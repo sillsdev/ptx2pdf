@@ -44,7 +44,12 @@
 \def\getsbp@ramNoInh#1{\ifdiglot \edef\d@sf{\ifdiglotL L\else R\fi}\else\def\d@sf{}\fi
   \getp@r@m{#1}{\c@tprefix\sb@rmarker\d@sf}\ifx\p@ram\relax\getp@ram{#1}{\c@tprefix\sb@rmarker}\fi
   \let\cp@ram\p@ram
-  \ifx\cp@ram\empty\global\let\cp@ram\relax\fi\trace{sc}{Got result for \c@tprefix\sb@rmarker:#1: \cp@ram}}
+  \ifx\cp@ram\empty\global\let\cp@ram\relax\fi
+  \ifx\cp@ram\relax
+    \trace{sc}{No result for \c@tprefix\sb@rmarker:#1}\else
+    \trace{sc}{Got result for \c@tprefix\sb@rmarker:#1: \cp@ram}%
+  \fi
+}
 %\setsbp@ram{hascol}{T}
 %\setsbp@ram{bgcolour}{0 1 0}
 %\setsbp@ram{alpha}{0.2}% 1=solid 0=invisible
@@ -111,9 +116,10 @@
   \ifx\t@st\empty
     \let\n@xtB\endP@rseBorder
   \else
-    \x@\let\x@\t@st\csname B@rder#1\endcsname
+    \uppercase{\def\uc@ption{#1}}
+    \x@\let\x@\t@st\csname B@rder\uc@ption\endcsname
     \ifx\t@st\relax
-      \message{Could not parse \Border #1}%
+      \message{Could not parse Border #1}%
     \else
       \t@st \relax
     \fi
@@ -133,7 +139,7 @@
  %h*,c*,p* take the current page width as their base
  %tX,bX take the column width 
  %t,b,B take the text width
- \trace{e}{setsb@rwidth c:\the\colwidth, t:\the\textwidth, h:\the\hsize}%
+ \trace{e}{setsb@rwidth c:\the\colwidth, t:\the\textwidth, h:\the\hsize, \the\c@rrentcols}%
  \getsbp@ram{posn}%
  \ifx\cp@ram\relax
    \gdef\sb@rpos{b}%
@@ -146,14 +152,15 @@
  \getsbp@ramNoInh{w@dth}% Width must NOT be inherited.
  \ifx\cp@ram\relax
    \x@\minip@rsepos\fgfigp@s\mid\sb@rpos\end
-   \dimen1=\hs@ze
+   \dimen1=\ifnum \c@rrentcols=1 \textwidth \else \colwidth\fi
+   \trace{sc}{Initial width set to \the\dimen1}%
    \ifx\tempd\empty
-     \if\tempc t\dimen1=\textwidth\else
-       \if\tempc b\dimen1=\textwidth\else
-         \if\tempc B\dimen1=\textwidth\fi\fi\fi
+     \if\tempc t\relax\dimen1=\textwidth\else
+       \if\tempc b\relax\dimen1=\textwidth\else
+         \if\tempc B\relax\dimen1=\textwidth\fi\fi\fi
    \else
-     \if\tempc t\dimen1=\colwidth\else
-       \if\tempc b\dimen1=\colwidth\fi\fi
+     \if\tempc t\relax\dimen1=\colwidth\else
+       \if\tempc b\relax\dimen1=\colwidth\fi\fi
    \fi
    % Now apply scale..
    \getsbp@ram{scale}\ifx\cp@ram\relax\else
@@ -178,7 +185,9 @@
      \advance\dimen1 by \fb@hpadding\fi
    \ifx\b@drright\tr@e \advance\dimen1 by -\b@drwidth\FontSizeUnit
      \advance\dimen1 by \fb@hpadding\fi
-   \setsbp@ram{w@dth}{\the\dimen1}%
+   \if h\tempc\relax\else
+     \setsbp@ram{w@dth}{\the\dimen1}%
+   \fi
  \else
    \dimen1=\cp@ram
  \fi
@@ -186,6 +195,7 @@
 }
 % Sidebar 
 \def\@sb{\let\oldc@tegory\c@tegory\let\oldc@prefix\c@tprefix 
+  \trace{e}{Starting side bar from \m@rker}%
   \ifhmode\par\fi
   \edef\l@stdepth{\the\prevdepth}% Remember for later
   \edef\hs@ze{\the\hsize}%
@@ -220,10 +230,11 @@
 \def\@sbe{%
   \ifhe@dings\endhe@dings\fi
   \ifhmode\par\fi
-  \ifinextended\global\let\c@t@gory\c@tegory\egroup\else\message{\\ebse called without \\esb}\fi
-  \end@llpoppedstyles{s*}
+  \relax
+  \ifinextended\global\let\c@t@gory=\c@tegory\egroup \else \global\let\c@t@gory=\empty \trace{e}{\\ebse called without \\esb}\fi
+  \end@llpoppedstyles{s*}% May also close groups
   \trace{e}{ESBE \the\sb@rchunkh@ight}%
-  \let\c@tegory\c@t@gory%recover boxed value
+  \let\c@tegory=\c@t@gory %recover value from box, without making global changes.
   \s@tc@tpr@fix
   \trace{e}{ESBE \c@tprefix}%
   \inextendedfalse
@@ -373,6 +384,8 @@
     \repeat
   \let\c@tegory\oldc@tegory 
   \s@tc@tpr@fix
+  \unvbox\sid@barnotes
+  \cancelcutouts
 }
 
 % Category file parsing 
@@ -431,13 +444,13 @@
   \EndCategory\stylesheet{#1}\EndCategory
   \subc@llfalse
 }
-\def\B@rderTop{\setsbp@ram{bordertop}{T}}
-\def\B@rderBottom{\setsbp@ram{borderbottom}{T}}
-\def\B@rderLeft{\setsbp@ram{borderoddleft}{T}\setsbp@ram{borderevenleft}{T}}
-\def\B@rderRight{\setsbp@ram{borderoddright}{T}\setsbp@ram{borderevenright}{T}}
-\def\B@rderInner{\ifBookOpenLeft\setsbp@ram{borderoddright}{T}\setsbp@ram{borderevenleft}{T}\else\setsbp@ram{borderoddleft}{T}\setsbp@ram{borderevenright}{T}\fi}
-\def\B@rderOuter{\ifBookOpenLeft\setsbp@ram{borderoddleft}{T}\setsbp@ram{borderevenright}{T}\else\setsbp@ram{borderoddright}{T}\setsbp@ram{borderevenleft}{T}\fi}
-\def\B@rderAll{\setsbp@ram{borderoddleft}{T}\setsbp@ram{borderevenleft}{T}\setsbp@ram{borderoddright}{T}\setsbp@ram{borderevenright}{T}\setsbp@ram{bordertop}{T}\setsbp@ram{borderbottom}{T}}
+\def\B@rderTOP{\setsbp@ram{bordertop}{T}}
+\def\B@rderBOTTOM{\setsbp@ram{borderbottom}{T}}
+\def\B@rderLEFT{\setsbp@ram{borderoddleft}{T}\setsbp@ram{borderevenleft}{T}}
+\def\B@rderRIGHT{\setsbp@ram{borderoddright}{T}\setsbp@ram{borderevenright}{T}}
+\def\B@rderINNER{\ifBookOpenLeft\setsbp@ram{borderoddright}{T}\setsbp@ram{borderevenleft}{T}\else\setsbp@ram{borderoddleft}{T}\setsbp@ram{borderevenright}{T}\fi}
+\def\B@rderOUTER{\ifBookOpenLeft\setsbp@ram{borderoddleft}{T}\setsbp@ram{borderevenright}{T}\else\setsbp@ram{borderoddright}{T}\setsbp@ram{borderevenleft}{T}\fi}
+\def\B@rderALL{\setsbp@ram{borderoddleft}{T}\setsbp@ram{borderevenleft}{T}\setsbp@ram{borderoddright}{T}\setsbp@ram{borderevenright}{T}\setsbp@ram{bordertop}{T}\setsbp@ram{borderbottom}{T}}
 \def\B@rderNone{\setsbp@ram{borderoddleft}{F}\setsbp@ram{borderevenleft}{F}\setsbp@ram{borderoddright}{F}\setsbp@ram{borderevenright}{F}\setsbp@ram{bordertop}{F}\setsbp@ram{borderbottom}{F}}
 
 \addtoinithooks{\let\@SB=\esb\let\@SBE=\esbe \let\esb=\@sb\let\esbe=\@sbe}

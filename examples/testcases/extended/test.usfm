@@ -18,7 +18,7 @@ now inside a qt-s..qt-e block \nd*
 \cat inl\cat*
 \p This is an esb with 
 \p category "\showTheCategory"
-\p It is put inline 
+\p It is put inline\f + \ft hmm \f* 
 \esbe
 
 \esb

@@ -6,6 +6,7 @@ from ptxprint.font import TTFont, cachepath, cacheremovepath
 from ptxprint.utils import _, refKey, universalopen
 from ptxprint.usfmutils import Sheets, UsfmCollection
 from ptxprint.piclist import PicInfo
+from ptxprint.styleditor import StyleEditor
 import pathlib, os, sys
 from configparser import NoSectionError, NoOptionError, _UNSET
 from zipfile import ZipFile, ZIP_DEFLATED
@@ -14,7 +15,7 @@ from shutil import rmtree
 import datetime, time
 from shutil import copyfile, copytree, move
 
-VersionStr = "1.3"
+VersionStr = "1.4.3"
 
 pdfre = re.compile(r".+[\\/](.+)\.pdf")
 
@@ -74,7 +75,7 @@ class ViewModel:
         "fancy/sectionheaderpdf":   ("sectionheader", False, "lb_inclSectionHeader"),
         "fancy/endofbookpdf":       ("endofbook", False, "lb_inclEndOfBook"),
         "fancy/versedecoratorpdf":  ("versedecorator", False, "lb_inclVerseDecorator"),
-        "document/customfigfolder": ("customFigFolder", False, None),
+        "document/customfigfolder": ("customFigFolder", False, "lb_selectFigureFolder"),
         "document/customoutputfolder": ("customOutputFolder", False, None)
     }
     _settingmappings = {
@@ -112,6 +113,7 @@ class ViewModel:
         self.usfms = None
         self.picinfos = None
         self.loadingConfig = False
+        self.styleEditor = StyleEditor(self)
 
         # private to this implementation
         self.dict = {}
@@ -358,6 +360,7 @@ class ViewModel:
             if readConfig:  # project changed
                 self.usfms = None
                 self.get_usfms()
+            self.styleEditor.load(self.getStyleSheets())
             self.loadPics()
             return res
         else:
@@ -536,7 +539,15 @@ class ViewModel:
                     move(modpath, path)
                     with open(modpath, "w") as outf:
                         pass
-            config.set("config", "version", "1.290")
+        if v < 1.400:
+            indent = config.getfloat("document", "indentunit", fallback="2.000")
+            if indent == 2.0 and config.getboolean("paper", "columns", fallback=True):
+                    config.set("document", "indentunit", "1.000")
+            config.set("config", "version", "1.400")
+        if v < 1.403:   # no need to bump version for this and merge this with a later version test
+            f = os.path.join(self.configPath(cfgname), "NestedStyles.sty")
+            if os.path.exists(f):
+                os.remove(f)
 
         styf = os.path.join(self.configPath(cfgname), "ptxprint.sty")
         if not os.path.exists(styf):
@@ -594,6 +605,13 @@ class ViewModel:
 
     def editFile_delayed(self, *a):
         pass
+
+    def saveStyles(self, force=False):
+        if not force and self.configLocked():
+            return
+        fname = os.path.join(self.configPath(self.configName(), makePath=True), "ptxprint.sty")
+        with open(fname, "w", encoding="Utf-8") as outf:
+            self.styleEditor.output_diffile(outf)
 
     def savePics(self, force=False):
         if not force and self.configLocked():
@@ -754,27 +772,6 @@ class ViewModel:
                 m2 = _("No valid words were found in Paratext's Hyphenation List")
         self.doError(m1, m2)
 
-    # def checkSFMforFancyIntroMarkers(self):
-        # unfitBooks = []
-        # prjid = self.get("fcb_project")
-        # prjdir = os.path.join(self.settings_dir, prjid)
-        # bks = self.getBooks()
-        # for bk in bks:
-            # if bk not in TexModel._peripheralBooks:
-                # fname = self.getBookFilename(bk, prjid)
-                # fpath = os.path.join(self.settings_dir, prjid, fname)
-                # if os.path.exists(fpath):
-                    # with open(fpath, "r", encoding="utf-8") as inf:
-                        # sfmtxt = inf.read()
-                    # # Put strict conditions on the format (including only valid \ior using 0-9, not \d digits from any script)
-                    # # This was probably too restrictive, but is a great RegEx: \\ior ([0-9]+(:[0-9]+)?[-\u2013][0-9]+(:[0-9]+)?) ?\\ior\*
-                    # if regex.search(r"\\iot .+\r?\n(\\io\d .+?\\ior [()0-9\-:.,\u2013\u2014 ]+?\\ior\* ?\r?\n)+\\c 1", sfmtxt, flags=regex.MULTILINE) \
-                       # and len(regex.findall(r"\\iot",sfmtxt)) == 1: # Must have exactly 1 \iot per book 
-                        # pass
-                    # else:
-                        # unfitBooks.append(bk)
-        # return unfitBooks
-
     def onFindMissingCharsClicked(self, btn_findMissingChars):
         count = collections.Counter()
         prjid = self.get("fcb_project")
@@ -857,12 +854,6 @@ class ViewModel:
                 if os.path.exists(fp):
                     res.append(fp)
                     break
-        if generated:
-            for p in (cpath, rcpath):
-                fp = os.path.join(p, "NestedStyles.sty")
-                if os.path.exists(fp):
-                    res.append(fp)
-                    break
         res.append(os.path.join(cpath, "ptxprint.sty"))
         return res
 
@@ -915,7 +906,7 @@ class ViewModel:
             for pic in os.listdir(piclstpath):
                 if pic.endswith(".piclist") and pic in picbks:
                     res[os.path.join(piclstpath, pic)] = cfpath+"PicLists/"+pic
-        for jobpiclistf in ("{}-{}.piclist".format(prjid, cfgid), "ptxprint.sty", "NestedStyles.sty", "picChecks.txt"):
+        for jobpiclistf in ("{}-{}.piclist".format(prjid, cfgid), "ptxprint.sty", "picChecks.txt"):
             jobpiclist = os.path.join(basecfpath, jobpiclistf)
             if os.path.exists(jobpiclist):
                 res[jobpiclist] = cfpath+jobpiclistf
@@ -988,7 +979,8 @@ class ViewModel:
         if self.diglotView is not None:
             self.diglotView._archiveAdd(zf, self.getBooks(files=True))
         if self.get("c_archiveTemps"):
-            for f in self.tempFiles:
+            temps = [x.replace(".xdv", ".pdf") for x in self.tempFiles if x.endswith(".xdv")]
+            for f in self.tempFiles + temps:
                 pf = os.path.join(self.working_dir, f)
                 if os.path.exists(pf):
                     outfname = os.path.relpath(pf, self.settings_dir)

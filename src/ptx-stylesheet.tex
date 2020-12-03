@@ -40,6 +40,7 @@
 \def\h@phen{-} % for matching
 \def\ds@ffix{} % diglot suffix (L/R)
 \def\m@rker{} % The currently being defined \Marker
+\let\prev@rsemode\empty
 
 % Remember the name of the marker currently being defined
 \def \Marker         #1\relax{\def\m@rker{#1} % store name of marker currently being defined
@@ -106,7 +107,7 @@
 \def \SmallCaps      #1\relax{\defbinp@ram{smallcaps}{#1}}
 \let \Smallcaps\SmallCaps
 \def \BaseLine       #1\relax{\defp@ram{baseline}{#1}}
-\def \LineSpacing    #1\relax{\defp@ram{baseline}{#1\FontSizeUnit}}
+\def \LineSpacing    #1\relax{\defp@ram{baseline}{#1\onel@neunit}}
 % Make a TeX macro based on the StyleType
 \def \StyleType      #1\relax{\lowercase{\def\styl@type{#1}}\m@kestyle}     %(1)
 \let \Styletype=\StyleType
@@ -310,7 +311,7 @@
   % called after \c and \v have been processed in stylesheet at beginning of typesetting file
   \let\@V=\v% remember \v defn for (A) below
   % Define a macro to read an actual space delimited verse number, and then check if the next token is \vp
-  \def\@v@ ##1 {\gdef\v@rse{##1}\global\let\print@bleVerse\v@rse\futurelet\mayb@vp\@V@}%
+  \def\@v@ ##1 {\gdef\v@rse{##1}\ifdiglot\ifdiglotL\global\let\@v@rse=\v@rse\else\global\let\@v@rseR=\v@rse\fi\fi\global\let\print@bleVerse\v@rse\futurelet\mayb@vp\@V@}%
   % If the next token IS vp, then call relevant code to interpret before dropping 
   \def\@V@{%
    \let\nxt\@@V@@
@@ -380,9 +381,21 @@
   % Define a macro to process space delimited chapter number
   % ## is necessary because this is a nested macro definition
   \def\@c@ ##1 {\ifsk@pping \egroup \fi % if we were skipping, stop it
-   \gdef\ch@pter{##1}% remember chapter number
-   \gdef\ch@ptert@xt{##1}% the chapter number we will actually output
-   \gdef\v@rse{}% clear verse number
+   \ifnum 1=\ifdiglot\ifdiglotL 1 \else 2\fi\else 2\fi
+     \gdef\@ch@pterR{##1}% remember chapter number
+     \gdef\@ch@ptert@xtR{##1}% the chapter number we will actually output
+     \gdef\@v@rseR{}% clear verse number
+     \global\let\ch@pter=\@ch@pterR
+     \global\let\ch@ptert@xt=\@ch@ptert@xtR
+     \global\let\v@rse=\@v@rseR
+   \else
+     \gdef\@ch@pter{##1}% remember chapter number
+     \gdef\@ch@ptert@xt{##1}% the chapter number we will actually output
+     \gdef\@v@rse{}% clear verse number
+     \global\let\ch@pter=\@ch@pter
+     \global\let\ch@ptert@xt=\@ch@ptert@xt
+     \global\let\v@rse=\@v@rse
+   \fi
    \global\let\print@bleVerse=\v@rse
    \m@kedigitsletters
    % If omitting chapter number, skip this. 
@@ -544,10 +557,16 @@
 \let\b@ok\relax
 \def\ch@pter{}
 \def\v@rse{}
-\def\m@rkverse{\ifdiglot\ifdiglotL\m@rkverseL\else\m@rkverseR\fi\else\m@rkverseL\fi}
-\def\m@rkverseL{\mark{\b@ok:\ch@pter:\print@bleVerse}\marks1{\b@ok:\ch@pter:\print@bleVerse}}
-\def\m@rkverseR{\mark{\b@okR:\ch@pter:\print@bleVerse}\marks2{\b@okR:\ch@pter:\print@bleVerse}}
+\let\@ch@pter=\ch@pter
+\let\@ch@pterR=\ch@pter
+\let\@v@rse=\v@rse
+\let\@v@rseR=\v@rse
+\def\m@rkverse{\ifdiglot\ifdiglotL\m@rkverseL\else\m@rkverseR\fi\else\m@rkverseN\fi}
+\def\m@rkverseN{\mark{\b@ok:\ch@pter:\print@bleVerse}} %normal verse
+\def\m@rkverseL{\mark{\b@ok:\ch@pter:\print@bleVerse}\marks1{\b@ok:\ch@pter:\print@bleVerse}} % Left diglot verse
+\def\m@rkverseR{\mark{\b@okR:\ch@pter:\print@bleVerse}\marks2{\b@okR:\ch@pter:\print@bleVerse}} %Right diglot verse
 
+\def\n@xtparstart{}
 %+csty_addspecialhooks
 \begingroup
 \obeylines%
@@ -558,7 +577,7 @@
  \def\@h ##1^^M{\ifdiglot\ifdiglotL\gdef\b@ok{##1}\else\gdef\b@okR{##1}\fi\else\gdef\b@ok{##1}\fi\egroup}% store book id in \b@ok
  %
  \let\@CL=\cl%
- \def\do@CL{\global\ch@pterfalse\@CL}%
+ \def\do@CL{\global\ch@pterfalse\gdef\n@xtparstart{\pdfch@ptermark}\@CL}%
  \def\cl{\ifch@pter \let\n@xt=\do@CL \else \let\n@xt=\st@recl \fi \n@xt}%
  \def\st@recl{\bgroup\obeylines\@cl}% \cl gets stored as chapter label and changes \c format
  \def\@cl ##1^^M{\ifdiglot\ifdiglotL\gdef\ch@plabel{##1}\else\gdef\ch@plabelR{##1}\fi\else\gdef\ch@plabel{##1}\fi\egroup}%
@@ -801,6 +820,7 @@
 %+csty_ptxfile_intro
 \def\ptxfile#1{
  \saveLRspecificOrig%This becomes a \relax after first use. Always call it.
+ \ifdiglot\setLRspecific\fi% \@netimesetup needs actual values, in a diglot there may be no use of generic FontSizeUnit, etc.
  \@netimesetup
  \ifdiglot\bgroup%This must be outside of @onetimesetup as there's no guarantee that diglot will be true for all ptxfiles.
    \dimen0=\baselineskip
@@ -844,10 +864,11 @@
  \endt@ble
  \ifdiglot\ifdiglotL\norighttext\fi\enddigl@t\fi
  \ifx\b@ok\relax\else\csname bookend-\id@@@\endcsname\relax\csname bookend-all\endcsname\fi
+ \ifnum \ifnotesEachBook 1\else\iflastptxfile 1\else 0\fi\fi =1 \the\placendnotes\fi
  \iflastptxfile\closepiclist\fi
  \closeadjlist
  \unprepusfm
- \singlecolumn\pagebreak
+ \singlecolumn\bookendpagebreak
  %\ifendbooknoeject\else\global\output={\global\setbox255=\box\voidb@x}\eject\xdef\p@gefirstmark{}\setbox\partial=\box\voidb@x\fi
  \ifendbooknoeject\else\global\output={\shipout\vbox{\box\partial\box255}}\eject\xdef\p@gefirstmark{}\setbox\partial=\box\voidb@x\fi
  \global\output={\onecol}
@@ -918,6 +939,7 @@
   \egroup % End the group from the containing code.             %(4)
 }
 % remember as c@t, onetime setup will define \cat to this, protecting the definition from stylesheet
+\def\nofin@lspace #1 #2\E{#1}%Eat a final space
 \def\c@t #1\cat*{%
   \ifx\c@tegory\empty\else                                      %(5)
     \trace{sc}{Odd situation: two \\cat commands in one group or nested categories? Assuming nesting.}%
@@ -927,7 +949,7 @@
     %\endgroup %End the group started between the cat groups  
     %\cl@singhooks{after}{cat}%
   \fi
-  \s@tc@tprefix{#1}%
+  \x@\s@tc@tprefix{\nofin@lspace #1 \E}%
   \the\c@th@@ks% Run anythingthe enclosing code wants
   \op@ninghooks{before}{cat}% 
   \ifhmode\par\fi
@@ -1017,8 +1039,10 @@
 \def\s@tb@dyb@seline#1{%Parameter is {} for monoglot, L / R for diglot.
  \baselineskip=\origb@selineskip
  \le@dingunit=\LineSpacingFactor\FontSizeUnit
+ \onel@neunit=\LineSpaceBase\le@dingunit
  \verticalsp@ceunit=\VerticalSpaceFactor\le@dingunit
- \ifdim\baselineskip < 1pt \baselineskip=14\le@dingunit\fi % If the baselineskip has been specifically
+ \trace{F}{le@dingunit(\the\le@dingunit)=\LineSpacingFactor * \the\FontSizeUnit, onel@neunit(\the\onel@neunit)=\LineSpaceBase * \the\le@dingunit}
+ \ifdim\baselineskip < 1pt \baselineskip=\onel@neunit\fi % If the baselineskip has been specifically
                                                            % set it will remain. Otherwise, the default
                                                            % of 14 will be applied here and set text will
                                                            % hold to the grid.
@@ -1069,7 +1093,9 @@
  \resetvsize
 }
 %-csty_setupsizes
+\def\LineSpaceBase{14}
 \newdimen\le@dingunit
+\newdimen\onel@neunit
 \newdimen\verticalsp@ceunit
 \newdimen\topm@rgin
 \newdimen\bottomm@rgin

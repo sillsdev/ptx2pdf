@@ -54,7 +54,7 @@
 
 %LRspecific holds a list of things that get redefined on side-switching. Now split into Definitions and Dimensions.
 \def\LRspecificDef{VerticalSpaceFactor,LineSpacingFactor,regular,bold,italic,bolditalic,SpaceStretchFactor,SpaceShrinkFactor}
-\def\LRspecificDim{FontSizeUnit,le@dingunit,verticalsp@ceunit,IndentUnit} 
+\def\LRspecificDim{FontSizeUnit,le@dingunit,onel@neunit,verticalsp@ceunit,IndentUnit} 
 
 
 % Code to cycle through \LRspecific, setting them to their L/R values, modified
@@ -87,7 +87,7 @@
 
 \def\s@veSpecificOrig#1{\ifcsname #1\endcsname \x@\let\csname #1\@rig\x@\endcsname\csname #1\endcsname
   \ch@ckLR{#1}{L}\ch@ckLR{#1}{R}\else\MSG{No global definition for #1}\fi} % If the item exists, save its current value. 
-\def\ch@ckLR#1#2{\ifcsname#1#2\endcsname\else\x@\let\csname #1#2\x@\endcsname\csname #1\@rig\endcsname
+\def\ch@ckLR#1#2{\ifcsname#1#2\endcsname\trace{S}{SpS: #1#2 exists}\else\x@\let\csname #1#2\x@\endcsname\csname #1\@rig\endcsname
   \ifdiglot\MSG{Side-specific #1#2 not defined, global #1 will be used}\fi\fi}% Helper function
 
 % If the item exists, save its current value. 
@@ -126,6 +126,7 @@
 
 \newdimen\FontSizeUnitL\FontSizeUnitL=-1sp\newdimen\FontSizeUnitR\FontSizeUnitR=-1sp
 \newdimen\le@dingunitL\le@dingunitL=-1sp\newdimen\le@dingunitR\le@dingunitR=-1sp
+\newdimen\onel@neunitL\onel@neunitL=-1sp\newdimen\onel@neunitR\onel@neunitR=-1sp
 \newdimen\verticalsp@ceunitL\verticalsp@ceunitL=-1sp\newdimen\verticalsp@ceunitR\verticalsp@ceunitR=-1sp
 \newdimen\IndentUnitL\IndentUnitL=-1sp\newdimen\IndentUnitR\IndentUnitR=-1sp
 \def\SpaceStretchFactorL{}\def\SpaceStretchFactorR{}
@@ -1026,6 +1027,15 @@
   \let\m@rkerL=\m@rker\let\m@rker=\m@rkerR\relax\fi%
   %\message{m@rker now \m@rker}
  \fi%
+ \ifdiglotL
+   \global\let\ch@pter=\@ch@pter
+   \global\let\ch@ptert@xt=\@ch@ptert@xt
+   \global\let\v@rse=\@v@rse
+ \else
+   \global\let\ch@pter=\@ch@pterR
+   \global\let\ch@ptert@xt=\@ch@ptert@xtR
+   \global\let\v@rse=\@v@rseR
+ \fi
  \setLRspecific %ensure that all the units are correct.
  \trace{D}{Leadingunit: \the\le@dingunit}%
  \ifdim\le@dingunit>0pt %

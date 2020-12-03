@@ -129,11 +129,17 @@
     \ch@rstyle{#1}~\ignorespaces}%
 }
 
+\newtoks\s@vedm@rks
+\let\origm@rk\mark
+\let\origm@rks\marks
+\s@vedm@rks{}
 \def\st@rtcell{%
   \advance\tablec@l by 1
   \ifnum\tablec@l>\allocatedtablec@ls \@llocnewc@l \fi
   \setbox\cellb@x=\vbox\bgroup
-    \def\mark##1{\xdef\s@vedm@rk{##1}\aftergroup\dos@vedm@rk}%
+    \def\mark##1{\x@\global\x@\s@vedm@rks\x@{\the\s@vedm@rks \origm@rk{##1}}}%
+    \def\marks##1##2{\x@\global\x@\s@vedm@rks\x@{\the\s@vedm@rks \origm@rks{##1}{##2}}}%
+    \aftergroup\dos@vedm@rk%
     \hsize=\maxdimen
     \resetp@rstyle \everypar={}\noindent
     \ifRTL\beginR\fi
@@ -146,7 +152,7 @@
     \s@tfont{tr}%
     \global\p@ranesting=1
     \@celltrue}
-\def\dos@vedm@rk{\expandafter\mark\expandafter{\s@vedm@rk}\ifdiglotL\def\tmp{1}\else\def\tmp{2}\fi\x@\marks\x@\tmp\x@{\s@vedm@rk}}
+\def\dos@vedm@rk{\the\s@vedm@rks\relax\s@vedm@rks{}}
 
 \def\@ndcell{%
   \if@cell

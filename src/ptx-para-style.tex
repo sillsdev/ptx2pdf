@@ -220,7 +220,7 @@
  \fi
 }
 
-\def\shrinkdel@y#1|#2\EDLY{\trace{g}{shrint {#1}{#2}}\xdef\temp{#2}}
+\def\shrinkdel@y#1|#2\EDLY{\trace{g}{shrink {#1}{#2}}\xdef\temp{#2}}
 %-cpar_doendofthispar
 
 %
@@ -230,6 +230,10 @@
 \newif\ifhe@dingstyle
 \newif\ifnsp@cebefore
 \newif\ifJustifyPars \JustifyParstrue
+\def\intro@mbigious#1{\x@\def\csname intro@mbigious-#1\endcsname{t}}
+\def\settest@mb#1{\x@\let\x@\test@mb\csname intro@mbigious-#1\endcsname}
+\def\intro@mbigious{iex} % iex can be intro or not intro.
+
 \newdimen\lastdepth
 \def\endit@P{%Called by whileitp@ps, to end a paragraph style
  \let\p@r=\par % end the paragraph
@@ -290,6 +294,11 @@
   %
 %+cpar_parstyle_transition
   \x@\t@stintro\m@rker\relax
+  %If the marker is an (ultra-rare) type that occurs in introductions and normal text, then
+  %set the intromarker flag based on what the current state (\if@ntro) is.
+  \settest@mb{\m@rker}\ifx\test@mb\relax\else
+    \if@ntro\@ntromarkertrue\else\@ntromarkerfalse\fi 
+  \fi
   % \tr is treated as an intro marker if we're already in intro mode
   \if@tablerow\if@ntro\@ntromarkertrue\fi\fi
   \global\he@dingstylefalse
@@ -310,7 +319,7 @@
   \else
     \if@ntromarker\st@rtintro\else\st@rtbody\fi
   \fi\fi\fi                                                                     %(2)
-  \ifhe@dingstyle\TRACE{headingstyle true}%
+  \ifhe@dingstyle\trace{s}{headingstyle true}%
     \ifhe@dings\nsp@cebeforetrue\s@tbaseline{\m@rker}%In a heading again, may be different so set a new baseline
       \else
         % Headingtopspace gets removed at top of page, preserve for titles.
@@ -324,14 +333,15 @@
         \hyphenpenalty=10000 \exhyphenpenalty=10000 % don't hyphenate in headings
     \fi
     \nobreak
-  \else\TRACE{headingstyle false}%
+  \else\trace{s}{headingstyle false}%
     \ifhe@dings\endhe@dings\fi
+    \s@tbaseline{\m@rker}%
   \fi
   \getp@ram{spacebefore}{\m@rker}% output <spacebefore> for this style
   \ifx\p@ram\relax \else
     \ifhe@dings\nobreak\fi
     \ifnsp@cebefore\nsp@cebeforefalse
-      \ifnum\p@ram<0\vskip\p@ram\verticalsp@ceunit\fi
+      \ifdim\p@ram\verticalsp@ceunit<0pt\vskip\p@ram\verticalsp@ceunit\fi
     \else\vskip\p@ram\verticalsp@ceunit\fi
   \fi
   \global\startparatrue
@@ -374,7 +384,7 @@
    % handle drop-cap style chapter number, if this is the beginning of a chapter
    %
 %+cpar_parstyle_chapter
-   \ifch@pter
+   \ifinextended\else\ifch@pter
     \getp@ram{type}{\m@rker}%
     \ifx\p@ram\v@rsetext
      \t@stpublishability{c}\ifn@npublishable
@@ -428,7 +438,7 @@
      \dr@ppednumberfalse
      \spacefactor=\n@wchaptersf % prevent hanging verse number here
     \fi
-   \fi
+   \fi\fi
 %-cpar_parstyle_drop
 %+cpar_parstyle_final
    \ifx\f@rstindent\relax \else
@@ -445,6 +455,7 @@
    \fi
    \ifvoid\ch@pterbox\else \kern-\wd\ch@pterbox \box\ch@pterbox \fi
    \global\p@ranesting=1
+   \n@xtparstart\gdef\n@xtparstart{}%
    \op@ninghooks{start}{\m@rker}%handle <start> hook
    \ifdr@ppednumber \spacefactor=0\n@wchaptersf \fi
    \startparafalse

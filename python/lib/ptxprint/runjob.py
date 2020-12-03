@@ -21,13 +21,19 @@ _errmsghelp = {
                                          "then ensure that the PDF(s) exist(s); OR uncheck those options (Advanced tab).\n",
 "! Missing control sequence inserted.":  "Fallback font probably being applied to text in a footnote (not permitted!)\n",
 "! Missing number, treated as zero.":    "Related to USFM3 illustration markup\n",
-"! Undefined control sequence.":         "This is related to a USFM marker error (such as an unsupported marker)\n" +\
+"! Undefined control sequence.":         "This might be related to a USFM marker error (using an unsupported marker).\n" +\
                                          "Try 'Run Basic Checks' in Paratext\n",
 "! Illegal unit of measure (pt inserted).":    "One of the settings in the Stylesheet may be missing the units.\n" +\
                                          "To confirm that this is a stylesheet issue, temporarily turn off Stylesheets.\n" +\
                                          "Then, check any recent changes to the Stylesheets (on Advanced tab) and try again.\n",
 "! File ended while scanning use of":    "Try turning off PrintDraftChanges.txt and both Stylesheets on Advanced tab.\n",
-"! Output loop---25 consecutive dead cycles.":  "Unknown cause. Try changing one or more settings or contact support.\n",
+"! Output loop---25 consecutive dead cycles.":  "Sorry! XeTeX was unable to complete the typesetting.\n" +\
+                                         "* If creating a Diglot, ensure both texts can print successfully\n" +\
+                                         "  before merging them as a Diglot print. And ensure that there\n" +\
+                                         "  aren't any large chunks of missing text in either of the projects.\n" +\
+                                         "* Also check that you haven't inadvertently left certain settings on\n" +\
+                                         "  from a previous session (Pictures, Diglot, Borders - which will show\n" +\
+                                         "  in blue if these features are currently enabled).", 
 "! Paratext stylesheet":                 "Try turning off the ptxprint-mods stylesheet\n",
 "! File ended while scanning use of \iotableleader.": "Problem with Formatting Intro Outline\n" +\
                                          "Try disabling option 'Right-Align \ior with tabbed leaders' on the Body tab\n",
@@ -47,7 +53,8 @@ _errmsghelp = {
 "Unknown":                               "Sorry, there is no diagnostic help for this error.\n" +\
                                          "Ensure that the Basic Checks (in Paratext) pass for all books in list.\n" +\
                                          "Try turning off various settings, and disable Changes or Stylesheets.\n" +\
-                                         "If peripheral books are selected, try excluding those."
+                                         "If peripheral books are selected, try excluding those.\n" +\
+                                         "Sometimes just closing and re-opening PTXprint can make things work again!"
 }
 # \def\LineSpacingFactor{{{paragraph/linespacingfactor}}}
 # \def\VerticalSpaceFactor{{1.0}}
@@ -158,7 +165,6 @@ class RunJob:
         self.prjdir = os.path.join(self.args.paratext, self.prjid)
         if self.prjid is None or not len(self.prjid):     # can't print no project
             return
-        self.texfiles += info.generateNestedStyles()
         self.tmpdir = os.path.join(self.prjdir, 'PrintDraft') if info.asBool("project/useprintdraftfolder") \
                                                                  or self.args.directory is None else self.args.directory
         os.makedirs(self.tmpdir, exist_ok=True)
@@ -304,8 +310,17 @@ class RunJob:
     def dojob(self, jobs, info, logbuffer=None):
         donebooks = []
         for b in jobs:
-            out = info.convertBook(b, self.tmpdir, self.prjdir)
+            try:
+                out = info.convertBook(b, self.tmpdir, self.prjdir)
+            except FileNotFoundError as e:
+                self.printer.doError(str(e))
+                out = None
+            if out is None:
+                continue
             donebooks.append(out)
+        if not len(donebooks):
+            unlockme()
+            return []
         self.books += donebooks
         info["project/bookids"] = jobs
         info["project/books"] = donebooks
@@ -336,10 +351,20 @@ class RunJob:
             diginfo[k]=info[k]
         syntaxErrors = []
         for b in jobs:
-            out = info.convertBook(b, self.tmpdir, self.prjdir)
-            digout = diginfo.convertBook(b, self.tmpdir, digprjdir)
-            donebooks.append(out)
-            digdonebooks.append(digout)
+            try:
+                out = info.convertBook(b, self.tmpdir, self.prjdir)
+                digout = diginfo.convertBook(b, self.tmpdir, digprjdir)
+            except FileNotFoundError as e:
+                self.printer.doError(str(e))
+                out = None
+            if out is None:
+                continue
+            else:
+                donebooks.append(out)
+            if digout is None:
+                continue
+            else:
+                digdonebooks.append(digout)
             
             # Now merge the secondary text (right) into the primary text (left) 
             left = os.path.join(self.tmpdir, out)
@@ -357,6 +382,11 @@ class RunJob:
                 syntaxErrors.append("{} {} Error: {}".format(self.prjid, b, str(e)))
             for f in [left, right, outFile, logFile]:
                 texfiles += [os.path.join(self.tmpdir, f)]
+
+        if not len(donebooks) or not len(digdonebooks):
+            unlockme()
+            return []
+
         if len(syntaxErrors):
             self.printer.doError(_("Failed to merge texts due to a Syntax Error:"),
             secondary="\n".join(syntaxErrors)+_("\n\nIf original USFM text is correct, then check "+ \
@@ -370,9 +400,7 @@ class RunJob:
         # Pass all the needed parameters for the snippet from diginfo to info
         for k,v in _diglot.items():
             info[k]=diginfo[v]
-            # print(k, v, diginfo[v])
         info["document/diglotcfgrpath"] = os.path.relpath(diginfo.printer.configPath(diginfo.printer.configName()), docdir).replace("\\","/")
-        texfiles += info.generateNestedStyles(diglot=True)
         texfiles += self.sharedjob(jobs, info, logbuffer=logbuffer, extra="-diglot")
         return texfiles
 
@@ -500,10 +528,10 @@ class RunJob:
         #    self.removeTmpFolders(self.printer.working_dir, folderList, mkdirs=True)
         #except PermissionError:
         #    print("Warning: Couldn't Remove Temporary Folders - is a temp file open?")
-            
+        cropme = info['document/iffigcrop']
         def carefulCopy(p, src, tgt):
             ratio = pageRatios[0 if p['size'].startswith("span") else 1]
-            return self.carefulCopy(ratio, src, tgt)
+            return self.carefulCopy(ratio, src, tgt, cropme)
         missingPics = []
         if info['document/ifinclfigs'] == 'false':
             print("NoFigs")
@@ -511,9 +539,8 @@ class RunJob:
         picinfos.build_searchlist()
         for j in jobs:
             picinfos.getFigureSources(keys=j, exclusive=self.printer.get("c_exclusiveFiguresFolder"))
-            picinfos.set_destinations(fn=carefulCopy, keys=j)
-        missingPics = [v['src'] for k,v in picinfos.items() if k[:3] in j and 'dest file' not in v and 'src' in v]
-        # missingPics = [v['src'] for v in picinfos.values() if 'dest file' not in v and 'src' in v]
+            picinfos.set_destinations(fn=carefulCopy, keys=j, cropme=cropme)
+        missingPics = [v['src'] for v in picinfos.values() if v['anchor'][:3] in jobs and 'dest file' not in v and 'src' in v]
         res = [os.path.join("tmpPics", v['dest file']) for v in picinfos.values() if 'dest file' in v]
         outfname = info.printer.baseTeXPDFnames(jobs)[0] + ".piclist"
         picinfos.out(os.path.join(self.tmpdir, outfname), bks=jobs, skipkey="disabled", usedest=True, media='p')
@@ -529,7 +556,35 @@ class RunJob:
             self.printer.set("l_missingPictureString", "")
         return res
 
-    def convertToJPGandResize(self, ratio, infile, outfile):
+    def getBorder(self, box, start, end, fn):
+        if start > end:
+            it = range(box[start]-1, box[end]-1, -1)
+        else:
+            it = range(box[start], box[end])
+        otheri = 0 if (start & 1) else 1
+        others = box[otheri]
+        othere = box[otheri+2]
+        for t in it:
+            score = sum(fn(t, i) for i in range(others, othere))
+            # 8 = 256 * 5% (approx)
+            if score > 8 * (othere - others):
+                break
+        return t
+
+    def cropBorder(self, im):
+        bwim = im.convert("L").load()
+        box = im.getbbox()
+        cbox = []
+        cbox.append(self.getBorder(box, 0, 2, lambda x, y: bwim[x, y]))
+        cbox.append(self.getBorder(box, 1, 3, lambda y, x: bwim[x, y]))     # top is 0
+        cbox.append(self.getBorder(box, 2, 0, lambda x, y: bwim[x, y]))
+        cbox.append(self.getBorder(box, 3, 1, lambda y, x: bwim[x, y]))
+        cbox = tuple(cbox)
+        if cbox != box:
+            return im.crop(cbox)
+        return im
+
+    def convertToJPGandResize(self, ratio, infile, outfile, cropme):
         if self.ispdfxa:
             white = (0, 0, 0, 0)
             fmt = fmta = "CMYK"
@@ -541,34 +596,26 @@ class RunJob:
             rawdata = inf.read()
         newinf = cStringIO(rawdata)
         im = Image.open(newinf)
-        try:
-            p = im.load()
-        except OSError:
-            print(_("Failed to load (image) file:"), infile)
-            return
-        try:
-            onlyRGBAimage = im.convert(fmta)
-            iw = im.size[0]
-            ih = im.size[1]
-        except OSError:
-            print(_("Failed to convert (image) file:"), infile)
-            return
-        # print("Orig ih={} iw={}".format(ih, iw))
-        # print("iw/ih = ", iw/ih)
+        if cropme:
+            im = self.cropBorder(im)
+        p = im.load()
+        onlyRGBAimage = im.convert(fmta)
+        iw = im.size[0]
+        ih = im.size[1]
         if iw/ih < ratio:
             newWidth = int(ih * ratio)
             newimg = Image.new(fmta, (newWidth, ih), color=white)
             newimg.alpha_composite(onlyRGBAimage, (int((newWidth-iw)/2),0))
             iw = newimg.size[0]
             ih = newimg.size[1]
-            # print(">>>>>> Resized: ih={} iw={}".format(ih, iw))
             onlyRGBimage = newimg.convert(fmt)
             onlyRGBimage.save(outfile)
         else:
             onlyRGBimage = onlyRGBAimage.convert(fmt)
             onlyRGBimage.save(outfile)
+        return True
 
-    def carefulCopy(self, ratio, srcpath, tgtfile):
+    def carefulCopy(self, ratio, srcpath, tgtfile, cropme):
         tmpPicPath = os.path.join(self.printer.working_dir, "tmpPics")
         tgtpath = os.path.join(tmpPicPath, tgtfile)
         try:
@@ -577,13 +624,12 @@ class RunJob:
             ih = im.size[1]
         except OSError:
             print(("Failed to get size of (image) file:"), srcpath)
-            return srcpath
         # If either the source image is a TIF (or) the proportions aren't right for page dimensions 
         # then we first need to convert to a JPG and/or pad with which space on either side
-        if self.ispdfxa or iw/ih < ratio or os.path.splitext(srcpath)[1].lower().startswith(".tif"): # (.tif or .tiff)
+        if cropme or self.ispdfxa or iw/ih < ratio or os.path.splitext(srcpath)[1].lower().startswith(".tif"): # (.tif or .tiff)
             tgtpath = os.path.splitext(tgtpath)[0]+".jpg"
             try:
-                self.convertToJPGandResize(ratio, srcpath, tgtpath)
+                self.convertToJPGandResize(ratio, srcpath, tgtpath, cropme)
             except: # MH: Which exception should I try to catch?
                 print(_("Error: Unable to convert/resize image!\nImage skipped:"), srcpath)
                 return os.path.basename(tgtpath)

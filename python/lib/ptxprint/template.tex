@@ -17,9 +17,6 @@
 {document/ifdiglot}{ifusediglotcustomsty_}\stylesheet{R_}{{{/ptxrpath}/{document/diglotsecprj}/custom.sty}}
 {project/ifusecustomsty}{/nocustomsty}\stylesheet{L_}{{{/ptxrpath}/{project/id}/custom.sty}}
 
-{document/ifdiglot}\stylesheet{R_}{{{/nststypathR}}} % generated stylesheet for Secondary project
-\stylesheet{L_}{{{/nststypath}}} % generated stylesheet for monodoc or Primary project
-
 {document/ifdiglot}{ifusediglotmodsty_}\stylesheet{R_}{{{document/diglotcfgrpath}/ptxprint-mods.sty}} % Right-side/Diglot Secondary stylesheet override settings
 {project/ifusemodssty}\stylesheet{L_}{{{/cfgrpath}/ptxprint-mods.sty}} % Left-side stylesheet override settings
 
@@ -53,6 +50,7 @@
 \def\PageFullFactor{{0.66}}
 
 %%%%% Text Spacing %%%%%
+\def\LineSpaceBase{{12}}
 \def\LineSpacingFactor{L_}{{{paragraph/linespacingfactor}}}
 \def\VerticalSpaceFactor{L_}{{1.0}}
 {paragraph/useglyphmetrics}\XeTeXuseglyphmetrics=0
@@ -94,9 +92,7 @@
 %\XeTeXlinebreakskip=0em plus 0.1em minus 0.01em
 \JustifyPars{paragraph/ifjustify}
 \IndentAfterHeading{document/firstparaindent}
-
-%%%%% Removed until we can make it work better across the board (incl \q markers)
-% \IndentUnit={document/indentunit}in
+\IndentUnit={document/indentunit}in
 
 %%% Chapters & Verses %%%
 \OmitVerseNumberOne{document/ifomitverseone}
@@ -115,15 +111,15 @@
 {document/hangpoetry}\sethook{{start}}{{qm1}}{{\let\printv@rse=\hangprintv@rse\hangversenumber}}
 {document/hangpoetry}\sethook{{start}}{{qm2}}{{\let\printv@rse=\hangprintv@rse\hangversenumber}}
 {document/hangpoetry}\sethook{{start}}{{qm3}}{{\let\printv@rse=\hangprintv@rse\hangversenumber}}
-{document/hangpoetry}\sethook{{end}}{{q}}{{\let\printv@rse=\simpleprintv@rse}}
-{document/hangpoetry}\sethook{{end}}{{q1}}{{\let\printv@rse=\simpleprintv@rse}}
-{document/hangpoetry}\sethook{{end}}{{q2}}{{\let\printv@rse=\simpleprintv@rse}}
-{document/hangpoetry}\sethook{{end}}{{q3}}{{\let\printv@rse=\simpleprintv@rse}}
-{document/hangpoetry}\sethook{{end}}{{q4}}{{\let\printv@rse=\simpleprintv@rse}}
-{document/hangpoetry}\sethook{{end}}{{qm}}{{\let\printv@rse=\simpleprintv@rse}}
-{document/hangpoetry}\sethook{{end}}{{qm1}}{{\let\printv@rse=\simpleprintv@rse}}
-{document/hangpoetry}\sethook{{end}}{{qm2}}{{\let\printv@rse=\simpleprintv@rse}}
-{document/hangpoetry}\sethook{{end}}{{qm3}}{{\let\printv@rse=\simpleprintv@rse}}
+{document/hangpoetry}\sethook{{end}}{{q}}{{\let\printv@rse=\simpleprintv@rse\hangingversefalse}}
+{document/hangpoetry}\sethook{{end}}{{q1}}{{\let\printv@rse=\simpleprintv@rse\hangingversefalse}}
+{document/hangpoetry}\sethook{{end}}{{q2}}{{\let\printv@rse=\simpleprintv@rse\hangingversefalse}}
+{document/hangpoetry}\sethook{{end}}{{q3}}{{\let\printv@rse=\simpleprintv@rse\hangingversefalse}}
+{document/hangpoetry}\sethook{{end}}{{q4}}{{\let\printv@rse=\simpleprintv@rse\hangingversefalse}}
+{document/hangpoetry}\sethook{{end}}{{qm}}{{\let\printv@rse=\simpleprintv@rse\hangingversefalse}}
+{document/hangpoetry}\sethook{{end}}{{qm1}}{{\let\printv@rse=\simpleprintv@rse\hangingversefalse}}
+{document/hangpoetry}\sethook{{end}}{{qm2}}{{\let\printv@rse=\simpleprintv@rse\hangingversefalse}}
+{document/hangpoetry}\sethook{{end}}{{qm3}}{{\let\printv@rse=\simpleprintv@rse\hangingversefalse}}
 {document/hangpoetry}\catcode`\@=12
 
 %%%%% Notes %%%%%
@@ -219,9 +215,7 @@
 \tracingstats=1
 
 % Extras not yet templated (if ever)
-%\MarginUnit=1in
 %\ExtraRMargin=0pt
-%\def\MergePDF{{}} % another page border e.g. for watermarks
 %\def\SuperscriptRaise{{0.85ex}}  % in terms of the scaled-down superscript font size
 %\def\SuperscriptFactor{{0.75}} % fontsize scale for a superscript char
 

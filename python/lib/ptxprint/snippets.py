@@ -5,7 +5,6 @@ from .ptsettings import bookcodes
 
 class Snippet:
     regexes = []
-    styleInfo = ""
     processTex = False
     texCode = ""
 
@@ -29,7 +28,7 @@ class PDFx1aOutput(Snippet):
 %\special{{pdf:close @OBJCVR}}
 \special{{pdf:docview <<
 /OutputIntents [ <<
-/Type/OutputIndent
+/Type/OutputIntent
 /S/GTS_PDFX
 /OutputCondition (An Unknown print device)
 /OutputConditionIdentifier (Custom)
@@ -71,60 +70,6 @@ class Diglot(Snippet):
 """
 
 class FancyBorders(Snippet):
-    def styleInfo(self, m):
-        return (r"""
-# need a smaller verse number to fit in the stars
-\Marker v
-\FontSize {fancy/versenumsize}
-""".format(**m.dict) if m['fancy/versedecorator'] != "%" else "") + (r"""
-\Marker s
-\FontSize 10
-\SpaceAfter 2
-\LeftMargin .3
-\RightMargin .3
-""" if m['fancy/sectionheader'] != "%" else "") + r"""
-# \Marker p
-# \FontSize 12
-
-# \Marker mt2
-# \Regular
-
-# \Marker iref
-# \Endmarker iref*
-# \Name (iref...iref*) Introduction reference
-# \OccursUnder ip
-# \TextType Other
-# \TextProperties paragraph publishable vernacular
-# \StyleType Character
-# \FontSize 12
-
-# footnotes will use the 'fcaller' style for the caller, smaller text
-# \Marker f
-# \CallerStyle fcaller
-# \FontSize 9
-
-# footnote caller is superscript (even though verse numbers are not)
-# \Marker fcaller
-# \Endmarker fcaller*
-# \StyleType character
-# \Superscript
-# \FontSize 11
-
-# \Marker fr
-# \FontSize 9
-# \Regular
-
-# \Marker fk
-# \Endmarker fk*
-# \FontSize 9
-# \Regular
-# \Bold
-
-# \Marker ft
-# \FontSize 9
-
-"""
-
     processTex = True
     texCode = r"""
 % Define this to add a border to all pages, from a PDF file containing the graphic
@@ -176,22 +121,15 @@ class FancyBorders(Snippet):
 
 {fancy/versedecorator}\def\getversedigits#1#2#3#4\end{{\def\digitone{{#1}}\def\digittwo{{#2}}\def\digitthree{{#3}}}}
 
-{fancy/versedecorator}\font\smallversenums="{versenumfont}" at {fancy/versenumsize}pt
 {fancy/versedecorator}\def\exclam{{!}}
 {fancy/versedecorator}\def\printversedigits{{%
 {fancy/versedecorator}  \beginL
 {fancy/versedecorator}  \ifx\digitthree\exclam
-{fancy/versedecorator}    \digitone
-{fancy/versedecorator}    \ifx\digittwo\exclam\else
-{fancy/versedecorator}      \ifnum\digitone=1\kern-0.1em
-{fancy/versedecorator}      \else\kern-0.05em\fi
-{fancy/versedecorator}      \digittwo
-{fancy/versedecorator}    \fi
+{fancy/versedecorator}    \digitone\ifx\digittwo\exclam\else
+{fancy/versedecorator}      \ifnum\digitone=1\kern-0.1em \else\kern-0.05em\fi
+{fancy/versedecorator}      \digittwo\fi
 {fancy/versedecorator}  \else
-{fancy/versedecorator}    \smallversenums
-{fancy/versedecorator}    \digitone
-{fancy/versedecorator}    \kern-0.12em \digittwo
-{fancy/versedecorator}    \kern-0.08em \digitthree
+{fancy/versedecorator}    \zSmallVnum \digitone \kern-0.12em\digittwo \kern-0.08em\digitthree\zSmallVnum*
 {fancy/versedecorator}  \fi
 {fancy/versedecorator}  \endL}}
 
@@ -265,8 +203,8 @@ class FancyBorders(Snippet):
 """
 
 artstr = {
-"cn" : ("©_1996_David_C._Cook.", "©_DCC."),
-"co" : ("©_1996_David_C._Cook.", "©_DCC."),
+"cn" : ("©_1996_David_C._Cook.", "©_DCC,_1996."),
+"co" : ("©_1996_David_C._Cook.", "©_DCC_1996."),
 "hk" : ("by_Horace_Knowles\n©_The_British \\& Foreign Bible Society, 1954, 1967, 1972, 1995.", "©_BFBS,_1995."),
 "lb" : ("by_Louise_Bass\n©_The_British \\& Foreign Bible Society, 1994.", "©_BFBS,_1994."),
 "bk" : ("by_Horace_Knowles revised by_Louise_Bass\n©_The_British \\& Foreign Bible Society, 1994.", "©_BFBS,_1994."),
@@ -294,7 +232,6 @@ class ImgCredits(Snippet):
         mkr='pc'
         sensitive = texmodel['document/sensitive']
         picpagesfile = os.path.join(texmodel.docdir()[0], texmodel['jobname'] + ".picpages")
-        # picpagesfile = r"C:\My Paratext 9 Projects\WSGlatin\PrintDraft\temp4testing.picpages"
         crdts = ["\\def\\zImageCopyrights{%"]
         if os.path.exists(picpagesfile):
             with universalopen(picpagesfile) as inf:
@@ -315,7 +252,6 @@ class ImgCredits(Snippet):
                         artpgs.setdefault('zz', []).append(int(f[0]))
                     else:
                         artpgs.setdefault(a, []).append(int(f[0]))
-
             if len(artpgs):
                 artistWithMost = max(artpgs, key=lambda x: len(set(artpgs[x])))
             else:
@@ -407,9 +343,7 @@ class ThumbTabs(Snippet):
             books[b] = index
             texlines.append(f"\\setthumbtab{{{b}}}{{{index}}}")
         bcol = parsecol(model["thumbtabs/background"])
-        fcol = parsecol(model["thumbtabs/foreground"])
         texlines.append("\\def\\tabBoxCol{{{}}}".format(bcol))
-        texlines.append("\\def\\tabFontCol{{{}}}".format(fcol))
         try:
             height = float(model["thumbtabs/height"])
         except (ValueError, TypeError):
@@ -430,16 +364,6 @@ class ThumbTabs(Snippet):
         texlines.append("\\tab{}={:.2f}mm".format("height" if rotate else "width", width))
         return "\n".join(texlines)+"\n"
 
-    def styleInfo(self, model):
-        fcol = "x"+"".join("{:02X}".format(int(float(c.strip())*255)) for c in parsecol(model["thumbtabs/foreground"]).split())
-        fsize = int(float(model["thumbtabs/fontsize"]))
-        res = ["\\Marker toc3"]
-        res.append(f"\\color {fcol}")
-        res.append(f"\\FontSize {fsize}")
-        res.append("\\Italic " + ("-" if not model["thumbtabs/italic"] else ""))
-        res.append("\\Bold " + ("-" if not model["thumbtabs/bold"] else ""))
-        return "\n".join(res)+"\n"
-
 class Colophon(Snippet):
     processTex = True
     texCode = """
@@ -452,12 +376,5 @@ class Colophon(Snippet):
 {project/colophontext}
 \\esbe \uFDEF
 \\unprepusfm
-
-"""
-    styleInfo=r"""
-\Category colophon
-\Marker esb
-\Position b
-\EndCategory
 
 """

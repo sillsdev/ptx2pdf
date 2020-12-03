@@ -177,10 +177,17 @@ except FileNotFoundError:
         path = "C:\\My Paratext {} Projects".format(v)
         if os.path.exists(path):
             pt_settings = path
-            pt_bindir = "C:\\Program Files (x86)\\Paratext {}".format(v)
+            pt_bindir = "C:\\Program Files\\Paratext {}".format(v)
+            if os.path.exists(pt_bindir):
+                break
+            else:
+                pt_bindir = "C:\\Program Files (x86)\\Paratext {}".format(v)
             break
 else:
     if ptv:
         version = ptv[:ptv.find(".")]
-        pt_bindir = queryvalue(ptob, 'Program_Files_Directory_Ptw'+version)
+        try:
+            pt_bindir = queryvalue(ptob, 'Paratext{}_Full_Release_AppPath'.format(version))
+        except:
+            pt_bindir = queryvalue(ptob, 'Program_Files_Directory_Ptw'+version)
     pt_settings = queryvalue(ptob, 'Settings_Directory')

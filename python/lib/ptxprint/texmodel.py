@@ -1,4 +1,4 @@
-import configparser, re, os, gi
+import configparser, re, os, gi, traceback
 from shutil import copyfile
 from pathlib import Path
 from functools import reduce
@@ -118,12 +118,11 @@ ModelMap = {
     "fancy/versedecoratorpdf":  ("btn_selectVerseDecorator", lambda w,v: w.versedecorator.as_posix() \
                                             if (w.versedecorator is not None and w.versedecorator != 'None') \
                                             else get("/ptxprintlibpath")+"/Verse number star.pdf"),
-    "fancy/versenumsize":       ("s_verseNumSize", lambda w,v: v or "11.00"),
 
     "paragraph/varlinespacing":    ("c_variableLineSpacing", lambda w,v: "" if v else "%"),
     "paragraph/useglyphmetrics":   ("c_variableLineSpacing", lambda w,v: "%" if v else ""),
     "paragraph/linespacing":       ("s_linespacing", lambda w,v: "{:.3f}".format(float(v)) or "15.000"),
-    # "paragraph/linespacingfactor": ("s_linespacing", lambda w,v: "{:.3f}".format(float(v or "15") / 14)),
+    # "paragraph/linespacingfactor": ("s_linespacing", lambda w,v: "{:.3f}".format(float(v or "15") / 12)),
     "paragraph/linemin":           ("s_linespacingmin", lambda w,v: "minus {:.3f}pt".format(float(w.get("s_linespacing")) - float(v)) \
                                                      if float(v) < float(w.get("s_linespacing")) else ""),
     "paragraph/linemax":        ("s_linespacingmax", lambda w,v: "plus {:.3f}pt".format(float(v) - float(w.get("s_linespacing"))) \
@@ -170,10 +169,12 @@ ModelMap = {
     # "document/iffigfrmpiclist": ("c_usePicList", None),
     "document/iffigexclwebapp": ("c_figexclwebapp", None),
     "document/iffigskipmissing": ("c_skipmissingimages", None),
+    "document/iffigcrop":       ("c_cropborders", None),
     "document/iffigplaceholders": ("c_figplaceholders", lambda w,v: "true" if v else "false"),
     "document/iffighiderefs":   ("c_fighiderefs", None),
-    "document/usesmallpics":    ("c_useLowResPics", lambda w,v :"" if v else "%"),
-    "document/uselargefigs":    ("c_useHighResPics", lambda w,v :"" if v else "%"),
+    # "document/usesmallpics":    ("c_useLowResPics", lambda w,v :"" if v else "%"),
+    # "document/uselargefigs":    ("c_useHighResPics", lambda w,v :"" if v else "%"),
+    "document/picresolution":   ("r_pictureRes", None),
     "document/customfiglocn":   ("c_useCustomFolder", lambda w,v :"" if v else "%"),
     "document/exclusivefolder": ("c_exclusiveFiguresFolder", None),
     "document/customfigfolder": ("btn_selectFigureFolder", lambda w,v: w.customFigFolder.as_posix() if w.customFigFolder is not None else ""),
@@ -189,7 +190,7 @@ ModelMap = {
     "document/parallelrefs":    ("c_parallelRefs", None),
     "document/bookintro":       ("c_bookIntro", None),
     "document/introoutline":    ("c_introOutline", None),
-    "document/indentunit":      ("s_indentUnit", lambda w,v: round(float(v or "2.0"), 1)),
+    "document/indentunit":      ("s_indentUnit", lambda w,v: round(float(v or "1.0"), 1)),
     "document/firstparaindent": ("c_firstParaIndent", lambda w,v: "true" if v else "false"),
     "document/ifhidehboxerrors": ("c_showHboxErrorBars", lambda w,v :"%" if v else ""),
     "document/elipsizemptyvs":  ("c_elipsizeMissingVerses", None),
@@ -269,7 +270,6 @@ ModelMap = {
     "fontitalic":               ("bl_fontI", lambda w,v: v[0]),
     "fontbolditalic":           ("bl_fontBI", lambda w,v: v[0]),
     "fontextraregular":         ("bl_fontExtraR", lambda w,v: v[0]),
-    "versenumfont":             ("bl_verseNumFont", lambda w,v: v[0]),
     "font/features":            ("t_fontfeatures", None),
     "font/usegraphite":         ("c_useGraphite", None),
     "fontbold/fakeit":          ("c_fakebold", None),
@@ -290,13 +290,11 @@ ModelMap = {
     "thumbtabs/numtabs":        ("s_thumbtabs", None),
     "thumbtabs/length":         ("s_thumblength", None),
     "thumbtabs/height":         ("s_thumbheight", None),
-    "thumbtabs/fontsize":       ("s_thumbfont", None),
-    "thumbtabs/italic":         ("c_thumbitalic", None),
-    "thumbtabs/bold":           ("c_thumbbold", None),
+    "thumbtabs/background":     ("col_thumbback", None),
     "thumbtabs/rotate":         ("c_thumbrotate", None),
     "thumbtabs/rotatetype":     ("fcb_rotateTabs", None),
     "thumbtabs/background":     ("col_thumbback", None),
-    "thumbtabs/foreground":     ("col_thumbtext", None),
+    "thumbtabs/thumbIsZthumb":  ("c_thumbIsZthumb", None),
     "thumbtabs/restart":        ("c_thumbrestart", None),
     "thumbtabs/groups":         ("t_thumbgroups", None),
 
@@ -321,7 +319,6 @@ class TexModel:
         "fontitalic":               ("bl_fontI", None, "c_fakeitalic", "fontitalic/embolden", "fontitalic/slant"),
         "fontbolditalic":           ("bl_fontBI", None, "c_fakebolditalic", "fontbolditalic/embolden", "fontbolditalic/slant"),
         "fontextraregular":         ("bl_fontExtraR", "c_useFallbackFont", None, None, None),
-        "versenumfont":             ("bl_verseNumFont", "c_inclVerseDecorator", None, None, None)
     }
     _hdrmappings = {
         _("First Reference"):           r"\firstref",
@@ -427,20 +424,9 @@ class TexModel:
         if not os.path.exists(fpath):
             fpath = j(rcpath, "ptxprint-mods.tex")
         self.dict['/modspath'] = rel(fpath, docdir).replace("\\","/")
-        # Look in local Config folder for NestedStyles.sty, and drop back to shared/ptxprint if not found
-        fpath = j(cpath, "NestedStyles.sty")
-        if not os.path.exists(fpath):
-            fpath = j(rcpath, "NestedStyles.sty")
-        self.dict['/nststypath'] = rel(fpath, docdir).replace("\\","/")
-        # If Diglot, look in local Config folder for NestedStylesR.sty, and drop back to shared/ptxprint if not found
-        fpathR = j(cpath, "NestedStylesR.sty")
-        if self.dict["document/ifdiglot"] == "":
-            if not os.path.exists(fpathR):
-                fpathR = j(rcpath, "NestedStylesR.sty")
         if "document/diglotcfgrpath" not in self.dict:
             self.dict["document/diglotcfgrpath"] = ""
-        self.dict['/nststypathR'] = rel(fpathR, docdir).replace("\\","/")
-        self.dict['paragraph/linespacingfactor'] = "{:.3f}".format(float(self.dict['paragraph/linespacing']) / 14 / float(self.dict['paper/fontfactor']))
+        self.dict['paragraph/linespacingfactor'] = "{:.3f}".format(float(self.dict['paragraph/linespacing']) / 12 / float(self.dict['paper/fontfactor']))
         self.dict['paragraph/ifhavehyphenate'] = "" if os.path.exists(os.path.join(self.printer.configPath(""), \
                                                        "hyphen-"+self.dict["project/id"]+".tex")) else "%"
         # forward cleanup. If ask for ptxprint-mods.tex but don't have it, copy PrintDraft-mods.tex
@@ -643,7 +629,7 @@ class TexModel:
                         if extra != "":
                             fname = re.sub(r"^([^.]*).(.*)$", r"\1"+extra+r".\2", fname)
                         if i == len(self.dict['project/bookids']) - 1 and self.dict['project/ifcolophon'] == "":
-                            res.append("\\lastptxfiletrue\n\\endbooknoejecttrue\n")
+                            res.append("\\lastptxfiletrue\n")
                         if self.asBool('document/ifomitsinglechnum') and \
                            self.asBool('document/showchapternums') and \
                            f in oneChbooks:
@@ -714,7 +700,10 @@ class TexModel:
             outfpath = outfpath[:doti] + "-flat" + outfpath[doti:]
         usfms = self.printer.get_usfms()
         mod = Module(infpath, usfms)
-        res = mod.parse()
+        try:
+            res = mod.parse()
+        except SyntaxError:
+            return None
         with open(outfpath, "w", encoding="utf-8") as outf:
             outf.write(sfm.generate(res))
         return outfpath
@@ -760,6 +749,11 @@ class TexModel:
         if fname is None:
             infpath = os.path.join(prjdir, bk)  # assume module
             infpath = self.flattenModule(infpath, outdir)
+            if infpath is None:
+                self.printer.doError("Failed to flatten module text (due to a Syntax Error?):",        
+                secondary="Check for USFM errors and/or problems with a module.", 
+                title="PTXprint [{}] - Canonicalise Text Error!".format(self.VersionStr))
+                return None
         else:
             infpath = os.path.join(prjdir, fname)
         if not self.dict['project/runscriptafter']:
@@ -770,7 +764,8 @@ class TexModel:
         if doti > 0:
             outfname = outfname[:doti] + draft + outfname[doti:]
         outfpath = os.path.join(outdir, outfname)
-        with universalopen(infpath) as inf:
+        codepage = self.ptsettings.get('Encoding', 65001)
+        with universalopen(infpath, cp=codepage) as inf:
             dat = inf.read()
             if self.changes is not None:
                 dat = self.runChanges(self.changes, dat)
@@ -783,12 +778,13 @@ class TexModel:
                 except SyntaxError as e:
                     syntaxErrors.append("{} {} line:{}".format(self.prjid, bk, str(e).split('line', maxsplit=1)[1]))
                 except Exception as e:
-                    syntaxErrors.append("{} {} Error: {}".format(self.prjid, bk, str(e)))
+                    syntaxErrors.append("{} {} Error({}): {}".format(self.prjid, bk, type(e), str(e)))
+                    traceback.print_exc()
                 if len(syntaxErrors):
                     self.printer.doError("Failed to canonicalise texts due to a Syntax Error:",        
-                    secondary="\n".join(syntaxErrors)+"\n\nIf original USFM text is correct, then check "+ \
-                    "if PrintDraftChanges.txt has caused the error(s).", 
-                    title="PTXprint [{}] - Canonicalise Text Error!".format(self.VersionStr))
+                            secondary="\n".join(syntaxErrors)+"\n\nIf original USFM text is correct, then check "+ \
+                            "if PrintDraftChanges.txt has caused the error(s).", 
+                            title="PTXprint [{}] - Canonicalise Text Error!".format(self.VersionStr))
                 else:
                     if self.dict["document/ifletter"] == "":
                         doc.letter_space("\uFDD0")
@@ -947,7 +943,7 @@ class TexModel:
                                           flags=regex.M), r"\1\4"))   # USFM3
         else:
             # Strip out all \figs from the USFM as an internally generated temp PicList will do the same job
-            self.localChanges.append((None, regex.compile(r'\\fig [^\\]+?\\fig\*', flags=regex.M), ""))
+            self.localChanges.append((None, regex.compile(r'\\fig[\s|][^\\]+?\\fig\*', flags=regex.M), ""))
         
         if not self.asBool("document/bookintro"): # Drop Introductory matter
             self.localChanges.append((None, regex.compile(r"\\i(s|m|mi|mt|p|pi|li\d?|pq|mq|pr|b|q\d?) .+?\r?\n", flags=regex.M), "")) 
@@ -1009,13 +1005,10 @@ class TexModel:
         # Paratext marks no-break space as a tilde ~
         self.localChanges.append((None, regex.compile(r"~", flags=regex.M), r"\u00A0")) 
 
-        # Remove the + of embedded markup (xetex handles it)
-        self.localChanges.append((None, regex.compile(r"\\\+", flags=regex.M), r"\\"))  
-            
-        for c in range(1,4): # Remove any \toc lines that we don't want appearing in the Table of Contents
-            if not self.asBool("document/usetoc{}".format(c)) and (c != 3 or self.asBool("thumbtabs/ifthumbtab")):
+        # for c in range(1,4): # Remove any \toc lines that we don't want appearing in the Table of Contents
+            # if not self.asBool("document/usetoc{}".format(c)) and (c != 3 or self.asBool("thumbtabs/ifthumbtab")):
                 # print("Deleting toc{} with thumbtabs/ifthumbtab of {}".format(c, self.printer.get("thumbtabs/ifthumbtab")))
-                self.localChanges.append((None, regex.compile(r"(\\toc{} .+)".format(c), flags=regex.M), ""))
+                # self.localChanges.append((None, regex.compile(r"(\\toc{} .+)".format(c), flags=regex.M), ""))
 
         # Add End of Book decoration PDF to Scripture books only if FancyBorders is enabled and .PDF defined
         if self.asBool("fancy/enableborders") and self.asBool("fancy/endofbook") and bk not in self._peripheralBooks \
@@ -1112,86 +1105,6 @@ class TexModel:
             return clwr
         else:
             return re.sub('[()&+,.;: ]', '_', self.base(fpath).lower())
-
-    def generateNestedStyles(self, diglot=False):
-        if diglot:
-            pfx = "diglot"
-            sfx = "R.sty"
-        else:
-            pfx = "notes"
-            sfx = ".sty"
-        rtl = self['document/ifrtl'] == "true"
-        cfgname = self.printer.configName()
-        nstyfname = os.path.join(self.printer.configPath(cfgname), "NestedStyles"+sfx)
-        nstylist = []
-        if self.dict["document/ifshowversenums"] == '':
-            nstylist.append("##### Remove all verse numbers\n\\Marker v\n\\TextProperties nonpublishable\n\n")
-
-        if not self.asBool(pfx+"/includefootnotes"):
-            nstylist.append("##### Set Footnote Size and Line Spacing\n")
-            nstylist.append("\\Marker {}\n\\FontSize {}\n".format("f", self.dict[pfx+'/fnfontsize']))
-            nstylist.append("\\BaseLine {}pt plus 2pt\n".format(self.dict[pfx+'/fnlinespacing']))
-            nstylist.append("\\Justification {}\n\n".format("Right" if rtl else "Left"))
-        else:
-            nstylist.append("##### Remove all footnotes\n\\Marker f\n\\TextProperties nonpublishable\n\n")
-
-        if not self.asBool("notes/includexrefs"):
-            nstylist.append("##### Set Cross-reference Size and Line Spacing\n")
-            nstylist.append("\\Marker {}\n\\FontSize {}\n".format("x", self.dict[pfx+'/fnfontsize']))
-            nstylist.append("\\BaseLine {}pt plus 2pt\n".format(self.dict[pfx+'/fnlinespacing']))
-            nstylist.append("\\Justification {}\n\n".format("Right" if rtl else "Left"))
-        else:
-            nstylist.append("##### Remove all cross-references\n\\Marker x\n\\TextProperties nonpublishable\n\n")
-
-        if self.dict[pfx+"/ifblendfnxr"]:
-            nstylist.append("##### Treat x-refs as footnotes with their own caller\n\\Marker x\n\\NoteBlendInto f\n\n")
-
-        # Adjust the amount of indent on \p according to the IndentUnit setting 2=default
-        iu = float(self.dict["document/indentunit"])
-        cols = int(self.dict["paper/columns"])
-        nstylist.append("##### Adjust p-first-line-indent\n\\Marker p\n\\FirstLineIndent {:.3f}\n\n".format(0.250 * iu / cols))
-
-        nstylist.append("##### Adjust poetic indents\n")
-        m = ["\Marker", "\LeftMargin", "\FirstLineIndent"]
-        if self.dict["paper/columns"] == "2" or self.dict["document/ifdiglot"] == "": # Double Column layout so use smaller indents
-            v = [["q", "0.60", "-0.45"], ["q1", "0.60", "-0.45"], ["q2", "0.60", "-0.225"], 
-                 ["q3", "0.60", "-0.112"], ["q4", "0.60", "-0.0"]]
-        else: # Single column layout, so use larger (USFM.sty default) indents
-            v = [["q", "1.25", "-1.00"], ["q1", "1.25", "-1.00"], ["q2", "1.25", "-0.75"],
-                 ["q3", "1.25", "-0.5"], ["q4", "1.25", "-0.25"]]
-        r = [list(zip(m, x)) for x in v]
-        
-        for mkr in r:
-            for l in range(0,3):
-                nstylist.append("{} {}\n".format(mkr[l][0],mkr[l][1]))
-            nstylist.append("\\Justification {}\n\n".format("Right" if rtl else "Left"))
-
-        if True: # Hack! We need to qualify this (look in USFM for a \cl and if it exists, then don't do this)
-            nstylist.append("# The descriptive heading is typically considered VerseText, but then often formatted as a heading.\n")
-            nstylist.append("# We need to change the TextType so that Print Draft will handle it correctly beside drop-caps.\n")
-            nstylist.append("\\Marker d\n\\TextType Section\n\\SpaceBefore 0\n\n")
-
-        for k, c in self._snippets.items():
-            if self.printer is None:
-                v = self.asBool(k)
-            else:
-                v = self.printer.get(c[0])
-                self.dict[k] = "true" if v else "false"
-            if v: # if the c_checkbox is true then add the stylesheet snippet for that option
-                if isinstance(c[1].styleInfo, str):
-                    nstylist.append(c[1].styleInfo+"\n")
-                else:
-                    nstylist.append(c[1].styleInfo(c[1], self)+"\n")
-
-        if nstylist == []:
-            if os.path.exists(nstyfname):
-                os.remove(nstyfname)
-            return []
-        else:
-            os.makedirs(self.printer.configPath(cfgname), exist_ok=True)
-            with open(nstyfname, "w", encoding="utf-8") as outf:
-                outf.write("".join(nstylist))
-            return [nstyfname]
 
     def makeGlossaryFootnotes(self, printer, bk):
         # Glossary entries for the key terms appearing like footnotes

@@ -172,15 +172,18 @@ class Usfm:
     def readnames(self):
         if len(self.tocs) > 0:
             return
-        for e in self.doc[0]:       # children of id
-            if not isinstance(e, sfm.Element):
+        for c in self.doc[0]:       # children of id
+            if not isinstance(c, sfm.Element) or c.name != "h":
                 continue
-            m = re.match(r"^toc(\d)", e.name)
-            if m:
-                ind = int(m.group(1))
-                if ind > len(self.tocs):
-                    self.tocs.extend([""] * (ind - len(self.tocs) + 1))
-                self.tocs[ind] = e[0]
+            for e in c:
+                if not isinstance(e, sfm.Element):
+                    continue
+                m = re.match(r"^toc(\d)", e.name)
+                if m:
+                    ind = int(m.group(1))
+                    if ind > len(self.tocs):
+                        self.tocs.extend([""] * (ind - len(self.tocs) + 1))
+                    self.tocs[ind-1] = e[0]
 
     def getwords(self, init=None, constrain=None):
         ''' Counts words found in the document. If constrain then is a set or
@@ -367,7 +370,7 @@ exclusionmap = {
 
 class Module:
 
-    localise_re = re.compile(r"\$([asl]?)\(\s*(\S+)\s+(\d+):(\S+)\s*\)")
+    localise_re = re.compile(r"\$([asl]?)\(\s*(\S+)\s+(\d+):([^)\s]+)\s*\)")
     localcodes = {'a': 3, 's': 2, 'l': 1}
 
     def __init__(self, fname, usfms):
@@ -401,7 +404,7 @@ class Module:
         if tocindex > len(book.tocs):
             return ''
         else:
-            return book.tocs[tocindex]
+            return '{} {}:{}'.format(book.tocs[tocindex-1], c, v)
 
     def parse_element(self, e):
         if isinstance(e, sfm.Text):

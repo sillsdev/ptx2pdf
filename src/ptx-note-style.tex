@@ -166,6 +166,7 @@
   \csname end-\newn@testyle\endcsname % execute <end> hook
  \fi
  \egroup \ifhe@dings\egroup\fi% end the insert (started in \m@kenote) or skip-box
+ \ifinextended\egroup\fi%
  \global\inn@tefalse
  \global\n@tenesting=0 
  \ifsp@cebefore \global\let\n@xt=\ignorespaces % ignore following spaces if there was a preceding one

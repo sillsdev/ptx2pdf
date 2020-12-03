@@ -126,9 +126,9 @@
   % text is read later
   \ifhmode\edef\@sf{\spacefactor\the\spacefactor}\/\fi%
   % if footnote is on a chapter number ...
-  \ifhe@dings #3\edef\@wrap{\global\setbox\he@dingnotes=\vbox\bgroup\unvbox\he@dingnotes}%
-  \else\ifinextended
-    \edef\@wrap{\global\setbox\sid@barnotes=\vbox\bgroup\unvbox\sid@barnotes}\else\edef\@wrap{}%
+  \ifinextended #3\edef\@wrap{\global\setbox\sid@barnotes=\vbox\bgroup\unvbox\sid@barnotes}\else
+    \ifhe@dings #3\edef\@wrap{\global\setbox\he@dingnotes=\vbox\bgroup\unvbox\he@dingnotes}%
+    \else\edef\@wrap{}%
       \ifch@pter \everypar={}\ch@pterfalse%
         \global\setbox\ch@pternote=\hbox{\box\ch@pternote #3}%
       \else #3\fi % output caller
@@ -139,16 +139,25 @@
 %-c_makenote
 
 %+c_vmakenote
+\newtoks\d@note
 \def\vm@kenote#1#2#3{%
   \inn@tetrue%
   \let\next\relax%
   \def\n@tetype{#1}%
   \ifdiglot\ifdiglotSepNotes\ifdiglotL\def\n@tetype{#1}\else\def\n@tetype{#1R}\fi\fi\fi%
   \TRACE{vm@kenote \n@tetype}%
-  \x@\insert\csname note-\n@tetype\endcsname\bgroup% insert note-f (or note-x)
+  \d@note{\x@\insert\csname note-\n@tetype\endcsname}%
+  \x@\let\x@\th@sins\csname note-no-insert-\n@tetype\endcsname
+  \ifx\th@sins\relax
+    \checkp@ranotes{#1}% check whether this note class is to be paragraphed 
+    \n@tewidth=\ifp@ranotes\maxdimen\else\textwidth\advance\hsize by -\columnshift\fi % insert penalties to control breaking of footnotes
+  \else\d@note{\th@sins}%
+    \n@tewidth=\hsize
+  \fi%
+  \trace{f}{Footnote (\n@tetype) will be \the\n@tewidth wide}%
+  \the\d@note\bgroup% insert note-f (or note-x)
+    \hsize=\n@tewidth
 %%% single-column notes:
-  \checkp@ranotes{#1}% check whether this note class is to be paragraphed 
-  \hsize=\ifp@ranotes\maxdimen\else\textwidth\advance\hsize by -\columnshift\fi % insert penalties to control breaking of footnotes
   \interlinepenalty\interfootnotelinepenalty % set penalty to break lines
   \floatingpenalty\@MM % make sure note does not float away from caller to another page
   \leftskip\z@skip \rightskip\z@skip \spaceskip\z@skip \xspaceskip\z@skip % reset extra space around paragraph 0
@@ -179,6 +188,23 @@
   \s@tfont{#2}%
   \futurelet\next\fo@t}% use plain.tex footnote processor
 %-c_vmakenote
+
+%+c_endnotes
+
+\def\NoteAtEnd#1{%Treat the specified note as an end-note.
+        \x@\newb@x\csname endnote-#1\endcsname
+        \x@\gdef\csname addt@endnote-#1\endcsname{\unvbox\csname endnote-#1\endcsname}%
+        \x@\gdef\csname note-no-insert-#1\endcsname{\x@\afterassignment\csname addt@endnote-#1\endcsname\global\setbox\csname endnote-#1\endcsname\vbox}%
+        \x@\gdef\csname zplacenotes#1\endcsname{\unvbox\csname endnote-#1\endcsname}% Individual 
+        \x@\placendnotes\x@{\the\placendnotes\csname zplacenotes#1\endcsname}%
+}
+\let\newb@x=\newbox
+\newtoks\placendnotes
+\newif\ifnotesEachBook
+\notesEachBooktrue
+\NoteAtEnd{fe}
+
+%-c_endnotes
 
 % use \OmitCallerInNote{f} to omit callers from the note at foot of page
 % but leave them in the body text (e.g. all the callers are *'s)
@@ -218,14 +244,14 @@
   \ifdiglot\ifdiglotL\def\f@ntstyle{#1}\else\def\f@ntstyle{#1R}\fi\else\def\f@ntstyle{#1}\fi%
   \getp@ram{baseline}{#1}\ifx\p@ram\relax
     \getp@ram{fontsize}{#1}\dimen0=\p@ram\le@dingunit
-    \multiply\dimen0 by 14 \divide\dimen0 by 12 % default .75 shift of .85ex (ex=.5 fontsize) against 14/12
-    \trace{F}{baseline [\f@ntstyle] = \the\dimen0}%
+    \multiply\dimen0 by \LineSpaceBase \divide\dimen0 by 12 % default .75 shift of .85ex (ex=.5 fontsize) against 14/12
+    \trace{F}{baseline [\f@ntstyle] = \the\dimen0 = \the\le@dingunit / 12 * \LineSpaceBase}%
     \setp@ram{baseline}{\f@ntstyle}{\the\dimen0}\baselineskip=\dimen0\else
   \baselineskip=\p@ram\fi
   \trace{j}{set baselineskip=\the\baselineskip}}
 
 \def\ins@rtn@tecl@ss#1{% insert the given note class, either paragraphed or separately
-  \iff@rstnote\setn@tewidth\fi % set appropriate hsize width for diglot or not.
+  \iff@rstnote\setn@tewidth{#1}\fi % set appropriate hsize width for diglot or not.
   \checkp@ranotes{#1}\ifp@ranotes\let\n@xt=\parains@rtn@tecl@ss
     \else\let\n@xt=\separateins@rtn@tecl@ss\fi
   \n@xt{#1}}
@@ -259,7 +285,7 @@
 \newif\iff@rstnote
 \f@rstnotetrue
 \def\footnoterule{\kern-0.5\AboveNoteSpace\kern-.4pt % the \hrule is .4pt high
-  \setn@tewidth
+  \setn@tewidth{-}%
   \dimen0=\n@tewidth
   \ifdiglot\else
      \advance\dimen0 by -\columnshift %handled differently in diglot
@@ -283,12 +309,24 @@
 % Notewidth for diglots depends on settings and column. 
 %+c_setnotewidth
 \newdimen\n@tewidth
-\def\setn@tewidth{%
-  \ifdiglot
-    \ifdiglotSepNotes
-      \ifdiglotL\n@tewidth=\columnLwidth\else\n@tewidth=\columnRwidth\fi
-    \else\n@tewidth=\textwidth\fi
-  \else\n@tewidth=\textwidth\fi
+\def\setn@tewidth#1{%
+  \trace{f}{setn@tewidth}%
+  \x@\let\x@\th@sins\csname note-no-insert-#1\endcsname
+  \ifx\th@sins\relax % Normal footnote
+   \ifdiglot
+     \ifdiglotSepNotes
+       \ifdiglotL\n@tewidth=\columnLwidth\else\n@tewidth=\columnRwidth\fi
+     \else\n@tewidth=\textwidth\fi
+   \else\n@tewidth=\textwidth\fi
+  \else
+    %Assume that the note will be inserted using the current text width.
+    \ifnum\c@rrentcols=1
+      \n@tewidth=\textwidth
+    \else
+      \n@tewidth=\colwidth
+    \fi
+  \fi
+  \trace{f}{end-setn@tewidth}%
 }
 %-c_setnotewidth
 
@@ -301,7 +339,7 @@
 \newskip\intern@teskip \intern@teskip=15pt plus 3pt minus 5pt
 \newskip\noteRag\noteRag=0pt plus 18pt
 \def\maken@tepara#1#2{%
-  \setn@tewidth
+  \setn@tewidth{#2}%
   \hsize=\n@tewidth%\advance\hsize by -\columnshift % width is full page size
   \let\par=\endgraf\ch@pterfalse
   \everypar={}% don't do body text formatting
@@ -763,6 +801,7 @@
 %-c_getcolhts
 
 %+c_splitcols
+\newif\ifswapcol
 \def\spl@tcols#1{
     % even if \vsplit to 0pt, TeX will always pull one line from the input box over
     %\trace{o}{split params maxdepth=\the\splitmaxdepth, topskip=\the\splittopskip, colhtA=\the\colhtA, colhtB=\the\colhtB}
@@ -772,7 +811,8 @@
     \setbox9=\copy#1
     \setbox\colB=\vsplit#1 to \colhtB \ifnum\badness>999999\setbox#1=\box9\setbox\colB\box\voidb@x\else\setbox\colB=\vbox{\unvbox\colB}\fi
     % swap boxes if either, colA is empty and colB full, or colB is empty and colA is over full.
-    \ifvoid\colA\ifvoid\colB\else\ifdim\colhtA<\ht\colB\else\setbox\colA=\box\colB\fi\fi\fi
+    \ifvoid\colA\ifvoid\colB\else\ifswapcol\ifdim\colhtA<\ht\colB\else
+      \trace{o}{splitcols swapping B->A}\setbox\colA=\box\colB\fi\fi\fi\fi
     \ifdim\ht\colA>\colhtA\ifdim\ht\colB<1pt\ifdim\ht\colA<\colhtB\setbox\colB=\box\colA\fi\fi\fi
     \xdef\p@gebotmark{\splitbotmark}
 }
@@ -802,21 +842,26 @@
   \fi\fi\fi
   \iffitonpage
     \shortavail=\colhtB \advance\shortavail by -\ht\colB                        %(3)
-    \advance\shortavail by -\colhtA \advance\shortavail by \ht\colA
+    \advance\shortavail by \colhtA \advance\shortavail by -\ht\colA
     \ifdim\shortavail>5\baselineskip
-      \trace{o}{Rebalance trying from average \the\shortavail of \the\colhtA =\the\ht\colA, \the\colhtB =\the\ht\colB}
+      \trace{o}{Rebalance trying from average \the\shortavail\space of
+                \the\colhtA =\the\ht\colA, \the\colhtB =\the\ht\colB}
       \divide\shortavail 2% \advance\shortavail by -0.5\ht\colA \advance\shortavail by -0.5\ht\colB
       \advance\colhtA by -\shortavail \advance\colhtB by -\shortavail
-      \loopcount=0
       \loop\setbox0=\copy\s@vedpage
         \advance\colhtA by \baselineskip
         \advance\colhtB by \baselineskip
+        \advance\shortavail by -\baselineskip
         \spl@tcols0
-        \ifvoid0\loopcount=10\fi  
-        \ifnum\loopcount=10\repeat % so ugly you can't \else\repeat
-      \trace{o}{Rebalance starting with \the\colhtA, \the\colhtB}
+        \trace{o}{Rebalance average loop(\the\shortavail): \the\ht\colA=\the\colhtA,
+                  \the\ht\colB=\the\colhtB\space remainder \the\ht0}
+        \ifdim\ht0>0pt \temptrue\else\tempfalse\fi
+        \ifdim\shortavail<\baselineskip\tempfalse\fi
+        \iftemp\repeat
+      \trace{o}{Rebalance starting with \the\colhtA=\the\colhtA, \the\colhtB=\the\colhtB}
     \fi
     \g@tcolhts                                                                  %(4)
+    \shortavail=\colhtA
     \ifunbalanced\shortavail=\availht\else\ifdim\colhtB<\colhtA \rebalancetrue \shortavail=\colhtA\fi\fi
     \advance\colhtA -\baselineskip\ifdim\colhtA<\colhtB \rebalancetrue \shortavail=\colhtB\fi
     \advance\shortavail \baselineskip
@@ -932,6 +977,7 @@
   \c@lcavailht
   \setbox\s@vedpage=\vbox{\unvbox255}
   \trace{o}{balancing from savepartialpaged, height=\the\ht\s@vedpage, hIns:\the\holdinginserts, vsz=\the\vsize}
+  \ifdim\ht\partial>\baselineskip\swapcolfalse\else\swapcoltrue\fi
   \ifdim\availht<\baselineskip 
     \rem@indertrue % No, I don't know what this does, but once If i  didn't do it then we get lost verses. 
     %\rem@inderfalse
@@ -1013,6 +1059,7 @@
   \fi
   \setbox\s@vedpage=\copy255
   \trace{o}{balance from twocoltrial height \the\ht\s@vedpage}
+  \ifdim\ht\partial>\baselineskip\swapcolfalse\else\swapcoltrue\fi
   \rem@indertrue\balanced
   \iffitonpage\ifvoid\s@vedpage\else\fitonpagefalse\fi
   \else\ifnum\vsize<0 \fitonpagetrue\fi % no fit so dump the page we have now and try again with a new one.
@@ -1210,6 +1257,17 @@
   \fi}%
 %-c_singlecolumn
 
+\newread\t@mpfile
+\def\includeifpresent#1{%
+  \openin\t@mpfile="#1"
+  \ifeof\t@mpfile\closein\t@mpfile
+    \immediate\write-1{Optional file "#1" Cannot be found}%
+  \else
+    \closein\t@mpfile
+    \immediate\write-1{Reading optional file "#1"}%
+    \input "#1"
+  \fi}
+
 
 \def\includepdf{\@netimesetup % in case \ptxfile hasn't been used yet
   \ifx\XeTeXpdfpagecount\undefined
@@ -1247,6 +1305,11 @@
 
 \newif\ifendbooknoeject \endbooknoejectfalse
 \def\pagebreak{
+  \ifsk@pping \egroup \fi%
+  \ifhe@dings\endhe@dings\fi%
+  \vfill\eject%
+}
+\def\bookendpagebreak{
   \ifsk@pping \egroup \fi%
   \ifhe@dings\endhe@dings\fi%
   \ifendbooknoeject\else%

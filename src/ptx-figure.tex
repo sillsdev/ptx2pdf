@@ -246,6 +246,20 @@
 }
 %-cfig_docaption
 
+\def\m@kepl@ceholder#1#2{
+\vbox to #2{\offinterlineskip
+  \hrule height .2pt \kern-.2pt
+  \hbox to #1{\vrule height #2 width .2pt \hfil \vrule width .2pt}%
+  \vbox to 0pt{\kern-#2 \vss \hbox to #1{\hss\idf@nt
+    \csname param-2\endcsname\hss}\vss}%
+  \kern-.2pt \hrule height .2pt}}
+\def\ins@rtpic#1#2#3#4#5#6{
+ \openin\t@stread="#1"
+   \ifeof\t@stread\dimen0=\ifdim #3>#4\relax #4\else #3\fi
+     \m@kepl@ceholder{\dimen0}{0.618 \dimen0}
+   \else \closein\t@stread \picfilecomm@nd #1 #2 #3 #5 #6\fi
+}
+
 %+cfig_dofigure_intro
 \def\d@figure#1{%
  \ifIncludeFigures
@@ -383,26 +397,21 @@
     \fi
     % First, try to set it at the requested dimension:
     \setbox1=\hbox{
-      \picfilecomm@nd "\the\PicPath\csname param-2\endcsname"
-                     \picdim@n \sizem@ltiple\p@cwidth \xtra \xtraremains}%
+      \ins@rtpic{"\the\PicPath\csname param-2\endcsname"}%
+                     {\picdim@n}{\sizem@ltiple\p@cwidth}{\p@cheight}{\xtra}{\xtraremains}}%
     \ifdim\ht1>\p@cheight
       %It doesn't fit. Scale to other dimension:
       \trace{g}{Picture too big set with \picdim@n=\sizem@ltiple\the\p@cwidth}%
       \setbox1=\hbox{
-        \picfilecomm@nd "\the\PicPath\csname param-2\endcsname"
-                     \picaltdim@n \p@cheight \xtra \xtraremains}%
+        \ins@rtpic{"\the\PicPath\csname param-2\endcsname"}%
+                     {\picaltdim@n}{\p@cheight}{\sizem@ltiple}{\xtra}{\xtraremains}}%
     \fi
     \setbox0=\hbox to \sizem@ltiple\p@cwidth{\hss
       \edef\l@gstring{{\the\im@gecount}{\f@lename}{\csname param-4\endcsname}{\csname param-5\endcsname}{\sizem@ltiple x\the\p@cwidth}}% Fully expand figure parameters, but leave page no. to be expanded later.
       \x@\writefigp@gelog\x@{\l@gstring}%
       \box1\hss}%
     \ifFigurePlaceholders % replace graphic with a frame and the file name
-      \setbox0=\vbox to \ht0{\offinterlineskip
-        \hrule height .2pt \kern-.2pt
-        \hbox to \wd0{\vrule height \ht0 width .2pt \hfil \vrule width .2pt}%
-        \vbox to 0pt{\kern-\ht0 \vss \hbox to \wd0{\hss\idf@nt
-          \csname param-2\endcsname\hss}\vss}%
-        \kern-.2pt \hrule height .2pt}%
+      \setbox0=\m@kepl@ceholder{\wd0}{\ht0}
     \fi
 %-cfig_dofigure_3
     % FIXME: Something like this?

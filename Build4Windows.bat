@@ -16,7 +16,7 @@ xcopy /s /i /y /q C:\msys64\mingw64\share\glib-2.0 dist\ptxprint\share\glib-2.0
 REM xcopy /s /i /y /q C:\msys64\mingw64\share\gtksourceview-1.0 dist\ptxprint\share\gtksourceview-4
 xcopy /s /i /y /q C:\msys64\mingw64\share\icons dist\ptxprint\share\icons
 xcopy /s /i /y /q C:\msys64\mingw64\share\themes dist\ptxprint\share\themes
-
+xcopy /s /i /y /q python\lib\ptxprint\mo dist\ptxprint\mo
 REM Then use a python script to build the #include list of only the needed icons from the Adwaita folders
 python python\scripts\getstockicons -f inno -s dist\ptxprint -d "{app}" -i list-remove-symbolic.symbolic -i list-add-symbolic.symbolic -i pan-end-symbolic.symbolic -i pan-up-symbolic.symbolic -i pan-down-symbolic.symbolic python\lib\ptxprint\ptxprint.glade AdwaitaIcons.txt
 

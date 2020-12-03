@@ -1,6 +1,98 @@
-PTXprint 1.3 Release Notes 
-23rd October 2020
+PTXprint 1.4.3 Release Notes 
+3 December 2020
 
+Bug Fixes and Improvements in 1.4.3
+
+  * Switch \LineSpacing to be a multiple of base line spacing. 1.0 means base line spacing.
+
+  * Fix deleting the output pdf as a temporary file
+
+  * Delete old NestedStyles.sty files
+
+  * Fix marks in tables in diglots
+
+  * Give visual traceback for errors in archive creation
+
+Bug Fixes and Improvements in 1.4.2
+
+  * Eliminate the need for NestedStyles.sty (this file can now be deleted permanently)
+  
+  * Significant improvements and bug fixes in the Style Editor
+  
+  * Updated Picture Checklist wording and integrated Reverse/Mirror settings with Details tab settings
+
+  * Added "Location on Page" previews to PicList editor
+  
+  * Renamed various controls to reflect Base (on Layout tab) + Factor (on Style tab) settings
+  
+  * Added Help page link to Scripture Software Community
+  
+  * Fixed (Relative) Font Size and (Absolute) Line Spacing settings in Style editor
+  
+  * #306 Fixed adjusting Main Title's before and after space causing crash
+
+  * Moved "Variable Line Spacing" to Advanced tab [currently still broken] 
+  
+Bug Fixes and Improvements in 1.3.8
+
+  * Re-arrange Pictures UI items and fix multiple bugs relating to picture handling
+
+  * Moved links to a new Help tab
+  
+  * Improvements to Style editor
+  
+  * Fixed #293 for more logical access to ToC settings
+  
+  * #290 Add notes in Pictures Checklist 
+  
+  * #291 Add filter for Checking Status of Pictures
+
+Bug Fixes and Improvements in 1.3.3
+
+  * Localized UI for Spanish (es) added - thanks to Phil Leckrone and team
+
+  * Fixed verses in tables
+  
+  * Missing images now display as placeholders 
+  
+  * Errors display as dialogs
+  
+  * Prevent PTXprint locking up completely after failed outputs
+  
+Bug Fixes in 1.3.2
+
+  * Localized references now display properly in Modules
+  
+  * Inverted Show/Hide Advanced Settings switch (Defaults to off, remembers state in user settings)
+
+  * Fixed averaging balancing (esp. for end of books)
+
+  * Linux: Fixed description and icon entry
+  
+Bug Fixes and Improvements in 1.3.1
+
+  * Endnotes should now display at the end of each book
+  
+  * Add option to crop borders on all images (eliminates spurious lines on edges of illustrations)
+  
+  * Add (another) button on Help & Links tab to Create ZIP Archive (in the context of filing bug reports)
+
+  * Fixed: #237 Piclist spinners not retaining typed values 
+  
+  * Fixed: #265 Changes to the picture scale not retained after closing and opening the app
+
+  * Fixed: #267 Colophon did not print for single book PDF
+  
+  * Fixed: #268 Always start 1st Chapter on new page
+
+  * Fixed: #269 Unable to add A4 watermark
+  
+  * Fixed: #271 We can't change a picture's filename inside PTXprint
+  
+  * Fixed: #273 Header can't display verse numbers when Marginal verse numbers used
+
+  * Fixed: #275 Selecting "Letter spacing" prevents printing
+  
 Bug Fixes and Improvements in 1.3
 
   * Stylesheet editor
