@@ -54,7 +54,7 @@
 
 %LRspecific holds a list of things that get redefined on side-switching. Now split into Definitions and Dimensions.
 \def\LRspecificDef{VerticalSpaceFactor,LineSpacingFactor,regular,bold,italic,bolditalic,SpaceStretchFactor,SpaceShrinkFactor}
-\def\LRspecificDim{FontSizeUnit,le@dingunit,verticalsp@ceunit,IndentUnit} 
+\def\LRspecificDim{FontSizeUnit,le@dingunit,onel@neunit,verticalsp@ceunit,IndentUnit} 
 
 
 % Code to cycle through \LRspecific, setting them to their L/R values, modified
@@ -126,6 +126,7 @@
 
 \newdimen\FontSizeUnitL\FontSizeUnitL=-1sp\newdimen\FontSizeUnitR\FontSizeUnitR=-1sp
 \newdimen\le@dingunitL\le@dingunitL=-1sp\newdimen\le@dingunitR\le@dingunitR=-1sp
+\newdimen\onel@neunitL\onel@neunitL=-1sp\newdimen\onel@neunitR\onel@neunitR=-1sp
 \newdimen\verticalsp@ceunitL\verticalsp@ceunitL=-1sp\newdimen\verticalsp@ceunitR\verticalsp@ceunitR=-1sp
 \newdimen\IndentUnitL\IndentUnitL=-1sp\newdimen\IndentUnitR\IndentUnitR=-1sp
 \def\SpaceStretchFactorL{}\def\SpaceStretchFactorR{}

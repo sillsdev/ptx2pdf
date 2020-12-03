@@ -850,7 +850,7 @@
 \newdimen\PaperHeight		\PaperHeight=297mm
 \newdimen\MarginUnit		\MarginUnit=1in % units for margins
 \newdimen\BindingGutter		\BindingGutter=5mm
-\def\LineSpacingFactor{1.0} % scale factor used for line spacing (14/12 is default)
+\def\LineSpacingFactor{1.0} % scale factor used for line spacing
 \def\VerticalSpaceFactor{1.0} % scaling factor applied to space before/after styles
 \def\TopMarginFactor{1.0}
 \def\BottomMarginFactor{\TopMarginFactor}
@@ -873,9 +873,10 @@
 \def\s@tb@dyb@seline#1{%Parameter is {} for monoglot, L / R for diglot.
  \baselineskip=\origb@selineskip
  \le@dingunit=\LineSpacingFactor\FontSizeUnit
- \onel@neunit=14\le@dingunit
+ \onel@neunit=\LineSpaceBase\le@dingunit
  \verticalsp@ceunit=\VerticalSpaceFactor\le@dingunit
- \ifdim\baselineskip < 1pt \baselineskip=14\le@dingunit\fi % If the baselineskip has been specifically
+ \trace{F}{le@dingunit(\the\le@dingunit)=\LineSpacingFactor * \the\FontSizeUnit, onel@neunit(\the\onel@neunit)=\LineSpaceBase * \the\le@dingunit}
+ \ifdim\baselineskip < 1pt \baselineskip=\onel@neunit\fi % If the baselineskip has been specifically
                                                            % set it will remain. Otherwise, the default
                                                            % of 14 will be applied here and set text will
                                                            % hold to the grid.
@@ -926,6 +927,7 @@
  \resetvsize
 }
 %-csty_setupsizes
+\def\LineSpaceBase{14}
 \newdimen\le@dingunit
 \newdimen\onel@neunit
 \newdimen\verticalsp@ceunit
