@@ -669,6 +669,9 @@
 \mcp@pEnd{t*}{t}% cat end pops one old cat, then finish
 \mcp@pCont{N*}{c}% Ending Note pops c
 \mcp@pCont{N*}{C}% Ending Note pops C
+\mcp@pCont{tc*}{C}% Ending table cell pops C (\char)
+\mcp@pCont{tc*}{c}% Ending table cell pops C (\char)
+
 
 \def\itp@psstore{}
 \def\endit@c{\endch@rstyle*}
@@ -859,7 +862,7 @@
  \n@xt
 %-csty_ptxfile_start
 %+csty_ptxfile_end
- \ifhmode \unskip\end@llcharstyles \par \fi
+ \ifhmode \unskip\end@llpoppedstyles{P}\par \fi
  \ifsk@pping\egroup\fi
  \endt@ble
  \ifdiglot\ifdiglotL\norighttext\fi\enddigl@t\fi

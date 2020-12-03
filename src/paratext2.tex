@@ -231,7 +231,8 @@
 
 %+c_foot
 \def\@foot{\ifp@ranotes \parfillskip=0pt \else\strut\fi
-  \par\egroup\ifdiglot\ifRTL\endR\fi\fi\end@llcharstyles
+  \par\egroup\ifdiglot\ifRTL\endR\fi\fi
+  \end@llpoppedstyles{N*}%
   \def\d@##1+##2\E{\if ##1N\else\MSG{Bad marker ##2\space but expected a closing note marker}\fi}\mctopnoms
   \mcpop}
 \newbox\f@@tstrut
