@@ -15445,7 +15445,7 @@ the .ZIP file to the developers, either upload and send
 a link, OR email it to ptxprint_support@sil.org </property>
                                     <property name="halign">end</property>
                                     <property name="valign">start</property>
-                                    <property name="label" translatable="yes">The easiest wasy for the developers to replicate
+                                    <property name="label" translatable="yes">The easiest way for the developers to replicate
 an issue is for you to Create a ZIP Archive with
 all the required files and then send it to them:</property>
                                     <property name="justify">right</property>
