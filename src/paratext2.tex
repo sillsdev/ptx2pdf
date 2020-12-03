@@ -1255,6 +1255,17 @@
   \fi}%
 %-c_singlecolumn
 
+\newread\t@mpfile
+\def\includeifpresent#1{%
+  \openin\t@mpfile="#1"
+  \ifeof\t@mpfile\closein\t@mpfile
+    \immediate\write-1{Optional file "#1" Cannot be found}%
+  \else
+    \closein\t@mpfile
+    \immediate\write-1{Reading optional file "#1"}%
+    \input "#1"
+  \fi}
+
 
 \def\includepdf{\@netimesetup % in case \ptxfile hasn't been used yet
   \ifx\XeTeXpdfpagecount\undefined
