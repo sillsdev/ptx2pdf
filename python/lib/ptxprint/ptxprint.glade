@@ -323,6 +323,7 @@ THE SOFTWARE.
     <property name="page_increment">1</property>
   </object>
   <object class="GtkAdjustment" id="a_styRaise">
+    <property name="lower">-50</property>
     <property name="upper">50</property>
     <property name="step_increment">0.10000000000000001</property>
     <property name="page_increment">1</property>
@@ -374,6 +375,18 @@ THE SOFTWARE.
     <property name="value">1.8</property>
     <property name="step_increment">0.050000000000000003</property>
     <property name="page_increment">0.10000000000000001</property>
+  </object>
+  <object class="GtkAdjustment" id="a_verseDecoratorScale">
+    <property name="upper">10</property>
+    <property name="value">1</property>
+    <property name="step_increment">0.10000000000000001</property>
+    <property name="page_increment">1</property>
+  </object>
+  <object class="GtkAdjustment" id="a_verseDecoratorShift">
+    <property name="lower">-20</property>
+    <property name="upper">20</property>
+    <property name="step_increment">0.10000000000000001</property>
+    <property name="page_increment">1</property>
   </object>
   <object class="GtkAdjustment" id="a_versefontsize">
     <property name="lower">2</property>
@@ -13359,8 +13372,9 @@ to make it fit. </property>
 a PDF graphic. You may also use a special
 font and size to ensure verses fit well.</property>
                                 <property name="halign">start</property>
-                                <property name="margin_left">40</property>
+                                <property name="valign">center</property>
                                 <property name="margin_top">4</property>
+                                <property name="image_position">right</property>
                                 <property name="draw_indicator">True</property>
                                 <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                               </object>
@@ -13424,27 +13438,6 @@ as vertical to make sure all headings fit.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkCheckButton" id="c_inclEndOfBook">
-                                <property name="label" translatable="yes">End of Book</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">False</property>
-                                <property name="tooltip_text" translatable="yes">Section Headings may be adorned with
-a special graphic. Ensure that there is
-adequate space - both horizontal as well
-as vertical to make sure all headings fit.</property>
-                                <property name="halign">start</property>
-                                <property name="margin_left">40</property>
-                                <property name="margin_top">4</property>
-                                <property name="draw_indicator">True</property>
-                                <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="left_attach">3</property>
-                                <property name="top_attach">3</property>
-                              </packing>
-                            </child>
-                            <child>
                               <object class="GtkLabel" id="lb_inclEndOfBook">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
@@ -13459,23 +13452,6 @@ as vertical to make sure all headings fit.</property>
                                 <property name="left_attach">3</property>
                                 <property name="top_attach">4</property>
                                 <property name="width">2</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkButton" id="btn_selectEndOfBookPDF">
-                                <property name="label" translatable="yes">Select...</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">True</property>
-                                <property name="halign">end</property>
-                                <property name="valign">center</property>
-                                <property name="margin_right">6</property>
-                                <signal name="clicked" handler="onEndOfBookPDFclicked" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="left_attach">5</property>
-                                <property name="top_attach">3</property>
-                                <property name="height">2</property>
                               </packing>
                             </child>
                             <child>
@@ -13495,21 +13471,121 @@ as vertical to make sure all headings fit.</property>
                               </packing>
                             </child>
                             <child>
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="tooltip_text" translatable="yes">Vertical shift in pts of the verse decorator image.</property>
+                                <property name="halign">end</property>
+                                <property name="label" translatable="yes">Decorator Shift:</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">3</property>
+                                <property name="top_attach">2</property>
+                                <property name="width">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkCheckButton" id="c_inclEndOfBook">
+                                <property name="label" translatable="yes">End of Book</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="tooltip_text" translatable="yes">Section Headings may be adorned with
+a special graphic. Ensure that there is
+adequate space - both horizontal as well
+as vertical to make sure all headings fit.</property>
+                                <property name="halign">start</property>
+                                <property name="margin_top">4</property>
+                                <property name="draw_indicator">True</property>
+                                <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">5</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkButton" id="btn_selectEndOfBookPDF">
+                                <property name="label" translatable="yes">Select...</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                                <property name="halign">end</property>
+                                <property name="valign">center</property>
+                                <signal name="clicked" handler="onEndOfBookPDFclicked" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="left_attach">2</property>
+                                <property name="top_attach">5</property>
+                              </packing>
+                            </child>
+                            <child>
                               <object class="GtkButton" id="btn_VerseStyle">
                                 <property name="label" translatable="yes">Adjust Style...</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
+                                <property name="tooltip_text" translatable="yes">Edit Style properties for \v</property>
                                 <property name="halign">end</property>
                                 <property name="valign">start</property>
-                                <property name="margin_right">6</property>
                                 <signal name="clicked" handler="onVerseStyleClicked" swapped="no"/>
                               </object>
                               <packing>
-                                <property name="left_attach">3</property>
-                                <property name="top_attach">2</property>
-                                <property name="width">3</property>
+                                <property name="left_attach">5</property>
+                                <property name="top_attach">4</property>
                               </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="tooltip_text" translatable="yes">Scale verse decorator image. 1.0 is unity.</property>
+                                <property name="halign">end</property>
+                                <property name="label" translatable="yes">Decorator Scale:</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">3</property>
+                                <property name="top_attach">3</property>
+                                <property name="width">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkSpinButton" id="s_verseDecoratorShift">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="text" translatable="yes">0.0</property>
+                                <property name="adjustment">a_verseDecoratorShift</property>
+                                <property name="climb_rate">0.10000000000000001</property>
+                                <property name="digits">1</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">5</property>
+                                <property name="top_attach">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkSpinButton" id="s_verseDecoratorScale">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="text" translatable="yes">0.0</property>
+                                <property name="adjustment">a_verseDecoratorScale</property>
+                                <property name="climb_rate">0.10000000000000001</property>
+                                <property name="digits">1</property>
+                                <property name="value">1</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">5</property>
+                                <property name="top_attach">3</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
                             </child>
                             <child>
                               <placeholder/>

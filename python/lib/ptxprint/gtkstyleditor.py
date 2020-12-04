@@ -17,7 +17,7 @@ stylemap = {
     'Italic':       ('c_styFaceItalic',     'c_styFaceItalic',  '-', lambda v: "" if v else "-", None),
     'SmallCap':     ('c_stySmallCap',       'c_stySmallCap',    '-', lambda v: "" if v else "-", None),
     'Superscript':  ('c_styFaceSuperscript', 'c_styFaceSuperscript', '-', lambda v: "" if v else "-", None),
-    'Raise':        ('s_styRaise',          'l_styRaise',       '0', lambda v: str(v)+"ex", lambda v: re.sub(r"(?<=\d)\D+$", "", v)),
+    'Raise':        ('s_styRaise',          'l_styRaise',       '0', None, lambda v: re.sub(r"(?<=\d)\D+$", "", v)),
     'Justification': ('fcb_styJustification', 'l_styJustification', 'Justified', lambda v: "" if v == "Justified" else v, None),
     'FirstLineIndent': ('s_styFirstLineIndent', 'l_styFirstLineIndent', '0', None, None),
     'LeftMargin':   ('s_styLeftMargin',     'l_styLeftMargin',  '0', None, None),

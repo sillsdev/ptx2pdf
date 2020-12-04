@@ -2,7 +2,7 @@
 
 \input paratext2.tex
 
-{project/ifusepremodstex}\input "{/premodspath}"% adjust/override setup parameters here
+{project/ifusepremodstex}\inputifpresent{{{/premodspath}}}
 %%%%% Aligned Diglot Switches
 {document/ifdiglot}\diglottrue
 {document/ifdiglot}\diglotcolumns

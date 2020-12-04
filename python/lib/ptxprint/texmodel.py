@@ -119,6 +119,8 @@ ModelMap = {
     "fancy/versedecoratorpdf":  ("btn_selectVerseDecorator", lambda w,v: w.versedecorator.as_posix() \
                                             if (w.versedecorator is not None and w.versedecorator != 'None') \
                                             else get("/ptxprintlibpath")+"/Verse number star.pdf"),
+    "fancy/versedecoratorshift":   ("s_verseDecoratorShift", None),
+    "fancy/versedecoratorscale":   ("s_verseDecoratorScale", lambda w,v: int(float(v or "1.0")*1000)),
 
     "paragraph/varlinespacing":    ("c_variableLineSpacing", lambda w,v: "" if v else "%"),
     "paragraph/useglyphmetrics":   ("c_variableLineSpacing", lambda w,v: "%" if v else ""),
