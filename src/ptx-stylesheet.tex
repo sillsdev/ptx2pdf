@@ -160,7 +160,7 @@
    %\tracingassigns=1
    %\tracingmacros=1
    \ifdiglot
-     \edef\d@sf{\ifdiglotL L\else R\fi}%
+     \xdef\d@sf{\ifdiglotL L\else R\fi}%
      \edef\p@ssParams{#2\d@sf,#2}%
    \else
      \edef\p@ssParams{#2}%
@@ -231,6 +231,7 @@
   \mcup\global\let\p@ram\r@s\traceNum{s}{paramR #1 for \mcstack\space is \p@ram}}
  
 \def\getFp@ram#1#2{%
+  \let\p@ram\relax
   \def\d@##1+##2\E{\edef\tmp{##2}\csname d@code-##1\endcsname\edef\tmpa{#2}\ifx\tmp\tmpa\getmcp@ram{#1}\else\getp@ram{#1}{#2}\fi}%
   \mctop}
 \def\getFp@ramR#1#2{%

@@ -90,7 +90,7 @@
  \def\doch@rstyle{% here, \n@xt has been \let to the next character after the marker    %(1)
   \catcode32=10 % reset <space> to act like a space again
   \catcode13=10 % and <return> is also a space (we don't want blank line -> \par)
-  \tracingassigns=1
+  %\tracingassigns=1
   \if\n@xt*\let\n@xt@\endch@rstylen % check for "*", if so then we need to end the style
   \else
     \temptrue
@@ -104,7 +104,7 @@
     \fi
   \fi % else we need to start it
   \xdef\stylet@pe{\ss@Char}%                                                                   %(2)
-  \tracingassigns=0
+  %\tracingassigns=0
   \n@xt@} % chain to the start or end macro
  %doch@rstylepls is like doch@rstyle, but wraps the style in a group and generates a comma-separated stack of styles.
  \def\doch@rstylepls{% here, \n@xt has been \let to the next character after the marker %(1)
@@ -202,6 +202,8 @@
      \the\afterh@@ks%\global\afterh@@ks{} % execute all the <after>-hook, if there was one
     \fi
    \mcpop
+   \def\thiswh@tvrstyle{p}%Default value just in case
+   \trace{s}{end char style, stack now: \mcstack}%
    \def\d@##1+##2\E{\edef\tmp{##2}\csname d@code-##1\endcsname\let\thiswh@tvrstyle\tmp}\mctop
    \s@tfont{\thiswh@tvrstyle}% set up font attributes
    \fi
