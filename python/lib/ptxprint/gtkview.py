@@ -1610,15 +1610,8 @@ class GtkViewModel(ViewModel):
         titleStr = super(GtkViewModel, self).getDialogTitle()
         self.builder.get_object("ptxprint").set_title(titleStr)
 
-    def editFile(self, file2edit, loc="wrk", pgid="scroll_Settings", switch=None): # keep param order
-        if switch is None:
-            switch = pgid == "scroll_Settings"
-        pgnum = self.notebooks["Viewer"].index(pgid)
-        mpgnum = self.notebooks["Main"].index("tb_ViewerEditor")
-        if switch:
-            self.builder.get_object("nbk_Main").set_current_page(mpgnum)
-            self.builder.get_object("nbk_Viewer").set_current_page(pgnum)
-        # self.prjid = self.get("fcb_project")
+    def _locFile(self, file2edit, loc):
+        fpath = None
         self.prjdir = os.path.join(self.settings_dir, self.prjid)
         if loc == "wrk":
             fpath = os.path.join(self.working_dir, file2edit)
@@ -1631,7 +1624,19 @@ class GtkViewModel(ViewModel):
                 fpath = os.path.join(self.configPath(""), file2edit)
         elif "\\" in loc or "/" in loc:
             fpath = os.path.join(loc, file2edit)
-        else:
+        return fpath
+
+    def editFile(self, file2edit, loc="wrk", pgid="scroll_Settings", switch=None): # keep param order
+        if switch is None:
+            switch = pgid == "scroll_Settings"
+        pgnum = self.notebooks["Viewer"].index(pgid)
+        mpgnum = self.notebooks["Main"].index("tb_ViewerEditor")
+        if switch:
+            self.builder.get_object("nbk_Main").set_current_page(mpgnum)
+            self.builder.get_object("nbk_Viewer").set_current_page(pgnum)
+        # self.prjid = self.get("fcb_project")
+        fpath = self._locFile(file2edit, loc)
+        if fpath is None:
             return
         label = self.builder.get_object("l_{1}".format(*pgid.split("_")))
         label.set_tooltip_text(fpath)
@@ -1667,27 +1672,37 @@ class GtkViewModel(ViewModel):
         tbuf.place_cursor(titer)
         GLib.idle_add(self.fileViews[pgnum][1].scroll_mark_onscreen, tmark)
 
+    def _editProcFile(self, fname, loc, intro=""):
+        fpath = self._locFile(fname, loc)
+        if intro != "" and not os.path.exists(fpath):
+            openfile = open(fpath,"w", encoding="utf-8")
+            openfile.write(intro)
+            openfile.close()
+        self.editFile(fname, loc)
+
     def onEditScriptFile(self, btn):
         customScriptFPath = self.get("btn_selectScript")
         scriptName = os.path.basename(customScriptFPath)
         scriptPath = customScriptFPath[:-len(scriptName)]
         if len(customScriptFPath):
-            self.editFile(scriptName, scriptPath)
+            self._editProcFile(scriptName, scriptPath)
 
     def onEditChangesFile(self, btn):
-        self.editFile("PrintDraftChanges.txt", "prj")
+        self._editProcFile("PrintDraftChanges.txt", "prj")
 
     def onEditModsTeX(self, btn):
-        # self.prjid = self.get("fcb_project")
         cfgname = self.configName()
-        fpath = os.path.join(self.configPath(cfgname), "ptxprint-mods.tex")
-        if not os.path.exists(fpath):
-            openfile = open(fpath,"w", encoding="utf-8")
-            openfile.write(_("% This is the .tex file specific for the {} project used by PTXprint.\n").format(self.prjid))
-            if cfgname != "":
-                openfile.write(_("% Saved Configuration name: {}\n").format(cfgname))
-            openfile.close()
-        self.editFile("ptxprint-mods.tex", "cfg")
+        self._editProcFile("ptxprint-mods.tex", "cfg",
+            intro=_(_("""% This is the .tex file specific for the {} project used by PTXprint.
+% Saved Configuration name: {}
+""").format(self.prjid, cfgname)))
+
+    def onEditPreModsTeX(self, btn):
+        cfgname = self.configName()
+        self._editProcFile("ptxprint-mods.tex", "cfg",
+            intro=_(_("""% This is the preprocessing .tex file specific for the {} project used by PTXprint.
+% Saved Configuration name: {}
+""").format(self.prjid, cfgname)))
 
     def onEditCustomSty(self, btn):
         self.editFile("custom.sty", "prj")

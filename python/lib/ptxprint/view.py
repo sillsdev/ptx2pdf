@@ -543,11 +543,12 @@ class ViewModel:
             indent = config.getfloat("document", "indentunit", fallback="2.000")
             if indent == 2.0 and config.getboolean("paper", "columns", fallback=True):
                     config.set("document", "indentunit", "1.000")
-            config.set("config", "version", "1.400")
         if v < 1.403:   # no need to bump version for this and merge this with a later version test
             f = os.path.join(self.configPath(cfgname), "NestedStyles.sty")
             if os.path.exists(f):
                 os.remove(f)
+            config.set("paragraph", "linespacebase", "True")
+            config.set("config", "version", "1.403")
 
         styf = os.path.join(self.configPath(cfgname), "ptxprint.sty")
         if not os.path.exists(styf):

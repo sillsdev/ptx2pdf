@@ -11358,6 +11358,7 @@ have been enabled.</property>
                                 <property name="margin_left">6</property>
                                 <property name="margin_right">6</property>
                                 <property name="margin_top">6</property>
+                                <property name="margin_bottom">6</property>
                                 <property name="label_xalign">0.039999999105930328</property>
                                 <child>
                                   <object class="GtkAlignment">
@@ -11371,7 +11372,7 @@ have been enabled.</property>
                                         <property name="halign">start</property>
                                         <property name="margin_right">6</property>
                                         <property name="margin_top">6</property>
-                                        <property name="row_spacing">11</property>
+                                        <property name="row_spacing">10</property>
                                         <property name="column_spacing">6</property>
                                         <child>
                                           <object class="GtkCheckButton" id="c_useModsTex">
@@ -11385,7 +11386,6 @@ any conflicting settings here, which
 could make it appear as if settings
 here are not working at all.</property>
                                             <property name="halign">start</property>
-                                            <property name="margin_top">6</property>
                                             <property name="draw_indicator">True</property>
                                             <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                           </object>
@@ -11501,7 +11501,6 @@ apply to the USFM file(s) prior to
 producing the printout, then these
 can be specified in this file.</property>
                                             <property name="halign">start</property>
-                                            <property name="margin_top">6</property>
                                             <property name="draw_indicator">True</property>
                                             <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                           </object>
@@ -11517,8 +11516,6 @@ can be specified in this file.</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">True</property>
-                                            <property name="margin_top">4</property>
-                                            <property name="margin_bottom">4</property>
                                             <signal name="clicked" handler="onEditChangesFile" swapped="no"/>
                                           </object>
                                           <packing>
@@ -11532,8 +11529,6 @@ can be specified in this file.</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">True</property>
-                                            <property name="margin_top">4</property>
-                                            <property name="margin_bottom">4</property>
                                             <signal name="clicked" handler="onEditModsTeX" swapped="no"/>
                                           </object>
                                           <packing>
@@ -11547,13 +11542,12 @@ can be specified in this file.</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">True</property>
-                                            <property name="margin_top">4</property>
-                                            <property name="margin_bottom">4</property>
+                                            <property name="margin_bottom">6</property>
                                             <signal name="clicked" handler="onEditModsSty" swapped="no"/>
                                           </object>
                                           <packing>
                                             <property name="left_attach">2</property>
-                                            <property name="top_attach">4</property>
+                                            <property name="top_attach">5</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -11565,13 +11559,12 @@ can be specified in this file.</property>
                                             <property name="tooltip_text" translatable="yes">It is recommended to leave 
 this option checked (on).</property>
                                             <property name="halign">start</property>
-                                            <property name="margin_top">6</property>
                                             <property name="draw_indicator">True</property>
                                             <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                           </object>
                                           <packing>
                                             <property name="left_attach">0</property>
-                                            <property name="top_attach">4</property>
+                                            <property name="top_attach">5</property>
                                             <property name="width">2</property>
                                           </packing>
                                         </child>
@@ -11584,14 +11577,13 @@ this option checked (on).</property>
                                             <property name="tooltip_text" translatable="yes">It is recommended to leave 
 this option checked (on).</property>
                                             <property name="halign">start</property>
-                                            <property name="margin_top">6</property>
                                             <property name="active">True</property>
                                             <property name="draw_indicator">True</property>
                                             <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                           </object>
                                           <packing>
                                             <property name="left_attach">0</property>
-                                            <property name="top_attach">3</property>
+                                            <property name="top_attach">4</property>
                                             <property name="width">2</property>
                                           </packing>
                                         </child>
@@ -11601,13 +11593,11 @@ this option checked (on).</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">True</property>
-                                            <property name="margin_top">4</property>
-                                            <property name="margin_bottom">4</property>
                                             <signal name="clicked" handler="onEditCustomSty" swapped="no"/>
                                           </object>
                                           <packing>
                                             <property name="left_attach">2</property>
-                                            <property name="top_attach">3</property>
+                                            <property name="top_attach">4</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -11624,6 +11614,35 @@ this option checked (on).</property>
                                           <packing>
                                             <property name="left_attach">2</property>
                                             <property name="top_attach">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkButton" id="btn_editModsPreTex">
+                                            <property name="label" translatable="yes">Edit...</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">True</property>
+                                            <signal name="clicked" handler="onEditPreModsTeX" swapped="no"/>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">2</property>
+                                            <property name="top_attach">3</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkCheckButton" id="c_usePreModsTex">
+                                            <property name="label" translatable="yes">Apply Initial Settings (ptxprint-premods.tex)</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">False</property>
+                                            <property name="halign">start</property>
+                                            <property name="draw_indicator">True</property>
+                                            <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">0</property>
+                                            <property name="top_attach">3</property>
+                                            <property name="width">2</property>
                                           </packing>
                                         </child>
                                       </object>
@@ -12326,6 +12345,57 @@ when thin paper is being used.</property>
                         <property name="expand">False</property>
                         <property name="fill">False</property>
                         <property name="position">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkFrame" id="fr_AdvCompat">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="halign">start</property>
+                        <property name="valign">start</property>
+                        <property name="margin_left">12</property>
+                        <property name="margin_right">12</property>
+                        <property name="margin_bottom">6</property>
+                        <property name="label_xalign">0.019999999552965164</property>
+                        <child>
+                          <object class="GtkAlignment">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="valign">start</property>
+                            <property name="left_padding">12</property>
+                            <child>
+                              <object class="GtkGrid">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_AdvCompatLineSpacing">
+                                    <property name="label" translatable="yes">Legacy 1/14 LineSpacing</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="draw_indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">0</property>
+                                  </packing>
+                                </child>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                        <child type="label">
+                          <object class="GtkLabel">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="label" translatable="yes">Compatibility</property>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">2</property>
                       </packing>
                     </child>
                   </object>
@@ -14333,7 +14403,7 @@ Factor:</property>
                                           <object class="GtkLabel" id="l_stySpaceBefore">
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
-                                            <property name="tooltip_text" translatable="yes">Amount of space to insert before the paragraph. This is in line spacing units where 12 is the same as the default line spacing.</property>
+                                            <property name="tooltip_text" translatable="yes">Amount of space to insert before the paragraph. This is expressed in line units with 12 line units being the base line spacing (from the layout tab).</property>
                                             <property name="halign">end</property>
                                             <property name="label" translatable="yes">Space Before
 Factor:</property>
@@ -14355,7 +14425,7 @@ Factor:</property>
                                           <object class="GtkLabel" id="l_stySpaceAfter">
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
-                                            <property name="tooltip_text" translatable="yes">Amount of space to insert after the paragraph. This is in line spacing units where 12 is the same as the default line spacing.</property>
+                                            <property name="tooltip_text" translatable="yes">Amount of space to insert after the paragraph. This is expressed in line units with 12 line units being the base line spacing (from the layout tab).</property>
                                             <property name="halign">end</property>
                                             <property name="label" translatable="yes">Space After
 Factor:</property>
