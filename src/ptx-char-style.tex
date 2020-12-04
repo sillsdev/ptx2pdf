@@ -185,7 +185,7 @@
      \x@\let\x@\@ttriblist\csname @ttriblist-\oldch@rstyle\endcsname
      \getmcp@ramR{raise}%
      \ifx\@ttriblist\empty
-       \ifx\p@ram\relax\else \egroup \raise\p@ram\box0 \fi
+       \ifx\p@ram\relax\else \egroup\dimen9=\p@ram\ifdim\dimen9<0pt\lower-\dimen9\else\raise\dimen9\fi\box0 \fi
      \else
        \egroup
        \ifx\@ttributes\empty\else
@@ -193,7 +193,7 @@
        \fi
        \ifx\p@ram\relax
          \unhbox0
-       \else\raise\p@ram\box0 \fi
+       \else\dimen9=\p@ram\ifdim\dimen9<0pt\lower-\dimen9\else\raise\dimen9\fi\box0 \fi
      \fi
      \cl@singhooks{after}{\oldch@rstyle}% discover any <after> hooks
      \ifnum\n@tenesting>0 \global\advance\n@tenesting by -1 % decrement nesting level

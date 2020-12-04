@@ -2,6 +2,7 @@
 
 \input paratext2.tex
 
+{project/ifusepremodstex}\inputifpresent{{{/premodspath}}}
 %%%%% Aligned Diglot Switches
 {document/ifdiglot}\diglottrue
 {document/ifdiglot}\diglotcolumns
@@ -50,7 +51,7 @@
 \def\PageFullFactor{{0.66}}
 
 %%%%% Text Spacing %%%%%
-\def\LineSpaceBase{{12}}
+\def\LineSpaceBase{{{paragraph/linespacebase}}}
 \def\LineSpacingFactor{L_}{{{paragraph/linespacingfactor}}}
 \def\VerticalSpaceFactor{L_}{{1.0}}
 {paragraph/useglyphmetrics}\XeTeXuseglyphmetrics=0

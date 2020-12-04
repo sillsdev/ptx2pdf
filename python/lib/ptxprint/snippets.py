@@ -7,6 +7,7 @@ class Snippet:
     regexes = []
     processTex = False
     texCode = ""
+    takesDiglot = False
 
 class PDFx1aOutput(Snippet):
     processTex = True
@@ -71,7 +72,9 @@ class Diglot(Snippet):
 
 class FancyBorders(Snippet):
     processTex = True
-    texCode = r"""
+    takesDiglot = True
+    def generateTex(self, texmodel, diglotSide=""):
+        res = r"""
 % Define this to add a border to all pages, from a PDF file containing the graphic
 %   "scaled <factor>" adjusts the size (1000 would keep the border at its original size)
 % Can also use "xscaled 850 yscaled 950" to scale separately in each direction,
@@ -99,41 +102,23 @@ class FancyBorders(Snippet):
 {fancy/sectionheader}\sethook{{start}}{{s}}{{\placesectionheadbox}}
 {fancy/sectionheader}\sethook{{start}}{{s1}}{{\placesectionheadbox}}
 {fancy/sectionheader}\sethook{{start}}{{s2}}{{\placesectionheadbox}}
-
+"""
+        if texmodel.dict.get("_isDiglot", False):
+            repeats = [("L", ""), ("R", "diglot")]
+        else:
+            repeats = [("", "")]
+        for replaceD, replaceE in repeats:
+            res += r"""
 % The following code puts the verse number inside a star
 %
-{fancy/versedecorator}\newbox\versestarbox
-{fancy/versedecorator}\setbox\versestarbox=\hbox{{\XeTeXpdffile "{fancy/versedecoratorpdf}"\relax}}
+{%E%fancy/versedecorator}\newbox\versestarbox%D%
+{%E%fancy/versedecorator}\setbox\versestarbox%D%=\hbox{{\XeTeXpdffile "{%E%fancy/versedecoratorpdf}" scaled {%E%fancy/versedecoratorscale}\relax}}
 
 % capture the verse number in a box (surrounded by \hfil) which we overlap with star
-{fancy/versedecorator}\newbox\versenumberbox
-{fancy/versedecorator}\sethook{{start}}{{v}}{{\setbox\versenumberbox=\hbox to \wd\versestarbox\bgroup\hfil}}
-{fancy/versedecorator}\sethook{{end}}{{v}}{{\hfil\egroup
-{fancy/versedecorator} \beginL % ensure TeX is "thinking" left-to-right for the \rlap etc
-{fancy/versedecorator}   \rlap{{\raise1pt\box\versenumberbox}}\lower4pt\copy\versestarbox
-{fancy/versedecorator} \endL}}
-
-% Replace the ptx2pdf macro which prints out the verse number, so that we can
-% kern between numbers or change the font size, if necessary
-{fancy/versedecorator}\catcode`\@=11   % allow @ to be used in the name of ptx2pdf macro we have to override
-{fancy/versedecorator}\def\printv@rse{{\expandafter\getversedigits\v@rsefrom!!\end\printversedigits}}
-{fancy/versedecorator}\catcode`\@=12   % return to normal function
-
-{fancy/versedecorator}\def\getversedigits#1#2#3#4\end{{\def\digitone{{#1}}\def\digittwo{{#2}}\def\digitthree{{#3}}}}
-
-{fancy/versedecorator}\def\exclam{{!}}
-{fancy/versedecorator}\def\printversedigits{{%
-{fancy/versedecorator}  \beginL
-{fancy/versedecorator}  \ifx\digitthree\exclam
-{fancy/versedecorator}    \digitone\ifx\digittwo\exclam\else
-{fancy/versedecorator}      \ifnum\digitone=1\kern-0.1em \else\kern-0.05em\fi
-{fancy/versedecorator}      \digittwo\fi
-{fancy/versedecorator}  \else
-{fancy/versedecorator}    \zSmallVnum \digitone \kern-0.12em\digittwo \kern-0.08em\digitthree\zSmallVnum*
-{fancy/versedecorator}  \fi
-{fancy/versedecorator}  \endL}}
-
-"""
+{%E%fancy/versedecorator}\def\AdornVerseNumber%D%#1{{\beginL\rlap{{\hbox to \wd\versestarbox%D%{{\hfil #1\hfil}}}}%
+{%E%fancy/versedecorator}    \raise{%E%fancy/versedecoratorshift}pt\copy\versestarbox%D%\endL}}
+""".replace("%D%", replaceD).replace("%E%", replaceE)
+        return res.format(**texmodel.dict)
 
     unusedStuff = r"""
 % Some code to allow us to kern chapter numbers

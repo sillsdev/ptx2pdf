@@ -69,6 +69,7 @@ ModelMap = {
     "project/selectscript":     ("btn_selectScript", lambda w,v: w.customScript.as_posix() if w.customScript is not None else ""),
     "project/usechangesfile":   ("c_usePrintDraftChanges", lambda w,v :"true" if v else "false"),
     "project/ifusemodstex":     ("c_useModsTex", lambda w,v: "" if v else "%"),
+    "project/ifusepremodstex":  ("c_usePreModsTex", lambda w,v: "" if v else "%"),
     "project/ifusecustomsty":   ("c_useCustomSty", lambda w,v: "" if v else "%"),
     "project/ifusemodssty":     ("c_useModsSty", lambda w,v: "" if v else "%"),
     "project/ifstarthalfpage":  ("c_startOnHalfPage", lambda w,v :"true" if v else "false"),
@@ -118,10 +119,13 @@ ModelMap = {
     "fancy/versedecoratorpdf":  ("btn_selectVerseDecorator", lambda w,v: w.versedecorator.as_posix() \
                                             if (w.versedecorator is not None and w.versedecorator != 'None') \
                                             else get("/ptxprintlibpath")+"/Verse number star.pdf"),
+    "fancy/versedecoratorshift":   ("s_verseDecoratorShift", None),
+    "fancy/versedecoratorscale":   ("s_verseDecoratorScale", lambda w,v: int(float(v or "1.0")*1000)),
 
     "paragraph/varlinespacing":    ("c_variableLineSpacing", lambda w,v: "" if v else "%"),
     "paragraph/useglyphmetrics":   ("c_variableLineSpacing", lambda w,v: "%" if v else ""),
     "paragraph/linespacing":       ("s_linespacing", lambda w,v: "{:.3f}".format(float(v)) or "15.000"),
+    "paragraph/linespacebase":  ("c_AdvCompatLineSpacing", lambda w,v: 14 if v else 12),
     # "paragraph/linespacingfactor": ("s_linespacing", lambda w,v: "{:.3f}".format(float(v or "15") / 12)),
     "paragraph/linemin":           ("s_linespacingmin", lambda w,v: "minus {:.3f}pt".format(float(w.get("s_linespacing")) - float(v)) \
                                                      if float(v) < float(w.get("s_linespacing")) else ""),
@@ -424,9 +428,14 @@ class TexModel:
         if not os.path.exists(fpath):
             fpath = j(rcpath, "ptxprint-mods.tex")
         self.dict['/modspath'] = rel(fpath, docdir).replace("\\","/")
+        fpath = j(cpath, "ptxprint-premods.tex")
+        if not os.path.exists(fpath):
+            fpath = j(rcpath, "ptxprint-premods.tex")
+        self.dict['/premodspath'] = rel(fpath, docdir).replace("\\","/")
         if "document/diglotcfgrpath" not in self.dict:
             self.dict["document/diglotcfgrpath"] = ""
-        self.dict['paragraph/linespacingfactor'] = "{:.3f}".format(float(self.dict['paragraph/linespacing']) / 12 / float(self.dict['paper/fontfactor']))
+        self.dict['paragraph/linespacingfactor'] = "{:.3f}".format(float(self.dict['paragraph/linespacing']) \
+                    / self.dict["paragraph/linespacebase"] / float(self.dict['paper/fontfactor']))
         self.dict['paragraph/ifhavehyphenate'] = "" if os.path.exists(os.path.join(self.printer.configPath(""), \
                                                        "hyphen-"+self.dict["project/id"]+".tex")) else "%"
         # forward cleanup. If ask for ptxprint-mods.tex but don't have it, copy PrintDraft-mods.tex
