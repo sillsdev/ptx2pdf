@@ -99,11 +99,11 @@
         \if\n@xt-\let\n@xt@\startmst@nestyle@minus\let\thismil@stone\newch@rstyle\tempfalse\else
 	  \let\n@xt@\startch@rstyle@misc\fi\fi\fi
     \iftemp
-      \end@llpoppedstyles{C}% Char style
+      \end@llpoppedstyles{\ss@Char}% Char style
       %\end@llcharstyles % a char style closes all other char styles, milestones do not.
     \fi
   \fi % else we need to start it
-  \xdef\stylet@pe{C}%                                                                   %(2)
+  \xdef\stylet@pe{\ss@Char}%                                                                   %(2)
   \tracingassigns=0
   \n@xt@} % chain to the start or end macro
  %doch@rstylepls is like doch@rstyle, but wraps the style in a group and generates a comma-separated stack of styles.
@@ -120,7 +120,7 @@
     \fi\fi\fi
   \fi % else we need to start it
   %\tracingassigns=0
-  \xdef\stylet@pe{c}%                                                                   %(2)
+  \xdef\stylet@pe{\ss@ChrP}%                                                                   %(2)
   \n@xt@} % chain to the start or end macro
  % when \startch@rstyle is called, the following <space> or <return> has become category-12
  % so we have to explicitly consume it here as part of the macro parameter list
@@ -142,7 +142,7 @@
 }
 %-cchar_endstyle
 %+cchar_startcharstyle
-\def\startch@rstyle{\trace{s}{startch@rstyle \newch@rstyle}%
+\def\startch@rstyle{\trace{s}{startch@rstyle \newch@rstyle (\stylet@pe)}%
   \mcpush{\ifx\stylet@pe\empty C\else\stylet@pe\fi+\newch@rstyle}%
   \t@stpublishability{\newch@rstyle}\ifn@npublishable                   %(1)
    \setbox0=\hbox\bgroup\skipch@rstyletrue

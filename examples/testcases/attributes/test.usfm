@@ -3,7 +3,7 @@
 \c 1
 \s This is a title
 \p
-\v 1 This is normal text. 
+\v 1 This is normal text. \f + \fr 1:1 \ft A footnote\f*
 \nd NDtext \qt-s\*
 now inside an unattributed  qt-s..qt-e block \nd* The end of the ND style returns to what it was before the ND started,
 if it doesn't call setfont.
