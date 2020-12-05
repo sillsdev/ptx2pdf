@@ -116,7 +116,7 @@ class FancyBorders(Snippet):
 
 % capture the verse number in a box (surrounded by \hfil) which we overlap with star
 {%E%fancy/versedecorator}\def\AdornVerseNumber%D%#1{{\beginL\rlap{{\hbox to \wd\versestarbox%D%{{\hfil #1\hfil}}}}%
-{%E%fancy/versedecorator}    \raise{%E%fancy/versedecoratorshift}pt\copy\versestarbox%D%\endL}}
+{%E%fancy/versedecorator}    \raise {%E%fancy/versedecoratorshift}pt\copy\versestarbox%D%\endL}}
 """.replace("%D%", replaceD).replace("%E%", replaceE)
         return res.format(**texmodel.dict)
 
