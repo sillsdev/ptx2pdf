@@ -11484,7 +11484,6 @@ Custom Script at:</property>
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">True</property>
                                                 <property name="receives_default">True</property>
-                                                <property name="tooltip_text" translatable="yes">Script to run with 2 command line parameters, the input file and the output file.</property>
                                                 <property name="valign">center</property>
                                                 <property name="margin_top">4</property>
                                                 <property name="margin_bottom">4</property>
