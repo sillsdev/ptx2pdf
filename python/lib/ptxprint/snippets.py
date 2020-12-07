@@ -86,22 +86,6 @@ class FancyBorders(Snippet):
 {fancy/endofbook}\setbox\decorationbox=\hbox{{\XeTeXpdffile "{fancy/endofbookpdf}"\relax}}
 {fancy/endofbook}\def\z{{\par\nobreak\vskip 16pt\centerline{{\copy\decorationbox}}}}
 
-{fancy/sectionheader}\newbox\sectionheadbox
-{fancy/sectionheader}\def\placesectionheadbox{{%
-{fancy/sectionheader}  \ifvoid\sectionheadbox % set up the \sectionheadbox box the first time it's needed
-{fancy/sectionheader}    \global\setbox\sectionheadbox=\hbox{{\XeTeXpdffile "{fancy/sectionheaderpdf}"\relax}}%
-{fancy/sectionheader}    \global\setbox\sectionheadbox=\hbox to \hsize% \hsize is the line width
-{fancy/sectionheader}        {{\hss \box\sectionheadbox \hss}}% so now the graphic will be centered
-{fancy/sectionheader}    \global\setbox\sectionheadbox=\vbox to 0pt
-{fancy/sectionheader}        {{\kern-21pt % adjust value of \kern here to shift graphic up or down
-{fancy/sectionheader}         \box\sectionheadbox \vss}}% now we have a box with zero height
-{fancy/sectionheader}  \fi
-{fancy/sectionheader}  \vadjust{{\copy\sectionheadbox}}% insert the graphic below the current line
-{fancy/sectionheader}  \vrule width 0pt height 0pt depth 0.5em
-{fancy/sectionheader}}}
-{fancy/sectionheader}\sethook{{start}}{{s}}{{\placesectionheadbox}}
-{fancy/sectionheader}\sethook{{start}}{{s1}}{{\placesectionheadbox}}
-{fancy/sectionheader}\sethook{{start}}{{s2}}{{\placesectionheadbox}}
 """
         if texmodel.dict.get("_isDiglot", False):
             repeats = [("L", ""), ("R", "diglot")]
@@ -109,14 +93,23 @@ class FancyBorders(Snippet):
             repeats = [("", "")]
         for replaceD, replaceE in repeats:
             res += r"""
-% The following code puts the verse number inside a star
-%
-{%E%fancy/versedecorator}\newbox\versestarbox%D%
-{%E%fancy/versedecorator}\setbox\versestarbox%D%=\hbox{{\XeTeXpdffile "{%E%fancy/versedecoratorpdf}" scaled {%E%fancy/versedecoratorscale}\relax}}
+{%E%fancy/sectionheader}\newbox\sectionheadbox%D%
+{%E%fancy/sectionheader}\def\placesectionheadbox%D%{{%
+{%E%fancy/sectionheader}  \ifvoid\sectionheadbox%D% % set up the \sectionheadbox box the first time it's needed
+{%E%fancy/sectionheader}    \global\setbox\sectionheadbox%D%=\hbox to \hsize{{\hss \XeTeXpdffile "{%E%fancy/sectionheaderpdf}" scaled {%E%fancy/sectionheaderscale} \relax\hss}}%
+{%E%fancy/sectionheader}    \global\setbox\sectionheadbox%D%=\vbox to 0pt
+{%E%fancy/sectionheader}        {{\kern-\ht\sectionheadbox%D% \kern {%E%fancy/sectionheadershift}pt \box\sectionheadbox \vss}}
+{%E%fancy/sectionheader}  \fi
+{%E%fancy/sectionheader}  \vadjust{{\copy\sectionheadbox}}
+{%E%fancy/sectionheader}}}
+{%E%fancy/sectionheader}\sethook{{start}}{{s%D%}}{{\placesectionheadbox}}
+{%E%fancy/sectionheader}\sethook{{start}}{{s1%D%}}{{\placesectionheadbox}}
+{%E%fancy/sectionheader}\sethook{{start}}{{s2%D%}}{{\placesectionheadbox}}
 
-% capture the verse number in a box (surrounded by \hfil) which we overlap with star
+{%E%fancy/versedecorator}\newbox\versestarbox%D%
+{%E%fancy/versedecorator}\setbox\versestarbox%D%=\hbox{{\XeTeXpdffile "{%E%fancy/versedecoratorpdf}" scaled {%E%fancy/versedecoratorscale} \relax}}
 {%E%fancy/versedecorator}\def\AdornVerseNumber%D%#1{{\beginL\rlap{{\hbox to \wd\versestarbox%D%{{\hfil #1\hfil}}}}%
-{%E%fancy/versedecorator}    \raise{%E%fancy/versedecoratorshift}pt\copy\versestarbox%D%\endL}}
+{%E%fancy/versedecorator}    \raise {%E%fancy/versedecoratorshift}pt\copy\versestarbox%D%\endL}}
 """.replace("%D%", replaceD).replace("%E%", replaceE)
         return res.format(**texmodel.dict)
 

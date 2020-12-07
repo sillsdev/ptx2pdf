@@ -560,7 +560,9 @@ class ViewModel:
             if os.path.exists(f):
                 os.remove(f)
             config.set("paragraph", "linespacebase", "True")
-            config.set("config", "version", "1.403")
+        if v < 1.404:
+            config.set("fancy", "versedecoratorshift", "-5")
+            config.set("config", "version", "1.404")
 
         styf = os.path.join(self.configPath(cfgname), "ptxprint.sty")
         if not os.path.exists(styf):
