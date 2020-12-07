@@ -153,29 +153,39 @@ This is a milestone that takes a default attribute. For example `\qt-s
 
 ```
 1.  \Marker qt-Jesus
-2.  \Marker ms:Jesus|qt
+2.  \Marker qt-s-Jesus
+3.  \Marker ms:Jesus|qt
+4.  \Marker ms:who=Jesus|qt
 ```
 
 Approach 1 looks easy but there are a number of moving parts here, not least
 that this wouldn't work for `\qt-s |s\*` since that would be indistinguishable
-with `\qt-s\*`. But this may not be important. Approach 2 is in keeping with
-category-markup and a generalised milestone marker model.
+with `\qt-s\*`. But this may not be important. 
+Approach 2 is the current implementation.
+Approach 3 is in keeping with category-markup and a generalised milestone marker model.
+Approach 4 is suggested by the Milestones with multiple attributes below.
 
-### Multiply Parameterised Milestone
+### Milestones with Multiple Attributes
 
 This is where a milestone is explicitly attributed with multiple attributes. For
 a hypothetical example: `\qt-s |who=Jesus|style=story\*`.
 
 ```
 1.  \Marker qt-Jesus-story
-2.  \Marker ms:who=Jesus;style=story|qt
+2.  \Marker qt-s-Jesus-story
+3.  \Marker ms:who=Jesus;style=story|qt
+4.  \Marker ms:Jesus;style=story|qt
 ```
 
-Approach 1 extends the approach 1 for the default parameterised milestone. It
+Approach 1 extends the approach 1 for the default parameterised milestone, approach 2 similarly. It
 raises a number of questions: how do we map from named attributes to an ordered
-list of unnamed attributes? Approach 2 is precise but still suffers from the
-ordering question. In addition, does this mean that `ms:who=Jesus|qt` is to be
-supported for `\qt-s |Jesus\*` as well?
+list of unnamed attributes? (see the solution below)
+
+Approach 3 is precise but still suffers from the
+ordering question. In addition, does this mean that `ms:who="Jesus"|qt` would need to be
+supported for `\qt-s |Jesus\*` as well? 
+
+Approach 4 is a compromise, leaving the automatic (default) parameter unspecified, by specifying others.
 
 The ordering issue can be dealt with by defining the 'cannonical order' as being 
 the order of attributes within the stylesheet. This however leaves user-defined 
@@ -183,6 +193,8 @@ additional attributes in an undefined random order. Hopefully, however, a user w
 wishes to defined their own attributes and used them for styling is also capable 
 of supplying their own ```\Attributes``` list in the stylesheet, and so 
 this should not be an issue if documented.
+
+However, in all of this, it is assumed to be incorrect to apply the (unique) id fields to such a list.
 
 One important consideration is whether there is ever a use-case for a multiply 
 parameterised milestones at all.
@@ -205,8 +217,10 @@ The question is how do we style the `agloss` text?
 5.  \Marker wit(gloss)
 ```
 
-Method 1 is deficient, not making any distinction between potential values:
-```\w word | strong="124" lemma="something" \w*```
+Method 1 is deficient, not making any distinction between potential values e.g.:
+```\w word | strong="124" lemma="something" \w*``` Method two is thus preferred 
+over method 1.
+
 Method 3. is simple and bears a striking similarlity to the simplest milestone
 format, but while in milestones it was the *content* of the
 attribute that defined the marker, here the content is displayed and the styling

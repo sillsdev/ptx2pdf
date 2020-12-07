@@ -29,43 +29,53 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Milestone macros
-\def\mst@nestyle#1{\trace{m}{mst@nestyle:#1}%
+\def\mst@nestyle#1{\trace{m}{mst@nestyle:#1 (\milestoneOp)}%
  \gdef\thismil@stone{\detokenize{#1}}% record the name of the style
  \catcode32=12 % make <space> an "other" character, so it won't be skipped by \futurelet
  \catcode13=12 % ditto for <return>
+ \tracingassigns=1
+ %\use@ttrSlash
  \futurelet\n@xt\domst@nestyle % look at following character and call \domst@nestyle
 }
 
+\let\p@pe=| % for matching
 \catcode`\~=12 \lccode`\~=32 % we'll use \lowercase{~} when we need a category-12 space
 \catcode`\_=12 \lccode`\_=13 % and \lowercase{_} for category-12 <return>
 \lowercase{%
  \def\domst@nestyle{% here, \n@xt has been \let to the next character after the marker
+  \mst@nestyletrue
+  \initmil@stone%
   \catcode32=10 % reset <space> to act like a space again
   \catcode13=10 % and <return> is also a space (we don't want blank line -> \par)
-  \if\n@xt-\let\n@xt@\startmst@nestyle@minus\else
-    \if\n@xt~\let\n@xt@\startmst@nestyle@spc\else
-      \if\n@xt_\let\n@xt@\startmst@nestyle@nl\else
-	\let\n@xt@\startmst@nestyle\fi\fi\fi
+  \ifx\n@xt\h@phen\let\n@xt@\startmst@nestyle@minus\else
+    \ifx\n@xt~\let\n@xt@\startmst@nestyle@spc\else
+      \ifx\n@xt_\let\n@xt@\startmst@nestyle@nl\else
+       \ifx\n@xt\p@pe\let\n@xt@\startmst@nestyle@pipe\else
+	\let\n@xt@\startmst@nestyle\fi\fi\fi\fi
+  \tracingassigns=0
+  \trace{m}{Start style}%
   \n@xt@
  }
  \def\startmst@nestyle@spc~{\startmst@nestyle}%                                             
  \def\startmst@nestyle@nl_{\startmst@nestyle}%
 }
+\def\startmst@nestyle@pipe|{\trace{m}{Immediate start of attributes}\in@ttribtrue\startmst@nestyle\@ttrSlash}%
 \def\startmst@nestyle@minus-#1{%
-  \mst@nestyletrue
-  \initmil@stone{#1}%
+  \def\milestoneOp{#1}%
   \startmst@nestyle
 }
 
-\def\initmil@stone#1{%called by startmst@nestyle@minus and startch@rstyle@minus.
-  \trace{m}{initmil@stone #1}%
+\def\initmil@stone{%called by startmst@nestyle@minus and startch@rstyle@minus.
+  \trace{m}{initmil@stone \milestoneOp}%
   \ifmst@nestyle\else %Was this marker defined as a milestone or as a character style
     \edef\thismil@stone{\newch@rstyle}%
   \fi
   \edef\thismil@stoneKey{}\edef\thismil@stoneVal{}% Set by Attributes
-  \xdef\milestoneOp{#1}%
+  %\xdef\milestoneOp{#1}%
   \edef\attrid{\milestoneOp id}% id / sid / eid, depending.
 }
+
+\def\@ttrSlash#1\*{\trace{m}{@ttrSlash}\xdef\attrib@rgs{#1}\message{Attr:\attrib@rgs}\in@ttribtrue\*}
 
 \def\*{%This might end a + style (c)  or a normal style character style(C), or a milestone style
   \trace{m}{slash *}%
@@ -75,7 +85,6 @@
     \let\thismil@stoneKey\thisdefault@ttrkey
     \let\thismil@stoneVal\attr@b
   \fi
-  \trace{m}{slash *}%
   \ifmst@nestyle\else
     \ifx \ss@ChrP\stylet@pe
       \endch@rstylepls*
@@ -84,13 +93,13 @@
     \fi
   \fi
   \mst@nestylefalse
-  \mil@stone\ignorespaces}% USFM3 'self closing marker' milestone
+  \processmil@stone}% USFM3 'self closing marker' milestone
 
 \let\milestoneOp\empty
 \let\thismil@stone\empty
 \newif\ifmst@nestyle \mst@nestylefalse
 
-\def\mil@stone{\trace{m}{Milestone \thismil@stone (\milestoneOp), \csname thisch@rstyle\endcsname}%
+\def\processmil@stone{\trace{m}{Milestone \thismil@stone (\milestoneOp), \csname thisch@rstyle\endcsname}%
   \if\milestoneOp s\relax\st@rtmilestone\else
    \if\milestoneOp e\relax\@ndmilestone\else
     \st@ndalonemilestone\fi\fi
@@ -103,6 +112,7 @@
 
 \def\startmst@nestyle{%What actually changes between the beginning of a milestone and the end-marker? Attribute values!
    \trace{m}{startmst@nestyle}%
+   \op@ninghooks{before}{\thismil@stone}%
    \csname init@ttribs\endcsname
 }
 
@@ -176,9 +186,11 @@
   \fi
   \upd@teMsPrefix
   \trace{m}{Style stack now: \mcstack}%
+  \op@ninghooks{start}{\thismil@stone}%
 }
 \def\@ndmilestone{%
   \trace{m}{@ndmilestone.  stack now: \mcstack}%
+  \cl@singhooks{end}{\thismil@stone}%
   \get@ttribute{\attrid}%attrid is id/sid/eid (set in init@trrtibs)
   \ifx\attr@b\relax 
   \dr@pmilestone{\thismil@stone}{}%
@@ -187,9 +199,11 @@
   \fi
   \trace{m}{Style stack now: \mcstack}%
   \upd@teMsPrefix
+  \cl@singhooks{after}{\thismil@stone}\the\afterh@@ks
   \let\attr@b\empty\let\attrid\empty
 }
 \def\st@ndalonemilestone{% FIXME:Potentially some kind of hook? Or use this as an image anchor?
+  \cl@singhooks{after}{\thismil@stone}\the\afterh@@ks
 }%
 \def\upd@teMsPrefix{%Build a prefix based on all currently-in-force milestones.
   \trace{m}{upd@teMsPrefix}%
@@ -201,7 +215,7 @@
 
 \x@\def\csname d@code-m\endcsname{%Modify contents of \tmp to only include bits of the stack value of use for styles.
   \x@\pars@msid \tmp;;;\E
-  \edef\tmp{\MStyp@-\ifx\k@yv@al\empty s\else\k@yv@al\fi}%
+  \edef\tmp{\MStyp@\ifx\k@yv@al\empty\else-\k@yv@al\fi}%
 }
 \def\mil@st@necheck#1+#2\E{%The milestone has a key value and possibly an ID field. Ignore the id for building the prefix
   \edef\MSt@mp{#1}%

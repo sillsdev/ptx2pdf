@@ -69,7 +69,7 @@
 % For each property that affects formatting, define a macro to store the value
 % of this field, these will be accessed via getp@ram.
 % Constructs a macro name \<marker>:<parameter> to hold the value
-\def \Endmarker      #1\relax{\defp@ram{endmarker}{#1}} % endmarker is not currently checked
+\def \Endmarker      #1\relax{\defp@ram{endmarker}{#1}} % endmarker is not currently checked except for milestones
 \def \TextType       #1\relax{\lowercase{\defp@ram{type}{#1}}}
 \let \Texttype\TextType
 \def \TextProperties #1\relax{\lowercase{\defp@ram{properties}{#1}}}
@@ -283,7 +283,16 @@
 \catcode`+=\pl@scatcode
 \def\defn@testyle#1{\x@\def\csname#1\endcsname{\n@testyle{#1}}\m@ken@tecl@ss{#1}}
 %Make a milestone marker if there isn't a character style with the same prefix
-\def\defmst@nestyle#1-#2\E{\x@\let\x@\tmp\csname #1\endcsname\ifx\tmp\relax\x@\def\csname#1\endcsname{\mst@nestyle{#1}}\fi} 
+\def\defmst@nestyle#1\E{\x@\let\x@\tmp\csname #1\endcsname
+  \ifx\tmp\relax
+    \getp@r@m{endmarker}{\m@rker}%
+    \ifx\p@ram\relax
+      \x@\def\csname#1\endcsname{\def\milestoneOp{}\mst@nestyle{#1}}%
+    \else
+      \x@\def\csname#1\endcsname{\def\milestoneOp{s}\mst@nestyle{#1}}%
+      \x@\def\csname\p@ram\endcsname{\def\milestoneOp{e}\mst@nestyle{#1}}%
+    \fi
+  \fi} 
 %-csty_makestyle
 
 %+csty_sethook
@@ -547,10 +556,10 @@
 %+csty_fndigits
 \def\m@kedigitsletters{\catcode`0=\el@ven \catcode`1=\el@ven \catcode`2=\el@ven \catcode`3=\el@ven
  \catcode`4=\el@ven \catcode`5=\el@ven \catcode`6=\el@ven \catcode`7=\el@ven
- \catcode`8=\el@ven \catcode`9=\el@ven \relax}
+ \catcode`8=\el@ven \catcode`9=\el@ven \catcode`-=\el@ven \relax}
 \def\m@kedigitsother{\catcode`0=\tw@lve \catcode`1=\tw@lve \catcode`2=\tw@lve \catcode`3=\tw@lve
  \catcode`4=\tw@lve \catcode`5=\tw@lve \catcode`6=\tw@lve \catcode`7=\tw@lve
- \catcode`8=\tw@lve \catcode`9=\tw@lve \relax}
+ \catcode`8=\tw@lve \catcode`9=\tw@lve \catcode`-=\tw@lve \relax}
 \def\el@ven{11}
 \def\tw@lve{12}
 %-csty_fndigits

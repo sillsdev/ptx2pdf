@@ -32,7 +32,6 @@
 
 
 
-\def\@ttrSlash#1\*{\xdef\attrib@rgs{#1}\message{Attr:\attrib@rgs}\in@ttribtrue\*}
 %\tracingall=1
 
 \catcode`\|=\active
@@ -77,7 +76,6 @@
   \edef\attrid{\milestoneOp id}% id / sid / eid, depending.
   \catcode`\|=\active
   \ifmst@nestyle
-  %\iffalse
     \use@ttrSlash
   \else
     \use@ttrGrab
@@ -149,7 +147,7 @@
 \def\default@ttrkey{} % What unnamed attributes get saved 
 \def\thisdefault@ttrkey{} % What do unnamed attributes get saved as?
 \def\relaxval{\relax}
-
+\def\milestoneJoinChar{ } % While replacing ' ' with '_' is  nice for styling things like \qt-s |the crowd\*, this then breaks equivalence with ... who="The crowd"
 \def\save@ttribute#1="#2"=#3\E{%
   \tracingassigns=1
   \lowercase{\def\attr@key{#1}}\def\attr@val{#2}%
@@ -159,8 +157,14 @@
     \fi
     \get@ttribute{\thisdefault@ttrkey}%
     \if\attr@b\relax
-        \edef\attr@val{#1}\else
-    \edef\attr@val{\attr@b_#1}\fi % Join words with _ instead of space.
+      \edef\attr@val{#1}%
+    \else
+      \ifmst@nestyle
+	\edef\attr@val{\attr@b\milestoneJoinChar#1}% Join words with milestoneJoinChar instead of space.
+      \else
+	\edef\attr@val{\attr@b\space #1}% Join words with a space.
+      \fi 
+    \fi
     \trace{A}{Got unnamed(\thisdefault@ttrkey) attribute #1 -> \attr@val}%
     \set@ttribute{\thisdefault@ttrkey}{\attr@val}%
   \else
