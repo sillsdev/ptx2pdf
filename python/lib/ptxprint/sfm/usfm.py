@@ -345,7 +345,7 @@ class parser(sfm.parser):
 
     def _ChapterNumber_(self, chapter_marker):
         tok = next(self._tokens)
-        chapter = self.numeric_re.match(tok)
+        chapter = self.numeric_re.match(str(tok))
         if not chapter:
             self._error(ErrorLevel.Content,
                         'missing chapter number after \\c',
@@ -354,7 +354,7 @@ class parser(sfm.parser):
         else:
             chapter_marker.args = [str(tok[chapter.start(1):chapter.end(1)])]
             tok = tok[chapter.end():]
-        if tok and not self.sep_re.match(tok):
+        if tok and not self.sep_re.match(str(tok)):
             self._error(ErrorLevel.Content,
                         'missing space after chapter number \'{chapter}\'',
                         tok, chapter=chapter_marker.args[0])
@@ -378,7 +378,7 @@ class parser(sfm.parser):
         '''
         '''
         tok = next(self._tokens)
-        verse = self.verse_re.match(tok)
+        verse = self.verse_re.match(str(tok))
         if not verse:
             self._error(ErrorLevel.Content,
                         'missing verse number after \\v',
@@ -388,7 +388,7 @@ class parser(sfm.parser):
             verse_marker.args = [str(tok[verse.start(1):verse.end(1)])]
             tok = tok[verse.end():]
 
-        if not self.sep_re.match(tok):
+        if not self.sep_re.match(str(tok)):
             self._error(ErrorLevel.Content,
                         'missing space after verse number \'{verse}\'',
                         tok, verse=verse_marker.args[0])
@@ -418,7 +418,7 @@ class parser(sfm.parser):
             return self._default_(parent)
 
         tok = next(self._tokens)
-        caller = self.caller_re.match(tok)
+        caller = self.caller_re.match(str(tok))
         if not caller:
             self._error(ErrorLevel.Content,
                         'missing caller parameter after \\{token.name}',
@@ -428,7 +428,7 @@ class parser(sfm.parser):
             parent.args = [str(tok[caller.start(1):caller.end(1)])]
             tok = tok[caller.end():]
 
-        if not self.sep_re.match(tok):
+        if not self.sep_re.match(str(tok)):
             self._error(ErrorLevel.Content,
                         'missing space after caller parameter \'{caller}\'',
                         tok, caller=parent.args[0])
