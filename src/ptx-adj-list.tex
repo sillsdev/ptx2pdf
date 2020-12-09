@@ -94,19 +94,32 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \def\ch@ckadjustments{% check if the current reference is the place for the next adjustment
- \edef\c@rref{\id@@@\ifdiglot\ifdiglotL L\else R\fi\fi\ch@pter.\v@rse}%
- \ifx\c@rref\pr@vref \if@dvance@dj \global\advance\curr@djpar by 1 \fi
+ \settrig@refcv
+ \ifdiglot
+   \let\adjc@rref\dc@rref
+   \edef\prevrefn@me{pr@vref\ifdiglotL L\else R\fi}%
+   \x@\let\x@\pr@vref\csname\prevrefn@me\endcsname
+ \else
+   \let\adjc@rref\c@rref
+ \fi
+ \ifx\adjc@rref\pr@vref \if@dvance@dj \global\advance\curr@djpar by 1 \fi
  \else \global\curr@djpar=1 \fi
- \trace{b}{BALANCE paradj: ref=\c@rref: para=\the\curr@djpar: baselineskip=\the\baselineskip}%
- \trace{j}{checkadjustments: curref=\meaning\c@rref , prevref=\pr@vref , adjref=\meaning\@djref , curradjpar=\the\curr@djpar , adjparindex=\the\@djparindex}%
- \global\let\pr@vref=\c@rref
- \ifx\c@rref\@djref%
- \trace{j}{(Testing \c@rref\space against \@djref,  par \the\curr@djpar\space against \the\@djparindex)}%
+ \trace{b}{BALANCE paradj: ref=\adjc@rref: para=\the\curr@djpar: baselineskip=\the\baselineskip}%
+ \trace{j}{checkadjustments: curref=\meaning\adjc@rref , prevref=\meaning\pr@vref , adjref=\meaning\@djref , curradjpar=\the\curr@djpar , adjparindex=\the\@djparindex}%
+ \ifdiglot
+   \x@\global\x@\let\csname\prevrefn@me\endcsname=\adjc@rref
+ \else
+   \global\let\pr@vref=\adjc@rref
+ \fi
+ \ifx\adjc@rref\@djref%
+ \trace{j}{(Testing \adjc@rref\space against \@djref,  par \the\curr@djpar\space against \the\@djparindex)}%
    \ifnum\@djparindex=\curr@djpar \do@dj \fi
  \fi}
 \newif\if@dvance@dj \@dvance@djtrue
 \newcount\curr@djpar
 \global\let\pr@vref=\empty
+\global\let\pr@vrefL=\empty
+\global\let\pr@vrefR=\empty
 
 \addtoversehooks{\@dvance@djfalse\ch@ckadjustments} % add this to the hooks executed at each verse
 \addtoeveryparhooks{\@dvance@djtrue\ch@ckadjustments} % and at every new par

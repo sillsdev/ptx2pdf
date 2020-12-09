@@ -53,7 +53,7 @@
 
 \def\parsep@cline #1 #2.#3 #4\endpicline{%
   \uppercase{\def\piclstb@@kref{#1}}%
-  \xdef\p@cref{\piclstb@@kref#2.#3}\gdef\p@cspec{#4}%
+  \xdef\p@cref{\piclstb@@kref#2.#3-preverse}\gdef\p@cspec{#4}%Append -preverse because inline pics should be before the verse number
   \ifpicslurp
     \ifx\l@stpicref\p@cref\else\p@clistsuff=1\fi
     \loop
@@ -65,10 +65,10 @@
         %\message{picid:\p@cid already exists}%
         \advance\p@clistsuff by 1\temptrue
       \fi
-      \iftemp\repeat
+    \iftemp\repeat
     \x@\global\x@\let\csname \p@cid\endcsname\p@cspec
     % Track defined pictures, so we can make a list of unused ones for error reporting
-    \edef\humanp@cref{\p@cref\ifnum\p@clistsuff>1 (\the\p@clistsuff)\fi, }%
+    \edef\humanp@cref{\piclstb@@kref\space #2.#3\ifnum\p@clistsuff>1 (\the\p@clistsuff)\fi, }%
     %\tracingassigns=1
     \x@\global\x@\let\csname used\p@cid\endcsname\humanp@cref
     \gdef\picchecklist{\csname used\p@cid\endcsname\picchecklist}%
@@ -152,13 +152,11 @@
 }
 
 \def\ch@ckpiclist{%
-  \edef\c@rref{\id@@@\ch@pter.\v@rse}%
   \ifpicslurp
     \let\p@cref=\c@rref
     \p@clistsuff=1
     \ch@ckN@xtPicid
     \ifdiglot
-      \edef\dc@rref{\id@@@\ifdiglotL L\else R\fi\ch@pter.\v@rse}%
       \let\p@cref=\dc@rref
       \p@clistsuff=1
       \ch@ckN@xtPicid
@@ -184,7 +182,8 @@
     \fi
   \fi
 }
-\addtopreversehooks{\ch@ckpiclist}                                              %(1)
+
+\addtotrigg@rchecks{\ch@ckpiclist}                                              %(1)
 \addtoendhooks{\endpiclistch@ck}
 %-cpic_check
 
