@@ -256,6 +256,7 @@
      \ifnum\prevgraf=1 \nobreak \else \dr@ppednumberfalse \fi
    \fi
  \fi
+ \mcpop
 }
 
 \def\p@rstyle#1{\trace{s}{p@rstyle: #1}%
@@ -285,6 +286,12 @@
   \cl@singhooks{after}{\m@rker}%
   \the\afterh@@ks
   \gdef\m@rker{#1}% remember the new style name
+  \let\tmp\empty
+  %FIXME: Make par marker sink below any milestones if there's no paragraph style above the hightest barrier 
+  %\def\d@##1+##2\E{\ifcsname isb@rrier-##1\endcsname\let\d@=\cstackrelax\else\edef\tmp{##1}\fi}\mctopnoms
+  %\ifx\tmp\empty
+  %  Urm.... help
+  %\fi
   \mcpush{P+#1}%
   \op@ninghooks{before}{\m@rker}%
 %-cpar_parstyle_after

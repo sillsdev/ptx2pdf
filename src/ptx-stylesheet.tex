@@ -628,7 +628,7 @@
 \gdef\mcstack{+,} 
 \let\mcstack@mpty\mcstack
 \def\cstackempty{,}
-\def\mcpopsimple{\traceNum{s}{pop stack: \mcstack}\xdef\mcstack{\x@\cstackpop\mcstack\E}\ifx\mcstack\empty\xdef\mcstack{+,}\fi}
+\def\mcpopsimple{\traceNum{s}{popsimple stack: \mcstack}\xdef\mcstack{\x@\cstackpop\mcstack\E}\ifx\mcstack\empty\xdef\mcstack{+,}\fi}
 \def\mcpush#1{\traceNum{s}{push #1 onto \mcstack}\xdef\mcstack{#1,\mcstack}}
 \def\mcup{\x@\cstackup\mcstack\E}
 \def\mcdown{\x@\cstackdown\mcstack\E}
@@ -636,7 +636,7 @@
 \def\mctopnoms{\let\d@a=\d@\gdef\d@##1+##2\E{\if ##1m\else\d@a ##1+##2\E\let\d@=\cstackrelax\fi}\mcdown}
 \def\mcstackdown#1,#2\E{\let\n@x=\mcstackdown\edef\tmp{#1}%
     \ifx\tmp\empty\let\n@x=\cstackrelax\else\d@b #1\E\iftemp\xdef\mcstack{\msstack #2}\let\n@x=\cstackrelax\fi\fi\n@x #2\E}
-\def\mcpop{\traceNum{s}{pop stack: \mcstack}\global\tempfalse\xdef\msstack{}%
+\def\mcpop{\traceNum{s}{mcpop stack: \mcstack}\global\tempfalse\xdef\msstack{}%
     \def\d@b##1+##2\E{\if ##1m\xdef\msstack{##1+##2,\msstack}\else\global\temptrue\fi}%
     \x@\mcstackdown\mcstack\E\ifx\mcstack\empty\xdef\mcstack{+,}\fi}
 
@@ -682,11 +682,19 @@
 \mcp@pCont{tc*}{C}% Ending table cell pops C (\char)
 \mcp@pCont{tc*}{c}% Ending table cell pops C (\char)
 
+%No point going below these for font styling, etc.
+\def\mcb@rrier#1{\x@\let\csname isb@rrier-#1\endcsname\empty}
+\mcb@rrier{P}
+\mcb@rrier{N}
+\mcb@rrier{b}
 
+\newif\ifp@pping
+\p@ppingfalse
 \def\itp@psstore{}
 \def\endit@c{\endch@rstyle*}
 \def\endit@C{\endch@rstyle*}
 \def\whileitp@ps#1+#2\E{% This almost does the same as \end@llcharstyle, but uses the new mechanism
+  \p@ppingtrue
   \trace{s}{whileitp@ps:\mcch@cking:#1+#2 (\mcstack)}%
   \x@\let\x@\tmp\csname\mct@stname{\mcch@cking}{#1}\endcsname
   \ifx\tmp\relax %No specific style pop, is there a generic?
@@ -694,22 +702,37 @@
   \fi
   \trace{s}{whileitp@ps result:\tmp}%
   \if S\tmp\relax % Store it?
-     \edef\itp@psstore{#1+#2,\itp@psstore}
+     \edef\itp@psstore{#1+#2,\itp@psstore}%
+     \mcpop
   \else
     \if Y\tmp\relax  %end it and pop it
-      \csname endit@#1\endcsname
-      \mcpop
+      \ifcsname endit@#1\endcsname
+        \trace{s}{endit@#1}% endit@ macros are assumed(requrired) to call mcpop 
+      	\csname endit@#1\endcsname
+      \else 
+	\mcpop
+      \fi
     \else
-       \let\d@=\cstackrelax %stop here
-       \if P\tmp\relax % ....but end it and pop first
-         \csname endit@#1\endcsname
-         \mcpop
+      \let\d@=\cstackrelax %stop here
+      \if P\tmp\relax % ....but end it and pop first
+	 \ifcsname endit@#1\endcsname
+	   \trace{s}{endit@#1}% endit@ macros are assumed(requrired) to call mcpop 
+	   \csname endit@#1\endcsname
+	 \else 
+	   \mcpop
+	 \fi
        \fi
      \fi
-  \fi}
+  \fi
+  \p@ppingfalse
+}
 \def\end@llpoppedstyles#1{\let\itp@psstore\empty\edef\mcch@cking{#1}\let\d@=\whileitp@ps\mcdown\ifx\itp@psstore\empty\else\edef\mcstack{\itp@psstore\mcstack}\fi}
 
-
+\def\s@tstyst@k{%Get a +(prefixed and)separated list of styles that ought to uniquely define a font/etc.
+  %preset styst@k to \relax to skip top marker. List stops at a barrier (e.g. a par/note/sidebar)
+  \def\d@##1+##2\E{\ifcsname isb@rrier-##1\endcsname\let\d@=\cstackrelax\fi%stop here?
+    \edef\tmp{##2}\csname d@code-##1\endcsname\ifx\tmp\empty\else\ifx\styst@k\relax\def\styst@k{}\else\edef\styst@k{\styst@k+\tmp}\fi\fi}\mcdown
+}
 %-csty_mstack
 
 %+csty_stylesheet

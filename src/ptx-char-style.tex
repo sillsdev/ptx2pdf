@@ -201,13 +201,17 @@
      \egroup % end the style's group, so formatting reverts             %(2)
      \the\afterh@@ks%\global\afterh@@ks{} % execute all the <after>-hook, if there was one
     \fi
+   \trace{s}{ending charstyle}%
    \mcpop
-   \def\thiswh@tvrstyle{p}%Default value just in case
    \trace{s}{end char style, stack now: \mcstack}%
+   \ifp@pping\else\setwh@tvrstyle\fi
+  \fi
+ }
+}
+\def\setwh@tvrstyle{%
+   \def\thiswh@tvrstyle{p}%Default value just in case
    \def\d@##1+##2\E{\edef\tmp{##2}\csname d@code-##1\endcsname\let\thiswh@tvrstyle\tmp}\mctop
    \s@tfont{\thiswh@tvrstyle}% set up font attributes
-   \fi
- }
 }
 %-cchar_endcharstyle
 %+cchar_endallcharstyles
@@ -244,14 +248,19 @@
 \def\g@tfontname#1{%
  \trace{F}{Font request for (\c@tegory)(\mspr@fix)#1}%
  \ifdiglot\ifdiglotL\def\f@ntstyle{#1L}\def\sid@{L}\else\def\f@ntstyle{#1R}\def\sid@{R}\fi\else\def\f@ntstyle{#1}\def\sid@{-}\fi%
- \ifx\mspr@fix\empty\else\edef\f@ntstyle{\mspr@fix\f@ntstyle}\fi % Milestones have different styles
+ \ifx\mspr@fix\empty\else\edef\f@ntstyle{\mspr@fix\f@ntstyle}\fi % Milestones now on stack
  \ifx\c@tegory\empty\else\s@tc@tpr@fix\edef\f@ntstyle{\c@tprefix\f@ntstyle}\fi % Categories have different styles
  \let\d@@=\d@
+ \let\styst@k=\relax
  \def\d@##1+##2\E{\edef\tmp{#1}\edef\tmpa{##2}\ifx\tmp\tmpa\getmcfonts@ze\else
 			\csname d@code-##1\endcsname
                         \getp@ram{fontsize}{\tmp}\ifx\p@ram\relax\xdef\c@rrfontsize{12}%
                         \else\global\let\c@rrfontsize=\p@ram\fi\fi}%
- \mctop\let\d@=\d@@\edef\f@ntstyle{\f@ntstyle-\c@rrfontsize}}
+ \mctop
+ \s@tstyst@k
+ \let\d@=\d@@
+ \ifx\styst@k\relax\let\styst@k\empty\fi
+ \edef\f@ntstyle{\f@ntstyle-\c@rrfontsize\styst@k}}
 %-cchar_getfontname
 
 %+cchar_setfont
