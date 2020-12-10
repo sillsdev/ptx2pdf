@@ -46,11 +46,15 @@
 
 \def\runtrigg@rscv{%after the verse number
   \p@rnum=1
-  \settrig@refcv\the\trigg@rchecks
+  \settrig@refcv
+  \trace{T}{running triggers \c@rref}%
+  \the\trigg@rchecks
 }
 \def\runtrigg@rsprecv{% before the verse number
   \p@rnum=0
-  \settrig@refprecv\the\trigg@rchecks
+  \settrig@refprecv
+  \trace{T}{running triggers \c@rref}%
+  \the\trigg@rchecks
 }
 
 \def\runtrigg@rspar{%Paragraph trigger
@@ -63,6 +67,7 @@
   \ifdiglot
     \xdef\dc@rref{\odc@rref-\the\p@rnum}%
   \fi
+  \trace{T}{running triggers \c@rref}%
   \the\trigg@rchecks
   \let\c@rref=\oc@rref\let\dc@rref=\odc@rref
 }
@@ -70,6 +75,7 @@
 \def\runtrigg@rs#1{%Generic something trigger (milestone, or...)
   \def\c@rref{#1}%
   \ifdiglot\def\dc@rref{#1\ifdiglotL L\else R\fi}%
+  \trace{T}{running triggers \c@rref}%
   \the\trigg@rchecks
 }
 \def\settrign@me#1{\edef\trign@me{trigger-#1}}
