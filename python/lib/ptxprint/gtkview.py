@@ -1699,7 +1699,7 @@ class GtkViewModel(ViewModel):
 
     def onEditPreModsTeX(self, btn):
         cfgname = self.configName()
-        self._editProcFile("ptxprint-mods.tex", "cfg",
+        self._editProcFile("ptxprint-premods.tex", "cfg",
             intro=_(_("""% This is the preprocessing .tex file specific for the {} project used by PTXprint.
 % Saved Configuration name: {}
 """).format(self.prjid, cfgname)))

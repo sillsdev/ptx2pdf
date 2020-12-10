@@ -11600,7 +11600,10 @@ Custom Script at:</property>
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">True</property>
                                                     <property name="receives_default">False</property>
-                                                    <property name="tooltip_text" translatable="yes">Execute processing script before running any printdraftchanges, canonicalisation or local changes.</property>
+                                                    <property name="tooltip_text" translatable="yes">Execute processing script BEFORE running 
+any printdraftchanges, canonicalisation 
+(i.e. Auto-Correct USFM) or local changes
+which are all specified below.</property>
                                                     <property name="halign">start</property>
                                                     <property name="active">True</property>
                                                     <property name="draw_indicator">True</property>
@@ -11618,7 +11621,10 @@ Custom Script at:</property>
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">True</property>
                                                     <property name="receives_default">False</property>
-                                                    <property name="tooltip_text" translatable="yes">Execute processing script before running any printdraftchanges, canonicalisation or local changes.</property>
+                                                    <property name="tooltip_text" translatable="yes">Execute processing script AFTER running 
+any printdraftchanges, canonicalisation 
+(i.e. Auto-Correct USFM) or local changes
+which are all specified below.</property>
                                                     <property name="halign">start</property>
                                                     <property name="active">True</property>
                                                     <property name="draw_indicator">True</property>
