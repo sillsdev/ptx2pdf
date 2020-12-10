@@ -118,11 +118,7 @@ _diglot = {
 "diglot/fnfontsize" :       "notes/fnfontsize",
 "diglot/fnlinespacing" :    "notes/fnlinespacing",
 "diglot/includexrefs" :     "notes/includexrefs",
-"diglot/ifblendfnxr" :      "notes/ifblendfnxr",
-"diglotfancy/versedecorator":       "fancy/versedecorator",
-"diglotfancy/versedecoratorpdf":    "fancy/versedecoratorpdf",
-"diglotfancy/versedecoratorshift":  "fancy/versedecoratorshift",
-"diglotfancy/versedecoratorscale":  "fancy/versedecoratorscale"
+"diglot/ifblendfnxr" :      "notes/ifblendfnxr"
 }
 
 _joblock = None
@@ -405,7 +401,6 @@ class RunJob:
         for k,v in _diglot.items():
             info[k]=diginfo[v]
         info["document/diglotcfgrpath"] = os.path.relpath(diginfo.printer.configPath(diginfo.printer.configName()), docdir).replace("\\","/")
-        info["_isDiglot"] = True
         texfiles += self.sharedjob(jobs, info, logbuffer=logbuffer, extra="-diglot")
         return texfiles
 

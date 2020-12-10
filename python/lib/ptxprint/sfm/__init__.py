@@ -147,7 +147,7 @@ class Element(list):
         return sep.join([marker, body])
 
 
-class Text(collections.UserString):
+class Text(str):
     '''
     An extended string type that tracks position and
     parent/child relationship.
@@ -194,11 +194,10 @@ class Text(collections.UserString):
     >>> t, t.pos
     (Text('a few short words'), Position(line=1, col=1))
     '''
-    #def __new__(cls, content, pos=Position(1, 1), parent=None):
-    #    return super().__new__(cls, content)
+    def __new__(cls, content, pos=Position(1, 1), parent=None):
+        return super().__new__(cls, content)
 
     def __init__(self, content, pos=Position(1, 1), parent=None):
-        super().__init__(str(content))
         self.pos = pos
         self.parent = parent
 
@@ -206,9 +205,7 @@ class Text(collections.UserString):
     def concat(iterable):
         i = iter(iterable)
         h = next(i)
-        l = [str(h)] + [str(s) for s in i]
-        return Text(''.join(l), h.pos, h.parent)
-        #return Text(''.join(chain([str(h)], i)), h.pos, h.parent)
+        return Text(''.join(chain([h], i)), h.pos, h.parent)
 
     def split(self, sep=None, maxsplit=-1):
         sep = sep or ' '
@@ -624,7 +621,7 @@ class parser(collections.Iterable):
                                    for istag, g in gs)
 
     def __get_tag(self, parent: Element, tok: str):
-        if tok[0] != '\\' or self._escaped_tag.match(str(tok)):
+        if tok[0] != '\\' or self._escaped_tag.match(tok):
             return None
 
         tok = tok[1:]
@@ -785,7 +782,7 @@ def sreduce(elementf, textf, trees, initial):
     12
     """
     def _g(a, e):
-        if isinstance(e, (str, Text)):
+        if isinstance(e, str):
             return textf(e, a)
         return elementf(e, a, reduce(_g, e, initial))
     return reduce(_g, trees, initial)
@@ -953,7 +950,7 @@ def generate(doc):
                if e.name else ''
 
     def gt(t, a):
-        return a + str(t)
+        return a + t
 
     return sreduce(ge, gt, doc, '')
 

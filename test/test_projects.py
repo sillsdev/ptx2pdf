@@ -102,9 +102,7 @@ XdvInfo = namedtuple("XdvInfo", ["projectsdir", "project", "config", "stddir", "
 @pytest.fixture(scope="class")
 def xdv(request, projectsdir, project, config, starttime):
     (stddir, filename, testsdir, ptxcmd) = make_paths(projectsdir, project, config, xdv=True)
-    pdftpath = os.path.join(projectsdir, project, "PrintDraft")
-    os.makedirs(pdftpath, exist_ok=True)
-    filebasepath = os.path.join(pdftpath, "ptxprint-"+filename)
+    filebasepath = os.path.join(projectsdir, project, "PrintDraft", "ptxprint-"+filename)
     lockfile = filebasepath+".lock"
     with FileLock(lockfile):
         try:

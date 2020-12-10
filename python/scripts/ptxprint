@@ -48,9 +48,7 @@ if args.logging and getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
     sys.stderr = errfile
 
 if args.paratext is None:
-    args.paratext = os.getenv("PTXPRINT_PROJECTSDIR", None)
-    if args.paratext is None:
-        args.paratext = ptxprint.runner.pt_settings
+    args.paratext = ptxprint.runner.pt_settings
 
 if not args.paratext:
     print("No Paratext Settings directory found")

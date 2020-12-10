@@ -69,7 +69,6 @@ ModelMap = {
     "project/selectscript":     ("btn_selectScript", lambda w,v: w.customScript.as_posix() if w.customScript is not None else ""),
     "project/usechangesfile":   ("c_usePrintDraftChanges", lambda w,v :"true" if v else "false"),
     "project/ifusemodstex":     ("c_useModsTex", lambda w,v: "" if v else "%"),
-    "project/ifusepremodstex":  ("c_usePreModsTex", lambda w,v: "" if v else "%"),
     "project/ifusecustomsty":   ("c_useCustomSty", lambda w,v: "" if v else "%"),
     "project/ifusemodssty":     ("c_useModsSty", lambda w,v: "" if v else "%"),
     "project/ifstarthalfpage":  ("c_startOnHalfPage", lambda w,v :"true" if v else "false"),
@@ -111,8 +110,6 @@ ModelMap = {
     "fancy/sectionheaderpdf":   ("btn_selectSectionHeaderPDF", lambda w,v: w.sectionheader.as_posix() \
                                             if (w.sectionheader is not None and w.sectionheader != 'None') \
                                             else get("/ptxprintlibpath")+"/A5 section head border.pdf"),
-    "fancy/sectionheadershift": ("s_inclSectionShift", lambda w,v: float(v or "0")),
-    "fancy/sectionheaderscale": ("s_inclSectionScale", lambda w,v: int(float(v or "1.0")*1000)),
     "fancy/endofbook":          ("c_inclEndOfBook", lambda w,v: "" if v else "%"),
     "fancy/endofbookpdf":       ("btn_selectEndOfBookPDF", lambda w,v: w.endofbook.as_posix() \
                                             if (w.endofbook is not None and w.endofbook != 'None') \
@@ -121,14 +118,11 @@ ModelMap = {
     "fancy/versedecoratorpdf":  ("btn_selectVerseDecorator", lambda w,v: w.versedecorator.as_posix() \
                                             if (w.versedecorator is not None and w.versedecorator != 'None') \
                                             else get("/ptxprintlibpath")+"/Verse number star.pdf"),
-    "fancy/versedecoratorshift":   ("s_verseDecoratorShift", lambda w,v: float(v or "0")),
-    "fancy/versedecoratorscale":   ("s_verseDecoratorScale", lambda w,v: int(float(v or "1.0")*1000)),
 
     "paragraph/varlinespacing":    ("c_variableLineSpacing", lambda w,v: "" if v else "%"),
     "paragraph/useglyphmetrics":   ("c_variableLineSpacing", lambda w,v: "%" if v else ""),
     "paragraph/linespacing":       ("s_linespacing", lambda w,v: "{:.3f}".format(float(v)) or "15.000"),
-    "paragraph/linespacebase":  ("c_AdvCompatLineSpacing", lambda w,v: 14 if v else 12),
-    # "paragraph/linespacingfactor": ("s_linespacing", lambda w,v: "{:.3f}".format(float(v or "15") / 12)),
+    # "paragraph/linespacingfactor": ("s_linespacing", lambda w,v: "{:.3f}".format(float(v or "15") / 14)),
     "paragraph/linemin":           ("s_linespacingmin", lambda w,v: "minus {:.3f}pt".format(float(w.get("s_linespacing")) - float(v)) \
                                                      if float(v) < float(w.get("s_linespacing")) else ""),
     "paragraph/linemax":        ("s_linespacingmax", lambda w,v: "plus {:.3f}pt".format(float(v) - float(w.get("s_linespacing"))) \
@@ -178,9 +172,8 @@ ModelMap = {
     "document/iffigcrop":       ("c_cropborders", None),
     "document/iffigplaceholders": ("c_figplaceholders", lambda w,v: "true" if v else "false"),
     "document/iffighiderefs":   ("c_fighiderefs", None),
-    # "document/usesmallpics":    ("c_useLowResPics", lambda w,v :"" if v else "%"),
-    # "document/uselargefigs":    ("c_useHighResPics", lambda w,v :"" if v else "%"),
-    "document/picresolution":   ("r_pictureRes", None),
+    "document/usesmallpics":    ("c_useLowResPics", lambda w,v :"" if v else "%"),
+    "document/uselargefigs":    ("c_useHighResPics", lambda w,v :"" if v else "%"),
     "document/customfiglocn":   ("c_useCustomFolder", lambda w,v :"" if v else "%"),
     "document/exclusivefolder": ("c_exclusiveFiguresFolder", None),
     "document/customfigfolder": ("btn_selectFigureFolder", lambda w,v: w.customFigFolder.as_posix() if w.customFigFolder is not None else ""),
@@ -430,14 +423,9 @@ class TexModel:
         if not os.path.exists(fpath):
             fpath = j(rcpath, "ptxprint-mods.tex")
         self.dict['/modspath'] = rel(fpath, docdir).replace("\\","/")
-        fpath = j(cpath, "ptxprint-premods.tex")
-        if not os.path.exists(fpath):
-            fpath = j(rcpath, "ptxprint-premods.tex")
-        self.dict['/premodspath'] = rel(fpath, docdir).replace("\\","/")
         if "document/diglotcfgrpath" not in self.dict:
             self.dict["document/diglotcfgrpath"] = ""
-        self.dict['paragraph/linespacingfactor'] = "{:.3f}".format(float(self.dict['paragraph/linespacing']) \
-                    / self.dict["paragraph/linespacebase"] / float(self.dict['paper/fontfactor']))
+        self.dict['paragraph/linespacingfactor'] = "{:.3f}".format(float(self.dict['paragraph/linespacing']) / 14 / float(self.dict['paper/fontfactor']))
         self.dict['paragraph/ifhavehyphenate'] = "" if os.path.exists(os.path.join(self.printer.configPath(""), \
                                                        "hyphen-"+self.dict["project/id"]+".tex")) else "%"
         # forward cleanup. If ask for ptxprint-mods.tex but don't have it, copy PrintDraft-mods.tex

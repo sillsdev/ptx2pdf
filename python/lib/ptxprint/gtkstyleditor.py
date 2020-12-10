@@ -1,6 +1,5 @@
 from gi.repository import Gtk, Pango
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal
-from ptxprint.sfm.style import Marker, CaselessStr
 from ptxprint.styleditor import StyleEditor
 from ptxprint.utils import _
 import re
@@ -17,17 +16,17 @@ stylemap = {
     'Italic':       ('c_styFaceItalic',     'c_styFaceItalic',  '-', lambda v: "" if v else "-", None),
     'SmallCap':     ('c_stySmallCap',       'c_stySmallCap',    '-', lambda v: "" if v else "-", None),
     'Superscript':  ('c_styFaceSuperscript', 'c_styFaceSuperscript', '-', lambda v: "" if v else "-", None),
-    'Raise':        ('s_styRaise',          'l_styRaise',       '0', None, lambda v: re.sub(r"(?<=\d)\D+$", "", v)),
+    'Raise':        ('s_styRaise',          'l_styRaise',       '0', lambda v: str(v)+"ex", lambda v: re.sub(r"(?<=\d)\D+$", "", v)),
     'Justification': ('fcb_styJustification', 'l_styJustification', 'Justified', lambda v: "" if v == "Justified" else v, None),
     'FirstLineIndent': ('s_styFirstLineIndent', 'l_styFirstLineIndent', '0', None, None),
     'LeftMargin':   ('s_styLeftMargin',     'l_styLeftMargin',  '0', None, None),
     'RightMargin':  ('s_styRightMargin',    'l_styRightMargin', '0', None, None),
-    'LineSpacing':  ('s_styLineSpacing',    'l_styLineSpacing', '1', None, None),
+    'LineSpacing':  ('s_styLineSpacing',    'l_styLineSpacing', '0', None, None),
     'SpaceBefore':  ('s_stySpaceBefore',    'l_stySpaceBefore', '0', None, None),
     'SpaceAfter':   ('s_stySpaceAfter',     'l_stySpaceAfter',  '0', None, None),
-    'CallerStyle':  ('t_styCallerStyle',  'l_styCallerStyle', '', None, None),
-    'NoteCallerStyle': ('t_styNoteCallerStyle', 'l_styNoteCallerStyle', '', None, None),
-    'NoteBlendInto': ('t_NoteBlendInto',  'l_NoteBlendInto',  '', None, None),
+    'CallerStyle':  ('fcb_styCallerStyle',  'l_styCallerStyle', '', None, None),
+    'NoteCallerStyle': ('fcb_styNoteCallerStyle', 'l_styNoteCallerStyle', '', None, None),
+    'NoteBlendInto': ('fcb_NoteBlendInto',  'l_NoteBlendInto',  '', None, None),
     'CallerRaise':  ('s_styCallerRaise',    'l_styCallerRaise', '0', None, None),
     'NoteCallerRaise': ('s_styNoteCallerRaise', 'l_styNoteCallerRaise', '0', None, None),
     '_fontsize':    ('c_styFontScale',      'c_styFontScale',   False, lambda v: "FontScale" if v else "FontSize", None),
@@ -280,8 +279,7 @@ class StyleEditorView(StyleEditor):
         oldval = None
         if 'LineSpacing' not in old and 'BaseLine' not in old:
             old['LineSpacing'] = "1"
-            if 'LineSpacing' not in data and 'BaseLine' not in data:
-                data['LineSpacing'] = "1"
+            data['LineSpacing'] = "1"
         for k, v in stylemap.items():
             if k == 'Marker':
                 val = "\\" + self.marker
@@ -371,7 +369,7 @@ class StyleEditorView(StyleEditor):
             return
         data = self.sheet[self.marker]
         v = stylemap[key]
-        val = self.get(v[0], v[2])
+        val = self.get(v[0], w)
         if key == '_publishable':
             if val:
                 add, rem = "non", ""

@@ -220,7 +220,7 @@
  \fi
 }
 
-\def\shrinkdel@y#1|#2\EDLY{\trace{g}{shrink {#1}{#2}}\xdef\temp{#2}}
+\def\shrinkdel@y#1|#2\EDLY{\trace{g}{shrint {#1}{#2}}\xdef\temp{#2}}
 %-cpar_doendofthispar
 
 %
@@ -230,10 +230,6 @@
 \newif\ifhe@dingstyle
 \newif\ifnsp@cebefore
 \newif\ifJustifyPars \JustifyParstrue
-\def\intro@mbigious#1{\x@\def\csname intro@mbigious-#1\endcsname{t}}
-\def\settest@mb#1{\x@\let\x@\test@mb\csname intro@mbigious-#1\endcsname}
-\def\intro@mbigious{iex} % iex can be intro or not intro.
-
 \newdimen\lastdepth
 \def\p@rstyle#1{\trace{s}{p@rstyle: #1}%
  \ifsk@pping \egroup \fi % if we were skipping nonpublishable text, end that mode
@@ -286,11 +282,6 @@
   %
 %+cpar_parstyle_transition
   \x@\t@stintro\m@rker\relax
-  %If the marker is an (ultra-rare) type that occurs in introductions and normal text, then
-  %set the intromarker flag based on what the current state (\if@ntro) is.
-  \settest@mb{\m@rker}\ifx\test@mb\relax\else
-    \if@ntro\@ntromarkertrue\else\@ntromarkerfalse\fi 
-  \fi
   % \tr is treated as an intro marker if we're already in intro mode
   \if@tablerow\if@ntro\@ntromarkertrue\fi\fi
   \global\he@dingstylefalse
@@ -311,7 +302,7 @@
   \else
     \if@ntromarker\st@rtintro\else\st@rtbody\fi
   \fi\fi\fi                                                                     %(2)
-  \ifhe@dingstyle\trace{s}{headingstyle true}%
+  \ifhe@dingstyle\TRACE{headingstyle true}%
     \ifhe@dings\nsp@cebeforetrue\s@tbaseline{\m@rker}%In a heading again, may be different so set a new baseline
       \else
         % Headingtopspace gets removed at top of page, preserve for titles.
@@ -325,9 +316,8 @@
         \hyphenpenalty=10000 \exhyphenpenalty=10000 % don't hyphenate in headings
     \fi
     \nobreak
-  \else\trace{s}{headingstyle false}%
+  \else\TRACE{headingstyle false}%
     \ifhe@dings\endhe@dings\fi
-    \s@tbaseline{\m@rker}%
   \fi
   \getp@ram{spacebefore}{\m@rker}% output <spacebefore> for this style
   \ifx\p@ram\relax \else

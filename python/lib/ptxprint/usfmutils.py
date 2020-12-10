@@ -1,6 +1,6 @@
 from ptxprint.sfm import usfm, style
 from ptxprint import sfm
-import re, os, traceback
+import re, os
 from collections import namedtuple
 from itertools import groupby
 from functools import reduce
@@ -111,12 +111,9 @@ class UsfmCollection:
 class Usfm:
     def __init__(self, iterable, sheets):
         tag_escapes = r"[^0-9A-Za-z]"
-        try:
-            self.doc = list(usfm.parser(iterable, stylesheet=sheets,
+        self.doc = list(usfm.parser(iterable, stylesheet=sheets,
                                     canonicalise_footnotes=False,
                                     tag_escapes=tag_escapes))
-        except:
-            traceback.print_exc()
         self.cvaddorned = False
         self.tocs = []
 
@@ -236,36 +233,6 @@ class Usfm:
             return a
         return reduce(_g, chaps, [])
 
-    def iter(self, e):
-        def iterfn(el):
-            yield el
-            if isinstance(el, sfm.Element):
-                for c in el:
-                    for c1 in iterfn(c):
-                        yield c1
-        return iterfn(e)
-
-    def iterVerse(self, chap, verse):
-        start = self.chapters[chap]
-        it = self.iter(start)
-        for e in it:
-            if not isinstance(e, sfm.Element):
-                continue
-            if e.name == "c" and int(e.args[0]) != chap:
-                print(e.name, e.args, len(e))
-                return
-            elif e.name == "v" and e.args[0] == verse:
-                yield e
-                break
-        else:
-            return
-        for e in it:
-            yield e
-            if not isinstance(e, sfm.Element):
-                continue
-            if e.name == "c" or e.name == "v":
-                break
-
     def normalise(self):
         ''' Normalise USFM in place '''
         ispara = sfm.text_properties("paragraph")
@@ -337,7 +304,7 @@ class Usfm:
             done = False
             lastspace = False
             res = []
-            for (islet, c) in groupby(str(e), key=lambda x:get_ucd(ord(x), "gc") in takslc_cats):
+            for (islet, c) in groupby(e, key=lambda x:get_ucd(ord(x), "gc") in takslc_cats):
                 chars = "".join(c)
                 # print("{} = {}".format(chars, islet))
                 if not len(chars):

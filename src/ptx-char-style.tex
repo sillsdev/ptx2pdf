@@ -161,7 +161,7 @@
     \ifskipch@rstyle\egroup\else%
      \cl@singhooks{end}{\thisch@rstyle}% discover and execute any <end> hook
      \getmcp@ramR{raise}%
-     \ifx\p@ram\relax\else \egroup\dimen9=\p@ram\ifdim\dimen9<0pt\lower-\dimen9\else\raise\dimen9\fi\box0 \fi
+     \ifx\p@ram\relax\else \egroup \raise\p@ram\box0 \fi
      \cl@singhooks{after}{\thisch@rstyle}% discover any <after> hooks
      \ifnum\n@tenesting>0 \global\advance\n@tenesting by -1 % decrement nesting level
      \else \global\advance\p@ranesting by -1 \fi

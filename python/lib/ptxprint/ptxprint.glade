@@ -152,18 +152,6 @@ THE SOFTWARE.
     <property name="step_increment">0.049999999776482583</property>
     <property name="page_increment">0.10000000000000001</property>
   </object>
-  <object class="GtkAdjustment" id="a_inclSectionScale">
-    <property name="upper">10</property>
-    <property name="value">1</property>
-    <property name="step_increment">0.10000000000000001</property>
-    <property name="page_increment">1</property>
-  </object>
-  <object class="GtkAdjustment" id="a_inclSectionShift">
-    <property name="lower">-50</property>
-    <property name="upper">50</property>
-    <property name="step_increment">0.10000000000000001</property>
-    <property name="page_increment">1</property>
-  </object>
   <object class="GtkAdjustment" id="a_indentUnit">
     <property name="upper">4</property>
     <property name="value">1</property>
@@ -335,7 +323,6 @@ THE SOFTWARE.
     <property name="page_increment">1</property>
   </object>
   <object class="GtkAdjustment" id="a_styRaise">
-    <property name="lower">-50</property>
     <property name="upper">50</property>
     <property name="step_increment">0.10000000000000001</property>
     <property name="page_increment">1</property>
@@ -387,18 +374,6 @@ THE SOFTWARE.
     <property name="value">1.8</property>
     <property name="step_increment">0.050000000000000003</property>
     <property name="page_increment">0.10000000000000001</property>
-  </object>
-  <object class="GtkAdjustment" id="a_verseDecoratorScale">
-    <property name="upper">10</property>
-    <property name="value">1</property>
-    <property name="step_increment">0.10000000000000001</property>
-    <property name="page_increment">1</property>
-  </object>
-  <object class="GtkAdjustment" id="a_verseDecoratorShift">
-    <property name="lower">-20</property>
-    <property name="upper">20</property>
-    <property name="step_increment">0.10000000000000001</property>
-    <property name="page_increment">1</property>
   </object>
   <object class="GtkAdjustment" id="a_versefontsize">
     <property name="lower">2</property>
@@ -602,7 +577,7 @@ Description):</property>
     <property name="type_hint">dialog</property>
     <property name="gravity">center</property>
     <property name="program_name">PTXprint</property>
-    <property name="version">Version 1.4.3</property>
+    <property name="version">Version 1.4.1</property>
     <property name="copyright">© 2020, SIL International</property>
     <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
 the User-Interface. The PDFs are produced by enhanced 
@@ -2567,9 +2542,6 @@ in the Windows system.</property>
       <row>
         <col id="0" translatable="yes">Note</col>
       </row>
-      <row>
-        <col id="0" translatable="yes">Milestone</col>
-      </row>
     </data>
   </object>
   <object class="GtkListStore" id="ls_styTextType">
@@ -2792,6 +2764,7 @@ in the Windows system.</property>
               <packing>
                 <property name="left_attach">2</property>
                 <property name="top_attach">0</property>
+                <property name="width">2</property>
               </packing>
             </child>
             <child>
@@ -2880,28 +2853,7 @@ in the Windows system.</property>
               </packing>
             </child>
             <child>
-              <object class="GtkLabel">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="halign">end</property>
-                <property name="margin_left">12</property>
-                <property name="label" translatable="yes">End Marker:</property>
-              </object>
-              <packing>
-                <property name="left_attach">3</property>
-                <property name="top_attach">0</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkEntry" id="t_styEndMarker">
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="halign">start</property>
-              </object>
-              <packing>
-                <property name="left_attach">4</property>
-                <property name="top_attach">0</property>
-              </packing>
+              <placeholder/>
             </child>
           </object>
           <packing>
@@ -3710,8 +3662,14 @@ then the default set will be loaded.</property>
                                   <object class="GtkEntry">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
-                                    <property name="tooltip_text" translatable="yes">Select one of these licenses, 
-or type a different license.</property>
+                                    <property name="tooltip_text" translatable="yes">Enter a name for the configuration to be saved.
+
+Note that only Roman/Latin names
+are supported using: a-z A-Z, 0-9,
+parentheses, underscores and hyphens.
+
+Longer descriptions may be typed into
+the Notes field below.</property>
                                   </object>
                                 </child>
                               </object>
@@ -4047,7 +4005,7 @@ Font Size:</property>
                                         <property name="caps_lock_warning">False</property>
                                         <property name="adjustment">a_fontsize</property>
                                         <property name="climb_rate">0.10000000000000001</property>
-                                        <property name="digits">2</property>
+                                        <property name="digits">1</property>
                                         <property name="numeric">True</property>
                                         <property name="value">12</property>
                                         <signal name="value-changed" handler="onNumTabsChanged" swapped="no"/>
@@ -9029,7 +8987,7 @@ content of Headers and Footers.</property>
                                         <property name="column_spacing">6</property>
                                         <property name="row_homogeneous">True</property>
                                         <child>
-                                          <object class="GtkRadioButton" id="r_pictureRes_Low">
+                                          <object class="GtkRadioButton" id="c_useLowResPics">
                                             <property name="label" translatable="yes">Low (Smaller File)</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
@@ -9041,8 +8999,7 @@ will be relatively small, and therefore easy to
 share, but the image quality will be low.</property>
                                             <property name="halign">start</property>
                                             <property name="draw_indicator">True</property>
-                                            <property name="group">r_pictureRes_High</property>
-                                            <signal name="clicked" handler="onPicRescan" swapped="no"/>
+                                            <property name="group">c_useHighResPics</property>
                                           </object>
                                           <packing>
                                             <property name="left_attach">4</property>
@@ -9074,7 +9031,7 @@ without illustrations.</property>
                                           </packing>
                                         </child>
                                         <child>
-                                          <object class="GtkRadioButton" id="r_pictureRes_High">
+                                          <object class="GtkRadioButton" id="c_useHighResPics">
                                             <property name="label" translatable="yes">High (Larger File)</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
@@ -9091,8 +9048,7 @@ therefore difficult to share electronically, but
 the image quality will be as good as possible.</property>
                                             <property name="halign">start</property>
                                             <property name="draw_indicator">True</property>
-                                            <property name="group">r_pictureRes_Low</property>
-                                            <signal name="clicked" handler="onPicRescan" swapped="no"/>
+                                            <property name="group">c_useLowResPics</property>
                                           </object>
                                           <packing>
                                             <property name="left_attach">3</property>
@@ -9274,7 +9230,6 @@ specified directly (and NOT look in any other folders
 then enable this option).</property>
                                             <property name="halign">end</property>
                                             <property name="draw_indicator">True</property>
-                                            <signal name="clicked" handler="onPicRescan" swapped="no"/>
                                           </object>
                                           <packing>
                                             <property name="left_attach">4</property>
@@ -11530,7 +11485,6 @@ have been enabled.</property>
                                 <property name="margin_left">6</property>
                                 <property name="margin_right">6</property>
                                 <property name="margin_top">6</property>
-                                <property name="margin_bottom">6</property>
                                 <property name="label_xalign">0.039999999105930328</property>
                                 <child>
                                   <object class="GtkAlignment">
@@ -11544,7 +11498,7 @@ have been enabled.</property>
                                         <property name="halign">start</property>
                                         <property name="margin_right">6</property>
                                         <property name="margin_top">6</property>
-                                        <property name="row_spacing">10</property>
+                                        <property name="row_spacing">11</property>
                                         <property name="column_spacing">6</property>
                                         <child>
                                           <object class="GtkCheckButton" id="c_useModsTex">
@@ -11558,6 +11512,7 @@ any conflicting settings here, which
 could make it appear as if settings
 here are not working at all.</property>
                                             <property name="halign">start</property>
+                                            <property name="margin_top">6</property>
                                             <property name="draw_indicator">True</property>
                                             <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                           </object>
@@ -11578,7 +11533,6 @@ Custom Script at:</property>
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">True</property>
                                                 <property name="receives_default">False</property>
-                                                <property name="tooltip_text" translatable="yes">Processes the .usfm file through a program of your choosing. The program is run as `prog infile outfile` where infile is the source .usfm file and outfile the output .usfm that will then be typeset.</property>
                                                 <property name="draw_indicator">True</property>
                                                 <signal name="clicked" handler="onProcessScriptClicked" swapped="no"/>
                                               </object>
@@ -11678,6 +11632,7 @@ apply to the USFM file(s) prior to
 producing the printout, then these
 can be specified in this file.</property>
                                             <property name="halign">start</property>
+                                            <property name="margin_top">6</property>
                                             <property name="draw_indicator">True</property>
                                             <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                           </object>
@@ -11693,6 +11648,8 @@ can be specified in this file.</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">True</property>
+                                            <property name="margin_top">4</property>
+                                            <property name="margin_bottom">4</property>
                                             <signal name="clicked" handler="onEditChangesFile" swapped="no"/>
                                           </object>
                                           <packing>
@@ -11706,6 +11663,8 @@ can be specified in this file.</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">True</property>
+                                            <property name="margin_top">4</property>
+                                            <property name="margin_bottom">4</property>
                                             <signal name="clicked" handler="onEditModsTeX" swapped="no"/>
                                           </object>
                                           <packing>
@@ -11719,12 +11678,13 @@ can be specified in this file.</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">True</property>
-                                            <property name="margin_bottom">6</property>
+                                            <property name="margin_top">4</property>
+                                            <property name="margin_bottom">4</property>
                                             <signal name="clicked" handler="onEditModsSty" swapped="no"/>
                                           </object>
                                           <packing>
                                             <property name="left_attach">2</property>
-                                            <property name="top_attach">5</property>
+                                            <property name="top_attach">4</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -11736,12 +11696,13 @@ can be specified in this file.</property>
                                             <property name="tooltip_text" translatable="yes">It is recommended to leave 
 this option checked (on).</property>
                                             <property name="halign">start</property>
+                                            <property name="margin_top">6</property>
                                             <property name="draw_indicator">True</property>
                                             <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                           </object>
                                           <packing>
                                             <property name="left_attach">0</property>
-                                            <property name="top_attach">5</property>
+                                            <property name="top_attach">4</property>
                                             <property name="width">2</property>
                                           </packing>
                                         </child>
@@ -11754,13 +11715,14 @@ this option checked (on).</property>
                                             <property name="tooltip_text" translatable="yes">It is recommended to leave 
 this option checked (on).</property>
                                             <property name="halign">start</property>
+                                            <property name="margin_top">6</property>
                                             <property name="active">True</property>
                                             <property name="draw_indicator">True</property>
                                             <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                           </object>
                                           <packing>
                                             <property name="left_attach">0</property>
-                                            <property name="top_attach">4</property>
+                                            <property name="top_attach">3</property>
                                             <property name="width">2</property>
                                           </packing>
                                         </child>
@@ -11770,11 +11732,13 @@ this option checked (on).</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">True</property>
+                                            <property name="margin_top">4</property>
+                                            <property name="margin_bottom">4</property>
                                             <signal name="clicked" handler="onEditCustomSty" swapped="no"/>
                                           </object>
                                           <packing>
                                             <property name="left_attach">2</property>
-                                            <property name="top_attach">4</property>
+                                            <property name="top_attach">3</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -11783,7 +11747,6 @@ this option checked (on).</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">True</property>
-                                            <property name="tooltip_text" translatable="yes">Edit the processing script</property>
                                             <property name="margin_top">4</property>
                                             <property name="margin_bottom">4</property>
                                             <signal name="clicked" handler="onEditScriptFile" swapped="no"/>
@@ -13446,6 +13409,42 @@ options here to create a Diglot or Didoc.</property>
                             <property name="row_spacing">6</property>
                             <property name="column_spacing">6</property>
                             <child>
+                              <object class="GtkCheckButton" id="c_inclPageBorder">
+                                <property name="label" translatable="yes">Page Border</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="tooltip_text" translatable="yes">Select a PDF for the Border of the publication.
+Note that after setting this border, it is likely
+that you will need to adjust the page margins
+to make it fit. </property>
+                                <property name="halign">start</property>
+                                <property name="margin_top">4</property>
+                                <property name="draw_indicator">True</property>
+                                <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkButton" id="btn_selectPageBorderPDF">
+                                <property name="label" translatable="yes">Select...</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                                <property name="halign">start</property>
+                                <property name="valign">center</property>
+                                <signal name="clicked" handler="onPageBorderPDFclicked" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="left_attach">2</property>
+                                <property name="top_attach">0</property>
+                                <property name="height">2</property>
+                              </packing>
+                            </child>
+                            <child>
                               <object class="GtkButton" id="btn_selectSectionHeaderPDF">
                                 <property name="label" translatable="yes">Select...</property>
                                 <property name="visible">True</property>
@@ -13456,8 +13455,8 @@ options here to create a Diglot or Didoc.</property>
                                 <signal name="clicked" handler="onSectionHeaderPDFclicked" swapped="no"/>
                               </object>
                               <packing>
-                                <property name="left_attach">3</property>
-                                <property name="top_attach">0</property>
+                                <property name="left_attach">2</property>
+                                <property name="top_attach">3</property>
                                 <property name="height">2</property>
                               </packing>
                             </child>
@@ -13472,7 +13471,7 @@ options here to create a Diglot or Didoc.</property>
                                 <property name="max_width_chars">30</property>
                               </object>
                               <packing>
-                                <property name="left_attach">4</property>
+                                <property name="left_attach">0</property>
                                 <property name="top_attach">1</property>
                                 <property name="width">2</property>
                               </packing>
@@ -13490,8 +13489,29 @@ options here to create a Diglot or Didoc.</property>
                               </object>
                               <packing>
                                 <property name="left_attach">0</property>
-                                <property name="top_attach">1</property>
-                                <property name="width">3</property>
+                                <property name="top_attach">4</property>
+                                <property name="width">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkCheckButton" id="c_inclVerseDecorator">
+                                <property name="label" translatable="yes">Verse Number Decorator</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="tooltip_text" translatable="yes">The Verse numbers may be decorated by
+a PDF graphic. You may also use a special
+font and size to ensure verses fit well.</property>
+                                <property name="halign">start</property>
+                                <property name="margin_left">40</property>
+                                <property name="margin_top">4</property>
+                                <property name="draw_indicator">True</property>
+                                <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="left_attach">3</property>
+                                <property name="top_attach">0</property>
+                                <property name="width">2</property>
                               </packing>
                             </child>
                             <child>
@@ -13505,9 +13525,26 @@ options here to create a Diglot or Didoc.</property>
                                 <property name="max_width_chars">30</property>
                               </object>
                               <packing>
-                                <property name="left_attach">0</property>
-                                <property name="top_attach">5</property>
-                                <property name="width">3</property>
+                                <property name="left_attach">3</property>
+                                <property name="top_attach">1</property>
+                                <property name="width">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkButton" id="btn_selectVerseDecorator">
+                                <property name="label" translatable="yes">Select...</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                                <property name="halign">end</property>
+                                <property name="valign">center</property>
+                                <property name="margin_right">6</property>
+                                <signal name="clicked" handler="onVerseDecoratorPDFclicked" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="left_attach">5</property>
+                                <property name="top_attach">0</property>
+                                <property name="height">2</property>
                               </packing>
                             </child>
                             <child>
@@ -13527,134 +13564,7 @@ as vertical to make sure all headings fit.</property>
                               </object>
                               <packing>
                                 <property name="left_attach">0</property>
-                                <property name="top_attach">0</property>
-                                <property name="width">2</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel" id="lb_inclEndOfBook">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="opacity">0.80000000000000004</property>
-                                <property name="halign">end</property>
-                                <property name="valign">center</property>
-                                <property name="margin_bottom">6</property>
-                                <property name="justify">right</property>
-                                <property name="ellipsize">middle</property>
-                                <property name="max_width_chars">30</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">4</property>
                                 <property name="top_attach">3</property>
-                                <property name="width">2</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkCheckButton" id="c_inclVerseDecorator">
-                                <property name="label" translatable="yes">Verse Number Decorator</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">False</property>
-                                <property name="tooltip_text" translatable="yes">The Verse numbers may be decorated by
-a PDF graphic. You may also use a special
-font and size to ensure verses fit well.</property>
-                                <property name="halign">start</property>
-                                <property name="margin_top">4</property>
-                                <property name="draw_indicator">True</property>
-                                <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="left_attach">0</property>
-                                <property name="top_attach">4</property>
-                                <property name="width">2</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkButton" id="btn_selectVerseDecorator">
-                                <property name="label" translatable="yes">Select...</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">True</property>
-                                <property name="halign">start</property>
-                                <property name="valign">center</property>
-                                <signal name="clicked" handler="onVerseDecoratorPDFclicked" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="left_attach">3</property>
-                                <property name="top_attach">4</property>
-                                <property name="height">2</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="tooltip_text" translatable="yes">Vertical shift in pts of the verse decorator image upwards relative to the text.</property>
-                                <property name="halign">end</property>
-                                <property name="label" translatable="yes">Shift:</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">0</property>
-                                <property name="top_attach">6</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkSpinButton" id="s_verseDecoratorShift">
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="text" translatable="yes">0.0</property>
-                                <property name="adjustment">a_verseDecoratorShift</property>
-                                <property name="climb_rate">0.10000000000000001</property>
-                                <property name="digits">1</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">1</property>
-                                <property name="top_attach">6</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="tooltip_text" translatable="yes">Scale verse decorator image. 1.0 is unity.</property>
-                                <property name="halign">end</property>
-                                <property name="label" translatable="yes">Scale:</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">2</property>
-                                <property name="top_attach">6</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkSpinButton" id="s_verseDecoratorScale">
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="text" translatable="yes">1.0</property>
-                                <property name="adjustment">a_verseDecoratorScale</property>
-                                <property name="climb_rate">0.10000000000000001</property>
-                                <property name="digits">1</property>
-                                <property name="value">1</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">3</property>
-                                <property name="top_attach">6</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkButton" id="btn_VerseStyle">
-                                <property name="label" translatable="yes">Adjust Verse Style...</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">True</property>
-                                <property name="tooltip_text" translatable="yes">Edit Style properties for \v</property>
-                                <property name="halign">start</property>
-                                <property name="valign">start</property>
-                                <signal name="clicked" handler="onVerseStyleClicked" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="left_attach">4</property>
-                                <property name="top_attach">6</property>
-                                <property name="width">2</property>
                               </packing>
                             </child>
                             <child>
@@ -13668,33 +13578,31 @@ a special graphic. Ensure that there is
 adequate space - both horizontal as well
 as vertical to make sure all headings fit.</property>
                                 <property name="halign">start</property>
+                                <property name="margin_left">40</property>
                                 <property name="margin_top">4</property>
                                 <property name="draw_indicator">True</property>
                                 <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                               </object>
                               <packing>
-                                <property name="left_attach">4</property>
-                                <property name="top_attach">2</property>
+                                <property name="left_attach">3</property>
+                                <property name="top_attach">3</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkCheckButton" id="c_inclPageBorder">
-                                <property name="label" translatable="yes">Page Border</property>
+                              <object class="GtkLabel" id="lb_inclEndOfBook">
                                 <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">False</property>
-                                <property name="tooltip_text" translatable="yes">Select a PDF for the Border of the publication.
-Note that after setting this border, it is likely
-that you will need to adjust the page margins
-to make it fit. </property>
-                                <property name="halign">start</property>
-                                <property name="margin_top">4</property>
-                                <property name="draw_indicator">True</property>
-                                <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                                <property name="can_focus">False</property>
+                                <property name="opacity">0.80000000000000004</property>
+                                <property name="halign">end</property>
+                                <property name="margin_bottom">6</property>
+                                <property name="justify">right</property>
+                                <property name="ellipsize">middle</property>
+                                <property name="max_width_chars">30</property>
                               </object>
                               <packing>
-                                <property name="left_attach">4</property>
-                                <property name="top_attach">0</property>
+                                <property name="left_attach">3</property>
+                                <property name="top_attach">4</property>
+                                <property name="width">2</property>
                               </packing>
                             </child>
                             <child>
@@ -13705,27 +13613,13 @@ to make it fit. </property>
                                 <property name="receives_default">True</property>
                                 <property name="halign">end</property>
                                 <property name="valign">center</property>
+                                <property name="margin_right">6</property>
                                 <signal name="clicked" handler="onEndOfBookPDFclicked" swapped="no"/>
                               </object>
                               <packing>
-                                <property name="left_attach">6</property>
-                                <property name="top_attach">2</property>
+                                <property name="left_attach">5</property>
+                                <property name="top_attach">3</property>
                                 <property name="height">2</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkButton" id="btn_selectPageBorderPDF">
-                                <property name="label" translatable="yes">Select...</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">True</property>
-                                <property name="halign">start</property>
-                                <property name="valign">center</property>
-                                <signal name="clicked" handler="onPageBorderPDFclicked" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="left_attach">6</property>
-                                <property name="top_attach">0</property>
                               </packing>
                             </child>
                             <child>
@@ -13740,95 +13634,26 @@ to make it fit. </property>
                                 <property name="draw_indicator">True</property>
                               </object>
                               <packing>
-                                <property name="left_attach">6</property>
-                                <property name="top_attach">1</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="tooltip_text" translatable="yes">Vertical shift in pts of the section box downwards relative to the text</property>
-                                <property name="halign">end</property>
-                                <property name="label" translatable="yes">Shift:</property>
-                              </object>
-                              <packing>
                                 <property name="left_attach">0</property>
                                 <property name="top_attach">2</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkLabel">
+                              <object class="GtkButton" id="btn_VerseStyle">
+                                <property name="label" translatable="yes">Adjust Style...</property>
                                 <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="tooltip_text" translatable="yes">Scale verse decorator image. 1.0 is unity.</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
                                 <property name="halign">end</property>
-                                <property name="label" translatable="yes">Scale:</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">2</property>
-                                <property name="top_attach">2</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkSpinButton" id="s_inclSectionShift">
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="text" translatable="yes">0.0</property>
-                                <property name="adjustment">a_inclSectionShift</property>
-                                <property name="climb_rate">0.10000000000000001</property>
-                                <property name="digits">1</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">1</property>
-                                <property name="top_attach">2</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkSpinButton" id="s_inclSectionScale">
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="text" translatable="yes">1.0</property>
-                                <property name="adjustment">a_inclSectionScale</property>
-                                <property name="climb_rate">0.10000000000000001</property>
-                                <property name="digits">1</property>
-                                <property name="value">1</property>
+                                <property name="valign">start</property>
+                                <property name="margin_right">6</property>
+                                <signal name="clicked" handler="onVerseStyleClicked" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="left_attach">3</property>
                                 <property name="top_attach">2</property>
+                                <property name="width">3</property>
                               </packing>
-                            </child>
-                            <child>
-                              <object class="GtkSeparator">
-                                <property name="visible">True</property>
-                                <property name="sensitive">False</property>
-                                <property name="can_focus">False</property>
-                                <property name="valign">center</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">0</property>
-                                <property name="top_attach">3</property>
-                                <property name="width">4</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
                             </child>
                             <child>
                               <placeholder/>
@@ -14697,9 +14522,6 @@ Factor:</property>
                                             <property name="width_request">78</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
-                                            <property name="tooltip_text" translatable="yes">This a proportion of the base line spacing.
-So 1.0 is the same as the base line spacing from the Layout tab.
-If Absolute Spacing is set, then this value is the line spacing in pts.</property>
                                             <property name="halign">end</property>
                                             <property name="label" translatable="yes">Line Spacing
 Factor:</property>
@@ -14722,7 +14544,6 @@ Factor:</property>
                                           <object class="GtkLabel" id="l_stySpaceBefore">
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
-                                            <property name="tooltip_text" translatable="yes">Amount of space to insert before the paragraph. This is expressed in line units with 12 line units being the base line spacing (from the layout tab).</property>
                                             <property name="halign">end</property>
                                             <property name="label" translatable="yes">Space Before
 Factor:</property>
@@ -14744,7 +14565,6 @@ Factor:</property>
                                           <object class="GtkLabel" id="l_stySpaceAfter">
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
-                                            <property name="tooltip_text" translatable="yes">Amount of space to insert after the paragraph. This is expressed in line units with 12 line units being the base line spacing (from the layout tab).</property>
                                             <property name="halign">end</property>
                                             <property name="label" translatable="yes">Space After
 Factor:</property>
@@ -14797,6 +14617,32 @@ Factor:</property>
                                     <property name="row_spacing">6</property>
                                     <property name="column_spacing">6</property>
                                     <child>
+                                      <object class="GtkComboBox" id="fcb_styCallerStyle">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="can_default">True</property>
+                                        <property name="halign">start</property>
+                                        <property name="model">ls_styCallerStyle</property>
+                                        <property name="wrap_width">1</property>
+                                        <property name="active">1</property>
+                                        <property name="has_entry">True</property>
+                                        <property name="entry_text_column">0</property>
+                                        <property name="id_column">0</property>
+                                        <property name="active_id">1</property>
+                                        <child internal-child="entry">
+                                          <object class="GtkEntry">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="width_chars">9</property>
+                                          </object>
+                                        </child>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">1</property>
+                                        <property name="top_attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
                                       <object class="GtkSpinButton" id="s_styCallerRaise">
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
@@ -14818,6 +14664,32 @@ Factor:</property>
                                       </packing>
                                     </child>
                                     <child>
+                                      <object class="GtkComboBox" id="fcb_styNoteCallerStyle">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="can_default">True</property>
+                                        <property name="halign">start</property>
+                                        <property name="model">ls_styNoteCallerStyle</property>
+                                        <property name="wrap_width">1</property>
+                                        <property name="active">1</property>
+                                        <property name="has_entry">True</property>
+                                        <property name="entry_text_column">0</property>
+                                        <property name="id_column">0</property>
+                                        <property name="active_id">1</property>
+                                        <child internal-child="entry">
+                                          <object class="GtkEntry">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="width_chars">9</property>
+                                          </object>
+                                        </child>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">1</property>
+                                        <property name="top_attach">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
                                       <object class="GtkSpinButton" id="s_styNoteCallerRaise">
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
@@ -14836,6 +14708,32 @@ Factor:</property>
                                       <packing>
                                         <property name="left_attach">4</property>
                                         <property name="top_attach">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkComboBox" id="fcb_NoteBlendInto">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="can_default">True</property>
+                                        <property name="halign">start</property>
+                                        <property name="model">ls_NoteBlendInto</property>
+                                        <property name="wrap_width">1</property>
+                                        <property name="active">1</property>
+                                        <property name="has_entry">True</property>
+                                        <property name="entry_text_column">0</property>
+                                        <property name="id_column">0</property>
+                                        <property name="active_id">1</property>
+                                        <child internal-child="entry">
+                                          <object class="GtkEntry">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="width_chars">9</property>
+                                          </object>
+                                        </child>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">1</property>
+                                        <property name="top_attach">2</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -14951,36 +14849,6 @@ Into Style:</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
-                                        <property name="top_attach">2</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkEntry" id="t_styCallerStyle">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">1</property>
-                                        <property name="top_attach">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkEntry" id="t_styNoteCallerStyle">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">1</property>
-                                        <property name="top_attach">1</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkEntry" id="t_NoteBlendInto">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">1</property>
                                         <property name="top_attach">2</property>
                                       </packing>
                                     </child>
@@ -15834,7 +15702,7 @@ the .ZIP file to the developers, either upload and send
 a link, OR email it to ptxprint_support@sil.org </property>
                                     <property name="halign">end</property>
                                     <property name="valign">start</property>
-                                    <property name="label" translatable="yes">The easiest way for the developers to replicate
+                                    <property name="label" translatable="yes">The easiest wasy for the developers to replicate
 an issue is for you to Create a ZIP Archive with
 all the required files and then send it to them:</property>
                                     <property name="justify">right</property>
