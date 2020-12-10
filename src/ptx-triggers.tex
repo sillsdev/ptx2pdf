@@ -1,0 +1,118 @@
+%:strip
+% Part of the ptx2pdf macro package for formatting USFM text
+% copyright (c) 2020 by SIL International
+% written by David Gardner 
+%
+% Permission is hereby granted, free of charge, to any person obtaining  
+% a copy of this software and associated documentation files (the  
+% "Software"), to deal in the Software without restriction, including  
+% without limitation the rights to use, copy, modify, merge, publish,  
+% distribute, sublicense, and/or sell copies of the Software, and to  
+% permit persons to whom the Software is furnished to do so, subject to  
+% the following conditions:
+%
+% The above copyright notice and this permission notice shall be  
+% included in all copies or substantial portions of the Software.
+%
+% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,  
+% EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF  
+% MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND  
+% NONINFRINGEMENT. IN NO EVENT SHALL SIL INTERNATIONAL BE LIABLE FOR  
+% ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF  
+% CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION  
+% WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+%
+% Except as contained in this notice, the name of SIL International  
+% shall not be used in advertising or otherwise to promote the sale,  
+% use or other dealings in this Software without prior written  
+% authorization from SIL International.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% generic chapter.verse / milestone / etc trigger support for the ptx2pdf package
+% A trigger is a piece of code that is run at a particular chapter.verse or other event.
+% a triggercheck  is code to check if a certain type of trigger e.g. piclist entry is to be run.
+% Triggering is based on the actual verse number/range specified in \v, not \vp (printed verse)  
+% The setting is set in c@rref (and for diglots, dc@rref). Triggers should be careful
+% to not alter the values of c@rref or dc@rref, as these are used by other trigger code.
+% The following conventions are applied:
+% GEN14.5-preverse  is triggered before the verse number is output. It is possible that this is in vertical mode after a
+% paragraph break.
+% GEN14.5 is triggered after the verse number has been output. 
+%
+
+\newtoks\trigg@rchecks
+\trigg@rchecks{}
+\def\addtotrigg@rchecks#1{\x@\global\x@\trigg@rchecks\x@{\the\trigg@rchecks #1}}
+
+\def\runtrigg@rscv{%after the verse number
+  \p@rnum=1
+  \settrig@refcv\the\trigg@rchecks
+}
+\def\runtrigg@rsprecv{% before the verse number
+  \p@rnum=0
+  \settrig@refprecv\the\trigg@rchecks
+}
+
+\def\runtrigg@rspar{%Paragraph trigger
+  \advance\p@rnum by 1
+  \ifx\v@rse\empty\else
+    \settrig@refcv
+  \fi
+  \let\oc@rref=\c@rref\let\odc@rref=\dc@rref % Preserve old references so that we can restore it later.
+  \xdef\c@rref{\c@rref-\the\p@rnum}%
+  \ifdiglot
+    \xdef\dc@rref{\odc@rref-\the\p@rnum}%
+  \fi
+  \the\trigg@rchecks
+  \let\c@rref=\oc@rref\let\dc@rref=\odc@rref
+}
+
+\def\runtrigg@rs#1{%Generic something trigger (milestone, or...)
+  \def\c@rref{#1}%
+  \ifdiglot\def\dc@rref{#1\ifdiglotL L\else R\fi}%
+  \the\trigg@rchecks
+}
+\def\settrign@me#1{\edef\trign@me{trigger-#1}}
+
+\def\addtrigger#1#2{%Add trigger code trigger on reference #1 (to do #2). 
+   %Much of the complication is so the triggers concatenate roughly like a toklist
+   \settrign@me{#1}\x@\let\x@\tr@gtmp\csname\trign@me\endcsname
+   \ifx\tr@gtmp\relax
+     \def\tr@gtmp{#2}%
+   \else
+     \x@\def\x@\tr@gtmp\x@{\tr@gtmp#2}%
+   \fi
+   \x@\let\csname\trign@me\endcsname\tr@gtmp
+}
+
+\def\stdtrigger{%Run any triggers if they exist.
+   \settrign@me{\c@rref}\csname\trign@me\endcsname
+   \ifdiglot
+     \settrign@me{\dc@rref}\csname\trign@me\endcsname
+   \fi
+}
+
+\addtotrigg@rchecks{\stdtrigger}
+
+\def\settrig@refcv{%
+  \xdef\c@rref{\id@@@\ch@pter.\v@rse}%
+  \ifdiglot
+    \xdef\dc@rref{\id@@@\ifdiglotL L\else R\fi\ch@pter.\v@rse}%
+  \fi
+}
+
+\newcount\p@rnum
+
+
+\def\settrig@refprecv{%
+  \edef\c@rref{\id@@@\ch@pter.\v@rse-preverse}%
+  \ifdiglot
+    \edef\dc@rref{\id@@@\ifdiglotL L\else R\fi\ch@pter.\v@rse-preverse}%
+  \fi
+}
+
+\addtopreversehooks{\runtrigg@rsprecv} % e.g. piclists
+\addtoversehooks{\runtrigg@rscv} % e.g. adjustlist
+\addtoeveryparhooks{\runtrigg@rspar} 
+\def\c@rref{start}
+\def\dc@rref{start\ifdifglotL L\else R\fi}
