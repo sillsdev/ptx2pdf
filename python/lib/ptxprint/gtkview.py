@@ -291,7 +291,7 @@ class GtkViewModel(ViewModel):
         self.fcb_digits.set_active_id(_alldigits[0])
 
         for d in ("dlg_multiBookSelector", "dlg_fontChooser", "dlg_password",
-                  "dlg_generate", "dlg_styModsdialog"):
+                  "dlg_generate", "dlg_styModsdialog", "dlg_DBLbundle"):
             dialog = self.builder.get_object(d)
             dialog.add_buttons(
                 Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
@@ -2258,3 +2258,33 @@ class GtkViewModel(ViewModel):
         pgid = Gtk.Buildable.get_name(page)
         if pgid == "pn_checklist":
             self.set("r_image", "preview")
+
+    def onUnpackDBLbundleClicked(self, btn):
+        dialog = self.builder.get_object("dlg_DBLbundle")
+        response = dialog.run()
+        if response == Gtk.ResponseType.OK:
+            pass
+            # do something useful here:
+            # (unpack the module, and update the Project fcb_ entry and set project)
+        dialog.hide()
+
+    def onChooseDBLbundleClicked(self, btn):
+        prjdir = os.path.join(self.settings_dir, self.prjid)
+        DBLfile = self.fileChooser("Select a DBL Bundle file", 
+                filters = {"DBL Bundles": {"patterns": ["bundle_text_dbl*.zip"] , "mime": "text/plain", "default": True},
+                           "All Files": {"pattern": "*"}},
+                multiple = False, basedir=os.path.join(prjdir, "Bundles"))
+        if DBLfile is not None:
+            # DBLfile = [x.relative_to(prjdir) for x in DBLfile]
+            self.DBLfile = DBLfile[0]
+            self.builder.get_object("lb_DBLbundleFilename").set_label(os.path.basename(DBLfile[0]))
+            self.builder.get_object("btn_chooseDBLbundle").set_tooltip_text(str(DBLfile[0]))
+        else:
+            self.builder.get_object("lb_DBLbundleFilename").set_label("")
+            self.DBLfile = None
+            self.builder.get_object("btn_chooseDBLbundle").set_tooltip_text("")
+    
+    def onDBLprojNameChanged(self, foo, bar):
+        # Update the clickability of the OK button so that we 
+        # don't accidentally overwrite an existing project
+        pass

@@ -104,6 +104,7 @@ class ViewModel:
         self.BackPDFs = None
         self.customScript = None
         self.moduleFile = None
+        self.DBLfile = None
         self.watermarks = None
         self.pageborder = None
         self.sectionheader = None
