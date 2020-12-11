@@ -1,6 +1,7 @@
 
 import sys, subprocess, os
 import xml.etree.ElementTree as et
+from ptxprint.utils import pt_bindir
 
 # Thank you to rho https://stackoverflow.com/questions/10514094/gobject-and-subprocess-popen-to-communicate-in-a-gtk-gui
 from gi.repository import GObject, Gtk, Pango
@@ -168,26 +169,3 @@ elif sys.platform == "win32":
             res = subprocess.call(*newa, creationflags=CREATE_NO_WINDOW, **kw)
             return res
 
-pt_settings = "."
-try:
-    ptob = openkey("Paratext/8")
-    ptv = queryvalue(ptob, "ParatextVersion")
-except FileNotFoundError:
-    for v in ('9', '8'):
-        path = "C:\\My Paratext {} Projects".format(v)
-        if os.path.exists(path):
-            pt_settings = path
-            pt_bindir = "C:\\Program Files\\Paratext {}".format(v)
-            if os.path.exists(pt_bindir):
-                break
-            else:
-                pt_bindir = "C:\\Program Files (x86)\\Paratext {}".format(v)
-            break
-else:
-    if ptv:
-        version = ptv[:ptv.find(".")]
-        try:
-            pt_bindir = queryvalue(ptob, 'Paratext{}_Full_Release_AppPath'.format(version))
-        except:
-            pt_bindir = queryvalue(ptob, 'Program_Files_Directory_Ptw'+version)
-    pt_settings = queryvalue(ptob, 'Settings_Directory')

@@ -26,6 +26,7 @@ from ptxprint.gtkstyleditor import StyleEditorView
 from ptxprint.runjob import isLocked, unlockme
 from ptxprint.texmodel import TexModel
 from ptxprint.minidialog import MiniDialog
+from ptxprint.dbl import UnpackDBL
 import ptxprint.scriptsnippets as scriptsnippets
 from ptxprint.utils import _, f_
 import configparser
@@ -127,6 +128,7 @@ _sensitivities = {
     "c_processScript" :        ["c_processScriptBefore", "c_processScriptAfter", "btn_selectScript", "btn_editScript"],
     "c_usePrintDraftChanges" : ["btn_editChangesFile"],
     "c_useModsTex" :           ["btn_editModsTeX"],
+    "c_usePreModsTex" :        ["btn_editModsPreTex"],
     "c_useCustomSty" :         ["btn_editCustomSty"],
     "c_useModsSty" :           ["btn_editModsSty"],
     "c_inclFrontMatter" :      ["btn_selectFrontPDFs"],
@@ -224,6 +226,22 @@ _styleLinks = {
     "updateFnLineSpacing": (("f", "Baseline"), ("f", "LineSpacing")),
 }
 
+def _doError(text, secondary, title):
+    dialog = Gtk.MessageDialog(parent=None, message_type=Gtk.MessageType.ERROR,
+             buttons=Gtk.ButtonsType.OK, text=text)
+    if title is not None:
+        dialog.set_title(title)
+    else:
+        dialog.set_title("PTXprint")
+    if secondary is not None:
+        dialog.format_secondary_text(secondary)
+    if sys.platform == "win32":
+        dialog.set_keep_above(True)
+    dialog.run()
+    if sys.platform == "win32":
+        dialog.set_keep_above(False)
+    dialog.destroy()
+
 class GtkViewModel(ViewModel):
 
     def __init__(self, settings_dir, workingdir, userconfig, scriptsdir, args=None):
@@ -263,7 +281,7 @@ class GtkViewModel(ViewModel):
             self.notebooks[n] = [Gtk.Buildable.get_name(nbk.get_nth_page(i)) for i in range(nbk.get_n_pages())]
         for fcb in ("digits", "script", "chapfrom", "chapto", "diglotPicListSources",
                     "textDirection", "glossaryMarkupStyle", "fontFaces",
-                    # "styTextType", "styStyleType", 
+                    "styTextType", "styStyleType", "styCallerStyle", "styNoteCallerStyle", "NoteBlendInto",
                     "picaccept", "pubusage", "pubaccept", "chklstFilter"): #, "rotateTabs"):
             self.addCR("fcb_"+fcb, 0)
         self.cb_savedConfig = self.builder.get_object("ecb_savedConfig")
@@ -291,7 +309,7 @@ class GtkViewModel(ViewModel):
         self.fcb_digits.set_active_id(_alldigits[0])
 
         for d in ("dlg_multiBookSelector", "dlg_fontChooser", "dlg_password",
-                  "dlg_generate", "dlg_styModsdialog"):
+                  "dlg_generate", "dlg_styModsdialog", "dlg_DBLbundle"):
             dialog = self.builder.get_object(d)
             dialog.add_buttons(
                 Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
@@ -307,10 +325,7 @@ class GtkViewModel(ViewModel):
             scroll = self.builder.get_object("scroll_" + k)
             scroll.add(view)
             self.fileViews.append((self.buf[i], view))
-            if i > 2:
-                view.set_show_line_numbers(True)  # Turn these ON
-            else:
-                view.set_show_line_numbers(False)  # Turn these OFF
+            view.set_show_line_numbers(True if i > 1 else False)
             view.pageid = "scroll_"+k
             view.connect("focus-out-event", self.onViewerLostFocus)
             view.connect("focus-in-event", self.onViewerFocus)
@@ -407,7 +422,7 @@ class GtkViewModel(ViewModel):
             Gtk.main()
         except Exception as e:
             s = traceback.format_exc()
-            s += "\n{}: {}".format(type(e), str(e))
+            s += "\n" + str(e)
             self.doError(s)
 
     def emission_hook(self, w, *a):
@@ -426,7 +441,7 @@ class GtkViewModel(ViewModel):
 
     def monitor(self):
         if self.pendingerror is not None:
-            self._doError(*self.pendingerror)
+            _doError(*self.pendingerror)
             self.pendingerror = None
         return True
 
@@ -573,23 +588,7 @@ class GtkViewModel(ViewModel):
         if threaded:
             self.pendingerror=(txt, secondary, title)
         else:
-            self._doError(txt, secondary, title)
-
-    def _doError(self, text, secondary, title):
-        dialog = Gtk.MessageDialog(parent=None, message_type=Gtk.MessageType.ERROR,
-                 buttons=Gtk.ButtonsType.OK, text=text)
-        if title is not None:
-            dialog.set_title(title)
-        else:
-            dialog.set_title("PTXprint")
-        if secondary is not None:
-            dialog.format_secondary_text(secondary)
-        if sys.platform == "win32":
-            dialog.set_keep_above(True)
-        dialog.run()
-        if sys.platform == "win32":
-            dialog.set_keep_above(False)
-        dialog.destroy()
+            _doError(txt, secondary, title)
 
     def onOK(self, btn):
         if isLocked():
@@ -635,7 +634,7 @@ class GtkViewModel(ViewModel):
             self.callback(self)
         except Exception as e:
             s = traceback.format_exc()
-            s += "\n{}: {}".format(type(e), str(e))
+            s += "\n" + str(e)
             self.doError(s)
             unlockme()
 
@@ -815,7 +814,7 @@ class GtkViewModel(ViewModel):
         self.onSimpleClicked(btn)
         self.picListView.onRadioChanged()
         val = self.get("s_indentUnit")
-        if btn.get_active():
+        if btn.is_active():
             val = val / 2
         else:
             val = val * 2
@@ -1122,6 +1121,7 @@ class GtkViewModel(ViewModel):
                   "l_projectFullName", "t_plCaption", "t_plRef", "t_plAltText", "t_plCopyright", "textv_colophon"):
             self.builder.get_object(w).modify_font(p)
         self.picListView.modify_font(p)
+        # MH TO DO: Also need to handle TWO fallback fonts in the picList for Diglots (otherwise one script will end up as Tofu)
 
     def onRadioChanged(self, btn):
         n = Gtk.Buildable.get_name(btn)
@@ -1184,11 +1184,7 @@ class GtkViewModel(ViewModel):
         status = self.sensiVisible("c_useCustomFolder")
         if not status:
             self.builder.get_object("c_exclusiveFiguresFolder").set_active(status)
-        self.onPicRescan(btn)
-        
-    def onPicRescan(self, btn):
-        self.picListView.clearSrcPaths()
-        
+
     def onPageNumTitlePageChanged(self, btn):
         if self.get("c_pageNumTitlePage"):
             self.builder.get_object("c_printConfigName").set_active(False)
@@ -1244,7 +1240,7 @@ class GtkViewModel(ViewModel):
     def onFnBlendClicked(self, btn):
         self.onSimpleClicked(btn)
         try:
-            self.styleEditor.setval("x", "NoteBlendInto", "f" if btn.get_active() else "")
+            self.styleEditor.setval("x", "NoteBlendInto", "f" if btn.get_active() else None)
         except KeyError:
             return
 
@@ -1610,8 +1606,15 @@ class GtkViewModel(ViewModel):
         titleStr = super(GtkViewModel, self).getDialogTitle()
         self.builder.get_object("ptxprint").set_title(titleStr)
 
-    def _locFile(self, file2edit, loc):
-        fpath = None
+    def editFile(self, file2edit, loc="wrk", pgid="scroll_Settings", switch=None): # keep param order
+        if switch is None:
+            switch = pgid == "scroll_Settings"
+        pgnum = self.notebooks["Viewer"].index(pgid)
+        mpgnum = self.notebooks["Main"].index("tb_ViewerEditor")
+        if switch:
+            self.builder.get_object("nbk_Main").set_current_page(mpgnum)
+            self.builder.get_object("nbk_Viewer").set_current_page(pgnum)
+        # self.prjid = self.get("fcb_project")
         self.prjdir = os.path.join(self.settings_dir, self.prjid)
         if loc == "wrk":
             fpath = os.path.join(self.working_dir, file2edit)
@@ -1624,19 +1627,7 @@ class GtkViewModel(ViewModel):
                 fpath = os.path.join(self.configPath(""), file2edit)
         elif "\\" in loc or "/" in loc:
             fpath = os.path.join(loc, file2edit)
-        return fpath
-
-    def editFile(self, file2edit, loc="wrk", pgid="scroll_Settings", switch=None): # keep param order
-        if switch is None:
-            switch = pgid == "scroll_Settings"
-        pgnum = self.notebooks["Viewer"].index(pgid)
-        mpgnum = self.notebooks["Main"].index("tb_ViewerEditor")
-        if switch:
-            self.builder.get_object("nbk_Main").set_current_page(mpgnum)
-            self.builder.get_object("nbk_Viewer").set_current_page(pgnum)
-        # self.prjid = self.get("fcb_project")
-        fpath = self._locFile(file2edit, loc)
-        if fpath is None:
+        else:
             return
         label = self.builder.get_object("l_{1}".format(*pgid.split("_")))
         label.set_tooltip_text(fpath)
@@ -1671,7 +1662,6 @@ class GtkViewModel(ViewModel):
         tbuf.move_mark(tmark, titer)
         tbuf.place_cursor(titer)
         GLib.idle_add(self.fileViews[pgnum][1].scroll_mark_onscreen, tmark)
-
     def _editProcFile(self, fname, loc, intro=""):
         fpath = self._locFile(fname, loc)
         if intro != "" and not os.path.exists(fpath):
@@ -1685,12 +1675,13 @@ class GtkViewModel(ViewModel):
         scriptName = os.path.basename(customScriptFPath)
         scriptPath = customScriptFPath[:-len(scriptName)]
         if len(customScriptFPath):
-            self._editProcFile(scriptName, scriptPath)
+            self.editFile(scriptName, scriptPath)
 
     def onEditChangesFile(self, btn):
-        self._editProcFile("PrintDraftChanges.txt", "prj")
+        self.editFile("PrintDraftChanges.txt", "prj")
 
     def onEditModsTeX(self, btn):
+        # self.prjid = self.get("fcb_project")
         cfgname = self.configName()
         self._editProcFile("ptxprint-mods.tex", "cfg",
             intro=_(_("""% This is the .tex file specific for the {} project used by PTXprint.
@@ -1699,7 +1690,7 @@ class GtkViewModel(ViewModel):
 
     def onEditPreModsTeX(self, btn):
         cfgname = self.configName()
-        self._editProcFile("ptxprint-mods.tex", "cfg",
+        self._editProcFile("ptxprint-premods.tex", "cfg",
             intro=_(_("""% This is the preprocessing .tex file specific for the {} project used by PTXprint.
 % Saved Configuration name: {}
 """).format(self.prjid, cfgname)))
@@ -1745,12 +1736,8 @@ class GtkViewModel(ViewModel):
         if archiveZipFile is not None:
             # self.archiveZipFile = archiveZipFile[0]
             btn_createZipArchive.set_tooltip_text(str(archiveZipFile[0]))
-            try:
-                self.createArchive(str(archiveZipFile[0]))
-            except Exception as e:
-                s = traceback.format_exc()
-                s += "\n{}: {}".format(type(e), str(e))
-                self.doError(s)
+            self.createArchive(str(archiveZipFile[0]))
+            
         else:
             # self.archiveZipFile = None
             btn_createZipArchive.set_tooltip_text("No Archive File Created")
@@ -2258,3 +2245,43 @@ class GtkViewModel(ViewModel):
         pgid = Gtk.Buildable.get_name(page)
         if pgid == "pn_checklist":
             self.set("r_image", "preview")
+
+    def onUnpackDBLbundleClicked(self, btn):
+        dialog = self.builder.get_object("dlg_DBLbundle")
+        response = dialog.run()
+        if response == Gtk.ResponseType.OK and self.builder.get_object("btn_chooseDBLbundle").get_sensitive:
+            prj = self.get("t_DBLprojName")
+            if prj != "":
+                UnpackDBL(self.DBLfile, prj, self.settings_dir)
+                # add prj to ls_project before selecting it.
+                lsp = self.builder.get_object("ls_projects")
+                allprojects = [x[0] for x in lsp]
+                for i, p in enumerate(allprojects):
+                    if prj.casefold() > p.casefold():
+                        lsp.insert(i, [prj])
+                        break
+                self.set("fcb_project", prj)
+        dialog.hide()
+
+    def onChooseDBLbundleClicked(self, btn):
+        prjdir = os.path.join(self.settings_dir, self.prjid)
+        DBLfile = self.fileChooser("Select a DBL Bundle file", 
+                filters = {"DBL Bundles": {"patterns": ["*.zip"] , "mime": "text/plain", "default": True},
+                           "All Files": {"pattern": "*"}},
+                multiple = False, basedir=os.path.join(prjdir, "Bundles"))
+        if DBLfile is not None:
+            # DBLfile = [x.relative_to(prjdir) for x in DBLfile]
+            self.DBLfile = DBLfile[0]
+            self.builder.get_object("lb_DBLbundleFilename").set_label(os.path.basename(DBLfile[0]))
+            self.builder.get_object("btn_chooseDBLbundle").set_tooltip_text(str(DBLfile[0]))
+        else:
+            self.builder.get_object("lb_DBLbundleFilename").set_label("")
+            self.DBLfile = None
+            self.builder.get_object("btn_chooseDBLbundle").set_tooltip_text("")
+    
+    def onDBLprojNameChanged(self, widget):
+        text = self.get("t_DBLprojName")
+        btn = self.builder.get_object("btn_chooseDBLbundle")
+        lsp = self.builder.get_object("ls_projects")
+        allprojects = [x[0] for x in lsp]
+        btn.set_sensitive(not text in allprojects)

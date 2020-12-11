@@ -29,6 +29,7 @@ bookcodes.update(_endBkCodes)
 chaps = dict(b.split("|") for b in _bookslist.split())
 oneChbooks = [b.split("|")[0] for b in _bookslist.split() if b[-2:] == "|1"]
 
+
 class ParatextSettings:
     def __init__(self, basedir, prjid):
         self.dict = {}
@@ -47,6 +48,7 @@ class ParatextSettings:
             for c in doc.getroot():
                 self.dict[c.tag] = c.text
             self.read_ldml()
+        return self
 
     def read_ldml(self):
         self.langid = re.sub('-(?=-|$)', '', self.get('LanguageIsoCode', "unk").replace(":", "-"))
@@ -138,4 +140,4 @@ class ParatextSettings:
             if os.path.exists(fname):
                 res[fname] = self.langid+".ldml"
         return res
-    
+
