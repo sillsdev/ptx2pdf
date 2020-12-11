@@ -7084,6 +7084,8 @@ and Illustrations.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="halign">start</property>
+                                    <property name="margin_right">6</property>
+                                    <property name="column_spacing">6</property>
                                     <child>
                                       <object class="GtkFrame">
                                         <property name="width_request">330</property>
@@ -7326,8 +7328,6 @@ Print a second time before it applies.</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="halign">start</property>
-                                        <property name="margin_left">8</property>
-                                        <property name="margin_right">8</property>
                                         <property name="margin_top">6</property>
                                         <property name="label_xalign">0.059999998658895493</property>
                                         <property name="shadow_type">in</property>
@@ -8472,6 +8472,7 @@ flicking through pages to find the right chapter.</property>
                                             <property name="tooltip_text" translatable="yes">Use a colon (:) to separate
 chapter &amp; verse numbers
 in the header reference.</property>
+                                            <property name="margin_right">6</property>
                                             <property name="draw_indicator">True</property>
                                             <property name="group">c_sepPeriod</property>
                                           </object>
@@ -8490,6 +8491,7 @@ in the header reference.</property>
                                             <property name="tooltip_text" translatable="yes">Use a period (.) to separate
 chapter &amp; verse numbers
 in the header reference.</property>
+                                            <property name="margin_right">6</property>
                                             <property name="draw_indicator">True</property>
                                             <property name="group">c_sepColon</property>
                                           </object>
@@ -9203,6 +9205,7 @@ JPG  (only use JPGs - ignore all other file types)
 TIF  (only use TIFs - ignore all other file types)
 
 NOTE: TIF files are converted internally to JPGs.</property>
+                                            <property name="margin_right">6</property>
                                             <property name="width_chars">16</property>
                                             <property name="text">JPG PNG TIF BMP PDF</property>
                                           </object>
@@ -10626,6 +10629,7 @@ status of the checking values.</property>
                                           <object class="GtkFrame">
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
+                                            <property name="margin_right">6</property>
                                             <property name="margin_top">6</property>
                                             <property name="margin_bottom">6</property>
                                             <property name="label_xalign">0.019999999552965164</property>
@@ -10639,7 +10643,7 @@ status of the checking values.</property>
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">False</property>
                                                     <property name="valign">start</property>
-                                                    <property name="margin_right">18</property>
+                                                    <property name="margin_right">6</property>
                                                     <property name="margin_top">6</property>
                                                     <property name="margin_bottom">6</property>
                                                     <property name="row_spacing">4</property>
@@ -11458,6 +11462,7 @@ have been enabled.</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="valign">start</property>
+                    <property name="margin_left">6</property>
                     <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkBox">
@@ -11469,6 +11474,7 @@ have been enabled.</property>
                         <property name="margin_right">6</property>
                         <property name="margin_top">6</property>
                         <property name="margin_bottom">6</property>
+                        <property name="spacing">6</property>
                         <child>
                           <object class="GtkBox">
                             <property name="visible">True</property>
@@ -11482,7 +11488,6 @@ have been enabled.</property>
                                 <property name="can_focus">False</property>
                                 <property name="halign">start</property>
                                 <property name="valign">start</property>
-                                <property name="margin_left">6</property>
                                 <property name="margin_right">6</property>
                                 <property name="margin_top">6</property>
                                 <property name="label_xalign">0.039999999105930328</property>
@@ -11498,7 +11503,7 @@ have been enabled.</property>
                                         <property name="halign">start</property>
                                         <property name="margin_right">6</property>
                                         <property name="margin_top">6</property>
-                                        <property name="row_spacing">11</property>
+                                        <property name="row_spacing">6</property>
                                         <property name="column_spacing">6</property>
                                         <child>
                                           <object class="GtkCheckButton" id="c_useModsTex">
@@ -11648,6 +11653,7 @@ can be specified in this file.</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">True</property>
+                                            <property name="margin_right">6</property>
                                             <property name="margin_top">4</property>
                                             <property name="margin_bottom">4</property>
                                             <signal name="clicked" handler="onEditChangesFile" swapped="no"/>
@@ -11663,6 +11669,7 @@ can be specified in this file.</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">True</property>
+                                            <property name="margin_right">6</property>
                                             <property name="margin_top">4</property>
                                             <property name="margin_bottom">4</property>
                                             <signal name="clicked" handler="onEditModsTeX" swapped="no"/>
@@ -11678,6 +11685,7 @@ can be specified in this file.</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">True</property>
+                                            <property name="margin_right">6</property>
                                             <property name="margin_top">4</property>
                                             <property name="margin_bottom">4</property>
                                             <signal name="clicked" handler="onEditModsSty" swapped="no"/>
@@ -11732,6 +11740,7 @@ this option checked (on).</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">True</property>
+                                            <property name="margin_right">6</property>
                                             <property name="margin_top">4</property>
                                             <property name="margin_bottom">4</property>
                                             <signal name="clicked" handler="onEditCustomSty" swapped="no"/>
@@ -11747,6 +11756,7 @@ this option checked (on).</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">True</property>
+                                            <property name="margin_right">6</property>
                                             <property name="margin_top">4</property>
                                             <property name="margin_bottom">4</property>
                                             <signal name="clicked" handler="onEditScriptFile" swapped="no"/>
@@ -11762,6 +11772,7 @@ this option checked (on).</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">True</property>
+                                            <property name="margin_right">6</property>
                                             <signal name="clicked" handler="onEditPreModsTeX" swapped="no"/>
                                           </object>
                                           <packing>
@@ -11824,6 +11835,7 @@ this option checked (on).</property>
                                 <property name="width_request">290</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="margin_right">6</property>
                                 <property name="margin_top">6</property>
                                 <property name="vexpand">True</property>
                                 <property name="label_xalign">0.039999999105930328</property>
@@ -11866,6 +11878,7 @@ file is selected, then these will appear in alphabetical order.</property>
                                             <property name="receives_default">True</property>
                                             <property name="halign">start</property>
                                             <property name="valign">center</property>
+                                            <property name="margin_right">5</property>
                                             <property name="margin_bottom">4</property>
                                             <signal name="clicked" handler="onFrontPDFsClicked" swapped="no"/>
                                           </object>
@@ -11883,6 +11896,7 @@ file is selected, then these will appear in alphabetical order.</property>
                                             <property name="receives_default">True</property>
                                             <property name="halign">start</property>
                                             <property name="valign">center</property>
+                                            <property name="margin_right">6</property>
                                             <property name="margin_top">4</property>
                                             <property name="margin_bottom">4</property>
                                             <signal name="clicked" handler="onBackPDFsClicked" swapped="no"/>
@@ -11920,6 +11934,7 @@ file is selected, then these will appear in alphabetical order.</property>
                                             <property name="receives_default">True</property>
                                             <property name="halign">start</property>
                                             <property name="valign">center</property>
+                                            <property name="margin_right">6</property>
                                             <property name="margin_top">4</property>
                                             <property name="margin_bottom">4</property>
                                             <signal name="clicked" handler="onWatermarkPDFclicked" swapped="no"/>
@@ -12048,7 +12063,6 @@ PrintDraft Folder</property>
                                     <property name="tooltip_text" translatable="yes">Use the Project Printdraft directory 
 to store generated PDF file(s).</property>
                                     <property name="halign">center</property>
-                                    <property name="margin_left">6</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
                                     <signal name="clicked" handler="onUsePrintDraftFolderClicked" swapped="no"/>
@@ -12145,14 +12159,13 @@ files, for debugging</property>
                       <object class="GtkBox">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="spacing">7</property>
                         <child>
                           <object class="GtkFrame" id="fr_AdvOther">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="halign">start</property>
                             <property name="valign">start</property>
-                            <property name="margin_left">12</property>
-                            <property name="margin_right">12</property>
                             <property name="margin_top">6</property>
                             <property name="margin_bottom">6</property>
                             <property name="label_xalign">0.019999999552965164</property>
@@ -12321,6 +12334,58 @@ This will delete all previous log and intermediate temporary files for the entir
                                       <packing>
                                         <property name="left_attach">1</property>
                                         <property name="top_attach">3</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkBox">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <child>
+                                          <object class="GtkCheckButton" id="c_interlinear">
+                                            <property name="label" translatable="yes">Interlinear</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">False</property>
+                                            <property name="tooltip_text" translatable="yes">Convert interlinear text to ruby</property>
+                                            <property name="draw_indicator">True</property>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkEntry" id="t_interlinearLang">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="tooltip_text" translatable="yes">Interlinear language code to use</property>
+                                            <property name="margin_left">6</property>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">1</property>
+                                          </packing>
+                                        </child>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">0</property>
+                                        <property name="top_attach">4</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="c_ruby">
+                                        <property name="label" translatable="yes">Ruby text above</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="tooltip_text" translatable="yes">Treat ruby text as ruby rather than interlinear text by placing it above the base text rather than below.</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">1</property>
+                                        <property name="top_attach">4</property>
                                       </packing>
                                     </child>
                                   </object>
@@ -12648,6 +12713,8 @@ from XeTeX processing.</property>
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="halign">start</property>
+                            <property name="margin_left">7</property>
+                            <property name="margin_right">6</property>
                             <property name="margin_bottom">6</property>
                             <property name="row_spacing">6</property>
                             <property name="column_spacing">6</property>
@@ -13394,8 +13461,6 @@ options here to create a Diglot or Didoc.</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
                         <property name="valign">end</property>
-                        <property name="margin_left">6</property>
-                        <property name="margin_right">6</property>
                         <property name="margin_top">3</property>
                         <property name="margin_bottom">6</property>
                         <property name="label_xalign">0.039999999105930328</property>
@@ -13403,7 +13468,7 @@ options here to create a Diglot or Didoc.</property>
                           <object class="GtkGrid" id="gr_borders">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="margin_left">12</property>
+                            <property name="margin_left">6</property>
                             <property name="margin_right">6</property>
                             <property name="margin_top">6</property>
                             <property name="margin_bottom">6</property>

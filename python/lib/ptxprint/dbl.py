@@ -1,6 +1,6 @@
 
 import xml.etree.ElementTree as et
-import argparse, re, os
+import re, os
 from zipfile import ZipFile
 from ptxprint.ptsettings import books, allbooks
 from ptxprint.utils import get_ptsettings
@@ -213,6 +213,3 @@ def UnpackDBL(dblfile, prjid, prjdir):
     n.tail = "\n"
     with open(os.path.join(prjpath, "Settings.xml"), "wb") as outf:
         outf.write(et.tostring(settings, encoding="utf-8"))
-
-    
-

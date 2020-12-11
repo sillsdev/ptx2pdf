@@ -14,6 +14,7 @@ from ptxprint.usfmutils import Usfm, Sheets, isScriptureText, Module
 from ptxprint.utils import _, universalopen
 from ptxprint.dimension import Dimension
 import ptxprint.scriptsnippets as scriptsnippets
+from ptxprint.interlinear import Interlinear
 
 # After universalopen to resolve circular import. Kludge
 from ptxprint.snippets import FancyIntro, PDFx1aOutput, Diglot, FancyBorders, ImgCredits, ThumbTabs, Colophon
@@ -74,6 +75,9 @@ ModelMap = {
     "project/ifstarthalfpage":  ("c_startOnHalfPage", lambda w,v :"true" if v else "false"),
     "project/randompicposn":    ("c_randomPicPosn", None),
     "project/canonicalise":     ("c_canonicalise", None),
+    "project/interlinear":      ("c_interlinear", None),
+    "project/interlang":        ("t_interlinearLang", None),
+    "project/ruby":             ("c_ruby", None),
     "project/license":          ("ecb_licenseText", None),
     "project/copyright":        ("t_copyrightStatement", None),
     "project/colophontext":     ("tb_colophon", lambda w,v: v or ""),
@@ -372,6 +376,7 @@ class TexModel:
         self.changes = None
         self.localChanges = None
         self.debug = False
+        self.interlinear = None
         libpath = os.path.abspath(os.path.dirname(__file__))
         self.dict = {"/ptxpath": path.replace("\\","/"),
                      "/ptxprintlibpath": libpath.replace("\\","/"),
@@ -425,7 +430,8 @@ class TexModel:
         self.dict['/modspath'] = rel(fpath, docdir).replace("\\","/")
         if "document/diglotcfgrpath" not in self.dict:
             self.dict["document/diglotcfgrpath"] = ""
-        self.dict['paragraph/linespacingfactor'] = "{:.3f}".format(float(self.dict['paragraph/linespacing']) / 14 / float(self.dict['paper/fontfactor']))
+        self.dict['paragraph/linespacingfactor'] = "{:.3f}".format(float(self.dict['paragraph/linespacing']) \
+                                                                   / 14 / float(self.dict['paper/fontfactor']))
         self.dict['paragraph/ifhavehyphenate'] = "" if os.path.exists(os.path.join(self.printer.configPath(""), \
                                                        "hyphen-"+self.dict["project/id"]+".tex")) else "%"
         # forward cleanup. If ask for ptxprint-mods.tex but don't have it, copy PrintDraft-mods.tex
@@ -437,6 +443,9 @@ class TexModel:
                     copyfile(spath, modspath)
         self.dict["paper/pagegutter"] = "{:.2f}mm".format(Dimension(self.dict["paper/width"]).asunits("mm") \
                         - (self.dict["paper/gutter"] if self.dict["paper/ifaddgutter"] == "true" else 0.))
+        if self.dict["project/interlinear"]:
+            self.interlinear = Interlinear(self.dict["project/interlang"],
+                                            os.path.join(self.dict["/ptxpath"], self.dict["project/id"]))
 
     def updatefields(self, a):
         global get
@@ -769,10 +778,17 @@ class TexModel:
             if self.changes is not None:
                 dat = self.runChanges(self.changes, dat)
 
+            doc = None
+            if self.interlinear is not None:
+                doc = Usfm(dat.splitlines(True), self.sheets)
+                linelengths = [len(x) for x in dat.splitlines(True)]
+                self.interlinear.convertBk(bk, doc, linelengths)
+
             if self.dict['project/canonicalise']:
                 syntaxErrors = []
                 try:
-                    doc = Usfm(dat.splitlines(True), self.sheets)
+                    if doc is None:
+                        doc = Usfm(dat.splitlines(True), self.sheets)
                     doc.normalise()
                 except SyntaxError as e:
                     syntaxErrors.append("{} {} line:{}".format(self.prjid, bk, str(e).split('line', maxsplit=1)[1]))
@@ -787,7 +803,9 @@ class TexModel:
                 else:
                     if self.dict["document/ifletter"] == "":
                         doc.letter_space("\uFDD0")
-                    dat = str(doc)
+                
+            if doc is not None:
+                dat = str(doc)
 
             if self.localChanges is not None:
                 dat = self.runChanges(self.localChanges, dat)
