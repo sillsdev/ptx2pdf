@@ -26,6 +26,7 @@ from ptxprint.gtkstyleditor import StyleEditorView
 from ptxprint.runjob import isLocked, unlockme
 from ptxprint.texmodel import TexModel
 from ptxprint.minidialog import MiniDialog
+from ptxprint.dbl import UnpackDBL
 import ptxprint.scriptsnippets as scriptsnippets
 from ptxprint.utils import _, f_
 import configparser
@@ -127,6 +128,7 @@ _sensitivities = {
     "c_processScript" :        ["c_processScriptBefore", "c_processScriptAfter", "btn_selectScript", "btn_editScript"],
     "c_usePrintDraftChanges" : ["btn_editChangesFile"],
     "c_useModsTex" :           ["btn_editModsTeX"],
+    "c_usePreModsTex" :        ["btn_editModsPreTex"],
     "c_useCustomSty" :         ["btn_editCustomSty"],
     "c_useModsSty" :           ["btn_editModsSty"],
     "c_inclFrontMatter" :      ["btn_selectFrontPDFs"],
@@ -1663,6 +1665,13 @@ class GtkViewModel(ViewModel):
         tbuf.move_mark(tmark, titer)
         tbuf.place_cursor(titer)
         GLib.idle_add(self.fileViews[pgnum][1].scroll_mark_onscreen, tmark)
+    def _editProcFile(self, fname, loc, intro=""):
+        fpath = self._locFile(fname, loc)
+        if intro != "" and not os.path.exists(fpath):
+            openfile = open(fpath,"w", encoding="utf-8")
+            openfile.write(intro)
+            openfile.close()
+        self.editFile(fname, loc)
 
     def onEditScriptFile(self, btn):
         customScriptFPath = self.get("btn_selectScript")
@@ -2243,16 +2252,24 @@ class GtkViewModel(ViewModel):
     def onUnpackDBLbundleClicked(self, btn):
         dialog = self.builder.get_object("dlg_DBLbundle")
         response = dialog.run()
-        if response == Gtk.ResponseType.OK:
-            pass
-            # do something useful here:
-            # (unpack the module, and update the Project fcb_ entry and set project)
+        if response == Gtk.ResponseType.OK and self.builder.get_object("btn_chooseDBLbundle").get_sensitive:
+            prj = self.get("t_DBLprojName")
+            if prj != "":
+                UnpackDBL(self.DBLfile, prj, self.settings_dir)
+                # add prj to ls_project before selecting it.
+                lsp = self.builder.get_object("ls_projects")
+                allprojects = [x[0] for x in lsp]
+                for i, p in enumerate(allprojects):
+                    if prj.casefold() > p.casefold():
+                        lsp.insert(i, [prj])
+                        break
+                self.set("fcb_project", prj)
         dialog.hide()
 
     def onChooseDBLbundleClicked(self, btn):
         prjdir = os.path.join(self.settings_dir, self.prjid)
         DBLfile = self.fileChooser("Select a DBL Bundle file", 
-                filters = {"DBL Bundles": {"patterns": ["bundle_text_dbl*.zip"] , "mime": "text/plain", "default": True},
+                filters = {"DBL Bundles": {"patterns": ["*.zip"] , "mime": "text/plain", "default": True},
                            "All Files": {"pattern": "*"}},
                 multiple = False, basedir=os.path.join(prjdir, "Bundles"))
         if DBLfile is not None:
@@ -2265,7 +2282,9 @@ class GtkViewModel(ViewModel):
             self.DBLfile = None
             self.builder.get_object("btn_chooseDBLbundle").set_tooltip_text("")
     
-    def onDBLprojNameChanged(self, foo, bar):
-        # Update the clickability of the OK button so that we 
-        # don't accidentally overwrite an existing project
-        pass
+    def onDBLprojNameChanged(self, widget):
+        text = self.get("t_DBLprojName")
+        btn = self.builder.get_object("btn_chooseDBLbundle")
+        lsp = self.builder.get_object("ls_projects")
+        allprojects = [x[0] for x in lsp]
+        btn.set_sensitive(not text in allprojects)

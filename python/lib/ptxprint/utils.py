@@ -1,6 +1,7 @@
 import gettext
 import locale, codecs, traceback
 import os, sys, re
+import xml.etree.ElementTree as et
 from inspect import currentframe
 from ptxprint.ptsettings import books
 
