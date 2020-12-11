@@ -11,9 +11,17 @@
 \stylesheet{test.sty}
 \catcode`\@=11
 \gdef\b@okShort{}
-\x@\def\csname complex-w\endcsname{%
-   \message{complex-w}%
-   \unhbox0
+\def\rubyb#1#2{\setbox1=\hbox{\s@tfont{#2|#1}\get@ttribute{#2}\attr@b}
+    \dimen0=\ifdim\wd0>\wd1 \wd0\else\wd1\fi
+    \setbox0=\hbox{\vtop{\s@tbaseline{#1}\hbox to \dimen0{\hfil\box0\hfil}
+        \hbox to \dimen0{\hfil\box1\hfil}}}}
+\def\rubyt#1#2{\setbox1=\hbox{\s@tfont{#2|#1}\get@ttribute{#2}\attr@b}
+    \dimen0=\ifdim\wd0>\wd1 \wd0\else\wd1\fi
+    \setbox0=\hbox{\vbox{\s@tbaseline{#2|#1}\hbox to \dimen0{\hfil\box1\hfil}
+        \hbox to \dimen0{\hfil\box0\hfil}}}}
+\x@\def\csname complex-w\endcsname{\rubyb{w}{lemma}}
+\def\dummy{%
+   \box0
    {\s@tfont{w:lemma}%
    \get@ttribute{lemma}\attr@b}
 }%

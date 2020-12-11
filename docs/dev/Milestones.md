@@ -146,6 +146,12 @@ But the question remains how often does one want to change the styling of one
 marker inside another other than with regard to the character styling a
 milestone marker might add.
 
+We have gone with with approach one and with there being nothing syntactic about
+the structure of a basic milestone marker. Thus `wj-s` is just a milestone
+`wj-s` that happens to have an ending milestone `wj-e`. It is the presence of
+the endmarker that indicates that the milestones are paired. Nothing about the
+structure of the marker.
+
 ### Default Parameterised Milestone
 
 This is a milestone that takes a default attribute. For example `\qt-s
@@ -154,8 +160,9 @@ This is a milestone that takes a default attribute. For example `\qt-s
 ```
 1.  \Marker qt-Jesus
 2.  \Marker qt-s-Jesus
-3.  \Marker ms:Jesus|qt
-4.  \Marker ms:who=Jesus|qt
+3.  \Marker ms:Jesus|qt-s
+4.  \Marker ms:who=Jesus|qt-s
+5.  \Marker Jesus|qt-s
 ```
 
 Approach 1 looks easy but there are a number of moving parts here, not least
@@ -164,6 +171,11 @@ with `\qt-s\*`. But this may not be important.
 Approach 2 is the current implementation.
 Approach 3 is in keeping with category-markup and a generalised milestone marker model.
 Approach 4 is suggested by the Milestones with multiple attributes below.
+Approach 5 carries the unmarked content without needing extra namespace
+handling.
+
+[MH] I like both 4 & 5 and suggest we support both with 4 taking precedence over
+5. 
 
 ### Milestones with Multiple Attributes
 
@@ -215,6 +227,7 @@ The question is how do we style the `agloss` text?
 3.  \Marker wit-gloss
 4.  \Marker wit:gloss
 5.  \Marker wit(gloss)
+6.  \Marker gloss|wit
 ```
 
 Method 1 is deficient, not making any distinction between potential values e.g.:
@@ -226,6 +239,20 @@ format, but while in milestones it was the *content* of the
 attribute that defined the marker, here the content is displayed and the styling
 is applied based on the *attribute* type. This may become confusing to people, hence 
 methods 4 and 5 are suggested.
+
+Method 6 follows on from method 5 for the simply parameterised milestone. Since
+a marker can't be both a character style and a milestone in this way, we can
+re-use the principle. Notice that whereas for the milestone the text before the
+`|` is the content of an attribute, for the character style it is the attribute
+name itself.
+
+[MH] I like method 6 along with method 2 with method 2 taking precedence. Method
+2 allows for multiply defined fields as for `\wit name|gloss="gloss"
+morph="morphbreak"\wit*
+
+```
+1.  \Marker at:gloss;morph|wit
+```
 
 #### Disussion
 While there are going to be distinct layouts for different markers/attributes there are some 
