@@ -224,6 +224,22 @@ _styleLinks = {
     "updateFnLineSpacing": (("f", "Baseline"), ("f", "LineSpacing")),
 }
 
+def _doError(text, secondary, title):
+    dialog = Gtk.MessageDialog(parent=None, message_type=Gtk.MessageType.ERROR,
+             buttons=Gtk.ButtonsType.OK, text=text)
+    if title is not None:
+        dialog.set_title(title)
+    else:
+        dialog.set_title("PTXprint")
+    if secondary is not None:
+        dialog.format_secondary_text(secondary)
+    if sys.platform == "win32":
+        dialog.set_keep_above(True)
+    dialog.run()
+    if sys.platform == "win32":
+        dialog.set_keep_above(False)
+    dialog.destroy()
+
 class GtkViewModel(ViewModel):
 
     def __init__(self, settings_dir, workingdir, userconfig, scriptsdir, args=None):
@@ -426,7 +442,7 @@ class GtkViewModel(ViewModel):
 
     def monitor(self):
         if self.pendingerror is not None:
-            self._doError(*self.pendingerror)
+            _doError(*self.pendingerror)
             self.pendingerror = None
         return True
 
@@ -573,23 +589,7 @@ class GtkViewModel(ViewModel):
         if threaded:
             self.pendingerror=(txt, secondary, title)
         else:
-            self._doError(txt, secondary, title)
-
-    def _doError(self, text, secondary, title):
-        dialog = Gtk.MessageDialog(parent=None, message_type=Gtk.MessageType.ERROR,
-                 buttons=Gtk.ButtonsType.OK, text=text)
-        if title is not None:
-            dialog.set_title(title)
-        else:
-            dialog.set_title("PTXprint")
-        if secondary is not None:
-            dialog.format_secondary_text(secondary)
-        if sys.platform == "win32":
-            dialog.set_keep_above(True)
-        dialog.run()
-        if sys.platform == "win32":
-            dialog.set_keep_above(False)
-        dialog.destroy()
+            _doError(txt, secondary, title)
 
     def onOK(self, btn):
         if isLocked():

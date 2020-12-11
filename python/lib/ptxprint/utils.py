@@ -100,3 +100,65 @@ def universalopen(fname, rewrite=False, cp=65001):
 
 def print_traceback():
     traceback.print_stack()
+
+if sys.platform == "linux":
+
+    def openkey(path, doError=None):
+        basepath = os.path.expanduser("~/.config/paratext/registry/LocalMachine/software")
+        valuepath = os.path.join(basepath, path.lower(), "values.xml")
+        doc = et.parse(valuepath)
+        return doc
+
+    def queryvalue(base, value):
+        res = base.getroot().find('.//value[@name="{}"]'.format(value))
+        if res is None:
+            return ""
+        else:
+            return res.text
+
+elif sys.platform == "win32":
+    import winreg
+
+    def openkey(path, doError=None):
+        try:
+            k = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\WOW6432Node\\" + path.replace("/", "\\"))
+        except FileNotFoundError:
+            txt1 = "Unable to locate Registry Key for Paratext installation"
+            txt2 = "Sorry - PTXprint cannot work unless Paratext 8 (or later) is installed"
+            print("Fatal Error: {}\n{}".format(txt1, txt2))
+            if doError is not None:
+                doError(txt1, txt2, "PTXprint: Fatal Error")
+        return k
+
+    def queryvalue(base, value):
+        return winreg.QueryValueEx(base, value)[0]
+
+pt_bindir = ""
+
+def get_ptsettings(errorfn):
+    global pt_bindir
+    pt_settings = "."
+    try:
+        ptob = openkey("Paratext/8", doError=errorfn)
+        ptv = queryvalue(ptob, "ParatextVersion")
+    except FileNotFoundError:
+        for v in ('9', '8'):
+            path = "C:\\My Paratext {} Projects".format(v)
+            if os.path.exists(path):
+                pt_settings = path
+                pt_bindir = "C:\\Program Files\\Paratext {}".format(v)
+                if os.path.exists(pt_bindir):
+                    break
+                else:
+                    pt_bindir = "C:\\Program Files (x86)\\Paratext {}".format(v)
+                break
+    else:
+        if ptv:
+            version = ptv[:ptv.find(".")]
+            try:
+                pt_bindir = queryvalue(ptob, 'Paratext{}_Full_Release_AppPath'.format(version))
+            except:
+                pt_bindir = queryvalue(ptob, 'Program_Files_Directory_Ptw'+version)
+        pt_settings = queryvalue(ptob, 'Settings_Directory')
+    return pt_settings
+

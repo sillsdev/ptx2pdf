@@ -63,6 +63,12 @@ class Path(pathlib.Path):
 posparms = ["alt", "src", "size", "pgpos", "copy", "caption", "ref", "x-xetex", "mirror", "scale"]
 pos3parms = ["src", "size", "pgpos", "ref", "copy", "alt", "x-xetex", "mirror", "scale"]
 
+def doError(txt, secondary=None, title=None):
+    print(txt)
+    if secondary is not None:
+        print(secondary)
+
+
 class ViewModel:
     _attributes = {
         # modelname: (attribute, isMultiple, label)

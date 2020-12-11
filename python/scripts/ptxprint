@@ -13,10 +13,10 @@ try:
 except ImportError:
     sys.path.append(os.path.join(os.path.dirname(__file__), "..", "lib"))
     import ptxprint
-from ptxprint.view import ViewModel, VersionStr
+from ptxprint.view import ViewModel, VersionStr, doError
 from ptxprint.font import initFontCache, cachepath
 from ptxprint.runjob import RunJob, isLocked
-from ptxprint.utils import _, setup_i18n
+from ptxprint.utils import _, setup_i18n, get_ptsettings
 
 parser = argparse.ArgumentParser()
 # parser.add_argument('-h','--help', help="show this help message and exit")
@@ -47,8 +47,14 @@ if args.logging and getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
     sys.stdio = errfile
     sys.stderr = errfile
 
+if not args.print:
+    from ptxprint.gtkview import GtkViewModel, _doError
+
+# necessary for the side effect of setting pt_bindir :(
+ptsettingsdir = get_ptsettings(doError if args.print else _doError)
+
 if args.paratext is None:
-    args.paratext = ptxprint.runner.pt_settings
+    args.paratext = ptsettingsdir
 
 if not args.paratext:
     print("No Paratext Settings directory found")
@@ -108,7 +114,6 @@ else:
 if args.print or args.archive is not None:
     mainw = ViewModel(args.paratext, args.directory, config, macrosdir, args)
 else:
-    from ptxprint.gtkview import GtkViewModel
     mainw = GtkViewModel(args.paratext, args.directory, config, macrosdir, args)
     mainw.ExperimentalFeatures(args.experimental)
 
