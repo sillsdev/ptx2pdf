@@ -75,7 +75,7 @@ ModelMap = {
     "project/ifstarthalfpage":  ("c_startOnHalfPage", lambda w,v :"true" if v else "false"),
     "project/randompicposn":    ("c_randomPicPosn", None),
     "project/canonicalise":     ("c_canonicalise", None),
-    "project/interlinear":      ("c_interlinear", "" if v else "%"),
+    "project/interlinear":      ("c_interlinear", lambda w,v: "" if v else "%"),
     "project/interlang":        ("t_interlinearLang", None),
     "project/ruby":             ("c_ruby", lambda w,v : "t" if v else "b"),
     "project/license":          ("ecb_licenseText", None),
@@ -443,7 +443,8 @@ class TexModel:
                     copyfile(spath, modspath)
         self.dict["paper/pagegutter"] = "{:.2f}mm".format(Dimension(self.dict["paper/width"]).asunits("mm") \
                         - (self.dict["paper/gutter"] if self.dict["paper/ifaddgutter"] == "true" else 0.))
-        if self.dict["project/interlinear"]:
+        if self.dict["project/interlinear"] != "%":
+            print("Making interlinear", self.dict["project/interlang"], self.dict["/ptxpath"], self.dict["project/id"])
             self.interlinear = Interlinear(self.dict["project/interlang"],
                                             os.path.join(self.dict["/ptxpath"], self.dict["project/id"]))
 

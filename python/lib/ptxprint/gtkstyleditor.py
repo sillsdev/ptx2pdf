@@ -2,6 +2,7 @@ from gi.repository import Gtk, Pango
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal
 from ptxprint.styleditor import StyleEditor
 from ptxprint.utils import _
+from ptxprint.sfm.style import Marker, CaselessStr
 import re
 
 stylemap = {
@@ -199,10 +200,13 @@ class StyleEditorView(StyleEditor):
 
     def load(self, sheetfiles):
         super().load(sheetfiles)
+        print(sorted(self.sheet.keys()))
         results = {"Tables": {"th": {"thc": {}, "thr": {}}, "tc": {"tcc": {}, "tcr": {}}},
                    "Peripheral Materials": {"zpa-": {}},
                    "Identification": {"toc": {}}}
         for k, v in sorted(self.sheet.items(), key=lambda x:(len(x[0]), x[0])):
+            if '|' in k:
+                print("Found attributed style: ", k)
             if k == "p":
                 foundp = True
             cat = 'Other'

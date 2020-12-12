@@ -120,7 +120,7 @@ class Usfm:
     def __str__(self):
         return sfm.generate(self.doc)
 
-    def addorncv(self):
+    def addorncv(self, backrefs=True):
         if self.cvaddorned:
             return
         ispara = sfm.text_properties('paragraph')
@@ -156,7 +156,7 @@ class Usfm:
                     for t in pending:
                         t.pos = _Reference(t.pos, ref)
                     pending.clear()
-                elif ref[2] != "0":
+                elif ref[2] != "0" and backrefs:
                     if isHeading(e) or len(pending):
                         pending.append(e)
                 e.pos = _Reference(e.pos, ref)
@@ -232,6 +232,26 @@ class Usfm:
                 a.extend(e_[:])
             return a
         return reduce(_g, chaps, [])
+
+    def iterVerse(self, cstart, vstart, clast=None, vlast=None):
+        start = make_rangetuple(cstart, vstart, start=True)
+        last = make_rangetuple(clast or cstart, vlast or vstart, start=False)
+        self.addorncv()
+        print(f"iterVerse({start}, {last})")
+
+        def iterandtest(e):
+            if e.pos.endref > last:
+                return
+            if e.pos.startref >= start:
+                print(type(e), e.name if isinstance(e, sfm.Element) else "")
+                yield e
+            if isinstance(e, sfm.Element):
+                for c in e:
+                    yield from iterandtest(c)
+            
+        chaps = self.chapters[start[0]:last[0]+1]
+        for e in chaps:
+            yield from iterandtest(e)
 
     def normalise(self):
         ''' Normalise USFM in place '''
