@@ -15,7 +15,7 @@ else:
 from gi.repository import GtkSource
 
 import xml.etree.ElementTree as et
-from ptxprint.font import TTFont, initFontCache, fccache
+from ptxprint.font import TTFont, initFontCache, fccache, FontRef
 from ptxprint.view import ViewModel, Path
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal, setFontButton
 from ptxprint.utils import APP
@@ -140,9 +140,7 @@ _sensitivities = {
     "c_inclSectionHeader" :    ["btn_selectSectionHeaderPDF", "lb_inclSectionHeader"],
     "c_inclEndOfBook" :        ["btn_selectEndOfBookPDF", "lb_inclEndOfBook"],
     "c_inclVerseDecorator" :   ["btn_selectVerseDecorator", "lb_inclVerseDecorator", "btn_VerseStyle"],
-    "c_fakebold" :             ["s_boldembolden", "s_boldslant"],
-    "c_fakeitalic" :           ["s_italicembolden", "s_italicslant"],
-    "c_fakebolditalic" :       ["s_bolditalicembolden", "s_bolditalicslant"],
+    "c_fontFake":              ["s_fontBold", "s_fontItalic", "l_fontBold", "l_fontItalic"],
     "c_thumbtabs":             ["gr_thumbs"],
     "c_thumbrotate":           ["fcb_rotateTabs"],
     "c_colophon":              ["gr_colophon"],
@@ -1107,17 +1105,18 @@ class GtkViewModel(ViewModel):
         super(GtkViewModel, self).onFontChanged(fbtn)
         self.builder.get_object('c_useGraphite').set_sensitive(self.get('c_useGraphite'))
         self.setEntryBoxFont()
-        self.updateFakeLabels()
 
     def setEntryBoxFont(self):
         # Set the font of any GtkEntry boxes to the primary body text font for this project
         fsize = self.get("s_fontsize")
-        (name, style) = self.get("bl_fontR")
-        fallback = ',Sans'
+        fontr = self.get("bl_fontR", skipmissing=True)
+        if fontr is None:
+            return
+        fallbacks = ['Sans']
         if self.diglotView is not None:
-            (digname, digstyle) = self.diglotView.get("bl_fontR")
-            fallback = "," + digname + fallback
-        pangostr = '{}{} {} {}'.format(name, fallback, style, fsize)
+            digfontr = self.diglotView.get("bl_fontR")
+            fallbacks.append(digfontr.name)
+        pangostr = fontr.asPango(fallbacks, fsize)
         p = Pango.FontDescription(pangostr)
         for w in ("t_clHeading", "t_tocTitle", "t_configNotes", "scroll_FinalSFM", \
                   "ecb_ftrcenter", "ecb_hdrleft", "ecb_hdrcenter", "ecb_hdrright", "t_fncallers", "t_xrcallers", \
@@ -1145,15 +1144,6 @@ class GtkViewModel(ViewModel):
         self.onPicRadioChanged(btn)
         self.picChecksView.onReverseRadioChanged()
     
-    def updateFakeLabels(self):
-        status = self.get("c_fakebold") or self.get("c_fakeitalic") or self.get("c_fakebolditalic")
-        for c in ("l_embolden", "l_slant"):
-            self.builder.get_object(c).set_sensitive(status)
-
-    def onFakeClicked(self, btn):
-        self.onSimpleClicked(btn)
-        self.updateFakeLabels()
-        
     def onVariableLineSpacingClicked(self, btn):
         self.sensiVisible("c_variableLineSpacing")
         lnspVal = round(float(self.get("s_linespacing")), 1)
@@ -1325,8 +1315,8 @@ class GtkViewModel(ViewModel):
         fc.fill_liststore(lsfonts)
 
     def onFontRclicked(self, btn):
-        self.getFontNameFace("bl_fontR")
-        self.onFontChanged(btn)
+        if self.getFontNameFace("bl_fontR"):
+            self.onFontChanged(btn)
         
     def onFontBclicked(self, btn):
         self.getFontNameFace("bl_fontB")
@@ -1351,12 +1341,42 @@ class GtkViewModel(ViewModel):
 
     def getFontNameFace(self, btnid, noStyles=False):
         btn = self.builder.get_object(btnid)
+        f = self.get(btnid)
+        print(f"getFontNameFace: {btnid} {f}")
         lb = self.builder.get_object("tv_fontFamily")
-        lb.set_cursor(0)
+        ls = lb.get_model()
         dialog = self.builder.get_object("dlg_fontChooser")
+        if f is None:
+            i = 0
+            isGraphite = False
+            feats = ""
+            hasfake = False
+            embolden = None
+            italic = None
+        else:
+            for i, row in enumerate(ls):
+                if row[0] == f.name:
+                    break
+            else:
+                i = 0
+            print(btnid, f, i)
+            isGraphite = f.isGraphite
+            feats = f.asFeatStr()
+            embolden = f.getFake("embolden")
+            italic = f.getFake("slant")
+            hasfake = embolden is not None or italic is not None
+        lb.set_cursor(i)
+        lb.scroll_to_cell(i)
         self.builder.get_object("t_fontSearch").set_text("")
         self.builder.get_object("t_fontSearch").has_focus()
         self.builder.get_object("fcb_fontFaces").set_sensitive(not noStyles)
+        self.builder.get_object("t_fontFeatures").set_text(feats)
+        self.builder.get_object("c_fontGraphite").set_active(isGraphite)
+        self.builder.get_object("s_fontBold").set_value(float(embolden or 0.))
+        self.builder.get_object("s_fontItalic").set_value(float(italic or 0.))
+        self.builder.get_object("c_fontFake").set_active(hasfake)
+        for a in ("Bold", "Italic"):
+            self.builder.get_object("s_font"+a).set_sensitive(hasfake)
         # dialog.set_default_response(Gtk.ResponseType.OK)
         dialog.set_keep_above(True)
         
@@ -1372,11 +1392,14 @@ class GtkViewModel(ViewModel):
                 style = cb.get_model()[cb.get_active()][0]
                 if style == "Regular":
                     style = ""
-            setFontButton(btn, name, style)
+            f = FontRef.fromDialog(name, style, self.get("c_fontGraphite"), self.get("t_fontFeatures"))
+            self.set(btnid, f)
+            res = True
         elif response == Gtk.ResponseType.CANCEL:
-            pass
+            res = False
         dialog.set_keep_above(False)
         dialog.hide()
+        return res
 
     def onChooseBooksClicked(self, btn):
         dialog = self.builder.get_object("dlg_multiBookSelector")
@@ -1597,13 +1620,11 @@ class GtkViewModel(ViewModel):
     def updateFonts(self):
         if self.ptsettings is None:
             return
-        ptfont = self.ptsettings.get("DefaultFont", "Arial")
-        fb = 'bl_fontR'
-        fblabel = self.builder.get_object(fb).get_label()
-        if fblabel == _("Select font..."):
-            w = self.builder.get_object(fb)
-            setFontButton(w, ptfont, "")
-            self.onFontChanged(w)
+        ptfont = self.get("bl_fontR", skipmissing=True)
+        if ptfont is None:
+            ptfont = FontRef(self.ptsettings.get("DefaultFont", "Arial"), "")
+            self.set('bl_fontR', ptfont)
+            self.onFontChanged(None)
 
     def updateDialogTitle(self):
         titleStr = super(GtkViewModel, self).getDialogTitle()
@@ -2172,7 +2193,6 @@ class GtkViewModel(ViewModel):
 
     def onFontStyclicked(self, btn):
         self.getFontNameFace("bl_font_styFontName", noStyles=True)
-        self.onFontChanged(btn)
         
     def onColophonClicked(self, btn):
         self.onSimpleClicked(btn)

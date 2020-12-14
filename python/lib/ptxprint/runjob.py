@@ -92,27 +92,13 @@ _diglot = {
 "diglot/linebreaklocale" :  "document/linebreaklocale",
 "diglot/useglyphmetrics" :  "paragraph/useglyphmetrics",
 
-"diglot/fontregular" :      "fontregular",
-"diglot/fontregeng" :       "fontregular/engine",
-"diglot/texfeatures" :      "font/texfeatures",
 "diglot/docscript" :        "document/script",
 "diglot/docdigitmapping" :  "document/digitmapping",
                             
-"diglot/fontbold" :         "fontbold",
-"diglot/fontboldeng" :      "fontbold/engine",
-"diglot/boldembolden" :     "fontbold/embolden",
-"diglot/boldslant" :        "fontbold/slant",
-                            
-"diglot/fontitalic" :       "fontitalic",
-"diglot/fontitaleng" :      "fontitalic/engine",
-"diglot/italembolden" :     "fontitalic/embolden",
-"diglot/italslant" :        "fontitalic/slant",
-                            
-"diglot/fontbolditalic" :   "fontbolditalic",
-"diglot/fontbolditaleng" :  "fontbolditalic/engine",
-"diglot/bolditalembolden" : "fontbolditalic/embolden",
-"diglot/boldital/slant" :   "fontbolditalic/slant",
-
+"diglot/fontregular" :      "document/fontregular",
+"diglot/fontbold" :         "document/fontbold",
+"diglot/fontitalic" :       "document/fontitalic",
+"diglot/fontbolditalic" :   "document/fontbolditalic",
 "diglot/ifshowversenums" :  "document/ifshowversenums",
 "diglot/includefootnotes" : "notes/includefootnotes",
 "diglot/fnfontsize" :       "notes/fnfontsize",

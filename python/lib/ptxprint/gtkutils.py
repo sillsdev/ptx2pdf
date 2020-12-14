@@ -26,9 +26,7 @@ def getWidgetVal(wid, w, default=None, asstr=False, sub=0):
     elif wid.startswith("btn_"):
         v = w.get_tooltip_text()
     elif wid.startswith("bl_"):
-        v = getattr(w, 'font_info', (None, None))
-        if asstr:
-            v = "\n".join(v)
+        v = getattr(w, 'font_info', None)
     elif wid.startswith("lb_"):
         v = w.get_label()
     elif wid.startswith("l_"):
@@ -70,7 +68,7 @@ def setWidgetVal(wid, w, value, noui=False):
     elif wid.startswith("btn_"):
         w.set_tooltip_text(value)
     elif wid.startswith("bl_"):
-        setFontButton(w, *value)
+        setFontButton(w, value)
     elif wid.startswith("lb_"):
         w.set_label(value)
     elif wid.startswith("l_"):
@@ -82,8 +80,16 @@ def setWidgetVal(wid, w, value, noui=False):
     elif wid.startswith("nbk_"):
         w.set_current_page(value)
 
-def setFontButton(btn, name, style):
-    btn.font_info = (name, style)
-    btn.set_label("{}\n{}".format(name, style))
+def setFontButton(btn, value):
+    btn.font_info = value
+    style = value.style
+    if not style:
+        styles = []
+        if "embolden" in value.feats:
+            styles.append("(bold)")
+        if "slant" in value.feats:
+            styles.append("(italic)")
+        style = " ".join(styles)
+    btn.set_label("{}\n{}".format(value.name, style))
 
 

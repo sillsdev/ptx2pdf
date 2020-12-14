@@ -2085,7 +2085,7 @@ Viewer tab.</property>
               <packing>
                 <property name="expand">True</property>
                 <property name="fill">True</property>
-                <property name="position">1</property>
+                <property name="position">0</property>
               </packing>
             </child>
             <child>
@@ -2093,6 +2093,7 @@ Viewer tab.</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="halign">start</property>
+                <property name="spacing">6</property>
                 <child>
                   <object class="GtkLabel">
                     <property name="visible">True</property>
@@ -2157,7 +2158,173 @@ in the Windows system.</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkBox">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="spacing">6</property>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="label" translatable="yes">Features:</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkEntry" id="t_fontFeatures">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkCheckButton" id="c_fontGraphite">
+                    <property name="label" translatable="yes">Graphite</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">False</property>
+                    <property name="draw_indicator">True</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">2</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
                 <property name="position">2</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkFrame">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="margin_left">6</property>
+                <property name="margin_right">6</property>
+                <property name="label_xalign">0</property>
+                <child>
+                  <object class="GtkAlignment">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="left_padding">12</property>
+                    <child>
+                      <object class="GtkGrid">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="row_spacing">6</property>
+                        <property name="column_spacing">6</property>
+                        <child>
+                          <object class="GtkLabel" id="l_fontBold">
+                            <property name="visible">True</property>
+                            <property name="sensitive">False</property>
+                            <property name="can_focus">False</property>
+                            <property name="halign">center</property>
+                            <property name="label" translatable="yes">Embolden</property>
+                            <property name="justify">center</property>
+                            <property name="xalign">0.5</property>
+                            <attributes>
+                              <attribute name="weight" value="bold"/>
+                            </attributes>
+                          </object>
+                          <packing>
+                            <property name="left_attach">0</property>
+                            <property name="top_attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="l_fontItalic">
+                            <property name="visible">True</property>
+                            <property name="sensitive">False</property>
+                            <property name="can_focus">False</property>
+                            <property name="halign">center</property>
+                            <property name="label" translatable="yes">Slant</property>
+                            <property name="justify">center</property>
+                            <property name="xalign">0.5</property>
+                            <attributes>
+                              <attribute name="style" value="italic"/>
+                            </attributes>
+                          </object>
+                          <packing>
+                            <property name="left_attach">0</property>
+                            <property name="top_attach">1</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkSpinButton" id="s_fontBold">
+                            <property name="visible">True</property>
+                            <property name="sensitive">False</property>
+                            <property name="can_focus">True</property>
+                            <property name="tooltip_text" translatable="yes">If the required font does not have a BOLD-ITALIC typeface, you can use this setting to create the BOLD effect. (For example, setting Embolden to 2.0 would thicken the Regular typeface making it appear as bold), and use the Slant settings for the ITALIC effect.</property>
+                            <property name="width_chars">5</property>
+                            <property name="text">1.6</property>
+                            <property name="caps_lock_warning">False</property>
+                            <property name="input_purpose">number</property>
+                            <property name="adjustment">a_bolditalice</property>
+                            <property name="climb_rate">0.10000000000000001</property>
+                            <property name="digits">1</property>
+                            <property name="numeric">True</property>
+                            <property name="value">1.6000000002235175</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">1</property>
+                            <property name="top_attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkSpinButton" id="s_fontItalic">
+                            <property name="visible">True</property>
+                            <property name="sensitive">False</property>
+                            <property name="can_focus">True</property>
+                            <property name="tooltip_text" translatable="yes">If the required font does not have a BOLD-ITALIC typeface, you can use this setting to create the ITALIC effect. (For example, setting Slant to 0.15 would slant the Regular typeface by 15% making it appear as italic), and use the Embolden settings for the BOLD effect.</property>
+                            <property name="width_chars">5</property>
+                            <property name="text">0.15</property>
+                            <property name="caps_lock_warning">False</property>
+                            <property name="input_purpose">number</property>
+                            <property name="adjustment">a_bolditalics</property>
+                            <property name="climb_rate">0.01</property>
+                            <property name="digits">2</property>
+                            <property name="numeric">True</property>
+                            <property name="value">0.14999999999999999</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">1</property>
+                            <property name="top_attach">1</property>
+                          </packing>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child type="label">
+                  <object class="GtkCheckButton" id="c_fontFake">
+                    <property name="label" translatable="yes">Fake Bold/Italic</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">False</property>
+                    <property name="draw_indicator">True</property>
+                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">3</property>
               </packing>
             </child>
           </object>
@@ -2541,6 +2708,9 @@ in the Windows system.</property>
       </row>
       <row>
         <col id="0" translatable="yes">Note</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Milestone</col>
       </row>
     </data>
   </object>
@@ -4827,221 +4997,6 @@ Special books and Other advanced options.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkCheckButton" id="c_fakebold">
-                                    <property name="label" translatable="yes">Fake Bold Typeface</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">If the required font does not have a BOLD typeface, you can use this setting to create a BOLD effect. (For example, setting Embolden to 2.0 would thicken the Regular typeface making it appear as bold).</property>
-                                    <property name="halign">start</property>
-                                    <property name="margin_left">30</property>
-                                    <property name="hexpand">True</property>
-                                    <property name="draw_indicator">True</property>
-                                    <signal name="clicked" handler="onFakeClicked" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">2</property>
-                                    <property name="top_attach">1</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkCheckButton" id="c_fakeitalic">
-                                    <property name="label" translatable="yes">Fake Italic Typeface</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">If the required font does not have an ITALIC typeface, you can use this setting to create an ITALIC effect. (For example, setting Slant to 0.15 would slant the Regular typeface by 15% making it appear as italic).</property>
-                                    <property name="halign">start</property>
-                                    <property name="margin_left">30</property>
-                                    <property name="hexpand">True</property>
-                                    <property name="draw_indicator">True</property>
-                                    <signal name="clicked" handler="onFakeClicked" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">2</property>
-                                    <property name="top_attach">2</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkCheckButton" id="c_fakebolditalic">
-                                    <property name="label" translatable="yes">Fake Bold-Italic       </property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="halign">start</property>
-                                    <property name="margin_left">30</property>
-                                    <property name="hexpand">True</property>
-                                    <property name="draw_indicator">True</property>
-                                    <signal name="clicked" handler="onFakeClicked" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">2</property>
-                                    <property name="top_attach">3</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkLabel" id="l_slant">
-                                    <property name="visible">True</property>
-                                    <property name="sensitive">False</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="halign">center</property>
-                                    <property name="label" translatable="yes">Slant</property>
-                                    <property name="justify">center</property>
-                                    <property name="xalign">0.5</property>
-                                    <attributes>
-                                      <attribute name="style" value="italic"/>
-                                    </attributes>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">4</property>
-                                    <property name="top_attach">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkSpinButton" id="s_boldembolden">
-                                    <property name="visible">True</property>
-                                    <property name="sensitive">False</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="tooltip_text" translatable="yes">If the required font does not have a BOLD typeface, you can use this setting to create a BOLD effect. (For example, setting Embolden to 2.0 would thicken the Regular typeface making it appear as bold).</property>
-                                    <property name="width_chars">5</property>
-                                    <property name="text">1.6</property>
-                                    <property name="caps_lock_warning">False</property>
-                                    <property name="input_purpose">number</property>
-                                    <property name="adjustment">a_bolde</property>
-                                    <property name="climb_rate">0.10000000000000001</property>
-                                    <property name="digits">1</property>
-                                    <property name="numeric">True</property>
-                                    <property name="value">1.6000000000000001</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">3</property>
-                                    <property name="top_attach">1</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkSpinButton" id="s_boldslant">
-                                    <property name="visible">True</property>
-                                    <property name="sensitive">False</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="tooltip_text" translatable="yes">This setting would not normally be used, but is included just in case the Typeface Slant factor needs to be changed for Bold.</property>
-                                    <property name="opacity">0.40000000000000002</property>
-                                    <property name="width_chars">5</property>
-                                    <property name="text">0.00</property>
-                                    <property name="caps_lock_warning">False</property>
-                                    <property name="input_purpose">number</property>
-                                    <property name="adjustment">a_bolds</property>
-                                    <property name="climb_rate">0.01</property>
-                                    <property name="digits">2</property>
-                                    <property name="numeric">True</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">4</property>
-                                    <property name="top_attach">1</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkSpinButton" id="s_italicembolden">
-                                    <property name="visible">True</property>
-                                    <property name="sensitive">False</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="tooltip_text" translatable="yes">This setting would not normally be used, but is included in case the thickness of the Typeface also needs to be changed for Italics. Note that a negative value can also be applied to make it appear less thick.</property>
-                                    <property name="opacity">0.40000000000000002</property>
-                                    <property name="width_chars">5</property>
-                                    <property name="text">0.0</property>
-                                    <property name="caps_lock_warning">False</property>
-                                    <property name="input_purpose">number</property>
-                                    <property name="adjustment">a_italice</property>
-                                    <property name="climb_rate">0.10000000000000001</property>
-                                    <property name="digits">1</property>
-                                    <property name="numeric">True</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">3</property>
-                                    <property name="top_attach">2</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkSpinButton" id="s_italicslant">
-                                    <property name="visible">True</property>
-                                    <property name="sensitive">False</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="tooltip_text" translatable="yes">If the required font does not have an ITALIC typeface, you can use this setting to create an ITALIC effect. (For example, setting Slant to 0.15 would slant the Regular typeface by 15% making it appear as italic).</property>
-                                    <property name="width_chars">5</property>
-                                    <property name="text">0.15</property>
-                                    <property name="caps_lock_warning">False</property>
-                                    <property name="input_purpose">number</property>
-                                    <property name="adjustment">a_italics</property>
-                                    <property name="climb_rate">0.01</property>
-                                    <property name="digits">2</property>
-                                    <property name="numeric">True</property>
-                                    <property name="value">0.14999999999999999</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">4</property>
-                                    <property name="top_attach">2</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkSpinButton" id="s_bolditalicembolden">
-                                    <property name="visible">True</property>
-                                    <property name="sensitive">False</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="tooltip_text" translatable="yes">If the required font does not have a BOLD-ITALIC typeface, you can use this setting to create the BOLD effect. (For example, setting Embolden to 2.0 would thicken the Regular typeface making it appear as bold), and use the Slant settings for the ITALIC effect.</property>
-                                    <property name="width_chars">5</property>
-                                    <property name="text">1.6</property>
-                                    <property name="caps_lock_warning">False</property>
-                                    <property name="input_purpose">number</property>
-                                    <property name="adjustment">a_bolditalice</property>
-                                    <property name="climb_rate">0.10000000000000001</property>
-                                    <property name="digits">1</property>
-                                    <property name="numeric">True</property>
-                                    <property name="value">1.6000000002235175</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">3</property>
-                                    <property name="top_attach">3</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkSpinButton" id="s_bolditalicslant">
-                                    <property name="visible">True</property>
-                                    <property name="sensitive">False</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="tooltip_text" translatable="yes">If the required font does not have a BOLD-ITALIC typeface, you can use this setting to create the ITALIC effect. (For example, setting Slant to 0.15 would slant the Regular typeface by 15% making it appear as italic), and use the Embolden settings for the BOLD effect.</property>
-                                    <property name="width_chars">5</property>
-                                    <property name="text">0.15</property>
-                                    <property name="caps_lock_warning">False</property>
-                                    <property name="input_purpose">number</property>
-                                    <property name="adjustment">a_bolditalics</property>
-                                    <property name="climb_rate">0.01</property>
-                                    <property name="digits">2</property>
-                                    <property name="numeric">True</property>
-                                    <property name="value">0.14999999999999999</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">4</property>
-                                    <property name="top_attach">3</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkLabel" id="l_embolden">
-                                    <property name="visible">True</property>
-                                    <property name="sensitive">False</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="halign">center</property>
-                                    <property name="label" translatable="yes">Embolden</property>
-                                    <property name="justify">center</property>
-                                    <property name="xalign">0.5</property>
-                                    <attributes>
-                                      <attribute name="weight" value="bold"/>
-                                    </attributes>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">3</property>
-                                    <property name="top_attach">0</property>
-                                  </packing>
-                                </child>
-                                <child>
                                   <object class="GtkLabel">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
@@ -5157,6 +5112,15 @@ that option - then Refresh Fonts.</property>
                                     <property name="left_attach">1</property>
                                     <property name="top_attach">3</property>
                                   </packing>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
                                 </child>
                               </object>
                             </child>
@@ -12381,6 +12345,7 @@ This will delete all previous log and intermediate temporary files for the entir
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
                                         <property name="tooltip_text" translatable="yes">Treat ruby text as ruby rather than interlinear text by placing it above the base text rather than below.</property>
+                                        <property name="halign">start</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
                                       <packing>

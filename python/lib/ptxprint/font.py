@@ -126,30 +126,6 @@ class TTFontCache:
         for k in sorted(v.keys(), key=lambda k:(styles_order.get(k, len(styles_order)), k)):
             cbs.append([k])
 
-    # deprecated, nothing calls this
-    def find(self, name, style):
-        orgname = name
-        orgstyle = style.title()
-        if style == "":
-            style = "Regular"
-        else:
-            style = style.title()
-        res = self.get(name, style)
-        while res is None:
-            cn = name.split(" ")
-            name = " ".join(cn[:-1])
-            if style == "Regular":
-                style = ""
-            style = cn[-1].title() + (" " + style if len(style) else "")
-            if not len(name):
-                return (None, orgname, orgstyle)
-            res = self.get(name, style)
-            if res is None:
-                res = self.get(name, "Regular")
-                if res is not None:
-                    break
-        return (res, name, style)
-
     def get(self, name, style=None):
         if self.busy:
             self.thread.join()
@@ -258,6 +234,8 @@ class TTFont:
     def readFeat(self, inf):
         self.feats = {}
         self.featvals = {}
+        self.featnames = {}
+        self.featvalnames = {}
         if 'Feat' not in self.dict:
             return
         inf.seek(self.dict['Feat'][0])
@@ -269,12 +247,19 @@ class TTFont:
                 (fid, nums, _, offset, flags, lid) = struct.unpack(">LHHLHH", data[12+16*i:28+16*i])
             else:
                 (fid, nums, offset, flags, lid) = struct.unpack(">HHLHH", data[12+12*i:24+12*i])
-            self.feats[num2tag(fid)] = self.names.get(lid, "")
+            featname = self.names.get(lid, "")
+            fidstr = num2tag(fid)
+            self.feats[num2tag(fid)] = featname
+            self.featnames[featname] = fidstr
             valdict = {}
-            self.featvals[num2tag(fid)] = valdict
+            valnamedict = {}
+            self.featvals[fidstr] = valdict
+            self.featvalnames[fidstr] = valnamedict
             for j in range(nums):
                 val, lid = struct.unpack(">HH", data[offset + 4*j:offset + 4*(j+1)])
-                valdict[val] = self.names.get(lid, "")
+                vname = self.names.get(lid, "")
+                valdict[val] = vname
+                valnamedict[vname] = val
             
     def readNames(self, inf):
         self.names = {}
@@ -316,4 +301,214 @@ class TTFont:
         cmap = self.ttfont['cmap']
         b=cmap.getBestCmap()
         return [c for c in chars if ord(c) not in b and ord(c) > 32]
-        
+
+_fontstylemap = {
+    '': '',
+    'Regular': '',
+    'Bold': '/B',
+    'Italic': '/I',
+    'Bold Italic': '/BI',
+    'Oblique': '/I',
+    'Bold Oblique': 'BI'
+}
+
+FontRef = None
+
+class FontRef:
+    def __init__(self, name, style, isGraphite=False, feats=None):
+        self.name = name
+        self.style = style
+        self.isGraphite = isGraphite
+        self.feats = feats.copy() if feats is not None else {}
+
+    def __repr__(self):
+        return str(type(self)) + self.asConfig()
+
+    @classmethod
+    def fromTeXStyle(cls, style, regular=None):
+        name = style.get('fontname', None)
+        if name is not None:
+            res = cls(name, "")
+            feats = style.get('xtexFontFeatures', None)
+            if feats is None:
+                return res
+            m = re.match("/([^/:;,]+)", feats)
+            while m is not None:
+                val = m.group(1)
+                if val == "GR":
+                    res.isGraphite = True
+                for k, v in _fontstylemap.items():
+                    if "/"+val == v:
+                        res.styles = k
+                feats = feats[m.endpos:]
+                m = re.match("/([^/:;,]+)", feats)
+            if not len(feats):
+                return res
+            f = res.getTtfont()
+            res.feats = {}
+            for feat in re.split(r"\s*:\s*", feats):
+                key, val = re.split("\s*=\s*", feat)
+                fid = f.featnames.get(key, key)
+                fval = f.featvalnames.get(fid, {}).get(val, val)
+                res.feats[fid] = fval
+            return res
+        if regular is None:
+            return None
+        res = regular.copy(cls)
+        for a in ('Bold', 'Italic'):
+            if a in style:
+                if style[a] == "-" and a in res.style:
+                    res.style = res.style.replace(a, "").strip()
+                elif a not in res.style:
+                    res.style.append((" " if len(res.style) else "") + a)
+        return res
+
+    @classmethod
+    def fromConfig(cls, txt):
+        (name, styles, isGraphite, featstr) = txt.split("|", 3)
+        feats = {}
+        if len(featstr):
+            for s in featstr.split("|"):
+                k, v = s.split("=")
+                feats[k] = v
+        return cls(name, styles, isGraphite.lower()=="true", feats)
+
+    @classmethod
+    def fromDialog(cls, name, style, isGraphite, featstring):
+        res = cls(name, style, isGraphite, None)
+        res.updateFeats(featstring)
+        return res
+
+    def copy(self, cls=None):
+        res = (cls or FontRef)(self.name, self.style, self.isGraphite, self.feats)
+        return res
+
+    def updateFeats(self, featstring, keep=False):
+        if not keep:
+            self.feats = {}
+        if featstring != "":
+            for l in re.split(r'\s*[,;:]\s*|\s+', featstring):
+                k, v = l.split("=")
+                self.feats[k.strip()] = v.strip()
+
+    def fromStyle(self, bold=False, italic=False):
+        newstyle = []
+        if bold:
+            newstyle.append("Bold")
+        if italic:
+            newstyle.append("Italic")
+        if not len(newstyle):
+            newstyle.append("Regular")
+        s = " ".join(newstyle)
+        f = fontcache.get(self.name, s)
+        print(f"fromStyle: {self}, {s}, {f}")
+        if f is not None:
+            return FontRef(self.name, s, self.isGraphite, self.feats)
+        res = self.copy()
+        if bold:
+            f = fontcache.get(self.name, "Bold")
+            if f is not None:
+                res.style = "Bold"
+                if italic and 'slant' not in res.feats:
+                    res.feats['slant'] = 0.15
+                elif not italic and 'slant' in res.feats:
+                    del res.feats['slant']
+                if 'embolden' in res.feats:
+                    del res.feats['embolden']
+                return res
+        if italic:
+            f = fontcache.get(self.name, "Italic")
+            if f is not None:
+                res.style = "Italic"
+                if bold and 'embolden' not in res.feats:
+                    res.feats['embolden'] = 2
+                elif not bold and 'embolden' in res.feats:
+                    del res.feats['embolden']
+                if 'slant' in res.feats:
+                    del res.feats['slant']
+                return res
+        f = fontcache.get(self.name)
+        print(f"restyling: {self.name}")
+        if f is None:
+            return None
+        res.style = None
+        if bold and 'embolden' not in res.feats:
+            res.feats['embolden'] = 2
+        if not bold and 'embolden' in res.feats:
+            del res.feats['embolden']
+        if italic and 'slant' not in res.feats:
+            res.feats['slant'] = 0.15
+        elif not italic and 'slant' in res.feats:
+            del res.feats['slant']
+        return res
+
+    def getTtfont(self):
+        return TTFont(self.name, self.style)
+
+    def getFake(self, name):
+        return self.feats.get(name, None)
+
+    def _getTeXComponents(self):
+        if self.style is not None and len(self.style):
+            s = _fontstylemap.get(self.style, None)
+            name = self.name + (" "+self.style if s is None else "")
+        else:
+            name = self.name
+            s = None
+        if not s and not len(self.feats):
+            return (name, [], [])
+
+        f = self.getTtfont()
+        sfeats = [] if s is None else [s]
+        if self.isGraphite:
+            sfeats.append("/GR")
+        feats = []
+        for k, v in self.feats.items():
+            if k in ('embolden', 'slant'):
+                feats.append((k, v))
+                continue
+            feats.append((f.feats.get(k, k), f.featvals.get(k, {}).get(int(v), v)))
+        return (name, sfeats, feats)
+
+    def updateTeXStyle(self, style, regular=None):
+        res = []
+        if regular is not None and self.name == regular.name:
+            for a in ("Bold", "Italic"):
+                x = a in regular.style
+                y = a in self.style
+                if x and not y:
+                    style[a] = "-"
+                elif y and not x:
+                    style[a] = ""
+                elif x:
+                    del style[a]
+        else:
+            (name, sfeats, feats) = self._getTeXComponents()
+            style['FontName'] = name
+            if feats is not None and len(feats):
+                style["ztexFontFeatures"] = "".join(sfeats) + ":".join("=".join(map(str, f)) for f in feats)
+
+    def asTeXFont(self):
+        (name, sfeats, feats) = self._getTeXComponents()
+        res = [name, "".join(sfeats)]
+        if feats is not None and len(feats):
+            res.append(":" + ":".join("=".join(map(str, f)) for f in feats))
+        return "".join(res)
+
+    def asConfig(self):
+        if self.feats is not None:
+            featstr = "|".join("{}={}".format(k, v) for k, v in self.feats.items())
+        else:
+            featstr = ""
+        res = [self.name, self.style or "", ("true" if self.isGraphite else "false"), featstr]
+        return "|".join(res)
+
+    def asFeatStr(self):
+        return ", ".join("{}={}".format(k, v) for k, v in self.feats.items() if k not in ("embolden", "slant"))
+
+    def asPango(self, fallbacks, size=None):
+        res = "{}{} {}".format(self.name, ",".join(fallbacks), self.style)
+        return res + (" "+size if size is not None else "")
+
+    
+
