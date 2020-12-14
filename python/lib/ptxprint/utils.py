@@ -78,7 +78,7 @@ codecs.register(wincpaliases)
 
 def universalopen(fname, rewrite=False, cp=65001):
     """ Opens a file with the right codec from a small list and perhaps rewrites as utf-8 """
-    encoding = "cp{}".format(cp) if cp != 65001 else "utf-8"
+    encoding = "cp{}".format(cp) if str(cp) != "65001" else "utf-8"
     fh = open(fname, "r", encoding=encoding)
     try:
         fh.readline()

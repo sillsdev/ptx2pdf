@@ -1,0 +1,18 @@
+% Test the 'hook' code.
+\input "paratext2.tex"
+\catcode`\@=11
+%\input "ptx-extended.tex"
+%\input "ptxplus-marginalverses.tex"
+\catcode`\@=12
+\stylesheet{usfm.sty}
+\stylesheet{default-custom.sty}
+\input "usfmTex-settings.tex"
+\tracingmacros=0
+\tracingassigns=0
+% Set added material in desired form
+\def\RHoddcenter{\timestamp}
+\def\RHoddleft{\isodate}
+\csname ColorFontstrue\endcsname
+\tracinggroups=1
+\ptxfile{test.usfm}
+\bye

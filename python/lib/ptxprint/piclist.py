@@ -199,6 +199,20 @@ class PicList:
                 del picinfos[k]
         return picinfos
 
+    def clearPicSources(self, picinfos):
+        allkeys = set()
+        for row in self.model:
+            k = row[_pickeys['key']]
+            p = picinfos.setdefault(k, {})
+            for i, e in enumerate(_piclistfields):
+                if e == 'key':
+                    allkeys.add(row[i])
+                    continue
+                elif e == "cleardest":
+                    if row[i] and 'dest file' in p:
+                        del p['dest file']
+                    continue
+
     def row_select(self, selection): # Populate the form from the model
         model, it = selection.get_selected()
         if self.loading or selection.count_selected_rows() != 1:
@@ -227,7 +241,6 @@ class PicList:
                 else:
                     s.unselect_all()
                 self.loading = False
-        # print("path,cpath,fpath:", path,cpath,fpath)
         if selection != self.selection:
             self.parent.savePicChecks()
             if not self.checkmodel.do_visible(self.checkmodel, self.checkmodel.get_model(), cit):
@@ -291,7 +304,6 @@ class PicList:
         if not self.get("c_plMediaP"):
             locnKey = "1" if cols == 1 else "2"
         else:
-        # Unhandled: 2-col-h, 2-col-p[lrcio], 2-col-c, 1-pl
             frSize = self.currow[_pickeys['size']]
             pgposLocn = self.currow[_pickeys['pgpos']]
             locnKey = "{}-{}-{}".format(cols, frSize, pgposLocn)
@@ -306,7 +318,6 @@ class PicList:
             locnKey = re.sub(r'^2\-col\-c$', '2-col-cl', locnKey)
             locnKey = re.sub(r'^1\-c$', '1-cl', locnKey)
             locnKey = re.sub(r'\d$', '', locnKey)
-            print("cols, frSize, pgposLocn:",cols, frSize, pgposLocn, " ==> ", locnKey)
         return locnKey
 
     def select_row(self, i):
@@ -375,7 +386,9 @@ class PicList:
                 if r_image == "preview":
                     fpath = None
                     if self.picinfo is not None:
-                        fpath = self.picinfo.get_sourcefile(val, exclusive=self.parent.get("c_exclusiveFiguresFolder"))
+                        dat = self.picinfo.getFigureSources(data={'1': {'src': val}},
+                                    key='path', exclusive=self.parent.get("c_exclusiveFiguresFolder"))
+                        fpath = dat['1'].get('path', None)
                     if fpath is not None:
                         if self.picrect is None:
                             picframe = self.builder.get_object("fr_picPreview")
@@ -459,6 +472,9 @@ class PicList:
         wid = _form_structure.get('src', 'src')
         w = self.builder.get_object(wid)
         setWidgetVal(wid, w, src)
+
+    def clearSrcPaths(self):
+        self.picinfo.clearSrcPaths()
 
 _checks = {
     "r_picclear":       "unknown",
@@ -718,7 +734,7 @@ class PicInfo(dict):
                     m = regex.findall(r"(?ms)\\fig (.*?)\|(.+?\.....?)\|(....?)\|([^\\]+?)?\|([^\\]+?)?"
                                    r"\|([^\\]+?)?\|([^\\]+?)?\\fig\*", s)
                     if len(m):
-                        print("usfm2:", lastv, m)
+                        # print("usfm2:", lastv, m)
                         for f in m:     # usfm 2
                             r = "{}{} {}.{}".format(bk, suffix, c, lastv)
                             pic = {'anchor': r, 'caption':f[5].strip()}
@@ -729,7 +745,7 @@ class PicInfo(dict):
                             self._fixPicinfo(pic)
                     m = regex.findall(r'(?ms)\\fig ([^\\]*?)\|([^\\]+)\\fig\*', s)
                     if len(m):
-                        print("usfm3:", lastv, m)
+                        # print("usfm3:", lastv, m)
                         for i, f in enumerate(m):     # usfm 3
                             # lastv = f[0] or lastv
                             if "|" in f[1]:
@@ -808,10 +824,15 @@ class PicInfo(dict):
             self.srchlist = []
             chkpaths = []
             for d in ("local", ""):
-                chkpaths += [os.path.join(self.basedir, x, y+"igures") for x in (d, d.title()) for y in "fF"]
+                if sys.platform.startswith("win"):
+                    chkpaths += [os.path.join(self.basedir, d, "figures")]
+                else:
+                    chkpaths += [os.path.join(self.basedir, x, y+"igures") for x in (d, d.title()) for y in "fF"]
             for p in chkpaths:
-                if os.path.exists(p):
-                    self.srchlist += [p]
+                if os.path.exists(p) and len(os.listdir(p)) > 0:
+                    for dp, _, fn in os.walk(p): 
+                        if len(fn): 
+                            self.srchlist += [dp]
         self.extensions = []
         extdflt = {x:i for i, x in enumerate(["jpg", "jpeg", "png", "tif", "tiff", "bmp", "pdf"])}
         imgord = self.model.get("t_imageTypeOrder").lower()
@@ -820,11 +841,15 @@ class PicInfo(dict):
         if not len(self.extensions):   # If the user hasn't defined any extensions 
             self.extensions = extdflt  # then we can assign defaults
 
-    def getFigureSources(self, filt=newBase, key='src path', keys=None, exclusive=False):
+    def getFigureSources(self, filt=newBase, key='src path', keys=None, exclusive=False, data=None):
         ''' Add source filename information to each figinfo, stored with the key '''
+        if data is None:
+            data = self
+        if self.srchlist is None or not len(self.srchlist):
+            self.build_searchlist()
         res = {}
         newfigs = {}
-        for k, f in self.items():
+        for k, f in data.items():
             if keys is not None and f['anchor'][:3] not in keys:
                 continue
             newk = filt(f['src']) if filt is not None else f['src']
@@ -847,40 +872,19 @@ class PicInfo(dict):
                     if nB not in newfigs:
                         continue
                     for k in newfigs[nB]:
-                        if 'dest file' in self[k]:
+                        if 'dest file' in data[k]:
                             continue
-                        if key in self[k]:
-                            old = self.extensions.get(os.path.splitext(self[k][key])[1].lower(), 10000)
+                        if key in data[k]:
+                            old = self.extensions.get(os.path.splitext(data[k][key])[1].lower(), 10000)
                             new = self.extensions.get(os.path.splitext(filepath)[1].lower(), 10000)
                             if old > new:
-                                self[k][key] = filepath
+                                data[k][key] = filepath
                             elif old == new and (self.get("c_useLowResPics") \
-                                                != bool(os.path.getsize(self[k][key]) < os.path.getsize(filepath))):
-                                self[k][key] = filepath
+                                                != bool(os.path.getsize(data[k][key]) < os.path.getsize(filepath))):
+                                data[k][key] = filepath
                         else:
-                            self[k][key] = filepath
-
-    def get_sourcefile(self, fname, filt=newBase, exclusive=False):
-        if filt is not None:
-            fname = filt(fname)
-        if self.srchlist is None or not len(self.srchlist):
-            self.build_searchlist()
-        for srchdir in self.srchlist:
-            if srchdir is None or not os.path.exists(srchdir):
-                continue
-            if exclusive:
-                search = [(srchdir, [], os.listdir(srchdir))]
-            else:
-                search = os.walk(srchdir)
-            for subdir, dirs, files in search:
-                for f in files:
-                    _, origExt = os.path.splitext(f)
-                    if origExt[1:] not in self.extensions:
-                        continue
-                    nB = filt(f) if filt is not None else f
-                    if nB == fname:
-                        return os.path.join(subdir, f)
-        return None
+                            data[k][key] = filepath
+        return data
 
     def set_positions(self, cols=1, randomize=False, suffix=""):
         picposns = { "L": {"col":  ("tl", "bl"),             "span": ("t")},
@@ -922,7 +926,14 @@ class PicInfo(dict):
         if self.inthread:
             GObject.timeout_add_seconds(1, self.updateView, view, bks=bks, filtered=filtered)
         view.load(self, bks=bks if filtered else None)
-
+        
+    def clearSrcPaths(self):
+        self.build_searchlist()
+        for k, v in self.items():
+            for a in ('src path', 'dest file'):
+                if a in v:
+                    del v[a]        
+        
 def PicInfoUpdateProject(model, bks, allbooks, picinfos, suffix="", random=False, cols=1, doclear=True):
     newpics = PicInfo(model)
     newpics.read_piclist(os.path.join(model.settings_dir, model.prjid, 'shared',

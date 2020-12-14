@@ -15,7 +15,7 @@ from shutil import rmtree
 import datetime, time
 from shutil import copyfile, copytree, move
 
-VersionStr = "1.4.1"
+VersionStr = "1.4.3"
 
 pdfre = re.compile(r".+[\\/](.+)\.pdf")
 
@@ -62,6 +62,12 @@ class Path(pathlib.Path):
 
 posparms = ["alt", "src", "size", "pgpos", "copy", "caption", "ref", "x-xetex", "mirror", "scale"]
 pos3parms = ["src", "size", "pgpos", "ref", "copy", "alt", "x-xetex", "mirror", "scale"]
+
+stylelinks = {
+    "notes/ifblendfnxr":   ("getboolean", ("x",),     "NoteBlendInto", lambda v: "f" if v else ""),
+    "notes/fnfontsize":    ("getfloat",   ("f", "x"), "FontSize",      None),
+    "notes/fnlinespacing": ("getfloat",   ("f", "x"), "BaseLine",      None)
+} 
 
 class ViewModel:
     _attributes = {
@@ -355,13 +361,13 @@ class ViewModel:
                 self._copyConfig("Default", configName)
             else:
                 self._copyConfig(self.configId, configName)
+            self.styleEditor.load(self.getStyleSheets(configName))
             res = self.readConfig(cfgname=configName)
             if res or forceConfig:
                 self.configId = configName
             if readConfig:  # project changed
                 self.usfms = None
                 self.get_usfms()
-            self.styleEditor.load(self.getStyleSheets())
             self.loadPics()
             return res
         else:
@@ -544,8 +550,20 @@ class ViewModel:
             indent = config.getfloat("document", "indentunit", fallback="2.000")
             if indent == 2.0 and config.getboolean("paper", "columns", fallback=True):
                     config.set("document", "indentunit", "1.000")
-            config.set("config", "version", "1.400")
-
+            for k, r in stylelinks.items():
+                s, a = k.split("/")
+                val = getattr(config, r[0])(s, a, fallback=None)
+                res = r[3](val) if r[3] is not None else val
+                for m in r[1]:
+                    self.styleEditor.setval(m, r[2], res, ifunchanged=True)
+        if v < 1.403:   # no need to bump version for this and merge this with a later version test
+            f = os.path.join(self.configPath(cfgname), "NestedStyles.sty")
+            if os.path.exists(f):
+                os.remove(f)
+            config.set("paragraph", "linespacebase", "True")
+        if v < 1.404:
+            config.set("fancy", "versedecoratorshift", "-5")
+            config.set("config", "version", "1.404")
 
         styf = os.path.join(self.configPath(cfgname), "ptxprint.sty")
         if not os.path.exists(styf):
@@ -837,11 +855,13 @@ class ViewModel:
     def incrementProgress(self, val=None):
         pass
 
-    def getStyleSheets(self, generated=False):
+    def getStyleSheets(self, cfgname=None, generated=False):
         if self.prjid is None:
             return []
         res = []
-        cpath = self.configPath(cfgname=self.configName())
+        if cfgname is None:
+            cfgname = self.configName()
+        cpath = self.configPath(cfgname=cfgname)
         rcpath = self.configPath("")
         res.append(os.path.join(self.scriptsdir, "ptx2pdf.sty"))
         if self.get('c_useCustomSty'):
@@ -977,7 +997,8 @@ class ViewModel:
         if self.diglotView is not None:
             self.diglotView._archiveAdd(zf, self.getBooks(files=True))
         if self.get("c_archiveTemps"):
-            for f in self.tempFiles:
+            temps = [x.replace(".xdv", ".pdf") for x in self.tempFiles if x.endswith(".xdv")]
+            for f in self.tempFiles + temps:
                 pf = os.path.join(self.working_dir, f)
                 if os.path.exists(pf):
                     outfname = os.path.relpath(pf, self.settings_dir)

@@ -2,6 +2,7 @@
 
 \input paratext2.tex
 
+{project/ifusepremodstex}\inputifpresent{{{/premodspath}}}
 %%%%% Aligned Diglot Switches
 {document/ifdiglot}\diglottrue
 {document/ifdiglot}\diglotcolumns
@@ -50,6 +51,7 @@
 \def\PageFullFactor{{0.66}}
 
 %%%%% Text Spacing %%%%%
+\def\LineSpaceBase{{{paragraph/linespacebase}}}
 \def\LineSpacingFactor{L_}{{{paragraph/linespacingfactor}}}
 \def\VerticalSpaceFactor{L_}{{1.0}}
 {paragraph/useglyphmetrics}\XeTeXuseglyphmetrics=0
@@ -110,15 +112,15 @@
 {document/hangpoetry}\sethook{{start}}{{qm1}}{{\let\printv@rse=\hangprintv@rse\hangversenumber}}
 {document/hangpoetry}\sethook{{start}}{{qm2}}{{\let\printv@rse=\hangprintv@rse\hangversenumber}}
 {document/hangpoetry}\sethook{{start}}{{qm3}}{{\let\printv@rse=\hangprintv@rse\hangversenumber}}
-{document/hangpoetry}\sethook{{end}}{{q}}{{\let\printv@rse=\simpleprintv@rse}}
-{document/hangpoetry}\sethook{{end}}{{q1}}{{\let\printv@rse=\simpleprintv@rse}}
-{document/hangpoetry}\sethook{{end}}{{q2}}{{\let\printv@rse=\simpleprintv@rse}}
-{document/hangpoetry}\sethook{{end}}{{q3}}{{\let\printv@rse=\simpleprintv@rse}}
-{document/hangpoetry}\sethook{{end}}{{q4}}{{\let\printv@rse=\simpleprintv@rse}}
-{document/hangpoetry}\sethook{{end}}{{qm}}{{\let\printv@rse=\simpleprintv@rse}}
-{document/hangpoetry}\sethook{{end}}{{qm1}}{{\let\printv@rse=\simpleprintv@rse}}
-{document/hangpoetry}\sethook{{end}}{{qm2}}{{\let\printv@rse=\simpleprintv@rse}}
-{document/hangpoetry}\sethook{{end}}{{qm3}}{{\let\printv@rse=\simpleprintv@rse}}
+{document/hangpoetry}\sethook{{end}}{{q}}{{\let\printv@rse=\simpleprintv@rse\hangingversefalse}}
+{document/hangpoetry}\sethook{{end}}{{q1}}{{\let\printv@rse=\simpleprintv@rse\hangingversefalse}}
+{document/hangpoetry}\sethook{{end}}{{q2}}{{\let\printv@rse=\simpleprintv@rse\hangingversefalse}}
+{document/hangpoetry}\sethook{{end}}{{q3}}{{\let\printv@rse=\simpleprintv@rse\hangingversefalse}}
+{document/hangpoetry}\sethook{{end}}{{q4}}{{\let\printv@rse=\simpleprintv@rse\hangingversefalse}}
+{document/hangpoetry}\sethook{{end}}{{qm}}{{\let\printv@rse=\simpleprintv@rse\hangingversefalse}}
+{document/hangpoetry}\sethook{{end}}{{qm1}}{{\let\printv@rse=\simpleprintv@rse\hangingversefalse}}
+{document/hangpoetry}\sethook{{end}}{{qm2}}{{\let\printv@rse=\simpleprintv@rse\hangingversefalse}}
+{document/hangpoetry}\sethook{{end}}{{qm3}}{{\let\printv@rse=\simpleprintv@rse\hangingversefalse}}
 {document/hangpoetry}\catcode`\@=12
 
 %%%%% Notes %%%%%
