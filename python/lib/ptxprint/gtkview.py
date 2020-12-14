@@ -279,7 +279,7 @@ class GtkViewModel(ViewModel):
             self.notebooks[n] = [Gtk.Buildable.get_name(nbk.get_nth_page(i)) for i in range(nbk.get_n_pages())]
         for fcb in ("digits", "script", "chapfrom", "chapto", "diglotPicListSources",
                     "textDirection", "glossaryMarkupStyle", "fontFaces",
-                    "styTextType", "styStyleType", "styCallerStyle", "styNoteCallerStyle", "NoteBlendInto",
+                    # "styTextType", "styStyleType", 
                     "picaccept", "pubusage", "pubaccept", "chklstFilter"): #, "rotateTabs"):
             self.addCR("fcb_"+fcb, 0)
         self.cb_savedConfig = self.builder.get_object("ecb_savedConfig")
@@ -423,7 +423,7 @@ class GtkViewModel(ViewModel):
             Gtk.main()
         except Exception as e:
             s = traceback.format_exc()
-            s += "\n" + str(e)
+            s += "\n{}: {}".format(type(e), str(e))
             self.doError(s)
 
     def emission_hook(self, w, *a):
@@ -635,7 +635,7 @@ class GtkViewModel(ViewModel):
             self.callback(self)
         except Exception as e:
             s = traceback.format_exc()
-            s += "\n" + str(e)
+            s += "\n{}: {}".format(type(e), str(e))
             self.doError(s)
             unlockme()
 
@@ -815,7 +815,7 @@ class GtkViewModel(ViewModel):
         self.onSimpleClicked(btn)
         self.picListView.onRadioChanged()
         val = self.get("s_indentUnit")
-        if btn.is_active():
+        if btn.get_active():
             val = val / 2
         else:
             val = val * 2
@@ -1123,7 +1123,6 @@ class GtkViewModel(ViewModel):
                   "l_projectFullName", "t_plCaption", "t_plRef", "t_plAltText", "t_plCopyright", "textv_colophon"):
             self.builder.get_object(w).modify_font(p)
         self.picListView.modify_font(p)
-        # MH TO DO: Also need to handle TWO fallback fonts in the picList for Diglots (otherwise one script will end up as Tofu)
 
     def onRadioChanged(self, btn):
         n = Gtk.Buildable.get_name(btn)
@@ -1177,7 +1176,11 @@ class GtkViewModel(ViewModel):
         status = self.sensiVisible("c_useCustomFolder")
         if not status:
             self.builder.get_object("c_exclusiveFiguresFolder").set_active(status)
-
+        self.onPicRescan(btn)
+        
+    def onPicRescan(self, btn):
+        self.picListView.clearSrcPaths()
+        
     def onPageNumTitlePageChanged(self, btn):
         if self.get("c_pageNumTitlePage"):
             self.builder.get_object("c_printConfigName").set_active(False)
@@ -1630,15 +1633,8 @@ class GtkViewModel(ViewModel):
         titleStr = super(GtkViewModel, self).getDialogTitle()
         self.builder.get_object("ptxprint").set_title(titleStr)
 
-    def editFile(self, file2edit, loc="wrk", pgid="scroll_Settings", switch=None): # keep param order
-        if switch is None:
-            switch = pgid == "scroll_Settings"
-        pgnum = self.notebooks["Viewer"].index(pgid)
-        mpgnum = self.notebooks["Main"].index("tb_ViewerEditor")
-        if switch:
-            self.builder.get_object("nbk_Main").set_current_page(mpgnum)
-            self.builder.get_object("nbk_Viewer").set_current_page(pgnum)
-        # self.prjid = self.get("fcb_project")
+    def _locFile(self, file2edit, loc):
+        fpath = None
         self.prjdir = os.path.join(self.settings_dir, self.prjid)
         if loc == "wrk":
             fpath = os.path.join(self.working_dir, file2edit)
@@ -1651,7 +1647,19 @@ class GtkViewModel(ViewModel):
                 fpath = os.path.join(self.configPath(""), file2edit)
         elif "\\" in loc or "/" in loc:
             fpath = os.path.join(loc, file2edit)
-        else:
+        return fpath
+
+    def editFile(self, file2edit, loc="wrk", pgid="scroll_Settings", switch=None): # keep param order
+        if switch is None:
+            switch = pgid == "scroll_Settings"
+        pgnum = self.notebooks["Viewer"].index(pgid)
+        mpgnum = self.notebooks["Main"].index("tb_ViewerEditor")
+        if switch:
+            self.builder.get_object("nbk_Main").set_current_page(mpgnum)
+            self.builder.get_object("nbk_Viewer").set_current_page(pgnum)
+        # self.prjid = self.get("fcb_project")
+        fpath = self._locFile(file2edit, loc)
+        if fpath is None:
             return
         label = self.builder.get_object("l_{1}".format(*pgid.split("_")))
         label.set_tooltip_text(fpath)
@@ -1694,18 +1702,25 @@ class GtkViewModel(ViewModel):
             openfile.close()
         self.editFile(fname, loc)
 
+    def _editProcFile(self, fname, loc, intro=""):
+        fpath = self._locFile(fname, loc)
+        if intro != "" and not os.path.exists(fpath):
+            openfile = open(fpath,"w", encoding="utf-8")
+            openfile.write(intro)
+            openfile.close()
+        self.editFile(fname, loc)
+
     def onEditScriptFile(self, btn):
         customScriptFPath = self.get("btn_selectScript")
         scriptName = os.path.basename(customScriptFPath)
         scriptPath = customScriptFPath[:-len(scriptName)]
         if len(customScriptFPath):
-            self.editFile(scriptName, scriptPath)
+            self._editProcFile(scriptName, scriptPath)
 
     def onEditChangesFile(self, btn):
-        self.editFile("PrintDraftChanges.txt", "prj")
+        self._editProcFile("PrintDraftChanges.txt", "prj")
 
     def onEditModsTeX(self, btn):
-        # self.prjid = self.get("fcb_project")
         cfgname = self.configName()
         self._editProcFile("ptxprint-mods.tex", "cfg",
             intro=_(_("""% This is the .tex file specific for the {} project used by PTXprint.
@@ -1760,8 +1775,12 @@ class GtkViewModel(ViewModel):
         if archiveZipFile is not None:
             # self.archiveZipFile = archiveZipFile[0]
             btn_createZipArchive.set_tooltip_text(str(archiveZipFile[0]))
-            self.createArchive(str(archiveZipFile[0]))
-            
+            try:
+                self.createArchive(str(archiveZipFile[0]))
+            except Exception as e:
+                s = traceback.format_exc()
+                s += "\n{}: {}".format(type(e), str(e))
+                self.doError(s)
         else:
             # self.archiveZipFile = None
             btn_createZipArchive.set_tooltip_text("No Archive File Created")

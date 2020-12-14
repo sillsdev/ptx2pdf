@@ -1,31 +1,38 @@
-PTXprint 1.4.1 Release Notes 
-28 November 2020
+PTXprint 1.4.3 Release Notes 
+3 December 2020
 
-Bug Fixes and Improvements in 1.4.1
+Bug Fixes and Improvements in 1.4.3
 
-!! Note that this version is only for private circulation to a handful of testers. Major code
-!! changes and behavoral changes have been made. Please back up your settings before testing!
-  
-  * Completely eliminate the need for NestedStyles.sty (can now be deleted permanently)
-  
-  * Some significant improvements to the Style Editor
-  
-  * Update wording and integrate Checklist Reverse/Mirror settings with Details tab settings
-  
-  * Rename controls to reflect Base (on Layout tab) + Factor (on Style tab)
-  
-  * Moved "Variable Line Spacing" to Advanced tab [currently still broken] 
+  * Switch \LineSpacing to be a multiple of base line spacing. 1.0 means base line spacing.
 
-Bug Fixes and Improvements in 1.4
+  * Fix deleting the output pdf as a temporary file
 
-  * Added Picture Location on Page previews to PicList editor
+  * Delete old NestedStyles.sty files
+
+  * Fix marks in tables in diglots
+
+  * Give visual traceback for errors in archive creation
+
+Bug Fixes and Improvements in 1.4.2
+
+  * Eliminate the need for NestedStyles.sty (this file can now be deleted permanently)
   
-  * Added link to Scripture Software Community
+  * Significant improvements and bug fixes in the Style Editor
+  
+  * Updated Picture Checklist wording and integrated Reverse/Mirror settings with Details tab settings
+
+  * Added "Location on Page" previews to PicList editor
+  
+  * Renamed various controls to reflect Base (on Layout tab) + Factor (on Style tab) settings
+  
+  * Added Help page link to Scripture Software Community
   
   * Fixed (Relative) Font Size and (Absolute) Line Spacing settings in Style editor
   
   * #306 Fixed adjusting Main Title's before and after space causing crash
 
+  * Moved "Variable Line Spacing" to Advanced tab [currently still broken] 
+  
 Bug Fixes and Improvements in 1.3.8
 
   * Re-arrange Pictures UI items and fix multiple bugs relating to picture handling

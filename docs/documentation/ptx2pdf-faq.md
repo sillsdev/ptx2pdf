@@ -78,8 +78,8 @@ In the case of fontsize, things are little more complex:
 
 ### I'm altering `\LineSpacingFactor` but it's not having any effect.
 \LineSpacingFactor only gets used in the following circumstance:
-- For the main text, no \baseline has been set.
-- For any paragraph style, no \BaseLine (or \LineSpace) has been set in the style sheet.
+- For the main text, no `\BaseLine` has been set.
+- For any paragraph style, no `\BaseLine` (or `\LineSpace`) has been set in the style sheet.
 - The paragraph style has been used before. Once a paragraph style (or font) has been used,
 it will not be recalculated.
 
@@ -123,8 +123,8 @@ Notice that markers are case dependent.
 \\Superscript | blank enables, "-" disables. Equivalent to \FontExpand \SuperscriptFactor, \Raise \SuperscriptRaise.
 \\Raise       | specifies a dimension to raise the text by. Be careful, this can't handle whole paragraphs and will not allow line breaking within the text so marked.
 \\Regular     | Disables italic, bold, superscript
-\\SpaceBefore | Space before paragraph * \\VerticalSpaceFactor * \\LineSpacingFactor * \\FontSizeUnit
-\\SpaceAfter  | Space after paragraph * \\VerticalSpaceFactor * \\LineSpacingFactor * \\FontSizeUnit
+\\SpaceBefore | Space before paragraph ( actual value is this * \\VerticalSpaceFactor * \\LineSpacingFactor * \\FontSizeUnit)
+\\SpaceAfter  | Space after paragraph (actual value is this * \\VerticalSpaceFactor * \\LineSpacingFactor * \\FontSizeUnit)
 \\Justification | "center", "left", "right" anything else is fully justified
 \\CallerStyle | marker to style the body text caller
 \\CallerRaise | dimension to raise the body text caller
@@ -132,8 +132,11 @@ Notice that markers are case dependent.
 \\NoteCallerRaise | dimension to raise the in note caller
 \\NoteBlendInto   | name of note type marker to merge these notes into that class
 \\SmallCap    | blank enables, "-" disables. Only works with fonts with a +smcp feature
-\\LineSpacing | (see also BaseLine.) Dimension of line spacing, in the same units as fontsize. I.e. actual measurement is \\LineSpacing * \\FontSizeUnit
+\\LineSpacing | (see also BaseLine.) Dimension of line spacing, as a proportion of the default line spacing. I.e. actual measurement is \\LineSpacing * \\LineSpaceBase * \\LineSpacingFactor * \\FontSizeUnit<sup id="a1">[1](#f1)</sup>
 \\StyleType   | "paragraph", "character", "note"
+
+<b id="f1">[1]</b>: Because the default mapping of fontsize to linespacing is hardwired to \\LineSpaceBase /12, a full line is \\LineSpaceBase * fontsize units (* \\LineSpacingFactor).
+This is all calculated internally to the macros. LineSpacing of 1.0 is the same as the default linespacing. [↩](#a1)
 
 These styles are used by other programs but have no action in the macros:
 
