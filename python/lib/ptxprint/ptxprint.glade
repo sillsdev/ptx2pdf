@@ -5144,6 +5144,8 @@ that option - then Refresh Fonts.</property>
                       <object class="GtkGrid">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="row_spacing">6</property>
+                        <property name="column_spacing">7</property>
                         <child>
                           <object class="GtkFrame">
                             <property name="visible">True</property>
@@ -5161,11 +5163,12 @@ that option - then Refresh Fonts.</property>
                                 <property name="margin_right">6</property>
                                 <property name="margin_bottom">6</property>
                                 <property name="orientation">vertical</property>
-                                <property name="spacing">15</property>
+                                <property name="spacing">12</property>
                                 <child>
                                   <object class="GtkBox">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="margin_left">6</property>
                                     <property name="spacing">4</property>
                                     <child>
                                       <object class="GtkLabel" id="l_textDirection">
@@ -5236,6 +5239,7 @@ Fonts</property>
                                   <object class="GtkBox">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="margin_left">6</property>
                                     <property name="spacing">4</property>
                                     <child>
                                       <object class="GtkLabel">
@@ -5298,6 +5302,7 @@ script-specific rendering issues.</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
+                                        <property name="margin_right">6</property>
                                         <signal name="clicked" handler="onScrSettingsClicked" swapped="no"/>
                                       </object>
                                       <packing>
@@ -5318,6 +5323,7 @@ script-specific rendering issues.</property>
                                   <object class="GtkBox">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="margin_left">6</property>
                                     <property name="spacing">4</property>
                                     <child>
                                       <object class="GtkLabel" id="l_digits">
@@ -5368,84 +5374,6 @@ are using supports these digits too.)</property>
                                     <property name="expand">False</property>
                                     <property name="fill">True</property>
                                     <property name="position">3</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkBox">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="spacing">4</property>
-                                    <child>
-                                      <object class="GtkLabel">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="tooltip_text" translatable="yes">Font features that have been set up in the
-Paratext project's language settings should
-automatically show up here. These may be
-modified here if necessary. </property>
-                                        <property name="halign">end</property>
-                                        <property name="label" translatable="yes">Font
-Features:</property>
-                                        <property name="justify">right</property>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkEntry" id="t_fontfeatures">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="tooltip_text" translatable="yes">Font features that have been set up in the
-Paratext project's language settings should
-automatically show up here. These may be
-modified here if necessary. 
-
-For example, Graphite font features may
-be specified something like this:
-      litr=1,dig0=1,dig4=1,dg69=0,dig7=1</property>
-                                        <property name="halign">start</property>
-                                        <property name="hexpand">False</property>
-                                        <property name="width_chars">20</property>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">1</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkCheckButton" id="c_useGraphite">
-                                        <property name="label" translatable="yes">Graphite
-Rendering</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="tooltip_text" translatable="yes">By default, PTXprint will use Graphite
-Rendering technology for any fonts
-which have Graphite support.
-
-There may be rare occasions when this
-needs to be disabled (for example to
-compare the outputs of two different
-rendering technologies).</property>
-                                        <property name="halign">end</property>
-                                        <property name="active">True</property>
-                                        <property name="draw_indicator">True</property>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">2</property>
-                                      </packing>
-                                    </child>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">4</property>
                                   </packing>
                                 </child>
                               </object>
@@ -5502,6 +5430,7 @@ adjustable - and allows a greater degree
 of flexibility when trying to shrink or
 grow paragrahs when balancing pages.</property>
                                         <property name="halign">end</property>
+                                        <property name="margin_left">6</property>
                                         <property name="image_position">right</property>
                                         <property name="draw_indicator">True</property>
                                         <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
@@ -5634,6 +5563,7 @@ characters to be adjusted (usually by a very small
 percentage). This can help alleviate space problems.
 Values are in percentage of the text point size and 
 get used everywhere. Only use this if really needed! </property>
+                                        <property name="margin_left">6</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
                                       <packing>
@@ -5720,6 +5650,7 @@ Some: Spaces between words are adjusted, but the rendering of individual words i
 
 Full: Spaces between words are adjusted, and the rendering of individual words *IS* affected by the spaces.</property>
                                         <property name="halign">end</property>
+                                        <property name="margin_left">6</property>
                                         <property name="margin_top">1</property>
                                         <property name="margin_bottom">1</property>
                                         <property name="label" translatable="yes">Cross-space 
@@ -5836,7 +5767,6 @@ gr = Graphite</property>
                           <object class="GtkFrame" id="fr_fallbackFont">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="margin_left">4</property>
                             <property name="margin_right">6</property>
                             <property name="margin_bottom">6</property>
                             <property name="label_xalign">0.05000000074505806</property>
