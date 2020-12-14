@@ -52,7 +52,6 @@ class StyleEditor:
         foundp = False
         self.basesheet = Sheets(sheetfiles[:-1])
         self.sheet = Sheets(sheetfiles[-1:], base=self.basesheet)
-        print(sheetfiles[-1:])
 
     def _convertabs(self, key, valstr):
         def asfloat(v, d):

@@ -110,9 +110,9 @@
   \x@\xdef\csname \@ttrlistname\endcsname{\tmp,#2}}
 
 \edef\p@stattribcmd{}% Parse the attributes, run any code.
-\def\store@ttributes#1{\def\newbit{#1}i\trace{a}{'\newbit'}\edef\@ttributes{\@ttributes\newbit}\futurelet\nxt\isitslash}                                                                    
+\def\store@ttributes#1{\def\newbit{#1}\message{'\newbit'}\edef\@ttributes{\@ttributes\newbit}\futurelet\nxt\isitslash}
 \def\startp@stattribcmd#1{\futurelet\nxt\isitcmd}
-\def\storep@stattribcmd#1{\def\newbit{#1}\trace{a}{"\newbit"}\edef\p@stattribcmd{\p@stattribcmd\newbit}\futurelet\nxt\isitcmd}                                                                          
+\def\storep@stattribcmd#1{\def\newbit{#1}\message{"\newbit"}\edef\p@stattribcmd{\p@stattribcmd\newbit}\futurelet\nxt\isitcmd}
 \lccode`\~=32
 \lowercase{
  \gdef\isitcmd{%
@@ -127,7 +127,7 @@
 \catcode`\ =11 \catcode`|=0\catcode`\\=12}                                                                                 
 \def\normalc@tcodes{\catcode`"=12 \catcode`==12 
 \catcode`\ =10\catcode`\\=0\catcode`\|=12}                                                                              
-\trace{a}{CATCODES: "\the\catcode`",  =\the\catcode`=,  \the\catcode`\ , *\the\catcode`\*,  \the\catcode`\\,  \the\catcode`\|}%
+\message{CATCODES: "\the\catcode`",  =\the\catcode`=,  \the\catcode`\ , *\the\catcode`\*,  \the\catcode`\\,  \the\catcode`\|}%
 
 
 \xdef\attribsus@d{}% List of used attributes.
@@ -135,7 +135,7 @@
 \def\start@ttributegrab{\let\c@ntinue\isitslash\oddc@tcodes\futurelet\nxt\c@ntinue}
 \def\end@ttributegrab{%
   \xdef\@ttributes{\x@\detokenize\x@{\@ttributes}}% Make it all strings.
-  \trace{a}{Now executing \p@stattribcmd}%
+  \message{Now executing \p@stattribcmd}%
   \csname\p@stattribcmd\endcsname}% 
 
 \oddc@tcodes%NO SPACES until |normalc@tcodes is called.
@@ -149,7 +149,7 @@
 \def\relaxval{\relax}
 \def\milestoneJoinChar{ } % While replacing ' ' with '_' is  nice for styling things like \qt-s |the crowd\*, this then breaks equivalence with ... who="The crowd"
 \def\save@ttribute#1="#2"=#3\E{%
-  %\tracingassigns=1
+  \tracingassigns=1
   \lowercase{\def\attr@key{#1}}\def\attr@val{#2}%
   \ifx\attr@val\relaxval
     \ifx\thisdefault@ttrkey\empty
@@ -171,7 +171,7 @@
     \trace{A}{Got named attribute \attr@key="\attr@val"}%
     \set@ttribute{\attr@key}{\attr@val}%
   \fi
-  %\tracingassigns=0
+  \tracingassigns=0
 }
 
 \def\get@ttribute#1{\x@\let\x@\attr@b\csname attr:#1\endcsname \trace{A}{attrib #1 is \attr@b}} %simple access function
@@ -253,13 +253,13 @@
     \box#2%
     \ifx\p@ram\c@nter\hfil\else\ifx\p@ram\l@ft\hfil\else\ifx\p@ram\relax\hfil\fi\fi\fi}
 \def\rubyb#1#2{\setbox1=\hbox{\s@tfont{#2|#1}\get@ttribute{#2}\attr@b}
-    \dimen5=\ifdim\wd0>\wd1 \wd0\else\wd1\fi
-    \setbox0=\hbox{\vtop{\s@tbaseline{#1}\hbox to \dimen5{\alignb@x{#1}{0}}
-        \hbox to \dimen5{\alignb@x{#2|#1}{1}}}}}
+    \dimen0=\ifdim\wd0>\wd1 \wd0\else\wd1\fi
+    \setbox0=\hbox{\vtop{\s@tbaseline{#1}\hbox to \dimen0{\alignb@x{#1}{0}}
+        \hbox to \dimen0{\alignb@x{#2|#1}{1}}}}}
 \def\rubyt#1#2{\setbox1=\hbox{\s@tfont{#2|#1}\get@ttribute{#2}\attr@b}
-    \dimen5=\ifdim\wd0>\wd1 \wd0\else\wd1\fi
-    \setbox0=\hbox{\vbox{\s@tbaseline{#2|#1}\hbox to \dimen5{\alignb@x{#2|#1}{1}}
-        \hbox to \dimen5{\alignb@x{#1}{0}}}}}
+    \dimen0=\ifdim\wd0>\wd1 \wd0\else\wd1\fi
+    \setbox0=\hbox{\vbox{\s@tbaseline{#2|#1}\hbox to \dimen0{\alignb@x{#2|#1}{1}}
+        \hbox to \dimen0{\alignb@x{#1}{0}}}}}
 
 %usfm 3.0 defaults - now loaded from stylesheet.
 %\setdefaultattrib{qt}{who}

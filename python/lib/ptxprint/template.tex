@@ -99,8 +99,6 @@
 {document/ifshowchapternums}\def\AfterChapterSpaceFactor{{10}}
 {document/ifshowversenums}\def\AfterVerseSpaceFactor{{0}}
 
-{project/interlinear}\expandafter\def\csname complex-rb\endcsname{{\ruby{project/ruby}{{rb}}{{gloss}}}}
-
 %%% Poetry - Hang Verse Numbers
 {document/hangpoetry}\catcode`\@=11
 {document/hangpoetry}\sethook{{start}}{{q}}{{\let\printv@rse=\hangprintv@rse\hangversenumber}}
@@ -204,6 +202,7 @@
 \def\b{{\par\vskip\baselineskip}}
 % restore page break definition (if present in USFM stylesheet, it has been re-defined and will not work)
 \let\pb=\pagebreak
+{project/interlinear}\x@\def\csname complex-rb\endcsname{{\ruby{project/ruby}{rb}{gloss}}}
 
 %%%%% Set hooks to allow Poetical books more freedom when column-balancing
 %\optimizepoetry

@@ -1662,7 +1662,6 @@ class GtkViewModel(ViewModel):
         tbuf.move_mark(tmark, titer)
         tbuf.place_cursor(titer)
         GLib.idle_add(self.fileViews[pgnum][1].scroll_mark_onscreen, tmark)
-
     def _editProcFile(self, fname, loc, intro=""):
         fpath = self._locFile(fname, loc)
         if intro != "" and not os.path.exists(fpath):

@@ -417,13 +417,6 @@ class ViewModel:
     def configLocked(self):
         return self.get("t_invisiblePassword") != ""
 
-    def _locFile(self, fname, loc):
-        if loc == "cfg":
-            base = os.path.join(self.settings_dir, self.prjid, "shared", "ptxprint", self.configName())
-        elif loc == "prj":
-            base = os.path.join(self.settings_dir, self.prjid)
-        return os.path.join(base, fname)
-
     def readConfig(self, cfgname=None):
         if cfgname is None:
             cfgname = self.configName() or ""
