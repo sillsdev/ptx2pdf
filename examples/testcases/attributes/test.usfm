@@ -17,7 +17,7 @@ So is this bit, after a non-mathcing break.
 \qt-e|eid="123"\*
 
 
-\p  We're outside the clever stuff ught to be back to normal now. But let's do some nesting.
+\p  We're outside the clever stuff and ought to be back to normal now. But let's do some nesting.
 \v 3 James said \qt1-s|James\* "Fred said \qt2-s|Fred\* 'quisquam est,'\qt2-e\* menacingly"\qt1-e\*, But really Fred
 said \qt-s|Fred\* "qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit"\qt-e\*, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.
 \p \qt-s|The crowd\*Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam\qt-e\*, nisi ut aliquid ex ea commodi

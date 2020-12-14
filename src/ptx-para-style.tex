@@ -286,13 +286,8 @@
   \cl@singhooks{after}{\m@rker}%
   \the\afterh@@ks
   \gdef\m@rker{#1}% remember the new style name
-  \let\tmp\empty
-  %FIXME: Make par marker sink below any milestones if there's no paragraph style above the hightest barrier 
-  %\def\d@##1+##2\E{\ifcsname isb@rrier-##1\endcsname\let\d@=\cstackrelax\else\edef\tmp{##1}\fi}\mctopnoms
-  %\ifx\tmp\empty
-  %  Urm.... help
-  %\fi
-  \mcpush{P+#1}%
+  \mcpushunderms{P+#1}%
+  \trace{s}{Pushed P+#1,  stack now: \mcstack}%
   \op@ninghooks{before}{\m@rker}%
 %-cpar_parstyle_after
   %
@@ -380,7 +375,9 @@
    %\getp@ram{fontsize}{\m@rker}\edef\c@rrfontsize{\ifx\p@ram\relax12\else\p@ram\fi}%
    \def\thiswh@tvrstyle{p}%Default value just in case
    \def\d@##1+##2\E{\edef\tmp{##2}\csname d@code-##1\endcsname\let\thiswh@tvrstyle\tmp}\mctop
-   \s@tfont{\thiswh@tvrstyle}% set up font attributes
+   \ifx\thiswh@tvrstyle\empty\else
+     \s@tfont{\thiswh@tvrstyle}% set up font attributes
+   \fi
    \trace{j}{baselineskip=\the\baselineskip ; UseGlyphMetrics=\the\XeTeXuseglyphmetrics}%
    \allowp@rindenttrue
    %

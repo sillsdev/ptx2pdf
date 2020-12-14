@@ -221,14 +221,14 @@
 
 \x@\def\csname d@code-m\endcsname{%Modify contents of \tmp to only include bits of the stack value of use for styles.
   \x@\pars@msid \tmp;;;\E
-  \edef\tmp{\MStyp@\ifx\k@yv@al\empty\else-\k@yv@al\fi}%
+  \edef\tmp{\ifx\k@yv@al\empty\else\k@yv@al|\fi\MStyp@}%
 }
 \def\mil@st@necheck#1+#2\E{%The milestone has a key value and possibly an ID field. Ignore the id for building the prefix
   \edef\MSt@mp{#1}%
   \ifx\MSt@mp\ss@Mstn
     \x@\pars@msid #2;;;\E
     \trace{m}{parsed #2->\k@yv@al, \mstone@id}%
-  \xdef\mspr@fix{\ifx\mspr@fix\empty\else \mspr@fix+\fi\MStyp@\ifx\k@yv@al\equ@l\else\k@yv@al\fi}\fi}
+  \xdef\mspr@fix{\ifx\mspr@fix\empty\else \mspr@fix+\fi\ifx\k@yv@al\equ@l\else\k@yv@al|\fi\MStyp@}\fi}
  
 \newtoks\tmpt@ks
 \def\exp@ndmspr@fix#1{%for each potential prefix, call #1 with \@lso defined

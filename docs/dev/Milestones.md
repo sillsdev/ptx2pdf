@@ -90,13 +90,19 @@ This could be solved by:
 1. Stacking (```\Marker sts+ip```)
 2. Some additional clue or category being given to the code so that some
 milestones always 'float' to the top of the stack (```\sts```) while others 
-(```\qt```) remain in their normal position. 
+(```\qt```) remain in their normal position.  
+This is probably not going to be intuitive to people.
+
 3. A CSS-like `important` flag on some parameters.
 
 Of these options, (1) is on the roadmap, but requires thought / checking of the
 uses of the markers, to determine if it might be useful. (2) would be 
 relatively easy to code. (3) would be fully flexible but complex to code /
 troubleshoot.
+
+Solution (1) is determined to be the most useful, long-term. 
+
+
 
 ### Table of Contents
 
@@ -168,14 +174,15 @@ This is a milestone that takes a default attribute. For example `\qt-s
 Approach 1 looks easy but there are a number of moving parts here, not least
 that this wouldn't work for `\qt-s |s\*` since that would be indistinguishable
 with `\qt-s\*`. But this may not be important. 
-Approach 2 is the current implementation.
+Approach 2 is an old implementation.
 Approach 3 is in keeping with category-markup and a generalised milestone marker model.
 Approach 4 is suggested by the Milestones with multiple attributes below.
 Approach 5 carries the unmarked content without needing extra namespace
-handling.
+handling. It is the current implementation.
 
 [MH] I like both 4 & 5 and suggest we support both with 4 taking precedence over
 5. 
+[DG] 5 is implemented easily.
 
 ### Milestones with Multiple Attributes
 
@@ -187,6 +194,7 @@ a hypothetical example: `\qt-s |who=Jesus|style=story\*`.
 2.  \Marker qt-s-Jesus-story
 3.  \Marker ms:who=Jesus;style=story|qt
 4.  \Marker ms:Jesus;style=story|qt
+5.  \Marker Jesus;style=story|qt
 ```
 
 Approach 1 extends the approach 1 for the default parameterised milestone, approach 2 similarly. It
@@ -198,13 +206,16 @@ ordering question. In addition, does this mean that `ms:who="Jesus"|qt` would ne
 supported for `\qt-s |Jesus\*` as well? 
 
 Approach 4 is a compromise, leaving the automatic (default) parameter unspecified, by specifying others.
+Approach 5 is like 4, but without the `ms:` prefix.
 
 The ordering issue can be dealt with by defining the 'cannonical order' as being 
 the order of attributes within the stylesheet. This however leaves user-defined 
-additional attributes in an undefined random order. Hopefully, however, a user who 
-wishes to defined their own attributes and used them for styling is also capable 
-of supplying their own ```\Attributes``` list in the stylesheet, and so 
+additional attributes in  undefined random order (or skipped entirely). Hopefully, 
+however, a user who wishes to define their own attributes and use them for styling is also
+capable of supplying their own ```\Attributes``` list in the stylesheet, and so 
 this should not be an issue if documented.
+
+Implementing ANY of this will need some additoinal parsing steps.
 
 However, in all of this, it is assumed to be incorrect to apply the (unique) id fields to such a list.
 
@@ -253,6 +264,8 @@ morph="morphbreak"\wit*
 ```
 1.  \Marker at:gloss;morph|wit
 ```
+
+[DG] I don't understand. Why is gloss in the above, and it not  ``\Marker morph|wit```
 
 #### Disussion
 While there are going to be distinct layouts for different markers/attributes there are some 

@@ -38,6 +38,7 @@
 %
 %+csty_definition_setup
 \def\h@phen{-} % for matching
+\def\tru@{true}% for matching
 \def\ds@ffix{} % diglot suffix (L/R)
 \def\m@rker{} % The currently being defined \Marker
 \let\prev@rsemode\empty
@@ -91,7 +92,7 @@
 \def \Bold           #1\relax{\defbinp@ram{bold}{#1}}
 \def \Superscript    #1\relax{\condp@ram{#1}{\defp@ram{raise}{\SuperscriptRaise}\defp@ram{fontfactor}{\SuperscriptFactor}}{\defp@ram{raise}{0pt}\defp@ram{fontfactor}{1}}}
 \def \Raise          #1\relax{\defp@ram{raise}{#1}}
-\def \Regular        {\defp@ram{regular}{true}\defp@ram{italic}{false}\defp@ram{bold}{false}\defp@ram{superscript}{false}\defp@ram{smallcaps}{false}}
+\def \Regular        {\defp@ram{regular}{\tru@}\defp@ram{italic}{false}\defp@ram{bold}{false}\defp@ram{superscript}{false}\defp@ram{smallcaps}{false}}
 \let \superscript\Superscript
 \def \SpaceBefore    #1\relax{\defp@ram{spacebefore}{#1}}
 \let \Spacebefore\SpaceBefore
@@ -135,7 +136,7 @@
 
 \def\defp@ram#1#2{\x@\def\csname\c@tprefix\m@rker\ds@ffix:#1\endcsname{#2}\trace{s}{\c@tprefix\m@rker\ds@ffix:#1 -> #2}}
 \def\condp@ram#1#2#3{\edef\t@mp{#1}\ifx\t@mp\h@phen\relax\def\t@mp{#3}\else\def\t@mp{#2}\fi\t@mp}
-\def\defbinp@ram#1#2{\edef\t@mp{#2}\ifx\t@mp\h@phen\defp@ram{#1}{false}\else\defp@ram{#1}{true}\fi}
+\def\defbinp@ram#1#2{\edef\t@mp{#2}\ifx\t@mp\h@phen\defp@ram{#1}{false}\else\defp@ram{#1}{\tru@}\fi}
 \def\setp@ram#1#2#3{\x@\xdef\csname\c@tprefix#2\ds@ffix:#1\endcsname{#3}\trace{s}{\c@tprefix#2\ds@ffix:#1 -> #3}} % expand now, not later 
 %-csty_defparam
 
@@ -152,8 +153,7 @@
 % take into account: diglot, categories and milestones.
 % Rather than attempt to code \ifs for all possible 8 options, it now builds a comma-separated list of them, 
 % and finds the first match. This results in cleaner code.
-
-\def\getp@ram#1#2{\trace{s}{getp@ram #2:#1}%
+\def\getp@ram#1#2{\trace{s}{getp@ram #2:#1 (\styst@k)}%
  \iftrue
    {%protect outer version of \d@, etc.
    \let\p@ram\relax
@@ -167,10 +167,14 @@
      \edef\p@ssParams{#2}%
    \fi
    %\trace{s}{1. Checking \p@ssParams}%
-   \ifx\mspr@fix\empty\else
+   \edef\tmp{#2}\ifx\tmp\styst@k\else
+     \ifx\tmp\styst@kskip
+     \fi
+   \fi
+   %\ifx\mspr@fix\empty\else
      %If we expand our prefix list for special styling of milestone+marker, then:
      %\exp@ndmspr@fix{\let\@ut=\empty \let\d@=\cspr@pend\x@\cstackdown \p@ssParams,\E \edef\p@ssParams{\@ut,\p@ssParams}}%
-   \fi
+   %\fi
    %\trace{s}{2. Checking \p@ssParams}%
    \ifx\c@tprefix\empty\else
      \edef\@lso{\c@tprefix}%
@@ -637,8 +641,12 @@
 \def\mctopnoms{\let\d@a=\d@\gdef\d@##1+##2\E{\if ##1m\else\d@a ##1+##2\E\let\d@=\cstackrelax\fi}\mcdown}
 \def\mcstackdown#1,#2\E{\let\n@x=\mcstackdown\edef\tmp{#1}%
     \ifx\tmp\empty\let\n@x=\cstackrelax\else\d@b #1\E\iftemp\xdef\mcstack{\msstack #2}\let\n@x=\cstackrelax\fi\fi\n@x #2\E}
-\def\mcpop{\traceNum{s}{mcpop stack: \mcstack}\global\tempfalse\xdef\msstack{}%
+\def\mcpop{\traceNum{s}{mcpop stack: \mcstack}\global\tempfalse\xdef\msstack{}% Pop the first non-milestone
     \def\d@b##1+##2\E{\if ##1m\xdef\msstack{##1+##2,\msstack}\else\global\temptrue\fi}%
+    \x@\mcstackdown\mcstack\E\ifx\mcstack\empty\xdef\mcstack{+,}\fi}
+
+\def\mcpushunderms#1{\traceNum{s}{mcpushunder stack(#1): \mcstack}\global\tempfalse\xdef\msstack{#1,}% push #1 above the first non-milestone
+    \def\d@b##1+##2\E{\if ##1\relax\relax\xdef\msstack{\msstack+,}\else\xdef\msstack{##1+##2,\msstack}\fi\if ##1m\else\global\temptrue\fi}%
     \x@\mcstackdown\mcstack\E\ifx\mcstack\empty\xdef\mcstack{+,}\fi}
 
 % milestone stack (MScstack)
@@ -658,7 +666,8 @@
 \def\ss@ChrP{c}%
 \def\ss@Para{P}%
 \def\ss@Note{N}%
-\def\ss@Mstn{m}%
+\def\ss@MstnS{M}% Static milestones
+\def\ss@Mstn{m}% Floating milestones (always above a par style)
 \def\ss@Ctgy{t}%
 \def\ss@Sbar{b}%
 
@@ -704,14 +713,14 @@
   \trace{s}{whileitp@ps result:\tmp}%
   \if S\tmp\relax % Store it?
      \edef\itp@psstore{#1+#2,\itp@psstore}%
-     \mcpop
+     \mcpopsimple
   \else
     \if Y\tmp\relax  %end it and pop it
       \ifcsname endit@#1\endcsname
         \trace{s}{endit@#1}% endit@ macros are assumed(requrired) to call mcpop 
       	\csname endit@#1\endcsname
       \else 
-	\mcpop
+	\mcpopsimple
       \fi
     \else
       \let\d@=\cstackrelax %stop here
@@ -720,7 +729,7 @@
 	   \trace{s}{endit@#1}% endit@ macros are assumed(requrired) to call mcpop 
 	   \csname endit@#1\endcsname
 	 \else 
-	   \mcpop
+	   \mcpopsimple
 	 \fi
        \fi
      \fi
@@ -729,10 +738,19 @@
 }
 \def\end@llpoppedstyles#1{\let\itp@psstore\empty\edef\mcch@cking{#1}\let\d@=\whileitp@ps\mcdown\ifx\itp@psstore\empty\else\edef\mcstack{\itp@psstore\mcstack}\fi}
 
-\def\s@tstyst@k{%Get a +(prefixed and)separated list of styles that ought to uniquely define a font/etc.
-  %preset styst@k to \relax to skip top marker. List stops at a barrier (e.g. a par/note/sidebar)
+\def\s@tstyst@k#1{%Get a separated list of styles that ought to uniquely define a font/etc.
+  %List excludes marker #1 and stops at a barrier (e.g. a par/note/sidebar)
+  %defines \styst@kskipped to be the skipped value and \styst@kfirst to first value.
+  \edef\styst@kskip{#1}%
   \def\d@##1+##2\E{\ifcsname isb@rrier-##1\endcsname\let\d@=\cstackrelax\fi%stop here?
-    \edef\tmp{##2}\csname d@code-##1\endcsname\ifx\tmp\empty\else\ifx\styst@k\relax\def\styst@k{}\else\edef\styst@k{\styst@k+\tmp}\fi\fi}\mcdown
+    \edef\tmp{##2}\csname d@code-##1\endcsname
+    \ifx\tmp\empty\else\ifx\tmp\styst@kskip\else
+      \ifx\styst@k\empty
+        \edef\styst@kfirst{\tmp}\edef\styst@k{\tmp}%
+      \else
+        \edef\styst@k{\styst@k+\tmp}%
+    \fi\fi\fi
+  }\mcdown
 }
 %-csty_mstack
 

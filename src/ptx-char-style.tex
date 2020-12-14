@@ -251,17 +251,18 @@
  \ifx\mspr@fix\empty\else\edef\f@ntstyle{\mspr@fix\f@ntstyle}\fi % Milestones now on stack
  \ifx\c@tegory\empty\else\s@tc@tpr@fix\edef\f@ntstyle{\c@tprefix\f@ntstyle}\fi % Categories have different styles
  \let\d@@=\d@
- \let\styst@k=\relax
  \def\d@##1+##2\E{\edef\tmp{#1}\edef\tmpa{##2}\ifx\tmp\tmpa\getmcfonts@ze\else
 			\csname d@code-##1\endcsname
                         \getp@ram{fontsize}{\tmp}\ifx\p@ram\relax\xdef\c@rrfontsize{12}%
                         \else\global\let\c@rrfontsize=\p@ram\fi\fi}%
  \mctop
- \s@tstyst@k
+ \let\styst@k=\empty
+ \s@tstyst@k{#1}%
  \let\d@=\d@@
- \ifx\styst@k\relax\let\styst@k\empty\fi
- \edef\f@ntstyle{\f@ntstyle-\c@rrfontsize\styst@k}}
+ \edef\f@ntstyle{\f@ntstyle-\c@rrfontsize\ifx\styst@k\empty\else+\styst@k\fi}}
 %-cchar_getfontname
+
+\let\styst@k\empty
 
 %+cchar_setfont
 \xdef\z@ros{000000}%What does ParseColor come out with for black?
@@ -338,7 +339,6 @@
   \trace{s}{extrafont<#1> =\csname extrafont<#1>\endcsname}%
   \csname extrafont<#1>\endcsname
 }
-\def\tru@{true}
 \def\SuperscriptFactor{0.75}
 \def\SmallCapsSuffix{/ICU:+smcp}
 %-cchar_extrafont
