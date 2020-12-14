@@ -153,7 +153,7 @@
 % take into account: diglot, categories and milestones.
 % Rather than attempt to code \ifs for all possible 8 options, it now builds a comma-separated list of them, 
 % and finds the first match. This results in cleaner code.
-\def\getp@ram#1#2{\trace{s}{getp@ram #2:#1 (\styst@k)}%
+\def\getp@ram#1#2{\trace{s}{getp@ram #2:#1 (\styst@kskip/\styst@kfirst/\styst@k)}%
  \iftrue
    {%protect outer version of \d@, etc.
    \let\p@ram\relax
@@ -166,11 +166,17 @@
    \else
      \edef\p@ssParams{#2}%
    \fi
-   %\trace{s}{1. Checking \p@ssParams}%
    \edef\tmp{#2}\ifx\tmp\styst@k\else
-     \ifx\tmp\styst@kskip
+     \ifx\tmp\styst@kfirst\else
+        \edef\p@ssParams{#2+\styst@kfirst,\p@ssParams}%
+     \fi
+     \ifx\styst@k\empty\else
+        \ifx\styst@k\styst@kfirst\else%styst@k may be the same as styst@kfirst
+          \edef\p@ssParams{#2+\styst@k,\p@ssParams}%
+	\fi
      \fi
    \fi
+   \trace{s}{1. Checking \p@ssParams}%
    %\ifx\mspr@fix\empty\else
      %If we expand our prefix list for special styling of milestone+marker, then:
      %\exp@ndmspr@fix{\let\@ut=\empty \let\d@=\cspr@pend\x@\cstackdown \p@ssParams,\E \edef\p@ssParams{\@ut,\p@ssParams}}%
@@ -646,8 +652,8 @@
     \x@\mcstackdown\mcstack\E\ifx\mcstack\empty\xdef\mcstack{+,}\fi}
 
 \def\mcpushunderms#1{\traceNum{s}{mcpushunder stack(#1): \mcstack}\global\tempfalse\xdef\msstack{#1,}% push #1 above the first non-milestone
-    \def\d@b##1+##2\E{\if ##1\relax\relax\xdef\msstack{\msstack+,}\else\xdef\msstack{##1+##2,\msstack}\fi\if ##1m\else\global\temptrue\fi}%
-    \x@\mcstackdown\mcstack\E\ifx\mcstack\empty\xdef\mcstack{+,}\fi}
+    \def\d@b##1+##2\E{\trace{s}{[##1+##2] (\msstack)}\if ##1\relax\relax\xdef\msstack{\msstack+,}\else\xdef\msstack{##1+##2,\msstack}\fi\if ##1m\relax\else\global\temptrue\fi}%
+    \x@\mcstackdown\mcstack\E\iftrue\else\xdef\msstack{\msstack,+,}\fi\let\mcstack=\msstack}
 
 % milestone stack (MScstack)
 %\gdef\MScstack{+,}  
@@ -666,7 +672,7 @@
 \def\ss@ChrP{c}%
 \def\ss@Para{P}%
 \def\ss@Note{N}%
-\def\ss@MstnS{M}% Static milestones
+%\def\ss@MstnS{M}% Static milestones (unused)
 \def\ss@Mstn{m}% Floating milestones (always above a par style)
 \def\ss@Ctgy{t}%
 \def\ss@Sbar{b}%
@@ -738,9 +744,9 @@
 }
 \def\end@llpoppedstyles#1{\let\itp@psstore\empty\edef\mcch@cking{#1}\let\d@=\whileitp@ps\mcdown\ifx\itp@psstore\empty\else\edef\mcstack{\itp@psstore\mcstack}\fi}
 
-\def\s@tstyst@k#1{%Get a separated list of styles that ought to uniquely define a font/etc.
+\def\s@tstyst@k#1{%Get a + separated list of styles that ought to uniquely define a font/etc.
   %List excludes marker #1 and stops at a barrier (e.g. a par/note/sidebar)
-  %defines \styst@kskipped to be the skipped value and \styst@kfirst to first value.
+  %defines \styst@kskip to be the skipped value and \styst@kfirst to first value.
   \edef\styst@kskip{#1}%
   \def\d@##1+##2\E{\ifcsname isb@rrier-##1\endcsname\let\d@=\cstackrelax\fi%stop here?
     \edef\tmp{##2}\csname d@code-##1\endcsname
@@ -751,7 +757,11 @@
         \edef\styst@k{\styst@k+\tmp}%
     \fi\fi\fi
   }\mcdown
+  \trace{s}{styst@k -> (\styst@kskip/\styst@kfirst/\styst@k)}%
 }
+\let\styst@kfirst\empty
+\let\styst@kskip\empty
+\let\styst@k\empty
 %-csty_mstack
 
 %+csty_stylesheet
