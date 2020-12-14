@@ -107,7 +107,8 @@
 \def \SmallCaps      #1\relax{\defbinp@ram{smallcaps}{#1}}
 \let \Smallcaps\SmallCaps
 \def \BaseLine       #1\relax{\defp@ram{baseline}{#1}}
-\def \LineSpacing    #1\relax{\defp@ram{baseline}{#1\FontSizeUnit}}
+\def \LineSpacing    #1\relax{\defp@ram{baseline}{#1\onel@neunit}}
+\def \ztexFontFeatures  #1\relax{\defp@ram{fontfeatures}{#1}}
 % Make a TeX macro based on the StyleType
 \def \StyleType      #1\relax{\lowercase{\def\styl@type{#1}}\m@kestyle}     %(1)
 \let \Styletype=\StyleType
@@ -321,7 +322,7 @@
   % called after \c and \v have been processed in stylesheet at beginning of typesetting file
   \let\@V=\v% remember \v defn for (A) below
   % Define a macro to read an actual space delimited verse number, and then check if the next token is \vp
-  \def\@v@ ##1 {\gdef\v@rse{##1}\global\let\print@bleVerse\v@rse\futurelet\mayb@vp\@V@}%
+  \def\@v@ ##1 {\gdef\v@rse{##1}\ifdiglot\ifdiglotL\global\let\@v@rse=\v@rse\else\global\let\@v@rseR=\v@rse\fi\fi\global\let\print@bleVerse\v@rse\futurelet\mayb@vp\@V@}%
   % If the next token IS vp, then call relevant code to interpret before dropping 
   \def\@V@{%
    \let\nxt\@@V@@
@@ -391,9 +392,21 @@
   % Define a macro to process space delimited chapter number
   % ## is necessary because this is a nested macro definition
   \def\@c@ ##1 {\ifsk@pping \egroup \fi % if we were skipping, stop it
-   \gdef\ch@pter{##1}% remember chapter number
-   \gdef\ch@ptert@xt{##1}% the chapter number we will actually output
-   \gdef\v@rse{}% clear verse number
+   \ifnum 1=\ifdiglot\ifdiglotL 1 \else 2\fi\else 2\fi
+     \gdef\@ch@pterR{##1}% remember chapter number
+     \gdef\@ch@ptert@xtR{##1}% the chapter number we will actually output
+     \gdef\@v@rseR{}% clear verse number
+     \global\let\ch@pter=\@ch@pterR
+     \global\let\ch@ptert@xt=\@ch@ptert@xtR
+     \global\let\v@rse=\@v@rseR
+   \else
+     \gdef\@ch@pter{##1}% remember chapter number
+     \gdef\@ch@ptert@xt{##1}% the chapter number we will actually output
+     \gdef\@v@rse{}% clear verse number
+     \global\let\ch@pter=\@ch@pter
+     \global\let\ch@ptert@xt=\@ch@ptert@xt
+     \global\let\v@rse=\@v@rse
+   \fi
    \global\let\print@bleVerse=\v@rse
    \m@kedigitsletters
    % If omitting chapter number, skip this. 
@@ -544,10 +557,10 @@
 %+csty_fndigits
 \def\m@kedigitsletters{\catcode`0=\el@ven \catcode`1=\el@ven \catcode`2=\el@ven \catcode`3=\el@ven
  \catcode`4=\el@ven \catcode`5=\el@ven \catcode`6=\el@ven \catcode`7=\el@ven
- \catcode`8=\el@ven \catcode`9=\el@ven \relax}
+ \catcode`8=\el@ven \catcode`9=\el@ven \catcode`-=\el@ven \relax}
 \def\m@kedigitsother{\catcode`0=\tw@lve \catcode`1=\tw@lve \catcode`2=\tw@lve \catcode`3=\tw@lve
  \catcode`4=\tw@lve \catcode`5=\tw@lve \catcode`6=\tw@lve \catcode`7=\tw@lve
- \catcode`8=\tw@lve \catcode`9=\tw@lve \relax}
+ \catcode`8=\tw@lve \catcode`9=\tw@lve \catcode`-=\tw@lve \relax}
 \def\el@ven{11}
 \def\tw@lve{12}
 %-csty_fndigits
@@ -555,10 +568,14 @@
 \let\b@ok\relax
 \def\ch@pter{}
 \def\v@rse{}
+\let\@ch@pter=\ch@pter
+\let\@ch@pterR=\ch@pter
+\let\@v@rse=\v@rse
+\let\@v@rseR=\v@rse
 \def\m@rkverse{\ifdiglot\ifdiglotL\m@rkverseL\else\m@rkverseR\fi\else\m@rkverseN\fi}
-\def\m@rkverseN{\mark{\b@ok:\ch@pter:\print@bleVerse}}
-\def\m@rkverseL{\mark{\b@ok:\ch@pter:\print@bleVerse}\marks1{\b@ok:\ch@pter:\print@bleVerse}}
-\def\m@rkverseR{\mark{\b@okR:\ch@pter:\print@bleVerse}\marks2{\b@okR:\ch@pter:\print@bleVerse}}
+\def\m@rkverseN{\mark{\b@ok:\ch@pter:\print@bleVerse}} %normal verse
+\def\m@rkverseL{\mark{\b@ok:\ch@pter:\print@bleVerse}\marks1{\b@ok:\ch@pter:\print@bleVerse}} % Left diglot verse
+\def\m@rkverseR{\mark{\b@okR:\ch@pter:\print@bleVerse}\marks2{\b@okR:\ch@pter:\print@bleVerse}} %Right diglot verse
 
 \def\n@xtparstart{}
 %+csty_addspecialhooks
@@ -840,6 +857,7 @@
 %+csty_ptxfile_intro
 \def\ptxfile#1{
  \saveLRspecificOrig%This becomes a \relax after first use. Always call it.
+ \ifdiglot\setLRspecific\fi% \@netimesetup needs actual values, in a diglot there may be no use of generic FontSizeUnit, etc.
  \@netimesetup
  \ifdiglot\bgroup%This must be outside of @onetimesetup as there's no guarantee that diglot will be true for all ptxfiles.
    \dimen0=\baselineskip
@@ -1058,8 +1076,10 @@
 \def\s@tb@dyb@seline#1{%Parameter is {} for monoglot, L / R for diglot.
  \baselineskip=\origb@selineskip
  \le@dingunit=\LineSpacingFactor\FontSizeUnit
+ \onel@neunit=\LineSpaceBase\le@dingunit
  \verticalsp@ceunit=\VerticalSpaceFactor\le@dingunit
- \ifdim\baselineskip < 1pt \baselineskip=14\le@dingunit\fi % If the baselineskip has been specifically
+ \trace{F}{le@dingunit(\the\le@dingunit)=\LineSpacingFactor * \the\FontSizeUnit, onel@neunit(\the\onel@neunit)=\LineSpaceBase * \the\le@dingunit}
+ \ifdim\baselineskip < 1pt \baselineskip=\onel@neunit\fi % If the baselineskip has been specifically
                                                            % set it will remain. Otherwise, the default
                                                            % of 14 will be applied here and set text will
                                                            % hold to the grid.
@@ -1110,7 +1130,9 @@
  \resetvsize
 }
 %-csty_setupsizes
+\def\LineSpaceBase{14}
 \newdimen\le@dingunit
+\newdimen\onel@neunit
 \newdimen\verticalsp@ceunit
 \newdimen\topm@rgin
 \newdimen\bottomm@rgin

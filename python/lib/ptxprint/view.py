@@ -2,7 +2,7 @@
 import configparser, os, re, regex, random, collections
 from ptxprint.texmodel import ModelMap, TexModel
 from ptxprint.ptsettings import ParatextSettings, allbooks, books, bookcodes, chaps
-from ptxprint.font import TTFont, cachepath, cacheremovepath
+from ptxprint.font import TTFont, cachepath, cacheremovepath, FontRef
 from ptxprint.utils import _, refKey, universalopen
 from ptxprint.usfmutils import Sheets, UsfmCollection
 from ptxprint.piclist import PicInfo
@@ -15,7 +15,7 @@ from shutil import rmtree
 import datetime, time
 from shutil import copyfile, copytree, move
 
-VersionStr = "1.4.1"
+VersionStr = "1.4.3"
 
 pdfre = re.compile(r".+[\\/](.+)\.pdf")
 
@@ -24,6 +24,14 @@ varpaths = (
     ('settingsdir', ('settings_dir',)),
     ('workingdir', ('working_dir',)),
 )
+
+FontModelMap = {
+    "fontregular": ("bl_fontR", None),
+    "fontbold":    ("bl_fontB", None),
+    "fontitalic":  ("bl_fontI", None),
+    "fontbolditalic": ("bl_fontBI", None),
+    "fontextraregular": ("bl_fontExtraR", None)
+}
 
 class Path(pathlib.Path):
 
@@ -68,6 +76,11 @@ def doError(txt, secondary=None, title=None):
     if secondary is not None:
         print(secondary)
 
+stylelinks = {
+    "notes/ifblendfnxr":   ("getboolean", ("x",),     "NoteBlendInto", lambda v: "f" if v else ""),
+    "notes/fnfontsize":    ("getfloat",   ("f", "x"), "FontSize",      None),
+    "notes/fnlinespacing": ("getfloat",   ("f", "x"), "BaseLine",      None)
+} 
 
 class ViewModel:
     _attributes = {
@@ -157,14 +170,10 @@ class ViewModel:
             return [font, 0]
 
     def get(self, wid, default=None, sub=0, asstr=False, skipmissing=False):
-        if wid.startswith("bl_"):
-            return (self.dict.get(wid + "/name", None), self.dict.get(wid + "/style", None))
         return self.dict.get(wid, default)
 
     def set(self, wid, value, skipmissing=False):
-        if wid.startswith("bl_"):
-            self.setFont(wid, *value)
-        elif wid.startswith("s_"):
+        if wid.startswith("s_"):
             self.dict[wid] = "{:.3f}".format(float(value))
         else:
             self.dict[wid] = value
@@ -252,43 +261,21 @@ class ViewModel:
 
     def onFontChanged(self, fbtn):
         font_info = self.get("bl_fontR")
-        f = TTFont(*font_info)
-        if "Silf" in f:
-            self.set("c_useGraphite", True)
-        else:
-            self.set("c_useGraphite", False)
+        f = font_info.getTtfont()
         silns = "{urn://www.sil.org/ldml/0.1}"
-        if self.get("t_fontfeatures") == "":
+        if not len(font_info.feats):
             d = self.ptsettings.find_ldml('.//special/{1}external-resources/{1}font[@name="{0}"]'.format(f.family, silns))
             if d is not None:
                 featstring = d.get('features', '')
-                self.set("t_fontfeatures", featstring)
+                font_info.updateFeats(featstring)
         for s in ('Bold', 'Italic', 'Bold Italic'):
             sid = "".join(x[0] for x in s.split())
             esid = s.lower().replace(" ", "")
             w = "bl_font"+sid
-            nf = TTFont(f.family, style = " ".join(s.split()))
-            if nf.filename is None:
-                styles = s.split()
-                if len(styles) > 1:
-                    bf = TTFont(f.family, style=styles[0])
-                    if bf.filename is not None:
-                        self.set("s_{}embolden".format(esid), 0)
-                        styles.pop(0)
-                    else:
-                        bf = f
-                else:
-                    bf = f
-                self.set(w, (bf.family, bf.style))
-                self.set("c_fake"+esid, True)
-                for t in styles:
-                    if t == 'Bold':
-                        self.set("s_{}embolden".format(esid), 2)
-                    elif t == 'Italic':
-                        self.set("s_{}slant".format(esid), 0.15)
-            else:
-                self.set(w, (nf.family, nf.style))
-                self.set("c_fake"+esid, False)
+            nf = font_info.fromStyle(bold="Bold" in s, italic="Italic" in s)
+            print(f"onFontChagned {w} {nf}")
+            if nf is not None:
+                self.set(w, nf)
 
     def updateSavedConfigList(self):
         pass
@@ -361,13 +348,13 @@ class ViewModel:
                 self._copyConfig("Default", configName)
             else:
                 self._copyConfig(self.configId, configName)
+            self.styleEditor.load(self.getStyleSheets(configName))
             res = self.readConfig(cfgname=configName)
             if res or forceConfig:
                 self.configId = configName
             if readConfig:  # project changed
                 self.usfms = None
                 self.get_usfms()
-            self.styleEditor.load(self.getStyleSheets())
             self.loadPics()
             return res
         else:
@@ -433,6 +420,10 @@ class ViewModel:
         else:
             self.diglotView = None
         self.loadingConfig = False
+        if self.get("bl_fontR", skipmissing=True) is None:
+            fname = self.ptsettings.get('DefaultFont', 'Arial')
+            font = FontRef(fname, "")
+            self.set("bl_fontR", font)
         # clear generated pictures
         for f in ("tmpPics", "tmpPicLists"):
             path2del = os.path.join(self.working_dir, f)
@@ -484,10 +475,10 @@ class ViewModel:
                 else:
                     val = val.withvars(self)
             elif v[0].startswith("bl_"):
-                val = self.get(v[0], skipmissing=True)
-                self._configset(config, k+"/name", val[0] or "")
-                self._configset(config, k+"/style", val[1] or "")
-                continue
+                    vfont = self.get(v[0], skipmissing=True)
+                    if vfont is None:
+                        continue
+                    val = vfont.asConfig()
             else:
                 if v[0] is None:
                     continue
@@ -550,8 +541,20 @@ class ViewModel:
             indent = config.getfloat("document", "indentunit", fallback="2.000")
             if indent == 2.0 and config.getboolean("paper", "columns", fallback=True):
                     config.set("document", "indentunit", "1.000")
-            config.set("config", "version", "1.400")
-
+            for k, r in stylelinks.items():
+                s, a = k.split("/")
+                val = getattr(config, r[0])(s, a, fallback=None)
+                res = r[3](val) if r[3] is not None else val
+                for m in r[1]:
+                    self.styleEditor.setval(m, r[2], res, ifunchanged=True)
+        if v < 1.403:   # no need to bump version for this and merge this with a later version test
+            f = os.path.join(self.configPath(cfgname), "NestedStyles.sty")
+            if os.path.exists(f):
+                os.remove(f)
+            config.set("paragraph", "linespacebase", "True")
+        if v < 1.404:
+            config.set("fancy", "versedecoratorshift", "-5")
+            config.set("config", "version", "1.404")
 
         styf = os.path.join(self.configPath(cfgname), "ptxprint.sty")
         if not os.path.exists(styf):
@@ -586,16 +589,28 @@ class ViewModel:
                                 val = float(val) if val is not None and val != '' else 0
                             elif v[0].startswith("c_"):
                                 val = config.getboolean(sect, opt) if val else False
+                            elif v[0].startswith("bl_"):
+                                val = FontRef.fromConfig(val)
                             if val is not None:
                                 setv(v[0], val)
                         except AttributeError:
                             pass # ignore missing keys 
-                elif sect in ModelMap:
-                    v = ModelMap[sect]
-                    if v[0].startswith("bl_") and opt == "name":
+                elif sect in FontModelMap:
+                    v = FontModelMap[sect]
+                    if v[0].startswith("bl_") and opt == "name":    # legacy
                         vname = re.sub(r"\s*,?\s+\d+\s*$", "", val) # strip legacy style and size
                         vstyle = config.get(sect, "style", fallback="")
-                        setv(ModelMap[sect][0], (vname, vstyle))
+                        vfeats = {}
+                        if config.get(sect, "fakeit", fallback="False").lower() == "true":
+                            for a in ("embolden", "slant"):
+                                v = config.getfloat(sect, a, fallback=0.)
+                                if v != 0.:
+                                    vfeats[a] = v
+                        vf = FontRef(vname, vstyle, feats=vfeats)
+                        vf.updateFeats(config.get("font", "features", fallback=""), keep=True)
+                        vf.isGraphite = config.getboolean("font", "usegraphite", fallback=False)
+                        print(FontModelMap[sect][0], vf)
+                        setv(FontModelMap[sect][0], vf)
                 if key in self._activekeys:
                     getattr(self, self._activekeys[key])()
         for k, v in self._settingmappings.items():
@@ -843,11 +858,13 @@ class ViewModel:
     def incrementProgress(self, val=None):
         pass
 
-    def getStyleSheets(self, generated=False):
+    def getStyleSheets(self, cfgname=None, generated=False):
         if self.prjid is None:
             return []
         res = []
-        cpath = self.configPath(cfgname=self.configName())
+        if cfgname is None:
+            cfgname = self.configName()
+        cpath = self.configPath(cfgname=cfgname)
         rcpath = self.configPath("")
         res.append(os.path.join(self.scriptsdir, "ptx2pdf.sty"))
         if self.get('c_useCustomSty'):
@@ -983,7 +1000,8 @@ class ViewModel:
         if self.diglotView is not None:
             self.diglotView._archiveAdd(zf, self.getBooks(files=True))
         if self.get("c_archiveTemps"):
-            for f in self.tempFiles:
+            temps = [x.replace(".xdv", ".pdf") for x in self.tempFiles if x.endswith(".xdv")]
+            for f in self.tempFiles + temps:
                 pf = os.path.join(self.working_dir, f)
                 if os.path.exists(pf):
                     outfname = os.path.relpath(pf, self.settings_dir)

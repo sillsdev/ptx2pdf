@@ -54,7 +54,9 @@ if not args.print:
 ptsettingsdir = get_ptsettings(doError if args.print else _doError)
 
 if args.paratext is None:
-    args.paratext = ptsettingsdir
+    args.paratext = os.getenv("PTXPRINT_PROJECTSDIR", None)
+    if args.paratext is None:
+        args.paratext = get_ptsettings(doError if args.print else _doError)
 
 if not args.paratext:
     print("No Paratext Settings directory found")

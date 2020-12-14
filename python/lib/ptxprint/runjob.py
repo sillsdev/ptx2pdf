@@ -92,33 +92,23 @@ _diglot = {
 "diglot/linebreaklocale" :  "document/linebreaklocale",
 "diglot/useglyphmetrics" :  "paragraph/useglyphmetrics",
 
-"diglot/fontregular" :      "fontregular",
-"diglot/fontregeng" :       "fontregular/engine",
-"diglot/texfeatures" :      "font/texfeatures",
 "diglot/docscript" :        "document/script",
 "diglot/docdigitmapping" :  "document/digitmapping",
                             
-"diglot/fontbold" :         "fontbold",
-"diglot/fontboldeng" :      "fontbold/engine",
-"diglot/boldembolden" :     "fontbold/embolden",
-"diglot/boldslant" :        "fontbold/slant",
-                            
-"diglot/fontitalic" :       "fontitalic",
-"diglot/fontitaleng" :      "fontitalic/engine",
-"diglot/italembolden" :     "fontitalic/embolden",
-"diglot/italslant" :        "fontitalic/slant",
-                            
-"diglot/fontbolditalic" :   "fontbolditalic",
-"diglot/fontbolditaleng" :  "fontbolditalic/engine",
-"diglot/bolditalembolden" : "fontbolditalic/embolden",
-"diglot/boldital/slant" :   "fontbolditalic/slant",
-
+"diglot/fontregular" :      "document/fontregular",
+"diglot/fontbold" :         "document/fontbold",
+"diglot/fontitalic" :       "document/fontitalic",
+"diglot/fontbolditalic" :   "document/fontbolditalic",
 "diglot/ifshowversenums" :  "document/ifshowversenums",
 "diglot/includefootnotes" : "notes/includefootnotes",
 "diglot/fnfontsize" :       "notes/fnfontsize",
 "diglot/fnlinespacing" :    "notes/fnlinespacing",
 "diglot/includexrefs" :     "notes/includexrefs",
-"diglot/ifblendfnxr" :      "notes/ifblendfnxr"
+"diglot/ifblendfnxr" :      "notes/ifblendfnxr",
+"diglotfancy/versedecorator":       "fancy/versedecorator",
+"diglotfancy/versedecoratorpdf":    "fancy/versedecoratorpdf",
+"diglotfancy/versedecoratorshift":  "fancy/versedecoratorshift",
+"diglotfancy/versedecoratorscale":  "fancy/versedecoratorscale"
 }
 
 _joblock = None
@@ -401,6 +391,7 @@ class RunJob:
         for k,v in _diglot.items():
             info[k]=diginfo[v]
         info["document/diglotcfgrpath"] = os.path.relpath(diginfo.printer.configPath(diginfo.printer.configName()), docdir).replace("\\","/")
+        info["_isDiglot"] = True
         texfiles += self.sharedjob(jobs, info, logbuffer=logbuffer, extra="-diglot")
         return texfiles
 

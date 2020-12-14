@@ -7,6 +7,7 @@ class Snippet:
     regexes = []
     processTex = False
     texCode = ""
+    takesDiglot = False
 
 class PDFx1aOutput(Snippet):
     processTex = True
@@ -47,10 +48,10 @@ class FancyIntro(Snippet):
 class Diglot(Snippet):
     processTex = True
     texCode = r"""
-\def\regularR{{"{diglot/fontregular}{diglot/fontregeng}{diglot/texfeatures}{diglot/docscript}{diglot/docdigitmapping}"}}
-\def\boldR{{"{diglot/fontbold}{diglot/fontboldeng}{diglot/texfeatures}{diglot/docscript}{diglot/docdigitmapping}{diglot/boldembolden}{diglot/boldslant}"}}
-\def\italicR{{"{diglot/fontitalic}{diglot/fontitaleng}{diglot/texfeatures}{diglot/docscript}{diglot/docdigitmapping}{diglot/italembolden}{diglot/italslant}"}}
-\def\bolditalicR{{"{diglot/fontbolditalic}{diglot/fontbolditaleng}{diglot/texfeatures}{diglot/docscript}{diglot/docdigitmapping}{diglot/bolditalembolden}{diglot/boldital/slant}"}}
+\def\regularR{{"{diglot/fontregular}{diglot/docscript}{diglot/docdigitmapping}"}}
+\def\boldR{{"{diglot/fontbold}{diglot/docdigitmapping}"}}
+\def\italicR{{"{diglot/fontitalic}{diglot/docscript}{diglot/docdigitmapping}"}}
+\def\bolditalicR{{"{diglot/fontbolditalic}{diglot/docscript}{diglot/docdigitmapping}"}}
 
 \def\DiglotLeftFraction{{{document/diglotprifraction}}}
 \def\DiglotRightFraction{{{document/diglotsecfraction}}}
@@ -71,7 +72,9 @@ class Diglot(Snippet):
 
 class FancyBorders(Snippet):
     processTex = True
-    texCode = r"""
+    takesDiglot = True
+    def generateTex(self, texmodel, diglotSide=""):
+        res = r"""
 % Define this to add a border to all pages, from a PDF file containing the graphic
 %   "scaled <factor>" adjusts the size (1000 would keep the border at its original size)
 % Can also use "xscaled 850 yscaled 950" to scale separately in each direction,
@@ -83,57 +86,32 @@ class FancyBorders(Snippet):
 {fancy/endofbook}\setbox\decorationbox=\hbox{{\XeTeXpdffile "{fancy/endofbookpdf}"\relax}}
 {fancy/endofbook}\def\z{{\par\nobreak\vskip 16pt\centerline{{\copy\decorationbox}}}}
 
-{fancy/sectionheader}\newbox\sectionheadbox
-{fancy/sectionheader}\def\placesectionheadbox{{%
-{fancy/sectionheader}  \ifvoid\sectionheadbox % set up the \sectionheadbox box the first time it's needed
-{fancy/sectionheader}    \global\setbox\sectionheadbox=\hbox{{\XeTeXpdffile "{fancy/sectionheaderpdf}"\relax}}%
-{fancy/sectionheader}    \global\setbox\sectionheadbox=\hbox to \hsize% \hsize is the line width
-{fancy/sectionheader}        {{\hss \box\sectionheadbox \hss}}% so now the graphic will be centered
-{fancy/sectionheader}    \global\setbox\sectionheadbox=\vbox to 0pt
-{fancy/sectionheader}        {{\kern-21pt % adjust value of \kern here to shift graphic up or down
-{fancy/sectionheader}         \box\sectionheadbox \vss}}% now we have a box with zero height
-{fancy/sectionheader}  \fi
-{fancy/sectionheader}  \vadjust{{\copy\sectionheadbox}}% insert the graphic below the current line
-{fancy/sectionheader}  \vrule width 0pt height 0pt depth 0.5em
-{fancy/sectionheader}}}
-{fancy/sectionheader}\sethook{{start}}{{s}}{{\placesectionheadbox}}
-{fancy/sectionheader}\sethook{{start}}{{s1}}{{\placesectionheadbox}}
-{fancy/sectionheader}\sethook{{start}}{{s2}}{{\placesectionheadbox}}
-
-% The following code puts the verse number inside a star
-%
-{fancy/versedecorator}\newbox\versestarbox
-{fancy/versedecorator}\setbox\versestarbox=\hbox{{\XeTeXpdffile "{fancy/versedecoratorpdf}"\relax}}
-
-% capture the verse number in a box (surrounded by \hfil) which we overlap with star
-{fancy/versedecorator}\newbox\versenumberbox
-{fancy/versedecorator}\sethook{{start}}{{v}}{{\setbox\versenumberbox=\hbox to \wd\versestarbox\bgroup\hfil}}
-{fancy/versedecorator}\sethook{{end}}{{v}}{{\hfil\egroup
-{fancy/versedecorator} \beginL % ensure TeX is "thinking" left-to-right for the \rlap etc
-{fancy/versedecorator}   \rlap{{\raise1pt\box\versenumberbox}}\lower4pt\copy\versestarbox
-{fancy/versedecorator} \endL}}
-
-% Replace the ptx2pdf macro which prints out the verse number, so that we can
-% kern between numbers or change the font size, if necessary
-{fancy/versedecorator}\catcode`\@=11   % allow @ to be used in the name of ptx2pdf macro we have to override
-{fancy/versedecorator}\def\printv@rse{{\expandafter\getversedigits\v@rsefrom!!\end\printversedigits}}
-{fancy/versedecorator}\catcode`\@=12   % return to normal function
-
-{fancy/versedecorator}\def\getversedigits#1#2#3#4\end{{\def\digitone{{#1}}\def\digittwo{{#2}}\def\digitthree{{#3}}}}
-
-{fancy/versedecorator}\def\exclam{{!}}
-{fancy/versedecorator}\def\printversedigits{{%
-{fancy/versedecorator}  \beginL
-{fancy/versedecorator}  \ifx\digitthree\exclam
-{fancy/versedecorator}    \digitone\ifx\digittwo\exclam\else
-{fancy/versedecorator}      \ifnum\digitone=1\kern-0.1em \else\kern-0.05em\fi
-{fancy/versedecorator}      \digittwo\fi
-{fancy/versedecorator}  \else
-{fancy/versedecorator}    \zSmallVnum \digitone \kern-0.12em\digittwo \kern-0.08em\digitthree\zSmallVnum*
-{fancy/versedecorator}  \fi
-{fancy/versedecorator}  \endL}}
-
 """
+        if texmodel.dict.get("_isDiglot", False):
+            repeats = [("L", ""), ("R", "diglot")]
+        else:
+            repeats = [("", "")]
+        for replaceD, replaceE in repeats:
+            res += r"""
+{%E%fancy/sectionheader}\newbox\sectionheadbox%D%
+{%E%fancy/sectionheader}\def\placesectionheadbox%D%{{%
+{%E%fancy/sectionheader}  \ifvoid\sectionheadbox%D% % set up the \sectionheadbox box the first time it's needed
+{%E%fancy/sectionheader}    \global\setbox\sectionheadbox%D%=\hbox to \hsize{{\hss \XeTeXpdffile "{%E%fancy/sectionheaderpdf}" scaled {%E%fancy/sectionheaderscale} \relax\hss}}%
+{%E%fancy/sectionheader}    \global\setbox\sectionheadbox%D%=\vbox to 0pt
+{%E%fancy/sectionheader}        {{\kern-\ht\sectionheadbox%D% \kern {%E%fancy/sectionheadershift}pt \box\sectionheadbox \vss}}
+{%E%fancy/sectionheader}  \fi
+{%E%fancy/sectionheader}  \vadjust{{\copy\sectionheadbox}}
+{%E%fancy/sectionheader}}}
+{%E%fancy/sectionheader}\sethook{{start}}{{s%D%}}{{\placesectionheadbox}}
+{%E%fancy/sectionheader}\sethook{{start}}{{s1%D%}}{{\placesectionheadbox}}
+{%E%fancy/sectionheader}\sethook{{start}}{{s2%D%}}{{\placesectionheadbox}}
+
+{%E%fancy/versedecorator}\newbox\versestarbox%D%
+{%E%fancy/versedecorator}\setbox\versestarbox%D%=\hbox{{\XeTeXpdffile "{%E%fancy/versedecoratorpdf}" scaled {%E%fancy/versedecoratorscale} \relax}}
+{%E%fancy/versedecorator}\def\AdornVerseNumber%D%#1{{\beginL\rlap{{\hbox to \wd\versestarbox%D%{{\hfil #1\hfil}}}}%
+{%E%fancy/versedecorator}    \raise {%E%fancy/versedecoratorshift}pt\copy\versestarbox%D%\endL}}
+""".replace("%D%", replaceD).replace("%E%", replaceE)
+        return res.format(**texmodel.dict)
 
     unusedStuff = r"""
 % Some code to allow us to kern chapter numbers
@@ -245,7 +223,6 @@ class ImgCredits(Snippet):
                 for f in m:
                     a = 'co' if f[2] == 'cn' else f[2] # merge Cook's OT & NT illustrations together
                     if a == '' and f[3] != '':
-                        print(f[3])
                         customStmt += [f[0]]
                         artpgs.setdefault(f[3], []).append(int(f[0]))
                     elif a == '':
