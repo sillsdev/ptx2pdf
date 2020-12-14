@@ -92,7 +92,7 @@
 \def \Bold           #1\relax{\defbinp@ram{bold}{#1}}
 \def \Superscript    #1\relax{\condp@ram{#1}{\defp@ram{raise}{\SuperscriptRaise}\defp@ram{fontfactor}{\SuperscriptFactor}}{\defp@ram{raise}{0pt}\defp@ram{fontfactor}{1}}}
 \def \Raise          #1\relax{\defp@ram{raise}{#1}}
-\def \Regular        {\defp@ram{regular}{\tru@}\defp@ram{italic}{false}\defp@ram{bold}{false}\defp@ram{superscript}{false}\defp@ram{smallcaps}{false}}
+\def \Regular        {\defp@ram{regular}{true}\defp@ram{italic}{false}\defp@ram{bold}{false}\defp@ram{superscript}{false}\defp@ram{smallcaps}{false}}
 \let \superscript\Superscript
 \def \SpaceBefore    #1\relax{\defp@ram{spacebefore}{#1}}
 \let \Spacebefore\SpaceBefore
@@ -136,7 +136,7 @@
 
 \def\defp@ram#1#2{\x@\def\csname\c@tprefix\m@rker\ds@ffix:#1\endcsname{#2}\trace{s}{\c@tprefix\m@rker\ds@ffix:#1 -> #2}}
 \def\condp@ram#1#2#3{\edef\t@mp{#1}\ifx\t@mp\h@phen\relax\def\t@mp{#3}\else\def\t@mp{#2}\fi\t@mp}
-\def\defbinp@ram#1#2{\edef\t@mp{#2}\ifx\t@mp\h@phen\defp@ram{#1}{false}\else\defp@ram{#1}{\tru@}\fi}
+\def\defbinp@ram#1#2{\edef\t@mp{#2}\ifx\t@mp\h@phen\defp@ram{#1}{false}\else\defp@ram{#1}{true}\fi}
 \def\setp@ram#1#2#3{\x@\xdef\csname\c@tprefix#2\ds@ffix:#1\endcsname{#3}\trace{s}{\c@tprefix#2\ds@ffix:#1 -> #3}} % expand now, not later 
 %-csty_defparam
 
