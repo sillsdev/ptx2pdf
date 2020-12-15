@@ -42,10 +42,11 @@ class Interlinear:
             if isinstance(e, sfm.Element):
                 if e.name == "v":   # starting col and line
                     startl = e.pos.line - 1
-                    startc = e.pos.col - 1 + len(e.args[0]) + 4
+                    startc = e.pos.col - 1
                 continue
-            lstart = sum(linelengths[startl:e.pos.line-1]) + startc
+            lstart = sum(linelengths[startl:e.pos.line-1]) + e.pos.col-1 + startc
             lend = lstart + len(e)
+            #print(f"{e.pos.chapter}:{e.pos.verse} ({e.pos.col}, {e.pos.line}), ({startc}, {startl}), {lstart}, {lend} {linelengths[startl:e.pos.line-1]}")
             i = 0
             res = []
             for l in (lex for lex in lexemes if lex[0][0] >= lstart and lex[0][0] < lend):
@@ -72,10 +73,11 @@ class Interlinear:
                     lid = e.get('Id', '')
                     gid = e.get('GlossId', '')
                     if lid.startswith('Word:'):
-                        lexemes.append((currange, str(lexicon.get(lid, {}).get(gid, ''))))
+                        lexemes.append((currange, str(self.lexicon.get(lid, {}).get(gid, ''))))
             elif event == "end":
                 if e.tag == "string":
-                    curref = makeref(e.text)
+                    curref = self.makeref(e.text)
                     lexemes = []
                 elif e.tag == "VerseData":
-                    replaceindoc(doc, curref, lexemes, linelengths, mrk=mrk)
+                    self.replaceindoc(doc, curref, lexemes, linelengths, mrk=mrk)
+

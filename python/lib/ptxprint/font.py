@@ -324,6 +324,15 @@ class FontRef:
     def __repr__(self):
         return str(type(self)) + self.asConfig()
 
+    def __eq__(self, other):
+        if id(self) == id(other):
+            return True
+        if self is None or other is None:
+            return False
+        if self.name != other.name or self.style != other.style or self.isGraphite != other.isGraphite:
+            return False
+        return self.feats == other.feats
+
     @classmethod
     def fromTeXStyle(cls, style, regular=None):
         name = style.get('fontname', None)
@@ -378,6 +387,19 @@ class FontRef:
         res = cls(name, style, isGraphite, None)
         res.updateFeats(featstring)
         return res
+
+    @classmethod
+    def fromTeXStyle(cls, style):
+        if 'FontName' in style:
+            name = style['FontName']
+            styles = []
+            for a in ("Bold", "Italic"):
+                if a in name:
+                    name = name.replace(a, "")
+                    styles.append(a)
+            res = cls(name.strip(), " ".join(styles), style.get("ztexFontFeatures", None))
+            return res
+        return None
 
     def copy(self, cls=None):
         res = (cls or FontRef)(self.name, self.style, self.isGraphite, self.feats)
@@ -455,7 +477,7 @@ class FontRef:
         else:
             name = self.name
             s = None
-        if not s and not len(self.feats):
+        if not s and not len(self.feats) and not self.isGraphite:
             return (name, [], [])
 
         f = self.getTtfont()
@@ -484,8 +506,9 @@ class FontRef:
                     del style[a]
         else:
             (name, sfeats, feats) = self._getTeXComponents()
+            print(f"updateTeXStyle: {name}, {sfeats}, {feats}")
             style['FontName'] = name
-            if feats is not None and len(feats):
+            if len(feats) or len(sfeats):
                 style["ztexFontFeatures"] = "".join(sfeats) + ":".join("=".join(map(str, f)) for f in feats)
 
     def asTeXFont(self):

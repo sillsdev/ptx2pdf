@@ -1,4 +1,5 @@
 from gi.repository import Gtk, Gdk
+from ptxprint.utils import _
 
 def getWidgetVal(wid, w, default=None, asstr=False, sub=0):
     v = None
@@ -82,7 +83,10 @@ def setWidgetVal(wid, w, value, noui=False):
 
 def setFontButton(btn, value):
     btn.font_info = value
-    style = value.style
+    if value is None:
+        btn.set_label(_("Set Font..."))
+        return
+    style = getattr(value, 'style', None)
     if not style:
         styles = []
         if "embolden" in value.feats:

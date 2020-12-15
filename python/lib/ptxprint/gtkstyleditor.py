@@ -10,7 +10,7 @@ stylemap = {
     'Description':  ('l_styDescription',    None,               None, None, None),
     'TextType':     ('fcb_styTextType',     'l_styTextType',    'Paragraph', None, None),
     'StyleType':    ('fcb_styStyleType',    'l_styStyleType',   'Paragraph', None, None),
-    'FontName':     ('bl_font_styFontName', 'l_styFontName',    None, None, None),
+    ' font':        ('bl_font_styFontName', 'l_styFontName',    None, None, None),
     'Color':        ('col_styColor',        'l_styColor',       'x000000', None, None),
     'FontSize':     ('s_styFontSize',       'l_styFontSize',    '12', None, None),
     'Bold':         ('c_styFaceBold',       'c_styFaceBold',    '-', lambda v: "" if v else "-", None),
@@ -350,11 +350,7 @@ class StyleEditorView(StyleEditor):
         if w is None:
             print("Can't find widget {}".format(v[0]))
         else:
-            if v[0].startswith("bl_"):
-                if val is None:
-                    return
-                newval = (val, "")
-            elif v[0].startswith("col_"):
+            if v[0].startswith("col_"):
                 newval = textocol(val)
             else:
                 newval = val
@@ -391,8 +387,6 @@ class StyleEditorView(StyleEditor):
             value = val
         elif v[0].startswith("col_"):
             value = coltotex(val)
-        elif v[0].startswith("bl_"):
-            value = val[0]
         elif key.startswith("_"):
             newkey = v[3](val)
             otherkey = v[3](not val)

@@ -629,8 +629,9 @@ class ViewModel:
         if not force and self.configLocked():
             return
         fname = os.path.join(self.configPath(self.configName(), makePath=True), "ptxprint.sty")
+        regularfont = self.get("bl_fontR")
         with open(fname, "w", encoding="Utf-8") as outf:
-            self.styleEditor.output_diffile(outf)
+            self.styleEditor.output_diffile(outf, regular=regularfont)
 
     def savePics(self, force=False):
         if not force and self.configLocked():
@@ -936,7 +937,7 @@ class ViewModel:
         for k, v in TexModel._fonts.items():
             if v[1] is None or self.get(v[1]):
                 font_info = self.get(v[0])
-                f = TTFont(*font_info)
+                f = font_info.get_ttfont()
                 fname = os.path.basename(f.filename)
                 res[f.filename] = "shared/fonts/"+fname
 

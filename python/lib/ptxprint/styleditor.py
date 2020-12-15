@@ -1,13 +1,15 @@
 
 import re
 from ptxprint.usfmutils import Sheets
+from ptxprint.font import FontRef
 from copy import deepcopy
 
 mkrexceptions = {k.lower().title(): k for k in ('BaseLine', 'TextType', 'TextProperties', 'FontName',
                 'FontSize', 'FirstLineIndent', 'LeftMargin', 'RightMargin',
                 'SpaceBefore', 'SpaceAfter', 'CallerStyle', 'CallerRaise',
                 'NoteCallerStyle', 'NoteCallerRaise', 'NoteBlendInto', 'LineSpacing',
-                'StyleType', 'ColorName', 'XMLTag', 'TEStyleName')}
+                'StyleType', 'ColorName', 'XMLTag', 'TEStyleName', 'ztexFontFeatures')}
+binarymkrs = {"bold", "italic", "smallcaps"}
 
 absolutes = {"baseline", "raise", "callerraise", "notecallerraise"}
 
@@ -52,7 +54,15 @@ class StyleEditor:
             return
         foundp = False
         self.basesheet = Sheets(sheetfiles[:-1])
+        self._createFonts(self.basesheet)
         self.sheet = Sheets(sheetfiles[-1:], base=self.basesheet)
+        self._createFonts(self.sheet)
+
+    def _createFonts(self, sheet):
+        for k, v in sheet.items():
+            f = FontRef.fromTeXStyle(v)
+            if f is not None:
+                v[" font"] = f
 
     def _convertabs(self, key, valstr):
         def asfloat(v, d):
@@ -87,9 +97,13 @@ class StyleEditor:
             try:
                 fa = float(a)
                 fb = float(b)
+                return abs(fa - fb) < 0.005
             except (ValueError, TypeError):
-                return b is None if a is None else (False if b is None else a == b)
-        return abs(fa - fb) < 0.005
+                pass
+            if key.lower() not in binarymkrs:
+                a = a or ""
+                b = b or ""
+            return a == b
 
     def _str_val(self, v, key=""):
         if isinstance(v, (set, list)):
@@ -108,7 +122,7 @@ class StyleEditor:
             res = re.sub(r"^\s*(.*\d+)\s*$", r"\1pt", res)
         return res
 
-    def output_diffile(self, outfh):
+    def output_diffile(self, outfh, regular=None):
         def normmkr(s):
             x = s.lower().title()
             return mkrexceptions.get(x, x)
@@ -116,6 +130,8 @@ class StyleEditor:
             markerout = False
             sm = self.sheet.get(m, {})
             om = self.basesheet.get(m, {})
+            if " font" in sm:
+                sm[" font"].updateTeXStyle(sm, regular=regular)
             for k,v in sm.items():
                 if k.startswith(" "):
                     continue

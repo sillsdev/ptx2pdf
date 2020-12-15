@@ -127,7 +127,7 @@
 \catcode`\ =11 \catcode`|=0\catcode`\\=12}                                                                                 
 \def\normalc@tcodes{\catcode`"=12 \catcode`==12 
 \catcode`\ =10\catcode`\\=0\catcode`\|=12}                                                                              
-\message{CATCODES: "\the\catcode`",  =\the\catcode`=,  \the\catcode`\ , *\the\catcode`\*,  \the\catcode`\\,  \the\catcode`\|}%
+\trace{A}{CATCODES: "\the\catcode`",  =\the\catcode`=,  \the\catcode`\ , *\the\catcode`\*,  \the\catcode`\\,  \the\catcode`\|}%
 
 
 \xdef\attribsus@d{}% List of used attributes.
@@ -135,7 +135,7 @@
 \def\start@ttributegrab{\let\c@ntinue\isitslash\oddc@tcodes\futurelet\nxt\c@ntinue}
 \def\end@ttributegrab{%
   \xdef\@ttributes{\x@\detokenize\x@{\@ttributes}}% Make it all strings.
-  \message{Now executing \p@stattribcmd}%
+  \trace{A}{Now executing \p@stattribcmd}%
   \csname\p@stattribcmd\endcsname}% 
 
 \oddc@tcodes%NO SPACES until |normalc@tcodes is called.
@@ -149,7 +149,6 @@
 \def\relaxval{\relax}
 \def\milestoneJoinChar{ } % While replacing ' ' with '_' is  nice for styling things like \qt-s |the crowd\*, this then breaks equivalence with ... who="The crowd"
 \def\save@ttribute#1="#2"=#3\E{%
-  \tracingassigns=1
   \lowercase{\def\attr@key{#1}}\def\attr@val{#2}%
   \ifx\attr@val\relaxval
     \ifx\thisdefault@ttrkey\empty
@@ -171,7 +170,6 @@
     \trace{A}{Got named attribute \attr@key="\attr@val"}%
     \set@ttribute{\attr@key}{\attr@val}%
   \fi
-  \tracingassigns=0
 }
 
 \def\get@ttribute#1{\x@\let\x@\attr@b\csname attr:#1\endcsname \trace{A}{attrib #1 is \attr@b}} %simple access function
