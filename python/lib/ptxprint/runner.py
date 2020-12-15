@@ -136,7 +136,7 @@ elif sys.platform == "win32":
 
     def fclist(family, pattern):
         print("In fclist, pt_bindir = ", pt_bindir)
-        a = [os.path.join(pt_bindir, "xetex", "bin", "fc-list.exe").replace("\\", "/"),
+        a = [os.path.join(pt_bindir(), "xetex", "bin", "fc-list.exe").replace("\\", "/"),
                 '"'+family+'"', '":style='+pattern+'"', 'file']
         print("a = ", a)
         return subprocess.check_output(a, creationflags=CREATE_NO_WINDOW).decode("utf-8", errors="ignore")
@@ -147,7 +147,7 @@ elif sys.platform == "win32":
             del kw['shell']
         if 'path' in kw:
             if kw['path'] == 'xetex':
-                path = os.path.join(pt_bindir, "xetex", "bin", a[0][0]+".exe").replace("\\", "/")
+                path = os.path.join(pt_bindir(), "xetex", "bin", a[0][0]+".exe").replace("\\", "/")
                 print("path = ", path)
                 a = [[path] + list(a[0])[1:]] + [x.replace('"', '') for x in a[1:]]
                 print("a=", a)
@@ -158,7 +158,7 @@ elif sys.platform == "win32":
         return res
 
     def call(*a, **kw):
-        path = os.path.join(pt_bindir, "xetex", "bin", a[0][0]+".exe").replace("/", "\\")
+        path = os.path.join(pt_bindir(), "xetex", "bin", a[0][0]+".exe").replace("/", "\\")
         newa = [[path] + a[0][1:]] + list(a)[1:]
         del kw['logbuffer'] # Temporary hack as a work-around. Remove later.
         if 'logbuffer' in kw:

@@ -134,7 +134,10 @@ elif sys.platform == "win32":
     def queryvalue(base, value):
         return winreg.QueryValueEx(base, value)[0]
 
-pt_bindir = ""
+_pt_bindir = ""
+
+def pt_bindir():
+    return _pt_bindir
 
 def get_ptsettings(errorfn):
     global pt_bindir
