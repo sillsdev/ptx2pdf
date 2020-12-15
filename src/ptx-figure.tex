@@ -572,27 +572,25 @@
      \else
        \trace{g}{Cutout now in horizontal mode, but before this verse was started
 		 it was in vertical mode. Using \prev@rsemode and negative lineskip}%
-       \csname\prev@rsemode\endcsname
-       \vskip -\baselineskip
+       %\csname\prev@rsemode\endcsname
+       %\vskip -\baselineskip
      \fi
   \fi 
-  \dimen1=\baselineskip \advance\count255 by 1 \multiply\dimen1 by \count255
+  \dimen1=0.5\baselineskip% How far should the top of the picture be below the previous baseline? For a large baseline, set it to 0.4 em.
   \advance\dimen1 by \c@tskip\baselineskip
-  \dimen2=\wd#1 \advance\dimen2 by 10pt
-  \dimen3=\hs@ze \advance\dimen3 by -\dimen2
+  \dimen2=\wd#1\advance\dimen2 by 10pt\dimen3=\hs@ze \advance\dimen3 by -\dimen2
   \ifdim\dimen3<5em\message{*** \w@tsit specification of \size@ption \sizem@ltiple (at \ch@pter:\v@rse)
 			    leaves \the\dimen3 \space for text. That's probably not enough.}\fi
+  \setbox#1\vbox to 0pt{\kern\dimen1\box#1\vss}%
   %Switch relative (inner/outer) to absolute (left/right) depending on page number for this image.
   \ifx\l@cspec\@lignLeft
-    \setbox#1\hbox to 0pt {\lower\dimen1\box#1\hss}%
-    \ht#1=0pt \dp#1=0pt \vskip-\baselineskip  %Yuck
-    \box#1 %FIXME? Box here Adds vertical space
+    \setbox#1\hbox to \hsize{\hss\box#1}%
+    \strut\vadjust pre{\box#1}% 
     \trace{g}{leftcutout \the\dimen2, \c@tskip, \the\count255}%
     \leftcutout{\the\dimen2}{\c@tskip}{\the\count255}%
   \else\ifx\l@cspec\@lignRight
-      \setbox#1\hbox to \hsize{\hss\lower\dimen1\box#1}%
-      \ht#1=0pt \dp#1=0pt \vskip-\baselineskip %Yuck
-      \box#1% FIXME? Box here adds vertical space
+      \setbox#1\hbox to \hsize{\hss\box#1}%
+      \strut\vadjust pre{\box#1}% 
       \trace{g}{rightcutout \the\dimen2, \c@tskip, \the\count255}%\
       %\edef\t@mpd{\the\dimen2}%
       \rightcutout{\the\dimen2}{\c@tskip}{\the\count255}%\emspace

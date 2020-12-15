@@ -177,7 +177,7 @@
 %-cpar_par
 % No blank line here!
 %+cpar_doendofthispar
-\def\do@ndofthispar{
+\def\do@ndofthispar{%
  %run code to insert picb@x / picb@xR at the right time.
  \edef\eotpn@me{at@ndofthispar\ifdiglot\ifdiglotL L\else R\fi\fi}% Which endofthispar macro?
  \x@\let\x@\pn@xt\csname \eotpn@me\endcsname
