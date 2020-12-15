@@ -110,9 +110,9 @@
   \x@\xdef\csname \@ttrlistname\endcsname{\tmp,#2}}
 
 \edef\p@stattribcmd{}% Parse the attributes, run any code.
-\def\store@ttributes#1{\def\newbit{#1}\message{'\newbit'}\edef\@ttributes{\@ttributes\newbit}\futurelet\nxt\isitslash}
+\def\store@ttributes#1{\def\newbit{#1}\edef\@ttributes{\@ttributes\newbit}\futurelet\nxt\isitslash}
 \def\startp@stattribcmd#1{\futurelet\nxt\isitcmd}
-\def\storep@stattribcmd#1{\def\newbit{#1}\message{"\newbit"}\edef\p@stattribcmd{\p@stattribcmd\newbit}\futurelet\nxt\isitcmd}
+\def\storep@stattribcmd#1{\def\newbit{#1}\edef\p@stattribcmd{\p@stattribcmd\newbit}\futurelet\nxt\isitcmd}
 \lccode`\~=32
 \lowercase{
  \gdef\isitcmd{%
@@ -123,10 +123,10 @@
 }
 %\def\foo#1{Thatsit "#1"}
 
-\def\oddc@tcodes{\catcode`"=11 \catcode`==11 
-\catcode`\ =11 \catcode`|=0\catcode`\\=12}                                                                                 
-\def\normalc@tcodes{\catcode`"=12 \catcode`==12 
-\catcode`\ =10\catcode`\\=0\catcode`\|=12}                                                                              
+\def\oddc@tcodes{\xdef\sl@shcode{\the\catcode`\/}\catcode`"=11 \catcode`==11
+\catcode`\ =11 \catcode`|=0\catcode`\/=12\catcode`\\=12}
+\def\normalc@tcodes{\catcode`"=12 \catcode`==12
+\catcode`\ =10\catcode`\\=0\catcode`\/=\sl@shcode\catcode`\|=12}
 \trace{A}{CATCODES: "\the\catcode`",  =\the\catcode`=,  \the\catcode`\ , *\the\catcode`\*,  \the\catcode`\\,  \the\catcode`\|}%
 
 
@@ -134,7 +134,7 @@
 
 \def\start@ttributegrab{\let\c@ntinue\isitslash\oddc@tcodes\futurelet\nxt\c@ntinue}
 \def\end@ttributegrab{%
-  \xdef\@ttributes{\x@\detokenize\x@{\@ttributes}}% Make it all strings.
+  \xdef\@ttributes{\x@\noexpand\x@{\@ttributes}}% Make it all strings.
   \trace{A}{Now executing \p@stattribcmd}%
   \csname\p@stattribcmd\endcsname}% 
 

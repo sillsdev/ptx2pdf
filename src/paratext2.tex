@@ -1340,8 +1340,8 @@
 \def\WJ{\leavevmode\nobreak} % WORD JOINER
 \def\ZWNBSP{\WJ} % ZERO WIDTH NO-BREAK SPACE
 \def\NBHYPH{\leavevmode\hbox{-}} % NON-BREAKING HYPHEN
-\def\NQUAD{\penalty\badspacepenalty\ } % subvert Unicode En-Quad as BAD BREAKING SPACE
-\def\MQUAD{\penalty\badspacepenalty\hskip 1em}
+\def\NQUAD{\penalty\the\badspacepenalty\hskip 0.4em} % subvert Unicode En-Quad as BAD BREAKING SPACE
+\def\MQUAD{\penalty\the\badspacepenalty\hskip 1em}
 \def\MSPACE{\hskip 1em}
 \def\NSPACE{\ }
 \def\THREEPEREMSPACE{\hskip .333em}

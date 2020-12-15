@@ -174,7 +174,7 @@
    \def\d@##1+##2\E{\xdef\oldch@rstyle{##2}}\mctopnoms
    \trace{s}{endch@rstyle \oldch@rstyle\space from \newch@rstyle}%
    \ifx\@ttributes\empty\else
-     \message{\@ttributes (\csname @ttriblist-\oldch@rstyle\endcsname)}%
+     %\message{\@ttributes (\csname @ttriblist-\oldch@rstyle\endcsname)}%
      \parse@ttribs{\@ttributes}%
    \fi
    \ifx\thisch@rstyle\undefined
