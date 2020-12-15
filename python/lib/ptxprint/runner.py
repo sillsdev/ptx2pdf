@@ -54,7 +54,7 @@ if sys.platform == "linux":
 
     def fclist(family, pattern):
         a = ["fc-list", '"{0}":style="{1}"'.format(family, pattern), 'file']
-        # print(a)
+        print(a)
         return subprocess.check_output(" ".join(a), shell=1).decode("utf-8", errors="ignore")
 
     def checkoutput(*a, **kw):
@@ -135,17 +135,22 @@ elif sys.platform == "win32":
         return winreg.QueryValueEx(base, value)[0]
 
     def fclist(family, pattern):
+        print("In fclist, pt_bindir = ", pt_bindir)
         a = [os.path.join(pt_bindir, "xetex", "bin", "fc-list.exe").replace("\\", "/"),
                 '"'+family+'"', '":style='+pattern+'"', 'file']
+        print("a = ", a)
         return subprocess.check_output(a, creationflags=CREATE_NO_WINDOW).decode("utf-8", errors="ignore")
 
     def checkoutput(*a, **kw):
+        print("pt_bindir = ", pt_bindir)
         if 'shell' in kw:
             del kw['shell']
         if 'path' in kw:
             if kw['path'] == 'xetex':
                 path = os.path.join(pt_bindir, "xetex", "bin", a[0][0]+".exe").replace("\\", "/")
+                print("path = ", path)
                 a = [[path] + list(a[0])[1:]] + [x.replace('"', '') for x in a[1:]]
+                print("a=", a)
             del kw['path']
         else:
             a = [[x.replace("/", "\\") for x in a[0]]] + [x.replace('"', '') for x in a[1:]]

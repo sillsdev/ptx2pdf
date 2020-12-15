@@ -152,7 +152,7 @@ _nonsensitivities = {
     "c_blendfnxr" :            ["l_internote", "s_internote"],
     # "c_usePicList" :           ["c_figexclwebapp"],
     "c_useprintdraftfolder" :  ["btn_selectOutputFolder"],
-    "c_styTextProperties":     ["fr_styParaSettings", "fr_styCharSettings", "fr_styNoteSettings"],
+    # "c_styTextProperties":     ["fr_styParaSettings", "fr_styCharSettings", "fr_styNoteSettings"],
 }
 # Checkboxes and the Tabs that they make (in)visible
 # _visibilities = {
@@ -759,6 +759,7 @@ class GtkViewModel(ViewModel):
         for k, v in _nonsensitivities.items():
             state = not self.get(k)
             for w in v:
+                print(w, state)
                 self.builder.get_object(w).set_sensitive(state)
         self.colourTabs()
 

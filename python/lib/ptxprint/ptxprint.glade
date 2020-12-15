@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.2 
+<!-- Generated with glade 3.22.1 
 
 The MIT License (MIT)
 
@@ -2195,6 +2195,7 @@ in the Windows system.</property>
                   <object class="GtkLabel">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="margin_left">6</property>
                     <property name="label" translatable="yes">Features:</property>
                   </object>
                   <packing>
@@ -2251,6 +2252,8 @@ in the Windows system.</property>
                       <object class="GtkGrid">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="margin_top">4</property>
+                        <property name="margin_bottom">6</property>
                         <property name="row_spacing">6</property>
                         <property name="column_spacing">6</property>
                         <child>
@@ -2258,9 +2261,9 @@ in the Windows system.</property>
                             <property name="visible">True</property>
                             <property name="sensitive">False</property>
                             <property name="can_focus">False</property>
-                            <property name="halign">center</property>
+                            <property name="halign">start</property>
                             <property name="label" translatable="yes">Embolden</property>
-                            <property name="justify">center</property>
+                            <property name="justify">right</property>
                             <property name="xalign">0.5</property>
                             <attributes>
                               <attribute name="weight" value="bold"/>
@@ -2276,9 +2279,9 @@ in the Windows system.</property>
                             <property name="visible">True</property>
                             <property name="sensitive">False</property>
                             <property name="can_focus">False</property>
-                            <property name="halign">center</property>
+                            <property name="halign">start</property>
                             <property name="label" translatable="yes">Slant</property>
-                            <property name="justify">center</property>
+                            <property name="justify">right</property>
                             <property name="xalign">0.5</property>
                             <attributes>
                               <attribute name="style" value="italic"/>
@@ -2294,7 +2297,7 @@ in the Windows system.</property>
                             <property name="visible">True</property>
                             <property name="sensitive">False</property>
                             <property name="can_focus">True</property>
-                            <property name="tooltip_text" translatable="yes">If the required font does not have a BOLD-ITALIC typeface, you can use this setting to create the BOLD effect. (For example, setting Embolden to 2.0 would thicken the Regular typeface making it appear as bold), and use the Slant settings for the ITALIC effect.</property>
+                            <property name="tooltip_text" translatable="yes">If the required font doesn't have a BOLD typeface, you can use this setting to create the BOLD effect. (For example, setting Embolden to 1.6 would thicken the Regular typeface making it appear as bold).</property>
                             <property name="width_chars">5</property>
                             <property name="text">1.6</property>
                             <property name="caps_lock_warning">False</property>
@@ -2315,7 +2318,7 @@ in the Windows system.</property>
                             <property name="visible">True</property>
                             <property name="sensitive">False</property>
                             <property name="can_focus">True</property>
-                            <property name="tooltip_text" translatable="yes">If the required font does not have a BOLD-ITALIC typeface, you can use this setting to create the ITALIC effect. (For example, setting Slant to 0.15 would slant the Regular typeface by 15% making it appear as italic), and use the Embolden settings for the BOLD effect.</property>
+                            <property name="tooltip_text" translatable="yes">If the required font does not have an ITALIC typeface, you can use this setting to create the ITALIC effect. (For example, setting Slant to 0.15 would slant the Regular typeface by 15% making it appear as italic).</property>
                             <property name="width_chars">5</property>
                             <property name="text">0.15</property>
                             <property name="caps_lock_warning">False</property>
@@ -2341,6 +2344,12 @@ in the Windows system.</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
+                    <property name="tooltip_text" translatable="yes">If the font you are using doesn't
+have multiple typefaces (such
+as Bold, Italic and Bold-Italic)
+then you can "fake" these by
+adding boldness and/or slant
+to the regular typeface.</property>
                     <property name="draw_indicator">True</property>
                     <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                   </object>
@@ -11690,8 +11699,8 @@ this option checked (on).</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">True</property>
-                                            <property name="margin_right">6</property>
                                             <property name="tooltip_text" translatable="yes">Edit the processing script</property>
+                                            <property name="margin_right">6</property>
                                             <property name="margin_top">4</property>
                                             <property name="margin_bottom">4</property>
                                             <signal name="clicked" handler="onEditScriptFile" swapped="no"/>
@@ -14048,12 +14057,9 @@ properties for this style.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkFrame" id="fr_styCharSettings">
-                                <property name="can_focus">False</property>
-                                <property name="no_show_all">True</property>
-                                <property name="margin_top">3</property>
-                                <property name="label_xalign">0.019999999552965164</property>
-                                <property name="shadow_type">none</property>
+                              <object class="GtkExpander" id="ex_styChar">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
                                 <child>
                                   <object class="GtkGrid">
                                     <property name="visible">True</property>
@@ -14354,11 +14360,9 @@ Factor:</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkFrame" id="fr_styParaSettings">
-                                <property name="can_focus">False</property>
-                                <property name="no_show_all">True</property>
-                                <property name="label_xalign">0.019999999552965164</property>
-                                <property name="shadow_type">none</property>
+                              <object class="GtkExpander" id="ex_styPara">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
                                 <child>
                                   <object class="GtkGrid">
                                     <property name="visible">True</property>
@@ -14745,12 +14749,9 @@ Factor:</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkFrame" id="fr_styNoteSettings">
-                                <property name="can_focus">False</property>
-                                <property name="no_show_all">True</property>
-                                <property name="margin_top">3</property>
-                                <property name="label_xalign">0.019999999552965164</property>
-                                <property name="shadow_type">none</property>
+                              <object class="GtkExpander" id="ex_styNote">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
                                 <child>
                                   <object class="GtkGrid">
                                     <property name="visible">True</property>

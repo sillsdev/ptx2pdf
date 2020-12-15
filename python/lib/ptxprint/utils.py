@@ -161,5 +161,7 @@ def get_ptsettings(errorfn):
             except:
                 pt_bindir = queryvalue(ptob, 'Program_Files_Directory_Ptw'+version)
         pt_settings = queryvalue(ptob, 'Settings_Directory')
+        print("pt_settings:", pt_settings)
+        print("pt_bindir:", pt_bindir)
     return pt_settings
 

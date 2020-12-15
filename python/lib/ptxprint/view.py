@@ -609,7 +609,7 @@ class ViewModel:
                         vf = FontRef(vname, vstyle, feats=vfeats)
                         vf.updateFeats(config.get("font", "features", fallback=""), keep=True)
                         vf.isGraphite = config.getboolean("font", "usegraphite", fallback=False)
-                        print(FontModelMap[sect][0], vf)
+                        # print(FontModelMap[sect][0], vf)
                         setv(FontModelMap[sect][0], vf)
                 if key in self._activekeys:
                     getattr(self, self._activekeys[key])()

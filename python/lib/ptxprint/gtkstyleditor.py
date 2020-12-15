@@ -329,7 +329,7 @@ class StyleEditorView(StyleEditor):
         _showgrid = {'Para': (True, True, False), 'Char': (False, True, False), 'Note': (True, True, True)}
         visibles = _showgrid.get(stype[:4],(True, True, True))
         for i, w in enumerate(('Para', 'Char', 'Note')):
-            self.builder.get_object("fr_sty"+w+"Settings").set_visible(visibles[i])
+            self.builder.get_object("ex_sty"+w).set_expanded(visibles[i])
             
         site = 'https://ubsicap.github.io/usfm'
         if urlcat is None:
