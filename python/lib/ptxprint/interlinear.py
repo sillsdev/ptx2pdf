@@ -36,7 +36,7 @@ class Interlinear:
         else:
             raise SyntaxError("Bad Reference {}".format(s))
 
-    def replaceindoc(self, doc, curref, lexemes, linelengths, mrk="wit"):
+    def replaceindoc(self, doc, curref, lexemes, linelengths, mrk="+wit"):
         lexemes.sort()
         for e in doc.iterVerse(*curref):
             if isinstance(e, sfm.Element):
@@ -58,7 +58,7 @@ class Interlinear:
                 res.append(e[i:])
             e.data = str("".join(str(s) for s in res))
 
-    def convertBk(self, bkid, doc, linelengths, mrk="rb"):
+    def convertBk(self, bkid, doc, linelengths, mrk="+rb"):
         intname = "Interlinear_{}".format(self.lang)
         intfile = os.path.join(self.prjdir, intname, "{}_{}.xml".format(intname, bkid))
         if not os.path.exists(intfile):
