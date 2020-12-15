@@ -94,7 +94,7 @@
 %+cfig_parsesize
 \def\p@rsesize#1*#2*#3\end{%
   \def\size@ption{#1}%
-  \edef\tmp{#2}
+  \edef\tmp{#2}%
   \if\tmp\relax\else\def\sizem@ltiple{#2}\trace{g}{Setting scale to #2}\fi% empty if not provided
 }
 %-cfig_parsesize
@@ -105,7 +105,7 @@
 % These three macros split up x-xetex="foo" parameter, stripping out any key=val formated parameters and leaving the rest.
 % 
 \def\p@rs@xtr@#1=#2=#3\end{\edef\t{#2}%
-  \ifx\t\empty \edef\t{#1}
+  \ifx\t\empty \edef\t{#1}%
     \ifx\t\empty\else
       \edef\xtraremains{\xtraremains#1\space}\trace{g}{Passing #1 directly to xetex}%
     \fi
@@ -217,7 +217,7 @@
 %+cfig_docaption
 \def\DecorateRef#1{(#1)}
 
-\def\d@caption{
+\def\d@caption{%
   \xdef\r@f{\csname param-7\endcsname}% get reference
   \stripspace\r@f\end/ \end/\relax\r@f \edef\r@f{\p@ram}% strip space
   \edef\c@ption{\ifusfmthree\csname param-1\endcsname\else\csname param-6\endcsname\fi}% get caption
@@ -235,7 +235,7 @@
     \linepenalty=1000
     \s@tbaseline{fig}%
     % insert caption box
-    \edef\@r@f{\ifx\r@f\empty\else\DecorateRef{\r@f\unskip}\fi}
+    \edef\@r@f{\ifx\r@f\empty\else\DecorateRef{\r@f\unskip}\fi}%
     \noindent\leavevmode
       \ifCaptionRefFirst\@r@f\nobreak\ \fi
       \s@tfont{fig}\c@ption\unskip
@@ -246,17 +246,17 @@
 }
 %-cfig_docaption
 
-\def\m@kepl@ceholder#1#2{
+\def\m@kepl@ceholder#1#2{%
 \vbox to #2{\offinterlineskip
   \hrule height .2pt \kern-.2pt
   \hbox to #1{\vrule height #2 width .2pt \hfil \vrule width .2pt}%
   \vbox to 0pt{\kern-#2 \vss \hbox to #1{\hss\idf@nt
     \csname param-2\endcsname\hss}\vss}%
   \kern-.2pt \hrule height .2pt}}
-\def\ins@rtpic#1#2#3#4#5#6{
+\def\ins@rtpic#1#2#3#4#5#6{%
  \openin\t@stread="#1"
    \ifeof\t@stread\dimen0=\ifdim #3>#4\relax #4\else #3\fi
-     \m@kepl@ceholder{\dimen0}{0.618 \dimen0}
+     \m@kepl@ceholder{\dimen0}{0.618 \dimen0}%
    \else \closein\t@stread \picfilecomm@nd #1 #2 #3 #5 #6\fi
 }
 
@@ -370,7 +370,7 @@
   % create box to contain picture
 %+cfig_dofigure_3
   \trace{g}{Figure \the\im@gecount\space size=\size@ption, scale=\sizem@ltiple, loc=\loc@ption \ifpicUsesIns, picins=\the\p@cins\fi, hsz=\the\hsize}%
-  \setbox0=\vbox{
+  \setbox0=\vbox{%
     \ifpicNarrow
       \hsize=\sizem@ltiple\p@cwidth
       \p@cinswid=\hsize
@@ -396,13 +396,13 @@
       \def\picdim@n{width}\def\picaltdim@n{height}%Normal
     \fi
     % First, try to set it at the requested dimension:
-    \setbox1=\hbox{
+    \setbox1=\hbox{%
       \ins@rtpic{"\the\PicPath\csname param-2\endcsname"}%
                      {\picdim@n}{\sizem@ltiple\p@cwidth}{\p@cheight}{\xtra}{\xtraremains}}%
     \ifdim\ht1>\p@cheight
       %It doesn't fit. Scale to other dimension:
       \trace{g}{Picture too big set with \picdim@n=\sizem@ltiple\the\p@cwidth}%
-      \setbox1=\hbox{
+      \setbox1=\hbox{%
         \ins@rtpic{"\the\PicPath\csname param-2\endcsname"}%
                      {\picaltdim@n}{\p@cheight}{\sizem@ltiple}{\xtra}{\xtraremains}}%
     \fi
@@ -411,7 +411,7 @@
       \x@\writefigp@gelog\x@{\l@gstring}%
       \box1\hss}%
     \ifFigurePlaceholders % replace graphic with a frame and the file name
-      \setbox0=\m@kepl@ceholder{\wd0}{\ht0}
+      \setbox0=\m@kepl@ceholder{\wd0}{\ht0}%
     \fi
 %-cfig_dofigure_3
     % FIXME: Something like this?
@@ -420,7 +420,7 @@
     \def\pr@pic{}\def\p@stpic{}%
     \ifx\mirr@r\empty\else
       \trace{g}{Mirror: \mirr@r, \the\pageno}%
-      \global\def\pr@pic{
+      \global\def\pr@pic{%
          \trace{g}{prepic: Mirror: \mirr@r, \the\pageno}%
          \ifx\mirr@r\val@dd\ifodd\whichp@ge\temptrue\fi\fi %Page number is frequently low by one or 2 when image is read. Needs external toc-style file.
          \ifx\mirr@r\val@ven\ifodd\whichp@ge\else\temptrue\fi\fi
@@ -471,21 +471,21 @@
     \trace{g}{Inline \w@tsit takes \the\count255 lines}%
     %
     \ifx\picl@c\loc@Inl
-      \d@figureInl0
+      \d@figureInl0%
     \fi
     %
     \ifx\picl@c\loc@Par
-      \d@figurePar0
+      \d@figurePar0%
     \fi
     %
     \ifx\picl@c\loc@Page
-      \d@figurePage0
+      \d@figurePage0%
     \fi
     \ifx\picl@c\loc@Full
-      \d@figureFull0
+      \d@figureFull0%
     \fi
     \ifx\picl@c\loc@Cut
-      \d@figureCut0
+      \d@figureCut0% 
     \fi
     %Sanity check. If we used \box0 then it'll be empty now.
     \ifvoid0\else\message{Placement for \the\im@gecount could not be understood. Image Lost!}\fi
@@ -502,7 +502,7 @@
     \fi
   \fi
   %\splittopskip\baselineskip
-  \def\picc@ntents{
+  \def\picc@ntents{%
     \gridp@cfalse% Not true! It's not floating. 
     \gridb@x#1 \dimen9=\lastdepth \kern\dimen9
     \trace{g}{gridbox dp=\the\dimen9}%There's a skip at the bottom of the box, but somehow the depth is kept. Need to kill it.
@@ -524,7 +524,7 @@
   \fi
   \edef\eotpn@me{at@ndofthispar\ifdiglot\ifdiglotL L\else R\fi\fi}% Which endofthispar macro?\emspace
   \trace{g}{\eotpn@me\space defined}%
-  \x@\gdef\csname \eotpn@me\endcsname{
+  \x@\gdef\csname \eotpn@me\endcsname{%
     \relax \let\picb@@x=\picb@x \ifdiglot\ifdiglotL\else\let\picb@@x=\picb@xR\fi\fi
     \penalty10 % Allow the page to break
     %\gridp@cfalse% Not true. Not a floating image.
@@ -553,7 +553,7 @@
 }
 
 \def\d@figureFull#1{%
-  \trace{g}{\w@tsit is full-page, \the\ht#1, \the\wd#1,}%
+  \trace{g}{\w@tsit\space is full-page, \the\ht#1, \the\wd#1,}%
   %Page is not positioned absolutely. Calculate offset
   \dimen0=\bottomm@rgin\advance\dimen0 by -\topm@rgin
   \divide\dimen0 by 2
@@ -564,7 +564,7 @@
 }
 
 \def\d@figureCut#1{%
-  \trace{g}{\w@tsit is cutout}%
+  \trace{g}{\w@tsit\space is cutout}%
   \ifhmode
      \ifx\prev@rsemode\empty
        \trace{g}{Cutout in horizontal mode. forcing \m@rker}%
@@ -686,7 +686,7 @@
   \ifpicp@gefile\else
     \inputpicp@ges "#1"
     \picp@gefiletrue
-    \addtoendhooks{\finishpicp@ges "#1"}
+    \addtoendhooks{\finishpicp@ges "#1"}%
     \openout\picp@ges="#1" % test to see if the file exists
   \fi
 }
@@ -703,7 +703,7 @@
    \iftemp\message{}\message{*** Figures have changed. It may be necessary to re-run the job}\fi% 
 }
 
-\def\writefigp@gelog#1{
+\def\writefigp@gelog#1{%
   \write\picp@ges{\string\figonpage{\the\pageno}#1}%
 }
 
@@ -719,26 +719,26 @@
   \xdef\l@stfignum{#2}%
 %\trace{P}{Picture "#3" turned up on page #1}%
 }%
-\def\checkfigpage#1#2#3#4#5#6{
+\def\checkfigpage#1#2#3#4#5#6{%
   \edef\ch@ck{#3#4#6}%
   \trace{g}{Comparing "\ch@ck" with "\csname fig#2p@ram\endcsname"}%
-  \x@\ifx\csname fig#2p@ram\endcsname\ch@ck\else\trace{g}{Figure #2 parameters changed}
+  \x@\ifx\csname fig#2p@ram\endcsname\ch@ck\else\trace{g}{Figure #2 parameters changed}%
    %\temptrue %Probably don't matter on their own, but could change pagination. Significant pagination changes should be caught by other tests.
   \fi
-  \edef\ch@ck{#1}
+  \edef\ch@ck{#1}%
   \x@\ifx\csname fig#2p@ge\endcsname\ch@ck\else\trace{g}{Figure #2 page changed from \ch@ck \space to \csname fig#2p@ge\endcsname}\temptrue\fi
 }
 %-cfig_openpicpages
 
 %+cfig_dofigpage
-\def\dofigp@ge{
+\def\dofigp@ge{%
   \ifvoid\wholepagepic\else
     \trace{g}{wholepagepic is \the\ht\wholepagepic high}%
     \setbox0=\vsplit\wholepagepic to \PaperHeight
     \setbox0=\vbox{\unvbox 0\global\count254=\lastpenalty}%
     \trace{g}{lp:\t box0 is \the\ht0\space high, th:\the\textheight}%
     \ifnum\count254=11
-      \def\pagecontents{
+      \def\pagecontents{%
         \trace{g}{Topins=\the\ht\topins, Bottomins=\the\ht\bottomins, tlins=\the\ht\topleftins, blins=\the\ht\bottomleftins, trins=\the\ht\toprightins, brins=\the\ht\bottomrightins}%
         \box0%
         }%
