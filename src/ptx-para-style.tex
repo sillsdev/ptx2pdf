@@ -579,6 +579,10 @@
 
 % Stack operations for delayed items.
 \def\parse@pending#1@#2@#3\E{\def\this@thing{#1}\def\thing@ref{#2}\thing@y=#3}%
+\def\write@pending#1@#2@#3\E{\def\this@thing{#1}\def\thing@ref{#2}\thing@y=#3
+   \trace{C}{Writing #1 #2 =#3}%
+   \wr@teDelayedItem{\this@thing}{\thing@ref}{\the\this@y}%
+}%
 \xdef\pending@items{,} %same as cstackempty, defined later
 \def\get@pending{\ifx\pending@items\cstackempty
      \let\this@thing\empty\let\thing@ref\empty\thing@y=0
@@ -623,8 +627,11 @@
     \fi
   \fi
   \let\n@xtline=\relax
+  \trace{C}{Pending: \pending@items}%
   \ifx\pending@items\cstackempty\else
-    \wr@teDelayedItem{\pendingtyp@}{\pendingr@f}{\the\this@y}%
+    \let\d@=\write@pending
+    \x@\cstackdown\pending@items\E
+    %\wr@teDelayedItem{\pendingtyp@}{\pendingr@f}{\the\this@y}%
   \fi
 }
 %-cpar_parloccmds
@@ -648,6 +655,8 @@
   \ifnum\prev@y<\thing@y % para start was lower than chapter number, must have passed a col/page break
     \def\this@thing{#1}% What is it?
     \def\thing@ref{#2}% Unique id.
+    \add@pending{#1}{#2}{#4}%
+
   \else % para start level with or above chapter number; OK to calculate # of lines
     \tmp@lines=\prev@y
     \advance\tmp@lines by -\thing@y
@@ -680,7 +689,7 @@
   %\immediate\write\delayf@le{\string\DelayedChapter{#1}{#2}{\number\th@sdelay}}%
 %}
 \def\wr@teDelayedItem#1#2#3{%
-  \delay@test{chapter}%
+  \delay@test{#1}%
   %\x@\let\x@\t@st\csname delay-#1:#2\endcsname
   \ifx\t@std@lay\relax \pr@vdelay=-2 % ensure undefined value will not match 0
   \else \pr@vdelay=\t@std@lay\fi
@@ -800,8 +809,9 @@
   \fi
 }
 \newbox\str@tbox
-\def\str@t{\setbox\str@tbox=\hbox to 0pt{\XeTeXuseglyphmetrics=0                %(4)
-  \char32 \hss}\copy\str@tbox}
+\def\mkstr@t{\setbox\str@tbox=\hbox to 0pt{\XeTeXuseglyphmetrics=0                %(4)
+  \char32 \hss}}
+\def\str@t{\mkstr@t\copy\str@tbox}
 %-cpar_ptxnb
 
 %+cpar_strings

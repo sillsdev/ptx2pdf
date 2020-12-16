@@ -466,9 +466,12 @@
 %+cfig_dofigure_6
   \else
     % Calculate lines used for the picture
-    \dimen0=\ht0 \advance\dimen0 by \dp0 \advance\dimen0 by 0.8\baselineskip % Rounding correction plus a bit
-    \divide\dimen0 by \baselineskip \count255=\dimen0
-    \trace{g}{Inline \w@tsit takes \the\count255 lines}%
+    \dimen0=\ht0 \advance\dimen0 by \dp0 %
+    \count255=\dimen0
+    \divide\count255 by \baselineskip 
+    \advance\count255 by 1
+    \dimen2=\count255\baselineskip %space reserved...
+    \trace{g}{Inline \w@tsit\space takes \the\dimen0, reserving \the\dimen2}%
     %
     \ifx\picl@c\loc@Inl
       \d@figureInl0%
@@ -563,41 +566,61 @@
   \global\setbox\wholepagepic\vbox{\unvbox\wholepagepic\box#1\penalty9}% magic number
 }
 
-\def\d@figureCut#1{%
-  \trace{g}{\w@tsit\space is cutout}%
-  %\setbox1\hbox{\str@t}% Run \str@t so we get \str@tbox defined.
+\def\d@figureCut#1{% Expects: count255=number of lines gap, dimen0=size of wotsit
+  \mkstr@t
+  \dimen2=\count255\baselineskip %space reserved...
+  \trace{g}{\w@tsit\space is cutout. \the\count255 x \the\baselineskip  = \the\dimen2. Box is \the\dimen0}%
+  \setbox#1=\hbox{\vrule height\dimen0\box#1}%TESTING.
+  \dimen1=0pt%-\baselineskip %where does the picture go? Starting point is the lowest point of the line above (i.e. this includes descenders)
+  \ifdim\lastdepth>0pt
+    \advance\dimen1 by -\lastdepth
+  \fi
   \ifhmode
-     \trace{g}{Cutout in horizontal mode.}%
-  \else 
-     \trace{g}{Cutout in vertical mode.}%
-     %\csname\m@rker\endcsname
-     %\ifx\prev@rsemode\empty
-     %\else
-       %\trace{g}{Cutout now in horizontal mode, but before this verse was started
-		 %it was in vertical mode. Using \prev@rsemode and negative lineskip}%
+     \trace{g}{Cutout in horizontal mode. ref:\c@rref}%
+     \ifx\prev@rsemode\empty
+       \trace{g}{we were in horizontal mode even before the verse number. lastdepth is not trustworthy}%
+       \dimen1=0pt
+     \else
+       \trace{g}{Before this verse was started it was in vertical mode. lastdepth is trustworthy}%
        %\csname\prev@rsemode\endcsname
        %\vskip -\baselineskip
-     %\fi
+     \fi
+     \delay@test{droppic}%
+     \ifx\t@std@lay\relax \MSG{*** Cutout for picture \the\im@gecount, re-run to generate \string\DelayedItem\space setting}%
+     \else \MSG{* Cutout for picture \the\im@gecount}\fi
+     \beginL\pdfsavepos
+     \edef\dc@ref@rgs{\string\@delayedthing\string{droppic\string}\string{\c@rref\string}}%
+     \x@\write\x@\p@rlocs\x@{\dc@ref@rgs{\the\pdflastxpos}{\the\pdflastypos}}\endL
+     \trace{C}{Cutout data written for \dc@ref@rgs}%
+     \ifx\t@std@lay\relax
+	\count254=0
+     \else 
+	\count254=\t@std@lay
+     \fi
+     %\csname\m@rker\endcsname
+  \else 
+     \trace{g}{Cutout in vertical mode.}%
+     \count254=0
   \fi 
-  \dimen1=\baselineskip% How far should the top of the picture be below the previous baseline? Make top of box align with top of txt.
-  \advance\dimen1 by -\ht\str@tbox
+  %\advance\dimen1 by \baselineskip
   \advance\dimen1 by \c@tskip\baselineskip
   \dimen2=\wd#1\advance\dimen2 by 10pt\dimen3=\hs@ze \advance\dimen3 by -\dimen2
   \ifdim\dimen3<5em\message{*** \w@tsit specification of \size@ption \sizem@ltiple (at \ch@pter:\v@rse)
 			    leaves \the\dimen3 \space for text. That's probably not enough.}\fi
-  \setbox#1\vbox to 0pt{\kern\dimen1\box#1\vss}%
+  \setbox#1\vbox to 0pt{\kern\dimen1\kern\count255\baselineskip\vbox to 0pt{\vss\box#1}\vss}%
   %Switch relative (inner/outer) to absolute (left/right) depending on page number for this image.
+  \advance\count254 by \c@tskip
   \ifx\l@cspec\@lignLeft
     \setbox#1\hbox to \hsize{\box#1\hss}%
     \strut\vadjust pre{\box#1}% 
     \trace{g}{leftcutout \the\dimen2, \c@tskip, \the\count255}%
-    \leftcutout{\the\dimen2}{\c@tskip}{\the\count255}%
+    \leftcutout{\the\dimen2}{\the\count254}{\the\count255}%
   \else\ifx\l@cspec\@lignRight
       \setbox#1\hbox to \hsize{\hss\box#1}%
       \strut\vadjust pre{\box#1}% 
       \trace{g}{rightcutout \the\dimen2, \c@tskip, \the\count255}%\
       %\edef\t@mpd{\the\dimen2}%
-      \rightcutout{\the\dimen2}{\c@tskip}{\the\count255}%\emspace
+      \rightcutout{\the\dimen2}{\the\count254}{\the\count255}%\emspace
     \else
       \message{*** Unknown cutout position \l@cspec, picture misplaced}%
       \box#1
