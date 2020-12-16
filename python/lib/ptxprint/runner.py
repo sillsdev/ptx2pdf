@@ -54,7 +54,6 @@ if sys.platform == "linux":
 
     def fclist(family, pattern):
         a = ["fc-list", '"{0}":style="{1}"'.format(family, pattern), 'file']
-        print(a)
         return subprocess.check_output(" ".join(a), shell=1).decode("utf-8", errors="ignore")
 
     def checkoutput(*a, **kw):

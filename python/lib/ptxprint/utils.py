@@ -28,7 +28,7 @@ def setup_i18n():
         libintl.bindtextdomain(APP, localedir)
 
         libintl.textdomain(APP)
-        print(localedir, lang)
+        # print(localedir, lang)
     else:
         locale.bindtextdomain(APP, localedir)
     locale.setlocale(locale.LC_ALL, '')

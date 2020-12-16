@@ -52,7 +52,6 @@ if not args.print:
 
 # necessary for the side effect of setting pt_bindir :(
 ptsettingsdir = get_ptsettings(doError if args.print else _doError)
-print("ptxptint bindir:", pt_bindir())
 if args.paratext is None:
     args.paratext = os.getenv("PTXPRINT_PROJECTSDIR", None)
     if args.paratext is None:

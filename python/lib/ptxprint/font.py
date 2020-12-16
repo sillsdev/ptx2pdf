@@ -462,7 +462,7 @@ class FontRef:
             newstyle.append("Regular")
         s = " ".join(newstyle)
         f = fontcache.get(self.name, s)
-        print(f"fromStyle: {self}, {s}, {f}")
+        # print(f"fromStyle: {self}, {s}, {f}")
         if f is not None:
             return FontRef(self.name, s, self.isGraphite, self.isCtxtSpace, self.feats)
         res = self.copy()
@@ -489,7 +489,7 @@ class FontRef:
                     del res.feats['slant']
                 return res
         f = fontcache.get(self.name)
-        print(f"restyling: {self.name}")
+        # print(f"restyling: {self.name}")
         if f is None:
             return None
         res.style = None
@@ -545,7 +545,7 @@ class FontRef:
                     del style[a]
         else:
             (name, sfeats, feats) = self._getTeXComponents()
-            print(f"updateTeXStyle: {name}, {sfeats}, {feats}")
+            # print(f"updateTeXStyle: {name}, {sfeats}, {feats}")
             style['FontName'] = name
             if len(feats) or len(sfeats):
                 style["ztexFontFeatures"] = "".join(sfeats) + (":" if len(sfeats) else "") \

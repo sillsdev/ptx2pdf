@@ -819,9 +819,9 @@ class GtkViewModel(ViewModel):
         self.picListView.onRadioChanged()
         val = self.get("s_indentUnit")
         if btn.get_active():
-            val = val / 2
+            val = float(val) / 2
         else:
-            val = val * 2
+            val = float(val) * 2
         self.set("s_indentUnit", val)
 
     def onSimpleFocusClicked(self, btn):
@@ -1366,7 +1366,7 @@ class GtkViewModel(ViewModel):
                     break
             else:
                 i = 0
-            print(btnid, f, i)
+            # print(btnid, f, i)
             isGraphite = f.isGraphite
             feats = f.asFeatStr()
             embolden = f.getFake("embolden")

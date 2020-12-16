@@ -252,7 +252,7 @@ class Usfm:
             if not isinstance(e, sfm.Element):
                 continue
             if e.name == "c" and int(e.args[0]) != chap:
-                print(e.name, e.args, len(e))
+                # print(e.name, e.args, len(e))
                 return
             elif e.name == "v" and e.args[0] == verse:
                 yield e
@@ -284,6 +284,8 @@ class Usfm:
             return False
         def ge(i, e):
             ''' Iterate document allowing in place editing '''
+            if self.doc is None or not len(self.doc):
+                   return
             res = False
             if isinstance(e, sfm.Element):
                 if ispara(e) or e.name == "v":

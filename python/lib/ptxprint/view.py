@@ -273,7 +273,7 @@ class ViewModel:
             esid = s.lower().replace(" ", "")
             w = "bl_font"+sid
             nf = font_info.fromStyle(bold="Bold" in s, italic="Italic" in s)
-            print(f"onFontChagned {w} {nf}")
+            # print(f"onFontChanged {w} {nf}")
             if nf is not None:
                 self.set(w, nf)
 

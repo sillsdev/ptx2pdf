@@ -529,7 +529,7 @@ class RunJob:
             return self.carefulCopy(ratio, src, tgt, cropme)
         missingPics = []
         if info['document/ifinclfigs'] == 'false':
-            print("NoFigs")
+            # print("NoFigs")
             return []
         picinfos.build_searchlist()
         for j in jobs:
