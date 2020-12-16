@@ -764,7 +764,7 @@ class GtkViewModel(ViewModel):
         for k, v in _nonsensitivities.items():
             state = not self.get(k)
             for w in v:
-                print(w, state)
+                # print(w, state)
                 self.builder.get_object(w).set_sensitive(state)
         self.colourTabs()
 
