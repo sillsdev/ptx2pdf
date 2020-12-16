@@ -692,14 +692,18 @@ class TexModel:
         codepage = self.ptsettings.get('Encoding', 65001)
         with universalopen(infpath, cp=codepage) as inf:
             dat = inf.read()
-            if self.changes is not None:
-                dat = self.runChanges(self.changes, dat)
 
             doc = None
             if self.interlinear is not None:
                 doc = Usfm(dat.splitlines(True), self.sheets)
                 linelengths = [len(x) for x in dat.splitlines(True)]
                 self.interlinear.convertBk(bk, doc, linelengths)
+
+            if self.changes is not None:
+                if doc is not None:
+                    dat = str(doc)
+                    doc = None
+                dat = self.runChanges(self.changes, dat)
 
             if self.dict['project/canonicalise']:
                 syntaxErrors = []
