@@ -8,7 +8,7 @@ mkrexceptions = {k.lower().title(): k for k in ('BaseLine', 'TextType', 'TextPro
                 'FontSize', 'FirstLineIndent', 'LeftMargin', 'RightMargin',
                 'SpaceBefore', 'SpaceAfter', 'CallerStyle', 'CallerRaise',
                 'NoteCallerStyle', 'NoteCallerRaise', 'NoteBlendInto', 'LineSpacing',
-                'StyleType', 'ColorName', 'XMLTag', 'TEStyleName', 'ztexFontFeatures')}
+                'StyleType', 'ColorName', 'XMLTag', 'TEStyleName', 'ztexFontFeatures', 'ztexFontGrSpace')}
 binarymkrs = {"bold", "italic", "smallcaps"}
 
 absolutes = {"baseline", "raise", "callerraise", "notecallerraise"}

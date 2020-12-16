@@ -2359,6 +2359,8 @@ litr=1, dig0=1, dig1=1, dig4=1</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
+                    <property name="tooltip_text" translatable="yes">Set this option if the font changes the width of 
+spaces depending on the text around them.</property>
                     <property name="halign">start</property>
                     <property name="draw_indicator">True</property>
                   </object>
@@ -12240,7 +12242,14 @@ troubleshooting use only.</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
-                                            <property name="tooltip_text" translatable="yes">Convert interlinear text to ruby</property>
+                                            <property name="tooltip_text" translatable="yes">Convert Paratext's interlinear data
+text to ruby (glossing) so that an
+interlinear text can be printed.
+
+Note that  you may need to adjust 
+the following marker styles:
+  \rb    for the base text 
+  \gloss|rb    for the gloss text</property>
                                             <property name="draw_indicator">True</property>
                                           </object>
                                           <packing>
@@ -12253,7 +12262,11 @@ troubleshooting use only.</property>
                                           <object class="GtkEntry" id="t_interlinearLang">
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
-                                            <property name="tooltip_text" translatable="yes">Interlinear language code to use</property>
+                                            <property name="tooltip_text" translatable="yes">Interlinear language code to use.
+To know which code to use, look 
+in the project folder for a folder 
+named "Interlinear_xyz" where xyz
+is the language code.</property>
                                             <property name="valign">center</property>
                                             <property name="margin_left">6</property>
                                             <property name="width_chars">10</property>
@@ -12278,7 +12291,12 @@ troubleshooting use only.</property>
                                         <property name="receives_default">False</property>
                                         <property name="tooltip_text" translatable="yes">Treat ruby text as ruby rather than 
 interlinear text by placing it above 
-the base text rather than below.</property>
+the base text rather than below.
+
+Note that  you may need to adjust 
+the following marker styles:
+  \rb    for the base text 
+  \gloss|rb    for the gloss text</property>
                                         <property name="halign">start</property>
                                         <property name="draw_indicator">True</property>
                                       </object>

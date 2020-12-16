@@ -973,6 +973,8 @@ class GtkViewModel(ViewModel):
         pgid = Gtk.Buildable.get_name(nbk_Main.get_nth_page(pgnum))
         if pgid == "tb_ViewerEditor": # Viewer tab
             self.onRefreshViewerTextClicked(None)
+        elif pgid == "tb_Tabs":
+            self.onThumbColourChange()
 
     def onRefreshViewerTextClicked(self, btn):
         pg = self.get("nbk_Viewer")
@@ -2113,14 +2115,14 @@ class GtkViewModel(ViewModel):
             vals = s[s.find("(")+1:-1].split(",")
             h = "#"+"".join("{:02x}".format(int(x)) for x in vals)
             return h
-
         bcol = coltohex(self.get("col_thumbback"))
         tabstyle = "zthumbtab" if self.get("c_thumbIsZthumb") else "toc3"
+        print(tabstyle, "Bold:", self.styleEditor.getval(tabstyle, "bold"))
+        print(tabstyle, "Ital:", self.styleEditor.getval(tabstyle, "italic"))
         fcol = coltohex(textocol(self.styleEditor.getval(tabstyle, "color")))
-        bold = "bold" if self.styleEditor.getval(tabstyle, "bold") else "normal"
-        ital = "italic" if self.styleEditor.getval(tabstyle, "italic") else "normal"
+        bold = "bold" if self.styleEditor.getval(tabstyle, "bold") == "" else "normal"
+        ital = "italic" if self.styleEditor.getval(tabstyle, "italic") == "" else "normal"
         markup = '<span background="{}" foreground="{}" font-weight="{}" font-style="{}">  {{}}  </span>'.format(bcol, fcol, bold, ital)
-        #markup = '<span background="{}" font-weight="{}" font-style="{}">  {{}}  </span>'.format(bcol, bold, ital)
         for w in ("VerticalL", "VerticalR", "HorizontalL", "HorizontalR"):
             wid = self.builder.get_object("l_thumb"+w)
             wid.set_text(markup.format(w[:-1]))
