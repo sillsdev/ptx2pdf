@@ -108,7 +108,11 @@ _diglot = {
 "diglotfancy/versedecorator":       "fancy/versedecorator",
 "diglotfancy/versedecoratorpdf":    "fancy/versedecoratorpdf",
 "diglotfancy/versedecoratorshift":  "fancy/versedecoratorshift",
-"diglotfancy/versedecoratorscale":  "fancy/versedecoratorscale"
+"diglotfancy/versedecoratorscale":  "fancy/versedecoratorscale",
+"diglotfancy/sectionheader":    "fancy/sectionheader",
+"diglotfancy/sectionheadershift":   "fancy/sectionheadershift",
+"diglotfancy/sectionheaderscale":   "fancy/sectionheaderscale",
+"diglotfancy/sectionheaderpdf": "fancy/sectionheaderpdf",
 }
 
 _joblock = None
