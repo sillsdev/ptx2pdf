@@ -1106,7 +1106,6 @@ class GtkViewModel(ViewModel):
     def onFontChanged(self, fbtn):
         # traceback.print_stack(limit=3)
         super(GtkViewModel, self).onFontChanged(fbtn)
-        self.builder.get_object('c_useGraphite').set_sensitive(self.get('c_useGraphite'))
         self.setEntryBoxFont()
 
     def setEntryBoxFont(self):
@@ -1398,7 +1397,8 @@ class GtkViewModel(ViewModel):
                 bi = (self.get("s_fontBold"), self.get("s_fontItalic"))
             else:
                 bi = None
-            f = FontRef.fromDialog(name, style, self.get("c_fontGraphite"), self.get("t_fontFeatures"), bi)
+            f = FontRef.fromDialog(name, style, self.get("c_fontGraphite"), 
+                                   self.get("c_fontCtxtSpaces"), self.get("t_fontFeatures"), bi)
             self.set(btnid, f)
             res = True
         elif response == Gtk.ResponseType.CANCEL:

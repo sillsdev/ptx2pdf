@@ -315,10 +315,11 @@ _fontstylemap = {
 FontRef = None
 
 class FontRef:
-    def __init__(self, name, style, isGraphite=False, feats=None):
+    def __init__(self, name, style, isGraphite=False, isCtxtSpace=False, feats=None):
         self.name = name
         self.style = style
         self.isGraphite = isGraphite
+        self.isCtxtSpace = isCtxtSpace
         self.feats = feats.copy() if feats is not None else {}
 
     def __repr__(self):
@@ -337,8 +338,9 @@ class FontRef:
     def fromTeXStyle(cls, style, regular=None):
         name = style.get('fontname', None)
         if name is not None:
-            res = cls(name, "")
-            feats = style.get('xtexFontFeatures', None)
+            isCtxtSpace = style.get("ztexFontGrSpace", "0") != "0"
+            res = cls(name, "", isCtxtSpace=isCtxtSpace)
+            feats = style.get('ztexFontFeatures', None)
             if feats is None:
                 return res
             m = re.match("/([^/:;,]+)", feats)
@@ -374,17 +376,28 @@ class FontRef:
 
     @classmethod
     def fromConfig(cls, txt):
-        (name, styles, isGraphite, featstr) = txt.split("|", 3)
+        bits = txt.split("|")
+        isCtxtSpace = "False"
+        if len(bits) < 4:
+            (name, styles, isGraphite) = bits
+        else:
+            (name, styles, isGraphite) = bits[:3]
+            if bits[3] not in ('True', 'False'):
+                featlist = bits[3:]
+            else:
+                isCtxtSpace = bits[3]
+                featlist = bits[4:]
         feats = {}
-        if len(featstr):
-            for s in featstr.split("|"):
-                k, v = s.split("=")
-                feats[k] = v
-        return cls(name, styles, isGraphite.lower()=="true", feats)
+        if len(featlist):
+            for s in featlist:
+                if len(s):
+                    k, v = s.split("=")
+                    feats[k] = v
+        return cls(name, styles, isGraphite.lower()=="true", isCtxtSpace.lower()=="true", feats)
 
     @classmethod
-    def fromDialog(cls, name, style, isGraphite, featstring, bi):
-        res = cls(name, style, isGraphite, None)
+    def fromDialog(cls, name, style, isGraphite, isCtxtSpace, featstring, bi):
+        res = cls(name, style, isGraphite, isCtxtSpace, None)
         res.updateFeats(featstring)
         if bi is not None:
             for i, a in enumerate(("embolden", "slant")):
@@ -401,21 +414,44 @@ class FontRef:
                 if a in name:
                     name = name.replace(a, "")
                     styles.append(a)
-            res = cls(name.strip(), " ".join(styles), style.get("ztexFontFeatures", None))
+            res = cls(name.strip(), " ".join(styles), isCtxtSpace=(style.get("ztexFontGrSpace", "0")=="0"))
+            res.updateTeXFeats(style.get("ztexFontFeatures", ""))
             return res
         return None
 
     def copy(self, cls=None):
-        res = (cls or FontRef)(self.name, self.style, self.isGraphite, self.feats)
+        res = (cls or FontRef)(self.name, self.style, self.isGraphite, self.isCtxtSpace, self.feats)
         return res
 
     def updateFeats(self, featstring, keep=False):
         if not keep:
             self.feats = {}
-        if featstring != "":
+        print(f"updateFeats: {featstring}")
+        if featstring is not None and featstring:
             for l in re.split(r'\s*[,;:]\s*|\s+', featstring):
                 k, v = l.split("=")
                 self.feats[k.strip()] = v.strip()
+
+    def updateTeXFeats(self, featstring, keep=False):
+        if not keep:
+            self.feats = {}
+        if not featstring:
+            return
+        while featstring[0] == "/":
+            m = re.match("/([^:;,/]+)", featstring)
+            if m.group(1).lower() == "gr":
+                self.isGraphite = True
+            featstring = featstring[m.endpos:]
+        if not featstring:
+            return
+        f = fontcache.get(self.name)
+        if f is None:
+            return
+        for l in re.split(r"[,;:]", featstring):
+            k, v = s.split("=")
+            key = f.featnames.get(k.strip(), k.strip())
+            val = f.featvalnames.get(key, {}).get(v.strip(), v.strip())
+            self.feats[key] = val
 
     def fromStyle(self, bold=False, italic=False):
         newstyle = []
@@ -429,7 +465,7 @@ class FontRef:
         f = fontcache.get(self.name, s)
         print(f"fromStyle: {self}, {s}, {f}")
         if f is not None:
-            return FontRef(self.name, s, self.isGraphite, self.feats)
+            return FontRef(self.name, s, self.isGraphite, self.isCtxtSpace, self.feats)
         res = self.copy()
         if bold:
             f = fontcache.get(self.name, "Bold")
@@ -513,7 +549,10 @@ class FontRef:
             print(f"updateTeXStyle: {name}, {sfeats}, {feats}")
             style['FontName'] = name
             if len(feats) or len(sfeats):
-                style["ztexFontFeatures"] = "".join(sfeats) + ":".join("=".join(map(str, f)) for f in feats)
+                style["ztexFontFeatures"] = "".join(sfeats) + (":" if len(sfeats) else "") \
+                                            + ":".join("=".join(map(str, f)) for f in feats)
+            if self.isCtxtSpace:
+                style["ztexFontGrSpace"] = "2"
 
     def asTeXFont(self):
         (name, sfeats, feats) = self._getTeXComponents()
