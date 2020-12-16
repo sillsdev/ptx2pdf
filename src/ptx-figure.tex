@@ -466,7 +466,7 @@
 %+cfig_dofigure_6
   \else
     % Calculate lines used for the picture
-    \dimen0=\ht0 \advance\dimen0 by \dp0 \advance\dimen0 by 0.5\baselineskip % Rounding correction
+    \dimen0=\ht0 \advance\dimen0 by \dp0 \advance\dimen0 by 0.8\baselineskip % Rounding correction plus a bit
     \divide\dimen0 by \baselineskip \count255=\dimen0
     \trace{g}{Inline \w@tsit takes \the\count255 lines}%
     %
@@ -565,18 +565,22 @@
 
 \def\d@figureCut#1{%
   \trace{g}{\w@tsit\space is cutout}%
+  %\setbox1\hbox{\str@t}% Run \str@t so we get \str@tbox defined.
   \ifhmode
-     \ifx\prev@rsemode\empty
-       \trace{g}{Cutout in horizontal mode. forcing \m@rker}%
-       \csname\m@rker\endcsname
-     \else
-       \trace{g}{Cutout now in horizontal mode, but before this verse was started
-		 it was in vertical mode. Using \prev@rsemode and negative lineskip}%
+     \trace{g}{Cutout in horizontal mode.}%
+  \else 
+     \trace{g}{Cutout in vertical mode.}%
+     %\csname\m@rker\endcsname
+     %\ifx\prev@rsemode\empty
+     %\else
+       %\trace{g}{Cutout now in horizontal mode, but before this verse was started
+		 %it was in vertical mode. Using \prev@rsemode and negative lineskip}%
        %\csname\prev@rsemode\endcsname
        %\vskip -\baselineskip
-     \fi
+     %\fi
   \fi 
-  \dimen1=0.5\baselineskip% How far should the top of the picture be below the previous baseline? For a large baseline, set it to 0.4 em.
+  \dimen1=\baselineskip% How far should the top of the picture be below the previous baseline? Make top of box align with top of txt.
+  \advance\dimen1 by -\ht\str@tbox
   \advance\dimen1 by \c@tskip\baselineskip
   \dimen2=\wd#1\advance\dimen2 by 10pt\dimen3=\hs@ze \advance\dimen3 by -\dimen2
   \ifdim\dimen3<5em\message{*** \w@tsit specification of \size@ption \sizem@ltiple (at \ch@pter:\v@rse)
@@ -584,7 +588,7 @@
   \setbox#1\vbox to 0pt{\kern\dimen1\box#1\vss}%
   %Switch relative (inner/outer) to absolute (left/right) depending on page number for this image.
   \ifx\l@cspec\@lignLeft
-    \setbox#1\hbox to \hsize{\hss\box#1}%
+    \setbox#1\hbox to \hsize{\box#1\hss}%
     \strut\vadjust pre{\box#1}% 
     \trace{g}{leftcutout \the\dimen2, \c@tskip, \the\count255}%
     \leftcutout{\the\dimen2}{\c@tskip}{\the\count255}%

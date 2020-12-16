@@ -408,6 +408,7 @@
      \gdef\@ch@pterR{##1}% remember chapter number
      \gdef\@ch@ptert@xtR{##1}% the chapter number we will actually output
      \gdef\@v@rseR{}% clear verse number
+     \uppercase{\xdef\c@rref{\id@@@R.\@ch@pterR}}%
      \global\let\ch@pter=\@ch@pterR
      \global\let\ch@ptert@xt=\@ch@ptert@xtR
      \global\let\v@rse=\@v@rseR
@@ -418,6 +419,7 @@
      \global\let\ch@pter=\@ch@pter
      \global\let\ch@ptert@xt=\@ch@ptert@xt
      \global\let\v@rse=\@v@rse
+     \uppercase{\xdef\c@rref{\id@@@.\@ch@pter}}%
    \fi
    \global\let\print@bleVerse=\v@rse
    \m@kedigitsletters
