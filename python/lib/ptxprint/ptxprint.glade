@@ -2242,6 +2242,7 @@ in the Windows system.</property>
                 <property name="can_focus">False</property>
                 <property name="margin_left">6</property>
                 <property name="margin_right">6</property>
+                <property name="margin_bottom">6</property>
                 <property name="label_xalign">0</property>
                 <child>
                   <object class="GtkAlignment">
@@ -12860,6 +12861,7 @@ styling for the tabs, then select this option.
 The USFM extension \zthumbtab'' can be used to set an alternative value for the thumbtab contents. If a book's header contains a \zthumbtab entry, then\toc3 will not set the thumbtab contents. An empty\zthumbtab'' entry specifies that there should be no text in the thumbtab for that book.</property>
                                 <property name="halign">start</property>
                                 <property name="draw_indicator">True</property>
+                                <signal name="clicked" handler="onTabsClicked" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="left_attach">4</property>

@@ -2112,18 +2112,20 @@ class GtkViewModel(ViewModel):
         def coltohex(s):
             vals = s[s.find("(")+1:-1].split(",")
             h = "#"+"".join("{:02x}".format(int(x)) for x in vals)
+            # print("s, h:", s, h)
             return h
 
         bcol = coltohex(self.get("col_thumbback"))
-        # MH: We have to get these values from the Stylesheet(s) now. How do to so?
-        # fcol = coltohex(self.get("col_thumbtext"))
-        # bold = "bold" if self.get("c_thumbbold") else "normal"
-        # ital = "italic" if self.get("c_thumbitalic") else "normal"
+        tabstyle = "zthumbtab" if self.get("c_thumbIsZthumb") else "toc3"
+        # fcol = coltohex(self.styleEditor.getval(tabstyle, "color"))
+        bold = "bold" if self.styleEditor.getval(tabstyle, "bold") else "normal"
+        ital = "italic" if self.styleEditor.getval(tabstyle, "italic") else "normal"
         # markup = '<span background="{}" foreground="{}" font-weight="{}" font-style="{}">  {{}}  </span>'.format(bcol, fcol, bold, ital)
-        # for w in ("VerticalL", "VerticalR", "HorizontalL", "HorizontalR"):
-            # wid = self.builder.get_object("l_thumb"+w)
-            # wid.set_text(markup.format(w[:-1]))
-            # wid.set_use_markup(True)
+        markup = '<span background="{}" font-weight="{}" font-style="{}">  {{}}  </span>'.format(bcol, bold, ital)
+        for w in ("VerticalL", "VerticalR", "HorizontalL", "HorizontalR"):
+            wid = self.builder.get_object("l_thumb"+w)
+            wid.set_text(markup.format(w[:-1]))
+            wid.set_use_markup(True)
 
     def onRotateTabsChanged(self, *a):
         orientation = self.get("fcb_rotateTabs")

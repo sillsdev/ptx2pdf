@@ -137,10 +137,11 @@ elif sys.platform == "win32":
 _pt_bindir = ""
 
 def pt_bindir():
+    global _pt_bindir
     return _pt_bindir
 
 def get_ptsettings(errorfn):
-    global pt_bindir
+    global _pt_bindir
     pt_settings = "."
     try:
         ptob = openkey("Paratext/8", doError=errorfn)
@@ -150,21 +151,19 @@ def get_ptsettings(errorfn):
             path = "C:\\My Paratext {} Projects".format(v)
             if os.path.exists(path):
                 pt_settings = path
-                pt_bindir = "C:\\Program Files\\Paratext {}".format(v)
+                _pt_bindir = "C:\\Program Files\\Paratext {}".format(v)
                 if os.path.exists(pt_bindir):
                     break
                 else:
-                    pt_bindir = "C:\\Program Files (x86)\\Paratext {}".format(v)
+                    _pt_bindir = "C:\\Program Files (x86)\\Paratext {}".format(v)
                 break
     else:
         if ptv:
             version = ptv[:ptv.find(".")]
             try:
-                pt_bindir = queryvalue(ptob, 'Paratext{}_Full_Release_AppPath'.format(version))
+                _pt_bindir = queryvalue(ptob, 'Paratext{}_Full_Release_AppPath'.format(version))
             except:
-                pt_bindir = queryvalue(ptob, 'Program_Files_Directory_Ptw'+version)
+                _pt_bindir = queryvalue(ptob, 'Program_Files_Directory_Ptw'+version)
         pt_settings = queryvalue(ptob, 'Settings_Directory')
-        print("pt_settings:", pt_settings)
-        print("pt_bindir:", pt_bindir)
     return pt_settings
 
