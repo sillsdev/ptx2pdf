@@ -134,6 +134,8 @@ Notice that markers are case dependent.
 \\SmallCap    | blank enables, "-" disables. Only works with fonts with a +smcp feature
 \\LineSpacing | (see also BaseLine.) Dimension of line spacing, as a proportion of the default line spacing. I.e. actual measurement is \\LineSpacing * \\LineSpaceBase * \\LineSpacingFactor * \\FontSizeUnit<sup id="a1">[1](#f1)</sup>
 \\StyleType   | "paragraph", "character", "note"
+\\ztexFontFeatures | TeX style font feature settings to append to the font name specification when a font is instantiated
+\\ztexFontGrSpace | the \XeTeXinterwordspaceshaping value to use when this marker is active.
 
 <b id="f1">[1]</b>: Because the default mapping of fontsize to linespacing is hardwired to \\LineSpaceBase /12, a full line is \\LineSpaceBase * fontsize units (* \\LineSpacingFactor).
 This is all calculated internally to the macros. LineSpacing of 1.0 is the same as the default linespacing. [↩](#a1)

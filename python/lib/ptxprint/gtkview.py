@@ -2117,8 +2117,6 @@ class GtkViewModel(ViewModel):
             return h
         bcol = coltohex(self.get("col_thumbback"))
         tabstyle = "zthumbtab" if self.get("c_thumbIsZthumb") else "toc3"
-        print(tabstyle, "Bold:", self.styleEditor.getval(tabstyle, "bold"))
-        print(tabstyle, "Ital:", self.styleEditor.getval(tabstyle, "italic"))
         fcol = coltohex(textocol(self.styleEditor.getval(tabstyle, "color")))
         bold = "bold" if self.styleEditor.getval(tabstyle, "bold") == "" else "normal"
         ital = "italic" if self.styleEditor.getval(tabstyle, "italic") == "" else "normal"

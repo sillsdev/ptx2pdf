@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.1 
+<!-- Generated with glade 3.22.2 
 
 The MIT License (MIT)
 
@@ -3985,7 +3985,6 @@ Configuration settings.</property>
                       <object class="GtkBox">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="halign">start</property>
                         <child>
                           <object class="GtkFrame">
                             <property name="visible">True</property>
@@ -4368,6 +4367,7 @@ also affects poetry indentation.
                               <object class="GtkFrame">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="margin_right">6</property>
                                 <property name="margin_bottom">4</property>
                                 <property name="hexpand">True</property>
                                 <property name="label_xalign">0.30000001192092896</property>
@@ -4846,7 +4846,6 @@ that should be typeset as a single column.</property>
                         <property name="width_request">675</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="halign">start</property>
                         <property name="valign">start</property>
                         <property name="margin_left">6</property>
                         <property name="margin_right">6</property>
@@ -4905,10 +4904,9 @@ Text:</property>
                                   <object class="GtkViewport">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="margin_left">4</property>
-                                    <property name="margin_right">4</property>
                                     <property name="margin_top">4</property>
                                     <property name="margin_bottom">4</property>
+                                    <property name="vexpand">True</property>
                                     <child>
                                       <object class="GtkTextView" id="textv_colophon">
                                         <property name="visible">True</property>
@@ -5025,6 +5023,7 @@ Special books and Other advanced options.</property>
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="valign">start</property>
+                            <property name="margin_right">6</property>
                             <property name="margin_bottom">6</property>
                             <property name="label_xalign">0.039999999105930328</property>
                             <child>
@@ -5250,8 +5249,6 @@ are using supports these digits too.)</property>
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="valign">start</property>
-                            <property name="margin_left">6</property>
-                            <property name="margin_right">6</property>
                             <property name="margin_bottom">6</property>
                             <property name="label_xalign">0.05000000074505806</property>
                             <child>
@@ -5582,6 +5579,7 @@ text will appear in black.</property>
                           <object class="GtkFrame">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
+                            <property name="margin_right">6</property>
                             <property name="margin_top">6</property>
                             <property name="margin_bottom">6</property>
                             <property name="label_xalign">0.039999999105930328</property>
@@ -5589,6 +5587,7 @@ text will appear in black.</property>
                               <object class="GtkBox">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="margin_right">6</property>
                                 <property name="margin_bottom">6</property>
                                 <property name="orientation">vertical</property>
                                 <property name="spacing">11</property>
@@ -5962,7 +5961,6 @@ for characters missing in primary font.</property>
                         <property name="width_request">675</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="halign">start</property>
                         <property name="margin_left">6</property>
                         <property name="margin_top">6</property>
                         <property name="margin_bottom">6</property>
@@ -6313,7 +6311,6 @@ selected books/chapters will show in the glossary.</property>
                         <property name="width_request">675</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="halign">start</property>
                         <property name="margin_left">6</property>
                         <property name="margin_top">6</property>
                         <property name="margin_bottom">6</property>
