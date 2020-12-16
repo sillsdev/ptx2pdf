@@ -147,7 +147,9 @@ elif sys.platform == "win32":
             del kw['shell']
         if 'path' in kw:
             if kw['path'] == 'xetex':
-                path = os.path.join(pt_bindir(), "xetex", "bin", a[0][0]+".exe").replace("\\", "/")
+                # path = os.path.join(pt_bindir(), "xetex", "bin", a[0][0]+".exe").replace("\\", "/")
+                # TEMP Windows Hack in order to get further with testing - REMOVE SOON!
+                path = os.path.join("C:\\Program Files\\Paratext 9", "xetex", "bin", a[0][0]+".exe").replace("\\", "/")
                 print("path = ", path)
                 a = [[path] + list(a[0])[1:]] + [x.replace('"', '') for x in a[1:]]
                 print("a=", a)
