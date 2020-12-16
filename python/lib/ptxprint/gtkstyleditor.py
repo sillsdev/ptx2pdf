@@ -2,7 +2,7 @@ from gi.repository import Gtk, Pango
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal
 from ptxprint.sfm.style import Marker, CaselessStr
 from ptxprint.styleditor import StyleEditor
-from ptxprint.utils import _
+from ptxprint.utils import _, coltotex, textocol
 import re
 
 stylemap = {
@@ -128,30 +128,6 @@ def triefit(k, base, start):
     else:
         base[k] = {}
 
-def coltotex(s):
-    vals = s[s.find("(")+1:-1].split(",")
-    try:
-        return "x"+"".join("{:02X}".format(int(x)) for x in vals[:3])
-    except (ValueError, TypeError):
-        return ""
-
-def textocol(s):
-    if s.startswith("x"):
-        try:
-            vals = [int(s[1:3], 16), int(s[3:5], 16), int(s[5:7], 16)]
-        except (ValueError, TypeError):
-            vals = [0, 0, 0]
-    else:
-        try:
-            v = int(s)
-        except (ValueError, TypeError):
-            v = 0
-        vals = []
-        while v:
-            vals.append(v % 256)
-            v //= 256
-        vals.extend([0] * (3 - len(vals)))
-    return "rgb({0},{1},{2})".format(*vals)
 
 
 class StyleEditorView(StyleEditor):

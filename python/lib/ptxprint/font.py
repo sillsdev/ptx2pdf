@@ -426,7 +426,6 @@ class FontRef:
     def updateFeats(self, featstring, keep=False):
         if not keep:
             self.feats = {}
-        print(f"updateFeats: {featstring}")
         if featstring is not None and featstring:
             for l in re.split(r'\s*[,;:]\s*|\s+', featstring):
                 k, v = l.split("=")
