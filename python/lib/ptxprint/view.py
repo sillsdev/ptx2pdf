@@ -15,7 +15,7 @@ from shutil import rmtree
 import datetime, time
 from shutil import copyfile, copytree, move
 
-VersionStr = "1.4.3"
+VersionStr = "1.4.9"
 
 pdfre = re.compile(r".+[\\/](.+)\.pdf")
 

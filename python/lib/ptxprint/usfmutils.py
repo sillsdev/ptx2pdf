@@ -284,8 +284,6 @@ class Usfm:
             return False
         def ge(i, e):
             ''' Iterate document allowing in place editing '''
-            if self.doc is None or not len(self.doc):
-                   return
             res = False
             if isinstance(e, sfm.Element):
                 if ispara(e) or e.name == "v":
@@ -297,6 +295,8 @@ class Usfm:
                         j += 1
                     j += 1
             return res
+        if self.doc is None or not len(self.doc):
+               return
         ge(0, self.doc[0])
 
     def _proctext(self, fn, doc=None):
