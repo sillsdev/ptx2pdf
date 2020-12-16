@@ -83,6 +83,7 @@ categorymapping = {
     'Study':                                    ('Extended Study Content', 'notes_study'),
     'Quotation start/end milestone':            ('Milestones', 'milestones'),
     "Translator's section start/end milestone": ('Milestones', 'milestones'),
+    "Milestone":                   ("Milestones", "milestones"),
     'Other':                       ('Other', None),
     'OBSOLETE':                    ('Obsolete & Deprecated', None),
     'DEPRECATED':                  ('Obsolete & Deprecated', None)

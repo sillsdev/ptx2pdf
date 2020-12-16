@@ -1391,14 +1391,14 @@ class GtkViewModel(ViewModel):
             sel = lb.get_selection()
             ls, row = sel.get_selected()
             name = ls.get_value(row, 0)
-            cb = self.builder.get_object("fcb_fontFaces")
-            if noStyles:
-                style = ""
+            style = self.get("fcb_fontFaces")
+            if style.lower() == "regular":
+                style = None
+            if self.get("c_fontFake"):
+                bi = (self.get("s_fontBold"), self.get("s_fontItalic"))
             else:
-                style = cb.get_model()[cb.get_active()][0]
-                if style == "Regular":
-                    style = ""
-            f = FontRef.fromDialog(name, style, self.get("c_fontGraphite"), self.get("t_fontFeatures"))
+                bi = None
+            f = FontRef.fromDialog(name, style, self.get("c_fontGraphite"), self.get("t_fontFeatures"), bi)
             self.set(btnid, f)
             res = True
         elif response == Gtk.ResponseType.CANCEL:

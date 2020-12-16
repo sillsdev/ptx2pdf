@@ -383,9 +383,13 @@ class FontRef:
         return cls(name, styles, isGraphite.lower()=="true", feats)
 
     @classmethod
-    def fromDialog(cls, name, style, isGraphite, featstring):
+    def fromDialog(cls, name, style, isGraphite, featstring, bi):
         res = cls(name, style, isGraphite, None)
         res.updateFeats(featstring)
+        if bi is not None:
+            for i, a in enumerate(("embolden", "slant")):
+                if float(bi[i]) > 0.0001:
+                    res.feats[a] = bi[i]
         return res
 
     @classmethod
@@ -530,7 +534,8 @@ class FontRef:
         return ", ".join("{}={}".format(k, v) for k, v in self.feats.items() if k not in ("embolden", "slant"))
 
     def asPango(self, fallbacks, size=None):
-        res = "{}{} {}".format(self.name, ",".join(fallbacks), self.style)
+        fb = ("," + ",".join(fallbacks)) if len(fallbacks) else ""
+        res = "{}{} {}".format(self.name, fb, self.style)
         return res + (" "+size if size is not None else "")
 
     
