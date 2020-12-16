@@ -400,7 +400,6 @@ class TexModel:
         self.dict['config/name'] = self.printer.configId
         self.dict['/ptxrpath'] = rel(self.dict['/ptxpath'], docdir)
         self.dict['/cfgrpath'] = rel(cpath, docdir)
-        #self.processFonts(self.printer)
         self.processHdrFtr(self.printer)
         # sort out caseless figures folder. This is a hack
         for p in ("Figures", "figures"):
@@ -470,72 +469,6 @@ class TexModel:
         else:
             return True
 
-    def processFonts(self, printer):
-        """ Update model fonts from UI """
-        badfonts = set()
-        for p in self._fonts.keys():
-            if p in self.dict:
-                del self.dict[p]
-        frn = self.dict.get("fontregular/name", "")
-        if frn is None or frn == "":
-            self.dict["fontregular/name"] = "Arial"     # Fallback
-        for p in ['fontregular'] + list(self._fonts.keys()):
-            if p in self.dict:
-                continue
-            name = self.dict.get(p+"/name", "")
-            style = self.dict.get(p+"/style", "")
-            # import pdb; pdb.set_trace()
-            f = TTFont(name, style)
-            # print(p, f.filename, f.family, f.style)
-            if f.filename is None:
-                if self._fonts[p][1] is None or printer.get(self._fonts[p][1]):
-                    badfonts.add((name or f.filename or "", style))
-                if p != "fontregular" and self._fonts[p][2] is not None:
-                    regname = self.dict["fontregular/name"]
-                    regstyle = self.dict["fontregular/style"]
-                    f = TTFont(regname, regstyle)
-                    if printer is not None:
-                        printer.set(self._fonts[p][2], True)
-                        printer.set(self._fonts[p][0], (name, style))
-                        if self._fonts[p][3] is not None:
-                            self.updatefields([self._fonts[p][3]])
-                        # print("Setting {} to {}".format(p, reg))
-            if 'Silf' in f and self.asBool("font/usegraphite"):
-                engine = "/GR"
-            else:
-                engine = ""
-            fname = f.family
-            #print([p, name, style, f.family, f.style, f.filename])
-            if f.style is not None and len(f.style):
-                s = _fontstylemap.get(f.style," " + f.style)
-                fname = f.family + s
-            self.dict[p] = "[{}]".format(f.filename.as_posix()) if f.usepath else fname
-            self.dict[p+"/engine"] = engine
-        featstring = self.dict["font/features"]
-        if featstring is not None and len(featstring):
-            if printer is not None:
-                printer.set(ModelMap["font/features"][0], featstring)
-            f = TTFont(self.dict["fontregular/name"], self.dict["fontregular/style"])
-            f.features = {}
-            for l in re.split(r'\s*[,;:]\s*|\s+', featstring):
-                if '=' in l:
-                    k, v = l.split('=')
-                    f.features[k.strip()] = v.strip()
-            if len(f.features):
-                self.dict['font/texfeatures'] = ":"+ ":".join("{0}={1}".format(f.feats.get(fid, fid),
-                                                f.featvals.get(fid, {}).get(int(v), v)) for fid, v in f.features.items())
-            else:
-                self.dict['font/texfeatures'] = ""
-        else:
-            self.dict['font/texfeatures'] = ""
-        badfonts.discard(("", ""))
-        if len(badfonts):
-            printer.doError("Font(s) missing or incorrectly installed:\n" \
-                    + ", ".join("{} {}".format(*x) for x in badfonts if len(x[0])), \
-                    secondary="If using Windows, please re-install the font as\n" \
-                    + "Administrator, and right-click to 'Install for ALL Users'.", \
-                    title="Error: Missing Font(s)")
-        
     def processHdrFtr(self, printer):
         """ Update model headers from model UI read values """
         diglot = True if self.dict["document/ifdiglot"] == "" else False

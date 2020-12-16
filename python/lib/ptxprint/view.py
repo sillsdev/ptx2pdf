@@ -896,6 +896,7 @@ class ViewModel:
         if cfgid is not None:
             cfpath += cfgid+"/"
         basecfpath = self.configPath(cfgname=cfgid, prjid=prjid)
+        interlang = self.get("t_interlinearLang") if self.get("c_interlinear") else None
 
         # pictures and texts
         fpath = os.path.join(self.settings_dir, prjid)
@@ -908,6 +909,10 @@ class ViewModel:
                     cfgchanges['btn_chooseBibleModule'] = os.path.basename(fname)
             else:
                 res[os.path.join(fpath, fname)] = os.path.basename(fname)
+            if interlang is not None:
+                intpath = "Interlinear_{}".format(interlang)
+                intfile = "{}_{}.xml".format(intpath, bk)
+                res[os.path.join(fpath, intpath, intfile)] = os.path.join(intpath, intfile)
         self.picinfos.getFigureSources(exclusive=self.get("c_exclusiveFiguresFolder"))
         pathkey = 'src path'
         for f in (p[pathkey] for p in self.picinfos.values() if pathkey in p):
@@ -969,6 +974,8 @@ class ViewModel:
                 p = os.path.join(self.settings_dir, prjid, 'shared', 'ptxprint', 'ptxprint-mods.tex')
                 if os.path.exists(p):
                     res[p] = "shared/ptxprint/ptxprint-mods.tex"
+        if interlang is not None:
+            res[os.path.join(fpath, 'Lexicon.xml')] = 'Lexicon.xml' 
 
         script = self.get("btn_selectScript")
         if script is not None and len(script):

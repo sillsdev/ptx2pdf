@@ -436,7 +436,7 @@ class FontRef:
             self.feats = {}
         if not featstring:
             return
-        while featstring[0] == "/":
+        while len(featstring) and featstring[0] == "/":
             m = re.match("/([^:;,/]+)", featstring)
             if m.group(1).lower() == "gr":
                 self.isGraphite = True
