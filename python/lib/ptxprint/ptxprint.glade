@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.2 
+<!-- Generated with glade 3.22.1 
 
 The MIT License (MIT)
 
@@ -2144,7 +2144,7 @@ in the Windows system.</property>
                 </child>
                 <child>
                   <object class="GtkComboBox" id="fcb_fontFaces">
-                    <property name="width_request">100</property>
+                    <property name="width_request">90</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="halign">start</property>
@@ -2192,7 +2192,6 @@ in the Windows system.</property>
                 <property name="can_focus">False</property>
                 <property name="margin_left">6</property>
                 <property name="margin_right">6</property>
-                <property name="margin_bottom">6</property>
                 <property name="label_xalign">0</property>
                 <child>
                   <object class="GtkAlignment">
@@ -2203,19 +2202,19 @@ in the Windows system.</property>
                       <object class="GtkGrid">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="margin_top">4</property>
+                        <property name="halign">center</property>
                         <property name="margin_bottom">6</property>
                         <property name="row_spacing">6</property>
-                        <property name="column_spacing">6</property>
+                        <property name="column_spacing">20</property>
                         <child>
                           <object class="GtkLabel" id="l_fontBold">
                             <property name="visible">True</property>
                             <property name="sensitive">False</property>
                             <property name="can_focus">False</property>
                             <property name="tooltip_text" translatable="yes">If the required font doesn't have a BOLD typeface, you can use this setting to create the BOLD effect. (For example, setting Embolden to 1.6 would thicken the Regular typeface making it appear as bold).</property>
-                            <property name="halign">start</property>
+                            <property name="halign">center</property>
                             <property name="label" translatable="yes">Embolden</property>
-                            <property name="justify">right</property>
+                            <property name="justify">center</property>
                             <property name="xalign">0.5</property>
                             <attributes>
                               <attribute name="weight" value="bold"/>
@@ -2243,28 +2242,8 @@ in the Windows system.</property>
                             <property name="value">1.6000000002235175</property>
                           </object>
                           <packing>
-                            <property name="left_attach">1</property>
-                            <property name="top_attach">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkLabel" id="l_fontItalic">
-                            <property name="visible">True</property>
-                            <property name="sensitive">False</property>
-                            <property name="can_focus">False</property>
-                            <property name="tooltip_text" translatable="yes">If the required font does not have an ITALIC typeface, you can use this setting to create the ITALIC effect. (For example, setting Slant to 0.15 would slant the Regular typeface by 15% making it appear as italic).</property>
-                            <property name="halign">start</property>
-                            <property name="margin_left">6</property>
-                            <property name="label" translatable="yes">Slant</property>
-                            <property name="justify">right</property>
-                            <property name="xalign">0.5</property>
-                            <attributes>
-                              <attribute name="style" value="italic"/>
-                            </attributes>
-                          </object>
-                          <packing>
-                            <property name="left_attach">2</property>
-                            <property name="top_attach">0</property>
+                            <property name="left_attach">0</property>
+                            <property name="top_attach">1</property>
                           </packing>
                         </child>
                         <child>
@@ -2284,7 +2263,26 @@ in the Windows system.</property>
                             <property name="value">0.14999999999999999</property>
                           </object>
                           <packing>
-                            <property name="left_attach">3</property>
+                            <property name="left_attach">1</property>
+                            <property name="top_attach">1</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="l_fontItalic">
+                            <property name="visible">True</property>
+                            <property name="sensitive">False</property>
+                            <property name="can_focus">False</property>
+                            <property name="tooltip_text" translatable="yes">If the required font does not have an ITALIC typeface, you can use this setting to create the ITALIC effect. (For example, setting Slant to 0.15 would slant the Regular typeface by 15% making it appear as italic).</property>
+                            <property name="halign">center</property>
+                            <property name="label" translatable="yes">Slant</property>
+                            <property name="justify">right</property>
+                            <property name="xalign">0.5</property>
+                            <attributes>
+                              <attribute name="style" value="italic"/>
+                            </attributes>
+                          </object>
+                          <packing>
+                            <property name="left_attach">1</property>
                             <property name="top_attach">0</property>
                           </packing>
                         </child>
@@ -2319,6 +2317,11 @@ to the regular typeface.</property>
               <object class="GtkGrid">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="margin_left">6</property>
+                <property name="margin_right">7</property>
+                <property name="margin_bottom">6</property>
+                <property name="hexpand">True</property>
+                <property name="row_spacing">4</property>
                 <child>
                   <object class="GtkLabel">
                     <property name="visible">True</property>
@@ -2326,6 +2329,7 @@ to the regular typeface.</property>
                     <property name="tooltip_text" translatable="yes">You can enable/disable any font features 
 for the selected font. For example:
 litr=1, dig0=1, dig1=1, dig4=1</property>
+                    <property name="halign">start</property>
                     <property name="margin_left">6</property>
                     <property name="label" translatable="yes">Font Features:</property>
                   </object>
@@ -2341,16 +2345,32 @@ litr=1, dig0=1, dig1=1, dig4=1</property>
                     <property name="tooltip_text" translatable="yes">You can enable/disable any font features 
 for the selected font. For example:
 litr=1, dig0=1, dig1=1, dig4=1</property>
+                    <property name="hexpand">True</property>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
                     <property name="top_attach">0</property>
+                    <property name="width">3</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkCheckButton" id="c_fontCtxtSpaces">
+                    <property name="label" translatable="yes">Contextual Spaces</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">False</property>
+                    <property name="halign">start</property>
+                    <property name="draw_indicator">True</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">2</property>
+                    <property name="top_attach">1</property>
+                    <property name="width">2</property>
                   </packing>
                 </child>
                 <child>
                   <object class="GtkCheckButton" id="c_fontGraphite">
-                    <property name="label" translatable="yes">Graphite
-Rendering</property>
+                    <property name="label" translatable="yes">Graphite Rendering</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
@@ -2360,29 +2380,10 @@ technology, then enable this.</property>
                     <property name="draw_indicator">True</property>
                   </object>
                   <packing>
-                    <property name="left_attach">2</property>
-                    <property name="top_attach">0</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkCheckButton" id="c_fontCtxtSpaces">
-                    <property name="label" translatable="yes">Contextual
-Spaces</property>
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">False</property>
-                    <property name="draw_indicator">True</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">2</property>
+                    <property name="left_attach">0</property>
                     <property name="top_attach">1</property>
+                    <property name="width">2</property>
                   </packing>
-                </child>
-                <child>
-                  <placeholder/>
-                </child>
-                <child>
-                  <placeholder/>
                 </child>
               </object>
               <packing>
@@ -5021,7 +5022,6 @@ Special books and Other advanced options.</property>
                             <property name="width_request">340</property>
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="halign">start</property>
                             <property name="valign">start</property>
                             <property name="margin_bottom">6</property>
                             <property name="label_xalign">0.039999999105930328</property>
@@ -5247,7 +5247,6 @@ are using supports these digits too.)</property>
                           <object class="GtkFrame" id="fr_fallbackFont">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="halign">start</property>
                             <property name="valign">start</property>
                             <property name="margin_left">6</property>
                             <property name="margin_right">6</property>
@@ -5595,6 +5594,7 @@ text will appear in black.</property>
                                   <object class="GtkGrid">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="margin_right">6</property>
                                     <property name="row_spacing">7</property>
                                     <property name="column_spacing">6</property>
                                     <child>
