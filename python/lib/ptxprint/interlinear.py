@@ -1,6 +1,7 @@
 from xml.etree import ElementTree as et
 from ptxprint.usfmutils import Usfm, Sheets
 from ptxprint import sfm
+from hashlib import md5
 import re, os
 
 _refre = re.compile("^(\d?\D+?)\s+(\d+):(\S+)\s*$")
@@ -38,13 +39,20 @@ class Interlinear:
 
     def replaceindoc(self, doc, curref, lexemes, linelengths, mrk="+wit"):
         lexemes.sort()
+        #allstr = []
+        adj = 0
         for e in doc.iterVerse(*curref):
+            #allstr.append(str(e))
             if isinstance(e, sfm.Element):
                 if e.name == "v":   # starting col and line
                     startl = e.pos.line - 1
                     startc = e.pos.col - 1
+                adj += getattr(e, 'adjust', 0)
                 continue
-            lstart = sum(linelengths[startl:e.pos.line-1]) + e.pos.col-1 + startc
+            if e.parent.name == "fig":
+                continue
+            thisadj = adj - getattr(e.parent, 'adjust', 0)
+            lstart = sum(linelengths[startl:e.pos.line-1]) + e.pos.col-1 + startc + thisadj
             lend = lstart + len(e)
             #print(f"{e.pos.chapter}:{e.pos.verse} ({e.pos.col}, {e.pos.line}), ({startc}, {startl}), {lstart}, {lend} {linelengths[startl:e.pos.line-1]}")
             i = 0
@@ -57,6 +65,9 @@ class Interlinear:
             if i < len(e):
                 res.append(e[i:])
             e.data = str("".join(str(s) for s in res))
+        #hashstr =  md5()
+        #hashstr.update("".join(allstr)[:-1].encode("utf-16LE"))
+        #print(curref, allstr, hashstr.hexdigest())
 
     def convertBk(self, bkid, doc, linelengths, mrk="+rb"):
         intname = "Interlinear_{}".format(self.lang)
@@ -78,6 +89,6 @@ class Interlinear:
                 if e.tag == "string":
                     curref = self.makeref(e.text)
                     lexemes = []
-                elif e.tag == "VerseData":
+                elif e.tag == "VerseData" and e.get('Hash', "") != "":
                     self.replaceindoc(doc, curref, lexemes, linelengths, mrk=mrk)
 

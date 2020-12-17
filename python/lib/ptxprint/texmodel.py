@@ -696,6 +696,7 @@ class TexModel:
             if self.interlinear is not None:
                 doc = Usfm(dat.splitlines(True), self.sheets)
                 linelengths = [len(x) for x in dat.splitlines(True)]
+                doc.calc_PToffsets()
                 self.interlinear.convertBk(bk, doc, linelengths)
 
             if self.changes is not None:
@@ -846,7 +847,7 @@ class TexModel:
         # Glossary Word markup: Remove the second half of the \w word|glossary-form\w* and apply chosen glossary markup
         v = self.dict["document/glossarymarkupstyle"]
         gloStyle = self._glossarymarkup.get(v, v)
-        self.localChanges.append((None, regex.compile(r"\\\+?w (.+?)(\|.+?)?\\\+?w\*", flags=regex.M), gloStyle))
+        #self.localChanges.append((None, regex.compile(r"\\\+?w ((?:.(?!\\\+w\*))+?)(\|[^|]+?)?\\\+?w\*", flags=regex.M), gloStyle))
         
         # Remember to preserve \figs ... \figs for books that can't have PicLists (due to no ch:vs refs in them)
         if self.asBool("document/ifinclfigs") and bk in self._peripheralBooks:

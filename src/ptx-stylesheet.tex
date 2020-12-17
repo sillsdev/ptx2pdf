@@ -44,8 +44,8 @@
 \let\prev@rsemode\empty
 
 % Remember the name of the marker currently being defined
-\def \Marker         #1\relax{\def\m@rker{#1} % store name of marker currently being defined
-                              \expandafter\let\csname font<#1>\endcsname\relax}
+\def \Marker         #1\relax{\m@kedigitsletters\xdef\m@rker{\scantokens{#1\noexpand}}\m@kedigitsother % store name of marker currently being defined
+                              \expandafter\let\csname font<\m@rker>\endcsname\relax}
                               %\expandafter\let\csname extrafont<#1>\endcsname\relax}
 %-csty_definition_setup
 

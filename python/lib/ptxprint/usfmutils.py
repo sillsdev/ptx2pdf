@@ -260,11 +260,9 @@ class Usfm:
         else:
             return
         for e in it:
-            yield e
-            if not isinstance(e, sfm.Element):
-                continue
-            if e.name == "c" or e.name == "v":
+            if isinstance(e, sfm.Element) and (e.name == "c" or e.name == "v"):
                 break
+            yield e
 
     def normalise(self):
         ''' Normalise USFM in place '''
@@ -354,6 +352,26 @@ class Usfm:
                 # print("{} -> {}".format(e, "".join(res)))
             return sfm.Text("".join(res), e.pos, e.parent) if done else e
         self._proctext(fn, doc=doc)
+
+    def calc_PToffsets(self):
+        def _ge(e, a, ac):
+            attrs = e.meta.get('Attributes', None)
+            if attrs is None:
+                return None
+            styletype = e.meta['StyleType']
+            if styletype.lower() == "character":
+                s = str(e[0])
+                bits = s.split("|")
+                if len(bits) < 2 or "=" in bits[1]:
+                    return None
+                default = attrs.split()[0]
+                # incorporate ="" 3 chars
+                e.adjust = len(default) + 3 - (1 if default.startswith("?") else 0)
+                print(f"{e.pos.line}.{e.pos.col} {e.name} +{e.adjust} {default}")
+            return None
+        def _gt(e, a):
+            return None
+        sfm.sreduce(_ge, _gt, self.doc, None)
 
 def read_module(inf, sheets):
     lines = inf.readlines()
