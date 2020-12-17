@@ -184,10 +184,12 @@
     \tablec@l=0
     \global\maxtablec@l=0
     \doingt@bletrue
+    \message{starting table}%
   \fi}
 
 \newdimen\t@talwidth
 \def\endt@ble{%
+    \message{ending table}%
   \ifdoingt@ble
     \@ndcell
     \@ndrow

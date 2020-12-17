@@ -1220,7 +1220,7 @@ class GtkViewModel(ViewModel):
         self.set("s_fnfontsize", val)
 
     def onFnLineSpacingChanged(self, btn, *a):
-        val = self.get("s_fnlinespacing")
+        val = float(self.get("s_fnlinespacing", default=15.))
         for k in ("f", "x"):
             try:
                 isabs = self.styleEditor.getval(k, "LineSpacing") == None
@@ -1235,7 +1235,7 @@ class GtkViewModel(ViewModel):
     def updateFnLineSpacing(self, key, val):
         val = float(val)
         if key.lower() == "linespacing":
-            val = val * self.get("s_linespacing", default=12.)
+            val = val * float(self.get("s_linespacing", default=12.))
         self.set("s_fnlinespacing", val)
 
     def onFnBlendClicked(self, btn):
