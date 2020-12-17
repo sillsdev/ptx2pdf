@@ -367,7 +367,7 @@ class Usfm:
                 default = attrs.split()[0]
                 # incorporate ="" 3 chars
                 e.adjust = len(default) + 3 - (1 if default.startswith("?") else 0)
-                print(f"{e.pos.line}.{e.pos.col} {e.name} +{e.adjust} {default}")
+                # print(f"{e.pos.line}.{e.pos.col} {e.name} +{e.adjust} {default}")
             return None
         def _gt(e, a):
             return None

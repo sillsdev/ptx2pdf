@@ -443,11 +443,11 @@ class FontRef:
             featstring = featstring[m.endpos:]
         if not featstring:
             return
-        f = fontcache.get(self.name)
+        f = TTFont(self.name, self.style)
         if f is None:
             return
         for l in re.split(r"[,;:]", featstring):
-            k, v = s.split("=")
+            k, v = l.split("=")
             key = f.featnames.get(k.strip(), k.strip())
             val = f.featvalnames.get(key, {}).get(v.strip(), v.strip())
             self.feats[key] = val
