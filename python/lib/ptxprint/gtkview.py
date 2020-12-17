@@ -104,7 +104,7 @@ _sensitivities = {
     "c_useFallbackFont" :      ["btn_findMissingChars", "t_missingChars", "l_fallbackFont", "bl_fontExtraR"],
     "c_includeFootnotes" :     ["bx_fnOptions"],
     "c_includeXrefs" :         ["bx_xrOptions"],
-    "c_includeillustrations" : ["gr_IllustrationOptions", "c_includeImageCopyrights"],
+    "c_includeillustrations" : ["gr_IllustrationOptions"],
     "c_diglot" :               ["gr_diglot", "fcb_diglotPicListSources", "c_hdrLeftPri", "c_hdrCenterPri", "c_hdrRightPri",
                                 "c_ftrCenterPri", "c_hdrLeftSec", "c_hdrCenterSec", "c_hdrRightSec", "c_ftrCenterSec"],
     "c_borders" :              ["gr_borders"],
@@ -177,7 +177,7 @@ _object_classes = {
     "viewernb":    ("nbk_Viewer", "nbk_PicList"),
     "thumbtabs":   ("l_thumbVerticalL", "l_thumbVerticalR", "l_thumbHorizontalL", "l_thumbHorizontalR"),
     "stybutton":   ("btn_resetCopyright", "btn_resetColophon", "btn_resetFNcallers", "btn_resetXRcallers", 
-                    "btn_styAdd", "btn_styEdit", "btn_styDel", "btn_styReset", "btn_refreshFonts")
+                    "btn_styAdd", "btn_styEdit", "btn_styDel", "btn_styReset", "btn_refreshFonts", "btn_resetStyFilter")
 }
 
     # "Center": "c", 
@@ -475,18 +475,19 @@ class GtkViewModel(ViewModel):
                 "this switch to hide the more complex/advanced options."))
                       
         for c in ("tb_Font", "tb_Advanced", "tb_ViewerEditor", "tb_Tabs", "tb_DiglotBorder", "tb_StyleEditor",
-                  "fr_copyrightLicense", "r_book_module", "btn_chooseBibleModule", "lb_bibleModule", # "tb_Pictures",
-                  "c_fighiderefs", "lb_selectFigureFolder", # "r_book_dbl", "btn_chooseDBLbundle", "l_dblBundle", 
+                  "fr_copyrightLicense", "r_book_module", "btn_chooseBibleModule", "lb_bibleModule", "c_combine",
+                  "c_fighiderefs", "lb_selectFigureFolder", "l_indentUnit", "s_indentUnit",
+                  "l_btmMrgn", "s_bottommarginfactor", "l_ftrPosn", "s_footerposition", "c_ftrCenterPri", "c_ftrCenterSec", 
                   "l_missingPictureString", "l_imageTypeOrder", "t_imageTypeOrder", "fr_layoutSpecialBooks", "fr_layoutOther",
-                  "s_colgutteroffset", "fr_Footer", "bx_TopMarginSettings", "gr_HeaderAdvOptions", "l_colgutteroffset",
+                  "s_colgutteroffset", "bx_TopMarginSettings", "gr_HeaderAdvOptions", "l_colgutteroffset",
                   "c_fighiderefs", "c_skipmissingimages", "c_useCustomFolder", "btn_selectFigureFolder", "c_exclusiveFiguresFolder",
                   "c_startOnHalfPage", "c_prettyIntroOutline", "c_marginalverses", "s_columnShift", "c_figplaceholders",
                   "fr_FontConfig", "fr_fallbackFont", "fr_paragraphAdjust", "l_textDirection", "l_colgutteroffset", "fr_hyphenation",
                   "bx_fnCallers", "bx_fnCalleeCaller", "bx_xrCallers", "bx_xrCalleeCaller", "c_fnOverride", "c_xrOverride",
-                  "row_ToC", "c_hyphenate", "l_missingPictureCount", "bx_colophon", 
+                  "row_ToC", "c_hyphenate", "l_missingPictureCount", "bx_colophon", "btn_deleteConfig", "btn_lockunlock",
                   "c_hdrLeftPri", "c_hdrLeftSec", "c_hdrCenterPri", "c_hdrCenterSec", "c_hdrRightPri", "c_hdrRightSec", 
                   "c_omitverseone", "c_glueredupwords", "c_firstParaIndent", "c_hangpoetry", "c_preventwidows", 
-                  "l_sidemarginfactor", "s_sidemarginfactor", "s_linespacingmin", "s_linespacingmax",
+                  "l_sidemarginfactor", "s_sidemarginfactor", "s_linespacingmin", "s_linespacingmax", "btn_unpackDBLbundle",
                   "c_variableLineSpacing", "c_pagegutter", "s_pagegutter", "fcb_textDirection", "l_digits", "fcb_digits",
                   "t_invisiblePassword", "t_configNotes", "l_notes", "c_elipsizeMissingVerses", "fcb_glossaryMarkupStyle",
                   "gr_fnAdvOptions", "c_figexclwebapp", "bx_horizRule", "l_glossaryMarkupStyle"):

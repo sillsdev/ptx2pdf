@@ -83,7 +83,6 @@ ModelMap = {
     "project/copyright":        ("t_copyrightStatement", None),
     "project/colophontext":     ("tb_colophon", lambda w,v: v or ""),
     "project/ifcolophon":       ("c_colophon", lambda w,v: "" if v else "%"),
-    "project/inclimagecopyright": ("c_includeImageCopyrights", None),
 
     "paper/height":             ("ecb_pagesize", lambda w,v: re.sub(r"^.*?,\s*(.+?)\s*(?:\(.*|$)", r"\1", v or "210mm")),
     "paper/width":              ("ecb_pagesize", lambda w,v: re.sub(r"^(.*?)\s*,.*$", r"\1", v or "148mm")),
