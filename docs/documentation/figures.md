@@ -83,8 +83,8 @@ picture half a column wide and the text a little distance away.  This may
 In the table below, 'left-aligned' means that the left hand edge of the image is
 lined up with the left-hand image of (unindented) paragraph text.
 
-The page positions listed below are now available. For each position code given
-with `l` (Left), you may also specify: `r` (Right), `i` (Inner) and `o` (Outer).
+The page positions listed below are now available. For each **position code** given
+with `l` (Left), **you may also specify**: `r` (Right), `i` (Inner) and `o` (Outer).
 `i` is replaced with `l` on odd-numbered pages, and `r` on even numbered pages. In a 
 diglot when the `mirrored` columns are in use ('left' text is always inner, the
 'right' text outer), you probably don't want to use `ti` or `to` for picture placement.
@@ -97,16 +97,16 @@ b    | 'Bottom'               | Below all verse text (and footnotes in diglot). 
 tl   | 'Top-Left'    [1]      | At the top of the left-hand [2] column                          | width of column 
 bl   | 'Bottoom-Left'    [1]  | At the bottom of the left-hand [2] column                          | width of column 
 -----|------------------------|       ***Experimental Additions***                              |----------------------------
-h    | 'Here'                 | Where defined / before the verse in piclist[3,4], centred       | width of column
-hc   | 'Here',centred         | Where defined / before the verse in piclist[3,4], centred       | width of column
-hl   | 'Here',Left            | Where defined / before the verse in piclist[3,4], left-aligned  | same width as image
+h    | 'Here'                 | Where defined / before the verse in piclist[3], centred       | width of column
+hc   | 'Here',centred         | Where defined / before the verse in piclist[3], centred       | width of column
+hl   | 'Here',Left            | Where defined / before the verse in piclist[3], left-aligned  | same width as image
 p    | 'Post-paragraph'       | After this paragraph[4,7], centred                              | width of column
 pc   | 'Post-paragraph', centred  | After this paragraph[4], centred                            | width of column
 pl   | 'Post-paragraph, Left' | After this paragraph[4], left-aligned                           | same width as image
 pc#  | 'Post-paragraph'       | After # paragraphs[4,5], centred                                | width of column
 pl#  | 'Post-paragraph, Left' | After # paragraphs[4,5], left-aligned                           | width of column
-cl   | 'Cutout Left'          | In the top-left corner of this paragraph [3]                    | same width as image
-cl#  | 'Cutout Left'          | In a notch # lines[6] below the top of this paragraph [3]       | same width as image
+cl   | 'Cutout Left'          | A notch/corner cut out of the text, starting at current line    | same width as image
+cl#  | 'Cutout Left'          | A notch starting # lines[6] below the current line              | same width as image
 P    | 'Page'                 | An image that replaces the normal text on the page              | width of page
 Pc   | 'Page', centred        | An image that replaces the normal text on the page              | width of page
 Pct  | 'Page', centred, top[8] | An image that replaces the normal text on the page              | width of page
@@ -116,9 +116,9 @@ F    | 'Full page'            | The entirety of the paper [9]                   
 F... | 'Full page', as above  | The entirety of the paper [9] pushed to whatever edge is indicated   | width of paper, may be off the page.
 
 Notes:
-[1] If two columns are in use.
+[1] Only if two columns are in use.
 [2] If a diglot is being set inner-outer rather than left/right, then the 'left' column is the inner column. 
-[3] *Here*  and *cutout* images need to start at a new paragraph. If the
+[3] *Here*  images need to start at a new paragraph. If the
     specified location is not a paragraph boundary, a new paragraph will be forced.
 [4] The 'insert image here' code will be activated at the end of the paragraph.
     Counting starts at the paragraph containing the verse number or the \fig
@@ -161,15 +161,15 @@ Notes:
 #### Do the new picture positions conform to examples in the USFM specification?
 In some ways, they conform better than the previously available options. USFM
 specification indicates that a picture can occur immediately after text, ending
-the previous paragraph. This works with *here* and *cutout* picture locations,
-(the 'automatic' paragraph style for text surrounding the cutout is intended to
+the previous paragraph. This works with *here* picture locations,
+(the 'automatic' paragraph style for text surrounding the image is intended to
 be the same as the previous paragraph style, but until further testing reveals
 this to be 100% reliable, sensible users will supply their own style marker).
 USFM makes no reference to left or right alignment, nor scaling images, nor
 images in cutouts.
  
 #### Why might I use unusual positions?
-- cl / cr  Small images, perhaps glossary items?
+- cl / cr  Small images, perhaps glossary items? Or in a single column printout.
 - p  A picture to be set after the final verse of a book, otherwise impossible
   from a piclist. Possibly also for some kind of decorative 'end of section'
   mark.

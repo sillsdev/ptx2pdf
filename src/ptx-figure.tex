@@ -570,7 +570,7 @@
   \mkstr@t
   \dimen2=\count255\baselineskip %space reserved...
   \trace{g}{\w@tsit\space is cutout. \the\count255 x \the\baselineskip  = \the\dimen2. Box is \the\dimen0}%
-  %\setbox#1=\hbox{\vrule height\dimen0\box#1}%TESTING.
+  \setbox#1=\hbox{\vrule height\dimen0\box#1}%TESTING.
   \dimen1=-\baselineskip %where does the picture go? Starting point is the lowest point of the current line(i.e. this includes descenders, but we'll deal with that via the strutb@x)
   \advance\dimen1 by -\dp\str@tbox
   \ifhmode
@@ -584,18 +584,6 @@
 	  %\advance\dimen1 by -\lastdepth
 	%\fi
      \fi
-     \delay@test{droppic}%
-     \ifx\t@std@lay\relax \MSG{*** Cutout for picture \the\im@gecount, re-run to generate \string\DelayedItem\space setting}%
-     \else \MSG{* Cutout for picture \the\im@gecount}\fi
-     \beginL\pdfsavepos
-     \edef\dc@ref@rgs{\string\@delayedthing\string{droppic\string}\string{\c@rref\string}}%
-     \x@\write\x@\p@rlocs\x@{\dc@ref@rgs{\the\pdflastxpos}{\the\pdflastypos}}\endL
-     \trace{C}{Cutout data written for \dc@ref@rgs}%
-     \ifx\t@std@lay\relax
-	\count254=0
-     \else
-	\count254=\t@std@lay
-     \fi
      %\csname\m@rker\endcsname
   \else
      \trace{g}{Cutout in vertical mode.}%
@@ -604,29 +592,54 @@
   %\advance\dimen1 by \baselineskip
   \advance\dimen1 by \c@tskip\baselineskip
  \dimen2=\wd#1\advance\dimen2 by 10pt\dimen3=\hs@ze \advance\dimen3 by -\dimen2
-  \ifdim\dimen3<5em\message{*** \w@tsit specification of \size@ption \sizem@ltiple (at \ch@pter:\v@rse)
-			    leaves \the\dimen3 \space for text. That's probably not enough.}\fi
+  \ifdim\dimen3<5em\message{*** \w@tsit specification of \size@ption \sizem@ltiple (at \ch@pter:\v@rse) leaves \the\dimen3 \space for text. That's probably not enough.}\fi
   \setbox#1\vbox to 0pt{\kern\dimen1\kern\count255\baselineskip\vbox to 0pt{\vss\box#1}\vss}%
-  %Switch relative (inner/outer) to absolute (left/right) depending on page number for this image.
   \advance\count254 by \c@tskip
   \ifx\l@cspec\@lignLeft
+    \let\c@tcmd\leftcutout
+    \edef\thing@side{L}%
     \setbox#1\hbox to \hsize{\box#1\hss}%
-    \leavevmode\str@t\vadjust {\vbox to 0pt{\box#1\vss}}%
-    \trace{g}{leftcutout \the\dimen2, \c@tskip, \the\count255}%
-    \leftcutout{\the\dimen2}{\the\count254}{\the\count255}%
-  \else\ifx\l@cspec\@lignRight
+  \else
+    \ifx\l@cspec\@lignRight
+      \let\c@tcmd\rightcutout
+      \edef\thing@side{R}%
       \setbox#1\hbox to \hsize{\hss\box#1}%
-      \leavevmode\str@t\vadjust {\vbox to 0pt{\box#1\vss}}%
-     % \strut\vadjust pre{\box#1}%
-      \trace{g}{rightcutout \the\dimen2, \c@tskip, \the\count255}%\
-      %\edef\t@mpd{\the\dimen2}%
-      \rightcutout{\the\dimen2}{\the\count254}{\the\count255}%\emspace
     \else
       \message{*** Unknown cutout position \l@cspec, picture misplaced}%
-      \box#1
+      \let\c@tcmd\rightcutout
+      \edef\thing@side{R}%
+      \setbox#1\hbox to \hsize{\hss\box#1\hss}%
     \fi
-    \unskip
   \fi
+  \delay@test{droppic\the\im@gecount}%
+  \ifx\t@std@lay\relax \MSG{*** Cutout for picture \the\im@gecount, (\c@rref) re-run to generate \string\DelayedItem\space setting}%
+  \else \MSG{* Cutout for picture \the\im@gecount\space at \c@rref}\fi
+  %
+  \ifx\t@std@lay\relax
+    \count254=0
+  \else
+    \count254=\t@std@lay
+  \fi
+  \beginL\pdfsavepos
+  \edef\dc@ref@rgs{\string\@delayedthing\string{droppic\the\im@gecount\string}\string{\c@rref\string}\string{0\string}\string{\the\dimen2\string}\string{\the\count255\string}\string{\the\count254\string}\string{\thing@side\string}}%
+  \x@\write\x@\p@rlocs\x@{\dc@ref@rgs{\the\pdflastxpos}{\the\pdflastypos}}\endL
+  \trace{C}{Cutout data written for \dc@ref@rgs}%
+  %
+  \ifx\t@std@lay\relax
+    \MSG{*** Image in cutout at \c@rref, re-run to generate \string\DelayedItem\space settings}%
+    \add@pending{droppic\the\im@gecount}{\c@rref}{0}{\the\dimen2}{\the\count255}{\the\count254}{\thing@side}%
+  \else
+  \fi
+  \leavevmode\str@t\vadjust {\vbox to 0pt{\box#1\vss}}%
+  \run@pending
+    %\setbox#1\hbox to \hsize{\box#1\hss}%
+    %\trace{g}{leftcutout \the\dimen2, \c@tskip, \the\count255}%
+    %\leftcutout{\the\dimen2}{\the\coun254}{\the\count255}%
+  %\else\ifx\l@cspec\@lignRight
+      %\leavevmode\str@t\vadjust {\vbox to 0pt{\box#1\vss}}%
+     %% \strut\vadjust pre{\box#1}%
+      %\trace{g}{rightcutout \the\dimen2, \c@tskip, \the\count255}%\
+  %\fi
 }
 %-cfig_dofigure_7
 \newtoks\PicPath % directory containing picture files

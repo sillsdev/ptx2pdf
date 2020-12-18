@@ -455,6 +455,7 @@
      \spacefactor=\n@wchaptersf % prevent hanging verse number here
     \fi
    \fi\fi
+   \run@pending
 %-cpar_parstyle_drop
 %+cpar_parstyle_final
    \ifx\f@rstindent\relax \else
@@ -578,24 +579,48 @@
 %+cpar_parloccmds
 
 % Stack operations for delayed items.
-\def\parse@pending#1@#2@#3\E{\def\this@thing{#1}\def\thing@ref{#2}\thing@y=#3}%
-\def\write@pending#1@#2@#3\E{\def\this@thing{#1}\def\thing@ref{#2}\thing@y=#3
-   \trace{C}{Writing #1 #2 =#3}%
-   \wr@teDelayedItem{\this@thing}{\thing@ref}{\the\this@y}%
+% pending item arguments: 
+% 1. Item type 
+% 2. Curref
+% 3. Y ref (sp) of reference mark (or 0 if no reference yet)
+% 4. Width (points) of cutout
+% 5. Height (lines) of cutout
+% 6. (initially) Lines below reference mark for cutout, later lines below par start
+% 7. Cutout side (L or R for Left/Right)
+\def\parse@pending#1@#2@#3(#4x#5@#6)#7\E{\def\this@thing{#1}\def\thing@ref{#2}\thing@y=#3
+  \def\thing@wd{#4}\def\thing@ht{#5}\def\thing@after{#6}\def\thing@side{#7}%
+  \D@IT}%
+\def\write@pending#1@#2@#3(#4x#5@#6)#7\E{\def\this@thing{#1}\def\thing@ref{#2}\thing@y=#3
+  \def\thing@wd{#4}\def\thing@ht{#5}\def\thing@after{#6}\def\thing@side{#7}%
+  \trace{C}{Writing #1 #2 =#3(#4x#5@6)#7}%
+  \wr@teDelayedItem{\this@thing}{\thing@ref}{\the\this@y}{(\thing@wd x\thing@ht @\thing@after)\thing@side}%
 }%
 \xdef\pending@items{,} %same as cstackempty, defined later
-\def\get@pending{\ifx\pending@items\cstackempty
+\def\get@pending{\let\D@IT=\relax\ifx\pending@items\cstackempty
      \let\this@thing\empty\let\thing@ref\empty\thing@y=0
    \else%
      \let\d@=\parse@pending
      \x@\cstacktop\pending@items\E
    \fi}
 \def\pop@pending{\ifx\pending@items\cstackempty\else
-   \x@\cstackpop\pending@items\E\fi
+   \xdef\pending@items{\x@\cstackpop\pending@items\E}\fi
    \ifx\pending@items\empty\let\pending@items\cstackempty\fi}
-\def\add@pending#1#2#3{\edef\tmp{#1@#2@#3}\ifx\pending@items\cstackempty
+
+\def\add@pending#1#2#3#4#5#6#7{\trace{C}{add@pending #1@#2}%
+   \edef\tmp{#1@#2@#3(#4x#5@#6)#7}\ifx\pending@items\cstackempty
    \edef\pending@items{\tmp,}\else\edef\pending@items{\pending@items\tmp,}\fi}
 
+\def\run@pending{\trace{C}{run@pending: \pending@items}%
+  \ifx\pending@items\cstackempty\else
+    \def\D@IT{%\ifnum\thing@after<1 
+      \trace{C}{run@pending Cutout: \thing@side}%
+      \@cutout{\thing@side}{\thing@wd}{\thing@after}{\thing@ht}%
+      %\fi
+    }%
+    \let\d@\parse@pending
+    \x@\cstackdown\pending@items\E
+  \fi
+}
 %prev@y is the pdf y pos of the current paragraph
 %this@y is the pdf y pos of the current line within the paragraph 
 \newcount\prev@y \newcount\this@y \newcount\thing@y
@@ -606,15 +631,23 @@
 
 \def\@parend#1#2{%
   \ifx\pending@items\cstackempty\else
-    \this@y=#2\relax
-    \ifnum\chap@y>\this@y
-      \advance\this@y by -\chap@y
-      \divide\this@y by \baselineskip
-    \else
-      \MSG{*** unable to determine \string\DelayedChapter\space setting for \pendingb@@k\space\pendingch@pter / \pendingtyp@:\pendingr@f}%
-      \let\pendingch@pter=\empty
-      \let\pendingb@@k=\empty
-    \fi
+    \trace{C}{Before parend: pending: \pending@items}%
+    \def\D@IT{%
+      \this@y=#2\relax
+      \ifnum\thing@y>\this@y
+        \advance\this@y by -\thing@y
+        \divide\this@y by \baselineskip
+	\MSG{\this@thing \thing@ref [ \the\thing@y=>\the\this@y]}%
+	\add@pending{\this@thing}{\thing@ref}{\this@y}{\thing@wd}{\thing@ht}{\thing@after}{\thing@side}%
+      \else
+        \MSG{*** unable to determine \string\DelayedItem\space setting for \this@thing/\thing@ref (\the\thing@y, \the\this@y), removed from list}%
+      \fi
+    }
+    \let\d@=\parse@pending
+    \let\tmp\pending@items
+    \global\let\pending@items\cstackempty
+    \x@\cstackup\tmp\E
+    \trace{C}{After parend: pending: \pending@items}%
   \fi}
 
 \def\@parlines#1{\ifx\pendingch@pter\empty\else%
@@ -631,7 +664,6 @@
   \ifx\pending@items\cstackempty\else
     \let\d@=\write@pending
     \x@\cstackdown\pending@items\E
-    %\wr@teDelayedItem{\pendingtyp@}{\pendingr@f}{\the\this@y}%
   \fi
 }
 %-cpar_parloccmds
@@ -649,20 +681,20 @@
   %\fi}
 
 \def\@delayedchapter#1#2#3#4{%
-  \@delayedthing{chapter}{#1.#2}{#3}{#4}}
+  \@delayedthing{chapter}{\c@rref}{#4}{2}{\the\ch@pterwd}{0}{\ifRTL R\else L\fi}{#3}{#4}}
 
-\def\@delayedthing#1#2#3#4{\thing@y=#4\relax
-  \ifnum\prev@y<\thing@y % para start was lower than chapter number, must have passed a col/page break
+%
+\def\@delayedthing#1#2#3#4#5#6#7#8#9{\thing@y=#9\relax
+  \ifnum\the\prev@y<\thing@y % para start was lower than chapter number, must have passed a col/page break
     \def\this@thing{#1}% What is it?
     \def\thing@ref{#2}% Unique id.
-    \add@pending{#1}{#2}{#4}%
-
+    \add@pending{#1}{#2}{\thing@y}{#4}{#5}{#6}{#7}%
   \else % para start level with or above chapter number; OK to calculate # of lines
     \tmp@lines=\prev@y
     \advance\tmp@lines by -\thing@y
     \divide\tmp@lines by \baselineskip
-    \MSG{* calculated \string\DelayedItem{#1}{#2}{\the\tmp@lines}}%
-    \wr@teDelayedItem{#1}{#2}{\the\tmp@lines}%
+    \MSG{* calculated \string\DelayedItem{#1}{#2}{\the\tmp@lines} (#4 x#5)}%
+    \wr@teDelayedItem{#1}{#2}{\the\tmp@lines}{(#4x#5@#6)#7}%
   \fi}
 
 %-cpar_delayedchap
@@ -688,9 +720,9 @@
   %%\fi
   %\immediate\write\delayf@le{\string\DelayedChapter{#1}{#2}{\number\th@sdelay}}%
 %}
-\def\wr@teDelayedItem#1#2#3{%
+\def\wr@teDelayedItem#1#2#3#4{%
+  %\wr@teDelayedItem{thingtype}{curref}{y}{cutout wd}{cutout ht}{cutout after}{cutout side}%
   \delay@test{#1}%
-  %\x@\let\x@\t@st\csname delay-#1:#2\endcsname
   \ifx\t@std@lay\relax \pr@vdelay=-2 % ensure undefined value will not match 0
   \else \pr@vdelay=\t@std@lay\fi
   \th@sdelay=#3\relax
@@ -704,14 +736,11 @@
       \else \MSG{PARLOC: OK using RaiseChapter at #1 #2}\fi
       \immediate\write\delayf@le{\string\RaiseItem{#1}{#2}}%
     \else
-      \MSG{PARLOC: Rerun. Delayed #1 setting changed at #2}%
+      \MSG{PARLOC: Rerun. Delayed #1 setting changed (from \the\pr@vdelay to \the\th@sdelay) at #2}%
     \fi
   \fi
-  \immediate\write\delayf@le{\string\DelayedItem{#1}{#2}{\number\th@sdelay}}%
+  \immediate\write\delayf@le{\string\DelayedItem{#1}{#2}{\number\th@sdelay}{#4}}%
 }
-\newcount\pr@vdelay \newcount\th@sdelay
-\newif\ifsk@pping \newbox\j@nkbox
-%-cpar_writedelayed
 \newcount\pr@vdelay \newcount\th@sdelay
 \newif\ifsk@pping \newbox\j@nkbox
 %-cpar_writedelayed
@@ -752,11 +781,10 @@
 %\def\DelayedChapter#1#2#3{\uppercase{\def\ucb@@k{#1}}%
   %\x@\edef\csname delay-\ucb@@k.#2\endcsname{#3}}
 \def\DelayedChapter#1#2#3{\uppercase{\def\ucb@@k{#1}}%
-  \DelayedItem{chapter}{\ucb@@k.#2}{#3}}
+  \DelayedItem{chapter}{\ucb@@k.#2}{#3}{#2}}
 
-\def\DelayedItem#1#2#3{%
-  \x@\edef\csname delay-#1.#2\endcsname{#3}}
-
+\def\DelayedItem#1#2#3#4{%
+  \x@\xdef\csname delay-#1.#2\endcsname{#3}\x@\xdef\csname delayparam-#1.#2\endcsname{#4}}
 
 % Used to set a delayed paragraph number one line higher (projecting above the line with v.1 instead of below it)
 %\def\RaiseChapter#1#2{\uppercase{\def\ucb@@k{#1}}%
@@ -789,16 +817,18 @@
      \ifRTL\let\c@tcmd=\rightcutout\else\let\c@tcmd=\leftcutout\fi
      \x@\c@tcmd\x@{\the\ch@pterwd}{0\t@std@lay}{2}%
      \vadjust{\vbox to 0pt{\kern-\dp\str@tbox \kern-\ht\ch@pterbox              %(2)
-      \x@\let\x@\t@st\csname raise-\id@@@.\ch@pter\endcsname
+      %\x@\let\x@\t@st\csname raise-\id@@@.\ch@pter\endcsname
       \raise@test{chapter}%
       \ifx\t@str@ise\relax \else \kern-\baselineskip \fi
       \ifRTL\let\n@xt\rightline\else\let\n@xt\leftline\fi
       \n@xt{\ifRTL\beginR\fi\box\ch@pterbox\ifRTL\endR\fi}\vss}%
       \pdfb@@kmark\pdfch@ptermark\nobreak}%
      \beginL\pdfsavepos                                                         %(3)
+     %\edef\dc@ref@rgs{\string\@delayedchapter\string{\id@@@\string}\string{\ch@pter\string}}%
      \edef\dc@ref@rgs{\string\@delayedchapter\string{\id@@@\string}\string{\ch@pter\string}}%
      \x@\write\x@\p@rlocs\x@{\dc@ref@rgs{\the\pdflastxpos}{\the\pdflastypos}}\endL
      \dr@ppednumbertrue
+     \run@pending
     \fi
   \fi}
 

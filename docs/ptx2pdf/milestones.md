@@ -260,6 +260,11 @@ to go to insert the cutout. This gets output during the shipout and so is
 measured against the top of the paragraph or column.  Then we make a cutout on
 the appropriate side. The cutout is shifted down by the previously read delay.
 
+Fortunately, TeX allows us to set the shape of the paragraph in any part of the 
+paragraph's text - beginning, middle or end, as long as it has been defined 
+before the text is actually completed and it starts getting split up into 
+paragraphs. 
+
 The actual chapter box is output as a `\vadjust`, which inserts a vbox after
 the current line. By setting the vbox to a height of 0pt, it adds no extra
 height to the line on the page. Inside the box we have to shift from the current
