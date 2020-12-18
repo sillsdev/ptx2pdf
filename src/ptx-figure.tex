@@ -52,7 +52,7 @@
 %+cfig_getonepair
 \def\FigP@ramAlt{alt} \def\FigP@ramSrc{src} \def\FigP@ramSize{size} \def\FigP@ramLoc{loc}
 \def\FigP@ramCopy{copy} \def\FigP@ramRef{ref} \def\FigP@ramXtra{x-xetex} \def\FigP@ramPgpos{pgpos}
-\def\FigP@ramMirror{mirror} \def\FigP@ramScale{scale}  \def\FigP@ramMedia{media} 
+\def\FigP@ramMirror{mirror} \def\FigP@ramScale{scale}  \def\FigP@ramMedia{media}
 
 \newif\ifusfmthree \usfmthreefalse
 \def\getonepairp@ram#1="#2" {\stripspace#1\end/ \end/\relax{#1}\edef\p@ramid{\p@ram}%
@@ -109,12 +109,12 @@
     \ifx\t\empty\else
       \edef\xtraremains{\xtraremains#1\space}\trace{g}{Passing #1 directly to xetex}%
     \fi
-  \else 
+  \else
     \trace{g}{Found k=#1,v=#2 (x=#3)}%
     \def\key{#1}\def\val{#2}%
     \ifx\key\keyR@TATE \rotimagetrue
       \ifx\val\val@BIND \ifodd\whichp@ge\def\xtra{rotated 90}\else\def\xtra{rotated -90}\fi
-      \else 
+      \else
         \ifx\val\val@EDGE \ifodd\whichp@ge\def\xtra{rotated -90}\else\def\xtra{rotated 90}\fi
         \else \tempfalse \t@mpfalse
           \ifx\val\val@dd \t@mptrue \ifodd\whichp@ge\temptrue\fi\fi
@@ -156,7 +156,7 @@
 \newif\iffiglocleft \figloclefttrue
 \newif\ifpicUsesIns \picUsesInstrue
 \newif\ifpicNarrow \picNarrowfalse
-\newif\ifrotimage 
+\newif\ifrotimage
 \newif\ift@mp %because just one temp isn't enough
 
 %+cfig_parsepicuse
@@ -183,7 +183,7 @@
       %redefine loc@ption
       \xdef\loc@ption{\t@mp\t@mpb}%
   \fi\fi
-  % new options 
+  % new options
   \ifx\t@mp\loc@Inl
     \trace{g}{Experimental inline \w@tsit}%
     \global\let\picl@c\loc@Inl\xdef\pic@lign{\t@mpb}\global\picUsesInsfalse\p@cinswid=\hsize
@@ -201,7 +201,7 @@
     \xdef\pic@lign{\t@mpb}\global\picUsesInsfalse
     \ifx\t@mpb\@lignLeft\picNarrowtrue\fi
     \ifx\t@mpb\@lignRight\picNarrowtrue\fi
-    \ifx\t@mpc\empty\gdef\c@tskip{0}\else\xdef\c@tskip{\t@mpc}\fi%Borrow cutskip for parskip 
+    \ifx\t@mpc\empty\gdef\c@tskip{0}\else\xdef\c@tskip{\t@mpc}\fi%Borrow cutskip for parskip
   \fi
   % full-page options
   \tempfalse
@@ -293,18 +293,18 @@
 	\else\def\loc@ption{tl}\fi % else default to top left FIXME? Standard says inline. Could swap to h if that proves stable.
   \fi
   % set width to column width or span width and other default parameters
-  \p@cwidth=\textwidth \advance\p@cwidth by -\columnshift 
+  \p@cwidth=\textwidth \advance\p@cwidth by -\columnshift
   \p@cheight=\textheight
   \advance\p@cheight by -4\baselineskip % there should be text on the page too - allow for caption+space+2 lines of text!
   \picUsesInstrue \picNarrowfalse                                               %(1)
   \gdef\pic@lign{c}% How does the picture align within the box?
   \gdef\picV@lign{c}% How does the picture align vertically on the page (Page/Full only)
-  \gdef\picl@c{}% location code for in-line (non-insert) pictures 
+  \gdef\picl@c{}% location code for in-line (non-insert) pictures
   % By default, set the insert width to full span
   \p@cinswid=\textwidth\advance\p@cinswid by -\columnshift
   \ifx\size@ption\size@COL \p@cwidth=\hsize
   \else\ifx\size@ption\size@SPAN
-    \else\ifx\size@ption\size@PAGE 
+    \else\ifx\size@ption\size@PAGE
         \global\let\picl@c=\loc@Page
         \picUsesInsfalse
         \p@cheight=\textheight % no text
@@ -313,7 +313,7 @@
           \global\let\picl@c=\loc@Full
           \picUsesInsfalse
           \p@cwidth=\PaperWidth\p@cheight=\PaperHeight
-        \else 
+        \else
            \errmessage{Unknown picture size "\size@ption", expected "col", "span", "page" or "full"}\fi\fi\fi\fi
   \let\p@cins=\relax
 %-cfig_dofigure_1
@@ -468,7 +468,7 @@
     % Calculate lines used for the picture
     \dimen0=\ht0 \advance\dimen0 by \dp0 %
     \count255=\dimen0
-    \divide\count255 by \baselineskip 
+    \divide\count255 by \baselineskip
     \advance\count255 by 1
     \dimen2=\count255\baselineskip %space reserved...
     \trace{g}{Inline \w@tsit\space takes \the\dimen0, reserving \the\dimen2}%
@@ -488,7 +488,7 @@
       \d@figureFull0%
     \fi
     \ifx\picl@c\loc@Cut
-      \d@figureCut0% 
+      \d@figureCut0%
     \fi
     %Sanity check. If we used \box0 then it'll be empty now.
     \ifvoid0\else\message{Placement for \the\im@gecount could not be understood. Image Lost!}\fi
@@ -506,11 +506,11 @@
   \fi
   %\splittopskip\baselineskip
   \def\picc@ntents{%
-    \gridp@cfalse% Not true! It's not floating. 
+    \gridp@cfalse% Not true! It's not floating.
     \gridb@x#1 \dimen9=\lastdepth \kern\dimen9
     \trace{g}{gridbox dp=\the\dimen9}%There's a skip at the bottom of the box, but somehow the depth is kept. Need to kill it.
   \penalty10}%
-  \ifvmode \picc@ntents 
+  \ifvmode \picc@ntents
   \else\vadjust pre{\picc@ntents}\fi
 }
 
@@ -570,20 +570,19 @@
   \mkstr@t
   \dimen2=\count255\baselineskip %space reserved...
   \trace{g}{\w@tsit\space is cutout. \the\count255 x \the\baselineskip  = \the\dimen2. Box is \the\dimen0}%
-  \setbox#1=\hbox{\vrule height\dimen0\box#1}%TESTING.
-  \dimen1=0pt%-\baselineskip %where does the picture go? Starting point is the lowest point of the line above (i.e. this includes descenders)
-  \ifdim\lastdepth>0pt
-    \advance\dimen1 by -\lastdepth
-  \fi
+  %\setbox#1=\hbox{\vrule height\dimen0\box#1}%TESTING.
+  \dimen1=-\baselineskip %where does the picture go? Starting point is the lowest point of the current line(i.e. this includes descenders, but we'll deal with that via the strutb@x)
+  \advance\dimen1 by -\dp\str@tbox
   \ifhmode
      \trace{g}{Cutout in horizontal mode. ref:\c@rref}%
      \ifx\prev@rsemode\empty
-       \trace{g}{we were in horizontal mode even before the verse number. lastdepth is not trustworthy}%
-       \dimen1=0pt
+       \trace{g}{we were in horizontal mode even before the verse number.}%
+     %  \dimen1=0pt
      \else
-       \trace{g}{Before this verse was started it was in vertical mode. lastdepth is trustworthy}%
-       %\csname\prev@rsemode\endcsname
-       %\vskip -\baselineskip
+       \trace{g}{Before this verse was started it was in vertical mode.}%
+	%\ifdim\lastdepth>0pt
+	  %\advance\dimen1 by -\lastdepth
+	%\fi
      \fi
      \delay@test{droppic}%
      \ifx\t@std@lay\relax \MSG{*** Cutout for picture \the\im@gecount, re-run to generate \string\DelayedItem\space setting}%
@@ -594,17 +593,17 @@
      \trace{C}{Cutout data written for \dc@ref@rgs}%
      \ifx\t@std@lay\relax
 	\count254=0
-     \else 
+     \else
 	\count254=\t@std@lay
      \fi
      %\csname\m@rker\endcsname
-  \else 
+  \else
      \trace{g}{Cutout in vertical mode.}%
      \count254=0
-  \fi 
+  \fi
   %\advance\dimen1 by \baselineskip
   \advance\dimen1 by \c@tskip\baselineskip
-  \dimen2=\wd#1\advance\dimen2 by 10pt\dimen3=\hs@ze \advance\dimen3 by -\dimen2
+ \dimen2=\wd#1\advance\dimen2 by 10pt\dimen3=\hs@ze \advance\dimen3 by -\dimen2
   \ifdim\dimen3<5em\message{*** \w@tsit specification of \size@ption \sizem@ltiple (at \ch@pter:\v@rse)
 			    leaves \the\dimen3 \space for text. That's probably not enough.}\fi
   \setbox#1\vbox to 0pt{\kern\dimen1\kern\count255\baselineskip\vbox to 0pt{\vss\box#1}\vss}%
@@ -612,12 +611,13 @@
   \advance\count254 by \c@tskip
   \ifx\l@cspec\@lignLeft
     \setbox#1\hbox to \hsize{\box#1\hss}%
-    \strut\vadjust pre{\box#1}% 
+    \leavevmode\str@t\vadjust {\vbox to 0pt{\box#1\vss}}%
     \trace{g}{leftcutout \the\dimen2, \c@tskip, \the\count255}%
     \leftcutout{\the\dimen2}{\the\count254}{\the\count255}%
   \else\ifx\l@cspec\@lignRight
       \setbox#1\hbox to \hsize{\hss\box#1}%
-      \strut\vadjust pre{\box#1}% 
+      \leavevmode\str@t\vadjust {\vbox to 0pt{\box#1\vss}}%
+     % \strut\vadjust pre{\box#1}%
       \trace{g}{rightcutout \the\dimen2, \c@tskip, \the\count255}%\
       %\edef\t@mpd{\the\dimen2}%
       \rightcutout{\the\dimen2}{\the\count254}{\the\count255}%\emspace
@@ -636,7 +636,7 @@
 \CaptionRefFirstfalse
 \newif\ifCaptionFirst % Does the caption come before the image or after?
 \CaptionFirstfalse
-\def\FullPageFudgeFactor{-2pt} % How much does a full page top-aligned picture miss the top of the page by? 
+\def\FullPageFudgeFactor{-2pt} % How much does a full page top-aligned picture miss the top of the page by?
 %+cfig_checkpdf
 \def\ch@ckpdf#1.#2.#3\endf@lename{\lowercase{\edef\@xt{#2}}%
   \ifx\@xt\@pdf \let\picfilecomm@nd\XeTeXpdffile \fi}
@@ -725,14 +725,14 @@
    \fi
    \let\figonpage=\checkfigpage
    \inputpicp@ges "#1"
-   \iftemp\message{}\message{*** Figures have changed. It may be necessary to re-run the job}\fi% 
+   \iftemp\message{}\message{*** Figures have changed. It may be necessary to re-run the job}\fi%
 }
 
 \def\writefigp@gelog#1{%
   \write\picp@ges{\string\figonpage{\the\pageno}#1}%
 }
 
-%: `\figonpage` gets written to the picpages auxiliary file at insert use. 
+%: `\figonpage` gets written to the picpages auxiliary file at insert use.
 % #1 ~ Page number
 % #2 ~ Figure number
 % #3 ~ File name
