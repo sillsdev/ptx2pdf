@@ -1,5 +1,5 @@
 TST 1.4 This is a rose, not a fig |loc="cl" src="image.jpg" alt="Figs are tasty"  ref="1:4" size="col*0.25"
 TST 1.5 This is a rose, not a fig |loc="h" src="image.jpg" alt="Figs are tasty"  ref="1:5" size="col*0.25"
 TST 1.8 This is a rose, not a fig |loc="cr1" src="image.jpg" alt="Figs are tasty"  ref="1:8" size="col*0.28"
-TST 2.1 Rose |loc="cr0" src="image.jpg" alt="Figs are tasty"  ref="2:1" size="col*0.2"
-TST 2.1 Not fig.|loc="cl2" src="image.jpg" alt="Figs are tasty"  ref="2:1" size="col*0.2"
+%TST 2.1 Rose |loc="cr0" src="image.jpg" alt="Figs are tasty"  ref="2:1" size="col*0.2"
+%TST 2.1 Not fig.|loc="cl2" src="image.jpg" alt="Figs are tasty"  ref="2:1" size="col*0.2"

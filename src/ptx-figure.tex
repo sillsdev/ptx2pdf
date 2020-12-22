@@ -613,7 +613,7 @@
   \fi
   \delay@test{droppic\the\im@gecount}%
   \ifx\t@std@lay\relax \MSG{*** Cutout for picture \the\im@gecount, (\c@rref) re-run to generate \string\DelayedItem\space setting}%
-  \else \MSG{* Cutout for picture \the\im@gecount\space at \c@rref}\fi
+  \else \MSG{* Cutout for picture \the\im@gecount\space at \c@rref, delay is \t@std@lay}\fi
   %
   \ifx\t@std@lay\relax
     \count254=0
@@ -624,6 +624,7 @@
   \edef\dc@ref@rgs{\string\@delayedthing\string{droppic\the\im@gecount\string}\string{\c@rref\string}\string{0\string}\string{\the\dimen2\string}\string{\the\count255\string}\string{\the\count254\string}\string{\thing@side\string}}%
   \x@\write\x@\p@rlocs\x@{\dc@ref@rgs{\the\pdflastxpos}{\the\pdflastypos}}\endL
   \trace{C}{Cutout data written for \dc@ref@rgs}%
+  \MSG{+++ CUTOUT \dc@ref@rgs}%
   %
   \ifx\t@std@lay\relax
     \MSG{*** Image in cutout at \c@rref, re-run to generate \string\DelayedItem\space settings}%

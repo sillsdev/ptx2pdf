@@ -94,6 +94,7 @@
     \count@=\csname cut@after\the\@index\endcsname
     \advance\count@ by \csname cut@lines\the\@index\endcsname \relax
     \ifnum\count@>\@parshapelines \@parshapelines=\count@ \fi
+    \ifnum\@parshapelines>500 \MSG{*** Impossible number of lines in cutout:\the\count@}\@parshapelines=500\fi
   \repeat
   \advance\@parshapelines by 1
   \def\@shape{}%                                                                %(1)

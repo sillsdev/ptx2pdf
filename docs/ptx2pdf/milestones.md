@@ -449,10 +449,11 @@ cannot be longer than the old list).
 ### Parlocs and Delayed Cutouts
 
 Calculating where delayed cutouts go involves two auxiliary files. The
-`.delayed` file contains entries for each delayed chapter number (i.e. `\nb`
-paragraph). The `.parlocs` gives the x, y position of the start and end of each
+`.delayed` file (read at start-up) contains entries for each delayed chapter number 
+(i.e. `\nb` paragraph) and item in a cutout. The `.parlocs`  file
+gives the x, y position of the start and end of each
 paragraph on a page. It also gives the number of lines in a paragraph that has
-a dropped number in it.
+a dropped number or cutout in it.
 
 Managing the parlocs files are done together. We open the `.delayed` file to
 read, and if it is present delay the reading until we have closed the test
@@ -462,7 +463,7 @@ to run at initialisation
 
 [=cpar_initparlocs]::
 
-Closing up the parlocs file is somewhat the opposite of initialising it. For
+Closing up the parlocs files is somewhat the opposite of initialising it. For
 this we close the written `.parlocs` file and then set up to read it. We open
 the `.delayed` file for writing and then read the `.parlocs` file and process
 it, which will write things to the `.delayed` file which we close after we have
@@ -488,6 +489,11 @@ The macro that actually causes output to the `.delayed` file is `\@parlines`
 which lists how many lines are in the cutout. The y value, which is in lines, is
 adjusted according to the number of lines needed and then a `.delayed` entry is
 written to that file and the pending chapter and book are cleared.
+
+`\@delayedthing` and the simplified `\@delayedchapter` record various parameters  
+related to the position and size of the cutout on the page, and build a stack
+of itmes. `\@parlines` then uses those parameters to determine the numbers to 
+save into the `.delay` file.
 
 [=cpar_parloccmds]::
 
