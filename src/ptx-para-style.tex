@@ -232,7 +232,7 @@
 \newif\ifJustifyPars \JustifyParstrue
 \def\intro@mbigious#1{\x@\def\csname intro@mbigious-#1\endcsname{t}}
 \def\settest@mb#1{\x@\let\x@\test@mb\csname intro@mbigious-#1\endcsname}
-\def\intro@mbigious{iex} % iex can be intro or not intro.
+\intro@mbigious{iex} % iex can be intro or not intro.
 
 \newdimen\lastdepth
 \newcount\dropped@ther@lines
@@ -558,6 +558,24 @@
   \immediate\openout\p@rlocs="\jobname.parlocs"
 }
 \addtoinithooks{\initp@rlocs}
+\def\locs@startstop#1{%
+  \showboxdepth=99
+  \showboxbreadth=99
+  \let\old@ep=\everypar
+  \everypar{}%
+  \setbox#1\vbox{%
+    %\hsize=\wd#1%
+    \edef\dc@ref@rgs{\string\@colstart{\the\ht#1}{\the\dp#1}{\the\wd#1}}%
+    \pdfsavepos
+    \x@\write\x@\p@rlocs\x@{\dc@ref@rgs{\the\pdflastxpos}{\the\pdflastypos}}%
+    \box#1%
+    \pdfsavepos
+    \write\p@rlocs{\string\@colstop{\the\pdflastxpos}{\the\pdflastypos}}%
+    \MSG{\dc@ref@rgs (\the\hsize) ->}%
+    }%
+    \MSG{\the\ht#1,\the\dp#1,\the\wd#1}%
+    %\showbox#1
+}
 %-cpar_initparlocs
 
 %+cpar_finishparlocs
@@ -575,77 +593,52 @@
 
 
 % commands that get written to the parlocs file to record locations
+
 %+cpar_parloccmds
-
-% Stack operations for delayed items.
-% pending item arguments: 
-% 1. Item type 
-% 2. Curref
-% 3. Y ref (sp) of reference mark (or 0 if no reference yet)
-% 4. Width (points) of cutout
-% 5. Height (lines) of cutout
-% 6. (initially) Lines below reference mark for cutout, later lines below par start
-% 7. Cutout side (L or R for Left/Right)
-\def\parse@pending#1@#2@#3(#4x#5@#6)#7\E{\def\this@thing{#1}\def\thing@ref{#2}\thing@y=#3
-  \def\thing@wd{#4}\def\thing@ht{#5}\def\thing@after{#6}\def\thing@side{#7}%
-  \D@IT}%
-\xdef\pending@items{,} %same as cstackempty, but that's defined later
-
-% This bit is called in proccessing the  pending list to fill the .delay file.
-\def\write@pending#1@#2@#3(#4x#5@#6)#7\E{\def\this@thing{#1}\def\thing@ref{#2}\thing@y=#3
-  %\MSG{+write@pending#1@#2@#3(#4x#5@#6)#7}%
-  \def\thing@wd{#4}\def\thing@ht{#5}\def\thing@after{#6}\def\thing@side{#7}%
-  %\MSG{++ \the\prev@y, \the\thing@y, \the\baselineskip, #6}%
-  \tmp@lines=\prev@y
-  \advance\tmp@lines by -\thing@y
-  \divide\tmp@lines by \baselineskip
-  \advance\tmp@lines by #6
-  \MSG{+++ Writing #1 #2 [#3=>\the\tmp@lines](#4x#5@6)#7}%
-  \wr@teDelayedItem{\this@thing}{\thing@ref}{\tmp@lines}{(\thing@wd x\thing@ht @\thing@after)\thing@side}%
-}%
-\def\get@pending{\let\D@IT=\relax\ifx\pending@items\cstackempty
-     \let\this@thing\empty\let\thing@ref\empty\thing@y=0
-   \else%
-     \let\d@=\parse@pending
-     \x@\cstacktop\pending@items\E
-   \fi}
-\def\pop@pending{\ifx\pending@items\cstackempty\else
-   \xdef\pending@items{\x@\cstackpop\pending@items\E}\fi
-   \ifx\pending@items\empty\let\pending@items\cstackempty\fi}
-
-\def\add@pending#1#2#3#4#5#6#7{\trace{C}{add@pending #1@#2 (#4x#5@#6)}%
-   \MSG{add@pending #1@#2 (#4x#5@#6)}%
-   \edef\tmp{#1@#2@#3(#4x#5@#6)#7}\ifx\pending@items\cstackempty
-   \edef\pending@items{\tmp,}\else\edef\pending@items{\pending@items\tmp,}\fi}
-
-% Having added pending items they are run with run@pending
-\def\run@pending{\trace{C}{run@pending: \pending@items}%
-  \ifnum\dropped@ther@lines<0\dropped@ther@lines=0\fi
-  \ifx\pending@items\cstackempty\else
-    \def\D@IT{%\ifnum\thing@after<1 
-      \trace{C}{run@pending Cutout: {\thing@wd}{\thing@after}{\thing@ht}\thing@side}%
-      \tmp@lines=\thing@after\advance\tmp@lines\thing@ht
-      \ifnum\tmp@lines>\dropped@ther@lines
-        \dropped@ther@lines=\tmp@lines
-      \fi
-      \@cutout{\thing@side}{\thing@wd}{\thing@after}{\thing@ht}%
-      %\fi
-    }%
-    \let\d@\parse@pending
-    \x@\cstackdown\pending@items\E
-  \fi
-}
 %prev@y is the pdf y pos of the current paragraph
 %this@y is the pdf y pos of the last line within the paragraph 
 %thispar@lines is number of lines in the (recently finished) paragrpah
+%
 \newcount\prev@y \newcount\this@y \newcount\thing@y
 \newcount\tmp@lines \newcount\thispar@lines
+\def\this@pgno{}
+\let\par@items\cstackempty
 
-
-\def\@parstart#1#2{\prev@y=#2\relax}
+\def\@parstart#1#2{\prev@y=#2\relax\let\par@items\cstackempty}
 
 \def\@parend#1#2{%
       \this@y=#2\relax}
+
+\def\@pgstart#1{%
+      \edef\this@pgno{#1}}
+
+\def\@colstart#1#2#3#4#5{%
+      \edef\prev@col@x{#4}%
+      \edef\prev@col@y{#5}%
+      \edef\prev@col@ht{#1}%
+      \edef\prev@col@wd{#2}%
+      \edef\prev@col@dp{#3}%
+}
+\def\@colstop#1#2{%
+      \edef\this@col@x{#1}%
+      \edef\this@col@y{#2}%
+      \trace{C}{colstop: \par@items}%
+      \let\d@=\check@pagefoot
+      \x@\cstackdown\par@items\E
+}
+
+%Do somehing clever for items that are near 
+%the end of the column.. Problem: the ones we're
+%interested in doing clever things with were not put
+%on the pending stack. Use a new stack, \par@items and
+%...  Do somthing with it. At the moment just moan.
+\def\check@pagefoot#1|#2|#3\E{
+  \ifnum #3 < \this@col@y
+    \dimen1=\this@col@y sp
+    \advance \dimen1 by -#3 sp
+    \MSG{*** item type '#1' in cutout at #2 drops below the bottom of the column(by more than \the\dimen1)}%
+  \fi
+}
 
 \def\@parlines#1{%
   \thispar@lines=#1
@@ -673,15 +666,15 @@
       %\this@y=#2\relax
       %\ifnum\thing@y=0% First time. Don't adjust anything
         \else
-          \ifnum\thing@y>\this@y
+          \ifnum\thing@y<\this@y
+            \MSG{*** unable to determine \string\DelayedItem\space setting for \this@thing/\thing@ref (\the\thing@y, \the\this@y), removed from list}%
+          \else
             \tmp@lines=\thing@y
             \advance\tmp@lines by -\this@y
             \divide\tmp@lines by \baselineskip
 	    \advance\tmp@lines by \thing@after
 	    \MSG{\this@thing \thing@ref [ \thing@after=>\the\tmp@lines]}%
 	    \add@pending{\this@thing}{\thing@ref}{\the\this@y}{\thing@wd}{\thing@ht}{\thing@after}{\thing@side}%
-          \else
-            \MSG{*** unable to determine \string\DelayedItem\space setting for \this@thing/\thing@ref (\the\thing@y, \the\this@y), removed from list}%
           \fi
 	\fi
       \fi
@@ -714,17 +707,25 @@
   %\fi}
 
 \def\@delayedchapter#1#2#3#4{%
-  \@delayedthing{chapter}{\c@rref}{#4}{2}{\the\ch@pterwd}{0}{\ifRTL R\else L\fi}{#3}{#4}}
+  \@delayedthing{chapter}{\c@rref}{#4}{\the\ch@pterwd}{2}{0}{\ifRTL R\else L\fi}{#3}{#4}}
 
 %
 \def\@delayedthing#1#2#3#4#5#6#7#8#9{\thing@y=#9\relax
-  \trace{C}{delayedthing #1 #2 #3 #4 #5 #6 #7 #8#9}%
+  \trace{C}{delayedthing #1 #2 #3 #4 #5 #6 #7 #8 #9}%
   \ifnum\the\prev@y<\thing@y % para start was lower than chapter number, must have passed a col/page break
     %%\def\this@thing{#1}% What is it?
     %\def\thing@ref{#2}% Unique id.
     \MSG{* saved pending  \string\DelayedItem{#1}{#2}}%
     \add@pending{#1}{#2}{\the\thing@y}{#4}{#5}{#6}{#7}%
   \else % para start level with or above chapter number; OK to calculate # of lines
+    %First, remember where the bottom of the item
+    %probably is.
+    \tmp@lines=\thing@y
+    \dimen1=#4
+    \advance\tmp@lines by -\dimen1
+    \dimen1=#6\baselineskip
+    \advance\tmp@lines by -\dimen1
+    \edef\par@items{\cstackpush{\par@items}{#1|#2|\the\tmp@lines}}%
     \tmp@lines=\prev@y
     \advance\tmp@lines by -\thing@y
     \divide\tmp@lines by \baselineskip
@@ -845,6 +846,7 @@
     \delay@test{chapter}%
     %\x@\let\x@\t@st\csname delay-\id@@@.\ch@pter\endcsname
     \ifx\t@std@lay\relax \MSG{*** no-break at \id@@@\space\ch@pter, re-run to generate \string\DelayedChapter\space setting}%
+    \def\t@std@lay{0}%
     \else \MSG{* no-break at \id@@@\space\ch@pter}\fi
     \leavevmode\str@t                                                           %(1)
     \global\ch@pterfalse
@@ -855,7 +857,7 @@
      \setbox\ch@pterbox=\hbox{\box\ch@pterbox
        \kern\ifRTL\rightskip\else\leftskip\fi}%
      \ifRTL\let\c@tcmd=\rightcutout\else\let\c@tcmd=\leftcutout\fi
-     \x@\c@tcmd\x@{\the\ch@pterwd}{0\t@std@lay}{2}%
+     \x@\c@tcmd\x@{\the\ch@pterwd}{\t@std@lay}{2}%
      \vadjust{\vbox to 0pt{\kern-\dp\str@tbox \kern-\ht\ch@pterbox              %(2)
       %\x@\let\x@\t@st\csname raise-\id@@@.\ch@pter\endcsname
       \raise@test{chapter}%

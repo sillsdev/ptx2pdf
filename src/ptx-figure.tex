@@ -307,7 +307,7 @@
     \else\ifx\size@ption\size@PAGE
         \global\let\picl@c=\loc@Page
         \picUsesInsfalse
-        \p@cheight=\textheight % no text
+        \p@cheight=\textheight % without text
         \advance\p@cheight by -2\baselineskip
       \else\ifx\size@ption\size@FULL
           \global\let\picl@c=\loc@Full
@@ -328,7 +328,7 @@
     \whichp@ge=\pgn@
     \trace{g}{Picture \the\im@gecount was on page \pgn@ last time. [\the\pageno]}%
   \fi
-  \let\w@tsit\gr@phic   % Make sure the debugging info is correct
+  \let\w@tsit\gr@phic   % Make sure the debugging info is correct. Also, tested for sometimes 
   \x@\p@rsePicUse\loc@ption\end                                               %(2)
   % make \p@cins point to insertion class for this location
   \otherinsht=0pt % subtract this from the insert height.
@@ -380,7 +380,9 @@
     \ifx\picl@c\loc@Inl
        %\vskip0.5\baselineskip
     \fi
-    \ifCaptionFirst\d@caption\fi
+    \ifCaptionFirst\d@caption\else
+       \vskip0.3\baselineskip
+    \fi
 	% insert picture based on PicPath and file name, scaled to \p@cwidth
     \let\picfilecomm@nd=\XeTeXpicfile
     \edef\f@lename{\csname param-2\endcsname}%
@@ -620,17 +622,13 @@
   \else
     \count254=\t@std@lay
   \fi
-  \beginL\pdfsavepos
-  \edef\dc@ref@rgs{\string\@delayedthing\string{droppic\the\im@gecount\string}\string{\c@rref\string}\string{0\string}\string{\the\dimen2\string}\string{\the\count255\string}\string{\the\count254\string}\string{\thing@side\string}}%
-  \x@\write\x@\p@rlocs\x@{\dc@ref@rgs{\the\pdflastxpos}{\the\pdflastypos}}\endL
-  \trace{C}{Cutout data written for \dc@ref@rgs}%
-  \MSG{+++ CUTOUT \dc@ref@rgs}%
+  \write@delayedthing{droppic\the\im@gecount}{\the\count245}{\the\dimen2}{\the\count255}{\c@tskip}{\thing@side}%
   %
   \ifx\t@std@lay\relax
     \MSG{*** Image in cutout at \c@rref, re-run to generate \string\DelayedItem\space settings}%
-    \add@pending{droppic\the\im@gecount}{\c@rref}{0}{\the\dimen2}{\the\count255}{\the\count254}{\thing@side}%
   \else
   \fi
+  \add@pending{droppic\the\im@gecount}{\c@rref}{0}{\the\dimen2}{\the\count255}{\the\count254}{\thing@side}%
   \leavevmode\str@t\vadjust {\vbox to 0pt{\box#1\vss}}%
   \run@pending
     %\setbox#1\hbox to \hsize{\box#1\hss}%

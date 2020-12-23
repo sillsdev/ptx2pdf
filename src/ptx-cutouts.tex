@@ -138,4 +138,76 @@
 \newcount\@index \newcount\@line \newcount\@after \newcount\@until
 \newdimen\@width \newdimen\@indent \newdimen\@hsize
 %-ccut_cutthisline
+
+%+ccut_pending
+\let\pending@items\cstackempty %
+
+% Stack operations for delayed items.
+% pending item arguments: 
+% 1. Item type 
+% 2. Curref
+% 3. Y ref (sp) of reference mark (or 0 if no reference yet)
+% 4. Width (points) of cutout
+% 5. Height (lines) of cutout
+% 6. (initially) Lines below reference mark for cutout, later lines below par start
+% 7. Cutout side (L or R for Left/Right)
+\def\parse@pending#1@#2@#3(#4x#5@#6)#7\E{\def\this@thing{#1}\def\thing@ref{#2}\thing@y=#3
+  \def\thing@wd{#4}\def\thing@ht{#5}\def\thing@after{#6}\def\thing@side{#7}%
+  \D@IT}%
+
+% This bit is called in proccessing the  pending list to fill the .delay file.
+\def\write@pending#1@#2@#3(#4x#5@#6)#7\E{\def\this@thing{#1}\def\thing@ref{#2}\thing@y=#3
+  %\MSG{+write@pending#1@#2@#3(#4x#5@#6)#7}%
+  \def\thing@wd{#4}\def\thing@ht{#5}\def\thing@after{#6}\def\thing@side{#7}%
+  %\MSG{++ \the\prev@y, \the\thing@y, \the\baselineskip, #6}%
+  \tmp@lines=\prev@y
+  \advance\tmp@lines by -\thing@y
+  \divide\tmp@lines by \baselineskip
+  \advance\tmp@lines by #6
+  \MSG{+++ Writing #1 #2 [#3=>\the\tmp@lines](#4x#5@6)#7}%
+  \wr@teDelayedItem{\this@thing}{\thing@ref}{\tmp@lines}{(\thing@wd x\thing@ht @\thing@after)\thing@side}%
+}%
+\def\get@pending{\let\D@IT=\relax\ifx\pending@items\cstackempty
+     \let\this@thing\empty\let\thing@ref\empty\thing@y=0
+   \else%
+     \let\d@=\parse@pending
+     \x@\cstacktop\pending@items\E
+     \let\d@\relax
+   \fi}
+\def\pop@pending{\ifx\pending@items\cstackempty\else
+   \xdef\pending@items{\x@\cstackpop\pending@items\E}\fi
+   \ifx\pending@items\empty\let\pending@items\cstackempty\fi}
+
+\def\add@pending#1#2#3#4#5#6#7{\trace{C}{add@pending #1@#2 (#4x#5@#6)}%
+   \edef\tmp{#1@#2@#3(#4x#5@#6)#7}\ifx\pending@items\cstackempty
+   \edef\pending@items{\tmp,}\else\edef\pending@items{\pending@items\tmp,}\fi}
+
+% Having added pending items they are run with run@pending
+\def\run@pending{\trace{C}{run@pending: \pending@items}%
+  \ifnum\dropped@ther@lines<0\dropped@ther@lines=0\fi
+  \ifx\pending@items\cstackempty\else
+    \def\D@IT{%\ifnum\thing@after<1 
+      \trace{C}{run@pending Cutout: {\thing@wd}{\thing@after}{\thing@ht}\thing@side}%
+      \tmp@lines=\thing@after\advance\tmp@lines\thing@ht
+      \ifnum\tmp@lines>\dropped@ther@lines
+        \dropped@ther@lines=\tmp@lines
+      \fi
+      \@cutout{\thing@side}{\thing@wd}{\thing@after}{\thing@ht}%
+      %\fi
+    }%
+    \let\d@\parse@pending
+    \x@\cstackdown\pending@items\E
+    \let\d@\relax
+  \fi
+}
+
+\def\write@delayedthing#1#2#3#4#5#6{%
+  \edef\dc@ref@rgs{\string\@delayedthing{#1}{\c@rref}{#2}{#3}{#4}{#5}{#6}}%
+  %\x@\MSG\x@{+++ CUTOUT \dc@ref@rgs}%
+  \beginL\pdfsavepos
+  \x@\write\x@\p@rlocs\x@{\dc@ref@rgs{\the\pdflastxpos}{\the\pdflastypos}}\endL
+  \trace{C}{Cutout data written for \dc@ref@rgs}%
+}
+
+%-ccut_pending
 \endinput

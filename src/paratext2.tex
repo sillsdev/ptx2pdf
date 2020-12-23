@@ -989,6 +989,8 @@
   \fi
   \iffitonpage
     \c@lcboxheights
+    \locs@startstop{\colA}%
+    \locs@startstop{\colB}%
     \ht\colA=\dimen3 \ht\colB=\dimen3
     \dimen4=\ht\partial \dimen5=\dp\partial
     \global\setbox\partial=\vbox{
@@ -1070,6 +1072,8 @@
 %+c_twocoltrial
   \iffitonpage
     \c@lcboxheights
+    \locs@startstop{\colA}%
+    \locs@startstop{\colB}%
     \ifdim\ht\colB<1pt\setbox\colB\vbox{\noindent\par}\fi
     \ht\colA=\the\availht \ht\colB=\the\availht                             %(1)
     \def\pagecontents{%
