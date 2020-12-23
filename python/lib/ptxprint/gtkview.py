@@ -1159,6 +1159,7 @@ class GtkViewModel(ViewModel):
 
     def onSectionHeadsClicked(self, btn):
         self.onSimpleClicked(btn)
+        status = self.sensiVisible("c_sectionHeads")
         self.builder.get_object("c_parallelRefs").set_active(status)
 
     def onHyphenateClicked(self, btn):
@@ -1551,6 +1552,9 @@ class GtkViewModel(ViewModel):
         self.updatePrjLinks()
         self.builder.get_object("btn_saveConfig").set_sensitive(True)
         self.builder.get_object("btn_deleteConfig").set_sensitive(False)
+        self.set("c_interlinear", False)
+        self.set("t_interlinearLang", "")
+        self.set("c_ruby", False)
         lockBtn = self.builder.get_object("btn_lockunlock")
         lockBtn.set_label("Lock Config")
         lockBtn.set_sensitive(False)

@@ -15,7 +15,7 @@ from shutil import rmtree
 import datetime, time
 from shutil import copyfile, copytree, move
 
-VersionStr = "1.4.9"
+VersionStr = "1.5"
 
 pdfre = re.compile(r".+[\\/](.+)\.pdf")
 
@@ -555,6 +555,9 @@ class ViewModel:
         if v < 1.404:
             config.set("fancy", "versedecoratorshift", "-5")
             config.set("config", "version", "1.404")
+            config.set("project", "interlinear", "False")
+            config.set("project", "interlang", "")
+            config.set("project", "ruby", "False")
 
         styf = os.path.join(self.configPath(cfgname), "ptxprint.sty")
         if not os.path.exists(styf):

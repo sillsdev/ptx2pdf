@@ -1,7 +1,7 @@
-PTXprint 1.4.9 Release Notes 
-17 December 2020
+PTXprint 1.5 Release Notes 
+23 December 2020
 
-Bug Fixes and Improvements in 1.4.9
+Bug Fixes and Improvements in 1.5
 
   * Interlinear/Ruby glossing is now possible (for early testing and feedback)
   
@@ -11,7 +11,7 @@ Bug Fixes and Improvements in 1.4.9
   
   * Several UI improvements, and more flexibility in Style Editor
   
-  * Printing possible from a DBL bundle (untested... in progress) 
+  * Printing possible from a DBL bundle (minimally tested, work in progress) 
 
 Bug Fixes and Improvements in 1.4.3
 

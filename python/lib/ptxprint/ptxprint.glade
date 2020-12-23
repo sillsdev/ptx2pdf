@@ -602,7 +602,7 @@ Description):</property>
     <property name="type_hint">dialog</property>
     <property name="gravity">center</property>
     <property name="program_name">PTXprint</property>
-    <property name="version">Version 1.4.9</property>
+    <property name="version">Version 1.5</property>
     <property name="copyright">© 2020, SIL International</property>
     <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
 the User-Interface. The PDFs are produced by enhanced 
@@ -5233,7 +5233,9 @@ are using supports these digits too.)</property>
                         <child>
                           <object class="GtkFrame" id="fr_fallbackFont">
                             <property name="visible">True</property>
+                            <property name="sensitive">False</property>
                             <property name="can_focus">False</property>
+                            <property name="no_show_all">True</property>
                             <property name="valign">start</property>
                             <property name="margin_bottom">6</property>
                             <property name="label_xalign">0.05000000074505806</property>
@@ -5340,7 +5342,9 @@ which are not in the Regular font.</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
-                                <property name="tooltip_text" translatable="yes">This setting is used to prevent [] "Tofu" in the
+                                <property name="tooltip_text" translatable="yes">TEMPORARILY DISABLED (in ver 1.5)
+
+This setting is used to prevent [] "Tofu" in the
 printed text. If the primary font is missing any
 special characters (for example curly quotes),
 then an alternative "fallback" font can be used
@@ -8646,21 +8650,6 @@ header, or the Secondary format.</property>
                                 <property name="left_attach">1</property>
                                 <property name="top_attach">1</property>
                               </packing>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
                             </child>
                           </object>
                         </child>
