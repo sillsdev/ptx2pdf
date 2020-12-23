@@ -595,6 +595,10 @@
   \advance\dimen1 by \c@tskip\baselineskip
  \dimen2=\wd#1\advance\dimen2 by 10pt\dimen3=\hs@ze \advance\dimen3 by -\dimen2
   \ifdim\dimen3<5em\message{*** \w@tsit specification of \size@ption \sizem@ltiple (at \ch@pter:\v@rse) leaves \the\dimen3 \space for text. That's probably not enough.}\fi
+  \raise@test{droppic\the\im@gecount}%
+  \ifx\t@str@ise\relax\else
+    \advance\dimen1 by -\t@str@ise\baselineskip
+  \fi
   \setbox#1\vbox to 0pt{\kern\dimen1\kern\count255\baselineskip\vbox to 0pt{\vss\box#1}\vss}%
   \advance\count254 by \c@tskip
   \ifx\l@cspec\@lignLeft

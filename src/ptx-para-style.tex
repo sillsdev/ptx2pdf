@@ -643,12 +643,12 @@
 \def\@parlines#1{%
   \thispar@lines=#1
 %  \MSG{* calculated \string\DelayedChapter{\pendingb@@k}{\pendingch@pter}{\the\this@y}}%
-  \ifx\pendingb@@k\empty\else
-    \ifdr@ppednumber
-      \wr@teDelayedChapter{\pendingb@@k}{\pendingch@pter}{\the\thispar@lines}%
-      \let\pendingch@pter\empty\let\pendingb@@k\empty
-    \fi
-  \fi
+  %\ifx\pendingb@@k\empty\else
+    %\ifdr@ppednumber
+      %\wr@teDelayedChapter{\pendingb@@k}{\pendingch@pter}{\the\thispar@lines}%
+      %\let\pendingch@pter\empty\let\pendingb@@k\empty
+    %\fi
+  %\fi
   \ifx\pending@items\cstackempty\else
     \trace{C}{Before parlines: pending: \pending@items}%
    % \thispar@lines=\prev@y\advance\thispar@lines by -\this@y
@@ -707,7 +707,8 @@
   %\fi}
 
 \def\@delayedchapter#1#2#3#4{%
-  \@delayedthing{chapter}{\c@rref}{#4}{\the\ch@pterwd}{2}{0}{\ifRTL R\else L\fi}{#3}{#4}}
+  \trace{C}{delayedchapter #1 #2 #3 #4}%
+  \@delayedthing{chapter}{#1#2.1}{#4}{\the\ch@pterwd}{2}{0}{\ifRTL R\else L\fi}{#3}{#4}}
 
 %
 \def\@delayedthing#1#2#3#4#5#6#7#8#9{\thing@y=#9\relax
@@ -761,19 +762,28 @@
 
 \def\wr@teDelayedItem#1#2#3#4{%
   %\wr@teDelayedItem{thingtype}{curref}{delay}{cutout wd}{cutout ht}{cutout after}{cutout side}%
+  \def\c@rref{#2}%
+  \trace{C}{wDI}%
   \delay@test{#1}%
   \ifx\t@std@lay\relax \pr@vdelay=-2 % ensure undefined value will not match 0
   \else \pr@vdelay=\t@std@lay\fi
   \th@sdelay=#3\relax
+  \raise@test{#1}%
   \ifnum\pr@vdelay=\th@sdelay % if the delay value is unchanged, all is good
     %\MSG{PARLOC: OK}%
   \else
-    \advance\pr@vdelay by 1
-    \ifnum\pr@vdelay=\th@sdelay % if new delay is 1 greater than old, we can use \RaiseChapter
-      \advance\th@sdelay by -1
+    \tmp@lines=\th@sdelay
+    \ifx\t@str@ise\relax \else \advance\tmp@lines by -\t@str@ise\fi
+    \advance\tmp@lines by -\pr@vdelay
+    \ifnum\tmp@lines <0 \count255=-\tmp@lines\else\count255=\tmp@lines\fi
+    \ifnum\count255<3 % if new delay is <2 away than old, we can use \RaiseChapter
+      \advance\th@sdelay by \tmp@lines
       \ifx\t@std@lay\relax \MSG{PARLOC: Rerun. RaiseChapter needed at #1 #2}%
-      \else \MSG{PARLOC: OK using RaiseChapter at #1 #2}\fi
-      \immediate\write\delayf@le{\string\RaiseItem{#1}{#2}}%
+      \else 
+        \MSG{PARLOC: OK using RaiseItem (by \the\tmp@lines) at #1 #2}%
+	\multiply\tmp@lines by -1
+        \immediate\write\delayf@le{\string\RaiseItem{#1}{#2}{\the\tmp@lines}}%
+      \fi
     \else
       \MSG{PARLOC: Rerun. Delayed #1 setting changed (from \the\pr@vdelay to \the\th@sdelay) at #2}%
     \fi
@@ -831,23 +841,26 @@
 %\def\RaiseChapter#1#2{\uppercase{\def\ucb@@k{#1}}%
   %\x@\let\csname raise-\ucb@@k.#2\endcsname=1}
 \def\RaiseChapter#1#2{\uppercase{\def\ucb@@k{#1}}%
-  \RaiseItem{chapter}{\ucb@@k.#2}}
+  \RaiseItem{chapter}{\ucb@@k.#2}{-1}}
 
-\def\RaiseItem#1#2{%
-  \x@\let\csname raise-#1.#2\endcsname=1}
+\def\RaiseItem#1#2#3{%
+  \x@\def\csname raise-#1.#2\endcsname{#3}}%
 
 \def\delay@test#1{\trace{C}{delay@test: \id@@@.\ch@pter: \c@rref}%
     \x@\let\x@\t@std@lay\csname delay-#1.\c@rref\endcsname}
-\def\raise@test#1{\trace{C}{delay@test: \id@@@.\ch@pter: \c@rref}%
+\def\raise@test#1{\trace{C}{raise@test: \id@@@.\ch@pter: \c@rref}%
     \x@\let\x@\t@str@ise\csname raise-#1.\c@rref\endcsname}
 
 \def\ptx@nb{%
   \ifch@pter
     \delay@test{chapter}%
     %\x@\let\x@\t@st\csname delay-\id@@@.\ch@pter\endcsname
-    \ifx\t@std@lay\relax \MSG{*** no-break at \id@@@\space\ch@pter, re-run to generate \string\DelayedChapter\space setting}%
-    \def\t@std@lay{0}%
-    \else \MSG{* no-break at \id@@@\space\ch@pter}\fi
+    \ifx\t@std@lay\relax
+      \MSG{*** no-break at \id@@@\space\ch@pter, re-run to generate \string\DelayedChapter\space setting}%
+      \def\t@std@lay{0}%
+    \else 
+      \MSG{* no-break at \id@@@\space\ch@pter (\t@std@lay)}%
+    \fi
     \leavevmode\str@t                                                           %(1)
     \global\ch@pterfalse
     \t@stpublishability{c}\ifn@npublishable
@@ -856,12 +869,11 @@
      \m@kechapterbox
      \setbox\ch@pterbox=\hbox{\box\ch@pterbox
        \kern\ifRTL\rightskip\else\leftskip\fi}%
-     \ifRTL\let\c@tcmd=\rightcutout\else\let\c@tcmd=\leftcutout\fi
-     \x@\c@tcmd\x@{\the\ch@pterwd}{\t@std@lay}{2}%
+     %\ifRTL\let\c@tcmd=\rightcutout\else\let\c@tcmd=\leftcutout\fi
+     %\x@\c@tcmd\x@{\the\ch@pterwd}{\t@std@lay}{2}%
      \vadjust{\vbox to 0pt{\kern-\dp\str@tbox \kern-\ht\ch@pterbox              %(2)
-      %\x@\let\x@\t@st\csname raise-\id@@@.\ch@pter\endcsname
       \raise@test{chapter}%
-      \ifx\t@str@ise\relax \else \kern-\baselineskip \fi
+      \ifx\t@str@ise\relax \else \kern-\t@str@ise\baselineskip \fi
       \ifRTL\let\n@xt\rightline\else\let\n@xt\leftline\fi
       \n@xt{\ifRTL\beginR\fi\box\ch@pterbox\ifRTL\endR\fi}\vss}%
       \pdfb@@kmark\pdfch@ptermark\nobreak}%
@@ -870,16 +882,13 @@
      \edef\dc@ref@rgs{\string\@delayedchapter\string{\id@@@\string}\string{\ch@pter\string}}%
      \x@\write\x@\p@rlocs\x@{\dc@ref@rgs{\the\pdflastxpos}{\the\pdflastypos}}\endL
      \dr@ppednumbertrue
+     \add@pending{chapter}{\c@rref}{0}{\the\ch@pterwd}{2}{\t@std@lay}{\ifRTL R\else L\fi}%
      \run@pending
     \fi
+  \else
+    \MSG{nb ignored near \c@rref: not after chapter}%
   \fi}
 
-\def\othrdelayedcutout#1#2{%#1 what sort of thing is this #2 relevant ref (\c@rref)
-  \x@\let\x@\t@st\csname delay-#1-#2\endcsname
-  \ifx\t@st\relax \MSG{*** no-break at \id@@@\space\ch@pter, re-run to generate \string\DelayedChapter\space setting}%
-    \dr@ppedothertrue
-  \fi
-}
 \newbox\str@tbox
 \def\mkstr@t{\setbox\str@tbox=\hbox to 0pt{\XeTeXuseglyphmetrics=0                %(4)
   \char32 \hss}}
