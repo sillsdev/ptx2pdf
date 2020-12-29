@@ -12110,6 +12110,7 @@ This will delete all previous log and intermediate temporary files for the entir
                                     <property name="margin_bottom">6</property>
                                     <property name="row_spacing">6</property>
                                     <property name="column_spacing">16</property>
+                                    <property name="row_homogeneous">True</property>
                                     <child>
                                       <object class="GtkCheckButton" id="c_showHboxErrorBars">
                                         <property name="label" translatable="yes">Show Error Bars For Overfull Lines</property>
@@ -12229,9 +12230,10 @@ troubleshooting use only.</property>
                                       <object class="GtkBox">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
+                                        <property name="spacing">6</property>
                                         <child>
                                           <object class="GtkCheckButton" id="c_interlinear">
-                                            <property name="label" translatable="yes">Interlinear</property>
+                                            <property name="label" translatable="yes">Interlinear  &amp;  Code:</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
@@ -12256,10 +12258,13 @@ the following marker styles:
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="tooltip_text" translatable="yes">Interlinear language code to use.
-To know which code to use, look 
+To find which code to use, look 
 in the project folder for a folder 
-named "Interlinear_xyz" where xyz
-is the language code.</property>
+named "Interlinear_xy" where xy
+is the language code. 
+For example if the interlinear has
+been glossed into English, then 
+the code would be "en".</property>
                                             <property name="valign">center</property>
                                             <property name="margin_left">6</property>
                                             <property name="width_chars">10</property>
@@ -12270,32 +12275,76 @@ is the language code.</property>
                                             <property name="position">1</property>
                                           </packing>
                                         </child>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">0</property>
-                                        <property name="top_attach">3</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkCheckButton" id="c_ruby">
-                                        <property name="label" translatable="yes">Ruby text above</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="tooltip_text" translatable="yes">Treat ruby text as ruby rather than 
+                                        <child>
+                                          <object class="GtkCheckButton" id="c_ruby">
+                                            <property name="label" translatable="yes">Ruby Text Above</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">False</property>
+                                            <property name="tooltip_text" translatable="yes">Treat ruby text as ruby rather than 
 interlinear text by placing it above 
 the base text rather than below.
 
 Note that  you may need to adjust 
 the following marker styles:
   \rb    for the base text 
-  \gloss|rb    for the gloss text</property>
-                                        <property name="halign">start</property>
-                                        <property name="draw_indicator">True</property>
+  \gloss|rb    for the gloss text
+which can be found in the
+"Special Text" section of the
+markers.</property>
+                                            <property name="halign">start</property>
+                                            <property name="draw_indicator">True</property>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">2</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkButton" id="btn_RubyStyle">
+                                            <property name="label" translatable="yes">✎rb</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">True</property>
+                                            <property name="tooltip_text" translatable="yes">Click to jump to the \rb marker in
+the style editor to change the
+formatting of the ruby text.</property>
+                                            <property name="halign">center</property>
+                                            <property name="valign">center</property>
+                                            <signal name="clicked" handler="onRubyStyleClicked" swapped="no"/>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">3</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkButton" id="btn_GlossRubyStyle">
+                                            <property name="label" translatable="yes">✎gloss|rb</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">True</property>
+                                            <property name="tooltip_text" translatable="yes">Click to jump to the \gloss|rb 
+marker in the style editor to 
+change the formatting of the 
+glosses for interlinear/ruby text.</property>
+                                            <property name="halign">start</property>
+                                            <property name="valign">center</property>
+                                            <signal name="clicked" handler="onGlossRubyStyleClicked" swapped="no"/>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">4</property>
+                                          </packing>
+                                        </child>
                                       </object>
                                       <packing>
-                                        <property name="left_attach">1</property>
+                                        <property name="left_attach">0</property>
                                         <property name="top_attach">3</property>
+                                        <property name="width">2</property>
                                       </packing>
                                     </child>
                                   </object>
@@ -12802,10 +12851,16 @@ For example: PHM TIT; 1JN 2JN 3JN JUD</property>
                             </child>
                             <child>
                               <object class="GtkButton" id="btn_ThumbStyle">
-                                <property name="label" translatable="yes">Adjust Style...</property>
+                                <property name="label" translatable="yes">✎ Style...</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
+                                <property name="tooltip_text" translatable="yes">Click to jump to the appropriate
+(\toc3 or \zthumbtab) marker in
+the style editor to change the
+formatting of the thumb tabs.</property>
+                                <property name="halign">end</property>
+                                <property name="valign">center</property>
                                 <signal name="clicked" handler="onThumbStyleClicked" swapped="no"/>
                               </object>
                               <packing>
@@ -13436,13 +13491,14 @@ font and size to ensure verses fit well.</property>
                             </child>
                             <child>
                               <object class="GtkButton" id="btn_VerseStyle">
-                                <property name="label" translatable="yes">Adjust Verse Style...</property>
+                                <property name="label" translatable="yes">✎ Verse Style...</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
-                                <property name="tooltip_text" translatable="yes">Edit Style properties for \v</property>
+                                <property name="tooltip_text" translatable="yes">Edit marker properties for 
+\v on the Styles tab.</property>
                                 <property name="halign">start</property>
-                                <property name="valign">start</property>
+                                <property name="valign">center</property>
                                 <signal name="clicked" handler="onVerseStyleClicked" swapped="no"/>
                               </object>
                               <packing>

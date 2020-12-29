@@ -176,6 +176,7 @@ _object_classes = {
     "mainnb":      ("nbk_Main", ),
     "viewernb":    ("nbk_Viewer", "nbk_PicList"),
     "thumbtabs":   ("l_thumbVerticalL", "l_thumbVerticalR", "l_thumbHorizontalL", "l_thumbHorizontalR"),
+    "stylinks":    ("btn_VerseStyle", "btn_RubyStyle", "btn_GlossRubyStyle", "btn_ThumbStyle"), 
     "stybutton":   ("btn_resetCopyright", "btn_resetColophon", "btn_resetFNcallers", "btn_resetXRcallers", 
                     "btn_styAdd", "btn_styEdit", "btn_styDel", "btn_styReset", "btn_refreshFonts", "btn_resetStyFilter")
 }
@@ -372,6 +373,7 @@ class GtkViewModel(ViewModel):
         css = """
             .printbutton:active { background-color: chartreuse; background-image: None }
             .fontbutton {font-size: smaller}
+            .stylinks {font-size: 11px; padding: 2px 3px; background-color: paleturquoise; background-image: None}
             .stybutton {font-size: 12px; padding: 4px 6px}
             progress, trough {min-height: 24px}
             .mainnb {background-color: #F0F0F0}
@@ -1265,6 +1267,16 @@ class GtkViewModel(ViewModel):
     def onThumbStyleClicked(self, btn):
         self.styleEditor.selectMarker("zthumbtab" if self.get("c_thumbIsZthumb") else "toc3")
         self.set("c_styTextProperties", False)
+        mpgnum = self.notebooks['Main'].index("tb_StyleEditor")
+        self.builder.get_object("nbk_Main").set_current_page(mpgnum)
+
+    def onRubyStyleClicked(self, btn):
+        self.styleEditor.selectMarker("rb")
+        mpgnum = self.notebooks['Main'].index("tb_StyleEditor")
+        self.builder.get_object("nbk_Main").set_current_page(mpgnum)
+
+    def onGlossRubyStyleClicked(self, btn):
+        self.styleEditor.selectMarker("gloss|rb")
         mpgnum = self.notebooks['Main'].index("tb_StyleEditor")
         self.builder.get_object("nbk_Main").set_current_page(mpgnum)
 
