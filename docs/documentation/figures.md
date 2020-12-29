@@ -148,15 +148,36 @@ Notes:
   or multiple images in the box. (But diglots have a second box for the
   right/outer text).  If an attempt is made to put a second picture into the
   box while it still contains the first, the first picture will be lost.
-- c : If a cutout picture occurs in the same paragraph as a 'drop-caps' chapter
-  number or another cutout picture, then an error is triggered and a horrible mess 
-  occurs.
 - F : 
   -  If a caption is used, this will normally be off the page. It may,
      however, still affect the alignment of the image, preventing top / bottom alignment from 
      functioning correctly. Thus captions should *not* be used in connection with full-page 
      images that approach the page edges.
      
+- c : The interaction between automatic paragraph adjustment, page balancing 
+  and cutout positioning can result in loops where the code cannot find a
+  solution: run 1 calculates the position for the cutout, but when cutout is 
+  positioned during run 2, that moves the anchor, meaning that next time the
+  cutout moves to a position that allows the anchor to return to the position
+  it was in during run 1. 
+  This is most common when the cutout is anchored late in the paragraph.
+  There are two possible solutions: 
+   a. pick an earlier anchor, with a corresponding increase in the 'after # lines' number.
+   b. use ```\setCutoutSlop```
+
+#### ```\setCutoutSlop``` - defining cutout offset permission.
+
+The TeX code allows a small amount of hysterisis (slop) in the positioning of
+cutouts.  (1 line higher for chapter numbers, +/- 2 for other cutouts).
+This might mean, for instance, that if run 1 calculated that an
+in-cutout image should ideally start at line 14 in a given paragraph, if on 
+the next run  it finds the anchor-point has moved and the cutout should now be
+on line 13 or 15 it considers this acceptable and, rather than adjusting the
+shape of the paragraph again (which risks moving the anchor point more), the
+image is raised or lowered relative to the anchor point to fit into the cutout. 
+The following allows `droppic4` to accept being raised by 3 lines or lowered by two.
+
+   ```\setCutoutSlop{droppic4}{3}{2}```
 
 #### Do the new picture positions conform to examples in the USFM specification?
 In some ways, they conform better than the previously available options. USFM
