@@ -2,9 +2,14 @@
 all: test.pdf
 DIR:=$(shell dirname `find ../../..  -name paratext2.tex`)
 .tex.pdf:
+	-mkdir 1 2 3
 	TEXINPUTS=.:$(DIR) xetex $<
-	#TEXINPUTS=.:$(DIR) xetex $<
-	#TEXINPUTS=.:$(DIR) xetex $<
+	cp test.pdf test.parlocs test.delayed 1
+	TEXINPUTS=.:$(DIR) xetex $< 
+	cp test.pdf test.parlocs test.delayed 2
+	TEXINPUTS=.:$(DIR) xetex $<
+	cp test.pdf test.parlocs test.delayed 3
+	TEXINPUTS=.:$(DIR) xetex $<
 	
 
 test.pdf: test.tex usfmTex-ext.tex usfmTex-settings.tex test.usfm $(DIR)/*.tex *.sty test.usfm test.usfm.piclist

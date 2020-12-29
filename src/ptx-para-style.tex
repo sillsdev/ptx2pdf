@@ -706,12 +706,12 @@
     %\wr@teDelayedChapter{#1}{#2}{\the\prev@y}%
   %\fi}
 
-\def\@delayedchapter#1#2#3#4{%
+\def\@delayedchapter#1#2#3#4{% Part of post-run processing
   \trace{C}{delayedchapter #1 #2 #3 #4}%
-  \@delayedthing{chapter}{#1#2.1}{#4}{\the\ch@pterwd}{2}{0}{\ifRTL R\else L\fi}{#3}{#4}}
+  \@delayedthing{chapter}{#1#2.0}{#4}{\the\ch@pterwd}{2}{0}{\ifRTL R\else L\fi}{#3}{#4}}
 
 %
-\def\@delayedthing#1#2#3#4#5#6#7#8#9{\thing@y=#9\relax
+\def\@delayedthing#1#2#3#4#5#6#7#8#9{\thing@y=#9\relax %Part of post-run processing
   \trace{C}{delayedthing #1 #2 #3 #4 #5 #6 #7 #8 #9}%
   \ifnum\the\prev@y<\thing@y % para start was lower than chapter number, must have passed a col/page break
     %%\def\this@thing{#1}% What is it?
@@ -739,48 +739,32 @@
 %-cpar_delayedchap
 
 %+cpar_writedelayed
-%\def\wr@teDelayedChapter#1#2#3{%
-  %\x@\let\x@\t@st\csname delay-#1.#2\endcsname
-  %\ifx\t@st\relax \pr@vdelay=-2 % ensure undefined value will not match 0
-  %\else \pr@vdelay=\csname delay-#1.#2\endcsname\fi
-  %\th@sdelay=#3\relax
-  %\ifnum\pr@vdelay=\th@sdelay % if the delay value is unchanged, all is good
-    %%\MSG{PARLOC: OK}%
-  %\else
-    %\advance\pr@vdelay by 1
-    %\ifnum\pr@vdelay=\th@sdelay % if new delay is 1 greater than old, we can use \RaiseChapter
-      %\advance\th@sdelay by -1
-      %\ifx\t@st\relax \MSG{PARLOC: Rerun. RaiseChapter needed at #1 #2}%
-      %\else \MSG{PARLOC: OK using RaiseChapter at #1 #2}\fi
-      %\immediate\write\delayf@le{\string\RaiseChapter{#1}{#2}}%
-    %\else
-      %\MSG{PARLOC: Rerun. DelayedChapter setting changed at #1 #2}%
-    %\fi
-  %%\fi
-  %\immediate\write\delayf@le{\string\DelayedChapter{#1}{#2}{\number\th@sdelay}}%
-%}
-
-\def\wr@teDelayedItem#1#2#3#4{%
+\def\wr@teDelayedItem#1#2#3#4{% Part of post-run processing
   %\wr@teDelayedItem{thingtype}{curref}{delay}{cutout wd}{cutout ht}{cutout after}{cutout side}%
   \def\c@rref{#2}%
   \trace{C}{wDI}%
   \delay@test{#1}%
-  \ifx\t@std@lay\relax \pr@vdelay=-2 % ensure undefined value will not match 0
+  \raise@test{#1}%
+  \ifx\t@std@lay\relax \pr@vdelay=-5 % ensure undefined value will not match 0
   \else \pr@vdelay=\t@std@lay\fi
   \th@sdelay=#3\relax
-  \raise@test{#1}%
   \ifnum\pr@vdelay=\th@sdelay % if the delay value is unchanged, all is good
+    \ifx\t@str@ise\relax \else
+       \MSG{PARLOC: Rerun. RaiseChapter not needed}%
+    \fi
     %\MSG{PARLOC: OK}%
   \else
-    \tmp@lines=\th@sdelay
-    \ifx\t@str@ise\relax \else \advance\tmp@lines by -\t@str@ise\fi
-    \advance\tmp@lines by -\pr@vdelay
+    \tmp@lines=\pr@vdelay
+    \advance\tmp@lines by -\th@sdelay
+    %\ifx\t@str@ise\relax \else \count255=\t@str@ise\advance\tmp@lines by -\count255\fi
     \ifnum\tmp@lines <0 \count255=-\tmp@lines\else\count255=\tmp@lines\fi
-    \ifnum\count255<3 % if new delay is <2 away than old, we can use \RaiseChapter
-      \advance\th@sdelay by \tmp@lines
+    \ifnum\count255<2 % if new delay is <2 away than old, we can use \RaiseItem
+      \ifnum\tmp@lines=0\t@str@ise\else
+        \MSG{PARLOC: Rerun. RaiseChapter needed at #1 #2 now \the\tmp@lines}%
+      \fi
       \ifx\t@std@lay\relax \MSG{PARLOC: Rerun. RaiseChapter needed at #1 #2}%
       \else 
-        \MSG{PARLOC: OK using RaiseItem (by \the\tmp@lines) at #1 #2}%
+        \MSG{PARLOC: OK using RaiseItem (by \the\tmp@lines was ) at #1 #2}%
 	\multiply\tmp@lines by -1
         \immediate\write\delayf@le{\string\RaiseItem{#1}{#2}{\the\tmp@lines}}%
       \fi
