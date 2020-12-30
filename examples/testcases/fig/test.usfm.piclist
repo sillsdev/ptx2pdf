@@ -3,3 +3,4 @@ TST 1.5 This is a rose, not a fig (h) |loc="h" src="image.jpg" alt="Figs are tas
 %TST 1.7 This is a rose, not a fig [cr2] |loc="cr2" src="image.jpg" alt="Figs are tasty"  ref="1:8" size="col*0.28"
 TST 2.3 Flower [cr0] |loc="cr0" src="image.jpg" alt="Figs are tasty"  ref="v1" size="col*0.5"
 TST 2.4 Not fig. [cl3] |loc="cl3" src="image.jpg" alt="Figs are tasty"  ref="v1" size="col*0.2"
+TST 3.1 A larger picture[tl] | pgpos="tl" src="image.jpg" ref="3:1" size="col" scale="0.8" credit="tnx to ImageMagick" creditpos="cl"

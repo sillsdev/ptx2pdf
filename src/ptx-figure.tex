@@ -50,17 +50,17 @@
 \def\stripspace#1 \end/#2\relax#3{\if\relax#2\relax\gdef\p@ram{#3}\else\stripspace#1\end/ \end/\relax{#1}\fi}
 %-cfig_stripspace
 %+cfig_getonepair
-\def\FigP@ramAlt{alt} \def\FigP@ramSrc{src} \def\FigP@ramSize{size} \def\FigP@ramLoc{loc}
-\def\FigP@ramCopy{copy} \def\FigP@ramRef{ref} \def\FigP@ramXtra{x-xetex} \def\FigP@ramPgpos{pgpos}
-\def\FigP@ramMirror{mirror} \def\FigP@ramScale{scale}  \def\FigP@ramMedia{media}
+%\def\FigP@ramAlt{alt} \def\FigP@ramSrc{src} \def\FigP@ramSize{size} \def\FigP@ramLoc{loc}
+%\def\FigP@ramCopy{copy} \def\FigP@ramRef{ref} \def\FigP@ramXtra{x-xetex} \def\FigP@ramPgpos{pgpos}
+%\def\FigP@ramMirror{mirror} \def\FigP@ramScale{scale}  \def\FigP@ramMedia{media}
 
-\def\s@tp@ramid{%
+\def\s@tp@ramid{%This is used both to decode numeric parameters and to reset named parameters.
   \ifnum \p@ramnumber<0 
     \edef\p@ramid{NEG\the\p@ramnumber}%
   \else
-    \ifnum \p@ramnumber>12 \global\morep@ramsfalse\fi
+    \ifnum \p@ramnumber>15 \global\morep@ramsfalse\fi
     \edef\p@ramid{\ifcase\p@ramnumber UNK-0\or alt\or src\or size\or loc\or copy\or caption\or ref\or x-xetex\or mirror\or 
-        scale\or media\or pgpos\else UNK-\the\p@ramnumber \fi}%
+        scale\or media\or pgpos\or credit\or creditpos\or creditrot\else UNK-\the\p@ramnumber \fi}%
   \fi
 }
 \newif\ifusfmthree \usfmthreefalse
@@ -189,7 +189,7 @@
   \xdef\t@mpb{#1}\xdef\t@mpc{#2}%
 }
 \def\gr@phic{graphic}
-\def\p@rsePicUse#1#2\end{% Parse the new picture options, and remember them
+\def\p@rseLoc#1#2\end{% Parse the new picture options, and remember them
   \edef\t@mp{#1}\edef\t@mpb{#2}%
   \ifx\t@mpb\empty\let\t@mpc=\t@mpb\else\x@\p@rsePicXtra\t@mpb\end\fi
   \trace{g}{p@rsePicUse: #1 \t@mpb \t@mpc}%
@@ -198,6 +198,10 @@
   %Switch relative (inner/outer) to absolute (left/right) depending on page number for this image.
   \ifx\t@mpb\@lignOuter\temptrue\ifodd\whichp@ge\let\t@mpb=\@lignRight\else\let\t@mpb=\@lignLeft\fi\fi
   \ifx\t@mpb\@lignInner\temptrue\ifodd\whichp@ge\let\t@mpb=\@lignLeft\else\let\t@mpb=\@lignRight\fi\fi
+}
+
+\def\p@rsePicUse#1\end{% Parse the new picture options, and remember them
+  \x@\p@rseLoc#1\end % sets \t@mp, \t@mpb, \t@mpc to chars 1, 2, 3+
   \iftemp
     % inner/outer support for inserts
     \trace{g}{Page \the\whichp@ge, defined #2 to \t@mpb}%
@@ -451,6 +455,12 @@
         \ins@rtpic{"\the\PicPath\csname figparam-src\endcsname"}%
                      {\picaltdim@n}{\p@cheight}{\sizem@ltiple}{\xtra}{\xtraremains}}%
     \fi
+    \x@\ifx\csname figparam-credit\endcsname\empty\else
+        \x@\let\cr@dit\csname figparam-credit\endcsname \x@\let\cr@ditpos\csname figparam-creditpos\endcsname \x@\let\cr@ditrot\csname figparam-creditrot\endcsname
+	\add@credit
+
+    	\setbox2=\vbox
+    \fi
     \setbox0=\hbox to \sizem@ltiple\p@cwidth{\hss
       \edef\l@gstring{{\the\im@gecount}{\f@lename}{\csname figparam-copy\endcsname}{\csname figparam-caption\endcsname}{\sizem@ltiple x\the\p@cwidth}}% Fully expand figure parameters, but leave page no. to be expanded later.
       \x@\writefigp@gelog\x@{\l@gstring}%
@@ -688,6 +698,26 @@
   %\fi
 }
 %-cfig_dofigure_7
+%+cfig_dofigure_8
+\def\add@credit{%
+  \ifx\cr@ditpos\empty
+    \edef\cr@ditpos{ci}% Center, inner edge
+  \fi
+  \x@\p@rseLoc\cr@ditpos\end
+  \edef\cred@v{\t@mp}\edef\cred@h{\t@mpb}%
+  \ifx\cr@ditrot\empty % Set some kind of a default
+    \ifx\cred@h\@lignLeft
+      \edef\creditrot{-90}
+    \else
+      \ifx\cred@h\@lignRight
+	\edef\creditrot{90}
+      \else
+	\edef\cr@ditrot{0}%
+      \fi
+    \fi
+  \fi
+}
+%-cfig_dofigure_8
 \newtoks\PicPath % directory containing picture files
 \newif\ifIncludeFigures \IncludeFigurestrue
 \newif\ifFigurePlaceholders
