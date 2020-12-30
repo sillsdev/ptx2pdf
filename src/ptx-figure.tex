@@ -54,40 +54,58 @@
 \def\FigP@ramCopy{copy} \def\FigP@ramRef{ref} \def\FigP@ramXtra{x-xetex} \def\FigP@ramPgpos{pgpos}
 \def\FigP@ramMirror{mirror} \def\FigP@ramScale{scale}  \def\FigP@ramMedia{media}
 
+\def\s@tp@ramid{%
+  \edef\p@ramid{\ifcase\p@ramnumber UNK-0\or UNK-1\or src\or size\or loc\or copy\or caption\or ref\or x-xetex\or mirror\or scale\or media\else UNK-\p@ramid\fi}%
+}
 \newif\ifusfmthree \usfmthreefalse
 \def\getonepairp@ram#1="#2" {\stripspace#1\end/ \end/\relax{#1}\edef\p@ramid{\p@ram}%
   \stripspace#2\end/ \end/\relax{#2}\edef\p@ramval{\p@ram}%
   \trace{g}{getonepairparam: [\p@ramid] = [\p@ramval]}%
   \ifx\p@ramid\empty\let\fnext=\relax\else
-    \ifx\p@ramid\FigP@ramSrc\global\p@ramnumber=2\else
-    \ifx\p@ramid\FigP@ramSize\global\p@ramnumber=3 \trace{g}{Got Size}\else
-    \ifx\p@ramid\FigP@ramLoc\global\p@ramnumber=\x@\ifx\csname param-4\endcsname\empty 4\else 5\fi\else
-    \ifx\p@ramid\FigP@ramPgpos\global\p@ramnumber=4\else
-    \ifx\p@ramid\FigP@ramCopy\global\p@ramnumber=5\else
-    \ifx\p@ramid\FigP@ramAlt\global\p@ramnumber=6\else
-    \ifx\p@ramid\FigP@ramRef\global\p@ramnumber=7\else
-    \ifx\p@ramid\FigP@ramXtra\global\p@ramnumber=8\else %experimental extra parameter, post filename e.g. "rotated 90"
-    \ifx\p@ramid\FigP@ramMirror\global\p@ramnumber=9\else %experimental mirror parameter.
-    \ifx\p@ramid\FigP@ramScale\global\p@ramnumber=10\else
-    \ifx\p@ramid\FigP@ramMedia\global\p@ramnumber=11\else
+    %\ifx\p@ramid\FigP@ramSrc\global\p@ramnumber=2\else
+    %\ifx\p@ramid\FigP@ramSize\global\p@ramnumber=3 \trace{g}{Got Size}\else
+    %\ifx\p@ramid\FigP@ramLoc\global\p@ramnumber=\x@\ifx\csname param-4\endcsname\empty 4\else 5\fi\else
+    %\ifx\p@ramid\FigP@ramPgpos\global\p@ramnumber=4\else
+    %\ifx\p@ramid\FigP@ramCopy\global\p@ramnumber=5\else
+    %\ifx\p@ramid\FigP@ramAlt\global\p@ramnumber=6\else
+    %\ifx\p@ramid\FigP@ramRef\global\p@ramnumber=7\else
+    %\ifx\p@ramid\FigP@ramXtra\global\p@ramnumber=8\else %experimental extra parameter, post filename e.g. "rotated 90"
+    %\ifx\p@ramid\FigP@ramMirror\global\p@ramnumber=9\else %experimental mirror parameter.
+    %\ifx\p@ramid\FigP@ramScale\global\p@ramnumber=10\else
+    %\ifx\p@ramid\FigP@ramMedia\global\p@ramnumber=11\else
     \ifx\p@ramval\empty
-      \trace{g}{usfm2 parameter \p@ramid}%
+      \let\p@ramval=\p@ramid
+      \ifnum\p@ramnumber>0 
+        \s@tp@ramid
+      \else
+        \edef\p@ramid{error}%
+      \fi
+      \edef\p@ramid{\ifcase\p@ramnumber UNK-0\or alt\or src\or size\or loc\or copy\or caption\or ref\or x-xetex\or mirror\or scale\or media\else UNK-\p@ramid\fi}%
+      \trace{g}{usfm2 parameter (\p@ramid=)\p@ramval }%
     \else
-      \trace{g}{Unrecognised usfm3 parameter \p@ramid}\p@ramnumber=-1%
+      \trace{g}{usfm3 parameter \p@ramid=\p@ramval}%
+      \ifusfmthree\else %first usfm3 parameter
+        \x@\let\x@\tmp\csname figparam-alt\endcsname
+      	\x@\global\x@\let\csname figparam-caption\endcsname\cs
+      \fi
+      \usfmthreetrue
+      %\trace{g}{Unrecognised usfm3 parameter \p@ramid}\p@ramnumber=-1%
     \fi% If there's no value, it's probably usfm2-style
-    \fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi
-    \tempfalse
-    \ifx\p@ramval\empty\ifusfmthree\else
-      \trace{g}{param-\the\p@ramnumber = "\p@ramid" but not "\p@ramval"}%
-      \x@\global\x@\edef\csname param-\the\p@ramnumber\endcsname{\p@ramid}%
-      \let\fnext=\relax
-      \temptrue
-    \fi\fi
-    \iftemp\else
-      \trace{g}{param-\the\p@ramnumber [\p@ramid]  = "#2" from "\p@ramval"}%
-      \x@\gdef\csname param-\the\p@ramnumber\endcsname{#2}%
-      \let\fnext=\getonepairp@ram \usfmthreetrue
-    \fi
+    \x@\global\x@\let\csname figparam-\p@ramid\endcsname\p@ramval
+
+    %\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi
+   % \tempfalse
+   % \ifx\p@ramval\empty\ifusfmthree\else
+   %   \trace{g}{param-\the\p@ramnumber = "\p@ramid" but not "\p@ramval"}%
+   %   \x@\global\x@\edef\csname param-\the\p@ramnumber\endcsname{\p@ramid}%
+   %   \let\fnext=\relax
+   %   \temptrue
+   % \fi\fi
+   % \iftemp\else
+   %   \trace{g}{param-\the\p@ramnumber [\p@ramid]  = "#2" from "\p@ramval"}%
+   %   \x@\gdef\csname param-\the\p@ramnumber\endcsname{#2}%
+   %   \let\fnext=\getonepairp@ram \usfmthreetrue
+   % \fi
   \fi\fnext}
 %-cfig_getonepair
 
@@ -218,7 +236,7 @@
 \def\DecorateRef#1{(#1)}
 
 \def\d@caption{%
-  \xdef\r@f{\csname param-7\endcsname}% get reference
+  \xdef\r@f{\csname figparam-ref\endcsname}% get reference
   \stripspace\r@f\end/ \end/\relax\r@f \edef\r@f{\p@ram}% strip space
   \edef\c@ption{\ifusfmthree\csname param-1\endcsname\else\csname param-6\endcsname\fi}% get caption
   \trace{g}{Fig caption: [\c@ption] \ifx\r@f\relax\else(\r@f)\fi}%
@@ -278,6 +296,7 @@
     \x@\getonep@ram\p@rams\end
     \ifx\p@rams\empty \morep@ramsfalse \else \morep@ramstrue \fi
     \ifmorep@rams\repeat
+  \ifusfmthree\x@\edef\csname param-caption\endcsname{\csname param-1\endcsname}\fi
   % get size
   \lowercase{\edef\size@ption{\csname param-3\endcsname}}%
   \lowercase{\edef\sizem@ltiple{\csname param-10\endcsname}}%
