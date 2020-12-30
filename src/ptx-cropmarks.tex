@@ -170,19 +170,13 @@
   \setbox0\hbox{\hbox to 0pt{\special{color push rgb #1}\vrule depth #4 height #5 width #3 \hss}\special{color pop}\special{color push rgb #2}\raise \dimen2\box0}\ht0=#5\dp0=#4\box0\special{color pop}}
 
 %Rotate box0 about a point on it's baseline, half way along its width. Adjust size so that height/depth and width are correct for rotated box. box height/depth becomes left-most edge.
+\def\r@acwSet{\edef\@ngle{90}\kern\ht0}% anticlockwise
+\def\r@cwSet{\edef\@ngle{-90}\kern\dp0}%clockwise.
 \def\rot@tebz{\dimen1=\wd0\dimen2=\ht0
   \advance\dimen2 by \dp0%
   \hbox to \dimen2{\kern -0.5\wd0%
     %kern so that the correct edge of the box is at the centrepoint location, and set rotation
     %\ifodd\pageno \kern\ht0\else\kern\dp0\fi %Old-style
-    \def\r@acwSet{\edef\@ngle{90}\kern\ht0}% anticlockwise
-    \def\r@cwSet{\edef\@ngle{-90}\kern\dp0}%clockwise.
-    \let\r@tSet\r@cwSet 
-    \ifodd\pageno
-      \ifTabTopToEdgeOdd\else\let\r@tSet\r@acwSet\fi
-    \else
-      \ifTabTopToEdgeEven\let\r@tSet\r@acwSet\fi
-    \fi
     \r@tSet
     \trace{pt}{Rotating tab \@ngle (+ is anticlockwise)}%
     \vbox to 0pt{\vss\hbox to 0pt{\kern 0.5\wd0\special{x:gsave}\special{x:rotate \@ngle}\hss}\vss}%
@@ -263,6 +257,12 @@
    \fi
    \setbox0\hbox{\colourbox{\t@bBoxCol}{\t@bFontCol}{\tabheight}{\bxdp}{\bxht}{\V@dj}{\vertThumbtabContents{\b@okShort}}}%
    \ht0=\tabwidth
+   \let\r@tSet\r@cwSet 
+   \ifodd\pageno
+     \ifTabTopToEdgeOdd\else\let\r@tSet\r@acwSet\fi
+   \else
+     \ifTabTopToEdgeEven\let\r@tSet\r@acwSet\fi
+   \fi
    \hbox to 0pt{%
     \if\st@rtatedge F\kern -\tabwidth\else\hss\fi
      %\setbox2\hbox{\vrule height 0.5\wd0 depth 0.5\wd0 width 1pt}%

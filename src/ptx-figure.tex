@@ -204,7 +204,7 @@
   \x@\p@rseLoc#1\end % sets \t@mp, \t@mpb, \t@mpc to chars 1, 2, 3+
   \iftemp
     % inner/outer support for inserts
-    \trace{g}{Page \the\whichp@ge, defined #2 to \t@mpb}%
+    \trace{g}{Page \the\whichp@ge, defined #1 to \t@mp, \t@mpb, \t@mpc}%
     \tempfalse
     \ifx\t@mp\loc@T\temptrue\fi
     \ifx\t@mp\loc@B\temptrue\fi
@@ -252,28 +252,85 @@
   \edef\c@ption{\csname figparam-caption\endcsname}% get caption
   \trace{g}{Fig caption: [\c@ption] \ifx\r@f\relax\else(\r@f)\fi}%
   \ifx\c@ption\empty\else
-    \everypar={}\let\par\endgraf
-    \leftskip=0pt plus \hsize \rightskip=\leftskip \parfillskip=0pt
-    \getp@ram{justification}{fig}%
-    \ifx\p@ram\r@ght\rightskip=0pt\fi
-    \ifx\p@ram\l@ft\leftskip=0pt\fi
-    \getp@ram{leftmargin}{fig}%
-    \ifx\p@ram\relax \else \advance \ifRTL\rightskip\else\leftskip\fi\p@ram \IndentUnit \fi
-    \getp@ram{rightmargin}{fig}%
-    \ifx\p@ram\relax \else \advance \ifRTL\leftskip\else\rightskip\fi\p@ram \IndentUnit \fi
-    \linepenalty=1000
-    \s@tbaseline{fig}%
-    % insert caption box
     \edef\@r@f{\ifx\r@f\empty\else\DecorateRef{\r@f\unskip}\fi}%
-    \noindent\leavevmode
-      \ifCaptionRefFirst\@r@f\nobreak\ \fi
+    % insert caption box
+    \t@xtfragment{fig}{\ifCaptionRefFirst\@r@f\nobreak\ \fi
       \s@tfont{fig}\c@ption\unskip
-      \ifCaptionRefFirst\else\nobreak\ \@r@f\fi
-    \par
+      \ifCaptionRefFirst\else\nobreak\ \@r@f\fi}%
   \fi
   \vskip.5\baselineskip
 }
+
+\def\t@xtfragment#1#2{\bgroup\everypar={}\let\par\endgraf
+    \leftskip=0pt plus \hsize \rightskip=\leftskip \parfillskip=0pt
+    \getp@ram{justification}{#1}%
+    \ifx\p@ram\r@ght\rightskip=0pt\fi
+    \ifx\p@ram\l@ft\leftskip=0pt\fi
+    \getp@ram{leftmargin}{#1}%
+    \ifx\p@ram\relax \else \advance \ifRTL\rightskip\else\leftskip\fi\p@ram \IndentUnit \fi
+    \getp@ram{rightmargin}{#1}%
+    \ifx\p@ram\relax \else \advance \ifRTL\leftskip\else\rightskip\fi\p@ram \IndentUnit \fi
+    \linepenalty=1000
+    \s@tbaseline{#1}%
+    \noindent\leavevmode #2\par
+    \egroup
+}
 %-cfig_docaption
+%+cfig_addcredit
+\def\add@credit{% Box to add credit to is  box1
+  \ifx\cr@ditpos\empty
+    \edef\cr@ditpos{ci}% Center, inner edge
+  \fi
+  \x@\p@rseLoc\cr@ditpos\end
+  \edef\cred@v{\t@mp}\edef\cred@h{\t@mpb}%
+  \ifx\cr@ditrot\empty % Set some kind of a defaults
+    \ifx\cred@h\@lignLeft
+      \edef\cr@ditrot{-90}
+    \else
+      \ifx\cred@h\@lignRight
+	\edef\cr@ditrot{90}
+      \else
+	\edef\cr@ditrot{0}%
+      \fi
+    \fi
+  \fi
+  % Positioning of credit box.
+  \def\pr@credit{}\def\p@stcredit{}\def\ab@vecredit{}\def\b@lowcredit{}%
+  \ifx\@lignLeft\cred@h\def\p@credit{\hfill}%
+  \else\ifx\@lignRight\cred@h\def\p@stcredit{\hfill}%
+    \else\def\pr@credit{\hfill}\def\p@stcredit{\hfill}\fi
+  \fi
+  \ifx\@lignTop\cred@v\def\b@lowcredit{\vfill}%
+  \else\ifx\@lignBot\cred@v\def\ab@vecredit{\vfill}%
+    \else\def\b@lowcredit{\vfill}\def\ab@vecredit{\vfill}\fi
+  \fi
+  % Determine if the (a full line) annotation is wider or taller, and whether it should be treated as a paragraph or a 
+  % small piece of text.
+  \count255=\cr@ditrot % adjust to -180 to 180 range.
+  \loop
+    \ifnum \count255>180 \advance\count255 by -360 \repeat
+  \loop
+    \ifnum \count255<-180 \advance\count255 by 360 \repeat
+  \edef\@ngle{\the\count255}%
+  \ifnum \count255>0
+     \def\r@tSet{\kern\ht0}%
+  \else 
+     \def\r@tSet{\kern\dp0}%
+  \fi
+  \ifnum \count255>-45
+    \dimen0=0.7\wd1
+  \else
+    \dimen0=0.7\ht1
+  \fi
+  \setbox0=\hbox{\s@tfont{credit|fig}\cr@dit}%
+  \ifdim\wd0>\dimen0%
+     \setbox0=\vbox{\hsize=\dimen0\relax\t@xtfragment{credit|fig}{\unhbox0}}%
+  \fi
+  \setbox0\hbox{\rot@tebz}%
+  \setbox0=\vbox to \ht1{\hsize=\wd1\ab@vecredit\hbox to \wd1{\beginL\pr@credit\box0\p@stcredit\endL}\b@lowcredit}%
+  \setbox1=\vbox to \ht1{\box1\vss\box0}%
+}
+%-cfig_addcredit
 
 \def\m@kepl@ceholder#1#2{%
 \vbox to #2{\offinterlineskip
@@ -456,10 +513,8 @@
                      {\picaltdim@n}{\p@cheight}{\sizem@ltiple}{\xtra}{\xtraremains}}%
     \fi
     \x@\ifx\csname figparam-credit\endcsname\empty\else
-        \x@\let\cr@dit\csname figparam-credit\endcsname \x@\let\cr@ditpos\csname figparam-creditpos\endcsname \x@\let\cr@ditrot\csname figparam-creditrot\endcsname
+        \x@\let\x@\cr@dit\csname figparam-credit\endcsname \x@\let\x@\cr@ditpos\csname figparam-creditpos\endcsname \x@\let\x@\cr@ditrot\csname figparam-creditrot\endcsname
 	\add@credit
-
-    	\setbox2=\vbox
     \fi
     \setbox0=\hbox to \sizem@ltiple\p@cwidth{\hss
       \edef\l@gstring{{\the\im@gecount}{\f@lename}{\csname figparam-copy\endcsname}{\csname figparam-caption\endcsname}{\sizem@ltiple x\the\p@cwidth}}% Fully expand figure parameters, but leave page no. to be expanded later.
@@ -698,26 +753,7 @@
   %\fi
 }
 %-cfig_dofigure_7
-%+cfig_dofigure_8
-\def\add@credit{%
-  \ifx\cr@ditpos\empty
-    \edef\cr@ditpos{ci}% Center, inner edge
-  \fi
-  \x@\p@rseLoc\cr@ditpos\end
-  \edef\cred@v{\t@mp}\edef\cred@h{\t@mpb}%
-  \ifx\cr@ditrot\empty % Set some kind of a default
-    \ifx\cred@h\@lignLeft
-      \edef\creditrot{-90}
-    \else
-      \ifx\cred@h\@lignRight
-	\edef\creditrot{90}
-      \else
-	\edef\cr@ditrot{0}%
-      \fi
-    \fi
-  \fi
-}
-%-cfig_dofigure_8
+
 \newtoks\PicPath % directory containing picture files
 \newif\ifIncludeFigures \IncludeFigurestrue
 \newif\ifFigurePlaceholders

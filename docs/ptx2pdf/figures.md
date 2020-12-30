@@ -173,6 +173,9 @@ We insert the picture, scaling it according to its width. But if it turns out
 that results in something too high, then we try again but scale it according to
 the available height.
 
+We now see if there should be credit-text (e.g. "© A. Artist") overwritten on the image, and 
+if so apply that (to be discussed later).
+
 Now we create the figure box which is what appears in the document and consists
 of either the picture or a placeholder. At this point we write details of this
 picture to the `.picpages` file. If the user has asked for placeholders instead
@@ -199,6 +202,7 @@ for an image of a spear that would make better use of space if shown at an angle
 available using values of `odd` or `even` then also collect the angle which
 will be used if the page constraint is met.
 
+
 [=cfig_parsextra]::
 
 Returning to creating the figure vbox we set up a few variables for later use.
@@ -221,22 +225,35 @@ the caption.
 [=cfig_dofigure_4]::
 
 We are ready to describe caption processing. We collect the reference attribute
-from the figure and strip its space. We also collect the caption text. The
-location is different for USFM3 from USFM2. If there is no caption then we don't
-use the reference either and we simply insert a small post caption gap.
+from the figure and strip its space. We also collect the caption text.
+If there is no caption then we don't use the reference either and we simply insert a 
+small post caption gap.
 
-We set up for creating a paragraph based on the `fig` style. While `fig` is officially 
+Then we prepare the reference, if there is one. The user can change
+the `\DecorateRef` macro to change how references will be add to the caption (to
+the point of deleting it).
+
+We call the ```\t@xtfragment``` macro to actually setup the paragrpahing, 
+based on the `fig` style. While `fig` is officially 
 a character style, we select the appropriate justification for
 it as if it were a paragraph. We also do not allow page breaks in this text (because it is
 being processed into a separate box). We then set the baseline for this
-paragraph. Then we prepare the reference, if there is one. The user can change
-the `\DecorateRef` macro to change how references will be add to the caption (to
-the point of deleting it). Finally we start the paragraph and perhaps insert the
+paragraph.
+
+Finally we start the paragraph and perhaps insert the
 reference with a non-breaking space followed by the caption itself and then if
 the reference comes at the end a non-breaking space and the reference. The
 paragraph is completed and we add a half space at the end.
 
 [=cfig_docaption]::
+
+The ```\add@credit``` macro performs similar handling to the  caption, except that 
+there are considerably more placement options, including rotation.
+No attempt at precise trigonometry is performed, so rotation in steps of 90 degrees 
+are highly recommended.
+
+[=cfig_addcredit]::
+
 
 Now that we have a box containing the whole figure, we need to put it somewhere.
 In the case that the box is to be `insert`ed, we test to see if we are in a
