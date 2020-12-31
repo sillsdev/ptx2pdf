@@ -58,9 +58,11 @@
   \ifnum \p@ramnumber<0 
     \edef\p@ramid{NEG\the\p@ramnumber}%
   \else
-    \ifnum \p@ramnumber>15 \global\morep@ramsfalse\fi
+    \ifnum \p@ramnumber>16 \global\morep@ramsfalse\fi
+    %WARNING: There must not be a space after the text(before \or / \else / \fi) or (re)-initialisation will break
     \edef\p@ramid{\ifcase\p@ramnumber UNK-0\or alt\or src\or size\or loc\or copy\or caption\or ref\or x-xetex\or mirror\or 
-        scale\or media\or pgpos\or credit\or creditpos\or creditrot\else UNK-\the\p@ramnumber \fi}%
+        scale\or media\or pgpos\or x-credit\or x-creditpos\or
+	x-creditrot\or x-creditbox\else UNK-\the\p@ramnumber\fi}%
   \fi
 }
 \newif\ifusfmthree \usfmthreefalse
@@ -80,14 +82,18 @@
     %\ifx\p@ramid\FigP@ramScale\global\p@ramnumber=10\else
     %\ifx\p@ramid\FigP@ramMedia\global\p@ramnumber=11\else
     \ifx\p@ramval\empty
-      \let\p@ramval=\p@ramid
-      \ifnum\p@ramnumber>0 
-        \s@tp@ramid
+      \ifusfmthree
+        \let\fnext=\getonepairp@ram
       \else
-        \edef\p@ramid{error}%
-      \fi
-      \let\fnext=\relax 
-      \trace{g}{usfm2 style parameter (\p@ramid=)\p@ramval}%
+        \let\p@ramval=\p@ramid
+        \ifnum\p@ramnumber>0 
+          \s@tp@ramid
+        \else
+          \edef\p@ramid{error}%
+        \fi
+        \let\fnext=\relax 
+        \trace{g}{usfm2 style parameter (\p@ramid=)\p@ramval}%
+       \fi
     \else
       \trace{g}{usfm3 parameter \p@ramid=\p@ramval}%
       \ifusfmthree\else %first usfm3 parameter. USFM3 says first param is comment,  not alt-text. Swap them
@@ -277,12 +283,15 @@
 }
 %-cfig_docaption
 %+cfig_addcredit
+\newdimen\FigCreditPadding
+\FigCreditPadding=2pt
 \def\add@credit{% Box to add credit to is  box1
   \ifx\cr@ditpos\empty
-    \edef\cr@ditpos{ci}% Center, inner edge
+    \edef\cr@ditpos{ti}% Center, inner edge
   \fi
   \x@\p@rseLoc\cr@ditpos\end
   \edef\cred@v{\t@mp}\edef\cred@h{\t@mpb}%
+  \trace{g}{creditrot="\cr@ditrot"}%
   \ifx\cr@ditrot\empty % Set some kind of a defaults
     \ifx\cred@h\@lignLeft
       \edef\cr@ditrot{-90}
@@ -293,18 +302,32 @@
 	\edef\cr@ditrot{0}%
       \fi
     \fi
+    \trace{g}{credit rotation blank, \cr@ditrot deg chosen}%
   \fi
   % Positioning of credit box.
   \def\pr@credit{}\def\p@stcredit{}\def\ab@vecredit{}\def\b@lowcredit{}%
-  \ifx\@lignLeft\cred@h\def\p@credit{\hfill}%
-  \else\ifx\@lignRight\cred@h\def\p@stcredit{\hfill}%
+  \ifx\@lignLeft\cred@h\def\p@stcredit{\hfill}%
+  \else\ifx\@lignRight\cred@h\def\pr@credit{\hfill}%
     \else\def\pr@credit{\hfill}\def\p@stcredit{\hfill}\fi
   \fi
   \ifx\@lignTop\cred@v\def\b@lowcredit{\vfill}%
   \else\ifx\@lignBot\cred@v\def\ab@vecredit{\vfill}%
     \else\def\b@lowcredit{\vfill}\def\ab@vecredit{\vfill}\fi
   \fi
-  % Determine if the (a full line) annotation is wider or taller, and whether it should be treated as a paragraph or a 
+  %
+  %\trace{g}{Parse credit box}%
+  \let\cr@dit@col\empty
+  \edef\cr@ditstyle{x-credit|fig}%
+  \ifx\cr@ditbox\empty\else
+    \ifx\cr@ditbox\tru@\else
+      \expandafter\p@rseCreditBox \cr@ditbox - - - \end\relax%
+    \fi
+    \ifx\cr@ditbox\tru@
+    \else
+      \edef\cr@ditstyle{x-credit:box=\cr@ditbox|fig,\cr@ditstyle}%
+    \fi
+  \fi
+  % Determine if the credit (as a full line) is wider or taller, and whether it should be treated as a paragraph or a 
   % small piece of text.
   \count255=\cr@ditrot % adjust to -180 to 180 range.
   \loop
@@ -316,20 +339,82 @@
      \def\r@tSet{\kern\ht0}%
   \else 
      \def\r@tSet{\kern\dp0}%
+     \count255=-\count255
   \fi
-  \ifnum \count255>-45
-    \dimen0=0.7\wd1
+  %pad credit
+  \setbox0=\hbox{\s@tfont{\cr@ditstyle}\cr@dit}%
+  \dimen1=\ht0\advance\dimen1 by \FigCreditPadding\ht0=\dimen1
+  \dimen1=\dp0\advance\dimen1 by \FigCreditPadding\dp0=\dimen1
+  % Calculuate maximum credit width.  (note count255 is now
+  % positive)
+  \ifnum \count255>45
+    \dimen0=\ht1
   \else
-    \dimen0=0.7\ht1
+    \dimen0=\wd1
   \fi
-  \setbox0=\hbox{\s@tfont{credit|fig}\cr@dit}%
-  \ifdim\wd0>\dimen0%
-     \setbox0=\vbox{\hsize=\dimen0\relax\t@xtfragment{credit|fig}{\unhbox0}}%
+  \advance\dimen0 by -2\FigCreditPadding
+  \ifdim\wd0>0.9\dimen0% Credit doesn't comfortably fit on one line. Find out how many it'll take
+     \count255=2
+     \loop
+       \dimen1=\wd0
+       \divide\dimen1 by \count255
+       \ifdim \dimen1>\dimen0 \advance\count255 by 1 \repeat 
+     \advance \dimen1 by \ht0 %Add ~1em to each line as line breaking space
+     \ifdim \dimen1>\dimen0
+       \dimen1=\dimen0
+     \fi
+     % Now cram the text into a box that ought to be just wide enough
+     \setbox0=\vbox{\hsize=\dimen1\relax\t@xtfragment{\cr@ditstyle}{\vrule width 0pt height\ht0 \unhbox0\vrule depth\FigCreditPadding width 0pt}}%
   \fi
-  \setbox0\hbox{\rot@tebz}%
-  \setbox0=\vbox to \ht1{\hsize=\wd1\ab@vecredit\hbox to \wd1{\beginL\pr@credit\box0\p@stcredit\endL}\b@lowcredit}%
+  \setbox0=\hbox{\hskip \FigCreditPadding\box0\hskip \FigCreditPadding}%
+  \ifx\cr@ditbox\empty\else
+    \ifx\cr@dit@col\empty
+      \getp@ram{background}{\cr@ditstyle}%
+      \ifx\p@ram\relax
+        \edef\cr@dit@col{1 1 1} 
+      \else
+	\ifx\p@ram\h@phen
+          \edef\cr@dit@col{\p@ram}%
+	\else
+          \trace{g}{decoding \p@ram}%
+          \edef\cr@dit@col{\x@\h@xsixtotripple \p@ram\end}%
+	\fi
+      \fi
+    \fi
+    \trace{g}{credit text on \cr@dit@col background}%
+    \ifx\cr@dit@col\h@phen\else
+      \setbox0=\hbox{\colourbox{\cr@dit@col}{}{\the\wd0}{\the\dp0}{\the\ht0}{0pt}{\box0}\relax}%
+    \fi
+  \fi
+  \ifnum\cr@ditrot=0 \else
+    \setbox0=\hbox{\rot@tebz}%
+  \fi
+  \trace{g}{credit text is \the\wd0 x (\the\ht0 + \the\dp0)}%
+  \setbox0=\vbox to \ht1{\baselineskip=0pt \hsize=\wd1 \vskip 0pt\ab@vecredit\hbox to \wd1{\beginL\hskip 0pt\pr@credit\box0\p@stcredit\hskip 0pt\endL}\b@lowcredit\vskip 0pt}%
   \setbox1=\vbox to \ht1{\box1\vss\box0}%
 }
+\def\strip@minus#1-{#1}
+\def\p@rseCreditBox#1 #2 #3 #4\end{%
+  \trace{g}{credit box params "#1" "#2" "#3" "#4"}%
+  \def\t@mp{- - }\def\tmp{#4}\ifx\tmp\t@mp
+     \edef\cr@dit@col{\strip@minus #1 #2 #3}%
+  \else
+     \def\t@mp{t-}\def\tmp{#1}\ifx\tmp\t@mp
+     	\let\cr@ditbox\tru@
+     \fi
+  \fi
+}
+\def\h@xpairtofloat#1{\uppercase{\x@\dimen\x@0 "#1}pt \divide\dimen0 by 255
+  \x@\strip@pt{\dimen0}}
+\def\h@xsixtotripple #1#2#3#4#5#6#7\end{%
+  \if x#1\relax 
+    \x@\h@xpairtofloat{#1#2} %
+    \x@\h@xpairtofloat{#3#4} %
+    \x@\h@xpairtofloat{#5#6}
+  \else
+    #1#2#3#4#5#6#7\fi} %
+         
+\setp@ram{fontsize}{x-credit|fig}{7}
 %-cfig_addcredit
 
 \def\m@kepl@ceholder#1#2{%
@@ -512,8 +597,11 @@
         \ins@rtpic{"\the\PicPath\csname figparam-src\endcsname"}%
                      {\picaltdim@n}{\p@cheight}{\sizem@ltiple}{\xtra}{\xtraremains}}%
     \fi
-    \x@\ifx\csname figparam-credit\endcsname\empty\else
-        \x@\let\x@\cr@dit\csname figparam-credit\endcsname \x@\let\x@\cr@ditpos\csname figparam-creditpos\endcsname \x@\let\x@\cr@ditrot\csname figparam-creditrot\endcsname
+    \x@\ifx\csname figparam-x-credit\endcsname\empty\else
+        \x@\let\x@\cr@dit\x@=\csname figparam-x-credit\endcsname 
+	\x@\let\x@\cr@ditpos\x@=\csname figparam-x-creditpos\endcsname
+	\x@\let\x@\cr@ditrot\x@=\csname figparam-x-creditrot\endcsname
+	\x@\let\x@\cr@ditbox\x@=\csname figparam-x-creditbox\endcsname
 	\add@credit
     \fi
     \setbox0=\hbox to \sizem@ltiple\p@cwidth{\hss
