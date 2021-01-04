@@ -349,7 +349,12 @@
   % Calculuate maximum credit width.  (note count255 is now
   % positive)
   \ifnum \count255>45
-    \dimen0=\ht1
+    \ifnum \count255<135
+       \dimen0=\ht1
+    \else
+       \dimen0=\wd1
+       \def\r@tSet{}%
+    \fi
   \else
     \dimen0=\wd1
   \fi
@@ -393,7 +398,11 @@
     \fi
   \fi
   \ifnum\cr@ditrot=0 \else
-    \setbox0=\hbox{\rot@tebz}%
+    \ifnum\count255>135 
+      \setbox0=\hbox{\rot@tebzoneeighty}%
+    \else
+      \setbox0=\hbox{\rot@tebz}%
+    \fi
   \fi
   \trace{g}{credit text is \the\wd0 x (\the\ht0 + \the\dp0)}%
   \setbox0=\vbox to \ht1{\baselineskip=0pt \hsize=\wd1 \vskip 0pt\ab@vecredit\hbox to \wd1{\beginL\hskip 0pt\pr@credit\box0\p@stcredit\hskip 0pt\endL}\b@lowcredit\vskip 0pt}%
