@@ -377,10 +377,13 @@
 	\ifx\p@ram\h@phen
           \edef\cr@dit@col{\p@ram}%
 	\else
-          %\trace{g}{decoding \p@ram}%
-          %\def\tmp{\x@\h@xsixtotripple \p@ram\end}%
-          %\trace{g}{ result: \cr@dit@col}%
-          \edef\cr@dit@col{\p@ram}%
+          \trace{g}{decoding \p@ram}%
+          \tracingmacros=1
+          \x@\checkh@x \p@ram\end
+          \tracingmacros=0
+          \let\cr@dit@col\rgb@out
+          \trace{g}{ result: \cr@dit@col}%
+          %\edef\cr@dit@col{\p@ram}%
 	\fi
       \fi
     \fi
@@ -407,20 +410,21 @@
      \fi
   \fi
 }
-\def\h@xpairtofloat#1{%\x@\dimen\x@ 0 "#1 pt \divide\dimen0 by 255
-  \edef\tmp@@{"#1 pt}%
- }%
-  %\x@\strip@pt{\x@\dimexpr \tmp@@ / 255}}% \dimen0}}
-\def\h@xsixtotripple #1#2#3#4#5#6#7\end{%
-  \if x#1
-    \x@\h@xpairtofloat\x@{#2#3} %
-    \x@\h@xpairtofloat\x@{#4#5} %
-    \x@\h@xpairtofloat\x@{#6#7}
-  \else
-    #1#2#3#4#5#6#7\fi} %
+%-cfig_addcredit
+%+cfig_hex
+\def\@x@{x}
+\def\checkh@x #1#2\end{%
+  \def\t@mp{#1}%
+  \ifx \t@mp\@x@\x@\h@xsixtotripple #1#2\end\else\def\rgb@out{#1#2}\fi}
+
+\def\h@xsixtotripple x#1#2#3#4#5#6\end{%
+ \uppercase\x@{\def\rgb@out{%
+   \x@\strip@pt\x@{\x@\dimexpr "#1#2 pt / 255}
+   \x@\strip@pt\x@{\x@\dimexpr "#3#4 pt / 255}
+   \x@\strip@pt\x@{\x@\dimexpr "#5#6 pt / 255}}}}
          
 \setp@ram{fontsize}{x-credit|fig}{7}
-%-cfig_addcredit
+%-cfig_hex
 
 \def\m@kepl@ceholder#1#2{%
 \vbox to #2{\offinterlineskip

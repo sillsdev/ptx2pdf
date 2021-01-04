@@ -248,11 +248,33 @@ paragraph is completed and we add a half space at the end.
 [=cfig_docaption]::
 
 The ```\add@credit``` macro performs similar handling to the  caption, except that 
-there are considerably more placement options, including rotation.
+there are considerably more placement options, including rotation. Also the 
+alignmnet of the positions is somewhat tricky.
 No attempt at precise trigonometry is performed, so rotation in steps of 90 degrees 
-are highly recommended.
+is highly recommended. The rotation and box commands are the same ones used for 
+thumb-tabs.
+
 
 [=cfig_addcredit]::
+
+It's worth mentioning the bit of magic that happens for converting hexadecimal 
+colour codes into R G B colour triplets.
+XeTeX (and some other modern TeXes) allows a hexadecimal number to be specified 
+using `"FFEF` notation, and also has eTeX's `\dimexpr` which lets us perform 
+maths on dimensions as the value is defined.  We use dimensions as they can
+give fractional results, but we must supply  and then strip off the 'pt'. 
+(There are other similar primitives, `\numexpr` for integers and 
+`\glueexpr` for glue). 
+
+While neither the hex-notation nor `\dimexpr` are normally expanded
+immediately in macros, (not even with `\edef` as that does not process
+primitives) they *are* sufficiently well defined and expandable that wrapping a
+macro definition that uses them in `\lowercase` (or `\uppercase`) reduces them
+to their unique result. Note that multiply-layered wrappings or more complex
+macro arrangements do not process as fully as we might hope, thus the macro
+must define the triplet without calling other macros.
+
+[=cfig_hex]::
 
 
 Now that we have a box containing the whole figure, we need to put it somewhere.

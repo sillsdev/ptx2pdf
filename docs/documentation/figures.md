@@ -274,7 +274,10 @@ While not part of USFM, the XeTeX code recognises the following USFM-3 style att
 to over-print a small piece of text on the image, intended for giving credit to the artist. (while the following is 
 true at the time of writing, the 'ink is not dry' and there will probably be changes).
 - `x-credit="© A.Artist"` The text to print.
-- `x-creditpos="to"` The position in which the text should go (here, top outer-edge). (Default: `ti`)
+- `x-creditpos="to"` The position in which the text should go. Two letters are
+  expected, the first being vertical position (t/c/b for top, bottom, centre),
+  the second being horizontal (l/c/r/i/o for left, centre, right, inner, outer).  (here: top,
+  and the edge closest to the outer-edge of the book).  (Default: `ti`)
 - `x-creditrot="-90"` Rotation of the credit text (Default: depends on the location of the text. 
  At left and right edges, the text is rotated so that the text is bottom-to-edge).
 - `x-creditbox="value"` Should the text be printed inside a box or not. The following values are understood:
@@ -285,7 +288,8 @@ true at the time of writing, the 'ink is not dry' and there will probably be cha
 
 #### Styling of credit 
 Similarly to other attributes, the  displayed attribute `x-credit` of marker `\fig` can be styled in the following manner (by
-the XeTeX code):
+the XeTeX code, don't expect this to work with Paratext or another program!):
+
 ```
 \Marker x-credit|fig
 \Font Andika
@@ -296,24 +300,29 @@ the XeTeX code):
 \Font Andika
 \FontSize 5
 \Color xFFFFFE
-\Background 0.2 0.2 0.2
+\Background x1E1E3E
 
 \Marker x-credit:box=whitetext|fig
 \Color xFFFFFE
 \Background -
 ```
 
-In the above, the normal fontsize (6 `\FontSizeUnit`s) is overridden, and the font specified to be `Andika`. If a box is to be used, the
-default white is replaced with a 50% gray. Note that the use of hexadecimal notation is not presently possible in the style file. 
-It will never be understood in the ```\fig``` line as the spaces are used to distinguish between a colour and a style label.
+In the above, the normal fontsize (6 `\FontSizeUnit`s) is overridden, and the
+font specified to be `Andika`. If a box is to be used, the default white is
+replaced with a 50% gray, specified as 0.5 red, 0.5 green, 0.5 blue.
 
-The second `\Marker` set specifies that for credits with ```x-creditbox="dark"```, a black box is written with (almost) white text on it.
-XeTeX's driver software treats pure white (`xFFFFFF`) as a magic value meaning no colour change, so specifying pure white text does not
-work.
+The second `\Marker` set specifies that for credits specified with
+```x-creditbox="dark"```, a black box is written with (almost) white text on
+it.  XeTeX's driver software treats pure white (`xFFFFFF`) for fonts as a magic
+value meaning no colour change, so specifying pure white text does not
+work.  Note the use of hexadecimal notation is possible only in the style file. 
+It is not understood in the ```\fig``` line as the presence of spaces are used
+to distinguish between a colour and a style label.
 
-The third set demonstrates that there's no need to re-specify the default parameters (defined by ```\Marker x-credit|fig```, and the special
-value of `-` for the `\Background` parameter cancels the box for `creditbox="whitetext"`.
-
+The third set demonstrates that there's no need to re-specify the default
+parameters (defined by ```\Marker x-credit|fig```, and the special value of `-`
+for the `\Background` parameter cancels the box for `creditbox="whitetext"` I.e. 
+there will be no box for this item.
 
 
 ## Piclist files
