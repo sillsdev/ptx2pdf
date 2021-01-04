@@ -572,7 +572,7 @@
   \mkstr@t
   \dimen2=\count255\baselineskip %space reserved...
   \trace{g}{\w@tsit\space is cutout. \the\count255 x \the\baselineskip  = \the\dimen2. Box is \the\dimen0}%
-  \setbox#1=\hbox{\vrule height\dimen0\box#1}%TESTING.
+  %\setbox#1=\hbox{\vrule height\dimen0\box#1}%TESTING.
   \dimen1=-\baselineskip %where does the picture go? Starting point is the lowest point of the current line(i.e. this includes descenders, but we'll deal with that via the strutb@x)
   \advance\dimen1 by -\dp\str@tbox
   \ifhmode

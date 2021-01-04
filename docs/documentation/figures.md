@@ -77,8 +77,7 @@ An example of the `pgpos` attribute may be found in the piclist line shown in
 the initial section above. In that line (for the *right* column of a diglot, hence the `R`
 after the `HEB`), the picture will be set in a cut-out on the right side of the
 column, two lines below the beginning of the paragraph starting at 3:9, with the
-picture half a column wide and the text a little distance away.  This may
-*force* a paragraph at this point.
+picture half a column wide and the text a little distance away. 
 
 In the table below, 'left-aligned' means that the left hand edge of the image is
 lined up with the left-hand image of (unindented) paragraph text.
@@ -113,7 +112,7 @@ Pct  | 'Page', centred, top[8] | An image that replaces the normal text on the p
 Pl   | 'Page', left           | An image that replaces the normal text on the page, left-aligned | width of page
 Plt  | 'Page', left, top[8]   | An image that replaces the normal text on the page, left-aligned | width of page
 F    | 'Full page'            | The entirety of the paper [9]                                    | width of paper, may be off the page.
-F... | 'Full page', as above  | The entirety of the paper [9] pushed to whatever edge is indicated   | width of paper, may be off the page.
+Flt | 'Full page', as above  | The entirety of the paper [9] pushed to whatever edge is indicated   | width of paper, may be off the page.
 
 Notes:
 [1] Only if two columns are in use.
@@ -127,10 +126,11 @@ Notes:
     c is assumed if no number is specified, but required if supplying a number), pc2
     means after the next paragraph. This is useful if the verse contains poetry.
 [6] Multi-digit numbers may be specified, but little sanity checking is done.
-    The image will be on the same page as the calling verse (or off the page's
-    bottom), even if the notch is partly or fully on the next. A negative number
-    (e.g. cr-1) will raise the image and shorten the cut-out, but will not make
-    space above.
+    The image will *always* be on the same page/column as the anchor (normally 
+    a verse);  It may occur off the page's bottom, even if the notch is partly
+    or fully on the next. A negative number (e.g. cr-1) will raise the image and
+    cut-out, but while this can raise the image into the preceeding paragraph, 
+    it  cannot make the cutout begin earlier than the paragraph containing the anchor.
 [7] Since `p` is also interpretable as a media target, `pc` should always be
     used in SFM2 instead.
 [8] Use `b` for bottom alignment, or `c` for explicit central vertical alignment. 
@@ -142,7 +142,7 @@ Notes:
     be -2pt) is available for tweaking if top alignment does not actually coincide 
     with the image. 
 
-#### Restrictions on certain picture positions
+#### Restrictions  / notes on certain picture positions
 - p : The delayed picture is saved until the end of the Nth paragraph in a
   certain 'box'. There is no code to have either an adjustable stack of boxes 
   or multiple images in the box. (But diglots have a second box for the
@@ -154,30 +154,42 @@ Notes:
      functioning correctly. Thus captions should *not* be used in connection with full-page 
      images that approach the page edges.
      
-- c : The interaction between automatic paragraph adjustment, page balancing 
-  and cutout positioning can result in loops where the code cannot find a
-  solution: run 1 calculates the position for the cutout, but when cutout is 
-  positioned during run 2, that moves the anchor, meaning that next time the
-  cutout moves to a position that allows the anchor to return to the position
-  it was in during run 1. 
+- c : The interaction between automatic paragraph breaking, page balancing 
+  and cutout positioning can result in loops where the code would not find a
+  solution without hysterisis (slop). The addition of hysterisis, however,
+  means that different runs of the input may result in different final solutions. 
+  If reproducing a file exactly is required, e.g. for archiving, the `.parlocs`
+  file should be retained.
+
+  The undersired loop occurs like this:
+
+  Run 1 calculates the position for the cutout, but when cutout is positioned
+  during run 2, that moves the anchor, meaning that next time the cutout moves to
+  a position that allows the anchor to return to the position it was in during run 1. 
+
   This is most common when the cutout is anchored late in the paragraph.
-  There are two possible solutions: 
-   a. pick an earlier anchor, with a corresponding increase in the 'after # lines' number.
-   b. use ```\setCutoutSlop```
+  While some hysterisis is already permitted, it may be that this is insufficient for 
+  every case.  There are two possible solutions: 
+   a. Pick an earlier anchor, with a corresponding increase in the 'after # lines' number.
+   b. Use ```\setCutoutSlop```
 
 #### ```\setCutoutSlop``` - defining cutout offset permission.
 
 The TeX code allows a small amount of hysterisis (slop) in the positioning of
-cutouts.  (1 line higher for chapter numbers, +/- 2 for other cutouts).
+cutouts.  (1 line higher for chapter numbers, +/- 2 relative to 'perfect' for other cutouts).
 This might mean, for instance, that if run 1 calculated that an
 in-cutout image should ideally start at line 14 in a given paragraph, if on 
 the next run  it finds the anchor-point has moved and the cutout should now be
-on line 13 or 15 it considers this acceptable and, rather than adjusting the
-shape of the paragraph again (which risks moving the anchor point more), the
-image is raised or lowered relative to the anchor point to fit into the cutout. 
-The following allows `droppic4` to accept being raised by 3 lines or lowered by two.
+on line 13 or 15 the code considers this acceptable.  Rather than adjusting the
+shape of the paragraph again (which risks moving the anchor point again), an annotation 
+is made to the `.parlocs` file that the image is to raised or lowered relative to the 
+anchor point to fit into the cutout.
+The following allows `droppic4` (image number 4, in a cutout analagous to
+a drop-cap)  to accept being raised by 3 lines or lowered by two.
 
-   ```\setCutoutSlop{droppic4}{3}{2}```
+```
+\setCutoutSlop{droppic4}{3}{2}
+```
 
 #### Do the new picture positions conform to examples in the USFM specification?
 In some ways, they conform better than the previously available options. USFM
