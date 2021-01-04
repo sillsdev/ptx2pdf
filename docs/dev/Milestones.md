@@ -258,14 +258,14 @@ re-use the principle. Notice that whereas for the milestone the text before the
 name itself.
 
 [MH] I like method 6 along with method 2 with method 2 taking precedence. Method
-2 allows for multiply defined fields as for `\wit name|gloss="gloss"
-morph="morphbreak"\wit*
+2 allows for multiply defined fields as for:
+```\wit name|gloss="gloss" morph="morphbreak"\wit*```
 
 ```
 1.  \Marker at:gloss;morph|wit
 ```
 
-[DG] I don't understand. Why is gloss in the above, and it not  ``\Marker morph|wit```
+[DG] I don't understand. Why is gloss in the above, and is it not  ``\Marker morph|wit```
 
 #### Disussion
 While there are going to be distinct layouts for different markers/attributes there are some 
@@ -285,6 +285,14 @@ colon-parsing for ruby glosses, as described in the USFM 3 docs.
 want Strong's numbers or lemma  on a ```\w``` to be above/below the word rather
 than a superscript. Also, of course multi-line interlinear text. It should not
 be necessary to rewrite the USFM to apply these layout options.
+
+### Image credit styles
+
+1.  ```\Marker credit|fig```
+2.  ```\Marker credit:box=dark|fig```
+
+The new credit field of a fig can (should) be styled.
+
 
 ### Active Categories: Containing Block
 

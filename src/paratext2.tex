@@ -245,11 +245,14 @@
 \def\s@tbaseline#1{%
   \ifdiglot\ifdiglotL\def\f@ntstyle{#1}\else\def\f@ntstyle{#1R}\fi\else\def\f@ntstyle{#1}\fi%
   \getp@ram{baseline}{#1}\ifx\p@ram\relax
-    \getp@ram{fontsize}{#1}\dimen0=\p@ram\le@dingunit
-    \multiply\dimen0 by \LineSpaceBase \divide\dimen0 by 12 % default .75 shift of .85ex (ex=.5 fontsize) against 14/12
-    \trace{F}{baseline [\f@ntstyle] = \the\dimen0 = \the\le@dingunit / 12 * \LineSpaceBase}%
-    \setp@ram{baseline}{\f@ntstyle}{\the\dimen0}\baselineskip=\dimen0\else
-  \baselineskip=\p@ram\fi
+    \getp@ram{fontsize}{#1}\ifx\p@ram\relax\else
+      \dimen0=\p@ram\le@dingunit
+      \multiply\dimen0 by \LineSpaceBase \divide\dimen0 by 12 % default .75 shift of .85ex (ex=.5 fontsize) against 14/12
+      \trace{F}{baseline [\f@ntstyle] = \the\dimen0 = \the\le@dingunit / 12 * \LineSpaceBase}%
+      \setp@ram{baseline}{\f@ntstyle}{\the\dimen0}\baselineskip=\dimen0
+     \fi
+    \else
+    \baselineskip=\p@ram\fi
   \trace{j}{set baselineskip=\the\baselineskip}}
 
 \def\ins@rtn@tecl@ss#1{% insert the given note class, either paragraphed or separately

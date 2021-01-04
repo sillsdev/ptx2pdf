@@ -268,6 +268,54 @@ to mirror the picture. The possible values are:
 - `both` Mirror on all pages 
 NB: the odd/even behaviour requires a second XeTeX run to get things right.
 
+### Credit Attributes
+
+While not part of USFM, the XeTeX code recognises the following USFM-3 style attributes 
+to over-print a small piece of text on the image, intended for giving credit to the artist. (while the following is 
+true at the time of writing, the 'ink is not dry' and there will probably be changes).
+- `x-credit="© A.Artist"` The text to print.
+- `x-creditpos="to"` The position in which the text should go (here, top outer-edge). (Default: `ti`)
+- `x-creditrot="-90"` Rotation of the credit text (Default: depends on the location of the text. 
+ At left and right edges, the text is rotated so that the text is bottom-to-edge).
+- `x-creditbox="value"` Should the text be printed inside a box or not. The following values are understood:
+   * A value of "true" (or "t") indicates that a box of the styling-defined  colour should be applied, or white if there is none.
+   * A value of comprising of three numbers (e.g. "0.5 0.5 1.0") represents the Red, Green and Blue components of the box colour.
+   This is simple but not a recommended approach as changing this styling element can quickly become time consuming.
+   * Any other string (e.g. `x-creditbox="dark"`) specifies a particular styling set for the credit.
+
+#### Styling of credit 
+Similarly to other attributes, the  displayed attribute `x-credit` of marker `\fig` can be styled in the following manner (by
+the XeTeX code):
+```
+\Marker x-credit|fig
+\Font Andika
+\FontSize 5
+\Background x7F7F7F
+
+\Marker x-credit:box=dark|fig
+\Font Andika
+\FontSize 5
+\Color xFFFFFE
+\Background x1E1E3E
+
+\Marker x-credit:box=whitetext|fig
+\Color xFFFFFE
+\Background -
+```
+
+In the above, the normal fontsize (6 `\FontSizeUnit`s) is overridden, and the font specified to be `Andika`. If a box is to be used, the
+default white is replaced with a 50% gray. Note the use of hexadecimal notation is possible in the style file. At present it is not
+understood in the ```\fig``` line as the spaces are used to distinguish between a colour and a style label.
+
+The second `\Marker` set specifies that for credits with ```x-creditbox="dark"```, a black box is written with (almost) white text on it.
+XeTeX's driver software treats pure white (`xFFFFFF`) as a magic value meaning no colour change, so specifying pure white text does not
+work.
+
+The third set demonstrates that there's no need to re-specify the default parameters (defined by ```\Marker x-credit|fig```, and the special
+value of `-` for the `\Background` parameter cancels the box for `creditbox="whitetext"`.
+
+
+
 ## Piclist files
 
 Piclist files are a way of describing which figures should go where in a
