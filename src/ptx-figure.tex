@@ -47,7 +47,7 @@
 % Place everything up to first | into \param-N.
 % Redefine \p@rams to be rest of list
 %+cfig_stripspace
-\def\stripspace#1 \end/#2\relax#3{\if\relax#2\relax\gdef\p@ram{#3}\else\stripspace#1\end/ \end/\relax{#1}\fi}
+\def\stripspace#1 \end/#2\relax#3{\if\relax#2\relax\xdef\p@ram{#3}\else\stripspace#1\end/ \end/\relax{#1}\fi}
 %-cfig_stripspace
 %+cfig_getonepair
 %\def\FigP@ramAlt{alt} \def\FigP@ramSrc{src} \def\FigP@ramSize{size} \def\FigP@ramLoc{loc}
@@ -66,7 +66,8 @@
   \fi
 }
 \newif\ifusfmthree \usfmthreefalse
-\def\getonepairp@ram#1="#2" {\stripspace#1\end/ \end/\relax{#1}\edef\p@ramid{\p@ram}%
+\lowercase{\def\setp@r@mid #1#2\E{\edef\p@ramid{\ifx ~#1\else #1\fi#2}}}% Kill off infuriating leading space issue
+\def\getonepairp@ram#1="#2" {\stripspace#1\end/ \end/\relax{#1}\ifx\p@ram\empty\let\p@ramid\empty\else\x@\setp@r@mid\p@ram\E\fi
   \stripspace#2\end/ \end/\relax{#2}\edef\p@ramval{\p@ram}%
   \trace{g}{getonepairparam: [\p@ramid] = [\p@ramval]}%
   \ifx\p@ramid\empty\let\fnext=\relax\else
