@@ -377,8 +377,10 @@
 	\ifx\p@ram\h@phen
           \edef\cr@dit@col{\p@ram}%
 	\else
-          \trace{g}{decoding \p@ram}%
-          \edef\cr@dit@col{\x@\h@xsixtotripple \p@ram\end}%
+          %\trace{g}{decoding \p@ram}%
+          %\def\tmp{\x@\h@xsixtotripple \p@ram\end}%
+          %\trace{g}{ result: \cr@dit@col}%
+          \edef\cr@dit@col{\p@ram}%
 	\fi
       \fi
     \fi
@@ -405,13 +407,15 @@
      \fi
   \fi
 }
-\def\h@xpairtofloat#1{\uppercase{\x@\dimen\x@0 "#1}pt \divide\dimen0 by 255
-  \x@\strip@pt{\dimen0}}
+\def\h@xpairtofloat#1{%\x@\dimen\x@ 0 "#1 pt \divide\dimen0 by 255
+  \edef\tmp@@{"#1 pt}%
+ }%
+  %\x@\strip@pt{\x@\dimexpr \tmp@@ / 255}}% \dimen0}}
 \def\h@xsixtotripple #1#2#3#4#5#6#7\end{%
-  \if x#1\relax 
-    \x@\h@xpairtofloat{#1#2} %
-    \x@\h@xpairtofloat{#3#4} %
-    \x@\h@xpairtofloat{#5#6}
+  \if x#1
+    \x@\h@xpairtofloat\x@{#2#3} %
+    \x@\h@xpairtofloat\x@{#4#5} %
+    \x@\h@xpairtofloat\x@{#6#7}
   \else
     #1#2#3#4#5#6#7\fi} %
          

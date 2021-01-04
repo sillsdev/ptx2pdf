@@ -290,13 +290,13 @@ the XeTeX code):
 \Marker x-credit|fig
 \Font Andika
 \FontSize 5
-\Background x7F7F7F
+\Background 0.5 0.5 0.5
 
 \Marker x-credit:box=dark|fig
 \Font Andika
 \FontSize 5
 \Color xFFFFFE
-\Background x1E1E3E
+\Background 0.2 0.2 0.2
 
 \Marker x-credit:box=whitetext|fig
 \Color xFFFFFE
@@ -304,8 +304,8 @@ the XeTeX code):
 ```
 
 In the above, the normal fontsize (6 `\FontSizeUnit`s) is overridden, and the font specified to be `Andika`. If a box is to be used, the
-default white is replaced with a 50% gray. Note the use of hexadecimal notation is possible in the style file. At present it is not
-understood in the ```\fig``` line as the spaces are used to distinguish between a colour and a style label.
+default white is replaced with a 50% gray. Note that the use of hexadecimal notation is not presently possible in the style file. 
+It will never be understood in the ```\fig``` line as the spaces are used to distinguish between a colour and a style label.
 
 The second `\Marker` set specifies that for credits with ```x-creditbox="dark"```, a black box is written with (almost) white text on it.
 XeTeX's driver software treats pure white (`xFFFFFF`) as a magic value meaning no colour change, so specifying pure white text does not
