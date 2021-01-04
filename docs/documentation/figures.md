@@ -312,7 +312,7 @@ font specified to be `Andika`. If a box is to be used, the default white is
 replaced with a 50% gray, specified as 0.5 red, 0.5 green, 0.5 blue.
 
 The second `\Marker` set specifies that for credits specified with
-```x-creditbox="dark"```, a black box is written with (almost) white text on
+```x-creditbox="dark"```, a dark blue-gray box is written with (almost) white text on
 it.  XeTeX's driver software treats pure white (`xFFFFFF`) for fonts as a magic
 value meaning no colour change, so specifying pure white text does not
 work.  Note the use of hexadecimal notation is possible only in the style file. 
