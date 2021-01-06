@@ -24,7 +24,7 @@ from ptxprint.ptsettings import ParatextSettings, allbooks, books, bookcodes, ch
 from ptxprint.piclist import PicList, PicChecks, PicInfoUpdateProject
 from ptxprint.gtkstyleditor import StyleEditorView
 from ptxprint.runjob import isLocked, unlockme
-from ptxprint.texmodel import TexModel
+from ptxprint.texmodel import TexModel, ModelMap
 from ptxprint.minidialog import MiniDialog
 from ptxprint.dbl import UnpackDBL
 import ptxprint.scriptsnippets as scriptsnippets
@@ -265,7 +265,7 @@ class GtkViewModel(ViewModel):
             self.builder = Gtk.Builder.new_from_string(xml_text, -1)
         else:
             self.builder.set_translation_domain(APP)
-            self.builder.add_from_file(os.path.join(os.path.dirname(__file__), "ptxprint.glade"))
+            self.builder.add_from_file(gladefile)
         self.builder.connect_signals(self)
         super(GtkViewModel, self).__init__(settings_dir, workingdir, userconfig, scriptsdir, args)
         self.isDisplay = True
@@ -393,6 +393,7 @@ class GtkViewModel(ViewModel):
 
         olst = ["b_print", "fr_SavedConfigSettings", "tb_Font", "tb_Layout", "tb_Body", "tb_HeadFoot", "tb_Pictures",
                 "tb_Advanced", "tb_Logging", "tb_ViewerEditor", "tb_DiglotBorder"]
+        self.getInitValues()
         self.initialised = True
         for o in olst:
             self.builder.get_object(o).set_sensitive(False)
@@ -453,6 +454,14 @@ class GtkViewModel(ViewModel):
     def onMainConfigure(self, w, ev, *a):
         if self.picListView is not None:
             self.picListView.onResized()
+
+    def getInitValues(self):
+        self.initValues = {v[0]: self.get(v[0], skipmissing=True) for k, v in ModelMap.items() if v[0] is not None}
+
+    def resetToInitValues(self):
+        for k, v in self.initValues.items():
+            if v is not None:
+                self.set(k, v)
 
     def onHideAdvancedSettingsClicked(self, c_hideAdvancedSettings, foo):
         val = self.get("c_hideAdvancedSettings")
@@ -1259,9 +1268,9 @@ class GtkViewModel(ViewModel):
                 j = self.styleEditor.getval(k, "Justification")
             except KeyError:
                 return
-            if j.lower() == "right":
+            if j is not None and j.lower() == "right":
                 self.styleEditor.setval(k, "Justification", "Left")
-            elif j.lower() == "left":
+            elif j is None or j.lower() == "left":
                 self.styleEditor.setval(k, "Justification", "Right")
 
     def onThumbStyleClicked(self, btn):
@@ -1512,7 +1521,7 @@ class GtkViewModel(ViewModel):
 
     def onBookChange(self, cb_book):
         self.bk = self.get("ecb_book")
-        if self.bk != "":
+        if self.bk is not None and self.bk != "":
             self.chs = int(chaps.get(str(self.bk)))
             self.chapfrom = self.builder.get_object("ls_chapfrom")
             self._setchap(self.chapfrom, 1, self.chs)
@@ -1561,12 +1570,15 @@ class GtkViewModel(ViewModel):
             self.set("ecb_savedConfig", configid)
 
     def onProjectChange(self, cb_prj):
+        if not self.initialised:
+            return
+        self.resetToInitValues()
         self.updatePrjLinks()
         self.builder.get_object("btn_saveConfig").set_sensitive(True)
         self.builder.get_object("btn_deleteConfig").set_sensitive(False)
-        self.set("c_interlinear", False)
-        self.set("t_interlinearLang", "")
-        self.set("c_ruby", False)
+        #self.set("c_interlinear", False)
+        #self.set("t_interlinearLang", "")
+        #self.set("c_ruby", False)
         lockBtn = self.builder.get_object("btn_lockunlock")
         lockBtn.set_label("Lock Config")
         lockBtn.set_sensitive(False)
