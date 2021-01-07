@@ -134,6 +134,7 @@ class ViewModel:
         self.picinfos = None
         self.loadingConfig = False
         self.styleEditor = StyleEditor(self)
+        self.triggervcs = False
 
         # private to this implementation
         self.dict = {}
@@ -296,6 +297,7 @@ class ViewModel:
         oldp = self.configPath(cfgname=oldcfg)
         newp = self.configPath(cfgname=newcfg)
         if not os.path.exists(newp):
+            self.triggervcs = True
             os.makedirs(newp)
             jobs = {k:k for k in('ptxprint-mods.sty', 'ptxprint.sty', 'ptxprint-mods.tex',
                                  'ptxprint.cfg', 'PicLists', 'AdjLists')}
@@ -442,6 +444,10 @@ class ViewModel:
         config = self.createConfig()
         with open(path, "w", encoding="utf-8") as outf:
             config.write(outf)
+        if self.triggervcs:
+            with open(os.path.join(self.settings_dir, self.prjid, "unique.id"), "w") as outf:
+                outf.write("ptxprint-{}".format(datetime.datetime.now().isoformat(" ")))
+            self.triggervcs = False
 
     def _configset(self, config, key, value):
         if "/" in key:

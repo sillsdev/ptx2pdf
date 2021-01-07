@@ -126,7 +126,7 @@ class StyleEditor:
         def normmkr(s):
             x = s.lower().title()
             return mkrexceptions.get(x, x)
-        for m in self.allStyles():
+        for m in sorted(self.allStyles()):
             markerout = False
             sm = self.sheet.get(m, {})
             om = self.basesheet.get(m, {})

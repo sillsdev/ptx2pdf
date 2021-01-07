@@ -96,4 +96,8 @@ def setFontButton(btn, value):
         style = " ".join(styles)
     btn.set_label("{}\n{}".format(value.name, style))
 
-
+def makeSpinButton(mini, maxi, start, step=1, page=1):
+    adj = Gtk.Adjustment(upper=maxi, lower=mini, step_increment=step, page_increment=page)
+    res = Gtk.SpinButton()
+    res.set_adjustment(adj)
+    return res

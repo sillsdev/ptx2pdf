@@ -103,6 +103,7 @@ widgetsignals = {
 
 dialogKeys = {
     "Marker":       "t_styMarker",
+    "EndMarker":    "t_styEndMarker",
     "Name":         "t_styName",
     "Description":  "tb_styDesc",
     "OccursUnder":  "t_styOccursUnder",
@@ -415,7 +416,7 @@ class StyleEditorView(StyleEditor):
         for k, v in dialogKeys.items():
             if k == "OccursUnder":
                 self.model.set(v, " ".join(sorted(data.get(k, {}))))
-            else:
+            elif data.get(k, '') is not None:
                 self.model.set(v, data.get(k, ''))
         self.model.set(dialogKeys['Marker'], '' if newkey else self.marker)
         wid = self.builder.get_object(dialogKeys['Marker'])
@@ -452,6 +453,8 @@ class StyleEditorView(StyleEditor):
                     selecti = self.treestore.append(selecti, [key, name, True])
             data = self.sheet[key]
             for k, v in dialogKeys.items():
+                if k == 'Marker':
+                    continue
                 val = self.model.get(v)
                 if k.lower() == 'occursunder':
                     val = set(val.split())

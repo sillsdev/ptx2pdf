@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.1 
+<!-- Generated with glade 3.22.2 
 
 The MIT License (MIT)
 
@@ -1980,6 +1980,129 @@ Viewer tab.</property>
       </row>
     </data>
   </object>
+  <object class="GtkListStore" id="ls_featsLangs">
+    <columns>
+      <!-- column-name Name -->
+      <column type="gchararray"/>
+      <!-- column-name Code -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
+  <object class="GtkDialog" id="dlg_features">
+    <property name="width_request">440</property>
+    <property name="height_request">440</property>
+    <property name="can_focus">False</property>
+    <property name="type_hint">dialog</property>
+    <child type="titlebar">
+      <placeholder/>
+    </child>
+    <child internal-child="vbox">
+      <object class="GtkBox">
+        <property name="can_focus">False</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox">
+            <property name="can_focus">False</property>
+            <property name="layout_style">end</property>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkScrolledWindow">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="shadow_type">in</property>
+            <child>
+              <object class="GtkViewport">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <child>
+                  <object class="GtkGrid" id="box_featsFeatures">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="column_spacing">6</property>
+                    <property name="row_homogeneous">True</property>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkBox">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="spacing">6</property>
+            <child>
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="halign">end</property>
+                <property name="label" translatable="yes">Language:</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkComboBox" id="fcb_featsLangs">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="model">ls_featsLangs</property>
+                <property name="id_column">1</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">2</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
   <object class="GtkListStore" id="ls_font">
     <columns>
       <!-- column-name FontFamily -->
@@ -2323,22 +2446,6 @@ to the regular typeface.</property>
                 <property name="hexpand">True</property>
                 <property name="row_spacing">4</property>
                 <child>
-                  <object class="GtkLabel">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="tooltip_text" translatable="yes">You can enable/disable any font features 
-for the selected font. For example:
-litr=1, dig0=1, dig1=1, dig4=1</property>
-                    <property name="halign">start</property>
-                    <property name="margin_left">6</property>
-                    <property name="label" translatable="yes">Font Features:</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">0</property>
-                    <property name="top_attach">0</property>
-                  </packing>
-                </child>
-                <child>
                   <object class="GtkEntry" id="t_fontFeatures">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
@@ -2381,11 +2488,26 @@ SIL's Graphite Rendering
 technology, then enable this.</property>
                     <property name="halign">start</property>
                     <property name="draw_indicator">True</property>
+                    <signal name="clicked" handler="onFontIsGraphiteClicked" swapped="no"/>
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
                     <property name="top_attach">1</property>
                     <property name="width">2</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkButton" id="c_fontFeatures">
+                    <property name="label" translatable="yes">Font Features:</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <property name="halign">start</property>
+                    <signal name="clicked" handler="onFontFeaturesClicked" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
+                    <property name="top_attach">0</property>
                   </packing>
                 </child>
               </object>
@@ -11407,7 +11529,7 @@ could make it appear as if settings
 here are not working at all.</property>
                                             <property name="halign">start</property>
                                             <property name="draw_indicator">True</property>
-                                            <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                                            <signal name="clicked" handler="onExtraFileClicked" swapped="no"/>
                                           </object>
                                           <packing>
                                             <property name="left_attach">0</property>
@@ -11527,7 +11649,7 @@ producing the printout, then these
 can be specified in this file.</property>
                                             <property name="halign">start</property>
                                             <property name="draw_indicator">True</property>
-                                            <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                                            <signal name="clicked" handler="onExtraFileClicked" swapped="no"/>
                                           </object>
                                           <packing>
                                             <property name="left_attach">0</property>
@@ -11593,7 +11715,7 @@ can be specified in this file.</property>
 this option checked (on).</property>
                                             <property name="halign">start</property>
                                             <property name="draw_indicator">True</property>
-                                            <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                                            <signal name="clicked" handler="onExtraFileClicked" swapped="no"/>
                                           </object>
                                           <packing>
                                             <property name="left_attach">0</property>
@@ -11612,7 +11734,7 @@ this option checked (on).</property>
                                             <property name="halign">start</property>
                                             <property name="active">True</property>
                                             <property name="draw_indicator">True</property>
-                                            <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                                            <signal name="clicked" handler="onExtraFileClicked" swapped="no"/>
                                           </object>
                                           <packing>
                                             <property name="left_attach">0</property>
@@ -11675,7 +11797,7 @@ this option checked (on).</property>
                                             <property name="receives_default">False</property>
                                             <property name="halign">start</property>
                                             <property name="draw_indicator">True</property>
-                                            <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                                            <signal name="clicked" handler="onExtraFileClicked" swapped="no"/>
                                           </object>
                                           <packing>
                                             <property name="left_attach">0</property>

@@ -2,7 +2,7 @@
 
 import sys, os, re, regex, gi, subprocess, traceback
 gi.require_version('Gtk', '3.0')
-from shutil import copyfile, copytree, rmtree
+from shutil import rmtree
 import time
 from gi.repository import Gdk, Gtk, Pango, GObject, GLib, GdkPixbuf
 
@@ -15,9 +15,9 @@ else:
 from gi.repository import GtkSource
 
 import xml.etree.ElementTree as et
-from ptxprint.font import TTFont, initFontCache, fccache, FontRef
+from ptxprint.font import TTFont, initFontCache, fccache, FontRef, parseFeatString
 from ptxprint.view import ViewModel, Path
-from ptxprint.gtkutils import getWidgetVal, setWidgetVal, setFontButton
+from ptxprint.gtkutils import getWidgetVal, setWidgetVal, setFontButton, makeSpinButton
 from ptxprint.utils import APP
 from ptxprint.runner import StreamTextBuffer
 from ptxprint.ptsettings import ParatextSettings, allbooks, books, bookcodes, chaps
@@ -284,7 +284,7 @@ class GtkViewModel(ViewModel):
             nbk = self.builder.get_object("nbk_"+n)
             self.notebooks[n] = [Gtk.Buildable.get_name(nbk.get_nth_page(i)) for i in range(nbk.get_n_pages())]
         for fcb in ("digits", "script", "chapfrom", "chapto", "diglotPicListSources",
-                    "textDirection", "glossaryMarkupStyle", "fontFaces",
+                    "textDirection", "glossaryMarkupStyle", "fontFaces", "featsLangs",
                     # "styTextType", "styStyleType", 
                     "picaccept", "pubusage", "pubaccept", "chklstFilter"): #, "rotateTabs"):
             self.addCR("fcb_"+fcb, 0)
@@ -313,7 +313,7 @@ class GtkViewModel(ViewModel):
         self.fcb_digits.set_active_id(_alldigits[0])
 
         for d in ("dlg_multiBookSelector", "dlg_fontChooser", "dlg_password",
-                  "dlg_generate", "dlg_styModsdialog", "dlg_DBLbundle"):
+                  "dlg_generate", "dlg_styModsdialog", "dlg_DBLbundle", "dlg_features"):
             dialog = self.builder.get_object(d)
             dialog.add_buttons(
                 Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
@@ -706,6 +706,7 @@ class GtkViewModel(ViewModel):
             self.set("t_savedConfig", "Default")
             self.loadConfig("Default")
             self.updateDialogTitle()
+            self.triggervcs = True
 
     def updateBookList(self):
         self.bookNoUpdate = True
@@ -1365,11 +1366,22 @@ class GtkViewModel(ViewModel):
         name = ls.get_value(row, 0)
         initFontCache().fill_cbstore(name, lsstyles)
         self.builder.get_object("fcb_fontFaces").set_active(0)
+        self.set("t_fontFeatures", "")
 
     def responseToDialog(entry, dialog, response):
         dialog.response(response)
 
-    def getFontNameFace(self, btnid, noStyles=False):
+    def _getSelectedFont(self):
+        lb = self.builder.get_object("tv_fontFamily")
+        sel = lb.get_selection()
+        ls, row = sel.get_selected()
+        name = ls.get_value(row, 0)
+        style = self.get("fcb_fontFaces")
+        if style.lower() == "regular":
+            style = None
+        return (name, style)
+
+    def getFontNameFace(self, btnid, noStyles=False, noFeats=False):
         btn = self.builder.get_object(btnid)
         f = self.get(btnid)
         print(f"getFontNameFace: {btnid} {f}")
@@ -1383,6 +1395,7 @@ class GtkViewModel(ViewModel):
             hasfake = False
             embolden = None
             italic = None
+            isCtxtSpace = False
         else:
             for i, row in enumerate(ls):
                 if row[0] == f.name:
@@ -1391,6 +1404,7 @@ class GtkViewModel(ViewModel):
                 i = 0
             # print(btnid, f, i)
             isGraphite = f.isGraphite
+            isCtxtSpace = f.isCtxtSpace
             feats = f.asFeatStr()
             embolden = f.getFake("embolden")
             italic = f.getFake("slant")
@@ -1401,7 +1415,9 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("t_fontSearch").has_focus()
         self.builder.get_object("fcb_fontFaces").set_sensitive(not noStyles)
         self.builder.get_object("t_fontFeatures").set_text(feats)
+        self.builder.get_object("t_fontFeatures").set_sensitive(not noFeats)
         self.builder.get_object("c_fontGraphite").set_active(isGraphite)
+        self.builder.get_object("c_fontCtxtSpaces").set_active(isCtxtSpace)
         self.builder.get_object("s_fontBold").set_value(float(embolden or 0.))
         self.builder.get_object("s_fontItalic").set_value(float(italic or 0.))
         self.builder.get_object("c_fontFake").set_active(hasfake)
@@ -1412,12 +1428,7 @@ class GtkViewModel(ViewModel):
         
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
-            sel = lb.get_selection()
-            ls, row = sel.get_selected()
-            name = ls.get_value(row, 0)
-            style = self.get("fcb_fontFaces")
-            if style.lower() == "regular":
-                style = None
+            (name, style) = self._getSelectedFont()
             if self.get("c_fontFake"):
                 bi = (self.get("s_fontBold"), self.get("s_fontItalic"))
             else:
@@ -1431,6 +1442,85 @@ class GtkViewModel(ViewModel):
         dialog.set_keep_above(False)
         dialog.hide()
         return res
+
+    def onFontFeaturesClicked(self, btn):
+        (name, style) = self._getSelectedFont()
+        f = TTFont(name, style)
+        if f is None:
+            return
+        isGraphite = self.get("c_fontGraphite")
+        dialog = self.builder.get_object("dlg_features")
+        featbox = self.builder.get_object("box_featsFeatures")
+        lslangs = self.builder.get_object("ls_featsLangs")
+        if isGraphite:
+            feats = f.feats
+            vals = f.featvals
+            langs = f.grLangs
+        else:
+            feats = f.otFeats
+            vals = f.otVals
+            langs = f.otLangs
+        numrows = len(feats)
+        (lang, setfeats) = parseFeatString(self.get("t_fontFeatures"))
+        for i, (k, v) in enumerate(sorted(feats.items())):
+            featbox.insert_row(i)
+            l = Gtk.Label(label=v+":")
+            l.set_halign(Gtk.Align.END)
+            featbox.attach(l, 0, i, 1, 1)
+            l.show()
+            inival = int(setfeats.get(k, "0"))
+            if k in vals:
+                if len(vals[k]) < 3:
+                    obj = Gtk.CheckButton()
+                    obj.set_tooltip_text(vals[k][1])
+                    obj.set_active(inival)
+                else:
+                    obj = Gtk.ComboBoxText()
+                    for j, n in sorted(vals[k].items()):
+                        obj.append(str(j), n)
+                    obj.set_active(inival)
+                    obj.set_entry_text_column(1)
+            elif k == "aalt":
+                obj = makeSpinButton(0, 100, 0)
+                obj.set_value(inival)
+            else:
+                obj = Gtk.CheckButton()
+                obj.set_active(inival)
+            obj.set_halign(Gtk.Align.START)
+            featbox.attach(obj, 1, i, 1, 1)
+            obj.show()
+        lslangs.clear()
+        for k, v in sorted(langs.items()):
+            lslangs.append([v, k])
+        if lang is not None:
+            self.set("fcb_featsLangs", lang)
+        response = dialog.run()
+        if response == Gtk.ResponseType.OK:
+            results = []
+            lang = self.get("fcb_featsLangs")
+            if lang is not None:
+                results.append("language="+lang)
+            for i, (k, v) in enumerate(sorted(feats.items())):
+                obj = featbox.get_child_at(1, i)
+                if isinstance(obj, Gtk.CheckButton):
+                    if obj.get_active():
+                        results.append("{}=1".format(k))
+                elif isinstance(obj, Gtk.SpinButton):
+                    num = int(obj.get_value())
+                    if num > 0:
+                        results.append("{}={}".format(k, num))
+                elif isinstance(obj, Gtk.ComboBoxText):
+                    val = obj.get_active_id()
+                    if val is not None and str(val) != "0":
+                        results.append("{}={}".format(k, val))
+            self.set("t_fontFeatures", ", ".join(results))
+        for i in range(numrows-1, -1, -1):
+            featbox.remove_row(i)
+        dialog.hide()
+
+    def onFontIsGraphiteClicked(self, btn):
+        self.onSimpleClicked(btn)
+        self.set("t_fontFeatures", "")
 
     def onChooseBooksClicked(self, btn):
         dialog = self.builder.get_object("dlg_multiBookSelector")
@@ -1728,13 +1818,6 @@ class GtkViewModel(ViewModel):
         tbuf.move_mark(tmark, titer)
         tbuf.place_cursor(titer)
         GLib.idle_add(self.fileViews[pgnum][1].scroll_mark_onscreen, tmark)
-    def _editProcFile(self, fname, loc, intro=""):
-        fpath = self._locFile(fname, loc)
-        if intro != "" and not os.path.exists(fpath):
-            openfile = open(fpath,"w", encoding="utf-8")
-            openfile.write(intro)
-            openfile.close()
-        self.editFile(fname, loc)
 
     def _editProcFile(self, fname, loc, intro=""):
         fpath = self._locFile(fname, loc)
@@ -1773,6 +1856,11 @@ class GtkViewModel(ViewModel):
 
     def onEditModsSty(self, btn):
         self.editFile("ptxprint-mods.sty", "cfg")
+
+    def onExtraFileClicked(self, btn):
+        self.onSimpleClicked(btn)
+        if btn.get_active():
+            self.triggervcs = True
 
     def onMainBodyTextChanged(self, btn):
         self.sensiVisible("c_mainBodyText")
