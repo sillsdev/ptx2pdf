@@ -1612,7 +1612,7 @@ class GtkViewModel(ViewModel):
     def onBookChange(self, cb_book):
         self.bk = self.get("ecb_book")
         if self.bk is not None and self.bk != "":
-            self.chs = int(chaps.get(str(self.bk)))
+            self.chs = int(chaps.get(str(self.bk), 0))
             self.chapfrom = self.builder.get_object("ls_chapfrom")
             self._setchap(self.chapfrom, 1, self.chs)
             self.fcb_chapfrom.set_active_id('1')
