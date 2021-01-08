@@ -185,6 +185,13 @@
     \trace{m}{Milestone with \attrid =\attr@b\space stacked}%
   \fi
   \upd@teMsPrefix
+  \let\styst@k=\empty
+  \s@tstyst@k{\thismil@stone}%
+  % kill cached possParam-\m@rker values  
+  \let\d@=\kill@cache
+  \x@\cstackdown\p@ssParamCached,\E
+  \global\let\p@ssParamCached\relax
+  \trace{sC}{Emptied p@ssParamCached}%
   \trace{m}{Style stack now: \mcstack}%
   \op@ninghooks{start}{\thismil@stone}%
 }

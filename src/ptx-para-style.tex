@@ -36,7 +36,7 @@
 \newif\ifstartpara
 
 %+cpar_init
-\def\initp@rastyles{\@ntrofalse \t@tlefalse \b@dyfalse \def\m@rker{something}}
+\def\initp@rastyles{\@ntrofalse \t@tlefalse \b@dyfalse \def\m@rker{p}}
 %-cpar_init
 
 % test if a marker is an "introduction" style (name begins with "i")
@@ -305,6 +305,8 @@
   % and switch to the appropriate mode
   %
 %+cpar_parstyle_transition
+  \let\styst@k=\empty
+  \s@tstyst@k{#1}%
   \x@\t@stintro\m@rker\relax
   %If the marker is an (ultra-rare) type that occurs in introductions and normal text, then
   %set the intromarker flag based on what the current state (\if@ntro) is.

@@ -44,7 +44,7 @@
 \let\prev@rsemode\empty
 
 % Remember the name of the marker currently being defined
-\def \Marker         #1\relax{\m@kedigitsletters\xdef\m@rker{\scantokens{#1\noexpand}}\m@kedigitsother % store name of marker currently being defined
+\def \Marker         #1\relax{\m@kedigitsletters\xdef\m@rker{\scantokens{#1\noexpand}}\m@kedigitsother\x@\xdef\csname m@rkerexists-\m@rker\endcsname{t}% store name of marker currently being defined
                               \expandafter\let\csname font<\m@rker>\endcsname\relax}
                               %\expandafter\let\csname extrafont<#1>\endcsname\relax}
 %-csty_definition_setup
@@ -156,47 +156,80 @@
 % take into account: diglot, categories and milestones.
 % Rather than attempt to code \ifs for all possible 8 options, it now builds a comma-separated list of them, 
 % and finds the first match. This results in cleaner code.
-\def\getp@ram#1#2{\trace{s}{getp@ram #2:#1 (\styst@kskip/\styst@kfirst/\styst@k)}%
- \iftrue
-   {%protect outer version of \d@, etc.
-   \let\p@ram\relax
-   %\tracingassigns=1
-   %\tracingmacros=1
-   \ifdiglot
+
+\def\s@tpossParams#1{\trace{s}{setpossParam #1 (\styst@kskip/\styst@kfirst/\styst@k)}%
+  \ifdiglot
      \xdef\d@sf{\ifdiglotL L\else R\fi}%
-     \edef\p@ssParams{#2\d@sf,#2}%
-   \else
-     \edef\p@ssParams{#2}%
-   \fi
-   \edef\tmp{#2}\ifx\tmp\styst@k\else
-     \ifx\tmp\styst@kfirst\else
-        \edef\p@ssParams{#2+\styst@kfirst,\p@ssParams}%
-     \fi
-     \ifx\styst@k\empty\else
-        \ifx\styst@k\styst@kfirst\else%styst@k may be the same as styst@kfirst
-          \edef\p@ssParams{#2+\styst@k,\p@ssParams}%
-	\fi
-     \fi
-   \fi
-   \trace{s}{1. Checking \p@ssParams}%
+     \edef\p@ssParams{#1\d@sf,#1}%
+  \else
+     \edef\p@ssParams{#1}%
+  \fi
+  \edef\tmp{#1}\ifx\tmp\styst@k\else
+    \ifx\tmp\styst@kfirst\else
+       \edef\p@ssParams{#1+\styst@kfirst,\p@ssParams}%
+    \fi
+    \ifx\styst@k\empty\else
+      \ifx\styst@k\styst@kfirst\else%styst@k may be the same as styst@kfirst
+         \edef\p@ssParams{#1+\styst@k,\p@ssParams}%
+      \fi
+    \fi
+  \fi
+  \trace{s}{1. Checking \p@ssParams}%
    %\ifx\mspr@fix\empty\else
      %If we expand our prefix list for special styling of milestone+marker, then:
      %\exp@ndmspr@fix{\let\@ut=\empty \let\d@=\cspr@pend\x@\cstackdown \p@ssParams,\E \edef\p@ssParams{\@ut,\p@ssParams}}%
    %\fi
    %\trace{s}{2. Checking \p@ssParams}%
-   \ifx\c@tprefix\empty\else
-     \edef\@lso{\c@tprefix}%
-     \let\@ut=\empty \let\d@=\cspr@pend\x@\cstackdown \p@ssParams,\E \edef\p@ssParams{\@ut,\p@ssParams}%
+  \ifx\c@tprefix\empty\else
+    \edef\@lso{\c@tprefix}%
+    \let\@ut=\empty \let\d@=\cspr@pend\x@\cstackdown \p@ssParams,\E \edef\p@ssParams{\@ut,\p@ssParams}%
+  \fi
+  \let\@ut\empty
+  \let\d@=\cscheck@xist\x@\cstackdown \p@ssParams,\E
+  \global\let\p@ssParams=\@ut
+  \trace{s}{2. Shrunk list:\p@ssParams}%
+}
+\def\kill@cache #1\E{%Remove listed item
+   \x@\global\x@\let\csname #1\endcsname\relax}
+
+\def\p@ssParamCached{}
+
+\def\getp@ram#1#2{\trace{s}{getp@ram #2:#1}%
+ \iftrue
+   \let\p@ram\relax
+   \ifx\relax#1\relax\else 
+     \edef\tmppar@mtwo{#2}\ifx\styst@k\tmppar@mtwo
+       \xdef\pp@name{pPrms-#2/}%
+     \else
+       \xdef\pp@name{pPrms-#2/\styst@k}%
+     \fi
+     \x@\let\x@\g@tp@tmp\csname \pp@name\endcsname
+     \ifx\g@tp@tmp\relax
+       \s@tpossParams{#2}\x@\global\x@\let\csname \pp@name\endcsname\p@ssParams
+       \ifx\p@ssParamCached\empty
+         \xdef\p@ssParamCached{\pp@name}%
+       \else
+         \xdef\p@ssParamCached{\p@ssParamCached,\pp@name}%
+       \fi
+       \trace{sC}{\pp@name  defined (\p@ssParamCached) as \p@ssParams}%
+     \else
+       \global\let\p@ssParams\g@tp@tmp
+       \trace{sC}{\pp@name exists}%
+     \fi
+     {%protect outer version of \d@, etc.
+     %\tracingassigns=1
+     %\tracingmacros=1
+    % Final version of the list might be cat:inl|ms:qt|pR,cat:inl|ms:qt|p,cat:inl|pR,cat:inl|p,ms:qt|pR,ms:qt|p,pR,p
+     \gettop@aram{#1}%
+     \global\let\p@@r@m=\p@ram % Need to return outside the brackets
+     %\tracingassigns=0
+     %\tracingmacros=0
+     }%
+     \let\p@ram=\p@@r@m
    \fi
-   % Final version of the list might be cat:inl|ms:qt|pR,cat:inl|ms:qt|p,cat:inl|pR,cat:inl|p,ms:qt|pR,ms:qt|p,pR,p
-   \gettop@aram{#1}%
-   \global\let\p@@r@m=\p@ram % Need to return outside the brackets
-   %\tracingassigns=0
-   %\tracingmacros=0
-   }%
-   \let\p@ram=\p@@r@m
  \else %Old, working, but ignorant of milestones
    \ifdiglot
+    \xdef\d@sf{\ifdiglotL L\else R\fi}%
     \getp@r@m{#1}{\c@tprefix#2\d@sf}%
     \ifx\p@ram\relax
       \ifx\c@tprefix\empty\else\getp@r@m{#1}{\c@tprefix#2}\fi%
@@ -206,7 +239,7 @@
     \fi
     \ifx\p@ram\relax
       \getp@r@m{#1}{#2}\trace{Ds}{...default -> \p@ram}%
-    \else
+    %\else
       %\trace{Ds}{...side-specfic -> \p@ram}%
     \fi
    \else\getp@r@m{#1}{\c@tprefix#2}%
@@ -223,7 +256,7 @@
 }
 \def\gettop@aram#1{%Check list of acceptable parameters and return the first one found.
    \edef\p@ramcheck{#1}%
-   \trace{s}{Checking \p@ssParams}%
+   \trace{s}{Checking for #1 in \p@ssParams}%
    \let\d@=\stackg@tp@ram
    \x@\cstackdown \p@ssParams,\E
 }
@@ -232,16 +265,18 @@
 \def\getp@r@m#1#2{\x@\let\x@\p@ram\csname#2:#1\endcsname \ifx\p@ram\relax\else\trace{s}{#2:#1 found: \p@ram}\fi}
 \def\cspr@pend#1\E{\ifx\@ut\empty\xdef\@ut{\@lso#1}\else\xdef\@ut{\@ut,\@lso#1}\fi}
 \def\cs@lsolist#1\E{\trace{s}{expanding #1->\@lso#1,#1}\ifx\@ut\empty\xdef\@ut{\@lso#1,#1}\else\xdef\@ut{\@ut,\@lso#1,#1}\fi}
+\def\cscheck@xist#1\E{\ifcsname m@rkerexists-#1\endcsname\ifx\@ut\empty\xdef\@ut{#1}\else\xdef\@ut{\@ut,#1}\fi\fi}
+
 %\def\cs@lsolist#1\E{\trace{s}{expanding #1->\@lso#1,#1}\@lso#1,#1}
 %-csty_getparam
 
 %+csty_getmcparam
 %Main utility function for font parameters, stacking-styles aware
-\def\getmcp@ram#1{\let\r@s=\relax
+\def\getmcp@ram#1{\trace{s}{getmcp #1}\let\r@s=\relax
   \def\d@##1+##2\E{\edef\tmp{##2}\ifx\tmp\empty\else\csname d@code-##1\endcsname\if##1\ss@Sbar\global\let\r@s\relax\else\if##1\ss@Note\global\let\r@s\relax\fi\fi
     \getp@ram{#1}{\tmp}\ifx\p@ram\relax\else\global\let\r@s\p@ram\fi\fi}%
   \mcup\global\let\p@ram\r@s\traceNum{s}{param #1 for \mcstack\space is \p@ram}}    %(1)
-\def\getmcp@ramR#1{\let\r@s\relax
+\def\getmcp@ramR#1{\trace{s}{getmcpR #1}\let\r@s\relax
   \def\d@##1+##2\E{\edef\tmp{##2}\ifx\tmp\empty\else\csname d@code-##1\endcsname\if##1\ss@Sbar\global\let\r@s\relax\else\if##1\ss@Note\global\let\r@s\relax\fi\fi
     \getp@ram{regular}{\tmp}\ifx\p@ram\relax\getp@ram{#1}{\tmp}\ifx\p@ram\relax\else\global\let\r@s\p@ram\fi
                            \else\global\let\r@s\relax\fi\fi}%
@@ -257,7 +292,7 @@
 %-csty_getmcparam
 
 %+csty_getmcfontsize
-\def\getmcfonts@ze{\getp@ram{p}{fontsize}\ifx\p@ram\relax\edef\ps@ze{12}\else\edef\ps@ze{\p@ram}\fi
+\def\getmcfonts@ze{\getp@ram{fontsize}{p}\ifx\p@ram\relax\edef\ps@ze{12}\else\edef\ps@ze{\p@ram}\fi
   \def\d@##1+##2\E{\edef\tmp{##2}\ifx\tmp\empty\else
       \csname d@code-##1\endcsname
       \let\tmpstylen@me\tmp
@@ -1029,6 +1064,8 @@
   \begingroup % This group will be closed between the end and after hooks of endc@t %(1)
   \mcpush{t+#1}%
   \op@ninghooks{start}{cat}%
+  \let\styst@k=\empty
+  \s@tstyst@k{#1}%
   \bgroup % This group will be closed by the end-of footnote marker / other container.  %(2)
   %I.e. we're borrowing the egroup from other bits of code.  
   \aftergroup\@ndc@t %
