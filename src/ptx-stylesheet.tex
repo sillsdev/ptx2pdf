@@ -197,7 +197,8 @@
 \def\getp@ram#1#2{\trace{s}{getp@ram #2:#1}%
  \iftrue
    \let\p@ram\relax
-   \ifx\relax#1\relax\else 
+   \def\gp@test{#1}%
+   \ifx\gp@test\empty\message{Eh? getp@ram called for #2 and empty parameter}\else 
      \edef\tmppar@mtwo{#2}\ifx\styst@k\tmppar@mtwo
        \xdef\pp@name{pPrms-#2/}%
      \else
