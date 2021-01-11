@@ -839,11 +839,11 @@ class ViewModel:
         self.getFontNameFace("bl_fontExtraR")
         finfor = self.get('bl_fontR')
         finfoe = self.get('bl_fontExtraR')
-        if finfor[0] == finfoe[0]:
+        if finfor.name == finfoe.name:
             self.doError(_("The Fallback Font needs to be something other than the Regular Font."),
                          _("Please select a different Font."))
         else:
-            f = TTFont(*finfoe)
+            f = finfoe.getTtfont()
             msngchars = self.get("t_missingChars") # .split(" ")
             msngchars = spclChars = re.sub(r"\\[uU]([0-9a-fA-F]{4,6})", lambda m:chr(int(m.group(1), 16)), msngchars)
             stillmissing = f.testcmap(msngchars)

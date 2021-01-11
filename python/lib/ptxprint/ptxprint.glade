@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.2 
+<!-- Generated with glade 3.22.1 
 
 The MIT License (MIT)
 
@@ -2033,6 +2033,15 @@ Viewer tab.</property>
                     <property name="can_focus">False</property>
                     <property name="column_spacing">6</property>
                     <property name="row_homogeneous">True</property>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
                     <child>
                       <placeholder/>
                     </child>
@@ -5355,9 +5364,7 @@ are using supports these digits too.)</property>
                         <child>
                           <object class="GtkFrame" id="fr_fallbackFont">
                             <property name="visible">True</property>
-                            <property name="sensitive">False</property>
                             <property name="can_focus">False</property>
-                            <property name="no_show_all">True</property>
                             <property name="valign">start</property>
                             <property name="margin_bottom">6</property>
                             <property name="label_xalign">0.05000000074505806</property>
