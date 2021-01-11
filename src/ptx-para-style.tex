@@ -286,7 +286,6 @@
     \ifhe@dings\nobreak\fi
     \vskip\p@ram\verticalsp@ceunit                                              %(1)
   \fi
-  \resetp@rstyle
   %\ifx\mcstack\mcstack@mpty\else
     %\def\d@##1+##2\E{\edef\tmp{##2}%
       %\ifx\tmp\m@rker\else\ifx\m@rker\relax\else\MSG{Bad closing marker "\tmp" expecting "\m@rker"}\fi\fi}%
@@ -359,9 +358,11 @@
     \else\vskip\p@ram\verticalsp@ceunit\fi
   \fi
   \global\startparatrue
+  \resetp@rstyle
 %-cpar_parstyle_transition
 %+cpar_parstyle_start
   \everypar={%
+   %\trace{s}{EveryPar!}%
    %
    % \everypar will be triggered when the paragraph actually starts (normally at the first character of text,
    % or something like a verse number); then we'll set up margins/indents and font
@@ -373,16 +374,14 @@
    \ifRTL \beginR \leftskip\else\rightskip\fi =0pt \ifJustifyPars\else plus .25\hsize\fi
    \getp@ram{justification}{\m@rker}%
    \ifx\p@ram\c@nter
-    \leftskip=0pt plus \hsize \rightskip=\leftskip \parfillskip=0pt
+    \dimen0=\leftskip \leftskip=\the\dimen0 plus \hsize \rightskip=\leftskip \parfillskip=0pt
    \else\ifx\p@ram\l@ft
-    \rightskip=0pt plus .25\hsize \ifRTL\parfillskip=0pt\fi
+    \dimen0=\rightskip
+    \rightskip=\the\dimen0 plus .25\hsize \ifRTL\parfillskip=0pt\fi
    \else\ifx\p@ram\r@ght
-    \leftskip=0pt plus .25\hsize \ifRTL\else\parfillskip=0pt\fi
+    \dimen0=\leftskip
+    \leftskip=\the\dimen0 plus .25\hsize \ifRTL\else\parfillskip=0pt\fi
    \fi\fi\fi
-   \getp@ram{leftmargin}{\m@rker}%                                              %(1)
-   \ifx\p@ram\relax \else \advance \ifRTL\rightskip\else\leftskip\fi\p@ram \IndentUnit \fi
-   \getp@ram{rightmargin}{\m@rker}%
-   \ifx\p@ram\relax \else \advance \ifRTL\leftskip\else\rightskip\fi\p@ram \IndentUnit \fi
    \trace{s}{\m@rker\ifdiglot\ifdiglotL L \else R\fi\fi\space iu=\the\IndentUnit, ls=\the\leftskip, rs=\the\rightskip}%
    %\getp@ram{fontsize}{\m@rker}\edef\c@rrfontsize{\ifx\p@ram\relax12\else\p@ram\fi}%
    \def\thiswh@tvrstyle{p}%Default value just in case

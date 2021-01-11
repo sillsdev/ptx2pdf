@@ -257,9 +257,11 @@
 }
 \def\gettop@aram#1{%Check list of acceptable parameters and return the first one found.
    \edef\p@ramcheck{#1}%
-   \trace{s}{Checking for #1 in \p@ssParams}%
-   \let\d@=\stackg@tp@ram
-   \x@\cstackdown \p@ssParams,\E
+   \ifx\p@ramcheck\empty\else
+     \trace{s}{Checking for #1 in \p@ssParams}%
+     \let\d@=\stackg@tp@ram
+     \x@\cstackdown \p@ssParams,\E
+   \fi
 }
 
 \def\stackg@tp@ram#1\E{\getp@r@m{\p@ramcheck}{#1}\ifx\p@ram\relax\else\let\d@=\cstackrelax\fi}
