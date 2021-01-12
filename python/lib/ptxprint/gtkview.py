@@ -505,14 +505,9 @@ class GtkViewModel(ViewModel):
             # print(c)
             self.builder.get_object(c).set_visible(val)
 
-        # Hide the Details and Checklist tabs on the Pictures tab
-        if not val:
-            self.builder.get_object("scr_picListEdit").set_visible(val)
-            self.builder.get_object("scr_picListEdit1").set_visible(val)
-            for x in ("checklist", "details"): 
-                self.builder.get_object("pn_{}".format(x)).set_visible(val)
-        else: # Still haven't found a way to turn these tabs back on without a segfault! :-(
-            pass
+        # Disable/Enable the Details and Checklist tabs on the Pictures tab
+        self.builder.get_object("tb_details").set_sensitive(val)
+        self.builder.get_object("tb_checklist").set_sensitive(val)
             
         # Show Hide specific Help items
         for pre in ("l_", "lb_"):
