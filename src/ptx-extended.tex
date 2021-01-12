@@ -197,7 +197,8 @@
 \def\@sb{\let\oldc@tegory\c@tegory\let\oldc@prefix\c@tprefix 
   \trace{e}{Starting side bar from \m@rker}%
   \ifhmode\par\fi
-  \edef\l@stdepth{\the\prevdepth}% Remember for later
+  % kill cached possParam-\m@rker values  
+  \kill@PossParamCache
   \edef\hs@ze{\the\hsize}%
   \s@tc@tpr@fix
   \getsbp@ram{w@dth}\end@llpoppedstyles{s}\mcpush{s+\sb@rmarker}\trace{e}{ESB}\setbox\extb@x\vbox\bgroup
@@ -211,6 +212,7 @@
  \c@th@@ks{}%Once per box is enough!
  \s@tsb@rwidth
  \trace{e}{startESB \the\dimen1}%
+ \kill@PossParamCache
  \global\sb@rchunkh@ight=\maxdimen
  \getsbp@ram{break}\ifx\cp@ram\relax\else \if\cp@ram F\else
    \ifx\cp@ram\tr@e
@@ -233,6 +235,7 @@
   \relax
   \ifinextended\global\let\c@t@gory=\c@tegory\egroup \else \global\let\c@t@gory=\empty \trace{e}{\\ebse called without \\esb}\fi
   \end@llpoppedstyles{s*}% May also close groups
+  \kill@PossParamCache
   \trace{e}{ESBE \the\sb@rchunkh@ight}%
   \let\c@tegory=\c@t@gory %recover value from box, without making global changes.
   \s@tc@tpr@fix
@@ -352,13 +355,13 @@
       \ifx\picl@c\empty
         \message{Could not interpret position \loc@ption for \c@tegory:\sb@rmarker}%
       \else
-	  \dimen0=\ht\extchunkb@x \advance\dimen0 by \dp\extchunkb@x \advance\dimen0 by 0.5\baselineskip % Rounding correction
-	  \divide\dimen0 by \baselineskip \count255=\dimen0
-	  \trace{g}{Inline \w@tsit takes \the\count255 lines}%
-	  \ifx\picl@c\loc@Inl
-	  \vskip -\l@stdepth
+        \dimen0=\ht\extchunkb@x \advance\dimen0 by \dp\extchunkb@x \advance\dimen0 by 0.5\baselineskip % Rounding correction
+        \divide\dimen0 by \baselineskip \count255=\dimen0
+        \trace{g}{Inline \w@tsit takes \the\count255 lines}%
+        \ifx\picl@c\loc@Inl
+	  \vskip -\lastdepth
 	  \ifx\h@scol\tr@e
-	    \ifdim\l@stdepth>0.2pt\vskip\baselineskip\fi%
+	    \ifdim\lastdepth>0.2pt\vskip\baselineskip\fi%
 	  \fi
 	  \d@figureInl\extchunkb@x
 	\fi
@@ -386,6 +389,7 @@
   \s@tc@tpr@fix
   \unvbox\sid@barnotes
   \cancelcutouts
+  \kill@PossParamCache
 }
 
 % Category file parsing 
@@ -400,6 +404,7 @@
   \else 
     \edef\t@stname{\c@tprefix \m@rker\ds@ffix:is_defined}%
   \fi
+  \x@\xdef\csname m@rkerexists-\c@tprefix\m@rker\endcsname{t}%
   \x@\let\x@\t@st\csname \t@stname\endcsname
   \ifx\t@st\relax 
     \trace{e}{First definition of \c@tprefix\m@rker\ds@ffix}%

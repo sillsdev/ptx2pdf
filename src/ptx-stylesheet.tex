@@ -184,15 +184,24 @@
     \edef\@lso{\c@tprefix}%
     \let\@ut=\empty \let\d@=\cspr@pend\x@\cstackdown \p@ssParams,\E \edef\p@ssParams{\@ut,\p@ssParams}%
   \fi
+  \trace{s}{2. Checking \p@ssParams}%
   \let\@ut\empty
   \let\d@=\cscheck@xist\x@\cstackdown \p@ssParams,\E
   \global\let\p@ssParams=\@ut
-  \trace{s}{2. Shrunk list:\p@ssParams}%
+  \trace{s}{3. Shrunk list:\p@ssParams}%
 }
 \def\kill@cache #1\E{%Remove listed item
    \x@\global\x@\let\csname #1\endcsname\relax}
 
 \def\p@ssParamCached{}
+
+\def\kill@PossParamCache{\ifx\p@ssParamCached\empty\else% kill cached possParam-\m@rker values  
+    \let\d@=\kill@cache
+    \x@\cstackdown\p@ssParamCached,\E
+    \global\let\p@ssParamCached\empty
+    \trace{sC}{Emptied p@ssParamCached}%
+  \fi
+}
 
 \def\getp@ram#1#2{\trace{s}{getp@ram #2:#1}%
  \iftrue
@@ -200,9 +209,9 @@
    \def\gp@test{#1}%
    \ifx\gp@test\empty\message{Eh? getp@ram called for #2 and empty parameter}\else 
      \edef\tmppar@mtwo{#2}\ifx\styst@k\tmppar@mtwo
-       \xdef\pp@name{pPrms-#2/}%
+       \xdef\pp@name{pPrms-\c@tprefix#2/--}%
      \else
-       \xdef\pp@name{pPrms-#2/\styst@k}%
+       \xdef\pp@name{pPrms-\c@tprefix#2/\styst@k}%
      \fi
      \x@\let\x@\g@tp@tmp\csname \pp@name\endcsname
      \ifx\g@tp@tmp\relax
@@ -685,21 +694,21 @@
 \gdef\mcstack{+,} 
 \let\mcstack@mpty\mcstack
 \def\cstackempty{,}
-\def\mcpopsimple{\traceNum{s}{popsimple stack: \mcstack}\xdef\mcstack{\x@\cstackpop\mcstack\E}\ifx\mcstack\empty\xdef\mcstack{+,}\fi}
+\def\mcpopsimple{\traceNum{s}{popsimple stack: \mcstack}\xdef\mcstack{\x@\cstackpop\mcstack\E}\ifx\mcstack\empty\global\let\mcstack\mcstack@mpty\fi}
 \def\mcpush#1{\traceNum{s}{push #1 onto \mcstack}\xdef\mcstack{#1,\mcstack}}
 \def\mcup{\x@\cstackup\mcstack\E}
 \def\mcdown{\x@\cstackdown\mcstack\E}
 \def\mctop{\x@\cstacktop\mcstack\E}
 \def\mctopnoms{\let\d@a=\d@\gdef\d@##1+##2\E{\if ##1m\else\d@a ##1+##2\E\let\d@=\cstackrelax\fi}\mcdown}
-\def\mcstackdown#1,#2\E{\let\n@x=\mcstackdown\edef\tmp{#1}%
-    \ifx\tmp\empty\let\n@x=\cstackrelax\else\d@b #1\E\iftemp\xdef\mcstack{\msstack #2}\let\n@x=\cstackrelax\fi\fi\n@x #2\E}
-\def\mcpop{\traceNum{s}{mcpop stack: \mcstack}\global\tempfalse\xdef\msstack{}% Pop the first non-milestone
-    \def\d@b##1+##2\E{\if ##1m\xdef\msstack{##1+##2,\msstack}\else\global\temptrue\fi}%
-    \x@\mcstackdown\mcstack\E\ifx\mcstack\empty\xdef\mcstack{+,}\fi}
+\def\mcstackdown#1,#2\E{\let\n@x=\mcstackdown\edef\tmp{#1}%Iftemp, then rebulild mcstack with the modified/saved portion (msst@ck) on top, then any insertion (inst@ck) and  the unprocesed parts of the stack, and stop
+    \ifx\tmp\empty\let\n@x=\cstackrelax\else\d@b #1\E\iftemp\xdef\mcstack{\msst@ck\inst@ck #2}\let\n@x=\cstackrelax\fi\fi\n@x #2\E}
+\def\mcpop{\traceNum{s}{mcpop stack: \mcstack}\global\tempfalse\xdef\inst@ck{}\xdef\msst@ck{}% Pop the first non-milestone
+    \def\d@b##1+##2\E{\if ##1m\xdef\msst@ck{##1+##2,\msst@ck}\else\global\temptrue\fi}%
+    \x@\mcstackdown\mcstack\E\ifx\mcstack\empty\global\let\mcstack\mcstack@mpty\fi}
 
-\def\mcpushunderms#1{\traceNum{s}{mcpushunder stack(#1): \mcstack}\global\tempfalse\xdef\msstack{#1,}% push #1 above the first non-milestone
-    \def\d@b##1+##2\E{\trace{s}{[##1+##2] (\msstack)}\if ##1\relax\relax\xdef\msstack{\msstack+,}\else\xdef\msstack{##1+##2,\msstack}\fi\if ##1m\relax\else\global\temptrue\fi}%
-    \x@\mcstackdown\mcstack\E\iftrue\else\xdef\msstack{\msstack,+,}\fi\let\mcstack=\msstack}
+\def\mcpushunderms#1{\traceNum{s}{mcpushunder stack(#1): \mcstack}\global\tempfalse\edef\msst@ck{}\xdef\inst@ck{#1,}% push #1 above the first non-milestone
+    \def\d@b##1+##2\E{\trace{s}{[##1+##2] (\msst@ck)}\if ##1\relax\relax\xdef\inst@ck{\inst@ck+,}\temptrue\else\if ##1m\relax\xdef\msst@ck{\msst@ck##1+##2,}\else\xdef\inst@ck{\inst@ck##1+##2,}\global\temptrue\fi\fi}%
+    \x@\mcstackdown\mcstack\E\trace{s}{->\msst@ck [\iftemp t\else f\fi], '\mcstack'}\iftemp\else\xdef\mcstack{\inst@ck\mcstack}\fi}
 
 % milestone stack (MScstack)
 %\gdef\MScstack{+,}  
@@ -954,7 +963,6 @@
  \fi
  \gdef\ch@plabel{}
  \gdef\ch@plabelR{}
- \gdef\mcstack{,}
  \initp@rastyles
  \initn@testyles
  \ifendbooknoeject\else\p@geonetrue\fi
