@@ -1494,6 +1494,7 @@ class GtkViewModel(ViewModel):
             lslangs.append([v, k])
         if lang is not None:
             self.set("fcb_featsLangs", lang)
+        dialog.set_keep_above(True)
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
             results = []
@@ -1516,6 +1517,7 @@ class GtkViewModel(ViewModel):
             self.set("t_fontFeatures", ", ".join(results))
         for i in range(numrows-1, -1, -1):
             featbox.remove_row(i)
+        dialog.set_keep_above(False)
         dialog.hide()
 
     def onFontIsGraphiteClicked(self, btn):

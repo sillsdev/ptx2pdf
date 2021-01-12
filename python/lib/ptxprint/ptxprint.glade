@@ -603,7 +603,7 @@ Description):</property>
     <property name="gravity">center</property>
     <property name="program_name">PTXprint</property>
     <property name="version">Version 1.5.1</property>
-    <property name="copyright">© 2020, SIL International</property>
+    <property name="copyright">© 2020-2021, SIL International</property>
     <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
 the User-Interface. The PDFs are produced by enhanced 
 XeTeX macros (PTX2PDF) with a long and reliable history.
@@ -1992,6 +1992,8 @@ Viewer tab.</property>
     <property name="width_request">440</property>
     <property name="height_request">440</property>
     <property name="can_focus">False</property>
+    <property name="title" translatable="yes">Select Font Features...</property>
+    <property name="icon">Google-Noto-Emoji-Objects-62859-open-book.ico</property>
     <property name="type_hint">dialog</property>
     <child type="titlebar">
       <placeholder/>
@@ -2075,6 +2077,8 @@ Viewer tab.</property>
           <object class="GtkBox">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <property name="margin_left">6</property>
+            <property name="margin_top">4</property>
             <property name="spacing">6</property>
             <child>
               <object class="GtkLabel">
@@ -7633,7 +7637,7 @@ producing printouts for comprehension
 testing (where  Key Biblical Terms in the
 passage which have Glossary Entries also
 need to be checked for understanding).</property>
-                                        <property name="halign">end</property>
+                                        <property name="halign">start</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
                                       <packing>
