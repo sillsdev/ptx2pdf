@@ -1,5 +1,11 @@
-PTXprint 1.5.1 Release Notes 
-11 January 2021
+PTXprint 1.5.2 Release Notes 
+12 January 2021
+
+Bug Fixes and Improvements in 1.5.2
+
+  * Pictures tab: Enable/Disable Details and Checklist tabs when Show/Hide Advanced features is clicked
+  
+  * Fix pictures not displaying without section headings present
 
 Bug Fixes and Improvements in 1.5.1
 
