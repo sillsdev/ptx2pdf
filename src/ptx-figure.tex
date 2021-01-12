@@ -676,6 +676,7 @@
     \insert\p@cins{\penalty10000 % make sure this picture does not float away to another page
       \splittopskip\z@skip
       \splitmaxdepth\maxdimen \floatingpenalty20000 % was zero
+      \xdef\headingtopspace{0}%
       \gridp@ctrue\gridb@x0\gridp@cfalse% make sure we align to the page grid
     }%
 %-cfig_dofigure_5
@@ -723,6 +724,7 @@
   %\splittopskip\baselineskip
   \def\picc@ntents{%
     \gridp@cfalse% Not true! It's not floating.
+    \xdef\headingtopspace{0}%
     \gridb@x#1 \dimen9=\lastdepth \kern\dimen9
     \trace{g}{gridbox dp=\the\dimen9}%There's a skip at the bottom of the box, but somehow the depth is kept. Need to kill it.
   \penalty10}%
@@ -747,7 +749,8 @@
     \relax \let\picb@@x=\picb@x \ifdiglot\ifdiglotL\else\let\picb@@x=\picb@xR\fi\fi
     \penalty10 % Allow the page to break
     %\gridp@cfalse% Not true. Not a floating image.
-       \gridb@x\picb@@x
+    \xdef\headingtopspace{0}%
+    \gridb@x\picb@@x
        %\vskip-\prevdepth
     \penalty10
    }%
