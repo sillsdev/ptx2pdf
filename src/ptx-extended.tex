@@ -91,14 +91,15 @@
      \hss
   }%
   \egroup\global\advance\feintb@xnum by 1}
+
 \def\feintbox#1#2#3{% Set a (transparent) coloured box as background for box given in #3. #1: alpha, #2: {r g b}  (all numbers in range 0-1.0)
-  \dimen4=-\fb@vpadding% preserve grid
-  \ifdim\fb@vpadding<0.2\baselineskip \else 
-    \advance\dimen4 by \baselineskip
-  \fi
-  \edef\vp@dskip{\the\dimen4}\vskip\vp@dskip
-  \setbox0#3\hbox{\feintb@x{#1}{#2}{\ht0}{\dp0}{\wd0}\box0}%
-  \vskip\vp@dskip % preserve grid
+  \vskip-\fb@vpadding% preserve grid
+  \setbox0#3%
+  \trace{e}{pre-feintbox, ht=\the\ht0, dp=\the\dp0}%
+  \setbox0\hbox{\feintb@x{#1}{#2}{\ht0}{\dp0}{\wd0}\box0}%
+  \trace{e}{post-feintbox, ht=\the\ht0, dp=\the\dp0}%
+  \box0
+  %\vskip-\fb@vpadding % preserve grid
   }
 
 \def\minip@rs@two#1#2\end{%
@@ -116,7 +117,7 @@
   \ifx\t@st\empty
     \let\n@xtB\endP@rseBorder
   \else
-    \uppercase{\def\uc@ption{#1}}
+    \uppercase{\def\uc@ption{#1}}%
     \x@\let\x@\t@st\csname B@rder\uc@ption\endcsname
     \ifx\t@st\relax
       \message{Could not parse Border #1}%
@@ -196,7 +197,7 @@
 % Sidebar 
 \def\@sb{\let\oldc@tegory\c@tegory\let\oldc@prefix\c@tprefix 
   \trace{e}{Starting side bar from \m@rker}%
-  \ifhmode\par\fi
+  %\ifhmode\par\fi
   % kill cached possParam-\m@rker values  
   \kill@PossParamCache
   \edef\hs@ze{\the\hsize}%
@@ -204,7 +205,8 @@
   \getsbp@ram{w@dth}\end@llpoppedstyles{s}\mcpush{s+\sb@rmarker}\trace{e}{ESB}\setbox\extb@x\vbox\bgroup
     \s@tsb@rwidth\inextendedtrue
     \global\sb@rchunkh@ight=\maxdimen
-    \global\c@th@@ks{\st@rtsb@r}}
+    \global\c@th@@ks{\st@rtsb@r}%
+}
 \newdimen\sb@rchunkh@ight
 \newdimen\sb@rus@dheightl
 \newdimen\sb@rus@dheightr
@@ -225,17 +227,76 @@
  %\egroup\setbox\extb@x\vbox\bgroup
  \getsbp@ram{fgfigspec}\ifx\cp@ram\relax\else\x@\fig \cp@ram\fig*\fi
 }
-\def\sb@rb@x{ESB inset box}
+\def\sb@rb@x{sidebarBox}%one word
 \def\tr@e{T}
 \def\false{F}
 
+\newbox\b@rderbox
+\def\mkb@rder#1{%Put a border around a box
+  \x@\setbox\x@\b@rderbox\x@\box#1
+  \tempfalse\t@mpfalse
+  \ifx\b@drleft\tr@e\temptrue\trace{eb}{Border: left}\fi
+  \ifx\b@drright\tr@e\temptrue\trace{eb}{Border: right}\fi
+  \ifx\b@drtop\tr@e\temptrue\t@mptrue\trace{eb}{Border: Top}\fi
+  \ifx\b@drbottom\tr@e\temptrue\t@mptrue\trace{eb}{Border: Bottom}\fi
+  \def\v@dj{0pt}%
+  \iftemp\def\v@dj{\fb@vpadding}\fi
+  \dimen0=\fb@vpadding
+  \dimen1=0pt % should include padding already
+  \advance\dimen0 by \ht\b@rderbox
+  \advance\dimen1 by \dp\b@rderbox
+  \iftemp % if ANY border, add horizontal padding and any vertical lines
+    \setbox\b@rderbox\vbox{%
+      \hbox{\ifx\b@drleft\tr@e\trace{eb}{Drawing Border:left}%
+         \vrule width \b@drwidth\FontSizeUnit height \dimen0 depth \dimen1
+       \else
+         \vrule width 0pt height \dimen0 depth \dimen1 %Strut to sort out vertical padding
+       \fi
+       \hskip \fb@hpadding
+       \box\b@rderbox
+       \hskip \fb@hpadding
+       \ifx\b@drright\tr@e \trace{eb}{Drawing Border: right}%
+         \vrule width \b@drwidth\FontSizeUnit height \dimen0 depth \dimen1 
+       \fi}%
+     }%
+  \fi
+  \dimen4=-\b@drwidth\FontSizeUnit
+  \ifdim\dimen4< -0.1\baselineskip
+    \advance\dimen4 by \baselineskip
+  \fi
+  \edef\b@xadj{\the\dimen4}%
+  \advance \dimen4 by -\dimen1
+  \ifdim\dimen4< -0.1\baselineskip
+    \advance\dimen4 by \baselineskip
+  \fi
+  \trace{eb}{Border box: \the\ht\b@rderbox+\the\dp\b@rderbox, bdr:\b@drwidth , \the\dimen4, \the \dimen0}%
+  \ift@mp %Horizontal lines
+    \edef\b@xw@dth{\the\wd\b@rderbox}%
+    \dimen0=\ht\b@rderbox
+    \advance\dimen0 by \dp\b@rderbox
+    \advance\dimen0 by \b@drwidth\FontSizeUnit
+    \advance\dimen0 by \b@drwidth\FontSizeUnit
+    \setbox\b@rderbox\vbox{\baselineskip=0pt%
+      \ifx\b@drtop\tr@e\vskip\b@xadj\trace{eb}{Drawing Border:top}\hbox{\vrule height\b@drwidth\FontSizeUnit width \b@xw@dth}\fi%
+      \unvbox\b@rderbox
+      \ifx\b@drbottom\tr@e\trace{eb}{Drawing Border:bottom}\hbox{\vrule depth\b@drwidth\FontSizeUnit width \b@xw@dth}\vskip\dimen4\fi
+    }%
+    %\nonstopmode
+    %\showbox\b@rderbox
+  \fi
+  \x@\setbox#1\box\b@rderbox
+}
+
 \def\@sbe{%
   \ifhe@dings\endhe@dings\fi
-  \ifhmode\par\fi
   \relax
-  \ifinextended\global\let\c@t@gory=\c@tegory\egroup \else \global\let\c@t@gory=\empty \trace{e}{\\ebse called without \\esb}\fi
-  \end@llpoppedstyles{s*}% May also close groups
-  \kill@PossParamCache
+  \ifinextended
+   \end@llpoppedstyles{\ss@Sbar*}% May also close groups
+   \kill@PossParamCache
+   \ifhmode\par\fi
+   \global\let\c@t@gory=\c@tegory\egroup 
+  \else\global\let\c@t@gory=\empty \trace{e}{\\ebse called without \\esb}%
+  \fi
   \trace{e}{ESBE \the\sb@rchunkh@ight}%
   \let\c@tegory=\c@t@gory %recover value from box, without making global changes.
   \s@tc@tpr@fix
@@ -267,7 +328,7 @@
     \setbox\extb@x\vbox to \ht\extb@x{\vbox to 0pt{\vbox to\ht\extb@x{\vfil\d@figure{\bgf@gsp@c}\vfil}\vss}\extb@x}%
     \let\bgf@gsp@c\relax %used it, so if it's still there later, we need to use it.
   \fi
-  \let\w@tsit\sb@rb@x   % Make sure the debugging info is correct
+  \let\w@tsit\sb@rb@x % Make sure the item is identified properly - used in debugging and .delayed file
   \let\loc@ption\sb@rpos
   \picUsesInstrue
   \x@\p@rsePicUse\loc@ption\end  %set loc@ption and discover if there's to be an insert. (sets \picUsesInsfalse if not)
@@ -294,72 +355,33 @@
       \setbox\extchunkb@x=\box\extb@x
       \let\fb@vpadding=\s@vedvpadding
     \fi
-    \trace{e}{Chunk of extbox is \the\ht\extchunkb@x (\the\ht\extb@x)}%
+    \trace{e}{Chunk of extbox is \the\ht\extchunkb@x+\the\dp\extchunkb@x (\the\ht\extb@x)}%
     \ifx\h@scol\tr@e
       \setbox\extchunkb@x\vbox{%
        \ifx\bgf@gsp@c\relax\else\vbox to 0pt{\vbox to\ht\extchunkb@x{\vfil\d@figure{\bgf@gsp@c}\vfil}\vss}\fi
        % \vskip\baselineskip
-        \feintbox{\pdf@lpha}{\pdfBGc@l}{\box\extchunkb@x}}%
+       \feintbox{\pdf@lpha}{\pdfBGc@l}{\box\extchunkb@x}}%
+       \trace{e}{Chunk is (with box) \the\ht\extchunkb@x+\the\dp\extchunkb@x}%
     \fi
-    \tempfalse\t@mpfalse
-    \ifx\b@drleft\tr@e\temptrue\trace{eb}{Border: left}\fi
-    \ifx\b@drright\tr@e\temptrue\trace{eb}{Border: right}\fi
-    \ifx\b@drtop\tr@e\temptrue\t@mptrue\trace{eb}{Border: Top}\fi
-    \ifx\b@drbottom\tr@e\temptrue\t@mptrue\trace{eb}{Border: Bottom}\fi
-    \def\v@dj{0pt}%
-    \iftemp\def\v@dj{\fb@vpadding}\fi
-%
-    \iftemp % if ANY border, add padding and any vertical lines
-      \dimen0=\fb@vpadding
-      \dimen1=\dimen0
-      \advance\dimen0 by \ht\extchunkb@x
-      \advance\dimen1 by \dp\extchunkb@x
-      \setbox\extchunkb@x\vbox{%
-         \hbox{\ifx\b@drleft\tr@e\trace{eb}{Drawing Border:left}%
-	     \vrule width \b@drwidth\FontSizeUnit height \dimen0 depth \dimen1
-	   \else
-	     \vrule width 0pt height \dimen0 depth \dimen1 %Strut to sort out vertical padding
-	   \fi
-	   \hskip \fb@hpadding
-	   \box\extchunkb@x
-	   \hskip \fb@hpadding
-	   \ifx\b@drright\tr@e \trace{eb}{Drawing Border: right}%
-	     \vrule width \b@drwidth\FontSizeUnit height \dimen0 depth \dimen1 
-	   \fi}}%
-    \fi
-    \dimen4=-\b@drwidth\FontSizeUnit
-    \ifdim\b@drwidth\FontSizeUnit>0.2\baselineskip
-      \advance\dimen4 by \baselineskip
-    \fi
-    \edef\b@xadj{\the\dimen4}%
-    \ift@mp
-      \edef\b@xw@dth{\the\wd\extchunkb@x}%
-      \dimen0=\ht\extchunkb@x
-      \advance\dimen0 by \dp\extchunkb@x
-      %\advance\dimen0 by \b@drwidth\FontSizeUnit
-      \setbox\extchunkb@x\vbox{\baselineskip=0pt%
-        \ifx\b@drtop\tr@e\vskip\b@xadj\trace{eb}{Drawing Border:top}\hbox{\vrule height\b@drwidth\FontSizeUnit width \b@xw@dth}\fi%
-        \unvbox\extchunkb@x
-        \ifx\b@drbottom\tr@e\trace{eb}{Drawing Border:bottom}\hbox{\vrule depth\b@drwidth\FontSizeUnit width \b@xw@dth}\vskip\b@xadj\fi
-      }%
-      %\nonstopmode
-      %\showbox\extchunkb@x
-    \fi
+    \mkb@rder{\extchunkb@x}%
+    \trace{e}{Chunk is  now \the\ht\extchunkb@x+\the\dp\extchunkb@x}%
     \x@\let\x@\@xtins\csname ins-\loc@ption\endcsname
     \ifpicUsesIns
       \trace{e}{using ins-\loc@ption}%
       \insert\@xtins{%\vskip\baselineskip
 	  \vskip-\v@dj
-          \penalty10000\unvbox\extchunkb@x}%
+          \dimen0=\dp\extchunkb@x
+          \penalty10000\unvbox\extchunkb@x\vskip-\the\dimen0}%
     \else
       \ifx\picl@c\empty
         \message{Could not interpret position \loc@ption for \c@tegory:\sb@rmarker}%
       \else
         \dimen0=\ht\extchunkb@x \advance\dimen0 by \dp\extchunkb@x \advance\dimen0 by 0.5\baselineskip % Rounding correction
         \divide\dimen0 by \baselineskip \count255=\dimen0
+        \advance\count255 by 1
         \trace{g}{Inline \w@tsit takes \the\count255 lines}%
         \ifx\picl@c\loc@Inl
-	  \vskip -\lastdepth
+	  %\vskip -\lastdepth
 	  \ifx\h@scol\tr@e
 	    \ifdim\lastdepth>0.2pt\vskip\baselineskip\fi%
 	  \fi
@@ -375,21 +397,25 @@
           \d@figureFull\extchunkb@x
 	\fi
         \ifx\picl@c\loc@Cut
+          \penalty 3
           \d@figureCut\extchunkb@x
+          %\ifhmode |+\fi
 	\fi
         \ifvoid\extchunkb@x\else
           \message{Could not understand / interpret position \loc@ption for \c@tegory:\sb@rmarker}%
 	\fi
       \fi
     \fi
-  \ifdim\ht\extb@x>0pt
-    \def\fb@vpadding{0pt}%
-    \repeat
+    \ifdim\ht\extb@x>0pt
+      \def\fb@vpadding{0pt}%
+  \repeat
   \let\c@tegory\oldc@tegory 
   \s@tc@tpr@fix
-  \unvbox\sid@barnotes
-  \cancelcutouts
+  \ifvoid\sid@barnotes\else
+    \unvbox\sid@barnotes
+  \fi
   \kill@PossParamCache
+  %\ifhmode +\fi
 }
 
 % Category file parsing 

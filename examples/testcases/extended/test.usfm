@@ -40,7 +40,6 @@ doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore
 veritatis et quasi architecto beatae vitae dicta sunt explicabo.
 \p Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.
 \p Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.
-\p Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.
 \esbe
 
 \p  We're outside the esb (after esb testing3) so ought to be back to normal now
@@ -51,14 +50,15 @@ veritatis et quasi architecto beatae vitae dicta sunt explicabo.
 At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga.
 \p Et harum quidem rerum facilis est et expedita distinctio.
 \p
-\v 5  Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus.
+\v 5  Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, 
 \esb\cat cut\cat*
 \s1 Testing 4
 \p
-This esb should be in a cut-out.
+This esb should be in a cut-out, two lines below 'possimus'
 \esbe
+omnis voluptas assumenda est, omnis dolor repellendus.
 \p Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae.
-\v 6 Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.
+\p \v 6 Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.
 
 \esb \cat foo\cat*
 \s3 Testing 5
@@ -70,4 +70,14 @@ This esb should be in a cut-out.
 \p This is a box of category "\showTheCategory", which is not defined.
 \esbe
 \p 
-\v 7 There are no more esbs in this book. Three on one page is sufficient.
+\v 7 There are no more esbs in this book. However many we have on one page is sufficient.
+\v 8 Dolore doloribus sunt aut libero expedita dolorem qui. Quod atque doloribus ab. Et aperiam vel placeat a aut architecto voluptas id. Quo illo quos saepe eum quia. Earum laudantium recusandae dicta itaque.
+\v 9 Quasi ad in ex nostrum. Repellendus corporis facere necessitatibus recusandae tempore. Tenetur optio et aut fugit ut.
+
+\p
+\v 10
+Culpa optio nihil a doloribus omnis quidem dolorem inventore. Dolorem quo et amet sed. Earum et aliquam molestias sunt in. Et sint dicta quia culpa laboriosam iste.
+
+\v 11
+Tenetur deleniti rerum minima dolor. Rerum autem ipsa ipsum autem quo a. Aut ut occaecati et aspernatur voluptatum voluptate consequatur. Alias illum molestiae quia sed blanditiis est. Saepe ipsam omnis beatae magnam culpa.
+

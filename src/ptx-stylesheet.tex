@@ -44,8 +44,13 @@
 \let\prev@rsemode\empty
 
 % Remember the name of the marker currently being defined
-\def \Marker         #1\relax{\m@kedigitsletters\xdef\m@rker{\scantokens{#1\noexpand}}\m@kedigitsother\x@\xdef\csname m@rkerexists-\m@rker\endcsname{t}% store name of marker currently being defined
-                              \expandafter\let\csname font<\m@rker>\endcsname\relax}
+\def \Marker         #1\relax{\m@kedigitsletters%
+  \xdef\m@rker{\scantokens{#1\noexpand}}%
+  \m@kedigitsother\x@\xdef\csname m@rkerexists-\m@rker\endcsname{t}% store name of marker currently being defined
+  \ifx\c@tprefix\empty\else
+    \x@\xdef\csname m@rkerexists-\c@tprefix\m@rker\endcsname{t}%
+  \fi
+  \expandafter\let\csname font<\m@rker>\endcsname\relax}
                               %\expandafter\let\csname extrafont<#1>\endcsname\relax}
 %-csty_definition_setup
 
@@ -730,7 +735,7 @@
 %\def\ss@MstnS{M}% Static milestones (unused)
 \def\ss@Mstn{m}% Floating milestones (always above a par style)
 \def\ss@Ctgy{t}%
-\def\ss@Sbar{b}%
+\def\ss@Sbar{s}%
 
 \mcp@pCont{P}{P}% new P pops P
 \mcp@pCont{P}{c}% new P pops c (\+char)

@@ -205,8 +205,9 @@
 \def\write@delayedthing#1#2#3#4#5#6{%
   \edef\dc@ref@rgs{\string\@delayedthing{#1}{\c@rref}{#2}{#3}{#4}{#5}{#6}}%
   %\x@\MSG\x@{+++ CUTOUT \dc@ref@rgs}%
-  \beginL\pdfsavepos
-  \x@\write\x@\p@rlocs\x@{\dc@ref@rgs{\the\pdflastxpos}{\the\pdflastypos}}\endL
+  \ifhmode\beginL\fi
+  \pdfsavepos
+  \x@\write\x@\p@rlocs\x@{\dc@ref@rgs{\the\pdflastxpos}{\the\pdflastypos}}\ifhmode\endL\fi
   \trace{C}{Cutout data written for \dc@ref@rgs}%
 }
 

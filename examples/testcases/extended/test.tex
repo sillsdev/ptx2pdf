@@ -1,15 +1,17 @@
 % Test the 'hook' code.
 \input "paratext2.tex"
 \catcode`\@=11
-\addtoversehooks{\ifx\prev@rsemode\empty \endash\penalty5 \fi}
+%\addtoversehooks{\ifx\prev@rsemode\empty \endash\penalty5 \fi}
 %\input "ptx-extended.tex"
-\input "ptxplus-marginalverses.tex"
+%\input "ptxplus-marginalverses.tex"
+\showboxdepth=99\showboxbreadth=99
 \catcode`\@=12
 \stylesheet{usfm_sb.sty}
 \stylesheet{default-custom.sty}
 \stylesheet{test.sty}
 \tracing{sc}
 \tracing{sC}
+\tracing{C}
 \tracing{e}
 \tracing{A}
 \tracing{m}
@@ -17,6 +19,7 @@
 \tracing{s}
 \tracing{g}
 \categorysheet{mycats.sty}
+%\unbalancedfalse
 \unbalancedtrue
 %\dimen\toprightins=13cm
 %\StyleCategory{People}{

@@ -725,8 +725,11 @@
   \def\picc@ntents{%
     \gridp@cfalse% Not true! It's not floating.
     \xdef\headingtopspace{0}%
-    \gridb@x#1 \dimen9=\lastdepth \kern\dimen9
-    \trace{g}{gridbox dp=\the\dimen9}%There's a skip at the bottom of the box, but somehow the depth is kept. Need to kill it.
+    \gridb@x#1 
+    \ifx\w@tsit\gr@phic
+      \dimen9=\lastdepth \kern\dimen9
+      \trace{g}{gridbox dp=\the\dimen9}%Figs have a skip at the bottom of the box, but somehow the depth is kept. Need to kill it. sidebars don't have this issue.
+    \fi
   \penalty10}%
   \ifvmode \picc@ntents
   \else\vadjust pre{\picc@ntents}\fi
@@ -785,11 +788,18 @@
   \global\setbox\wholepagepic\vbox{\unvbox\wholepagepic\box#1\penalty9}% magic number
 }
 
-\def\d@figureCut#1{% Expects: count255=number of lines gap, dimen0=size of wotsit
+
+\def\d@figureCut#1{% Expects: count255=number of lines gap, dimen0=size of wotsit, \c@tskip=delay
   \mkstr@t
-  \dimen2=\count255\baselineskip %space reserved...
-  \trace{g}{\w@tsit\space is cutout. \the\count255 x \the\baselineskip  = \the\dimen2. Box is \the\dimen0}%
-  %\setbox#1=\hbox{\vrule height\dimen0\box#1}%TESTING.
+  \dimen0=\ht#1
+  \ifx\w@tsit\gr@phic 
+   \edef\dr@pthingid{droppic\the\im@gecount}%
+  \else
+   \advance\notim@gecount by 1
+   \edef\dr@pthingid{drop\w@tsit\the\notim@gecount}%
+  \fi
+  \trace{g}{\w@tsit\space\dr@pthingid\space is in a cutout. \the\count255 x \the\baselineskip.}%
+  %\setbox#1=\hbox{\vrule height\dimen0\kern 0.5pt\box#1}%TESTING.
   \dimen1=-\baselineskip %where does the picture go? Starting point is the lowest point of the current line(i.e. this includes descenders, but we'll deal with that via the strutb@x)
   \advance\dimen1 by -\dp\str@tbox
   \ifhmode
@@ -810,9 +820,9 @@
   \fi
   %\advance\dimen1 by \baselineskip
   \advance\dimen1 by \c@tskip\baselineskip
- \dimen2=\wd#1\advance\dimen2 by 10pt\dimen3=\hs@ze \advance\dimen3 by -\dimen2
+  \dimen2=\wd#1\advance\dimen2 by 10pt\dimen3=\hs@ze \advance\dimen3 by -\dimen2
   \ifdim\dimen3<5em\message{*** \w@tsit specification of \size@ption \sizem@ltiple (at \ch@pter:\v@rse) leaves \the\dimen3 \space for text. That's probably not enough.}\fi
-  \raise@test{droppic\the\im@gecount}%
+  \raise@test{\dr@pthingid}%
   \ifx\t@str@ise\relax\else
     \advance\dimen1 by -\t@str@ise\baselineskip
   \fi
@@ -834,23 +844,31 @@
       \setbox#1\hbox to \hsize{\hss\box#1\hss}%
     \fi
   \fi
-  \delay@test{droppic\the\im@gecount}%
+  \delay@test{\dr@pthingid}%
   \ifx\t@std@lay\relax \MSG{*** Cutout for picture \the\im@gecount, (\c@rref) re-run to generate \string\DelayedItem\space setting}%
-  \else \MSG{* Cutout for picture \the\im@gecount\space at \c@rref, delay is \t@std@lay}\fi
+  \else\MSG{* Cutout for picture \the\im@gecount\space at \c@rref, delay is \t@std@lay}\fi
   %
   \ifx\t@std@lay\relax
     \count254=0
   \else
     \count254=\t@std@lay
   \fi
-  \write@delayedthing{droppic\the\im@gecount}{\the\count245}{\the\dimen2}{\the\count255}{\c@tskip}{\thing@side}%
-  %
+  %\ifhmode 2|\fi
+  \write@delayedthing{\dr@pthingid}{\the\count254}{\the\dimen2}{\the\count255}{\c@tskip}{\thing@side}%
   \ifx\t@std@lay\relax
     \MSG{*** Image in cutout at \c@rref, re-run to generate \string\DelayedItem\space settings}%
+  \else\fi
+  \add@pending{\dr@pthingid}{\c@rref}{0}{\the\dimen2}{\the\count255}{\the\count254}{\thing@side}%
+  \ifx\gr@phic\w@tsit
+    \leavevmode\str@t\vadjust {\vbox to 0pt{\box#1\vss}}%
   \else
-  \fi
-  \add@pending{droppic\the\im@gecount}{\c@rref}{0}{\the\dimen2}{\the\count255}{\the\count254}{\thing@side}%
-  \leavevmode\str@t\vadjust {\vbox to 0pt{\box#1\vss}}%
+    \ifhmode \vadjust{\vbox to 0pt{\box#1\vss}}%
+    \else 
+        \vskip -1\baselineskip
+       % \vrule height 0pt depth 1pt width 10ex\kern-1pt 
+        \vbox to 0pt{\box#1\vss}%
+    \fi
+  \fi 
   \run@pending
     %\setbox#1\hbox to \hsize{\box#1\hss}%
     %\trace{g}{leftcutout \the\dimen2, \c@tskip, \the\count255}%
@@ -920,6 +938,7 @@
 \newbox\picb@x % Delayed picture
 \newbox\picb@xR % (diglot, right-hand) delayed picture.
 \newcount\p@ramnumber
+\newcount\notim@gecount \notim@gecount=0
 \newdimen\p@cinswid
 \newdimen\p@cwidth
 \newdimen\p@cheight
@@ -930,7 +949,7 @@
 \newread\picl@ctest
 \newwrite\picp@ges
 %-cfig_declare
-
+\
 %+cfig_openpicpages
 \def\inputpicp@ges "#1"{%read picpages file.
     \openin\picl@ctest="#1" % test to see if the file exists before reading it.
