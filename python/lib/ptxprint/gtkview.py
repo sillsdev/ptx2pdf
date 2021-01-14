@@ -932,6 +932,8 @@ class GtkViewModel(ViewModel):
         bks = bks2gen
         dialog = self.builder.get_object("dlg_generate")
         self.set("l_generate_booklist", " ".join(bks))
+        if sys.platform == "win32":
+            dialog.set_keep_above(True)
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
             if self.get("r_generate") == "all":
@@ -957,7 +959,9 @@ class GtkViewModel(ViewModel):
             self.updatePicList(procbks)
             self.savePics()
             self.set("c_filterPicList", False)
-            dialog.hide()
+        if sys.platform == "win32":
+            dialog.set_keep_above(False)
+        dialog.hide()
 
     def onFilterPicListClicked(self, btn):
         self.updatePicList()
@@ -1664,9 +1668,6 @@ class GtkViewModel(ViewModel):
         self.updatePrjLinks()
         self.builder.get_object("btn_saveConfig").set_sensitive(True)
         self.builder.get_object("btn_deleteConfig").set_sensitive(False)
-        #self.set("c_interlinear", False)
-        #self.set("t_interlinearLang", "")
-        #self.set("c_ruby", False)
         lockBtn = self.builder.get_object("btn_lockunlock")
         lockBtn.set_label("Lock Config")
         lockBtn.set_sensitive(False)

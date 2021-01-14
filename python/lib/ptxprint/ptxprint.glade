@@ -658,6 +658,7 @@ Jonathan Kew (Author of XeTeX + sfm2pdf)</property>
     <property name="icon">Google-Noto-Emoji-Objects-62859-open-book.ico</property>
     <property name="type_hint">dialog</property>
     <property name="skip_taskbar_hint">True</property>
+    <property name="deletable">False</property>
     <property name="gravity">center</property>
     <child type="titlebar">
       <placeholder/>

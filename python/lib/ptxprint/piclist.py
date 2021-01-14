@@ -694,9 +694,7 @@ class PicInfo(dict):
                     continue
                 m = l.split("|")
                 r = m[0].split(maxsplit=2)
-                if suffix == "":
-                    k = " ".join(r[:2])
-                elif len(r) > 1:
+                if len(r) > 1:
                     k = "{}{} {}".format(r[0][:3], suffix, r[1])
                 else:
                     k = "{}{}".format(r[0], suffix)
