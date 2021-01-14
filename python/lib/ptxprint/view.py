@@ -163,6 +163,9 @@ class ViewModel:
         print(q2)
         return False
 
+    def resetToInitValues(self):
+        pass
+
     def parse_fontname(self, font):
         m = re.match(r"^(.*?)(\d+(?:\.\d+?)?)$", font)
         if m:
@@ -344,6 +347,7 @@ class ViewModel:
                 cachepath(fdir)
             readConfig = True
         if readConfig or self.configId != configName:
+            self.resetToInitValues()
             if configName == "Default":
                 self._copyConfig(None, configName, moving=True)
             if currprj != self.prjid:
@@ -468,6 +472,7 @@ class ViewModel:
             else:
                 return (1, k, v)
         config = configparser.ConfigParser()
+        print("Writing book:", self.get("ecb_book"))
         for k, v in sorted(ModelMap.items(), key=sortkeys):
             if v[0] is None or k.endswith("_"):
                 continue

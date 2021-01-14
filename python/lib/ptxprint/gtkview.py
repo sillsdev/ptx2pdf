@@ -459,6 +459,7 @@ class GtkViewModel(ViewModel):
         self.initValues = {v[0]: self.get(v[0], skipmissing=True) for k, v in ModelMap.items() if v[0] is not None}
 
     def resetToInitValues(self):
+        self.picinfos.clear(self)
         for k, v in self.initValues.items():
             if v is not None:
                 self.set(k, v)
@@ -709,12 +710,12 @@ class GtkViewModel(ViewModel):
         cbbook.set_model(None)
         lsbooks = self.builder.get_object("ls_books")
         lsbooks.clear()
-        if self.ptsettings is not None:
-            bp = self.ptsettings['BooksPresent']
-            for b in allbooks:
-                ind = books.get(b, 0)-1
-                if 0 <= ind <= len(bp) and bp[ind - 1 if ind > 39 else ind] == "1":
-                    lsbooks.append([b])
+        # if self.ptsettings is not None:
+        bks = self.getAllBooks()
+        for b in bks:
+            # ind = books.get(b, 0)-1
+            # if 0 <= ind <= len(bp) and bp[ind - 1 if ind > 39 else ind] == "1":
+            lsbooks.append([b])
         cbbook.set_model(lsbooks)
         self.bookNoUpdate = False
 
@@ -1659,7 +1660,6 @@ class GtkViewModel(ViewModel):
     def onProjectChange(self, cb_prj):
         if not self.initialised:
             return
-        self.resetToInitValues()
         self.updatePrjLinks()
         self.builder.get_object("btn_saveConfig").set_sensitive(True)
         self.builder.get_object("btn_deleteConfig").set_sensitive(False)
@@ -1705,6 +1705,15 @@ class GtkViewModel(ViewModel):
             self.userconfig.set("init", "project", self.prjid)
             if getattr(self, 'configId', None) is not None:
                 self.userconfig.set("init", "config", self.configId)
+        # self.updateBookList()
+        books = self.getBooks()
+        if books is None or not len(books):
+            books = self.getAllBooks()
+            for b in allbooks:
+                if b in books:
+                    self.set("ecb_book", b)
+                    self.set("r_book", "single")
+                    break
         status = self.get("r_book") == "multiple"
         for c in ("c_combine", "t_booklist"):
             self.builder.get_object(c).set_sensitive(status)
@@ -1721,6 +1730,7 @@ class GtkViewModel(ViewModel):
         self.updatePicList()
         self.updateDialogTitle()
         self.picChecksView.init(basepath=self.configPath(cfgname=None), configid=self.configId)
+        print("Current book:", self.get("ecb_book"))
 
     def onConfigNameChanged(self, cb_savedConfig):
         if self.configNoUpdate:

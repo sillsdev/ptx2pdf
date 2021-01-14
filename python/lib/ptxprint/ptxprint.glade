@@ -3796,7 +3796,7 @@ of the same Paratext project.</property>
                                         <property name="has_entry">True</property>
                                         <property name="active_id">0</property>
                                         <items>
-                                          <item translatable="yes">(None)</item>
+                                          <item translatable="yes">Default</item>
                                         </items>
                                         <signal name="changed" handler="onConfigNameChanged" swapped="no"/>
                                         <child internal-child="entry">
