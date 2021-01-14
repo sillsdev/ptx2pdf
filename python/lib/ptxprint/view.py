@@ -395,7 +395,7 @@ class ViewModel:
     def configName(self):
         return self.configId or None
 
-    def configPath(self, cfgname=None, prjid=None, makePath=False):
+    def configPath(self, cfgname=None, prjid=None, makePath=True):
         if prjid is None:
             prjid = self.prjid
         if self.settings_dir is None or prjid is None:
@@ -413,7 +413,7 @@ class ViewModel:
     def readConfig(self, cfgname=None):
         if cfgname is None:
             cfgname = self.configName() or ""
-        path = os.path.join(self.configPath(cfgname), "ptxprint.cfg")
+        path = os.path.join(self.configPath(cfgname, makePath=False), "ptxprint.cfg")
         if not os.path.exists(path):
             return False
         config = configparser.ConfigParser()
@@ -879,8 +879,8 @@ class ViewModel:
         res = []
         if cfgname is None:
             cfgname = self.configName()
-        cpath = self.configPath(cfgname=cfgname)
-        rcpath = self.configPath("")
+        cpath = self.configPath(cfgname=cfgname, makePath=False)
+        rcpath = self.configPath("", makePath=False)
         res.append(os.path.join(self.scriptsdir, "ptx2pdf.sty"))
         if self.get('c_useCustomSty'):
             res.append(os.path.join(self.settings_dir, self.prjid, "custom.sty"))
@@ -1041,7 +1041,8 @@ class ViewModel:
         cfgid = self.configName()
         entries, cfgchanges = self._getArchiveFiles(books, prjid=prjid, cfgid=cfgid)
         for k, v in entries.items():
-            zf.write(k, arcname=prjid + "/" + v)
+            if os.path.exists(k):
+                zf.write(k, arcname=prjid + "/" + v)
         tmpcfg = {}
         for k,v in cfgchanges.items():
             tmpcfg[k] = self.get(k)

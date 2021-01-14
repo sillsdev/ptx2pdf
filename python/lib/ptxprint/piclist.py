@@ -1,6 +1,5 @@
 
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal
-from ptxprint.view import refKey
 from ptxprint.utils import refKey, universalopen, print_traceback
 from ptxprint.texmodel import TexModel
 from gi.repository import Gtk, GdkPixbuf, GObject, Gdk
@@ -777,7 +776,7 @@ class PicInfo(dict):
             p3p = pos3parms
         lines = []
         for k, v in sorted(self.items(),
-                           key=lambda x: refKey(x[1]['anchor'][:3]+x[0][4:], info=x[1]['anchor'][3:4])):
+                           key=lambda x: refKey(x[1]['anchor'], info=x[1]['anchor'][3:4])):
             if (len(bks) and v['anchor'][:3] not in bks) or (skipkey is not None and v.get(skipkey, False)):
                 continue
             outk = self.stripsp_re.sub(r"\1", v['anchor'])
