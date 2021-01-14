@@ -945,14 +945,15 @@ class GtkViewModel(ViewModel):
             if self.diglotView is None:
                 PicInfoUpdateProject(self, procbks, ab, self.picinfos, random=rnd, cols=cols, doclear=doclear)
             else:
-                mode = self.get("fcb_diglotPicListSources")
-                if mode in ("both", "left"):
+                mode = self.get("fcb_diglotPicListSources")[:4].lower()
+                print("mode=[{}]".format(mode))
+                if mode in ("both", "pri "):
                     PicInfoUpdateProject(self, procbks, ab, self.picinfos,
-                                         suffix="L", random=rnd, cols=cols)
-                if mode in ("both", "right"):
+                                         suffix="L", random=rnd, cols=cols, clearsuffix=(mode != "both"))
+                if mode in ("both", "sec "):
                     diallbooks = self.diglotView.getAllBooks()
                     PicInfoUpdateProject(self.diglotView, procbks, diallbooks,
-                                         self.picinfos, suffix="R", random=rnd, cols=cols)
+                                         self.picinfos, suffix="R", random=rnd, cols=cols, doclear=doclear & (mode != "both"), clearsuffix=(mode != "both"))
             self.updatePicList(procbks)
             self.savePics()
             self.set("c_filterPicList", False)

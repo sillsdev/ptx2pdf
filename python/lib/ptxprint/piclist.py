@@ -660,6 +660,7 @@ class PicInfo(dict):
         for bk, bkp in bks.items():
             if os.path.exists(bkp):
                 self.read_sfm(bk, bkp, suffix=suffix)
+        self.set_positions(cols=2, randomize=True, suffix=suffix)
         self.model.savePics()
         self.inthread = False
 
@@ -697,7 +698,7 @@ class PicInfo(dict):
                 if suffix == "":
                     k = " ".join(r[:2])
                 elif len(r) > 1:
-                    k = "{}{} {}".format(r[0][:2], suffix, r[1])  # :3 or :2 ?
+                    k = "{}{} {}".format(r[0][:3], suffix, r[1])
                 else:
                     k = "{}{}".format(r[0], suffix)
                 pic = {'anchor': k, 'caption': r[2] if len(r) > 2 else ""}
@@ -934,7 +935,7 @@ class PicInfo(dict):
                 if a in v:
                     del v[a]        
         
-def PicInfoUpdateProject(model, bks, allbooks, picinfos, suffix="", random=False, cols=1, doclear=True):
+def PicInfoUpdateProject(model, bks, allbooks, picinfos, suffix="", random=False, cols=1, doclear=True, clearsuffix=False):
     newpics = PicInfo(model)
     newpics.read_piclist(os.path.join(model.settings_dir, model.prjid, 'shared',
                                       'ptxprint', "{}.piclist".format(model.prjid)))
@@ -945,11 +946,11 @@ def PicInfoUpdateProject(model, bks, allbooks, picinfos, suffix="", random=False
         bkf = allbooks.get(bk, None)
         if bkf is None or not os.path.exists(bkf):
             continue
-        for k in [k for k,v in newpics.items() if v['anchor'][:3] == bk]:
+        for k in [k for k,v in newpics.items() if v['anchor'][:3] == bk and (clearsuffix or (suffix != "" and v['anchor'][4] == suffix))]:
             del newpics[k]
-        for k in [k for k,v in picinfos.items() if v['anchor'][:3] == bk]:
+        for k in [k for k,v in picinfos.items() if v['anchor'][:3] == bk and (clearsuffix or (suffix != "" and v['anchor'][4] == suffix))]:
             del picinfos[k]
-        newpics.read_sfm(bk, bkf)
+        newpics.read_sfm(bk, bkf, suffix=suffix)
         newpics.set_positions(randomize=random, suffix=suffix, cols=cols)
         for k, v in newpics.items():
             if v['anchor'][:3] == bk:

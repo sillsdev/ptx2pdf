@@ -717,7 +717,7 @@ Jonathan Kew (Author of XeTeX + sfm2pdf)</property>
                     <property name="column_spacing">6</property>
                     <child>
                       <object class="GtkRadioButton" id="r_generate_selected">
-                        <property name="label" translatable="yes">Only Include Pictures From These Books:</property>
+                        <property name="label" translatable="yes">Append Pictures to PicList From These Books:</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">False</property>
@@ -791,8 +791,7 @@ Checking this option will randomly position the
 illustrations on the page (using top-left, top-right
 bottom-left and bottom-right). 
 
-You can change the locations using
-the Edit PicList tab later.</property>
+You can change the location of pictures later if needed.</property>
                         <property name="halign">start</property>
                         <property name="margin_top">12</property>
                         <property name="margin_bottom">12</property>
@@ -840,7 +839,7 @@ the Edit PicList tab later.</property>
                         <property name="halign">start</property>
                         <property name="label" translatable="yes">This operation can overwrite 
 carefully crafted settings.
-So chose carefully...
+So choose carefully...
 If in doubt, click Cancel.</property>
                         <attributes>
                           <attribute name="foreground" value="#cccc00000000"/>
