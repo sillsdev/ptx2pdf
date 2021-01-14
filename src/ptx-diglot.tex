@@ -1,6 +1,6 @@
 %:strip
 % ptx-diglot.tex: Diglot processing for xetex paratext2.tex
-% Copyright (c) 2007-2021 by SIL International 
+% Copyright (c) 2008-2021 by SIL International 
 % written by David Gardner
 %
 % Permission is hereby granted, free of charge, to any person obtaining
@@ -58,7 +58,11 @@
 \def\LeftMarkstrue{\useLeftMarkstrue\useRigthMarksfalse}
 \def\LeftMarksfalse{\useLeftMarkstrue\useRigthMarkstrue}
 
-\newif\ifVisTrace% Show lines where boxes are joined. 
+%Defined penalties
+\def\dgl@tPenColSwap{-10001}
+\def\dgl@tPenInternalRpt{-10002}
+\def\dgl@tPenLtrialEnd{-10005}
+\def\dgl@tPenRtrialEnd{-10006}
 \VisTracefalse%
 \def\oldRmark{}
 \def\oldLmark{}
@@ -172,6 +176,7 @@
 \global\def\n@xtc@mmand{}%
 
 %\partial % fully set Partial page (both columns)
+\newbox\trialgalley %used for resetting after a failed trial 
 \newbox\partialL \setbox\partialL=\vbox{} % Partial page, on the left side
 \newbox\excessL \setbox\excessL=\vbox{} % Excess left material, once we know we're on the next page (added to partialL on shipout)
 \newbox\excessR \setbox\excessR=\vbox{} % Excess right material, once we know we're on the next page 
@@ -272,7 +277,7 @@
  \trace{D}{diglotLeft O:\the\outputpenalty, P:\the\savedpenalty, LP:\the\lastsavedLpenalty, vs:\the\vsize,
     pg:\the\pagegoal, pt:\the\pagetotal, bs:\the\baselineskip, ilp:\the\interlinepenalty, \ifintrial INTRIAL\fi}% 
  \p@gestarttrue % or at least, this isn't the right place to place things that go after a paragraph
- \ifnum\outputpenalty=-10005 %Why are we here after a trial?
+ \ifnum\outputpenalty=\dgl@tPenLtrialEnd\relax %Why are we here after a trial?
    \ifintrial\diglotLeftTrial\fi
    %\tmppenalty=\savedpenalty\relax%
    %\Lneedsemptyingtrue%
@@ -301,7 +306,7 @@
    \tmppenalty=0\relax%
    \Lneedsemptyingfalse%
  \else%
-   \ifnum\outputpenalty=-10001 %Got to the end of the \lefttext
+   \ifnum\outputpenalty=\dgl@tPenColSwap\relax %Got to the end of the \lefttext
      \tmppenalty=\savedpenalty\relax%
      \Lneedsemptyingtrue%
    \fi%
@@ -472,7 +477,7 @@
      \runLtrialtrue%
      \global\leftfulltrue%
    \fi%
-   \ifnum\outputpenalty=-10001
+   \ifnum\outputpenalty=\dgl@tPenColSwap\relax
       %Must release footnotes, this section of page is about to be committed
       \runLtrialtrue%
    \fi%
@@ -520,7 +525,7 @@
   % the kerns would need removing somehow.
   \p@gestarttrue % or at least, this isn't the right place to place things that go after a paragraph
   \makevtop{255}
-  \global\setbox\LeftBox=\vtop{\unvbox 255}
+  \global\setbox\LeftBox=\vtop{\unvbox 255\doVisTrace{e}}
   \tmppenalty=\outputpenalty %
   \ifnum\tmppenalty=10000 %
     \tmppenalty=0 %
@@ -555,15 +560,16 @@
     \fi% Not Cary over
   \fi% botmark empty or not
   \let\firstmark=\empty
-
   %\TRshipout{\vbox{\hbox{\the\diglotTRcount diglotLeftTrial:}\copy\LeftBox}}%
   \trace{D}{Box=\the\ht\LeftBox+\the\dp\LeftBox}%
   \ifnum\holdinginserts=0 %
-    \global\deadcycles=0 %
+    %\global\deadcycles=0 %
     \global\holdinginserts=1 % inserts inactive again
     %Footnotes may have been added that fill up the available space even if
     %it wasn't full before - recalculate.
     \calc@vailht%
+  \else
+    \trace{D}{EH???? Who runs a trial with inserts held?}% 
   \fi%
   \TempDim=\availht %
   \boxmovedfalse%
@@ -591,20 +597,29 @@
     \TempDim=0pt % 
   \fi
   \ifdim\TempDim<-0.7\baselineskip % Rerun trial.
+    \global\advance\trialheight by -\baselineskip
     \ifnum\deadcycles=0 
       \traceNum{d}{Footnotes make left column over full. Trying again}%
     \else%
-      \global\advance\trialheight by -\baselineskip
-      \traceNum{d}{Left column still too full. Try again th:\the\trialheight}%
-      \global\vsize=\trialheight
+      \ifdim\TempDim<-10\baselineskip
+      	\ifdim\availht>5\baselineskip
+	   \deadcycles=0
+	\fi
+      \fi
+      \traceNum{d}{Left column still too full. Try again th:\the\trialheight\space av:\the\availht}%
     \fi%
-    \unvbox\LeftBox\ifdim\lastkern<0pt \unkern\fi%FIXME? Only want to unkern makevtop's kerns.
+    \global\vsize=\trialheight
+    \global\holdinginserts=0
+    \r@storenotes{}%
+    \setbox0\copy\trialgalley
+    \unvbox0
+    \ifdim\lastkern<0pt \unkern\fi%FIXME? Only want to unkern makevtop's kerns.
     \penalty\tmppenalty\relax% tmppenalty might be an end of data or anything else. We put it back as we rerun the trial
   \else% Not rerunning the trial. 
     \ifdim\TempDim<\baselineskip % 
       \global\leftfulltrue%
     \fi
-    \ifnum\outputpenalty=-10005 %
+    \ifnum\outputpenalty=\dgl@tPenLtrialEnd\relax %
       \trace{D}{Final penalty found \the\outputpenalty.} 
       \intrialfalse
       \ifx\n@xtc@mmand\empty \trace{D}{no next command set?}
@@ -618,6 +633,7 @@
       \global\def\n@xtc@mmand{} %
       \do@nce
       %start returning to processing input..
+      \trace{D}{digl@tL says next data is \ifdigl@tL L\else R\fi}%
       \ifdigl@tL%
         \global\output={\diglotLeft}\relax%
       \else%
@@ -652,7 +668,7 @@
   \ifnum\tmppenalty=10000 %
     \tmppenalty=0 %
   \fi
-  \ifnum\tmppenalty=-10005 %
+  \ifnum\tmppenalty=\dgl@tPenLtrialEnd\relax %
     \tmppenalty=\savedpenalty
       \global\savedpenalty=0 %
   \fi
@@ -664,7 +680,7 @@
   \global\partialLpenalty=\tmppenalty %
   \trace{D}{\the\ht\partialL+\the\dp\partialL}%
   %\TRshipout{\vbox{\hbox{\the\diglotTRcount diglotLeftAfterTrial:}\copy\aftertri@lbox}}%
-  \ifnum\outputpenalty=-10005\relax%
+  \ifnum\outputpenalty=\dgl@tPenLtrialEnd\relax%
     \intrialfalse
     \ifdigl@tL
       \global\output={\diglotLeft}\relax
@@ -710,6 +726,7 @@
   \global\output={\diglotLeftTrial}\relax%
   \global\vsize=\trialheight\relax%
   \global\holdinginserts=0%
+  \global\deadcycles=0
   \global\savedpenalty=\partialLpenalty %
   \global\intrialtrue
   %\bgroup
@@ -722,8 +739,11 @@
   \ifdim\dimen3>\trialheight %Is this likely to be the last chunk added to the page? 
     \ifm@rksonpage\else\mark{}\marks1{}\fi% FIXME? \marks2 too?
   \fi
-  \joinboxes{\LeftBox}{\partialL}{10}{\Lboxpenalty}\endgraf\penalty-10005
-\relax{\aftergroup\relax}%
+  \global\setbox\trialgalley\vbox{\joinboxes{\LeftBox}{\partialL}{10}{\Lboxpenalty}\endgraf\penalty\dgl@tPenLtrialEnd}%
+  \s@venotes{}%
+  \setbox0\copy\trialgalley
+  \unvbox0
+  \relax{\aftergroup\relax}%
 }
 
 \def\diglotRightExtra{%
@@ -734,7 +754,7 @@
   \ifnum\tmppenalty=10000 %
     \tmppenalty=0 %
   \fi
-  \ifnum\tmppenalty=-10006 %
+  \ifnum\tmppenalty=\dgl@tPenRtrialEnd\relax %
     \tmppenalty=\savedpenalty
     \global\savedpenalty=0 %
   \fi%
@@ -747,7 +767,7 @@
   \fi
   \global\setbox\excessR=\vtop{\joinboxes{\excessR}{255}{3}{\Rchunkpenalty}}%
   \global\Rchunkpenalty=\tmppenalty %
-  \ifnum\outputpenalty=-10006 %% All OK. drop through to digl@tRight
+  \ifnum\outputpenalty=\dgl@tPenRtrialEnd\relax %% All OK. drop through to digl@tRight
     \intrialfalse
     %digl@tRight will reset \output
     \setbox255=\box\partialR% digl@tright expects this
@@ -777,12 +797,12 @@
   \ifnum\tmppenalty=10000 %
     \tmppenalty=0 %
   \fi
-  \ifnum\tmppenalty=-10006 %
+  \ifnum\tmppenalty=\dgl@tPenRtrialEnd\relax %
     \tmppenalty=\savedpenalty
     \global\savedpenalty=0 %
   \fi%
  \let\eotri@l=\relax
- \ifnum\outputpenalty=-10006 %
+ \ifnum\outputpenalty=\dgl@tPenRtrialEnd\relax %
     \trace{D}{Final penalty found \the\outputpenalty}%
     \global\TempDim=\the\availht
     {\setbox0=\copy255\setbox1=\vtop{\unvbox0}%
@@ -797,7 +817,7 @@
      \global\vsize=\trialheight
      \global\savedpenalty=\tmppenalty %
      \unvbox255
-     \penalty-10006 
+     \penalty\dgl@tPenRtrialEnd\relax 
     \fi%
   \else%
     \trace{D}{Remembering right hand data, but final penalty not found}%
@@ -845,7 +865,7 @@
   \else
     \joinboxes{\partialR}{255}{12}{\partialRpenalty}%
   \fi
-  \endgraf\penalty-10006
+  \endgraf\penalty\dgl@tPenRtrialEnd\relax
   %\egroup%
   \relax{\aftergroup\relax}%
 }
@@ -878,12 +898,12 @@
  \ifnum\outputpenalty=10000 % Nothing wrong with breaking here
    \tmppenalty=0 % and leave Rchunkpenalty alone
  \else%
-   \ifnum\outputpenalty=-10001 %Got to the end of the \righttext
+   \ifnum\outputpenalty=\dgl@tPenColSwap\relax %Got to the end of the \righttext
      \Rchunkpenalty=\savedpenalty %
      \tmppenalty=\Rchunkpenalty %
      \global\savedpenalty=0 %
    \else%
-     \ifnum\outputpenalty=-10006 %Got to the end of the trialtext. why are we here?
+     \ifnum\outputpenalty=\dgl@tPenRtrialEnd\relax %Got to the end of the trialtext. why are we here?
        \tmppenalty=\savedpenalty %
        \global\savedpenalty=0 %
        %\Rchunkpenalty should already have been set.
@@ -928,7 +948,6 @@
      \fi
    \fi 
    \xdef\oldRmark{\botmarks2}%
-
  \fi
  \hsize=\columnRwidth\relax%
  \makevtop{255}%
@@ -974,7 +993,7 @@
   \Lneedsemptyingtrue%
   \calc@vailht%
   \n@xtc@mmand%
-  \endgraf\penalty-10001
+  \endgraf\penalty\dgl@tPenColSwap\relax
   \relax%
   \global\digl@tLtrue%
   \global\diglotLtrue%
@@ -995,7 +1014,7 @@
   \par\do@ndofthispar
   \n@xtc@mmand
   \global\holdinginserts=1
-  \ifhe@dings\endhe@dings\fi\endgraf\penalty-10001
+  \ifhe@dings\endhe@dings\fi\endgraf\penalty\dgl@tPenColSwap\relax
   \calc@vailht\global\digl@tLfalse\global\diglotRtrue\calc@vailht
   \global\vsize=\availht\relax\output={\diglotRight}\the\rightho@ks\relax\swapfonts{R}%
   \global\hsize=\columnRwidth\relax\global\holdinginserts=\ifuseRightTrial 1 \message{Someone set useRightTrial true. MISTAKE!}\else 0\fi}
@@ -1005,7 +1024,7 @@
 \def\norighttext{\global\savedpenalty=\lastpenalty
   %\par\do@ndofthispar
   \relax\trace{D}{norighttext}\Lneedsemptyingtrue
-  \endgraf\penalty-10001
+  \endgraf\penalty\dgl@tPenColSwap\relax
   \global\diglotLtrue\global\digl@tLtrue\Lchunkpenalty=0\relax\setboth\output={\diglotLeft}%
   \global\hsize=\columnLwidth\relax\global\holdinginserts=1}
 
@@ -1013,7 +1032,7 @@
 \def\nolefttext{\global\savedpenalty=\lastpenalty
   %\par\do@ndofthispar
   \trace{D}{nolefttext}\n@xtc@mmand
-  \endgraf\penalty-10001
+  \endgraf\penalty\dgl@tPenColSwap\relax
   \global\diglotLtrue\calc@vailht\global\digl@tLfalse\global\diglotRtrue\calc@vailht
   \global\vsize=\availht\output={\diglotRight}\swapfonts{R}%
   \global\hsize=\columnRwidth\relax\global\holdinginserts=\ifuseRightTrial 1\else 0\fi}
@@ -1119,16 +1138,16 @@
   \ifnum\outputpenalty=-10000
    \pagefulltrue
   \fi
-  \ifnum\outputpenalty=-10002 %Set on self-repeat calls
+  \ifnum\outputpenalty=\dgl@tPenInternalRpt\relax %Set on self-repeat calls
    \pagefullfalse
    \redocoloktrue
   \fi
-  \ifnum\outputpenalty=-10001 % Column break.
+  \ifnum\outputpenalty=\dgl@tPenColSwap\relax % Column break.
    \pagefullfalse
    \redocolokfalse
    \repeatpermittedtrue
   \fi
-  \ifnum\outputpenalty=-10005 
+  \ifnum\outputpenalty=\dgl@tPenLtrialEnd\relax
     \repeatpermittedtrue
   \fi
   % Box is probably a title or similar - never OK to refill here
@@ -1142,7 +1161,7 @@
   % I don't understand why this next bit causes problems...
   \else%  We're in right column mode..
     \trace{D}{pRp:\the\partialRpenalty, op:\the\outputpenalty}%
-    \ifnum\outputpenalty=-10006 % final penalty
+    \ifnum\outputpenalty=\dgl@tPenRtrialEnd\relax % final penalty
       \redocolokfalse
     \fi
     %\ifnum\outputpenalty>-10000 % and a normal page break
@@ -1221,7 +1240,6 @@
         \global\setbox\partialL=\vtop{\joinboxes{\partialL}{\excessL}{9}{\partialLpenalty}}%
         \egroup
         \partialLpenalty=\Lchunkpenalty %
-
       \fi
       %\showbox\partialL
     \fi
@@ -1656,7 +1674,7 @@
         \else
           \trace{D}{no need to split}%
         \fi
-        \global\outputpenalty=-10002\relax%No more itterations after this
+        \global\outputpenalty=\dgl@tPenInternalRpt\relax more itterations after this
         % but we do need 
         \global\setbox\partialL=\vtop{\unvbox\partialL}%
         %\makevtop{\partialL}
@@ -1664,7 +1682,7 @@
       \global\trialheight=\availht\relax%
       \doDiglotLeftTrial%
     \else %i.e.\dp\partialL<=0
-      \ifnum\outputpenalty=-10001\relax%
+      \ifnum\outputpenalty=\dgl@tPenColSwap\relax
         % No partialL mtl, but possibly have right column that should be
         % set.
         \trace{D}{B pL:(\the\ht\partialL+\the\dp\partialL) pR:(\the\ht\partialR+\the\dp\partialR)}%

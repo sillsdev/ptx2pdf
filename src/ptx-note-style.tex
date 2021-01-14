@@ -60,6 +60,7 @@
 }
 \def\n@wnoteins@rt#1{
 	\x@\n@winsert\csname note-#1\endcsname
+	\x@\n@winsert\csname notesave-#1\endcsname
 }
 \let\n@winsert=\newinsert % work around the \outer nature of \newinsert
 %-cnote_makenote
@@ -73,7 +74,6 @@
     \ifdiglotSepNotes\s@tn@tep@r@ms{#1}\s@tn@tep@r@ms{#1R}\else\s@tn@tep@r@ms{#1}\fi
   \else\s@tn@tep@r@ms{#1}\fi
 }
-
 \def\s@tn@tep@r@ms#1{%
   %% !!!FIXME!!! This guesses p@ranotes take half a line each. There are better ways. 
   \x@\count\csname note-#1\endcsname=\ifdiglot 1000 \else \ifp@ranotes 500 \else 1000 \fi\fi 
