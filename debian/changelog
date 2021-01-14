@@ -1,3 +1,9 @@
+ptxprint (1.5.3-1ubuntu1) bionic; urgency=medium
+
+  * Bumped version. 
+
+ -- Nicolas Spalinger <nicolas.spalinger@sil.org>  Thu, 14 Jan 2021 15:40:55 +0100
+
 ptxprint (1.5.1-1ubuntu1) bionic; urgency=medium
 
   * Bumped version. 
