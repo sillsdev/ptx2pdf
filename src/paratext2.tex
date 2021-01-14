@@ -477,7 +477,7 @@
     \else\setbox0=\box255\deadcycles=0\fi % dump empty pages (typically at end)
     \global\holdinginserts=1
     \ifrerunsavepartialpaged\trace{o}{onecoltrial: rerunsavepartialpage}%
-      \global\output={\savepartialpage}\global\rerunsavepartialpagedfalse               %(+)
+      \global\output={\savepartialpage}% leave flag set to allow caller to trigger extra \eject   %(+)
     \else\global\output={\onecol}\fi
 %-c_onecoltrial_pagefit
 %+c_onecoltrial_fail
@@ -526,10 +526,11 @@
     \vskip-\lastdepth
     \ifhe@dings\endhe@dings\fi % if headings in process, end headings
     \penalty-100\vskip\baselineskip % ensure blank line between single and double column material
-    \global\output={\savepartialpage}\eject % save any partially-full page
+    \global\output={\savepartialpage}\eject
+    \ifrerunsavepartialpaged\eject\rerunsavepartialpagedfalse\fi % save any partially-full page
 	% if single column material already fills 3/4 page, go to next page to start double columns
     \dimen0=\ht\partial
-    \trace{o}{DoubleColumns: \the\dimen0\space > \PageFullFactor\space\the\textheight}%
+    \trace{o}{DoubleColumns: \the\dimen0\space > \PageFullFactor\space * \the\textheight}%
     \ifdim\dimen0>\PageFullFactor\textheight
 %%%      \msg{Output full page from 1 to 2 columns}%
       \global\output={\onecol} % but output it immediately if 75% full
@@ -626,7 +627,7 @@
         % so reduce \vsize and try again with an earlier break
     \trace{i}{2c REDUCING VSIZE hIns=\the\holdinginserts}
     \@mptyinserts
-    \global\advance\vsize by -\baselineskip
+    %\global\advance\vsize by -\baselineskip
     \let\\=\cle@rn@tecl@ss \the\n@tecl@sses
     \global\let\whichtrial=\onecoltrial
     \global\output={\backingup}
