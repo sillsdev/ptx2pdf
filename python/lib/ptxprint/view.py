@@ -15,7 +15,7 @@ from shutil import rmtree
 import datetime, time
 from shutil import copyfile, copytree, move
 
-VersionStr = "1.5.2"
+VersionStr = "1.5.3"
 
 pdfre = re.compile(r".+[\\/](.+)\.pdf")
 
@@ -472,7 +472,6 @@ class ViewModel:
             else:
                 return (1, k, v)
         config = configparser.ConfigParser()
-        print("Writing book:", self.get("ecb_book"))
         for k, v in sorted(ModelMap.items(), key=sortkeys):
             if v[0] is None or k.endswith("_"):
                 continue

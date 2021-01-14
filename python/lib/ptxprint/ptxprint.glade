@@ -602,7 +602,7 @@ Description):</property>
     <property name="type_hint">dialog</property>
     <property name="gravity">center</property>
     <property name="program_name">PTXprint</property>
-    <property name="version">Version 1.5.2</property>
+    <property name="version">Version 1.5.3</property>
     <property name="copyright">© 2020-2021, SIL International</property>
     <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
 the User-Interface. The PDFs are produced by enhanced 
@@ -5044,7 +5044,7 @@ Text:</property>
                                 <property name="left_attach">1</property>
                                 <property name="top_attach">0</property>
                                 <property name="width">2</property>
-                                <property name="height">2</property>
+                                <property name="height">3</property>
                               </packing>
                             </child>
                             <child>
@@ -5061,6 +5061,25 @@ Illustration credits tag.</property>
                                 <property name="halign">end</property>
                                 <property name="valign">end</property>
                                 <signal name="clicked" handler="onColophonResetClicked" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkCheckButton" id="c_standAloneColophon">
+                                <property name="label" translatable="yes">Force Page Break 
+Before Colophon</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="tooltip_text" translatable="yes">Normally the colophon is inserted at the end
+of the last page of the last book. If this option
+is checked, then the colophon will appear at the 
+bottom of a new page at the end of the publication.</property>
+                                <property name="margin_left">6</property>
+                                <property name="draw_indicator">True</property>
                               </object>
                               <packing>
                                 <property name="left_attach">0</property>
@@ -6755,7 +6774,9 @@ occuring on a line on their own.</property>
                                     <property name="receives_default">False</property>
                                     <property name="tooltip_text" translatable="yes">By default the text will be fully-justified.
 If you prefer a ragged edge, then uncheck
-this option.</property>
+this option.
+NOTE that this setting will override what is
+defined in the Styles area for marker \p</property>
                                     <property name="halign">start</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>

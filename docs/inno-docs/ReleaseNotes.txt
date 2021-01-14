@@ -1,6 +1,14 @@
-PTXprint 1.5.2 Release Notes 
-12 January 2021
+PTXprint 1.5.3 Release Notes 
+14 January 2021
 
+Bug Fixes and Improvements in 1.5.3
+
+  * Several PicList bugs fixed - especially relating to diglot illustrations
+  
+  * Initialization of new projects and configs fixed
+  
+  * Fixed broken ImageCredits in colophon
+  
 Bug Fixes and Improvements in 1.5.2
 
   * Pictures tab: Enable/Disable Details and Checklist tabs when Show/Hide Advanced features is clicked
