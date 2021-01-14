@@ -623,7 +623,7 @@
 	\add@credit
     \fi
     \setbox0=\hbox to \sizem@ltiple\p@cwidth{\hss
-      \edef\l@gstring{{\the\im@gecount}{\f@lename}{\csname figparam-copy\endcsname}{\csname figparam-caption\endcsname}{\sizem@ltiple x\the\p@cwidth}}% Fully expand figure parameters, but leave page no. to be expanded later.
+      \edef\l@gstring{{\the\im@gecount}{\f@lename}{\csname figparam-pgpos\endcsname}{\csname figparam-copy\endcsname}{\sizem@ltiple x\the\p@cwidth}}% Fully expand figure parameters, but leave page no. to be expanded later.
       \x@\writefigp@gelog\x@{\l@gstring}%
       \box1\hss}%
     \ifFigurePlaceholders % replace graphic with a frame and the file name
