@@ -144,6 +144,10 @@ class StyleEditorView(StyleEditor):
         self.treeview.append_column(tvc)
         tself = self.treeview.get_selection()
         tself.connect("changed", self.onSelected)
+        self.treeview.set_search_equal_func(self.tree_search)
+        searchentry = self.builder.get_object("t_styleSearch")
+        self.treeview.set_search_entry(searchentry)
+        #self.treeview.set_enable_search(True)
         for k, v in stylemap.items():
             if v[0].startswith("l_"):
                 continue
@@ -250,6 +254,16 @@ class StyleEditorView(StyleEditor):
                     return ret
             it = self.treestore.iter_next(it)
         return None
+
+    def tree_search(self, model, colmn, key, rowiter):
+        root = self.treestore.get_iter_first()
+        it = self._searchMarker(root, key.lower())
+        if it is None:
+            return False
+        path = model.get_path(it)
+        self.treeview.expand_to_path(path)
+        self.treeview.scroll_to_cell(path)
+        return True
 
     def editMarker(self):
         self.isLoading = True

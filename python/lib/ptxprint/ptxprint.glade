@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.1 
+<!-- Generated with glade 3.22.2 
 
 The MIT License (MIT)
 
@@ -14062,9 +14062,8 @@ for Marker:</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkSearchEntry" id="t_fontSearch1">
+                              <object class="GtkSearchEntry" id="t_styleSearch">
                                 <property name="visible">True</property>
-                                <property name="sensitive">False</property>
                                 <property name="can_focus">True</property>
                                 <property name="no_show_all">True</property>
                                 <property name="tooltip_text" translatable="yes">If you are not sure which category
@@ -14120,6 +14119,8 @@ markers/styles in the list below.</property>
                                 <property name="width_request">310</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
+                                <property name="has_focus">True</property>
+                                <property name="is_focus">True</property>
                                 <property name="halign">start</property>
                                 <property name="margin_left">6</property>
                                 <property name="margin_right">6</property>
