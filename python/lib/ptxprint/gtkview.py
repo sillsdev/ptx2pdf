@@ -16,7 +16,7 @@ from gi.repository import GtkSource
 
 import xml.etree.ElementTree as et
 from ptxprint.font import TTFont, initFontCache, fccache, FontRef, parseFeatString
-from ptxprint.view import ViewModel, Path
+from ptxprint.view import ViewModel, Path, VersionStr
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal, setFontButton, makeSpinButton
 from ptxprint.utils import APP
 from ptxprint.runner import StreamTextBuffer
@@ -231,13 +231,26 @@ _styleLinks = {
     "updateFnLineSpacing": (("f", "Baseline"), ("f", "LineSpacing")),
 }
 
-def _doError(text, secondary, title):
+def _doError(text, secondary, title, copy2clip=False):
     dialog = Gtk.MessageDialog(parent=None, message_type=Gtk.MessageType.ERROR,
              buttons=Gtk.ButtonsType.OK, text=text)
-    if title is not None:
-        dialog.set_title(title)
-    else:
-        dialog.set_title("PTXprint")
+    if title is None:
+        title = "PTXprint Version " + VersionStr
+    dialog.set_title(title)
+    if copy2clip:
+        lines = [title]
+        if text is not None and len(text):
+            lines.append(text)
+        if secondary is not None and len(secondary):
+            lines.append(secondary)
+        s = "Please send this error message to ptxprint_support@sil.org\n\n{}".format("\n\n".join(lines))
+        clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
+        clipboard.set_text(s, -1)
+        clipboard.store() # keep after app crashed
+        if secondary is not None:
+            secondary.append("\n\nThe text of this error message has been copied to the clipboard.")
+        else:
+            secondary = "The text of this error message has been copied to the clipboard."
     if secondary is not None:
         dialog.format_secondary_text(secondary)
     if sys.platform == "win32":
@@ -246,6 +259,7 @@ def _doError(text, secondary, title):
     if sys.platform == "win32":
         dialog.set_keep_above(False)
     dialog.destroy()
+
 
 class GtkViewModel(ViewModel):
 
@@ -425,12 +439,13 @@ class GtkViewModel(ViewModel):
         expert = self.userconfig.getboolean('init', 'expert', fallback=False)
         self.set("c_hideAdvancedSettings", expert)
         self.onHideAdvancedSettingsClicked(None, None)
+        sys.excepthook = self.doSysError
         try:
             Gtk.main()
         except Exception as e:
             s = traceback.format_exc()
             s += "\n{}: {}".format(type(e), str(e))
-            self.doError(s)
+            self.doError(s, copy2clip=True)
 
     def emission_hook(self, w, *a):
         if not self.logactive:
@@ -508,10 +523,7 @@ class GtkViewModel(ViewModel):
             self.builder.get_object(c).set_visible(val)
 
         # Disable/Enable the Details and Checklist tabs on the Pictures tab
-        # self.builder.get_object("tb_details").set_sensitive(val)
-        # self.builder.get_object("tb_checklist").set_sensitive(val)
         for  w in ("tb_checklist", "tb_details"):
-            print(w)
             self.builder.get_object(w).set_sensitive(val)
             
         # Show Hide specific Help items
@@ -599,11 +611,15 @@ class GtkViewModel(ViewModel):
             # print("Esc pressed, ignoring")
             return True
 
-    def doError(self, txt, secondary=None, title=None, threaded=True):
+    def doSysError(self, tp, value, tb):
+        s = "".join(traceback.format_exception(tp, value, tb))
+        self.doError(s, copy2clip=True)
+
+    def doError(self, txt, secondary=None, title=None, threaded=False, copy2clip=False):
         if threaded:
             self.pendingerror=(txt, secondary, title)
         else:
-            _doError(txt, secondary, title)
+            _doError(txt, secondary, title, copy2clip)
 
     def onOK(self, btn):
         if isLocked():
@@ -650,7 +666,7 @@ class GtkViewModel(ViewModel):
         except Exception as e:
             s = traceback.format_exc()
             s += "\n{}: {}".format(type(e), str(e))
-            self.doError(s)
+            self.doError(s, copy2clip=True)
             unlockme()
 
     def onCancel(self, btn):
@@ -1902,7 +1918,7 @@ class GtkViewModel(ViewModel):
             except Exception as e:
                 s = traceback.format_exc()
                 s += "\n{}: {}".format(type(e), str(e))
-                self.doError(s)
+                self.doError(s, copy2clip=True)
         else:
             # self.archiveZipFile = None
             btn_createZipArchive.set_tooltip_text("No Archive File Created")
@@ -2391,6 +2407,8 @@ class GtkViewModel(ViewModel):
             self.picListView.set_src(os.path.basename(picfile[0]))
 
     def onPlDelClicked(self, btn):
+        # TEMP for testing Exception handling only! MP to remove later
+        raise Exception("Sorry, but you can't delete Pictures in this version!") 
         self.picListView.del_row()
 
     def onAnchorRefChanged(self, t_plAnchor, foo): # called on "focus-out-event"
