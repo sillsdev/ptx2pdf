@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.2 
+<!-- Generated with glade 3.22.1 
 
 The MIT License (MIT)
 
@@ -602,7 +602,7 @@ Description):</property>
     <property name="type_hint">dialog</property>
     <property name="gravity">center</property>
     <property name="program_name">PTXprint</property>
-    <property name="version">Version 1.5.3</property>
+    <property name="version">Version 1.5.4</property>
     <property name="copyright">© 2020-2021, SIL International</property>
     <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
 the User-Interface. The PDFs are produced by enhanced 
@@ -14045,9 +14045,7 @@ been enabled.</property>
                             <child>
                               <object class="GtkLabel">
                                 <property name="visible">True</property>
-                                <property name="sensitive">False</property>
                                 <property name="can_focus">False</property>
-                                <property name="no_show_all">True</property>
                                 <property name="tooltip_text" translatable="yes">If you are not sure which category
 your marker can be found under,
 then use this Search tool to find
@@ -14065,7 +14063,6 @@ for Marker:</property>
                               <object class="GtkSearchEntry" id="t_styleSearch">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
-                                <property name="no_show_all">True</property>
                                 <property name="tooltip_text" translatable="yes">If you are not sure which category
 your marker can be found under,
 then use this Search tool to find
@@ -14084,7 +14081,6 @@ the marker you need.</property>
                             <child>
                               <object class="GtkButton" id="btn_resetStyFilter">
                                 <property name="label">↺</property>
-                                <property name="visible">True</property>
                                 <property name="sensitive">False</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>

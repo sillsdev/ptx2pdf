@@ -1,5 +1,13 @@
-PTXprint 1.5.3 Release Notes 
-14 January 2021
+PTXprint 1.5.4 Release Notes 
+15 January 2021
+
+Bug Fixes and Improvements in 1.5.4
+
+  * Enable searching for Styles
+  
+  * Ensure that all exceptions are caught and put on the clipboard for better error reporting
+  
+  * Change some default values (poetry left aligned instead of justified; custom.sty is OFF by default)
 
 Bug Fixes and Improvements in 1.5.3
 
