@@ -114,7 +114,8 @@ _sensitivities = {
     "c_verticalrule" :         ["l_colgutteroffset", "s_colgutteroffset"],
     "c_rhrule" :               ["s_rhruleposition", "gr_horizRule"],
     "c_introOutline" :         ["c_prettyIntroOutline"],
-    "c_sectionHeads" :         ["c_parallelRefs"],
+    "c_sectionHeads" :         ["c_parallelRefs", "lb_style_s", "lb_style_r"],
+    "c_parallelRefs" :         ["lb_style_r"],
     "c_useChapterLabel" :      ["t_clBookList", "l_clHeading", "t_clHeading", "c_optimizePoetryLayout"],
     "c_singleColLayout" :      ["t_singleColBookList"],
     "c_autoToC" :              ["t_tocTitle", "gr_toc", "l_toc"],
@@ -142,7 +143,7 @@ _sensitivities = {
                                 "l_inclSectionShift", "l_inclSectionScale", 
                                 "s_inclSectionShift", "s_inclSectionScale"],
     "c_inclEndOfBook" :        ["btn_selectEndOfBookPDF", "lb_inclEndOfBook"],
-    "c_inclVerseDecorator" :   ["btn_selectVerseDecorator", "lb_inclVerseDecorator", "btn_VerseStyle",
+    "c_inclVerseDecorator" :   ["btn_selectVerseDecorator", "lb_inclVerseDecorator", "lb_style_v",
                                 "l_verseDecoratorShift", "l_verseDecoratorScale",
                                 "s_verseDecoratorShift", "s_verseDecoratorScale"],
     "c_fontFake":              ["s_fontBold", "s_fontItalic", "l_fontBold", "l_fontItalic"],
@@ -176,7 +177,7 @@ _object_classes = {
     "mainnb":      ("nbk_Main", ),
     "viewernb":    ("nbk_Viewer", "nbk_PicList"),
     "thumbtabs":   ("l_thumbVerticalL", "l_thumbVerticalR", "l_thumbHorizontalL", "l_thumbHorizontalR"),
-    "stylinks":    ("btn_VerseStyle", "btn_RubyStyle", "btn_GlossRubyStyle", "btn_ThumbStyle"), 
+    "stylinks":    ("lb_style_s", "lb_style_r", "lb_style_v", "lb_style_rb", "lb_style_gloss|rb", "lb_style_toc3"), 
     "stybutton":   ("btn_resetCopyright", "btn_resetColophon", "btn_resetFNcallers", "btn_resetXRcallers", 
                     "btn_styAdd", "btn_styEdit", "btn_styDel", "btn_styReset", "btn_refreshFonts", "btn_resetStyFilter")
 }
@@ -373,7 +374,7 @@ class GtkViewModel(ViewModel):
         css = """
             .printbutton:active { background-color: chartreuse; background-image: None }
             .fontbutton {font-size: smaller}
-            .stylinks {font-size: 11px; padding: 2px 3px; background-color: paleturquoise; background-image: None}
+            .stylinks {text-decoration: None; padding: 1px 1px}
             .stybutton {font-size: 12px; padding: 4px 6px}
             progress, trough {min-height: 24px}
             .mainnb {background-color: #F0F0F0}
@@ -381,7 +382,7 @@ class GtkViewModel(ViewModel):
             .viewernb {background-color: #F0F0F0}
             .viewernb tab {min-height: 0pt; margin: 0pt; padding-bottom: 3pt}
             .smradio {font-size: 11px; padding: 1px 1px}
-            .changed { font-weight: bold} """
+            .changed {font-weight: bold} """
         provider = Gtk.CssProvider()
         provider.load_from_data(css.encode("utf-8"))
         Gtk.StyleContext().add_provider_for_screen(Gdk.Screen.get_default(), provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
@@ -488,7 +489,7 @@ class GtkViewModel(ViewModel):
                       
         for c in ("tb_Font", "tb_Advanced", "tb_ViewerEditor", "tb_Tabs", "tb_DiglotBorder", "tb_StyleEditor",
                   "fr_copyrightLicense", "r_book_module", "btn_chooseBibleModule", "lb_bibleModule", "c_combine",
-                  "c_fighiderefs", "lb_selectFigureFolder", "l_indentUnit", "s_indentUnit",
+                  "c_fighiderefs", "lb_selectFigureFolder", "l_indentUnit", "s_indentUnit", "lb_style_s", "lb_style_r", 
                   "l_btmMrgn", "s_bottommarginfactor", "l_ftrPosn", "s_footerposition", "c_ftrCenterPri", "c_ftrCenterSec", 
                   "l_missingPictureString", "l_imageTypeOrder", "t_imageTypeOrder", "fr_layoutSpecialBooks", "fr_layoutOther",
                   "s_colgutteroffset", "bx_TopMarginSettings", "gr_HeaderAdvOptions", "l_colgutteroffset",
@@ -507,8 +508,11 @@ class GtkViewModel(ViewModel):
             self.builder.get_object(c).set_visible(val)
 
         # Disable/Enable the Details and Checklist tabs on the Pictures tab
-        self.builder.get_object("tb_details").set_sensitive(val)
-        self.builder.get_object("tb_checklist").set_sensitive(val)
+        # self.builder.get_object("tb_details").set_sensitive(val)
+        # self.builder.get_object("tb_checklist").set_sensitive(val)
+        for  w in ("tb_checklist", "tb_details"):
+            print(w)
+            self.builder.get_object(w).set_sensitive(val)
             
         # Show Hide specific Help items
         for pre in ("l_", "lb_"):
@@ -1275,24 +1279,12 @@ class GtkViewModel(ViewModel):
             elif j is None or j.lower() == "left":
                 self.styleEditor.setval(k, "Justification", "Right")
 
-    def onThumbStyleClicked(self, btn):
-        self.styleEditor.selectMarker("zthumbtab" if self.get("c_thumbIsZthumb") else "toc3")
-        self.set("c_styTextProperties", False)
-        mpgnum = self.notebooks['Main'].index("tb_StyleEditor")
-        self.builder.get_object("nbk_Main").set_current_page(mpgnum)
-
-    def onRubyStyleClicked(self, btn):
-        self.styleEditor.selectMarker("rb")
-        mpgnum = self.notebooks['Main'].index("tb_StyleEditor")
-        self.builder.get_object("nbk_Main").set_current_page(mpgnum)
-
-    def onGlossRubyStyleClicked(self, btn):
-        self.styleEditor.selectMarker("gloss|rb")
-        mpgnum = self.notebooks['Main'].index("tb_StyleEditor")
-        self.builder.get_object("nbk_Main").set_current_page(mpgnum)
-
-    def onVerseStyleClicked(self, btn):
-        self.styleEditor.selectMarker("v")
+    def onEditStyleClicked(self, btn):
+        mkr = Gtk.Buildable.get_name(btn)[9:]
+        if mkr == "toc3" and self.get("c_thumbIsZthumb"):
+            self.set("c_styTextProperties", False)
+            mkr = "zthumbtab"
+        self.styleEditor.selectMarker(mkr)
         mpgnum = self.notebooks['Main'].index("tb_StyleEditor")
         self.builder.get_object("nbk_Main").set_current_page(mpgnum)
 

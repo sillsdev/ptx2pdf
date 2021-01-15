@@ -167,7 +167,7 @@ THE SOFTWARE.
   <object class="GtkAdjustment" id="a_indentUnit">
     <property name="upper">4</property>
     <property name="value">1</property>
-    <property name="step_increment">0.10000000000000001</property>
+    <property name="step_increment">0.050000000000000003</property>
     <property name="page_increment">0.25</property>
   </object>
   <object class="GtkAdjustment" id="a_internote">
@@ -6556,44 +6556,6 @@ typesetting issues. Use with care!</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkCheckButton" id="c_sectionHeads">
-                                    <property name="label" translatable="yes">Section Headings (\s)</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">Uncheck this option if you don't want
-to print any Section Headings.
-Unchecking this option will ALSO 
-uncheck the Parallel Passage Refs.</property>
-                                    <property name="halign">start</property>
-                                    <property name="active">True</property>
-                                    <property name="draw_indicator">True</property>
-                                    <signal name="clicked" handler="onSectionHeadsClicked" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">2</property>
-                                    <property name="top_attach">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkCheckButton" id="c_parallelRefs">
-                                    <property name="label" translatable="yes">Parallel Passage Refs (\r)   </property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">Uncheck this option to hide all the
-Parallel Pasage References which
-occur below Section Headings.</property>
-                                    <property name="halign">start</property>
-                                    <property name="active">True</property>
-                                    <property name="draw_indicator">True</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">2</property>
-                                    <property name="top_attach">1</property>
-                                  </packing>
-                                </child>
-                                <child>
                                   <object class="GtkCheckButton" id="c_firstParaIndent">
                                     <property name="label" translatable="yes">Indent First Paragraph</property>
                                     <property name="visible">True</property>
@@ -6807,6 +6769,103 @@ been done so far.</property>
                                   <packing>
                                     <property name="left_attach">2</property>
                                     <property name="top_attach">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkBox">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <child>
+                                      <object class="GtkCheckButton" id="c_sectionHeads">
+                                        <property name="label" translatable="yes">Section Headings</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="tooltip_text" translatable="yes">Uncheck this option if you don't want
+to print any Section Headings.
+Unchecking this option will ALSO 
+uncheck the Parallel Passage Refs.</property>
+                                        <property name="halign">start</property>
+                                        <property name="active">True</property>
+                                        <property name="draw_indicator">True</property>
+                                        <signal name="clicked" handler="onSectionHeadsClicked" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLinkButton" id="lb_style_s">
+                                        <property name="label" translatable="yes">\s</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="focus_on_click">False</property>
+                                        <property name="receives_default">True</property>
+                                        <property name="halign">start</property>
+                                        <property name="relief">none</property>
+                                        <property name="uri">Click to edit the \s marker's properties on the Styles tab</property>
+                                        <signal name="activate-link" handler="onEditStyleClicked" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">1</property>
+                                      </packing>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">2</property>
+                                    <property name="top_attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkBox">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <child>
+                                      <object class="GtkCheckButton" id="c_parallelRefs">
+                                        <property name="label" translatable="yes">Parallel Passage Refs </property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="tooltip_text" translatable="yes">Uncheck this option to hide all the
+Parallel Pasage References which
+occur below Section Headings.</property>
+                                        <property name="halign">start</property>
+                                        <property name="active">True</property>
+                                        <property name="draw_indicator">True</property>
+                                        <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLinkButton" id="lb_style_r">
+                                        <property name="label" translatable="yes">\r</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="focus_on_click">False</property>
+                                        <property name="receives_default">True</property>
+                                        <property name="halign">start</property>
+                                        <property name="relief">none</property>
+                                        <property name="uri">Click to edit the \r marker's properties on the Styles tab</property>
+                                        <signal name="activate-link" handler="onEditStyleClicked" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">1</property>
+                                      </packing>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">2</property>
+                                    <property name="top_attach">1</property>
                                   </packing>
                                 </child>
                               </object>
@@ -11786,7 +11845,6 @@ this option checked (on).</property>
                                             <property name="tooltip_text" translatable="yes">It is recommended to leave 
 this option checked (on).</property>
                                             <property name="halign">start</property>
-                                            <property name="active">True</property>
                                             <property name="draw_indicator">True</property>
                                             <signal name="clicked" handler="onExtraFileClicked" swapped="no"/>
                                           </object>
@@ -12478,17 +12536,19 @@ markers.</property>
                                           </packing>
                                         </child>
                                         <child>
-                                          <object class="GtkButton" id="btn_RubyStyle">
-                                            <property name="label" translatable="yes">✎rb</property>
+                                          <object class="GtkLinkButton" id="lb_style_rb">
+                                            <property name="label" translatable="yes">\rb</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
+                                            <property name="focus_on_click">False</property>
                                             <property name="receives_default">True</property>
                                             <property name="tooltip_text" translatable="yes">Click to jump to the \rb marker in
 the style editor to change the
 formatting of the ruby text.</property>
-                                            <property name="halign">center</property>
-                                            <property name="valign">center</property>
-                                            <signal name="clicked" handler="onRubyStyleClicked" swapped="no"/>
+                                            <property name="halign">start</property>
+                                            <property name="relief">none</property>
+                                            <property name="uri">Click to edit style</property>
+                                            <signal name="activate-link" handler="onEditStyleClicked" swapped="no"/>
                                           </object>
                                           <packing>
                                             <property name="expand">False</property>
@@ -12497,18 +12557,20 @@ formatting of the ruby text.</property>
                                           </packing>
                                         </child>
                                         <child>
-                                          <object class="GtkButton" id="btn_GlossRubyStyle">
-                                            <property name="label" translatable="yes">✎gloss|rb</property>
+                                          <object class="GtkLinkButton" id="lb_style_gloss|rb">
+                                            <property name="label" translatable="yes">\gloss|rb</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
+                                            <property name="focus_on_click">False</property>
                                             <property name="receives_default">True</property>
                                             <property name="tooltip_text" translatable="yes">Click to jump to the \gloss|rb 
 marker in the style editor to 
 change the formatting of the 
 glosses for interlinear/ruby text.</property>
                                             <property name="halign">start</property>
-                                            <property name="valign">center</property>
-                                            <signal name="clicked" handler="onGlossRubyStyleClicked" swapped="no"/>
+                                            <property name="relief">none</property>
+                                            <property name="uri">Click to edit style</property>
+                                            <signal name="activate-link" handler="onEditStyleClicked" swapped="no"/>
                                           </object>
                                           <packing>
                                             <property name="expand">False</property>
@@ -13026,26 +13088,6 @@ For example: PHM TIT; 1JN 2JN 3JN JUD</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkButton" id="btn_ThumbStyle">
-                                <property name="label" translatable="yes">✎ Style...</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">True</property>
-                                <property name="tooltip_text" translatable="yes">Click to jump to the appropriate
-(\toc3 or \zthumbtab) marker in
-the style editor to change the
-formatting of the thumb tabs.</property>
-                                <property name="halign">end</property>
-                                <property name="valign">center</property>
-                                <signal name="clicked" handler="onThumbStyleClicked" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="left_attach">2</property>
-                                <property name="top_attach">2</property>
-                                <property name="width">2</property>
-                              </packing>
-                            </child>
-                            <child>
                               <object class="GtkCheckButton" id="c_thumbIsZthumb">
                                 <property name="label" translatable="yes">Use \zthumbtab Style</property>
                                 <property name="visible">True</property>
@@ -13062,6 +13104,28 @@ The USFM extension \zthumbtab'' can be used to set an alternative value for the 
                               </object>
                               <packing>
                                 <property name="left_attach">4</property>
+                                <property name="top_attach">2</property>
+                                <property name="width">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLinkButton" id="lb_style_toc3">
+                                <property name="label" translatable="yes">Edit Style</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="focus_on_click">False</property>
+                                <property name="receives_default">True</property>
+                                <property name="tooltip_text" translatable="yes">Click to jump to the appropriate
+(\toc3 or \zthumbtab) marker in
+the style editor to change the
+formatting of the thumb tabs.</property>
+                                <property name="halign">end</property>
+                                <property name="relief">none</property>
+                                <property name="uri">Click to edit style</property>
+                                <signal name="activate-link" handler="onEditStyleClicked" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="left_attach">2</property>
                                 <property name="top_attach">2</property>
                                 <property name="width">2</property>
                               </packing>
@@ -13666,24 +13730,6 @@ font and size to ensure verses fit well.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkButton" id="btn_VerseStyle">
-                                <property name="label" translatable="yes">✎ Verse Style...</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">True</property>
-                                <property name="tooltip_text" translatable="yes">Edit marker properties for 
-\v on the Styles tab.</property>
-                                <property name="halign">start</property>
-                                <property name="valign">center</property>
-                                <signal name="clicked" handler="onVerseStyleClicked" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="left_attach">4</property>
-                                <property name="top_attach">7</property>
-                                <property name="width">2</property>
-                              </packing>
-                            </child>
-                            <child>
                               <object class="GtkCheckButton" id="c_inclEndOfBook">
                                 <property name="label" translatable="yes">End of Book</property>
                                 <property name="visible">True</property>
@@ -13855,6 +13901,26 @@ to make it fit. </property>
                                 <property name="top_attach">0</property>
                                 <property name="height">4</property>
                               </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLinkButton" id="lb_style_v">
+                                <property name="label" translatable="yes">\v</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="focus_on_click">False</property>
+                                <property name="receives_default">True</property>
+                                <property name="halign">start</property>
+                                <property name="relief">none</property>
+                                <property name="uri">Click to edit the \v marker's properties on the Styles tab</property>
+                                <signal name="activate-link" handler="onEditStyleClicked" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="left_attach">2</property>
+                                <property name="top_attach">5</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <placeholder/>
                             </child>
                             <child>
                               <placeholder/>
