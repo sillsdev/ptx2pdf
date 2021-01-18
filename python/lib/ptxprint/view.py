@@ -824,7 +824,8 @@ class ViewModel:
                     bkcntr = collections.Counter(sfmtxt)
                     count += bkcntr
         # slist = sorted(count.items(), key=lambda pair: pair[0])
-        f = TTFont(*self.get("bl_fontR"))
+        # f = TTFont(*self.get("bl_fontR"))
+        f = self.get("bl_fontR").getTtfont()
         allchars = ''.join([i[0] for i in count.items()])
         if self.get("fcb_glossaryMarkupStyle") == "with ⸤floor⸥ brackets":
             allchars += "\u2e24\u2e25"

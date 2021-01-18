@@ -1846,6 +1846,80 @@ Viewer tab.</property>
       </row>
     </data>
   </object>
+  <object class="GtkListStore" id="ls_creditHpos">
+    <columns>
+      <!-- column-name Hpos -->
+      <column type="gchararray"/>
+      <!-- column-name HposCode -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">Left</col>
+        <col id="1" translatable="yes">l</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Center</col>
+        <col id="1" translatable="yes">c</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Right</col>
+        <col id="1" translatable="yes">r</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Inner</col>
+        <col id="1" translatable="yes">i</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Outer</col>
+        <col id="1" translatable="yes">o</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkListStore" id="ls_creditRotate">
+    <columns>
+      <!-- column-name RotateDesc -->
+      <column type="gchararray"/>
+      <!-- column-name degrees -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">None</col>
+        <col id="1" translatable="yes">0</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Anti-clockwise</col>
+        <col id="1" translatable="yes">-90</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Clockwise</col>
+        <col id="1" translatable="yes">90</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkListStore" id="ls_creditVpos">
+    <columns>
+      <!-- column-name Vpos -->
+      <column type="gchararray"/>
+      <!-- column-name VposCode -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">Top</col>
+        <col id="1" translatable="yes">t</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Center</col>
+        <col id="1" translatable="yes">c</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Bottom</col>
+        <col id="1" translatable="yes">b</col>
+      </row>
+    </data>
+  </object>
   <object class="GtkListStore" id="ls_digits">
     <columns>
       <!-- column-name digitscript -->
@@ -4350,7 +4424,7 @@ space between lines of text.</property>
                                         <property name="tooltip_text" translatable="yes">This is the base font size by which all other
 font sizes are calculated (according to their
 factor size). If you intend to use the Style
-editor and expect to specify abosulute font
+editor and expect to specify absolute font
 sizes then set the font size here to 12pt.</property>
                                         <property name="halign">end</property>
                                         <property name="valign">center</property>
@@ -11541,10 +11615,579 @@ in this publication, as well as other contexts.</property>
                           </packing>
                         </child>
                         <child>
-                          <placeholder/>
+                          <object class="GtkBox" id="tb_credits">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="orientation">vertical</property>
+                            <child>
+                              <object class="GtkPaned">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="orientation">vertical</property>
+                                <child>
+                                  <object class="GtkBox">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <child>
+                                      <object class="GtkScrolledWindow" id="scr_picListEdit2">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="margin_bottom">6</property>
+                                        <property name="vexpand">True</property>
+                                        <property name="hscrollbar_policy">always</property>
+                                        <property name="vscrollbar_policy">always</property>
+                                        <property name="shadow_type">in</property>
+                                        <property name="propagate_natural_height">True</property>
+                                        <child>
+                                          <object class="GtkTreeView" id="tv_picListEdit2">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="vexpand">True</property>
+                                            <property name="hadjustment">a_picListadjustment1</property>
+                                            <property name="hscroll_policy">natural</property>
+                                            <property name="vadjustment">a_picListadjustment2</property>
+                                            <property name="vscroll_policy">natural</property>
+                                            <property name="model">ls_PicList</property>
+                                            <property name="reorderable">True</property>
+                                            <property name="rules_hint">True</property>
+                                            <property name="enable_search">False</property>
+                                            <property name="search_column">0</property>
+                                            <property name="fixed_height_mode">True</property>
+                                            <child internal-child="selection">
+                                              <object class="GtkTreeSelection"/>
+                                            </child>
+                                            <child>
+                                              <object class="GtkTreeViewColumn">
+                                                <property name="spacing">4</property>
+                                                <property name="sizing">fixed</property>
+                                                <property name="fixed_width">72</property>
+                                                <property name="title" translatable="yes">Anchor Ref</property>
+                                                <property name="clickable">True</property>
+                                                <property name="reorderable">True</property>
+                                                <property name="sort_indicator">True</property>
+                                                <child>
+                                                  <object class="GtkCellRendererText" id="cr_anchor1"/>
+                                                  <attributes>
+                                                    <attribute name="text">0</attribute>
+                                                  </attributes>
+                                                </child>
+                                              </object>
+                                            </child>
+                                            <child>
+                                              <object class="GtkTreeViewColumn" id="col_caption1">
+                                                <property name="resizable">True</property>
+                                                <property name="spacing">4</property>
+                                                <property name="sizing">fixed</property>
+                                                <property name="fixed_width">250</property>
+                                                <property name="title" translatable="yes">Caption</property>
+                                                <child>
+                                                  <object class="GtkCellRendererText" id="cr_caption1"/>
+                                                  <attributes>
+                                                    <attribute name="text">1</attribute>
+                                                  </attributes>
+                                                </child>
+                                              </object>
+                                            </child>
+                                            <child>
+                                              <object class="GtkTreeViewColumn">
+                                                <property name="resizable">True</property>
+                                                <property name="spacing">4</property>
+                                                <property name="sizing">fixed</property>
+                                                <property name="fixed_width">88</property>
+                                                <property name="title" translatable="yes">File</property>
+                                                <child>
+                                                  <object class="GtkCellRendererText" id="cr_filename1"/>
+                                                  <attributes>
+                                                    <attribute name="text">2</attribute>
+                                                  </attributes>
+                                                </child>
+                                              </object>
+                                            </child>
+                                            <child>
+                                              <object class="GtkTreeViewColumn">
+                                                <property name="resizable">True</property>
+                                                <property name="spacing">4</property>
+                                                <property name="sizing">fixed</property>
+                                                <property name="fixed_width">43</property>
+                                                <property name="title" translatable="yes">Frame</property>
+                                                <child>
+                                                  <object class="GtkCellRendererText" id="cr_size1"/>
+                                                  <attributes>
+                                                    <attribute name="text">3</attribute>
+                                                  </attributes>
+                                                </child>
+                                              </object>
+                                            </child>
+                                            <child>
+                                              <object class="GtkTreeViewColumn">
+                                                <property name="spacing">4</property>
+                                                <property name="sizing">fixed</property>
+                                                <property name="fixed_width">38</property>
+                                                <property name="title" translatable="yes">Scale</property>
+                                                <property name="alignment">1</property>
+                                                <child>
+                                                  <object class="GtkCellRendererText" id="cr_scale1"/>
+                                                  <attributes>
+                                                    <attribute name="text">4</attribute>
+                                                  </attributes>
+                                                </child>
+                                              </object>
+                                            </child>
+                                            <child>
+                                              <object class="GtkTreeViewColumn">
+                                                <property name="spacing">4</property>
+                                                <property name="sizing">fixed</property>
+                                                <property name="title" translatable="yes">Posn</property>
+                                                <child>
+                                                  <object class="GtkCellRendererText" id="cr_pgpos1"/>
+                                                  <attributes>
+                                                    <attribute name="text">5</attribute>
+                                                  </attributes>
+                                                </child>
+                                              </object>
+                                            </child>
+                                            <child>
+                                              <object class="GtkTreeViewColumn">
+                                                <property name="spacing">4</property>
+                                                <property name="sizing">fixed</property>
+                                                <property name="fixed_width">50</property>
+                                                <property name="title" translatable="yes">Ref</property>
+                                                <child>
+                                                  <object class="GtkCellRendererText" id="cr_ref1"/>
+                                                  <attributes>
+                                                    <attribute name="text">6</attribute>
+                                                  </attributes>
+                                                </child>
+                                              </object>
+                                            </child>
+                                            <child>
+                                              <object class="GtkTreeViewColumn">
+                                                <property name="spacing">6</property>
+                                                <property name="sizing">fixed</property>
+                                                <property name="fixed_width">45</property>
+                                                <property name="title" translatable="yes">Mirror</property>
+                                                <child>
+                                                  <object class="GtkCellRendererText" id="cr_mirror1"/>
+                                                  <attributes>
+                                                    <attribute name="text">9</attribute>
+                                                  </attributes>
+                                                </child>
+                                              </object>
+                                            </child>
+                                            <child>
+                                              <object class="GtkTreeViewColumn">
+                                                <property name="resizable">True</property>
+                                                <property name="spacing">4</property>
+                                                <property name="sizing">fixed</property>
+                                                <property name="fixed_width">75</property>
+                                                <property name="title" translatable="yes">Description</property>
+                                                <child>
+                                                  <object class="GtkCellRendererText" id="cr_alt1"/>
+                                                  <attributes>
+                                                    <attribute name="text">7</attribute>
+                                                  </attributes>
+                                                </child>
+                                              </object>
+                                            </child>
+                                            <child>
+                                              <object class="GtkTreeViewColumn">
+                                                <property name="resizable">True</property>
+                                                <property name="spacing">4</property>
+                                                <property name="sizing">fixed</property>
+                                                <property name="fixed_width">75</property>
+                                                <property name="title" translatable="yes">Copyright</property>
+                                                <child>
+                                                  <object class="GtkCellRendererText" id="cr_copyright1"/>
+                                                  <attributes>
+                                                    <attribute name="text">8</attribute>
+                                                  </attributes>
+                                                </child>
+                                              </object>
+                                            </child>
+                                            <child>
+                                              <object class="GtkTreeViewColumn">
+                                                <property name="spacing">4</property>
+                                                <property name="sizing">fixed</property>
+                                                <property name="fixed_width">3</property>
+                                                <property name="title" translatable="yes">Media</property>
+                                                <child>
+                                                  <object class="GtkCellRendererText" id="cr_media1"/>
+                                                  <attributes>
+                                                    <attribute name="text">13</attribute>
+                                                  </attributes>
+                                                </child>
+                                              </object>
+                                            </child>
+                                          </object>
+                                        </child>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">True</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkGrid">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="margin_top">6</property>
+                                        <property name="margin_bottom">6</property>
+                                        <property name="row_spacing">6</property>
+                                        <child>
+                                          <object class="GtkCheckButton" id="c_filterPicList1">
+                                            <property name="label" translatable="yes">Only Show Active Books</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">False</property>
+                                            <property name="tooltip_text" translatable="yes">Select this option to only display images from the books that are selected to be printed. If unchecked, then images from ALL the books in the project will be listed in the view below.</property>
+                                            <property name="active">True</property>
+                                            <property name="draw_indicator">True</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">0</property>
+                                            <property name="top_attach">1</property>
+                                            <property name="width">2</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkButton">
+                                            <property name="label" translatable="yes">Apply to other images...</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">True</property>
+                                            <property name="tooltip_text" translatable="yes">Copy the existing image credit
+details to all other images with
+the same prefix. (This will not
+overwrite any existing settings.)</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">0</property>
+                                            <property name="top_attach">2</property>
+                                            <property name="width">2</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">False</property>
+                                        <property name="position">1</property>
+                                      </packing>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="resize">False</property>
+                                    <property name="shrink">True</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkBox">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <child>
+                                      <object class="GtkGrid">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="margin_left">6</property>
+                                        <property name="margin_right">6</property>
+                                        <property name="margin_top">6</property>
+                                        <property name="margin_bottom">6</property>
+                                        <property name="row_spacing">6</property>
+                                        <property name="column_spacing">3</property>
+                                        <child>
+                                          <object class="GtkLabel">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="label" translatable="yes">Image Credit Text:</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">0</property>
+                                            <property name="top_attach">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkEntry" id="t_creditText">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="placeholder_text" translatable="yes">© David C. Cook</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">1</property>
+                                            <property name="top_attach">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkLabel">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="halign">end</property>
+                                            <property name="label" translatable="yes">Vertical
+Position:</property>
+                                            <property name="justify">right</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">0</property>
+                                            <property name="top_attach">1</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkComboBox" id="fcb_creditVpos">
+                                            <property name="width_request">88</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="can_default">True</property>
+                                            <property name="halign">start</property>
+                                            <property name="model">ls_creditVpos</property>
+                                            <property name="wrap_width">1</property>
+                                            <property name="has_entry">True</property>
+                                            <property name="entry_text_column">0</property>
+                                            <property name="id_column">1</property>
+                                            <child internal-child="entry">
+                                              <object class="GtkEntry">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">True</property>
+                                                <property name="width_chars">6</property>
+                                              </object>
+                                            </child>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">1</property>
+                                            <property name="top_attach">1</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkLabel">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="halign">end</property>
+                                            <property name="label" translatable="yes">Horizontal
+Position:</property>
+                                            <property name="justify">right</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">2</property>
+                                            <property name="top_attach">1</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkComboBox" id="fcb_creditHpos">
+                                            <property name="width_request">88</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="can_default">True</property>
+                                            <property name="halign">start</property>
+                                            <property name="model">ls_creditHpos</property>
+                                            <property name="wrap_width">1</property>
+                                            <property name="has_entry">True</property>
+                                            <property name="entry_text_column">0</property>
+                                            <property name="id_column">1</property>
+                                            <child internal-child="entry">
+                                              <object class="GtkEntry">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">True</property>
+                                                <property name="width_chars">6</property>
+                                              </object>
+                                            </child>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">3</property>
+                                            <property name="top_attach">1</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkLabel">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="label" translatable="yes">Rotation:</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">2</property>
+                                            <property name="top_attach">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkComboBox" id="fcb_creditRotate">
+                                            <property name="width_request">88</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="can_default">True</property>
+                                            <property name="tooltip_text" translatable="yes">Sometimes the credit text needs
+to be rotated. 
+</property>
+                                            <property name="halign">start</property>
+                                            <property name="model">ls_creditRotate</property>
+                                            <property name="wrap_width">1</property>
+                                            <property name="active">1</property>
+                                            <property name="has_entry">True</property>
+                                            <property name="entry_text_column">0</property>
+                                            <property name="id_column">1</property>
+                                            <property name="active_id">1</property>
+                                            <child internal-child="entry">
+                                              <object class="GtkEntry">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">True</property>
+                                                <property name="halign">start</property>
+                                                <property name="width_chars">6</property>
+                                              </object>
+                                            </child>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">3</property>
+                                            <property name="top_attach">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkCheckButton" id="c_creditBox">
+                                            <property name="label" translatable="yes">Apply Background Box</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">False</property>
+                                            <property name="tooltip_text" translatable="yes">Check this option if the text 
+needs to be printed inside a 
+box in order to be visible.</property>
+                                            <property name="halign">end</property>
+                                            <property name="draw_indicator">True</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">0</property>
+                                            <property name="top_attach">2</property>
+                                            <property name="width">2</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkComboBoxText" id="ecb_creditBoxStyle">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="tooltip_text" translatable="yes">Specify the kind of box (Light/Dark background
+or enter the name of a style which should be applied.
+By selecting a (custom) style, you can change multiple
+parameters at once: font, size and colour. </property>
+                                            <property name="halign">start</property>
+                                            <property name="active">0</property>
+                                            <property name="has_entry">True</property>
+                                            <property name="active_id">0</property>
+                                            <items>
+                                              <item translatable="yes">Light</item>
+                                              <item translatable="yes">Dark</item>
+                                            </items>
+                                            <child internal-child="entry">
+                                              <object class="GtkEntry">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">True</property>
+                                                <property name="halign">start</property>
+                                                <property name="max_length">16</property>
+                                                <property name="width_chars">16</property>
+                                              </object>
+                                            </child>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">2</property>
+                                            <property name="top_attach">2</property>
+                                            <property name="width">2</property>
+                                          </packing>
+                                        </child>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkBox">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="orientation">vertical</property>
+                                        <child>
+                                          <object class="GtkFrame" id="fr_picPreview1">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="margin_bottom">8</property>
+                                            <property name="label_xalign">0</property>
+                                            <property name="label_yalign">0</property>
+                                            <property name="shadow_type">none</property>
+                                            <child>
+                                              <object class="GtkAlignment">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">False</property>
+                                                <property name="top_padding">3</property>
+                                                <property name="bottom_padding">3</property>
+                                                <property name="left_padding">3</property>
+                                                <property name="right_padding">3</property>
+                                                <child>
+                                                  <object class="GtkImage" id="img_picPreview1">
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">False</property>
+                                                    <property name="pixbuf">62859-open-book-icon(128).png</property>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                            </child>
+                                            <child type="label_item">
+                                              <placeholder/>
+                                            </child>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">True</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">0</property>
+                                          </packing>
+                                        </child>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">True</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">1</property>
+                                      </packing>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="resize">True</property>
+                                    <property name="shrink">True</property>
+                                  </packing>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">0</property>
+                              </packing>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="position">3</property>
+                          </packing>
                         </child>
                         <child type="tab">
-                          <placeholder/>
+                          <object class="GtkLabel" id="lb_credits">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="tooltip_text" translatable="yes">This tab allows you to overlay
+credits on images (e.g. as required by David C Cook).</property>
+                            <property name="label" translatable="yes">Credit Overlays</property>
+                          </object>
+                          <packing>
+                            <property name="position">3</property>
+                            <property name="tab_fill">False</property>
+                          </packing>
                         </child>
                       </object>
                       <packing>
