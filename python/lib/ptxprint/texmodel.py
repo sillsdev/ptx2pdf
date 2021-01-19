@@ -297,6 +297,12 @@ ModelMap = {
     "thumbtabs/restart":        ("c_thumbrestart", None),
     "thumbtabs/groups":         ("t_thumbgroups", None),
 
+    "hyphens/usepatterns":      ("c_hyphPatterns", None),
+    "hyphens/ranges":           ("t_hyphRanges", None),
+    "hyphens/multipliers":      ("t_hyphMults", None),
+    "hyphens/thresholds":       ("t_hyphThreshes", None),
+    "hyphens/samples":          ("s_hyphSamples", None),
+
     "scrmymr/syllables":        ("c_scrmymrSyllable", None),
 }
 

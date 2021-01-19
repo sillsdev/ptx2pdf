@@ -27,6 +27,7 @@ from ptxprint.runjob import isLocked, unlockme
 from ptxprint.texmodel import TexModel, ModelMap
 from ptxprint.minidialog import MiniDialog
 from ptxprint.dbl import UnpackDBL
+from ptxprint.patgen import Patgen
 import ptxprint.scriptsnippets as scriptsnippets
 from ptxprint.utils import _, f_, textocol
 import configparser
@@ -295,6 +296,7 @@ class GtkViewModel(ViewModel):
         self.notebooks = {}
         self.pendingerror = None
         self.logfile = None
+        self.patgen = None
         for n in _notebooks:
             nbk = self.builder.get_object("nbk_"+n)
             self.notebooks[n] = [Gtk.Buildable.get_name(nbk.get_nth_page(i)) for i in range(nbk.get_n_pages())]
@@ -1196,10 +1198,6 @@ class GtkViewModel(ViewModel):
         status = self.sensiVisible("c_sectionHeads")
         self.builder.get_object("c_parallelRefs").set_active(status)
 
-    def onHyphenateClicked(self, btn):
-        if self.prjid is not None:
-            fname = os.path.join(self.settings_dir, self.prjid, "shared", "ptxprint", 'hyphen-{}.tex'.format(self.prjid))
-        
     def onUseIllustrationsClicked(self, btn):
         self.onSimpleClicked(btn)
         self.colourTabs()
@@ -2240,13 +2238,50 @@ class GtkViewModel(ViewModel):
         self.colourTabs()
 
     def onHyphRecalcClicked(self, btn):
-        pass
+        if self.patgen is None:
+            self.onHyphResampleClicked(btn)
+        if len(self.patgen.hyphens):
+            self.patgen.create_layers(100)      # the weight here is finely tuned - ha ha
+            rngs, mults, scores = zip(*self.patgen.rngs)
+            self.set("t_hyphRanges", ", ".join(map(str, rngs)))
+            self.set("t_hyphMults", ", ".join(map(str, mults)))
+            self.set("t_hyphThreshes", ", ".join(map(str, scores)))
 
     def onHyphResampleClicked(self, btn):
-        pass
+        self.patgen = Patgen()      # throw away whatever we have
+        hyphenfile = os.path.join(self.settings_dir, self.prjid, "hyphenatedWords.txt")
+        if os.path.exists(hyphenfile):
+            self.patgen.load_dict(hyphenfile, samples=int(float(self.get("s_hyphSamples", 2000))))
+            self.patgen.compute_margins()
+        self.set("lb_hyphWords", _("{} Words".format(len(self.patgen.hyphens))))
+        self.set("lb_hyphHyphWords", _("{} Words with hyphens".format(sum(1 for v in self.patgen.hyphens.values() if len(v)))))
+        # Do estimation here
 
     def onHyphRegenerateClicked(self, btn):
-        pass
+        if self.patgen is None:
+            self.onHyphResampleClicked(btn)
+        if self.get("c_hyphPatterns"):
+            self.patgen.patterns = []
+            self.patgen.rngs = []
+            rngs = [int(r.strip()) for r in self.get("t_hyphRanges").split(",")]
+            mults = [int(r.strip()) for r in self.get("t_hyphMults").split(",")]
+            scores = [int(r.strip()) for r in self.get("t_hyphThreshes").split(",")]
+            print(rngs, mults, scores)
+            for z in zip(rngs, mults, scores):
+                self.patgen.commit(*z)
+        outd = os.path.join(self.settings_dir, self.prjid, "shared", "ptxprint")
+        outf = os.path.join(outd, "hyphen-{}.tex".format(self.prjid))
+        os.makedirs(outd, exist_ok=True)
+        output, patlen, numpat, numwords = self.patgen.asTeX()
+        print(f"{numpat} patterns taking {patlen/1024:.3f} KB, {numwords} exception words")
+        if patlen > 900000:
+            self.doError("Pattern data too large ({})".format(patlen))
+        elif numwords > 32760:
+            self.doError("Too many hyphenation exceptions ({})".format(numwords))
+        else:
+            print("Saving hyphens to {}".format(outf))
+            with open(outf, "w", encoding="utf-8") as o:
+                o.write(output)
 
     def onNumTabsChanged(self, *a):
         if self.get("c_thumbtabs"):

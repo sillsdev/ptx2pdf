@@ -152,6 +152,14 @@ THE SOFTWARE.
     <property name="step_increment">0.049999999776482583</property>
     <property name="page_increment">0.10000000000000001</property>
   </object>
+  <object class="GtkAdjustment" id="a_hyphSamples">
+    <property name="lower">1000</property>
+    <property name="upper">20000</property>
+    <property name="value">2000</property>
+    <property name="step_increment">1000</property>
+    <property name="page_increment">1000</property>
+    <property name="page_size">1000</property>
+  </object>
   <object class="GtkAdjustment" id="a_inclSectionScale">
     <property name="upper">10</property>
     <property name="value">1</property>
@@ -7100,42 +7108,14 @@ file(s) in the Viewer tab.</property>
 any hyphens in the text may cause a line break.
 
 To have hyphenation happen automatically, without having
-to insert them in the source text, you need 
-to click the "Create Hyphenation List" button on the
-left. This will create a XeTeX hyphenation list from the
-hyphenation list in Paratext.
-
-</property>
+to insert them in the source text, use the Hyphens tab.</property>
                                         <property name="halign">start</property>
                                         <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
                                       <packing>
-                                        <property name="left_attach">1</property>
-                                        <property name="top_attach">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkButton" id="btn_generateHyphenationList">
-                                        <property name="label" translatable="yes">Create Hyphenation List</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">True</property>
-                                        <property name="tooltip_text" translatable="yes">Click this button to generate a hyphenation 
-list that can be used by XeTeX to optimize
-hyphenation. This will read Paratext's
-HyphenatedWords.txt list and optimize it.
-Note that the Hypenate option on the Body
-tab needs to be checked to make us of this.</property>
-                                        <property name="halign">end</property>
-                                        <property name="valign">center</property>
-                                        <property name="hexpand">True</property>
-                                        <signal name="clicked" handler="onGenerateHyphenationListClicked" swapped="no"/>
-                                      </object>
-                                      <packing>
                                         <property name="left_attach">0</property>
                                         <property name="top_attach">0</property>
-                                        <property name="height">2</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -7152,7 +7132,7 @@ is checked, then "hyphens" will be invisible.</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
                                       <packing>
-                                        <property name="left_attach">1</property>
+                                        <property name="left_attach">0</property>
                                         <property name="top_attach">1</property>
                                       </packing>
                                     </child>
@@ -13844,33 +13824,10 @@ Note: If only a single book is currently selected, it will place the Thumb Tab r
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkLabel" id="lb_hyphSamples">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="halign">start</property>
-                                    <property name="label" translatable="yes">10,000 samples</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">0</property>
-                                    <property name="top_attach">1</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkLabel" id="lb_hyphETA">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="halign">start</property>
-                                    <property name="label" translatable="yes">Estimated 10 mins</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">1</property>
-                                    <property name="top_attach">1</property>
-                                  </packing>
-                                </child>
-                                <child>
                                   <object class="GtkLabel">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="tooltip_text" translatable="yes">These values govern how long substrings should be tested at each layer in the pattern generation. It is not expected for users to edit these values. The values are recalculated by the recalculate button, which can take a long time.</property>
                                     <property name="halign">end</property>
                                     <property name="margin_right">6</property>
                                     <property name="label" translatable="yes">Ranges:</property>
@@ -13884,6 +13841,7 @@ Note: If only a single book is currently selected, it will place the Thumb Tab r
                                   <object class="GtkLabel">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="tooltip_text" translatable="yes">These values govern the relative cost of false positives over false negatives at each layer in the pattern generation. It is not expected for users to edit these values. The values are recalculated by the recalculate button, which can take a long time.</property>
                                     <property name="halign">end</property>
                                     <property name="margin_right">6</property>
                                     <property name="label" translatable="yes">Multipliers:</property>
@@ -13897,26 +13855,13 @@ Note: If only a single book is currently selected, it will place the Thumb Tab r
                                   <object class="GtkLabel">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="tooltip_text" translatable="yes">These values govern the cost threshold to accept a substring at each layer in the pattern generation. It is not expected for users to edit these values. The values are recalculated by the recalculate button, which can take a long time.</property>
                                     <property name="halign">end</property>
                                     <property name="margin_right">6</property>
                                     <property name="label" translatable="yes">Thresholds:</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">2</property>
-                                    <property name="top_attach">2</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkButton" id="btn_hyphRecalc">
-                                    <property name="label" translatable="yes">ReCalculate</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">True</property>
-                                    <property name="halign">start</property>
-                                    <signal name="clicked" handler="onHyphRecalcClicked" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">0</property>
                                     <property name="top_attach">2</property>
                                   </packing>
                                 </child>
@@ -13934,6 +13879,7 @@ Note: If only a single book is currently selected, it will place the Thumb Tab r
                                   <object class="GtkEntry" id="t_hyphMults">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
+                                    <property name="valign">center</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">3</property>
@@ -13951,6 +13897,38 @@ Note: If only a single book is currently selected, it will place the Thumb Tab r
                                   </packing>
                                 </child>
                                 <child>
+                                  <object class="GtkScale" id="s_hyphSamples">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="tooltip_text" translatable="yes">Sets the number of hyphenated words to use for calculating the pattern parameters. The higher the number, the more accurate the result. The lower the number, the quicker ReCalculate runs. If you set it too high, ptxprint may crash due to lack of memory. Time taken goes up by approximately the square of the number of samples.</property>
+                                    <property name="adjustment">a_hyphSamples</property>
+                                    <property name="lower_stepper_sensitivity">on</property>
+                                    <property name="restrict_to_fill_level">False</property>
+                                    <property name="fill_level">10000</property>
+                                    <property name="digits">0</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">1</property>
+                                    <property name="width">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkButton" id="btn_hyphRecalc">
+                                    <property name="label" translatable="yes">ReCalculate</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <property name="tooltip_text" translatable="yes">Clicking this could result in processing taking a long time. It recalculates the range, multiplies and thresholds from the hyphenation data using the given number of samples.</property>
+                                    <property name="halign">start</property>
+                                    <signal name="clicked" handler="onHyphRecalcClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">2</property>
+                                  </packing>
+                                </child>
+                                <child>
                                   <placeholder/>
                                 </child>
                               </object>
@@ -13963,6 +13941,7 @@ Note: If only a single book is currently selected, it will place the Thumb Tab r
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
+                            <property name="tooltip_text" translatable="yes">Enabling hyphenation patterns allows ptxprint to reduce the number of hyphenation exceptions (words with hyphens) to acceptable levels. Choose an appropriate sample size and press ReCalculate to fill in the parameters that Regenerate will use to create the patterns in the output TeX file and drastically reduce the number of hyphenation exceptions.</property>
                             <property name="draw_indicator">True</property>
                             <signal name="clicked" handler="onHyphensClicked" swapped="no"/>
                           </object>
@@ -13991,6 +13970,7 @@ Note: If only a single book is currently selected, it will place the Thumb Tab r
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
+                            <property name="tooltip_text" translatable="yes">Reloads the hyphenation data and recalculates the estimations and information on number of words, etc.</property>
                             <property name="halign">start</property>
                             <signal name="clicked" handler="onHyphResampleClicked" swapped="no"/>
                           </object>
@@ -14006,6 +13986,7 @@ Note: If only a single book is currently selected, it will place the Thumb Tab r
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
+                            <property name="tooltip_text" translatable="yes">Clicking this regenerates the TeX hyphenation file. If the resulting file would be too large, an error will be generated. There are too many exceptions if the number of words with hyphens is above 32500. Using patterns reduces the number of exceptions needed, but can take a long time.</property>
                             <property name="halign">start</property>
                             <signal name="clicked" handler="onHyphRegenerateClicked" swapped="no"/>
                           </object>
