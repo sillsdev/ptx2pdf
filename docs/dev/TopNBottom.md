@@ -76,3 +76,9 @@ We would therefore, probably have to write a new set of output routines to
 implement this algorithm. How much can then be shared into the new code or
 shared back, remains to be seen.
 
+Comment:
+You *almost* get this for free with per-verse chunking. What you don't get is 
+continuous paragraphs.
+It might be easier to consider chunks that extend a previous paragraph rather than 
+an output mechanism that needs to drive an input-control mechanism, which this sounds like.
+

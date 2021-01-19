@@ -63,10 +63,12 @@
 \def\dgl@tPenInternalRpt{-10002}
 \def\dgl@tPenLtrialEnd{-10005}
 \def\dgl@tPenRtrialEnd{-10006}
-\VisTracefalse%
 \def\oldRmark{}
 \def\oldLmark{}
 \def\p@gebotmark{}
+
+\newif\ifVisTrace% Show lines where boxes are joined
+\VisTracefalse%
 %\def\doTRACEdiglot#1{\global\advance\diglotTRcount by 1 \MSG{\the\diglotTRcount: #1}}%
 %\def\noTRACEdiglot#1{\relax}%
 %\let\TRACEdiglot=\noTRACEdiglot%
@@ -176,7 +178,9 @@
 \global\def\n@xtc@mmand{}%
 
 %\partial % fully set Partial page (both columns)
-\newbox\trialgalley %used for resetting after a failed trial 
+%\newbox\trialgalley %used for resetting after a failed trial 
+%\galley - as used in monoglot routines. This is the (holdinginserts=1) text
+% saved by the first output routine.
 \newbox\partialL \setbox\partialL=\vbox{} % Partial page, on the left side
 \newbox\excessL \setbox\excessL=\vbox{} % Excess left material, once we know we're on the next page (added to partialL on shipout)
 \newbox\excessR \setbox\excessR=\vbox{} % Excess right material, once we know we're on the next page 
@@ -212,7 +216,7 @@
    \decr{\availht}{\topins}%pictures
    \setbox1\copy\topleftins\setbox1\vbox{\unvbox1}%
    \setbox2\copy\toprightins\setbox2\vbox{\unvbox2}%
-   \trace{D}{\the\ht1=\the\ht\topleftins? \the\ht2=\the\ht\toprightins?}%
+   \trace{D}{inserts: \the\ht1=\the\ht\topleftins? \the\ht2=\the\ht\toprightins?}%
    \ifdim\ht1>\ht\topleftins
      \trace{D}{Box was shrunk: \the\ht1 > \the\ht\topleftins}%
      \ht\topleftins=\ht1
@@ -246,6 +250,7 @@
 \newif\ifearlyLrefill % In some circumstances partialL is empty deliberatly, other times it isn't
 \repeatoktrue
 \newif\ifuseRightTrial % righttrials have give problems 
+
 \useRightTrialfalse %DO NOT SET TO TRUE except in testing!
 
 % The \lastpenalty before a \lefttext or \righttext issues a fake one,
@@ -512,6 +517,47 @@
 } %
 
 \newif\ifboxmoved%
+\newcount\endtri@lpen@lty
+\newbox\exc@ss
+\def\@ddtoexcess{%
+  \trace{o}{@ddtoexcess hIns=\the\holdinginserts(==1) adding \the\ht255\space to \the\ht\exc@ss}%
+  \setbox\exc@ss{\ifvoid\exc@ss\else\unvbox\exc@ss\fi\unvbox255\ifnum\outputpenalty=10000\else\penalty\outputpenalty\fi}
+}
+\def\diglot@backingup{%Similar to but more complex than
+  % monoglot backing-up routine.
+  % it will cause a new page break to be found, and then the appropriate \trial
+  % routine is called again
+  \trace{o}{backingup hIns=\the\holdinginserts(==1)}
+  \global\deadcycles=0
+  \global\galleypenalty=\outputpenalty
+  \ifnum\outputpenalty\endtri@lpen@lty
+    \global\output={\whichtrial}%
+    \ifvoid\galley
+      \global\setbox\galley=\box255
+    \else
+      \@ddtoexcess
+    \fi
+    \global\holdinginserts=0
+    \unvbox\galley% eject
+    \penalty\ifnum\outputpenalty=10000 0 \else \outputpenalty \fi
+    \relax
+  \else 
+    \vsize=\textheight
+    \@ddtoexcess
+  \fi
+}
+  
+%\def\diglot@endbackingup{%Final output routine after the backing-up process
+  %\tmppenalty=\outputpenalty
+  %\ifnum\tmppenalty=\dgl@tPenLtrialEnd
+  %\else
+    %\ifnum\tmppenalty=\dgl@tPenRtrialEnd
+    %\else
+      %\setbox\exc@ss
+    %\fi
+  %\fi
+%}
+
 \def\diglotLeftTrial{%
 % Secondary left hand \output routine.
 % Should normally get called once per box when that's about to be set. Puts set
@@ -525,7 +571,7 @@
   % the kerns would need removing somehow.
   \p@gestarttrue % or at least, this isn't the right place to place things that go after a paragraph
   \makevtop{255}
-  \global\setbox\LeftBox=\vtop{\unvbox 255\doVisTrace{e}}
+  \global\setbox\LeftBox=\vtop{\unvbox 255}
   \tmppenalty=\outputpenalty %
   \ifnum\tmppenalty=10000 %
     \tmppenalty=0 %
@@ -541,19 +587,19 @@
       \xdef\botLmark{\botmarks1}%
       \xdef\oldLmark{\botmarks1}%
       \ifx\firstLmark\empty
-        \trace{H}{dlt1: Setting firstLmark to \firstmarks1}%
+        \trace{H}{dlt2: Setting firstLmark to \firstmarks1}%
         \xdef\firstLmark{\firstmarks1}% remember first, if not already set
       \fi
       \ifuseLeftMarks%
         \edef\t@st{\p@gefirstmark}%
         \ifx\t@st\empty%
-          \trace{H}{dlt2: Setting (default) pagefirstmark to \firstmarks1}%
+          \trace{H}{dlt3: Setting (default) pagefirstmark to \firstmarks1}%
           \xdef\p@gefirstmark{\firstmarks1}%
         \fi
         \trace{H}{dlt3: oldRmark: \oldRmark, firstmark: \firstmark, botmark: \botmark}
         \edef\t@st{\firstmark}
         \ifx\t@st\oldRmark\else%
-          \trace{H}{dlt4: Setting (default) bottom mark to \botmark, may revise later}%
+          \trace{H}{dlt5: Setting (default) bottom mark to \botmark, may revise later}%
           \xdef\b@xbotmark{\botmark}%
         \fi% remember first, if not already set
       \fi% LeftMarks
@@ -610,11 +656,11 @@
     \fi%
     \global\vsize=\trialheight
     \global\holdinginserts=0
-    \r@storenotes{}%
-    \setbox0\copy\trialgalley
-    \unvbox0
+    %\r@storenotes{}%blank or restore
+    \setbox\trialgalley=\vbox{\copy\LeftBox\penalty\tmppenalty}%
+    \unvbox\LeftBox % 
     \ifdim\lastkern<0pt \unkern\fi%FIXME? Only want to unkern makevtop's kerns.
-    \penalty\tmppenalty\relax% tmppenalty might be an end of data or anything else. We put it back as we rerun the trial
+    \penalty\tmppenalty\relax% tmppenalty might be anything else. We put it back as we rerun the trial
   \else% Not rerunning the trial. 
     \ifdim\TempDim<\baselineskip % 
       \global\leftfulltrue%
@@ -651,6 +697,7 @@
       \let\do@nce=\n@xtc@mmand %
       \global\def\n@xtc@mmand{} %
       \do@nce%
+      \vsize=\textheight\relax%slurp up to a  full page
       \global\output={\diglotLeftAfterTrial}\relax%
       \relax%
     \fi%
@@ -678,32 +725,35 @@
     \global\setbox\partialL=\vtop{\joinboxes{\partialL}{255}{6}{\partialLpenalty}}\relax%
   \fi
   \global\partialLpenalty=\tmppenalty %
-  \trace{D}{\the\ht\partialL+\the\dp\partialL}%
+  \trace{D}{pL \the\ht\partialL+\the\dp\partialL\space digl@t\ifdigl@tL L\else R\fi}%
   %\TRshipout{\vbox{\hbox{\the\diglotTRcount diglotLeftAfterTrial:}\copy\aftertri@lbox}}%
   \ifnum\outputpenalty=\dgl@tPenLtrialEnd\relax%
-    \intrialfalse
+    \global\intrialfalse
     \ifdigl@tL
-      \global\output={\diglotLeft}\relax
+      \global\holdinginserts=1 
+      \global\output={\diglotLeft}%
     \else
-      \global\output={\diglotRight}\relax
       \global\holdinginserts=0 
       \global\diglotRtrue
       \global\hsize=\columnRwidth\relax
       \calc@vailht
+      \vsize=\availht
       \ifVisTrace
          \doVisTrace{t}\box0
       \fi
+      \global\output={\diglotRight}%
     \fi
-     \n@xtc@mmand%
-     \global\def\n@xtc@mmand{}%
+    \n@xtc@mmand%
+    \global\def\n@xtc@mmand{}%
   \fi
+  \relax\relax
 }
 
 
 \def\doDiglotLeftTrial{%
   %empties LeftBox and partialL back onto stack, with holdinginserts=0
-  \trace{D}{doDiglotLeftTrial LB:\the\ht\LeftBox+\the\dp\LeftBox, pL:(\the\ht\partialL+\the\dp\partialL)}%
-  \ifdiglotL%Save current state
+  \trace{D}{doDiglotLeftTrial LB:\the\ht\LeftBox+\the\dp\LeftBox, pL:(\the\ht\partialL+\the\dp\partialL) diglotL\ifdiglotL true\else false\fi, dig@tL\ifdigl@tL true\else false\fi,}%
+  \ifdigl@tL%Save current state
     \global\digl@tLtrue%
   \else%
     \global\digl@tLfalse%
@@ -735,7 +785,7 @@
   \advance\dimen3 by \ht\partialL
   \advance\dimen3 by \dp\partialL
   \advance\dimen3 by 3\baselineskip
-  \penalty\lastsavedLpenalty
+  %\penalty\lastsavedLpenalty
   \ifdim\dimen3>\trialheight %Is this likely to be the last chunk added to the page? 
     \ifm@rksonpage\else\mark{}\marks1{}\fi% FIXME? \marks2 too?
   \fi
@@ -877,6 +927,7 @@
  %\RightBox and \partialR are empty, 
  %Calls appropriate handler based on whether inserts are held or not
  % (traditionally they weren't)
+ \ifnum\the\outputpenalty=\dgl@tPenLtrialEnd\relax\trace{d}{WRONG OUTPUT ROUTINE!}\fi
  \traceNum{d}{diglotRight \the\outputpenalty, \the\savedpenalty, \the\Rchunkpenalty, (\ifnum\holdinginserts=0 Not\fi holding) pg:\the\pagegoal}%
  \p@gestarttrue % or at least, this isn't the right place to place things that go after a paragraph
  \tmppenalty=\outputpenalty %
@@ -983,20 +1034,21 @@
 %
 %
 % Change which side we're adding to
+\def\pr@sideswitch#1{%
+  \trace{d}{#1text pL:\the\dp\partialL, xL:\the\dp\excessL, pR:\the\dp\partialR, lp:\the\savedpenalty}%
+  \ifhe@dings\endhe@dings\fi%
+  \ifsk@pping \egroup \sk@ppingfalse\fi% if we were skipping nonpublishable text, end that mode
+  \ifinn@te\errmessage{*** #1text called from inside footnote?!?}\fi
+  \n@xtc@mmand%
+  \global\def\n@xtc@mmand{}%
+  \endgraf\penalty\dgl@tPenColSwap\relax
+} 
 \outer\def\lefttext{%
   \global\savedpenalty=\lastpenalty % This MUST be first, or the last /thing/ won't be a penalty
   %\par\do@ndofthispar
-  \trace{d}{lefttext ilp=\the\interlinepenalty, lp:\the\savedpenalty}%
-  \ifsk@pping \egroup \sk@ppingfalse\fi% if we were skipping nonpublishable text, end that mode
-  \ifhe@dings\endhe@dings\fi%
-  \ifinn@te\errmessage{*** lefttext called from inside footnote?!?}\fi
-  \Lneedsemptyingtrue%
-  \calc@vailht%
-  \n@xtc@mmand%
-  \endgraf\penalty\dgl@tPenColSwap\relax
-  \relax%
-  \global\digl@tLtrue%
-  \global\diglotLtrue%
+  \pr@sideswitch{left}%
+  \Lneedsemptyingtrue%eh?
+  \calc@vailht\relax\swapfonts{L}%sets diglotRtrue, etc
   \ifleftfull % Already full, just swallow text...
     \global\vsize=\maxdimen
     \global\availht=\vsize
@@ -1006,36 +1058,39 @@
   \fi
   %Other Left parameters
   \output={\diglotLeft}\relax%
-  \the\leftho@ks\relax\swapfonts{L}%
-  \global\hsize=\columnLwidth\relax\global\holdinginserts=1}%
+  \global\holdinginserts=1
+  \the\leftho@ks
+  }%
 
 \outer\def\righttext{\global\savedpenalty=\lastpenalty
-  \trace{d}{righttext pL:\the\dp\partialL, xL:\the\dp\excessL, pR:\the\dp\partialR, lp:\the\savedpenalty}%
-  \par\do@ndofthispar
-  \n@xtc@mmand
-  \global\holdinginserts=1
-  \ifhe@dings\endhe@dings\fi\endgraf\penalty\dgl@tPenColSwap\relax
-  \calc@vailht\global\digl@tLfalse\global\diglotRtrue\calc@vailht
-  \global\vsize=\availht\relax\output={\diglotRight}\the\rightho@ks\relax\swapfonts{R}%
-  \global\hsize=\columnRwidth\relax\global\holdinginserts=\ifuseRightTrial 1 \message{Someone set useRightTrial true. MISTAKE!}\else 0\fi}
+  %\par\do@ndofthispar
+  \pr@sideswitch{right}%
+  \calc@vailht\relax\swapfonts{R}%sets diglotRtrue, etc
+  \calc@vailht
+  \global\vsize=\availht
+  \relax\output={\diglotRight}%
+  \global\holdinginserts=\ifuseRightTrial 1 \message{Someone set useRightTrial true. MISTAKE!}\else 0\fi
+  \the\rightho@ks
+  }
 %
 % When there's a header on the left but not the right, but we want the verses
 % to line up nicely...
 \def\norighttext{\global\savedpenalty=\lastpenalty
-  %\par\do@ndofthispar
-  \relax\trace{D}{norighttext}\Lneedsemptyingtrue
-  \endgraf\penalty\dgl@tPenColSwap\relax
+  \pr@sideswitch{noright}%
+  \Lneedsemptyingtrue
   \global\diglotLtrue\global\digl@tLtrue\Lchunkpenalty=0\relax\setboth\output={\diglotLeft}%
-  \global\hsize=\columnLwidth\relax\global\holdinginserts=1}
+  \global\holdinginserts=1}
 
-%Similarly when there's no left text, copying \righttext seems OK ...
+%Similarly when there's no left text, almost-copying \righttext seems OK ...
 \def\nolefttext{\global\savedpenalty=\lastpenalty
+  \pr@sideswitch{noleft}%
   %\par\do@ndofthispar
-  \trace{D}{nolefttext}\n@xtc@mmand
-  \endgraf\penalty\dgl@tPenColSwap\relax
-  \global\diglotLtrue\calc@vailht\global\digl@tLfalse\global\diglotRtrue\calc@vailht
-  \global\vsize=\availht\output={\diglotRight}\swapfonts{R}%
-  \global\hsize=\columnRwidth\relax\global\holdinginserts=\ifuseRightTrial 1\else 0\fi}
+  \diglotLtrue\calc@vailht%update left-hand availheight
+  \swapfonts{R}%
+  \calc@vailht
+  \global\vsize=\availht
+  \output={\diglotRight}%
+  \global\holdinginserts=\ifuseRightTrial 1\else 0\fi}
 
 \def\pagenumberL{\bgroup\diglotLtrue\s@tfont{h}\pagenumber\egroup}
 \def\pagenumberR{\bgroup\diglotLfalse\s@tfont{h}\pagenumber\egroup}
@@ -1056,18 +1111,21 @@
 \newif\ifdiglotL%
 \newif\ifdigl@tL%
 \let\diglotRtrue=\diglotLfalse\relax%
+\let\digl@tRtrue=\digl@tLfalse\relax%
 \let\diglotRfalse=\diglotLtrue\relax%
 
+\def\@@setside#1{\global\csname diglot#1true\endcsname\global\csname digl@t#1true\endcsname}%
 \def\swapfonts#1{% Because it might be desirable to set fonts appropriately.
  %Swapping fonts isn't actually needed, but do need to set
  %baselineskip and other things
  \trace{D}{swapfonts #1}%
- \def\@@setside{\global\csname diglot#1true\endcsname}%
  \trace{D}{t@tle is \ift@tle set\else  not set\fi}%
  \trace{D}{he@dingstyle is \ifhe@dingstyle set\else  not set\fi}%
  \trace{D}{he@dings is \ifhe@dings set\else  not set\fi}%
   %\trace{D}{nsp@cebefore is \ifnsp@cebefore set\else  not set\fi}
- \@@setside%
+ \@@setside{#1}%
+ \x@\let\x@\w@dth\csname column#1width\endcsname
+ \global\hsize=\w@dth\relax
  %All sorts of things should follow if m@rker is set properly...
  \expandafter\ifx\csname m@rker\endcsname\relax\else%
   \ifdiglotL\let\m@rkerR=\m@rker\let\m@rker=\m@rkerL\relax\else%
@@ -1114,15 +1172,14 @@
 }
 
 \newif\ifrepeatpermitted  %Not to be confused by repeatok which is set by caller
-\newif\ifredocolok%
+\newif\ifredoRcolok%
 \def\setboth{%
   %Assumptions:
   %\LeftBox has been filled by diglotLeftTrial.
   %\partialL may have extra material in it, which hasn't been footnoted. 
   %\RightBox needs to be filled from partialR.
   %\Rchunkpenalty et al. correctly  set by caller
-  \traceNum{d}{setboth \the\outputpenalty, \the\savedpenalty, \the\Rchunkpenalty,  rbp:\the\Rboxpenalty
-    diglotL\ifdiglotL true\else false\fi}%
+  \traceNum{d}{setboth \the\outputpenalty, \the\savedpenalty, \the\Rchunkpenalty,  rbp:\the\Rboxpenalty diglotL\ifdiglotL true\else false\fi}%
   \calc@vailht
   \global\splittopskip=\baselineskip
   \global\topskip=\baselineskip
@@ -1131,38 +1188,38 @@
   \global\Rht=\ht\partialR\relax
   \advance\Rht by \dp\partialR
   \trace{D}{Rht \the\Rht, Lht \the\Lht}
-  % Force page output if user-caused and not by a column swap.
-  \redocoloktrue
+  \redoRcoloktrue
   \pagefullfalse
   \repeatpermittedfalse% in many situations we don't want this looping.
+  % Force page output if user-caused and not by a column swap.
   \ifnum\outputpenalty=-10000
    \pagefulltrue
   \fi
   \ifnum\outputpenalty=\dgl@tPenInternalRpt\relax %Set on self-repeat calls
    \pagefullfalse
-   \redocoloktrue
+   \redoRcoloktrue
   \fi
   \ifnum\outputpenalty=\dgl@tPenColSwap\relax % Column break.
    \pagefullfalse
-   \redocolokfalse
+   \redoRcolokfalse
    \repeatpermittedtrue
   \fi
   \ifnum\outputpenalty=\dgl@tPenLtrialEnd\relax
     \repeatpermittedtrue
   \fi
-  % Box is probably a title or similar - never OK to refill here
-  % FIXME why not refil? Not ok to break, yes, but wy not refil?
+  % Box is probably a title or similar - never OK to
+  % refill here, it's not a natural break.
   \ifnum\partialRpenalty = 10000
-    \redocolokfalse
+    \redoRcolokfalse
   \fi
   % Don't allow unvboxing the right column if we're in left column modeǃ
   \ifdiglotL
-    \redocolokfalse
+    \redoRcolokfalse
   % I don't understand why this next bit causes problems...
   \else%  We're in right column mode..
     \trace{D}{pRp:\the\partialRpenalty, op:\the\outputpenalty}%
     \ifnum\outputpenalty=\dgl@tPenRtrialEnd\relax % final penalty
-      \redocolokfalse
+      \redoRcolokfalse
     \fi
     %\ifnum\outputpenalty>-10000 % and a normal page break
       %\ifvoid\partialR\else%and there's material left to set in the right hand column
@@ -1171,13 +1228,14 @@
     %\fi
   \fi
   \ifdigl@tL
-    \redocolokfalse
+    \redoRcolokfalse
   \fi
+  \trace{D}{redoRcolok\ifredoRcolok true\else false\fi}%
   % Eject a partial page when we're done too, in some cases
   \ifnum\outputpenalty=-20000 % End of document / supereject
    \traceNum{d}{SuperEject encountered}%
    \pagefulltrue
-   \redocolokfalse
+   \redoRcolokfalse
    \aftergroup\emitpartial
   \fi
   \ifnum\partialRpenalty=10000\relax% Can't break page here
@@ -1317,7 +1375,7 @@
   \ifdim \TempDim<0pt %Left box is longest
     %\advance\TempDim by \dp\RightBox
     \lastd@pth=\dp\RightBox\relax%
-    \ifredocolok%
+    \ifredoRcolok%
       \ifpagefull%
         %\makevtop{\RightBox}%
         \global\setbox\RightBox=\vtop{\unvbox\RightBox}%
@@ -1344,11 +1402,11 @@
           \upd@tep@rtial%
         \fi%
       \fi %pagefull
-    \else %redocolok 
+    \else %redoRcolok 
       %\makevtop{\RightBox}%
       \global\setbox\RightBox=\vtop{\unvbox\RightBox}%
       \upd@tep@rtial%
-    \fi %redocolok 
+    \fi %redoRcolok 
   \else %TempDim 
     %\makevtop{\RightBox}%
     \global\setbox\RightBox=\vtop{\unvbox\RightBox}%
@@ -1406,7 +1464,7 @@
  \global\setbox#1=\vtop{\unvbox#1\ifdim\dp2=0pt\ifdim\TempDim=0pt\else\kern-\TempDim\fi\fi}}%\egroup}%
 
 \def\joinboxes#1#2#3#4{%Join 2 vtops together and preserve baselineskip%
- \traceNum{d}{joinboxes #1 #2 called from locn #3}%
+ \traceNum{d}{joinboxes #1(\the\ht#1+\the\dp#1) #2 called from locn #3}%
  \ifnum\TRACEcount=\diglotDbgJoinboxes
    \showbox#1\showbox#2
  \fi\relax
@@ -1421,7 +1479,7 @@
   % \unkern
    \setbox0=\lastbox%
    \copy0
-   \traceNum{d}{lk: \the\dimen4, final bit of deconstructed first box \the\ht0+\the\dp0}%
+   \trace{D}{lk: \the\dimen4, final bit of deconstructed first box: \the\ht0+\the\dp0, 2nd box: \the\ht#2+\the\dp#2}%
    \ifdim\dp0=0pt
 %     \kern \lastkern
    \else
@@ -1438,7 +1496,7 @@
    \fi
    \ifVisTrace
   %   \hrule\kern -0.4pt
-     \hbox to 0pt{\hss\doVisTrace{s}\box0}%
+     \hbox to 0pt{\hss\doVisTrace{j}\box0}%
    \fi
  \fi%
  %
@@ -1531,7 +1589,7 @@
     %\message{adding \the\count255 to cumulativeDelta}%
     \global\advance\cumulativeDelta by \count255
   \egroup
-  \global\setbox\LeftBox=\vtop{%
+  \global\setbox\LeftBox=\vtop{%Stealing Leftbox for the output
     \dimen8=0pt
     \ifdim\thisjointDelta>0pt
       \advance\dimen8 by \thisjointDelta
@@ -1661,7 +1719,7 @@
         \global\setbox\partialL=\box\LeftBox\relax%
       \else%
         \ifx\firstLmark\empty
-          \trace{D}{need to split to get marks}%
+          \trace{D}{need to split, but only to get marks}%
           \setbox0=\copy\partialL
           \setbox0=\vsplit0 to \maxdimen
           \xdef\firstLmark{\splitfirstmark}%
@@ -1674,7 +1732,7 @@
         \else
           \trace{D}{no need to split}%
         \fi
-        \global\outputpenalty=\dgl@tPenInternalRpt\relax more itterations after this
+        \global\outputpenalty=\dgl@tPenInternalRpt\relax %no more itterations after this
         % but we do need 
         \global\setbox\partialL=\vtop{\unvbox\partialL}%
         %\makevtop{\partialL}
@@ -1708,7 +1766,7 @@
 \def\@writep@ge {%
   \trace{D}{@writep@ge}%
   \diglotN@rmaltrue\ifdiglotInnerOuter\ifodd\pageno\else\diglotN@rmalfalse\fi\fi 
-  \global\setbox\galley=\vbox{\unvbox\partial}%
+  \global\setbox\partial=\vbox{\unvbox\partial}%
   \ifdiglotSepNotes%
     \trace{D}{Sep notes}%
     \s@vedLfalse%
@@ -1769,7 +1827,7 @@
       \else%
         \trace{f}{No footnotes}%
       \fi %LRf@@tnotes
-      \setbox\galley=\vbox{\unvbox\galley\box\LeftBox}%
+      \setbox\partial=\vbox{\unvbox\partial\box\LeftBox}%
     \else %BalNotes
       \trace{f}{unBalanced notes}%
       \ifLRf@@tnotes%
@@ -1837,7 +1895,7 @@
           \fi%
         \fi%
         \trace{f}{Adjusting footnotebox}%
-        \global\setbox\galley=\vbox{\unvbox\galley\kern -\dimen3\vskip 0.5\AboveNoteSpace plus 1fil \box\LeftBox}%
+        \global\setbox\partial=\vbox{\unvbox\partial\kern -\dimen3\vskip 0.5\AboveNoteSpace plus 1fil \box\LeftBox}%
         }%
       \else%
         \trace{f}{No footnotes}%
@@ -1848,7 +1906,7 @@
   \fi%
   \traceNum{d}{Forming page}%
   \trace{D}{PFM:\p@gefirstmark\space PBM:\p@gebotmark}%
-  %\showbox\galley
+  %\showbox\partial
   %\showthe\everyhbox
   %\showthe\leftskip
   %\showthe\rightskip
@@ -1878,8 +1936,8 @@
        \hbox to\columnLwidth{\box\topleftins\hss}%\rlap{\the\ht\RightBox \the\dp\RightBox}
      \fi%
    }%
-   \lastd@pth=\dp\galley\relax%
-   \unvbox\galley%
+   \lastd@pth=\dp\partial\relax%
+   \unvbox\partial%
    \ifdim\ht\bottomleftins>\ht\bottomrightins%
       \setbox\bottomrightins=\vbox to \ht\bottomleftins{\box\bottomrightins\vss}%
    \else%

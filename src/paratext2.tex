@@ -773,8 +773,8 @@
   \x@\let\x@\th@cl@ss\csname note-#1\endcsname
   \global\setbox\th@cl@ss=\box\voidb@x}
 
-\def\s@venotes#1{\edef\n@t@sfx{#1}\let\\=\s@ven@te \the\n@tecl@sses}
-\def\r@storenotes#1{\edef\n@t@sfx{#1}\let\\=\r@storen@te \the\n@tecl@sses}
+\def\s@venotes#1{\trace{n}{Saving footnotes}\edef\n@t@sfx{#1}\let\\=\s@ven@te \the\n@tecl@sses}
+\def\r@storenotes#1{\trace{n}{Restoring footnotes}\edef\n@t@sfx{#1}\let\\=\r@storen@te \the\n@tecl@sses}
 \def\s@ven@te#1{%
   \x@\let\x@\tmp@note\csname note-#1\n@t@sfx\endcsname
   \x@\let\x@\tmp@save\csname notesave-#1\n@t@sfx\endcsname
