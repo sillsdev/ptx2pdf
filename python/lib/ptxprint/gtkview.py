@@ -804,10 +804,11 @@ class GtkViewModel(ViewModel):
 
         dc = " color='"+col+"'" if self.get("c_diglot") else ""
         bc = " color='"+col+"'" if self.get("c_borders") else ""
-        self.builder.get_object("lb_DiglotBorder").set_markup("<span{}>Diglot</span>+<span{}>Border</span>".format(dc,bc))
+        self.builder.get_object("lb_DiglotBorder").set_markup("<span{}>Diglot</span>+<span{}>Border</span>".format(dc, bc))
 
         tc = " color='"+col+"'" if self.get("c_thumbtabs") else ""
-        self.builder.get_object("lb_Tabs").set_markup("<span{}>Tabs</span>".format(tc))
+        hc = " color='"+col+"'" if self.get("c_hyphPatterns") else ""
+        self.builder.get_object("lb_Tabs").set_markup("<span{}>Tabs</span>+<span{}>Hyphens</span>".format(tc, hc))
 
     def sensiVisible(self, k, focus=False, state=None):
         if state is None:
@@ -2233,6 +2234,19 @@ class GtkViewModel(ViewModel):
         self.onSimpleClicked(btn)
         self.colourTabs()
         self.onNumTabsChanged()
+
+    def onHyphensClicked(self, btn):
+        self.onSimpleClicked(btn)
+        self.colourTabs()
+
+    def onHyphRecalcClicked(self, btn):
+        pass
+
+    def onHyphResampleClicked(self, btn):
+        pass
+
+    def onHyphRegenerateClicked(self, btn):
+        pass
 
     def onNumTabsChanged(self, *a):
         if self.get("c_thumbtabs"):

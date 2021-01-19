@@ -69,7 +69,7 @@ class Sheets(dict):
 
     def append(self, sf):
         if os.path.exists(sf):
-            with open(sf) as s:
+            with open(sf, errors="ignore", encoding="utf-8") as s:
                 self.update_sheet(style.parse(s))
 
     def update_sheet(self, d):
