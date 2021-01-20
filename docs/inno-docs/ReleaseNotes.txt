@@ -1,5 +1,9 @@
-PTXprint 1.5.4 Release Notes 
-15 January 2021
+PTXprint 1.5.5 Release Notes 
+20 January 2021
+
+Bug Fixes and Improvements in 1.5.5
+
+  * Fix exception generated from multi-threading
 
 Bug Fixes and Improvements in 1.5.4
 
