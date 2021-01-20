@@ -222,13 +222,14 @@ class RunJob:
                         self.printer.doError(_("PDF was created BUT..."),
                             secondary=_("Layout problems were encountered on page(s): ") + ",".join(badpgs) + \
                                   _("\n\nTry changing the PicList and/or AdjList settings to solve issues."), \
-                                  title=_("PTXprint [{}] - Warning!").format(VersionStr),
+                            title=_("PTXprint [{}] - Warning!").format(VersionStr),
                             threaded=True)
 
         elif not self.args.print: # We don't want pop-up messages if running in command-line mode
             finalLogLines = self.parseLogLines()
             self.printer.doError(_("Failed to create: ")+re.sub(r".+[\\/](.+\.pdf)",r"\1",pdfname),
-                    secondary="".join(finalLogLines[-20:]), title="PTXprint [{}] - Error!".format(VersionStr))
+                    secondary="".join(finalLogLines[-20:]), title="PTXprint [{}] - Error!".format(VersionStr),
+                    threaded=True)
             self.printer.onIdle(self.printer.showLogFile)
         if not info.asBool("project/keeptempfiles"):
             self.removeTempFiles(self.texfiles)
