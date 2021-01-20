@@ -2,8 +2,8 @@
 
 from collections import defaultdict
 from array import array
-from multiprocessing import Pool, current_process
-import random, re
+import multiprocessing
+import random, re, sys
 
 EMPTYSET = set()
 
@@ -69,9 +69,9 @@ def predict(word, patterns, rng, maxrange, margins):
                     predictions.add(start + index - 1)
     return predictions
 
-def score_predictions(item):
+def score_predictions(item, getpool=multiprocessing.current_process):
     word, hyphens = item
-    proc = current_process()
+    proc = getpool()
     nmissed = [{} for i in range(proc.mult)]
     nfalse = [{} for i in range(proc.mult)]
     predictions = multi_predict(word, proc.patterns, proc.rng, proc.mult, proc.scores, proc.maxrange, proc.margins)
@@ -88,13 +88,18 @@ def score_predictions(item):
     return nmissed, nfalse
 
 class Patgen:
-    def __init__(self, maxrange=8):
+    def __init__(self, maxrange=8, multiproc=None):
         self.patterns = []
         self.rngs = []
         self.selectors = []
         self.maxrange = maxrange
         self.settings = dict(HardHyphen="\u2010", SoftHyphen="-", SoftHyphenOut="-")
         self.hyphens = {}
+        if multiproc is None:
+            self.multiproc = sys.platform == "linux"
+        else:
+            self.multiproc = multiproc
+        
 
     def load_dict(self, wlistfile, samples=2000):
         self.hyphens = {}     # ordereddict
@@ -191,7 +196,7 @@ class Patgen:
         res = [(ch, good[ch], bad[ch]) for ch in sorted(set(good.keys()) | set(bad.keys()))]
         return res
 
-    def train(self, maxmult=8, false_weight=1):
+    def train(self, maxmult=8, false_weight=1, callback=None):
         print(f"Margins: {self.margins}")
         inhibiting = len(self.patterns) & 1
         lastwin = None
@@ -217,7 +222,7 @@ class Patgen:
                             v = patterns[ch][index]
                             if v < score:
                                 patterns[ch][index] = score
-            print("pattern length: {}, scores: {}, mult_start: {}".format(len(patterns), list(map(len, scores)), mult_start))
+            # print("pattern length: {}, scores: {}, mult_start: {}".format(len(patterns), list(map(len, scores)), mult_start))
             winners = []
             misseds, falses = statsproc(patterns, rng-1, maxmult-1, scores)
             for mult in range(maxmult-1):
@@ -232,7 +237,9 @@ class Patgen:
                 if lastwin is None or winners[winner][0] < lastwin[0]:
                     lastwin = winners[winner]
                 mult_start += max(0, winner-1)
-                print(rng, winner, winners)
+                # print(rng, winner, winners)
+                if callback is not None:
+                    callback(winner == len(winners) - 1)
                 if winner == len(winners) - 1:
                     rng -= 1
                     mult_start += 1
@@ -282,6 +289,16 @@ class Patgen:
         inhibiting = len(self.patterns) & 1
         nmissed = [defaultdict(int) for i in range(mult)]
         nfalse = [defaultdict(int) for i in range(mult)]
+        if not self.multiproc:
+            class MyProc:
+                pass
+            myproc = MyProc()
+            def current_process():
+                return myproc
+
+        else:
+            current_process = multiprocessing.current_process
+
         def setup(patterns, missed, false, scores, rng, mult, inhibiting, maxrange, margins):
             proc = current_process()
             proc.patterns = patterns
@@ -294,8 +311,18 @@ class Patgen:
             proc.maxrange = maxrange
             proc.margins = margins
 
-        pool = Pool(None, setup, [patterns, self.missed, self.false, scores, rng, mult, inhibiting, self.maxrange, self.margins])
-        for (m, f) in pool.imap_unordered(score_predictions, self.d_hyphens.items(), len(self.d_hyphens) // 64):
+        setup_parms = [patterns, self.missed, self.false, scores, rng, mult, inhibiting, self.maxrange, self.margins]
+        if self.multiproc:
+            pool = multiprocessing.Pool(None, setup, setup_parms)
+            runmap = pool.imap_unordered
+        else:
+            setup(*setup_parms)
+            def getpool():
+                return myproc
+            def runmap(fn, items, chunksize=0):
+                return [fn(x, getpool=getpool) for x in items]
+
+        for (m, f) in runmap(score_predictions, self.d_hyphens.items(), len(self.d_hyphens) // 64):
             for i in range(mult):
                 for k, v in m[i].items():
                     nmissed[i][k] += v
@@ -376,11 +403,11 @@ class Patgen:
             if missed or false:
                 yield word, hyphen, missed, false
 
-    def create_layers(self, false_weight=100):
+    def create_layers(self, false_weight=100, callback=None):
         lastmissed = 2000
         lastfalse = 2000
         for i in range(7):
-            (bestres, rng, score, mult, missed, false) = self.train(false_weight=false_weight)
+            (bestres, rng, score, mult, missed, false) = self.train(false_weight=false_weight, callback=callback)
             if bestres == 0:
                 break
             print(f"{i+1} {rng}:{mult}>{score} missed: {missed}, false: {false}")
@@ -391,6 +418,8 @@ class Patgen:
                 self.commit(rng, mult, score)
                 lastmissed = missed
                 lastfalse = false
+            if callback is not None:
+                callback()
             if missed == 0 and false == 0:
                 break
 

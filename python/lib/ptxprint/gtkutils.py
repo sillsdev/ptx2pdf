@@ -1,4 +1,4 @@
-from gi.repository import Gtk, Gdk
+from gi.repository import Gtk, Gdk, GLib
 from ptxprint.utils import _
 
 def getWidgetVal(wid, w, default=None, asstr=False, sub=0):
@@ -101,3 +101,33 @@ def makeSpinButton(mini, maxi, start, step=1, page=1):
     res = Gtk.SpinButton()
     res.set_adjustment(adj)
     return res
+
+class ProgressBar:
+    def __init__(self, widget):
+        self.widget = widget
+        self.max = 1
+        self.val = 0
+
+    def inc(self, incmax=False):
+        self.val += 1
+        if incmax:
+            self.max += 1
+        self._setval()
+
+    def reset(self):
+        self.val = 0
+        self.max = 1
+
+    def set(self, val):
+        self.val = val
+        self._setval()
+
+    def finished(self):
+        self.set(self.max)
+
+    def _setval(self):
+        GLib.idle_add(self._updateview)
+
+    def _updateview(self):
+        self.widget.set_fraction(self.val / self.max)
+

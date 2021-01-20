@@ -17,7 +17,7 @@ from gi.repository import GtkSource
 import xml.etree.ElementTree as et
 from ptxprint.font import TTFont, initFontCache, fccache, FontRef, parseFeatString
 from ptxprint.view import ViewModel, Path, VersionStr
-from ptxprint.gtkutils import getWidgetVal, setWidgetVal, setFontButton, makeSpinButton
+from ptxprint.gtkutils import getWidgetVal, setWidgetVal, setFontButton, makeSpinButton, ProgressBar
 from ptxprint.utils import APP
 from ptxprint.runner import StreamTextBuffer
 from ptxprint.ptsettings import ParatextSettings, allbooks, books, bookcodes, chaps
@@ -297,6 +297,8 @@ class GtkViewModel(ViewModel):
         self.pendingerror = None
         self.logfile = None
         self.patgen = None
+        self.progress = ProgressBar(self.builder.get_object("pr_runs"))
+
         for n in _notebooks:
             nbk = self.builder.get_object("nbk_"+n)
             self.notebooks[n] = [Gtk.Buildable.get_name(nbk.get_nth_page(i)) for i in range(nbk.get_n_pages())]
@@ -662,7 +664,7 @@ class GtkViewModel(ViewModel):
                 fileLocked = False
         self.onSaveConfig(None)
 
-        self._incrementProgress(val=0.)
+        self.progress.reset()
         try:
             self.callback(self)
         except Exception as e:
@@ -2207,19 +2209,6 @@ class GtkViewModel(ViewModel):
         path = os.path.realpath(fldrpath)
         os.startfile(fldrpath)
 
-    def finished(self):
-        self._incrementProgress(val=0.)
-
-    def _incrementProgress(self, val=None):
-        wid = self.builder.get_object("pr_runs")
-        if val is None:
-            val = wid.get_fraction()
-            val = 0.5 if val < 0.1 else 1. - (1. - val) * 0.5
-        wid.set_fraction(val)
-
-    def incrementProgress(self):
-        GLib.idle_add(self._incrementProgress)
-
     def onIdle(self, fn, *args):
         GLib.idle_add(fn, *args)
 
@@ -2240,12 +2229,14 @@ class GtkViewModel(ViewModel):
     def onHyphRecalcClicked(self, btn):
         if self.patgen is None:
             self.onHyphResampleClicked(btn)
+        self.progress.max = 42
         if len(self.patgen.hyphens):
-            self.patgen.create_layers(100)      # the weight here is finely tuned - ha ha
+            self.patgen.create_layers(100, callback=self.progress.inc)      # the weight here is finely tuned - ha ha
             rngs, mults, scores = zip(*self.patgen.rngs)
             self.set("t_hyphRanges", ", ".join(map(str, rngs)))
             self.set("t_hyphMults", ", ".join(map(str, mults)))
             self.set("t_hyphThreshes", ", ".join(map(str, scores)))
+        self.progress.reset()
 
     def onHyphResampleClicked(self, btn):
         self.patgen = Patgen()      # throw away whatever we have

@@ -196,6 +196,7 @@ class RunJob:
 
     def done_job(self, outfname, info):
         # Work out what the resulting PDF was called
+        self.printer.progress.finished()
         cfgname = info['config/name']
         if cfgname is not None and cfgname != "":
             cfgname = "-"+cfgname
@@ -234,8 +235,8 @@ class RunJob:
             self.removeTempFiles(self.texfiles)
         else:
             self.printer.tempFiles = self.texfiles
-        self.printer.finished()
         self.busy = False
+        self.printer.progress.reset()
         unlockme()
 
     def parselog(self, fname, rerunp=False, lines=20):
@@ -449,8 +450,9 @@ class RunJob:
 
     def run_xetex(self, outfname, info, logbuffer):
         numruns = 0
+        self.printer.progress.max = numruns + 1
         while numruns < self.maxRuns:
-            self.printer.incrementProgress()
+            self.printer.progress.inc()
             if info["document/toc"] != "%":
                 tocdata = self.readfile(os.path.join(self.tmpdir, outfname.replace(".tex", ".toc")))
             cmd = ["xetex", "-halt-on-error", "-interaction=nonstopmode", "-no-pdf"]
@@ -482,7 +484,7 @@ class RunJob:
                 break
             numruns += 1
         if not self.args.testing and not self.res:
-            self.printer.incrementProgress()
+            self.printer.progress.set(self.printer.progress.max-1)
             cmd = ["xdvipdfmx", "-E"]
             if self.printer.get("c_PDFx1aOutput"):
                 cmd += ["-z", "0"]
