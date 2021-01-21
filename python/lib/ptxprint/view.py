@@ -297,8 +297,8 @@ class ViewModel:
         return self.updateProjectSettings(self.prjid, saveCurrConfig=saveCurrConfig, configName=configid, forceConfig=force)
 
     def _copyConfig(self, oldcfg, newcfg, moving=False):
-        oldp = self.configPath(cfgname=oldcfg)
-        newp = self.configPath(cfgname=newcfg)
+        oldp = self.configPath(cfgname=oldcfg, makePath=False)
+        newp = self.configPath(cfgname=newcfg, makePath=False)
         if not os.path.exists(newp):
             self.triggervcs = True
             os.makedirs(newp)
