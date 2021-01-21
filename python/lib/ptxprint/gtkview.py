@@ -1195,10 +1195,6 @@ class GtkViewModel(ViewModel):
         status = self.sensiVisible("c_sectionHeads")
         self.builder.get_object("c_parallelRefs").set_active(status)
 
-    def onHyphenateClicked(self, btn):
-        if self.prjid is not None:
-            fname = os.path.join(self.settings_dir, self.prjid, "shared", "ptxprint", 'hyphen-{}.tex'.format(self.prjid))
-        
     def onUseIllustrationsClicked(self, btn):
         self.onSimpleClicked(btn)
         self.colourTabs()

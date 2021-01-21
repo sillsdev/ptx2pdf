@@ -760,6 +760,7 @@ class ViewModel:
                 for l in inf.readlines()[8:]: # Skip over the Paratext header lines
                     l = l.strip().replace(u"\uFEFF", "")
                     l = re.sub(r"\*", "", l)
+                    l = re.sub(r"-", "\u2010", l)
                     l = re.sub(r"=", "-", l)
                     # Paratext doesn't seem to allow segments of 1 character to be hyphenated  (for example: a-shame-d) 
                     # (so there's nothing to filter them out, because they don't seem to exist!)
