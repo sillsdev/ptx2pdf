@@ -111,6 +111,7 @@ class UsfmCollection:
 class Usfm:
     def __init__(self, iterable, sheets):
         tag_escapes = r"[^0-9A-Za-z]"
+        self.doc = None
         try:
             self.doc = list(usfm.parser(iterable, stylesheet=sheets,
                                     canonicalise_footnotes=False,
