@@ -543,36 +543,41 @@ class TexModel:
             if self.dict[k] == "":
                 self.dict[k] = self.ptsettings.dict.get(v, "a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z")
         res = []
+        resetPageDone = self.dict['document/startpagenum'] >= 0
         docdir, docbase = self.docdir()
         self.dict['jobname'] = jobname
         with universalopen(os.path.join(os.path.dirname(__file__), template)) as inf:
             for l in inf.readlines():
                 if l.startswith(r"\ptxfile"):
-                    res.append("\\PtxFilePath={"+os.path.relpath(filedir, docdir).replace("\\","/")+"/}\n")
+                    res.append(r"\PtxFilePath={"+os.path.relpath(filedir, docdir).replace("\\","/")+"/}")
                     for i, f in enumerate(self.dict['project/bookids']):
                         fname = self.dict['project/books'][i]
                         if extra != "":
                             fname = re.sub(r"^([^.]*).(.*)$", r"\1"+extra+r".\2", fname)
                         if i == len(self.dict['project/bookids']) - 1 and self.dict['project/ifcolophon'] == "":
-                            res.append("\\lastptxfiletrue\n")
+                            res.append(r"\lastptxfiletrue")
                             if not self.asBool('project/pgbreakcolophon'):
-                                res.append("\\endbooknoejecttrue\n")
+                                res.append(r"\endbooknoejecttrue")
+                        if not resetPageDone and f not in self._peripheralBooks:
+                            res.append(r"\ifodd\pageno\else\catcode`\@=11 \shipwithcr@pmarks{\vbox{}}\catcode`\@=12 \fi")
+                            res.append(r"\pageno=1")
+                            resetPageDone = True
                         if self.asBool('document/ifomitsinglechnum') and \
                            self.asBool('document/showchapternums') and \
                            f in oneChbooks:
-                            res.append("\\OmitChapterNumbertrue\n")
-                            res.append("\\ptxfile{{{}}}\n".format(fname))
-                            res.append("\\OmitChapterNumberfalse\n")
+                            res.append(r"\OmitChapterNumbertrue")
+                            res.append(r"\ptxfile{{{}}}".format(fname))
+                            res.append(r"\OmitChapterNumberfalse")
                         elif self.dict['paper/columns'] == '2' and \
                              self.dict['document/clsinglecol'] and \
                              f in self.dict['document/clsinglecolbooks']:
-                            res.append("\\BodyColumns=1\n")
-                            res.append("\\ptxfile{{{}}}\n".format(fname))
-                            res.append("\\BodyColumns=2\n")
+                            res.append(r"\BodyColumns=1")
+                            res.append(r"\ptxfile{{{}}}".format(fname))
+                            res.append(r"\BodyColumns=2")
                         else:
-                            res.append("\\ptxfile{{{}}}\n".format(fname))
+                            res.append(r"\ptxfile{{{}}}".format(fname))
                 elif l.startswith(r"%\extrafont") and self.dict["document/fontextraregular"]:
-                    spclChars = re.sub(r"\\[uU]([0-9a-fA-F]{4,6})", lambda m:chr(int(m.group(1), 16)), self.dict["paragraph/missingchars"])
+                    spclChars = re.sub(r"\[uU]([0-9a-fA-F]{4,6})", lambda m:chr(int(m.group(1), 16)), self.dict["paragraph/missingchars"])
                     # print(spclChars.split(' '), [len(x) for x in spclChars.split(' ')])
                     if self.dict["paragraph/ifusefallback"] and len(spclChars):
                         badlist = "\u2018\u2019\u201c\u201d*#%"
@@ -581,25 +586,25 @@ class TexModel:
                         c = [x for x in zip(a,b) if chr(int(x[1],16)) not in badlist]
                         if not len(c):
                             continue
-                        res.append("% for defname @active+ @+digit => 0->@, 1->a ... 9->i A->j B->k .. F->o\n")
-                        res.append("% 12 (size) comes from \\p size\n")
-                        res.append('\\def\\extraregular{{"{}"}}\n'.format(self.dict["document/fontextraregular"]))
-                        res.append("\\catcode`\\@=11\n")
-                        res.append("\\def\\do@xtrafont{\\x@\\s@textrafont\\ifx\\thisch@rstyle\\undefined\\m@rker\\else\\thisch@rstyle\\fi}\n")
+                        res.append(r"% for defname @active+ @+digit => 0->@, 1->a ... 9->i A->j B->k .. F->o")
+                        res.append(r"% 12 (size) comes from \p size")
+                        res.append(r'\def\extraregular{{"{}"}}'.format(self.dict["document/fontextraregular"]))
+                        res.append(r"\catcode`\@=11")
+                        res.append(r"\def\do@xtrafont{\x@\s@textrafont\ifx\thisch@rstyle\undefined\m@rker\else\thisch@rstyle\fi}")
                         for a,b in c:
-                            res.append("\\def\\@ctive{}{{{{\\do@xtrafont {}{}}}}}\n".format(a, '^'*len(b), b))
-                            res.append("\\DefineActiveChar{{{}{}}}{{\\@ctive{}}}\n".format( '^'*len(b), b, a))
-                        res.append("\\@ctivate\n")
-                        res.append("\\catcode`\\@=12\n")
+                            res.append(r"\def\@ctive{}{{{{\do@xtrafont {}{}}}}}".format(a, '^'*len(b), b))
+                            res.append(r"\DefineActiveChar{{{}{}}}{{\@ctive{}}}".format( '^'*len(b), b, a))
+                        res.append(r"\@ctivate")
+                        res.append(r"\catcode`\@=12")
                     else:
-                        res.append("% No special/missing characters specified for fallback font")
+                        res.append(r"% No special/missing characters specified for fallback font")
                 elif l.startswith(r"%\optimizepoetry"):
                     bks = self.dict["document/clabelbooks"]
                     if self.dict["document/ifchaplabels"] == "%" and len(bks):
                         for bk in bks.split(" "):
                             if bk in self.dict['project/bookids']:
-                                res.append("\setbookhook{{start}}{{{}}}{{\gdef\BalanceThreshold{{3}}\clubpenalty=50\widowpenalty=50}}\n".format(bk))
-                                res.append("\setbookhook{{end}}{{{}}}{{\gdef\BalanceThreshold{{0}}\clubpenalty=10000\widowpenalty=10000}}\n".format(bk))
+                                res.append(r"\setbookhook{{start}}{{{}}}{{\gdef\BalanceThreshold{{3}}\clubpenalty=50\widowpenalty=50}}".format(bk))
+                                res.append(r"\setbookhook{{end}}{{{}}}{{\gdef\BalanceThreshold{{0}}\clubpenalty=10000\widowpenalty=10000}}".format(bk))
                 elif l.startswith(r"%\snippets"):
                     for k, c in self._snippets.items():
                         v = self.asBool(k)
@@ -617,8 +622,8 @@ class TexModel:
                         if sclass is not None:
                             res.append(sclass.tex(self))
                 else:
-                    res.append(l.format(**self.dict))
-        return "".join(res).replace("\OmitChapterNumberfalse\n\OmitChapterNumbertrue\n","")
+                    res.append(l.rstrip().format(**self.dict))
+        return "\n".join(res).replace("\\OmitChapterNumberfalse\n\\OmitChapterNumbertrue\n","")
 
     def flattenModule(self, infpath, outdir):
         outfpath = os.path.join(outdir, os.path.basename(infpath))
@@ -933,7 +938,7 @@ class TexModel:
                                     regex.compile(r"( .) "), r"\1\u00A0"))
 
         # keep \xo & \fr refs with whatever follows (i.e the bookname or footnote) so it doesn't break at end of line
-        self.localChanges.append((None, regex.compile(r"(\\(xo|fr) (\d+[:.]\d+([-,]\d+)?)) "), r"\1\u2000"))
+        self.localChanges.append((None, regex.compile(r"(\\(xo|fr) (\d+[:.]\d+([-,]\d+)?)) "), r"\1\u00A0"))
 
         for c in ("fn", "xr"):
             # Force all footnotes/x-refs to be either '+ ' or '- ' rather than '*/#'

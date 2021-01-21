@@ -296,7 +296,7 @@ THE SOFTWARE.
     <property name="page_increment">0.5</property>
   </object>
   <object class="GtkAdjustment" id="a_startPageNum">
-    <property name="lower">1</property>
+    <property name="lower">-99</property>
     <property name="upper">9999</property>
     <property name="value">1</property>
     <property name="step_increment">1</property>
@@ -6807,11 +6807,11 @@ occuring on a line on their own.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">By default the text will be fully-justified.
+                                    <property name="tooltip_text" translatable="yes">By default the text will be fully justified.
 If you prefer a ragged edge, then uncheck
 this option.
-NOTE that this setting will override what is
-defined in the Styles area for marker \p</property>
+NOTE that a justification setting of "Justify"
+in a style is subject to this setting.</property>
                                     <property name="halign">start</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
