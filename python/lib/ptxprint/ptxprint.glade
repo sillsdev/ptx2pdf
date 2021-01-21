@@ -3810,11 +3810,11 @@ configuration to retrieve those settings.</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
-                                        <property name="tooltip_text" translatable="yes">Save the current settings with the name
-given in the drop-down box on the left.
+                                        <property name="tooltip_text" translatable="yes">Save the current settings with the 
+Configuration Name provided.
 
-If the configuration was saved earlier, then
-clicking Save will update the existing settings.
+Note that these settings are also automatically
+updated (saved) when you click Print.
 
 Shortcut key: &lt;Ctrl-S&gt;</property>
                                         <property name="halign">start</property>
@@ -4066,11 +4066,7 @@ Note: If you manually type (c) then the © symbol will magically appear.</proper
                                 <property name="receives_default">True</property>
                                 <property name="tooltip_text" translatable="yes">Clicking this button will reload
 the Copyright Statement from the
-Paratext project settings.
-
-Note that if the callers have not
-been defined in the Paratext project
-then the default set will be loaded.</property>
+Paratext project settings.</property>
                                 <signal name="clicked" handler="onResetCopyrightClicked" swapped="no"/>
                               </object>
                               <packing>
@@ -4348,7 +4344,7 @@ page for binding (millimeters).</property>
                                       <object class="GtkSpinButton" id="s_linespacing">
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
-                                        <property name="tooltip_text" translatable="yes">Line spacing in points (pts).
+                                        <property name="tooltip_text" translatable="yes">Base Line spacing in points (pts).
 Change to increase or decrease
 space between lines of text.</property>
                                         <property name="halign">start</property>
@@ -4465,6 +4461,9 @@ Font Size:</property>
                                       <object class="GtkLabel">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
+                                        <property name="tooltip_text" translatable="yes">Base Line spacing in points (pts).
+Change to increase or decrease
+space between lines of text.</property>
                                         <property name="halign">end</property>
                                         <property name="valign">center</property>
                                         <property name="label" translatable="yes">Base
@@ -7887,14 +7886,13 @@ of the page.</property>
                                       <object class="GtkLabel">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="tooltip_text" translatable="yes">The font size (pts) for the Footnotes and 
-Cross-references. If changing this value
-appears to have no effect on the output
-then check to see if you have specified
-the FontSize for various Footnote and 
-Cross-reference markers in the Stylesheet.
-The PrintDraft-mods.sty stylesheet will
-overide the settings specified here.</property>
+                                        <property name="tooltip_text" translatable="yes">The font size (pts) for text in the Notes area.
+This applies to both Footnotes as well as 
+Cross-References.
+
+If you require each to use different 
+font sizes, then this can be achieved 
+by adjusting their appropriate Styles.</property>
                                         <property name="halign">end</property>
                                         <property name="label" translatable="yes">Font Size:</property>
                                       </object>
@@ -7907,14 +7905,13 @@ overide the settings specified here.</property>
                                       <object class="GtkSpinButton" id="s_fnfontsize">
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
-                                        <property name="tooltip_text" translatable="yes">The font size (pts) for the Footnotes and 
-Cross-references. If changing this value
-appears to have no effect on the output
-then check to see if you have specified
-the FontSize for various Footnote and 
-Cross-reference markers in the Stylesheet.
-The PrintDraft-mods.sty stylesheet will
-overide the settings specified here.</property>
+                                        <property name="tooltip_text" translatable="yes">The font size (pts) for text in the Notes area.
+This applies to both Footnotes as well as 
+Cross-References.
+
+If you require each to use different 
+font sizes, then this can be achieved 
+by adjusting their appropriate Styles.</property>
                                         <property name="halign">end</property>
                                         <property name="valign">center</property>
                                         <property name="text">10.0</property>
@@ -7939,11 +7936,15 @@ overide the settings specified here.</property>
                                       <object class="GtkLabel">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="tooltip_text" translatable="yes">The line-spacing (pts) for the Footnotes
-and Cross-references. If you really need
-different values for each, then this can
-be achieved manually by adjusting the
-PrintDraft-mods.sty stylesheet.</property>
+                                        <property name="tooltip_text" translatable="yes">Line spacing in points (pts).
+Change to increase or decrease
+space between lines of text in
+the notes area. This applies to both
+footnotes as well as cross-references.
+
+If you require each to use different 
+line-spacing, then this can be achieved 
+by adjusting their appropriate Styles.</property>
                                         <property name="halign">end</property>
                                         <property name="margin_left">6</property>
                                         <property name="label" translatable="yes">Line Spacing:</property>
@@ -7961,7 +7962,11 @@ PrintDraft-mods.sty stylesheet.</property>
 Change to increase or decrease
 space between lines of text in
 the notes area. This applies to both
-footnotes as well as cross-references.</property>
+footnotes as well as cross-references.
+
+If you require each to use different 
+line-spacing, then this can be achieved 
+by adjusting their appropriate Styles.</property>
                                         <property name="halign">end</property>
                                         <property name="valign">center</property>
                                         <property name="text">12.0</property>
@@ -12462,7 +12467,11 @@ can be specified in this file.</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
                                             <property name="tooltip_text" translatable="yes">It is recommended to leave 
-this option checked (on).</property>
+this option unchecked (off)
+unless you have intentionally
+customized styles using the
+ptxprint-mods.sty stylesheet and 
+wish for these to be used by PTXprint.</property>
                                             <property name="halign">start</property>
                                             <property name="draw_indicator">True</property>
                                             <signal name="clicked" handler="onExtraFileClicked" swapped="no"/>
@@ -12480,7 +12489,11 @@ this option checked (on).</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
                                             <property name="tooltip_text" translatable="yes">It is recommended to leave 
-this option checked (on).</property>
+this option unchecked (off)
+unless you have intentionally
+customized styles using the
+custom.sty stylesheet and wish 
+for these to be used by PTXprint.</property>
                                             <property name="halign">start</property>
                                             <property name="draw_indicator">True</property>
                                             <signal name="clicked" handler="onExtraFileClicked" swapped="no"/>
@@ -14687,8 +14700,7 @@ been enabled.</property>
 your marker can be found under,
 then use this Search tool to find
 the marker you need.</property>
-                                <property name="label" translatable="yes">Search/Filter
-for Marker:</property>
+                                <property name="label" translatable="yes">Search Markers:</property>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
@@ -14705,6 +14717,7 @@ your marker can be found under,
 then use this Search tool to find
 the marker you need.</property>
                                 <property name="width_chars">15</property>
+                                <property name="secondary_icon_stock">gtk-clear</property>
                                 <property name="primary_icon_name">edit-find-symbolic</property>
                                 <property name="primary_icon_activatable">False</property>
                                 <property name="primary_icon_sensitive">False</property>
@@ -14808,7 +14821,8 @@ markers/styles in the list below.</property>
                                   <object class="GtkLabel" id="l_styDescription">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="valign">start</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">center</property>
                                     <property name="hexpand">True</property>
                                     <property name="wrap">True</property>
                                     <attributes>
@@ -15883,7 +15897,7 @@ Into Style:</property>
 the value is different from what is in the stylesheet.
 
 Note that you can click on a bold setting name of 
-any parameter to reset it to the stylesheet value.</property>
+any parameter to RESET it to the stylesheet value.</property>
                                 <property name="margin_top">6</property>
                                 <property name="margin_bottom">6</property>
                                 <property name="label" translatable="yes">Why are some parameter names in bold?</property>

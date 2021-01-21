@@ -114,6 +114,7 @@ dialogKeys = {
 usfmpgname = {
     'f':     'fnotes',
     'x':     'xrefs',
+    'rq':    'xrefs',
     'ef':    'efnotes',
     'ex':    'exrefs',
     'esb':   'sidebars',
