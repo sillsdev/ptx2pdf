@@ -121,10 +121,9 @@ _sensitivities = {
     "c_autoToC" :              ["t_tocTitle", "gr_toc", "l_toc"],
     "c_marginalverses" :       ["s_columnShift"],
     "c_hdrverses" :            ["c_sepPeriod", "c_sepColon"],
-    "c_fnautocallers" :        ["t_fncallers", "btn_resetFNcallers"],
-    "c_xrautocallers" :        ["t_xrcallers", "btn_resetXRcallers"],
+    "c_fnautocallers" :        ["t_fncallers", "btn_resetFNcallers", "c_fnomitcaller", "c_fnpageresetcallers"],
+    "c_xrautocallers" :        ["t_xrcallers", "btn_resetXRcallers", "c_xromitcaller", "c_xrpageresetcallers"],
     "c_glossaryFootnotes" :    ["c_firstOccurenceOnly"],
-    # "c_usePicList" :           ["btn_editPicList"],
     "c_useCustomFolder" :      ["btn_selectFigureFolder", "c_exclusiveFiguresFolder", "lb_selectFigureFolder"],
     "c_processScript" :        ["c_processScriptBefore", "c_processScriptAfter", "btn_selectScript", "btn_editScript"],
     "c_usePrintDraftChanges" : ["btn_editChangesFile"],
@@ -156,21 +155,8 @@ _sensitivities = {
 _nonsensitivities = {
     "c_omitrhchapnum" :        ["c_hdrverses"],
     "c_blendfnxr" :            ["l_internote", "s_internote"],
-    # "c_usePicList" :           ["c_figexclwebapp"],
     "c_useprintdraftfolder" :  ["btn_selectOutputFolder"],
-    # "c_styTextProperties":     ["fr_styParaSettings", "fr_styCharSettings", "fr_styNoteSettings"],
 }
-# Checkboxes and the Tabs that they make (in)visible
-# _visibilities = {
-    # "c_showLayoutTab" :        ["tb_Layout"],
-    # "c_showFontTab" :          ["tb_Font"],
-    # "c_showBodyTab" :          ["tb_Body"],
-    # "c_showHeadFootTab" :      ["tb_HeadFoot"],
-    # "c_showPicturesTab" :      ["tb_Pictures"],
-    # "c_showAdvancedTab" :      ["tb_Advanced"],
-    # "c_showDiglotBorderTab" :  ["tb_DiglotBorder"],
-    # "c_showViewerTab" :        ["tb_ViewerEditor"]
-# }
 _object_classes = {
     "printbutton": ("b_print", "btn_refreshFonts"),
     "fontbutton":  ("bl_fontR", "bl_fontB", "bl_fontI", "bl_fontBI"),
@@ -855,6 +841,13 @@ class GtkViewModel(ViewModel):
 
     def onSimpleFocusClicked(self, btn):
         self.sensiVisible(Gtk.Buildable.get_name(btn), focus=True)
+
+    def onCallersClicked(self, btn):
+        w1 = Gtk.Buildable.get_name(btn)
+        status = self.sensiVisible(w1, focus=True)
+        for s in ['omitcaller', 'pageresetcallers']:
+            w2 = w1[:4]+s
+            self.builder.get_object(w2).set_active(status)
 
     def onLockUnlockSavedConfig(self, btn):
         lockBtn = self.builder.get_object("btn_lockunlock")
