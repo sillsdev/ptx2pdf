@@ -1357,6 +1357,7 @@
 \def\SIXPEREMSPACE{\hskip .1666em}
 \def\THINSPACE{\hskip .2em}
 \def\HAIRSPACE{\hskip 1sp}
+\def\HYPHEN{\-}
 \def\emdash{\char"2014\relax}
 %endash defined in ptx-references.tex
 
@@ -1377,6 +1378,7 @@
   \let\SIXPEREMSPACE=\relax
   \let\THINSPACE=\relax
   \let\HAIRSPACE=\relax
+  \let\HYPHEN=\relax
 }
 
 \catcode"A0=12
@@ -1393,6 +1395,7 @@
 \catcode"2006=12
 \catcode"2009=12
 \catcode"200A=12
+\catcode"2010=12
 \def\liter@lspecials{%
   \def\pr@tect{}%
   \def\NBSP{^^a0}%
@@ -1410,6 +1413,7 @@
   \def\SIXPEREMSPACE{^^^^2006}%
   \def\THINSPACE{^^^^2009}%
   \def\HAIRSPACE{^^^^200a}%
+  \def\HYPHEN{^^^^2010}%
 }
 
 \catcode"A0=\active   \def^^a0{\pr@tect\NBSP}
@@ -1427,6 +1431,7 @@
 \catcode"2006=\active \def^^^^2006{\pr@tect\SIXPEREMSPACE}
 \catcode"2009=\active \def^^^^2009{\pr@tect\THINSPACE}
 \catcode"200A=\active \def^^^^200a{\pr@tect\HAIRSPACE}
+\catcode"2010=\active \def^^^^2010{\pr@tect\HYPHEN}
 \lccode"2010="2010
 \catcode`\@=12
 

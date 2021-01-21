@@ -947,6 +947,9 @@ class TexModel:
         # Paratext marks no-break space as a tilde ~
         self.localChanges.append((None, regex.compile(r"~", flags=regex.M), r"\u00A0")) 
 
+        # Convert hyphens from minus to hyphen
+        self.localChanges.append((None, regex.compile(r"(?<=[*\s][-]*)-", flags=regex.M), r"\u2010"))
+
         # for c in range(1,4): # Remove any \toc lines that we don't want appearing in the Table of Contents
             # if not self.asBool("document/usetoc{}".format(c)) and (c != 3 or self.asBool("thumbtabs/ifthumbtab")):
                 # print("Deleting toc{} with thumbtabs/ifthumbtab of {}".format(c, self.printer.get("thumbtabs/ifthumbtab")))

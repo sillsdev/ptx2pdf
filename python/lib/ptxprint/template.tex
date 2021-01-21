@@ -204,6 +204,11 @@
 % restore page break definition (if present in USFM stylesheet, it has been re-defined and will not work)
 \catcode`\@=11
 \def\b{{\the\p@rstylehooks \par\vskip\baselineskip}}
+%%%%% Hyphenation %%%%%
+\newlanguage\langund \language\langund
+{paragraph/ifhavehyphenate}{paragraph/ifhyphenate}\bgroup\liter@lspecials\input "{/ptxrpath}/{project/id}/shared/ptxprint/hyphen-{project/id}.tex" \egroup
+{paragraph/ifomithyphen}\defaulthyphenchar=8203
+{paragraph/ifnothyphenate}\hyphenpenalty=10000 \exhyphenpenalty=10000
 \catcode`\@=12
 \let\pb=\pagebreak
 {project/interlinear}\expandafter\def\csname complex-rb\endcsname{{\ruby{project/ruby}{{rb}}{{gloss}}}}
@@ -211,11 +216,6 @@
 %%%%% Set hooks to allow Poetical books more freedom when column-balancing
 %\optimizepoetry
 
-%%%%% Hyphenation %%%%%
-\newlanguage\langund \language\langund
-{paragraph/ifhavehyphenate}{paragraph/ifhyphenate}\input "{/ptxrpath}/{project/id}/shared/ptxprint/hyphen-{project/id}.tex"
-{paragraph/ifomithyphen}\defaulthyphenchar=8203
-{paragraph/ifnothyphenate}\hyphenpenalty=10000 \exhyphenpenalty=10000
 \tracingstats=1
 
 % Extras not yet templated (if ever)
