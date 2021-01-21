@@ -181,8 +181,9 @@
 %\partial % fully set Partial page (both columns)
 %\galley - as used in monoglot routines. This is the (holdinginserts=1) text
 % saved by the first output routine.
+\newbox\galleyexc@ss %This is the bit of the galley that didn't make it onto the current page
 \newbox\partialL \setbox\partialL=\vbox{} % Partial page, on the left side
-\newbox\excessL \setbox\excessL=\vbox{} % Excess left material, once we know we're on the next page (added to partialL on shipout)
+\newbox\excessL \setbox\excessL=\vbox{} % Excess left material, aligning with the next right chunk. (added to partialL on shipout if partialL empty)
 \newbox\excessR \setbox\excessR=\vbox{} % Excess right material, once we know we're on the next page 
 \newbox\partialR \setbox\partialR=\vbox{} % Partial page on the right side
 \newbox\trialbox
@@ -286,12 +287,6 @@
  \p@gestarttrue % or at least, this isn't the right place to place things that go after a paragraph
  \ifnum\outputpenalty=\dgl@tPenLtrialEnd\relax %Why are we here after a trial?
    \ifintrial\diglotLeftTrial\fi
-   %\tmppenalty=\savedpenalty\relax%
-   %\Lneedsemptyingtrue%
-   %\upd@tep@rtial
-%
-   %%\setboth
-   %%\diglotLeftAfterTrial
  \fi
  \runLtrialfalse%
  \ifdim\ht255<-20pt % eek. we've been given a seriously -ve height box.
@@ -315,11 +310,11 @@
  \tmppenalty=\outputpenalty %
  \ifnum\outputpenalty=10000 % Nothing wrong with breaking here
    \tmppenalty=0\relax%
-   \Lneedsemptyingfalse%
+   \global\Lneedsemptyingfalse%
  \else%
    \ifnum\outputpenalty=\dgl@tPenColSwap\relax %Got to the end of the \lefttext
      \tmppenalty=\savedpenalty\relax%
-     \Lneedsemptyingtrue%
+     \global\Lneedsemptyingtrue%
    \fi%
  \fi%
  \ifleftfull%
@@ -506,7 +501,7 @@
      \traceNum{d}{Inserts not held (!?) will not re-run}%
    \else%
      \global\holdinginserts=0
-     \traceNum{d}{Re-processing partialL (\the\ht\partialL, \the\availht)}%
+     \traceNum{d}{Processing partialL for inserts (\the\ht\partialL+\the\dp\partialL, \the\availht)}%
      \global\trialheight=\availht
      \doDiglotLeftTrial%
    \fi%
@@ -525,10 +520,9 @@
 \newif\ifboxmoved%
 \newcount\endtri@lpen@lty %the penalty we EXPECT at the end of the trial
 %\galleypenalty %the penalty we FOUND at the break between the %galley and \galleyexc@ss
-\newbox\galleyexc@ss
 \def\@ddtoexcess{%
-  \trace{d}{@ddtoexcess hIns=\the\holdinginserts(==1) adding \the\ht255\space to excess\the\ht\galleyexc@ss}%
-  \global\setbox\galleyexc@ss\vbox{\ifvoid\galleyexc@ss\else\unvbox\galleyexc@ss\fi\unvbox255\ifnum\outputpenalty=10000\else\penalty\outputpenalty\fi}
+  \trace{d}{@ddtoexcess hIns=\the\holdinginserts(==1) adding \the\ht255\space to galleyexcess (\the\ht\galleyexc@ss)}%
+  \global\setbox\galleyexc@ss\vbox{\ifvoid\galleyexc@ss\else\unvbox\galleyexc@ss\fi\unvbox255\ifnum\outputpenalty=10000\else\ifnum\outputpenalty=\endtri@lpen@lty\else\penalty\outputpenalty\fi\fi}
 }
 \def\diglot@backingup{%Similar to but more complex than monoglot backing-up
   % routine. Run with holdinginserts=1
@@ -538,6 +532,9 @@
   % the \trial routine is called (again)
   % assumes galley is empty when first run
   \trace{d}{backingup hIns=\the\holdinginserts(==1)}%
+  \ifnum\holdinginserts=0
+    \MSG{*** Internal error caught. Incorrect internal state found in backing up. Text of footnotes may have been lost.}%
+  \fi
   \global\deadcycles=0
   \ifvoid\galley
     \global\setbox\galley=\box255
@@ -565,25 +562,31 @@
  %it calls whichtrial 
  %as though it hadn't been here.
  %Assumptions: holdinginserts=1 material in \galley and \galleyexc@ss
-  \trace{d}{diglot@any@trial \the\ht255+\the\dp255 hIns=\the\holdinginserts(==0) op=\the\outputpenalty, etp=\the\endtri@lpen@lty}%
+  \trace{d}{diglot@any@trial \the\ht255+\the\dp255\space hIns=\the\holdinginserts(==0 1st time) op=\the\outputpenalty, etp=\the\endtri@lpen@lty, dc=\the\deadcycles}%
+  \ifnum\holdinginserts=0\else
+    \ifvoid\trialbox
+      \MSG{*** Internal error caught. Incorrect internal state found in during trial run. Text or footnotes may have been lost.}%
+    \fi
+  \fi
   \global\holdinginserts=1
   \ifvoid\trialbox
     \dglt@calc@vailht
     \TempDim=\availht
     \advance\TempDim by -\ht255
     \advance\TempDim by -\dp255
+    \global\setbox\trialbox=\box255
     \ifdim\TempDim<-0.8\baselineskip % Coarse test. main trial routine can be pickier if it wants
       \trace{D}{Content does not fit (\the\TempDim, \the\availht, \the\trialheight)}%
       \global\trialfailedtrue
     \else
-      \trace{D}{Content fits}%
+      \trace{D}{Content fits (\the\TempDim, \the\availht, \the\trialheight, \the\ht\trialbox)}%
     \fi
-    \setbox\trialbox=\box255
   \else
     \ifnum 1=\ifdim\ht255>0pt 1 \else \ifdim\dp255>0pt 1 \else 0\fi\fi
       \trace{D}{Extra content found before end of trial}%
       \global\trialfailedtrue
       \global\vsize=\textheight
+      \global\setbox255\box\voidb@x
     \else
       \trace{D}{Zero-sized box found.}%
       \global\setbox\trialbox=\vbox{\unvbox\trialbox\box 255}%
@@ -596,8 +599,8 @@
       \ifdim\trialheight<0.9\baselineskip
         \trace{D}{Abandoning trial, no space for galley at all}%
 	\r@storenotes{\ifdiglotL\else R\fi}% As if galley hadn't happened.
-	\setbox\galleyexc@ss\vbox{\unvbox\galley\unvbox\galleyexc@ss}%
-        \setbox255=\box\voidb@x
+	\global\setbox\galleyexc@ss\vbox{\unvbox\galley\unvbox\galleyexc@ss}%
+        \global\setbox255=\box\voidb@x
 	\let\after@this=\whichtrial% 
       \else 
         \global\output={\diglot@backingup}%
@@ -679,6 +682,11 @@
     \trace{D}{Assuming we got here via diglot@any@trial}% 
   \fi%
   \boxmovedfalse%
+  \iftrialfailed
+    \trace{D}{Trial reported as failing.}%
+    \global\boxmovedtrue
+    \global\leftfulltrue
+  \fi
   \TempDim=\availht % Recalc this, in case assumption is wrong
   \advance\TempDim by -\the\ht\LeftBox %
   \advance\TempDim by -\the\dp\LeftBox %
@@ -729,10 +737,14 @@
     \s@venotes{}%
     \ifvoid\galleyexc@ss\else
       \trace{D}{saving galleyexc@ss (\the\ht\galleyexc@ss+\the\dp\galleyexc@ss) in excessL (\the\ht\excessL+\the\dp\excessL)}%
-      \ifvoid\excessL
-        \global\setbox\excessL\box\galleyexc@ss
+      \ifvoid\partialL
+      	\global\setbox\partialL\box\galleyexc@ss
       \else
-        \global\setbox\excessL=\vtop{\joinboxes{\excessL}{255}{14}{\galleyexc@ss}}%
+	\ifvoid\excessL
+	  \global\setbox\excessL\box\galleyexc@ss
+	\else
+	  \global\setbox\excessL=\vtop{\joinboxes{\excessL}{255}{14}{\galleyexc@ss}}%
+	\fi
       \fi
     \fi
     \ifdim\TempDim<\baselineskip % 
@@ -848,7 +860,7 @@
   \fi
   \global\let\whichtrial=\diglotLeftTrial
   \global\endtri@lpen@lty=\dgl@tPenLtrialEnd
-  \trialfailedfalse
+  \global\trialfailedfalse
   \global\output={\diglot@any@trial}\relax%
   \global\holdinginserts=0%
   \global\deadcycles=0
@@ -1259,7 +1271,7 @@
   %\partialL may have extra material in it, which hasn't been footnoted. 
   %\RightBox needs to be filled from partialR.
   %\Rchunkpenalty et al. correctly  set by caller
-  \traceNum{d}{setboth \the\outputpenalty, \the\savedpenalty, \the\Rchunkpenalty,  rbp:\the\Rboxpenalty diglotL\ifdiglotL true\else false\fi}%
+  \traceNum{d}{setboth \the\outputpenalty, \the\savedpenalty, \the\Rchunkpenalty,  rbp:\the\Rboxpenalty\space diglotL\ifdiglotL true\else false\fi, leftfull\ifleftfull true\else false\fi}%
   \dglt@calc@vailht
   \global\splittopskip=\baselineskip
   \global\topskip=\baselineskip
@@ -1371,11 +1383,13 @@
       \ifvoid\excessL\else
         \traceNum{d}{Refilling empty partialL from excessL}%
         \global\setbox\partialL=\vtop{\unvbox\excessL}%
+	%\pagefulltrue\leftfulltrue
       \fi
       \partialLpenalty=\Lchunkpenalty
     \else
       \ifvoid\excessL\else
         \traceNum{d}{Refilling non-empty partialL from excessL}%
+	\pagefulltrue\leftfulltrue
         \bgroup \diglotLtrue
         \global\setbox\partialL=\vtop{\joinboxes{\partialL}{\excessL}{9}{\partialLpenalty}}%
         \egroup
@@ -1461,7 +1475,7 @@
         %\makevtop{\RightBox}%
         \global\setbox\RightBox=\vtop{\unvbox\RightBox}%
         \upd@tep@rtial%
-      \else %pagefull
+      \else %! pagefull
         \ifnum\deadcycles<15 %
           %We can safely have a go at re-setting this column. 
           \traceNum{d}{Trying to refill right column}%
@@ -1494,10 +1508,25 @@
     \upd@tep@rtial%
   \fi %TempDim 
   %NB: Code added here gets run during trials too.
+  \let\@ftersetboth\relax
   \ifintrial\else\ifLneedsemptying%
     \trace{D}{more to empty  lb:(\the\ht\LeftBox+\the\dp\LeftBox) pL:(\the\ht\partialL+\the\dp\partialL)
       eL:(\the\ht\excessL+\the\dp\excessL) pR:(\the\ht\partialR+\the\dp\partialR)}%\setboth%
-   \setboth%
+    \let\@ftersetboth\setboth
+    \ifvoid\LeftBox
+      \ifvoid\partialR
+	\ifvoid\partialL
+	  \global\Lneedsemptyingfalse %Nothing TO empty
+	  \let\@ftersetboth\relax
+	  \trace{D}{Nothing to empty}%
+	\else
+	  \trace{D}{Promoting partialL to LeftBox via trial}%
+	  \let\@ftersetboth=\doDiglotLeftTrial
+	  %\global\setbox\LeftBox\box\partialL
+	\fi
+      \fi
+    \fi
+    \@ftersetboth%
   \fi\fi%
 }
 \def\checkn@sty#1#2{%
@@ -1700,7 +1729,7 @@
         \hbox to\columnLwidth{\box\LeftBox\hss}%\rlap{\the\ht\RightBox \the\dp\RightBox}
       \fi
   }}%
-  \trace{D}{adding box to partial (\the\ht\LeftBox)}%
+  \trace{D}{adding box to partial (\the\ht\LeftBox+\the\dp\LeftBox)}%
   \global\setbox\partial=\vtop{\joinb@xes{\partial}{\LeftBox}}%
   \ifleftfull% This box fills the left column (with footnotes)
     \pagefulltrue%
@@ -1719,10 +1748,10 @@
     \@writep@ge%
   \fi%
   \global\setbox\RightBox=\box\voidb@x %
-  \ifdim\dp\partialL=0pt %
+  \ifvoid\partialL %
     \ifvoid\excessL %
       \trace{D}{partialL and excessL now empty}%
-      \Lneedsemptyingfalse%
+      \global\Lneedsemptyingfalse%
     \fi
   \fi
   \ifpagefull % Page was written
@@ -1746,8 +1775,18 @@
     \else
       \trace{D}{no early refill of  partialL. pL:(\the\ht\partialL+\the\dp\partialL) eL:(\the\ht\excessL+\the\dp\excessL) }%
     \fi
-    \trace{D}{pL:(\the\ht\partialL+\the\dp\partialL) pR:(\the\ht\partialR+\the\dp\partialR)}%
-    \ifdim\dp\partialL>0pt %
+    \trace{D}{pL:(\the\ht\partialL+\the\dp\partialL) pR:(\the\ht\partialR+\the\dp\partialR) Lneedsemptying\ifLneedsemptying true\else false\fi}%
+    \ifvoid\partialL
+      \ifnum\outputpenalty=\dgl@tPenColSwap\relax
+        % No partialL mtl, but possibly have right column that should be
+        % set.
+        \trace{D}{B pL:(\the\ht\partialL+\the\dp\partialL) pR:(\the\ht\partialR+\the\dp\partialR)}%
+	\ifvoid\partialR\else
+          \traceNum{d}{Repeating setboth}%
+          \setboth%
+        \fi
+      \fi %outputpenalty %
+    \else 
       %Assumptions: Page is empty, LeftBox is empty, partialL contains extra
       %material for left column, excessL is possibly empty (from setboth or above). 
       \ifrepeatpermitted 
@@ -1827,22 +1866,7 @@
       \fi%
       \global\trialheight=\availht\relax%
       \doDiglotLeftTrial%
-    \else %i.e.\dp\partialL<=0
-      \ifnum\outputpenalty=\dgl@tPenColSwap\relax
-        % No partialL mtl, but possibly have right column that should be
-        % set.
-        \trace{D}{B pL:(\the\ht\partialL+\the\dp\partialL) pR:(\the\ht\partialR+\the\dp\partialR)}%
-        \ifdim\dp\partialR>0pt
-          \traceNum{d}{Repeating setboth}%
-          \setboth%
-        \else
-          \ifdim\ht\partialR>0pt
-            \traceNum{d}{Repeating setboth}%
-            \setboth%
-          \fi
-        \fi
-      \fi %outputpenalty %
-    \fi %\ht\partiaL
+    \fi %\void\partiaL
   \fi%
 }
 
