@@ -1,5 +1,17 @@
-PTXprint 1.5.5 Release Notes 
-20 January 2021
+PTXprint 1.5.6 Release Notes 
+21 January 2021
+
+Bug Fixes and Improvements in 1.5.6
+
+  * Fixed issue with saving/naming configurations
+  
+  * Page numbering now allows negative numbers - which enables roman numerals for introductory pages
+  
+  * Fixed AdjList generation
+  
+  * Adjusted FN and XR controls in UI to prevent nonsensical settings
+  
+  * Updated help in several Tooltips to reflect addition of Styles editor
 
 Bug Fixes and Improvements in 1.5.5
 
