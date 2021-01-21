@@ -8761,7 +8761,13 @@ header, or the Secondary format.</property>
                                     <property name="tooltip_text" translatable="yes">If the document you are creating needs
 to be appended to another, you can
 start the page numbering from where
-the first document ends.</property>
+the first document ends.
+
+Note that selecting a NEGATIVE number will
+cause roman numerals (i, ii, iii, iv, v, etc) to
+be used on introductory books (FRT, INT and
+so on), and page numbering will restart as
+soon as the first scripture book is encountered.</property>
                                     <property name="halign">end</property>
                                     <property name="label" translatable="yes">Starting Page Number:</property>
                                   </object>
@@ -8777,7 +8783,13 @@ the first document ends.</property>
                                     <property name="tooltip_text" translatable="yes">If the document you are creating needs
 to be appended to another, you can
 start the page numbering from where
-the first document ends.</property>
+the first document ends.
+
+Note that selecting a NEGATIVE number will
+cause roman numerals (i, ii, iii, iv, v, etc) to
+be used on introductory books (FRT, INT and
+so on), and page numbering will restart as
+soon as the first scripture book is encountered.</property>
                                     <property name="opacity">0.80000000000000004</property>
                                     <property name="halign">start</property>
                                     <property name="max_length">4</property>
