@@ -782,69 +782,20 @@
       \let\do@nce=\n@xtc@mmand %
       \global\def\n@xtc@mmand{} %
       \do@nce%
-      %\vsize=\textheight\relax%slurp up to a  full page
-      %\global\output={\diglotLeftAfterTrial}\relax% Not needed now
       \relax%
     \fi%
   \fi%
   %\ifboxmoved\global\setbox\LeftBox=\box\partialL\fi
 }
 
-\def\diglotLeftAfterTrial{%
-  %LeftBox holds a pagefull and should not be touched.
-  %partialL is empty first time round, this will be called multiple times until reaching the end marker
-  \trace{D}{diglotLeftAfterTrial \the\outputpenalty, \the\deadcycles,
-   av:\the\availht, vs:\the\vsize, pg:\the\pagegoal, pt:\the\pagetotal}%
-  \makevtop{255}%
-  \tmppenalty=\outputpenalty %
-  \ifnum\tmppenalty=10000 %
-    \tmppenalty=0 %
-  \fi
-  \ifnum\tmppenalty=\dgl@tPenLtrialEnd\relax %
-    \tmppenalty=\savedpenalty
-      \global\savedpenalty=0 %
-  \fi
-  \ifvoid\partialL%
-    \global\setbox\partialL=\box255 %
-  \else%
-    \global\setbox\partialL=\vtop{\joinboxes{\partialL}{255}{6}{\partialLpenalty}}\relax%
-  \fi
-  \global\partialLpenalty=\tmppenalty %
-  \trace{D}{pL \the\ht\partialL+\the\dp\partialL\space digl@t\ifdigl@tL L\else R\fi}%
-  %\TRshipout{\vbox{\hbox{\the\diglotTRcount diglotLeftAfterTrial:}\copy\aftertri@lbox}}%
-  \ifnum\outputpenalty=\dgl@tPenLtrialEnd\relax%
-    \global\intrialfalse
-    \ifdigl@tL
-      \global\holdinginserts=1 
-      \global\output={\diglotLeft}%
-    \else
-      \global\holdinginserts=0 
-      \global\diglotRtrue
-      \global\hsize=\columnRwidth\relax
-      \dglt@calc@vailht
-      \vsize=\availht
-      \ifVisTrace
-         \doVisTrace{t}\box0
-      \fi
-      \global\output={\diglotRight}%
-    \fi
-    \n@xtc@mmand%
-    \global\def\n@xtc@mmand{}%
-  \fi
-  \relax\relax
-}
 
 
 \def\doDiglotLeftTrial{%
   %empties LeftBox and partialL back onto stack, with holdinginserts=0
   \trace{D}{doDiglotLeftTrial LB:\the\ht\LeftBox+\the\dp\LeftBox, pL:(\the\ht\partialL+\the\dp\partialL) diglotL\ifdiglotL true\else false\fi, dig@tL\ifdigl@tL true\else false\fi,}%
-  \ifdigl@tL%Save current state
-    \global\digl@tLtrue%
-  \else%
-    \global\digl@tLfalse%
-    \global\diglotLtrue%
-    \global\hsize=\columnLwidth\relax%
-  \fi%
+  %Set correct current state
+  \global\diglotLtrue%
+  \global\hsize=\columnLwidth\relax%
   \dglt@calc@vailht%
   \trace{D}{av: \the\availht, tr: \the\trialheight}%
   % don't know why it might not be, but...
@@ -861,21 +812,20 @@
   \global\let\whichtrial=\diglotLeftTrial
   \global\endtri@lpen@lty=\dgl@tPenLtrialEnd
   \global\trialfailedfalse
-  \global\output={\diglot@any@trial}\relax%
   \global\holdinginserts=0%
+  \global\intrialtrue
   \global\deadcycles=0
   \global\savedpenalty=\partialLpenalty %
   \ifnum\savedpenalty=10000
     \global\advance\trialheight by -2\baselineskip %hopefully prevents bad breaks 
   \fi
   \global\vsize=\trialheight\relax%
-  \global\intrialtrue
-  %\bgroup
   \dimen3=\ht\LeftBox
   \advance\dimen3 by \dp\LeftBox
   \advance\dimen3 by \ht\partialL
   \advance\dimen3 by \dp\partialL
   \advance\dimen3 by 3\baselineskip
+  \global\output={\diglot@any@trial}%
   %\penalty\lastsavedLpenalty
   \ifdim\dimen3>\trialheight %Is this likely to be the last chunk added to the page? 
     \ifm@rksonpage\else\mark{}\marks1{}\fi% FIXME? \marks2 too?
@@ -896,18 +846,6 @@
   \ifnum\tmppenalty=10000 %
     \tmppenalty=0 %
   \fi
-  \ifnum\tmppenalty=\dgl@tPenRtrialEnd\relax %
-    \tmppenalty=\savedpenalty
-    \global\savedpenalty=0 %
-  \fi%
-%
-  \ifx\nextfirstRmark\empty
-     \xdef\nextfirstRmark{\firstmarks2}%
-  \fi
-  \ifx\nextbotRmark\empty
-    \xdef\nextbotRmark{\botmarks2}%
-  \fi
-  \global\setbox\excessR=\vtop{\joinboxes{\excessR}{255}{3}{\Rchunkpenalty}}%
   \global\Rchunkpenalty=\tmppenalty %
   \ifnum\outputpenalty=\dgl@tPenRtrialEnd\relax %% All OK. drop through to digl@tRight
     \intrialfalse
@@ -927,47 +865,54 @@
 % Should normally get called once per box when that's about to be set. Leaves set
 % material in 255 and calls setboth via digl@tRight.
 %If material (e.g. due to footnotes) is too big for page, shrink vsize and try again.
-% if not all material was set, hold stuff in \partialR and use \diglotRightExtra to put that into \excessR
+% if not all material was set, hold stuff in \partialR put
+% surplus  into \excessR
   \traceNum{D}{diglotRightTrial, \the\holdinginserts, \the\outputpenalty, 
     \the\deadcycles, Rb:\the\ht\RightBox+\the\dp\RightBox, pR:\the\ht\partialR+\the\dp\partialR,
     av:\the\availht, vs:\the\vsize, pg:\the\pagegoal}%
- \makevtop{255}%
+  \makevtop{255}%
  %\global\setbox\RightBox=\box255
  %\TRshipout{\vbox{\hbox{\the\diglotTRcount diglotRightTrial:}\copy\RightBox}}%
- \trace{D}{Box=\the\ht\LeftBox+\the\dp\LeftBox}%
+  \trace{D}{Box=\the\ht\LeftBox+\the\dp\LeftBox}%
   \tmppenalty=\outputpenalty %
   \ifnum\tmppenalty=10000 %
     \tmppenalty=0 %
   \fi
   \ifnum\tmppenalty=\dgl@tPenRtrialEnd\relax %
     \tmppenalty=\savedpenalty
-    \global\savedpenalty=0 %
   \fi%
- \let\eotri@l=\relax
- \ifnum\outputpenalty=\dgl@tPenRtrialEnd\relax %
+  \let\eotri@l=\relax
+  \ifnum\outputpenalty=\dgl@tPenRtrialEnd\relax %
     \trace{D}{Final penalty found \the\outputpenalty}%
+        \global\Rchunkpenalty=\savedpenalty
     \global\TempDim=\the\availht
     {\setbox0=\copy255\setbox1=\vtop{\unvbox0}%
     \global\advance\TempDim by -\dp1}%
-    \ifdim\TempDim>-1\baselineskip% All OK. drop through to digl@tRight
-     \global\holdinginserts=1 % inserts inactive again
-     \traceNum{D}{Dropping through}%
-     \let\eotri@l=\digl@tRight
+    \ifdim\TempDim>-0.8\baselineskip% All OK. drop through to digl@tRight
+      \ifvoid\excessR
+	 \trace{D}{saving galleyexc@ss (\the\ht\galleyexc@ss+\the\dp\galleyexc@ss) to excessR}%
+	 \global\setbox\excessR=\box\galleyexc@ss
+      \else
+	 \trace{D}{adding galleyexc@ss (\the\ht\galleyexc@ss+\the\dp\galleyexc@ss) to excessR (\the\ht\excessR+\the\dp\excessR)}%
+	 \global\setbox\excessR=\vtop{\joinboxes{\excessR}{\galleyexc@ss}{3}{\Rchunkpenalty}}%
+	 \global\Rchunkpenalty=0
+      \fi
+\global\holdinginserts=1 % inserts inactive again
+      \traceNum{D}{Dropping through}%
+      \let\eotri@l=\digl@tRight
     \else% Not a nice choice by output routine...
-     \traceNum{d}{Shrinking trialsize and trying again}%
-     \global\advance\trialheight-\baselineskip
-     \global\vsize=\trialheight
-     \global\savedpenalty=\tmppenalty %
-     \unvbox255
-     \penalty\dgl@tPenRtrialEnd\relax 
+      \global\advance\trialheight-\baselineskip
+      \traceNum{d}{Right column still too full trying again.  th:\the\trialheight av:\the\availht}%
+      \global\vsize=\trialheight
+      \global\savedpenalty=\tmppenalty %
+      \global\output={\diglot@backingup}%
+      \unvbox\galley
+      \penalty\dgl@tPenRtrialEnd\relax 
     \fi%
   \else%
-    \trace{D}{Remembering right hand data, but final penalty not found}%
-    \global\deadcycles=0
-    \global\partialRpenalty=\tmppenalty %
-    \global\holdinginserts=1 % inserts inactive again
-    \setbox\partialR=\box255
-    \global\output={\diglotRightExtra}\relax
+    \trace{d}{*** Eh? Wrong output penalty}
+    %Remembering right hand data, but final penalty not found}%
+     \let\eotri@l=\digl@tRight
   \fi\eotri@l
 }
 
@@ -979,36 +924,45 @@
   %   Box255 holds new data
   %\tmppenalty contains the penalty that goes after box255
   % need to stop holding inserts
-  \trace{D}{doDiglotRightTrial RB:\the\ht\RightBox+\the\dp\RightBox, pR:(\the\ht\partialR+\the\dp\partialR)
-    255:(\the\ht255+\the\dp255)}%
-  \ifdiglotL%Save current state
-    \global\digl@tLtrue%
-    \global\diglotLfalse%
-    \global\hsize=\columnRwidth\relax%
-  \else%
-    \global\digl@tLfalse%
-  \fi%
-  \dglt@calc@vailht%
+  \trace{D}{doDiglotRightTrial RB:\the\ht\RightBox+\the\dp\RightBox, pR:(\the\ht\partialR+\the\dp\partialR) 255:(\the\ht255+\the\dp255) diglotL\ifdiglotL true\else false\fi, dig@tL\ifdigl@tL true\else false\fi}%
+  %Set correct current state
+  \global\diglotLfalse%
+  \global\hsize=\columnRwidth\relax%
+  \dglt@calc@vailht
   \trace{D}{av: \the\availht, tr: \the\trialheight}%
-  \global\output={\diglotRightTrial}\relax%
+  \ifdim\availht<\trialheight
+    \ifdim\availht<0pt
+      \bgroup
+        \dimen0=\trialheight
+        \advance\dimen0 by -\availht
+        \message{*** SOMETHING BAD, pg. \the\pageno. A picture or footnote (probable range: \topmark-\botmark) has just taken \the\dimen0 of space. There's no space left for text.}%
+      \egroup
+     \fi
+    \global\trialheight=\availht
+  \fi
+  \global\let\whichtrial=\diglotRightTrial
+  \global\endtri@lpen@lty=\dgl@tPenRtrialEnd
+  \global\trialfailedfalse
+  \global\output={\diglot@any@trial}\relax%
   \global\vsize=\trialheight\relax%
   \global\holdinginserts=0 %
+  \global\deadcycles=0
   \global\savedpenalty=\tmppenalty %
-  %\bgroup
   \endgraf
   \ifvoid\partialR
-    \ifVisTrace
+    \global\setbox\galley\vbox{\ifVisTrace
       \setbox0\vtop{\hbox to 0pt{\hss\doVisTrace{r}\box0}}%
       \nointerlineskip
       \ht0=0pt\dp0=0pt{\baselineskip=0pt\box0}%
       \kern -\baselineskip
     \fi
-    \unvbox255
+    \unvbox255\penalty\dgl@tPenRtrialEnd}%
   \else
-    \joinboxes{\partialR}{255}{12}{\partialRpenalty}%
+    \global\setbox\galley\vbox{\joinboxes{\partialR}{255}{12}{\partialRpenalty}\penalty\dgl@tPenRtrialEnd}%
   \fi
-  \endgraf\penalty\dgl@tPenRtrialEnd\relax
-  %\egroup%
+  \s@venotes{R}%
+  \setbox0\copy\galley
+  \unvbox0
   \relax{\aftergroup\relax}%
 }
 
@@ -1054,7 +1008,8 @@
    \fi%
  \fi%
  \ifnum\holdinginserts=0 %Inserts not held, continue
-         \digl@tRight%
+	\trace{D}{Unexpected holdinginserts=0}%
+        \digl@tRight%
  \else%
         \doDiglotRightTrial% FIXME - still broken?
  \fi%
@@ -1122,7 +1077,21 @@
  \else % We are trying to collect more.
    \penalty\Rboxpenalty
  \fi
+ \ifdigl@tL
+ %  \global\diglotLtrue
+ %  \global\output={\diglotLeft}%
+ \else
+ %  \global\diglotLfalse
+ %  \global\output={\diglotRight}%
+   \ifvoid\excessR\else
+  %    \holdinginserts=1
+  %    \trace{d}{Unboxing excessR (\the\ht\excessR+\the\dp\excessR)}%
+  %    \global\output={\diglotRight}%
+      \unvbox\excessR
+   \fi
+ \fi
 } %
+
 %
 %
 % Change which side we're adding to
@@ -1161,7 +1130,7 @@
   \dglt@calc@vailht
   \global\vsize=\availht
   \relax\output={\diglotRight}%
-  \global\holdinginserts=\ifuseRightTrial 1 \message{Someone set useRightTrial true. MISTAKE!}\else 0\fi
+  \global\holdinginserts=1
   \the\rightho@ks
   }
 %
@@ -1182,7 +1151,7 @@
   \dglt@calc@vailht
   \global\vsize=\availht
   \output={\diglotRight}%
-  \global\holdinginserts=\ifuseRightTrial 1\else 0\fi}
+  \global\holdinginserts=1}
 
 \def\pagenumberL{\bgroup\diglotLtrue\s@tfont{h}\pagenumber\egroup}
 \def\pagenumberR{\bgroup\diglotLfalse\s@tfont{h}\pagenumber\egroup}
@@ -1760,7 +1729,7 @@
     \global\holdinginserts=1 %
     \global\availht=\textheight %
     \global\vsize=\availht\relax%
-    \ifdim\dp\excessL>0pt \ifdim\dp\partialL=0pt 
+    \ifvoid\excessL\else \ifvoid\partialL
         \trace{D}{Forcing early refill of partialL. pL:(\the\ht\partialL+\the\dp\partialL) eL:(\the\ht\excessL+\the\dp\excessL) }%
         \global\earlyLrefilltrue
         \global\Lneedsemptyingtrue
@@ -1777,7 +1746,8 @@
     \fi
     \trace{D}{pL:(\the\ht\partialL+\the\dp\partialL) pR:(\the\ht\partialR+\the\dp\partialR) Lneedsemptying\ifLneedsemptying true\else false\fi}%
     \ifvoid\partialL
-      \ifnum\outputpenalty=\dgl@tPenColSwap\relax
+      \traceNum{D}{partialL is void}% 
+      \ifnum\outputpenalty=\dgl@tPenColSwap
         % No partialL mtl, but possibly have right column that should be
         % set.
         \trace{D}{B pL:(\the\ht\partialL+\the\dp\partialL) pR:(\the\ht\partialR+\the\dp\partialR)}%
@@ -1786,7 +1756,8 @@
           \setboth%
         \fi
       \fi %outputpenalty %
-    \else 
+    \else
+      \traceNum{D}{partialL not void}% 
       %Assumptions: Page is empty, LeftBox is empty, partialL contains extra
       %material for left column, excessL is possibly empty (from setboth or above). 
       \ifrepeatpermitted 
@@ -1864,10 +1835,12 @@
         \global\setbox\partialL=\vtop{\unvbox\partialL}%
         %\makevtop{\partialL}
       \fi%
+      \trace{D}{rerun left Trial}%
       \global\trialheight=\availht\relax%
       \doDiglotLeftTrial%
     \fi %\void\partiaL
   \fi%
+  \trace{D}{end of upd@tep@rtial}%
 }
 
 \newif\ifLRf@@tnotes%
