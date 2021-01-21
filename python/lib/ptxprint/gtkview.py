@@ -1109,7 +1109,14 @@ class GtkViewModel(ViewModel):
         pg = self.builder.get_object("nbk_Viewer").get_current_page()
         pgid = self.notebooks["Viewer"][pg]
         buf = self.fileViews[pg][0]
-        fpath = self.builder.get_object("l_{1}".format(*pgid.split("_"))).get_tooltip_text()
+        if pg == 1:
+            bk = self.get("ecb_examineBook")
+            fname = self.getDraftFilename(bk, ext=".adj")
+            fdir= os.path.join(self.configPath(self.configName()), "AdjLists")
+            os.makedirs(fdir, exist_ok=True)
+            fpath = os.path.join(fdir, fname)
+        else:
+            fpath = self.builder.get_object("l_{1}".format(*pgid.split("_"))).get_tooltip_text()
         titer = buf.get_iter_at_mark(buf.get_insert())
         self.cursors[pg] = (titer.get_line(), titer.get_line_offset())
         text2save = buf.get_text(buf.get_start_iter(), buf.get_end_iter(), True)
