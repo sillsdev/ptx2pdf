@@ -299,11 +299,11 @@ class StyleEditorView(StyleEditor):
                         olddat = f
                         oldval = old[m]
                         if m.lower() == "baseline":
-                            oldval = re.sub(r"(-?\d*\.?\d*)(\D|$)", r"\1", oldval)
+                            oldval = re.sub(r"(-?\d*\.?\d*)(\D|$)", r"\1", str(oldval))
                     if m in data:
                         val = data[m]
                         if m.lower() == "baseline":
-                            val = re.sub(r"(-?\d*\.?\d*)(\D|$)", r"\1", val)
+                            val = re.sub(r"(-?\d*\.?\d*)(\D|$)", r"\1", str(val))
                         self._setFieldVal(v, olddat, f)
                         v = stylemap[v[3](False)]
                         break
