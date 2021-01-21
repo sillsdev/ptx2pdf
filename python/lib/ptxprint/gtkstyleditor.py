@@ -150,7 +150,7 @@ class StyleEditorView(StyleEditor):
         self.treeview.set_search_entry(searchentry)
         #self.treeview.set_enable_search(True)
         for k, v in stylemap.items():
-            if v[0].startswith("l_"):
+            if v[0].startswith("l_") or k in dialogKeys:
                 continue
             w = self.builder.get_object(v[0])
             #key = stylediverts.get(k, k)
@@ -480,7 +480,7 @@ class StyleEditorView(StyleEditor):
                 data['EndMarker'] = key + "*"
                 if data['styletype'] == 'Character':
                     data['OccursUnder'].add("NEST")
-            #self.marker = key
+            self.marker = key
             self.treeview.get_selection().select_iter(selecti)
             #self.editMarker()
         dialog.hide()
