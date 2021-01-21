@@ -168,14 +168,14 @@
 
   %\global\rhr@lefalse
  \else
-  \ifendbooknoeject
-    \trace{h}{endbooknoeject, so treating as normal page}
-    \ifodd\pageno
-      \the\oddhead
-    \else
-      \ifDoubleSided \the\evenhead \else \the\oddhead \fi
-    \fi
-  \else
+%  \ifendbooknoeject
+%    \trace{h}{endbooknoeject, so treating as normal page}
+%    \ifodd\pageno
+%      \the\oddhead
+%    \else
+%      \ifDoubleSided \the\evenhead \else \the\oddhead \fi
+%    \fi
+%  \else
     \trace{h}{Testing for \t@tle\space in \t@st}%
     \ifnum\ifx\t@st\t@tle 1\else\ifp@geone 1\else 0\fi\fi =1
       \the\titlehead \global\rhr@lefalse
@@ -189,7 +189,7 @@
         \fi
       \fi
     \fi
-  \fi
+%  \fi
  \fi}}
 
 % default headers are made of three components, placed left, center and right
