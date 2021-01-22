@@ -854,7 +854,6 @@ class GtkViewModel(ViewModel):
             self.builder.get_object(w2).set_active(status)
 
     def onReloadConfigClicked(self, btn_reloadConfig):
-        print("Reloading config:", self.configName())
         self.updateProjectSettings(self.prjid, configName = self.configName(), readConfig=True)
 
     def onLockUnlockSavedConfig(self, btn):
@@ -2416,8 +2415,6 @@ class GtkViewModel(ViewModel):
             self.picListView.set_src(os.path.basename(picfile[0]))
 
     def onPlDelClicked(self, btn):
-        # TEMP for testing Exception handling only! MP to remove later
-        raise Exception("Sorry, but you can't delete Pictures in this version!") 
         self.picListView.del_row()
 
     def onAnchorRefChanged(self, t_plAnchor, foo): # called on "focus-out-event"

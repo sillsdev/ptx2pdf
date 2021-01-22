@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.2 
+<!-- Generated with glade 3.22.1 
 
 The MIT License (MIT)
 
@@ -3584,7 +3584,11 @@ Shortcut key: &lt;Ctrl-S&gt;</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
                                         <property name="tooltip_text" translatable="yes">Delete the currently selected
-Saved Configuration immediately.</property>
+Saved Configuration immediately.
+
+If the Default configuration is selected,
+then this will RESET all the settings to
+their default values.</property>
                                         <property name="halign">start</property>
                                         <property name="margin_top">6</property>
                                         <property name="margin_bottom">6</property>
@@ -3718,7 +3722,7 @@ and then being re-saved with the
 same name.
 
 When Config is LOCKED:
-Click to enter a password to unlock this
+Click to enter the password to unlock this
 configuration and allow changes to be 
 saved or the configuration to be deleted.</property>
                                         <property name="margin_right">6</property>
@@ -3738,11 +3742,7 @@ saved or the configuration to be deleted.</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
                                         <property name="tooltip_text" translatable="yes">Clicking this button will 
-reload the saved Config.
-
-Note that if the callers have not
-been defined in the Paratext project
-then the default set will be loaded.</property>
+reload the saved Config.</property>
                                         <property name="margin_top">6</property>
                                         <property name="margin_bottom">6</property>
                                         <signal name="clicked" handler="onReloadConfigClicked" swapped="no"/>
@@ -11415,7 +11415,7 @@ in this publication, as well as other contexts.</property>
                                 <property name="can_focus">True</property>
                                 <property name="vexpand">True</property>
                                 <property name="orientation">vertical</property>
-                                <property name="position">400</property>
+                                <property name="position">350</property>
                                 <child>
                                   <object class="GtkBox">
                                     <property name="visible">True</property>
@@ -11676,7 +11676,7 @@ overwrite any existing settings.)</property>
                                     </child>
                                   </object>
                                   <packing>
-                                    <property name="resize">False</property>
+                                    <property name="resize">True</property>
                                     <property name="shrink">True</property>
                                   </packing>
                                 </child>
@@ -12053,7 +12053,7 @@ have been enabled.</property>
                                         <property name="halign">start</property>
                                         <property name="margin_right">6</property>
                                         <property name="margin_top">6</property>
-                                        <property name="row_spacing">10</property>
+                                        <property name="row_spacing">6</property>
                                         <property name="column_spacing">6</property>
                                         <child>
                                           <object class="GtkCheckButton" id="c_useModsTex">
@@ -12178,7 +12178,7 @@ which are all specified below.</property>
                                         </child>
                                         <child>
                                           <object class="GtkCheckButton" id="c_usePrintDraftChanges">
-                                            <property name="label" translatable="yes">Apply Changes Specified  (PrintDraftChanges.txt)</property>
+                                            <property name="label" translatable="yes">Apply Changes Specified (PrintDraftChanges.txt)</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
@@ -12606,7 +12606,7 @@ to show gridlines for finetuning settings.</property>
                                 <property name="margin_left">6</property>
                                 <property name="margin_top">16</property>
                                 <property name="margin_bottom">3</property>
-                                <property name="row_spacing">16</property>
+                                <property name="row_spacing">9</property>
                                 <property name="column_spacing">6</property>
                                 <child>
                                   <object class="GtkCheckButton" id="c_useprintdraftfolder">
@@ -12776,7 +12776,7 @@ This will delete all previous log and intermediate temporary files for the entir
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="margin_bottom">6</property>
-                                    <property name="row_spacing">6</property>
+                                    <property name="row_spacing">3</property>
                                     <property name="column_spacing">16</property>
                                     <property name="row_homogeneous">True</property>
                                     <child>
@@ -13647,8 +13647,8 @@ Note: If only a single book is currently selected, it will place the Thumb Tab r
                             <property name="halign">center</property>
                             <property name="margin_left">6</property>
                             <property name="margin_right">6</property>
-                            <property name="margin_top">10</property>
-                            <property name="margin_bottom">10</property>
+                            <property name="margin_top">4</property>
+                            <property name="margin_bottom">4</property>
                             <property name="hexpand">True</property>
                             <property name="row_spacing">8</property>
                             <property name="column_spacing">6</property>
@@ -13922,7 +13922,6 @@ options here to create a Diglot or Didoc.</property>
                       <object class="GtkBox">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="margin_top">6</property>
                         <child>
                           <object class="GtkButton" id="btn_diglotSwitch">
                             <property name="label" translatable="yes">Switch to Other
@@ -13956,9 +13955,8 @@ options here to create a Diglot or Didoc.</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
                         <property name="valign">end</property>
-                        <property name="margin_top">3</property>
                         <property name="margin_bottom">6</property>
-                        <property name="label_xalign">0.039999999105930328</property>
+                        <property name="label_xalign">0.019999999552965164</property>
                         <child>
                           <object class="GtkGrid" id="gr_borders">
                             <property name="visible">True</property>
@@ -15684,7 +15682,7 @@ the value is different from what is in the stylesheet.
 Note that you can click on a bold setting name of 
 any parameter to RESET it to the stylesheet value.</property>
                                 <property name="margin_top">6</property>
-                                <property name="margin_bottom">6</property>
+                                <property name="margin_bottom">2</property>
                                 <property name="label" translatable="yes">Why are some parameter names in bold?</property>
                                 <attributes>
                                   <attribute name="foreground" value="#5c5c35356666"/>
@@ -15694,6 +15692,32 @@ any parameter to RESET it to the stylesheet value.</property>
                                 <property name="expand">False</property>
                                 <property name="fill">True</property>
                                 <property name="position">5</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="tooltip_text" translatable="yes">It is recommended that you make changes in this Style editor which overrides all the stylesheets below. The settings modified here are stored in each config's ptxprint.sty file.
+
+[Optional: ptxprint-mods.sty can be edited using the Advanced tab, and contains style modifications specific to a publication/configuration.]
+
+[Optional: custom.sty contains style modifications that are project-wide and also affect display of text within Paratext itseld (can also be edited using the shortcut on the Advanced tab)]
+
+ptx2pdf.sty contains PTXprint-specific modifications to make things work better (not to be edited)
+
+usfm_sb.sty is the underlying Paratext stylesheet (which should never be edited)</property>
+                                <property name="margin_top">2</property>
+                                <property name="margin_bottom">6</property>
+                                <property name="label" translatable="yes">How are the various Stylesheets applied?</property>
+                                <attributes>
+                                  <attribute name="foreground" value="#5c5c35356666"/>
+                                </attributes>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">6</property>
                               </packing>
                             </child>
                           </object>
