@@ -792,16 +792,16 @@ class FontRef:
         return self.feats.get(name, None)
 
     def _getTeXComponents(self):
+        f = self.getTtfont()
+        name = "[{}]".format(f.filename)
         if self.style is not None and len(self.style):
             s = _fontstylemap.get(self.style, None)
-            name = self.name + (" "+self.style if s is None else "")
+            name += (" "+self.style if s is None else "")
         else:
-            name = self.name
             s = None
         if not s and not len(self.feats) and not self.isGraphite:
             return (name, [], [])
 
-        f = self.getTtfont()
         sfeats = [] if s is None else [s]
         if self.isGraphite:
             sfeats.append("/GR")

@@ -258,7 +258,7 @@
      \x@\write\x@\p@rlocs\x@{\x@\noexpand\x@\@parlines\x@{\the\prevgraf}}%
      \ifnum\prevgraf=1 \nobreak \else 
        \dr@ppednumberfalse 
-       \ifnum\prevgraf>\dropped@ther@lines \nobreak
+       \ifnum\prevgraf<\dropped@ther@lines \nobreak
        \fi
      \fi
      \ifnum\dropped@ther@lines>0
@@ -658,7 +658,7 @@
    % \divide\thispar@lines by \baselineskip
     \def\D@IT{%
       %\tmp@lines=\thing@after
-      \ifnum\thing@after>500\MSG{*** Rubbish data got into parlocs file.  \this@thing\space\thing@ref\space ignored}
+      \ifnum\thing@after>500\MSG{*** Rubbish data got into parlocs file.  \this@thing\space\thing@ref\space ignored}%
       \else
         \ifnum\thing@after>\thispar@lines
 	  \MSG{*** \this@thing\space \thing@ref Is supposed to be delayed by \thing@after lines, but paragraph is \the\thispar@lines long}%
