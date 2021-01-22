@@ -164,7 +164,7 @@ _object_classes = {
     "viewernb":    ("nbk_Viewer", "nbk_PicList"),
     "thumbtabs":   ("l_thumbVerticalL", "l_thumbVerticalR", "l_thumbHorizontalL", "l_thumbHorizontalR"),
     "stylinks":    ("lb_style_s", "lb_style_r", "lb_style_v", "lb_style_rb", "lb_style_gloss|rb", "lb_style_toc3"), 
-    "stybutton":   ("btn_resetCopyright", "btn_resetColophon", "btn_resetFNcallers", "btn_resetXRcallers", 
+    "stybutton":   ("btn_reloadConfig", "btn_resetCopyright", "btn_resetColophon", "btn_resetFNcallers", "btn_resetXRcallers", 
                     "btn_styAdd", "btn_styEdit", "btn_styDel", "btn_styReset", "btn_refreshFonts", "btn_resetStyFilter")
 }
 
@@ -695,7 +695,10 @@ class GtkViewModel(ViewModel):
         cfg = self.get("t_savedConfig")
         delCfgPath = self.configPath(cfgname=cfg)
         if cfg == 'Default':
-            self.doError(_("Can't delete 'Default' configuration!"), secondary=_("Folder: ") + delCfgPath)
+            # self.doError(_("Can't delete 'Default' configuration!"), secondary=_("Folder: ") + delCfgPath)
+            self.resetToInitValues()
+            # Note that we may give them an option (later) to delete the entire "Default" including piclists etc.
+            # Right now it (only) re-initializes the UI settings.
             return
         else:
             if not os.path.exists(os.path.join(delCfgPath, "ptxprint.cfg")):
@@ -850,6 +853,10 @@ class GtkViewModel(ViewModel):
             w2 = w1[:4]+s
             self.builder.get_object(w2).set_active(status)
 
+    def onReloadConfigClicked(self, btn_reloadConfig):
+        print("Reloading config:", self.configName())
+        self.updateProjectSettings(self.prjid, configName = self.configName(), readConfig=True)
+
     def onLockUnlockSavedConfig(self, btn):
         lockBtn = self.builder.get_object("btn_lockunlock")
         dialog = self.builder.get_object("dlg_password")
@@ -880,10 +887,10 @@ class GtkViewModel(ViewModel):
         lockBtn = self.builder.get_object("btn_lockunlock")
         if self.get("t_invisiblePassword") == "":
             status = True
-            lockBtn.set_label(_("Lock Config"))
+            lockBtn.set_label(_("Lock"))
         else:
             status = False
-            lockBtn.set_label(_("Unlock Config"))
+            lockBtn.set_label(_("Unlock"))
         for c in ["btn_saveConfig", "btn_deleteConfig", "t_configNotes", "c_hideAdvancedSettings", 
                   "btn_Generate", "btn_plAdd", "btn_plDel", "btn_plAdd1", "btn_plDel1", ]:
             self.builder.get_object(c).set_sensitive(status)
@@ -1620,15 +1627,15 @@ class GtkViewModel(ViewModel):
             chap.set_value(initChap if initChap in range(minimum, maximum) else (minimum if fromTo == "from" else maximum))
 
     def onBookChange(self, cb_book):
-        self.bk = self.get("ecb_book")
-        if self.bk is not None and self.bk != "":
-            self.chs = int(chaps.get(str(self.bk), 0))
+        bk = self.get("ecb_book")
+        if bk is not None and bk != "":
+            chs = int(chaps.get(str(bk), 999))
             if self.loadingConfig:
-                self._setChapRange("from", 1, self.chs, int(float(self.get("s_chapfrom"))))
-                self._setChapRange("to", 1, self.chs, int(float(self.get("s_chapto"))))
+                self._setChapRange("from", 1, chs, int(float(self.get("s_chapfrom"))))
+                self._setChapRange("to", 1, chs, int(float(self.get("s_chapto"))))
             else:
-                self._setChapRange("from", 1, self.chs, 1)
-                self._setChapRange("to", 1, self.chs, self.chs)
+                self._setChapRange("from", 1, chs, 1)
+                self._setChapRange("to", 1, chs, chs)
             self.updateExamineBook()
         self.updateDialogTitle()
         self.updatePicList()
@@ -1636,12 +1643,11 @@ class GtkViewModel(ViewModel):
     def onChapFrmChg(self, s_chapfrom):
         if self.loadingConfig:
             return
-        self.bk = self.get("ecb_book")
-        if self.bk != "":
-            self.chs = int(chaps.get(str(self.bk)))
-            self.strt = int(float(self.get("s_chapfrom")))
-            self.end = int(float(self.get("s_chapto")))
-            self._setChapRange("to", self.strt, self.chs, 0)
+        bk = self.get("ecb_book")
+        if bk != "":
+            chs = int(chaps.get(str(bk), 999))
+            strt = int(float(self.get("s_chapfrom")))
+            self._setChapRange("to", strt, chs, 0)
 
     def configName(self):
         cfg = self.pendingConfig or self.get("ecb_savedConfig") or ""
@@ -1673,7 +1679,7 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("btn_saveConfig").set_sensitive(True)
         self.builder.get_object("btn_deleteConfig").set_sensitive(False)
         lockBtn = self.builder.get_object("btn_lockunlock")
-        lockBtn.set_label("Lock Config")
+        lockBtn.set_label("Lock")
         lockBtn.set_sensitive(False)
         self.updateProjectSettings(None, saveCurrConfig=True, configName="Default")
         self.updateSavedConfigList()
@@ -1699,11 +1705,11 @@ class GtkViewModel(ViewModel):
             self.builder.get_object("lb_settings_dir").set_label(self.configPath(cfgname=self.configName()) or "")
             self.builder.get_object("lb_working_dir").set_label(self.working_dir or "")
             
-    def updateProjectSettings(self, prjid, saveCurrConfig=False, configName=None):
+    def updateProjectSettings(self, prjid, saveCurrConfig=False, configName=None, readConfig=False):
         self.picListView.clear()
         if self.picinfos is not None:
             self.picinfos.clear()
-        if not super(GtkViewModel, self).updateProjectSettings(prjid, saveCurrConfig=saveCurrConfig, configName=configName):
+        if not super(GtkViewModel, self).updateProjectSettings(prjid, saveCurrConfig=saveCurrConfig, configName=configName, readConfig=readConfig):
             for fb in ['bl_fontR', 'bl_fontB', 'bl_fontI', 'bl_fontBI', 'bl_fontExtraR']:
                 fblabel = self.builder.get_object(fb).set_label("Select font...")
         if self.prjid:
@@ -1742,7 +1748,7 @@ class GtkViewModel(ViewModel):
             return
         self.builder.get_object("c_hideAdvancedSettings").set_sensitive(True)
         lockBtn = self.builder.get_object("btn_lockunlock")
-        lockBtn.set_label("Lock Config")
+        lockBtn.set_label("Lock")
         self.builder.get_object("t_invisiblePassword").set_text("")
         self.builder.get_object("btn_saveConfig").set_sensitive(True)
         self.builder.get_object("btn_deleteConfig").set_sensitive(True)

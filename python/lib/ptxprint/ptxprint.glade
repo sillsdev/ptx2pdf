@@ -3593,7 +3593,7 @@ Saved Configuration immediately.</property>
                                         <signal name="clicked" handler="onDeleteConfig" swapped="no"/>
                                       </object>
                                       <packing>
-                                        <property name="left_attach">3</property>
+                                        <property name="left_attach">4</property>
                                         <property name="top_attach">0</property>
                                       </packing>
                                     </child>
@@ -3634,7 +3634,8 @@ Longer descriptions may be typed into
 the Notes field below.</property>
                                             <property name="halign">start</property>
                                             <property name="max_length">32</property>
-                                            <property name="width_chars">35</property>
+                                            <property name="width_chars">30</property>
+                                            <property name="progress_pulse_step">0</property>
                                           </object>
                                         </child>
                                       </object>
@@ -3670,7 +3671,7 @@ saved/shared configuration named above.</property>
                                       <packing>
                                         <property name="left_attach">1</property>
                                         <property name="top_attach">1</property>
-                                        <property name="width">3</property>
+                                        <property name="width">4</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -3684,6 +3685,8 @@ you to see the length of
 the password that was set.</property>
                                         <property name="halign">center</property>
                                         <property name="margin_right">6</property>
+                                        <property name="margin_top">6</property>
+                                        <property name="margin_bottom">6</property>
                                         <property name="editable">False</property>
                                         <property name="max_length">16</property>
                                         <property name="visibility">False</property>
@@ -3696,13 +3699,13 @@ the password that was set.</property>
                                         <signal name="changed" handler="onPasswordChanged" swapped="no"/>
                                       </object>
                                       <packing>
-                                        <property name="left_attach">4</property>
+                                        <property name="left_attach">5</property>
                                         <property name="top_attach">1</property>
                                       </packing>
                                     </child>
                                     <child>
                                       <object class="GtkButton" id="btn_lockunlock">
-                                        <property name="label" translatable="yes">Lock Config</property>
+                                        <property name="label" translatable="yes">Lock</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
@@ -3724,7 +3727,28 @@ saved or the configuration to be deleted.</property>
                                         <signal name="clicked" handler="onLockUnlockSavedConfig" swapped="no"/>
                                       </object>
                                       <packing>
-                                        <property name="left_attach">4</property>
+                                        <property name="left_attach">5</property>
+                                        <property name="top_attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkButton" id="btn_reloadConfig">
+                                        <property name="label">↺</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">True</property>
+                                        <property name="tooltip_text" translatable="yes">Clicking this button will 
+reload the saved Config.
+
+Note that if the callers have not
+been defined in the Paratext project
+then the default set will be loaded.</property>
+                                        <property name="margin_top">6</property>
+                                        <property name="margin_bottom">6</property>
+                                        <signal name="clicked" handler="onReloadConfigClicked" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">3</property>
                                         <property name="top_attach">0</property>
                                       </packing>
                                     </child>

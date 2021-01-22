@@ -319,10 +319,9 @@ class ViewModel:
                     else:
                         copyfile(srcp, destp)
 
-    def updateProjectSettings(self, prjid, saveCurrConfig=False, configName=None, forceConfig=False):
+    def updateProjectSettings(self, prjid, saveCurrConfig=False, configName=None, forceConfig=False, readConfig=False):
         currprj = self.prjid
         currcfg = self.configId
-        readConfig = False
         if currprj is None or currprj != prjid:
             if currprj is not None and saveCurrConfig:
                 self.writeConfig()
