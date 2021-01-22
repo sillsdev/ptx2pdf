@@ -2115,6 +2115,8 @@ class GtkViewModel(ViewModel):
         self.sensiVisible("c_borders")
         self.updateHdrFtrOptions(btn.get_active())
         self.colourTabs()
+        if self.loadingConfig:
+            return
         if self.get("c_diglot"):
             self.diglotView = self.createDiglotView()
         else:
@@ -2162,7 +2164,12 @@ class GtkViewModel(ViewModel):
         self.updateDiglotConfigList()
 
     def ondiglotSecConfigChanged(self, btn):
-        self.diglotView = self.createDiglotView()
+        if self.loadingConfig:
+            return
+        if self.get("c_diglot"):
+            self.diglotView = self.createDiglotView()
+        else:
+            self.diglotView = None
         self.loadPics()
         self.updatePicList()
         

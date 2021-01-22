@@ -1137,8 +1137,8 @@
   \ifColumnGutterRule
     \setbox4=\vbox to #2{
       \vskip\ColumnGutterRuleSkip
-      \hbox to 1pt{\vrule height \the\dimen4}%\dp5=#3 \box5
-      \vfil}
+      \hbox to 1pt{\hfil\vrule height \the\dimen4\hfil}%\dp5=#3 \box5
+      \vfil}%
     \dp4=#3 \box4
   \fi
   \hfil
@@ -1251,8 +1251,8 @@
     \global\vsize=\textheight
     %\tempfalse
     \trace{o}{SingleColumn: \the\ht\partial > \PageFullFactor\space\the\textheight}%
-    \ifdim\ht\partial>\PageFullFactor\textheight
-      \twocolp@geout \fi%Set up pagecontents and call \plainoutput
+    \ifdim\ht\partial>\PageFullFactor\textheight\iflastptxfile\else
+      \twocolp@geout \fi\fi%Set up pagecontents and call \plainoutput
     \global\c@rrentcols=1
     \trace{o}{resetting resetvsize for singlecolumn}\def\resetvsize{\trace{o}{resetvsize}\global\vsize=\textheight} 
     \global\output={\onecol}

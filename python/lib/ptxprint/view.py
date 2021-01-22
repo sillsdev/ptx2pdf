@@ -3,7 +3,7 @@ import configparser, os, re, regex, random, collections
 from ptxprint.texmodel import ModelMap, TexModel
 from ptxprint.ptsettings import ParatextSettings, allbooks, books, bookcodes, chaps
 from ptxprint.font import TTFont, cachepath, cacheremovepath, FontRef
-from ptxprint.utils import _, refKey, universalopen
+from ptxprint.utils import _, refKey, universalopen, print_traceback
 from ptxprint.usfmutils import Sheets, UsfmCollection
 from ptxprint.piclist import PicInfo
 from ptxprint.styleditor import StyleEditor
