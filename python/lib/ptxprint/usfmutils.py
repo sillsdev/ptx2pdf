@@ -441,6 +441,8 @@ class Module:
             self.doc = read_module(inf, self.sheets)
 
     def parse(self):
+        if self.doc.doc is None:
+            return []
         self.removes = set()
         final = sum(map(self.parse_element, self.doc.doc), [])
         return final

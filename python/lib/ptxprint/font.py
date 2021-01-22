@@ -793,12 +793,14 @@ class FontRef:
 
     def _getTeXComponents(self):
         f = self.getTtfont()
-        name = "[{}]".format(f.filename.as_posix()) if f.filename is not None else self.name
-        if self.style is not None and len(self.style):
+        s = None
+        if f.filename is not None:
+            name = "[{}]".format(f.filename.as_posix())
+        elif self.style is not None and len(self.style):
             s = _fontstylemap.get(self.style, None)
-            name += (" "+self.style if s is None else "")
+            name = self.name + (" "+self.style if s is None else "")
         else:
-            s = None
+            name = self.name
         if not s and not len(self.feats) and not self.isGraphite:
             return (name, [], [])
 
