@@ -79,6 +79,20 @@ THE SOFTWARE.
     <property name="step_increment">0.049999999776482583</property>
     <property name="page_increment">0.10000000000000001</property>
   </object>
+  <object class="GtkAdjustment" id="a_chapfrom">
+    <property name="lower">1</property>
+    <property name="upper">999</property>
+    <property name="value">1</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="a_chapto">
+    <property name="lower">1</property>
+    <property name="upper">999</property>
+    <property name="value">1</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
   <object class="GtkAdjustment" id="a_colgutterwidth">
     <property name="lower">1</property>
     <property name="upper">40</property>
@@ -1519,46 +1533,6 @@ saved configuration.</property>
     <data>
       <row>
         <col id="0" translatable="yes">NONE</col>
-      </row>
-    </data>
-  </object>
-  <object class="GtkListStore" id="ls_chapfrom">
-    <columns>
-      <!-- column-name num -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0">1</col>
-      </row>
-      <row>
-        <col id="0">2</col>
-      </row>
-      <row>
-        <col id="0">3</col>
-      </row>
-      <row>
-        <col id="0">4</col>
-      </row>
-    </data>
-  </object>
-  <object class="GtkListStore" id="ls_chapto">
-    <columns>
-      <!-- column-name num -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0">5</col>
-      </row>
-      <row>
-        <col id="0">6</col>
-      </row>
-      <row>
-        <col id="0">7</col>
-      </row>
-      <row>
-        <col id="0">8</col>
       </row>
     </data>
   </object>
@@ -3265,31 +3239,13 @@ technology, then enable this.</property>
                                 <property name="sensitive">False</property>
                                 <property name="can_focus">False</property>
                                 <property name="halign">end</property>
+                                <property name="margin_left">6</property>
                                 <property name="label" translatable="yes">From
 Chapter:</property>
                                 <property name="track_visited_links">False</property>
                               </object>
                               <packing>
-                                <property name="left_attach">3</property>
-                                <property name="top_attach">1</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkComboBox" id="fcb_chapfrom">
-                                <property name="width_request">65</property>
-                                <property name="visible">True</property>
-                                <property name="sensitive">False</property>
-                                <property name="can_focus">False</property>
-                                <property name="halign">start</property>
-                                <property name="model">ls_chapfrom</property>
-                                <property name="wrap_width">5</property>
-                                <property name="active">0</property>
-                                <property name="id_column">0</property>
-                                <property name="active_id">0</property>
-                                <signal name="changed" handler="onChapFrmChg" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="left_attach">4</property>
+                                <property name="left_attach">2</property>
                                 <property name="top_attach">1</property>
                               </packing>
                             </child>
@@ -3299,31 +3255,13 @@ Chapter:</property>
                                 <property name="sensitive">False</property>
                                 <property name="can_focus">False</property>
                                 <property name="halign">end</property>
-                                <property name="margin_left">2</property>
+                                <property name="margin_left">6</property>
                                 <property name="label" translatable="yes">To
 Chapter:</property>
                                 <property name="track_visited_links">False</property>
                               </object>
                               <packing>
-                                <property name="left_attach">5</property>
-                                <property name="top_attach">1</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkComboBox" id="fcb_chapto">
-                                <property name="width_request">65</property>
-                                <property name="visible">True</property>
-                                <property name="sensitive">False</property>
-                                <property name="can_focus">False</property>
-                                <property name="halign">start</property>
-                                <property name="model">ls_chapto</property>
-                                <property name="wrap_width">5</property>
-                                <property name="active">0</property>
-                                <property name="id_column">0</property>
-                                <property name="active_id">0</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">6</property>
+                                <property name="left_attach">4</property>
                                 <property name="top_attach">1</property>
                               </packing>
                             </child>
@@ -3352,6 +3290,7 @@ to be printed from the project.</property>
 printed, the book codes will be listed here.
 This list is editable, so books can be re-ordered
 if need be.</property>
+                                <property name="margin_left">6</property>
                                 <property name="caps_lock_warning">False</property>
                                 <signal name="focus-out-event" handler="onBookListChanged" swapped="no"/>
                               </object>
@@ -3409,6 +3348,7 @@ if need be.</property>
                                 <property name="draw_indicator">True</property>
                                 <property name="group">r_book_multiple</property>
                                 <signal name="clicked" handler="onRadioChanged" swapped="no"/>
+                                <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="left_attach">0</property>
@@ -3500,6 +3440,42 @@ to create the neccessary file to print from it.</property>
                               <packing>
                                 <property name="left_attach">7</property>
                                 <property name="top_attach">3</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkSpinButton" id="s_chapfrom">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="max_length">3</property>
+                                <property name="width_chars">2</property>
+                                <property name="progress_pulse_step">0</property>
+                                <property name="adjustment">a_chapfrom</property>
+                                <property name="climb_rate">1</property>
+                                <property name="numeric">True</property>
+                                <property name="value">1</property>
+                                <signal name="value-changed" handler="onChapFrmChg" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="left_attach">3</property>
+                                <property name="top_attach">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkSpinButton" id="s_chapto">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="max_length">3</property>
+                                <property name="width_chars">2</property>
+                                <property name="text" translatable="yes">1</property>
+                                <property name="progress_pulse_step">0</property>
+                                <property name="adjustment">a_chapto</property>
+                                <property name="climb_rate">1</property>
+                                <property name="numeric">True</property>
+                                <property name="value">1</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">5</property>
+                                <property name="top_attach">1</property>
                               </packing>
                             </child>
                             <child>
@@ -12933,8 +12909,9 @@ For example if the interlinear has
 been glossed into English, then 
 the code would be "en".</property>
                                             <property name="valign">center</property>
-                                            <property name="margin_left">6</property>
-                                            <property name="width_chars">10</property>
+                                            <property name="margin_left">1</property>
+                                            <property name="margin_right">3</property>
+                                            <property name="width_chars">8</property>
                                           </object>
                                           <packing>
                                             <property name="expand">False</property>
@@ -14266,7 +14243,7 @@ to make it fit. </property>
                               <object class="GtkLabel" id="l_inclSectionScale">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="tooltip_text" translatable="yes">Scale verse decorator image. 1.0 is unity.</property>
+                                <property name="tooltip_text" translatable="yes">Scale section header image. 1.0 is unity.</property>
                                 <property name="halign">end</property>
                                 <property name="label" translatable="yes">Scale:</property>
                               </object>

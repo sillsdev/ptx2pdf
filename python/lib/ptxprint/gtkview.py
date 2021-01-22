@@ -95,7 +95,7 @@ _allbkmap = {k: i for i, k in enumerate(_allbooks)}
 # Order is important, as the 1st object can be told to "grab_focus"
 _sensitivities = {
     "r_book": {
-        "r_book_single":       ["ecb_book", "l_chapfrom", "fcb_chapfrom", "l_chapto", "fcb_chapto"],
+        "r_book_single":       ["ecb_book", "l_chapfrom", "s_chapfrom", "l_chapto", "s_chapto"],
         "r_book_multiple":     ["btn_chooseBooks", "t_booklist", "c_combine", "c_autoToC"],
         "r_book_module":       ["btn_chooseBibleModule", "lb_bibleModule"]},
         # "r_book_dbl":          ["btn_chooseDBLbundle", "l_dblBundle"]},
@@ -284,10 +284,9 @@ class GtkViewModel(ViewModel):
         for n in _notebooks:
             nbk = self.builder.get_object("nbk_"+n)
             self.notebooks[n] = [Gtk.Buildable.get_name(nbk.get_nth_page(i)) for i in range(nbk.get_n_pages())]
-        for fcb in ("digits", "script", "chapfrom", "chapto", "diglotPicListSources",
+        for fcb in ("digits", "script", "diglotPicListSources",
                     "textDirection", "glossaryMarkupStyle", "fontFaces", "featsLangs",
-                    # "styTextType", "styStyleType", 
-                    "picaccept", "pubusage", "pubaccept", "chklstFilter"): #, "rotateTabs"):
+                    "picaccept", "pubusage", "pubaccept", "chklstFilter"):
             self.addCR("fcb_"+fcb, 0)
         self.cb_savedConfig = self.builder.get_object("ecb_savedConfig")
         self.ecb_diglotSecConfig = self.builder.get_object("ecb_diglotSecConfig")
@@ -1609,39 +1608,32 @@ class GtkViewModel(ViewModel):
             toc = self.builder.get_object("c_usetoc1")
             toc.set_active(True)
             
-    def _setchap(self, ls, start, end):
-        self.chapNoUpdate = True
-        ls.clear()
-        for c in range(start, end+1):
-            ls.append([str(c)])
-        self.chapNoUpdate = False
+    def _setChapRange(self, fromTo, minimum, maximum, value):
+        initChap = int(float(self.get('s_chap'+fromTo)))
+        self.Chap = self.builder.get_object('s_chap'+fromTo)
+        self.Chap.set_range(minimum, maximum)
+        if value:
+            self.Chap.set_value(value if value in range(minimum, maximum) else (minimum if fromTo == "from" else maximum))
+        else:
+            self.Chap.set_value(initChap if initChap in range(minimum, maximum) else (minimum if fromTo == "from" else maximum))
 
     def onBookChange(self, cb_book):
         self.bk = self.get("ecb_book")
         if self.bk is not None and self.bk != "":
             self.chs = int(chaps.get(str(self.bk), 0))
-            self.chapfrom = self.builder.get_object("ls_chapfrom")
-            self._setchap(self.chapfrom, 1, self.chs)
-            self.fcb_chapfrom.set_active_id('1')
-        
-            self.chapto = self.builder.get_object("ls_chapto")
-            self._setchap(self.chapto, 1, self.chs)
-            self.fcb_chapto.set_active_id(str(self.chs))
-            # self.builder.get_object("ecb_examineBook").set_active_id(self.bk)
+            self._setChapRange("from", 1, self.chs, 1)
+            self._setChapRange("to", 1, self.chs, self.chs)
             self.updateExamineBook()
         self.updateDialogTitle()
         self.updatePicList()
 
-    def onChapFrmChg(self, cb_chapfrom):
-        if self.chapNoUpdate == True:
-            return
+    def onChapFrmChg(self, s_chapfrom):
         self.bk = self.get("ecb_book")
         if self.bk != "":
             self.chs = int(chaps.get(str(self.bk)))
-            self.strt = self.get("fcb_chapfrom")
-            self.chapto = self.builder.get_object("ls_chapto")
-            self._setchap(self.chapto, (int(self.strt) if self.strt is not None else 0), self.chs)
-            self.fcb_chapto.set_active_id(str(self.chs))
+            self.strt = int(float(self.get("s_chapfrom")))
+            self.end = int(float(self.get("s_chapto")))
+            self._setChapRange("to", self.strt, self.end, 0)
 
     def configName(self):
         cfg = self.pendingConfig or self.get("ecb_savedConfig") or ""

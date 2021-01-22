@@ -155,8 +155,8 @@ ModelMap = {
     "document/usetoc1":         ("c_usetoc1", None),
     "document/usetoc2":         ("c_usetoc2", None),
     "document/usetoc3":         ("c_usetoc3", None),
-    "document/chapfrom":        ("fcb_chapfrom", None),
-    "document/chapto":          ("fcb_chapto", None),
+    "document/chapfrom":        ("s_chapfrom", None),
+    "document/chapto":          ("s_chapto", None),
     "document/colgutterfactor": ("s_colgutterfactor", lambda w,v: round(float(v)*3) or "12"), # Hack to be fixed
     "document/ifrtl":           ("fcb_textDirection", lambda w,v:"true" if v == "Right-to-Left" else "false"),
     "document/toptobottom":     ("fcb_textDirection", lambda w,v: "" if v == "Top-to-Bottom (LTR)" else "%"),
