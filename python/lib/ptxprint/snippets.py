@@ -100,7 +100,7 @@ class FancyBorders(Snippet):
 {%E%fancy/sectionheader}    \global\setbox\sectionheadbox%D%=\vbox to 0pt
 {%E%fancy/sectionheader}        {{\kern-\ht\sectionheadbox%D% \kern {%E%fancy/sectionheadershift}pt \box\sectionheadbox \vss}}
 {%E%fancy/sectionheader}  \fi
-{%E%fancy/sectionheader}  \vadjust{{\copy\sectionheadbox}}
+{%E%fancy/sectionheader}  \vadjust{{\copy\sectionheadbox}}%
 {%E%fancy/sectionheader}}}
 {%E%fancy/sectionheader}\sethook{{start}}{{s%D%}}{{\placesectionheadbox}}
 {%E%fancy/sectionheader}\sethook{{start}}{{s1%D%}}{{\placesectionheadbox}}
