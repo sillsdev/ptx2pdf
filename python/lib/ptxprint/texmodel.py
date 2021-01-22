@@ -155,8 +155,8 @@ ModelMap = {
     "document/usetoc1":         ("c_usetoc1", None),
     "document/usetoc2":         ("c_usetoc2", None),
     "document/usetoc3":         ("c_usetoc3", None),
-    "document/chapfrom":        ("s_chapfrom", None),
-    "document/chapto":          ("s_chapto", None),
+    "document/chapfrom":        ("s_chapfrom", lambda w,v: int(float(v)) or "1"),
+    "document/chapto":          ("s_chapto", lambda w,v: int(float(v)) or "999"),
     "document/colgutterfactor": ("s_colgutterfactor", lambda w,v: round(float(v)*3) or "12"), # Hack to be fixed
     "document/ifrtl":           ("fcb_textDirection", lambda w,v:"true" if v == "Right-to-Left" else "false"),
     "document/toptobottom":     ("fcb_textDirection", lambda w,v: "" if v == "Top-to-Bottom (LTR)" else "%"),
@@ -815,8 +815,8 @@ class TexModel:
         self.localChanges = []
         if bk == "GLO" and self.dict['document/filterglossary']:
             self.filterGlossary(printer)
-        first = int(self.dict["document/chapfrom"])
-        last = int(self.dict["document/chapto"])
+        first = int(float(self.dict["document/chapfrom"]))
+        last = int(float(self.dict["document/chapto"]))
         
         # Fix things that other parsers accept and we don't
         self.localChanges.append((None, regex.compile(r"(\\[cv] [^ \\\n]+)(\\)", flags=regex.S), r"\1 \2"))

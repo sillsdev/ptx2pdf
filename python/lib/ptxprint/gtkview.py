@@ -464,6 +464,8 @@ class GtkViewModel(ViewModel):
         for k, v in self.initValues.items():
             if v is not None:
                 self.set(k, v)
+        self._setChapRange("from", 1, 999, 1)
+        self._setChapRange("to", 1, 999, 1)
 
     def onHideAdvancedSettingsClicked(self, c_hideAdvancedSettings, foo):
         val = self.get("c_hideAdvancedSettings")
@@ -1610,30 +1612,36 @@ class GtkViewModel(ViewModel):
             
     def _setChapRange(self, fromTo, minimum, maximum, value):
         initChap = int(float(self.get('s_chap'+fromTo)))
-        self.Chap = self.builder.get_object('s_chap'+fromTo)
-        self.Chap.set_range(minimum, maximum)
+        chap = self.builder.get_object('s_chap'+fromTo)
+        chap.set_range(minimum, maximum)
         if value:
-            self.Chap.set_value(value if value in range(minimum, maximum) else (minimum if fromTo == "from" else maximum))
+            chap.set_value(value if value in range(minimum, maximum) else (minimum if fromTo == "from" else maximum))
         else:
-            self.Chap.set_value(initChap if initChap in range(minimum, maximum) else (minimum if fromTo == "from" else maximum))
+            chap.set_value(initChap if initChap in range(minimum, maximum) else (minimum if fromTo == "from" else maximum))
 
     def onBookChange(self, cb_book):
         self.bk = self.get("ecb_book")
         if self.bk is not None and self.bk != "":
             self.chs = int(chaps.get(str(self.bk), 0))
-            self._setChapRange("from", 1, self.chs, 1)
-            self._setChapRange("to", 1, self.chs, self.chs)
+            if self.loadingConfig:
+                self._setChapRange("from", 1, self.chs, int(float(self.get("s_chapfrom"))))
+                self._setChapRange("to", 1, self.chs, int(float(self.get("s_chapto"))))
+            else:
+                self._setChapRange("from", 1, self.chs, 1)
+                self._setChapRange("to", 1, self.chs, self.chs)
             self.updateExamineBook()
         self.updateDialogTitle()
         self.updatePicList()
 
     def onChapFrmChg(self, s_chapfrom):
+        if self.loadingConfig:
+            return
         self.bk = self.get("ecb_book")
         if self.bk != "":
             self.chs = int(chaps.get(str(self.bk)))
             self.strt = int(float(self.get("s_chapfrom")))
             self.end = int(float(self.get("s_chapto")))
-            self._setChapRange("to", self.strt, self.end, 0)
+            self._setChapRange("to", self.strt, self.chs, 0)
 
     def configName(self):
         cfg = self.pendingConfig or self.get("ecb_savedConfig") or ""
