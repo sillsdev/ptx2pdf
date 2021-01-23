@@ -1,5 +1,17 @@
-PTXprint 1.5.6 Release Notes 
-21 January 2021
+PTXprint 1.5.7 Release Notes 
+23 January 2021
+
+Bug Fixes and Improvements in 1.5.7
+
+  * Allow configurations to be reloaded, and Default config to be "Deleted" (or re-initialized)
+  
+  * Updated various Tooltips to reflect current way of working
+  
+  * Gutter rule now perfectly in centre
+  
+  * Chapter selection no longer lost on project restart #283 (& use spinners rather than drop-downs)
+  
+  * Note that Colophon display has a known issue - spreads over multiple pages - (to be resolved next week)
 
 Bug Fixes and Improvements in 1.5.6
 
