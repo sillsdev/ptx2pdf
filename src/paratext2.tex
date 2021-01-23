@@ -433,6 +433,7 @@
   \let\\=\reduceavailht \the\n@tecl@sses % reduce it by the space needed for each note class
   \decr{\availht}{\topins}% and by the space needed for spanning pictures
   \decr{\availht}{\bottomins}%And post-footnote inserts
+  \decr{\availht}{\verybottomins}%
   \ifdim\availht<0pt                                                        %(2)
     \MSG{Page overfull with inserts. Perhaps a little more text and less pictures would help}
   \fi
@@ -487,6 +488,7 @@
     \global\advance\vsize by -\baselineskip
     \global\setbox\topins=\box\voidb@x
     \global\setbox\bottomins=\box\voidb@x
+    \global\setbox\verybottomins=\box\voidb@x
     \let\\=\cle@rn@tecl@ss \the\n@tecl@sses
     \global\setbox255=\box\voidb@x
     \global\holdinginserts=1
@@ -559,6 +561,7 @@
     \count255=2000
     \global\count\topins=\count255
     \global\count\bottomins=\count255
+    \global\count\verybottomins=\count255
     \let\\=\s@tn@tec@unt \the\n@tecl@sses % reset \count for each note class
     \global\holdinginserts=1 % don't pull out inserts yet, we are still adjusting page
     %\msg{Starting 2col partial: \the\ht\partial, pagetotal: \the\pagetotal, vsize: \the\vsize}

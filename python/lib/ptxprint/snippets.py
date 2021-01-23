@@ -251,10 +251,10 @@ class ImgCredits(Snippet):
                                 cpystr = re.sub('_', '\u00A0', artstr[art][1])
                             else:
                                 cpystr = re.sub('_', '\u00A0', artstr[art][0])
-                            crdts += ["\\{} Illustration{} {}{}\n".format(mkr, pl, pgstr, cpystr)]
+                            crdts += ["\\{} Illustration{} {}{}".format(mkr, pl, pgstr, cpystr)]
                         else:
                             if len(art) > 2:
-                                crdts += ["\\{} Illustration{} {}{}\n".format(mkr, pl, pgstr, re.sub('© ', '©\u00A0', art))]
+                                crdts += ["\\{} Illustration{} {}{}".format(mkr, pl, pgstr, re.sub('© ', '©\u00A0', art))]
                             else:
                                 crdts += ["\\rem Warning: No copyright statement found for: {} image{} {}".format(art.upper(), pl, pgstr)]
             if len(msngPgs):
@@ -271,12 +271,12 @@ class ImgCredits(Snippet):
                 else:
                     cpystr = re.sub('_', '\u00A0', artstr.get(artistWithMost, (artistWithMost, ""))[0])
                 if len(crdts) == 1:
-                    crdts += ["\\{} All illustrations {}{}\n".format(mkr, exceptpgs, cpystr)]
+                    crdts += ["\\{} All illustrations {}{}".format(mkr, exceptpgs, cpystr)]
                 elif len(crdts) > 1:
-                    crdts += ["\\{} All other illustrations {}{}\n".format(mkr, exceptpgs, cpystr)]
+                    crdts += ["\\{} All other illustrations {}{}".format(mkr, exceptpgs, cpystr)]
             
         crdts += ["}"]
-        return "\n".join(crdts)+"\n"
+        return "\n".join(crdts)
 
 def parsecol(s):
     vals = s[s.find("(")+1:-1].split(",")
