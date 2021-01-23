@@ -134,6 +134,9 @@
 {notes/fnomitcaller}\OmitCallerInNote{{f}}
 {notes/fnparagraphednotes}\ParagraphedNotes{{f}}
 %\NumericCallers{{f}}
+{notes/includefootnotes}\expandafter\def\csname f:properties\endcsname{{nonpublishable}}
+%%%{notes/includefootnotes}\expandafter\def\csname f{L_}:properties\endcsname{{nonpublishable}}
+%%%{ifdiglotincludefootnotes_}\expandafter\def\csname f{R_}:properties\endcsname{{nonpublishable}}
 
 % no comments inside this catcode area. Who knows what others people will want.
 \catcode`\#=12 \catcode`\%=12 \catcode`\&=12 \catcode`\^=12
@@ -146,6 +149,9 @@
 {notes/xromitcaller}\OmitCallerInNote{{x}}
 {notes/xrparagraphednotes}\ParagraphedNotes{{x}}
 %\NumericCallers{{x}}
+{notes/includexrefs}\expandafter\def\csname x:properties\endcsname{{nonpublishable}}
+%%%{notes/includexrefs}\expandafter\def\csname x{L_}:properties\endcsname{{nonpublishable}}
+%%%{ifdiglotincludexrefs_}\expandafter\def\csname x{R_}:properties\endcsname{{nonpublishable}}
 
 \AboveNoteSpace={notes/abovenotespace}pt
 \InterNoteSpace={notes/internotespace}pt

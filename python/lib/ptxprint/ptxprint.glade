@@ -6229,12 +6229,11 @@ appear at the beginning of each book.</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
                                         <property name="tooltip_text" translatable="yes">If the last page of a book uses less than
-half the page (50%), then the next book
-will start on the same page.
+two-thirds of the page (66%), then the 
+next book will start on the same page.
 
-Note that if you want the next book
-to start AFTER 50% of the page, then
-add a line to your ptxprint-mods.tex
+Note that you can modify this percentage
+by adding a line to your ptxprint-mods.tex
 file as follows (for 75%):
 \def\PageFullFactor{0.75}</property>
                                         <property name="halign">start</property>
@@ -6410,9 +6409,8 @@ typesetting issues. Use with care!</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
                                     <property name="tooltip_text" translatable="yes">If this option is unchecked, it will make the 1st
-\p(aragraph) after a Chapter number or Section
-Heading appear as an \m(argin) paragraph
-with no indentation.</property>
+\p(aragraph) after a Section Heading appear as
+a \m(argin) paragraph with no indentation.</property>
                                     <property name="halign">start</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
@@ -8100,7 +8098,7 @@ secondary text as the Outer text.</property>
                                         <property name="tooltip_text" translatable="yes">The header line on each page can contain
 the page number, and/or reference(s) in
 various forms. Select a preset option, or
-type in your own TeX key word with additional
+type in your own TeX keyword with additional
 adornments or text as needed. 
 For example:
 [\pagenumber]   places square brackets around the page number
@@ -8142,7 +8140,7 @@ DRAFT\ \isodate\ \hrsmins   would give "DRAFT YYYY-MM-YY HH:MM"
                                         <property name="tooltip_text" translatable="yes">The header line on each page can contain
 the page number, and/or reference(s) in
 various forms. Select a preset option, or
-type in your own TeX key word with additional
+type in your own TeX keyword with additional
 adornments or text as needed. 
 For example:
 [\pagenumber]   places square brackets around the page number
@@ -8184,7 +8182,7 @@ DRAFT\ \isodate\ \hrsmins   would give "DRAFT YYYY-MM-YY HH:MM"
                                         <property name="tooltip_text" translatable="yes">The header line on each page can contain
 the page number, and/or reference(s) in
 various forms. Select a preset option, or
-type in your own TeX key word with additional
+type in your own TeX keyword with additional
 adornments or text as needed. 
 For example:
 [\pagenumber]   places square brackets around the page number
@@ -8227,7 +8225,10 @@ DRAFT\ \isodate\ \hrsmins   would give "DRAFT YYYY-MM-YY HH:MM"
 you will need to specify whether
 the Primary (Left) text's formatting
 should be used for this part of the
-header, or the Secondary format.</property>
+header, or the Secondary format.
+
+Note: To activate or change this 
+setting, you must first enable Diglot.</property>
                                         <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
                                         <property name="group">c_hdrLeftSec</property>
@@ -8247,7 +8248,10 @@ header, or the Secondary format.</property>
 you will need to specify whether
 the Primary (Left) text's formatting
 should be used for this part of the
-header, or the Secondary format.</property>
+header, or the Secondary format.
+
+Note: To activate or change this 
+setting, you must first enable Diglot.</property>
                                         <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
@@ -8266,7 +8270,10 @@ header, or the Secondary format.</property>
 you will need to specify whether
 the Primary (Left) text's formatting
 should be used for this part of the
-header, or the Secondary format.</property>
+header, or the Secondary format.
+
+Note: To activate or change this 
+setting, you must first enable Diglot.</property>
                                         <property name="margin_left">10</property>
                                         <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
@@ -8287,7 +8294,10 @@ header, or the Secondary format.</property>
 you will need to specify whether
 the Primary (Left) text's formatting
 should be used for this part of the
-header, or the Secondary format.</property>
+header, or the Secondary format.
+
+Note: To activate or change this 
+setting, you must first enable Diglot.</property>
                                         <property name="margin_left">10</property>
                                         <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
@@ -8308,7 +8318,10 @@ header, or the Secondary format.</property>
 you will need to specify whether
 the Primary (Left) text's formatting
 should be used for this part of the
-header, or the Secondary format.</property>
+header, or the Secondary format.
+
+Note: To activate or change this 
+setting, you must first enable Diglot.</property>
                                         <property name="margin_left">10</property>
                                         <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
@@ -8328,7 +8341,10 @@ header, or the Secondary format.</property>
 you will need to specify whether
 the Primary (Left) text's formatting
 should be used for this part of the
-header, or the Secondary format.</property>
+header, or the Secondary format.
+
+Note: To activate or change this 
+setting, you must first enable Diglot.</property>
                                         <property name="margin_left">10</property>
                                         <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
@@ -12060,7 +12076,7 @@ have been enabled.</property>
                                         <property name="column_spacing">6</property>
                                         <child>
                                           <object class="GtkCheckButton" id="c_useModsTex">
-                                            <property name="label" translatable="yes">Apply Customized Settings  (ptxprint-mods.tex)</property>
+                                            <property name="label" translatable="yes">Apply Customized Settings (ptxprint-mods.tex)</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
@@ -12249,7 +12265,7 @@ can be specified in this file.</property>
                                         </child>
                                         <child>
                                           <object class="GtkCheckButton" id="c_useModsSty">
-                                            <property name="label" translatable="yes">Apply Stylesheet Overrides  (ptxprint-mods.sty)</property>
+                                            <property name="label" translatable="yes">Apply Stylesheet Overrides (ptxprint-mods.sty)</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
@@ -12271,7 +12287,7 @@ wish for these to be used by PTXprint.</property>
                                         </child>
                                         <child>
                                           <object class="GtkCheckButton" id="c_useCustomSty">
-                                            <property name="label" translatable="yes">Apply Customized Styles  (custom.sty)</property>
+                                            <property name="label" translatable="yes">Apply Customized Styles (custom.sty)</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>

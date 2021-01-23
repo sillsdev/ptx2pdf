@@ -84,8 +84,12 @@ def newBase(fpath):
 _diglot = {
 "ifusediglotcustomsty_":    "project/ifusecustomsty",
 "ifusediglotmodsty_":       "project/ifusemodssty",
+"ifdiglotincludefootnotes_":"notes/includefootnotes",
+"ifdiglotincludexrefs_":    "notes/includexrefs",
+
 "diglot/colorfonts" :       "document/ifcolorfonts",
 "diglot/ifrtl" :            "document/ifrtl",
+"diglot/ifomitsinglechnum": "document/ifomitsinglechnum",
 "diglot/fontfactor" :       "paper/fontfactor",
 "diglot/linespacingfactor": "paragraph/linespacingfactor",
 "diglot/iflinebreakon" :    "document/iflinebreakon",
@@ -100,10 +104,8 @@ _diglot = {
 "diglot/fontitalic" :       "document/fontitalic",
 "diglot/fontbolditalic" :   "document/fontbolditalic",
 "diglot/ifshowversenums" :  "document/ifshowversenums",
-"diglot/includefootnotes" : "notes/includefootnotes",
 "diglot/fnfontsize" :       "notes/fnfontsize",
 "diglot/fnlinespacing" :    "notes/fnlinespacing",
-"diglot/includexrefs" :     "notes/includexrefs",
 "diglot/ifblendfnxr" :      "notes/ifblendfnxr",
 "diglotfancy/versedecorator":       "fancy/versedecorator",
 "diglotfancy/versedecoratorpdf":    "fancy/versedecoratorpdf",
@@ -332,7 +334,7 @@ class RunJob:
                            "document/parallelrefs", "document/elipsizemptyvs", "notes/iffootnoterule",
                            "notes/ifblendfnxr", "notes/includefootnotes", "notes/includexrefs", 
                            "notes/fnparagraphednotes", "notes/xrparagraphednotes", "document/filterglossary", 
-                           "document/chapfrom", "document/chapto", "document/ifcolorfonts"]
+                           "document/chapfrom", "document/chapto", "document/ifcolorfonts", "document/ifomitsinglechnum"]
         diginfo["project/bookids"] = jobs
         diginfo["project/books"] = digdonebooks
         diginfo["document/ifdiglot"] = "%"

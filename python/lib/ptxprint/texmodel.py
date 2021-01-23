@@ -34,6 +34,8 @@ ModelMap = {
     "pdfdate_":                 ("_pdfdate", lambda w,v: v),
     "ifusediglotcustomsty_":    ("_diglotcustomsty", lambda w,v: "%"),
     "ifusediglotmodsty_":       ("_diglotmodsty", lambda w,v: "%"),
+    "ifdiglotincludefootnotes_":("_diglotinclfn", lambda w,v: "%"),
+    "ifdiglotincludexrefs_":    ("_diglotinclxr", lambda w,v: "%"),
 
     #"config/name":              ("ecb_savedConfig", lambda w,v: v or "default"),
     "config/notes":             ("t_configNotes", lambda w,v: v or ""),
@@ -916,7 +918,7 @@ class TexModel:
         if self.asBool("document/preventwidows"):
             # Push the verse number onto the next line (using NBSP) if there is
             # a short widow word (3 characters or less) at the end of the line
-            self.localChanges.append((None, regex.compile(r"(\\v \d+([-,]\d+)? [\w]{1,3}) ", flags=regex.M), r"\1\u2000")) 
+            self.localChanges.append((None, regex.compile(r"(\\v \d+([-,]\d+)? [\w]{1,3}) ", flags=regex.M), r"\1\u00A0")) 
 
         # By default, HIDE chapter numbers for all non-scripture (Peripheral) books (unless "Show... is checked)
         if not self.asBool("document/showxtrachapnums") and bk in TexModel._peripheralBooks:
