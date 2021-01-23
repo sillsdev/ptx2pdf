@@ -1224,7 +1224,7 @@ start of the publication in this oder:
     <property name="height_request">100</property>
     <property name="can_focus">False</property>
     <property name="valign">start</property>
-    <property name="title" translatable="yes">Saved Configuration</property>
+    <property name="title" translatable="yes">PTXprint: Lock/Unlock Configuration</property>
     <property name="resizable">False</property>
     <property name="modal">True</property>
     <property name="window_position">center-on-parent</property>
@@ -3453,7 +3453,7 @@ to create the neccessary file to print from it.</property>
                                 <property name="climb_rate">1</property>
                                 <property name="numeric">True</property>
                                 <property name="value">1</property>
-                                <signal name="value-changed" handler="onChapFrmChg" swapped="no"/>
+                                <signal name="value-changed" handler="onChapChg" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="left_attach">3</property>
@@ -3472,6 +3472,7 @@ to create the neccessary file to print from it.</property>
                                 <property name="climb_rate">1</property>
                                 <property name="numeric">True</property>
                                 <property name="value">1</property>
+                                <signal name="value-changed" handler="onChapChg" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="left_attach">5</property>
@@ -3724,7 +3725,10 @@ same name.
 When Config is LOCKED:
 Click to enter the password to unlock this
 configuration and allow changes to be 
-saved or the configuration to be deleted.</property>
+saved or the configuration to be deleted.
+
+Note that the Default config cannot be
+locked.</property>
                                         <property name="margin_right">6</property>
                                         <property name="margin_top">6</property>
                                         <property name="margin_bottom">6</property>
@@ -6564,7 +6568,6 @@ a line.</property>
 at the ends of paragraphs from 
 occuring on a line on their own.</property>
                                     <property name="halign">start</property>
-                                    <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
                                   <packing>
@@ -12655,16 +12658,14 @@ PDF (and associated interim files).</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
                                     <property name="tooltip_text" translatable="yes">Create a ZIPped archive of all the files
-required to recreate this configuration
+required to replicate this configuration
 on a different computer. Mainly used
-for troubleshooting/diagnosing issues.
-Note that no fonts or illustrations will
-be included. Only the various PTXprint
-settings files, along with the relevant
-Paratext USFM data files. You can
+for troubleshooting issues. You may
 examine the contents of the ZIPped
-file before manually sending it to the
-PTXprint team for support.</property>
+file before sending it to the PTXprint
+e-mail address for support.
+
+It may also be useful for archiving...</property>
                                     <property name="halign">end</property>
                                     <property name="valign">start</property>
                                     <signal name="clicked" handler="onCreateZipArchiveClicked" swapped="no"/>
@@ -12681,9 +12682,10 @@ files, for debugging</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">Add all the files needed for TeX to run this 
-job without ptxprint. Only enable this if 
-directed to do so by Tech Support.</property>
+                                    <property name="tooltip_text" translatable="yes">When this option is checked, several other
+(temporary) files get added to the ZIP
+archive. So only enable this if directed
+to do so by the PTXprint Support team.</property>
                                     <property name="halign">start</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
@@ -16210,7 +16212,7 @@ edit various control and log files.</property>
                                     <property name="can_focus">False</property>
                                     <property name="tooltip_text" translatable="yes">To use PTXprint effectively you need a good PDF viewer
 which allows the PDF file to be refreshed (reloaded)
-without closing it each time the PDF is re-created.
+without closing it each time the PDF is to be re-created.
 
 On Linux the built-in Evince PDF viewer works great.
 
@@ -16219,8 +16221,8 @@ is highly recommended and is a small download. You
 will need to set SumatraPDf as the default PDF viewer
 for best results.</property>
                                     <property name="halign">end</property>
-                                    <property name="label" translatable="yes">Hints on Using an 
-Effective PDF viewer:</property>
+                                    <property name="label" translatable="yes">Using a good
+PDF Viewer:</property>
                                     <property name="justify">right</property>
                                   </object>
                                   <packing>
@@ -16522,19 +16524,16 @@ all the required files and then send it to them:</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
                                     <property name="tooltip_text" translatable="yes">Create a ZIPped archive of all the files
-required to recreate this configuration
-on a different computer. Used for 
-troubleshooting issues.
-Note that no fonts or illustrations will
-be included. Only the various PTXprint
-settings files, along with the relevant
-Paratext USFM data files. You can
+required to replicate this configuration
+on a different computer. Mainly used
+for troubleshooting issues. You may
 examine the contents of the ZIPped
-file before manually sending it to the
-PTXprint team for support. To transfer
-the .ZIP file to the developers, either 
-upload and send a link, OR email it to
-ptxprint_support@sil.org </property>
+file before sending it to the PTXprint
+e-mail address for support.
+
+Note that there is an additional option
+on the Advanced tab which you may be
+requested to enable by the support team.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
                                     <property name="margin_left">16</property>

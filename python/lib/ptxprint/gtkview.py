@@ -857,6 +857,9 @@ class GtkViewModel(ViewModel):
         self.updateProjectSettings(self.prjid, configName = self.configName(), readConfig=True)
 
     def onLockUnlockSavedConfig(self, btn):
+        if self.configName() == "Default":
+            self.builder.get_object("btn_lockunlock").set_sensitive(False)
+            return
         lockBtn = self.builder.get_object("btn_lockunlock")
         dialog = self.builder.get_object("dlg_password")
         dialog.set_keep_above(True)
@@ -1628,6 +1631,7 @@ class GtkViewModel(ViewModel):
     def onBookChange(self, cb_book):
         bk = self.get("ecb_book")
         if bk is not None and bk != "":
+            self.set("r_book", "single")
             chs = int(chaps.get(str(bk), 999))
             if self.loadingConfig:
                 self._setChapRange("from", 1, chs, int(float(self.get("s_chapfrom"))))
@@ -1639,11 +1643,12 @@ class GtkViewModel(ViewModel):
         self.updateDialogTitle()
         self.updatePicList()
 
-    def onChapFrmChg(self, s_chapfrom):
+    def onChapChg(self, btn):
         if self.loadingConfig:
             return
         bk = self.get("ecb_book")
         if bk != "":
+            self.set("r_book", "single")
             chs = int(chaps.get(str(bk), 999))
             strt = int(float(self.get("s_chapfrom")))
             self._setChapRange("to", strt, chs, 0)
@@ -1743,16 +1748,19 @@ class GtkViewModel(ViewModel):
         self.picChecksView.init(basepath=self.configPath(cfgname=None), configid=self.configId)
 
     def onConfigNameChanged(self, cb_savedConfig):
+        lockBtn = self.builder.get_object("btn_lockunlock")
+        if self.configName() == "Default":
+            lockBtn.set_sensitive(False)
         if self.configNoUpdate:
             return
         self.builder.get_object("c_hideAdvancedSettings").set_sensitive(True)
-        lockBtn = self.builder.get_object("btn_lockunlock")
         lockBtn.set_label("Lock")
         self.builder.get_object("t_invisiblePassword").set_text("")
         self.builder.get_object("btn_saveConfig").set_sensitive(True)
         self.builder.get_object("btn_deleteConfig").set_sensitive(True)
         if len(self.get("ecb_savedConfig")):
-            lockBtn.set_sensitive(True)
+            if self.configName() != "Default":
+                lockBtn.set_sensitive(True)
         else:
             self.builder.get_object("t_configNotes").set_text("")
             lockBtn.set_sensitive(False)
