@@ -52,7 +52,7 @@
 \def\addtoendhooks#1{\x@\global\x@\@ndhooks\x@{\the\@ndhooks #1}}
 \newtoks\@ndhooks
 \let\s@ve@nd=\end
-\def\end{\par\vfill\supereject \the\@ndhooks \s@ve@nd}
+\def\end{\par\vfil\supereject \the\@ndhooks \s@ve@nd}
 
 %: `\addtoinithooks` is for stuff we do during one-time-setup before the first PTX file
 \def\addtoinithooks#1{\x@\global\x@\@nithooks\x@{\the\@nithooks #1}}
@@ -466,7 +466,7 @@
       \ifdim\ht2<0pt\trace{b}{Strange notes height}\fi
       \unvbox2
       \ifvoid\verybottomins\else % \kern-\dimen0
-        \lastd@pth=0pt \vskip\skip\verybottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\verybottomins}}\fi
+        \lastd@pth=0pt \vskip 0pt plus 1fill\vskip\skip\verybottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\verybottomins}}\fi
     }
 %-c_onecoltrial_pagecontents
 %+c_onecoltrial_pagefit
@@ -511,7 +511,7 @@
     \fi\fi}\vss}\nointerlineskip}
 \newif\ifrhr@le
 \def\makefootline{%
-  \vbox to 0pt{\dimen0=\textwidth\advance\dimen0 by -\columnshift
+  \vbox to \bottomm@rgin{\dimen0=\textwidth\advance\dimen0 by -\columnshift
     \kern\bottomm@rgin
     \kern-\FooterPosition\MarginUnit
      \hbox to \textwidth{\the\footline}\vss}}
@@ -537,7 +537,7 @@
       \loop\ifdim\dimen0>\textheight\advance\dimen0-\textheight\repeat
       %\vbox{\hskip-\columnshift\box\partial}
       \unvbox\partial
-      \ifdim\dimen0>\PageFullFactor\textheight\vfill\eject
+      \ifdim\dimen0>\PageFullFactor\textheight\eject
         \else\global\output={\savepartialpage}\eject
       \fi
     \else
@@ -610,7 +610,7 @@
       \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2}
       \unvbox2
       \ifvoid\verybottomins\else%
-        \kern-\lastd@pth \lastd@pth=0pt \vskip\skip\verybottomins \unvbox\verybottomins \fi
+        \kern-\lastd@pth \lastd@pth=0pt \vskip 0pt plus 1fill\vskip\skip\verybottomins \unvbox\verybottomins \fi
     }
     \resetvsize%
     \ifdim\ht\colA>\baselineskip\plainoutput
@@ -927,11 +927,11 @@
 \def\c@lcboxheights{
   \g@tcolhts
   \trace{b}{BALANCE pageout: cols=2: texta=\the\ht\colA , \the\dp\colA : textb=\the\ht\colB , \the\dp\colB : partial=\the\ht\partial, \the\dp\partial : topins=\the\ht\topins+\the\skip\topins, \the\ht\topleftins+\the\skip\topleftins, \the\ht\toprightins+\the\skip\toprightins : bottomins=\the\ht\bottomins+\the\skip\bottomins, \the\ht\bottomleftins+\the\skip\bottomleftins, \the\ht\bottomrightins+\the\skip\bottomrightins}
-  \lastd@pth=\dp\colA \setbox\colA=\vbox to \availht{\unvbox\topleftins\box\colA\vfil\unvbox\bottomleftins}\dp\colA=\lastd@pth
+  \lastd@pth=\dp\colA \setbox\colA=\vbox{\unvbox\topleftins\unvbox\colA\vfil\unvbox\bottomleftins}\dp\colA=\lastd@pth
   \ifdim\ht\colB<1pt\setbox\colB\vbox{\noindent\par}\else\ifdim\lastd@pth<\dp\colB\lastd@pth=\dp\colB\fi\fi
-  \setbox\colB=\vbox to \availht{\unvbox\toprightins\box\colB\vfil\unvbox\bottomrightins}\dp\colB=\lastd@pth
-  \ifdim\colhtA>\colhtB \dimen3=\colhtA\lastd@pth=\dp\colA\dp\colB=\lastd@pth\else
-    \dimen3=\colhtB\lastd@pth=\dp\colB\dp\colA=\lastd@pth\fi
+  \setbox\colB=\vbox{\unvbox\toprightins\unvbox\colB\vfil\unvbox\bottomrightins}\dp\colB=\lastd@pth
+  \ifdim\ht\colA>\ht\colB \dimen3=\ht\colA\lastd@pth=\dp\colA\dp\colB=\lastd@pth\else
+    \dimen3=\ht\colB\lastd@pth=\dp\colB\dp\colA=\lastd@pth\fi
   \advance\dimen3 by \lastd@pth
 }
 %-c_calcboxheights
@@ -1079,7 +1079,7 @@
     \locs@startstop{\colA}%
     \locs@startstop{\colB}%
     \ifdim\ht\colB<1pt\setbox\colB\vbox{\noindent\par}\fi
-    \ht\colA=\the\availht \ht\colB=\the\availht                             %(1)
+    %\ht\colA=\the\availht \ht\colB=\the\availht                             %(1)
     \def\pagecontents{%
       \trace{o}{Topins=\the\ht\topins, Bottomins=\the\ht\bottomins, tlins=\the\ht\topleftins, blins=\the\ht\bottomleftins, trins=\the\ht\toprightins, brins=\the\ht\bottomrightins}%
       \dimen1=\textwidth\advance\dimen1 by -\ExtraRMargin
@@ -1098,7 +1098,7 @@
       \unvbox2
       \global\noteseenfalse%
       \ifvoid\verybottomins\else%
-        \kern-\lastd@pth \lastd@pth=0pt \vskip\skip\verybottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\verybottomins}}\fi % ouput bottom spanning picture
+        \kern-\lastd@pth \lastd@pth=0pt \vskip 0pt plus 1fill\vskip\skip\verybottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\verybottomins}}\fi % ouput bottom spanning picture
     }
     \global\setbox255=\box\voidb@x                                          %(+)
     \resetvsize % reset size of next page since it will not have any 1 column material
@@ -1222,16 +1222,16 @@
   \def\pagecontents{
     \trace{b}{BALANCE pageout: cols=1: partial=\the\ht\partial , \the\dp\partial : topins=\the\ht\topins : bottomins=\the\ht\bottomins}
     \vbox{\dimen1=\textwidth \advance\dimen1 -\ExtraRMargin
-    \ifvoid\partial\else \vbox{\hbox to \dimen1{\hskip\columnshift\box\partial}} \fi
-	\lastd@pth=\dp\partial
-    \ifvoid\bottomins\else % \kern-\dimen0
-      \lastd@pth=0pt \vskip\skip\bottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\bottomins}}\fi
-    \f@rstnotetrue%
-    \m@kenotebox
-    \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2}%
-    \unvbox2
-    \ifvoid\verybottomins\else % \kern-\dimen0
-      \lastd@pth=0pt \vskip\skip\verybottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\verybottomins}}\fi
+      \ifvoid\partial\else \vbox{\hbox to \dimen1{\hskip\columnshift\box\partial}} \fi
+	  \lastd@pth=\dp\partial
+      \ifvoid\bottomins\else % \kern-\dimen0
+        \lastd@pth=0pt \vskip\skip\bottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\bottomins}}\fi
+      \f@rstnotetrue%
+      \m@kenotebox
+      \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2}%
+      \unvbox2
+      \ifvoid\verybottomins\else % \kern-\dimen0
+        \lastd@pth=0pt \vskip 0pt plus 1fill\vskip\skip\verybottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\verybottomins}}\fi
     }}\plainoutput
     \xdef\p@gefirstmark{}\xdef\p@gebotmark{}%
     \nextshipout
@@ -1317,17 +1317,17 @@
 \def\pagebreak{
   \ifsk@pping \egroup \fi%
   \ifhe@dings\endhe@dings\fi%
-  \vfill\eject%
+  \vfil\eject%
 }
 \def\bookendpagebreak{
   \ifsk@pping \egroup \fi%
   \ifhe@dings\endhe@dings\fi%
   \ifendbooknoeject\else%
-  \vfill\eject\fi%
+  \vfil\eject\fi%
 }
 \let\pb=\pagebreak
 
-\def\columnbreak{\vfill\eject}
+\def\columnbreak{\vfil\eject}
 
 \newcount\badspacepenalty \badspacepenalty=100
 \tolerance=9000

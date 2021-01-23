@@ -896,6 +896,10 @@ class ViewModel:
                   'c_useModsTex': ("ptxprint-mods.tex", True),
                   'c_usePrintDraftChanges': ("PrintDraftChanges.txt", False),
                   None: ("picChecks.txt", False)}
+        borders = {'c_inclPageBorder': 'pageborder',
+                   'c_inclSectionHeader': 'sectionheader',
+                   'c_inclEndOfBook': 'endofbook',
+                   'c_inclVerseDecorator': 'versedecorator'}
         res = {}
         cfgchanges = {}
         pictures = set()
@@ -948,6 +952,15 @@ class ViewModel:
             jobpiclist = os.path.join(basecfpath, jobpiclistf)
             if os.path.exists(jobpiclist):
                 res[jobpiclist] = cfpath+jobpiclistf
+
+        # borders
+        if self.get('c_borders'):
+            for k, v in borders.items():
+                if self.get(k):
+                    fname = getattr(self, v)
+                    print(k, v, fname)
+                    if fname is not None:
+                        res[fname.as_posix()] = "shared/ptxprint/"+fname.name
 
         # fonts
         for k, v in TexModel._fonts.items():
