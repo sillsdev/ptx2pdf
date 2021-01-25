@@ -538,7 +538,7 @@
   \global\deadcycles=0
   \ifvoid\galley
     \global\setbox\galley=\box255
-    \global\galleypenalty=\outputpenalty
+    \global\galleypenalty=\ifnum \outputpenalty=10000 0\else\outputpenalty\fi
   \else
     \@ddtoexcess
   \fi
@@ -546,10 +546,9 @@
     \global\holdinginserts=0
     \global\trialfailedfalse
     \global\output={\diglot@any@trial}%calls \whichtrial on success
-    \setbox0\copy\galley
-    \unvbox0 % reprocess
-    \penalty\outputpenalty
-    \relax
+    \unvcopy\galley %process
+    \penalty\endtri@lpen@lty
+    \showlists
   \else 
     \vsize=\textheight
   \fi
@@ -599,7 +598,7 @@
       \ifdim\trialheight<0.9\baselineskip
         \trace{D}{Abandoning trial, no space for galley at all}%
 	\r@storenotes{\ifdiglotL\else R\fi}% As if galley hadn't happened.
-	\global\setbox\galleyexc@ss\vbox{\unvbox\galley\unvbox\galleyexc@ss}%
+	\global\setbox\galleyexc@ss\vbox{\unvbox\galley\unpenalty\penalty\galleypenalty\unvbox\galleyexc@ss}%
         \global\setbox255=\box\voidb@x
 	\let\after@this=\whichtrial% 
       \else 
@@ -608,7 +607,11 @@
 	\global\vsize=\trialheight
         \trace{D}{Trying again}%
 	\r@storenotes{\ifdiglotL\else R\fi}%
-	\setbox\galley\vbox{\unvbox\galley\unvbox\galleyexc@ss\penalty\endtri@lpen@lty}%
+	%\setbox\galley\vbox{\unvbox\galley\unvbox\galleyexc@ss\penalty\endtri@lpen@lty}%
+	\ifvoid\galleyexc@ss\else
+	  \setbox\galley\vbox{\unvbox\galley\count255=\lastpenalty\unpenalty
+	   \ifVisTrace\hbox to 0pt{\hss\doVisTrace{t}\box0\hss}\fi\traceNum{D}{removed penalty \the\count255}\penalty\galleypenalty\unvbox\galleyexc@ss\penalty\endtri@lpen@lty}%
+	\fi
         \unvbox\galley
       \fi
     \else
@@ -833,8 +836,7 @@
   \global\setbox\galley=\vbox{\joinboxes{\LeftBox}{\partialL}{10}{\Lboxpenalty}\endgraf\penalty\dgl@tPenLtrialEnd}%
   \global\setbox\galleyexc@ss=\box\voidb@x
   \s@venotes{}%
-  \setbox0\copy\galley
-  \unvbox0
+  \unvcopy\galley
   \relax{\aftergroup\relax}%
 }
 
@@ -961,8 +963,7 @@
     \global\setbox\galley\vbox{\joinboxes{\partialR}{255}{12}{\partialRpenalty}\penalty\dgl@tPenRtrialEnd}%
   \fi
   \s@venotes{R}%
-  \setbox0\copy\galley
-  \unvbox0
+  \unvcopy\galley
   \relax{\aftergroup\relax}%
 }
 
@@ -1077,16 +1078,21 @@
  \else % We are trying to collect more.
    \penalty\Rboxpenalty
  \fi
+ \trace{D}{Back in digl@tRight:\the\availht,diglotL\ifdiglotL true\else false\fi, dig@tL\ifdigl@tL true\else false\fi}%
  \ifdigl@tL
  %  \global\diglotLtrue
  %  \global\output={\diglotLeft}%
  \else
- %  \global\diglotLfalse
+    \global\diglotLfalse
  %  \global\output={\diglotRight}%
    \ifvoid\excessR\else
   %    \holdinginserts=1
   %    \trace{d}{Unboxing excessR (\the\ht\excessR+\the\dp\excessR)}%
   %    \global\output={\diglotRight}%
+      \vsize=\availhtR
+      \showbox\excessR
+      \showlists
+      \redoRcoloktrue
       \unvbox\excessR
    \fi
  \fi
@@ -1559,7 +1565,7 @@
    \setbox0=\lastbox%
    \copy0
    \trace{D}{lk: \the\dimen4, final bit of deconstructed first box: \the\ht0+\the\dp0, 2nd box: \the\ht#2+\the\dp#2}%
-   \ifdim\dp0=0pt
+   \ifdim\dp0=0pt%
 %     \kern \lastkern
    \else
      \ifdim\dp0>\baselineskip
