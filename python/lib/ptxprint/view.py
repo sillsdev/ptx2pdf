@@ -420,6 +420,8 @@ class ViewModel:
         self.versionFwdConfig(config, cfgname)
         self.loadingConfig = True
         self.loadConfig(config)
+        if self.get("ecb_book") == "":
+            self.set("ecb_book", list(self.getAllBooks().keys())[0])
         if self.get("c_diglot"):
             self.diglotView = self.createDiglotView()
         else:

@@ -12668,7 +12668,7 @@ PDF (and associated interim files).</property>
                                 </child>
                                 <child>
                                   <object class="GtkButton" id="btn_createZipArchive">
-                                    <property name="label" translatable="yes">Create ZIP Archive...</property>
+                                    <property name="label" translatable="yes">Create Archive...</property>
                                     <property name="width_request">140</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
@@ -16522,7 +16522,7 @@ a link, OR email it to ptxprint_support@sil.org </property>
                                     <property name="halign">end</property>
                                     <property name="valign">start</property>
                                     <property name="label" translatable="yes">The easiest way for the developers to replicate
-an issue is for you to Create a ZIP Archive with
+an issue is for you to Create an Archive with
 all the required files and then send it to them:</property>
                                     <property name="justify">right</property>
                                   </object>
@@ -16534,7 +16534,7 @@ all the required files and then send it to them:</property>
                                 </child>
                                 <child>
                                   <object class="GtkButton" id="btn_createZipArchiveXtra">
-                                    <property name="label" translatable="yes">Create ZIP Archive...</property>
+                                    <property name="label" translatable="yes">Create Archive...</property>
                                     <property name="width_request">140</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>

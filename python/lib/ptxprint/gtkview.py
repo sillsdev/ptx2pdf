@@ -710,7 +710,7 @@ class GtkViewModel(ViewModel):
                 self.doError(_("Can't delete that configuration from disk"), secondary=_("Folder: ") + delCfgPath)
             self.updateSavedConfigList()
             self.set("t_savedConfig", "Default")
-            self.loadConfig("Default")
+            self.readConfig("Default")
             self.updateDialogTitle()
             self.triggervcs = True
 
@@ -835,6 +835,8 @@ class GtkViewModel(ViewModel):
 
     def on2colClicked(self, btn):
         self.onSimpleClicked(btn)
+        if self.loadingConfig:
+            return
         self.picListView.onRadioChanged()
         val = self.get("s_indentUnit")
         if btn.get_active():
@@ -1630,10 +1632,13 @@ class GtkViewModel(ViewModel):
 
     def onBookChange(self, cb_book):
         bk = self.get("ecb_book")
+        if bk == "NON":
+            self.set("ecb_book", "")
+            return
         if bk is not None and bk != "":
-            self.set("r_book", "single")
             chs = int(chaps.get(str(bk), 999))
             if self.loadingConfig:
+                self.set("r_book", "single")
                 self._setChapRange("from", 1, chs, int(float(self.get("s_chapfrom"))))
                 self._setChapRange("to", 1, chs, int(float(self.get("s_chapto"))))
             else:
@@ -1751,7 +1756,7 @@ class GtkViewModel(ViewModel):
         lockBtn = self.builder.get_object("btn_lockunlock")
         if self.configName() == "Default":
             lockBtn.set_sensitive(False)
-        if self.configNoUpdate:
+        if self.configNoUpdate or self.get("ecb_savedConfig") == "":
             return
         self.builder.get_object("c_hideAdvancedSettings").set_sensitive(True)
         lockBtn.set_label("Lock")
