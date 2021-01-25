@@ -85,7 +85,7 @@ ModelMap = {
     "project/copyright":        ("t_copyrightStatement", None),
     "project/colophontext":     ("tb_colophon", lambda w,v: v or ""),
     "project/ifcolophon":       ("c_colophon", lambda w,v: "" if v else "%"),
-    "project/pgbreakcolophon":  ("c_standAloneColophon", None),
+    "project/pgbreakcolophon":  ("c_standAloneColophon", lambda w,v: "" if v else "%"),
 
     "paper/height":             ("ecb_pagesize", lambda w,v: re.sub(r"^.*?,\s*(.+?)\s*(?:\(.*|$)", r"\1", v or "210mm")),
     "paper/width":              ("ecb_pagesize", lambda w,v: re.sub(r"^(.*?)\s*,.*$", r"\1", v or "148mm")),
@@ -558,7 +558,7 @@ class TexModel:
                             fname = re.sub(r"^([^.]*).(.*)$", r"\1"+extra+r".\2", fname)
                         if i == len(self.dict['project/bookids']) - 1 and self.dict['project/ifcolophon'] == "":
                             res.append(r"\lastptxfiletrue")
-                            if not self.asBool('project/pgbreakcolophon'):
+                            if self.dict['project/pgbreakcolophon'] != '%':
                                 res.append(r"\endbooknoejecttrue")
                         if not resetPageDone and f not in self._peripheralBooks:
                             res.append(r"\ifodd\pageno\else\catcode`\@=11 \shipwithcr@pmarks{\vbox{}}\catcode`\@=12 \fi")
