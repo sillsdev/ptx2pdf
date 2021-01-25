@@ -234,6 +234,7 @@
 \def\zImageCopyrights{{}}
 %\snippets
 
+{project/ifcolophon}\expandafter\let\csname bookend-final\endcsname\zColophon
 % Looks in local Config folder for ptxprint-mods.tex, and drops back to shared/ptxprint .tex if not found 
 {project/ifusemodstex}\input "{/modspath}"% adjust/override setup parameters here
 
@@ -256,7 +257,6 @@
 \def\closepiclist{{\relax}}
 % job files:
 \ptxfile{{PrintDraft/41MATprojid-draft.SFM}}
-{project/ifcolophon}\zColophon
 %%%%% Back Matter PDF file(s) get included here %%%%%
 {project/backincludes}
 

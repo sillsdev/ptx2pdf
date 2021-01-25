@@ -369,9 +369,9 @@
     \ifpicUsesIns
       \trace{e}{using ins-\loc@ption}%
       \insert\@xtins{%\vskip\baselineskip
-	  \vskip-\v@dj
-          \dimen0=\dp\extchunkb@x
-          \penalty10000\unvbox\extchunkb@x\vskip-\the\dimen0}%
+	    \vskip-\v@dj
+        \dimen0=\dp\extchunkb@x
+        \penalty10000\box\extchunkb@x\vskip-\the\dimen0}%
     \else
       \ifx\picl@c\empty
         \message{Could not interpret position \loc@ption for \c@tegory:\sb@rmarker}%
@@ -382,28 +382,28 @@
         \trace{g}{Inline \w@tsit takes \the\count255 lines}%
         \ifx\picl@c\loc@Inl
 	  %\vskip -\lastdepth
-	  \ifx\h@scol\tr@e
-	    \ifdim\lastdepth>0.2pt\vskip\baselineskip\fi%
-	  \fi
-	  \d@figureInl\extchunkb@x
-	\fi
-	\ifx\picl@c\loc@Par
-	  \d@figurePar\extchunkb@x
-	\fi
+	      \ifx\h@scol\tr@e
+	        \ifdim\lastdepth>0.2pt\vskip\baselineskip\fi%
+	      \fi
+	      \d@figureInl\extchunkb@x
+	    \fi
+        \ifx\picl@c\loc@Par
+  	      \d@figurePar\extchunkb@x
+  	    \fi
         \ifx\picl@c\loc@Page
-	  \d@figurePage\extchunkb@x
-	\fi
+          \d@figurePage\extchunkb@x
+        \fi
         \ifx\picl@c\loc@Full
           \d@figureFull\extchunkb@x
-	\fi
+        \fi
         \ifx\picl@c\loc@Cut
           \penalty 3
           \d@figureCut\extchunkb@x
           %\ifhmode |+\fi
-	\fi
+        \fi
         \ifvoid\extchunkb@x\else
           \message{Could not understand / interpret position \loc@ption for \c@tegory:\sb@rmarker}%
-	\fi
+        \fi
       \fi
     \fi
     \ifdim\ht\extb@x>0pt

@@ -994,7 +994,7 @@
  \iflastptxfile\closepiclist\fi
  \closeadjlist
  \unprepusfm
- \singlecolumn\bookendpagebreak
+ \singlecolumn\csname bookend-final\endcsname\bookendpagebreak
  %\ifendbooknoeject\else\global\output={\global\setbox255=\box\voidb@x}\eject\xdef\p@gefirstmark{}\setbox\partial=\box\voidb@x\fi
  \ifendbooknoeject\else\global\output={\shipout\vbox{\box\partial\box255}}\eject\xdef\p@gefirstmark{}\setbox\partial=\box\voidb@x\fi
  \global\output={\onecol}

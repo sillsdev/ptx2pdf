@@ -351,6 +351,7 @@ class Colophon(Snippet):
 \\prepusfm
 \\def\\zColophon\uFDEE
 \\esb\\cat colophon\\cat*
+\\bigskip
 {project/colophontext}
 \\esbe \uFDEF
 \\unprepusfm
