@@ -448,6 +448,7 @@ class PicList:
         return row
 
     def add_row(self):
+        global newrowcounter
         if len(self.model) > 0:
             row = self.model[self.selection.get_selected()[1]][:]
         else:
