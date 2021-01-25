@@ -31,7 +31,7 @@
 \newcount\diglotDbgJoinboxes%
 \diglotDbgJoinboxes=-1% Set to the debug message of a joinboxes to execute showbox on that join
 
-\def\diglotbadbrk{\penalty 10000}
+\def\diglotbadbrk{\penalty 10001}
 
 %\def\TRshipout#1{\shipout#1}
 \def\TRshipout#1{}
@@ -346,7 +346,7 @@
    \dimen0=\availht %
    \advance\dimen0 by -\ht\partialL %
    \advance\dimen0 by -\dp\partialL %
-   \ifnum\partialLpenalty=10000 %This place must not be the last on the page. How nasty is that?
+   \ifnum\partialLpenalty=\diglotbadbrk %This place must not be the last on the page. How nasty is that?
      \trace{D}{Checking what to do with this box}%
      \ifdim\dimen0>-0.3\baselineskip % The box fits..
         \trace{D}{box itself fits}
@@ -382,7 +382,7 @@
          %It is small. Probably a heading, best to promote it 
          \global\nastyboxtrue
          \dimen1=0pt
-         \ifnum\lastsavedLpenalty=10000
+         \ifnum\lastsavedLpenalty=10002
             %But on the other hand we can't put it on the next page
             %so try splitting it after all
             \dimen1=\ht\partialL
@@ -575,10 +575,10 @@
     \advance\TempDim by -\dp255
     \global\setbox\trialbox=\box255
     \ifdim\TempDim<-0.8\baselineskip % Coarse test. main trial routine can be pickier if it wants
-      \trace{D}{Content does not fit (\the\TempDim, \the\availht, \the\trialheight)}%
+      \trace{D}{Content does not fit (\the\trialheight, \the\TempDim, \the\availht)}%
       \global\trialfailedtrue
     \else
-      \trace{D}{Content fits (\the\TempDim, \the\availht, \the\trialheight, \the\ht\trialbox)}%
+      \trace{D}{Content fits (\the\trialheight, \the\TempDim, \the\availht, \the\ht\trialbox)}%
     \fi
   \else
     \ifnum 1=\ifdim\ht255>0pt 1 \else \ifdim\dp255>0pt 1 \else 0\fi\fi
@@ -599,6 +599,7 @@
         \trace{D}{Abandoning trial, no space for galley at all}%
 	\r@storenotes{\ifdiglotL\else R\fi}% As if galley hadn't happened.
 	\global\setbox\galleyexc@ss\vbox{\unvbox\galley\unpenalty\penalty\galleypenalty\unvbox\galleyexc@ss}%
+	\global\galleypenalty=0 
         \global\setbox255=\box\voidb@x
 	\let\after@this=\whichtrial% 
       \else 
@@ -610,7 +611,7 @@
 	%\setbox\galley\vbox{\unvbox\galley\unvbox\galleyexc@ss\penalty\endtri@lpen@lty}%
 	\ifvoid\galleyexc@ss\else
 	  \setbox\galley\vbox{\unvbox\galley\count255=\lastpenalty\unpenalty
-	   \ifVisTrace\hbox to 0pt{\hss\doVisTrace{t}\box0\hss}\fi\traceNum{D}{removed penalty \the\count255}\penalty\galleypenalty\unvbox\galleyexc@ss\penalty\endtri@lpen@lty}%
+	   \ifVisTrace\hbox to 0pt{\doVisTrace{t \the\ht\galleyexc@ss}\box0\hss}\fi\traceNum{D}{removed penalty \the\count255}\penalty\galleypenalty\unvbox\galleyexc@ss\penalty\endtri@lpen@lty}%
 	\fi
         \unvbox\galley
       \fi
@@ -701,13 +702,13 @@
 	  \trace{D}{Box size means it moves}%
 	\else 
 	  \ifvoid\galleyexc@ss
-	    \ifnum\savedpenalty=10000\relax 1 
+	    \ifnum\savedpenalty>9999\relax 1 
 	      \trace{D}{Penalty after box means it moves}%
 	    \else 0 \fi
 	  \else 0 \fi
         \fi
       % better move it onto next page.
-      \ifnum\lastsavedLpenalty=10000 %
+      \ifnum\lastsavedLpenalty>9999 %
         \MSG{*** Bad column break on p.\the\pageno}%
       \fi%
       \global\setbox\partialL=\box\LeftBox%
@@ -819,7 +820,7 @@
   \global\intrialtrue
   \global\deadcycles=0
   \global\savedpenalty=\partialLpenalty %
-  \ifnum\savedpenalty=10000
+  \ifnum\savedpenalty>9999
     \global\advance\trialheight by -2\baselineskip %hopefully prevents bad breaks 
   \fi
   \global\vsize=\trialheight\relax%
@@ -1102,6 +1103,7 @@
 %
 % Change which side we're adding to
 \def\pr@sideswitch#1{%
+  \global\savedpenalty=\lastpenalty % This MUST be first, or the last /thing/ won't be a penalty
   \trace{d}{#1text pL:\the\dp\partialL, xL:\the\dp\excessL, pR:\the\dp\partialR, lp:\the\savedpenalty}%
   \ifhe@dings\endhe@dings\fi%
   \ifsk@pping \egroup \sk@ppingfalse\fi% if we were skipping nonpublishable text, end that mode
@@ -1111,7 +1113,6 @@
   \endgraf\penalty\dgl@tPenColSwap\relax
 } 
 \outer\def\lefttext{%
-  \global\savedpenalty=\lastpenalty % This MUST be first, or the last /thing/ won't be a penalty
   %\par\do@ndofthispar
   \pr@sideswitch{left}%
   \Lneedsemptyingtrue%eh?
@@ -1129,8 +1130,7 @@
   \the\leftho@ks
   }%
 
-\outer\def\righttext{\global\savedpenalty=\lastpenalty
-  %\par\do@ndofthispar
+\outer\def\righttext{%
   \pr@sideswitch{right}%
   \dglt@calc@vailht\relax\swapfonts{R}%sets diglotRtrue, etc
   \dglt@calc@vailht
@@ -1276,7 +1276,7 @@
   \fi
   % Box is probably a title or similar - never OK to
   % refill here, it's not a natural break.
-  \ifnum\partialRpenalty = 10000
+  \ifnum\partialRpenalty >9999
     \redoRcolokfalse
   \fi
   % Don't allow unvboxing the right column if we're in left column modeǃ
@@ -1305,7 +1305,7 @@
    \redoRcolokfalse
    \aftergroup\emitpartial
   \fi
-  \ifnum\partialRpenalty=10000\relax% Can't break page here
+  \ifnum\partialRpenalty>9999\relax% Can't break page here
     \checkn@sty{\availhtL}{\Lht}%
     \trace{D}{Checking what to do with this box (\the\ht\partialR+\the\dp\partialR) av:\the\availhtR,
       aL:\the\availhtL, \the\Lht, ->\the\TempDim}%
