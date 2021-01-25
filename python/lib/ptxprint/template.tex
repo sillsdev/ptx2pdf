@@ -209,7 +209,7 @@
 % tweak to enable blank lines
 % restore page break definition (if present in USFM stylesheet, it has been re-defined and will not work)
 \catcode`\@=11
-\def\b{{\the\p@rstylehooks \par\vskip\baselineskip}}
+\def\b{{\the\p@rstylehooks \par\bgroup\s@tbaseline{{b}}\vskip\baselineskip\egroup}}
 %%%%% Hyphenation %%%%%
 \newlanguage\langund \language\langund
 {paragraph/ifhavehyphenate}{paragraph/ifhyphenate}\bgroup\liter@lspecials\input "{/ptxrpath}/{project/id}/shared/ptxprint/hyphen-{project/id}.tex" \egroup

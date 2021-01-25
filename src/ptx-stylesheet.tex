@@ -191,7 +191,9 @@
   \fi
   \trace{s}{2. Checking \p@ssParams}%
   \let\@ut\empty
+  \let\tmpd@=\d@
   \let\d@=\cscheck@xist\x@\cstackdown \p@ssParams,\E
+  \let\d@=\tmpd@
   \global\let\p@ssParams=\@ut
   \trace{s}{3. Shrunk list:\p@ssParams}%
 }
@@ -226,10 +228,10 @@
        \else
          \xdef\p@ssParamCached{\p@ssParamCached,\pp@name}%
        \fi
-       \trace{sC}{\pp@name  defined (\p@ssParamCached) as \p@ssParams}%
+       \trace{sC}{\pp@name\space defined (\p@ssParamCached) as \p@ssParams}%
      \else
        \global\let\p@ssParams\g@tp@tmp
-       \trace{sC}{\pp@name exists}%
+       \trace{sC}{\pp@name\space exists}%
      \fi
      {%protect outer version of \d@, etc.
      %\tracingassigns=1
@@ -320,7 +322,7 @@
           \ifnum\ifx\p@ram\relax 1\else\ifx\p@ram\ps@ze 1\else 0\fi\fi =1
             \dimen0=\sc@le\dimen0\else\dimen0=\p@ram pt\fi
         \else\dimen0=\sc@le\dimen0                                                  %(2)
-    \fi\fi\xdef\c@rrfontsize{\strip@pt{\dimen0}}\trace{s}{\space working c@rrfontsize from ##2 is \c@rrfontsize}\fi}%
+    \fi\fi\xdef\c@rrfontsize{\strip@pt{\dimen0}}\fi\trace{s}{\space working c@rrfontsize from ##2 is \c@rrfontsize}}%
   \mcup\trace{s}{set c@rrfontsize for \mcstack\space is \c@rrfontsize}}             %(3)
 %-csty_getmcfontsize
 
