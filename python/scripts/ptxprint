@@ -51,11 +51,10 @@ if not args.print:
     from ptxprint.gtkview import GtkViewModel, _doError
 
 # necessary for the side effect of setting pt_bindir :(
-ptsettingsdir = get_ptsettings(doError if args.print else _doError)
 if args.paratext is None:
     args.paratext = os.getenv("PTXPRINT_PROJECTSDIR", None)
     if args.paratext is None:
-        args.paratext = get_ptsettings(doError if args.print else _doError)
+        args.paratext = get_ptsettings()
 
 if not args.paratext:
     print("No Paratext Settings directory found")

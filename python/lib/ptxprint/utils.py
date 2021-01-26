@@ -131,6 +131,8 @@ if sys.platform == "linux":
     def openkey(path, doError=None):
         basepath = os.path.expanduser("~/.config/paratext/registry/LocalMachine/software")
         valuepath = os.path.join(basepath, path.lower(), "values.xml")
+        if not os.path.exists(valuepath):
+            return None
         doc = et.parse(valuepath)
         return doc
 
@@ -144,51 +146,31 @@ if sys.platform == "linux":
 elif sys.platform == "win32":
     import winreg
 
-    def openkey(path, doError=None):
+    def openkey(path):
         try:
             k = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\WOW6432Node\\" + path.replace("/", "\\"))
         except FileNotFoundError:
-            txt1 = "Unable to locate Registry Key for Paratext installation"
-            txt2 = "Sorry - PTXprint cannot work unless Paratext 8 (or later) is installed"
-            print("Fatal Error: {}\n{}".format(txt1, txt2))
-            if doError is not None:
-                doError(txt1, txt2, "PTXprint: Fatal Error")
+            k = None
         return k
 
     def queryvalue(base, value):
         return winreg.QueryValueEx(base, value)[0]
 
-_pt_bindir = ""
-
 def pt_bindir():
-    global _pt_bindir
-    return _pt_bindir
+    return getattr(sys, '_MEIPASS', os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..')))
 
-def get_ptsettings(errorfn):
+def get_ptsettings():
     global _pt_bindir
     pt_settings = "."
-    try:
-        ptob = openkey("Paratext/8", doError=errorfn)
-        ptv = queryvalue(ptob, "ParatextVersion")
-    except FileNotFoundError:
+    ptob = openkey("Paratext/8")
+    if ptob is None:
+        tempstr = ("C:\\My Paratext {} Projects" if sys.platform == "win32" else
+                    os.path.expanduser("~/Paratext{}Projects"))
         for v in ('9', '8'):
-            path = "C:\\My Paratext {} Projects".format(v)
+            path = tempstr.format(v)
             if os.path.exists(path):
                 pt_settings = path
-                _pt_bindir = "C:\\Program Files\\Paratext {}".format(v)
-                if os.path.exists(pt_bindir):
-                    break
-                else:
-                    _pt_bindir = "C:\\Program Files (x86)\\Paratext {}".format(v)
-                break
     else:
-        if ptv:
-            version = ptv[:ptv.find(".")]
-            try:
-                _pt_bindir = queryvalue(ptob, 'Paratext{}_Full_Release_AppPath'.format(version))
-            except:
-                _pt_bindir = queryvalue(ptob, 'Program_Files_Directory_Ptw'+version)
         pt_settings = queryvalue(ptob, 'Settings_Directory')
-    _pt_bindir = getattr(sys, '_MEIPASS', os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..')))
     return pt_settings
 

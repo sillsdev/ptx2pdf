@@ -1,8 +1,0 @@
-%% pstricks.con (for xetex + xdvipdfmx driver)
-
-% wrapper to read the real file, which is placed in the tex/generic tree
-% but given a xetex-specific name to avoid confusing other programs
-
-\input xdvipdfmx.cfg
-\endinput
-
