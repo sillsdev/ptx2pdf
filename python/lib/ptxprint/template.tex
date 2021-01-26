@@ -235,8 +235,8 @@
 %\snippets
 
 {project/ifcolophon}\expandafter\def\csname bookend-final\endcsname{{
-{project/pgbreakcolophon}\pb
-{project/pgbreakcolophon}\zColophon}}
+{project/ifcolophon}\pb
+{project/ifcolophon}\zColophon}}
 % Looks in local Config folder for ptxprint-mods.tex, and drops back to shared/ptxprint .tex if not found 
 {project/ifusemodstex}\input "{/modspath}"% adjust/override setup parameters here
 
