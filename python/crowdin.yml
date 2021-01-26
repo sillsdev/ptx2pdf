@@ -1,9 +1,7 @@
 #
 # Your Crowdin credentials
 #
-"project_id" : ""
-"api_token" : ""
-"base_path" : "/project-base-path"
+"base_path" : "."
 "base_url" : "https://api.crowdin.com"
 
 #
@@ -27,9 +25,11 @@ files: [
   # Where translations will be placed
   # e.g. "/resources/%two_letters_code%/%original_file_name%"
   #
-  "translation" : "locales/%two_letters_code%/LC_MESSAGES/ptxprint.po",
+  "translation" : "locales/%two_letters_code%/LC_MESSAGES/ptxprint_crowdin.po",
   "languages_mapping": {
     "two_letters_code": {
       "en-GB": "en_GB"
+    }
+  }
  }
 ]
