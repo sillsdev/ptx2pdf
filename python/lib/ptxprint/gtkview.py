@@ -1701,7 +1701,7 @@ class GtkViewModel(ViewModel):
             self.builder.get_object("l_projectFullName").set_label("")
             self.builder.get_object("l_projectFullName").set_tooltip_text("")
         pts = self._getPtSettings()
-        if pts is not None:
+        if pts is not None and self.get("t_copyrightStatement") == "":
             self.builder.get_object("t_copyrightStatement").set_text(pts.get('Copyright', ""))
 
     def updatePrjLinks(self):
