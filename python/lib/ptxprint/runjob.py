@@ -304,7 +304,7 @@ class RunJob:
             finalLogLines.append("\nFile(s) to check: {}".format(", ".join(files)))
         return finalLogLines
 
-    def dojob(self, jobs, info, logbuffer=None):
+    def dojob(self, jobs, info):
         donebooks = []
         for b in jobs:
             try:
@@ -321,9 +321,9 @@ class RunJob:
         self.books += donebooks
         info["project/bookids"] = jobs
         info["project/books"] = donebooks
-        return [os.path.join(self.tmpdir, out)] + self.sharedjob(jobs, info, logbuffer=logbuffer)
+        return [os.path.join(self.tmpdir, out)] + self.sharedjob(jobs, info)
 
-    def digdojob(self, jobs, info, diginfo, digprjid, digprjdir, logbuffer=None):
+    def digdojob(self, jobs, info, diginfo, digprjid, digprjdir):
         texfiles = []
         donebooks = []
         digdonebooks = []
@@ -399,10 +399,10 @@ class RunJob:
             info[k]=diginfo[v]
         info["document/diglotcfgrpath"] = os.path.relpath(diginfo.printer.configPath(diginfo.printer.configName()), docdir).replace("\\","/")
         info["_isDiglot"] = True
-        texfiles += self.sharedjob(jobs, info, logbuffer=logbuffer, extra="-diglot")
+        texfiles += self.sharedjob(jobs, info, extra="-diglot")
         return texfiles
 
-    def sharedjob(self, jobs, info, prjid=None, prjdir=None, logbuffer=None, extra=""):
+    def sharedjob(self, jobs, info, prjid=None, prjdir=None, extra=""):
         if prjid is None:
             prjid = self.prjid
         if prjdir is None:
@@ -440,7 +440,7 @@ class RunJob:
         miscfonts.append(os.path.join(prjdir, "shared"))
         if len(miscfonts):
             os.putenv("MISCFONTS", pathjoin(miscfonts))
-        self.thread = Thread(target=self.run_xetex, args=(outfname, info, logbuffer))
+        self.thread = Thread(target=self.run_xetex, args=(outfname, info))
         self.busy = True
         self.thread.start()
         return [os.path.join(self.tmpdir, outfname.replace(".tex", x)) for x in (".tex", ".xdv")]
@@ -450,14 +450,14 @@ class RunJob:
             self.thread.join()
         return self.res
 
-    def run_xetex(self, outfname, info, logbuffer):
+    def run_xetex(self, outfname, info):
         numruns = 0
         while numruns < self.maxRuns:
             self.printer.incrementProgress()
             if info["document/toc"] != "%":
                 tocdata = self.readfile(os.path.join(self.tmpdir, outfname.replace(".tex", ".toc")))
             cmd = ["xetex", "-halt-on-error", "-interaction=nonstopmode", "-no-pdf"]
-            runner = call(cmd + [outfname], cwd=self.tmpdir, logbuffer=logbuffer)
+            runner = call(cmd + [outfname], cwd=self.tmpdir)
             if isinstance(runner, subprocess.Popen) and runner is not None:
                 try:
                     runner.wait(self.args.timeout)
@@ -489,7 +489,7 @@ class RunJob:
             cmd = ["xdvipdfmx", "-E"]
             if self.printer.get("c_PDFx1aOutput"):
                 cmd += ["-z", "0"]
-            runner = call(cmd + [outfname.replace(".tex", ".xdv")], cwd=self.tmpdir, logbuffer=logbuffer)
+            runner = call(cmd + [outfname.replace(".tex", ".xdv")], cwd=self.tmpdir)
             if isinstance(runner, subprocess.Popen) and runner is not None:
                 try:
                     runner.wait(self.args.timeout)

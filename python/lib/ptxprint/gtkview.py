@@ -19,7 +19,6 @@ from ptxprint.font import TTFont, initFontCache, fccache, FontRef, parseFeatStri
 from ptxprint.view import ViewModel, Path, VersionStr
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal, setFontButton, makeSpinButton
 from ptxprint.utils import APP
-from ptxprint.runner import StreamTextBuffer
 from ptxprint.ptsettings import ParatextSettings, allbooks, books, bookcodes, chaps
 from ptxprint.piclist import PicList, PicChecks, PicInfoUpdateProject
 from ptxprint.gtkstyleditor import StyleEditorView
@@ -345,8 +344,6 @@ class GtkViewModel(ViewModel):
             for a in v:
                 self.styleEditor.registerFn(a[0], a[1], getattr(self, k))
 
-        self.logbuffer = StreamTextBuffer()
-        self.builder.get_object("tv_logging").set_buffer(self.logbuffer)
         self.mw = self.builder.get_object("ptxprint")
         self.experimental = None
 
