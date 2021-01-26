@@ -34,3 +34,4 @@ tmpPicLists/
 /ucd/
 docs/**/*.pdf
 ptxprint.sty
+ptxprint_crowdin.po
