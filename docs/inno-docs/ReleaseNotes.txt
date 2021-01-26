@@ -1,5 +1,20 @@
-PTXprint 1.5.7 Release Notes 
-23 January 2021
+PTXprint 1.5.8 Release Notes 
+27 January 2021
+
+Bug Fixes and Improvements in 1.5.8
+
+  * Note that PTXprint now ships with its own XeTeX binary so that it can run without Paratext being present
+  
+  * Localization of UI is now available through Crowdin - contributions welcome! https://crowdin.com/project/ptxprint
+    (aiming to release several languages for ver 1.6)
+	
+  * Fixed #349,351 Verse numbers missing or too large in certain situations
+  
+  * Fixed #342,354 Base Paragraph Indent value reverting to 1.0 after restart
+  
+  * Fixed bug on adding a first picture
+  
+  * Colophon now works as expected (can be forced to a new page if needed, and can include special characters)
 
 Bug Fixes and Improvements in 1.5.7
 
