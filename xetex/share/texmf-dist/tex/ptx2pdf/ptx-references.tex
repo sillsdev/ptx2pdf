@@ -1,0 +1,201 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Part of the ptx2pdf macro package for formatting USFM text
+% copyright (c) 2007 by SIL International
+% written by Jonathan Kew
+%
+% Permission is hereby granted, free of charge, to any person obtaining  
+% a copy of this software and associated documentation files (the  
+% "Software"), to deal in the Software without restriction, including  
+% without limitation the rights to use, copy, modify, merge, publish,  
+% distribute, sublicense, and/or sell copies of the Software, and to  
+% permit persons to whom the Software is furnished to do so, subject to  
+% the following conditions:
+%
+% The above copyright notice and this permission notice shall be  
+% included in all copies or substantial portions of the Software.
+%
+% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,  
+% EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF  
+% MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND  
+% NONINFRINGEMENT. IN NO EVENT SHALL SIL INTERNATIONAL BE LIABLE FOR  
+% ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF  
+% CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION  
+% WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+%
+% Except as contained in this notice, the name of SIL International  
+% shall not be used in advertising or otherwise to promote the sale,  
+% use or other dealings in this Software without prior written  
+% authorization from SIL International.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Macros to deal with Scripture references (book, chapter, verse) and running headers
+
+% These macros work on the reference information in the format "Book:C:V"
+% that is embedded in the \mark at each verse number.
+
+% Note that "V" may be a verse range, if the USFM data included bridged verses such as "\v 12-15".
+% Therefore, we have to do some extra work to extract individual verse numbers.
+
+\newif\ifOmitChapterNumberRH % make this true to omit the ch # (eg for single-chapter books)
+%
+% Print the first reference from the mark data
+%
+\def\f@rstref#1{\edef\t@st{#1}\x@\extr@ctfirst\t@st\relax
+ \ifx\@book\empty\else\@book\ 
+  \ifOmitChapterNumberRH\@verse\else
+   \@chapter\ifVerseRefs\cvs@p\@verse\fi\fi\fi}
+
+%
+% Print the last reference from the mark data
+% (same as above unless there are bridged verses)
+%
+\def\l@stref#1{\edef\t@st{#1}\x@\extr@ctlast\t@st\relax
+ \ifx\@@book\empty\else\@@book\ 
+  \ifOmitChapterNumberRH\@@verse\else
+   \@@chapter\ifVerseRefs\cvs@p\@@verse\fi\fi\fi}
+
+%
+% Print the range of references from a pair of marks
+%
+\def\r@ngerefs#1#2{%
+ \edef\t@st{#1}\x@\extr@ctfirst\t@st\relax
+ \edef\t@st{#2}\x@\extr@ctlast\t@st\relax
+ \ifx\@book\empty\else
+ \@book\ 
+ \ifVerseRefs
+  \ifOmitChapterNumberRH\else\ifx\@chapter\empty\else\@chapter\cvs@p\fi\fi\@verse
+  \ifx\@book\@@book
+   \ifx\@chapter\@@chapter
+    \ifx\@verse\@@verse\else\ranges@p\@@verse\fi
+   \else\ranges@p\ifOmitChapterNumberRH\else\@@chapter\cvs@p\fi\@@verse\fi
+  \else\ranges@p\@@book\ \ifOmitChapterNumberRH\else\@@chapter\cvs@p\fi\@@verse\fi
+ \else
+  \ifOmitChapterNumberRH\else
+  \ifx\@chapter\empty\else
+   \@chapter
+   \ifx\@chapter\@@chapter\else
+    \setbox0=\hbox{\tracinglostchars=0
+     \global\c@untA=0\@chapter \global\c@untB=0\@@chapter}%
+    \advance\c@untA by 1
+    \ifnum\c@untA=\c@untB \pairs@p \else \ranges@p \fi
+    \@@chapter
+   \fi
+  \fi
+  \fi
+ \fi\fi}
+\newcount\c@untA \newcount\c@untB
+
+%
+% extract the starting reference of a (possible) range
+% putting the result into \@book, \@chapter, \@verse
+%
+\def\extr@ctfirst#1:#2:#3\relax{%
+ \def\@book{#1}\def\@chapter{#2}\def\t@st{#3}%
+ \x@\spl@tverses\t@st--\relax
+ \edef\@verse{\v@rsefrom}}
+
+%
+% extract the ending reference of a (possible) range
+% putting the result into \@@book, \@@chapter, \@@verse
+%
+\def\extr@ctlast#1:#2:#3\relax{%
+ \def\@@book{#1}\def\@@chapter{#2}\def\t@st{#3}%
+ \x@\spl@tverses\t@st--\relax
+ \edef\@@verse{\v@rseto}}
+
+%
+% split a possible verse range on hyphen, setting \v@rsefrom and \v@rseto
+%
+\def\spl@tverses#1-#2-#3\relax{%
+ \edef\v@rsefrom{#1}\edef\v@rseto{#2}%
+ \ifx\v@rseto\empty\let\v@rseto=\v@rsefrom\fi}
+
+\newif\ifVerseRefs % whether to include verse numbers, or only book+chapter
+
+%
+% Specify separators to use when constructing references
+%
+\def\ranges@p{\hbox{\RangeSeparator}} % box this to avoid possible bidi problems
+%\def\pairs@p{,\kern.2em}
+\let\pairs@p\ranges@p
+\def\cvs@p{\hbox{\ChapterVerseSeparator}}
+\def\endash{\char"2013\relax}
+
+\def\RangeSeparator{\kern.1em\endash\kern.1em} % what to put between first - last of a range
+\def\ChapterVerseSeparator{\kern.02em.\kern.02em} % what to put between chapter:verse
+
+%
+% Running headers/footers that may use the references defined above
+%
+
+% define \headline for use by the output routine
+\headline={{%
+ \s@tfont{h}%
+ \edef\t@st{\p@gefirstmark}% check first mark on page to see if this is a "title" page
+ \global\rhr@letrue
+ \ifx\t@st\empty \hfil \global\rhr@lefalse \else
+  \ifx\t@st\t@tle \the\titlehead \global\rhr@lefalse \else
+  \ifodd\pageno \the\oddhead \else
+    \ifDoubleSided \the\evenhead \else \the\oddhead \fi % for single-sided, all pages are "odd"
+  \fi\fi\fi}}
+
+% default headers are made of three components, placed left, center and right
+\newtoks\oddhead
+\newtoks\evenhead
+\newtoks\titlehead
+\oddhead={\rlap{\RHoddleft}\hfil\RHoddcenter\hfil\llap{\RHoddright}}
+\evenhead={\rlap{\RHevenleft}\hfil\RHevencenter\hfil\llap{\RHevenright}}
+\titlehead={\rlap{\RHtitleleft}\hfil\RHtitlecenter\hfil\llap{\RHtitleright}}
+
+% \footline is similar except it doesn't have to place a border graphic
+\footline={{%
+ \s@tfont{h}%
+ \edef\t@st{\p@gefirstmark}%
+ \ifx\t@st\empty \hfil \else
+  \ifx\t@st\t@tle \the\titlefoot \else
+  \ifodd\pageno \the\oddfoot \else 
+    \ifDoubleSided \the\evenfoot \else \the\oddfoot \fi
+  \fi\fi\fi}}
+\newtoks\oddfoot
+\newtoks\evenfoot
+\newtoks\titlefoot
+\oddfoot={\rlap{\RFoddleft}\hfil\RFoddcenter\hfil\llap{\RFoddright}}
+\evenfoot={\rlap{\RFevenleft}\hfil\RFevencenter\hfil\llap{\RFevenright}}
+\titlefoot={\rlap{\RFtitleleft}\hfil\RFtitlecenter\hfil\llap{\RFtitleright}}
+
+%
+% user-level macros for use within the running header
+%
+\def\firstref{\ifRTL\beginR\fi\f@rstref{\p@gefirstmark}\ifRTL\endR\fi}
+\def\lastref{\ifRTL\beginR\fi\l@stref{\p@gebotmark}\ifRTL\endR\fi}
+\def\rangeref{\ifRTL\beginR\fi\r@ngerefs{\p@gefirstmark}{\p@gebotmark}\ifRTL\endR\fi}
+\let\pagenumber=\folio
+
+%
+% default settings of the running header components
+%
+\def\RHoddleft{\empty}
+\def\RHoddcenter{\rangeref}
+\def\RHoddright{\pagenumber}
+
+\def\RHevenleft{\pagenumber}
+\def\RHevencenter{\rangeref}
+\def\RHevenright{\empty}
+
+\def\RHtitleleft{\empty}
+\def\RHtitlecenter{\empty}
+\def\RHtitleright{\empty}
+
+\def\RFoddleft{\empty}
+\def\RFoddcenter{\empty}
+\def\RFoddright{\empty}
+
+\def\RFevenleft{\empty}
+\def\RFevencenter{\empty}
+\def\RFevenright{\empty}
+
+\def\RFtitleleft{\empty}
+\def\RFtitlecenter{\pagenumber}
+\def\RFtitleright{\empty}
+
+\endinput

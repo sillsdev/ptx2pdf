@@ -1,0 +1,132 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Part of the ptx2pdf macro package for formatting USFM text
+% copyright (c) 2007 by SIL International
+% written by Jonathan Kew
+%
+% Permission is hereby granted, free of charge, to any person obtaining  
+% a copy of this software and associated documentation files (the  
+% "Software"), to deal in the Software without restriction, including  
+% without limitation the rights to use, copy, modify, merge, publish,  
+% distribute, sublicense, and/or sell copies of the Software, and to  
+% permit persons to whom the Software is furnished to do so, subject to  
+% the following conditions:
+%
+% The above copyright notice and this permission notice shall be  
+% included in all copies or substantial portions of the Software.
+%
+% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,  
+% EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF  
+% MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND  
+% NONINFRINGEMENT. IN NO EVENT SHALL SIL INTERNATIONAL BE LIABLE FOR  
+% ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF  
+% CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION  
+% WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+%
+% Except as contained in this notice, the name of SIL International  
+% shall not be used in advertising or otherwise to promote the sale,  
+% use or other dealings in this Software without prior written  
+% authorization from SIL International.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% paragraph shape support for the ptx2pdf package
+
+%
+% Parameters to the cutout macros:
+%   #1 -> width of cutout to create
+%   #2 -> begin after this many lines of the paragraph (0 for start of par)
+%   #3 -> number of lines to cut
+%
+\def\leftcutout{\@cutout{L}}
+\def\rightcutout{\@cutout{R}}
+
+\def\@cutout#1#2#3#4{%
+  \global\advance\@numcuts by 1
+  \expandafter\xdef\csname cut@side\the\@numcuts\endcsname{#1}%
+  \expandafter\xdef\csname cut@width\the\@numcuts\endcsname{#2}%
+  \expandafter\xdef\csname cut@after\the\@numcuts\endcsname{#3}%
+  \expandafter\xdef\csname cut@lines\the\@numcuts\endcsname{#4}%
+}
+\newcount\@numcuts
+
+% Forget any current cutouts
+\def\cancelcutouts{\@numcuts=0 }
+
+%
+% This must be called after each paragraph to carry-over any residual amout of cutout
+% (e.g., if you ask for a 10-line cutout, but the paragraph only has 6 lines;
+% the remaining 4 lines will be cut in the next paragraph)
+%
+\def\cutoutcarryover{%
+  \ifnum\@numcuts>0
+    \count@=\@numcuts \@numcuts=0
+    \@index=0
+    \loop \ifnum\@index<\count@ \advance\@index by 1
+      \@after=\csname cut@after\the\@index\endcsname
+      \advance\@after by -\prevgraf
+      \@until=\csname cut@lines\the\@index\endcsname
+      \advance\@until by \@after
+      \ifnum\@until>0
+        \ifnum\@after<0 \@after=0 \fi
+        \advance\@until by -\@after
+        \@width=\csname cut@width\the\@index\endcsname
+        \edef\@side{\csname cut@side\the\@index\endcsname}%
+        \@cutout{\@side}{\the\@width}{\the\@after}{\the\@until}%
+      \fi
+    \repeat
+  \fi
+}
+
+%
+% This must be called at the end of each paragraph (e.g., by redefining \par)
+% so as to calculate and apply the shape, given all current cutout specifications
+%
+\def\makecutouts{%
+  \ifnum\hangafter<0 \@parshapelines=-\hangafter
+  \else \@parshapelines=\hangafter \fi
+  \@index=0
+  \loop \ifnum\@index<\@numcuts \advance\@index by 1
+    \count@=\csname cut@after\the\@index\endcsname
+    \advance\count@ by \csname cut@lines\the\@index\endcsname \relax
+    \ifnum\count@>\@parshapelines \@parshapelines=\count@ \fi
+  \repeat
+  \advance\@parshapelines by 1
+  \def\@shape{}%
+  \@line=0
+  \loop \ifnum\@line<\@parshapelines \advance\@line by 1
+    \global\@hsize=\hsize
+    \global\@indent=0pt
+    \ifnum\hangafter<0
+      \ifnum\@line>-\hangafter\else \global\@indent=\hangindent \fi
+    \else
+      \ifnum\@line>\hangafter \global\@indent=\hangindent \fi
+    \fi
+    \ifdim\@indent<0pt \global\advance\@hsize by \@indent \global\@indent=0pt
+    \else \global\advance\@hsize by -\@indent \fi
+    \@cutthisline
+    \edef\@shape{\@shape\space\the\@indent\space\the\@hsize}%
+  \repeat
+  \parshape=\number\@parshapelines \@shape
+}
+\def\@cutthisline{%
+  \@index=0
+  {\loop \ifnum\@index<\@numcuts
+    \advance\@index by 1
+    \@after=\csname cut@after\the\@index\endcsname
+    \@until=\csname cut@lines\the\@index\endcsname
+    \advance\@until by \@after
+    \ifnum\@line>\@after
+      \ifnum\@line>\@until \else
+        \@width=\csname cut@width\the\@index\endcsname
+        \global\advance\@hsize by -\@width
+        \if L\csname cut@side\the\@index\endcsname
+          \global\advance\@indent by \@width
+        \fi
+      \fi
+    \fi
+  \repeat}%
+}
+\newcount\@parshapelines
+\newcount\@index \newcount\@line \newcount\@after \newcount\@until
+\newdimen\@width \newdimen\@indent \newdimen\@hsize
+
+\endinput

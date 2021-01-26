@@ -1,0 +1,213 @@
+%
+% This is a copy of
+% (1) ptex-kozuka-pr6n.map
+% (2) uptex-kozuka-pr6n.map
+% (3) otf-kozuka-pr6n.map
+% (4) otf-up-kozuka-pr6n.map
+% (5) otf-cktx.map
+% by Norbert Preining and H. Kitagawa,
+% which are in TeX Live
+%
+% ptex-kozuka-pr6n.map
+rml	H	KozMinPr6N-Regular.otf
+rmlv	V	KozMinPr6N-Regular.otf
+gbm	H	KozGoPr6N-Medium.otf
+gbmv	V	KozGoPr6N-Medium.otf
+%
+% uptex-kozuka-pr6n.map
+urml	UniJIS-UTF16-H	KozMinPr6N-Regular.otf
+urmlv	UniJIS-UTF16-V	KozMinPr6N-Regular.otf
+ugbm	UniJIS-UTF16-H	KozGoPr6N-Medium.otf
+ugbmv	UniJIS-UTF16-V	KozGoPr6N-Medium.otf
+uprml-h	UniJIS-UTF16-H	KozMinPr6N-Regular.otf
+uprml-v	UniJIS-UTF16-V	KozMinPr6N-Regular.otf
+upgbm-h	UniJIS-UTF16-H	KozGoPr6N-Medium.otf
+upgbm-v	UniJIS-UTF16-V	KozGoPr6N-Medium.otf
+uprml-hq	UniJIS-UCS2-H	KozMinPr6N-Regular.otf
+upgbm-hq	UniJIS-UCS2-H	KozGoPr6N-Medium.otf
+%
+% otf-kozuka-pr6n.map
+% TEXT, 90JIS
+hminl-h	H	KozMinPr6N-Light.otf
+hminl-v	V	KozMinPr6N-Light.otf
+hminr-h	H	KozMinPr6N-Regular.otf
+hminr-v	V	KozMinPr6N-Regular.otf
+hminb-h	H	KozMinPr6N-Bold.otf
+hminb-v	V	KozMinPr6N-Bold.otf
+hgothr-h	H	KozGoPr6N-Regular.otf
+hgothr-v	V	KozGoPr6N-Regular.otf
+hgothb-h	H	KozGoPr6N-Bold.otf
+hgothb-v	V	KozGoPr6N-Bold.otf
+hgotheb-h	H	KozGoPr6N-Heavy.otf
+hgotheb-v	V	KozGoPr6N-Heavy.otf
+hmgothr-h	H	KozGoPr6N-Heavy.otf
+hmgothr-v	V	KozGoPr6N-Heavy.otf
+
+% TEXT, JIS04
+hminln-h	H	KozMinPr6N-Light.otf
+hminln-v	V	KozMinPr6N-Light.otf
+hminrn-h	H	KozMinPr6N-Regular.otf
+hminrn-v	V	KozMinPr6N-Regular.otf
+hminbn-h	H	KozMinPr6N-Bold.otf
+hminbn-v	V	KozMinPr6N-Bold.otf
+hgothrn-h	H	KozGoPr6N-Regular.otf
+hgothrn-v	V	KozGoPr6N-Regular.otf
+hgothbn-h	H	KozGoPr6N-Bold.otf
+hgothbn-v	V	KozGoPr6N-Bold.otf
+hgothebn-h	H	KozGoPr6N-Heavy.otf
+hgothebn-v	V	KozGoPr6N-Heavy.otf
+hmgothrn-h	H	KozGoPr6N-Heavy.otf
+hmgothrn-v	V	KozGoPr6N-Heavy.otf
+
+% CID
+otf-cjml-h	Identity-H	KozMinPr6N-Light.otf
+otf-cjml-v	Identity-V	KozMinPr6N-Light.otf
+otf-cjmr-h	Identity-H	KozMinPr6N-Regular.otf
+otf-cjmr-v	Identity-V	KozMinPr6N-Regular.otf
+otf-cjmb-h	Identity-H	KozMinPr6N-Bold.otf
+otf-cjmb-v	Identity-V	KozMinPr6N-Bold.otf
+otf-cjgr-h	Identity-H	KozGoPr6N-Regular.otf
+otf-cjgr-v	Identity-V	KozGoPr6N-Regular.otf
+otf-cjgb-h	Identity-H	KozGoPr6N-Bold.otf
+otf-cjgb-v	Identity-V	KozGoPr6N-Bold.otf
+otf-cjge-h	Identity-H	KozGoPr6N-Heavy.otf
+otf-cjge-v	Identity-V	KozGoPr6N-Heavy.otf
+otf-cjmgr-h	Identity-H	KozGoPr6N-Heavy.otf
+otf-cjmgr-v	Identity-V	KozGoPr6N-Heavy.otf
+
+% Unicode 90JIS
+otf-ujml-h	UniJIS-UTF16-H	KozMinPr6N-Light.otf
+otf-ujml-v	UniJIS-UTF16-V	KozMinPr6N-Light.otf
+otf-ujmr-h	UniJIS-UTF16-H	KozMinPr6N-Regular.otf
+otf-ujmr-v	UniJIS-UTF16-V	KozMinPr6N-Regular.otf
+otf-ujmb-h	UniJIS-UTF16-H	KozMinPr6N-Bold.otf
+otf-ujmb-v	UniJIS-UTF16-V	KozMinPr6N-Bold.otf
+otf-ujgr-h	UniJIS-UTF16-H	KozGoPr6N-Regular.otf
+otf-ujgr-v	UniJIS-UTF16-V	KozGoPr6N-Regular.otf
+otf-ujgb-h	UniJIS-UTF16-H	KozGoPr6N-Bold.otf
+otf-ujgb-v	UniJIS-UTF16-V	KozGoPr6N-Bold.otf
+otf-ujge-h	UniJIS-UTF16-H	KozGoPr6N-Heavy.otf
+otf-ujge-v	UniJIS-UTF16-V	KozGoPr6N-Heavy.otf
+otf-ujmgr-h	UniJIS-UTF16-H	KozGoPr6N-Heavy.otf
+otf-ujmgr-v	UniJIS-UTF16-V	KozGoPr6N-Heavy.otf
+
+% Unicode JIS04
+otf-ujmln-h	UniJIS2004-UTF16-H	KozMinPr6N-Light.otf
+otf-ujmln-v	UniJIS2004-UTF16-V	KozMinPr6N-Light.otf
+otf-ujmrn-h	UniJIS2004-UTF16-H	KozMinPr6N-Regular.otf
+otf-ujmrn-v	UniJIS2004-UTF16-V	KozMinPr6N-Regular.otf
+otf-ujmbn-h	UniJIS2004-UTF16-H	KozMinPr6N-Bold.otf
+otf-ujmbn-v	UniJIS2004-UTF16-V	KozMinPr6N-Bold.otf
+otf-ujgrn-h	UniJIS2004-UTF16-H	KozGoPr6N-Regular.otf
+otf-ujgrn-v	UniJIS2004-UTF16-V	KozGoPr6N-Regular.otf
+otf-ujgbn-h	UniJIS2004-UTF16-H	KozGoPr6N-Bold.otf
+otf-ujgbn-v	UniJIS2004-UTF16-V	KozGoPr6N-Bold.otf
+otf-ujgen-h	UniJIS2004-UTF16-H	KozGoPr6N-Heavy.otf
+otf-ujgen-v	UniJIS2004-UTF16-V	KozGoPr6N-Heavy.otf
+otf-ujmgrn-h	UniJIS2004-UTF16-H	KozGoPr6N-Heavy.otf
+otf-ujmgrn-v	UniJIS2004-UTF16-V	KozGoPr6N-Heavy.otf
+%
+% otf-up-kozuka-pr6n.map
+% TEXT, 90JIS
+uphminl-h	UniJIS-UTF16-H	KozMinPr6N-Light.otf
+uphminl-v	UniJIS-UTF16-V	KozMinPr6N-Light.otf
+uphminr-h	UniJIS-UTF16-H	KozMinPr6N-Regular.otf
+uphminr-v	UniJIS-UTF16-V	KozMinPr6N-Regular.otf
+uphminb-h	UniJIS-UTF16-H	KozMinPr6N-Bold.otf
+uphminb-v	UniJIS-UTF16-V	KozMinPr6N-Bold.otf
+uphgothr-h	UniJIS-UTF16-H	KozGoPr6N-Regular.otf
+uphgothr-v	UniJIS-UTF16-V	KozGoPr6N-Regular.otf
+uphgothb-h	UniJIS-UTF16-H	KozGoPr6N-Bold.otf
+uphgothb-v	UniJIS-UTF16-V	KozGoPr6N-Bold.otf
+uphgotheb-h	UniJIS-UTF16-H	KozGoPr6N-Heavy.otf
+uphgotheb-v	UniJIS-UTF16-V	KozGoPr6N-Heavy.otf
+uphmgothr-h	UniJIS-UTF16-H	KozGoPr6N-Heavy.otf
+uphmgothr-v	UniJIS-UTF16-V	KozGoPr6N-Heavy.otf
+% JISX 0213:2004
+uphminln-h      UniJIS2004-UTF16-H KozMinPr6N-Light.otf
+uphminln-v      UniJIS2004-UTF16-V KozMinPr6N-Light.otf
+uphminrn-h      UniJIS2004-UTF16-H KozMinPr6N-Regular.otf
+uphminrn-v      UniJIS2004-UTF16-V KozMinPr6N-Regular.otf
+uphminbn-h      UniJIS2004-UTF16-H KozMinPr6N-Bold.otf
+uphminbn-v      UniJIS2004-UTF16-V KozMinPr6N-Bold.otf
+uphgothrn-h     UniJIS2004-UTF16-H KozGoPr6N-Regular.otf
+uphgothrn-v     UniJIS2004-UTF16-V KozGoPr6N-Regular.otf
+uphgothbn-h     UniJIS2004-UTF16-H KozGoPr6N-Bold.otf
+uphgothbn-v     UniJIS2004-UTF16-V KozGoPr6N-Bold.otf
+uphgothebn-h    UniJIS2004-UTF16-H KozGoPr6N-Heavy.otf
+uphgothebn-v    UniJIS2004-UTF16-V KozGoPr6N-Heavy.otf
+uphmgothrn-h    UniJIS2004-UTF16-H KozGoPr6N-Heavy.otf
+uphmgothrn-v    UniJIS2004-UTF16-V KozGoPr6N-Heavy.otf
+%
+% otf cktx
+%
+otf-utmr-h  UniCNS-UCS2-H  AdobeMingStd-Light.otf
+otf-utmr-v  UniCNS-UCS2-V  AdobeMingStd-Light.otf
+otf-utgr-h  UniCNS-UCS2-H  AdobeFanHeitiStd-Bold.otf
+otf-utgr-v  UniCNS-UCS2-V  AdobeFanHeitiStd-Bold.otf
+otf-ucmr-h  UniGB-UCS2-H   AdobeSongStd-Light.otf
+otf-ucmr-v  UniGB-UCS2-V   AdobeSongStd-Light.otf
+otf-ucgr-h  UniGB-UCS2-H   AdobeHeitiStd-Regular.otf
+otf-ucgr-v  UniGB-UCS2-V   AdobeHeitiStd-Regular.otf
+otf-ukmr-h  UniKS-UCS2-H   AdobeMyungjoStd-Medium.otf
+otf-ukmr-v  UniKS-UCS2-V   AdobeMyungjoStd-Medium.otf
+otf-ukgr-h  UniKS-UCS2-H   AdobeGothicStd-Bold.otf
+otf-ukgr-v  UniKS-UCS2-V   AdobeGothicStd-Bold.otf
+%
+% otf cktx (cid)
+%
+otf-ctmr-h  Identity-H     AdobeMingStd-Light.otf
+otf-ctmr-v  Identity-V     AdobeMingStd-Light.otf
+otf-ctgr-h  Identity-H     AdobeFanHeitiStd-Bold.otf
+otf-ctgr-v  Identity-V     AdobeFanHeitiStd-Bold.otf
+otf-ccmr-h  Identity-H     AdobeSongStd-Light.otf
+otf-ccmr-v  Identity-V     AdobeSongStd-Light.otf
+otf-ccgr-h  Identity-H     AdobeHeitiStd-Regular.otf
+otf-ccgr-v  Identity-V     AdobeHeitiStd-Regular.otf
+otf-ckmr-h  Identity-H     AdobeMyungjoStd-Medium.otf
+otf-ckmr-v  Identity-V     AdobeMyungjoStd-Medium.otf
+otf-ckgr-h  Identity-H     AdobeGothicStd-Bold.otf
+otf-ckgr-v  Identity-V     AdobeGothicStd-Bold.otf
+%
+% uptex cktx
+%
+upmsl-h     UniCNS-UTF16-H AdobeMingStd-Light.otf
+upmsl-v     UniCNS-UTF16-V AdobeMingStd-Light.otf
+upmhm-h     UniCNS-UTF16-H AdobeFanHeitiStd-Bold.otf
+upmhm-v     UniCNS-UTF16-V AdobeFanHeitiStd-Bold.otf
+upstsl-h    UniGB-UTF16-H  AdobeSongStd-Light.otf
+upstsl-v    UniGB-UTF16-V  AdobeSongStd-Light.otf
+upstht-h    UniGB-UTF16-H  AdobeHeitiStd-Regular.otf
+upstht-v    UniGB-UTF16-V  AdobeHeitiStd-Regular.otf
+uphysmjm-h  UniKS-UTF16-H  AdobeMyungjoStd-Medium.otf
+uphysmjm-v  UniKS-UTF16-V  AdobeMyungjoStd-Medium.otf
+uphygt-h    UniKS-UTF16-H  AdobeGothicStd-Bold.otf
+uphygt-v    UniKS-UTF16-V  AdobeGothicStd-Bold.otf
+%
+% utf
+%
+unijmin-h     UniJIS-UTF16-H    KozMinPr6N-Regular.otf
+unijmin-v     UniJIS-UTF16-V    KozMinPr6N-Regular.otf
+unijgoth-h    UniJIS-UTF16-H    KozGoPr6N-Medium.otf
+unijgoth-v    UniJIS-UTF16-V    KozGoPr6N-Medium.otf
+
+cidmin-h      Identity-H        KozMinPr6N-Regular.otf
+cidmin-v      Identity-V        KozMinPr6N-Regular.otf
+cidgoth-h     Identity-H        KozGoPr6N-Medium.otf
+cidgoth-v     Identity-V        KozGoPr6N-Medium.otf
+
+hmr           H                 KozMinPr6N-Regular.otf
+hmrv          V                 KozMinPr6N-Regular.otf
+hkb           H                 KozGoPr6N-Medium.otf
+hkbv          V                 KozGoPr6N-Medium.otf
+%
+% misc: ttfgid
+ugidmin-h   Identity-H ipaexm.ttf/I 
+ugidmin-v   Identity-V ipaexm.ttf/I
+ugidgoth-h  Identity-H ipaexg.ttf/I
+ugidgoth-v  Identity-V ipaexg.ttf/I
+
+gidmin-h   Identity-H ipam.ttf/I 
+gidmin-v   Identity-V ipam.ttf/I
+gidgoth-h  Identity-H ipag.ttf/I
+gidgoth-v  Identity-V ipag.ttf/I

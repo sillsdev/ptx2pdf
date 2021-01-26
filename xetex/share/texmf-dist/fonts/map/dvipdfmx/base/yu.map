@@ -1,0 +1,219 @@
+%
+% This is a copy of
+% (1) ptex-yu-win.map
+% (2) uptex-yu-win.map
+% (3) otf-yu-win.map
+% (4) otf-up-yu-win.map
+% (5) otf-cktx.map
+% by Norbert Preining,
+% which are in TeX Live
+%
+% ptex-yu-win.map
+%
+rml	H	yumin.ttf
+rmlv	V	yumin.ttf
+gbm	H	yugothic.ttf
+gbmv	V	yugothic.ttf
+%
+% uptex-yu-win.map
+%
+urml	UniJIS-UTF16-H	yumin.ttf
+urmlv	UniJIS-UTF16-V	yumin.ttf
+ugbm	UniJIS-UTF16-H	yugothic.ttf
+ugbmv	UniJIS-UTF16-V	yugothic.ttf
+uprml-h	UniJIS-UTF16-H	yumin.ttf
+uprml-v	UniJIS-UTF16-V	yumin.ttf
+upgbm-h	UniJIS-UTF16-H	yugothic.ttf
+upgbm-v	UniJIS-UTF16-V	yugothic.ttf
+uprml-hq	UniJIS-UCS2-H	yumin.ttf
+upgbm-hq	UniJIS-UCS2-H	yugothic.ttf
+%
+% otf-yu-win.map
+%
+% TEXT, 90JIS
+hminl-h	H	yuminl.ttf
+hminl-v	V	yuminl.ttf
+hminr-h	H	yumin.ttf
+hminr-v	V	yumin.ttf
+hminb-h	H	yumindb.ttf
+hminb-v	V	yumindb.ttf
+hgothr-h	H	yugothic.ttf
+hgothr-v	V	yugothic.ttf
+hgothb-h	H	yugothib.ttf
+hgothb-v	V	yugothib.ttf
+hgotheb-h	H	yugothib.ttf
+hgotheb-v	V	yugothib.ttf
+hmgothr-h	H	yugothib.ttf
+hmgothr-v	V	yugothib.ttf
+
+% TEXT, JIS04
+hminln-h	H	yuminl.ttf
+hminln-v	V	yuminl.ttf
+hminrn-h	H	yumin.ttf
+hminrn-v	V	yumin.ttf
+hminbn-h	H	yumindb.ttf
+hminbn-v	V	yumindb.ttf
+hgothrn-h	H	yugothic.ttf
+hgothrn-v	V	yugothic.ttf
+hgothbn-h	H	yugothib.ttf
+hgothbn-v	V	yugothib.ttf
+hgothebn-h	H	yugothib.ttf
+hgothebn-v	V	yugothib.ttf
+hmgothrn-h	H	yugothib.ttf
+hmgothrn-v	V	yugothib.ttf
+
+% CID
+otf-cjml-h	Identity-H	yuminl.ttf/AJ16
+otf-cjml-v	Identity-V	yuminl.ttf/AJ16
+otf-cjmr-h	Identity-H	yumin.ttf/AJ16
+otf-cjmr-v	Identity-V	yumin.ttf/AJ16
+otf-cjmb-h	Identity-H	yumindb.ttf/AJ16
+otf-cjmb-v	Identity-V	yumindb.ttf/AJ16
+otf-cjgr-h	Identity-H	yugothic.ttf/AJ16
+otf-cjgr-v	Identity-V	yugothic.ttf/AJ16
+otf-cjgb-h	Identity-H	yugothib.ttf/AJ16
+otf-cjgb-v	Identity-V	yugothib.ttf/AJ16
+otf-cjge-h	Identity-H	yugothib.ttf/AJ16
+otf-cjge-v	Identity-V	yugothib.ttf/AJ16
+otf-cjmgr-h	Identity-H	yugothib.ttf/AJ16
+otf-cjmgr-v	Identity-V	yugothib.ttf/AJ16
+
+% Unicode 90JIS
+otf-ujml-h	UniJIS-UTF16-H	yuminl.ttf
+otf-ujml-v	UniJIS-UTF16-V	yuminl.ttf
+otf-ujmr-h	UniJIS-UTF16-H	yumin.ttf
+otf-ujmr-v	UniJIS-UTF16-V	yumin.ttf
+otf-ujmb-h	UniJIS-UTF16-H	yumindb.ttf
+otf-ujmb-v	UniJIS-UTF16-V	yumindb.ttf
+otf-ujgr-h	UniJIS-UTF16-H	yugothic.ttf
+otf-ujgr-v	UniJIS-UTF16-V	yugothic.ttf
+otf-ujgb-h	UniJIS-UTF16-H	yugothib.ttf
+otf-ujgb-v	UniJIS-UTF16-V	yugothib.ttf
+otf-ujge-h	UniJIS-UTF16-H	yugothib.ttf
+otf-ujge-v	UniJIS-UTF16-V	yugothib.ttf
+otf-ujmgr-h	UniJIS-UTF16-H	yugothib.ttf
+otf-ujmgr-v	UniJIS-UTF16-V	yugothib.ttf
+
+% Unicode JIS04
+otf-ujmln-h	UniJIS2004-UTF16-H	yuminl.ttf
+otf-ujmln-v	UniJIS2004-UTF16-V	yuminl.ttf
+otf-ujmrn-h	UniJIS2004-UTF16-H	yumin.ttf
+otf-ujmrn-v	UniJIS2004-UTF16-V	yumin.ttf
+otf-ujmbn-h	UniJIS2004-UTF16-H	yumindb.ttf
+otf-ujmbn-v	UniJIS2004-UTF16-V	yumindb.ttf
+otf-ujgrn-h	UniJIS2004-UTF16-H	yugothic.ttf
+otf-ujgrn-v	UniJIS2004-UTF16-V	yugothic.ttf
+otf-ujgbn-h	UniJIS2004-UTF16-H	yugothib.ttf
+otf-ujgbn-v	UniJIS2004-UTF16-V	yugothib.ttf
+otf-ujgen-h	UniJIS2004-UTF16-H	yugothib.ttf
+otf-ujgen-v	UniJIS2004-UTF16-V	yugothib.ttf
+otf-ujmgrn-h	UniJIS2004-UTF16-H	yugothib.ttf
+otf-ujmgrn-v	UniJIS2004-UTF16-V	yugothib.ttf
+%
+% otf-up-yu-win.map
+%
+% TEXT, 90JIS
+uphminl-h	UniJIS-UTF16-H	yuminl.ttf
+uphminl-v	UniJIS-UTF16-V	yuminl.ttf
+uphminr-h	UniJIS-UTF16-H	yumin.ttf
+uphminr-v	UniJIS-UTF16-V	yumin.ttf
+uphminb-h	UniJIS-UTF16-H	yumindb.ttf
+uphminb-v	UniJIS-UTF16-V	yumindb.ttf
+uphgothr-h	UniJIS-UTF16-H	yugothic.ttf
+uphgothr-v	UniJIS-UTF16-V	yugothic.ttf
+uphgothb-h	UniJIS-UTF16-H	yugothib.ttf
+uphgothb-v	UniJIS-UTF16-V	yugothib.ttf
+uphgotheb-h	UniJIS-UTF16-H	yugothib.ttf
+uphgotheb-v	UniJIS-UTF16-V	yugothib.ttf
+uphmgothr-h	UniJIS-UTF16-H	yugothib.ttf
+uphmgothr-v	UniJIS-UTF16-V	yugothib.ttf
+
+% TEXT, JIS04
+uphminln-h	UniJIS2004-UTF16-H	yuminl.ttf
+uphminln-v	UniJIS2004-UTF16-V	yuminl.ttf
+uphminrn-h	UniJIS2004-UTF16-H	yumin.ttf
+uphminrn-v	UniJIS2004-UTF16-V	yumin.ttf
+uphminbn-h	UniJIS2004-UTF16-H	yumindb.ttf
+uphminbn-v	UniJIS2004-UTF16-V	yumindb.ttf
+uphgothrn-h	UniJIS2004-UTF16-H	yugothic.ttf
+uphgothrn-v	UniJIS2004-UTF16-V	yugothic.ttf
+uphgothbn-h	UniJIS2004-UTF16-H	yugothib.ttf
+uphgothbn-v	UniJIS2004-UTF16-V	yugothib.ttf
+uphgothebn-h	UniJIS2004-UTF16-H	yugothib.ttf
+uphgothebn-v	UniJIS2004-UTF16-V	yugothib.ttf
+uphmgothrn-h	UniJIS2004-UTF16-H	yugothib.ttf
+uphmgothrn-v	UniJIS2004-UTF16-V	yugothib.ttf
+%
+% otf cktx
+%
+otf-utmr-h  UniCNS-UCS2-H  AdobeMingStd-Light.otf
+otf-utmr-v  UniCNS-UCS2-V  AdobeMingStd-Light.otf
+otf-utgr-h  UniCNS-UCS2-H  AdobeFanHeitiStd-Bold.otf
+otf-utgr-v  UniCNS-UCS2-V  AdobeFanHeitiStd-Bold.otf
+otf-ucmr-h  UniGB-UCS2-H   AdobeSongStd-Light.otf
+otf-ucmr-v  UniGB-UCS2-V   AdobeSongStd-Light.otf
+otf-ucgr-h  UniGB-UCS2-H   AdobeHeitiStd-Regular.otf
+otf-ucgr-v  UniGB-UCS2-V   AdobeHeitiStd-Regular.otf
+otf-ukmr-h  UniKS-UCS2-H   AdobeMyungjoStd-Medium.otf
+otf-ukmr-v  UniKS-UCS2-V   AdobeMyungjoStd-Medium.otf
+otf-ukgr-h  UniKS-UCS2-H   AdobeGothicStd-Bold.otf
+otf-ukgr-v  UniKS-UCS2-V   AdobeGothicStd-Bold.otf
+%
+% otf cktx (cid)
+%
+otf-ctmr-h  Identity-H     AdobeMingStd-Light.otf
+otf-ctmr-v  Identity-V     AdobeMingStd-Light.otf
+otf-ctgr-h  Identity-H     AdobeFanHeitiStd-Bold.otf
+otf-ctgr-v  Identity-V     AdobeFanHeitiStd-Bold.otf
+otf-ccmr-h  Identity-H     AdobeSongStd-Light.otf
+otf-ccmr-v  Identity-V     AdobeSongStd-Light.otf
+otf-ccgr-h  Identity-H     AdobeHeitiStd-Regular.otf
+otf-ccgr-v  Identity-V     AdobeHeitiStd-Regular.otf
+otf-ckmr-h  Identity-H     AdobeMyungjoStd-Medium.otf
+otf-ckmr-v  Identity-V     AdobeMyungjoStd-Medium.otf
+otf-ckgr-h  Identity-H     AdobeGothicStd-Bold.otf
+otf-ckgr-v  Identity-V     AdobeGothicStd-Bold.otf
+%
+% uptex cktx
+%
+upmsl-h     UniCNS-UTF16-H AdobeMingStd-Light.otf
+upmsl-v     UniCNS-UTF16-V AdobeMingStd-Light.otf
+upmhm-h     UniCNS-UTF16-H AdobeFanHeitiStd-Bold.otf
+upmhm-v     UniCNS-UTF16-V AdobeFanHeitiStd-Bold.otf
+upstsl-h    UniGB-UTF16-H  AdobeSongStd-Light.otf
+upstsl-v    UniGB-UTF16-V  AdobeSongStd-Light.otf
+upstht-h    UniGB-UTF16-H  AdobeHeitiStd-Regular.otf
+upstht-v    UniGB-UTF16-V  AdobeHeitiStd-Regular.otf
+uphysmjm-h  UniKS-UTF16-H  AdobeMyungjoStd-Medium.otf
+uphysmjm-v  UniKS-UTF16-V  AdobeMyungjoStd-Medium.otf
+uphygt-h    UniKS-UTF16-H  AdobeGothicStd-Bold.otf
+uphygt-v    UniKS-UTF16-V  AdobeGothicStd-Bold.otf
+%
+% utf
+%
+unijmin-h     UniJIS-UTF16-H    yumin.ttf
+unijmin-v     UniJIS-UTF16-V    yumin.ttf
+unijgoth-h    UniJIS-UTF16-H    yugothic.ttf
+unijgoth-v    UniJIS-UTF16-V    yugothic.ttf
+
+cidmin-h      Identity-H        yumin.ttf/AJ16
+cidmin-v      Identity-V        yumin.ttf/AJ16
+cidgoth-h     Identity-H        yugothic/AJ16
+cidgoth-v     Identity-V        yugothic/AJ16
+
+hmr           H                 yumin.ttf
+hmrv          V                 yumin.ttf
+hkb           H                 yugothic.ttf
+hkbv          V                 yugothic.ttf
+%
+% misc: ttfgid
+%
+ugidmin-h   Identity-H ipaexm.ttf/I 
+ugidmin-v   Identity-V ipaexm.ttf/I
+ugidgoth-h  Identity-H ipaexg.ttf/I
+ugidgoth-v  Identity-V ipaexg.ttf/I
+
+gidmin-h   Identity-H ipam.ttf/I 
+gidmin-v   Identity-V ipam.ttf/I
+gidgoth-h  Identity-H ipag.ttf/I
+gidgoth-v  Identity-V ipag.ttf/I

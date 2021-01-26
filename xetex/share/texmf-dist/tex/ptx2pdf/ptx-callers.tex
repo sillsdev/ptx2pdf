@@ -1,0 +1,155 @@
+﻿%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Part of the ptx2pdf macro package for formatting USFM text
+% copyright (c) 2007 by SIL International
+% written by Jonathan Kew
+%
+% Permission is hereby granted, free of charge, to any person obtaining  
+% a copy of this software and associated documentation files (the  
+% "Software"), to deal in the Software without restriction, including  
+% without limitation the rights to use, copy, modify, merge, publish,  
+% distribute, sublicense, and/or sell copies of the Software, and to  
+% permit persons to whom the Software is furnished to do so, subject to  
+% the following conditions:
+%
+% The above copyright notice and this permission notice shall be  
+% included in all copies or substantial portions of the Software.
+%
+% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,  
+% EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF  
+% MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND  
+% NONINFRINGEMENT. IN NO EVENT SHALL SIL INTERNATIONAL BE LIABLE FOR  
+% ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF  
+% CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION  
+% WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+%
+% Except as contained in this notice, the name of SIL International  
+% shall not be used in advertising or otherwise to promote the sale,  
+% use or other dealings in this Software without prior written  
+% authorization from SIL International.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% footnote caller support for the ptx2pdf package
+
+%
+% Set a list of callers to be used for a given note style
+%   #1 -> the note style, e.g., f or x
+%   #2 -> comma-separated list of callers (may be multi-character)
+%
+\def\AutoCallers#1#2{%
+  \expandafter\def\csname callers-#1\endcsname{#2}%
+      % store the caller list in a macro \callers-#1
+  \numc@llers=0
+  \expandafter\expandafter\expandafter
+    \countc@llers\csname callers-#1\endcsname,\end
+      % count number of callers in the list and store in \callercount-#1
+  \expandafter\edef\csname callercount-#1\endcsname{\the\numc@llers}}
+
+\def\countc@llers#1,#2\end{\def\t@st{#1}% recursively count items in comma-separated list
+  \ifx\t@st\empty \let\n@xt\donec@llers
+  \else \advance\numc@llers by 1 \let\n@xt\countc@llers \fi
+  \n@xt#2,\end}
+\def\donec@llers#1\end{}
+
+%
+% Generate an autocaller
+%   #1 -> note number (sequential from 1)
+%   #2 -> note style, e.g., f or x
+%
+\def\getcaller#1#2{%
+  \c@llernum=#1\relax
+  \expandafter\ifx\csname page-caller #2\endcsname\relax \else % if this note class is using per-page callers...
+    \write\n@tepages{\string\noteonpage{#2}{#1}{\the\pageno}}% record the page where this note occurred
+    \expandafter\let\expandafter\thisc@llerpage\csname notepage-#2-#1\endcsname
+    \ifx\thisc@llerpage\relax \else % check where the note occurred last time
+      \count255=\c@llernum \c@llernum=1 % reset c@llernum to 1
+      \loop \advance\count255 by -1 % then increment it by the number of prev callers on same page
+        \expandafter\let\expandafter\prevc@llerpage\csname notepage-#2-\number\count255\endcsname
+        \ifx\thisc@llerpage\prevc@llerpage \advance\c@llernum by 1 \repeat
+    \fi
+  \fi
+  \expandafter\ifx\csname callers-#2\endcsname\relax % if caller list is empty
+    \expandafter\ifx\csname numeric-callers #2\endcsname\relax % and numeric callers not specified
+      \loop\ifnum\c@llernum>\AutoCallerNumChars
+        \advance\c@llernum by -\AutoCallerNumChars \repeat
+      \advance\c@llernum by -1 \advance\c@llernum by \AutoCallerStartChar
+      \char\c@llernum % generate an alphabetic auto-caller
+    \else
+      \number\c@llernum % generate a numeric caller
+    \fi
+  \else % caller list is not empty
+    \edef\c@llers{\csname callers-#2\endcsname}%
+    \ifx\c@llers\empty \else
+    \numc@llers=\csname callercount-#2\endcsname
+    \loop \ifnum\c@llernum>\numc@llers % reduce \c@llernum modulo \numc@llers
+      \advance\c@llernum by -\numc@llers \repeat
+    \loop \ifnum\c@llernum>1 % then strip \c@llernum-1 callers from the front of the list
+      \advance\c@llernum by -1
+      \expandafter\dropfirstc@ller\c@llers,\end \repeat
+    \expandafter\getfirstc@ller\c@llers,\end % and extract the one we want
+    \fi
+  \fi
+}
+
+\def\dropfirstc@ller#1,#2\end{\def\c@llers{#2}}
+\def\getfirstc@ller#1,#2\end{#1}
+\newcount\c@llernum \newcount\numc@llers
+
+\newwrite\n@tepages
+\newread\n@tepagetest
+\def\PageResetCallers#1{% if we want per-page callers, we have to generate and read an auxiliary file
+  \ifpagec@llers \else
+    \openin\n@tepagetest = "\jobname.notepages" % test if notepages file exists from prev run
+    \ifeof\n@tepagetest \let\n@xt\relax
+    \else \def\n@xt{\input "\jobname.notepages"}
+    \fi \closein\n@tepagetest
+    \n@xt
+    \pagec@llerstrue
+    \addtoendhooks{\finishc@llers}
+    \openout\n@tepages="\jobname.notepages"
+  \fi
+  \expandafter\let\csname page-caller #1\endcsname=1 % record that this note class wants per-page callers
+}
+\newif\ifpagec@llers
+\def\noteonpage#1#2#3{% style, number, page: defines \notepage-<style>-<number> as the page number where this note occurs
+  \expandafter\def\csname notepage-#1-#2\endcsname{#3}}
+\def\finishc@llers{\immediate\closeout\n@tepages % close the notepages file, then re-read it and check for changes
+  \n@teschangedfalse
+  \m@kedigitsother
+  \let\noteonpage=\checkn@tepage \input "\jobname.notepages"
+  \ifn@teschanged \msg{*** Notes may have changed; re-run to update callers}\fi % if so, notify the user
+}
+\def\checkn@tepage#1#2#3{\def\t@st{#3}% test whether note has moved since the previous run
+  \expandafter\ifx\expandafter\t@st\csname notepage-#1-#2\endcsname
+    \else \n@teschangedtrue \fi}
+\newif\ifn@teschanged
+
+\def\NumericCallers#1{% use numeric rather than alphabetic auto-callers for style #1
+  \expandafter\let\csname numeric-callers #1\endcsname=1}
+
+% Character numbers used for default caller sequence
+\newcount\AutoCallerStartChar
+\newcount\AutoCallerNumChars
+
+\AutoCallerStartChar=97 % start at 'a'
+\AutoCallerNumChars=26 % and generate 26 callers before restarting
+
+% To restart numbering class "f" on each page:
+% \PageResetCallers{f}
+
+% To make note class "f" use a specific sequence of symbols:
+% \AutoCallers{f}{*,†,‡,¶,§,**,††,‡‡,¶¶,§§}
+
+% To make note class "x" omit callers:
+% \AutoCallers{x}{}
+
+% To make note class "f" default to numbers rather than chars
+% (an explicit list of \AutoCallers will still override this)
+% \NumericCallers{f}
+
+%% override the autonumber macro from ptx-note-style.tex:
+\def\gen@utonum#1{\count255=0\csname autonum #1\endcsname
+  \edef\n@mber{\the\count255}%
+  \expandafter\def\expandafter\them@rk
+    \expandafter{\expandafter\getcaller\expandafter{\n@mber}{#1}}}
+
+\endinput

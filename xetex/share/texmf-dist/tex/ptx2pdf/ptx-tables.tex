@@ -1,0 +1,327 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Part of the ptx2pdf macro package for formatting USFM text
+% copyright (c) 2007-2008 by SIL International
+% written by Jonathan Kew
+%
+% Permission is hereby granted, free of charge, to any person obtaining  
+% a copy of this software and associated documentation files (the  
+% "Software"), to deal in the Software without restriction, including  
+% without limitation the rights to use, copy, modify, merge, publish,  
+% distribute, sublicense, and/or sell copies of the Software, and to  
+% permit persons to whom the Software is furnished to do so, subject to  
+% the following conditions:
+%
+% The above copyright notice and this permission notice shall be  
+% included in all copies or substantial portions of the Software.
+%
+% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,  
+% EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF  
+% MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND  
+% NONINFRINGEMENT. IN NO EVENT SHALL SIL INTERNATIONAL BE LIABLE FOR  
+% ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF  
+% CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION  
+% WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+%
+% Except as contained in this notice, the name of SIL International  
+% shall not be used in advertising or otherwise to promote the sale,  
+% use or other dealings in this Software without prior written  
+% authorization from SIL International.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% ptx-tables.tex
+% support for USFM table markup
+
+\addtoinithooks{\set@ptablemarkers}
+
+\m@kedigitsletters
+\def\set@ptablemarkers{% redefine the markers from usfm.sty
+  \def\th1{\t@blecell{th1}{l}}
+  \def\th2{\t@blecell{th2}{l}}
+  \def\th3{\t@blecell{th3}{l}}
+  \def\th4{\t@blecell{th4}{l}}
+  \def\th5{\t@blecell{th5}{l}}
+  \def\th6{\t@blecell{th6}{l}}
+  \def\th7{\t@blecell{th7}{l}}
+  \def\th8{\t@blecell{th8}{l}}
+  \def\th9{\t@blecell{th9}{l}}
+  \def\thr1{\t@blecell{thr1}{r}}
+  \def\thr2{\t@blecell{thr2}{r}}
+  \def\thr3{\t@blecell{thr3}{r}}
+  \def\thr4{\t@blecell{thr4}{r}}
+  \def\thr5{\t@blecell{thr5}{r}}
+  \def\thr6{\t@blecell{thr6}{r}}
+  \def\thr7{\t@blecell{thr7}{r}}
+  \def\thr8{\t@blecell{thr8}{r}}
+  \def\thr9{\t@blecell{thr9}{r}}
+  \def\tc1{\t@blecell{tc1}{l}}
+  \def\tc2{\t@blecell{tc2}{l}}
+  \def\tc3{\t@blecell{tc3}{l}}
+  \def\tc4{\t@blecell{tc4}{l}}
+  \def\tc5{\t@blecell{tc5}{l}}
+  \def\tc6{\t@blecell{tc6}{l}}
+  \def\tc7{\t@blecell{tc7}{l}}
+  \def\tc8{\t@blecell{tc8}{l}}
+  \def\tc9{\t@blecell{tc9}{l}}
+  \def\tcr1{\t@blecell{tcr1}{r}}
+  \def\tcr2{\t@blecell{tcr2}{r}}
+  \def\tcr3{\t@blecell{tcr3}{r}}
+  \def\tcr4{\t@blecell{tcr4}{r}}
+  \def\tcr5{\t@blecell{tcr5}{r}}
+  \def\tcr6{\t@blecell{tcr6}{r}}
+  \def\tcr7{\t@blecell{tcr7}{r}}
+  \def\tcr8{\t@blecell{tcr8}{r}}
+  \def\tcr9{\t@blecell{tcr9}{r}}
+  \let\@TR=\tr
+  \let\tr=\t@blerow
+}
+\m@kedigitsother
+
+\def\t@blerow{%
+  \startt@ble
+  \@ndcell
+  \@ndrow
+  \advance\tabler@ws by 1
+  \tablec@l=0
+  \@tablerowtrue \@TR \@tablerowfalse
+  \@rowtrue
+  \ignorespaces}
+
+\addtoparstylehooks{\if@tablerow\else\endt@ble\fi}
+\newif\if@tablerow
+\newif\if@row
+
+\def\@ndrow{%
+  \if@row
+    \loop \ifnum\tablec@l<\maxtablec@l
+      \advance\tablec@l by 1
+      \x@\let\x@\c@rrentcolbox\csname tablecol-\the\tablec@l\endcsname
+      \setbox\c@rrentcolbox=\vbox{\hbox{}\unvbox\c@rrentcolbox}%
+      \repeat
+    \@rowfalse
+  \fi}
+
+\catcode`\~=12 \lccode`\~=32
+\lowercase{%
+  \def\t@blecell#1#2{%
+    \@ndcell
+    \st@rtcell
+    \x@\xdef\csname align-\the\tabler@ws-\the\tablec@l\endcsname{#2}%
+    \ifnum\tablec@l>\maxtablec@l \global\maxtablec@l=\tablec@l \fi
+    \ch@rstyle{#1}~\ignorespaces}%
+}
+
+\def\st@rtcell{%
+  \advance\tablec@l by 1
+  \ifnum\tablec@l>\allocatedtablec@ls \@llocnewc@l \fi
+  \setbox\cellb@x=\vbox\bgroup
+    \def\mark##1{\xdef\s@vedm@rk{##1}\aftergroup\dos@vedm@rk}%
+    \hsize=\maxdimen
+    \resetp@rstyle \everypar={}\noindent
+    \ifRTL\beginR\fi
+    \dimen255=0pt
+    \getp@ram{leftmargin}{tr}%
+    \ifx\p@ram\relax \else \advance\dimen255 \p@ram\IndentUnit \fi
+    \getp@ram{firstindent}{tr}%
+    \ifx\p@ram\relax \else \advance\dimen255 \p@ram\IndentUnit \fi
+    \kern\dimen255
+    \s@tfont{tr}%
+    \global\p@ranesting=1
+    \@celltrue}
+\def\dos@vedm@rk{\expandafter\mark\expandafter{\s@vedm@rk}}
+
+\def\@ndcell{%
+  \if@cell
+    \unskip
+    \end@llcharstyles
+    \egroup
+    \setbox0=\vbox{\unvbox\cellb@x \global\setbox\cellb@x=\lastbox}%
+    \global\setbox\cellb@x=\hbox{\unhbox\cellb@x \unskip\unskip\unpenalty}%
+    \x@\let\x@\c@rrentcolbox\csname tablecol-\the\tablec@l\endcsname
+    \ifvoid\c@rrentcolbox % adding a column, may need to add empty cells above
+      \count255=1
+      \loop \ifnum\count255<\tabler@ws \advance\count255 by 1
+        \setbox\c@rrentcolbox=\vbox{\hbox{}\unvbox\c@rrentcolbox}%
+        \repeat
+    \fi
+    \setbox\c@rrentcolbox=\vbox{\box\cellb@x\unvbox\c@rrentcolbox}%
+      % note that this stacks the cells upwards! they'll be reversed later
+  \fi}
+
+\newif\if@cell
+\newbox\cellb@x
+
+\def\startt@ble{%
+  \ifdoingt@ble \else
+    \ifhe@dings\endhe@dings\fi
+    \tabler@ws=0
+    \tablec@l=0
+    \global\maxtablec@l=0
+    \doingt@bletrue
+  \fi}
+
+\newdimen\t@talwidth
+\def\endt@ble{%
+  \ifdoingt@ble
+    \@ndcell
+    \@ndrow
+    \t@talwidth=0pt
+    \f@reachcol{\advance\t@talwidth by \wd\c@rrentcolbox}%
+    \endt@blewrap
+    \f@reachcol{\setbox\c@rrentcolbox=\box\voidb@x}%
+    \doingt@blefalse
+  \fi}
+\newif\ifdoingt@ble
+
+\def\endt@blewrap{%
+  % calculate column widths as:
+  % (a) any column whose max is < \hsize / numcols gets its natural width
+  % (b) calculate exc@ss width of the remaining columns
+  % (c) calculate sp@re width available from the narrow ones
+  % (d) distribute this in proportion to the relative exc@ss of each
+  \sp@re=0pt \exc@ss=0pt
+  \thr@shold=\hsize \divide\thr@shold by \maxtablec@l
+  \f@reachcol{%
+    \c@rrentcolwidth=-1sp % "unset" flag
+    \ifdim\wd\c@rrentcolbox>\thr@shold
+      \advance\exc@ss by \wd\c@rrentcolbox \advance\exc@ss by -\thr@shold
+    \else
+      \c@rrentcolwidth=\wd\c@rrentcolbox
+      \advance\sp@re by \thr@shold \advance\sp@re by -\c@rrentcolwidth
+    \fi}%
+  \f@reachcol{%
+    \ifdim\c@rrentcolwidth=-1sp
+      \ifdim\exc@ss>\sp@re % we have to wrap at least one column
+        \c@rrentcolwidth=\wd\c@rrentcolbox \advance\c@rrentcolwidth by -\thr@shold
+        \multiply\c@rrentcolwidth by 20
+        \divide\c@rrentcolwidth by \exc@ss
+        \multiply\c@rrentcolwidth by \sp@re
+        \divide\c@rrentcolwidth by 20
+        \advance\c@rrentcolwidth by \thr@shold
+      \else % there was enough sp@re, just give columns their desired width
+        \c@rrentcolwidth=\wd\c@rrentcolbox
+      \fi
+    \fi
+  }%
+%  \f@reachcol{%
+%    \MSG{column \the\@col: width=\the\c@rrentcolwidth\space
+%      \ifdim\c@rrentcolwidth<\wd\c@rrentcolbox
+%        (wrapped, natural was \the\wd\c@rrentcolbox)\fi}%
+%  }%
+  \f@reachcol{\wr@pcolumn}%
+  \f@reachrow{%
+    \ifnum\@row=2 \nobreak \fi
+    \ifnum\@row=\tabler@ws \nobreak \fi
+    \linec@unt=0
+    \f@reachcol{\extractl@stcell \updatelinec@unt}%
+    \nth@line=0
+    \@@LOOP \ifnum\nth@line<\linec@unt
+      \advance\nth@line by 1
+      \line{\ifRTL\hfil\lochcaer@f{\getnth@line}\hfil\else
+        \hfil\f@reachcol{\getnth@line}\hfil\fi}%
+      \ifnum\nth@line<\linec@unt \nobreak \fi
+      \@@REPEAT
+  }%
+}
+\newcount\linec@unt \newcount\lct@mp
+\newdimen\sp@re \newdimen\exc@ss \newdimen\thr@shold
+
+% more copies of plain.tex loop macros (see also ptx-char-style)
+\def\@@LOOP #1\@@REPEAT{\gdef\@@BODY{#1}\@@ITERATE}
+\def\@@ITERATE{\@@BODY \global\let\@@NEXT\@@ITERATE
+ \else \global\let\@@NEXT\relax \fi \@@NEXT}
+\let\@@REPEAT\fi
+
+\def\@@@LOOP #1\@@@REPEAT{\gdef\@@@BODY{#1}\@@@ITERATE}
+\def\@@@ITERATE{\@@@BODY \global\let\@@@NEXT\@@@ITERATE
+ \else \global\let\@@@NEXT\relax \fi \@@@NEXT}
+\let\@@@REPEAT\fi
+
+\def\wr@pcolumn{\@row=1 \setbox\c@rrentcolbox=\vbox{\unvbox\c@rrentcolbox \wr@pboxes}}
+\def\wr@pboxes{% line-wrap a list of \hboxes
+  \setbox0=\lastbox 
+  \ifhbox0 {\advance\@row by 1 \wr@pboxes}\fi
+%  \MSG{before wrap:}\showbox0
+  \setbox0=\vbox{\hsize=\c@rrentcolwidth
+    \everypar={}\resetp@rstyle\noindent
+    \ifRTL\beginR\fi
+    \getp@ram{leftmargin}{tr}%
+    \ifx\p@ram\relax \else \advance \ifRTL\rightskip\else\leftskip\fi\p@ram \IndentUnit \fi
+    \kern-\p@ram\IndentUnit
+    \getp@ram{rightmargin}{tr}%
+    \ifx\p@ram\relax \else \advance \ifRTL\leftskip\else\rightskip\fi\p@ram \IndentUnit \fi
+    \x@\let\x@\the@lign\csname align-\the\@row-\the\@col\endcsname
+    \ifx\the@lign\cell@r
+      \ifRTL\let\n@xt=\rightskip\else\let\n@xt=\leftskip\fi
+    \else
+      \ifRTL\let\n@xt=\leftskip\else\let\n@xt=\rightskip\fi
+    \fi
+    \advance\n@xt by 0pt plus 1fil
+    \ifx\the@lign\cell@r\nobreak\csname leaders-tcr\the\@col\endcsname\hfill\fi
+    \unhbox0\unskip \parfillskip=0pt
+    \ifx\the@lign\cell@r\else\nobreak\csname leaders-tc\the\@col\endcsname\hfill\null\fi
+    \par}%
+  \wd0=\c@rrentcolwidth
+%  \MSG{after wrap:}\showbox0
+  \box0 }
+\def\cell@r{r}
+\def\extractl@stcell{% delete last cell from box \c@rrentcolbox and return it in \c@rrentcell
+  \setbox\c@rrentcolbox=\vbox{\unvbox\c@rrentcolbox \unskip\unpenalty
+    \global\setbox\c@rrentcell=\lastbox}}
+\def\updatelinec@unt{% count lines in \c@rrentcell, update \linec@unt if more than current value
+  \global\lct@mp=0
+  \setbox0=\vbox{\unvcopy\c@rrentcell \c@untlines}%
+  \ifnum\lct@mp>\linec@unt \linec@unt=\lct@mp \fi}
+\def\c@untlines{\setbox0=\lastbox
+  \ifhbox0 \global\advance\lct@mp by 1 \unskip\unpenalty\c@untlines
+  \fi}
+\def\getnth@line{% return content of line nth@line from box \c@rrentcell
+  \lct@mp=0
+  \setbox0=\vbox{\unvcopy\c@rrentcell \c@untlines}% count lines into \lct@mp
+  \ifnum\nth@line>\lct@mp \global\setbox1=\hbox to \c@rrentcolwidth{\hfil}\else
+    \setbox0=\vbox{\unvcopy\c@rrentcell
+      \@@@LOOP \ifnum\nth@line<\lct@mp
+        \setbox0=\lastbox \unskip\unpenalty
+        \advance\lct@mp by -1 \@@@REPEAT
+      \global\setbox1=\lastbox}%
+  \fi
+  \box1
+}
+\newcount\nth@line
+
+\def\f@reachcol#1{%
+  \@col=0 \loop \ifnum\@col<\maxtablec@l
+    \advance\@col by 1
+    \x@\let\x@\c@rrentcolbox\csname tablecol-\the\@col\endcsname
+    \x@\let\x@\c@rrentcolwidth\csname colwidth-\the\@col\endcsname
+    \x@\let\x@\c@rrentcell\csname cell-\the\@col\endcsname
+    #1\repeat}
+
+\def\lochcaer@f#1{%
+  \@col=\maxtablec@l \loop \ifnum\@col>0
+    \x@\let\x@\c@rrentcolbox\csname tablecol-\the\@col\endcsname
+    \x@\let\x@\c@rrentcolwidth\csname colwidth-\the\@col\endcsname
+    \x@\let\x@\c@rrentcell\csname cell-\the\@col\endcsname
+    #1%
+    \advance\@col by -1
+    \repeat}
+
+\def\f@reachrow#1{%
+  \@row=0 \@LOOP \ifnum\@row<\tabler@ws
+    \advance\@row by 1
+    #1\@REPEAT}
+
+\newcount\tabler@ws
+\newcount\maxtablec@l
+\newcount\tablec@l
+\newcount\@col \newcount\@row
+\newcount\allocatedtablec@ls
+
+\def\@llocnewc@l{%
+  \advance\allocatedtablec@ls by 1
+  \x@\n@wbox\csname tablecol-\the\allocatedtablec@ls\endcsname
+  \x@\n@wbox\csname cell-\the\allocatedtablec@ls\endcsname
+  \x@\n@wdimen\csname colwidth-\the\allocatedtablec@ls\endcsname
+}
+\let\n@wbox=\newbox
+\let\n@wdimen=\newdimen
+

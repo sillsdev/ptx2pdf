@@ -1,0 +1,67 @@
+% dlbase14.map
+%
+% urw fonts (in Ghostscript) are embedded for the Base 14 fonts.
+% dvipdfm(x) -f dlbase14.map ... ...
+%
+% Courier
+%
+pcrr8r    8r    ucrr8a
+pcrb8r    8r    ucrb8a
+pcrro8r   8r    ucrro8a
+pcrbo8r   8r    ucrbo8a
+%
+pcrr8rn   8r    ucrr8a -e 0.85
+%
+% Helvetica
+%
+phvr8r    8r    uhvr8a
+phvb8r	  8r    uhvb8a
+phvro8r   8r    uhvro8a
+phvbo8r   8r    uhvbo8a
+%
+% Helvetica narrow
+%
+phvbon8r  8r    uhvbo8ac
+phvbrn8r  8r    uhvb8ac
+phvron8r  8r    uhvro8ac
+phvrrn8r  8r    uhvr8ac
+%
+phvbo8rn  8r    uhvbo8ac
+phvb8rn   8r    uhvb8ac
+phvro8rn  8r    uhvro8ac
+phvr8rn   8r    uhvr8ac
+% Symbol
+psyr      none  usyr
+psyro     none  usyr -s 0.167
+% Raw Symbol
+rpsyr     none  usyr
+% Times
+ptmr8r    8r    utmr8a
+ptmb8r    8r    utmb8a
+ptmbi8r   8r    utmbi8a
+ptmri8r   8r    utmri8a
+% Raw Times
+rptmr     none  utmr8a
+rptmb     none  utmb8a
+rptmbi    none  utmbi8a
+rptmri    none  utmri8a
+%
+ptmbo8r   8r    utmb8a -s 0.167
+ptmro8r   8r    utmr8a -s 0.167
+ptmrre8r  8r    utmr8a -e 1.2
+ptmrrn8r  8r    utmr8a -e 0.8
+% ZapfDingbats
+pzdr      none  uzdr
+%
+% txfonts
+%
+rtxptmb   tx8r  utmb8a
+rtxptmbo  tx8r  utmb8a -s 0.167
+rtxptmbi  tx8r  utmbi8a
+rtxptmr   tx8r  utmr8a
+rtxptmro  tx8r  utmr8a -s 0.167
+rtxptmri  tx8r  utmri8a
+rtxphvr   tx8r  uhvr8a
+rtxphvro  tx8r  uhvro8a
+rtxphvb   tx8r  uhvb8a
+rtxphvbo  tx8r  uhvbo8a

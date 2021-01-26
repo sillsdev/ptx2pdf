@@ -1,0 +1,67 @@
+% kbbase14.map
+%
+% Adobe base 14 fonts (Karl Berry names) are embedded.
+% dvipdfm(x) -f kbbase14.map ... ...
+%
+% Courier
+%
+pcrr8r    8r    pcrr8a
+pcrb8r    8r    pcrb8a
+pcrro8r   8r    pcrro8a
+pcrbo8r   8r    pcrbo8a
+%
+pcrr8rn   8r    pcrr8a -e 0.85
+%
+% Helvetica
+%
+phvr8r    8r    phvr8a
+phvb8r	  8r    phvb8a
+phvro8r   8r    phvro8a
+phvbo8r   8r    phvbo8a
+%
+% Helvetica Narrow
+%
+phvbon8r  8r    phvbo8a -e 0.82
+phvbrn8r  8r    phvb8a  -e 0.82
+phvron8r  8r    phvro8a -e 0.82
+phvrrn8r  8r    phvr8a  -e 0.82
+%
+phvbo8rn  8r    phvbo8a -e 0.82
+phvb8rn   8r    phvb8a  -e 0.82
+phvro8rn  8r    phvro8a -e 0.82
+phvr8rn   8r    phvr8a  -e 0.82
+% Symbol
+psyr      none  psyr
+psyro     none  psyr -s 0.167
+% Raw Symbol
+rpsyr     none  psyr
+% Times
+ptmr8r    8r    ptmr8a
+ptmb8r    8r    ptmb8a
+ptmbi8r   8r    ptmbi8a
+ptmri8r   8r    ptmri8a
+% Raw Times
+rptmr     none  ptmr8a
+rptmb     none  ptmb8a
+rptmbi    none  ptmbi8a
+rptmri    none  ptmri8a
+%
+ptmbo8r   8r    ptmb8a -s 0.167
+ptmro8r   8r    ptmr8a -s 0.167
+ptmrre8r  8r    ptmr8a -e 1.2
+ptmrrn8r  8r    ptmr8a -e 0.8
+% ZapfDingbats
+pzdr      none  pzdr
+%
+% txfonts
+%
+rtxptmb   tx8r  ptmb8a
+rtxptmbo  tx8r  ptmb8a -s 0.167
+rtxptmbi  tx8r  ptmbi8a
+rtxptmr   tx8r  ptmr8a
+rtxptmro  tx8r  ptmr8a -s 0.167
+rtxptmri  tx8r  ptmri8a
+rtxphvr   tx8r  phvr8a
+rtxphvro  tx8r  phvro8a
+rtxphvb   tx8r  phvb8a
+rtxphvbo  tx8r  phvbo8a

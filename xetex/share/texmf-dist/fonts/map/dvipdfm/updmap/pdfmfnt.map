@@ -1,0 +1,1679 @@
+% --------------------------------------------------------
+% pdfmfnt-base.map
+% System map file which is copied to pdfmfnt.map by updmap
+% --------------------------------------------------------
+%
+% cmr
+%
+cmr10 ot1r -r
+cmr12 ot1r -r
+cmr17 ot1r -r
+cmr6 ot1r -r
+cmr7 ot1r -r
+cmr8 ot1r -r
+cmr9 ot1r -r
+% cmr5 is encoded somewhat differently
+cmr5 -r
+% Bold
+cmbx10 ot1r -r
+cmbx12 ot1r -r
+cmbx5 ot1r -r 
+cmbx6 ot1r -r
+cmbx7 ot1r -r
+cmbx8 ot1r -r
+cmbx9 ot1r -r
+% Symbol fonts are remapped, but not reencoded
+cmex10 -r
+cmbsy10 -r
+cmsy10 -r
+cmsy9 -r
+cmsy8 -r
+cmsy7 -r
+cmsy6 -r
+cmsy5 -r
+lasy10 -r
+lasy9 -r
+lasy8 -r
+lasy7 -r
+lasy6 -r
+lasy5 -r
+cmbsy7 -r
+cmbsy5 -r
+euex10 -r
+eufm10 -r
+eufm7 -r
+eufm5 -r
+eufb10 -r
+eufb7 -r
+eufb5 -r
+eurb10 -r
+eurm10 -r
+eurb7 -r
+eurm7 -r
+eurb5 -r
+eurm5 -r
+msam10 -r
+% Likewise for math italic
+cmmi12 -r
+cmmi10 -r
+cmmib10 -r
+cmmib7 -r
+cmmib5 -r
+cmmi9 -r
+cmmi8 -r
+cmmi7 -r
+cmmi6 -r
+cmmi5 -r
+% Misc
+cmb10 ot1r -r
+cmbxsl10 ot1r -r
+cmbxti10 ot1alt -r
+cmdunh10 ot1r -r
+cmff10  ot1alt -r
+cmfi10 ot1alt -r
+cmfib8 ot1alt -r
+cmssbx10 ot1r -r
+cmssdc10 ot1r -r
+cmssq8 ot1r -r
+cmssqi8 ot1r -r
+cmu10 ot1alt -r
+cmvtt10 ot1r -r
+lcmss8 ot1r -r
+lcmssb8 ot1r -r
+lcmssi8 ot1r -r
+% tt fonts
+cmtt10 -r
+cmtt12 -r
+cmtt8 -r
+cmtt9 -r
+% Italic 
+cmti10 ot1alt -r
+cmti12 ot1alt -r
+cmti7 ot1alt -r
+cmti8 ot1alt -r
+cmti9 ot1alt -r
+% Slanted
+cmsl10 ot1r -r
+cmsl12 ot1r -r
+cmsl8 ot1r -r
+cmsl9 ot1r -r
+% Roman sans serif
+cmss10 ot1r -r
+cmss12 ot1r -r
+cmss17 ot1r -r
+cmss8 ot1r -r
+cmss9 ot1r -r
+% Sans Serif
+cmssi10 ot1r -r
+cmssi12 ot1r -r
+cmssi17 ot1r -r
+cmssi8 ot1r -r
+cmssi9 ot1r -r
+%
+% LaTeX Fonts here too.  They don't
+% seem to fit anywhere else.
+%
+lcirclew10 default lcirclew10 -r
+lcircle10 default lcircle10 -r
+line10 -r
+%
+% Required by psnfss2e
+%
+eurmo10  default  eurm10 -s 0.167 -r
+eurbo10  default  eurb10 -s 0.167 -r
+rsfs5    default  rsfs5
+rsfs7    default  rsfs7
+rsfs10   default  rsfs10
+%
+% tt2001
+%
+cmbsy6 none  tedbsy6
+cmbsy8 none  tedbsy8
+cmbsy9 none  tedbsy9
+cmex7 none  tedex7
+cmex8 none  tedex8
+cmex9 none  tedex9
+cmmib6 none  tedmib6
+cmmib8 none  tedmib8
+cmmib9 none  tedmib9
+msam6 none  tesam6
+msam8 none  tesam8
+msam9 none  tesam9
+msbm6 none  tesbm6
+msbm8 none  tesbm8
+msbm9 none  tesbm9
+euex7 none  teuex7
+euex8 none  teuex8
+euex9 none  teuex9
+eufb6 none  teufb6
+eufb8 none  teufb8
+eufb9 none  teufb9
+eufm6 none  teufm6
+eufm8 none  teufm8
+eufm9 none  teufm9
+eurb6 none  teurb6
+eurb8 none  teurb8
+eurb9 none  teurb9
+eurm6 none  teurm6
+eurm8 none  teurm8
+eurm9 none  teurm9
+eusb6 none  teusb6
+eusb8 none  teusb8
+eusb9 none  teusb9
+eusm6 none  teusm6
+eusm8 none  teusm8
+eusm9 none  teusm9
+%
+% webomints
+%
+WebOMintsGD none WebOMintsGD
+%
+% efont
+%
+esfr8r 8r Efont_Serif
+esfb8r 8r Efont_Serif_B
+esfri8r 8r Efont_Serif_I
+esfbi8r 8r Efont_Serif_BI
+esfro8r 8r Efont_Serif -s .167
+esfbo8r	8r Efont_Serif_B -s .167
+esfar8r 8r Efont_Serif_A
+esfab8r 8r Efont_Serif_A_B
+esfari8r 8r Efont_Serif_A_I
+esfabi8r 8r Efont_Serif_A_BI
+esfaro8r 8r Efont_Serif_A -s .167
+esfabo8r 8r Efont_Serif_A_B -s .167
+%
+% Here is Fourier-GUtenberg (math complement for Utopia)
+%
+fourier-orns default fourier-orns
+fourier-alt default fourier-alt
+fourier-alt-semi default fourier-alt-semi
+fourier-alt-bold default fourier-alt-bold
+fourier-alt-black default fourier-alt-black
+fourier-alt-ita default fourier-alt-ita
+fourier-alt-semiita default fourier-alt-semiita
+fourier-alt-boldita default fourier-alt-boldita
+fourier-alt-sl default fourier-alt -s .167
+fourier-alt-semi-sl default fourier-alt-semi -s .167
+fourier-alt-bold-sl default fourier-alt-bold -s .167
+fourier-bb default fourier-bb
+fourier-mcl default fourier-mcl
+fourier-mex default fourier-mex
+fourier-ml default fourier-ml
+fourier-mlit default fourier-mlit
+fourier-mlb default fourier-mlb
+fourier-mlitb default fourier-mlitb
+fourier-ms default fourier-ms
+%%%
+futb8r 8r putb8a
+futbi8r 8r putbi8a
+futbo8r 8r putb8a -s .167
+futr8r 8r putr8a
+futri8r 8r putri8a
+futro8r 8r putr8a -s .167
+%
+% Euro (currency)
+%
+pe8r none _2______
+pe8b none _2b_____
+pe8ri none _2i_____
+pe8bi none _2bi____
+pe7r none _1______
+pe7b none _1b_____
+pe7ri none _1i_____
+pe7bi none _1bi____
+pe9r none _3______
+pe9b none _3b_____
+pe9ri none _3i_____
+pe9bi none _3bi____
+%
+% kerkis
+%
+k8r      kerkis     Kerkis
+ki8r     kerkis     Kerkis-Italic
+ko8r     kerkis     Kerkis -s 0.167
+ksc8r    kerkis     Kerkis-SmallCaps
+ksco8r   kerkis     Kerkis-SmallCaps -s 0.167
+kb8r     kerkis     Kerkis-Bold
+kbi8r    kerkis     Kerkis-BoldItalic
+kbo8r    kerkis     Kerkis-Bold -s 0.167
+kbsc8r   kerkis     Kerkis-BoldSmallCaps
+kbsco8r  kerkis     Kerkis-BoldSmallCaps -s 0.167
+kbui8r   kerkis     Kerkis-BoldItalic -s -0.168
+ksb8r    kerkis     Kerkis-SemiBold
+ksbi8r   kerkis     Kerkis-SemiBold-Italic
+ksbo8r   kerkis     Kerkis-SemiBold -s 0.167
+ksbui8r  kerkis     Kerkis-SemiBold-Italic -s -0.168
+kui8r    kerkis     Kerkis-Italic -s -0.168
+kcal8r   kerkis     Kerkis-Calligraphic
+kmath8r  kmath      Kerkis-Italic
+ek8r     kerkisec   Kerkis
+eki8r    kerkisec   Kerkis-Italic
+eko8r    kerkisec   Kerkis -s 0.167
+eksc8r   kerkisecsc Kerkis-SmallCaps
+eksco8r  kerkisecsc Kerkis-SmallCaps -s 0.167
+ekb8r    kerkisec   Kerkis-Bold
+ekbi8r   kerkisec   Kerkis-BoldItalic
+ekbo8r   kerkisec   Kerkis-Bold -s 0.167
+ekbsc8r  kerkisec   Kerkis-BoldSmallCaps
+ekbsco8r kerkisec   Kerkis-BoldSmallCaps -s 0.167
+ekbui8r  kerkisec   Kerkis-BoldItalic -s -0.168
+eksb8r   kerkisec   Kerkis-SemiBold
+eksbi8r  kerkisec   Kerkis-SemiBold-Italic
+eksbo8r  kerkisec   Kerkis-SemiBold -s 0.167
+eksbui8r kerkisec   Kerkis-SemiBoldItalic -s -0.168
+ekui8r   kerkisec   Kerkis-Italic -s -0.168
+ekcal8r  kerkisec   Kerkis-Calligraphic
+gk7a     gpkerkis   Kerkis
+gki7a    gpkerkis   Kerkis-Italic
+gko7a    gpkerkis   Kerkis -s 0.167
+gksc7a   gpkerkis   Kerkis-SmallCaps
+gksco7a  gpkerkis   Kerkis-SmallCaps -s 0.167
+gkb7a    gpkerkis   Kerkis-Bold
+gkbi7a   gpkerkis   Kerkis-BoldItalic
+gkbo7a   gpkerkis   Kerkis-Bold -s 0.167
+gkbsc8r  gpkerkis   Kerkis-BoldSmallCaps
+gkbsco8r gpkerkis   Kerkis-BoldSmallCaps -s 0.167
+gkbui7a  gpkerkis   Kerkis-BoldItalic -s -0.168
+gksb7a   gpkerkis   Kerkis-SemiBold
+gksbi7a  gpkerkis   Kerkis-SemiBold-Italic
+gksbo7a  gpkerkis   Kerkis-SemiBold -s 0.167
+gksbui7a gpkerkis   Kerkis-SemiBold-Italic -s -0.168
+gkui7a   gpkerkis   Kerkis-Italic -s -0.168
+gkcal7a  gpkerkis   Kerkis-Calligraphic
+ktsy8r   kmsym      ktsy
+ksf8a    kerkis     KerkisSans
+ksfi8a   kerkis     KerkisSans-Italic
+ksfsc8a  kerkis     KerkisSans-SmallCaps
+ksfb8a   kerkis     KerkisSans-Bold
+ksfbi8a  kerkis     KerkisSans-BoldItalic
+eksf8a   kerkisec   KerkisSans
+eksfi8a  kerkisec   KerkisSans-Italic
+eksfsc8a kerkisec   KerkisSans-SmallCaps
+eksfb8a  kerkisec   KerkisSans-Bold
+eksfbi8a kerkisec   KerkisSans-BoldItalic
+gksf7a   gpkerkis   KerkisSans
+gksfi7a  gpkerkis   KerkisSans-Italic
+gksfsc7a gpkerkis   KerkisSans-SmallCaps
+gksfb7a  gpkerkis   KerkisSans-Bold
+gksfbi7a gpkerkis   KerkisSans-BoldItalic
+%
+% lucidaso.map
+%
+hlsr6w none hlsr6w
+hlsr80 none hlsr80
+hlsr81 none hlsr81
+hlsro6w nonoe hlsro6w
+hlsro80 none hlsro80
+hlsro81 none hlsro81
+hlsd6w none hlsd6w
+hlsd80 none hlsd80
+hlsd81 none hlsd81
+hlsdo6w none hlsdo6w
+hlsdo80 none hlsdo80
+hlsdo81 none hlsdo81
+hlcrt6w none hlcrt6w
+hlcrt80 none hlcrt80
+hlcrt81 none hlcrt81
+hlcrot6w none hlcrot6w
+hlcrot80 none hlcrot80
+hlcrot81 none hlcrot81
+hlcbt6w none hlcbt6w
+hlcbt80 none hlcbt80
+hlcbt81 none hlcbt81
+hlcbot6w none hlcbot6w
+hlcbot80 none hlcbot80
+hlcbot81 nonoe hlcbot81
+hlhr80 none hlhr80
+hlhr81 none hlhr81
+hlhro80 none hlhr80 -s 0.194
+hlhro81 none hlhr81 -s 0.194
+hlhri80 none hlhri80
+hlhri81 none hlhri81
+hlhru80 none hlhri80 -s -0.194
+hlhru81 none hlhri81 -s -0.194
+hlhd80 none hlhd80
+hlhd81 none hlhd81
+hlhdo80 none hlhd80 -s 0.194
+hlhdo81 none hlhd81 -s 0.194
+hlhdi80 none hlhdi80
+hlhdi81 none hlhdi81
+hlhdu80 none hlhdi80 -s -0.194
+hlhdu81 none hlhdi81 -s -0.194
+%
+% urw names
+%
+uaqr8r   8r  uaqrrc
+uaqro8r  8r  uaqrrc  -s .167
+ugqb8r   8r  ugqb
+ugqbo8r  8r  ugqb    -s .167
+unmr8r   8r  unmr
+unmro8r  8r  unmr    -s .167
+unmrs8r  8r  unmrs
+unmros8r 8r  unmrs   -s .167
+uagr8r   8r  uagr8a
+uagri8r  8r  uagri8a
+uagk8r   8r  uagk8a
+uagko8r  8r  uagko8a
+uagb8r   8r  uagb8a
+uagbi8r  8r  uagbi8a
+uagd8r   8r  uagd8a
+uagdo8r  8r  uagdo8a
+uagro8r  8r  uagr8a   -s .167
+uagbo8r  8r  uagb8a   -s .167
+ubkr8r   8r  ubkr8a
+ubkri8r  8r  ubkri8a
+ubkb8r   8r  ubkb8a
+ubkbi8r  8r  ubkbi8a
+ubkd8r   8r  ubkd8a
+ubkdi8r  8r  ubkdi8a
+ubkl8r   8r  ubkl8a
+ubkli8r  8r  ubkli8a
+ubkro8r  8r  ubkr8a   -s .167
+ubkbo8r  8r  ubkb8a   -s .167
+ubkdo8r  8r  ubkd8a   -s .167
+ubklo8r  8r  ubkl8a   -s .167
+ucrr8r   8r  ucrr8a
+ucrro8r  8r  ucrro8a
+ucrb8r   8r  ucrb8a
+ucrbo8r  8r  ucrbo8a
+ugqb8r   8r  ugqb8a
+ugqbo8r  8r  ugqb8a   -s .167
+uhvr8r   8r  uhvr8a
+uhvro8r  8r  uhvro8a
+uhvri8r  8r  uhvri8a
+uhvr8rn  8r  uhvr8a
+uhvro8rn 8r  uhvro8a
+uhvri8rn 8r  uhvri8a
+uhvb8r   8r  uhvb8a
+uhvbo8r  8r  uhvbo8a
+uhvbi8r  8r  uhvbi8a
+uhvb8rn  8r  uhvb8a
+uhvbo8rn 8r  uhvbo8a
+uhvro8rn 8r  uhvr8an   -s .167
+uhvbo8rn 8r  uhvb8an   -s .167
+uncr8r   8r  uncr8a
+uncri8r  8r  uncri8a
+uncb8r   8r  uncb8a
+uncbi8r  8r  uncbi8a
+uncro8r  8r  uncr8a    -s .167
+uncbo8r  8r  uncb8a    -s .167
+uplr8r   8r  uplr8a
+uplri8r  8r  uplri8a
+uplb8r   8r  uplb8a
+uplbi8r  8r  uplbi8a
+uplro8r  8r  uplr8a    -s .167
+uplbo8r  8r  uplb8a    -s .167
+usyr     none usyr
+utmr8r   8r  utmr8a
+utmri8r  8r  utmri8a
+utmb8r   8r  utmb8a
+utmbi8r  8r  utmbi8a
+utmro8r  8r  utmr8a    -s .167
+utmbo8r  8r  utmb8a    -s .167
+uzcmi8r  8r  uzcmi8a
+uzdr     none uzdr
+%
+% txfonts
+%
+% TX Text
+rtxr none rtxr
+rtxsl none rtxr -s 0.167
+rtxi none rtxi
+rtxsc none rtxsc
+rtxb none rtxb
+rtxbsl none rtxb -s 0.167
+rtxbi none rtxbi
+rtxbsc none rtxbsc
+rtcxb none rtcxb
+rtcxbsl none rtcxb -s 0.167
+rtcxbi none rtcxbi
+rtcxi none rtcxi
+rtcxr none rtcxr
+rtcxsl none rtcxr -s 0.167
+% TX Math
+rtxbmi none rtxbmi
+rtxmi none rtxmi
+txbex none txbex
+txbexa none txbexa
+txbmia none txbmia
+txbsy none txbsy
+txbsya none txbsya
+txbsyb none txbsyb
+txbsyc none txbsyc
+txex none txex
+txexa none txexa
+txmia none txmia
+txsy none txsy
+txsya none txsya
+txsyb none txsyb
+txsyc none txsyc
+% TX TT Text
+txtt none txtt
+txttsl none txtt -s 0.167
+txttsc none txttsc
+txbtt none txbtt
+txbttsl none txbtt -s 0.167
+txbttsc none txbttsc
+t1xtt none t1xtt
+t1xttsl none t1xtt -s 0.167
+t1xttsc none t1xttsc
+t1xbtt none t1xbtt
+t1xbttsl none t1xbtt -s 0.167
+t1xbttsc none t1xbttsc
+tcxtt none tcxtt
+tcxttsl none tcxtt -s 0.167
+tcxbtt none tcxbtt
+tcxbttsl none tcxbtt -s 0.167
+% TX SS Text
+rtxss none rtxss
+rtxsssl none rtxss -s 0.167
+rtxsssc none rtxsssc
+rtxbss none rtxbss
+rtxbsssl none rtxbss -s 0.167
+rtxbsssc none rtxbsssc
+rtcxss none rtcxss
+rtcxbss none rtcxbss
+rtcxsssl none rtcxss -s 0.167
+rtcxbsso none rtcxbss -s 0.167
+%
+% pxfonts
+%
+rpxpplb tx8r uplb8a
+rpxpplbo tx8r uplb8a -s 0.167
+rpxpplbi tx8r uplbi8a
+rpxpplr tx8r uplr8a
+rpxpplro tx8r uplr8a -s 0.167
+rpxpplri tx8r uplri8a
+% PX Text
+rpxr none rpxr
+rpxsl none rpxr -s 0.167
+rpxi none rpxi
+rpxsc none rpxsc
+rpxb none rpxb
+rpxbsl none rpxb -s 0.167
+rpxbi none rpxbi
+rpxbsc none rpxbsc
+rpcxb none rpcxb
+rpcxbsl none rpcxb -s .167
+rpcxbi none rpcxbi
+rpcxi none rpcxi
+rpcxr none rpcxr
+rpcxsl none rpcxr -s .167
+% PX Math
+rpxbmi none rpxbmi
+rpxmi none rpxmi
+pxbex none pxbex
+pxbexa none pxbexa
+pxbmia none pxbmia
+pxbsy none pxbsy
+pxbsya none pxbsya
+pxbsyb none pxbsyb
+pxbsyc none pxbsyc
+pxex none pxex
+pxexa none pxexa
+pxmia none pxmia
+pxsy none pxsy
+pxsya none pxsya
+pxsyb none pxsyb
+pxsyc none pxsyc
+%
+% mathpazo
+%
+fplmr none fplmr
+fplmri none fplmri
+fplmb none fplmb
+fplmbi none fplmbi
+fplmbb none fplmbb
+%
+% ascgrp. 
+%
+ascgrp none ascgrp
+ascii10 none ascii10
+ascii36 none ascii36
+%
+% musixtex
+%
+musix11 default musix11
+musix13 default musix13  
+musix16 default musix16  
+musix20 default musix20  
+musix24 default musix24  
+musix29 default musix29
+musixsps default musixsps
+musixspx default musixspx
+xgreg11 default xgreg11
+xgreg13 default xgreg13
+xgreg16 default xgreg16
+xgreg20 default xgreg20
+xgreg24 default xgreg24
+xgreg29 default xgreg29
+xsld11 default xsld11
+xsld11d default xsld11d
+xsld13 default xsld13
+xsld13d default xsld13d
+xsld16 default xsld16
+xsld16d default xsld16d
+xsld20 default xsld20
+xsld20d default xsld20d
+xsld24 default xsld24
+xsld24d default xsld24d
+xsld29 default xsld29
+xsld29d default xsld29d
+xsldd20 default xsldd20
+xsldu20 default xsldu20
+xslhd11 default xslhd11
+xslhd11d default xslhd11d
+xslhd13 default xslhd13
+xslhd13d default xslhd13d
+xslhd16 default xslhd16
+xslhd16d default xslhd16d
+xslhd20 default xslhd20
+xslhd20d default xslhd20d
+xslhd24 default xslhd24
+xslhd24d default xslhd24d
+xslhd29 default xslhd29
+xslhd29d default xslhd29d
+xslhu11 default xslhu11
+xslhu11d default xslhu11d
+xslhu13 default xslhu13
+xslhu13d default xslhu13d
+xslhu16 default xslhu16
+xslhu16d default xslhu16d
+xslhu20 default xslhu20
+xslhu20d default xslhu20d
+xslhu24 default xslhu24
+xslhu24d default xslhu24d
+xslhu29 default xslhu29
+xslhu29d default xslhu29d
+xslhz20 default xslhz20
+xslhz20d default xslhz20d
+xslu11 default xslu11
+xslu11d default xslu11d
+xslu13 default xslu13
+xslu13d default xslu13d
+xslu16 default xslu16
+xslu16d default xslu16d
+xslu20 default xslu20
+xslu20d default xslu20d
+xslu24 default xslu24
+xslu24d default xslu24d
+xslu29 default xslu29
+xslu29d default xslu29d
+xslud20 default xslud20
+xslup20 default xslup20
+xslz20 default xslz20
+xslz20d default xslz20d
+xtie20 default xtie20
+%
+% mathematica (4.1)
+%
+Math1          none   Math1
+Math1-Bold     none   Math1-Bold
+Math2          none   Math2
+Math2-Bold     none   Math2-Bold
+Math3          none   Math3
+Math3-Bold     none   Math3-Bold
+Math4          none   Math4
+Math4-Bold     none   Math4-Bold
+Math5          none   Math5
+Math5-Bold     none   Math5-Bold
+Math1Mono      none   Math1Mono
+Math1Mono-Bold none   Math1Mono-Bold
+Math2Mono      none   Math2Mono
+Math2Mono-Bold none   Math2Mono-Bold
+Math3Mono      none   Math3Mono
+Math3Mono-Bold none   Math3Mono-Bold
+Math4Mono      none   Math4Mono
+Math4Mono-Bold none   Math4Mono-Bold
+Math5Mono      none   Math5Mono
+Math5Mono-Bold none   Math5Mono-Bold
+%
+% lw35urw
+% 35 STANDARD ADOBE FONTS
+%
+% New century
+%
+pncb8r    8r        uncb8a
+pncbi8r   8r        uncbi8a
+pncr8r    8r        uncr8a
+pncri8r   8r        uncri8a
+pncbo8r   8r        uncb8a       -s 0.167
+pncro8r   8r        uncr8a       -s 0.167
+%
+% Palatino
+%
+pplb8r    8r        uplb8a
+pplbi8r   8r        uplbi8a
+pplr8r    8r        uplr8a
+pplri8r   8r        uplri8a
+pplbo8r   8r        uplb8a      -s 0.167
+pplbu8r   8r        uplbi8a     -s -0.1763
+pplr8rn   8r        uplr8a      -e 0.82
+pplro8r   8r        uplr8a      -s 0.167
+pplrr8re  8r        uplr8a      -e 1.2
+pplru8r   8r        uplri8a     -s -0.1763
+%
+% ZapfChancery
+%
+pzcmi8r   8r        uzcmi8a
+%
+%  Bookman
+%
+pbkd8r	8r	ubkd8a
+pbkdi8r 8r	ubkdi8a
+pbkl8r	8r	ubkl8a
+pbkli8r	8r	ubkli8a
+%
+pbkdo8r	8r	ubkd8a	-s 0.167
+pbklo8r	8r	ubkl8a	-s 0.167
+%
+% AvantGarde
+%
+pagd8r	8r	uagd8a
+pagdo8r	8r	uagdo8a
+pagk8r	8r	uagk8a
+pagko8r	8r	uagko8a
+%
+% t1fonts
+%
+% Charter
+bchb8r 8r bchb8a
+bchbi8r 8r bchbi8a
+bchr8r 8r bchr8a
+bchri8r 8r bchri8a
+% Utopia
+putb8r 8r putb8a
+putbi8r 8r putbi8a
+putr8r 8r putr8a
+putri8r 8r putri8a
+putbo8r 8r putb8a -s 0.167
+putro8r 8r putr8a -s 0.167
+%
+% cm-lgc
+%
+fcmr8r 8r-mod fcmr8a
+fcmri8r 8r-mod fcmri8a
+fcmrc8r 8r-mod fcmrc8a
+fcmrij8r 8r-mod fcmrij8a
+fcmb8r 8r-mod fcmb8a
+fcmbi8r 8r-mod fcmbi8a
+fcmbc8r 8r-mod fcmbc8a
+fcmbij8r 8r-mod fcmbij8a
+fcsr8r 8r-mod fcsr8a
+fcsro8r 8r-mod fcsro8a
+fcsb8r 8r-mod fcsb8a
+fcsbo8r 8r-mod fcsbo8a
+fctr8r 8r-mod fctr8a
+fctri8r 8r-mod fctri8a
+fctrc8r 8r-mod fctrc8a
+fctrij8r 8r-mod fctrij8a
+fcmr6z none fcmr6z
+fcmri6z none fcmri6z
+fcmrc6z none fcmrc6z
+fcmrij6z none fcmrij6z
+fcmb6z none fcmb6z
+fcmbi6z none fcmbi6z
+fcmbc6z none fcmbc6z
+fcmbij6z none fcmbij6z
+fcsr6z none fcsr6z
+fcsro6z none fcsro6z
+fcsb6z none fcsb6z
+fcsbo6z none fcsbo6z
+fctr6z none fctr6z
+fctri6z none fctri6z
+fctrc6z none fctrc6z
+fctrij6z none fctrij6z
+fcmr6y none fcmr6y
+fcmri6y none fcmri6y
+fcmrc6y none fcmrc6y
+fcmrij6y none fcmrij6y
+fcmb6y none fcmb6y
+fcmbi6y none fcmbi6y
+fcmbc6y none fcmbc6y
+fcmbij6y none fcmbij6y
+fcsr6y none fcsr6y
+fcsro6y none fcsro6y
+fcsb6y none fcsb6y
+fcsbo6y none fcsbo6y
+fctr6y none fctr6y
+fctri6y none fctri6y
+fctrc6y none fctrc6y
+fctrij6y none fctrij6y
+fcmrpg none fcmrpg
+fcmripg none fcmripg
+fcmrcpg none fcmrcpg
+fcmrijpg none fcmrijpg
+fcmbpg none fcmbpg
+fcmbipg none fcmbipg
+fcmbcpg none fcmbcpg
+fcmbijpg none fcmbijpg
+fcsrpg none fcsrpg
+fcsropg none fcsropg
+fcsbpg none fcsbpg
+fcsbopg none fcsbopg
+fctrpg none fctrpg
+fctripg none fctripg
+fctrcpg none fctrcpg
+fctrijpg none fctrijpg
+%
+% double stroke
+%
+dsrom12 default dsrom12
+dsrom10 default dsrom10
+dsrom8 default dsrom8
+dsss12 default dsss12
+dsss10 default dsss10
+dsss8 default dsss8
+%
+% cmbright
+%
+cmbr10 default hfbr10
+cmbr17 default hfbr17
+cmbr8 default hfbr8
+cmbr9 default hfbr9
+cmbras10 default hfbras10
+cmbras8 default hfbras8
+cmbras9 default hfbras9
+cmbrbs10 default hfbrbs10
+cmbrbs8 default hfbrbs8
+cmbrbs9 default hfbrbs9
+cmbrbx10 default hfbrbx10
+cmbrmb10 default hfbrmb10
+cmbrmi10 default hfbrmi10
+cmbrmi8 default hfbrmi8
+cmbrmi9 default hfbrmi9
+cmbrsl10 default hfbrsl10
+cmbrsl17 default hfbrsl17
+cmbrsl8 default hfbrsl8
+cmbrsl9 default hfbrsl9
+cmbrsy10 default hfbrsy10
+cmbrsy8 default hfbrsy8
+cmbrsy9 default hfbrsy9
+cmsltl10 default hfsltl10
+cmtl10 default hftl10
+%
+% yhmath
+%
+yrcmex10 default yhcmex
+%
+% jisxpdfm.map
+%
+HeiseiMin-W3-G01 none HeiseiMin-W3-G01
+HeiseiMin-W3-G02 none HeiseiMin-W3-G02
+HeiseiMin-W3-G03 none HeiseiMin-W3-G03
+HeiseiMin-W3-G04 none HeiseiMin-W3-G04
+HeiseiMin-W3-G05 none HeiseiMin-W3-G05
+HeiseiMin-W3-G06 none HeiseiMin-W3-G06
+HeiseiMin-W3-G07 none HeiseiMin-W3-G07
+HeiseiMin-W3-G08 none HeiseiMin-W3-G08
+HeiseiMin-W3-G09 none HeiseiMin-W3-G09
+HeiseiMin-W3-G10 none HeiseiMin-W3-G10
+HeiseiMin-W3-G11 none HeiseiMin-W3-G11
+HeiseiMin-W3-G12 none HeiseiMin-W3-G12
+HeiseiMin-W3-G13 none HeiseiMin-W3-G13
+HeiseiMin-W3-G14 none HeiseiMin-W3-G14
+HeiseiMin-W3-G15 none HeiseiMin-W3-G15
+HeiseiMin-W3-G16 none HeiseiMin-W3-G16
+HeiseiMin-W3-G17 none HeiseiMin-W3-G17
+HeiseiMin-W3-G18 none HeiseiMin-W3-G18
+HeiseiMin-W3-G19 none HeiseiMin-W3-G19
+HeiseiMin-W3-G20 none HeiseiMin-W3-G20
+HeiseiMin-W3-G21 none HeiseiMin-W3-G21
+HeiseiMin-W3-G22 none HeiseiMin-W3-G22
+HeiseiMin-W3-G23 none HeiseiMin-W3-G23
+HeiseiMin-W3-G24 none HeiseiMin-W3-G24
+HeiseiMin-W3-G25 none HeiseiMin-W3-G25
+HeiseiMin-W3-G26 none HeiseiMin-W3-G26
+HeiseiMin-W3-G27 none HeiseiMin-W3-G27
+HeiseiMin-W3-G28 none HeiseiMin-W3-G28
+HeiseiMin-W3-G29 none HeiseiMin-W3-G29
+HeiseiMin-W3-G30 none HeiseiMin-W3-G30
+HeiseiMin-W3-G31 none HeiseiMin-W3-G31
+HeiseiMin-W3-G34 none HeiseiMin-W3-G34
+HeiseiMin-W3-G35 none HeiseiMin-W3-G35
+%
+% LuxiMono
+%
+ul9r8r  8r  ul9r8a
+ul9b8r  8r  ul9b8a
+ul9ro8r 8r  ul9ro8a
+ul9bo8r 8r  ul9bo8a
+%
+% dotlessj
+%
+uagd8j   dotlessj  uagd8j
+uagdo8j  dotlessj  uagdo8j
+uagk8j   dotlessj  uagk8j
+uagko8j  dotlessj  uagko8j
+uaqr8jc  dotlessj  uaqr8jc
+ubkd8j   dotlessj  ubkd8j
+ubkdi8j  dotlessj  ubkdi8j
+ubkl8j   dotlessj  ubkl8j
+ubkli8j  dotlessj  ubkli8j
+ucrb8j   dotlessj  ucrb8j
+ucrbo8j  dotlessj  ucrbo8j
+ucrr8j   dotlessj  ucrr8j
+ucrro8j  dotlessj  ucrro8j
+ugqb8j   dotlessj  ugqb8j
+uhvb8j   dotlessj  uhvb8j
+uhvb8jc  dotlessj  uhvb8jc
+uhvbo8j  dotlessj  uhvbo8j
+uhvbo8jc dotlessj  uhvbo8jc
+uhvr8j   dotlessj  uhvr8j
+uhvr8jc  dotlessj  uhvr8jc
+uhvro8j  dotlessj  uhvro8j
+uhvro8jc dotlessj  uhvro8jc
+uncb8j   dotlessj  uncb8j
+uncbi8j  dotlessj  uncbi8j
+uncr8j   dotlessj  uncr8j
+uncri8j  dotlessj  uncri8j
+unmrj    dotlessj  unmrj
+unmrsj   dotlessj  unmrsj
+uplb8j   dotlessj  uplb8j
+uplbi8j  dotlessj  uplbi8j
+uplr8j   dotlessj  uplr8j
+uplri8j  dotlessj  uplri8j
+utmb8j   dotlessj  utmb8j
+utmbo8j  dotlessj  utmb8j -s .167
+utmbi8j  dotlessj  utmbi8j
+utmr8j   dotlessj  utmr8j
+utmro8j  dotlessj  utmr8j -s .167
+utmri8j  dotlessj  utmri8j
+uzcmi8j  dotlessj  uzcmi8j
+%
+% ttnfss (Y. Otobe)
+%
+wsyr      symbol   symbol.ttf
+wsyro     symbol   symbol.ttf -s .167
+wpi313    mtsorts  mtsorts.ttf
+wmsdr     webdings webdings.ttf
+wmswdr    wingding wingding.ttf
+wmswdr2   wingdng2 wingdng2.ttf
+wmswdr3   wingdng3 wingdng3.ttf
+wingding  wingding wingding.ttf
+% wmsmlt
+wlcr8r    winansi  lucon.ttf
+wlcrih8r  winansi  lhandw.ttf
+wlsri8r   winansi  lsansi.ttf
+wlsr8r    winansi  l_10646.ttf
+% wwmtr8r
+wimtsr8r  winansi  matisse_.ttf
+witpsr8r  winansi  tempsitc.ttf
+wplr8r    winansi  pala.ttf
+wplb8r    winansi  palab.ttf
+wplbi8r   winansi  palabi.ttf
+wplri8r   winansi  palai.ttf
+wmcsr8r   winansi  comic.ttf
+wmcsb8r   winansi  comicbd.ttf
+wmgr8r    winansi  georgia.ttf
+wmgb8r    winansi  georgiab.ttf
+wmgri8r   winansi  georgiai.ttf
+wmgbi8r   winansi  georgiaz.ttf
+msssr8r   winansi  micross.ttf
+wmssfr8r  winansi  sylfaen.ttf
+wthr8r    winansi  tahoma.ttf
+wthb8r    winansi  tahomabd.ttf
+wtbcr8r   winansi  trebuc.ttf
+wtbcb8r   winansi  trebucbd.ttf
+wtbcbi8r  winansi  trebucbi.ttf
+wtbcri8r  winansi  trebucit.ttf
+wvdr8r    winansi  verdana.ttf
+wvdb8r    winansi  verdanab.ttf
+wvdri8r   winansi  verdanai.ttf
+wvdbi8r   winansi  verdanaz.ttf
+% wail8rc
+wa1r8r    winansi  arial.ttf
+wa1b8r    winansi  arialbd.ttf
+wa1bi8r   winansi  arialbi.ttf
+wa1ri8r   winansi  ariali.ttf
+wa1c8r    winansi  ariblk.ttf
+waqr8r    winansi  bkant.ttf
+wc1r8r    winansi  calist.ttf
+wagb8r    winansi  gothicb.ttf
+wagbi8r   winansi  gothicbi.ttf
+wagr8r    winansi  gothic.ttf
+wagri8r   winansi  gothici.ttf
+wcrr8r    winansi  cour.ttf
+wcrb8r    winansi  courbd.ttf
+wcrbi8r   winansi  courbi.ttf
+wcrri8r   winansi  couri.ttf
+wicr8r    winansi  impact.ttf
+% wngb8r
+wocrr8r   winansi  ocraext.ttf
+wnsr8r    winansi  times.ttf
+wnsb8r    winansi  timesbd.ttf
+wnsbi8r   winansi  timesbi.ttf
+wnsri8r   winansi  timesi.ttf
+wcpbs8r   winansi  coprgtb.ttf
+wcpls8r   winansi  coprgtl.ttf
+%
+wlcrc8r   winansi  lucon.ttf
+wlcrihc8r winansi  lhandw.ttf
+wlsrc8r   winansi  l_10646.ttf
+wlsric8r  winansi  lsansi.ttf
+% wwmtrc8r
+wimtsrc8r winansi  matisse_.ttf
+witpsrc8r winansi  tempsitc.ttf
+wplrc8r   winansi  pala.ttf
+wplbc8r   winansi  palab.ttf
+wplbic8r  winansi  palabi.ttf
+wplric8r  winansi  palai.ttf
+wmcsrc8r  winansi  comic.ttf
+wmcsbc8r  winansi  comicbd.ttf
+wmgrc8r   winansi  georgia.ttf
+wmgbc8r   winansi  georgiab.ttf
+wmgric8r  winansi  georgiai.ttf
+wmgbic8r  winansi  georgiaz.ttf
+msssrc8r  winansi  micross.ttf
+wmssfrc8r winansi  sylfaen.ttf
+wthrc8r   winansi  tahoma.ttf
+wthbc8r   winansi  tahomabd.ttf
+wtbcrc8r  winansi  trebuc.ttf
+wtbcbc8r  winansi  trebucbd.ttf
+wtbcbic8r winansi  trebucbi.ttf
+wtbcric8r winansi  trebucit.ttf
+wvdrc8r   winansi  verdana.ttf
+wvdbc8r   winansi  verdanab.ttf
+wvdric8r  winansi  verdanai.ttf
+wvdbic8r  winansi  verdanaz.ttf
+% wailc8rc
+wa1rc8r   winansi  arial.ttf
+wa1bc8r   winansi  arialbd.ttf
+wa1bic8r  winansi  arialbi.ttf
+wa1ric8r  winansi  ariali.ttf
+wa1cc8r   winansi  ariblk.ttf
+wcrrc8r   winansi  cour.ttf
+wcrbc8r   winansi  courbd.ttf
+waqrc8r   winansi  bkant.ttf
+wc1rc8r   winansi  calist.ttf
+wagbc8r   winansi  gothicb.ttf
+wagbic8r  winansi  gothicbi.ttf
+wagrc8r   winansi  gothic.ttf
+wagric8r  winansi  gohticit.ttf
+wcrbic8r  winansi  courbi.ttf
+wcrric8r  winansi  courit.ttf
+wicrc8r   winansi  impact.ttf
+% wngbc8r
+wocrrc8r  winansi  ocraext.ttf
+wnsrc8r   winansi  times.ttf
+wnsbc8r   winansi  timesbd.ttf
+wnsbic8r  winansi  timesbi.ttf
+wnsric8r  winansi  timesi.ttf
+wcpbsc8r  winansi  coprgtb.ttf
+wcplsc8r  winansi  coprgtl.ttf
+% ----------------------------------------------------
+% lines after here are automatically written by updmap
+% ----------------------------------------------------
+cs-lmb10 lm-cs lmb10
+cs-lmbo10 lm-cs lmbo10
+cs-lmbx10 lm-cs lmbx10
+cs-lmbx12 lm-cs lmbx12
+cs-lmbx5 lm-cs lmbx5
+cs-lmbx6 lm-cs lmbx6
+cs-lmbx7 lm-cs lmbx7
+cs-lmbx8 lm-cs lmbx8
+cs-lmbx9 lm-cs lmbx9
+cs-lmbxi10 lm-cs lmbxi10
+cs-lmbxo10 lm-cs lmbxo10
+cs-lmcsc10 lm-cs lmcsc10
+cs-lmcsco10 lm-cs lmcsco10
+cs-lmdunh10 lm-cs lmdunh10
+cs-lmduno10 lm-cs lmduno10
+cs-lmr10 lm-cs lmr10
+cs-lmr12 lm-cs lmr12
+cs-lmr17 lm-cs lmr17
+cs-lmr5 lm-cs lmr5
+cs-lmr6 lm-cs lmr6
+cs-lmr7 lm-cs lmr7
+cs-lmr8 lm-cs lmr8
+cs-lmr9 lm-cs lmr9
+cs-lmri10 lm-cs lmri10
+cs-lmri12 lm-cs lmri12
+cs-lmri7 lm-cs lmri7
+cs-lmri8 lm-cs lmri8
+cs-lmri9 lm-cs lmri9
+cs-lmro10 lm-cs lmro10
+cs-lmro12 lm-cs lmro12
+cs-lmro17 lm-cs lmro17
+cs-lmro8 lm-cs lmro8
+cs-lmro9 lm-cs lmro9
+cs-lmss10 lm-cs lmss10
+cs-lmss12 lm-cs lmss12
+cs-lmss17 lm-cs lmss17
+cs-lmss8 lm-cs lmss8
+cs-lmss9 lm-cs lmss9
+cs-lmssbo10 lm-cs lmssbo10
+cs-lmssbx10 lm-cs lmssbx10
+cs-lmssdc10 lm-cs lmssdc10
+cs-lmssdo10 lm-cs lmssdo10
+cs-lmsso10 lm-cs lmsso10
+cs-lmsso12 lm-cs lmsso12
+cs-lmsso17 lm-cs lmsso17
+cs-lmsso8 lm-cs lmsso8
+cs-lmsso9 lm-cs lmsso9
+cs-lmssq8 lm-cs lmssq8
+cs-lmssqbo8 lm-cs lmssqbo8
+cs-lmssqbx8 lm-cs lmssqbx8
+cs-lmssqo8 lm-cs lmssqo8
+cs-lmtcsc10 lm-cs lmtcsc10
+cs-lmtcso10 lm-cs lmtcso10
+cs-lmtk10 lm-cs lmtk10
+cs-lmtko10 lm-cs lmtko10
+cs-lmtl10 lm-cs lmtl10
+cs-lmtlc10 lm-cs lmtlc10
+cs-lmtlco10 lm-cs lmtlco10
+cs-lmtlo10 lm-cs lmtlo10
+cs-lmtt10 lm-cs lmtt10
+cs-lmtt12 lm-cs lmtt12
+cs-lmtt8 lm-cs lmtt8
+cs-lmtt9 lm-cs lmtt9
+cs-lmtti10 lm-cs lmtti10
+cs-lmtto10 lm-cs lmtto10
+cs-lmu10 lm-cs lmu10
+cs-lmvtk10 lm-cs lmvtk10
+cs-lmvtko10 lm-cs lmvtko10
+cs-lmvtl10 lm-cs lmvtl10
+cs-lmvtlo10 lm-cs lmvtlo10
+cs-lmvtt10 lm-cs lmvtt10
+cs-lmvtto10 lm-cs lmvtto10
+ec-lmb10 lm-ec lmb10
+ec-lmbo10 lm-ec lmbo10
+ec-lmbx10 lm-ec lmbx10
+ec-lmbx12 lm-ec lmbx12
+ec-lmbx5 lm-ec lmbx5
+ec-lmbx6 lm-ec lmbx6
+ec-lmbx7 lm-ec lmbx7
+ec-lmbx8 lm-ec lmbx8
+ec-lmbx9 lm-ec lmbx9
+ec-lmbxi10 lm-ec lmbxi10
+ec-lmbxo10 lm-ec lmbxo10
+ec-lmcsc10 lm-ec lmcsc10
+ec-lmcsco10 lm-ec lmcsco10
+ec-lmdunh10 lm-ec lmdunh10
+ec-lmduno10 lm-ec lmduno10
+ec-lmr10 lm-ec lmr10
+ec-lmr12 lm-ec lmr12
+ec-lmr17 lm-ec lmr17
+ec-lmr5 lm-ec lmr5
+ec-lmr6 lm-ec lmr6
+ec-lmr7 lm-ec lmr7
+ec-lmr8 lm-ec lmr8
+ec-lmr9 lm-ec lmr9
+ec-lmri10 lm-ec lmri10
+ec-lmri12 lm-ec lmri12
+ec-lmri7 lm-ec lmri7
+ec-lmri8 lm-ec lmri8
+ec-lmri9 lm-ec lmri9
+ec-lmro10 lm-ec lmro10
+ec-lmro12 lm-ec lmro12
+ec-lmro17 lm-ec lmro17
+ec-lmro8 lm-ec lmro8
+ec-lmro9 lm-ec lmro9
+ec-lmss10 lm-ec lmss10
+ec-lmss12 lm-ec lmss12
+ec-lmss17 lm-ec lmss17
+ec-lmss8 lm-ec lmss8
+ec-lmss9 lm-ec lmss9
+ec-lmssbo10 lm-ec lmssbo10
+ec-lmssbx10 lm-ec lmssbx10
+ec-lmssdc10 lm-ec lmssdc10
+ec-lmssdo10 lm-ec lmssdo10
+ec-lmsso10 lm-ec lmsso10
+ec-lmsso12 lm-ec lmsso12
+ec-lmsso17 lm-ec lmsso17
+ec-lmsso8 lm-ec lmsso8
+ec-lmsso9 lm-ec lmsso9
+ec-lmssq8 lm-ec lmssq8
+ec-lmssqbo8 lm-ec lmssqbo8
+ec-lmssqbx8 lm-ec lmssqbx8
+ec-lmssqo8 lm-ec lmssqo8
+ec-lmtcsc10 lm-ec lmtcsc10
+ec-lmtcso10 lm-ec lmtcso10
+ec-lmtk10 lm-ec lmtk10
+ec-lmtko10 lm-ec lmtko10
+ec-lmtl10 lm-ec lmtl10
+ec-lmtlc10 lm-ec lmtlc10
+ec-lmtlco10 lm-ec lmtlco10
+ec-lmtlo10 lm-ec lmtlo10
+ec-lmtt10 lm-ec lmtt10
+ec-lmtt12 lm-ec lmtt12
+ec-lmtt8 lm-ec lmtt8
+ec-lmtt9 lm-ec lmtt9
+ec-lmtti10 lm-ec lmtti10
+ec-lmtto10 lm-ec lmtto10
+ec-lmu10 lm-ec lmu10
+ec-lmvtk10 lm-ec lmvtk10
+ec-lmvtko10 lm-ec lmvtko10
+ec-lmvtl10 lm-ec lmvtl10
+ec-lmvtlo10 lm-ec lmvtlo10
+ec-lmvtt10 lm-ec lmvtt10
+ec-lmvtto10 lm-ec lmvtto10
+el-lmb10 lm-el lmb10
+el-lmbo10 lm-el lmbo10
+el-lmbx10 lm-el lmbx10
+el-lmbx12 lm-el lmbx12
+el-lmbx5 lm-el lmbx5
+el-lmbx6 lm-el lmbx6
+el-lmbx7 lm-el lmbx7
+el-lmbx8 lm-el lmbx8
+el-lmbx9 lm-el lmbx9
+el-lmbxi10 lm-el lmbxi10
+el-lmbxo10 lm-el lmbxo10
+el-lmcsc10 lm-el lmcsc10
+el-lmcsco10 lm-el lmcsco10
+el-lmdunh10 lm-el lmdunh10
+el-lmduno10 lm-el lmduno10
+el-lmr10 lm-el lmr10
+el-lmr12 lm-el lmr12
+el-lmr17 lm-el lmr17
+el-lmr5 lm-el lmr5
+el-lmr6 lm-el lmr6
+el-lmr7 lm-el lmr7
+el-lmr8 lm-el lmr8
+el-lmr9 lm-el lmr9
+el-lmri10 lm-el lmri10
+el-lmri12 lm-el lmri12
+el-lmri7 lm-el lmri7
+el-lmri8 lm-el lmri8
+el-lmri9 lm-el lmri9
+el-lmro10 lm-el lmro10
+el-lmro12 lm-el lmro12
+el-lmro17 lm-el lmro17
+el-lmro8 lm-el lmro8
+el-lmro9 lm-el lmro9
+el-lmss10 lm-el lmss10
+el-lmss12 lm-el lmss12
+el-lmss17 lm-el lmss17
+el-lmss8 lm-el lmss8
+el-lmss9 lm-el lmss9
+el-lmssbo10 lm-el lmssbo10
+el-lmssbx10 lm-el lmssbx10
+el-lmssdc10 lm-el lmssdc10
+el-lmssdo10 lm-el lmssdo10
+el-lmsso10 lm-el lmsso10
+el-lmsso12 lm-el lmsso12
+el-lmsso17 lm-el lmsso17
+el-lmsso8 lm-el lmsso8
+el-lmsso9 lm-el lmsso9
+el-lmssq8 lm-el lmssq8
+el-lmssqbo8 lm-el lmssqbo8
+el-lmssqbx8 lm-el lmssqbx8
+el-lmssqo8 lm-el lmssqo8
+el-lmtcsc10 lm-el lmtcsc10
+el-lmtcso10 lm-el lmtcso10
+el-lmtk10 lm-el lmtk10
+el-lmtko10 lm-el lmtko10
+el-lmtl10 lm-el lmtl10
+el-lmtlc10 lm-el lmtlc10
+el-lmtlco10 lm-el lmtlco10
+el-lmtlo10 lm-el lmtlo10
+el-lmtt10 lm-el lmtt10
+el-lmtt12 lm-el lmtt12
+el-lmtt8 lm-el lmtt8
+el-lmtt9 lm-el lmtt9
+el-lmtti10 lm-el lmtti10
+el-lmtto10 lm-el lmtto10
+el-lmu10 lm-el lmu10
+el-lmvtk10 lm-el lmvtk10
+el-lmvtko10 lm-el lmvtko10
+el-lmvtl10 lm-el lmvtl10
+el-lmvtlo10 lm-el lmvtlo10
+el-lmvtt10 lm-el lmvtt10
+el-lmvtto10 lm-el lmvtto10
+l7x-lmb10 lm-l7x lmb10
+l7x-lmbo10 lm-l7x lmbo10
+l7x-lmbx10 lm-l7x lmbx10
+l7x-lmbx12 lm-l7x lmbx12
+l7x-lmbx5 lm-l7x lmbx5
+l7x-lmbx6 lm-l7x lmbx6
+l7x-lmbx7 lm-l7x lmbx7
+l7x-lmbx8 lm-l7x lmbx8
+l7x-lmbx9 lm-l7x lmbx9
+l7x-lmbxi10 lm-l7x lmbxi10
+l7x-lmbxo10 lm-l7x lmbxo10
+l7x-lmcsc10 lm-l7x lmcsc10
+l7x-lmcsco10 lm-l7x lmcsco10
+l7x-lmdunh10 lm-l7x lmdunh10
+l7x-lmduno10 lm-l7x lmduno10
+l7x-lmr10 lm-l7x lmr10
+l7x-lmr12 lm-l7x lmr12
+l7x-lmr17 lm-l7x lmr17
+l7x-lmr5 lm-l7x lmr5
+l7x-lmr6 lm-l7x lmr6
+l7x-lmr7 lm-l7x lmr7
+l7x-lmr8 lm-l7x lmr8
+l7x-lmr9 lm-l7x lmr9
+l7x-lmri10 lm-l7x lmri10
+l7x-lmri12 lm-l7x lmri12
+l7x-lmri7 lm-l7x lmri7
+l7x-lmri8 lm-l7x lmri8
+l7x-lmri9 lm-l7x lmri9
+l7x-lmro10 lm-l7x lmro10
+l7x-lmro12 lm-l7x lmro12
+l7x-lmro17 lm-l7x lmro17
+l7x-lmro8 lm-l7x lmro8
+l7x-lmro9 lm-l7x lmro9
+l7x-lmss10 lm-l7x lmss10
+l7x-lmss12 lm-l7x lmss12
+l7x-lmss17 lm-l7x lmss17
+l7x-lmss8 lm-l7x lmss8
+l7x-lmss9 lm-l7x lmss9
+l7x-lmssbo10 lm-l7x lmssbo10
+l7x-lmssbx10 lm-l7x lmssbx10
+l7x-lmssdc10 lm-l7x lmssdc10
+l7x-lmssdo10 lm-l7x lmssdo10
+l7x-lmsso10 lm-l7x lmsso10
+l7x-lmsso12 lm-l7x lmsso12
+l7x-lmsso17 lm-l7x lmsso17
+l7x-lmsso8 lm-l7x lmsso8
+l7x-lmsso9 lm-l7x lmsso9
+l7x-lmssq8 lm-l7x lmssq8
+l7x-lmssqbo8 lm-l7x lmssqbo8
+l7x-lmssqbx8 lm-l7x lmssqbx8
+l7x-lmssqo8 lm-l7x lmssqo8
+l7x-lmtcsc10 lm-l7x lmtcsc10
+l7x-lmtcso10 lm-l7x lmtcso10
+l7x-lmtk10 lm-l7x lmtk10
+l7x-lmtko10 lm-l7x lmtko10
+l7x-lmtl10 lm-l7x lmtl10
+l7x-lmtlc10 lm-l7x lmtlc10
+l7x-lmtlco10 lm-l7x lmtlco10
+l7x-lmtlo10 lm-l7x lmtlo10
+l7x-lmtt10 lm-l7x lmtt10
+l7x-lmtt12 lm-l7x lmtt12
+l7x-lmtt8 lm-l7x lmtt8
+l7x-lmtt9 lm-l7x lmtt9
+l7x-lmtti10 lm-l7x lmtti10
+l7x-lmtto10 lm-l7x lmtto10
+l7x-lmu10 lm-l7x lmu10
+l7x-lmvtk10 lm-l7x lmvtk10
+l7x-lmvtko10 lm-l7x lmvtko10
+l7x-lmvtl10 lm-l7x lmvtl10
+l7x-lmvtlo10 lm-l7x lmvtlo10
+l7x-lmvtt10 lm-l7x lmvtt10
+l7x-lmvtto10 lm-l7x lmvtto10
+qx-lmb10 lm-qx lmb10
+qx-lmbo10 lm-qx lmbo10
+qx-lmbx10 lm-qx lmbx10
+qx-lmbx12 lm-qx lmbx12
+qx-lmbx5 lm-qx lmbx5
+qx-lmbx6 lm-qx lmbx6
+qx-lmbx7 lm-qx lmbx7
+qx-lmbx8 lm-qx lmbx8
+qx-lmbx9 lm-qx lmbx9
+qx-lmbxi10 lm-qx lmbxi10
+qx-lmbxo10 lm-qx lmbxo10
+qx-lmcsc10 lm-qx lmcsc10
+qx-lmcsco10 lm-qx lmcsco10
+qx-lmdunh10 lm-qx lmdunh10
+qx-lmduno10 lm-qx lmduno10
+qx-lmr10 lm-qx lmr10
+qx-lmr12 lm-qx lmr12
+qx-lmr17 lm-qx lmr17
+qx-lmr5 lm-qx lmr5
+qx-lmr6 lm-qx lmr6
+qx-lmr7 lm-qx lmr7
+qx-lmr8 lm-qx lmr8
+qx-lmr9 lm-qx lmr9
+qx-lmri10 lm-qx lmri10
+qx-lmri12 lm-qx lmri12
+qx-lmri7 lm-qx lmri7
+qx-lmri8 lm-qx lmri8
+qx-lmri9 lm-qx lmri9
+qx-lmro10 lm-qx lmro10
+qx-lmro12 lm-qx lmro12
+qx-lmro17 lm-qx lmro17
+qx-lmro8 lm-qx lmro8
+qx-lmro9 lm-qx lmro9
+qx-lmss10 lm-qx lmss10
+qx-lmss12 lm-qx lmss12
+qx-lmss17 lm-qx lmss17
+qx-lmss8 lm-qx lmss8
+qx-lmss9 lm-qx lmss9
+qx-lmssbo10 lm-qx lmssbo10
+qx-lmssbx10 lm-qx lmssbx10
+qx-lmssdc10 lm-qx lmssdc10
+qx-lmssdo10 lm-qx lmssdo10
+qx-lmsso10 lm-qx lmsso10
+qx-lmsso12 lm-qx lmsso12
+qx-lmsso17 lm-qx lmsso17
+qx-lmsso8 lm-qx lmsso8
+qx-lmsso9 lm-qx lmsso9
+qx-lmssq8 lm-qx lmssq8
+qx-lmssqbo8 lm-qx lmssqbo8
+qx-lmssqbx8 lm-qx lmssqbx8
+qx-lmssqo8 lm-qx lmssqo8
+qx-lmtcsc10 lm-qxtt lmtcsc10
+qx-lmtcso10 lm-qxtt lmtcso10
+qx-lmtk10 lm-qxtt lmtk10
+qx-lmtko10 lm-qxtt lmtko10
+qx-lmtl10 lm-qxtt lmtl10
+qx-lmtlc10 lm-qxtt lmtlc10
+qx-lmtlco10 lm-qxtt lmtlco10
+qx-lmtlo10 lm-qxtt lmtlo10
+qx-lmtt10 lm-qxtt lmtt10
+qx-lmtt12 lm-qxtt lmtt12
+qx-lmtt8 lm-qxtt lmtt8
+qx-lmtt9 lm-qxtt lmtt9
+qx-lmtti10 lm-qxtt lmtti10
+qx-lmtto10 lm-qxtt lmtto10
+qx-lmu10 lm-qx lmu10
+qx-lmvtk10 lm-qx lmvtk10
+qx-lmvtko10 lm-qx lmvtko10
+qx-lmvtl10 lm-qx lmvtl10
+qx-lmvtlo10 lm-qx lmvtlo10
+qx-lmvtt10 lm-qx lmvtt10
+qx-lmvtto10 lm-qx lmvtto10
+rm-lmb10 lm-rm lmb10
+rm-lmbo10 lm-rm lmbo10
+rm-lmbx10 lm-rm lmbx10
+rm-lmbx12 lm-rm lmbx12
+rm-lmbx5 lm-rm lmbx5
+rm-lmbx6 lm-rm lmbx6
+rm-lmbx7 lm-rm lmbx7
+rm-lmbx8 lm-rm lmbx8
+rm-lmbx9 lm-rm lmbx9
+rm-lmbxi10 lm-rm lmbxi10
+rm-lmbxo10 lm-rm lmbxo10
+rm-lmcsc10 lm-rm lmcsc10
+rm-lmcsco10 lm-rm lmcsco10
+rm-lmdunh10 lm-rm lmdunh10
+rm-lmduno10 lm-rm lmduno10
+rm-lmr10 lm-rm lmr10
+rm-lmr12 lm-rm lmr12
+rm-lmr17 lm-rm lmr17
+rm-lmr5 lm-rm lmr5
+rm-lmr6 lm-rm lmr6
+rm-lmr7 lm-rm lmr7
+rm-lmr8 lm-rm lmr8
+rm-lmr9 lm-rm lmr9
+rm-lmri10 lm-rm lmri10
+rm-lmri12 lm-rm lmri12
+rm-lmri7 lm-rm lmri7
+rm-lmri8 lm-rm lmri8
+rm-lmri9 lm-rm lmri9
+rm-lmro10 lm-rm lmro10
+rm-lmro12 lm-rm lmro12
+rm-lmro17 lm-rm lmro17
+rm-lmro8 lm-rm lmro8
+rm-lmro9 lm-rm lmro9
+rm-lmss10 lm-rm lmss10
+rm-lmss12 lm-rm lmss12
+rm-lmss17 lm-rm lmss17
+rm-lmss8 lm-rm lmss8
+rm-lmss9 lm-rm lmss9
+rm-lmssbo10 lm-rm lmssbo10
+rm-lmssbx10 lm-rm lmssbx10
+rm-lmssdc10 lm-rm lmssdc10
+rm-lmssdo10 lm-rm lmssdo10
+rm-lmsso10 lm-rm lmsso10
+rm-lmsso12 lm-rm lmsso12
+rm-lmsso17 lm-rm lmsso17
+rm-lmsso8 lm-rm lmsso8
+rm-lmsso9 lm-rm lmsso9
+rm-lmssq8 lm-rm lmssq8
+rm-lmssqbo8 lm-rm lmssqbo8
+rm-lmssqbx8 lm-rm lmssqbx8
+rm-lmssqo8 lm-rm lmssqo8
+rm-lmtcsc10 lm-rm lmtcsc10
+rm-lmtcso10 lm-rm lmtcso10
+rm-lmtk10 lm-rm lmtk10
+rm-lmtko10 lm-rm lmtko10
+rm-lmtl10 lm-rm lmtl10
+rm-lmtlc10 lm-rm lmtlc10
+rm-lmtlco10 lm-rm lmtlco10
+rm-lmtlo10 lm-rm lmtlo10
+rm-lmtt10 lm-rm lmtt10
+rm-lmtt12 lm-rm lmtt12
+rm-lmtt8 lm-rm lmtt8
+rm-lmtt9 lm-rm lmtt9
+rm-lmtti10 lm-rm lmtti10
+rm-lmtto10 lm-rm lmtto10
+rm-lmu10 lm-rm lmu10
+rm-lmvtk10 lm-rm lmvtk10
+rm-lmvtko10 lm-rm lmvtko10
+rm-lmvtl10 lm-rm lmvtl10
+rm-lmvtlo10 lm-rm lmvtlo10
+rm-lmvtt10 lm-rm lmvtt10
+rm-lmvtto10 lm-rm lmvtto10
+texnansi-lmb10 lm-texnansi lmb10
+texnansi-lmbo10 lm-texnansi lmbo10
+texnansi-lmbx10 lm-texnansi lmbx10
+texnansi-lmbx12 lm-texnansi lmbx12
+texnansi-lmbx5 lm-texnansi lmbx5
+texnansi-lmbx6 lm-texnansi lmbx6
+texnansi-lmbx7 lm-texnansi lmbx7
+texnansi-lmbx8 lm-texnansi lmbx8
+texnansi-lmbx9 lm-texnansi lmbx9
+texnansi-lmbxi10 lm-texnansi lmbxi10
+texnansi-lmbxo10 lm-texnansi lmbxo10
+texnansi-lmcsc10 lm-texnansi lmcsc10
+texnansi-lmcsco10 lm-texnansi lmcsco10
+texnansi-lmdunh10 lm-texnansi lmdunh10
+texnansi-lmduno10 lm-texnansi lmduno10
+texnansi-lmr10 lm-texnansi lmr10
+texnansi-lmr12 lm-texnansi lmr12
+texnansi-lmr17 lm-texnansi lmr17
+texnansi-lmr5 lm-texnansi lmr5
+texnansi-lmr6 lm-texnansi lmr6
+texnansi-lmr7 lm-texnansi lmr7
+texnansi-lmr8 lm-texnansi lmr8
+texnansi-lmr9 lm-texnansi lmr9
+texnansi-lmri10 lm-texnansi lmri10
+texnansi-lmri12 lm-texnansi lmri12
+texnansi-lmri7 lm-texnansi lmri7
+texnansi-lmri8 lm-texnansi lmri8
+texnansi-lmri9 lm-texnansi lmri9
+texnansi-lmro10 lm-texnansi lmro10
+texnansi-lmro12 lm-texnansi lmro12
+texnansi-lmro17 lm-texnansi lmro17
+texnansi-lmro8 lm-texnansi lmro8
+texnansi-lmro9 lm-texnansi lmro9
+texnansi-lmss10 lm-texnansi lmss10
+texnansi-lmss12 lm-texnansi lmss12
+texnansi-lmss17 lm-texnansi lmss17
+texnansi-lmss8 lm-texnansi lmss8
+texnansi-lmss9 lm-texnansi lmss9
+texnansi-lmssbo10 lm-texnansi lmssbo10
+texnansi-lmssbx10 lm-texnansi lmssbx10
+texnansi-lmssdc10 lm-texnansi lmssdc10
+texnansi-lmssdo10 lm-texnansi lmssdo10
+texnansi-lmsso10 lm-texnansi lmsso10
+texnansi-lmsso12 lm-texnansi lmsso12
+texnansi-lmsso17 lm-texnansi lmsso17
+texnansi-lmsso8 lm-texnansi lmsso8
+texnansi-lmsso9 lm-texnansi lmsso9
+texnansi-lmssq8 lm-texnansi lmssq8
+texnansi-lmssqbo8 lm-texnansi lmssqbo8
+texnansi-lmssqbx8 lm-texnansi lmssqbx8
+texnansi-lmssqo8 lm-texnansi lmssqo8
+texnansi-lmtcsc10 lm-texnansi lmtcsc10
+texnansi-lmtcso10 lm-texnansi lmtcso10
+texnansi-lmtk10 lm-texnansi lmtk10
+texnansi-lmtko10 lm-texnansi lmtko10
+texnansi-lmtl10 lm-texnansi lmtl10
+texnansi-lmtlc10 lm-texnansi lmtlc10
+texnansi-lmtlco10 lm-texnansi lmtlco10
+texnansi-lmtlo10 lm-texnansi lmtlo10
+texnansi-lmtt10 lm-texnansi lmtt10
+texnansi-lmtt12 lm-texnansi lmtt12
+texnansi-lmtt8 lm-texnansi lmtt8
+texnansi-lmtt9 lm-texnansi lmtt9
+texnansi-lmtti10 lm-texnansi lmtti10
+texnansi-lmtto10 lm-texnansi lmtto10
+texnansi-lmu10 lm-texnansi lmu10
+texnansi-lmvtk10 lm-texnansi lmvtk10
+texnansi-lmvtko10 lm-texnansi lmvtko10
+texnansi-lmvtl10 lm-texnansi lmvtl10
+texnansi-lmvtlo10 lm-texnansi lmvtlo10
+texnansi-lmvtt10 lm-texnansi lmvtt10
+texnansi-lmvtto10 lm-texnansi lmvtto10
+t5-lmb10 lm-t5 lmb10
+t5-lmbo10 lm-t5 lmbo10
+t5-lmbx10 lm-t5 lmbx10
+t5-lmbx12 lm-t5 lmbx12
+t5-lmbx5 lm-t5 lmbx5
+t5-lmbx6 lm-t5 lmbx6
+t5-lmbx7 lm-t5 lmbx7
+t5-lmbx8 lm-t5 lmbx8
+t5-lmbx9 lm-t5 lmbx9
+t5-lmbxi10 lm-t5 lmbxi10
+t5-lmbxo10 lm-t5 lmbxo10
+t5-lmcsc10 lm-t5 lmcsc10
+t5-lmcsco10 lm-t5 lmcsco10
+t5-lmdunh10 lm-t5 lmdunh10
+t5-lmduno10 lm-t5 lmduno10
+t5-lmr10 lm-t5 lmr10
+t5-lmr12 lm-t5 lmr12
+t5-lmr17 lm-t5 lmr17
+t5-lmr5 lm-t5 lmr5
+t5-lmr6 lm-t5 lmr6
+t5-lmr7 lm-t5 lmr7
+t5-lmr8 lm-t5 lmr8
+t5-lmr9 lm-t5 lmr9
+t5-lmri10 lm-t5 lmri10
+t5-lmri12 lm-t5 lmri12
+t5-lmri7 lm-t5 lmri7
+t5-lmri8 lm-t5 lmri8
+t5-lmri9 lm-t5 lmri9
+t5-lmro10 lm-t5 lmro10
+t5-lmro12 lm-t5 lmro12
+t5-lmro17 lm-t5 lmro17
+t5-lmro8 lm-t5 lmro8
+t5-lmro9 lm-t5 lmro9
+t5-lmss10 lm-t5 lmss10
+t5-lmss12 lm-t5 lmss12
+t5-lmss17 lm-t5 lmss17
+t5-lmss8 lm-t5 lmss8
+t5-lmss9 lm-t5 lmss9
+t5-lmssbo10 lm-t5 lmssbo10
+t5-lmssbx10 lm-t5 lmssbx10
+t5-lmssdc10 lm-t5 lmssdc10
+t5-lmssdo10 lm-t5 lmssdo10
+t5-lmsso10 lm-t5 lmsso10
+t5-lmsso12 lm-t5 lmsso12
+t5-lmsso17 lm-t5 lmsso17
+t5-lmsso8 lm-t5 lmsso8
+t5-lmsso9 lm-t5 lmsso9
+t5-lmssq8 lm-t5 lmssq8
+t5-lmssqbo8 lm-t5 lmssqbo8
+t5-lmssqbx8 lm-t5 lmssqbx8
+t5-lmssqo8 lm-t5 lmssqo8
+t5-lmtcsc10 lm-t5 lmtcsc10
+t5-lmtcso10 lm-t5 lmtcso10
+t5-lmtk10 lm-t5 lmtk10
+t5-lmtko10 lm-t5 lmtko10
+t5-lmtl10 lm-t5 lmtl10
+t5-lmtlc10 lm-t5 lmtlc10
+t5-lmtlco10 lm-t5 lmtlco10
+t5-lmtlo10 lm-t5 lmtlo10
+t5-lmtt10 lm-t5 lmtt10
+t5-lmtt12 lm-t5 lmtt12
+t5-lmtt8 lm-t5 lmtt8
+t5-lmtt9 lm-t5 lmtt9
+t5-lmtti10 lm-t5 lmtti10
+t5-lmtto10 lm-t5 lmtto10
+t5-lmu10 lm-t5 lmu10
+t5-lmvtk10 lm-t5 lmvtk10
+t5-lmvtko10 lm-t5 lmvtko10
+t5-lmvtl10 lm-t5 lmvtl10
+t5-lmvtlo10 lm-t5 lmvtlo10
+t5-lmvtt10 lm-t5 lmvtt10
+t5-lmvtto10 lm-t5 lmvtto10
+ts1-lmb10 lm-ts1 lmb10
+ts1-lmbo10 lm-ts1 lmbo10
+ts1-lmbx10 lm-ts1 lmbx10
+ts1-lmbx12 lm-ts1 lmbx12
+ts1-lmbx5 lm-ts1 lmbx5
+ts1-lmbx6 lm-ts1 lmbx6
+ts1-lmbx7 lm-ts1 lmbx7
+ts1-lmbx8 lm-ts1 lmbx8
+ts1-lmbx9 lm-ts1 lmbx9
+ts1-lmbxi10 lm-ts1 lmbxi10
+ts1-lmbxo10 lm-ts1 lmbxo10
+ts1-lmcsc10 lm-ts1 lmcsc10
+ts1-lmcsco10 lm-ts1 lmcsco10
+ts1-lmdunh10 lm-ts1 lmdunh10
+ts1-lmduno10 lm-ts1 lmduno10
+ts1-lmr10 lm-ts1 lmr10
+ts1-lmr12 lm-ts1 lmr12
+ts1-lmr17 lm-ts1 lmr17
+ts1-lmr5 lm-ts1 lmr5
+ts1-lmr6 lm-ts1 lmr6
+ts1-lmr7 lm-ts1 lmr7
+ts1-lmr8 lm-ts1 lmr8
+ts1-lmr9 lm-ts1 lmr9
+ts1-lmri10 lm-ts1 lmri10
+ts1-lmri12 lm-ts1 lmri12
+ts1-lmri7 lm-ts1 lmri7
+ts1-lmri8 lm-ts1 lmri8
+ts1-lmri9 lm-ts1 lmri9
+ts1-lmro10 lm-ts1 lmro10
+ts1-lmro12 lm-ts1 lmro12
+ts1-lmro17 lm-ts1 lmro17
+ts1-lmro8 lm-ts1 lmro8
+ts1-lmro9 lm-ts1 lmro9
+ts1-lmss10 lm-ts1 lmss10
+ts1-lmss12 lm-ts1 lmss12
+ts1-lmss17 lm-ts1 lmss17
+ts1-lmss8 lm-ts1 lmss8
+ts1-lmss9 lm-ts1 lmss9
+ts1-lmssbo10 lm-ts1 lmssbo10
+ts1-lmssbx10 lm-ts1 lmssbx10
+ts1-lmssdc10 lm-ts1 lmssdc10
+ts1-lmssdo10 lm-ts1 lmssdo10
+ts1-lmsso10 lm-ts1 lmsso10
+ts1-lmsso12 lm-ts1 lmsso12
+ts1-lmsso17 lm-ts1 lmsso17
+ts1-lmsso8 lm-ts1 lmsso8
+ts1-lmsso9 lm-ts1 lmsso9
+ts1-lmssq8 lm-ts1 lmssq8
+ts1-lmssqbo8 lm-ts1 lmssqbo8
+ts1-lmssqbx8 lm-ts1 lmssqbx8
+ts1-lmssqo8 lm-ts1 lmssqo8
+ts1-lmtcsc10 lm-ts1 lmtcsc10
+ts1-lmtcso10 lm-ts1 lmtcso10
+ts1-lmtk10 lm-ts1 lmtk10
+ts1-lmtko10 lm-ts1 lmtko10
+ts1-lmtl10 lm-ts1 lmtl10
+ts1-lmtlc10 lm-ts1 lmtlc10
+ts1-lmtlco10 lm-ts1 lmtlco10
+ts1-lmtlo10 lm-ts1 lmtlo10
+ts1-lmtt10 lm-ts1 lmtt10
+ts1-lmtt12 lm-ts1 lmtt12
+ts1-lmtt8 lm-ts1 lmtt8
+ts1-lmtt9 lm-ts1 lmtt9
+ts1-lmtti10 lm-ts1 lmtti10
+ts1-lmtto10 lm-ts1 lmtto10
+ts1-lmu10 lm-ts1 lmu10
+ts1-lmvtk10 lm-ts1 lmvtk10
+ts1-lmvtko10 lm-ts1 lmvtko10
+ts1-lmvtl10 lm-ts1 lmvtl10
+ts1-lmvtlo10 lm-ts1 lmvtlo10
+ts1-lmvtt10 lm-ts1 lmvtt10
+ts1-lmvtto10 lm-ts1 lmvtto10
+lmbsy5 lm-mathsy lmbsy5
+lmbsy7 lm-mathsy lmbsy7
+lmbsy10 lm-mathsy lmbsy10
+lmsy5 lm-mathsy lmsy5
+lmsy6 lm-mathsy lmsy6
+lmsy7 lm-mathsy lmsy7
+lmsy8 lm-mathsy lmsy8
+lmsy9 lm-mathsy lmsy9
+lmsy10 lm-mathsy lmsy10
+lmex10 lm-mathex lmex10
+lmmi5 lm-mathit lmmi5
+lmmi6 lm-mathit lmmi6
+lmmi7 lm-mathit lmmi7
+lmmi8 lm-mathit lmmi8
+lmmi9 lm-mathit lmmi9
+lmmi10 lm-mathit lmmi10
+lmmi12 lm-mathit lmmi12
+lmmib5 lm-mathit lmmib5
+lmmib7 lm-mathit lmmib7
+lmmib10 lm-mathit lmmib10
+pplbj8r 8r fplbj8a
+pplbij8r 8r fplbij8a
+pplrc8r 8r fplrc8a
+pplrij8r 8r fplrij8a

@@ -1,0 +1,519 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Part of the ptx2pdf macro package for formatting USFM text
+% copyright (c) 2007 by SIL International
+% written by Jonathan Kew
+%
+% Permission is hereby granted, free of charge, to any person obtaining  
+% a copy of this software and associated documentation files (the  
+% "Software"), to deal in the Software without restriction, including  
+% without limitation the rights to use, copy, modify, merge, publish,  
+% distribute, sublicense, and/or sell copies of the Software, and to  
+% permit persons to whom the Software is furnished to do so, subject to  
+% the following conditions:
+%
+% The above copyright notice and this permission notice shall be  
+% included in all copies or substantial portions of the Software.
+%
+% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,  
+% EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF  
+% MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND  
+% NONINFRINGEMENT. IN NO EVENT SHALL SIL INTERNATIONAL BE LIABLE FOR  
+% ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF  
+% CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION  
+% WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+%
+% Except as contained in this notice, the name of SIL International  
+% shall not be used in advertising or otherwise to promote the sale,  
+% use or other dealings in this Software without prior written  
+% authorization from SIL International.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% Macros to read Paratext stylesheets and define TeX control sequences
+%% for all markers present in the file
+
+%
+% Macros to process each marker used in a Paratext stylesheet,
+% either ignoring it or saving the parameter as appropriate
+%
+
+% Remember the name of the marker currently being defined
+\def \Marker         #1\relax{\def\m@rker{#1}% store name of marker currently being defined
+                              \expandafter\let\csname font<#1>\endcsname\relax}
+
+% Ignore stylesheet markers that do not affect formatting 
+\def \Name           #1\relax{}
+\def \Description    #1\relax{}
+\def \OccursUnder    #1\relax{}
+\let \Occursunder\OccursUnder
+\def \Rank           #1\relax{}
+\def \Underline      {}
+\let \underline\Underline
+%\def \SmallCaps      {}
+%\let \smallcaps\SmallCaps
+%\let \Smallcaps\SmallCaps
+\def \NotRepeatable  {}
+\let \Notrepeatable\NotRepeatable
+\def \Color          #1\relax{}
+\let \color\Color
+
+% For each property that affects formatting, define a macro to store the value
+% of this field, these will be accessed via getp@ram.
+% Constructs a macro name \<marker>:<parameter> to hold the value
+\def \Endmarker      #1\relax{\defp@ram{endmarker}{#1}} % endmarker is not currently checked
+\def \TextType       #1\relax{\lowercase{\defp@ram{type}{#1}}}
+\let \Texttype\TextType
+\def \TextProperties #1\relax{\lowercase{\defp@ram{properties}{#1}}}
+\let \Textproperties\TextProperties
+\def \FontSize       #1\relax{\defp@ram{fontsize}{#1}}
+\let \Fontsize\FontSize
+\def \FontName       #1\relax{\defp@ram{fontname}{#1}}
+\let \Fontname\FontName
+\def \FirstLineIndent#1\relax{\defp@ram{firstindent}{#1}}
+\let \Firstlineindent\FirstLineIndent
+\def \LeftMargin     #1\relax{\defp@ram{leftmargin}{#1}}
+\let \Leftmargin\LeftMargin
+\def \RightMargin    #1\relax{\defp@ram{rightmargin}{#1}}
+\let \Rightmargin\RightMargin
+\def \Italic         {\defp@ram{italic}{true}}
+\def \Bold           {\defp@ram{bold}{true}}
+\def \Superscript    {\defp@ram{superscript}{true}}
+\def \Regular        {\defp@ram{italic}{false}\defp@ram{bold}{false}\defp@ram{superscript}{false}}
+\let \superscript\Superscript
+\def \SpaceBefore    #1\relax{\defp@ram{spacebefore}{#1}}
+\let \Spacebefore\SpaceBefore
+\def \SpaceAfter     #1\relax{\defp@ram{spaceafter}{#1}}
+\let \Spaceafter\SpaceAfter
+\def \Justification  #1\relax{\lowercase{\defp@ram{justification}{#1}}}
+\def \CallerStyle    #1\relax{\defp@ram{callerstyle}{#1}} % ptx2pdf extension
+\def \TEStyleName    #1\relax{} % Translation Editor extension
+\def \SmallCaps      {\defp@ram{smallcaps}{true}}
+\let \Smallcaps\SmallCaps
+
+% Make a TeX macro based on the StyleType
+\def \StyleType      #1\relax{\lowercase{\def\styl@type{#1}}\m@kestyle}
+\let \Styletype=\StyleType
+
+%
+% \defp@ram: store the value of a parameter from the .sty file
+%   #1 -> name of parameter to store
+%   #2 -> value
+% Constructs a macro name \<marker>:<parameter> to hold the value
+% csname is required here in order to build a macro name containing a colon and possibly a number.
+%
+\def\defp@ram#1#2{\x@\def\csname\m@rker:#1\endcsname{#2}}
+
+%
+% \getp@aram: fetch the value of a style parameter into \p@ram
+%   #1 -> name of parameter to fetch
+%   #2 -> name of marker
+% Sets temporary macro \p@ram to the value
+%
+\def\getp@ram#1#2{\x@\let\x@\p@ram\csname#2:#1\endcsname}
+
+%
+%
+%
+\def\m@kestyle{{\uccode`\|=`\\\uppercase{\message{|\m@rker}}}
+ \x@\let\csname font<\m@rker>\endcsname=\relax 
+ \ifx\styl@type\P@ra \x@\defp@rstyle\x@{\m@rker}
+ \else\ifx\styl@type\Ch@r \x@\defch@rstyle\x@{\m@rker}
+ \else\ifx\styl@type\N@te \x@\defn@testyle\x@{\m@rker}
+ \else \message{unknown style type \styl@type}
+ \fi\fi\fi}
+\def\P@ra{paragraph}
+\def\Ch@r{character}
+\def\N@te{note}
+
+%
+% \def*style: define a USFM marker as a paragraph, character or note style marker
+% which will expand to \p@rstyle, \ch@rstyle or \n@testyle, with the marker name
+% as its parameter
+%
+% \csname...\endcsname is used because the marker may contain numbers as well as letters
+%
+\def\defp@rstyle#1{\x@\def\csname#1\endcsname{\p@rstyle{#1}}}
+\def\defch@rstyle#1{\x@\def\csname#1\endcsname{\ch@rstyle{#1}}}
+\def\defn@testyle#1{\x@\def\csname#1\endcsname{\n@testyle{#1}}\m@ken@tecl@ss{#1}}
+
+% Allow "hooking" custom TeX code at the beginning or ending of specific styles.
+% e.g. \sethook{start}{s1}{-} % put a hyphen at the start of every section heading
+\def\sethook#1#2#3{\x@\def\csname #1-#2\endcsname{#3}}
+
+% All types of marker use this to check for the "nonpublishable" property
+\def\t@stpublishability#1{\n@npublishablefalse % check if "nonpublishable" occurred in the marker's \Properties
+ \getp@ram{properties}{#1}%
+ \x@\t@stnonpub\p@ram nonpublishable!}
+\def\t@stnonpub #1nonpublishable#2!{%
+ \def\t@st{#2}\ifx\t@st\empty\else\n@npublishabletrue\fi}
+\newif\ifn@npublishable
+
+% called after \c and \v have been processed in stylesheet at beginning of typesetting file
+% Patch in special handling for \c and \v.
+% ~ is set to lowercase to a space in \ch@rstyle
+\lowercase{
+ \def\@ddcvhooks{
+  \let\@V=\v% remember \v defn for (A) below
+  % Define a macro to read an actual space delimited verse number
+  \def\@v@ ##1 {\gdef\v@rse{##1}%
+   \x@\spl@tverses\v@rse--\relax % split verse in a verse bridge (e.g. 3-4) into \v@rsefrom, \v@rseto
+   \ifx\v@rse\@ne \else \c@ncelfirstversefalse \fi % if the number isn't just "1", never cancel it
+   % if not cancelling first verse, output verse number
+   \ifc@ncelfirstverse\else
+     \@V~\printv@rse\@V*% (A) output verse number using saved style. ~ will lowercase to a space
+     \kern\h@ngverseoffset % additional space to align hanging numbers, if required
+     \kern\AfterVerseSpaceFactor\FontSizeUnit \fi
+   \egroup
+   \m@rkverse % generate a milestone for running headers
+   % run the hooks for picture insertion, paragraph adjustments, etc.
+   % these hooks were added via \addtoversehooks
+   \the\v@rsehooks
+   % remember current chapter:verse, not currently used. Could potentially be used
+   % to insert chapter:verse in footnotes.
+   \gdef\reference{\ch@pter:\v@rse}%
+   \nobreak\hskip1sp % let \x detect that there's "space" (or maybe drop-chapter) here
+   \relax
+  }
+  % define handling for usfm \v marker
+  \def\v{\leavevmode % ensure we are in horizontal mode to build paragraph
+   % set c@ncelfirstversetrue if we are immediately following a drop cap chapter number
+   % and the user has requested omission of the first verse number in a chapter
+   \c@ncelfirstversefalse
+   \ifnum\spacefactor=\n@wchaptersf \kern0sp % override \hangversenumber here
+    \ifOmitVerseNumberOne \c@ncelfirstversetrue \fi % and maybe suppress v1
+   \else\ifnum\spacefactor=\dr@pcapsf \kern0sp \fi \fi % second line, just prevent hang
+   % -1sp indicates that a hanging verse number has been requested here.
+   % When this happens we make ll@p use llap to right justify the verse number at the current position.
+   % Otherwise make ll@p do nothing.
+   \ifdim\lastkern=-1sp \let\ll@p=\llap \calch@ngverseoffset
+   \else \let\ll@p=\relax \h@ngverseoffset=0pt \fi % hanging verse number?
+   \ll@p\bgroup\m@kedigitsother\@v@} %
+  % remember chapter macro for later
+  \let\@C=\c
+  % Define a macro to process space delimited chapter number
+  % ## is necessary because this is a nested macro definition
+  \def\@c@ ##1 {\ifsk@pping \egroup \fi % if we were skipping, stop it
+   \gdef\ch@pter{##1}% remember chapter number
+   \gdef\v@rse{}% clear verse number
+   \m@kedigitsletters
+   % If omitting chapter number, skip this. 
+   % We would have to set \OmitChapterNumbertrue on a book by book basis
+   % in the configuration file in order to omit chapter numbers for single chapter books.
+   \ifOmitChapterNumber\else
+    % if chapter label not present, set \ch@ptertrue to cause chapter number to be printed
+    % at start of first text paragraph.
+    \ifx\ch@plabel\empty \global\ch@ptertrue 
+    \else % if \cl present, output chapter label here
+      \p@rstyle{cl}\ch@plabel\ \ch@pter
+      \pdfb@@kmark \pdfch@ptermark
+    \fi
+   \fi}
+  %
+  \def\c{\m@kedigitsother\@c@}
+  % set default value for drop cap chapter number size if not already set
+  \ifdim\dropnumbersize=0pt
+    \getp@ram{fontsize}{p}\dimen255=0\p@ram\FontSizeUnit \multiply\dimen255 by 2
+    \ifdim\dimen255=0pt \dimen255=24\FontSizeUnit \fi % just in case \FontSize was missing
+    \getp@ram{fontsize}{c}\dropnumbersize=0\p@ram\FontSizeUnit \relax
+	% if font size specified for chapter number stylesheet is less than 2*paragraph font size ...
+    \ifdim\dropnumbersize<\dimen255
+      \s@tfont{p}%workaround for Lotus Elam Bold issue - ensure the \p font is loaded first
+      \s@tfont{c}\setbox0=\hbox{0123456789}%set a box at the size specified by the \c marker
+	  %clear font<c> so that it will get rebuilt on next setfont for \c (after we have figured out real size)
+      \x@\let\csname font<c>\endcsname=\relax 
+	  % Calculate drop cap height = base line height + (lower case) x height
+      \s@tfont{p}\dimen0=\fontdimen5\font % get x height (appendix F) 5 is x-height of font
+      \advance\dimen0 by \baselineskip
+      % Now \dimen0 is the desired height, and \ht0 is the actual height
+      % that results from the existing \dropnumbersize.
+      % So we want to calculate
+      %   dropnumbersize = dropnumbersize * dimen0 / ht0
+      % but we have to be careful of both overflow and limited precision.
+	  % The calculations are scaled in order to get better accuracy
+	  % even though calculations are integer values.
+	  % divide desired height by current height
+      \multiply\dimen0 by 16
+      \dimen2=0.0625\ht0
+      \divide\dimen0 by \dimen2
+      % now \dimen0 is (desired / actual)*256 as a 16.16 fixed-point value
+	  % multiply by original size from \c marker in stylesheet
+      \dimen0=0.0625\dimen0
+      \dimen2=0.0625\dropnumbersize
+      \multiply\dimen0 by \dimen2
+      % now \dropnumbersize is the final size we want to achieve;
+      % divide by the \FontSizeUnit to get value for fontsize param of marker \c
+      \dropnumbersize=\dimen0
+      \ifdim\dropnumbersize<64pt
+        \multiply\dropnumbersize by 256
+        \dimen0=\FontSizeUnit \divide\dimen0 by 256
+      \else
+        \multiply\dropnumbersize by 64
+        \dimen0=\FontSizeUnit \divide\dimen0 by 1024
+      \fi
+      \divide\dropnumbersize by \dimen0
+    \fi
+  \fi
+  % set font size for \c
+  \edef\dr@psize{\expandafter\strip@pt\the\dropnumbersize}%
+  \def\m@rker{c}\defp@ram{fontsize}{\dr@psize}
+ }
+}
+{\catcode`P=12 \catcode`T=12 \lowercase{\gdef\strip@pt#1PT{#1}}}
+\def\AfterVerseSpaceFactor{2}
+\newif\ifOmitChapterNumber
+\newif\ifc@ncelfirstverse
+\def\printv@rse{\AdornVerseNumber{\v@rsefrom}\ifx\v@rsefrom\v@rseto
+                \else\endash\AdornVerseNumber{\v@rseto}\fi}
+\def\@ne{1}
+\def\AdornVerseNumber#1{#1}
+
+% put \hangversenumber into the <start> hook for a style such as \q1
+% in order to 'hang' verse numbers into the paragraph indent of the style
+\def\hangversenumber{\kern-1sp\relax}
+
+% calculate extra space to put after the hanging number, to align at specified marker's indent
+\def\HangVerseAlignMarker{}
+\def\calch@ngverseoffset{%
+  \ifx\HangVerseAlignMarker\empty
+    \h@ngverseoffset=0pt
+  \else
+    % if \HangVerseAlign is not empty, then we align hanging numbers to that style's indent
+    \h@ngverseoffset=0pt
+    \getp@ram{leftmargin}{\m@rker}%
+    \ifx\p@ram\relax \else \advance\h@ngverseoffset \p@ram\IndentUnit \fi
+    \getp@ram{firstindent}{\m@rker}%
+    \ifx\p@ram\relax \else \advance\h@ngverseoffset \p@ram\IndentUnit \fi
+    \getp@ram{leftmargin}{\HangVerseAlignMarker}%
+    \ifx\p@ram\relax \else \advance\h@ngverseoffset -\p@ram\IndentUnit \fi
+    \getp@ram{firstindent}{\HangVerseAlignMarker}%
+    \ifx\p@ram\relax \else \advance\h@ngverseoffset -\p@ram\IndentUnit \fi
+    % don't allow it to be negative as that would make the number overprint the text
+    \ifdim\h@ngverseoffset<0pt \h@ngverseoffset=0pt \fi
+  \fi
+}
+\newdimen\h@ngverseoffset
+
+% size to use for drop-cap style numbers; automatically calculated if not set
+\newdimen\dropnumbersize
+
+% other modules can use \addtoversehooks to insert macros that will be executed at each verse
+\def\addtoversehooks#1{\x@\global\x@\v@rsehooks\x@{\the\v@rsehooks #1}}
+\newtoks\v@rsehooks
+
+\newif\ifch@pter \def\ch@plabel{}
+
+% macros to switch digits between "letter" and "other" category; must be "letter" when reading USFM data,
+% but "other" when we want to read numeric values
+\def\m@kedigitsletters{\catcode`0=\el@ven \catcode`1=\el@ven \catcode`2=\el@ven \catcode`3=\el@ven
+ \catcode`4=\el@ven \catcode`5=\el@ven \catcode`6=\el@ven \catcode`7=\el@ven
+ \catcode`8=\el@ven \catcode`9=\el@ven \relax}
+\def\m@kedigitsother{\catcode`0=\tw@lve \catcode`1=\tw@lve \catcode`2=\tw@lve \catcode`3=\tw@lve
+ \catcode`4=\tw@lve \catcode`5=\tw@lve \catcode`6=\tw@lve \catcode`7=\tw@lve
+ \catcode`8=\tw@lve \catcode`9=\tw@lve \relax}
+\def\el@ven{11}
+\def\tw@lve{12}
+
+\let\b@ok\relax
+\def\ch@pter{}
+\def\v@rse{}
+\def\m@rkverse{\mark{\b@ok:\ch@pter:\v@rse}}
+
+\begingroup
+\obeylines%
+\gdef\@ddspecialhooks{% there are a few special USFM markers that we give "magic" properties
+ \let\@H=\h%
+ \def\h{\bgroup\deactiv@tecustomch@rs
+        \obeylines\@h}% \h gets stored as the book name (for references)
+ \def\@h ##1^^M{\gdef\b@ok{##1}\egroup}% store book id in \b@ok
+ %
+ \let\@CL=\cl%
+ \def\do@CL{\global\ch@pterfalse\@CL}%
+ \def\cl{\ifch@pter \let\n@xt=\do@CL \else \let\n@xt=\st@recl \fi \n@xt}%
+ \def\st@recl{\bgroup\obeylines\@cl}% \cl gets stored as chapter label and changes \c format
+ \def\@cl ##1^^M{\gdef\ch@plabel{##1}\egroup}%
+ %
+ \let\@ID=\id%
+ \def\id{\bgroup\obeylines\unc@tcodespecials \m@kedigitsother
+   \catcode32=10 \@id}% \id gets stored and printed in the margin with cropmarks
+ \def\@id ##1^^M{\gdef\c@rrID{##1}\uppercase{\@@id##1ZZZ\end}\egroup}%
+ %
+ \let\fig=\ptx@fig% \fig has its own special macro to parse the fields
+ %
+ \let\nb=\ptx@nb% \nb is a special code that suppresses a paragraph break across \c
+}%
+\endgroup
+\def\unc@tcodespecials{\def\do##1{\catcode`##1=12 }\dospecials}
+\def\@@id#1#2#3#4\end{\gdef\id@@@{#1#2#3}} % get first 3 chars of the \id
+\def\ptx@fig{\begingroup\m@kedigitsother \ptx@f@g}
+\def\ptx@f@g #1\fig*{\d@figure{#1}\endgroup}
+
+%
+% \stylesheet{...} reads a Paratext stylesheet line by line
+%
+\newif\ifc@ntinue
+\newread\styl@sheet
+\def\stylesheet#1{
+ \let\save@regular=\regular \let\regular=\Regular
+ \let\save@bold=\bold \let\bold=\Bold
+ \let\save@italic=\italic \let\italic=\Italic
+ \openin\styl@sheet="#1" \c@ntinuetrue
+ \ifeof\styl@sheet\errmessage{Paratext stylesheet "#1" not found}\else
+   \message{Reading Paratext stylesheet "#1"...}%
+   \endlinechar=-1
+   \catcode`\#=5 % paratext comment char
+   \loop
+    \read\styl@sheet to \th@line
+    \th@line \relax
+    \ifeof\styl@sheet \c@ntinuefalse \fi
+    \ifc@ntinue\repeat
+   \endlinechar=13
+   \closein\styl@sheet
+   \catcode`\#=6 % restore default TeX catcode
+ \fi
+ \let\regular=\save@regular
+ \let\bold=\save@bold
+ \let\italic=\save@italic
+}
+
+\def\@netimesetup{
+ % stuff to execute after loading all stylesheets but before processing the first USFM file
+ \s@tupsizes
+ \@ddcvhooks
+ \@ddspecialhooks
+ \the\@nithooks
+ \let\@netimesetup=\relax}
+
+% Read the files associated with this book: usfm, adjustment list, picture list
+\def\ptxfile#1{
+ \@netimesetup
+ \gdef\ch@plabel{}
+ \initp@rastyles
+ \initn@testyles
+ \openadjlist "\the\AdjListPath#1.adj"
+ \openpiclist "\the\PicListPath#1.piclist"
+ %\catcode`\$=12
+ \catcode`\^=12 % make these printable
+ \catcode`\&=12 \catcode`\~=12
+ \catcode`\#=12 %\catcode`\%=12
+ \catcode`\{=12 \catcode`\}=12
+ \catcode`\_=11 % treat as letter for TE custom styles
+ \catcode`\/=\active
+ \catcode13=10
+ \activ@tecustomch@rs
+ \m@kedigitsletters %so that marker names can include digits
+ % test if file is available, inform user if it's missing
+ \openin\t@stread="\the\PtxFilePath#1"
+   \ifeof\t@stread \def\n@xt{\MSG{USFM file "\the\PtxFilePath#1" not found -- ignored}}
+   \else \closein\t@stread \def\n@xt{\input "\the\PtxFilePath#1"\relax}\fi
+ \n@xt
+ \ifhmode \unskip\end@llcharstyles \par \fi
+ \ifsk@pping\egroup\fi % end skipping, if file ended with a non-printable marker
+ \endt@ble % end table if file ended during table processing
+ \m@kedigitsother
+ \deactiv@tecustomch@rs
+ \catcode13=5
+ \closepiclist
+ \closeadjlist
+ \catcode`\/=12
+ \catcode`\#=6 \catcode`\%=14 % restore TeX meanings for those we might use
+ \catcode`\{=1 \catcode`\}=2
+ \singlecolumn
+ \pagebreak}
+\newread\t@stread
+\newtoks\AdjListPath % path to look for adjustment files
+\newtoks\PicListPath % path to look for picture list files
+\newtoks\PtxFilePath % path to look for main ptx input files
+
+% mechanism to define active chars within the ptx files
+\catcode`\~=\active
+\def\DefineActiveChar#1#2{\count255=`#1
+  \do@ctive=\x@\x@\x@{\x@\the\x@\do@ctive
+    \x@\d@something\the\count255 }
+  \lccode`\~=\count255
+  \def\t@mp{\noexpand#2} \lowercase{\edef~{\t@mp}}}
+\newtoks\do@ctive
+
+\def\@ctivate{\x@\edef\csname save-cat-\the\count255\endcsname{\the\catcode\count255}%
+  \catcode\the\count255=\active\relax}
+\def\de@ctivate{\catcode\the\count255=\csname save-cat-\the\count255\endcsname\relax}
+
+\def\activ@tecustomch@rs{% activate all the chars configured with \DefineActiveChar
+ \def\d@something{\afterassignment\@ctivate \count255=}\the\do@ctive}  
+\def\deactiv@tecustomch@rs{% deactivate all the chars configured with \DefineActiveChar
+ \def\d@something{\afterassignment\de@ctivate \count255=}\the\do@ctive}  
+
+%\def\openbracket{\char`\[\ignorespaces}
+%\def\openparen{\char`\(\ignorespaces}
+% The above results in undefined control sequence when these characters occur within \fig...\fig*
+\def\openbracket{\char91\ignorespaces}
+\def\openparen{\char40\ignorespaces}
+
+\DefineActiveChar{[}{\openbracket} % make these skip following spaces
+\DefineActiveChar{(}{\openparen}   % (useful at end-of-line before new verse)
+
+\catcode`\/=\active
+\def/{\futurelet\n@xt\sl@sh}
+\def\sl@sh{\ifx\n@xt/\let\n@xt\sl@shbreak\else\let\n@xt\sl@shprint\fi\n@xt}
+\def\sl@shbreak/{\unskip\penalty-250{} \ignorespaces}
+\def\sl@shprint{\char`\/}
+\catcode`\/=12
+
+% Create registers to hold configuration information, set defaults
+\newdimen\FontSizeUnit		\FontSizeUnit=1bp % units for font sizes in Paratext stylesheet
+\newdimen\IndentUnit		\IndentUnit=1in % units for indents
+\newdimen\PaperWidth		\PaperWidth=210mm
+\newdimen\PaperHeight		\PaperHeight=297mm
+\newdimen\MarginUnit		\MarginUnit=1in % units for margins
+\newdimen\BindingGutter		\BindingGutter=5mm
+\def\LineSpacingFactor{1.0} % scale factor used for line spacing
+\def\VerticalSpaceFactor{1.0} % scaling factor applied to space before/after styles
+\def\TopMarginFactor{1.0}
+\def\BottomMarginFactor{\TopMarginFactor}
+\def\SideMarginFactor{1.0}
+\def\ColumnGutterFactor{15} % relative to FontSizeUnit
+\def\HeaderPosition{0.5} % pos of baseline from top of page, relative to MarginUnit
+\def\FooterPosition{0.5} % pos of baseline from bottom of page, relative to MarginUnit
+
+\newcount\TitleColumns \TitleColumns=1
+\newcount\IntroColumns \IntroColumns=1
+\newcount\BodyColumns  \BodyColumns=1
+
+\newif\ifBindingGutter % \BindingGutter won't be used unless this is set to true
+\newif\ifDoubleSided \DoubleSidedtrue % binding gutter on alternate sides; use odd/even headers
+
+% calculate various dimensions based on the factors, units, etc that have been defined
+\def\s@tupsizes{
+ \le@dingunit=\LineSpacingFactor\FontSizeUnit
+ \verticalsp@ceunit=\VerticalSpaceFactor\le@dingunit
+ \baselineskip=14\le@dingunit
+ \lineskiplimit=-7\le@dingunit
+ \lineskip=0pt
+ \topskip=\baselineskip
+ \gutter=\ColumnGutterFactor\FontSizeUnit
+ \dimen0=\PaperWidth \dimen2=\SideMarginFactor\MarginUnit
+ \advance\dimen0 by -2\dimen2
+ \ifBindingGutter \advance\dimen0 by -\BindingGutter \fi
+ \textwidth=\dimen0
+ \colwidth=0.5\textwidth \advance\colwidth by -0.5\gutter
+ \hsize=\textwidth
+ \topm@rgin=\TopMarginFactor\MarginUnit
+ \advance\topm@rgin by -\topskip \advance\topm@rgin by 12\FontSizeUnit
+ \bottomm@rgin=\BottomMarginFactor\MarginUnit
+ \dimen0=\PaperHeight
+ \advance\dimen0 by -\topm@rgin
+ \advance\dimen0 by -\bottomm@rgin
+ \textheight=\dimen0
+ \vsize=\textheight
+ \pdfpagewidth=\PaperWidth
+ \pdfpageheight=\PaperHeight
+ \resetvsize
+}
+\newdimen\le@dingunit
+\newdimen\verticalsp@ceunit
+\newdimen\topm@rgin
+\newdimen\bottomm@rgin
+\newdimen\textwidth
+\newdimen\textheight
+\newdimen\colwidth
+\newdimen\gutter \gutter=20pt
+
+\endinput
