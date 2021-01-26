@@ -25,7 +25,7 @@ files: [
   # Where translations will be placed
   # e.g. "/resources/%two_letters_code%/%original_file_name%"
   #
-  "translation" : "locales/%two_letters_code%/LC_MESSAGES/ptxprint_crowdin.po",
+  "translation" : "locales/%two_letters_code%/LC_MESSAGES/ptxprint.po",
   "languages_mapping": {
     "two_letters_code": {
       "en-GB": "en_GB"
