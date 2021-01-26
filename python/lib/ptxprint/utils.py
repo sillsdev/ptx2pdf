@@ -189,5 +189,6 @@ def get_ptsettings(errorfn):
             except:
                 _pt_bindir = queryvalue(ptob, 'Program_Files_Directory_Ptw'+version)
         pt_settings = queryvalue(ptob, 'Settings_Directory')
+    _pt_bindir = getattr(sys, '_MEIPASS', os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..')))
     return pt_settings
 
