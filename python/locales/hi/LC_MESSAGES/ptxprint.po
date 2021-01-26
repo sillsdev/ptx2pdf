@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: ptxprint\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-01-26 13:30+0700\n"
-"PO-Revision-Date: 2021-01-26 08:39\n"
+"PO-Revision-Date: 2021-01-26 17:00\n"
 "Last-Translator: \n"
 "Language-Team: Hindi\n"
 "Language: hi_IN\n"
@@ -86,11 +86,11 @@ msgstr ""
 
 #: lib/ptxprint/gtkview.py:891 lib/ptxprint/ptxprint.glade:3713
 msgid "Lock"
-msgstr ""
+msgstr "लॉक करें"
 
 #: lib/ptxprint/gtkview.py:894
 msgid "Unlock"
-msgstr ""
+msgstr "अनलॉक करें"
 
 #: lib/ptxprint/gtkview.py:1048
 msgid " PicLists have been renamed and moved!"
@@ -209,7 +209,7 @@ msgstr ""
 
 #: lib/ptxprint/gtkview.py:2417
 msgid "Choose Image"
-msgstr ""
+msgstr "चित्र चुने"
 
 #: lib/ptxprint/runjob.py:223 lib/ptxprint/runjob.py:225
 msgid "Layout problems were encountered on page(s): "
@@ -279,24 +279,24 @@ msgstr ""
 #: lib/ptxprint/texmodel.py:315 lib/ptxprint/ptxprint.glade:8116
 #: lib/ptxprint/ptxprint.glade:8158 lib/ptxprint/ptxprint.glade:8200
 msgid "First Reference"
-msgstr ""
+msgstr "प्रथम-संदर्भ"
 
 #: lib/ptxprint/texmodel.py:316 lib/ptxprint/ptxprint.glade:8117
 #: lib/ptxprint/ptxprint.glade:8159 lib/ptxprint/ptxprint.glade:8201
 msgid "Last Reference"
-msgstr ""
+msgstr "अंतिम-संदर्भ"
 
 #: lib/ptxprint/texmodel.py:317 lib/ptxprint/ptxprint.glade:8118
 #: lib/ptxprint/ptxprint.glade:8160 lib/ptxprint/ptxprint.glade:8202
 #: lib/ptxprint/ptxprint.glade:8649
 msgid "Reference Range"
-msgstr ""
+msgstr "संदर्भ श्रेणी"
 
 #: lib/ptxprint/texmodel.py:318 lib/ptxprint/ptxprint.glade:8115
 #: lib/ptxprint/ptxprint.glade:8157 lib/ptxprint/ptxprint.glade:8199
 #: lib/ptxprint/ptxprint.glade:8648
 msgid "Page Number"
-msgstr ""
+msgstr "पृष्ठ संख्या"
 
 #: lib/ptxprint/texmodel.py:319
 msgid "Time (HH:MM)"
@@ -318,7 +318,7 @@ msgstr ""
 
 #: lib/ptxprint/view.py:391
 msgid "No book selected!"
-msgstr ""
+msgstr "कोई पुस्तक चयनित नहीं है।"
 
 #: lib/ptxprint/view.py:692
 msgid "No Secondary Project Set"
@@ -498,7 +498,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:942
 msgid "All Books"
-msgstr ""
+msgstr "सभी पुस्तकें"
 
 #: lib/ptxprint/ptxprint.glade:946
 msgid "Click to turn ALL books on/off."
@@ -596,16 +596,16 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:1574
 msgid "Single"
-msgstr ""
+msgstr "अकेला"
 
 #: lib/ptxprint/ptxprint.glade:1578
 msgid "Double"
-msgstr ""
+msgstr "डबल"
 
 #: lib/ptxprint/ptxprint.glade:1590 lib/ptxprint/ptxprint.glade:1677
 #: lib/ptxprint/ptxprint.glade:3625
 msgid "Default"
-msgstr ""
+msgstr "डिफॉल्ट"
 
 #: lib/ptxprint/ptxprint.glade:1603 lib/ptxprint/ptxprint.glade:2461
 #: lib/ptxprint/ptxprint.glade:2703
@@ -620,7 +620,7 @@ msgstr ""
 #: lib/ptxprint/ptxprint.glade:2465 lib/ptxprint/ptxprint.glade:2706
 #: lib/ptxprint/ptxprint.glade:8067
 msgid "Center"
-msgstr ""
+msgstr "सेंटर"
 
 #: lib/ptxprint/ptxprint.glade:1608 lib/ptxprint/ptxprint.glade:1660
 msgid "c"
@@ -637,7 +637,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:1615 lib/ptxprint/ptxprint.glade:2473
 msgid "Inner"
-msgstr ""
+msgstr "भीतरी"
 
 #: lib/ptxprint/ptxprint.glade:1616
 msgid "i"
@@ -645,7 +645,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:1619 lib/ptxprint/ptxprint.glade:2477
 msgid "Outer"
-msgstr ""
+msgstr "बाहरी"
 
 #: lib/ptxprint/ptxprint.glade:1620
 msgid "o"
@@ -678,7 +678,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:1655 lib/ptxprint/ptxprint.glade:2521
 msgid "Top"
-msgstr ""
+msgstr "ऊपर"
 
 #: lib/ptxprint/ptxprint.glade:1656
 msgid "t"
@@ -686,7 +686,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:1663 lib/ptxprint/ptxprint.glade:2525
 msgid "Bottom"
-msgstr ""
+msgstr "नीचे"
 
 #: lib/ptxprint/ptxprint.glade:1664
 msgid "b"
@@ -694,23 +694,23 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:1681
 msgid "Arabic-Hindi"
-msgstr ""
+msgstr "अरबी-हिन्दी"
 
 #: lib/ptxprint/ptxprint.glade:1685
 msgid "Arabic-Farsi"
-msgstr ""
+msgstr "अरबी-फारसी"
 
 #: lib/ptxprint/ptxprint.glade:1689
 msgid "Bengali"
-msgstr ""
+msgstr "बंगाली"
 
 #: lib/ptxprint/ptxprint.glade:1693
 msgid "Burmese"
-msgstr ""
+msgstr "बर्मी"
 
 #: lib/ptxprint/ptxprint.glade:1697
 msgid "Devanagari"
-msgstr ""
+msgstr "देवनागरी"
 
 #: lib/ptxprint/ptxprint.glade:1701
 msgid "Ethiopic"
@@ -722,15 +722,15 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:1709
 msgid "Gujarati"
-msgstr ""
+msgstr "गुजराती"
 
 #: lib/ptxprint/ptxprint.glade:1713
 msgid "Gurmukhi"
-msgstr ""
+msgstr "गुरुमुखी"
 
 #: lib/ptxprint/ptxprint.glade:1717
 msgid "Kannada"
-msgstr ""
+msgstr "कन्नड़"
 
 #: lib/ptxprint/ptxprint.glade:1721
 msgid "Khmer"
@@ -832,7 +832,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:2092
 msgid "Typeface:"
-msgstr ""
+msgstr "अक्षराकृति"
 
 #: lib/ptxprint/ptxprint.glade:2169 lib/ptxprint/ptxprint.glade:2188
 msgid "If the required font doesn't have a BOLD typeface, you can use this setting to create the BOLD effect. (For example, setting Embolden to 1.6 would thicken the Regular typeface making it appear as bold)."
@@ -960,7 +960,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:2495
 msgid "Never"
-msgstr ""
+msgstr "कभी नहीं"
 
 #: lib/ptxprint/ptxprint.glade:2499
 msgid "Odd"
@@ -980,11 +980,11 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:2507
 msgid "Both"
-msgstr ""
+msgstr "दोनों"
 
 #: lib/ptxprint/ptxprint.glade:2508
 msgid "both"
-msgstr ""
+msgstr "दोनों"
 
 #: lib/ptxprint/ptxprint.glade:2529
 msgid "Before Verse"
@@ -1060,7 +1060,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:2732
 msgid "Note"
-msgstr ""
+msgstr "नोट"
 
 #: lib/ptxprint/ptxprint.glade:2735
 msgid "Milestone"
@@ -1104,7 +1104,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:3024
 msgid "Name:"
-msgstr ""
+msgstr "नाम:"
 
 #: lib/ptxprint/ptxprint.glade:3038
 msgid "Consists of: Marker..Endmarker - Treeview Heading - short description"
@@ -1181,7 +1181,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:3469
 msgid "1"
-msgstr ""
+msgstr "1"
 
 #: lib/ptxprint/ptxprint.glade:3494
 msgid "Project and Scope"
@@ -1257,7 +1257,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:3702
 msgid "No Password Set"
-msgstr ""
+msgstr "कोई पासवर्ड सेट नहीं है"
 
 #: lib/ptxprint/ptxprint.glade:3717
 msgid "When Config is UNLOCKED:\n"
@@ -1286,7 +1286,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:3812
 msgid "Copyright:"
-msgstr ""
+msgstr "कॉपीराइट"
 
 #: lib/ptxprint/ptxprint.glade:3823
 msgid "It is important to include a copyright statement on every publication. By default this will be set according to the Paratext project settings, but you can edit it here if needed. \n\n"

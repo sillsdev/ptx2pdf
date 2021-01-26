@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: ptxprint\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-01-26 13:30+0700\n"
-"PO-Revision-Date: 2021-01-26 08:39\n"
+"PO-Revision-Date: 2021-01-26 17:00\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -30,8 +30,8 @@ msgstr "Ligne de base :"
 #: lib/ptxprint/gtkstyleditor.py:94 lib/ptxprint/ptxprint.glade:14993
 msgid "Font Size\n"
 "Factor:"
-msgstr "Facteur\n"
-"de taille de police :"
+msgstr "Facteur de taille\n"
+"de police :"
 
 #: lib/ptxprint/gtkstyleditor.py:94
 msgid "Font Scale:"
@@ -185,15 +185,15 @@ msgstr "Sélectionnez le dossier contenant des fichiers image"
 
 #: lib/ptxprint/gtkview.py:2006
 msgid "Select one or more PDF(s) for FRONT matter"
-msgstr "Sélectionnez un ou plusieurs PDF(s) pour la matière FRONT"
+msgstr "Sélectionnez un ou plusieurs fichiers PDF(s) pour les pages de garde"
 
 #: lib/ptxprint/gtkview.py:2010
 msgid "Select one or more PDF(s) for BACK matter"
-msgstr "Sélectionnez un ou plusieurs PDF(s) pour le retour en arrière"
+msgstr "Sélectionnez un ou plusieurs PDF(s) pour les annexes"
 
 #: lib/ptxprint/gtkview.py:2014
 msgid "Select Watermark PDF file"
-msgstr "Sélectionnez un fichier filigrane PDF"
+msgstr "Sélectionnez un fichier PDF pour le filigrane"
 
 #: lib/ptxprint/gtkview.py:2019
 msgid "Select Page Border PDF file"
@@ -205,22 +205,22 @@ msgstr "Sélectionnez le fichier PDF de l'en-tête de section"
 
 #: lib/ptxprint/gtkview.py:2029
 msgid "Select End of Book PDF file"
-msgstr "Sélectionnez le fichier PDF de fin de livre"
+msgstr "Sélectionnez le fichier PDF de décoration de fin de livre"
 
 #: lib/ptxprint/gtkview.py:2034
 msgid "Select Verse Decorator PDF file"
-msgstr "Sélectionnez le fichier PDF de verset Decorator"
+msgstr "Sélectionnez le fichier PDF de décoration de numéro de verset"
 
 #: lib/ptxprint/gtkview.py:2142
 msgid "Switch to Other\n"
 "Diglot Project"
-msgstr ""
+msgstr "Basculer vers l'autre projet Diglot"
 
 #: lib/ptxprint/gtkview.py:2148
 msgid "Save & Return to\n"
 "Diglot Project"
-msgstr "Enregistrer et revenir à\n"
-"Projet Diglot"
+msgstr "Enregistrer et revenir\n"
+"au projet Diglot"
 
 #: lib/ptxprint/gtkview.py:2196
 msgid "FYI: The Regular font already supports all the characters in the text."
@@ -334,7 +334,7 @@ msgstr "Heure (HH:MM)"
 
 #: lib/ptxprint/texmodel.py:320
 msgid "Date (YYYY-MM-DD)"
-msgstr "Date (AAAAA-MM-JJ)"
+msgstr "Date (AAAA-MM-JJ)"
 
 #: lib/ptxprint/texmodel.py:321 lib/ptxprint/ptxprint.glade:8114
 #: lib/ptxprint/ptxprint.glade:8156 lib/ptxprint/ptxprint.glade:8198
@@ -357,8 +357,8 @@ msgstr "Aucun projet secondaire défini"
 #: lib/ptxprint/view.py:692
 msgid "In order to generate an AdjList for Diglots, the \n"
 "Secondary project must be set on the Diglot+Border tab."
-msgstr "Afin de générer une AdjList pour Diglots, le projet \n"
-"secondaire doit être défini sur l'onglet Diglot+Bord."
+msgstr "Afin de générer une AdjList pour les Diglots, le projet \n"
+"secondaire doit être défini sur l'onglet Diglot+Bordure."
 
 #: lib/ptxprint/view.py:702
 msgid "One or more Paragraph Adjust file(s) already exist!"
@@ -439,11 +439,11 @@ msgstr "Afin d'imprimer à partir d'un paquet BBN, il est\n"
 #: lib/ptxprint/ptxprint.glade:501 lib/ptxprint/ptxprint.glade:3270
 #: lib/ptxprint/ptxprint.glade:3402
 msgid "Ch_oose..."
-msgstr "Ch_oose..."
+msgstr "_Sélectionner..."
 
 #: lib/ptxprint/ptxprint.glade:518
 msgid "DBL Bundle:"
-msgstr "Pack BBN :"
+msgstr "Paquet BBN :"
 
 #: lib/ptxprint/ptxprint.glade:529 lib/ptxprint/ptxprint.glade:544
 msgid "PTXprint will create a NEW Paratext project\n"
@@ -507,8 +507,8 @@ msgid "This option will REPLACE ALL entries\n"
 "want to do this?\n\n"
 "If in doubt, then click Cancel."
 msgstr "Cette option remplacera toutes les entrées\n"
-"dans la liste de photos existante. Voulez-vous vraiment\n"
-"faire cela ?\n\n"
+"dans la liste de photos existante. Voulez-vous\n"
+"vraiment faire cela ?\n\n"
 "En cas de doute, cliquez sur Annuler."
 
 #: lib/ptxprint/ptxprint.glade:785
@@ -571,7 +571,7 @@ msgstr "Ancien Testament"
 
 #: lib/ptxprint/ptxprint.glade:965
 msgid "Click to turn OT books on/off."
-msgstr "Cliquez pour activer ou désactiver les livres OT."
+msgstr "Cliquez pour activer ou désactiver les livres AT."
 
 #: lib/ptxprint/ptxprint.glade:980
 msgid "New Testament"
@@ -633,7 +633,7 @@ msgid "Enter a password of \n"
 "lock/unlock this\n"
 "saved configuration."
 msgstr "Entrez un mot de passe de \n"
-"à 16 caractères pour\n"
+"jusqu'à 16 caractères pour\n"
 "verrouiller/déverrouiller cette\n"
 "configuration."
 
@@ -681,13 +681,13 @@ msgstr "Gauche"
 
 #: lib/ptxprint/ptxprint.glade:1604
 msgid "l"
-msgstr "l"
+msgstr "g"
 
 #: lib/ptxprint/ptxprint.glade:1607 lib/ptxprint/ptxprint.glade:1659
 #: lib/ptxprint/ptxprint.glade:2465 lib/ptxprint/ptxprint.glade:2706
 #: lib/ptxprint/ptxprint.glade:8067
 msgid "Center"
-msgstr "Centrer"
+msgstr "Centre"
 
 #: lib/ptxprint/ptxprint.glade:1608 lib/ptxprint/ptxprint.glade:1660
 msgid "c"
@@ -700,7 +700,7 @@ msgstr "Droite"
 
 #: lib/ptxprint/ptxprint.glade:1612
 msgid "r"
-msgstr "r"
+msgstr "d"
 
 #: lib/ptxprint/ptxprint.glade:1615 lib/ptxprint/ptxprint.glade:2473
 msgid "Inner"
@@ -716,7 +716,7 @@ msgstr "Extérieur"
 
 #: lib/ptxprint/ptxprint.glade:1620
 msgid "o"
-msgstr "o"
+msgstr "e"
 
 #: lib/ptxprint/ptxprint.glade:1633 lib/ptxprint/ptxprint.glade:2395
 #: lib/ptxprint/ptxprint.glade:2496
@@ -745,11 +745,11 @@ msgstr "90"
 
 #: lib/ptxprint/ptxprint.glade:1655 lib/ptxprint/ptxprint.glade:2521
 msgid "Top"
-msgstr "En haut"
+msgstr "Haut"
 
 #: lib/ptxprint/ptxprint.glade:1656
 msgid "t"
-msgstr "t"
+msgstr "h"
 
 #: lib/ptxprint/ptxprint.glade:1663 lib/ptxprint/ptxprint.glade:2525
 msgid "Bottom"
@@ -869,23 +869,23 @@ msgstr "Langue :"
 
 #: lib/ptxprint/ptxprint.glade:1983
 msgid "Regular"
-msgstr "Régulièrement"
+msgstr "Normal"
 
 #: lib/ptxprint/ptxprint.glade:1986 lib/ptxprint/ptxprint.glade:14823
 msgid "Bold"
-msgstr "Bold"
+msgstr "Gras"
 
 #: lib/ptxprint/ptxprint.glade:1989 lib/ptxprint/ptxprint.glade:14838
 msgid "Italic"
-msgstr "Italic"
+msgstr "Italique"
 
 #: lib/ptxprint/ptxprint.glade:1992
 msgid "Bold Italic"
-msgstr "Bold Italic"
+msgstr "Gras italique"
 
 #: lib/ptxprint/ptxprint.glade:1998
 msgid "Pick a Font (and Typeface)"
-msgstr "Choisissez une police (et un Typeface)"
+msgstr "Choisissez une police (et un style)"
 
 #: lib/ptxprint/ptxprint.glade:2081
 msgid "Fonts which have all 4 typefaces\n"
@@ -895,37 +895,37 @@ msgid "Fonts which have all 4 typefaces\n"
 "in this list, then it is quite likely that\n"
 "it has not been installed \"For all Users\"\n"
 "in the Windows system."
-msgstr "Les polices qui ont les 4 fontes\n"
-"(régulières, gras, italiques et en gras)\n"
+msgstr "Les polices qui ont les 4 styles\n"
+"(normal, gras, italique et gras-italique)\n"
 "sont affichées dans la liste ci-dessus.\n\n"
-"Si vous ne pouvez pas localiser la police souhaitée\n"
-"dans cette liste, alors il est très probable que\n"
-"il n'ait pas été installé \"Pour tous les utilisateurs\"\n"
+"Si vous ne pouvez pas trouver la police souhaitée\n"
+"dans cette liste, il est probable qu’elle n’a pas\n"
+"été installée \"Pour tous les utilisateurs\"\n"
 "dans le système Windows."
 
 #: lib/ptxprint/ptxprint.glade:2092
 msgid "Typeface:"
-msgstr "Type :"
+msgstr "Style :"
 
 #: lib/ptxprint/ptxprint.glade:2169 lib/ptxprint/ptxprint.glade:2188
 msgid "If the required font doesn't have a BOLD typeface, you can use this setting to create the BOLD effect. (For example, setting Embolden to 1.6 would thicken the Regular typeface making it appear as bold)."
-msgstr "Si la police requise n'a pas de police BOLD, vous pouvez utiliser ce paramètre pour créer l'effet BOLD. (Par exemple, fixer Embolden à 1.6 épaissirait la fonte Régulière qui l'apparaissait en gras)."
+msgstr "Si la police requise n'a pas de style GRAS, vous pouvez utiliser ce paramètre pour créer l'effet GRAS. (Par exemple, fixer Plus gras à 1.6 épaissirait le style Normal qui l'apparaissait en gras)."
 
 #: lib/ptxprint/ptxprint.glade:2171
 msgid "Embolden"
-msgstr "Embolden"
+msgstr "Plus gras"
 
 #: lib/ptxprint/ptxprint.glade:2209 lib/ptxprint/ptxprint.glade:2230
 msgid "If the required font does not have an ITALIC typeface, you can use this setting to create the ITALIC effect. (For example, setting Slant to 0.15 would slant the Regular typeface by 15% making it appear as italic)."
-msgstr "Si la police requise n'a pas de police ITALIque, vous pouvez utiliser ce paramètre pour créer l'effet ITALIQUE. (Par exemple, le fait de fixer Slant à 0,15 inclinerait la fonte régulière de 15 %, ce qui la ferait apparaître en italique)."
+msgstr "Si la police requise n'a pas de style ITALIQUE, vous pouvez utiliser ce paramètre pour créer l'effet ITALIQUE. (Par exemple, le fait de fixer Inclinaison à 0,15 inclinerait le style Normal de 15 %, ce qui la ferait apparaître en italique)."
 
 #: lib/ptxprint/ptxprint.glade:2232
 msgid "Slant"
-msgstr "Slant"
+msgstr "Inclinaison"
 
 #: lib/ptxprint/ptxprint.glade:2250
 msgid "Fake Bold/Italic"
-msgstr "Fake Bold/Italic"
+msgstr "Faux gras/italique"
 
 #: lib/ptxprint/ptxprint.glade:2254
 msgid "If the font you are using doesn't\n"
@@ -935,11 +935,10 @@ msgid "If the font you are using doesn't\n"
 "adding boldness and/or slant\n"
 "to the regular typeface."
 msgstr "Si la police que vous utilisez n'a pas\n"
-"de caractères multiples (\n"
-"comme Bold, Italique et Bold-Italic)\n"
-"alors vous pouvez les \"faux\" en\n"
-"ajoutant de l'audace et/ou de l'inclinaison\n"
-"à la fonte ordinaire."
+"de style spécial (comme Gras, Italique\n"
+"et Gras italique) vous pouvez créer les\n"
+"\"faux\" versions de ces styles avec\n"
+"Inclinaison ou Plus gras."
 
 #: lib/ptxprint/ptxprint.glade:2284
 msgid "You can enable/disable any font features \n"
@@ -951,7 +950,7 @@ msgstr "Vous pouvez activer/désactiver toutes les fonctionnalités de police \n
 
 #: lib/ptxprint/ptxprint.glade:2297
 msgid "Contextual Spaces"
-msgstr "Espaces contextuels"
+msgstr "Espaces contextuelles"
 
 #: lib/ptxprint/ptxprint.glade:2301
 msgid "Set this option if the font changes the width of \n"
@@ -985,7 +984,7 @@ msgstr "format en italique"
 
 #: lib/ptxprint/ptxprint.glade:2404
 msgid "format as bold italics"
-msgstr "format en italique en gras"
+msgstr "format en gras italique"
 
 #: lib/ptxprint/ptxprint.glade:2407
 msgid "format with emphasis"
@@ -993,15 +992,15 @@ msgstr "format avec accent"
 
 #: lib/ptxprint/ptxprint.glade:2410
 msgid "with ⸤floor⸥ brackets"
-msgstr "avec des crochets de plancher"
+msgstr "avec des crochets de ⸤sol⸥"
 
 #: lib/ptxprint/ptxprint.glade:2413
 msgid "with ⌊floor⌋ characters"
-msgstr "avec les caractères <unk> plancher<unk>"
+msgstr "avec des caractères de ⌊sol⌋"
 
 #: lib/ptxprint/ptxprint.glade:2416
 msgid "with ⌞corner⌟ characters"
-msgstr "avec des caractères <unk> angle<unk>"
+msgstr "avec des caractères de ⌞coin⌟"
 
 #: lib/ptxprint/ptxprint.glade:2419
 msgid "star *before word"
@@ -1009,15 +1008,15 @@ msgstr "étoile *avant le mot"
 
 #: lib/ptxprint/ptxprint.glade:2422
 msgid "star after* word"
-msgstr "étoile après* mot"
+msgstr "étoile après* le mot"
 
 #: lib/ptxprint/ptxprint.glade:2425
 msgid "circumflex ^before word"
-msgstr "circumflex ^avant mot"
+msgstr "circumflex ^avant le mot"
 
 #: lib/ptxprint/ptxprint.glade:2428
 msgid "circumflex after^ word"
-msgstr "circumflex après ^ mot"
+msgstr "circumflex après^ le mot"
 
 #: lib/ptxprint/ptxprint.glade:2439 lib/ptxprint/ptxprint.glade:2594
 #: lib/ptxprint/ptxprint.glade:2614 lib/ptxprint/ptxprint.glade:2634
@@ -1031,7 +1030,7 @@ msgstr "Culturellement approprié"
 
 #: lib/ptxprint/ptxprint.glade:2445 lib/ptxprint/ptxprint.glade:2600
 msgid "Alien but Acceptable"
-msgstr "Extraterrestre mais acceptable"
+msgstr "Étranger mais acceptable"
 
 #: lib/ptxprint/ptxprint.glade:2448 lib/ptxprint/ptxprint.glade:2603
 msgid "Inappropriate"
@@ -1055,11 +1054,11 @@ msgstr "impair"
 
 #: lib/ptxprint/ptxprint.glade:2503
 msgid "Even"
-msgstr "Même"
+msgstr "Pair"
 
 #: lib/ptxprint/ptxprint.glade:2504
 msgid "even"
-msgstr "pi"
+msgstr "pair"
 
 #: lib/ptxprint/ptxprint.glade:2507
 msgid "Both"
@@ -1071,7 +1070,7 @@ msgstr "les deux"
 
 #: lib/ptxprint/ptxprint.glade:2529
 msgid "Before Verse"
-msgstr "Avant verset"
+msgstr "Avant le verset"
 
 #: lib/ptxprint/ptxprint.glade:2533
 msgid "After Paragraph"
@@ -2112,7 +2111,7 @@ msgstr "Bold Italic:"
 msgid "Body Text\n"
 "(Regular):"
 msgstr "Corps du texte\n"
-"(régulier) :"
+"(Normal) :"
 
 #: lib/ptxprint/ptxprint.glade:5493
 msgid "↺"
@@ -2340,7 +2339,7 @@ msgstr "Fontes de base et options de police avancées.\n"
 
 #: lib/ptxprint/ptxprint.glade:5929
 msgid "Fonts+Script"
-msgstr "Fonts+Script"
+msgstr "Polices+Écriture"
 
 #: lib/ptxprint/ptxprint.glade:5974
 msgid "Generate Table of Contents       Title for ToC:"
@@ -2397,7 +2396,9 @@ msgstr "Sélectionnez lequel des marqueurs \\tde oc\n"
 msgid "To be listed\n"
 "in the Table\n"
 "of Contents"
-msgstr ""
+msgstr "À lister\n"
+"dans la table\n"
+"des matières"
 
 #: lib/ptxprint/ptxprint.glade:6161
 msgid "Book Introductions (\\i..)"
@@ -2849,7 +2850,7 @@ msgstr "Paramètres principaux pour contrôler le \n"
 
 #: lib/ptxprint/ptxprint.glade:6971
 msgid "Body"
-msgstr "Corps"
+msgstr "Corps du texte"
 
 #: lib/ptxprint/ptxprint.glade:7046
 msgid "Use Paragraphed Footnotes"
@@ -3251,7 +3252,7 @@ msgstr "Contrôle comment les notes de bas de page et\n"
 
 #: lib/ptxprint/ptxprint.glade:7863
 msgid "Notes+Refs"
-msgstr "Notes+Refs"
+msgstr "Notes+Références"
 
 #: lib/ptxprint/ptxprint.glade:7914 lib/ptxprint/ptxprint.glade:7937
 msgid "The primary margin is set on the Layout tab, but\n"
@@ -3914,7 +3915,7 @@ msgstr "Cliquez pour supprimer immédiatement l'image en surbrillance. Aucune co
 #: lib/ptxprint/ptxprint.glade:9618
 msgid "Image\n"
 "Preview"
-msgstr ""
+msgstr "Aperçu de l'image"
 
 #: lib/ptxprint/ptxprint.glade:9623
 msgid "Provided that the image can be located\n"
@@ -4236,7 +4237,8 @@ msgstr "L'image est-elle appropriée pour la publication ?"
 #: lib/ptxprint/ptxprint.glade:10851
 msgid "OK to\n"
 "mirror"
-msgstr ""
+msgstr "Permettre\n"
+"miroir"
 
 #: lib/ptxprint/ptxprint.glade:10856
 msgid "It is fine to mirror the image if needed. It would\n"
@@ -5072,7 +5074,7 @@ msgstr "Les onglets pouces sont parfois utilisés dans des publications plus lon
 
 #: lib/ptxprint/ptxprint.glade:13634
 msgid "Tabs"
-msgstr "Tabs"
+msgstr "Onglets"
 
 #: lib/ptxprint/ptxprint.glade:13693
 msgid "Percentage of Page Width to \n"
@@ -5221,7 +5223,7 @@ msgstr "Une publication Diglot contient plus de\n"
 #: lib/ptxprint/ptxprint.glade:13945
 msgid "Switch to Other\n"
 "  Diglot Project"
-msgstr ""
+msgstr "Basculer vers l'autre projet Diglot"
 
 #: lib/ptxprint/ptxprint.glade:14055
 msgid "Section Header"
@@ -5274,10 +5276,10 @@ msgid "Select a PDF for the Border of the publication.\n"
 "Note that after setting this border, it is likely\n"
 "that you will need to adjust the page margins\n"
 "to make it fit. "
-msgstr "Sélectionnez un PDF pour la bordure de la publication.\n"
+msgstr "Sélectionnez un fichier PDF pour la bordure de la publication.\n"
 "Notez qu'après avoir défini cette bordure, il est probable que\n"
-"vous aurez besoin d'ajuster les marges de la page\n"
-"pour la rendre adaptée. "
+"vous aurez besoin d'ajuster les marges de la page pour\n"
+"la rendre adaptée. "
 
 #: lib/ptxprint/ptxprint.glade:14256
 msgid "Full page"
@@ -5285,7 +5287,7 @@ msgstr "Page complète"
 
 #: lib/ptxprint/ptxprint.glade:14260
 msgid "If set, the border is expanded to the full page. Otherwise it is expanded only to the gutter margins."
-msgstr "Si défini, la bordure est étendue à la page complète, sinon elle ne sera étendue qu'aux marges de la goutte."
+msgstr "Si coché, la bordure est étendue à la page complète, sinon elle ne sera étendue qu'aux marges de gouttière."
 
 #: lib/ptxprint/ptxprint.glade:14274
 msgid "Vertical shift in pts of the section box downwards relative to the text"
@@ -5321,11 +5323,10 @@ msgid "Create a diglot publication by incorporating \n"
 "it lets you know that these features have\n"
 "been enabled."
 msgstr "Créez une publication de diglot en incorporant \n"
-"un projet secondaire. Ajoutez éventuellement des bordures\n"
-"décoratives et des embellissements au texte.\n\n"
-"Lorsque \"Diglot\" ou \"Bordre\" s'affichent en bleu\n"
-"il vous permet de savoir que ces fonctionnalités\n"
-"ont été activées."
+"un projet secondaire. Ajoutez éventuellement des\n"
+"décorations et des embellissements au texte.\n\n"
+"Si \"Diglot\" ou \"Bordure\" s'affichent en bleu il\n"
+"indique que ces fonctionnalités ont été activées."
 
 #: lib/ptxprint/ptxprint.glade:14471
 msgid "Diglot+Border"

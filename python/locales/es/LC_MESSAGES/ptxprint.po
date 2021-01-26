@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: ptxprint\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-01-26 13:30+0700\n"
-"PO-Revision-Date: 2021-01-26 08:39\n"
+"PO-Revision-Date: 2021-01-26 17:00\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -20,8 +20,8 @@ msgstr ""
 #: lib/ptxprint/gtkstyleditor.py:93 lib/ptxprint/ptxprint.glade:15366
 msgid "Line Spacing\n"
 "Factor:"
-msgstr "Factor de Espaciado de línea\n"
-":"
+msgstr "Espaciado de línea\n"
+"Factor:"
 
 #: lib/ptxprint/gtkstyleditor.py:93
 msgid "Baseline:"
@@ -35,7 +35,7 @@ msgstr "Tamaño de fuente\n"
 
 #: lib/ptxprint/gtkstyleditor.py:94
 msgid "Font Scale:"
-msgstr "Font Scale:"
+msgstr "Escala de fuente:"
 
 #: lib/ptxprint/gtkutils.py:87
 msgid "Set Font..."
@@ -1507,7 +1507,8 @@ msgstr "Este es el ajuste de margen base (mm). \n"
 #: lib/ptxprint/ptxprint.glade:3984
 msgid "Base\n"
 "Margin Width:"
-msgstr ""
+msgstr "Ancho de margen\n"
+"base:"
 
 #: lib/ptxprint/ptxprint.glade:3997
 msgid "Basic unit for margins; changing this will alter them all."
@@ -3200,7 +3201,13 @@ msgid "Line spacing in points (pts).\n"
 "If you require each to use different \n"
 "line-spacing, then this can be achieved \n"
 "by adjusting their appropriate Styles."
-msgstr ""
+msgstr "Espaciado de línea en puntos (pts).\n"
+"Cambie para aumentar o disminuir\n"
+"espacio entre líneas de texto en\n"
+"el área de notas. Esto se aplica tanto a las\n"
+"notas al pie de página como a las referencias cruzadas.\n\n"
+"Si desea que las notas y las referencias utilicen un interlineado diferente, puede hacerlo \n"
+"ajustando sus estilos apropiados."
 
 #: lib/ptxprint/ptxprint.glade:7722
 msgid "Line Spacing:"
@@ -4284,7 +4291,8 @@ msgstr "¿Es la imagen apropiada para la publicación?"
 #: lib/ptxprint/ptxprint.glade:10851
 msgid "OK to\n"
 "mirror"
-msgstr ""
+msgstr "Aceptar a\n"
+"reflejar"
 
 #: lib/ptxprint/ptxprint.glade:10856
 msgid "It is fine to mirror the image if needed. It would\n"
@@ -5548,7 +5556,8 @@ msgstr "Indent izquierdo\n"
 #: lib/ptxprint/ptxprint.glade:15339
 msgid "Right Indent\n"
 "Factor:"
-msgstr ""
+msgstr "Factor de\n"
+"sangría derecha:"
 
 #: lib/ptxprint/ptxprint.glade:15362
 msgid "This a proportion of the base line spacing.\n"
