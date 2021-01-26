@@ -17,13 +17,18 @@ locales/ptxprint.pot : lib/ptxprint/*.py lib/ptxprint/*.glade crowdin.yml
 	$(CROWDIN) upload
 
 define LANGRULES=
-# locales/${1}/LC_MESSAGES/ptxprint.po :: locales/ptxprint.pot
-#	msgmerge -U --lang=${1} $$@ $$<
+lib/ptxprint/mo/${1}/LC_MESSAGES :
+	mkdir -p $$@
+
+locales/${1}/LC_MESSAGES/ptxprint.po : locales/ptxprint.pot
+	msgmerge -U --lang=${1} $$@ $$<
 
 # locales/${1}/LC_MESSAGES/ptxprint.po :: locales/${1}/LC_MESSAGES/ptxprint_crowdin.po
 #	msgmerge -o $$@ $$@ $$<
 
+
 lib/ptxprint/mo/${1}/LC_MESSAGES/ptxprint.mo : locales/${1}/LC_MESSAGES/ptxprint.po
+	@mkdir -p lib/ptxprint/mo/${1}/LC_MESSAGES
 	- msgfmt $$< -o $$@
 endef
 
