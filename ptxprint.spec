@@ -13,6 +13,7 @@ if sys.platform == "win32":
      pathex =   ['C:\\ptx2pdf',
         'C:\\msys64\\mingw64\\lib',
         'C:\\msys64\\usr\\lib\\python3.7\\site-packages',
+        'C:\\msys64\\lib\\python3.7\\site-packages',
         'C:\\msys64\\mingw64\\lib\\python3.7\\lib-dynload',
         'C:\\msys64\\mingw64\\lib\\python3.7',
         'C:\\pyinstaller']
