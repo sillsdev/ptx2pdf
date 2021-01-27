@@ -41,29 +41,37 @@ parser.add_argument("-C","--capture",help="Capture interaction events to file. N
 args = parser.parse_args()
 
 setup_i18n()
-
+print("we're back!")
 if args.logging and getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
     errfile = open("ptxprint.log", "w")
     sys.stdio = errfile
     sys.stderr = errfile
-
+print("In __init__ in ptxprint")
 if not args.print:
     from ptxprint.gtkview import GtkViewModel, _doError
+print("After: from ptxprint.gtkview import GtkViewModel, _doError")
 
 # necessary for the side effect of setting pt_bindir :(
 if args.paratext is None:
+    print("inside if args.paratext is None:")
     args.paratext = os.getenv("PTXPRINT_PROJECTSDIR", None)
+    print('args.paratext = os.getenv("PTXPRINT_PROJECTSDIR", None)')
     if args.paratext is None:
         args.paratext = get_ptsettings()
+        print("After: args.paratext = get_ptsettings()")
 
+print("if not args.paratext:")
 if not args.paratext:
-    print("No Paratext Settings directory found")
+    print("No Paratext Settings directory found - sys.exit(1)")
     sys.exit(1)
 else:
     args.paratext = os.path.abspath(args.paratext.replace("\\", "/"))
+    print('After: args.paratext = os.path.abspath(args.paratext.replace("\\", "/"))')
     if args.paratext.endswith("/"):
         args.paratext = args.paratext[:-1]
+        print("After: args.paratext = args.paratext[:-1]")
 
+print("BEFORE if args.pid is not None and ...")
 if args.pid is not None and (any(x in args.pid for x in "\\/") or args.pid.lower().endswith(".cfg")):
     pidpath = os.path.relpath(args.pid, args.paratext).replace("\\", "/")
     if pidpath.startswith("..") or pidpath.startswith("/"):
@@ -82,14 +90,17 @@ if args.pid is not None and (any(x in args.pid for x in "\\/") or args.pid.lower
         args.config = pidbits[3]
     if len(pidbits) > 3:
         args.pid = pidbits[0]
+print("After: if args.pid is not None and ...")
 
 if args.directory is not None:
     args.directory = os.path.abspath(args.directory)
+    print("After: args.directory = os.path.abspath(args.directory)")
 
 # Where to find the default for -p
 # HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Paratext\8:Settings_Directory
 
 conffile = os.path.join(appdirs.user_config_dir("ptxprint", "SIL"), "ptxprint_user.cfg")
+print('After: conffile = os.path.join(appdirs.user_config_dir("ptxprint", "SIL"), "ptxprint_user.cfg")')
 config = configparser.ConfigParser()
 if os.path.exists(conffile):
     config.read(conffile, encoding="utf-8")
@@ -101,6 +112,7 @@ else:
     if not os.path.exists(os.path.dirname(conffile)):
         os.makedirs(os.path.dirname(conffile))
     config.add_section("init")
+print("After: if os.path.exists(conffile):")
 
 scriptsdir = getattr(sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__)))
 if os.path.exists("/usr/share/ptx2pdf") and not os.path.exists(os.path.join(scriptsdir, "..", "..", "src")):
@@ -110,12 +122,14 @@ elif getattr(sys, 'frozen', False):
     macrosdir = os.path.join(scriptsdir, "ptx2pdf")
 else:
     macrosdir = os.path.join(scriptsdir, "..", "..", "src")
+print("After setting scriptsdir and macrosdir:", scriptsdir, macrosdir)
 
 if args.print or args.archive is not None:
     mainw = ViewModel(args.paratext, args.directory, config, macrosdir, args)
 else:
     mainw = GtkViewModel(args.paratext, args.directory, config, macrosdir, args)
     mainw.ExperimentalFeatures(args.experimental)
+print("After: if args.print or args.archive is not None:")
 
 if args.pid:
     pdir = os.path.join(args.paratext, args.pid)
@@ -125,6 +139,7 @@ if args.pid:
         pdir = os.path.join(pdir, "shared", "ptxprint", args.config, "ptxprint.cfg")
         if not os.path.exists(pdir):
             args.config = None
+print("After 2nd: if args.pid:")
 
 if args.pid:
     mainw.setPrjid(args.pid)
@@ -145,6 +160,7 @@ if args.fontpath is not None:
             cachepath(p, nofclist=args.nofontcache)
 
 if args.print or args.archive is not None:
+    print("inside (true): if args.print or args.archive is not None:")
     res = 0
     initFontCache(nofclist=args.nofontcache)
     if args.print:

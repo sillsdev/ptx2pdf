@@ -14,6 +14,8 @@ Bug Fixes and Improvements in 1.5.8
   
   * Fixed bug on adding a first picture
   
+  * \pb pagebreaks no longer cause an error message from the USFM validator
+  
   * Colophon now works as expected (can be forced to a new page if needed, and can include special characters)
 
 Bug Fixes and Improvements in 1.5.7

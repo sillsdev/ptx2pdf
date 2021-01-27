@@ -217,6 +217,7 @@ _styleLinks = {
 }
 
 def _doError(text, secondary, title, copy2clip=False):
+    print("in DO ERROR - exiting without doing anything")
     dialog = Gtk.MessageDialog(parent=None, message_type=Gtk.MessageType.ERROR,
              buttons=Gtk.ButtonsType.OK, text=text)
     if title is None:
@@ -245,7 +246,7 @@ def _doError(text, secondary, title, copy2clip=False):
         dialog.set_keep_above(False)
     dialog.destroy()
 
-
+print("Just before class GtkViewModel")
 class GtkViewModel(ViewModel):
 
     def __init__(self, settings_dir, workingdir, userconfig, scriptsdir, args=None):
@@ -262,6 +263,7 @@ class GtkViewModel(ViewModel):
                 if node.get('name') in ('pixbuf', 'icon', 'logo'):
                     node.text = os.path.join(os.path.dirname(__file__), node.text)
             xml_text = et.tostring(tree.getroot(), encoding='unicode', method='xml')
+            print("In gtkview.py at __init__ before self.builder = Gtk.Builder.new_from_string(xml_text, -1)")
             self.builder = Gtk.Builder.new_from_string(xml_text, -1)
         else:
             self.builder.set_translation_domain(APP)
@@ -2482,3 +2484,5 @@ class GtkViewModel(ViewModel):
         lsp = self.builder.get_object("ls_projects")
         allprojects = [x[0] for x in lsp]
         btn.set_sensitive(not text in allprojects)
+
+print("End of gtkview.py")
