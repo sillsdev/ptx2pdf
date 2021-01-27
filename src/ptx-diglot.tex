@@ -179,8 +179,9 @@
 \global\def\n@xtc@mmand{}%
 
 %\partial % fully set Partial page (both columns)
-%\galley - as used in monoglot routines. This is the (holdinginserts=1) text
-% saved by the first output routine.
+%\galley - as used in monoglot routines. This is the (holdinginserts=1) text. 
+% saved by the first output routine. Unless void, it always ends with the appropriate
+% end-of-trial penalty
 \newbox\galleyexc@ss %This is the bit of the galley that didn't make it onto the current page
 \newbox\partialL \setbox\partialL=\vbox{} % Partial page, on the left side
 \newbox\excessL \setbox\excessL=\vbox{} % Excess left material, aligning with the next right chunk. (added to partialL on shipout if partialL empty)
@@ -523,7 +524,7 @@
 \newcount\endtri@lpen@lty %the penalty we EXPECT at the end of the trial
 %\galleypenalty %the penalty we FOUND at the break between the %galley and \galleyexc@ss
 \def\@ddtoexcess{%
-  \trace{d}{@ddtoexcess hIns=\the\holdinginserts(==1) adding \the\ht255\space to galleyexcess (\the\ht\galleyexc@ss)}%
+  \trace{d}{@ddtoexcess hIns=\the\holdinginserts(==1) adding \the\ht255\space to galley@xcess (\the\ht\galleyexc@ss)}%
   \global\setbox\galleyexc@ss\vbox{\ifvoid\galleyexc@ss\else\unvbox\galleyexc@ss\fi\unvbox255\ifnum\outputpenalty=10000\else\ifnum\outputpenalty=\endtri@lpen@lty\else\penalty\outputpenalty\fi\fi}
 }
 \def\diglot@backingup{%Similar to but more complex than monoglot backing-up
@@ -533,6 +534,7 @@
   % once the end-of-trial penalty is found, 
   % the \trial routine is called (again)
   % assumes galley is empty when first run
+  % post-galley material is saved  in  \galleyexc@ss
   \trace{d}{backingup hIns=\the\holdinginserts(==1)}%
   \ifnum\holdinginserts=0
     \MSG{*** Internal error caught. Incorrect internal state found in backing up. Text of footnotes may have been lost.}%
@@ -541,8 +543,8 @@
     \global\deadcycles=\numexpr \deadcycles - 1\relax% it takes 2 cycles to get here, and can't use advance
   \fi
   \ifvoid\galley
-    \global\setbox\galley=\box255
     \global\galleypenalty=\ifnum \outputpenalty=10000 0\else\outputpenalty\fi
+    \global\setbox\galley=\vbox{\unvbox255\penalty\endtri@lpen@lty}%
   \else
     \@ddtoexcess
   \fi
@@ -551,7 +553,6 @@
     \global\trialfailedfalse
     \global\output={\diglot@any@trial}%calls \whichtrial on success
     \unvcopy\galley %process
-    \penalty\endtri@lpen@lty
     \showlists
   \else 
     \vsize=\textheight
@@ -917,7 +918,7 @@
       \global\savedpenalty=\tmppenalty %
       \global\output={\diglot@backingup}%
       \unvbox\galley
-      \penalty\dgl@tPenRtrialEnd\relax 
+      \relax 
     \fi%
   \else%
     \trace{d}{*** Eh? Wrong output penalty}
