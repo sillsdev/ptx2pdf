@@ -40,10 +40,11 @@ class StyleEditor:
         if ifunchanged and self.basesheet.get(mrk, {}).get(key, None) != \
                 self.sheet.get(mrk, {}).get(key, None):
             return
-        if val is None and key in self.sheet.get(mrk, {}):
+        if key in self.sheet.get(mrk, {}) and 
+                    (val is None or val == self.basesheet.get(mrk, {}).get(key, None)):
             del self.sheet[mrk][key]
             return
-        if self.basesheet.get(mrk, {}).get(key, None) != val:
+        elif self.basesheet.get(mrk, {}).get(key, None) != val:
             self.sheet.setdefault(mrk, {})[key] = val
 
     def registerFn(self, mark, key, fn):

@@ -616,7 +616,7 @@ class GtkViewModel(ViewModel):
         # If the viewer/editor is open on an Editable tab, then "autosave" contents
         if Gtk.Buildable.get_name(self.builder.get_object("nbk_Main").get_nth_page(self.get("nbk_Main"))) == "tb_ViewerEditor":
             pgnum = self.get("nbk_Viewer")
-            if self.notebooks["Viewer"][pgnum] in ("scroll_Adjust", "scroll_FinalSFM", "scroll_Settings"):
+            if self.notebooks["Viewer"][pgnum] in ("scroll_AdjList", "scroll_FinalSFM", "scroll_Settings"):
                 self.onSaveEdits(None)
         cfgname = self.configName()
         if cfgname is None:
