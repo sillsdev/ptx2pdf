@@ -31,7 +31,7 @@
 \newcount\diglotDbgJoinboxes%
 \diglotDbgJoinboxes=-1% Set to the debug message of a joinboxes to execute showbox on that join
 
-\def\diglotbadbrk{\penalty 10001}
+\def\diglotbadbrk{\penalty 10000}
 
 %\def\TRshipout#1{\shipout#1}
 \def\TRshipout#1{}
@@ -346,7 +346,7 @@
    \dimen0=\availht %
    \advance\dimen0 by -\ht\partialL %
    \advance\dimen0 by -\dp\partialL %
-   \ifnum\partialLpenalty=\diglotbadbrk %This place must not be the last on the page. How nasty is that?
+   \ifnum\partialLpenalty>9999 %This place must not be the last on the page. How nasty is that?
      \trace{D}{Checking what to do with this box}%
      \ifdim\dimen0>-0.3\baselineskip % The box fits..
         \trace{D}{box itself fits}
@@ -496,6 +496,7 @@
       \runLtrialfalse%
    \fi%
  \fi%
+ \let\after@this=\relax
  \ifrunLtrial %Apply inserts.
    \ifnum\holdinginserts=0
      \traceNum{d}{Inserts not held (!?) will not re-run}%
@@ -503,7 +504,7 @@
      \global\holdinginserts=0
      \traceNum{d}{Processing partialL for inserts (\the\ht\partialL+\the\dp\partialL, \the\availht)}%
      \global\trialheight=\availht
-     \doDiglotLeftTrial%
+     \let\after@this=\doDiglotLeftTrial%
    \fi%
  \else
    \ifnastybox %THis box is forcing a page break before itself. Therefore do that pagebreak 
@@ -512,9 +513,10 @@
      \global\repeatokfalse
      \global\pagefulltrue
      \global\setbox\RightBox=\box\voidb@x%
-     \upd@tep@rtial%
+     \let\after@this=\upd@tep@rtial%
    \fi
  \fi%
+ \after@this
 } %
 
 \newif\ifboxmoved%
@@ -535,7 +537,9 @@
   \ifnum\holdinginserts=0
     \MSG{*** Internal error caught. Incorrect internal state found in backing up. Text of footnotes may have been lost.}%
   \fi
-  \global\deadcycles=0
+  \ifnum\deadcycles>0
+    \global\deadcycles=\numexpr \deadcycles - 1\relax% it takes 2 cycles to get here, and can't use advance
+  \fi
   \ifvoid\galley
     \global\setbox\galley=\box255
     \global\galleypenalty=\ifnum \outputpenalty=10000 0\else\outputpenalty\fi
@@ -606,12 +610,15 @@
         \global\output={\diglot@backingup}%
         \global\setbox\trialbox=\box\voidb@x
 	\global\vsize=\trialheight
-        \trace{D}{Trying again}%
+        \traceNum{D}{Trying again}%
 	\r@storenotes{\ifdiglotL\else R\fi}%
 	%\setbox\galley\vbox{\unvbox\galley\unvbox\galleyexc@ss\penalty\endtri@lpen@lty}%
 	\ifvoid\galleyexc@ss\else
 	  \setbox\galley\vbox{\unvbox\galley\count255=\lastpenalty\unpenalty
 	   \ifVisTrace\hbox to 0pt{\doVisTrace{t \the\ht\galleyexc@ss}\box0\hss}\fi\traceNum{D}{removed penalty \the\count255}\penalty\galleypenalty\unvbox\galleyexc@ss\penalty\endtri@lpen@lty}%
+	\fi
+	\ifnum\TRACEcount=\diglotDbgJoinboxes
+	   \showbox\galley
 	\fi
         \unvbox\galley
       \fi
@@ -838,7 +845,7 @@
   \global\setbox\galleyexc@ss=\box\voidb@x
   \s@venotes{}%
   \unvcopy\galley
-  \relax{\aftergroup\relax}%
+  \relax\relax%
 }
 
 \def\diglotRightExtra{%
@@ -920,11 +927,10 @@
 }
 
 \def\doDiglotRightTrial{%
-  % assumptions: called from output routine handler. 
+  % assumptions: NOT called from output routine handler. 
   %   \RightBox contains previously set material - don't touch. FIXME - really?
   %   \partialR contains unset material.
   %\Rchunkpenalty has been set by caller
-  %   Box255 holds new data
   %\tmppenalty contains the penalty that goes after box255
   % need to stop holding inserts
   \trace{D}{doDiglotRightTrial RB:\the\ht\RightBox+\the\dp\RightBox, pR:(\the\ht\partialR+\the\dp\partialR) 255:(\the\ht255+\the\dp255) diglotL\ifdiglotL true\else false\fi, dig@tL\ifdigl@tL true\else false\fi}%
@@ -975,7 +981,7 @@
  %\RightBox and \partialR are empty, 
  %Calls appropriate handler based on whether inserts are held or not
  % (traditionally they weren't)
- \ifnum\the\outputpenalty=\dgl@tPenLtrialEnd\relax\trace{d}{WRONG OUTPUT ROUTINE!}\fi
+ \ifnum\the\outputpenalty=\dgl@tPenLtrialEnd\relax\trace{d}{*** WRONG OUTPUT ROUTINE!}\fi
  \traceNum{d}{diglotRight \the\outputpenalty, \the\savedpenalty, \the\Rchunkpenalty, (\ifnum\holdinginserts=0 Not\fi holding) pg:\the\pagegoal}%
  \p@gestarttrue % or at least, this isn't the right place to place things that go after a paragraph
  \tmppenalty=\outputpenalty %
@@ -1080,21 +1086,25 @@
    \penalty\Rboxpenalty
  \fi
  \trace{D}{Back in digl@tRight:\the\availht,diglotL\ifdiglotL true\else false\fi, dig@tL\ifdigl@tL true\else false\fi}%
- \ifdigl@tL
- %  \global\diglotLtrue
- %  \global\output={\diglotLeft}%
- \else
-    \global\diglotLfalse
- %  \global\output={\diglotRight}%
-   \ifvoid\excessR\else
-  %    \holdinginserts=1
-  %    \trace{d}{Unboxing excessR (\the\ht\excessR+\the\dp\excessR)}%
-  %    \global\output={\diglotRight}%
-      \vsize=\availhtR
-      \showbox\excessR
-      \showlists
-      \redoRcoloktrue
-      \unvbox\excessR
+ \ifintrial\else
+   \trace{D}{Resetting output routines}%
+   \ifdigl@tL
+     \global\diglotLtrue
+     \global\output={\diglotLeft}%
+   \else
+      \global\diglotLfalse
+     %\global\output={\diglotRight}%
+     \ifvoid\excessR\else
+    %    \holdinginserts=1
+        \trace{d}{Moving excessR (\the\ht\excessR+\the\dp\excessR) into partialR}%
+        \global\output={\diglotRight}%
+        \vsize=\textheight
+        %\showbox\partialR
+        %\showbox\excessR
+        %\redoRcoloktrue
+        \setbox\partialR\box\excessR
+        \showlists
+     \fi
    \fi
  \fi
 } %
@@ -1260,6 +1270,9 @@
   \repeatpermittedfalse% in many situations we don't want this looping.
   % Force page output if user-caused and not by a column swap.
   \ifnum\outputpenalty=-10000
+   \pagefulltrue
+  \fi
+  \iftrialfailed
    \pagefulltrue
   \fi
   \ifnum\outputpenalty=\dgl@tPenInternalRpt\relax %Set on self-repeat calls
@@ -1453,21 +1466,27 @@
       \else %! pagefull
         \ifnum\deadcycles<15 %
           %We can safely have a go at re-setting this column. 
-          \traceNum{d}{Trying to refill right column}%
-          %\global\setbox\partialL=\vbox{\unvbox\LeftBox\unvbox\partialL}
-          \global\holdinginserts=0
-          \global\Lneedsemptyingfalse%
-          \unvbox\RightBox%
-          \ifnum\outputpenalty = 10000
-            \penalty 10
-          \else %
-            \ifnum\outputpenalty<-100
-              \penalty 999
-            \else%
-              \penalty\outputpenalty %
-            \fi%
-          \fi %outputpenalty
+	  \ifintrial
+	    \traceNum{d}{Want to refill right collumn, but in a trial already}%
+            \upd@tep@rtial%
+	  \else
+	    \traceNum{d}{Trying to refill right column}%
+	    \global\holdinginserts=0
+	    \global\Lneedsemptyingfalse%
+	    \diglotLfalse
+	    \unvbox\RightBox%
+	    \ifnum\outputpenalty = 10000
+	      \penalty 10
+	    \else %
+	      \ifnum\outputpenalty<-100
+		\penalty 999
+	      \else%
+		\penalty\outputpenalty %
+	      \fi%
+	    \fi %outputpenalty
+	  \fi
         \else %deadcycles. Set partial with partly empty page
+	  \traceNum{d}{Deadcycles too high, not trying to refill}%
           \global\setbox\RightBox=\vtop{\unvbox\RightBox}%
           \upd@tep@rtial%
         \fi%
@@ -1501,8 +1520,8 @@
 	\fi
       \fi
     \fi
-    \@ftersetboth%
   \fi\fi%
+  \@ftersetboth%
 }
 \def\checkn@sty#1#2{%
   %Parameters availht, boxheight
@@ -1630,7 +1649,7 @@
     \setbox\LeftBox=\vbox{\unvbox\LeftBox}%
     \setbox\RightBox=\vbox{\unvbox\RightBox}%
   \fi\fi
-   \diglotN@rmaltrue\ifdiglotInnerOuter\ifodd\pageno\else\diglotN@rmalfalse\fi\fi 
+  \diglotN@rmaltrue\ifdiglotInnerOuter\ifodd\pageno\else\diglotN@rmalfalse\fi\fi 
   \showboxdepth=3 %
   \showboxbreadth=1000 %
   %\ifnum\pageno=1%
@@ -1647,10 +1666,9 @@
   \fi%
   %Re-use LeftBox for this page chunk
   %
- 
   \traceNum{d}{Adding to page: LB:\the\ht\LeftBox+\the\dp\LeftBox\space RB:\the\ht\RightBox+\the\dp\RightBox\space Last Delta:\the\chunkDelta}%\space Tot:\the\cumulativeDelta%
   \ifVisTrace
-    \doVisTrace{L}%
+    \doVisTrace{L}% sets box0, used ~43 lines below
   \fi
   \thisjointDelta=0pt %Do we need extra space
   \ifdim\dp\LeftBox>0.3\baselineskip \ifdim\chunkDelta<0pt
@@ -1705,6 +1723,7 @@
       \fi
   }}%
   \trace{D}{adding box to partial (\the\ht\LeftBox+\the\dp\LeftBox)}%
+  \TempDim=\dimexpr \ht\LeftBox + \dp\LeftBox\relax
   \global\setbox\partial=\vtop{\joinb@xes{\partial}{\LeftBox}}%
   \ifleftfull% This box fills the left column (with footnotes)
     \pagefulltrue%
@@ -1716,11 +1735,14 @@
     \global\trialheight=\availht\relax%
     \global\vsize=\trialheight\relax%
   \fi%
-  \deadcycles=0 %
+  \ifdim\TempDim>0.1pt
+    \global\deadcycles=0 %Reset deadcycles only if there's actual matter being added.
+  \fi
   \global\lastsavedLpenalty=\Lboxpenalty % Remember how happy we are to break at this point
   \global\lastsavedRpenalty=\Rboxpenalty % Remember how happy we are to break at this point
   \ifpagefull%
     \@writep@ge%
+    \global\deadcycles=0 %That counts as an action too.
   \fi%
   \global\setbox\RightBox=\box\voidb@x %
   \ifvoid\partialL %
@@ -1736,7 +1758,7 @@
     \global\availht=\textheight %
     \global\vsize=\availht\relax%
     \ifvoid\excessL\else \ifvoid\partialL
-        \trace{D}{Forcing early refill of partialL. pL:(\the\ht\partialL+\the\dp\partialL) eL:(\the\ht\excessL+\the\dp\excessL) }%
+        \trace{D}{Forcing early refill of partialL. eL:(\the\ht\excessL+\the\dp\excessL) }%
         \global\earlyLrefilltrue
         \global\Lneedsemptyingtrue
         \global\def\n@xtc@mmand{\upd@tep@rtial}%
