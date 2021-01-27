@@ -40,8 +40,7 @@ class StyleEditor:
         if ifunchanged and self.basesheet.get(mrk, {}).get(key, None) != \
                 self.sheet.get(mrk, {}).get(key, None):
             return
-        if key in self.sheet.get(mrk, {}) and 
-                    (val is None or val == self.basesheet.get(mrk, {}).get(key, None)):
+        if key in self.sheet.get(mrk, {}) and (val is None or val == self.basesheet.get(mrk, {}).get(key, None)):
             del self.sheet[mrk][key]
             return
         elif self.basesheet.get(mrk, {}).get(key, None) != val:
