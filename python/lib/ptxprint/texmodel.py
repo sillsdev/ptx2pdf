@@ -366,7 +366,7 @@ class TexModel:
         self.debug = False
         self.interlinear = None
         libpath = os.path.abspath(os.path.dirname(__file__))
-        self.dict = {"/ptxpath": path.replace("\\","/"),
+        self.dict = {"/ptxpath": str(path).replace("\\","/"),
                      "/ptxprintlibpath": libpath.replace("\\","/"),
                      "/iccfpath": os.path.join(libpath, "ps_cmyk.icc").replace("\\","/"),
                      "/ptx2pdf": self.printer.scriptsdir.replace("\\", "/")}
