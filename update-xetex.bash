@@ -6,13 +6,19 @@ repo=$PWD/xetex
 # create download location
 tmpdir=$(mktemp -d -p /tmp)
 
-# record existing files
+# versioned files
+versioned_files="icudt*.dll kpathsea*.dll msvcr*.dll"
+
+# record existing files (and handle versioned files)
 pushd xetex
+pushd bin
+git rm $versioned_files
+popd
 find -type f > $tmpdir/old.txt
 popd
 
 # possible servers
-ring1=http://ring.shibaura-it.ac.jp/archives/text/TeX/ptex-win32/current/
+ring1=http://ring.shibaura-it.ac.jp/archives/text/TeX/ptex-win32/current
 
 # server to use
 server=$ring1
@@ -44,9 +50,15 @@ mv -v bin share xetex
 pushd xetex
 find -type f > ../new.txt
 sort ../old.txt ../new.txt | uniq -d | rsync -a -v --files-from - ./ $repo
+pushd bin
+cp -p $versioned_files $repo/bin
+popd
 popd
 
-# cleanup
+# cleanup (back in the repo directory)
+popd
+pushd xetex/bin
+git add $versioned_files
 popd
 rm -rf $tmpdir
 echo
