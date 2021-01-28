@@ -1,7 +1,7 @@
-PTXprint 1.5.8.3 Release Notes 
-29 January 2021
+PTXprint 1.5.8.4 Release Notes 
+28 January 2021
 
-Bug Fixes and Improvements in 1.5.8.3
+Bug Fixes and Improvements in 1.5.8.4
 
   * Localization of UI is now available through Crowdin - contributions welcome! https://crowdin.com/project/ptxprint
     (aiming to release several languages for ver 1.6)
