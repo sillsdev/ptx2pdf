@@ -1,7 +1,7 @@
-PTXprint 1.5.8 Release Notes 
-28 January 2021
+PTXprint 1.5.8.3 Release Notes 
+29 January 2021
 
-Bug Fixes and Improvements in 1.5.8
+Bug Fixes and Improvements in 1.5.8.3
 
   * Localization of UI is now available through Crowdin - contributions welcome! https://crowdin.com/project/ptxprint
     (aiming to release several languages for ver 1.6)
@@ -14,9 +14,11 @@ Bug Fixes and Improvements in 1.5.8
   
   * \pb pagebreaks no longer cause an error message from the USFM validator
   
-  * Colophon now works as expected (can be forced to a new page if needed, and can include special characters)
+  * Colophon can now be forced to a new page if needed, and can include special characters
 
   * Note that PTXprint now ships with its own XeTeX binary so that it can run without Paratext being present
+  
+  * PTXprint will prompt for a folder with the (Paratext) Project Data if Paratext isn't installed 
   
 Bug Fixes and Improvements in 1.5.7
 
