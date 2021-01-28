@@ -161,7 +161,7 @@ def pt_bindir():
     return res
 
 def get_ptsettings():
-    pt_settings = "."
+    pt_settings = None
     ptob = openkey("Paratext/8")
     if ptob is None:
         tempstr = ("C:\\My Paratext {} Projects" if sys.platform == "win32" else

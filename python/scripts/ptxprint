@@ -48,7 +48,7 @@ if args.logging and getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
     sys.stderr = errfile
 
 if not args.print:
-    from ptxprint.gtkview import GtkViewModel, _doError
+    from ptxprint.gtkview import GtkViewModel, getPTDir
 
 # necessary for the side effect of setting pt_bindir :(
 if args.paratext is None:
@@ -56,9 +56,14 @@ if args.paratext is None:
     if args.paratext is None:
         args.paratext = get_ptsettings()
 
-if not args.paratext:
-    print("No Paratext Settings directory found")
-    sys.exit(1)
+if not args.paratext or str(args.paratext).lower() == "none":
+    # print("No Paratext Settings directory found - sys.exit(1)")
+    if not args.print:
+        args.paratext = getPTDir()
+        if args.paratext is None:
+            sys.exit(1)
+    else:
+        sys.exit(1)
 else:
     args.paratext = os.path.abspath(args.paratext.replace("\\", "/"))
     if args.paratext.endswith("/"):
@@ -137,7 +142,6 @@ def doit(printer):
         return runjob
     else:
         return None
-        
 
 if args.fontpath is not None:
     for p in args.fontpath:

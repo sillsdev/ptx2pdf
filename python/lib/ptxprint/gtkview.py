@@ -247,6 +247,31 @@ def _doError(text, secondary, title, copy2clip=False):
         dialog.set_keep_above(False)
     dialog.destroy()
 
+def getPTDir():
+    txt = _('''Paratext is not installed on this system.
+Please locate the directory containing your paratext projects. Or cancel to exit''')
+    dialog = Gtk.MessageDialog(parent=None, message_type=Gtk.MessageType.ERROR,
+            buttons=Gtk.ButtonsType.OK_CANCEL, text=txt)
+    response = dialog.run()
+    dialog.destroy()
+    if response == Gtk.ResponseType.OK:
+        action = Gtk.FileChooserAction.SELECT_FOLDER
+        btnlabel = "Select"
+        fdialog = Gtk.FileChooserDialog("Paratext Projects directory", None,
+            (action),
+            (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+            (btnlabel), Gtk.ResponseType.OK))
+        fdialog.set_default_size(400, 300)
+        fdialog.set_select_multiple(False)
+        fresponse = fdialog.run()
+        fcFilepath = None
+        if fresponse == Gtk.ResponseType.OK:
+            fcFilepath = Path(fdialog.get_filename()+"/")
+        fdialog.destroy()
+        return fcFilepath
+    else:
+        return None
+
 class GtkViewModel(ViewModel):
 
     def __init__(self, settings_dir, workingdir, userconfig, scriptsdir, args=None):
