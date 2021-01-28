@@ -249,7 +249,7 @@ def _doError(text, secondary, title, copy2clip=False):
 
 def getPTDir():
     txt = _('''Paratext is not installed on this system.
-Please locate the directory containing your paratext projects. Or cancel to exit''')
+Please locate the directory containing your (paratext) project directories. Or cancel to exit''')
     dialog = Gtk.MessageDialog(parent=None, message_type=Gtk.MessageType.ERROR,
             buttons=Gtk.ButtonsType.OK_CANCEL, text=txt)
     response = dialog.run()

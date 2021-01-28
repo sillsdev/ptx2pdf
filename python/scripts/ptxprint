@@ -51,6 +51,11 @@ if not args.print:
     from ptxprint.gtkview import GtkViewModel, getPTDir
 
 # necessary for the side effect of setting pt_bindir :(
+if args.paratext is None:
+    args.paratext = os.getenv("PTXPRINT_PROJECTSDIR", None)
+    if args.paratext is None:
+        args.paratext = get_ptsettings()
+
 conffile = os.path.join(appdirs.user_config_dir("ptxprint", "SIL"), "ptxprint_user.cfg")
 config = configparser.ConfigParser()
 if os.path.exists(conffile):
@@ -65,11 +70,6 @@ else:
     if not os.path.exists(os.path.dirname(conffile)):
         os.makedirs(os.path.dirname(conffile))
     config.add_section("init")
-
-if args.paratext is None:
-    args.paratext = os.getenv("PTXPRINT_PROJECTSDIR", None)
-    if args.paratext is None:
-        args.paratext = get_ptsettings()
 
 if not args.paratext or str(args.paratext).lower() == "none":
     # print("No Paratext Settings directory found - sys.exit(1)")
