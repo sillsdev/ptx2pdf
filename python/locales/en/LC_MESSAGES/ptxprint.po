@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ptxprint\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-26 16:05+0700\n"
-"PO-Revision-Date: 2021-01-26 08:39\n"
+"POT-Creation-Date: 2021-01-28 11:54+0700\n"
+"PO-Revision-Date: 2021-01-28 04:55\n"
 "Last-Translator: \n"
 "Language-Team: English\n"
 "Language: en\n"
@@ -12,10 +12,10 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: ptxprint\n"
-"X-Crowdin-Project-ID: 438618\n"
+"X-Crowdin-Project-ID: 438758\n"
 "X-Crowdin-Language: en\n"
 "X-Crowdin-File: /locales/ptxprint.pot\n"
-"X-Crowdin-File-ID: 4\n"
+"X-Crowdin-File-ID: 4068\n"
 
 #: lib/ptxprint/gtkstyleditor.py:93 lib/ptxprint/ptxprint.glade:15366
 msgid ""
@@ -41,7 +41,14 @@ msgstr ""
 msgid "Set Font..."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:479
+#: lib/ptxprint/gtkview.py:251
+msgid ""
+"Paratext is not installed on this system.\n"
+"Please locate the directory containing your (paratext) project directories. "
+"Or cancel to exit"
+msgstr ""
+
+#: lib/ptxprint/gtkview.py:508
 msgid ""
 "Show Advanced Settings:\n"
 "\n"
@@ -49,7 +56,7 @@ msgid ""
 "available for use within PTXprint."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:485
+#: lib/ptxprint/gtkview.py:514
 msgid ""
 "Hide Advanced Settings:\n"
 "\n"
@@ -57,15 +64,15 @@ msgid ""
 "this switch to hide the more complex/advanced options."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:556
+#: lib/ptxprint/gtkview.py:585
 msgid "Can't get {} in the model"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:569
+#: lib/ptxprint/gtkview.py:598
 msgid "Can't set {} in the model"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:635
+#: lib/ptxprint/gtkview.py:664
 msgid ""
 "                   >>> PLEASE CLOSE the PDF <<<                     \n"
 "\n"
@@ -78,50 +85,50 @@ msgid ""
 "                        Do you want to try again?"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:640
+#: lib/ptxprint/gtkview.py:669
 msgid "The old PDF file is open!"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:702
+#: lib/ptxprint/gtkview.py:731
 msgid "Internal error occurred, trying to delete a directory tree"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:702 lib/ptxprint/gtkview.py:707
+#: lib/ptxprint/gtkview.py:731 lib/ptxprint/gtkview.py:736
 msgid "Folder: "
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:707
+#: lib/ptxprint/gtkview.py:736
 msgid "Can't delete that configuration from disk"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:891 lib/ptxprint/ptxprint.glade:3713
+#: lib/ptxprint/gtkview.py:920 lib/ptxprint/ptxprint.glade:3713
 msgid "Lock"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:894
+#: lib/ptxprint/gtkview.py:923
 msgid "Unlock"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1048
+#: lib/ptxprint/gtkview.py:1077
 msgid " PicLists have been renamed and moved!"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1049
+#: lib/ptxprint/gtkview.py:1078
 msgid " Look on the <Pictures> tab for Details & Checklist along the top row."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1050
+#: lib/ptxprint/gtkview.py:1079
 msgid ""
 " A tool to help create Front Matter (the FRT book) may show up here in "
 "future."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1080
+#: lib/ptxprint/gtkview.py:1109
 msgid ""
 " Use the 'Advanced' tab to select which settings you want to view or edit."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1095
+#: lib/ptxprint/gtkview.py:1124
 msgid ""
 "\n"
 "\n"
@@ -131,7 +138,7 @@ msgid ""
 "Click on View/Edit... button to see more."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1102
+#: lib/ptxprint/gtkview.py:1131
 msgid ""
 "\n"
 "This file doesn't exist yet.\n"
@@ -141,21 +148,21 @@ msgid ""
 "   * the 'Print' button to create the PDF first"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1326
+#: lib/ptxprint/gtkview.py:1355
 msgid "Remove Intermediate Files and Logs?"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1327
+#: lib/ptxprint/gtkview.py:1356
 msgid ""
 "Are you sure you want to delete\n"
 "ALL the temporary PTXprint files?"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1354
+#: lib/ptxprint/gtkview.py:1383
 msgid "Warning: Could not delete some file(s) or folders(s):"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1828
+#: lib/ptxprint/gtkview.py:1857
 msgid ""
 "\n"
 "This file doesn't exist yet!\n"
@@ -163,78 +170,78 @@ msgid ""
 "Edit here and Click 'Save' to create it."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1870
+#: lib/ptxprint/gtkview.py:1899
 msgid ""
 "% This is the .tex file specific for the {} project used by PTXprint.\n"
 "% Saved Configuration name: {}\n"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1877
+#: lib/ptxprint/gtkview.py:1906
 msgid ""
 "% This is the preprocessing .tex file specific for the {} project used by "
 "PTXprint.\n"
 "% Saved Configuration name: {}\n"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1921
+#: lib/ptxprint/gtkview.py:1950
 msgid "Select the location and name for the Archive file"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1971
+#: lib/ptxprint/gtkview.py:2000
 msgid "Select the folder containing image files"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:2006
+#: lib/ptxprint/gtkview.py:2035
 msgid "Select one or more PDF(s) for FRONT matter"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:2010
+#: lib/ptxprint/gtkview.py:2039
 msgid "Select one or more PDF(s) for BACK matter"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:2014
+#: lib/ptxprint/gtkview.py:2043
 msgid "Select Watermark PDF file"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:2019
+#: lib/ptxprint/gtkview.py:2048
 msgid "Select Page Border PDF file"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:2024
+#: lib/ptxprint/gtkview.py:2053
 msgid "Select Section Header PDF file"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:2029
+#: lib/ptxprint/gtkview.py:2058
 msgid "Select End of Book PDF file"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:2034
+#: lib/ptxprint/gtkview.py:2063
 msgid "Select Verse Decorator PDF file"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:2142
+#: lib/ptxprint/gtkview.py:2171
 msgid ""
 "Switch to Other\n"
 "Diglot Project"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:2148
+#: lib/ptxprint/gtkview.py:2177
 msgid ""
 "Save & Return to\n"
 "Diglot Project"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:2196
+#: lib/ptxprint/gtkview.py:2225
 msgid "FYI: The Regular font already supports all the characters in the text."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:2197
+#: lib/ptxprint/gtkview.py:2226
 msgid ""
 "A fallback font is not required so\n"
 "the 'Use Fallback Font' option will be disabled."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:2417
+#: lib/ptxprint/gtkview.py:2446
 msgid "Choose Image"
 msgstr ""
 

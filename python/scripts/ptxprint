@@ -50,7 +50,7 @@ if args.logging and getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
 if not args.print:
     from ptxprint.gtkview import GtkViewModel, getPTDir
 
-# necessary for the side effect of setting pt_bindir :(
+# read config file
 conffile = os.path.join(appdirs.user_config_dir("ptxprint", "SIL"), "ptxprint_user.cfg")
 config = configparser.ConfigParser()
 if os.path.exists(conffile):
@@ -66,6 +66,7 @@ else:
         os.makedirs(os.path.dirname(conffile))
     config.add_section("init")
 
+# get a paratext directory if not in config
 if args.paratext is None:
     args.paratext = os.getenv("PTXPRINT_PROJECTSDIR", None)
     if args.paratext is None:
