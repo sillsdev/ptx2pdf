@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ptxprint\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-26 16:05+0700\n"
-"PO-Revision-Date: 2021-01-26 08:39\n"
+"POT-Creation-Date: 2021-01-28 16:52+0700\n"
+"PO-Revision-Date: 2021-01-28 09:52\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh\n"
@@ -12,10 +12,10 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Crowdin-Project: ptxprint\n"
-"X-Crowdin-Project-ID: 438618\n"
+"X-Crowdin-Project-ID: 438758\n"
 "X-Crowdin-Language: zh-CN\n"
 "X-Crowdin-File: /locales/ptxprint.pot\n"
-"X-Crowdin-File-ID: 4\n"
+"X-Crowdin-File-ID: 4068\n"
 
 #: lib/ptxprint/gtkstyleditor.py:93 lib/ptxprint/ptxprint.glade:15366
 msgid ""
@@ -39,13 +39,20 @@ msgstr ""
 
 #: lib/ptxprint/gtkstyleditor.py:94
 msgid "Font Scale:"
-msgstr "Font Scale:"
+msgstr ""
 
 #: lib/ptxprint/gtkutils.py:87
 msgid "Set Font..."
-msgstr "Set Font..."
+msgstr ""
 
-#: lib/ptxprint/gtkview.py:479
+#: lib/ptxprint/gtkview.py:251
+msgid ""
+"Paratext is not installed on this system.\n"
+"Please locate the directory containing your paratext projects. Or cancel to "
+"exit"
+msgstr ""
+
+#: lib/ptxprint/gtkview.py:508
 msgid ""
 "Show Advanced Settings:\n"
 "\n"
@@ -57,7 +64,7 @@ msgstr ""
 "在 PTXprint中有更多复杂的选项\n"
 "可供使用。"
 
-#: lib/ptxprint/gtkview.py:485
+#: lib/ptxprint/gtkview.py:514
 msgid ""
 "Hide Advanced Settings:\n"
 "\n"
@@ -69,15 +76,15 @@ msgstr ""
 "如果选项数量过多，则使用\n"
 "此切换来隐藏更复杂/高级选项。"
 
-#: lib/ptxprint/gtkview.py:556
+#: lib/ptxprint/gtkview.py:585
 msgid "Can't get {} in the model"
 msgstr "无法在模型中获取 {}"
 
-#: lib/ptxprint/gtkview.py:569
+#: lib/ptxprint/gtkview.py:598
 msgid "Can't set {} in the model"
 msgstr "无法在模型中设置 {}"
 
-#: lib/ptxprint/gtkview.py:635
+#: lib/ptxprint/gtkview.py:664
 msgid ""
 "                   >>> PLEASE CLOSE the PDF <<<                     \n"
 "\n"
@@ -90,50 +97,50 @@ msgid ""
 "                        Do you want to try again?"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:640
+#: lib/ptxprint/gtkview.py:669
 msgid "The old PDF file is open!"
 msgstr "旧的 PDF 文件已打开！"
 
-#: lib/ptxprint/gtkview.py:702
+#: lib/ptxprint/gtkview.py:731
 msgid "Internal error occurred, trying to delete a directory tree"
 msgstr "发生了内部错误，试图删除目录树"
 
-#: lib/ptxprint/gtkview.py:702 lib/ptxprint/gtkview.py:707
+#: lib/ptxprint/gtkview.py:731 lib/ptxprint/gtkview.py:736
 msgid "Folder: "
 msgstr "文件夹： "
 
-#: lib/ptxprint/gtkview.py:707
+#: lib/ptxprint/gtkview.py:736
 msgid "Can't delete that configuration from disk"
 msgstr "无法从磁盘中删除该配置"
 
-#: lib/ptxprint/gtkview.py:891 lib/ptxprint/ptxprint.glade:3713
+#: lib/ptxprint/gtkview.py:920 lib/ptxprint/ptxprint.glade:3713
 msgid "Lock"
 msgstr "锁定"
 
-#: lib/ptxprint/gtkview.py:894
+#: lib/ptxprint/gtkview.py:923
 msgid "Unlock"
 msgstr "解锁"
 
-#: lib/ptxprint/gtkview.py:1048
+#: lib/ptxprint/gtkview.py:1077
 msgid " PicLists have been renamed and moved!"
 msgstr " Piclists 已被重命名并移动！"
 
-#: lib/ptxprint/gtkview.py:1049
+#: lib/ptxprint/gtkview.py:1078
 msgid " Look on the <Pictures> tab for Details & Checklist along the top row."
 msgstr " 在 <Pictures> 选项卡上查找最上行的详细信息和清单。"
 
-#: lib/ptxprint/gtkview.py:1050
+#: lib/ptxprint/gtkview.py:1079
 msgid ""
 " A tool to help create Front Matter (the FRT book) may show up here in "
 "future."
 msgstr " 帮助创建前台事物的工具 (FRT book) 将来可能会显示在这里。"
 
-#: lib/ptxprint/gtkview.py:1080
+#: lib/ptxprint/gtkview.py:1109
 msgid ""
 " Use the 'Advanced' tab to select which settings you want to view or edit."
 msgstr " 使用“高级”选项卡来选择您想要查看或编辑的设置。"
 
-#: lib/ptxprint/gtkview.py:1095
+#: lib/ptxprint/gtkview.py:1124
 msgid ""
 "\n"
 "\n"
@@ -148,7 +155,7 @@ msgstr ""
 "[文件已被截断以显示]                                            \n"
 "点击查看/编辑... 按钮查看更多信息。"
 
-#: lib/ptxprint/gtkview.py:1102
+#: lib/ptxprint/gtkview.py:1131
 msgid ""
 "\n"
 "This file doesn't exist yet.\n"
@@ -164,11 +171,11 @@ msgstr ""
 "   * “生成”按钮                                                \n"
 "   * “打印”按钮首先创建 PDF"
 
-#: lib/ptxprint/gtkview.py:1326
+#: lib/ptxprint/gtkview.py:1355
 msgid "Remove Intermediate Files and Logs?"
 msgstr "删除中间文件和日志吗？"
 
-#: lib/ptxprint/gtkview.py:1327
+#: lib/ptxprint/gtkview.py:1356
 msgid ""
 "Are you sure you want to delete\n"
 "ALL the temporary PTXprint files?"
@@ -176,11 +183,11 @@ msgstr ""
 "您确定要删除\n"
 "全部临时PTXprint文件吗？"
 
-#: lib/ptxprint/gtkview.py:1354
+#: lib/ptxprint/gtkview.py:1383
 msgid "Warning: Could not delete some file(s) or folders(s):"
 msgstr "警告：无法删除一些文件(s)或文件夹(s)："
 
-#: lib/ptxprint/gtkview.py:1828
+#: lib/ptxprint/gtkview.py:1857
 msgid ""
 "\n"
 "This file doesn't exist yet!\n"
@@ -192,7 +199,7 @@ msgstr ""
 "\n"
 "在这里编辑并点击“保存”来创建它。"
 
-#: lib/ptxprint/gtkview.py:1870
+#: lib/ptxprint/gtkview.py:1899
 msgid ""
 "% This is the .tex file specific for the {} project used by PTXprint.\n"
 "% Saved Configuration name: {}\n"
@@ -200,7 +207,7 @@ msgstr ""
 "% 是 PTXprint使用 {} 工程的 .tex 文件。\n"
 "% 保存的配置名称：{}\n"
 
-#: lib/ptxprint/gtkview.py:1877
+#: lib/ptxprint/gtkview.py:1906
 msgid ""
 "% This is the preprocessing .tex file specific for the {} project used by "
 "PTXprint.\n"
@@ -209,43 +216,43 @@ msgstr ""
 "% 是 PTXprint使用 {} 工程的 .tex 预处理文件。\n"
 "% 保存的配置名称：{}\n"
 
-#: lib/ptxprint/gtkview.py:1921
+#: lib/ptxprint/gtkview.py:1950
 msgid "Select the location and name for the Archive file"
 msgstr "选择归档文件的位置和名称"
 
-#: lib/ptxprint/gtkview.py:1971
+#: lib/ptxprint/gtkview.py:2000
 msgid "Select the folder containing image files"
 msgstr "选择包含图像文件的文件夹"
 
-#: lib/ptxprint/gtkview.py:2006
+#: lib/ptxprint/gtkview.py:2035
 msgid "Select one or more PDF(s) for FRONT matter"
 msgstr "为FRONT事项选择一个或多个PDF(s)"
 
-#: lib/ptxprint/gtkview.py:2010
+#: lib/ptxprint/gtkview.py:2039
 msgid "Select one or more PDF(s) for BACK matter"
 msgstr "为BACK事项选择一个或多个PDF(s)"
 
-#: lib/ptxprint/gtkview.py:2014
+#: lib/ptxprint/gtkview.py:2043
 msgid "Select Watermark PDF file"
 msgstr "选择 Watermark PDF 文件"
 
-#: lib/ptxprint/gtkview.py:2019
+#: lib/ptxprint/gtkview.py:2048
 msgid "Select Page Border PDF file"
 msgstr "选择页面边框 PDF 文件"
 
-#: lib/ptxprint/gtkview.py:2024
+#: lib/ptxprint/gtkview.py:2053
 msgid "Select Section Header PDF file"
 msgstr "选择章节标题 PDF 文件"
 
-#: lib/ptxprint/gtkview.py:2029
+#: lib/ptxprint/gtkview.py:2058
 msgid "Select End of Book PDF file"
 msgstr "选择 PDF 书文件结束"
 
-#: lib/ptxprint/gtkview.py:2034
+#: lib/ptxprint/gtkview.py:2063
 msgid "Select Verse Decorator PDF file"
 msgstr "选择 Verse Decorator PDF 文件"
 
-#: lib/ptxprint/gtkview.py:2142
+#: lib/ptxprint/gtkview.py:2171
 msgid ""
 "Switch to Other\n"
 "Diglot Project"
@@ -253,7 +260,7 @@ msgstr ""
 "切换到其他\n"
 "数字项目"
 
-#: lib/ptxprint/gtkview.py:2148
+#: lib/ptxprint/gtkview.py:2177
 msgid ""
 "Save & Return to\n"
 "Diglot Project"
@@ -261,11 +268,11 @@ msgstr ""
 "保存并返回到\n"
 "Diglot 项目"
 
-#: lib/ptxprint/gtkview.py:2196
+#: lib/ptxprint/gtkview.py:2225
 msgid "FYI: The Regular font already supports all the characters in the text."
 msgstr "FYI：正则字体已经支持文本中的所有字符。"
 
-#: lib/ptxprint/gtkview.py:2197
+#: lib/ptxprint/gtkview.py:2226
 msgid ""
 "A fallback font is not required so\n"
 "the 'Use Fallback Font' option will be disabled."
@@ -273,7 +280,7 @@ msgstr ""
 "不需要后退字体，因此\n"
 "\"使用后退字体\"选项将被禁用。"
 
-#: lib/ptxprint/gtkview.py:2417
+#: lib/ptxprint/gtkview.py:2446
 msgid "Choose Image"
 msgstr "选择图像"
 
@@ -515,7 +522,7 @@ msgstr ""
 #: lib/ptxprint/ptxprint.glade:501 lib/ptxprint/ptxprint.glade:3270
 #: lib/ptxprint/ptxprint.glade:3402
 msgid "Ch_oose..."
-msgstr "Ch_oose..."
+msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:518
 msgid "DBL Bundle:"
@@ -679,7 +686,7 @@ msgstr "点击打开/关闭NT书籍。"
 
 #: lib/ptxprint/ptxprint.glade:999
 msgid "Deuterocanon"
-msgstr "Deuterocanon"
+msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:1003
 msgid "Click to turn DC books on/off."
@@ -781,7 +788,7 @@ msgstr "左侧"
 
 #: lib/ptxprint/ptxprint.glade:1604
 msgid "l"
-msgstr "l"
+msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:1607 lib/ptxprint/ptxprint.glade:1659
 #: lib/ptxprint/ptxprint.glade:2465 lib/ptxprint/ptxprint.glade:2706
@@ -791,7 +798,7 @@ msgstr "居中"
 
 #: lib/ptxprint/ptxprint.glade:1608 lib/ptxprint/ptxprint.glade:1660
 msgid "c"
-msgstr "c"
+msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:1611 lib/ptxprint/ptxprint.glade:2469
 #: lib/ptxprint/ptxprint.glade:2709
@@ -800,7 +807,7 @@ msgstr "右侧"
 
 #: lib/ptxprint/ptxprint.glade:1612
 msgid "r"
-msgstr "r"
+msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:1615 lib/ptxprint/ptxprint.glade:2473
 msgid "Inner"
@@ -816,7 +823,7 @@ msgstr "外观"
 
 #: lib/ptxprint/ptxprint.glade:1620
 msgid "o"
-msgstr "o"
+msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:1633 lib/ptxprint/ptxprint.glade:2395
 #: lib/ptxprint/ptxprint.glade:2496
@@ -825,7 +832,7 @@ msgstr "无"
 
 #: lib/ptxprint/ptxprint.glade:1634
 msgid "0"
-msgstr "0"
+msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:1637
 msgid "Anti-clockwise"
@@ -833,7 +840,7 @@ msgstr "逆时针"
 
 #: lib/ptxprint/ptxprint.glade:1638
 msgid "-90"
-msgstr "-90"
+msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:1641
 msgid "Clockwise"
@@ -841,7 +848,7 @@ msgstr "顺时针"
 
 #: lib/ptxprint/ptxprint.glade:1642
 msgid "90"
-msgstr "90"
+msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:1655 lib/ptxprint/ptxprint.glade:2521
 msgid "Top"
@@ -849,7 +856,7 @@ msgstr "顶端"
 
 #: lib/ptxprint/ptxprint.glade:1656
 msgid "t"
-msgstr "t"
+msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:1663 lib/ptxprint/ptxprint.glade:2525
 msgid "Bottom"
@@ -857,7 +864,7 @@ msgstr "底部"
 
 #: lib/ptxprint/ptxprint.glade:1664
 msgid "b"
-msgstr "b"
+msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:1681
 msgid "Arabic-Hindi"
@@ -873,7 +880,7 @@ msgstr "孟加拉语"
 
 #: lib/ptxprint/ptxprint.glade:1693
 msgid "Burmese"
-msgstr "Burmese"
+msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:1697
 msgid "Devanagari"
@@ -885,11 +892,11 @@ msgstr "埃塞俄比亚文"
 
 #: lib/ptxprint/ptxprint.glade:1705
 msgid "Gondi (Gunjala)"
-msgstr "Gondi (Gunjala)"
+msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:1709
 msgid "Gujarati"
-msgstr "Gujarati"
+msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:1713
 msgid "Gurmukhi"
@@ -897,15 +904,15 @@ msgstr "古尔穆基文"
 
 #: lib/ptxprint/ptxprint.glade:1717
 msgid "Kannada"
-msgstr "Kannada"
+msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:1721
 msgid "Khmer"
-msgstr "Khmer"
+msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:1725
 msgid "Lao"
-msgstr "Lao"
+msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:1729
 msgid "Malayalam"
@@ -913,15 +920,15 @@ msgstr "马来亚拉姆"
 
 #: lib/ptxprint/ptxprint.glade:1733
 msgid "Oriya"
-msgstr "Oriya"
+msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:1737
 msgid "Tamil"
-msgstr "Tamil"
+msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:1741
 msgid "Telugu"
-msgstr "Telugu"
+msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:1745
 msgid "Thai"
@@ -973,15 +980,15 @@ msgstr "常规的"
 
 #: lib/ptxprint/ptxprint.glade:1986 lib/ptxprint/ptxprint.glade:14823
 msgid "Bold"
-msgstr "Bold"
+msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:1989 lib/ptxprint/ptxprint.glade:14838
 msgid "Italic"
-msgstr "Italic"
+msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:1992
 msgid "Bold Italic"
-msgstr "Bold Italic"
+msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:1998
 msgid "Pick a Font (and Typeface)"
@@ -1035,11 +1042,11 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:2232
 msgid "Slant"
-msgstr "Slant"
+msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:2250
 msgid "Fake Bold/Italic"
-msgstr "Fake Bold/Italic"
+msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:2254
 msgid ""
@@ -1161,7 +1168,7 @@ msgstr "不适当的"
 
 #: lib/ptxprint/ptxprint.glade:2481 lib/ptxprint/ptxprint.glade:2482
 msgid "-"
-msgstr "-"
+msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:2495
 msgid "Never"
@@ -1297,7 +1304,7 @@ msgstr "样式类型："
 
 #: lib/ptxprint/ptxprint.glade:2923
 msgid "Marker:"
-msgstr "Marker:"
+msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:2939
 msgid "Description:"
@@ -1403,7 +1410,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:3469
 msgid "1"
-msgstr "1"
+msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:3494
 msgid "Project and Scope"
@@ -1583,7 +1590,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:3827
 msgid "© 2020 Wycliffe Bible Translators, Inc."
-msgstr "© 2020 Wycliffe Bible Translators, Inc."
+msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:3842
 msgid ""
@@ -1720,7 +1727,7 @@ msgstr "基本比值单位以毫米为单位。这乘以各种比值因子来给
 #: lib/ptxprint/ptxprint.glade:4042 lib/ptxprint/ptxprint.glade:14145
 #: lib/ptxprint/ptxprint.glade:14300
 msgid "0.0"
-msgstr "0.0"
+msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:4083
 msgid ""
@@ -2330,7 +2337,7 @@ msgstr ""
 #: lib/ptxprint/ptxprint.glade:5451 lib/ptxprint/ptxprint.glade:5465
 #: lib/ptxprint/ptxprint.glade:5479 lib/ptxprint/ptxprint.glade:14768
 msgid "Select Font..."
-msgstr "Select Font..."
+msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:5327
 msgid ""
@@ -2362,7 +2369,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:5391
 msgid "Bold:"
-msgstr "Bold:"
+msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:5403
 msgid "Italic:"
@@ -2370,7 +2377,7 @@ msgstr "斜体："
 
 #: lib/ptxprint/ptxprint.glade:5415
 msgid "Bold Italic:"
-msgstr "Bold Italic:"
+msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:5427
 msgid ""
@@ -2382,7 +2389,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:5493
 msgid "↺"
-msgstr "↺"
+msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:5497
 msgid ""
@@ -2511,11 +2518,11 @@ msgstr ""
 #: lib/ptxprint/ptxprint.glade:5697 lib/ptxprint/ptxprint.glade:14172
 #: lib/ptxprint/ptxprint.glade:14314
 msgid "1.0"
-msgstr "1.0"
+msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:5713
 msgid "5.0"
-msgstr "5.0"
+msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:5728 lib/ptxprint/ptxprint.glade:5744
 msgid ""
@@ -3021,7 +3028,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:6646
 msgid "\\s"
-msgstr "\\s"
+msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:6674
 msgid "Parallel Passage Refs "
@@ -3038,9 +3045,8 @@ msgstr ""
 "出现在章节标题之下。"
 
 #: lib/ptxprint/ptxprint.glade:6694
-#, fuzzy
 msgid "\\r"
-msgstr "\\rb"
+msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:6722
 msgid "Include Scripture Text"
@@ -3727,7 +3733,7 @@ msgstr ""
 #: lib/ptxprint/ptxprint.glade:8220 lib/ptxprint/ptxprint.glade:8265
 #: lib/ptxprint/ptxprint.glade:8289 lib/ptxprint/ptxprint.glade:8715
 msgid "Pri"
-msgstr "Pri"
+msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:8224 lib/ptxprint/ptxprint.glade:8247
 #: lib/ptxprint/ptxprint.glade:8269 lib/ptxprint/ptxprint.glade:8293
@@ -3788,7 +3794,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:8431
 msgid "ch:vs"
-msgstr "ch:vs"
+msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:8435
 msgid ""
@@ -3802,7 +3808,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:8450
 msgid "ch.vs"
-msgstr "ch.vs"
+msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:8454
 msgid ""
@@ -4293,7 +4299,7 @@ msgstr "文件"
 
 #: lib/ptxprint/ptxprint.glade:9455 lib/ptxprint/ptxprint.glade:11525
 msgid "Frame"
-msgstr "Frame"
+msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:9469 lib/ptxprint/ptxprint.glade:11539
 msgid "Scale"
@@ -4576,7 +4582,7 @@ msgstr "可以用于手机应用程序。 "
 
 #: lib/ptxprint/ptxprint.glade:10234
 msgid "Web"
-msgstr "Web"
+msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:10238
 msgid "Can be used on websites. "
@@ -4837,7 +4843,7 @@ msgstr "日期"
 
 #: lib/ptxprint/ptxprint.glade:11107
 msgid "Initials"
-msgstr "Initials"
+msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:11120
 msgid "any publication"
@@ -4907,7 +4913,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:11418
 msgid "Checklist"
-msgstr "Checklist"
+msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:11668
 msgid "Apply to other images..."
@@ -4931,7 +4937,7 @@ msgstr "图像积分文本："
 
 #: lib/ptxprint/ptxprint.glade:11732
 msgid "© David C. Cook"
-msgstr "© David C. Cook"
+msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:11821
 msgid "Rotation:"
@@ -5491,7 +5497,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:12993
 msgid "\\rb"
-msgstr "\\rb"
+msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:12998
 msgid ""
@@ -5502,7 +5508,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:13014
 msgid "\\gloss|rb"
-msgstr "\\gloss|rb"
+msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:13019
 msgid ""
@@ -5683,7 +5689,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:13431
 msgid "PHM TIT; 1JN 2JN 3JN JUD"
-msgstr "PHM TIT; 1JN 2JN 3JN JUD"
+msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:13445
 msgid ""
@@ -5748,7 +5754,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:13605
 msgid "Thumb Tabs"
-msgstr "Thumb Tabs"
+msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:13609
 msgid ""
@@ -5767,7 +5773,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:13634
 msgid "Tabs"
-msgstr "Tabs"
+msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:13693
 msgid ""
@@ -5981,7 +5987,7 @@ msgstr "相对于文本，音像作品位向上的垂直偏移。"
 
 #: lib/ptxprint/ptxprint.glade:14134 lib/ptxprint/ptxprint.glade:14276
 msgid "Shift:"
-msgstr "Shift:"
+msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:14159
 msgid "Scale verse decorator image. 1.0 is unity."
@@ -6027,7 +6033,7 @@ msgstr "缩放节头部图像。1.0表示团结。"
 
 #: lib/ptxprint/ptxprint.glade:14358
 msgid "\\v"
-msgstr "\\v"
+msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:14434
 msgid "Decorative Borders and Verses"
@@ -6061,7 +6067,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:14471
 msgid "Diglot+Border"
-msgstr "Diglot+Border"
+msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:14500 lib/ptxprint/ptxprint.glade:14516
 msgid ""
@@ -6101,7 +6107,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:14694
 msgid "Del"
-msgstr "Del"
+msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:14698
 msgid ""
@@ -6165,7 +6171,7 @@ msgstr "文本颜色"
 
 #: lib/ptxprint/ptxprint.glade:14941
 msgid "Font:"
-msgstr "Font:"
+msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:14961
 msgid "Color:"
@@ -6297,8 +6303,6 @@ msgid ""
 "Caller\n"
 "Style:"
 msgstr ""
-"Caller\n"
-"Style:"
 
 #: lib/ptxprint/ptxprint.glade:15542
 msgid ""
@@ -6403,7 +6407,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:15776
 msgid "Styles"
-msgstr "Styles"
+msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:15833
 msgid ""
@@ -6521,7 +6525,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:16018
 msgid "Adj List"
-msgstr "Adj List"
+msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:16049
 msgid "Final SFM"
@@ -6671,11 +6675,11 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:16378
 msgid "See PTX2PDF Macros FAQ"
-msgstr "See PTX2PDF Macros FAQ"
+msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:16396 lib/ptxprint/ptxprint.glade:16481
 msgid "prjdir"
-msgstr "prjdir"
+msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:16414
 msgid "settings_dir"
@@ -6881,7 +6885,4 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:16888
 msgid "PTXprint"
-msgstr "PTXprint"
-
-#~ msgid "\r"
-#~ msgstr "\r"
+msgstr ""

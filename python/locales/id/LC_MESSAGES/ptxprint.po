@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ptxprint\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-26 16:05+0700\n"
-"PO-Revision-Date: 2021-01-26 08:39\n"
+"POT-Creation-Date: 2021-01-28 16:52+0700\n"
+"PO-Revision-Date: 2021-01-28 09:52\n"
 "Last-Translator: \n"
 "Language-Team: Indonesian\n"
 "Language: id\n"
@@ -12,10 +12,10 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Crowdin-Project: ptxprint\n"
-"X-Crowdin-Project-ID: 438618\n"
+"X-Crowdin-Project-ID: 438758\n"
 "X-Crowdin-Language: id\n"
 "X-Crowdin-File: /locales/ptxprint.pot\n"
-"X-Crowdin-File-ID: 4\n"
+"X-Crowdin-File-ID: 4068\n"
 
 #: lib/ptxprint/gtkstyleditor.py:93 lib/ptxprint/ptxprint.glade:15366
 msgid ""
@@ -25,7 +25,7 @@ msgstr ""
 
 #: lib/ptxprint/gtkstyleditor.py:93
 msgid "Baseline:"
-msgstr ""
+msgstr "Teks Dasar:"
 
 #: lib/ptxprint/gtkstyleditor.py:94 lib/ptxprint/ptxprint.glade:14993
 msgid ""
@@ -41,7 +41,14 @@ msgstr ""
 msgid "Set Font..."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:479
+#: lib/ptxprint/gtkview.py:251
+msgid ""
+"Paratext is not installed on this system.\n"
+"Please locate the directory containing your paratext projects. Or cancel to "
+"exit"
+msgstr ""
+
+#: lib/ptxprint/gtkview.py:508
 msgid ""
 "Show Advanced Settings:\n"
 "\n"
@@ -49,7 +56,7 @@ msgid ""
 "available for use within PTXprint."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:485
+#: lib/ptxprint/gtkview.py:514
 msgid ""
 "Hide Advanced Settings:\n"
 "\n"
@@ -57,15 +64,15 @@ msgid ""
 "this switch to hide the more complex/advanced options."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:556
+#: lib/ptxprint/gtkview.py:585
 msgid "Can't get {} in the model"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:569
+#: lib/ptxprint/gtkview.py:598
 msgid "Can't set {} in the model"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:635
+#: lib/ptxprint/gtkview.py:664
 msgid ""
 "                   >>> PLEASE CLOSE the PDF <<<                     \n"
 "\n"
@@ -78,50 +85,50 @@ msgid ""
 "                        Do you want to try again?"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:640
+#: lib/ptxprint/gtkview.py:669
 msgid "The old PDF file is open!"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:702
+#: lib/ptxprint/gtkview.py:731
 msgid "Internal error occurred, trying to delete a directory tree"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:702 lib/ptxprint/gtkview.py:707
+#: lib/ptxprint/gtkview.py:731 lib/ptxprint/gtkview.py:736
 msgid "Folder: "
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:707
+#: lib/ptxprint/gtkview.py:736
 msgid "Can't delete that configuration from disk"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:891 lib/ptxprint/ptxprint.glade:3713
+#: lib/ptxprint/gtkview.py:920 lib/ptxprint/ptxprint.glade:3713
 msgid "Lock"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:894
+#: lib/ptxprint/gtkview.py:923
 msgid "Unlock"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1048
+#: lib/ptxprint/gtkview.py:1077
 msgid " PicLists have been renamed and moved!"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1049
+#: lib/ptxprint/gtkview.py:1078
 msgid " Look on the <Pictures> tab for Details & Checklist along the top row."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1050
+#: lib/ptxprint/gtkview.py:1079
 msgid ""
 " A tool to help create Front Matter (the FRT book) may show up here in "
 "future."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1080
+#: lib/ptxprint/gtkview.py:1109
 msgid ""
 " Use the 'Advanced' tab to select which settings you want to view or edit."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1095
+#: lib/ptxprint/gtkview.py:1124
 msgid ""
 "\n"
 "\n"
@@ -131,7 +138,7 @@ msgid ""
 "Click on View/Edit... button to see more."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1102
+#: lib/ptxprint/gtkview.py:1131
 msgid ""
 "\n"
 "This file doesn't exist yet.\n"
@@ -141,21 +148,21 @@ msgid ""
 "   * the 'Print' button to create the PDF first"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1326
+#: lib/ptxprint/gtkview.py:1355
 msgid "Remove Intermediate Files and Logs?"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1327
+#: lib/ptxprint/gtkview.py:1356
 msgid ""
 "Are you sure you want to delete\n"
 "ALL the temporary PTXprint files?"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1354
+#: lib/ptxprint/gtkview.py:1383
 msgid "Warning: Could not delete some file(s) or folders(s):"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1828
+#: lib/ptxprint/gtkview.py:1857
 msgid ""
 "\n"
 "This file doesn't exist yet!\n"
@@ -163,78 +170,78 @@ msgid ""
 "Edit here and Click 'Save' to create it."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1870
+#: lib/ptxprint/gtkview.py:1899
 msgid ""
 "% This is the .tex file specific for the {} project used by PTXprint.\n"
 "% Saved Configuration name: {}\n"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1877
+#: lib/ptxprint/gtkview.py:1906
 msgid ""
 "% This is the preprocessing .tex file specific for the {} project used by "
 "PTXprint.\n"
 "% Saved Configuration name: {}\n"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1921
+#: lib/ptxprint/gtkview.py:1950
 msgid "Select the location and name for the Archive file"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1971
+#: lib/ptxprint/gtkview.py:2000
 msgid "Select the folder containing image files"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:2006
+#: lib/ptxprint/gtkview.py:2035
 msgid "Select one or more PDF(s) for FRONT matter"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:2010
+#: lib/ptxprint/gtkview.py:2039
 msgid "Select one or more PDF(s) for BACK matter"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:2014
+#: lib/ptxprint/gtkview.py:2043
 msgid "Select Watermark PDF file"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:2019
+#: lib/ptxprint/gtkview.py:2048
 msgid "Select Page Border PDF file"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:2024
+#: lib/ptxprint/gtkview.py:2053
 msgid "Select Section Header PDF file"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:2029
+#: lib/ptxprint/gtkview.py:2058
 msgid "Select End of Book PDF file"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:2034
+#: lib/ptxprint/gtkview.py:2063
 msgid "Select Verse Decorator PDF file"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:2142
+#: lib/ptxprint/gtkview.py:2171
 msgid ""
 "Switch to Other\n"
 "Diglot Project"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:2148
+#: lib/ptxprint/gtkview.py:2177
 msgid ""
 "Save & Return to\n"
 "Diglot Project"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:2196
+#: lib/ptxprint/gtkview.py:2225
 msgid "FYI: The Regular font already supports all the characters in the text."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:2197
+#: lib/ptxprint/gtkview.py:2226
 msgid ""
 "A fallback font is not required so\n"
 "the 'Use Fallback Font' option will be disabled."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:2417
+#: lib/ptxprint/gtkview.py:2446
 msgid "Choose Image"
 msgstr ""
 
@@ -314,24 +321,24 @@ msgstr ""
 #: lib/ptxprint/texmodel.py:315 lib/ptxprint/ptxprint.glade:8116
 #: lib/ptxprint/ptxprint.glade:8158 lib/ptxprint/ptxprint.glade:8200
 msgid "First Reference"
-msgstr ""
+msgstr "Referensi Pertama"
 
 #: lib/ptxprint/texmodel.py:316 lib/ptxprint/ptxprint.glade:8117
 #: lib/ptxprint/ptxprint.glade:8159 lib/ptxprint/ptxprint.glade:8201
 msgid "Last Reference"
-msgstr ""
+msgstr "Referensi terakhir"
 
 #: lib/ptxprint/texmodel.py:317 lib/ptxprint/ptxprint.glade:8118
 #: lib/ptxprint/ptxprint.glade:8160 lib/ptxprint/ptxprint.glade:8202
 #: lib/ptxprint/ptxprint.glade:8649
 msgid "Reference Range"
-msgstr ""
+msgstr "Rentangan Referensi"
 
 #: lib/ptxprint/texmodel.py:318 lib/ptxprint/ptxprint.glade:8115
 #: lib/ptxprint/ptxprint.glade:8157 lib/ptxprint/ptxprint.glade:8199
 #: lib/ptxprint/ptxprint.glade:8648
 msgid "Page Number"
-msgstr ""
+msgstr "Nomor Halaman"
 
 #: lib/ptxprint/texmodel.py:319
 msgid "Time (HH:MM)"
@@ -345,7 +352,7 @@ msgstr ""
 #: lib/ptxprint/ptxprint.glade:8156 lib/ptxprint/ptxprint.glade:8198
 #: lib/ptxprint/ptxprint.glade:8647
 msgid "-empty-"
-msgstr ""
+msgstr "-kosong-"
 
 #: lib/ptxprint/view.py:378
 msgid ""
@@ -538,7 +545,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:840
 msgid "Warning!"
-msgstr ""
+msgstr "Peringatan!"
 
 #: lib/ptxprint/ptxprint.glade:855
 msgid ""
@@ -558,7 +565,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:942
 msgid "All Books"
-msgstr ""
+msgstr "Semua Kitab"
 
 #: lib/ptxprint/ptxprint.glade:946
 msgid "Click to turn ALL books on/off."
@@ -566,7 +573,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:961
 msgid "Old Testament"
-msgstr ""
+msgstr "Perjanjian Lama"
 
 #: lib/ptxprint/ptxprint.glade:965
 msgid "Click to turn OT books on/off."
@@ -574,7 +581,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:980
 msgid "New Testament"
-msgstr ""
+msgstr "Perjanjian Baru"
 
 #: lib/ptxprint/ptxprint.glade:984
 msgid "Click to turn NT books on/off."
@@ -582,7 +589,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:999
 msgid "Deuterocanon"
-msgstr ""
+msgstr "Deuterokanonika"
 
 #: lib/ptxprint/ptxprint.glade:1003
 msgid "Click to turn DC books on/off."
@@ -590,7 +597,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:1018
 msgid "Extra Material"
-msgstr ""
+msgstr "Materi Tambahan"
 
 #: lib/ptxprint/ptxprint.glade:1022
 msgid "Click to turn Extra books on/off."
@@ -598,7 +605,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:1048
 msgid "Reset All"
-msgstr ""
+msgstr "Atur Ulang Semuanya"
 
 #: lib/ptxprint/ptxprint.glade:1052
 msgid "Click to turn OFF all books."
@@ -619,7 +626,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:1181
 msgid "Books:"
-msgstr ""
+msgstr "Kitab-kitab:"
 
 #: lib/ptxprint/ptxprint.glade:1227
 msgid "PTXprint: Lock/Unlock Configuration"
@@ -639,11 +646,11 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:1535
 msgid "NONE"
-msgstr ""
+msgstr "TIDAK ADA"
 
 #: lib/ptxprint/ptxprint.glade:1548
 msgid "All"
-msgstr ""
+msgstr "Semua"
 
 #: lib/ptxprint/ptxprint.glade:1552
 msgid "All Unknown / Unchecked"
@@ -655,25 +662,25 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:1560
 msgid "Approved"
-msgstr ""
+msgstr "Disetujui"
 
 #: lib/ptxprint/ptxprint.glade:1574
 msgid "Single"
-msgstr ""
+msgstr "Satu Baris"
 
 #: lib/ptxprint/ptxprint.glade:1578
 msgid "Double"
-msgstr ""
+msgstr "Rangkap"
 
 #: lib/ptxprint/ptxprint.glade:1590 lib/ptxprint/ptxprint.glade:1677
 #: lib/ptxprint/ptxprint.glade:3625
 msgid "Default"
-msgstr ""
+msgstr "Standar"
 
 #: lib/ptxprint/ptxprint.glade:1603 lib/ptxprint/ptxprint.glade:2461
 #: lib/ptxprint/ptxprint.glade:2703
 msgid "Left"
-msgstr ""
+msgstr "Kiri"
 
 #: lib/ptxprint/ptxprint.glade:1604
 msgid "l"
@@ -683,7 +690,7 @@ msgstr ""
 #: lib/ptxprint/ptxprint.glade:2465 lib/ptxprint/ptxprint.glade:2706
 #: lib/ptxprint/ptxprint.glade:8067
 msgid "Center"
-msgstr ""
+msgstr "Di Tengah"
 
 #: lib/ptxprint/ptxprint.glade:1608 lib/ptxprint/ptxprint.glade:1660
 msgid "c"
@@ -692,7 +699,7 @@ msgstr ""
 #: lib/ptxprint/ptxprint.glade:1611 lib/ptxprint/ptxprint.glade:2469
 #: lib/ptxprint/ptxprint.glade:2709
 msgid "Right"
-msgstr ""
+msgstr "Kanan"
 
 #: lib/ptxprint/ptxprint.glade:1612
 msgid "r"
@@ -700,7 +707,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:1615 lib/ptxprint/ptxprint.glade:2473
 msgid "Inner"
-msgstr ""
+msgstr "Dalam"
 
 #: lib/ptxprint/ptxprint.glade:1616
 msgid "i"
@@ -708,7 +715,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:1619 lib/ptxprint/ptxprint.glade:2477
 msgid "Outer"
-msgstr ""
+msgstr "Luar"
 
 #: lib/ptxprint/ptxprint.glade:1620
 msgid "o"
@@ -717,11 +724,11 @@ msgstr ""
 #: lib/ptxprint/ptxprint.glade:1633 lib/ptxprint/ptxprint.glade:2395
 #: lib/ptxprint/ptxprint.glade:2496
 msgid "None"
-msgstr ""
+msgstr "Tidak Ada"
 
 #: lib/ptxprint/ptxprint.glade:1634
 msgid "0"
-msgstr ""
+msgstr "0"
 
 #: lib/ptxprint/ptxprint.glade:1637
 msgid "Anti-clockwise"
@@ -741,7 +748,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:1655 lib/ptxprint/ptxprint.glade:2521
 msgid "Top"
-msgstr ""
+msgstr "Atas"
 
 #: lib/ptxprint/ptxprint.glade:1656
 msgid "t"
@@ -749,7 +756,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:1663 lib/ptxprint/ptxprint.glade:2525
 msgid "Bottom"
-msgstr ""
+msgstr "Dasar"
 
 #: lib/ptxprint/ptxprint.glade:1664
 msgid "b"
@@ -757,23 +764,23 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:1681
 msgid "Arabic-Hindi"
-msgstr ""
+msgstr "Arab-Hindi"
 
 #: lib/ptxprint/ptxprint.glade:1685
 msgid "Arabic-Farsi"
-msgstr ""
+msgstr "Arab-Farsi"
 
 #: lib/ptxprint/ptxprint.glade:1689
 msgid "Bengali"
-msgstr ""
+msgstr "Bengali"
 
 #: lib/ptxprint/ptxprint.glade:1693
 msgid "Burmese"
-msgstr ""
+msgstr "Burma"
 
 #: lib/ptxprint/ptxprint.glade:1697
 msgid "Devanagari"
-msgstr ""
+msgstr "Dewanagari"
 
 #: lib/ptxprint/ptxprint.glade:1701
 msgid "Ethiopic"
@@ -785,47 +792,47 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:1709
 msgid "Gujarati"
-msgstr ""
+msgstr "Gujarat"
 
 #: lib/ptxprint/ptxprint.glade:1713
 msgid "Gurmukhi"
-msgstr ""
+msgstr "Gurmukhi"
 
 #: lib/ptxprint/ptxprint.glade:1717
 msgid "Kannada"
-msgstr ""
+msgstr "Kannada"
 
 #: lib/ptxprint/ptxprint.glade:1721
 msgid "Khmer"
-msgstr ""
+msgstr "Khmer"
 
 #: lib/ptxprint/ptxprint.glade:1725
 msgid "Lao"
-msgstr ""
+msgstr "Laos"
 
 #: lib/ptxprint/ptxprint.glade:1729
 msgid "Malayalam"
-msgstr ""
+msgstr "Malayalam"
 
 #: lib/ptxprint/ptxprint.glade:1733
 msgid "Oriya"
-msgstr ""
+msgstr "Oriya"
 
 #: lib/ptxprint/ptxprint.glade:1737
 msgid "Tamil"
-msgstr ""
+msgstr "Tamil"
 
 #: lib/ptxprint/ptxprint.glade:1741
 msgid "Telugu"
-msgstr ""
+msgstr "Telugu"
 
 #: lib/ptxprint/ptxprint.glade:1745
 msgid "Thai"
-msgstr ""
+msgstr "Thai"
 
 #: lib/ptxprint/ptxprint.glade:1749
 msgid "Tibetan"
-msgstr ""
+msgstr "Tibet"
 
 #: lib/ptxprint/ptxprint.glade:1761
 msgid "Aligned at Paragraphs"
@@ -861,23 +868,23 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:1907
 msgid "Language:"
-msgstr ""
+msgstr "Bahasa:"
 
 #: lib/ptxprint/ptxprint.glade:1983
 msgid "Regular"
-msgstr ""
+msgstr "Teratur"
 
 #: lib/ptxprint/ptxprint.glade:1986 lib/ptxprint/ptxprint.glade:14823
 msgid "Bold"
-msgstr ""
+msgstr "Tebal"
 
 #: lib/ptxprint/ptxprint.glade:1989 lib/ptxprint/ptxprint.glade:14838
 msgid "Italic"
-msgstr ""
+msgstr "Kursif"
 
 #: lib/ptxprint/ptxprint.glade:1992
 msgid "Bold Italic"
-msgstr ""
+msgstr "Huruf Tebal-Miring"
 
 #: lib/ptxprint/ptxprint.glade:1998
 msgid "Pick a Font (and Typeface)"
@@ -965,7 +972,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:2333
 msgid "Font Features:"
-msgstr ""
+msgstr "Corak Font:"
 
 #: lib/ptxprint/ptxprint.glade:2398
 msgid "format as bold"
@@ -1015,7 +1022,7 @@ msgstr ""
 #: lib/ptxprint/ptxprint.glade:2614 lib/ptxprint/ptxprint.glade:2634
 #: lib/ptxprint/ptxprint.glade:10707
 msgid "Unknown"
-msgstr ""
+msgstr "Tidak Dikenal"
 
 #: lib/ptxprint/ptxprint.glade:2442 lib/ptxprint/ptxprint.glade:2597
 msgid "Culturally Appropriate"
@@ -1035,7 +1042,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:2495
 msgid "Never"
-msgstr ""
+msgstr "Tidak pernah"
 
 #: lib/ptxprint/ptxprint.glade:2499
 msgid "Odd"
@@ -1055,11 +1062,11 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:2507
 msgid "Both"
-msgstr ""
+msgstr "Keduanya"
 
 #: lib/ptxprint/ptxprint.glade:2508
 msgid "both"
-msgstr ""
+msgstr "keduanya"
 
 #: lib/ptxprint/ptxprint.glade:2529
 msgid "Before Verse"
@@ -1123,19 +1130,19 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:2700
 msgid "Justified"
-msgstr ""
+msgstr "Tarakan"
 
 #: lib/ptxprint/ptxprint.glade:2726
 msgid "Paragraph"
-msgstr ""
+msgstr "Paragraf"
 
 #: lib/ptxprint/ptxprint.glade:2729
 msgid "Character"
-msgstr ""
+msgstr "Karakter"
 
 #: lib/ptxprint/ptxprint.glade:2732
 msgid "Note"
-msgstr ""
+msgstr "Catatan"
 
 #: lib/ptxprint/ptxprint.glade:2735
 msgid "Milestone"
@@ -1143,11 +1150,11 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:2775
 msgid "Left-to-Right"
-msgstr ""
+msgstr "Kiri ke Kanan"
 
 #: lib/ptxprint/ptxprint.glade:2778
 msgid "Right-to-Left"
-msgstr ""
+msgstr "Kanan ke Kiri"
 
 #: lib/ptxprint/ptxprint.glade:2781
 msgid "Top-to-Bottom"
@@ -1167,11 +1174,11 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:2923
 msgid "Marker:"
-msgstr ""
+msgstr "Markah:"
 
 #: lib/ptxprint/ptxprint.glade:2939
 msgid "Description:"
-msgstr ""
+msgstr "Penjelasan:"
 
 #: lib/ptxprint/ptxprint.glade:2966
 msgid "Occurs Under:"
@@ -1179,7 +1186,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:3024
 msgid "Name:"
-msgstr ""
+msgstr "Nama:"
 
 #: lib/ptxprint/ptxprint.glade:3038
 msgid "Consists of: Marker..Endmarker - Treeview Heading - short description"
@@ -1187,11 +1194,11 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:3052
 msgid "End Marker:"
-msgstr ""
+msgstr "Tanda Akhir:"
 
 #: lib/ptxprint/ptxprint.glade:3175
 msgid "Paratext Project:"
-msgstr ""
+msgstr "Proyek Paratext:"
 
 #: lib/ptxprint/ptxprint.glade:3243
 msgid ""
@@ -1263,7 +1270,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:3469
 msgid "1"
-msgstr ""
+msgstr "1"
 
 #: lib/ptxprint/ptxprint.glade:3494
 msgid "Project and Scope"
@@ -1340,7 +1347,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:3659
 msgid "Notes:"
-msgstr ""
+msgstr "Catatan:"
 
 #: lib/ptxprint/ptxprint.glade:3686
 msgid ""
@@ -1386,7 +1393,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:3812
 msgid "Copyright:"
-msgstr ""
+msgstr "Hak Cipta:"
 
 #: lib/ptxprint/ptxprint.glade:3823
 msgid ""
@@ -1459,7 +1466,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:3927
 msgid "Basic"
-msgstr ""
+msgstr "Dasar"
 
 #: lib/ptxprint/ptxprint.glade:3979
 msgid ""
@@ -1536,23 +1543,23 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:4153
 msgid "Page Size:"
-msgstr ""
+msgstr "Ukuran Halaman:"
 
 #: lib/ptxprint/ptxprint.glade:4169
 msgid "210mm, 297mm (A4)"
-msgstr ""
+msgstr "210mm, 297mm (A4)"
 
 #: lib/ptxprint/ptxprint.glade:4170
 msgid "148mm, 210mm (A5)"
-msgstr ""
+msgstr "158mm, 210mm (A4)"
 
 #: lib/ptxprint/ptxprint.glade:4171
 msgid "8.5in, 11in (Letter)"
-msgstr ""
+msgstr "di 8.5, 11 in (Surat)"
 
 #: lib/ptxprint/ptxprint.glade:4172
 msgid "5.5in, 8.5in (1/2 Letter)"
-msgstr ""
+msgstr "5.5in, 8.5 in (1/2 Surat)"
 
 #: lib/ptxprint/ptxprint.glade:4173
 msgid "5.25in, 8.25in (133x210mm)"
@@ -1603,7 +1610,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:4316
 msgid "Page Setup"
-msgstr ""
+msgstr "Pengaturan Halaman"
 
 #: lib/ptxprint/ptxprint.glade:4356 lib/ptxprint/ptxprint.glade:4403
 msgid ""
@@ -1856,7 +1863,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:4985
 msgid "Layout"
-msgstr ""
+msgstr "Tata Letak"
 
 #: lib/ptxprint/ptxprint.glade:5037
 msgid ""
@@ -1914,7 +1921,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:5226
 msgid "Writing System"
-msgstr ""
+msgstr "Sistem Tulisan"
 
 #: lib/ptxprint/ptxprint.glade:5254
 msgid "Find Any Missing Characters:"
@@ -1992,15 +1999,15 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:5391
 msgid "Bold:"
-msgstr ""
+msgstr "Huruf Tebal:"
 
 #: lib/ptxprint/ptxprint.glade:5403
 msgid "Italic:"
-msgstr ""
+msgstr "Huruf Miring:"
 
 #: lib/ptxprint/ptxprint.glade:5415
 msgid "Bold Italic:"
-msgstr ""
+msgstr "Huruf Tebal-Miring:"
 
 #: lib/ptxprint/ptxprint.glade:5427
 msgid ""
@@ -2044,7 +2051,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:5557
 msgid "Font Configuration"
-msgstr ""
+msgstr "Konfigurasi Font"
 
 #: lib/ptxprint/ptxprint.glade:5591
 msgid "Between Words"
@@ -2101,7 +2108,7 @@ msgstr ""
 #: lib/ptxprint/ptxprint.glade:5697 lib/ptxprint/ptxprint.glade:14172
 #: lib/ptxprint/ptxprint.glade:14314
 msgid "1.0"
-msgstr ""
+msgstr "Tunggal"
 
 #: lib/ptxprint/ptxprint.glade:5713
 msgid "5.0"
@@ -2491,7 +2498,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:6625
 msgid "Section Headings"
-msgstr ""
+msgstr "Judul Bagian"
 
 #: lib/ptxprint/ptxprint.glade:6629
 msgid ""
@@ -2613,7 +2620,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:6938
 msgid "Hyphenation"
-msgstr ""
+msgstr "Tanda hubung"
 
 #: lib/ptxprint/ptxprint.glade:6964
 msgid ""
@@ -2627,7 +2634,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:6971
 msgid "Body"
-msgstr ""
+msgstr "Tubuh, badan"
 
 #: lib/ptxprint/ptxprint.glade:7046
 msgid "Use Paragraphed Footnotes"
@@ -2910,7 +2917,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:7722
 msgid "Line Spacing:"
-msgstr ""
+msgstr "Spasi Baris:"
 
 #: lib/ptxprint/ptxprint.glade:7764
 msgid ""
@@ -3036,7 +3043,7 @@ msgstr ""
 #: lib/ptxprint/ptxprint.glade:8220 lib/ptxprint/ptxprint.glade:8265
 #: lib/ptxprint/ptxprint.glade:8289 lib/ptxprint/ptxprint.glade:8715
 msgid "Pri"
-msgstr ""
+msgstr "SD"
 
 #: lib/ptxprint/ptxprint.glade:8224 lib/ptxprint/ptxprint.glade:8247
 #: lib/ptxprint/ptxprint.glade:8269 lib/ptxprint/ptxprint.glade:8293
@@ -3108,7 +3115,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:8490
 msgid "Header"
-msgstr ""
+msgstr "Hulu"
 
 #: lib/ptxprint/ptxprint.glade:8525 lib/ptxprint/ptxprint.glade:8551
 msgid ""
@@ -3241,7 +3248,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:8887 lib/ptxprint/ptxprint.glade:13049
 msgid "Other"
-msgstr ""
+msgstr "Lainnya"
 
 #: lib/ptxprint/ptxprint.glade:8906
 msgid ""
@@ -3461,7 +3468,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:9346 lib/ptxprint/ptxprint.glade:16127
 msgid "Settings"
-msgstr ""
+msgstr "Pengaturan"
 
 #: lib/ptxprint/ptxprint.glade:9407 lib/ptxprint/ptxprint.glade:10417
 #: lib/ptxprint/ptxprint.glade:11477
@@ -3471,12 +3478,12 @@ msgstr ""
 #: lib/ptxprint/ptxprint.glade:9425 lib/ptxprint/ptxprint.glade:10435
 #: lib/ptxprint/ptxprint.glade:11495
 msgid "Caption"
-msgstr ""
+msgstr "Judul"
 
 #: lib/ptxprint/ptxprint.glade:9440 lib/ptxprint/ptxprint.glade:10450
 #: lib/ptxprint/ptxprint.glade:11510
 msgid "File"
-msgstr ""
+msgstr "Berkas"
 
 #: lib/ptxprint/ptxprint.glade:9455 lib/ptxprint/ptxprint.glade:11525
 msgid "Frame"
@@ -3492,7 +3499,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:9497 lib/ptxprint/ptxprint.glade:11567
 msgid "Ref"
-msgstr ""
+msgstr "Acuan"
 
 #: lib/ptxprint/ptxprint.glade:9511 lib/ptxprint/ptxprint.glade:11581
 msgid "Mirror"
@@ -3500,7 +3507,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:9526 lib/ptxprint/ptxprint.glade:11596
 msgid "Description"
-msgstr ""
+msgstr "Deskripsi"
 
 #: lib/ptxprint/ptxprint.glade:9541 lib/ptxprint/ptxprint.glade:11611
 msgid "Copyright"
@@ -3508,7 +3515,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:9555 lib/ptxprint/ptxprint.glade:11625
 msgid "Media"
-msgstr ""
+msgstr "Media"
 
 #: lib/ptxprint/ptxprint.glade:9584 lib/ptxprint/ptxprint.glade:10478
 msgid "Add Picture..."
@@ -3522,7 +3529,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:9601 lib/ptxprint/ptxprint.glade:10494
 msgid "Delete Picture"
-msgstr ""
+msgstr "Hapus Gambar"
 
 #: lib/ptxprint/ptxprint.glade:9605 lib/ptxprint/ptxprint.glade:10498
 msgid ""
@@ -3598,7 +3605,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:9809
 msgid "Caption:"
-msgstr ""
+msgstr "Judul gambar:"
 
 #: lib/ptxprint/ptxprint.glade:9835
 msgid ""
@@ -3703,7 +3710,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:10204
 msgid "Print"
-msgstr ""
+msgstr "Cetak Daftar Kata"
 
 #: lib/ptxprint/ptxprint.glade:10208
 msgid "Can be used in Print/PDF publications. "
@@ -3734,7 +3741,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:10356
 msgid "Details"
-msgstr ""
+msgstr "Perincian"
 
 #: lib/ptxprint/ptxprint.glade:10532
 msgid ""
@@ -3776,12 +3783,12 @@ msgstr ""
 #: lib/ptxprint/ptxprint.glade:10675 lib/ptxprint/ptxprint.glade:10933
 #: lib/ptxprint/ptxprint.glade:10981
 msgid "Yes"
-msgstr ""
+msgstr "Ya"
 
 #: lib/ptxprint/ptxprint.glade:10691 lib/ptxprint/ptxprint.glade:10949
 #: lib/ptxprint/ptxprint.glade:10997
 msgid "No"
-msgstr ""
+msgstr "Tidak"
 
 #: lib/ptxprint/ptxprint.glade:10725
 msgid ""
@@ -3932,7 +3939,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:11091
 msgid "Date"
-msgstr ""
+msgstr "Tanggal"
 
 #: lib/ptxprint/ptxprint.glade:11107
 msgid "Initials"
@@ -4050,11 +4057,11 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:11890
 msgid "Light"
-msgstr ""
+msgstr "Ringan"
 
 #: lib/ptxprint/ptxprint.glade:11891
 msgid "Dark"
-msgstr ""
+msgstr "Gelap"
 
 #: lib/ptxprint/ptxprint.glade:11985
 msgid ""
@@ -4157,7 +4164,7 @@ msgstr ""
 #: lib/ptxprint/ptxprint.glade:12252 lib/ptxprint/ptxprint.glade:12312
 #: lib/ptxprint/ptxprint.glade:12328 lib/ptxprint/ptxprint.glade:12345
 msgid "Edit..."
-msgstr ""
+msgstr "Sunting..."
 
 #: lib/ptxprint/ptxprint.glade:12268
 msgid "Apply Stylesheet Overrides (ptxprint-mods.sty)"
@@ -4496,7 +4503,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:13133
 msgid "Advanced"
-msgstr ""
+msgstr "Lanjutan"
 
 #: lib/ptxprint/ptxprint.glade:13188
 msgid ""
@@ -4506,7 +4513,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:13191
 msgid "Log"
-msgstr ""
+msgstr "Lgk"
 
 #: lib/ptxprint/ptxprint.glade:13232 lib/ptxprint/ptxprint.glade:13353
 msgid "The length of the Thumb Tab measured in millimeters (mm)."
@@ -4711,7 +4718,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:13746
 msgid "(None)"
-msgstr ""
+msgstr "(Nihil)"
 
 #: lib/ptxprint/ptxprint.glade:13785
 msgid ""
@@ -4866,7 +4873,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:14256
 msgid "Full page"
-msgstr ""
+msgstr "Halaman seluruhnya"
 
 #: lib/ptxprint/ptxprint.glade:14260
 msgid ""
@@ -4934,11 +4941,11 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:14642
 msgid "More Info..."
-msgstr ""
+msgstr "Informasi selengkapnya..."
 
 #: lib/ptxprint/ptxprint.glade:14680
 msgid "Add"
-msgstr ""
+msgstr "Tambah"
 
 #: lib/ptxprint/ptxprint.glade:14684
 msgid ""
@@ -4949,7 +4956,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:14694
 msgid "Del"
-msgstr ""
+msgstr "Hps"
 
 #: lib/ptxprint/ptxprint.glade:14698
 msgid ""
@@ -4966,7 +4973,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:14725
 msgid "Edit"
-msgstr ""
+msgstr "Sunting"
 
 #: lib/ptxprint/ptxprint.glade:14729
 msgid ""
@@ -5004,11 +5011,11 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:14941
 msgid "Font:"
-msgstr ""
+msgstr "Font:"
 
 #: lib/ptxprint/ptxprint.glade:14961
 msgid "Color:"
-msgstr ""
+msgstr "Warna:"
 
 #: lib/ptxprint/ptxprint.glade:14981
 msgid ""
@@ -5193,7 +5200,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:15776
 msgid "Styles"
-msgstr ""
+msgstr "Gaya-gaya"
 
 #: lib/ptxprint/ptxprint.glade:15833
 msgid ""
@@ -5258,7 +5265,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:15981
 msgid "Front Matter"
-msgstr ""
+msgstr "Informasi Awal Kitab"
 
 #: lib/ptxprint/ptxprint.glade:16006
 msgid ""
@@ -5478,7 +5485,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:16624
 msgid "Help"
-msgstr ""
+msgstr "Bantuan"
 
 #: lib/ptxprint/ptxprint.glade:16679
 msgid ""
