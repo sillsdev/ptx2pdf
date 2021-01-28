@@ -56,6 +56,21 @@ if args.paratext is None:
     if args.paratext is None:
         args.paratext = get_ptsettings()
 
+conffile = os.path.join(appdirs.user_config_dir("ptxprint", "SIL"), "ptxprint_user.cfg")
+config = configparser.ConfigParser()
+if os.path.exists(conffile):
+    config.read(conffile, encoding="utf-8")
+    if args.pid is None and config.has_option("init", "project"):
+        args.pid = config.get('init', 'project')
+        if args.config is None and config.has_option("init", "config"):
+            args.config = config.get('init', 'config')
+    if (not args.paratext or str(args.paratext).lower() == "none") and config.has_option("init", "paratext"):
+        args.paratext = config.get("init", "paratext")
+else:
+    if not os.path.exists(os.path.dirname(conffile)):
+        os.makedirs(os.path.dirname(conffile))
+    config.add_section("init")
+
 if not args.paratext or str(args.paratext).lower() == "none":
     # print("No Paratext Settings directory found - sys.exit(1)")
     if not args.print:
@@ -68,6 +83,8 @@ else:
     args.paratext = os.path.abspath(args.paratext.replace("\\", "/"))
     if args.paratext.endswith("/"):
         args.paratext = args.paratext[:-1]
+
+config.set("init", "paratext", str(args.paratext))
 
 if args.pid is not None and (any(x in args.pid for x in "\\/") or args.pid.lower().endswith(".cfg")):
     pidpath = os.path.relpath(args.pid, args.paratext).replace("\\", "/")
@@ -93,19 +110,6 @@ if args.directory is not None:
 
 # Where to find the default for -p
 # HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Paratext\8:Settings_Directory
-
-conffile = os.path.join(appdirs.user_config_dir("ptxprint", "SIL"), "ptxprint_user.cfg")
-config = configparser.ConfigParser()
-if os.path.exists(conffile):
-    config.read(conffile, encoding="utf-8")
-    if args.pid is None and config.has_option("init", "project"):
-        args.pid = config.get('init', 'project')
-        if args.config is None and config.has_option("init", "config"):
-            args.config = config.get('init', 'config')
-else:
-    if not os.path.exists(os.path.dirname(conffile)):
-        os.makedirs(os.path.dirname(conffile))
-    config.add_section("init")
 
 scriptsdir = getattr(sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__)))
 if os.path.exists("/usr/share/ptx2pdf") and not os.path.exists(os.path.join(scriptsdir, "..", "..", "src")):
