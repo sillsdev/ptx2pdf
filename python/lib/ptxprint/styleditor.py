@@ -31,7 +31,7 @@ class StyleEditor:
 
     def getval(self, mrk, key):
         if self.sheet is None:
-            raise KeyError(f"{mrk} + {key}")
+            raise KeyError(f"stylesheet missing: {mrk} + {key}")
         return self.sheet.get(mrk, {}).get(key, self.basesheet.get(mrk, {}).get(key, None))
 
     def setval(self, mrk, key, val, ifunchanged=False):

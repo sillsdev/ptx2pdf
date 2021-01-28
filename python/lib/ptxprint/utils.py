@@ -174,10 +174,10 @@ elif sys.platform == "win32":
         return winreg.QueryValueEx(base, value)[0]
 
 def pt_bindir():
-    return getattr(sys, '_MEIPASS', os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..')))
+    res = getattr(sys, '_MEIPASS', os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..')))
+    return res
 
 def get_ptsettings():
-    global _pt_bindir
     pt_settings = "."
     ptob = openkey("Paratext/8")
     if ptob is None:

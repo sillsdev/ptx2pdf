@@ -358,9 +358,12 @@ class GtkViewModel(ViewModel):
             p = os.path.join(self.settings_dir, d)
             if not os.path.isdir(p):
                 continue
-            if os.path.exists(os.path.join(p, 'Settings.xml')) \
-                    or any(x.lower().endswith("sfm") for x in os.listdir(p)):
-                allprojects.append(d)
+            try:
+                if os.path.exists(os.path.join(p, 'Settings.xml')) \
+                        or any(x.lower().endswith("sfm") for x in os.listdir(p)):
+                    allprojects.append(d)
+            except OSError:
+                pass
         for p in sorted(allprojects, key = lambda s: s.casefold()):
             projects.append([p])
             digprojects.append([p])
