@@ -6,8 +6,6 @@ Bug Fixes and Improvements in 1.5.8
   * Localization of UI is now available through Crowdin - contributions welcome! https://crowdin.com/project/ptxprint
     (aiming to release several languages for ver 1.6)
 	
-  * But, there is a KNOWN ISSUE: PTXprint doesn't seem to load at all with some other non English locales - we're working on it... 
-
   * Fixed #349,351 Verse numbers missing or too large in certain situations
   
   * Fixed #342,354 Base Paragraph Indent value reverting to 1.0 after restart

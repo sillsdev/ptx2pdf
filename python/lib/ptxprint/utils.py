@@ -16,41 +16,24 @@ def setup_i18n():
             lang, enc = locale.getdefaultlocale()
             print("lang:, enc:", lang, enc)
             os.environ['LANG'] = lang
-            # print("finished: os.environ['LANG'] = lang")
         else:
             lang = os.getenv('LANG')
-            # print("finished: lang = os.getenv('LANG')")
         from ctypes import cdll, windll
-        # print("finished: from ctypes import cdll, windll")
         from ctypes.util import find_msvcrt
-        # print("finished: from ctypes.util import find_msvcrt")
         cdll.msvcrt._putenv('LANG={}'.format(lang))
-        # print("finished: cdll.msvcrt._putenv('LANG={}'.format(lang)))")
         msvcrt = find_msvcrt()
-        # print("finished: msvcrt = find_msvcrt()")
         msvcrtname = str(msvcrt).split('.')[0] if '.' in msvcrt else str(msvcrt)
-        # print("finished: msvcrtname = str(msvcrt).split('.')[0] if '.' in msvcrt else str(msvcrt)")
         cdll.LoadLibrary(msvcrt)._putenv('LANG={}'.format(lang))        
-        # print("finished: cdll.LoadLibrary(msvcrt)._putenv('LANG={}'.format(lang))")
         windll.kernel32.SetEnvironmentVariableW("LANG", lang)
-        # print('finished: windll.kernel32.SetEnvironmentVariableW("LANG", lang)')
         libintl = cdll.LoadLibrary("libintl-8.dll")
-        # print('finished: libintl = cdll.LoadLibrary("libintl-8.dll")')
         libintl.bindtextdomain(APP, localedir)
-        # print("finished: libintl.bindtextdomain(APP, localedir)")
 
         libintl.textdomain(APP)
-        print("finished: libintl.textdomain(APP)")
-        # print(localedir, lang)
     else:
         locale.bindtextdomain(APP, localedir)
-        # print("finished: locale.bindtextdomain(APP, localedir)")
     locale.setlocale(locale.LC_ALL, '')
-    # print("finished: locale.setlocale(locale.LC_ALL, '')")
     gettext.bindtextdomain(APP, localedir=localedir)
-    # print("finished: gettext.bindtextdomain(APP, localedir=localedir)")
     gettext.textdomain(APP)
-    print("finished: gettext.textdomain(APP)")
     
 def f_(s):
     frame = currentframe().f_back
