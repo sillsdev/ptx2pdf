@@ -1038,7 +1038,11 @@ class ViewModel:
             filename = os.path.join(self.configPath(self.configName()), "ptxprintArchive.zip")
         if not filename.lower().endswith(".zip"):
             filename += ".zip"
-        zf = ZipFile(filename, mode="w", compression=ZIP_DEFLATED)  # need at least python 3.7 for: compresslevel=9
+        try:
+            zf = ZipFile(filename, mode="w", compression=ZIP_DEFLATED)  # need at least python 3.7 for: compresslevel=9
+        except OSError:
+            self.doError(_("Error: Cannot create Archive!"), secondary=_("The ZIP file seems to open in another program."))
+            return
         self._archiveAdd(zf, self.getBooks(files=True))
         if self.diglotView is not None:
             self.diglotView._archiveAdd(zf, self.getBooks(files=True))
