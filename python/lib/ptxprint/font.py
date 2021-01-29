@@ -43,6 +43,7 @@ def parseFeatString(featstring):
 class TTFontCache:
     def __init__(self, nofclist=False):
         self.cache = {}
+        self.fccache = {}
         self.fontpaths = []
         self.busy = False
         if nofclist:
@@ -77,6 +78,7 @@ class TTFontCache:
             for n in names:
                 for s in styles:
                     self.cache.setdefault(n, {})[s] = path
+        self.fccache = {k: v.copy() for k,v in self.cache.items()}
         self.busy = False
 
     def stylefilter(self, styles):
@@ -116,7 +118,10 @@ class TTFontCache:
             theseitems = list(c.items())
             for k, v in theseitems:
                 if "/" not in os.path.relpath(v, path).replace("\\", "/"):
-                    del c[k]
+                    if f not in self.fccache or k not in self.fccache[f]:
+                        del c[k]
+                    else:
+                        c[k] = self.fccache[f][k]
             if not len(c):
                 del self.cache[f]
 
@@ -410,9 +415,11 @@ class TTFont:
             res = super(TTFont, cls).__new__(cls)
         return res
 
-    def __init__(self, name, style="", filename=None):
+    def __init__(self, name, style=None, filename=None):
         if hasattr(self, 'family'):     # already init from cache
             return
+        if style is None:
+            style = ""
         self.extrastyles = ""
         self.family = name
         self.style = style

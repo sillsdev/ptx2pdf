@@ -281,15 +281,16 @@
   \x@\let\x@\th@cl@ss\csname note-\cl@ss\endcsname % make \th@cl@ss be a synonym for the current note class
   % if the noteclass has content to output ...
   \ifvoid\th@cl@ss\else
-    \iff@rstnote\kern-\lastd@pth\vfil % ignore depth of body text; fill space
-      \vskip\AboveNoteSpace\else\vskip\InterNoteSpace\fi
-    \iff@rstnote{\footnoterule}\global\f@rstnotefalse\fi % output rule before first note
+    \iff@rstnote\vfil %\kern-\lastd@pth\vfil % ignore depth of body text; fill space
+      \vskip\AboveNoteSpace
+      {\footnoterule}\global\f@rstnotefalse % output rule before first note
+    \else\vskip\InterNoteSpace\fi
     {\maken@tepara{\th@cl@ss}{#1}}%
   \fi}
 
 \newif\iff@rstnote
 \f@rstnotetrue
-\def\footnoterule{\kern-0.5\AboveNoteSpace\kern-.4pt % the \hrule is .4pt high
+\def\footnoterule{\kern-0.5\AboveNoteSpace
   \setn@tewidth{-}%
   \dimen0=\n@tewidth
   \ifdiglot\else
@@ -298,7 +299,7 @@
   \toks0=\everypar\everypar={}\parskip=0pt\baselineskip=0pt\parindent=0pt\let\par=\endgraf\parfillskip=0pt%
 %  \noindent\hbox{\noindent\kern\columnshift\vbox{\hrule width \dimen0}}\par
   \hbox{\ifdiglot\else\kern\columnshift\fi
-    \vrule height 0.4pt width \dimen0}\kern0pt%
+    \vrule height 0.4pt width \dimen0}\kern-.4pt % the \hrule is .4pt high
     \kern0.5\AboveNoteSpace%This was commented out, without it the line was going through through some callers
 \everypar=\toks0}
 
