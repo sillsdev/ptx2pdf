@@ -352,6 +352,8 @@ class Usfm:
             # if done:
                 # print("{} -> {}".format(e, "".join(res)))
             return sfm.Text("".join(res), e.pos, e.parent) if done else e
+        if self.doc is None or not len(self.doc):
+               return            
         self._proctext(fn, doc=doc)
 
     def calc_PToffsets(self):

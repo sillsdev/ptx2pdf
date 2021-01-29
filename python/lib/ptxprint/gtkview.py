@@ -1427,7 +1427,6 @@ class GtkViewModel(ViewModel):
     def getFontNameFace(self, btnid, noStyles=False, noFeats=False):
         btn = self.builder.get_object(btnid)
         f = self.get(btnid)
-        print(f"getFontNameFace: {btnid} {f}")
         lb = self.builder.get_object("tv_fontFamily")
         ls = lb.get_model()
         dialog = self.builder.get_object("dlg_fontChooser")
@@ -1683,6 +1682,25 @@ class GtkViewModel(ViewModel):
             chs = int(chaps.get(str(bk), 999))
             strt = int(float(self.get("s_chapfrom")))
             self._setChapRange("to", strt, chs, 0)
+
+    def _setNoteSpacingRange(self, fromTo, minimum, maximum, value):
+        initSpace = int(float(self.get('s_notespacing'+fromTo)))
+        spacing = self.builder.get_object('s_notespacing'+fromTo)
+        spacing.set_range(minimum, maximum)
+        if value:
+            spacing.set_value(value if value in range(minimum, maximum) else (minimum if fromTo == "min" else maximum))
+        else:
+            spacing.set_value(initSpace if initSpace in range(minimum, maximum) else (minimum if fromTo == "min" else initSpace + 4))
+
+    def onNoteSpacingChanged(self, btn):
+        if self.loadingConfig:
+            return
+        strt = int(float(self.get("s_notespacingmin"))) + 4
+        self._setNoteSpacingRange("max", strt, 40, 0)
+
+    def onstyColorClicked(seld, btn):
+        # Need to ask if the colour option should be activated (if not already on)
+        pass
 
     def configName(self):
         cfg = self.pendingConfig or self.get("ecb_savedConfig") or ""

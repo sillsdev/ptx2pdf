@@ -277,6 +277,9 @@ ModelMap = {
     "notes/fnlinespacing":      ("s_fnlinespacing", lambda w,v: "{:.3f}".format(float(v))),
     "notes/internotespace":     ("s_internote", lambda w,v: "{:.3f}".format(float(v))),
 
+    "notes/horiznotespacemin":  ("s_notespacingmin", lambda w,v: "{:.3f}".format(float(v))),
+    "notes/horiznotespacemax":  ("s_notespacingmax", lambda w,v: "{:.3f}".format(float(v))),
+
     "document/fontregular":              ("bl_fontR", lambda w,v: v.asTeXFont() if v else ""),
     "document/fontbold":                 ("bl_fontB", lambda w,v: v.asTeXFont() if v else ""),
     "document/fontitalic":               ("bl_fontI", lambda w,v: v.asTeXFont() if v else ""),
@@ -600,6 +603,13 @@ class TexModel:
                         res.append(r"\catcode`\@=12")
                     else:
                         res.append(r"% No special/missing characters specified for fallback font")
+                elif l.startswith(r"%\horiznotespacing"):
+                    mins = float(self.dict["notes/horiznotespacemin"])
+                    maxs = float(self.dict["notes/horiznotespacemax"])
+                    tgts = mins + ((maxs - mins) / 3)
+                    minus = tgts - mins
+                    plus = maxs - tgts
+                    res.append(r"%\NoteSpace={:.3f}pt plus {:.3f}pt minus {:.3f}pt".format(tgts, plus, minus))
                 elif l.startswith(r"%\optimizepoetry"):
                     bks = self.dict["document/clabelbooks"]
                     if self.dict["document/ifchaplabels"] == "%" and len(bks):

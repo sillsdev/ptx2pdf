@@ -853,7 +853,6 @@ class PicInfo(dict):
                 continue
             newk = filt(f['src']) if filt is not None else f['src']
             newfigs.setdefault(newk, []).append(k)
-        print(self.srchlist)
         for srchdir in self.srchlist:
             if srchdir is None or not os.path.exists(srchdir):
                 continue

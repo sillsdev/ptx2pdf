@@ -314,8 +314,6 @@ class StyleEditorView(StyleEditor):
                 if v[0].startswith("c_"):
                     val = val != v[2]
                     oldval = oldval != v[2]
-            if (isinstance(val, str) and val.endswith("pt")) or (isinstance(oldval, str) and oldval.endswith("pt")):
-                print("pt value!", k, val, oldval)
             self._setFieldVal(v, oldval, val)
 
         stype = data.get('StyleType', old.get('StyleType', ''))

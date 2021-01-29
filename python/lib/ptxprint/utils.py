@@ -14,7 +14,6 @@ def setup_i18n():
     if sys.platform.startswith('win'):
         if os.getenv('LANG') is None:
             lang, enc = locale.getdefaultlocale()
-            print("lang:, enc:", lang, enc)
             os.environ['LANG'] = lang
         else:
             lang = os.getenv('LANG')
