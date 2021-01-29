@@ -428,6 +428,7 @@ class TTFont:
         else:
             fname = fontcache.get(name, style)
             self.filename = Path(os.path.abspath(fname)) if fname is not None else None
+        print(name, style, self.filename)
         self.feats = {}
         self.featvals = {}
         self.names = {}

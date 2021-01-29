@@ -88,6 +88,8 @@ class StyleEditor:
             fn = self.registers.get(self.marker, {}).get(key.lower(), None)
             if fn is not None:
                 fn(key, val)
+        elif key in self.sheet.get(self.marker, {}):
+            del self.sheet[self.marker][key]
 
     def _eq_val(self, a, b, key=""):
         if key.lower() in absolutes:

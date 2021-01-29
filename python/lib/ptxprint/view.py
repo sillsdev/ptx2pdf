@@ -960,30 +960,31 @@ class ViewModel:
             for k, v in borders.items():
                 if self.get(k):
                     fname = getattr(self, v)
-                    print(k, v, fname)
-                    if fname is not None:
-                        res[fname.as_posix()] = "shared/ptxprint/"+fname.name
+                    # print(k, v, fname)
+                    if fname is None: continue
+                    res[fname.as_posix()] = "shared/ptxprint/"+fname.name
 
         # fonts
         for k, v in TexModel._fonts.items():
             if v[1] is None or self.get(v[1]):
                 font_info = self.get(v[0])
+                if font_info is None: continue
                 f = font_info.getTtfont()
-                if f.filename is not None:
-                    fname = os.path.basename(f.filename)
-                    res[f.filename] = "shared/fonts/"+fname
+                if f.filename is None: continue
+                fname = os.path.basename(f.filename)
+                res[f.filename] = "shared/fonts/"+fname
+                
         for k, v in self.styleEditor.sheet.items():
             font_info = v.get(' font', self.styleEditor.basesheet.get(k, {}).get(' font', None))
             if font_info is not None:
                 f = font_info.getTtfont()
-                if f.filename is not None:
-                    fname = os.path.basename(f.filename)
-                    res[f.filename] = "shared/fonts/"+fname
+                if f.filename is None: continue
+                fname = os.path.basename(f.filename)
+                res[f.filename] = "shared/fonts/"+fname
 
         # config files
         for t, a in sfiles.items():
-            if isinstance(t, str) and not self.get(t):
-                continue
+            if isinstance(t, str) and not self.get(t): continue
             if a[1]:
                 s = os.path.join(basecfpath, a[0])
                 d = cfpath + a[0]
