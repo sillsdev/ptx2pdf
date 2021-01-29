@@ -34,8 +34,8 @@ hminl-h      H  yuminl.ttf %!PS YuMincho-Light
 hminl-v      V  yuminl.ttf %!PS YuMincho-Light
 hminr-h      H  yumin.ttf %!PS YuMincho-Regular
 hminr-v      V  yumin.ttf %!PS YuMincho-Regular
-hminb-h      H  yumindb.ttf %!PS YuMincho-DemiBold
-hminb-v      V  yumindb.ttf %!PS YuMincho-DemiBold
+hminb-h      H  yumindb.ttf %!PS YuMincho-Demibold
+hminb-v      V  yumindb.ttf %!PS YuMincho-Demibold
 hgothr-h     H  :0:YuGothR.ttc %!PS YuGothic-Regular
 hgothr-v     V  :0:YuGothR.ttc %!PS YuGothic-Regular
 hgothb-h     H  :0:YuGothB.ttc %!PS YuGothic-Bold
@@ -50,8 +50,8 @@ hminln-h     H  yuminl.ttf %!PS YuMincho-Light
 hminln-v     V  yuminl.ttf %!PS YuMincho-Light
 hminrn-h     H  yumin.ttf %!PS YuMincho-Regular
 hminrn-v     V  yumin.ttf %!PS YuMincho-Regular
-hminbn-h     H  yumindb.ttf %!PS YuMincho-DemiBold
-hminbn-v     V  yumindb.ttf %!PS YuMincho-DemiBold
+hminbn-h     H  yumindb.ttf %!PS YuMincho-Demibold
+hminbn-v     V  yumindb.ttf %!PS YuMincho-Demibold
 hgothrn-h    H  :0:YuGothR.ttc %!PS YuGothic-Regular
 hgothrn-v    V  :0:YuGothR.ttc %!PS YuGothic-Regular
 hgothbn-h    H  :0:YuGothB.ttc %!PS YuGothic-Bold
@@ -62,28 +62,28 @@ hmgothrn-h   H  :0:YuGothB.ttc %!PS YuGothic-Bold
 hmgothrn-v   V  :0:YuGothB.ttc %!PS YuGothic-Bold
 
 % CID
-otf-cjml-h   Identity-H  yuminl.ttf/AJ16 %!PS YuMincho-Light
-otf-cjml-v   Identity-V  yuminl.ttf/AJ16 %!PS YuMincho-Light
-otf-cjmr-h   Identity-H  yumin.ttf/AJ16 %!PS YuMincho-Regular
-otf-cjmr-v   Identity-V  yumin.ttf/AJ16 %!PS YuMincho-Regular
-otf-cjmb-h   Identity-H  yumindb.ttf/AJ16 %!PS YuMincho-DemiBold
-otf-cjmb-v   Identity-V  yumindb.ttf/AJ16 %!PS YuMincho-DemiBold
-otf-cjgr-h   Identity-H  :0:YuGothR.ttc/AJ16 %!PS YuGothic-Regular
-otf-cjgr-v   Identity-V  :0:YuGothR.ttc/AJ16 %!PS YuGothic-Regular
-otf-cjgb-h   Identity-H  :0:YuGothB.ttc/AJ16 %!PS YuGothic-Bold
-otf-cjgb-v   Identity-V  :0:YuGothB.ttc/AJ16 %!PS YuGothic-Bold
-otf-cjge-h   Identity-H  :0:YuGothB.ttc/AJ16 %!PS YuGothic-Bold
-otf-cjge-v   Identity-V  :0:YuGothB.ttc/AJ16 %!PS YuGothic-Bold
-otf-cjmgr-h  Identity-H  :0:YuGothB.ttc/AJ16 %!PS YuGothic-Bold
-otf-cjmgr-v  Identity-V  :0:YuGothB.ttc/AJ16 %!PS YuGothic-Bold
+otf-cjml-h   Identity-H  yuminl.ttf/AJ1 %!PS YuMincho-Light
+otf-cjml-v   Identity-V  yuminl.ttf/AJ1 %!PS YuMincho-Light
+otf-cjmr-h   Identity-H  yumin.ttf/AJ1 %!PS YuMincho-Regular
+otf-cjmr-v   Identity-V  yumin.ttf/AJ1 %!PS YuMincho-Regular
+otf-cjmb-h   Identity-H  yumindb.ttf/AJ1 %!PS YuMincho-Demibold
+otf-cjmb-v   Identity-V  yumindb.ttf/AJ1 %!PS YuMincho-Demibold
+otf-cjgr-h   Identity-H  :0:YuGothR.ttc/AJ1 %!PS YuGothic-Regular
+otf-cjgr-v   Identity-V  :0:YuGothR.ttc/AJ1 %!PS YuGothic-Regular
+otf-cjgb-h   Identity-H  :0:YuGothB.ttc/AJ1 %!PS YuGothic-Bold
+otf-cjgb-v   Identity-V  :0:YuGothB.ttc/AJ1 %!PS YuGothic-Bold
+otf-cjge-h   Identity-H  :0:YuGothB.ttc/AJ1 %!PS YuGothic-Bold
+otf-cjge-v   Identity-V  :0:YuGothB.ttc/AJ1 %!PS YuGothic-Bold
+otf-cjmgr-h  Identity-H  :0:YuGothB.ttc/AJ1 %!PS YuGothic-Bold
+otf-cjmgr-v  Identity-V  :0:YuGothB.ttc/AJ1 %!PS YuGothic-Bold
 
 % Unicode 90JIS
 otf-ujml-h   UniJIS-UTF16-H  yuminl.ttf %!PS YuMincho-Light
 otf-ujml-v   UniJIS-UTF16-V  yuminl.ttf %!PS YuMincho-Light
 otf-ujmr-h   UniJIS-UTF16-H  yumin.ttf %!PS YuMincho-Regular
 otf-ujmr-v   UniJIS-UTF16-V  yumin.ttf %!PS YuMincho-Regular
-otf-ujmb-h   UniJIS-UTF16-H  yumindb.ttf %!PS YuMincho-DemiBold
-otf-ujmb-v   UniJIS-UTF16-V  yumindb.ttf %!PS YuMincho-DemiBold
+otf-ujmb-h   UniJIS-UTF16-H  yumindb.ttf %!PS YuMincho-Demibold
+otf-ujmb-v   UniJIS-UTF16-V  yumindb.ttf %!PS YuMincho-Demibold
 otf-ujgr-h   UniJIS-UTF16-H  :0:YuGothR.ttc %!PS YuGothic-Regular
 otf-ujgr-v   UniJIS-UTF16-V  :0:YuGothR.ttc %!PS YuGothic-Regular
 otf-ujgb-h   UniJIS-UTF16-H  :0:YuGothB.ttc %!PS YuGothic-Bold
@@ -98,8 +98,8 @@ otf-ujmln-h  UniJIS2004-UTF16-H  yuminl.ttf %!PS YuMincho-Light
 otf-ujmln-v  UniJIS2004-UTF16-V  yuminl.ttf %!PS YuMincho-Light
 otf-ujmrn-h  UniJIS2004-UTF16-H  yumin.ttf %!PS YuMincho-Regular
 otf-ujmrn-v  UniJIS2004-UTF16-V  yumin.ttf %!PS YuMincho-Regular
-otf-ujmbn-h  UniJIS2004-UTF16-H  yumindb.ttf %!PS YuMincho-DemiBold
-otf-ujmbn-v  UniJIS2004-UTF16-V  yumindb.ttf %!PS YuMincho-DemiBold
+otf-ujmbn-h  UniJIS2004-UTF16-H  yumindb.ttf %!PS YuMincho-Demibold
+otf-ujmbn-v  UniJIS2004-UTF16-V  yumindb.ttf %!PS YuMincho-Demibold
 otf-ujgrn-h  UniJIS2004-UTF16-H  :0:YuGothR.ttc %!PS YuGothic-Regular
 otf-ujgrn-v  UniJIS2004-UTF16-V  :0:YuGothR.ttc %!PS YuGothic-Regular
 otf-ujgbn-h  UniJIS2004-UTF16-H  :0:YuGothB.ttc %!PS YuGothic-Bold
@@ -116,8 +116,8 @@ uphminl-h    UniJIS-UTF16-H  yuminl.ttf %!PS YuMincho-Light
 uphminl-v    UniJIS-UTF16-V  yuminl.ttf %!PS YuMincho-Light
 uphminr-h    UniJIS-UTF16-H  yumin.ttf %!PS YuMincho-Regular
 uphminr-v    UniJIS-UTF16-V  yumin.ttf %!PS YuMincho-Regular
-uphminb-h    UniJIS-UTF16-H  yumindb.ttf %!PS YuMincho-DemiBold
-uphminb-v    UniJIS-UTF16-V  yumindb.ttf %!PS YuMincho-DemiBold
+uphminb-h    UniJIS-UTF16-H  yumindb.ttf %!PS YuMincho-Demibold
+uphminb-v    UniJIS-UTF16-V  yumindb.ttf %!PS YuMincho-Demibold
 uphgothr-h   UniJIS-UTF16-H  :0:YuGothR.ttc %!PS YuGothic-Regular
 uphgothr-v   UniJIS-UTF16-V  :0:YuGothR.ttc %!PS YuGothic-Regular
 uphgothb-h   UniJIS-UTF16-H  :0:YuGothB.ttc %!PS YuGothic-Bold
@@ -132,8 +132,8 @@ uphminln-h    UniJIS2004-UTF16-H  yuminl.ttf %!PS YuMincho-Light
 uphminln-v    UniJIS2004-UTF16-V  yuminl.ttf %!PS YuMincho-Light
 uphminrn-h    UniJIS2004-UTF16-H  yumin.ttf %!PS YuMincho-Regular
 uphminrn-v    UniJIS2004-UTF16-V  yumin.ttf %!PS YuMincho-Regular
-uphminbn-h    UniJIS2004-UTF16-H  yumindb.ttf %!PS YuMincho-DemiBold
-uphminbn-v    UniJIS2004-UTF16-V  yumindb.ttf %!PS YuMincho-DemiBold
+uphminbn-h    UniJIS2004-UTF16-H  yumindb.ttf %!PS YuMincho-Demibold
+uphminbn-v    UniJIS2004-UTF16-V  yumindb.ttf %!PS YuMincho-Demibold
 uphgothrn-h   UniJIS2004-UTF16-H  :0:YuGothR.ttc %!PS YuGothic-Regular
 uphgothrn-v   UniJIS2004-UTF16-V  :0:YuGothR.ttc %!PS YuGothic-Regular
 uphgothbn-h   UniJIS2004-UTF16-H  :0:YuGothB.ttc %!PS YuGothic-Bold
@@ -145,48 +145,78 @@ uphmgothrn-v  UniJIS2004-UTF16-V  :0:YuGothB.ttc %!PS YuGothic-Bold
 %
 % otf cktx
 %
-otf-utmr-h  UniCNS-UCS2-H  AdobeMingStd-Light.otf
-otf-utmr-v  UniCNS-UCS2-V  AdobeMingStd-Light.otf
-otf-utgr-h  UniCNS-UCS2-H  AdobeFanHeitiStd-Bold.otf
-otf-utgr-v  UniCNS-UCS2-V  AdobeFanHeitiStd-Bold.otf
-otf-ucmr-h  UniGB-UCS2-H   AdobeSongStd-Light.otf
-otf-ucmr-v  UniGB-UCS2-V   AdobeSongStd-Light.otf
-otf-ucgr-h  UniGB-UCS2-H   AdobeHeitiStd-Regular.otf
-otf-ucgr-v  UniGB-UCS2-V   AdobeHeitiStd-Regular.otf
-otf-ukmr-h  UniKS-UCS2-H   AdobeMyungjoStd-Medium.otf
-otf-ukmr-v  UniKS-UCS2-V   AdobeMyungjoStd-Medium.otf
-otf-ukgr-h  UniKS-UCS2-H   AdobeGothicStd-Bold.otf
-otf-ukgr-v  UniKS-UCS2-V   AdobeGothicStd-Bold.otf
+otf-utmr-h  UniCNS-UTF16-H HaranoAjiMinchoTW-Regular.otf
+otf-utmr-v  UniCNS-UTF16-V HaranoAjiMinchoTW-Regular.otf
+otf-utgr-h  UniCNS-UTF16-H HaranoAjiGothicTW-Regular.otf
+otf-utgr-v  UniCNS-UTF16-V HaranoAjiGothicTW-Regular.otf
+otf-utmb-h  UniCNS-UTF16-H HaranoAjiMinchoTW-Bold.otf
+otf-utmb-v  UniCNS-UTF16-V HaranoAjiMinchoTW-Bold.otf
+otf-utml-h  UniCNS-UTF16-H HaranoAjiMinchoTW-Light.otf
+otf-utml-v  UniCNS-UTF16-V HaranoAjiMinchoTW-Light.otf
+otf-utgb-h  UniCNS-UTF16-H HaranoAjiGothicTW-Medium.otf
+otf-utgb-v  UniCNS-UTF16-V HaranoAjiGothicTW-Medium.otf
+otf-utge-h  UniCNS-UTF16-H HaranoAjiGothicTW-Bold.otf
+otf-utge-v  UniCNS-UTF16-V HaranoAjiGothicTW-Bold.otf
+otf-utmgr-h UniCNS-UTF16-H HaranoAjiGothicTW-Heavy.otf
+otf-utmgr-v UniCNS-UTF16-V HaranoAjiGothicTW-Heavy.otf
+otf-ucmr-h  UniGB-UTF16-H  HaranoAjiMinchoCN-Regular.otf
+otf-ucmr-v  UniGB-UTF16-V  HaranoAjiMinchoCN-Regular.otf
+otf-ucgr-h  UniGB-UTF16-H  HaranoAjiGothicCN-Regular.otf
+otf-ucgr-v  UniGB-UTF16-V  HaranoAjiGothicCN-Regular.otf
+otf-ucmb-h  UniGB-UTF16-H  HaranoAjiMinchoCN-Bold.otf
+otf-ucmb-v  UniGB-UTF16-V  HaranoAjiMinchoCN-Bold.otf
+otf-ucml-h  UniGB-UTF16-H  HaranoAjiMinchoCN-Light.otf
+otf-ucml-v  UniGB-UTF16-V  HaranoAjiMinchoCN-Light.otf
+otf-ucgb-h  UniGB-UTF16-H  HaranoAjiGothicCN-Medium.otf
+otf-ucgb-v  UniGB-UTF16-V  HaranoAjiGothicCN-Medium.otf
+otf-ucge-h  UniGB-UTF16-H  HaranoAjiGothicCN-Bold.otf
+otf-ucge-v  UniGB-UTF16-V  HaranoAjiGothicCN-Bold.otf
+otf-ucmgr-h UniGB-UTF16-H  HaranoAjiGothicCN-Heavy.otf
+otf-ucmgr-v UniGB-UTF16-V  HaranoAjiGothicCN-Heavy.otf
+otf-ukmr-h  UniKS-UTF16-H  HaranoAjiMinchoK1-Regular.otf
+otf-ukmr-v  UniKS-UTF16-V  HaranoAjiMinchoK1-Regular.otf
+otf-ukgr-h  UniKS-UTF16-H  HaranoAjiGothicK1-Regular.otf
+otf-ukgr-v  UniKS-UTF16-V  HaranoAjiGothicK1-Regular.otf
+otf-ukmb-h  UniKS-UTF16-H  HaranoAjiMinchoK1-Bold.otf
+otf-ukmb-v  UniKS-UTF16-V  HaranoAjiMinchoK1-Bold.otf
+otf-ukml-h  UniKS-UTF16-H  HaranoAjiMinchoK1-Light.otf
+otf-ukml-v  UniKS-UTF16-V  HaranoAjiMinchoK1-Light.otf
+otf-ukgb-h  UniKS-UTF16-H  HaranoAjiGothicK1-Medium.otf
+otf-ukgb-v  UniKS-UTF16-V  HaranoAjiGothicK1-Medium.otf
+otf-ukge-h  UniKS-UTF16-H  HaranoAjiGothicK1-Bold.otf
+otf-ukge-v  UniKS-UTF16-V  HaranoAjiGothicK1-Bold.otf
+otf-ukmgr-h UniKS-UTF16-H  HaranoAjiGothicK1-Heavy.otf
+otf-ukmgr-v UniKS-UTF16-V  HaranoAjiGothicK1-Heavy.otf
 %
 % otf cktx (cid)
 %
-otf-ctmr-h  Identity-H     AdobeMingStd-Light.otf
-otf-ctmr-v  Identity-V     AdobeMingStd-Light.otf
-otf-ctgr-h  Identity-H     AdobeFanHeitiStd-Bold.otf
-otf-ctgr-v  Identity-V     AdobeFanHeitiStd-Bold.otf
-otf-ccmr-h  Identity-H     AdobeSongStd-Light.otf
-otf-ccmr-v  Identity-V     AdobeSongStd-Light.otf
-otf-ccgr-h  Identity-H     AdobeHeitiStd-Regular.otf
-otf-ccgr-v  Identity-V     AdobeHeitiStd-Regular.otf
-otf-ckmr-h  Identity-H     AdobeMyungjoStd-Medium.otf
-otf-ckmr-v  Identity-V     AdobeMyungjoStd-Medium.otf
-otf-ckgr-h  Identity-H     AdobeGothicStd-Bold.otf
-otf-ckgr-v  Identity-V     AdobeGothicStd-Bold.otf
+otf-ctmr-h  Identity-H     HaranoAjiMinchoTW-Regular.otf
+otf-ctmr-v  Identity-V     HaranoAjiMinchoTW-Regular.otf
+otf-ctgr-h  Identity-H     HaranoAjiGothicTW-Regular.otf
+otf-ctgr-v  Identity-V     HaranoAjiGothicTW-Regular.otf
+otf-ccmr-h  Identity-H     HaranoAjiMinchoCN-Regular.otf
+otf-ccmr-v  Identity-V     HaranoAjiMinchoCN-Regular.otf
+otf-ccgr-h  Identity-H     HaranoAjiGothicCN-Regular.otf
+otf-ccgr-v  Identity-V     HaranoAjiGothicCN-Regular.otf
+otf-ckmr-h  Identity-H     HaranoAjiMinchoK1-Regular.otf
+otf-ckmr-v  Identity-V     HaranoAjiMinchoK1-Regular.otf
+otf-ckgr-h  Identity-H     HaranoAjiGothicK1-Regular.otf
+otf-ckgr-v  Identity-V     HaranoAjiGothicK1-Regular.otf
 %
 % uptex cktx
 %
-upmsl-h     UniCNS-UTF16-H AdobeMingStd-Light.otf
-upmsl-v     UniCNS-UTF16-V AdobeMingStd-Light.otf
-upmhm-h     UniCNS-UTF16-H AdobeFanHeitiStd-Bold.otf
-upmhm-v     UniCNS-UTF16-V AdobeFanHeitiStd-Bold.otf
-upstsl-h    UniGB-UTF16-H  AdobeSongStd-Light.otf
-upstsl-v    UniGB-UTF16-V  AdobeSongStd-Light.otf
-upstht-h    UniGB-UTF16-H  AdobeHeitiStd-Regular.otf
-upstht-v    UniGB-UTF16-V  AdobeHeitiStd-Regular.otf
-uphysmjm-h  UniKS-UTF16-H  AdobeMyungjoStd-Medium.otf
-uphysmjm-v  UniKS-UTF16-V  AdobeMyungjoStd-Medium.otf
-uphygt-h    UniKS-UTF16-H  AdobeGothicStd-Bold.otf
-uphygt-v    UniKS-UTF16-V  AdobeGothicStd-Bold.otf
+upmsl-h     UniCNS-UTF16-H HaranoAjiMinchoTW-Regular.otf
+upmsl-v     UniCNS-UTF16-V HaranoAjiMinchoTW-Regular.otf
+upmhm-h     UniCNS-UTF16-H HaranoAjiGothicTW-Regular.otf
+upmhm-v     UniCNS-UTF16-V HaranoAjiGothicTW-Regular.otf
+upstsl-h    UniGB-UTF16-H  HaranoAjiMinchoCN-Regular.otf
+upstsl-v    UniGB-UTF16-V  HaranoAjiMinchoCN-Regular.otf
+upstht-h    UniGB-UTF16-H  HaranoAjiGothicCN-Regular.otf
+upstht-v    UniGB-UTF16-V  HaranoAjiGothicCN-Regular.otf
+uphysmjm-h  UniKS-UTF16-H  HaranoAjiMinchoK1-Regular.otf
+uphysmjm-v  UniKS-UTF16-V  HaranoAjiMinchoK1-Regular.otf
+uphygt-h    UniKS-UTF16-H  HaranoAjiGothicK1-Regular.otf
+uphygt-v    UniKS-UTF16-V  HaranoAjiGothicK1-Regular.otf
 %
 % utf
 %
@@ -195,10 +225,10 @@ unijmin-v     UniJIS-UTF16-V    yumin.ttf
 unijgoth-h    UniJIS-UTF16-H    :0:YuGothM.ttc
 unijgoth-v    UniJIS-UTF16-V    :0:YuGothM.ttc
 
-cidmin-h      Identity-H        yumin.ttf/AJ16
-cidmin-v      Identity-V        yumin.ttf/AJ16
-cidgoth-h     Identity-H        :0:YuGothM.ttc/AJ16
-cidgoth-v     Identity-V        :0:YuGothM.ttc/AJ16
+cidmin-h      Identity-H        yumin.ttf/AJ1
+cidmin-v      Identity-V        yumin.ttf/AJ1
+cidgoth-h     Identity-H        :0:YuGothM.ttc/AJ1
+cidgoth-v     Identity-V        :0:YuGothM.ttc/AJ1
 
 hmr           H                 yumin.ttf
 hmrv          V                 yumin.ttf

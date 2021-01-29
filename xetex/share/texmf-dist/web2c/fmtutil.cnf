@@ -28,26 +28,21 @@
 #
 # Standard formats (plain, latex) with all engines:
 #
-#tex tex - -enc tex.ini
-tex tex - -enc -translate-file=cp227.tcx tex.ini
+tex tex - tex.ini
 eplain pdftex language.dat -translate-file=cp227.tcx *eplain.ini
 luatex luatex language.def,language.dat.lua -etex luatex.ini
-luatex-plain luatex - -etex luatex-plain.ini
-harftex-plain harftex - -etex luatex-plain.ini
+luatex-plain luatex - *luatex-plain.ini
+luahbtex-plain luahbtex - *luatex-plain.ini
 dviluatex luatex language.def,language.dat.lua -etex dviluatex.ini
-lualatex luatex language.dat,language.dat.lua -etex lualatex.ini
+lualatex luahbtex language.dat,language.dat.lua -etex lualatex.ini
 dvilualatex luatex language.dat,language.dat.lua -etex dvilualatex.ini
 etex pdftex language.def -etex -translate-file=cp227.tcx etex.ini
 latex pdftex language.dat -etex -translate-file=cp227.tcx latex.ini
 xetex xetex language.def -etex xetex.ini
 xelatex xetex language.dat -etex xelatex.ini
-harftex harftex language.def,language.dat.lua -etex luatex.ini
-harflatex harftex language.dat,language.dat.lua -etex lualatex.ini
 #
 luahbtex luahbtex language.def,language.dat.lua -etex luatex.ini
-luahblatex luahbtex language.dat,language.dat.lua -etex lualatex.ini
 luajithbtex luajithbtex language.def,language.dat.lua -etex luatex.ini
-luajithblatex luajithbtex language.dat,language.dat.lua -etex lualatex.ini
 #
 pdftex pdftex language.def -etex -translate-file=cp227.tcx pdftex.ini
 pdflatex pdftex language.dat -etex -translate-file=cp227.tcx pdflatex.ini
@@ -65,8 +60,8 @@ cont-en euptex cont-usr.tex -kanji=utf8 -kanji-internal=uptex -no-guess *cont-up
 #
 # from jadetex:
 #
-#jadetex pdftex language.dat *jadetex.ini
-#pdfjadetex pdftex language.dat *pdfjadetex.ini
+# jadetex pdftex language.dat *jadetex.ini
+# pdfjadetex pdftex language.dat *pdfjadetex.ini
 #
 # from csplain:
 #
@@ -116,7 +111,6 @@ euptex euptex language.def -kanji-internal=uptex -no-guess *euptex.ini
 # luajittex
 #
 luajittex luajittex language.def,language.dat.lua -etex luatex.ini
-luajitlatex luajittex language.dat,language.dat.lua -etex lualatex.ini
 #
 # from lollipop:
 #
@@ -136,9 +130,7 @@ platex-ng ptex-ng language.dat *platex-ng.ini
 #
 latex-dev pdftex language.dat -etex -translate-file=cp227.tcx latex.ini
 pdflatex-dev pdftex language.dat -etex -translate-file=cp227.tcx pdflatex.ini
-lualatex-dev luatex language.dat,language.dat.lua -etex lualatex.ini
+lualatex-dev luahbtex language.dat,language.dat.lua -etex lualatex.ini
 xelatex-dev xetex language.dat -etex xelatex.ini
 platex-dev eptex language.dat -kanji-internal=sjis -no-guess *platex.ini
 uplatex-dev euptex language.dat -kanji-internal=uptex -no-guess *uplatex.ini
-harflatex-dev harftex language.dat,language.dat.lua -etex lualatex.ini
-luahblatex-dev luahbtex language.dat,language.dat.lua -etex lualatex.ini

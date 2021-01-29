@@ -153,48 +153,78 @@ uphmgothrn-v    UniJIS2004-UTF16-V HiraMaruProN-W4.otf
 %
 % otf cktx
 %
-otf-utmr-h  UniCNS-UCS2-H  AdobeMingStd-Light.otf
-otf-utmr-v  UniCNS-UCS2-V  AdobeMingStd-Light.otf
-otf-utgr-h  UniCNS-UCS2-H  AdobeFanHeitiStd-Bold.otf
-otf-utgr-v  UniCNS-UCS2-V  AdobeFanHeitiStd-Bold.otf
-otf-ucmr-h  UniGB-UCS2-H   AdobeSongStd-Light.otf
-otf-ucmr-v  UniGB-UCS2-V   AdobeSongStd-Light.otf
-otf-ucgr-h  UniGB-UCS2-H   AdobeHeitiStd-Regular.otf
-otf-ucgr-v  UniGB-UCS2-V   AdobeHeitiStd-Regular.otf
-otf-ukmr-h  UniKS-UCS2-H   AdobeMyungjoStd-Medium.otf
-otf-ukmr-v  UniKS-UCS2-V   AdobeMyungjoStd-Medium.otf
-otf-ukgr-h  UniKS-UCS2-H   AdobeGothicStd-Bold.otf
-otf-ukgr-v  UniKS-UCS2-V   AdobeGothicStd-Bold.otf
+otf-utmr-h  UniCNS-UTF16-H HaranoAjiMinchoTW-Regular.otf
+otf-utmr-v  UniCNS-UTF16-V HaranoAjiMinchoTW-Regular.otf
+otf-utgr-h  UniCNS-UTF16-H HaranoAjiGothicTW-Regular.otf
+otf-utgr-v  UniCNS-UTF16-V HaranoAjiGothicTW-Regular.otf
+otf-utmb-h  UniCNS-UTF16-H HaranoAjiMinchoTW-Bold.otf
+otf-utmb-v  UniCNS-UTF16-V HaranoAjiMinchoTW-Bold.otf
+otf-utml-h  UniCNS-UTF16-H HaranoAjiMinchoTW-Light.otf
+otf-utml-v  UniCNS-UTF16-V HaranoAjiMinchoTW-Light.otf
+otf-utgb-h  UniCNS-UTF16-H HaranoAjiGothicTW-Medium.otf
+otf-utgb-v  UniCNS-UTF16-V HaranoAjiGothicTW-Medium.otf
+otf-utge-h  UniCNS-UTF16-H HaranoAjiGothicTW-Bold.otf
+otf-utge-v  UniCNS-UTF16-V HaranoAjiGothicTW-Bold.otf
+otf-utmgr-h UniCNS-UTF16-H HaranoAjiGothicTW-Heavy.otf
+otf-utmgr-v UniCNS-UTF16-V HaranoAjiGothicTW-Heavy.otf
+otf-ucmr-h  UniGB-UTF16-H  HaranoAjiMinchoCN-Regular.otf
+otf-ucmr-v  UniGB-UTF16-V  HaranoAjiMinchoCN-Regular.otf
+otf-ucgr-h  UniGB-UTF16-H  HaranoAjiGothicCN-Regular.otf
+otf-ucgr-v  UniGB-UTF16-V  HaranoAjiGothicCN-Regular.otf
+otf-ucmb-h  UniGB-UTF16-H  HaranoAjiMinchoCN-Bold.otf
+otf-ucmb-v  UniGB-UTF16-V  HaranoAjiMinchoCN-Bold.otf
+otf-ucml-h  UniGB-UTF16-H  HaranoAjiMinchoCN-Light.otf
+otf-ucml-v  UniGB-UTF16-V  HaranoAjiMinchoCN-Light.otf
+otf-ucgb-h  UniGB-UTF16-H  HaranoAjiGothicCN-Medium.otf
+otf-ucgb-v  UniGB-UTF16-V  HaranoAjiGothicCN-Medium.otf
+otf-ucge-h  UniGB-UTF16-H  HaranoAjiGothicCN-Bold.otf
+otf-ucge-v  UniGB-UTF16-V  HaranoAjiGothicCN-Bold.otf
+otf-ucmgr-h UniGB-UTF16-H  HaranoAjiGothicCN-Heavy.otf
+otf-ucmgr-v UniGB-UTF16-V  HaranoAjiGothicCN-Heavy.otf
+otf-ukmr-h  UniKS-UTF16-H  HaranoAjiMinchoK1-Regular.otf
+otf-ukmr-v  UniKS-UTF16-V  HaranoAjiMinchoK1-Regular.otf
+otf-ukgr-h  UniKS-UTF16-H  HaranoAjiGothicK1-Regular.otf
+otf-ukgr-v  UniKS-UTF16-V  HaranoAjiGothicK1-Regular.otf
+otf-ukmb-h  UniKS-UTF16-H  HaranoAjiMinchoK1-Bold.otf
+otf-ukmb-v  UniKS-UTF16-V  HaranoAjiMinchoK1-Bold.otf
+otf-ukml-h  UniKS-UTF16-H  HaranoAjiMinchoK1-Light.otf
+otf-ukml-v  UniKS-UTF16-V  HaranoAjiMinchoK1-Light.otf
+otf-ukgb-h  UniKS-UTF16-H  HaranoAjiGothicK1-Medium.otf
+otf-ukgb-v  UniKS-UTF16-V  HaranoAjiGothicK1-Medium.otf
+otf-ukge-h  UniKS-UTF16-H  HaranoAjiGothicK1-Bold.otf
+otf-ukge-v  UniKS-UTF16-V  HaranoAjiGothicK1-Bold.otf
+otf-ukmgr-h UniKS-UTF16-H  HaranoAjiGothicK1-Heavy.otf
+otf-ukmgr-v UniKS-UTF16-V  HaranoAjiGothicK1-Heavy.otf
 %
 % otf cktx (cid)
 %
-otf-ctmr-h  Identity-H     AdobeMingStd-Light.otf
-otf-ctmr-v  Identity-V     AdobeMingStd-Light.otf
-otf-ctgr-h  Identity-H     AdobeFanHeitiStd-Bold.otf
-otf-ctgr-v  Identity-V     AdobeFanHeitiStd-Bold.otf
-otf-ccmr-h  Identity-H     AdobeSongStd-Light.otf
-otf-ccmr-v  Identity-V     AdobeSongStd-Light.otf
-otf-ccgr-h  Identity-H     AdobeHeitiStd-Regular.otf
-otf-ccgr-v  Identity-V     AdobeHeitiStd-Regular.otf
-otf-ckmr-h  Identity-H     AdobeMyungjoStd-Medium.otf
-otf-ckmr-v  Identity-V     AdobeMyungjoStd-Medium.otf
-otf-ckgr-h  Identity-H     AdobeGothicStd-Bold.otf
-otf-ckgr-v  Identity-V     AdobeGothicStd-Bold.otf
+otf-ctmr-h  Identity-H     HaranoAjiMinchoTW-Regular.otf
+otf-ctmr-v  Identity-V     HaranoAjiMinchoTW-Regular.otf
+otf-ctgr-h  Identity-H     HaranoAjiGothicTW-Regular.otf
+otf-ctgr-v  Identity-V     HaranoAjiGothicTW-Regular.otf
+otf-ccmr-h  Identity-H     HaranoAjiMinchoCN-Regular.otf
+otf-ccmr-v  Identity-V     HaranoAjiMinchoCN-Regular.otf
+otf-ccgr-h  Identity-H     HaranoAjiGothicCN-Regular.otf
+otf-ccgr-v  Identity-V     HaranoAjiGothicCN-Regular.otf
+otf-ckmr-h  Identity-H     HaranoAjiMinchoK1-Regular.otf
+otf-ckmr-v  Identity-V     HaranoAjiMinchoK1-Regular.otf
+otf-ckgr-h  Identity-H     HaranoAjiGothicK1-Regular.otf
+otf-ckgr-v  Identity-V     HaranoAjiGothicK1-Regular.otf
 %
 % uptex cktx
 %
-upmsl-h     UniCNS-UTF16-H AdobeMingStd-Light.otf
-upmsl-v     UniCNS-UTF16-V AdobeMingStd-Light.otf
-upmhm-h     UniCNS-UTF16-H AdobeFanHeitiStd-Bold.otf
-upmhm-v     UniCNS-UTF16-V AdobeFanHeitiStd-Bold.otf
-upstsl-h    UniGB-UTF16-H  AdobeSongStd-Light.otf
-upstsl-v    UniGB-UTF16-V  AdobeSongStd-Light.otf
-upstht-h    UniGB-UTF16-H  AdobeHeitiStd-Regular.otf
-upstht-v    UniGB-UTF16-V  AdobeHeitiStd-Regular.otf
-uphysmjm-h  UniKS-UTF16-H  AdobeMyungjoStd-Medium.otf
-uphysmjm-v  UniKS-UTF16-V  AdobeMyungjoStd-Medium.otf
-uphygt-h    UniKS-UTF16-H  AdobeGothicStd-Bold.otf
-uphygt-v    UniKS-UTF16-V  AdobeGothicStd-Bold.otf
+upmsl-h     UniCNS-UTF16-H HaranoAjiMinchoTW-Regular.otf
+upmsl-v     UniCNS-UTF16-V HaranoAjiMinchoTW-Regular.otf
+upmhm-h     UniCNS-UTF16-H HaranoAjiGothicTW-Regular.otf
+upmhm-v     UniCNS-UTF16-V HaranoAjiGothicTW-Regular.otf
+upstsl-h    UniGB-UTF16-H  HaranoAjiMinchoCN-Regular.otf
+upstsl-v    UniGB-UTF16-V  HaranoAjiMinchoCN-Regular.otf
+upstht-h    UniGB-UTF16-H  HaranoAjiGothicCN-Regular.otf
+upstht-v    UniGB-UTF16-V  HaranoAjiGothicCN-Regular.otf
+uphysmjm-h  UniKS-UTF16-H  HaranoAjiMinchoK1-Regular.otf
+uphysmjm-v  UniKS-UTF16-V  HaranoAjiMinchoK1-Regular.otf
+uphygt-h    UniKS-UTF16-H  HaranoAjiGothicK1-Regular.otf
+uphygt-v    UniKS-UTF16-V  HaranoAjiGothicK1-Regular.otf
 %
 % utf
 %
