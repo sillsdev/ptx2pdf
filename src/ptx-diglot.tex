@@ -276,7 +276,21 @@
 \newcount\lastsavedLpenalty% The penalty for page breaks at the \n@xtpartial / new boundary
 \newcount\lastsavedRpenalty%
 \newif\ifLneedsemptying
+
 % Initial \output routine for left scripture
+\def\any@diglot@primary{%
+   \ifnum\the\outputpenalty=\dgl@tPenColSwap
+     \setf@lwgdiglotstate{\n@xtdiglotstate}%
+   \fi
+   \trace{D}{any@diglot@primary: \c@rrdiglotstate\f@lwgdiglotstate\n@xtdiglotstate}%
+   \tmppenalty=\outputpenalty %
+   \ifnum\tmppenalty=1000
+     \tmppenalty=0
+   \fi
+   \p@gestarttrue % or at least, this isn't the right place to place things that go after a paragraph
+ } 
+
+
 \def\diglotLeft{% 
  %This gets called every time that there's new material that the computer thinks
  %fills the rest of the page with text - maybe multiple times - and also on
@@ -290,7 +304,7 @@
  % Empties: \box255
  \trace{D}{diglotLeft O:\the\outputpenalty, P:\the\savedpenalty, LP:\the\lastsavedLpenalty, vs:\the\vsize,
     pg:\the\pagegoal, pt:\the\pagetotal, bs:\the\baselineskip, ilp:\the\interlinepenalty, \ifintrial INTRIAL\fi}% 
- \p@gestarttrue % or at least, this isn't the right place to place things that go after a paragraph
+ \any@diglot@primary
  \ifnum\outputpenalty=\dgl@tPenLtrialEnd\relax %Why are we here after a trial?
    \ifintrial\diglotLeftTrial\fi
  \fi
@@ -673,6 +687,9 @@
   % NB: If box255 does need to go through makevtop, then when the box is unzipped to try again,
   % the kerns would need removing somehow.
   \p@gestarttrue % or at least, this isn't the right place to place things that go after a paragraph
+  \ifnum\TRACEcount=\diglotDbgJoinboxes
+   \showbox255\showbox\galleyexc@ss\showlists
+  \fi
   \makevtop{255}
   \global\setbox\LeftBox=\vtop{\unvbox 255}
   \tmppenalty=\outputpenalty %
@@ -740,7 +757,7 @@
         \trace{D}{Box size means it moves}%
       \else 
         \ifvoid\galleyexc@ss % then consider savedpenalty
-          \ifnum\savedpenalty>9999\relax 1 
+          \ifnum\savedpenalty>9999 1 
             \trace{D}{Penalty after box means it moves}%
           \else 0 \fi
         \else 0 \fi
@@ -751,25 +768,29 @@
   \temptrue
   \ifboxmoved
     % better move it onto next page.
-    \ifnum\lastsavedLpenalty>9999 %
-      \traceNum{d}{Printing without last box to avoid bad column break on p.\the\pageno.  partial:\the\ht\partial+\the\dp\partial,\the\ht\n@xtpartial+\the\dp\n@xtpartial}%
-      \r@storenotes{}%
-      \@writep@ge
-      \diglotLtrue
-      \global\deadcycles=0
-      \global\setbox\partial=\box\n@xtpartial
-      \dglt@calc@vailht%
-      \global\trialheight=\availht
-      \TempDim=\availht 
-      \global\leftfullfalse
-      \global\setbox\trialbox=\box\voidb@x
-      \global\setbox\LeftBox=\vbox{\undog@lley}%
-      \doDiglotLeftTrial
-      \showlists
-      \tempfalse
-    \else
+    \ifdim \dimexpr \ht\partial+\dp\partial\relax = 0pt
       \TempDim=0pt
-    \fi%
+    \else
+      \ifnum\lastsavedLpenalty>9999 %
+        \traceNum{d}{Printing without last box to avoid bad column break on p.\the\pageno.  partial:\the\ht\partial+\the\dp\partial,\the\ht\n@xtpartial+\the\dp\n@xtpartial}%
+        \r@storenotes{}%
+        \@writep@ge
+        \diglotLtrue
+        \global\deadcycles=0
+        \global\setbox\partial=\box\n@xtpartial
+        \dglt@calc@vailht%
+        \global\trialheight=\availht
+        \TempDim=\availht 
+        \global\leftfullfalse
+        \global\setbox\trialbox=\box\voidb@x
+        \global\setbox\LeftBox=\vbox{\undog@lley}%
+        \doDiglotLeftTrial
+        \showlists
+        \tempfalse
+      \else
+        \TempDim=0pt
+      \fi%
+    \fi% dimexpr
     \global\setbox\partialL=\box\LeftBox
   \fi
   \iftemp %Skip this if the whole trial is being re-run
@@ -933,6 +954,9 @@
   \traceNum{D}{diglotRightTrial, \the\holdinginserts, \the\outputpenalty, 
     \the\deadcycles, Rb:\the\ht\RightBox+\the\dp\RightBox, pR:\the\ht\partialR+\the\dp\partialR,
     av:\the\availht, vs:\the\vsize, pg:\the\pagegoal}%
+  \ifnum\TRACEcount=\diglotDbgJoinboxes
+   \showbox255\showbox\galleyexc@ss\showlists
+  \fi
   \makevtop{255}%
  %\global\setbox\RightBox=\box255
  %\TRshipout{\vbox{\hbox{\the\diglotTRcount diglotRightTrial:}\copy\RightBox}}%
@@ -988,7 +1012,7 @@
   %\Rchunkpenalty has been set by caller
   %\tmppenalty contains the penalty that goes after box255
   % need to stop holding inserts
-  \trace{D}{doDiglotRightTrial RB:\the\ht\RightBox+\the\dp\RightBox, pR:(\the\ht\partialR+\the\dp\partialR) 255:(\the\ht255+\the\dp255) diglotL\ifdiglotL true\else false\fi, dig@tL\ifdigl@tL true\else false\fi}%
+  \trace{D}{doDiglotRightTrial RB:\the\ht\RightBox+\the\dp\RightBox, pR:(\the\ht\partialR+\the\dp\partialR) 255:(\the\ht255+\the\dp255) diglotL\ifdiglotL true\else false\fi, digl@tL\ifdigl@tL true\else false\fi}%
   %Set correct current state
   \global\diglotLfalse%
   \global\hsize=\columnRwidth\relax%
@@ -1038,8 +1062,7 @@
  % (traditionally they weren't)
  \ifnum\the\outputpenalty=\dgl@tPenLtrialEnd\relax\trace{d}{*** WRONG OUTPUT ROUTINE!}\fi
  \traceNum{d}{diglotRight \the\outputpenalty, \the\savedpenalty, \the\Rchunkpenalty, (\ifnum\holdinginserts=0 Not\fi holding) pg:\the\pagegoal}%
- \p@gestarttrue % or at least, this isn't the right place to place things that go after a paragraph
- \tmppenalty=\outputpenalty %
+ \any@diglot@primary
  % tempoarily split and see if there are marks in this text
  \bgroup\setbox0=\copy255 \setbox1=\vsplit0 to \maxdimen\egroup
    \edef\t@mp{\splitbotmark}
@@ -1179,7 +1202,6 @@
   \endgraf\penalty\dgl@tPenColSwap\relax
 } 
 \outer\def\lefttext{%
-  %\par\do@ndofthispar
   \pr@sideswitch{left}{L}%
   \Lneedsemptyingtrue%eh?
   \dglt@calc@vailht\relax\swapfonts{L}%sets diglotRtrue, etc
@@ -1246,9 +1268,25 @@
 \let\diglotRtrue=\diglotLfalse\relax%
 \let\digl@tRtrue=\digl@tLfalse\relax%
 \let\diglotRfalse=\diglotLtrue\relax%
+%Diglotstate.
+\def\n@xtdiglotstate{L}%What does the diglotstate become at the next \dgl@tPenColSwap penalty?
+\def\f@lwgdiglotstate{L}%What is the diglotstate of the 'recent contributions'? (i.e. next material to read)
+\def\c@rrdiglotstate{L}%What is the current diglotstate?
+\def\g@tdiglotstate{\if\c@rrdiglotstate L\else\c@rrdiglotstate\fi}% Returns "" or "R"
 
-\def\@setside#1{\global\csname diglot#1true\endcsname\global\csname digl@t#1true\endcsname}%
-\def\@@setside#1{\global\csname digl@t#1true\endcsname}%
+\def\setc@rdiglotstate#1{\gdef\c@rrdiglotstate{#1}%
+ \if#1L\global\diglotLtrue\else\global\diglotLfalse\fi%Compatability
+}
+\def\setf@lwgdiglotstate#1{\gdef\f@lwgdiglotstate{#1}%
+ \if#1L\global\digl@tLtrue\else\global\digl@tLfalse\fi%Compatability
+}
+
+\def\@setside#1{\setf@lwgdiglotstate{#1}\setc@rdiglotstate{#1}}
+
+\def\@@setside#1{\trace{D}{@@setside #1}%
+   \xdef\n@xtdiglotstate{#1}%
+   }%
+
 \def\swapfonts#1{% Because it might be desirable to set fonts appropriately.
  %Swapping fonts isn't actually needed, but do need to set
  %baselineskip and other things
