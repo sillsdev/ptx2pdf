@@ -849,11 +849,12 @@
           \global\output={\diglotLeft}\relax%
         \else%
           \global\output={\diglotRight}%
-          \global\diglotLfalse%
+          \setc@rdiglotstate{R}%
           \global\hsize=\columnRwidth
           \global\holdinginserts=1 %
           \dglt@calc@vailht%
-          \global\vsize=\availhtR%
+          \global\trialheight=\availhtR%
+          \global\vsize=\availhtR
           \traceNum{D}{Unvboxing excessR onto input stack}%
           \unvbox\excessR
           \ifnum\TRACEcount=\diglotDbgJoinboxes
@@ -986,7 +987,7 @@
          \fi
       \else
          \trace{D}{adding galleyexc@ss (\the\ht\galleyexc@ss+\the\dp\galleyexc@ss) to excessR (\the\ht\excessR+\the\dp\excessR)}%
-         \global\setbox\excessR=\vtop{\joinboxes{\galleyexc@ss}{\excessR}{3}{\Rchunkpenalty}}%
+         \global\setbox\excessR=\vtop{\joinboxes{\excessR}{\galleyexc@ss}{3}{\Rchunkpenalty}}%
          \ifnum\TRACEcount=\diglotDbgJoinboxes
             \showbox\excessR
          \fi
@@ -1016,7 +1017,7 @@
   % need to stop holding inserts
   \trace{D}{doDiglotRightTrial RB:\the\ht\RightBox+\the\dp\RightBox, pR:(\the\ht\partialR+\the\dp\partialR) 255:(\the\ht255+\the\dp255) diglotL\ifdiglotL true\else false\fi, digl@tL\ifdigl@tL true\else false\fi}%
   %Set correct current state
-  \global\diglotLfalse%
+  \setc@rdiglotstate{R}%
   \global\hsize=\columnRwidth\relax%
   \dglt@calc@vailht
   \trace{D}{av: \the\availht, tr: \the\trialheight}%
@@ -1099,7 +1100,7 @@
         \trace{D}{Unexpected holdinginserts=0}%
         \digl@tRight%
  \else%
-        \doDiglotRightTrial% FIXME - still broken?
+        \doDiglotRightTrial%
  \fi%
 }
 
@@ -1169,10 +1170,10 @@
  \ifintrial\else
    \trace{D}{Resetting output routines \ifintrial INTRIAL\fi \show@diglotstate}%
    \if\f@lwgdiglotstate L
-     \global\diglotLtrue
+     \setc@rdiglotstate{L}%
      \global\output={\diglotLeft}%
    \else
-     \global\diglotLfalse
+     \setc@rdiglotstate{R}%
      \global\output={\diglotRight}%
      \ifvoid\excessR\else
     %    \holdinginserts=1
@@ -1213,6 +1214,7 @@
   \else%
     \dglt@calc@vailht%Recalculate for this column
     \global\vsize=\availht\relax%
+    \global\trialheight=\textheight
   \fi
   %Other Left parameters
   \output={\diglotLeft}\relax%
@@ -1225,6 +1227,7 @@
   \dglt@calc@vailht\relax\swapfonts{R}%sets diglotRtrue, etc
   \dglt@calc@vailht
   \global\vsize=\availht
+  \global\trialheight=\availht
   \relax\output={\diglotRight}%
   \global\holdinginserts=1
   \the\rightho@ks
@@ -1234,6 +1237,7 @@
 % to line up nicely...
 \def\norighttext{\global\savedpenalty=\lastpenalty
   \pr@sideswitch{noright}{L}%
+  \global\trialheight=\availht
   \Lneedsemptyingtrue
   \global\diglotLtrue\global\digl@tLtrue\Lchunkpenalty=0\relax\setboth\output={\diglotLeft}%
   \global\holdinginserts=1}
@@ -1246,11 +1250,12 @@
   \swapfonts{R}%
   \dglt@calc@vailht
   \global\vsize=\availht
+  \global\trialheight=\availht
   \output={\diglotRight}%
   \global\holdinginserts=1}
 
-\def\pagenumberL{\bgroup\diglotLtrue\s@tfont{h}\pagenumber\egroup}
-\def\pagenumberR{\bgroup\diglotLfalse\s@tfont{h}\pagenumber\egroup}
+\def\pagenumberL{\bgroup\setc@rdiglotstate{L}\s@tfont{h}\pagenumber\egroup}
+\def\pagenumberR{\bgroup\setc@rdiglotstate{R}\s@tfont{h}\pagenumber\egroup}
 
 \newdimen\columnLwidth%
 \newdimen\columnRwidth%
@@ -1477,7 +1482,7 @@
       \ifvoid\excessL\else
         \traceNum{d}{Refilling non-empty partialL from excessL}%
         \pagefulltrue\leftfulltrue
-        \bgroup \diglotLtrue
+        \bgroup \setc@rdiglotstate{L}%
         \global\setbox\partialL=\vtop{\joinboxes{\partialL}{\excessL}{9}{\partialLpenalty}}%
         \egroup
         \partialLpenalty=\Lchunkpenalty %
@@ -1572,7 +1577,7 @@
             \traceNum{d}{Trying to refill right column}%
             \global\holdinginserts=0
             \global\Lneedsemptyingfalse%
-            \diglotLfalse
+            \setc@rdiglotstate{R}%
             \unvbox\RightBox%
             \ifnum\outputpenalty = 10000
               \penalty 10
@@ -1988,7 +1993,6 @@
 }
 
 \newif\ifLRf@@tnotes%
-\newif\ifs@vedL%
 \newif\ifNoteGutterRule \NoteGutterRulefalse
 \newif\ifFigGutterRule \FigGutterRulefalse
 \newif\ifJoinGutterRule \FigGutterRulefalse
@@ -1998,13 +2002,10 @@
   \global\setbox\partial=\vbox{\unvbox\partial}%
   \ifdiglotSepNotes%
     \trace{D}{Sep notes}%
-    \s@vedLfalse%
-    \ifdiglotL%
-      \s@vedLtrue%
-    \fi%
+    \let\s@veddiglotstate=\c@rrdiglotstate
     \LRf@@tnotesfalse%
     \f@rstnotetrue%
-    \diglotLtrue%
+    \setc@rdiglotstate{L}%%
     \lastd@pth=0pt 
     %Arrange Left and Right footnotes
     \global\setbox\LeftBox=\vbox{\the\leftho@ks\let\\=\ins@rtn@tecl@ss \the\n@tecl@sses}%
@@ -2015,17 +2016,14 @@
       \f@rstnotetrue%
     \fi%
     \lastd@pth=0pt 
-    \diglotLfalse%
+    \setc@rdiglotstate{R}%%
     \global\setbox\RightBox=\vbox{\the\rightho@ks\let\\=\ins@rtn@tecl@ss \the\n@tecl@sses}%
     \iff@rstnote%
       \trace{f}{No Right footnotes}%
     \else%
       \LRf@@tnotestrue%
     \fi%
-    \diglotLfalse%
-    \ifs@vedL%
-      \diglotLtrue%
-    \fi%
+    \setc@rdiglotstate{\s@veddiglotstate}%%
     \ifdiglotBalNotes%
       \trace{f}{Balanced notes}%
       \ifLRf@@tnotes%
@@ -2210,6 +2208,7 @@
   \global\availhtR=\textheight%
   \global\availhtL=\textheight%
   \global\availht=\textheight%
+  \global\vsize=\availht
   \plainoutput%
   \global\chunkDelta=0pt
   \p@gestartfalse
@@ -2220,7 +2219,7 @@
   \xdef\nextp@gefirstmark{}%
   \edef\botmark{\p@gebotmark}%
   \let\firstmark\empty
-  \ifdigl@tL\diglotLtrue\else\diglotLfalse\fi
+  \setc@rdiglotstate{\f@lwgdiglotstate}%Reset things
   \xdef\p@gebotmark{}%
   \xdef\firstLmark{}
   \xdef\botLmark{}

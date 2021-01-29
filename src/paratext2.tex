@@ -682,7 +682,7 @@
 \def\reduceavailht@para#1{
   \def\cl@sss{#1}%
   \ifdiglot\ifdiglotSepNotes\ifdiglotL\def\cl@sss{#1}\else\def\cl@sss{#1R}\fi\fi\fi%
-  \TRACE{class \cl@sss}%
+  \trace{n}{class \cl@sss}%
   \x@\let\x@\th@cl@ss\csname note-\cl@sss\endcsname
   \ifvoid\th@cl@ss\else
     \setbox0=\copy\th@cl@ss
