@@ -278,11 +278,11 @@
 \newif\ifLneedsemptying
 
 % Initial \output routine for left scripture
-\def\any@diglot@primary{%
+\def\diglot@any@primary{%
    \ifnum\the\outputpenalty=\dgl@tPenColSwap
      \setf@lwgdiglotstate{\n@xtdiglotstate}%
    \fi
-   \trace{D}{any@diglot@primary: \c@rrdiglotstate\f@lwgdiglotstate\n@xtdiglotstate}%
+   \trace{D}{diglot@any@primary: \c@rrdiglotstate\f@lwgdiglotstate\n@xtdiglotstate}%
    \tmppenalty=\outputpenalty %
    \ifnum\tmppenalty=1000
      \tmppenalty=0
@@ -304,7 +304,7 @@
  % Empties: \box255
  \trace{D}{diglotLeft O:\the\outputpenalty, P:\the\savedpenalty, LP:\the\lastsavedLpenalty, vs:\the\vsize,
     pg:\the\pagegoal, pt:\the\pagetotal, bs:\the\baselineskip, ilp:\the\interlinepenalty, \ifintrial INTRIAL\fi}% 
- \any@diglot@primary
+ \diglot@any@primary
  \ifnum\outputpenalty=\dgl@tPenLtrialEnd\relax %Why are we here after a trial?
    \ifintrial\diglotLeftTrial\fi
  \fi
@@ -591,7 +591,9 @@
     \global\trialfailedfalse
     \global\output={\diglot@any@trial}%calls \whichtrial on success
     \unvcopy\galley %process
-    %\showlists
+    \ifnum\pageno>100
+      \showlists
+    \fi
     %\showbox\galleyexc@ss
   \else 
     \vsize=\textheight
@@ -768,8 +770,8 @@
   \temptrue
   \ifboxmoved
     % better move it onto next page.
-    \ifdim \dimexpr \ht\partial+\dp\partial\relax = 0pt
-      \TempDim=0pt
+    \ifdim 0pt=\dimexpr \ht\partial+\dp\partial\relax 
+      \TempDim=0pt % no point printing partial
     \else
       \ifnum\lastsavedLpenalty>9999 %
         \traceNum{d}{Printing without last box to avoid bad column break on p.\the\pageno.  partial:\the\ht\partial+\the\dp\partial,\the\ht\n@xtpartial+\the\dp\n@xtpartial}%
@@ -1062,7 +1064,7 @@
  % (traditionally they weren't)
  \ifnum\the\outputpenalty=\dgl@tPenLtrialEnd\relax\trace{d}{*** WRONG OUTPUT ROUTINE!}\fi
  \traceNum{d}{diglotRight \the\outputpenalty, \the\savedpenalty, \the\Rchunkpenalty, (\ifnum\holdinginserts=0 Not\fi holding) pg:\the\pagegoal}%
- \any@diglot@primary
+ \diglot@any@primary
  % tempoarily split and see if there are marks in this text
  \bgroup\setbox0=\copy255 \setbox1=\vsplit0 to \maxdimen\egroup
    \edef\t@mp{\splitbotmark}
@@ -1281,7 +1283,7 @@
  \if#1L\global\digl@tLtrue\else\global\digl@tLfalse\fi%Compatability
 }
 
-\def\@setside#1{\setf@lwgdiglotstate{#1}\setc@rdiglotstate{#1}}
+\def\@setside#1{\setf@lwgdiglotstate{#1}\setc@rdiglotstate{#1}\xdef\n@xtdiglotstate{#1}}
 
 \def\@@setside#1{\trace{D}{@@setside #1}%
    \xdef\n@xtdiglotstate{#1}%
