@@ -269,7 +269,7 @@
   \x@\let\x@\th@cl@ss\csname note-\cl@ss\endcsname % make \th@cl@ss be a synonym for the current note class
   % if the noteclass has content to output ...
   \ifvoid\th@cl@ss\TRACE{no note}\else%
-    \iff@rstnote\kern-\lastd@pth\vfil\fi % ignore depth of body text; fill space
+    \iff@rstnote\kern-\lastd@pth\iflastpage\else\vfil\fi\fi % ignore depth of body text; fill space
     \vskip\AboveNoteSpace % output above note class space
     \iff@rstnote\footnoterule\global\f@rstnotefalse\fi % output rule before first note
     \hbox{\hskip\columnshift \vbox{\unvbox\th@cl@ss}}\fi}% output notes
@@ -281,7 +281,7 @@
   \x@\let\x@\th@cl@ss\csname note-\cl@ss\endcsname % make \th@cl@ss be a synonym for the current note class
   % if the noteclass has content to output ...
   \ifvoid\th@cl@ss\else
-    \iff@rstnote\vfil %\kern-\lastd@pth\vfil % ignore depth of body text; fill space
+    \iff@rstnote\iflastpage\else\vfil\fi %\kern-\lastd@pth\vfil % ignore depth of body text; fill space
       \vskip\AboveNoteSpace
       {\footnoterule}\global\f@rstnotefalse % output rule before first note
     \else\vskip\InterNoteSpace\fi
@@ -457,6 +457,7 @@
       \trace{b}{BALANCE pangeoutins: cols=1: text=\the\ht\colA, \the\dp\colA: partial=\the\ht\partial, \the\dp\partial: topins=\the\ht\topins: bottomins=\the\ht\bottomins}
       \ifvoid\partial\else \vbox{\hbox to \dimen1{\hskip\columnshift\vbox{\unvbox\partial}}} \fi
       \ifvoid\topins\else \vbox{\hbox to \columnshift{}\box\topins} \vskip\skip\topins \fi
+      \iflastpage\setbox\colA=\vbox{\unvbox\colA}
       \lastd@pth=\dp\colA
       \hbox to \dimen1{\hbox to \columnshift{}%
         \box\colA\hbox to \ExtraRMargin{}\hfil}%
@@ -467,7 +468,7 @@
       \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2 \space Leaving \the\ht255, \the\dp255}%
       \ifdim\ht2<0pt\trace{b}{Strange notes height}\fi
       \unvbox2
-      \ifvoid\verybottomins\else % \kern-\dimen0
+      \ifvoid\verybottomins\else\vfil % \kern-\dimen0
         \lastd@pth=0pt \vskip\skip\verybottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\verybottomins}}\fi
     }
 %-c_onecoltrial_pagecontents
@@ -1090,6 +1091,8 @@
       \ifvoid\partial\else %\msg{2colout partial: \the\ht\partial}\hskip\columnshift
         \vbox{\hbox to \dimen1{\hskip\columnshift\vbox{\unvbox\partial}}}\fi % output partial page
       \ifvoid\topins\else \hbox{\hbox to \columnshift{}\box\topins} \vskip\skip\topins \fi % output top spanning pictures
+      \iflastpage\setbox\colA={\unvbox\colA}\setbox\colB={\unvbox\colB}
+        \ifdim\ht\colA>\ht\colB\ht\colB=\ht\colA\else\ht\colA=\ht\colB\fi\fi
       \trace{p}{Text depth = \the\dimen3}%\showthe\lastd@pth
       \hbox to \dimen1{\hbox to \columnshift{}%
         \ifRTL \hbox to \ExtraRMargin{}\box\colB\makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}\box\colA
@@ -1101,7 +1104,7 @@
       \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2}%
       \unvbox2
       \global\noteseenfalse%
-      \ifvoid\verybottomins\else%
+      \ifvoid\verybottomins\else\vfil
         \kern-\lastd@pth \lastd@pth=0pt \vskip\skip\verybottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\verybottomins}}\fi % ouput bottom spanning picture
     }
     \global\setbox255=\box\voidb@x                                          %(+)

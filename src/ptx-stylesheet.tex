@@ -887,6 +887,7 @@
 %-csty_stylesheet
 
 \newif\iflastptxfile
+\newif\iflastpage
 \newdimen\origb@selineskip %Save the initial baselineskip here
 
 
@@ -978,6 +979,7 @@
  \openadjlist "\the\AdjListPath#1.adj"
  \openpiclist "\the\PicListPath#1.piclist"
  \openpicpages "\jobname.picpages"
+ \lastpagefalse
  \prepusfm
  \openin\t@stread="\the\PtxFilePath#1"
    \ifeof\t@stread \def\n@xt{\MSG{USFM file "\the\PtxFilePath#1" not found -- ignored}}
@@ -994,6 +996,7 @@
  \iflastptxfile\closepiclist\fi
  \closeadjlist
  \unprepusfm
+ \lastpagetrue
  \singlecolumn\iflastptxfile\csname bookend-final\endcsname\fi\bookendpagebreak
  %\ifendbooknoeject\else\global\output={\global\setbox255=\box\voidb@x}\eject\xdef\p@gefirstmark{}\setbox\partial=\box\voidb@x\fi
  \ifendbooknoeject\else\global\output={\shipout\vbox{\box\partial\box255}}\eject\xdef\p@gefirstmark{}\setbox\partial=\box\voidb@x\fi
