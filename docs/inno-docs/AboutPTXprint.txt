@@ -4,9 +4,9 @@ PTXprint - AboutPTXprint.txt
 
 PTXprint is a GUI for the extended macros from PTX2PDF which is a XeTeX based macro package for typesetting USFM formatted (Paratext output) scripture files.
 PTXprint is 64-bit software and will NOT run on 32-bit versions of Windows.
-It requires Paratext 8 (or later) to be installed.
+It is recommended to be used with Paratext 8 (or later), but can work even if Paratext isn't installed.
 
-Please use "New Issue" button in the GitHub Issue Tracking System (https://github.com/sillsdev/ptx2pdf/issues) to report any bugs, or suggestions for improvement.
+Please use "New Issue" button in the GitHub Issue Tracking System (https://github.com/sillsdev/ptx2pdf/issues) to report any bugs, or suggestions for improvement. There is also a Scripture Software Community page dedicated to PTXprint (https://community.scripture.software.sil.org/c/ptxprint/27) where you can get assistance from other PTXprint users.
 
 Commandline options are also available to run without the UI:
 
