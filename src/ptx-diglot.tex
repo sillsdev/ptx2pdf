@@ -68,7 +68,9 @@
 \def\p@gebotmark{}
 
 \newif\ifVisTrace% Show lines where boxes are joined
+\newif\ifVisTraceExtra %Do VisTrace even in places where this breaks the layout.
 \VisTracefalse%
+\VisTraceExtrafalse%
 %\def\doTRACEdiglot#1{\global\advance\diglotTRcount by 1 \MSG{\the\diglotTRcount: #1}}%
 %\def\noTRACEdiglot#1{\relax}%
 %\let\TRACEdiglot=\noTRACEdiglot%
@@ -170,6 +172,9 @@
 \def\doVisTrace#1{%
   \setbox0=\vtop to 0pt{\hrule height 0pt depth 0.5pt width 15pt\hbox{\VisTracefont #1 \the\TRACEcount}\vss}\ht0=0pt\dp0=0pt
 }
+\def\doVisTraceT#1{%
+  \setbox0=\vbox to 0pt{\vss\hbox{\VisTracefont #1 \the\TRACEcount}\hrule height 0pt depth 0.5pt width 15pt}\ht0=0pt\dp0=0pt
+}
 
 \diglotfalse%
 \newif\ifdiglotSepNotes %If the footnotes from the versions should be split (true) or merged together
@@ -200,11 +205,7 @@
 
 % Not the same as \c@lcavailht from paratext2.tex
 \def\dglt@calc@vailht{%
-   \ifdiglotL%
-     \trace{D}{dglt@calc@vailht L}%
-   \else%
-     \trace{D}{dglt@calc@vailht R}%
-   \fi%
+   \trace{D}{dglt@calc@vailht \c@rrdiglotstate}%
    \global\availht=\textheight %
    \global\advance\availht by \adjustp@ge % Panic measure..
    \global\advance\availht by -\ht\partial %
@@ -247,11 +248,7 @@
    \fi%
    \decr{\availht}{\bottomins}%
    \decr{\availht}{\verybottomins}%
-   \ifdiglotL%
-     \global\availhtL=\availht %
-   \else%
-     \global\availhtR=\availht %
-   \fi%
+   \x@\global\x@\csname availht\c@rrdiglotstate\endcsname=\availht
    \trace{D}{final:\the\availht}%
 }
 \newif\ifnastybox  % Signal that box must be treated specially
@@ -277,12 +274,13 @@
 \newcount\lastsavedRpenalty%
 \newif\ifLneedsemptying
 
+\def\show@diglotstate{\c@rrdiglotstate\f@lwgdiglotstate\n@xtdiglotstate}%
 % Initial \output routine for left scripture
 \def\diglot@any@primary{%
    \ifnum\the\outputpenalty=\dgl@tPenColSwap
      \setf@lwgdiglotstate{\n@xtdiglotstate}%
    \fi
-   \trace{D}{diglot@any@primary: \c@rrdiglotstate\f@lwgdiglotstate\n@xtdiglotstate}%
+   \trace{D}{diglot@any@primary: \show@diglotstate}%
    \tmppenalty=\outputpenalty %
    \ifnum\tmppenalty=1000
      \tmppenalty=0
@@ -549,7 +547,7 @@
 
 \def\undog@lley{%
   \unvbox\galley\count255=\lastpenalty\unpenalty
-  \ifVisTrace\hbox to 0pt{\doVisTrace{t \the\ht\galleyexc@ss}\box0\hss}\fi
+  \ifVisTraceExtra\hbox to 0pt{\doVisTrace{t \the\ht\galleyexc@ss}\box0\hss}\fi
   \traceNum{D}{removed penalty \the\count255, replacing with \the\galleypenalty}\penalty\galleypenalty
   \unvbox\galleyexc@ss
 }
@@ -755,6 +753,7 @@
       \global\leftfulltrue
   \fi
   \ifnum 1= 
+    \ifdim\TempDim<2\baselineskip
       \ifdim\TempDim<-1.5\baselineskip 1
         \trace{D}{Box size means it moves}%
       \else 
@@ -764,6 +763,7 @@
           \else 0 \fi
         \else 0 \fi
       \fi
+    \else 0 \fi
     \boxmovedtrue%
     \global\leftfulltrue
   \fi
@@ -1040,7 +1040,7 @@
   \global\savedpenalty=\tmppenalty %
   \endgraf
   \ifvoid\partialR
-    \global\setbox\galley\vbox{\ifVisTrace
+    \global\setbox\galley\vbox{\ifVisTraceExtra
       \setbox0\vtop{\hbox to 0pt{\hss\doVisTrace{r}\box0}}%
       \nointerlineskip
       \ht0=0pt\dp0=0pt{\baselineskip=0pt\box0}%
@@ -1167,23 +1167,23 @@
  \fi
  \trace{D}{Back in digl@tRight:\the\availht,diglotL\ifdiglotL true\else false\fi, dig@tL\ifdigl@tL true\else false\fi}%
  \ifintrial\else
-   \trace{D}{Resetting output routines}%
-   \ifdigl@tL
+   \trace{D}{Resetting output routines \ifintrial INTRIAL\fi \show@diglotstate}%
+   \if\f@lwgdiglotstate L
      \global\diglotLtrue
      \global\output={\diglotLeft}%
    \else
-      \global\diglotLfalse
-     %\global\output={\diglotRight}%
+     \global\diglotLfalse
+     \global\output={\diglotRight}%
      \ifvoid\excessR\else
     %    \holdinginserts=1
-        \trace{d}{Moving excessR (\the\ht\excessR+\the\dp\excessR) into partialR}%
-        \global\output={\diglotRight}%
-        \vsize=\textheight
-        %\showbox\partialR
-        %\showbox\excessR
-        %\redoRcoloktrue
-        \global\setbox\partialR\box\excessR
-        %\showlists
+       \trace{d}{Moving excessR (\the\ht\excessR+\the\dp\excessR) into partialR}%
+       \global\output={\diglotRight}%
+       \vsize=\textheight
+       %\showbox\partialR
+       %\showbox\excessR
+       %\redoRcoloktrue
+       \global\setbox\partialR\box\excessR
+       %\showlists
      \fi
    \fi
  \fi
@@ -1667,14 +1667,15 @@
  \global\setbox#1=\vtop{\unvbox#1\ifdim\dp2=0pt\ifdim\TempDim=0pt\else\kern-\TempDim\fi\fi}}%\egroup}%
 
 \def\joinboxes#1#2#3#4{%Join 2 vtops together and preserve baselineskip%
- \traceNum{d}{joinboxes #1(\the\ht#1+\the\dp#1) #2 called from locn #3}%
+ \traceNum{d}{joinboxes #1(\the\ht#1+\the\dp#1x\the\wd#1) #2 called from locn #3}%
  \ifnum\TRACEcount=\diglotDbgJoinboxes
    \showbox#1\showbox#2
  \fi\relax
  %\bgroup
  %\ifnum#3=10\showbox#1\fi%
- \ifdim\ht#1=0pt \ifdim\dp#1=0pt \ifdim\wd0=0pt \setbox0=\box#1\fi\fi\fi
+ \ifdim\ht#1=0pt \ifdim\dp#1=0pt \ifdim\wd#1=0pt \setbox0=\box#1\fi\fi\fi%make a 0 size box void
  \ifvoid#1%
+   \trace{D}{#1 is void}%
  \else%
    \s@tbaseline{p}%
    \unvbox#1
@@ -1694,9 +1695,11 @@
      \fi%
    \fi
    \ifvoid#2\else
-     \dimen3=\baselineskip
-     \advance\dimen3 by -\topskip
-     \vskip \dimen3
+     \ifdim\ht#2=0pt 
+       \dimen3=\baselineskip
+       \advance\dimen3 by -\topskip
+       \vskip \dimen3
+     \fi
    \fi
    \ifVisTrace
   %   \hrule\kern -0.4pt
@@ -1768,7 +1771,11 @@
   %
   \traceNum{d}{Adding to page: LB:\the\ht\LeftBox+\the\dp\LeftBox\space RB:\the\ht\RightBox+\the\dp\RightBox\space Last Delta:\the\chunkDelta}%\space Tot:\the\cumulativeDelta%
   \ifVisTrace
-    \doVisTrace{L}% sets box0, used ~43 lines below
+    \ifdim\ht\LeftBox>0pt
+      \doVisTraceT{L}% sets box0, used ~43 lines below
+    \else
+      \doVisTrace{L}% sets box0, used ~43 lines below
+    \fi
   \fi
   \thisjointDelta=0pt %Do we need extra space
   \ifdim\dp\LeftBox>0.3\baselineskip \ifdim\chunkDelta<0pt
