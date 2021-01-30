@@ -213,11 +213,6 @@ _signals = {
     'row-activated': ("TreeView",),
 }
 
-_styleLinks = {
-    "updateFnFontSize": (("f", "FontSize"),),
-    "updateFnLineSpacing": (("f", "Baseline"), ("f", "LineSpacing")),
-}
-
 def _doError(text, secondary, title, copy2clip=False):
     dialog = Gtk.MessageDialog(parent=None, message_type=Gtk.MessageType.ERROR,
              buttons=Gtk.ButtonsType.OK, text=text)
@@ -366,9 +361,6 @@ class GtkViewModel(ViewModel):
                                    self.builder.get_object('tv_picListEdit1'), self.builder, self)
         self.picChecksView = PicChecks(self)
         self.styleEditor = StyleEditorView(self)
-        for k, v in _styleLinks.items():
-            for a in v:
-                self.styleEditor.registerFn(a[0], a[1], getattr(self, k))
 
         self.mw = self.builder.get_object("ptxprint")
         self.experimental = None
@@ -816,14 +808,14 @@ class GtkViewModel(ViewModel):
     def colourTabs(self):
         col = "#688ACC"
         ic = " color='"+col+"'" if self.get("c_includeillustrations") else ""
-        self.builder.get_object("lb_Pictures").set_markup("<span{}>"+_("Pictures")+"</span>".format(ic))
+        self.builder.get_object("lb_Pictures").set_markup("<span{}>".format(ic)+_("Pictures")+"</span>")
 
         dc = " color='"+col+"'" if self.get("c_diglot") else ""
         bc = " color='"+col+"'" if self.get("c_borders") else ""
-        self.builder.get_object("lb_DiglotBorder").set_markup("<span{}>"+_("Diglot")+"</span>+<span{}>"+_("Border")+"</span>".format(dc,bc))
+        self.builder.get_object("lb_DiglotBorder").set_markup("<span{}>".format(dc)+_("Diglot")+"</span>+<span{}>".format(bc)+_("Border")+"</span>")
 
         tc = " color='"+col+"'" if self.get("c_thumbtabs") else ""
-        self.builder.get_object("lb_Tabs").set_markup("<span{}>"+_("Tabs")+"</span>".format(tc))
+        self.builder.get_object("lb_Tabs").set_markup("<span{}>".format(tc)+_("Tabs")+"</span>")
 
     def sensiVisible(self, k, focus=False, state=None):
         if state is None:

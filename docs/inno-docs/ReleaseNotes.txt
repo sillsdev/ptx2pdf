@@ -1,14 +1,30 @@
-PTXprint 1.5.8.4 Release Notes 
-28 January 2021
+PTXprint 1.5.9 Release Notes 
+30 January 2021
+
+Bug Fixes and Improvements in 1.5.9
+
+  * Ensure settings are actually reset when reverting to default values in Style editor
+  
+  * Allow horizontal spacing between Notes (and cross-references) to be specified with min+max values
+  
+  * Close up gao between main body text and footnotes
+  
+  * Updated to TeX Live 2020 (on Windows)
+  
+  * Fixed bug of losing fonts when a project is changed
+  
+  * Make "Create Archive..." more robust (skips over any missing files)
+  
+  * 
 
 Bug Fixes and Improvements in 1.5.8.4
 
   * Localization of UI is now available through Crowdin - contributions welcome! https://crowdin.com/project/ptxprint
     (aiming to release several languages for ver 1.6)
 	
-  * Fixed #349,351 Verse numbers missing or too large in certain situations
+  * Fixed #349,#351 Verse numbers missing or too large in certain situations
   
-  * Fixed #342,354 Base Paragraph Indent value reverting to 1.0 after restart
+  * Fixed #342,#354 Base Paragraph Indent value reverting to 1.0 after restart
   
   * Fixed bug on adding a first picture
   

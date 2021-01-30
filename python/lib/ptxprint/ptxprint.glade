@@ -133,20 +133,6 @@ THE SOFTWARE.
     <property name="step_increment">1</property>
     <property name="page_increment">5</property>
   </object>
-  <object class="GtkAdjustment" id="a_fnfontsize">
-    <property name="lower">2</property>
-    <property name="upper">30</property>
-    <property name="value">10</property>
-    <property name="step_increment">0.10000000000000001</property>
-    <property name="page_increment">1</property>
-  </object>
-  <object class="GtkAdjustment" id="a_fnlinespacing">
-    <property name="lower">2</property>
-    <property name="upper">50</property>
-    <property name="value">12</property>
-    <property name="step_increment">0.10000000000000001</property>
-    <property name="page_increment">1</property>
-  </object>
   <object class="GtkAdjustment" id="a_fontsize">
     <property name="lower">2</property>
     <property name="upper">36</property>
@@ -630,7 +616,7 @@ Description):</property>
     <property name="type_hint">dialog</property>
     <property name="gravity">center</property>
     <property name="program_name">PTXprint</property>
-    <property name="version">Version 1.5.8</property>
+    <property name="version">Version 1.5.9</property>
     <property name="copyright">© 2020-2021, SIL International</property>
     <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
 the User-Interface. The PDFs are produced by enhanced 
@@ -7119,19 +7105,49 @@ and Illustrations.</property>
                                                 <property name="orientation">vertical</property>
                                                 <property name="homogeneous">True</property>
                                                 <child>
-                                                  <object class="GtkCheckButton" id="c_fnparagraphednotes">
-                                                    <property name="label" translatable="yes">Use Paragraphed Footnotes</property>
+                                                  <object class="GtkBox">
                                                     <property name="visible">True</property>
-                                                    <property name="can_focus">True</property>
-                                                    <property name="receives_default">False</property>
-                                                    <property name="tooltip_text" translatable="yes">Rather than starting each footnote on a different line,
+                                                    <property name="can_focus">False</property>
+                                                    <child>
+                                                      <object class="GtkCheckButton" id="c_fnparagraphednotes">
+                                                        <property name="label" translatable="yes">Use Paragraphed Footnotes</property>
+                                                        <property name="visible">True</property>
+                                                        <property name="can_focus">True</property>
+                                                        <property name="receives_default">False</property>
+                                                        <property name="tooltip_text" translatable="yes">Rather than starting each footnote on a different line,
 place footnotes one after the other (with space between)
 to form a paragraph.</property>
-                                                    <property name="halign">start</property>
-                                                    <property name="margin_top">2</property>
-                                                    <property name="margin_bottom">6</property>
-                                                    <property name="active">True</property>
-                                                    <property name="draw_indicator">True</property>
+                                                        <property name="halign">start</property>
+                                                        <property name="margin_top">2</property>
+                                                        <property name="margin_bottom">6</property>
+                                                        <property name="active">True</property>
+                                                        <property name="draw_indicator">True</property>
+                                                      </object>
+                                                      <packing>
+                                                        <property name="expand">False</property>
+                                                        <property name="fill">True</property>
+                                                        <property name="position">0</property>
+                                                      </packing>
+                                                    </child>
+                                                    <child>
+                                                      <object class="GtkLinkButton" id="lb_style_f">
+                                                        <property name="label" translatable="yes">\f</property>
+                                                        <property name="visible">True</property>
+                                                        <property name="can_focus">True</property>
+                                                        <property name="focus_on_click">False</property>
+                                                        <property name="receives_default">True</property>
+                                                        <property name="halign">end</property>
+                                                        <property name="hexpand">True</property>
+                                                        <property name="relief">none</property>
+                                                        <property name="uri">Click to edit the Footnote properties on the Styles tab</property>
+                                                        <signal name="activate-link" handler="onEditStyleClicked" swapped="no"/>
+                                                      </object>
+                                                      <packing>
+                                                        <property name="expand">False</property>
+                                                        <property name="fill">True</property>
+                                                        <property name="position">1</property>
+                                                      </packing>
+                                                    </child>
                                                   </object>
                                                   <packing>
                                                     <property name="expand">False</property>
@@ -7355,18 +7371,48 @@ Print a second time before it applies.</property>
                                                 <property name="orientation">vertical</property>
                                                 <property name="homogeneous">True</property>
                                                 <child>
-                                                  <object class="GtkCheckButton" id="c_paragraphedxrefs">
-                                                    <property name="label" translatable="yes">Use Paragraphed Cross-References</property>
+                                                  <object class="GtkBox">
                                                     <property name="visible">True</property>
-                                                    <property name="can_focus">True</property>
-                                                    <property name="receives_default">False</property>
-                                                    <property name="tooltip_text" translatable="yes">Rather than starting each cross-reference on a 
+                                                    <property name="can_focus">False</property>
+                                                    <child>
+                                                      <object class="GtkCheckButton" id="c_paragraphedxrefs">
+                                                        <property name="label" translatable="yes">Use Paragraphed Cross-References</property>
+                                                        <property name="visible">True</property>
+                                                        <property name="can_focus">True</property>
+                                                        <property name="receives_default">False</property>
+                                                        <property name="tooltip_text" translatable="yes">Rather than starting each cross-reference on a 
 different line, place cross-references one after
 the other (with space between) to form a paragraph.</property>
-                                                    <property name="halign">start</property>
-                                                    <property name="margin_bottom">6</property>
-                                                    <property name="active">True</property>
-                                                    <property name="draw_indicator">True</property>
+                                                        <property name="halign">start</property>
+                                                        <property name="margin_bottom">6</property>
+                                                        <property name="active">True</property>
+                                                        <property name="draw_indicator">True</property>
+                                                      </object>
+                                                      <packing>
+                                                        <property name="expand">False</property>
+                                                        <property name="fill">True</property>
+                                                        <property name="position">0</property>
+                                                      </packing>
+                                                    </child>
+                                                    <child>
+                                                      <object class="GtkLinkButton" id="lb_style_x">
+                                                        <property name="label" translatable="yes">\x</property>
+                                                        <property name="visible">True</property>
+                                                        <property name="can_focus">True</property>
+                                                        <property name="focus_on_click">False</property>
+                                                        <property name="receives_default">True</property>
+                                                        <property name="halign">end</property>
+                                                        <property name="hexpand">True</property>
+                                                        <property name="relief">none</property>
+                                                        <property name="uri">Click to edit the Cross-Reference properties on the Styles tab</property>
+                                                        <signal name="activate-link" handler="onEditStyleClicked" swapped="no"/>
+                                                      </object>
+                                                      <packing>
+                                                        <property name="expand">False</property>
+                                                        <property name="fill">True</property>
+                                                        <property name="position">1</property>
+                                                      </packing>
+                                                    </child>
                                                   </object>
                                                   <packing>
                                                     <property name="expand">False</property>
@@ -7732,111 +7778,6 @@ of the page.</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkLabel">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="tooltip_text" translatable="yes">The font size (pts) for text in the Notes area.
-This applies to both Footnotes as well as 
-Cross-References.
-
-If you require each to use different 
-font sizes, then this can be achieved 
-by adjusting their appropriate Styles.</property>
-                                        <property name="halign">end</property>
-                                        <property name="label" translatable="yes">Font Size:</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">4</property>
-                                        <property name="top_attach">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkSpinButton" id="s_fnfontsize">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="tooltip_text" translatable="yes">The font size (pts) for text in the Notes area.
-This applies to both Footnotes as well as 
-Cross-References.
-
-If you require each to use different 
-font sizes, then this can be achieved 
-by adjusting their appropriate Styles.</property>
-                                        <property name="halign">end</property>
-                                        <property name="valign">center</property>
-                                        <property name="text">10.0</property>
-                                        <property name="caps_lock_warning">False</property>
-                                        <property name="progress_pulse_step">0</property>
-                                        <property name="placeholder_text">0.0</property>
-                                        <property name="input_purpose">number</property>
-                                        <property name="adjustment">a_fnfontsize</property>
-                                        <property name="climb_rate">0.10000000000000001</property>
-                                        <property name="digits">1</property>
-                                        <property name="numeric">True</property>
-                                        <property name="update_policy">if-valid</property>
-                                        <property name="value">10</property>
-                                        <signal name="value-changed" handler="onFnFontSizeChanged" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">5</property>
-                                        <property name="top_attach">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkLabel">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="tooltip_text" translatable="yes">Line spacing in points (pts).
-Change to increase or decrease
-space between lines of text in
-the notes area. This applies to both
-footnotes as well as cross-references.
-
-If you require each to use different 
-line-spacing, then this can be achieved 
-by adjusting their appropriate Styles.</property>
-                                        <property name="halign">end</property>
-                                        <property name="margin_left">6</property>
-                                        <property name="label" translatable="yes">Line Spacing:</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">4</property>
-                                        <property name="top_attach">1</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkSpinButton" id="s_fnlinespacing">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="tooltip_text" translatable="yes">Line spacing in points (pts).
-Change to increase or decrease
-space between lines of text in
-the notes area. This applies to both
-footnotes as well as cross-references.
-
-If you require each to use different 
-line-spacing, then this can be achieved 
-by adjusting their appropriate Styles.</property>
-                                        <property name="halign">end</property>
-                                        <property name="valign">center</property>
-                                        <property name="text">12.0</property>
-                                        <property name="caps_lock_warning">False</property>
-                                        <property name="progress_pulse_step">0</property>
-                                        <property name="placeholder_text">0.0</property>
-                                        <property name="input_purpose">number</property>
-                                        <property name="adjustment">a_fnlinespacing</property>
-                                        <property name="climb_rate">0.10000000000000001</property>
-                                        <property name="digits">1</property>
-                                        <property name="numeric">True</property>
-                                        <property name="update_policy">if-valid</property>
-                                        <property name="value">12</property>
-                                        <signal name="value-changed" handler="onFnLineSpacingChanged" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">5</property>
-                                        <property name="top_attach">1</property>
-                                      </packing>
-                                    </child>
-                                    <child>
                                       <object class="GtkCheckButton" id="c_firstOccurenceOnly">
                                         <property name="label" translatable="yes">Show First Occurence
 for Each Glossary Entry</property>
@@ -7899,6 +7840,18 @@ so that they don't get split across lines.</property>
                                         <property name="top_attach">2</property>
                                         <property name="width">2</property>
                                       </packing>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
                                     </child>
                                   </object>
                                   <packing>
