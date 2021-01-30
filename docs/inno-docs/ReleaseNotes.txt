@@ -1,7 +1,7 @@
 PTXprint 1.5.9 Release Notes 
 30 January 2021
 
-Bug Fixes and Improvements in 1.5.9
+Bug Fixes and Improvements in 1.5.9 (RC for ver 1.6)
 
   * Ensure settings are actually reset when reverting to default values in Style editor
   
