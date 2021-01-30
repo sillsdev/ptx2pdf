@@ -1169,6 +1169,20 @@ class GtkViewModel(ViewModel):
         # If there is a matching digit style for the script that has just been set, 
         # then also turn that on (but it can be overridden by the user if needed).
         self.fcb_digits.set_active_id(self.get('fcb_script'))
+        script = self.get("fcb_script")
+        if script is not None:
+            gclass = getattr(scriptsnippets, script.lower(), None)
+        else:
+            gclass = None
+        if gclass is None or gclass.dialogstruct is None:
+            state = False
+        else:
+            state = True
+        for w in ["l_complexScript", "b_scrsettings"]:
+            wid = self.builder.get_object(w)
+            if wid is not None:
+                wid.set_sensitive(state)
+        
 
     def onFontChanged(self, fbtn):
         # traceback.print_stack(limit=3)
