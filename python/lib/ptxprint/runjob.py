@@ -104,8 +104,6 @@ _diglot = {
 "diglot/fontitalic" :       "document/fontitalic",
 "diglot/fontbolditalic" :   "document/fontbolditalic",
 "diglot/ifshowversenums" :  "document/ifshowversenums",
-"diglot/fnfontsize" :       "notes/fnfontsize",
-"diglot/fnlinespacing" :    "notes/fnlinespacing",
 "diglot/ifblendfnxr" :      "notes/ifblendfnxr",
 "diglotfancy/versedecorator":       "fancy/versedecorator",
 "diglotfancy/versedecoratorpdf":    "fancy/versedecoratorpdf",

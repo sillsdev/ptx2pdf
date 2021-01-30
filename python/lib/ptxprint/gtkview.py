@@ -164,7 +164,8 @@ _object_classes = {
     "mainnb":      ("nbk_Main", ),
     "viewernb":    ("nbk_Viewer", "nbk_PicList"),
     "thumbtabs":   ("l_thumbVerticalL", "l_thumbVerticalR", "l_thumbHorizontalL", "l_thumbHorizontalR"),
-    "stylinks":    ("lb_style_s", "lb_style_r", "lb_style_v", "lb_style_rb", "lb_style_gloss|rb", "lb_style_toc3"), 
+    "stylinks":    ("lb_style_s", "lb_style_r", "lb_style_v", "lb_style_f", "lb_style_x", 
+                    "lb_style_rb", "lb_style_gloss|rb", "lb_style_toc3"), 
     "stybutton":   ("btn_reloadConfig", "btn_resetCopyright", "btn_resetColophon", "btn_resetFNcallers", "btn_resetXRcallers", 
                     "btn_styAdd", "btn_styEdit", "btn_styDel", "btn_styReset", "btn_refreshFonts", "btn_resetStyFilter")
 }
@@ -391,7 +392,7 @@ class GtkViewModel(ViewModel):
         css = """
             .printbutton:active { background-color: chartreuse; background-image: None }
             .fontbutton {font-size: smaller}
-            .stylinks {text-decoration: None; padding: 1px 1px}
+            .stylinks {font-weight: bold; text-decoration: None; padding: 1px 1px}
             .stybutton {font-size: 12px; padding: 4px 6px}
             progress, trough {min-height: 24px}
             .mainnb {background-color: #F0F0F0}
@@ -2489,3 +2490,10 @@ class GtkViewModel(ViewModel):
         lsp = self.builder.get_object("ls_projects")
         allprojects = [x[0] for x in lsp]
         btn.set_sensitive(not text in allprojects)
+
+    def onParagraphednotesClicked(self, btn):
+        status = self.get("c_fnparagraphednotes") or self.get("c_paragraphedxrefs")
+        for w in ["l_paragraphedNotes", "s_notespacingmin", "s_notespacingmax", "l_min", "l_max"]:
+            wid = self.builder.get_object(w)
+            if wid is not None:
+                wid.set_sensitive(status)

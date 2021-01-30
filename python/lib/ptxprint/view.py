@@ -77,9 +77,7 @@ def doError(txt, secondary=None, title=None):
         print(secondary)
 
 stylelinks = {
-    "notes/ifblendfnxr":   ("getboolean", ("x",),     "NoteBlendInto", lambda v: "f" if v else ""),
-    "notes/fnfontsize":    ("getfloat",   ("f", "x"), "FontSize",      None),
-    "notes/fnlinespacing": ("getfloat",   ("f", "x"), "BaseLine",      None)
+    "notes/ifblendfnxr":   ("getboolean", ("x",),     "NoteBlendInto", lambda v: "f" if v else "")
 } 
 
 class ViewModel:
