@@ -816,14 +816,14 @@ class GtkViewModel(ViewModel):
     def colourTabs(self):
         col = "#688ACC"
         ic = " color='"+col+"'" if self.get("c_includeillustrations") else ""
-        self.builder.get_object("lb_Pictures").set_markup("<span{}>Pictures</span>".format(ic))
+        self.builder.get_object("lb_Pictures").set_markup("<span{}>"+_("Pictures")+"</span>".format(ic))
 
         dc = " color='"+col+"'" if self.get("c_diglot") else ""
         bc = " color='"+col+"'" if self.get("c_borders") else ""
-        self.builder.get_object("lb_DiglotBorder").set_markup("<span{}>Diglot</span>+<span{}>Border</span>".format(dc,bc))
+        self.builder.get_object("lb_DiglotBorder").set_markup("<span{}>"+_("Diglot")+"</span>+<span{}>"+_("Border")+"</span>".format(dc,bc))
 
         tc = " color='"+col+"'" if self.get("c_thumbtabs") else ""
-        self.builder.get_object("lb_Tabs").set_markup("<span{}>Tabs</span>".format(tc))
+        self.builder.get_object("lb_Tabs").set_markup("<span{}>"+_("Tabs")+"</span>".format(tc))
 
     def sensiVisible(self, k, focus=False, state=None):
         if state is None:
@@ -1273,38 +1273,6 @@ class GtkViewModel(ViewModel):
         w.set_text(re.sub(" ", ",", self.ptsettings.get('crossrefs', "")))
         if w.get_text() == "":
             w.set_text("†,‡,§,∥,#")
-
-    def onFnFontSizeChanged(self, btn, *a):
-        val = float(self.get("s_fnfontsize"))
-        val = val / float(self.get("s_fontsize")) * 12.
-        try:
-            self.styleEditor.setval("f", "FontSize", val)
-            self.styleEditor.setval("x", "FontSize", val)
-        except KeyError:
-            return
-
-    def updateFnFontSize(self, key, val):
-        val = float(val) * 12. / float(self.get("s_fontsize"))
-        self.set("s_fnfontsize", val)
-
-    def onFnLineSpacingChanged(self, btn, *a):
-        val = float(self.get("s_fnlinespacing", default=15.))
-        for k in ("f", "x"):
-            try:
-                isabs = self.styleEditor.getval(k, "LineSpacing") == None
-            except KeyError:
-                return      # probably haven't fully initialised yet
-            if isabs:
-                self.styleEditor.setval(k, "Baseline", val)
-            else:
-                v = val / float(self.get("s_linespacing", default=12.))
-                self.styleEditor.setval(k, "LineSpacing", v)
-
-    def updateFnLineSpacing(self, key, val):
-        val = float(val)
-        if key.lower() == "linespacing":
-            val = val * float(self.get("s_linespacing", default=12.))
-        self.set("s_fnlinespacing", val)
 
     def onFnBlendClicked(self, btn):
         self.onSimpleClicked(btn)

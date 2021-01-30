@@ -273,8 +273,6 @@ ModelMap = {
     "notes/glossaryfootnotes":  ("c_glossaryFootnotes", None),
 
     "notes/abovenotespace":     ("s_abovenotespace", lambda w,v: "{:.3f}".format(float(v))),
-    "notes/fnfontsize":         ("s_fnfontsize", lambda w,v: "{:.3f}".format(float(v))),
-    "notes/fnlinespacing":      ("s_fnlinespacing", lambda w,v: "{:.3f}".format(float(v))),
     "notes/internotespace":     ("s_internote", lambda w,v: "{:.3f}".format(float(v))),
 
     "notes/horiznotespacemin":  ("s_notespacingmin", lambda w,v: "{:.3f}".format(float(v))),
