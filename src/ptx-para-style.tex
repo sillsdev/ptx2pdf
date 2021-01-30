@@ -148,7 +148,7 @@
   \fi
   \ifdiglot\kern\else\vskip\fi\dimen2
   \vbox{\kern\dimen0\vskip-\headingtopspace\verticalsp@ceunit
-    \trace{h}{after gridbox: skip \the\dimen2, kern \the\dimen0; baselineskip=\the\baselineskip}%
+    \trace{h}{after gridbox(\ch@pter.\v@rse): skip \the\dimen2, kern \the\dimen0; baselineskip=\the\baselineskip}%
     \unvbox0}\nobreak
 }
 
@@ -170,6 +170,7 @@
    \cl@singhooks{end}{\m@rker}%
    \trace{j}{baselineskip = \the\baselineskip, looseness = \the\looseness}%
    \endgraf
+   \ifvmode\ifinn@te\else\ifhe@dings\else\lastdepth=\prevdepth\fi\fi\fi
    \cutoutcarryover 
  \fi
  \do@ndofthispar
@@ -246,9 +247,9 @@
    %  \fi\else\tolerance=10\fi
    \p@r
    \ifvmode
-    \ifdim\prevdepth>0pt\lastdepth=\prevdepth\else\lastdepth=-1pt\fi
+    %\ifdim\prevdepth>0pt\lastdepth=\prevdepth\else\lastdepth=-1pt\fi
    \else
-     \lastdepth=0pt
+     %\lastdepth=0pt
      \ifinner\trace{s}{Inner mode at end of paragraph style \m@rker}\fi
    \fi
    \trace{C}{enditP: \the\dropped@ther@lines, \ifdr@ppednumber dropped num\fi, \pending@items}%

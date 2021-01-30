@@ -609,7 +609,7 @@ class TexModel:
                     tgts = mins + ((maxs - mins) / 3)
                     minus = tgts - mins
                     plus = maxs - tgts
-                    res.append(r"%\NoteSpace={:.3f}pt plus {:.3f}pt minus {:.3f}pt".format(tgts, plus, minus))
+                    res.append(r"\internoteskip={:.3f}pt plus {:.3f}pt minus {:.3f}pt".format(tgts, plus, minus))
                 elif l.startswith(r"%\optimizepoetry"):
                     bks = self.dict["document/clabelbooks"]
                     if self.dict["document/ifchaplabels"] == "%" and len(bks):

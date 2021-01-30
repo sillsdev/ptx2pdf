@@ -342,7 +342,7 @@
 % #1 is vbox containing notes as individual paragraphs.
 %+c_makenotepara
 \newif\ifNoteTracing \NoteTracingfalse
-\newskip\intern@teskip \intern@teskip=15pt plus 3pt minus 5pt
+\newskip\internoteskip \internoteskip=15pt plus 12pt minus 7pt
 \newskip\noteRag\noteRag=0pt plus 18pt
 \def\maken@tepara#1#2{%
   \setn@tewidth{#2}%
@@ -393,7 +393,7 @@
 % skip between notes in paragraph. skip is good place to break.
 \def\internotepenalty{-10}
 %\def\internotespace{\hfil\hskip\intern@teskip\penalty\internotepenalty\hfilneg}
-\def\internotespace{\hskip\intern@teskip\kern 0pt\penalty\internotepenalty}
+\def\internotespace{\penalty\internotepenalty\hskip\internoteskip}%\kern 0pt after \hskip, to force gap
 %\def\internotespace{\hfil\hskip\intern@teskip\penalty-10\hfilneg}
 %-c_makehboxofhboxes
 
@@ -457,7 +457,7 @@
       \trace{b}{BALANCE pangeoutins: cols=1: text=\the\ht\colA, \the\dp\colA: partial=\the\ht\partial, \the\dp\partial: topins=\the\ht\topins: bottomins=\the\ht\bottomins}
       \ifvoid\partial\else \vbox{\hbox to \dimen1{\hskip\columnshift\vbox{\unvbox\partial}}} \fi
       \ifvoid\topins\else \vbox{\hbox to \columnshift{}\box\topins} \vskip\skip\topins \fi
-      \iflastpage\setbox\colA=\vbox{\unvbox\colA}
+      \iflastpage\setbox\colA\vbox{\unvbox\colA}\fi
       \lastd@pth=\dp\colA
       \hbox to \dimen1{\hbox to \columnshift{}%
         \box\colA\hbox to \ExtraRMargin{}\hfil}%
@@ -1091,7 +1091,7 @@
       \ifvoid\partial\else %\msg{2colout partial: \the\ht\partial}\hskip\columnshift
         \vbox{\hbox to \dimen1{\hskip\columnshift\vbox{\unvbox\partial}}}\fi % output partial page
       \ifvoid\topins\else \hbox{\hbox to \columnshift{}\box\topins} \vskip\skip\topins \fi % output top spanning pictures
-      \iflastpage\setbox\colA={\unvbox\colA}\setbox\colB={\unvbox\colB}
+      \iflastpage\setbox\colA=\vbox{\unvbox\colA}\setbox\colB=\vbox{\unvbox\colB}
         \ifdim\ht\colA>\ht\colB\ht\colB=\ht\colA\else\ht\colA=\ht\colB\fi\fi
       \trace{p}{Text depth = \the\dimen3}%\showthe\lastd@pth
       \hbox to \dimen1{\hbox to \columnshift{}%
