@@ -7,7 +7,7 @@ Bug Fixes and Improvements in 1.5.9
   
   * Allow horizontal spacing between Notes (and cross-references) to be specified with min+max values
   
-  * Close up gao between main body text and footnotes
+  * Close up gap between main body text and footnotes
   
   * Updated to TeX Live 2020 (on Windows)
   
@@ -15,7 +15,7 @@ Bug Fixes and Improvements in 1.5.9
   
   * Make "Create Archive..." more robust (skips over any missing files)
   
-  * 
+  * Various refinements to underlying XeTeX macros
 
 Bug Fixes and Improvements in 1.5.8.4
 

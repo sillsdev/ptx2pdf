@@ -5018,7 +5018,7 @@ Special books and Other advanced options.</property>
                               <object class="GtkGrid">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="margin_left">12</property>
+                                <property name="margin_left">18</property>
                                 <property name="margin_top">3</property>
                                 <property name="margin_bottom">6</property>
                                 <property name="row_spacing">6</property>
@@ -14962,7 +14962,7 @@ properties for this style.</property>
                                         <property name="halign">start</property>
                                         <property name="title" translatable="yes">Text Colour</property>
                                         <property name="rgba">rgb(0,0,0)</property>
-                                        <signal name="clicked" handler="onstyColorClicked" swapped="no"/>
+                                        <signal name="color-set" handler="onstyColorSet" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left_attach">7</property>

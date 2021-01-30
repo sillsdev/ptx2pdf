@@ -1659,9 +1659,11 @@ class GtkViewModel(ViewModel):
         strt = int(float(self.get("s_notespacingmin"))) + 4
         self._setNoteSpacingRange("max", strt, 40, 0)
 
-    def onstyColorClicked(seld, btn):
-        # Need to ask if the colour option should be activated (if not already on)
-        pass
+    def onstyColorSet(self, btn):
+        col = self.get("col_styColor")
+        if col != "rgb(0,0,0)" and not self.get("c_colorfonts"):
+            self.set("c_colorfonts", True)
+            self.doError(_("'Enable Colored Text' has now been turned on.\nSee Fonts+Script tab for details."))
 
     def configName(self):
         cfg = self.pendingConfig or self.get("ecb_savedConfig") or ""
