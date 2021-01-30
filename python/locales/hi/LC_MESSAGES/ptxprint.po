@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: ptxprint\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-01-30 16:27+0700\n"
-"PO-Revision-Date: 2021-01-30 09:27\n"
+"PO-Revision-Date: 2021-01-30 09:32\n"
 "Last-Translator: \n"
 "Language-Team: Hindi\n"
 "Language: hi\n"
@@ -111,7 +111,7 @@ msgstr ""
 
 #: lib/ptxprint/gtkview.py:816
 msgid "Border"
-msgstr ""
+msgstr "सीमा"
 
 #: lib/ptxprint/gtkview.py:819 lib/ptxprint/ptxprint.glade:13686
 msgid "Tabs"
@@ -374,7 +374,7 @@ msgstr ""
 #: lib/ptxprint/ptxprint.glade:8208 lib/ptxprint/ptxprint.glade:8250
 #: lib/ptxprint/ptxprint.glade:8699
 msgid "-empty-"
-msgstr ""
+msgstr "-खाली-"
 
 #: lib/ptxprint/view.py:376
 msgid ""
@@ -603,7 +603,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:961
 msgid "Old Testament"
-msgstr ""
+msgstr "पुराना नियम"
 
 #: lib/ptxprint/ptxprint.glade:965
 msgid "Click to turn OT books on/off."
@@ -611,7 +611,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:980
 msgid "New Testament"
-msgstr ""
+msgstr "नए नियम"
 
 #: lib/ptxprint/ptxprint.glade:984
 msgid "Click to turn NT books on/off."
@@ -619,7 +619,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:999
 msgid "Deuterocanon"
-msgstr ""
+msgstr "ड्यूटेरो सिद्धांत"
 
 #: lib/ptxprint/ptxprint.glade:1003
 msgid "Click to turn DC books on/off."
@@ -627,7 +627,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:1018
 msgid "Extra Material"
-msgstr ""
+msgstr "अतिरिक्त सामग्री"
 
 #: lib/ptxprint/ptxprint.glade:1022
 msgid "Click to turn Extra books on/off."
@@ -635,7 +635,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:1048
 msgid "Reset All"
-msgstr ""
+msgstr "सब रिसेट करें"
 
 #: lib/ptxprint/ptxprint.glade:1052
 msgid "Click to turn OFF all books."
@@ -656,7 +656,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:1181
 msgid "Books:"
-msgstr ""
+msgstr "पुस्तकें:"
 
 #: lib/ptxprint/ptxprint.glade:1227
 msgid "PTXprint: Lock/Unlock Configuration"
@@ -676,11 +676,11 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:1535
 msgid "NONE"
-msgstr ""
+msgstr "कोई नहीं"
 
 #: lib/ptxprint/ptxprint.glade:1548
 msgid "All"
-msgstr ""
+msgstr "सभी"
 
 #: lib/ptxprint/ptxprint.glade:1552
 msgid "All Unknown / Unchecked"
@@ -692,7 +692,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:1560
 msgid "Approved"
-msgstr ""
+msgstr "स्वीकृत किया गया है"
 
 #: lib/ptxprint/ptxprint.glade:1574
 msgid "Single"
@@ -710,7 +710,7 @@ msgstr "डिफॉल्ट"
 #: lib/ptxprint/ptxprint.glade:1603 lib/ptxprint/ptxprint.glade:2461
 #: lib/ptxprint/ptxprint.glade:2703
 msgid "Left"
-msgstr ""
+msgstr "बाएँ"
 
 #: lib/ptxprint/ptxprint.glade:1604
 msgid "l"
@@ -729,7 +729,7 @@ msgstr ""
 #: lib/ptxprint/ptxprint.glade:1611 lib/ptxprint/ptxprint.glade:2469
 #: lib/ptxprint/ptxprint.glade:2709
 msgid "Right"
-msgstr ""
+msgstr "दाएँ"
 
 #: lib/ptxprint/ptxprint.glade:1612
 msgid "r"
@@ -754,11 +754,11 @@ msgstr ""
 #: lib/ptxprint/ptxprint.glade:1633 lib/ptxprint/ptxprint.glade:2395
 #: lib/ptxprint/ptxprint.glade:2496
 msgid "None"
-msgstr ""
+msgstr "कोई नहीं"
 
 #: lib/ptxprint/ptxprint.glade:1634
 msgid "0"
-msgstr ""
+msgstr "0"
 
 #: lib/ptxprint/ptxprint.glade:1637
 msgid "Anti-clockwise"
@@ -834,35 +834,35 @@ msgstr "कन्नड़"
 
 #: lib/ptxprint/ptxprint.glade:1721
 msgid "Khmer"
-msgstr ""
+msgstr "खमेर"
 
 #: lib/ptxprint/ptxprint.glade:1725
 msgid "Lao"
-msgstr ""
+msgstr "लाओ"
 
 #: lib/ptxprint/ptxprint.glade:1729
 msgid "Malayalam"
-msgstr ""
+msgstr "मलयालम"
 
 #: lib/ptxprint/ptxprint.glade:1733
 msgid "Oriya"
-msgstr ""
+msgstr "उड़िया"
 
 #: lib/ptxprint/ptxprint.glade:1737
 msgid "Tamil"
-msgstr ""
+msgstr "तमिल"
 
 #: lib/ptxprint/ptxprint.glade:1741
 msgid "Telugu"
-msgstr ""
+msgstr "तेलुगू"
 
 #: lib/ptxprint/ptxprint.glade:1745
 msgid "Thai"
-msgstr ""
+msgstr "थाई"
 
 #: lib/ptxprint/ptxprint.glade:1749
 msgid "Tibetan"
-msgstr ""
+msgstr "तिब्बती"
 
 #: lib/ptxprint/ptxprint.glade:1761
 msgid "Aligned at Paragraphs"
@@ -898,19 +898,19 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:1907
 msgid "Language:"
-msgstr ""
+msgstr "भाषा :"
 
 #: lib/ptxprint/ptxprint.glade:1983
 msgid "Regular"
-msgstr ""
+msgstr "नियमित"
 
 #: lib/ptxprint/ptxprint.glade:1986 lib/ptxprint/ptxprint.glade:14875
 msgid "Bold"
-msgstr ""
+msgstr "मोटा"
 
 #: lib/ptxprint/ptxprint.glade:1989 lib/ptxprint/ptxprint.glade:14890
 msgid "Italic"
-msgstr ""
+msgstr "तिरछा"
 
 #: lib/ptxprint/ptxprint.glade:1992
 msgid "Bold Italic"
@@ -1052,7 +1052,7 @@ msgstr ""
 #: lib/ptxprint/ptxprint.glade:2614 lib/ptxprint/ptxprint.glade:2634
 #: lib/ptxprint/ptxprint.glade:10759
 msgid "Unknown"
-msgstr ""
+msgstr "अज्ञात"
 
 #: lib/ptxprint/ptxprint.glade:2442 lib/ptxprint/ptxprint.glade:2597
 msgid "Culturally Appropriate"
@@ -1168,7 +1168,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:2729
 msgid "Character"
-msgstr ""
+msgstr "वर्ण"
 
 #: lib/ptxprint/ptxprint.glade:2732
 msgid "Note"
@@ -1181,10 +1181,14 @@ msgstr ""
 #: lib/ptxprint/ptxprint.glade:2775
 msgid "Left-to-Right"
 msgstr ""
+"\n"
+"    "
 
 #: lib/ptxprint/ptxprint.glade:2778
 msgid "Right-to-Left"
 msgstr ""
+"\n"
+"    "
 
 #: lib/ptxprint/ptxprint.glade:2781
 msgid "Top-to-Bottom"
@@ -1204,11 +1208,11 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:2923
 msgid "Marker:"
-msgstr ""
+msgstr "चिन्ह:"
 
 #: lib/ptxprint/ptxprint.glade:2939
 msgid "Description:"
-msgstr ""
+msgstr "विवरण:"
 
 #: lib/ptxprint/ptxprint.glade:2966
 msgid "Occurs Under:"
@@ -1224,7 +1228,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:3052
 msgid "End Marker:"
-msgstr ""
+msgstr "समापन चिन्ह:"
 
 #: lib/ptxprint/ptxprint.glade:3175
 msgid "Paratext Project:"
@@ -1300,7 +1304,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:3469
 msgid "1"
-msgstr ""
+msgstr "1"
 
 #: lib/ptxprint/ptxprint.glade:3494
 msgid "Project and Scope"
@@ -1447,7 +1451,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:3857
 msgid "License:"
-msgstr ""
+msgstr "लाइसेंस:"
 
 #: lib/ptxprint/ptxprint.glade:3868
 msgid "Select a standard License Text or type your own customized License."
@@ -1496,7 +1500,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:3927
 msgid "Basic"
-msgstr ""
+msgstr "मूल"
 
 #: lib/ptxprint/ptxprint.glade:3979
 msgid ""
@@ -1573,23 +1577,23 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:4153
 msgid "Page Size:"
-msgstr ""
+msgstr "पृष्ठ आकार:"
 
 #: lib/ptxprint/ptxprint.glade:4169
 msgid "210mm, 297mm (A4)"
-msgstr ""
+msgstr "210mm, 297mm (A4)"
 
 #: lib/ptxprint/ptxprint.glade:4170
 msgid "148mm, 210mm (A5)"
-msgstr ""
+msgstr "148mm, 210mm (A5)"
 
 #: lib/ptxprint/ptxprint.glade:4171
 msgid "8.5in, 11in (Letter)"
-msgstr ""
+msgstr "8.5in, 11in (लैटर)"
 
 #: lib/ptxprint/ptxprint.glade:4172
 msgid "5.5in, 8.5in (1/2 Letter)"
-msgstr ""
+msgstr "5.5in, 8.5in (1/2 लैटर)"
 
 #: lib/ptxprint/ptxprint.glade:4173
 msgid "5.25in, 8.25in (133x210mm)"
@@ -1640,7 +1644,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:4316
 msgid "Page Setup"
-msgstr ""
+msgstr "पृष्ठ व्यवस्था"
 
 #: lib/ptxprint/ptxprint.glade:4356 lib/ptxprint/ptxprint.glade:4403
 msgid ""
@@ -1893,7 +1897,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:4985
 msgid "Layout"
-msgstr ""
+msgstr "लेआउटस"
 
 #: lib/ptxprint/ptxprint.glade:5031
 msgid ""
@@ -2035,15 +2039,15 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:5340
 msgid "Bold:"
-msgstr ""
+msgstr "मोटा:"
 
 #: lib/ptxprint/ptxprint.glade:5352
 msgid "Italic:"
-msgstr ""
+msgstr "तिरछा:"
 
 #: lib/ptxprint/ptxprint.glade:5364
 msgid "Bold Italic:"
-msgstr ""
+msgstr "मोटा तिरछा:"
 
 #: lib/ptxprint/ptxprint.glade:5376
 msgid ""
@@ -2087,7 +2091,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:5506
 msgid "Font Configuration"
-msgstr ""
+msgstr "फ़ॉन्ट का विन्यास"
 
 #: lib/ptxprint/ptxprint.glade:5540
 msgid "Between Words"
@@ -2144,7 +2148,7 @@ msgstr ""
 #: lib/ptxprint/ptxprint.glade:5646 lib/ptxprint/ptxprint.glade:14224
 #: lib/ptxprint/ptxprint.glade:14366
 msgid "1.0"
-msgstr ""
+msgstr "1.0"
 
 #: lib/ptxprint/ptxprint.glade:5662
 msgid "5.0"
@@ -2532,7 +2536,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:6579
 msgid "Section Headings"
-msgstr ""
+msgstr "खंड के शीर्षक"
 
 #: lib/ptxprint/ptxprint.glade:6583
 msgid ""
@@ -2611,7 +2615,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:6820
 msgid "Hyphenate"
-msgstr ""
+msgstr "हाइफ़नेट"
 
 #: lib/ptxprint/ptxprint.glade:6824
 msgid ""
@@ -2654,7 +2658,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:6892
 msgid "Hyphenation"
-msgstr ""
+msgstr "हाइफ़नेशन"
 
 #: lib/ptxprint/ptxprint.glade:6918
 msgid ""
@@ -2668,7 +2672,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:6925
 msgid "Body"
-msgstr ""
+msgstr "शरीर"
 
 #: lib/ptxprint/ptxprint.glade:7004
 msgid "Use Paragraphed Footnotes"
@@ -3291,7 +3295,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:8939 lib/ptxprint/ptxprint.glade:13101
 msgid "Other"
-msgstr ""
+msgstr "अन्य"
 
 #: lib/ptxprint/ptxprint.glade:8958
 msgid ""
@@ -3521,12 +3525,12 @@ msgstr ""
 #: lib/ptxprint/ptxprint.glade:9477 lib/ptxprint/ptxprint.glade:10487
 #: lib/ptxprint/ptxprint.glade:11547
 msgid "Caption"
-msgstr ""
+msgstr "उपशीर्षक"
 
 #: lib/ptxprint/ptxprint.glade:9492 lib/ptxprint/ptxprint.glade:10502
 #: lib/ptxprint/ptxprint.glade:11562
 msgid "File"
-msgstr ""
+msgstr "फाइल"
 
 #: lib/ptxprint/ptxprint.glade:9507 lib/ptxprint/ptxprint.glade:11577
 msgid "Frame"
@@ -3550,15 +3554,15 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:9578 lib/ptxprint/ptxprint.glade:11648
 msgid "Description"
-msgstr ""
+msgstr "विवरण"
 
 #: lib/ptxprint/ptxprint.glade:9593 lib/ptxprint/ptxprint.glade:11663
 msgid "Copyright"
-msgstr ""
+msgstr "कॉपीराइट"
 
 #: lib/ptxprint/ptxprint.glade:9607 lib/ptxprint/ptxprint.glade:11677
 msgid "Media"
-msgstr ""
+msgstr "मीडिया"
 
 #: lib/ptxprint/ptxprint.glade:9636 lib/ptxprint/ptxprint.glade:10530
 msgid "Add Picture..."
@@ -3648,7 +3652,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:9861
 msgid "Caption:"
-msgstr ""
+msgstr "उपाधि:"
 
 #: lib/ptxprint/ptxprint.glade:9887
 msgid ""
@@ -3753,7 +3757,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:10256
 msgid "Print"
-msgstr ""
+msgstr "प्रिंट करें"
 
 #: lib/ptxprint/ptxprint.glade:10260
 msgid "Can be used in Print/PDF publications. "
@@ -3826,12 +3830,12 @@ msgstr ""
 #: lib/ptxprint/ptxprint.glade:10727 lib/ptxprint/ptxprint.glade:10985
 #: lib/ptxprint/ptxprint.glade:11033
 msgid "Yes"
-msgstr ""
+msgstr "हाँ"
 
 #: lib/ptxprint/ptxprint.glade:10743 lib/ptxprint/ptxprint.glade:11001
 #: lib/ptxprint/ptxprint.glade:11049
 msgid "No"
-msgstr ""
+msgstr "नहीं"
 
 #: lib/ptxprint/ptxprint.glade:10777
 msgid ""
@@ -3982,7 +3986,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:11143
 msgid "Date"
-msgstr ""
+msgstr "तिथि"
 
 #: lib/ptxprint/ptxprint.glade:11159
 msgid "Initials"
@@ -4100,11 +4104,11 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:11942
 msgid "Light"
-msgstr ""
+msgstr "हल्का"
 
 #: lib/ptxprint/ptxprint.glade:11943
 msgid "Dark"
-msgstr ""
+msgstr "अंधेरा"
 
 #: lib/ptxprint/ptxprint.glade:12037
 msgid ""
@@ -4158,7 +4162,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:12179
 msgid "start"
-msgstr ""
+msgstr "आरम्भ करें"
 
 #: lib/ptxprint/ptxprint.glade:12183
 msgid ""
@@ -4170,7 +4174,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:12200
 msgid "end"
-msgstr ""
+msgstr "अंत"
 
 #: lib/ptxprint/ptxprint.glade:12204
 msgid ""
@@ -4203,7 +4207,7 @@ msgstr ""
 #: lib/ptxprint/ptxprint.glade:12304 lib/ptxprint/ptxprint.glade:12364
 #: lib/ptxprint/ptxprint.glade:12380 lib/ptxprint/ptxprint.glade:12397
 msgid "Edit..."
-msgstr ""
+msgstr "संपादित करें..."
 
 #: lib/ptxprint/ptxprint.glade:12320
 msgid "Apply Stylesheet Overrides (ptxprint-mods.sty)"
@@ -4542,7 +4546,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:13185
 msgid "Advanced"
-msgstr ""
+msgstr "एडवांस्ड"
 
 #: lib/ptxprint/ptxprint.glade:13240
 msgid ""
@@ -4552,7 +4556,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:13243
 msgid "Log"
-msgstr ""
+msgstr "लॉग"
 
 #: lib/ptxprint/ptxprint.glade:13284 lib/ptxprint/ptxprint.glade:13405
 msgid "The length of the Thumb Tab measured in millimeters (mm)."
@@ -4753,7 +4757,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:13798
 msgid "(None)"
-msgstr ""
+msgstr "(कोई नहीं)"
 
 #: lib/ptxprint/ptxprint.glade:13837
 msgid ""
@@ -4976,11 +4980,11 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:14694
 msgid "More Info..."
-msgstr ""
+msgstr "अधिक जानकारी..."
 
 #: lib/ptxprint/ptxprint.glade:14732
 msgid "Add"
-msgstr ""
+msgstr "जोड़ें"
 
 #: lib/ptxprint/ptxprint.glade:14736
 msgid ""
@@ -4991,7 +4995,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:14746
 msgid "Del"
-msgstr ""
+msgstr "Del"
 
 #: lib/ptxprint/ptxprint.glade:14750
 msgid ""
@@ -5008,7 +5012,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:14777
 msgid "Edit"
-msgstr ""
+msgstr "संपादित करें"
 
 #: lib/ptxprint/ptxprint.glade:14781
 msgid ""
@@ -5046,11 +5050,11 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:14994
 msgid "Font:"
-msgstr ""
+msgstr "फ़ॉन्ट:"
 
 #: lib/ptxprint/ptxprint.glade:15014
 msgid "Color:"
-msgstr ""
+msgstr "रंग:"
 
 #: lib/ptxprint/ptxprint.glade:15034
 msgid ""
@@ -5300,7 +5304,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:16034
 msgid "Front Matter"
-msgstr ""
+msgstr "सामने की बात"
 
 #: lib/ptxprint/ptxprint.glade:16059
 msgid ""
@@ -5520,7 +5524,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:16677
 msgid "Help"
-msgstr ""
+msgstr "सहायता"
 
 #: lib/ptxprint/ptxprint.glade:16732
 msgid ""

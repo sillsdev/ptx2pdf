@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: ptxprint\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-01-30 16:27+0700\n"
-"PO-Revision-Date: 2021-01-30 09:27\n"
+"PO-Revision-Date: 2021-01-30 09:32\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr\n"
@@ -3432,7 +3432,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:7026
 msgid "\\f"
-msgstr ""
+msgstr "\\f"
 
 #: lib/ptxprint/ptxprint.glade:7052
 msgid "Override Footnote-Specific -/+ Settings in Text"
@@ -3596,7 +3596,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:7292
 msgid "\\x"
-msgstr ""
+msgstr "\\x"
 
 #: lib/ptxprint/ptxprint.glade:7318
 msgid "Override xRref-Specific -/+ Settings in Text"
