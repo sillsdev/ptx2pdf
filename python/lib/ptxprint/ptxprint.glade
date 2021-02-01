@@ -5011,182 +5011,6 @@ Special books and Other advanced options.</property>
                         <property name="row_spacing">6</property>
                         <property name="column_spacing">6</property>
                         <child>
-                          <object class="GtkFrame">
-                            <property name="width_request">340</property>
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="valign">start</property>
-                            <property name="margin_right">6</property>
-                            <property name="margin_bottom">6</property>
-                            <property name="label_xalign">0.039999999105930328</property>
-                            <child>
-                              <object class="GtkGrid">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="margin_left">18</property>
-                                <property name="margin_top">3</property>
-                                <property name="margin_bottom">6</property>
-                                <property name="row_spacing">6</property>
-                                <property name="column_spacing">4</property>
-                                <child>
-                                  <object class="GtkLabel" id="l_textDirection">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="halign">start</property>
-                                    <property name="label" translatable="yes">Text Flow
-Direction:</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">0</property>
-                                    <property name="top_attach">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkComboBox" id="fcb_textDirection">
-                                    <property name="width_request">140</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="tooltip_text" translatable="yes">Select the direction for the
-text to flow. Note that the
-option for "Top to Bottom"
-only supports LTR.</property>
-                                    <property name="halign">start</property>
-                                    <property name="hexpand">False</property>
-                                    <property name="model">ls_textDirection</property>
-                                    <property name="active">0</property>
-                                    <property name="id_column">0</property>
-                                    <property name="active_id">1</property>
-                                    <signal name="changed" handler="onDirectionChanged" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">1</property>
-                                    <property name="top_attach">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkLabel">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="halign">start</property>
-                                    <property name="valign">center</property>
-                                    <property name="label" translatable="yes">Text
-Script:</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">0</property>
-                                    <property name="top_attach">1</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkComboBox" id="fcb_script">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="tooltip_text" translatable="yes">In most cases XeTeX can auto-detect
-the appropriate script, so leave this
-set as "Default" unless there are
-script-specific rendering issues.</property>
-                                    <property name="resize_mode">queue</property>
-                                    <property name="model">ls_scripts</property>
-                                    <property name="wrap_width">6</property>
-                                    <property name="active">0</property>
-                                    <property name="popup_fixed_width">False</property>
-                                    <property name="id_column">1</property>
-                                    <property name="active_id">0</property>
-                                    <signal name="changed" handler="onScriptChanged" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">1</property>
-                                    <property name="top_attach">1</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkButton" id="b_scrsettings">
-                                    <property name="label" translatable="yes">Additional Script Settings...</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">True</property>
-                                    <property name="tooltip_text" translatable="yes">A small number of scripts (such as
-Burmese) have additional options
-which can be set individually.</property>
-                                    <property name="halign">start</property>
-                                    <signal name="clicked" handler="onScrSettingsClicked" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">1</property>
-                                    <property name="top_attach">2</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkLabel" id="l_digits">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="tooltip_text" translatable="yes">All known unicode-encoded number/digit systems
-are catered for. So if you don't want to use the
-Latin/Arabic numbers [0-9], you can pick the
-appropriate script here. (Make sure the font you
-are using supports these digits too.)</property>
-                                    <property name="halign">start</property>
-                                    <property name="margin_bottom">3</property>
-                                    <property name="label" translatable="yes">Script for 
-Numbers:</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">0</property>
-                                    <property name="top_attach">3</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkComboBox" id="fcb_digits">
-                                    <property name="width_request">140</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="tooltip_text" translatable="yes">All known unicode-encoded number/digit systems
-are catered for. So if you don't want to use the
-Latin/Arabic numbers [0-9], you can pick the
-appropriate script here. (Make sure the font you
-are using supports these digits too.)</property>
-                                    <property name="halign">start</property>
-                                    <property name="model">ls_digits</property>
-                                    <property name="wrap_width">3</property>
-                                    <property name="active">0</property>
-                                    <property name="popup_fixed_width">False</property>
-                                    <property name="id_column">0</property>
-                                    <property name="active_id">0</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">1</property>
-                                    <property name="top_attach">3</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkLabel" id="l_complexScript">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="halign">start</property>
-                                    <property name="label" translatable="yes">Complex
-Scripts:</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">0</property>
-                                    <property name="top_attach">2</property>
-                                  </packing>
-                                </child>
-                              </object>
-                            </child>
-                            <child type="label">
-                              <object class="GtkLabel">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="label" translatable="yes">Writing System</property>
-                              </object>
-                            </child>
-                          </object>
-                          <packing>
-                            <property name="left_attach">1</property>
-                            <property name="top_attach">1</property>
-                          </packing>
-                        </child>
-                        <child>
                           <object class="GtkFrame" id="fr_fallbackFont">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
@@ -5201,7 +5025,7 @@ Scripts:</property>
                                 <property name="margin_right">6</property>
                                 <property name="margin_top">6</property>
                                 <property name="margin_bottom">5</property>
-                                <property name="row_spacing">6</property>
+                                <property name="row_spacing">10</property>
                                 <property name="column_spacing">6</property>
                                 <child>
                                   <object class="GtkButton" id="btn_findMissingChars">
@@ -5316,7 +5140,6 @@ to ensure that they are displayed properly.</property>
                           <object class="GtkFrame" id="fr_FontConfig">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="halign">start</property>
                             <property name="margin_top">6</property>
                             <property name="margin_bottom">6</property>
                             <property name="label_xalign">0.039999999105930328</property>
@@ -5482,6 +5305,7 @@ specify \Color Red which will only take effect
 if this option is also enabled - otherwise all
 text will appear in black.</property>
                                         <property name="halign">start</property>
+                                        <property name="margin_top">6</property>
                                         <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
@@ -5519,17 +5343,237 @@ text will appear in black.</property>
                         </child>
                         <child>
                           <object class="GtkFrame">
+                            <property name="width_request">340</property>
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="margin_right">6</property>
+                            <property name="valign">start</property>
+                            <property name="margin_left">6</property>
                             <property name="margin_top">6</property>
+                            <property name="margin_bottom">6</property>
+                            <property name="label_xalign">0.039999999105930328</property>
+                            <child>
+                              <object class="GtkGrid">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="margin_left">6</property>
+                                <property name="margin_right">6</property>
+                                <property name="margin_top">3</property>
+                                <property name="margin_bottom">6</property>
+                                <property name="row_spacing">6</property>
+                                <property name="column_spacing">4</property>
+                                <child>
+                                  <object class="GtkLabel" id="l_textDirection">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="halign">start</property>
+                                    <property name="label" translatable="yes">Text Flow
+Direction:</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkComboBox" id="fcb_textDirection">
+                                    <property name="width_request">140</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="tooltip_text" translatable="yes">Select the direction for the
+text to flow. Note that the
+option for "Top to Bottom"
+only supports LTR.</property>
+                                    <property name="halign">start</property>
+                                    <property name="hexpand">False</property>
+                                    <property name="model">ls_textDirection</property>
+                                    <property name="active">0</property>
+                                    <property name="id_column">0</property>
+                                    <property name="active_id">1</property>
+                                    <signal name="changed" handler="onDirectionChanged" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="top_attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">center</property>
+                                    <property name="label" translatable="yes">Text
+Script:</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkComboBox" id="fcb_script">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="tooltip_text" translatable="yes">In most cases XeTeX can auto-detect
+the appropriate script, so leave this
+set as "Default" unless there are
+script-specific rendering issues.</property>
+                                    <property name="resize_mode">queue</property>
+                                    <property name="model">ls_scripts</property>
+                                    <property name="wrap_width">6</property>
+                                    <property name="active">0</property>
+                                    <property name="popup_fixed_width">False</property>
+                                    <property name="id_column">1</property>
+                                    <property name="active_id">0</property>
+                                    <signal name="changed" handler="onScriptChanged" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="top_attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkButton" id="b_scrsettings">
+                                    <property name="label" translatable="yes">Additional Script Settings...</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <property name="tooltip_text" translatable="yes">A small number of scripts (such as
+Burmese) have additional options
+which can be set individually.</property>
+                                    <property name="halign">start</property>
+                                    <signal name="clicked" handler="onScrSettingsClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="top_attach">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="l_digits">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="tooltip_text" translatable="yes">All known unicode-encoded number/digit systems
+are catered for. So if you don't want to use the
+Latin/Arabic numbers [0-9], you can pick the
+appropriate script here. (Make sure the font you
+are using supports these digits too.)</property>
+                                    <property name="halign">start</property>
+                                    <property name="margin_bottom">3</property>
+                                    <property name="label" translatable="yes">Script for 
+Numbers:</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkComboBox" id="fcb_digits">
+                                    <property name="width_request">140</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="tooltip_text" translatable="yes">All known unicode-encoded number/digit systems
+are catered for. So if you don't want to use the
+Latin/Arabic numbers [0-9], you can pick the
+appropriate script here. (Make sure the font you
+are using supports these digits too.)</property>
+                                    <property name="halign">start</property>
+                                    <property name="model">ls_digits</property>
+                                    <property name="wrap_width">3</property>
+                                    <property name="active">0</property>
+                                    <property name="popup_fixed_width">False</property>
+                                    <property name="id_column">0</property>
+                                    <property name="active_id">0</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="top_attach">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="l_complexScript">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="halign">start</property>
+                                    <property name="label" translatable="yes">Complex
+Scripts:</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_linebreakon">
+                                    <property name="label" translatable="yes">Specify Line
+Break Locale:</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">Some languages that use complex scripts need
+the locale to be specified for proper line-breaking.
+For example, zh for Chinese, ko for Korean, etc.
+Note that Graphite fonts can also have line breaking
+rules which can be enabled by using the gr locale.</property>
+                                    <property name="halign">end</property>
+                                    <property name="draw_indicator">True</property>
+                                    <signal name="clicked" handler="onSimpleFocusClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">4</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkEntry" id="t_linebreaklocale">
+                                    <property name="width_request">65</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="tooltip_text" translatable="yes">ja = Japanese
+km = Khmer
+ko = Korean
+my = Myanmar
+th = Thai
+zh = Chinese
+   OR
+gr = Graphite</property>
+                                    <property name="halign">start</property>
+                                    <property name="width_chars">6</property>
+                                    <property name="max_width_chars">4</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="top_attach">4</property>
+                                  </packing>
+                                </child>
+                              </object>
+                            </child>
+                            <child type="label">
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes">Writing System</property>
+                              </object>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="left_attach">1</property>
+                            <property name="top_attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkFrame" id="fr_spacingAdj">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="valign">start</property>
+                            <property name="margin_left">6</property>
                             <property name="margin_bottom">6</property>
                             <property name="label_xalign">0.039999999105930328</property>
                             <child>
                               <object class="GtkBox">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="margin_right">6</property>
                                 <property name="margin_bottom">6</property>
                                 <property name="orientation">vertical</property>
                                 <property name="spacing">11</property>
@@ -5537,6 +5581,7 @@ text will appear in black.</property>
                                   <object class="GtkGrid">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="margin_left">6</property>
                                     <property name="margin_right">6</property>
                                     <property name="row_spacing">7</property>
                                     <property name="column_spacing">6</property>
@@ -5683,7 +5728,6 @@ space width.</property>
 can grow to when necessary.</property>
                                         <property name="halign">start</property>
                                         <property name="valign">end</property>
-                                        <property name="margin_left">30</property>
                                         <property name="label" translatable="yes">Min/Shrink</property>
                                         <property name="justify">center</property>
                                         <attributes>
@@ -5703,7 +5747,6 @@ can grow to when necessary.</property>
 can grow to when necessary.</property>
                                         <property name="halign">start</property>
                                         <property name="valign">end</property>
-                                        <property name="margin_left">30</property>
                                         <property name="label" translatable="yes">Max/Stretch</property>
                                         <property name="justify">right</property>
                                         <attributes>
@@ -5796,49 +5839,6 @@ space between lines of text.</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkCheckButton" id="c_linebreakon">
-                                        <property name="label" translatable="yes">Specify Line Break Locale:</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="tooltip_text" translatable="yes">Some languages that use complex scripts need
-the locale to be specified for proper line-breaking.
-For example, zh for Chinese, ko for Korean, etc.
-Note that Graphite fonts can also have line breaking
-rules which can be enabled by using the gr locale.</property>
-                                        <property name="halign">end</property>
-                                        <property name="draw_indicator">True</property>
-                                        <signal name="clicked" handler="onSimpleFocusClicked" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">0</property>
-                                        <property name="top_attach">4</property>
-                                        <property name="width">2</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkEntry" id="t_linebreaklocale">
-                                        <property name="width_request">65</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="tooltip_text" translatable="yes">ja = Japanese
-km = Khmer
-ko = Korean
-my = Myanmar
-th = Thai
-zh = Chinese
-   OR
-gr = Graphite</property>
-                                        <property name="halign">start</property>
-                                        <property name="width_chars">6</property>
-                                        <property name="max_width_chars">4</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">2</property>
-                                        <property name="top_attach">4</property>
-                                      </packing>
-                                    </child>
-                                    <child>
                                       <placeholder/>
                                     </child>
                                   </object>
@@ -5860,8 +5860,14 @@ gr = Graphite</property>
                           </object>
                           <packing>
                             <property name="left_attach">1</property>
-                            <property name="top_attach">0</property>
+                            <property name="top_attach">1</property>
                           </packing>
+                        </child>
+                        <child>
+                          <placeholder/>
+                        </child>
+                        <child>
+                          <placeholder/>
                         </child>
                       </object>
                       <packing>
@@ -6114,7 +6120,6 @@ of Contents</property>
                                     <property name="margin_top">4</property>
                                     <property name="margin_bottom">4</property>
                                     <property name="row_spacing">6</property>
-                                    <property name="column_homogeneous">True</property>
                                     <child>
                                       <object class="GtkCheckButton" id="c_bookIntro">
                                         <property name="label" translatable="yes">Book Introductions (\i..)</property>
@@ -6276,7 +6281,6 @@ selected books/chapters will show in the glossary.</property>
                                 <property name="margin_bottom">6</property>
                                 <property name="row_spacing">8</property>
                                 <property name="column_spacing">6</property>
-                                <property name="column_homogeneous">True</property>
                                 <child>
                                   <object class="GtkCheckButton" id="c_chapterNumber">
                                     <property name="label" translatable="yes">Chapter numbers</property>
@@ -13197,7 +13201,6 @@ and Back Matter PDFs and Watermarks.</property>
                 </child>
                 <child>
                   <object class="GtkBox" id="tb_Logging">
-                    <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="no_show_all">True</property>
                     <property name="halign">start</property>
@@ -13239,7 +13242,6 @@ and Back Matter PDFs and Watermarks.</property>
                 </child>
                 <child type="tab">
                   <object class="GtkLabel" id="lb_Logging">
-                    <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="no_show_all">True</property>
                     <property name="tooltip_text" translatable="yes">Display the output log 

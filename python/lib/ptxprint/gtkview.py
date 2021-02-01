@@ -402,7 +402,7 @@ class GtkViewModel(ViewModel):
             .stybutton {font-size: 12px; padding: 4px 6px}
             progress, trough {min-height: 24px}
             .mainnb {background-color: #F0F0F0}
-            .mainnb tab {min-height: 0pt; margin: 0pt; padding-bottom: 12pt}
+            .mainnb tab {min-height: 0pt; margin: 0pt; padding-bottom: 8pt}
             .viewernb {background-color: #F0F0F0}
             .viewernb tab {min-height: 0pt; margin: 0pt; padding-bottom: 3pt}
             .smradio {font-size: 11px; padding: 1px 1px}
@@ -514,7 +514,7 @@ class GtkViewModel(ViewModel):
                 "If the number of options is too overwhelming then use\n" + \
                 "this switch to hide the more complex/advanced options."))
                       
-        for c in ("tb_Font", "tb_Advanced", "tb_ViewerEditor", "tb_Tabs", "tb_DiglotBorder", "tb_StyleEditor",
+        for c in ("tb_Advanced", "tb_ViewerEditor", "tb_Tabs", "tb_DiglotBorder", "tb_StyleEditor",
                   "fr_copyrightLicense", "r_book_module", "btn_chooseBibleModule", "lb_bibleModule", "c_combine",
                   "c_fighiderefs", "lb_selectFigureFolder", "l_indentUnit", "s_indentUnit", "lb_style_s", "lb_style_r", 
                   "l_btmMrgn", "s_bottommarginfactor", "l_ftrPosn", "s_footerposition", "c_ftrCenterPri", "c_ftrCenterSec", 
@@ -522,15 +522,16 @@ class GtkViewModel(ViewModel):
                   "s_colgutteroffset", "bx_TopMarginSettings", "gr_HeaderAdvOptions", "l_colgutteroffset",
                   "c_fighiderefs", "c_skipmissingimages", "c_useCustomFolder", "btn_selectFigureFolder", "c_exclusiveFiguresFolder",
                   "c_startOnHalfPage", "c_prettyIntroOutline", "c_marginalverses", "s_columnShift", "c_figplaceholders",
-                  "fr_FontConfig", "fr_fallbackFont", "fr_paragraphAdjust", "l_textDirection", "l_colgutteroffset", "fr_hyphenation",
+                  "fr_fallbackFont", "fr_paragraphAdjust", "l_colgutteroffset", "fr_hyphenation",
                   "bx_fnCallers", "bx_fnCalleeCaller", "bx_xrCallers", "bx_xrCalleeCaller", "c_fnOverride", "c_xrOverride",
                   "row_ToC", "c_hyphenate", "l_missingPictureCount", "bx_colophon", "btn_deleteConfig", "btn_lockunlock",
                   "c_hdrLeftPri", "c_hdrLeftSec", "c_hdrCenterPri", "c_hdrCenterSec", "c_hdrRightPri", "c_hdrRightSec", 
                   "c_omitverseone", "c_glueredupwords", "c_firstParaIndent", "c_hangpoetry", "c_preventwidows", 
                   "l_sidemarginfactor", "s_sidemarginfactor", "s_linespacingmin", "s_linespacingmax", "btn_unpackDBLbundle",
-                  "c_variableLineSpacing", "c_pagegutter", "s_pagegutter", "fcb_textDirection", "l_digits", "fcb_digits",
+                  "c_variableLineSpacing", "c_pagegutter", "s_pagegutter", "l_digits", "fcb_digits",
                   "t_invisiblePassword", "t_configNotes", "l_notes", "c_elipsizeMissingVerses", "fcb_glossaryMarkupStyle",
-                  "gr_fnAdvOptions", "c_figexclwebapp", "bx_horizRule", "l_glossaryMarkupStyle"):
+                  "gr_fnAdvOptions", "c_figexclwebapp", "bx_horizRule", "l_glossaryMarkupStyle", "btn_refreshFonts",
+                  "fr_spacingAdj", "fr_fallbackFont", "l_complexScript", "b_scrsettings", "c_colorfonts"):
             # print(c)
             self.builder.get_object(c).set_visible(val)
 
@@ -983,7 +984,6 @@ class GtkViewModel(ViewModel):
                 PicInfoUpdateProject(self, procbks, ab, self.picinfos, random=rnd, cols=cols, doclear=doclear)
             else:
                 mode = self.get("fcb_diglotPicListSources")
-                print("mode=[{}]".format(mode))
                 if mode in ("bth", "pri"):
                     PicInfoUpdateProject(self, procbks, ab, self.picinfos,
                                          suffix="L", random=rnd, cols=cols, clearsuffix=(mode != "bth"))
@@ -2508,7 +2508,6 @@ class GtkViewModel(ViewModel):
     def oninterfaceLangChanged(self, btn):
         if self.initialised:
             lang = self.get("fcb_interfaceLang")
-            print("Language will be changed to: ", lang)
             try:
                 setup_i18n(lang)
             except locale.Error:
