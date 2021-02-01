@@ -3,7 +3,7 @@ import configparser, os, re, regex, random, collections
 from ptxprint.texmodel import ModelMap, TexModel
 from ptxprint.ptsettings import ParatextSettings, allbooks, books, bookcodes, chaps
 from ptxprint.font import TTFont, cachepath, cacheremovepath, FontRef
-from ptxprint.utils import _, refKey, universalopen, print_traceback
+from ptxprint.utils import _, refKey, universalopen, print_traceback, local2globalhdr, global2localhdr
 from ptxprint.usfmutils import Sheets, UsfmCollection
 from ptxprint.piclist import PicInfo
 from ptxprint.styleditor import StyleEditor
@@ -417,6 +417,7 @@ class ViewModel:
         config.read(path, encoding="utf-8")
         self.versionFwdConfig(config, cfgname)
         self.loadingConfig = True
+        self.localiseConfig(config)
         self.loadConfig(config)
         if self.get("ecb_book") == "":
             self.set("ecb_book", list(self.getAllBooks().keys())[0])
@@ -445,6 +446,7 @@ class ViewModel:
             cfgname = self.configName() or ""
         path = os.path.join(self.configPath(cfgname=cfgname, makePath=True), "ptxprint.cfg")
         config = self.createConfig()
+        self.globaliseConfig(config)
         with open(path, "w", encoding="utf-8") as outf:
             config.write(outf)
         if self.triggervcs:
@@ -569,6 +571,22 @@ class ViewModel:
         if not os.path.exists(styf):
             with open(styf, "w", encoding="utf-8") as outf:
                 outf.write("# This file left intentionally blank\n")
+
+    def localiseConfig(self, config):
+        for a in ("header/hdrleft", "header/hdrcenter", "header/hdrright", "footer/ftrcenter"):
+            (sect, opt) = a.split("/")
+            s = config.get(sect, opt, fallback=None)
+            if s:
+                s = global2localhdr(s)
+                config.set(sect, opt, s)
+
+    def globaliseConfig(self, config):
+        for a in ("header/hdrleft", "header/hdrcenter", "header/hdrright", "footer/ftrcenter"):
+            (sect, opt) = a.split("/")
+            s = config.get(sect, opt, fallback=None)
+            if s:
+                s = local2globalhdr(s)
+                config.set(sect, opt, s)
 
     def loadConfig(self, config):
         def setv(k, v): self.set(k, v, skipmissing=True)

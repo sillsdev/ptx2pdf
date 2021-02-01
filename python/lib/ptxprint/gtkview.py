@@ -1709,7 +1709,7 @@ class GtkViewModel(ViewModel):
                   "tb_Advanced", "tb_Logging", "tb_ViewerEditor", "tb_DiglotBorder"]:
             self.builder.get_object(o).set_sensitive(True)
         self.updateFonts()
-        self.updateHdrFtrOptions(self.get("c_diglot"))
+        # self.updateHdrFtrOptions(self.get("c_diglot"))
         if self.ptsettings is not None:
             self.builder.get_object("l_projectFullName").set_label(self.ptsettings.get('FullName', ""))
             self.builder.get_object("l_projectFullName").set_tooltip_text(self.ptsettings.get('Copyright', ""))
@@ -2138,7 +2138,7 @@ class GtkViewModel(ViewModel):
     def onDiglotClicked(self, btn):
         self.sensiVisible("c_diglot")
         self.sensiVisible("c_borders")
-        self.updateHdrFtrOptions(btn.get_active())
+        # self.updateHdrFtrOptions(btn.get_active())
         self.colourTabs()
         if self.loadingConfig:
             return

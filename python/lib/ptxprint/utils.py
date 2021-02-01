@@ -172,3 +172,39 @@ def get_ptsettings():
         pt_settings = queryvalue(ptob, 'Settings_Directory')
     return pt_settings
 
+headermappings = {
+    "First Reference":           r"\firstref",
+    "Last Reference":            r"\lastref",
+    "Reference Range":           r"\rangeref",
+    "Page Number":               r"\pagenumber",
+    "Time (HH:MM)":              r"\hrsmins",
+    "Date (YYYY-MM-DD)":         r"\isodate",
+    "-empty-":                   r"\empty"
+}
+
+def localhdrmappings():
+    return {
+        _("First Reference"):           r"\firstref",
+        _("Last Reference"):            r"\lastref",
+        _("Reference Range"):           r"\rangeref",
+        _("Page Number"):               r"\pagenumber",
+        _("Time (HH:MM)"):              r"\hrsmins",
+        _("Date (YYYY-MM-DD)"):         r"\isodate",
+        _("-empty-"):                   r"\empty"
+    }
+
+def local2globalhdr(s):
+    revglobal = {v:k for k,v in headermappings.items()}
+    mkr = localhdrmappings().get(s, None)
+    if mkr is not None:
+        return revglobal.get(mkr, mkr)
+    else:
+        return s
+
+def global2localhdr(s):
+    revlocal = {v:k for k,v in localhdrmappings().items()}
+    mkr = headermappings.get(s, None)
+    if mkr is not None:
+        return revlocal.get(mkr, mkr)
+    else:
+        return s

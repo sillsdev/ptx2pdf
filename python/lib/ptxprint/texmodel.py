@@ -11,7 +11,7 @@ from ptxprint.runner import checkoutput
 from ptxprint import sfm
 from ptxprint.sfm import usfm, style
 from ptxprint.usfmutils import Usfm, Sheets, isScriptureText, Module
-from ptxprint.utils import _, universalopen
+from ptxprint.utils import _, universalopen, localhdrmappings
 from ptxprint.dimension import Dimension
 import ptxprint.scriptsnippets as scriptsnippets
 from ptxprint.interlinear import Interlinear
@@ -302,6 +302,7 @@ ModelMap = {
     "scrmymr/syllables":        ("c_scrmymrSyllable", None),
 }
 
+
 class TexModel:
     _peripheralBooks = ["FRT", "INT", "GLO", "TDX", "NDX", "CNC", "OTH", "BAK", "XXA", "XXB", "XXC", "XXD", "XXE", "XXF", "XXG"]
     _fonts = {
@@ -310,15 +311,6 @@ class TexModel:
         "fontitalic":               ("bl_fontI", None, "c_fakeitalic", "fontitalic/embolden", "fontitalic/slant"),
         "fontbolditalic":           ("bl_fontBI", None, "c_fakebolditalic", "fontbolditalic/embolden", "fontbolditalic/slant"),
         "fontextraregular":         ("bl_fontExtraR", "c_useFallbackFont", None, None, None),
-    }
-    _hdrmappings = {
-        _("First Reference"):           r"\firstref",
-        _("Last Reference"):            r"\lastref",
-        _("Reference Range"):           r"\rangeref",
-        _("Page Number"):               r"\pagenumber",
-        _("Time (HH:MM)"):              r"\hrsmins",
-        _("Date (YYYY-MM-DD)"):         r"\isodate",
-        _("-empty-"):                   r"\empty"
     }
     _mirrorRL = {r'\lastref':    r'\firstref',
                  r'\firstref':   r'\lastref'
@@ -373,6 +365,7 @@ class TexModel:
         self.prjid = prjid
         if self.prjid is not None:
             self.dict['project/id'] = self.prjid
+        self._hdrmappings = localhdrmappings()
         if self.printer is not None:
             self.sheets = Sheets(self.printer.getStyleSheets(generated=True))
             self.update()
