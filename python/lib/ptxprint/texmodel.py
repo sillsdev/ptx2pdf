@@ -54,7 +54,6 @@ ModelMap = {
     # "project/showviewertab":    ("c_showViewerTab", None),
     "project/keeptempfiles":    ("c_keepTemporaryFiles", None),
     "project/pdfx1acompliant":  ("c_PDFx1aOutput", None),
-    "project/blockexperimental": ("c_experimental", lambda w,v: "" if v else "%"),
     "project/bookscope":        ("r_book", None),
     "project/combinebooks":     ("c_combine", None),
     "project/book":             ("ecb_book", None),

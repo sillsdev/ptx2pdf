@@ -305,7 +305,7 @@ class GtkViewModel(ViewModel):
         for n in _notebooks:
             nbk = self.builder.get_object("nbk_"+n)
             self.notebooks[n] = [Gtk.Buildable.get_name(nbk.get_nth_page(i)) for i in range(nbk.get_n_pages())]
-        for fcb in ("digits", "script", "diglotPicListSources",
+        for fcb in ("interfaceLang", "digits", "script", "diglotPicListSources",
                     "textDirection", "glossaryMarkupStyle", "fontFaces", "featsLangs",
                     "picaccept", "pubusage", "pubaccept", "chklstFilter"):
             self.addCR("fcb_"+fcb, 0)
@@ -364,7 +364,6 @@ class GtkViewModel(ViewModel):
         self.styleEditor = StyleEditorView(self)
 
         self.mw = self.builder.get_object("ptxprint")
-        self.experimental = None
 
         projects = self.builder.get_object("ls_projects")
         digprojects = self.builder.get_object("ls_digprojects")
@@ -542,20 +541,6 @@ class GtkViewModel(ViewModel):
             self.mw.resize(828, 292)
         else:
             self.mw.resize(830, 594)
-
-    def ExperimentalFeatures(self, value):
-        self.experimental = value
-        if value:
-                self.builder.get_object("c_experimental").set_visible(True)
-                self.builder.get_object("c_experimental").set_active(True)
-                self.builder.get_object("c_experimental").set_sensitive(False)
-        else:
-            for c in ("c_experimental", "c_experimental"):
-                self.builder.get_object(c).set_active(False)
-                self.builder.get_object(c).set_visible(False)
-                self.builder.get_object(c).set_sensitive(False)
-        for w in ("tb_", "lb_"):
-            self.builder.get_object("{}Logging".format(w)).set_visible(value)
 
     def addCR(self, name, index):
         v = self.builder.get_object(name)
@@ -2513,3 +2498,6 @@ class GtkViewModel(ViewModel):
             wid = self.builder.get_object(w)
             if wid is not None:
                 wid.set_sensitive(status)
+
+    def oninterfaceLangChanged(self, btn):
+        print("Language will be changed to: ", self.get("fcb_interfaceLang"))

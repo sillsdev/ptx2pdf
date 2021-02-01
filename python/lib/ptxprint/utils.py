@@ -9,15 +9,19 @@ APP = 'ptxprint'
 
 _ = gettext.gettext
 
-def setup_i18n():
+def setup_i18n(i18nlang):
+    print(i18nlang)
     localedir = os.path.join(getattr(sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__))), "mo")
     if sys.platform.startswith('win'):
-        if os.getenv('LANG') is None:
+        if i18nlang is not None:
+            lang = i18nlang
+        elif os.getenv('LANG') is None:
             lang, enc = locale.getdefaultlocale()
             os.environ['LANG'] = lang
         else:
             lang = os.getenv('LANG')
         from ctypes import cdll, windll
+        print(lang)
         from ctypes.util import find_msvcrt
         cdll.msvcrt._putenv('LANG={}'.format(lang))
         msvcrt = find_msvcrt()

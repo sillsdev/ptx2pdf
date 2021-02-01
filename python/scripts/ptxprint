@@ -28,7 +28,6 @@ parser.add_argument('-P','--print',action='store_true',help="Hits print")
 parser.add_argument('-b','--books',help='Space separated bookid list to set')
 parser.add_argument('-m','--macros',help="Directory containing TeX macros (paratext2.tex)")
 parser.add_argument('-l','--logging',action="store_true",help="Output logging to terminal instead of logging window")
-parser.add_argument('-e','--experimental',action="store_true",help="Enable experimental features")
 parser.add_argument('--timeout',default=200,type=int,help='xetex runtime timeout')
 parser.add_argument('-T','--testing',action='store_true',help="Run in testing, output xdv")
 parser.add_argument('-f','--fontpath',action='append',help="Directory of fonts to include (repeatable)")
@@ -40,7 +39,8 @@ parser.add_argument("-C","--capture",help="Capture interaction events to file. N
 # parser.add_argument('-t','--test', action='store_true',help="Quick start for a lazy typist")
 args = parser.parse_args()
 
-setup_i18n()
+# We might need to do this AFTER reading in the user-config file (as the UI language needs to be read)
+# setup_i18n()
 
 if args.logging and getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
     errfile = open("ptxprint.log", "w")
@@ -66,10 +66,19 @@ if os.path.exists(conffile):
             args.config = config.get('init', 'config')
     if not args.paratext and config.has_option("init", "paratext"):
         args.paratext = config.get("init", "paratext")
+    try:
+        args.lang = config.get("init", "lang")
+        print(args.lang)
+    except:
+        args.lang = 'en'
 else:
     if not os.path.exists(os.path.dirname(conffile)):
         os.makedirs(os.path.dirname(conffile))
     config.add_section("init")
+    args.lang = 'en'
+
+print(args.lang)
+setup_i18n(args.lang)
 
 if not args.paratext or str(args.paratext).lower() == "none":
     # print("No Paratext Settings directory found - sys.exit(1)")
@@ -124,7 +133,6 @@ if args.print or args.archive is not None:
     mainw = ViewModel(args.paratext, args.directory, config, macrosdir, args)
 else:
     mainw = GtkViewModel(args.paratext, args.directory, config, macrosdir, args)
-    mainw.ExperimentalFeatures(args.experimental)
 
 if args.pid:
     pdir = os.path.join(args.paratext, args.pid)
@@ -134,6 +142,7 @@ if args.pid:
         pdir = os.path.join(pdir, "shared", "ptxprint", args.config, "ptxprint.cfg")
         if not os.path.exists(pdir):
             args.config = None
+
 
 if args.pid:
     mainw.setPrjid(args.pid)

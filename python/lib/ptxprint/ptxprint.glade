@@ -2429,6 +2429,72 @@ technology, then enable this.</property>
       </row>
     </data>
   </object>
+  <object class="GtkListStore" id="ls_interfaceLang">
+    <columns>
+      <!-- column-name Language -->
+      <column type="gchararray"/>
+      <!-- column-name LangCode -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">Arabic</col>
+        <col id="1" translatable="yes">ar</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Burmese</col>
+        <col id="1" translatable="yes">my</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Chinese</col>
+        <col id="1" translatable="yes">zh</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">English</col>
+        <col id="1" translatable="yes">en</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">French</col>
+        <col id="1" translatable="yes">fr</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Hindi</col>
+        <col id="1" translatable="yes">hi</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Hungarian</col>
+        <col id="1" translatable="yes">hu</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Indonesian</col>
+        <col id="1" translatable="yes">id</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Korean</col>
+        <col id="1" translatable="yes">ko</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Portugese</col>
+        <col id="1" translatable="yes">pt</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Romanian</col>
+        <col id="1" translatable="yes">ro</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Russian</col>
+        <col id="1" translatable="yes">ru</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Spanish</col>
+        <col id="1" translatable="yes">es</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Thai</col>
+        <col id="1" translatable="yes">th</col>
+      </row>
+    </data>
+  </object>
   <object class="GtkListStore" id="ls_pic_accept">
     <columns>
       <!-- column-name pic_accept -->
@@ -16745,20 +16811,24 @@ There are many more complex options available for use within PTXprint.</property
               </packing>
             </child>
             <child>
-              <object class="GtkCheckButton" id="c_experimental">
-                <property name="label" translatable="yes">Experimental Features are ON!</property>
-                <property name="sensitive">False</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">False</property>
-                <property name="no_show_all">True</property>
-                <property name="tooltip_text" translatable="yes">Experimental features are enabled by
-using the -e flag on the command line.</property>
+              <object class="GtkComboBox" id="fcb_interfaceLang">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="tooltip_text" translatable="yes">There are several PTXprint interface
+languages available. After selecting
+the appropriate language, you will
+need to re-start the program before
+the language will change.</property>
                 <property name="halign">start</property>
+                <property name="margin_left">10</property>
                 <property name="margin_top">3</property>
                 <property name="margin_bottom">3</property>
-                <property name="hexpand">True</property>
-                <property name="resize_mode">immediate</property>
-                <property name="draw_indicator">True</property>
+                <property name="hexpand">False</property>
+                <property name="model">ls_interfaceLang</property>
+                <property name="active">3</property>
+                <property name="id_column">1</property>
+                <property name="active_id">1</property>
+                <signal name="changed" handler="oninterfaceLangChanged" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
