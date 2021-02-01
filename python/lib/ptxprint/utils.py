@@ -10,18 +10,13 @@ APP = 'ptxprint'
 _ = gettext.gettext
 
 def setup_i18n(i18nlang):
-    print(i18nlang)
     localedir = os.path.join(getattr(sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__))), "mo")
+    if i18nlang is not None:
+        os.environ["LANG"] = i18nlang
+    lang, enc = locale.getdefaultlocale(("LANG", "LANGUAGE"))
+    enc = "UTF-8"
     if sys.platform.startswith('win'):
-        if i18nlang is not None:
-            lang = i18nlang
-        elif os.getenv('LANG') is None:
-            lang, enc = locale.getdefaultlocale()
-            os.environ['LANG'] = lang
-        else:
-            lang = os.getenv('LANG')
         from ctypes import cdll, windll
-        print(lang)
         from ctypes.util import find_msvcrt
         cdll.msvcrt._putenv('LANG={}'.format(lang))
         msvcrt = find_msvcrt()
@@ -30,11 +25,11 @@ def setup_i18n(i18nlang):
         windll.kernel32.SetEnvironmentVariableW("LANG", lang)
         libintl = cdll.LoadLibrary("libintl-8.dll")
         libintl.bindtextdomain(APP, localedir)
-
         libintl.textdomain(APP)
-    else:
+    print(f"Lang = ({lang}, {enc}) from {i18nlang} and LANG={os.environ['LANG']}")
+    locale.setlocale(locale.LC_ALL, (lang, enc))
+    if not sys.platform.startswith("win"):
         locale.bindtextdomain(APP, localedir)
-    locale.setlocale(locale.LC_ALL, '')
     gettext.bindtextdomain(APP, localedir=localedir)
     gettext.textdomain(APP)
     

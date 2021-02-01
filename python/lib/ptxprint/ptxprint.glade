@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.1 
+<!-- Generated with glade 3.22.2 
 
 The MIT License (MIT)
 
@@ -2439,59 +2439,59 @@ technology, then enable this.</property>
     <data>
       <row>
         <col id="0" translatable="yes">Arabic</col>
-        <col id="1" translatable="yes">ar</col>
+        <col id="1">ar_SA</col>
       </row>
       <row>
         <col id="0" translatable="yes">Burmese</col>
-        <col id="1" translatable="yes">my</col>
+        <col id="1">my</col>
       </row>
       <row>
         <col id="0" translatable="yes">Chinese</col>
-        <col id="1" translatable="yes">zh</col>
+        <col id="1">zh</col>
       </row>
       <row>
         <col id="0" translatable="yes">English</col>
-        <col id="1" translatable="yes">en</col>
+        <col id="1">en</col>
       </row>
       <row>
         <col id="0" translatable="yes">French</col>
-        <col id="1" translatable="yes">fr</col>
+        <col id="1">fr</col>
       </row>
       <row>
         <col id="0" translatable="yes">Hindi</col>
-        <col id="1" translatable="yes">hi</col>
+        <col id="1">hi</col>
       </row>
       <row>
         <col id="0" translatable="yes">Hungarian</col>
-        <col id="1" translatable="yes">hu</col>
+        <col id="1">hu</col>
       </row>
       <row>
         <col id="0" translatable="yes">Indonesian</col>
-        <col id="1" translatable="yes">id</col>
+        <col id="1">id</col>
       </row>
       <row>
         <col id="0" translatable="yes">Korean</col>
-        <col id="1" translatable="yes">ko</col>
+        <col id="1">ko</col>
       </row>
       <row>
         <col id="0" translatable="yes">Portugese</col>
-        <col id="1" translatable="yes">pt</col>
+        <col id="1">pt</col>
       </row>
       <row>
         <col id="0" translatable="yes">Romanian</col>
-        <col id="1" translatable="yes">ro</col>
+        <col id="1">ro</col>
       </row>
       <row>
         <col id="0" translatable="yes">Russian</col>
-        <col id="1" translatable="yes">ru</col>
+        <col id="1">ru</col>
       </row>
       <row>
         <col id="0" translatable="yes">Spanish</col>
-        <col id="1" translatable="yes">es</col>
+        <col id="1">es</col>
       </row>
       <row>
         <col id="0" translatable="yes">Thai</col>
-        <col id="1" translatable="yes">th</col>
+        <col id="1">th</col>
       </row>
     </data>
   </object>

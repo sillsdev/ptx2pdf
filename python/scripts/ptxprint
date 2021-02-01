@@ -18,6 +18,16 @@ from ptxprint.font import initFontCache, cachepath
 from ptxprint.runjob import RunJob, isLocked
 from ptxprint.utils import _, setup_i18n, get_ptsettings, pt_bindir
 
+def getnsetlang(config):
+    envlang = os.getenv("LANG", None)
+    oldlang = config.get("init", "syslang", fallback=None)
+    newlang = config.get("init", "lang", fallback=None)
+    if envlang is None or oldlang == envlang:
+        return newlang
+    config.set("init", "syslang", envlang)
+    config.set("init", "lang", envlang)
+    return envlang
+
 parser = argparse.ArgumentParser()
 # parser.add_argument('-h','--help', help="show this help message and exit")
 parser.add_argument('pid',nargs="?",help="Project id or full path to a ptxprint.cfg file")
@@ -26,6 +36,7 @@ parser.add_argument('-p','--paratext',help="Path to Paratext Projects directory"
 parser.add_argument('-d','--directory',help="Directory to store temporary files in")
 parser.add_argument('-P','--print',action='store_true',help="Hits print")
 parser.add_argument('-b','--books',help='Space separated bookid list to set')
+parser.add_argument('-L','--lang',help='Set UI language code')
 parser.add_argument('-m','--macros',help="Directory containing TeX macros (paratext2.tex)")
 parser.add_argument('-l','--logging',action="store_true",help="Output logging to terminal instead of logging window")
 parser.add_argument('--timeout',default=200,type=int,help='xetex runtime timeout')
@@ -66,19 +77,13 @@ if os.path.exists(conffile):
             args.config = config.get('init', 'config')
     if not args.paratext and config.has_option("init", "paratext"):
         args.paratext = config.get("init", "paratext")
-    try:
-        args.lang = config.get("init", "lang")
-        print(args.lang)
-    except:
-        args.lang = 'en'
 else:
     if not os.path.exists(os.path.dirname(conffile)):
         os.makedirs(os.path.dirname(conffile))
     config.add_section("init")
-    args.lang = 'en'
 
-print(args.lang)
-setup_i18n(args.lang)
+if args.lang is None:
+    args.lang = getnsetlang(config)
 
 if not args.paratext or str(args.paratext).lower() == "none":
     # print("No Paratext Settings directory found - sys.exit(1)")
@@ -129,25 +134,6 @@ elif getattr(sys, 'frozen', False):
 else:
     macrosdir = os.path.join(scriptsdir, "..", "..", "src")
 
-if args.print or args.archive is not None:
-    mainw = ViewModel(args.paratext, args.directory, config, macrosdir, args)
-else:
-    mainw = GtkViewModel(args.paratext, args.directory, config, macrosdir, args)
-
-if args.pid:
-    pdir = os.path.join(args.paratext, args.pid)
-    if not os.path.exists(pdir):
-        args.pid = None
-    elif args.config:
-        pdir = os.path.join(pdir, "shared", "ptxprint", args.config, "ptxprint.cfg")
-        if not os.path.exists(pdir):
-            args.config = None
-
-
-if args.pid:
-    mainw.setPrjid(args.pid)
-    mainw.setConfigId(args.config or "Default")
-
 def doit(printer):
     if not isLocked():
         runjob = RunJob(printer, scriptsdir, macrosdir, config, args)
@@ -161,7 +147,20 @@ if args.fontpath is not None:
         if os.path.exists(p):
             cachepath(p, nofclist=args.nofontcache)
 
+if args.pid:
+    pdir = os.path.join(args.paratext, args.pid)
+    if not os.path.exists(pdir):
+        args.pid = None
+    elif args.config:
+        pdir = os.path.join(pdir, "shared", "ptxprint", args.config, "ptxprint.cfg")
+        if not os.path.exists(pdir):
+            args.config = None
+
 if args.print or args.archive is not None:
+    mainw = ViewModel(args.paratext, args.directory, config, macrosdir, args)
+    if args.pid:
+        mainw.setPrjid(args.pid)
+        mainw.setConfigId(args.config or "Default")
     res = 0
     initFontCache(nofclist=args.nofontcache)
     if args.print:
@@ -185,6 +184,17 @@ if args.print or args.archive is not None:
         mainw.createArchive(args.archive)
     sys.exit(res)
 else:
-    mainw.run(doit)
+    goround = True
+    while (goround):
+        goround = False
+        setup_i18n(args.lang)
+        mainw = GtkViewModel(args.paratext, args.directory, config, macrosdir, args)
+        if args.pid:
+            mainw.setPrjid(args.pid)
+            mainw.setConfigId(args.config or "Default")
+        mainw.run(doit)
+        if mainw.lang != args.lang:
+            args.lang = mainw.lang
+            goround = True
     with open(conffile, "w", encoding="utf-8") as outf:
         config.write(outf)

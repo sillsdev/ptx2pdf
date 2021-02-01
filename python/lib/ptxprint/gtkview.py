@@ -302,6 +302,13 @@ class GtkViewModel(ViewModel):
         self.notebooks = {}
         self.pendingerror = None
         self.logfile = None
+        self.lang = args.lang
+        ilang = self.builder.get_object("fcb_interfaceLang")
+        llang = self.builder.get_object("ls_interfaceLang")
+        for i, r in enumerate(llang):
+            if self.lang.startswith(r[1]):
+                ilang.set_active(i)
+                break
         for n in _notebooks:
             nbk = self.builder.get_object("nbk_"+n)
             self.notebooks[n] = [Gtk.Buildable.get_name(nbk.get_nth_page(i)) for i in range(nbk.get_n_pages())]
@@ -2500,4 +2507,9 @@ class GtkViewModel(ViewModel):
                 wid.set_sensitive(status)
 
     def oninterfaceLangChanged(self, btn):
-        print("Language will be changed to: ", self.get("fcb_interfaceLang"))
+        if self.initialised:
+            self.lang = self.get("fcb_interfaceLang")
+            print("Language will be changed to: ", self.lang)
+            self.builder.get_object("ptxprint").destroy()
+            self.onDestroy(None)
+
