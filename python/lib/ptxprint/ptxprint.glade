@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.2 
+<!-- Generated with glade 3.22.1 
 
 The MIT License (MIT)
 
@@ -16814,13 +16814,12 @@ There are many more complex options available for use within PTXprint.</property
               <object class="GtkComboBox" id="fcb_interfaceLang">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="tooltip_text" translatable="yes">There are several PTXprint interface
-languages available. After selecting
-the appropriate language, you will
-need to re-start the program before
-the language will change.</property>
+                <property name="tooltip_text" translatable="yes">Several PTXprint interface languages are 
+available. On selecting a language, the
+program will close and re-open in the
+chosen language.</property>
                 <property name="halign">start</property>
-                <property name="margin_left">10</property>
+                <property name="margin_left">6</property>
                 <property name="margin_top">3</property>
                 <property name="margin_bottom">3</property>
                 <property name="hexpand">False</property>
@@ -16852,33 +16851,7 @@ the language will change.</property>
               </packing>
             </child>
             <child>
-              <object class="GtkCheckButton" id="c_onlyRunOnce">
-                <property name="label" translatable="yes">Quick Run</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">False</property>
-                <property name="no_show_all">True</property>
-                <property name="tooltip_text" translatable="yes">Do not re-run job for exact results:
-
-Ordinarily, PTXprint re-runs the typesetting
-process (up to 5 times) in order to ensure
-everything is positioned as properly as
-possible, and so that the Table of Contents
-accurately reflects what is in the document. 
-This gives a much neater end result,
-but obviously takes it longer. If you would
-rather just see a quick/rough result, then
-check this option to only run ONCE. This
-setting is only for the current session, and
-will automatically be reset the next time
-you start PTXprint.</property>
-                <property name="halign">end</property>
-                <property name="draw_indicator">True</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">4</property>
-              </packing>
+              <placeholder/>
             </child>
             <child>
               <object class="GtkProgressBar" id="pr_runs">

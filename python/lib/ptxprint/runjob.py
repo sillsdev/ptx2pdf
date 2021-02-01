@@ -165,10 +165,7 @@ class RunJob:
         jobs = self.printer.getBooks(files=True)
 
         self.books = []
-        if self.printer.get("c_onlyRunOnce"):
-            self.maxRuns = 1
-        else:
-            self.maxRuns = 5
+        self.maxRuns = 5
         if r"\zImageCopyrights" in (info.dict['project/colophontext'] or ""):
             self.minRuns = max(self.minRuns, 1)
         self.changes = None
