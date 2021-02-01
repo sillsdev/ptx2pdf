@@ -3,7 +3,7 @@
 import sys, os, re, regex, gi, subprocess, traceback
 gi.require_version('Gtk', '3.0')
 from shutil import rmtree
-import time
+import time, locale
 
 from gi.repository import Gdk, Gtk, Pango, GObject, GLib, GdkPixbuf
 
@@ -20,7 +20,7 @@ import xml.etree.ElementTree as et
 from ptxprint.font import TTFont, initFontCache, fccache, FontRef, parseFeatString
 from ptxprint.view import ViewModel, Path, VersionStr
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal, setFontButton, makeSpinButton
-from ptxprint.utils import APP
+from ptxprint.utils import APP, setup_i18n
 from ptxprint.ptsettings import ParatextSettings, allbooks, books, bookcodes, chaps
 from ptxprint.piclist import PicList, PicChecks, PicInfoUpdateProject
 from ptxprint.gtkstyleditor import StyleEditorView
@@ -2508,8 +2508,15 @@ class GtkViewModel(ViewModel):
 
     def oninterfaceLangChanged(self, btn):
         if self.initialised:
-            self.lang = self.get("fcb_interfaceLang")
-            print("Language will be changed to: ", self.lang)
+            lang = self.get("fcb_interfaceLang")
+            print("Language will be changed to: ", lang)
+            try:
+                setup_i18n(lang)
+            except locale.Error:
+                self.doError(_("Unsupported Locale"),
+                             secondary=_("This locale is not supported on your system, you may need to install it"))
+                return
+            self.lang = lang
             self.builder.get_object("ptxprint").destroy()
             self.onDestroy(None)
 

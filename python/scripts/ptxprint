@@ -22,10 +22,10 @@ def getnsetlang(config):
     envlang = os.getenv("LANG", None)
     oldlang = config.get("init", "syslang", fallback=None)
     newlang = config.get("init", "lang", fallback=None)
+    config.set("init", "lang", envlang)
     if envlang is None or oldlang == envlang:
         return newlang
     config.set("init", "syslang", envlang)
-    config.set("init", "lang", envlang)
     return envlang
 
 parser = argparse.ArgumentParser()
@@ -184,10 +184,10 @@ if args.print or args.archive is not None:
         mainw.createArchive(args.archive)
     sys.exit(res)
 else:
+    setup_i18n(args.lang)
     goround = True
     while (goround):
         goround = False
-        setup_i18n(args.lang)
         mainw = GtkViewModel(args.paratext, args.directory, config, macrosdir, args)
         if args.pid:
             mainw.setPrjid(args.pid)
@@ -195,6 +195,7 @@ else:
         mainw.run(doit)
         if mainw.lang != args.lang:
             args.lang = mainw.lang
+            config.set("init", "lang", mainw.lang)
             goround = True
     with open(conffile, "w", encoding="utf-8") as outf:
         config.write(outf)
