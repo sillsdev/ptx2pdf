@@ -22,10 +22,10 @@ def getnsetlang(config):
     envlang = os.getenv("LANG", None)
     oldlang = config.get("init", "syslang", fallback=None)
     newlang = config.get("init", "lang", fallback=None)
-    config.set("init", "lang", envlang)
+    config.set("init", "lang", envlang or "")
     if envlang is None or oldlang == envlang:
         return newlang
-    config.set("init", "syslang", envlang)
+    config.set("init", "syslang", envlang or "")
     return envlang
 
 parser = argparse.ArgumentParser()
