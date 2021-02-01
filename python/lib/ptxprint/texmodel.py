@@ -320,19 +320,19 @@ class TexModel:
                'right':  'left'
     }
     _glossarymarkup = {
-        "None":                    r"\1",
-        None:                      r"\1",
-        "format as bold":          r"\\bd \1\\bd*",
-        "format as italics":       r"\\it \1\\it*",
-        "format as bold italics":  r"\\bdit \1\\bdit*",
-        "format with emphasis":    r"\\em \1\\em*",
-        "with ⸤floor⸥ brackets":   r"\u2E24\1\u2E25",
-        "with ⌊floor⌋ characters": r"\u230a\1\u230b",
-        "with ⌞corner⌟ characters":r"\u231e\1\u231f",
-        "star *before word":       r"*\1",
-        "star after* word":        r"\1*",
-        "circumflex ^before word": r"^\1",
-        "circumflex after^ word":  r"\1^"
+        "no": r"\1",                # "None":                    
+        None: r"\1",                # None:                      
+        "bd": r"\\bd \1\\bd*",      # "format as bold":          
+        "it": r"\\it \1\\it*",      # "format as italics":       
+        "bi": r"\\bdit \1\\bdit*",  # "format as bold italics":  
+        "em": r"\\em \1\\em*",      # "format with emphasis":    
+        "fb": r"\u2E24\1\u2E25",    # "with ⸤floor⸥ brackets":   
+        "fc": r"\u230a\1\u230b",    # "with ⌊floor⌋ characters": 
+        "cc": r"\u231e\1\u231f",    # "with ⌞corner⌟ characters":
+        "sb": r"*\1",               # "star *before word":       
+        "sa": r"\1*",               # "star after* word":        
+        "cb": r"^\1",               # "circumflex ^before word": 
+        "ca":  r"\1^"               # "circumflex after^ word":  
     }
     _snippets = {
         "snippets/fancyintro":            ("c_prettyIntroOutline", FancyIntro),
@@ -857,6 +857,7 @@ class TexModel:
         # Glossary Word markup: Remove the second half of the \w word|glossary-form\w* and apply chosen glossary markup
         v = self.dict["document/glossarymarkupstyle"]
         gloStyle = self._glossarymarkup.get(v, v)
+        print("Glo markup and gloStyle:", v, gloStyle)
         if gloStyle is not None:
             self.localChanges.append((None, regex.compile(r"\\\+?w ((?:.(?!\\\+w\*))+?)(\|[^|]+?)?\\\+?w\*", flags=regex.M), gloStyle))
         

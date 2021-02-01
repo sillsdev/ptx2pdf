@@ -2389,43 +2389,57 @@ technology, then enable this.</property>
     <columns>
       <!-- column-name glossaryMarkupStyle -->
       <column type="gchararray"/>
+      <!-- column-name gloCode -->
+      <column type="gchararray"/>
     </columns>
     <data>
       <row>
         <col id="0" translatable="yes">None</col>
+        <col id="1">no</col>
       </row>
       <row>
         <col id="0" translatable="yes">format as bold</col>
+        <col id="1">bd</col>
       </row>
       <row>
         <col id="0" translatable="yes">format as italics</col>
+        <col id="1">it</col>
       </row>
       <row>
         <col id="0" translatable="yes">format as bold italics</col>
+        <col id="1">bi</col>
       </row>
       <row>
         <col id="0" translatable="yes">format with emphasis</col>
+        <col id="1">em</col>
       </row>
       <row>
         <col id="0" translatable="yes">with ⸤floor⸥ brackets</col>
+        <col id="1">fb</col>
       </row>
       <row>
         <col id="0" translatable="yes">with ⌊floor⌋ characters</col>
+        <col id="1">fc</col>
       </row>
       <row>
         <col id="0" translatable="yes">with ⌞corner⌟ characters</col>
+        <col id="1">cc</col>
       </row>
       <row>
         <col id="0" translatable="yes">star *before word</col>
+        <col id="1">sb</col>
       </row>
       <row>
         <col id="0" translatable="yes">star after* word</col>
+        <col id="1">sa</col>
       </row>
       <row>
         <col id="0" translatable="yes">circumflex ^before word</col>
+        <col id="1">cb</col>
       </row>
       <row>
         <col id="0" translatable="yes">circumflex after^ word</col>
+        <col id="1">ca</col>
       </row>
     </data>
   </object>
@@ -6453,7 +6467,7 @@ in the printed output.</property>
                                     <property name="valign">center</property>
                                     <property name="model">ls_glossaryMarkupStyle</property>
                                     <property name="active">0</property>
-                                    <property name="id_column">0</property>
+                                    <property name="id_column">1</property>
                                     <property name="active_id">1</property>
                                   </object>
                                   <packing>
