@@ -1601,23 +1601,23 @@ saved configuration.</property>
     <data>
       <row>
         <col id="0" translatable="yes">Left</col>
-        <col id="1" translatable="yes">l</col>
+        <col id="1">l</col>
       </row>
       <row>
         <col id="0" translatable="yes">Center</col>
-        <col id="1" translatable="yes">c</col>
+        <col id="1">c</col>
       </row>
       <row>
         <col id="0" translatable="yes">Right</col>
-        <col id="1" translatable="yes">r</col>
+        <col id="1">r</col>
       </row>
       <row>
         <col id="0" translatable="yes">Inner</col>
-        <col id="1" translatable="yes">i</col>
+        <col id="1">i</col>
       </row>
       <row>
         <col id="0" translatable="yes">Outer</col>
-        <col id="1" translatable="yes">o</col>
+        <col id="1">o</col>
       </row>
     </data>
   </object>
@@ -1631,15 +1631,15 @@ saved configuration.</property>
     <data>
       <row>
         <col id="0" translatable="yes">None</col>
-        <col id="1" translatable="yes">0</col>
+        <col id="1">0</col>
       </row>
       <row>
         <col id="0" translatable="yes">Anti-clockwise</col>
-        <col id="1" translatable="yes">-90</col>
+        <col id="1">-90</col>
       </row>
       <row>
         <col id="0" translatable="yes">Clockwise</col>
-        <col id="1" translatable="yes">90</col>
+        <col id="1">90</col>
       </row>
     </data>
   </object>
@@ -1653,15 +1653,15 @@ saved configuration.</property>
     <data>
       <row>
         <col id="0" translatable="yes">Top</col>
-        <col id="1" translatable="yes">t</col>
+        <col id="1">t</col>
       </row>
       <row>
         <col id="0" translatable="yes">Center</col>
-        <col id="1" translatable="yes">c</col>
+        <col id="1">c</col>
       </row>
       <row>
         <col id="0" translatable="yes">Bottom</col>
-        <col id="1" translatable="yes">b</col>
+        <col id="1">b</col>
       </row>
     </data>
   </object>
@@ -1686,88 +1686,8 @@ saved configuration.</property>
         <col id="1">extended-arabic-indic</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Bengali</col>
-        <col id="1">bengali</col>
-      </row>
-      <row>
         <col id="0" translatable="yes">Burmese</col>
         <col id="1">myanmar</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Devanagari</col>
-        <col id="1">devanagari</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Ethiopic</col>
-        <col id="1">ethiopic</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Gondi (Gunjala)</col>
-        <col id="1">gunjala-gondi</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Gujarati</col>
-        <col id="1">gujarati</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Gurmukhi</col>
-        <col id="1">gurmukhi</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Kannada</col>
-        <col id="1">kannada</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Khmer</col>
-        <col id="1">khmer</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Lao</col>
-        <col id="1">lao</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Malayalam</col>
-        <col id="1">malayalam</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Oriya</col>
-        <col id="1">oriya</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Tamil</col>
-        <col id="1">tamil</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Telugu</col>
-        <col id="1">telugu</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Thai</col>
-        <col id="1">thai</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Tibetan</col>
-        <col id="1">tibetan</col>
-      </row>
-    </data>
-  </object>
-  <object class="GtkListStore" id="ls_diglotAlignment">
-    <columns>
-      <!-- column-name DiglotAlignment -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">Aligned at Paragraphs</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Aligned at Verses</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Aligned at Chapters</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Not auto-aligned</col>
       </row>
     </data>
   </object>
@@ -1775,16 +1695,21 @@ saved configuration.</property>
     <columns>
       <!-- column-name DiglotPicSources -->
       <column type="gchararray"/>
+      <!-- column-name digPicSrcCode -->
+      <column type="gchararray"/>
     </columns>
     <data>
       <row>
         <col id="0" translatable="yes">Pri (Left)</col>
+        <col id="1">pri</col>
       </row>
       <row>
         <col id="0" translatable="yes">Sec (Right)</col>
+        <col id="1">sec</col>
       </row>
       <row>
         <col id="0" translatable="yes">Both Pri+Sec</col>
+        <col id="1">bth</col>
       </row>
     </data>
   </object>
@@ -2573,19 +2498,19 @@ technology, then enable this.</property>
     <data>
       <row>
         <col id="0" translatable="yes">Never</col>
-        <col id="1" translatable="yes">None</col>
+        <col id="1">None</col>
       </row>
       <row>
         <col id="0" translatable="yes">Odd</col>
-        <col id="1" translatable="yes">odd</col>
+        <col id="1">odd</col>
       </row>
       <row>
         <col id="0" translatable="yes">Even</col>
-        <col id="1" translatable="yes">even</col>
+        <col id="1">even</col>
       </row>
       <row>
         <col id="0" translatable="yes">Both</col>
-        <col id="1" translatable="yes">both</col>
+        <col id="1">both</col>
       </row>
     </data>
   </object>
@@ -14012,7 +13937,7 @@ inactive until Diglot is enabled.</property>
                                 <property name="valign">center</property>
                                 <property name="model">ls_diglotPicListSources</property>
                                 <property name="active">0</property>
-                                <property name="id_column">0</property>
+                                <property name="id_column">1</property>
                                 <property name="active_id">1</property>
                               </object>
                               <packing>

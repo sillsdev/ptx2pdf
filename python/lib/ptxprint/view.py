@@ -697,7 +697,6 @@ class ViewModel:
         existingFilelist = []
         booklist = self.getBooks()
         diglot  = self.get("c_diglot")
-        # digmode = self.get("fcb_diglotPicListSources") if diglot else "Primary"
         prjid = self.get("fcb_project")
         secprjid = ""
         if diglot:

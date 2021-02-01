@@ -960,7 +960,6 @@ class GtkViewModel(ViewModel):
         self.picListView.setCheckFilter(self.get('c_picCheckInvFilter'), f)
 
     def onGeneratePicListClicked(self, btn):
-        priority=self.get("fcb_diglotPicListSources")[:4]
         bks2gen = self.getBooks()
         if not len(bks2gen):
             return
@@ -983,15 +982,15 @@ class GtkViewModel(ViewModel):
             if self.diglotView is None:
                 PicInfoUpdateProject(self, procbks, ab, self.picinfos, random=rnd, cols=cols, doclear=doclear)
             else:
-                mode = self.get("fcb_diglotPicListSources")[:4].lower()
+                mode = self.get("fcb_diglotPicListSources")
                 print("mode=[{}]".format(mode))
-                if mode in ("both", "pri "):
+                if mode in ("bth", "pri"):
                     PicInfoUpdateProject(self, procbks, ab, self.picinfos,
-                                         suffix="L", random=rnd, cols=cols, clearsuffix=(mode != "both"))
-                if mode in ("both", "sec "):
+                                         suffix="L", random=rnd, cols=cols, clearsuffix=(mode != "bth"))
+                if mode in ("bth", "sec"):
                     diallbooks = self.diglotView.getAllBooks()
                     PicInfoUpdateProject(self.diglotView, procbks, diallbooks,
-                                         self.picinfos, suffix="R", random=rnd, cols=cols, doclear=doclear & (mode != "both"), clearsuffix=(mode != "both"))
+                                         self.picinfos, suffix="R", random=rnd, cols=cols, doclear=doclear & (mode != "both"), clearsuffix=(mode != "bth"))
             self.updatePicList(procbks)
             self.savePics()
             self.set("c_filterPicList", False)
@@ -1003,7 +1002,7 @@ class GtkViewModel(ViewModel):
         self.updatePicList()
 
     def onGenerateClicked(self, btn):
-        priority=self.get("fcb_diglotPicListSources")[:4]
+        priority=self.get("fcb_diglotPicListSources")
         pg = self.get("nbk_Viewer")
         pgid = self.notebooks['Viewer'][pg]
         bks2gen = self.getBooks()
