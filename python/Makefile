@@ -6,7 +6,9 @@ SRC_FILES = $(foreach l,${LANGUAGES},locales/${l}/LC_MESSAGES/ptxprint.po)
 CROWDIN_FILES = $(foreach l,${LANGUAGES},locales/${l}/LC_MESSAGES/ptxprint.po)
 MO_FILES = $(foreach l,${LANGUAGES},lib/ptxprint/mo/${l}/LC_MESSAGES/ptxprint.mo)
 
-src : locales/ptxprint.pot ${SRC_FILES}
+.PHONY: download
+
+all : locales/ptxprint.pot download ${MO_FILES}
 	@- echo done ${LANGUAGES}
 
 mos : ${MO_FILES}
@@ -33,8 +35,6 @@ lib/ptxprint/mo/${1}/LC_MESSAGES/ptxprint.mo : locales/${1}/LC_MESSAGES/ptxprint
 endef
 
 $(foreach l,${LANGUAGES},$(eval $(call LANGRULES,${l})))
-
-${CROWDIN_FILES} : locales/ptxprint.pot download
 
 download:
 	$(CROWDIN) download

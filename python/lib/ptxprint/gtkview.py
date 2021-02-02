@@ -302,6 +302,7 @@ class GtkViewModel(ViewModel):
         self.notebooks = {}
         self.pendingerror = None
         self.logfile = None
+        self.rtl = False
         self.lang = args.lang
         ilang = self.builder.get_object("fcb_interfaceLang")
         llang = self.builder.get_object("ls_interfaceLang")
@@ -485,6 +486,8 @@ class GtkViewModel(ViewModel):
         self.initValues = {v[0]: self.get(v[0], skipmissing=True) for k, v in ModelMap.items() if v[0] is not None}
 
     def resetToInitValues(self):
+        super().resetToInitValues()
+        self.rtl = False
         self.picinfos.clear(self)
         for k, v in self.initValues.items():
             if v is not None:
