@@ -70,6 +70,21 @@ _allscripts = { "Zyyy" : "Default", "Adlm" : "Adlam", "Afak" : "Afaka", "Aghb" :
     "Tglg" : "Tagalog (Baybayin, Alibata)", "Thaa" : "Thaana", "Thai" : "Thai", "Tibt" : "Tibetan", "Tirh" : "Tirhuta", "Ugar" : "Ugaritic",
     "Vaii" : "Vai", "Wara" : "Warang-Citi", "Wole" : "Woleai", "Xpeo" : "Old Persian", "Yiii" : "Yi", "Zzzz" : "Uncoded script"
 }
+_cjkLangs = {
+    "Hanb" : "zh",  # "Han with Bopomofo",
+    "Hang" : "zh",  # "Hangul (Hangŭl, Hangeul)",
+    "Hani" : "zh",  # "Han (Hanzi, Kanji, Hanja)",
+    "Hano" : "zh",  # "Hanunoo (Hanunóo)",
+    "Hans" : "zh",  # "Han (Simplified)",
+    "Hant" : "zh",  # "Han (Traditional)"
+    "Hrkt" : "ja",  # "Japanese (Hiragana+Katakana)",
+    "Jamo" : "ja",  # "Jamo (subset of Hangul)",
+    "Jpan" : "ja",  # "Japanese (Han+Hiragana+Katakana)"
+    "Khmr" : "km",  # "Khmer",
+    "Kore" : "ko",  # "Korean (Hangul+Han)"
+    "Mymr" : "my",  # "Myanmar (Burmese)"    
+    "Thai" : "th"   # "Thai"
+}
 # Note that ls_digits (in the glade file) is used to map these "friendly names" to the "mapping table names" (especially the non-standard ones)
 _alldigits = [ "Default", "Adlam", "Ahom", "Arabic-Indic", "Balinese", "Bengali", "Bhaiksuki", "Brahmi",
     "Chakma", "Cham", "Devanagari", "Ethiopic", "Extended-Arabic", "Gujarati", "Gunjala-Gondi", "Gurmukhi", "Hanifi-Rohingya", "Javanese", "Kannada", 
@@ -1176,7 +1191,10 @@ class GtkViewModel(ViewModel):
             wid = self.builder.get_object(w)
             if wid is not None:
                 wid.set_sensitive(state)
-        
+        if script not in _cjkLangs.keys(): return
+        if self.get("t_linebreaklocale") == "":
+            self.set("t_linebreaklocale", _cjkLangs[script])
+            self.set("c_linebreakon", True)
 
     def onFontChanged(self, fbtn):
         # traceback.print_stack(limit=3)
