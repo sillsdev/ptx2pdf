@@ -2733,65 +2733,50 @@ technology, then enable this.</property>
   </object>
   <object class="GtkListStore" id="ls_styStyleType">
     <columns>
-      <!-- column-name StyleTypeLocal -->
-      <column type="gchararray"/>
-      <!-- column-name StyleTypeEng -->
+      <!-- column-name StyleType -->
       <column type="gchararray"/>
     </columns>
     <data>
       <row>
-        <col id="0" translatable="yes">Paragraph</col>
-        <col id="1">Paragraph</col>
+        <col id="0">Paragraph</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Character</col>
-        <col id="1">Character</col>
+        <col id="0">Character</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Note</col>
-        <col id="1">Note</col>
+        <col id="0">Note</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Milestone</col>
-        <col id="1">Milestone</col>
+        <col id="0">Milestone</col>
       </row>
     </data>
   </object>
   <object class="GtkListStore" id="ls_styTextType">
     <columns>
-      <!-- column-name TextTypeLocal -->
-      <column type="gchararray"/>
-      <!-- column-name TextTypeEng -->
+      <!-- column-name TextType -->
       <column type="gchararray"/>
     </columns>
     <data>
       <row>
-        <col id="0" translatable="yes">Verse Text</col>
-        <col id="1">VerseText</col>
+        <col id="0">VerseText</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Title</col>
-        <col id="1">Title</col>
+        <col id="0">Title</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Section</col>
-        <col id="1">Section</col>
+        <col id="0">Section</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Other</col>
-        <col id="1">Other</col>
+        <col id="0">Other</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Note Text</col>
-        <col id="1">NoteText</col>
+        <col id="0">NoteText</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Chapter Number</col>
-        <col id="1">ChapterNumber</col>
+        <col id="0">ChapterNumber</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Verse Number</col>
-        <col id="1">VerseNumber</col>
+        <col id="0">VerseNumber</col>
       </row>
     </data>
   </object>
@@ -2935,7 +2920,7 @@ technology, then enable this.</property>
                 <property name="active">1</property>
                 <property name="has_entry">True</property>
                 <property name="entry_text_column">0</property>
-                <property name="id_column">1</property>
+                <property name="id_column">0</property>
                 <property name="active_id">1</property>
                 <child internal-child="entry">
                   <object class="GtkEntry">
