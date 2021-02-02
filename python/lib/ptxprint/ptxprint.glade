@@ -616,7 +616,7 @@ Description):</property>
     <property name="type_hint">dialog</property>
     <property name="gravity">center</property>
     <property name="program_name">PTXprint</property>
-    <property name="version">Version 1.5.9.1</property>
+    <property name="version">Version 1.5.9.3</property>
     <property name="copyright">© 2020-2021, SIL International</property>
     <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
 the User-Interface. The PDFs are produced by enhanced 
@@ -1900,27 +1900,21 @@ saved configuration.</property>
   </object>
   <object class="GtkListStore" id="ls_fontFaces">
     <columns>
-      <!-- column-name FontFacesLocal -->
-      <column type="gchararray"/>
-      <!-- column-name FontFacesEng -->
+      <!-- column-name FontFaces -->
       <column type="gchararray"/>
     </columns>
     <data>
       <row>
-        <col id="0" translatable="yes">Regular</col>
-        <col id="1">Regular</col>
+        <col id="0">Regular</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Bold</col>
-        <col id="1">Bold</col>
+        <col id="0">Bold</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Italic</col>
-        <col id="1">Italic</col>
+        <col id="0">Italic</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Bold Italic</col>
-        <col id="1">Bold Italic</col>
+        <col id="0">Bold Italic</col>
       </row>
     </data>
   </object>
@@ -2038,7 +2032,7 @@ in the Windows system.</property>
                     <property name="margin_bottom">6</property>
                     <property name="model">ls_fontFaces</property>
                     <property name="active">0</property>
-                    <property name="id_column">1</property>
+                    <property name="id_column">0</property>
                     <property name="active_id">1</property>
                   </object>
                   <packing>

@@ -829,8 +829,8 @@ class FontRef:
         res = []
         if regular is not None and self.name == regular.name:
             for a in ("Bold", "Italic"):
-                x = a in regular.style
-                y = a in self.style
+                x = a in (regular.style or "")
+                y = a in (self.style or "")
                 if x and not y:
                     style[a] = "-"
                 elif y and not x:
