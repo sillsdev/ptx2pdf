@@ -1,5 +1,11 @@
-PTXprint 1.5.9.1 Release Notes 
-2 February 2021
+PTXprint 1.5.9.3 Release Notes 
+3 February 2021
+
+Bug Fixes and Improvements in 1.5.9.3
+
+  * Fix non-starting PTXprint due to lack of lang code in user config
+  
+  * Get rtl and ttb working again
 
 Bug Fixes and Improvements in 1.5.9.1
 
