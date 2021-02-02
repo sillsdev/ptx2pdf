@@ -364,7 +364,10 @@ class StyleEditorView(StyleEditor):
                 add, rem = "non", ""
             else:
                 add, rem = "", "non"
-            data['TextProperties'].remove(rem+'publishable')
+            try:
+                data['TextProperties'].remove(rem+'publishable')
+            except KeyError:
+                pass
             data['TextProperties'].add(add+'publishable')
             return
         elif key in stylediverts:

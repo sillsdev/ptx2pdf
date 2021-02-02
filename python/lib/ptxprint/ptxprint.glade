@@ -1540,7 +1540,7 @@ saved configuration.</property>
     <columns>
       <!-- column-name chklstFilter -->
       <column type="gchararray"/>
-      <!-- column-name guint1 -->
+      <!-- column-name chklstFilterCode -->
       <column type="guint"/>
     </columns>
     <data>
@@ -1900,21 +1900,27 @@ saved configuration.</property>
   </object>
   <object class="GtkListStore" id="ls_fontFaces">
     <columns>
-      <!-- column-name gchararray1 -->
+      <!-- column-name FontFacesLocal -->
+      <column type="gchararray"/>
+      <!-- column-name FontFacesEng -->
       <column type="gchararray"/>
     </columns>
     <data>
       <row>
         <col id="0" translatable="yes">Regular</col>
+        <col id="1">Regular</col>
       </row>
       <row>
         <col id="0" translatable="yes">Bold</col>
+        <col id="1">Bold</col>
       </row>
       <row>
         <col id="0" translatable="yes">Italic</col>
+        <col id="1">Italic</col>
       </row>
       <row>
         <col id="0" translatable="yes">Bold Italic</col>
+        <col id="1">Bold Italic</col>
       </row>
     </data>
   </object>
@@ -2032,7 +2038,7 @@ in the Windows system.</property>
                     <property name="margin_bottom">6</property>
                     <property name="model">ls_fontFaces</property>
                     <property name="active">0</property>
-                    <property name="id_column">0</property>
+                    <property name="id_column">1</property>
                     <property name="active_id">1</property>
                   </object>
                   <packing>
@@ -2436,21 +2442,27 @@ technology, then enable this.</property>
   </object>
   <object class="GtkListStore" id="ls_pic_accept">
     <columns>
-      <!-- column-name pic_accept -->
+      <!-- column-name pic_acceptLocal -->
+      <column type="gchararray"/>
+      <!-- column-name pic_acceptEng -->
       <column type="gchararray"/>
     </columns>
     <data>
       <row>
         <col id="0" translatable="yes">Unknown</col>
+        <col id="1">Unknown</col>
       </row>
       <row>
         <col id="0" translatable="yes">Culturally Appropriate</col>
+        <col id="1">Culturally Appropriate</col>
       </row>
       <row>
         <col id="0" translatable="yes">Alien but Acceptable</col>
+        <col id="1">Alien but Acceptable</col>
       </row>
       <row>
         <col id="0" translatable="yes">Inappropriate</col>
+        <col id="1">Inappropriate</col>
       </row>
     </data>
   </object>
@@ -2591,61 +2603,53 @@ technology, then enable this.</property>
   </object>
   <object class="GtkListStore" id="ls_pub_accept">
     <columns>
-      <!-- column-name pub_accept -->
+      <!-- column-name pub_acceptLocal -->
+      <column type="gchararray"/>
+      <!-- column-name pub_acceptEng -->
       <column type="gchararray"/>
     </columns>
     <data>
       <row>
         <col id="0" translatable="yes">Unknown</col>
+        <col id="1">Unknown</col>
       </row>
       <row>
         <col id="0" translatable="yes">Culturally Appropriate</col>
+        <col id="1">Culturally Appropriate</col>
       </row>
       <row>
         <col id="0" translatable="yes">Alien but Acceptable</col>
+        <col id="1">Alien but Acceptable</col>
       </row>
       <row>
         <col id="0" translatable="yes">Inappropriate</col>
-      </row>
-    </data>
-  </object>
-  <object class="GtkListStore" id="ls_pub_usag">
-    <columns>
-      <!-- column-name pub_accept -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">Unknown</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Clarification</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Story Enhancement</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Filler</col>
+        <col id="1">Inappropriate</col>
       </row>
     </data>
   </object>
   <object class="GtkListStore" id="ls_pub_usage">
     <columns>
-      <!-- column-name pub_usage -->
+      <!-- column-name pub_usageLocal -->
+      <column type="gchararray"/>
+      <!-- column-name pub_usageEng -->
       <column type="gchararray"/>
     </columns>
     <data>
       <row>
         <col id="0" translatable="yes">Unknown</col>
+        <col id="1">Unknown</col>
       </row>
       <row>
         <col id="0" translatable="yes">Clarification</col>
+        <col id="1">Clarification</col>
       </row>
       <row>
         <col id="0" translatable="yes">Story Enhancement</col>
+        <col id="1">Story Enhancement</col>
       </row>
       <row>
         <col id="0" translatable="yes">Space Filler</col>
+        <col id="1">Space Filler</col>
       </row>
     </data>
   </object>
@@ -2697,21 +2701,27 @@ technology, then enable this.</property>
   </object>
   <object class="GtkListStore" id="ls_styJustification">
     <columns>
-      <!-- column-name Justification -->
+      <!-- column-name JustificationLocal -->
+      <column type="gchararray"/>
+      <!-- column-name JustificationEng -->
       <column type="gchararray"/>
     </columns>
     <data>
       <row>
         <col id="0" translatable="yes">Justified</col>
+        <col id="1">Justified</col>
       </row>
       <row>
         <col id="0" translatable="yes">Left</col>
+        <col id="1">Left</col>
       </row>
       <row>
         <col id="0" translatable="yes">Center</col>
+        <col id="1">Center</col>
       </row>
       <row>
         <col id="0" translatable="yes">Right</col>
+        <col id="1">Right</col>
       </row>
     </data>
   </object>
@@ -2723,50 +2733,65 @@ technology, then enable this.</property>
   </object>
   <object class="GtkListStore" id="ls_styStyleType">
     <columns>
-      <!-- column-name StyleType -->
+      <!-- column-name StyleTypeLocal -->
+      <column type="gchararray"/>
+      <!-- column-name StyleTypeEng -->
       <column type="gchararray"/>
     </columns>
     <data>
       <row>
         <col id="0" translatable="yes">Paragraph</col>
+        <col id="1">Paragraph</col>
       </row>
       <row>
         <col id="0" translatable="yes">Character</col>
+        <col id="1">Character</col>
       </row>
       <row>
         <col id="0" translatable="yes">Note</col>
+        <col id="1">Note</col>
       </row>
       <row>
         <col id="0" translatable="yes">Milestone</col>
+        <col id="1">Milestone</col>
       </row>
     </data>
   </object>
   <object class="GtkListStore" id="ls_styTextType">
     <columns>
-      <!-- column-name TextType -->
+      <!-- column-name TextTypeLocal -->
+      <column type="gchararray"/>
+      <!-- column-name TextTypeEng -->
       <column type="gchararray"/>
     </columns>
     <data>
       <row>
-        <col id="0">VerseText</col>
+        <col id="0" translatable="yes">Verse Text</col>
+        <col id="1">VerseText</col>
       </row>
       <row>
-        <col id="0">Title</col>
+        <col id="0" translatable="yes">Title</col>
+        <col id="1">Title</col>
       </row>
       <row>
-        <col id="0">Section</col>
+        <col id="0" translatable="yes">Section</col>
+        <col id="1">Section</col>
       </row>
       <row>
-        <col id="0">Other</col>
+        <col id="0" translatable="yes">Other</col>
+        <col id="1">Other</col>
       </row>
       <row>
-        <col id="0">NoteText</col>
+        <col id="0" translatable="yes">Note Text</col>
+        <col id="1">NoteText</col>
       </row>
       <row>
-        <col id="0">ChapterNumber</col>
+        <col id="0" translatable="yes">Chapter Number</col>
+        <col id="1">ChapterNumber</col>
       </row>
       <row>
-        <col id="0">VerseNumber</col>
+        <col id="0" translatable="yes">Verse Number</col>
+        <col id="1">VerseNumber</col>
       </row>
     </data>
   </object>
@@ -2774,16 +2799,21 @@ technology, then enable this.</property>
     <columns>
       <!-- column-name Direction -->
       <column type="gchararray"/>
+      <!-- column-name dirCode -->
+      <column type="gchararray"/>
     </columns>
     <data>
       <row>
         <col id="0" translatable="yes">Left-to-Right</col>
+        <col id="1">ltr</col>
       </row>
       <row>
         <col id="0" translatable="yes">Right-to-Left</col>
+        <col id="1">rtl</col>
       </row>
       <row>
         <col id="0" translatable="yes">Top-to-Bottom</col>
+        <col id="1">ttb</col>
       </row>
     </data>
   </object>
@@ -2905,7 +2935,7 @@ technology, then enable this.</property>
                 <property name="active">1</property>
                 <property name="has_entry">True</property>
                 <property name="entry_text_column">0</property>
-                <property name="id_column">0</property>
+                <property name="id_column">1</property>
                 <property name="active_id">1</property>
                 <child internal-child="entry">
                   <object class="GtkEntry">
@@ -5387,7 +5417,7 @@ only supports LTR.</property>
                                     <property name="hexpand">False</property>
                                     <property name="model">ls_textDirection</property>
                                     <property name="active">0</property>
-                                    <property name="id_column">0</property>
+                                    <property name="id_column">1</property>
                                     <property name="active_id">1</property>
                                     <signal name="changed" handler="onDirectionChanged" swapped="no"/>
                                   </object>
@@ -5863,12 +5893,6 @@ space between lines of text.</property>
                             <property name="top_attach">1</property>
                           </packing>
                         </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -6262,6 +6286,7 @@ selected books/chapters will show in the glossary.</property>
                         <property name="width_request">675</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="halign">start</property>
                         <property name="margin_left">6</property>
                         <property name="margin_top">6</property>
                         <property name="margin_bottom">6</property>
@@ -6335,6 +6360,7 @@ more like an ordinary book.</property>
                                     <property name="halign">start</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
+                                    <signal name="clicked" handler="onverseNumbersClicked" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
@@ -10898,7 +10924,7 @@ in the printed output.</property>
                                                             <property name="valign">center</property>
                                                             <property name="model">ls_pic_accept</property>
                                                             <property name="active">0</property>
-                                                            <property name="id_column">0</property>
+                                                            <property name="id_column">1</property>
                                                             <property name="active_id">-1</property>
                                                           </object>
                                                           <packing>
@@ -10980,7 +11006,7 @@ in the printed output.</property>
                                                             <property name="valign">center</property>
                                                             <property name="model">ls_pub_usage</property>
                                                             <property name="active">0</property>
-                                                            <property name="id_column">0</property>
+                                                            <property name="id_column">1</property>
                                                             <property name="active_id">-1</property>
                                                           </object>
                                                           <packing>
@@ -11082,7 +11108,7 @@ in the printed output.</property>
                                                             <property name="valign">center</property>
                                                             <property name="model">ls_pub_accept</property>
                                                             <property name="active">0</property>
-                                                            <property name="id_column">0</property>
+                                                            <property name="id_column">1</property>
                                                             <property name="active_id">1</property>
                                                           </object>
                                                           <packing>
@@ -15136,7 +15162,7 @@ Factor:</property>
                                         <property name="wrap_width">1</property>
                                         <property name="has_entry">True</property>
                                         <property name="entry_text_column">0</property>
-                                        <property name="id_column">0</property>
+                                        <property name="id_column">1</property>
                                         <child internal-child="entry">
                                           <object class="GtkEntry">
                                             <property name="visible">True</property>

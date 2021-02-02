@@ -1279,6 +1279,14 @@ class GtkViewModel(ViewModel):
         except KeyError:
             return
 
+    def onverseNumbersClicked(self, btn):
+        self.onSimpleClicked(btn)
+        x = "" if btn.get_active() else "non"
+        try:
+            self.styleEditor.setval("v", "TextProperties", "{}publishable verse".format(x))
+        except KeyError:
+            return
+
     def onDirectionChanged(self, btn, *a):
         rtl = self.get("fcb_textDirection") == "Right-to-Left"
         if self.loadingConfig:
