@@ -159,8 +159,8 @@ ModelMap = {
     "document/chapfrom":        ("s_chapfrom", lambda w,v: int(float(v)) or "1"),
     "document/chapto":          ("s_chapto", lambda w,v: int(float(v)) or "999"),
     "document/colgutterfactor": ("s_colgutterfactor", lambda w,v: round(float(v)*3) or "12"), # Hack to be fixed
-    "document/ifrtl":           ("fcb_textDirection", lambda w,v:"true" if v == "Right-to-Left" else "false"),
-    "document/toptobottom":     ("fcb_textDirection", lambda w,v: "" if v == "Top-to-Bottom (LTR)" else "%"),
+    "document/ifrtl":           ("fcb_textDirection", lambda w,v:"true" if v == "rtl" else "false"),
+    "document/toptobottom":     ("fcb_textDirection", lambda w,v: "" if v == "ttb" else "%"),
     "document/iflinebreakon":   ("c_linebreakon", lambda w,v: "" if v else "%"),
     "document/linebreaklocale": ("t_linebreaklocale", lambda w,v: v or ""),
     "document/script":          ("fcb_script", lambda w,v: ":script="+v.lower() if v != "Zyyy" else ""),

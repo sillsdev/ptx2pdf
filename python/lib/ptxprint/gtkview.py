@@ -318,7 +318,7 @@ class GtkViewModel(ViewModel):
         self.pendingerror = None
         self.logfile = None
         self.rtl = False
-        self.lang = args.lang
+        self.lang = args.lang if args.lang is not None else 'en'
         ilang = self.builder.get_object("fcb_interfaceLang")
         llang = self.builder.get_object("ls_interfaceLang")
         for i, r in enumerate(llang):
@@ -1312,11 +1312,13 @@ class GtkViewModel(ViewModel):
             return
 
     def onDirectionChanged(self, btn, *a):
-        rtl = self.get("fcb_textDirection") == "Right-to-Left"
+        rtl = self.get("fcb_textDirection") == "rtl"
         if self.loadingConfig:
             self.rtl = rtl
         if rtl == self.rtl:
             return
+        else:
+            self.rtl = rtl
         for k in self.styleEditor.allStyles():
             try:
                 j = self.styleEditor.getval(k, "Justification")
