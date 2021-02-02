@@ -1,6 +1,18 @@
-PTXprint 1.5.9 Release Notes 
-30 January 2021
+PTXprint 1.5.9.1 Release Notes 
+2 February 2021
 
+Bug Fixes and Improvements in 1.5.9.1
+
+  * Added Language chooser
+  
+  * Several fixes to localization (incl. glossary markup etc.)
+  
+  * Auto set line break locale for CJK scripts
+  
+  * Fix missing page nums on pages without any scripture
+  
+  * Show subset of Fonts+Script tab settings for basic users
+  
 Bug Fixes and Improvements in 1.5.9 (RC for ver 1.6)
 
   * Ensure settings are actually reset when reverting to default values in Style editor

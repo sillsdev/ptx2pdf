@@ -1191,8 +1191,11 @@ class GtkViewModel(ViewModel):
             wid = self.builder.get_object(w)
             if wid is not None:
                 wid.set_sensitive(state)
-        if script not in _cjkLangs.keys(): return
-        if self.get("t_linebreaklocale") == "":
+
+        if script not in _cjkLangs.keys():
+            self.set("t_linebreaklocale", "")
+            self.set("c_linebreakon", False)
+        else:
             self.set("t_linebreaklocale", _cjkLangs[script])
             self.set("c_linebreakon", True)
 
