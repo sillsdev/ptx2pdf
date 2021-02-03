@@ -515,10 +515,12 @@ class PicChecks:
         if not len(self.cfgShared) or configid is None:
             return
         self.savepic()
-        with open(os.path.join(basepath, "shared", "ptxprint", self.fname), "w", encoding="utf-8") as outf:
-            self.cfgShared.write(outf)
-        with open(os.path.join(basepath, "shared", "ptxprint", configid, self.fname), "w", encoding="utf-8") as outf:
-            self.cfgProject.write(outf)
+        basep = os.path.join(basepath, "shared", "ptxprint")
+        for a in (configid, None):
+            p = os.path.join(basep, a) if a else basep
+            os.makedirs(p, exist_ok=True)
+            with open(os.path.join(p, self.fname), "w", encoding="utf-8") as outf:
+                self.cfgShared.write(outf)
 
     def loadpic(self, src):
         if self.src == newBase(src):
