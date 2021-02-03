@@ -541,13 +541,22 @@
 %\galleypenalty %the penalty we FOUND at the break between the %galley and \galleyexc@ss
 \def\@ddtoexcess{%
   \trace{d}{@ddtoexcess hIns=\the\holdinginserts(==1) adding \the\ht255+\the\dp255\space to galleyexc@ss (\the\ht\galleyexc@ss+\the\dp\galleyexc@ss)}%
-  \global\setbox\galleyexc@ss\vbox{\ifvoid\galleyexc@ss\else\unvbox\galleyexc@ss\fi\unvbox255\ifnum\outputpenalty=10000\else\ifnum\outputpenalty=\endtri@lpen@lty\else\penalty\outputpenalty\fi\fi}%
+  \ifvoid\galleyexc@ss
+    \global\setbox\galleyexc@ss\vbox{\TempDim=\dp255\unvbox255\kern-\TempDim\ifnum\outputpenalty=10000\else\ifnum\outputpenalty=\endtri@lpen@lty\else\penalty\outputpenalty\fi\fi}%
+    %\showbox\galleyexc@ss
+  \else
+    %\global\setbox\galleyexc@ss\vbox{\joinboxes{\galleyexc@ss}{255}{19}{\ifnum\outputpenalty=10000 0\else\ifnum\outputpenalty=\endtri@lpen@lty 0\else\outputpenalty\fi\fi}}%
+    \global\setbox\galleyexc@ss\vbox{\unvbox\galleyexc@ss\ifnum\outputpenalty=10000\else\ifnum\outputpenalty=\endtri@lpen@lty \else\penalty\outputpenalty\fi\fi\unvbox255}%
+  \fi
 }
 
 \def\undog@lley{%
+  \dimen9=\dp\galley
   \unvbox\galley\count255=\lastpenalty\unpenalty
+  \count254=\lastnodetype
+  \ifnum\count254=12\else\kern-\dimen9\fi%\lastnotedype=12 is eTeX test for kern
   \ifVisTraceExtra\hbox to 0pt{\doVisTrace{t \the\ht\galleyexc@ss}\box0\hss}\fi
-  \traceNum{D}{removed penalty \the\count255, replacing with \the\galleypenalty}%
+  \traceNum{D}{removed penalty \the\count255, replacing with \the\galleypenalty. lnt:\the\count254}%
   \ifvoid\galleyexc@ss\else
     \penalty\galleypenalty
     \unvbox\galleyexc@ss
@@ -591,9 +600,11 @@
     \global\trialfailedfalse
     \global\output={\diglot@any@trial}%calls \whichtrial on success
     \unvcopy\galley %process
-    \ifnum\pageno>100
-      \showlists
-    \fi
+    %\ifnum\pageno>100
+      %\ifnum\interactionmode=2 %=\scrollmode
+        %\showlists
+      %\fi
+    %\fi
     %\showbox\galleyexc@ss
   \else 
     \vsize=\textheight
@@ -792,7 +803,9 @@
         \global\setbox\trialbox=\box\voidb@x
         \global\setbox\LeftBox=\vbox{\undog@lley}%
         \doDiglotLeftTrial
-        \showlists
+        \ifnum\interactionmode=2
+          \showlists
+        \fi
         \tempfalse
       \else
         \TempDim=0pt
@@ -822,7 +835,8 @@
     \else% Not rerunning the trial. 
       \s@venotes{}%
       \ifvoid\galleyexc@ss\else
-        \trace{D}{saving galleyexc@ss (\the\ht\galleyexc@ss+\the\dp\galleyexc@ss) in excessL (\the\ht\excessL+\the\dp\excessL)}%
+        \global\leftfulltrue
+        \trace{D}{saving galleyexc@ss (\the\ht\galleyexc@ss+\the\dp\galleyexc@ss) in excessL (\the\ht\excessL+\the\dp\excessL), marked left full}%
         \ifvoid\partialL
           \global\setbox\partialL\box\galleyexc@ss
         \else
@@ -885,7 +899,7 @@
 
 \def\doDiglotLeftTrial{%
   %empties LeftBox and partialL back onto stack, with holdinginserts=0
-  \trace{D}{doDiglotLeftTrial LB:\the\ht\LeftBox+\the\dp\LeftBox, pL:(\the\ht\partialL+\the\dp\partialL) diglotL\ifdiglotL true\else false\fi, dig@tL\ifdigl@tL true\else false\fi,}%
+  \trace{D}{doDiglotLeftTrial LB:\the\ht\LeftBox+\the\dp\LeftBox, pL:(\the\ht\partialL+\the\dp\partialL) \show@diglotstate, diglotL\ifdiglotL true\else false\fi, dig@tL\ifdigl@tL true\else false\fi, leftfull\ifleftfull true\else false\fi}%
   %Set correct current state
   \global\diglotLtrue%
   \global\hsize=\columnLwidth\relax%
@@ -897,7 +911,8 @@
       \bgroup
         \dimen0=\trialheight
         \advance\dimen0 by -\availht
-        \message{*** SOMETHING BAD, pg. \the\pageno. A picture or footnote (probable range: \topmark-\botmark) has just taken \the\dimen0 of space. There's no space left for text.}%
+        \message{*** SOMETHING BAD, pg. \the\pageno. A picture or footnote (probable range: \p@gefirstmark-\p@gebotmark) has just taken \the\dimen0 of space. (There used to be \the\trialheight, now there's \the\availht).  There's no space left for text.}%
+        \global\leftfulltrue
       \egroup
      \fi
     \global\trialheight=\availht
@@ -912,22 +927,24 @@
 %  \ifnum\savedpenalty>9999
 %    \global\advance\trialheight by -2\baselineskip %hopefully prevents bad breaks 
 %  \fi
-  \global\vsize=\trialheight\relax%
-  \dimen3=\ht\LeftBox
-  \advance\dimen3 by \dp\LeftBox
-  \advance\dimen3 by \ht\partialL
-  \advance\dimen3 by \dp\partialL
-  \advance\dimen3 by 3\baselineskip
-  \global\output={\diglot@any@trial}%
-  %\penalty\lastsavedLpenalty
-  \ifdim\dimen3>\trialheight %Is this likely to be the last chunk added to the page? 
-    \ifm@rksonpage\else\mark{}\marks1{}\fi% FIXME? \marks2 too?
+  \ifleftfull\else
+    \global\vsize=\trialheight\relax%
+    \dimen3=\ht\LeftBox
+    \advance\dimen3 by \dp\LeftBox
+    \advance\dimen3 by \ht\partialL
+    \advance\dimen3 by \dp\partialL
+    \advance\dimen3 by 3\baselineskip
+    \global\output={\diglot@any@trial}%
+    %\penalty\lastsavedLpenalty
+    \ifdim\dimen3>\trialheight %Is this likely to be the last chunk added to the page? 
+      \ifm@rksonpage\else\mark{}\marks1{}\fi% FIXME? \marks2 too?
+    \fi
+    \global\setbox\galley=\vbox{\joinboxes{\LeftBox}{\partialL}{10}{\Lboxpenalty}\endgraf\penalty\dgl@tPenLtrialEnd}%
+    \global\setbox\galleyexc@ss=\box\voidb@x
+    \s@venotes{}%
+    \unvcopy\galley
+    \relax\relax%
   \fi
-  \global\setbox\galley=\vbox{\joinboxes{\LeftBox}{\partialL}{10}{\Lboxpenalty}\endgraf\penalty\dgl@tPenLtrialEnd}%
-  \global\setbox\galleyexc@ss=\box\voidb@x
-  \s@venotes{}%
-  \unvcopy\galley
-  \relax\relax%
 }
 
 \def\diglotRightExtra{%
@@ -1082,7 +1099,7 @@
       \bgroup
         \dimen0=\trialheight
         \advance\dimen0 by -\availht
-        \message{*** SOMETHING BAD, pg. \the\pageno. A picture or footnote (probable range: \topmark-\botmark) has just taken \the\dimen0 of space. There's no space left for text.}%
+        \message{*** SOMETHING BAD, pg. \the\pageno. A picture or footnote (probable range: \p@getopmark-\p@gebotmark) has just taken \the\dimen0 of space. There's no space left for text.}%
       \egroup
      \fi
     \global\trialheight=\availht
@@ -1485,7 +1502,6 @@
     \checkn@sty{\availhtL}{\Lht}%
     \trace{D}{Checking what to do with this box (\the\ht\partialR+\the\dp\partialR) av:\the\availhtR,
       aL:\the\availhtL, \the\Lht, ->\the\TempDim}%
-    \checkn@sty{\availhtL}{\Lht}%
     \checkn@sty{\availhtR}{\Rht}%
     \ifdim\TempDim<\Rht %split required
       \availht=\TempDim\relax% Save the cutting length
@@ -1908,7 +1924,7 @@
     \fi\fi
     \trace{d}{Gutter \the\dimen8 height, \the\dimen9 deep}%
     \dimen7=\dimen8%.5\baselineskip
-    \setbox\n@xtpartialNrml\vtop{%
+    \global\setbox\n@xtpartialNrml\vtop{%
       \iftemp
         \vskip\ColumnGutterRuleSkip
       \fi
@@ -1917,7 +1933,7 @@
       \hbox to\columnLwidth{\copy\LeftBox\hss}\makediglotgutter{\dimen7}{\dimen8}{\dimen9}%
       \hbox to\columnRwidth{\copy\RightBox\hss}%\rlap{\the\ht\RightBox \the\dp\RightBox}%
     }}%
-    \setbox\n@xtpartialRev\vtop{%
+    \global\setbox\n@xtpartialRev\vtop{%
       \iftemp
         \vskip\ColumnGutterRuleSkip
       \fi
@@ -1958,14 +1974,13 @@
     \trace{H}{updp1: Setting bottom mark to \b@xbotmark, since it's empty }%
     \xdef\p@gebotmark{\b@xbotmark}%
   \fi%
-  \traceNum{d}{Adding to page: LB:\the\ht\LeftBox+\the\dp\LeftBox\space RB:\the\ht\RightBox+\the\dp\RightBox\space Last Delta:\the\chunkDelta}%\space Tot:\the\cumulativeDelta%
-  \diglot@arrange@cols
-  \trace{D}{putting box in n@xtpartial (\the\ht\LeftBox+\the\dp\LeftBox)}%
-  \TempDim=\dimexpr \ht\n@xtpartial + \dp\n@xtpartial\relax
+  \traceNum{d}{Adding old n@xtpartial to page(\the\ht\n@xtpartial+\the\dp\n@xtpartial)}%
   \ifvoid\n@xtpartial\else
     \global\setbox\partial=\vtop{\joinb@xes{\partial}{\n@xtpartial}}%
   \fi
-  \global\setbox\n@xtpartial=\box\LeftBox%
+  \trace{d}{Writing new n@xtpartial : LB:\the\ht\LeftBox+\the\dp\LeftBox\space RB:\the\ht\RightBox+\the\dp\RightBox\space Last Delta:\the\chunkDelta}%\space Tot:\the\cumulativeDelta%
+  \diglot@arrange@cols
+  \TempDim=\dimexpr \ht\n@xtpartial + \dp\n@xtpartial\relax
   \ifleftfull% This box fills the left column (with footnotes)
     \pagefulltrue%
   \fi%
@@ -2391,8 +2406,7 @@
 }
 \def\testmarker{\hbox to 0pt{\vrule height 7pt depth 0pt width 0.5pt \kern-0.5pt}\message{_}}
 
-\addtoendhooks{\ifvoid\n@xtpartial\else\showbox\n@xtpartial\global\setbox\partial=\vtop{\joinb@xes{\partial}{\n@xtpartial}}%
-       \fi
+\addtoendhooks{
        \bgroup\ifdiglot\ifnum\pageno>0 \count255=\cumulativeDelta \divide\count255 by \pageno \message{Overall column delta \the\cumulativeDelta pt (\the\count255 pt/ pg)\space(-ve means left longer)}\fi\fi\egroup\cumulativeDelta=0}%
 
 \endinput

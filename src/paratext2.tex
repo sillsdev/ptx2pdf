@@ -1204,14 +1204,33 @@
   \sk@ppingfalse
   \ifhe@dings\endhe@dings\fi%
   \Lneedsemptyingtrue%
+  \pickn@xtpartial
+  \tempfalse
+  \ifvoid\partialL\else\temptrue\fi
+  \ifvoid\partialR\else\temptrue\fi
+  \setboth
+  \setc@rdiglotstate{L}%
+  \eject
+  \ifnum\interactionmode=2
+    \showbox\n@xtpartialNrml\showbox\n@xtpartialRev
+  \fi
+  \ifvoid\n@xtpartial\else
+    \global\setbox\partial=\vtop{\joinb@xes{\partial}{\n@xtpartial}}%
+  \fi
 %FIXME! If \ifendbooknoeject  happens to be true, then what? 
 %Set the 2 columns, put the footnotes up in the air and carry on??
-  \eject
 }
 
 % to switch back to diglot columns, first set the page  so far 
 % and then change the rest.
-\def\diglotcolumns{\ifdiglot\enddigl@t\fi\diglottrue\diglots@tup}
+\def\diglotcolumns{
+  \ifx\@netimesetup\relax%Skip ending diglot if there's no possibily we've started.
+    \ifdiglot
+      \enddigl@t
+    \fi
+  \fi
+  \diglottrue\diglots@tup
+}
 
 \def\diglots@tup{%
   % reset parameters for diglot-column formatting
