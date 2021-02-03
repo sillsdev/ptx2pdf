@@ -172,7 +172,8 @@ class RunJob:
         self.checkForMissingDecorations(info)
         info["document/piclistfile"] = ""
         if info.asBool("document/ifinclfigs"):
-            self.texfiles += self.gatherIllustrations(info, jobs, self.args.paratext)
+            self.gatherIllustrations(info, jobs, self.args.paratext)
+            # self.texfiles += self.gatherIllustrations(info, jobs, self.args.paratext)
         self.ispdfxa = self.printer.get("c_PDFx1aOutput")
         
         if info.asBool("project/combinebooks"):
@@ -228,10 +229,10 @@ class RunJob:
                     secondary="".join(finalLogLines[-20:]), title="PTXprint [{}] - Error!".format(VersionStr),
                     threaded=True)
             self.printer.onIdle(self.printer.showLogFile)
-        if not info.asBool("project/keeptempfiles"):
-            self.removeTempFiles(self.texfiles)
-        else:
+        if info.asBool("project/keeptempfiles"):
             self.printer.tempFiles = self.texfiles
+        else:
+            self.removeTempFiles(self.texfiles)
         self.printer.finished()
         self.busy = False
         unlockme()
@@ -647,7 +648,7 @@ class RunJob:
                 # os.remove(n)
             # except:
                 # notDeleted += [n]
-        for extn in ('delayed','parlocs','notepages', 'picpages', 'piclist', 'SFM', 'sfm', 'xdv', 'tex', 'log'):
+        for extn in ('delayed','parlocs', 'notepages', 'SFM', 'sfm', 'xdv', 'tex', 'log'):
             for t in set(texfiles):
                 delfname = os.path.join(self.tmpdir, t.replace(".tex", "."+extn))
                 if os.path.exists(delfname):

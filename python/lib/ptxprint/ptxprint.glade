@@ -4853,15 +4853,18 @@ that should be typeset as a single column.</property>
 USFM codes for formatting. You may want to
 use the reset button to start with a standard set.
 
-Note that you may use the following codes to
-automatically include special text using the 
-following markers:
+You can use the following codes to
+automatically include special text 
+using the following markers:
 \zCopyright   - copyright statement from the Basic tab
 \zLicense     - License text from the Basic tab
 \zImageCopyrights   - Automatically generated list of images, page numbers and attributions.
 
-Note that you will have to hit Print a second time in
-order to get accurate Image Copyright Attribution.</property>
+These special codes may also be used in other
+books such as the front matter book (FRT). 
+
+IMPORTANT: you will have to hit Print a second time
+in order to get accurate Image Copyright Attribution.</property>
                                 <property name="halign">end</property>
                                 <property name="valign">start</property>
                                 <property name="margin_top">6</property>
@@ -4956,15 +4959,17 @@ bottom of a new page at the end of the publication.</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
-                            <property name="tooltip_text" translatable="yes">A brief statement containing information
+                            <property name="tooltip_text" translatable="yes">NOTE: This Colophon will not appear 
+in the PDF the first time you hit Print, 
+but will appear on subsequent runs.
+
+What is a Colophon?
+A brief statement containing information
 about the publication such as the place of 
 publication, the publisher, and the date of 
 publication. This will be printed at the END
 of the book. Similar to a "biblio-page" or a
-"copyright-page" at the front of a book.
-
-Note that you will have to hit Print a second time in
-order to get accurate Image Copyright Attribution.</property>
+"copyright-page" at the front of a book.</property>
                             <property name="halign">start</property>
                             <property name="active">True</property>
                             <property name="draw_indicator">True</property>
