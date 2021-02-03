@@ -5,7 +5,7 @@
 
 # Quick Start
 
-To get started with ptx2pdf you need XeTeX and the ptx2pdf macro package installed. (Instructions can be found here.) We have a sample project that can be downloaded here - [ptx2pdf-sample-GLW.zip](../quick-start/ptx2pdf-sample-GLW.zip?attredirects=0/index.html)
+To get started with ptx2pdf you need XeTeX and the ptx2pdf macro package installed. ([Instructions](../installation/README.md) can be found here.) We have a sample project that can be downloaded here - [ptx2pdf-sample-GLW.zip](../quick-start/ptx2pdf-sample-GLW.zip?attredirects=0/index.html)
 
 A typical ptx2pdf project consists of:
 
@@ -141,7 +141,7 @@ A typical ptx2pdf project consists of:
 
 
 
-<small>Updated on <abbr class="updated" title="2011-05-17T19:37:25.726Z">May 17, 2011</abbr> by <span class="author"><span class="vcard">Jeff Klassen</span> </span>(Version <span class="sites:revision">4</span>)</small>
+<small>Updated on <abbr class="updated" title="2011-05-17T19:37:25.726Z">February 3, 2021</abbr> by <span class="author"><span class="vcard">Bobby de Vos</span> </span>(Version <span class="sites:revision">5</span>)</small>
 
 * * *
 
