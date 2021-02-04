@@ -52,7 +52,7 @@ ModelMap = {
     # "project/showadvancedtab":  ("c_showAdvancedTab", None),
     # "project/showdiglottab":    ("c_showDiglotBorderTab", None),
     # "project/showviewertab":    ("c_showViewerTab", None),
-    "project/keeptempfiles":    ("c_keepTemporaryFiles", None),
+    # "project/keeptempfiles":    ("c_keepTemporaryFiles", None),
     "project/pdfx1acompliant":  ("c_PDFx1aOutput", None),
     "project/bookscope":        ("r_book", None),
     "project/combinebooks":     ("c_combine", None),

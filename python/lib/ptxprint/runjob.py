@@ -229,10 +229,11 @@ class RunJob:
                     secondary="".join(finalLogLines[-20:]), title="PTXprint [{}] - Error!".format(VersionStr),
                     threaded=True)
             self.printer.onIdle(self.printer.showLogFile)
-        if info.asBool("project/keeptempfiles"):
-            self.printer.tempFiles = self.texfiles
-        else:
-            self.removeTempFiles(self.texfiles)
+        self.printer.tempFiles = self.texfiles  # Always do this now - regardless!
+        # if info.asBool("project/keeptempfiles"):
+            # self.printer.tempFiles = self.texfiles
+        # else:
+            # self.removeTempFiles(self.texfiles)
         self.printer.finished()
         self.busy = False
         unlockme()
