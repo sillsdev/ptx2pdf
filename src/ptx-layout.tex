@@ -1,0 +1,194 @@
+
+
+\def\makeframe#1#2#3{
+  \x@\x@\x@\def\x@\csname o#1@fill\endcsname\x@{\csname o#2@fill\endcsname #1}
+  \x@\x@\x@\def\x@\csname o#1@store\endcsname\x@{\csname o#2@store\endcsname #1}
+  \x@\x@\x@\def\x@\csname o#1@cmp\endcsname\x@{\csname o#2@cmp\endcsname #1}
+  \x@\x@\x@\def\x@\csname o#1@adjust\endcsname\x@{\csname o#2@adjust\endcsname #1}
+  \x@\x@\x@\def\x@\csname o#1@finalise\endcsname\x@{\csname o#2@finalise\endcsname #1}
+  \x@\x@\x@\def\x@\csname o#1@htsource\endcsname\x@{\csname o#2@htsource\endcsname #1}
+  \x@\def\csname o#1@source\endcsname#3
+}
+
+\def\expandframe#1{
+  \x@\let\x@\o@fill\csname o#1@fill\endcsname
+  \x@\let\x@\o@store\csname o#1@store\endcsname
+  \x@\let\x@\o@cmp\csname o#1@cmp\endcsname
+  \x@\let\x@\o@adjust\csname o#1@adjust\endcsname
+  \x@\let\x@\o@source\csname o#1@source\endcsname
+}
+
+% Single frame (with or without footnotes)
+
+\def\ofs@init#1#2{
+    % #1: id, #2 initial height
+    \makeframe{#1}{fs}{\mainbox}
+    \x@\ifx\csname o#1@process\endcsname\undefined
+      \global\advance\count14 by 1 % box allocation counter
+      \x@\let\csname o#1@process\endcsname\count14
+      \global\advance\count11 by 1 % dimen allocation counter
+      \x@\dimendef\csname o#1@currcut\endcsname=\count11
+      \csname o#1@currcut\endcsname=#2
+      \global\advance\count11 by 1
+      \x@\dimendef\csname o#1@maxcut\endcsname=\count11
+      \csname o#1@maxcut\endcsname=#2
+      \global\advance\count11 by 1
+      \x@\dimendef\csname o#1@mincut\endcsname=\count11
+      \csname o#1@mincut\endcsname=0pt
+      \ifx\o@procbox\undefined\newbox\o@procbox\fi
+      \ifx\o@balbox\undefined\newbox\o@balbox\fi
+      \ifx\tmpbox\undefined\newbox\tmpbox\fi
+    \fi
+}
+
+\def\ofs@fill#1#2#3{
+  % #1: id, #2 maxheight, #3 maxmark or \empty
+  % o@result=0: good, 1: overfull, 2: underfull
+  \setbox\o@procbox=\x@\copy\csname o#1@process\endcsname
+  \setbox\o@balbox=\vsplit\o@procbox to #2
+  \let\o@contentstopmark=\splitfirstmark
+  \let\o@contentsbotmark=\splitbotmark
+  \o@score=0
+  \x@\setbox\csname o#1@contents\endcsname=\vbox{\unvbox\o@balbox}
+  \ifvoid\o@procbox
+    \ifx{#3}\empty\o@result=0
+    \else\o@cmpmarks{#3}{\o@contentsbotmark}
+      \let\o@score=\ifcase\o@cmpmarksres 0
+        \or 2\or 1\fi
+    \fi
+  \else
+    \ifx{#3}\empty\o@result=1
+    \else
+      \setbox\tempbox=\vsplit\o@procbox to \ht\o@procbox
+      \let\o@remaindertopmark=\splitfirstmark
+      \let\o@remainderbotmark=\splitbotmark
+      \o@cmpmarks{#3}{\o@contentsbotmark}
+      \let\o@result=\ifcase\o@cmpmarksres 1
+        \or\o@cmpmarks{\o@remaindertopmark}{#3}\ifcase\o@cmpmarksres 2\or 2\or 1\fi
+        \or 1\fi
+  \fi\fi
+}
+
+\def\ofs@store#1#2{
+  \x@\x@\x@\let\x@\csname o#1@#2cut\endcsname\csname o#1@currcut\endcsname
+}
+
+\def\ofs@cmp#1#2{
+    \dimen0=\csname o#1@#2cut\endcsname
+    \dimen1=\csname o#1@currcut\endcsname
+    \ifdim\dimen0<\dimen1 1\else\ifdim\dimen1<\dimen0 2\else 0\fi\fi
+}
+
+\def\ofs@nochange#1{
+    \dimen0=\csname o#1@maxcut\endcsname
+    \x@\advance\x@\dimen0\x@-\csname o#1@mincut\endcsname
+    \ifdim\dimen0 < \baselineskip 1\else 0\fi
+}
+
+\def\ofs@adjust#1#2#3#4{
+    % #1: id, #2: t, #3: left, #4: right
+    \dimen1=\csname o#1@#3cut\endcsname
+    \dimen0=\csname o#1@#4cut\endcsname
+    \advance\dimen0 -#2\dimen0\advance \dimen0 #2\dimen1
+    \setbox\balbox\x@\copy\csname o#1@source\endcsname
+    \setbox\o@procbox=\vsplit\balbox to \dimen0
+    \holdinginserts=0
+    \output\o@output\unvbox\o@procbox\eject
+    \x@\setbox\csname o#1@process\endcsname=\box\galleybox
+}
+
+\def\ofs@finalise#1#2#3#4{
+    \holdinginserts=0
+    \setbox\tmpbox\x@\vpslit\csname o#1@source\endcsname to \csname o#1@#2cut\endcsname
+    \output\o@output\unvbox\tmpbox\eject
+    \x@\setbox\csname o#1@process\endcsname=\box\galleybox
+    \csname o#1@fill\endcsname#1#3#4
+    \x@\box\csname o#1@contents\endcsname
+}
+
+\def\ofs@htsource#1{
+    \ht\x@\csname o#1@source\endcsname
+}
+
+\def\o@output{
+  % output routine for pulling apart an ejected vbox
+  \setbox\galleybox=\box255
+}
+
+\def\ops@page{
+  \setbox\tmpbox=\oa@finalise{best}{\ops@bestheight}{}
+  \iflastpage\setbox\tmpbox\vbox{\unvbox\tmpbox}\fi
+  \gdef\pagecontents{
+    \dimen1=\textwidth \advance\dimen1 -\ExtraRMargin
+    \trace{b}{BALANCE pangeoutins: cols=1: text=\the\ht\tmpbox, \the\dp\tmpbox: partial=\the\ht\partial, \the\dp\partial: topins=\the\ht\topins: bottomins=\the\ht\bottomins}
+    \ifvoid\partial\else \vbox{\hbox to \dimen1{\hskip\columnshift\vbox{\unvbox\partial}}} \fi
+    \ifvoid\topins\else \vbox{\hbox to \columnshift{}\box\topins} \vskip\skip\topins \fi
+    \lastd@pth=\dp\tmpbox
+    \hbox to \dimen1{\hbox to \columnshift{}%
+      \ifrtl\hbox to \ExtraRMargin{}\hfil\box\tmppbox\else
+      \box\tmpbox\hbox to \ExtraRMargin{}\hfil\fi}%
+    \ifvoid\bottomins\else \vfil\kern-\lastd@pth
+      \lastd@pth=0pt \vskip\skip\bottomins \hbox{\hbox to \columnshift{}\box\bottomins} \fi % ouput bottom spanning pictures
+    \f@rstnotetrue%
+    \m@kenotebox
+    \trace{b}{BALANCE pageouttxt: notes=\the\ht2, \the\dp2 \space Leaving \the\ht\mainbox, \the\dp\mainbox}%
+    \ifdim\ht2<0pt\trace{b}{Strange notes height}\fi
+    \unvbox2
+    \ifvoid\verybottomins\else\vfil % \kern-\dimen0
+      \lastd@pth=0pt \vskip\skip\verybottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\verybottomins}}\fi
+  }
+}
+
+\newdimen\bestheight
+\def\ops@fillpage{
+  \ofs@init{a}{\textheight}
+  \oa@adjust{0.75}{min}{max}
+  \bestheight=0pt
+  \loop
+    \c@lcavailht
+    \oa@fill{\availht}{}
+    \temptrue
+    \ifcase\o@result    % valid result
+      \ifnum\o@score=0\tempfalse
+      \else
+        \ifdim\ht\oa@contents>\bestheight
+          \bestheight=\ht\oa@contents
+          \oa@store{best}\oa@store{min}
+        \else
+          \oa@store{max}
+      \fi\fi
+    \or\oa@store{max}   % overfull
+    \or\oa@store{min}   % underfull
+    \fi
+  \ifnum\oa@nochange=1\tempfalse\fi
+  \iftemp\oa@adjust{0.5}{min}{max}\repeat
+  
+\def\o@binchop{
+  % Runs the binary iteration process. Needs a balancer and bincmp. Stores result in \bestht
+  % want this algorithm to resplit mainbox and recalc availht every time round the loop
+  % to handle changes in footnotes and pictures.
+  \bestmax=\availht
+  \bestmin=0pt
+  \bestht=0pt
+  \loop
+    \c@lcavailht
+    \maxht=\availht
+    \temptrue
+    \setbox\balbox=\copy\galleybox
+    \os@balance
+    \ifdim\ht\balbox<=0pt
+      \ifdim\bestht=0pt\nextht=\ht\galleybox\else    %\ht\colA=\ht\galleybox
+        \nextht=\bestmax\advance\nextht by \ht\galleybox\divide\nextht by 2
+        \dimen0=\nextht\advance\dimen0 by -\ht\galleybox
+        \ifdim0<\baselineskip\tempfalse\fi
+      \fi
+      \ifdim\ht\colA>\bestht\bestht=\ht\colA\bestin=\ht\galleybox\fi
+    \else
+      \ifdim\ht\galleybox<\bestmax\bestmax=\ht\galleybox\fi
+      \nextht=\ht\colA
+    \fi
+  \iftemp\os@process\repeat
+  \dimen0=\maxht\advance\dimen0=-\bestht
+  \let\next=\
+  \ifdim0<\baselineskip\let\next=\os@pageout\fi
+}
