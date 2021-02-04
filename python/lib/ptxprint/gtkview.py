@@ -126,7 +126,6 @@ _sensitivities = {
     "c_borders" :              ["gr_borders"],
 
     "c_pagegutter" :           ["s_pagegutter"],
-    "c_variableLineSpacing" :  ["s_linespacingmin", "s_linespacingmax"],
     "c_verticalrule" :         ["l_colgutteroffset", "s_colgutteroffset"],
     "c_rhrule" :               ["s_rhruleposition", "gr_horizRule"],
     "c_introOutline" :         ["c_prettyIntroOutline"],
@@ -545,8 +544,8 @@ class GtkViewModel(ViewModel):
                   "row_ToC", "c_hyphenate", "l_missingPictureCount", "bx_colophon", "btn_deleteConfig", "btn_lockunlock",
                   "c_hdrLeftPri", "c_hdrLeftSec", "c_hdrCenterPri", "c_hdrCenterSec", "c_hdrRightPri", "c_hdrRightSec", 
                   "c_omitverseone", "c_glueredupwords", "c_firstParaIndent", "c_hangpoetry", "c_preventwidows", 
-                  "l_sidemarginfactor", "s_sidemarginfactor", "s_linespacingmin", "s_linespacingmax", "btn_unpackDBLbundle",
-                  "c_variableLineSpacing", "c_pagegutter", "s_pagegutter", "l_digits", "fcb_digits",
+                  "l_sidemarginfactor", "s_sidemarginfactor", "btn_unpackDBLbundle",
+                  "c_pagegutter", "s_pagegutter", "l_digits", "fcb_digits",
                   "t_invisiblePassword", "t_configNotes", "l_notes", "c_elipsizeMissingVerses", "fcb_glossaryMarkupStyle",
                   "gr_fnAdvOptions", "c_figexclwebapp", "bx_horizRule", "l_glossaryMarkupStyle", "btn_refreshFonts",
                   "fr_spacingAdj", "fr_fallbackFont", "l_complexScript", "b_scrsettings", "c_colorfonts"):
@@ -1242,15 +1241,6 @@ class GtkViewModel(ViewModel):
         self.onPicRadioChanged(btn)
         self.picChecksView.onReverseRadioChanged()
     
-    def onVariableLineSpacingClicked(self, btn):
-        self.sensiVisible("c_variableLineSpacing")
-        lnspVal = round(float(self.get("s_linespacing")), 1)
-        minVal = round(float(self.get("s_linespacingmin")), 1)
-        maxVal = round(float(self.get("s_linespacingmax")), 1)
-        if self.get("c_variableLineSpacing") and lnspVal == minVal and lnspVal == maxVal:
-            self.set("s_linespacingmin", lnspVal - 1)
-            self.set("s_linespacingmax", lnspVal + 2)
-
     def onSectionHeadsClicked(self, btn):
         self.onSimpleClicked(btn)
         status = self.sensiVisible("c_sectionHeads")

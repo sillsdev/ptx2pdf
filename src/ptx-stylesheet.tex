@@ -1177,7 +1177,7 @@
                                                            % set it will remain. Otherwise, the default
                                                            % of 14 will be applied here and set text will
                                                            % hold to the grid.
- \getp@ram{baseline}{p#1}\ifx\p@ram\relax\setp@ram{baseline}{p#1}{\the\baselineskip}%
+ \getp@ram{baseline}{p#1}\ifx\p@ram\relax\s@tbaseline{p#1}\setp@ram{baseline}{p#1}{\the\baselineskip}%
  \MSG{Baselineskip for p#1 undefined, set to \the\baselineskip}\fi
 }
 \def\s@tupsizes{

@@ -129,15 +129,9 @@ ModelMap = {
     "fancy/versedecoratorshift":   ("s_verseDecoratorShift", lambda w,v: float(v or "0")),
     "fancy/versedecoratorscale":   ("s_verseDecoratorScale", lambda w,v: int(float(v or "1.0")*1000)),
 
-    "paragraph/varlinespacing":    ("c_variableLineSpacing", lambda w,v: "" if v else "%"),
-    "paragraph/useglyphmetrics":   ("c_variableLineSpacing", lambda w,v: "%" if v else ""),
     "paragraph/linespacing":       ("s_linespacing", lambda w,v: "{:.3f}".format(float(v)) or "15.000"),
     "paragraph/linespacebase":  ("c_AdvCompatLineSpacing", lambda w,v: 14 if v else 12),
     # "paragraph/linespacingfactor": ("s_linespacing", lambda w,v: "{:.3f}".format(float(v or "15") / 12)),
-    "paragraph/linemin":           ("s_linespacingmin", lambda w,v: "minus {:.3f}pt".format(float(w.get("s_linespacing")) - float(v)) \
-                                                     if float(v) < float(w.get("s_linespacing")) else ""),
-    "paragraph/linemax":        ("s_linespacingmax", lambda w,v: "plus {:.3f}pt".format(float(v) - float(w.get("s_linespacing"))) \
-                                                     if float(v) > float(w.get("s_linespacing")) else ""),
     "paragraph/ifjustify":      ("c_justify", lambda w,v: "true" if v else "false"),
     "paragraph/ifhyphenate":    ("c_hyphenate", lambda w,v: "" if v else "%"),
     "paragraph/ifomithyphen":   ("c_omitHyphen", lambda w,v: "" if v else "%"),
