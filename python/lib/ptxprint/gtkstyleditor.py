@@ -294,6 +294,7 @@ class StyleEditorView(StyleEditor):
                 oldval = old.get(basekey, old.get(obasekey, ''))
                 val = data.get(basekey, oldval)
                 olddat = v[2]
+                controlk = v[3](False)
                 for m, f in ((v[3](x), x) for x in (v[2], not v[2])):
                     if m in old:
                         olddat = f
@@ -307,6 +308,11 @@ class StyleEditorView(StyleEditor):
                         self._setFieldVal(v, olddat, f)
                         v = stylemap[v[3](False)]
                         break
+                else:
+                    f = v[2]
+                newlabel = stylediverts[controlk][2 if f else 1]
+                controlw = stylemap[controlk][1]
+                self.set(controlw, newlabel)
                 old[" "+k] = olddat
             else:
                 oldval = old.get(k, v[2])
