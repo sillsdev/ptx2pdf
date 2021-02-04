@@ -607,6 +607,11 @@
     %\fi
     %\showbox\galleyexc@ss
   \else 
+    \ifnum\outputpenalty<-10000
+      \ifnum\outputpenalty>-10010
+        \MSG{*** Internal error caught. Incorrect penalty encountered. \the\outputpenalty!=\the\endtri@lpen@lty}%
+      \fi
+    \fi
     \vsize=\textheight
   \fi
 }
@@ -940,7 +945,10 @@
       \ifm@rksonpage\else\mark{}\marks1{}\fi% FIXME? \marks2 too?
     \fi
     \global\setbox\galley=\vbox{\joinboxes{\LeftBox}{\partialL}{10}{\Lboxpenalty}\endgraf\penalty\dgl@tPenLtrialEnd}%
-    \global\setbox\galleyexc@ss=\box\voidb@x
+    \ifvoid\galleyexc@ss\else
+      \MSG{*** Internal error caught. Galleyexc@ss was not empty. Text has probably been lost near page \the\pageno. (\the\galleyexc@sspenalty, \the\ht\galleyexc@ss+\the\dp\galleyexc@ss)}%
+      \global\setbox\galleyexc@ss=\box\voidb@x
+    \fi
     \s@venotes{}%
     \unvcopy\galley
     \relax\relax%
