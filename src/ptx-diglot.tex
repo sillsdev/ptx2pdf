@@ -1430,6 +1430,7 @@
        \traceNum{d}{Emitpartial \the\ht\partial+\the\dp\partial, \the\ht\n@xtpartial+\the\dp\n@xtpartial}%
        \ifvoid\n@xtpartial\else
          \global\setbox\partial=\vtop{\joinb@xes{\partial}{\n@xtpartial}}%
+         \voidn@xtpartial
        \fi
        \@writep@ge\@writep@ge%
        \global\leftfullfalse%
@@ -1707,6 +1708,13 @@
       \fi
     \fi
   \fi\fi%
+  \ifvoid\partialL\ifvoid\partialR\ifvoid\excessL\ifvoid\excessR\else
+    \if\n@xtdiglotstate L
+      \trace{D}{ExcessR isn't empty and needs emptying \show@diglotstate}%
+      \setbox\partialR\box\excessR
+      \let\@ftersetboth\setboth
+    \fi
+  \fi\fi\fi\fi
   \@ftersetboth%
 }
 \def\checkn@sty#1#2{%
@@ -1956,7 +1964,7 @@
 
 \def\pickn@xtpartial{\ifdiglotN@rmal\global\let\n@xtpartial=\n@xtpartialNrml\else\global\let\n@xtpartial=\n@xtpartialRev\fi} % decide which n@xtpartial box to use
 
-\def\voidn@xtpartial{\ifdiglotN@rmal\global\setbox\n@xtpartialRev\voidb@x\else\global\setbox\n@xtpartialNrml\voidb@x\fi}% Void the other n@xtpartial box
+\def\voidn@xtpartial{\ifdiglotN@rmal\global\setbox\n@xtpartialRev\box\voidb@x\else\global\setbox\n@xtpartialNrml\box\voidb@x\fi}% Void the other n@xtpartial box
 
 \def\upd@tep@rtial{%Actually add stuff to the page.
   \trace{D}{upd@tep@rtial \the\outputpenalty}%
@@ -1985,6 +1993,7 @@
   \traceNum{d}{Adding old n@xtpartial to page(\the\ht\n@xtpartial+\the\dp\n@xtpartial)}%
   \ifvoid\n@xtpartial\else
     \global\setbox\partial=\vtop{\joinb@xes{\partial}{\n@xtpartial}}%
+    \voidn@xtpartial
   \fi
   \trace{d}{Writing new n@xtpartial : LB:\the\ht\LeftBox+\the\dp\LeftBox\space RB:\the\ht\RightBox+\the\dp\RightBox\space Last Delta:\the\chunkDelta}%\space Tot:\the\cumulativeDelta%
   \diglot@arrange@cols
@@ -2010,6 +2019,7 @@
   \ifpagefull%
     \ifvoid\n@xtpartial\else
       \global\setbox\partial=\vtop{\joinb@xes{\partial}{\n@xtpartial}}%
+      \voidn@xtpartial
     \fi
     \@writep@ge%
     \global\deadcycles=0 %That counts as an action too.
