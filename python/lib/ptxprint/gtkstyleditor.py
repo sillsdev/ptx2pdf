@@ -189,6 +189,8 @@ class StyleEditorView(StyleEditor):
         for k, v in sorted(self.sheet.items(), key=lambda x:(len(x[0]), x[0])):
             if k == "p":
                 foundp = True
+            if k not in self.basesheet:
+                v[' deletable'] = True
             cat = 'Other'
             if 'Name' in v:
                 m = name_reg.match(str(v['Name']))
