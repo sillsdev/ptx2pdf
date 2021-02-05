@@ -43,7 +43,9 @@
 %
 %
 \newif\ifdiglotInnerOuter% Do pages switch columns based on page number (odd pages Left-Right, even Right-left)?
+\newif\ifdiglotSwap %Do we invert the columns?
 \diglotInnerOuterfalse
+\diglotSwapfalse
 \newif\ifdiglotN@rmal % Which way round for this page?
 \newif\ifuseLeftMarks %Do we use marks from the left column
 \newif\ifuseRightMarks %Do we use them from the right column
@@ -1460,6 +1462,8 @@
  \box1
 \egroup}
 
+\def\setdiglotN@rmal{\ifnum \numexpr 1 \ifdiglotInnerOuter \ifodd\pageno\else * -1 \fi\fi \ifdiglotSwap * -1\fi\relax >0 
+  \diglotN@rmaltrue \else \diglotN@rmalfalse \fi}
 
 \def\upd@tep@rtial{%Actually add stuff to the page.
   \trace{D}{upd@tep@rtial \the\outputpenalty}%
@@ -1469,8 +1473,7 @@
     \setbox\LeftBox=\vbox{\unvbox\LeftBox}%
     \setbox\RightBox=\vbox{\unvbox\RightBox}%
   \fi\fi
-   \diglotN@rmaltrue\ifdiglotInnerOuter\ifodd\pageno\else\diglotN@rmalfalse\fi\fi 
-  \showboxdepth=3 %
+  \setdiglotN@rmal
   \showboxbreadth=1000 %
   %\ifnum\pageno=1%
   %\showbox\LeftBox%
@@ -1689,7 +1692,7 @@
 \newif\ifJoinGutterRule \FigGutterRulefalse
 \def\@writep@ge {%
   \trace{D}{@writep@ge}%
-  \diglotN@rmaltrue\ifdiglotInnerOuter\ifodd\pageno\else\diglotN@rmalfalse\fi\fi 
+  \setdiglotN@rmal
   \global\setbox\galley=\vbox{\unvbox\partial}%
   \ifdiglotSepNotes%
     \trace{D}{Sep notes}%
@@ -1836,7 +1839,7 @@
   %\showthe\rightskip
   \p@gestarttrue
   \def\pagecontents{%
-   \diglotN@rmaltrue\ifdiglotInnerOuter\ifodd\pageno\else\diglotN@rmalfalse\fi\fi 
+   \setdiglotN@rmal
    \ifvoid\topins\else \unvbox\topins \vskip\skip\topins \fi%
    \ifdim\ht\topleftins>\ht\toprightins%
       \setbox\toprightins=\vbox to \ht\topleftins{\box\toprightins\vss}%
