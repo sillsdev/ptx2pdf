@@ -140,7 +140,6 @@ class RunJob:
         self.tempFiles = []
         self.tmpdir = "."
         self.maxRuns = 1
-        self.minRuns = 0
         self.changes = None
         self.args = args
         self.res = 0
@@ -165,11 +164,8 @@ class RunJob:
         jobs = self.printer.getBooks(files=True)
 
         self.books = []
-        self.maxRuns = 5
+        self.maxRuns = 1 if self.printer.get("c_quickRun") else 5
         print(info.dict['project/colophontext'])
-        if r"\zImageCopyrights" in (info.dict['project/colophontext'] or ""):
-            self.minRuns = max(self.minRuns, 1)
-            print(self.minRuns)
         self.changes = None
         self.checkForMissingDecorations(info)
         info["document/piclistfile"] = ""
@@ -231,6 +227,10 @@ class RunJob:
                     secondary="".join(finalLogLines[-20:]), title="PTXprint [{}] - Error!".format(VersionStr),
                     threaded=True)
             self.printer.onIdle(self.printer.showLogFile)
+        if len(self.rerunReasons):
+            self.printer.set("l_statusLine", _("Rerun") + " (" + ", ".join(self.rerunReasons) + ")")
+        else:
+            self.printer.set("l_statusLine", "")
         self.printer.tempFiles = self.texfiles  # Always do this now - regardless!
         # if info.asBool("project/keeptempfiles"):
             # self.printer.tempFiles = self.texfiles
@@ -455,6 +455,8 @@ class RunJob:
             self.printer.incrementProgress()
             if info["document/toc"] != "%":
                 tocdata = self.readfile(os.path.join(self.tmpdir, outfname.replace(".tex", ".toc")))
+            if info["document/includeimg"]:
+                picdata = self.readfile(os.path.join(self.tmpdir, outfname.replace(".tex", ".picpages")))
             cmd = ["xetex", "-halt-on-error", "-interaction=nonstopmode", "-no-pdf"]
             runner = call(cmd + [outfname], cwd=self.tmpdir)
             if isinstance(runner, subprocess.Popen) and runner is not None:
@@ -470,20 +472,31 @@ class RunJob:
             (self.loglines, rerun) = self.parselog(os.path.join(self.tmpdir, logfname), rerunp=True, lines=300)
             info.printer.editFile_delayed(logfname, "wrk", "scroll_XeTeXlog", False)
             numruns += 1
-            if numruns <= self.minRuns + 1:
-                continue
-            elif self.res:
-                continue
-            elif info["document/toc"] != "%" and not rerun:
+            self.rerunReasons = []
+            rererun = False
+            if self.res:
+                rererun = True
+            if info["document/toc"] != "%":
                 tocndata = self.readfile(os.path.join(self.tmpdir, outfname.replace(".tex", ".toc")))
-                rerun = tocdata != tocndata
-                if rerun:
-                    print(_("Rerunning because the Table of Contents was updated"))
+                if tocdata != tocndata:
+                    if numruns >= self.maxruns:
+                        self.rerunReasons.append(_("TOC"))
+                    else:
+                        print(_("Rerunning because the Table of Contents was updated"))
+                        rererun = True
                 else:
                     break
-            elif rerun:
-                print(_("Rerunning because inline chapter numbers moved"))
-            else:
+            if info["document/includeimg"]:
+                picndata = self.readfile(os.path.join(self.tmpdir, outfname.replace(".tex", ".picpages")))
+                if picdata != picndata:
+                    self.rerunReasons.append(_("image copyrights"))
+            if rerun:
+                if numruns >= self.maxruns:
+                    self.rerunReasons.append(_("inline chapters"))
+                else:
+                    print(_("Rerunning because inline chapter numbers moved"))
+                    rererun = True
+            if not rererun:
                 break
         if not self.args.testing and not self.res:
             self.printer.incrementProgress()

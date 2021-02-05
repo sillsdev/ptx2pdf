@@ -565,7 +565,9 @@ class ViewModel:
             config.set("paragraph", "linespacebase", "True")
         if v < 1.404:
             config.set("fancy", "versedecoratorshift", "-5")
-            config.set("config", "version", "1.404")
+        if v < 1.501:
+            config.set("document", "includeimg", config.get("snippets", "imgcredits", fallback="false"))
+            config.set("config", "version", "1.501")
 
         styf = os.path.join(self.configPath(cfgname), "ptxprint.sty")
         if not os.path.exists(styf):
