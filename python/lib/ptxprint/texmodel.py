@@ -620,6 +620,13 @@ class TexModel:
                                 res.append(r"\setbookhook{{start}}{{{}}}{{\gdef\BalanceThreshold{{3}}\clubpenalty=50\widowpenalty=50}}".format(bk))
                                 res.append(r"\setbookhook{{end}}{{{}}}{{\gdef\BalanceThreshold{{0}}\clubpenalty=10000\widowpenalty=10000}}".format(bk))
                 elif l.startswith(r"%\snippets"):
+                    res.append("""
+\\catcode"FDEE=1 \\catcode"FDEF=2
+\\prepusfm
+\\def\\zcopyright\uFDEE{project/copyright}\uFDEF
+\\def\\zlicense\uFDEE{project/license}\uFDEF
+\\unprepusfm
+""".format(**self.dict))
                     for k, c in self._snippets.items():
                         v = self.asBool(k)
                         if v:
@@ -1117,7 +1124,7 @@ class TexModel:
         mkr='pc'
         sensitive = self['document/sensitive']
         picpagesfile = os.path.join(self.docdir()[0], self['jobname'] + ".picpages")
-        crdts = ["\\def\\zImageCopyrights{%"]
+        crdts = ["\\def\\zimagecopyrights{%"]
         if os.path.exists(picpagesfile):
             with universalopen(picpagesfile) as inf:
                 dat = inf.read()

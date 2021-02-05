@@ -479,7 +479,7 @@ class RunJob:
             if info["document/toc"] != "%":
                 tocndata = self.readfile(os.path.join(self.tmpdir, outfname.replace(".tex", ".toc")))
                 if tocdata != tocndata:
-                    if numruns >= self.maxruns:
+                    if numruns >= self.maxRuns:
                         self.rerunReasons.append(_("TOC"))
                     else:
                         print(_("Rerunning because the Table of Contents was updated"))
@@ -491,7 +491,7 @@ class RunJob:
                 if picdata != picndata:
                     self.rerunReasons.append(_("image copyrights"))
             if rerun:
-                if numruns >= self.maxruns:
+                if numruns >= self.maxRuns:
                     self.rerunReasons.append(_("inline chapters"))
                 else:
                     print(_("Rerunning because inline chapter numbers moved"))

@@ -567,6 +567,9 @@ class ViewModel:
             config.set("fancy", "versedecoratorshift", "-5")
         if v < 1.501:
             config.set("document", "includeimg", config.get("snippets", "imgcredits", fallback="false"))
+            colophontext = config.get("document", "colophontext", fallback="").replace("zCopyright", "zcopyright")\
+                            .replace("zImageCopyrights", "zimagecopyrights").replace("zLicense", "zlicense")
+            config.set("document", "colophontext", colophontext)
             config.set("config", "version", "1.501")
 
         styf = os.path.join(self.configPath(cfgname), "ptxprint.sty")

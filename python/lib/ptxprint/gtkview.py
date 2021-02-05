@@ -203,9 +203,9 @@ _horiz = {
     "-":        "-"
 }
 
-_defaultColophon = r"""\pc \zCopyright
-\pc \zLicense
-\pc \zImageCopyrights
+_defaultColophon = r"""\pc \zcopyright
+\pc \zlicense
+\pc \zimagecopyrights
 """
 
 _notebooks = ("Main", "Viewer", "PicList")

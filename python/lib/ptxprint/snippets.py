@@ -249,9 +249,7 @@ class Colophon(Snippet):
     texCode = """
 \\catcode"FDEE=1 \\catcode"FDEF=2
 \\prepusfm
-\\def\\zCopyright\uFDEE{project/copyright}\uFDEF
-\\def\\zLicense\uFDEE{project/license}\uFDEF
-\\def\\zColophon\uFDEE
+\\def\\zcolophon\uFDEE
 \\esb\\cat colophon\\cat*
 \\bigskip
 {project/colophontext}
