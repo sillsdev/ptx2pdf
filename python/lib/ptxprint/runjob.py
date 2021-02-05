@@ -165,7 +165,6 @@ class RunJob:
 
         self.books = []
         self.maxRuns = 1 if self.printer.get("c_quickRun") else 5
-        print(info.dict['project/colophontext'])
         self.changes = None
         self.checkForMissingDecorations(info)
         info["document/piclistfile"] = ""
@@ -228,7 +227,7 @@ class RunJob:
                     threaded=True)
             self.printer.onIdle(self.printer.showLogFile)
         if len(self.rerunReasons):
-            self.printer.set("l_statusLine", _("Rerun") + " (" + ", ".join(self.rerunReasons) + ")")
+            self.printer.set("l_statusLine", _("Rerun to fix: ") + ", ".join(self.rerunReasons))
         else:
             self.printer.set("l_statusLine", "")
         self.printer.tempFiles = self.texfiles  # Always do this now - regardless!
@@ -492,7 +491,7 @@ class RunJob:
                     self.rerunReasons.append(_("image copyrights"))
             if rerun:
                 if numruns >= self.maxRuns:
-                    self.rerunReasons.append(_("inline chapters"))
+                    self.rerunReasons.append(_("chapter numbers"))
                 else:
                     print(_("Rerunning because inline chapter numbers moved"))
                     rererun = True

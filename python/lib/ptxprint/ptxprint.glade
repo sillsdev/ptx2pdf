@@ -12705,10 +12705,10 @@ to do so by the PTXprint Support team.</property>
                                   <object class="GtkCheckButton" id="c_keepTemporaryFiles">
                                     <property name="label" translatable="yes">Preserve Intermediate
 Files and Logs </property>
-                                    <property name="visible">True</property>
                                     <property name="sensitive">False</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
+                                    <property name="no_show_all">True</property>
                                     <property name="tooltip_text" translatable="yes">AN AID FOR TRACKING PROBLEMS
 
 If the output is not as you expect, it is possible to discover
@@ -13794,7 +13794,6 @@ and Page Number in (or near) the middle.</property>
                                 <property name="label" translatable="yes">Secondary on
 Left (or Inner)</property>
                                 <property name="visible">True</property>
-                                <property name="sensitive">False</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
                                 <property name="tooltip_text" translatable="yes">Normally the Primary text is on the Left
@@ -16701,17 +16700,20 @@ chosen language.</property>
             </child>
             <child>
               <object class="GtkLabel" id="l_statusLine">
+                <property name="width_request">160</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="halign">end</property>
                 <property name="valign">center</property>
-                <property name="margin_left">12</property>
-                <property name="margin_right">6</property>
-                <property name="margin_top">6</property>
-                <property name="margin_bottom">6</property>
-                <property name="hexpand">True</property>
+                <property name="margin_left">6</property>
+                <property name="margin_right">3</property>
+                <property name="hexpand">False</property>
                 <property name="label"> </property>
-                <property name="justify">fill</property>
-                <property name="single_line_mode">True</property>
+                <property name="justify">right</property>
+                <property name="wrap">True</property>
+                <attributes>
+                  <attribute name="foreground" value="#a4a400000000"/>
+                </attributes>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -16725,20 +16727,20 @@ chosen language.</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">False</property>
-                <property name="tooltip_text" translatable="yes">Do not re-run job for exact results:
-
-Ordinarily, PTXprint re-runs the typesetting
-process (up to 5 times) in order to ensure
-everything is positioned as properly as
-possible, and so that the Table of Contents
-accurately reflects what is in the document. 
-This gives a much neater end result,
-but obviously takes it longer. If you would
+                <property name="tooltip_text" translatable="yes">Ordinarily, PTXprint reruns the typesetting
+process (multiple times) in order to ensure
+everything is positioned precisely, and the
+Table of Contents &amp; Image Copyright page
+numbers are accurate.
+  
+This gives a much neater end result, but 
+obviously takes longer to run. If you would
 rather just see a quick/rough result, then
-check this option to only run ONCE. This
-setting is only for the current session, and
-will automatically be reset the next time
-you start PTXprint.</property>
+check this option to only run ONCE.
+
+If it detects that it needs to be re-run for
+a perfect result, a reminder message will
+be displayed (in red) just to the left.</property>
                 <property name="valign">center</property>
                 <property name="margin_left">3</property>
                 <property name="margin_right">4</property>
