@@ -400,7 +400,7 @@ class PicList:
                 self.mask_media(self.currow)
                 if val != oldval: # New source implies new destination file
                     self.currow[_piclistfields.index('cleardest')] = True
-            elif key == "scale" and val != oldval: # Not sure why we need to do this
+            elif key == "size" and val != oldval: # Trigger a new copy of the image, since ratio may change
                 self.currow[_piclistfields.index('cleardest')] = True
             elif key == "mirror" and val == "None":
                 self.currow[fieldi] = ""
@@ -475,6 +475,7 @@ class PicList:
 
     def clearSrcPaths(self):
         self.picinfo.clearSrcPaths()
+
 
 _checks = {
     "r_picclear":       "unknown",
@@ -932,8 +933,11 @@ class PicInfo(dict):
         self.build_searchlist()
         for k, v in self.items():
             for a in ('src path', 'dest file'):
-                if a in v:
-                    del v[a]        
+                v.pop(a, None)
+
+    def clearDests(self):
+        for k, v in self.items():
+            v.pop('dest file', None)
         
 def PicInfoUpdateProject(model, bks, allbooks, picinfos, suffix="", random=False, cols=1, doclear=True, clearsuffix=False):
     newpics = PicInfo(model)

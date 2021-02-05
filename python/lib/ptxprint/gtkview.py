@@ -1374,6 +1374,7 @@ class GtkViewModel(ViewModel):
             if len(warnings):
                 self.printer.doError(_("Warning: Could not delete some file(s) or folders(s):"),
                         secondary="\n".join(warnings))
+            self.picinfos.clearDests()
 
     def onRefreshFontsclicked(self, btn):
         fc = fccache()
