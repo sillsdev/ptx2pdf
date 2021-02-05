@@ -16700,9 +16700,14 @@ chosen language.</property>
               </packing>
             </child>
             <child>
-              <object class="GtkLabel">
+              <object class="GtkLabel" id="l_statusLine">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="valign">center</property>
+                <property name="margin_left">12</property>
+                <property name="margin_right">6</property>
+                <property name="margin_top">6</property>
+                <property name="margin_bottom">6</property>
                 <property name="hexpand">True</property>
                 <property name="label"> </property>
                 <property name="justify">fill</property>
@@ -16715,7 +16720,37 @@ chosen language.</property>
               </packing>
             </child>
             <child>
-              <placeholder/>
+              <object class="GtkCheckButton" id="c_quickRun">
+                <property name="label" translatable="yes">Quick Run</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">False</property>
+                <property name="tooltip_text" translatable="yes">Do not re-run job for exact results:
+
+Ordinarily, PTXprint re-runs the typesetting
+process (up to 5 times) in order to ensure
+everything is positioned as properly as
+possible, and so that the Table of Contents
+accurately reflects what is in the document. 
+This gives a much neater end result,
+but obviously takes it longer. If you would
+rather just see a quick/rough result, then
+check this option to only run ONCE. This
+setting is only for the current session, and
+will automatically be reset the next time
+you start PTXprint.</property>
+                <property name="valign">center</property>
+                <property name="margin_left">3</property>
+                <property name="margin_right">4</property>
+                <property name="margin_top">3</property>
+                <property name="margin_bottom">3</property>
+                <property name="draw_indicator">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">4</property>
+              </packing>
             </child>
             <child>
               <object class="GtkProgressBar" id="pr_runs">

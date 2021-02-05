@@ -386,7 +386,7 @@ class StyleEditorView(StyleEditor):
             other = newv[3](not isset)
             if other in data:
                 del data[other]
-            value = val
+            value = val if v[3] is None else v[3](val)
         elif v[0].startswith("col_"):
             value = coltotex(val)
         elif key.startswith("_"):
@@ -394,13 +394,14 @@ class StyleEditorView(StyleEditor):
             otherkey = v[3](not val)
             controlk = v[3](False)
             self._setData(newkey, self._convertabs(newkey, data.get(otherkey, None)))
-            self.set(stylemap.get(newkey, stylemap.get(otherkey, [None]))[0], data[newkey])
+            newv = stylemap.get(newkey, stylemap.get(otherkey, [None]))
+            self.set(newv[0], data[newkey])
             newlabel = stylediverts[controlk][2 if val else 1]
             controlw = stylemap[controlk][1]
             self.set(controlw, newlabel)
             if otherkey in data:
                 del data[otherkey]
-            value = val
+            value = val if newv[3] is None else newv[3](val)
         elif v[3] is not None:
             value = v[3](val)
         else:

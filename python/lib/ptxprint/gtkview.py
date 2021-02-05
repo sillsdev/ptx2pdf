@@ -546,7 +546,7 @@ class GtkViewModel(ViewModel):
                   "c_hdrLeftPri", "c_hdrLeftSec", "c_hdrCenterPri", "c_hdrCenterSec", "c_hdrRightPri", "c_hdrRightSec", 
                   "c_omitverseone", "c_glueredupwords", "c_firstParaIndent", "c_hangpoetry", "c_preventwidows", 
                   "l_sidemarginfactor", "s_sidemarginfactor", "btn_unpackDBLbundle",
-                  "c_pagegutter", "s_pagegutter", "l_digits", "fcb_digits",
+                  "c_pagegutter", "s_pagegutter", "l_digits", "fcb_digits", "c_quickRun",
                   "t_invisiblePassword", "t_configNotes", "l_notes", "c_elipsizeMissingVerses", "fcb_glossaryMarkupStyle",
                   "gr_fnAdvOptions", "c_figexclwebapp", "bx_horizRule", "l_glossaryMarkupStyle", "btn_refreshFonts",
                   "fr_spacingAdj", "fr_fallbackFont", "l_complexScript", "b_scrsettings", "c_colorfonts"):
