@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ptxprint\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-02-04 15:57+0700\n"
-"PO-Revision-Date: 2021-02-04 08:58\n"
+"POT-Creation-Date: 2021-02-05 21:43+0700\n"
+"PO-Revision-Date: 2021-02-05 14:43\n"
 "Last-Translator: \n"
 "Language-Team: Romanian\n"
 "Language: ro_RO\n"
@@ -17,7 +17,7 @@ msgstr ""
 "X-Crowdin-File: /locales/ptxprint.pot\n"
 "X-Crowdin-File-ID: 4068\n"
 
-#: lib/ptxprint/gtkstyleditor.py:93 lib/ptxprint/ptxprint.glade:15356
+#: lib/ptxprint/gtkstyleditor.py:93 lib/ptxprint/ptxprint.glade:15348
 msgid "Line Spacing\n"
 "Factor:"
 msgstr "Spațiere linie\n"
@@ -27,7 +27,7 @@ msgstr "Spațiere linie\n"
 msgid "Baseline:"
 msgstr "Valoare iniţială:"
 
-#: lib/ptxprint/gtkstyleditor.py:94 lib/ptxprint/ptxprint.glade:14983
+#: lib/ptxprint/gtkstyleditor.py:94 lib/ptxprint/ptxprint.glade:14975
 msgid "Font Size\n"
 "Factor:"
 msgstr "Dimensiune font\n"
@@ -41,12 +41,12 @@ msgstr ""
 msgid "Set Font..."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:261
+#: lib/ptxprint/gtkview.py:262
 msgid "Paratext is not installed on this system.\n"
 "Please locate the directory containing your (paratext) project directories. Or cancel to exit"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:524
+#: lib/ptxprint/gtkview.py:525
 msgid "Show Advanced Settings:\n\n"
 "There are many more complex options\n"
 "available for use within PTXprint."
@@ -54,7 +54,7 @@ msgstr "Arată setările avansate:\n\n"
 "Există multe opţiuni mai complexe\n"
 "disponibile pentru utilizare în cadrul PTXprint."
 
-#: lib/ptxprint/gtkview.py:530
+#: lib/ptxprint/gtkview.py:531
 msgid "Hide Advanced Settings:\n\n"
 "If the number of options is too overwhelming then use\n"
 "this switch to hide the more complex/advanced options."
@@ -62,15 +62,15 @@ msgstr "Ascunde setările avansate:\n\n"
 "Dacă numărul de opțiuni este prea copleșitor atunci folosește\n"
 "acest comutator pentru a ascunde opțiunile mai complexe/avansate."
 
-#: lib/ptxprint/gtkview.py:588
+#: lib/ptxprint/gtkview.py:589
 msgid "Can't get {} in the model"
 msgstr "Nu se poate obține {} în model"
 
-#: lib/ptxprint/gtkview.py:601
+#: lib/ptxprint/gtkview.py:602
 msgid "Can't set {} in the model"
 msgstr "Nu se poate seta {} în model"
 
-#: lib/ptxprint/gtkview.py:667
+#: lib/ptxprint/gtkview.py:668
 msgid "                   >>> PLEASE CLOSE the PDF <<<                     \n\n"
 "{}\n\n"
 " Or use a different PDF viewer which will                              \n"
@@ -84,63 +84,63 @@ msgstr "                   >>> Închide PDF-ul <<                     \n\n"
 " Vezi secțiunea 'Link-uri' pe Vizualizator pentru mai multe detalii.                            \n\n"
 "                        Doriți să încercați din nou?"
 
-#: lib/ptxprint/gtkview.py:672
+#: lib/ptxprint/gtkview.py:673
 msgid "The old PDF file is open!"
 msgstr "Vechiul fișier PDF este deschis!"
 
-#: lib/ptxprint/gtkview.py:734
+#: lib/ptxprint/gtkview.py:735
 msgid "Internal error occurred, trying to delete a directory tree"
 msgstr "A apărut o eroare internă, încercarea de a șterge un arbore director"
 
-#: lib/ptxprint/gtkview.py:734 lib/ptxprint/gtkview.py:739
+#: lib/ptxprint/gtkview.py:735 lib/ptxprint/gtkview.py:740
 msgid "Folder: "
 msgstr "Dosar: "
 
-#: lib/ptxprint/gtkview.py:739
+#: lib/ptxprint/gtkview.py:740
 msgid "Can't delete that configuration from disk"
 msgstr "Nu se poate șterge configurația de pe disc"
 
-#: lib/ptxprint/gtkview.py:822 lib/ptxprint/ptxprint.glade:12012
+#: lib/ptxprint/gtkview.py:823 lib/ptxprint/ptxprint.glade:12012
 msgid "Pictures"
 msgstr "Imagini"
 
-#: lib/ptxprint/gtkview.py:826
+#: lib/ptxprint/gtkview.py:827
 msgid "Diglot"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:826
+#: lib/ptxprint/gtkview.py:827
 msgid "Border"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:829 lib/ptxprint/ptxprint.glade:13623
+#: lib/ptxprint/gtkview.py:830 lib/ptxprint/ptxprint.glade:13624
 msgid "Tabs"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:923 lib/ptxprint/ptxprint.glade:3727
+#: lib/ptxprint/gtkview.py:924 lib/ptxprint/ptxprint.glade:3727
 msgid "Lock"
 msgstr "Blocare"
 
-#: lib/ptxprint/gtkview.py:926
+#: lib/ptxprint/gtkview.py:927
 msgid "Unlock"
 msgstr "Deblocare"
 
-#: lib/ptxprint/gtkview.py:1078
+#: lib/ptxprint/gtkview.py:1079
 msgid " PicLists have been renamed and moved!"
 msgstr " PicListele au fost redenumite şi mutate!"
 
-#: lib/ptxprint/gtkview.py:1079
+#: lib/ptxprint/gtkview.py:1080
 msgid " Look on the <Pictures> tab for Details & Checklist along the top row."
 msgstr " Uitați-vă în fila <Pictures> pentru detalii și listă de verificare de-a lungul rândului de sus."
 
-#: lib/ptxprint/gtkview.py:1080
+#: lib/ptxprint/gtkview.py:1081
 msgid " A tool to help create Front Matter (the FRT book) may show up here in future."
 msgstr " Un instrument pentru a ajuta la crearea Front Matter (Cartea FRT) poate apărea aici în viitor."
 
-#: lib/ptxprint/gtkview.py:1110
+#: lib/ptxprint/gtkview.py:1111
 msgid " Use the 'Advanced' tab to select which settings you want to view or edit."
 msgstr " Utilizați fila \"Avansat\" pentru a selecta setările pe care doriți să le vedeți sau să le editați."
 
-#: lib/ptxprint/gtkview.py:1125
+#: lib/ptxprint/gtkview.py:1126
 msgid "\n\n"
 "-------------------------------------                                            \n"
 "[File has been truncated for display]                                            \n"
@@ -150,7 +150,7 @@ msgstr "\n\n"
 "[Fișierul a fost trunchiat pentru afișare]                                            \n"
 "Faceți clic pe butonul Vizualizare/Edit... pentru a vedea mai multe."
 
-#: lib/ptxprint/gtkview.py:1132
+#: lib/ptxprint/gtkview.py:1133
 msgid "\n"
 "This file doesn't exist yet.\n\n"
 "Try clicking...                                                \n"
@@ -162,26 +162,26 @@ msgstr "\n"
 "   * butonul 'Generează'                                                \n"
 "   * butonul 'Imprimare' pentru a crea PDF mai întâi"
 
-#: lib/ptxprint/gtkview.py:1346
+#: lib/ptxprint/gtkview.py:1347
 msgid "Remove Intermediate Files and Logs?"
 msgstr "Eliminați fișierele și jurnalele intermediare?"
 
-#: lib/ptxprint/gtkview.py:1347
+#: lib/ptxprint/gtkview.py:1348
 msgid "Are you sure you want to delete\n"
 "ALL the temporary PTXprint files?"
 msgstr "Sunteţi sigur că doriţi să ştergeţi\n"
 "TOATE fişierele temporare PTXprint?"
 
-#: lib/ptxprint/gtkview.py:1374
+#: lib/ptxprint/gtkview.py:1375
 msgid "Warning: Could not delete some file(s) or folders(s):"
 msgstr "Avertisment: Nu s-au putut șterge unele fișiere sau dosare:"
 
-#: lib/ptxprint/gtkview.py:1696
+#: lib/ptxprint/gtkview.py:1698
 msgid "'Enable Colored Text' has now been turned on.\n"
 "See Fonts+Script tab for details."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1868
+#: lib/ptxprint/gtkview.py:1870
 msgid "\n"
 "This file doesn't exist yet!\n\n"
 "Edit here and Click 'Save' to create it."
@@ -189,149 +189,165 @@ msgstr "\n"
 "Acest fişier nu există încă!\n\n"
 "Editaţi aici şi faceţi clic pe 'Salvează' pentru a-l crea."
 
-#: lib/ptxprint/gtkview.py:1910
+#: lib/ptxprint/gtkview.py:1912
 msgid "% This is the .tex file specific for the {} project used by PTXprint.\n"
 "% Saved Configuration name: {}\n"
 msgstr "% Acesta este fișierul .tex specific pentru proiectul {} folosit de PTXprint.\n"
 "% Nume de configurare salvat: {}\n"
 
-#: lib/ptxprint/gtkview.py:1917
+#: lib/ptxprint/gtkview.py:1919
 msgid "% This is the preprocessing .tex file specific for the {} project used by PTXprint.\n"
 "% Saved Configuration name: {}\n"
 msgstr "% Acesta este fișierul .tex preprocesat specific proiectului {} folosit de PTXprint.\n"
 "% Nume de configurare salvat: {}\n"
 
-#: lib/ptxprint/gtkview.py:1961
+#: lib/ptxprint/gtkview.py:1963
 msgid "Select the location and name for the Archive file"
 msgstr "Selectează locația și numele fișierului arhivă"
 
-#: lib/ptxprint/gtkview.py:2011
+#: lib/ptxprint/gtkview.py:2013
 msgid "Select the folder containing image files"
 msgstr "Selectaţi folderul care conţine fişiere imagine"
 
-#: lib/ptxprint/gtkview.py:2046
+#: lib/ptxprint/gtkview.py:2048
 msgid "Select one or more PDF(s) for FRONT matter"
 msgstr "Selectaţi unul sau mai multe PDF(uri) pentru materia FRONT"
 
-#: lib/ptxprint/gtkview.py:2050
+#: lib/ptxprint/gtkview.py:2052
 msgid "Select one or more PDF(s) for BACK matter"
 msgstr "Selectaţi unul sau mai multe PDF(uri) pentru materia BACK"
 
-#: lib/ptxprint/gtkview.py:2054
+#: lib/ptxprint/gtkview.py:2056
 msgid "Select Watermark PDF file"
 msgstr "Selectați fișierul PDF filigran"
 
-#: lib/ptxprint/gtkview.py:2059
+#: lib/ptxprint/gtkview.py:2061
 msgid "Select Page Border PDF file"
 msgstr "Selectați fișierul PDF pagină"
 
-#: lib/ptxprint/gtkview.py:2064
+#: lib/ptxprint/gtkview.py:2066
 msgid "Select Section Header PDF file"
 msgstr "Selectaţi fişierul PDF secţiune antet"
 
-#: lib/ptxprint/gtkview.py:2069
+#: lib/ptxprint/gtkview.py:2071
 msgid "Select End of Book PDF file"
 msgstr "Selectați Sfârșitul fișierului PDF al Cărții"
 
-#: lib/ptxprint/gtkview.py:2074
+#: lib/ptxprint/gtkview.py:2076
 msgid "Select Verse Decorator PDF file"
 msgstr "Selectați fișierul PDF al Decoratorului Verse"
 
-#: lib/ptxprint/gtkview.py:2182
+#: lib/ptxprint/gtkview.py:2184
 msgid "Switch to Other\n"
 "Diglot Project"
 msgstr "Comutați la proiectul Alt\n"
 "Diglot"
 
-#: lib/ptxprint/gtkview.py:2188
+#: lib/ptxprint/gtkview.py:2190
 msgid "Save & Return to\n"
 "Diglot Project"
 msgstr "Salvați și reveniți la proiectul\n"
 "Diglot"
 
-#: lib/ptxprint/gtkview.py:2236
+#: lib/ptxprint/gtkview.py:2238
 msgid "FYI: The Regular font already supports all the characters in the text."
 msgstr "FYI: Fontul obișnuit acceptă deja toate caracterele din text."
 
-#: lib/ptxprint/gtkview.py:2237
+#: lib/ptxprint/gtkview.py:2239
 msgid "A fallback font is not required so\n"
 "the 'Use Fallback Font' option will be disabled."
 msgstr "Un font de rezervă nu este necesar astfel încât\n"
 "opțiunea „Folosește Fallback Font” va fi dezactivată."
 
-#: lib/ptxprint/gtkview.py:2457
+#: lib/ptxprint/gtkview.py:2459
 msgid "Choose Image"
 msgstr "Alege imagine"
 
-#: lib/ptxprint/gtkview.py:2539
+#: lib/ptxprint/gtkview.py:2541
 msgid "Unsupported Locale"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:2540
+#: lib/ptxprint/gtkview.py:2542
 msgid "This locale is not supported on your system, you may need to install it"
 msgstr ""
 
-#: lib/ptxprint/runjob.py:219 lib/ptxprint/runjob.py:221
+#: lib/ptxprint/runjob.py:215 lib/ptxprint/runjob.py:217
 msgid "Layout problems were encountered on page(s): "
 msgstr "S-au întâmpinat probleme de schemă pe pagina (pagini): "
 
-#: lib/ptxprint/runjob.py:220
+#: lib/ptxprint/runjob.py:216
 msgid "PDF was created BUT..."
 msgstr "PDF a fost creat BUT..."
 
-#: lib/ptxprint/runjob.py:222
+#: lib/ptxprint/runjob.py:218
 msgid "\n\n"
 "Try changing the PicList and/or AdjList settings to solve issues."
 msgstr "\n\n"
 "Încercați să schimbați setările PicList și/sau AdjList pentru a rezolva probleme."
 
-#: lib/ptxprint/runjob.py:223
+#: lib/ptxprint/runjob.py:219
 msgid "PTXprint [{}] - Warning!"
 msgstr "PTXprint [{}] - Avertizare!"
 
-#: lib/ptxprint/runjob.py:228
+#: lib/ptxprint/runjob.py:224
 msgid "Failed to create: "
 msgstr "Creare eșuată: "
 
-#: lib/ptxprint/runjob.py:384
+#: lib/ptxprint/runjob.py:229
+msgid "Rerun to fix: "
+msgstr ""
+
+#: lib/ptxprint/runjob.py:385
 msgid "Failed to merge texts due to a Syntax Error:"
 msgstr "Nu s-a putut fuziona textele din cauza unei erori de sintaxă:"
 
-#: lib/ptxprint/runjob.py:385
+#: lib/ptxprint/runjob.py:386
 msgid "\n\n"
 "If original USFM text is correct, then check if PrintDraftChanges.txt has caused the error(s)."
 msgstr "\n\n"
 "Dacă textul original USFM este corect, atunci verifică dacă PrintDraftChanges.txt a cauzat erorile(erorile)"
 
-#: lib/ptxprint/runjob.py:387
+#: lib/ptxprint/runjob.py:388
 msgid "PTXprint [{}] - Diglot Merge Error!"
 msgstr "PTXprint [{}] - Diglot Merge Eroare!"
 
-#: lib/ptxprint/runjob.py:475
+#: lib/ptxprint/runjob.py:481
+msgid "ToC pages"
+msgstr ""
+
+#: lib/ptxprint/runjob.py:483
 msgid "Rerunning because the Table of Contents was updated"
 msgstr "Rerunning deoarece tabelul de conținut a fost actualizat"
 
-#: lib/ptxprint/runjob.py:479
+#: lib/ptxprint/runjob.py:490
+msgid "image copyrights"
+msgstr ""
+
+#: lib/ptxprint/runjob.py:493
+msgid "chapter numbers"
+msgstr ""
+
+#: lib/ptxprint/runjob.py:495
 msgid "Rerunning because inline chapter numbers moved"
 msgstr "Rerunning pentru că numerele de capitol înline au fost mutate"
 
-#: lib/ptxprint/runjob.py:511
+#: lib/ptxprint/runjob.py:527
 msgid "Warning: Could not locate decorative PDF(s):"
 msgstr "Avertisment: PDF(urile) decorative nu au putut fi localizate:"
 
-#: lib/ptxprint/runjob.py:631
+#: lib/ptxprint/runjob.py:647
 msgid "Error: Unable to convert/resize image!\n"
 "Image skipped:"
 msgstr "Eroare: Imposibil de convertit/redimensionat imaginea!\n"
 "Imaginea omisă:"
 
-#: lib/ptxprint/runjob.py:637
+#: lib/ptxprint/runjob.py:653
 msgid "Error: Unable to copy {}\n"
 "       image to {} in tmpPics folder"
 msgstr "Eroare: Nu se poate copia {}\n"
 "       imaginea în {} în dosarul tmpPics"
 
-#: lib/ptxprint/runjob.py:669
+#: lib/ptxprint/runjob.py:685
 msgid "Warning: Could not delete\n"
 "temporary file(s) or folder(s):"
 msgstr "Atenție:\n"
@@ -385,82 +401,82 @@ msgstr "PTXprint {} - Aspect biblie pentru toată lumea! Începe prin selectarea
 msgid "No book selected!"
 msgstr "Nicio carte selectată!"
 
-#: lib/ptxprint/view.py:707
+#: lib/ptxprint/view.py:712
 msgid "No Secondary Project Set"
 msgstr "Niciun proiect secundar"
 
-#: lib/ptxprint/view.py:707
+#: lib/ptxprint/view.py:712
 msgid "In order to generate an AdjList for Diglots, the \n"
 "Secondary project must be set on the Diglot+Border tab."
 msgstr "Pentru a genera AdjList pentru Diglots, \n"
 "proiectul secundar trebuie să fie setat în fila Diglot+Border tab."
 
-#: lib/ptxprint/view.py:717
+#: lib/ptxprint/view.py:722
 msgid "One or more Paragraph Adjust file(s) already exist!"
 msgstr "Unul sau mai multe paragrafe Reglaţi fişierele deja existente!"
 
-#: lib/ptxprint/view.py:718
+#: lib/ptxprint/view.py:723
 msgid "\n\n"
 "Do you want to OVERWRITE the above-listed file(s)?"
 msgstr "\n\n"
 "Doriți să faceți OVERWRITE fișierele enumerate mai sus?"
 
-#: lib/ptxprint/view.py:769
+#: lib/ptxprint/view.py:774
 msgid "Failed to Generate Hyphenation List"
 msgstr "Eșec la generarea listei de hifenare"
 
-#: lib/ptxprint/view.py:770
+#: lib/ptxprint/view.py:775
 msgid "{} Paratext Project's Hyphenation file not found:\n"
 "{}"
 msgstr "{} Fisierul de Hyphenation proiect paratext nu a fost gasit:\n"
 "{}"
 
-#: lib/ptxprint/view.py:811
+#: lib/ptxprint/view.py:816
 msgid "Hyphenation List Generated"
 msgstr "Hifenare listă generată"
 
-#: lib/ptxprint/view.py:812
+#: lib/ptxprint/view.py:817
 msgid "{} hyphenated words were gathered\n"
 "from Paratext's Hyphenation Word List."
 msgstr "{} cuvintele hifenate au fost adunate\n"
 "din lista Paratextului de Hyphenation Word List."
 
-#: lib/ptxprint/view.py:814
+#: lib/ptxprint/view.py:819
 msgid "\n\n"
 "Note for Indic languages that {} words containing ZWJ"
 msgstr ""
 
-#: lib/ptxprint/view.py:815
+#: lib/ptxprint/view.py:820
 msgid "\n"
 "and ZWNJ characters have been left off the hyphenation list."
 msgstr "\n"
 "şi caracterele ZWNJ au fost lăsate de pe lista de cratime."
 
-#: lib/ptxprint/view.py:818
+#: lib/ptxprint/view.py:823
 msgid "Hyphenation List was NOT Generated"
 msgstr "Lista de fenomene NU a fost generată"
 
-#: lib/ptxprint/view.py:819
+#: lib/ptxprint/view.py:824
 msgid "No valid words were found in Paratext's Hyphenation List"
 msgstr "Nu au fost găsite cuvinte valide în Lista de Hyphenation a Paratext-ului"
 
-#: lib/ptxprint/view.py:862
+#: lib/ptxprint/view.py:867
 msgid "The Fallback Font needs to be something other than the Regular Font."
 msgstr "Fontul de Fallback trebuie să fie altceva decât Fontul normal."
 
-#: lib/ptxprint/view.py:863 lib/ptxprint/view.py:871
+#: lib/ptxprint/view.py:868 lib/ptxprint/view.py:876
 msgid "Please select a different Font."
 msgstr "Vă rugăm să selectaţi un alt font."
 
-#: lib/ptxprint/view.py:870
+#: lib/ptxprint/view.py:875
 msgid "The Fallback Font just selected does NOT support all the missing characters listed."
 msgstr "Fontul Fallback selectat NU suportă toate caracterele lipsă listate."
 
-#: lib/ptxprint/view.py:1059
+#: lib/ptxprint/view.py:1064
 msgid "Error: Cannot create Archive!"
 msgstr ""
 
-#: lib/ptxprint/view.py:1059
+#: lib/ptxprint/view.py:1064
 msgid "The ZIP file seems to open in another program."
 msgstr ""
 
@@ -1348,8 +1364,8 @@ msgstr "Este important să includem o declarație privind drepturile de autor î
 "Notă: Dacă tastați manual (c), atunci © simbolul va apărea magic."
 
 #: lib/ptxprint/ptxprint.glade:3841
-msgid "© 2020 Wycliffe Bible Translators, Inc."
-msgstr "© 2020 Wycliffe Bible Translators Inc."
+msgid "© 2021 Wycliffe Bible Translators, Inc."
+msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:3856
 msgid "Clicking this button will reload\n"
@@ -3450,7 +3466,7 @@ msgstr "Ar putea fi util să imprimați numele\n"
 "mai târziu - cu privire la setările care au fost folosite\n"
 "pentru a produce fișierul PDF."
 
-#: lib/ptxprint/ptxprint.glade:8878 lib/ptxprint/ptxprint.glade:13040
+#: lib/ptxprint/ptxprint.glade:8878 lib/ptxprint/ptxprint.glade:13041
 msgid "Other"
 msgstr "Altele"
 
@@ -3712,7 +3728,7 @@ msgstr "Este important să se asigure o atribuire corespunzătoare a drepturilor
 msgid "Overview of the Pictures used in the publication."
 msgstr "Prezentare generală a imaginilor utilizate în publicaţie."
 
-#: lib/ptxprint/ptxprint.glade:9337 lib/ptxprint/ptxprint.glade:16117
+#: lib/ptxprint/ptxprint.glade:9337 lib/ptxprint/ptxprint.glade:16109
 msgid "Settings"
 msgstr "Setări"
 
@@ -3829,7 +3845,7 @@ msgstr "Arată doar Cărți active"
 msgid "Select this option to only display images from the books that are selected to be printed. If unchecked, then images from ALL the books in the project will be listed in the view below."
 msgstr "Selectaţi această opţiune pentru a afişa imagini doar din cărţile care sunt selectate pentru a fi tipărite. Dacă nu bifaţi, imaginile de la TOATE cărţile din proiect vor fi listate în vizualizarea de mai jos."
 
-#: lib/ptxprint/ptxprint.glade:9699 lib/ptxprint/ptxprint.glade:15799
+#: lib/ptxprint/ptxprint.glade:9699 lib/ptxprint/ptxprint.glade:15791
 msgid "If you edit any of these files, you should\n"
 "save them before moving to a different\n"
 "tab (otherwise your changes will be lost.)\n\n"
@@ -4509,7 +4525,7 @@ msgstr "AVERTISMENT: încă nu a fost implementat!\n"
 "un alt folder pentru\n"
 "PDF (și fișiere interimare asociate)."
 
-#: lib/ptxprint/ptxprint.glade:12662 lib/ptxprint/ptxprint.glade:16527
+#: lib/ptxprint/ptxprint.glade:12662 lib/ptxprint/ptxprint.glade:16519
 msgid "Create Archive..."
 msgstr "Creează arhivă..."
 
@@ -4553,7 +4569,7 @@ msgid "Preserve Intermediate\n"
 msgstr "Păstrează\n"
 "Fișiere și Jurnale Intermediare "
 
-#: lib/ptxprint/ptxprint.glade:12711
+#: lib/ptxprint/ptxprint.glade:12712
 msgid "AN AID FOR TRACKING PROBLEMS\n\n"
 "If the output is not as you expect, it is possible to discover\n"
 "what might have gone wrong by examining the intermediate\n"
@@ -4562,29 +4578,29 @@ msgid "AN AID FOR TRACKING PROBLEMS\n\n"
 "files."
 msgstr ""
 
-#: lib/ptxprint/ptxprint.glade:12729
+#: lib/ptxprint/ptxprint.glade:12730
 msgid "Remove Temp Files"
 msgstr "Elimină fişierele temporare"
 
-#: lib/ptxprint/ptxprint.glade:12733
+#: lib/ptxprint/ptxprint.glade:12734
 msgid "Click this to tidy up the output folder (usually PrintDraft).\n"
 "This will delete all previous log and intermediate temporary files for the entire project and is a good way to easily remove many unwanted files."
 msgstr "Faceţi clic pe acest lucru pentru a ordona dosarul de ieşire (de obicei PrintDraft).\n"
 "Aceasta va șterge toate jurnalele anterioare și fișierele intermediare temporare pentru întregul proiect și este o modalitate bună de a șterge cu ușurință multe fișiere nedorite."
 
-#: lib/ptxprint/ptxprint.glade:12793
+#: lib/ptxprint/ptxprint.glade:12794
 msgid "Show Error Bars For Overfull Lines"
 msgstr "Arată barele de eroare pentru liniile suprascrise"
 
-#: lib/ptxprint/ptxprint.glade:12797
+#: lib/ptxprint/ptxprint.glade:12798
 msgid "If you don't know what this means, or want to get rid of black boxes in the PDF then uncheck it. Enable this option to have TeX make overfull lines stand out."
 msgstr "Daca nu stii ce inseamna asta, sau vrei sa scapi de cutiile negre din PDF, apoi debifeaza. Activaţi această opţiune pentru a avea TeX să evidenţieze liniile suprascrise."
 
-#: lib/ptxprint/ptxprint.glade:12808
+#: lib/ptxprint/ptxprint.glade:12809
 msgid "Include Crop Marks"
 msgstr "Include semnele de decupare"
 
-#: lib/ptxprint/ptxprint.glade:12812
+#: lib/ptxprint/ptxprint.glade:12813
 msgid "Some printers require crop marks\n"
 "on the PDF to show where the page\n"
 "should be trimmed to after printing."
@@ -4592,11 +4608,11 @@ msgstr "Unele imprimante necesită marcaje de recoltă\n"
 "în PDF pentru a arăta unde pagina\n"
 "ar trebui redusă la după imprimare."
 
-#: lib/ptxprint/ptxprint.glade:12825
+#: lib/ptxprint/ptxprint.glade:12826
 msgid "Sensitive Project"
 msgstr "Proiect sensibil"
 
-#: lib/ptxprint/ptxprint.glade:12829
+#: lib/ptxprint/ptxprint.glade:12830
 msgid "In sensitive locations the illustration copyright\n"
 "statement(s) can just contain the appropriate\n"
 "acronyms (e.g. BFBS or DCC) for some artists.\n\n"
@@ -4608,11 +4624,11 @@ msgstr "În locații sensibile, declarațiile cu privire la drepturile de autor\
 "Și dacă PDF/X-1a :2003 Format este selectat mai sus,\n"
 "meta-datele nu vor conține date sensibile."
 
-#: lib/ptxprint/ptxprint.glade:12845
+#: lib/ptxprint/ptxprint.glade:12846
 msgid "Output in PDF/X-1a:2003 Format"
 msgstr "Rezultat în PDF/X-1a:2003 Format"
 
-#: lib/ptxprint/ptxprint.glade:12849
+#: lib/ptxprint/ptxprint.glade:12850
 msgid "What is a PDF/X-1a file?\n"
 "PDF/X-1a files are regular PDF 1.3 or PDF 1.4 files to which a number of restrictions apply:\n"
 "* All fonts must be embedded in the file.\n"
@@ -4632,11 +4648,11 @@ msgstr "Ce este un fișier PDF/X-1a?\n"
 "* Fișierul conține o intenție de ieșire care descrie condiția de tipărire preconizată (în acest caz un profil de culoare ICC). \n"
 "și așa mai departe..."
 
-#: lib/ptxprint/ptxprint.glade:12869
+#: lib/ptxprint/ptxprint.glade:12870
 msgid "Auto-Correct USFM"
 msgstr "Auto-Corect USFM"
 
-#: lib/ptxprint/ptxprint.glade:12873
+#: lib/ptxprint/ptxprint.glade:12874
 msgid "PTXprint can analyze the USFM files and\n"
 "automatically correct some common \n"
 "errors in syntax. It will also notify you of \n"
@@ -4652,21 +4668,21 @@ msgstr "PTXprint poate analiza fişierele USFM şi\n"
 "cu privire la cum să rezolvați problema înainte de a reîncerca \n"
 "să tipăriți."
 
-#: lib/ptxprint/ptxprint.glade:12891
+#: lib/ptxprint/ptxprint.glade:12892
 msgid "Debug Tracing"
 msgstr "Tragere Depanare"
 
-#: lib/ptxprint/ptxprint.glade:12895
+#: lib/ptxprint/ptxprint.glade:12896
 msgid "This advanced feature is for\n"
 "troubleshooting use only."
 msgstr "Această caracteristică avansată este doar pentru\n"
 "utilizare de depanare."
 
-#: lib/ptxprint/ptxprint.glade:12913
+#: lib/ptxprint/ptxprint.glade:12914
 msgid "Interlinear  &  Code:"
 msgstr "Interliniar & Cod:"
 
-#: lib/ptxprint/ptxprint.glade:12917
+#: lib/ptxprint/ptxprint.glade:12918
 msgid "Convert Paratext's interlinear data\n"
 "text to ruby (glossing) so that an\n"
 "interlinear text can be printed.\n\n"
@@ -4682,7 +4698,7 @@ msgstr "Convertește datele interlineare ale Paratextului\n"
 "  \\rb pentru textul de bază \n"
 "  \\gloss<unk> rb pentru textul de tip luciu"
 
-#: lib/ptxprint/ptxprint.glade:12937
+#: lib/ptxprint/ptxprint.glade:12938
 msgid "Interlinear language code to use.\n"
 "To find which code to use, look \n"
 "in the project folder for a folder \n"
@@ -4700,11 +4716,11 @@ msgstr "Codul lingvistic interliniar de utilizat.\n"
 "a fost transferat în engleză, atunci \n"
 "codul ar fi „ro”."
 
-#: lib/ptxprint/ptxprint.glade:12958
+#: lib/ptxprint/ptxprint.glade:12959
 msgid "Ruby Text Above"
 msgstr "Text Ruby deasupra"
 
-#: lib/ptxprint/ptxprint.glade:12962
+#: lib/ptxprint/ptxprint.glade:12963
 msgid "Treat ruby text as ruby rather than \n"
 "interlinear text by placing it above \n"
 "the base text rather than below.\n\n"
@@ -4726,11 +4742,11 @@ msgstr "Tratați textul ruby mai degrabă ca ruby decât \n"
 "\"Text special\" a marcajelor\n"
 "."
 
-#: lib/ptxprint/ptxprint.glade:12984
+#: lib/ptxprint/ptxprint.glade:12985
 msgid "\\rb"
 msgstr ""
 
-#: lib/ptxprint/ptxprint.glade:12989
+#: lib/ptxprint/ptxprint.glade:12990
 msgid "Click to jump to the \\rb marker in\n"
 "the style editor to change the\n"
 "formatting of the ruby text."
@@ -4738,11 +4754,11 @@ msgstr "Faceți clic pentru a sări la marcajul \\rb în\n"
 "editorul de stil pentru a schimba\n"
 "formatarea textului ruby."
 
-#: lib/ptxprint/ptxprint.glade:13005
+#: lib/ptxprint/ptxprint.glade:13006
 msgid "\\gloss|rb"
 msgstr "\\gloss}"
 
-#: lib/ptxprint/ptxprint.glade:13010
+#: lib/ptxprint/ptxprint.glade:13011
 msgid "Click to jump to the \\gloss|rb \n"
 "marker in the style editor to \n"
 "change the formatting of the \n"
@@ -4752,19 +4768,19 @@ msgstr "Faceți clic pentru a sări la marcajul \n"
 "modifica formatarea \n"
 "glosses pentru textul interlinear/ruby."
 
-#: lib/ptxprint/ptxprint.glade:13072
+#: lib/ptxprint/ptxprint.glade:13073
 msgid "Legacy 1/14 LineSpacing"
 msgstr ""
 
-#: lib/ptxprint/ptxprint.glade:13076
+#: lib/ptxprint/ptxprint.glade:13077
 msgid "In the past, SpaceAbove and SpaceBelow were, in effect units of 1/14 of the base line spacing. This has changed so they are now in units of 1/12 of the base line spacing. Enabling this compatibility reverts the units."
 msgstr "În trecut, SpaceAbove și SpaceSub erau, de fapt, unități de 1/14 din spațiul de la linia de bază. Acest lucru s-a schimbat astfel încât acum sunt în unitățile 1/12 din spațiul de la linia de bază. Activând această compatibilitate revine la unități."
 
-#: lib/ptxprint/ptxprint.glade:13092
+#: lib/ptxprint/ptxprint.glade:13093
 msgid "Compatibility"
 msgstr "Compatibilitate"
 
-#: lib/ptxprint/ptxprint.glade:13119
+#: lib/ptxprint/ptxprint.glade:13120
 msgid "Pre-process the text prior\n"
 "to creating the PDF. Add Front\n"
 "and Back Matter PDFs and Watermarks."
@@ -4772,83 +4788,83 @@ msgstr "Preprocesează textul înainte de\n"
 "pentru a crea PDF. Adaugă Front\n"
 "și PDF-uri și semne de protecție."
 
-#: lib/ptxprint/ptxprint.glade:13124
+#: lib/ptxprint/ptxprint.glade:13125
 msgid "Advanced"
 msgstr "Avansat"
 
-#: lib/ptxprint/ptxprint.glade:13177
+#: lib/ptxprint/ptxprint.glade:13178
 msgid "Display the output log \n"
 "from XeTeX processing."
 msgstr "Afișează jurnalul de ieșire \n"
 "din procesarea XeTeX."
 
-#: lib/ptxprint/ptxprint.glade:13180
+#: lib/ptxprint/ptxprint.glade:13181
 msgid "Log"
 msgstr "Jurnal"
 
-#: lib/ptxprint/ptxprint.glade:13221 lib/ptxprint/ptxprint.glade:13342
+#: lib/ptxprint/ptxprint.glade:13222 lib/ptxprint/ptxprint.glade:13343
 msgid "The length of the Thumb Tab measured in millimeters (mm)."
 msgstr "Lungimea pictogramei filă măsurată în milimetri (mm)."
 
-#: lib/ptxprint/ptxprint.glade:13223
+#: lib/ptxprint/ptxprint.glade:13224
 msgid "Length:"
 msgstr "Lungime:"
 
-#: lib/ptxprint/ptxprint.glade:13235 lib/ptxprint/ptxprint.glade:13249
+#: lib/ptxprint/ptxprint.glade:13236 lib/ptxprint/ptxprint.glade:13250
 msgid "The height of the Thumb Tab measured in millimeters (mm)."
 msgstr "Înălţimea pictogramei filă măsurată în milimetri (mm)."
 
-#: lib/ptxprint/ptxprint.glade:13237
+#: lib/ptxprint/ptxprint.glade:13238
 msgid "Height:"
 msgstr "Înălţime:"
 
-#: lib/ptxprint/ptxprint.glade:13252
+#: lib/ptxprint/ptxprint.glade:13253
 msgid "Specifies the height of the tab in FontUnits. This value should be greater than the Font Size."
 msgstr "Specifică înălțimea filei în Unitățile Font. Această valoare trebuie să fie mai mare decât dimensiunea fontului."
 
-#: lib/ptxprint/ptxprint.glade:13268 lib/ptxprint/ptxprint.glade:13283
+#: lib/ptxprint/ptxprint.glade:13269 lib/ptxprint/ptxprint.glade:13284
 msgid "Thumb Tabs usually use a dark colour for the Tab with a light (or white) text."
 msgstr "Taburile degetului mare folosesc de obicei o culoare închisă pentru filă cu un text deschis (sau alb)."
 
-#: lib/ptxprint/ptxprint.glade:13270
+#: lib/ptxprint/ptxprint.glade:13271
 msgid "Tab Colour:"
 msgstr "Culoarea filei:"
 
-#: lib/ptxprint/ptxprint.glade:13285
+#: lib/ptxprint/ptxprint.glade:13286
 msgid "Thumb Tab Background Colour"
 msgstr "Culoare fundal pictogramă"
 
-#: lib/ptxprint/ptxprint.glade:13296
+#: lib/ptxprint/ptxprint.glade:13297
 msgid "Rotate Tabs:"
 msgstr "Rotire file:"
 
-#: lib/ptxprint/ptxprint.glade:13300
+#: lib/ptxprint/ptxprint.glade:13301
 msgid "Rotates the tabs so that the text runs along the edge of the page. This works well for narrow margins, but may result in fewer tab positions per page."
 msgstr "Rotește filele astfel încât textul să ruleze de-a lungul marginii paginii. Aceasta funcționează bine pentru marjele înguste, dar poate duce la mai puține poziții pe pagină."
 
-#: lib/ptxprint/ptxprint.glade:13315
+#: lib/ptxprint/ptxprint.glade:13316
 msgid "How many tabs can there be down a page. This is automatically calculated from the Width, Height, Page size and Margins. If any of these change then this value will be updated. Increasing it, makes tabs overlap. Reducing it spreads them apart."
 msgstr "Câte file pot fi acolo în jos o pagină. Aceasta este calculată automat din lăţimea, înălţimea, dimensiunea paginii şi marginile. Dacă oricare dintre aceste modificări, atunci această valoare va fi actualizată. Creșterea ei, face filele să se suprapună. Reducerea se extinde separat."
 
-#: lib/ptxprint/ptxprint.glade:13317
+#: lib/ptxprint/ptxprint.glade:13318
 msgid "Number of\n"
 "Tab Positions:"
 msgstr "Numărul de\n"
 "Pozitiile filei:"
 
-#: lib/ptxprint/ptxprint.glade:13346
+#: lib/ptxprint/ptxprint.glade:13347
 msgid "Width of the tab in margin units. Best to be less than the Side margins factor in the Layout tab."
 msgstr "Lățimea filei în unitățile de marjă. Cel mai bine pentru a fi mai mică decât marja laterală în fila de afișare."
 
-#: lib/ptxprint/ptxprint.glade:13365 lib/ptxprint/ptxprint.glade:13464
+#: lib/ptxprint/ptxprint.glade:13366 lib/ptxprint/ptxprint.glade:13465
 msgid "<span background=\"black\" foreground=\"white\" font-weight=\"bold\">  Vertical  </span>"
 msgstr ""
 
-#: lib/ptxprint/ptxprint.glade:13382 lib/ptxprint/ptxprint.glade:13494
+#: lib/ptxprint/ptxprint.glade:13383 lib/ptxprint/ptxprint.glade:13495
 msgid "<span background=\"black\" foreground=\"white\" font-weight=\"bold\">  Horizontal  </span>"
 msgstr "<span background=\"black\" foreground=\"white\" font-weight=\"bold\">  Orizontal  </span>"
 
-#: lib/ptxprint/ptxprint.glade:13396
+#: lib/ptxprint/ptxprint.glade:13397
 msgid "When several shorter adjacent books occur, it is\n"
 "common to group them together to use the same\n"
 "tab position (but still have differently named tabs)."
@@ -4856,11 +4872,11 @@ msgstr "Când au loc mai multe cărţi adiacente mai scurte, este\n"
 "comun pentru a le grupa împreună pentru a utiliza aceeași\n"
 "poziție tab (dar încă mai au tabs-uri cu nume diferit)."
 
-#: lib/ptxprint/ptxprint.glade:13401
+#: lib/ptxprint/ptxprint.glade:13402
 msgid "Grouped Tabs:"
 msgstr "File grupate:"
 
-#: lib/ptxprint/ptxprint.glade:13413
+#: lib/ptxprint/ptxprint.glade:13414
 msgid "List book IDs of short books to be grouped together\n"
 "at the same tab position. Use spaces between book \n"
 "IDs, and use ; to separate groups. There is no need to\n"
@@ -4874,27 +4890,27 @@ msgstr "Listează ID-urile de cărți scurte care vor fi grupate la\n"
 "trebuie să împartă poziția aceluiași tab.\n\n"
 "De exemplu: PHM TIT; 1JN 2JN 3JN"
 
-#: lib/ptxprint/ptxprint.glade:13420
+#: lib/ptxprint/ptxprint.glade:13421
 msgid "PHM TIT; 1JN 2JN 3JN JUD"
 msgstr ""
 
-#: lib/ptxprint/ptxprint.glade:13434
+#: lib/ptxprint/ptxprint.glade:13435
 msgid "If you choose to Rotate the tabs, there are various options as to how these should be oriented. The preview (right) will show how these will appear on facing pages."
 msgstr "Dacă alegeţi să rotiţi filele, există diferite opţiuni cu privire la modul în care acestea ar trebui orientate. Previzualizarea (dreapta) va arăta cum vor apărea acestea pe paginile frontale."
 
-#: lib/ptxprint/ptxprint.glade:13518
+#: lib/ptxprint/ptxprint.glade:13519
 msgid "Restart Tabs at MAT"
 msgstr "Repornește filele la MAT"
 
-#: lib/ptxprint/ptxprint.glade:13522
+#: lib/ptxprint/ptxprint.glade:13523
 msgid "Normally books will follow sequentially and if the next tab would be off the bottom of the page, then it will be set to the top for a new cycle of tabs. Setting this starts a new cycle at the start of the New Testament (Matthew)."
 msgstr "În mod normal, cărţile vor urma secvenţial şi dacă următoarea filă va fi în partea de jos a paginii, apoi va fi setat în partea de sus pentru un nou ciclu de taburi. Setarea asta începe un nou ciclu la începutul New Testament (Matthew)."
 
-#: lib/ptxprint/ptxprint.glade:13534
+#: lib/ptxprint/ptxprint.glade:13535
 msgid "Use \\zthumbtab Style"
 msgstr "Folosește stilul \\zthumbtab"
 
-#: lib/ptxprint/ptxprint.glade:13538
+#: lib/ptxprint/ptxprint.glade:13539
 msgid "By default the Thumb Tabs use the styling specified\n"
 "for the \\toc3 marker. If you want to specify different\n"
 "styling for the tabs, then select this option.\n\n"
@@ -4904,11 +4920,11 @@ msgstr "În mod implicit Thumb Tabs utilizează stilul specificat\n"
 "pentru file, apoi selectaţi această opţiune.\n\n"
 "Extensia USFM \\zthumbtab'' poate fi folosită pentru a seta o valoare alternativă pentru conţinutul thumbtab-ului. Dacă antetul unei cărți conține o \\zthumbtab intrare, atunci\\toc3 nu va seta conținutul thumbtab-ului. O intrare goală \\zthumbtab'' specifică faptul că nu ar trebui să existe text în thumbtab pentru cartea respectivă."
 
-#: lib/ptxprint/ptxprint.glade:13555
+#: lib/ptxprint/ptxprint.glade:13556
 msgid "Edit Style"
 msgstr "Editare stil"
 
-#: lib/ptxprint/ptxprint.glade:13560
+#: lib/ptxprint/ptxprint.glade:13561
 msgid "Click to jump to the appropriate\n"
 "(\\toc3 or \\zthumbtab) marker in\n"
 "the style editor to change the\n"
@@ -4918,11 +4934,11 @@ msgstr "Faceţi clic pentru a sări la marcajul corespunzător\n"
 "editorul de stil pentru a schimba\n"
 "formatarea filelor de degetul mare."
 
-#: lib/ptxprint/ptxprint.glade:13594
+#: lib/ptxprint/ptxprint.glade:13595
 msgid "Thumb Tabs"
 msgstr ""
 
-#: lib/ptxprint/ptxprint.glade:13598
+#: lib/ptxprint/ptxprint.glade:13599
 msgid "Thumb Tabs are sometimes used in longer publications to help the user find a scripture book easier. By default\n"
 "these use the \\toc3 element in a USFM file to provide\n"
 "the text for the tab.\n"
@@ -4932,13 +4948,13 @@ msgstr "Tab-urile Thumb sunt uneori utilizate în publicații mai lungi pentru a
 "textul filei.\n"
 "Notă: Dacă este selectată doar o singură carte, va plasa pictograma în raport cu TOATE cărțile listate în lista multiplă de cărți."
 
-#: lib/ptxprint/ptxprint.glade:13682
+#: lib/ptxprint/ptxprint.glade:13683
 msgid "Percentage of Page Width to \n"
 "be Used by Primary (Left) Text"
 msgstr "Procentul lățimii paginii pentru \n"
 "a fi folosit de textul primar (stânga)"
 
-#: lib/ptxprint/ptxprint.glade:13695 lib/ptxprint/ptxprint.glade:13751
+#: lib/ptxprint/ptxprint.glade:13696 lib/ptxprint/ptxprint.glade:13752
 msgid "Select the project for the other text\n"
 "to be printed. This will usually appear\n"
 "in the right-hand (or outer) column."
@@ -4946,17 +4962,17 @@ msgstr "Selectați proiectul pentru ca celălalt text\n"
 "să fie imprimat. Acest lucru va apărea de obicei\n"
 "în coloana din dreapta (sau din afară)."
 
-#: lib/ptxprint/ptxprint.glade:13699
+#: lib/ptxprint/ptxprint.glade:13700
 msgid "Secondary (other) Project:"
 msgstr "Proiectul secundar (altele)"
 
-#: lib/ptxprint/ptxprint.glade:13712
+#: lib/ptxprint/ptxprint.glade:13713
 msgid "Use Saved Configuration\n"
 "(from Secondary Project):"
 msgstr "Folosește economisirea configurației\n"
 "(din proiectul secundar):"
 
-#: lib/ptxprint/ptxprint.glade:13726
+#: lib/ptxprint/ptxprint.glade:13727
 msgid "Select a previously-saved/shared\n"
 "configuration to retrieve those settings.\n\n"
 "(Leaving this blank will use the default\n"
@@ -4966,17 +4982,17 @@ msgstr "Selectați o configurație\n"
 "(Lăsând acest gol va utiliza setările implicite\n"
 "pentru proiect)"
 
-#: lib/ptxprint/ptxprint.glade:13735
+#: lib/ptxprint/ptxprint.glade:13736
 msgid "(None)"
 msgstr "Niciuna)"
 
-#: lib/ptxprint/ptxprint.glade:13774
+#: lib/ptxprint/ptxprint.glade:13775
 msgid "Use Default Header\n"
 "Settings for Diglot"
 msgstr "Folosește antetul implicit\n"
 "Setări pentru Diglot"
 
-#: lib/ptxprint/ptxprint.glade:13779
+#: lib/ptxprint/ptxprint.glade:13780
 msgid "Checking this option will override\n"
 "the header settings and place the\n"
 "Reference Ranges on the outer edges\n"
@@ -4986,7 +5002,7 @@ msgstr "Verificarea acestei opțiuni va suprascrie\n"
 "pe marginile exterioare\n"
 "și numărul paginii în (sau aproape) în mijloc."
 
-#: lib/ptxprint/ptxprint.glade:13793
+#: lib/ptxprint/ptxprint.glade:13794
 msgid "Secondary on\n"
 "Left (or Inner)"
 msgstr "Secundar pe\n"
@@ -5291,49 +5307,33 @@ msgid "Color:"
 msgstr "Culoare:"
 
 #: lib/ptxprint/ptxprint.glade:14971
-msgid "If you want the font sizes here in styles to equal\n"
-"their point size, then set the base font size on the\n"
-"Layout tab to 12pt. (This is to maintain the way in\n"
-"which Paratext uses stylesheet font size settings).\n\n"
-"More details: The actual font size is scaled by the\n"
-"base font size / 12. So if you set the base font size \n"
-"to 11, then choosing a Font Size Factor of 11 will \n"
-"result in a point size of 11 * 11pt / 12 = 10.08pt. \n"
-"Likewise size 9 for a style will give you 8.25pt\n"
-"and size 8 will give you 7.33pt."
-msgstr "Dacă doriţi aici mărimile fonturilor în stiluri sunt egale\n"
-"cu dimensiunea lor de punct, apoi setați dimensiunea fontului de bază pe tab-ul\n"
-"Layout la 12pt. (Aceasta este pentru a întreține modul în\n"
-"care Paratext folosește setările de mărime a fontului stylesheet).\n\n"
-"Mai multe detalii: dimensiunea reală a fontului este scalată de\n"
-"dimensiunea fontului / 12. Deci dacă setezi dimensiunea fontului de bază \n"
-"la 11, apoi alegând un factor de mărime font de 11 va rezulta \n"
-"într-un punct de mărimea 11 * 11pt / 12 = 10. 8pt. \n"
-"De asemenea, dimensiunea 9 pentru un stil vă va da 8.25pt\n"
-"şi dimensiunea 8 vă va da 7.33pt."
+msgid "This a factor or proportion of the base font size.\n"
+"So 1.0 is the same as the base font size from the \n"
+"Layout tab."
+msgstr ""
 
-#: lib/ptxprint/ptxprint.glade:15005
+#: lib/ptxprint/ptxprint.glade:14997
 msgid "Raise:"
 msgstr "Ridicare:"
 
-#: lib/ptxprint/ptxprint.glade:15031
+#: lib/ptxprint/ptxprint.glade:15023
 msgid "Character Settings"
 msgstr "Setări caracter"
 
-#: lib/ptxprint/ptxprint.glade:15175
+#: lib/ptxprint/ptxprint.glade:15167
 msgid "Use Absolute Spacing (in pts)"
 msgstr "Folosește spațiu absolut (în puncte)"
 
-#: lib/ptxprint/ptxprint.glade:15179
+#: lib/ptxprint/ptxprint.glade:15171
 msgid "The Line Spacing is usually calculated as a factor of the Font Size. If you prefer to specify an exact/absolute line spacing (in points), then enable this option."
 msgstr "Spațierea liniei este de obicei calculată ca un factor al dimensiunii font. Dacă preferați să specificați o delimitare exactă/absolută a liniei (în puncte), atunci activați această opțiune."
 
-#: lib/ptxprint/ptxprint.glade:15253
+#: lib/ptxprint/ptxprint.glade:15245
 msgid "Alignment:"
 msgstr "Aliniere:"
 
-#: lib/ptxprint/ptxprint.glade:15274 lib/ptxprint/ptxprint.glade:15300
-#: lib/ptxprint/ptxprint.glade:15325
+#: lib/ptxprint/ptxprint.glade:15266 lib/ptxprint/ptxprint.glade:15292
+#: lib/ptxprint/ptxprint.glade:15317
 msgid "This is multiplied by the Base Paragraph Indent\n"
 "value (specified on the Layout tab) to get the final\n"
 "indentation amount."
@@ -5341,25 +5341,25 @@ msgstr "Acest lucru este multiplicat cu valoarea de bază Paragraph Indent\n"
 "(specificată în tab-ul Layout) pentru a obține suma finală\n"
 "indentare."
 
-#: lib/ptxprint/ptxprint.glade:15278
+#: lib/ptxprint/ptxprint.glade:15270
 msgid "First Line\n"
 "Indent Factor:"
 msgstr "Primul rând\n"
 "Indent Factor:"
 
-#: lib/ptxprint/ptxprint.glade:15304
+#: lib/ptxprint/ptxprint.glade:15296
 msgid "Left Indent\n"
 "Factor:"
 msgstr "Indent la stânga\n"
 "Factor:"
 
-#: lib/ptxprint/ptxprint.glade:15329
+#: lib/ptxprint/ptxprint.glade:15321
 msgid "Right Indent\n"
 "Factor:"
 msgstr "Indent la dreapta\n"
 "Factor:"
 
-#: lib/ptxprint/ptxprint.glade:15352
+#: lib/ptxprint/ptxprint.glade:15344
 msgid "This a proportion of the base line spacing.\n"
 "So 1.0 is the same as the base line spacing from the Layout tab.\n"
 "If Absolute Spacing is set, then this value is the line spacing in pts."
@@ -5367,75 +5367,75 @@ msgstr "Acesta este un procent din spațierea liniei de bază.\n"
 "Deci 1.0 este același cu distanța de la linia de bază de la tabul de Aspect\n"
 "Dacă este setată spațierea absolută, atunci această valoare este distanța în puncte."
 
-#: lib/ptxprint/ptxprint.glade:15377
+#: lib/ptxprint/ptxprint.glade:15369
 msgid "Amount of space to insert before the paragraph. This is expressed in line units with 12 line units being the base line spacing (from the layout tab)."
 msgstr "Cantitatea de spaţiu care trebuie introdusă înaintea paragrafului. Aceasta este exprimată în unităţi de linie cu 12 unităţi de linie fiind spaţierea liniei de bază (de la fila de dispunere)."
 
-#: lib/ptxprint/ptxprint.glade:15379
+#: lib/ptxprint/ptxprint.glade:15371
 msgid "Space Before\n"
 "Factor:"
 msgstr "Spațiu înainte de\n"
 "Factor:"
 
-#: lib/ptxprint/ptxprint.glade:15399
+#: lib/ptxprint/ptxprint.glade:15391
 msgid "Amount of space to insert after the paragraph. This is expressed in line units with 12 line units being the base line spacing (from the layout tab)."
 msgstr "Cantitatea de spaţiu care trebuie introdusă după paragraf. Aceasta este exprimată în unităţi de linie cu 12 unităţi de linie fiind spaţierea liniei de bază (de la fila de dispunere)."
 
-#: lib/ptxprint/ptxprint.glade:15401
+#: lib/ptxprint/ptxprint.glade:15393
 msgid "Space After\n"
 "Factor:"
 msgstr "Spațiu după\n"
 "Factor:"
 
-#: lib/ptxprint/ptxprint.glade:15420
+#: lib/ptxprint/ptxprint.glade:15412
 msgid "Paragraph Settings"
 msgstr "Setările paragrafului"
 
-#: lib/ptxprint/ptxprint.glade:15511
+#: lib/ptxprint/ptxprint.glade:15503
 msgid "Caller\n"
 "Style:"
 msgstr ""
 
-#: lib/ptxprint/ptxprint.glade:15532
+#: lib/ptxprint/ptxprint.glade:15524
 msgid "Caller\n"
 "Raise:"
 msgstr "Apelant\n"
 "Ridicare:"
 
-#: lib/ptxprint/ptxprint.glade:15553
+#: lib/ptxprint/ptxprint.glade:15545
 msgid "Note Caller\n"
 "Style:"
 msgstr "Notă Apelant\n"
 "Stil:"
 
-#: lib/ptxprint/ptxprint.glade:15574
+#: lib/ptxprint/ptxprint.glade:15566
 msgid "Note Caller\n"
 "Raise:"
 msgstr "Notă apelant\n"
 "Ridicare:"
 
-#: lib/ptxprint/ptxprint.glade:15595
+#: lib/ptxprint/ptxprint.glade:15587
 msgid "Note Blend\n"
 "Into Style:"
 msgstr "Amestecă nota\n"
 "în stil:"
 
-#: lib/ptxprint/ptxprint.glade:15654
+#: lib/ptxprint/ptxprint.glade:15646
 msgid "Note  Settings"
 msgstr "Setările Notei"
 
-#: lib/ptxprint/ptxprint.glade:15687
+#: lib/ptxprint/ptxprint.glade:15679
 msgid "When a setting's name is in bold it indicates that \n"
 "the value is different from what is in the stylesheet.\n\n"
 "Note that you can click on a bold setting name of \n"
 "any parameter to RESET it to the stylesheet value."
 msgstr ""
 
-#: lib/ptxprint/ptxprint.glade:15694
+#: lib/ptxprint/ptxprint.glade:15686
 msgid "Why are some parameter names in bold?"
 msgstr "De ce sunt niște nume de parametri în bold?"
 
-#: lib/ptxprint/ptxprint.glade:15709
+#: lib/ptxprint/ptxprint.glade:15701
 msgid "It is recommended that you make changes in this Style editor which overrides all the stylesheets below. The settings modified here are stored in each config's ptxprint.sty file.\n\n"
 "[Optional: ptxprint-mods.sty can be edited using the Advanced tab, and contains style modifications specific to a publication/configuration.]\n\n"
 "[Optional: custom.sty contains style modifications that are project-wide and also affect display of text within Paratext itseld (can also be edited using the shortcut on the Advanced tab)]\n\n"
@@ -5447,15 +5447,15 @@ msgstr "Se recomandă să faceți modificări în acest editor de stil care să 
 "ptx2pdf. ty conține modificările specifice PTXprintpentru a face lucrurile să funcționeze mai bine (nu să fie editate)\n\n"
 "usfm_sb.sty este stylesheet Paratext de bază (care nu ar trebui să fie editat niciodată)"
 
-#: lib/ptxprint/ptxprint.glade:15720
+#: lib/ptxprint/ptxprint.glade:15712
 msgid "How are the various Stylesheets applied?"
 msgstr "Cum sunt aplicate diferitele stiluri?"
 
-#: lib/ptxprint/ptxprint.glade:15735
+#: lib/ptxprint/ptxprint.glade:15727
 msgid "Hide/Exclude Contents of Marker"
 msgstr "Ascunde/Exclude conținutul marcatorului"
 
-#: lib/ptxprint/ptxprint.glade:15739
+#: lib/ptxprint/ptxprint.glade:15731
 msgid "If this option is checked, the marker becomes \n"
 "\"non-publishable\" and the contents of this \n"
 "marker will not be included in the output."
@@ -5463,11 +5463,11 @@ msgstr "În cazul în care această opțiune este bifată, marcajul devine \n"
 "\"non-publishable\" și conținutul acestui marcaj \n"
 "nu va fi inclus în output."
 
-#: lib/ptxprint/ptxprint.glade:15766
+#: lib/ptxprint/ptxprint.glade:15758
 msgid "Styles"
 msgstr ""
 
-#: lib/ptxprint/ptxprint.glade:15823
+#: lib/ptxprint/ptxprint.glade:15815
 msgid "Discard away any changes that have \n"
 "been made and restore the contents\n"
 "of this file as it was when last saved."
@@ -5475,13 +5475,13 @@ msgstr "Renunțați la orice modificări care au fost făcute \n"
 "și restaurați conținutul acestui fișier\n"
 "așa cum a fost atunci când a fost salvat ultima dată."
 
-#: lib/ptxprint/ptxprint.glade:15843
+#: lib/ptxprint/ptxprint.glade:15835
 msgid "Book in\n"
 "Focus:"
 msgstr "Rezervă în\n"
 "Focalizează:"
 
-#: lib/ptxprint/ptxprint.glade:15855
+#: lib/ptxprint/ptxprint.glade:15847
 msgid "Choose any book (including\n"
 "those which are not currently\n"
 "in the list to be printed.)"
@@ -5489,11 +5489,11 @@ msgstr "Alege orice carte (inclusiv\n"
 "cele care nu sunt momentan\n"
 "în listă pentru a fi tipărite.)"
 
-#: lib/ptxprint/ptxprint.glade:15884
+#: lib/ptxprint/ptxprint.glade:15876
 msgid "Generate"
 msgstr "Genereaza"
 
-#: lib/ptxprint/ptxprint.glade:15888
+#: lib/ptxprint/ptxprint.glade:15880
 msgid "This button will (re-)generate the PicList(s) or\n"
 "AdjList(s) for all/any books which have been\n"
 "selected for printing.\n\n"
@@ -5503,11 +5503,11 @@ msgid "This button will (re-)generate the PicList(s) or\n"
 "list for each of the books listed for printing."
 msgstr ""
 
-#: lib/ptxprint/ptxprint.glade:15908
+#: lib/ptxprint/ptxprint.glade:15900
 msgid "View/Edit..."
 msgstr "Vizualizare/Editare..."
 
-#: lib/ptxprint/ptxprint.glade:15912
+#: lib/ptxprint/ptxprint.glade:15904
 msgid "If you would prefer to view or edit this file in\n"
 "the Editor Application designated by your \n"
 "system then click here.\n"
@@ -5523,7 +5523,7 @@ msgstr "Dacă preferați să vizualizați sau să editați acest fișier în\n"
 "(. fm, .piclist, .adjlist, .tex, .log, .sty etc.)\n"
 "cu un editor de text (cum ar fi Notepad sau NP+)."
 
-#: lib/ptxprint/ptxprint.glade:15965
+#: lib/ptxprint/ptxprint.glade:15957
 msgid "A PicList is used to specify the \n"
 "position of illustrations on the page. \n"
 "Any one of the following are possible:\n"
@@ -5537,11 +5537,11 @@ msgstr "O listă de imagini este folosită pentru a specifica poziția \n"
 "pentru \"culoare\": tl=stânga sus, tr=dreapta sus,\n"
 "        bl=stânga jos, br=jos dreapta"
 
-#: lib/ptxprint/ptxprint.glade:15971
+#: lib/ptxprint/ptxprint.glade:15963
 msgid "Front Matter"
 msgstr "Materie frontală"
 
-#: lib/ptxprint/ptxprint.glade:15996
+#: lib/ptxprint/ptxprint.glade:15988
 msgid "To balance columns of text on a page it is possible\n"
 "to specify paragraphs adjustments (shrink or expand):\n\n"
 "A Paragraph Adjust List needs to be in this format:\n"
@@ -5565,45 +5565,45 @@ msgstr "Pentru a echilibra coloanele de text pe o pagină este posibil\n"
 "atunci când toate celelalte setări au fost finalizate. Altfel, este foarte probabil ca dumneavoastră\n"
 "să trebuiască să o repetați din nou."
 
-#: lib/ptxprint/ptxprint.glade:16008
+#: lib/ptxprint/ptxprint.glade:16000
 msgid "Adj List"
 msgstr ""
 
-#: lib/ptxprint/ptxprint.glade:16039
+#: lib/ptxprint/ptxprint.glade:16031
 msgid "Final SFM"
 msgstr "SFM final"
 
-#: lib/ptxprint/ptxprint.glade:16065
+#: lib/ptxprint/ptxprint.glade:16057
 msgid ".tex file"
 msgstr "Fișier .tex"
 
-#: lib/ptxprint/ptxprint.glade:16091
+#: lib/ptxprint/ptxprint.glade:16083
 msgid "XeTeX Log"
 msgstr "Jurnal XeTeX"
 
-#: lib/ptxprint/ptxprint.glade:16140
+#: lib/ptxprint/ptxprint.glade:16132
 msgid "The Viewer allows you to view and\n"
 "edit various control and log files."
 msgstr "Vizualizatorul vă permite să vizualizați și\n"
 "editați diverse fișiere de control și jurnal."
 
-#: lib/ptxprint/ptxprint.glade:16143
+#: lib/ptxprint/ptxprint.glade:16135
 msgid "View+Edit"
 msgstr "Vizualizare+Editare"
 
-#: lib/ptxprint/ptxprint.glade:16184
+#: lib/ptxprint/ptxprint.glade:16176
 msgid "Current Project Path:"
 msgstr "Calea actuală a proiectului:"
 
-#: lib/ptxprint/ptxprint.glade:16196
+#: lib/ptxprint/ptxprint.glade:16188
 msgid "Configuration Settings:"
 msgstr "Setări configurare:"
 
-#: lib/ptxprint/ptxprint.glade:16208
+#: lib/ptxprint/ptxprint.glade:16200
 msgid "Output PDF Location:"
 msgstr "Locaţie PDF de ieşire:"
 
-#: lib/ptxprint/ptxprint.glade:16219
+#: lib/ptxprint/ptxprint.glade:16211
 msgid "To use PTXprint effectively you need a good PDF viewer\n"
 "which allows the PDF file to be refreshed (reloaded)\n"
 "without closing it each time the PDF is to be re-created.\n\n"
@@ -5614,17 +5614,17 @@ msgid "To use PTXprint effectively you need a good PDF viewer\n"
 "for best results."
 msgstr ""
 
-#: lib/ptxprint/ptxprint.glade:16230
+#: lib/ptxprint/ptxprint.glade:16222
 msgid "Using a good\n"
 "PDF Viewer:"
 msgstr "Folosind\n"
 "PDF Viewer:"
 
-#: lib/ptxprint/ptxprint.glade:16242
+#: lib/ptxprint/ptxprint.glade:16234
 msgid "Visit SumatraPDF Download Page"
 msgstr "Vizitați pagina de descărcare SumatraPDF"
 
-#: lib/ptxprint/ptxprint.glade:16261
+#: lib/ptxprint/ptxprint.glade:16253
 msgid "PTXprint is built with Python & PyGTK3, using Glade for\n"
 "the User-Interface. The PDFs are produced by recently\n"
 "enhanced XeTeX macros with a long and reliable history.\n"
@@ -5640,21 +5640,21 @@ msgstr "PTXprint este construit cu Python & PyGTK3, folosind Glade pentru\n"
 "o problemă folosind acest link aici. Dezvoltatorii lucrează la asta\n"
 "în timpul lor liber, așa că aveți răbdare pentru un răspuns."
 
-#: lib/ptxprint/ptxprint.glade:16269
+#: lib/ptxprint/ptxprint.glade:16261
 msgid "How to Report Bugs, \n"
 "Annoyances or Other Issues:"
 msgstr "Cum să raportezi erori, \n"
 "Annoyances sau alte probleme:"
 
-#: lib/ptxprint/ptxprint.glade:16281
+#: lib/ptxprint/ptxprint.glade:16273
 msgid "Report an Issue via GitHub"
 msgstr "Raportează o problemă prin intermediul GitHub"
 
-#: lib/ptxprint/ptxprint.glade:16299
+#: lib/ptxprint/ptxprint.glade:16291
 msgid "Visit PTXprint's Home Page to Download Latest Version"
 msgstr "Vizitaţi pagina de start a PTXprint-ului pentru a descărca ultima versiune"
 
-#: lib/ptxprint/ptxprint.glade:16318
+#: lib/ptxprint/ptxprint.glade:16310
 msgid "PTXprint does not have an auto-updating\n"
 "feature, so you are encouraged to check\n"
 "for new updates at the Home Page.\n"
@@ -5666,13 +5666,13 @@ msgstr "PTXprint nu are o funcție\n"
 "Vă rugăm să vă asigurați că utilizați ultima\n"
 "versiune înainte de a raporta o problemă."
 
-#: lib/ptxprint/ptxprint.glade:16324
+#: lib/ptxprint/ptxprint.glade:16316
 msgid "Home Page for Documentation, \n"
 "Videos, FAQs and Latest Updates:"
 msgstr "Pagina de start pentru documentatie, \n"
 "videoclipuri, FAQs si ultimele actualizări:"
 
-#: lib/ptxprint/ptxprint.glade:16352
+#: lib/ptxprint/ptxprint.glade:16344
 msgid "For technical FAQs relating to how the TeX macros\n"
 "work and how to customize the stylesheets even\n"
 "further, this FAQ document is worth visiting."
@@ -5680,43 +5680,43 @@ msgstr "Pentru întrebări tehnice frecvente legate de cum funcționează\n"
 "TeX macros și cum să personalizeze și mai departe stilurile\n"
 ", acest document de întrebări frecvente merită vizitat."
 
-#: lib/ptxprint/ptxprint.glade:16356
+#: lib/ptxprint/ptxprint.glade:16348
 msgid "Technical FAQs Related \n"
 "to the PTX2PDF Macros:"
 msgstr "Întrebări tehnice frecvente \n"
 "legate de Macros-ul PTX2PDF:"
 
-#: lib/ptxprint/ptxprint.glade:16368
+#: lib/ptxprint/ptxprint.glade:16360
 msgid "See PTX2PDF Macros FAQ"
 msgstr "Vezi Întrebări frecvente PTX2PDF"
 
-#: lib/ptxprint/ptxprint.glade:16386 lib/ptxprint/ptxprint.glade:16471
+#: lib/ptxprint/ptxprint.glade:16378 lib/ptxprint/ptxprint.glade:16463
 msgid "prjdir"
 msgstr ""
 
-#: lib/ptxprint/ptxprint.glade:16404
+#: lib/ptxprint/ptxprint.glade:16396
 msgid "settings_dir"
 msgstr "setăris_dir"
 
-#: lib/ptxprint/ptxprint.glade:16421
+#: lib/ptxprint/ptxprint.glade:16413
 msgid "working_dir"
 msgstr ""
 
-#: lib/ptxprint/ptxprint.glade:16438
+#: lib/ptxprint/ptxprint.glade:16430
 msgid "Answers to Frequently Asked Questions (FAQs)"
 msgstr "Răspunsuri la întrebări frecvente (FAQ)"
 
-#: lib/ptxprint/ptxprint.glade:16457 lib/ptxprint/ptxprint.glade:16574
+#: lib/ptxprint/ptxprint.glade:16449 lib/ptxprint/ptxprint.glade:16566
 msgid "Frequently Asked Questions (FAQs) from\n"
 "general users and common solutions."
 msgstr "Întrebări frecvente de la\n"
 "utilizatorii generali şi soluţii comune."
 
-#: lib/ptxprint/ptxprint.glade:16460
+#: lib/ptxprint/ptxprint.glade:16452
 msgid "PTXprint FAQ page:"
 msgstr "Pagina de întrebări frecvente PTXprint:"
 
-#: lib/ptxprint/ptxprint.glade:16491
+#: lib/ptxprint/ptxprint.glade:16483
 msgid "Among other things, this folder contains:\n"
 "* ReleaseNotes.txt\n"
 "* AboutPTXprint.txt\n"
@@ -5726,11 +5726,11 @@ msgstr "Printre altele, acest dosar conține:\n"
 "* AboutPTXprint.txt\n"
 "* MIT License.txt"
 
-#: lib/ptxprint/ptxprint.glade:16496
+#: lib/ptxprint/ptxprint.glade:16488
 msgid "PTXprint Docs Path:"
 msgstr "Cale documente PTXprint:"
 
-#: lib/ptxprint/ptxprint.glade:16507
+#: lib/ptxprint/ptxprint.glade:16499
 msgid "In order to keep the size of the file to a minimum\n"
 "you are encouraged to turn off features (pictures?)\n"
 "that don't affect the issue being reported. To transfer\n"
@@ -5742,7 +5742,7 @@ msgstr "Pentru a păstra dimensiunea fișierului la minim\n"
 "fișierul .ZIP către dezvoltatori, fie încarcă și trimite\n"
 "un link, fie trimite-l prin e-mail la ptxprint_support@sil.org "
 
-#: lib/ptxprint/ptxprint.glade:16514
+#: lib/ptxprint/ptxprint.glade:16506
 msgid "The easiest way for the developers to replicate\n"
 "an issue is for you to Create an Archive with\n"
 "all the required files and then send it to them:"
@@ -5750,7 +5750,7 @@ msgstr "Cea mai ușoară cale pentru dezvoltatori de a replica\n"
 "o problemă este să creezi o arhivă cu\n"
 "toate fișierele necesare și apoi să le trimiți:"
 
-#: lib/ptxprint/ptxprint.glade:16532
+#: lib/ptxprint/ptxprint.glade:16524
 msgid "Create a ZIPped archive of all the files\n"
 "required to replicate this configuration\n"
 "on a different computer. Mainly used\n"
@@ -5772,40 +5772,60 @@ msgstr "Creați o arhivă ZIPped a tuturor fișierelor\n"
 "în fila Avansată pe care ați putea fi\n"
 "cerută să o activați de către echipa de asistență."
 
-#: lib/ptxprint/ptxprint.glade:16555
+#: lib/ptxprint/ptxprint.glade:16547
 msgid "Get help from other PTXprint users"
 msgstr "Obțineți ajutor de la alți utilizatori PTXprint"
 
-#: lib/ptxprint/ptxprint.glade:16577
+#: lib/ptxprint/ptxprint.glade:16569
 msgid "PTXprint User Community:"
 msgstr "Comunitatea utilizatorilor PTXprint"
 
-#: lib/ptxprint/ptxprint.glade:16594
+#: lib/ptxprint/ptxprint.glade:16586
 msgid "Helpful Links"
 msgstr "Link-uri utile"
 
-#: lib/ptxprint/ptxprint.glade:16614
+#: lib/ptxprint/ptxprint.glade:16606
 msgid "Help"
 msgstr "Ajutor"
 
-#: lib/ptxprint/ptxprint.glade:16669
+#: lib/ptxprint/ptxprint.glade:16661
 msgid "Show Advanced Settings:\n\n"
 "There are many more complex options available for use within PTXprint."
 msgstr "Arată setările avansate:\n\n"
 "Există multe alte opţiuni complexe disponibile pentru utilizare în cadrul PTXprint."
 
-#: lib/ptxprint/ptxprint.glade:16688
+#: lib/ptxprint/ptxprint.glade:16680
 msgid "Several PTXprint interface languages are \n"
 "available. On selecting a language, the\n"
 "program will close and re-open in the\n"
 "chosen language."
 msgstr ""
 
-#: lib/ptxprint/ptxprint.glade:16750
+#: lib/ptxprint/ptxprint.glade:16726
+msgid "Quick Run"
+msgstr ""
+
+#: lib/ptxprint/ptxprint.glade:16730
+msgid "Ordinarily, PTXprint reruns the typesetting\n"
+"process (multiple times) in order to ensure\n"
+"everything is positioned precisely, and the\n"
+"Table of Contents & Image Copyright page\n"
+"numbers are accurate.\n"
+"  \n"
+"This gives a much neater end result, but \n"
+"obviously takes longer to run. If you would\n"
+"rather just see a quick/rough result, then\n"
+"check this option to only run ONCE.\n\n"
+"If it detects that it needs to be re-run for\n"
+"a perfect result, a reminder message will\n"
+"be displayed (in red) just to the left."
+msgstr ""
+
+#: lib/ptxprint/ptxprint.glade:16780
 msgid "Close the PTXprint tool without re-creating the PDF."
 msgstr "Închide unealta PTXprint fără a recrea PDF."
 
-#: lib/ptxprint/ptxprint.glade:16774
+#: lib/ptxprint/ptxprint.glade:16804
 msgid "Apply any changes specified, save the\n"
 "current configuration (if not locked) and\n"
 "produce a PDF with the settings specified.\n\n"
@@ -5815,11 +5835,11 @@ msgstr "Aplică orice modificări specificate, salvează\n"
 "produce un PDF cu setările specificate.\n\n"
 "Comandă rapidă: <Ctrl-P>"
 
-#: lib/ptxprint/ptxprint.glade:16809
+#: lib/ptxprint/ptxprint.glade:16839
 msgid "Welcome to PTXprint!"
 msgstr "Bun venit la PTXprint!"
 
-#: lib/ptxprint/ptxprint.glade:16838
+#: lib/ptxprint/ptxprint.glade:16868
 msgid "Loading Font List...\n\n"
 "If you have enough time to read this message, \n"
 "then you probably have too many fonts installed!\n\n"
@@ -5829,7 +5849,7 @@ msgstr "Se încarcă lista de fonturi...\n\n"
 "atunci probabil ai prea multe fonturi instalate!\n\n"
 "Luați în considerare dezinstalarea celor care nu sunt utilizate niciodată."
 
-#: lib/ptxprint/ptxprint.glade:16855
+#: lib/ptxprint/ptxprint.glade:16885
 msgid "PTXprint"
 msgstr "Amprentă"
 
