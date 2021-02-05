@@ -2422,7 +2422,7 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("t_copyrightStatement").set_text(self._getPtSettings().get('Copyright', ""))
 
     def onCopyrightStatementChanged(self, btn):
-        w = self.builder.get_object("t_copyrightStatement")
+        w = self.builder.get_object(Gtk.Buildable.get_name(btn))
         t = w.get_text()
         t = re.sub("</?p>", "", t)
         t = re.sub("\([cC]\)", "\u00a9 ", t)
@@ -2470,8 +2470,8 @@ class GtkViewModel(ViewModel):
         self.picListView.del_row()
 
     def onAnchorRefChanged(self, t_plAnchor, foo): # called on "focus-out-event"
-        # Ensure that the anchor ref only uses . (and not :) as the ch.vs separator
-        self.set("t_plAnchor", re.sub(r':', r'.', self.get('t_plAnchor')))
+        # Ensure that the anchor ref only uses . (and not :) as the ch.vs separator and is upperCASE
+        self.set("t_plAnchor", re.sub(r':', r'.', self.get('t_plAnchor').upper()))
 
     def resetParam(self, btn, foo):
         label = Gtk.Buildable.get_name(btn.get_child())

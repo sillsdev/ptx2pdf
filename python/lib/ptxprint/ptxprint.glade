@@ -9924,6 +9924,7 @@ Attribution:</property>
                                                         <property name="can_focus">True</property>
                                                         <property name="hexpand">True</property>
                                                         <property name="placeholder_text" translatable="yes">by Artist Name © Year, Entity Name and License Type</property>
+                                                        <signal name="changed" handler="onCopyrightStatementChanged" swapped="no"/>
                                                       </object>
                                                       <packing>
                                                         <property name="left_attach">1</property>
@@ -16661,8 +16662,8 @@ general users and common solutions.</property>
                 <property name="tooltip_text" translatable="yes">Show Advanced Settings:
 
 There are many more complex options available for use within PTXprint.</property>
-                <property name="margin_left">20</property>
-                <property name="margin_right">20</property>
+                <property name="margin_left">12</property>
+                <property name="margin_right">12</property>
                 <property name="margin_top">7</property>
                 <property name="margin_bottom">7</property>
                 <signal name="state-set" handler="onHideAdvancedSettingsClicked" swapped="no"/>
@@ -16682,7 +16683,7 @@ available. On selecting a language, the
 program will close and re-open in the
 chosen language.</property>
                 <property name="halign">start</property>
-                <property name="margin_left">6</property>
+                <property name="margin_left">3</property>
                 <property name="margin_top">3</property>
                 <property name="margin_bottom">3</property>
                 <property name="hexpand">False</property>
@@ -16706,7 +16707,7 @@ chosen language.</property>
                 <property name="halign">end</property>
                 <property name="valign">center</property>
                 <property name="margin_left">6</property>
-                <property name="margin_right">3</property>
+                <property name="margin_right">2</property>
                 <property name="hexpand">False</property>
                 <property name="label"> </property>
                 <property name="justify">right</property>
@@ -16742,8 +16743,8 @@ If it detects that it needs to be re-run for
 a perfect result, a reminder message will
 be displayed (in red) just to the left.</property>
                 <property name="valign">center</property>
-                <property name="margin_left">3</property>
-                <property name="margin_right">4</property>
+                <property name="margin_left">2</property>
+                <property name="margin_right">2</property>
                 <property name="margin_top">3</property>
                 <property name="margin_bottom">3</property>
                 <property name="draw_indicator">True</property>
