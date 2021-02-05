@@ -552,7 +552,7 @@ class TexModel:
         docdir, docbase = self.docdir()
         self.dict['jobname'] = jobname
         self.dict['document/imageCopyrights'] = self.generateImageCopyrightText() \
-                if self.dict['document/includeimg'] else r"\def\zImageCopyrights{}"
+                if self.dict['document/includeimg'] else r"\def\zimagecopyrights{}"
         with universalopen(os.path.join(os.path.dirname(__file__), template)) as inf:
             for l in inf.readlines():
                 if l.startswith(r"\ptxfile"):

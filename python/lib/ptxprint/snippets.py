@@ -64,7 +64,6 @@ class Diglot(Snippet):
 \addToLeftHooks{{\RTL{document/ifrtl}}}
 \addToRightHooks{{\RTL{diglot/ifrtl}}}
 %{diglot/iflinebreakon}\XeTeXlinebreaklocaleR "{diglot/linebreaklocale}"
-%{diglot/useglyphmetrics}\XeTeXuseglyphmetricsR=0
 \diglotSwap{document/diglotswapside}
 \diglotLtrue
 \catcode `@=12

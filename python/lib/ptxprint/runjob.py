@@ -94,7 +94,6 @@ _diglot = {
 "diglot/linespacingfactor": "paragraph/linespacingfactor",
 "diglot/iflinebreakon" :    "document/iflinebreakon",
 "diglot/linebreaklocale" :  "document/linebreaklocale",
-"diglot/useglyphmetrics" :  "paragraph/useglyphmetrics",
 
 "diglot/docscript" :        "document/script",
 "diglot/docdigitmapping" :  "document/digitmapping",
@@ -479,7 +478,7 @@ class RunJob:
                 tocndata = self.readfile(os.path.join(self.tmpdir, outfname.replace(".tex", ".toc")))
                 if tocdata != tocndata:
                     if numruns >= self.maxRuns:
-                        self.rerunReasons.append(_("TOC"))
+                        self.rerunReasons.append(_("ToC pages"))
                     else:
                         print(_("Rerunning because the Table of Contents was updated"))
                         rererun = True
