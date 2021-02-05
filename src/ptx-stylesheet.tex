@@ -164,7 +164,7 @@
 
 \def\s@tpossParams#1{\trace{s}{setpossParam #1 (\styst@kskip/\styst@kfirst/\styst@k)}%
   \ifdiglot
-     \xdef\d@sf{\ifdiglotL L\else R\fi}%
+     \global\let\d@sf\c@rrdstat
      \edef\p@ssParams{#1\d@sf,#1}%
   \else
      \edef\p@ssParams{#1}%
@@ -246,7 +246,7 @@
    \fi
  \else %Old, working, but ignorant of milestones
    \ifdiglot
-    \xdef\d@sf{\ifdiglotL L\else R\fi}%
+    \global\let\d@sf\c@rrdstat
     \getp@r@m{#1}{\c@tprefix#2\d@sf}%
     \ifx\p@ram\relax
       \ifx\c@tprefix\empty\else\getp@r@m{#1}{\c@tprefix#2}\fi%
@@ -392,7 +392,7 @@
   % called after \c and \v have been processed in stylesheet at beginning of typesetting file
   \let\@V=\v% remember \v defn for (A) below
   % Define a macro to read an actual space delimited verse number, and then check if the next token is \vp
-  \def\@v@ ##1 {\gdef\v@rse{##1}\ifdiglot\ifdiglotL\global\let\@v@rse=\v@rse\else\global\let\@v@rseR=\v@rse\fi\fi\global\let\print@bleVerse\v@rse\futurelet\mayb@vp\@V@}%
+  \def\@v@ ##1 {\gdef\v@rse{##1}\ifdiglot\x@\let\csname @v@rse\g@tdstat\endcsname\v@rse\fi\global\let\print@bleVerse\v@rse\futurelet\mayb@vp\@V@}%
   % If the next token IS vp, then call relevant code to interpret before dropping 
   \def\@V@{%
    \let\nxt\@@V@@
@@ -462,39 +462,30 @@
   % Define a macro to process space delimited chapter number
   % ## is necessary because this is a nested macro definition
   \def\@c@ ##1 {\ifsk@pping \egroup \fi % if we were skipping, stop it
-   \ifnum 1=\ifdiglot\ifdiglotL 2 \else 1\fi\else 2\fi
-     \gdef\@ch@pterR{##1}% remember chapter number
-     \gdef\@ch@ptert@xtR{##1}% the chapter number we will actually output
-     \gdef\@v@rseR{}% clear verse number
-     \uppercase{\xdef\c@rref{\id@@@ R\@ch@pterR.0}}%
-     \global\let\ch@pter=\@ch@pterR
-     \global\let\ch@ptert@xt=\@ch@ptert@xtR
-     \global\let\v@rse=\@v@rseR
-   \else
-     \gdef\@ch@pter{##1}% remember chapter number
-     \gdef\@ch@ptert@xt{##1}% the chapter number we will actually output
-     \gdef\@v@rse{}% clear verse number
-     \global\let\ch@pter=\@ch@pter
-     \global\let\ch@ptert@xt=\@ch@ptert@xt
-     \global\let\v@rse=\@v@rse
-     \uppercase{\xdef\c@rref{\id@@@\@ch@pter.0}}%
-   \fi
-   \global\let\print@bleVerse=\v@rse
-   \m@kedigitsletters
+  \gdef\@ch@pter{##1}% remember chapter number
+  \gdef\@ch@ptert@xt{##1}% the chapter number we will actually output
+  \gdef\@v@rse{}% clear verse number
+  \ifdiglot
+    \x@\global\x@\let\csname @ch@pter\g@tdstat\endcsname\ch@pter
+    \x@\global\x@\let\csname @ch@ptert@xt\g@tdstat\endcsname\ch@ptert@xt
+    \x@\global\x@\let\csname @v@rse\g@tdstat\endcsname\v@rse
+  \fi
+  \uppercase{\xdef\c@rref{\id@@@\g@tdstat\ch@pter.0}}%
+  \global\let\print@bleVerse=\v@rse
+  \m@kedigitsletters
    % If omitting chapter number, skip this. 
    % We would have to set \OmitChapterNumbertrue on a book by book basis
    % in the configuration file in order to omit chapter numbers for single chapter books.
-   \ifOmitChapterNumber\else
+  \ifOmitChapterNumber\else
     % if chapter label not present, set \ch@ptertrue to cause chapter number to be printed
     % at start of first text paragraph.
-    \global\let\ch@pl@bel=\ch@plabel % p@rstyle{cl} may end a group.
-    \ifdiglot\ifdiglotL\else\global\let\ch@pl@bel=\ch@plabelR\fi\fi
+    \x@\global\x@\let\x@\ch@pl@bel\csname\ch@plabel\g@tdstat\endcsname% global as p@rstyle{cl} may end a group.
     \ifx\ch@pl@bel\empty \global\ch@ptertrue 
     \else % if \cl present, output chapter label here
       \p@rstyle{cl}\ch@pl@bel\ \ch@pter
       \pdfb@@kmark \pdfch@ptermark
     \fi
-   \fi}
+  \fi}
   %
   \def\c{\m@kedigitsother\@c@}
   \def\cp ##1 {\gdef\ch@ptert@xt{##1}}
@@ -640,14 +631,14 @@
 \let\b@ok\relax
 \def\ch@pter{}
 \def\v@rse{}
+\def\m@rknum{1}
 \let\@ch@pter=\ch@pter
 \let\@ch@pterR=\ch@pter
 \let\@v@rse=\v@rse
 \let\@v@rseR=\v@rse
-\def\m@rkverse{\ifdiglot\ifdiglotL\m@rkverseL\else\m@rkverseR\fi\else\m@rkverseN\fi}
-\def\m@rkverseN{\mark{\b@ok:\ch@pter:\print@bleVerse}} %normal verse
-\def\m@rkverseL{\mark{\b@ok:\ch@pter:\print@bleVerse}\marks1{\b@ok:\ch@pter:\print@bleVerse}} % Left diglot verse
-\def\m@rkverseR{\mark{\b@okR:\ch@pter:\print@bleVerse}\marks2{\b@okR:\ch@pter:\print@bleVerse}} %Right diglot verse
+\def\m@rkverse{\ifdiglot\m@rkverseDglot\else\m@rkverseNml\fi}
+\def\m@rkverseNml{\mark{\b@ok:\ch@pter:\print@bleVerse}} %normal verse
+\def\m@rkverseDglot{\mark{\b@ok:\ch@pter:\print@bleVerse}\edef\cur@ds{\g@tdstat}\marks\m@rknum{\csname b@ok\cur@ds\endcsname:\csname ch@pter\cur@ds\endcsname:\print@bleVerse}} % diglot verse
 
 \def\n@xtparstart{}
 %+csty_addspecialhooks

@@ -82,7 +82,7 @@
 %-c_timestamp
 
 %+c_imports
-\input ptx-diglot.tex
+\input ptx-diglot2.tex
 \input ptx-tracing.tex
 \input ptx-para-style.tex
 \input ptx-char-style.tex
@@ -1209,7 +1209,7 @@
   \ifvoid\partialL\else\temptrue\fi
   \ifvoid\partialR\else\temptrue\fi
   \setboth
-  \setc@rdiglotstate{L}%
+  \setc@rdstat{L}%
   \eject
   \ifnum\interactionmode=2
     \showbox\n@xtpartialNrml\showbox\n@xtpartialRev
@@ -1243,7 +1243,7 @@
   \gdef\resetvsize{\global\vsize=\textheight \global\advance\vsize by -\ht\partial \global\advance\vsize by 0.5\baselineskip} 
   \global\availht=\vsize
   \global\c@rrentcols=2
-  \global\output={\diglotLeft}
+  \global\output={\diglotCollect}
   
   % (\count of an insertion class is a scaling factor)
   \count255=1000

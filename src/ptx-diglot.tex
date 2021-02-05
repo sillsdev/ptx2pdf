@@ -206,7 +206,7 @@
 
 % Not the same as \c@lcavailht from paratext2.tex
 \def\dglt@calc@vailht{%
-   \trace{D}{dglt@calc@vailht \c@rrdiglotstate}%
+   \trace{D}{dglt@calc@vailht \c@rrdstat}%
    \global\availht=\textheight %
    \global\advance\availht by \adjustp@ge % Panic measure..
    \global\advance\availht by -\ht\partial %
@@ -249,7 +249,7 @@
    \fi%
    \decr{\availht}{\bottomins}%
    \decr{\availht}{\verybottomins}%
-   \x@\global\x@\csname availht\c@rrdiglotstate\endcsname=\availht
+   \x@\global\x@\csname availht\c@rrdstat\endcsname=\availht
    \trace{D}{final:\the\availht}%
 }
 \newif\ifnastybox  % Signal that box must be treated specially
@@ -278,9 +278,9 @@
 % Initial \output routine for left scripture
 \def\diglot@any@primary{%
    \ifnum\the\outputpenalty=\dgl@tPenColSwap
-     \setf@lwgdiglotstate{\n@xtdiglotstate}%
+     \setf@lwgdstat{\n@xtdstat}%
    \fi
-   \trace{D}{diglot@any@primary: \show@diglotstate}%
+   \trace{D}{diglot@any@primary: \show@dstat}%
    \tmppenalty=\outputpenalty %
    \ifnum\tmppenalty=1000
      \tmppenalty=0
@@ -798,7 +798,7 @@
         \traceNum{d}{Printing without last box to avoid bad column break on p.\the\pageno.  partial:\the\ht\partial+\the\dp\partial,\the\ht\n@xtpartial+\the\dp\n@xtpartial}%
         \r@storenotes{}%
         \@writep@ge
-        \setc@rdiglotstate{L}%
+        \setc@rdstat{L}%
         \global\deadcycles=0
         \global\setbox\partial=\box\n@xtpartial
         \dglt@calc@vailht%
@@ -874,7 +874,7 @@
           \global\output={\diglotLeft}\relax%
         \else%
           \global\output={\diglotRight}%
-          \setc@rdiglotstate{R}%
+          \setc@rdstat{R}%
           \global\hsize=\columnRwidth
           \global\holdinginserts=1 %
           \dglt@calc@vailht%
@@ -904,7 +904,7 @@
 
 \def\doDiglotLeftTrial{%
   %empties LeftBox and partialL back onto stack, with holdinginserts=0
-  \trace{D}{doDiglotLeftTrial LB:\the\ht\LeftBox+\the\dp\LeftBox, pL:(\the\ht\partialL+\the\dp\partialL) \show@diglotstate, diglotL\ifdiglotL true\else false\fi, dig@tL\ifdigl@tL true\else false\fi, leftfull\ifleftfull true\else false\fi}%
+  \trace{D}{doDiglotLeftTrial LB:\the\ht\LeftBox+\the\dp\LeftBox, pL:(\the\ht\partialL+\the\dp\partialL) \show@dstat, diglotL\ifdiglotL true\else false\fi, dig@tL\ifdigl@tL true\else false\fi, leftfull\ifleftfull true\else false\fi}%
   %Set correct current state
   \global\diglotLtrue%
   \global\hsize=\columnLwidth\relax%
@@ -1021,7 +1021,7 @@
         \traceNum{d}{Printing without last box to avoid bad RH column break on p.\the\pageno.  partial:\the\ht\partial+\the\dp\partial,\the\ht\n@xtpartial+\the\dp\n@xtpartial}%
         \TempDim=0pt
         \setbox0=\box255%kill trial
-        \setc@rdiglotstate{R}%
+        \setc@rdstat{R}%
         \r@storenotes{R}%
         \@writep@ge
         \global\setbox\partial=\box\n@xtpartial
@@ -1041,7 +1041,7 @@
         %\fi
         \global\partialRpenalty=0
         \global\setbox\trialbox=\box\voidb@x
-        \setc@rdiglotstate{L}%
+        \setc@rdstat{L}%
         \dglt@calc@vailht
         \global\trialheight=\availht
         \TempDim=-\baselineskip %trigger the reprocess-galley logic below
@@ -1098,7 +1098,7 @@
   % need to stop holding inserts
   \trace{D}{doDiglotRightTrial RB:\the\ht\RightBox+\the\dp\RightBox, pR:(\the\ht\partialR+\the\dp\partialR) 255:(\the\ht255+\the\dp255) diglotL\ifdiglotL true\else false\fi, digl@tL\ifdigl@tL true\else false\fi}%
   %Set correct current state
-  \setc@rdiglotstate{R}%
+  \setc@rdstat{R}%
   \global\hsize=\columnRwidth\relax%
   \dglt@calc@vailht
   \trace{D}{av: \the\availht, tr: \the\trialheight}%
@@ -1249,12 +1249,12 @@
  \fi
  \trace{D}{Back in digl@tRight:\the\availht,diglotL\ifdiglotL true\else false\fi, dig@tL\ifdigl@tL true\else false\fi}%
  \ifintrial\else
-   \trace{D}{Resetting output routines \ifintrial INTRIAL\fi \show@diglotstate}%
-   \if\f@lwgdiglotstate L
-     \setc@rdiglotstate{L}%
+   \trace{D}{Resetting output routines \ifintrial INTRIAL\fi \show@dstat}%
+   \if\f@lwgdstat L
+     \setc@rdstat{L}%
      \global\output={\diglotLeft}%
    \else
-     \setc@rdiglotstate{R}%
+     \setc@rdstat{R}%
      \global\output={\diglotRight}%
      \ifvoid\excessR\else
     %    \holdinginserts=1
@@ -1335,8 +1335,8 @@
   \output={\diglotRight}%
   \global\holdinginserts=1}
 
-\def\pagenumberL{\bgroup\setc@rdiglotstate{L}\s@tfont{h}\pagenumber\egroup}%
-\def\pagenumberR{\bgroup\setc@rdiglotstate{R}\s@tfont{h}\pagenumber\egroup}
+\def\pagenumberL{\bgroup\setc@rdstat{L}\s@tfont{h}\pagenumber\egroup}%
+\def\pagenumberR{\bgroup\setc@rdstat{R}\s@tfont{h}\pagenumber\egroup}
 
 \newdimen\columnLwidth%
 \newdimen\columnRwidth%
@@ -1357,23 +1357,23 @@
 \let\digl@tRtrue=\digl@tLfalse\relax%
 \let\diglotRfalse=\diglotLtrue\relax%
 %Diglotstate.
-\def\n@xtdiglotstate{L}%What does the diglotstate become at the next \dgl@tPenColSwap penalty?
-\def\f@lwgdiglotstate{L}%What is the diglotstate of the 'recent contributions'? (i.e. next material to read)
-\def\c@rrdiglotstate{L}%What is the current diglotstate?
-\def\g@tdiglotstate{\if\c@rrdiglotstate L\else\c@rrdiglotstate\fi}% Returns "" or "R" (Or other state values in the future)
+\def\n@xtdstat{L}%What does the dstat become at the next \dgl@tPenColSwap penalty?
+\def\f@lwgdstat{L}%What is the dstat of the 'recent contributions'? (i.e. next material to read)
+\def\c@rrdstat{L}%What is the current dstat?
+\def\g@tdstat{\if\c@rrdstat L\else\c@rrdstat\fi}% Returns "" or "R" (Or other state values in the future)
 
-\def\show@diglotstate{\c@rrdiglotstate\f@lwgdiglotstate\n@xtdiglotstate}% for debugging output 
-\def\setc@rdiglotstate#1{\gdef\c@rrdiglotstate{#1}%
+\def\show@dstat{\c@rrdstat\f@lwgdstat\n@xtdstat}% for debugging output 
+\def\setc@rdstat#1{\gdef\c@rrdstat{#1}%
  \if#1L\global\diglotLtrue\else\global\diglotLfalse\fi%Compatability
 }
-\def\setf@lwgdiglotstate#1{\gdef\f@lwgdiglotstate{#1}%
+\def\setf@lwgdstat#1{\gdef\f@lwgdstat{#1}%
  \if#1L\global\digl@tLtrue\else\global\digl@tLfalse\fi%Compatability
 }
 
-\def\@setside#1{\setf@lwgdiglotstate{#1}\setc@rdiglotstate{#1}\xdef\n@xtdiglotstate{#1}}
+\def\@setside#1{\setf@lwgdstat{#1}\setc@rdstat{#1}\xdef\n@xtdstat{#1}}
 
 \def\@@setside#1{\trace{D}{@@setside #1}%
-   \xdef\n@xtdiglotstate{#1}%
+   \xdef\n@xtdstat{#1}%
    }%
 
 \def\swapfonts#1{% Because it might be desirable to set fonts appropriately.
@@ -1445,7 +1445,7 @@
   %\partialL may have extra material in it, which hasn't been footnoted. 
   %\RightBox needs to be filled from partialR.
   %\Rchunkpenalty et al. correctly  set by caller
-  \traceNum{d}{setboth \the\outputpenalty, \the\savedpenalty, \the\Rchunkpenalty,  rbp:\the\Rboxpenalty\space diglotL\ifdiglotL true\else false\fi, leftfull\ifleftfull true\else false\fi\space \show@diglotstate}%
+  \traceNum{d}{setboth \the\outputpenalty, \the\savedpenalty, \the\Rchunkpenalty,  rbp:\the\Rboxpenalty\space diglotL\ifdiglotL true\else false\fi, leftfull\ifleftfull true\else false\fi\space \show@dstat}%
   \dglt@calc@vailht
   \global\splittopskip=\baselineskip
   \global\topskip=\baselineskip
@@ -1565,7 +1565,7 @@
       \ifvoid\excessL\else
         \traceNum{d}{Refilling non-empty partialL from excessL}%
         \pagefulltrue\leftfulltrue
-        \bgroup \setc@rdiglotstate{L}%
+        \bgroup \setc@rdstat{L}%
         \global\setbox\partialL=\vtop{\joinboxes{\partialL}{\excessL}{9}{\partialLpenalty}}%
         \egroup
         \partialLpenalty=\Lchunkpenalty %
@@ -1660,7 +1660,7 @@
             \traceNum{d}{Trying to refill right column}%
             \global\holdinginserts=0
             \global\Lneedsemptyingfalse%
-            \setc@rdiglotstate{R}%
+            \setc@rdstat{R}%
             \unvbox\RightBox%
             \ifnum\outputpenalty = 10000
               \penalty 10
@@ -1709,8 +1709,8 @@
     \fi
   \fi\fi%
   \ifvoid\partialL\ifvoid\partialR\ifvoid\excessL\ifvoid\excessR\else
-    \if\n@xtdiglotstate L
-      \trace{D}{ExcessR isn't empty and needs emptying \show@diglotstate}%
+    \if\n@xtdstat L
+      \trace{D}{ExcessR isn't empty and needs emptying \show@dstat}%
       \setbox\partialR\box\excessR
       \let\@ftersetboth\setboth
     \fi
@@ -2169,10 +2169,10 @@
   \global\setbox\partial=\vbox{\unvbox\partial}%
   \ifdiglotSepNotes%
     \trace{D}{Sep notes}%
-    \let\s@veddiglotstate=\c@rrdiglotstate
+    \let\s@veddstat=\c@rrdstat
     \LRf@@tnotesfalse%
     \f@rstnotetrue%
-    \setc@rdiglotstate{L}%%
+    \setc@rdstat{L}%%
     \lastd@pth=0pt 
     %Arrange Left and Right footnotes
     \global\setbox\LeftBox=\vbox{\the\leftho@ks\let\\=\ins@rtn@tecl@ss \the\n@tecl@sses}%
@@ -2183,14 +2183,14 @@
       \f@rstnotetrue%
     \fi%
     \lastd@pth=0pt 
-    \setc@rdiglotstate{R}%%
+    \setc@rdstat{R}%%
     \global\setbox\RightBox=\vbox{\the\rightho@ks\let\\=\ins@rtn@tecl@ss \the\n@tecl@sses}%
     \iff@rstnote%
       \trace{f}{No Right footnotes}%
     \else%
       \LRf@@tnotestrue%
     \fi%
-    \setc@rdiglotstate{\s@veddiglotstate}%%
+    \setc@rdstat{\s@veddstat}%%
     \ifdiglotBalNotes%
       \trace{f}{Balanced notes}%
       \ifLRf@@tnotes%
@@ -2390,7 +2390,7 @@
   \xdef\nextp@gefirstmark{}%
   \edef\botmark{\p@gebotmark}%
   \let\firstmark\empty
-  \setc@rdiglotstate{\f@lwgdiglotstate}%Reset things
+  \setc@rdstat{\f@lwgdstat}%Reset things
   \xdef\p@gebotmark{}%
   \xdef\firstLmark{}%
   \xdef\botLmark{}%
