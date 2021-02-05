@@ -3838,7 +3838,7 @@ reload the saved Config.</property>
 
 Note: If you manually type (c) then the © symbol will magically appear.</property>
                                 <property name="hexpand">True</property>
-                                <property name="placeholder_text" translatable="yes">© 2020 Wycliffe Bible Translators, Inc.</property>
+                                <property name="placeholder_text" translatable="yes">© 2021 Wycliffe Bible Translators, Inc.</property>
                                 <signal name="changed" handler="onCopyrightStatementChanged" swapped="no"/>
                               </object>
                               <packing>

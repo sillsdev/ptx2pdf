@@ -17,7 +17,7 @@ import ptxprint.scriptsnippets as scriptsnippets
 from ptxprint.interlinear import Interlinear
 
 # After universalopen to resolve circular import. Kludge
-from ptxprint.snippets import FancyIntro, PDFx1aOutput, Diglot, FancyBorders, ImgCredits, ThumbTabs, Colophon
+from ptxprint.snippets import FancyIntro, PDFx1aOutput, Diglot, FancyBorders, ThumbTabs, Colophon
 
 def loosint(x):
     try:
@@ -280,7 +280,7 @@ ModelMap = {
     "snippets/pdfx1aoutput":    ("c_PDFx1aOutput", None),
     "snippets/diglot":          ("c_diglot", lambda w,v: True if v else False),
     "snippets/fancyborders":    ("c_borders", None),
-    "snippets/imgcredits":      ("c_includeillustrations", None),
+    "document/includeimg":      ("c_includeillustrations", None),
     "thumbtabs/ifthumbtabs":    ("c_thumbtabs", None),
     "thumbtabs/numtabs":        ("s_thumbtabs", None),
     "thumbtabs/length":         ("s_thumblength", None),
@@ -333,7 +333,6 @@ class TexModel:
         "snippets/pdfx1aoutput":          ("c_PDFx1aOutput", PDFx1aOutput),
         "snippets/diglot":                ("c_diglot", Diglot),
         "snippets/fancyborders":          ("c_borders", FancyBorders),
-        "snippets/imgcredits":            ("c_includeillustrations", ImgCredits),
         "snippets/thumbtabs":             ("c_thumbtabs", ThumbTabs),
         "snippets/colophon":              ("c_colophon", Colophon)
     }
@@ -342,6 +341,23 @@ class TexModel:
         "notes/fncallers": "footnotes"
     }
 
+    _artstr = {
+    "cn" : ("©_1996_David_C._Cook.", "©_DCC,_1996."),
+    "co" : ("©_1996_David_C._Cook.", "©_DCC_1996."),
+    "hk" : ("by_Horace_Knowles\n©_The_British \\& Foreign Bible Society, 1954, 1967, 1972, 1995.", "©_BFBS,_1995."),
+    "lb" : ("by_Louise_Bass\n©_The_British \\& Foreign Bible Society, 1994.", "©_BFBS,_1994."),
+    "bk" : ("by_Horace_Knowles revised by_Louise_Bass\n©_The_British \\& Foreign Bible Society, 1994.", "©_BFBS,_1994."),
+    "ba" : ("used by_permission of_Louise_Bass.", ""),
+    "dy" : ("by_Carolyn_Dyk, ©_2001_Wycliffe Bible Translators Inc.\nand licensed under the_Creative_Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.", ""),
+    "gt" : ("by_Gordon_Thompson ©_2012_Wycliffe Bible Translators Inc.\nand licensed under_the Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia License.", ""),
+    "dh" : ("by_David_Healey ©_2012_Wycliffe Bible Translators Inc.\nand licensed under the_Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia License.", ""),
+    "mh" : ("by_Michael_Harrar ©_2012_Wycliffe Bible Translators Inc.\nand licensed under the_Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia License.", ""),
+    "mn" : ("used by_permission_of_Muze_Tshilombo.", ""),
+    "wa" : ("by_Graham_Wade, ©_United Bible Societies, 1989.", ""),
+    "dn" : ("by_Darwin_Dunham, ©_United Bible Societies, 1989.", ""),
+    "ib" : ("by_Farid_Faadil. Copyright ©_by_Biblica, Inc.\nUsed_by_permission. All_rights_reserved_worldwide.", "")
+    }
+    
     def __init__(self, printer, path, ptsettings, prjid=None):
         from ptxprint.view import VersionStr
         self.VersionStr = VersionStr
@@ -535,6 +551,8 @@ class TexModel:
         resetPageDone = self.dict['document/startpagenum'] >= 0
         docdir, docbase = self.docdir()
         self.dict['jobname'] = jobname
+        self.dict['document/imageCopyrights'] = self.generateImageCopyrightText() \
+                if self.dict['document/includeimg'] else r"\def\zImageCopyrights{}"
         with universalopen(os.path.join(os.path.dirname(__file__), template)) as inf:
             for l in inf.readlines():
                 if l.startswith(r"\ptxfile"):
@@ -816,6 +834,10 @@ class TexModel:
         
         # Fix things that other parsers accept and we don't
         self.localChanges.append((None, regex.compile(r"(\\[cv] [^ \\\n]+)(\\)", flags=regex.S), r"\1 \2"))
+        
+        # Remove empty \h markers (might need to expand this list and loop through a bunch of markers)
+        self.localChanges.append((None, regex.compile(r"(\\h ?\r?\n)", flags=regex.S), r""))
+        
         # This section handles PARTIAL books (from chapter X to chapter Y)
         if self.asBool("document/ifchaplabels", true="%"):
             clabel = self.dict["document/clabel"]
@@ -1089,3 +1111,78 @@ class TexModel:
                 ge = re.findall(r"\\p \\k (.+)\\k\* .+\r?\n", dat) # Finds all glossary entries in GLO book
         for delGloEntry in [x for x in ge if x not in list(set(glossentries))]:
             self.localChanges.append((None, regex.compile(r"\\p \\k {}\\k\* .+\r?\n".format(delGloEntry), flags=regex.M), ""))
+
+    def generateImageCopyrightText(self):
+        artpgs = {}
+        mkr='pc'
+        sensitive = self['document/sensitive']
+        picpagesfile = os.path.join(self.docdir()[0], self['jobname'] + ".picpages")
+        crdts = ["\\def\\zImageCopyrights{%"]
+        if os.path.exists(picpagesfile):
+            with universalopen(picpagesfile) as inf:
+                dat = inf.read()
+
+            # \figonpage{304}{56}{cn01617.jpg}{tl}{© David C. Cook Publishing Co, 1978.}{x170.90504pt}
+            m = re.findall(r"\\figonpage\{(\d+)\}\{\d+\}\{.*?(((?=cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib)..)\d{5})?.+?\}\{.*?\}\{(.*?)?\}\{x.+?\}", dat)
+            msngPgs = []
+            customStmt = []
+            if len(m):
+                for f in m:
+                    a = 'co' if f[2] == 'cn' else f[2] # merge Cook's OT & NT illustrations together
+                    if a == '' and f[3] != '':
+                        customStmt += [f[0]]
+                        artpgs.setdefault(f[3], []).append(int(f[0]))
+                    elif a == '':
+                        msngPgs += [f[0]] 
+                        artpgs.setdefault('zz', []).append(int(f[0]))
+                    else:
+                        artpgs.setdefault(a, []).append(int(f[0]))
+            if len(artpgs):
+                artistWithMost = max(artpgs, key=lambda x: len(set(artpgs[x])))
+            else:
+                artistWithMost = ""
+        
+            for art, pgs in artpgs.items():
+                if art != artistWithMost:
+                    if len(pgs):
+                        pgs = sorted(set(pgs))
+                        if len(pgs) == 1:
+                            pl = ""
+                            pgstr = "on page {} ".format(str(pgs[0]))
+                        else:
+                            pl = "s"
+                            pgstr = "on pages {} and {} ".format(", ".join(str(p) for p in pgs[:-1]), str(pgs[-1]))
+                        
+                        if art in self._artstr.keys():
+                            if sensitive and len(self._artstr[art][1]):
+                                cpystr = re.sub('_', '\u00A0', self._artstr[art][1])
+                            else:
+                                cpystr = re.sub('_', '\u00A0', self._artstr[art][0])
+                            crdts += ["\\{} Illustration{} {}{}".format(mkr, pl, pgstr, cpystr)]
+                        else:
+                            if len(art) > 2:
+                                crdts += ["\\{} Illustration{} {}{}".format(mkr, pl, pgstr, re.sub('© ', '©\u00A0', art))]
+                            else:
+                                crdts += ["\\rem Warning: No copyright statement found for: {} image{} {}".format(art.upper(), pl, pgstr)]
+            if len(msngPgs):
+                if len(msngPgs) == 1:
+                    exceptpgs = "(except on page {}) ".format(str(msngPgs[0]).strip("'"))
+                else:
+                    exceptpgs = "(except on pages {} and {}) ".format(", ".join(str(p) for p in msngPgs[:-1]), str(msngPgs[-1]))
+            else:
+                exceptpgs = ""
+
+            if artistWithMost != "":
+                if sensitive and len(self._artstr[artistWithMost][1]):
+                    cpystr = re.sub('_', '\u00A0', self._artstr.get(artistWithMost, ("", artistWithMost))[1])
+                else:
+                    cpystr = re.sub('_', '\u00A0', self._artstr.get(artistWithMost, (artistWithMost, ""))[0])
+                if len(crdts) == 1:
+                    crdts += ["\\{} All illustrations {}{}".format(mkr, exceptpgs, cpystr)]
+                elif len(crdts) > 1:
+                    crdts += ["\\{} All other illustrations {}{}".format(mkr, exceptpgs, cpystr)]
+            
+        crdts += ["}"]
+        return "\n".join(crdts)
+
+    

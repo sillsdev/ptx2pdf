@@ -166,8 +166,10 @@ class RunJob:
 
         self.books = []
         self.maxRuns = 5
+        print(info.dict['project/colophontext'])
         if r"\zImageCopyrights" in (info.dict['project/colophontext'] or ""):
             self.minRuns = max(self.minRuns, 1)
+            print(self.minRuns)
         self.changes = None
         self.checkForMissingDecorations(info)
         info["document/piclistfile"] = ""
@@ -467,8 +469,11 @@ class RunJob:
             logfname = outfname.replace(".tex", ".log")
             (self.loglines, rerun) = self.parselog(os.path.join(self.tmpdir, logfname), rerunp=True, lines=300)
             info.printer.editFile_delayed(logfname, "wrk", "scroll_XeTeXlog", False)
-            if self.res and numruns >= self.minRuns:
-                break
+            numruns += 1
+            if numruns <= self.minRuns + 1:
+                continue
+            elif self.res:
+                continue
             elif info["document/toc"] != "%" and not rerun:
                 tocndata = self.readfile(os.path.join(self.tmpdir, outfname.replace(".tex", ".toc")))
                 rerun = tocdata != tocndata
@@ -480,7 +485,6 @@ class RunJob:
                 print(_("Rerunning because inline chapter numbers moved"))
             else:
                 break
-            numruns += 1
         if not self.args.testing and not self.res:
             self.printer.incrementProgress()
             cmd = ["xdvipdfmx", "-E"]
