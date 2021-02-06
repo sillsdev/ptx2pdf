@@ -166,7 +166,7 @@ class StyleEditorView(StyleEditor):
             if v is None:
                 return
             self.loading = True
-            self.set(v[0], val)
+            self.set(v[0], val or "")
             self.loading = False
 
     def get(self, key, default=None):

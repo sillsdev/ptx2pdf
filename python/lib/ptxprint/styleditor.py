@@ -44,7 +44,7 @@ class StyleEditor:
             del self.sheet[mrk][key]
             return
         elif self.basesheet.get(mrk, {}).get(key, None) != val:
-            self.sheet.setdefault(mrk, {})[key] = val
+            self.sheet.setdefault(mrk, {})[key] = val or ""
 
     def registerFn(self, mark, key, fn):
         self.registers.setdefault(mark, {})[key.lower()] = fn
