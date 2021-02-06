@@ -20,8 +20,8 @@ Bug Fixes and Improvements in 1.5.10
   * Removed variable line spacing from UI 
     (Note: this is still available through .tex file mods \XeTeXuseglyphmetrics=0).
   
-  * Ensure typing (c) --> © in any copyright fields
-  
+  * Ensure auto-correct typing (c) --> © works in both copyright statements 
+
   * Fixed #376 regarding missing directories
   
   * Fixed #379 Empty \h fields are now ignored
