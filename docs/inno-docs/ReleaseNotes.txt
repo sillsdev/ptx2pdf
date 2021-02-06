@@ -1,7 +1,40 @@
-PTXprint 1.5.9.3 Release Notes 
-3 February 2021
+PTXprint 1.5.10 Release Notes 
+6 February 2021
 
-Bug Fixes and Improvements in 1.5.9.3
+Bug Fixes and Improvements in 1.5.10
+
+  * Font Size Factor on Styles tab is now exactly that - rather than a point size
+    (Note: we still need to add a label/tooltip displaying the actual calculated point size)
+
+  * Enabled Diglot texts to switch sides (especially useful for RTL)
+
+  * Changed magic codes to lowercase so they can be typed in paratext \zcopyright, \zlicense and \zimagecopyrights
+
+  * Added "Quick Run" option with a red Warning/Status message on bottom status bar
+
+  * Fixed not being able to delete new styles after saving and reloading
+
+  * "Preserve Intermediate files" option has been removed. 
+  
+  * "Remove Temp Files" button is now the recommended way to tidy up unwanted files in PrintDraft
+  
+  * Auto set "Line break locale" for CJK languages
+  
+  * Removed variable line spacing from UI (this is still available through .tex file mods \XeTeXuseglyphmetrics=0).
+  
+  * Ensure typing (c) --> © in any copyright fields
+  
+  * Fixed #376 regarding missing directories
+  
+  * Fixed #379 Empty \h fields are now ignored
+  
+  * Fixed #369 Page numbering failing (in specific case where there was no text on the page)
+  
+  * Fixed bug where (Omit) Verse Numbers was doing nothing
+
+  * Prevent crash from occurring if you hit print with an empty Settings page open (in View+Edit)
+  
+Bug Fixes and Improvements in 1.5.10
 
   * Fix non-starting PTXprint due to lack of lang code in user config
   
