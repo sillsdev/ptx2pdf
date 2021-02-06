@@ -391,15 +391,18 @@ class StyleEditorView(StyleEditor):
             newkey = v[3](val)
             otherkey = v[3](not val)
             controlk = v[3](False)
-            self._setData(newkey, self._convertabs(newkey, data.get(otherkey, None)))
             newv = stylemap.get(newkey, stylemap.get(otherkey, [None]))
-            self.set(newv[0], data[newkey])
+            oldval = data.get(otherkey, None)
+            newval = self._convertabs(newkey, oldval)
+            self._setData(newkey, newval)
+            self.set(newv[0], data[newkey] if newkey not in stylemap or newv[4] is None else newv[4](data[newkey]))
             newlabel = stylediverts[controlk][2 if val else 1]
             controlw = stylemap[controlk][1]
             self.set(controlw, newlabel)
             if otherkey in data:
                 del data[otherkey]
-            value = val if newv[3] is None else newv[3](val)
+            value = val
+            # value = val if newv[3] is None else newv[3](val)
         elif v[3] is not None:
             value = v[3](val)
         else:

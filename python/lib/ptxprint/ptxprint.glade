@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.1 
+<!-- Generated with glade 3.22.2 
 
 The MIT License (MIT)
 
@@ -14794,7 +14794,7 @@ properties for this style.</property>
                                     <child>
                                       <object class="GtkCheckButton" id="c_styFontScale">
                                         <property name="label" translatable="yes">Scale Relative to Parent</property>
-                                        <property name="width_request">165</property>
+                                        <property name="width_request">200</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
@@ -14976,6 +14976,7 @@ Layout tab.</property>
                                             <property name="label" translatable="yes">Font Size
 Factor:</property>
                                             <property name="justify">right</property>
+                                            <property name="width_chars">10</property>
                                             <property name="xalign">1</property>
                                           </object>
                                         </child>
