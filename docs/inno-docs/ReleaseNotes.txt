@@ -15,12 +15,10 @@ Bug Fixes and Improvements in 1.5.10
   * Fixed not being able to delete new styles after saving and reloading
 
   * "Preserve Intermediate files" option has been removed. 
+    (Note: "Remove Temp Files" button is now the recommended way to tidy up unwanted files in PrintDraft folder)
   
-  * "Remove Temp Files" button is now the recommended way to tidy up unwanted files in PrintDraft
-  
-  * Auto set "Line break locale" for CJK languages
-  
-  * Removed variable line spacing from UI (this is still available through .tex file mods \XeTeXuseglyphmetrics=0).
+  * Removed variable line spacing from UI 
+    (Note: this is still available through .tex file mods \XeTeXuseglyphmetrics=0).
   
   * Ensure typing (c) --> © in any copyright fields
   
@@ -28,13 +26,11 @@ Bug Fixes and Improvements in 1.5.10
   
   * Fixed #379 Empty \h fields are now ignored
   
-  * Fixed #369 Page numbering failing (in specific case where there was no text on the page)
-  
   * Fixed bug where (Omit) Verse Numbers was doing nothing
 
   * Prevent crash from occurring if you hit print with an empty Settings page open (in View+Edit)
   
-Bug Fixes and Improvements in 1.5.10
+Bug Fixes and Improvements in 1.5.9.3
 
   * Fix non-starting PTXprint due to lack of lang code in user config
   
@@ -42,13 +38,13 @@ Bug Fixes and Improvements in 1.5.10
 
 Bug Fixes and Improvements in 1.5.9.1
 
-  * Added Language chooser
+  * #368 Added Localization selection from within PTXPrint
   
   * Several fixes to localization (incl. glossary markup etc.)
   
   * Auto set line break locale for CJK scripts
   
-  * Fix missing page nums on pages without any scripture
+  * Fixed #369 Page numbering failing (in specific case where there was no text on the page)
   
   * Show subset of Fonts+Script tab settings for basic users
   
