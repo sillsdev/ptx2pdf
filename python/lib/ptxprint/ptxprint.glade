@@ -73,7 +73,7 @@ THE SOFTWARE.
     <property name="step_increment">0.01</property>
     <property name="page_increment">0.10000000000000001</property>
   </object>
-  <object class="GtkAdjustment" id="a_bottommarginfactor">
+  <object class="GtkAdjustment" id="a_bottommargin">
     <property name="upper">5</property>
     <property name="value">1.2</property>
     <property name="step_increment">0.049999999776482583</property>
@@ -223,9 +223,9 @@ THE SOFTWARE.
   </object>
   <object class="GtkAdjustment" id="a_margins">
     <property name="upper">200</property>
-    <property name="value">14</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">5</property>
+    <property name="value">12</property>
+    <property name="step_increment">0.5</property>
+    <property name="page_increment">1</property>
   </object>
   <object class="GtkAdjustment" id="a_maxSpace">
     <property name="lower">50</property>
@@ -303,7 +303,7 @@ THE SOFTWARE.
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkAdjustment" id="a_sidemarginfactor">
+  <object class="GtkAdjustment" id="a_sidemargin">
     <property name="lower">-20</property>
     <property name="upper">20</property>
     <property name="step_increment">0.10000000000000001</property>
@@ -396,11 +396,11 @@ THE SOFTWARE.
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkAdjustment" id="a_topmarginfactor">
-    <property name="upper">5</property>
-    <property name="value">1.8</property>
-    <property name="step_increment">0.050000000000000003</property>
-    <property name="page_increment">0.10000000000000001</property>
+  <object class="GtkAdjustment" id="a_topmargin">
+    <property name="upper">80</property>
+    <property name="value">18</property>
+    <property name="step_increment">0.10000000000000001</property>
+    <property name="page_increment">1</property>
   </object>
   <object class="GtkAdjustment" id="a_verseDecoratorScale">
     <property name="upper">10</property>
@@ -3990,13 +3990,10 @@ Configuration settings.</property>
                                       <object class="GtkLabel">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="tooltip_text" translatable="yes">This is the base margin setting (mm). 
-Changing this will alter all margins
-according to the factors set.</property>
                                         <property name="halign">end</property>
                                         <property name="valign">center</property>
-                                        <property name="label" translatable="yes">Base
-Margin Width:</property>
+                                        <property name="label" translatable="yes">Side Margin
+Width:</property>
                                         <property name="justify">right</property>
                                       </object>
                                       <packing>
@@ -4005,9 +4002,10 @@ Margin Width:</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkLabel" id="l_sidemarginfactor">
-                                        <property name="visible">True</property>
+                                      <object class="GtkLabel" id="l_sidemargin">
+                                        <property name="sensitive">False</property>
                                         <property name="can_focus">False</property>
+                                        <property name="no_show_all">True</property>
                                         <property name="tooltip_text" translatable="yes">Basic unit for margins; changing this will alter them all.</property>
                                         <property name="halign">end</property>
                                         <property name="valign">center</property>
@@ -4057,6 +4055,7 @@ in millimeters (mm).</property>
                                         <property name="input_purpose">number</property>
                                         <property name="adjustment">a_margins</property>
                                         <property name="climb_rate">1</property>
+                                        <property name="digits">1</property>
                                         <property name="numeric">True</property>
                                         <property name="update_policy">if-valid</property>
                                         <property name="value">12</property>
@@ -4068,9 +4067,10 @@ in millimeters (mm).</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkSpinButton" id="s_sidemarginfactor">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
+                                      <object class="GtkSpinButton" id="s_sidemargin">
+                                        <property name="sensitive">False</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="no_show_all">True</property>
                                         <property name="halign">start</property>
                                         <property name="valign">center</property>
                                         <property name="width_chars">5</property>
@@ -4078,7 +4078,7 @@ in millimeters (mm).</property>
                                         <property name="caps_lock_warning">False</property>
                                         <property name="placeholder_text">0.0</property>
                                         <property name="input_purpose">number</property>
-                                        <property name="adjustment">a_sidemarginfactor</property>
+                                        <property name="adjustment">a_sidemargin</property>
                                         <property name="digits">1</property>
                                         <property name="numeric">True</property>
                                         <property name="update_policy">if-valid</property>
@@ -4521,6 +4521,8 @@ Top:</property>
 line under the page header, before the
 main body text begins.</property>
                                     <property name="halign">end</property>
+                                    <property name="margin_left">6</property>
+                                    <property name="margin_bottom">3</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
                                     <signal name="clicked" handler="onRHruleClicked" swapped="no"/>
@@ -4547,17 +4549,16 @@ main body text begins.</property>
                                   <object class="GtkLabel" id="l_rhruleoffset">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="tooltip_text" translatable="yes">This is the space between the 
-header line and horizontal rule.
-           (Measured in pts).
-Increase to move the line down.
-Decease to move the line up.
-</property>
+                                    <property name="tooltip_text" translatable="yes">This is the space between the horizontal 
+rule and the top of the main test (in pts).</property>
                                     <property name="halign">end</property>
-                                    <property name="label" translatable="yes">Header to Rule:</property>
+                                    <property name="margin_right">4</property>
+                                    <property name="margin_top">3</property>
+                                    <property name="label" translatable="yes">Space from Rule
+to Body Text:</property>
                                     <property name="justify">right</property>
                                     <attributes>
-                                      <attribute name="foreground" value="#88888a8a8585"/>
+                                      <attribute name="foreground" value="#22228b8b2222"/>
                                     </attributes>
                                   </object>
                                   <packing>
@@ -4635,9 +4636,9 @@ Decease to move the line up.
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
-                                    <property name="top_attach">0</property>
+                                    <property name="top_attach">1</property>
                                     <property name="width">2</property>
-                                    <property name="height">4</property>
+                                    <property name="height">3</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -4681,11 +4682,11 @@ Margins value on the Layout tab.</property>
                                     <property name="caps_lock_warning">False</property>
                                     <property name="placeholder_text">0.0</property>
                                     <property name="input_purpose">number</property>
-                                    <property name="adjustment">a_topmarginfactor</property>
+                                    <property name="adjustment">a_topmargin</property>
                                     <property name="digits">2</property>
                                     <property name="numeric">True</property>
                                     <property name="update_policy">if-valid</property>
-                                    <property name="value">1.8</property>
+                                    <property name="value">18</property>
                                     <signal name="change-value" handler="onNumTabsChanged" swapped="no"/>
                                   </object>
                                   <packing>
@@ -4718,11 +4719,9 @@ Margins value on the Layout tab.</property>
                                   <object class="GtkSpinButton" id="s_headerposition">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
-                                    <property name="tooltip_text" translatable="yes">This setting can be used to increase/decrease the 
-space at the top of the page and determines the
-vertical positioning of the header line. This setting
-is a factor (without units) and is multiplied by the
-Margins value on the Layout tab.</property>
+                                    <property name="tooltip_text" translatable="yes">This setting determines the vertical positioning
+of the header line by setting the amount of space
+between the header and the top of the text. (pts)</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
                                     <property name="width_chars">6</property>
@@ -4749,9 +4748,9 @@ Margins value on the Layout tab.</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
-                                    <property name="top_attach">0</property>
+                                    <property name="top_attach">1</property>
                                     <property name="width">2</property>
-                                    <property name="height">4</property>
+                                    <property name="height">3</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -4783,13 +4782,10 @@ by the Margins value on the Layout tab.</property>
                                   <object class="GtkSpinButton" id="s_bottommargin">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
-                                    <property name="tooltip_text" translatable="yes">The primary margin is set on the Layout tab, but
-this setting can be used to increase/decrease the 
+                                    <property name="tooltip_text" translatable="yes">This setting can be used to increase/decrease the 
 space at the bottom of the page and determines
 where the main text and footnotes and 
-cross-references end. This setting is a 
-factor (without units) and is multiplied 
-by the Margins value on the Layout tab.</property>
+cross-references end.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
                                     <property name="width_chars">6</property>
@@ -4797,7 +4793,7 @@ by the Margins value on the Layout tab.</property>
                                     <property name="caps_lock_warning">False</property>
                                     <property name="placeholder_text">0.0</property>
                                     <property name="input_purpose">number</property>
-                                    <property name="adjustment">a_bottommarginfactor</property>
+                                    <property name="adjustment">a_bottommargin</property>
                                     <property name="digits">2</property>
                                     <property name="numeric">True</property>
                                     <property name="update_policy">if-valid</property>
@@ -4814,12 +4810,10 @@ by the Margins value on the Layout tab.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="tooltip_text" translatable="yes">This setting can be used to increase/decrease the 
-space at the bottom of the page and determines the
-vertical positioning of the footer line. This setting
-is a factor (without units) and is multiplied by the
-Margins value on the Layout tab.</property>
+space between the end of the text and the footer line.</property>
                                     <property name="halign">end</property>
-                                    <property name="label" translatable="yes">Footer to Text Space:</property>
+                                    <property name="label" translatable="yes">Bottom of Footer
+to Edge of Page:</property>
                                     <property name="justify">right</property>
                                     <attributes>
                                       <attribute name="foreground" value="#2b0a4be2f850"/>
@@ -4835,10 +4829,7 @@ Margins value on the Layout tab.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="tooltip_text" translatable="yes">This setting can be used to increase/decrease the 
-space at the bottom of the page and determines the
-vertical positioning of the footer line. This setting
-is a factor (without units) and is multiplied by the
-Margins value on the Layout tab.</property>
+space between the end of the text and the footer line.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
                                     <property name="width_chars">6</property>
@@ -4865,7 +4856,7 @@ Margins value on the Layout tab.</property>
                                     <property name="margin_left">30</property>
                                     <property name="margin_right">30</property>
                                     <property name="margin_top">3</property>
-                                    <property name="margin_bottom">3</property>
+                                    <property name="margin_bottom">2</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
@@ -4890,12 +4881,9 @@ Margins value on the Layout tab.</property>
                                   <object class="GtkLabel">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="tooltip_text" translatable="yes">The primary margin is set on the Layout tab, but
-this setting can be used to increase/decrease the 
+                                    <property name="tooltip_text" translatable="yes">This setting can be used to increase/decrease the 
 space at the top of the page and determines
-where the main text begins. This setting is a 
-factor (without units) and is multiplied by the
-Margins value on the Layout tab.</property>
+where the main text begins.</property>
                                     <property name="halign">end</property>
                                     <property name="label" translatable="yes">Edge of Page to
 Top of Header:</property>
@@ -4913,15 +4901,11 @@ Top of Header:</property>
                                   <object class="GtkLabel">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="tooltip_text" translatable="yes">The primary margin is set on the Layout tab, but
-this setting can be used to increase/decrease the 
+                                    <property name="tooltip_text" translatable="yes">This setting can be used to increase/decrease the 
 space at the top of the page and determines
-where the main text begins. This setting is a 
-factor (without units) and is multiplied by the
-Margins value on the Layout tab.</property>
+where the main text begins.</property>
                                     <property name="halign">end</property>
-                                    <property name="label" translatable="yes">Bottom of Footer
-to Edge of Page:</property>
+                                    <property name="label" translatable="yes">Footer to Text Space:</property>
                                     <property name="justify">right</property>
                                     <attributes>
                                       <attribute name="foreground" value="#cece5c5c0000"/>
@@ -4938,7 +4922,7 @@ to Edge of Page:</property>
                                     <property name="can_focus">False</property>
                                     <property name="halign">start</property>
                                     <property name="margin_left">6</property>
-                                    <property name="label" translatable="yes">10.5mm</property>
+                                    <property name="label" translatable="yes">10.5pt</property>
                                     <attributes>
                                       <attribute name="foreground" value="#cece5c5c0000"/>
                                     </attributes>
@@ -4963,6 +4947,12 @@ to Edge of Page:</property>
                                     <property name="left_attach">3</property>
                                     <property name="top_attach">3</property>
                                   </packing>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
                                 </child>
                                 <child>
                                   <placeholder/>
