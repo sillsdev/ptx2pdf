@@ -615,7 +615,7 @@ class TTFont:
     def readhhea(self, inf):
         inf.seek(self.dict['hhea'][0])
         data = inf.read(8)
-        self.ascent, self.descent = struct.unpack(b">HH", data[4:])
+        self.ascent, self.descent = struct.unpack(b">Hh", data[4:])
 
     def readhead(self, inf):
         inf.seek(self.dict['head'][0])

@@ -281,16 +281,17 @@ class ViewModel:
 
     def getMargins(self):
         font = self.get("bl_fontR").getTtfont()
-        fontheight = 1. - float(font.descent) / font.upem
+        fontheight = 1. + float(font.descent) / font.upem
         fontsize = float(self.get("s_fontsize")) / 72.27 * 25.4
+        print(f"font size: {fontsize}, height: {fontheight} @ {font.upem} descent: {font.descent}")
         marginmms = float(self.get("s_margins"))
-        topmarginmms = float(self.get("s_topmargin")) - fontsize
+        topmarginmms = float(self.get("s_topmargin")) # - fontsize  # macros add fontsize for some reason
         bottommarginmms = float(self.get("s_bottommargin"))
-        headerpos = topmarginmms - float(self.get("s_headerposition"))
-        footerpos = float(self.get("s_footerposition"))
-        headerlabel = headerpos - fontheight * fontsize
-        footerlabel = (bottommarginmms - footerpos - fontheight * fontsize) * 25.4 / 72.27
-        return (marginmms, topmarginmms, bottommarginmms, headerpos, footerpos, headerlabel, footerlabel)
+        headerposmms = topmarginmms - float(self.get("s_headerposition")) * 25.4 / 72.27
+        footerposmms = float(self.get("s_footerposition"))
+        headerlabel = headerposmms - fontheight * fontsize
+        footerlabel = (bottommarginmms - footerposmms - fontheight * fontsize) * 72.27 / 25.4
+        return (marginmms, topmarginmms, bottommarginmms, headerposmms, footerposmms, headerlabel, footerlabel)
 
     def updateSavedConfigList(self):
         pass
@@ -588,9 +589,10 @@ class ViewModel:
             marginmms = config.getfloat("paper", "margins")
             config.set("paper", "topmargin", "{:.3f}".format(config.getfloat("paper", "topmarginfactor") * marginmms))
             config.set("paper", "headerpos", "{:.3f}".format(config.getfloat("paper", "topmarginfactor") * marginmms \
-                        - config.getfloat("header", "headerposition") - config.getfloat("paper", "fontfactor") * 25.4 / 72.27))
+                        - config.getfloat("header", "headerposition") * marginmms\
+                        - config.getfloat("paper", "fontfactor") * 25.4 / 72.27))
             config.set("paper", "bottommargin", "{:.3f}".format(config.getfloat("paper", "bottommarginfactor") * marginmms))
-            config.set("paper", "footerpos", "{:.3f}".format(config.getfloat("header", "footerposition")))
+            config.set("paper", "footerpos", "{:.3f}".format(config.getfloat("header", "footerposition") * marginmms))
             config.set("paper", "rulegap", "{:.3f}".format(config.getfloat("header", "ruleposition")))
             config.set("config", "version", "1.503")
 

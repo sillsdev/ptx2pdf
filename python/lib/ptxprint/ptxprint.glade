@@ -74,10 +74,10 @@ THE SOFTWARE.
     <property name="page_increment">0.10000000000000001</property>
   </object>
   <object class="GtkAdjustment" id="a_bottommargin">
-    <property name="upper">5</property>
-    <property name="value">1.2</property>
-    <property name="step_increment">0.049999999776482583</property>
-    <property name="page_increment">0.10000000000000001</property>
+    <property name="upper">80</property>
+    <property name="value">15</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">5</property>
   </object>
   <object class="GtkAdjustment" id="a_chapfrom">
     <property name="lower">1</property>
@@ -141,16 +141,16 @@ THE SOFTWARE.
     <property name="page_increment">1</property>
   </object>
   <object class="GtkAdjustment" id="a_ftrposition">
-    <property name="upper">2</property>
+    <property name="upper">20</property>
     <property name="value">1</property>
-    <property name="step_increment">0.050000000000000003</property>
-    <property name="page_increment">0.10000000000000001</property>
+    <property name="step_increment">0.20000000000000001</property>
+    <property name="page_increment">1</property>
   </object>
   <object class="GtkAdjustment" id="a_hdrposition">
-    <property name="upper">2</property>
+    <property name="upper">72</property>
     <property name="value">1</property>
-    <property name="step_increment">0.049999999776482583</property>
-    <property name="page_increment">0.10000000000000001</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">3</property>
   </object>
   <object class="GtkAdjustment" id="a_inclSectionScale">
     <property name="upper">10</property>
@@ -4583,6 +4583,7 @@ to Body Text:</property>
                                     <property name="numeric">True</property>
                                     <property name="update_policy">if-valid</property>
                                     <property name="value">12</property>
+                                    <signal name="value-changed" handler="onNumTabsChanged" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">1</property>
@@ -4687,7 +4688,7 @@ Margins value on the Layout tab.</property>
                                     <property name="numeric">True</property>
                                     <property name="update_policy">if-valid</property>
                                     <property name="value">18</property>
-                                    <signal name="change-value" handler="onNumTabsChanged" swapped="no"/>
+                                    <signal name="wrapped" handler="onNumTabsChanged" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">3</property>
@@ -4734,6 +4735,7 @@ between the header and the top of the text. (pts)</property>
                                     <property name="numeric">True</property>
                                     <property name="update_policy">if-valid</property>
                                     <property name="value">1</property>
+                                    <signal name="value-changed" handler="onNumTabsChanged" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">3</property>
@@ -4779,33 +4781,6 @@ by the Margins value on the Layout tab.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkSpinButton" id="s_bottommargin">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="tooltip_text" translatable="yes">This setting can be used to increase/decrease the 
-space at the bottom of the page and determines
-where the main text and footnotes and 
-cross-references end.</property>
-                                    <property name="halign">start</property>
-                                    <property name="valign">center</property>
-                                    <property name="width_chars">6</property>
-                                    <property name="text">1.20</property>
-                                    <property name="caps_lock_warning">False</property>
-                                    <property name="placeholder_text">0.0</property>
-                                    <property name="input_purpose">number</property>
-                                    <property name="adjustment">a_bottommargin</property>
-                                    <property name="digits">2</property>
-                                    <property name="numeric">True</property>
-                                    <property name="update_policy">if-valid</property>
-                                    <property name="value">1.2</property>
-                                    <signal name="change-value" handler="onNumTabsChanged" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">3</property>
-                                    <property name="top_attach">5</property>
-                                  </packing>
-                                </child>
-                                <child>
                                   <object class="GtkLabel" id="l_ftrPosn">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
@@ -4842,6 +4817,7 @@ space between the end of the text and the footer line.</property>
                                     <property name="numeric">True</property>
                                     <property name="update_policy">if-valid</property>
                                     <property name="value">0.80000000000000004</property>
+                                    <signal name="value-changed" handler="onNumTabsChanged" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">3</property>
@@ -4946,6 +4922,33 @@ where the main text begins.</property>
                                   <packing>
                                     <property name="left_attach">3</property>
                                     <property name="top_attach">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkSpinButton" id="s_bottommargin">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="tooltip_text" translatable="yes">This setting can be used to increase/decrease the 
+space at the bottom of the page and determines
+where the main text and footnotes and 
+cross-references end.</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">center</property>
+                                    <property name="width_chars">6</property>
+                                    <property name="text">1.20</property>
+                                    <property name="caps_lock_warning">False</property>
+                                    <property name="placeholder_text">0.0</property>
+                                    <property name="input_purpose">number</property>
+                                    <property name="adjustment">a_bottommargin</property>
+                                    <property name="digits">2</property>
+                                    <property name="numeric">True</property>
+                                    <property name="update_policy">if-valid</property>
+                                    <property name="value">1.2</property>
+                                    <signal name="value-changed" handler="onNumTabsChanged" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">3</property>
+                                    <property name="top_attach">5</property>
                                   </packing>
                                 </child>
                                 <child>
