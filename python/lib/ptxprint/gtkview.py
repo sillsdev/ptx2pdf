@@ -1491,12 +1491,14 @@ class GtkViewModel(ViewModel):
             feats = f.feats
             vals = f.featvals
             langs = f.grLangs
+            defaults = f.featdefaults
         else:
             feats = f.otFeats
             vals = f.otVals
             langs = f.otLangs
+            defaults = {}
         numrows = len(feats)
-        (lang, setfeats) = parseFeatString(self.get("t_fontFeatures"))
+        (lang, setfeats) = parseFeatString(self.get("t_fontFeatures"), defaults=defaults)
         for i, (k, v) in enumerate(sorted(feats.items())):
             featbox.insert_row(i)
             l = Gtk.Label(label=v+":")
@@ -1539,16 +1541,14 @@ class GtkViewModel(ViewModel):
             for i, (k, v) in enumerate(sorted(feats.items())):
                 obj = featbox.get_child_at(1, i)
                 if isinstance(obj, Gtk.CheckButton):
-                    if obj.get_active():
-                        results.append("{}=1".format(k))
+                    val = 1 if obj.get_active() else 0
                 elif isinstance(obj, Gtk.SpinButton):
-                    num = int(obj.get_value())
-                    if num > 0:
-                        results.append("{}={}".format(k, num))
+                    val = int(obj.get_value())
                 elif isinstance(obj, Gtk.ComboBoxText):
                     val = obj.get_active_id()
-                    if val is not None and str(val) != "0":
-                        results.append("{}={}".format(k, val))
+                if val is not None and ((defaults is not None and str(defaults.get(k, 0)) != str(val))\
+                                        or (defaults is None and str(val) != "0")):
+                    results.append("{}={}".format(k, val))
             self.set("t_fontFeatures", ", ".join(results))
         for i in range(numrows-1, -1, -1):
             featbox.remove_row(i)

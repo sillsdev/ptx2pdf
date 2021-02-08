@@ -28,8 +28,8 @@ def num2tag(n):
     else:
         return struct.unpack('4s', struct.pack('>L', n))[0].replace(b'\000', b'').decode()
 
-def parseFeatString(featstring):
-    feats = {}
+def parseFeatString(featstring, defaults={}):
+    feats = defaults.copy()
     lang = None
     if featstring is not None and featstring:
         for l in re.split(r'\s*[,;:]\s*|\s+', featstring):
@@ -476,6 +476,7 @@ class TTFont:
         self.featvals = {}
         self.featnames = {}
         self.featvalnames = {}
+        self.featdefaults = {}
         if 'Feat' not in self.dict:
             return
         inf.seek(self.dict['Feat'][0])
@@ -497,14 +498,18 @@ class TTFont:
             valnamedict = {}
             self.featvals[fidstr] = valdict
             self.featvalnames[fidstr] = valnamedict
+            self.featdefaults[fidstr] = 0
             for j in range(nums):
                 val, lid = struct.unpack(">HH", data[offset + 4*j:offset + 4*(j+1)])
                 vname = self.names.get(lid, "")
                 valdict[val] = vname
                 valnamedict[vname] = val
+                if j == 0:
+                    self.featdefaults[fidstr] = val
 
     def readSill(self, inf):
         self.grLangs = {}
+        self.langfeats = {}
         if 'Sill' not in self.dict:
             return
         inf.seek(self.dict['Sill'][0])
@@ -512,9 +517,15 @@ class TTFont:
         numlangs = struct.unpack(">H", data[4:6])[0]
         data = inf.read(8 * numlangs)
         for i in range(numlangs):
-            tagnum = struct.unpack(">L", data[i*8:i*8+4])[0]
+            tagnum, numsettings, o = struct.unpack(">LHH", data[i*8:i*8+8])
             langtag = num2tag(tagnum)
             self.grLangs[langtag] = langtag
+            self.langfeats[langtag] = {}
+            inf.seek(self.dict['Sill'][0] + o)
+            setdat = inf.read(numsettings * 8)
+            for j in range(numsettings):
+                fnum, value = struct.unpack(">LH", data[j*8:j*8+6])
+                self.langfeats[langtag][num2tag(fnum)] = value
 
     def readOTFeats(self, inf):
         self.otFeats = {}
