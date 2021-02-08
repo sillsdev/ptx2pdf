@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.2 
+<!-- Generated with glade 3.22.1 
 
 The MIT License (MIT)
 
@@ -4314,7 +4314,26 @@ also affects poetry indentation.
                                       </packing>
                                     </child>
                                     <child>
-                                      <placeholder/>
+                                      <object class="GtkCheckButton" id="c_cropmarks">
+                                        <property name="label" translatable="yes">Crop Marks</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="tooltip_text" translatable="yes">Some printers require crop marks
+on the PDF to show where the page
+should be trimmed to after printing.
+
+This is also useful to check that the
+margins have been set correctly, after
+printing a sample page at 100% and
+measuring the physical printout.</property>
+                                        <property name="halign">end</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">5</property>
+                                        <property name="top_attach">0</property>
+                                      </packing>
                                     </child>
                                     <child>
                                       <placeholder/>
@@ -4489,67 +4508,10 @@ Top:</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkFrame" id="bx_horizRule">
+                              <object class="GtkGrid">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="margin_top">12</property>
-                                <property name="hexpand">True</property>
-                                <property name="label_xalign">0.10000000149011612</property>
                                 <child>
-                                  <object class="GtkGrid" id="gr_horizRule">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="margin_left">12</property>
-                                    <property name="margin_right">11</property>
-                                    <property name="margin_top">4</property>
-                                    <property name="margin_bottom">5</property>
-                                    <property name="column_spacing">5</property>
-                                    <child>
-                                      <object class="GtkLabel" id="l_rhruleoffset">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="tooltip_text" translatable="yes">This is the space between the 
-header line and horizontal rule.
-           (Measured in pts).
-Increase to move the line down.
-Decease to move the line up.
-</property>
-                                        <property name="halign">end</property>
-                                        <property name="label" translatable="yes">Vertical
-Offset:</property>
-                                        <property name="justify">right</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">0</property>
-                                        <property name="top_attach">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkSpinButton" id="s_rhruleposition">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="halign">end</property>
-                                        <property name="valign">center</property>
-                                        <property name="width_chars">4</property>
-                                        <property name="text">12</property>
-                                        <property name="caps_lock_warning">False</property>
-                                        <property name="progress_pulse_step">0</property>
-                                        <property name="placeholder_text">0.0</property>
-                                        <property name="input_purpose">number</property>
-                                        <property name="adjustment">a_ruleposition</property>
-                                        <property name="climb_rate">1</property>
-                                        <property name="numeric">True</property>
-                                        <property name="update_policy">if-valid</property>
-                                        <property name="value">12</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">1</property>
-                                        <property name="top_attach">0</property>
-                                      </packing>
-                                    </child>
-                                  </object>
-                                </child>
-                                <child type="label">
                                   <object class="GtkCheckButton" id="c_rhrule">
                                     <property name="label" translatable="yes">Horizontal Rule</property>
                                     <property name="visible">True</property>
@@ -4559,16 +4521,77 @@ Offset:</property>
 line under the page header, before the
 main body text begins.</property>
                                     <property name="halign">end</property>
-                                    <property name="margin_left">2</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
-                                    <signal name="clicked" handler="onSimpleFocusClicked" swapped="no"/>
+                                    <signal name="clicked" handler="onRHruleClicked" swapped="no"/>
                                   </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkSeparator" id="rul_rhrule">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="valign">center</property>
+                                    <property name="margin_top">6</property>
+                                    <property name="margin_bottom">6</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="top_attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="l_rhruleoffset">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="tooltip_text" translatable="yes">This is the space between the 
+header line and horizontal rule.
+           (Measured in pts).
+Increase to move the line down.
+Decease to move the line up.
+</property>
+                                    <property name="halign">end</property>
+                                    <property name="label" translatable="yes">Header to Rule:</property>
+                                    <property name="justify">right</property>
+                                    <attributes>
+                                      <attribute name="foreground" value="#88888a8a8585"/>
+                                    </attributes>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkSpinButton" id="s_rhruleposition">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">center</property>
+                                    <property name="width_chars">4</property>
+                                    <property name="text">12</property>
+                                    <property name="caps_lock_warning">False</property>
+                                    <property name="progress_pulse_step">0</property>
+                                    <property name="placeholder_text">0.0</property>
+                                    <property name="input_purpose">number</property>
+                                    <property name="adjustment">a_ruleposition</property>
+                                    <property name="climb_rate">1</property>
+                                    <property name="numeric">True</property>
+                                    <property name="update_policy">if-valid</property>
+                                    <property name="value">12</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="top_attach">1</property>
+                                  </packing>
                                 </child>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
-                                <property name="fill">False</property>
+                                <property name="fill">True</property>
                                 <property name="position">1</property>
                               </packing>
                             </child>
@@ -4587,218 +4610,359 @@ main body text begins.</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkFrame" id="fr_layoutSpecialBooks">
-                        <property name="width_request">675</property>
+                      <object class="GtkFrame" id="fr_topBottomMargins">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="halign">start</property>
-                        <property name="margin_left">6</property>
-                        <property name="margin_right">6</property>
-                        <property name="margin_top">3</property>
-                        <property name="margin_bottom">6</property>
-                        <property name="label_xalign">0.019999999552965164</property>
+                        <property name="label_xalign">0</property>
                         <child>
                           <object class="GtkAlignment">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="valign">start</property>
-                            <property name="left_padding">10</property>
-                            <property name="right_padding">10</property>
+                            <property name="left_padding">12</property>
                             <child>
                               <object class="GtkGrid">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="margin_top">6</property>
+                                <property name="margin_top">4</property>
                                 <property name="margin_bottom">6</property>
-                                <property name="row_spacing">8</property>
-                                <property name="column_spacing">6</property>
+                                <property name="row_spacing">5</property>
+                                <property name="column_spacing">4</property>
                                 <child>
-                                  <object class="GtkCheckButton" id="c_useChapterLabel">
-                                    <property name="label" translatable="yes">Use Special Features
-for These Books:</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">Some Poetical books like the Psalms, and maybe even
-Proverbs look better without drop-cap chapter numbers.
-Instead, they can use a prefix like "Chapter" or "Psalm"
-at the start of the chapter.
-Note: If the text already has one or more \cl markers, then
-these settings will overrirde what has been set in the text.</property>
-                                    <property name="halign">start</property>
-                                    <property name="draw_indicator">True</property>
-                                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">0</property>
-                                    <property name="top_attach">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkEntry" id="t_clBookList">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="tooltip_text" translatable="yes">Add the 3-letter book codes for any books that
-this "Chapter Label" setting should be applied to.
-
-Note: If this list of books is left empty, then this
-setting will be applied to ALL books</property>
-                                    <property name="text">PSA PRO</property>
-                                    <property name="caps_lock_warning">False</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">1</property>
-                                    <property name="top_attach">0</property>
-                                    <property name="width">4</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkEntry" id="t_clHeading">
-                                    <property name="width_request">150</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="tooltip_text" translatable="yes">The chapter “label” to be used when rendering
-chapter divisions as headings (instead of drop-cap
-numerals). For example, "Chapter" or "Psalm".
-
-If you want the chapter number to appear centered
-and above the Section Header WITHOUT any preceding
-text, then just put the code \ZWNBSP in here. </property>
-                                    <property name="halign">start</property>
-                                    <property name="valign">center</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">6</property>
-                                    <property name="top_attach">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkLabel" id="l_clHeading">
+                                  <object class="GtkImage" id="gr_marginGraphicLineTrue">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="tooltip_text" translatable="yes">The chapter “label” to be used when rendering
-chapter divisions as headings (instead of drop-cap
-numerals). For example, "Psalm"</property>
-                                    <property name="halign">end</property>
-                                    <property name="margin_left">3</property>
-                                    <property name="label" translatable="yes">Chapter
-Label:</property>
-                                    <property name="justify">right</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">5</property>
-                                    <property name="top_attach">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkCheckButton" id="c_singleColLayout">
-                                    <property name="label" translatable="yes">Use Single Column
-Layout for These Books:</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">Some books (e.g. Introduction, Glossary, Psalms, and 
-maybe even Proverbs) look better formatted as single
-column, even though most of the books are typeset
-in two column layout.</property>
-                                    <property name="halign">start</property>
-                                    <property name="draw_indicator">True</property>
-                                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                                    <property name="pixbuf">marginGraphicLineTrue.png</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
+                                    <property name="top_attach">0</property>
+                                    <property name="width">2</property>
+                                    <property name="height">4</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="tooltip_text" translatable="yes">The primary margin is set on the Layout tab, but
+this setting can be used to increase/decrease the 
+space at the top of the page and determines
+where the main text begins. This setting is a 
+factor (without units) and is multiplied by the
+Margins value on the Layout tab.</property>
+                                    <property name="halign">end</property>
+                                    <property name="margin_top">6</property>
+                                    <property name="margin_bottom">6</property>
+                                    <property name="label" translatable="yes">Top Margin to Text:</property>
+                                    <property name="justify">right</property>
+                                    <attributes>
+                                      <attribute name="foreground" value="#cccc00000000"/>
+                                    </attributes>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">2</property>
+                                    <property name="top_attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkSpinButton" id="s_topmarginfactor">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="tooltip_text" translatable="yes">The primary margin is set on the Layout tab, but
+this setting can be used to increase/decrease the 
+space at the top of the page and determines
+where the main text begins. This setting is a 
+factor (without units) and is multiplied by the
+Margins value on the Layout tab.</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">center</property>
+                                    <property name="width_chars">6</property>
+                                    <property name="text">1.80</property>
+                                    <property name="caps_lock_warning">False</property>
+                                    <property name="placeholder_text">0.0</property>
+                                    <property name="input_purpose">number</property>
+                                    <property name="adjustment">a_topmarginfactor</property>
+                                    <property name="digits">2</property>
+                                    <property name="numeric">True</property>
+                                    <property name="update_policy">if-valid</property>
+                                    <property name="value">1.8</property>
+                                    <signal name="change-value" handler="onNumTabsChanged" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">3</property>
+                                    <property name="top_attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="tooltip_text" translatable="yes">This setting can be used to increase/decrease the 
+space at the top of the page and determines the
+vertical positioning of the header line. This setting
+is a factor (without units) and is multiplied by the
+Margins value on the Layout tab.</property>
+                                    <property name="halign">end</property>
+                                    <property name="label" translatable="yes">Header to Text Space:</property>
+                                    <property name="justify">right</property>
+                                    <attributes>
+                                      <attribute name="foreground" value="#2b0a4be2f850"/>
+                                    </attributes>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">2</property>
                                     <property name="top_attach">2</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkCheckButton" id="c_showNonScriptureChapters">
-                                    <property name="label" translatable="yes">Show Chapter Numbers in Non-Scripture Books</property>
+                                  <object class="GtkSpinButton" id="s_headerposition">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">Peripheral books often have more than one
-"chapter" but do not need the chapter number
-to be printed. By default, PTXprint removes
-the chapter numbers from non-scripture books.
-If you need it to retain (and show) those chapter
-numbers then check this option.</property>
+                                    <property name="tooltip_text" translatable="yes">This setting can be used to increase/decrease the 
+space at the top of the page and determines the
+vertical positioning of the header line. This setting
+is a factor (without units) and is multiplied by the
+Margins value on the Layout tab.</property>
                                     <property name="halign">start</property>
-                                    <property name="draw_indicator">True</property>
+                                    <property name="valign">center</property>
+                                    <property name="width_chars">6</property>
+                                    <property name="text">1.00</property>
+                                    <property name="caps_lock_warning">False</property>
+                                    <property name="placeholder_text">0.0</property>
+                                    <property name="input_purpose">number</property>
+                                    <property name="adjustment">a_hdrposition</property>
+                                    <property name="digits">2</property>
+                                    <property name="numeric">True</property>
+                                    <property name="update_policy">if-valid</property>
+                                    <property name="value">1</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">3</property>
+                                    <property name="top_attach">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkImage" id="gr_marginGraphicLineFalse">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="pixbuf">MarginGraphicLineFalse.png</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">0</property>
+                                    <property name="width">2</property>
+                                    <property name="height">4</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="l_btmMrgn">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="tooltip_text" translatable="yes">The primary margin is set on the Layout tab, but
+this setting can be used to increase/decrease the 
+space at the bottom of the page and determines
+where the main text and footnotes and 
+cross-references end. This setting is a 
+factor (without units) and is multiplied 
+by the Margins value on the Layout tab.</property>
+                                    <property name="halign">start</property>
+                                    <property name="margin_top">6</property>
+                                    <property name="margin_bottom">6</property>
+                                    <property name="label" translatable="yes">Bottom Margin to Text:</property>
+                                    <property name="justify">right</property>
+                                    <attributes>
+                                      <attribute name="foreground" value="#cccc00000000"/>
+                                    </attributes>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">2</property>
+                                    <property name="top_attach">5</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkSpinButton" id="s_bottommarginfactor">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="tooltip_text" translatable="yes">The primary margin is set on the Layout tab, but
+this setting can be used to increase/decrease the 
+space at the bottom of the page and determines
+where the main text and footnotes and 
+cross-references end. This setting is a 
+factor (without units) and is multiplied 
+by the Margins value on the Layout tab.</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">center</property>
+                                    <property name="width_chars">6</property>
+                                    <property name="text">1.20</property>
+                                    <property name="caps_lock_warning">False</property>
+                                    <property name="placeholder_text">0.0</property>
+                                    <property name="input_purpose">number</property>
+                                    <property name="adjustment">a_bottommarginfactor</property>
+                                    <property name="digits">2</property>
+                                    <property name="numeric">True</property>
+                                    <property name="update_policy">if-valid</property>
+                                    <property name="value">1.2</property>
+                                    <signal name="change-value" handler="onNumTabsChanged" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">3</property>
+                                    <property name="top_attach">5</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="l_ftrPosn">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="tooltip_text" translatable="yes">This setting can be used to increase/decrease the 
+space at the bottom of the page and determines the
+vertical positioning of the footer line. This setting
+is a factor (without units) and is multiplied by the
+Margins value on the Layout tab.</property>
+                                    <property name="halign">end</property>
+                                    <property name="label" translatable="yes">Footer to Text Space:</property>
+                                    <property name="justify">right</property>
+                                    <attributes>
+                                      <attribute name="foreground" value="#2b0a4be2f850"/>
+                                    </attributes>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">2</property>
+                                    <property name="top_attach">6</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkSpinButton" id="s_footerposition">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="tooltip_text" translatable="yes">This setting can be used to increase/decrease the 
+space at the bottom of the page and determines the
+vertical positioning of the footer line. This setting
+is a factor (without units) and is multiplied by the
+Margins value on the Layout tab.</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">center</property>
+                                    <property name="width_chars">6</property>
+                                    <property name="text">0.80</property>
+                                    <property name="caps_lock_warning">False</property>
+                                    <property name="placeholder_text">0.0</property>
+                                    <property name="input_purpose">number</property>
+                                    <property name="adjustment">a_ftrposition</property>
+                                    <property name="digits">2</property>
+                                    <property name="numeric">True</property>
+                                    <property name="update_policy">if-valid</property>
+                                    <property name="value">0.80000000000000004</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">3</property>
+                                    <property name="top_attach">6</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkSeparator">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="valign">center</property>
+                                    <property name="margin_left">30</property>
+                                    <property name="margin_right">30</property>
+                                    <property name="margin_top">3</property>
+                                    <property name="margin_bottom">3</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">4</property>
+                                    <property name="width">4</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkImage">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="pixbuf">MarginGraphicBottom.png</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">5</property>
+                                    <property name="width">2</property>
+                                    <property name="height">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="tooltip_text" translatable="yes">The primary margin is set on the Layout tab, but
+this setting can be used to increase/decrease the 
+space at the top of the page and determines
+where the main text begins. This setting is a 
+factor (without units) and is multiplied by the
+Margins value on the Layout tab.</property>
+                                    <property name="halign">end</property>
+                                    <property name="label" translatable="yes">Edge of Page to
+Top of Header:</property>
+                                    <property name="justify">right</property>
+                                    <attributes>
+                                      <attribute name="foreground" value="#cece5c5c0000"/>
+                                    </attributes>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">2</property>
+                                    <property name="top_attach">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="tooltip_text" translatable="yes">The primary margin is set on the Layout tab, but
+this setting can be used to increase/decrease the 
+space at the top of the page and determines
+where the main text begins. This setting is a 
+factor (without units) and is multiplied by the
+Margins value on the Layout tab.</property>
+                                    <property name="halign">end</property>
+                                    <property name="label" translatable="yes">Bottom of Footer
+to Edge of Page:</property>
+                                    <property name="justify">right</property>
+                                    <attributes>
+                                      <attribute name="foreground" value="#cece5c5c0000"/>
+                                    </attributes>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">2</property>
+                                    <property name="top_attach">7</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="l_margin2footer">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="halign">start</property>
+                                    <property name="margin_left">6</property>
+                                    <property name="label" translatable="yes">10.5mm</property>
+                                    <attributes>
+                                      <attribute name="foreground" value="#cece5c5c0000"/>
+                                    </attributes>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">3</property>
+                                    <property name="top_attach">7</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="l_margin2header1">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="halign">start</property>
+                                    <property name="margin_left">6</property>
+                                    <property name="label" translatable="yes">12.5mm</property>
+                                    <attributes>
+                                      <attribute name="foreground" value="#cece5c5c0000"/>
+                                    </attributes>
                                   </object>
                                   <packing>
                                     <property name="left_attach">3</property>
                                     <property name="top_attach">3</property>
-                                    <property name="width">4</property>
                                   </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkCheckButton" id="c_omitChap1ChBooks">
-                                    <property name="label" translatable="yes">Hide Chapter Number in Single Chapter Books</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">Select this option to supress the 1 at the begining
-of books that only have a single chapter (OBA, PHM,
-2JN, 3JN, JUD, etc.)</property>
-                                    <property name="halign">start</property>
-                                    <property name="active">True</property>
-                                    <property name="draw_indicator">True</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">0</property>
-                                    <property name="top_attach">3</property>
-                                    <property name="width">3</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkCheckButton" id="c_optimizePoetryLayout">
-                                    <property name="label" translatable="yes">Optimize Layout for Poetry Books</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">Trying to get poetry to balance
-columns creates all sorts of
-unforeseen issues and whitespace.
-This option allows unbalanced
-poetry to improve the overall look.
-It also allows Widow and Orphan 
-lines to occur.</property>
-                                    <property name="halign">start</property>
-                                    <property name="active">True</property>
-                                    <property name="draw_indicator">True</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">0</property>
-                                    <property name="top_attach">1</property>
-                                    <property name="width">2</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkEntry" id="t_singleColBookList">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="tooltip_text" translatable="yes">Add the 3-letter book codes for any books 
-that should be typeset as a single column.</property>
-                                    <property name="text">FRT INT PSA PRO BAK GLO</property>
-                                    <property name="caps_lock_warning">False</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">1</property>
-                                    <property name="top_attach">2</property>
-                                    <property name="width">5</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
                                 </child>
                                 <child>
                                   <placeholder/>
@@ -4814,7 +4978,7 @@ that should be typeset as a single column.</property>
                           <object class="GtkLabel">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">Handling Special Books </property>
+                            <property name="label" translatable="yes">Top &amp; Bottom Margins</property>
                           </object>
                         </child>
                       </object>
@@ -4823,169 +4987,6 @@ that should be typeset as a single column.</property>
                         <property name="fill">True</property>
                         <property name="position">1</property>
                       </packing>
-                    </child>
-                    <child>
-                      <object class="GtkFrame" id="bx_colophon">
-                        <property name="width_request">675</property>
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="valign">start</property>
-                        <property name="margin_left">6</property>
-                        <property name="margin_right">6</property>
-                        <property name="margin_top">3</property>
-                        <property name="margin_bottom">6</property>
-                        <property name="label_xalign">0.019999999552965164</property>
-                        <child>
-                          <object class="GtkGrid" id="gr_colophon">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="margin_left">10</property>
-                            <property name="margin_right">10</property>
-                            <property name="margin_top">6</property>
-                            <property name="margin_bottom">6</property>
-                            <property name="row_spacing">6</property>
-                            <property name="column_spacing">6</property>
-                            <child>
-                              <object class="GtkLabel">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="tooltip_text" translatable="yes">Enter your Colophon text here - using standard
-USFM codes for formatting. You may want to
-use the reset button to start with a standard set.
-
-You can use the following codes to
-automatically include special text 
-using the following markers:
-\zCopyright   - copyright statement from the Basic tab
-\zLicense     - License text from the Basic tab
-\zImageCopyrights   - Automatically generated list of images, page numbers and attributions.
-
-These special codes may also be used in other
-books such as the front matter book (FRT). 
-
-IMPORTANT: you will have to hit Print a second time
-in order to get accurate Image Copyright Attribution.</property>
-                                <property name="halign">end</property>
-                                <property name="valign">start</property>
-                                <property name="margin_top">6</property>
-                                <property name="label" translatable="yes">Colophon
-Text:</property>
-                                <property name="justify">right</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">0</property>
-                                <property name="top_attach">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkScrolledWindow" id="scroll_colophon">
-                                <property name="height_request">100</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="hexpand">True</property>
-                                <property name="vexpand">True</property>
-                                <property name="shadow_type">etched-in</property>
-                                <property name="overlay_scrolling">False</property>
-                                <child>
-                                  <object class="GtkViewport">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="margin_top">4</property>
-                                    <property name="margin_bottom">4</property>
-                                    <property name="vexpand">True</property>
-                                    <child>
-                                      <object class="GtkTextView" id="textv_colophon">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="vexpand">True</property>
-                                        <property name="wrap_mode">word</property>
-                                        <property name="buffer">tb_colophon</property>
-                                      </object>
-                                    </child>
-                                  </object>
-                                </child>
-                              </object>
-                              <packing>
-                                <property name="left_attach">1</property>
-                                <property name="top_attach">0</property>
-                                <property name="width">2</property>
-                                <property name="height">3</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkButton" id="btn_resetColophon">
-                                <property name="label">↺</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">True</property>
-                                <property name="tooltip_text" translatable="yes">Clicking this button will reload the 
-default Colophon text markers which
-include the Copyright statement tag,
-the License statement tag, and the
-Illustration credits tag.</property>
-                                <property name="halign">end</property>
-                                <property name="valign">end</property>
-                                <signal name="clicked" handler="onColophonResetClicked" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="left_attach">0</property>
-                                <property name="top_attach">2</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkCheckButton" id="c_standAloneColophon">
-                                <property name="label" translatable="yes">Force Page Break 
-Before Colophon</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">False</property>
-                                <property name="tooltip_text" translatable="yes">Normally the colophon is inserted at the end
-of the last page of the last book. If this option
-is checked, then the colophon will appear at the 
-bottom of a new page at the end of the publication.</property>
-                                <property name="margin_left">6</property>
-                                <property name="draw_indicator">True</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">0</property>
-                                <property name="top_attach">1</property>
-                              </packing>
-                            </child>
-                          </object>
-                        </child>
-                        <child type="label">
-                          <object class="GtkCheckButton" id="c_colophon">
-                            <property name="label" translatable="yes">Include Colophon</property>
-                            <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="receives_default">False</property>
-                            <property name="tooltip_text" translatable="yes">NOTE: This Colophon will not appear 
-in the PDF the first time you hit Print, 
-but will appear on subsequent runs.
-
-What is a Colophon?
-A brief statement containing information
-about the publication such as the place of 
-publication, the publisher, and the date of 
-publication. This will be printed at the END
-of the book. Similar to a "biblio-page" or a
-"copyright-page" at the front of a book.</property>
-                            <property name="halign">start</property>
-                            <property name="active">True</property>
-                            <property name="draw_indicator">True</property>
-                            <signal name="clicked" handler="onColophonClicked" swapped="no"/>
-                            <signal name="toggled" handler="onColophonClicked" swapped="no"/>
-                          </object>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">False</property>
-                        <property name="position">2</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <placeholder/>
                     </child>
                   </object>
                   <packing>
@@ -5148,6 +5149,7 @@ to ensure that they are displayed properly.</property>
                           <packing>
                             <property name="left_attach">0</property>
                             <property name="top_attach">1</property>
+                            <property name="height">2</property>
                           </packing>
                         </child>
                         <child>
@@ -5795,6 +5797,115 @@ can grow to when necessary.</property>
                           <packing>
                             <property name="left_attach">1</property>
                             <property name="top_attach">1</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkFrame" id="fr_hyphenation">
+                            <property name="width_request">330</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="halign">start</property>
+                            <property name="margin_bottom">6</property>
+                            <property name="hexpand">False</property>
+                            <property name="label_xalign">0.039999999105930328</property>
+                            <child>
+                              <object class="GtkAlignment">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="halign">start</property>
+                                <property name="margin_top">6</property>
+                                <property name="margin_bottom">6</property>
+                                <property name="left_padding">12</property>
+                                <child>
+                                  <object class="GtkGrid">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">center</property>
+                                    <property name="margin_bottom">6</property>
+                                    <property name="row_spacing">6</property>
+                                    <property name="column_spacing">12</property>
+                                    <child>
+                                      <object class="GtkCheckButton" id="c_hyphenate">
+                                        <property name="label" translatable="yes">Hyphenate</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="tooltip_text" translatable="yes">If disabled, hyphens will not cause line breaks. If enabled, then
+any hyphens in the text may cause a line break.
+
+To have hyphenation happen automatically, without having
+to insert them in the source text, you need 
+to click the "Create Hyphenation List" button on the
+left. This will create a XeTeX hyphenation list from the
+hyphenation list in Paratext.
+
+</property>
+                                        <property name="halign">start</property>
+                                        <property name="active">True</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">1</property>
+                                        <property name="top_attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkButton" id="btn_generateHyphenationList">
+                                        <property name="label" translatable="yes">Create Hyphenation List</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">True</property>
+                                        <property name="tooltip_text" translatable="yes">Click this button to generate a hyphenation 
+list that can be used by XeTeX to optimize
+hyphenation. This will read Paratext's
+HyphenatedWords.txt list and optimize it.
+Note that the Hypenate option on the Body
+tab needs to be checked to make us of this.</property>
+                                        <property name="halign">end</property>
+                                        <property name="valign">center</property>
+                                        <property name="hexpand">True</property>
+                                        <signal name="clicked" handler="onGenerateHyphenationListClicked" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">0</property>
+                                        <property name="top_attach">0</property>
+                                        <property name="height">2</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="c_omitHyphen">
+                                        <property name="label" translatable="yes">Omit '-'Hyphen</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="tooltip_text" translatable="yes">Some scripts use hyphenation to break long
+words onto the next line, BUT don't need to
+display the actual '-' character. If this option
+is checked, then "hyphens" will be invisible.</property>
+                                        <property name="halign">start</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">1</property>
+                                        <property name="top_attach">1</property>
+                                      </packing>
+                                    </child>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <child type="label">
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes">Hyphenation</property>
+                              </object>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="left_attach">1</property>
+                            <property name="top_attach">2</property>
                           </packing>
                         </child>
                       </object>
@@ -6637,206 +6748,232 @@ be turned OFF (to omit the main text).</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkBox">
+                      <object class="GtkFrame" id="fr_layoutSpecialBooks">
+                        <property name="width_request">675</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="spacing">5</property>
-                        <property name="homogeneous">True</property>
+                        <property name="halign">start</property>
+                        <property name="margin_top">3</property>
+                        <property name="margin_bottom">6</property>
+                        <property name="label_xalign">0.019999999552965164</property>
                         <child>
-                          <object class="GtkFrame" id="fr_paragraphAdjust">
-                            <property name="width_request">330</property>
+                          <object class="GtkAlignment">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="halign">start</property>
-                            <property name="margin_left">6</property>
-                            <property name="margin_top">6</property>
-                            <property name="margin_bottom">6</property>
-                            <property name="hexpand">False</property>
-                            <property name="label_xalign">0.039999999105930328</property>
+                            <property name="valign">start</property>
+                            <property name="left_padding">10</property>
+                            <property name="right_padding">10</property>
                             <child>
-                              <object class="GtkAlignment">
+                              <object class="GtkGrid">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="halign">start</property>
-                                <property name="margin_right">6</property>
                                 <property name="margin_top">6</property>
                                 <property name="margin_bottom">6</property>
-                                <property name="left_padding">12</property>
+                                <property name="row_spacing">8</property>
+                                <property name="column_spacing">6</property>
                                 <child>
-                                  <object class="GtkGrid">
+                                  <object class="GtkCheckButton" id="c_useChapterLabel">
+                                    <property name="label" translatable="yes">Use Special Features
+for These Books:</property>
                                     <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">Some Poetical books like the Psalms, and maybe even
+Proverbs look better without drop-cap chapter numbers.
+Instead, they can use a prefix like "Chapter" or "Psalm"
+at the start of the chapter.
+Note: If the text already has one or more \cl markers, then
+these settings will overrirde what has been set in the text.</property>
+                                    <property name="halign">start</property>
+                                    <property name="draw_indicator">True</property>
+                                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkEntry" id="t_clBookList">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="tooltip_text" translatable="yes">Add the 3-letter book codes for any books that
+this "Chapter Label" setting should be applied to.
+
+Note: If this list of books is left empty, then this
+setting will be applied to ALL books</property>
+                                    <property name="text">PSA PRO</property>
+                                    <property name="caps_lock_warning">False</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="top_attach">0</property>
+                                    <property name="width">4</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkEntry" id="t_clHeading">
+                                    <property name="width_request">150</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="tooltip_text" translatable="yes">The chapter “label” to be used when rendering
+chapter divisions as headings (instead of drop-cap
+numerals). For example, "Chapter" or "Psalm".
+
+If you want the chapter number to appear centered
+and above the Section Header WITHOUT any preceding
+text, then just put the code \ZWNBSP in here. </property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
-                                    <property name="margin_bottom">6</property>
-                                    <property name="row_spacing">6</property>
-                                    <property name="column_spacing">12</property>
-                                    <child>
-                                      <object class="GtkLabel">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="tooltip_text" translatable="yes">A Paragraph Adjust List needs to be in this format:
-MRK 2.7 +1    (i.e. expand the para at Mark 2.7 by one line) 
-MRK 3.20 -1   (i.e. shrink the para at Mark 3:20 by one line)
-%MARK 4.14 +1   (ignore this line - treat it as a comment)   
-MRK 5.8 +2    (i.e. expand the para at Mark 2.7 by two lines)
-etc.
-Note that adjusting paragraphs needs to be done right at the
-end when all other settings have been finalized. Otherwise you
-are likely to have to re-do it all again.</property>
-                                        <property name="halign">start</property>
-                                        <property name="label" translatable="yes">Adjust Layout by Shrinking
-or Expanding Paragraphs:</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">0</property>
-                                        <property name="top_attach">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkButton" id="btn_editParaAdjList">
-                                        <property name="label" translatable="yes">Edit Adjust List...</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">True</property>
-                                        <property name="tooltip_text" translatable="yes">Click to view or edit the Para Adj List
-file(s) in the Viewer tab.</property>
-                                        <signal name="clicked" handler="onEditAdjListClicked" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">1</property>
-                                        <property name="top_attach">0</property>
-                                      </packing>
-                                    </child>
                                   </object>
+                                  <packing>
+                                    <property name="left_attach">6</property>
+                                    <property name="top_attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="l_clHeading">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="tooltip_text" translatable="yes">The chapter “label” to be used when rendering
+chapter divisions as headings (instead of drop-cap
+numerals). For example, "Psalm"</property>
+                                    <property name="halign">end</property>
+                                    <property name="label" translatable="yes">Chapter
+Label:</property>
+                                    <property name="justify">right</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">5</property>
+                                    <property name="top_attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_singleColLayout">
+                                    <property name="label" translatable="yes">Use Single Column
+Layout for These Books:</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">Some books (e.g. Introduction, Glossary, Psalms, and 
+maybe even Proverbs) look better formatted as single
+column, even though most of the books are typeset
+in two column layout.</property>
+                                    <property name="halign">start</property>
+                                    <property name="draw_indicator">True</property>
+                                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_showNonScriptureChapters">
+                                    <property name="label" translatable="yes">Show Chapter Numbers in Non-Scripture Books</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">Peripheral books often have more than one
+"chapter" but do not need the chapter number
+to be printed. By default, PTXprint removes
+the chapter numbers from non-scripture books.
+If you need it to retain (and show) those chapter
+numbers then check this option.</property>
+                                    <property name="halign">start</property>
+                                    <property name="draw_indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">3</property>
+                                    <property name="top_attach">3</property>
+                                    <property name="width">4</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_omitChap1ChBooks">
+                                    <property name="label" translatable="yes">Hide Chapter Number in Single Chapter Books</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">Select this option to supress the 1 at the begining
+of books that only have a single chapter (OBA, PHM,
+2JN, 3JN, JUD, etc.)</property>
+                                    <property name="halign">start</property>
+                                    <property name="active">True</property>
+                                    <property name="draw_indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">3</property>
+                                    <property name="width">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_optimizePoetryLayout">
+                                    <property name="label" translatable="yes">Optimize Layout for Poetry Books</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">Trying to get poetry to balance
+columns creates all sorts of
+unforeseen issues and whitespace.
+This option allows unbalanced
+poetry to improve the overall look.
+It also allows Widow and Orphan 
+lines to occur.</property>
+                                    <property name="halign">start</property>
+                                    <property name="active">True</property>
+                                    <property name="draw_indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">1</property>
+                                    <property name="width">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkEntry" id="t_singleColBookList">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="tooltip_text" translatable="yes">Add the 3-letter book codes for any books 
+that should be typeset as a single column.</property>
+                                    <property name="text">FRT INT PSA PRO BAK GLO</property>
+                                    <property name="caps_lock_warning">False</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="top_attach">2</property>
+                                    <property name="width">5</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
                                 </child>
                               </object>
                             </child>
-                            <child type="label">
-                              <object class="GtkLabel">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="label" translatable="yes">Paragraph Adjustments</property>
-                              </object>
-                            </child>
                           </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">0</property>
-                          </packing>
                         </child>
-                        <child>
-                          <object class="GtkFrame" id="fr_hyphenation">
-                            <property name="width_request">330</property>
+                        <child type="label">
+                          <object class="GtkLabel">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="halign">start</property>
-                            <property name="margin_left">6</property>
-                            <property name="margin_top">6</property>
-                            <property name="margin_bottom">6</property>
-                            <property name="hexpand">False</property>
-                            <property name="label_xalign">0.039999999105930328</property>
-                            <child>
-                              <object class="GtkAlignment">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="halign">start</property>
-                                <property name="margin_top">6</property>
-                                <property name="margin_bottom">6</property>
-                                <property name="left_padding">12</property>
-                                <child>
-                                  <object class="GtkGrid">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="halign">start</property>
-                                    <property name="valign">center</property>
-                                    <property name="margin_bottom">6</property>
-                                    <property name="row_spacing">6</property>
-                                    <property name="column_spacing">12</property>
-                                    <child>
-                                      <object class="GtkCheckButton" id="c_hyphenate">
-                                        <property name="label" translatable="yes">Hyphenate</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="tooltip_text" translatable="yes">If disabled, hyphens will not cause line breaks. If enabled, then
-any hyphens in the text may cause a line break.
-
-To have hyphenation happen automatically, without having
-to insert them in the source text, you need 
-to click the "Create Hyphenation List" button on the
-left. This will create a XeTeX hyphenation list from the
-hyphenation list in Paratext.
-
-</property>
-                                        <property name="halign">start</property>
-                                        <property name="active">True</property>
-                                        <property name="draw_indicator">True</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">1</property>
-                                        <property name="top_attach">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkButton" id="btn_generateHyphenationList">
-                                        <property name="label" translatable="yes">Create Hyphenation List</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">True</property>
-                                        <property name="tooltip_text" translatable="yes">Click this button to generate a hyphenation 
-list that can be used by XeTeX to optimize
-hyphenation. This will read Paratext's
-HyphenatedWords.txt list and optimize it.
-Note that the Hypenate option on the Body
-tab needs to be checked to make us of this.</property>
-                                        <property name="halign">end</property>
-                                        <property name="valign">center</property>
-                                        <property name="hexpand">True</property>
-                                        <signal name="clicked" handler="onGenerateHyphenationListClicked" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">0</property>
-                                        <property name="top_attach">0</property>
-                                        <property name="height">2</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkCheckButton" id="c_omitHyphen">
-                                        <property name="label" translatable="yes">Omit '-'Hyphen</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="tooltip_text" translatable="yes">Some scripts use hyphenation to break long
-words onto the next line, BUT don't need to
-display the actual '-' character. If this option
-is checked, then "hyphens" will be invisible.</property>
-                                        <property name="halign">start</property>
-                                        <property name="draw_indicator">True</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">1</property>
-                                        <property name="top_attach">1</property>
-                                      </packing>
-                                    </child>
-                                  </object>
-                                </child>
-                              </object>
-                            </child>
-                            <child type="label">
-                              <object class="GtkLabel">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="label" translatable="yes">Hyphenation</property>
-                              </object>
-                            </child>
+                            <property name="label" translatable="yes">Handling Special Books </property>
                           </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">1</property>
-                          </packing>
                         </child>
                       </object>
                       <packing>
@@ -7899,126 +8036,19 @@ Cross-references appear.</property>
                                     <property name="halign">start</property>
                                     <property name="spacing">6</property>
                                     <child>
-                                      <object class="GtkLabel">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="tooltip_text" translatable="yes">The primary margin is set on the Layout tab, but
-this setting can be used to increase/decrease the 
-space at the top of the page and determines
-where the main text begins. This setting is a 
-factor (without units) and is multiplied by the
-Margins value on the Layout tab.</property>
-                                        <property name="halign">end</property>
-                                        <property name="margin_top">6</property>
-                                        <property name="margin_bottom">6</property>
-                                        <property name="label" translatable="yes">Top Margin Factor:</property>
-                                        <property name="justify">right</property>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="padding">6</property>
-                                        <property name="position">0</property>
-                                      </packing>
+                                      <placeholder/>
                                     </child>
                                     <child>
-                                      <object class="GtkSpinButton" id="s_topmarginfactor">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="tooltip_text" translatable="yes">The primary margin is set on the Layout tab, but
-this setting can be used to increase/decrease the 
-space at the top of the page and determines
-where the main text begins. This setting is a 
-factor (without units) and is multiplied by the
-Margins value on the Layout tab.</property>
-                                        <property name="halign">start</property>
-                                        <property name="width_chars">6</property>
-                                        <property name="text">1.15</property>
-                                        <property name="caps_lock_warning">False</property>
-                                        <property name="placeholder_text">0.0</property>
-                                        <property name="input_purpose">number</property>
-                                        <property name="adjustment">a_topmarginfactor</property>
-                                        <property name="digits">2</property>
-                                        <property name="numeric">True</property>
-                                        <property name="update_policy">if-valid</property>
-                                        <property name="value">1.8</property>
-                                        <signal name="change-value" handler="onNumTabsChanged" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">1</property>
-                                      </packing>
+                                      <placeholder/>
                                     </child>
                                     <child>
-                                      <object class="GtkLabel">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="tooltip_text" translatable="yes">This setting can be used to increase/decrease the 
-space at the top of the page and determines the
-vertical positioning of the header line. This setting
-is a factor (without units) and is multiplied by the
-Margins value on the Layout tab.</property>
-                                        <property name="halign">end</property>
-                                        <property name="margin_left">20</property>
-                                        <property name="label" translatable="yes">Header Position:</property>
-                                        <property name="justify">right</property>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="padding">6</property>
-                                        <property name="position">2</property>
-                                      </packing>
+                                      <placeholder/>
                                     </child>
                                     <child>
-                                      <object class="GtkSpinButton" id="s_headerposition">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="tooltip_text" translatable="yes">This setting can be used to increase/decrease the 
-space at the top of the page and determines the
-vertical positioning of the header line. This setting
-is a factor (without units) and is multiplied by the
-Margins value on the Layout tab.</property>
-                                        <property name="halign">start</property>
-                                        <property name="width_chars">6</property>
-                                        <property name="text">0.50</property>
-                                        <property name="caps_lock_warning">False</property>
-                                        <property name="placeholder_text">0.0</property>
-                                        <property name="input_purpose">number</property>
-                                        <property name="adjustment">a_hdrposition</property>
-                                        <property name="digits">2</property>
-                                        <property name="numeric">True</property>
-                                        <property name="update_policy">if-valid</property>
-                                        <property name="value">1</property>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">3</property>
-                                      </packing>
+                                      <placeholder/>
                                     </child>
                                     <child>
-                                      <object class="GtkCheckButton" id="c_mirrorpages">
-                                        <property name="label" translatable="yes">Mirrored Layout</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="tooltip_text" translatable="yes">When this option is checked, the left header will be the inner header and the right header will be shown on the outer edge. Highly recommended.
-
-Note that this setting also affects the Diglot settings:
-making the primary text the Inner text, and the
-secondary text as the Outer text.</property>
-                                        <property name="halign">end</property>
-                                        <property name="margin_left">10</property>
-                                        <property name="active">True</property>
-                                        <property name="draw_indicator">True</property>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">4</property>
-                                      </packing>
+                                      <placeholder/>
                                     </child>
                                   </object>
                                   <packing>
@@ -8489,6 +8519,167 @@ in the header reference.</property>
                       </packing>
                     </child>
                     <child>
+                      <object class="GtkFrame" id="fr_layoutOther">
+                        <property name="width_request">675</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="halign">start</property>
+                        <property name="margin_left">6</property>
+                        <property name="margin_right">6</property>
+                        <property name="margin_top">6</property>
+                        <property name="margin_bottom">6</property>
+                        <property name="label_xalign">0.019999999552965164</property>
+                        <child>
+                          <object class="GtkAlignment">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="valign">start</property>
+                            <property name="left_padding">10</property>
+                            <property name="right_padding">10</property>
+                            <child>
+                              <object class="GtkGrid">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="margin_bottom">6</property>
+                                <property name="column_spacing">16</property>
+                                <child>
+                                  <object class="GtkLabel" id="l_startPageNum">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="tooltip_text" translatable="yes">If the document you are creating needs
+to be appended to another, you can
+start the page numbering from where
+the first document ends.
+
+Note that selecting a NEGATIVE number will
+cause roman numerals (i, ii, iii, iv, v, etc) to
+be used on introductory books (FRT, INT and
+so on), and page numbering will restart as
+soon as the first scripture book is encountered.</property>
+                                    <property name="halign">end</property>
+                                    <property name="label" translatable="yes">Starting Page Number:</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkSpinButton" id="s_startPageNum">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="tooltip_text" translatable="yes">If the document you are creating needs
+to be appended to another, you can
+start the page numbering from where
+the first document ends.
+
+Note that selecting a NEGATIVE number will
+cause roman numerals (i, ii, iii, iv, v, etc) to
+be used on introductory books (FRT, INT and
+so on), and page numbering will restart as
+soon as the first scripture book is encountered.</property>
+                                    <property name="opacity">0.80000000000000004</property>
+                                    <property name="halign">start</property>
+                                    <property name="max_length">4</property>
+                                    <property name="width_chars">4</property>
+                                    <property name="text">1</property>
+                                    <property name="caps_lock_warning">False</property>
+                                    <property name="input_purpose">number</property>
+                                    <property name="adjustment">a_startPageNum</property>
+                                    <property name="climb_rate">1</property>
+                                    <property name="numeric">True</property>
+                                    <property name="update_policy">if-valid</property>
+                                    <property name="value">1</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="top_attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_pageNumTitlePage">
+                                    <property name="label" translatable="yes">Print Page Number at Bottom of Intro Page(s)</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">By default there is no page number on the
+Title Page of each book. Check this option
+to place the page number at the bottom of
+the page (only on Intoductory Pages before 
+the scripture text begins).</property>
+                                    <property name="halign">start</property>
+                                    <property name="margin_top">4</property>
+                                    <property name="active">True</property>
+                                    <property name="draw_indicator">True</property>
+                                    <signal name="clicked" handler="onPageNumTitlePageChanged" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">2</property>
+                                    <property name="top_attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_printConfigName">
+                                    <property name="label" translatable="yes">Print Name of Saved Config on Intro Page(s)</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">It may be helpful to print the Name of
+the Saved Configuration on the first
+page (of every book) as a reminder for
+later - as to which settings were used
+to produce the PDF.</property>
+                                    <property name="halign">start</property>
+                                    <property name="margin_top">6</property>
+                                    <property name="draw_indicator">True</property>
+                                    <signal name="clicked" handler="onPrintConfigNameChanged" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">2</property>
+                                    <property name="top_attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_mirrorpages">
+                                    <property name="label" translatable="yes">Mirror Page Headers (Inner+Outer Layout)</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">When this option is checked, the left header will be the inner header and the right header will be shown on the outer edge. Highly recommended.
+
+Note that this setting also affects the Diglot settings:
+making the primary text the Inner text, and the
+secondary text as the Outer text.</property>
+                                    <property name="halign">start</property>
+                                    <property name="margin_top">6</property>
+                                    <property name="active">True</property>
+                                    <property name="draw_indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">0</property>
+                                    <property name="width">2</property>
+                                  </packing>
+                                </child>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                        <child type="label">
+                          <object class="GtkLabel">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="label" translatable="yes">Other</property>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                    <child>
                       <object class="GtkFrame" id="fr_Footer">
                         <property name="width_request">675</property>
                         <property name="visible">True</property>
@@ -8509,103 +8700,6 @@ in the header reference.</property>
                             <property name="margin_bottom">6</property>
                             <property name="row_spacing">7</property>
                             <property name="column_spacing">2</property>
-                            <child>
-                              <object class="GtkSpinButton" id="s_footerposition">
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="tooltip_text" translatable="yes">This setting can be used to increase/decrease the 
-space at the bottom of the page and determines the
-vertical positioning of the footer line. This setting
-is a factor (without units) and is multiplied by the
-Margins value on the Layout tab.</property>
-                                <property name="halign">start</property>
-                                <property name="width_chars">6</property>
-                                <property name="text">0.50</property>
-                                <property name="caps_lock_warning">False</property>
-                                <property name="placeholder_text">0.0</property>
-                                <property name="input_purpose">number</property>
-                                <property name="adjustment">a_ftrposition</property>
-                                <property name="digits">2</property>
-                                <property name="numeric">True</property>
-                                <property name="update_policy">if-valid</property>
-                                <property name="value">0.80000000000000004</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">4</property>
-                                <property name="top_attach">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel" id="l_ftrPosn">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="tooltip_text" translatable="yes">This setting can be used to increase/decrease the 
-space at the bottom of the page and determines the
-vertical positioning of the footer line. This setting
-is a factor (without units) and is multiplied by the
-Margins value on the Layout tab.</property>
-                                <property name="halign">end</property>
-                                <property name="label" translatable="yes">Footer Position:</property>
-                                <property name="justify">right</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">3</property>
-                                <property name="top_attach">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkSpinButton" id="s_bottommarginfactor">
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="tooltip_text" translatable="yes">The primary margin is set on the Layout tab, but
-this setting can be used to increase/decrease the 
-space at the bottom of the page and determines
-where the main text and footnotes and 
-cross-references end. This setting is a 
-factor (without units) and is multiplied 
-by the Margins value on the Layout tab.</property>
-                                <property name="halign">start</property>
-                                <property name="width_chars">6</property>
-                                <property name="text">1.15</property>
-                                <property name="caps_lock_warning">False</property>
-                                <property name="placeholder_text">0.0</property>
-                                <property name="input_purpose">number</property>
-                                <property name="adjustment">a_bottommarginfactor</property>
-                                <property name="digits">2</property>
-                                <property name="numeric">True</property>
-                                <property name="update_policy">if-valid</property>
-                                <property name="value">1.2</property>
-                                <signal name="change-value" handler="onNumTabsChanged" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="left_attach">1</property>
-                                <property name="top_attach">0</property>
-                                <property name="width">2</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel" id="l_btmMrgn">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="tooltip_text" translatable="yes">The primary margin is set on the Layout tab, but
-this setting can be used to increase/decrease the 
-space at the bottom of the page and determines
-where the main text and footnotes and 
-cross-references end. This setting is a 
-factor (without units) and is multiplied 
-by the Margins value on the Layout tab.</property>
-                                <property name="halign">start</property>
-                                <property name="margin_left">20</property>
-                                <property name="margin_top">6</property>
-                                <property name="margin_bottom">6</property>
-                                <property name="label" translatable="yes">Bottom Margin Factor:</property>
-                                <property name="justify">right</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">0</property>
-                                <property name="top_attach">0</property>
-                              </packing>
-                            </child>
                             <child>
                               <object class="GtkComboBoxText" id="ecb_ftrcenter">
                                 <property name="width_request">340</property>
@@ -8722,6 +8816,18 @@ header, or the Secondary format.</property>
                                 <property name="top_attach">1</property>
                               </packing>
                             </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
                           </object>
                         </child>
                         <child type="label">
@@ -8737,152 +8843,162 @@ header, or the Secondary format.</property>
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">True</property>
-                        <property name="position">1</property>
+                        <property name="position">2</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkFrame" id="fr_layoutOther">
+                      <object class="GtkFrame" id="bx_colophon">
                         <property name="width_request">675</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="halign">start</property>
-                        <property name="margin_left">6</property>
-                        <property name="margin_right">6</property>
-                        <property name="margin_top">6</property>
+                        <property name="valign">start</property>
+                        <property name="margin_top">3</property>
                         <property name="margin_bottom">6</property>
                         <property name="label_xalign">0.019999999552965164</property>
                         <child>
-                          <object class="GtkAlignment">
+                          <object class="GtkGrid" id="gr_colophon">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="valign">start</property>
-                            <property name="left_padding">10</property>
-                            <property name="right_padding">10</property>
+                            <property name="margin_top">6</property>
+                            <property name="margin_bottom">6</property>
+                            <property name="row_spacing">6</property>
+                            <property name="column_spacing">6</property>
                             <child>
-                              <object class="GtkGrid">
+                              <object class="GtkLabel">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="margin_bottom">6</property>
-                                <property name="column_spacing">16</property>
+                                <property name="tooltip_text" translatable="yes">Enter your Colophon text here - using standard
+USFM codes for formatting. You may want to
+use the reset button to start with a standard set.
+
+You can use the following codes to
+automatically include special text 
+using the following markers:
+\zCopyright   - copyright statement from the Basic tab
+\zLicense     - License text from the Basic tab
+\zImageCopyrights   - Automatically generated list of images, page numbers and attributions.
+
+These special codes may also be used in other
+books such as the front matter book (FRT). 
+
+IMPORTANT: you will have to hit Print a second time
+in order to get accurate Image Copyright Attribution.</property>
+                                <property name="halign">end</property>
+                                <property name="valign">start</property>
+                                <property name="margin_top">6</property>
+                                <property name="label" translatable="yes">Colophon
+Text:</property>
+                                <property name="justify">right</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkScrolledWindow" id="scroll_colophon">
+                                <property name="height_request">100</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="hexpand">True</property>
+                                <property name="vexpand">True</property>
+                                <property name="shadow_type">etched-in</property>
+                                <property name="overlay_scrolling">False</property>
                                 <child>
-                                  <object class="GtkLabel" id="l_startPageNum">
+                                  <object class="GtkViewport">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="tooltip_text" translatable="yes">If the document you are creating needs
-to be appended to another, you can
-start the page numbering from where
-the first document ends.
-
-Note that selecting a NEGATIVE number will
-cause roman numerals (i, ii, iii, iv, v, etc) to
-be used on introductory books (FRT, INT and
-so on), and page numbering will restart as
-soon as the first scripture book is encountered.</property>
-                                    <property name="halign">end</property>
-                                    <property name="label" translatable="yes">Starting Page Number:</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">0</property>
-                                    <property name="top_attach">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkSpinButton" id="s_startPageNum">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="tooltip_text" translatable="yes">If the document you are creating needs
-to be appended to another, you can
-start the page numbering from where
-the first document ends.
-
-Note that selecting a NEGATIVE number will
-cause roman numerals (i, ii, iii, iv, v, etc) to
-be used on introductory books (FRT, INT and
-so on), and page numbering will restart as
-soon as the first scripture book is encountered.</property>
-                                    <property name="opacity">0.80000000000000004</property>
-                                    <property name="halign">start</property>
-                                    <property name="max_length">4</property>
-                                    <property name="width_chars">4</property>
-                                    <property name="text">1</property>
-                                    <property name="caps_lock_warning">False</property>
-                                    <property name="input_purpose">number</property>
-                                    <property name="adjustment">a_startPageNum</property>
-                                    <property name="climb_rate">1</property>
-                                    <property name="numeric">True</property>
-                                    <property name="update_policy">if-valid</property>
-                                    <property name="value">1</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">1</property>
-                                    <property name="top_attach">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkCheckButton" id="c_pageNumTitlePage">
-                                    <property name="label" translatable="yes">Print Page Number at Bottom of Intro Page(s)</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">By default there is no page number on the
-Title Page of each book. Check this option
-to place the page number at the bottom of
-the page (only on Intoductory Pages before 
-the scripture text begins).</property>
-                                    <property name="halign">start</property>
                                     <property name="margin_top">4</property>
-                                    <property name="active">True</property>
-                                    <property name="draw_indicator">True</property>
-                                    <signal name="clicked" handler="onPageNumTitlePageChanged" swapped="no"/>
+                                    <property name="margin_bottom">4</property>
+                                    <property name="vexpand">True</property>
+                                    <child>
+                                      <object class="GtkTextView" id="textv_colophon">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="vexpand">True</property>
+                                        <property name="wrap_mode">word</property>
+                                        <property name="buffer">tb_colophon</property>
+                                      </object>
+                                    </child>
                                   </object>
-                                  <packing>
-                                    <property name="left_attach">2</property>
-                                    <property name="top_attach">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkCheckButton" id="c_printConfigName">
-                                    <property name="label" translatable="yes">Print Name of Saved Config on Intro Page(s)</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">It may be helpful to print the Name of
-the Saved Configuration on the first
-page (of every book) as a reminder for
-later - as to which settings were used
-to produce the PDF.</property>
-                                    <property name="halign">start</property>
-                                    <property name="margin_top">6</property>
-                                    <property name="draw_indicator">True</property>
-                                    <signal name="clicked" handler="onPrintConfigNameChanged" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">2</property>
-                                    <property name="top_attach">1</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
                                 </child>
                               </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="top_attach">0</property>
+                                <property name="width">2</property>
+                                <property name="height">3</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkButton" id="btn_resetColophon">
+                                <property name="label">↺</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                                <property name="tooltip_text" translatable="yes">Clicking this button will reload the 
+default Colophon text markers which
+include the Copyright statement tag,
+the License statement tag, and the
+Illustration credits tag.</property>
+                                <property name="halign">end</property>
+                                <property name="valign">end</property>
+                                <signal name="clicked" handler="onColophonResetClicked" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkCheckButton" id="c_standAloneColophon">
+                                <property name="label" translatable="yes">Force Page Break 
+Before Colophon</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="tooltip_text" translatable="yes">Normally the colophon is inserted at the end
+of the last page of the last book. If this option
+is checked, then the colophon will appear at the 
+bottom of a new page at the end of the publication.</property>
+                                <property name="draw_indicator">True</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">1</property>
+                              </packing>
                             </child>
                           </object>
                         </child>
                         <child type="label">
-                          <object class="GtkLabel">
+                          <object class="GtkCheckButton" id="c_colophon">
+                            <property name="label" translatable="yes">Include Colophon</property>
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">Other</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">False</property>
+                            <property name="tooltip_text" translatable="yes">NOTE: This Colophon will not appear 
+in the PDF the first time you hit Print, 
+but will appear on subsequent runs.
+
+What is a Colophon?
+A brief statement containing information
+about the publication such as the place of 
+publication, the publisher, and the date of 
+publication. This will be printed at the END
+of the book. Similar to a "biblio-page" or a
+"copyright-page" at the front of a book.</property>
+                            <property name="halign">start</property>
+                            <property name="active">True</property>
+                            <property name="draw_indicator">True</property>
+                            <signal name="clicked" handler="onColophonClicked" swapped="no"/>
+                            <signal name="toggled" handler="onColophonClicked" swapped="no"/>
                           </object>
                         </child>
                       </object>
                       <packing>
                         <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">2</property>
+                        <property name="fill">False</property>
+                        <property name="position">3</property>
                       </packing>
                     </child>
                   </object>
@@ -12806,23 +12922,6 @@ This will delete all previous log and intermediate temporary files for the entir
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkCheckButton" id="c_cropmarks">
-                                        <property name="label" translatable="yes">Include Crop Marks</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="tooltip_text" translatable="yes">Some printers require crop marks
-on the PDF to show where the page
-should be trimmed to after printing.</property>
-                                        <property name="halign">start</property>
-                                        <property name="draw_indicator">True</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">1</property>
-                                        <property name="top_attach">1</property>
-                                      </packing>
-                                    </child>
-                                    <child>
                                       <object class="GtkCheckButton" id="c_sensitive">
                                         <property name="label" translatable="yes">Sensitive Project</property>
                                         <property name="visible">True</property>
@@ -13030,6 +13129,9 @@ glosses for interlinear/ruby text.</property>
                                         <property name="top_attach">3</property>
                                         <property name="width">2</property>
                                       </packing>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
                                     </child>
                                   </object>
                                 </child>
@@ -13610,6 +13712,88 @@ Note: If only a single book is currently selected, it will place the Thumb Tab r
                         <property name="expand">False</property>
                         <property name="fill">True</property>
                         <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkFrame" id="fr_paragraphAdjust">
+                        <property name="width_request">330</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="halign">start</property>
+                        <property name="margin_top">6</property>
+                        <property name="margin_bottom">6</property>
+                        <property name="hexpand">False</property>
+                        <property name="label_xalign">0.039999999105930328</property>
+                        <child>
+                          <object class="GtkAlignment">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="halign">start</property>
+                            <property name="margin_top">6</property>
+                            <property name="margin_bottom">6</property>
+                            <property name="left_padding">12</property>
+                            <child>
+                              <object class="GtkGrid">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="halign">start</property>
+                                <property name="valign">center</property>
+                                <property name="margin_bottom">6</property>
+                                <property name="row_spacing">6</property>
+                                <property name="column_spacing">12</property>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="tooltip_text" translatable="yes">A Paragraph Adjust List needs to be in this format:
+MRK 2.7 +1    (i.e. expand the para at Mark 2.7 by one line) 
+MRK 3.20 -1   (i.e. shrink the para at Mark 3:20 by one line)
+%MARK 4.14 +1   (ignore this line - treat it as a comment)   
+MRK 5.8 +2    (i.e. expand the para at Mark 2.7 by two lines)
+etc.
+Note that adjusting paragraphs needs to be done right at the
+end when all other settings have been finalized. Otherwise you
+are likely to have to re-do it all again.</property>
+                                    <property name="halign">start</property>
+                                    <property name="label" translatable="yes">Adjust Layout by Shrinking
+or Expanding Paragraphs:</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkButton" id="btn_editParaAdjList">
+                                    <property name="label" translatable="yes">Edit Adjust List...</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <property name="tooltip_text" translatable="yes">Click to view or edit the Para Adj List
+file(s) in the Viewer tab.</property>
+                                    <signal name="clicked" handler="onEditAdjListClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="top_attach">0</property>
+                                  </packing>
+                                </child>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                        <child type="label">
+                          <object class="GtkLabel">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="label" translatable="yes">Paragraph Adjustments</property>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
                       </packing>
                     </child>
                   </object>
@@ -15008,7 +15192,19 @@ Factor:</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <placeholder/>
+                                      <object class="GtkLabel" id="l_styActualFontSize">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="halign">start</property>
+                                        <property name="label" translatable="yes">11.7pt</property>
+                                        <attributes>
+                                          <attribute name="foreground" value="#555557575353"/>
+                                        </attributes>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">5</property>
+                                        <property name="top_attach">0</property>
+                                      </packing>
                                     </child>
                                     <child>
                                       <placeholder/>
@@ -16798,7 +16994,7 @@ be displayed (in red) just to the left.</property>
             </child>
             <child>
               <object class="GtkButton" id="b_print">
-                <property name="label">Print</property>
+                <property name="label" translatable="yes">Print</property>
                 <property name="visible">True</property>
                 <property name="sensitive">False</property>
                 <property name="can_focus">True</property>

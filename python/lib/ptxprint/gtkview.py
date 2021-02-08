@@ -128,7 +128,7 @@ _sensitivities = {
 
     "c_pagegutter" :           ["s_pagegutter"],
     "c_verticalrule" :         ["l_colgutteroffset", "s_colgutteroffset"],
-    "c_rhrule" :               ["s_rhruleposition", "gr_horizRule"],
+    "c_rhrule" :               ["s_rhruleposition"],
     "c_introOutline" :         ["c_prettyIntroOutline"],
     "c_sectionHeads" :         ["c_parallelRefs", "lb_style_s", "lb_style_r"],
     "c_parallelRefs" :         ["lb_style_r"],
@@ -545,10 +545,10 @@ class GtkViewModel(ViewModel):
                   "row_ToC", "c_hyphenate", "l_missingPictureCount", "bx_colophon", "btn_deleteConfig", "btn_lockunlock",
                   "c_hdrLeftPri", "c_hdrLeftSec", "c_hdrCenterPri", "c_hdrCenterSec", "c_hdrRightPri", "c_hdrRightSec", 
                   "c_omitverseone", "c_glueredupwords", "c_firstParaIndent", "c_hangpoetry", "c_preventwidows", 
-                  "l_sidemarginfactor", "s_sidemarginfactor", "btn_unpackDBLbundle",
-                  "c_pagegutter", "s_pagegutter", "l_digits", "fcb_digits", "c_quickRun",
+                  "l_sidemarginfactor", "s_sidemarginfactor", "btn_unpackDBLbundle", "c_cropmarks", 
+                  "c_pagegutter", "s_pagegutter", "l_digits", "fcb_digits", "c_quickRun", "c_mirrorpages",
                   "t_invisiblePassword", "t_configNotes", "l_notes", "c_elipsizeMissingVerses", "fcb_glossaryMarkupStyle",
-                  "gr_fnAdvOptions", "c_figexclwebapp", "bx_horizRule", "l_glossaryMarkupStyle", "btn_refreshFonts",
+                  "gr_fnAdvOptions", "c_figexclwebapp", "l_glossaryMarkupStyle", "btn_refreshFonts",
                   "fr_spacingAdj", "fr_fallbackFont", "l_complexScript", "b_scrsettings", "c_colorfonts"):
             # print(c)
             self.builder.get_object(c).set_visible(val)
@@ -2569,3 +2569,16 @@ class GtkViewModel(ViewModel):
             self.builder.get_object("ptxprint").destroy()
             self.onDestroy(None)
 
+    def onRHruleClicked(self, btn):
+        status = self.sensiVisible("c_rhrule")
+        self.builder.get_object("gr_marginGraphicLineTrue").set_visible(status)
+        self.builder.get_object("rul_rhrule").set_visible(status)
+        # self.builder.get_object("l_rhruleoffset").set_visible(status)
+
+        fc = "#22228b8b2222" if status else "#88888a8a8585"
+        fc = "green" if status else "grey"
+        print("<span foreground='{}'>".format(fc)+_("Header to Rule")+"</span>")
+        self.builder.get_object("l_rhruleoffset").set_markup("<span foreground='{}'>".format(fc)+_("Header to Rule")+"</span>")
+        
+        # self.builder.get_object("").set_visible(False)
+        # "s_rhruleposition", "rul_rhrule", "l_rhruleoffset", "gr_marginGraphicLineTrue"
