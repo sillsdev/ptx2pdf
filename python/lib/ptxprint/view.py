@@ -279,6 +279,19 @@ class ViewModel:
             if nf is not None:
                 self.set(w, nf)
 
+    def getMargins(self):
+        font = self.get("bl_fontR").getTtfont()
+        fontheight = 1. - float(font.descent) / font.upem
+        fontsize = float(self.get("s_fontsize")) / 72.27 * 25.4
+        marginmms = float(self.get("s_margins"))
+        topmarginmms = float(self.get("s_topmargin")) - fontsize
+        bottommarginmms = float(self.get("s_bottommargin"))
+        headerpos = topmarginmms - float(self.get("s_headerposition"))
+        footerpos = float(self.get("s_footerposition"))
+        headerlabel = headerpos - fontheight * fontsize
+        footerlabel = (bottommarginmms - footerpos - fontheight * fontsize) * 25.4 / 72.27
+        return (marginmms, topmarginmms, bottommarginmms, headerpos, footerpos, headerlabel, footerlabel)
+
     def updateSavedConfigList(self):
         pass
 
@@ -571,7 +584,15 @@ class ViewModel:
             colophontext = config.get("project", "colophontext", fallback="").replace("zCopyright", "zcopyright")\
                             .replace("zImageCopyrights", "zimagecopyrights").replace("zLicense", "zlicense")
             config.set("project", "colophontext", colophontext)
-            config.set("config", "version", "1.502")
+        if v < 1.503:
+            marginmms = config.getfloat("paper", "margins")
+            config.set("paper", "topmargin", "{:.3f}".format(config.getfloat("paper", "topmarginfactor") * marginmms))
+            config.set("paper", "headerpos", "{:.3f}".format(config.getfloat("paper", "topmarginfactor") * marginmms \
+                        - config.getfloat("header", "headerposition") - config.getfloat("paper", "fontfactor") * 25.4 / 72.27))
+            config.set("paper", "bottommargin", "{:.3f}".format(config.getfloat("paper", "bottommarginfactor") * marginmms))
+            config.set("paper", "footerpos", "{:.3f}".format(config.getfloat("header", "footerposition")))
+            config.set("paper", "rulegap", "{:.3f}".format(config.getfloat("header", "ruleposition")))
+            config.set("config", "version", "1.503")
 
         styf = os.path.join(self.configPath(cfgname), "ptxprint.sty")
         if not os.path.exists(styf):
@@ -1104,8 +1125,8 @@ class ViewModel:
             pageheight = float(m.group(1)) * unitConv.get(m.group(2), 1)
         else:
             pageheight = 210
-        tfactor = float(self.get("s_topmarginfactor"))
-        bfactor = float(self.get("s_bottommarginfactor"))
+        tfactor = float(self.get("s_topmargin"))
+        bfactor = float(self.get("s_bottommargin"))
         tabsheight = pageheight - munits * (tfactor + bfactor)   # in mm
         tabsheight -= 20 * 25.4 / 72.27                          # from default \TabsStart + \TabsEnd (in pt)
         if self.get("c_thumbrotate"):

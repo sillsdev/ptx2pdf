@@ -34,7 +34,7 @@
 \MarginUnit={paper/margins}mm
 \def\TopMarginFactor{{{paper/topmarginfactor}}}
 \def\BottomMarginFactor{{{paper/bottommarginfactor}}}
-\def\SideMarginFactor{{{paper/sidemarginfactor}}}
+\def\SideMarginFactor{{1.0}}
 \BindingGutter{paper/ifaddgutter}
 \BindingGutter={paper/gutter}mm
 
@@ -159,9 +159,9 @@
 %\horiznotespacing
 
 %%%%% Running Header/Footer %%%%%
-\def\HeaderPosition{{{header/headerposition}}}
-\def\FooterPosition{{{header/footerposition}}}
-{header/ifrhrule}\RHruleposition={header/ruleposition}pt
+\def\HeaderPosition{{{paper/headerposition}}}
+\def\FooterPosition{{{paper/footerposition}}}
+{header/ifrhrule}\RHruleposition={paper/ruleposition}pt
 \def\RangeSeparator{{\kern.1em\char"2013\kern.1em}} % what to put between first - last of a reference range
 \def\ChapterVerseSeparator{{\kern.02em{header/chvseparator}\kern.02em}} % what to put between chapter:verse
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.1 
+<!-- Generated with glade 3.22.2 
 
 The MIT License (MIT)
 
@@ -4665,7 +4665,7 @@ Margins value on the Layout tab.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkSpinButton" id="s_topmarginfactor">
+                                  <object class="GtkSpinButton" id="s_topmargin">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="tooltip_text" translatable="yes">The primary margin is set on the Layout tab, but
@@ -4780,7 +4780,7 @@ by the Margins value on the Layout tab.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkSpinButton" id="s_bottommarginfactor">
+                                  <object class="GtkSpinButton" id="s_bottommargin">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="tooltip_text" translatable="yes">The primary margin is set on the Layout tab, but
@@ -8815,6 +8815,9 @@ header, or the Secondary format.</property>
                                 <property name="left_attach">1</property>
                                 <property name="top_attach">1</property>
                               </packing>
+                            </child>
+                            <child>
+                              <placeholder/>
                             </child>
                             <child>
                               <placeholder/>

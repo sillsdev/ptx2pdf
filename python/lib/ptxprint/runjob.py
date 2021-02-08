@@ -704,7 +704,7 @@ class RunJob:
         # print("pageHeight =", pageHeight, "  pageWidth =", pageWidth)
         margin = self.convert2mm(info.dict["paper/margins"])
         # print("margin =", margin)
-        sideMarginFactor = float(info.dict["paper/sidemarginfactor"])
+        sideMarginFactor = 1.0
         middleGutter = float(info.dict["document/colgutterfactor"])/3
         bindingGutter = float(info.dict["paper/gutter"]) if info.asBool("paper/ifaddgutter") else 0
         topMarginFactor = info.dict["paper/topmarginfactor"]

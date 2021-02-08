@@ -26,7 +26,7 @@ tmpPicLists/
 /test/projects/*.sfm
 /test/**/*.pdf
 /examples/**/*.pdf
-/*.zip
+*.zip
 /cygwin/
 /fonts/
 /projects/

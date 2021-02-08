@@ -535,7 +535,7 @@ class GtkViewModel(ViewModel):
         for c in ("tb_Advanced", "tb_ViewerEditor", "tb_Tabs", "tb_DiglotBorder", "tb_StyleEditor",
                   "fr_copyrightLicense", "r_book_module", "btn_chooseBibleModule", "lb_bibleModule", "c_combine",
                   "c_fighiderefs", "lb_selectFigureFolder", "l_indentUnit", "s_indentUnit", "lb_style_s", "lb_style_r", 
-                  "l_btmMrgn", "s_bottommarginfactor", "l_ftrPosn", "s_footerposition", "c_ftrCenterPri", "c_ftrCenterSec", 
+                  "l_btmMrgn", "s_bottommargin", "l_ftrPosn", "s_footerposition", "c_ftrCenterPri", "c_ftrCenterSec", 
                   "l_missingPictureString", "l_imageTypeOrder", "t_imageTypeOrder", "fr_layoutSpecialBooks", "fr_layoutOther",
                   "s_colgutteroffset", "bx_TopMarginSettings", "gr_HeaderAdvOptions", "l_colgutteroffset",
                   "c_fighiderefs", "c_skipmissingimages", "c_useCustomFolder", "btn_selectFigureFolder", "c_exclusiveFiguresFolder",
@@ -2319,6 +2319,9 @@ class GtkViewModel(ViewModel):
         self.onNumTabsChanged()
 
     def onNumTabsChanged(self, *a):
+        (marginmms, topmarginmms, bottommarginmms, headerpos, footerpos, headerlabel, footerlabel) = self.getMargins()
+        self.set("l_margin2header1", "{:.3f}mm".format(headerlabel))
+        self.set("l_margin2footer", "{:.1f}pt".format(footerlabel))
         if self.get("c_thumbtabs"):
             self.updateThumbLines()
             self.onThumbColourChange()

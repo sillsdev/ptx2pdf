@@ -95,9 +95,12 @@ ModelMap = {
     "paper/ifcropmarks":        ("c_cropmarks", lambda w,v :"true" if v else "false"),  
     "paper/ifverticalrule":     ("c_verticalrule", lambda w,v :"true" if v else "false"),
     "paper/margins":            ("s_margins", lambda w,v: round(float(v)) or "14"),
-    "paper/topmarginfactor":    ("s_topmarginfactor", lambda w,v: round(float(v), 2) or "1.60"),
-    "paper/bottommarginfactor": ("s_bottommarginfactor", lambda w,v: round(float(v), 2) or "1.00"),
-    "paper/sidemarginfactor":   ("s_sidemarginfactor", lambda w,v: round(float(v), 2) or "1.00"),
+    "paper/topmargin":          ("s_topmargin", None),
+    "paper/bottommargin":       ("s_bottommargin", None),
+    "paper/headerpos":          ("s_headerposition", None),
+    "paper/footerpos":          ("s_footerposition", None),
+    "paper/rulegap":            ("s_rhruleposition", None),
+
     "paper/ifaddgutter":        ("c_pagegutter", lambda w,v :"true" if v else "false"),
     "paper/gutter":             ("s_pagegutter", lambda w,v: round(float(v)) or "0"),
     "paper/colgutteroffset":    ("s_colgutteroffset", lambda w,v: "{:.1f}".format(float(v)) or "0.0"),
@@ -223,13 +226,10 @@ ModelMap = {
     "document/diglotsepnotes":  ("c_diglotSeparateNotes", lambda w,v: "true" if v else "false"),
     "document/diglotsecconfig": ("ecb_diglotSecConfig", None),
 
-    "header/headerposition":    ("s_headerposition", lambda w,v: round(float(v), 2) or "1.00"),
-    "header/footerposition":    ("s_footerposition", lambda w,v: round(float(v), 2) or "1.00"),
     "header/ifomitrhchapnum":   ("c_omitrhchapnum", lambda w,v :"true" if v else "false"),
     "header/ifverses":          ("c_hdrverses", lambda w,v :"true" if v else "false"),
     "header/chvseparator":      ("c_sepColon", lambda w,v : ":" if v else "."),
     "header/ifrhrule":          ("c_rhrule", lambda w,v: "" if v else "%"),
-    "header/ruleposition":      ("s_rhruleposition", lambda w,v: v or "10"),
     "header/hdrleftpri":        ("c_hdrLeftPri", None),
     "header/hdrleft":           ("ecb_hdrleft", lambda w,v: v or "-empty-"),
     "header/hdrcenterpri":      ("c_hdrCenterPri", None),
@@ -441,6 +441,7 @@ class TexModel:
                                             os.path.join(self.dict["/ptxpath"], self.dict["project/id"]))
         regfont = self.printer.get("bl_fontR")
         self.dict["document/spacecntxtlztn"] = "2" if regfont.isCtxtSpace else "0"
+        self.calculateMargins()
 
     def updatefields(self, a):
         global get
@@ -539,6 +540,14 @@ class TexModel:
                 return self._mirrorRL[h]
             except KeyError:
                 return h
+
+    def calculateMargins(self):
+        (marginmms, topmarginmms, bottommarginmms, headerpos, footerpos, headerlabel, footerlabel) = self.printer.getMargins()
+        self.dict["paper/topmarginfactor"] = "{:.3f}".format(topmarginmms / marginmms)
+        self.dict["paper/bottommarginfactor"] = "{:.3f}".format(bottommarginmms / marginmms)
+        self.dict["paper/headerposition"] = "{:.3f}".format(headerpos / marginmms)
+        self.dict["paper/footerposition"] = "{:.3f}".format(footerpos / marginmms)
+        self.dict["paper/ruleposition"] = "{:.3f}".format(headerpos / 25.4 * 72.27 - float(self.dict["paper/rulegap"]))
         
     def texfix(self, path):
         return path.replace(" ", r"\ ")

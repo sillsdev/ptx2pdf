@@ -437,6 +437,9 @@ class TTFont:
         self.names = {}
         self.ttfont = None
         self.usepath = False
+        self.ascent = 0.
+        self.descent = 0.
+        self.upem = 1
         if self.filename is not None:
             if self.readfont():
                 self.family = self.names.get(1, self.family)
@@ -473,6 +476,8 @@ class TTFont:
             self.readSill(inf)
             self.readOTFeats(inf)
             self.readOTLangs(inf)
+            self.readhhea(inf)
+            self.readhead(inf)
         return True
 
     def readFeat(self, inf):
@@ -606,6 +611,16 @@ class TTFont:
             # only get unicode strings (US English)
             if (pid == 0 and lid == 0) or (pid == 3 and (eid < 2 or eid == 10) and lid == 1033):
                 self.names[nid] = stringData[offset:offset+length].decode("utf_16_be")
+
+    def readhhea(self, inf):
+        inf.seek(self.dict['hhea'][0])
+        data = inf.read(8)
+        self.ascent, self.descent = struct.unpack(b">HH", data[4:])
+
+    def readhead(self, inf):
+        inf.seek(self.dict['head'][0])
+        data = inf.read(20)
+        self.upem = struct.unpack(b">H", data[18:])[0]
 
     def style2str(self, style):
         return pango_styles.get(style, str(style))
