@@ -28,17 +28,21 @@ def num2tag(n):
     else:
         return struct.unpack('4s', struct.pack('>L', n))[0].replace(b'\000', b'').decode()
 
-def parseFeatString(featstring, defaults={}):
-    feats = defaults.copy()
+def parseFeatString(featstring, defaults={}, langfeats={}):
+    feats = {}
     lang = None
+    base = defaults
     if featstring is not None and featstring:
         for l in re.split(r'\s*[,;:]\s*|\s+', featstring):
             k, v = l.split("=")
             if k.lower() == "language":
                 lang = v.strip()
+                base = langfeats.get(lang, base)
             else:
                 feats[k.strip()] = v.strip()
-    return (lang, feats)
+    res = base.copy()
+    res.update(feats)
+    return (lang, res)
 
 class TTFontCache:
     def __init__(self, nofclist=False):
@@ -524,7 +528,7 @@ class TTFont:
             inf.seek(self.dict['Sill'][0] + o)
             setdat = inf.read(numsettings * 8)
             for j in range(numsettings):
-                fnum, value = struct.unpack(">LH", data[j*8:j*8+6])
+                fnum, value = struct.unpack(">LH", setdat[j*8:j*8+6])
                 self.langfeats[langtag][num2tag(fnum)] = value
 
     def readOTFeats(self, inf):

@@ -1491,14 +1491,16 @@ class GtkViewModel(ViewModel):
             feats = f.feats
             vals = f.featvals
             langs = f.grLangs
-            defaults = f.featdefaults
+            self.currdefaults = f.featdefaults
+            langfeats = f.langfeats
         else:
             feats = f.otFeats
             vals = f.otVals
             langs = f.otLangs
-            defaults = {}
+            self.currdefaults = {}
+            langfeats = {}
         numrows = len(feats)
-        (lang, setfeats) = parseFeatString(self.get("t_fontFeatures"), defaults=defaults)
+        (lang, setfeats) = parseFeatString(self.get("t_fontFeatures"), defaults=self.currdefaults, langfeats=langfeats)
         for i, (k, v) in enumerate(sorted(feats.items())):
             featbox.insert_row(i)
             l = Gtk.Label(label=v+":")
@@ -1531,6 +1533,26 @@ class GtkViewModel(ViewModel):
             lslangs.append([v, k])
         if lang is not None:
             self.set("fcb_featsLangs", lang)
+        def onLangChanged(fcb):
+            newlang = self.get("fcb_featsLangs")
+            newdefaults = langfeats.get(newlang, self.currdefaults)
+            print("New defaults for lang {}: {}".format(newlang, newdefaults))
+            for i, (k, v) in enumerate(sorted(feats.items())):
+                if newdefaults.get(k, 0) == self.currdefaults.get(k, 0):
+                    continue
+                obj = featbox.get_child_at(1, i)
+                print("Changing feature {} in lang {}".format(k, newlang))
+                if isinstance(obj, Gtk.CheckButton):
+                    if (1 if obj.get_active() else 0) == self.currdefaults.get(k, 0):
+                        obj.set_active(newdefaults.get(k, 0) == 1)
+                elif isinstnace(obj, GtkSpinButton):
+                    if obj.get_value() == self.currdefaults.get(k, 0):
+                        obj.set_value(newdefaults.get(k, 0))
+                elif isinstance(obj, Gtk.ComboBoxText):
+                    if obj.get_active_id() == self.currdefaults.get(k, 0):
+                        ob.set_active_id(newdefaults.get(k, 0))
+            self.currdefaults = newdefaults
+        langChangedId = self.builder.get_object("fcb_featsLangs").connect("changed", onLangChanged)
         dialog.set_keep_above(True)
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
@@ -1538,6 +1560,7 @@ class GtkViewModel(ViewModel):
             lang = self.get("fcb_featsLangs")
             if lang is not None:
                 results.append("language="+lang)
+                self.currdefaults = langfeats.get(lang, self.currdefaults)
             for i, (k, v) in enumerate(sorted(feats.items())):
                 obj = featbox.get_child_at(1, i)
                 if isinstance(obj, Gtk.CheckButton):
@@ -1546,12 +1569,13 @@ class GtkViewModel(ViewModel):
                     val = int(obj.get_value())
                 elif isinstance(obj, Gtk.ComboBoxText):
                     val = obj.get_active_id()
-                if val is not None and ((defaults is not None and str(defaults.get(k, 0)) != str(val))\
-                                        or (defaults is None and str(val) != "0")):
+                if val is not None and ((self.currdefaults is not None and str(self.currdefaults.get(k, 0)) != str(val))\
+                                        or (self.currdefaults is None and str(val) != "0")):
                     results.append("{}={}".format(k, val))
             self.set("t_fontFeatures", ", ".join(results))
         for i in range(numrows-1, -1, -1):
             featbox.remove_row(i)
+        self.builder.get_object("fcb_featsLangs").disconnect(langChangedId)
         dialog.set_keep_above(False)
         dialog.hide()
 
