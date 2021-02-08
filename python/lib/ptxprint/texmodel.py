@@ -588,8 +588,9 @@ class TexModel:
                     # print(spclChars.split(' '), [len(x) for x in spclChars.split(' ')])
                     if self.dict["paragraph/ifusefallback"] and len(spclChars):
                         badlist = "\u2018\u2019\u201c\u201d*#%"
-                        a = ["".join(chr(ord(c) + 16 if ord(c) < 58 else ord(c) - 23) for c in str(hex(ord(x)))[2:]).lower() for x in spclChars.split(" ")]
-                        b = ["".join((c) for c in str(hex(ord(x)))[2:]).lower() for x in spclChars.split(" ")]
+                        specials = spclChars.replace(" ", "").encode("raw_unicode_escape").decode("raw_unicode_escape")
+                        a = ["".join(chr(ord(c) + 16 if ord(c) < 58 else ord(c) - 23) for c in str(hex(ord(x)))[2:]).lower() for x in specials]
+                        b = ["".join((c) for c in str(hex(ord(x)))[2:]).lower() for x in specials]
                         c = [x for x in zip(a,b) if chr(int(x[1],16)) not in badlist]
                         if not len(c):
                             continue
