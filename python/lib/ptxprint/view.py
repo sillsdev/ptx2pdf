@@ -3,7 +3,7 @@ import configparser, os, re, regex, random, collections
 from ptxprint.texmodel import ModelMap, TexModel
 from ptxprint.ptsettings import ParatextSettings, allbooks, books, bookcodes, chaps
 from ptxprint.font import TTFont, cachepath, cacheremovepath, FontRef
-from ptxprint.utils import _, refKey, universalopen, print_traceback, local2globalhdr, global2localhdr
+from ptxprint.utils import _, refKey, universalopen, print_traceback, local2globalhdr, global2localhdr, asfloat
 from ptxprint.usfmutils import Sheets, UsfmCollection
 from ptxprint.piclist import PicInfo
 from ptxprint.styleditor import StyleEditor
@@ -281,16 +281,20 @@ class ViewModel:
 
     def getMargins(self):
         font = self.get("bl_fontR").getTtfont()
-        fontheight = 1. + float(font.descent) / font.upem
-        fontsize = float(self.get("s_fontsize")) / 72.27 * 25.4
+        #fontheight = 1. + float(font.descent) / font.upem
+        fontheight = float(font.ascent) / font.upem
+        fontsizemms = float(self.get("s_fontsize")) / 72.27 * 25.4
+        linespacemms = float(self.get("s_linespacing")) * 25.4 / 72.27
+        hfontsizemms = asfloat(self.styleEditor.get("h", "FontSize"), 1.) * fontsizemms
         marginmms = float(self.get("s_margins"))
         topmarginmms = float(self.get("s_topmargin")) # - fontsize  # macros add fontsize for some reason
         bottommarginmms = float(self.get("s_bottommargin"))
-        headerposmms = topmarginmms - float(self.get("s_headerposition")) * 25.4 / 72.27
+        headerposmms = topmarginmms - float(self.get("s_headerposition")) * 25.4 / 72.27 - 0.7 * hfontsizemms
         footerposmms = float(self.get("s_footerposition"))
-        headerlabel = headerposmms - fontheight * fontsize
-        footerlabel = (bottommarginmms - footerposmms - fontheight * fontsize) * 72.27 / 25.4
-        return (marginmms, topmarginmms, bottommarginmms, headerposmms, footerposmms, headerlabel, footerlabel)
+        headerlabel = headerposmms - fontheight * fontsizemms
+        footerlabel = (bottommarginmms - footerposmms - fontheight * fontsizemms) * 72.27 / 25.4
+        rulerposmms = (float(self.get("s_headerposition")) - float(self.get("s_rhruleposition"))) * 25.4 / 72.27 + fontsizemms - linespacemms
+        return (marginmms, topmarginmms, bottommarginmms, headerposmms, footerposmms, rulerposmms, headerlabel, footerlabel)
 
     def updateSavedConfigList(self):
         pass

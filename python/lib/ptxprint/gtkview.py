@@ -2320,7 +2320,7 @@ class GtkViewModel(ViewModel):
         self.onNumTabsChanged()
 
     def onNumTabsChanged(self, *a):
-        (marginmms, topmarginmms, bottommarginmms, headerpos, footerpos, headerlabel, footerlabel) = self.getMargins()
+        (marginmms, topmarginmms, bottommarginmms, headerpos, footerpos, rulerpos, headerlabel, footerlabel) = self.getMargins()
         self.set("l_margin2header1", "{:.3f}mm".format(headerlabel))
         self.set("l_margin2footer", "{:.1f}pt".format(footerlabel))
         if self.get("c_thumbtabs"):

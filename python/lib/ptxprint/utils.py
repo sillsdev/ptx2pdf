@@ -209,3 +209,9 @@ def global2localhdr(s):
         return revlocal.get(mkr, mkr)
     else:
         return s
+
+def asfloat(v, d):
+    try:
+        return float(v)
+    except (ValueError, TypeError):
+        return d

@@ -542,12 +542,12 @@ class TexModel:
                 return h
 
     def calculateMargins(self):
-        (marginmms, topmarginmms, bottommarginmms, headerposmms, footerposmms, headerlabel, footerlabel) = self.printer.getMargins()
+        (marginmms, topmarginmms, bottommarginmms, headerposmms, footerposmms, ruleposmms, headerlabel, footerlabel) = self.printer.getMargins()
         self.dict["paper/topmarginfactor"] = "{:.3f}".format(topmarginmms / marginmms)
         self.dict["paper/bottommarginfactor"] = "{:.3f}".format(bottommarginmms / marginmms)
         self.dict["paper/headerposition"] = "{:.3f}".format(headerposmms / marginmms)
         self.dict["paper/footerposition"] = "{:.3f}".format(footerposmms / marginmms)
-        self.dict["paper/ruleposition"] = "{:.3f}".format((topmarginmms - headerposmms) * 72.27 / 25.4 - float(self.dict["paper/rulegap"]))
+        self.dict["paper/ruleposition"] = "{:.3f}".format(ruleposmms * 72.27 / 25.4)
         
     def texfix(self, path):
         return path.replace(" ", r"\ ")
