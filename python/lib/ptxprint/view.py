@@ -283,7 +283,6 @@ class ViewModel:
         font = self.get("bl_fontR").getTtfont()
         fontheight = 1. + float(font.descent) / font.upem
         fontsize = float(self.get("s_fontsize")) / 72.27 * 25.4
-        print(f"font size: {fontsize}, height: {fontheight} @ {font.upem} descent: {font.descent}")
         marginmms = float(self.get("s_margins"))
         topmarginmms = float(self.get("s_topmargin")) # - fontsize  # macros add fontsize for some reason
         bottommarginmms = float(self.get("s_bottommargin"))

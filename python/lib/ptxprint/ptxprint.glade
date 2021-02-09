@@ -4688,7 +4688,7 @@ Margins value on the Layout tab.</property>
                                     <property name="numeric">True</property>
                                     <property name="update_policy">if-valid</property>
                                     <property name="value">18</property>
-                                    <signal name="wrapped" handler="onNumTabsChanged" swapped="no"/>
+                                    <signal name="value-changed" handler="onNumTabsChanged" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">3</property>
