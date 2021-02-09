@@ -1814,6 +1814,7 @@ class GtkViewModel(ViewModel):
         self.updatePicList()
         self.updateDialogTitle()
         self.picChecksView.init(basepath=self.configPath(cfgname=None), configid=self.configId)
+        self.styleEditor.editMarker()
 
     def onConfigNameChanged(self, cb_savedConfig):
         lockBtn = self.builder.get_object("btn_lockunlock")
