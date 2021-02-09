@@ -172,6 +172,7 @@ _nonsensitivities = {
     "c_omitrhchapnum" :        ["c_hdrverses"],
     "c_blendfnxr" :            ["l_internote", "s_internote"],
     "c_useprintdraftfolder" :  ["btn_selectOutputFolder"],
+    "c_styFaceSuperscript" :   ["l_styRaise", "s_styRaise"],
 }
 _object_classes = {
     "printbutton": ("b_print", "btn_refreshFonts"),
@@ -545,7 +546,7 @@ class GtkViewModel(ViewModel):
                   "row_ToC", "c_hyphenate", "l_missingPictureCount", "bx_colophon", "btn_deleteConfig", "btn_lockunlock",
                   "c_hdrLeftPri", "c_hdrLeftSec", "c_hdrCenterPri", "c_hdrCenterSec", "c_hdrRightPri", "c_hdrRightSec", 
                   "c_omitverseone", "c_glueredupwords", "c_firstParaIndent", "c_hangpoetry", "c_preventwidows", 
-                  "btn_unpackDBLbundle", "c_cropmarks", # "l_sidemargin", "s_sidemargin", 
+                  "btn_unpackDBLbundle", "c_cropmarks",
                   "c_pagegutter", "s_pagegutter", "l_digits", "fcb_digits", "c_quickRun", "c_mirrorpages",
                   "t_invisiblePassword", "t_configNotes", "l_notes", "c_elipsizeMissingVerses", "fcb_glossaryMarkupStyle",
                   "gr_fnAdvOptions", "c_figexclwebapp", "l_glossaryMarkupStyle", "btn_refreshFonts",
@@ -2574,15 +2575,7 @@ class GtkViewModel(ViewModel):
             self.onDestroy(None)
 
     def onRHruleClicked(self, btn):
-        status = self.sensiVisible("c_rhrule")
-        self.builder.get_object("gr_marginGraphicLineTrue").set_visible(status)
-        self.builder.get_object("rul_rhrule").set_visible(status)
-        # self.builder.get_object("l_rhruleoffset").set_visible(status)
-
-        fc = "#22228b8b2222" if status else "#88888a8a8585"
-        fc = "green" if status else "grey"
-        print("<span foreground='{}'>".format(fc)+_("Header to Rule")+"</span>")
-        self.builder.get_object("l_rhruleoffset").set_markup("<span foreground='{}'>".format(fc)+_("Header to Rule")+"</span>")
-        
-        # self.builder.get_object("").set_visible(False)
-        # "s_rhruleposition", "rul_rhrule", "l_rhruleoffset", "gr_marginGraphicLineTrue"
+        status = self.get("c_rhrule")
+        self.builder.get_object("l_rhruleoffset").set_visible(status)
+        self.builder.get_object("s_rhruleposition").set_visible(status)
+        self.builder.get_object("gr_marginGraphicLineTrue").set_visible(status)        

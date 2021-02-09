@@ -322,7 +322,6 @@ class StyleEditorView(StyleEditor):
                     oldval = oldval != v[2]
             if k == "FontSize":
                 self.set("l_styActualFontSize", "{:.1f}pt".format(float(val) / 12. * float(self.model.get("s_fontsize"))))
-                print("Actual fontsize: {} * {}".format(float(val), float(self.model.get("s_fontsize"))))
             self._setFieldVal(v, oldval, val)
 
         stype = data.get('StyleType', old.get('StyleType', ''))
@@ -414,7 +413,6 @@ class StyleEditorView(StyleEditor):
             self._setData(key, value)
             if key == "FontSize":
                 self.set("l_styActualFontSize", "{:.1f}pt".format(float(value) / 12. * float(self.model.get("s_fontsize"))))
-                print("Actual fontsize: {} * {}".format(float(val), float(self.model.get("s_fontsize"))))
         if v[1] is not None:
             ctxt = self.builder.get_object(v[1]).get_style_context()
             if key.startswith("_"):

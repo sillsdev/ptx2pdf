@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.2 
+<!-- Generated with glade 3.22.1 
 
 The MIT License (MIT)
 
@@ -3985,40 +3985,8 @@ Configuration settings.</property>
                                     <property name="valign">center</property>
                                     <property name="margin_right">6</property>
                                     <property name="margin_bottom">6</property>
-                                    <property name="row_spacing">12</property>
+                                    <property name="row_spacing">9</property>
                                     <property name="column_spacing">3</property>
-                                    <child>
-                                      <object class="GtkLabel">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="halign">end</property>
-                                        <property name="valign">center</property>
-                                        <property name="label" translatable="yes">Side Margin
-Width:</property>
-                                        <property name="justify">right</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">0</property>
-                                        <property name="top_attach">1</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkLabel" id="l_sidemargin">
-                                        <property name="sensitive">False</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="no_show_all">True</property>
-                                        <property name="tooltip_text" translatable="yes">Basic unit for margins; changing this will alter them all.</property>
-                                        <property name="halign">end</property>
-                                        <property name="valign">center</property>
-                                        <property name="label" translatable="yes">Side Margin
-Factor:</property>
-                                        <property name="justify">right</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">0</property>
-                                        <property name="top_attach">2</property>
-                                      </packing>
-                                    </child>
                                     <child>
                                       <object class="GtkCheckButton" id="c_pagegutter">
                                         <property name="label" translatable="yes">Binding
@@ -4036,58 +4004,6 @@ page for binding.</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
-                                        <property name="top_attach">3</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkSpinButton" id="s_margins">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="tooltip_text" translatable="yes">The margins are set
-in millimeters (mm).</property>
-                                        <property name="halign">start</property>
-                                        <property name="valign">center</property>
-                                        <property name="width_chars">5</property>
-                                        <property name="text">14</property>
-                                        <property name="caps_lock_warning">False</property>
-                                        <property name="progress_pulse_step">0</property>
-                                        <property name="secondary_icon_tooltip_text" translatable="yes">The basic margin unit in mm. This is multiplied by the various margin factors to give the actual margin</property>
-                                        <property name="placeholder_text" translatable="yes">0.0</property>
-                                        <property name="input_purpose">number</property>
-                                        <property name="adjustment">a_margins</property>
-                                        <property name="climb_rate">1</property>
-                                        <property name="digits">1</property>
-                                        <property name="numeric">True</property>
-                                        <property name="update_policy">if-valid</property>
-                                        <property name="value">12</property>
-                                        <signal name="value-changed" handler="onNumTabsChanged" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">1</property>
-                                        <property name="top_attach">1</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkSpinButton" id="s_sidemargin">
-                                        <property name="sensitive">False</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="no_show_all">True</property>
-                                        <property name="halign">start</property>
-                                        <property name="valign">center</property>
-                                        <property name="width_chars">5</property>
-                                        <property name="text">1.00</property>
-                                        <property name="caps_lock_warning">False</property>
-                                        <property name="placeholder_text">0.0</property>
-                                        <property name="input_purpose">number</property>
-                                        <property name="adjustment">a_sidemargin</property>
-                                        <property name="digits">1</property>
-                                        <property name="numeric">True</property>
-                                        <property name="update_policy">if-valid</property>
-                                        <property name="value">1</property>
-                                        <signal name="value-changed" handler="onNumTabsChanged" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">1</property>
                                         <property name="top_attach">2</property>
                                       </packing>
                                     </child>
@@ -4102,6 +4018,7 @@ page for binding (millimeters).</property>
                                         <property name="valign">center</property>
                                         <property name="width_chars">4</property>
                                         <property name="text">5</property>
+                                        <property name="xalign">1</property>
                                         <property name="caps_lock_warning">False</property>
                                         <property name="progress_pulse_step">0</property>
                                         <property name="placeholder_text">0.0</property>
@@ -4115,7 +4032,7 @@ page for binding (millimeters).</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
-                                        <property name="top_attach">3</property>
+                                        <property name="top_attach">2</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -4141,6 +4058,7 @@ space between lines of text.</property>
                                         <property name="valign">center</property>
                                         <property name="width_chars">6</property>
                                         <property name="text">15.0</property>
+                                        <property name="xalign">1</property>
                                         <property name="caps_lock_warning">False</property>
                                         <property name="progress_pulse_step">0</property>
                                         <property name="placeholder_text">0.0</property>
@@ -4215,8 +4133,8 @@ sizes then set the font size here to 12pt.</property>
                                         <property name="halign">end</property>
                                         <property name="valign">center</property>
                                         <property name="hexpand">True</property>
-                                        <property name="label" translatable="yes">Base
-Font Size:</property>
+                                        <property name="label" translatable="yes">Base Font
+Size (pt):</property>
                                         <property name="justify">right</property>
                                       </object>
                                       <packing>
@@ -4233,6 +4151,7 @@ Font Size:</property>
                                         <property name="valign">center</property>
                                         <property name="width_chars">6</property>
                                         <property name="text">12.0</property>
+                                        <property name="xalign">1</property>
                                         <property name="caps_lock_warning">False</property>
                                         <property name="adjustment">a_fontsize</property>
                                         <property name="climb_rate">0.10000000000000001</property>
@@ -4256,8 +4175,8 @@ Change to increase or decrease
 space between lines of text.</property>
                                         <property name="halign">end</property>
                                         <property name="valign">center</property>
-                                        <property name="label" translatable="yes">Base
-Line Spacing:</property>
+                                        <property name="label" translatable="yes">Base Line
+Spacing (pt):</property>
                                         <property name="justify">right</property>
                                       </object>
                                       <packing>
@@ -4275,15 +4194,14 @@ also affects poetry indentation.
 (default=1, min=0, max=4)</property>
                                         <property name="halign">end</property>
                                         <property name="valign">center</property>
-                                        <property name="margin_left">28</property>
-                                        <property name="label" translatable="yes">Base 
-Paragraph Indent:</property>
+                                        <property name="margin_left">6</property>
+                                        <property name="label" translatable="yes">Base Paragraph 
+Indent (inches):</property>
                                         <property name="justify">right</property>
                                       </object>
                                       <packing>
-                                        <property name="left_attach">2</property>
-                                        <property name="top_attach">3</property>
-                                        <property name="width">2</property>
+                                        <property name="left_attach">0</property>
+                                        <property name="top_attach">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -4296,9 +4214,9 @@ also affects poetry indentation.
 (default=1, min=0, max=4)</property>
                                         <property name="halign">start</property>
                                         <property name="valign">center</property>
-                                        <property name="max_length">4</property>
-                                        <property name="width_chars">6</property>
+                                        <property name="width_chars">4</property>
                                         <property name="text">1.00</property>
+                                        <property name="xalign">1</property>
                                         <property name="caps_lock_warning">False</property>
                                         <property name="input_purpose">number</property>
                                         <property name="adjustment">a_indentUnit</property>
@@ -4309,9 +4227,8 @@ also affects poetry indentation.
                                         <property name="value">1</property>
                                       </object>
                                       <packing>
-                                        <property name="left_attach">4</property>
-                                        <property name="top_attach">3</property>
-                                        <property name="width">2</property>
+                                        <property name="left_attach">1</property>
+                                        <property name="top_attach">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -4358,188 +4275,43 @@ measuring the physical printout.</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkBox">
+                          <object class="GtkFrame">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="margin_left">10</property>
                             <property name="margin_right">6</property>
-                            <property name="margin_top">4</property>
+                            <property name="margin_top">6</property>
                             <property name="margin_bottom">4</property>
-                            <property name="orientation">vertical</property>
+                            <property name="hexpand">True</property>
+                            <property name="label_xalign">0.30000001192092896</property>
                             <child>
-                              <object class="GtkFrame">
+                              <object class="GtkGrid" id="gr_doubleColumn">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="margin_right">6</property>
-                                <property name="margin_bottom">4</property>
-                                <property name="hexpand">True</property>
-                                <property name="label_xalign">0.30000001192092896</property>
+                                <property name="margin_left">6</property>
+                                <property name="margin_right">12</property>
+                                <property name="margin_top">4</property>
+                                <property name="margin_bottom">5</property>
+                                <property name="row_spacing">6</property>
+                                <property name="column_spacing">4</property>
                                 <child>
-                                  <object class="GtkGrid" id="gr_doubleColumn">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="margin_left">6</property>
-                                    <property name="margin_right">12</property>
-                                    <property name="margin_top">4</property>
-                                    <property name="margin_bottom">5</property>
-                                    <property name="column_spacing">4</property>
-                                    <child>
-                                      <object class="GtkSpinButton" id="s_colgutterfactor">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="tooltip_text" translatable="yes">This is the space between 
-the text of the two columns 
-(measured in millimeters).</property>
-                                        <property name="halign">end</property>
-                                        <property name="valign">center</property>
-                                        <property name="width_chars">5</property>
-                                        <property name="text">15</property>
-                                        <property name="caps_lock_warning">False</property>
-                                        <property name="input_purpose">number</property>
-                                        <property name="adjustment">a_colgutterwidth</property>
-                                        <property name="climb_rate">1</property>
-                                        <property name="digits">1</property>
-                                        <property name="numeric">True</property>
-                                        <property name="value">4</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">1</property>
-                                        <property name="top_attach">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkCheckButton" id="c_verticalrule">
-                                        <property name="label" translatable="yes">Vertical Rule in Gutter</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="tooltip_text" translatable="yes">Check this option to include a center line
-between the two columns.</property>
-                                        <property name="halign">start</property>
-                                        <property name="valign">center</property>
-                                        <property name="margin_left">8</property>
-                                        <property name="margin_top">6</property>
-                                        <property name="margin_bottom">6</property>
-                                        <property name="active">True</property>
-                                        <property name="draw_indicator">True</property>
-                                        <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">0</property>
-                                        <property name="top_attach">1</property>
-                                        <property name="width">2</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkLabel" id="l_gutterWidth">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="tooltip_text" translatable="yes">This is the space between 
-the text of the two columns 
-(measured in millimeters).</property>
-                                        <property name="halign">end</property>
-                                        <property name="valign">center</property>
-                                        <property name="margin_left">12</property>
-                                        <property name="label" translatable="yes">Gutter 
-Width:</property>
-                                        <property name="justify">right</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">0</property>
-                                        <property name="top_attach">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkSpinButton" id="s_colgutteroffset">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="tooltip_text" translatable="yes">This setting can raise (if -ve) or lower (if +ve) the starting point of the vertical rule between columns. (Value is pts).</property>
-                                        <property name="halign">end</property>
-                                        <property name="valign">center</property>
-                                        <property name="width_chars">5</property>
-                                        <property name="text">-2.0</property>
-                                        <property name="caps_lock_warning">False</property>
-                                        <property name="input_purpose">number</property>
-                                        <property name="adjustment">a_columngutteroffset</property>
-                                        <property name="climb_rate">1</property>
-                                        <property name="digits">1</property>
-                                        <property name="numeric">True</property>
-                                        <property name="value">-3.5</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">1</property>
-                                        <property name="top_attach">2</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkLabel" id="l_colgutteroffset">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="tooltip_text" translatable="yes">This setting can raise (if -ve) or lower (if +ve) the starting point of the vertical rule between columns. (Value is pts).</property>
-                                        <property name="halign">end</property>
-                                        <property name="label" translatable="yes">Adjust
-Top:</property>
-                                        <property name="justify">right</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">0</property>
-                                        <property name="top_attach">2</property>
-                                      </packing>
-                                    </child>
-                                  </object>
-                                </child>
-                                <child type="label">
-                                  <object class="GtkCheckButton" id="c_doublecolumn">
-                                    <property name="label" translatable="yes">Two Column Layout</property>
+                                  <object class="GtkSpinButton" id="s_colgutterfactor">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">This is the space between 
+the text of the two columns 
+(measured in millimeters).</property>
                                     <property name="halign">end</property>
-                                    <property name="margin_left">2</property>
-                                    <property name="active">True</property>
-                                    <property name="draw_indicator">True</property>
-                                    <signal name="clicked" handler="on2colClicked" swapped="no"/>
-                                  </object>
-                                </child>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">False</property>
-                                <property name="position">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkGrid">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <child>
-                                  <object class="GtkCheckButton" id="c_rhrule">
-                                    <property name="label" translatable="yes">Horizontal Rule</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">Check this option to add a horizontal
-line under the page header, before the
-main body text begins.</property>
-                                    <property name="halign">end</property>
-                                    <property name="margin_left">6</property>
-                                    <property name="margin_bottom">3</property>
-                                    <property name="active">True</property>
-                                    <property name="draw_indicator">True</property>
-                                    <signal name="clicked" handler="onRHruleClicked" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">0</property>
-                                    <property name="top_attach">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkSeparator" id="rul_rhrule">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
                                     <property name="valign">center</property>
-                                    <property name="margin_top">6</property>
-                                    <property name="margin_bottom">6</property>
+                                    <property name="width_chars">5</property>
+                                    <property name="text">15</property>
+                                    <property name="xalign">1</property>
+                                    <property name="caps_lock_warning">False</property>
+                                    <property name="input_purpose">number</property>
+                                    <property name="adjustment">a_colgutterwidth</property>
+                                    <property name="climb_rate">1</property>
+                                    <property name="digits">1</property>
+                                    <property name="numeric">True</property>
+                                    <property name="value">4</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">1</property>
@@ -4547,56 +4319,98 @@ main body text begins.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkLabel" id="l_rhruleoffset">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="tooltip_text" translatable="yes">This is the space between the horizontal 
-rule and the top of the main test (in pts).</property>
-                                    <property name="halign">end</property>
-                                    <property name="margin_right">4</property>
-                                    <property name="margin_top">3</property>
-                                    <property name="label" translatable="yes">Space from Rule
-to Body Text:</property>
-                                    <property name="justify">right</property>
-                                    <attributes>
-                                      <attribute name="foreground" value="#22228b8b2222"/>
-                                    </attributes>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">0</property>
-                                    <property name="top_attach">1</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkSpinButton" id="s_rhruleposition">
+                                  <object class="GtkCheckButton" id="c_verticalrule">
+                                    <property name="label" translatable="yes">Vertical Rule in Gutter</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">Check this option to include a center line
+between the two columns.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
-                                    <property name="width_chars">4</property>
-                                    <property name="text">12</property>
+                                    <property name="margin_left">8</property>
+                                    <property name="margin_top">6</property>
+                                    <property name="margin_bottom">6</property>
+                                    <property name="active">True</property>
+                                    <property name="draw_indicator">True</property>
+                                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">1</property>
+                                    <property name="width">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="l_gutterWidth">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="tooltip_text" translatable="yes">This is the space between 
+the text of the two columns 
+(measured in millimeters).</property>
+                                    <property name="halign">end</property>
+                                    <property name="valign">center</property>
+                                    <property name="margin_left">12</property>
+                                    <property name="label" translatable="yes">Gutter 
+Width:</property>
+                                    <property name="justify">right</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkSpinButton" id="s_colgutteroffset">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="tooltip_text" translatable="yes">This setting can raise (if -ve) or lower (if +ve) the starting point of the vertical rule between columns. (Value is pts).</property>
+                                    <property name="halign">end</property>
+                                    <property name="valign">center</property>
+                                    <property name="width_chars">5</property>
+                                    <property name="text">-2.0</property>
+                                    <property name="xalign">1</property>
                                     <property name="caps_lock_warning">False</property>
-                                    <property name="progress_pulse_step">0</property>
-                                    <property name="placeholder_text">0.0</property>
                                     <property name="input_purpose">number</property>
-                                    <property name="adjustment">a_ruleposition</property>
+                                    <property name="adjustment">a_columngutteroffset</property>
                                     <property name="climb_rate">1</property>
+                                    <property name="digits">1</property>
                                     <property name="numeric">True</property>
-                                    <property name="update_policy">if-valid</property>
-                                    <property name="value">12</property>
-                                    <signal name="value-changed" handler="onNumTabsChanged" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">1</property>
-                                    <property name="top_attach">1</property>
+                                    <property name="top_attach">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="l_colgutteroffset">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="tooltip_text" translatable="yes">This setting can raise (if -ve) or lower (if +ve) the starting point of the vertical rule between columns. (Value is pts).</property>
+                                    <property name="halign">end</property>
+                                    <property name="label" translatable="yes">Adjust
+Top:</property>
+                                    <property name="justify">right</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">2</property>
                                   </packing>
                                 </child>
                               </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">True</property>
-                                <property name="position">1</property>
-                              </packing>
+                            </child>
+                            <child type="label">
+                              <object class="GtkCheckButton" id="c_doublecolumn">
+                                <property name="label" translatable="yes">Two Column Layout</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="halign">end</property>
+                                <property name="margin_left">2</property>
+                                <property name="active">True</property>
+                                <property name="draw_indicator">True</property>
+                                <signal name="clicked" handler="on2colClicked" swapped="no"/>
+                              </object>
                             </child>
                           </object>
                           <packing>
@@ -4616,7 +4430,11 @@ to Body Text:</property>
                       <object class="GtkFrame" id="fr_topBottomMargins">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="label_xalign">0</property>
+                        <property name="margin_left">6</property>
+                        <property name="margin_right">6</property>
+                        <property name="margin_top">4</property>
+                        <property name="margin_bottom">6</property>
+                        <property name="label_xalign">0.019999999552965164</property>
                         <child>
                           <object class="GtkAlignment">
                             <property name="visible">True</property>
@@ -4629,17 +4447,18 @@ to Body Text:</property>
                                 <property name="margin_top">4</property>
                                 <property name="margin_bottom">6</property>
                                 <property name="row_spacing">5</property>
-                                <property name="column_spacing">4</property>
+                                <property name="column_spacing">8</property>
                                 <child>
                                   <object class="GtkImage" id="gr_marginGraphicLineTrue">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="margin_left">12</property>
                                     <property name="pixbuf">MarginGraphicLineTrue.png</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
                                     <property name="top_attach">1</property>
-                                    <property name="width">2</property>
+                                    <property name="width">3</property>
                                     <property name="height">3</property>
                                   </packing>
                                 </child>
@@ -4656,14 +4475,15 @@ Margins value on the Layout tab.</property>
                                     <property name="halign">end</property>
                                     <property name="margin_top">6</property>
                                     <property name="margin_bottom">6</property>
-                                    <property name="label" translatable="yes">Top Margin to Text:</property>
+                                    <property name="label" translatable="yes">Top Margin 
+to Text (mm):</property>
                                     <property name="justify">right</property>
                                     <attributes>
                                       <attribute name="foreground" value="#cccc00000000"/>
                                     </attributes>
                                   </object>
                                   <packing>
-                                    <property name="left_attach">2</property>
+                                    <property name="left_attach">3</property>
                                     <property name="top_attach">1</property>
                                   </packing>
                                 </child>
@@ -4679,20 +4499,21 @@ factor (without units) and is multiplied by the
 Margins value on the Layout tab.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
-                                    <property name="width_chars">6</property>
+                                    <property name="width_chars">5</property>
                                     <property name="text">1.80</property>
+                                    <property name="xalign">1</property>
                                     <property name="caps_lock_warning">False</property>
                                     <property name="placeholder_text">0.0</property>
                                     <property name="input_purpose">number</property>
                                     <property name="adjustment">a_topmargin</property>
-                                    <property name="digits">2</property>
+                                    <property name="digits">1</property>
                                     <property name="numeric">True</property>
                                     <property name="update_policy">if-valid</property>
                                     <property name="value">18</property>
                                     <signal name="value-changed" handler="onNumTabsChanged" swapped="no"/>
                                   </object>
                                   <packing>
-                                    <property name="left_attach">3</property>
+                                    <property name="left_attach">4</property>
                                     <property name="top_attach">1</property>
                                   </packing>
                                 </child>
@@ -4706,14 +4527,15 @@ vertical positioning of the header line. This setting
 is a factor (without units) and is multiplied by the
 Margins value on the Layout tab.</property>
                                     <property name="halign">end</property>
-                                    <property name="label" translatable="yes">Header to Text Space:</property>
+                                    <property name="label" translatable="yes">Header to 
+Text Space (pt):</property>
                                     <property name="justify">right</property>
                                     <attributes>
                                       <attribute name="foreground" value="#2b0a4be2f850"/>
                                     </attributes>
                                   </object>
                                   <packing>
-                                    <property name="left_attach">2</property>
+                                    <property name="left_attach">3</property>
                                     <property name="top_attach">2</property>
                                   </packing>
                                 </child>
@@ -4726,20 +4548,21 @@ of the header line by setting the amount of space
 between the header and the top of the text. (pts)</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
-                                    <property name="width_chars">6</property>
+                                    <property name="width_chars">5</property>
                                     <property name="text">1.00</property>
+                                    <property name="xalign">1</property>
                                     <property name="caps_lock_warning">False</property>
                                     <property name="placeholder_text">0.0</property>
                                     <property name="input_purpose">number</property>
                                     <property name="adjustment">a_hdrposition</property>
-                                    <property name="digits">2</property>
+                                    <property name="digits">1</property>
                                     <property name="numeric">True</property>
                                     <property name="update_policy">if-valid</property>
-                                    <property name="value">1</property>
+                                    <property name="value">15</property>
                                     <signal name="value-changed" handler="onNumTabsChanged" swapped="no"/>
                                   </object>
                                   <packing>
-                                    <property name="left_attach">3</property>
+                                    <property name="left_attach">4</property>
                                     <property name="top_attach">2</property>
                                   </packing>
                                 </child>
@@ -4747,12 +4570,13 @@ between the header and the top of the text. (pts)</property>
                                   <object class="GtkImage" id="gr_marginGraphicLineFalse">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="margin_left">12</property>
                                     <property name="pixbuf">MarginGraphicLineFalse.png</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
                                     <property name="top_attach">1</property>
-                                    <property name="width">2</property>
+                                    <property name="width">3</property>
                                     <property name="height">3</property>
                                   </packing>
                                 </child>
@@ -4767,17 +4591,18 @@ where the main text and footnotes and
 cross-references end. This setting is a 
 factor (without units) and is multiplied 
 by the Margins value on the Layout tab.</property>
-                                    <property name="halign">start</property>
+                                    <property name="halign">end</property>
                                     <property name="margin_top">6</property>
                                     <property name="margin_bottom">6</property>
-                                    <property name="label" translatable="yes">Bottom Margin to Text:</property>
+                                    <property name="label" translatable="yes">Bottom Margin 
+to Text (mm):</property>
                                     <property name="justify">right</property>
                                     <attributes>
                                       <attribute name="foreground" value="#cccc00000000"/>
                                     </attributes>
                                   </object>
                                   <packing>
-                                    <property name="left_attach">2</property>
+                                    <property name="left_attach">3</property>
                                     <property name="top_attach">5</property>
                                   </packing>
                                 </child>
@@ -4788,15 +4613,15 @@ by the Margins value on the Layout tab.</property>
                                     <property name="tooltip_text" translatable="yes">This setting can be used to increase/decrease the 
 space between the end of the text and the footer line.</property>
                                     <property name="halign">end</property>
-                                    <property name="label" translatable="yes">Bottom of Footer
-to Edge of Page:</property>
+                                    <property name="label" translatable="yes">Bottom Margin
+to Footer (mm):</property>
                                     <property name="justify">right</property>
                                     <attributes>
                                       <attribute name="foreground" value="#2b0a4be2f850"/>
                                     </attributes>
                                   </object>
                                   <packing>
-                                    <property name="left_attach">2</property>
+                                    <property name="left_attach">3</property>
                                     <property name="top_attach">6</property>
                                   </packing>
                                 </child>
@@ -4808,20 +4633,21 @@ to Edge of Page:</property>
 space between the end of the text and the footer line.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
-                                    <property name="width_chars">6</property>
+                                    <property name="width_chars">5</property>
                                     <property name="text">0.80</property>
+                                    <property name="xalign">1</property>
                                     <property name="caps_lock_warning">False</property>
                                     <property name="placeholder_text">0.0</property>
                                     <property name="input_purpose">number</property>
                                     <property name="adjustment">a_ftrposition</property>
-                                    <property name="digits">2</property>
+                                    <property name="digits">1</property>
                                     <property name="numeric">True</property>
                                     <property name="update_policy">if-valid</property>
-                                    <property name="value">0.80000000000000004</property>
+                                    <property name="value">9</property>
                                     <signal name="value-changed" handler="onNumTabsChanged" swapped="no"/>
                                   </object>
                                   <packing>
-                                    <property name="left_attach">3</property>
+                                    <property name="left_attach">4</property>
                                     <property name="top_attach">6</property>
                                   </packing>
                                 </child>
@@ -4838,19 +4664,20 @@ space between the end of the text and the footer line.</property>
                                   <packing>
                                     <property name="left_attach">0</property>
                                     <property name="top_attach">4</property>
-                                    <property name="width">4</property>
+                                    <property name="width">5</property>
                                   </packing>
                                 </child>
                                 <child>
                                   <object class="GtkImage">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="margin_left">12</property>
                                     <property name="pixbuf">MarginGraphicBottom.png</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
                                     <property name="top_attach">5</property>
-                                    <property name="width">2</property>
+                                    <property name="width">3</property>
                                     <property name="height">3</property>
                                   </packing>
                                 </child>
@@ -4870,7 +4697,7 @@ Top of Header:</property>
                                     </attributes>
                                   </object>
                                   <packing>
-                                    <property name="left_attach">2</property>
+                                    <property name="left_attach">3</property>
                                     <property name="top_attach">3</property>
                                   </packing>
                                 </child>
@@ -4882,14 +4709,15 @@ Top of Header:</property>
 space at the top of the page and determines
 where the main text begins.</property>
                                     <property name="halign">end</property>
-                                    <property name="label" translatable="yes">Footer to Text Space:</property>
+                                    <property name="label" translatable="yes">Bottom of Text to 
+Top of Footer:</property>
                                     <property name="justify">right</property>
                                     <attributes>
                                       <attribute name="foreground" value="#cece5c5c0000"/>
                                     </attributes>
                                   </object>
                                   <packing>
-                                    <property name="left_attach">2</property>
+                                    <property name="left_attach">3</property>
                                     <property name="top_attach">7</property>
                                   </packing>
                                 </child>
@@ -4898,14 +4726,14 @@ where the main text begins.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="halign">start</property>
-                                    <property name="margin_left">6</property>
-                                    <property name="label" translatable="yes">10.5pt</property>
+                                    <property name="margin_left">12</property>
+                                    <property name="label" translatable="yes">10.5</property>
                                     <attributes>
                                       <attribute name="foreground" value="#cece5c5c0000"/>
                                     </attributes>
                                   </object>
                                   <packing>
-                                    <property name="left_attach">3</property>
+                                    <property name="left_attach">4</property>
                                     <property name="top_attach">7</property>
                                   </packing>
                                 </child>
@@ -4914,14 +4742,14 @@ where the main text begins.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="halign">start</property>
-                                    <property name="margin_left">6</property>
-                                    <property name="label" translatable="yes">12.5mm</property>
+                                    <property name="margin_left">12</property>
+                                    <property name="label" translatable="yes">12.5</property>
                                     <attributes>
                                       <attribute name="foreground" value="#cece5c5c0000"/>
                                     </attributes>
                                   </object>
                                   <packing>
-                                    <property name="left_attach">3</property>
+                                    <property name="left_attach">4</property>
                                     <property name="top_attach">3</property>
                                   </packing>
                                 </child>
@@ -4935,34 +4763,131 @@ where the main text and footnotes and
 cross-references end.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
-                                    <property name="width_chars">6</property>
+                                    <property name="width_chars">5</property>
                                     <property name="text">1.20</property>
+                                    <property name="xalign">1</property>
                                     <property name="caps_lock_warning">False</property>
                                     <property name="placeholder_text">0.0</property>
                                     <property name="input_purpose">number</property>
                                     <property name="adjustment">a_bottommargin</property>
-                                    <property name="digits">2</property>
+                                    <property name="digits">1</property>
                                     <property name="numeric">True</property>
                                     <property name="update_policy">if-valid</property>
                                     <property name="value">1.2</property>
                                     <signal name="value-changed" handler="onNumTabsChanged" swapped="no"/>
                                   </object>
                                   <packing>
-                                    <property name="left_attach">3</property>
+                                    <property name="left_attach">4</property>
                                     <property name="top_attach">5</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <placeholder/>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">center</property>
+                                    <property name="margin_left">6</property>
+                                    <property name="label" translatable="yes">Side Margin
+Width (mm):</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">0</property>
+                                  </packing>
                                 </child>
                                 <child>
-                                  <placeholder/>
+                                  <object class="GtkSpinButton" id="s_margins">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="tooltip_text" translatable="yes">The margins are set
+in millimeters (mm).</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">center</property>
+                                    <property name="width_chars">5</property>
+                                    <property name="text">12.0</property>
+                                    <property name="xalign">1</property>
+                                    <property name="caps_lock_warning">False</property>
+                                    <property name="progress_pulse_step">0</property>
+                                    <property name="placeholder_text" translatable="yes">0.0</property>
+                                    <property name="input_purpose">number</property>
+                                    <property name="adjustment">a_margins</property>
+                                    <property name="climb_rate">1</property>
+                                    <property name="digits">1</property>
+                                    <property name="numeric">True</property>
+                                    <property name="update_policy">if-valid</property>
+                                    <property name="value">12</property>
+                                    <signal name="value-changed" handler="onNumTabsChanged" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="top_attach">0</property>
+                                  </packing>
                                 </child>
                                 <child>
-                                  <placeholder/>
+                                  <object class="GtkLabel" id="l_rhruleoffset">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="tooltip_text" translatable="yes">This is the space between the horizontal 
+rule and the top of the main test (in pts).</property>
+                                    <property name="halign">end</property>
+                                    <property name="margin_top">3</property>
+                                    <property name="label" translatable="yes">Space from Rule
+to Body Text (pt):</property>
+                                    <property name="justify">right</property>
+                                    <attributes>
+                                      <attribute name="foreground" value="#22228b8b2222"/>
+                                    </attributes>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">3</property>
+                                    <property name="top_attach">0</property>
+                                  </packing>
                                 </child>
                                 <child>
-                                  <placeholder/>
+                                  <object class="GtkSpinButton" id="s_rhruleposition">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">center</property>
+                                    <property name="width_chars">4</property>
+                                    <property name="text">0</property>
+                                    <property name="xalign">1</property>
+                                    <property name="caps_lock_warning">False</property>
+                                    <property name="progress_pulse_step">0</property>
+                                    <property name="placeholder_text">0.0</property>
+                                    <property name="input_purpose">number</property>
+                                    <property name="adjustment">a_ruleposition</property>
+                                    <property name="climb_rate">1</property>
+                                    <property name="digits">1</property>
+                                    <property name="numeric">True</property>
+                                    <property name="update_policy">if-valid</property>
+                                    <signal name="value-changed" handler="onNumTabsChanged" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">4</property>
+                                    <property name="top_attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_rhrule">
+                                    <property name="label" translatable="yes">Horizontal Rule</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">Check this option to add a horizontal
+line under the page header, before the
+main body text begins.</property>
+                                    <property name="halign">end</property>
+                                    <property name="margin_bottom">3</property>
+                                    <property name="active">True</property>
+                                    <property name="draw_indicator">True</property>
+                                    <signal name="clicked" handler="onRHruleClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">2</property>
+                                    <property name="top_attach">0</property>
+                                  </packing>
                                 </child>
                               </object>
                             </child>
@@ -4972,7 +4897,7 @@ cross-references end.</property>
                           <object class="GtkLabel">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">Top &amp; Bottom Margins</property>
+                            <property name="label" translatable="yes">Margins</property>
                           </object>
                         </child>
                       </object>
@@ -8856,6 +8781,7 @@ header, or the Secondary format.</property>
                           <object class="GtkGrid" id="gr_colophon">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
+                            <property name="valign">start</property>
                             <property name="margin_top">6</property>
                             <property name="margin_bottom">6</property>
                             <property name="row_spacing">6</property>
@@ -14941,13 +14867,12 @@ properties for this style.</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
-                                        <property name="halign">start</property>
                                         <signal name="clicked" handler="onFontStyclicked" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
                                         <property name="top_attach">0</property>
-                                        <property name="width">4</property>
+                                        <property name="width">3</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -14969,13 +14894,13 @@ properties for this style.</property>
                                       <packing>
                                         <property name="left_attach">1</property>
                                         <property name="top_attach">1</property>
-                                        <property name="width">3</property>
+                                        <property name="width">2</property>
                                       </packing>
                                     </child>
                                     <child>
                                       <object class="GtkCheckButton" id="c_styFontScale">
                                         <property name="label" translatable="yes">Scale Relative to Parent</property>
-                                        <property name="width_request">200</property>
+                                        <property name="width_request">170</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
@@ -14984,9 +14909,9 @@ properties for this style.</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
                                       <packing>
-                                        <property name="left_attach">4</property>
+                                        <property name="left_attach">3</property>
                                         <property name="top_attach">1</property>
-                                        <property name="width">4</property>
+                                        <property name="width">5</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -15001,12 +14926,12 @@ properties for this style.</property>
                                       <packing>
                                         <property name="left_attach">1</property>
                                         <property name="top_attach">2</property>
-                                        <property name="width">2</property>
                                       </packing>
                                     </child>
                                     <child>
                                       <object class="GtkCheckButton" id="c_styFaceItalic">
                                         <property name="label" translatable="yes">Italic</property>
+                                        <property name="width_request">60</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
@@ -15014,14 +14939,31 @@ properties for this style.</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
                                       <packing>
-                                        <property name="left_attach">3</property>
+                                        <property name="left_attach">2</property>
                                         <property name="top_attach">2</property>
-                                        <property name="width">2</property>
                                       </packing>
                                     </child>
                                     <child>
                                       <object class="GtkCheckButton" id="c_styFaceSuperscript">
                                         <property name="label" translatable="yes">Superscript</property>
+                                        <property name="width_request">95</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="halign">start</property>
+                                        <property name="draw_indicator">True</property>
+                                        <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">4</property>
+                                        <property name="top_attach">2</property>
+                                        <property name="width">2</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="c_stySmallCap">
+                                        <property name="label" translatable="yes">SmallCaps</property>
+                                        <property name="width_request">90</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
@@ -15031,22 +14973,6 @@ properties for this style.</property>
                                       <packing>
                                         <property name="left_attach">1</property>
                                         <property name="top_attach">3</property>
-                                        <property name="width">2</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkCheckButton" id="c_stySmallCap">
-                                        <property name="label" translatable="yes">SmallCaps</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="halign">start</property>
-                                        <property name="draw_indicator">True</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">5</property>
-                                        <property name="top_attach">2</property>
-                                        <property name="width">3</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -15089,17 +15015,6 @@ properties for this style.</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkLabel">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="hexpand">True</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">3</property>
-                                        <property name="top_attach">3</property>
-                                      </packing>
-                                    </child>
-                                    <child>
                                       <object class="GtkEventBox">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
@@ -15127,6 +15042,7 @@ properties for this style.</property>
                                         <signal name="button-release-event" handler="resetParam" swapped="no"/>
                                         <child>
                                           <object class="GtkLabel" id="l_styColor">
+                                            <property name="width_request">45</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
                                             <property name="halign">end</property>
@@ -15147,7 +15063,7 @@ properties for this style.</property>
                                         <signal name="button-release-event" handler="resetParam" swapped="no"/>
                                         <child>
                                           <object class="GtkLabel" id="l_styFontSize">
-                                            <property name="width_request">60</property>
+                                            <property name="width_request">70</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
                                             <property name="tooltip_text" translatable="yes">This a factor or proportion of the base font size.
@@ -15176,7 +15092,7 @@ Factor:</property>
                                           <object class="GtkLabel" id="l_styRaise">
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
-                                            <property name="halign">end</property>
+                                            <property name="halign">start</property>
                                             <property name="label" translatable="yes">Raise:</property>
                                             <property name="justify">right</property>
                                             <signal name="button-release-event" handler="resetParam" swapped="no"/>
@@ -15195,13 +15111,39 @@ Factor:</property>
                                         <property name="halign">start</property>
                                         <property name="label" translatable="yes">11.7pt</property>
                                         <attributes>
-                                          <attribute name="foreground" value="#555557575353"/>
+                                          <attribute name="foreground" value="#cece5c5c0000"/>
                                         </attributes>
                                       </object>
                                       <packing>
-                                        <property name="left_attach">5</property>
+                                        <property name="left_attach">4</property>
                                         <property name="top_attach">0</property>
                                       </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="hexpand">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">3</property>
+                                        <property name="top_attach">3</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
                                     </child>
                                     <child>
                                       <placeholder/>
@@ -15285,9 +15227,8 @@ Factor:</property>
                                         <property name="value">1</property>
                                       </object>
                                       <packing>
-                                        <property name="left_attach">6</property>
+                                        <property name="left_attach">5</property>
                                         <property name="top_attach">0</property>
-                                        <property name="width">3</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -15329,9 +15270,8 @@ Factor:</property>
                                         <property name="value">1</property>
                                       </object>
                                       <packing>
-                                        <property name="left_attach">6</property>
+                                        <property name="left_attach">5</property>
                                         <property name="top_attach">1</property>
-                                        <property name="width">3</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -15370,7 +15310,7 @@ Factor:</property>
                                       <packing>
                                         <property name="left_attach">4</property>
                                         <property name="top_attach">2</property>
-                                        <property name="width">5</property>
+                                        <property name="width">2</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -15412,9 +15352,8 @@ Factor:</property>
                                         <property name="value">1</property>
                                       </object>
                                       <packing>
-                                        <property name="left_attach">6</property>
+                                        <property name="left_attach">5</property>
                                         <property name="top_attach">3</property>
-                                        <property name="width">3</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -15472,7 +15411,6 @@ Indent Factor:</property>
                                       <packing>
                                         <property name="left_attach">4</property>
                                         <property name="top_attach">0</property>
-                                        <property name="width">2</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -15522,7 +15460,6 @@ Factor:</property>
                                       <packing>
                                         <property name="left_attach">4</property>
                                         <property name="top_attach">1</property>
-                                        <property name="width">2</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -15595,7 +15532,6 @@ Factor:</property>
                                       <packing>
                                         <property name="left_attach">4</property>
                                         <property name="top_attach">3</property>
-                                        <property name="width">2</property>
                                       </packing>
                                     </child>
                                   </object>
