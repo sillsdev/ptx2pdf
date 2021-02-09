@@ -73,9 +73,6 @@
 \newif\ifVisTraceExtra %Do VisTrace even in places where this breaks the layout.
 \VisTracefalse%
 \VisTraceExtrafalse%
-%\def\doTRACEdiglot#1{\global\advance\diglotTRcount by 1 \MSG{\the\diglotTRcount: #1}}%
-%\def\noTRACEdiglot#1{\relax}%
-%\let\TRACEdiglot=\noTRACEdiglot%
 \newif\ifdiglot %If there is diglot material
 \newif\ifp@gestart % temporary hold while things get going.
 \def\setsid@{\ifdiglotL\xdef\sid@{L}\else\xdef\sid@{R}\fi}
@@ -259,21 +256,24 @@
 \newif\ifnastybox  % Signal that box must be treated specially
 % The \lastpenalty before a \lefttext or \righttext issues a fake one,
 % or similarly penalty to apply at end of trial text, and scratch space
-\newcount\savedpenalty
+
+%%%%%%%%%%%
+% All penalties
+%
+\newcount\savedpenalty  % The penalty immediately preceeding a side-swap.
+
 \newcount\tmppenalty%scratchspace
-\newcount\Lchunkpenalty% The penalty that should be applied at the end of the L text (either partialL or excessL), according to the first output routine. 
 \newcount\Lboxpenalty% The penalty that goes between Lbox and partialL
-\newcount\partialLpenalty% The penalty that goes between partialL and excessL
-\newcount\Rchunkpenalty%
-\newcount\Rboxpenalty% The penalty that goes between Rbox and partialR
-\newcount\partialRpenalty% The penalty that goes between partialR and excessR
+\newcount\Rboxpenalty%  ~"~
+\newcount\partialLpenalty% The penalty that goes between partialL and excessL (also used while loading excessL during excessL
+\newcount\partialRpenalty% ~"~
+\newcount\endtri@lpen@lty %the penalty we EXPECT at the end of the trial
+\newcount\chunkpenalty %highest penalty encoutered yet for this chunk 
+\newcount\lastchunkpenalty %highest penalty previouschunk
+\newif\ifLneedsemptying
+\newif\ifallNeedEmptying %set by lefttext, etc. to indicate that the current chunck ends with the next side-transition. 
 
-\newcount\lastsavedLpenalty% The penalty for page breaks at the \n@xtpartial / new boundary
-\newcount\lastsavedRpenalty%
-%\newif\ifLneedsemptying
-\newif\ifallNeedEmptying
-
-% Initial \output routine for left scripture
+% Initial \output routine for any side of scripture.
 \def\diglot@any@primary{%
    \ifnum\the\outputpenalty=\dgl@tPenColSwap
      \setf@lwgdstat{\n@xtdstat}%
@@ -288,7 +288,6 @@
 
 
 \newif\ifboxmoved%
-\newcount\endtri@lpen@lty %the penalty we EXPECT at the end of the trial
 %\galleypenalty %the penalty we FOUND at the break between the %galley and \galleyexc@ss
 \def\@ddtoexcess{%
   \trace{d}{@ddtoexcess hIns=\the\holdinginserts(==1) adding \the\ht255+\the\dp255\space to galleyexc@ss (\the\ht\galleyexc@ss+\the\dp\galleyexc@ss)}%
@@ -360,7 +359,7 @@
   \else 
     \ifnum\outputpenalty<-10000
       \ifnum\outputpenalty>-10010
-        \MSG{*** Internal error caught. Incorrect penalty encountered. \the\outputpenalty!=\the\endtri@lpen@lty}%
+        \MSG{*** Internal error caught. Incorrect penalty encountered. \the\outputpenalty!=\endtri@lpen@lty}%
       \fi
     \fi
     \vsize=\textheight
@@ -368,11 +367,17 @@
 }
   
 \def\run@a@trial{%
-  \x@\let\x@\endtri@lpen@lty\csname dgl@tPen\c@rrdstat trialEnd\endcsname
-  \trace{d}{run@a@trial \show@dstat, \the\availht, etp:\endtri@lpen@lty}%
+  \x@\global\x@\let\x@\endtri@lpen@lty\csname dgl@tPen\c@rrdstat trialEnd\endcsname
+  \traceNum{d}{run@a@trial \show@dstat, \the\availht>\the\baselineskip?, etp:\endtri@lpen@lty}%
   \x@\let\x@\p@rtl\csname partial\c@rrdstat\endcsname
   \x@\let\x@\@xcs\csname excess\c@rrdstat\endcsname
+  \trace{D}{partial\c@rrdstat: \the\ht\p@rtl+\the\dp\p@rtl x\the\wd\p@rtl}%
+  \trace{D}{excess\c@rrdstat: \the\ht\@xcs+\the\dp\@xcs x\the\wd\@xcs}%
+  \ifnum\TRACEcount=\diglotDbgJoinboxes
+   \showbox\p@rtl\showbox\@xcs
+  \fi
   \ifdim\availht>\baselineskip
+    \trace{D}{Preparing for trial}%
     \global\trialheight=\availht
     \global\let\whichtrial=\after@a@trial
     \global\vsize=\trialheight
@@ -382,19 +387,28 @@
     \global\deadcycles=0
     \global\holdinginserts=0
     %Make sure partialX is empty...
-    \ifvoid\p@rtl\else
-      \setbox\@xcs\vtop{\joinboxes{\p@rtl}{\@xcs}{3}{\galleypenalty}}%
-    \fi
+      %\ifvoid\p@rtl\else
+        %\setbox\@xcs\vtop{\joinboxes{\p@rtl}{\@xcs}{3}{\galleypenalty}}%
+    %%\fi
     %grab 1st trialheight from excessX
     \setbox\p@rtl=\vsplit\@xcs to \trialheight
+    \csname partial\c@rrdstat penalty\endcsname=0 %FIXME: Isn't there a \splitpenalty??
     \global\galleypenalty=0
-    \setbox\galley=\vbox{\x@\unvcopy\csname partial\c@rrdstat\endcsname\penalty\endtri@lpen@lty}%
+    \setbox\galley=\vbox{\x@\unvcopy\p@rtl\unpenalty\penalty\endtri@lpen@lty}%
+    \trace{D}{Running trial \the\trialheight, \the\ht\galley+\the\dp\galley (\the\ht\@xcs+\the\dp\@xcs left for next time)}%
+    \ifdim\ht\galley=0pt\ifdim\dp\galley=0pt
+      \showbox\galley
+    \fi\fi
     \global\output{\diglot@any@trial}
 %    \showbox\galley
     \unvcopy\galley
+    \unpenalty
+    \penalty\endtri@lpen@lty
     \relax\relax
   \else
+    \trace{D}{No space for trial}%
     \global\trialfailedtrue
+    \after@after@a@trial
   \fi
 }
 
@@ -408,37 +422,40 @@
   % excessL contains surplus material
   % Lboxpenalty contains penalty for a break after Lbox
   % savedLpenalty
-  \traceNum{d}{after@a@trial, \the\holdinginserts, Op:\the\outputpenalty,
-    LP:\the\lastsavedLpenalty, LBP:\the\Lboxpenalty, PLP:\the\partialLpenalty,  DCyc:\the\deadcycles,
+  \traceNum{d}{after@a@trial \c@rrdstat, \the\holdinginserts, Op:\the\outputpenalty,
+    tb:\the\ht\trialbox+\the\dp\trialbox,
+    LBP:\the\Lboxpenalty, PLP:\the\partialLpenalty,  DCyc:\the\deadcycles,
     LB:\the\ht\Lbox+\the\dp\Lbox, av:\the\availht, vs:\the\vsize, pg:\the\pagegoal}%
   \ifnum\TRACEcount=\diglotDbgJoinboxes
    \showbox\trialbox\showbox\galleyexc@ss\showlists
   \fi
   \trace{H}{after@a@trial: b:\botmark/\botmarks1/\botmarks2, t:\topmark/\topmarks1/\topmarks2, f:\firstmarks1/\firstmarks2, fr:\firstRmark, br:\botRmark ol:\oldLmark}%
-  \makevtop{\trialbox}%
   \iftrialfailed
     \trace{D}{trial failed, box moved}%
     \boxmovedtrue
     %partialX is still the whole proto-galley anyway, leave it be.
   \else
+    \makevtop{\trialbox}%
     \ifvoid\galleyexc@ss
-      \x@\global\csname \c@rrdstat boxpenalty\endcsname=\galleypenalty
-      \x@\setbox\x@\csname excess\c@rrdstat\endcsname\box\voidb@x
+      %\tracingmacros=1\tracingassigns=1
+      \x@\global\csname\c@rrdstat boxpenalty\endcsname =\galleypenalty
+      %\x@\global\x@\setbox\csname excess\c@rrdstat\endcsname=\box\voidb@x
       \TempDim=\availht %Recalc in case there's an issue
     \else
       \x@\global\csname \c@rrdstat boxpenalty\endcsname=\csname saved\c@rrdstat penalty\endcsname
-      \x@\setbox\x@\csname partial\c@rrdstat\endcsname\box\galley
-      \x@\setbox\x@\csname excess\c@rrdstat\endcsname\vbox{\joinboxes{\galleyexc@ss}{\csname excess\c@rrdstat\endcsname}{2}{\csname partial\c@rrdstat penalty\endcsname}}%
+      \x@\global\x@\setbox\csname partial\c@rrdstat\endcsname\box\galley
+      \x@\global\x@\setbox\csname excess\c@rrdstat\endcsname\vbox{\joinboxes{\galleyexc@ss}{\csname excess\c@rrdstat\endcsname}{2}{\csname partial\c@rrdstat penalty\endcsname}}%
     \fi
   \fi
   \ifboxmoved\else
-    \x@\setbox\x@\csname partial\c@rrdstat\endcsname\box\trialbox
-    \x@\let\x@\m@rknum\csname m@rknum\c@rrdstat\endcsname
+    \x@\global\csname \c@rrdstat ht\endcsname=\dimexpr \ht\trialbox + \dp\trialbox\relax
+    \x@\global\x@\setbox\x@\csname \c@rrdstat box\endcsname\box\trialbox
+    \x@\global\x@\let\x@\m@rknum\csname m@rknum\c@rrdstat\endcsname
     \update@marks
   \fi
-  \trace{D}{End of after@a@trial}%
-  \showlists
-  \relax
+  \trace{D}{End of after@a@trial LB:\the\ht\Lbox+\the\dp\Lbox, RB:\the\ht\Rbox+\the\dp\Rbox}%
+  %\showlists
+  \after@after@a@trial
 }
 
 \def\update@marks{%
@@ -473,6 +490,7 @@
  %as though it hadn't been here.
  %Assumptions: holdinginserts=1 material in \galley and \galleyexc@ss
   \trace{d}{diglot@any@trial \the\ht255+\the\dp255\space hIns=\the\holdinginserts(==0 1st time) op=\the\outputpenalty, etp=\endtri@lpen@lty, dc=\the\deadcycles}%
+  %\tracingifs=1
   \ifnum\holdinginserts=0\else
     \ifvoid\trialbox
       \MSG{*** Internal error caught. Incorrect internal state found in during trial run. Text or footnotes may have been lost.}%
@@ -536,69 +554,13 @@
       \fi
     \else
       \trace{D}{All looks good!  \the\ht\trialbox+\the\dp\trialbox (gp:\the\galleypenalty, op: \the\outputpenalty)}%
-      \box\trialbox
+      %\box\trialbox
       %\global\outputpenalty=\galleypenalty
       \let\after@this=\whichtrial
     \fi
   \fi
-  \relax
   \after@this
-}
-
-
-
-
-\def\doDiglotLeftTrial{%
-  %empties Lbox and partialL back onto stack, with holdinginserts=0
-  \trace{D}{doDiglotLeftTrial LB:\the\ht\Lbox+\the\dp\Lbox, pL:(\the\ht\partialL+\the\dp\partialL) \show@dstat, diglotL\ifdiglotL true\else false\fi, dig@tL\ifdigl@tL true\else false\fi, leftfull\ifleftfull true\else false\fi}%
-  %Set correct current state
-  \global\diglotLtrue%
-  \global\hsize=\columnLwidth\relax%
-  \dglt@calc@vailht%
-  \trace{D}{av: \the\availht, tr: \the\trialheight}%
-  % don't know why it might not be, but...
-  \ifdim\availht<\trialheight
-    \ifdim\availht<0pt
-      \bgroup
-        \dimen0=\trialheight
-        \advance\dimen0 by -\availht
-        \message{*** SOMETHING BAD, pg. \the\pageno. A picture or footnote (probable range: \p@gefirstmark-\p@gebotmark) has just taken \the\dimen0 of space. (There used to be \the\trialheight, now there's \the\availht).  There's no space left for text.}%
-        \global\leftfulltrue
-      \egroup
-     \fi
-    \global\trialheight=\availht
-  \fi
-  \global\let\whichtrial=\diglotLeftTrial
-  \global\endtri@lpen@lty=\dgl@tPenLtrialEnd
-  \global\trialfailedfalse
-  \global\holdinginserts=0%
-  \global\intrialtrue
-  \global\deadcycles=0
-  \global\savedpenalty=\partialLpenalty %
-%  \ifnum\savedpenalty>9999
-%    \global\advance\trialheight by -2\baselineskip %hopefully prevents bad breaks 
-%  \fi
-  \ifleftfull\else
-    \global\vsize=\trialheight\relax%
-    \dimen3=\ht\Lbox
-    \advance\dimen3 by \dp\Lbox
-    \advance\dimen3 by \ht\partialL
-    \advance\dimen3 by \dp\partialL
-    \advance\dimen3 by 3\baselineskip
-    \global\output={\diglot@any@trial}%
-    %\penalty\lastsavedLpenalty
-    \ifdim\dimen3>\trialheight %Is this likely to be the last chunk added to the page? 
-      \ifm@rksonpage\else\mark{}\marks1{}\fi% FIXME? \marks2 too?
-    \fi
-    \global\setbox\galley=\vbox{\joinboxes{\Lbox}{\partialL}{10}{\Lboxpenalty}\endgraf\penalty\dgl@tPenLtrialEnd}%
-    \ifvoid\galleyexc@ss\else
-      \MSG{*** Internal error caught. Galleyexc@ss was not empty. Text has probably been lost near page \the\pageno. (\the\galleyexc@sspenalty, \the\ht\galleyexc@ss+\the\dp\galleyexc@ss)}%
-      \global\setbox\galleyexc@ss=\box\voidb@x
-    \fi
-    \s@venotes{}%
-    \unvcopy\galley
-    \relax\relax%
-  \fi
+  \relax
 }
 
 
@@ -610,10 +572,12 @@
   \ifsk@pping \egroup \sk@ppingfalse\fi% if we were skipping nonpublishable text, end that mode
   \ifinn@te\errmessage{*** #1text called from inside footnote?!?}\fi
   \@@setside{#2}%
-  \n@xtc@mmand%
+  \endgraf\penalty\dgl@tPenColSwap\relax %Trigger collection of text.
+  \let\t@mpc@mmand=\n@xtc@mmand% This bit may process the collected input. 
   \global\def\n@xtc@mmand{}%
-  \endgraf\penalty\dgl@tPenColSwap\relax
+  \t@mpc@mmand
 } 
+
 \outer\def\lefttext{%
   \pr@sideswitch{left}{L}%
   \swap@diglot{L}%sets diglotRtrue, etc
@@ -626,8 +590,8 @@
 }%
 
 \outer\def\righttext{%
-  \allNeedEmptyingtrue
   \pr@sideswitch{right}{R}%
+  \allNeedEmptyingtrue
   \swap@diglot{R}%sets diglotRtrue, etc
   \global\vsize=\maxdimen
   \global\trialheight=\maxdimen
@@ -703,7 +667,7 @@
 \def\swap@diglot#1{% Because we need to set things appropriately.
  %Swapping fonts isn't actually needed, but do need to set
  %baselineskip and other things
- \trace{D}{swap@diglot #1}%
+ \trace{d}{swap@diglot #1}%
  \trace{D}{t@tle is \ift@tle set\else  not set\fi}%
  \trace{D}{he@dingstyle is \ifhe@dingstyle set\else  not set\fi}%
  \trace{D}{he@dings is \ifhe@dings set\else  not set\fi}%
@@ -745,10 +709,7 @@
 %when there's no more input, make sure partial gets printed
 \def\emitpartial{%
        \traceNum{d}{Emitpartial \the\ht\partial+\the\dp\partial, \the\ht\n@xtpartial+\the\dp\n@xtpartial}%
-       \ifvoid\n@xtpartial\else
-         \global\setbox\partial=\vtop{\joinb@xes{\partial}{\n@xtpartial}}%
-         \voidn@xtpartial
-       \fi
+       \@add@n@xtpartial
        \@writep@ge\@writep@ge%
        \global\leftfullfalse%
        \global\pagefullfalse%
@@ -761,7 +722,6 @@
 %the depth is not recoverable we add a kern to remove the orignial depth.
  \s@tbaseline{p}%
  \trace{D}{makevtop #1, before vtop dp=\the\dp#1, ht=\the\ht#1}%
- %\ifnum\diglotTRcount<61\showbox#1\fi
  \TempDim=\dp#1\relax%
  \ifdim\TempDim>\baselineskip \trace{D}{Looks like this is already a vtop}\TempDim=0pt
  \fi%
@@ -896,6 +856,7 @@
 
 
 \def\diglot@arrange@cols{%
+  \trace{D}{diglot@arrange@cols}%
   \ifVisTrace
     \ifdim\ht\Lbox>0pt
       \doVisTraceT{L}% sets box0, used ~43 lines below
@@ -981,13 +942,13 @@
 
 \def\upd@tep@rtial{%Actually add stuff to the page.
   \trace{D}{upd@tep@rtial \the\outputpenalty}%
-  \trace{D}{plp:\the\partialLpenalty, prp:\the\partialRpenalty, lcp:\the\Lchunkpenalty, rcp:\the\Rchunkpenalty, lbp:\the\Lboxpenalty, rbp:\the\Rboxpenalty}%
+  \trace{D}{plp:\the\partialLpenalty, prp:\the\partialRpenalty, cp:\the\chunkpenalty lcp:\the\lastchunkpenalty, lbp:\the\Lboxpenalty, rbp:\the\Rboxpenalty}%
   \ifnum\Lboxpenalty=10000 \ifnum\Rboxpenalty=10000
     \trace{D}{Un vtopping heading}%
     \setbox\Lbox=\vbox{\unvbox\Lbox}%
     \setbox\Rbox=\vbox{\unvbox\Rbox}%
   \fi\fi
-  \setdiglotN@rmal
+  \setdiglotN@rmal % Left=left (normal) or not?
   \pickn@xtpartial
   \showboxdepth=3 %
   \showboxbreadth=1000 %
@@ -1003,11 +964,8 @@
     \trace{H}{updp1: Setting bottom mark to \b@xbotmark, since it's empty }%
     \xdef\p@gebotmark{\b@xbotmark}%
   \fi%
-  \traceNum{d}{Adding old n@xtpartial to page(\the\ht\n@xtpartial+\the\dp\n@xtpartial)}%
-  \ifvoid\n@xtpartial\else
-    \global\setbox\partial=\vtop{\joinb@xes{\partial}{\n@xtpartial}}%
-    \voidn@xtpartial
-  \fi
+  \traceNum{d}{Adding old n@xtpartial(\the\ht\n@xtpartial+\the\dp\n@xtpartial) to page}%
+  \@add@n@xtpartial
   \trace{d}{Writing new n@xtpartial : LB:\the\ht\Lbox+\the\dp\Lbox\space RB:\the\ht\Rbox+\the\dp\Rbox\space Last Delta:\the\chunkDelta}%\space Tot:\the\cumulativeDelta%
   \diglot@arrange@cols
   \TempDim=\dimexpr \ht\n@xtpartial + \dp\n@xtpartial\relax
@@ -1024,152 +982,14 @@
   \ifdim\TempDim>0.1pt
     \global\deadcycles=0 %Reset deadcycles only if there's actual matter being added.
   \fi
-  %\ifnum 1=\ifnum\lastsavedLpenalty>9999 1\else\ifnum\lastsavedRpenalty>9999 1\fi\fi
-  %  \global\setbox\partial=\vtop{\joinb@xes{\partial}{\n@xtpartial}}%
-  %\fi
-  \global\lastsavedLpenalty=\Lboxpenalty % Remember how happy we are to break at this point
-  \global\lastsavedRpenalty=\Rboxpenalty % Remember how happy we are to break at this point
   \ifpagefull%
-    \ifvoid\n@xtpartial\else
-      \global\setbox\partial=\vtop{\joinb@xes{\partial}{\n@xtpartial}}%
-      \voidn@xtpartial
-    \fi
+    \@add@n@xtpartial
     \@writep@ge%
+    \pagefullfalse
     \global\deadcycles=0 %That counts as an action too.
   \fi%
-  \global\setbox\Rbox=\box\voidb@x %
-  \ifvoid\partialL %
-    \ifvoid\excessL %
-      \trace{D}{partialL and excessL now empty}%
-      \global\Lneedsemptyingfalse%
-    \fi
-  \fi
-  \ifpagefull % Page was written
-    \global\leftfullfalse%
-    \global\pagefullfalse%
-    \global\holdinginserts=1 %
-    \global\availht=\textheight %
-    \global\vsize=\availht\relax%
-    %\ifdim\ht\partialL=0pt\ifdim\dp\partialL=0pt\ifdim\wd\partialL=0pt
-      %\trace{D}{partialL has no size, making void}%
-      %\setbox\partialL\box\voidb@x
-    %\fi\fi\fi
-    \ifvoid\excessL\else \ifvoid\partialL
-        \trace{D}{Forcing early refill of partialL. eL:(\the\ht\excessL+\the\dp\excessL) }%
-        \global\earlyLrefilltrue
-        \global\Lneedsemptyingtrue
-        \global\def\n@xtc@mmand{\upd@tep@rtial}%
-    \fi\fi
-    \ifearlyLrefill%
-      %There is material in excessL which should be added now, not later.
-      \trace{D}{Refilling partialL early. pL:(\the\ht\partialL+\the\dp\partialL) eL:(\the\ht\excessL+\the\dp\excessL) }%
-      \global\setbox\partialL=\vtop{\joinboxes{\partialL}{\excessL}{12}{\partialLpenalty}}%
-      \partialLpenalty=\Lchunkpenalty %
-      \global\earlyLrefillfalse%
-    \else
-      \trace{D}{no early refill of  partialL. pL:(\the\ht\partialL+\the\dp\partialL) eL:(\the\ht\excessL+\the\dp\excessL) }%
-    \fi
-    \trace{D}{pL:(\the\ht\partialL+\the\dp\partialL) pR:(\the\ht\partialR+\the\dp\partialR) Lneedsemptying\ifLneedsemptying true\else false\fi}%
-    \ifvoid\partialL
-      \traceNum{D}{partialL is void}% 
-      \ifnum\outputpenalty=\dgl@tPenColSwap
-        % No partialL mtl, but possibly have right column that should be
-        % set.
-        \trace{D}{B pL:(\the\ht\partialL+\the\dp\partialL) pR:(\the\ht\partialR+\the\dp\partialR)}%
-        \ifvoid\partialR\else
-          \traceNum{d}{Repeating setboth}%
-          \setboth%
-        \fi
-      \fi %outputpenalty %
-    \else
-      \traceNum{D}{partialL not void repeatpermitted\ifrepeatpermitted true\else false\fi}% 
-      \ifnum\diglotDbgJoinboxes=\TRACEcount
-        \showbox\partialL
-      \fi
-      %Assumptions: Page is empty, Lbox is empty, partialL contains extra
-      %material for left column, excessL is possibly empty (from setboth or above). 
-      \ifrepeatpermitted 
-        % Quite possibly have enough material already - repeat 'til not a full page.
-        \tempfalse
-        \ifLneedsemptying\else
-          \ifdim\dp\partialR>0pt %Only test right if we've finished emptying left.
-            \temptrue
-        \fi\fi
-        \iftemp
-          %There is something to add to the RHS.. After re-setting partialL, setboth should be called.
-          \traceNum{d}{Repeating setboth after trial (both sides have data)}%
-          \global\def\n@xtc@mmand{\trace{D}{n@xtc@mmand}\setboth}%
-        \else
-          \ifrepeatok
-            %Right is empty, left has something. Don't call setboth, come straight back to updatepartial
-            \traceNum{d}{Repeating upd@tep@rtial after trial}%
-            \global\def\n@xtc@mmand{\trace{D}{n@xtc@mmand}\upd@tep@rtial}%
-          \else
-            % Don't repeat - e.g. when called here from \diglotLeft ??? Or only sometimes?
-            \traceNum{d}{Not Repeating upd@tep@rtial}%
-            \global\def\n@xtc@mmand{\trace{D}{no n@xtc@mmand}}%
-            \global\repeatoktrue %ok to do it later though
-          \fi
-        \fi
-      \fi%
-      \ifdim\dp\partialL>\availht%
-        %Want the first chunk in partialL, the residue in excessL, so vsplit
-        %gets it backwards for us, plus excessL may not be empty.
-        %Use Lbox as a temporary store
-        \trace{D}{Spliting partialL (\the\ht\partialL+\the\dp\partialL) to \the\availht}%
-        \global\setbox\Lbox=\vsplit\partialL to \availht
-        \edef\t@st{\splitbotmark}%
-        \ifx\t@st\empty\else
-          \xdef\botLmark{\splitbotmark}%
-          \ifuseLeftMarks
-            \trace{H}{updp2: Setting bottom mark to \splitbotmark, pagefirstmark to \splitfirstmark}%
-            \xdef\p@gefirstmark{\splitfirstmark}%
-            \xdef\p@gebotmark{\splitbotmark}%
-          \fi
-        \fi
-        \ifvoid\partialL%
-           \Lboxpenalty=\partialLpenalty %
-        \else%
-           \Lboxpenalty=0 %
-           \makevtop{\partialL}%
-        \fi%
-        \makevtop{\Lbox}%
-        \ifvoid\partialL\else
-          \trace{D}{Shuffling excessL, PartialL and Lbox}%
-          \ifvoid\excessL
-            \global\setbox\excessL=\box\partialL
-          \else 
-            \global\setbox\excessL=\vtop{\joinboxes{\partialL}{\excessL}{15}{\partialLpenalty}}%
-          \fi
-        \fi
-        \global\setbox\partialL=\box\Lbox
-      \else%
-        \ifx\firstLmark\empty
-          \trace{D}{need to split, but only to get marks}%
-          \setbox0=\copy\partialL
-          \setbox0=\vsplit0 to \maxdimen
-          \xdef\firstLmark{\splitfirstmark}%
-          \ifuseLeftMarks
-            \ifx\p@gefirstmark\empty%
-              \trace{H}{updp3: Setting pagefirstmark to \splitfirstmark}%
-              \xdef\p@gefirstmark{\splitfirstmark}%
-            \fi
-          \fi
-        \else
-          \trace{D}{no need to split}%
-        \fi
-        \global\outputpenalty=\dgl@tPenInternalRpt\relax %no more itterations after this
-        % but we do need 
-        \global\setbox\partialL=\vtop{\unvbox\partialL}%
-        %\makevtop{\partialL}%
-      \fi%
-      \trace{D}{rerun left Trial}%
-      \global\trialheight=\availht\relax%
-      \doDiglotLeftTrial%
-    \fi %\void\partiaL
-  \fi%
-  \trace{D}{end of upd@tep@rtial}%
 }
+
 
 \newif\ifLRf@@tnotes%
 \newif\ifNoteGutterRule \NoteGutterRulefalse
@@ -1391,16 +1211,14 @@
   \global\availhtL=\textheight%
   \global\availht=\textheight%
   \global\vsize=\availht
-  \global\lastsavedRpenalty=0 % No longer relevant
-  \global\lastsavedLpenalty=0
   \plainoutput%
   \global\chunkDelta=0pt
-  \lp@gestartfalse
+  \p@gestartfalse
   \xdef\p@gefirstmark{\nextp@gefirstmark}%
   \xdef\p@gebotmark{}%
   \xdef\nextp@gefirstmark{}%
   \edef\botmark{\p@gebotmark}%
-  \reset@marks\diglot@list\E% 
+  \x@\reset@marks\diglot@list\E% 
   \setc@rdstat{\f@lwgdstat}%Set the current diglotstatus
   \xdef\firstLmark{}%
   \xdef\botLmark{}%
@@ -1419,7 +1237,7 @@
   % assumes: \availht is correct, \ifleftfull set false on page output
   % Fills: \excessX
   % Empties: \box255
-  \trace{D}{diglotCollect O:\the\outputpenalty, P:\the\savedpenalty, LP:\the\lastsavedLpenalty, vs:\the\vsize}%
+  \trace{D}{diglotCollect O:\the\outputpenalty, P:\the\savedpenalty, vs:\the\vsize}%
   \x@\let\x@\destb@x\csname excess\c@rrdstat\endcsname
   \diglot@any@primary
   \ifnum\outputpenalty=\dgl@tPenLtrialEnd\relax 
@@ -1439,9 +1257,9 @@
   \ifvoid\destb@x
     \global\setbox\destb@x=\box255
   \else 
-    \global\setbox\destb@x=\vtop{\joinboxes{\destb@x}{255}{1}{\csname \c@rrdstat chunkpenalty\endcsname}}%
+    \global\setbox\destb@x=\vtop{\joinboxes{\destb@x}{255}{1}{\csname partial\c@rrdstat penalty\endcsname}}%
   \fi
-  \x@\csname \c@rrdstat chunkpenalty\endcsname=\tmppenalty
+  \x@\csname partial\c@rrdstat penalty\endcsname=\tmppenalty
   \ifnum\outputpenalty=\dgl@tPenColSwap\relax %Got to the end of the \lefttext
     \tmppenalty=\savedpenalty\relax%
     \ifallNeedEmptying
@@ -1452,19 +1270,22 @@
 }
 
 \def\reset@marks#1#2\E{
-  \if\relax#1\relax %#1 is empty
+  %\tracingmacros=1 \tracingassigns=1
+  \edef\t@st{#2}
+  \ifx\t@st\empty %#2 is empty
     \let\n@xtreset@marks=\cstackrelax
   \else
     \let\n@xtreset@marks=\reset@marks
-    \x@\xdef\csname first#1mark\endcsname{}%
-    \x@\xdef\csname bot#1mark\endcsname{}%
   \fi
+  \x@\xdef\csname first#1mark\endcsname{}%
+  \x@\xdef\csname bot#1mark\endcsname{}%
   \n@xtreset@marks#2\E
 }
 
 \newif\ifnot@empty % Is this chunk empty
 
 \def\@add@n@xtpartial{% 
+  \trace{d}{@add@n@xtpartial \the\ht\partial+\the\dp\partial, \the\ht\n@xtpartial+\the\dp\n@xtpartial}%
   \ifvoid\n@xtpartial\else
     \ifvoid\partial
       \global\setbox\partial=\box\n@xtpartial
@@ -1472,13 +1293,16 @@
       \global\setbox\partial=\vtop{\joinb@xes{\partial}{\n@xtpartial}}%
     \fi
     \voidn@xtpartial
+    \global\lastchunkpenalty=\chunkpenalty
+    \global\chunkpenalty=-20000 %Everything ought to be bigger than this.
   \fi
 }
 
 \def\tri@llist{}%Trials to be run.
 
 \def\n@xttrial#1#2\E{%
-  \edef\tri@llist{#2}%
+  \xdef\tri@llist{#2}%
+  \trace{D}{n@xttrial #1 (#2)}%
   \setc@rdstat{#1}
 }
 
@@ -1488,18 +1312,22 @@
   %Assumption: called initially with a list of possibly-containing-stuff
   %columns, and empty \tri@llist.
   \edef\c@rrdstat{#1}%
-  \ifx\c@rrdstat\empty
-    \let\afterch@ckcontents\cstackrelax
-  \else
-    \let\afterch@ckcontents\ch@ckcontents
-    \x@\ifvoid\csname partial\c@rrdstat\endcsname\else
-      \not@emptytrue
-    \fi
-    \x@\ifvoid\csname excess\c@rrdstat\endcsname
-      \edef\tri@llist{\tri@llist#1}% More trials to run 
-    \fi
+  \x@\ifvoid\csname \c@rrdstat box\endcsname \else
+    \trace{D}{side \c@rrdstat\space has material to put on the page}%
+    \global\not@emptytrue
   \fi
-  \afterch@ckcontents#2\E
+  \x@\ifvoid\csname excess\c@rrdstat\endcsname
+    \trace{D}{side \c@rrdstat\space is finished for now}%
+  \else
+    \trace{D}{side \c@rrdstat\space has stuff to typeset}%
+    \xdef\tri@llist{\tri@llist#1}% More trials to run 
+  \fi
+  \edef\n@xtarg{#2}%
+  \let\afterch@ckcontents\ch@ckcontents
+  \ifx\n@xtarg\empty
+    \let\afterch@ckcontents\cstackrelax
+  \fi
+  \x@\afterch@ckcontents\n@xtarg\E
 }
 
 \edef\diglot@list{LR}%
@@ -1511,6 +1339,7 @@
 }
 
 \def\check@and@update{%Checks each column to see if there is stuff to output
+  \trace{d}{check@and@update}%
   %and calls upd@tep@rtial as appropriate
   %responds to \ifboxmoved and \pagefull, checking the last chunkpenalty
   \not@emptyfalse
@@ -1532,37 +1361,62 @@
 }
 
 \newcount\triall@@pcount
-\newcount\thischunkpenalty %highest penalty encoutered yet for this chunk 
 \def\diglot@run@trials{% for X as L, R, (eventually others)
   %expects: collected input in partialX, excessX empty
   %Process: cycle through chunks  
   \traceNum{d}{diglot@run@trials}%
   \let\tri@llist\diglot@list%
   \triall@@pcount=1
-  \loop
-    \x@\n@xttrial\tri@llist\E
-    \ifx\c@rrdstat\empty %End of the loop.
-      \advance\triall@@pcount by 1
-      \check@and@update %May trigger a refilling of \triallist
-    \else
-      \ifnum 1=\x@\ifvoid\csname excess\c@rrdstat\endcsname \x@\ifvoid\csname partial\c@rrdstat\endcsname 0\else 1\fi\else 1\fi
-        \dglt@calc@vailht
-        \ifnum\triall@@pcount=1
-          %\showbox\partialL\showbox\excessL
-        \fi
-        \run@a@trial
-        \iftrialfailed
-          \ifnum\triall@@pcount=1
-            \boxmovedtrue
-          \fi
-          \x@\ifnum\csname last\c@rrdstat penalty\endcsname>\thischunkpenalty
-            \x@\thischunkpenalty\x@=\csname last\c@rrdstat penalty\endcsname
-          \fi
-        \fi
+  \diglot@run@nxt@trial
+}
+\def\diglot@run@nxt@trial{%
+  \traceNum{d}{diglot@run@nxt@trial}%
+  \x@\n@xttrial\tri@llist\E
+  \ifx\c@rrdstat\empty %End of the loop.
+  \else
+    \ifnum 1=\x@\ifvoid\csname excess\c@rrdstat\endcsname \x@\ifvoid\csname partial\c@rrdstat\endcsname 0\else 1\fi\else 1\fi
+      \dglt@calc@vailht
+      \ifnum\triall@@pcount=1
+        %\showbox\partialL\showbox\excessL
       \fi
+      \run@a@trial
+      \relax
     \fi
+  \fi
+  \relax\relax
+}
+
+\def\after@after@a@trial{%
+  \trace{d}{after@after@a@trial iftrialfailed\iftrialfailed true\else false\fi,  \the\triall@@pcount}%
+  % Check if the run failed (or didn't even run), and update page if that's 
+  % appropriate.
+  \iftrialfailed
+    \ifnum\triall@@pcount=1
+      \boxmovedtrue %Only count box as moved if the first chunk doesn't fit. 
+    \fi
+  \else
+    \x@\let\x@\tmppen\csname \c@rrdstat boxpenalty\endcsname
+    %\tracingassigns=0
+    \ifnum \tmppen>\chunkpenalty
+      \chunkpenalty=\tmppen
+    \fi
+  \fi
+  %\showlists
   \trace{D}{triallist: \tri@llist}%
-  \unless\ifx\tri@llist\empty\repeat
+  \ifx\tri@llist\empty
+    \advance\triall@@pcount by 1
+    \check@and@update %May trigger a refilling of \triallist
+    \trace{D}{after check@and@update, triallist: \tri@llist}%
+    \ifx\tri@llist\empty
+      \let\n@xt=\relax
+    \else
+      \let\n@xt=\diglot@run@nxt@trial
+    \fi
+  \else
+    \let\n@xt=\diglot@run@nxt@trial
+  \fi
+%  \tracingifs=0
+  \n@xt
 }   
 
 \def\makediglotgutter#1#2#3{\hbox to \gutter{\hss
