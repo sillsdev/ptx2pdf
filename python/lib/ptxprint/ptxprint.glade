@@ -4426,7 +4426,7 @@ Top:</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkFrame" id="fr_topBottomMargins">
+                      <object class="GtkFrame" id="fr_margins">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="margin_left">6</property>
@@ -4924,8 +4924,7 @@ main body text begins.</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="tooltip_text" translatable="yes">Page Setup, Font Size and Line Spacing. 
-Columns and Rules (lines).
-Special books and Other advanced options.</property>
+Margins, Columns and Rules (lines).</property>
                     <property name="halign">start</property>
                     <property name="label" translatable="yes">Layout</property>
                     <property name="justify">center</property>
@@ -5900,7 +5899,7 @@ for characters missing in primary font.</property>
                                     <property name="can_focus">False</property>
                                     <child>
                                       <object class="GtkCheckButton" id="c_autoToC">
-                                        <property name="label" translatable="yes">Generate Table of Contents       Title for ToC:</property>
+                                        <property name="label" translatable="yes">Generate Table of Contents       Title:</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
@@ -6244,8 +6243,8 @@ selected books/chapters will show in the glossary.</property>
                                 <property name="margin_right">6</property>
                                 <property name="margin_top">6</property>
                                 <property name="margin_bottom">6</property>
-                                <property name="row_spacing">8</property>
                                 <property name="column_spacing">6</property>
+                                <property name="column_homogeneous">True</property>
                                 <child>
                                   <object class="GtkCheckButton" id="c_chapterNumber">
                                     <property name="label" translatable="yes">Chapter numbers</property>
@@ -6413,6 +6412,7 @@ Verse Bridges (3-4) also stack vertically.</property>
                                   <object class="GtkBox">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="spacing">7</property>
                                     <child>
                                       <object class="GtkSpinButton" id="s_columnShift">
                                         <property name="visible">True</property>
@@ -6578,6 +6578,7 @@ uncheck the Parallel Passage Refs.</property>
                                         <property name="focus_on_click">False</property>
                                         <property name="receives_default">True</property>
                                         <property name="halign">start</property>
+                                        <property name="valign">center</property>
                                         <property name="relief">none</property>
                                         <property name="uri">Click to edit the \s marker's properties on the Styles tab</property>
                                         <signal name="activate-link" handler="onEditStyleClicked" swapped="no"/>
@@ -6694,8 +6695,8 @@ be turned OFF (to omit the main text).</property>
                                 <property name="can_focus">False</property>
                                 <property name="margin_top">6</property>
                                 <property name="margin_bottom">6</property>
-                                <property name="row_spacing">8</property>
-                                <property name="column_spacing">6</property>
+                                <property name="row_spacing">4</property>
+                                <property name="column_spacing">4</property>
                                 <child>
                                   <object class="GtkCheckButton" id="c_useChapterLabel">
                                     <property name="label" translatable="yes">Use Special Features
@@ -6918,10 +6919,9 @@ that should be typeset as a single column.</property>
                     <property name="can_focus">False</property>
                     <property name="tooltip_text" translatable="yes">Main settings to control the 
 beginning and ending of books,
-and  the options for Main Body
-of text. Also Adjustments and
-Hyphenation, and a Fallback Font.
-and Illustrations.</property>
+and options for what should be
+included in the Main Body of text.
+Also settings for special books.</property>
                     <property name="halign">start</property>
                     <property name="label" translatable="yes">Body</property>
                     <property name="justify">center</property>
@@ -8815,8 +8815,7 @@ in order to get accurate Image Copyright Attribution.</property>
                                 <property name="halign">end</property>
                                 <property name="valign">start</property>
                                 <property name="margin_top">6</property>
-                                <property name="label" translatable="yes">Colophon
-Text:</property>
+                                <property name="label" translatable="yes">Colophon Text:</property>
                                 <property name="justify">right</property>
                               </object>
                               <packing>
@@ -8826,11 +8825,11 @@ Text:</property>
                             </child>
                             <child>
                               <object class="GtkScrolledWindow" id="scroll_colophon">
-                                <property name="height_request">100</property>
+                                <property name="height_request">110</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
+                                <property name="valign">start</property>
                                 <property name="hexpand">True</property>
-                                <property name="vexpand">True</property>
                                 <property name="shadow_type">etched-in</property>
                                 <property name="overlay_scrolling">False</property>
                                 <child>
@@ -8917,6 +8916,7 @@ publication. This will be printed at the END
 of the book. Similar to a "biblio-page" or a
 "copyright-page" at the front of a book.</property>
                             <property name="halign">start</property>
+                            <property name="valign">center</property>
                             <property name="active">True</property>
                             <property name="draw_indicator">True</property>
                             <signal name="clicked" handler="onColophonClicked" swapped="no"/>
@@ -9176,46 +9176,11 @@ content of Headers and Footers.</property>
                           <object class="GtkGrid" id="gr_picButtons">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
+                            <property name="halign">end</property>
                             <property name="margin_top">6</property>
                             <property name="margin_bottom">6</property>
-                            <property name="row_spacing">6</property>
-                            <child>
-                              <object class="GtkButton" id="btn_plAdd">
-                                <property name="label" translatable="yes">Add</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">True</property>
-                                <property name="tooltip_text" translatable="yes">Click to add another picture to the PicList. You will need to fill in all the details in the area below.</property>
-                                <property name="valign">center</property>
-                                <property name="vexpand">False</property>
-                                <signal name="clicked" handler="onPlAddClicked" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="left_attach">0</property>
-                                <property name="top_attach">2</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkButton" id="btn_GeneratePicList">
-                                <property name="label" translatable="yes">Generate...</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">True</property>
-                                <property name="tooltip_text" translatable="yes">This button will (re-)generate the PicList from the USFM \fig ... \fig* definitions.
-
-If you only want to (re-)generate the PicList for a 
-single book, then just select that book on the 
-Basic tab.</property>
-                                <property name="halign">start</property>
-                                <property name="margin_top">6</property>
-                                <property name="margin_bottom">6</property>
-                                <signal name="clicked" handler="onGeneratePicListClicked" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="left_attach">0</property>
-                                <property name="top_attach">0</property>
-                              </packing>
-                            </child>
+                            <property name="row_spacing">4</property>
+                            <property name="column_spacing">4</property>
                             <child>
                               <object class="GtkCheckButton" id="c_filterPicList">
                                 <property name="label" translatable="yes">Only Show Active Books</property>
@@ -9229,37 +9194,13 @@ Basic tab.</property>
                               </object>
                               <packing>
                                 <property name="left_attach">0</property>
-                                <property name="top_attach">1</property>
+                                <property name="top_attach">2</property>
                                 <property name="width">2</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkButton" id="btn_saveEdits1">
-                                <property name="label">gtk-save</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">True</property>
-                                <property name="tooltip_text" translatable="yes">If you edit any of these files, you should
-save them before moving to a different
-tab (otherwise your changes will be lost.)
-
-Shortcut key: &lt;Ctrl-S&gt;</property>
-                                <property name="halign">center</property>
-                                <property name="margin_top">5</property>
-                                <property name="margin_bottom">5</property>
-                                <property name="use_stock">True</property>
-                                <property name="always_show_image">True</property>
-                                <signal name="clicked" handler="onSavePicListEdits" swapped="no"/>
-                                <accelerator key="s" signal="activate" modifiers="GDK_CONTROL_MASK"/>
-                              </object>
-                              <packing>
-                                <property name="left_attach">1</property>
-                                <property name="top_attach">0</property>
-                              </packing>
-                            </child>
-                            <child>
                               <object class="GtkButton">
-                                <property name="label" translatable="yes">Apply to other images...</property>
+                                <property name="label" translatable="yes">Apply to many...</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
@@ -9267,27 +9208,12 @@ Shortcut key: &lt;Ctrl-S&gt;</property>
 details to all other images with
 the same prefix. (This will not
 overwrite any existing settings.)</property>
+                                <property name="halign">end</property>
                               </object>
                               <packing>
                                 <property name="left_attach">0</property>
                                 <property name="top_attach">3</property>
                                 <property name="width">2</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkButton" id="btn_plDel">
-                                <property name="label" translatable="yes">Del</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">True</property>
-                                <property name="tooltip_text" translatable="yes">Click to immediately delete the currently highligted picture. No confirmation will be asked for!</property>
-                                <property name="valign">center</property>
-                                <property name="vexpand">False</property>
-                                <signal name="clicked" handler="onPlDelClicked" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="left_attach">1</property>
-                                <property name="top_attach">2</property>
                               </packing>
                             </child>
                             <child>
@@ -9306,8 +9232,10 @@ overwrite any existing settings.)</property>
                                       <object class="GtkGrid">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="margin_bottom">4</property>
-                                        <property name="row_spacing">3</property>
+                                        <property name="margin_right">6</property>
+                                        <property name="margin_top">4</property>
+                                        <property name="margin_bottom">6</property>
+                                        <property name="row_spacing">4</property>
                                         <child>
                                           <object class="GtkComboBox" id="fcb_chklstFilter">
                                             <property name="visible">True</property>
@@ -9357,6 +9285,84 @@ status of the checking values.</property>
                                 <property name="left_attach">0</property>
                                 <property name="top_attach">4</property>
                                 <property name="width">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkButton" id="btn_plAdd">
+                                <property name="label" translatable="yes">Add</property>
+                                <property name="width_request">55</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                                <property name="tooltip_text" translatable="yes">Click to add another picture to the PicList. You
+will need to fill in all the details in the area below.</property>
+                                <property name="halign">end</property>
+                                <property name="valign">center</property>
+                                <property name="vexpand">False</property>
+                                <signal name="clicked" handler="onPlAddClicked" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkButton" id="btn_plDel">
+                                <property name="label" translatable="yes">Del</property>
+                                <property name="width_request">55</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                                <property name="tooltip_text" translatable="yes">Click to immediately delete the currently highligted
+picture. No confirmation will be asked for!</property>
+                                <property name="halign">end</property>
+                                <property name="valign">center</property>
+                                <property name="vexpand">False</property>
+                                <signal name="clicked" handler="onPlDelClicked" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkButton" id="btn_plSaveEdits">
+                                <property name="label">gtk-save</property>
+                                <property name="width_request">90</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                                <property name="tooltip_text" translatable="yes">Shortcut key: &lt;Ctrl-S&gt;</property>
+                                <property name="halign">start</property>
+                                <property name="use_stock">True</property>
+                                <property name="always_show_image">True</property>
+                                <signal name="clicked" handler="onSavePicListEdits" swapped="no"/>
+                                <accelerator key="s" signal="activate" modifiers="GDK_CONTROL_MASK"/>
+                              </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="top_attach">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkButton" id="btn_plGenerate">
+                                <property name="label" translatable="yes">Generate...</property>
+                                <property name="width_request">90</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                                <property name="tooltip_text" translatable="yes">This button will (re-)generate the PicList
+from the USFM \fig ... \fig* definitions.
+
+If you just want to (re-)generate the PicList
+for a single book, then select that book on
+the Basic tab.</property>
+                                <property name="halign">start</property>
+                                <signal name="clicked" handler="onGeneratePicListClicked" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="top_attach">0</property>
                               </packing>
                             </child>
                           </object>
@@ -11403,10 +11409,10 @@ Preview</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">Provided that the image can be located
-in the specified folder(s), a preview of
-the picture should be displayed below.</property>
-                                    <property name="halign">start</property>
+                                    <property name="tooltip_text" translatable="yes">Display the picture currently in focus.
+Note that this is dependent on the image
+being located in the specified folder(s).</property>
+                                    <property name="halign">end</property>
                                     <property name="valign">end</property>
                                     <property name="vexpand">True</property>
                                     <property name="draw_indicator">True</property>
@@ -11426,11 +11432,10 @@ on Page</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">This option will show the position of the
-picture on the page. When Inner/Outer
-Horizontal Position is used, the layout
-will show for the odd/right-hand page
-of a spread.</property>
+                                    <property name="tooltip_text" translatable="yes">Show the relative position of the picture
+on the page. When Inner/Outer is used,
+the position displayed represents the 
+odd/right-hand page of a spread.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">end</property>
                                     <property name="vexpand">True</property>
@@ -12342,24 +12347,7 @@ to print.</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
-                                        <property name="top_attach">2</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkCheckButton" id="c_tracing">
-                                        <property name="label" translatable="yes">Debug Tracing</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="tooltip_text" translatable="yes">This advanced feature is for
-troubleshooting use only.</property>
-                                        <property name="opacity">0.80000000000000004</property>
-                                        <property name="halign">start</property>
-                                        <property name="draw_indicator">True</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">0</property>
-                                        <property name="top_attach">2</property>
+                                        <property name="top_attach">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -12484,12 +12472,9 @@ glosses for interlinear/ruby text.</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
-                                        <property name="top_attach">3</property>
+                                        <property name="top_attach">2</property>
                                         <property name="width">2</property>
                                       </packing>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
                                     </child>
                                   </object>
                                 </child>
@@ -12529,6 +12514,7 @@ glosses for interlinear/ruby text.</property>
                                     <property name="can_focus">False</property>
                                     <property name="margin_top">4</property>
                                     <property name="margin_bottom">6</property>
+                                    <property name="row_spacing">5</property>
                                     <child>
                                       <object class="GtkCheckButton" id="c_AdvCompatLineSpacing">
                                         <property name="label" translatable="yes">Legacy 1/14 LineSpacing</property>
@@ -12541,6 +12527,23 @@ glosses for interlinear/ruby text.</property>
                                       <packing>
                                         <property name="left_attach">0</property>
                                         <property name="top_attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="c_tracing">
+                                        <property name="label" translatable="yes">Debug Tracing</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="tooltip_text" translatable="yes">This advanced feature is for
+troubleshooting use only.</property>
+                                        <property name="opacity">0.80000000000000004</property>
+                                        <property name="halign">start</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">0</property>
+                                        <property name="top_attach">1</property>
                                       </packing>
                                     </child>
                                   </object>
@@ -13515,7 +13518,6 @@ options here to create a Diglot or Didoc.</property>
                             <property name="margin_right">6</property>
                             <property name="margin_top">4</property>
                             <property name="margin_bottom">10</property>
-                            <property name="row_spacing">6</property>
                             <property name="column_spacing">6</property>
                             <child>
                               <object class="GtkButton" id="btn_selectSectionHeaderPDF">

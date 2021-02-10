@@ -120,9 +120,8 @@ class PicList:
         self.checkmodel.refilter()
 
     def modify_font(self, p):
-        for a in ("", "2"):
-            w = self.builder.get_object("cr_caption"+a)
-            w.set_property("font-desc", p)
+        w = self.builder.get_object("cr_caption")
+        w.set_property("font-desc", p)
 
     def isEmpty(self):
         return len(self.model) == 0
@@ -409,17 +408,17 @@ class PicList:
 
     def setPreview(self, pixbuf, tooltip=None):
         pic = self.builder.get_object("img_picPreview")
-        picc = self.builder.get_object("img_piccheckPreview")
+        # picc = self.builder.get_object("img_piccheckPreview")
         if pixbuf is None:
             pic.clear()
-            picc.clear()
+            # picc.clear()
             tooltip = ""
         else:
             pic.set_from_pixbuf(pixbuf)
-            picc.set_from_pixbuf(pixbuf)
+            # picc.set_from_pixbuf(pixbuf)
         if tooltip is not None:
             pic.set_tooltip_text(tooltip)
-            picc.set_tooltip_text(tooltip)
+            # picc.set_tooltip_text(tooltip)
             self.builder.get_object("t_plFilename").set_tooltip_text(tooltip)
 
     def drawPreview(self, wid, cr):
