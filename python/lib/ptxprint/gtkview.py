@@ -382,8 +382,8 @@ class GtkViewModel(ViewModel):
         if self.get("c_colophon") and self.get("tb_colophon") == "":
             self.set("tb_colophon", _defaultColophon)
 
-        self.picListView = PicList(self.builder.get_object('tv_picListEdit'),
-                                   self.builder.get_object('tv_picListEdit1'), self.builder, self)
+        self.picListView = PicList(self.builder.get_object('tv_picListEdit'),  # need a fix here on next line was Edit1 @@@@
+                                   self.builder.get_object('tv_picListEdit'), self.builder, self)
         self.picChecksView = PicChecks(self)
         self.styleEditor = StyleEditorView(self)
 
@@ -2573,10 +2573,15 @@ class GtkViewModel(ViewModel):
             self.lang = lang
             self.builder.get_object("ptxprint").destroy()
             self.onDestroy(None)
-
+            
     def onRHruleClicked(self, btn):
         status = self.get("c_rhrule")
-        self.builder.get_object("l_rhruleoffset").set_visible(status)
-        self.builder.get_object("s_rhruleposition").set_visible(status)
-        self.builder.get_object("gr_marginGraphicLineTrue").set_visible(status)        
+        for w in ["l_rhruleoffset", "s_rhruleposition", "gr_marginGraphicLineTrue"]:
+            self.builder.get_object(w).set_visible(status)        
         self.builder.get_object("gr_marginGraphicLineFalse").set_visible(not status)        
+
+    def tryHidingTreeView(self, brn):
+        status = self.get("c_quickRun")
+        for w in ["scr_picListEdit", "gr_picButtons", "tb_picPreview"]:
+            self.builder.get_object(w).set_visible(status)        
+       
