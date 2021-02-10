@@ -9199,24 +9199,6 @@ content of Headers and Footers.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkButton">
-                                <property name="label" translatable="yes">Apply to many...</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">True</property>
-                                <property name="tooltip_text" translatable="yes">Copy the existing image credit
-details to all other images with
-the same prefix. (This will not
-overwrite any existing settings.)</property>
-                                <property name="halign">end</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">0</property>
-                                <property name="top_attach">3</property>
-                                <property name="width">2</property>
-                              </packing>
-                            </child>
-                            <child>
                               <object class="GtkFrame">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
@@ -9365,6 +9347,9 @@ the Basic tab.</property>
                                 <property name="top_attach">0</property>
                               </packing>
                             </child>
+                            <child>
+                              <placeholder/>
+                            </child>
                           </object>
                           <packing>
                             <property name="left_attach">1</property>
@@ -9388,6 +9373,27 @@ the Basic tab.</property>
                                 <property name="valign">start</property>
                                 <property name="orientation">vertical</property>
                                 <child>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="tooltip_text" translatable="yes">The Settings tab affects all the pictures. Specific
+parameters for individual pictures can be changed
+on the Details, Checklist and Credit Overlay tabs.</property>
+                                    <property name="halign">start</property>
+                                    <property name="margin_left">12</property>
+                                    <property name="margin_top">6</property>
+                                    <property name="label" translatable="yes">Global Picture Parameters for ALL Pictures in this Configuration</property>
+                                    <attributes>
+                                      <attribute name="foreground" value="#68689797c9c9"/>
+                                    </attributes>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">0</property>
+                                  </packing>
+                                </child>
+                                <child>
                                   <object class="GtkFrame">
                                     <property name="width_request">620</property>
                                     <property name="visible">True</property>
@@ -9406,7 +9412,7 @@ the Basic tab.</property>
                                         <property name="halign">start</property>
                                         <property name="valign">center</property>
                                         <property name="margin_top">6</property>
-                                        <property name="row_spacing">6</property>
+                                        <property name="row_spacing">3</property>
                                         <property name="column_spacing">6</property>
                                         <property name="row_homogeneous">True</property>
                                         <child>
@@ -9763,7 +9769,7 @@ more than once (to update the list of page numbers).</property>
                                   <packing>
                                     <property name="expand">False</property>
                                     <property name="fill">True</property>
-                                    <property name="position">0</property>
+                                    <property name="position">1</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -9778,7 +9784,7 @@ more than once (to update the list of page numbers).</property>
                                   <packing>
                                     <property name="expand">False</property>
                                     <property name="fill">True</property>
-                                    <property name="position">1</property>
+                                    <property name="position">2</property>
                                   </packing>
                                 </child>
                               </object>
@@ -11066,6 +11072,9 @@ in ALL publications of this project (not just THIS one).</property>
                                                     <child>
                                                       <placeholder/>
                                                     </child>
+                                                    <child>
+                                                      <placeholder/>
+                                                    </child>
                                                   </object>
                                                 </child>
                                               </object>
@@ -11118,7 +11127,6 @@ in this publication, as well as other contexts.</property>
                             <child>
                               <object class="GtkBox" id="tb_credits">
                                 <property name="visible">True</property>
-                                <property name="sensitive">False</property>
                                 <property name="can_focus">False</property>
                                 <property name="margin_left">6</property>
                                 <property name="margin_right">6</property>
@@ -11130,10 +11138,12 @@ in this publication, as well as other contexts.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="halign">start</property>
+                                    <property name="margin_left">6</property>
+                                    <property name="margin_right">6</property>
                                     <property name="margin_top">6</property>
                                     <property name="margin_bottom">6</property>
                                     <property name="row_spacing">6</property>
-                                    <property name="column_spacing">3</property>
+                                    <property name="column_spacing">6</property>
                                     <child>
                                       <object class="GtkLabel">
                                         <property name="visible">True</property>
@@ -11278,24 +11288,6 @@ to be rotated.
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkCheckButton" id="c_creditBox">
-                                        <property name="label" translatable="yes">Apply Background Box</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="tooltip_text" translatable="yes">Check this option if the text 
-needs to be printed inside a 
-box in order to be visible.</property>
-                                        <property name="halign">end</property>
-                                        <property name="draw_indicator">True</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">0</property>
-                                        <property name="top_attach">2</property>
-                                        <property name="width">2</property>
-                                      </packing>
-                                    </child>
-                                    <child>
                                       <object class="GtkComboBoxText" id="ecb_creditBoxStyle">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
@@ -11308,6 +11300,7 @@ parameters at once: font, size and colour. </property>
                                         <property name="has_entry">True</property>
                                         <property name="active_id">0</property>
                                         <items>
+                                          <item translatable="yes">None</item>
                                           <item translatable="yes">Light</item>
                                           <item translatable="yes">Dark</item>
                                         </items>
@@ -11326,6 +11319,51 @@ parameters at once: font, size and colour. </property>
                                         <property name="top_attach">2</property>
                                         <property name="width">2</property>
                                       </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="halign">end</property>
+                                        <property name="label" translatable="yes">Background Box:</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">0</property>
+                                        <property name="top_attach">2</property>
+                                        <property name="width">2</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkButton">
+                                        <property name="label" translatable="yes">Apply to multiple...</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">True</property>
+                                        <property name="tooltip_text" translatable="yes">Copy the existing image credit
+details to all other images with
+the same prefix. (This will not
+overwrite any existing settings.)</property>
+                                        <property name="halign">end</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">5</property>
+                                        <property name="top_attach">2</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
                                     </child>
                                   </object>
                                   <packing>
