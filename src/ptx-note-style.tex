@@ -60,7 +60,8 @@
 }
 \def\n@wnoteins@rt#1{
 	\x@\n@winsert\csname note-#1\endcsname
-	\x@\n@winsert\csname notesave-#1\endcsname
+	\x@\newb@x\csname notesave1-#1\endcsname
+	\x@\newb@x\csname notesave2-#1\endcsname
 }
 \let\n@winsert=\newinsert % work around the \outer nature of \newinsert
 %-cnote_makenote

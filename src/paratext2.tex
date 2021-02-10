@@ -774,18 +774,23 @@
   \x@\let\x@\th@cl@ss\csname note-#1\endcsname
   \global\setbox\th@cl@ss=\box\voidb@x}
 
-\def\s@venotes#1{\trace{n}{Saving footnotes}\edef\n@t@sfx{#1}\let\\=\s@ven@te \the\n@tecl@sses}
-\def\r@storenotes#1{\trace{n}{Restoring footnotes}\edef\n@t@sfx{#1}\let\\=\r@storen@te \the\n@tecl@sses}
-\def\s@ven@te#1{%
-  \x@\let\x@\tmp@note\csname note-#1\n@t@sfx\endcsname
-  \x@\let\x@\tmp@save\csname notesave-#1\n@t@sfx\endcsname
+\def\s@venotes#1#2{\trace{n}{Saving footnotes}\edef\n@tesavelevel{#2}\edef\n@t@sfx{#1}\let\\=\s@ven@te \the\n@tecl@sses}
+\def\r@storenotes#1#2{\trace{n}{Restoring footnotes}\edef\n@tesavelevel{#2}\edef\n@t@sfx{#1}\let\\=\r@storen@te \the\n@tecl@sses}
+\def\tw@{2}
+\def\s@ven@te#1{% Level2 save saves to notesave1-X to notesave2-X
+  \ifx\tw@\n@tesavelevel
+    \x@\let\x@\tmp@note\csname notesave1-#1\n@t@sfx\endcsname
+  \else
+    \x@\let\x@\tmp@note\csname note-#1\n@t@sfx\endcsname
+  \fi
+  \x@\let\x@\tmp@save\csname notesave\n@tesavelevel-#1\n@t@sfx\endcsname
   \global\setbox\tmp@save=\copy\tmp@note
-  \trace{n}{#1\n@t@sfx: \the\ht\tmp@save+\the\dp\tmp@save}%
+  \trace{n}{#1\n@t@sfx(\n@tesavelevel): \the\ht\tmp@save+\the\dp\tmp@save}%
 }
-\def\r@storen@te#1{%
+\def\r@storen@te#1{% either notesavelevel restores to note-X
   \x@\let\x@\tmp@note\csname note-#1\n@t@sfx\endcsname
-  \x@\let\x@\tmp@save\csname notesave-#1\n@t@sfx\endcsname
-  \trace{n}{#1\n@t@sfx: \the\ht\tmp@note+\the\dp\tmp@note -> \the\ht\tmp@save+\the\dp\tmp@save }%
+  \x@\let\x@\tmp@save\csname notesave\n@tesavelevel-#1\n@t@sfx\endcsname
+  \trace{n}{#1\n@t@sfx(\n@tesavelevel): \the\ht\tmp@note+\the\dp\tmp@note -> \the\ht\tmp@save+\the\dp\tmp@save }%
   \global\setbox\tmp@note=\copy\tmp@save
 }
 %-c_clearnoteclass
@@ -1208,9 +1213,10 @@
   \tempfalse
   \ifvoid\partialL\else\temptrue\fi
   \ifvoid\partialR\else\temptrue\fi
-  \setboth
-  \setc@rdstat{L}%
-  \eject
+  \allNeedEmptyingtrue
+  \pr@sideswitch{end}{L}%
+  \penalty\dgl@tPenColSwap
+  \@add@n@xtpartial
   \ifnum\interactionmode=2
     \showbox\n@xtpartialNrml\showbox\n@xtpartialRev
   \fi
