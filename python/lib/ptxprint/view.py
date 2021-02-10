@@ -283,13 +283,14 @@ class ViewModel:
         font = self.get("bl_fontR").getTtfont()
         #fontheight = 1. + float(font.descent) / font.upem
         fontheight = float(font.ascent) / font.upem
-        fontsizemms = float(self.get("s_fontsize")) / 72.27 * 25.4
+        fontsizemms = float(self.get("s_fontsize")) * 25.4 / 72.27
         linespacemms = float(self.get("s_linespacing")) * 25.4 / 72.27
-        hfontsizemms = asfloat(self.styleEditor.get("h", "FontSize"), 1.) * fontsizemms
+        hfontsizemms = asfloat(self.styleEditor.getval("h", "FontSize"), 12.) / 12. * fontsizemms
         marginmms = float(self.get("s_margins"))
         topmarginmms = float(self.get("s_topmargin")) # - fontsize  # macros add fontsize for some reason
         bottommarginmms = float(self.get("s_bottommargin"))
-        headerposmms = topmarginmms - float(self.get("s_headerposition")) * 25.4 / 72.27 - 0.7 * hfontsizemms
+        headerposmms = topmarginmms - float(self.get("s_headerposition")) * 25.4 / 72.27 - hfontsizemms
+        # print(f"hfont {hfontsizemms}, headerpos {headerposmms}")
         footerposmms = float(self.get("s_footerposition"))
         headerlabel = headerposmms - fontheight * fontsizemms
         footerlabel = (bottommarginmms - footerposmms - fontheight * fontsizemms) * 72.27 / 25.4
