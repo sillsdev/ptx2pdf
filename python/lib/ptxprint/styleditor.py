@@ -29,6 +29,11 @@ class StyleEditor:
         res.update(self.sheet.keys())
         return res
 
+    def asStyle(self, m):
+        res = self.basesheet.get(m, {}).copy()
+        res.update(self.sheet.get(m, {}))
+        return res
+
     def getval(self, mrk, key):
         if self.sheet is None:
             raise KeyError(f"stylesheet missing: {mrk} + {key}")
@@ -123,16 +128,19 @@ class StyleEditor:
             res = re.sub(r"^\s*(.*\d+)\s*$", r"\1pt", res)
         return res
 
-    def output_diffile(self, outfh, regular=None):
+    def output_diffile(self, outfh, regular=None, inArchive=False):
         def normmkr(s):
             x = s.lower().title()
             return mkrexceptions.get(x, x)
         for m in sorted(self.allStyles()):
             markerout = False
-            sm = self.sheet.get(m, {})
+            if inArchive:
+                sm = self.sheet.get(m, {}).copy()
+            else:
+                sm = self.sheet.get(m, {})
             om = self.basesheet.get(m, {})
             if " font" in sm:
-                sm[" font"].updateTeXStyle(sm, regular=regular)
+                sm[" font"].updateTeXStyle(sm, regular=regular, inArchive=inArchive)
             for k,v in sm.items():
                 if k.startswith(" "):
                     continue

@@ -720,6 +720,9 @@ class FontRef:
     def fromTeXStyle(cls, style):
         if 'FontName' in style:
             name = style['FontName']
+            if name.startswith("[") and name.endswith("]") and os.path.exists(name[1:-1]):
+                f = TTFont(None, filename=name[1:-1])
+                name = f.family
             styles = []
             for a in ("Bold", "Italic"):
                 if a in name:
@@ -855,7 +858,7 @@ class FontRef:
                 feats.append(("+"+k, v))
         return (name, sfeats, feats)
 
-    def updateTeXStyle(self, style, regular=None):
+    def updateTeXStyle(self, style, regular=None, inArchive=False):
         res = []
         if regular is not None and self.name == regular.name:
             for a in ("Bold", "Italic"):
@@ -868,7 +871,7 @@ class FontRef:
                 elif x:
                     del style[a]
         else:
-            (name, sfeats, feats) = self._getTeXComponents()
+            (name, sfeats, feats) = self._getTeXComponents(inarchive=inArchive)
             # print(f"updateTeXStyle: {name}, {sfeats}, {feats}")
             style['FontName'] = name
             if len(feats) or len(sfeats):
