@@ -828,11 +828,11 @@ class FontRef:
     def getFake(self, name):
         return self.feats.get(name, None)
 
-    def _getTeXComponents(self):
+    def _getTeXComponents(self, inarchive=False):
         f = self.getTtfont()
         s = None
         if f.filename is not None:
-            name = "[{}]".format(f.filename.as_posix())
+            name = "[{}]".format(f"../shared/fonts/{f.filename.name}" if inarchive else f.filename.as_posix())
         elif self.style is not None and len(self.style):
             s = _fontstylemap.get(self.style, None)
             name = self.name + (" "+self.style if s is None else "")
@@ -888,8 +888,8 @@ class FontRef:
             else:
                 style.pop("ztexFontGrSpace", None)
 
-    def asTeXFont(self):
-        (name, sfeats, feats) = self._getTeXComponents()
+    def asTeXFont(self, inarchive=False):
+        (name, sfeats, feats) = self._getTeXComponents(inarchive)
         res = [name, "".join(sfeats)]
         if self.lang is not None:
             res.append(":language={}".format(self.lang))

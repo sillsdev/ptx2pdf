@@ -131,11 +131,9 @@ def isLocked():
     return _joblock is not None
 
 class RunJob:
-    def __init__(self, printer, scriptsdir, macrosdir, userconfig, args):
+    def __init__(self, printer, scriptsdir, args, inArchive=False):
         self.scriptsdir = scriptsdir
-        self.macrosdir = macrosdir
         self.printer = printer
-        self.userconfig = userconfig
         self.tempFiles = []
         self.tmpdir = "."
         self.maxRuns = 1
@@ -145,6 +143,7 @@ class RunJob:
         self.thread = None
         self.busy = False
         self.ispdfxa = False
+        self.inArchive = inArchive
 
     def doit(self):
         if not lockme(self):
@@ -172,7 +171,7 @@ class RunJob:
             # self.texfiles += self.gatherIllustrations(info, jobs, self.args.paratext)
         self.ispdfxa = self.printer.get("c_PDFx1aOutput")
         
-        if info.asBool("project/combinebooks"):
+        if info.asBool("project/combinebooks") or self.inArchive:
             joblist = [jobs]
         else:
             joblist = [[j] for j in jobs]
@@ -184,7 +183,11 @@ class RunJob:
             digprjdir = os.path.join(self.args.paratext, digprjid)
             digptsettings = ParatextSettings(self.args.paratext, digprjid)
             diginfo = TexModel(self.printer.diglotView, self.args.paratext, digptsettings, digprjid)
+            if self.inArchive:
+                return self.digdojob(joblist[0], info, diginfo, digprjid, digprjdir)
             self.texfiles += sum((self.digdojob(j, info, diginfo, digprjid, digprjdir) for j in joblist), [])
+        elif self.inArchive:
+            return self.dojob(joblist[0], info)
         else: # Normal (non-diglot)
             self.texfiles += sum((self.dojob(j, info) for j in joblist), [])
 
@@ -318,7 +321,10 @@ class RunJob:
         self.books += donebooks
         info["project/bookids"] = jobs
         info["project/books"] = donebooks
-        return [os.path.join(self.tmpdir, out)] + self.sharedjob(jobs, info)
+        res = self.sharedjob(jobs, info)
+        if self.inArchive:
+            return res
+        return [os.path.join(self.tmpdir, out)] + res
 
     def digdojob(self, jobs, info, diginfo, digprjid, digprjdir):
         texfiles = []
@@ -396,7 +402,10 @@ class RunJob:
             info[k]=diginfo[v]
         info["document/diglotcfgrpath"] = os.path.relpath(diginfo.printer.configPath(diginfo.printer.configName()), docdir).replace("\\","/")
         info["_isDiglot"] = True
-        texfiles += self.sharedjob(jobs, info, extra="-diglot")
+        res = self.sharedjob(jobs, info, extra="-diglot")
+        if self.inArchive:
+            return res
+        texfiles += res
         return texfiles
 
     def sharedjob(self, jobs, info, prjid=None, prjdir=None, extra=""):
@@ -411,8 +420,11 @@ class RunJob:
             cfgname = "-" + cfgname
         outfname = info.printer.baseTeXPDFnames(jobs)[0] + ".tex"
         info.update()
+        texfiledat = info.asTex(filedir=self.tmpdir, jobname=outfname.replace(".tex", ""), extra=extra)
+        if self.inArchive:
+            return texfiledat
         with open(os.path.join(self.tmpdir, outfname), "w", encoding="utf-8") as texf:
-            texf.write(info.asTex(filedir=self.tmpdir, jobname=outfname.replace(".tex", ""), extra=extra))
+            texf.write(texfiledat)
         os.putenv("hyph_size", "32749")     # always run with maximum hyphenated words size (xetex is still tiny ~200MB resident)
         os.putenv("stack_size", "32768")    # extra input stack space (up from 5000)
         ptxmacrospath = os.path.abspath(os.path.join(self.scriptsdir, "..", "..", "src"))

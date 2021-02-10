@@ -2,6 +2,7 @@ import configparser, re, os, gi, traceback
 from shutil import copyfile
 from pathlib import Path
 from functools import reduce
+from inspect import signature
 import regex
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
@@ -271,11 +272,11 @@ ModelMap = {
     "notes/horiznotespacemin":  ("s_notespacingmin", lambda w,v: "{:.3f}".format(float(v)) if v is not None else "7.000"),
     "notes/horiznotespacemax":  ("s_notespacingmax", lambda w,v: "{:.3f}".format(float(v)) if v is not None else "27.000"),
 
-    "document/fontregular":              ("bl_fontR", lambda w,v: v.asTeXFont() if v else ""),
-    "document/fontbold":                 ("bl_fontB", lambda w,v: v.asTeXFont() if v else ""),
-    "document/fontitalic":               ("bl_fontI", lambda w,v: v.asTeXFont() if v else ""),
-    "document/fontbolditalic":           ("bl_fontBI", lambda w,v: v.asTeXFont() if v else ""),
-    "document/fontextraregular":         ("bl_fontExtraR", lambda w,v: v.asTeXFont() if v else ""),
+    "document/fontregular":              ("bl_fontR", lambda w,v,s: v.asTeXFont(s.inArchive) if v else ""),
+    "document/fontbold":                 ("bl_fontB", lambda w,v,s: v.asTeXFont(s.inArchive) if v else ""),
+    "document/fontitalic":               ("bl_fontI", lambda w,v,s: v.asTeXFont(s.inArchive) if v else ""),
+    "document/fontbolditalic":           ("bl_fontBI", lambda w,v,s: v.asTeXFont(s.inArchive) if v else ""),
+    "document/fontextraregular":         ("bl_fontExtraR", lambda w,v,s: v.asTeXFont(s.inArchive) if v else ""),
     "snippets/fancyintro":      ("c_prettyIntroOutline", None),
     "snippets/pdfx1aoutput":    ("c_PDFx1aOutput", None),
     "snippets/diglot":          ("c_diglot", lambda w,v: True if v else False),
@@ -358,11 +359,12 @@ class TexModel:
     "ib" : ("by_Farid_Faadil. Copyright ©_by_Biblica, Inc.\nUsed_by_permission. All_rights_reserved_worldwide.", "")
     }
     
-    def __init__(self, printer, path, ptsettings, prjid=None):
+    def __init__(self, printer, path, ptsettings, prjid=None, inArchive=False):
         from ptxprint.view import VersionStr
         self.VersionStr = VersionStr
         self.printer = printer
         self.ptsettings = ptsettings
+        self.inArchive = inArchive
         self.changes = None
         self.localChanges = None
         self.debug = False
@@ -449,10 +451,14 @@ class TexModel:
         for k in a:
             v = ModelMap[k]
             val = self.printer.get(v[0]) if v[0] is not None else None
-            if v[1] is not None:
-                self.dict[k] = v[1](self.printer, val)
-            else:
+            if v[1] is None:
                 self.dict[k] = val
+            else:
+                sig = signature(v[1])
+                if len(sig.parameters) == 2:
+                    self.dict[k] = v[1](self.printer, val)
+                else:
+                    self.dict[k] = v[1](self.printer, val, self)
 
     def __getitem__(self, key):
         return self.dict[key]

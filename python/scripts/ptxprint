@@ -136,7 +136,7 @@ else:
 
 def doit(printer):
     if not isLocked():
-        runjob = RunJob(printer, scriptsdir, macrosdir, config, args)
+        runjob = RunJob(printer, scriptsdir, args)
         runjob.doit()
         return runjob
     else:
