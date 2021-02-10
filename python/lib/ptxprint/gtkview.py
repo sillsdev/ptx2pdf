@@ -2579,3 +2579,4 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("l_rhruleoffset").set_visible(status)
         self.builder.get_object("s_rhruleposition").set_visible(status)
         self.builder.get_object("gr_marginGraphicLineTrue").set_visible(status)        
+        self.builder.get_object("gr_marginGraphicLineFalse").set_visible(not status)        

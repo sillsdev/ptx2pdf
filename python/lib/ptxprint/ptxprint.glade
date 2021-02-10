@@ -74,10 +74,10 @@ THE SOFTWARE.
     <property name="page_increment">0.10000000000000001</property>
   </object>
   <object class="GtkAdjustment" id="a_bottommargin">
-    <property name="upper">80</property>
-    <property name="value">15</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">5</property>
+    <property name="upper">99</property>
+    <property name="value">12</property>
+    <property name="step_increment">0.10000000000000001</property>
+    <property name="page_increment">1</property>
   </object>
   <object class="GtkAdjustment" id="a_chapfrom">
     <property name="lower">1</property>
@@ -141,16 +141,16 @@ THE SOFTWARE.
     <property name="page_increment">1</property>
   </object>
   <object class="GtkAdjustment" id="a_ftrposition">
-    <property name="upper">20</property>
-    <property name="value">1</property>
-    <property name="step_increment">0.20000000000000001</property>
+    <property name="upper">99</property>
+    <property name="value">8</property>
+    <property name="step_increment">0.10000000000000001</property>
     <property name="page_increment">1</property>
   </object>
   <object class="GtkAdjustment" id="a_hdrposition">
-    <property name="upper">72</property>
-    <property name="value">1</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">3</property>
+    <property name="upper">99</property>
+    <property name="value">15</property>
+    <property name="step_increment">0.10000000000000001</property>
+    <property name="page_increment">1</property>
   </object>
   <object class="GtkAdjustment" id="a_inclSectionScale">
     <property name="upper">10</property>
@@ -298,11 +298,10 @@ THE SOFTWARE.
     <property name="page_increment">5</property>
   </object>
   <object class="GtkAdjustment" id="a_ruleposition">
-    <property name="lower">-20</property>
+    <property name="lower">-100</property>
     <property name="upper">100</property>
-    <property name="value">12</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
+    <property name="step_increment">0.5</property>
+    <property name="page_increment">1</property>
   </object>
   <object class="GtkAdjustment" id="a_sidemargin">
     <property name="lower">-20</property>
@@ -398,7 +397,7 @@ THE SOFTWARE.
     <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="a_topmargin">
-    <property name="upper">80</property>
+    <property name="upper">200</property>
     <property name="value">18</property>
     <property name="step_increment">0.10000000000000001</property>
     <property name="page_increment">1</property>
@@ -4506,6 +4505,7 @@ Margins value on the Layout tab.</property>
                                     <property name="placeholder_text">0.0</property>
                                     <property name="input_purpose">number</property>
                                     <property name="adjustment">a_topmargin</property>
+                                    <property name="climb_rate">0.5</property>
                                     <property name="digits">1</property>
                                     <property name="numeric">True</property>
                                     <property name="update_policy">if-valid</property>
@@ -4555,6 +4555,7 @@ between the header and the top of the text. (pts)</property>
                                     <property name="placeholder_text">0.0</property>
                                     <property name="input_purpose">number</property>
                                     <property name="adjustment">a_hdrposition</property>
+                                    <property name="climb_rate">0.5</property>
                                     <property name="digits">1</property>
                                     <property name="numeric">True</property>
                                     <property name="update_policy">if-valid</property>
@@ -4640,6 +4641,7 @@ space between the end of the text and the footer line.</property>
                                     <property name="placeholder_text">0.0</property>
                                     <property name="input_purpose">number</property>
                                     <property name="adjustment">a_ftrposition</property>
+                                    <property name="climb_rate">0.5</property>
                                     <property name="digits">1</property>
                                     <property name="numeric">True</property>
                                     <property name="update_policy">if-valid</property>
@@ -4770,6 +4772,7 @@ cross-references end.</property>
                                     <property name="placeholder_text">0.0</property>
                                     <property name="input_purpose">number</property>
                                     <property name="adjustment">a_bottommargin</property>
+                                    <property name="climb_rate">0.5</property>
                                     <property name="digits">1</property>
                                     <property name="numeric">True</property>
                                     <property name="update_policy">if-valid</property>
@@ -4790,6 +4793,9 @@ cross-references end.</property>
                                     <property name="margin_left">6</property>
                                     <property name="label" translatable="yes">Side Margin
 Width (mm):</property>
+                                    <attributes>
+                                      <attribute name="foreground" value="#808000008080"/>
+                                    </attributes>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
@@ -4858,7 +4864,7 @@ to Body Text (pt):</property>
                                     <property name="placeholder_text">0.0</property>
                                     <property name="input_purpose">number</property>
                                     <property name="adjustment">a_ruleposition</property>
-                                    <property name="climb_rate">1</property>
+                                    <property name="climb_rate">0.5</property>
                                     <property name="digits">1</property>
                                     <property name="numeric">True</property>
                                     <property name="update_policy">if-valid</property>
