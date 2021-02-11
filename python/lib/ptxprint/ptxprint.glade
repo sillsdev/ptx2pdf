@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.1 
+<!-- Generated with glade 3.22.2 
 
 The MIT License (MIT)
 
@@ -147,9 +147,10 @@ THE SOFTWARE.
     <property name="page_increment">1</property>
   </object>
   <object class="GtkAdjustment" id="a_hdrposition">
+    <property name="lower">-20</property>
     <property name="upper">99</property>
     <property name="value">15</property>
-    <property name="step_increment">0.10000000000000001</property>
+    <property name="step_increment">0.5</property>
     <property name="page_increment">1</property>
   </object>
   <object class="GtkAdjustment" id="a_inclSectionScale">
@@ -4465,12 +4466,7 @@ Top:</property>
                                   <object class="GtkLabel">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="tooltip_text" translatable="yes">The primary margin is set on the Layout tab, but
-this setting can be used to increase/decrease the 
-space at the top of the page and determines
-where the main text begins. This setting is a 
-factor (without units) and is multiplied by the
-Margins value on the Layout tab.</property>
+                                    <property name="tooltip_text" translatable="yes">Distance in mm from the top of the page to the top of the body text (actually the baseline of a line above the first line of the body text).</property>
                                     <property name="halign">end</property>
                                     <property name="margin_top">6</property>
                                     <property name="margin_bottom">6</property>
@@ -4521,11 +4517,7 @@ Margins value on the Layout tab.</property>
                                   <object class="GtkLabel">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="tooltip_text" translatable="yes">This setting can be used to increase/decrease the 
-space at the top of the page and determines the
-vertical positioning of the header line. This setting
-is a factor (without units) and is multiplied by the
-Margins value on the Layout tab.</property>
+                                    <property name="tooltip_text" translatable="yes">The distance the header is above the top of the body text in pts. Strictly the distance the baseline of the header is above the baseline of a line above the first line of the body text.</property>
                                     <property name="halign">end</property>
                                     <property name="label" translatable="yes">Header to 
 Text Space (pt):</property>
@@ -4585,13 +4577,7 @@ between the header and the top of the text. (pts)</property>
                                   <object class="GtkLabel" id="l_btmMrgn">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="tooltip_text" translatable="yes">The primary margin is set on the Layout tab, but
-this setting can be used to increase/decrease the 
-space at the bottom of the page and determines
-where the main text and footnotes and 
-cross-references end. This setting is a 
-factor (without units) and is multiplied 
-by the Margins value on the Layout tab.</property>
+                                    <property name="tooltip_text" translatable="yes">This sets the distance from the bottom of the page to the baseline of the bottom of the text, in mm.</property>
                                     <property name="halign">end</property>
                                     <property name="margin_top">6</property>
                                     <property name="margin_bottom">6</property>
@@ -4611,8 +4597,7 @@ to Text (mm):</property>
                                   <object class="GtkLabel" id="l_ftrPosn">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="tooltip_text" translatable="yes">This setting can be used to increase/decrease the 
-space between the end of the text and the footer line.</property>
+                                    <property name="tooltip_text" translatable="yes">This sets the distance from the baseline of the footer to the bottom of the page in mm.</property>
                                     <property name="halign">end</property>
                                     <property name="label" translatable="yes">Bottom Margin
 to Footer (mm):</property>
@@ -4687,9 +4672,7 @@ space between the end of the text and the footer line.</property>
                                   <object class="GtkLabel">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="tooltip_text" translatable="yes">This setting can be used to increase/decrease the 
-space at the top of the page and determines
-where the main text begins.</property>
+                                    <property name="tooltip_text" translatable="yes">This tells you the distance from the top (ascender) of the header to the top of the page in mm.</property>
                                     <property name="halign">end</property>
                                     <property name="label" translatable="yes">Edge of Page to
 Top of Header:</property>
@@ -4707,9 +4690,7 @@ Top of Header:</property>
                                   <object class="GtkLabel">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="tooltip_text" translatable="yes">This setting can be used to increase/decrease the 
-space at the top of the page and determines
-where the main text begins.</property>
+                                    <property name="tooltip_text" translatable="yes">This tells you how far the baseline of the bottom of the body text is above the ascender of the footer in points.</property>
                                     <property name="halign">end</property>
                                     <property name="label" translatable="yes">Bottom of Text to 
 Top of Footer:</property>
@@ -4788,6 +4769,7 @@ cross-references end.</property>
                                   <object class="GtkLabel">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="tooltip_text" translatable="yes">How wide the side margins are in mm.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
                                     <property name="margin_left">6</property>
@@ -4835,7 +4817,7 @@ in millimeters (mm).</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="tooltip_text" translatable="yes">This is the space between the horizontal 
-rule and the top of the main test (in pts).</property>
+rule and the top of the main text (in pts). Strictly the distance above the baseline of a line above the top line.</property>
                                     <property name="halign">end</property>
                                     <property name="margin_top">3</property>
                                     <property name="label" translatable="yes">Space from Rule
@@ -9346,6 +9328,9 @@ the Basic tab.</property>
                                 <property name="left_attach">1</property>
                                 <property name="top_attach">0</property>
                               </packing>
+                            </child>
+                            <child>
+                              <placeholder/>
                             </child>
                             <child>
                               <placeholder/>

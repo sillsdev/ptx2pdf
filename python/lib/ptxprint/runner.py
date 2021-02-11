@@ -3,11 +3,6 @@ import sys, subprocess, os
 import xml.etree.ElementTree as et
 from ptxprint.utils import pt_bindir
 
-# Thank you to rho https://stackoverflow.com/questions/10514094/gobject-and-subprocess-popen-to-communicate-in-a-gtk-gui
-from gi.repository import GObject, Gtk, Pango
-
-# StreamTextBuffer removed post v1.5.6
-
 if sys.platform == "linux":
 
     def fclist(family, pattern):

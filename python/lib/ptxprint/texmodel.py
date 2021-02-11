@@ -4,8 +4,6 @@ from pathlib import Path
 from functools import reduce
 from inspect import signature
 import regex
-gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk
 from ptxprint.font import TTFont
 from ptxprint.ptsettings import chaps, books, bookcodes, oneChbooks
 from ptxprint.runner import checkoutput

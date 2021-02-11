@@ -149,7 +149,7 @@ class RunJob:
         if not lockme(self):
             return False
         self.texfiles = []
-        info = TexModel(self.printer, self.args.paratext, self.printer.ptsettings, self.printer.prjid)
+        info = TexModel(self.printer, self.args.paratext, self.printer.ptsettings, self.printer.prjid, inArchive=self.inArchive)
         info.debug = self.args.debug
         self.tempFiles = []
         self.prjid = info.dict["project/id"]

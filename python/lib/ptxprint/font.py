@@ -1,19 +1,19 @@
 from ptxprint.runner import fclist, checkoutput
 import struct, re, os
-from gi.repository import Pango
+# from gi.repository import Pango
 from pathlib import Path
 from threading import Thread
 
-pango_styles = {Pango.Style.ITALIC: "italic",
-    Pango.Style.NORMAL: "",
-    Pango.Style.OBLIQUE: "oblique",
-    Pango.Weight.ULTRALIGHT: "ultra light",
-    Pango.Weight.LIGHT: "light",
-    Pango.Weight.NORMAL: "",
-    Pango.Weight.BOLD: "bold",
-    Pango.Weight.ULTRABOLD: "ultra bold",
-    Pango.Weight.HEAVY: "heavy"
-}
+#pango_styles = {Pango.Style.ITALIC: "italic",
+#    Pango.Style.NORMAL: "",
+#    Pango.Style.OBLIQUE: "oblique",
+#    Pango.Weight.ULTRALIGHT: "ultra light",
+#    Pango.Weight.LIGHT: "light",
+#    Pango.Weight.NORMAL: "",
+#    Pango.Weight.BOLD: "bold",
+#    Pango.Weight.ULTRABOLD: "ultra bold",
+#    Pango.Weight.HEAVY: "heavy"
+#}
 
 styles_order = {
     "Regular": 1,
@@ -622,8 +622,8 @@ class TTFont:
         data = inf.read(20)
         self.upem = struct.unpack(b">H", data[18:])[0]
 
-    def style2str(self, style):
-        return pango_styles.get(style, str(style))
+    # def style2str(self, style):
+    #     return pango_styles.get(style, str(style))
 
     def __contains__(self, k):
         return k in self.dict

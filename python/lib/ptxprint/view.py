@@ -281,9 +281,9 @@ class ViewModel:
                 self.set(w, nf)
 
     def getMargins(self):
-        font = self.get("bl_fontR").getTtfont()
+        hfont = self.styleEditor.getval("h", " font") or self.get("bl_fontR").getTtfont()
         #fontheight = 1. + float(font.descent) / font.upem
-        fontheight = float(font.ascent) / font.upem
+        hfontheight = float(hfont.ascent) / hfont.upem
         fontsizemms = float(self.get("s_fontsize")) * 25.4 / 72.27
         linespacemms = float(self.get("s_linespacing")) * 25.4 / 72.27
         hfontsizemms = asfloat(self.styleEditor.getval("h", "FontSize"), 12.) / 12. * fontsizemms
@@ -293,8 +293,8 @@ class ViewModel:
         headerposmms = topmarginmms - float(self.get("s_headerposition")) * 25.4 / 72.27 - hfontsizemms
         # print(f"hfont {hfontsizemms}, headerpos {headerposmms}")
         footerposmms = float(self.get("s_footerposition"))
-        headerlabel = headerposmms - fontheight * fontsizemms
-        footerlabel = (bottommarginmms - footerposmms - fontheight * fontsizemms) * 72.27 / 25.4
+        headerlabel = headerposmms - hfontheight * hfontsizemms
+        footerlabel = (bottommarginmms - footerposmms - hfontheight * hfontsizemms) * 72.27 / 25.4
         rulerposmms = (float(self.get("s_headerposition")) - float(self.get("s_rhruleposition"))) * 25.4 / 72.27 + fontsizemms - linespacemms
         return (marginmms, topmarginmms, bottommarginmms, headerposmms, footerposmms, rulerposmms, headerlabel, footerlabel)
 
@@ -1030,7 +1030,6 @@ class ViewModel:
         for k, v in self.styleEditor.sheet.items():
             font_info = v.get(' font', self.styleEditor.basesheet.get(k, {}).get(' font', None))
             if font_info is not None:
-                print(font_info)
                 f = font_info.getTtfont()
                 if f.filename is None: continue
                 fname = os.path.basename(f.filename)
