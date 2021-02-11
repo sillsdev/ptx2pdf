@@ -316,8 +316,14 @@
   \x@\let\x@\th@sins\csname note-no-insert-#1\endcsname
   \ifx\th@sins\relax % Normal footnote
    \ifdiglot
+     \trace{d}{setn@tewidth (\show@dstat)}%
      \ifdiglotSepNotes
-       \n@tewidth=\csname column\c@rrdstat width\endcsname
+        \ifnum 1=\ifx\c@rrdstat\empty 0\else \ifcsname column\c@rrdstat width\endcsname 1 \else 0\fi\fi
+          \n@tewidth=\csname column\c@rrdstat width\endcsname
+        \else
+          \trace{d}{c@rrdstat currently set to '\c@rrdstat'.  No column width}%
+          \n@tewidth=\csname columnLwidth\endcsname
+        \fi
      \else\n@tewidth=\textwidth\fi
    \else\n@tewidth=\textwidth\fi
   \else
@@ -519,7 +525,6 @@
 %+c_doublecolumns
 \def\PageFullFactor{0.9}
 \def\doublecolumns{
-  \setc@rdstat{}\diglotfalse
   \ifnum\c@rrentcols=1
     % make switch from single to double column
     \vskip-\lastdepth
@@ -1199,25 +1204,6 @@
 }
 %-c_savepartialpagedbounce
 
-\def\enddigl@t{
-  \ifsk@pping \egroup \fi% if we were skipping nonpublishable text, end that mode
-  \sk@ppingfalse
-  \ifhe@dings\endhe@dings\fi%
-  \Lneedsemptyingtrue%
-  \pickn@xtpartial
-  \allNeedEmptyingtrue
-  \pr@sideswitch{end}{L}%
-  \penalty\dgl@tPenColSwap
-  \@add@n@xtpartial
-  \ifnum\interactionmode=2
-    \showbox\n@xtpartialNrml\showbox\n@xtpartialRev
-  \fi
-  \ifvoid\n@xtpartial\else
-    \global\setbox\partial=\vtop{\joinb@xes{\partial}{\n@xtpartial}}%
-  \fi
-%FIXME! If \ifendbooknoeject  happens to be true, then what? 
-%Set the 2 columns, put the footnotes up in the air and carry on??
-}
 
 % to switch back to diglot columns, first set the page  so far 
 % and then change the rest.
@@ -1278,7 +1264,6 @@
 % to switch back to single column, we reset the page size parameters
 \def\singlecolumn{%
   \trace{o}{singlecolumn hIns=\the\holdinginserts}%\tracingmacros=1
-  \setc@rdstat{}\diglotfalse
   \ifnum\c@rrentcols>1
     \ifhe@dings\endhe@dings\fi
     %\temptrue

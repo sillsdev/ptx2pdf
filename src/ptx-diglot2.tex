@@ -141,14 +141,14 @@
   \let\wh@t\sp@cificSideDim\pr@cessSpecificDim
 }% For use with style definitions, etc.
 
-\def\SSsetLRspecific{\ifx\ds@ffix\empty\def\sfx{@orig}\else\edef\sfx{\ds@ffix}\fi
+\def\SSsetLRspecific{\ifx\ds@ffix\empty\def\sfx{\@orig}\else\edef\sfx{\ds@ffix}\fi
   \let\wh@t\sp@cificSideDef\pr@cessSpecific}% for use in stylesheet, no need to check dimensions, just existance
 
 \def\showLRspecific{\edef\sfx{\ifdiglot\c@rrdstat\else \@rig\fi}%
   \let\wh@t\sh@wSpecificDef\pr@cessSpecificDef
   \let\wh@t\sh@wSpecificDim\pr@cessSpecificDim
 }% Call the output routines
-\def\saveLRspecificSide#1{\edef\sfx{#1}% Save current values (side defined by #1) 
+\def\saveLRspecificSide#1{\xdef\sfx{#1}% Save current values (side defined by #1) 
   \let\wh@t\s@veSpecificSide
   \trace{S}{Redefining #1-specific values to current ones}\pr@cessSpecific
 }
@@ -584,6 +584,10 @@
 \def\pr@sideswitch#1#2{%
   \global\savedpenalty=\lastpenalty % This MUST be first, or the last /thing/ won't be a penalty
   \trace{d}{#1text pL:\the\dp\partialL, xL:\the\dp\excessL, pR:\the\dp\partialR, lp:\the\savedpenalty}%
+  \ifx\c@rrdstat\empty
+    \trace{d}{\c@rrdstat is empty, making it L for sanity}%
+    \gdef\c@rrdstat{L}%
+  \fi
   \x@\xdef\csname saved\c@rrdstat penalty\endcsname{\the\savedpenalty}%
   \ifhe@dings\endhe@dings\fi%
   \ifsk@pping \egroup \sk@ppingfalse\fi% if we were skipping nonpublishable text, end that mode
@@ -671,7 +675,8 @@
 \def\show@dstat{\c@rrdstat\f@lwgdstat\n@xtdstat}% for debugging output 
 \def\setc@rdstat#1{\gdef\c@rrdstat{#1}%
  \ifx\c@rrdstat\empty
-   %\diglotfalse % Is this necessary?
+   \diglotfalse % Is this necessary? YES.
+   \trace{d}{current diglot state set to empty! End of diglot?}%
  \else 
    %\diglottrue % Is this necessary?
    \if#1L\relax\global\diglotLtrue\else\global\diglotLfalse\fi%Compatability
@@ -960,7 +965,7 @@
 
 \def\pickn@xtpartial{\ifdiglotN@rmal\global\let\n@xtpartial=\n@xtpartialNrml\else\global\let\n@xtpartial=\n@xtpartialRev\fi} % decide which n@xtpartial box to use
 
-\def\voidn@xtpartial{\ifdiglotN@rmal\global\setbox\n@xtpartialRev\box\voidb@x\else\global\setbox\n@xtpartialNrml\box\voidb@x\fi}% Void the other n@xtpartial box
+\def\voidn@xtpartial{\global\setbox\n@xtpartialRev\box\voidb@x\global\setbox\n@xtpartialNrml\box\voidb@x}% Void the other n@xtpartial box
 
 \def\setdiglotN@rmal{\ifnum \numexpr 1 \ifdiglotInnerOuter \ifodd\pageno\else * -1 \fi\fi \ifdiglotSwap * -1\fi\relax >0 
   \diglotN@rmaltrue \else \diglotN@rmalfalse \fi
@@ -1501,6 +1506,33 @@
   \n@xt
 }   
 
+\def\enddigl@t{
+  \endgraf
+  \ifdiglot
+    \ifsk@pping \egroup \fi% if we were skipping nonpublishable text, end that mode
+    \sk@ppingfalse
+    \ifhe@dings\endhe@dings\fi%
+    \trace{d}{enddigl@t \the\ht\n@xtpartial+\the\dp\n@xtpartial, \the\ht\partial+\the\dp\partial}%
+    \eject
+    \global\allNeedEmptyingtrue
+    \diglot@run@trials
+    \penalty\dgl@tPenColSwap
+    \global\allNeedEmptyingtrue
+    \diglot@run@trials
+    \ifnum\interactionmode=2
+      \showbox\n@xtpartialNrml\showbox\n@xtpartialRev
+    \fi
+    \@add@n@xtpartial
+    \trace{d}{After that; \the\ht\partial+\the\dp\partial, \the\ht\n@xtpartial+\the\dp\n@xtpartial}%
+    \ifvoid\partial\else
+      \@writep@ge
+    \fi
+    \pr@sideswitch{end}{L}%
+  \fi
+  %FIXME! If \ifendbooknoeject  happens to be true, then what? 
+  %Set the 2 columns, put the footnotes up in the air and carry on??
+}
+
 \def\makediglotgutter#1#2#3{\hbox to \gutter{\hss
 %rule is #1 hight, #3 deep, and fits in a box #2 high
   \trace{D}{makediglotgutter \the #1,\the #2,\the #3}%
@@ -1522,6 +1554,6 @@
 \def\testmarker{\hbox to 0pt{\vrule height 7pt depth 0pt width 0.5pt \kern-0.5pt}\message{_}}
 
 \addtoendhooks{
-       \bgroup\ifdiglot\ifnum\pageno>0 \count255=\cumulativeDelta \divide\count255 by \pageno \message{Overall column delta \the\cumulativeDelta pt (\the\count255 pt/ pg)\space(-ve means left longer)}\fi\fi\egroup\cumulativeDelta=0}%
+       \bgroup\ifvoid\partial\else\@writep@ge\fi\ifdiglot\ifnum\pageno>0 \count255=\cumulativeDelta \divide\count255 by \pageno \message{Overall column delta \the\cumulativeDelta pt (\the\count255 pt/ pg)\space(-ve means left longer)}\fi\fi\egroup\cumulativeDelta=0}%
 
 \endinput

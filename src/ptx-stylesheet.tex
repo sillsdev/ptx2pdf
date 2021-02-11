@@ -946,7 +946,12 @@
 %+csty_ptxfile_intro
 \def\ptxfile#1{
  \saveLRspecificOrig%This becomes a \relax after first use. Always call it.
- \ifdiglot\setLRspecific\fi% \@netimesetup needs actual values, in a diglot there may be no use of generic FontSizeUnit, etc.
+ \ifdiglot
+    \ifx\c@rrdstat\empty
+      \gdef\c@rrdstat{L}%
+    \fi
+    \setLRspecific% \@netimesetup needs actual values, in a diglot there may be no use of generic FontSizeUnit, etc.
+  \fi
  \@netimesetup
  \ifdiglot\bgroup%This must be outside of @onetimesetup as there's no guarantee that diglot will be true for all ptxfiles.
    \dimen0=\baselineskip
