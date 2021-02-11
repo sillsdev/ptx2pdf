@@ -11,7 +11,8 @@ import os, re, random, sys
 posparms = ["alt", "src", "size", "pgpos", "copy", "caption", "ref", "x-xetex", "mirror", "scale"]
 pos3parms = ["src", "size", "pgpos", "ref", "copy", "alt", "x-xetex", "mirror", "scale", "media"]
 
-_piclistfields = ["anchor", "caption", "src", "size", "scale", "pgpos", "ref", "alt", "copy", "mirror", "disabled", "cleardest", "key", "media"]
+_piclistfields = ["anchor", "caption", "src", "size", "scale", "pgpos", "ref", "alt", "copy", 
+                  "mirror", "disabled", "cleardest", "key", "media", "credits", "crRotate", "crVpos", "crHpos", "crBoxSty"]
 _pickeys = {k:i for i, k in enumerate(_piclistfields)}
 
 _form_structure = {
@@ -29,7 +30,12 @@ _form_structure = {
     'nlines':   's_plLines',
     'medP':     'c_plMediaP',
     'medA':     'c_plMediaA',
-    'medW':     'c_plMediaW'
+    'medW':     'c_plMediaW',
+    'credits':  't_creditText',
+    'crRotate': 'fcb_creditRotate',
+    'crVpos':   'fcb_creditVpos',
+    'crHpos':   'fcb_creditHpos',
+    'crBoxSty': 'ecb_creditBoxStyle'
 }
 _comblist = ['pgpos', 'hpos', 'nlines']
 _defaults = {
@@ -96,6 +102,7 @@ class PicList:
                 w.connect("focus-out-event", self.item_changed, k)
             elif v.startswith("c_"):
                 sig = "clicked"
+            print(v, sig, k)
             w.connect(sig, self.item_changed, k)
         self.previewBuf = GdkPixbuf.Pixbuf.new_from_file(os.path.join(os.path.dirname(__file__), "picLocationPreviews.png"))
         self.clear()
@@ -160,6 +167,7 @@ class PicList:
                             val = "".join(x for x in val if x in defaultmedia[0])
                     else:
                         val = v.get(e, "")
+                    print(e, val)
                     row.append(val)
                 self.model.append(row)
         #self.view.set_model(self.model)
@@ -274,6 +282,8 @@ class PicList:
                 val = self.currow[j] or "None"
             else:
                 val = self.currow[j]
+                if j < 5:
+                    print(k, val)
             w = self.builder.get_object(v)
             setWidgetVal(v, w, val)
         self.mask_media(self.currow)
@@ -408,17 +418,13 @@ class PicList:
 
     def setPreview(self, pixbuf, tooltip=None):
         pic = self.builder.get_object("img_picPreview")
-        # picc = self.builder.get_object("img_piccheckPreview")
         if pixbuf is None:
             pic.clear()
-            # picc.clear()
             tooltip = ""
         else:
             pic.set_from_pixbuf(pixbuf)
-            # picc.set_from_pixbuf(pixbuf)
         if tooltip is not None:
             pic.set_tooltip_text(tooltip)
-            # picc.set_tooltip_text(tooltip)
             self.builder.get_object("t_plFilename").set_tooltip_text(tooltip)
 
     def drawPreview(self, wid, cr):
