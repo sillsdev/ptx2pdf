@@ -45,8 +45,8 @@
       \kern 4.8pt
       \vrule height 30pt depth -5pt width .4pt
       \kern -30.4pt
-      \dimen0=\topm@rgin \advance\dimen0 by -.4pt
-      \vrule height -\dimen0 depth \topm@rgin width 15pt
+      \dimen0=\topm@rgin \advance\dimen0 by .4pt
+      \vrule height -\topm@rgin depth \dimen0 width 15pt
       \kern 15pt
       \hss
       \raise20pt\vtop{\hsize\PaperWidth \everypar={}
@@ -58,7 +58,7 @@
       \kern 4.8pt
       \vrule height .2pt depth .2pt width 25pt
       \kern -15pt
-      \vrule height -\dimen0 depth \topm@rgin width 15pt
+      \vrule height -\topm@rgin depth \dimen0 width 15pt
       \kern -30pt
     }%
   }\dp\topcr@p=0pt % end \vbox for \topcr@p

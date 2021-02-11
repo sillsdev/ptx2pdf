@@ -288,14 +288,14 @@ class ViewModel:
         linespacemms = float(self.get("s_linespacing")) * 25.4 / 72.27
         hfontsizemms = asfloat(self.styleEditor.getval("h", "FontSize"), 12.) / 12. * fontsizemms
         marginmms = float(self.get("s_margins"))
-        topmarginmms = float(self.get("s_topmargin")) # - fontsize  # macros add fontsize for some reason
+        topmarginmms = float(self.get("s_topmargin")) + linespacemms - fontsizemms  # macros add fontsize for some reason
         bottommarginmms = float(self.get("s_bottommargin"))
-        headerposmms = topmarginmms - float(self.get("s_headerposition")) * 25.4 / 72.27 - hfontsizemms
-        # print(f"hfont {hfontsizemms}, headerpos {headerposmms}")
+        headerposmms = topmarginmms - float(self.get("s_headerposition")) * 25.4 / 72.27  - 0.7 * hfontsizemms + fontsizemms - linespacemms
+        print(f"{hfontsizemms=} {headerposmms=} {fontsizemms=}")
         footerposmms = float(self.get("s_footerposition"))
         headerlabel = headerposmms - hfontheight * hfontsizemms
         footerlabel = (bottommarginmms - footerposmms - hfontheight * hfontsizemms) * 72.27 / 25.4
-        rulerposmms = (float(self.get("s_headerposition")) - float(self.get("s_rhruleposition"))) * 25.4 / 72.27 + fontsizemms - linespacemms
+        rulerposmms = (float(self.get("s_headerposition")) - float(self.get("s_rhruleposition"))) * 25.4 / 72.27 # + fontsizemms - linespacemms
         return (marginmms, topmarginmms, bottommarginmms, headerposmms, footerposmms, rulerposmms, headerlabel, footerlabel)
 
     def updateSavedConfigList(self):
