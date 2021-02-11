@@ -360,9 +360,10 @@
   \global\startparatrue
   \resetp@rstyle
 %-cpar_parstyle_transition
+  \trace{sP}{Redefined everypar}%
 %+cpar_parstyle_start
   \everypar={%
-   %\trace{s}{EveryPar!}%
+   \trace{sP}{everypar! ifch@pter\ifch@pter true\else false\fi}%
    %
    % \everypar will be triggered when the paragraph actually starts (normally at the first character of text,
    % or something like a verse number); then we'll set up margins/indents and font
@@ -804,6 +805,7 @@
 \newbox\ch@pternote
 \def\AfterChapterSpaceFactor{3}
 \def\m@kechapterbox{%
+ \trace{sP}{m@kechapterbox}%
  \edef\@seglyphmetrics{\the\XeTeXuseglyphmetrics}\XeTeXuseglyphmetrics=3%
  \edef\printchapter{\ch@ptert@xt}%
  \csname PrepChapterNumber\endcsname
