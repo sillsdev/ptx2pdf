@@ -503,6 +503,7 @@
 }
 
 \def\calcdr@psize{%
+  \trace{d}{Calculating drop: \c@rrdstat}%
     \getp@ram{fontsize}{c}\dropnumbersize=0\p@ram\FontSizeUnit \relax % C in following
 	% if font size specified for chapter number stylesheet is less than 2*paragraph font size ...
     %\ifdim\dropnumbersize<\dimen255
@@ -530,7 +531,7 @@
       \multiply\dimen0 by 128                                                   %(3)
       \divide\dimen0 by \dimen2
 	  % multiply by original size from \c marker in stylesheet
-      \trace{h}{font x-height \x@\the\fontdimen5\font, ht of digits \the\ht0, dp of digits \the\dp0, baselineskip \the\baselineskip, for dropcaps \the\dimen0\ multiply by \the\dropnumbersize}%
+      \trace{h}{font x-height \x@\the\fontdimen5\font, ht of digits \the\ht0, dp of digits \the\dp0, baselineskip \the\baselineskip, for dropcaps \the\dimen0\space multiply by \the\dropnumbersize}%
       \dimen3=\dimen0 % depth scale factor * 128
       \multiply\dimen0 by \dropnumbersize
       \dropnumbersize=\dimen0
@@ -554,10 +555,10 @@
   \setp@ram{fontsize}{cL}{\dr@psize}%
   \getp@ram{raise}{c}\ifx\p@ram\relax\else\setp@ram{raise}{cL}{\p@ram}\fi
   \g@tfontname{c}\x@\let\csname font<\f@ntstyle>\endcsname=\relax
-  \diglotLfalse
+  \setc@rdstat{R}
   \calcdr@psize
   \g@tfontname{c}\x@\let\csname font<\f@ntstyle>\endcsname=\relax
-  \diglotLtrue
+  \setc@rdstat{L}
   \message{ Setting R drop-cap size to \dr@psize}%
   \setp@ram{fontsize}{cR}{\dr@psize}%
   \getp@ram{raise}{c}\ifx\p@ram\relax\else\setp@ram{raise}{cR}{\p@ram}\fi
@@ -648,13 +649,13 @@
  \let\@H=\h%
  \def\h{\bgroup\deactiv@tecustomch@rs\catcode`\/=12
         \obeylines\@h}% \h gets stored as the book name (for references)
- \def\@h ##1^^M{\ifdiglot\ifdiglotL\gdef\b@ok{##1}\else\gdef\b@okR{##1}\fi\else\gdef\b@ok{##1}\fi\egroup}% store book id in \b@ok
+ \def\@h ##1^^M{\x@\gdef\csname b@ok\g@tdstat\endcsname{##1}\egroup}% store book id in \b@ok / b@okR 
  %
  \let\@CL=\cl%
  \def\do@CL{\global\ch@pterfalse\gdef\n@xtparstart{\pdfch@ptermark}\@CL}%
  \def\cl{\ifch@pter \let\n@xt=\do@CL \else \let\n@xt=\st@recl \fi \n@xt}%
  \def\st@recl{\bgroup\obeylines\@cl}% \cl gets stored as chapter label and changes \c format
- \def\@cl ##1^^M{\ifdiglot\ifdiglotL\gdef\ch@plabel{##1}\else\gdef\ch@plabelR{##1}\fi\else\gdef\ch@plabel{##1}\fi\egroup}%
+ \def\@cl ##1^^M{\x@\gdef\csname ch@plabel\g@tdstat\endcsname{##1}\egroup}%
  %
  \let\@ID=\id%
  \def\id{\bgroup\obeylines\unc@tcodespecials \m@kedigitsother
@@ -884,7 +885,9 @@
 %+csty_onetime
 \def\@netimesetup{
  % stuff to execute after loading all stylesheets but before processing the first USFM file
- \ifdiglot\else
+ \ifdiglot
+  \trace{d}{Onetimesetup, (\c@rrdstat)}%
+ \else
    \ifRTL
      \BookOpenLefttrue
    \fi
@@ -942,13 +945,13 @@
  \@netimesetup
  \ifdiglot\bgroup%This must be outside of @onetimesetup as there's no guarantee that diglot will be true for all ptxfiles.
    \dimen0=\baselineskip
-   \diglotLfalse
+   \setc@rdstat{R}%
    \showLRspecific
    \setLRspecific\s@tb@dyb@seline{R}%
    \global\baselineDelta=\baselineskip
    \saveLRspecificSide{R}%
    \baselineskip=\dimen0
-   \diglotLtrue
+   \setc@rdstat{L}%
    \showLRspecific
    \setLRspecific\s@tb@dyb@seline{L}%
    \global\advance\baselineDelta by -\baselineskip
@@ -979,7 +982,7 @@
  \ifhmode \unskip\end@llpoppedstyles{P}\par \fi
  \ifsk@pping\egroup\fi
  \endt@ble
- \ifdiglot\ifdiglotL\norighttext\fi\enddigl@t\fi
+ \ifdiglot\enddigl@t\fi
  \ifx\b@ok\relax\else\csname bookend-\id@@@\endcsname\relax\csname bookend-all\endcsname\fi
  \ifnum \ifnotesEachBook 1\else\iflastptxfile 1\else 0\fi\fi =1 \the\placendnotes\fi
  \iflastptxfile\closepiclist\fi

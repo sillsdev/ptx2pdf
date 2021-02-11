@@ -74,7 +74,7 @@
 
 \def\runtrigg@rs#1{%Generic something trigger (milestone, or...)
   \def\c@rref{#1}%
-  \ifdiglot\def\dc@rref{#1\ifdiglotL L\else R\fi}%
+  \ifdiglot\def\dc@rref{#1\g@tdstat}%
   \trace{T}{running triggers \c@rref}%
   \the\trigg@rchecks
 }
@@ -103,7 +103,7 @@
 \def\settrig@refcv{%
   \xdef\c@rref{\id@@@\ch@pter.\v@rse}%
   \ifdiglot
-    \xdef\dc@rref{\id@@@\ifdiglotL L\else R\fi\ch@pter.\v@rse}%
+    \xdef\dc@rref{\id@@@\c@rrdstat\ch@pter.\v@rse}%
   \fi
 }
 
@@ -113,7 +113,7 @@
 \def\settrig@refprecv{%
   \edef\c@rref{\id@@@\ch@pter.\v@rse-preverse}%
   \ifdiglot
-    \edef\dc@rref{\id@@@\ifdiglotL L\else R\fi\ch@pter.\v@rse-preverse}%
+    \edef\dc@rref{\id@@@\c@rrdstat\ch@pter.\v@rse-preverse}%
   \fi
 }
 
@@ -121,4 +121,4 @@
 \addtoversehooks{\runtrigg@rscv} % e.g. adjustlist
 \addtoeveryparhooks{\runtrigg@rspar} 
 \def\c@rref{start}
-\def\dc@rref{start\ifdiglotL L\else R\fi}
+\def\dc@rref{start\c@rrdstat}

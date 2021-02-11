@@ -179,9 +179,9 @@
 %+cpar_doendofthispar
 \def\do@ndofthispar{%
  %run code to insert picb@x / picb@xR at the right time.
- \edef\eotpn@me{at@ndofthispar\ifdiglot\ifdiglotL L\else R\fi\fi}% Which endofthispar macro?
+ \edef\eotpn@me{at@ndofthispar\c@rrdstat}% Which endofthispar macro?
  \x@\let\x@\pn@xt\csname \eotpn@me\endcsname
- \trace{g}{doendofthispar \ch@pter:\v@rse\ifdiglot\ifdiglotL L \else R \fi\fi\space \the\pagetotal,
+ \trace{g}{doendofthispar \ch@pter:\v@rse\c@rrdstat \space \the\pagetotal,
            \the\holdinginserts, page/chunk-\ifp@gestart start\else -middle\fi}%
  \temptrue %If iftemp stays true, then it's a valid insertion point.
  \ifx\pn@xt\empty\tempfalse\fi
@@ -317,7 +317,7 @@
   \global\he@dingstylefalse
   \getp@ram{type}{\m@rker}%
   \ifx\p@ram\t@tle
-    \mark{\t@tle}\ifdiglot\ifdiglotL\marks1{\t@tle}\else\marks2{\t@tle}\fi\fi
+    \mark{\t@tle}\ifdiglot\marks\csname m@rknum\c@rrdstat\endcsname{\t@tle}\fi% 
     \ift@tle\else\ifhe@dings\endhe@dings\fi\fi
     \st@rttitle
     \global\he@dingstyletrue 
@@ -384,7 +384,7 @@
    \ifx\p@ram\relax \else \advance \ifRTL\rightskip\else\leftskip\fi\p@ram \IndentUnit \fi
    \getp@ram{rightmargin}{\m@rker}%
    \ifx\p@ram\relax \else \advance \ifRTL\leftskip\else\rightskip\fi\p@ram \IndentUnit \fi
-   \trace{s}{\m@rker\ifdiglot\ifdiglotL L \else R\fi\fi\space iu=\the\IndentUnit, ls=\the\leftskip, rs=\the\rightskip}%
+   \trace{s}{\m@rker\g@tdstat\space iu=\the\IndentUnit, ls=\the\leftskip, rs=\the\rightskip}%
    %\getp@ram{fontsize}{\m@rker}\edef\c@rrfontsize{\ifx\p@ram\relax12\else\p@ram\fi}%
    \def\thiswh@tvrstyle{p}%Default value just in case
    \def\d@##1+##2\E{\edef\tmp{##2}\csname d@code-##1\endcsname\let\thiswh@tvrstyle\tmp}\mctop
@@ -468,7 +468,7 @@
     \fi
     \ifallowp@rindent % create first-line indent, unless suppressed at dropped chapter number
                       % (note that we don't suppress negative indents, as in \q1 etc)
-     \trace{Ds}{\m@rker\ifdiglot\ifdiglotL L \else R\fi\fi\space  First indent \f@rstindent * \the\IndentUnit}%
+     \trace{Ds}{\m@rker\ifdiglot\c@rrdstat\fi\space  First indent \f@rstindent * \the\IndentUnit}%
      \kern\f@rstindent \IndentUnit                                              %(1)
     \fi
    \fi
@@ -499,7 +499,7 @@
 \let\prevb@ok\relax
 \let\b@okR\relax
 \let\prevb@okR\relax
-\def\pdfb@@kmark{\ifdiglot\ifdiglotL\pdfb@@km@rk\else\pdfb@@km@rkR\fi\else\pdfb@@km@rk\fi}
+\def\pdfb@@kmark{\csname pdfb@@km@rk\g@tdstat\endcsname}
 
 \def\pdfb@@km@rk{\ifx\b@ok\prevb@ok
  \else
@@ -515,7 +515,7 @@
 \def\Alternative{\ /\ }%
 \let\b@okC=\relax
 
-\def\pdfb@@km@rkR{\ifx\b@okR\prevb@okR
+\def\pdfb@@km@rkR{\ifx\b@okR\prevb@okR %FIXME: make this work with \c@rrdstat, for polyglot
  \else\ifDropActions\else
   \bgroup\liter@lspecials
    \special{pdf:dest (\id@@@.) [@thispage /Fit]}%
@@ -530,7 +530,7 @@
 %-cpar_pdfbookmark
 
 %+cpar_pdfchaptermark
-\def\pdfch@ptermark{\ifdiglot\ifdiglotL\pdfch@pterm@rk\else\pdfch@pterm@rkR\fi\else\pdfch@pterm@rk\fi}
+\def\pdfch@ptermark{\csname pdfch@pterm@rk\g@tdstat\endcsname}
 \def\pdfch@pterm@rk{\ifDropActions\else\bgroup\liter@lspecials
   \special{pdf:dest (\id@@@.\ch@pter) [@thispage /Fit]}%
   \ifx\b@ok\relax \let\t@mp=\id@@@ \else \let\t@mp=\b@ok \fi
@@ -538,7 +538,7 @@
            /A << /S /GoTo /D (\id@@@.\ch@pter) >> >>}%
   \egroup\fi}
 
-\def\pdfch@pterm@rkR{\ifDropActions\else\bgroup\liter@lspecials
+\def\pdfch@pterm@rkR{\ifDropActions\else\bgroup\liter@lspecials%FIXME: make this work with \c@rrdstat, for polyglot
   \special{pdf:dest (\id@@@.\ch@pter) [@thispage /Fit]}%
   \ifx\b@okR\relax \let\t@mp=\id@@@ \else \let\t@mp=\b@okR \fi
   \special{pdf:outline 1 << /Title (\t@mp\space\ch@pter)

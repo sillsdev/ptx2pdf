@@ -738,18 +738,17 @@
 
 \def\d@figurePar#1{%
   \trace{g}{\w@tsit is post-paragraph}%
-  \let\picb@@x=\picb@x
-  \ifdiglot\ifdiglotL\else\let\picb@@x=\picb@xR\fi\fi
+  \x@\let\x@\picb@@x\csname picb@x\g@tdstat\endcsname
   \global\setbox\picb@@x\box#1
   \ifpicNarrow
     \ifx\pic@lign\@lignLeft \global\setbox\picb@@x\vbox{\hbox to \colwidth{\box\picb@@x\hss}}\trace{g}{Pic aligned left}%
     \else \global\setbox\picb@@x\vbox{\hbox to \colwidth{\hss\box\picb@@x}}\trace{g}{Pic aligned right}%
     \fi
   \fi
-  \edef\eotpn@me{at@ndofthispar\ifdiglot\ifdiglotL L\else R\fi\fi}% Which endofthispar macro?\emspace
+  \edef\eotpn@me{at@ndofthispar\c@rrdstat}% Which endofthispar macro?\emspace
   \trace{g}{\eotpn@me\space defined}%
   \x@\gdef\csname \eotpn@me\endcsname{%
-    \relax \let\picb@@x=\picb@x \ifdiglot\ifdiglotL\else\let\picb@@x=\picb@xR\fi\fi
+    \relax \x@\let\x@\picb@@x\csname picb@x\g@tdstat\endcsname
     \penalty10 % Allow the page to break
     %\gridp@cfalse% Not true. Not a floating image.
     \xdef\headingtopspace{0}%
@@ -949,7 +948,7 @@
 \newread\picl@ctest
 \newwrite\picp@ges
 %-cfig_declare
-\
+
 %+cfig_openpicpages
 \def\inputpicp@ges "#1"{%read picpages file.
     \openin\picl@ctest="#1" % test to see if the file exists before reading it.

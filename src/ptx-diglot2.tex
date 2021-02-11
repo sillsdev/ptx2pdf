@@ -75,13 +75,13 @@
 \VisTraceExtrafalse%
 \newif\ifdiglot %If there is diglot material
 \newif\ifp@gestart % temporary hold while things get going.
-\def\setsid@{\ifdiglotL\xdef\sid@{L}\else\xdef\sid@{R}\fi}
+\def\setsid@{\xdef\sid@{\c@rrdstat}}
 
 %+cdig_define-hooks
-\newtoks\leftho@ks
-\newtoks\rightho@ks
-\def\addToLeftHooks#1{\x@\global\x@\leftho@ks\x@{\the\leftho@ks #1}}
-\def\addToRightHooks#1{\x@\global\x@\rightho@ks\x@{\the\rightho@ks #1}}
+\newtoks\diglotLho@ks
+\newtoks\diglotRho@ks
+\def\addToLeftHooks#1{\x@\global\x@\diglotLho@ks\x@{\the\diglotLho@ks #1}}
+\def\addToRightHooks#1{\x@\global\x@\diglotRho@ks\x@{\the\diglotRho@ks #1}}
 %-cdig_define-hooks
 
 \def\stylesheetL#1{\gdef\ds@ffix{L}\stylesheet{#1}\gdef\ds@ffix{}}%Need to reset ds@ffix to {}, so that side-specific settings can be applied.
@@ -128,7 +128,7 @@
 % If the item exists, save its current value. 
 \def\s@veSpecificSide#1{\ifcsname #1\endcsname \x@\let\csname #1\sfx\x@\endcsname\csname #1\endcsname\fi}
 % Output routine for normal things.
-\def\sh@wSpecificDef#1{\ifcsname #1\sfx\endcsname\trace{S}{#1\sfx: \csname #1\sfx\endcsname}\else
+\def\sh@wSpecificDef#1{\ifcsname #1\sfx\endcsname\trace{S}{#1\sfx: \x@\meaning\csname #1\sfx\endcsname}\else
   \trace{S}{#1\sfx: undefined}\fi}
 % Output routine for  dimensions
 \def\sh@wSpecificDim#1{\ifcsname #1\sfx\endcsname\trace{S}{#1\sfx: \the\csname #1\sfx\endcsname}\else
@@ -136,7 +136,7 @@
 %
 % And these are the interface functions. They should all set \sfx  to L, R or \@rig
 %
-\def\setLRspecific{\edef\sfx{\ifdiglot\ifdiglotL L\else R\fi\else \@rig\fi}%
+\def\setLRspecific{\edef\sfx{\ifdiglot\c@rrdstat\else \@rig\fi}%
   \let\wh@t\sp@cificSideDef\pr@cessSpecificDef
   \let\wh@t\sp@cificSideDim\pr@cessSpecificDim
 }% For use with style definitions, etc.
@@ -144,7 +144,7 @@
 \def\SSsetLRspecific{\ifx\ds@ffix\empty\def\sfx{@orig}\else\edef\sfx{\ds@ffix}\fi
   \let\wh@t\sp@cificSideDef\pr@cessSpecific}% for use in stylesheet, no need to check dimensions, just existance
 
-\def\showLRspecific{\edef\sfx{\ifdiglot\ifdiglotL L\else R\fi\else \@rig\fi}%
+\def\showLRspecific{\edef\sfx{\ifdiglot\c@rrdstat\else \@rig\fi}%
   \let\wh@t\sh@wSpecificDef\pr@cessSpecificDef
   \let\wh@t\sh@wSpecificDim\pr@cessSpecificDim
 }% Call the output routines
@@ -156,6 +156,7 @@
 % Except this one:
 %
 \def\saveLRspecificOrig{% Save original values of side-specific variables. Force it to single use
+  \trace{d}{saveLRspecificOrig \c@rrdstat}%
   \let\wh@t\s@veSpecificOrig\pr@cessSpecific\let\saveLRspecificOrig=\relax}
 
 \maxdeadcycles=75
@@ -321,7 +322,7 @@
 
 \def\rej@ctgalley{%For calling by trial routines that don't like the galley they've just been given 
   \trace{d}{rej@ctgalley}%
-  \r@storenotes{\ifdiglotL\else R\fi}{1}%
+  \r@storenotes{\g@tdstat}{1}%
   \global\output={\diglot@backingup}%
   \global\vsize=\trialheight
   \global\holdinginserts=1
@@ -547,7 +548,7 @@
       \global\advance\trialheight by -1\baselineskip
       \ifdim\trialheight<0.5\baselineskip
         \trace{D}{Abandoning trial, no space for galley at all}%
-        \r@storenotes{\ifdiglotL\else R\fi}{1}% As if galley hadn't happened.
+        \r@storenotes{\g@tdstat}{1}% As if galley hadn't happened.
         \global\setbox\galleyexc@ss\vbox{\undog@lley}%
         \global\galleypenalty=0 
         \global\setbox255=\box\voidb@x
@@ -557,7 +558,7 @@
         \global\setbox\trialbox=\box\voidb@x
         \global\vsize=\trialheight
         \traceNum{D}{Trying again}%
-        \r@storenotes{\ifdiglotL\else R\fi}{1}%
+        \r@storenotes{\g@tdstat}{1}%
         %\setbox\galley\vbox{\unvbox\galley\unvbox\galleyexc@ss\penalty\endtri@lpen@lty}%
         \ifvoid\galleyexc@ss\else
           \setbox\galley\vbox{\undog@lley\penalty\endtri@lpen@lty}%
@@ -603,7 +604,7 @@
   %Other Left parameters
   \output={\diglotCollect}\relax%
   \global\holdinginserts=1
-  \the\leftho@ks
+  \the\diglotLho@ks
 }%
 
 \outer\def\righttext{%
@@ -614,7 +615,7 @@
   \global\trialheight=\maxdimen
   \relax\output={\diglotCollect}%
   \global\holdinginserts=1
-  \the\rightho@ks
+  \the\diglotRho@ks
 }
 %
 % When there's a header on the left but not the right, but we want the verses
@@ -626,7 +627,7 @@
   \global\vsize=\maxdimen
   \global\trialheight=\maxdimen
   \global\holdinginserts=1
-  \the\leftho@ks
+  \the\diglotLho@ks
 }
 
 %Similarly when there's no left text, almost-copying \righttext seems OK ...
@@ -637,7 +638,7 @@
   \global\vsize=\maxdimen
   \global\trialheight=\maxdimen
   \global\holdinginserts=1
-  \the\leftho@ks
+  \the\diglotLho@ks
 }
 
 \def\pagenumberL{\bgroup\setc@rdstat{L}\s@tfont{h}\pagenumber\egroup}%
@@ -664,12 +665,17 @@
 %Diglotstate.
 \def\n@xtdstat{L}%What does the diglotstate become at the next \dgl@tPenColSwap penalty?
 \def\f@lwgdstat{L}%What is the diglotstate of the 'recent contributions'? (i.e. next material to read)
-\def\c@rrdstat{L}%What is the current diglotstate?
+\def\c@rrdstat{}%What is the current diglotstate?
 \def\g@tdstat{\ifdiglot\if\c@rrdstat L\else\c@rrdstat\fi\fi}% Returns "" or "R" (Or other state values in the future)
 
 \def\show@dstat{\c@rrdstat\f@lwgdstat\n@xtdstat}% for debugging output 
 \def\setc@rdstat#1{\gdef\c@rrdstat{#1}%
- \if#1L\global\diglotLtrue\else\global\diglotLfalse\fi%Compatability
+ \ifx\c@rrdstat\empty
+   %\diglotfalse % Is this necessary?
+ \else 
+   %\diglottrue % Is this necessary?
+   \if#1L\relax\global\diglotLtrue\else\global\diglotLfalse\fi%Compatability
+ \fi
 }
 \def\setf@lwgdstat#1{\gdef\f@lwgdstat{#1}%
  \if#1L\global\digl@tLtrue\else\global\digl@tLfalse\fi%Compatability
@@ -1026,7 +1032,7 @@
     \setc@rdstat{L}%%
     \lastd@pth=0pt 
     %Arrange Left and Right footnotes
-    \global\setbox\Lbox=\vbox{\the\leftho@ks\let\\=\ins@rtn@tecl@ss \the\n@tecl@sses}%
+    \global\setbox\Lbox=\vbox{\the\diglotLho@ks\let\\=\ins@rtn@tecl@ss \the\n@tecl@sses}%
     \iff@rstnote%
       \trace{f}{No Left footnotes}%
     \else%
@@ -1035,7 +1041,7 @@
     \fi%
     \lastd@pth=0pt 
     \setc@rdstat{R}%%
-    \global\setbox\Rbox=\vbox{\the\rightho@ks\let\\=\ins@rtn@tecl@ss \the\n@tecl@sses}%
+    \global\setbox\Rbox=\vbox{\the\diglotRho@ks\let\\=\ins@rtn@tecl@ss \the\n@tecl@sses}%
     \iff@rstnote%
       \trace{f}{No Right footnotes}%
     \else%
@@ -1081,7 +1087,7 @@
         %chunckDelta preserves the *actual* last content added to the page.
         %Need to find out where to put the footnotes, as one of them should
         %be close to its respective text.
-        {\dimen1=\chunkDelta% dimen1 is step in last actual piece of text (for historic reasons, not the same way round as chunkDelta)
+        {\dimen1=-\chunkDelta% dimen1 is step in last actual piece of text (for historic reasons, not the same way round as chunkDelta (which is R-L))
         \dimen2=\ht\Lbox\relax%
         \trace{D}{L:\the\Lht R:\the\Rht\space Dl:\the\chunkDelta\space lf:(\the\ht\Lbox+\the\dp\Lbox) rf:(\the\ht\Rbox+\the\dp\Rbox)}%
         \advance\dimen2 by -\ht\Rbox % dimen2 is step in footnotes
@@ -1119,7 +1125,7 @@
           %\columnRwidth{\copy\Rbox\hss}%\rlap{\the\ht\Rbox \the\dp\Rbox}%
         %}%
         %dimen1 is step in text, dimen 2 is step in notes...
-        \trace{D}{d1:\the\dimen1 d2:\the\dimen2}%
+        \trace{D}{Left-Right,  text:\the\dimen1 notes:\the\dimen2}%
         \ifdim\dimen1<0pt %dimen1 -ve
           \ifdim\dimen2<0pt %dimen2 -ve
             \dimen3=0pt %No adjustment
@@ -1374,7 +1380,13 @@
 \def\new@diglot@col#1{
  \edef\diglot@list{\diglot@list#1}%
  \errmessage{This code isn't written yet}%
- %create: partial#1 excess#1 partial#1penalty m@rknum#1 
+ %CREATE: partial#1 excess#1 partial#1penalty m@rknum#1  column#1width picb@x#1
+ %FIXMEs needing to be solved before implementing this: 
+ % cle@rn@tecl@ss
+ %pdfb@@km@rkR 
+ %pdfch@pterm@rkR 
+ % UI!
+ % 
 }
 
 \def\check@and@update{%Checks each column to see if there is stuff to output

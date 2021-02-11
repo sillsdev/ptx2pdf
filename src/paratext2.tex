@@ -144,8 +144,7 @@
 \def\vm@kenote#1#2#3{%
   \inn@tetrue%
   \let\next\relax%
-  \def\n@tetype{#1}%
-  \ifdiglot\ifdiglotSepNotes\ifdiglotL\def\n@tetype{#1}\else\def\n@tetype{#1R}\fi\fi\fi%
+  \def\n@tetype{#1\g@tdstat}%
   \TRACE{vm@kenote \n@tetype}%
   \d@note{\x@\insert\csname note-\n@tetype\endcsname}%
   \x@\let\x@\th@sins\csname note-no-insert-\n@tetype\endcsname
@@ -170,7 +169,7 @@
 		\trace{f}{\reference : Footnote vskip=\the\dimen1 baselineskip=\the\baselineskip strut height=\the\dimen0}%
 	  \fi\fi
   \leavevmode % begin paragraph
-  \ifdiglot\ifdiglotL\the\leftho@ks\else\the\rightho@ks\fi\fi%
+  \ifdiglot \x@\the\csname diglot\c@rrdstat ho@ks\endcsname \fi%
   \ifRTL\setbox2=\lastbox\beginR\box2\fi % if RTL text this paragraph needs to be RTL
   % if note omitting caller from note (i.e. all callers are *'s)
   \testomitc@ller{#2}\ifomitc@ller\else
@@ -243,7 +242,7 @@
 % set baseline appropriately for the given style (may be using much smaller font than body)
 % baselineskip = leading
 \def\s@tbaseline#1{%
-  \ifdiglot\ifdiglotL\def\f@ntstyle{#1}\else\def\f@ntstyle{#1R}\fi\else\def\f@ntstyle{#1}\fi%
+  \def\f@ntstyle{#1\g@tdstat}%
   \getp@ram{baseline}{#1}\ifx\p@ram\relax
     \getp@ram{fontsize}{#1}\ifx\p@ram\relax\else
       \dimen0=\p@ram\le@dingunit
@@ -263,8 +262,7 @@
 
 % insert a note class in which each note is on its own line
 \def\separateins@rtn@tecl@ss#1{%
-  \def\cl@ss{#1}
-  \ifdiglot\ifdiglotSepNotes\ifdiglotL\def\cl@ss{#1}\else\def\cl@ss{#1R}\fi\fi\fi%
+  \def\cl@ss{#1\g@tdstat}%
   \TRACE{seperateins@rtn@tecl@ss \cl@ss}%
   \x@\let\x@\th@cl@ss\csname note-\cl@ss\endcsname % make \th@cl@ss be a synonym for the current note class
   % if the noteclass has content to output ...
@@ -276,8 +274,7 @@
 
 % insert a note class in which each note is in the same paragraph
 \def\parains@rtn@tecl@ss#1{%
-  \def\cl@ss{#1}%
-  \ifdiglot\ifdiglotSepNotes\ifdiglotL\def\cl@ss{#1}\else\def\cl@ss{#1R}\fi\fi\fi%
+  \def\cl@ss{#1\g@tdstat}%
   \x@\let\x@\th@cl@ss\csname note-\cl@ss\endcsname % make \th@cl@ss be a synonym for the current note class
   % if the noteclass has content to output ...
   \ifvoid\th@cl@ss\else
@@ -304,7 +301,7 @@
 
 % determine if a given note class is to be paragraphed
 %+c_paragraphedNotes
-\def\ParagraphedNotes#1{\Par@gr@phedNotes{#1}\ifdiglot\ifdiglotSepNotes\Par@gr@phedNotes{#1R}\fi\fi}
+\def\ParagraphedNotes#1{\Par@gr@phedNotes{#1\g@tdstat}}
 \def\Par@gr@phedNotes#1{\TRACE{Par@gr@phedNotes #1}\x@\let\csname paranotes-#1\endcsname=1}
 \newif\ifp@ranotes
 \def\checkp@ranotes#1{\x@\ifx\csname paranotes-#1\endcsname\relax
@@ -320,7 +317,7 @@
   \ifx\th@sins\relax % Normal footnote
    \ifdiglot
      \ifdiglotSepNotes
-       \ifdiglotL\n@tewidth=\columnLwidth\else\n@tewidth=\columnRwidth\fi
+       \n@tewidth=\csname column\c@rrdstat width\endcsname
      \else\n@tewidth=\textwidth\fi
    \else\n@tewidth=\textwidth\fi
   \else
@@ -503,7 +500,6 @@
 \def\pagebody{\vbox to\textheight{\boxmaxdepth\maxdepth \pagecontents}}
 \def\makeheadline{%
   \g@tfontname{h}%
-  %\def\f@ntstyle{h\ifdiglot\ifdiglotL L\else R\fi\fi}
   \vbox to 0pt{\kern-\topm@rgin
    \vbox{\kern\HeaderPosition\MarginUnit
     \setbox0=\vbox{\hbox to \textwidth{\the\headline}}
@@ -523,6 +519,7 @@
 %+c_doublecolumns
 \def\PageFullFactor{0.9}
 \def\doublecolumns{
+  \setc@rdstat{}\diglotfalse
   \ifnum\c@rrentcols=1
     % make switch from single to double column
     \vskip-\lastdepth
@@ -680,8 +677,7 @@
 
 %+c_reduceavailht_para
 \def\reduceavailht@para#1{
-  \def\cl@sss{#1}%
-  \ifdiglot\ifdiglotSepNotes\ifdiglotL\def\cl@sss{#1}\else\def\cl@sss{#1R}\fi\fi\fi%
+  \def\cl@sss{#1\g@tdstat}%
   \trace{n}{class \cl@sss}%
   \x@\let\x@\th@cl@ss\csname note-\cl@sss\endcsname
   \ifvoid\th@cl@ss\else
@@ -728,8 +724,7 @@
 
 %+c_reduceavailhtsep
 \def\reduceavailht@sep#1{
-  \def\cl@sss{#1}%
-  \ifdiglot\ifdiglotSepNotes\ifdiglotL\def\cl@sss{#1}\else\def\cl@sss{#1R}\fi\fi\fi
+  \def\cl@sss{#1\g@tdstat}%
   \TRACE{class \cl@sss}%
   \x@\let\x@\th@cl@ss\csname note-\cl@sss\endcsname
   \ifvoid\th@cl@ss\else
@@ -764,7 +759,7 @@
   \ifdiglot
     \ifdiglotSepNotes
        \cle@rn@t@cl@ss{#1}%
-       \cle@rn@t@cl@ss{#1R}%
+       \cle@rn@t@cl@ss{#1R}%FIXME: futureproofing: loop through diglot@list
     \else\cle@rn@t@cl@ss{#1}\fi
   \else\cle@rn@t@cl@ss{#1}\fi
 }
@@ -1210,9 +1205,6 @@
   \ifhe@dings\endhe@dings\fi%
   \Lneedsemptyingtrue%
   \pickn@xtpartial
-  \tempfalse
-  \ifvoid\partialL\else\temptrue\fi
-  \ifvoid\partialR\else\temptrue\fi
   \allNeedEmptyingtrue
   \pr@sideswitch{end}{L}%
   \penalty\dgl@tPenColSwap
@@ -1235,7 +1227,7 @@
       \enddigl@t
     \fi
   \fi
-  \diglottrue\diglots@tup
+  \global\diglottrue\diglots@tup
 }
 
 \def\diglots@tup{%
@@ -1286,6 +1278,7 @@
 % to switch back to single column, we reset the page size parameters
 \def\singlecolumn{%
   \trace{o}{singlecolumn hIns=\the\holdinginserts}%\tracingmacros=1
+  \setc@rdstat{}\diglotfalse
   \ifnum\c@rrentcols>1
     \ifhe@dings\endhe@dings\fi
     %\temptrue

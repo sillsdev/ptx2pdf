@@ -41,7 +41,7 @@
 
 \def\setsbp@ram#1#2{\trace{sc}{Styling cat \c@tegory:#1 #2}\setp@ram{#1}{\sb@rmarker}{#2}}
 \def\getsbp@ram#1{\getp@ram{#1}{\sb@rmarker}\let\cp@ram\p@ram\ifx\cp@ram\empty\global\let\cp@ram\relax\fi\trace{sc}{Got result for (\c@tegory)\sb@rmarker:#1: \cp@ram}}
-\def\getsbp@ramNoInh#1{\ifdiglot \edef\d@sf{\ifdiglotL L\else R\fi}\else\def\d@sf{}\fi
+\def\getsbp@ramNoInh#1{\edef\d@sf{\g@tdstat}%
   \getp@r@m{#1}{\c@tprefix\sb@rmarker\d@sf}\ifx\p@ram\relax\getp@ram{#1}{\c@tprefix\sb@rmarker}\fi
   \let\cp@ram\p@ram
   \ifx\cp@ram\empty\global\let\cp@ram\relax\fi
