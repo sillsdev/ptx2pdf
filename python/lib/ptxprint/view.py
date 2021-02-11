@@ -291,7 +291,6 @@ class ViewModel:
         topmarginmms = float(self.get("s_topmargin")) + linespacemms - fontsizemms  # macros add fontsize for some reason
         bottommarginmms = float(self.get("s_bottommargin"))
         headerposmms = topmarginmms - float(self.get("s_headerposition")) * 25.4 / 72.27  - 0.7 * hfontsizemms + fontsizemms - linespacemms
-        print(f"{hfontsizemms=} {headerposmms=} {fontsizemms=}")
         footerposmms = float(self.get("s_footerposition"))
         headerlabel = headerposmms - hfontheight * hfontsizemms
         footerlabel = (bottommarginmms - footerposmms - hfontheight * hfontsizemms) * 72.27 / 25.4

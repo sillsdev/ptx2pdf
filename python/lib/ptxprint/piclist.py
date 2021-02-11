@@ -281,7 +281,10 @@ class PicList:
             elif k == 'mirror':
                 val = self.currow[j] or "None"
             else:
-                val = self.currow[j]
+                try:
+                    val = self.currow[j]
+                except IndexError: 
+                    print("k, j:", k, j)
             w = self.builder.get_object(v)
             setWidgetVal(v, w, val)
         self.mask_media(self.currow)
