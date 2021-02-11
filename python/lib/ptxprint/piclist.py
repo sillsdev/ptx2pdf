@@ -31,11 +31,11 @@ _form_structure = {
     'medP':     'c_plMediaP',
     'medA':     'c_plMediaA',
     'medW':     'c_plMediaW',
-    'credits':  't_creditText',
-    'crRotate': 'fcb_creditRotate',
-    'crVpos':   'fcb_creditVpos',
-    'crHpos':   'fcb_creditHpos',
-    'crBoxSty': 'ecb_creditBoxStyle'
+    'credits':  't_plCreditText',
+    'crRotate': 'fcb_plCreditRotate',
+    'crVpos':   'fcb_plCreditVpos',
+    'crHpos':   'fcb_plCreditHpos',
+    'crBoxSty': 'ecb_plCreditBoxStyle'
 }
 _comblist = ['pgpos', 'hpos', 'nlines']
 _defaults = {
@@ -282,8 +282,6 @@ class PicList:
                 val = self.currow[j] or "None"
             else:
                 val = self.currow[j]
-                if j < 5:
-                    print(k, val)
             w = self.builder.get_object(v)
             setWidgetVal(v, w, val)
         self.mask_media(self.currow)
