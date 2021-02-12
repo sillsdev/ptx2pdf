@@ -186,7 +186,9 @@ class StyleEditorView(StyleEditor):
         results = {"Tables": {"th": {"thc": {}, "thr": {}}, "tc": {"tcc": {}, "tcr": {}}},
                    "Peripheral Materials": {"zpa-": {}},
                    "Identification": {"toc": {}}}
-        for k, v in sorted(self.sheet.items(), key=lambda x:(len(x[0]), x[0])):
+        # print(sorted(self.allStyles()))
+        for k in sorted(self.allStyles(), key=lambda x:(len(x), x)):
+            v = self.sheet.get(k, self.basesheet.get(k, {}))
             if k == "p":
                 foundp = True
             cat = 'Other'
@@ -202,6 +204,8 @@ class StyleEditorView(StyleEditor):
                 cat, url = categorymapping.get(cat, (cat, None))
                 v[' category'] = cat
                 v[' url'] = url
+            else:
+                print(k)
             triefit(k, results.setdefault(cat, {}), 1)
         self.treestore.clear()
         self._fill_store(results, None)

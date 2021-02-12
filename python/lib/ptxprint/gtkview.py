@@ -929,7 +929,8 @@ class GtkViewModel(ViewModel):
             status = False
             lockBtn.set_label(_("Unlock"))
         for c in ["btn_saveConfig", "btn_deleteConfig", "t_configNotes", "c_hideAdvancedSettings", 
-                  "btn_Generate", "btn_plAdd", "btn_plDel", "btn_plAdd1", "btn_plDel1", ]:
+                  "btn_Generate", "btn_plAdd", "btn_plDel"]:
+            print(c)
             self.builder.get_object(c).set_sensitive(status)
         
     def onExamineBookChanged(self, cb_examineBook):
@@ -1854,7 +1855,7 @@ class GtkViewModel(ViewModel):
         titleStr = super(GtkViewModel, self).getDialogTitle()
         self.builder.get_object("ptxprint").set_title(titleStr)
 
-    def _locFile(self, file2edit, loc, fallback=True):
+    def _locFile(self, file2edit, loc, fallback=False):
         fpath = None
         self.prjdir = os.path.join(self.settings_dir, self.prjid)
         if loc == "wrk":

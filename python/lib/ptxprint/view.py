@@ -936,6 +936,7 @@ class ViewModel:
         res.append(os.path.join(self.scriptsdir, "ptx2pdf.sty"))
         if self.get('c_useCustomSty'):
             res.append(os.path.join(self.settings_dir, self.prjid, "custom.sty"))
+        print(f"{cpath} {rcpath} usemods={self.get('c_useModsSty')}")
         if self.get('c_useModsSty'):
             for p in (cpath, rcpath):
                 fp = os.path.join(p, "ptxprint-mods.sty")

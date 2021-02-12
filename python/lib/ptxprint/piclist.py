@@ -30,7 +30,7 @@ _form_structure = {
     'x-credit':    't_plCreditText',
     'x-creditrot': 'fcb_plCreditRotate',
     'x-creditbox': 'ecb_plCreditBoxStyle',
-    'crVpos':   'fcb_plCreditVpos',
+    'crVpos':      'fcb_plCreditVpos',
     'crHpos':   'fcb_plCreditHpos',
     'hpos':     'fcb_plHoriz',
     'nlines':   's_plLines',
@@ -258,6 +258,7 @@ class PicList:
             self.currow = self.model[cit][:]    # copy it so that any edits don't mess with the model if the iterator moves
             self.curriter = cit
         pgpos = re.sub(r'^([PF])([lcr])([tb])', r'\1\3\2', self.currow[_pickeys['pgpos']])
+        creditpos = self.currow[_pickeys['x-creditpos']]
         self.parent.pause_logging()
         self.loading = True
         for j, (k, v) in enumerate(_form_structure.items()): # relies on ordered dict
@@ -271,12 +272,10 @@ class PicList:
                     val = pgpos[2:] or "c"
                 else:
                     val = pgpos[1:] or ""
-            elif k == 'x-creditpos':
-                val = x-creditpos[0:1] or "b"
-            # elif k == 'crVpos':
-                # val = '???' or ""
+            elif k == 'crVpos':
+                val = creditpos[0:1] or "b"
             elif k == 'crHpos':
-                val = pgpos[1:2] or "l"
+                val = creditpos[1:2] or "l"
             elif k == 'nlines':
                 val = re.sub(r'^\D*', "", pgpos)
                 try:
@@ -377,7 +376,7 @@ class PicList:
         return res
 
     def get_crpos(self):
-        res = "".join(self.get(k, default="") for k in _comblistcr[:-1])
+        res = "".join(self.get(k, default="") for k in _comblistcr)
         return res
 
     def item_changed(self, w, *a):
