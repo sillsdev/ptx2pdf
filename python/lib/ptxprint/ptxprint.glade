@@ -8891,10 +8891,9 @@ content of Headers and Footers.</property>
                         <property name="margin_top">4</property>
                         <property name="margin_bottom">4</property>
                         <property name="column_spacing">2</property>
-                        <property name="row_homogeneous">True</property>
                         <child>
                           <object class="GtkScrolledWindow" id="scr_picListEdit">
-                            <property name="width_request">635</property>
+                            <property name="width_request">638</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="halign">start</property>
@@ -9349,7 +9348,7 @@ the Basic tab.</property>
                             <signal name="select-page" handler="onPLpageChanged" swapped="no"/>
                             <signal name="switch-page" handler="onPLpageChanged" swapped="no"/>
                             <child>
-                              <object class="GtkBox" id="bx_picList">
+                              <object class="GtkBox" id="tb_picList">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="valign">start</property>
@@ -9823,7 +9822,7 @@ more than once (to update the list of page numbers).</property>
                                                 <property name="margin_top">3</property>
                                                 <property name="margin_bottom">3</property>
                                                 <property name="row_spacing">6</property>
-                                                <property name="column_spacing">3</property>
+                                                <property name="column_spacing">6</property>
                                                 <child>
                                                   <object class="GtkLabel">
                                                     <property name="visible">True</property>
@@ -10298,6 +10297,27 @@ Lines:</property>
                                                     <property name="left_attach">1</property>
                                                     <property name="top_attach">0</property>
                                                     <property name="width">3</property>
+                                                  </packing>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkLabel" id="l_autoCopyAttrib">
+                                                    <property name="sensitive">False</property>
+                                                    <property name="can_focus">False</property>
+                                                    <property name="tooltip_text" translatable="yes">If the image is from the recognized
+set of pictures commonly used in
+Scripture publications, then there is
+no need to fill in the Copyright 
+Attribution field, as this will be
+generated automatically for you.</property>
+                                                    <property name="halign">start</property>
+                                                    <property name="label" translatable="yes">Automatic</property>
+                                                    <attributes>
+                                                      <attribute name="foreground" value="#22228b8b2222"/>
+                                                    </attributes>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="left_attach">1</property>
+                                                    <property name="top_attach">5</property>
                                                   </packing>
                                                 </child>
                                                 <child>
@@ -14359,7 +14379,7 @@ properties for this style.</property>
                                     </child>
                                     <child>
                                       <object class="GtkCheckButton" id="c_styFontScale">
-                                        <property name="label" translatable="yes">Scale Relative to Parent Text</property>
+                                        <property name="label" translatable="yes">Scale Relative to Parent</property>
                                         <property name="width_request">170</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>

@@ -2513,8 +2513,16 @@ class GtkViewModel(ViewModel):
         if page == None:
             return
         pgid = Gtk.Buildable.get_name(page)
-        if pgid == "pn_checklist":
-            self.set("r_image", "preview")
+        # MH - what is this next piece doing in here?
+        if pgid == "tb_checklist":
+            # self.set("r_image", "preview")
+            self.builder.get_object("nbk_PicList").set_size_request(0, 335)
+        elif pgid == "tb_picList":
+            self.builder.get_object("nbk_PicList").set_size_request(0, 240)
+        elif pgid == "tb_details":
+            self.builder.get_object("nbk_PicList").set_size_request(0, 240)
+        elif pgid == "tb_credits":
+            self.builder.get_object("nbk_PicList").set_size_request(0, 160)
 
     def onUnpackDBLbundleClicked(self, btn):
         dialog = self.builder.get_object("dlg_DBLbundle")

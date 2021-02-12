@@ -275,7 +275,7 @@ class PicList:
             elif k == 'crVpos':
                 val = creditpos[0:1] or "b"
             elif k == 'crHpos':
-                val = creditpos[1:2] or "l"
+                val = creditpos[1:2] or "i"
             elif k == 'nlines':
                 val = re.sub(r'^\D*', "", pgpos)
                 try:
@@ -286,6 +286,12 @@ class PicList:
                 val = v[-1].lower() in (self.currow[_pickeys['media']] or "paw")
             elif k == 'mirror':
                 val = self.currow[j] or "None"
+            elif k == 'copy': # If we already have the copyright information, then don't let them enter it unnecessarily
+                val = self.currow[j]
+                figname = self.currow[_pickeys['src']]
+                status = True if len(re.findall(r"(?i)_?((?=cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib)..\d{5})[abc]?", figname)) else False
+                self.builder.get_object('l_autoCopyAttrib').set_visible(status)
+                self.builder.get_object(v).set_visible(not status)
             else:
                 try:
                     val = self.currow[j]
