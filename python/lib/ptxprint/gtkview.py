@@ -1854,7 +1854,7 @@ class GtkViewModel(ViewModel):
         titleStr = super(GtkViewModel, self).getDialogTitle()
         self.builder.get_object("ptxprint").set_title(titleStr)
 
-    def _locFile(self, file2edit, loc):
+    def _locFile(self, file2edit, loc, fallback=True):
         fpath = None
         self.prjdir = os.path.join(self.settings_dir, self.prjid)
         if loc == "wrk":
@@ -1864,7 +1864,7 @@ class GtkViewModel(ViewModel):
         elif loc == "cfg":
             cfgname = self.configName()
             fpath = os.path.join(self.configPath(cfgname), file2edit)
-            if not os.path.exists(fpath):
+            if fallback and not os.path.exists(fpath):
                 fpath = os.path.join(self.configPath(""), file2edit)
         elif "\\" in loc or "/" in loc:
             fpath = os.path.join(loc, file2edit)
