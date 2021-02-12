@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.2 
+<!-- Generated with glade 3.22.1 
 
 The MIT License (MIT)
 
@@ -8890,15 +8890,14 @@ content of Headers and Footers.</property>
                         <property name="margin_right">6</property>
                         <property name="margin_top">4</property>
                         <property name="margin_bottom">4</property>
-                        <property name="row_spacing">2</property>
-                        <property name="column_spacing">6</property>
+                        <property name="column_spacing">2</property>
+                        <property name="row_homogeneous">True</property>
                         <child>
                           <object class="GtkScrolledWindow" id="scr_picListEdit">
-                            <property name="width_request">630</property>
+                            <property name="width_request">635</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="halign">start</property>
-                            <property name="margin_bottom">6</property>
                             <property name="vexpand">True</property>
                             <property name="hscrollbar_policy">always</property>
                             <property name="vscrollbar_policy">always</property>
@@ -8926,7 +8925,7 @@ content of Headers and Footers.</property>
                                 </child>
                                 <child>
                                   <object class="GtkTreeViewColumn">
-                                    <property name="spacing">4</property>
+                                    <property name="spacing">2</property>
                                     <property name="sizing">fixed</property>
                                     <property name="fixed_width">72</property>
                                     <property name="title" translatable="yes">Anchor Ref</property>
@@ -8944,7 +8943,7 @@ content of Headers and Footers.</property>
                                 <child>
                                   <object class="GtkTreeViewColumn" id="col_caption">
                                     <property name="resizable">True</property>
-                                    <property name="spacing">4</property>
+                                    <property name="spacing">2</property>
                                     <property name="sizing">fixed</property>
                                     <property name="fixed_width">250</property>
                                     <property name="title" translatable="yes">Caption</property>
@@ -8959,7 +8958,7 @@ content of Headers and Footers.</property>
                                 <child>
                                   <object class="GtkTreeViewColumn">
                                     <property name="resizable">True</property>
-                                    <property name="spacing">4</property>
+                                    <property name="spacing">2</property>
                                     <property name="sizing">fixed</property>
                                     <property name="fixed_width">88</property>
                                     <property name="title" translatable="yes">File</property>
@@ -8974,7 +8973,7 @@ content of Headers and Footers.</property>
                                 <child>
                                   <object class="GtkTreeViewColumn">
                                     <property name="resizable">True</property>
-                                    <property name="spacing">4</property>
+                                    <property name="spacing">2</property>
                                     <property name="sizing">fixed</property>
                                     <property name="fixed_width">43</property>
                                     <property name="title" translatable="yes">Frame</property>
@@ -8988,7 +8987,7 @@ content of Headers and Footers.</property>
                                 </child>
                                 <child>
                                   <object class="GtkTreeViewColumn">
-                                    <property name="spacing">4</property>
+                                    <property name="spacing">2</property>
                                     <property name="sizing">fixed</property>
                                     <property name="fixed_width">38</property>
                                     <property name="title" translatable="yes">Scale</property>
@@ -9003,9 +9002,10 @@ content of Headers and Footers.</property>
                                 </child>
                                 <child>
                                   <object class="GtkTreeViewColumn">
-                                    <property name="spacing">4</property>
+                                    <property name="spacing">2</property>
                                     <property name="sizing">fixed</property>
                                     <property name="title" translatable="yes">Posn</property>
+                                    <property name="alignment">0.5</property>
                                     <child>
                                       <object class="GtkCellRendererText" id="cr_pgpos"/>
                                       <attributes>
@@ -9016,7 +9016,7 @@ content of Headers and Footers.</property>
                                 </child>
                                 <child>
                                   <object class="GtkTreeViewColumn">
-                                    <property name="spacing">4</property>
+                                    <property name="spacing">2</property>
                                     <property name="sizing">fixed</property>
                                     <property name="fixed_width">50</property>
                                     <property name="title" translatable="yes">Ref</property>
@@ -9030,7 +9030,7 @@ content of Headers and Footers.</property>
                                 </child>
                                 <child>
                                   <object class="GtkTreeViewColumn">
-                                    <property name="spacing">6</property>
+                                    <property name="spacing">2</property>
                                     <property name="sizing">fixed</property>
                                     <property name="fixed_width">45</property>
                                     <property name="title" translatable="yes">Mirror</property>
@@ -9045,7 +9045,7 @@ content of Headers and Footers.</property>
                                 <child>
                                   <object class="GtkTreeViewColumn">
                                     <property name="resizable">True</property>
-                                    <property name="spacing">4</property>
+                                    <property name="spacing">2</property>
                                     <property name="sizing">fixed</property>
                                     <property name="fixed_width">75</property>
                                     <property name="title" translatable="yes">Description</property>
@@ -9060,7 +9060,7 @@ content of Headers and Footers.</property>
                                 <child>
                                   <object class="GtkTreeViewColumn">
                                     <property name="resizable">True</property>
-                                    <property name="spacing">4</property>
+                                    <property name="spacing">2</property>
                                     <property name="sizing">fixed</property>
                                     <property name="fixed_width">75</property>
                                     <property name="title" translatable="yes">Copyright</property>
@@ -9074,10 +9074,11 @@ content of Headers and Footers.</property>
                                 </child>
                                 <child>
                                   <object class="GtkTreeViewColumn">
-                                    <property name="spacing">4</property>
+                                    <property name="spacing">2</property>
                                     <property name="sizing">fixed</property>
                                     <property name="fixed_width">3</property>
                                     <property name="title" translatable="yes">Media</property>
+                                    <property name="alignment">0.5</property>
                                     <child>
                                       <object class="GtkCellRendererText" id="cr_media"/>
                                       <attributes>
@@ -9088,7 +9089,9 @@ content of Headers and Footers.</property>
                                 </child>
                                 <child>
                                   <object class="GtkTreeViewColumn">
+                                    <property name="spacing">2</property>
                                     <property name="sizing">fixed</property>
+                                    <property name="fixed_width">140</property>
                                     <property name="title" translatable="yes">Credit</property>
                                     <child>
                                       <object class="GtkCellRendererText" id="cr_credit"/>
@@ -9100,8 +9103,11 @@ content of Headers and Footers.</property>
                                 </child>
                                 <child>
                                   <object class="GtkTreeViewColumn">
+                                    <property name="spacing">2</property>
                                     <property name="sizing">fixed</property>
+                                    <property name="fixed_width">40</property>
                                     <property name="title" translatable="yes">CrRotate</property>
+                                    <property name="alignment">0.5</property>
                                     <child>
                                       <object class="GtkCellRendererText" id="cr_crotate"/>
                                       <attributes>
@@ -9112,7 +9118,9 @@ content of Headers and Footers.</property>
                                 </child>
                                 <child>
                                   <object class="GtkTreeViewColumn">
+                                    <property name="spacing">2</property>
                                     <property name="sizing">fixed</property>
+                                    <property name="fixed_width">60</property>
                                     <property name="title" translatable="yes">CrBox</property>
                                     <child>
                                       <object class="GtkCellRendererText" id="cr_crbox"/>
@@ -9124,7 +9132,9 @@ content of Headers and Footers.</property>
                                 </child>
                                 <child>
                                   <object class="GtkTreeViewColumn">
+                                    <property name="spacing">2</property>
                                     <property name="sizing">fixed</property>
+                                    <property name="fixed_width">20</property>
                                     <property name="title">CrPosn</property>
                                     <child>
                                       <object class="GtkCellRendererText" id="cr_crpos"/>
@@ -9148,7 +9158,6 @@ content of Headers and Footers.</property>
                             <property name="can_focus">False</property>
                             <property name="halign">end</property>
                             <property name="margin_top">6</property>
-                            <property name="margin_bottom">6</property>
                             <property name="row_spacing">4</property>
                             <property name="column_spacing">4</property>
                             <child>
@@ -10116,7 +10125,7 @@ Position:</property>
                                                       <object class="GtkEntry">
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
-                                                        <property name="width_chars">6</property>
+                                                        <property name="width_chars">12</property>
                                                       </object>
                                                     </child>
                                                   </object>
@@ -10177,7 +10186,7 @@ on the Checklist tab.</property>
                                                       <object class="GtkEntry">
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
-                                                        <property name="width_chars">6</property>
+                                                        <property name="width_chars">10</property>
                                                       </object>
                                                     </child>
                                                   </object>
@@ -11117,6 +11126,7 @@ in this publication, as well as other contexts.</property>
                                     <property name="margin_bottom">6</property>
                                     <property name="row_spacing">6</property>
                                     <property name="column_spacing">6</property>
+                                    <property name="row_homogeneous">True</property>
                                     <child>
                                       <object class="GtkLabel">
                                         <property name="visible">True</property>
@@ -11163,16 +11173,14 @@ Position:</property>
                                         <property name="halign">start</property>
                                         <property name="model">ls_plCreditVpos</property>
                                         <property name="wrap_width">1</property>
-                                        <property name="active">0</property>
                                         <property name="has_entry">True</property>
                                         <property name="entry_text_column">0</property>
                                         <property name="id_column">1</property>
-                                        <property name="active_id">b</property>
                                         <child internal-child="entry">
                                           <object class="GtkEntry">
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
-                                            <property name="width_chars">6</property>
+                                            <property name="width_chars">12</property>
                                           </object>
                                         </child>
                                       </object>
@@ -11204,16 +11212,14 @@ Position:</property>
                                         <property name="halign">start</property>
                                         <property name="model">ls_plCreditHpos</property>
                                         <property name="wrap_width">1</property>
-                                        <property name="active">0</property>
                                         <property name="has_entry">True</property>
                                         <property name="entry_text_column">0</property>
                                         <property name="id_column">1</property>
-                                        <property name="active_id">l</property>
                                         <child internal-child="entry">
                                           <object class="GtkEntry">
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
-                                            <property name="width_chars">6</property>
+                                            <property name="width_chars">12</property>
                                           </object>
                                         </child>
                                       </object>
@@ -11245,17 +11251,15 @@ to be rotated.
                                         <property name="halign">start</property>
                                         <property name="model">ls_plCreditRotate</property>
                                         <property name="wrap_width">1</property>
-                                        <property name="active">0</property>
                                         <property name="has_entry">True</property>
                                         <property name="entry_text_column">0</property>
                                         <property name="id_column">1</property>
-                                        <property name="active_id">1</property>
                                         <child internal-child="entry">
                                           <object class="GtkEntry">
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="halign">start</property>
-                                            <property name="width_chars">6</property>
+                                            <property name="width_chars">12</property>
                                           </object>
                                         </child>
                                       </object>
@@ -11314,6 +11318,7 @@ parameters at once: font, size and colour. </property>
                                       <object class="GtkButton">
                                         <property name="label" translatable="yes">Apply to multiple...</property>
                                         <property name="visible">True</property>
+                                        <property name="sensitive">False</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
                                         <property name="tooltip_text" translatable="yes">Copy the existing image credit
@@ -11382,7 +11387,8 @@ credits on images (e.g. as required by David C Cook).</property>
                               <object class="GtkFrame" id="fr_picPreview">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="margin_bottom">8</property>
+                                <property name="hexpand">True</property>
+                                <property name="vexpand">True</property>
                                 <property name="label_xalign">0</property>
                                 <property name="label_yalign">0</property>
                                 <property name="shadow_type">none</property>
@@ -11417,6 +11423,8 @@ credits on images (e.g. as required by David C Cook).</property>
                               <object class="GtkBox">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="halign">center</property>
+                                <property name="valign">end</property>
                                 <child>
                                   <object class="GtkRadioButton" id="r_image_preview">
                                     <property name="label" translatable="yes">Image
