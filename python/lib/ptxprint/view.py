@@ -77,10 +77,6 @@ def doError(txt, secondary=None, title=None):
     if secondary is not None:
         print(secondary)
 
-stylelinks = {
-    "notes/ifblendfnxr":   ("getboolean", ("x",),     "NoteBlendInto", lambda v: "f" if v else "")
-} 
-
 class ViewModel:
     _attributes = {
         # modelname: (attribute, isMultiple, label)
@@ -374,8 +370,8 @@ class ViewModel:
                 self._copyConfig("Default", configName)
             else:
                 self._copyConfig(self.configId, configName)
-            self.styleEditor.load(self.getStyleSheets(configName))
             res = self.readConfig(cfgname=configName)
+            self.styleEditor.load(self.getStyleSheets(configName))
             if res or forceConfig:
                 self.configId = configName
             if readConfig:  # project changed
@@ -575,12 +571,6 @@ class ViewModel:
             indent = config.getfloat("document", "indentunit", fallback="2.000")
             if indent == 2.0 and config.getboolean("paper", "columns", fallback=True):
                     config.set("document", "indentunit", "1.000")
-            for k, r in stylelinks.items():
-                s, a = k.split("/")
-                val = getattr(config, r[0])(s, a, fallback=None)
-                res = r[3](val) if r[3] is not None else val
-                for m in r[1]:
-                    self.styleEditor.setval(m, r[2], res, ifunchanged=True)
         if v < 1.403:   # no need to bump version for this and merge this with a later version test
             f = os.path.join(self.configPath(cfgname), "NestedStyles.sty")
             if os.path.exists(f):

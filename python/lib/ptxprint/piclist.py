@@ -876,6 +876,8 @@ class PicInfo(dict):
         res = {}
         newfigs = {}
         for k, f in data.items():
+            if 'src' not in f:
+                continue
             if keys is not None and f['anchor'][:3] not in keys:
                 continue
             newk = filt(f['src']) if filt is not None else f['src']
