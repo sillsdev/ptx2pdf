@@ -281,20 +281,25 @@ class ViewModel:
                 self.set(w, nf)
 
     def getMargins(self):
+        def asmm(v): return v * 25.4 / 72.27
         hfont = self.styleEditor.getval("h", " font") or self.get("bl_fontR").getTtfont()
         #fontheight = 1. + float(font.descent) / font.upem
         hfontheight = float(hfont.ascent) / hfont.upem
-        fontsizemms = float(self.get("s_fontsize")) * 25.4 / 72.27
-        linespacemms = float(self.get("s_linespacing")) * 25.4 / 72.27
+        fontsizemms = asmm(float(self.get("s_fontsize")))
+        linespacemms = asmm(float(self.get("s_linespacing")))
         hfontsizemms = asfloat(self.styleEditor.getval("h", "FontSize"), 12.) / 12. * fontsizemms
         marginmms = float(self.get("s_margins"))
-        topmarginmms = float(self.get("s_topmargin")) + linespacemms - fontsizemms  # macros add fontsize for some reason
+        # in the macros, topmargin is set to topmargin - baselineskip + 12*FontSizeUnit
+        # Reverse that here, so that what appears on the page is what they ask for.
+        topmarginmms = float(self.get("s_topmargin")) + linespacemms - fontsizemms
         bottommarginmms = float(self.get("s_bottommargin"))
-        headerposmms = topmarginmms - float(self.get("s_headerposition")) * 25.4 / 72.27  - 0.7 * hfontsizemms + fontsizemms - linespacemms
+        # specified topmargin subtract 0.7 * hfontsize which the macros add in
+        headerposmms = float(self.get("s_topmargin")) - asmm(float(self.get("s_headerposition"))) - 0.7 * hfontsizemms
         footerposmms = float(self.get("s_footerposition"))
         headerlabel = headerposmms - hfontheight * hfontsizemms
         footerlabel = (bottommarginmms - footerposmms - hfontheight * hfontsizemms) * 72.27 / 25.4
-        rulerposmms = (float(self.get("s_headerposition")) - float(self.get("s_rhruleposition"))) * 25.4 / 72.27 # + fontsizemms - linespacemms
+        # simply subtract ruler gap from header gap
+        rulerposmms = asmm(float(self.get("s_headerposition")) - float(self.get("s_rhruleposition")))
         return (marginmms, topmarginmms, bottommarginmms, headerposmms, footerposmms, rulerposmms, headerlabel, footerlabel)
 
     def updateSavedConfigList(self):
