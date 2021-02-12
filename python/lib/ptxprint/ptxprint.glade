@@ -14351,7 +14351,7 @@ properties for this style.</property>
                                     </child>
                                     <child>
                                       <object class="GtkCheckButton" id="c_styFontScale">
-                                        <property name="label" translatable="yes">Scale Relative to Parent</property>
+                                        <property name="label" translatable="yes">Scale Relative to Parent Text</property>
                                         <property name="width_request">170</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
