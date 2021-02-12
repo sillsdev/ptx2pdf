@@ -278,10 +278,11 @@ class ViewModel:
 
     def onNumTabsChanged(self, *a):
         if self.loadingConfig:
-            return
+            return False
         (marginmms, topmarginmms, bottommarginmms, headerpos, footerpos, rulerpos, headerlabel, footerlabel) = self.getMargins()
         self.set("l_margin2header1", "{:.3f}mm".format(headerlabel))
         self.set("l_margin2footer", "{:.1f}pt".format(footerlabel))
+        return True
 
     def getMargins(self):
         def asmm(v): return v * 25.4 / 72.27

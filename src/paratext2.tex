@@ -163,7 +163,9 @@
   \floatingpenalty\@MM % make sure note does not float away from caller to another page
   \leftskip\z@skip \rightskip\z@skip \spaceskip\z@skip \xspaceskip\z@skip % reset extra space around paragraph 0
   \s@tbaseline{#1}%
-  \ifp@ranotes\else\setbox0=\hbox{\XeTeXuseglyphmetrics=0 \char32}\dimen0=\ht0
+  \ifp@ranotes\else
+      \getp@ram{spacebefore}{#1}\trace{f}{note(#1) spacebefore: \p@ram}\ifx\p@ram\relax\else\kern\p@ram\verticalsp@ceunit\fi
+      \setbox0=\hbox{\XeTeXuseglyphmetrics=0 \char32}\dimen0=\ht0
       \ifdim\dimen0<\baselineskip
         \dimen1=\baselineskip\advance\dimen1 by -\dimen0
         \vskip\dimen1
@@ -231,9 +233,12 @@
   \copy\f@@tstrut}
 
 %+c_foot
+% called at end of note
 \def\@foot{\ifp@ranotes \parfillskip=0pt \else\strut\fi
-  \par\egroup\ifdiglot\ifRTL\endR\fi\fi
-  \end@llpoppedstyles{N*}%
+  \par
+  \ifp@ranotes\else\getp@ram{spaceafter}{\n@tetype}\trace{f}{note(\n@tetype) spaceafter: \p@ram}%
+  \ifx\p@ram\relax\else\vskip\p@ram\verticalsp@ceunit\fi\fi
+  \egroup\ifdiglot\ifRTL\endR\fi\fi\end@llpoppedstyles{N*}%
   \def\d@##1+##2\E{\if ##1N\else\MSG{Bad marker ##2\space but expected a closing note marker}\fi}\mctopnoms
   \mcpop}
 \newbox\f@@tstrut
