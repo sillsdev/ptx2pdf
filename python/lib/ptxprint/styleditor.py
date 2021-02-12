@@ -58,7 +58,6 @@ class StyleEditor:
         if len(sheetfiles) == 0:
             return
         foundp = False
-        print(sheetfiles)
         self.basesheet = Sheets(sheetfiles[:-1])
         self._createFonts(self.basesheet)
         self.sheet = Sheets(sheetfiles[-1:], base=self.basesheet)

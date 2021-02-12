@@ -276,6 +276,13 @@ class ViewModel:
             if nf is not None:
                 self.set(w, nf)
 
+    def onNumTabsChanged(self, *a):
+        if self.loadingConfig:
+            return
+        (marginmms, topmarginmms, bottommarginmms, headerpos, footerpos, rulerpos, headerlabel, footerlabel) = self.getMargins()
+        self.set("l_margin2header1", "{:.3f}mm".format(headerlabel))
+        self.set("l_margin2footer", "{:.1f}pt".format(footerlabel))
+
     def getMargins(self):
         def asmm(v): return v * 25.4 / 72.27
         hfont = self.styleEditor.getval("h", " font") or self.get("bl_fontR").getTtfont()
@@ -375,6 +382,7 @@ class ViewModel:
             if res or forceConfig:
                 self.configId = configName
             if readConfig:  # project changed
+                self.onNumTabsChanged()
                 self.usfms = None
                 self.get_usfms()
             self.loadPics()
@@ -433,7 +441,8 @@ class ViewModel:
         if not os.path.exists(path):
             return False
         config = configparser.ConfigParser()
-        config.read(path, encoding="utf-8")
+        with open(path, encoding="utf-8", errors="ignore") as inf:
+            config.read_file(inf)
         self.versionFwdConfig(config, cfgname)
         self.loadingConfig = True
         self.localiseConfig(config)
@@ -926,7 +935,6 @@ class ViewModel:
         res.append(os.path.join(self.scriptsdir, "ptx2pdf.sty"))
         if self.get('c_useCustomSty'):
             res.append(os.path.join(self.settings_dir, self.prjid, "custom.sty"))
-        print(f"{cpath} {rcpath} usemods={self.get('c_useModsSty')}")
         if self.get('c_useModsSty'):
             for p in (cpath, rcpath):
                 fp = os.path.join(p, "ptxprint-mods.sty")
