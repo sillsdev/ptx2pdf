@@ -9,10 +9,11 @@ import regex
 import os, re, random, sys
 
 posparms = ["alt", "src", "size", "pgpos", "copy", "caption", "ref", "x-xetex", "mirror", "scale"]
-pos3parms = ["src", "size", "pgpos", "ref", "copy", "alt", "x-xetex", "mirror", "scale", "media"]
+pos3parms = ["src", "size", "pgpos", "ref", "copy", "alt", "x-xetex", "mirror", "scale", "media", 
+             "x-credit", "x-creditrot", "x-creditbox", "x-creditpos"]
 
 _piclistfields = ["anchor", "caption", "src", "size", "scale", "pgpos", "ref", "alt", "copy", 
-                  "mirror", "disabled", "cleardest", "key", "media", "credits", "crRotate", "crVpos", "crHpos", "crBoxSty"]
+                  "mirror", "x-credit", "x-creditrot", "x-creditbox", "x-creditpos", "disabled", "cleardest", "key", "media"]
 _pickeys = {k:i for i, k in enumerate(_piclistfields)}
 
 _form_structure = {
@@ -26,18 +27,19 @@ _form_structure = {
     'alt':      't_plAltText',
     'copy':     't_plCopyright',
     'mirror':   'fcb_plMirror',
+    'x-credit':    't_plCreditText',
+    'x-creditrot': 'fcb_plCreditRotate',
+    'x-creditbox': 'ecb_plCreditBoxStyle',
+    'crVpos':   'fcb_plCreditVpos',
+    'crHpos':   'fcb_plCreditHpos',
     'hpos':     'fcb_plHoriz',
     'nlines':   's_plLines',
     'medP':     'c_plMediaP',
     'medA':     'c_plMediaA',
-    'medW':     'c_plMediaW',
-    'credits':  't_plCreditText',
-    'crRotate': 'fcb_plCreditRotate',
-    'crVpos':   'fcb_plCreditVpos',
-    'crHpos':   'fcb_plCreditHpos',
-    'crBoxSty': 'ecb_plCreditBoxStyle'
+    'medW':     'c_plMediaW'
 }
 _comblist = ['pgpos', 'hpos', 'nlines']
+_comblistcr = ['crVpos', 'crHpos']
 _defaults = {
     'scale':    "1.000"
 }
@@ -102,7 +104,6 @@ class PicList:
                 w.connect("focus-out-event", self.item_changed, k)
             elif v.startswith("c_"):
                 sig = "clicked"
-            print(v, sig, k)
             w.connect(sig, self.item_changed, k)
         self.previewBuf = GdkPixbuf.Pixbuf.new_from_file(os.path.join(os.path.dirname(__file__), "picLocationPreviews.png"))
         self.clear()
@@ -167,7 +168,6 @@ class PicList:
                             val = "".join(x for x in val if x in defaultmedia[0])
                     else:
                         val = v.get(e, "")
-                    print(e, val)
                     row.append(val)
                 self.model.append(row)
         #self.view.set_model(self.model)
@@ -261,6 +261,7 @@ class PicList:
         self.parent.pause_logging()
         self.loading = True
         for j, (k, v) in enumerate(_form_structure.items()): # relies on ordered dict
+            # print(j, k, v)
             if k == 'pgpos':
                 val = pgpos[:2] if pgpos[0:1] in "PF" else (pgpos[0:1] or "t")
             elif k == 'hpos':
@@ -270,6 +271,12 @@ class PicList:
                     val = pgpos[2:] or "c"
                 else:
                     val = pgpos[1:] or ""
+            elif k == 'x-creditpos':
+                val = x-creditpos[0:1] or "b"
+            # elif k == 'crVpos':
+                # val = '???' or ""
+            elif k == 'crHpos':
+                val = pgpos[1:2] or "l"
             elif k == 'nlines':
                 val = re.sub(r'^\D*', "", pgpos)
                 try:
@@ -286,7 +293,11 @@ class PicList:
                 except IndexError: 
                     print("k, j:", k, j)
             w = self.builder.get_object(v)
-            setWidgetVal(v, w, val)
+            try:
+                setWidgetVal(v, w, val)
+            except (ValueError, TypeError):
+                print(v, w, val)
+            
         self.mask_media(self.currow)
         self.parent.unpause_logging()
         self.loading = False
@@ -365,6 +376,10 @@ class PicList:
             res += str(lines)
         return res
 
+    def get_crpos(self):
+        res = "".join(self.get(k, default="") for k in _comblistcr[:-1])
+        return res
+
     def item_changed(self, w, *a):
         key = a[-1]
         if self.loading and key not in ("src", ):
@@ -372,6 +387,9 @@ class PicList:
         if key in _comblist:
             val = self.get_pgpos()
             key = "pgpos"
+        elif key in _comblistcr:
+            val = self.get_crpos()
+            key = "x-creditpos"
         elif key.startswith("med"):
             val = "".join(v[-1].lower() for k, v in _form_structure.items() if k.startswith("med") and self.get(v))
             # if self.currow is not None:
@@ -451,6 +469,7 @@ class PicList:
         if row[9] == "None": # mirror
             row[9] = ""
         row[_piclistfields.index('pgpos')] = self.get_pgpos()
+        row[_piclistfields.index('x-creditpos')] = self.get_crpos()
         return row
 
     def add_row(self):

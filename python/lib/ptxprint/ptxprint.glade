@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.2 
+<!-- Generated with glade 3.22.1 
 
 The MIT License (MIT)
 
@@ -1363,6 +1363,14 @@ saved configuration.</property>
       <column type="gchararray"/>
       <!-- column-name Mirror -->
       <column type="gchararray"/>
+      <!-- column-name CreditText -->
+      <column type="gchararray"/>
+      <!-- column-name CreditRotate -->
+      <column type="gchararray"/>
+      <!-- column-name CreditBoxStyle -->
+      <column type="gchararray"/>
+      <!-- column-name CreditPos -->
+      <column type="gchararray"/>
       <!-- column-name disabled -->
       <column type="gboolean"/>
       <!-- column-name cleardest -->
@@ -1370,16 +1378,6 @@ saved configuration.</property>
       <!-- column-name origkey -->
       <column type="gchararray"/>
       <!-- column-name media -->
-      <column type="gchararray"/>
-      <!-- column-name CreditText -->
-      <column type="gchararray"/>
-      <!-- column-name CreditRotate -->
-      <column type="gchararray"/>
-      <!-- column-name CreditVpos -->
-      <column type="gchararray"/>
-      <!-- column-name CreditHpos -->
-      <column type="gchararray"/>
-      <!-- column-name CreditBoxStyle -->
       <column type="gchararray"/>
     </columns>
     <data>
@@ -1391,13 +1389,17 @@ saved configuration.</property>
         <col id="4">100</col>
         <col id="5">bl</col>
         <col id="6">None</col>
-        <col id="7">1:16</col>
+        <col id="7">1.16</col>
         <col id="8">None</col>
         <col id="9">N</col>
-        <col id="10">False</col>
-        <col id="11">False</col>
-        <col id="12" translatable="yes"/>
-        <col id="13" translatable="yes"/>
+        <col id="10"/>
+        <col id="11" translatable="yes"/>
+        <col id="12" translatable="yes">None</col>
+        <col id="13" translatable="yes">to</col>
+        <col id="14" translatable="yes">False</col>
+        <col id="15" translatable="yes">False</col>
+        <col id="16" translatable="yes"/>
+        <col id="17" translatable="yes"/>
       </row>
       <row>
         <col id="0">JHN 3:16-17</col>
@@ -1407,93 +1409,17 @@ saved configuration.</property>
         <col id="4">75</col>
         <col id="5">t</col>
         <col id="6">Image of a group of people</col>
-        <col id="7">3:16</col>
+        <col id="7">3.16</col>
         <col id="8">None</col>
         <col id="9">N</col>
-        <col id="10">False</col>
-        <col id="11">False</col>
-        <col id="12" translatable="yes"/>
-        <col id="13" translatable="yes"/>
-      </row>
-      <row>
-        <col id="0">LUK 15:8</col>
-        <col id="1">The disciples listening to Jesus</col>
-        <col id="2">CN00077b.tif</col>
-        <col id="3">page</col>
-        <col id="4">100</col>
-        <col id="5">t</col>
-        <col id="6">12 men listening to Jesus</col>
-        <col id="7">15:8</col>
-        <col id="8">None</col>
-        <col id="9">N</col>
-        <col id="10">False</col>
-        <col id="11">False</col>
-        <col id="12" translatable="yes"/>
-        <col id="13" translatable="yes"/>
-      </row>
-      <row>
-        <col id="0">ACT 18:27</col>
-        <col id="1">Paul's Journeys</col>
-        <col id="2">Paul's_3_JourneysBW.pdf</col>
-        <col id="3">full</col>
-        <col id="4">67</col>
-        <col id="5">b</col>
-        <col id="6">Map Creator map</col>
-        <col id="7">18:27</col>
-        <col id="8">None</col>
-        <col id="9">N</col>
-        <col id="10">False</col>
-        <col id="11">False</col>
-        <col id="12" translatable="yes"/>
-        <col id="13" translatable="yes"/>
-      </row>
-      <row>
-        <col id="0">ROM 8:28</col>
-        <col id="1">Everything working out</col>
-        <col id="2">gt12345.tif</col>
-        <col id="3">col</col>
-        <col id="4">30</col>
-        <col id="5">cr</col>
-        <col id="6">None</col>
-        <col id="7">8:28</col>
-        <col id="8">Gordon Thompson and friends.</col>
-        <col id="9">N</col>
-        <col id="10">False</col>
-        <col id="11">False</col>
-        <col id="12" translatable="yes"/>
-        <col id="13" translatable="yes"/>
-      </row>
-      <row>
-        <col id="0">1CO 3:16</col>
-        <col id="1">Some other caption that is rather long and complicated</col>
-        <col id="2">unknownpic.pdf</col>
-        <col id="3">col</col>
-        <col id="4">100</col>
-        <col id="5">p</col>
-        <col id="6">None</col>
-        <col id="7">3:16-19</col>
-        <col id="8">None</col>
-        <col id="9">N</col>
-        <col id="10">False</col>
-        <col id="11">False</col>
-        <col id="12" translatable="yes"/>
-        <col id="13" translatable="yes"/>
-      </row>
-      <row>
-        <col id="0">REV 3:20</col>
-        <col id="1">Behold I stand and the door and knock</col>
-        <col id="2">CN01012.jpg</col>
-        <col id="3">col</col>
-        <col id="4">80</col>
-        <col id="5">tr</col>
-        <col id="6">None</col>
-        <col id="7">3:20</col>
-        <col id="8">None</col>
-        <col id="9">N</col>
-        <col id="10">False</col>
-        <col id="11">False</col>
-        <col id="12" translatable="yes"/>
-        <col id="13" translatable="yes"/>
+        <col id="10"/>
+        <col id="11" translatable="yes"/>
+        <col id="12" translatable="yes">Light</col>
+        <col id="13" translatable="yes">bi</col>
+        <col id="14" translatable="yes">False</col>
+        <col id="15" translatable="yes">False</col>
+        <col id="16" translatable="yes"/>
+        <col id="17" translatable="yes"/>
       </row>
       <row>
         <col id="0">GLO 1:0</col>
@@ -1503,13 +1429,17 @@ saved configuration.</property>
         <col id="4">100</col>
         <col id="5">F</col>
         <col id="6">unrotated map</col>
-        <col id="7">1:0</col>
+        <col id="7">1.0</col>
         <col id="8">Map Creator</col>
         <col id="9">N</col>
-        <col id="10">False</col>
-        <col id="11">False</col>
-        <col id="12" translatable="yes"/>
-        <col id="13" translatable="yes"/>
+        <col id="10">ESV</col>
+        <col id="11" translatable="yes"/>
+        <col id="12" translatable="yes">Dark</col>
+        <col id="13" translatable="yes">tr</col>
+        <col id="14" translatable="yes">False</col>
+        <col id="15" translatable="yes">False</col>
+        <col id="16" translatable="yes"/>
+        <col id="17" translatable="yes"/>
       </row>
     </data>
   </object>
@@ -1599,80 +1529,6 @@ saved configuration.</property>
     <data>
       <row>
         <col id="0" translatable="yes">Default</col>
-      </row>
-    </data>
-  </object>
-  <object class="GtkListStore" id="ls_plCreditHpos">
-    <columns>
-      <!-- column-name Hpos -->
-      <column type="gchararray"/>
-      <!-- column-name HposCode -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">Left</col>
-        <col id="1">l</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Center</col>
-        <col id="1">c</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Right</col>
-        <col id="1">r</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Inner</col>
-        <col id="1">i</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Outer</col>
-        <col id="1">o</col>
-      </row>
-    </data>
-  </object>
-  <object class="GtkListStore" id="ls_plCreditRotate">
-    <columns>
-      <!-- column-name RotateDesc -->
-      <column type="gchararray"/>
-      <!-- column-name degrees -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">None</col>
-        <col id="1">0</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Anti-clockwise</col>
-        <col id="1">-90</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Clockwise</col>
-        <col id="1">90</col>
-      </row>
-    </data>
-  </object>
-  <object class="GtkListStore" id="ls_plCreditVpos">
-    <columns>
-      <!-- column-name Vpos -->
-      <column type="gchararray"/>
-      <!-- column-name VposCode -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">Top</col>
-        <col id="1">t</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Center</col>
-        <col id="1">c</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Bottom</col>
-        <col id="1">b</col>
       </row>
     </data>
   </object>
@@ -2468,6 +2324,80 @@ technology, then enable this.</property>
       <row>
         <col id="0" translatable="yes">Inappropriate</col>
         <col id="1">Inappropriate</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkListStore" id="ls_plCreditHpos">
+    <columns>
+      <!-- column-name Hpos -->
+      <column type="gchararray"/>
+      <!-- column-name HposCode -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">Left</col>
+        <col id="1">l</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Center</col>
+        <col id="1">c</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Right</col>
+        <col id="1">r</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Inner</col>
+        <col id="1">i</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Outer</col>
+        <col id="1">o</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkListStore" id="ls_plCreditRotate">
+    <columns>
+      <!-- column-name RotateDesc -->
+      <column type="gchararray"/>
+      <!-- column-name degrees -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">None</col>
+        <col id="1">0</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Anti-clockwise</col>
+        <col id="1">-90</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Clockwise</col>
+        <col id="1">90</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkListStore" id="ls_plCreditVpos">
+    <columns>
+      <!-- column-name Vpos -->
+      <column type="gchararray"/>
+      <!-- column-name VposCode -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">Top</col>
+        <col id="1">t</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Center</col>
+        <col id="1">c</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Bottom</col>
+        <col id="1">b</col>
       </row>
     </data>
   </object>
@@ -9122,7 +9052,7 @@ content of Headers and Footers.</property>
                                     <child>
                                       <object class="GtkCellRendererText" id="cr_alt"/>
                                       <attributes>
-                                        <attribute name="text">7</attribute>
+                                        <attribute name="text">6</attribute>
                                       </attributes>
                                     </child>
                                   </object>
@@ -9150,6 +9080,54 @@ content of Headers and Footers.</property>
                                     <property name="title" translatable="yes">Media</property>
                                     <child>
                                       <object class="GtkCellRendererText" id="cr_media"/>
+                                      <attributes>
+                                        <attribute name="text">17</attribute>
+                                      </attributes>
+                                    </child>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkTreeViewColumn">
+                                    <property name="sizing">fixed</property>
+                                    <property name="title" translatable="yes">Credit</property>
+                                    <child>
+                                      <object class="GtkCellRendererText" id="cr_credit"/>
+                                      <attributes>
+                                        <attribute name="text">10</attribute>
+                                      </attributes>
+                                    </child>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkTreeViewColumn">
+                                    <property name="sizing">fixed</property>
+                                    <property name="title" translatable="yes">CrRotate</property>
+                                    <child>
+                                      <object class="GtkCellRendererText" id="cr_crotate"/>
+                                      <attributes>
+                                        <attribute name="text">11</attribute>
+                                      </attributes>
+                                    </child>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkTreeViewColumn">
+                                    <property name="sizing">fixed</property>
+                                    <property name="title" translatable="yes">CrBox</property>
+                                    <child>
+                                      <object class="GtkCellRendererText" id="cr_crbox"/>
+                                      <attributes>
+                                        <attribute name="text">12</attribute>
+                                      </attributes>
+                                    </child>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkTreeViewColumn">
+                                    <property name="sizing">fixed</property>
+                                    <property name="title">CrPosn</property>
+                                    <child>
+                                      <object class="GtkCellRendererText" id="cr_crpos"/>
                                       <attributes>
                                         <attribute name="text">13</attribute>
                                       </attributes>
@@ -11185,6 +11163,7 @@ Position:</property>
                                         <property name="halign">start</property>
                                         <property name="model">ls_plCreditVpos</property>
                                         <property name="wrap_width">1</property>
+                                        <property name="active">0</property>
                                         <property name="has_entry">True</property>
                                         <property name="entry_text_column">0</property>
                                         <property name="id_column">1</property>
@@ -11224,6 +11203,7 @@ Position:</property>
                                         <property name="halign">start</property>
                                         <property name="model">ls_plCreditHpos</property>
                                         <property name="wrap_width">1</property>
+                                        <property name="active">0</property>
                                         <property name="has_entry">True</property>
                                         <property name="entry_text_column">0</property>
                                         <property name="id_column">1</property>
@@ -11263,7 +11243,7 @@ to be rotated.
                                         <property name="halign">start</property>
                                         <property name="model">ls_plCreditRotate</property>
                                         <property name="wrap_width">1</property>
-                                        <property name="active">1</property>
+                                        <property name="active">0</property>
                                         <property name="has_entry">True</property>
                                         <property name="entry_text_column">0</property>
                                         <property name="id_column">1</property>

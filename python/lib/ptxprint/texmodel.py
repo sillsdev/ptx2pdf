@@ -1145,6 +1145,7 @@ class TexModel:
 
             # \figonpage{304}{56}{cn01617.jpg}{tl}{© David C. Cook Publishing Co, 1978.}{x170.90504pt}
             m = re.findall(r"\\figonpage\{(\d+)\}\{\d+\}\{.*?(((?=cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib)..)\d{5})?.+?\}\{.*?\}\{(.*?)?\}\{x.+?\}", dat)
+            # print(len(m), m)
             msngPgs = []
             customStmt = []
             if len(m):
