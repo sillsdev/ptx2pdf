@@ -557,8 +557,10 @@ class GtkViewModel(ViewModel):
             self.builder.get_object(c).set_visible(val)
 
         # Disable/Enable the Details and Checklist tabs on the Pictures tab
-        for  w in ("tb_checklist", "tb_details"):
-            self.builder.get_object(w).set_sensitive(val)
+        for w in ["tb_details", "tb_checklist", "tb_credits"]:
+            self.builder.get_object(w).set_sensitive(val)        
+        for w in ["tb_plTopPane", "tb_picPreview", "scr_detailsBottom", "scr_checklistBottom", "gr_credits", "l_globalPicSettings"]: 
+            self.builder.get_object(w).set_visible(val)        
             
         # Show Hide specific Help items
         for pre in ("l_", "lb_"):
@@ -2453,10 +2455,16 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("t_copyrightStatement").set_text(self._getPtSettings().get('Copyright', ""))
 
     def onCopyrightStatementChanged(self, btn):
-        w = self.builder.get_object(Gtk.Buildable.get_name(btn))
+        btname = Gtk.Buildable.get_name(btn)
+        w = self.builder.get_object(btname)
         t = w.get_text()
         t = re.sub("</?p>", "", t)
         t = re.sub("\([cC]\)", "\u00a9 ", t)
+        if btname == 't_plCreditText':
+            if self.get('c_sensitive'):
+                t = re.sub("dcc", "\u00a9 DCC", t)
+            else:
+                t = re.sub("dcc", "\u00a9 David C Cook", t)
         w.set_text(t)
         
     def onStyleAdd(self, btn):
@@ -2510,19 +2518,12 @@ class GtkViewModel(ViewModel):
 
     def onPLpageChanged(self, nbk_PicList, scrollObject, pgnum):
         page = nbk_PicList.get_nth_page(pgnum)
-        if page == None:
-            return
-        pgid = Gtk.Buildable.get_name(page)
+        # if page == None:
+            # return
+        # pgid = Gtk.Buildable.get_name(page)
         # MH - what is this next piece doing in here?
-        if pgid == "tb_checklist":
+        # if pgid == "tb_checklist":
             # self.set("r_image", "preview")
-            self.builder.get_object("nbk_PicList").set_size_request(0, 335)
-        elif pgid == "tb_picList":
-            self.builder.get_object("nbk_PicList").set_size_request(0, 240)
-        elif pgid == "tb_details":
-            self.builder.get_object("nbk_PicList").set_size_request(0, 240)
-        elif pgid == "tb_credits":
-            self.builder.get_object("nbk_PicList").set_size_request(0, 160)
 
     def onUnpackDBLbundleClicked(self, btn):
         dialog = self.builder.get_object("dlg_DBLbundle")
@@ -2592,6 +2593,9 @@ class GtkViewModel(ViewModel):
 
     def tryHidingTreeView(self, brn):
         status = self.get("c_quickRun")
-        for w in ["scr_picListEdit", "gr_picButtons", "tb_picPreview"]:
-            self.builder.get_object(w).set_visible(status)        
+        # for w in ["scr_picListEdit", "gr_picButtons", "tb_picPreview"]:
+        # for w in ["tb_details", "tb_checklist", "tb_credits"]:
+            # self.builder.get_object(w).set_sensitive(status)        
+        # for w in ["tb_plTopPane", "tb_picPreview", "scr_detailsBottom", "scr_checklistBottom", "gr_credits"]: 
+            # self.builder.get_object(w).set_visible(status)        
        

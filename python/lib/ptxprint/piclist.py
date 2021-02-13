@@ -12,8 +12,8 @@ posparms = ["alt", "src", "size", "pgpos", "copy", "caption", "ref", "x-xetex", 
 pos3parms = ["src", "size", "pgpos", "ref", "copy", "alt", "x-xetex", "mirror", "scale", "media", 
              "x-credit", "x-creditrot", "x-creditbox", "x-creditpos"]
 
-_piclistfields = ["anchor", "caption", "src", "size", "scale", "pgpos", "ref", "alt", "copy", 
-                  "mirror", "x-credit", "x-creditrot", "x-creditbox", "x-creditpos", "disabled", "cleardest", "key", "media"]
+_piclistfields = ["anchor", "caption", "src", "size", "scale", "pgpos", "ref", "alt", "copy", "mirror", 
+                  "x-credit", "x-creditrot", "x-creditbox", "x-creditpos", "disabled", "cleardest", "key", "media"]
 _pickeys = {k:i for i, k in enumerate(_piclistfields)}
 
 _form_structure = {
@@ -562,6 +562,7 @@ class PicChecks:
             if n == "picreverse" and val == "unknown":
                 val = "OK"
             self.parent.set(k, val)
+        # MH - this doesn't seem to be working
         self.parent.set("tb_picNotes", self.cfgProject.get(self.src, "notes", fallback=""))
         for cfg in (self.cfgShared, self.cfgProject):
             if cfg.getboolean(self.src, "approved", fallback=False):
@@ -950,6 +951,7 @@ class PicInfo(dict):
             if self.srcfkey not in v:
                 continue
             fpath = v[self.srcfkey]
+            # print(fpath)
             origExt = os.path.splitext(fpath)[1]
             v['dest file'] = fn(v, v[self.srcfkey], nB+origExt.lower())
             v[' crop'] = cropme
