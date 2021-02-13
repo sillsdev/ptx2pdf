@@ -332,7 +332,7 @@ class GtkViewModel(ViewModel):
             self.notebooks[n] = [Gtk.Buildable.get_name(nbk.get_nth_page(i)) for i in range(nbk.get_n_pages())]
         for fcb in ("interfaceLang", "digits", "script", "diglotPicListSources",
                     "textDirection", "glossaryMarkupStyle", "fontFaces", "featsLangs",
-                    "picaccept", "pubusage", "pubaccept", "chklstFilter"):
+                    "picaccept", "pubusage", "pubaccept", "chklstFilter|0.75"):
             self.addCR("fcb_"+fcb, 0)
         self.cb_savedConfig = self.builder.get_object("ecb_savedConfig")
         self.ecb_diglotSecConfig = self.builder.get_object("ecb_diglotSecConfig")
@@ -574,9 +574,17 @@ class GtkViewModel(ViewModel):
             self.mw.resize(830, 594)
 
     def addCR(self, name, index):
+        if "|" in name:
+            name, size = name.split("|")
+        else:
+            size = None
         v = self.builder.get_object(name)
         setattr(self, name, v)
         c = Gtk.CellRendererText()
+        if size is not None:
+            width, height = c.get_fixed_size()
+            width = float(size) * width
+            c.set_fixed_size(width, height)
         v.pack_start(c, True)
         v.add_attribute(c, "text", index)
 
