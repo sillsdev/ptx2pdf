@@ -1,6 +1,23 @@
-PTXprint 1.5.10 Release Notes 
-6 February 2021
+PTXprint 1.5.11 Release Notes 
+13 February 2021
 
+Bug Fixes and Improvements in 1.5.11
+
+  * Font Size Factor now has a label displaying the (actual) calculated point size
+
+  * UI changes made to facilitate all the margin settings on the same page
+
+  * Credit Overlays has been introduced on the Pictures tab (4th sub-tab) - Warning: Work in Progress
+    (Note that "Enable Colored Text" needs to be enabled for this feature to work with Light/Dark background shading)
+	
+  * #385 Footnote spacing fixed
+  
+  * #386 Fixed? Issue with Colophon not working
+  
+  * #389 Archive was failing to be built
+  
+  * #390 Saving edits to a named project
+  
 Bug Fixes and Improvements in 1.5.10
 
   * Font Size Factor on Styles tab is now exactly that - rather than a point size
