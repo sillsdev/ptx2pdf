@@ -2526,12 +2526,14 @@ class GtkViewModel(ViewModel):
 
     def onPLpageChanged(self, nbk_PicList, scrollObject, pgnum):
         page = nbk_PicList.get_nth_page(pgnum)
-        # if page == None:
-            # return
-        # pgid = Gtk.Buildable.get_name(page)
+        if page == None:
+            return
+        pgid = Gtk.Buildable.get_name(page)
         # MH - what is this next piece doing in here?
         # if pgid == "tb_checklist":
             # self.set("r_image", "preview")
+        filterSensitive = True if pgid in ("tb_checklist", "tb_credits") else False
+        self.builder.get_object("fr_plChecklistFilter").set_sensitive(filterSensitive)
 
     def onUnpackDBLbundleClicked(self, btn):
         dialog = self.builder.get_object("dlg_DBLbundle")

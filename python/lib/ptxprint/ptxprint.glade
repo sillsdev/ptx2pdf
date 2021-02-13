@@ -9169,6 +9169,7 @@ content of Headers and Footers.</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
                                     <property name="tooltip_text" translatable="yes">Select this option to only display images from the books that are selected to be printed. If unchecked, then images from ALL the books in the project will be listed in the view below.</property>
+                                    <property name="halign">center</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
                                     <signal name="clicked" handler="onFilterPicListClicked" swapped="no"/>
@@ -9180,9 +9181,11 @@ content of Headers and Footers.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkFrame">
+                                  <object class="GtkFrame" id="fr_plChecklistFilter">
                                     <property name="visible">True</property>
+                                    <property name="sensitive">False</property>
                                     <property name="can_focus">False</property>
+                                    <property name="halign">start</property>
                                     <property name="valign">end</property>
                                     <property name="margin_left">4</property>
                                     <property name="margin_right">4</property>
@@ -9193,24 +9196,29 @@ content of Headers and Footers.</property>
                                       <object class="GtkAlignment">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
+                                        <property name="halign">start</property>
                                         <property name="left_padding">12</property>
                                         <child>
                                           <object class="GtkGrid">
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
+                                            <property name="halign">start</property>
                                             <property name="margin_top">4</property>
                                             <property name="margin_bottom">6</property>
                                             <property name="row_spacing">4</property>
                                             <child>
                                               <object class="GtkComboBox" id="fcb_chklstFilter">
+                                                <property name="width_request">115</property>
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">False</property>
                                                 <property name="tooltip_text" translatable="yes">The list of pictures can be 
 filtered according to the 
 status of the checking values.</property>
+                                                <property name="halign">start</property>
                                                 <property name="valign">center</property>
                                                 <property name="margin_left">4</property>
                                                 <property name="margin_right">6</property>
+                                                <property name="resize_mode">immediate</property>
                                                 <property name="model">ls_chklstFilter</property>
                                                 <property name="active">0</property>
                                                 <property name="id_column">0</property>
@@ -9228,6 +9236,7 @@ status of the checking values.</property>
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">True</property>
                                                 <property name="receives_default">False</property>
+                                                <property name="halign">start</property>
                                                 <property name="draw_indicator">True</property>
                                                 <signal name="toggled" handler="onPicCheckFilterChanged" swapped="no"/>
                                               </object>
@@ -9244,6 +9253,7 @@ status of the checking values.</property>
                                       <object class="GtkLabel">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
+                                        <property name="halign">start</property>
                                         <property name="label" translatable="yes">Filter List</property>
                                       </object>
                                     </child>
@@ -11351,6 +11361,7 @@ overwrite any existing settings.)</property>
                                           <object class="GtkLinkButton" id="lb_style_crbox">
                                             <property name="label" translatable="yes">Edit Style</property>
                                             <property name="visible">True</property>
+                                            <property name="sensitive">False</property>
                                             <property name="can_focus">True</property>
                                             <property name="focus_on_click">False</property>
                                             <property name="receives_default">True</property>
@@ -16316,6 +16327,19 @@ chosen language.</property>
               </packing>
             </child>
             <child>
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="hexpand">True</property>
+                <property name="label" translatable="yes"> </property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">3</property>
+              </packing>
+            </child>
+            <child>
               <object class="GtkLabel" id="l_statusLine">
                 <property name="width_request">160</property>
                 <property name="visible">True</property>
@@ -16335,7 +16359,7 @@ chosen language.</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">3</property>
+                <property name="position">4</property>
               </packing>
             </child>
             <child>
@@ -16369,7 +16393,7 @@ be displayed (in red) just to the left.</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">4</property>
+                <property name="position">5</property>
               </packing>
             </child>
             <child>
@@ -16386,7 +16410,7 @@ be displayed (in red) just to the left.</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
-                <property name="position">5</property>
+                <property name="position">6</property>
               </packing>
             </child>
             <child>
@@ -16409,7 +16433,7 @@ be displayed (in red) just to the left.</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
-                <property name="position">6</property>
+                <property name="position">7</property>
               </packing>
             </child>
             <child>
@@ -16437,7 +16461,7 @@ Shortcut key: &lt;Ctrl-P&gt;</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
-                <property name="position">7</property>
+                <property name="position">8</property>
               </packing>
             </child>
           </object>
