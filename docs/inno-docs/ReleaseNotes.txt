@@ -1,11 +1,13 @@
 PTXprint 1.5.12 Release Notes 
-14 February 2021
+15 February 2021
 
 Bug Fixes and Improvements in 1.5.12
 
   * Added missing margin graphics files to installer
-  * Added French EBAUCHE (=DRAFT) pdf to available watermarks, and an additional A5 border
-  * Added missing icon(s): Clear selection, Selected Checkmark
+  
+  * Added French A5-EBAUCHE.pdf (=DRAFT) to available watermarks, and an additional A5 border
+  
+  * Added missing icon(s): Clear edit, Selected Checkmark
 
 Bug Fixes and Improvements in 1.5.11
 
