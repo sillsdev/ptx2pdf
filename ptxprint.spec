@@ -33,14 +33,15 @@ a = Analysis(['python/scripts/ptxprint', 'python/scripts/usfmerge'],
              binaries = binaries
                       + [('python/lib/ptxprint/PDFassets/border-art/'+y, 'ptxprint/PDFassets/border-art') for y in 
                             ('A5 section head border.pdf', 'A5 section head border(RTL).pdf',
-                             'A5 page border.pdf', 'Verse number star.pdf', 'decoration.pdf')]
+                             'A5 page border.pdf', 'A5 page border - no footer.pdf', 'Verse number star.pdf', 'decoration.pdf')]
                       + [('python/lib/ptxprint/PDFassets/watermarks/'+z, 'ptxprint/PDFassets/watermarks') for z in 
-                            ('A4-Grid.pdf', 'A4-Draft.pdf', 'A5-Grid.pdf', 'A5-Draft.pdf',
+                            ('A4-Grid.pdf', 'A4-Draft.pdf', 'A5-Grid.pdf', 'A5-Draft.pdf', 'A5-EBAUCHE.pdf',
                              '5.8x8.7-12mmBorderDraft.pdf', '5.8x8.7-Draft.pdf', 'BSI-12mmBorder.pdf',
                              'A4-12mmBorder.pdf', 'A5-10mmBorder.pdf', 'A4-CopyrightWatermark.pdf', 'A5-CopyrightWatermark.pdf')]
                       + [('python/lib/ptxprint/'+x, 'ptxprint') for x in 
                             ('Google-Noto-Emoji-Objects-62859-open-book.ico', '62859-open-book-icon(128).png', 
-							 'picLocationPreviews.png', 'ps_cmyk.icc')]
+							 'picLocationPreviews.png', 'ps_cmyk.icc', 
+							 'MarginGraphicLineTrue.png', 'MarginGraphicLineFalse.png', 'MarginGraphicBottom.png')]
                       + [('python/lib/ptxprint/sfm/*.bz2', 'ptxprint/sfm')]
                       + [('src/mappings/*.tec', 'ptx2pdf/mappings')],
 #					  + [('python/lib/ptxprint/mo/' + y +'/LC_MESSAGES/ptxprint.mo', 'mo/' + y + '/LC_MESSAGES') for y in os.listdir('python/lib/ptxprint/mo')],
