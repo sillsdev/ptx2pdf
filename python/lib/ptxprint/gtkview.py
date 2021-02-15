@@ -207,6 +207,7 @@ _horiz = {
 
 _defaultColophon = r"""\pc \zcopyright
 \pc \zlicense
+\b 
 \pc \zimagecopyrights
 """
 

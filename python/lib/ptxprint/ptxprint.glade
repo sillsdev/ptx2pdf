@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.2 
+<!-- Generated with glade 3.22.1 
 
 The MIT License (MIT)
 
@@ -2122,7 +2122,7 @@ technology, then enable this.</property>
                 </child>
                 <child>
                   <object class="GtkButton" id="c_fontFeatures">
-                    <property name="label" translatable="yes">Font Features:</property>
+                    <property name="label" translatable="yes">Select Features...</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
@@ -8729,10 +8729,12 @@ using the following markers:
 \zLicense     - License text from the Basic tab
 \zImageCopyrights   - Automatically generated list of images, page numbers and attributions.
 
+\b can be used to insert a blank line between markers if needed.
+ 
 These special codes may also be used in other
 books such as the front matter book (FRT). 
 
-IMPORTANT: you will have to hit Print a second time
+IMPORTANT: You will have to click Print a second time
 in order to get accurate Image Copyright Attribution.</property>
                                 <property name="halign">end</property>
                                 <property name="valign">start</property>
@@ -13098,7 +13100,16 @@ formatting of the thumb tabs.</property>
                               </packing>
                             </child>
                             <child>
-                              <placeholder/>
+                              <object class="GtkLabel" id="l_thumbbackValue">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="halign">start</property>
+                                <property name="label" translatable="yes">CoorVal</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">4</property>
+                                <property name="top_attach">1</property>
+                              </packing>
                             </child>
                             <child>
                               <placeholder/>
@@ -14360,10 +14371,11 @@ properties for this style.</property>
                                     <child>
                                       <object class="GtkButton" id="bl_font_styFontName">
                                         <property name="label" translatable="yes">Select Font...</property>
-                                        <property name="width_request">160</property>
+                                        <property name="width_request">180</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
+                                        <property name="halign">start</property>
                                         <signal name="clicked" handler="onFontStyclicked" swapped="no"/>
                                       </object>
                                       <packing>
@@ -14408,7 +14420,7 @@ properties for this style.</property>
                                       <packing>
                                         <property name="left_attach">3</property>
                                         <property name="top_attach">1</property>
-                                        <property name="width">5</property>
+                                        <property name="width">4</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -14625,6 +14637,19 @@ Factor:</property>
                                       <packing>
                                         <property name="left_attach">3</property>
                                         <property name="top_attach">3</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel" id="l_styColorValue">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="halign">center</property>
+                                        <property name="valign">start</property>
+                                        <property name="label" translatable="yes">ColorVal</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">7</property>
+                                        <property name="top_attach">1</property>
                                       </packing>
                                     </child>
                                     <child>
