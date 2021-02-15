@@ -35,3 +35,12 @@ a child called ptxplus.
 \p 
 \v 5 And then did Mark and Martin come together and used Something Completely Different,  named python, and crafted the wondrous ptxprint. And David was asked if diglot would wed ptxprint. And David found the precious  treasure called time, and trimmed some strangenesses from diglot, and even from ptxprint  also. And behold, the two became one and marched forth into the world.
 
+\lefttext
+\v 6 After meeting a lot of bugs that were seemed increasingly complex to track
+down and fix, David (encouraged by Martin) delved deep into the insides of
+diglot and re-wrote the 'text collection' part significantly.  Then, meeting
+yet more bugs, he went on to rip out the old horrendously complex
+column-filling/refilling/side swapping and layout portions of diglot.
+
+Triglot (or more) is not yet possible, but it's now almost within touching distance.
+

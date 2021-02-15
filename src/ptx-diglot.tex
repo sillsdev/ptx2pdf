@@ -414,7 +414,10 @@
     \global\setbox\galley=\vbox{\x@\unvcopy\p@rtl\unpenalty\penalty\endtri@lpen@lty}%
     \trace{D}{Running trial \the\trialheight, \the\ht\galley+\the\dp\galley (\the\ht\@xcs+\the\dp\@xcs left for next time)}%
     \ifdim\ht\galley=0pt\ifdim\dp\galley=0pt
-      \showbox\galley
+      \trace{D}{How come galley has no size? (check with  scrollmode)}%
+      \ifnum\interactionmode=2
+        \showbox\galley
+      \fi
     \fi\fi
     \global\output{\diglot@any@trial}
 %    \showbox\galley
@@ -448,30 +451,56 @@
    \showbox\trialbox\showbox\galleyexc@ss\showlists
   \fi
   \trace{H}{after@a@trial: b:\botmark/\botmarks1/\botmarks2, t:\topmark/\topmarks1/\topmarks2, f:\firstmarks1/\firstmarks2, fr:\firstRmark, br:\botRmark ol:\oldLmark}%
-  \iftrialfailed
-    \trace{D}{trial failed, (end of?) box moved}%
-    %Undo the vsplit (all mtl into excessX)
-    \x@\global\x@\setbox\csname excess\c@rrdstat\endcsname\vbox{\joinboxes{\csname partial\c@rrdstat\endcsname}{\csname excess\c@rrdstat\endcsname}{3}{\csname partial\c@rrdstat penalty\endcsname}}%
-  \else
-    \makevtop{\trialbox}%
-    \ifvoid\galleyexc@ss
-      %\tracingmacros=1\tracingassigns=1
-      \TempDim=\availht %Recalc in case there's an issue
-      \x@\global\csname \c@rrdstat boxpenalty\endcsname=\csname saved\c@rrdstat penalty\endcsname
-    \else
-      \x@\global\csname\c@rrdstat boxpenalty\endcsname =\galleypenalty
-      \x@\global\x@\setbox\csname excess\c@rrdstat\endcsname\vbox{\joinboxes{\galleyexc@ss}{\csname excess\c@rrdstat\endcsname}{4}{\csname partial\c@rrdstat penalty\endcsname}}%
+  %
+  %Testing acceptability of result:
+  \tempfalse
+  \iftrialfailed\else
+    \TempDim=\dimexpr \availht-\ht\trialbox\relax
+    \ifdim \dp\trialbox > 0.5\baselineskip % Is the depth of the box significant?
+      \advance\TempDim by -\dp\trialbox
     \fi
-    \global\setbox\galleyexc@ss=\box\voidb@x
-    \x@\global\x@\setbox\csname partial\c@rrdstat\endcsname\box\galley% Remember the ol galley
-    \x@\global\csname \c@rrdstat ht\endcsname=\dimexpr \ht\trialbox + \dp\trialbox\relax
-    \x@\global\x@\setbox\x@\csname \c@rrdstat box\endcsname\box\trialbox
-    \x@\global\x@\let\x@\m@rknum\csname m@rknum\c@rrdstat\endcsname
-    \update@marks
+    \ifvoid\galleyexc@ss %Was that the whole input?
+      \x@\ifvoid\csname excess\c@rrdstat\endcsname
+        \x@\ifnum\csname saved\c@rrdstat penalty\endcsname>9999
+          \advance\TempDim by -2\baselineskip
+          \trace{D}{Penalty does not allow this as last item on page, reserving 2 lines}%
+        \fi
+        \ifdim \TempDim<-0.2\baselineskip %Unacceptable
+          \trace{D}{Not enough space for the suggested galley}%
+          \temptrue %
+        \fi
+      \fi
+    \fi
   \fi
-  \trace{D}{End of after@a@trial LB:\the\ht\Lbox+\the\dp\Lbox, RB:\the\ht\Rbox+\the\dp\Rbox}%
-  %\showlists
-  \after@after@a@trial
+  \iftemp
+    \global\advance\trialheight by -1\baselineskip
+    \rej@ctgalley
+  \else
+    \iftrialfailed
+      \trace{D}{trial failed, (end of?) box moved}%
+      %Undo the vsplit (all mtl into excessX)
+      \x@\global\x@\setbox\csname excess\c@rrdstat\endcsname\vbox{\joinboxes{\csname partial\c@rrdstat\endcsname}{\csname excess\c@rrdstat\endcsname}{3}{\csname partial\c@rrdstat penalty\endcsname}}%
+    \else
+      \makevtop{\trialbox}%
+      \ifvoid\galleyexc@ss
+        %\tracingmacros=1\tracingassigns=1
+        \TempDim=\availht %Recalc in case there's an issue
+        \x@\global\csname \c@rrdstat boxpenalty\endcsname=\csname saved\c@rrdstat penalty\endcsname
+      \else
+        \x@\global\csname\c@rrdstat boxpenalty\endcsname =\galleypenalty
+        \x@\global\x@\setbox\csname excess\c@rrdstat\endcsname\vbox{\joinboxes{\galleyexc@ss}{\csname excess\c@rrdstat\endcsname}{4}{\csname partial\c@rrdstat penalty\endcsname}}%
+      \fi
+      \global\setbox\galleyexc@ss=\box\voidb@x
+      \x@\global\x@\setbox\csname partial\c@rrdstat\endcsname\box\galley% Remember the ol galley
+      \x@\global\csname \c@rrdstat ht\endcsname=\dimexpr \ht\trialbox + \dp\trialbox\relax
+      \x@\global\x@\setbox\x@\csname \c@rrdstat box\endcsname\box\trialbox
+      \x@\global\x@\let\x@\m@rknum\csname m@rknum\c@rrdstat\endcsname
+      \update@marks
+    \fi
+    \trace{D}{End of after@a@trial LB:\the\ht\Lbox+\the\dp\Lbox, RB:\the\ht\Rbox+\the\dp\Rbox}%
+    %\showlists
+    \after@after@a@trial
+  \fi
 }
 
 \def\update@marks{%
@@ -510,6 +539,10 @@
   \ifnum\holdinginserts=0\else
     \ifvoid\trialbox
       \MSG{*** Internal error caught. Incorrect internal state found in during trial run. Text or footnotes may have been lost.}%
+      \ifnum\interactionmode=2
+        \showbox255
+        \showlists
+      \fi
     \fi
   \fi
   \global\holdinginserts=1
@@ -525,7 +558,7 @@
       \advance\TempDim by -\dp255
     \fi 
     \global\setbox\trialbox=\box255
-    \ifdim\TempDim<-0.8\baselineskip % Coarse test. main trial routine can be pickier if it wants
+    \ifdim\TempDim<-0.5\baselineskip % Coarse test. main trial routine can be pickier if it wants
       \trace{D}{Initial Content does not fit (\the\trialheight, \the\TempDim, \the\availht)}%
       \global\trialfailedtrue
     \else
@@ -588,6 +621,7 @@
     \trace{d}{\c@rrdstat is empty, making it L for sanity}%
     \gdef\c@rrdstat{L}%
   \fi
+  \global\output={\diglotCollect}%Why woudn't it be? Don't know, but sometimes it's not.
   \x@\xdef\csname saved\c@rrdstat penalty\endcsname{\the\savedpenalty}%
   \ifhe@dings\endhe@dings\fi%
   \ifsk@pping \egroup \sk@ppingfalse\fi% if we were skipping nonpublishable text, end that mode
@@ -625,8 +659,8 @@
 % When there's a header on the left but not the right, but we want the verses
 % to line up nicely...
 \def\norighttext{%
-  \allNeedEmptyingtrue
   \pr@sideswitch{noright}{L}%
+  \allNeedEmptyingtrue
   \swap@diglot{L}%sets diglotRtrue, etc
   \global\vsize=\maxdimen
   \global\trialheight=\maxdimen
@@ -636,8 +670,8 @@
 
 %Similarly when there's no left text, almost-copying \righttext seems OK ...
 \def\nolefttext{%
-  \allNeedEmptyingtrue
   \pr@sideswitch{noleft}{R}%
+  \allNeedEmptyingtrue
   \swap@diglot{R}%sets diglotRtrue, etc
   \global\vsize=\maxdimen
   \global\trialheight=\maxdimen
@@ -704,6 +738,7 @@
  %All sorts of things should follow if m@rker is set properly...
  \x@\let\csname m@rker\c@rrdstat\endcsname\m@rker %save the old marker 
  \@setside{#1}%
+ \xdef\digl@tc@ntentlist{\digl@tc@ntentlist #1}%
  \x@\let\x@\m@rker\csname m@rker\c@rrdstat\endcsname
  \x@\let\x@\w@dth\csname column#1width\endcsname
  \global\hsize=\w@dth\relax
@@ -1381,9 +1416,10 @@
 }
 
 \edef\diglot@list{LR}%
+\edef\digl@tc@ntentlist{}%
 
 \def\new@diglot@col#1{
- \edef\diglot@list{\diglot@list#1}%
+ \xdef\diglot@list{\diglot@list#1}%
  \errmessage{This code isn't written yet}%
  %CREATE: partial#1 excess#1 partial#1penalty m@rknum#1  column#1width picb@x#1
  %FIXMEs needing to be solved before implementing this: 
@@ -1429,15 +1465,18 @@
 \def\diglot@run@trials{% for X as L, R, (eventually others)
   %expects: collected input in partialX, excessX empty
   %Process: cycle through chunks  
-  \traceNum{d}{diglot@run@trials}%
+  \traceNum{d}{diglot@run@trials (\digl@tc@ntentlist)}%
   \let\tri@llist\diglot@list%
   %Before running trials, empty(eventually store?) old galleys
   \empty@partials
-  \let\tri@llist\diglot@list%
+  \let\tri@llist\digl@tc@ntentlist% Run trials for things that have contents
+  \xdef\digl@tc@ntentlist{}%
   \global\late@stage@reflowfalse
   \def\refl@wlist{}% List of columns needing to reflow.
-  \triall@@pcount=1
-  \diglot@run@nxt@trial
+  \ifx\empty\tri@llist\else
+    \triall@@pcount=1
+    \diglot@run@nxt@trial
+  \fi
 }
 
 \def\empty@partials{%Empty (eventually store?) partialX

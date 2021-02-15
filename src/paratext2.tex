@@ -82,7 +82,7 @@
 %-c_timestamp
 
 %+c_imports
-\input ptx-diglot2.tex
+\input ptx-diglot.tex
 \input ptx-tracing.tex
 \input ptx-para-style.tex
 \input ptx-char-style.tex
@@ -682,7 +682,7 @@
 
 %+c_reduceavailht_para
 \def\reduceavailht@para#1{
-  \def\cl@sss{#1\g@tdstat}%
+  \def\cl@sss{#1\ifdiglotSepNotes\g@tdstat\fi}%
   \trace{n}{class \cl@sss}%
   \x@\let\x@\th@cl@ss\csname note-\cl@sss\endcsname
   \ifvoid\th@cl@ss\else

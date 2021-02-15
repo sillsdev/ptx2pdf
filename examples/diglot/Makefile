@@ -10,9 +10,9 @@ SCRIPTDIR:=$(shell dirname `find ../..  -name diglot_merge.pl | grep -v bisect`)
 Galatians.pdf: Galatians.tex Galatians-setup.tex intro.usfm mergedGal.usfm mergedGalV.usfm ../../src/*.tex *.sty
 Galatians2.pdf: Galatians2.tex Galatians-setup.tex intro.usfm mergedGal.usfm mergedGalV.usfm ../../src/*.tex *.sty
 Galatians3.pdf: Galatians3.tex Galatians-setup.tex intro.usfm mergedGal.usfm mergedGalV.usfm ../../src/*.tex *.sty
-history.pdf: history.tex history.usfm
+history.pdf: history.tex history.usfm $(DIR)/*.tex
 
-history.png: history.pdf Makefile
+history.png: history.pdf Makefile 
 	gs -dNOPAUSE -q -sOutputFile=history.png -dBATCH -r150 -sDEVICE=png16 history.pdf 
 	mogrify -trim history.png
 
@@ -41,3 +41,8 @@ mergedGal.usfm: Gal_wyc.usfm Gal_web.usfm Makefile $(SCRIPTDIR)/diglot_merge.pl
 mergedGalV.usfm: Gal_wyc.usfm Gal_web.usfm Makefile $(SCRIPTDIR)/diglot_merge.pl 
 	$(SCRIPTDIR)/diglot_merge.pl -s -v -C -L merge.log -o merged.out Gal_web.usfm Gal_wyc.usfm 
 	cat merged.out | grep -Ev '\\sts|\\rem' > $@
+
+autohist:	
+	while inotifywait -e close_write . $(DIR) ; do sleep 1 ; make history.pdf ; done </dev/null
+autogal:	
+	while inotifywait -e close_write . $(DIR) ; do sleep 1 ; make Galatians.pdf ; done </dev/null
