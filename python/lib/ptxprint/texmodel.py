@@ -243,7 +243,7 @@ ModelMap = {
     "footer/ifprintConfigName": ("c_printConfigName", lambda w,v: "" if v else "%"),
 
     "notes/includefootnotes":   ("c_includeFootnotes", lambda w,v: "%" if v else ""),
-    "notes/fneachnewline":      ("c_fneachnewline", lambda w,v: "" if v else "%"),
+    "notes/fneachnewline":      ("c_fneachnewline", lambda w,v: "%" if v else ""),
     "notes/fnOverride":         ("c_fnOverride", None),
     "notes/iffnautocallers":    ("c_fnautocallers", lambda w,v :"true" if v else "false"),
     "notes/fncallers":          ("t_fncallers", lambda w,v: v if w.get("c_fnautocallers") else ""),
@@ -251,7 +251,7 @@ ModelMap = {
     "notes/fnomitcaller":       ("c_fnomitcaller", lambda w,v: "%" if v else ""),
 
     "notes/includexrefs":       ("c_includeXrefs", lambda w,v: "%" if v else ""),
-    "notes/xreachnewline":      ("c_xreachnewline", lambda w,v: "" if v else "%"),
+    "notes/xreachnewline":      ("c_xreachnewline", lambda w,v: "%" if v else ""),
     "notes/xrOverride":         ("c_xrOverride", None),
     "notes/ifxrautocallers":    ("c_xrautocallers", lambda w,v :"true" if v else "false"),
     "notes/xrcallers":          ("t_xrcallers", lambda w,v: v if w.get("c_xrautocallers") else ""),
@@ -1144,7 +1144,7 @@ class TexModel:
                 dat = inf.read()
 
             # \figonpage{304}{56}{cn01617.jpg}{tl}{© David C. Cook Publishing Co, 1978.}{x170.90504pt}
-            m = re.findall(r"\\figonpage\{(\d+)\}\{\d+\}\{.*?(((?=cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib)..)\d{5})?.+?\}\{.*?\}\{(.*?)?\}\{x.+?\}", dat)
+            m = re.findall(r"\\figonpage\{(\d+)\}\{\d+\}\{.*?(((?=cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib)..)\d{5})?.+?\}\{.*?\}\{(.*?)?\}\{.+?\}", dat)
             msngPgs = []
             customStmt = []
             if len(m):
