@@ -167,6 +167,8 @@ class StyleEditorView(StyleEditor):
                 return
             self.loading = True
             self.set(v[0], val or "")
+            if key == "Color":
+                self.set("l_styColorValue", str(val))
             self.loading = False
 
     def get(self, key, default=None):
@@ -355,6 +357,7 @@ class StyleEditorView(StyleEditor):
         else:
             if v[0].startswith("col_"):
                 newval = textocol(val)
+                self.set("l_styColorValue", val)
             else:
                 newval = val
             setWidgetVal(v[0], w, newval if v[4] is None else v[4](newval))
