@@ -27,3 +27,5 @@ dch -i ${VERSION} "Bumped released to ${VERSION}"
 git commit -a -m "Bumped release version to ${VERSION}"
 git push
 
+git checkout master
+
