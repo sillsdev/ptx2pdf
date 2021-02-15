@@ -57,6 +57,8 @@
 \def\firstRmark{} % First mark in right column
 \def\botRmark{} % last mark in right column
 \def\nextp@gefirstmark{}
+\def\n@xtfirstLmark{} %First Lmark in the n@xt chunk
+\def\n@xtfirstRmark{} %First Rmark in the n@xt chunk
 \def\LeftMarkstrue{\useLeftMarkstrue\useRigthMarksfalse}
 \def\LeftMarksfalse{\useLeftMarkstrue\useRigthMarkstrue}
 
@@ -323,6 +325,7 @@
 \def\rej@ctgalley{%For calling by trial routines that don't like the galley they've just been given 
   \trace{d}{rej@ctgalley}%
   \r@storenotes{\g@tdstat}{1}%
+  \restore@oldmarks{\g@tdstat}%
   \global\output={\diglot@backingup}%
   \global\vsize=\trialheight
   \global\holdinginserts=1
@@ -372,7 +375,7 @@
     \vsize=\textheight
   \fi
 }
-  
+
 \def\run@a@trial{%
   \x@\global\x@\let\x@\endtri@lpen@lty\csname dgl@tPen\c@rrdstat trialEnd\endcsname
   \traceNum{d}{run@a@trial \show@dstat, \the\availht>\the\baselineskip?, etp:\endtri@lpen@lty}%
@@ -433,7 +436,7 @@
 }
 
 \xdef\m@rknumL{1}
-\xdef\m@rknumR{1}
+\xdef\m@rknumR{2}
 
 \def\after@a@trial{%
   %After this runs: (example with L)
@@ -477,9 +480,11 @@
     \rej@ctgalley
   \else
     \iftrialfailed
-      \trace{D}{trial failed, (end of?) box moved}%
+      \trace{D}{trial failed, (end of?) input moved}%(the start may have been set already
       %Undo the vsplit (all mtl into excessX)
       \x@\global\x@\setbox\csname excess\c@rrdstat\endcsname\vbox{\joinboxes{\csname partial\c@rrdstat\endcsname}{\csname excess\c@rrdstat\endcsname}{3}{\csname partial\c@rrdstat penalty\endcsname}}%
+      \let\col@do=\restore@oldmarks
+      \x@\each@col\diglot@list\E
     \else
       \makevtop{\trialbox}%
       \ifvoid\galleyexc@ss
@@ -503,22 +508,28 @@
   \fi
 }
 
-\def\update@marks{%
+\def\update@marks{% Called on successful galley
+  \x@\let\x@\m@rknum\csname m@rknum\c@rrdstat\endcsname
+  \trace{H}{update@marks: \c@rrdstat uses marks\m@rknum}%
   \edef\t@st{\firstmarks\m@rknum}%
   \ifx\t@st\empty%
     \trace{H}{update@marks: First mark was empty}% Presumably others also
   \else%
-    \x@\let\x@\t@@st\csname old\c@rrdstat mark\endcsname%
+    \x@\let\x@\t@@st\csname oldbot\c@rrdstat mark\endcsname%
     \ifx\t@st\t@@st\else % do not use if \firstmark,botmark are a carry-over,
-      \trace{H}{u@m: Setting botLmark to \botmarks\m@rknum}%
-      \x@\xdef\csname old\c@rrdstat mark\endcsname{\botmarks\m@rknum}%
+      \trace{H}{u@m: Setting bot\c@rrdstat mark to (\m@rknum) \botmarks\m@rknum [!=\csname oldbot\c@rrdstat mark\endcsname]}%
+      \global\m@rksonpagetrue
+      \x@\xdef\csname oldfirst\c@rrdstat mark\endcsname{\csname first\c@rrdstat mark\endcsname}%
       \x@\xdef\csname oldbot\c@rrdstat mark\endcsname{\csname bot\c@rrdstat mark\endcsname}% Remember botmark in case this chunk isn't on the page
       \x@\xdef\csname bot\c@rrdstat mark\endcsname{\botmarks\m@rknum}%
+      \x@\xdef\csname n@xtfirst\c@rrdstat mark\endcsname{\firstmarks\m@rknum}%If the chunk moves, then this will be the appropriate start-point
+      \x@\xdef\csname n@xtbot\c@rrdstat mark\endcsname{\botmarks\m@rknum}%If the chunk moves, then this will be the appropriate end-point
       \x@\ifx\csname first\c@rrdstat mark\endcsname\empty
         \trace{H}{u@m: Setting first\c@rrdstat mark to \firstmarks\m@rknum}%
+        \x@\xdef\csname first\c@rrdstat mark\endcsname{\firstmarks\m@rknum}%If the chunk moves, then this will be the appropriate start-point
         \edef\t@st{\p@gefirstmark}%
         \ifx\t@st\empty%
-          \trace{H}{dlt3: Setting (default) pagefirstmark to \firstmarks1}%
+          \trace{H}{dlt3: Setting (default) pagefirstmark to \firstmarks\m@rknum}%
           \xdef\p@gefirstmark{\firstmarks1}%
         \fi
       \fi
@@ -745,7 +756,7 @@
  \x@\global\x@\let\x@\ch@pter\csname @ch@pter\g@tdstat\endcsname
  \x@\global\x@\let\x@\ch@ptert@xt\csname @ch@ptert@xt\g@tdstat\endcsname
  \x@\global\x@\let\x@\v@rse\csname @v@rse\g@tdstat\endcsname
- \x@\let\x@\m@rknum\csname m@rknum\c@rrdstat\endcsname
+ \x@\global\x@\let\x@\m@rknum\csname m@rknum\c@rrdstat\endcsname
  \setLRspecific %ensure that all the units are correct.
  \trace{D}{Leadingunit: \the\le@dingunit}%
  \ifdim\le@dingunit>0pt %
@@ -920,6 +931,14 @@
 \egroup}
 
 
+\def\update@cumulative@delta{\bgroup
+  \dimen2=1pt
+  \traceNum{dP}{Adding \the\dimen0 \space to cumulativeDelta}%
+  \divide\dimen0 by \dimen2
+  \count255=\dimen0
+  \global\advance\cumulativeDelta by \count255
+  \egroup
+}
 
 \def\diglot@arrange@cols{%
   \trace{D}{diglot@arrange@cols}%
@@ -950,11 +969,7 @@
     \bgroup
       \dimen0=\chunkDelta
       %\message{c255: \the\dimen0}%
-      \dimen2=1pt
-      \divide\dimen0 by \dimen2
-      \count255=\dimen0
-      %\message{adding \the\count255 to cumulativeDelta}%
-      \global\advance\cumulativeDelta by \count255
+      \update@cumulative@delta
     \egroup
     \dimen8=0pt
     \ifdim\thisjointDelta>0pt
@@ -1027,13 +1042,18 @@
   \hsize=\textwidth%
   \edef\t@st{\p@gebotmark}%
   \ifx\t@st\empty%
-    \trace{H}{updp1: Setting bottom mark to \b@xbotmark, since it's empty }%
+    \ifuseLeftMarks \let\b@xbotmark\botLmark\fi
+    \ifuseRightMarks \let\b@xbotmark\botRmark\fi
+    \trace{H}{updp1: Setting p@gebotmark to \b@xbotmark, since it's empty }%
     \xdef\p@gebotmark{\b@xbotmark}%
   \fi%
   \trace{d}{Adding old n@xtpartial(\the\ht\n@xtpartial+\the\dp\n@xtpartial) to page}%
   \@add@n@xtpartial
+  \let\col@do=\store@marks
+  \x@\each@col\diglot@list\E %remember old marks state
   \s@venotes{\g@tdstat}{2}% remember old notestate 
   \traceNum{d}{Writing new n@xtpartial : LB:\the\ht\Lbox+\the\dp\Lbox\space RB:\the\ht\Rbox+\the\dp\Rbox\space Last Delta:\the\chunkDelta}%\space Tot:\the\cumulativeDelta%
+  \let\\=\upd
   \diglot@arrange@cols
   \TempDim=\dimexpr \ht\n@xtpartial + \dp\n@xtpartial\relax
   \dglt@calc@vailht
@@ -1049,6 +1069,8 @@
   \ifpagefull%
     \@add@n@xtpartial
     \@writep@ge%
+      \let\col@do=\reset@n@xt
+      \x@\each@col\diglot@list\E% 
     \global\pagefullfalse
     \global\deadcycles=0 %That counts as an action too.
   \fi%
@@ -1060,7 +1082,7 @@
 \newif\ifFigGutterRule \FigGutterRulefalse
 \newif\ifJoinGutterRule \FigGutterRulefalse
 \def\@writep@ge {%
-  \trace{D}{@writep@ge}%
+  \trace{d}{@writep@ge}%
   \setdiglotN@rmal
   \pickn@xtpartial
   \global\setbox\partial=\vbox{\unvbox\partial}%
@@ -1190,6 +1212,8 @@
         \trace{f}{Adjusting footnotebox}%
         \trace{D}{Raising footnotebox by \the\dimen3}%
         \global\setbox\partial=\vbox{\unvbox\partial\kern -\dimen3\vskip 0.5\AboveNoteSpace plus 1fil \box\Lbox}%
+        \dimen0=-\dimen2 %Right-Left, like chunkDelta
+        \update@cumulative@delta
         }%
       \else%
         \trace{f}{No footnotes}%
@@ -1260,11 +1284,14 @@
    \ifdiglotSepNotes%
    \else%
      % RTLness will have been asserted (or not) when the note was defined.
+     {
      \ifdiglot\RTLfalse\fi
+     \def\c@rrdstat{L}%
      \traceNum{d}{Inserting Notes}%
      \f@rstnotetrue%
      \m@kenotebox
      \unvbox2 % defined by m@kenotebox
+     }
    \fi%
    \ifvoid\verybottomins\else % \kern-\dimen0
      \lastd@pth=0pt \vskip\skip\verybottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\verybottomins}}\fi
@@ -1284,7 +1311,8 @@
   \xdef\p@gebotmark{}%
   \xdef\nextp@gefirstmark{}%
   \edef\botmark{\p@gebotmark}%
-  \x@\reset@marks\diglot@list\E% 
+  \let\col@do=\reset@marks
+  \x@\each@col\diglot@list\E% 
   \setc@rdstat{\f@lwgdstat}%Set the current diglotstatus
   \xdef\firstLmark{}%
   \xdef\botLmark{}%
@@ -1308,7 +1336,7 @@
   \diglot@any@primary
   \ifnum\outputpenalty=\dgl@tPenLtrialEnd\relax 
     \trace{D}{Why are we in diglotCollect after a trial?}%
-    \ifintrial\diglot@any@trial\fi
+    \ifintrial\diglot@any@tstored\fi
   \fi
   % tempoarily split and see if there are marks in this text
   \bgroup\setbox0=\copy255 \setbox1=\vsplit0 to \maxdimen\egroup
@@ -1335,18 +1363,74 @@
   \fi
 }
 
-\def\reset@marks#1#2\E{
-  %\tracingmacros=1 \tracingassigns=1
-  \edef\t@st{#2}
-  \ifx\t@st\empty %#2 is empty
-    \let\n@xtreset@marks=\cstackrelax
-  \else
-    \let\n@xtreset@marks=\reset@marks
-  \fi
+
+% for 'Mark' activity around n@xtpartial and aborted trials.
+\def\reset@marks#1{% Called at page output
+  \trace{H}{Resetting first#1mark}%
   \x@\xdef\csname first#1mark\endcsname{}%
+  \x@\xdef\csname oldbot#1mark\endcsname{\csname bot#1mark\endcsname}%
   \x@\xdef\csname bot#1mark\endcsname{}%
-  \n@xtreset@marks#2\E
 }
+\def\reset@n@xt#1{% Called at page output
+  \trace{H}{Resetting n@xtfirst#1mark}%
+  \x@\xdef\csname n@xtfirst#1mark\endcsname{}%
+}
+\def\store@marks#1{%Save the current mark state
+  \trace{H}{Storing pre@ptl ... marks}%
+  \x@\xdef\csname pre@ptlfirst#1mark\endcsname{\csname first#1mark\endcsname}%
+  \x@\xdef\csname pre@ptlbot#1mark\endcsname{\csname bot#1mark\endcsname}%
+}
+
+\def\sw@p@marks#1#2{%
+  \edef\tmpmark{\csname pre@ptl#1#2mark\endcsname}%
+  \x@\xdef\csname pre@ptl#1#2mark\endcsname{\csname old#1#2mark\endcsname}%
+  \x@\xdef\csname old#1#2mark\endcsname{\tmpmark}%
+}
+
+\def\swap@marks#1{%Swap the two saved states 
+  \trace{H}{Swapping pre@ptl ... and old marks}%
+  \sw@p@marks{first}{#1}%
+  \sw@p@marks{bot}{#1}%
+}
+
+%\def\restore@botmark#1{%
+  %\x@\xdef\csname bot#1mark\endcsname{\csname pre@ptlbot#1mark\endcsname}%
+%} 
+
+\def\restore@oldmarks#1{%Restore saved mark state
+  \trace{H}{restoring old marks}%
+  \x@\xdef\csname first#1mark\endcsname{\csname oldfirst#1mark\endcsname}%
+  \x@\xdef\csname bot#1mark\endcsname{\csname oldbot#1mark\endcsname}%
+}
+\def\restore@storedmarks#1{%Restore saved mark state
+  \trace{H}{restoring stored marks}%
+  \x@\xdef\csname first#1mark\endcsname{\csname pre@ptlfirst#1mark\endcsname}%
+  \x@\xdef\csname bot#1mark\endcsname{\csname pre@ptlbot#1mark\endcsname}%
+}
+
+\def\p@rtialmarks#1{%p@rtial mark.
+  \store@marks{#1}%
+  \trace{H}{using n@xtmarks: first#1mark->\csname n@xtfirst#1mark\endcsname, bot#1mark->\csname n@xtbot#1mark\endcsname}%
+  \x@\let\x@\test\csname first#1mark\endcsname
+  \ifx\test\empty 
+    \x@\xdef\csname first#1mark\endcsname{\csname n@xtfirst#1mark\endcsname}%
+  \fi
+  \x@\xdef\csname bot#1mark\endcsname{\csname n@xtbot#1mark\endcsname}%
+}
+
+\def\each@col#1#2\E{% General purpose looper
+  %\tracingmacros=1 \tracingassigns=1
+  %\trace{H}{each@col #1#2}%
+  \edef\t@st{#2}%
+  \ifx\t@st\empty %#2 is empty
+    \let\n@xt@col=\cstackrelax
+  \else
+    \let\n@xt@col=\each@col
+  \fi
+  \col@do{#1}%
+  \n@xt@col#2\E
+}
+
 
 \newif\ifnot@empty % Is this chunk empty
 
@@ -1359,6 +1443,8 @@
       \global\setbox\partial=\vtop{\joinb@xes{\partial}{\n@xtpartial}}%
     \fi
     \voidn@xtpartial
+    \let\col@do=\p@rtialmarks
+    \x@\each@col\diglot@list\E
     \global\lastchunkpenalty=\chunkpenalty
     \global\chunkpenalty=-20000 %Everything ought to be bigger than this.
   \fi
@@ -1439,11 +1525,16 @@
   \ifboxmoved
     \ifnum\lastchunkpenalty>9999
       \postponen@xt@partial
+      \restore@storedmarks
       \@writep@ge
       \@add@n@xtpartial
+      \let\col@do=\reset@n@xt
+      \x@\each@col\diglot@list\E% 
     \else
       \@add@n@xtpartial
       \@writep@ge
+      \let\col@do=\reset@n@xt
+      \x@\each@col\diglot@list\E% 
     \fi
     \global\boxmovedfalse
   \else
@@ -1565,6 +1656,8 @@
     \trace{d}{After that; \the\ht\partial+\the\dp\partial, \the\ht\n@xtpartial+\the\dp\n@xtpartial}%
     \ifvoid\partial\else
       \@writep@ge
+      \let\col@do=\reset@n@xt
+      \x@\each@col\diglot@list\E% 
     \fi
     \pr@sideswitch{end}{L}%
   \fi
@@ -1592,7 +1685,7 @@
 }
 \def\testmarker{\hbox to 0pt{\vrule height 7pt depth 0pt width 0.5pt \kern-0.5pt}\message{_}}
 
-\addtoendhooks{
-       \bgroup\ifvoid\partial\else\@writep@ge\fi\ifdiglot\ifnum\pageno>0 \count255=\cumulativeDelta \divide\count255 by \pageno \message{Overall column delta \the\cumulativeDelta pt (\the\count255 pt/ pg)\space(-ve means left longer)}\fi\fi\egroup\cumulativeDelta=0}%
+\addtoendptxhooks{
+       \bgroup\ifvoid\partial\else\@writep@ge\fi\ifdiglot\ifnum\pageno>0 \count255=\cumulativeDelta \divide\count255 by \numexpr 1+\pageno-\ptxst@rtp@ge\relax \message{Column delta for book:\the\cumulativeDelta pt (\the\count255 pt/ pg)\space(-ve means left longer)}\fi\fi\egroup\cumulativeDelta=0}%
 
 \endinput

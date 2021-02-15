@@ -50,7 +50,9 @@
 %+c_define-hooks
 % `\addtoendhooks` collects macros to be executed at the end of the job
 \def\addtoendhooks#1{\x@\global\x@\@ndhooks\x@{\the\@ndhooks #1}}
+\def\addtoendptxhooks#1{\x@\global\x@\@ndptxhooks\x@{\the\@ndptxhooks #1}}
 \newtoks\@ndhooks
+\newtoks\@ndptxhooks
 \let\s@ve@nd=\end
 \def\end{\par\vfill\supereject \the\@ndhooks \s@ve@nd}
 
