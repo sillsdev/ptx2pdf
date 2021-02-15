@@ -1,3 +1,9 @@
+ptxprint (1.5.12.4-1ubuntu1) bionic; urgency=medium
+
+  * Bumped release to 1.5.12.4
+
+ -- Martin Hosken <martin_hosken@sil.org>  Mon, 15 Feb 2021 18:10:30 +0700
+
 
 ptxprint (1.5.12.4-1ubuntu1) bionic; urgency=medium
 
