@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.2 
+<!-- Generated with glade 3.22.1 
 
 The MIT License (MIT)
 
@@ -103,7 +103,6 @@ THE SOFTWARE.
   <object class="GtkAdjustment" id="a_columngutteroffset">
     <property name="lower">-50</property>
     <property name="upper">50</property>
-    <property name="value">-3.5</property>
     <property name="step_increment">0.5</property>
     <property name="page_increment">1</property>
   </object>
@@ -4192,6 +4191,23 @@ also affects poetry indentation.
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
+                                        <property name="tooltip_text" translatable="yes">Fine Tune Line Spacing:
+
+Click this button to shrink or expand the line spacing 
+slightly to minimise wasted vertical space on the page.
+
+If there is more than half a line of 'spare' space on the 
+page then the line-spacing will decrease slightly to
+fit one more line of text on the page.
+
+If there is less than half a line of 'spare' space on the 
+page then the line-spacing will increase slightly to 
+fill the page more evenly (with the same number of 
+lines of text).
+
+If you prefer to keep the exact line spacing specified, 
+then do NOT click this option. Instead, use the similar
+button to adjust either the Top or Bottom Margin.</property>
                                         <property name="halign">center</property>
                                         <property name="valign">center</property>
                                         <property name="margin_left">3</property>
@@ -4225,7 +4241,7 @@ also affects poetry indentation.
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="halign">end</property>
-                                        <property name="label" translatable="yes">Text Lines on Page:</property>
+                                        <property name="label" translatable="yes">Max Lines on Page:</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">5</property>
@@ -4429,7 +4445,7 @@ Top (pt):</property>
                                 <property name="margin_top">4</property>
                                 <property name="margin_bottom">6</property>
                                 <property name="row_spacing">5</property>
-                                <property name="column_spacing">8</property>
+                                <property name="column_spacing">6</property>
                                 <child>
                                   <object class="GtkImage" id="gr_marginGraphicLineTrue">
                                     <property name="visible">True</property>
@@ -4740,7 +4756,7 @@ cross-references end.</property>
                                     <property name="digits">1</property>
                                     <property name="numeric">True</property>
                                     <property name="update_policy">if-valid</property>
-                                    <property name="value">1.2</property>
+                                    <property name="value">12</property>
                                     <signal name="value-changed" handler="onBodyHeightChanged" swapped="no"/>
                                     <signal name="value-changed" handler="onNumTabsChanged" swapped="no"/>
                                   </object>
@@ -4754,7 +4770,7 @@ cross-references end.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="tooltip_text" translatable="yes">How wide the side margins are in mm.</property>
-                                    <property name="halign">start</property>
+                                    <property name="halign">end</property>
                                     <property name="valign">center</property>
                                     <property name="margin_left">6</property>
                                     <property name="label" translatable="yes">Side Margin
@@ -4852,7 +4868,6 @@ line under the page header, before the
 main body text begins.</property>
                                     <property name="halign">end</property>
                                     <property name="margin_bottom">3</property>
-                                    <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
                                     <signal name="clicked" handler="onRHruleClicked" swapped="no"/>
                                   </object>
@@ -4866,6 +4881,23 @@ main body text begins.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
+                                    <property name="tooltip_text" translatable="yes">Fine Tune Top Margin:
+
+Click this button to shrink or expand the top margin 
+slightly to minimise wasted vertical space on the page.
+
+If there is more than half a line of 'spare' space on the 
+page then the top margin will decrease slightly to
+fit one more line of text on the page.
+
+If there is less than half a line of 'spare' space on the 
+page then the top margin will increase slightly to 
+fill the page more evenly (with the same number of 
+lines of text).
+
+If you prefer to keep the exact top margin specified, 
+then do NOT click this option. Instead, use the similar
+button to adjust either the Line Spacing or Bottom Margin.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
                                     <property name="margin_right">3</property>
@@ -4883,6 +4915,23 @@ main body text begins.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
+                                    <property name="tooltip_text" translatable="yes">Fine Tune Bottom Margin:
+
+Click this button to shrink or expand the bottom margin 
+slightly to minimise wasted vertical space on the page.
+
+If there is more than half a line of 'spare' space on the 
+page then the bottom margin will decrease slightly to
+fit one more line of text on the page.
+
+If there is less than half a line of 'spare' space on the 
+page then the bottom margin will increase slightly to 
+fill the page more evenly (with the same number of 
+lines of text).
+
+If you prefer to keep the exact bottom margin specified, 
+then do NOT click this option. Instead, use the similar
+button to adjust either the Line Spacing or Top Margin.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
                                     <property name="image">icon_adjust1</property>
