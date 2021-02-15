@@ -16,10 +16,10 @@ def git(cmd, *a):
     call(["git", cmd]+list(a))
 
 def dch(version):
-    dt = datetime.today()
-    date = dt.strftime("%a, %d %b $Y %H:%M:%S %z")
-    txt = """
-ptxprint ({0}-1ubuntu1) bionic; urgency=medium
+    tz = datetime.now().astimezone().tzinfo
+    dt = datetime.now(tz)
+    date = dt.strftime("%a, %d %b %Y %H:%M:%S %z")
+    txt = """ptxprint ({0}-1ubuntu1) bionic; urgency=medium
 
   * Bumped release to {0}
 
