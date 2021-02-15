@@ -1,31 +1,62 @@
-#!/bin/sh
+#!/usr/bin/python3
 
-opts=":as"
-tagopt="-a"
-while getopts $opts opt; do
-  case "$opt" in
-    a) tagopt="-a";;
-    s) tagopt="-s";;
-  esac
-done
+import argparse
+import re
+from subprocess import call
+from datetime import datetime
 
-shift $((OPTIND-1))
-VERSION=$1
+def replacefile(file, match, replace):
+    with open(file, encoding="utf-8") as inf:
+        lines = [re.sub(match, replace, l) for l in inf.readlines()]
+    with open(file, "w", encoding="utf-8") as outf:
+        for l in lines:
+            outf.write(l)
+        
+def git(cmd, *a):
+    call(["git", cmd]+list(a))
 
-perl -i -CSD -pe "s/(version=\").*?\"/\${1}${VERSION}\"/o" setup.py
-perl -i -CSD -pe "s/(#define MyAppVersion \").*?\"/\${1}${VERSION}\"/o" InnoSetupPTXprint.iss
-perl -i -CSD -pe "s/(property name=\"version\">Version ).*?(<\/property>)/\${1}${VERSION}\${2}/o" python/lib/ptxprint/ptxprint.glade
-perl -i -CSD -pe "s/(VersionStr = \").*?\"/\${1}${VERSION}\"/o" python/lib/ptxprint/view.py
-perl -i -CSD -pe "s/(PTXprint )\S+( Release Notes)/\${1}${VERSION}\${2}/o" docs/inno-docs/ReleaseNotes.txt
+def dch(version):
+    dt = datetime.today()
+    date = dt.strftime("%a, %d %b $Y %H:%M:%S %z")
+    txt = """
+ptxprint ({0}-1ubuntu1) bionic; urgency=medium
 
-git commit -a -m "Releasing ${VERSION}"
-git tag ${tagopt} -m "Tagging ${VERSION}" ${VERSION}
-git push
+  * Bumped release to {0}
 
-git checkout packaging
-dch -i ${VERSION} "Bumped released to ${VERSION}"
-git commit -a -m "Bumped release version to ${VERSION}"
-git push
+ -- Martin Hosken <martin_hosken@sil.org>  {1}
 
-git checkout master
+""".format(version, date)
+    with open("debian/changelog") as inf:
+        lines = list(inf.readlines())
+    with open("debian/changelog", "w") as outf:
+        outf.write(txt)
+        for l in lines:
+            outf.write(l)
+
+parser = argparse.ArgumentParser()
+parser.add_argument("version")
+parser.add_argument("-a", action="store_true")
+parser.add_argument("-s", action="store_true")
+args = parser.parse_args()
+tagopt = "-a"
+if args.s:
+    tagopt = "-s"
+
+replacefile("setup.py", r'(version=").*?"', r'\g<1>'+args.version+'"')
+replacefile("InnoSetupPTXprint.iss", r'(#define MyAppVersion ").*?"', r'\g<1>'+args.version+'"')
+replacefile("python/lib/ptxprint/ptxprint.glade", r'(property name=\"version\">Version ).*?(<\/property>)', r'\g<1>'+args.version+r'\g<2>')
+replacefile("python/lib/ptxprint/view.py", r'(VersionStr = ").*?"', r'\g<1>'+args.version+'"')
+replacefile("docs/inno-docs/ReleaseNotes.txt", r'(PTXprint )\S+( Release Notes)', r'\g<1>'+args.version+'\g<2>')
+
+git("commit", "-a", "-m", "Releasing "+args.version)
+git("tag", tagopt, "-m", "Tagging "+args.version, args.version)
+git("push", "--tag")
+git("push")
+
+git("checkout", "packaging")
+dch(args.version)
+git("commit", "-a", "-m", "Bumped release version to "+args.version)
+git("push")
+
+git("checkout", "master")
 
