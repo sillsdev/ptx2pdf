@@ -1335,6 +1335,21 @@ saved configuration.</property>
       </object>
     </child>
   </object>
+  <object class="GtkImage" id="icon_adjust">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="icon_name">network-idle-symbolic</property>
+  </object>
+  <object class="GtkImage" id="icon_adjust1">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="icon_name">network-idle-symbolic</property>
+  </object>
+  <object class="GtkImage" id="icon_adjust2">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="icon_name">network-idle-symbolic</property>
+  </object>
   <object class="GtkListStore" id="ls_NoteBlendInto">
     <columns>
       <!-- column-name NoteBlendInto -->
@@ -4009,6 +4024,7 @@ space between lines of text.</property>
                                         <property name="numeric">True</property>
                                         <property name="update_policy">if-valid</property>
                                         <property name="value">15</property>
+                                        <signal name="value-changed" handler="onBodyHeightChanged" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left_attach">4</property>
@@ -4172,26 +4188,52 @@ also affects poetry indentation.
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkCheckButton" id="c_cropmarks">
-                                        <property name="label" translatable="yes">Crop Marks</property>
+                                      <object class="GtkToggleButton" id="btn_adjust_spacing">
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="tooltip_text" translatable="yes">Some printers require crop marks
-on the PDF to show where the page
-should be trimmed to after printing.
-
-This is also useful to check that the
-margins have been set correctly, after
-printing a sample page at 100% and
-measuring the physical printout.</property>
+                                        <property name="receives_default">True</property>
+                                        <property name="halign">center</property>
+                                        <property name="valign">center</property>
+                                        <property name="margin_left">3</property>
+                                        <property name="image">icon_adjust2</property>
+                                        <property name="always_show_image">True</property>
+                                        <signal name="clicked" handler="onMagicAdjustClicked" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">6</property>
+                                        <property name="top_attach">2</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel" id="l_linesOnPage">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="halign">start</property>
+                                        <property name="margin_left">3</property>
+                                        <property name="label" translatable="yes">99</property>
+                                        <attributes>
+                                          <attribute name="foreground" value="#cece5c5c0000"/>
+                                        </attributes>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">6</property>
+                                        <property name="top_attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
                                         <property name="halign">end</property>
-                                        <property name="draw_indicator">True</property>
+                                        <property name="label" translatable="yes">Text Lines on Page:</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">5</property>
                                         <property name="top_attach">0</property>
                                       </packing>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
                                     </child>
                                     <child>
                                       <placeholder/>
@@ -4446,6 +4488,7 @@ Margins value on the Layout tab.</property>
                                     <property name="numeric">True</property>
                                     <property name="update_policy">if-valid</property>
                                     <property name="value">18</property>
+                                    <signal name="value-changed" handler="onBodyHeightChanged" swapped="no"/>
                                     <signal name="value-changed" handler="onNumTabsChanged" swapped="no"/>
                                   </object>
                                   <packing>
@@ -4698,6 +4741,7 @@ cross-references end.</property>
                                     <property name="numeric">True</property>
                                     <property name="update_policy">if-valid</property>
                                     <property name="value">1.2</property>
+                                    <signal name="value-changed" handler="onBodyHeightChanged" swapped="no"/>
                                     <signal name="value-changed" handler="onNumTabsChanged" swapped="no"/>
                                   </object>
                                   <packing>
@@ -4816,6 +4860,76 @@ main body text begins.</property>
                                     <property name="left_attach">2</property>
                                     <property name="top_attach">0</property>
                                   </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkToggleButton" id="btn_adjust_top">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">center</property>
+                                    <property name="margin_right">3</property>
+                                    <property name="image">icon_adjust</property>
+                                    <property name="always_show_image">True</property>
+                                    <signal name="clicked" handler="onMagicAdjustClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">5</property>
+                                    <property name="top_attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkToggleButton" id="btn_adjust_bottom">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">center</property>
+                                    <property name="image">icon_adjust1</property>
+                                    <property name="always_show_image">True</property>
+                                    <signal name="clicked" handler="onMagicAdjustClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">5</property>
+                                    <property name="top_attach">5</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_cropmarks">
+                                    <property name="label" translatable="yes">Crop Marks</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">Some printers require crop marks
+on the PDF to show where the page
+should be trimmed to after printing.
+
+This is also useful to check that the
+margins have been set correctly, after
+printing a sample page at 100% and
+measuring the physical printout.</property>
+                                    <property name="halign">end</property>
+                                    <property name="draw_indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">5</property>
+                                    <property name="top_attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
                                 </child>
                               </object>
                             </child>
@@ -6923,18 +7037,18 @@ Also settings for special books.</property>
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">False</property>
                                                     <child>
-                                                      <object class="GtkCheckButton" id="c_fnparagraphednotes">
-                                                        <property name="label" translatable="yes">Use Paragraphed Footnotes</property>
+                                                      <object class="GtkCheckButton" id="c_fneachnewline">
+                                                        <property name="label" translatable="yes">Start Each Footnote on a New Line</property>
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                         <property name="receives_default">False</property>
-                                                        <property name="tooltip_text" translatable="yes">Rather than starting each footnote on a different line,
-place footnotes one after the other (with space between)
-to form a paragraph.</property>
+                                                        <property name="tooltip_text" translatable="yes">Normally footnotes are arranged one after
+the other to form a block of text. But if If you 
+require each footnote to start on its own new
+line then set this option.</property>
                                                         <property name="halign">start</property>
                                                         <property name="margin_top">2</property>
                                                         <property name="margin_bottom">6</property>
-                                                        <property name="active">True</property>
                                                         <property name="draw_indicator">True</property>
                                                         <signal name="clicked" handler="onParagraphednotesClicked" swapped="no"/>
                                                       </object>
@@ -7190,17 +7304,17 @@ Print a second time before it applies.</property>
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">False</property>
                                                     <child>
-                                                      <object class="GtkCheckButton" id="c_paragraphedxrefs">
-                                                        <property name="label" translatable="yes">Use Paragraphed Cross-References</property>
+                                                      <object class="GtkCheckButton" id="c_xreachnewline">
+                                                        <property name="label" translatable="yes">Start each Cross-Reference on a New Line</property>
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                         <property name="receives_default">False</property>
-                                                        <property name="tooltip_text" translatable="yes">Rather than starting each cross-reference on a 
-different line, place cross-references one after
-the other (with space between) to form a paragraph.</property>
+                                                        <property name="tooltip_text" translatable="yes">Normally cross-references are arranged one after
+the other to form a block of text. But if If you 
+require each cross-reference to start on its own new
+line then set this option.</property>
                                                         <property name="halign">start</property>
                                                         <property name="margin_bottom">6</property>
-                                                        <property name="active">True</property>
                                                         <property name="draw_indicator">True</property>
                                                         <signal name="clicked" handler="onParagraphednotesClicked" swapped="no"/>
                                                       </object>
@@ -13104,7 +13218,7 @@ formatting of the thumb tabs.</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="halign">start</property>
-                                <property name="label" translatable="yes">CoorVal</property>
+                                <property name="label" translatable="yes">ColorVal</property>
                               </object>
                               <packing>
                                 <property name="left_attach">4</property>

@@ -609,7 +609,13 @@ class ViewModel:
             config.set("paper", "bottommargin", "{:.3f}".format(config.getfloat("paper", "bottommarginfactor") * marginmms))
             config.set("paper", "footerpos", "{:.3f}".format(config.getfloat("header", "footerposition") * marginmms))
             config.set("paper", "rulegap", "{:.3f}".format(config.getfloat("header", "ruleposition")))
-            config.set("config", "version", "1.503")
+        if v < 1.504:
+            try:
+                self._configset(config, "notes/fneachnewline", not config.getboolean("notes", "fnparagraphednotes"))
+                self._configset(config, "notes/xreachnewline", not config.getboolean("notes", "xrparagraphednotes"))
+            except:
+                pass
+            config.set("config", "version", "1.504")
 
         styf = os.path.join(self.configPath(cfgname), "ptxprint.sty")
         if not os.path.exists(styf):

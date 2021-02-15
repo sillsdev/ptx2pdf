@@ -2578,7 +2578,7 @@ class GtkViewModel(ViewModel):
         btn.set_sensitive(not text in allprojects)
 
     def onParagraphednotesClicked(self, btn):
-        status = self.get("c_fnparagraphednotes") or self.get("c_paragraphedxrefs")
+        status = not (self.get("c_fneachnewline") and self.get("c_xreachnewline"))
         for w in ["l_paragraphedNotes", "s_notespacingmin", "s_notespacingmax", "l_min", "l_max"]:
             wid = self.builder.get_object(w)
             if wid is not None:
@@ -2603,7 +2603,7 @@ class GtkViewModel(ViewModel):
             self.builder.get_object(w).set_visible(status)        
         self.builder.get_object("gr_marginGraphicLineFalse").set_visible(not status)        
 
-    def tryHidingTreeView(self, brn):
+    def tryHidingTreeView(self, btn):
         status = self.get("c_quickRun")
         # for w in ["scr_picListEdit", "gr_picButtons", "tb_picPreview"]:
         # for w in ["tb_details", "tb_checklist", "tb_credits"]:
@@ -2611,3 +2611,25 @@ class GtkViewModel(ViewModel):
         # for w in ["tb_plTopPane", "tb_picPreview", "scr_detailsBottom", "scr_checklistBottom", "gr_credits"]: 
             # self.builder.get_object(w).set_visible(status)        
        
+
+    def onBodyHeightChanged(self, btn):
+        pass
+        
+    def onMagicAdjustClicked(self, btn):
+        param = Gtk.Buildable.get_name(btn).split("_")[-1]
+        
+        if param == "spacing":
+            self.set("s_linespacing", float(self.get("s_linespacing")) + .1)
+            self.set("l_linesOnPage", "65")
+            
+        elif param == "top":
+            self.set("s_topmargin", float(self.get("s_topmargin")) + .1)
+            self.set("l_linesOnPage", "66")
+            
+        elif param == "bottom":
+            self.set("s_bottommargin", float(self.get("s_bottommargin")) + .1)
+            self.set("l_linesOnPage", "67")
+            
+        else:
+            print("You wally!")
+            
