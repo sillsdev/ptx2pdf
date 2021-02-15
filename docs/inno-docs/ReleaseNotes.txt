@@ -1,4 +1,4 @@
-PTXprint 1.5.12 Release Notes 
+PTXprint 1.5.12.4 Release Notes 
 15 February 2021
 
 Bug Fixes and Improvements in 1.5.12
