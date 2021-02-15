@@ -393,7 +393,7 @@ class StyleEditorView(StyleEditor):
             other = newv[3](not isset)
             if other in data:
                 del data[other]
-            value = val if v[3] is None else v[3](val)
+            value = val if isset or v[3] is None else v[3](val) # v[4 if isset else 3] is None else v[4 if isset else 3](val)
         elif v[0].startswith("col_"):
             value = coltotex(val)
         elif key.startswith("_"):
@@ -404,7 +404,8 @@ class StyleEditorView(StyleEditor):
             oldval = data.get(otherkey, None)
             newval = self._convertabs(newkey, oldval)
             self._setData(newkey, newval)
-            self.set(newv[0], data[newkey] if newkey not in stylemap or newv[4] is None else newv[4](data[newkey]))
+            setnewv = data[newkey] if newkey not in stylemap or newv[4] is None else newv[4](data[newkey])
+            self.set(newv[0], setnewv)
             newlabel = stylediverts[controlk][2 if val else 1]
             controlw = stylemap[controlk][1]
             self.set(controlw, newlabel)
@@ -427,7 +428,7 @@ class StyleEditorView(StyleEditor):
             else:
                 oldval = self.basesheet.get(self.marker, {}).get(key, v[2])
             if v[0].startswith("s_"):
-                diff = abs(self.asFloatPts(oldval) - self.asFloatPts(value)) > 0.05
+                diff = abs(self.asFloatPts(str(oldval)) - self.asFloatPts(str(value))) > 0.05
             else:
                 diff = oldval != value
             if diff:

@@ -50,6 +50,8 @@ class StyleEditor:
             return
         elif self.basesheet.get(mrk, {}).get(key, None) != val:
             self.sheet.setdefault(mrk, {})[key] = val or ""
+        elif key in self.basesheet.get(mrk, {}) and val is None:
+            del self.basesheet[mrk][key]
 
     def registerFn(self, mark, key, fn):
         self.registers.setdefault(mark, {})[key.lower()] = fn
