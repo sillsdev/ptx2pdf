@@ -1,0 +1,29 @@
+#!/bin/sh
+
+opts=":as"
+tagopt="-a"
+while getopts $opts opt; do
+  case "$opt" in
+    a) tagopt="-a";;
+    s) tagopt="-s";;
+  esac
+done
+
+shift $((OPTIND-1))
+VERSION=$1
+
+perl -i -CSD -pe "s/(version=\").*?\"/\${1}${VERSION}\"/o" setup.py
+perl -i -CSD -pe "s/(#define MyAppVersion \").*?\"/\${1}${VERSION}\"/o" InnoSetupPTXprint.iss
+perl -i -CSD -pe "s/(property name=\"version\">Version ).*?(</property>)/\${1}${VERSION}\${2}/o" python/lib/ptxprint/ptxprint.glade
+perl -i -CSD -pe "s/(VersionStr = \").*?\"/\${1}${VERSION}\"/o" python/lib/ptxprint/view.py
+perl -i -CSD -pe "s/(PTXprint )\S+( Release Notes)/\${1}${VERSION}\${2}/o" docs/inno-docs/ReleaseNotes.txt
+
+git commit -a -m "Releasing ${VERSION}"
+git tag ${tagopt} ${VERSION}
+git push
+
+git checkout packaging
+dch -i ${VERSION} "Bumped released to ${VERSION}"
+git commit -a -m "Bumped release version to ${VERSION}"
+git push
+
