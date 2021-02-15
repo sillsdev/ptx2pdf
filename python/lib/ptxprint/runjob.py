@@ -330,7 +330,7 @@ class RunJob:
                            "document/ch1pagebreak", "document/bookintro", "document/introoutline", 
                            "document/parallelrefs", "document/elipsizemptyvs", "notes/iffootnoterule",
                            "notes/ifblendfnxr", "notes/includefootnotes", "notes/includexrefs", 
-                           "notes/fnparagraphednotes", "notes/xrparagraphednotes", "document/filterglossary", 
+                           "notes/fneachnewline", "notes/xreachnewline", "document/filterglossary", 
                            "document/chapfrom", "document/chapto", "document/ifcolorfonts", "document/ifomitsinglechnum"]
         diginfo["project/bookids"] = jobs
         diginfo["project/books"] = digdonebooks
