@@ -621,8 +621,6 @@ class GtkViewModel(ViewModel):
             if len(bits) > 1:
                 if value:
                     value = bits[1]
-                else:
-                    return
             super().set("r_"+bits[0], value)
             wid = "r_" + "_".join([bits[0], value])
             w = self.builder.get_object(wid)

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.1 
+<!-- Generated with glade 3.22.2 
 
 The MIT License (MIT)
 
@@ -9612,6 +9612,7 @@ share, but the image quality will be low.</property>
                                                 <property name="draw_indicator">True</property>
                                                 <property name="group">r_pictureRes_High</property>
                                                 <signal name="clicked" handler="onPicRescan" swapped="no"/>
+                                                <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                               </object>
                                               <packing>
                                                 <property name="left_attach">3</property>
@@ -9663,6 +9664,7 @@ the image quality will be as good as possible.</property>
                                                 <property name="draw_indicator">True</property>
                                                 <property name="group">r_pictureRes_Low</property>
                                                 <signal name="clicked" handler="onPicRescan" swapped="no"/>
+                                                <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                               </object>
                                               <packing>
                                                 <property name="left_attach">2</property>
