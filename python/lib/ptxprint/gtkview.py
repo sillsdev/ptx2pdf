@@ -1193,6 +1193,8 @@ class GtkViewModel(ViewModel):
     def onScriptChanged(self, btn):
         # If there is a matching digit style for the script that has just been set, 
         # then also turn that on (but it can be overridden by the user if needed).
+        if self.loadingConfig:
+            return
         self.fcb_digits.set_active_id(self.get('fcb_script'))
         script = self.get("fcb_script")
         if script is not None:
