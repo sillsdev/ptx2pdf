@@ -494,7 +494,7 @@
 \def\addqu@tes#1#2\E{\if #1"\relax \def\m@rgePDF{#1#2 }\else\def\m@rgePDF{"#1#2" }\fi}
 \def\m@rgepdf{\ifx\MergePDF\empty\else
   \x@\addqu@tes \MergePDF\E  %Make \m@rgePDF a copy of \MergePDF, adding quotes if needed
-  \vbox to 0pt{\XeTeXpdffile \m@rgePDF media\relax\vss}
+  \vbox to 0pt{\vbox to \pdfpageheight{\vss\hbox to \pdfpagewidth{\hss\XeTeXpdffile \m@rgePDF media\relax\hss}\vss}}
 \fi}
 %-c_pageborders
 
