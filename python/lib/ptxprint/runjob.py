@@ -506,7 +506,10 @@ class RunJob:
             if self.printer.get("c_PDFx1aOutput"):
                 cmd += ["-z", "0"]
             runner = call(cmd + [outfname.replace(".tex", ".xdv")], cwd=self.tmpdir)
+            print("runner has been defined as: {}".format(cmd + [outfname.replace(".tex", ".xdv")]))
+            print(runner)
             if isinstance(runner, subprocess.Popen) and runner is not None:
+                print("About to try runner.wait...")
                 try:
                     runner.wait(self.args.timeout)
                 except subprocess.TimeoutExpired:

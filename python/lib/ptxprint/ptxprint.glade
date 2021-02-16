@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.2 
+<!-- Generated with glade 3.22.1 
 
 The MIT License (MIT)
 
@@ -11318,6 +11318,11 @@ in this publication, as well as other contexts.</property>
                                           <object class="GtkLabel">
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
+                                            <property name="tooltip_text" translatable="yes">Type the text for the Credit to be overlaid
+on the image. Note that there are shortcuts:
+   (c) --&gt; ©
+   DCC --&gt; © David C. Cook
+       or --&gt; © DCC   (if Sensitive Project is set)</property>
                                             <property name="label" translatable="yes">Image Credit Text:</property>
                                           </object>
                                           <packing>
@@ -11329,7 +11334,12 @@ in this publication, as well as other contexts.</property>
                                           <object class="GtkEntry" id="t_plCreditText">
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
-                                            <property name="placeholder_text" translatable="yes">© David C. Cook</property>
+                                            <property name="tooltip_text" translatable="yes">Type the text for the Credit to be overlaid
+on the image. Note that there are shortcuts:
+(c) --&gt; ©
+DCC --&gt; © David C. Cook
+    or --&gt; © DCC   (if Sensitive Project is set)</property>
+                                            <property name="placeholder_text" translatable="yes">Enter Image Credit text...</property>
                                             <signal name="changed" handler="onCopyrightStatementChanged" swapped="no"/>
                                           </object>
                                           <packing>
