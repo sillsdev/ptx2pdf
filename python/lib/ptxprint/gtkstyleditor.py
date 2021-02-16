@@ -350,6 +350,14 @@ class StyleEditorView(StyleEditor):
             self.builder.get_object("l_url_usfm").set_uri('{}/{}/{}.html#{}'.format(site, urlcat, pgname, urlmkr))
         self.isLoading = False
 
+    def _cmp(self, a, b):
+        try:
+            fa = float(a)
+            fb = float(b)
+            return fb == fa
+        except (TypeError, ValueError):
+            return a == b
+
     def _setFieldVal(self, v, oldval, val):
         w = self.builder.get_object(v[0])
         if w is None:
@@ -363,7 +371,7 @@ class StyleEditorView(StyleEditor):
             setWidgetVal(v[0], w, newval if v[4] is None else v[4](newval))
         if v[1] is not None:
             ctxt = self.builder.get_object(v[1]).get_style_context()
-            if val != oldval:
+            if not self._cmp(val, oldval):
                 ctxt.add_class("changed")
             else:
                 ctxt.remove_class("changed")
