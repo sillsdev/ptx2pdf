@@ -1846,6 +1846,7 @@ class GtkViewModel(ViewModel):
         self.updateDialogTitle()
         self.picChecksView.init(basepath=self.configPath(cfgname=None), configid=self.configId)
         self.styleEditor.editMarker()
+        self.onBodyHeightChanged(None)
 
     def onConfigNameChanged(self, cb_savedConfig):
         lockBtn = self.builder.get_object("btn_lockunlock")
@@ -2637,27 +2638,46 @@ class GtkViewModel(ViewModel):
     def tryHidingTreeViewCols(self, btn):
         status = self.get("c_quickRun")
 
+    def _calcBodyHeight(self):
+        linespacing = float(self.get("s_linespacing")) * 25.4 / 72.27
+        unitConv = {'mm':1, 'cm':10, 'in':25.4, '"':25.4}
+        m = re.match(r"^.*?,\s*([\d.]+)(\S+)\s*(?:.*|$)", self.get("ecb_pagesize"))
+        if m:
+            pageheight = float(m.group(1)) * unitConv.get(m.group(2), 1)
+        else:
+            pageheight = 210
+        bottommargin = float(self.get("s_bottommargin"))
+        topmargin = float(self.get("s_topmargin"))
+        return (pageheight - bottommargin - topmargin, linespacing)
+
     def onBodyHeightChanged(self, btn):
-        self.setMagicAdjustSensitive(True)
+        textheight, linespacing = self._calcBodyHeight()
+        lines = textheight / linespacing
+        self.set("l_linesOnPage", "{:.1f}".format(lines))
+        self.setMagicAdjustSensitive(int(lines) != lines)
         
     def onMagicAdjustClicked(self, btn):
         param = Gtk.Buildable.get_name(btn).split("_")[-1]
+        textheight, linespacing = self._calcBodyHeight()
+        lines = textheight / linespacing
+        extra = int(lines) - lines
+        if extra < -0.5:
+            extra += 1.
+            lines += 1
+        extra *= linespacing
         
         if param == "spacing":
-            self.set("s_linespacing", float(self.get("s_linespacing")) + .1)
-            self.set("l_linesOnPage", "65")
-            
+            l = float(self.get("s_linespacing"))
+            l -= (extra * 72.27 / 25.4) / (int(lines))
+            self.set("s_linespacing", l)
         elif param == "top":
-            self.set("s_topmargin", float(self.get("s_topmargin")) + .1)
-            self.set("l_linesOnPage", "66")
+            self.set("s_topmargin", float(self.get("s_topmargin")) - extra)
             
         elif param == "bottom":
-            self.set("s_bottommargin", float(self.get("s_bottommargin")) + .1)
-            self.set("l_linesOnPage", "67")
-            
+            self.set("s_bottommargin", float(self.get("s_bottommargin")) - extra)
         else:
             print("Oops! No more Magic Adjust options...")
-
+        self.set("l_linesOnPage", "{:.1f}".format(int(lines)))
         self.setMagicAdjustSensitive(False)
             
     def setMagicAdjustSensitive(self, clickable=False):
