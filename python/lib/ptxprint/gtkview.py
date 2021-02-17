@@ -2648,6 +2648,11 @@ class GtkViewModel(ViewModel):
             pageheight = 210
         bottommargin = float(self.get("s_bottommargin"))
         topmargin = float(self.get("s_topmargin"))
+        font = self.get("bl_fontR")
+        if font is not None:
+            tt = font.getTtfont()
+            if tt is not None:
+                bottommargin -= tt.descent / tt.upem * float(self.get("s_fontsize")) * 72.27 / 25.4
         return (pageheight - bottommargin - topmargin, linespacing)
 
     def onBodyHeightChanged(self, btn):
