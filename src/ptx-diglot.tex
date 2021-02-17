@@ -645,19 +645,23 @@
   \relax
 }
 
-
+\def\ztmon{\tracingmacros=1}
+\def\ztmoff{\tracingmacros=0}
 % Change which side we're adding to
 \def\pr@sideswitch#1#2{%
   \global\savedpenalty=\lastpenalty % This MUST be first, or the last /thing/ won't be a penalty
-  \trace{d}{#1text pL:\the\dp\partialL, xL:\the\dp\excessL, pR:\the\dp\partialR, lp:\the\savedpenalty}%
+  \ifhe@dings\endhe@dings
+    \global\savedpenalty=\lastpenalty % Pick up revised after-heading penalty
+  \fi%
+  \endlastp@rstyle{p}%
+  \trace{d}{#1text pL:\the\dp\partialL, xL:\the\dp\excessL, pR:\the\dp\partialR, xR\the\dp\excessR, lp:\the\savedpenalty \ifallNeedEmptying allNeedwmptying\fi}%
+  %\showlists
   \ifx\c@rrdstat\empty
-    \trace{d}{\c@rrdstat is empty, making it L for sanity}%
+    \trace{d}{\c@rrdstat is empty, somehow, making it L for sanity}%
     \gdef\c@rrdstat{L}%
   \fi
   \global\output={\diglotCollect}%Why woudn't it be? Don't know, but sometimes it's not.
   \x@\xdef\csname saved\c@rrdstat penalty\endcsname{\the\savedpenalty}%
-  \ifhe@dings\endhe@dings\fi%
-  \ifsk@pping \egroup \sk@ppingfalse\fi% if we were skipping nonpublishable text, end that mode
   \ifinn@te\errmessage{*** #1text called from inside footnote?!?}\fi
   \@@setside{#2}%
   \endgraf\penalty\dgl@tPenColSwap\relax %Trigger collection of text.
@@ -668,7 +672,7 @@
 
 \outer\def\lefttext{%
   \pr@sideswitch{left}{L}%
-  \allNeedEmptyingfalse
+  \global\allNeedEmptyingfalse
   \swap@diglot{L}%sets diglotRtrue, etc
   \global\vsize=\maxdimen
   \global\availht=\vsize
@@ -680,7 +684,7 @@
 
 \outer\def\righttext{%
   \pr@sideswitch{right}{R}%
-  \allNeedEmptyingtrue
+  \global\allNeedEmptyingtrue % Text after this needs emptying
   \swap@diglot{R}%sets diglotRtrue, etc
   \global\vsize=\maxdimen
   \global\trialheight=\maxdimen
@@ -692,9 +696,9 @@
 % When there's a header on the left but not the right, but we want the verses
 % to line up nicely...
 \def\norighttext{%
+  \global\allNeedEmptyingtrue% Text before the swap needs emptying
   \pr@sideswitch{noright}{L}%
-  \allNeedEmptyingtrue
-  \swap@diglot{L}%sets diglotRtrue, etc
+  \swap@diglot{L}%sets diglotLtrue, etc
   \global\vsize=\maxdimen
   \global\trialheight=\maxdimen
   \global\holdinginserts=1
@@ -703,8 +707,9 @@
 
 %Similarly when there's no left text, almost-copying \righttext seems OK ...
 \def\nolefttext{%
+  \global\allNeedEmptyingtrue% Text before the swap needs emptying
   \pr@sideswitch{noleft}{R}%
-  \allNeedEmptyingtrue
+  \global\allNeedEmptyingtrue% Text after the swap ALSO needs emptying, in case \righttext not used
   \swap@diglot{R}%sets diglotRtrue, etc
   \global\vsize=\maxdimen
   \global\trialheight=\maxdimen
@@ -759,6 +764,24 @@
    \xdef\n@xtdstat{#1}%
    }%
 
+\def\check@dup#1{%set temptrue if \test is the same as #1
+  \edef\t@st{#1}\ifx\t@st\test\temptrue\fi
+}
+
+\def\add@to@digl@tc@ntentlist#1{%
+  \trace{d}{add@to@digl@tc@ntentlist #1 (\digl@tc@ntentlist)}%
+  \edef\test{#1}%
+  \tempfalse
+  \let\col@do=\check@dup
+  \ifx\digl@tc@ntentlist\empty
+  \else
+    \x@\each@col\digl@tc@ntentlist\E
+  \fi
+  \iftemp\else
+    \xdef\digl@tc@ntentlist{\digl@tc@ntentlist #1}%
+  \fi
+  \trace{D}{digl@tc@ntentlist now:(\digl@tc@ntentlist)}%
+}
 
 \def\swap@diglot#1{% Because we need to set things appropriately.
  %Swapping fonts isn't actually needed, but do need to set
@@ -771,7 +794,7 @@
  %All sorts of things should follow if m@rker is set properly...
  \x@\let\csname m@rker\c@rrdstat\endcsname\m@rker %save the old marker 
  \@setside{#1}%
- \xdef\digl@tc@ntentlist{\digl@tc@ntentlist #1}%
+ \add@to@digl@tc@ntentlist{#1}%
  \x@\let\x@\m@rker\csname m@rker\c@rrdstat\endcsname
  \x@\let\x@\w@dth\csname column#1width\endcsname
  \global\hsize=\w@dth\relax
@@ -1306,14 +1329,14 @@
    \ifdiglotSepNotes%
    \else%
      % RTLness will have been asserted (or not) when the note was defined.
-     {
+     {%
      \ifdiglot\RTLfalse\fi
      \def\c@rrdstat{L}%
      \traceNum{d}{Inserting Notes}%
      \f@rstnotetrue%
      \m@kenotebox
      \unvbox2 % defined by m@kenotebox
-     }
+     }%
    \fi%
    \ifvoid\verybottomins\else % \kern-\dimen0
      \lastd@pth=0pt \vskip\skip\verybottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\verybottomins}}\fi
@@ -1376,6 +1399,7 @@
   \fi
   \x@\csname partial\c@rrdstat penalty\endcsname=\tmppenalty
   \ifnum\outputpenalty=\dgl@tPenColSwap\relax %Got to the end of the \lefttext
+    \trace{D}{Reached end of diglotCollect. \ifallNeedEmptying Running trials\fi}%
     \tmppenalty=\savedpenalty\relax%
     \ifallNeedEmptying
       \global\let\n@xtc@mmand=\diglot@run@trials
@@ -1470,15 +1494,8 @@
     \global\chunkpenalty=-20000 %Everything ought to be bigger than this.
   \fi
 }
-\def\postponen@xt@partial{
+\def\postponen@xt@partial{%
   \trace{d}{postponen@xtpartial \the\ht\partial+\the\dp\partial, \the\ht\n@xtpartial+\the\dp\n@xtpartial}%
-  %NEEDS MORE THOUGHT:
-  %Postponing the notes from before the chunk was run will loose notes 
-  % for n@xt partial. Not restoring them means they go on the wrong page.
-  % Either need to diff the note boxes (!) or Another option is to save the
-  % galley for the previous chunk and re-trial that before trialing what's in partialX and excessX
-  %\r@storenotes{\g@tdstat}{2}%
-  %\s@venotes{\g@tdstat}{1}%
   \global\late@stage@reflowtrue % Need to re-flow all columns.
   \r@storenotes{\cur@ds}{1}%
 }
@@ -1525,7 +1542,7 @@
 \edef\diglot@list{LR}%
 \edef\digl@tc@ntentlist{}%
 
-\def\new@diglot@col#1{
+\def\new@diglot@col#1{%
  \xdef\diglot@list{\diglot@list#1}%
  \errmessage{This code isn't written yet}%
  %CREATE: partial#1 excess#1 partial#1penalty m@rknum#1  column#1width picb@x#1
@@ -1658,7 +1675,7 @@
   \n@xt
 }   
 
-\def\enddigl@t{
+\def\enddigl@t{%
   \endgraf
   \ifdiglot
     \ifsk@pping \egroup \fi% if we were skipping nonpublishable text, end that mode
@@ -1707,7 +1724,7 @@
 }
 \def\testmarker{\hbox to 0pt{\vrule height 7pt depth 0pt width 0.5pt \kern-0.5pt}\message{_}}
 
-\addtoendptxhooks{
+\addtoendptxhooks{%
        \bgroup\ifdiglot\ifnum\pageno>0 \count255=\cumulativeDelta \divide\count255 by \numexpr 1+\pageno-\ptxst@rtp@ge\relax \message{Column delta for book:\the\cumulativeDelta pt (\the\count255 pt/ pg)\space(-ve means left longer)}\fi\fi\egroup\cumulativeDelta=0\relax
  }%
 \addtoendhooks{\ifdiglot\ifvoid\partial\else\@writep@ge\fi\fi}

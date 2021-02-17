@@ -269,7 +269,7 @@
  \mcpop
 }
 
-\def\p@rstyle#1{\trace{s}{p@rstyle: #1}%
+\def\endlastp@rstyle#1{%
  \ifsk@pping \egroup \fi % if we were skipping nonpublishable text, end that mode
  \let\p@r=\par
  \the\p@rstylehooks % allow other modules to hook in here
@@ -294,6 +294,11 @@
   %\fi
   \cl@singhooks{after}{\m@rker}%
   \the\afterh@@ks
+ \fi
+}
+\def\p@rstyle#1{\trace{s}{p@rstyle: #1}%
+ \endlastp@rstyle{#1}%
+ \ifn@npublishable\else
   \gdef\m@rker{#1}% remember the new style name
   \mcpushunderms{P+#1}%
   \trace{s}{Pushed P+#1,  stack now: \mcstack}%

@@ -16,8 +16,10 @@ a child called ptxplus.
 \v 3 \XeTeX\ begat paratext2, paratext2 begat ptxplus.
 \lefttext
 \s The birth of diglot 
-\p
+\ztmon
 \norighttext
+\ztmoff
+\lefttext
 \p
 \v 4 David took ptxplus and tweaked it in various places and so diglot came into being, and it lived in dark obscurity for many years, sometimes crafting text, sometimes creating strange things.
 \p
@@ -36,8 +38,8 @@ a child called ptxplus.
 \v 5 And then did Mark and Martin come together and used Something Completely Different,  named python, and crafted the wondrous ptxprint. And David was asked if diglot would wed ptxprint. And David found the precious  treasure called time, and trimmed some strangenesses from diglot, and even from ptxprint  also. And behold, the two became one and marched forth into the world.
 
 \nolefttext
-\s2 The second coming of diglot
-
+\righttext
+\s2 The rebirth of diglot
 \lefttext
 \p
 \v 6 After meeting a lot of bugs that were seemed increasingly complex to track
@@ -51,8 +53,11 @@ distance.
 
 \righttext 
 \p
-\v 6 Pernicious were the bugs that ailed diglot and David did valiantly battle
-them, but in the end surgery more drastic was demanded.
+\v 6 Devious and pernicious were the bugs that
+ailed diglot and David did valiantly battle
+them, but it became apparent in the end
+surgery more drastic was demanded.
+\p
 \v 7 And by the hefty sword known as \it rewrite\it*, David
 conquered some of the bugs, and then he swung again at the innards of diglot
 and diglot2 was born from the mess.
