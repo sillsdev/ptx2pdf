@@ -341,6 +341,7 @@ class TexModel:
     }
 
     _artstr = {
+    "ab" : ("©_ABS_WARNING: Unpermitted_Use!", ""),
     "cn" : ("©_1996_David_C._Cook.", "©_DCC,_1996."),
     "co" : ("©_1996_David_C._Cook.", "©_DCC,_1996."),
     "hk" : ("by_Horace_Knowles\n©_The_British \\& Foreign Bible Society, 1954, 1967, 1972, 1995.", "©_BFBS,_1995."),
@@ -1144,7 +1145,7 @@ class TexModel:
                 dat = inf.read()
 
             # \figonpage{304}{56}{cn01617.jpg}{tl}{© David C. Cook Publishing Co, 1978.}{x170.90504pt}
-            m = re.findall(r"\\figonpage\{(\d+)\}\{\d+\}\{.*?(((?=cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib)..)\d{5})?.+?\}\{.*?\}\{(.*?)?\}\{.+?\}", dat)
+            m = re.findall(r"\\figonpage\{(\d+)\}\{\d+\}\{.*?(((?=ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib)..)\d{5})?.+?\}\{.*?\}\{(.*?)?\}\{.+?\}", dat)
             msngPgs = []
             customStmt = []
             if len(m):

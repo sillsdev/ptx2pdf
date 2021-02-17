@@ -205,6 +205,15 @@ _horiz = {
     "-":        "-"
 }
 
+_allcols = ["anchor", "caption", "file", "frame", "scale", "posn", "ref", "mirror", "desc", "copy", "media", "credit", "crrot", "crbox", "crposn"]
+
+_selcols = {
+    "settings":  ["anchor", "caption",         "desc"],
+    "details":   ["anchor", "caption", "file", "frame", "scale", "posn", "ref", "mirror", "desc", "copy", "media"],
+    "checklist": ["anchor", "caption", "file", "desc"],
+    "credits":   [          "caption", "file", "credit", "crrot", "crbox", "crposn"]
+}
+
 _defaultColophon = r"""\pc \zcopyright
 \pc \zlicense
 \b 
@@ -553,7 +562,8 @@ class GtkViewModel(ViewModel):
                   "t_invisiblePassword", "t_configNotes", "l_notes", "c_elipsizeMissingVerses", "fcb_glossaryMarkupStyle",
                   "gr_fnAdvOptions", "c_figexclwebapp", "l_glossaryMarkupStyle", "btn_refreshFonts",
                   "fr_spacingAdj", "fr_fallbackFont", "l_complexScript", "b_scrsettings", "c_colorfonts",
-                  "scr_picListEdit", "gr_picButtons", "tb_picPreview"):
+                  "scr_picListEdit", "gr_picButtons", "tb_picPreview", "l_linesOnPageLabel", "l_linesOnPage", 
+                  "btn_adjust_spacing", "btn_adjust_top", "btn_adjust_bottom"):
             # print(c)
             self.builder.get_object(c).set_visible(val)
 
@@ -1055,13 +1065,15 @@ class GtkViewModel(ViewModel):
             self.onRefreshViewerTextClicked(None)
         elif pgid == "tb_Tabs":
             self.onThumbColourChange()
+        # elif pgid == "tb_Pictures":
+            # need to get it to hide detail columns
 
     def onRefreshViewerTextClicked(self, btn):
         pg = self.get("nbk_Viewer")
         self.onViewerChangePage(None, None, pg)
 
     def onViewerChangePage(self, nbk_Viewer, scrollObject, pgnum):
-        allpgids = ("tb_PicList", "scroll_AdjList", "scroll_FinalSFM", "scroll_TeXfile",
+        allpgids = ("tb_settings", "scroll_AdjList", "scroll_FinalSFM", "scroll_TeXfile",
                     "scroll_XeTeXlog", "scroll_Settings", "tb_Links")
         if nbk_Viewer is None:
             nbk_Viewer = self.builder.get_object("nbk_Viewer")
@@ -1731,8 +1743,13 @@ class GtkViewModel(ViewModel):
         self._setNoteSpacingRange("max", strt, 40, 0)
 
     def onstyColorSet(self, btn):
-        col = self.get("col_styColor")
-        if col != "rgb(0,0,0)" and not self.get("c_colorfonts"):
+        def coltohex(s):
+            vals = s[s.find("(")+1:-1].split(",")
+            h = "#"+"".join("{:02x}".format(int(x)) for x in vals)
+            return h
+        col = coltohex(self.get("col_styColor"))
+        self.set("l_styColorValue", col)
+        if col != "x000000" and not self.get("c_colorfonts"):
             self.set("c_colorfonts", True)
             self.doError(_("'Enable Colored Text' has now been turned on.\nSee Fonts+Script tab for details."))
 
@@ -2472,9 +2489,9 @@ class GtkViewModel(ViewModel):
         t = re.sub("\([cC]\)", "\u00a9 ", t)
         if btname == 't_plCreditText':
             if self.get('c_sensitive'):
-                t = re.sub("dcc", "\u00a9 DCC", t)
+                t = re.sub(r"(?i)dcc", "\u00a9 DCC", t)
             else:
-                t = re.sub("dcc", "\u00a9 David C Cook", t)
+                t = re.sub(r"(?i)dcc", "\u00a9 David C Cook", t)
         w.set_text(t)
         
     def onStyleAdd(self, btn):
@@ -2530,12 +2547,27 @@ class GtkViewModel(ViewModel):
         page = nbk_PicList.get_nth_page(pgnum)
         if page == None:
             return
-        pgid = Gtk.Buildable.get_name(page)
-        # MH - what is this next piece doing in here?
-        # if pgid == "tb_checklist":
-            # self.set("r_image", "preview")
-        filterSensitive = True if pgid in ("tb_checklist", "tb_credits") else False
+        pgid = Gtk.Buildable.get_name(page).split('_')[-1]
+        filterSensitive = True if pgid in ("checklist", "credits") else False
         self.builder.get_object("fr_plChecklistFilter").set_sensitive(filterSensitive)
+        for w in _allcols:
+            if w in _selcols[pgid]:
+                self.builder.get_object("col_{}".format(w)).set_visible(True)
+            else:
+                self.builder.get_object("col_{}".format(w)).set_visible(False)
+
+        # Ask MH: @@@@
+        # if pgid in ["settings", "checklist", "credits"]:
+            # self.builder.get_object("scr_picListEdit").set_policy(None, GTK_POLICY_NEVER, GTK_POLICY_ALWAYS)
+
+        # See: https://stackoverflow.com/questions/50414957/gtk3-0-scrollbar-on-treeview-scrolledwindow-css-properties-to-control-scrol
+        # set_policy(GTK_SCROLLED_WINDOW(scwin), GTK_POLICY_AUTOMATIC,GTK_POLICY_ALWAYS)
+        
+        # sw = gtk_scrolled_window_new(NULL, NULL);
+        # gtk_container_set_border_width( GTK_CONTAINER(sw), 0 );
+        # gtk_scrolled_window_set_policy( GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS ); //scroll bars
+        # //Set scrollbar to ALWAYS be displayed and not as temporary overlay
+        # g_object_set( sw , "overlay-scrolling", FALSE , NULL);
 
     def onUnpackDBLbundleClicked(self, btn):
         dialog = self.builder.get_object("dlg_DBLbundle")
@@ -2603,17 +2635,11 @@ class GtkViewModel(ViewModel):
             self.builder.get_object(w).set_visible(status)        
         self.builder.get_object("gr_marginGraphicLineFalse").set_visible(not status)        
 
-    def tryHidingTreeView(self, btn):
+    def tryHidingTreeViewCols(self, btn):
         status = self.get("c_quickRun")
-        # for w in ["scr_picListEdit", "gr_picButtons", "tb_picPreview"]:
-        # for w in ["tb_details", "tb_checklist", "tb_credits"]:
-            # self.builder.get_object(w).set_sensitive(status)        
-        # for w in ["tb_plTopPane", "tb_picPreview", "scr_detailsBottom", "scr_checklistBottom", "gr_credits"]: 
-            # self.builder.get_object(w).set_visible(status)        
-       
 
     def onBodyHeightChanged(self, btn):
-        pass
+        self.setMagicAdjustSensitive(True)
         
     def onMagicAdjustClicked(self, btn):
         param = Gtk.Buildable.get_name(btn).split("_")[-1]
@@ -2631,5 +2657,12 @@ class GtkViewModel(ViewModel):
             self.set("l_linesOnPage", "67")
             
         else:
-            print("You wally!")
+            print("Oops! No more Magic Adjust options...")
+
+        self.setMagicAdjustSensitive(False)
             
+    def setMagicAdjustSensitive(self, clickable=False):
+        btns = ["spacing", "top", "bottom"]
+        for w in btns:
+            self.builder.get_object("btn_adjust_{}".format(w)).set_sensitive(clickable)
+    

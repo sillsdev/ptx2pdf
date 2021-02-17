@@ -1334,20 +1334,26 @@ saved configuration.</property>
       </object>
     </child>
   </object>
-  <object class="GtkImage" id="icon_adjust">
+  <object class="GtkImage" id="icon_adjust_bottom">
     <property name="visible">True</property>
+    <property name="sensitive">False</property>
     <property name="can_focus">False</property>
     <property name="icon_name">network-idle-symbolic</property>
+    <property name="icon_size">3</property>
   </object>
-  <object class="GtkImage" id="icon_adjust1">
+  <object class="GtkImage" id="icon_adjust_spacing">
     <property name="visible">True</property>
+    <property name="sensitive">False</property>
     <property name="can_focus">False</property>
     <property name="icon_name">network-idle-symbolic</property>
+    <property name="icon_size">3</property>
   </object>
-  <object class="GtkImage" id="icon_adjust2">
+  <object class="GtkImage" id="icon_adjust_top">
     <property name="visible">True</property>
+    <property name="sensitive">False</property>
     <property name="can_focus">False</property>
     <property name="icon_name">network-idle-symbolic</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkListStore" id="ls_NoteBlendInto">
     <columns>
@@ -4189,8 +4195,9 @@ also affects poetry indentation.
                                     <child>
                                       <object class="GtkToggleButton" id="btn_adjust_spacing">
                                         <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="focus_on_click">False</property>
+                                        <property name="receives_default">False</property>
                                         <property name="tooltip_text" translatable="yes">Fine Tune Line Spacing:
 
 Click this button to shrink or expand the line spacing 
@@ -4211,7 +4218,7 @@ button to adjust either the Top or Bottom Margin.</property>
                                         <property name="halign">center</property>
                                         <property name="valign">center</property>
                                         <property name="margin_left">3</property>
-                                        <property name="image">icon_adjust2</property>
+                                        <property name="image">icon_adjust_spacing</property>
                                         <property name="always_show_image">True</property>
                                         <signal name="clicked" handler="onMagicAdjustClicked" swapped="no"/>
                                       </object>
@@ -4237,7 +4244,7 @@ button to adjust either the Top or Bottom Margin.</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkLabel">
+                                      <object class="GtkLabel" id="l_linesOnPageLabel">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="halign">end</property>
@@ -4447,20 +4454,6 @@ Top (pt):</property>
                                 <property name="row_spacing">5</property>
                                 <property name="column_spacing">6</property>
                                 <child>
-                                  <object class="GtkImage" id="gr_marginGraphicLineTrue">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="margin_left">12</property>
-                                    <property name="pixbuf">MarginGraphicLineTrue.png</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">0</property>
-                                    <property name="top_attach">1</property>
-                                    <property name="width">3</property>
-                                    <property name="height">3</property>
-                                  </packing>
-                                </child>
-                                <child>
                                   <object class="GtkLabel">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
@@ -4477,38 +4470,6 @@ to Text (mm):</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">3</property>
-                                    <property name="top_attach">1</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkSpinButton" id="s_topmargin">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="tooltip_text" translatable="yes">The primary margin is set on the Layout tab, but
-this setting can be used to increase/decrease the 
-space at the top of the page and determines
-where the main text begins. This setting is a 
-factor (without units) and is multiplied by the
-Margins value on the Layout tab.</property>
-                                    <property name="halign">start</property>
-                                    <property name="valign">center</property>
-                                    <property name="width_chars">5</property>
-                                    <property name="text">1.80</property>
-                                    <property name="xalign">1</property>
-                                    <property name="caps_lock_warning">False</property>
-                                    <property name="placeholder_text">0.0</property>
-                                    <property name="input_purpose">number</property>
-                                    <property name="adjustment">a_topmargin</property>
-                                    <property name="climb_rate">0.5</property>
-                                    <property name="digits">1</property>
-                                    <property name="numeric">True</property>
-                                    <property name="update_policy">if-valid</property>
-                                    <property name="value">18</property>
-                                    <signal name="value-changed" handler="onBodyHeightChanged" swapped="no"/>
-                                    <signal name="value-changed" handler="onNumTabsChanged" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">4</property>
                                     <property name="top_attach">1</property>
                                   </packing>
                                 </child>
@@ -4556,20 +4517,6 @@ between the header and the top of the text. (pts)</property>
                                   <packing>
                                     <property name="left_attach">4</property>
                                     <property name="top_attach">2</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkImage" id="gr_marginGraphicLineFalse">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="margin_left">12</property>
-                                    <property name="pixbuf">MarginGraphicLineFalse.png</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">0</property>
-                                    <property name="top_attach">1</property>
-                                    <property name="width">3</property>
-                                    <property name="height">3</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -4814,8 +4761,8 @@ in millimeters (mm).</property>
                                 </child>
                                 <child>
                                   <object class="GtkLabel" id="l_rhruleoffset">
-                                    <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="no_show_all">True</property>
                                     <property name="tooltip_text" translatable="yes">This is the space between the horizontal 
 rule and the top of the main text (in pts). Strictly the distance above the baseline of a line above the top line.</property>
                                     <property name="halign">end</property>
@@ -4834,8 +4781,8 @@ to Body Text (pt):</property>
                                 </child>
                                 <child>
                                   <object class="GtkSpinButton" id="s_rhruleposition">
-                                    <property name="visible">True</property>
                                     <property name="can_focus">True</property>
+                                    <property name="no_show_all">True</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
                                     <property name="width_chars">4</property>
@@ -4879,8 +4826,9 @@ main body text begins.</property>
                                 <child>
                                   <object class="GtkToggleButton" id="btn_adjust_top">
                                     <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="focus_on_click">False</property>
+                                    <property name="receives_default">False</property>
                                     <property name="tooltip_text" translatable="yes">Fine Tune Top Margin:
 
 Click this button to shrink or expand the top margin 
@@ -4901,7 +4849,7 @@ button to adjust either the Line Spacing or Bottom Margin.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
                                     <property name="margin_right">3</property>
-                                    <property name="image">icon_adjust</property>
+                                    <property name="image">icon_adjust_top</property>
                                     <property name="always_show_image">True</property>
                                     <signal name="clicked" handler="onMagicAdjustClicked" swapped="no"/>
                                   </object>
@@ -4913,8 +4861,9 @@ button to adjust either the Line Spacing or Bottom Margin.</property>
                                 <child>
                                   <object class="GtkToggleButton" id="btn_adjust_bottom">
                                     <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="focus_on_click">False</property>
+                                    <property name="receives_default">False</property>
                                     <property name="tooltip_text" translatable="yes">Fine Tune Bottom Margin:
 
 Click this button to shrink or expand the bottom margin 
@@ -4934,7 +4883,7 @@ then do NOT click this option. Instead, use the similar
 button to adjust either the Line Spacing or Top Margin.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
-                                    <property name="image">icon_adjust1</property>
+                                    <property name="image">icon_adjust_bottom</property>
                                     <property name="always_show_image">True</property>
                                     <signal name="clicked" handler="onMagicAdjustClicked" swapped="no"/>
                                   </object>
@@ -4963,6 +4912,66 @@ measuring the physical printout.</property>
                                   <packing>
                                     <property name="left_attach">5</property>
                                     <property name="top_attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkSpinButton" id="s_topmargin">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="tooltip_text" translatable="yes">The primary margin is set on the Layout tab, but
+this setting can be used to increase/decrease the 
+space at the top of the page and determines
+where the main text begins. This setting is a 
+factor (without units) and is multiplied by the
+Margins value on the Layout tab.</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">center</property>
+                                    <property name="width_chars">5</property>
+                                    <property name="text">1.80</property>
+                                    <property name="xalign">1</property>
+                                    <property name="caps_lock_warning">False</property>
+                                    <property name="placeholder_text">0.0</property>
+                                    <property name="input_purpose">number</property>
+                                    <property name="adjustment">a_topmargin</property>
+                                    <property name="climb_rate">0.5</property>
+                                    <property name="digits">1</property>
+                                    <property name="numeric">True</property>
+                                    <property name="update_policy">if-valid</property>
+                                    <property name="value">18</property>
+                                    <signal name="value-changed" handler="onBodyHeightChanged" swapped="no"/>
+                                    <signal name="value-changed" handler="onNumTabsChanged" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">4</property>
+                                    <property name="top_attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkImage" id="gr_marginGraphicLineFalse">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="margin_left">12</property>
+                                    <property name="pixbuf">MarginGraphicLineFalse.png</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">1</property>
+                                    <property name="width">3</property>
+                                    <property name="height">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkImage" id="gr_marginGraphicLineTrue">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="margin_left">12</property>
+                                    <property name="pixbuf">MarginGraphicLineTrue.png</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">1</property>
+                                    <property name="width">3</property>
+                                    <property name="height">3</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -8916,6 +8925,7 @@ in order to get accurate Image Copyright Attribution.</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="valign">start</property>
+                                <property name="margin_right">6</property>
                                 <property name="hexpand">True</property>
                                 <property name="shadow_type">etched-in</property>
                                 <property name="overlay_scrolling">False</property>
@@ -8923,6 +8933,8 @@ in order to get accurate Image Copyright Attribution.</property>
                                   <object class="GtkViewport">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="margin_left">4</property>
+                                    <property name="margin_right">12</property>
                                     <property name="margin_top">4</property>
                                     <property name="margin_bottom">4</property>
                                     <property name="vexpand">True</property>
@@ -8976,6 +8988,7 @@ Before Colophon</property>
 of the last page of the last book. If this option
 is checked, then the colophon will appear at the 
 bottom of a new page at the end of the publication.</property>
+                                <property name="valign">start</property>
                                 <property name="draw_indicator">True</property>
                               </object>
                               <packing>
@@ -9003,7 +9016,6 @@ publication. This will be printed at the END
 of the book. Similar to a "biblio-page" or a
 "copyright-page" at the front of a book.</property>
                             <property name="halign">start</property>
-                            <property name="valign">center</property>
                             <property name="active">True</property>
                             <property name="draw_indicator">True</property>
                             <signal name="clicked" handler="onColophonClicked" swapped="no"/>
@@ -9013,7 +9025,7 @@ of the book. Similar to a "biblio-page" or a
                       </object>
                       <packing>
                         <property name="expand">False</property>
-                        <property name="fill">False</property>
+                        <property name="fill">True</property>
                         <property name="position">3</property>
                       </packing>
                     </child>
@@ -9089,7 +9101,7 @@ content of Headers and Footers.</property>
                                       <object class="GtkTreeSelection"/>
                                     </child>
                                     <child>
-                                      <object class="GtkTreeViewColumn">
+                                      <object class="GtkTreeViewColumn" id="col_anchor">
                                         <property name="spacing">2</property>
                                         <property name="sizing">fixed</property>
                                         <property name="fixed_width">72</property>
@@ -9121,7 +9133,7 @@ content of Headers and Footers.</property>
                                       </object>
                                     </child>
                                     <child>
-                                      <object class="GtkTreeViewColumn">
+                                      <object class="GtkTreeViewColumn" id="col_file">
                                         <property name="resizable">True</property>
                                         <property name="spacing">2</property>
                                         <property name="sizing">fixed</property>
@@ -9136,7 +9148,7 @@ content of Headers and Footers.</property>
                                       </object>
                                     </child>
                                     <child>
-                                      <object class="GtkTreeViewColumn">
+                                      <object class="GtkTreeViewColumn" id="col_frame">
                                         <property name="resizable">True</property>
                                         <property name="spacing">2</property>
                                         <property name="sizing">fixed</property>
@@ -9151,7 +9163,7 @@ content of Headers and Footers.</property>
                                       </object>
                                     </child>
                                     <child>
-                                      <object class="GtkTreeViewColumn">
+                                      <object class="GtkTreeViewColumn" id="col_scale">
                                         <property name="spacing">2</property>
                                         <property name="sizing">fixed</property>
                                         <property name="fixed_width">38</property>
@@ -9166,7 +9178,7 @@ content of Headers and Footers.</property>
                                       </object>
                                     </child>
                                     <child>
-                                      <object class="GtkTreeViewColumn">
+                                      <object class="GtkTreeViewColumn" id="col_posn">
                                         <property name="spacing">2</property>
                                         <property name="sizing">fixed</property>
                                         <property name="title" translatable="yes">Posn</property>
@@ -9180,7 +9192,7 @@ content of Headers and Footers.</property>
                                       </object>
                                     </child>
                                     <child>
-                                      <object class="GtkTreeViewColumn">
+                                      <object class="GtkTreeViewColumn" id="col_ref">
                                         <property name="spacing">2</property>
                                         <property name="sizing">fixed</property>
                                         <property name="fixed_width">50</property>
@@ -9194,7 +9206,7 @@ content of Headers and Footers.</property>
                                       </object>
                                     </child>
                                     <child>
-                                      <object class="GtkTreeViewColumn">
+                                      <object class="GtkTreeViewColumn" id="col_mirror">
                                         <property name="spacing">2</property>
                                         <property name="sizing">fixed</property>
                                         <property name="fixed_width">45</property>
@@ -9208,7 +9220,7 @@ content of Headers and Footers.</property>
                                       </object>
                                     </child>
                                     <child>
-                                      <object class="GtkTreeViewColumn">
+                                      <object class="GtkTreeViewColumn" id="col_desc">
                                         <property name="resizable">True</property>
                                         <property name="spacing">2</property>
                                         <property name="sizing">fixed</property>
@@ -9223,7 +9235,7 @@ content of Headers and Footers.</property>
                                       </object>
                                     </child>
                                     <child>
-                                      <object class="GtkTreeViewColumn">
+                                      <object class="GtkTreeViewColumn" id="col_copy">
                                         <property name="resizable">True</property>
                                         <property name="spacing">2</property>
                                         <property name="sizing">fixed</property>
@@ -9238,7 +9250,7 @@ content of Headers and Footers.</property>
                                       </object>
                                     </child>
                                     <child>
-                                      <object class="GtkTreeViewColumn">
+                                      <object class="GtkTreeViewColumn" id="col_media">
                                         <property name="spacing">2</property>
                                         <property name="sizing">fixed</property>
                                         <property name="fixed_width">32</property>
@@ -9253,11 +9265,11 @@ content of Headers and Footers.</property>
                                       </object>
                                     </child>
                                     <child>
-                                      <object class="GtkTreeViewColumn">
+                                      <object class="GtkTreeViewColumn" id="col_credit">
                                         <property name="resizable">True</property>
                                         <property name="spacing">2</property>
                                         <property name="sizing">fixed</property>
-                                        <property name="fixed_width">140</property>
+                                        <property name="fixed_width">100</property>
                                         <property name="title" translatable="yes">Credit</property>
                                         <child>
                                           <object class="GtkCellRendererText" id="cr_credit"/>
@@ -9268,10 +9280,10 @@ content of Headers and Footers.</property>
                                       </object>
                                     </child>
                                     <child>
-                                      <object class="GtkTreeViewColumn">
+                                      <object class="GtkTreeViewColumn" id="col_crrot">
                                         <property name="spacing">2</property>
                                         <property name="sizing">fixed</property>
-                                        <property name="fixed_width">40</property>
+                                        <property name="fixed_width">38</property>
                                         <property name="title" translatable="yes">CrRotate</property>
                                         <property name="alignment">0.5</property>
                                         <child>
@@ -9283,10 +9295,10 @@ content of Headers and Footers.</property>
                                       </object>
                                     </child>
                                     <child>
-                                      <object class="GtkTreeViewColumn">
+                                      <object class="GtkTreeViewColumn" id="col_crbox">
                                         <property name="spacing">2</property>
                                         <property name="sizing">fixed</property>
-                                        <property name="fixed_width">60</property>
+                                        <property name="fixed_width">45</property>
                                         <property name="title" translatable="yes">CrBox</property>
                                         <child>
                                           <object class="GtkCellRendererText" id="cr_crbox"/>
@@ -9297,7 +9309,7 @@ content of Headers and Footers.</property>
                                       </object>
                                     </child>
                                     <child>
-                                      <object class="GtkTreeViewColumn">
+                                      <object class="GtkTreeViewColumn" id="col_crposn">
                                         <property name="spacing">2</property>
                                         <property name="sizing">fixed</property>
                                         <property name="fixed_width">20</property>
@@ -9350,7 +9362,7 @@ content of Headers and Footers.</property>
                                     <property name="visible">True</property>
                                     <property name="sensitive">False</property>
                                     <property name="can_focus">False</property>
-                                    <property name="halign">start</property>
+                                    <property name="halign">end</property>
                                     <property name="valign">end</property>
                                     <property name="margin_left">4</property>
                                     <property name="margin_right">4</property>
@@ -9548,7 +9560,7 @@ the Basic tab.</property>
                                 <signal name="select-page" handler="onPLpageChanged" swapped="no"/>
                                 <signal name="switch-page" handler="onPLpageChanged" swapped="no"/>
                                 <child>
-                                  <object class="GtkBox" id="tb_picList">
+                                  <object class="GtkBox" id="tb_settings">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="valign">start</property>
@@ -9592,6 +9604,8 @@ on the Details, Checklist and Credit Overlay tabs.</property>
                                             <property name="can_focus">False</property>
                                             <property name="halign">start</property>
                                             <property name="valign">start</property>
+                                            <property name="margin_left">4</property>
+                                            <property name="margin_right">4</property>
                                             <property name="row_spacing">3</property>
                                             <property name="column_spacing">6</property>
                                             <property name="row_homogeneous">True</property>
@@ -9880,15 +9894,15 @@ images, not just those with lines.</property>
                                             </child>
                                             <child>
                                               <object class="GtkLabel" id="lb_selectFigureFolder">
-                                                <property name="width_request">300</property>
+                                                <property name="width_request">320</property>
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">False</property>
                                                 <property name="opacity">0.80000000000000004</property>
                                                 <property name="halign">start</property>
-                                                <property name="valign">start</property>
-                                                <property name="margin_top">6</property>
+                                                <property name="valign">center</property>
                                                 <property name="ellipsize">middle</property>
-                                                <property name="max_width_chars">128</property>
+                                                <property name="single_line_mode">True</property>
+                                                <property name="max_width_chars">60</property>
                                               </object>
                                               <packing>
                                                 <property name="left_attach">1</property>
@@ -11320,8 +11334,8 @@ in this publication, as well as other contexts.</property>
                                             <property name="can_focus">False</property>
                                             <property name="tooltip_text" translatable="yes">Type the text for the Credit to be overlaid
 on the image. Note that there are shortcuts:
-   (c) --&gt; ©
-   DCC --&gt; © David C. Cook
+   (c)   --&gt; ©
+   dcc  --&gt; © David C. Cook
        or --&gt; © DCC   (if Sensitive Project is set)</property>
                                             <property name="label" translatable="yes">Image Credit Text:</property>
                                           </object>
@@ -11336,9 +11350,9 @@ on the image. Note that there are shortcuts:
                                             <property name="can_focus">True</property>
                                             <property name="tooltip_text" translatable="yes">Type the text for the Credit to be overlaid
 on the image. Note that there are shortcuts:
-(c) --&gt; ©
-DCC --&gt; © David C. Cook
-    or --&gt; © DCC   (if Sensitive Project is set)</property>
+   (c)   --&gt; ©
+   dcc  --&gt; © David C. Cook
+       or --&gt; © DCC   (if Sensitive Project is set)</property>
                                             <property name="placeholder_text" translatable="yes">Enter Image Credit text...</property>
                                             <signal name="changed" handler="onCopyrightStatementChanged" swapped="no"/>
                                           </object>
@@ -16588,7 +16602,7 @@ be displayed (in red) just to the left.</property>
                 <property name="margin_top">3</property>
                 <property name="margin_bottom">3</property>
                 <property name="draw_indicator">True</property>
-                <signal name="clicked" handler="tryHidingTreeView" swapped="no"/>
+                <signal name="clicked" handler="tryHidingTreeViewCols" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>

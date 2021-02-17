@@ -45,7 +45,7 @@ _defaults = {
 }
 
 _picLimitDefault = {
-    'ab': ('paw','paw', 'Permission requirements unknown'),
+    'ab': ('p','x', 'Sorry, but permission to use these images in ANY media has been withdrawn!'),
     'cn': ('paw','paw', 'Any media, but needs written permission'),
     'co': ('paw','paw', 'Any media, but needs written permission'),
     'hk': ('pa','p', 'Print is fine, but App use requires a formal agreement and reporting. Web use is not permitted.'),
