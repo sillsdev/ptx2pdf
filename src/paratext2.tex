@@ -410,8 +410,8 @@
 \global\output={\onecol}
 \global\holdinginserts=1
 \def\onecol{%
-  \trace{b}{BALANCE pagebuild: cols=1: textheight=\the\textheight}%
   \global\setbox\galley=\copy255                                        %(1)
+  \trace{b}{BALANCE pagebuild: cols=1: textheight=\the\textheight\space with ht=\the\ht255 \space and partial=\the\ht\partial}%
   % tempoarily split and see if there are marks in this text
   \bgroup\setbox0=\copy255 \setbox1=\vsplit0 to \maxdimen\egroup        %(+)
   \edef\t@mp{\splitbotmark}%
@@ -459,7 +459,7 @@
     \def\pagecontents{%                                                     %(3)
 %      \msg{upwards mode = \the\XeTeXupwardsmode}
       \dimen1=\textwidth \advance\dimen1 -\ExtraRMargin
-      \trace{b}{BALANCE pangeoutins: cols=1: text=\the\ht\colA, \the\dp\colA: partial=\the\ht\partial, \the\dp\partial: topins=\the\ht\topins: bottomins=\the\ht\bottomins}
+      \trace{b}{BALANCE pageoutins: cols=1: text=\the\ht\colA, \the\dp\colA: partial=\the\ht\partial, \the\dp\partial: topins=\the\ht\topins: bottomins=\the\ht\bottomins}
       \ifvoid\partial\else \vbox{\hbox to \dimen1{\hskip\columnshift\vbox{\unvbox\partial}}} \fi
       \ifvoid\topins\else \vbox{\hbox to \columnshift{}\box\topins} \vskip\skip\topins \fi
       \iflastpage\setbox\colA\vbox{\unvbox\colA}\fi
@@ -471,7 +471,7 @@
       \f@rstnotetrue%
       \m@kenotebox
       \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2 \space Leaving \the\ht255, \the\dp255}%
-      \ifdim\ht2<0pt\trace{b}{Strange notes height}\fi
+      \ifdim\ht2<-\lastd@pth\trace{b}{Strange notes height: \the\ht2}\fi
       \unvbox2
       \ifvoid\verybottomins\else\vfil % \kern-\dimen0
         \lastd@pth=0pt \vskip\skip\verybottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\verybottomins}}\fi
@@ -487,12 +487,14 @@
     \ifrerunsavepartialpaged\trace{o}{onecoltrial: rerunsavepartialpage}%
       \global\output={\savepartialpage}% leave flag set to allow caller to trigger extra \eject   %(+)
     \else\global\output={\onecol}\fi
+    \global\setbox255=\box\voidb@x
 %-c_onecoltrial_pagefit
 %+c_onecoltrial_fail
   \else % the contents of the "galley" didn't fit into the actual page,
         % so reduce \vsize and try again with an earlier break
     \trace{i}{1c REDUCING VSIZE hIns=\the\holdinginserts}%
     \global\advance\vsize by -\baselineskip
+    \trace{b}{BALANCE 1col go round vsize=\the\vsize}%
     \global\setbox\topins=\box\voidb@x
     \global\setbox\bottomins=\box\voidb@x
     \global\setbox\verybottomins=\box\voidb@x

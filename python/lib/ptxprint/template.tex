@@ -74,7 +74,7 @@
 %\extrafont
 
 {document/ifletter}\newskip\intercharskip \intercharskip=0pt plus {document/letterstretch:.2f}em minus {document/lettershrink:.2f}em
-{document/ifletter}\def\letterspace{{\nobreak\hskip\intercharskip}}
+{document/ifletter}\def\letterspace{{\leavevmode\nobreak\hskip\intercharskip}}
 {document/ifletter}\DefineActiveChar{{^^^^fdd0}}{{\letterspace}}
 
 

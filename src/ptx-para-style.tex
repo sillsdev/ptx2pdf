@@ -257,7 +257,7 @@
    \ifnum 0\ifdr@ppednumber 1\else\ifnum\dropped@ther@lines>0 1\fi\ifx\pending@items\cstackempty\else1\fi\fi>0 % the preceding par had a dropped number or other cutout;                       %(2)
                     % add \nobreak if it was a single line, else clear the flag
      \x@\write\x@\p@rlocs\x@{\x@\noexpand\x@\@parlines\x@{\the\prevgraf}}%
-     \ifnum\prevgraf=1 \nobreak \else 
+     \ifnum\prevgraf=1 \nobreak\else 
        \dr@ppednumberfalse 
        \ifnum\prevgraf<\dropped@ther@lines \nobreak
        \fi
@@ -335,7 +335,7 @@
   \fi\fi\fi                                                                     %(2)
   \ifhe@dingstyle\trace{s}{headingstyle true}%
     \ifhe@dings\nsp@cebeforetrue\s@tbaseline{\m@rker}%In a heading again, may be different so set a new baseline
-      \else
+    \else
         % Headingtopspace gets removed at top of page, preserve for titles.
         \getp@ram{spacebefore}{\m@rker}\ifx\p@ram\relax\xdef\headingtopspace{0}\else
           \ift@tle\xdef\headingtopspace{0}\else\xdef\headingtopspace{\p@ram}\fi\fi
