@@ -238,9 +238,9 @@
 \titlefoot={\rlap{\RFtitleleft}\hfil\RFtitlecenter\hfil\llap{\RFtitleright}}
 
 
-\def\s@treffont{\let\tmp\c@rrdstat\ifuseRightMarks\setc@rdstat{R}\else\setc@rdstat{L}\fi\s@tfont{h}\setc@rdstat{\tmp}}
-\def\headfootL#1{\bgroup\ifRTL\beginR\fi\let\tmp\c@rrdstat\setc@rdstat{L}\s@tfont{h}#1\setc@rdstat{\tmp}\ifRTL\endR\fi\egroup}
-\def\headfootR#1{\bgroup\ifRTL\beginR\fi\let\tmp\c@rrdstat\setc@rdstat{R}\s@tfont{h}#1\setc@rdstat{\tmp}\ifRTL\endR\fi\egroup}
+\def\s@treffont{\let\tmp@dstat\c@rrdstat\ifuseRightMarks\setc@rdstat{R}\else\setc@rdstat{L}\fi\s@tfont{h}\setc@rdstat{\tmp@dstat}}
+\def\headfootL#1{\bgroup\ifRTL\beginR\fi\let\tmp@dstat\c@rrdstat\setc@rdstat{L}\s@tfont{h}#1\setc@rdstat{\tmp@dstat}\ifRTL\endR\fi\egroup}
+\def\headfootR#1{\bgroup\ifRTL\beginR\fi\let\tmp@dstat\c@rrdstat\setc@rdstat{R}\s@tfont{h}#1\setc@rdstat{\tmp@dstat}\ifRTL\endR\fi\egroup}
 %
 % user-level macros for use within the running header
 %

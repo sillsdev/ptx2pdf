@@ -323,15 +323,19 @@
 }
 
 \def\rej@ctgalley{%For calling by trial routines that don't like the galley they've just been given 
-  \trace{d}{rej@ctgalley}%
+  \trace{d}{rej@ctgalley (\c@rrdstat)}%
   \r@storenotes{\g@tdstat}{1}%
-  \restore@oldmarks{\g@tdstat}%
-  \global\output={\diglot@backingup}%
-  \global\vsize=\trialheight
-  \global\holdinginserts=1
-  \undog@lley
-  \penalty\endtri@lpen@lty
-  \relax
+  \restore@oldmarks{\c@rrdstat}%
+  \ifdim\trialheight<0pt
+    \boxmovedtrue
+  \else
+    \global\output={\diglot@backingup}%
+    \global\vsize=\trialheight
+    \global\holdinginserts=1
+    \undog@lley
+    \penalty\endtri@lpen@lty
+    \relax
+  \fi
 }
 
 \def\diglot@backingup{%Similar to but more complex than monoglot backing-up
@@ -449,7 +453,7 @@
     LBP:\the\Lboxpenalty, PLP:\the\partialLpenalty, SLP:\savedLpenalty,
     RBP:\the\Rboxpenalty, PRP:\the\partialRpenalty, SRP:\savedRpenalty,
     DCyc:\the\deadcycles,
-    LB:\the\ht\Lbox+\the\dp\Lbox, av:\the\availht, vs:\the\vsize, pg:\the\pagegoal}%
+    LB:\the\ht\Lbox+\the\dp\Lbox, av:\the\availht, vs:\the\vsize, pg:\the\pagegoal iftrialfailed\iftrialfailed true\else false\fi}%
   \ifnum\TRACEcount=\diglotDbgJoinboxes
    \showbox\trialbox\showbox\galleyexc@ss\showlists
   \fi
@@ -457,6 +461,7 @@
   %
   %Testing acceptability of result:
   \tempfalse
+  \let\after@this=\after@after@a@trial
   \iftrialfailed\else
     \TempDim=\dimexpr \availht-\ht\trialbox\relax
     \ifdim \dp\trialbox > 0.5\baselineskip % Is the depth of the box significant?
@@ -466,9 +471,9 @@
       \x@\ifvoid\csname excess\c@rrdstat\endcsname
         \x@\ifnum\csname saved\c@rrdstat penalty\endcsname>9999
           \advance\TempDim by -2\baselineskip
-          \trace{D}{Penalty does not allow this as last item on page, reserving 2 lines}%
+          \trace{D}{Penalty does not allow this as last item on page, reserving 2 lines: -> \the\TempDim}%
         \fi
-        \ifdim \TempDim<-0.2\baselineskip %Unacceptable
+        \ifdim \TempDim<-0.2\baselineskip %then Unacceptably over-full
           \trace{D}{Not enough space for the suggested galley}%
           \temptrue %
         \fi
@@ -476,15 +481,23 @@
     \fi
   \fi
   \iftemp
+    \traceNum{D}{Rejecting \the\ht\partialL+\the\dp\partialL,\the\ht\galley+\the\dp\galley, :: \the\ht\galleyexc@ss+\the\dp\galleyexc@ss (\the\trialheight}%
+    \ifnum\TRACEcount=\diglotDbgJoinboxes
+      \x@\showbox\csname partial\c@rrdstat\endcsname 
+      \x@\showbox\csname excess\c@rrdstat\endcsname 
+      \showbox\galley
+    \fi
     \global\advance\trialheight by -1\baselineskip
-    \rej@ctgalley
+    \ifdim\trialheight>\baselineskip
+      \let\after@this=\rej@ctgalley
+    \else
+      \global\trialfailedtrue
+      \global\pagefulltrue
+      \@trial@failed
+    \fi
   \else
     \iftrialfailed
-      \trace{D}{trial failed, (end of?) input moved}%(the start may have been set already
-      %Undo the vsplit (all mtl into excessX)
-      \x@\global\x@\setbox\csname excess\c@rrdstat\endcsname\vbox{\joinboxes{\csname partial\c@rrdstat\endcsname}{\csname excess\c@rrdstat\endcsname}{3}{\csname partial\c@rrdstat penalty\endcsname}}%
-      \let\col@do=\restore@oldmarks
-      \x@\each@col\diglot@list\E
+      \@trial@failed
     \else
       \makevtop{\trialbox}%
       \ifvoid\galleyexc@ss
@@ -504,37 +517,46 @@
     \fi
     \trace{D}{End of after@a@trial LB:\the\ht\Lbox+\the\dp\Lbox, RB:\the\ht\Rbox+\the\dp\Rbox}%
     %\showlists
-    \after@after@a@trial
   \fi
+  \after@this
 }
 
+\def\@trial@failed{%
+  \trace{D}{trial failed, (end of?) input moved. refilling excess\c@rrdstat}%(the start may have been set already
+  %Undo the vsplit (all mtl into excessX)
+  \x@\global\x@\setbox\csname excess\c@rrdstat\endcsname\vbox{\joinboxes{\csname partial\c@rrdstat\endcsname}{\csname excess\c@rrdstat\endcsname}{3}{\csname partial\c@rrdstat penalty\endcsname}}%
+  \let\col@do=\restore@oldmarks
+  \x@\each@col\diglot@list\E
+}
+
+
 \def\update@marks{% Called on successful galley
-  \x@\let\x@\m@rknum\csname m@rknum\c@rrdstat\endcsname
-  \trace{H}{update@marks: \c@rrdstat uses marks\m@rknum}%
-  \edef\t@st{\firstmarks\m@rknum}%
-  \ifx\t@st\empty%
-    \trace{H}{update@marks: First mark was empty}% Presumably others also
-  \else%
-    \x@\let\x@\t@@st\csname oldbot\c@rrdstat mark\endcsname%
-    \ifx\t@st\t@@st\else % do not use if \firstmark,botmark are a carry-over,
-      \trace{H}{u@m: Setting bot\c@rrdstat mark to (\m@rknum) \botmarks\m@rknum [!=\csname oldbot\c@rrdstat mark\endcsname]}%
-      \global\m@rksonpagetrue
-      \x@\xdef\csname oldfirst\c@rrdstat mark\endcsname{\csname first\c@rrdstat mark\endcsname}%
-      \x@\xdef\csname oldbot\c@rrdstat mark\endcsname{\csname bot\c@rrdstat mark\endcsname}% Remember botmark in case this chunk isn't on the page
-      \x@\xdef\csname bot\c@rrdstat mark\endcsname{\botmarks\m@rknum}%
-      \x@\xdef\csname n@xtfirst\c@rrdstat mark\endcsname{\firstmarks\m@rknum}%If the chunk moves, then this will be the appropriate start-point
-      \x@\xdef\csname n@xtbot\c@rrdstat mark\endcsname{\botmarks\m@rknum}%If the chunk moves, then this will be the appropriate end-point
-      \x@\ifx\csname first\c@rrdstat mark\endcsname\empty
-        \trace{H}{u@m: Setting first\c@rrdstat mark to \firstmarks\m@rknum}%
-        \x@\xdef\csname first\c@rrdstat mark\endcsname{\firstmarks\m@rknum}%If the chunk moves, then this will be the appropriate start-point
-        \edef\t@st{\p@gefirstmark}%
-        \ifx\t@st\empty%
-          \trace{H}{dlt3: Setting (default) pagefirstmark to \firstmarks\m@rknum}%
-          \xdef\p@gefirstmark{\firstmarks1}%
-        \fi
+\x@\let\x@\m@rknum\csname m@rknum\c@rrdstat\endcsname
+\trace{H}{update@marks: \c@rrdstat\space uses marks\m@rknum}%
+\edef\t@st{\firstmarks\m@rknum}%
+\ifx\t@st\empty%
+  \trace{H}{update@marks: First mark was empty}% Presumably others also
+\else%
+  \x@\let\x@\t@@st\csname oldbot\c@rrdstat mark\endcsname%
+  \ifx\t@st\t@@st\else % do not use if \firstmark,botmark are a carry-over,
+    \trace{H}{u@m: Setting bot\c@rrdstat mark to (\m@rknum) \botmarks\m@rknum [!=\csname oldbot\c@rrdstat mark\endcsname]}%
+    \global\m@rksonpagetrue
+    \x@\xdef\csname oldfirst\c@rrdstat mark\endcsname{\csname first\c@rrdstat mark\endcsname}%
+    \x@\xdef\csname oldbot\c@rrdstat mark\endcsname{\csname bot\c@rrdstat mark\endcsname}% Remember botmark in case this chunk isn't on the page
+    \x@\xdef\csname bot\c@rrdstat mark\endcsname{\botmarks\m@rknum}%
+    \x@\xdef\csname n@xtfirst\c@rrdstat mark\endcsname{\firstmarks\m@rknum}%If the chunk moves, then this will be the appropriate start-point
+    \x@\xdef\csname n@xtbot\c@rrdstat mark\endcsname{\botmarks\m@rknum}%If the chunk moves, then this will be the appropriate end-point
+    \x@\ifx\csname first\c@rrdstat mark\endcsname\empty
+      \trace{H}{u@m: Setting first\c@rrdstat mark to \firstmarks\m@rknum}%
+      \x@\xdef\csname first\c@rrdstat mark\endcsname{\firstmarks\m@rknum}%If the chunk moves, then this will be the appropriate start-point
+      \edef\t@st{\p@gefirstmark}%
+      \ifx\t@st\empty%
+        \trace{H}{dlt3: Setting (default) pagefirstmark to \firstmarks\m@rknum}%
+        \xdef\p@gefirstmark{\firstmarks1}%
       \fi
     \fi
   \fi
+\fi
 }
 
 
@@ -545,7 +567,7 @@
  %it calls whichtrial 
  %as though it hadn't been here.
  %Assumptions: holdinginserts=1 material in \galley and \galleyexc@ss
-  \trace{d}{diglot@any@trial \the\ht255+\the\dp255\space hIns=\the\holdinginserts(==0 1st time) op=\the\outputpenalty, etp=\endtri@lpen@lty, dc=\the\deadcycles, \the\ht\galleyexc@ss+\the\dp\galleyexc@ss}%
+  \trace{d}{diglot@any@trial \the\ht255+\the\dp255\space hIns=\the\holdinginserts(==0 1st time) op=\the\outputpenalty, etp=\endtri@lpen@lty, dc=\the\deadcycles, xs:\the\ht\galleyexc@ss+\the\dp\galleyexc@ss, th:\the\trialheight}%
   %\tracingifs=1
   \ifnum\holdinginserts=0\else
     \ifvoid\trialbox
@@ -569,7 +591,7 @@
       \advance\TempDim by -\dp255
     \fi 
     \global\setbox\trialbox=\box255
-    \ifdim\TempDim<-0.5\baselineskip % Coarse test. main trial routine can be pickier if it wants
+    \ifdim\TempDim<-0.3\baselineskip % Coarse test. main trial routine can be pickier if it wants
       \trace{D}{Initial Content does not fit (\the\trialheight, \the\TempDim, \the\availht)}%
       \global\trialfailedtrue
     \else
@@ -718,7 +740,7 @@
 \def\g@tdstat{\ifdiglot\if\c@rrdstat L\else\c@rrdstat\fi\fi}% Returns "" or "R" (Or other state values in the future)
 
 \def\show@dstat{\c@rrdstat\f@lwgdstat\n@xtdstat}% for debugging output 
-\def\setc@rdstat#1{\gdef\c@rrdstat{#1}%
+\def\setc@rdstat#1{\xdef\c@rrdstat{#1}%
  \ifx\c@rrdstat\empty
    \diglotfalse % Is this necessary? YES.
    \trace{d}{current diglot state set to empty! End of diglot?}%
@@ -727,7 +749,7 @@
    \if#1L\relax\global\diglotLtrue\else\global\diglotLfalse\fi%Compatability
  \fi
 }
-\def\setf@lwgdstat#1{\gdef\f@lwgdstat{#1}%
+\def\setf@lwgdstat#1{\xdef\f@lwgdstat{#1}%
  \if#1L\global\digl@tLtrue\else\global\digl@tLfalse\fi%Compatability
 }
 
@@ -1060,11 +1082,11 @@
   \ifdim\availht<\baselineskip %
     \global\pagefulltrue%
   \else%
-    \global\trialheight=\availht\relax%
-    \global\vsize=\trialheight\relax%
   \fi%
   \ifdim\TempDim>0.1pt
     \global\deadcycles=0 %Reset deadcycles only if there's actual matter being added.
+    \global\trialheight=\availht\relax%
+    \global\vsize=\trialheight\relax%
   \fi
   \ifpagefull%
     \@add@n@xtpartial
@@ -1310,7 +1332,6 @@
   \xdef\p@gefirstmark{\nextp@gefirstmark}%
   \xdef\p@gebotmark{}%
   \xdef\nextp@gefirstmark{}%
-  \edef\botmark{\p@gebotmark}%
   \let\col@do=\reset@marks
   \x@\each@col\diglot@list\E% 
   \setc@rdstat{\f@lwgdstat}%Set the current diglotstatus
@@ -1366,7 +1387,7 @@
 
 % for 'Mark' activity around n@xtpartial and aborted trials.
 \def\reset@marks#1{% Called at page output
-  \trace{H}{Resetting first#1mark}%
+  \trace{H}{Resetting first#1mark and friends}%
   \x@\xdef\csname first#1mark\endcsname{}%
   \x@\xdef\csname oldbot#1mark\endcsname{\csname bot#1mark\endcsname}%
   \x@\xdef\csname bot#1mark\endcsname{}%
@@ -1398,7 +1419,7 @@
 %} 
 
 \def\restore@oldmarks#1{%Restore saved mark state
-  \trace{H}{restoring old marks}%
+  \trace{H}{restoring old marks (#1)}%
   \x@\xdef\csname first#1mark\endcsname{\csname oldfirst#1mark\endcsname}%
   \x@\xdef\csname bot#1mark\endcsname{\csname oldbot#1mark\endcsname}%
 }
@@ -1525,7 +1546,8 @@
   \ifboxmoved
     \ifnum\lastchunkpenalty>9999
       \postponen@xt@partial
-      \restore@storedmarks
+      \let\col@do=\restore@storedmarks
+      \x@\each@col\diglot@list\E% 
       \@writep@ge
       \@add@n@xtpartial
       \let\col@do=\reset@n@xt
@@ -1686,6 +1708,8 @@
 \def\testmarker{\hbox to 0pt{\vrule height 7pt depth 0pt width 0.5pt \kern-0.5pt}\message{_}}
 
 \addtoendptxhooks{
-       \bgroup\ifvoid\partial\else\@writep@ge\fi\ifdiglot\ifnum\pageno>0 \count255=\cumulativeDelta \divide\count255 by \numexpr 1+\pageno-\ptxst@rtp@ge\relax \message{Column delta for book:\the\cumulativeDelta pt (\the\count255 pt/ pg)\space(-ve means left longer)}\fi\fi\egroup\cumulativeDelta=0}%
+       \bgroup\ifdiglot\ifnum\pageno>0 \count255=\cumulativeDelta \divide\count255 by \numexpr 1+\pageno-\ptxst@rtp@ge\relax \message{Column delta for book:\the\cumulativeDelta pt (\the\count255 pt/ pg)\space(-ve means left longer)}\fi\fi\egroup\cumulativeDelta=0\relax
+ }%
+\addtoendhooks{\ifdiglot\ifvoid\partial\else\@writep@ge\fi\fi}
 
 \endinput

@@ -35,12 +35,26 @@ a child called ptxplus.
 \p 
 \v 5 And then did Mark and Martin come together and used Something Completely Different,  named python, and crafted the wondrous ptxprint. And David was asked if diglot would wed ptxprint. And David found the precious  treasure called time, and trimmed some strangenesses from diglot, and even from ptxprint  also. And behold, the two became one and marched forth into the world.
 
+\nolefttext
+\s2 The second coming of diglot
+
 \lefttext
+\p
 \v 6 After meeting a lot of bugs that were seemed increasingly complex to track
 down and fix, David (encouraged by Martin) delved deep into the insides of
-diglot and re-wrote the 'text collection' part significantly.  Then, meeting
+diglot and re-wrote the 'text collection' part significantly.  
+\v 7 Then, meeting
 yet more bugs, he went on to rip out the old horrendously complex
 column-filling/refilling/side swapping and layout portions of diglot.
+\v 8 Triglot (or more) is not yet possible, but it's now almost within touching
+distance.
 
-Triglot (or more) is not yet possible, but it's now almost within touching distance.
-
+\righttext 
+\p
+\v 6 Pernicious were the bugs that ailed diglot and David did valiantly battle
+them, but in the end surgery more drastic was demanded.
+\v 7 And by the hefty sword known as \it rewrite\it*, David
+conquered some of the bugs, and then he swung again at the innards of diglot
+and diglot2 was born from the mess.
+\p
+\v 8 And with the coming of diglot2 there is the beacon of hope, for diglot2 is written such that triglots and polyglots may come to pass.
