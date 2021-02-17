@@ -552,7 +552,7 @@ class GtkViewModel(ViewModel):
                   "s_colgutteroffset", "bx_TopMarginSettings", "gr_HeaderAdvOptions", "l_colgutteroffset",
                   "c_fighiderefs", "c_skipmissingimages", "c_useCustomFolder", "btn_selectFigureFolder", "c_exclusiveFiguresFolder",
                   "c_startOnHalfPage", "c_prettyIntroOutline", "c_marginalverses", "s_columnShift", "c_figplaceholders",
-                  "fr_fallbackFont", "fr_paragraphAdjust", "l_colgutteroffset", "fr_hyphenation",
+                  "fr_fallbackFont", "l_colgutteroffset", "fr_hyphenation",
                   "bx_fnCallers", "bx_fnCalleeCaller", "bx_xrCallers", "bx_xrCalleeCaller", "c_fnOverride", "c_xrOverride",
                   "row_ToC", "c_hyphenate", "l_missingPictureCount", "bx_colophon", "btn_deleteConfig", "btn_lockunlock",
                   "c_hdrLeftPri", "c_hdrLeftSec", "c_hdrCenterPri", "c_hdrCenterSec", "c_hdrRightPri", "c_hdrRightSec", 
@@ -949,7 +949,6 @@ class GtkViewModel(ViewModel):
             lockBtn.set_label(_("Unlock"))
         for c in ["btn_saveConfig", "btn_deleteConfig", "t_configNotes", "c_hideAdvancedSettings", 
                   "btn_Generate", "btn_plAdd", "btn_plDel"]:
-            print(c)
             self.builder.get_object(c).set_sensitive(status)
         
     def onExamineBookChanged(self, cb_examineBook):
@@ -1781,7 +1780,7 @@ class GtkViewModel(ViewModel):
             return
         self.updatePrjLinks()
         self.builder.get_object("btn_saveConfig").set_sensitive(True)
-        self.builder.get_object("btn_deleteConfig").set_sensitive(False)
+        # self.builder.get_object("btn_deleteConfig").set_sensitive(False)
         lockBtn = self.builder.get_object("btn_lockunlock")
         lockBtn.set_label("Lock")
         lockBtn.set_sensitive(False)
