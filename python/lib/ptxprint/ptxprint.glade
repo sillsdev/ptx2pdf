@@ -4686,9 +4686,8 @@ Top of Footer:</property>
                                   <object class="GtkSpinButton" id="s_bottommargin">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
-                                    <property name="tooltip_text" translatable="yes">This setting can be used to increase/decrease the 
-space at the bottom of the page and determines
-where the main text and footnotes and 
+                                    <property name="tooltip_text" translatable="yes">This setting set the space at the bottom of the page
+to define where the main text, footnotes and/or 
 cross-references end.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
@@ -4918,12 +4917,8 @@ measuring the physical printout.</property>
                                   <object class="GtkSpinButton" id="s_topmargin">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
-                                    <property name="tooltip_text" translatable="yes">The primary margin is set on the Layout tab, but
-this setting can be used to increase/decrease the 
-space at the top of the page and determines
-where the main text begins. This setting is a 
-factor (without units) and is multiplied by the
-Margins value on the Layout tab.</property>
+                                    <property name="tooltip_text" translatable="yes">This setting set the space at the top of the page
+to define where the main body text begins.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
                                     <property name="width_chars">5</property>
@@ -6405,8 +6400,8 @@ selected books/chapters will show in the glossary.</property>
 numbers - making the publication read
 more like an ordinary book.
 
-Note that there is another option on the
-Layout tab which will only "Hide Chapter
+Note that there is another option lower down
+in the next section which will only "Hide Chapter
 Number in Single Chapter Books".</property>
                                     <property name="halign">start</property>
                                     <property name="active">True</property>
@@ -9145,10 +9140,10 @@ content of Headers and Footers.</property>
                                 <property name="propagate_natural_height">True</property>
                                 <child>
                                   <object class="GtkTreeView" id="tv_picListEdit">
+                                    <property name="height_request">40</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="hexpand">True</property>
-                                    <property name="vexpand">True</property>
                                     <property name="hadjustment">a_picListadjustment1</property>
                                     <property name="hscroll_policy">natural</property>
                                     <property name="vadjustment">a_picListadjustment2</property>
@@ -13028,7 +13023,6 @@ from XeTeX processing.</property>
                                 <property name="tooltip_text" translatable="yes">The height of the Thumb Tab measured in millimeters (mm).</property>
                                 <property name="halign">start</property>
                                 <property name="width_chars">5</property>
-                                <property name="secondary_icon_tooltip_text" translatable="yes">Specifies the height of the tab in FontUnits. This value should be greater than the Font Size.</property>
                                 <property name="adjustment">a_thumbheight</property>
                                 <property name="climb_rate">0.10000000000000001</property>
                                 <property name="digits">1</property>
@@ -13122,7 +13116,6 @@ Tab Positions:</property>
                                 <property name="halign">start</property>
                                 <property name="width_chars">5</property>
                                 <property name="progress_pulse_step">0</property>
-                                <property name="secondary_icon_tooltip_text" translatable="yes">Width of the tab in margin units. Best to be less than the Side margins factor in the Layout tab.</property>
                                 <property name="adjustment">a_thumblength</property>
                                 <property name="climb_rate">0.10000000000000001</property>
                                 <property name="digits">1</property>
@@ -15193,7 +15186,7 @@ Factor:</property>
                                           <object class="GtkLabel" id="l_stySpaceBefore">
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
-                                            <property name="tooltip_text" translatable="yes">Amount of space to insert before the paragraph. The actual space is this factor multiplied by the base line spacing from the layout tab.</property>
+                                            <property name="tooltip_text" translatable="yes">Amount of space to insert before the paragraph. The actual space is this factor multiplied by the base line spacing from the Layout tab.</property>
                                             <property name="halign">end</property>
                                             <property name="label" translatable="yes">Space Before
 Factor:</property>
