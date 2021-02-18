@@ -210,20 +210,23 @@
 \def\dglt@calc@vailht{%
    \trace{D}{dglt@calc@vailht \c@rrdstat}%
    \global\availht=\textheight %
-   \global\advance\availht by \adjustp@ge % Panic measure..
+   \global\advance\availht by \adjustp@ge\relax % Panic measure..
    \global\advance\availht by -\ht\partial %
    \global\advance\availht by -\dp\partial %
    \global\advance\availht by -\ht\n@xtpartial %
    \global\advance\availht by -\dp\n@xtpartial %
    \trace{D}{after part1:\the\availht}%
    \ifdim\baselineDelta<0pt %FIXME, shouldn't this be side-dependent?
-     \global\advance\availht by \baselineDelta%
+     \global\advance\availht by \baselineDelta\relax%
    \else
-     \global\advance\availht by -\baselineDelta%
+     \global\advance\availht by -\baselineDelta\relax%
    \fi
    \trace{D}{after part2:\the\availht}%
    \f@rstnotetrue
    \let\\=\reduceavailht \the\n@tecl@sses % reduce it by the space needed for each note class
+   \iff@rstnote\else
+      \advance\availht by -\AboveNoteSpace
+   \fi
    \trace{D}{after notes:\the\availht}%
    \decr{\availht}{\topins}%pictures
    % Reduce by the height of whichever top picture takes the most space.
@@ -1005,14 +1008,14 @@
       %left are 'touching' and need separating
       \ifdim\baselineDelta<0pt 
         \trace{D}{Separating chunks \the\baselineDelta}%
-        \advance\thisjointDelta by -\baselineDelta
+        \advance\thisjointDelta by -\baselineDelta\relax
       \fi 
       %FIXME: RHS / small L baseline may need more attention
     \fi\fi
     \global\chunkDelta=\Rht
-    \global\advance\chunkDelta by -\Lht
+    \global\advance\chunkDelta by -\Lht\relax
     \trace{D}{new chunkDelta: \the\Rht - \the\Lht =  \the\chunkDelta}%
-    %save (as nxtchunkXht) and reset Xht
+    %save Lht and Rht (as "nxtchunkXht) and reset Xht
     \let\col@do\save@reset@ht
     \x@\each@col\diglot@list\E
     \bgroup
@@ -1022,7 +1025,7 @@
     \egroup
     \dimen8=0pt
     \ifdim\thisjointDelta>0pt
-      \advance\dimen8 by \thisjointDelta
+      \advance\dimen8 by \thisjointDelta\relax
     \fi
     \advance\dimen8 by \ht\Lbox
     \ifdim \dimen8 <\ht\Rbox \dimen8=\ht\Rbox \fi
@@ -1031,7 +1034,7 @@
     % apply columngutterruleskip?
     \tempfalse
     \ifdim\ht\partial=0pt\ifdim\dp\partial=0pt
-      \advance\dimen8 by -\ColumnGutterRuleSkip
+      \advance\dimen8 by -\ColumnGutterRuleSkip\relax
       \ifdim\ColumnGutterRuleSkip < 0pt
        \ifColumnGutterRule
           \temptrue
@@ -1193,29 +1196,39 @@
     \else %BalNotes
       \trace{f}{unBalanced notes}%
       \ifLRf@@tnotes%
-        %Lht and Rht hold the height of the last boxes that wanted to join the
-        %page, but both may be empty 
-        %p@geChunkDelta preserves the *actual* last content added to the page.
+        %curLht and curRht hold the height of the last boxes that joined the
+        %page,
         %Need to find out where to put the footnotes, as one of them should
         %be close to its respective text.
-        {\dimen1=-\p@geChunkDelta% dimen1 is step in last actual piece of text (for historic reasons, not the same way round as chunkDelta (which is R-L))
-        \dimen2=\ht\Lbox\relax%
-        \trace{D}{L:\the\Lht R:\the\Rht\space Dl:\the\p@geChunkDelta\space lf:(\the\ht\Lbox+\the\dp\Lbox) rf:(\the\ht\Rbox+\the\dp\Rbox)}%
-        \advance\dimen2 by -\ht\Rbox % dimen2 is step in footnotes
-        %
-        \dimen8=\ht\Lbox
-        \ifdim \dimen8 <\ht\Rbox \dimen8=\ht\Rbox \fi
-        \dimen9=\dp\Lbox
-        \ifdim \dimen9 <\dp\Rbox \dimen9=\dp\Rbox \fi
-        \advance\dimen8 by -\AboveNoteSpace
-        %\advance\dimen8 by \baselineskip
+        {
+        %Implement meshing algorithm:
+        \trace{fS}{Saving fn dimensions}%
+        \edef\v@lpfx{@fn}\let\col@do=\save@boxdim %Save footnote values
+        \x@\each@col\diglot@list\E
+        \edef\v@lsfx{ht}%
+        \trace{fS}{Finding max \v@lpfx X\v@lsfx}%
+        \let\col@do=\max@val\dimen1=0pt
+        \x@\each@col\diglot@list\E
+        \dimen2=\dimen1 %dimen2=note height 
+        \dimen8=\dimen1 %dimen8=note height (needed for rule)
+        \edef\v@lpfx{@cur}\dimen1=0pt
+        \trace{fS}{Finding max \v@lpfx X\v@lsfx}%
+        \x@\each@col\diglot@list\E
+        \advance\dimen2 by \dimen1%dimen2 now contains total natural height of text from last true synch-point and notes.
+        \edef\v@lpfxb{@fn}\dimen1=\dimen2
+        \trace{fS}{Finding min note sep \v@lpfxb Xht}%
+        \let\col@do=\min@note@sep% subtracts \v@lpfxb Xht and \v@lpfx Xht from dimen2, returning the smalles value in dimen1
+        \x@\each@col\diglot@list\E
+        \dimen3=\dimen1
+        %rule calcs: is #1 (dimen7) high, #3(dimen9) deep, and fits in a box #2(dimen8 - found earlier)high
+        \edef\v@lpfx{@fn}
+        \edef\v@lsfx{dp}\let\col@do=\max@val\dimen1=0pt
+        \trace{fS}{Finding max \v@lpfx X\v@lsfx}%
+        \x@\each@col\diglot@list\E
+        \dimen9=\dimen1
+        \advance\dimen8 by -\AboveNoteSpace\relax %stop the line a little short
         \dimen7=\dimen8
-          %\ifdim\availht>0pt%
-            %\advance\dimen7 by \the\availht
-            %\advance\dimen8 by \the\availht
-          %\fi
-          %\advance\dimen7 by \baselineskip
-          %\advance\dimen8 by \baselineskip
+        %
         \trace{d}{Gutter \the\dimen8 tall, \the\dimen9 deep}%
         \setbox\Lbox\hbox to \textwidth{%\vllap{\the\ht\Lbox \the\dp\Lbox}%
           \hbox to\columnshift{}%
@@ -1229,40 +1242,9 @@
             \hbox to\columnLwidth{\copy\Lbox\hss}%\rlap{\the\ht\Rbox \the\dp\Rbox}%
           \fi%
         }%
-        %\advance\dimen2 by -\ht\Rbox % dimen2 is step in footnotes
-        %%
-        %\setbox\Lbox\hbox to \textwidth{%\vllap{\the\ht\Lbox \the\dp\Lbox}%
-          %\hbox to\columnLwidth{\copy\Lbox\hss}\hskip\gutter\hbox to%
-          %\columnRwidth{\copy\Rbox\hss}%\rlap{\the\ht\Rbox \the\dp\Rbox}%
-        %}%
-        %dimen1 is step in text, dimen 2 is step in notes...
-        \trace{D}{Left-Right,  text:\the\dimen1 notes:\the\dimen2}%
-        \ifdim\dimen1<0pt %dimen1 -ve
-          \ifdim\dimen2<0pt %dimen2 -ve
-            \dimen3=0pt %No adjustment
-          \else  %dimen2 +ve
-            \ifdim\dimen1 > -\dimen2
-              \dimen3=-\dimen1
-            \else%
-              \dimen3=\dimen2
-            \fi%
-          \fi  %dimen2 %dimen2 -ve
-        \else %dimen1 +ve
-          \ifdim\dimen2<0pt %
-            \ifdim\dimen1 > -\dimen2
-              \dimen3=-\dimen2
-            \else%
-              \dimen3=\dimen1
-            \fi%
-          \else %dimen2 +ve
-            \dimen3=0pt %No adjustment
-          \fi%
-        \fi%
         \trace{f}{Adjusting footnotebox}%
         \trace{D}{Raising footnotebox by \the\dimen3}%
         \global\setbox\partial=\vbox{\unvbox\partial\kern -\dimen3\vskip 0.5\AboveNoteSpace plus 1fil \box\Lbox}%
-        \dimen0=-\dimen2 %Right-Left, like chunkDelta
-        \update@cumulative@delta
         }%
       \else%
         \trace{f}{No footnotes}%
@@ -1467,15 +1449,58 @@
   \x@\xdef\csname bot#1mark\endcsname{\csname n@xtbot#1mark\endcsname}%
 }
 
-\def\save@reset@ht#1{%Save the value of \Xht into \nxtchunkXht, and set it to 0
-  \x@\xdef\csname nxtchunk#1ht\endcsname{\x@\the\csname #1ht\endcsname}%
+%%%%%%%%%
+% \Xht calculations, for 'snuggling' footnotes.
+\def\@curLht{0pt}
+\let\@curRdp\@curLht
+\let\@curRht\@curLht
+\let\@curRdp\@curLht
+
+\def\save@reset@ht#1{%Save the value of \Xht into \@nxtchunkXht, and set it to 0
+  \x@\xdef\csname @nxtchunk#1ht\endcsname{\x@\the\csname #1ht\endcsname}%
   \x@\global\x@\csname #1ht\endcsname=0pt
+}
+\def\save@boxdim#1{%Save the height & depth of Xbox in \v@lpfx#1ht
+  \x@\xdef\csname \v@lpfx#1ht\endcsname{\x@\the\x@\ht\csname #1box\endcsname}%
+  \x@\xdef\csname \v@lpfx#1dp\endcsname{\x@\the\x@\dp\csname #1box\endcsname}%
+} 
+\def\check@nxtht#1{%If the nxtchunk#1 height =0 for a box? Set iftemp if yes 
+  \x@\ifdim\csname @nxtchunk#1ht\endcsname=0pt
+    \temptrue
+  \fi
+}
+\def\set@ht#1{%Set the values of curXht, using method based on \iftemp  (anything on the page is current by definition)
+  \x@\dimen1\x@=\csname @nxtchunk#1ht\endcsname
+  \x@\dimen0\x@=\csname @cur#1ht\endcsname
+  \x@\xdef\csname @old#1ht\endcsname{\the\dimen0}%
+  \iftemp
+    \advance\dimen1 by \dimen0
+  \fi
+  \x@\xdef\csname @cur#1ht\endcsname{\the\dimen1}%
+}
+
+\def\max@val#1{\x@\let\x@\t@st\csname \v@lpfx#1\v@lsfx\endcsname
+  \ifdim\dimen1<\t@st
+    \dimen1=\t@st
+  \fi
+}
+\def\min@note@sep#1{%
+  \x@\let\x@\t@st\csname \v@lpfx#1ht\endcsname
+  \x@\let\x@\t@stb\csname \v@lpfxb#1ht\endcsname
+  \dimen0=\dimen2
+  \message{Notesep: (#1) d2:\the\dimen2 - \t@st -\t@stb}%
+  \advance\dimen0 by -\t@st\relax
+  \advance\dimen0 by -\t@stb\relax
+  \ifdim\dimen1>\dimen0
+    \dimen1=\dimen0
+  \fi
+  \trace{fS}{Notesep for #1 is \the\dimen0, min: \the\dimen1}%
 }
 
 
 \def\each@col#1#2\E{% General purpose looper
   %\tracingmacros=1 \tracingassigns=1
-  %\trace{H}{each@col #1#2}%
+  \trace{De}{each@col #1#2}%
   \edef\t@st{#2}%
   \ifx\t@st\empty %#2 is empty
     \let\n@xt@col=\cstackrelax
@@ -1500,8 +1525,17 @@
     \voidn@xtpartial
     \let\col@do=\p@rtialmarks
     \x@\each@col\diglot@list\E
+    % Column height (depth) calcs:
+    \tempfalse
+    \trace{fS}{Checking for empty boxes}%
+    \let\col@do=\check@nxtht %sets iftemp
+    \x@\each@col\diglot@list\E
+    \trace{fS}{Saving new Xht values}%
+    \let\col@do=\set@ht %uses iftemp, 
+    \x@\each@col\diglot@list\E
+    %
+    %\global\p@geChunkDelta=\chunkDelta%
     \global\lastchunkpenalty=\chunkpenalty
-    \global\p@geChunkDelta=\chunkDelta%
     \global\chunkpenalty=-20000 %Everything ought to be bigger than this.
   \fi
 }
