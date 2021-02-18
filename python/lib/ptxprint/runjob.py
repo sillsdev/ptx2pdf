@@ -325,8 +325,8 @@ class RunJob:
         donebooks = []
         digdonebooks = []
         _digSecSettings = ["paper/pagesize", "paper/height", "paper/width", "paper/margins",
-                           "paper/sidemarginfactor", "paper/topmarginfactor", "paper/bottommarginfactor",
-                           "header/headerposition", "header/footerposition", "header/ruleposition",
+                           "paper/topmarginfactor", "paper/bottommarginfactor",
+                           "paper/headerposition", "paper/footerposition", "paper/ruleposition",
                            "document/ch1pagebreak", "document/bookintro", "document/introoutline", 
                            "document/parallelrefs", "document/elipsizemptyvs", "notes/iffootnoterule",
                            "notes/ifblendfnxr", "notes/includefootnotes", "notes/includexrefs", 
@@ -503,6 +503,8 @@ class RunJob:
         if not self.args.testing and not self.res:
             self.printer.incrementProgress()
             cmd = ["xdvipdfmx", "-E"]
+            if self.args & 1:
+                cmd += ["-vv"]
             if self.printer.get("c_PDFx1aOutput"):
                 cmd += ["-z", "0"]
             runner = call(cmd + [outfname.replace(".tex", ".xdv")], cwd=self.tmpdir)
