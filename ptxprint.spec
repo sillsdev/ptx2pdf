@@ -43,6 +43,7 @@ a = Analysis(['python/scripts/ptxprint', 'python/scripts/usfmerge'],
 							 'picLocationPreviews.png', 'ps_cmyk.icc', 
 							 'MarginGraphicLineTrue.png', 'MarginGraphicLineFalse.png', 'MarginGraphicBottom.png')]
                       + [('python/lib/ptxprint/sfm/*.bz2', 'ptxprint/sfm')]
+                      + [('fonts/' + f, 'ptxprint/fonts/' + f) for f in ('Empties.ttf', 'SourceSansPro-Regular.ttf')]
                       + [('src/mappings/*.tec', 'ptx2pdf/mappings')],
 #					  + [('python/lib/ptxprint/mo/' + y +'/LC_MESSAGES/ptxprint.mo', 'mo/' + y + '/LC_MESSAGES') for y in os.listdir('python/lib/ptxprint/mo')],
              datas =    [('python/lib/ptxprint/'+x, 'ptxprint') for x in 

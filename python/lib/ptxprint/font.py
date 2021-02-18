@@ -19,7 +19,7 @@ fontconfig_template = """<?xml version="1.0"?>
 def writefontsconf():
     inf = {}
     if sys.platform.startswith("win"):
-        fname = os.path.join(os.getenv("APPDATA", "Local", "SIL", "ptxprint", "fonts.conf"))
+        fname = os.path.join(os.getenv("LOCALAPPDATA", "SIL", "ptxprint", "fonts.conf"))
         inf['sysfontsdir'] = os.path.abspath(os.path.join(os.getenv("WINDIR"), "Fonts"))
     else:
         fname = os.path.expanduser("~/.config/ptxprint/fonts.conf")
