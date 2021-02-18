@@ -70,7 +70,6 @@
 \def\oldRmark{}
 \def\oldLmark{}
 \def\p@gebotmark{}
-
 \newif\ifVisTrace% Show lines where boxes are joined
 \newif\ifVisTraceExtra %Do VisTrace even in places where this breaks the layout.
 \VisTracefalse%
@@ -276,7 +275,7 @@
 \newcount\chunkpenalty %highest penalty encoutered yet for this chunk 
 \newcount\lastchunkpenalty %highest penalty previouschunk
 \newif\ifLneedsemptying
-\newif\ifallNeedEmptying %set by lefttext, etc. to indicate that the current chunck ends with the next side-transition. 
+\newif\ifallNeedEmptying %set by lefttext, etc. to indicate that the current chunk ends with the next side-transition. 
 
 % Initial \output routine for any side of scripture.
 \def\diglot@any@primary{%
@@ -724,7 +723,8 @@
 \newdimen\columnRwidth%
 \newdimen\availhtL
 \newdimen\availhtR
-\newdimen\chunkDelta % Difference between the last boxes set on the page (-ve=left longer)
+\newdimen\chunkDelta % Difference between the last boxes prepared for the page (-ve=left longer)
+\newdimen\p@geChunkDelta \p@geChunkDelta=0pt %as above, but *added* to the page.
 \newdimen\baselineDelta % semi-constant: difference between the L and R baselines.  Set in ptx-stylesheet (-ve=left longer) 
 \newdimen\thisjointDelta % difference between the L and R boxes (-ve=left longer)
 \newcount\cumulativeDelta % Sum of \chunkDelta values, in points
@@ -1009,8 +1009,12 @@
       \fi 
       %FIXME: RHS / small L baseline may need more attention
     \fi\fi
-    \chunkDelta=\Rht
+    \global\chunkDelta=\Rht
     \global\advance\chunkDelta by -\Lht
+    \trace{D}{new chunkDelta: \the\Rht - \the\Lht =  \the\chunkDelta}%
+    %save (as nxtchunkXht) and reset Xht
+    \let\col@do\save@reset@ht
+    \x@\each@col\diglot@list\E
     \bgroup
       \dimen0=\chunkDelta
       %\message{c255: \the\dimen0}%
@@ -1097,7 +1101,7 @@
   \let\col@do=\store@marks
   \x@\each@col\diglot@list\E %remember old marks state
   \s@venotes{\g@tdstat}{2}% remember old notestate 
-  \traceNum{d}{Writing new n@xtpartial : LB:\the\ht\Lbox+\the\dp\Lbox\space RB:\the\ht\Rbox+\the\dp\Rbox\space Last Delta:\the\chunkDelta}%\space Tot:\the\cumulativeDelta%
+  \traceNum{d}{Writing new n@xtpartial : LB:\the\ht\Lbox+\the\dp\Lbox\space RB:\the\ht\Rbox+\the\dp\Rbox\space p@gechunkDelta:\the\p@geChunkDelta}%\space Tot:\the\cumulativeDelta%
   \let\\=\upd
   \diglot@arrange@cols
   \TempDim=\dimexpr \ht\n@xtpartial + \dp\n@xtpartial\relax
@@ -1191,12 +1195,12 @@
       \ifLRf@@tnotes%
         %Lht and Rht hold the height of the last boxes that wanted to join the
         %page, but both may be empty 
-        %chunckDelta preserves the *actual* last content added to the page.
+        %p@geChunkDelta preserves the *actual* last content added to the page.
         %Need to find out where to put the footnotes, as one of them should
         %be close to its respective text.
-        {\dimen1=-\chunkDelta% dimen1 is step in last actual piece of text (for historic reasons, not the same way round as chunkDelta (which is R-L))
+        {\dimen1=-\p@geChunkDelta% dimen1 is step in last actual piece of text (for historic reasons, not the same way round as chunkDelta (which is R-L))
         \dimen2=\ht\Lbox\relax%
-        \trace{D}{L:\the\Lht R:\the\Rht\space Dl:\the\chunkDelta\space lf:(\the\ht\Lbox+\the\dp\Lbox) rf:(\the\ht\Rbox+\the\dp\Rbox)}%
+        \trace{D}{L:\the\Lht R:\the\Rht\space Dl:\the\p@geChunkDelta\space lf:(\the\ht\Lbox+\the\dp\Lbox) rf:(\the\ht\Rbox+\the\dp\Rbox)}%
         \advance\dimen2 by -\ht\Rbox % dimen2 is step in footnotes
         %
         \dimen8=\ht\Lbox
@@ -1463,6 +1467,12 @@
   \x@\xdef\csname bot#1mark\endcsname{\csname n@xtbot#1mark\endcsname}%
 }
 
+\def\save@reset@ht#1{%Save the value of \Xht into \nxtchunkXht, and set it to 0
+  \x@\xdef\csname nxtchunk#1ht\endcsname{\x@\the\csname #1ht\endcsname}%
+  \x@\global\x@\csname #1ht\endcsname=0pt
+}
+
+
 \def\each@col#1#2\E{% General purpose looper
   %\tracingmacros=1 \tracingassigns=1
   %\trace{H}{each@col #1#2}%
@@ -1491,6 +1501,7 @@
     \let\col@do=\p@rtialmarks
     \x@\each@col\diglot@list\E
     \global\lastchunkpenalty=\chunkpenalty
+    \global\p@geChunkDelta=\chunkDelta%
     \global\chunkpenalty=-20000 %Everything ought to be bigger than this.
   \fi
 }
