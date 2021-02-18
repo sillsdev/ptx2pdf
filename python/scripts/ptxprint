@@ -14,7 +14,7 @@ except ImportError:
     sys.path.append(os.path.join(os.path.dirname(__file__), "..", "lib"))
     import ptxprint
 from ptxprint.view import ViewModel, VersionStr, doError
-from ptxprint.font import initFontCache, cachepath
+from ptxprint.font import initFontCache, cachepath, writefontsconf
 from ptxprint.runjob import RunJob, isLocked
 from ptxprint.utils import _, setup_i18n, get_ptsettings, pt_bindir
 
@@ -60,6 +60,9 @@ if args.logging and getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
     sys.stderr = errfile
 
 if not args.print:
+    fontconfig_path = writefontsconf()
+    os.putenv("FONTCONFIG_FILE", fontconfig_path)
+    print(fontconfig_path) 
     from ptxprint.gtkview import GtkViewModel, getPTDir
 
 # necessary for the side effect of setting pt_bindir :(

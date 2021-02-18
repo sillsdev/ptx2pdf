@@ -1,8 +1,39 @@
 from ptxprint.runner import fclist, checkoutput
-import struct, re, os
+import struct, re, os, sys
 # from gi.repository import Pango
 from pathlib import Path
 from threading import Thread
+
+fontconfig_template = """<?xml version="1.0"?>
+<fontconfig>
+    <dir>{sysfontsdir}</dir>
+    <dir>{appfontsdir}</dir>
+    <dir prefix="xdg">fonts</dir>
+    <cachedir prefix="xdg">fontconfig</cachedir>
+    <include ignore_missing="yes">/etc/fonts/fonts.conf</include>
+    <include ignore_missing="yes" prefix="xdg">fontconfig/conf.d</include>
+    <include ignore_missing="yes" prefix="xdg">fontconfig/fonts.conf</include>
+</fontconfig>
+"""
+
+def writefontsconf():
+    inf = {}
+    if sys.platform.startswith("win"):
+        fname = os.path.join(os.getenv("APPDATA", "Local", "SIL", "ptxprint", "fonts.conf"))
+        inf['sysfontsdir'] = os.path.abspath(os.path.join(os.getenv("WINDIR"), "Fonts"))
+    else:
+        fname = os.path.expanduser("~/.config/ptxprint/fonts.conf")
+        inf['sysfontsdir'] = "/usr/share/fonts"
+    os.makedirs(os.path.dirname(fname), exist_ok=True)
+    fdir = os.path.join(os.path.dirname(__file__), '..')
+    for a in (['fonts'], ['..', '..', 'fonts']):
+        fpath = os.path.join(fdir, *a)
+        if os.path.exists(fpath):
+            inf['appfontsdir'] = fpath
+            break
+    with open(fname, "w", encoding="utf=8") as outf:
+        outf.write(fontconfig_template.format(**inf))
+    return fname
 
 #pango_styles = {Pango.Style.ITALIC: "italic",
 #    Pango.Style.NORMAL: "",
@@ -94,18 +125,15 @@ class TTFontCache:
             return res
 
     def runFcCache(self):
-        if self.busy:
-            self.thread.join()
         dummy = checkoutput(["fc-cache"], path="xetex")
         self.cache = {}
         self.loadFcList()
         for p in self.fontpaths:
-            self.addFontDir(p)
+            self.addFontDir(p, noadd=True)
         
-    def addFontDir(self, path):
-        if self.busy:
-            self.thread.join()
-        self.fontpaths.append(path)
+    def addFontDir(self, path, noadd=False):
+        if not noadd:
+            self.fontpaths.append(path)
         for fname in os.listdir(path):
             if fname.lower().endswith(".ttf"):
                 fpath = os.path.join(path, fname)
@@ -114,8 +142,6 @@ class TTFontCache:
                 self.cache.setdefault(f.family, {})[f.style] = fpath
 
     def removeFontDir(self, path):
-        if self.busy:
-            self.thread.join()
         self.fontpaths.remove(path)
         allitems = list(self.cache.items())
         for f, c in allitems:
@@ -130,16 +156,12 @@ class TTFontCache:
                 del self.cache[f]
 
     def fill_liststore(self, ls):
-        if self.busy:
-            self.thread.join()
         ls.clear()
         for k, v in sorted(self.cache.items()):
             score = sum(1 for j in ("Regular", "Bold", "Italic", "Bold Italic") if j in v)
             ls.append([k, 700 if score == 4 else 400])
 
     def fill_cbstore(self, name, cbs):
-        if self.busy:
-            self.thread.join()
         cbs.clear()
         v = self.cache.get(name, None)
         if v is None:
