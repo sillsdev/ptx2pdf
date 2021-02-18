@@ -188,7 +188,6 @@ class StyleEditorView(StyleEditor):
         results = {"Tables": {"th": {"thc": {}, "thr": {}}, "tc": {"tcc": {}, "tcr": {}}},
                    "Peripheral Materials": {"zpa-": {}},
                    "Identification": {"toc": {}}}
-        # print(sorted(self.allStyles()))
         for k in sorted(self.allStyles(), key=lambda x:(len(x), x)):
             v = self.sheet.get(k, self.basesheet.get(k, {}))
             if k == "p":
@@ -220,6 +219,7 @@ class StyleEditorView(StyleEditor):
         else:
             keyfn = lambda x:(len(x[0]), x[0])
         for k, v in sorted(d.items(), key=keyfn):
+            ismarker = True
             if k in self.sheet:
                 n = self.sheet[k].get('name', k)
                 if n is None:
@@ -227,9 +227,12 @@ class StyleEditorView(StyleEditor):
                 m = re.match(r"^([^-\s])+\s[^-]+(?:-|$)", n)
                 if m and m.group(1) not in ('OBSOLETE', 'DEPRECATED'):
                     n = k + " - " + n
+            elif k not in self.basesheet:
+                ismarker = False
+                n = k
             else:
                 n = k
-            s = [k, n, n != k]
+            s = [k, n, ismarker]
             this = self.treestore.append(parent, s)
             if len(v):
                 self._fill_store(v, this)
@@ -311,7 +314,7 @@ class StyleEditorView(StyleEditor):
                         val = data[m]
                         if m.lower() == "baseline":
                             val = re.sub(r"(-?\d*\.?\d*)(\D|$)", r"\1", str(val))
-                        self._setFieldVal(v, olddat, f)
+                        self._setFieldVal(m, v, olddat, f)
                         v = stylemap[v[3](False)]
                         break
                 else:
@@ -328,11 +331,11 @@ class StyleEditorView(StyleEditor):
                     oldval = oldval != v[2]
             if k == "FontSize":
                 self.set("l_styActualFontSize", "{:.1f}pt".format(float(val) / 12. * float(self.model.get("s_fontsize"))))
-            self._setFieldVal(v, oldval, val)
+            self._setFieldVal(k, v, oldval, val)
 
         stype = data.get('StyleType', old.get('StyleType', ''))
         _showgrid = {'Para': (True, True, False), 'Char': (False, True, False), 'Note': (True, True, True)}
-        visibles = _showgrid.get(stype[:4],(True, True, True))
+        visibles = _showgrid.get(stype[:4] if stype is not None else "",(True, True, True))
         for i, w in enumerate(('Para', 'Char', 'Note')):
             self.builder.get_object("ex_sty"+w).set_expanded(visibles[i])
             
@@ -358,7 +361,9 @@ class StyleEditorView(StyleEditor):
         except (TypeError, ValueError):
             return a == b
 
-    def _setFieldVal(self, v, oldval, val):
+    def _setFieldVal(self, k, v, oldval, val):
+        if val is None:
+            val = self.getval('p', k)
         w = self.builder.get_object(v[0])
         if w is None:
             print("Can't find widget {}".format(v[0]))
@@ -371,7 +376,7 @@ class StyleEditorView(StyleEditor):
             setWidgetVal(v[0], w, newval if v[4] is None else v[4](newval))
         if v[1] is not None:
             ctxt = self.builder.get_object(v[1]).get_style_context()
-            if not self._cmp(val, oldval):
+            if oldval is not None and not self._cmp(val, oldval):
                 ctxt.add_class("changed")
             else:
                 ctxt.remove_class("changed")
@@ -544,5 +549,5 @@ class StyleEditorView(StyleEditor):
             if newval is not None:
                 self._setFieldVal(stylemap[newk], newval, newval)
         oldval = old.get(k, v[2])
-        self._setFieldVal(v, oldval, oldval)
+        self._setFieldVal(k, v, oldval, oldval)
 
