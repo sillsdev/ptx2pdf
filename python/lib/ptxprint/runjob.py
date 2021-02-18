@@ -503,13 +503,14 @@ class RunJob:
         if not self.args.testing and not self.res:
             self.printer.incrementProgress()
             cmd = ["xdvipdfmx", "-E"]
-            if self.args & 1:
-                cmd += ["-vv"]
             if self.printer.get("c_PDFx1aOutput"):
                 cmd += ["-z", "0"]
+            if self.args.extras & 1:
+                cmd += ["-vv"]
+                print("runner has been defined as: {}".format(cmd + [outfname.replace(".tex", ".xdv")]))
             runner = call(cmd + [outfname.replace(".tex", ".xdv")], cwd=self.tmpdir)
-            print("runner has been defined as: {}".format(cmd + [outfname.replace(".tex", ".xdv")]))
-            print(runner)
+            if self.args.extra & 1:
+                print(f"Subprocess return value: {runner}")
             if isinstance(runner, subprocess.Popen) and runner is not None:
                 print("About to try runner.wait...")
                 try:
