@@ -62,7 +62,6 @@ if args.logging and getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
 fontconfig_path = writefontsconf()
 putenv("FONTCONFIG_FILE", fontconfig_path)
 if not args.print:
-    print(fontconfig_path) 
     from ptxprint.gtkview import GtkViewModel, getPTDir
 
 # necessary for the side effect of setting pt_bindir :(
