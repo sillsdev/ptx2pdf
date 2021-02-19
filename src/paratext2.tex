@@ -52,7 +52,7 @@
 \def\addtoendhooks#1{\x@\global\x@\@ndhooks\x@{\the\@ndhooks #1}}
 \newtoks\@ndhooks
 \let\s@ve@nd=\end
-\def\end{\par\vfill\supereject \the\@ndhooks \s@ve@nd}
+\def\end{\ifsk@pping\egroup\fi\par\vfill\supereject  \the\@ndhooks \s@ve@nd}
 
 %: `\addtoinithooks` is for stuff we do during one-time-setup before the first PTX file
 \def\addtoinithooks#1{\x@\global\x@\@nithooks\x@{\the\@nithooks #1}}

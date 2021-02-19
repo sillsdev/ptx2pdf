@@ -386,12 +386,8 @@
    \getp@ram{rightmargin}{\m@rker}%
    \ifx\p@ram\relax \else \advance \ifRTL\leftskip\else\rightskip\fi\p@ram \IndentUnit \fi
    \trace{s}{\m@rker\ifdiglot\ifdiglotL L \else R\fi\fi\space iu=\the\IndentUnit, ls=\the\leftskip, rs=\the\rightskip}%
-   %\getp@ram{fontsize}{\m@rker}\edef\c@rrfontsize{\ifx\p@ram\relax12\else\p@ram\fi}%
-   \def\thiswh@tvrstyle{p}%Default value just in case
-   \def\d@##1+##2\E{\edef\tmp{##2}\csname d@code-##1\endcsname\let\thiswh@tvrstyle\tmp}\mctop
-   \ifx\thiswh@tvrstyle\empty\else
-     \s@tfont{\thiswh@tvrstyle}% set up font attributes
-   \fi
+   \getp@ram{fontsize}{\m@rker}\edef\c@rrfontsize{\ifx\p@ram\relax12\else\p@ram\fi}%Need to set this before calling s@tfont, else that will consder the current fontsize as ruling.
+   \setwh@tvrstyle% set up font attributes (based on style stack)
    \trace{j}{baselineskip=\the\baselineskip ; UseGlyphMetrics=\the\XeTeXuseglyphmetrics}%
    \allowp@rindenttrue
    %
