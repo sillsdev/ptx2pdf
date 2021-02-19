@@ -750,6 +750,11 @@ class ViewModel:
             self.picinfos.load_files(suffix="R", prjdir=os.path.join(self.settings_dir, self.diglotView.prjid),
                                      prj=self.diglotView.prjid, cfg=self.diglotView.configName())
 
+    def getPicRe(self):
+        r = r"(?i)_?(" + "|".join(sorted(self.copyrightInfo['copyrights'].keys(), key=lambda x:(-len(x), x))) \
+                + ")(\d+)([a-z]*)"
+        return r
+
     def getDraftFilename(self, bk, ext=".piclist"):
         fname = self.getBookFilename(bk, self.prjid)
         if fname is None:

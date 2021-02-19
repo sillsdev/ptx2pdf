@@ -44,24 +44,6 @@ _defaults = {
     'scale':    "1.000"
 }
 
-_picLimitDefault = {
-    'ab': ('p','x', 'Sorry, but permission to use these images in ANY media has been withdrawn!'),
-    'cn': ('paw','paw', 'Any media, but needs written permission'),
-    'co': ('paw','paw', 'Any media, but needs written permission'),
-    'hk': ('pa','p', 'Print is fine, but App use requires a formal agreement and reporting. Web use is not permitted.'),
-    'lb': ('pa','p', 'Print is fine, but App use requires a formal agreement and reporting. Web use is not permitted.'),
-    'bk': ('pa','p', 'Print is fine, but App use requires a formal agreement and reporting. Web use is not permitted.'),
-    'ba': ('paw','paw', 'Any media is fine without restriction'),
-    'dy': ('paw','paw', 'Any media is fine without restriction'),
-    'gt': ('paw','paw', 'Any media is fine without restriction'),
-    'dh': ('paw','paw', 'Any media is fine without restriction'),
-    'mh': ('paw','paw', 'Any media is fine without restriction'),
-    'mn': ('paw','paw', 'Any media is fine without restriction'),
-    'wa': ('p','p', 'Only Print media'),
-    'dn': ('p','p', 'Only Print media'),
-    'ib': ('p','p', 'Only Print media')
-}
-
 newrowcounter = 1
 
 def newBase(fpath):

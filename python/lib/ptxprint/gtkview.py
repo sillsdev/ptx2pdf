@@ -2658,7 +2658,6 @@ class GtkViewModel(ViewModel):
             tt = font.getTtfont()
             if tt is not None:
                 ttadj = tt.descent / tt.upem * float(self.get("s_fontsize")) * 25.4 / 72.27
-                print(f"{font.name} descent at {self.get('s_fontsize')} is {ttadj}")
                 bottommargin -= ttadj
         return (pageheight - bottommargin - topmargin, linespacing)
 

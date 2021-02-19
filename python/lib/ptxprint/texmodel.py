@@ -339,24 +339,6 @@ class TexModel:
         "notes/fncallers": "footnotes"
     }
 
-    _artstr = {
-    "ab" : ("©_ABS_WARNING: Unpermitted_Use!", ""),
-    "cn" : ("©_1996_David_C._Cook.", "©_DCC,_1996."),
-    "co" : ("©_1996_David_C._Cook.", "©_DCC,_1996."),
-    "hk" : ("by_Horace_Knowles\n©_The_British \\& Foreign Bible Society, 1954, 1967, 1972, 1995.", "©_BFBS,_1995."),
-    "lb" : ("by_Louise_Bass\n©_The_British \\& Foreign Bible Society, 1994.", "©_BFBS,_1994."),
-    "bk" : ("by_Horace_Knowles revised by_Louise_Bass\n©_The_British \\& Foreign Bible Society, 1994.", "©_BFBS,_1994."),
-    "ba" : ("used by_permission of_Louise_Bass.", ""),
-    "dy" : ("by_Carolyn_Dyk, ©_2001_Wycliffe Bible Translators Inc.\nand licensed under the_Creative_Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.", ""),
-    "gt" : ("by_Gordon_Thompson ©_2012_Wycliffe Bible Translators Inc.\nand licensed under_the Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia License.", ""),
-    "dh" : ("by_David_Healey ©_2012_Wycliffe Bible Translators Inc.\nand licensed under the_Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia License.", ""),
-    "mh" : ("by_Michael_Harrar ©_2012_Wycliffe Bible Translators Inc.\nand licensed under the_Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia License.", ""),
-    "mn" : ("used by_permission_of_Muze_Tshilombo.", ""),
-    "wa" : ("by_Graham_Wade, ©_United Bible Societies, 1989.", ""),
-    "dn" : ("by_Darwin_Dunham, ©_United Bible Societies, 1989.", ""),
-    "ib" : ("by_Farid_Faadil. Copyright ©_by_Biblica, Inc.\nUsed_by_permission. All_rights_reserved_worldwide.", "")
-    }
-    
     def __init__(self, printer, path, ptsettings, prjid=None, inArchive=False):
         from ptxprint.view import VersionStr
         self.VersionStr = VersionStr
@@ -1084,7 +1066,8 @@ class TexModel:
         return os.path.basename(fpath[:doti])
 
     def codeLower(self, fpath):
-        cl = re.findall(r"(?i)_?((?=ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib)..\d{5})[abc]?$", self.base(fpath))
+        #cl = re.findall(r"(?i)_?((?=ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib)..\d{5})[abc]?$", self.base(fpath))
+        cl = re.findall(self.printer.getPicRe()+"$", self.base(fpath))
         if cl:
             return cl[0].lower()
         else:
@@ -1137,7 +1120,6 @@ class TexModel:
 
     def analyzeImageCopyrights(self, txt):
         for m in re.findall(r"\\(\S+).*?\\zimagecopyrights([A-Z]+)", txt):
-            print(m)
             self.imageCopyrightLangs[m[1].lower()] = m[0]
 
     def generateImageCopyrightText(self):
@@ -1153,15 +1135,17 @@ class TexModel:
                 dat = inf.read()
 
             # \figonpage{304}{56}{cn01617.jpg}{tl}{© David C. Cook Publishing Co, 1978.}{x170.90504pt}
-            m = re.findall(r"\\figonpage\{(\d+)\}\{\d+\}\{.*?(((?=ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib)..)\d{5})?.+?\}\{.*?\}\{(.*?)?\}\{.+?\}", dat)
+            rematch = r"\\figonpage\{(\d+)\}\{\d+\}\{" + self.printer.getPicRe() + "\.[^}]+\}\{.*?\}\{(.*?)?\}\{.+?\}"
+            print(rematch)
+            m = re.findall(rematch, dat)
             msngPgs = []
             customStmt = []
             if len(m):
                 for f in m:
-                    a = 'co' if f[2] == 'cn' else f[2] # merge Cook's OT & NT illustrations together
-                    if a == '' and f[3] != '':
+                    a = 'co' if f[1] == 'cn' else f[1] # merge Cook's OT & NT illustrations together
+                    if a == '' and f[2] != '':
                         customStmt += [f[0]]
-                        artpgs.setdefault(f[3], []).append(int(f[0]))
+                        artpgs.setdefault(f[2], []).append(int(f[0]))
                     elif a == '':
                         msngPgs += [f[0]] 
                         artpgs.setdefault('zz', []).append(int(f[0]))
@@ -1175,6 +1159,7 @@ class TexModel:
             langs = set(self.imageCopyrightLangs.keys())
             langs.add("en")
             for lang in sorted(langs):
+                hasOut = False
                 mkr = self.imageCopyrightLangs.get(lang, "pc")
                 crdts.append("\\def\\zimagecopyrights{}{{%".format(lang.upper()))
                 plstr = cinfo["plurals"].get(lang, cinfo["plurals"]["en"])
@@ -1195,6 +1180,7 @@ class TexModel:
                             else:
                                 crdts.append(_("\\rem Warning: No copyright statement found for: {} on pages {}")\
                                                 .format(art.upper(), pluralstr))
+                            hasOut = True
                 if len(msngPgs):
                     plurals = pluralstr(plstr, msngPgs)
                     template = cinfo['templates']['imageExceptions'].get(lang,
@@ -1210,13 +1196,13 @@ class TexModel:
                     artstr = artinfo["copyright"].get(lang, artinfo["copyright"]["en"])
                     if sensitive and "sensitive" in artinfo:
                         artstr = artinfo["sensitive"].get(lang, artinfo["sensitive"]["en"])
-                    if len(crdts) == 1:
+                    if not hasOut:
                         template = cinfo['templates']['allIllustrations'].get(lang,
                             cinfo['templates']['allIllustrations']['en'])
-                    elif len(crdts) > 1:
+                    else:
                         template = cinfo['templates']['exceptIllustrations'].get(lang,
                             cinfo['templates']['exceptIllustrations']['en'])
-                    cpystr = template.format(plurals) + artstr.replace("_", "\u00A0") + exceptPgs
+                    cpystr = template.format(artstr.replace("_", "\u00A0") + exceptPgs)
                     crdts.append("\\{} {}".format(mkr, cpystr))
                 crdts.append("}")
             crdts.append("\\let\\zimagecopyrights=\\zimagecopyrightsEN")
