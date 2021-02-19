@@ -184,7 +184,8 @@ _object_classes = {
                     "lb_style_rb", "lb_style_gloss|rb", "lb_style_toc3"), 
     "stybutton":   ("btn_reloadConfig", "btn_resetCopyright", "btn_resetColophon", "btn_resetFNcallers", "btn_resetXRcallers", 
                     "btn_styAdd", "btn_styEdit", "btn_styDel", "btn_styReset", "btn_refreshFonts", "btn_resetStyFilter",
-                    "btn_plAdd", "btn_plDel", "btn_plGenerate", "btn_plSaveEdits")
+                    "btn_plAdd", "btn_plDel", "btn_plGenerate", "btn_plSaveEdits",
+                    "btn_adjust_spacing", "btn_adjust_top", "btn_adjust_bottom", )
 }
 
     # "Center": "c", 
@@ -210,8 +211,8 @@ _allcols = ["anchor", "caption", "file", "frame", "scale", "posn", "ref", "mirro
 _selcols = {
     "settings":  ["anchor", "caption",         "desc"],
     "details":   ["anchor", "caption", "file", "frame", "scale", "posn", "ref", "mirror", "desc", "copy", "media"],
-    "checklist": ["anchor", "caption", "file", "desc"],
-    "credits":   [          "caption", "file", "credit", "crrot", "crbox", "crposn"]
+    "checklist": ["anchor", "caption", "file", "desc"]
+  # "credits":   [          "caption", "file", "credit", "crrot", "crbox", "crposn"]
 }
 
 _defaultColophon = r"""\pc \zcopyright
@@ -568,9 +569,9 @@ class GtkViewModel(ViewModel):
             self.builder.get_object(c).set_visible(val)
 
         # Disable/Enable the Details and Checklist tabs on the Pictures tab
-        for w in ["tb_details", "tb_checklist", "tb_credits"]:
+        for w in ["tb_details", "tb_checklist"]:
             self.builder.get_object(w).set_sensitive(val)        
-        for w in ["tb_plTopPane", "tb_picPreview", "scr_detailsBottom", "scr_checklistBottom", "gr_credits", "l_globalPicSettings"]: 
+        for w in ["tb_plTopPane", "tb_picPreview", "scr_detailsBottom", "scr_checklistBottom", "l_globalPicSettings"]: 
             self.builder.get_object(w).set_visible(val)        
             
         # Show Hide specific Help items
@@ -885,8 +886,13 @@ class GtkViewModel(ViewModel):
     def onSimpleClicked(self, btn):
         self.sensiVisible(Gtk.Buildable.get_name(btn))
 
+    def onVertRuleClicked(self, btn):
+        self.onSimpleClicked(btn)
+        self.updateMarginGraphics()
+        
     def on2colClicked(self, btn):
         self.onSimpleClicked(btn)
+        self.updateMarginGraphics()
         if self.loadingConfig:
             return
         self.picListView.onRadioChanged()
@@ -2548,7 +2554,7 @@ class GtkViewModel(ViewModel):
         if page == None:
             return
         pgid = Gtk.Buildable.get_name(page).split('_')[-1]
-        filterSensitive = True if pgid in ("checklist", "credits") else False
+        filterSensitive = True if pgid == "checklist" else False
         self.builder.get_object("fr_plChecklistFilter").set_sensitive(filterSensitive)
         for w in _allcols:
             if w in _selcols[pgid]:
@@ -2631,9 +2637,9 @@ class GtkViewModel(ViewModel):
             
     def onRHruleClicked(self, btn):
         status = self.get("c_rhrule")
-        for w in ["l_rhruleoffset", "s_rhruleposition", "gr_marginGraphicLineTrue"]:
+        self.updateMarginGraphics()
+        for w in ["l_rhruleoffset", "s_rhruleposition"]:
             self.builder.get_object(w).set_visible(status)        
-        self.builder.get_object("gr_marginGraphicLineFalse").set_visible(not status)        
 
     def tryHidingTreeViewCols(self, btn):
         status = self.get("c_quickRun")
@@ -2690,3 +2696,14 @@ class GtkViewModel(ViewModel):
         for w in btns:
             self.builder.get_object("btn_adjust_{}".format(w)).set_sensitive(clickable)
     
+    def updateMarginGraphics(self):
+        cols = 2 if self.get("c_doublecolumn") else 1
+        vert = self.get("c_verticalrule")
+        horz = self.get("c_rhrule")
+        top = re.sub("1True", "1False", "{}{}{}".format(cols,vert,horz))
+        bottom = re.sub("1True", "1False", "{}{}".format(cols,vert))
+        for t in ["1FalseFalse", "1FalseTrue", "2FalseFalse", "2FalseTrue", "2TrueFalse", "2TrueTrue"]:
+            self.builder.get_object("img_Top{}".format(t)).set_visible(t == top)        
+        for b in ["1False", "2False", "2True"]:
+            self.builder.get_object("img_Bottom{}".format(b)).set_visible(b == bottom)        
+

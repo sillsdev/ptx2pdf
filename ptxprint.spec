@@ -41,7 +41,9 @@ a = Analysis(['python/scripts/ptxprint', 'python/scripts/usfmerge'],
                       + [('python/lib/ptxprint/'+x, 'ptxprint') for x in 
                             ('Google-Noto-Emoji-Objects-62859-open-book.ico', '62859-open-book-icon(128).png', 
 							 'picLocationPreviews.png', 'ps_cmyk.icc', 
-							 'MarginGraphicLineTrue.png', 'MarginGraphicLineFalse.png', 'MarginGraphicBottom.png')]
+							 'Top1FalseFalse.png', 'Top1FalseTrue.png', 'Top2FalseFalse.png',
+							 'Top2FalseTrue.png', 'Top2TrueFalse.png', 'Top2TrueTrue.png',
+							 'Bottom1False.png', 'Bottom2False.png', 'Bottom2True.png')]
                       + [('python/lib/ptxprint/sfm/*.bz2', 'ptxprint/sfm')]
                       + [('fonts/' + f, 'ptxprint/fonts/' + f) for f in ('Empties.ttf', 'SourceSansPro-Regular.ttf')]
                       + [('src/mappings/*.tec', 'ptx2pdf/mappings')],

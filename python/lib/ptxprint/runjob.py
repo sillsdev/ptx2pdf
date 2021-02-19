@@ -507,12 +507,10 @@ class RunJob:
                 cmd += ["-z", "0"]
             if self.args.extras & 1:
                 cmd += ["-vv"]
-                print("runner has been defined as: {}".format(cmd + [outfname.replace(".tex", ".xdv")]))
             runner = call(cmd + [outfname.replace(".tex", ".xdv")], cwd=self.tmpdir)
             if self.args.extras & 1:
                 print(f"Subprocess return value: {runner}")
             if isinstance(runner, subprocess.Popen) and runner is not None:
-                print("About to try runner.wait...")
                 try:
                     runner.wait(self.args.timeout)
                 except subprocess.TimeoutExpired:

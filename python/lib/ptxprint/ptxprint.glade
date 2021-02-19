@@ -2421,6 +2421,287 @@ technology, then enable this.</property>
       </row>
     </data>
   </object>
+  <object class="GtkDialog">
+    <property name="can_focus">False</property>
+    <property name="type_hint">dialog</property>
+    <child>
+      <placeholder/>
+    </child>
+    <child internal-child="vbox">
+      <object class="GtkBox">
+        <property name="can_focus">False</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox">
+            <property name="can_focus">False</property>
+            <property name="layout_style">end</property>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkBox" id="dlg_imgCreditPos">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="orientation">vertical</property>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <object class="GtkGrid">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="row_spacing">6</property>
+                <property name="column_spacing">6</property>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="halign">end</property>
+                    <property name="label" translatable="yes">Vertical
+Position:</property>
+                    <property name="justify">right</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
+                    <property name="top_attach">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkComboBox" id="fcb_plCreditVpos">
+                    <property name="width_request">88</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="can_default">True</property>
+                    <property name="halign">start</property>
+                    <property name="model">ls_plCreditVpos</property>
+                    <property name="wrap_width">1</property>
+                    <property name="has_entry">True</property>
+                    <property name="entry_text_column">0</property>
+                    <property name="id_column">1</property>
+                    <child internal-child="entry">
+                      <object class="GtkEntry">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="width_chars">12</property>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="left_attach">1</property>
+                    <property name="top_attach">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="halign">end</property>
+                    <property name="label" translatable="yes">Horizontal
+Position:</property>
+                    <property name="justify">right</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">2</property>
+                    <property name="top_attach">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkComboBox" id="fcb_plCreditHpos">
+                    <property name="width_request">88</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="can_default">True</property>
+                    <property name="halign">start</property>
+                    <property name="model">ls_plCreditHpos</property>
+                    <property name="wrap_width">1</property>
+                    <property name="has_entry">True</property>
+                    <property name="entry_text_column">0</property>
+                    <property name="id_column">1</property>
+                    <child internal-child="entry">
+                      <object class="GtkEntry">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="width_chars">12</property>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="left_attach">3</property>
+                    <property name="top_attach">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="halign">end</property>
+                    <property name="label" translatable="yes">Background Box:</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
+                    <property name="top_attach">2</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkComboBoxText" id="ecb_plCreditBoxStyle">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="tooltip_text" translatable="yes">Specify the kind of box (Light/Dark background
+or enter the name of a style which should be applied.
+By selecting a (custom) style, you can change multiple
+parameters at once: font, size and colour. </property>
+                    <property name="halign">start</property>
+                    <property name="valign">center</property>
+                    <property name="active">0</property>
+                    <property name="has_entry">True</property>
+                    <property name="active_id">0</property>
+                    <items>
+                      <item translatable="yes">None</item>
+                      <item translatable="yes">Light</item>
+                      <item translatable="yes">Dark</item>
+                    </items>
+                    <child internal-child="entry">
+                      <object class="GtkEntry">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="halign">start</property>
+                        <property name="max_length">16</property>
+                        <property name="width_chars">16</property>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="left_attach">1</property>
+                    <property name="top_attach">2</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="halign">end</property>
+                    <property name="label" translatable="yes">Rotation:</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">2</property>
+                    <property name="top_attach">2</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkComboBox" id="fcb_plCreditRotate">
+                    <property name="width_request">88</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="can_default">True</property>
+                    <property name="tooltip_text" translatable="yes">Sometimes the credit text needs
+to be rotated. 
+</property>
+                    <property name="halign">start</property>
+                    <property name="model">ls_plCreditRotate</property>
+                    <property name="wrap_width">1</property>
+                    <property name="has_entry">True</property>
+                    <property name="entry_text_column">0</property>
+                    <property name="id_column">1</property>
+                    <child internal-child="entry">
+                      <object class="GtkEntry">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="halign">start</property>
+                        <property name="width_chars">12</property>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="left_attach">3</property>
+                    <property name="top_attach">2</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="tooltip_text" translatable="yes">Type the text for the Credit to be overlaid
+on the image. Note that there are shortcuts:
+   (c)   --&gt; ©
+   dcc  --&gt; © David C. Cook
+       or --&gt; © DCC   (if Sensitive Project is set)</property>
+                    <property name="label" translatable="yes">Image Credit Text:</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
+                    <property name="top_attach">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkEntry" id="t_plCreditText">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="tooltip_text" translatable="yes">Type the text for the Credit to be overlaid
+on the image. Note that there are shortcuts:
+   (c)   --&gt; ©
+   dcc  --&gt; © David C. Cook
+       or --&gt; © DCC   (if Sensitive Project is set)</property>
+                    <property name="placeholder_text" translatable="yes">Enter Image Credit text...</property>
+                    <signal name="changed" handler="onCopyrightStatementChanged" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="left_attach">1</property>
+                    <property name="top_attach">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLinkButton" id="lb_style_crbox">
+                    <property name="label" translatable="yes">Edit Style</property>
+                    <property name="visible">True</property>
+                    <property name="sensitive">False</property>
+                    <property name="can_focus">True</property>
+                    <property name="focus_on_click">False</property>
+                    <property name="receives_default">True</property>
+                    <property name="halign">end</property>
+                    <property name="hexpand">True</property>
+                    <property name="relief">none</property>
+                    <property name="uri">Click to edit the Credit Box properties on the Styles tab</property>
+                    <signal name="activate-link" handler="onEditStyleClicked" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="left_attach">3</property>
+                    <property name="top_attach">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
   <object class="GtkListStore" id="ls_plHoriz">
     <columns>
       <!-- column-name HorizPosn -->
@@ -4086,11 +4367,9 @@ space between lines of text.</property>
                                       <object class="GtkLabel">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="tooltip_text" translatable="yes">This is the base font size by which all other
-font sizes are calculated (according to their
-factor size). If you intend to use the Style
-editor and expect to specify absolute font
-sizes then set the font size here to 12pt.</property>
+                                        <property name="tooltip_text" translatable="yes">This is the base font size for default paragraph 
+text. All other font sizes are calculated (according 
+to their factor size) based on this value.</property>
                                         <property name="halign">end</property>
                                         <property name="valign">center</property>
                                         <property name="hexpand">True</property>
@@ -4131,9 +4410,8 @@ Size (pt):</property>
                                       <object class="GtkLabel">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="tooltip_text" translatable="yes">Base Line spacing in points (pts).
-Change to increase or decrease
-space between lines of text.</property>
+                                        <property name="tooltip_text" translatable="yes">This is the base line spacing 
+for default paragraph text.</property>
                                         <property name="halign">end</property>
                                         <property name="valign">center</property>
                                         <property name="label" translatable="yes">Base Line
@@ -4149,10 +4427,14 @@ Spacing (pt):</property>
                                       <object class="GtkLabel" id="l_indentUnit">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="tooltip_text" translatable="yes">The amount by which paragraphs
+                                        <property name="tooltip_text" translatable="yes">The space by which paragraphs
 should be indented (inches). This 
 also affects poetry indentation.
-(default=1, min=0, max=4)</property>
+Note that for a single-column text
+this value needs to be higher than
+for two-column texts, and the value
+updates automatically when you change
+from 1 to 2 columns, and vice versa. </property>
                                         <property name="halign">end</property>
                                         <property name="valign">center</property>
                                         <property name="margin_left">6</property>
@@ -4193,47 +4475,12 @@ also affects poetry indentation.
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkToggleButton" id="btn_adjust_spacing">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="focus_on_click">False</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="tooltip_text" translatable="yes">Fine Tune Line Spacing:
-
-Click this button to shrink or expand the line spacing 
-slightly to minimise wasted vertical space on the page.
-
-If there is more than half a line of 'spare' space on the 
-page then the line-spacing will decrease slightly to
-fit one more line of text on the page.
-
-If there is less than half a line of 'spare' space on the 
-page then the line-spacing will increase slightly to 
-fill the page more evenly (with the same number of 
-lines of text).
-
-If you prefer to keep the exact line spacing specified, 
-then do NOT click this option. Instead, use the similar
-button to adjust either the Top or Bottom Margin.</property>
-                                        <property name="halign">center</property>
-                                        <property name="valign">center</property>
-                                        <property name="margin_left">3</property>
-                                        <property name="image">icon_adjust_spacing</property>
-                                        <property name="always_show_image">True</property>
-                                        <signal name="clicked" handler="onMagicAdjustClicked" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">6</property>
-                                        <property name="top_attach">2</property>
-                                      </packing>
-                                    </child>
-                                    <child>
                                       <object class="GtkLabel" id="l_linesOnPage">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="halign">start</property>
                                         <property name="margin_left">3</property>
-                                        <property name="label" translatable="yes">99</property>
+                                        <property name="label" translatable="yes">99.9</property>
                                         <attributes>
                                           <attribute name="foreground" value="#cece5c5c0000"/>
                                         </attributes>
@@ -4253,6 +4500,39 @@ button to adjust either the Top or Bottom Margin.</property>
                                       <packing>
                                         <property name="left_attach">5</property>
                                         <property name="top_attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkButton" id="btn_adjust_spacing">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">True</property>
+                                        <property name="tooltip_text" translatable="yes">Fine Tune Line Spacing:
+
+Click this button to shrink or expand the line spacing 
+slightly to minimise wasted vertical space on the page.
+
+If there is more than half a line of 'spare' space on the 
+page then the line-spacing will decrease slightly to
+fit one more line of text on the page.
+
+If there is less than half a line of 'spare' space on the 
+page then the line-spacing will increase slightly to 
+fill the page more evenly (with the same number of 
+lines of text).
+
+If you prefer to keep the exact line spacing specified, 
+then do NOT click this option. Instead, use the similar
+button to adjust either the Top or Bottom Margin.</property>
+                                        <property name="halign">start</property>
+                                        <property name="valign">center</property>
+                                        <property name="image">icon_adjust_spacing</property>
+                                        <property name="always_show_image">True</property>
+                                        <signal name="clicked" handler="onMagicAdjustClicked" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">6</property>
+                                        <property name="top_attach">2</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -4329,8 +4609,8 @@ the text of the two columns
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">Check this option to include a center line
-between the two columns.</property>
+                                    <property name="tooltip_text" translatable="yes">Check this option to include a center
+line between the two columns.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
                                     <property name="margin_left">8</property>
@@ -4338,7 +4618,7 @@ between the two columns.</property>
                                     <property name="margin_bottom">6</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
-                                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                                    <signal name="clicked" handler="onVertRuleClicked" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
@@ -4350,9 +4630,8 @@ between the two columns.</property>
                                   <object class="GtkLabel" id="l_gutterWidth">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="tooltip_text" translatable="yes">This is the space between 
-the text of the two columns 
-(measured in millimeters).</property>
+                                    <property name="tooltip_text" translatable="yes">This is the space (mm) between 
+the text of the two columns.</property>
                                     <property name="halign">end</property>
                                     <property name="valign">center</property>
                                     <property name="margin_left">12</property>
@@ -4391,7 +4670,9 @@ Width (mm):</property>
                                   <object class="GtkLabel" id="l_colgutteroffset">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="tooltip_text" translatable="yes">This setting can raise (if -ve) or lower (if +ve) the starting point of the vertical rule between columns. (Value is pts).</property>
+                                    <property name="tooltip_text" translatable="yes">This setting raises (using a negative value) or 
+lowers (using a positive value) the starting 
+point of the vertical rule between columns.</property>
                                     <property name="halign">end</property>
                                     <property name="label" translatable="yes">Adjust
 Top (pt):</property>
@@ -4457,7 +4738,10 @@ Top (pt):</property>
                                   <object class="GtkLabel">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="tooltip_text" translatable="yes">Distance in mm from the top of the page to the top of the body text (actually the baseline of a line above the first line of the body text).</property>
+                                    <property name="tooltip_text" translatable="yes">The distance (mm) from the top of the page
+to the top of the main text area. Note that
+the first line actually starts a little bit below
+where the the main text area starts.</property>
                                     <property name="halign">end</property>
                                     <property name="margin_top">6</property>
                                     <property name="margin_bottom">6</property>
@@ -4477,13 +4761,16 @@ to Text (mm):</property>
                                   <object class="GtkLabel">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="tooltip_text" translatable="yes">The distance the header is above the top of the body text in pts. Strictly the distance the baseline of the header is above the baseline of a line above the first line of the body text.</property>
+                                    <property name="tooltip_text" translatable="yes">The space (pt) between the bottom of the header
+and the top of the main text area. Note that
+the first line actually starts a little bit below
+where the the main text area starts.</property>
                                     <property name="halign">end</property>
                                     <property name="label" translatable="yes">Header to 
 Text Space (pt):</property>
                                     <property name="justify">right</property>
                                     <attributes>
-                                      <attribute name="foreground" value="#2b0a4be2f850"/>
+                                      <attribute name="foreground" value="#cece5c5c0000"/>
                                     </attributes>
                                   </object>
                                   <packing>
@@ -4523,7 +4810,8 @@ between the header and the top of the text. (pts)</property>
                                   <object class="GtkLabel" id="l_btmMrgn">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="tooltip_text" translatable="yes">This sets the distance from the bottom of the page to the baseline of the bottom of the text, in mm.</property>
+                                    <property name="tooltip_text" translatable="yes">The distance (mm) from the bottom of the 
+main text area to the bottom of the page.</property>
                                     <property name="halign">end</property>
                                     <property name="margin_top">6</property>
                                     <property name="margin_bottom">6</property>
@@ -4543,7 +4831,10 @@ to Text (mm):</property>
                                   <object class="GtkLabel" id="l_ftrPosn">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="tooltip_text" translatable="yes">This sets the distance from the baseline of the footer to the bottom of the page in mm.</property>
+                                    <property name="tooltip_text" translatable="yes">The distance (mm) from the bottom of the 
+footer area to the bottom of the page. Note
+that (by default) only the introduction pages
+use the footer for page numbers.</property>
                                     <property name="halign">end</property>
                                     <property name="label" translatable="yes">Bottom Margin
 to Footer (mm):</property>
@@ -4591,8 +4882,8 @@ space between the end of the text and the footer line.</property>
                                     <property name="valign">center</property>
                                     <property name="margin_left">30</property>
                                     <property name="margin_right">30</property>
-                                    <property name="margin_top">3</property>
-                                    <property name="margin_bottom">2</property>
+                                    <property name="margin_top">12</property>
+                                    <property name="margin_bottom">12</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
@@ -4601,30 +4892,20 @@ space between the end of the text and the footer line.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkImage">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="margin_left">12</property>
-                                    <property name="pixbuf">MarginGraphicBottom.png</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">0</property>
-                                    <property name="top_attach">5</property>
-                                    <property name="width">3</property>
-                                    <property name="height">3</property>
-                                  </packing>
-                                </child>
-                                <child>
                                   <object class="GtkLabel">
+                                    <property name="width_request">95</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="tooltip_text" translatable="yes">This tells you the distance from the top (ascender) of the header to the top of the page in mm.</property>
+                                    <property name="tooltip_text" translatable="yes">The distance (mm) from the top of the page
+to the top of the header area. Note that
+the header text actually starts a little bit below
+where the the header area starts.</property>
                                     <property name="halign">end</property>
                                     <property name="label" translatable="yes">Edge of Page to
 Top of Header:</property>
                                     <property name="justify">right</property>
                                     <attributes>
-                                      <attribute name="foreground" value="#cece5c5c0000"/>
+                                      <attribute name="foreground" value="#2b0a4be2f850"/>
                                     </attributes>
                                   </object>
                                   <packing>
@@ -4633,48 +4914,14 @@ Top of Header:</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkLabel">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="tooltip_text" translatable="yes">This tells you how far the baseline of the bottom of the body text is above the ascender of the footer in points.</property>
-                                    <property name="halign">end</property>
-                                    <property name="label" translatable="yes">Bottom of Text to 
-Top of Footer:</property>
-                                    <property name="justify">right</property>
-                                    <attributes>
-                                      <attribute name="foreground" value="#cece5c5c0000"/>
-                                    </attributes>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">3</property>
-                                    <property name="top_attach">7</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkLabel" id="l_margin2footer">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="halign">start</property>
-                                    <property name="margin_left">12</property>
-                                    <property name="label" translatable="yes">10.5</property>
-                                    <attributes>
-                                      <attribute name="foreground" value="#cece5c5c0000"/>
-                                    </attributes>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">4</property>
-                                    <property name="top_attach">7</property>
-                                  </packing>
-                                </child>
-                                <child>
                                   <object class="GtkLabel" id="l_margin2header1">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="halign">start</property>
                                     <property name="margin_left">12</property>
-                                    <property name="label" translatable="yes">12.5</property>
+                                    <property name="label" translatable="yes">8.5mm</property>
                                     <attributes>
-                                      <attribute name="foreground" value="#cece5c5c0000"/>
+                                      <attribute name="foreground" value="#2b0a4be2f850"/>
                                     </attributes>
                                   </object>
                                   <packing>
@@ -4715,7 +4962,12 @@ cross-references end.</property>
                                   <object class="GtkLabel">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="tooltip_text" translatable="yes">How wide the side margins are in mm.</property>
+                                    <property name="tooltip_text" translatable="yes">The distance (mm) from the edge of the page
+to the start of the text area. Note that the left
+and right (or inner and outer) margins are set
+to be identical. If you require a greater inner
+margin, then use the Binding Gutter setting
+above.</property>
                                     <property name="halign">end</property>
                                     <property name="valign">center</property>
                                     <property name="margin_left">6</property>
@@ -4762,8 +5014,10 @@ in millimeters (mm).</property>
                                   <object class="GtkLabel" id="l_rhruleoffset">
                                     <property name="can_focus">False</property>
                                     <property name="no_show_all">True</property>
-                                    <property name="tooltip_text" translatable="yes">This is the space between the horizontal 
-rule and the top of the main text (in pts). Strictly the distance above the baseline of a line above the top line.</property>
+                                    <property name="tooltip_text" translatable="yes">The space (pt) between the horizontal rule
+and the top of the main text area. Note that
+the first line actually starts a little bit below
+where the the main text area starts.</property>
                                     <property name="halign">end</property>
                                     <property name="margin_top">3</property>
                                     <property name="label" translatable="yes">Space from Rule
@@ -4823,83 +5077,15 @@ main body text begins.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkToggleButton" id="btn_adjust_top">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="focus_on_click">False</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">Fine Tune Top Margin:
-
-Click this button to shrink or expand the top margin 
-slightly to minimise wasted vertical space on the page.
-
-If there is more than half a line of 'spare' space on the 
-page then the top margin will decrease slightly to
-fit one more line of text on the page.
-
-If there is less than half a line of 'spare' space on the 
-page then the top margin will increase slightly to 
-fill the page more evenly (with the same number of 
-lines of text).
-
-If you prefer to keep the exact top margin specified, 
-then do NOT click this option. Instead, use the similar
-button to adjust either the Line Spacing or Bottom Margin.</property>
-                                    <property name="halign">start</property>
-                                    <property name="valign">center</property>
-                                    <property name="margin_right">3</property>
-                                    <property name="image">icon_adjust_top</property>
-                                    <property name="always_show_image">True</property>
-                                    <signal name="clicked" handler="onMagicAdjustClicked" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">5</property>
-                                    <property name="top_attach">1</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkToggleButton" id="btn_adjust_bottom">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="focus_on_click">False</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">Fine Tune Bottom Margin:
-
-Click this button to shrink or expand the bottom margin 
-slightly to minimise wasted vertical space on the page.
-
-If there is more than half a line of 'spare' space on the 
-page then the bottom margin will decrease slightly to
-fit one more line of text on the page.
-
-If there is less than half a line of 'spare' space on the 
-page then the bottom margin will increase slightly to 
-fill the page more evenly (with the same number of 
-lines of text).
-
-If you prefer to keep the exact bottom margin specified, 
-then do NOT click this option. Instead, use the similar
-button to adjust either the Line Spacing or Top Margin.</property>
-                                    <property name="halign">start</property>
-                                    <property name="valign">center</property>
-                                    <property name="image">icon_adjust_bottom</property>
-                                    <property name="always_show_image">True</property>
-                                    <signal name="clicked" handler="onMagicAdjustClicked" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">5</property>
-                                    <property name="top_attach">5</property>
-                                  </packing>
-                                </child>
-                                <child>
                                   <object class="GtkCheckButton" id="c_cropmarks">
-                                    <property name="label" translatable="yes">Crop Marks</property>
+                                    <property name="label" translatable="yes">Crop
+Marks</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
                                     <property name="tooltip_text" translatable="yes">Some printers require crop marks
 on the PDF to show where the page
-should be trimmed to after printing.
+should be trimmed after printing.
 
 This is also useful to check that the
 margins have been set correctly, after
@@ -4942,11 +5128,74 @@ to define where the main body text begins.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkImage" id="gr_marginGraphicLineFalse">
+                                  <object class="GtkButton" id="btn_adjust_top">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <property name="tooltip_text" translatable="yes">Fine Tune Top Margin:
+
+Click this button to shrink or expand the top margin 
+slightly to minimise wasted vertical space on the page.
+
+If there is more than half a line of 'spare' space on the 
+page then the top margin will decrease slightly to
+fit one more line of text on the page.
+
+If there is less than half a line of 'spare' space on the 
+page then the top margin will increase slightly to 
+fill the page more evenly (with the same number of 
+lines of text).
+
+If you prefer to keep the exact top margin specified, 
+then do NOT click this option. Instead, use the similar
+button to adjust either the Line Spacing or Bottom Margin.</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">center</property>
+                                    <property name="image">icon_adjust_top</property>
+                                    <signal name="clicked" handler="onMagicAdjustClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">5</property>
+                                    <property name="top_attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkButton" id="btn_adjust_bottom">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <property name="tooltip_text" translatable="yes">Fine Tune Bottom Margin:
+
+Click this button to shrink or expand the bottom margin 
+slightly to minimise wasted vertical space on the page.
+
+If there is more than half a line of 'spare' space on the 
+page then the bottom margin will decrease slightly to
+fit one more line of text on the page.
+
+If there is less than half a line of 'spare' space on the 
+page then the bottom margin will increase slightly to 
+fill the page more evenly (with the same number of 
+lines of text).
+
+If you prefer to keep the exact bottom margin specified, 
+then do NOT click this option. Instead, use the similar
+button to adjust either the Line Spacing or Top Margin.</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">center</property>
+                                    <property name="image">icon_adjust_bottom</property>
+                                    <signal name="clicked" handler="onMagicAdjustClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">5</property>
+                                    <property name="top_attach">5</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkImage" id="img_Top1FalseFalse">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="margin_left">12</property>
-                                    <property name="pixbuf">MarginGraphicLineFalse.png</property>
+                                    <property name="pixbuf">Top1FalseFalse.png</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
@@ -4956,11 +5205,10 @@ to define where the main body text begins.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkImage" id="gr_marginGraphicLineTrue">
+                                  <object class="GtkImage" id="img_Top1FalseTrue">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="margin_left">12</property>
-                                    <property name="pixbuf">MarginGraphicLineTrue.png</property>
+                                    <property name="pixbuf">Top1FalseTrue.png</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
@@ -4970,7 +5218,95 @@ to define where the main body text begins.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <placeholder/>
+                                  <object class="GtkImage" id="img_Top2FalseFalse">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="pixbuf">Top2FalseFalse.png</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">1</property>
+                                    <property name="width">3</property>
+                                    <property name="height">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkImage" id="img_Top2FalseTrue">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="pixbuf">Top2FalseTrue.png</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">1</property>
+                                    <property name="width">3</property>
+                                    <property name="height">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkImage" id="img_Top2TrueFalse">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="pixbuf">Top2TrueFalse.png</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">1</property>
+                                    <property name="width">3</property>
+                                    <property name="height">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkImage" id="img_Top2TrueTrue">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="pixbuf">Top2TrueTrue.png</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">1</property>
+                                    <property name="width">3</property>
+                                    <property name="height">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkImage" id="img_Bottom2True">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="pixbuf">Bottom2True.png</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">5</property>
+                                    <property name="width">3</property>
+                                    <property name="height">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkImage" id="img_Bottom2False">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="pixbuf">Bottom2False.png</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">5</property>
+                                    <property name="width">3</property>
+                                    <property name="height">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkImage" id="img_Bottom1False">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="pixbuf">Bottom1False.png</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">5</property>
+                                    <property name="width">3</property>
+                                    <property name="height">2</property>
+                                  </packing>
                                 </child>
                                 <child>
                                   <placeholder/>
@@ -11370,286 +11706,10 @@ in this publication, as well as other contexts.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkBox" id="tb_credits">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="margin_top">4</property>
-                                    <property name="margin_bottom">4</property>
-                                    <property name="orientation">vertical</property>
-                                    <child>
-                                      <object class="GtkGrid" id="gr_credits">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="halign">start</property>
-                                        <property name="margin_left">12</property>
-                                        <property name="margin_right">12</property>
-                                        <property name="margin_top">6</property>
-                                        <property name="margin_bottom">6</property>
-                                        <property name="row_spacing">6</property>
-                                        <property name="column_spacing">6</property>
-                                        <child>
-                                          <object class="GtkLabel">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="tooltip_text" translatable="yes">Type the text for the Credit to be overlaid
-on the image. Note that there are shortcuts:
-   (c)   --&gt; ©
-   dcc  --&gt; © David C. Cook
-       or --&gt; © DCC   (if Sensitive Project is set)</property>
-                                            <property name="label" translatable="yes">Image Credit Text:</property>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">0</property>
-                                            <property name="top_attach">0</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkEntry" id="t_plCreditText">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">True</property>
-                                            <property name="tooltip_text" translatable="yes">Type the text for the Credit to be overlaid
-on the image. Note that there are shortcuts:
-   (c)   --&gt; ©
-   dcc  --&gt; © David C. Cook
-       or --&gt; © DCC   (if Sensitive Project is set)</property>
-                                            <property name="placeholder_text" translatable="yes">Enter Image Credit text...</property>
-                                            <signal name="changed" handler="onCopyrightStatementChanged" swapped="no"/>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">1</property>
-                                            <property name="top_attach">0</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkLabel">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="halign">end</property>
-                                            <property name="label" translatable="yes">Vertical
-Position:</property>
-                                            <property name="justify">right</property>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">0</property>
-                                            <property name="top_attach">1</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkComboBox" id="fcb_plCreditVpos">
-                                            <property name="width_request">88</property>
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="can_default">True</property>
-                                            <property name="halign">start</property>
-                                            <property name="model">ls_plCreditVpos</property>
-                                            <property name="wrap_width">1</property>
-                                            <property name="has_entry">True</property>
-                                            <property name="entry_text_column">0</property>
-                                            <property name="id_column">1</property>
-                                            <child internal-child="entry">
-                                              <object class="GtkEntry">
-                                                <property name="visible">True</property>
-                                                <property name="can_focus">True</property>
-                                                <property name="width_chars">12</property>
-                                              </object>
-                                            </child>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">1</property>
-                                            <property name="top_attach">1</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkLabel">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="halign">end</property>
-                                            <property name="label" translatable="yes">Horizontal
-Position:</property>
-                                            <property name="justify">right</property>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">2</property>
-                                            <property name="top_attach">1</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkComboBox" id="fcb_plCreditHpos">
-                                            <property name="width_request">88</property>
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="can_default">True</property>
-                                            <property name="halign">start</property>
-                                            <property name="model">ls_plCreditHpos</property>
-                                            <property name="wrap_width">1</property>
-                                            <property name="has_entry">True</property>
-                                            <property name="entry_text_column">0</property>
-                                            <property name="id_column">1</property>
-                                            <child internal-child="entry">
-                                              <object class="GtkEntry">
-                                                <property name="visible">True</property>
-                                                <property name="can_focus">True</property>
-                                                <property name="width_chars">12</property>
-                                              </object>
-                                            </child>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">3</property>
-                                            <property name="top_attach">1</property>
-                                            <property name="width">2</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkLabel">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="halign">end</property>
-                                            <property name="label" translatable="yes">Rotation:</property>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">2</property>
-                                            <property name="top_attach">0</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkComboBox" id="fcb_plCreditRotate">
-                                            <property name="width_request">88</property>
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="can_default">True</property>
-                                            <property name="tooltip_text" translatable="yes">Sometimes the credit text needs
-to be rotated. 
-</property>
-                                            <property name="halign">start</property>
-                                            <property name="model">ls_plCreditRotate</property>
-                                            <property name="wrap_width">1</property>
-                                            <property name="has_entry">True</property>
-                                            <property name="entry_text_column">0</property>
-                                            <property name="id_column">1</property>
-                                            <child internal-child="entry">
-                                              <object class="GtkEntry">
-                                                <property name="visible">True</property>
-                                                <property name="can_focus">True</property>
-                                                <property name="halign">start</property>
-                                                <property name="width_chars">12</property>
-                                              </object>
-                                            </child>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">3</property>
-                                            <property name="top_attach">0</property>
-                                            <property name="width">2</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkComboBoxText" id="ecb_plCreditBoxStyle">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="tooltip_text" translatable="yes">Specify the kind of box (Light/Dark background
-or enter the name of a style which should be applied.
-By selecting a (custom) style, you can change multiple
-parameters at once: font, size and colour. </property>
-                                            <property name="halign">start</property>
-                                            <property name="valign">center</property>
-                                            <property name="active">0</property>
-                                            <property name="has_entry">True</property>
-                                            <property name="active_id">0</property>
-                                            <items>
-                                              <item translatable="yes">None</item>
-                                              <item translatable="yes">Light</item>
-                                              <item translatable="yes">Dark</item>
-                                            </items>
-                                            <child internal-child="entry">
-                                              <object class="GtkEntry">
-                                                <property name="visible">True</property>
-                                                <property name="can_focus">True</property>
-                                                <property name="halign">start</property>
-                                                <property name="max_length">16</property>
-                                                <property name="width_chars">16</property>
-                                              </object>
-                                            </child>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">2</property>
-                                            <property name="top_attach">2</property>
-                                            <property name="width">2</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkLabel">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="halign">end</property>
-                                            <property name="label" translatable="yes">Background Box:</property>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">1</property>
-                                            <property name="top_attach">2</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkButton">
-                                            <property name="label" translatable="yes">Apply to All
-Matching...</property>
-                                            <property name="visible">True</property>
-                                            <property name="sensitive">False</property>
-                                            <property name="can_focus">True</property>
-                                            <property name="receives_default">True</property>
-                                            <property name="tooltip_text" translatable="yes">Copy the existing image credit
-details to all other images with
-the same prefix. (This will not
-overwrite any existing settings.)</property>
-                                            <property name="halign">end</property>
-                                            <property name="margin_left">6</property>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">0</property>
-                                            <property name="top_attach">2</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkLinkButton" id="lb_style_crbox">
-                                            <property name="label" translatable="yes">Edit Style</property>
-                                            <property name="visible">True</property>
-                                            <property name="sensitive">False</property>
-                                            <property name="can_focus">True</property>
-                                            <property name="focus_on_click">False</property>
-                                            <property name="receives_default">True</property>
-                                            <property name="halign">end</property>
-                                            <property name="hexpand">True</property>
-                                            <property name="relief">none</property>
-                                            <property name="uri">Click to edit the Credit Box properties on the Styles tab</property>
-                                            <signal name="activate-link" handler="onEditStyleClicked" swapped="no"/>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">4</property>
-                                            <property name="top_attach">2</property>
-                                          </packing>
-                                        </child>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">0</property>
-                                      </packing>
-                                    </child>
-                                  </object>
-                                  <packing>
-                                    <property name="position">3</property>
-                                  </packing>
+                                  <placeholder/>
                                 </child>
                                 <child type="tab">
-                                  <object class="GtkLabel" id="lb_credits">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="tooltip_text" translatable="yes">This tab allows you to overlay
-credits on images (e.g. as required by David C Cook).</property>
-                                    <property name="label" translatable="yes">Credit Overlays</property>
-                                  </object>
-                                  <packing>
-                                    <property name="position">3</property>
-                                    <property name="tab_fill">False</property>
-                                  </packing>
+                                  <placeholder/>
                                 </child>
                               </object>
                               <packing>
