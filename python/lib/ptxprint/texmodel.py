@@ -1136,8 +1136,9 @@ class TexModel:
             self.localChanges.append((None, regex.compile(r"\\p \\k {}\\k\* .+\r?\n".format(delGloEntry), flags=regex.M), ""))
 
     def analyzeImageCopyrights(self, txt):
-        for m in re.findall(r"\\(?P<mkr>\S).*?\\zimagecopyright(?P<lang>[A-Z]+)", txt):
-            self.imageCopyrightLangs[m.lang.lower()] = m.mkr
+        for m in re.findall(r"\\(\S+).*?\\zimagecopyrights([A-Z]+)", txt):
+            print(m)
+            self.imageCopyrightLangs[m[1].lower()] = m[0]
 
     def generateImageCopyrightText(self):
         artpgs = {}
@@ -1211,11 +1212,11 @@ class TexModel:
                         artstr = artinfo["sensitive"].get(lang, artinfo["sensitive"]["en"])
                     if len(crdts) == 1:
                         template = cinfo['templates']['allIllustrations'].get(lang,
-                                        cinfo['templates']['allIllustrations']['en'])
+                            cinfo['templates']['allIllustrations']['en'])
                     elif len(crdts) > 1:
                         template = cinfo['templates']['exceptIllustrations'].get(lang,
-                                        cinfo['templates']['exceptIllustrations']['en'])
-                    cpystr = multstr(template, lang, len(pgs), plurals, artstr.replace("_", "\u00A0") + exceptPgs)
+                            cinfo['templates']['exceptIllustrations']['en'])
+                    cpystr = template.format(plurals) + artstr.replace("_", "\u00A0") + exceptPgs
                     crdts.append("\\{} {}".format(mkr, cpystr))
                 crdts.append("}")
             crdts.append("\\let\\zimagecopyrights=\\zimagecopyrightsEN")
