@@ -14,6 +14,7 @@ from zipfile import ZipFile, ZIP_DEFLATED
 from io import StringIO
 from shutil import rmtree
 import datetime, time
+import json
 from shutil import copyfile, copytree, move
 
 VersionStr = "1.5.12.4"
@@ -130,6 +131,7 @@ class ViewModel:
         self.loadingConfig = False
         self.styleEditor = StyleEditor(self)
         self.triggervcs = False
+        self.copyrightInfo = {}
 
         # private to this implementation
         self.dict = {}
@@ -392,6 +394,7 @@ class ViewModel:
                 self.onNumTabsChanged()
                 self.usfms = None
                 self.get_usfms()
+            self.readCopyrights()
             self.loadPics()
             return res
         else:
@@ -422,6 +425,19 @@ class ViewModel:
                 except IndexError:
                     bks = _("No book selected!")
             return "PTXprint {}   -  {} ({}) {}".format(VersionStr, prjid, bks, self.get("ecb_savedConfig") or "")
+
+    def readCopyrights(self):
+        with open(os.path.join(os.path.dirname(__file__), "picCopyrights.json")) as inf:
+            self.copyrightInfo = json.load(inf)
+        fname = os.path.join(self.settings_dir, self.prjid, "shard", "ptxprint", "picCopyrights.json")
+        if os.path.exists(fname):
+            with open(fnam) as inf:
+                try:
+                    cupdates = json.load(inf)
+                    self.copyrightInfo.update(cupdates)
+                except json.decode.JSONDecodeError as e:
+                    self.doError(_("Json parsing error in {}").format(fname),
+                                 secondary = _("{} at line {} col {}").format(e.msg, e.lineno, e.colno))
 
     def configName(self):
         return self.configId or None

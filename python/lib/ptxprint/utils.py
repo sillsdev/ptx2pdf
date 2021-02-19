@@ -9,7 +9,10 @@ APP = 'ptxprint'
 
 _ = gettext.gettext
 
+lang = None
+
 def setup_i18n(i18nlang):
+    global lang    
     localedir = os.path.join(getattr(sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__))), "mo")
     if i18nlang is not None:
         os.environ["LANG"] = i18nlang
@@ -33,6 +36,8 @@ def setup_i18n(i18nlang):
     # print(f"Lang = ({lang}, {enc}) from {i18nlang} and LANG={os.environ['LANG']}")
     gettext.bindtextdomain(APP, localedir=localedir)
     gettext.textdomain(APP)
+    if "_" in lang:
+        lang = lang[:lang.find("_")].lower()
     
 def f_(s):
     frame = currentframe().f_back
@@ -69,6 +74,7 @@ def textocol(s):
             v //= 256
         vals.extend([0] * (3 - len(vals)))
     return "rgb({0},{1},{2})".format(*vals)
+
 _wincodepages = {
     'cp950' : 'big5',
     'cp951' : 'big5hkscs',
@@ -215,3 +221,38 @@ def asfloat(v, d):
         return float(v)
     except (ValueError, TypeError):
         return d
+
+def pluralstr(s, l):
+    """CLDR plural rules"""
+    print(s, l)
+    if len(l) == 0:
+        return ""
+    elif len(l) == 1:
+        return l[0]
+    elif str(len(l)) in s:
+        return s[str(len(l))].format(*l)
+    if "end" in s:
+        curr = s["end"].format(l[-2], l[-1])
+        l = l[:-2]
+    if "middle" in s:
+        while len(l) > 1:
+            curr = s["middle"].format(l.pop(), curr)
+    if "start" in s:
+        curr = s["start"].format(l[0], curr)
+    elif "middle" in s:
+        curr = s["middle"].format(l[0], curr)
+    return curr
+
+def multstr(template, lang, num, text, addon=""):
+    print([template, lang, num, text, addon])
+    if str(num) in template:
+        res = template[str(num)].format(text)
+    elif num > 1 and "mult" in template:
+        res = template["mult"].format(text)
+    else:
+        res = ""
+    if len(addon):
+        res += " " + addon
+    print(res)
+    return res
+

@@ -1,0 +1,236 @@
+{
+    "plurals": {
+        "en": {
+            "2": "{0} and {1}",
+            "end": "{0} and {1}",
+            "middle": "{0}, {1}",
+            "start": "{0}, {1}"
+        }
+    },
+    "templates": {
+        "imageCopyright": {
+            "en": {
+                "1": "Illustration on page {0}",
+                "mult": "Illustrations on pages {0}"
+            }
+        },
+        "imageExceptions": {
+            "en": {
+                "1": "(except on page {0})",
+                "mult": "(except on pages {0})"
+            }
+        },
+        "allIllustrations": {
+            "en": "All illustrations {0}"
+        },
+        "exceptIllustrations": {
+            "en": "All other illustrations {0}"
+        }
+    },
+    "copyrights": {
+        "ab": {
+            "copyright": {
+                "en": "©_ABS_WARNING: Unpermitted_Use!"
+            },
+            "media": {
+                "default": "x",
+                "limit": "x",
+                "tip": {
+                    "en": "Sorry, but permission to use these images in ANY media has been withdrawn!"
+                }
+            }
+        },
+        "cn": {
+            "copyright": {
+                "en": "©_1996_David_C._Cook."
+            },
+            "sensitive": {
+                "en": "©_DCC,_1996."
+            },
+            "media": {
+                "default": "paw",
+                "limit": "paw",
+                "tip": {
+                    "en": "Any media, but needs written permission"
+                }
+            },
+            "credit": {
+                "en": "©_DCC"
+            }
+        },
+        "co": {
+            "copyright": {
+                "en": "©_1996_David_C._Cook."
+            },
+            "sensitive": {
+                "en": "©_DCC,_1996."
+            },
+            "media": {
+                "default": "paw",
+                "limit": "paw",
+                "tip": {
+                    "en": "Any media, but needs written permission"
+                }
+            },
+            "creditsensitive": {
+                "en": "© DCC"
+            },
+            "credit": {
+                "en": "© David C. Cook"
+            }
+        },
+        "hk": {
+            "copyright": {
+                "en": "by_Horace_Knowles\n©_The_British \\& Foreign Bible Society, 1954, 1967, 1972, 1995."
+            },
+            "sensitive": {
+                "en": "©_BFBS,_1995."
+            },
+            "media": {
+                "default": "p",
+                "limit": "pa",
+                "tip": {
+                    "en": "Print is fine, but App use requires a formal agreement and reporting. Web use is not permitted."
+                }
+            }
+        },
+        "lb": {
+            "copyright": {
+                "en": "by_Louise_Bass\n©_The_British \\& Foreign Bible Society, 1994."
+            },
+            "sensitive": {
+                "en": "©_BFBS,_1994."
+            },
+            "media": {
+                "default": "p",
+                "limit": "pa",
+                "tip": {
+                    "en": "Print is fine, but App use requires a formal agreement and reporting. Web use is not permitted."
+                }
+            }
+        },
+        "bk": {
+            "copyright": {
+                "en": "by_Horace_Knowles revised by_Louise_Bass\n©_The_British \\& Foreign Bible Society, 1994."
+            },
+            "sensitive": {
+                "en": "©_BFBS,_1994."
+            },
+            "media": {
+                "default": "p",
+                "limit": "pa",
+                "tip": {
+                    "en": "Print is fine, but App use requires a formal agreement and reporting. Web use is not permitted."
+                }
+            }
+        },
+        "ba": {
+            "copyright": {
+                "en": "used by_permission of_Louise_Bass."
+            },
+            "media": {
+                "default": "paw",
+                "limit": "paw",
+                "tip": {
+                    "en": "Any media is fine without restriction"
+                }
+            }
+        },
+        "dy": {
+            "copyright": {
+                "en": "by_Carolyn_Dyk, ©_2001_Wycliffe Bible Translators Inc.\nand licensed under the_Creative_Commons Attribution-NonCommercial-NoDerivatives 4.0 International License."
+            },
+            "media": {
+                "default": "paw",
+                "limit": "paw",
+                "tip": {
+                    "en": "Any media is fine without restriction"
+                }
+            }
+        },
+        "gt": {
+            "copyright": {
+                "en": "by_Gordon_Thompson ©_2012_Wycliffe Bible Translators Inc.\nand licensed under_the Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia License."
+            },
+            "media": {
+                "default": "paw",
+                "limit": "paw",
+                "tip": {
+                    "en": "Any media is fine without restriction"
+                }
+            }
+        },
+        "dh": {
+            "copyright": {
+                "en": "by_David_Healey ©_2012_Wycliffe Bible Translators Inc.\nand licensed under the_Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia License."
+            },
+            "media": {
+                "default": "paw",
+                "limit": "paw",
+                "tip": {
+                    "en": "Any media is fine without restriction"
+                }
+            }
+        },
+        "mh": {
+            "copyright": {
+                "en": "by_Michael_Harrar ©_2012_Wycliffe Bible Translators Inc.\nand licensed under the_Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia License."
+            },
+            "media": {
+                "default": "paw",
+                "limit": "paw",
+                "tip": {
+                    "en": "Any media is fine without restriction"
+                }
+            }
+        },
+        "mn": {
+            "copyright": {
+                "en": "used by_permission_of_Muze_Tshilombo."
+            },
+            "media": {
+                "default": "paw",
+                "limit": "paw",
+                "tip": {
+                    "en": "Any media is fine without restriction"
+                }
+            }
+        },
+        "wa": {
+            "copyright": {
+                "en": "by_Graham_Wade, ©_United Bible Societies, 1989."
+            },
+            "media": {
+                "default": "p",
+                "limit": "p",
+                "tip": {
+                    "en": "Only Print media"
+                }
+            }
+        },
+        "dn": {
+            "copyright": {
+                "en": "by_Darwin_Dunham, ©_United Bible Societies, 1989."
+            },
+            "media": {
+                "default": "p",
+                "limit": "p",
+                "tip": {
+                    "en": "Only Print media"
+                }
+            }
+        },
+        "ib": {
+            "copyright": {
+                "en": "by_Farid_Faadil. Copyright ©_by_Biblica, Inc.\nUsed_by_permission. All_rights_reserved_worldwide."
+            },
+            "media": {
+                "default": "p",
+                "limit": "p",
+                "tip": {
+                    "en": "Only Print media"
+                }
+            }
+        }
+    }
+}

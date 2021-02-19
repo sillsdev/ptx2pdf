@@ -59,9 +59,9 @@ if args.logging and getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
     sys.stdio = errfile
     sys.stderr = errfile
 
+fontconfig_path = writefontsconf()
+os.putenv("FONTCONFIG_FILE", fontconfig_path)
 if not args.print:
-    fontconfig_path = writefontsconf()
-    os.putenv("FONTCONFIG_FILE", fontconfig_path)
     print(fontconfig_path) 
     from ptxprint.gtkview import GtkViewModel, getPTDir
 

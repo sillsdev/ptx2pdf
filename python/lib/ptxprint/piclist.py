@@ -1,6 +1,6 @@
 
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal
-from ptxprint.utils import refKey, universalopen, print_traceback
+from ptxprint.utils import refKey, universalopen, print_traceback, lang, _
 from ptxprint.texmodel import TexModel
 from gi.repository import Gtk, GdkPixbuf, GObject, Gdk
 from threading import Thread
@@ -147,7 +147,9 @@ class PicList:
                 if bks is not None and len(bks) and v['anchor'][:3] not in bks:
                     continue
                 row = []
-                defaultmedia = _picLimitDefault.get(v.get('src', '')[:2].lower(), ('paw', 'paw', 'Default'))
+                #defaultmedia = _picLimitDefault.get(v.get('src', '')[:2].lower(), ('paw', 'paw', 'Default'))
+                defaultmedia = self.parent.copyrightInfo.get(v.get('src', '')[:2].lower(),
+                    { "default": "paw", "limit": "paw", "tip": {"en": "Default"}})
                 for e in _piclistfields:
                     if e == 'key':
                         val = k
@@ -163,9 +165,9 @@ class PicList:
                     elif e == "media":
                         val = v.get(e, None)
                         if val is None:
-                            val = defaultmedia[1]
+                            val = defaultmedia["default"]
                         else:
-                            val = "".join(x for x in val if x in defaultmedia[0])
+                            val = "".join(x for x in val if x in defaultmedia["limit"])
                     else:
                         val = v.get(e, "")
                     row.append(val)
@@ -353,17 +355,18 @@ class PicList:
 
     def mask_media(self, row):
         src = row[_pickeys['src']][:2]
-        inf = _picLimitDefault.get(src.lower(), ("paw", "paw", "Default"))
-        if inf[2] == 'Default':
-            self.builder.get_object("l_plMedia").set_tooltip_text("Media permissions unknown\nfor this illustration")
+        inf = self.parent.copyrightInfo.get(src.lower(), {"limit": "paw", "tip": {"en": "Default"}})
+        tip = inf["tip"].get(lang, inf["tip"]["en"])
+        if inf["tip"]["en"] == 'Default':
+            self.builder.get_object("l_plMedia").set_tooltip_text(_("Media permissions unknown\nfor this illustration"))
         else:
-            self.builder.get_object("l_plMedia").set_tooltip_text("Permission for {} series:\n{}".format(src.upper(),inf[2]))
+            self.builder.get_object("l_plMedia").set_tooltip_text(_("Permission for {} series:\n{}").format(src.upper(), tip))
         val = row[_pickeys['media']]
         for c in 'paw':
             w = _form_structure["med"+c.upper()]
             wid = self.builder.get_object(w)
             if wid is not None:
-                wid.set_sensitive(c in inf[0])
+                wid.set_sensitive(c in inf["limit"])
             if val is None or val == "":
                 wid.set_active(True)
             else:

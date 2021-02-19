@@ -10,7 +10,7 @@ from ptxprint.runner import checkoutput
 from ptxprint import sfm
 from ptxprint.sfm import usfm, style
 from ptxprint.usfmutils import Usfm, Sheets, isScriptureText, Module
-from ptxprint.utils import _, universalopen, localhdrmappings
+from ptxprint.utils import _, universalopen, localhdrmappings, pluralstr, multstr
 from ptxprint.dimension import Dimension
 import ptxprint.scriptsnippets as scriptsnippets
 from ptxprint.interlinear import Interlinear
@@ -1138,7 +1138,8 @@ class TexModel:
         mkr='pc'
         sensitive = self['document/sensitive']
         picpagesfile = os.path.join(self.docdir()[0], self['jobname'] + ".picpages")
-        crdts = ["\\def\\zimagecopyrights{%"]
+        crdts = []
+        cinfo = self.printer.copyrightInfo
         if os.path.exists(picpagesfile):
             with universalopen(picpagesfile) as inf:
                 dat = inf.read()
@@ -1162,48 +1163,52 @@ class TexModel:
                 artistWithMost = max(artpgs, key=lambda x: len(set(artpgs[x])))
             else:
                 artistWithMost = ""
-        
-            for art, pgs in artpgs.items():
-                if art != artistWithMost:
-                    if len(pgs):
-                        pgs = sorted(set(pgs))
-                        if len(pgs) == 1:
-                            pl = ""
-                            pgstr = "on page {} ".format(str(pgs[0]))
-                        else:
-                            pl = "s"
-                            pgstr = "on pages {} and {} ".format(", ".join(str(p) for p in pgs[:-1]), str(pgs[-1]))
-                        
-                        if art in self._artstr.keys():
-                            if sensitive and len(self._artstr[art][1]):
-                                cpystr = re.sub('_', '\u00A0', self._artstr[art][1])
-                            else:
-                                cpystr = re.sub('_', '\u00A0', self._artstr[art][0])
-                            crdts += ["\\{} Illustration{} {}{}".format(mkr, pl, pgstr, cpystr)]
-                        else:
-                            if len(art) > 2:
-                                crdts += ["\\{} Illustration{} {}{}".format(mkr, pl, pgstr, re.sub('© ', '©\u00A0', art))]
-                            else:
-                                crdts += ["\\rem Warning: No copyright statement found for: {} image{} {}".format(art.upper(), pl, pgstr)]
-            if len(msngPgs):
-                if len(msngPgs) == 1:
-                    exceptpgs = "(except on page {}) ".format(str(msngPgs[0]).strip("'"))
-                else:
-                    exceptpgs = "(except on pages {} and {}) ".format(", ".join(str(p) for p in msngPgs[:-1]), str(msngPgs[-1]))
-            else:
-                exceptpgs = ""
 
-            if artistWithMost != "":
-                if sensitive and len(self._artstr[artistWithMost][1]):
-                    cpystr = re.sub('_', '\u00A0', self._artstr.get(artistWithMost, ("", artistWithMost))[1])
+            for lang in ("en", ):
+                crdts.append("\\def\\zimagecopyrights{}{{%".format(lang.upper()))
+                plstr = cinfo["plurals"].get(lang, cinfo["plurals"]["en"])
+                cpytemplate = cinfo['templates']['imageCopyright'].get(lang,
+                                        cinfo['templates']['imageCopyright']['en'])
+                for art, pgs in artpgs.items():
+                    artinfo = cinfo["copyrights"].get(art, None)
+                    if art != artistWithMost:
+                        if len(pgs):
+                            pgs = sorted(set(pgs))
+                            plurals = pluralstr(plstr, pgs)
+                            if artinfo is not None:
+                                artstr = artinfo["copyright"].get(lang, artinfo["copyright"]["en"])
+                                if sensitive and "sensitive" in artinfo:
+                                    artstr = artinfo["sensitive"].get(lang, artinfo["sensitive"]["en"])
+                                cpystr = multstr(cpytemplate, lang, len(pgs), plurals, artstr.replace("_", "\u00A0"))
+                                crdts.append("\\{} {}".format(mkr, cpystr))
+                            else:
+                                crdts.append(_("\\rem Warning: No copyright statement found for: {} on pages {}")\
+                                                .format(art.upper(), pluralstr))
+                if len(msngPgs):
+                    plurals = pluralstr(plstr, msngPgs)
+                    template = cinfo['templates']['imageExceptions'].get(lang,
+                                        cinfo['templates']['imageExceptions']['en'])
+                    exceptPgs = " " + multstr(template, lang, len(msngPgs), plurals)
                 else:
-                    cpystr = re.sub('_', '\u00A0', self._artstr.get(artistWithMost, (artistWithMost, ""))[0])
-                if len(crdts) == 1:
-                    crdts += ["\\{} All illustrations {}{}".format(mkr, exceptpgs, cpystr)]
-                elif len(crdts) > 1:
-                    crdts += ["\\{} All other illustrations {}{}".format(mkr, exceptpgs, cpystr)]
-            
-        crdts += ["}"]
+                    exceptPgs = ""
+
+                artinfo = cinfo["copyrights"].get(artistWithMost, None)
+                if artinfo is not None:
+                    pgs = artpgs[artistWithMost]
+                    plurals = pluralstr(plstr, pgs)
+                    artstr = artinfo["copyright"].get(lang, artinfo["copyright"]["en"])
+                    if sensitive and "sensitive" in artinfo:
+                        artstr = artinfo["sensitive"].get(lang, artinfo["sensitive"]["en"])
+                    if sensitive:
+                        artstr = artinfo.get("sensitive", artstr)
+                    if len(crdts) == 1:
+                        template = cinfo['templates']['allIllustrations'].get(lang,
+                                        cinfo['templates']['allIllustrations']['en'])
+                    elif len(crdts) > 1:
+                        template = cinfo['templates']['exceptIllustrations'].get(lang,
+                                        cinfo['templates']['exceptIllustrations']['en'])
+                    cpystr = multstr(template, lang, len(pgs), plurals, artstr.replace("_", "\u00A0") + exceptPgs)
+                    crdts.append("\\{} {}".format(mkr, cpystr))
+                crdts.append("}")
+            crdts.append("\\let\\zimagecopyrights=\\zimagecopyrightsEN")
         return "\n".join(crdts)
-
-    
