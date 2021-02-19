@@ -1209,8 +1209,6 @@ class TexModel:
                     artstr = artinfo["copyright"].get(lang, artinfo["copyright"]["en"])
                     if sensitive and "sensitive" in artinfo:
                         artstr = artinfo["sensitive"].get(lang, artinfo["sensitive"]["en"])
-                    if sensitive:
-                        artstr = artinfo.get("sensitive", artstr)
                     if len(crdts) == 1:
                         template = cinfo['templates']['allIllustrations'].get(lang,
                                         cinfo['templates']['allIllustrations']['en'])

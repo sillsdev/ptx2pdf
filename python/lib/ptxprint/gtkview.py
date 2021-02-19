@@ -1118,7 +1118,7 @@ class GtkViewModel(ViewModel):
                 fpath = os.path.join(self.configPath(cfgname=self.configId, makePath=False), fndict[pgid][0], fname)
             doti = fpath.rfind(".")
             if doti > 0:
-                fpath = fpath[:doti] + "-" + self.configName() + fpath[doti:] + fndict[pgid][1]
+                fpath = fpath[:doti] + "-" + (self.configName() or "") + fpath[doti:] + fndict[pgid][1]
             if pgnum == 1: # AdjList
                 if self.get("t_invisiblePassword") == "":
                     genBtn.set_sensitive(True)

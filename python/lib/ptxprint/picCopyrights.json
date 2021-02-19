@@ -81,7 +81,7 @@
         },
         "hk": {
             "copyright": {
-                "en": "by_Horace_Knowles\n©_The_British \\& Foreign Bible Society, 1954, 1967, 1972, 1995."
+                "en": "by_Horace_Knowles ©_The_British \\& Foreign Bible Society, 1954, 1967, 1972, 1995."
             },
             "sensitive": {
                 "en": "©_BFBS,_1995."
@@ -96,7 +96,7 @@
         },
         "lb": {
             "copyright": {
-                "en": "by_Louise_Bass\n©_The_British \\& Foreign Bible Society, 1994."
+                "en": "by_Louise_Bass ©_The_British \\& Foreign Bible Society, 1994."
             },
             "sensitive": {
                 "en": "©_BFBS,_1994."
@@ -111,7 +111,7 @@
         },
         "bk": {
             "copyright": {
-                "en": "by_Horace_Knowles revised by_Louise_Bass\n©_The_British \\& Foreign Bible Society, 1994."
+                "en": "by_Horace_Knowles revised by_Louise_Bass ©_The_British \\& Foreign Bible Society, 1994."
             },
             "sensitive": {
                 "en": "©_BFBS,_1994."
@@ -138,7 +138,7 @@
         },
         "dy": {
             "copyright": {
-                "en": "by_Carolyn_Dyk, ©_2001_Wycliffe Bible Translators Inc.\nand licensed under the_Creative_Commons Attribution-NonCommercial-NoDerivatives 4.0 International License."
+                "en": "by_Carolyn_Dyk, ©_2001_Wycliffe Bible Translators Inc. and licensed under the_Creative_Commons Attribution-NonCommercial-NoDerivatives 4.0 International License."
             },
             "media": {
                 "default": "paw",
@@ -150,7 +150,7 @@
         },
         "gt": {
             "copyright": {
-                "en": "by_Gordon_Thompson ©_2012_Wycliffe Bible Translators Inc.\nand licensed under_the Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia License."
+                "en": "by_Gordon_Thompson ©_2012_Wycliffe Bible Translators Inc. and licensed under_the Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia License."
             },
             "media": {
                 "default": "paw",
@@ -162,7 +162,7 @@
         },
         "dh": {
             "copyright": {
-                "en": "by_David_Healey ©_2012_Wycliffe Bible Translators Inc.\nand licensed under the_Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia License."
+                "en": "by_David_Healey ©_2012_Wycliffe Bible Translators Inc. and licensed under the_Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia License."
             },
             "media": {
                 "default": "paw",
@@ -174,7 +174,7 @@
         },
         "mh": {
             "copyright": {
-                "en": "by_Michael_Harrar ©_2012_Wycliffe Bible Translators Inc.\nand licensed under the_Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia License."
+                "en": "by_Michael_Harrar ©_2012_Wycliffe Bible Translators Inc. and licensed under the_Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia License."
             },
             "media": {
                 "default": "paw",
@@ -222,7 +222,7 @@
         },
         "ib": {
             "copyright": {
-                "en": "by_Farid_Faadil. Copyright ©_by_Biblica, Inc.\nUsed_by_permission. All_rights_reserved_worldwide."
+                "en": "by_Farid_Faadil. Copyright ©_by_Biblica, Inc. Used_by_permission. All_rights_reserved_worldwide."
             },
             "media": {
                 "default": "p",

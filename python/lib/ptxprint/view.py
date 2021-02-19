@@ -427,11 +427,11 @@ class ViewModel:
             return "PTXprint {}   -  {} ({}) {}".format(VersionStr, prjid, bks, self.get("ecb_savedConfig") or "")
 
     def readCopyrights(self):
-        with open(os.path.join(os.path.dirname(__file__), "picCopyrights.json")) as inf:
+        with open(os.path.join(os.path.dirname(__file__), "picCopyrights.json"), encoding="utf-8", errors="ignore") as inf:
             self.copyrightInfo = json.load(inf)
         fname = os.path.join(self.settings_dir, self.prjid, "shard", "ptxprint", "picCopyrights.json")
         if os.path.exists(fname):
-            with open(fnam) as inf:
+            with open(fname, encoding="utf-8", errors="ignore") as inf:
                 try:
                     cupdates = json.load(inf)
                     self.copyrightInfo.update(cupdates)
