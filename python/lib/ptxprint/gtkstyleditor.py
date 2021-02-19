@@ -15,7 +15,7 @@ stylemap = {
     'FontSize':     ('s_styFontSize',       'l_styFontSize',    '12', lambda v: "{:.3f}".format(float(v) * 12), lambda v:float(v) / 12),
     'Bold':         ('c_styFaceBold',       'c_styFaceBold',    '-', lambda v: "" if v else "-", None),
     'Italic':       ('c_styFaceItalic',     'c_styFaceItalic',  '-', lambda v: "" if v else "-", None),
-    'SmallCap':     ('c_stySmallCap',       'c_stySmallCap',    '-', lambda v: "" if v else "-", None),
+    'Smallcaps':    ('c_stySmallCap',       'c_stySmallCap',    '-', lambda v: "" if v else "-", None),
     'Superscript':  ('c_styFaceSuperscript', 'c_styFaceSuperscript', '-', lambda v: "" if v else "-", None),
     'Raise':        ('s_styRaise',          'l_styRaise',       '0', None, lambda v: re.sub(r"(?<=\d)\D+$", "", v)),
     'Justification': ('fcb_styJustification', 'l_styJustification', 'Justified', lambda v: "" if v == "Justified" else v, None),

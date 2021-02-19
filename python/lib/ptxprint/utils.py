@@ -21,7 +21,7 @@ def setup_i18n(i18nlang):
     if sys.platform.startswith('win'):
         from ctypes import cdll, windll
         from ctypes.util import find_msvcrt
-        cdll.msvcrt._putenv('LANG={}'.format(lang))
+        putenv('LANG', lang)
         msvcrt = find_msvcrt()
         msvcrtname = str(msvcrt).split('.')[0] if '.' in msvcrt else str(msvcrt)
         cdll.LoadLibrary(msvcrt)._putenv('LANG={}'.format(lang))        
@@ -39,6 +39,13 @@ def setup_i18n(i18nlang):
     if "_" in lang:
         lang = lang[:lang.find("_")].lower()
     
+def putenv(k, v):
+    if sys.platform.startswith('win'):
+        from ctypes import cdll
+        from ctypes.util import find_msvcrt
+        cdll.msvcrt._putenv('{}={}'.format(k, v))
+    os.putenv(k, v)
+
 def f_(s):
     frame = currentframe().f_back
     return eval("f'{}'".format(_(s)), frame.f_locals, frame.f_globals)

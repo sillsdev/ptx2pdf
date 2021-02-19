@@ -16,7 +16,7 @@ except ImportError:
 from ptxprint.view import ViewModel, VersionStr, doError
 from ptxprint.font import initFontCache, cachepath, writefontsconf
 from ptxprint.runjob import RunJob, isLocked
-from ptxprint.utils import _, setup_i18n, get_ptsettings, pt_bindir
+from ptxprint.utils import _, setup_i18n, get_ptsettings, pt_bindir, putenv
 
 def getnsetlang(config):
     envlang = os.getenv("LANG", None)
@@ -60,7 +60,7 @@ if args.logging and getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
     sys.stderr = errfile
 
 fontconfig_path = writefontsconf()
-os.putenv("FONTCONFIG_FILE", fontconfig_path)
+putenv("FONTCONFIG_FILE", fontconfig_path)
 if not args.print:
     print(fontconfig_path) 
     from ptxprint.gtkview import GtkViewModel, getPTDir
