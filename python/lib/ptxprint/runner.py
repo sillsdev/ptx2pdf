@@ -42,7 +42,6 @@ elif sys.platform == "win32":
     def call(*a, **kw):
         path = os.path.join(pt_bindir(), "xetex", "bin", a[0][0]+".exe").replace("/", "\\")
         newa = [[path] + a[0][1:]] + list(a)[1:]
-        print(newa)
         res = subprocess.call(*newa, creationflags=CREATE_NO_WINDOW, **kw)
         return res
 

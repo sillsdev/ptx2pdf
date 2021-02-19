@@ -2421,10 +2421,12 @@ technology, then enable this.</property>
       </row>
     </data>
   </object>
-  <object class="GtkDialog">
+  <object class="GtkDialog" id="dlg_overlayCredit">
     <property name="can_focus">False</property>
+    <property name="title" translatable="yes">Illustration Credit Overlay</property>
+    <property name="icon">Google-Noto-Emoji-Objects-62859-open-book.ico</property>
     <property name="type_hint">dialog</property>
-    <child>
+    <child type="titlebar">
       <placeholder/>
     </child>
     <child internal-child="vbox">
@@ -2461,6 +2463,10 @@ technology, then enable this.</property>
               <object class="GtkGrid">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="margin_left">12</property>
+                <property name="margin_right">12</property>
+                <property name="margin_top">12</property>
+                <property name="margin_bottom">12</property>
                 <property name="row_spacing">6</property>
                 <property name="column_spacing">6</property>
                 <child>
@@ -2661,23 +2667,7 @@ on the image. Note that there are shortcuts:
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkLinkButton" id="lb_style_crbox">
-                    <property name="label" translatable="yes">Edit Style</property>
-                    <property name="visible">True</property>
-                    <property name="sensitive">False</property>
-                    <property name="can_focus">True</property>
-                    <property name="focus_on_click">False</property>
-                    <property name="receives_default">True</property>
-                    <property name="halign">end</property>
-                    <property name="hexpand">True</property>
-                    <property name="relief">none</property>
-                    <property name="uri">Click to edit the Credit Box properties on the Styles tab</property>
-                    <signal name="activate-link" handler="onEditStyleClicked" swapped="no"/>
-                  </object>
-                  <packing>
-                    <property name="left_attach">3</property>
-                    <property name="top_attach">0</property>
-                  </packing>
+                  <placeholder/>
                 </child>
                 <child>
                   <placeholder/>
@@ -10519,8 +10509,9 @@ here will NOT automatically be updated in the
 Paratext USFM files. Please edit/fit the figure
 information manually in Paratext if you change
 things here in PTXprint.</property>
+                                                    <property name="halign">start</property>
                                                     <property name="hexpand">True</property>
-                                                    <property name="width_chars">12</property>
+                                                    <property name="width_chars">14</property>
                                                   </object>
                                                   <packing>
                                                     <property name="left_attach">6</property>
@@ -10568,7 +10559,7 @@ Attribution:</property>
                                                   <packing>
                                                     <property name="left_attach">1</property>
                                                     <property name="top_attach">5</property>
-                                                    <property name="width">6</property>
+                                                    <property name="width">4</property>
                                                   </packing>
                                                 </child>
                                                 <child>
@@ -10901,6 +10892,34 @@ generated automatically for you.</property>
                                                   </object>
                                                   <packing>
                                                     <property name="left_attach">1</property>
+                                                    <property name="top_attach">5</property>
+                                                  </packing>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkButton" id="btn_overlayCredit">
+                                                    <property name="label" translatable="yes">Overlay
+Credit...</property>
+                                                    <property name="visible">True</property>
+                                                    <property name="sensitive">False</property>
+                                                    <property name="can_focus">True</property>
+                                                    <property name="receives_default">True</property>
+                                                    <signal name="clicked" handler="onOverlayCreditClicked" swapped="no"/>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="left_attach">5</property>
+                                                    <property name="top_attach">5</property>
+                                                  </packing>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkEntry" id="t_overlayParams">
+                                                    <property name="visible">True</property>
+                                                    <property name="sensitive">False</property>
+                                                    <property name="can_focus">True</property>
+                                                    <property name="halign">start</property>
+                                                    <property name="width_chars">12</property>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="left_attach">6</property>
                                                     <property name="top_attach">5</property>
                                                   </packing>
                                                 </child>

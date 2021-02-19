@@ -369,7 +369,7 @@ class GtkViewModel(ViewModel):
             digits.append([d, v])
         self.fcb_digits.set_active_id(_alldigits[0])
 
-        for d in ("dlg_multiBookSelector", "dlg_fontChooser", "dlg_password",
+        for d in ("dlg_multiBookSelector", "dlg_fontChooser", "dlg_password", "dlg_overlayCredit",
                   "dlg_generate", "dlg_styModsdialog", "dlg_DBLbundle", "dlg_features"):
             dialog = self.builder.get_object(d)
             dialog.add_buttons(
@@ -829,16 +829,14 @@ class GtkViewModel(ViewModel):
         super(GtkViewModel, self).loadConfig(config)
         for k, v in _sensitivities.items():
             state = self.get(k)
-            # print("k,v", k,v)
             for w in v:
-                # print("w", w)
                 self.builder.get_object(w).set_sensitive(state)
         for k, v in _nonsensitivities.items():
             state = not self.get(k)
             for w in v:
-                # print(w, state)
                 self.builder.get_object(w).set_sensitive(state)
         self.colourTabs()
+        self.updateMarginGraphics()
 
     def colourTabs(self):
         col = "#688ACC"
@@ -2699,11 +2697,28 @@ class GtkViewModel(ViewModel):
     def updateMarginGraphics(self):
         cols = 2 if self.get("c_doublecolumn") else 1
         vert = self.get("c_verticalrule")
-        horz = self.get("c_rhrule")
-        top = re.sub("1True", "1False", "{}{}{}".format(cols,vert,horz))
+        horiz = self.get("c_rhrule")
+        top = re.sub("1True", "1False", "{}{}{}".format(cols,vert,horiz))
         bottom = re.sub("1True", "1False", "{}{}".format(cols,vert))
         for t in ["1FalseFalse", "1FalseTrue", "2FalseFalse", "2FalseTrue", "2TrueFalse", "2TrueTrue"]:
             self.builder.get_object("img_Top{}".format(t)).set_visible(t == top)        
         for b in ["1False", "2False", "2True"]:
             self.builder.get_object("img_Bottom{}".format(b)).set_visible(b == bottom)        
 
+    def onOverlayCreditClicked(self, btn):
+        dialog = self.builder.get_object("dlg_overlayCredit")
+        dialog.set_keep_above(True)
+        response = dialog.run()
+        if response == Gtk.ResponseType.OK:
+            vpos = self.get("fcb_plCreditVpos")
+            hpos = self.get("fcb_plCreditHpos")
+            rota = self.get("fcb_plCreditRotate")
+            bbox = self.get("ecb_plCreditBoxStyle")
+            crParams = "{}{},{},{}".format(vpos, hpos, rota, bbox)
+            self.set("t_overlayParams", crParams)
+        elif response == Gtk.ResponseType.CANCEL:
+            pass
+        else:
+            return
+        dialog.set_keep_above(False)
+        dialog.hide()
