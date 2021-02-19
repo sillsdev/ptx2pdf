@@ -130,7 +130,7 @@ class StyleEditor:
             res = re.sub(r"^\s*(.*\d+)\s*$", r"\1pt", res)
         return res
 
-    def output_diffile(self, outfh, regular=None, inArchive=False):
+    def output_diffile(self, outfh, regular=None, inArchive=False, root=None):
         def normmkr(s):
             x = s.lower().title()
             return mkrexceptions.get(x, x)
@@ -142,7 +142,7 @@ class StyleEditor:
                 sm = self.sheet.get(m, {})
             om = self.basesheet.get(m, {})
             if " font" in sm:
-                sm[" font"].updateTeXStyle(sm, regular=regular, inArchive=inArchive)
+                sm[" font"].updateTeXStyle(sm, regular=regular, inArchive=inArchive, root=root)
             for k,v in sm.items():
                 if k.startswith(" "):
                     continue

@@ -26,11 +26,13 @@ def writefontsconf():
         inf['sysfontsdir'] = "/usr/share/fonts"
     os.makedirs(os.path.dirname(fname), exist_ok=True)
     fdir = os.path.join(os.path.dirname(__file__), '..')
-    for a in (['fonts'], ['..', '..', 'fonts']):
+    for a in (['..', 'fonts'], ['..', '..', 'fonts']):
         fpath = os.path.join(fdir, *a)
         if os.path.exists(fpath):
-            inf['appfontsdir'] = fpath
+            inf['appfontsdir'] = os.path.abspath(fpath)
             break
+    else:
+        inf['appfontsdir'] = os.path.abspath('fonts')
     with open(fname, "w", encoding="utf=8") as outf:
         outf.write(fontconfig_template.format(**inf))
     return fname
@@ -181,6 +183,17 @@ class TTFontCache:
         if res is None and "Oblique" in style:
             res = f.get(style.replace("Oblique", "Italic"), None)
         return res
+
+    def iscore(self, name, style=None):
+        f = self.fccache.get(name, None)
+        if f is None:
+            return False
+        if style is None or len(style) == 0:
+            style = "Regular"
+        res = f.get(style, None)
+        if res is None and "Oblique" in style:
+            res = f.get(style.replace("Oblique", "Italic"), None)
+        return res != None
 
 fontcache = None
 def initFontCache(nofclist=False):
@@ -454,6 +467,7 @@ class TTFont:
         else:
             fname = fontcache.get(name, style)
             self.filename = Path(os.path.abspath(fname)) if fname is not None else None
+        self.iscore = fontcache.iscore(name, style)
         self.feats = {}
         self.featvals = {}
         self.names = {}
@@ -853,11 +867,17 @@ class FontRef:
     def getFake(self, name):
         return self.feats.get(name, None)
 
-    def _getTeXComponents(self, inarchive=False):
+    def _getTeXComponents(self, inarchive=False, root=None):
         f = self.getTtfont()
         s = None
-        if f.filename is not None:
-            name = "[{}]".format(f"../shared/fonts/{f.filename.name}" if inarchive else f.filename.as_posix())
+        if f.filename is not None and not f.iscore:
+            if inarchive:
+                fname = f"../shared/fonts/{f.filename.name}"
+            elif root is not None:
+                fname = os.path.relpath(f.filename, root)
+            else:
+                fname = f.filename.as_posix()
+            name = "[{}]".format(fname)
         elif self.style is not None and len(self.style):
             s = _fontstylemap.get(self.style, None)
             name = self.name + (" "+self.style if s is None else "")
@@ -880,7 +900,7 @@ class FontRef:
                 feats.append(("+"+k, v))
         return (name, sfeats, feats)
 
-    def updateTeXStyle(self, style, regular=None, inArchive=False):
+    def updateTeXStyle(self, style, regular=None, inArchive=False, root=None):
         res = []
         if regular is not None and self.name == regular.name:
             for a in ("Bold", "Italic"):
@@ -893,7 +913,7 @@ class FontRef:
                 elif x:
                     del style[a]
         else:
-            (name, sfeats, feats) = self._getTeXComponents(inarchive=inArchive)
+            (name, sfeats, feats) = self._getTeXComponents(inarchive=inArchive, root=root)
             # print(f"updateTeXStyle: {name}, {sfeats}, {feats}")
             style['FontName'] = name
             if len(feats) or len(sfeats):

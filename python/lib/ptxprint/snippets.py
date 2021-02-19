@@ -105,6 +105,7 @@ class FancyBorders(Snippet):
 {%E%fancy/sectionheader}\sethook{{start}}{{s%D%}}{{\placesectionheadbox}}
 {%E%fancy/sectionheader}\sethook{{start}}{{s1%D%}}{{\placesectionheadbox}}
 {%E%fancy/sectionheader}\sethook{{start}}{{s2%D%}}{{\placesectionheadbox}}
+{%E%fancy/sectionheader}\squashgridboxfalse
 
 {%E%fancy/versedecorator}\newbox\versestarbox%D%
 {%E%fancy/versedecorator}\setbox\versestarbox%D%=\hbox{{\XeTeXpdffile "{%E%fancy/versedecoratorpdf}" scaled {%E%fancy/versedecoratorscale} \relax}}

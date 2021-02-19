@@ -723,8 +723,9 @@ class ViewModel:
             return
         fname = os.path.join(self.configPath(self.configName(), makePath=True), "ptxprint.sty")
         regularfont = self.get("bl_fontR")
+        root = os.path.join(self.settings_dir, self.prjid, "PrintDraft")
         with open(fname, "w", encoding="Utf-8") as outf:
-            self.styleEditor.output_diffile(outf, regular=regularfont)
+            self.styleEditor.output_diffile(outf, regular=regularfont, root=root)
 
     def savePics(self, force=False):
         if not force and self.configLocked():
