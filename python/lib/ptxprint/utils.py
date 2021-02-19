@@ -224,7 +224,6 @@ def asfloat(v, d):
 
 def pluralstr(s, l):
     """CLDR plural rules"""
-    print(s, l)
     if len(l) == 0:
         return ""
     elif len(l) == 1:
@@ -244,7 +243,6 @@ def pluralstr(s, l):
     return curr
 
 def multstr(template, lang, num, text, addon=""):
-    print([template, lang, num, text, addon])
     if str(num) in template:
         res = template[str(num)].format(text)
     elif num > 1 and "mult" in template:
@@ -253,6 +251,5 @@ def multstr(template, lang, num, text, addon=""):
         res = ""
     if len(addon):
         res += " " + addon
-    print(res)
     return res
 

@@ -12,49 +12,49 @@ from ptxprint.usfmerge import usfmerge
 from ptxprint.utils import _, universalopen
 
 _errmsghelp = {
-"! TeX capacity exceeded, sorry":        "Uh oh! You've pushed TeX too far! Try turning Hyphenation off, or contact support.\n",
-"! Paratext stylesheet":                 "Check if the stylesheet specified on the Advanced tab exists.\n",
-"! Unable to load picture":              "Check if picture file is located in 'Figures', 'local\\figures' or a\n" +\
-                                         "specified folder. Also try the option 'Omit Missing Pictures'\n",
-"! Unable to load picture or PDF file":  "Check if image/PDF file is available on the system.\n" +
-                                         "If you have specified one or more Front/Back matter PDFs or a Watermark PDF\n" +
-                                         "then ensure that the PDF(s) exist(s); OR uncheck those options (Advanced tab).\n",
-"! Missing control sequence inserted.":  "Fallback font probably being applied to text in a footnote (not permitted!)\n",
-"! Missing number, treated as zero.":    "Related to USFM3 illustration markup\n",
-"! Undefined control sequence.":         "This might be related to a USFM marker error (using an unsupported marker).\n" +\
-                                         "Try 'Run Basic Checks' in Paratext\n",
-"! Illegal unit of measure (pt inserted).":    "One of the settings in the Stylesheet may be missing the units.\n" +\
-                                         "To confirm that this is a stylesheet issue, temporarily turn off Stylesheets.\n" +\
-                                         "Then, check any recent changes to the Stylesheets (on Advanced tab) and try again.\n",
-"! File ended while scanning use of":    "Try turning off PrintDraftChanges.txt and both Stylesheets on Advanced tab.\n",
-"! Output loop---25 consecutive dead cycles.":  "Sorry! XeTeX was unable to complete the typesetting.\n" +\
-                                         "* If creating a Diglot, ensure both texts can print successfully\n" +\
-                                         "  before merging them as a Diglot print. And ensure that there\n" +\
-                                         "  aren't any large chunks of missing text in either of the projects.\n" +\
-                                         "* Also check that you haven't inadvertently left certain settings on\n" +\
-                                         "  from a previous session (Pictures, Diglot, Borders - which will show\n" +\
-                                         "  in blue if these features are currently enabled).", 
-"! Paratext stylesheet":                 "Try turning off the ptxprint-mods stylesheet\n",
-"! File ended while scanning use of \iotableleader.": "Problem with Formatting Intro Outline\n" +\
-                                         "Try disabling option 'Right-Align \ior with tabbed leaders' on the Body tab\n",
-"! Emergency stop.":                     "Probably a TeX macro problem - contact support, or post a bug report\n",
-"! Not a letter.":                       "Possible fault in the hyphenation file\n" +\
-                                         "Try turning off Hyphenate option located on the Body tab\n",
-"! Font \extrafont":                     "Fallback Font issue - set a font on the Body tab.\n" +\
-                                         "(Turn off the option 'Use Fallback Font' or specify a valid font)\n",
-"! Font":                                "Font related issue. The most likely reason for this error is that\n" +\
-                                         "the selected font has not been installed for all users. See FAQ.\n",
-"! Too many }'s":                        "Possibly a TeX macro issue - contact support, or post a bug report\n",
-"! This can't happen (page)":            "Possibly a TeX macro issue - contact support, or post a bug report\n",
-"! I can't find file `paratext2.tex'.":  "Possibly a faulty installation.\n",
-"! I can't find file `ptx-tracing.tex'.":"Possibly a faulty installation.\n",
-"Runaway argument?":                     "Unknown issue. Maybe related to Right-aligned tabbed leaders\n" +\
-                                         "Try turning off PrintDraftChanges.txt and both Stylesheets\n",
-"Unknown":                               "Sorry, there is no diagnostic help for this error.\n" +\
-                                         "Ensure that the Basic Checks (in Paratext) pass for all books in list.\n" +\
-                                         "Try turning off various settings, and disable Changes or Stylesheets.\n" +\
-                                         "If peripheral books are selected, try excluding those.\n" +\
-                                         "Sometimes just closing and re-opening PTXprint can make things work again!"
+"! TeX capacity exceeded, sorry":        _("Uh oh! You've pushed TeX too far! Try turning Hyphenation off, or contact support."),
+"! Paratext stylesheet":                 _("Check if the stylesheet specified on the Advanced tab exists."),
+"! Unable to load picture":              _("Check if picture file is located in 'Figures', 'local\\figures' or a\n" +\
+                                           "specified folder. Also try the option 'Omit Missing Pictures'"),
+"! Unable to load picture or PDF file":  _("Check if image/PDF file is available on the system.\n" +
+                                           "If you have specified one or more Front/Back matter PDFs or a Watermark PDF\n" +
+                                           "then ensure that the PDF(s) exist(s); OR uncheck those options (Advanced tab)."),
+"! Missing control sequence inserted.":  _("Fallback font probably being applied to text in a footnote (not permitted!)"),
+"! Missing number, treated as zero.":    _("Related to USFM3 illustration markup"),
+"! Undefined control sequence.":         _("This might be related to a USFM marker error (using an unsupported marker).\n" +\
+                                           "Try 'Run Basic Checks' in Paratext"),
+"! Illegal unit of measure (pt inserted).":    _("One of the settings in the Stylesheet may be missing the units.\n" +\
+                                           "To confirm that this is a stylesheet issue, temporarily turn off Stylesheets.\n" +\
+                                           "Then, check any recent changes to the Stylesheets (on Advanced tab) and try again."),
+"! File ended while scanning use of":    _("Try turning off PrintDraftChanges.txt and both Stylesheets on Advanced tab."),
+"! Output loop---25 consecutive dead cycles.":  _("Sorry! XeTeX was unable to complete the typesetting.\n" +\
+                                           "* If creating a Diglot, ensure both texts can print successfully\n" +\
+                                           "  before merging them as a Diglot print. And ensure that there\n" +\
+                                           "  aren't any large chunks of missing text in either of the projects.\n" +\
+                                           "* Also check that you haven't inadvertently left certain settings on\n" +\
+                                           "  from a previous session (Pictures, Diglot, Borders - which will show\n" +\
+                                           "  in blue if these features are currently enabled)."),
+"! Paratext stylesheet":                 _("Try turning off the ptxprint-mods stylesheet"),
+"! File ended while scanning use of \iotableleader.": _("Problem with Formatting Intro Outline\n" +\
+                                           "Try disabling option 'Right-Align \ior with tabbed leaders' on the Body tab"),
+"! Emergency stop.":                     _("Probably a TeX macro problem - contact support, or post a bug report"),
+"! Not a letter.":                       _("Possible fault in the hyphenation file\n" +\
+                                           "Try turning off Hyphenate option located on the Body tab"),
+"! Font \extrafont":                     _("Fallback Font issue - set a font on the Body tab.\n" +\
+                                           "(Turn off the option 'Use Fallback Font' or specify a valid font)"),
+"! Font":                                _("Font related issue. The most likely reason for this error is that\n" +\
+                                          "the selected font has not been installed for all users. See FAQ."),
+"! Too many }'s":                        _("Possibly a TeX macro issue - contact support, or post a bug report"),
+"! This can't happen (page)":            _("Possibly a TeX macro issue - contact support, or post a bug report"),
+"! I can't find file `paratext2.tex'.":  _("Possibly a faulty installation."),
+"! I can't find file `ptx-tracing.tex'.": _("Possibly a faulty installation."),
+"Runaway argument?":                     _("Unknown issue. Maybe related to Right-aligned tabbed leaders\n" +\
+                                           "Try turning off PrintDraftChanges.txt and both Stylesheets"),
+"Unknown":                               _("Sorry, there is no diagnostic help for this error.\n" +\
+                                           "Ensure that the Basic Checks (in Paratext) pass for all books in list.\n" +\
+                                           "Try turning off various settings, and disable Changes or Stylesheets.\n" +\
+                                           "If peripheral books are selected, try excluding those.\n" +\
+                                           "Sometimes just closing and re-opening PTXprint can make things work again!")
 }
 # \def\LineSpacingFactor{{{paragraph/linespacingfactor}}}
 # \def\VerticalSpaceFactor{{1.0}}
@@ -273,11 +273,11 @@ class RunJob:
                     if m in l:
                         if l[:-1] != m:
                             finalLogLines.append("{}\n".format(m))
-                        finalLogLines.append(_errmsghelp[m])
+                        finalLogLines.append(_errmsghelp[m]+"\n")
                         foundmsg = True
                         break
         if not foundmsg:
-            finalLogLines.append(_errmsghelp["Unknown"])
+            finalLogLines.append(_errmsghelp["Unknown"]+"\n")
         books = re.findall(r"\d\d(...){}.+?\....".format(self.prjid), "".join(finalLogLines))
         if len(books):
             book = " in {}".format(books[-1])

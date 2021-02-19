@@ -367,6 +367,7 @@ class TexModel:
         self.localChanges = None
         self.debug = False
         self.interlinear = None
+        self.imageCopyrightLangs = {}
         libpath = os.path.abspath(os.path.dirname(__file__))
         self.dict = {"/ptxpath": str(path).replace("\\","/"),
                      "/ptxprintlibpath": libpath.replace("\\","/"),
@@ -747,6 +748,7 @@ class TexModel:
                     dat = str(doc)
                     doc = None
                 dat = self.runChanges(self.changes, dat)
+                self.analyzeImageCopyrights(dat)
 
             if self.dict['project/canonicalise']:
                 syntaxErrors = []
@@ -1133,6 +1135,10 @@ class TexModel:
         for delGloEntry in [x for x in ge if x not in list(set(glossentries))]:
             self.localChanges.append((None, regex.compile(r"\\p \\k {}\\k\* .+\r?\n".format(delGloEntry), flags=regex.M), ""))
 
+    def analyzeImageCopyrights(self, txt):
+        for m in re.findall(r"\\(?P<mkr>\S).*?\\zimagecopyright(?P<lang>[A-Z]+)", txt):
+            self.imageCopyrightLangs[m.lang.lower()] = m.mkr
+
     def generateImageCopyrightText(self):
         artpgs = {}
         mkr='pc'
@@ -1140,6 +1146,7 @@ class TexModel:
         picpagesfile = os.path.join(self.docdir()[0], self['jobname'] + ".picpages")
         crdts = []
         cinfo = self.printer.copyrightInfo
+        self.analyzeImageCopyrights(self.dict['project/colophontext'])
         if os.path.exists(picpagesfile):
             with universalopen(picpagesfile) as inf:
                 dat = inf.read()
@@ -1164,7 +1171,10 @@ class TexModel:
             else:
                 artistWithMost = ""
 
-            for lang in ("en", ):
+            langs = set(self.imageCopyrightLangs.keys())
+            langs.add("en")
+            for lang in sorted(langs):
+                mkr = self.imageCopyrightLangs.get(lang, "pc")
                 crdts.append("\\def\\zimagecopyrights{}{{%".format(lang.upper()))
                 plstr = cinfo["plurals"].get(lang, cinfo["plurals"]["en"])
                 cpytemplate = cinfo['templates']['imageCopyright'].get(lang,
