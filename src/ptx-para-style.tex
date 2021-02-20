@@ -88,6 +88,7 @@
   \egroup \cutoutcarryover
 %{\showboxbreadth=200 \showbox\he@dingbox}
   \s@tbaseline{p}%
+  \trace{h}{ht=\the\ht\he@dingbox dp=\the\dp\he@dingbox}%
   \gridb@x\he@dingbox\unvbox\he@dingnotes
   \global\he@dingsfalse
   \global\first@fterheadingtrue
@@ -110,7 +111,7 @@
 %+cpar_gridbox1
 \def\gr@db@x#1{%
 % \setbox0=\vbox{\kern-#1pt\vrule\kern#1pt\kern-.4pt\box#1\kern-.4pt\vrule}%
-\setbox0=\box#1%\ifgridp@c\vbox{\box#1}\else\killd@scenders#1\fi%
+\setbox0=\vbox{\unvbox#1}%\ifgridp@c\vbox{\box#1}\else\killd@scenders#1\fi%
 \trace{h}{before gridbox: ht0=\the\ht0; dp0=\the\dp0 (dp was \the\dimen4)}%
 %\MSG{after killd: ht0=\the\ht0; dp0=\the\dp0}
 %{\showboxbreadth=100 \showboxdepth=10 \showbox0 }%

@@ -162,10 +162,9 @@
   \trace{h}{no p@gefirstmark. Page 1 is \ifp@geone True\else False\fi} 
     \ifodd\pageno
       \the\noVoddhead
-      \trace{h}{using noVoddhead} 
+      \trace{h}{using noVoddhead}% 
     \else
       \ifDoubleSided \trace{h}{using noVevenhead} \the\noVevenhead \else \trace{h}{using noVoddhead} \the\noVoddhead\fi\fi
-
   %\global\rhr@lefalse
  \else
 %  \ifendbooknoeject
