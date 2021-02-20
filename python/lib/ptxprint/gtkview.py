@@ -1850,6 +1850,7 @@ class GtkViewModel(ViewModel):
         self.updateDialogTitle()
         self.picChecksView.init(basepath=self.configPath(cfgname=None), configid=self.configId)
         self.styleEditor.editMarker()
+        self.updateMarginGraphics()
         self.onBodyHeightChanged(None)
 
     def onConfigNameChanged(self, cb_savedConfig):

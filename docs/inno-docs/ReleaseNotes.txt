@@ -1,6 +1,26 @@
-PTXprint 1.5.12.4 Release Notes 
-15 February 2021
+PTXprint 1.5.13 Release Notes 
+20 February 2021
 
+Bug Fixes and Improvements in 1.5.13
+
+  * Allow \zimagecopyrights to be localized by adding language code to end of marker
+  
+  * UI changes on Layout tab to make margin settings clearer
+  
+  * Magic button to optimize line spacing, or top and bottom margins
+  
+  * Temporarily removed Image Credit Overlays (coming back soon)
+  
+  * Pictures tab has been re-worked to be easier to use and maintain
+  
+  * Address #399 and spurious bolding of style labels
+  
+  * Add SourceCodePro font for use in Cropmark text
+  
+  * Centre watermarks on the text page
+  
+  * Prevent letter spacing from messing up page breaks
+  
 Bug Fixes and Improvements in 1.5.12
 
   * Added missing margin graphics files to installer

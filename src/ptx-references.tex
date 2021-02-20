@@ -159,12 +159,12 @@
  \edef\t@st{\p@gefirstmark}% check first mark on page to see if this is a "title" page
  \global\rhr@letrue
  \ifnum\ifx\t@st\empty\ifp@geone 0\else 1\fi\else 0\fi =1
-  \trace{h}{no p@gefirstmark. Page 1 is \ifp@geone True\else False\fi} 
+  \trace{h}{no p@gefirstmark. Page 1 is \ifp@geone True\else False\fi}%
     \ifodd\pageno
       \the\noVoddhead
       \trace{h}{using noVoddhead}% 
     \else
-      \ifDoubleSided \trace{h}{using noVevenhead} \the\noVevenhead \else \trace{h}{using noVoddhead} \the\noVoddhead\fi\fi
+      \ifDoubleSided \trace{h}{using noVevenhead}\the\noVevenhead \else \trace{h}{using noVoddhead}\the\noVoddhead\fi\fi
   %\global\rhr@lefalse
  \else
 %  \ifendbooknoeject
