@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ptxprint\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-02-19 13:56+0700\n"
-"PO-Revision-Date: 2021-02-19 06:57\n"
+"POT-Creation-Date: 2021-02-20 15:19+0700\n"
+"PO-Revision-Date: 2021-02-20 08:19\n"
 "Last-Translator: \n"
 "Language-Team: Thai\n"
 "Language: th_TH\n"
@@ -245,12 +245,12 @@ msgstr ""
 msgid "This locale is not supported on your system, you may need to install it"
 msgstr ""
 
-#: lib/ptxprint/piclist.py:361
+#: lib/ptxprint/piclist.py:343
 msgid "Media permissions unknown\n"
 "for this illustration"
 msgstr ""
 
-#: lib/ptxprint/piclist.py:363
+#: lib/ptxprint/piclist.py:345
 msgid "Permission for {} series:\n"
 "{}"
 msgstr ""
@@ -437,41 +437,41 @@ msgstr ""
 msgid "Syllable line breaking"
 msgstr ""
 
-#: lib/ptxprint/texmodel.py:1195
+#: lib/ptxprint/texmodel.py:1181
 msgid "\\rem Warning: No copyright statement found for: {} on pages {}"
 msgstr ""
 
-#: lib/ptxprint/utils.py:194 lib/ptxprint/ptxprint.glade:8538
+#: lib/ptxprint/utils.py:201 lib/ptxprint/ptxprint.glade:8538
 #: lib/ptxprint/ptxprint.glade:8580 lib/ptxprint/ptxprint.glade:8622
 msgid "First Reference"
 msgstr ""
 
-#: lib/ptxprint/utils.py:195 lib/ptxprint/ptxprint.glade:8539
+#: lib/ptxprint/utils.py:202 lib/ptxprint/ptxprint.glade:8539
 #: lib/ptxprint/ptxprint.glade:8581 lib/ptxprint/ptxprint.glade:8623
 msgid "Last Reference"
 msgstr ""
 
-#: lib/ptxprint/utils.py:196 lib/ptxprint/ptxprint.glade:8540
+#: lib/ptxprint/utils.py:203 lib/ptxprint/ptxprint.glade:8540
 #: lib/ptxprint/ptxprint.glade:8582 lib/ptxprint/ptxprint.glade:8624
 #: lib/ptxprint/ptxprint.glade:9135
 msgid "Reference Range"
 msgstr ""
 
-#: lib/ptxprint/utils.py:197 lib/ptxprint/ptxprint.glade:8537
+#: lib/ptxprint/utils.py:204 lib/ptxprint/ptxprint.glade:8537
 #: lib/ptxprint/ptxprint.glade:8579 lib/ptxprint/ptxprint.glade:8621
 #: lib/ptxprint/ptxprint.glade:9134
 msgid "Page Number"
 msgstr ""
 
-#: lib/ptxprint/utils.py:198
+#: lib/ptxprint/utils.py:205
 msgid "Time (HH:MM)"
 msgstr ""
 
-#: lib/ptxprint/utils.py:199
+#: lib/ptxprint/utils.py:206
 msgid "Date (YYYY-MM-DD)"
 msgstr ""
 
-#: lib/ptxprint/utils.py:200 lib/ptxprint/ptxprint.glade:8536
+#: lib/ptxprint/utils.py:207 lib/ptxprint/ptxprint.glade:8536
 #: lib/ptxprint/ptxprint.glade:8578 lib/ptxprint/ptxprint.glade:8620
 #: lib/ptxprint/ptxprint.glade:9133
 msgid "-empty-"
@@ -493,77 +493,77 @@ msgstr ""
 msgid "{} at line {} col {}"
 msgstr ""
 
-#: lib/ptxprint/view.py:773
+#: lib/ptxprint/view.py:779
 msgid "No Secondary Project Set"
 msgstr ""
 
-#: lib/ptxprint/view.py:773
+#: lib/ptxprint/view.py:779
 msgid "In order to generate an AdjList for Diglots, the \n"
 "Secondary project must be set on the Diglot+Border tab."
 msgstr ""
 
-#: lib/ptxprint/view.py:783
+#: lib/ptxprint/view.py:789
 msgid "One or more Paragraph Adjust file(s) already exist!"
 msgstr ""
 
-#: lib/ptxprint/view.py:784
+#: lib/ptxprint/view.py:790
 msgid "\n\n"
 "Do you want to OVERWRITE the above-listed file(s)?"
 msgstr ""
 
-#: lib/ptxprint/view.py:835
+#: lib/ptxprint/view.py:841
 msgid "Failed to Generate Hyphenation List"
 msgstr ""
 
-#: lib/ptxprint/view.py:836
+#: lib/ptxprint/view.py:842
 msgid "{} Paratext Project's Hyphenation file not found:\n"
 "{}"
 msgstr ""
 
-#: lib/ptxprint/view.py:877
+#: lib/ptxprint/view.py:883
 msgid "Hyphenation List Generated"
 msgstr ""
 
-#: lib/ptxprint/view.py:878
+#: lib/ptxprint/view.py:884
 msgid "{} hyphenated words were gathered\n"
 "from Paratext's Hyphenation Word List."
 msgstr ""
 
-#: lib/ptxprint/view.py:880
+#: lib/ptxprint/view.py:886
 msgid "\n\n"
 "Note for Indic languages that {} words containing ZWJ"
 msgstr ""
 
-#: lib/ptxprint/view.py:881
+#: lib/ptxprint/view.py:887
 msgid "\n"
 "and ZWNJ characters have been left off the hyphenation list."
 msgstr ""
 
-#: lib/ptxprint/view.py:884
+#: lib/ptxprint/view.py:890
 msgid "Hyphenation List was NOT Generated"
 msgstr ""
 
-#: lib/ptxprint/view.py:885
+#: lib/ptxprint/view.py:891
 msgid "No valid words were found in Paratext's Hyphenation List"
 msgstr ""
 
-#: lib/ptxprint/view.py:928
+#: lib/ptxprint/view.py:934
 msgid "The Fallback Font needs to be something other than the Regular Font."
 msgstr ""
 
-#: lib/ptxprint/view.py:929 lib/ptxprint/view.py:937
+#: lib/ptxprint/view.py:935 lib/ptxprint/view.py:943
 msgid "Please select a different Font."
 msgstr ""
 
-#: lib/ptxprint/view.py:936
+#: lib/ptxprint/view.py:942
 msgid "The Fallback Font just selected does NOT support all the missing characters listed."
 msgstr ""
 
-#: lib/ptxprint/view.py:1138
+#: lib/ptxprint/view.py:1144
 msgid "Error: Cannot create Archive!"
 msgstr ""
 
-#: lib/ptxprint/view.py:1138
+#: lib/ptxprint/view.py:1144
 msgid "The ZIP file seems to open in another program."
 msgstr ""
 

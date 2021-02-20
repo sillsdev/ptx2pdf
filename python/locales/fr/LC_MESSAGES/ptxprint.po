@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ptxprint\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-02-19 13:56+0700\n"
-"PO-Revision-Date: 2021-02-19 06:57\n"
+"POT-Creation-Date: 2021-02-20 15:19+0700\n"
+"PO-Revision-Date: 2021-02-20 08:19\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -258,8 +258,8 @@ msgstr "PVI : La police régulière prend déjà en charge tous les caractères
 #: lib/ptxprint/gtkview.py:2300
 msgid "A fallback font is not required so\n"
 "the 'Use Fallback Font' option will be disabled."
-msgstr "Une police de secours n'est pas nécessaire donc\n"
-"l'option 'Utiliser la police de repli' sera désactivée."
+msgstr "Une police de repli n'est pas nécessaire donc\n"
+"l'option 'Utiliser une police de repli' sera désactivée."
 
 #: lib/ptxprint/gtkview.py:2529
 msgid "Choose Image"
@@ -273,57 +273,65 @@ msgstr "Locale non prise en charge"
 msgid "This locale is not supported on your system, you may need to install it"
 msgstr "Cette locale n'est pas prise en charge sur votre système, vous devrez peut-être l'installer"
 
-#: lib/ptxprint/piclist.py:361
+#: lib/ptxprint/piclist.py:343
 msgid "Media permissions unknown\n"
 "for this illustration"
-msgstr ""
+msgstr "Autorisations des médias inconnues\n"
+"pour cette illustration"
 
-#: lib/ptxprint/piclist.py:363
+#: lib/ptxprint/piclist.py:345
 msgid "Permission for {} series:\n"
 "{}"
-msgstr ""
+msgstr "Permission pour la série {} :\n"
+"{}"
 
 #: lib/ptxprint/runjob.py:15
 msgid "Uh oh! You've pushed TeX too far! Try turning Hyphenation off, or contact support."
-msgstr ""
+msgstr "Désolé ! Vous avez poussé le TeX trop loin ! Essayez de désactiver la césure de mots, ou contactez l'assistance."
 
 #: lib/ptxprint/runjob.py:16
 msgid "Check if the stylesheet specified on the Advanced tab exists."
-msgstr ""
+msgstr "Vérifiez si la feuille de style spécifiée dans l'onglet Avancé existe."
 
 #: lib/ptxprint/runjob.py:17
 msgid "Check if picture file is located in 'Figures', 'local\\figures' or a\n"
 "specified folder. Also try the option 'Omit Missing Pictures'"
-msgstr ""
+msgstr "Vérifiez si le fichier d'image se trouve dans 'Figures', 'local\\figures' ou dans un dossier\n"
+"spécifié. Essayez également l'option 'Omettre les images manquantes'"
 
 #: lib/ptxprint/runjob.py:19
 msgid "Check if image/PDF file is available on the system.\n"
 "If you have specified one or more Front/Back matter PDFs or a Watermark PDF\n"
 "then ensure that the PDF(s) exist(s); OR uncheck those options (Advanced tab)."
-msgstr ""
+msgstr "Vérifiez si le fichier image/PDF est disponible sur le système.\n"
+"Si vous avez spécifié des PDF de pages de garde, d'annexes, ou de filigrane\n"
+"assurez-vous que le(s) PDF(s) existe(nt) ; OU décochez ces options (onglet Avancé)."
 
 #: lib/ptxprint/runjob.py:22
 msgid "Fallback font probably being applied to text in a footnote (not permitted!)"
-msgstr ""
+msgstr "La police de repli est probablement appliquée au texte dans une note de bas de page (pas permis !)"
 
 #: lib/ptxprint/runjob.py:23
 msgid "Related to USFM3 illustration markup"
-msgstr ""
+msgstr "Lié au balisage d'illustration USFM3"
 
 #: lib/ptxprint/runjob.py:24
 msgid "This might be related to a USFM marker error (using an unsupported marker).\n"
 "Try 'Run Basic Checks' in Paratext"
-msgstr ""
+msgstr "Ceci peut être lié à une erreur de marqueur USFM (usage d’un marqueur non supporté).\n"
+"Essayez \"Vérifications de base\" dans Paratext"
 
 #: lib/ptxprint/runjob.py:26
 msgid "One of the settings in the Stylesheet may be missing the units.\n"
 "To confirm that this is a stylesheet issue, temporarily turn off Stylesheets.\n"
 "Then, check any recent changes to the Stylesheets (on Advanced tab) and try again."
-msgstr ""
+msgstr "Il se peut qu'il manque les unités dans l'un des paramètres de la feuille de style.\n"
+"Pour confirmer que c'est bien le cas, désactivez temporairement les feuilles de style.\n"
+"Ensuite, vérifiez les modifications récentes apportées aux feuilles de style (dans l'onglet Avancé) et réessayez."
 
 #: lib/ptxprint/runjob.py:29
 msgid "Try turning off PrintDraftChanges.txt and both Stylesheets on Advanced tab."
-msgstr ""
+msgstr "Essayez de désactiver PrintDraftChanges.txt et les deux feuilles de style dans l'onglet Avancé."
 
 #: lib/ptxprint/runjob.py:30
 msgid "Sorry! XeTeX was unable to complete the typesetting.\n"
@@ -333,48 +341,59 @@ msgid "Sorry! XeTeX was unable to complete the typesetting.\n"
 "* Also check that you haven't inadvertently left certain settings on\n"
 "  from a previous session (Pictures, Diglot, Borders - which will show\n"
 "  in blue if these features are currently enabled)."
-msgstr ""
+msgstr "Désolé ! XeTeX n'a pas pu terminer la composition.\n"
+"* Si vous créez un Diglot, assurez-vous que les deux textes peuvent s'imprimer\n"
+"  correctement avant de les fusionner en une impression Diglot. Et assurez-vous\n"
+"  que ces projets ne manquent pas de gros morceaux de texte.\n"
+"* Vérifiez également que vous n'avez pas laissé certains paramètres activés\n"
+"  depuis une session précédente (Images, Diglot, Bordures - les onglets afficheront\n"
+"  en bleu si ces fonctionnalités sont activées)."
 
 #: lib/ptxprint/runjob.py:37
 msgid "Try turning off the ptxprint-mods stylesheet"
-msgstr ""
+msgstr "Essayez de désactiver la feuille de style ptxprint-mods"
 
 #: lib/ptxprint/runjob.py:38
 msgid "Problem with Formatting Intro Outline\n"
 "Try disabling option 'Right-Align \\ior with tabbed leaders' on the Body tab"
-msgstr ""
+msgstr "Problème avec le formatage du plan de livre dans l'introduction\n"
+"Essayez de désactiver l'option \"Alignement droit \\ior avec des points de remplissage\" dans l'onglet Corps du texte"
 
 #: lib/ptxprint/runjob.py:40
 msgid "Probably a TeX macro problem - contact support, or post a bug report"
-msgstr ""
+msgstr "Probablement un problème de macro TeX - contactez l'assistance, ou postez un rapport de bogue"
 
 #: lib/ptxprint/runjob.py:41
 msgid "Possible fault in the hyphenation file\n"
 "Try turning off Hyphenate option located on the Body tab"
-msgstr ""
+msgstr "Erreur possible dans le fichier de césure\n"
+"Essayez de désactiver l'option de césure de mots située dans l'onglet Polices+Écriture"
 
 #: lib/ptxprint/runjob.py:43
 msgid "Fallback Font issue - set a font on the Body tab.\n"
 "(Turn off the option 'Use Fallback Font' or specify a valid font)"
-msgstr ""
+msgstr "Problème de police de repli - définissez une police dans l'onglet Polices+Écriture\n"
+"(Désactivez l'option 'Utiliser une police de repli' ou spécifiez une police valide)"
 
 #: lib/ptxprint/runjob.py:45
 msgid "Font related issue. The most likely reason for this error is that\n"
 "the selected font has not been installed for all users. See FAQ."
-msgstr ""
+msgstr "Problème lié aux polices. La raison la plus probable de cette erreur est que\n"
+"la police sélectionnée n'a pas été installée pour tous les utilisateurs. Voir la FAQ."
 
 #: lib/ptxprint/runjob.py:47 lib/ptxprint/runjob.py:48
 msgid "Possibly a TeX macro issue - contact support, or post a bug report"
-msgstr ""
+msgstr "Peut-être un problème de macro TeX - contactez le support technique ou postez un rapport de bogue"
 
 #: lib/ptxprint/runjob.py:49 lib/ptxprint/runjob.py:50
 msgid "Possibly a faulty installation."
-msgstr ""
+msgstr "Peut-être une installation défectueuse."
 
 #: lib/ptxprint/runjob.py:51
 msgid "Unknown issue. Maybe related to Right-aligned tabbed leaders\n"
 "Try turning off PrintDraftChanges.txt and both Stylesheets"
-msgstr ""
+msgstr "Problème inconnu. Peut-être lié l’alignement à droite avec points de remplissage\n"
+"Essayez de désactiver PrintDraftChanges.txt et les deux feuilles de style"
 
 #: lib/ptxprint/runjob.py:53
 msgid "Sorry, there is no diagnostic help for this error.\n"
@@ -382,7 +401,11 @@ msgid "Sorry, there is no diagnostic help for this error.\n"
 "Try turning off various settings, and disable Changes or Stylesheets.\n"
 "If peripheral books are selected, try excluding those.\n"
 "Sometimes just closing and re-opening PTXprint can make things work again!"
-msgstr ""
+msgstr "Désolé, il n'y a pas d'aide de diagnostic pour cette erreur.\n"
+"Assurez-vous de compléter tous les vérifications de base (dans Paratext) pour tous les livres de la liste.\n"
+"Essayez de désactiver divers paramètres, et de désactiver modifications ou feuilles de style.\n"
+"Si des livres périphériques sont sélectionnés, essayez de les exclure.\n"
+"Parfois, si vous fermez et relancez PTXprint, le problème sera résolu !"
 
 #: lib/ptxprint/runjob.py:215 lib/ptxprint/runjob.py:217
 msgid "Layout problems were encountered on page(s): "
@@ -470,41 +493,41 @@ msgstr "Attention : Impossible de supprimer\n"
 msgid "Syllable line breaking"
 msgstr "Casser la syllabe"
 
-#: lib/ptxprint/texmodel.py:1195
+#: lib/ptxprint/texmodel.py:1181
 msgid "\\rem Warning: No copyright statement found for: {} on pages {}"
-msgstr ""
+msgstr "\\rem Attention : aucune déclaration de copyright trouvée pour: {} sur les pages {}"
 
-#: lib/ptxprint/utils.py:194 lib/ptxprint/ptxprint.glade:8538
+#: lib/ptxprint/utils.py:201 lib/ptxprint/ptxprint.glade:8538
 #: lib/ptxprint/ptxprint.glade:8580 lib/ptxprint/ptxprint.glade:8622
 msgid "First Reference"
 msgstr "Première référence"
 
-#: lib/ptxprint/utils.py:195 lib/ptxprint/ptxprint.glade:8539
+#: lib/ptxprint/utils.py:202 lib/ptxprint/ptxprint.glade:8539
 #: lib/ptxprint/ptxprint.glade:8581 lib/ptxprint/ptxprint.glade:8623
 msgid "Last Reference"
 msgstr "Dernière référence"
 
-#: lib/ptxprint/utils.py:196 lib/ptxprint/ptxprint.glade:8540
+#: lib/ptxprint/utils.py:203 lib/ptxprint/ptxprint.glade:8540
 #: lib/ptxprint/ptxprint.glade:8582 lib/ptxprint/ptxprint.glade:8624
 #: lib/ptxprint/ptxprint.glade:9135
 msgid "Reference Range"
 msgstr "Plage de référence"
 
-#: lib/ptxprint/utils.py:197 lib/ptxprint/ptxprint.glade:8537
+#: lib/ptxprint/utils.py:204 lib/ptxprint/ptxprint.glade:8537
 #: lib/ptxprint/ptxprint.glade:8579 lib/ptxprint/ptxprint.glade:8621
 #: lib/ptxprint/ptxprint.glade:9134
 msgid "Page Number"
 msgstr "Numéro de page"
 
-#: lib/ptxprint/utils.py:198
+#: lib/ptxprint/utils.py:205
 msgid "Time (HH:MM)"
 msgstr "Heure (HH:MM)"
 
-#: lib/ptxprint/utils.py:199
+#: lib/ptxprint/utils.py:206
 msgid "Date (YYYY-MM-DD)"
 msgstr "Date (AAAA-MM-JJ)"
 
-#: lib/ptxprint/utils.py:200 lib/ptxprint/ptxprint.glade:8536
+#: lib/ptxprint/utils.py:207 lib/ptxprint/ptxprint.glade:8536
 #: lib/ptxprint/ptxprint.glade:8578 lib/ptxprint/ptxprint.glade:8620
 #: lib/ptxprint/ptxprint.glade:9133
 msgid "-empty-"
@@ -520,89 +543,89 @@ msgstr "Aucun livre sélectionné !"
 
 #: lib/ptxprint/view.py:439
 msgid "Json parsing error in {}"
-msgstr ""
+msgstr "Erreur d'analyse de Json dans {}"
 
 #: lib/ptxprint/view.py:440
 msgid "{} at line {} col {}"
-msgstr ""
+msgstr "{} à la ligne {} col {}"
 
-#: lib/ptxprint/view.py:773
+#: lib/ptxprint/view.py:779
 msgid "No Secondary Project Set"
 msgstr "Aucun projet secondaire défini"
 
-#: lib/ptxprint/view.py:773
+#: lib/ptxprint/view.py:779
 msgid "In order to generate an AdjList for Diglots, the \n"
 "Secondary project must be set on the Diglot+Border tab."
 msgstr "Afin de générer une AdjList pour les Diglots, le projet \n"
 "secondaire doit être défini sur l'onglet Diglot+Bordure."
 
-#: lib/ptxprint/view.py:783
+#: lib/ptxprint/view.py:789
 msgid "One or more Paragraph Adjust file(s) already exist!"
 msgstr "Un ou plusieurs fichiers d'ajustement de paragraphe existent déjà!"
 
-#: lib/ptxprint/view.py:784
+#: lib/ptxprint/view.py:790
 msgid "\n\n"
 "Do you want to OVERWRITE the above-listed file(s)?"
 msgstr "\n\n"
 "Voulez-vous SUPPRIMER les fichiers listés ci-dessus ?"
 
-#: lib/ptxprint/view.py:835
+#: lib/ptxprint/view.py:841
 msgid "Failed to Generate Hyphenation List"
 msgstr "Échec de la génération de la liste de césure d'union"
 
-#: lib/ptxprint/view.py:836
+#: lib/ptxprint/view.py:842
 msgid "{} Paratext Project's Hyphenation file not found:\n"
 "{}"
 msgstr "{} Le fichier de césure du projet Paratext n'a pas été trouvé :\n"
 "{}"
 
-#: lib/ptxprint/view.py:877
+#: lib/ptxprint/view.py:883
 msgid "Hyphenation List Generated"
 msgstr "Liste de césure générée"
 
-#: lib/ptxprint/view.py:878
+#: lib/ptxprint/view.py:884
 msgid "{} hyphenated words were gathered\n"
 "from Paratext's Hyphenation Word List."
 msgstr "{} Les mots de trait d'union ont été rassemblés\n"
 "de la liste de mots de césure de Paratext."
 
-#: lib/ptxprint/view.py:880
+#: lib/ptxprint/view.py:886
 msgid "\n\n"
 "Note for Indic languages that {} words containing ZWJ"
 msgstr "\n\n"
 "Note pour les langues indiques que {} mots contenant ZWJ"
 
-#: lib/ptxprint/view.py:881
+#: lib/ptxprint/view.py:887
 msgid "\n"
 "and ZWNJ characters have been left off the hyphenation list."
 msgstr "\n"
 "et les caractères ZWNJ ont été laissés sur la liste de césure d'union."
 
-#: lib/ptxprint/view.py:884
+#: lib/ptxprint/view.py:890
 msgid "Hyphenation List was NOT Generated"
 msgstr "La liste de césure d'union n'a PAS été générée"
 
-#: lib/ptxprint/view.py:885
+#: lib/ptxprint/view.py:891
 msgid "No valid words were found in Paratext's Hyphenation List"
 msgstr "Aucun mot valide n'a été trouvé dans la liste de césure de Paratext"
 
-#: lib/ptxprint/view.py:928
+#: lib/ptxprint/view.py:934
 msgid "The Fallback Font needs to be something other than the Regular Font."
-msgstr "La fonte de Fallback doit être autre chose que la police régulière."
+msgstr "La police de repli doit être différente que la police principale."
 
-#: lib/ptxprint/view.py:929 lib/ptxprint/view.py:937
+#: lib/ptxprint/view.py:935 lib/ptxprint/view.py:943
 msgid "Please select a different Font."
 msgstr "Veuillez sélectionner une police différente."
 
-#: lib/ptxprint/view.py:936
+#: lib/ptxprint/view.py:942
 msgid "The Fallback Font just selected does NOT support all the missing characters listed."
-msgstr "La police de secours que vous venez de sélectionner ne prend pas en charge tous les caractères manquants listés."
+msgstr "La police de repli que vous avez sélectionné ne prend pas en charge tous les caractères manquants listés."
 
-#: lib/ptxprint/view.py:1138
+#: lib/ptxprint/view.py:1144
 msgid "Error: Cannot create Archive!"
 msgstr "Erreur : Impossible de créer une archive !"
 
-#: lib/ptxprint/view.py:1138
+#: lib/ptxprint/view.py:1144
 msgid "The ZIP file seems to open in another program."
 msgstr "Le fichier ZIP semble être ouvert dans un autre logiciel."
 
@@ -1167,7 +1190,7 @@ msgstr "Bas"
 
 #: lib/ptxprint/ptxprint.glade:2426
 msgid "Illustration Credit Overlay"
-msgstr ""
+msgstr "Superposition de crédits des illustration"
 
 #: lib/ptxprint/ptxprint.glade:2477 lib/ptxprint/ptxprint.glade:10596
 msgid "Vertical\n"
@@ -1717,7 +1740,9 @@ msgstr "5.8in, 8.7in (147x221mm)"
 msgid "This is the base font size for default paragraph \n"
 "text. All other font sizes are calculated (according \n"
 "to their factor size) based on this value."
-msgstr ""
+msgstr "Ceci est la taille de police de base pour le texte de paragraphe \n"
+"de défaut. Toutes les autres tailles de police sont calculées \n"
+"(selon leur taille de facteur) sur la base de cette valeur."
 
 #: lib/ptxprint/ptxprint.glade:4366
 msgid "Base Font\n"
@@ -1732,7 +1757,8 @@ msgstr "Définit la taille en point du texte du corps principal."
 #: lib/ptxprint/ptxprint.glade:4403
 msgid "This is the base line spacing \n"
 "for default paragraph text."
-msgstr ""
+msgstr "Ceci est l'espacement de ligne de base \n"
+"pour le texte de paragraphe de défaut."
 
 #: lib/ptxprint/ptxprint.glade:4407
 msgid "Base Line\n"
@@ -1749,7 +1775,14 @@ msgid "The space by which paragraphs\n"
 "for two-column texts, and the value\n"
 "updates automatically when you change\n"
 "from 1 to 2 columns, and vice versa. "
-msgstr ""
+msgstr "L'espace par lequel les paragraphes doivent\n"
+"être en retrait (pouces). Ceci touche également\n"
+"le retrait de la poésie. Notez que pour un texte\n"
+"d'une seule colonne cette valeur doit être\n"
+"supérieure à celle d’un texte en deux colonnes,\n"
+"et la valeur se met à jour automatiquement\n"
+"lorsque vous changez de 1 à 2 colonnes,\n"
+"et vice versa. "
 
 #: lib/ptxprint/ptxprint.glade:4431
 msgid "Base Paragraph \n"
@@ -1769,7 +1802,7 @@ msgstr "Le montant par lequel les paragraphes\n"
 
 #: lib/ptxprint/ptxprint.glade:4473
 msgid "99.9"
-msgstr ""
+msgstr "99.9"
 
 #: lib/ptxprint/ptxprint.glade:4488
 msgid "Max Lines on Page:"
@@ -1822,12 +1855,14 @@ msgstr "Règle verticale dans la gouttière"
 #: lib/ptxprint/ptxprint.glade:4602
 msgid "Check this option to include a center\n"
 "line between the two columns."
-msgstr ""
+msgstr "Cochez cette option pour inclure une ligne centrale\n"
+"entre les deux colonnes."
 
 #: lib/ptxprint/ptxprint.glade:4623
 msgid "This is the space (mm) between \n"
 "the text of the two columns."
-msgstr ""
+msgstr "Ceci est l'espace (mm) entre \n"
+"et le texte des deux colonnes."
 
 #: lib/ptxprint/ptxprint.glade:4628
 msgid "Gutter \n"
@@ -1843,7 +1878,9 @@ msgstr "Ce paramètre peut augmenter (si -ve) ou diminuer (si +ve) le point de d
 msgid "This setting raises (using a negative value) or \n"
 "lowers (using a positive value) the starting \n"
 "point of the vertical rule between columns."
-msgstr ""
+msgstr "Ce paramètre soulève (en utilisant une valeur négative) \n"
+"ou baisse (en utilisant une valeur positive) le point \n"
+"de départ de la règle verticale entre les colonnes."
 
 #: lib/ptxprint/ptxprint.glade:4667
 msgid "Adjust\n"
@@ -1860,7 +1897,10 @@ msgid "The distance (mm) from the top of the page\n"
 "to the top of the main text area. Note that\n"
 "the first line actually starts a little bit below\n"
 "where the the main text area starts."
-msgstr ""
+msgstr "La distance (mm) entre le haut de la page\n"
+"et le haut de la zone de texte principale. Notez que\n"
+"la première ligne commence un peu en dessous de\n"
+"cette zone de texte principale."
 
 #: lib/ptxprint/ptxprint.glade:4738
 msgid "Top Margin \n"
@@ -1873,7 +1913,10 @@ msgid "The space (pt) between the bottom of the header\n"
 "and the top of the main text area. Note that\n"
 "the first line actually starts a little bit below\n"
 "where the the main text area starts."
-msgstr ""
+msgstr "L'espace (pt) entre le bas de l'en-tête et le\n"
+"haut de la zone de texte principale. Notez\n"
+"que la première ligne commence un peu\n"
+"en dessous de cette zone de texte principale."
 
 #: lib/ptxprint/ptxprint.glade:4759
 msgid "Header to \n"
@@ -1892,7 +1935,8 @@ msgstr "Ce paramètre détermine le positionnement vertical\n"
 #: lib/ptxprint/ptxprint.glade:4803
 msgid "The distance (mm) from the bottom of the \n"
 "main text area to the bottom of the page."
-msgstr ""
+msgstr "La distance (mm) entre le bas de la zone\n"
+"de texte principal et le bas de la page."
 
 #: lib/ptxprint/ptxprint.glade:4808
 msgid "Bottom Margin \n"
@@ -1905,7 +1949,10 @@ msgid "The distance (mm) from the bottom of the \n"
 "footer area to the bottom of the page. Note\n"
 "that (by default) only the introduction pages\n"
 "use the footer for page numbers."
-msgstr ""
+msgstr "La distance (mm) entre le bas de la zone \n"
+"du pied de page et le bas de la page. Notez\n"
+"que (par défaut) seules les pages d'introduction\n"
+"utilisent le pied de page pour les numéros de page."
 
 #: lib/ptxprint/ptxprint.glade:4829
 msgid "Bottom Margin\n"
@@ -1924,7 +1971,10 @@ msgid "The distance (mm) from the top of the page\n"
 "to the top of the header area. Note that\n"
 "the header text actually starts a little bit below\n"
 "where the the header area starts."
-msgstr ""
+msgstr "La distance (mm) entre le haut de la page\n"
+"et le haut de la zone d'en-tête. Notez que le\n"
+"texte d'en-tête commence un peu en dessous\n"
+"du commencement de la zone d'en-tête."
 
 #: lib/ptxprint/ptxprint.glade:4894
 msgid "Edge of Page to\n"
@@ -1934,7 +1984,7 @@ msgstr "Bord de la page jusqu'à\n"
 
 #: lib/ptxprint/ptxprint.glade:4912
 msgid "8.5mm"
-msgstr ""
+msgstr "8.5mm"
 
 #: lib/ptxprint/ptxprint.glade:4926
 msgid "This setting set the space at the bottom of the page\n"
@@ -1952,7 +2002,12 @@ msgid "The distance (mm) from the edge of the page\n"
 "to be identical. If you require a greater inner\n"
 "margin, then use the Binding Gutter setting\n"
 "above."
-msgstr ""
+msgstr "La distance (mm) entre le bord de la page et le début\n"
+"de la zone de texte. Notez que les marges gauche\n"
+"et droite (ou intérieure et extérieure) sont fixées\n"
+"pour être identiques. Si vous souhaitez une marge\n"
+"intérieure plus grande, utilisez le paramètre\n"
+"Gouttière de reliure ci-dessus."
 
 #: lib/ptxprint/ptxprint.glade:4964
 msgid "Side Margin\n"
@@ -1976,7 +2031,10 @@ msgid "The space (pt) between the horizontal rule\n"
 "and the top of the main text area. Note that\n"
 "the first line actually starts a little bit below\n"
 "where the the main text area starts."
-msgstr ""
+msgstr "L'espace (pt) entre la règle horizontale et le\n"
+"haut de la zone de texte principale. Notez\n"
+"que la première ligne commence un peu\n"
+"en dessous de cette zone de texte principale."
 
 #: lib/ptxprint/ptxprint.glade:5013
 msgid "Space from Rule\n"
@@ -1999,7 +2057,7 @@ msgstr "Cocher cette option pour ajouter une ligne horizontale\n"
 #: lib/ptxprint/ptxprint.glade:5071
 msgid "Crop\n"
 "Marks"
-msgstr ""
+msgstr "Repères de coupe des pages"
 
 #: lib/ptxprint/ptxprint.glade:5076
 msgid "Some printers require crop marks\n"
@@ -2009,7 +2067,12 @@ msgid "Some printers require crop marks\n"
 "margins have been set correctly, after\n"
 "printing a sample page at 100% and\n"
 "measuring the physical printout."
-msgstr ""
+msgstr "Certaines imprimantes exigent des repères\n"
+"de coupe de page sur le PDF pour montrer où \n"
+"la page doit être coupée après l’impression.\n\n"
+"Ils servent également pour vérifier la définition\n"
+"des marges, en imprimant une page d'exemple\n"
+"à 100% et en mesurant l'impression physique."
 
 #: lib/ptxprint/ptxprint.glade:5096
 msgid "This setting set the space at the top of the page\n"
@@ -2104,12 +2167,11 @@ msgid "If the primary font is missing any characters\n"
 "Note that the following characters are reserved\n"
 "and are ignored by the Fallback font functionality:\n"
 "           \\u2018 \\u2019 \\u201c \\u201d * # %"
-msgstr "Si la police principale manque des caractères\n"
-"(habituellement des guillemets spéciaux), alors\n"
-"ceux-ci peuvent être listés ici, et gérés en utilisant\n"
-"la police spécifiée ci-dessous.\n\n"
+msgstr "Si la police principale manque des caractères (parfois\n"
+"des ponctuations ou des guillemets spéciaux), ils seront\n"
+"affichés ici, et gérés avec la police spécifiée ci-dessous.\n\n"
 "Il est recommandé de sélectionner autant de\n"
-"livres d'Écritures que disponibles avant d'utiliser\n"
+"livres d'Écritures disponibles avant d'utiliser\n"
 "cet outil pour trouver des caractères manquants.\n\n"
 "Notez que les caractères suivants sont réservés\n"
 "et sont ignorés par la fonctionnalité de police de caractères de repli :\n"
@@ -2124,12 +2186,12 @@ msgid "Select a font to be used as a substitute or\n"
 "have/support all the missing characters\n"
 "either - so it is wise to choose another font."
 msgstr "Sélectionnez une police à utiliser comme substitut ou\n"
-"« fallback» pour les caractères listés ci-dessus\n"
-"qui ne sont pas dans la police ordinaire.\n\n"
+"« repli » pour les caractères listés ci-dessus\n"
+"qui ne sont pas dans la police principale.\n\n"
 "Notez que si le texte de l'étiquette est ROUGE, cela signifie \n"
-"que la police actuellement sélectionnée ne supporte pas non plus \n"
-"tous les caractères manquants\n"
-"- il est donc sage de choisir une autre police."
+"que la police sélectionnée ne contient/supporte pas \n"
+"tous les caractères manquants - il est donc sage\n"
+"de choisir une autre police."
 
 #: lib/ptxprint/ptxprint.glade:5423
 msgid "Font to Display any\n"
@@ -2147,9 +2209,9 @@ msgstr "Sélectionner la police..."
 msgid "Click to select a font to be used as a substitute\n"
 "or \"fallback\" for the characters listed above\n"
 "which are not in the Regular font."
-msgstr "Cliquer pour sélectionner une police à utiliser comme substitut\n"
-"ou « repli » pour les caractères listés ci-dessus\n"
-"qui ne sont pas dans la police ordinaire."
+msgstr "Cliquer pour sélectionner une police à utiliser comme\n"
+"substitut ou « repli » pour les caractères listés ci-dessus\n"
+"qui ne sont pas dans la police principale."
 
 #: lib/ptxprint/ptxprint.glade:5451
 msgid "First use the button (on the left) to find\n"
@@ -2167,7 +2229,7 @@ msgstr "Premièrement, utilisez le bouton (à gauche) pour trouver\n"
 
 #: lib/ptxprint/ptxprint.glade:5473
 msgid "Use Fallback Font"
-msgstr "Utiliser la police de secours"
+msgstr "Utiliser une police de repli"
 
 #: lib/ptxprint/ptxprint.glade:5477
 msgid "This setting is used to prevent [] \"Tofu\" in the\n"
@@ -2175,11 +2237,11 @@ msgid "This setting is used to prevent [] \"Tofu\" in the\n"
 "special characters (for example curly quotes),\n"
 "then an alternative \"fallback\" font can be used\n"
 "to ensure that they are displayed properly."
-msgstr "Ce paramètre est utilisé pour empêcher [] \"Tofu\" dans le texte\n"
-"imprimé. Si la police primaire manque des\n"
+msgstr "Ce paramètre est utilisé pour empêcher [] \"Tofu\" dans\n"
+"le texte imprimé. Si la police principale manque des\n"
 "caractères spéciaux (par exemple des guillemets bouclés),\n"
-"alors une police alternative « fallback» peut être utilisée\n"
-"pour s'assurer qu'elles sont affichées correctement."
+"une police alternative de « repli » peut être utilisée\n"
+"pour s'assurer qu'ils sont affichés correctement."
 
 #: lib/ptxprint/ptxprint.glade:5522
 msgid "Bold:"
@@ -2492,7 +2554,7 @@ msgstr "Ajustement de l'espacement"
 
 #: lib/ptxprint/ptxprint.glade:6225
 msgid "Hyphenate"
-msgstr "Alignage"
+msgstr "Permettre la césure de mots"
 
 #: lib/ptxprint/ptxprint.glade:6229
 msgid "If disabled, hyphens will not cause line breaks. If enabled, then\n"
@@ -2545,7 +2607,7 @@ msgstr "Certains scripts utilisent la césure de trait d'union pour briser de lo
 
 #: lib/ptxprint/ptxprint.glade:6297
 msgid "Hyphenation"
-msgstr "césure"
+msgstr "Césure de mots"
 
 #: lib/ptxprint/ptxprint.glade:6322
 msgid "Basic Fonts and Advanced Font options.\n"
@@ -2554,10 +2616,10 @@ msgid "Basic Fonts and Advanced Font options.\n"
 "Advanced Spacing Settings. Fallback fonts\n"
 "for characters missing in primary font."
 msgstr "Polices de base et options de police avancées.\n"
-"Également une gamme de paramètres de typographie avancée\n"
+"Une gamme de paramètres de typographie avancée\n"
 "pour prendre en charge n'importe quel système d'écriture.\n"
-"Paramètres d'espacement avancés. Polices de secours\n"
-"pour les caractères manquants dans la police primaire."
+"Paramètres d'espacement avancés. Police de repli\n"
+"pour les caractères manquants dans la police principale."
 
 #: lib/ptxprint/ptxprint.glade:6328
 msgid "Fonts+Script"
@@ -2643,11 +2705,11 @@ msgstr "Imprimer les contours d'introduction qui\n"
 
 #: lib/ptxprint/ptxprint.glade:6595
 msgid "Right-align \\ior With Tabbed Leaders"
-msgstr "Alignement droit \\ior avec les chefs à onglets"
+msgstr "Alignement droit \\ior avec des points de remplissage"
 
 #: lib/ptxprint/ptxprint.glade:6599
 msgid "This will right-align and add leader tabs (. . . .) before the \\ior numbers for a pretty Intro Outline Table."
-msgstr "Cela alignera à droite et ajoutera des onglets de chef (. . . .) devant les nombres \\ior pour une jolie table d'introduction."
+msgstr "Cette option alignera à droite les chiffres \\ior avec des points de remplissage (. . . .) pour une jolie tableau d'introduction."
 
 #: lib/ptxprint/ptxprint.glade:6610
 msgid "Always Start 1st Chapter on a New Page"
@@ -3144,7 +3206,7 @@ msgid "The footnotes specified in Paratext can\n"
 "will determine how the callers will be displayed."
 msgstr "Les notes de bas de page spécifiées dans Paratext peuvent\n"
 "utiliser \\f - (avec un moins) pour omettre l'appelant, \n"
-"ou \\f +(avec un plus) pour inclure l'appelant.\n"
+"ou \\f + (avec un plus) pour inclure l'appelant.\n"
 "ou \\f * où * devient lui-même l'appelant.\n\n"
 "Si cette option est activée, les paramètres ci-dessous\n"
 "détermineront comment les appelants seront affichés."
@@ -4466,7 +4528,8 @@ msgstr "Automatique"
 #: lib/ptxprint/ptxprint.glade:10900
 msgid "Overlay\n"
 "Credit..."
-msgstr ""
+msgstr "Superposition\n"
+"des droits..."
 
 #: lib/ptxprint/ptxprint.glade:10958
 msgid "Use this tab to change the \n"
