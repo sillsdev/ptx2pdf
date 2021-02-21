@@ -1416,8 +1416,8 @@ saved configuration.</property>
         <col id="11" translatable="yes"/>
         <col id="12" translatable="yes">None</col>
         <col id="13" translatable="yes">to</col>
-        <col id="14" translatable="yes">False</col>
-        <col id="15" translatable="yes">False</col>
+        <col id="14">False</col>
+        <col id="15">False</col>
         <col id="16" translatable="yes"/>
         <col id="17" translatable="yes"/>
       </row>
@@ -1436,8 +1436,8 @@ saved configuration.</property>
         <col id="11" translatable="yes"/>
         <col id="12" translatable="yes">Light</col>
         <col id="13" translatable="yes">bi</col>
-        <col id="14" translatable="yes">False</col>
-        <col id="15" translatable="yes">False</col>
+        <col id="14">False</col>
+        <col id="15">False</col>
         <col id="16" translatable="yes"/>
         <col id="17" translatable="yes"/>
       </row>
@@ -1456,8 +1456,8 @@ saved configuration.</property>
         <col id="11" translatable="yes"/>
         <col id="12" translatable="yes">Dark</col>
         <col id="13" translatable="yes">tr</col>
-        <col id="14" translatable="yes">False</col>
-        <col id="15" translatable="yes">False</col>
+        <col id="14">False</col>
+        <col id="15">False</col>
         <col id="16" translatable="yes"/>
         <col id="17" translatable="yes"/>
       </row>
