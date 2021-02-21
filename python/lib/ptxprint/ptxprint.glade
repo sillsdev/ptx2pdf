@@ -1413,13 +1413,13 @@ saved configuration.</property>
         <col id="8">None</col>
         <col id="9">N</col>
         <col id="10"/>
-        <col id="11" translatable="yes"/>
-        <col id="12" translatable="yes">None</col>
-        <col id="13" translatable="yes">to</col>
+        <col id="11"/>
+        <col id="12">None</col>
+        <col id="13">to</col>
         <col id="14">False</col>
         <col id="15">False</col>
-        <col id="16" translatable="yes"/>
-        <col id="17" translatable="yes"/>
+        <col id="16"/>
+        <col id="17"/>
       </row>
       <row>
         <col id="0">JHN 3:16-17</col>
@@ -1433,13 +1433,13 @@ saved configuration.</property>
         <col id="8">None</col>
         <col id="9">N</col>
         <col id="10"/>
-        <col id="11" translatable="yes"/>
-        <col id="12" translatable="yes">Light</col>
-        <col id="13" translatable="yes">bi</col>
+        <col id="11"/>
+        <col id="12">Light</col>
+        <col id="13">bi</col>
         <col id="14">False</col>
         <col id="15">False</col>
-        <col id="16" translatable="yes"/>
-        <col id="17" translatable="yes"/>
+        <col id="16"/>
+        <col id="17"/>
       </row>
       <row>
         <col id="0">GLO 1:0</col>
@@ -1453,13 +1453,13 @@ saved configuration.</property>
         <col id="8">Map Creator</col>
         <col id="9">N</col>
         <col id="10">ESV</col>
-        <col id="11" translatable="yes"/>
-        <col id="12" translatable="yes">Dark</col>
-        <col id="13" translatable="yes">tr</col>
+        <col id="11"/>
+        <col id="12">Dark</col>
+        <col id="13">tr</col>
         <col id="14">False</col>
         <col id="15">False</col>
-        <col id="16" translatable="yes"/>
-        <col id="17" translatable="yes"/>
+        <col id="16"/>
+        <col id="17"/>
       </row>
     </data>
   </object>

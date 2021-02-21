@@ -547,7 +547,6 @@ class StyleEditorView(StyleEditor):
             newk = stylediverts[k][0]
             newval = old.get(" "+newk, None)
             if newval is not None:
-                self._setFieldVal(stylemap[newk], newval, newval)
+                self._setFieldVal(k, stylemap[newk], newval, newval)
         oldval = old.get(k, v[2])
         self._setFieldVal(k, v, oldval, oldval)
-
