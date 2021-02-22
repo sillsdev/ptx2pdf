@@ -631,7 +631,9 @@ class ViewModel:
                 self._configset(config, "notes/xreachnewline", not config.getboolean("notes", "xrparagraphednotes"))
             except:
                 pass
-            config.set("config", "version", "1.504")
+        if v < 1.505:
+            config.set("paragraph", "useglyphmetrics", "True")
+            config.set("config", "version", "1.505")
 
         styf = os.path.join(self.configPath(cfgname), "ptxprint.sty")
         if not os.path.exists(styf):

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.1 
+<!-- Generated with glade 3.22.2 
 
 The MIT License (MIT)
 
@@ -12920,6 +12920,21 @@ This will delete all previous log and intermediate temporary files for the entir
 troubleshooting use only.</property>
                                             <property name="opacity">0.80000000000000004</property>
                                             <property name="halign">start</property>
+                                            <property name="draw_indicator">True</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">0</property>
+                                            <property name="top_attach">2</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkCheckButton" id="c_AdvCompatGlyphMetrics">
+                                            <property name="label" translatable="yes">Use glyph metrics</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">False</property>
+                                            <property name="tooltip_text" translatable="yes">ptxprint can use either the actual glyph metrics in a line or the font metrics to calculate line heights and depths.
+Font metrics gives more consistent results.</property>
                                             <property name="draw_indicator">True</property>
                                           </object>
                                           <packing>

@@ -132,6 +132,7 @@ ModelMap = {
 
     "paragraph/linespacing":       ("s_linespacing", lambda w,v: "{:.3f}".format(float(v)) or "15.000"),
     "paragraph/linespacebase":  ("c_AdvCompatLineSpacing", lambda w,v: 14 if v else 12),
+    "paragraph/useglyphmetrics":   ("c_AdvCompatGlyphMetrics", lambda w,v: "%" if v else ""),
     # "paragraph/linespacingfactor": ("s_linespacing", lambda w,v: "{:.3f}".format(float(v or "15") / 12)),
     "paragraph/ifjustify":      ("c_justify", lambda w,v: "true" if v else "false"),
     "paragraph/ifhyphenate":    ("c_hyphenate", lambda w,v: "" if v else "%"),
