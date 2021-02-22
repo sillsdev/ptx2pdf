@@ -923,11 +923,11 @@ class TexModel:
             self.localChanges.append((None, regex.compile(r'\\fig[\s|][^\\]+?\\fig\*', flags=regex.M), ""))
         
         if not self.asBool("document/bookintro"): # Drop Introductory matter
-            self.localChanges.append((None, regex.compile(r"\\i(s|m|mi|mt|p|pi|li\d?|pq|mq|pr|b|q\d?) .+?\r?\n", flags=regex.M), "")) 
+            self.localChanges.append((None, regex.compile(r"\\i(b|ex?|m[iqt]?|mt[1234]?|mte[12]?|p[iqr]?|q[123]?|s[12]?|li[12]?)\s?.*?\r?\n", flags=regex.M), "")) 
 
         if not self.asBool("document/introoutline"): # Drop ALL Intro Outline matter & Intro Outline References
             # Wondering whether we should restrict this to just the GEN...REV books (as some xtra books only use \ixx markers for content)
-            self.localChanges.append((None, regex.compile(r"\\(iot|io\d) [^\\]+", flags=regex.M), ""))
+            self.localChanges.append((None, regex.compile(r"\\(iot|io[1234]?) [^\\]+", flags=regex.M), ""))
             self.localChanges.append((None, regex.compile(r"\\ior .+?\\ior\*\s?\r?\n", flags=regex.M), ""))
 
         if not self.asBool("document/sectionheads"): # Drop ALL Section Headings (which also drops the Parallel passage refs now)
