@@ -707,35 +707,35 @@
   \fi}
 %-c_reduceavailht_para
 
+\def\max@boxpara#1{%paragraph notes of type \v@lpfx#1 and find the max height amongst them
+  \trace{n}{max@boxpara \v@lpfx\if #1L\else #1\fi}%
+  \x@\let\x@\t@st\csname \v@lpfx\if #1L\else #1\fi\endcsname
+  \ifvoid\t@st \else
+    \setbox0=\copy\t@st
+    \let\t@mpdstat\c@rrdstat
+    \edef\c@rrdstat{#1}% make sure that maken@tepara can work with the right width
+    \setbox0=\vbox{\maken@tepara{0}{\v@lpfx}}%
+    \dimen0=\ht0 \advance\dimen0 by \dp0
+    \ifdim\dimen1<\dimen0
+      \dimen1=\dimen0
+    \fi
+    \let\c@rrdstat\t@mpdstat %don't forget to restore value
+    \trace{n}{\the\dimen0, \the\dimen1}%
+  \fi
+}
+
 \def\reduceavailht@para@bal#1{%
   \TRACE{reduceavailht@para@bal #1}%
-  \x@\let\x@\th@cl@ssL\csname note-#1\endcsname%
   \bgroup%leave dimen0 etc unchanged
   \dimen0=0pt
-  %FIXME: Should this code adjust & restore diglotL?%
-  \ifvoid\th@cl@ssL\else
-    \setbox0=\copy\th@cl@ssL
-    \setbox0=\vbox{\maken@tepara{0}{#1}}%
-    \message{reduceavailht@para@bal for #1 ht0=\the\ht0 dp0=\the\dp0}%
-    \dimen0=\ht0
-    \advance\dimen0 by \dp0
-  \fi
-  \x@\let\x@\th@cl@ssR\csname note-#1R\endcsname
-  \dimen1=0pt
-  \ifvoid\th@cl@ssR\else
-    \setbox0=\copy\th@cl@ssR
-    \setbox0=\vbox{\maken@tepara{0}{#1}}%
-    \message{reduceavailht@para@bal for #1R ht1=\the\ht1 dp1=\the\dp1}%
-    \dimen1=\ht0
-    \advance\dimen1 by \dp0
-  \fi
-  \ifnum\dimen1>\dimen0 \dimen0=\dimen1 \fi
-  \ifdim\dimen0>0pt
-    \advance\availht by -\dimen0
-    \iff@rstnote\advance\availht by -\AboveNoteSpace \f@rstnotefalse
-    \else \advance\availht by -\InterNoteSpace\fi
-    %\getp@ram{baseline}{#1}\advance\availht-\p@ram%
-    \message{p@ram=\p@ram}%
+  \edef\v@lpfx{note-#1}\edef\v@lsfx{}%
+  \let\col@do=\max@boxpara\dimen1=0pt
+  \x@\each@col\diglot@list\E % max@boxsz sets dimen1 to max ht+dp
+  \ifdim\dimen1>0pt
+    \global\advance\availht by -\dimen1
+    \iff@rstnote\global\advance\availht by -\AboveNoteSpace \f@rstnotefalse
+    \else \global\advance\availht by -\InterNoteSpace\fi
+    \message{reduced by=\the\dimen1}%
   \fi\egroup}
 
 %+c_reduceavailhtsep
@@ -747,35 +747,29 @@
     \f@rstnotefalse
     \advance\availht by -\ht\th@cl@ss
     \advance\availht by -\dp\th@cl@ss
+    \iff@rstnote\advance\availht by -\AboveNoteSpace \f@rstnotefalse
+    \else \advance\availht by -\InterNoteSpace\fi
     \advance\availht by -\AboveNoteSpace
-%FIXME?: Shouldn't the above be using InterNoteSpace? 
   \fi}
 %-c_reduceavailhtsep
 
 \def\reduceavailht@sep@bal#1{%
   \TRACE{reduceavailht@sep@bal}%
-  \x@\let\x@\th@cl@ssR\csname note-#1\endcsname
-  \x@\let\x@\th@cl@ssL\csname note-#1R\endcsname
-  \dimen0=0pt\dimen1=0pt
-  \ifvoid\th@cl@ssL\else
-    \dimen0=\ht\th@cl@ssL
-    \advance\dimen0 by \dp\th@cl@ssL
-  \fi
-  \ifvoid\th@cl@ssR\else
-    \dimen1=\ht\th@cl@ssR 
-    \advance\dimen1 by \dp\th@cl@ssR
-  \fi
-  \ifdim\dimen0>0pt 
-    \advance\availht by -\dimen0
-    \advance\availht by -\AboveNoteSpace
+  \edef\v@lpfx{note-#1}\edef\v@lsfx{}%
+  \let\col@do=\max@boxszB\dimen1=0pt
+  \x@\each@col\diglot@list\E % max@boxsz sets dimen1 to max ht+dp
+  \ifdim\dimen1>0pt 
+    \advance\availht by -\dimen1
+    \iff@rstnote\advance\availht by -\AboveNoteSpace \f@rstnotefalse
+    \else \advance\availht by -\InterNoteSpace\fi
   \fi}
 
 %+c_clearnoteclass
+
 \def\cle@rn@tecl@ss#1{%
   \ifdiglot
     \ifdiglotSepNotes
-       \cle@rn@t@cl@ss{#1}%
-       \cle@rn@t@cl@ss{#1R}%FIXME: futureproofing: loop through diglot@list
+       \diglotcle@rn@tecl@ss{#1}%
     \else\cle@rn@t@cl@ss{#1}\fi
   \else\cle@rn@t@cl@ss{#1}\fi
 }

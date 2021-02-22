@@ -10,14 +10,18 @@
 
 %\diglotInnerOutertrue
 \input Galatians-setup.tex
-\tracing{H}
-\tracing{d}
-\tracing{F}
-\tracing{dP}
-\tracing{s}
-\tracing{sC}
-\VisTracetrue
-\tracing{D}
+\iftrue
+ \tracing{H}
+ \tracing{d}
+ \tracing{F}
+ \tracing{dP}
+ \tracing{s}
+ \tracing{n}
+ \tracing{sC}
+ \VisTracetrue
+ \tracing{D}
+\fi
+
 \pageno=-1
 %\tracing{s}\tracing{S}
 %\uselanguage{british}
@@ -32,6 +36,7 @@
 %\addToLeftHooks{\RTLfalse}
 %\addToRightHooks{\RTLtrue}
 \diglotSepNotestrue
+\diglotBalNotestrue
 \ptxfile{mergedGal.usfm}
 \diglotcolumns
 \diglotSepNotesfalse

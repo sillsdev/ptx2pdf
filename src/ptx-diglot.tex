@@ -452,8 +452,13 @@
   \fi
 }
 
-\xdef\m@rknumL{1}
-\xdef\m@rknumR{2}
+\xdef\m@rksm@x{0}
+\def\newm@rknum#1{%define a new m@rknum#1 which gets set as the next unused marks  register (assuming all marksN are registered with this function.
+  \xdef\m@rksm@x{\numexpr \m@rksm@x+1\relax}%
+  \x@\global\x@\let\csname m@rknum#1\endcsname=\m@rksm@x
+}
+\newm@rknum{L}
+\newm@rknum{R}
 
 \def\after@a@trial{%
   %After this runs: (example with L)
@@ -746,7 +751,7 @@
     \global\holdinginserts=1
     \x@\the\csname diglot#1ho@ks\endcsname
   \else
-    \errmessage{diglotcolumn must be followed by a sensible argument. '#1' isn't a diglot column}%
+    \errmessage{diglotcolumn must be followed by a sensible argument. '#1' Hasn't been specified as a diglot column}%
   \fi
 }
 
@@ -1535,6 +1540,18 @@
     \dimen1=\t@st
   \fi
 }
+
+\def\max@boxsz#1{\x@\let\x@\t@st\csname \v@lpfx#1\v@lsfx\endcsname
+  \ifvoid\t@st \else
+    \dimen0=\ht\t@st \advance\dimen0 by \dp\t@st
+    \ifdim\dimen1<\dimen0
+      \dimen1=\dimen0
+    \fi
+  \fi
+}
+
+\def\max@boxszB#1{\max@boxsz{\if #1L\else #1\fi}}
+
 \def\min@note@sep#1{%
   \x@\let\x@\t@st\csname \v@lpfx#1ht\endcsname
   \x@\let\x@\t@stb\csname \v@lpfxb#1ht\endcsname
@@ -1562,8 +1579,18 @@
   \n@xt@col#2\E
 }
 
+\def\digl@tcle@rn@tecl@ss#1{% Diglot-loop friendly version of cle@rn@tecl@ss
+  \cle@rn@t@cl@ss{\tmpnotecl@ss\if L#1\else #1\fi}%
+}
+
+\def\diglotcle@rn@tecl@ss#1{%
+  \let\col@do=\digl@tcle@rn@tecl@ss
+  \edef\tmpnotecl@ss{#1}%
+  \x@\each@col\diglot@list\E
+}
 
 \newif\ifnot@empty % Is this chunk empty
+
 
 \def\@add@n@xtpartial{% 
   \trace{d}{@add@n@xtpartial \the\ht\partial+\the\dp\partial, \the\ht\n@xtpartial+\the\dp\n@xtpartial}%
@@ -1639,16 +1666,26 @@
 \edef\digl@tc@ntentlist{}%
 
 \def\newDiglotCol#1{%
- \xdef\diglot@list{\diglot@list#1}%
- \x@\csname #1isDiglotColumn\endcsname\empty
- \errmessage{This code isn't written yet}%
- %CREATE: partial#1 excess#1 partial#1penalty m@rknum#1  column#1width picb@x#1
- %FIXMEs needing to be solved before implementing this: 
- % cle@rn@tecl@ss
- %pdfb@@km@rkR 
- %pdfch@pterm@rkR 
- % UI!
- % 
+  \ifcsname #1isDiglotColumn\endcsname
+    \message{#1 is already a diglot column. You can only define it as one once!}%
+  \else
+    \message{Defining #1 as an additional diglot column.}%
+    \message{+++ This code isn't tested yet}%
+    \xdef\diglot@list{\diglot@list#1}%
+    \x@\csname #1isDiglotColumn\endcsname\empty
+    \x@\newb@x\csname partial#1\endcsname
+    \x@\newb@x\csname excess#1\endcsname
+    \x@\newb@x\csname picb@x#1\endcsname
+    \x@\newc@unt\csname partial#1penalty\endcsname
+    \newm@rk{#1}
+    \x@\newdim@n\csname column#1width\endcsname
+%CREATE:  
+%FIXMEs needing to be solved before implementing this: 
+% cle@rn@tecl@ss
+%pdfb@@km@rkR 
+%pdfch@pterm@rkR 
+% UI!
+% 
 }
 
 \def\check@and@update{%Checks each column to see if there is stuff to output
