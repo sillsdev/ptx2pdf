@@ -711,7 +711,7 @@
 \def\norighttext{%
   \global\allNeedEmptyingtrue% Text before the swap needs emptying
   \pr@sideswitch{noright}{L}%
-  \swap@diglot{L}%sets diglotLtrue, etc
+  \swap@diglot{L}%sets diglot state, etc
   \global\vsize=\maxdimen
   \global\trialheight=\maxdimen
   \global\holdinginserts=1
@@ -747,9 +747,6 @@
 \adjustp@ge=0pt
 \def\m@rkerL{}
 \def\m@rkerR{}
-\let\diglotRtrue=\diglotLfalse\relax%
-\let\digl@tRtrue=\digl@tLfalse\relax%
-\let\diglotRfalse=\diglotLtrue\relax%
 %Diglotstate.
 \def\n@xtdstat{L}%What does the diglotstate become at the next \dgl@tPenColSwap penalty?
 \def\f@lwgdstat{L}%What is the diglotstate of the 'recent contributions'? (i.e. next material to read)
@@ -763,7 +760,6 @@
    \trace{d}{current diglot state set to empty! End of diglot?}%
  \else 
    %\diglottrue % Is this necessary?
-   \if#1L\relax\global\diglotLtrue\else\global\diglotLfalse\fi%Compatability
  \fi
 }
 \def\setf@lwgdstat#1{\xdef\f@lwgdstat{#1}%
