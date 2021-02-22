@@ -169,6 +169,7 @@ class PicList:
         for row in self.model:
             k = row[_pickeys['key']]
             if k.startswith("row"):
+                print(f"{k} added")
             p = picinfos.setdefault(k, {})
             for i, e in enumerate(_piclistfields):
                 if e == 'key':
@@ -186,6 +187,7 @@ class PicList:
         for k,v in list(picinfos.items()):
             if k not in allkeys and (self.bookfilters is None or v['anchor'][:3] in self.bookfilters):
                 if k.startswith("row"):
+                    print(f"{k} removed")
                 del picinfos[k]
         return picinfos
 
@@ -468,6 +470,7 @@ class PicList:
         else:
             row = self.get_row_from_items()
         row[_pickeys['key']] = "row{}".format(newrowcounter)
+        print(f"{row[_pickeys['key']]}", sorted(self.picinfo.keys()))
         newrowcounter += 1
         self.coremodel.append(row)
         self.select_row(len(self.model)-1)

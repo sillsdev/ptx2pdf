@@ -1240,7 +1240,7 @@ class GtkViewModel(ViewModel):
         fontr = self.get("bl_fontR", skipmissing=True)
         if fontr is None:
             return
-        fallbacks = ['Sans', 'Empties']
+        fallbacks = ['Empties', 'Sans']
         if self.diglotView is not None:
             digfontr = self.diglotView.get("bl_fontR")
             fallbacks.append(digfontr.name)
