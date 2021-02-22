@@ -759,9 +759,12 @@
    \diglotfalse % Is this necessary? YES.
    \trace{d}{current diglot state set to empty! End of diglot?}%
  \else 
-   %\diglottrue % Is this necessary?
+   %\diglottrue % Is THIS necessary?
  \fi
 }
+
+\def\resetc@rdstat{\xdef\c@rrdstat{\f@lwgdstat}}
+
 \def\setf@lwgdstat#1{\xdef\f@lwgdstat{#1}%
 }
 
@@ -809,8 +812,8 @@
  \x@\global\x@\let\x@\ch@ptert@xt\csname @ch@ptert@xt\g@tdstat\endcsname
  \x@\global\x@\let\x@\v@rse\csname @v@rse\g@tdstat\endcsname
  \x@\global\x@\let\x@\m@rknum\csname m@rknum\c@rrdstat\endcsname
- \setLRspecific %ensure that all the units are correct.
- \trace{D}{Leadingunit: \the\le@dingunit}%
+ \setLRspecific %ensure that all the units, etc. are correct.
+ \trace{D}{Leadingunit: \the\le@dingunit, stylestack:\styst@k}%
  \ifdim\le@dingunit>0pt %
    \s@tbaseline{p}%
  \fi%
@@ -1347,7 +1350,7 @@
   \xdef\nextp@gefirstmark{}%
   \let\col@do=\reset@marks
   \x@\each@col\diglot@list\E% 
-  \setc@rdstat{\f@lwgdstat}%Set the current diglotstatus
+  \resetc@rdstat%reset the current diglotstatus
   \xdef\firstLmark{}%
   \xdef\botLmark{}%
   \xdef\firstRmark{}%
@@ -1396,6 +1399,7 @@
       \global\allNeedEmptyingfalse
     \fi
   \fi
+  \resetc@rdstat
 }
 
 

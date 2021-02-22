@@ -211,8 +211,11 @@
  }
 }
 \def\setwh@tvrstyle{%
+  \trace{s}{setwh@tvrstyle: \mcstack}%
    \def\thiswh@tvrstyle{p}%Default value just in case
-   \def\d@##1+##2\E{\edef\tmp{##2}\csname d@code-##1\endcsname\let\thiswh@tvrstyle\tmp}\mctop
+   \ifx\mcstack\mcstack@mpty\else
+     \def\d@##1+##2\E{\edef\tmp{##2}\csname d@code-##1\endcsname\let\thiswh@tvrstyle\tmp}\mctop
+   \fi
    \s@tfont{\thiswh@tvrstyle}% set up font attributes
 }
 %-cchar_endcharstyle
@@ -248,22 +251,23 @@
 \let\SpaceShrinkFactor=\empty %default, do-nothing value
 
 \def\g@tfontname#1{%
- \trace{F}{Font request for (\c@tegory)(\mspr@fix)#1}%
+ \trace{F}{Font request for (\c@tegory)(\mspr@fix)#1(\c@rrdstat)[\styst@k]}%
  %\let\styst@k=\empty
  %\s@tstyst@k{#1}%
  \ifdiglot\def\f@ntstyle{#1\c@rrdstat}\let\sid@\c@rrdstat\else\def\f@ntstyle{#1}\def\sid@{-}\fi%
  \ifx\mspr@fix\empty\else\edef\f@ntstyle{\mspr@fix\f@ntstyle}\fi % Milestones now on stack
  \ifx\c@tegory\empty\else\s@tc@tpr@fix\edef\f@ntstyle{\c@tprefix\f@ntstyle}\fi % Categories have different styles
+ \let\reqf@ntstyle\f@ntstyle
  \let\d@@=\d@
- \edef\req@sty{#1}%
- \trace{F}{#1: Looking for fontsize in style stack: \mcstack}%
- \def\d@##1+##2\E{\edef\tmpa{##2}\ifx\req@sty\tmpa\getmcfonts@ze\else
+ \trace{F}{\reqf@ntstyle: Looking for fontsize in style stack: \mcstack}%
+ \def\d@##1+##2\E{\edef\tmpa{##2}\ifx\reqf@ntstyle\tmpa\getmcfonts@ze\else
 			\csname d@code-##1\endcsname
-                        \getp@ram{fontsize}{\req@sty}\ifx\p@ram\relax\xdef\c@rrfontsize{12}%
+                        \getp@ram{fontsize}{#1}\ifx\p@ram\relax\xdef\c@rrfontsize{12}%
                         \else\global\let\c@rrfontsize=\p@ram\fi\fi}%
  \mctop
  \let\d@=\d@@
- \edef\f@ntstyle{\f@ntstyle-\c@rrfontsize\ifx\styst@k\empty\else+\styst@k\fi}}
+ \edef\f@ntstyle{\f@ntstyle-\c@rrfontsize\ifx\styst@k\empty\else+\styst@k\fi}%
+}
 %-cchar_getfontname
 
 \let\styst@k\empty
@@ -271,10 +275,11 @@
 %+cchar_setfont
 \xdef\z@ros{000000}%What does ParseColor come out with for black?
 \def\s@tfont#1{%
- \g@tfontname{#1}%
+ \edef\r@qmkr{#1}\ifx\empty\r@qmkr\trace{F}{Font for empty marker requested. Nonsense! Substituting p}\def\r@qmkr{p}\fi
+ \g@tfontname{\r@qmkr}% Sets reqf@ntstyle((cat)(milestone)#1(diglot) and f@ntstyle(which adds size and stack)
  \ifdiglot\setLRspecific\fi % FIXME: Whether diglot or not, it might have been diglot before.
  \x@\ifx\csname font<\f@ntstyle>\endcsname \relax 
-  \trace{s}{s@tfont font for #1 at \c@rrfontsize}%
+  \trace{F}{s@tfont font for #1 at \c@rrfontsize}%
   \trace{S}{Normal font for \sid@\space is \regular}%
   \let\regul@r=\regular
   \let\b@ld=\bold

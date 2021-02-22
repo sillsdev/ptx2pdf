@@ -164,16 +164,15 @@
 
 \def\s@tpossParams#1{\trace{s}{setpossParam #1 (\styst@kskip/\styst@kfirst/\styst@k)}%
   \ifdiglot
-     \global\let\d@sf\c@rrdstat
-     \edef\p@ssParams{#1\d@sf,#1}%
+     \edef\p@ssParams{#1\c@rrdstat,#1}%
   \else
      \edef\p@ssParams{#1}%
   \fi
   \edef\tmp{#1}\ifx\tmp\styst@k\else
-    \ifx\tmp\styst@kfirst\else
-       \edef\p@ssParams{#1+\styst@kfirst,\p@ssParams}%
-    \fi
     \ifx\styst@k\empty\else
+      \ifx\tmp\styst@kfirst\else
+         \edef\p@ssParams{#1+\styst@kfirst,\p@ssParams}%
+      \fi
       \ifx\styst@k\styst@kfirst\else%styst@k may be the same as styst@kfirst
          \edef\p@ssParams{#1+\styst@k,\p@ssParams}%
       \fi
@@ -216,9 +215,9 @@
    \def\gp@test{#1}%
    \ifx\gp@test\empty\message{Eh? getp@ram called for #2 and empty parameter}\else 
      \edef\tmppar@mtwo{#2}\ifx\styst@k\tmppar@mtwo
-       \xdef\pp@name{pPrms-\c@tprefix#2/--}%
+       \xdef\pp@name{pPrms-\c@tprefix#2\c@rrdstat/--}%
      \else
-       \xdef\pp@name{pPrms-\c@tprefix#2/\styst@k}%
+       \xdef\pp@name{pPrms-\c@tprefix#2\c@rrdstat/\styst@k}%
      \fi
      \x@\let\x@\g@tp@tmp\csname \pp@name\endcsname
      \ifx\g@tp@tmp\relax
@@ -246,12 +245,11 @@
    \fi
  \else %Old, working, but ignorant of milestones
    \ifdiglot
-    \global\let\d@sf\c@rrdstat
-    \getp@r@m{#1}{\c@tprefix#2\d@sf}%
+    \getp@r@m{#1}{\c@tprefix#2\c@rrdstat}%
     \ifx\p@ram\relax
       \ifx\c@tprefix\empty\else\getp@r@m{#1}{\c@tprefix#2}\fi%
     \else
-      \trace{sc}{Category specific(\c@tprefix#2\d@sf):#1 found}%
+      \trace{sc}{Category specific(\c@tprefix#2\c@rrdstat):#1 found}%
       \trace{Ds}{...side-specfic -> \p@ram}%
     \fi
     \ifx\p@ram\relax
@@ -269,7 +267,7 @@
     \fi
    \fi
  \fi
-  \trace{s}{\space\space (\c@tprefix)(\mspr@fix)#2\ifdiglot(\d@sf)\fi :#1 is \p@ram}%
+  \trace{s}{\space\space (\c@tprefix)(\mspr@fix)#2\ifdiglot(\c@rrdstat)\fi :#1 is \p@ram}%
 }
 \def\gettop@aram#1{%Check list of acceptable parameters and return the first one found.
    \edef\p@ramcheck{#1}%
