@@ -80,6 +80,8 @@ if os.path.exists(conffile):
             args.config = config.get('init', 'config')
     if not args.paratext and config.has_option("init", "paratext"):
         args.paratext = config.get("init", "paratext")
+        if not os.path.exists(args.paratext):
+            args.paratext = None
 else:
     if not os.path.exists(os.path.dirname(conffile)):
         os.makedirs(os.path.dirname(conffile))
