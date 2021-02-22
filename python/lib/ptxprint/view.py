@@ -990,7 +990,10 @@ class ViewModel:
         borders = {'c_inclPageBorder': 'pageborder',
                    'c_inclSectionHeader': 'sectionheader',
                    'c_inclEndOfBook': 'endofbook',
-                   'c_inclVerseDecorator': 'versedecorator'}
+                   'c_inclVerseDecorator': 'versedecorator',
+                   'c_inclFontMatter': 'FontPDFs',
+                   'c_inclBackMatter': 'BackPDFs',
+                   'c_applyWatermark': 'watermarks'}
         res = {}
         cfgchanges = {}
         tmpfiles = []
@@ -1049,13 +1052,15 @@ class ViewModel:
                 res[jobpiclist] = cfpath+jobpiclistf
 
         # borders
-        if self.get('c_borders'):
-            for k, v in borders.items():
-                if self.get(k):
-                    fname = getattr(self, v)
-                    # print(k, v, fname)
-                    if fname is None: continue
-                    res[fname.as_posix()] = "shared/ptxprint/"+fname.name
+        for k, v in borders.items():
+            if self.get(k):
+                fname = getattr(self, v)
+                print(k, v, fname)
+                if fname is None: continue
+                if not isinstance(fname, (list, tuple)):
+                    fname = [fname]
+                for f in fname:
+                    res[f.as_posix()] = "shared/ptxprint/"+f.name
 
         # fonts
         for k, v in TexModel._fonts.items():
