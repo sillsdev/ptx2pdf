@@ -562,13 +562,15 @@ class RunJob:
         res = [os.path.join("tmpPics", v['dest file']) for v in picinfos.values() if 'dest file' in v]
         outfname = info.printer.baseTeXPDFnames(jobs)[0] + ".piclist"
         for k, v in list(picinfos.items()):
-            if 'p' not in v.get('media', 'apw'):
+            m = v.get('media', '')
+            if m and 'p' not in m:
                 del picinfos[k]
         picinfos.out(os.path.join(self.tmpdir, outfname), bks=jobs, skipkey="disabled", usedest=True, media='p')
         res.append(outfname)
         info["document/piclistfile"] = outfname
 
         if len(missingPics):
+            print(missingPics)
             missingPicList = ["{}".format(", ".join(list(set(missingPics))))]
             self.printer.set("l_missingPictureCount", "({} Missing)".format(len(set(missingPics))))
             self.printer.set("l_missingPictureString", "Missing Pictures: {}".format("\n".join(missingPicList)))
