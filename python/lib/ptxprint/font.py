@@ -26,7 +26,7 @@ def writefontsconf():
         inf['sysfontsdir'] = "/usr/share/fonts"
     os.makedirs(os.path.dirname(fname), exist_ok=True)
     fdir = os.path.join(os.path.dirname(__file__), '..')
-    for a in (['..', 'fonts'], ['..', '..', 'fonts']):
+    for a in (['..', 'fonts'], ['..', '..', 'fonts'], ['/usr', 'share', 'ptx2pdf', 'fonts']):
         fpath = os.path.join(fdir, *a)
         if os.path.exists(fpath):
             inf['appfontsdir'] = os.path.abspath(fpath)
