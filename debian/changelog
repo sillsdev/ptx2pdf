@@ -1,3 +1,9 @@
+ptxprint (1.5.14.3-1ubuntu1) bionic; urgency=medium
+
+  * Bumped release to 1.5.14.3
+
+ -- Martin Hosken <martin_hosken@sil.org>  Mon, 22 Feb 2021 23:33:48 +0700
+
 ptxprint (1.5.14.2-1ubuntu1) bionic; urgency=medium
 
   * Bumped release to 1.5.14.2
