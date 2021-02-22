@@ -394,8 +394,7 @@ class GtkViewModel(ViewModel):
         if self.get("c_colophon") and self.get("tb_colophon") == "":
             self.set("tb_colophon", _defaultColophon)
 
-        self.picListView = PicList(self.builder.get_object('tv_picListEdit'),  # need a fix here on next line was Edit1 @@@@
-                                   self.builder.get_object('tv_picListEdit'), self.builder, self)
+        self.picListView = PicList(self.builder.get_object('tv_picListEdit'), self.builder, self)
         self.picChecksView = PicChecks(self)
         self.styleEditor = StyleEditorView(self)
 

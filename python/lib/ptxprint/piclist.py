@@ -56,16 +56,15 @@ def newBase(fpath):
         return re.sub('[()&+,.;: \-]', '_', f.lower())
 
 class PicList:
-    def __init__(self, view, checkview, builder, parent):
+    def __init__(self, view, builder, parent):
         self.view = view
-        self.checkview = checkview
         self.loading = False
         self.checkinv = False
         self.checkfilt = 0
-        self.model = view.get_model()
-        self.checkmodel = self.model.filter_new()
-        self.checkmodel.set_visible_func(self.checkfilter)
-        self.checkview.set_model(self.checkmodel)
+        self.coremodel = view.get_model()
+        self.model = self.coremodel.filter_new()
+        self.model.set_visible_func(self.checkfilter)
+        self.view. set_model(self.model)
         self.builder = builder
         self.parent = parent
         self.picinfo = None
@@ -74,10 +73,9 @@ class PicList:
         self.currow = None
         self.curriter = None
         self.bookfilters = None
-        for wid in (self.view, self.checkview):
-            sel = wid.get_selection()
-            sel.set_mode=Gtk.SelectionMode.SINGLE
-            sel.connect("changed", self.row_select)
+        sel = self.view.get_selection()
+        sel.set_mode=Gtk.SelectionMode.SINGLE
+        sel.connect("changed", self.row_select)
         for k, v in _form_structure.items():
             w = builder.get_object(v)
             sig = "changed"
@@ -107,7 +105,7 @@ class PicList:
     def setCheckFilter(self, invert, filt):
         self.checkinv = invert
         self.checkfilt = filt
-        self.checkmodel.refilter()
+        self.model.refilter()
 
     def modify_font(self, p):
         w = self.builder.get_object("cr_caption")
@@ -117,12 +115,12 @@ class PicList:
         return len(self.model) == 0
 
     def clear(self):
-        self.model.clear()
+        self.coremodel.clear()
 
     def load(self, picinfo, bks=None):
         self.picinfo = picinfo
         #self.view.set_model(None)
-        self.model.clear()
+        self.coremodel.clear()
         self.bookfilters = bks
         if picinfo is not None:
             for k, v in sorted(picinfo.items(), key=lambda x:refKey(x[1]['anchor'])):
@@ -153,9 +151,9 @@ class PicList:
                     else:
                         val = v.get(e, "")
                     row.append(val)
-                self.model.append(row)
+                self.coremodel.append(row)
         #self.view.set_model(self.model)
-        self.checkmodel.refilter()
+        self.model.refilter()
         self.loading = False
 
     def get(self, wid, default=None):
@@ -170,6 +168,8 @@ class PicList:
         allkeys = set()
         for row in self.model:
             k = row[_pickeys['key']]
+            if k.startswith("row"):
+                print(f"{k=} added")
             p = picinfos.setdefault(k, {})
             for i, e in enumerate(_piclistfields):
                 if e == 'key':
@@ -186,6 +186,8 @@ class PicList:
                 p[e] = val
         for k,v in list(picinfos.items()):
             if k not in allkeys and (self.bookfilters is None or v['anchor'][:3] in self.bookfilters):
+                if k.startswith("row"):
+                    print(f"{k=} removed")
                 del picinfos[k]
         return picinfos
 
@@ -219,21 +221,20 @@ class PicList:
         path = model.get_path(it)
         cpath = path if selection == self.selection else model.convert_path_to_child_path(path)
         cit = self.model.get_iter(cpath)
-        for w in (self.view, self.checkview): # keep both views in sync
-            s = w.get_selection()
-            if s != selection:
-                self.loading = True
-                m = w.get_model()
-                fpath = cpath if s == self.selection else m.convert_child_path_to_path(cpath)
-                if fpath is not None:
-                    s.select_path(fpath)
-                    w.scroll_to_cell(fpath)
-                else:
-                    s.unselect_all()
-                self.loading = False
+        s = self.view.get_selection()
+        if s != selection:
+            self.loading = True
+            m = self.view.get_model()
+            fpath = cpath if s == self.selection else m.convert_child_path_to_path(cpath)
+            if fpath is not None:
+                s.select_path(fpath)
+                self.view.scroll_to_cell(fpath)
+            else:
+                s.unselect_all()
+            self.loading = False
         if selection != self.selection:
             self.parent.savePicChecks()
-            if not self.checkmodel.do_visible(self.checkmodel, self.checkmodel.get_model(), cit):
+            if not self.model.do_visible(self.model, self.model.get_model(), cit):
                 return
         if cpath.get_indices()[0] >= len(self.model):
             print("Too Long!")
@@ -469,13 +470,15 @@ class PicList:
         else:
             row = self.get_row_from_items()
         row[_pickeys['key']] = "row{}".format(newrowcounter)
+        print(f"{row[_pickeys['key']]=}", sorted(self.picinfo.keys()))
         newrowcounter += 1
-        self.model.append(row)
+        self.coremodel.append(row)
         self.select_row(len(self.model)-1)
 
     def del_row(self):
         model, i = self.selection.get_selected()
-        del self.model[i]
+        ci = model.convert_iter_to_child_iter(i)
+        del self.coremodel[ci]
         ind = model.get_path(i)
         if ind is None:
             indt = model.get_iter_first()
