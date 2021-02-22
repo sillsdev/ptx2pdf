@@ -251,7 +251,7 @@
  \trace{F}{Font request for (\c@tegory)(\mspr@fix)#1}%
  %\let\styst@k=\empty
  %\s@tstyst@k{#1}%
- \ifdiglot\ifdiglotL\def\f@ntstyle{#1L}\def\sid@{L}\else\def\f@ntstyle{#1R}\def\sid@{R}\fi\else\def\f@ntstyle{#1}\def\sid@{-}\fi%
+ \ifdiglot\def\f@ntstyle{#1\c@rrdstat}\let\sid@\c@rrdstat\else\def\f@ntstyle{#1}\def\sid@{-}\fi%
  \ifx\mspr@fix\empty\else\edef\f@ntstyle{\mspr@fix\f@ntstyle}\fi % Milestones now on stack
  \ifx\c@tegory\empty\else\s@tc@tpr@fix\edef\f@ntstyle{\c@tprefix\f@ntstyle}\fi % Categories have different styles
  \let\d@@=\d@
