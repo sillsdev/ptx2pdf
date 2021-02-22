@@ -686,7 +686,7 @@
 \outer\def\lefttext{%
   \pr@sideswitch{left}{L}%
   \global\allNeedEmptyingfalse
-  \swap@diglot{L}%sets diglotRtrue, etc
+  \swap@diglot{L}%sets diglot state, etc
   \global\vsize=\maxdimen
   \global\availht=\vsize
   %Other Left parameters
@@ -698,7 +698,7 @@
 \outer\def\righttext{%
   \pr@sideswitch{right}{R}%
   \global\allNeedEmptyingtrue % Text after this needs emptying
-  \swap@diglot{R}%sets diglotRtrue, etc
+  \swap@diglot{R}%sets diglot state, etc
   \global\vsize=\maxdimen
   \global\trialheight=\maxdimen
   \relax\output={\diglotCollect}%
@@ -723,7 +723,7 @@
   \global\allNeedEmptyingtrue% Text before the swap needs emptying
   \pr@sideswitch{noleft}{R}%
   \global\allNeedEmptyingtrue% Text after the swap ALSO needs emptying, in case \righttext not used
-  \swap@diglot{R}%sets diglotRtrue, etc
+  \swap@diglot{R}%sets diglot state, etc
   \global\vsize=\maxdimen
   \global\trialheight=\maxdimen
   \global\holdinginserts=1
@@ -763,7 +763,6 @@
  \fi
 }
 \def\setf@lwgdstat#1{\xdef\f@lwgdstat{#1}%
- \if#1L\global\digl@tLtrue\else\global\digl@tLfalse\fi%Compatability
 }
 
 \def\@setside#1{\setf@lwgdstat{#1}\setc@rdstat{#1}\xdef\n@xtdstat{#1}}
