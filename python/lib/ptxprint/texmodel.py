@@ -721,7 +721,7 @@ class TexModel:
 
             doc = None
             if self.interlinear is not None:
-                doc = Usfm(dat.splitlines(True), self.sheets)
+                doc = self._makeUSFM(dat.splitlines(True), bk)
                 linelengths = [len(x) for x in dat.splitlines(True)]
                 doc.calc_PToffsets()
                 self.interlinear.convertBk(bk, doc, linelengths)
@@ -731,25 +731,12 @@ class TexModel:
                     dat = str(doc)
                     doc = None
                 dat = self.runChanges(self.changes, dat)
-                self.analyzeImageCopyrights(dat)
+                dat = self.analyzeImageCopyrights(dat)
 
             if self.dict['project/canonicalise']:
-                syntaxErrors = []
-                try:
-                    if doc is None:
-                        doc = Usfm(dat.splitlines(True), self.sheets)
-                    doc.normalise()
-                except SyntaxError as e:
-                    syntaxErrors.append("{} {} line:{}".format(self.prjid, bk, str(e).split('line', maxsplit=1)[1]))
-                except Exception as e:
-                    syntaxErrors.append("{} {} Error({}): {}".format(self.prjid, bk, type(e), str(e)))
-                    traceback.print_exc()
-                if len(syntaxErrors):
-                    self.printer.doError("Failed to canonicalise texts due to a Syntax Error:",        
-                            secondary="\n".join(syntaxErrors)+"\n\nIf original USFM text is correct, then check "+ \
-                            "if PrintDraftChanges.txt has caused the error(s).", 
-                            title="PTXprint [{}] - Canonicalise Text Error!".format(self.VersionStr))
-                else:
+                if doc is None:
+                    doc = self._makeUSFM(dat.splitlines(True), bk)
+                if doc is not None:
                     if self.dict["document/ifletter"] == "":
                         doc.letter_space("\uFDD0")
                 
@@ -772,6 +759,25 @@ class TexModel:
             return newname
         else:
             return bn
+            
+    def _makeUSFM(self, txtlines, bk):
+        syntaxErrors = []
+        try:
+            doc = Usfm(txtlines, self.sheets)
+            doc.normalise()
+        except SyntaxError as e:
+            syntaxErrors.append("{} {} line:{}".format(self.prjid, bk, str(e).split('line', maxsplit=1)[1]))
+        except Exception as e:
+            syntaxErrors.append("{} {} Error({}): {}".format(self.prjid, bk, type(e), str(e)))
+            traceback.print_exc()
+        if len(syntaxErrors):
+            self.printer.doError("Failed to canonicalise texts due to a Syntax Error:",        
+                    secondary="\n".join(syntaxErrors)+"\n\nIf original USFM text is correct, then check "+ \
+                    "if PrintDraftChanges.txt has caused the error(s).", 
+                    title="PTXprint [{}] - Canonicalise Text Error!".format(self.VersionStr))
+            return None
+        else:
+            return doc
 
     def make_contextsfn(self, *changes):
         # functional programmers eat your hearts out
@@ -957,9 +963,9 @@ class TexModel:
         
         if self.asBool("notes/keepbookwithrefs"): # keep Booknames and ch:vs nums together within \xt and \xo 
             self.localChanges.append((self.make_contextsfn(regex.compile(r"(\\[xf]t [^\\]+)")),
-                                    regex.compile(r"(?<!\\[fx][rto]) (\d+[:.]\d+([-,]\d+)?)"), r"\u00A0\1"))
+                                    regex.compile(r"(\d?[^\s\d\-\\,;]{3,}[^\\\s]*?) (\d+[:.]\d+)"), r"\1\u00A0\2"))
             self.localChanges.append((self.make_contextsfn(regex.compile(r"(\\[xf]t [^\\]+)")),
-                                    regex.compile(r"( .) "), r"\1\u00A0"))
+                                    regex.compile(r"( .) "), r"\1\u00A0")) # What is this one doing?
 
         # keep \xo & \fr refs with whatever follows (i.e the bookname or footnote) so it doesn't break at end of line
         self.localChanges.append((None, regex.compile(r"(\\(xo|fr) (\d+[:.]\d+([-,]\d+)?)) "), r"\1\u00A0"))
@@ -1122,6 +1128,8 @@ class TexModel:
     def analyzeImageCopyrights(self, txt):
         for m in re.findall(r"\\(\S+).*?\\zimagecopyrights([A-Z]+)", txt):
             self.imageCopyrightLangs[m[1].lower()] = m[0]
+        txt = re.sub(r'://', ':/ / ', txt)
+        return txt
 
     def generateImageCopyrightText(self):
         artpgs = {}
@@ -1130,7 +1138,7 @@ class TexModel:
         picpagesfile = os.path.join(self.docdir()[0], self['jobname'] + ".picpages")
         crdts = []
         cinfo = self.printer.copyrightInfo
-        self.analyzeImageCopyrights(self.dict['project/colophontext'])
+        self.dict['project/colophontext'] = self.analyzeImageCopyrights(self.dict['project/colophontext'])
         if os.path.exists(picpagesfile):
             with universalopen(picpagesfile) as inf:
                 dat = inf.read()

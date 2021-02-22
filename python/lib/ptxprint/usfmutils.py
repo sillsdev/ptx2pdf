@@ -112,12 +112,9 @@ class Usfm:
     def __init__(self, iterable, sheets):
         tag_escapes = r"[^0-9A-Za-z]"
         self.doc = None
-        try:
-            self.doc = list(usfm.parser(iterable, stylesheet=sheets,
-                                    canonicalise_footnotes=False,
-                                    tag_escapes=tag_escapes))
-        except:
-            traceback.print_exc()
+        self.doc = list(usfm.parser(iterable, stylesheet=sheets,
+                                canonicalise_footnotes=False,
+                                tag_escapes=tag_escapes))
         self.cvaddorned = False
         self.tocs = []
 
