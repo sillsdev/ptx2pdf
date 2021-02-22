@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: ptxprint\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-02-20 15:19+0700\n"
-"PO-Revision-Date: 2021-02-20 08:19\n"
+"PO-Revision-Date: 2021-02-22 09:56\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -5546,7 +5546,7 @@ msgstr "Superíndice"
 
 #: lib/ptxprint/ptxprint.glade:14719
 msgid "SmallCaps"
-msgstr "Mayúsculas"
+msgstr "Versalitas"
 
 #: lib/ptxprint/ptxprint.glade:14760
 msgid "Overrides the colour in the stylesheet for toc3"
