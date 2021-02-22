@@ -54,7 +54,7 @@
 \newtoks\@ndhooks
 \newtoks\@ndptxhooks
 \let\s@ve@nd=\end
-\def\end{\par\vfill\supereject \the\@ndhooks \s@ve@nd}
+\def\end{\ifsk@pping\egroup\fi\par\vfill\supereject  \the\@ndhooks \s@ve@nd}
 
 %: `\addtoinithooks` is for stuff we do during one-time-setup before the first PTX file
 \def\addtoinithooks#1{\x@\global\x@\@nithooks\x@{\the\@nithooks #1}}
@@ -164,7 +164,9 @@
   \floatingpenalty\@MM % make sure note does not float away from caller to another page
   \leftskip\z@skip \rightskip\z@skip \spaceskip\z@skip \xspaceskip\z@skip % reset extra space around paragraph 0
   \s@tbaseline{#1}%
-  \ifp@ranotes\else\setbox0=\hbox{\XeTeXuseglyphmetrics=0 \char32}\dimen0=\ht0
+  \ifp@ranotes\else
+      \getp@ram{spacebefore}{#1}\trace{f}{note(#1) spacebefore: \p@ram}\ifx\p@ram\relax\else\kern\p@ram\verticalsp@ceunit\fi
+      \setbox0=\hbox{\XeTeXuseglyphmetrics=0 \char32}\dimen0=\ht0
       \ifdim\dimen0<\baselineskip
         \dimen1=\baselineskip\advance\dimen1 by -\dimen0
         \vskip\dimen1
@@ -232,9 +234,12 @@
   \copy\f@@tstrut}
 
 %+c_foot
+% called at end of note
 \def\@foot{\ifp@ranotes \parfillskip=0pt \else\strut\fi
-  \par\egroup\ifdiglot\ifRTL\endR\fi\fi
-  \end@llpoppedstyles{N*}%
+  \par
+  \ifp@ranotes\else\getp@ram{spaceafter}{\n@tetype}\trace{f}{note(\n@tetype) spaceafter: \p@ram}%
+  \ifx\p@ram\relax\else\vskip\p@ram\verticalsp@ceunit\fi\fi
+  \egroup\ifdiglot\ifRTL\endR\fi\fi\end@llpoppedstyles{N*}%
   \def\d@##1+##2\E{\if ##1N\else\MSG{Bad marker ##2\space but expected a closing note marker}\fi}\mctopnoms
   \mcpop}
 \newbox\f@@tstrut
@@ -269,7 +274,7 @@
   \x@\let\x@\th@cl@ss\csname note-\cl@ss\endcsname % make \th@cl@ss be a synonym for the current note class
   % if the noteclass has content to output ...
   \ifvoid\th@cl@ss\TRACE{no note}\else%
-    \iff@rstnote\kern-\lastd@pth\vfil\fi % ignore depth of body text; fill space
+    \iff@rstnote\kern-\lastd@pth\iflastpage\else\vfil\fi\fi % ignore depth of body text; fill space
     \vskip\AboveNoteSpace % output above note class space
     \iff@rstnote\footnoterule\global\f@rstnotefalse\fi % output rule before first note
     \hbox{\hskip\columnshift \vbox{\unvbox\th@cl@ss}}\fi}% output notes
@@ -280,15 +285,16 @@
   \x@\let\x@\th@cl@ss\csname note-\cl@ss\endcsname % make \th@cl@ss be a synonym for the current note class
   % if the noteclass has content to output ...
   \ifvoid\th@cl@ss\else
-    \iff@rstnote\kern-\lastd@pth\vfil % ignore depth of body text; fill space
-      \vskip\AboveNoteSpace\else\vskip\InterNoteSpace\fi
-    \iff@rstnote{\footnoterule}\global\f@rstnotefalse\fi % output rule before first note
+    \iff@rstnote\iflastpage\else\vfil\fi %\kern-\lastd@pth\vfil % ignore depth of body text; fill space
+      \vskip\AboveNoteSpace
+      {\footnoterule}\global\f@rstnotefalse % output rule before first note
+    \else\vskip\InterNoteSpace\fi
     {\maken@tepara{\th@cl@ss}{#1}}%
   \fi}
 
 \newif\iff@rstnote
 \f@rstnotetrue
-\def\footnoterule{\kern-0.5\AboveNoteSpace\kern-.4pt % the \hrule is .4pt high
+\def\footnoterule{\kern-0.5\AboveNoteSpace
   \setn@tewidth{-}%
   \dimen0=\n@tewidth
   \ifdiglot\else
@@ -297,7 +303,7 @@
   \toks0=\everypar\everypar={}\parskip=0pt\baselineskip=0pt\parindent=0pt\let\par=\endgraf\parfillskip=0pt%
 %  \noindent\hbox{\noindent\kern\columnshift\vbox{\hrule width \dimen0}}\par
   \hbox{\ifdiglot\else\kern\columnshift\fi
-    \vrule height 0.4pt width \dimen0}\kern0pt%
+    \vrule height 0.4pt width \dimen0}\kern-.4pt % the \hrule is .4pt high
     \kern0.5\AboveNoteSpace%This was commented out, without it the line was going through through some callers
 \everypar=\toks0}
 
@@ -346,8 +352,8 @@
 % #1 is vbox containing notes as individual paragraphs.
 %+c_makenotepara
 \newif\ifNoteTracing \NoteTracingfalse
-\newskip\intern@teskip \intern@teskip=15pt plus 3pt minus 5pt
-\newskip\noteRag\noteRag=0pt plus 18pt
+\newskip\internoteskip \internoteskip=15pt plus 12pt minus 7pt
+\newskip\noteRag\noteRag=0pt plus 36pt
 \def\maken@tepara#1#2{%
   \setn@tewidth{#2}%
   \hsize=\n@tewidth%\advance\hsize by -\columnshift % width is full page size
@@ -397,7 +403,7 @@
 % skip between notes in paragraph. skip is good place to break.
 \def\internotepenalty{-10}
 %\def\internotespace{\hfil\hskip\intern@teskip\penalty\internotepenalty\hfilneg}
-\def\internotespace{\hskip\intern@teskip\kern 0pt\penalty\internotepenalty}
+\def\internotespace{\penalty\internotepenalty\hskip\internoteskip}%\kern 0pt after \hskip, to force gap
 %\def\internotespace{\hfil\hskip\intern@teskip\penalty-10\hfilneg}
 %-c_makehboxofhboxes
 
@@ -409,8 +415,8 @@
 \global\output={\onecol}
 \global\holdinginserts=1
 \def\onecol{%
-  \trace{b}{BALANCE pagebuild: cols=1: textheight=\the\textheight}%
   \global\setbox\galley=\copy255                                        %(1)
+  \trace{b}{BALANCE pagebuild: cols=1: textheight=\the\textheight\space with ht=\the\ht255 \space and partial=\the\ht\partial}%
   % tempoarily split and see if there are marks in this text
   \bgroup\setbox0=\copy255 \setbox1=\vsplit0 to \maxdimen\egroup        %(+)
   \edef\t@mp{\splitbotmark}%
@@ -458,9 +464,10 @@
     \def\pagecontents{%                                                     %(3)
 %      \msg{upwards mode = \the\XeTeXupwardsmode}
       \dimen1=\textwidth \advance\dimen1 -\ExtraRMargin
-      \trace{b}{BALANCE pangeoutins: cols=1: text=\the\ht\colA, \the\dp\colA: partial=\the\ht\partial, \the\dp\partial: topins=\the\ht\topins: bottomins=\the\ht\bottomins}
+      \trace{b}{BALANCE pageoutins: cols=1: text=\the\ht\colA, \the\dp\colA: partial=\the\ht\partial, \the\dp\partial: topins=\the\ht\topins: bottomins=\the\ht\bottomins}
       \ifvoid\partial\else \vbox{\hbox to \dimen1{\hskip\columnshift\vbox{\unvbox\partial}}} \fi
       \ifvoid\topins\else \vbox{\hbox to \columnshift{}\box\topins} \vskip\skip\topins \fi
+      \iflastpage\setbox\colA\vbox{\unvbox\colA}\fi
       \lastd@pth=\dp\colA
       \hbox to \dimen1{\hbox to \columnshift{}%
         \box\colA\hbox to \ExtraRMargin{}\hfil}%
@@ -469,9 +476,9 @@
       \f@rstnotetrue%
       \m@kenotebox
       \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2 \space Leaving \the\ht255, \the\dp255}%
-      \ifdim\ht2<0pt\trace{b}{Strange notes height}\fi
+      \ifdim\ht2<-\lastd@pth\trace{b}{Strange notes height: \the\ht2}\fi
       \unvbox2
-      \ifvoid\verybottomins\else % \kern-\dimen0
+      \ifvoid\verybottomins\else\vfil % \kern-\dimen0
         \lastd@pth=0pt \vskip\skip\verybottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\verybottomins}}\fi
     }
 %-c_onecoltrial_pagecontents
@@ -485,12 +492,14 @@
     \ifrerunsavepartialpaged\trace{o}{onecoltrial: rerunsavepartialpage}%
       \global\output={\savepartialpage}% leave flag set to allow caller to trigger extra \eject   %(+)
     \else\global\output={\onecol}\fi
+    \global\setbox255=\box\voidb@x
 %-c_onecoltrial_pagefit
 %+c_onecoltrial_fail
   \else % the contents of the "galley" didn't fit into the actual page,
         % so reduce \vsize and try again with an earlier break
     \trace{i}{1c REDUCING VSIZE hIns=\the\holdinginserts}%
     \global\advance\vsize by -\baselineskip
+    \trace{b}{BALANCE 1col go round vsize=\the\vsize}%
     \global\setbox\topins=\box\voidb@x
     \global\setbox\bottomins=\box\voidb@x
     \global\setbox\verybottomins=\box\voidb@x
@@ -1112,6 +1121,8 @@
       \ifvoid\partial\else %\msg{2colout partial: \the\ht\partial}\hskip\columnshift
         \vbox{\hbox to \dimen1{\hskip\columnshift\vbox{\unvbox\partial}}}\fi % output partial page
       \ifvoid\topins\else \hbox{\hbox to \columnshift{}\box\topins} \vskip\skip\topins \fi % output top spanning pictures
+      \iflastpage\setbox\colA=\vbox{\unvbox\colA}\setbox\colB=\vbox{\unvbox\colB}
+        \ifdim\ht\colA>\ht\colB\ht\colB=\ht\colA\else\ht\colA=\ht\colB\fi\fi
       \trace{p}{Text depth = \the\dimen3}%\showthe\lastd@pth
       \hbox to \dimen1{\hbox to \columnshift{}%
         \ifRTL \hbox to \ExtraRMargin{}\box\colB\makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}\box\colA
@@ -1123,7 +1134,7 @@
       \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2}%
       \unvbox2
       \global\noteseenfalse%
-      \ifvoid\verybottomins\else%
+      \ifvoid\verybottomins\else\vfil
         \kern-\lastd@pth \lastd@pth=0pt \vskip\skip\verybottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\verybottomins}}\fi % ouput bottom spanning picture
     }
     \global\setbox255=\box\voidb@x                                          %(+)

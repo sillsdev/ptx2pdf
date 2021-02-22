@@ -1,0 +1,262 @@
+%
+% This is a copy of
+% (1) ptex-morisawa-pr6n.map
+% (2) uptex-morisawa-pr6n.map
+% (3) otf-morisawa-pr6n.map
+% (4) otf-up-morisawa-pr6n.map
+% (5) otf-cktx.map
+% by Norbert Preining and H. Kitagawa,
+% which are in TeX Live
+%
+% ptex-morisawa-pr6n.map
+rml	H	A-OTF-RyuminPr6N-Light.otf
+rmlv	V	A-OTF-RyuminPr6N-Light.otf
+gbm	H	A-OTF-GothicBBBPr6N-Medium.otf
+gbmv	V	A-OTF-GothicBBBPr6N-Medium.otf
+%
+% uptex-morisawa-pr6n.map
+urml	UniJIS-UTF16-H	A-OTF-RyuminPr6N-Light.otf
+urmlv	UniJIS-UTF16-V	A-OTF-RyuminPr6N-Light.otf
+ugbm	UniJIS-UTF16-H	A-OTF-GothicBBBPr6N-Medium.otf
+ugbmv	UniJIS-UTF16-V	A-OTF-GothicBBBPr6N-Medium.otf
+uprml-h	UniJIS-UTF16-H	A-OTF-RyuminPr6N-Light.otf
+uprml-v	UniJIS-UTF16-V	A-OTF-RyuminPr6N-Light.otf
+upgbm-h	UniJIS-UTF16-H	A-OTF-GothicBBBPr6N-Medium.otf
+upgbm-v	UniJIS-UTF16-V	A-OTF-GothicBBBPr6N-Medium.otf
+uprml-hq	UniJIS-UCS2-H	A-OTF-RyuminPr6N-Light.otf
+upgbm-hq	UniJIS-UCS2-H	A-OTF-GothicBBBPr6N-Medium.otf
+%
+% otf-morisawa-pr6n.map
+% TEXT, 90JIS
+hminl-h	H	A-OTF-RyuminPr6N-Light.otf
+hminl-v	V	A-OTF-RyuminPr6N-Light.otf
+hminr-h	H	A-OTF-RyuminPr6N-Light.otf
+hminr-v	V	A-OTF-RyuminPr6N-Light.otf
+hminb-h	H	A-OTF-FutoMinA101Pr6N-Bold.otf
+hminb-v	V	A-OTF-FutoMinA101Pr6N-Bold.otf
+hgothr-h	H	A-OTF-GothicBBBPr6N-Medium.otf
+hgothr-v	V	A-OTF-GothicBBBPr6N-Medium.otf
+hgothb-h	H	A-OTF-FutoGoB101Pr6N-Bold.otf
+hgothb-v	V	A-OTF-FutoGoB101Pr6N-Bold.otf
+hgotheb-h	H	A-OTF-MidashiGoPr6N-MB31.otf
+hgotheb-v	V	A-OTF-MidashiGoPr6N-MB31.otf
+hmgothr-h	H	A-OTF-Jun101Pr6N-Light.otf
+hmgothr-v	V	A-OTF-Jun101Pr6N-Light.otf
+
+% TEXT, JIS04
+hminln-h	H	A-OTF-RyuminPr6N-Light.otf
+hminln-v	V	A-OTF-RyuminPr6N-Light.otf
+hminrn-h	H	A-OTF-RyuminPr6N-Light.otf
+hminrn-v	V	A-OTF-RyuminPr6N-Light.otf
+hminbn-h	H	A-OTF-FutoMinA101Pr6N-Bold.otf
+hminbn-v	V	A-OTF-FutoMinA101Pr6N-Bold.otf
+hgothrn-h	H	A-OTF-GothicBBBPr6N-Medium.otf
+hgothrn-v	V	A-OTF-GothicBBBPr6N-Medium.otf
+hgothbn-h	H	A-OTF-FutoGoB101Pr6N-Bold.otf
+hgothbn-v	V	A-OTF-FutoGoB101Pr6N-Bold.otf
+hgothebn-h	H	A-OTF-MidashiGoPr6N-MB31.otf
+hgothebn-v	V	A-OTF-MidashiGoPr6N-MB31.otf
+hmgothrn-h	H	A-OTF-Jun101Pr6N-Light.otf
+hmgothrn-v	V	A-OTF-Jun101Pr6N-Light.otf
+
+% CID
+otf-cjml-h	Identity-H	A-OTF-RyuminPr6N-Light.otf
+otf-cjml-v	Identity-V	A-OTF-RyuminPr6N-Light.otf
+otf-cjmr-h	Identity-H	A-OTF-RyuminPr6N-Light.otf
+otf-cjmr-v	Identity-V	A-OTF-RyuminPr6N-Light.otf
+otf-cjmb-h	Identity-H	A-OTF-FutoMinA101Pr6N-Bold.otf
+otf-cjmb-v	Identity-V	A-OTF-FutoMinA101Pr6N-Bold.otf
+otf-cjgr-h	Identity-H	A-OTF-GothicBBBPr6N-Medium.otf
+otf-cjgr-v	Identity-V	A-OTF-GothicBBBPr6N-Medium.otf
+otf-cjgb-h	Identity-H	A-OTF-FutoGoB101Pr6N-Bold.otf
+otf-cjgb-v	Identity-V	A-OTF-FutoGoB101Pr6N-Bold.otf
+otf-cjge-h	Identity-H	A-OTF-MidashiGoPr6N-MB31.otf
+otf-cjge-v	Identity-V	A-OTF-MidashiGoPr6N-MB31.otf
+otf-cjmgr-h	Identity-H	A-OTF-Jun101Pr6N-Light.otf
+otf-cjmgr-v	Identity-V	A-OTF-Jun101Pr6N-Light.otf
+
+% Unicode 90JIS
+otf-ujml-h	UniJIS-UTF16-H	A-OTF-RyuminPr6N-Light.otf
+otf-ujml-v	UniJIS-UTF16-V	A-OTF-RyuminPr6N-Light.otf
+otf-ujmr-h	UniJIS-UTF16-H	A-OTF-RyuminPr6N-Light.otf
+otf-ujmr-v	UniJIS-UTF16-V	A-OTF-RyuminPr6N-Light.otf
+otf-ujmb-h	UniJIS-UTF16-H	A-OTF-FutoMinA101Pr6N-Bold.otf
+otf-ujmb-v	UniJIS-UTF16-V	A-OTF-FutoMinA101Pr6N-Bold.otf
+otf-ujgr-h	UniJIS-UTF16-H	A-OTF-GothicBBBPr6N-Medium.otf
+otf-ujgr-v	UniJIS-UTF16-V	A-OTF-GothicBBBPr6N-Medium.otf
+otf-ujgb-h	UniJIS-UTF16-H	A-OTF-FutoGoB101Pr6N-Bold.otf
+otf-ujgb-v	UniJIS-UTF16-V	A-OTF-FutoGoB101Pr6N-Bold.otf
+otf-ujge-h	UniJIS-UTF16-H	A-OTF-MidashiGoPr6N-MB31.otf
+otf-ujge-v	UniJIS-UTF16-V	A-OTF-MidashiGoPr6N-MB31.otf
+otf-ujmgr-h	UniJIS-UTF16-H	A-OTF-Jun101Pr6N-Light.otf
+otf-ujmgr-v	UniJIS-UTF16-V	A-OTF-Jun101Pr6N-Light.otf
+
+% Unicode JIS04
+otf-ujmln-h	UniJIS2004-UTF16-H	A-OTF-RyuminPr6N-Light.otf
+otf-ujmln-v	UniJIS2004-UTF16-V	A-OTF-RyuminPr6N-Light.otf
+otf-ujmrn-h	UniJIS2004-UTF16-H	A-OTF-RyuminPr6N-Light.otf
+otf-ujmrn-v	UniJIS2004-UTF16-V	A-OTF-RyuminPr6N-Light.otf
+otf-ujmbn-h	UniJIS2004-UTF16-H	A-OTF-FutoMinA101Pr6N-Bold.otf
+otf-ujmbn-v	UniJIS2004-UTF16-V	A-OTF-FutoMinA101Pr6N-Bold.otf
+otf-ujgrn-h	UniJIS2004-UTF16-H	A-OTF-GothicBBBPr6N-Medium.otf
+otf-ujgrn-v	UniJIS2004-UTF16-V	A-OTF-GothicBBBPr6N-Medium.otf
+otf-ujgbn-h	UniJIS2004-UTF16-H	A-OTF-FutoGoB101Pr6N-Bold.otf
+otf-ujgbn-v	UniJIS2004-UTF16-V	A-OTF-FutoGoB101Pr6N-Bold.otf
+otf-ujgen-h	UniJIS2004-UTF16-H	A-OTF-MidashiGoPr6N-MB31.otf
+otf-ujgen-v	UniJIS2004-UTF16-V	A-OTF-MidashiGoPr6N-MB31.otf
+otf-ujmgrn-h	UniJIS2004-UTF16-H	A-OTF-Jun101Pr6N-Light.otf
+otf-ujmgrn-v	UniJIS2004-UTF16-V	A-OTF-Jun101Pr6N-Light.otf
+%
+% otf-up-morisawa-pr6n.map
+% TEXT, 90JIS
+uphminl-h	UniJIS-UTF16-H	A-OTF-RyuminPr6N-Light.otf
+uphminl-v	UniJIS-UTF16-V	A-OTF-RyuminPr6N-Light.otf
+uphminr-h	UniJIS-UTF16-H	A-OTF-RyuminPr6N-Light.otf
+uphminr-v	UniJIS-UTF16-V	A-OTF-RyuminPr6N-Light.otf
+uphminb-h	UniJIS-UTF16-H	A-OTF-FutoMinA101Pr6N-Bold.otf
+uphminb-v	UniJIS-UTF16-V	A-OTF-FutoMinA101Pr6N-Bold.otf
+uphgothr-h	UniJIS-UTF16-H	A-OTF-GothicBBBPr6N-Medium.otf
+uphgothr-v	UniJIS-UTF16-V	A-OTF-GothicBBBPr6N-Medium.otf
+uphgothb-h	UniJIS-UTF16-H	A-OTF-FutoGoB101Pr6N-Bold.otf
+uphgothb-v	UniJIS-UTF16-V	A-OTF-FutoGoB101Pr6N-Bold.otf
+uphgotheb-h	UniJIS-UTF16-H	A-OTF-MidashiGoPr6N-MB31.otf
+uphgotheb-v	UniJIS-UTF16-V	A-OTF-MidashiGoPr6N-MB31.otf
+uphmgothr-h	UniJIS-UTF16-H	A-OTF-Jun101Pr6N-Light.otf
+uphmgothr-v	UniJIS-UTF16-V	A-OTF-Jun101Pr6N-Light.otf
+% JISX 0213:2004
+uphminln-h      UniJIS2004-UTF16-H A-OTF-RyuminPr6N-Light.otf
+uphminln-v      UniJIS2004-UTF16-V A-OTF-RyuminPr6N-Light.otf
+uphminrn-h      UniJIS2004-UTF16-H A-OTF-RyuminPr6N-Light.otf
+uphminrn-v      UniJIS2004-UTF16-V A-OTF-RyuminPr6N-Light.otf
+uphminbn-h      UniJIS2004-UTF16-H A-OTF-FutoMinA101Pr6N-Bold.otf
+uphminbn-v      UniJIS2004-UTF16-V A-OTF-FutoMinA101Pr6N-Bold.otf
+uphgothrn-h     UniJIS2004-UTF16-H A-OTF-GothicBBBPr6N-Medium.otf
+uphgothrn-v     UniJIS2004-UTF16-V A-OTF-GothicBBBPr6N-Medium.otf
+uphgothbn-h     UniJIS2004-UTF16-H A-OTF-FutoGoB101Pr6N-Bold.otf
+uphgothbn-v     UniJIS2004-UTF16-V A-OTF-FutoGoB101Pr6N-Bold.otf
+uphgothebn-h    UniJIS2004-UTF16-H A-OTF-MidashiGoPr6N-MB31.otf
+uphgothebn-v    UniJIS2004-UTF16-V A-OTF-MidashiGoPr6N-MB31.otf
+uphmgothrn-h    UniJIS2004-UTF16-H A-OTF-Jun101Pr6N-Light.otf
+uphmgothrn-v    UniJIS2004-UTF16-V A-OTF-Jun101Pr6N-Light.otf
+%
+% otf cktx
+%
+otf-utmr-h  UniCNS-UTF16-H HaranoAjiMinchoTW-Regular.otf
+otf-utmr-v  UniCNS-UTF16-V HaranoAjiMinchoTW-Regular.otf
+otf-utgr-h  UniCNS-UTF16-H HaranoAjiGothicTW-Regular.otf
+otf-utgr-v  UniCNS-UTF16-V HaranoAjiGothicTW-Regular.otf
+otf-utmb-h  UniCNS-UTF16-H HaranoAjiMinchoTW-Bold.otf
+otf-utmb-v  UniCNS-UTF16-V HaranoAjiMinchoTW-Bold.otf
+otf-utml-h  UniCNS-UTF16-H HaranoAjiMinchoTW-Light.otf
+otf-utml-v  UniCNS-UTF16-V HaranoAjiMinchoTW-Light.otf
+otf-utgb-h  UniCNS-UTF16-H HaranoAjiGothicTW-Medium.otf
+otf-utgb-v  UniCNS-UTF16-V HaranoAjiGothicTW-Medium.otf
+otf-utge-h  UniCNS-UTF16-H HaranoAjiGothicTW-Bold.otf
+otf-utge-v  UniCNS-UTF16-V HaranoAjiGothicTW-Bold.otf
+otf-utmgr-h UniCNS-UTF16-H HaranoAjiGothicTW-Heavy.otf
+otf-utmgr-v UniCNS-UTF16-V HaranoAjiGothicTW-Heavy.otf
+otf-ucmr-h  UniGB-UTF16-H  HaranoAjiMinchoCN-Regular.otf
+otf-ucmr-v  UniGB-UTF16-V  HaranoAjiMinchoCN-Regular.otf
+otf-ucgr-h  UniGB-UTF16-H  HaranoAjiGothicCN-Regular.otf
+otf-ucgr-v  UniGB-UTF16-V  HaranoAjiGothicCN-Regular.otf
+otf-ucmb-h  UniGB-UTF16-H  HaranoAjiMinchoCN-Bold.otf
+otf-ucmb-v  UniGB-UTF16-V  HaranoAjiMinchoCN-Bold.otf
+otf-ucml-h  UniGB-UTF16-H  HaranoAjiMinchoCN-Light.otf
+otf-ucml-v  UniGB-UTF16-V  HaranoAjiMinchoCN-Light.otf
+otf-ucgb-h  UniGB-UTF16-H  HaranoAjiGothicCN-Medium.otf
+otf-ucgb-v  UniGB-UTF16-V  HaranoAjiGothicCN-Medium.otf
+otf-ucge-h  UniGB-UTF16-H  HaranoAjiGothicCN-Bold.otf
+otf-ucge-v  UniGB-UTF16-V  HaranoAjiGothicCN-Bold.otf
+otf-ucmgr-h UniGB-UTF16-H  HaranoAjiGothicCN-Heavy.otf
+otf-ucmgr-v UniGB-UTF16-V  HaranoAjiGothicCN-Heavy.otf
+otf-ukmr-h  UniKS-UTF16-H  HaranoAjiMinchoK1-Regular.otf
+otf-ukmr-v  UniKS-UTF16-V  HaranoAjiMinchoK1-Regular.otf
+otf-ukgr-h  UniKS-UTF16-H  HaranoAjiGothicK1-Regular.otf
+otf-ukgr-v  UniKS-UTF16-V  HaranoAjiGothicK1-Regular.otf
+otf-ukmb-h  UniKS-UTF16-H  HaranoAjiMinchoK1-Bold.otf
+otf-ukmb-v  UniKS-UTF16-V  HaranoAjiMinchoK1-Bold.otf
+otf-ukml-h  UniKS-UTF16-H  HaranoAjiMinchoK1-Light.otf
+otf-ukml-v  UniKS-UTF16-V  HaranoAjiMinchoK1-Light.otf
+otf-ukgb-h  UniKS-UTF16-H  HaranoAjiGothicK1-Medium.otf
+otf-ukgb-v  UniKS-UTF16-V  HaranoAjiGothicK1-Medium.otf
+otf-ukge-h  UniKS-UTF16-H  HaranoAjiGothicK1-Bold.otf
+otf-ukge-v  UniKS-UTF16-V  HaranoAjiGothicK1-Bold.otf
+otf-ukmgr-h UniKS-UTF16-H  HaranoAjiGothicK1-Heavy.otf
+otf-ukmgr-v UniKS-UTF16-V  HaranoAjiGothicK1-Heavy.otf
+%
+% otf cktx (cid)
+%
+otf-ctmr-h  Identity-H     HaranoAjiMinchoTW-Regular.otf
+otf-ctmr-v  Identity-V     HaranoAjiMinchoTW-Regular.otf
+otf-ctgr-h  Identity-H     HaranoAjiGothicTW-Regular.otf
+otf-ctgr-v  Identity-V     HaranoAjiGothicTW-Regular.otf
+otf-ccmr-h  Identity-H     HaranoAjiMinchoCN-Regular.otf
+otf-ccmr-v  Identity-V     HaranoAjiMinchoCN-Regular.otf
+otf-ccgr-h  Identity-H     HaranoAjiGothicCN-Regular.otf
+otf-ccgr-v  Identity-V     HaranoAjiGothicCN-Regular.otf
+otf-ckmr-h  Identity-H     HaranoAjiMinchoK1-Regular.otf
+otf-ckmr-v  Identity-V     HaranoAjiMinchoK1-Regular.otf
+otf-ckgr-h  Identity-H     HaranoAjiGothicK1-Regular.otf
+otf-ckgr-v  Identity-V     HaranoAjiGothicK1-Regular.otf
+%
+% uptex cktx
+%
+upmsl-h     UniCNS-UTF16-H HaranoAjiMinchoTW-Regular.otf
+upmsl-v     UniCNS-UTF16-V HaranoAjiMinchoTW-Regular.otf
+upmhm-h     UniCNS-UTF16-H HaranoAjiGothicTW-Regular.otf
+upmhm-v     UniCNS-UTF16-V HaranoAjiGothicTW-Regular.otf
+upstsl-h    UniGB-UTF16-H  HaranoAjiMinchoCN-Regular.otf
+upstsl-v    UniGB-UTF16-V  HaranoAjiMinchoCN-Regular.otf
+upstht-h    UniGB-UTF16-H  HaranoAjiGothicCN-Regular.otf
+upstht-v    UniGB-UTF16-V  HaranoAjiGothicCN-Regular.otf
+uphysmjm-h  UniKS-UTF16-H  HaranoAjiMinchoK1-Regular.otf
+uphysmjm-v  UniKS-UTF16-V  HaranoAjiMinchoK1-Regular.otf
+uphygt-h    UniKS-UTF16-H  HaranoAjiGothicK1-Regular.otf
+uphygt-v    UniKS-UTF16-V  HaranoAjiGothicK1-Regular.otf
+%
+% utf
+%
+unijmin-h     UniJIS-UTF16-H    A-OTF-RyuminPr6N-Light.otf
+unijmin-v     UniJIS-UTF16-V    A-OTF-RyuminPr6N-Light.otf
+unijgoth-h    UniJIS-UTF16-H    A-OTF-GothicBBBPr6N-Medium.otf
+unijgoth-v    UniJIS-UTF16-V    A-OTF-GothicBBBPr6N-Medium.otf
+
+cidmin-h      Identity-H        A-OTF-RyuminPr6N-Light.otf
+cidmin-v      Identity-V        A-OTF-RyuminPr6N-Light.otf
+cidgoth-h     Identity-H        A-OTF-GothicBBBPr6N-Medium.otf
+cidgoth-v     Identity-V        A-OTF-GothicBBBPr6N-Medium.otf
+
+hmr           H                 A-OTF-RyuminPr6N-Light.otf
+hmrv          V                 A-OTF-RyuminPr6N-Light.otf
+hkb           H                 A-OTF-GothicBBBPr6N-Medium.otf
+hkbv          V                 A-OTF-GothicBBBPr6N-Medium.otf
+%
+% moriprop
+%
+otf-jun101-light-h   Identity-H A-OTF-Jun101Pr6N-Light.otf
+otf-jun201-regular-h Identity-H A-OTF-Jun201Pr6N-Regular.otf
+otf-jun34-medium-h   Identity-H A-OTF-Jun34Pr6N-Medium.otf
+otf-jun501-bold-h    Identity-H A-OTF-Jun501Pr6N-Bold.otf
+otf-ryumin-bold-h    Identity-H A-OTF-RyuminPr6N-Bold.otf
+otf-ryumin-heavy-h   Identity-H A-OTF-RyuminPr6N-Heavy.otf
+otf-ryumin-light-h   Identity-H A-OTF-RyuminPr6N-Light.otf
+otf-ryumin-medium-h  Identity-H A-OTF-RyuminPr6N-Medium.otf
+otf-ryumin-regular-h Identity-H A-OTF-RyuminPr6N-Regular.otf
+otf-ryumin-ultra-h   Identity-H A-OTF-RyuminPr6N-Ultra.otf
+otf-shingo-bold-h    Identity-H A-OTF-ShinGoPr6N-Bold.otf
+otf-shingo-heavy-h   Identity-H A-OTF-ShinGoPr6N-Heavy.otf
+otf-shingo-light-h   Identity-H A-OTF-ShinGoPr6N-Light.otf
+otf-shingo-medium-h  Identity-H A-OTF-ShinGoPr6N-Medium.otf
+otf-shingo-regular-h Identity-H A-OTF-ShinGoPr6N-Regular.otf
+otf-shingo-ultra-h   Identity-H A-OTF-ShinGoPr6N-Ultra.otf
+%
+% misc: ttfgid
+ugidmin-h   Identity-H ipaexm.ttf/I 
+ugidmin-v   Identity-V ipaexm.ttf/I
+ugidgoth-h  Identity-H ipaexg.ttf/I
+ugidgoth-v  Identity-V ipaexg.ttf/I
+
+gidmin-h   Identity-H ipam.ttf/I 
+gidmin-v   Identity-V ipam.ttf/I
+gidgoth-h  Identity-H ipag.ttf/I
+gidgoth-v  Identity-V ipag.ttf/I

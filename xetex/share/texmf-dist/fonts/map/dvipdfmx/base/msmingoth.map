@@ -1,0 +1,243 @@
+%
+% This is a copy of
+% (1) ptex-ms.map
+% (2) uptex-ms.map
+% (3) otf-ms.map
+% (4) otf-up-ms.map
+% (5) otf-cktx.map
+% by Norbert Preining and H. Kitagawa,
+% which are in TeX Live
+%
+% ptex-ms.map
+rml	H	:0:msmincho.ttc
+rmlv	V	:0:msmincho.ttc
+gbm	H	:0:msgothic.ttc
+gbmv	V	:0:msgothic.ttc
+%
+% uptex-ms.map
+urml	UniJIS-UTF16-H	:0:msmincho.ttc
+urmlv	UniJIS-UTF16-V	:0:msmincho.ttc
+ugbm	UniJIS-UTF16-H	:0:msgothic.ttc
+ugbmv	UniJIS-UTF16-V	:0:msgothic.ttc
+uprml-h	UniJIS-UTF16-H	:0:msmincho.ttc
+uprml-v	UniJIS-UTF16-V	:0:msmincho.ttc
+upgbm-h	UniJIS-UTF16-H	:0:msgothic.ttc
+upgbm-v	UniJIS-UTF16-V	:0:msgothic.ttc
+uprml-hq	UniJIS-UCS2-H	:0:msmincho.ttc
+upgbm-hq	UniJIS-UCS2-H	:0:msgothic.ttc
+%
+% otf-ms.map
+% TEXT, 90JIS
+hminl-h	H	:0:msmincho.ttc
+hminl-v	V	:0:msmincho.ttc
+hminr-h	H	:0:msmincho.ttc
+hminr-v	V	:0:msmincho.ttc
+hminb-h	H	:0:msmincho.ttc
+hminb-v	V	:0:msmincho.ttc
+hgothr-h	H	:0:msgothic.ttc
+hgothr-v	V	:0:msgothic.ttc
+hgothb-h	H	:0:msgothic.ttc
+hgothb-v	V	:0:msgothic.ttc
+hgotheb-h	H	:0:msgothic.ttc
+hgotheb-v	V	:0:msgothic.ttc
+hmgothr-h	H	:0:msgothic.ttc
+hmgothr-v	V	:0:msgothic.ttc
+
+% TEXT, JIS04
+hminln-h	H	:0:msmincho.ttc
+hminln-v	V	:0:msmincho.ttc
+hminrn-h	H	:0:msmincho.ttc
+hminrn-v	V	:0:msmincho.ttc
+hminbn-h	H	:0:msmincho.ttc
+hminbn-v	V	:0:msmincho.ttc
+hgothrn-h	H	:0:msgothic.ttc
+hgothrn-v	V	:0:msgothic.ttc
+hgothbn-h	H	:0:msgothic.ttc
+hgothbn-v	V	:0:msgothic.ttc
+hgothebn-h	H	:0:msgothic.ttc
+hgothebn-v	V	:0:msgothic.ttc
+hmgothrn-h	H	:0:msgothic.ttc
+hmgothrn-v	V	:0:msgothic.ttc
+
+% CID
+otf-cjml-h	Identity-H	:0:msmincho.ttc/AJ1
+otf-cjml-v	Identity-V	:0:msmincho.ttc/AJ1
+otf-cjmr-h	Identity-H	:0:msmincho.ttc/AJ1
+otf-cjmr-v	Identity-V	:0:msmincho.ttc/AJ1
+otf-cjmb-h	Identity-H	:0:msmincho.ttc/AJ1
+otf-cjmb-v	Identity-V	:0:msmincho.ttc/AJ1
+otf-cjgr-h	Identity-H	:0:msgothic.ttc/AJ1
+otf-cjgr-v	Identity-V	:0:msgothic.ttc/AJ1
+otf-cjgb-h	Identity-H	:0:msgothic.ttc/AJ1
+otf-cjgb-v	Identity-V	:0:msgothic.ttc/AJ1
+otf-cjge-h	Identity-H	:0:msgothic.ttc/AJ1
+otf-cjge-v	Identity-V	:0:msgothic.ttc/AJ1
+otf-cjmgr-h	Identity-H	:0:msgothic.ttc/AJ1
+otf-cjmgr-v	Identity-V	:0:msgothic.ttc/AJ1
+
+% Unicode 90JIS
+otf-ujml-h	UniJIS-UTF16-H	:0:msmincho.ttc
+otf-ujml-v	UniJIS-UTF16-V	:0:msmincho.ttc
+otf-ujmr-h	UniJIS-UTF16-H	:0:msmincho.ttc
+otf-ujmr-v	UniJIS-UTF16-V	:0:msmincho.ttc
+otf-ujmb-h	UniJIS-UTF16-H	:0:msmincho.ttc
+otf-ujmb-v	UniJIS-UTF16-V	:0:msmincho.ttc
+otf-ujgr-h	UniJIS-UTF16-H	:0:msgothic.ttc
+otf-ujgr-v	UniJIS-UTF16-V	:0:msgothic.ttc
+otf-ujgb-h	UniJIS-UTF16-H	:0:msgothic.ttc
+otf-ujgb-v	UniJIS-UTF16-V	:0:msgothic.ttc
+otf-ujge-h	UniJIS-UTF16-H	:0:msgothic.ttc
+otf-ujge-v	UniJIS-UTF16-V	:0:msgothic.ttc
+otf-ujmgr-h	UniJIS-UTF16-H	:0:msgothic.ttc
+otf-ujmgr-v	UniJIS-UTF16-V	:0:msgothic.ttc
+
+% Unicode JIS04
+otf-ujmln-h	UniJIS2004-UTF16-H	:0:msmincho.ttc
+otf-ujmln-v	UniJIS2004-UTF16-V	:0:msmincho.ttc
+otf-ujmrn-h	UniJIS2004-UTF16-H	:0:msmincho.ttc
+otf-ujmrn-v	UniJIS2004-UTF16-V	:0:msmincho.ttc
+otf-ujmbn-h	UniJIS2004-UTF16-H	:0:msmincho.ttc
+otf-ujmbn-v	UniJIS2004-UTF16-V	:0:msmincho.ttc
+otf-ujgrn-h	UniJIS2004-UTF16-H	:0:msgothic.ttc
+otf-ujgrn-v	UniJIS2004-UTF16-V	:0:msgothic.ttc
+otf-ujgbn-h	UniJIS2004-UTF16-H	:0:msgothic.ttc
+otf-ujgbn-v	UniJIS2004-UTF16-V	:0:msgothic.ttc
+otf-ujgen-h	UniJIS2004-UTF16-H	:0:msgothic.ttc
+otf-ujgen-v	UniJIS2004-UTF16-V	:0:msgothic.ttc
+otf-ujmgrn-h	UniJIS2004-UTF16-H	:0:msgothic.ttc
+otf-ujmgrn-v	UniJIS2004-UTF16-V	:0:msgothic.ttc
+%
+% otf-up-ms.map
+% TEXT, 90JIS
+uphminl-h	UniJIS-UTF16-H	:0:msmincho.ttc
+uphminl-v	UniJIS-UTF16-V	:0:msmincho.ttc
+uphminr-h	UniJIS-UTF16-H	:0:msmincho.ttc
+uphminr-v	UniJIS-UTF16-V	:0:msmincho.ttc
+uphminb-h	UniJIS-UTF16-H	:0:msmincho.ttc
+uphminb-v	UniJIS-UTF16-V	:0:msmincho.ttc
+uphgothr-h	UniJIS-UTF16-H	:0:msgothic.ttc
+uphgothr-v	UniJIS-UTF16-V	:0:msgothic.ttc
+uphgothb-h	UniJIS-UTF16-H	:0:msgothic.ttc
+uphgothb-v	UniJIS-UTF16-V	:0:msgothic.ttc
+uphgotheb-h	UniJIS-UTF16-H	:0:msgothic.ttc
+uphgotheb-v	UniJIS-UTF16-V	:0:msgothic.ttc
+uphmgothr-h	UniJIS-UTF16-H	:0:msgothic.ttc
+uphmgothr-v	UniJIS-UTF16-V	:0:msgothic.ttc
+% JISX 0213:2004
+uphminln-h      UniJIS2004-UTF16-H :0:msmincho.ttc
+uphminln-v      UniJIS2004-UTF16-V :0:msmincho.ttc
+uphminrn-h      UniJIS2004-UTF16-H :0:msmincho.ttc
+uphminrn-v      UniJIS2004-UTF16-V :0:msmincho.ttc
+uphminbn-h      UniJIS2004-UTF16-H :0:msmincho.ttc
+uphminbn-v      UniJIS2004-UTF16-V :0:msmincho.ttc
+uphgothrn-h     UniJIS2004-UTF16-H :0:msgothic.ttc
+uphgothrn-v     UniJIS2004-UTF16-V :0:msgothic.ttc
+uphgothbn-h     UniJIS2004-UTF16-H :0:msgothic.ttc
+uphgothbn-v     UniJIS2004-UTF16-V :0:msgothic.ttc
+uphgothebn-h    UniJIS2004-UTF16-H :0:msgothic.ttc
+uphgothebn-v    UniJIS2004-UTF16-V :0:msgothic.ttc
+uphmgothrn-h    UniJIS2004-UTF16-H :0:msgothic.ttc
+uphmgothrn-v    UniJIS2004-UTF16-V :0:msgothic.ttc
+%
+% otf cktx
+%
+otf-utmr-h  UniCNS-UTF16-H HaranoAjiMinchoTW-Regular.otf
+otf-utmr-v  UniCNS-UTF16-V HaranoAjiMinchoTW-Regular.otf
+otf-utgr-h  UniCNS-UTF16-H HaranoAjiGothicTW-Regular.otf
+otf-utgr-v  UniCNS-UTF16-V HaranoAjiGothicTW-Regular.otf
+otf-utmb-h  UniCNS-UTF16-H HaranoAjiMinchoTW-Bold.otf
+otf-utmb-v  UniCNS-UTF16-V HaranoAjiMinchoTW-Bold.otf
+otf-utml-h  UniCNS-UTF16-H HaranoAjiMinchoTW-Light.otf
+otf-utml-v  UniCNS-UTF16-V HaranoAjiMinchoTW-Light.otf
+otf-utgb-h  UniCNS-UTF16-H HaranoAjiGothicTW-Medium.otf
+otf-utgb-v  UniCNS-UTF16-V HaranoAjiGothicTW-Medium.otf
+otf-utge-h  UniCNS-UTF16-H HaranoAjiGothicTW-Bold.otf
+otf-utge-v  UniCNS-UTF16-V HaranoAjiGothicTW-Bold.otf
+otf-utmgr-h UniCNS-UTF16-H HaranoAjiGothicTW-Heavy.otf
+otf-utmgr-v UniCNS-UTF16-V HaranoAjiGothicTW-Heavy.otf
+otf-ucmr-h  UniGB-UTF16-H  HaranoAjiMinchoCN-Regular.otf
+otf-ucmr-v  UniGB-UTF16-V  HaranoAjiMinchoCN-Regular.otf
+otf-ucgr-h  UniGB-UTF16-H  HaranoAjiGothicCN-Regular.otf
+otf-ucgr-v  UniGB-UTF16-V  HaranoAjiGothicCN-Regular.otf
+otf-ucmb-h  UniGB-UTF16-H  HaranoAjiMinchoCN-Bold.otf
+otf-ucmb-v  UniGB-UTF16-V  HaranoAjiMinchoCN-Bold.otf
+otf-ucml-h  UniGB-UTF16-H  HaranoAjiMinchoCN-Light.otf
+otf-ucml-v  UniGB-UTF16-V  HaranoAjiMinchoCN-Light.otf
+otf-ucgb-h  UniGB-UTF16-H  HaranoAjiGothicCN-Medium.otf
+otf-ucgb-v  UniGB-UTF16-V  HaranoAjiGothicCN-Medium.otf
+otf-ucge-h  UniGB-UTF16-H  HaranoAjiGothicCN-Bold.otf
+otf-ucge-v  UniGB-UTF16-V  HaranoAjiGothicCN-Bold.otf
+otf-ucmgr-h UniGB-UTF16-H  HaranoAjiGothicCN-Heavy.otf
+otf-ucmgr-v UniGB-UTF16-V  HaranoAjiGothicCN-Heavy.otf
+otf-ukmr-h  UniKS-UTF16-H  HaranoAjiMinchoK1-Regular.otf
+otf-ukmr-v  UniKS-UTF16-V  HaranoAjiMinchoK1-Regular.otf
+otf-ukgr-h  UniKS-UTF16-H  HaranoAjiGothicK1-Regular.otf
+otf-ukgr-v  UniKS-UTF16-V  HaranoAjiGothicK1-Regular.otf
+otf-ukmb-h  UniKS-UTF16-H  HaranoAjiMinchoK1-Bold.otf
+otf-ukmb-v  UniKS-UTF16-V  HaranoAjiMinchoK1-Bold.otf
+otf-ukml-h  UniKS-UTF16-H  HaranoAjiMinchoK1-Light.otf
+otf-ukml-v  UniKS-UTF16-V  HaranoAjiMinchoK1-Light.otf
+otf-ukgb-h  UniKS-UTF16-H  HaranoAjiGothicK1-Medium.otf
+otf-ukgb-v  UniKS-UTF16-V  HaranoAjiGothicK1-Medium.otf
+otf-ukge-h  UniKS-UTF16-H  HaranoAjiGothicK1-Bold.otf
+otf-ukge-v  UniKS-UTF16-V  HaranoAjiGothicK1-Bold.otf
+otf-ukmgr-h UniKS-UTF16-H  HaranoAjiGothicK1-Heavy.otf
+otf-ukmgr-v UniKS-UTF16-V  HaranoAjiGothicK1-Heavy.otf
+%
+% otf cktx (cid)
+%
+otf-ctmr-h  Identity-H     HaranoAjiMinchoTW-Regular.otf
+otf-ctmr-v  Identity-V     HaranoAjiMinchoTW-Regular.otf
+otf-ctgr-h  Identity-H     HaranoAjiGothicTW-Regular.otf
+otf-ctgr-v  Identity-V     HaranoAjiGothicTW-Regular.otf
+otf-ccmr-h  Identity-H     HaranoAjiMinchoCN-Regular.otf
+otf-ccmr-v  Identity-V     HaranoAjiMinchoCN-Regular.otf
+otf-ccgr-h  Identity-H     HaranoAjiGothicCN-Regular.otf
+otf-ccgr-v  Identity-V     HaranoAjiGothicCN-Regular.otf
+otf-ckmr-h  Identity-H     HaranoAjiMinchoK1-Regular.otf
+otf-ckmr-v  Identity-V     HaranoAjiMinchoK1-Regular.otf
+otf-ckgr-h  Identity-H     HaranoAjiGothicK1-Regular.otf
+otf-ckgr-v  Identity-V     HaranoAjiGothicK1-Regular.otf
+%
+% uptex cktx
+%
+upmsl-h     UniCNS-UTF16-H HaranoAjiMinchoTW-Regular.otf
+upmsl-v     UniCNS-UTF16-V HaranoAjiMinchoTW-Regular.otf
+upmhm-h     UniCNS-UTF16-H HaranoAjiGothicTW-Regular.otf
+upmhm-v     UniCNS-UTF16-V HaranoAjiGothicTW-Regular.otf
+upstsl-h    UniGB-UTF16-H  HaranoAjiMinchoCN-Regular.otf
+upstsl-v    UniGB-UTF16-V  HaranoAjiMinchoCN-Regular.otf
+upstht-h    UniGB-UTF16-H  HaranoAjiGothicCN-Regular.otf
+upstht-v    UniGB-UTF16-V  HaranoAjiGothicCN-Regular.otf
+uphysmjm-h  UniKS-UTF16-H  HaranoAjiMinchoK1-Regular.otf
+uphysmjm-v  UniKS-UTF16-V  HaranoAjiMinchoK1-Regular.otf
+uphygt-h    UniKS-UTF16-H  HaranoAjiGothicK1-Regular.otf
+uphygt-v    UniKS-UTF16-V  HaranoAjiGothicK1-Regular.otf
+%
+% utf
+%
+unijmin-h     UniJIS-UTF16-H    :0:msmincho.ttc
+unijmin-v     UniJIS-UTF16-V    :0:msmincho.ttc
+unijgoth-h    UniJIS-UTF16-H    :0:msgothic.ttc
+unijgoth-v    UniJIS-UTF16-V    :0:msgothic.ttc
+
+cidmin-h      Identity-H        :0:msmincho.ttc/AJ1
+cidmin-v      Identity-V        :0:msmincho.ttc/AJ1
+cidgoth-h     Identity-H        :0:msgothic.ttc/AJ1
+cidgoth-v     Identity-V        :0:msgothic.ttc/AJ1
+
+hmr           H                 :0:msmincho.ttc
+hmrv          V                 :0:msmincho.ttc
+hkb           H                 :0:msgothic.ttc
+hkbv          V                 :0:msgothic.ttc
+%
+% misc: ttfgid
+ugidmin-h   Identity-H ipaexm.ttf/I 
+ugidmin-v   Identity-V ipaexm.ttf/I
+ugidgoth-h  Identity-H ipaexg.ttf/I
+ugidgoth-v  Identity-V ipaexg.ttf/I
+
+gidmin-h   Identity-H ipam.ttf/I 
+gidmin-v   Identity-V ipam.ttf/I
+gidgoth-h  Identity-H ipag.ttf/I
+gidgoth-v  Identity-V ipag.ttf/I

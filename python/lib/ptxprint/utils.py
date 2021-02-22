@@ -9,32 +9,43 @@ APP = 'ptxprint'
 
 _ = gettext.gettext
 
-def setup_i18n():
+lang = None
+
+def setup_i18n(i18nlang):
+    global lang    
     localedir = os.path.join(getattr(sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__))), "mo")
+    if i18nlang is not None:
+        os.environ["LANG"] = i18nlang
+    lang, enc = locale.getdefaultlocale(("LANG", "LANGUAGE"))
+    enc = "UTF-8"
     if sys.platform.startswith('win'):
-        if os.getenv('LANG') is None:
-            lang, enc = locale.getdefaultlocale()
-            os.environ['LANG'] = lang
-        else:
-            lang = os.getenv('LANG')
         from ctypes import cdll, windll
         from ctypes.util import find_msvcrt
-        cdll.msvcrt._putenv('LANG={}'.format(lang))
+        putenv('LANG', lang)
         msvcrt = find_msvcrt()
         msvcrtname = str(msvcrt).split('.')[0] if '.' in msvcrt else str(msvcrt)
         cdll.LoadLibrary(msvcrt)._putenv('LANG={}'.format(lang))        
         windll.kernel32.SetEnvironmentVariableW("LANG", lang)
         libintl = cdll.LoadLibrary("libintl-8.dll")
         libintl.bindtextdomain(APP, localedir)
-
         libintl.textdomain(APP)
-        # print(localedir, lang)
+        locale.setlocale(locale.LC_ALL, '')
     else:
+        locale.setlocale(locale.LC_ALL, (lang, enc))
         locale.bindtextdomain(APP, localedir)
-    locale.setlocale(locale.LC_ALL, '')
+    # print(f"Lang = ({lang}, {enc}) from {i18nlang} and LANG={os.environ['LANG']}")
     gettext.bindtextdomain(APP, localedir=localedir)
     gettext.textdomain(APP)
+    if "_" in lang:
+        lang = lang[:lang.find("_")].lower()
     
+def putenv(k, v):
+    if sys.platform.startswith('win'):
+        from ctypes import cdll
+        from ctypes.util import find_msvcrt
+        cdll.msvcrt._putenv('{}={}'.format(k, v))
+    os.putenv(k, v)
+
 def f_(s):
     frame = currentframe().f_back
     return eval("f'{}'".format(_(s)), frame.f_locals, frame.f_globals)
@@ -70,6 +81,7 @@ def textocol(s):
             v //= 256
         vals.extend([0] * (3 - len(vals)))
     return "rgb({0},{1},{2})".format(*vals)
+
 _wincodepages = {
     'cp950' : 'big5',
     'cp951' : 'big5hkscs',
@@ -131,6 +143,8 @@ if sys.platform == "linux":
     def openkey(path, doError=None):
         basepath = os.path.expanduser("~/.config/paratext/registry/LocalMachine/software")
         valuepath = os.path.join(basepath, path.lower(), "values.xml")
+        if not os.path.exists(valuepath):
+            return None
         doc = et.parse(valuepath)
         return doc
 
@@ -144,50 +158,105 @@ if sys.platform == "linux":
 elif sys.platform == "win32":
     import winreg
 
-    def openkey(path, doError=None):
+    def openkey(path):
         try:
             k = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\WOW6432Node\\" + path.replace("/", "\\"))
         except FileNotFoundError:
-            txt1 = "Unable to locate Registry Key for Paratext installation"
-            txt2 = "Sorry - PTXprint cannot work unless Paratext 8 (or later) is installed"
-            print("Fatal Error: {}\n{}".format(txt1, txt2))
-            if doError is not None:
-                doError(txt1, txt2, "PTXprint: Fatal Error")
+            k = None
         return k
 
     def queryvalue(base, value):
         return winreg.QueryValueEx(base, value)[0]
 
-_pt_bindir = ""
-
 def pt_bindir():
-    global _pt_bindir
-    return _pt_bindir
+    res = getattr(sys, '_MEIPASS', os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..')))
+    return res
 
-def get_ptsettings(errorfn):
-    global _pt_bindir
-    pt_settings = "."
-    try:
-        ptob = openkey("Paratext/8", doError=errorfn)
-        ptv = queryvalue(ptob, "ParatextVersion")
-    except FileNotFoundError:
+def get_ptsettings():
+    pt_settings = None
+    ptob = openkey("Paratext/8")
+    if ptob is None:
+        tempstr = ("C:\\My Paratext {} Projects" if sys.platform == "win32" else
+                    os.path.expanduser("~/Paratext{}Projects"))
         for v in ('9', '8'):
-            path = "C:\\My Paratext {} Projects".format(v)
+            path = tempstr.format(v)
             if os.path.exists(path):
                 pt_settings = path
-                _pt_bindir = "C:\\Program Files\\Paratext {}".format(v)
-                if os.path.exists(pt_bindir):
-                    break
-                else:
-                    _pt_bindir = "C:\\Program Files (x86)\\Paratext {}".format(v)
-                break
     else:
-        if ptv:
-            version = ptv[:ptv.find(".")]
-            try:
-                _pt_bindir = queryvalue(ptob, 'Paratext{}_Full_Release_AppPath'.format(version))
-            except:
-                _pt_bindir = queryvalue(ptob, 'Program_Files_Directory_Ptw'+version)
         pt_settings = queryvalue(ptob, 'Settings_Directory')
     return pt_settings
+
+headermappings = {
+    "First Reference":           r"\firstref",
+    "Last Reference":            r"\lastref",
+    "Reference Range":           r"\rangeref",
+    "Page Number":               r"\pagenumber",
+    "Time (HH:MM)":              r"\hrsmins",
+    "Date (YYYY-MM-DD)":         r"\isodate",
+    "-empty-":                   r"\empty"
+}
+
+def localhdrmappings():
+    return {
+        _("First Reference"):           r"\firstref",
+        _("Last Reference"):            r"\lastref",
+        _("Reference Range"):           r"\rangeref",
+        _("Page Number"):               r"\pagenumber",
+        _("Time (HH:MM)"):              r"\hrsmins",
+        _("Date (YYYY-MM-DD)"):         r"\isodate",
+        _("-empty-"):                   r"\empty"
+    }
+
+def local2globalhdr(s):
+    revglobal = {v:k for k,v in headermappings.items()}
+    mkr = localhdrmappings().get(s, None)
+    if mkr is not None:
+        return revglobal.get(mkr, mkr)
+    else:
+        return s
+
+def global2localhdr(s):
+    revlocal = {v:k for k,v in localhdrmappings().items()}
+    mkr = headermappings.get(s, None)
+    if mkr is not None:
+        return revlocal.get(mkr, mkr)
+    else:
+        return s
+
+def asfloat(v, d):
+    try:
+        return float(v)
+    except (ValueError, TypeError):
+        return d
+
+def pluralstr(s, l):
+    """CLDR plural rules"""
+    if len(l) == 0:
+        return ""
+    elif len(l) == 1:
+        return l[0]
+    elif str(len(l)) in s:
+        return s[str(len(l))].format(*l)
+    if "end" in s:
+        curr = s["end"].format(l[-2], l[-1])
+        l = l[:-2]
+    if "middle" in s:
+        while len(l) > 1:
+            curr = s["middle"].format(l.pop(), curr)
+    if "start" in s:
+        curr = s["start"].format(l[0], curr)
+    elif "middle" in s:
+        curr = s["middle"].format(l[0], curr)
+    return curr
+
+def multstr(template, lang, num, text, addon=""):
+    if str(num) in template:
+        res = template[str(num)].format(text)
+    elif num > 1 and "mult" in template:
+        res = template["mult"].format(text)
+    else:
+        res = ""
+    if len(addon):
+        res += " " + addon
+    return res
 

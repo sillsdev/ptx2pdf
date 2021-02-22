@@ -2,22 +2,21 @@ import configparser, re, os, gi, traceback
 from shutil import copyfile
 from pathlib import Path
 from functools import reduce
+from inspect import signature
 import regex
-gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk
 from ptxprint.font import TTFont
 from ptxprint.ptsettings import chaps, books, bookcodes, oneChbooks
 from ptxprint.runner import checkoutput
 from ptxprint import sfm
 from ptxprint.sfm import usfm, style
 from ptxprint.usfmutils import Usfm, Sheets, isScriptureText, Module
-from ptxprint.utils import _, universalopen
+from ptxprint.utils import _, universalopen, localhdrmappings, pluralstr, multstr
 from ptxprint.dimension import Dimension
 import ptxprint.scriptsnippets as scriptsnippets
 from ptxprint.interlinear import Interlinear
 
 # After universalopen to resolve circular import. Kludge
-from ptxprint.snippets import FancyIntro, PDFx1aOutput, Diglot, FancyBorders, ImgCredits, ThumbTabs, Colophon
+from ptxprint.snippets import FancyIntro, PDFx1aOutput, Diglot, FancyBorders, ThumbTabs, Colophon
 
 def loosint(x):
     try:
@@ -40,7 +39,7 @@ ModelMap = {
     #"config/name":              ("ecb_savedConfig", lambda w,v: v or "default"),
     "config/notes":             ("t_configNotes", lambda w,v: v or ""),
     "config/pwd":               ("t_invisiblePassword", lambda w,v: v or ""),
-    "config/version":           ("_version", lambda w,v: "1.1.9.3"),
+    "config/version":           ("_version", None),
 
     # "project/id":               ("fcb_project", None),
     "project/hideadvsettings":  ("c_hideAdvancedSettings", None),
@@ -52,9 +51,7 @@ ModelMap = {
     # "project/showadvancedtab":  ("c_showAdvancedTab", None),
     # "project/showdiglottab":    ("c_showDiglotBorderTab", None),
     # "project/showviewertab":    ("c_showViewerTab", None),
-    "project/keeptempfiles":    ("c_keepTemporaryFiles", None),
     "project/pdfx1acompliant":  ("c_PDFx1aOutput", None),
-    "project/blockexperimental": ("c_experimental", lambda w,v: "" if v else "%"),
     "project/bookscope":        ("r_book", None),
     "project/combinebooks":     ("c_combine", None),
     "project/book":             ("ecb_book", None),
@@ -85,7 +82,7 @@ ModelMap = {
     "project/copyright":        ("t_copyrightStatement", None),
     "project/colophontext":     ("tb_colophon", lambda w,v: v or ""),
     "project/ifcolophon":       ("c_colophon", lambda w,v: "" if v else "%"),
-    "project/pgbreakcolophon":  ("c_standAloneColophon", None),
+    "project/pgbreakcolophon":  ("c_standAloneColophon", lambda w,v: "" if v else "%"),
 
     "paper/height":             ("ecb_pagesize", lambda w,v: re.sub(r"^.*?,\s*(.+?)\s*(?:\(.*|$)", r"\1", v or "210mm")),
     "paper/width":              ("ecb_pagesize", lambda w,v: re.sub(r"^(.*?)\s*,.*$", r"\1", v or "148mm")),
@@ -96,9 +93,12 @@ ModelMap = {
     "paper/ifcropmarks":        ("c_cropmarks", lambda w,v :"true" if v else "false"),  
     "paper/ifverticalrule":     ("c_verticalrule", lambda w,v :"true" if v else "false"),
     "paper/margins":            ("s_margins", lambda w,v: round(float(v)) or "14"),
-    "paper/topmarginfactor":    ("s_topmarginfactor", lambda w,v: round(float(v), 2) or "1.60"),
-    "paper/bottommarginfactor": ("s_bottommarginfactor", lambda w,v: round(float(v), 2) or "1.00"),
-    "paper/sidemarginfactor":   ("s_sidemarginfactor", lambda w,v: round(float(v), 2) or "1.00"),
+    "paper/topmargin":          ("s_topmargin", None),
+    "paper/bottommargin":       ("s_bottommargin", None),
+    "paper/headerpos":          ("s_headerposition", None),
+    "paper/footerpos":          ("s_footerposition", None),
+    "paper/rulegap":            ("s_rhruleposition", None),
+
     "paper/ifaddgutter":        ("c_pagegutter", lambda w,v :"true" if v else "false"),
     "paper/gutter":             ("s_pagegutter", lambda w,v: round(float(v)) or "0"),
     "paper/colgutteroffset":    ("s_colgutteroffset", lambda w,v: "{:.1f}".format(float(v)) or "0.0"),
@@ -130,15 +130,10 @@ ModelMap = {
     "fancy/versedecoratorshift":   ("s_verseDecoratorShift", lambda w,v: float(v or "0")),
     "fancy/versedecoratorscale":   ("s_verseDecoratorScale", lambda w,v: int(float(v or "1.0")*1000)),
 
-    "paragraph/varlinespacing":    ("c_variableLineSpacing", lambda w,v: "" if v else "%"),
-    "paragraph/useglyphmetrics":   ("c_variableLineSpacing", lambda w,v: "%" if v else ""),
     "paragraph/linespacing":       ("s_linespacing", lambda w,v: "{:.3f}".format(float(v)) or "15.000"),
     "paragraph/linespacebase":  ("c_AdvCompatLineSpacing", lambda w,v: 14 if v else 12),
+    "paragraph/useglyphmetrics":   ("c_AdvCompatGlyphMetrics", lambda w,v: "%" if v else ""),
     # "paragraph/linespacingfactor": ("s_linespacing", lambda w,v: "{:.3f}".format(float(v or "15") / 12)),
-    "paragraph/linemin":           ("s_linespacingmin", lambda w,v: "minus {:.3f}pt".format(float(w.get("s_linespacing")) - float(v)) \
-                                                     if float(v) < float(w.get("s_linespacing")) else ""),
-    "paragraph/linemax":        ("s_linespacingmax", lambda w,v: "plus {:.3f}pt".format(float(v) - float(w.get("s_linespacing"))) \
-                                                     if float(v) > float(w.get("s_linespacing")) else ""),
     "paragraph/ifjustify":      ("c_justify", lambda w,v: "true" if v else "false"),
     "paragraph/ifhyphenate":    ("c_hyphenate", lambda w,v: "" if v else "%"),
     "paragraph/ifomithyphen":   ("c_omitHyphen", lambda w,v: "" if v else "%"),
@@ -160,8 +155,8 @@ ModelMap = {
     "document/chapfrom":        ("s_chapfrom", lambda w,v: int(float(v)) or "1"),
     "document/chapto":          ("s_chapto", lambda w,v: int(float(v)) or "999"),
     "document/colgutterfactor": ("s_colgutterfactor", lambda w,v: round(float(v)*3) or "12"), # Hack to be fixed
-    "document/ifrtl":           ("fcb_textDirection", lambda w,v:"true" if v == "Right-to-Left" else "false"),
-    "document/toptobottom":     ("fcb_textDirection", lambda w,v: "" if v == "Top-to-Bottom (LTR)" else "%"),
+    "document/ifrtl":           ("fcb_textDirection", lambda w,v:"true" if v == "rtl" else "false"),
+    "document/toptobottom":     ("fcb_textDirection", lambda w,v: "" if v == "ttb" else "%"),
     "document/iflinebreakon":   ("c_linebreakon", lambda w,v: "" if v else "%"),
     "document/linebreaklocale": ("t_linebreaklocale", lambda w,v: v or ""),
     "document/script":          ("fcb_script", lambda w,v: ":script="+v.lower() if v != "Zyyy" else ""),
@@ -226,17 +221,14 @@ ModelMap = {
     "document/diglotsecfraction": ("s_diglotPriFraction", lambda w,v : round(1 - (float(v)/100), 3) if v is not None else "0.450"),
     "document/diglotsecprj":    ("fcb_diglotSecProject", None),
     "document/diglotpicsources": ("fcb_diglotPicListSources", None),
-    "document/diglotswapside":  ("c_diglotSwapSide", lambda w,v: v),
+    "document/diglotswapside":  ("c_diglotSwapSide", lambda w,v: "true" if v else "false"),
     "document/diglotsepnotes":  ("c_diglotSeparateNotes", lambda w,v: "true" if v else "false"),
     "document/diglotsecconfig": ("ecb_diglotSecConfig", None),
 
-    "header/headerposition":    ("s_headerposition", lambda w,v: round(float(v), 2) or "1.00"),
-    "header/footerposition":    ("s_footerposition", lambda w,v: round(float(v), 2) or "1.00"),
     "header/ifomitrhchapnum":   ("c_omitrhchapnum", lambda w,v :"true" if v else "false"),
     "header/ifverses":          ("c_hdrverses", lambda w,v :"true" if v else "false"),
     "header/chvseparator":      ("c_sepColon", lambda w,v : ":" if v else "."),
     "header/ifrhrule":          ("c_rhrule", lambda w,v: "" if v else "%"),
-    "header/ruleposition":      ("s_rhruleposition", lambda w,v: v or "10"),
     "header/hdrleftpri":        ("c_hdrLeftPri", None),
     "header/hdrleft":           ("ecb_hdrleft", lambda w,v: v or "-empty-"),
     "header/hdrcenterpri":      ("c_hdrCenterPri", None),
@@ -251,7 +243,7 @@ ModelMap = {
     "footer/ifprintConfigName": ("c_printConfigName", lambda w,v: "" if v else "%"),
 
     "notes/includefootnotes":   ("c_includeFootnotes", lambda w,v: "%" if v else ""),
-    "notes/fnparagraphednotes": ("c_fnparagraphednotes", lambda w,v: "" if v else "%"),
+    "notes/fneachnewline":      ("c_fneachnewline", lambda w,v: "%" if v else ""),
     "notes/fnOverride":         ("c_fnOverride", None),
     "notes/iffnautocallers":    ("c_fnautocallers", lambda w,v :"true" if v else "false"),
     "notes/fncallers":          ("t_fncallers", lambda w,v: v if w.get("c_fnautocallers") else ""),
@@ -259,7 +251,7 @@ ModelMap = {
     "notes/fnomitcaller":       ("c_fnomitcaller", lambda w,v: "%" if v else ""),
 
     "notes/includexrefs":       ("c_includeXrefs", lambda w,v: "%" if v else ""),
-    "notes/xrparagraphednotes": ("c_paragraphedxrefs", lambda w,v: "" if v else "%"),
+    "notes/xreachnewline":      ("c_xreachnewline", lambda w,v: "%" if v else ""),
     "notes/xrOverride":         ("c_xrOverride", None),
     "notes/ifxrautocallers":    ("c_xrautocallers", lambda w,v :"true" if v else "false"),
     "notes/xrcallers":          ("t_xrcallers", lambda w,v: v if w.get("c_xrautocallers") else ""),
@@ -273,20 +265,21 @@ ModelMap = {
     "notes/glossaryfootnotes":  ("c_glossaryFootnotes", None),
 
     "notes/abovenotespace":     ("s_abovenotespace", lambda w,v: "{:.3f}".format(float(v))),
-    "notes/fnfontsize":         ("s_fnfontsize", lambda w,v: "{:.3f}".format(float(v))),
-    "notes/fnlinespacing":      ("s_fnlinespacing", lambda w,v: "{:.3f}".format(float(v))),
     "notes/internotespace":     ("s_internote", lambda w,v: "{:.3f}".format(float(v))),
 
-    "document/fontregular":              ("bl_fontR", lambda w,v: v.asTeXFont() if v else ""),
-    "document/fontbold":                 ("bl_fontB", lambda w,v: v.asTeXFont() if v else ""),
-    "document/fontitalic":               ("bl_fontI", lambda w,v: v.asTeXFont() if v else ""),
-    "document/fontbolditalic":           ("bl_fontBI", lambda w,v: v.asTeXFont() if v else ""),
-    "document/fontextraregular":         ("bl_fontExtraR", lambda w,v: v.asTeXFont() if v else ""),
+    "notes/horiznotespacemin":  ("s_notespacingmin", lambda w,v: "{:.3f}".format(float(v)) if v is not None else "7.000"),
+    "notes/horiznotespacemax":  ("s_notespacingmax", lambda w,v: "{:.3f}".format(float(v)) if v is not None else "27.000"),
+
+    "document/fontregular":              ("bl_fontR", lambda w,v,s: v.asTeXFont(s.inArchive) if v else ""),
+    "document/fontbold":                 ("bl_fontB", lambda w,v,s: v.asTeXFont(s.inArchive) if v else ""),
+    "document/fontitalic":               ("bl_fontI", lambda w,v,s: v.asTeXFont(s.inArchive) if v else ""),
+    "document/fontbolditalic":           ("bl_fontBI", lambda w,v,s: v.asTeXFont(s.inArchive) if v else ""),
+    "document/fontextraregular":         ("bl_fontExtraR", lambda w,v,s: v.asTeXFont(s.inArchive) if v else ""),
     "snippets/fancyintro":      ("c_prettyIntroOutline", None),
     "snippets/pdfx1aoutput":    ("c_PDFx1aOutput", None),
     "snippets/diglot":          ("c_diglot", lambda w,v: True if v else False),
     "snippets/fancyborders":    ("c_borders", None),
-    "snippets/imgcredits":      ("c_includeillustrations", None),
+    "document/includeimg":      ("c_includeillustrations", None),
     "thumbtabs/ifthumbtabs":    ("c_thumbtabs", None),
     "thumbtabs/numtabs":        ("s_thumbtabs", None),
     "thumbtabs/length":         ("s_thumblength", None),
@@ -302,6 +295,7 @@ ModelMap = {
     "scrmymr/syllables":        ("c_scrmymrSyllable", None),
 }
 
+
 class TexModel:
     _peripheralBooks = ["FRT", "INT", "GLO", "TDX", "NDX", "CNC", "OTH", "BAK", "XXA", "XXB", "XXC", "XXD", "XXE", "XXF", "XXG"]
     _fonts = {
@@ -311,15 +305,6 @@ class TexModel:
         "fontbolditalic":           ("bl_fontBI", None, "c_fakebolditalic", "fontbolditalic/embolden", "fontbolditalic/slant"),
         "fontextraregular":         ("bl_fontExtraR", "c_useFallbackFont", None, None, None),
     }
-    _hdrmappings = {
-        _("First Reference"):           r"\firstref",
-        _("Last Reference"):            r"\lastref",
-        _("Reference Range"):           r"\rangeref",
-        _("Page Number"):               r"\pagenumber",
-        _("Time (HH:MM)"):              r"\hrsmins",
-        _("Date (YYYY-MM-DD)"):         r"\isodate",
-        _("-empty-"):                   r"\empty"
-    }
     _mirrorRL = {r'\lastref':    r'\firstref',
                  r'\firstref':   r'\lastref'
     }
@@ -328,26 +313,25 @@ class TexModel:
                'right':  'left'
     }
     _glossarymarkup = {
-        "None":                    r"\1",
-        None:                      r"\1",
-        "format as bold":          r"\\bd \1\\bd*",
-        "format as italics":       r"\\it \1\\it*",
-        "format as bold italics":  r"\\bdit \1\\bdit*",
-        "format with emphasis":    r"\\em \1\\em*",
-        "with ⸤floor⸥ brackets":   r"\u2E24\1\u2E25",
-        "with ⌊floor⌋ characters": r"\u230a\1\u230b",
-        "with ⌞corner⌟ characters":r"\u231e\1\u231f",
-        "star *before word":       r"*\1",
-        "star after* word":        r"\1*",
-        "circumflex ^before word": r"^\1",
-        "circumflex after^ word":  r"\1^"
+        "no": r"\1",                # "None":                    
+        None: r"\1",                # None:                      
+        "bd": r"\\bd \1\\bd*",      # "format as bold":          
+        "it": r"\\it \1\\it*",      # "format as italics":       
+        "bi": r"\\bdit \1\\bdit*",  # "format as bold italics":  
+        "em": r"\\em \1\\em*",      # "format with emphasis":    
+        "fb": r"\u2E24\1\u2E25",    # "with ⸤floor⸥ brackets":   
+        "fc": r"\u230a\1\u230b",    # "with ⌊floor⌋ characters": 
+        "cc": r"\u231e\1\u231f",    # "with ⌞corner⌟ characters":
+        "sb": r"*\1",               # "star *before word":       
+        "sa": r"\1*",               # "star after* word":        
+        "cb": r"^\1",               # "circumflex ^before word": 
+        "ca":  r"\1^"               # "circumflex after^ word":  
     }
     _snippets = {
         "snippets/fancyintro":            ("c_prettyIntroOutline", FancyIntro),
         "snippets/pdfx1aoutput":          ("c_PDFx1aOutput", PDFx1aOutput),
         "snippets/diglot":                ("c_diglot", Diglot),
         "snippets/fancyborders":          ("c_borders", FancyBorders),
-        "snippets/imgcredits":            ("c_includeillustrations", ImgCredits),
         "snippets/thumbtabs":             ("c_thumbtabs", ThumbTabs),
         "snippets/colophon":              ("c_colophon", Colophon)
     }
@@ -356,23 +340,26 @@ class TexModel:
         "notes/fncallers": "footnotes"
     }
 
-    def __init__(self, printer, path, ptsettings, prjid=None):
+    def __init__(self, printer, path, ptsettings, prjid=None, inArchive=False):
         from ptxprint.view import VersionStr
         self.VersionStr = VersionStr
         self.printer = printer
         self.ptsettings = ptsettings
+        self.inArchive = inArchive
         self.changes = None
         self.localChanges = None
         self.debug = False
         self.interlinear = None
+        self.imageCopyrightLangs = {}
         libpath = os.path.abspath(os.path.dirname(__file__))
-        self.dict = {"/ptxpath": path.replace("\\","/"),
+        self.dict = {"/ptxpath": str(path).replace("\\","/"),
                      "/ptxprintlibpath": libpath.replace("\\","/"),
                      "/iccfpath": os.path.join(libpath, "ps_cmyk.icc").replace("\\","/"),
                      "/ptx2pdf": self.printer.scriptsdir.replace("\\", "/")}
         self.prjid = prjid
         if self.prjid is not None:
             self.dict['project/id'] = self.prjid
+        self._hdrmappings = localhdrmappings()
         if self.printer is not None:
             self.sheets = Sheets(self.printer.getStyleSheets(generated=True))
             self.update()
@@ -438,6 +425,7 @@ class TexModel:
                                             os.path.join(self.dict["/ptxpath"], self.dict["project/id"]))
         regfont = self.printer.get("bl_fontR")
         self.dict["document/spacecntxtlztn"] = "2" if regfont.isCtxtSpace else "0"
+        self.calculateMargins()
 
     def updatefields(self, a):
         global get
@@ -445,10 +433,14 @@ class TexModel:
         for k in a:
             v = ModelMap[k]
             val = self.printer.get(v[0]) if v[0] is not None else None
-            if v[1] is not None:
-                self.dict[k] = v[1](self.printer, val)
-            else:
+            if v[1] is None:
                 self.dict[k] = val
+            else:
+                sig = signature(v[1])
+                if len(sig.parameters) == 2:
+                    self.dict[k] = v[1](self.printer, val)
+                else:
+                    self.dict[k] = v[1](self.printer, val, self)
 
     def __getitem__(self, key):
         return self.dict[key]
@@ -536,6 +528,14 @@ class TexModel:
                 return self._mirrorRL[h]
             except KeyError:
                 return h
+
+    def calculateMargins(self):
+        (marginmms, topmarginmms, bottommarginmms, headerposmms, footerposmms, ruleposmms, headerlabel, footerlabel) = self.printer.getMargins()
+        self.dict["paper/topmarginfactor"] = "{:.3f}".format(topmarginmms / marginmms)
+        self.dict["paper/bottommarginfactor"] = "{:.3f}".format(bottommarginmms / marginmms)
+        self.dict["paper/headerposition"] = "{:.3f}".format(headerposmms / marginmms)
+        self.dict["paper/footerposition"] = "{:.3f}".format(footerposmms / marginmms)
+        self.dict["paper/ruleposition"] = "{:.3f}".format(ruleposmms * 72.27 / 25.4)
         
     def texfix(self, path):
         return path.replace(" ", r"\ ")
@@ -548,6 +548,8 @@ class TexModel:
         resetPageDone = self.dict['document/startpagenum'] >= 0
         docdir, docbase = self.docdir()
         self.dict['jobname'] = jobname
+        self.dict['document/imageCopyrights'] = self.generateImageCopyrightText() \
+                if self.dict['document/includeimg'] else r"\def\zimagecopyrights{}"
         with universalopen(os.path.join(os.path.dirname(__file__), template)) as inf:
             for l in inf.readlines():
                 if l.startswith(r"\ptxfile"):
@@ -558,7 +560,7 @@ class TexModel:
                             fname = re.sub(r"^([^.]*).(.*)$", r"\1"+extra+r".\2", fname)
                         if i == len(self.dict['project/bookids']) - 1 and self.dict['project/ifcolophon'] == "":
                             res.append(r"\lastptxfiletrue")
-                            if not self.asBool('project/pgbreakcolophon'):
+                            if self.dict['project/pgbreakcolophon'] != '%':
                                 res.append(r"\endbooknoejecttrue")
                         if not resetPageDone and f not in self._peripheralBooks:
                             res.append(r"\ifodd\pageno\else\catcode`\@=11 \shipwithcr@pmarks{\vbox{}}\catcode`\@=12 \fi")
@@ -583,8 +585,9 @@ class TexModel:
                     # print(spclChars.split(' '), [len(x) for x in spclChars.split(' ')])
                     if self.dict["paragraph/ifusefallback"] and len(spclChars):
                         badlist = "\u2018\u2019\u201c\u201d*#%"
-                        a = ["".join(chr(ord(c) + 16 if ord(c) < 58 else ord(c) - 23) for c in str(hex(ord(x)))[2:]).lower() for x in spclChars.split(" ")]
-                        b = ["".join((c) for c in str(hex(ord(x)))[2:]).lower() for x in spclChars.split(" ")]
+                        specials = spclChars.replace(" ", "").encode("raw_unicode_escape").decode("raw_unicode_escape")
+                        a = ["".join(chr(ord(c) + 16 if ord(c) < 58 else ord(c) - 23) for c in str(hex(ord(x)))[2:]).lower() for x in specials]
+                        b = ["".join((c) for c in str(hex(ord(x)))[2:]).lower() for x in specials]
                         c = [x for x in zip(a,b) if chr(int(x[1],16)) not in badlist]
                         if not len(c):
                             continue
@@ -600,6 +603,13 @@ class TexModel:
                         res.append(r"\catcode`\@=12")
                     else:
                         res.append(r"% No special/missing characters specified for fallback font")
+                elif l.startswith(r"%\horiznotespacing"):
+                    mins = float(self.dict["notes/horiznotespacemin"])
+                    maxs = float(self.dict["notes/horiznotespacemax"])
+                    tgts = mins + ((maxs - mins) / 3)
+                    minus = tgts - mins
+                    plus = maxs - tgts
+                    res.append(r"\internoteskip={:.3f}pt plus {:.3f}pt minus {:.3f}pt".format(tgts, plus, minus))
                 elif l.startswith(r"%\optimizepoetry"):
                     bks = self.dict["document/clabelbooks"]
                     if self.dict["document/ifchaplabels"] == "%" and len(bks):
@@ -608,6 +618,13 @@ class TexModel:
                                 res.append(r"\setbookhook{{start}}{{{}}}{{\gdef\BalanceThreshold{{3}}\clubpenalty=50\widowpenalty=50}}".format(bk))
                                 res.append(r"\setbookhook{{end}}{{{}}}{{\gdef\BalanceThreshold{{0}}\clubpenalty=10000\widowpenalty=10000}}".format(bk))
                 elif l.startswith(r"%\snippets"):
+                    res.append("""
+\\catcode"FDEE=1 \\catcode"FDEF=2
+\\prepusfm
+\\def\\zcopyright\uFDEE{project/copyright}\uFDEF
+\\def\\zlicense\uFDEE{project/license}\uFDEF
+\\unprepusfm
+""".format(**self.dict))
                     for k, c in self._snippets.items():
                         v = self.asBool(k)
                         if v:
@@ -704,7 +721,7 @@ class TexModel:
 
             doc = None
             if self.interlinear is not None:
-                doc = Usfm(dat.splitlines(True), self.sheets)
+                doc = self._makeUSFM(dat.splitlines(True), bk)
                 linelengths = [len(x) for x in dat.splitlines(True)]
                 doc.calc_PToffsets()
                 self.interlinear.convertBk(bk, doc, linelengths)
@@ -714,24 +731,12 @@ class TexModel:
                     dat = str(doc)
                     doc = None
                 dat = self.runChanges(self.changes, dat)
+                dat = self.analyzeImageCopyrights(dat)
 
             if self.dict['project/canonicalise']:
-                syntaxErrors = []
-                try:
-                    if doc is None:
-                        doc = Usfm(dat.splitlines(True), self.sheets)
-                    doc.normalise()
-                except SyntaxError as e:
-                    syntaxErrors.append("{} {} line:{}".format(self.prjid, bk, str(e).split('line', maxsplit=1)[1]))
-                except Exception as e:
-                    syntaxErrors.append("{} {} Error({}): {}".format(self.prjid, bk, type(e), str(e)))
-                    traceback.print_exc()
-                if len(syntaxErrors):
-                    self.printer.doError("Failed to canonicalise texts due to a Syntax Error:",        
-                            secondary="\n".join(syntaxErrors)+"\n\nIf original USFM text is correct, then check "+ \
-                            "if PrintDraftChanges.txt has caused the error(s).", 
-                            title="PTXprint [{}] - Canonicalise Text Error!".format(self.VersionStr))
-                else:
+                if doc is None:
+                    doc = self._makeUSFM(dat.splitlines(True), bk)
+                if doc is not None:
                     if self.dict["document/ifletter"] == "":
                         doc.letter_space("\uFDD0")
                 
@@ -754,6 +759,25 @@ class TexModel:
             return newname
         else:
             return bn
+            
+    def _makeUSFM(self, txtlines, bk):
+        syntaxErrors = []
+        try:
+            doc = Usfm(txtlines, self.sheets)
+            doc.normalise()
+        except SyntaxError as e:
+            syntaxErrors.append("{} {} line:{}".format(self.prjid, bk, str(e).split('line', maxsplit=1)[1]))
+        except Exception as e:
+            syntaxErrors.append("{} {} Error({}): {}".format(self.prjid, bk, type(e), str(e)))
+            traceback.print_exc()
+        if len(syntaxErrors):
+            self.printer.doError("Failed to canonicalise texts due to a Syntax Error:",        
+                    secondary="\n".join(syntaxErrors)+"\n\nIf original USFM text is correct, then check "+ \
+                    "if PrintDraftChanges.txt has caused the error(s).", 
+                    title="PTXprint [{}] - Canonicalise Text Error!".format(self.VersionStr))
+            return None
+        else:
+            return doc
 
     def make_contextsfn(self, *changes):
         # functional programmers eat your hearts out
@@ -822,6 +846,10 @@ class TexModel:
         
         # Fix things that other parsers accept and we don't
         self.localChanges.append((None, regex.compile(r"(\\[cv] [^ \\\n]+)(\\)", flags=regex.S), r"\1 \2"))
+        
+        # Remove empty \h markers (might need to expand this list and loop through a bunch of markers)
+        self.localChanges.append((None, regex.compile(r"(\\h ?\r?\n)", flags=regex.S), r""))
+        
         # This section handles PARTIAL books (from chapter X to chapter Y)
         if self.asBool("document/ifchaplabels", true="%"):
             clabel = self.dict["document/clabel"]
@@ -832,7 +860,7 @@ class TexModel:
         if self.dict["project/bookscope"] == "single":
             if first > 1:
                 self.localChanges.append((None, regex.compile(r"\\c 1 ?\r?\n.+(?=\\c {} ?\r?\n)".format(first), flags=regex.S), ""))
-            if last < int(chaps.get(bk)):
+            if last < int(chaps.get(bk, 999)):
                 self.localChanges.append((None, regex.compile(r"\\c {} ?\r?\n.+".format(last+1), flags=regex.S), ""))
 
         # Throw out the known "nonpublishable" markers and their text (if any)
@@ -935,9 +963,9 @@ class TexModel:
         
         if self.asBool("notes/keepbookwithrefs"): # keep Booknames and ch:vs nums together within \xt and \xo 
             self.localChanges.append((self.make_contextsfn(regex.compile(r"(\\[xf]t [^\\]+)")),
-                                    regex.compile(r"(?<!\\[fx][rto]) (\d+[:.]\d+([-,]\d+)?)"), r"\u00A0\1"))
+                                    regex.compile(r"(\d?[^\s\d\-\\,;]{3,}[^\\\s]*?) (\d+[:.]\d+)"), r"\1\u00A0\2"))
             self.localChanges.append((self.make_contextsfn(regex.compile(r"(\\[xf]t [^\\]+)")),
-                                    regex.compile(r"( .) "), r"\1\u00A0"))
+                                    regex.compile(r"( .) "), r"\1\u00A0")) # What is this one doing?
 
         # keep \xo & \fr refs with whatever follows (i.e the bookname or footnote) so it doesn't break at end of line
         self.localChanges.append((None, regex.compile(r"(\\(xo|fr) (\d+[:.]\d+([-,]\d+)?)) "), r"\1\u00A0"))
@@ -1045,7 +1073,8 @@ class TexModel:
         return os.path.basename(fpath[:doti])
 
     def codeLower(self, fpath):
-        cl = re.findall(r"(?i)_?((?=ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib)..\d{5})[abc]?$", self.base(fpath))
+        #cl = re.findall(r"(?i)_?((?=ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib)..\d{5})[abc]?$", self.base(fpath))
+        cl = re.findall(self.printer.getPicRe()+"$", self.base(fpath))
         if cl:
             return cl[0].lower()
         else:
@@ -1095,3 +1124,95 @@ class TexModel:
                 ge = re.findall(r"\\p \\k (.+)\\k\* .+\r?\n", dat) # Finds all glossary entries in GLO book
         for delGloEntry in [x for x in ge if x not in list(set(glossentries))]:
             self.localChanges.append((None, regex.compile(r"\\p \\k {}\\k\* .+\r?\n".format(delGloEntry), flags=regex.M), ""))
+
+    def analyzeImageCopyrights(self, txt):
+        for m in re.findall(r"\\(\S+).*?\\zimagecopyrights([A-Z]+)", txt):
+            self.imageCopyrightLangs[m[1].lower()] = m[0]
+        txt = re.sub(r'://', ':/ / ', txt)
+        return txt
+
+    def generateImageCopyrightText(self):
+        artpgs = {}
+        mkr='pc'
+        sensitive = self['document/sensitive']
+        picpagesfile = os.path.join(self.docdir()[0], self['jobname'] + ".picpages")
+        crdts = []
+        cinfo = self.printer.copyrightInfo
+        self.dict['project/colophontext'] = self.analyzeImageCopyrights(self.dict['project/colophontext'])
+        if os.path.exists(picpagesfile):
+            with universalopen(picpagesfile) as inf:
+                dat = inf.read()
+
+            # \figonpage{304}{56}{cn01617.jpg}{tl}{© David C. Cook Publishing Co, 1978.}{x170.90504pt}
+            rematch = r"\\figonpage\{(\d+)\}\{\d+\}\{" + self.printer.getPicRe() + "\.[^}]+\}\{.*?\}\{(.*?)?\}\{.+?\}"
+            # print(rematch)
+            m = re.findall(rematch, dat)
+            msngPgs = []
+            customStmt = []
+            if len(m):
+                for f in m:
+                    a = 'co' if f[1] == 'cn' else f[1] # merge Cook's OT & NT illustrations together
+                    if a == '' and f[2] != '':
+                        customStmt += [f[0]]
+                        artpgs.setdefault(f[2], []).append(int(f[0]))
+                    elif a == '':
+                        msngPgs += [f[0]] 
+                        artpgs.setdefault('zz', []).append(int(f[0]))
+                    else:
+                        artpgs.setdefault(a, []).append(int(f[0]))
+            if len(artpgs):
+                artistWithMost = max(artpgs, key=lambda x: len(set(artpgs[x])))
+            else:
+                artistWithMost = ""
+
+            langs = set(self.imageCopyrightLangs.keys())
+            langs.add("en")
+            for lang in sorted(langs):
+                hasOut = False
+                mkr = self.imageCopyrightLangs.get(lang, "pc")
+                crdts.append("\\def\\zimagecopyrights{}{{%".format(lang.upper()))
+                plstr = cinfo["plurals"].get(lang, cinfo["plurals"]["en"])
+                cpytemplate = cinfo['templates']['imageCopyright'].get(lang,
+                                        cinfo['templates']['imageCopyright']['en'])
+                for art, pgs in artpgs.items():
+                    artinfo = cinfo["copyrights"].get(art, None)
+                    if art != artistWithMost:
+                        if len(pgs):
+                            pgs = sorted(set(pgs))
+                            plurals = pluralstr(plstr, pgs)
+                            if artinfo is not None:
+                                artstr = artinfo["copyright"].get(lang, artinfo["copyright"]["en"])
+                                if sensitive and "sensitive" in artinfo:
+                                    artstr = artinfo["sensitive"].get(lang, artinfo["sensitive"]["en"])
+                                cpystr = multstr(cpytemplate, lang, len(pgs), plurals, artstr.replace("_", "\u00A0"))
+                                crdts.append("\\{} {}".format(mkr, cpystr))
+                            else:
+                                crdts.append(_("\\rem Warning: No copyright statement found for: {} on pages {}")\
+                                                .format(art.upper(), pluralstr))
+                            hasOut = True
+                if len(msngPgs):
+                    plurals = pluralstr(plstr, msngPgs)
+                    template = cinfo['templates']['imageExceptions'].get(lang,
+                                        cinfo['templates']['imageExceptions']['en'])
+                    exceptPgs = " " + multstr(template, lang, len(msngPgs), plurals)
+                else:
+                    exceptPgs = ""
+
+                artinfo = cinfo["copyrights"].get(artistWithMost, None)
+                if artinfo is not None:
+                    pgs = artpgs[artistWithMost]
+                    plurals = pluralstr(plstr, pgs)
+                    artstr = artinfo["copyright"].get(lang, artinfo["copyright"]["en"])
+                    if sensitive and "sensitive" in artinfo:
+                        artstr = artinfo["sensitive"].get(lang, artinfo["sensitive"]["en"])
+                    if not hasOut:
+                        template = cinfo['templates']['allIllustrations'].get(lang,
+                            cinfo['templates']['allIllustrations']['en'])
+                    else:
+                        template = cinfo['templates']['exceptIllustrations'].get(lang,
+                            cinfo['templates']['exceptIllustrations']['en'])
+                    cpystr = template.format(artstr.replace("_", "\u00A0") + exceptPgs)
+                    crdts.append("\\{} {}".format(mkr, cpystr))
+                crdts.append("}")
+            crdts.append("\\let\\zimagecopyrights=\\zimagecopyrightsEN")
+        return "\n".join(crdts)

@@ -13,6 +13,7 @@ if sys.platform == "win32":
      pathex =   ['C:\\ptx2pdf',
         'C:\\msys64\\mingw64\\lib',
         'C:\\msys64\\usr\\lib\\python3.7\\site-packages',
+        'C:\\msys64\\lib\\python3.7\\site-packages',
         'C:\\msys64\\mingw64\\lib\\python3.7\\lib-dynload',
         'C:\\msys64\\mingw64\\lib\\python3.7',
         'C:\\pyinstaller']
@@ -32,19 +33,23 @@ a = Analysis(['python/scripts/ptxprint', 'python/scripts/usfmerge'],
              binaries = binaries
                       + [('python/lib/ptxprint/PDFassets/border-art/'+y, 'ptxprint/PDFassets/border-art') for y in 
                             ('A5 section head border.pdf', 'A5 section head border(RTL).pdf',
-                             'A5 page border.pdf', 'Verse number star.pdf', 'decoration.pdf')]
+                             'A5 page border.pdf', 'A5 page border - no footer.pdf', 'Verse number star.pdf', 'decoration.pdf')]
                       + [('python/lib/ptxprint/PDFassets/watermarks/'+z, 'ptxprint/PDFassets/watermarks') for z in 
-                            ('A4-Grid.pdf', 'A4-Draft.pdf', 'A5-Grid.pdf', 'A5-Draft.pdf',
+                            ('A4-Grid.pdf', 'A4-Draft.pdf', 'A5-Grid.pdf', 'A5-Draft.pdf', 'A5-EBAUCHE.pdf',
                              '5.8x8.7-12mmBorderDraft.pdf', '5.8x8.7-Draft.pdf', 'BSI-12mmBorder.pdf',
                              'A4-12mmBorder.pdf', 'A5-10mmBorder.pdf', 'A4-CopyrightWatermark.pdf', 'A5-CopyrightWatermark.pdf')]
                       + [('python/lib/ptxprint/'+x, 'ptxprint') for x in 
                             ('Google-Noto-Emoji-Objects-62859-open-book.ico', '62859-open-book-icon(128).png', 
-							 'picLocationPreviews.png', 'ps_cmyk.icc')]
+							 'picLocationPreviews.png', 'ps_cmyk.icc', 
+							 'Top1FalseFalse.png', 'Top1FalseTrue.png', 'Top2FalseFalse.png',
+							 'Top2FalseTrue.png', 'Top2TrueFalse.png', 'Top2TrueTrue.png',
+							 'Bottom1False.png', 'Bottom2False.png', 'Bottom2True.png')]
                       + [('python/lib/ptxprint/sfm/*.bz2', 'ptxprint/sfm')]
+                      + [('fonts/' + f, 'fonts/' + f) for f in ('Empties.ttf', 'SourceCodePro-Regular.ttf')]
                       + [('src/mappings/*.tec', 'ptx2pdf/mappings')],
 #					  + [('python/lib/ptxprint/mo/' + y +'/LC_MESSAGES/ptxprint.mo', 'mo/' + y + '/LC_MESSAGES') for y in os.listdir('python/lib/ptxprint/mo')],
              datas =    [('python/lib/ptxprint/'+x, 'ptxprint') for x in 
-                            ('ptxprint.glade', 'template.tex')]
+                            ('ptxprint.glade', 'template.tex', 'picCopyrights.json')]
                       + [('python/lib/ptxprint/sfm/*.*y', 'ptxprint/sfm')]
                       + [('docs/inno-docs/*.txt', 'ptxprint')]
                       + [('src/*.tex', 'ptx2pdf'), ('src/ptx2pdf.sty', 'ptx2pdf'), ('src/usfm_sb.sty', 'ptx2pdf')],

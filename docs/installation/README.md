@@ -11,7 +11,7 @@ To use ptx2pdf you need (a) XeTeX and (b) the ptx2pdf macro package. If you don'
 
 <a name="TOC-Installing-XeTeX">The most convenient way to setup a TeX system is through installing TeX Live. TeX Live is available for all major platforms, though Mac users might want to use MacTeX and Windows users might be interested in using the MikTeX distribution.
 
-If you don't want a full blown TeX distribution on your machine, you might want to use this[minimal Windows XeTeX distribution](https://bitbucket.org/hindlemail/xetexnuget/src/default/PutXetexFolderInHere/) based on W32TeX. This distribution contains the ptx2pdf macros, so you don't need to install them as described below.
+If you don't want a full blown TeX distribution on your machine, you might want to use this [minimal Windows XeTeX distribution](https://github.com/sillsdev/ptx2pdf/tree/master/xetex) based on [W32TeX](http://w32tex.org).
 
 </a>
 
@@ -28,4 +28,4 @@ Next step is to place the macro files at the appropriate place in your texmf tre
 <a name="TOC-Installing-ptx2pdf"></a></td>
 
 
-<small>Updated on Sep 4, 2019 by <span class="author"><span class="vcard">Bobby de Vos</span> </span>(Version <span class="sites:revision">7</span>)</small>
+<small>Updated on Feb 3, 2021 by <span class="author"><span class="vcard">Bobby de Vos</span> </span>(Version <span class="sites:revision">8</span>)</small>

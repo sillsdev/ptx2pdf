@@ -1,6 +1,6 @@
 
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal
-from ptxprint.utils import refKey, universalopen, print_traceback
+from ptxprint.utils import refKey, universalopen, print_traceback, lang, _
 from ptxprint.texmodel import TexModel
 from gi.repository import Gtk, GdkPixbuf, GObject, Gdk
 from threading import Thread
@@ -9,9 +9,11 @@ import regex
 import os, re, random, sys
 
 posparms = ["alt", "src", "size", "pgpos", "copy", "caption", "ref", "x-xetex", "mirror", "scale"]
-pos3parms = ["src", "size", "pgpos", "ref", "copy", "alt", "x-xetex", "mirror", "scale", "media"]
+pos3parms = ["src", "size", "pgpos", "ref", "copy", "alt", "x-xetex", "mirror", "scale", "media", 
+             "x-credit", "x-creditrot", "x-creditbox", "x-creditpos"]
 
-_piclistfields = ["anchor", "caption", "src", "size", "scale", "pgpos", "ref", "alt", "copy", "mirror", "disabled", "cleardest", "key", "media"]
+_piclistfields = ["anchor", "caption", "src", "size", "scale", "pgpos", "ref", "alt", "copy", "mirror", 
+                  "x-credit", "x-creditrot", "x-creditbox", "x-creditpos", "disabled", "cleardest", "key", "media"]
 _pickeys = {k:i for i, k in enumerate(_piclistfields)}
 
 _form_structure = {
@@ -25,6 +27,11 @@ _form_structure = {
     'alt':      't_plAltText',
     'copy':     't_plCopyright',
     'mirror':   'fcb_plMirror',
+    'x-credit':    't_plCreditText',
+    'x-creditrot': 'fcb_plCreditRotate',
+    'x-creditbox': 'ecb_plCreditBoxStyle',
+    'crVpos':      'fcb_plCreditVpos',
+    'crHpos':   'fcb_plCreditHpos',
     'hpos':     'fcb_plHoriz',
     'nlines':   's_plLines',
     'medP':     'c_plMediaP',
@@ -32,26 +39,9 @@ _form_structure = {
     'medW':     'c_plMediaW'
 }
 _comblist = ['pgpos', 'hpos', 'nlines']
+_comblistcr = ['crVpos', 'crHpos']
 _defaults = {
     'scale':    "1.000"
-}
-
-_picLimitDefault = {
-    'ab': ('paw','paw', 'Permission requirements unknown'),
-    'cn': ('paw','paw', 'Any media, but needs written permission'),
-    'co': ('paw','paw', 'Any media, but needs written permission'),
-    'hk': ('pa','p', 'Print is fine, but App use requires a formal agreement and reporting. Web use is not permitted.'),
-    'lb': ('pa','p', 'Print is fine, but App use requires a formal agreement and reporting. Web use is not permitted.'),
-    'bk': ('pa','p', 'Print is fine, but App use requires a formal agreement and reporting. Web use is not permitted.'),
-    'ba': ('paw','paw', 'Any media is fine without restriction'),
-    'dy': ('paw','paw', 'Any media is fine without restriction'),
-    'gt': ('paw','paw', 'Any media is fine without restriction'),
-    'dh': ('paw','paw', 'Any media is fine without restriction'),
-    'mh': ('paw','paw', 'Any media is fine without restriction'),
-    'mn': ('paw','paw', 'Any media is fine without restriction'),
-    'wa': ('p','p', 'Only Print media'),
-    'dn': ('p','p', 'Only Print media'),
-    'ib': ('p','p', 'Only Print media')
 }
 
 newrowcounter = 1
@@ -66,16 +56,15 @@ def newBase(fpath):
         return re.sub('[()&+,.;: \-]', '_', f.lower())
 
 class PicList:
-    def __init__(self, view, checkview, builder, parent):
+    def __init__(self, view, builder, parent):
         self.view = view
-        self.checkview = checkview
         self.loading = False
         self.checkinv = False
         self.checkfilt = 0
-        self.model = view.get_model()
-        self.checkmodel = self.model.filter_new()
-        self.checkmodel.set_visible_func(self.checkfilter)
-        self.checkview.set_model(self.checkmodel)
+        self.coremodel = view.get_model()
+        self.model = self.coremodel.filter_new()
+        self.model.set_visible_func(self.checkfilter)
+        self.view. set_model(self.model)
         self.builder = builder
         self.parent = parent
         self.picinfo = None
@@ -84,10 +73,9 @@ class PicList:
         self.currow = None
         self.curriter = None
         self.bookfilters = None
-        for wid in (self.view, self.checkview):
-            sel = wid.get_selection()
-            sel.set_mode=Gtk.SelectionMode.SINGLE
-            sel.connect("changed", self.row_select)
+        sel = self.view.get_selection()
+        sel.set_mode=Gtk.SelectionMode.SINGLE
+        sel.connect("changed", self.row_select)
         for k, v in _form_structure.items():
             w = builder.get_object(v)
             sig = "changed"
@@ -117,30 +105,31 @@ class PicList:
     def setCheckFilter(self, invert, filt):
         self.checkinv = invert
         self.checkfilt = filt
-        self.checkmodel.refilter()
+        self.model.refilter()
 
     def modify_font(self, p):
-        for a in ("", "2"):
-            w = self.builder.get_object("cr_caption"+a)
-            w.set_property("font-desc", p)
+        w = self.builder.get_object("cr_caption")
+        w.set_property("font-desc", p)
 
     def isEmpty(self):
         return len(self.model) == 0
 
     def clear(self):
-        self.model.clear()
+        self.coremodel.clear()
 
     def load(self, picinfo, bks=None):
         self.picinfo = picinfo
         #self.view.set_model(None)
-        self.model.clear()
+        self.coremodel.clear()
         self.bookfilters = bks
         if picinfo is not None:
             for k, v in sorted(picinfo.items(), key=lambda x:refKey(x[1]['anchor'])):
                 if bks is not None and len(bks) and v['anchor'][:3] not in bks:
                     continue
                 row = []
-                defaultmedia = _picLimitDefault.get(v.get('src', '')[:2].lower(), ('paw', 'paw', 'Default'))
+                #defaultmedia = _picLimitDefault.get(v.get('src', '')[:2].lower(), ('paw', 'paw', 'Default'))
+                defaultmedia = self.parent.copyrightInfo.get(v.get('src', '')[:2].lower(),
+                    { "default": "paw", "limit": "paw", "tip": {"en": "Default"}})
                 for e in _piclistfields:
                     if e == 'key':
                         val = k
@@ -156,15 +145,15 @@ class PicList:
                     elif e == "media":
                         val = v.get(e, None)
                         if val is None:
-                            val = defaultmedia[1]
+                            val = defaultmedia["default"]
                         else:
-                            val = "".join(x for x in val if x in defaultmedia[0])
+                            val = "".join(x for x in val if x in defaultmedia["limit"])
                     else:
                         val = v.get(e, "")
                     row.append(val)
-                self.model.append(row)
+                self.coremodel.append(row)
         #self.view.set_model(self.model)
-        self.checkmodel.refilter()
+        self.model.refilter()
         self.loading = False
 
     def get(self, wid, default=None):
@@ -179,6 +168,7 @@ class PicList:
         allkeys = set()
         for row in self.model:
             k = row[_pickeys['key']]
+            if k.startswith("row"):
             p = picinfos.setdefault(k, {})
             for i, e in enumerate(_piclistfields):
                 if e == 'key':
@@ -195,6 +185,7 @@ class PicList:
                 p[e] = val
         for k,v in list(picinfos.items()):
             if k not in allkeys and (self.bookfilters is None or v['anchor'][:3] in self.bookfilters):
+                if k.startswith("row"):
                 del picinfos[k]
         return picinfos
 
@@ -228,21 +219,20 @@ class PicList:
         path = model.get_path(it)
         cpath = path if selection == self.selection else model.convert_path_to_child_path(path)
         cit = self.model.get_iter(cpath)
-        for w in (self.view, self.checkview): # keep both views in sync
-            s = w.get_selection()
-            if s != selection:
-                self.loading = True
-                m = w.get_model()
-                fpath = cpath if s == self.selection else m.convert_child_path_to_path(cpath)
-                if fpath is not None:
-                    s.select_path(fpath)
-                    w.scroll_to_cell(fpath)
-                else:
-                    s.unselect_all()
-                self.loading = False
+        s = self.view.get_selection()
+        if s != selection:
+            self.loading = True
+            m = self.view.get_model()
+            fpath = cpath if s == self.selection else m.convert_child_path_to_path(cpath)
+            if fpath is not None:
+                s.select_path(fpath)
+                self.view.scroll_to_cell(fpath)
+            else:
+                s.unselect_all()
+            self.loading = False
         if selection != self.selection:
             self.parent.savePicChecks()
-            if not self.checkmodel.do_visible(self.checkmodel, self.checkmodel.get_model(), cit):
+            if not self.model.do_visible(self.model, self.model.get_model(), cit):
                 return
         if cpath.get_indices()[0] >= len(self.model):
             print("Too Long!")
@@ -251,9 +241,11 @@ class PicList:
             self.currow = self.model[cit][:]    # copy it so that any edits don't mess with the model if the iterator moves
             self.curriter = cit
         pgpos = re.sub(r'^([PF])([lcr])([tb])', r'\1\3\2', self.currow[_pickeys['pgpos']])
+        creditpos = self.currow[_pickeys['x-creditpos']]
         self.parent.pause_logging()
         self.loading = True
         for j, (k, v) in enumerate(_form_structure.items()): # relies on ordered dict
+            # print(j, k, v)
             if k == 'pgpos':
                 val = pgpos[:2] if pgpos[0:1] in "PF" else (pgpos[0:1] or "t")
             elif k == 'hpos':
@@ -263,6 +255,10 @@ class PicList:
                     val = pgpos[2:] or "c"
                 else:
                     val = pgpos[1:] or ""
+            elif k == 'crVpos':
+                val = creditpos[0:1] or "b"
+            elif k == 'crHpos':
+                val = creditpos[1:2] or "i"
             elif k == 'nlines':
                 val = re.sub(r'^\D*', "", pgpos)
                 try:
@@ -273,10 +269,23 @@ class PicList:
                 val = v[-1].lower() in (self.currow[_pickeys['media']] or "paw")
             elif k == 'mirror':
                 val = self.currow[j] or "None"
-            else:
+            elif k == 'copy': # If we already have the copyright information, then don't let them enter it unnecessarily
                 val = self.currow[j]
+                figname = self.currow[_pickeys['src']]
+                status = True if len(re.findall(r"(?i)_?((?=cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib)..\d{5})[abc]?", figname)) else False
+                self.builder.get_object('l_autoCopyAttrib').set_visible(status)
+                self.builder.get_object(v).set_visible(not status)
+            else:
+                try:
+                    val = self.currow[j]
+                except IndexError: 
+                    print("k, j:", k, j)
             w = self.builder.get_object(v)
-            setWidgetVal(v, w, val)
+            try:
+                setWidgetVal(v, w, val)
+            except (ValueError, TypeError):
+                print(v, w, val)
+            
         self.mask_media(self.currow)
         self.parent.unpause_logging()
         self.loading = False
@@ -327,17 +336,18 @@ class PicList:
 
     def mask_media(self, row):
         src = row[_pickeys['src']][:2]
-        inf = _picLimitDefault.get(src.lower(), ("paw", "paw", "Default"))
-        if inf[2] == 'Default':
-            self.builder.get_object("l_plMedia").set_tooltip_text("Media permissions unknown\nfor this illustration")
+        inf = self.parent.copyrightInfo.get(src.lower(), {"limit": "paw", "tip": {"en": "Default"}})
+        tip = inf["tip"].get(lang, inf["tip"]["en"])
+        if inf["tip"]["en"] == 'Default':
+            self.builder.get_object("l_plMedia").set_tooltip_text(_("Media permissions unknown\nfor this illustration"))
         else:
-            self.builder.get_object("l_plMedia").set_tooltip_text("Permission for {} series:\n{}".format(src.upper(),inf[2]))
+            self.builder.get_object("l_plMedia").set_tooltip_text(_("Permission for {} series:\n{}").format(src.upper(), tip))
         val = row[_pickeys['media']]
         for c in 'paw':
             w = _form_structure["med"+c.upper()]
             wid = self.builder.get_object(w)
             if wid is not None:
-                wid.set_sensitive(c in inf[0])
+                wid.set_sensitive(c in inf["limit"])
             if val is None or val == "":
                 wid.set_active(True)
             else:
@@ -355,6 +365,10 @@ class PicList:
             res += str(lines)
         return res
 
+    def get_crpos(self):
+        res = "".join(self.get(k, default="") for k in _comblistcr)
+        return res
+
     def item_changed(self, w, *a):
         key = a[-1]
         if self.loading and key not in ("src", ):
@@ -362,6 +376,9 @@ class PicList:
         if key in _comblist:
             val = self.get_pgpos()
             key = "pgpos"
+        elif key in _comblistcr:
+            val = self.get_crpos()
+            key = "x-creditpos"
         elif key.startswith("med"):
             val = "".join(v[-1].lower() for k, v in _form_structure.items() if k.startswith("med") and self.get(v))
             # if self.currow is not None:
@@ -400,7 +417,7 @@ class PicList:
                 self.mask_media(self.currow)
                 if val != oldval: # New source implies new destination file
                     self.currow[_piclistfields.index('cleardest')] = True
-            elif key == "scale" and val != oldval: # Not sure why we need to do this
+            elif key == "size" and val != oldval: # Trigger a new copy of the image, since ratio may change
                 self.currow[_piclistfields.index('cleardest')] = True
             elif key == "mirror" and val == "None":
                 self.currow[fieldi] = ""
@@ -409,17 +426,13 @@ class PicList:
 
     def setPreview(self, pixbuf, tooltip=None):
         pic = self.builder.get_object("img_picPreview")
-        picc = self.builder.get_object("img_piccheckPreview")
         if pixbuf is None:
             pic.clear()
-            picc.clear()
             tooltip = ""
         else:
             pic.set_from_pixbuf(pixbuf)
-            picc.set_from_pixbuf(pixbuf)
         if tooltip is not None:
             pic.set_tooltip_text(tooltip)
-            picc.set_tooltip_text(tooltip)
             self.builder.get_object("t_plFilename").set_tooltip_text(tooltip)
 
     def drawPreview(self, wid, cr):
@@ -445,6 +458,7 @@ class PicList:
         if row[9] == "None": # mirror
             row[9] = ""
         row[_piclistfields.index('pgpos')] = self.get_pgpos()
+        row[_piclistfields.index('x-creditpos')] = self.get_crpos()
         return row
 
     def add_row(self):
@@ -455,12 +469,13 @@ class PicList:
             row = self.get_row_from_items()
         row[_pickeys['key']] = "row{}".format(newrowcounter)
         newrowcounter += 1
-        self.model.append(row)
+        self.coremodel.append(row)
         self.select_row(len(self.model)-1)
 
     def del_row(self):
         model, i = self.selection.get_selected()
-        del self.model[i]
+        ci = model.convert_iter_to_child_iter(i)
+        del self.coremodel[ci]
         ind = model.get_path(i)
         if ind is None:
             indt = model.get_iter_first()
@@ -475,6 +490,7 @@ class PicList:
 
     def clearSrcPaths(self):
         self.picinfo.clearSrcPaths()
+
 
 _checks = {
     "r_picclear":       "unknown",
@@ -515,10 +531,12 @@ class PicChecks:
         if not len(self.cfgShared) or configid is None:
             return
         self.savepic()
-        with open(os.path.join(basepath, "shared", "ptxprint", self.fname), "w", encoding="utf-8") as outf:
-            self.cfgShared.write(outf)
-        with open(os.path.join(basepath, "shared", "ptxprint", configid, self.fname), "w", encoding="utf-8") as outf:
-            self.cfgProject.write(outf)
+        basep = os.path.join(basepath, "shared", "ptxprint")
+        for a in (configid, None):
+            p = os.path.join(basep, a) if a else basep
+            os.makedirs(p, exist_ok=True)
+            with open(os.path.join(p, self.fname), "w", encoding="utf-8") as outf:
+                self.cfgShared.write(outf)
 
     def loadpic(self, src):
         if self.src == newBase(src):
@@ -529,6 +547,7 @@ class PicChecks:
             if n == "picreverse" and val == "unknown":
                 val = "OK"
             self.parent.set(k, val)
+        # MH - this doesn't seem to be working
         self.parent.set("tb_picNotes", self.cfgProject.get(self.src, "notes", fallback=""))
         for cfg in (self.cfgShared, self.cfgProject):
             if cfg.getboolean(self.src, "approved", fallback=False):
@@ -849,6 +868,8 @@ class PicInfo(dict):
         res = {}
         newfigs = {}
         for k, f in data.items():
+            if 'src' not in f:
+                continue
             if keys is not None and f['anchor'][:3] not in keys:
                 continue
             newk = filt(f['src']) if filt is not None else f['src']
@@ -915,6 +936,7 @@ class PicInfo(dict):
             if self.srcfkey not in v:
                 continue
             fpath = v[self.srcfkey]
+            # print(fpath)
             origExt = os.path.splitext(fpath)[1]
             v['dest file'] = fn(v, v[self.srcfkey], nB+origExt.lower())
             v[' crop'] = cropme
@@ -930,8 +952,11 @@ class PicInfo(dict):
         self.build_searchlist()
         for k, v in self.items():
             for a in ('src path', 'dest file'):
-                if a in v:
-                    del v[a]        
+                v.pop(a, None)
+
+    def clearDests(self):
+        for k, v in self.items():
+            v.pop('dest file', None)
         
 def PicInfoUpdateProject(model, bks, allbooks, picinfos, suffix="", random=False, cols=1, doclear=True, clearsuffix=False):
     newpics = PicInfo(model)

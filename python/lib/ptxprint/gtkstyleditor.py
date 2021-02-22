@@ -12,10 +12,10 @@ stylemap = {
     'StyleType':    ('fcb_styStyleType',    'l_styStyleType',   'Paragraph', None, None),
     ' font':        ('bl_font_styFontName', 'l_styFontName',    None, None, None),
     'Color':        ('col_styColor',        'l_styColor',       'x000000', None, None),
-    'FontSize':     ('s_styFontSize',       'l_styFontSize',    '12', None, None),
+    'FontSize':     ('s_styFontSize',       'l_styFontSize',    '12', lambda v: "{:.3f}".format(float(v) * 12), lambda v:float(v) / 12),
     'Bold':         ('c_styFaceBold',       'c_styFaceBold',    '-', lambda v: "" if v else "-", None),
     'Italic':       ('c_styFaceItalic',     'c_styFaceItalic',  '-', lambda v: "" if v else "-", None),
-    'SmallCap':     ('c_stySmallCap',       'c_stySmallCap',    '-', lambda v: "" if v else "-", None),
+    'Smallcaps':    ('c_stySmallCap',       'c_stySmallCap',    '-', lambda v: "" if v else "-", None),
     'Superscript':  ('c_styFaceSuperscript', 'c_styFaceSuperscript', '-', lambda v: "" if v else "-", None),
     'Raise':        ('s_styRaise',          'l_styRaise',       '0', None, lambda v: re.sub(r"(?<=\d)\D+$", "", v)),
     'Justification': ('fcb_styJustification', 'l_styJustification', 'Justified', lambda v: "" if v == "Justified" else v, None),
@@ -23,8 +23,8 @@ stylemap = {
     'LeftMargin':   ('s_styLeftMargin',     'l_styLeftMargin',  '0', None, None),
     'RightMargin':  ('s_styRightMargin',    'l_styRightMargin', '0', None, None),
     'LineSpacing':  ('s_styLineSpacing',    'l_styLineSpacing', '1', None, None),
-    'SpaceBefore':  ('s_stySpaceBefore',    'l_stySpaceBefore', '0', None, None),
-    'SpaceAfter':   ('s_stySpaceAfter',     'l_stySpaceAfter',  '0', None, None),
+    'SpaceBefore':  ('s_stySpaceBefore',    'l_stySpaceBefore', '0', lambda v: "{:.3f}".format(float(v) * 12), lambda v:float(v) / 12),
+    'SpaceAfter':   ('s_stySpaceAfter',     'l_stySpaceAfter',  '0', lambda v: "{:.3f}".format(float(v) * 12), lambda v:float(v) / 12),
     'CallerStyle':  ('t_styCallerStyle',  'l_styCallerStyle', '', None, None),
     'NoteCallerStyle': ('t_styNoteCallerStyle', 'l_styNoteCallerStyle', '', None, None),
     'NoteBlendInto': ('t_NoteBlendInto',  'l_NoteBlendInto',  '', None, None),
@@ -166,7 +166,9 @@ class StyleEditorView(StyleEditor):
             if v is None:
                 return
             self.loading = True
-            self.set(v[0], val)
+            self.set(v[0], val or "")
+            if key == "Color":
+                self.set("l_styColorValue", str(val))
             self.loading = False
 
     def get(self, key, default=None):
@@ -186,7 +188,8 @@ class StyleEditorView(StyleEditor):
         results = {"Tables": {"th": {"thc": {}, "thr": {}}, "tc": {"tcc": {}, "tcr": {}}},
                    "Peripheral Materials": {"zpa-": {}},
                    "Identification": {"toc": {}}}
-        for k, v in sorted(self.sheet.items(), key=lambda x:(len(x[0]), x[0])):
+        for k in sorted(self.allStyles(), key=lambda x:(len(x), x)):
+            v = self.sheet.get(k, self.basesheet.get(k, {}))
             if k == "p":
                 foundp = True
             cat = 'Other'
@@ -202,6 +205,8 @@ class StyleEditorView(StyleEditor):
                 cat, url = categorymapping.get(cat, (cat, None))
                 v[' category'] = cat
                 v[' url'] = url
+            else:
+                print(k)
             triefit(k, results.setdefault(cat, {}), 1)
         self.treestore.clear()
         self._fill_store(results, None)
@@ -214,6 +219,7 @@ class StyleEditorView(StyleEditor):
         else:
             keyfn = lambda x:(len(x[0]), x[0])
         for k, v in sorted(d.items(), key=keyfn):
+            ismarker = True
             if k in self.sheet:
                 n = self.sheet[k].get('name', k)
                 if n is None:
@@ -221,9 +227,12 @@ class StyleEditorView(StyleEditor):
                 m = re.match(r"^([^-\s])+\s[^-]+(?:-|$)", n)
                 if m and m.group(1) not in ('OBSOLETE', 'DEPRECATED'):
                     n = k + " - " + n
+            elif k not in self.basesheet:
+                ismarker = False
+                n = k
             else:
                 n = k
-            s = [k, n, n != k]
+            s = [k, n, ismarker]
             this = self.treestore.append(parent, s)
             if len(v):
                 self._fill_store(v, this)
@@ -294,6 +303,7 @@ class StyleEditorView(StyleEditor):
                 oldval = old.get(basekey, old.get(obasekey, ''))
                 val = data.get(basekey, oldval)
                 olddat = v[2]
+                controlk = v[3](False)
                 for m, f in ((v[3](x), x) for x in (v[2], not v[2])):
                     if m in old:
                         olddat = f
@@ -304,9 +314,14 @@ class StyleEditorView(StyleEditor):
                         val = data[m]
                         if m.lower() == "baseline":
                             val = re.sub(r"(-?\d*\.?\d*)(\D|$)", r"\1", str(val))
-                        self._setFieldVal(v, olddat, f)
+                        self._setFieldVal(m, v, olddat, f)
                         v = stylemap[v[3](False)]
                         break
+                else:
+                    f = v[2]
+                newlabel = stylediverts[controlk][2 if f else 1]
+                controlw = stylemap[controlk][1]
+                self.set(controlw, newlabel)
                 old[" "+k] = olddat
             else:
                 oldval = old.get(k, v[2])
@@ -314,13 +329,13 @@ class StyleEditorView(StyleEditor):
                 if v[0].startswith("c_"):
                     val = val != v[2]
                     oldval = oldval != v[2]
-            if (isinstance(val, str) and val.endswith("pt")) or (isinstance(oldval, str) and oldval.endswith("pt")):
-                print("pt value!", k, val, oldval)
-            self._setFieldVal(v, oldval, val)
+            if k == "FontSize":
+                self.set("l_styActualFontSize", "{:.1f}pt".format(float(val) / 12. * float(self.model.get("s_fontsize"))))
+            self._setFieldVal(k, v, oldval, val)
 
         stype = data.get('StyleType', old.get('StyleType', ''))
         _showgrid = {'Para': (True, True, False), 'Char': (False, True, False), 'Note': (True, True, True)}
-        visibles = _showgrid.get(stype[:4],(True, True, True))
+        visibles = _showgrid.get(stype[:4] if stype is not None else "",(True, True, True))
         for i, w in enumerate(('Para', 'Char', 'Note')):
             self.builder.get_object("ex_sty"+w).set_expanded(visibles[i])
             
@@ -338,19 +353,30 @@ class StyleEditorView(StyleEditor):
             self.builder.get_object("l_url_usfm").set_uri('{}/{}/{}.html#{}'.format(site, urlcat, pgname, urlmkr))
         self.isLoading = False
 
-    def _setFieldVal(self, v, oldval, val):
+    def _cmp(self, a, b):
+        try:
+            fa = float(a)
+            fb = float(b)
+            return fb == fa
+        except (TypeError, ValueError):
+            return a == b
+
+    def _setFieldVal(self, k, v, oldval, val):
+        if val is None:
+            val = self.getval('p', k)
         w = self.builder.get_object(v[0])
         if w is None:
             print("Can't find widget {}".format(v[0]))
         else:
             if v[0].startswith("col_"):
                 newval = textocol(val)
+                self.set("l_styColorValue", val)
             else:
                 newval = val
             setWidgetVal(v[0], w, newval if v[4] is None else v[4](newval))
         if v[1] is not None:
             ctxt = self.builder.get_object(v[1]).get_style_context()
-            if val != oldval:
+            if oldval is not None and not self._cmp(val, oldval):
                 ctxt.add_class("changed")
             else:
                 ctxt.remove_class("changed")
@@ -366,7 +392,10 @@ class StyleEditorView(StyleEditor):
                 add, rem = "non", ""
             else:
                 add, rem = "", "non"
-            data['TextProperties'].remove(rem+'publishable')
+            try:
+                data['TextProperties'].remove(rem+'publishable')
+            except KeyError:
+                pass
             data['TextProperties'].add(add+'publishable')
             return
         elif key in stylediverts:
@@ -377,27 +406,34 @@ class StyleEditorView(StyleEditor):
             other = newv[3](not isset)
             if other in data:
                 del data[other]
-            value = val
+            value = val if isset or v[3] is None else v[3](val) # v[4 if isset else 3] is None else v[4 if isset else 3](val)
         elif v[0].startswith("col_"):
             value = coltotex(val)
         elif key.startswith("_"):
             newkey = v[3](val)
             otherkey = v[3](not val)
             controlk = v[3](False)
-            self._setData(newkey, self._convertabs(newkey, data.get(otherkey, None)))
-            self.set(stylemap.get(newkey, stylemap.get(otherkey, [None]))[0], data[newkey])
+            newv = stylemap.get(newkey, stylemap.get(otherkey, [None]))
+            oldval = data.get(otherkey, None)
+            newval = self._convertabs(newkey, oldval)
+            self._setData(newkey, newval)
+            setnewv = data[newkey] if newkey not in stylemap or newv[4] is None else newv[4](data[newkey])
+            self.set(newv[0], setnewv)
             newlabel = stylediverts[controlk][2 if val else 1]
             controlw = stylemap[controlk][1]
             self.set(controlw, newlabel)
             if otherkey in data:
                 del data[otherkey]
             value = val
+            # value = val if newv[3] is None else newv[3](val)
         elif v[3] is not None:
             value = v[3](val)
         else:
             value = val
         if not key.startswith("_"):
             self._setData(key, value)
+            if key == "FontSize":
+                self.set("l_styActualFontSize", "{:.1f}pt".format(float(value) / 12. * float(self.model.get("s_fontsize"))))
         if v[1] is not None:
             ctxt = self.builder.get_object(v[1]).get_style_context()
             if key.startswith("_"):
@@ -405,7 +441,7 @@ class StyleEditorView(StyleEditor):
             else:
                 oldval = self.basesheet.get(self.marker, {}).get(key, v[2])
             if v[0].startswith("s_"):
-                diff = abs(self.asFloatPts(oldval) - self.asFloatPts(value)) > 0.05
+                diff = abs(self.asFloatPts(str(oldval)) - self.asFloatPts(str(value))) > 0.05
             else:
                 diff = oldval != value
             if diff:
@@ -511,7 +547,6 @@ class StyleEditorView(StyleEditor):
             newk = stylediverts[k][0]
             newval = old.get(" "+newk, None)
             if newval is not None:
-                self._setFieldVal(stylemap[newk], newval, newval)
+                self._setFieldVal(k, stylemap[newk], newval, newval)
         oldval = old.get(k, v[2])
-        self._setFieldVal(v, oldval, oldval)
-
+        self._setFieldVal(k, v, oldval, oldval)

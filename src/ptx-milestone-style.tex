@@ -33,7 +33,7 @@
  \gdef\thismil@stone{\detokenize{#1}}% record the name of the style
  \catcode32=12 % make <space> an "other" character, so it won't be skipped by \futurelet
  \catcode13=12 % ditto for <return>
- \tracingassigns=1
+ %\tracingassigns=1
  %\use@ttrSlash
  \futurelet\n@xt\domst@nestyle % look at following character and call \domst@nestyle
 }
@@ -52,7 +52,7 @@
       \ifx\n@xt_\let\n@xt@\startmst@nestyle@nl\else
        \ifx\n@xt\p@pe\let\n@xt@\startmst@nestyle@pipe\else
 	\let\n@xt@\startmst@nestyle\fi\fi\fi\fi
-  \tracingassigns=0
+  %\tracingassigns=0
   \trace{m}{Start style}%
   \n@xt@
  }

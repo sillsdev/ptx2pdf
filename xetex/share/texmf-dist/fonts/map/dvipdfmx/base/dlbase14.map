@@ -1,0 +1,112 @@
+% dlbase14.map
+%
+% urw fonts (in Ghostscript) are embedded for the Base 14 fonts.
+% dvipdfm(x) -f dlbase14.map ... ...
+%
+% Courier
+%
+pcrr8r    8r          ucrr8a
+pcrb8r    8r          ucrb8a
+pcrro8r   8r          ucrro8a
+pcrbo8r   8r          ucrbo8a
+pcrr8y    texnansi    ucrr8a
+pcrb8y    texnansi    ucrb8a
+pcrro8y   texnansi    ucrro8a
+pcrbo8y   texnansi    ucrbo8a
+%
+pcrr8rn   8r          ucrr8a -e 0.85
+pcrr8yn   texnansi    ucrr8a -e 0.85
+%
+% Helvetica
+%
+phvr8r    8r          uhvr8a
+phvb8r	  8r          uhvb8a
+phvro8r   8r          uhvro8a
+phvbo8r   8r          uhvbo8a
+phvr8y    texnansi    uhvr8a
+phvb8y	  texnansi    uhvb8a
+phvro8y   texnansi    uhvro8a
+phvbo8y   texnansi    uhvbo8a
+%
+% Helvetica narrow
+%
+phvbon8r  8r          uhvbo8ac
+phvbrn8r  8r          uhvb8ac
+phvron8r  8r          uhvro8ac
+phvrrn8r  8r          uhvr8ac
+phvbon8y  texnansi    uhvbo8ac
+phvbrn8y  texnansi    uhvb8ac
+phvron8y  texnansi    uhvro8ac
+phvrrn8y  texnansi    uhvr8ac
+%
+phvbo8rn  8r          uhvbo8ac
+phvb8rn   8r          uhvb8ac
+phvro8rn  8r          uhvro8ac
+phvr8rn   8r          uhvr8ac
+phvbo8yn  texnansi    uhvbo8ac
+phvb8yn   texnansi    uhvb8ac
+phvro8yn  texnansi    uhvro8ac
+phvr8yn   texnansi    uhvr8ac
+% Symbol
+psyr      none        usyr
+psyro     none        usyr -s 0.167
+% Times
+ptmr8r    8r          utmr8a
+ptmb8r    8r          utmb8a
+ptmbi8r   8r          utmbi8a
+ptmri8r   8r          utmri8a
+ptmr8y    texnansi    utmr8a
+ptmb8y    texnansi    utmb8a
+ptmbi8y   texnansi    utmbi8a
+ptmri8y   texnansi    utmri8a
+%
+ptmbo8r   8r          utmb8a -s 0.167
+ptmro8r   8r          utmr8a -s 0.167
+ptmrre8r  8r          utmr8a -e 1.2
+ptmrrn8r  8r          utmr8a -e 0.8
+ptmbo8y   texnansi    utmb8a -s 0.167
+ptmro8y   texnansi    utmr8a -s 0.167
+ptmrre8y  texnansi    utmr8a -e 1.2
+ptmrrn8y  texnansi    utmr8a -e 0.8
+% ZapfDingbats
+pzdr      none        uzdr
+%
+% txfonts
+%
+rtxptmb   tx8r        utmb8a
+rtxptmbo  tx8r        utmb8a -s 0.167
+rtxptmbi  tx8r        utmbi8a
+rtxptmr   tx8r        utmr8a
+rtxptmro  tx8r        utmr8a -s 0.167
+rtxptmri  tx8r        utmri8a
+rtxphvr   tx8r        uhvr8a
+rtxphvro  tx8r        uhvro8a
+rtxphvb   tx8r        uhvb8a
+rtxphvbo  tx8r        uhvbo8a
+%
+% raw base 14
+%
+rpcrb     none        ucrb8a
+rpcrbo    none        ucrbo8a
+rpcrr     none        ucrr8a
+rpcrro    none        ucrro8a
+rphvb     none        uhvb8a
+rphvbo    none        uhvbo8a
+rphvbon   none        uhvbo8a -e 0.82
+rphvbrn   none        uhvb8a -e 0.82
+rphvr     none        uhvr8a
+rphvro    none        uhvro8a
+rphvron   none        uhvro8a -e 0.82
+rphvrrn   none        uhvr8a -e 0.82
+rpsyr     none        usyr
+rpsyro    none        usyr -s 0.167
+rptmb     none        utmb8a
+rptmbi    none        utmbi8a
+rptmbo    none        utmb8a -s 0.167
+rptmr     none        utmr8a
+rptmri    none        utmri8a
+rptmro    none        utmr8a -s 0.167
+rptmrre   none        utmr8a -e 1.2
+rptmrrn   none        utmr8a -e 0.82
+rpzdr     none        uzdr
+rpzcmi    none        uzcmi8a

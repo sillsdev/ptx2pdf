@@ -29,9 +29,14 @@ class StyleEditor:
         res.update(self.sheet.keys())
         return res
 
+    def asStyle(self, m):
+        res = self.basesheet.get(m, {}).copy()
+        res.update(self.sheet.get(m, {}))
+        return res
+
     def getval(self, mrk, key):
         if self.sheet is None:
-            raise KeyError(f"{mrk} + {key}")
+            raise KeyError(f"stylesheet missing: {mrk} + {key}")
         return self.sheet.get(mrk, {}).get(key, self.basesheet.get(mrk, {}).get(key, None))
 
     def setval(self, mrk, key, val, ifunchanged=False):
@@ -40,11 +45,13 @@ class StyleEditor:
         if ifunchanged and self.basesheet.get(mrk, {}).get(key, None) != \
                 self.sheet.get(mrk, {}).get(key, None):
             return
-        if val is None and key in self.sheet.get(mrk, {}):
+        if key in self.sheet.get(mrk, {}) and (val is None or val == self.basesheet.get(mrk, {}).get(key, None)):
             del self.sheet[mrk][key]
             return
-        if self.basesheet.get(mrk, {}).get(key, None) != val:
-            self.sheet.setdefault(mrk, {})[key] = val
+        elif self.basesheet.get(mrk, {}).get(key, None) != val:
+            self.sheet.setdefault(mrk, {})[key] = val or ""
+        elif key in self.basesheet.get(mrk, {}) and val is None:
+            del self.basesheet[mrk][key]
 
     def registerFn(self, mark, key, fn):
         self.registers.setdefault(mark, {})[key.lower()] = fn
@@ -70,14 +77,13 @@ class StyleEditor:
                 return float(v)
             except (ValueError, TypeError):
                 return d
-        basesize = float(self.model.get("s_fontsize", 12.))
         baseline = float(self.model.get("s_linespacing", 1.))
         if key.lower() == "fontsize":
-            res = asfloat(valstr, 1.) * basesize
+            res = asfloat(valstr, 1.) * 12.
         elif key.lower() == "baseline":
             res = asfloat(valstr, 12.) * baseline
         elif key.lower() == "fontscale": 
-            res = asfloat(valstr, basesize) / basesize
+            res = asfloat(valstr, 12.) / 12.
         elif key.lower() == "linespacing":
             res = asfloat(valstr, baseline) / baseline
         return res
@@ -88,6 +94,8 @@ class StyleEditor:
             fn = self.registers.get(self.marker, {}).get(key.lower(), None)
             if fn is not None:
                 fn(key, val)
+        elif key in self.sheet.get(self.marker, {}):
+            del self.sheet[self.marker][key]
 
     def _eq_val(self, a, b, key=""):
         if key.lower() in absolutes:
@@ -122,16 +130,19 @@ class StyleEditor:
             res = re.sub(r"^\s*(.*\d+)\s*$", r"\1pt", res)
         return res
 
-    def output_diffile(self, outfh, regular=None):
+    def output_diffile(self, outfh, regular=None, inArchive=False, root=None):
         def normmkr(s):
             x = s.lower().title()
             return mkrexceptions.get(x, x)
         for m in sorted(self.allStyles()):
             markerout = False
-            sm = self.sheet.get(m, {})
+            if inArchive:
+                sm = self.sheet.get(m, {}).copy()
+            else:
+                sm = self.sheet.get(m, {})
             om = self.basesheet.get(m, {})
             if " font" in sm:
-                sm[" font"].updateTeXStyle(sm, regular=regular)
+                sm[" font"].updateTeXStyle(sm, regular=regular, inArchive=inArchive, root=root)
             for k,v in sm.items():
                 if k.startswith(" "):
                     continue

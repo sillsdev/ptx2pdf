@@ -1,0 +1,73 @@
+{
+    "definitions": {
+        "root": {
+            "type": "object",
+            "properties" : {
+                "plurals" : {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "object",
+                        "properties": { 
+                            "start": { "type": "string" },
+                            "middle": { "type": "string" },
+                            "end": { "type": "string" },
+                            "2": { "type": "string" },
+                            "3": { "type": "string" }
+                        }
+                    }
+                },
+                "templates": {
+                    "type": "object",
+                    "properties": {
+                        "imagecopyright": { "$ref": "#/definitiones/pluralstr"},
+                        "imageExceptions": { "$ref": "#/definitiones/pluralstr"},
+                        "allIllustrations": { "$ref": "#/definitiones/pluralstr"},
+                        "exceptIllustrations": { "$ref": "#/definitiones/pluralstr"}
+                    }
+                },
+                "copyrights" : {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                            "copyright" : { "$ref": "#/definitions/multistring" },
+                            "sensitive": { "$ref": "#/definitions/multistring" },
+                            "media": {
+                                "type": "object",
+                                "properties": {
+                                    "default": { "type": "string" },
+                                    "limit": { "type": "string" },
+                                    "tip": { "$ref": "#/definitions/multistring" }
+                                },
+                                "required": [ "default", "limit", "tip" ]
+                            },
+                            "credit": { "$ref": "#/definitions/multistring" },
+                            "creditPos": { "type": "string" }
+                        }
+                    },
+                    "required": [ "copyright" ]
+                }
+            }
+        },
+        "multistring": {
+            "type": "object",
+            "properties" : {
+                "en": { "type": "string"}
+            },
+            "additionalProperties": { "type": "string" },
+            "required": [ "en" ]
+        },
+        "pluralstr": {
+            "type": "object",
+            "additionalProperties": {
+                "type": "object",
+                "properties": {
+                    "1": { "type": "string" },
+                    "2": { "type": "string" },
+                    "mult": { "type": "string" }
+                }
+            }
+        }
+    },
+    "type": { "$ref": "#/definitions/root" }
+}

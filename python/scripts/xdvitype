@@ -154,6 +154,7 @@ class XDviType:
         font_name = self.readbytes(plen).decode("utf-8")
         if self.diffable:
             font_name = os.path.basename(font_name)
+        ident = self.readval(4)
         color = self.readval(4) if flags & 0x200 else 0xFFFFFFFF
         if flags & 0x800:       # variations
             nvars = self.readval(2)
@@ -163,7 +164,6 @@ class XDviType:
         ext = self.readval(4) if flags & 0x1000 else 0
         slant = self.readval(4) if flags & 0x2000 else 0
         embolden = self.readval(4) if flags & 0x4000 else 0
-        ident = self.readval(4)
         self.fonts[k]=(ident, font_name)
         self.out('xfontdef[{}] "{}", size={}, flags={:04X}, color={:08X}, vars={}, ext={}, slant={}, embolden={}'.format(
                 ident, font_name, points, flags, color, variations, ext, slant, embolden))

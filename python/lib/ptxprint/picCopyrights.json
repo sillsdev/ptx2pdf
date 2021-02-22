@@ -1,0 +1,330 @@
+{
+    "plurals": {
+        "en": {
+            "2": "{0} and {1}",
+            "end": "{0} and {1}",
+            "middle": "{0}, {1}",
+            "start": "{0}, {1}"
+        },
+        "fr": {
+            "2": "{0} et {1}",
+            "end": "{0} et {1}",
+            "middle": "{0}, {1}",
+            "start": "{0}, {1}"
+        },
+        "es": {
+            "2": "{0} y {1}",
+            "end": "{0} y {1}",
+            "middle": "{0}, {1}",
+            "start": "{0}, {1}"
+        },
+        "id": {
+            "2": "{0} dan {1}",
+            "end": "{0} dan {1}",
+            "middle": "{0}, {1}",
+            "start": "{0}, {1}"
+        },
+        "ar": {
+            "2": "{0} و{1}",
+            "end": "{0} و{1}",
+            "middle": "{0} و{1}",
+            "start": "{0} و{1}"
+        },
+        "zh": {
+            "2": "{0}和{1}",
+            "end": "{0}和{1}",
+            "middle": "{0}、{1}",
+            "start": "{0}、{1}"
+        },
+        "pt": {
+            "2": "{0} e {1}",
+            "end": "{0} e {1}",
+            "middle": "{0}, {1}",
+            "start": "{0}, {1}"
+        },
+        "ro": {
+            "2": "{0} și {1}",
+            "end": "{0} și {1}",
+            "middle": "{0}, {1}",
+            "start": "{0}, {1}"
+        },
+        "ru": {
+            "2": "{0} и {1}",
+            "end": "{0} и {1}",
+            "middle": "{0}, {1}",
+            "start": "{0}, {1}"
+        }
+    },
+    "templates": {
+        "imageCopyright": {
+            "en": {
+                "1": "Illustration on page {0}",
+                "mult": "Illustrations on pages {0}"
+            },
+            "fr": {
+                "1": "Illustration sur la page {0}",
+                "mult": "Illustrations les pages {0}"
+            }
+        },
+        "imageExceptions": {
+            "en": {
+                "1": "(except on page {0})",
+                "mult": "(except on pages {0})"
+            },
+            "fr": {
+                "1": "(sauf sur page {0})",
+                "mult": "(sauf sur les pages {0})"
+            }
+        },
+        "allIllustrations": {
+            "en": "All illustrations {0}",
+            "fr": "Toutes les illustrations {0}"
+        },
+        "exceptIllustrations": {
+            "en": "All other illustrations {0}",
+            "fr": "Toute autre illustrations {0}"
+        }
+    },
+    "copyrights": {
+        "ab": {
+            "copyright": {
+                "en": "©_ABS_WARNING: Unpermitted_Use!",
+                "fr": "©_ABS_AVERTISSEMENT: Utilisation_non_autorisée!"
+            },
+            "media": {
+                "default": "x",
+                "limit": "x",
+                "tip": {
+                    "en": "Sorry, but permission to use these images in ANY media has been withdrawn!",
+                    "fr": "Désolé, mais l'autorisation d'utiliser ces images dans TOUS les médias a été retirée !"
+                }
+            }
+        },
+        "cn": {
+            "copyright": {
+                "en": "©_1996_David_C._Cook.",
+                "fr": "©_1996_David_C._Cook."
+            },
+            "sensitive": {
+                "en": "©_DCC,_1996.",
+                "fr": "©_DCC,_1996."
+            },
+            "media": {
+                "default": "paw",
+                "limit": "paw",
+                "tip": {
+                    "en": "Any media, but needs written permission",
+                    "fr": "Tout média, mais nécessite une autorisation écrite"
+                }
+            },
+            "credit": {
+                "en": "©_DCC",
+                "fr": "©_DCC"
+            }
+        },
+        "co": {
+            "copyright": {
+                "en": "©_1996_David_C._Cook.",
+                "fr": "©_1996_David_C._Cook."
+            },
+            "sensitive": {
+                "en": "©_DCC,_1996.",
+                "fr": "©_DCC,_1996."
+            },
+            "media": {
+                "default": "paw",
+                "limit": "paw",
+                "tip": {
+                    "en": "Any media, but needs written permission",
+                    "fr": "Tout média, mais nécessite une autorisation écrite"
+                }
+            },
+            "creditsensitive": {
+                "en": "© DCC",
+                "fr": "©_DCC"
+            },
+            "credit": {
+                "en": "© David C. Cook",
+                "fr": "© David C. Cook"
+            }
+        },
+        "hk": {
+            "copyright": {
+                "en": "by_Horace_Knowles ©_The_British \\& Foreign Bible Society, 1954, 1967, 1972, 1995.",
+                "fr": "de_Horace_Knowles ©_The_British \\& Foreign Bible Society, 1954, 1967, 1972, 1995."
+            },
+            "sensitive": {
+                "en": "©_BFBS,_1995.",
+                "fr": "©_BFBS,_1995."
+            },
+            "media": {
+                "default": "p",
+                "limit": "pa",
+                "tip": {
+                    "en": "Print is fine, but App use requires a formal agreement and reporting. Web use is not permitted.",
+                    "fr": "L’impression est autorisée, mais l’utilisation dans une application nécessite un accord formel et un rapport. L’utilisation sur le Web n’est pas autorisée."
+                }
+            }
+        },
+        "lb": {
+            "copyright": {
+                "en": "by_Louise_Bass ©_The_British \\& Foreign Bible Society, 1994."
+            },
+            "sensitive": {
+                "en": "©_BFBS,_1994."
+            },
+            "media": {
+                "default": "p",
+                "limit": "pa",
+                "tip": {
+                    "en": "Print is fine, but App use requires a formal agreement and reporting. Web use is not permitted.",
+                    "fr": "L’impression est autorisée, mais l’utilisation dans une application nécessite un accord formel et un rapport. L’utilisation sur le Web n’est pas autorisée."
+                }
+            }
+        },
+        "bk": {
+            "copyright": {
+                "en": "by_Horace_Knowles revised by_Louise_Bass ©_The_British \\& Foreign Bible Society, 1994.",
+                "fr": "de_Louise_Bass ©_The_British \\& Foreign Bible Society, 1994."
+            },
+            "sensitive": {
+                "en": "©_BFBS,_1994.",
+                "fr": "©_BFBS,_1994."
+            },
+            "media": {
+                "default": "p",
+                "limit": "pa",
+                "tip": {
+                    "en": "Print is fine, but App use requires a formal agreement and reporting. Web use is not permitted.",
+                    "fr": "L’impression est autorisée, mais l’utilisation dans une application nécessite un accord formel et un rapport. L’utilisation sur le Web n’est pas autorisée."
+                }
+            }
+        },
+        "ba": {
+            "copyright": {
+                "en": "used by_permission of_Louise_Bass.",
+                "fr": "utilisé avec la_permission de_Louise_Bass."
+            },
+            "media": {
+                "default": "paw",
+                "limit": "paw",
+                "tip": {
+                    "en": "Any media is fine without restriction",
+                    "fr": "Tout média est permis sans restriction"
+                }
+            }
+        },
+        "dy": {
+            "copyright": {
+                "en": "by_Carolyn_Dyk, ©_2001_Wycliffe Bible Translators Inc. and licensed under the_Creative_Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.",
+                "fr": "de_Carolyn_Dyk, ©_2001_Wycliffe Bible Translators Inc. et autorisé sous la_licence Creative_Commons Attribution-NonCommercial-NoDerivatives 4.0 International."
+            },
+            "media": {
+                "default": "paw",
+                "limit": "paw",
+                "tip": {
+                    "en": "Any media is fine without restriction",
+                    "fr": "Tout média est permis sans restriction"
+                }
+            }
+        },
+        "gt": {
+            "copyright": {
+                "en": "by_Gordon_Thompson ©_2012_Wycliffe Bible Translators Inc. and licensed under_the Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia License.",
+                "fr": "de_Gordon_Thompson ©_2012_Wycliffe Bible Translators Inc. et autorisé sous la_licence Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia."
+            },
+            "media": {
+                "default": "paw",
+                "limit": "paw",
+                "tip": {
+                    "en": "Any media is fine without restriction",
+                    "fr": "Tout média est permis sans restriction"
+                }
+            }
+        },
+        "dh": {
+            "copyright": {
+                "en": "by_David_Healey ©_2012_Wycliffe Bible Translators Inc. and licensed under the_Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia License.",
+                "fr": "de_David_Healey ©_2012_Wycliffe Bible Translators Inc. et autorisé sous la_licence Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia."
+            },
+            "media": {
+                "default": "paw",
+                "limit": "paw",
+                "tip": {
+                    "en": "Any media is fine without restriction",
+                    "fr": "Tout média est permis sans restriction"
+                }
+            }
+        },
+        "mh": {
+            "copyright": {
+                "en": "by_Michael_Harrar ©_2012_Wycliffe Bible Translators Inc. and licensed under the_Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia License.",
+                "fr": "de_Michael_Harrar ©_2012_Wycliffe Bible Translators Inc. et autorisé sous la_licence Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia."
+            },
+            "media": {
+                "default": "paw",
+                "limit": "paw",
+                "tip": {
+                    "en": "Any media is fine without restriction",
+                    "fr": "Tout média est permis sans restriction"
+                }
+            }
+        },
+        "mn": {
+            "copyright": {
+                "en": "used by_permission_of_Muze_Tshilombo.",
+                "fr": "utilisé avec la_permission de_Muze_Tshilombo."
+            },
+            "media": {
+                "default": "paw",
+                "limit": "paw",
+                "tip": {
+                    "en": "Any media is fine without restriction",
+                    "fr": "Tout média est permis sans restriction"
+                }
+            }
+        },
+        "wa": {
+            "copyright": {
+                "en": "by_Graham_Wade, ©_United Bible Societies, 1989.",
+                "fr": "de_Graham_Wade, ©_United Bible Societies, 1989."
+            },
+            "media": {
+                "default": "p",
+                "limit": "p",
+                "tip": {
+                    "en": "Only Print media",
+                    "fr": "Seulement les médias imprimés"
+                }
+            }
+        },
+        "dn": {
+            "copyright": {
+                "en": "by_Darwin_Dunham, ©_United Bible Societies, 1989.",
+                "fr": "de_Darwin_Dunham, ©_United Bible Societies, 1989."
+            },
+            "media": {
+                "default": "p",
+                "limit": "p",
+                "tip": {
+                    "en": "Only Print media",
+                    "fr": "Seulement les médias imprimés"
+                }
+            }
+        },
+        "ib": {
+            "copyright": {
+                "en": "by_Farid_Faadil. Copyright ©_by_Biblica, Inc. Used_by_permission. All_rights_reserved_worldwide.",
+                "fr": "de_Farid_Faadil. Copyright ©_par_Biblica, Inc. Utilisé_par_permission. Tous_droits_réservés dans le_monde_entier."
+            },
+            "media": {
+                "default": "p",
+                "limit": "p",
+                "tip": {
+                    "en": "Only Print media",
+                    "fr": "Seulement les médias imprimés"
+                }
+            }
+        }
+    }
+}

@@ -884,6 +884,7 @@
 %-csty_stylesheet
 
 \newif\iflastptxfile
+\newif\iflastpage
 \newdimen\origb@selineskip %Save the initial baselineskip here
 
 
@@ -902,7 +903,7 @@
  \defineheads
  \@ddcvhooks
  \@ddspecialhooks
- \global\lastptxfiletrue
+ %\global\lastptxfiletrue
  \the\@nithooks
  \let\@netimesetup=\relax}                                                      %(1)
 %-csty_onetime
@@ -984,6 +985,7 @@
  \openadjlist "\the\AdjListPath#1.adj"
  \openpiclist "\the\PicListPath#1.piclist"
  \openpicpages "\jobname.picpages"
+ \lastpagefalse
  \prepusfm
  \openin\t@stread="\the\PtxFilePath#1"
    \ifeof\t@stread \def\n@xt{\MSG{USFM file "\the\PtxFilePath#1" not found -- ignored}}
@@ -1002,7 +1004,8 @@
  \iflastptxfile\closepiclist\fi
  \closeadjlist
  \unprepusfm
- \singlecolumn\csname bookend-final\endcsname\bookendpagebreak
+ \lastpagetrue
+ \singlecolumn\iflastptxfile\csname bookend-final\endcsname\fi\bookendpagebreak
  %\ifendbooknoeject\else\global\output={\global\setbox255=\box\voidb@x}\eject\xdef\p@gefirstmark{}\setbox\partial=\box\voidb@x\fi
  \ifendbooknoeject\else\global\output={\shipout\vbox{\box\partial\box255}}\eject\xdef\p@gefirstmark{}\setbox\partial=\box\voidb@x\fi
  \global\output={\onecol}
@@ -1182,13 +1185,13 @@
                                                            % set it will remain. Otherwise, the default
                                                            % of 14 will be applied here and set text will
                                                            % hold to the grid.
- \getp@ram{baseline}{p#1}\ifx\p@ram\relax\setp@ram{baseline}{p#1}{\the\baselineskip}%
+ \getp@ram{baseline}{p#1}\ifx\p@ram\relax\s@tbaseline{p#1}\setp@ram{baseline}{p#1}{\the\baselineskip}%
  \MSG{Baselineskip for p#1 undefined, set to \the\baselineskip}\fi
 }
 \def\s@tupsizes{
  \s@tb@dyb@seline{}%
  %\tracingifs=1
- \lineskiplimit=-7\le@dingunit
+ \lineskiplimit=-9\le@dingunit
  \lineskip=0pt
  \s@tbaseline{p}%
  \NoteCallerWidth=1.1ex %Something sane?

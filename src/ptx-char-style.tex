@@ -256,6 +256,7 @@
  \ifx\c@tegory\empty\else\s@tc@tpr@fix\edef\f@ntstyle{\c@tprefix\f@ntstyle}\fi % Categories have different styles
  \let\d@@=\d@
  \edef\req@sty{#1}%
+ \trace{F}{#1: Looking for fontsize in style stack: \mcstack}%
  \def\d@##1+##2\E{\edef\tmpa{##2}\ifx\req@sty\tmpa\getmcfonts@ze\else
 			\csname d@code-##1\endcsname
                         \getp@ram{fontsize}{\req@sty}\ifx\p@ram\relax\xdef\c@rrfontsize{12}%

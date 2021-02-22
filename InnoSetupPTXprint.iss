@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "PTXprint"
-#define MyAppVersion "1.5.7"
+#define MyAppVersion "1.5.14"
 #define MyAppPublisher "SIL International"
 #define MyAppURL "http://software.sil.org/"
 #define MyAppExeName "PTXprint.exe"
@@ -28,7 +28,7 @@ DisableProgramGroupPage=yes
 LicenseFile=docs\inno-docs\MIT License.txt
 InfoBeforeFile=docs\inno-docs\AboutPTXprint.txt
 InfoAfterFile=docs\inno-docs\ReleaseNotes.txt
-OutputBaseFilename=SetupPTXprint(1.5.7)
+OutputBaseFilename=SetupPTXprint({#MyAppVersion})
 SetupIconFile=icon\Google-Noto-Emoji-Objects-62859-open-book.ico
 Compression=lzma
 SolidCompression=yes
@@ -48,6 +48,7 @@ Source: "dist\ptxprint\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs
 Source: "dist\ptxprint\share\locale\es\*"; DestDir: "{app}\share\locale\es\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "dist\ptxprint\share\locale\fr\*"; DestDir: "{app}\share\locale\fr\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "dist\ptxprint\share\locale\zh_CN\*"; DestDir: "{app}\share\locale\zh_CN\"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "xetex\*"; DestDir: "{app}\xetex\"; Flags: ignoreversion recursesubdirs createallsubdirs
 #include "AdwaitaIcons.txt"
 Source: "dist\ptxprint\share\icons\Adwaita\index.theme"; DestDir: "{app}\share\icons\Adwaita"
 

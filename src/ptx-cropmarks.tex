@@ -33,9 +33,10 @@
 %+c_makecropmarks
 \newif\ifBookOpenLeft\BookOpenLeftfalse % The friend of RTL. In monoglot these two typically go together, in diglot they may not. ifOpenLeft controls where binding gutter goes, etc.
 \newif\ifCropMarks
-\font\idf@nt=cmtt10 scaled 700 % font for the marginal job information
+%\font\idf@nt=cmtt10 scaled 700 % font for the marginal job information
+\font\idf@nt="Source Code Pro" at 8pt
 \def\id@@@{}% just in case.
-%\font\idf@nt="Courier" at 10pt % FIXME: Use something not bitmap?
+%\font\idf@nt="Times New Roman" at 10pt % FIXME: Use something not bitmap?
 \newbox\topcr@p \newbox\bottomcr@p
 \def\makecr@ps{% construct the cropmark boxes for top and bottom of page
   \global\setbox\topcr@p=\vbox to 0pt{\vss
@@ -45,8 +46,8 @@
       \kern 4.8pt
       \vrule height 30pt depth -5pt width .4pt
       \kern -30.4pt
-      \dimen0=\topm@rgin \advance\dimen0 by -.4pt
-      \vrule height -\dimen0 depth \topm@rgin width 15pt
+      \dimen0=\topm@rgin \advance\dimen0 by .4pt
+      \vrule height -\topm@rgin depth \dimen0 width 15pt
       \kern 15pt
       \hss
       \raise20pt\vtop{\hsize\PaperWidth \everypar={}
@@ -58,7 +59,7 @@
       \kern 4.8pt
       \vrule height .2pt depth .2pt width 25pt
       \kern -15pt
-      \vrule height -\dimen0 depth \topm@rgin width 15pt
+      \vrule height -\topm@rgin depth \dimen0 width 15pt
       \kern -30pt
     }%
   }\dp\topcr@p=0pt % end \vbox for \topcr@p
@@ -494,7 +495,7 @@
 \def\addqu@tes#1#2\E{\if #1"\relax \def\m@rgePDF{#1#2 }\else\def\m@rgePDF{"#1#2" }\fi}
 \def\m@rgepdf{\ifx\MergePDF\empty\else
   \x@\addqu@tes \MergePDF\E  %Make \m@rgePDF a copy of \MergePDF, adding quotes if needed
-  \vbox to 0pt{\XeTeXpdffile \m@rgePDF media\relax\vss}
+  \vbox to 0pt{\vbox to \pdfpageheight{\vss\hbox to \pdfpagewidth{\hss\XeTeXpdffile \m@rgePDF media\relax\hss}\vss}\vss}
 \fi}
 %-c_pageborders
 

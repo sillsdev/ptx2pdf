@@ -1,0 +1,62 @@
+#!/usr/bin/python3
+
+import argparse
+import re
+from subprocess import call
+from datetime import datetime
+
+def replacefile(file, match, replace):
+    with open(file, encoding="utf-8") as inf:
+        lines = [re.sub(match, replace, l) for l in inf.readlines()]
+    with open(file, "w", encoding="utf-8") as outf:
+        for l in lines:
+            outf.write(l)
+        
+def git(cmd, *a):
+    call(["git", cmd]+list(a))
+
+def dch(version):
+    tz = datetime.now().astimezone().tzinfo
+    dt = datetime.now(tz)
+    date = dt.strftime("%a, %d %b %Y %H:%M:%S %z")
+    txt = """ptxprint ({0}-1ubuntu1) bionic; urgency=medium
+
+  * Bumped release to {0}
+
+ -- Martin Hosken <martin_hosken@sil.org>  {1}
+
+""".format(version, date)
+    with open("debian/changelog") as inf:
+        lines = list(inf.readlines())
+    with open("debian/changelog", "w") as outf:
+        outf.write(txt)
+        for l in lines:
+            outf.write(l)
+
+parser = argparse.ArgumentParser()
+parser.add_argument("version")
+parser.add_argument("-a", action="store_true")
+parser.add_argument("-s", action="store_true")
+args = parser.parse_args()
+tagopt = "-a"
+if args.s:
+    tagopt = "-s"
+
+replacefile("setup.py", r'(version=").*?"', r'\g<1>'+args.version+'"')
+replacefile("InnoSetupPTXprint.iss", r'(#define MyAppVersion ").*?"', r'\g<1>'+args.version+'"')
+replacefile("python/lib/ptxprint/ptxprint.glade", r'(property name=\"version\">Version ).*?(<\/property>)', r'\g<1>'+args.version+r'\g<2>')
+replacefile("python/lib/ptxprint/view.py", r'(VersionStr = ").*?"', r'\g<1>'+args.version+'"')
+replacefile("docs/inno-docs/ReleaseNotes.txt", r'(PTXprint )\S+( Release Notes)', r'\g<1>'+args.version+'\g<2>')
+
+git("commit", "-a", "-m", "Releasing "+args.version)
+git("tag", tagopt, "-m", "Tagging "+args.version, args.version)
+git("push", "--tag")
+git("push")
+
+git("checkout", "packaging")
+dch(args.version)
+git("commit", "-a", "-m", "Bumped release version to "+args.version)
+git("push")
+
+git("checkout", "master")
+

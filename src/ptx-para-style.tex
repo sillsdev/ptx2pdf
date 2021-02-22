@@ -88,6 +88,7 @@
   \egroup \cutoutcarryover
 %{\showboxbreadth=200 \showbox\he@dingbox}
   \s@tbaseline{p}%
+  \trace{h}{ht=\the\ht\he@dingbox dp=\the\dp\he@dingbox}%
   \gridb@x\he@dingbox\unvbox\he@dingnotes
   \global\he@dingsfalse
   \global\first@fterheadingtrue
@@ -110,7 +111,7 @@
 %+cpar_gridbox1
 \def\gr@db@x#1{%
 % \setbox0=\vbox{\kern-#1pt\vrule\kern#1pt\kern-.4pt\box#1\kern-.4pt\vrule}%
-\setbox0=\ifgridp@c\vbox{\box#1}\else\killd@scenders#1\fi%
+\setbox0=\vbox{\unvbox#1}%\ifgridp@c\vbox{\box#1}\else\killd@scenders#1\fi%
 \trace{h}{before gridbox: ht0=\the\ht0; dp0=\the\dp0 (dp was \the\dimen4)}%
 %\MSG{after killd: ht0=\the\ht0; dp0=\the\dp0}
 %{\showboxbreadth=100 \showboxdepth=10 \showbox0 }%
@@ -148,7 +149,7 @@
   \fi
   \ifdiglot\kern\else\vskip\fi\dimen2
   \vbox{\kern\dimen0\vskip-\headingtopspace\verticalsp@ceunit
-    \trace{h}{after gridbox: skip \the\dimen2, kern \the\dimen0; baselineskip=\the\baselineskip}%
+    \trace{h}{after gridbox(\ch@pter.\v@rse): skip \the\dimen2, kern \the\dimen0; baselineskip=\the\baselineskip}%
     \unvbox0}\nobreak
 }
 
@@ -170,6 +171,7 @@
    \cl@singhooks{end}{\m@rker}%
    \trace{j}{baselineskip = \the\baselineskip, looseness = \the\looseness}%
    \endgraf
+   \ifvmode\ifinn@te\else\ifhe@dings\else\lastdepth=\prevdepth\fi\fi\fi
    \cutoutcarryover 
  \fi
  \do@ndofthispar
@@ -246,9 +248,9 @@
    %  \fi\else\tolerance=10\fi
    \p@r
    \ifvmode
-    \ifdim\prevdepth>0pt\lastdepth=\prevdepth\else\lastdepth=-1pt\fi
+    %\ifdim\prevdepth>0pt\lastdepth=\prevdepth\else\lastdepth=-1pt\fi
    \else
-     \lastdepth=0pt
+     %\lastdepth=0pt
      \ifinner\trace{s}{Inner mode at end of paragraph style \m@rker}\fi
    \fi
    \trace{C}{enditP: \the\dropped@ther@lines, \ifdr@ppednumber dropped num\fi, \pending@items}%
@@ -256,7 +258,7 @@
    \ifnum 0\ifdr@ppednumber 1\else\ifnum\dropped@ther@lines>0 1\fi\ifx\pending@items\cstackempty\else1\fi\fi>0 % the preceding par had a dropped number or other cutout;                       %(2)
                     % add \nobreak if it was a single line, else clear the flag
      \x@\write\x@\p@rlocs\x@{\x@\noexpand\x@\@parlines\x@{\the\prevgraf}}%
-     \ifnum\prevgraf=1 \nobreak \else 
+     \ifnum\prevgraf=1 \nobreak\else 
        \dr@ppednumberfalse 
        \ifnum\prevgraf<\dropped@ther@lines \nobreak
        \fi
@@ -339,7 +341,7 @@
   \fi\fi\fi                                                                     %(2)
   \ifhe@dingstyle\trace{s}{headingstyle true}%
     \ifhe@dings\nsp@cebeforetrue\s@tbaseline{\m@rker}%In a heading again, may be different so set a new baseline
-      \else
+    \else
         % Headingtopspace gets removed at top of page, preserve for titles.
         \getp@ram{spacebefore}{\m@rker}\ifx\p@ram\relax\xdef\headingtopspace{0}\else
           \ift@tle\xdef\headingtopspace{0}\else\xdef\headingtopspace{\p@ram}\fi\fi
@@ -391,12 +393,8 @@
    \getp@ram{rightmargin}{\m@rker}%
    \ifx\p@ram\relax \else \advance \ifRTL\leftskip\else\rightskip\fi\p@ram \IndentUnit \fi
    \trace{s}{\m@rker\g@tdstat\space iu=\the\IndentUnit, ls=\the\leftskip, rs=\the\rightskip}%
-   %\getp@ram{fontsize}{\m@rker}\edef\c@rrfontsize{\ifx\p@ram\relax12\else\p@ram\fi}%
-   \def\thiswh@tvrstyle{p}%Default value just in case
-   \def\d@##1+##2\E{\edef\tmp{##2}\csname d@code-##1\endcsname\let\thiswh@tvrstyle\tmp}\mctop
-   \ifx\thiswh@tvrstyle\empty\else
-     \s@tfont{\thiswh@tvrstyle}% set up font attributes
-   \fi
+   \getp@ram{fontsize}{\m@rker}\edef\c@rrfontsize{\ifx\p@ram\relax12\else\p@ram\fi}%Need to set this before calling s@tfont, else that will consder the current fontsize as ruling.
+   \setwh@tvrstyle% set up font attributes (based on style stack)
    \trace{j}{baselineskip=\the\baselineskip ; UseGlyphMetrics=\the\XeTeXuseglyphmetrics}%
    \allowp@rindenttrue
    %

@@ -1,6 +1,133 @@
-PTXprint 1.5.7 Release Notes 
-23 January 2021
+PTXprint 1.5.14 Release Notes 
+20 February 2021
 
+Bug Fixes and Improvements in 1.5.13
+
+  * Allow \zimagecopyrights to be localized by adding language code to end of marker
+  
+  * UI changes on Layout tab to make margin settings clearer
+  
+  * Magic button to optimize line spacing, or top and bottom margins
+  
+  * Temporarily removed Image Credit Overlays (coming back soon)
+  
+  * Pictures tab has been re-worked to be easier to use and maintain
+  
+  * Address #399 and spurious bolding of style labels
+  
+  * Add SourceCodePro font for use in Cropmark text
+  
+  * Centre watermarks on the text page
+  
+  * Prevent letter spacing from messing up page breaks
+  
+Bug Fixes and Improvements in 1.5.12
+
+  * Added missing margin graphics files to installer
+  
+  * Added French A5-EBAUCHE.pdf (=DRAFT) to available watermarks, and an additional A5 border
+  
+  * Added missing icon(s): Clear edit, Selected Checkmark
+
+Bug Fixes and Improvements in 1.5.11
+
+  * Font Size Factor now has a label displaying the (actual) calculated point size
+
+  * UI changes made to facilitate all the margin settings on the same page
+
+  * Credit Overlays has been introduced on the Pictures tab (4th sub-tab) - Warning: Work in Progress
+    (Note that "Enable Colored Text" needs to be enabled for this feature to work with Light/Dark background shading)
+	
+  * #385 Footnote spacing fixed
+  
+  * #386 Fixed? Issue with Colophon not working
+  
+  * #389 Archive was failing to be built
+  
+  * #390 Saving edits to a named project
+  
+Bug Fixes and Improvements in 1.5.10
+
+  * Font Size Factor on Styles tab is now exactly that - rather than a point size
+    (Note: we still need to add a label/tooltip displaying the actual calculated point size)
+
+  * Enabled Diglot texts to switch sides (especially useful for RTL)
+
+  * Changed magic codes to lowercase so they can be typed in paratext \zcopyright, \zlicense and \zimagecopyrights
+
+  * Added "Quick Run" option with a red Warning/Status message on bottom status bar
+
+  * Fixed not being able to delete new styles after saving and reloading
+
+  * "Preserve Intermediate files" option has been removed. 
+    (Note: "Remove Temp Files" button is now the recommended way to tidy up unwanted files in PrintDraft folder)
+  
+  * Removed variable line spacing from UI 
+    (Note: this is still available through .tex file mods \XeTeXuseglyphmetrics=0).
+  
+  * Ensure auto-correct typing (c) --> © works in both copyright statements 
+
+  * Fixed #376 regarding missing directories
+  
+  * Fixed #379 Empty \h fields are now ignored
+  
+  * Fixed bug where (Omit) Verse Numbers was doing nothing
+
+  * Prevent crash from occurring if you hit print with an empty Settings page open (in View+Edit)
+  
+Bug Fixes and Improvements in 1.5.9.3
+
+  * Fix non-starting PTXprint due to lack of lang code in user config
+  
+  * Get rtl and ttb working again
+
+Bug Fixes and Improvements in 1.5.9.1
+
+  * #368 Added Localization selection from within PTXPrint
+  
+  * Several fixes to localization (incl. glossary markup etc.)
+  
+  * Auto set line break locale for CJK scripts
+  
+  * Fixed #369 Page numbering failing (in specific case where there was no text on the page)
+  
+  * Show subset of Fonts+Script tab settings for basic users
+  
+Bug Fixes and Improvements in 1.5.9 (RC for ver 1.6)
+
+  * Ensure settings are actually reset when reverting to default values in Style editor
+  
+  * Allow horizontal spacing between Notes (and cross-references) to be specified with min+max values
+  
+  * Close up gap between main body text and footnotes
+  
+  * Updated to TeX Live 2020 (on Windows)
+  
+  * Fixed bug of losing fonts when a project is changed
+  
+  * Make "Create Archive..." more robust (skips over any missing files)
+  
+  * Various refinements to underlying XeTeX macros
+
+Bug Fixes and Improvements in 1.5.8.4
+
+  * Localization of UI is now available through Crowdin - contributions welcome! https://crowdin.com/project/ptxprint
+    (aiming to release several languages for ver 1.6)
+	
+  * Fixed #349,#351 Verse numbers missing or too large in certain situations
+  
+  * Fixed #342,#354 Base Paragraph Indent value reverting to 1.0 after restart
+  
+  * Fixed bug on adding a first picture
+  
+  * \pb pagebreaks no longer cause an error message from the USFM validator
+  
+  * Colophon can now be forced to a new page if needed, and can include special characters
+
+  * Note that PTXprint now ships with its own XeTeX binary so that it can run without Paratext being present
+  
+  * PTXprint will prompt for a folder with the (Paratext) Project Data if Paratext isn't installed 
+  
 Bug Fixes and Improvements in 1.5.7
 
   * Allow configurations to be reloaded, and Default config to be "Deleted" (or re-initialized)
@@ -199,7 +326,7 @@ Significant Improvements in 1.2
   
   * Added questions regarding appropriateness of illustrations (to encourage testing and reflection on which pictures are used)
   
-  * Copyright Credits for illustrations are autogenerated (use the \zImageCopyrights marker in SFM to insert this automatically)
+  * Copyright Credits for illustrations are autogenerated (use the \zimagecopyrights marker in SFM to insert this automatically)
   
   * Thumb Tabs for booknames on outer edge of page
   

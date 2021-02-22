@@ -12,49 +12,49 @@ from ptxprint.usfmerge import usfmerge
 from ptxprint.utils import _, universalopen
 
 _errmsghelp = {
-"! TeX capacity exceeded, sorry":        "Uh oh! You've pushed TeX too far! Try turning Hyphenation off, or contact support.\n",
-"! Paratext stylesheet":                 "Check if the stylesheet specified on the Advanced tab exists.\n",
-"! Unable to load picture":              "Check if picture file is located in 'Figures', 'local\\figures' or a\n" +\
-                                         "specified folder. Also try the option 'Omit Missing Pictures'\n",
-"! Unable to load picture or PDF file":  "Check if image/PDF file is available on the system.\n" +
-                                         "If you have specified one or more Front/Back matter PDFs or a Watermark PDF\n" +
-                                         "then ensure that the PDF(s) exist(s); OR uncheck those options (Advanced tab).\n",
-"! Missing control sequence inserted.":  "Fallback font probably being applied to text in a footnote (not permitted!)\n",
-"! Missing number, treated as zero.":    "Related to USFM3 illustration markup\n",
-"! Undefined control sequence.":         "This might be related to a USFM marker error (using an unsupported marker).\n" +\
-                                         "Try 'Run Basic Checks' in Paratext\n",
-"! Illegal unit of measure (pt inserted).":    "One of the settings in the Stylesheet may be missing the units.\n" +\
-                                         "To confirm that this is a stylesheet issue, temporarily turn off Stylesheets.\n" +\
-                                         "Then, check any recent changes to the Stylesheets (on Advanced tab) and try again.\n",
-"! File ended while scanning use of":    "Try turning off PrintDraftChanges.txt and both Stylesheets on Advanced tab.\n",
-"! Output loop---25 consecutive dead cycles.":  "Sorry! XeTeX was unable to complete the typesetting.\n" +\
-                                         "* If creating a Diglot, ensure both texts can print successfully\n" +\
-                                         "  before merging them as a Diglot print. And ensure that there\n" +\
-                                         "  aren't any large chunks of missing text in either of the projects.\n" +\
-                                         "* Also check that you haven't inadvertently left certain settings on\n" +\
-                                         "  from a previous session (Pictures, Diglot, Borders - which will show\n" +\
-                                         "  in blue if these features are currently enabled).", 
-"! Paratext stylesheet":                 "Try turning off the ptxprint-mods stylesheet\n",
-"! File ended while scanning use of \iotableleader.": "Problem with Formatting Intro Outline\n" +\
-                                         "Try disabling option 'Right-Align \ior with tabbed leaders' on the Body tab\n",
-"! Emergency stop.":                     "Probably a TeX macro problem - contact support, or post a bug report\n",
-"! Not a letter.":                       "Possible fault in the hyphenation file\n" +\
-                                         "Try turning off Hyphenate option located on the Body tab\n",
-"! Font \extrafont":                     "Fallback Font issue - set a font on the Body tab.\n" +\
-                                         "(Turn off the option 'Use Fallback Font' or specify a valid font)\n",
-"! Font":                                "Font related issue. The most likely reason for this error is that\n" +\
-                                         "the selected font has not been installed for all users. See FAQ.\n",
-"! Too many }'s":                        "Possibly a TeX macro issue - contact support, or post a bug report\n",
-"! This can't happen (page)":            "Possibly a TeX macro issue - contact support, or post a bug report\n",
-"! I can't find file `paratext2.tex'.":  "Possibly a faulty installation.\n",
-"! I can't find file `ptx-tracing.tex'.":"Possibly a faulty installation.\n",
-"Runaway argument?":                     "Unknown issue. Maybe related to Right-aligned tabbed leaders\n" +\
-                                         "Try turning off PrintDraftChanges.txt and both Stylesheets\n",
-"Unknown":                               "Sorry, there is no diagnostic help for this error.\n" +\
-                                         "Ensure that the Basic Checks (in Paratext) pass for all books in list.\n" +\
-                                         "Try turning off various settings, and disable Changes or Stylesheets.\n" +\
-                                         "If peripheral books are selected, try excluding those.\n" +\
-                                         "Sometimes just closing and re-opening PTXprint can make things work again!"
+"! TeX capacity exceeded, sorry":        _("Uh oh! You've pushed TeX too far! Try turning Hyphenation off, or contact support."),
+"! Paratext stylesheet":                 _("Check if the stylesheet specified on the Advanced tab exists."),
+"! Unable to load picture":              _("Check if picture file is located in 'Figures', 'local\\figures' or a\n" +\
+                                           "specified folder. Also try the option 'Omit Missing Pictures'"),
+"! Unable to load picture or PDF file":  _("Check if image/PDF file is available on the system.\n" +
+                                           "If you have specified one or more Front/Back matter PDFs or a Watermark PDF\n" +
+                                           "then ensure that the PDF(s) exist(s); OR uncheck those options (Advanced tab)."),
+"! Missing control sequence inserted.":  _("Fallback font probably being applied to text in a footnote (not permitted!)"),
+"! Missing number, treated as zero.":    _("Related to USFM3 illustration markup"),
+"! Undefined control sequence.":         _("This might be related to a USFM marker error (using an unsupported marker).\n" +\
+                                           "Try 'Run Basic Checks' in Paratext"),
+"! Illegal unit of measure (pt inserted).":    _("One of the settings in the Stylesheet may be missing the units.\n" +\
+                                           "To confirm that this is a stylesheet issue, temporarily turn off Stylesheets.\n" +\
+                                           "Then, check any recent changes to the Stylesheets (on Advanced tab) and try again."),
+"! File ended while scanning use of":    _("Try turning off PrintDraftChanges.txt and both Stylesheets on Advanced tab."),
+"! Output loop---25 consecutive dead cycles.":  _("Sorry! XeTeX was unable to complete the typesetting.\n" +\
+                                           "* If creating a Diglot, ensure both texts can print successfully\n" +\
+                                           "  before merging them as a Diglot print. And ensure that there\n" +\
+                                           "  aren't any large chunks of missing text in either of the projects.\n" +\
+                                           "* Also check that you haven't inadvertently left certain settings on\n" +\
+                                           "  from a previous session (Pictures, Diglot, Borders - which will show\n" +\
+                                           "  in blue if these features are currently enabled)."),
+"! Paratext stylesheet":                 _("Try turning off the ptxprint-mods stylesheet"),
+"! File ended while scanning use of \iotableleader.": _("Problem with Formatting Intro Outline\n" +\
+                                           "Try disabling option 'Right-Align \ior with tabbed leaders' on the Body tab"),
+"! Emergency stop.":                     _("Probably a TeX macro problem - contact support, or post a bug report"),
+"! Not a letter.":                       _("Possible fault in the hyphenation file\n" +\
+                                           "Try turning off Hyphenate option located on the Body tab"),
+"! Font \extrafont":                     _("Fallback Font issue - set a font on the Body tab.\n" +\
+                                           "(Turn off the option 'Use Fallback Font' or specify a valid font)"),
+"! Font":                                _("Font related issue. The most likely reason for this error is that\n" +\
+                                          "the selected font has not been installed for all users. See FAQ."),
+"! Too many }'s":                        _("Possibly a TeX macro issue - contact support, or post a bug report"),
+"! This can't happen (page)":            _("Possibly a TeX macro issue - contact support, or post a bug report"),
+"! I can't find file `paratext2.tex'.":  _("Possibly a faulty installation."),
+"! I can't find file `ptx-tracing.tex'.": _("Possibly a faulty installation."),
+"Runaway argument?":                     _("Unknown issue. Maybe related to Right-aligned tabbed leaders\n" +\
+                                           "Try turning off PrintDraftChanges.txt and both Stylesheets"),
+"Unknown":                               _("Sorry, there is no diagnostic help for this error.\n" +\
+                                           "Ensure that the Basic Checks (in Paratext) pass for all books in list.\n" +\
+                                           "Try turning off various settings, and disable Changes or Stylesheets.\n" +\
+                                           "If peripheral books are selected, try excluding those.\n" +\
+                                           "Sometimes just closing and re-opening PTXprint can make things work again!")
 }
 # \def\LineSpacingFactor{{{paragraph/linespacingfactor}}}
 # \def\VerticalSpaceFactor{{1.0}}
@@ -94,7 +94,6 @@ _diglot = {
 "diglot/linespacingfactor": "paragraph/linespacingfactor",
 "diglot/iflinebreakon" :    "document/iflinebreakon",
 "diglot/linebreaklocale" :  "document/linebreaklocale",
-"diglot/useglyphmetrics" :  "paragraph/useglyphmetrics",
 
 "diglot/docscript" :        "document/script",
 "diglot/docdigitmapping" :  "document/digitmapping",
@@ -104,8 +103,6 @@ _diglot = {
 "diglot/fontitalic" :       "document/fontitalic",
 "diglot/fontbolditalic" :   "document/fontbolditalic",
 "diglot/ifshowversenums" :  "document/ifshowversenums",
-"diglot/fnfontsize" :       "notes/fnfontsize",
-"diglot/fnlinespacing" :    "notes/fnlinespacing",
 "diglot/ifblendfnxr" :      "notes/ifblendfnxr",
 "diglotfancy/versedecorator":       "fancy/versedecorator",
 "diglotfancy/versedecoratorpdf":    "fancy/versedecoratorpdf",
@@ -134,27 +131,25 @@ def isLocked():
     return _joblock is not None
 
 class RunJob:
-    def __init__(self, printer, scriptsdir, macrosdir, userconfig, args):
+    def __init__(self, printer, scriptsdir, args, inArchive=False):
         self.scriptsdir = scriptsdir
-        self.macrosdir = macrosdir
         self.printer = printer
-        self.userconfig = userconfig
         self.tempFiles = []
         self.tmpdir = "."
         self.maxRuns = 1
-        self.minRuns = 0
         self.changes = None
         self.args = args
         self.res = 0
         self.thread = None
         self.busy = False
         self.ispdfxa = False
+        self.inArchive = inArchive
 
     def doit(self):
         if not lockme(self):
             return False
         self.texfiles = []
-        info = TexModel(self.printer, self.args.paratext, self.printer.ptsettings, self.printer.prjid)
+        info = TexModel(self.printer, self.args.paratext, self.printer.ptsettings, self.printer.prjid, inArchive=self.inArchive)
         info.debug = self.args.debug
         self.tempFiles = []
         self.prjid = info.dict["project/id"]
@@ -167,17 +162,13 @@ class RunJob:
         jobs = self.printer.getBooks(files=True)
 
         self.books = []
-        if self.printer.get("c_onlyRunOnce"):
-            self.maxRuns = 1
-        else:
-            self.maxRuns = 5
-        if r"\zImageCopyrights" in (info.dict['project/colophontext'] or ""):
-            self.minRuns = max(self.minRuns, 1)
+        self.maxRuns = 1 if self.printer.get("c_quickRun") else 5
         self.changes = None
         self.checkForMissingDecorations(info)
         info["document/piclistfile"] = ""
         if info.asBool("document/ifinclfigs"):
-            self.texfiles += self.gatherIllustrations(info, jobs, self.args.paratext)
+            self.gatherIllustrations(info, jobs, self.args.paratext)
+            # self.texfiles += self.gatherIllustrations(info, jobs, self.args.paratext)
         self.ispdfxa = self.printer.get("c_PDFx1aOutput")
         
         if info.asBool("project/combinebooks"):
@@ -195,6 +186,7 @@ class RunJob:
             self.texfiles += sum((self.digdojob(j, info, diginfo, digprjid, digprjdir) for j in joblist), [])
         else: # Normal (non-diglot)
             self.texfiles += sum((self.dojob(j, info) for j in joblist), [])
+        self.printer.tempFiles = self.texfiles  # Always do this now - regardless!
 
     def done_job(self, outfname, info):
         # Work out what the resulting PDF was called
@@ -233,10 +225,14 @@ class RunJob:
                     secondary="".join(finalLogLines[-20:]), title="PTXprint [{}] - Error!".format(VersionStr),
                     threaded=True)
             self.printer.onIdle(self.printer.showLogFile)
-        if not info.asBool("project/keeptempfiles"):
-            self.removeTempFiles(self.texfiles)
+        if len(self.rerunReasons):
+            self.printer.set("l_statusLine", _("Rerun to fix: ") + ", ".join(self.rerunReasons))
         else:
-            self.printer.tempFiles = self.texfiles
+            self.printer.set("l_statusLine", "")
+        # if info.asBool("project/keeptempfiles"):
+            # self.printer.tempFiles = self.texfiles
+        # else:
+            # self.removeTempFiles(self.texfiles)
         self.printer.finished()
         self.busy = False
         unlockme()
@@ -277,11 +273,11 @@ class RunJob:
                     if m in l:
                         if l[:-1] != m:
                             finalLogLines.append("{}\n".format(m))
-                        finalLogLines.append(_errmsghelp[m])
+                        finalLogLines.append(_errmsghelp[m]+"\n")
                         foundmsg = True
                         break
         if not foundmsg:
-            finalLogLines.append(_errmsghelp["Unknown"])
+            finalLogLines.append(_errmsghelp["Unknown"]+"\n")
         books = re.findall(r"\d\d(...){}.+?\....".format(self.prjid), "".join(finalLogLines))
         if len(books):
             book = " in {}".format(books[-1])
@@ -304,7 +300,7 @@ class RunJob:
             finalLogLines.append("\nFile(s) to check: {}".format(", ".join(files)))
         return finalLogLines
 
-    def dojob(self, jobs, info, logbuffer=None):
+    def dojob(self, jobs, info):
         donebooks = []
         for b in jobs:
             try:
@@ -321,19 +317,20 @@ class RunJob:
         self.books += donebooks
         info["project/bookids"] = jobs
         info["project/books"] = donebooks
-        return [os.path.join(self.tmpdir, out)] + self.sharedjob(jobs, info, logbuffer=logbuffer)
+        res = self.sharedjob(jobs, info)
+        return [os.path.join(self.tmpdir, out)] + res
 
-    def digdojob(self, jobs, info, diginfo, digprjid, digprjdir, logbuffer=None):
+    def digdojob(self, jobs, info, diginfo, digprjid, digprjdir):
         texfiles = []
         donebooks = []
         digdonebooks = []
         _digSecSettings = ["paper/pagesize", "paper/height", "paper/width", "paper/margins",
-                           "paper/sidemarginfactor", "paper/topmarginfactor", "paper/bottommarginfactor",
-                           "header/headerposition", "header/footerposition", "header/ruleposition",
+                           "paper/topmarginfactor", "paper/bottommarginfactor",
+                           "paper/headerposition", "paper/footerposition", "paper/ruleposition",
                            "document/ch1pagebreak", "document/bookintro", "document/introoutline", 
                            "document/parallelrefs", "document/elipsizemptyvs", "notes/iffootnoterule",
                            "notes/ifblendfnxr", "notes/includefootnotes", "notes/includexrefs", 
-                           "notes/fnparagraphednotes", "notes/xrparagraphednotes", "document/filterglossary", 
+                           "notes/fneachnewline", "notes/xreachnewline", "document/filterglossary", 
                            "document/chapfrom", "document/chapto", "document/ifcolorfonts", "document/ifomitsinglechnum"]
         diginfo["project/bookids"] = jobs
         diginfo["project/books"] = digdonebooks
@@ -399,10 +396,11 @@ class RunJob:
             info[k]=diginfo[v]
         info["document/diglotcfgrpath"] = os.path.relpath(diginfo.printer.configPath(diginfo.printer.configName()), docdir).replace("\\","/")
         info["_isDiglot"] = True
-        texfiles += self.sharedjob(jobs, info, logbuffer=logbuffer, extra="-diglot")
+        res = self.sharedjob(jobs, info, extra="-diglot")
+        texfiles += res
         return texfiles
 
-    def sharedjob(self, jobs, info, prjid=None, prjdir=None, logbuffer=None, extra=""):
+    def sharedjob(self, jobs, info, prjid=None, prjdir=None, extra=""):
         if prjid is None:
             prjid = self.prjid
         if prjdir is None:
@@ -414,8 +412,11 @@ class RunJob:
             cfgname = "-" + cfgname
         outfname = info.printer.baseTeXPDFnames(jobs)[0] + ".tex"
         info.update()
+        texfiledat = info.asTex(filedir=self.tmpdir, jobname=outfname.replace(".tex", ""), extra=extra)
         with open(os.path.join(self.tmpdir, outfname), "w", encoding="utf-8") as texf:
-            texf.write(info.asTex(filedir=self.tmpdir, jobname=outfname.replace(".tex", ""), extra=extra))
+            texf.write(texfiledat)
+        if self.inArchive:
+            return [os.path.join(self.tmpdir, outfname.replace(".tex", x)) for x in (".tex", ".xdv")]
         os.putenv("hyph_size", "32749")     # always run with maximum hyphenated words size (xetex is still tiny ~200MB resident)
         os.putenv("stack_size", "32768")    # extra input stack space (up from 5000)
         ptxmacrospath = os.path.abspath(os.path.join(self.scriptsdir, "..", "..", "src"))
@@ -440,7 +441,7 @@ class RunJob:
         miscfonts.append(os.path.join(prjdir, "shared"))
         if len(miscfonts):
             os.putenv("MISCFONTS", pathjoin(miscfonts))
-        self.thread = Thread(target=self.run_xetex, args=(outfname, info, logbuffer))
+        self.thread = Thread(target=self.run_xetex, args=(outfname, info))
         self.busy = True
         self.thread.start()
         return [os.path.join(self.tmpdir, outfname.replace(".tex", x)) for x in (".tex", ".xdv")]
@@ -450,14 +451,16 @@ class RunJob:
             self.thread.join()
         return self.res
 
-    def run_xetex(self, outfname, info, logbuffer):
+    def run_xetex(self, outfname, info):
         numruns = 0
         while numruns < self.maxRuns:
             self.printer.incrementProgress()
             if info["document/toc"] != "%":
                 tocdata = self.readfile(os.path.join(self.tmpdir, outfname.replace(".tex", ".toc")))
+            if info["document/includeimg"]:
+                picdata = self.readfile(os.path.join(self.tmpdir, outfname.replace(".tex", ".picpages")))
             cmd = ["xetex", "-halt-on-error", "-interaction=nonstopmode", "-no-pdf"]
-            runner = call(cmd + [outfname], cwd=self.tmpdir, logbuffer=logbuffer)
+            runner = call(cmd + [outfname], cwd=self.tmpdir)
             if isinstance(runner, subprocess.Popen) and runner is not None:
                 try:
                     runner.wait(self.args.timeout)
@@ -470,26 +473,43 @@ class RunJob:
             logfname = outfname.replace(".tex", ".log")
             (self.loglines, rerun) = self.parselog(os.path.join(self.tmpdir, logfname), rerunp=True, lines=300)
             info.printer.editFile_delayed(logfname, "wrk", "scroll_XeTeXlog", False)
-            if self.res and numruns >= self.minRuns:
-                break
-            elif info["document/toc"] != "%" and not rerun:
+            numruns += 1
+            self.rerunReasons = []
+            rererun = False
+            if self.res:
+                rererun = True
+            if info["document/toc"] != "%":
                 tocndata = self.readfile(os.path.join(self.tmpdir, outfname.replace(".tex", ".toc")))
-                rerun = tocdata != tocndata
-                if rerun:
-                    print(_("Rerunning because the Table of Contents was updated"))
+                if tocdata != tocndata:
+                    if numruns >= self.maxRuns:
+                        self.rerunReasons.append(_("ToC pages"))
+                    else:
+                        print(_("Rerunning because the Table of Contents was updated"))
+                        rererun = True
                 else:
                     break
-            elif rerun:
-                print(_("Rerunning because inline chapter numbers moved"))
-            else:
+            if info["document/includeimg"]:
+                picndata = self.readfile(os.path.join(self.tmpdir, outfname.replace(".tex", ".picpages")))
+                if picdata != picndata:
+                    self.rerunReasons.append(_("image copyrights"))
+            if rerun:
+                if numruns >= self.maxRuns:
+                    self.rerunReasons.append(_("chapter numbers"))
+                else:
+                    print(_("Rerunning because inline chapter numbers moved"))
+                    rererun = True
+            if not rererun:
                 break
-            numruns += 1
         if not self.args.testing and not self.res:
             self.printer.incrementProgress()
             cmd = ["xdvipdfmx", "-E"]
             if self.printer.get("c_PDFx1aOutput"):
                 cmd += ["-z", "0"]
-            runner = call(cmd + [outfname.replace(".tex", ".xdv")], cwd=self.tmpdir, logbuffer=logbuffer)
+            if self.args.extras & 1:
+                cmd += ["-vv"]
+            runner = call(cmd + [outfname.replace(".tex", ".xdv")], cwd=self.tmpdir)
+            if self.args.extras & 1:
+                print(f"Subprocess return value: {runner}")
             if isinstance(runner, subprocess.Popen) and runner is not None:
                 try:
                     runner.wait(self.args.timeout)
@@ -542,13 +562,15 @@ class RunJob:
         res = [os.path.join("tmpPics", v['dest file']) for v in picinfos.values() if 'dest file' in v]
         outfname = info.printer.baseTeXPDFnames(jobs)[0] + ".piclist"
         for k, v in list(picinfos.items()):
-            if 'p' not in v.get('media', 'apw'):
+            m = v.get('media', '')
+            if m and 'p' not in m:
                 del picinfos[k]
         picinfos.out(os.path.join(self.tmpdir, outfname), bks=jobs, skipkey="disabled", usedest=True, media='p')
         res.append(outfname)
         info["document/piclistfile"] = outfname
 
         if len(missingPics):
+            print(missingPics)
             missingPicList = ["{}".format(", ".join(list(set(missingPics))))]
             self.printer.set("l_missingPictureCount", "({} Missing)".format(len(set(missingPics))))
             self.printer.set("l_missingPictureString", "Missing Pictures: {}".format("\n".join(missingPicList)))
@@ -652,7 +674,7 @@ class RunJob:
                 # os.remove(n)
             # except:
                 # notDeleted += [n]
-        for extn in ('delayed','parlocs','notepages', 'picpages', 'piclist', 'SFM', 'sfm', 'xdv', 'tex', 'log'):
+        for extn in ('delayed','parlocs', 'notepages', 'SFM', 'sfm', 'xdv', 'tex', 'log'):
             for t in set(texfiles):
                 delfname = os.path.join(self.tmpdir, t.replace(".tex", "."+extn))
                 if os.path.exists(delfname):
@@ -692,7 +714,7 @@ class RunJob:
         # print("pageHeight =", pageHeight, "  pageWidth =", pageWidth)
         margin = self.convert2mm(info.dict["paper/margins"])
         # print("margin =", margin)
-        sideMarginFactor = float(info.dict["paper/sidemarginfactor"])
+        sideMarginFactor = 1.0
         middleGutter = float(info.dict["document/colgutterfactor"])/3
         bindingGutter = float(info.dict["paper/gutter"]) if info.asBool("paper/ifaddgutter") else 0
         topMarginFactor = info.dict["paper/topmarginfactor"]

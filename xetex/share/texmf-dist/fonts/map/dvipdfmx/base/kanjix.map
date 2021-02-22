@@ -1,0 +1,817 @@
+%% FONTMAP: CID-keyed font mapping file for dvipdfmx
+%% =================================================
+%%
+%% Last modified: April 4, 2004
+%%
+%% FORMAT
+%% ------
+%%
+%%  TFMNAME[@SFDNAME@] ENCNAME [:INDEX:][!]FONTNAME[/CSI][,VARIANT] [OPTIONS]
+%%
+%%
+%% DESCRIPTION
+%% -----------
+%%
+%% 1) TFMNAME[@SFDNAME@]
+%%
+%%    TFM name is specified in the field TFMNAME without extension (.tfm),
+%%    and the subfont definition name in the field SFDNAME without
+%%    extension (.sfd). For example, jbtm@UKS@ specifies the TFM names,
+%%    jbtm01 - jbtm35, used in the CJK package.
+%%
+%% 2) ENCNAME
+%%
+%%    CMap resource name is specified in the field ENCNAME.
+%%
+%% 3) [:INDEX:][!]FONTNAME[/CSI][,VARIANT]
+%%
+%%    Font name is specified in the field FONTNAME with or without
+%%    extension. The field INDEX is used for TrueType collections (.ttc)
+%%    to specify the font index number. The character `!' enables the
+%%    no-embedding option. The /CSI option is required for TrueType fonts
+%%    when Identity CMap is specified in the ENCNAME. The stylistic variants
+%%    (Bold, Italic, BoldItalic) are specified in the filed VARIANT.
+%%    See examples below.
+%%
+%% 4) [OPTIONS]
+%%
+%%    All options available in the original dvipdfm are also valid here.
+%%    The remap option [-r] is simply ignored.
+
+%%
+%% ----------------------------------------------------------------------
+%%
+
+%%
+%% Japanese
+%%
+
+%%
+%% ASCII pTeX Examples
+%%
+
+%rml   H HiraMinProN-W3.otf
+%gbm   H HiraKakuProN-W6.otf
+%rmlv  V HiraMinProN-W3.otf
+%gbmv  V HiraKakuProN-W6.otf
+
+rml	H	HaranoAjiMincho-Regular.otf
+rmlv	V	HaranoAjiMincho-Regular.otf
+gbm	H	HaranoAjiGothic-Medium.otf
+gbmv	V	HaranoAjiGothic-Medium.otf
+
+%rml   H :0:msmincho.ttc
+%gbm   H :0:msgothic.ttc
+%rmlv  V :0:msmincho.ttc
+%gbmv  V :0:msgothic.ttc
+
+%rml   H Ryumin-Light
+%gbm   H GothicBBB-Medium
+%rmlv  V Ryumin-Light
+%gbmv  V GothicBBB-Medium
+
+nrml    H Ryumin-Light
+ngbm    H GothicBBB-Medium
+
+%%
+%% upTeX examples
+%%
+
+%urml     UniJIS-UTF16-H  HiraMinProN-W3.otf
+%urmlv    UniJIS-UTF16-V  HiraMinProN-W3.otf
+%ugbm     UniJIS-UTF16-H  HiraKakuProN-W6.otf
+%ugbmv    UniJIS-UTF16-V  HiraKakuProN-W6.otf
+%uprml-h  UniJIS-UTF16-H  HiraMinProN-W3.otf
+%uprml-v  UniJIS-UTF16-V  HiraMinProN-W3.otf
+%upgbm-h  UniJIS-UTF16-H  HiraKakuProN-W6.otf
+%upgbm-v  UniJIS-UTF16-V  HiraKakuProN-W6.otf
+%uprml-hq UniJIS-UCS2-H   HiraMinProN-W3.otf
+%upgbm-hq UniJIS-UCS2-H   HiraKakuProN-W6.otf
+
+%urml     UniJIS-UTF16-H  Ryumin-Light
+%urmlv    UniJIS-UTF16-V  Ryumin-Light
+%ugbm     UniJIS-UTF16-H  GothicBBB-Medium
+%ugbmv    UniJIS-UTF16-V  GothicBBB-Medium
+%uprml-h  UniJIS-UTF16-H  Ryumin-Light
+%uprml-v  UniJIS-UTF16-V  Ryumin-Light
+%upgbm-h  UniJIS-UTF16-H  GothicBBB-Medium
+%upgbm-v  UniJIS-UTF16-V  GothicBBB-Medium
+%uprml-hq UniJIS-UCS2-H   Ryumin-Light
+%upgbm-hq UniJIS-UCS2-H   GothicBBB-Medium
+
+%urml     UniJIS-UTF16-H  msmincho.ttc
+%urmlv    UniJIS-UTF16-V  msmincho.ttc
+%ugbm     UniJIS-UTF16-H  msgothic.ttc
+%ugbmv    UniJIS-UTF16-V  msgothic.ttc
+%uprml-h  UniJIS-UTF16-H  msmincho.ttc
+%uprml-v  UniJIS-UTF16-V  msmincho.ttc
+%upgbm-h  UniJIS-UTF16-H  msgothic.ttc
+%upgbm-v  UniJIS-UTF16-V  msgothic.ttc
+%uprml-hq UniJIS-UCS2-H   msmincho.ttc
+%upgbm-hq UniJIS-UCS2-H   msgothic.ttc
+
+%urml     UniJIS-UTF16-H  ipam.ttf
+%urmlv    UniJIS-UTF16-V  ipam.ttf
+%ugbm     UniJIS-UTF16-H  ipag.ttf
+%ugbmv    UniJIS-UTF16-V  ipag.ttf
+%uprml-h  UniJIS-UTF16-H  ipam.ttf
+%uprml-v  UniJIS-UTF16-V  ipam.ttf
+%upgbm-h  UniJIS-UTF16-H  ipag.ttf
+%upgbm-v  UniJIS-UTF16-V  ipag.ttf
+%uprml-hq UniJIS-UCS2-H   ipam.ttf
+%upgbm-hq UniJIS-UCS2-H   ipag.ttf
+
+%urml     UniJIS-UTF16-H   ipaexm.ttf
+%urmlv    UniJIS-UTF16-V   ipaexm.ttf
+%ugbm     UniJIS-UTF16-H   ipaexg.ttf
+%ugbmv    UniJIS-UTF16-V   ipaexg.ttf
+%uprml-h  UniJIS-UTF16-H   ipaexm.ttf
+%uprml-v  UniJIS-UTF16-V   ipaexm.ttf
+%upgbm-h  UniJIS-UTF16-H   ipaexg.ttf
+%upgbm-v  UniJIS-UTF16-V   ipaexg.ttf
+%uprml-hq UniJIS-UCS2-H    ipaexm.ttf
+%upgbm-hq UniJIS-UCS2-H    ipaexg.ttf
+
+urml	UniJIS-UTF16-H	HaranoAjiMincho-Regular.otf
+urmlv	UniJIS-UTF16-V	HaranoAjiMincho-Regular.otf
+ugbm	UniJIS-UTF16-H	HaranoAjiGothic-Medium.otf
+ugbmv	UniJIS-UTF16-V	HaranoAjiGothic-Medium.otf
+uprml-h	UniJIS-UTF16-H	HaranoAjiMincho-Regular.otf
+uprml-v	UniJIS-UTF16-V	HaranoAjiMincho-Regular.otf
+upgbm-h	UniJIS-UTF16-H	HaranoAjiGothic-Medium.otf
+upgbm-v	UniJIS-UTF16-V	HaranoAjiGothic-Medium.otf
+uprml-hq	UniJIS-UCS2-H	HaranoAjiMincho-Regular.otf
+upgbm-hq	UniJIS-UCS2-H	HaranoAjiGothic-Medium.otf
+
+%%
+%% misc
+%%
+
+gmin10    H Ryumin-Light
+gtmin10   V Ryumin-Light
+
+msmin   H :0:msmincho.ttc
+mspmin  H :1:msmincho.ttc
+msgoth  H :0:msgothic.ttc
+mspgoth H :1:msgothic.ttc
+
+mspmin00   UniJIS-UTF16-H :1:msmincho.ttc
+
+%%
+%% ttfgid (S. Saito)
+%%
+
+gidmin-h   Identity-H ipam.ttf/I
+gidmin-v   Identity-V ipam.ttf/I
+gidgoth-h  Identity-H ipag.ttf/I
+gidgoth-v  Identity-V ipag.ttf/I
+
+%%
+%% ttfgidu (S. Saito)
+%%
+
+ugidmin-h    Identity-H ipaexm.ttf/I
+ugidmin-v    Identity-V ipaexm.ttf/I
+ugidgoth-h   Identity-H ipaexg.ttf/I
+ugidgoth-v   Identity-V ipaexg.ttf/I
+
+%%
+%% ums by virtual fonts
+%%
+
+unimin    UniJIS-UTF16-H Ryumin-Light
+unigoth   UniJIS-UTF16-H GothicBBB-Medium
+
+%%
+%% ums by subfonts
+%%
+
+msmin@Unicode@    UniJIS-UTF16-H msmincho.ttc
+msgoth@Unicode@   UniJIS-UTF16-H msgothic.ttc
+
+%%
+%% for uniomjp.sty
+%%
+
+omcrml  Identity-H     Ryumin-Light
+omcgbm  Identity-H     GothicBBB-Medium
+omrml   UniJIS-UTF16-H Ryumin-Light
+omgbm   UniJIS-UTF16-H GothicBBB-Medium
+omrmlv  UniJIS-UTF16-V Ryumin-Light
+omgbmv  UniJIS-UTF16-V GothicBBB-Medium
+
+%%
+%% luaTeX (omf)
+%%
+
+luarml   UniJIS-UTF16-H KozMinPr6N-Regular.otf
+luagbm   UniJIS-UTF16-H KozGoPr6N-Medium.otf
+luarmlv  UniJIS-UTF16-V KozMinPr6N-Regular.otf
+luagbmv  UniJIS-UTF16-V KozGoPr6N-Medium.otf
+
+%%
+%% lambdaj(GT fonts), omegaj, lmj209
+%%
+
+omsmincho  UniJIS-UTF16-H Ryumin-Light
+omsmin     UniJIS-UTF16-H Ryumin-Light
+omsgoth    UniJIS-UTF16-H GothicBBB-Medium
+ugt01      UniJIS-UTF16-H gt200001
+ugt02      UniJIS-UTF16-H gt200002
+ugt03      UniJIS-UTF16-H gt200003
+ugt04      UniJIS-UTF16-H gt200004
+ugt05      UniJIS-UTF16-H gt200005
+ugt06      UniJIS-UTF16-H gt200006
+ugt07      UniJIS-UTF16-H gt200007
+ugt08      UniJIS-UTF16-H gt200008
+ugt09      UniJIS-UTF16-H gt200009
+ugt10      UniJIS-UTF16-H gt200010
+ugt11      UniJIS-UTF16-H gt200011
+
+%%
+%% Mojikumi-kata
+%%
+
+MJKanji   H KozMinPro-Bold.otf
+MJKanji-v V KozMinPro-Bold.otf
+MJKata-h  H MojikumiKata-EB.otf
+MJKata-v  V MojikumiKata-EB.otf
+
+%%
+%% GT fonts in gtftex
+%%
+
+gtf01  H gt200001
+gtf02  H gt200002
+gtf03  H gt200003
+gtf04  H gt200004
+gtf05  H gt200005
+gtf06  H gt200006
+gtf07  H gt200007
+gtf08  H gt200008
+gtf09  H gt200009
+gtf10  H gt200010
+gtf11  H gt200011
+
+%%
+%% utf by S. Saito (Hiragino)
+%%
+
+unijmin-h     UniJIS-UTF16-H    HiraMinProN-W3.otf
+unijmin-v     UniJIS-UTF16-V    HiraMinProN-W3.otf
+unijgoth-h    UniJIS-UTF16-H    HiraKakuProN-W6.otf
+unijgoth-v    UniJIS-UTF16-V    HiraKakuProN-W6.otf
+
+cidmin-h      Identity-H        HiraMinProN-W3.otf
+cidmin-v      Identity-V        HiraMinProN-W3.otf
+cidgoth-h     Identity-H        HiraKakuProN-W6.otf
+cidgoth-v     Identity-V        HiraKakuProN-W6.otf
+
+hmr           H                 HiraMinProN-W3.otf
+hmrv          V                 HiraMinProN-W3.otf
+hkb           H                 HiraKakuProN-W6.otf
+hkbv          V                 HiraKakuProN-W6.otf
+
+%%
+%% otf package (S. Saito)
+%%
+
+% TEXT, 90JIS
+%hminl-h	H	HiraMinProN-W2.otf
+%hminl-v	V	HiraMinProN-W2.otf
+%hminr-h	H	HiraMinProN-W3.otf
+%hminr-v	V	HiraMinProN-W3.otf
+%hminb-h	H	HiraMinProN-W6.otf
+%hminb-v	V	HiraMinProN-W6.otf
+%hgothr-h	H	HiraKakuProN-W3.otf
+%hgothr-v	V	HiraKakuProN-W3.otf
+%hgothb-h	H	HiraKakuProN-W6.otf
+%hgothb-v	V	HiraKakuProN-W6.otf
+%hgotheb-h	H	HiraKakuStdN-W8.otf
+%hgotheb-v	V	HiraKakuStdN-W8.otf
+%hmgothr-h	H	HiraMaruProN-W4.otf
+%hmgothr-v	V	HiraMaruProN-W4.otf
+
+hminl-h	H	HaranoAjiMincho-Light.otf
+hminl-v	V	HaranoAjiMincho-Light.otf
+hminr-h	H	HaranoAjiMincho-Regular.otf
+hminr-v	V	HaranoAjiMincho-Regular.otf
+hminb-h	H	HaranoAjiMincho-Bold.otf
+hminb-v	V	HaranoAjiMincho-Bold.otf
+hgothr-h	H	HaranoAjiGothic-Regular.otf
+hgothr-v	V	HaranoAjiGothic-Regular.otf
+hgothb-h	H	HaranoAjiGothic-Medium.otf
+hgothb-v	V	HaranoAjiGothic-Medium.otf
+hgotheb-h	H	HaranoAjiGothic-Bold.otf
+hgotheb-v	V	HaranoAjiGothic-Bold.otf
+hmgothr-h	H	HaranoAjiGothic-Heavy.otf
+hmgothr-v	V	HaranoAjiGothic-Heavy.otf
+
+% TEXT, JIS04
+%hminln-h	H	HiraMinProN-W2.otf
+%hminln-v	V	HiraMinProN-W2.otf
+%hminrn-h	H	HiraMinProN-W3.otf
+%hminrn-v	V	HiraMinProN-W3.otf
+%hminbn-h	H	HiraMinProN-W6.otf
+%hminbn-v	V	HiraMinProN-W6.otf
+%hgothrn-h	H	HiraKakuProN-W3.otf
+%hgothrn-v	V	HiraKakuProN-W3.otf
+%hgothbn-h	H	HiraKakuProN-W6.otf
+%hgothbn-v	V	HiraKakuProN-W6.otf
+%hgothebn-h	H	HiraKakuStdN-W8.otf
+%hgothebn-v	V	HiraKakuStdN-W8.otf
+%hmgothrn-h	H	HiraMaruProN-W4.otf
+%hmgothrn-v	V	HiraMaruProN-W4.otf
+
+hminln-h	H	HaranoAjiMincho-Light.otf
+hminln-v	V	HaranoAjiMincho-Light.otf
+hminrn-h	H	HaranoAjiMincho-Regular.otf
+hminrn-v	V	HaranoAjiMincho-Regular.otf
+hminbn-h	H	HaranoAjiMincho-Bold.otf
+hminbn-v	V	HaranoAjiMincho-Bold.otf
+hgothrn-h	H	HaranoAjiGothic-Regular.otf
+hgothrn-v	V	HaranoAjiGothic-Regular.otf
+hgothbn-h	H	HaranoAjiGothic-Medium.otff
+hgothbn-v	V	HaranoAjiGothic-Medium.otf
+hgothebn-h	H	HaranoAjiGothic-Bold.otf
+hgothebn-v	V	HaranoAjiGothic-Bold.otf
+hmgothrn-h	H	HaranoAjiGothic-Heavy.otf
+hmgothrn-v	V	HaranoAjiGothic-Heavy.otf
+
+% CID
+%otf-cjml-h	Identity-H	HiraMinProN-W2.otf
+%otf-cjml-v	Identity-V	HiraMinProN-W2.otf
+%otf-cjmr-h	Identity-H	HiraMinProN-W3.otf
+%otf-cjmr-v	Identity-V	HiraMinProN-W3.otf
+%otf-cjmb-h	Identity-H	HiraMinProN-W6.otf
+%otf-cjmb-v	Identity-V	HiraMinProN-W6.otf
+%otf-cjgr-h	Identity-H	HiraKakuProN-W3.otf
+%otf-cjgr-v	Identity-V	HiraKakuProN-W3.otf
+%otf-cjgb-h	Identity-H	HiraKakuProN-W6.otf
+%otf-cjgb-v	Identity-V	HiraKakuProN-W6.otf
+%otf-cjge-h	Identity-H	HiraKakuStdN-W8.otf
+%otf-cjge-v	Identity-V	HiraKakuStdN-W8.otf
+%otf-cjmgr-h	Identity-H	HiraMaruProN-W4.otf
+%otf-cjmgr-v	Identity-V	HiraMaruProN-W4.otf
+
+otf-cjml-h	Identity-H	HaranoAjiMincho-Light.otf
+otf-cjml-v	Identity-V	HaranoAjiMincho-Light.otf
+otf-cjmr-h	Identity-H	HaranoAjiMincho-Regular.otf
+otf-cjmr-v	Identity-V	HaranoAjiMincho-Regular.otf
+otf-cjmb-h	Identity-H	HaranoAjiMincho-Bold.otf
+otf-cjmb-v	Identity-V	HaranoAjiMincho-Bold.otf
+otf-cjgr-h	Identity-H	HaranoAjiGothic-Regular.otf
+otf-cjgr-v	Identity-V	HaranoAjiGothic-Regular.otf
+otf-cjgb-h	Identity-H	HaranoAjiGothic-Medium.otf
+otf-cjgb-v	Identity-V	HaranoAjiGothic-Medium.otf
+otf-cjge-h	Identity-H	HaranoAjiGothic-Bold.otf
+otf-cjge-v	Identity-V	HaranoAjiGothic-Bold.otf
+otf-cjmgr-h	Identity-H	HaranoAjiGothic-Heavy.otf
+otf-cjmgr-v	Identity-V	HaranoAjiGothic-Heavy.otf
+
+% Unicode 90JIS
+%otf-ujml-h	UniJIS-UTF16-H	HiraMinProN-W2.otf
+%otf-ujml-v	UniJIS-UTF16-V	HiraMinProN-W2.otf
+%otf-ujmr-h	UniJIS-UTF16-H	HiraMinProN-W3.otf
+%otf-ujmr-v	UniJIS-UTF16-V	HiraMinProN-W3.otf
+%otf-ujmb-h	UniJIS-UTF16-H	HiraMinProN-W6.otf
+%otf-ujmb-v	UniJIS-UTF16-V	HiraMinProN-W6.otf
+%otf-ujgr-h	UniJIS-UTF16-H	HiraKakuProN-W3.otf
+%otf-ujgr-v	UniJIS-UTF16-V	HiraKakuProN-W3.otf
+%otf-ujgb-h	UniJIS-UTF16-H	HiraKakuProN-W6.otf
+%otf-ujgb-v	UniJIS-UTF16-V	HiraKakuProN-W6.otf
+%otf-ujge-h	UniJIS-UTF16-H	HiraKakuStdN-W8.otf
+%otf-ujge-v	UniJIS-UTF16-V	HiraKakuStdN-W8.otf
+%otf-ujmgr-h	UniJIS-UTF16-H	HiraMaruProN-W4.otf
+%otf-ujmgr-v	UniJIS-UTF16-V	HiraMaruProN-W4.otf
+
+otf-ujml-h	UniJIS-UTF16-H	HaranoAjiMincho-Light.otf
+otf-ujml-v	UniJIS-UTF16-V	HaranoAjiMincho-Light.otf
+otf-ujmr-h	UniJIS-UTF16-H	HaranoAjiMincho-Regular.otf
+otf-ujmr-v	UniJIS-UTF16-V	HaranoAjiMincho-Regular.otf
+otf-ujmb-h	UniJIS-UTF16-H	HaranoAjiMincho-Bold.otf
+otf-ujmb-v	UniJIS-UTF16-V	HaranoAjiMincho-Bold.otf
+otf-ujgr-h	UniJIS-UTF16-H	HaranoAjiGothic-Regular.otf
+otf-ujgr-v	UniJIS-UTF16-V	HaranoAjiGothic-Regular.otf
+otf-ujgb-h	UniJIS-UTF16-H  HaranoAjiGothic-Medium.otf
+otf-ujgb-v	UniJIS-UTF16-V	HaranoAjiGothic-Medium.otf
+otf-ujge-h	UniJIS-UTF16-H	HaranoAjiGothic-Bold.otf
+otf-ujge-v	UniJIS-UTF16-V	HaranoAjiGothic-Bold.otf
+otf-ujmgr-h	UniJIS-UTF16-H	HaranoAjiGothic-Heavy.otf
+otf-ujmgr-v	UniJIS-UTF16-V	HaranoAjiGothic-Heavy.otf
+
+% Unicode JIS04
+%otf-ujmln-h	UniJIS2004-UTF16-H	HiraMinProN-W2.otf
+%otf-ujmln-v	UniJIS2004-UTF16-V	HiraMinProN-W2.otf
+%otf-ujmrn-h	UniJIS2004-UTF16-H	HiraMinProN-W3.otf
+%otf-ujmrn-v	UniJIS2004-UTF16-V	HiraMinProN-W3.otf
+%otf-ujmbn-h	UniJIS2004-UTF16-H	HiraMinProN-W6.otf
+%otf-ujmbn-v	UniJIS2004-UTF16-V	HiraMinProN-W6.otf
+%otf-ujgrn-h	UniJIS2004-UTF16-H	HiraKakuProN-W3.otf
+%otf-ujgrn-v	UniJIS2004-UTF16-V	HiraKakuProN-W3.otf
+%otf-ujgbn-h	UniJIS2004-UTF16-H	HiraKakuProN-W6.otf
+%otf-ujgbn-v	UniJIS2004-UTF16-V	HiraKakuProN-W6.otf
+%otf-ujgen-h	UniJIS2004-UTF16-H	HiraKakuStdN-W8.otf
+%otf-ujgen-v	UniJIS2004-UTF16-V	HiraKakuStdN-W8.otf
+%otf-ujmgrn-h	UniJIS2004-UTF16-H	HiraMaruProN-W4.otf
+%otf-ujmgrn-v	UniJIS2004-UTF16-V	HiraMaruProN-W4.otf
+
+otf-ujmln-h	UniJIS2004-UTF16-H	HaranoAjiMincho-Light.otf
+otf-ujmln-v	UniJIS2004-UTF16-V	HaranoAjiMincho-Light.otf
+otf-ujmrn-h	UniJIS2004-UTF16-H	HaranoAjiMincho-Regular.otf
+otf-ujmrn-v	UniJIS2004-UTF16-V	HaranoAjiMincho-Regular.otf
+otf-ujmbn-h	UniJIS2004-UTF16-H	HaranoAjiMincho-Bold.otf
+otf-ujmbn-v	UniJIS2004-UTF16-V	HaranoAjiMincho-Bold.otf
+otf-ujgrn-h	UniJIS2004-UTF16-H	HaranoAjiGothic-Regular.otf
+otf-ujgrn-v	UniJIS2004-UTF16-V	HaranoAjiGothic-Regular.otf
+otf-ujgbn-h	UniJIS2004-UTF16-H	HaranoAjiGothic-Medium.otf
+otf-ujgbn-v	UniJIS2004-UTF16-V	HaranoAjiGothic-Medium.otf
+otf-ujgen-h	UniJIS2004-UTF16-H	HaranoAjiGothic-Bold.otf
+otf-ujgen-v	UniJIS2004-UTF16-V	HaranoAjiGothic-Bold.otf
+otf-ujmgrn-h	UniJIS2004-UTF16-H	HaranoAjiGothic-Heavy.otf
+otf-ujmgrn-v	UniJIS2004-UTF16-V	HaranoAjiGothic-Heavy.otf
+
+% hiraprop
+hiramin-w3-h  Identity-H HiraMinProN-W3.otf
+hiramin-w6-h  Identity-H HiraMinProN-W6.otf
+hirakaku-w3-h Identity-H HiraKakuProN-W3.otf
+hirakaku-w6-h Identity-H HiraKakuProN-W6.otf
+hiramaru-w4-h Identity-H HiraMaruProN-W4.otf
+hiramin-w3-v  Identity-V HiraMinProN-W3.otf
+hiramin-w6-v  Identity-V HiraMinProN-W6.otf
+hirakaku-w3-v Identity-V HiraKakuProN-W3.otf
+hirakaku-w6-v Identity-V HiraKakuProN-W6.otf
+hiramaru-w4-v Identity-V HiraMaruProN-W4.otf
+
+%
+% moriprop
+%
+otf-jun101-light-h   Identity-H A-OTF-Jun101Pro-Light.otf
+otf-jun201-regular-h Identity-H A-OTF-Jun201Pro-Regular.otf
+otf-jun34-medium-h   Identity-H A-OTF-Jun34Pro-Medium.otf
+otf-jun501-bold-h    Identity-H A-OTF-Jun501Pro-Bold.otf
+otf-ryumin-bold-h    Identity-H A-OTF-RyuminPro-Bold.otf
+otf-ryumin-heavy-h   Identity-H A-OTF-RyuminPro-Heavy.otf
+otf-ryumin-light-h   Identity-H A-OTF-RyuminPro-Light.otf
+otf-ryumin-medium-h  Identity-H A-OTF-RyuminPro-Medium.otf
+otf-ryumin-regular-h Identity-H A-OTF-RyuminPro-Regular.otf
+otf-ryumin-ultra-h   Identity-H A-OTF-RyuminPro-Ultra.otf
+otf-shingo-bold-h    Identity-H A-OTF-ShinGoPro-Bold.otf
+otf-shingo-heavy-h   Identity-H A-OTF-ShinGoPro-Heavy.otf
+otf-shingo-light-h   Identity-H A-OTF-ShinGoPro-Light.otf
+otf-shingo-medium-h  Identity-H A-OTF-ShinGoPro-Medium.otf
+otf-shingo-regular-h Identity-H A-OTF-ShinGoPro-Regular.otf
+otf-shingo-ultra-h   Identity-H A-OTF-ShinGoPro-Ultra.otf
+
+% TEXT, 90JIS (uptex)
+%uphminl-h	UniJIS-UTF16-H	HiraMinProN-W2.otf
+%uphminl-v	UniJIS-UTF16-V	HiraMinProN-W2.otf
+%uphminr-h	UniJIS-UTF16-H	HiraMinProN-W3.otf
+%uphminr-v	UniJIS-UTF16-V	HiraMinProN-W3.otf
+%uphminb-h	UniJIS-UTF16-H	HiraMinProN-W6.otf
+%uphminb-v	UniJIS-UTF16-V	HiraMinProN-W6.otf
+%uphgothr-h	UniJIS-UTF16-H	HiraKakuProN-W3.otf
+%uphgothr-v	UniJIS-UTF16-V	HiraKakuProN-W3.otf
+%uphgothb-h	UniJIS-UTF16-H	HiraKakuProN-W6.otf
+%uphgothb-v	UniJIS-UTF16-V	HiraKakuProN-W6.otf
+%uphgotheb-h	UniJIS-UTF16-H	HiraKakuStdN-W8.otf
+%uphgotheb-v	UniJIS-UTF16-V	HiraKakuStdN-W8.otf
+%uphmgothr-h	UniJIS-UTF16-H	HiraMaruProN-W4.otf
+%uphmgothr-v	UniJIS-UTF16-V	HiraMaruProN-W4.otf
+
+uphminl-h	UniJIS-UTF16-H	HaranoAjiMincho-Light.otf
+uphminl-v	UniJIS-UTF16-V	HaranoAjiMincho-Light.otf
+uphminr-h	UniJIS-UTF16-H	HaranoAjiMincho-Regular.otf
+uphminr-v	UniJIS-UTF16-V	HaranoAjiMincho-Regular.otf
+uphminb-h	UniJIS-UTF16-H	HaranoAjiMincho-Bold.otf
+uphminb-v	UniJIS-UTF16-V	HaranoAjiMincho-Bold.otf
+uphgothr-h	UniJIS-UTF16-H	HaranoAjiGothic-Regular.otf
+uphgothr-v	UniJIS-UTF16-V	HaranoAjiGothic-Regular.otf
+uphgothb-h	UniJIS-UTF16-H	HaranoAjiGothic-Medium.otf
+uphgothb-v	UniJIS-UTF16-V	HaranoAjiGothic-Medium.otf
+uphgotheb-h	UniJIS-UTF16-H	HaranoAjiGothic-Bold.otf
+uphgotheb-v	UniJIS-UTF16-V	HaranoAjiGothic-Bold.otf
+uphmgothr-h	UniJIS-UTF16-H	HaranoAjiGothic-Heavy.otf
+uphmgothr-v	UniJIS-UTF16-V	HaranoAjiGothic-Heavy.otf
+
+% JISX 0213:2004 (uptex)
+%uphminln-h      UniJIS2004-UTF16-H HiraMinProN-W2.otf
+%uphminln-v      UniJIS2004-UTF16-V HiraMinProN-W2.otf
+%uphminrn-h      UniJIS2004-UTF16-H HiraMinProN-W3.otf
+%uphminrn-v      UniJIS2004-UTF16-V HiraMinProN-W3.otf
+%uphgothrn-h     UniJIS2004-UTF16-H HiraKakuProN-W3.otf
+%uphgothrn-v     UniJIS2004-UTF16-V HiraKakuProN-W3.otf
+%uphminbn-h      UniJIS2004-UTF16-H HiraMinProN-W6.otf
+%uphminbn-v      UniJIS2004-UTF16-V HiraMinProN-W6.otf
+%uphgothbn-h     UniJIS2004-UTF16-H HiraKakuProN-W6.otf
+%uphgothbn-v     UniJIS2004-UTF16-V HiraKakuProN-W6.otf
+%uphgothebn-h    UniJIS2004-UTF16-H HiraKakuStdN-W8.otf
+%uphgothebn-v    UniJIS2004-UTF16-V HiraKakuStdN-W8.otf
+%uphmgothrn-h    UniJIS2004-UTF16-H HiraMaruProN-W4.otf
+%uphmgothrn-v    UniJIS2004-UTF16-V HiraMaruProN-W4.otf
+
+uphminln-h	UniJIS2004-UTF16-H	HaranoAjiMincho-Light.otf
+uphminln-v	UniJIS2004-UTF16-V	HaranoAjiMincho-Light.otf
+uphminrn-h	UniJIS2004-UTF16-H	HaranoAjiMincho-Regular.otf
+uphminrn-v	UniJIS2004-UTF16-V	HaranoAjiMincho-Regular.otf
+uphminbn-h	UniJIS2004-UTF16-H	HaranoAjiMincho-Bold.otf
+uphminbn-v	UniJIS2004-UTF16-V	HaranoAjiMincho-Bold.otf
+uphgothrn-h	UniJIS2004-UTF16-H	HaranoAjiGothic-Regular.otf
+uphgothrn-v	UniJIS2004-UTF16-V	HaranoAjiGothic-Regular.otf
+uphgothbn-h	UniJIS2004-UTF16-H	HaranoAjiGothic-Medium.otf
+uphgothbn-v	UniJIS2004-UTF16-V	HaranoAjiGothic-Medium.otf
+uphgothebn-h	UniJIS2004-UTF16-H	HaranoAjiGothic-Bold.otf
+uphgothebn-v	UniJIS2004-UTF16-V	HaranoAjiGothic-Bold.otf
+uphmgothrn-h	UniJIS2004-UTF16-H	HaranoAjiGothic-Heavy.otf
+uphmgothrn-v	UniJIS2004-UTF16-V	HaranoAjiGothic-Heavy.otf
+%
+% otfcjk TrueType
+%
+ttf-utmr-h   Identity-H         MING_UNI.TTF/UCS
+ttf-utmr-v   Identity-V         MING_UNI.TTF/UCS
+%CNS14 is not correct.
+ttf-ctmr-h   Identity-H         MING_UNI.TTF/CNS14
+ttf-ctmr-v   Identity-V         MING_UNI.TTF/CNS14
+
+%%
+%% CJK-LaTeX/HLaTeX Examples
+%%
+
+%% Arphic Public Licence fonts:
+%%  AR PL KaitiM, AR PL Mingti2L, AR PL SungtiL
+
+bkai@Big5@  ETen-B5-H  bkai00mp
+bsmi@Big5@  ETen-B5-H  bsmi00lp
+%bkaiv@Big5@  ETen-B5-V  bkai00mp
+%bsmiv@Big5@  ETen-B5-V  bsmi00lp
+
+%% Korean MS-Windows fonts with stylistic variants
+%jbtm@UKS@  UniKS-UTF16-H !batang
+%jbtmo@UKS@ UniKS-UTF16-H !batang,Italic
+%jbtb@UKS@  UniKS-UTF16-H !batang,Bold
+%jbtbo@UKS@ UniKS-UTF16-H !batang,BoldItalic
+
+%% Baekmuk fonts (used with HLaTeX package)
+%bbtm@KS-HLaTeX@   KSCms-UHC-H  batang
+%bbtmo@UKS-HLaTeX@ UniKS-UTF16-H batang -s .167
+
+%% Heisei family comes with Acrobat Asian Font Packs:
+%% Not embedded.
+%mincho@UJIS@ UniJIS-UTF16-H HeiseiMin-W3-Acro
+%gothic@UJIS@ UniJIS-UTF16-H HeiseiKakuGo-W5-Acro
+
+%% Bitstream Cyberbit
+%% Available at:
+%%  http://ftp.netscape.com/pub/communicator/extras/fonts/windows/ReadMe.htm
+
+cyberb@Unicode@ unicode cyberbit
+
+%
+% times.ttf as Unicode
+%
+%times00 Identity-H times/UCS
+%times01 Identity-H times/UCS
+%times02 Identity-H times/UCS
+%times03 Identity-H times/UCS
+%times04 Identity-H times/UCS
+%times05 Identity-H times/UCS
+%times06 Identity-H times/UCS
+%times1e Identity-H times/UCS
+%times20 Identity-H times/UCS
+%times21 Identity-H times/UCS
+%times22 Identity-H times/UCS
+%times23 Identity-H times/UCS
+%times25 Identity-H times/UCS
+%times26 Identity-H times/UCS
+%timese8 Identity-H times/UCS
+%timesf0 Identity-H times/UCS
+%timesfb Identity-H times/UCS
+%timesfc Identity-H times/UCS
+%timesfd Identity-H times/UCS
+%timesfe Identity-H times/UCS
+%timesff Identity-H times/UCS
+hgrsmp   hgrsmp    hgrsmp.ttf
+%%
+%%
+mnprut        unicode MinionPro-Regular.otf
+mnpbut        unicode MinionPro-Bold.otf
+mnpbiut       unicode MinionPro-BoldIt.otf
+mnpriut       unicode MinionPro-It.otf
+mnprout       unicode MinionPro-Regular.otf
+mnpbout       unicode MinionPro-Bold.otf
+
+mrprut        unicode MyriadPro-Regular.otf
+mrpbut        unicode MyriadPro-Bold.otf
+mrpbiut       unicode MyriadPro-BoldIt.otf
+mrpriut       unicode MyriadPro-It.otf
+mrprout       unicode MyriadPro-Regular.otf
+mrpbout       unicode MyriadPro-Bold.otf
+
+%%
+%% Palatino Linotype
+%%
+
+lplru         unicode pala
+lplbu         unicode palab
+lplriu        unicode palai
+lplbiu        unicode palabi
+%%
+%% Small Caps
+%%
+lplrcu        unicode pala
+lplbcu        unicode palab
+%%
+%% OSF
+%%
+lplru-onum    unicode pala
+lplbu-onum    unicode palab
+lplriu-onum   unicode palai
+lplbiu-onum   unicode palabi
+%% All ligatures enabled
+%%
+%% OFM must use same PUA assignment.
+%%
+lplru-alig    unicode pala
+lplbu-alig    unicode palab
+lplbiu-alig   unicode palabi
+lplriu-alig   unicode palai
+%%
+fixedpitch-smpl unicode arialuni
+fixedpitch-trad unicode arialuni
+fixedpitch      unicode arialuni
+%%
+arialuni	unicode arialuni
+%%
+
+arial   unicode arial
+arialbd unicode arialbd
+arialbi unicode arialbi
+ariali  unicode ariali
+
+cour    unicode cour
+courbd  unicode courbd
+courbi  unicode courbi
+couri   unicode couri
+
+genai101   unicode genai101
+genar101   unicode genar101
+genai101bi unicode genai101 -e 1.2
+genar101b  unicode genar101 -e 1.2
+
+grgaref    unicode grgaref
+grgarefi   unicode grgaref -s .167
+grgarefb   unicode grgaref -e 1.2
+grgarefbi  unicode grgaref -s .167 -e 1.2
+
+microsslv   unicode   microsslv
+microsslvi  unicode   microsslv -s .167
+microsslvb  unicode   microsslv -e 1.2
+microsslvbi unicode   microsslv -s .167 -e 1.2
+
+pala   unicode pala
+palab  unicode palab
+palabi unicode palabi
+palai  unicode palai
+
+refsan   unicode refsan
+refsanb  unicode refsanb
+refsanbi unicode refsanbi
+refsani  unicode refsani
+
+refser   unicode refser
+refserb  unicode refserb
+refserbi unicode refserbi
+refseri  unicode refseri
+
+tahoma   unicode tahoma
+tahomabd unicode tahomabd
+tahomai  unicode tahoma -s .167
+tahomabi unicode tahomabd -s .167
+
+times   unicode times
+timesbd unicode timesbd
+timesbi unicode timesbi
+timesi  unicode timesi
+
+verdana  unicode verdana
+verdanab unicode verdanab
+verdanai unicode verdanai
+verdanaz unicode verdanaz
+
+vuanhminh   unicode vuanhminh
+vuanhminhb  unicode vuanhminhb
+vuanhminhbi unicode vuanhminhbi
+vuanhminhi  unicode vuanhminhi
+
+vuheomay   unicode  vuheomay
+vuheomayb  unicode vuheomayb
+vuheomaybi unicode vuheomaybi
+vuheomayi  unicode vuheomayi
+
+vuhoangyen   unicode vuhoangyen
+vuhoangyenb  unicode vuhoangyenb
+vuhoangyenbi unicode vuhoangyenbi
+vuhoangyeni  unicode vuhoangyeni
+
+vuminhquan   unicode vuminhquan
+vuminhquanb  unicode vuminhquanb
+vuminhquanbi unicode vuminhquanbi
+vuminhquani  unicode vuminhquani
+
+vuphuongthao   unicode vuphuongthao
+vuphuongthaob  unicode vuphuongthaob
+vuphuongthaobi unicode vuphuongthaobi
+vuphuongthaoi  unicode vuphuongthaoi
+
+vuthahuong   unicode vuthahuong
+vuthahuongb  unicode vuthahuongb
+vuthahuongbi unicode vuthahuongbi
+vuthahuongi  unicode vuthahuongi
+vuuhoai      unicode vuuhoai
+vuuhoaib     unicode vuuhoaib
+vuuhoaibi    unicode vuuhoaibi
+vuuhoaii     unicode vuuhoaii
+%
+% otf cktx
+%
+otf-utmr-h  UniCNS-UTF16-H HaranoAjiMinchoTW-Regular.otf
+otf-utmr-v  UniCNS-UTF16-V HaranoAjiMinchoTW-Regular.otf
+otf-utgr-h  UniCNS-UTF16-H HaranoAjiGothicTW-Regular.otf
+otf-utgr-v  UniCNS-UTF16-V HaranoAjiGothicTW-Regular.otf
+otf-utmb-h  UniCNS-UTF16-H HaranoAjiMinchoTW-Bold.otf
+otf-utmb-v  UniCNS-UTF16-V HaranoAjiMinchoTW-Bold.otf
+otf-utml-h  UniCNS-UTF16-H HaranoAjiMinchoTW-Light.otf
+otf-utml-v  UniCNS-UTF16-V HaranoAjiMinchoTW-Light.otf
+otf-utgb-h  UniCNS-UTF16-H HaranoAjiGothicTW-Medium.otf
+otf-utgb-v  UniCNS-UTF16-V HaranoAjiGothicTW-Medium.otf
+otf-utge-h  UniCNS-UTF16-H HaranoAjiGothicTW-Bold.otf
+otf-utge-v  UniCNS-UTF16-V HaranoAjiGothicTW-Bold.otf
+otf-utmgr-h UniCNS-UTF16-H HaranoAjiGothicTW-Heavy.otf
+otf-utmgr-v UniCNS-UTF16-V HaranoAjiGothicTW-Heavy.otf
+otf-ucmr-h  UniGB-UTF16-H  HaranoAjiMinchoCN-Regular.otf
+otf-ucmr-v  UniGB-UTF16-V  HaranoAjiMinchoCN-Regular.otf
+otf-ucgr-h  UniGB-UTF16-H  HaranoAjiGothicCN-Regular.otf
+otf-ucgr-v  UniGB-UTF16-V  HaranoAjiGothicCN-Regular.otf
+otf-ucmb-h  UniGB-UTF16-H  HaranoAjiMinchoCN-Bold.otf
+otf-ucmb-v  UniGB-UTF16-V  HaranoAjiMinchoCN-Bold.otf
+otf-ucml-h  UniGB-UTF16-H  HaranoAjiMinchoCN-Light.otf
+otf-ucml-v  UniGB-UTF16-V  HaranoAjiMinchoCN-Light.otf
+otf-ucgb-h  UniGB-UTF16-H  HaranoAjiGothicCN-Medium.otf
+otf-ucgb-v  UniGB-UTF16-V  HaranoAjiGothicCN-Medium.otf
+otf-ucge-h  UniGB-UTF16-H  HaranoAjiGothicCN-Bold.otf
+otf-ucge-v  UniGB-UTF16-V  HaranoAjiGothicCN-Bold.otf
+otf-ucmgr-h UniGB-UTF16-H  HaranoAjiGothicCN-Heavy.otf
+otf-ucmgr-v UniGB-UTF16-V  HaranoAjiGothicCN-Heavy.otf
+otf-ukmr-h  UniKS-UTF16-H  HaranoAjiMinchoK1-Regular.otf
+otf-ukmr-v  UniKS-UTF16-V  HaranoAjiMinchoK1-Regular.otf
+otf-ukgr-h  UniKS-UTF16-H  HaranoAjiGothicK1-Regular.otf
+otf-ukgr-v  UniKS-UTF16-V  HaranoAjiGothicK1-Regular.otf
+otf-ukmb-h  UniKS-UTF16-H  HaranoAjiMinchoK1-Bold.otf
+otf-ukmb-v  UniKS-UTF16-V  HaranoAjiMinchoK1-Bold.otf
+otf-ukml-h  UniKS-UTF16-H  HaranoAjiMinchoK1-Light.otf
+otf-ukml-v  UniKS-UTF16-V  HaranoAjiMinchoK1-Light.otf
+otf-ukgb-h  UniKS-UTF16-H  HaranoAjiGothicK1-Medium.otf
+otf-ukgb-v  UniKS-UTF16-V  HaranoAjiGothicK1-Medium.otf
+otf-ukge-h  UniKS-UTF16-H  HaranoAjiGothicK1-Bold.otf
+otf-ukge-v  UniKS-UTF16-V  HaranoAjiGothicK1-Bold.otf
+otf-ukmgr-h UniKS-UTF16-H  HaranoAjiGothicK1-Heavy.otf
+otf-ukmgr-v UniKS-UTF16-V  HaranoAjiGothicK1-Heavy.otf
+
+%
+% otf cktx (cid)
+%
+otf-ctmr-h  Identity-H     HaranoAjiMinchoTW-Regular.otf
+otf-ctmr-v  Identity-V     HaranoAjiMinchoTW-Regular.otf
+otf-ctgr-h  Identity-H     HaranoAjiGothicTW-Regular.otf
+otf-ctgr-v  Identity-V     HaranoAjiGothicTW-Regular.otf
+otf-ccmr-h  Identity-H     HaranoAjiMinchoCN-Regular.otf
+otf-ccmr-v  Identity-V     HaranoAjiMinchoCN-Regular.otf
+otf-ccgr-h  Identity-H     HaranoAjiGothicCN-Regular.otf
+otf-ccgr-v  Identity-V     HaranoAjiGothicCN-Regular.otf
+otf-ckmr-h  Identity-H     HaranoAjiMinchoK1-Regular.otf
+otf-ckmr-v  Identity-V     HaranoAjiMinchoK1-Regular.otf
+otf-ckgr-h  Identity-H     HaranoAjiGothicK1-Regular.otf
+otf-ckgr-v  Identity-V     HaranoAjiGothicK1-Regular.otf
+
+%
+% uptex cktx
+%
+upmsl-h     UniCNS-UTF16-H HaranoAjiMinchoTW-Regular.otf
+upmsl-v     UniCNS-UTF16-V HaranoAjiMinchoTW-Regular.otf
+upmhm-h     UniCNS-UTF16-H HaranoAjiGothicTW-Regular.otf
+upmhm-v     UniCNS-UTF16-V HaranoAjiGothicTW-Regular.otf
+upstsl-h    UniGB-UTF16-H  HaranoAjiMinchoCN-Regular.otf
+upstsl-v    UniGB-UTF16-V  HaranoAjiMinchoCN-Regular.otf
+upstht-h    UniGB-UTF16-H  HaranoAjiGothicCN-Regular.otf
+upstht-v    UniGB-UTF16-V  HaranoAjiGothicCN-Regular.otf
+uphysmjm-h  UniKS-UTF16-H  HaranoAjiMinchoK1-Regular.otf
+uphysmjm-v  UniKS-UTF16-V  HaranoAjiMinchoK1-Regular.otf
+uphygt-h    UniKS-UTF16-H  HaranoAjiGothicK1-Regular.otf
+uphygt-v    UniKS-UTF16-V  HaranoAjiGothicK1-Regular.otf
+
+%%
+%% ipa mjmincho font
+%%
+
+ipamjm-mzm-h Identity-H ipamjm.ttf
+ipamjm-mzm-v Identity-V ipamjm.ttf

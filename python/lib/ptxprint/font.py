@@ -1,19 +1,52 @@
 from ptxprint.runner import fclist, checkoutput
-import struct, re, os
-from gi.repository import Pango
+import struct, re, os, sys
+# from gi.repository import Pango
 from pathlib import Path
 from threading import Thread
 
-pango_styles = {Pango.Style.ITALIC: "italic",
-    Pango.Style.NORMAL: "",
-    Pango.Style.OBLIQUE: "oblique",
-    Pango.Weight.ULTRALIGHT: "ultra light",
-    Pango.Weight.LIGHT: "light",
-    Pango.Weight.NORMAL: "",
-    Pango.Weight.BOLD: "bold",
-    Pango.Weight.ULTRABOLD: "ultra bold",
-    Pango.Weight.HEAVY: "heavy"
-}
+fontconfig_template = """<?xml version="1.0"?>
+<fontconfig>
+    <dir>{sysfontsdir}</dir>
+    <dir>{appfontsdir}</dir>
+    <dir prefix="xdg">fonts</dir>
+    <cachedir prefix="xdg">fontconfig</cachedir>
+    <include ignore_missing="yes">/etc/fonts/fonts.conf</include>
+    <include ignore_missing="yes" prefix="xdg">fontconfig/conf.d</include>
+    <include ignore_missing="yes" prefix="xdg">fontconfig/fonts.conf</include>
+</fontconfig>
+"""
+
+def writefontsconf():
+    inf = {}
+    if sys.platform.startswith("win"):
+        fname = os.path.join(os.getenv("LOCALAPPDATA"), "SIL", "ptxprint", "fonts.conf")
+        inf['sysfontsdir'] = os.path.abspath(os.path.join(os.getenv("WINDIR"), "Fonts"))
+    else:
+        fname = os.path.expanduser("~/.config/ptxprint/fonts.conf")
+        inf['sysfontsdir'] = "/usr/share/fonts"
+    os.makedirs(os.path.dirname(fname), exist_ok=True)
+    fdir = os.path.join(os.path.dirname(__file__), '..')
+    for a in (['..', 'fonts'], ['..', '..', 'fonts'], ['/usr', 'share', 'ptx2pdf', 'fonts']):
+        fpath = os.path.join(fdir, *a)
+        if os.path.exists(fpath):
+            inf['appfontsdir'] = os.path.abspath(fpath)
+            break
+    else:
+        inf['appfontsdir'] = os.path.abspath('fonts')
+    with open(fname, "w", encoding="utf=8") as outf:
+        outf.write(fontconfig_template.format(**inf))
+    return fname
+
+#pango_styles = {Pango.Style.ITALIC: "italic",
+#    Pango.Style.NORMAL: "",
+#    Pango.Style.OBLIQUE: "oblique",
+#    Pango.Weight.ULTRALIGHT: "ultra light",
+#    Pango.Weight.LIGHT: "light",
+#    Pango.Weight.NORMAL: "",
+#    Pango.Weight.BOLD: "bold",
+#    Pango.Weight.ULTRABOLD: "ultra bold",
+#    Pango.Weight.HEAVY: "heavy"
+#}
 
 styles_order = {
     "Regular": 1,
@@ -28,21 +61,26 @@ def num2tag(n):
     else:
         return struct.unpack('4s', struct.pack('>L', n))[0].replace(b'\000', b'').decode()
 
-def parseFeatString(featstring):
+def parseFeatString(featstring, defaults={}, langfeats={}):
     feats = {}
     lang = None
+    base = defaults
     if featstring is not None and featstring:
         for l in re.split(r'\s*[,;:]\s*|\s+', featstring):
             k, v = l.split("=")
             if k.lower() == "language":
                 lang = v.strip()
+                base = langfeats.get(lang, base)
             else:
                 feats[k.strip()] = v.strip()
-    return (lang, feats)
+    res = base.copy()
+    res.update(feats)
+    return (lang, res)
 
 class TTFontCache:
     def __init__(self, nofclist=False):
         self.cache = {}
+        self.fccache = {}
         self.fontpaths = []
         self.busy = False
         if nofclist:
@@ -77,6 +115,7 @@ class TTFontCache:
             for n in names:
                 for s in styles:
                     self.cache.setdefault(n, {})[s] = path
+        self.fccache = {k: v.copy() for k,v in self.cache.items()}
         self.busy = False
 
     def stylefilter(self, styles):
@@ -88,18 +127,15 @@ class TTFontCache:
             return res
 
     def runFcCache(self):
-        if self.busy:
-            self.thread.join()
         dummy = checkoutput(["fc-cache"], path="xetex")
         self.cache = {}
         self.loadFcList()
         for p in self.fontpaths:
-            self.addFontDir(p)
+            self.addFontDir(p, noadd=True)
         
-    def addFontDir(self, path):
-        if self.busy:
-            self.thread.join()
-        self.fontpaths.append(path)
+    def addFontDir(self, path, noadd=False):
+        if not noadd:
+            self.fontpaths.append(path)
         for fname in os.listdir(path):
             if fname.lower().endswith(".ttf"):
                 fpath = os.path.join(path, fname)
@@ -108,29 +144,26 @@ class TTFontCache:
                 self.cache.setdefault(f.family, {})[f.style] = fpath
 
     def removeFontDir(self, path):
-        if self.busy:
-            self.thread.join()
         self.fontpaths.remove(path)
         allitems = list(self.cache.items())
         for f, c in allitems:
             theseitems = list(c.items())
             for k, v in theseitems:
                 if "/" not in os.path.relpath(v, path).replace("\\", "/"):
-                    del c[k]
+                    if f not in self.fccache or k not in self.fccache[f]:
+                        del c[k]
+                    else:
+                        c[k] = self.fccache[f][k]
             if not len(c):
                 del self.cache[f]
 
     def fill_liststore(self, ls):
-        if self.busy:
-            self.thread.join()
         ls.clear()
         for k, v in sorted(self.cache.items()):
             score = sum(1 for j in ("Regular", "Bold", "Italic", "Bold Italic") if j in v)
             ls.append([k, 700 if score == 4 else 400])
 
     def fill_cbstore(self, name, cbs):
-        if self.busy:
-            self.thread.join()
         cbs.clear()
         v = self.cache.get(name, None)
         if v is None:
@@ -150,6 +183,17 @@ class TTFontCache:
         if res is None and "Oblique" in style:
             res = f.get(style.replace("Oblique", "Italic"), None)
         return res
+
+    def iscore(self, name, style=None):
+        f = self.fccache.get(name, None)
+        if f is None:
+            return False
+        if style is None or len(style) == 0:
+            style = "Regular"
+        res = f.get(style, None)
+        if res is None and "Oblique" in style:
+            res = f.get(style.replace("Oblique", "Italic"), None)
+        return res != None
 
 fontcache = None
 def initFontCache(nofclist=False):
@@ -410,22 +454,28 @@ class TTFont:
             res = super(TTFont, cls).__new__(cls)
         return res
 
-    def __init__(self, name, style="", filename=None):
+    def __init__(self, name, style=None, filename=None):
         if hasattr(self, 'family'):     # already init from cache
             return
+        if style is None:
+            style = ""
         self.extrastyles = ""
         self.family = name
         self.style = style
         if filename is not None:
             self.filename = Path(os.path.abspath(filename))
         else:
-            fname = fontcache.get(name, style)
+            fname = initFontCache().get(name, style)
             self.filename = Path(os.path.abspath(fname)) if fname is not None else None
+        self.iscore = fontcache.iscore(name, style)
         self.feats = {}
         self.featvals = {}
         self.names = {}
         self.ttfont = None
         self.usepath = False
+        self.ascent = 0.
+        self.descent = 0.
+        self.upem = 1
         if self.filename is not None:
             if self.readfont():
                 self.family = self.names.get(1, self.family)
@@ -462,6 +512,8 @@ class TTFont:
             self.readSill(inf)
             self.readOTFeats(inf)
             self.readOTLangs(inf)
+            self.readhhea(inf)
+            self.readhead(inf)
         return True
 
     def readFeat(self, inf):
@@ -469,6 +521,7 @@ class TTFont:
         self.featvals = {}
         self.featnames = {}
         self.featvalnames = {}
+        self.featdefaults = {}
         if 'Feat' not in self.dict:
             return
         inf.seek(self.dict['Feat'][0])
@@ -490,14 +543,18 @@ class TTFont:
             valnamedict = {}
             self.featvals[fidstr] = valdict
             self.featvalnames[fidstr] = valnamedict
+            self.featdefaults[fidstr] = 0
             for j in range(nums):
                 val, lid = struct.unpack(">HH", data[offset + 4*j:offset + 4*(j+1)])
                 vname = self.names.get(lid, "")
                 valdict[val] = vname
                 valnamedict[vname] = val
+                if j == 0:
+                    self.featdefaults[fidstr] = val
 
     def readSill(self, inf):
         self.grLangs = {}
+        self.langfeats = {}
         if 'Sill' not in self.dict:
             return
         inf.seek(self.dict['Sill'][0])
@@ -505,9 +562,15 @@ class TTFont:
         numlangs = struct.unpack(">H", data[4:6])[0]
         data = inf.read(8 * numlangs)
         for i in range(numlangs):
-            tagnum = struct.unpack(">L", data[i*8:i*8+4])[0]
+            tagnum, numsettings, o = struct.unpack(">LHH", data[i*8:i*8+8])
             langtag = num2tag(tagnum)
             self.grLangs[langtag] = langtag
+            self.langfeats[langtag] = {}
+            inf.seek(self.dict['Sill'][0] + o)
+            setdat = inf.read(numsettings * 8)
+            for j in range(numsettings):
+                fnum, value = struct.unpack(">LH", setdat[j*8:j*8+6])
+                self.langfeats[langtag][num2tag(fnum)] = value
 
     def readOTFeats(self, inf):
         self.otFeats = {}
@@ -585,8 +648,18 @@ class TTFont:
             if (pid == 0 and lid == 0) or (pid == 3 and (eid < 2 or eid == 10) and lid == 1033):
                 self.names[nid] = stringData[offset:offset+length].decode("utf_16_be")
 
-    def style2str(self, style):
-        return pango_styles.get(style, str(style))
+    def readhhea(self, inf):
+        inf.seek(self.dict['hhea'][0])
+        data = inf.read(8)
+        self.ascent, self.descent = struct.unpack(b">Hh", data[4:])
+
+    def readhead(self, inf):
+        inf.seek(self.dict['head'][0])
+        data = inf.read(20)
+        self.upem = struct.unpack(b">H", data[18:])[0]
+
+    # def style2str(self, style):
+    #     return pango_styles.get(style, str(style))
 
     def __contains__(self, k):
         return k in self.dict
@@ -683,6 +756,9 @@ class FontRef:
     def fromTeXStyle(cls, style):
         if 'FontName' in style:
             name = style['FontName']
+            if name.startswith("[") and name.endswith("]") and os.path.exists(name[1:-1]):
+                f = TTFont(None, filename=name[1:-1])
+                name = f.family
             styles = []
             for a in ("Bold", "Italic"):
                 if a in name:
@@ -791,11 +867,17 @@ class FontRef:
     def getFake(self, name):
         return self.feats.get(name, None)
 
-    def _getTeXComponents(self):
+    def _getTeXComponents(self, inarchive=False, root=None):
         f = self.getTtfont()
         s = None
-        if f.filename is not None:
-            name = "[{}]".format(f.filename.as_posix())
+        if f.filename is not None and not f.iscore:
+            if inarchive:
+                fname = f"../shared/fonts/{f.filename.name}"
+            elif root is not None:
+                fname = os.path.relpath(f.filename, root)
+            else:
+                fname = f.filename.as_posix()
+            name = "[{}]".format(fname)
         elif self.style is not None and len(self.style):
             s = _fontstylemap.get(self.style, None)
             name = self.name + (" "+self.style if s is None else "")
@@ -818,12 +900,12 @@ class FontRef:
                 feats.append(("+"+k, v))
         return (name, sfeats, feats)
 
-    def updateTeXStyle(self, style, regular=None):
+    def updateTeXStyle(self, style, regular=None, inArchive=False, root=None):
         res = []
         if regular is not None and self.name == regular.name:
             for a in ("Bold", "Italic"):
-                x = a in regular.style
-                y = a in self.style
+                x = a in (regular.style or "")
+                y = a in (self.style or "")
                 if x and not y:
                     style[a] = "-"
                 elif y and not x:
@@ -831,7 +913,7 @@ class FontRef:
                 elif x:
                     del style[a]
         else:
-            (name, sfeats, feats) = self._getTeXComponents()
+            (name, sfeats, feats) = self._getTeXComponents(inarchive=inArchive, root=root)
             # print(f"updateTeXStyle: {name}, {sfeats}, {feats}")
             style['FontName'] = name
             if len(feats) or len(sfeats):
@@ -851,8 +933,8 @@ class FontRef:
             else:
                 style.pop("ztexFontGrSpace", None)
 
-    def asTeXFont(self):
-        (name, sfeats, feats) = self._getTeXComponents()
+    def asTeXFont(self, inarchive=False):
+        (name, sfeats, feats) = self._getTeXComponents(inarchive)
         res = [name, "".join(sfeats)]
         if self.lang is not None:
             res.append(":language={}".format(self.lang))

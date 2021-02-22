@@ -1,0 +1,112 @@
+% psbase14.map
+%
+% Base 14 fonts are not embedded (default).
+%
+%
+% Courier
+%
+pcrr8r    8r          Courier
+pcrb8r    8r          Courier-Bold
+pcrro8r   8r          Courier-Oblique
+pcrbo8r   8r          Courier-BoldOblique
+pcrr8y    texnansi    Courier
+pcrb8y    texnansi    Courier-Bold
+pcrro8y   texnansi    Courier-Oblique
+pcrbo8y   texnansi    Courier-BoldOblique
+%
+pcrr8rn   8r          Courier -e 0.85
+pcrr8yn   texnansi    Courier -e 0.85
+%
+% Helvetica
+%
+phvr8r	  8r          Helvetica
+phvb8r	  8r          Helvetica-Bold
+phvro8r   8r          Helvetica-Oblique
+phvbo8r   8r          Helvetica-BoldOblique
+phvr8y	  texnansi    Helvetica
+phvb8y	  texnansi    Helvetica-Bold
+phvro8y   texnansi    Helvetica-Oblique
+phvbo8y   texnansi    Helvetica-BoldOblique
+%
+% Helvetica Narrow
+%
+phvbon8r  8r          Helvetica-BoldOblique  -e 0.82
+phvbrn8r  8r          Helvetica-Bold         -e 0.82
+phvron8r  8r          Helvetica-Oblique      -e 0.82
+phvrrn8r  8r          Helvetica              -e 0.82
+phvbon8y  texnansi    Helvetica-BoldOblique  -e 0.82
+phvbrn8y  texnansi    Helvetica-Bold         -e 0.82
+phvron8y  texnansi    Helvetica-Oblique      -e 0.82
+phvrrn8y  texnansi    Helvetica              -e 0.82
+%
+phvbo8rn  8r          Helvetica-BoldOblique  -e 0.82
+phvb8rn   8r          Helvetica-Bold         -e 0.82
+phvro8rn  8r          Helvetica-Oblique      -e 0.82
+phvr8rn   8r          Helvetica              -e 0.82
+phvbo8yn  texnansi    Helvetica-BoldOblique  -e 0.82
+phvb8yn   texnansi    Helvetica-Bold         -e 0.82
+phvro8yn  texnansi    Helvetica-Oblique      -e 0.82
+phvr8yn   texnansi    Helvetica              -e 0.82
+% Symbol
+psyr      none        Symbol
+psyro     none        Symbol -s 0.167
+% Times
+ptmr8r    8r          Times-Roman
+ptmb8r    8r          Times-Bold
+ptmbi8r   8r          Times-BoldItalic
+ptmri8r   8r          Times-Italic
+ptmr8y    texnansi    Times-Roman
+ptmb8y    texnansi    Times-Bold
+ptmbi8y   texnansi    Times-BoldItalic
+ptmri8y   texnansi    Times-Italic
+%
+ptmbo8r   8r          Times-Bold -s 0.167
+ptmro8r   8r          Times-Roman -s 0.167
+ptmrre8r  8r          Times-Roman -e 1.2
+ptmrrn8r  8r          Times-Roman -e 0.8
+ptmbo8y   texnansi    Times-Bold -s 0.167
+ptmro8y   texnansi    Times-Roman -s 0.167
+ptmrre8y  texnansi    Times-Roman -e 1.2
+ptmrrn8y  texnansi    Times-Roman -e 0.8
+% ZapfDingbats
+pzdr      none        ZapfDingbats
+%
+% txfonts
+%
+rtxptmb   tx8r        Times-Bold
+rtxptmbo  tx8r        Times-Bold -s 0.167
+rtxptmbi  tx8r        Times-BoldItalic
+rtxptmr   tx8r        Times-Roman
+rtxptmro  tx8r        Times-Roman -s 0.167
+rtxptmri  tx8r        Times-Italic
+rtxphvr   tx8r        Helvetica
+rtxphvro  tx8r        Helvetica-Oblique
+rtxphvb   tx8r        Helvetica-Bold
+rtxphvbo  tx8r        Helvetica-BoldOblique
+%
+% raw base 14
+%
+rpcrb     none        Courier-Bold
+rpcrbo    none        Courier-BoldOblique
+rpcrr     none        Courier
+rpcrro    none        Courier-Oblique
+rphvb     none        Helvetica-Bold
+rphvbo    none        Helvetica-BoldOblique
+rphvbon   none        Helvetica-BoldOblique -e 0.82
+rphvbrn   none        Helvetica-Bold -e 0.82
+rphvr     none        Helvetica
+rphvro    none        Helvetica-Oblique
+rphvron   none        Helvetica-Oblique -e 0.82
+rphvrrn   none        Helvetica -e 0.82
+rpsyr     none        Symbol
+rpsyro    none        Symbol -s 0.167
+rptmb     none        Times-Bold
+rptmbi    none        Times-BoldItalic
+rptmbo    none        Times-Bold -s 0.167
+rptmr     none        Times-Roman
+rptmri    none        Times-Italic
+rptmro    none        Times-Roman -s 0.167
+rptmrre   none        Times-Roman -e 1.2
+rptmrrn   none        Times-Roman -e 0.82
+rpzdr     none        ZapfDingbats
+rpzcmi    none        uzcmi8a

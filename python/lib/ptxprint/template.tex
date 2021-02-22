@@ -34,7 +34,7 @@
 \MarginUnit={paper/margins}mm
 \def\TopMarginFactor{{{paper/topmarginfactor}}}
 \def\BottomMarginFactor{{{paper/bottommarginfactor}}}
-\def\SideMarginFactor{{{paper/sidemarginfactor}}}
+\def\SideMarginFactor{{1.0}}
 \BindingGutter{paper/ifaddgutter}
 \BindingGutter={paper/gutter}mm
 
@@ -55,7 +55,6 @@
 \def\LineSpacingFactor{L_}{{{paragraph/linespacingfactor}}}
 \def\VerticalSpaceFactor{L_}{{1.0}}
 {paragraph/useglyphmetrics}\XeTeXuseglyphmetrics=0
-{paragraph/varlinespacing}\baselineskip={paragraph/linespacing}pt {paragraph/varlinespacing} {paragraph/linemax} {paragraph/linemin}
 
 %% Cross-space contextualization
 \XeTeXinterwordspaceshaping={document/spacecntxtlztn}
@@ -75,7 +74,7 @@
 %\extrafont
 
 {document/ifletter}\newskip\intercharskip \intercharskip=0pt plus {document/letterstretch:.2f}em minus {document/lettershrink:.2f}em
-{document/ifletter}\def\letterspace{{\nobreak\hskip\intercharskip}}
+{document/ifletter}\def\letterspace{{\leavevmode\nobreak\hskip\intercharskip}}
 {document/ifletter}\DefineActiveChar{{^^^^fdd0}}{{\letterspace}}
 
 
@@ -132,7 +131,7 @@
 %\AutoCallerNumChars=26
 {notes/fnresetcallers}\PageResetCallers{{f}}
 {notes/fnomitcaller}\OmitCallerInNote{{f}}
-{notes/fnparagraphednotes}\ParagraphedNotes{{f}}
+{notes/fneachnewline}\ParagraphedNotes{{f}}
 %\NumericCallers{{f}}
 {notes/includefootnotes}\expandafter\def\csname f:properties\endcsname{{nonpublishable}}
 %%%{notes/includefootnotes}\expandafter\def\csname f{L_}:properties\endcsname{{nonpublishable}}
@@ -147,7 +146,7 @@
 
 {notes/xrresetcallers}\PageResetCallers{{x}}
 {notes/xromitcaller}\OmitCallerInNote{{x}}
-{notes/xrparagraphednotes}\ParagraphedNotes{{x}}
+{notes/xreachnewline}\ParagraphedNotes{{x}}
 %\NumericCallers{{x}}
 {notes/includexrefs}\expandafter\def\csname x:properties\endcsname{{nonpublishable}}
 %%%{notes/includexrefs}\expandafter\def\csname x{L_}:properties\endcsname{{nonpublishable}}
@@ -157,11 +156,12 @@
 \InterNoteSpace={notes/internotespace}pt
 %\AboveNoteSpace=\medskipamount % but is a dimension not a skip
 %\InterNoteSpace=3.5pt
+%\horiznotespacing
 
 %%%%% Running Header/Footer %%%%%
-\def\HeaderPosition{{{header/headerposition}}}
-\def\FooterPosition{{{header/footerposition}}}
-{header/ifrhrule}\RHruleposition={header/ruleposition}pt
+\def\HeaderPosition{{{paper/headerposition}}}
+\def\FooterPosition{{{paper/footerposition}}}
+{header/ifrhrule}\RHruleposition={paper/ruleposition}pt
 \def\RangeSeparator{{\kern.1em\char"2013\kern.1em}} % what to put between first - last of a reference range
 \def\ChapterVerseSeparator{{\kern.02em{header/chvseparator}\kern.02em}} % what to put between chapter:verse
 
@@ -192,7 +192,9 @@
 \def\RFoddcenter{{{footer/oddcenter}}}
 \def\RFevencenter{{{footer/oddcenter}}}
 \def\RFtitlecenter{{{footer/oddcenter}}}
-
+\def\RFnoVoddcenter{{{footer/oddcenter}}}
+\def\RFnoVoddcenter{{{footer/oddcenter}}}
+  
 {footer/ifftrtitlepagenum}\def\RFtitlecenter{{\pagenumber}}
 {footer/ifprintConfigName}\def\RFtitlecenter{{{config/name}}}
 
@@ -231,10 +233,12 @@
 
 %%%%% all normal settings, etc. before this line %%%%%
 
-\def\zImageCopyrights{{}}
+{document/imageCopyrights}
 %\snippets
 
-{project/ifcolophon}\expandafter\let\csname bookend-final\endcsname\zColophon
+{project/ifcolophon}\expandafter\def\csname bookend-final\endcsname{{
+{project/ifcolophon}{project/pgbreakcolophon}\pb
+{project/ifcolophon}\zcolophon}}
 % Looks in local Config folder for ptxprint-mods.tex, and drops back to shared/ptxprint .tex if not found 
 {project/ifusemodstex}\input "{/modspath}"% adjust/override setup parameters here
 

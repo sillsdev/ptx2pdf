@@ -112,12 +112,9 @@ class Usfm:
     def __init__(self, iterable, sheets):
         tag_escapes = r"[^0-9A-Za-z]"
         self.doc = None
-        try:
-            self.doc = list(usfm.parser(iterable, stylesheet=sheets,
-                                    canonicalise_footnotes=False,
-                                    tag_escapes=tag_escapes))
-        except:
-            traceback.print_exc()
+        self.doc = list(usfm.parser(iterable, stylesheet=sheets,
+                                canonicalise_footnotes=False,
+                                tag_escapes=tag_escapes))
         self.cvaddorned = False
         self.tocs = []
 
@@ -352,6 +349,8 @@ class Usfm:
             # if done:
                 # print("{} -> {}".format(e, "".join(res)))
             return sfm.Text("".join(res), e.pos, e.parent) if done else e
+        if self.doc is None or not len(self.doc):
+               return            
         self._proctext(fn, doc=doc)
 
     def calc_PToffsets(self):

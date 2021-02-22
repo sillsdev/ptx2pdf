@@ -1,0 +1,245 @@
+%
+% This is a copy of
+% (1) ptex-ipa.map
+% (2) uptex-ipa.map
+% (3) otf-ipa.map
+% (4) otf-up-ipa.map
+% (5) otf-cktx.map
+% by Norbert Preining and H. Kitagawa,
+% which are in TeX Live
+%
+% ptex-ipa.map
+rml	H	ipam.ttf
+rmlv	V	ipam.ttf
+gbm	H	ipag.ttf
+gbmv	V	ipag.ttf
+%
+% uptex-ipa.map
+urml	UniJIS-UTF16-H	ipam.ttf
+urmlv	UniJIS-UTF16-V	ipam.ttf
+ugbm	UniJIS-UTF16-H	ipag.ttf
+ugbmv	UniJIS-UTF16-V	ipag.ttf
+uprml-h	UniJIS-UTF16-H	ipam.ttf
+uprml-v	UniJIS-UTF16-V	ipam.ttf
+upgbm-h	UniJIS-UTF16-H	ipag.ttf
+upgbm-v	UniJIS-UTF16-V	ipag.ttf
+uprml-hq	UniJIS-UCS2-H	ipam.ttf
+upgbm-hq	UniJIS-UCS2-H	ipag.ttf
+%
+% otf-ipa.map
+
+% TEXT, 90JIS
+hminl-h	H	ipam.ttf
+hminl-v	V	ipam.ttf
+hminr-h	H	ipam.ttf
+hminr-v	V	ipam.ttf
+hminb-h	H	ipam.ttf
+hminb-v	V	ipam.ttf
+hgothr-h	H	ipag.ttf
+hgothr-v	V	ipag.ttf
+hgothb-h	H	ipag.ttf
+hgothb-v	V	ipag.ttf
+hgotheb-h	H	ipag.ttf
+hgotheb-v	V	ipag.ttf
+hmgothr-h	H	ipag.ttf
+hmgothr-v	V	ipag.ttf
+
+% TEXT, JIS04
+hminln-h	H	ipam.ttf
+hminln-v	V	ipam.ttf
+hminrn-h	H	ipam.ttf
+hminrn-v	V	ipam.ttf
+hminbn-h	H	ipam.ttf
+hminbn-v	V	ipam.ttf
+hgothrn-h	H	ipag.ttf
+hgothrn-v	V	ipag.ttf
+hgothbn-h	H	ipag.ttf
+hgothbn-v	V	ipag.ttf
+hgothebn-h	H	ipag.ttf
+hgothebn-v	V	ipag.ttf
+hmgothrn-h	H	ipag.ttf
+hmgothrn-v	V	ipag.ttf
+
+% CID
+otf-cjml-h	Identity-H	ipam.ttf/AJ1
+otf-cjml-v	Identity-V	ipam.ttf/AJ1
+otf-cjmr-h	Identity-H	ipam.ttf/AJ1
+otf-cjmr-v	Identity-V	ipam.ttf/AJ1
+otf-cjmb-h	Identity-H	ipam.ttf/AJ1
+otf-cjmb-v	Identity-V	ipam.ttf/AJ1
+otf-cjgr-h	Identity-H	ipag.ttf/AJ1
+otf-cjgr-v	Identity-V	ipag.ttf/AJ1
+otf-cjgb-h	Identity-H	ipag.ttf/AJ1
+otf-cjgb-v	Identity-V	ipag.ttf/AJ1
+otf-cjge-h	Identity-H	ipag.ttf/AJ1
+otf-cjge-v	Identity-V	ipag.ttf/AJ1
+otf-cjmgr-h	Identity-H	ipag.ttf/AJ1
+otf-cjmgr-v	Identity-V	ipag.ttf/AJ1
+
+% Unicode 90JIS
+otf-ujml-h	UniJIS-UTF16-H	ipam.ttf
+otf-ujml-v	UniJIS-UTF16-V	ipam.ttf
+otf-ujmr-h	UniJIS-UTF16-H	ipam.ttf
+otf-ujmr-v	UniJIS-UTF16-V	ipam.ttf
+otf-ujmb-h	UniJIS-UTF16-H	ipam.ttf
+otf-ujmb-v	UniJIS-UTF16-V	ipam.ttf
+otf-ujgr-h	UniJIS-UTF16-H	ipag.ttf
+otf-ujgr-v	UniJIS-UTF16-V	ipag.ttf
+otf-ujgb-h	UniJIS-UTF16-H	ipag.ttf
+otf-ujgb-v	UniJIS-UTF16-V	ipag.ttf
+otf-ujge-h	UniJIS-UTF16-H	ipag.ttf
+otf-ujge-v	UniJIS-UTF16-V	ipag.ttf
+otf-ujmgr-h	UniJIS-UTF16-H	ipag.ttf
+otf-ujmgr-v	UniJIS-UTF16-V	ipag.ttf
+
+% Unicode JIS04
+otf-ujmln-h	UniJIS2004-UTF16-H	ipam.ttf
+otf-ujmln-v	UniJIS2004-UTF16-V	ipam.ttf
+otf-ujmrn-h	UniJIS2004-UTF16-H	ipam.ttf
+otf-ujmrn-v	UniJIS2004-UTF16-V	ipam.ttf
+otf-ujmbn-h	UniJIS2004-UTF16-H	ipam.ttf
+otf-ujmbn-v	UniJIS2004-UTF16-V	ipam.ttf
+otf-ujgrn-h	UniJIS2004-UTF16-H	ipag.ttf
+otf-ujgrn-v	UniJIS2004-UTF16-V	ipag.ttf
+otf-ujgbn-h	UniJIS2004-UTF16-H	ipag.ttf
+otf-ujgbn-v	UniJIS2004-UTF16-V	ipag.ttf
+otf-ujgen-h	UniJIS2004-UTF16-H	ipag.ttf
+otf-ujgen-v	UniJIS2004-UTF16-V	ipag.ttf
+otf-ujmgrn-h	UniJIS2004-UTF16-H	ipag.ttf
+otf-ujmgrn-v	UniJIS2004-UTF16-V	ipag.ttf
+%
+% otf-up-ipa.map
+
+% TEXT, 90JIS
+uphminl-h	UniJIS-UTF16-H	ipam.ttf
+uphminl-v	UniJIS-UTF16-V	ipam.ttf
+uphminr-h	UniJIS-UTF16-H	ipam.ttf
+uphminr-v	UniJIS-UTF16-V	ipam.ttf
+uphminb-h	UniJIS-UTF16-H	ipam.ttf
+uphminb-v	UniJIS-UTF16-V	ipam.ttf
+uphgothr-h	UniJIS-UTF16-H	ipag.ttf
+uphgothr-v	UniJIS-UTF16-V	ipag.ttf
+uphgothb-h	UniJIS-UTF16-H	ipag.ttf
+uphgothb-v	UniJIS-UTF16-V	ipag.ttf
+uphgotheb-h	UniJIS-UTF16-H	ipag.ttf
+uphgotheb-v	UniJIS-UTF16-V	ipag.ttf
+uphmgothr-h	UniJIS-UTF16-H	ipag.ttf
+uphmgothr-v	UniJIS-UTF16-V	ipag.ttf
+% JISX 0213:2004
+uphminln-h      UniJIS2004-UTF16-H ipam.ttf
+uphminln-v      UniJIS2004-UTF16-V ipam.ttf
+uphminrn-h      UniJIS2004-UTF16-H ipam.ttf
+uphminrn-v      UniJIS2004-UTF16-V ipam.ttf
+uphminbn-h      UniJIS2004-UTF16-H ipam.ttf
+uphminbn-v      UniJIS2004-UTF16-V ipam.ttf
+uphgothrn-h     UniJIS2004-UTF16-H ipag.ttf
+uphgothrn-v     UniJIS2004-UTF16-V ipag.ttf
+uphgothbn-h     UniJIS2004-UTF16-H ipag.ttf
+uphgothbn-v     UniJIS2004-UTF16-V ipag.ttf
+uphgothebn-h    UniJIS2004-UTF16-H ipag.ttf
+uphgothebn-v    UniJIS2004-UTF16-V ipag.ttf
+uphmgothrn-h    UniJIS2004-UTF16-H ipag.ttf
+uphmgothrn-v    UniJIS2004-UTF16-V ipag.ttf
+%
+% otf cktx
+%
+otf-utmr-h  UniCNS-UTF16-H HaranoAjiMinchoTW-Regular.otf
+otf-utmr-v  UniCNS-UTF16-V HaranoAjiMinchoTW-Regular.otf
+otf-utgr-h  UniCNS-UTF16-H HaranoAjiGothicTW-Regular.otf
+otf-utgr-v  UniCNS-UTF16-V HaranoAjiGothicTW-Regular.otf
+otf-utmb-h  UniCNS-UTF16-H HaranoAjiMinchoTW-Bold.otf
+otf-utmb-v  UniCNS-UTF16-V HaranoAjiMinchoTW-Bold.otf
+otf-utml-h  UniCNS-UTF16-H HaranoAjiMinchoTW-Light.otf
+otf-utml-v  UniCNS-UTF16-V HaranoAjiMinchoTW-Light.otf
+otf-utgb-h  UniCNS-UTF16-H HaranoAjiGothicTW-Medium.otf
+otf-utgb-v  UniCNS-UTF16-V HaranoAjiGothicTW-Medium.otf
+otf-utge-h  UniCNS-UTF16-H HaranoAjiGothicTW-Bold.otf
+otf-utge-v  UniCNS-UTF16-V HaranoAjiGothicTW-Bold.otf
+otf-utmgr-h UniCNS-UTF16-H HaranoAjiGothicTW-Heavy.otf
+otf-utmgr-v UniCNS-UTF16-V HaranoAjiGothicTW-Heavy.otf
+otf-ucmr-h  UniGB-UTF16-H  HaranoAjiMinchoCN-Regular.otf
+otf-ucmr-v  UniGB-UTF16-V  HaranoAjiMinchoCN-Regular.otf
+otf-ucgr-h  UniGB-UTF16-H  HaranoAjiGothicCN-Regular.otf
+otf-ucgr-v  UniGB-UTF16-V  HaranoAjiGothicCN-Regular.otf
+otf-ucmb-h  UniGB-UTF16-H  HaranoAjiMinchoCN-Bold.otf
+otf-ucmb-v  UniGB-UTF16-V  HaranoAjiMinchoCN-Bold.otf
+otf-ucml-h  UniGB-UTF16-H  HaranoAjiMinchoCN-Light.otf
+otf-ucml-v  UniGB-UTF16-V  HaranoAjiMinchoCN-Light.otf
+otf-ucgb-h  UniGB-UTF16-H  HaranoAjiGothicCN-Medium.otf
+otf-ucgb-v  UniGB-UTF16-V  HaranoAjiGothicCN-Medium.otf
+otf-ucge-h  UniGB-UTF16-H  HaranoAjiGothicCN-Bold.otf
+otf-ucge-v  UniGB-UTF16-V  HaranoAjiGothicCN-Bold.otf
+otf-ucmgr-h UniGB-UTF16-H  HaranoAjiGothicCN-Heavy.otf
+otf-ucmgr-v UniGB-UTF16-V  HaranoAjiGothicCN-Heavy.otf
+otf-ukmr-h  UniKS-UTF16-H  HaranoAjiMinchoK1-Regular.otf
+otf-ukmr-v  UniKS-UTF16-V  HaranoAjiMinchoK1-Regular.otf
+otf-ukgr-h  UniKS-UTF16-H  HaranoAjiGothicK1-Regular.otf
+otf-ukgr-v  UniKS-UTF16-V  HaranoAjiGothicK1-Regular.otf
+otf-ukmb-h  UniKS-UTF16-H  HaranoAjiMinchoK1-Bold.otf
+otf-ukmb-v  UniKS-UTF16-V  HaranoAjiMinchoK1-Bold.otf
+otf-ukml-h  UniKS-UTF16-H  HaranoAjiMinchoK1-Light.otf
+otf-ukml-v  UniKS-UTF16-V  HaranoAjiMinchoK1-Light.otf
+otf-ukgb-h  UniKS-UTF16-H  HaranoAjiGothicK1-Medium.otf
+otf-ukgb-v  UniKS-UTF16-V  HaranoAjiGothicK1-Medium.otf
+otf-ukge-h  UniKS-UTF16-H  HaranoAjiGothicK1-Bold.otf
+otf-ukge-v  UniKS-UTF16-V  HaranoAjiGothicK1-Bold.otf
+otf-ukmgr-h UniKS-UTF16-H  HaranoAjiGothicK1-Heavy.otf
+otf-ukmgr-v UniKS-UTF16-V  HaranoAjiGothicK1-Heavy.otf
+%
+% otf cktx (cid)
+%
+otf-ctmr-h  Identity-H     HaranoAjiMinchoTW-Regular.otf
+otf-ctmr-v  Identity-V     HaranoAjiMinchoTW-Regular.otf
+otf-ctgr-h  Identity-H     HaranoAjiGothicTW-Regular.otf
+otf-ctgr-v  Identity-V     HaranoAjiGothicTW-Regular.otf
+otf-ccmr-h  Identity-H     HaranoAjiMinchoCN-Regular.otf
+otf-ccmr-v  Identity-V     HaranoAjiMinchoCN-Regular.otf
+otf-ccgr-h  Identity-H     HaranoAjiGothicCN-Regular.otf
+otf-ccgr-v  Identity-V     HaranoAjiGothicCN-Regular.otf
+otf-ckmr-h  Identity-H     HaranoAjiMinchoK1-Regular.otf
+otf-ckmr-v  Identity-V     HaranoAjiMinchoK1-Regular.otf
+otf-ckgr-h  Identity-H     HaranoAjiGothicK1-Regular.otf
+otf-ckgr-v  Identity-V     HaranoAjiGothicK1-Regular.otf
+%
+% uptex cktx
+%
+upmsl-h     UniCNS-UTF16-H HaranoAjiMinchoTW-Regular.otf
+upmsl-v     UniCNS-UTF16-V HaranoAjiMinchoTW-Regular.otf
+upmhm-h     UniCNS-UTF16-H HaranoAjiGothicTW-Regular.otf
+upmhm-v     UniCNS-UTF16-V HaranoAjiGothicTW-Regular.otf
+upstsl-h    UniGB-UTF16-H  HaranoAjiMinchoCN-Regular.otf
+upstsl-v    UniGB-UTF16-V  HaranoAjiMinchoCN-Regular.otf
+upstht-h    UniGB-UTF16-H  HaranoAjiGothicCN-Regular.otf
+upstht-v    UniGB-UTF16-V  HaranoAjiGothicCN-Regular.otf
+uphysmjm-h  UniKS-UTF16-H  HaranoAjiMinchoK1-Regular.otf
+uphysmjm-v  UniKS-UTF16-V  HaranoAjiMinchoK1-Regular.otf
+uphygt-h    UniKS-UTF16-H  HaranoAjiGothicK1-Regular.otf
+uphygt-v    UniKS-UTF16-V  HaranoAjiGothicK1-Regular.otf
+%
+% utf
+%
+unijmin-h     UniJIS-UTF16-H    ipam.ttf
+unijmin-v     UniJIS-UTF16-V    ipam.ttf
+unijgoth-h    UniJIS-UTF16-H    ipag.ttf
+unijgoth-v    UniJIS-UTF16-V    ipag.ttf
+
+cidmin-h      Identity-H        ipam.ttf/AJ1
+cidmin-v      Identity-V        ipam.ttf/AJ1
+cidgoth-h     Identity-H        ipag.ttf/AJ1
+cidgoth-v     Identity-V        ipag.ttf/AJ1
+
+hmr           H                 ipam.ttf
+hmrv          V                 ipam.ttf
+hkb           H                 ipag.ttf
+hkbv          V                 ipag.ttf
+%
+% misc: ttfgid
+ugidmin-h   Identity-H ipaexm.ttf/I 
+ugidmin-v   Identity-V ipaexm.ttf/I
+ugidgoth-h  Identity-H ipaexg.ttf/I
+ugidgoth-v  Identity-V ipaexg.ttf/I
+
+gidmin-h   Identity-H ipam.ttf/I 
+gidmin-v   Identity-V ipam.ttf/I
+gidgoth-h  Identity-H ipag.ttf/I
+gidgoth-v  Identity-V ipag.ttf/I
