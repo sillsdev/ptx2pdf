@@ -63,7 +63,7 @@
             },
             "fr": {
                 "1": "Illustration sur la page {0}",
-                "mult": "Illustrations les pages {0}"
+                "mult": "Illustrations sur les pages {0}"
             }
         },
         "imageExceptions": {
@@ -82,7 +82,7 @@
         },
         "exceptIllustrations": {
             "en": "All other illustrations {0}",
-            "fr": "Toute autre illustrations {0}"
+            "fr": "Toute autre illustration {0}"
         }
     },
     "copyrights": {
@@ -102,12 +102,10 @@
         },
         "cn": {
             "copyright": {
-                "en": "©_1996_David_C._Cook.",
-                "fr": "©_1996_David_C._Cook."
+                "en": "©_1996_David_C._Cook."
             },
             "sensitive": {
-                "en": "©_DCC,_1996.",
-                "fr": "©_DCC,_1996."
+                "en": "©_DCC,_1996."
             },
             "media": {
                 "default": "paw",
@@ -118,18 +116,15 @@
                 }
             },
             "credit": {
-                "en": "©_DCC",
-                "fr": "©_DCC"
+                "en": "©_DCC"
             }
         },
         "co": {
             "copyright": {
-                "en": "©_1996_David_C._Cook.",
-                "fr": "©_1996_David_C._Cook."
+                "en": "©_1996_David_C._Cook."
             },
             "sensitive": {
-                "en": "©_DCC,_1996.",
-                "fr": "©_DCC,_1996."
+                "en": "©_DCC,_1996."
             },
             "media": {
                 "default": "paw",
@@ -140,12 +135,10 @@
                 }
             },
             "creditsensitive": {
-                "en": "© DCC",
-                "fr": "©_DCC"
+                "en": "© DCC"
             },
             "credit": {
-                "en": "© David C. Cook",
-                "fr": "© David C. Cook"
+                "en": "© David C. Cook"
             }
         },
         "hk": {
@@ -154,8 +147,7 @@
                 "fr": "de_Horace_Knowles ©_The_British \\& Foreign Bible Society, 1954, 1967, 1972, 1995."
             },
             "sensitive": {
-                "en": "©_BFBS,_1995.",
-                "fr": "©_BFBS,_1995."
+                "en": "©_BFBS,_1995."
             },
             "media": {
                 "default": "p",
@@ -188,8 +180,7 @@
                 "fr": "de_Louise_Bass ©_The_British \\& Foreign Bible Society, 1994."
             },
             "sensitive": {
-                "en": "©_BFBS,_1994.",
-                "fr": "©_BFBS,_1994."
+                "en": "©_BFBS,_1994."
             },
             "media": {
                 "default": "p",
