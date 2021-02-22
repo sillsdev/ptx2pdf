@@ -1,6 +1,26 @@
 PTXprint 1.5.14 Release Notes 
 20 February 2021
 
+Bug Fixes and Improvements in 1.5.14.1
+
+  * Fix fatal (Faux) error when trying to switch UI languages
+  
+  * Fix #405 missing Param
+  
+  * Fix linux install application fonts path
+  
+  * Add Use Glyph Metrics legacy control
+  
+  * Fix missing remembered paratext directory
+  
+  * #394 xt regex and usfm exception reporting
+  
+  * Fix piclists for add and remove
+  
+  * #393 Always output any selected borders in ZIP Archive even if borders are turned off
+  
+  * Fix #406 regexes for excluding intro materials
+  
 Bug Fixes and Improvements in 1.5.13
 
   * Allow \zimagecopyrights to be localized by adding language code to end of marker
