@@ -65,7 +65,6 @@ class Diglot(Snippet):
 \addToRightHooks{{\RTL{diglot/ifrtl}}}
 %{diglot/iflinebreakon}\XeTeXlinebreaklocaleR "{diglot/linebreaklocale}"
 \diglotSwap{document/diglotswapside}
-\diglotLtrue
 \catcode `@=12
 
 """

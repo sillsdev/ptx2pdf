@@ -683,6 +683,7 @@
   \t@mpc@mmand
 } 
 
+
 \outer\def\lefttext{%
   \pr@sideswitch{left}{L}%
   \global\allNeedEmptyingfalse
@@ -730,6 +731,28 @@
   \the\diglotLho@ks
 }
 
+\def\endcols{%EXPERIMENTAL
+  \global\allNeedEmptyingtrue% Text before the swap needs emptying
+  \pr@sideswitch{noleft}{L}%
+}
+
+\def\diglotcolumn#1{%EXPERIMENTAL
+  \uppercase{\edef\reqcol{#1}}%
+  \ifx\reqcol\empty\errmessage{diglotcolumn may not be called with an empty argument}\fi
+  \ifcsname #1isDiglotColumn\endcsname % 
+    \swap@diglot{#1}%sets diglot state, etc
+    \global\vsize=\maxdimen
+    \global\trialheight=\maxdimen
+    \global\holdinginserts=1
+    \x@\the\csname diglot#1ho@ks\endcsname
+  \else
+    \errmessage{diglotcolumn must be followed by a sensible argument. '#1' isn't a diglot column}%
+  \fi
+}
+
+\let\LisDiglotColumn\empty
+\let\RisDiglotColumn\empty
+
 \def\pagenumberL{\bgroup\setc@rdstat{L}\s@tfont{h}\pagenumber\egroup}%
 \def\pagenumberR{\bgroup\setc@rdstat{R}\s@tfont{h}\pagenumber\egroup}
 
@@ -763,7 +786,27 @@
  \fi
 }
 
-\def\resetc@rdstat{\xdef\c@rrdstat{\f@lwgdstat}}
+\def\resetc@rdstat{\xdef\c@rrdstat{\f@lwgdstat}}% Restore to correct value for new text. Mainly for use in Collect
+
+\def\diglotLtrue{%
+  \oldboole@n{L}{diglotLtrue}%
+}
+\def\diglotRtrue{%
+  \oldboole@n{R}{diglotRtrue}%
+}
+\def\diglotLfalse{%
+  \oldboole@n{L}{diglotLfalse}%
+}
+\def\diglotRfalse{%
+  \oldboole@n{R}{diglotRfalse}%
+}
+
+\def\oldboole@n#1#2{%
+  \message{#1 is deprecated. The normal column switching method is to use (no)lefttext / (no)righttext or the new  diglotcolumn and endcols macros}%
+  \diglotcolumn{#1}%
+}
+  
+
 
 \def\setf@lwgdstat#1{\xdef\f@lwgdstat{#1}%
 }
@@ -1595,8 +1638,9 @@
 \edef\diglot@list{LR}%
 \edef\digl@tc@ntentlist{}%
 
-\def\new@diglot@col#1{%
+\def\newDiglotCol#1{%
  \xdef\diglot@list{\diglot@list#1}%
+ \x@\csname #1isDiglotColumn\endcsname\empty
  \errmessage{This code isn't written yet}%
  %CREATE: partial#1 excess#1 partial#1penalty m@rknum#1  column#1width picb@x#1
  %FIXMEs needing to be solved before implementing this: 
