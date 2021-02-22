@@ -1145,7 +1145,7 @@ class TexModel:
 
             # \figonpage{304}{56}{cn01617.jpg}{tl}{© David C. Cook Publishing Co, 1978.}{x170.90504pt}
             rematch = r"\\figonpage\{(\d+)\}\{\d+\}\{" + self.printer.getPicRe() + "\.[^}]+\}\{.*?\}\{(.*?)?\}\{.+?\}"
-            print(rematch)
+            # print(rematch)
             m = re.findall(rematch, dat)
             msngPgs = []
             customStmt = []
