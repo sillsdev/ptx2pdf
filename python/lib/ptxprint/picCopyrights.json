@@ -75,7 +75,7 @@
                 "1": "Ilustrație la pagina {0}",
                 "mult": "Ilustrații la paginiele {0}"
             },
-	    "es": {
+            "es": {
                 "1": "La ilustración en la página {0}",
                 "mult": "Las ilustraciones en las páginas {0}"
             },
@@ -295,7 +295,7 @@
                 "limit": "paw",
                 "tip": {
                     "en": "Any media is fine without restriction",
-					"es": "Cualquier medio está bien sin restricción",
+                    "es": "Cualquier medio está bien sin restricción",
                     "fr": "Tout média est permis sans restriction"
                 }
             }
@@ -311,7 +311,7 @@
                 "limit": "paw",
                 "tip": {
                     "en": "Any media is fine without restriction",
-					"es": "Cualquier medio está bien sin restricción",
+                    "es": "Cualquier medio está bien sin restricción",
                     "fr": "Tout média est permis sans restriction"
                 }
             }
@@ -327,7 +327,7 @@
                 "limit": "paw",
                 "tip": {
                     "en": "Any media is fine without restriction",
-					"es": "Cualquier medio está bien sin restricción",
+                    "es": "Cualquier medio está bien sin restricción",
                     "fr": "Tout média est permis sans restriction"
                 }
             }
@@ -344,7 +344,9 @@
                 "tip": {
                     "en": "Only Print media",
                     "es": "Sólo medios impresos",
-                    "fr": "Seulement les médias imprimés"
+                    "fr": "Seulement les médias imprimés",
+                    "ro": "Numai pentru imprimare",
+                    "hu": "Csak nyomtatás"
                 }
             }
         },
@@ -359,8 +361,10 @@
                 "limit": "p",
                 "tip": {
                     "en": "Only Print media",
-					"es": "Sólo medios impresos",
-                    "fr": "Seulement les médias imprimés"
+                    "es": "Sólo medios impresos",
+                    "fr": "Seulement les médias imprimés",
+                    "ro": "Numai pentru imprimare",
+                    "hu": "Csak nyomtatás"
                 }
             }
         },
@@ -370,23 +374,33 @@
                 "es": "por_Farid_Faadil. Copyright ©_by_Biblica, Inc. Usado_con_permiso. Todos_los_derechos_reservados_en_el_mundo.",
                 "fr": "de_Farid_Faadil. Copyright ©_par_Biblica, Inc. Utilisé_par_permission. Tous_droits_réservés dans le_monde_entier."
             },
-            "media": {
+             "media": {
                 "default": "p",
                 "limit": "p",
                 "tip": {
                     "en": "Only Print media",
-					"es": "Sólo medios impresos",
-                    "fr": "Seulement les médias imprimés"
+                    "es": "Sólo medios impresos",
+                    "fr": "Seulement les médias imprimés",
+                    "ro": "Numai pentru imprimare",
+                    "hu": "Csak nyomtatás"
                 }
             }
         }
     },
-    "postgreg": {
-        "imageCopyright": {
-                "hu": [
-                        ["A 1\.","Az 1."],
-                        ["A 5","Az 5"]
-                 ]
+    "postreg": {
+        "hu": {
+            "replacements": {
+                "defArt":{
+                        ["\b([Aa]) 1\.","\1z 1."],
+                        ["\b([Aa]) ([5aeiouóöőúüűíéá])","\1z \2"]
+                }
+             },
+            "templates":{
+                "templates": { 
+                    "imageCopyrights" : ["defArt"],
+                    "imageExceptions" : ["defArt"] 
+                } 
+            }
         }
     }
 }
