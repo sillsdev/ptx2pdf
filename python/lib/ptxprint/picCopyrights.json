@@ -61,6 +61,10 @@
                 "1": "Illustration on page {0}",
                 "mult": "Illustrations on pages {0}"
             },
+			"es": {
+                "1": "La ilustración en la página {0}",
+                "mult": "Las ilustraciones en las páginas {0}"
+            },
             "fr": {
                 "1": "Illustration sur la page {0}",
                 "mult": "Illustrations sur les pages {0}"
@@ -71,6 +75,10 @@
                 "1": "(except on page {0})",
                 "mult": "(except on pages {0})"
             },
+            "es": {
+                "1": "(excepto en la página {0})",
+                "mult": "(excepto en las páginas {0})"
+            },
             "fr": {
                 "1": "(sauf sur page {0})",
                 "mult": "(sauf sur les pages {0})"
@@ -78,17 +86,20 @@
         },
         "allIllustrations": {
             "en": "All illustrations {0}",
+            "es": "Todas las ilustraciones {0}",
             "fr": "Toutes les illustrations {0}"
         },
         "exceptIllustrations": {
             "en": "All other illustrations {0}",
-            "fr": "Toute autre illustration {0}"
+            "fr": "Toute autre illustration {0}",
+            "es": "Todas las demás ilustraciones {0}"
         }
     },
     "copyrights": {
         "ab": {
             "copyright": {
                 "en": "©_ABS_WARNING: Unpermitted_Use!",
+                "es": "©_ABS_ADVERTENCIA: ¡Uso no permitido!",
                 "fr": "©_ABS_AVERTISSEMENT: Utilisation_non_autorisée!"
             },
             "media": {
@@ -96,6 +107,7 @@
                 "limit": "x",
                 "tip": {
                     "en": "Sorry, but permission to use these images in ANY media has been withdrawn!",
+                    "es": "Lo sentimos, pero se ha retirado el permiso para utilizar estas imágenes en CUALQUIER medio de comunicación.",
                     "fr": "Désolé, mais l'autorisation d'utiliser ces images dans TOUS les médias a été retirée !"
                 }
             }
@@ -112,6 +124,7 @@
                 "limit": "paw",
                 "tip": {
                     "en": "Any media, but needs written permission",
+                    "es": "Cualquier medio de comunicación, pero necesita permiso por escrito",
                     "fr": "Tout média, mais nécessite une autorisation écrite"
                 }
             },
@@ -131,6 +144,7 @@
                 "limit": "paw",
                 "tip": {
                     "en": "Any media, but needs written permission",
+                    "es": "Cualquier medio de comunicación, pero necesita permiso por escrito",
                     "fr": "Tout média, mais nécessite une autorisation écrite"
                 }
             },
@@ -144,6 +158,7 @@
         "hk": {
             "copyright": {
                 "en": "by_Horace_Knowles ©_The_British \\& Foreign Bible Society, 1954, 1967, 1972, 1995.",
+                "es": "por_Horace_Knowles ©_The_British \\& Foreign Bible Society, 1954, 1967, 1972, 1995.",
                 "fr": "de_Horace_Knowles ©_The_British \\& Foreign Bible Society, 1954, 1967, 1972, 1995."
             },
             "sensitive": {
@@ -154,6 +169,7 @@
                 "limit": "pa",
                 "tip": {
                     "en": "Print is fine, but App use requires a formal agreement and reporting. Web use is not permitted.",
+                    "es": "La impresión está permitida, pero el uso de la App requiere un acuerdo formal y un informe. El uso en la web no está permitido.",
                     "fr": "L’impression est autorisée, mais l’utilisation dans une application nécessite un accord formel et un rapport. L’utilisation sur le Web n’est pas autorisée."
                 }
             }
@@ -161,6 +177,8 @@
         "lb": {
             "copyright": {
                 "en": "by_Louise_Bass ©_The_British \\& Foreign Bible Society, 1994."
+            },
+            "es": "por_Louise_Bass ©_The_British \\& Foreign Bible Society, 1994."
             },
             "sensitive": {
                 "en": "©_BFBS,_1994."
@@ -170,6 +188,7 @@
                 "limit": "pa",
                 "tip": {
                     "en": "Print is fine, but App use requires a formal agreement and reporting. Web use is not permitted.",
+                    "es": "La impresión está permitida, pero el uso de la App requiere un acuerdo formal y un informe. El uso en la web no está permitido.",
                     "fr": "L’impression est autorisée, mais l’utilisation dans une application nécessite un accord formel et un rapport. L’utilisation sur le Web n’est pas autorisée."
                 }
             }
@@ -177,6 +196,7 @@
         "bk": {
             "copyright": {
                 "en": "by_Horace_Knowles revised by_Louise_Bass ©_The_British \\& Foreign Bible Society, 1994.",
+                "es": "por_Horace_Knowles revised by_Louise_Bass ©_The_British \\& Foreign Bible Society, 1994.",
                 "fr": "de_Louise_Bass ©_The_British \\& Foreign Bible Society, 1994."
             },
             "sensitive": {
@@ -187,6 +207,7 @@
                 "limit": "pa",
                 "tip": {
                     "en": "Print is fine, but App use requires a formal agreement and reporting. Web use is not permitted.",
+                    "es": "La impresión está permitida, pero el uso de la App requiere un acuerdo formal y un informe. El uso en la web no está permitido.",
                     "fr": "L’impression est autorisée, mais l’utilisation dans une application nécessite un accord formel et un rapport. L’utilisation sur le Web n’est pas autorisée."
                 }
             }
@@ -194,6 +215,7 @@
         "ba": {
             "copyright": {
                 "en": "used by_permission of_Louise_Bass.",
+                "es": "utilizado con_permiso de_Louise_Bass.",
                 "fr": "utilisé avec la_permission de_Louise_Bass."
             },
             "media": {
@@ -201,6 +223,7 @@
                 "limit": "paw",
                 "tip": {
                     "en": "Any media is fine without restriction",
+                    "es": "Cualquier medio está bien sin restricción",
                     "fr": "Tout média est permis sans restriction"
                 }
             }
@@ -208,6 +231,7 @@
         "dy": {
             "copyright": {
                 "en": "by_Carolyn_Dyk, ©_2001_Wycliffe Bible Translators Inc. and licensed under the_Creative_Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.",
+                "es": "por_Carolyn_Dyk, ©_2001_Wycliffe Bible Translators Inc. y con licencia bajo_Creative_Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.",
                 "fr": "de_Carolyn_Dyk, ©_2001_Wycliffe Bible Translators Inc. et autorisé sous la_licence Creative_Commons Attribution-NonCommercial-NoDerivatives 4.0 International."
             },
             "media": {
@@ -215,6 +239,7 @@
                 "limit": "paw",
                 "tip": {
                     "en": "Any media is fine without restriction",
+                    "es": "Cualquier medio está bien sin restricción",
                     "fr": "Tout média est permis sans restriction"
                 }
             }
@@ -222,6 +247,7 @@
         "gt": {
             "copyright": {
                 "en": "by_Gordon_Thompson ©_2012_Wycliffe Bible Translators Inc. and licensed under_the Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia License.",
+                "es": "por_Gordon_Thompson ©_2012_Wycliffe Bible Translators Inc. y con licencia bajo_Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia License.",
                 "fr": "de_Gordon_Thompson ©_2012_Wycliffe Bible Translators Inc. et autorisé sous la_licence Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia."
             },
             "media": {
@@ -229,6 +255,7 @@
                 "limit": "paw",
                 "tip": {
                     "en": "Any media is fine without restriction",
+                    "es": "Cualquier medio está bien sin restricción",
                     "fr": "Tout média est permis sans restriction"
                 }
             }
@@ -236,6 +263,7 @@
         "dh": {
             "copyright": {
                 "en": "by_David_Healey ©_2012_Wycliffe Bible Translators Inc. and licensed under the_Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia License.",
+                "es": "por_David_Healey ©_2012_Wycliffe Bible Translators Inc. y con licencia bajo_Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia License.",
                 "fr": "de_David_Healey ©_2012_Wycliffe Bible Translators Inc. et autorisé sous la_licence Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia."
             },
             "media": {
@@ -243,6 +271,7 @@
                 "limit": "paw",
                 "tip": {
                     "en": "Any media is fine without restriction",
+					"es": "Cualquier medio está bien sin restricción",
                     "fr": "Tout média est permis sans restriction"
                 }
             }
@@ -250,6 +279,7 @@
         "mh": {
             "copyright": {
                 "en": "by_Michael_Harrar ©_2012_Wycliffe Bible Translators Inc. and licensed under the_Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia License.",
+                "es": "por_Michael_Harrar ©_2012_Wycliffe Bible Translators Inc. y con licencia bajo_Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia License.",
                 "fr": "de_Michael_Harrar ©_2012_Wycliffe Bible Translators Inc. et autorisé sous la_licence Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia."
             },
             "media": {
@@ -257,6 +287,7 @@
                 "limit": "paw",
                 "tip": {
                     "en": "Any media is fine without restriction",
+					"es": "Cualquier medio está bien sin restricción",
                     "fr": "Tout média est permis sans restriction"
                 }
             }
@@ -264,6 +295,7 @@
         "mn": {
             "copyright": {
                 "en": "used by_permission_of_Muze_Tshilombo.",
+                "es": "utilizado con_permiso de_Muze_Tshilombo.",
                 "fr": "utilisé avec la_permission de_Muze_Tshilombo."
             },
             "media": {
@@ -271,6 +303,7 @@
                 "limit": "paw",
                 "tip": {
                     "en": "Any media is fine without restriction",
+					"es": "Cualquier medio está bien sin restricción",
                     "fr": "Tout média est permis sans restriction"
                 }
             }
@@ -278,6 +311,7 @@
         "wa": {
             "copyright": {
                 "en": "by_Graham_Wade, ©_United Bible Societies, 1989.",
+                "es": "por_Graham_Wade, ©_United Bible Societies, 1989.",
                 "fr": "de_Graham_Wade, ©_United Bible Societies, 1989."
             },
             "media": {
@@ -285,6 +319,7 @@
                 "limit": "p",
                 "tip": {
                     "en": "Only Print media",
+                    "es": "Sólo medios impresos",
                     "fr": "Seulement les médias imprimés"
                 }
             }
@@ -292,6 +327,7 @@
         "dn": {
             "copyright": {
                 "en": "by_Darwin_Dunham, ©_United Bible Societies, 1989.",
+                "es": "por_Darwin_Dunham, ©_United Bible Societies, 1989.",
                 "fr": "de_Darwin_Dunham, ©_United Bible Societies, 1989."
             },
             "media": {
@@ -299,6 +335,7 @@
                 "limit": "p",
                 "tip": {
                     "en": "Only Print media",
+					"es": "Sólo medios impresos",
                     "fr": "Seulement les médias imprimés"
                 }
             }
@@ -306,6 +343,7 @@
         "ib": {
             "copyright": {
                 "en": "by_Farid_Faadil. Copyright ©_by_Biblica, Inc. Used_by_permission. All_rights_reserved_worldwide.",
+                "es": "por_Farid_Faadil. Copyright ©_by_Biblica, Inc. Usado_con_permiso. Todos_los_derechos_reservados_en_el_mundo.",
                 "fr": "de_Farid_Faadil. Copyright ©_par_Biblica, Inc. Utilisé_par_permission. Tous_droits_réservés dans le_monde_entier."
             },
             "media": {
@@ -313,6 +351,7 @@
                 "limit": "p",
                 "tip": {
                     "en": "Only Print media",
+					"es": "Sólo medios impresos",
                     "fr": "Seulement les médias imprimés"
                 }
             }
