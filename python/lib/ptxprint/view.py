@@ -5,7 +5,7 @@ from ptxprint.ptsettings import ParatextSettings, allbooks, books, bookcodes, ch
 from ptxprint.font import TTFont, cachepath, cacheremovepath, FontRef
 from ptxprint.utils import _, refKey, universalopen, print_traceback, local2globalhdr, global2localhdr, asfloat
 from ptxprint.usfmutils import Sheets, UsfmCollection
-from ptxprint.piclist import PicInfo
+from ptxprint.piclist import PicInfo, PicChecks
 from ptxprint.styleditor import StyleEditor
 import pathlib, os, sys
 from configparser import NoSectionError, NoOptionError, _UNSET
@@ -128,6 +128,7 @@ class ViewModel:
         self.tempFiles = []
         self.usfms = None
         self.picinfos = None
+        self.picChecksView = PicChecks(self)
         self.loadingConfig = False
         self.styleEditor = StyleEditor(self)
         self.triggervcs = False

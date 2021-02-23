@@ -6,8 +6,7 @@ from threading import Thread
 
 fontconfig_template = """<?xml version="1.0"?>
 <fontconfig>
-    <dir>{sysfontsdir}</dir>
-    <dir>{appfontsdir}</dir>
+    {fontsdirs}
     <dir prefix="xdg">fonts</dir>
     <cachedir prefix="xdg">fontconfig</cachedir>
     <include ignore_missing="yes">/etc/fonts/fonts.conf</include>
@@ -18,21 +17,24 @@ fontconfig_template = """<?xml version="1.0"?>
 
 def writefontsconf():
     inf = {}
+    dirs = []
     if sys.platform.startswith("win"):
+        dirs.append(os.path.join(os.getenv("LOCALAPPDATA"), "Microsoft", "Windows", "Fonts"))
+        dirs.append(os.path.abspath(os.path.join(os.getenv("WINDIR"), "Fonts")))
         fname = os.path.join(os.getenv("LOCALAPPDATA"), "SIL", "ptxprint", "fonts.conf")
-        inf['sysfontsdir'] = os.path.abspath(os.path.join(os.getenv("WINDIR"), "Fonts"))
     else:
+        dirs.append("/usr/share/fonts")
         fname = os.path.expanduser("~/.config/ptxprint/fonts.conf")
-        inf['sysfontsdir'] = "/usr/share/fonts"
     os.makedirs(os.path.dirname(fname), exist_ok=True)
     fdir = os.path.join(os.path.dirname(__file__), '..')
     for a in (['..', 'fonts'], ['..', '..', 'fonts'], ['/usr', 'share', 'ptx2pdf', 'fonts']):
         fpath = os.path.join(fdir, *a)
         if os.path.exists(fpath):
-            inf['appfontsdir'] = os.path.abspath(fpath)
+            dirs.insert(0, os.path.abspath(fpath))
             break
     else:
-        inf['appfontsdir'] = os.path.abspath('fonts')
+        dirs.append(os.path.abspath('fonts'))
+    inf['fontsdirs'] = "\n    ".join("<dir>{}</dir>".format(d) for d in dirs)
     with open(fname, "w", encoding="utf=8") as outf:
         outf.write(fontconfig_template.format(**inf))
     return fname
