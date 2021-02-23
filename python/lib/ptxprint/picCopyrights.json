@@ -42,6 +42,12 @@
             "middle": "{0}, {1}",
             "start": "{0}, {1}"
         },
+        "hu": {
+            "2": "{0}. és {1}.",
+            "end": "{0}. és {1}.",
+            "middle": "{0}., {1}.",
+            "start": "{0}., {1}."
+        },
         "ro": {
             "2": "{0} și {1}",
             "end": "{0} și {1}",
@@ -61,6 +67,14 @@
                 "1": "Illustration on page {0}",
                 "mult": "Illustrations on pages {0}"
             },
+            "hu": {
+                "1": "Kép a {0} oldalon",
+                "mult": "Képek a {0} oldalakon"
+            },
+            "ro": {
+                "1": "Ilustrație la pagina {0}",
+                "mult": "Ilustrații la paginiele {0}"
+            },
             "fr": {
                 "1": "Illustration sur la page {0}",
                 "mult": "Illustrations sur les pages {0}"
@@ -71,6 +85,14 @@
                 "1": "(except on page {0})",
                 "mult": "(except on pages {0})"
             },
+            "hu": {
+                "1": "(kivéve a {0}. oldalon)",
+                "mult": "(kivéve a {0} oldalon)"
+            },
+            "ro": {
+                "1": "(cu excepția celei de la pagina {0})",
+                "mult": "(cu excepția celor de la paginile {0})"
+            },
             "fr": {
                 "1": "(sauf sur page {0})",
                 "mult": "(sauf sur les pages {0})"
@@ -78,7 +100,9 @@
         },
         "allIllustrations": {
             "en": "All illustrations {0}",
-            "fr": "Toutes les illustrations {0}"
+            "fr": "Toutes les illustrations {0}",
+            "hu": "Az összes illusztráció",
+            "ro": "Toate ilustrațiile"
         },
         "exceptIllustrations": {
             "en": "All other illustrations {0}",
