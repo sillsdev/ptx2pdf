@@ -616,7 +616,7 @@ Description):</property>
     <property name="type_hint">dialog</property>
     <property name="gravity">center</property>
     <property name="program_name">PTXprint</property>
-    <property name="version">Version 1.5.14.1</property>
+    <property name="version">Version 1.5.14.3</property>
     <property name="copyright">© 2020-2021, SIL International</property>
     <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
 the User-Interface. The PDFs are produced by enhanced 
@@ -1383,14 +1383,6 @@ saved configuration.</property>
       <column type="gchararray"/>
       <!-- column-name Mirror -->
       <column type="gchararray"/>
-      <!-- column-name CreditText -->
-      <column type="gchararray"/>
-      <!-- column-name CreditRotate -->
-      <column type="gchararray"/>
-      <!-- column-name CreditBoxStyle -->
-      <column type="gchararray"/>
-      <!-- column-name CreditPos -->
-      <column type="gchararray"/>
       <!-- column-name disabled -->
       <column type="gboolean"/>
       <!-- column-name cleardest -->
@@ -1412,14 +1404,10 @@ saved configuration.</property>
         <col id="7">None</col>
         <col id="8">None</col>
         <col id="9">N</col>
-        <col id="10"/>
-        <col id="11"/>
-        <col id="12">None</col>
-        <col id="13">to</col>
-        <col id="14">False</col>
-        <col id="15">False</col>
-        <col id="16"/>
-        <col id="17"/>
+        <col id="10">False</col>
+        <col id="11">False</col>
+        <col id="12"/>
+        <col id="13"/>
       </row>
       <row>
         <col id="0">JHN 3:16-17</col>
@@ -1432,14 +1420,10 @@ saved configuration.</property>
         <col id="7">Image of a group of people</col>
         <col id="8">None</col>
         <col id="9">N</col>
-        <col id="10"/>
-        <col id="11"/>
-        <col id="12">Light</col>
-        <col id="13">bi</col>
-        <col id="14">False</col>
-        <col id="15">False</col>
-        <col id="16"/>
-        <col id="17"/>
+        <col id="10">False</col>
+        <col id="11">False</col>
+        <col id="12"/>
+        <col id="13"/>
       </row>
       <row>
         <col id="0">GLO 1:0</col>
@@ -1452,14 +1436,10 @@ saved configuration.</property>
         <col id="7">unrotated map</col>
         <col id="8">Map Creator</col>
         <col id="9">N</col>
-        <col id="10">ESV</col>
-        <col id="11"/>
-        <col id="12">Dark</col>
-        <col id="13">tr</col>
-        <col id="14">False</col>
-        <col id="15">False</col>
-        <col id="16"/>
-        <col id="17"/>
+        <col id="10">False</col>
+        <col id="11">False</col>
+        <col id="12"/>
+        <col id="13"/>
       </row>
     </data>
   </object>
@@ -2573,9 +2553,9 @@ parameters at once: font, size and colour. </property>
                     <property name="has_entry">True</property>
                     <property name="active_id">0</property>
                     <items>
-                      <item translatable="yes">None</item>
-                      <item translatable="yes">Light</item>
-                      <item translatable="yes">Dark</item>
+                      <item id="&lt;Enter ID&gt;">None</item>
+                      <item>Light</item>
+                      <item>Dark</item>
                     </items>
                     <child internal-child="entry">
                       <object class="GtkEntry">
@@ -10497,7 +10477,7 @@ Ref:</property>
                                                   <packing>
                                                     <property name="left_attach">1</property>
                                                     <property name="top_attach">4</property>
-                                                    <property name="width">6</property>
+                                                    <property name="width">3</property>
                                                   </packing>
                                                 </child>
                                                 <child>
@@ -10900,28 +10880,45 @@ generated automatically for you.</property>
                                                     <property name="label" translatable="yes">Overlay
 Credit...</property>
                                                     <property name="visible">True</property>
-                                                    <property name="sensitive">False</property>
                                                     <property name="can_focus">True</property>
                                                     <property name="receives_default">True</property>
                                                     <signal name="clicked" handler="onOverlayCreditClicked" swapped="no"/>
                                                   </object>
                                                   <packing>
                                                     <property name="left_attach">5</property>
-                                                    <property name="top_attach">5</property>
+                                                    <property name="top_attach">4</property>
                                                   </packing>
                                                 </child>
                                                 <child>
-                                                  <object class="GtkEntry" id="t_overlayParams">
+                                                  <object class="GtkEntry" id="t_piccreditbox">
                                                     <property name="visible">True</property>
-                                                    <property name="sensitive">False</property>
                                                     <property name="can_focus">True</property>
+                                                    <property name="tooltip_text" translatable="yes">Credit overlay position and style</property>
                                                     <property name="halign">start</property>
                                                     <property name="width_chars">12</property>
                                                   </object>
                                                   <packing>
                                                     <property name="left_attach">6</property>
+                                                    <property name="top_attach">4</property>
+                                                  </packing>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkLabel" id="l_piccredit">
+                                                    <property name="sensitive">False</property>
+                                                    <property name="can_focus">False</property>
+                                                    <property name="no_show_all">True</property>
+                                                    <property name="label" translatable="yes">credit text</property>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="left_attach">6</property>
                                                     <property name="top_attach">5</property>
                                                   </packing>
+                                                </child>
+                                                <child>
+                                                  <placeholder/>
+                                                </child>
+                                                <child>
+                                                  <placeholder/>
                                                 </child>
                                                 <child>
                                                   <placeholder/>

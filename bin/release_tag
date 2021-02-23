@@ -54,6 +54,7 @@ git("push", "--tag")
 git("push")
 
 git("checkout", "packaging")
+git("pull")
 dch(args.version)
 git("commit", "-a", "-m", "Bumped release version to "+args.version)
 git("push")

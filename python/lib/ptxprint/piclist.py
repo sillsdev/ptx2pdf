@@ -13,7 +13,7 @@ pos3parms = ["src", "size", "pgpos", "ref", "copy", "alt", "x-xetex", "mirror", 
              "x-credit", "x-creditrot", "x-creditbox", "x-creditpos"]
 
 _piclistfields = ["anchor", "caption", "src", "size", "scale", "pgpos", "ref", "alt", "copy", "mirror", 
-                  "x-credit", "x-creditrot", "x-creditbox", "x-creditpos", "disabled", "cleardest", "key", "media"]
+                  "disabled", "cleardest", "key", "media"]
 _pickeys = {k:i for i, k in enumerate(_piclistfields)}
 
 _form_structure = {
@@ -27,11 +27,6 @@ _form_structure = {
     'alt':      't_plAltText',
     'copy':     't_plCopyright',
     'mirror':   'fcb_plMirror',
-    'x-credit':    't_plCreditText',
-    'x-creditrot': 'fcb_plCreditRotate',
-    'x-creditbox': 'ecb_plCreditBoxStyle',
-    'crVpos':      'fcb_plCreditVpos',
-    'crHpos':   'fcb_plCreditHpos',
     'hpos':     'fcb_plHoriz',
     'nlines':   's_plLines',
     'medP':     'c_plMediaP',
@@ -43,6 +38,8 @@ _comblistcr = ['crVpos', 'crHpos']
 _defaults = {
     'scale':    "1.000"
 }
+
+_creditcomps = {'x-creditpos': 0, 'x-creditrot': 1, 'x-creditbox': 2}
 
 newrowcounter = 1
 
@@ -243,7 +240,6 @@ class PicList:
             self.currow = self.model[cit][:]    # copy it so that any edits don't mess with the model if the iterator moves
             self.curriter = cit
         pgpos = re.sub(r'^([PF])([lcr])([tb])', r'\1\3\2', self.currow[_pickeys['pgpos']])
-        creditpos = self.currow[_pickeys['x-creditpos']]
         self.parent.pause_logging()
         self.loading = True
         for j, (k, v) in enumerate(_form_structure.items()): # relies on ordered dict
@@ -257,10 +253,6 @@ class PicList:
                     val = pgpos[2:] or "c"
                 else:
                     val = pgpos[1:] or ""
-            elif k == 'crVpos':
-                val = creditpos[0:1] or "b"
-            elif k == 'crHpos':
-                val = creditpos[1:2] or "i"
             elif k == 'nlines':
                 val = re.sub(r'^\D*', "", pgpos)
                 try:
@@ -378,9 +370,6 @@ class PicList:
         if key in _comblist:
             val = self.get_pgpos()
             key = "pgpos"
-        elif key in _comblistcr:
-            val = self.get_crpos()
-            key = "x-creditpos"
         elif key.startswith("med"):
             val = "".join(v[-1].lower() for k, v in _form_structure.items() if k.startswith("med") and self.get(v))
             # if self.currow is not None:
@@ -460,7 +449,6 @@ class PicList:
         if row[9] == "None": # mirror
             row[9] = ""
         row[_piclistfields.index('pgpos')] = self.get_pgpos()
-        row[_piclistfields.index('x-creditpos')] = self.get_crpos()
         return row
 
     def add_row(self):
@@ -502,7 +490,9 @@ _checks = {
     "fcb_pubusage":     "Unknown",
     "r_pubclear":       "unchecked",
     "r_pubnoise":       "unchecked",
-    "fcb_pubaccept":    "Unknown"
+    "fcb_pubaccept":    "Unknown",
+    "t_piccreditbox":   "",
+    "l_piccredit":      ""
 }
 
 class PicChecks:
@@ -531,7 +521,7 @@ class PicChecks:
         self._init_default(self.cfgProject, "pub")
 
     def writeCfg(self, basepath, configid):
-        if not len(self.cfgShared) or configid is None:
+        if len(self.cfgShared) < 2 or configid is None:     # always a default
             return
         self.savepic()
         basep = os.path.join(basepath, "shared", "ptxprint")
@@ -568,6 +558,8 @@ class PicChecks:
             return
         for (cfg, n, defval, k) in self._allFields():
             val = self.parent.get(k)
+            if val is None or not val:
+                continue
             try:
                 cfg.set(self.src, n, val)   # update the existing entry if it already exists
             except configparser.NoSectionError:
@@ -614,6 +606,18 @@ class PicChecks:
             self.parent.set("fcb_plMirror", "None")
         else: # unlock the control
             self.parent.builder.get_object("fcb_plMirror").set_sensitive(True)
+
+    def getCreditInfo(self, src):
+        text = self.cfgShared.get(src, "piccredit", fallback=None)
+        res = None
+        if text is not None:
+            crstr = self.cfgShared.get(src, "piccreditbox", fallback="")
+            m = re.match(r"^([tcb]?[lcrio]?),(-?9?0?|None),(\w*)$", crstr)
+            if m:
+                res = ["" if x.lower() == "none" else x for x in m.groups()]
+                if not res[1]:
+                    res[1] = "0"
+        return (text, res)
         
 class PicInfo(dict):
 
@@ -784,11 +788,13 @@ class PicInfo(dict):
                                 if 'media' in pic and not any(x in media for x in pic['media']):
                                     del self[key]
 
-    def out(self, fpath, bks=[], skipkey=None, usedest=False, media=None):
+    def out(self, fpath, bks=[], skipkey=None, usedest=False, media=None, checks=None):
         ''' Generate a picinfo file, with given date.
                 bks is a list of 3 letter bkids only to include. If empty, include all.
                 skipkey if set will skip a record if there is a non False value associated with skipkey
                 usedest says to use dest file rather than src as the file source in the output'''
+        if not len(self):
+            return
         self.rmdups()
         hiderefs = self.model.get("c_fighiderefs")
         if usedest:
@@ -801,21 +807,36 @@ class PicInfo(dict):
             if (len(bks) and v['anchor'][:3] not in bks) or (skipkey is not None and v.get(skipkey, False)):
                 continue
             outk = self.stripsp_re.sub(r"\1", v['anchor'])
+            credittxt, creditbox = checks.getCreditInfo(newBase(v['src'])) if checks is not None else (None, None)
             line = []
             for i, x in enumerate(p3p):
-                if x not in v or not v[x]:
-                    continue
-                elif x in _defaults and _defaults[x] == v[x]:
+                if x in _defaults and _defaults[x] == v.get(x, None):
                     continue
                 elif usedest and hiderefs and x == "ref":
                     continue
-                elif x == "scale" and float(v[x]) == 1.0:
+                elif x == "scale" and float(v.get(x, 1.0)) == 1.0:
                     continue
-                elif x == "media" and sorted(v[x]) == "apw":
+                elif x == "media" and sorted(v.get(x, 'apw')) == "apw":
                     if media is not None and media not in v[x]:
                         break
                     continue
-                line.append('{}="{}"'.format(pos3parms[i], v[x]))
+                elif x == "x-credit":
+                    if credittxt is None:
+                        continue
+                    val = credittxt
+                elif x in _creditcomps:
+                    if creditbox is None:
+                        continue
+                    val = creditbox[_creditcomps[x]]
+                    if not val:
+                        continue
+                elif x not in v:
+                    continue
+                else:
+                    val = v[x]
+                    if not val:
+                        continue
+                line.append('{}="{}"'.format(pos3parms[i], val))
             else:
                 lines.append("{} {}|".format(outk, v.get('caption', ''))+ " ".join(line))
         dat = "\n".join(lines)+"\n"
