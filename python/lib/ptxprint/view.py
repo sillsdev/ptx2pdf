@@ -396,6 +396,7 @@ class ViewModel:
                 self.usfms = None
                 self.get_usfms()
             self.readCopyrights()
+            self.picChecksView.init(basepath=self.configPath(cfgname=None), configid=self.configId)
             self.loadPics()
             return res
         else:

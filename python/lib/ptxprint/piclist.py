@@ -521,7 +521,7 @@ class PicChecks:
         self._init_default(self.cfgProject, "pub")
 
     def writeCfg(self, basepath, configid):
-        if not len(self.cfgShared) or configid is None:
+        if len(self.cfgShared) < 2 or configid is None:     # always a default
             return
         self.savepic()
         basep = os.path.join(basepath, "shared", "ptxprint")
@@ -793,6 +793,8 @@ class PicInfo(dict):
                 bks is a list of 3 letter bkids only to include. If empty, include all.
                 skipkey if set will skip a record if there is a non False value associated with skipkey
                 usedest says to use dest file rather than src as the file source in the output'''
+        if not len(self):
+            return
         self.rmdups()
         hiderefs = self.model.get("c_fighiderefs")
         if usedest:
