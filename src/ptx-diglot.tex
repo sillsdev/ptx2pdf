@@ -459,8 +459,8 @@
   \xdef\m@rksm@x{\numexpr \m@rksm@x+1\relax}%
   \x@\global\x@\let\csname m@rknum#1\endcsname=\m@rksm@x
 }
-\newm@rknum{L}
-\newm@rknum{R}
+\newm@rknum{L}% registers m@rknumL
+\newm@rknum{R}% registers m@rknumR
 
 \def\after@a@trial{%
   %After this runs: (example with L)
@@ -1667,6 +1667,9 @@
 \edef\diglot@list{LR}%
 \edef\digl@tc@ntentlist{}%
 
+\def\set@cseq#1#2{\x@\xdef\csname #1\endcsname{#1}}% Helper function
+\def\empty@cseq#1{\x@\xdef\csname #1\endcsname{}}% Helper function
+
 \def\newDiglotCol#1{%
   \ifcsname #1isDiglotColumn\endcsname
     \message{#1 is already a diglot column. You can only define it as one once!}%
@@ -1679,15 +1682,20 @@
     \x@\newb@x\csname excess#1\endcsname
     \x@\newb@x\csname picb@x#1\endcsname
     \x@\newc@unt\csname partial#1penalty\endcsname
-    \newm@rk{#1}
+    \newm@rknum{#1}%
     \x@\newdim@n\csname column#1width\endcsname
-%CREATE:  
+    \empty@cseq{n@xtbot#1mark}% Last X mark in the next chunk 
+    \empty@cseq{n@xtfirst#1mark}%First X mark in the next chunk 
+    \empty@cseq{old#1mark}%last X mark 
+    \empty@cseq{first#1mark}%First X mark on this pave
+    \empty@cseq{bot#1mark}%bottom X mark on this page
+    \empty@cseq{b@ok#1}% Name of book to put in PDF.
 %FIXMEs needing to be solved before implementing this: 
-% cle@rn@tecl@ss
-%pdfb@@km@rkR 
-%pdfch@pterm@rkR 
+%pdfb@@km@rkR  - rewrite, generating combined book name.
+%pdfch@pterm@rkR  
 % UI!
 % 
+  \fi
 }
 
 \def\check@and@update{%Checks each column to see if there is stuff to output

@@ -519,7 +519,7 @@
 \def\Alternative{\ /\ }%
 \let\b@okC=\relax
 
-\def\pdfb@@km@rkR{\ifx\b@okR\prevb@okR %FIXME: make this work with \c@rrdstat, for polyglot
+\def\pdfb@@km@rkR{\ifx\b@okR\prevb@okR %FIXME: make this work with \c@rrdstat, for polyglot. Ideally it should only actually run when all books defined.
  \else\ifDropActions\else
   \bgroup\liter@lspecials
    \special{pdf:dest (\id@@@.) [@thispage /Fit]}%

@@ -55,12 +55,12 @@ with `\diglotcolumn L`, `\diglotcolumn R`, etc.
 the data read so far, the final text-containing column must finish with an explicit  `\endcols`
 
 4) Instead of specifying the column width with `\DiglotLeftFraction`, the
-equivalent 1-letter column code will take the place of the Left, i.e.
-`\DiglotLFraction`, `\DiglotAFraction`
+equivalent 1-letter column code will take the place of the Left, e.g.
+`\DiglotLFraction`, `\DiglotAFraction` and `\DiglotRFraction
 
 
 ### Backward compatability
-The code is being re-written in a way intended to be backwards compatible. E.g. `\DiglotLFraction` is not defined,
+The code is being re-written in a way intended to be backwards compatible. E.g. If `\DiglotLFraction` is not defined,
 `\DiglotLeftFraction` will be used instead, and `\lefttext`,  `\righttext` etc.
 are expected to retain their current behaviour, but will give unexpected results
 in a polyglot use-case.
