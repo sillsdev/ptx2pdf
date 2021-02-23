@@ -254,7 +254,7 @@
     \getp@ram{fontsize}{#1}\ifx\p@ram\relax\else
       \dimen0=\p@ram\le@dingunit
       \multiply\dimen0 by \LineSpaceBase \divide\dimen0 by 12 % default .75 shift of .85ex (ex=.5 fontsize) against 14/12
-      \trace{F}{baseline [\f@ntstyle] = \the\dimen0 = \the\le@dingunit / 12 * \LineSpaceBase}%
+      \trace{F}{baseline [\f@ntstyle] = \the\dimen0 = \p@ram * \the\le@dingunit  * \LineSpaceBase / 12}%
       \setp@ram{baseline}{\f@ntstyle}{\the\dimen0}\baselineskip=\dimen0
      \fi
     \else

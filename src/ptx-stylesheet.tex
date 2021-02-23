@@ -42,11 +42,17 @@
 \def\ds@ffix{} % diglot suffix (L/R)
 \def\m@rker{} % The currently being defined \Marker
 \let\prev@rsemode\empty
+\def\remember@xists#1{\x@\xdef\csname m@rkerexists-#1\endcsname{t}}
+\def\should@xist#1{\ifcsname m@rkerexists-#1\endcsname\else
+  \remember@xists{#1}%
+  \setpp@name{#1}\x@\global\x@\let\csname \pp@name\endcsname\relax%Invalidate old cache
+\fi
+}
 
 % Remember the name of the marker currently being defined
 \def \Marker         #1\relax{\m@kedigitsletters%
   \xdef\m@rker{\scantokens{#1\noexpand}}%
-  \m@kedigitsother\x@\xdef\csname m@rkerexists-\m@rker\endcsname{t}% store name of marker currently being defined
+  \m@kedigitsother\remember@xists{\m@rker}% store name of marker currently being defined
   \ifx\c@tprefix\empty\else
     \x@\xdef\csname m@rkerexists-\c@tprefix\m@rker\endcsname{t}%
   \fi
@@ -145,7 +151,10 @@
 \def\defp@ram#1#2{\x@\def\csname\c@tprefix\m@rker\ds@ffix:#1\endcsname{#2}\trace{s}{\c@tprefix\m@rker\ds@ffix:#1 -> #2}}
 \def\condp@ram#1#2#3{\edef\t@mp{#1}\ifx\t@mp\h@phen\relax\def\t@mp{#3}\else\def\t@mp{#2}\fi\t@mp}
 \def\defbinp@ram#1#2{\edef\t@mp{#2}\ifx\t@mp\h@phen\defp@ram{#1}{false}\else\defp@ram{#1}{true}\fi}
-\def\setp@ram#1#2#3{\x@\xdef\csname\c@tprefix#2\ds@ffix:#1\endcsname{#3}\trace{s}{\c@tprefix#2\ds@ffix:#1 -> #3}} % expand now, not later 
+\def\setp@ram#1#2#3{
+  \x@\xdef\csname\c@tprefix#2\ds@ffix:#1\endcsname{#3}\trace{s}{\c@tprefix#2\ds@ffix:#1 -> #3}
+  \should@xist{#2}%Ensure that the marker is in the exists list
+} % expand now, not later 
 %-csty_defparam
 
 %+csty_getparam
@@ -209,16 +218,20 @@
   \fi
 }
 
+\def\setpp@name#1{%
+  \edef\tmppar@mtwo{#1}\ifx\styst@k\tmppar@mtwo
+   \xdef\pp@name{pPrms-\c@tprefix#1/--}%
+  \else
+   \xdef\pp@name{pPrms-\c@tprefix#1/\styst@k}%
+  \fi
+}
+
 \def\getp@ram#1#2{\trace{s}{getp@ram #2:#1}%
  \iftrue
    \let\p@ram\relax
    \def\gp@test{#1}%
    \ifx\gp@test\empty\message{Eh? getp@ram called for #2 and empty parameter}\else 
-     \edef\tmppar@mtwo{#2}\ifx\styst@k\tmppar@mtwo
-       \xdef\pp@name{pPrms-\c@tprefix#2\c@rrdstat/--}%
-     \else
-       \xdef\pp@name{pPrms-\c@tprefix#2\c@rrdstat/\styst@k}%
-     \fi
+     \setpp@name{#2\c@rrdstat}%
      \x@\let\x@\g@tp@tmp\csname \pp@name\endcsname
      \ifx\g@tp@tmp\relax
        \s@tpossParams{#2}\x@\global\x@\let\csname \pp@name\endcsname\p@ssParams
@@ -230,7 +243,7 @@
        \trace{sC}{\pp@name\space defined (\p@ssParamCached) as \p@ssParams}%
      \else
        \global\let\p@ssParams\g@tp@tmp
-       \trace{sC}{\pp@name\space exists}%
+       \trace{sC}{\pp@name\space exists: \p@ssParams}%
      \fi
      {%protect outer version of \d@, etc.
      %\tracingassigns=1
@@ -1183,8 +1196,9 @@
                                                            % set it will remain. Otherwise, the default
                                                            % of 14 will be applied here and set text will
                                                            % hold to the grid.
- \getp@ram{baseline}{p#1}\ifx\p@ram\relax\s@tbaseline{p#1}\setp@ram{baseline}{p#1}{\the\baselineskip}%
- \MSG{Baselineskip for p#1 undefined, set to \the\baselineskip}\fi
+ \getp@ram{baseline}{p#1}\ifx\p@ram\relax
+   \s@tbaseline{p#1}\setp@ram{baseline}{p#1}{\the\baselineskip}%
+   \MSG{Baselineskip for p#1 was undefined, now set to \the\baselineskip}\fi
 }
 \def\s@tupsizes{
  \s@tb@dyb@seline{}%
