@@ -33,12 +33,37 @@ Assumption 7 means that in this case, there is no need (if there are never
 headings with notes) to reprocess the chunk.
 However, with the moving of a previously set box (or boxes), the consequence is
 that the state of notes should be remembered so that the page can be rolled
-back to 'without the final chunk'. [DONE, partially] 
+back to 'without the final chunk'. [DONE] 
 
 Assumption 8 then probably implies that (unprocessed) galleys should be
 remembered not just for each 'currently-open' chunk, but also for 'recently
 closed' chunks also.  It is assumed that rolling back of images and other
-inserts is NOT required.  [TO DO]
+inserts is NOT required.  [Done, partially, should be tested.]
+
+
+## Changes in use for polyglot.
+Diglot2 is slowly edging towards being polyglot-capable. For this to function
+the following changes will need to be made:
+
+1) A new diglot column will need to be declared with e.g. `\newDiglotColumn{A}`. The code for the column must be a 
+single letter (so that there are no problems with `{` and `}` losing their magic meaning within USFM text).
+
+2) Instead of `\lefttext` and `\righttext`, data will be segregated
+with `\diglotcolumn L`, `\diglotcolumn R`, etc. 
+
+3) Rather than `\lefttext`  and `\norighttext` implicitly finishing the previous row and triggering the processing of 
+the data read so far, the final text-containing column must finish with an explicit  `\endcols`
+
+4) Instead of specifying the column width with `\DiglotLeftFraction`, the
+equivalent 1-letter column code will take the place of the Left, i.e.
+`\DiglotLFraction`, `\DiglotAFraction`
+
+
+### Backward compatability
+The code is being re-written in a way intended to be backwards compatible. E.g. `\DiglotLFraction` is not defined,
+`\DiglotLeftFraction` will be used instead, and `\lefttext`,  `\righttext` etc.
+are expected to retain their current behaviour, but will give unexpected results
+in a polyglot use-case.
 
 
 
