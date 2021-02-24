@@ -22,7 +22,8 @@ from ptxprint.view import ViewModel, Path, VersionStr
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal, setFontButton, makeSpinButton
 from ptxprint.utils import APP, setup_i18n
 from ptxprint.ptsettings import ParatextSettings, allbooks, books, bookcodes, chaps
-from ptxprint.piclist import PicList, PicChecks, PicInfoUpdateProject
+from ptxprint.gtkpiclist import PicList
+from ptxprint.piclist import PicChecks, PicInfoUpdateProject
 from ptxprint.gtkstyleditor import StyleEditorView
 from ptxprint.runjob import isLocked, unlockme
 from ptxprint.texmodel import TexModel, ModelMap

@@ -25,6 +25,28 @@
                         "exceptIllustrations": { "$ref": "#/definitions/multistring"}
                     }
                 },
+                "postreg": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                            "replacements": {
+                                "type": "object",
+                                "additionalProperties": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "array",
+                                        "items": { "type": "string" }
+                                    }
+                                }
+                            }
+                        },
+                        "templates": {
+                            "type": "object",
+                            "additionalProperties": { "type": "string" }
+                        }
+                    }
+                },
                 "copyrights" : {
                     "type": "object",
                     "additionalProperties": {

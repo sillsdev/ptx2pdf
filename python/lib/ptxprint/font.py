@@ -469,7 +469,7 @@ class TTFont:
         else:
             fname = initFontCache().get(name, style)
             self.filename = Path(os.path.abspath(fname)) if fname is not None else None
-        self.iscore = fontcache.iscore(name, style)
+        self.iscore = initFontCache().iscore(name, style)
         self.feats = {}
         self.featvals = {}
         self.names = {}
