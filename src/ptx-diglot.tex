@@ -129,7 +129,8 @@
   \ifdiglot\MSG{Side-specific #1#2 not defined, global #1 will be used}\fi\fi}% Helper function
 
 % If the item exists, save its current value. 
-\def\s@veSpecificSide#1{\ifcsname #1\endcsname \x@\let\csname #1\sfx\x@\endcsname\csname #1\endcsname\fi}
+\def\s@veSpecificSideDef#1{\ifcsname #1\endcsname \x@\let\csname #1\sfx\x@\endcsname\csname #1\endcsname\fi}
+\def\s@veSpecificSideDim#1{\ifcsname #1\endcsname\ifcsname #1\sfx\endcsname  \x@\global\csname #1\sfx\endcsname=\csname #1\endcsname\fi\fi}
 % Output routine for normal things.
 \def\sh@wSpecificDef#1{\ifcsname #1\sfx\endcsname\trace{S}{#1\sfx: \x@\meaning\csname #1\sfx\endcsname}\else
   \trace{S}{#1\sfx: undefined}\fi}
@@ -152,8 +153,9 @@
   \let\wh@t\sh@wSpecificDim\pr@cessSpecificDim
 }% Call the output routines
 \def\saveLRspecificSide#1{\xdef\sfx{#1}% Save current values (side defined by #1) 
-  \let\wh@t\s@veSpecificSide
-  \trace{S}{Redefining #1-specific values to current ones}\pr@cessSpecific
+  \trace{S}{Redefining #1-specific values to current ones}%
+  \let\wh@t\s@veSpecificSideDef\pr@cessSpecificDef
+  \let\wh@t\s@veSpecificSideDim\pr@cessSpecificDim
 }
 %
 % Except this one:
@@ -1699,6 +1701,7 @@
 %pdfb@@km@rkR  - rewrite, generating combined book name.
 %something like newnummarks for this: dgl@tPenRtrialEnd{-10006}
 %pdfch@pterm@rkR 
+%resetdropc@p
 % UI!
 % 
   \fi
