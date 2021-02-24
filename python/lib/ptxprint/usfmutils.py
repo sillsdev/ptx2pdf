@@ -325,7 +325,7 @@ class Usfm:
                 return sfm.Text(s, e.pos, e.parent)
             else:
                 return e
-        return self._proctext(fn, doc=doc)
+        return list(self._proctext(fn, doc=doc))
 
     def letter_space(self, inschar, doc=None):
         from ptxprint.sfm.ucd import get_ucd
