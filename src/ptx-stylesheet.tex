@@ -54,10 +54,10 @@
   \xdef\m@rker{\scantokens{#1\noexpand}}%
   \m@kedigitsother\remember@xists{\m@rker}% store name of marker currently being defined
   \ifx\c@tprefix\empty\else
-    \x@\xdef\csname m@rkerexists-\c@tprefix\m@rker\endcsname{t}%
+    \remember@xists{\c@tprefix\m@rkerexists}%
   \fi
   \expandafter\let\csname font<\m@rker>\endcsname\relax}
-                              %\expandafter\let\csname extrafont<#1>\endcsname\relax}
+  %\expandafter\let\csname extrafont<#1>\endcsname\relax}
 %-csty_definition_setup
 
 %+csty_definitions
@@ -226,7 +226,7 @@
   \fi
 }
 
-\def\getp@ram#1#2{\trace{s}{getp@ram #2:#1}%
+\def\getp@ram#1#2{\trace{s}{getp@ram #2:#1 (\mcstack)}%
  \iftrue
    \let\p@ram\relax
    \def\gp@test{#1}%
@@ -792,6 +792,7 @@
      \mcpopsimple
   \else
     \if Y\tmp\relax  %end it and pop it
+      \if #1\ss@Para\relax\xdef\last@popped@parstyle{#2}\fi
       \ifcsname endit@#1\endcsname
         \trace{s}{endit@#1}% endit@ macros are assumed(requrired) to call mcpop 
       	\csname endit@#1\endcsname
@@ -871,7 +872,7 @@
  \let\save@italic=\italic \let\italic=\Italic
  \openin\styl@sheet="#1" \c@ntinuetrue                      %(1)
  \ifeof\styl@sheet\errmessage{Paratext stylesheet "#1" not found}\else
-   \message{Reading Paratext stylesheet "#1"...}%
+   \message{Reading Paratext stylesheet "#1" (\c@tegory)...}%
    \endlinechar=-1
    %\catcode`\#=5 % paratext comment char
    \loop
@@ -959,6 +960,7 @@
 \def\ptxst@rtp@ge{1}
 \def\ptxfile#1{
  \saveLRspecificOrig%This becomes a \relax after first use. Always call it.
+ \kill@PossParamCache
  \xdef\ptxst@rtp@ge{\the\pageno}%
  \ifdiglot
     \ifx\c@rrdstat\empty

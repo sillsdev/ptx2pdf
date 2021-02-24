@@ -46,3 +46,5 @@ autohist:
 	while inotifywait -e close_write . $(DIR) ; do sleep 1 ; make history.pdf ; done </dev/null
 autogal:	
 	while inotifywait -e close_write . $(DIR) ; do sleep 1 ; make Galatians.pdf ; done </dev/null
+autogal2:	
+	while inotifywait -e close_write . $(DIR) ; do sleep 1 ; make Galatians2.pdf ; cp Galatians2.pdf Galatians2`git branch --show-current`.pdf; done </dev/null

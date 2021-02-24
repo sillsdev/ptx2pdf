@@ -67,7 +67,7 @@
 %Defined penalties
 \def\dgl@tPenColSwap{-10001}%
 \def\dgl@tPenInternalRpt{-10002}
-\def\dgl@tPenLtrialEnd{-10005}
+\def\dgl@tPenLtrialEnd{-10005}% FIXME - expand to get rid of special caseing
 \def\dgl@tPenRtrialEnd{-10006}
 \def\oldRmark{}
 \def\oldLmark{}
@@ -674,7 +674,8 @@
     \global\savedpenalty=\lastpenalty % Pick up revised after-heading penalty
   \fi%
   \endlastp@rstyle{p}%
-  \trace{d}{#1text pL:\the\dp\partialL, xL:\the\dp\excessL, pR:\the\dp\partialR, xR\the\dp\excessR, lp:\the\savedpenalty \ifallNeedEmptying allNeedwmptying\fi}%
+  \x@\let\csname m@rker\c@rrdstat\endcsname\last@popped@parstyle %save the old (paragraph-style) marker 
+  \trace{d}{pr@sideswitch pL:\the\dp\partialL, xL:\the\dp\excessL, pR:\the\dp\partialR, xR\the\dp\excessR, lp:\the\savedpenalty \ifallNeedEmptying allNeedwmptying\fi}%
   %\showlists
   \ifx\c@rrdstat\empty
     \trace{d}{\c@rrdstat is empty, somehow, making it L for sanity}%
@@ -683,8 +684,9 @@
   \global\output={\diglotCollect}%Why woudn't it be? Don't know, but sometimes it's not.
   \x@\xdef\csname saved\c@rrdstat penalty\endcsname{\the\savedpenalty}%
   \ifinn@te\errmessage{*** #1text called from inside footnote?!?}\fi
-  \@@setside{#2}%
+  \@@setside{#2}%Set the side to occur after the next swapcols penalty
   \endgraf\penalty\dgl@tPenColSwap\relax %Trigger collection of text.
+  % <<< Diglot collect runs HERE! (and sets n@xtc@mmand
   \let\t@mpc@mmand=\n@xtc@mmand% This bit may process the collected input. 
   \global\def\n@xtc@mmand{}%
   \t@mpc@mmand
@@ -812,8 +814,6 @@
   \message{#1 is deprecated. The normal column switching method is to use (no)lefttext / (no)righttext or the new  diglotcolumn and endcols macros}%
   \diglotcolumn{#1}%
 }
-  
-
 
 \def\setf@lwgdstat#1{\xdef\f@lwgdstat{#1}%
 }
@@ -837,7 +837,9 @@
   \else
     \x@\each@col\digl@tc@ntentlist\E
   \fi
-  \iftemp\else
+  \iftemp
+    \trace{D}{Surprising request ignored}%
+  \else
     \xdef\digl@tc@ntentlist{\digl@tc@ntentlist #1}%
   \fi
   \trace{D}{digl@tc@ntentlist now:(\digl@tc@ntentlist)}%
@@ -846,16 +848,16 @@
 \def\swap@diglot#1{% Because we need to set things appropriately.
  %Swapping fonts isn't actually needed, but do need to set
  %baselineskip and other things
- \trace{d}{swap@diglot #1}%
+ \trace{d}{swap@diglot #1 (\show@dstat)}%
  \trace{D}{t@tle is \ift@tle set\else  not set\fi}%
  \trace{D}{he@dingstyle is \ifhe@dingstyle set\else  not set\fi}%
  \trace{D}{he@dings is \ifhe@dings set\else  not set\fi}%
   %\trace{D}{nsp@cebefore is \ifnsp@cebefore set\else  not set\fi}%
  %All sorts of things should follow if m@rker is set properly...
- \x@\let\csname m@rker\c@rrdstat\endcsname\m@rker %save the old marker 
- \@setside{#1}%
+ \@setside{#1}%Ought to be needless
  \add@to@digl@tc@ntentlist{#1}%
- \x@\let\x@\m@rker\csname m@rker\c@rrdstat\endcsname
+ \x@\global\x@\let\x@\m@rker\csname m@rker\c@rrdstat\endcsname
+ \trace{D}{m@rker set to \m@rker}%
  \x@\let\x@\w@dth\csname column#1width\endcsname
  \global\hsize=\w@dth\relax
  \x@\global\x@\let\x@\ch@pter\csname @ch@pter\g@tdstat\endcsname
@@ -1442,7 +1444,7 @@
   \fi
   \x@\csname partial\c@rrdstat penalty\endcsname=\tmppenalty
   \ifnum\outputpenalty=\dgl@tPenColSwap\relax %Got to the end of the \lefttext
-    \trace{D}{Reached end of diglotCollect. \ifallNeedEmptying Running trials\fi}%
+    \trace{D}{Reached end of diglotCollect. \ifallNeedEmptying Running trials soon\fi}%
     \tmppenalty=\savedpenalty\relax%
     \ifallNeedEmptying
       \global\let\n@xtc@mmand=\diglot@run@trials
@@ -1676,7 +1678,7 @@
   \else
     \message{Defining #1 as an additional diglot column.}%
     \message{+++ This code isn't tested yet}%
-    \xdef\diglot@list{\diglot@list#1}%
+    \add@to@digl@tc@ntentlist{#1}%
     \x@\csname #1isDiglotColumn\endcsname\empty
     \x@\newb@x\csname partial#1\endcsname
     \x@\newb@x\csname excess#1\endcsname
@@ -1690,9 +1692,11 @@
     \empty@cseq{first#1mark}%First X mark on this pave
     \empty@cseq{bot#1mark}%bottom X mark on this page
     \empty@cseq{b@ok#1}% Name of book to put in PDF.
+%TODO:
 %FIXMEs needing to be solved before implementing this: 
 %pdfb@@km@rkR  - rewrite, generating combined book name.
-%pdfch@pterm@rkR  
+%something like newnummarks for this: dgl@tPenRtrialEnd{-10006}
+%pdfch@pterm@rkR 
 % UI!
 % 
   \fi
