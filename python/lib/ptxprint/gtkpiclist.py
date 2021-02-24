@@ -1,6 +1,5 @@
 
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal
-from ptxprint.texmodel import TexModel
 from ptxprint.piclist import newBase
 from ptxprint.utils import refKey, lang, _
 from gi.repository import Gtk, GdkPixbuf, GObject, Gdk

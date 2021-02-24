@@ -1,5 +1,6 @@
 
 from ptxprint.utils import refKey, universalopen
+from ptxprint.texmodel import TexModel
 from threading import Thread
 import configparser
 import regex
