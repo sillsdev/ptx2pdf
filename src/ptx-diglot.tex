@@ -674,7 +674,9 @@
     \global\savedpenalty=\lastpenalty % Pick up revised after-heading penalty
   \fi%
   \endlastp@rstyle{p}%
-  \x@\let\csname m@rker\c@rrdstat\endcsname\last@popped@parstyle %save the old (paragraph-style) marker 
+  \ifx\last@popped@parstyle\relax\else
+    \x@\let\csname m@rker\c@rrdstat\endcsname\last@popped@parstyle %save the old (paragraph-style) marker 
+  \fi
   \trace{d}{pr@sideswitch pL:\the\dp\partialL, xL:\the\dp\excessL, pR:\the\dp\partialR, xR\the\dp\excessR, lp:\the\savedpenalty \ifallNeedEmptying allNeedwmptying\fi}%
   %\showlists
   \ifx\c@rrdstat\empty

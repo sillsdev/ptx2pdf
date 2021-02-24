@@ -283,7 +283,9 @@
   \p@r% End the present paragaph, to make sure that cutouts, etc. are handled properly
   \setbox\j@nkbox=\vbox\bgroup\def\m@rker{#1}\sk@ppingtrue % and if so, start a box to consume and discard the text
  \else % else we need to actually process it!
-  \getp@ram{spaceafter}{\m@rker}% output any <spaceafter> for the previous style
+  \ifx\m@rker\relax\else
+    \getp@ram{spaceafter}{\m@rker}% output any <spaceafter> for the previous style
+  \fi
   \ifx\p@ram\relax \else
     \ifhe@dings\nobreak\fi
     \vskip\p@ram\verticalsp@ceunit                                              %(1)

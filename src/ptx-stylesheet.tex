@@ -54,7 +54,7 @@
   \xdef\m@rker{\scantokens{#1\noexpand}}%
   \m@kedigitsother\remember@xists{\m@rker}% store name of marker currently being defined
   \ifx\c@tprefix\empty\else
-    \remember@xists{\c@tprefix\m@rkerexists}%
+    \remember@xists{\c@tprefix\m@rker}%
   \fi
   \expandafter\let\csname font<\m@rker>\endcsname\relax}
   %\expandafter\let\csname extrafont<#1>\endcsname\relax}
@@ -776,6 +776,7 @@
 
 \newif\ifp@pping
 \p@ppingfalse
+\def\last@popped@parstyle{}
 \def\itp@psstore{}
 \def\endit@c{\endch@rstyle*}
 \def\endit@C{\endch@rstyle*}
