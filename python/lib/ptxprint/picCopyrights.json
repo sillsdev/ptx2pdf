@@ -390,16 +390,14 @@
     "postreg": {
         "hu": {
             "replacements": {
-                "defArt":{
-                        ["\b([Aa]) 1\.","\1z 1."],
-                        ["\b([Aa]) ([5aeiouóöőúüűíéá])","\1z \2"]
-                }
+                "defArt": [
+                        ["\\b([Aa]) 1\\.", "\\1z 1."],
+                        ["\\b([Aa]) ([5aeiouóöőúüűíéá])", "\\1z \\2"]
+                ]
              },
-            "templates":{
-                "templates": { 
-                    "imageCopyrights" : ["defArt"],
-                    "imageExceptions" : ["defArt"] 
-                } 
+            "templates": {
+                "imageCopyrights" : "defArt",
+                "imageExceptions" : "defArt" 
             }
         }
     }
