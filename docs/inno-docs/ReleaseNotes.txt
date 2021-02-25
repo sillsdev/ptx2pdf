@@ -1,5 +1,13 @@
-PTXprint 1.5.14.3 Release Notes 
+PTXprint 1.5.14.4 Release Notes 
 20 February 2021
+
+Bug Fixes and Improvements in 1.5.14.4
+
+  * Fix module loading
+
+  * Allow DBL import for in spec (old spec) DBL bundles
+
+  * Fix Linux PPA building
 
 Bug Fixes and Improvements in 1.5.14.1
 
