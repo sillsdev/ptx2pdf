@@ -422,9 +422,6 @@
     \iflate@stage@reflow
       \trace{D}{restoring notes, re-flowing partial\c@rrdstat\space and excess\c@rrdstat,}%
       \r@storenotes{\g@tdstat}{1}%
-      \ifvoid\p@rtl\else
-        \global\setbox\@xcs\vtop{\joinboxes{\p@rtl}{\@xcs}{2}{\galleypenalty}}%
-      \fi
     \else
       \s@venotes{\g@tdstat}{1}%
     \fi
@@ -494,11 +491,13 @@
       \x@\ifvoid\csname excess\c@rrdstat\endcsname
         \x@\ifnum\csname saved\c@rrdstat penalty\endcsname>9999
           \advance\TempDim by -2\baselineskip
-          \trace{D}{Penalty does not allow this as last item on page, reserving 2 lines: -> \the\TempDim}%
+          \trace{D}{Penalty does not allow this as last item on page, checking there's 2 lines space: -> \the\TempDim}%
         \fi
         \ifdim \TempDim<-0.2\baselineskip %then Unacceptably over-full
           \trace{D}{Not enough space for the suggested galley}%
           \temptrue %
+        \else
+          \trace{D}{OK}%
         \fi
       \fi
     \fi
@@ -512,7 +511,7 @@
     \fi
     \global\advance\trialheight by -1\baselineskip
     \ifdim\trialheight>\baselineskip
-      \let\after@this=\rej@ctgalley
+      \let\after@this=\rej@ctgalley %reject and try again
     \else
       \global\trialfailedtrue
       \global\pagefulltrue
@@ -545,7 +544,7 @@
 }
 
 \def\@trial@failed{%
-  \trace{D}{trial failed, (end of?) input moved. refilling excess\c@rrdstat}%(the start may have been set already
+  \trace{D}{trial failed, (end of?) input moved. refilling excess\c@rrdstat - \refl@wlist}%(the start may have been set already
   %Undo the vsplit (all mtl into excessX)
   \x@\global\x@\setbox\csname excess\c@rrdstat\endcsname\vbox{\joinboxes{\csname partial\c@rrdstat\endcsname}{\csname excess\c@rrdstat\endcsname}{3}{\csname partial\c@rrdstat penalty\endcsname}}%
   \let\col@do=\restore@oldmarks
@@ -842,8 +841,7 @@
   \edef\test{#1}%
   \tempfalse
   \let\col@do=\check@dup
-  \ifx\digl@tc@ntentlist\empty
-  \else
+  \ifx\digl@tc@ntentlist\empty\else
     \x@\each@col\digl@tc@ntentlist\E
   \fi
   \iftemp
@@ -1509,6 +1507,23 @@
   \x@\xdef\csname bot#1mark\endcsname{\csname pre@ptlbot#1mark\endcsname}%
 }
 
+\def\reflow@trial#1{%Restore trial contents to excess
+  \x@\let\x@\p@rtl\csname partial#1\endcsname
+  \x@\let\x@\@xcs\csname excess#1\endcsname
+  \ifvoid\p@rtl\else
+    \global\setbox\@xcs\vtop{\joinboxes{\p@rtl}{\@xcs}{4}{0}}%
+    \tempfalse
+    \ifx\tri@llist\empty\else
+      \edef\test{#1}%
+      \let\col@do=\check@dup
+      \x@\each@col\tri@llist\E
+    \fi
+    \iftemp\else
+      \xdef\tri@llist{\tri@llist#1}% Add this as a trial to run
+    \fi
+  \fi
+}
+
 \def\p@rtialmarks#1{%p@rtial mark.
   \store@marks{#1}%
   \x@\let\x@\test\csname first#1mark\endcsname
@@ -1660,10 +1675,10 @@
     \trace{D}{side \c@rrdstat\space has material to put on the page}%
     \global\not@emptytrue
     \dglt@calc@vailht
-    \ifdim \availht<-2pt 
-      \trace{D}{No space (\the\availht) for material (now, was \oldavht)}%
+    \ifnum 1 = \ifboxmoved 1 \else \ifdim \availht<-2pt 1 \else 0 \fi\fi
       \late@stage@reflowtrue
       \xdef\refl@wlist{\refl@wlist\c@rrdstat}%
+      \trace{D}{No space (\the\availht) for material (now, was \oldavht) reflow:\refl@wlist}%
     \fi
   \fi
   \x@\ifvoid\csname excess\c@rrdstat\endcsname
@@ -1717,8 +1732,10 @@
   \fi
 }
 
+
+
 \def\check@and@update{%Checks each column to see if there is stuff to output
-  \trace{d}{check@and@update \the\triall@@pcount}%
+  \trace{d}{check@and@update \the\triall@@pcount \ifboxmoved boxmoved\fi}%
   %and calls upd@tep@rtial as appropriate
   %responds to \ifboxmoved and \pagefull, checking the last chunkpenalty
   \not@emptyfalse
@@ -1828,6 +1845,12 @@
     \advance\triall@@pcount by 1
     \check@and@update %May trigger a refilling of \tri@llist
     \trace{D}{after check@and@update, tri@llist: \tri@llist, refl@wlist:\refl@wlist}%
+    \ifx\refl@wlist\empty\else
+      \trace{d}{Reflowing aborted trials}%
+      \let\col@do=\reflow@trial
+      \x@\each@col\refl@wlist\E% 
+      \global\let\refl@wlist\empty
+    \fi
     \ifx\tri@llist\empty
       \let\n@xt=\relax
     \else
