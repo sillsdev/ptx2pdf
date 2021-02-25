@@ -130,7 +130,7 @@
 
 % If the item exists, save its current value. 
 \def\s@veSpecificSideDef#1{\ifcsname #1\endcsname \x@\let\csname #1\sfx\x@\endcsname\csname #1\endcsname\fi}
-\def\s@veSpecificSideDim#1{\ifcsname #1\endcsname\ifcsname #1\sfx\endcsname  \x@\global\csname #1\sfx\endcsname=\csname #1\endcsname\fi\fi}
+\def\s@veSpecificSideDim#1{\ifcsname #1\endcsname\ifcsname #1\sfx\endcsname  \x@\global\csname #1\sfx\endcsname=\csname #1\endcsname\else\errmessage{dimension #1 does not exist}\fi\else\errmessage{dimension #1\sfx does not exist}\fi}
 % Output routine for normal things.
 \def\sh@wSpecificDef#1{\ifcsname #1\sfx\endcsname\trace{S}{#1\sfx: \x@\meaning\csname #1\sfx\endcsname}\else
   \trace{S}{#1\sfx: undefined}\fi}
@@ -458,8 +458,9 @@
 
 \xdef\m@rksm@x{0}
 \def\newm@rknum#1{%define a new m@rknum#1 which gets set as the next unused marks  register (assuming all marksN are registered with this function.
-  \xdef\m@rksm@x{\numexpr \m@rksm@x+1\relax}%
-  \x@\global\x@\let\csname m@rknum#1\endcsname=\m@rksm@x
+  {\count255=\numexpr \m@rksm@x+1\relax
+  \x@\xdef\x@\m@rksm@x{\the\count255}%
+  \x@\xdef\csname m@rknum#1\endcsname{\m@rksm@x}}%
 }
 \newm@rknum{L}% registers m@rknumL
 \newm@rknum{R}% registers m@rknumR
@@ -559,9 +560,13 @@
 \ifx\t@st\empty%
   \trace{H}{update@marks: First mark was empty}% Presumably others also
 \else%
-  \x@\let\x@\t@@st\csname oldbot\c@rrdstat mark\endcsname%
-  \ifx\t@st\t@@st\else % do not use if \firstmark,botmark are a carry-over,
-    \trace{H}{u@m: Setting bot\c@rrdstat mark to (\m@rknum) \botmarks\m@rknum [!=\csname oldbot\c@rrdstat mark\endcsname]}%
+  \x@\let\x@\t@@st\csname bot\c@rrdstat mark\endcsname%
+  \trace{H}{u@m:'\t@st'='\t@@st'?}% 
+  \ifx\t@st\t@@st
+    \trace{H}{update@marks: First mark was carry-over}% Presumably others also
+    \x@\xdef\csname n@xtfirst\c@rrdstat mark\endcsname{}%
+  \else % do not use if \firstmark,botmark are a carry-over,
+    \trace{H}{u@m: Setting bot\c@rrdstat mark to \botmarks\m@rknum [!=\csname oldbot\c@rrdstat mark\endcsname]}%
     \global\m@rksonpagetrue
     \x@\xdef\csname oldfirst\c@rrdstat mark\endcsname{\csname first\c@rrdstat mark\endcsname}%
     \x@\xdef\csname oldbot\c@rrdstat mark\endcsname{\csname bot\c@rrdstat mark\endcsname}% Remember botmark in case this chunk isn't on the page
@@ -574,7 +579,7 @@
       \edef\t@st{\p@gefirstmark}%
       \ifx\t@st\empty%
         \trace{H}{dlt3: Setting (default) pagefirstmark to \firstmarks\m@rknum}%
-        \xdef\p@gefirstmark{\firstmarks1}%
+        \xdef\p@gefirstmark{\firstmarks\m@rknum}%
       \fi
     \fi
   \fi
@@ -1052,7 +1057,7 @@
 }
 
 \def\diglot@arrange@cols{%
-  \trace{D}{diglot@arrange@cols}%
+  \trace{D}{diglot@arrange@cols chnkDlta:\the\chunkDelta}%
   \ifVisTrace
     \ifdim\ht\Lbox>0pt
       \doVisTraceT{L}% sets box0, used ~43 lines below
@@ -1067,9 +1072,9 @@
         \else 1\fi
       \else 1\fi
     \thisjointDelta=0pt %Do we need extra space?
-    \ifdim\dp\Lbox>0.3\baselineskip \ifdim\chunkDelta<0pt
+    \ifdim\dp\Lbox>0.5\baselineskip \ifdim\chunkDelta<0pt
       %left are 'touching' and need separating
-      \ifdim\baselineDelta<0pt 
+      \ifdim\baselineDelta<0pt  %baselineDelta is baselineR - baselineL
         \trace{D}{Separating chunks \the\baselineDelta}%
         \advance\thisjointDelta by -\baselineDelta\relax
       \fi 
@@ -1128,7 +1133,7 @@
   \fi
 }
 
-\def\pickn@xtpartial{\ifdiglotN@rmal\global\let\n@xtpartial=\n@xtpartialNrml\else\global\let\n@xtpartial=\n@xtpartialRev\fi} % decide which n@xtpartial box to use
+\def\pickn@xtpartial{\trace{D}{pickn@xtpartial \ifdiglotN@rmal Normal\else Reversed\fi}\ifdiglotN@rmal\global\let\n@xtpartial=\n@xtpartialNrml\else\global\let\n@xtpartial=\n@xtpartialRev\fi} % decide which n@xtpartial box to use
 
 \def\voidn@xtpartial{\global\setbox\n@xtpartialRev\box\voidb@x\global\setbox\n@xtpartialNrml\box\voidb@x}% Void the other n@xtpartial box
 
@@ -1323,6 +1328,7 @@
   %\showthe\leftskip
   %\showthe\rightskip
   \p@gestarttrue
+  \setc@rdstat{L}%%
   \def\pagecontents{%
    \setdiglotN@rmal
    \pickn@xtpartial
@@ -1471,7 +1477,7 @@
   \x@\xdef\csname n@xtfirst#1mark\endcsname{}%
 }
 \def\store@marks#1{%Save the current mark state
-  \trace{H}{Storing pre@ptl ... marks}%
+  \trace{H}{Storing pre@ptl ...#1 marks}%
   \x@\xdef\csname pre@ptlfirst#1mark\endcsname{\csname first#1mark\endcsname}%
   \x@\xdef\csname pre@ptlbot#1mark\endcsname{\csname bot#1mark\endcsname}%
 }
@@ -1498,18 +1504,22 @@
   \x@\xdef\csname bot#1mark\endcsname{\csname oldbot#1mark\endcsname}%
 }
 \def\restore@storedmarks#1{%Restore saved mark state
-  \trace{H}{restoring stored marks}%
+  \trace{H}{restoring stored marks first:\csname pre@ptlfirst#1mark\endcsname\space bot:\csname pre@ptlbot#1mark\endcsname}%
   \x@\xdef\csname first#1mark\endcsname{\csname pre@ptlfirst#1mark\endcsname}%
   \x@\xdef\csname bot#1mark\endcsname{\csname pre@ptlbot#1mark\endcsname}%
 }
 
 \def\p@rtialmarks#1{%p@rtial mark.
   \store@marks{#1}%
-  \trace{H}{using n@xtmarks: first#1mark->\csname n@xtfirst#1mark\endcsname, bot#1mark->\csname n@xtbot#1mark\endcsname}%
   \x@\let\x@\test\csname first#1mark\endcsname
   \ifx\test\empty 
+    \trace{H}{using n@xtmark: first#1mark(\csname first#1mark\endcsname).->\csname n@xtfirst#1mark\endcsname}%
     \x@\xdef\csname first#1mark\endcsname{\csname n@xtfirst#1mark\endcsname}%
+    \global\m@rksonpagetrue
+  \else
+    \trace{H}{not using n@xtfirst#1mark(\csname n@xtfirst#1mark\endcsname), already set as '\csname first#1mark\endcsname'}%
   \fi
+  \trace{H}{bot#1mark(using n@xtmark \csname bot#1mark\endcsname) ->\csname n@xtbot#1mark\endcsname}%
   \x@\xdef\csname bot#1mark\endcsname{\csname n@xtbot#1mark\endcsname}%
 }
 
@@ -1628,7 +1638,7 @@
 \def\postponen@xt@partial{%
   \trace{d}{postponen@xtpartial \the\ht\partial+\the\dp\partial, \the\ht\n@xtpartial+\the\dp\n@xtpartial}%
   \global\late@stage@reflowtrue % Need to re-flow all columns.
-  \r@storenotes{\cur@ds}{1}%
+  \r@storenotes{\g@tdstat}{1}%
 }
 
 \def\tri@llist{}%Trials to be run.
@@ -1719,6 +1729,8 @@
       \let\col@do=\restore@storedmarks
       \x@\each@col\diglot@list\E% 
       \@writep@ge
+      \setdiglotN@rmal
+      \pickn@xtpartial
       \@add@n@xtpartial
       \let\col@do=\reset@n@xt
       \x@\each@col\diglot@list\E% 
