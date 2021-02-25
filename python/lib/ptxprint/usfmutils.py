@@ -500,7 +500,7 @@ class Module:
                 res = self.doc.transform_text(*reps, doc=res)
             return res
         elif e.name == 'inc':
-            s = "".join(e).strip()
+            s = "".join(map(str, e)).strip()
             for c in s:
                 if c == "-":
                     self.removes = set(sum(exclusionmap.values(), []))

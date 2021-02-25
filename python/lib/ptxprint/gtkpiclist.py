@@ -3,7 +3,7 @@ from ptxprint.gtkutils import getWidgetVal, setWidgetVal
 from ptxprint.piclist import newBase
 from ptxprint.utils import refKey, lang, _
 from gi.repository import Gtk, GdkPixbuf, GObject, Gdk
-import os
+import os, re
 
 _form_structure = {
     'anchor':   't_plAnchor',
