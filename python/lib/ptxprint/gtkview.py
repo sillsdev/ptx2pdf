@@ -2059,7 +2059,7 @@ class GtkViewModel(ViewModel):
                            "All Files": {"pattern": "*"}},
                 multiple = False, basedir=os.path.join(prjdir, "Modules"))
         if moduleFile is not None:
-            moduleFile = [x.relative_to(prjdir) for x in moduleFile]
+            moduleFile = [Path(os.path.relpath(x, prjdir)) for x in moduleFile]
             self.moduleFile = moduleFile[0]
             self.builder.get_object("lb_bibleModule").set_label(os.path.basename(moduleFile[0]))
             self.builder.get_object("btn_chooseBibleModule").set_tooltip_text(str(moduleFile[0]))
