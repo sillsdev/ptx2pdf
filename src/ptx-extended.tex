@@ -338,6 +338,9 @@
   \fi
   \let\fstb@drtop=\b@drtop
   \let\lstb@drbot=\b@drbottom
+  \ifdim\ht\extb@x > 0.9\textheight
+    \message{*** WARNING: Sidebar or colophon might not print on page \folio. (\the\ht\extb@x\space high, and  page is \the\textheight).}%
+  \fi
   \loop %Breakable box:
     \ifdim\ht\extb@x>\sb@rchunkh@ight % to enable page splitting, the box should be chunked.
       \dimen1=\sb@rchunkh@ight
