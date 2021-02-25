@@ -2,7 +2,7 @@
 
 import argparse
 import re
-from subprocess import call
+from subprocess import call, check_output
 from datetime import datetime
 
 def replacefile(file, match, replace):
@@ -33,6 +33,20 @@ def dch(version):
         for l in lines:
             outf.write(l)
 
+def get_branches():
+    txt = check_output(["git", "branch", "-vv"])
+    res = {}
+    for l in txt.decode("utf-8").split("\n"):
+        m = re.match(r"^  (\S+)\s.*?\[(.*?)\]", l)
+        if m:
+            name = m.group(1)
+            if ':' in m.group(2):
+                upstream = m.group(2)[:m.group(2).find(':')]
+            else:
+                upstream = m.group(2)
+            res[name] = upstream
+    return res
+
 parser = argparse.ArgumentParser()
 parser.add_argument("version")
 parser.add_argument("-a", action="store_true")
@@ -48,16 +62,27 @@ replacefile("python/lib/ptxprint/ptxprint.glade", r'(property name=\"version\">V
 replacefile("python/lib/ptxprint/view.py", r'(VersionStr = ").*?"', r'\g<1>'+args.version+'"')
 replacefile("docs/inno-docs/ReleaseNotes.txt", r'(PTXprint )\S+( Release Notes)', r'\g<1>'+args.version+'\g<2>')
 
+branches = get_branches()
+
 git("commit", "-a", "-m", "Releasing "+args.version)
 git("tag", tagopt, "-m", "Tagging "+args.version, args.version)
 git("push", "--tag")
 git("push")
 
-git("checkout", "packaging")
+if 'origin/packaging' not in branches.values():
+    git("checkout", "-t", "-b", "packaging", "origin/packaging")
+else:
+    git("checkout", "packaging")
 git("pull")
 dch(args.version)
 git("commit", "-a", "-m", "Bumped release version to "+args.version)
 git("push")
 
+if 'origin/lasttag' not in branches.values():
+    git("checkout", "-t", "-b", "lasttag", "origin/lasttag")
+else:
+    git("checkout", "lasttag")
+git("reset", "--hard", "master")
+git("push")
 git("checkout", "master")
 
