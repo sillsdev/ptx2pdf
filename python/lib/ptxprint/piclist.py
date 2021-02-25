@@ -3,7 +3,7 @@ from ptxprint.utils import refKey, universalopen
 from ptxprint.texmodel import TexModel
 from threading import Thread
 import configparser
-import regex
+import regex, re
 import os, re, random, sys
 
 posparms = ["alt", "src", "size", "pgpos", "copy", "caption", "ref", "x-xetex", "mirror", "scale"]
