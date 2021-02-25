@@ -336,6 +336,8 @@
     \getsbp@ram{alpha}\global\let\pdf@lpha=\cp@ram
     \getsbp@ram{bgcolour}\let\pdfBGc@l=\cp@ram
   \fi
+  \let\fstb@drtop=\b@drtop
+  \let\lstb@drbot=\b@drbottom
   \loop %Breakable box:
     \ifdim\ht\extb@x>\sb@rchunkh@ight % to enable page splitting, the box should be chunked.
       \dimen1=\sb@rchunkh@ight
@@ -350,10 +352,12 @@
         \repeat
       }%
       \setbox\extchunkb@x=\vbox{\unvbox\extchunkb@x}% Reset to natural size
+      \let\b@drbottom=\relax
       \ifvoid\extb@x\else \dp\extchunkb@x=0pt\fi
     \else
       \setbox\extchunkb@x=\box\extb@x
       \let\fb@vpadding=\s@vedvpadding
+      \let\b@drbottom=\lstb@drbot
     \fi
     \trace{e}{Chunk of extbox is \the\ht\extchunkb@x+\the\dp\extchunkb@x (\the\ht\extb@x)}%
     \ifx\h@scol\tr@e
@@ -363,7 +367,9 @@
        \feintbox{\pdf@lpha}{\pdfBGc@l}{\box\extchunkb@x}}%
        \trace{e}{Chunk is (with box) \the\ht\extchunkb@x+\the\dp\extchunkb@x}%
     \fi
+    \let\b@drtop=\fstb@drtop
     \mkb@rder{\extchunkb@x}%
+    \let\fstb@drtop=\relax
     \trace{e}{Chunk is  now \the\ht\extchunkb@x+\the\dp\extchunkb@x}%
     \x@\let\x@\@xtins\csname ins-\loc@ption\endcsname
     \ifpicUsesIns
@@ -371,7 +377,7 @@
       \insert\@xtins{%\vskip\baselineskip
 	    \vskip-\v@dj
         \dimen0=\dp\extchunkb@x
-        \penalty10000\box\extchunkb@x\vskip-\the\dimen0}%
+        \penalty10000\box\extchunkb@x\vskip-\the\dimen0\ifdim\ht\extb@x>0pt \penalty5000 \fi}%
     \else
       \ifx\picl@c\empty
         \message{Could not interpret position \loc@ption for \c@tegory:\sb@rmarker}%

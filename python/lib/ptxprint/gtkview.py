@@ -22,7 +22,8 @@ from ptxprint.view import ViewModel, Path, VersionStr
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal, setFontButton, makeSpinButton
 from ptxprint.utils import APP, setup_i18n
 from ptxprint.ptsettings import ParatextSettings, allbooks, books, bookcodes, chaps
-from ptxprint.piclist import PicList, PicChecks, PicInfoUpdateProject
+from ptxprint.gtkpiclist import PicList
+from ptxprint.piclist import PicChecks, PicInfoUpdateProject
 from ptxprint.gtkstyleditor import StyleEditorView
 from ptxprint.runjob import isLocked, unlockme
 from ptxprint.texmodel import TexModel, ModelMap
@@ -395,7 +396,6 @@ class GtkViewModel(ViewModel):
             self.set("tb_colophon", _defaultColophon)
 
         self.picListView = PicList(self.builder.get_object('tv_picListEdit'), self.builder, self)
-        self.picChecksView = PicChecks(self)
         self.styleEditor = StyleEditorView(self)
 
         self.mw = self.builder.get_object("ptxprint")
@@ -1847,7 +1847,6 @@ class GtkViewModel(ViewModel):
         self.setEntryBoxFont()
         self.updatePicList()
         self.updateDialogTitle()
-        self.picChecksView.init(basepath=self.configPath(cfgname=None), configid=self.configId)
         self.styleEditor.editMarker()
         self.updateMarginGraphics()
         self.onBodyHeightChanged(None)
@@ -2060,7 +2059,7 @@ class GtkViewModel(ViewModel):
                            "All Files": {"pattern": "*"}},
                 multiple = False, basedir=os.path.join(prjdir, "Modules"))
         if moduleFile is not None:
-            moduleFile = [x.relative_to(prjdir) for x in moduleFile]
+            moduleFile = [Path(os.path.relpath(x, prjdir)) for x in moduleFile]
             self.moduleFile = moduleFile[0]
             self.builder.get_object("lb_bibleModule").set_label(os.path.basename(moduleFile[0]))
             self.builder.get_object("btn_chooseBibleModule").set_tooltip_text(str(moduleFile[0]))
@@ -2330,7 +2329,7 @@ class GtkViewModel(ViewModel):
         os.startfile(fldrpath)
 
     def finished(self):
-        self._incrementProgress(val=0.)
+        GLib.idle_add(lambda: self._incrementProgress(val=0.))
 
     def _incrementProgress(self, val=None):
         wid = self.builder.get_object("pr_runs")
@@ -2710,14 +2709,24 @@ class GtkViewModel(ViewModel):
     def onOverlayCreditClicked(self, btn):
         dialog = self.builder.get_object("dlg_overlayCredit")
         dialog.set_keep_above(True)
+        crParams = self.get("t_piccreditbox")
+        m = re.match(r"^([tcb]?)([lrcio]?),(-?9?0?|None),(\w*)", crParams)
+        if m:
+            self.set("fcb_plCreditVpos", m[0])
+            self.set("fcb_plCreditHpos", m[1])
+            self.set("fcb_plCreditRotate", m[2])
+            self.set("ecb_plCreditBoxStyle", m[3])
+        self.set("t_piccredit", self.get("l_piccredit"))
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
             vpos = self.get("fcb_plCreditVpos")
             hpos = self.get("fcb_plCreditHpos")
             rota = self.get("fcb_plCreditRotate")
             bbox = self.get("ecb_plCreditBoxStyle")
+            text = self.get("t_plCreditText")
             crParams = "{}{},{},{}".format(vpos, hpos, rota, bbox)
-            self.set("t_overlayParams", crParams)
+            self.set("t_piccreditbox", crParams)
+            self.set("l_piccredit", text)
         elif response == Gtk.ResponseType.CANCEL:
             pass
         else:

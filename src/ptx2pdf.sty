@@ -187,6 +187,9 @@
 \Marker s4e
 \OccursUnder c periph esb
 
+\Marker sr
+\OccursUnder c periph esb s s1 s2 s3 s4
+
 \Marker lh
 \OccursUnder c periph esb
 
@@ -286,6 +289,74 @@
 \Marker rb
 \LineSpacing 0.5
 \FontSize 8
+
+# Modules markers
+\Marker err
+\Endmarker err*
+\Name OBSOLETE err...err* - Module Error
+\Description An error in a module file
+\OccursUnder id c vrs inc ref rep mod
+\TextProperties nonpublishable nonvernacular
+\TextType Other
+\StyleType Character
+\FontSize 12
+\Color 00000255
+
+\Marker inc
+\Name Module Include Options
+\Description Options for including stuff in modules
+\Rank 4
+\TextProperties paragraph nonpublishable nonvernacular
+\TextType Other
+\FontSize 12
+\StyleType Paragraph
+
+\Marker vrs
+\Name Module Versification 
+\Description Specifies the versification used in a module
+\Rank 4
+\TextProperties paragraph nonpublishable nonvernacular
+\TextType Other
+\FontSize 12
+\StyleType Paragraph
+
+\Marker ref
+\Name Module Verse Reference
+\Description Included verse references in modules
+\Rank 4
+\TextProperties paragraph nonpublishable nonvernacular
+\TextType Other
+\FontSize 12
+\StyleType Paragraph
+
+\Marker refnp
+\Name Module Verse Reference No Paragraphs
+\Description Included verse references in modules with no paragraph markers
+\Rank 4
+\TextProperties paragraph nonpublishable nonvernacular
+\TextType Other
+\FontSize 12
+\StyleType Paragraph
+
+\Marker rep
+\Name Module Text Replacement
+\Description Replaces text included in modules
+\Rank 4
+\TextProperties paragraph nonpublishable nonvernacular
+\TextType Other
+\FontSize 12
+\StyleType Paragraph
+
+\Marker mod
+\Name Module Import
+\Description Includes another module in modules
+\Rank 4
+\TextProperties paragraph nonpublishable nonvernacular
+\TextType Other
+\FontSize 12
+\StyleType Paragraph
+
+# local additions
 
 \Marker gloss|rb
 \Name gloss|rb - Special Text - Ruby Gloss

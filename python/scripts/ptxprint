@@ -13,10 +13,7 @@ try:
 except ImportError:
     sys.path.append(os.path.join(os.path.dirname(__file__), "..", "lib"))
     import ptxprint
-from ptxprint.view import ViewModel, VersionStr, doError
-from ptxprint.font import initFontCache, cachepath, writefontsconf
-from ptxprint.runjob import RunJob, isLocked
-from ptxprint.utils import _, setup_i18n, get_ptsettings, pt_bindir, putenv
+from pathlib import Path
 
 def getnsetlang(config):
     envlang = os.getenv("LANG", None)
@@ -32,6 +29,7 @@ parser = argparse.ArgumentParser()
 # parser.add_argument('-h','--help', help="show this help message and exit")
 parser.add_argument('pid',nargs="?",help="Project id or full path to a ptxprint.cfg file")
 parser.add_argument('-c','--config',help='Configuration path to load')
+parser.add_argument("-M",'--module',help="Module to print")
 parser.add_argument('-p','--paratext',help="Path to Paratext Projects directory")
 parser.add_argument('-d','--directory',help="Directory to store temporary files in")
 parser.add_argument('-P','--print',action='store_true',help="Hits print")
@@ -59,10 +57,16 @@ if args.logging and getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
     sys.stdio = errfile
     sys.stderr = errfile
 
+from ptxprint.utils import _, setup_i18n, get_ptsettings, pt_bindir, putenv
+from ptxprint.font import initFontCache, cachepath, writefontsconf
+
 fontconfig_path = writefontsconf()
 putenv("FONTCONFIG_FILE", fontconfig_path)
 if not args.print:
     from ptxprint.gtkview import GtkViewModel, getPTDir
+
+from ptxprint.view import ViewModel, VersionStr, doError
+from ptxprint.runjob import RunJob, isLocked
 
 # necessary for the side effect of setting pt_bindir :(
 if args.paratext is None:
@@ -178,6 +182,9 @@ if args.print or args.archive is not None:
             elif len(bl) > 1:
                 mainw.set("t_booklist", args.books)
                 mainw.set("r_booK", "multiple")
+        elif args.module is not None and len(args.module):
+            mainw.set("r_book", "module")
+            mainw.moduleFile = Path(args.module)
         mainw.savePics()
         mainw.saveStyles()
         job = doit(mainw)

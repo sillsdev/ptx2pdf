@@ -325,7 +325,7 @@ class Usfm:
                 return sfm.Text(s, e.pos, e.parent)
             else:
                 return e
-        self._proctext(fn, doc=doc)
+        return list(self._proctext(fn, doc=doc))
 
     def letter_space(self, inschar, doc=None):
         from ptxprint.sfm.ucd import get_ucd
@@ -463,7 +463,8 @@ class Module:
 
     def parse_element(self, e):
         if isinstance(e, sfm.Text):
-            t = self.localise_re.sub(self.localref, e)
+            t = self.localise_re.sub(self.localref, str(e)
+)
             if t != e:
                 return [sfm.Text(t, e.pos, e.parent)]
             return [e]
@@ -477,13 +478,13 @@ class Module:
                 if rep.name != "rep":
                     break
                 # parse rep
-                m = re.match("^\s*(.*?)\s*=>\s*(.*?)\s*$", rep[0], re.M)
+                m = re.match("^\s*(.*?)\s*=>\s*(.*?)\s*$", str(rep[0]), re.M)
                 if m:
                     reps.append((None,
-                            re.compile(r"(?<=\s|^)"+m.group(1).replace("...","[^\n\r]+")+"(\\b|(?=\\s)|$)",
-                            m.group(2))))
+                            re.compile(r"\b"+m.group(1).replace("...","[^\n\r]+")+"(\\b|(?=\\s)|$)"),
+                            m.group(2)))
                 del e.parent[curr+1]
-            for r in parse_refs(e[0]):
+            for r in parse_refs(str(e[0])):
                 p = self.get_passage(r, removes=self.removes, strippara=e.name=="refnp")
                 if e.name == "ref":
                     for i, t in enumerate(p):
@@ -492,13 +493,14 @@ class Module:
                                 p[0:i] = [self.new_element(e, "p1" if isidparent else "p", p[0:i])]
                             break
                     else:
+
                         p = [self.new_element(e, "p1" if isidparent else "p", p)]
                 res.extend(p)
             if len(reps):
                 res = self.doc.transform_text(*reps, doc=res)
             return res
         elif e.name == 'inc':
-            s = "".join(e).strip()
+            s = "".join(map(str, e)).strip()
             for c in s:
                 if c == "-":
                     self.removes = set(sum(exclusionmap.values(), []))

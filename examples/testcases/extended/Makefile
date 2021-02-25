@@ -8,6 +8,7 @@ DIR:=$(shell dirname `find ../../..  -name paratext2.tex`)
 	
 
 test.pdf: test.tex usfmTex-ext.tex usfmTex-settings.tex test.usfm $(DIR)/*.tex *.sty
+test2.pdf: test2.tex usfmTex-ext.tex usfmTex-settings.tex test2.usfm $(DIR)/*.tex *.sty
 
 bisect:
 	mkdir ../bisect || rm -f ../bisect/*
@@ -15,4 +16,4 @@ bisect:
 
 auto:
 	echo Source code in $(DIR)
-	while inotifywait -e close_write . $(DIR) ; do make test.pdf ; done < /dev/null
+	while inotifywait -e close_write . $(DIR) ; do make test.pdf test2.pdf; done < /dev/null

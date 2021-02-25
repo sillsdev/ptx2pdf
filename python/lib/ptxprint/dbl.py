@@ -177,23 +177,44 @@ def UnpackDBL(dblfile, prjid, prjdir):
             prjid = meta.findtext('identification/abbreviation')
         prjpath = os.path.join(prjdir, prjid)
         os.makedirs(prjpath, exist_ok=True)
-        with inzip.open("release/styles.xml") as instyle:
-            style = et.parse(instyle)
+        for f in ('styles.xml', 'release/styles.xml'):
+            try:
+                with inzip.open(f) as instyle:
+                    style = et.parse(instyle)
+                break
+            except KeyError:
+                pass
 
         ldmlname = "{}_{}.ldml".format(meta.findtext('language/iso'), meta.findtext('language/ldml'))
-        inzip.extract("release/"+ldmlname, path=os.path.join(prjpath, ldmlname))
+        for f in (ldmlname, 'release/'+ldmlname):
+            try:
+                inzip.extract(f, path=os.path.join(prjpath, ldmlname))
+                break
+            except KeyError:
+                pass
 
-        contents = meta.find('publications/publication[@default="true"]/structure')
-        for contentel in contents.findall('content'):
-            bkid = contentel.get("role")
+        def process_usx(bkid, infname):
             bkindex = books.get(bkid)
             bookshere[bkindex-1] = 1
-            infname = contentel.get("src")
             outfname = "{:02}{}{}.USFM".format(bkindex, bkid, prjid)
             outpath = os.path.join(prjpath, outfname)
             with inzip.open(infname) as inf:
                 with open(outpath, "w", encoding="utf-8") as outf:
                     usx2usfm(inf, outf)
+
+        metacontents = meta.find('publications/publication[@default="true"]/structure')
+        if metacontents is not None:
+            for contentel in metacontents.findall('content'):
+                bkid = contentel.get("role")
+                infname = contentel.get("src")
+                process_usx(bkid, infname)
+        else:
+            metacontents = meta.find('contents/bookList[@default="true"]/books')
+            for contentel in metacontents.findall('book'):
+                bkid = contentel.get('code')
+                infname = 'USX_1/{}.usx'.format(bkid)
+                process_usx(bkid, infname)
+
     info['bookspresent'] = "".join(str(x) for x in bookshere)
     settings = et.Element('ScriptureText')
     settings.tail = "\n    "

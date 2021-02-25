@@ -19,10 +19,32 @@
                 "templates": {
                     "type": "object",
                     "properties": {
-                        "imagecopyright": { "$ref": "#/definitiones/pluralstr"},
-                        "imageExceptions": { "$ref": "#/definitiones/pluralstr"},
-                        "allIllustrations": { "$ref": "#/definitiones/pluralstr"},
-                        "exceptIllustrations": { "$ref": "#/definitiones/pluralstr"}
+                        "imagecopyright": { "$ref": "#/definitions/pluralstr"},
+                        "imageExceptions": { "$ref": "#/definitions/pluralstr"},
+                        "allIllustrations": { "$ref": "#/definitions/multistring"},
+                        "exceptIllustrations": { "$ref": "#/definitions/multistring"}
+                    }
+                },
+                "postreg": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                            "replacements": {
+                                "type": "object",
+                                "additionalProperties": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "array",
+                                        "items": { "type": "string" }
+                                    }
+                                }
+                            }
+                        },
+                        "templates": {
+                            "type": "object",
+                            "additionalProperties": { "type": "string" }
+                        }
                     }
                 },
                 "copyrights" : {
@@ -43,9 +65,9 @@
                             },
                             "credit": { "$ref": "#/definitions/multistring" },
                             "creditPos": { "type": "string" }
-                        }
-                    },
-                    "required": [ "copyright" ]
+                        },
+                        "required": [ "copyright" ]
+                    }
                 }
             }
         },
