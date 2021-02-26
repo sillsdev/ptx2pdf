@@ -273,7 +273,7 @@
 \def\savedLpenalty{0}% just storage.
 \def\savedRpenalty{0}
 
-\newcount\tmppenalty%scratchspace
+\newcount\tmpcount%scratchspace
 \newcount\Lboxpenalty% The penalty that goes between Lbox and partialL
 \newcount\Rboxpenalty%  ~"~
 \newcount\partialLpenalty% The penalty that goes between partialL and excessL (also used while loading excessL during excessL
@@ -290,10 +290,6 @@
      \setf@lwgdstat{\n@xtdstat}%
    \fi
    \trace{D}{diglot@any@primary: \show@dstat}%
-   \tmppenalty=\outputpenalty %
-   \ifnum\tmppenalty=1000
-     \tmppenalty=0
-   \fi
    \p@gestarttrue % or at least, this isn't the right place to place things that go after a paragraph
 } 
 
@@ -1032,7 +1028,7 @@
    \ifdim\dimen0<0pt
      \dimen0=0pt
    \fi
-   %Theoretically, there ought to be a \baselineskip here. It doesn't seem to be needed.
+   %I thought ought to be a \baselineskip here. It doesn't seem to be needed.
    %\advance\dimen0 by \baselineskip
  \fi\fi
  \trace{D}{joinb@xes #1 #2, skip \the\dimen0}%
@@ -1054,7 +1050,7 @@
   \egroup
 }
 
-\def\diglot@arrange@cols{%
+\def\diglot@arrange@cols{% Xht is the sum of Xbox's depth and height (set by after@a@trial
   \trace{D}{diglot@arrange@cols chnkDlta:\the\chunkDelta}%
   \ifVisTrace
     \ifdim\ht\Lbox>0pt
@@ -1064,23 +1060,30 @@
     \fi
   \fi
   %Is there actually anything to set?
-  \ifnum 1=
-      \ifdim\Lht=0pt
-        \ifdim\Rht=0pt 0
-        \else 1\fi
-      \else 1\fi
+  \tmpcount=0\def\v@lpfx{}\def\v@lsfx{ht}\let\cts@list=\empty
+  \let\col@do=\count@dim% increments tmpcount by each non-0 value, and sets \cts@list
+  \x@\each@col\diglot@list\E
+  \ifnum \tmpcount>0
     \thisjointDelta=0pt %Do we need extra space?
-    \ifdim\dp\Lbox>0.5\baselineskip \ifdim\chunkDelta<0pt
-      %left are 'touching' and need separating
-      \ifdim\baselineDelta<0pt  %baselineDelta is baselineR - baselineL
-        \trace{D}{Separating chunks \the\baselineDelta}%
-        \advance\thisjointDelta by -\baselineDelta\relax
-      \fi 
-      %FIXME: RHS / small L baseline may need more attention
-    \fi\fi
+    %Calculate how much extra space we need:
+    % step 1: max height of the last box 
+    \def\v@lpfx{@cur}\def\v@lsfx{ht}%
+    \let\col@do=\max@val
+    \x@\each@col\diglot@list\E % Find height of lastchunk
+    \edef\@maxht{\the\dimen1}%
+    \dimen1=0pt
+    % step 2: position of the ideal next baseline (below last box)
+    \let\col@do=\maxjoint@val
+    \x@\each@col\cts@list\E
+    \ifdim\dimen1>0pt
+      \thisjointDelta=\dimen1
+      \advance\thisjointDelta by -\@maxht
+      \advance\thisjointDelta by -\b@selineskipL
+    \fi
+    \trace{dP}{Join delta gives \the\dimen1 -\@maxht -\b@selineskipL = \the\thisjointDelta (\the\ht\n@xtpartial+\the\dp\n@xtpartial}%
     \global\chunkDelta=\Rht
     \global\advance\chunkDelta by -\Lht\relax
-    \trace{D}{new chunkDelta: \the\Rht - \the\Lht =  \the\chunkDelta}%
+    \trace{dP}{new chunkDelta: \the\Rht - \the\Lht =  \the\chunkDelta}%
     %save Lht and Rht (as "nxtchunkXht) and reset Xht
     \let\col@do\save@reset@ht
     \x@\each@col\diglot@list\E
@@ -1112,11 +1115,15 @@
     \global\setbox\n@xtpartialNrml\vtop{%
       \iftemp
         \vskip\ColumnGutterRuleSkip
+      \else
+        \ifdim\thisjointDelta<0pt
+          \kern\thisjointDelta
+        \fi
       \fi
       \hbox to \textwidth{\ifVisTrace\llap{\copy0}\fi%
-      \hbox to\columnshift{}%
-      \hbox to\columnLwidth{\copy\Lbox\hss}\makediglotgutter{\dimen7}{\dimen8}{\dimen9}%
-      \hbox to\columnRwidth{\copy\Rbox\hss}%\rlap{\the\ht\Rbox \the\dp\Rbox}%
+        \hbox to\columnshift{}%
+        \hbox to\columnLwidth{\copy\Lbox\hss}\makediglotgutter{\dimen7}{\dimen8}{\dimen9}%
+        \hbox to\columnRwidth{\copy\Rbox\hss}%\rlap{\the\ht\Rbox \the\dp\Rbox}%
     }}%
     \global\setbox\n@xtpartialRev\vtop{%
       \iftemp
@@ -1269,7 +1276,7 @@
         {
         %Implement meshing algorithm:
         \trace{Df}{Saving fn dimensions}%
-        \edef\v@lpfx{@fn}\let\col@do=\save@boxdim %Save footnote values
+        \edef\v@lpfx{@fn}\let\col@do=\save@boxdim %Save footnote @fnXht @fnXdp values
         \x@\each@col\diglot@list\E
         \edef\v@lsfx{ht}%
         \trace{Df}{Finding max \v@lpfx X\v@lsfx}%
@@ -1441,19 +1448,18 @@
   \ifx\t@mp\empty\else\global\m@rksonpagetrue\trace{H}{Found mark \splitbotmark}\fi
   \makevtop{255}%
   \trace{D}{dp:\the\dp255}%
-  \tmppenalty=\outputpenalty %
+  \tmpcount=\outputpenalty %
   \ifnum\outputpenalty=10000 % Nothing wrong with breaking here
-    \tmppenalty=0\relax%
+    \tmpcount=0\relax%
   \fi
   \ifvoid\destb@x
     \global\setbox\destb@x=\box255
   \else 
     \global\setbox\destb@x=\vtop{\joinboxes{\destb@x}{255}{1}{\csname partial\c@rrdstat penalty\endcsname}}%
   \fi
-  \x@\csname partial\c@rrdstat penalty\endcsname=\tmppenalty
+  \x@\csname partial\c@rrdstat penalty\endcsname=\tmpcount
   \ifnum\outputpenalty=\dgl@tPenColSwap\relax %Got to the end of the \lefttext
     \trace{D}{Reached end of diglotCollect. \ifallNeedEmptying Running trials soon\fi}%
-    \tmppenalty=\savedpenalty\relax%
     \ifallNeedEmptying
       \global\let\n@xtc@mmand=\diglot@run@trials
       \global\allNeedEmptyingfalse
@@ -1539,7 +1545,7 @@
 }
 
 %%%%%%%%%
-% \Xht calculations, for 'snuggling' footnotes.
+% \Xht calculations, for 'snuggling' footnotes and chunks
 \def\@curLht{0pt}
 \let\@curRdp\@curLht
 \let\@curRht\@curLht
@@ -1553,17 +1559,28 @@
   \x@\xdef\csname \v@lpfx#1ht\endcsname{\x@\the\x@\ht\csname #1box\endcsname}%
   \x@\xdef\csname \v@lpfx#1dp\endcsname{\x@\the\x@\dp\csname #1box\endcsname}%
 } 
-\def\check@nxtht#1{%If the nxtchunk#1 height =0 for a box? Set iftemp if yes 
-  \x@\ifdim\csname @nxtchunk#1ht\endcsname=0pt
+
+\def\count@dim#1{%Is the dimension non non-zero? Count using tmpcount and add tag to list
+  \x@\ifdim \csname \v@lpfx#1\v@lsfx\endcsname=0pt\else
+    \advance\tmpcount by 1
+    \edef\cts@list{\cts@list#1}%
+  \fi
+}
+\def\check@nxtht#1{%If the nxtchunk#1 height =0 for a previously-not-empty box? Set iftemp if yes , un
+  \x@\ifdim\csname @nxtchunk#1ht\endcsname=0pt 
     \temptrue
   \fi
 }
-\def\set@ht#1{%Set the values of curXht, using method based on \iftemp  (anything on the page is current by definition)
+\def\set@ht#1{%Set the values of curXht, adding or resetting based on \iftemp  (anything on the page is current by definition)
   \x@\dimen1\x@=\csname @nxtchunk#1ht\endcsname
   \x@\dimen0\x@=\csname @cur#1ht\endcsname
   \x@\xdef\csname @old#1ht\endcsname{\the\dimen0}%
-  \iftemp
-    \advance\dimen1 by \dimen0
+  \iftemp %one at least is empty
+    \ifdim \dimen1 =0pt
+      \dimen1=\dimen0 % new height = old hright
+    \else
+      \advance\dimen1 by \m@xht
+    \fi
   \fi
   \x@\xdef\csname @cur#1ht\endcsname{\the\dimen1}%
 }
@@ -1571,6 +1588,13 @@
 \def\max@val#1{\x@\let\x@\t@st\csname \v@lpfx#1\v@lsfx\endcsname
   \ifdim\dimen1<\t@st
     \dimen1=\t@st
+  \fi
+}
+\def\maxjoint@val#1{\dimen0=\csname \v@lpfx#1\v@lsfx\endcsname
+  \advance \dimen0 by \csname b@selineskip#1\endcsname
+  \trace{dP}{joint ht for #1 = \the\dimen0}%
+  \ifdim\dimen1<\dimen0
+    \dimen1=\dimen0
   \fi
 }
 
@@ -1641,8 +1665,17 @@
     \trace{Df}{Checking for empty boxes}%
     \let\col@do=\check@nxtht %sets iftemp
     \x@\each@col\diglot@list\E
+    \iftemp
+      \def\v@lpfx{@nxtchunk}\def\v@lsfx{ht}%
+      \trace{Df}{Finding max \v@lpfx X\v@lsfx}%
+      \let\col@do=\max@val\dimen1=0pt
+      \x@\each@col\diglot@list\E
+      \edef\m@xht{\the\dimen1}%
+    \else
+      \edef\m@xht{0pt}%
+    \fi
     \trace{Df}{Saving new Xht values}%
-    \let\col@do=\set@ht %uses iftemp, 
+    \let\col@do=\set@ht %uses iftemp and m@xht
     \x@\each@col\diglot@list\E
     %
     %\global\p@geChunkDelta=\chunkDelta%
