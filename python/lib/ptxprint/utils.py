@@ -3,6 +3,7 @@ import locale, codecs, traceback
 import os, sys, re
 import xml.etree.ElementTree as et
 from inspect import currentframe
+from struct import unpack
 from ptxprint.ptsettings import books
 
 APP = 'ptxprint'
@@ -259,4 +260,78 @@ def multstr(template, lang, num, text, addon=""):
     if len(addon):
         res += " " + addon
     return res
+
+def xdvigetpages(xdv):
+    with open(xdv, "rb") as inf:
+        inf.seek(-12, 2)
+        dat = inf.read(12).rstrip(b"\xdf")
+        postamble = unpack(">I", dat[-5:-1])[0]
+        inf.seek(postamble, 0)
+        dat = inf.read(5)
+        lastpage = unpack(">I", dat[1:])[0]
+        inf.seek(lastpage, 0)
+        dat = inf.read(5)
+        res = unpack(">I", dat[1:])[0]
+    return res
+
+def brent(left, right, mid, fn, tol, log=None, maxiter=20):
+    '''Brent method, see Numerical Recipes in C Ed. 2 p404'''
+    GOLD = 0.3819660
+    a = left
+    b = right
+    e = 0.
+    x = w = v = mid
+    fw = fv = fx = fn(mid)
+    for i in range(maxiter):
+        xm = 0.5 * (a + b)
+        t1 = tol * abs(x) + 1e-8
+        t2 = 2 * t1
+        if abs(x - xm) <= t2 - 0.5 * (b - a):
+            return x
+        if abs(e) > t1:
+            r = (x - w) * (fx - fv)
+            q = (x - v) * (fx - fw)
+            p = (x - v) * q - (x - w) * r
+            q = 2 * (q - r)
+            if q > 0:
+                p = -p
+            q = abs(q)
+            etemp = e
+            e = d
+            if abs(p) > abs(0.5 * q * etemp) or p <= q * (a -x ) or p >= q * (b - x):
+                e = a - x if x >= xm else b - x
+                d = GOLD * e
+            else:
+                d = p / q
+                u = x + d
+                if u - a < t2 or b - u < t2:
+                    return xm
+        else:
+            e = a - x if x >= xm else b - x
+            d = GOLD * e
+        u = x + d if abs(x) >= t1 else x + (t1 if d > 0. else -t1)
+        fu = fn(u)
+        if fu is None:
+            fu = fx + d
+        if log is not None:
+            log.append((u, fu))
+        if fu <= fx:
+            if u >= x:
+                a = x
+            else:
+                b = x
+            v = w; w = x; x = u
+            fv = fw; fw = fx; fx = fu
+        else:
+            if u < x:
+                a = u
+            else:
+                b = u
+            if fu <= fw or w == x:
+                v = w; w = u
+                fv = fw; fw = fu
+            elif fu <= fv or v == x or v == w:
+                v = u
+                fv = fu
+    return xm
 

@@ -20,7 +20,7 @@ import xml.etree.ElementTree as et
 from ptxprint.font import TTFont, initFontCache, fccache, FontRef, parseFeatString
 from ptxprint.view import ViewModel, Path, VersionStr
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal, setFontButton, makeSpinButton
-from ptxprint.utils import APP, setup_i18n
+from ptxprint.utils import APP, setup_i18n, brent, xdvigetpages
 from ptxprint.ptsettings import ParatextSettings, allbooks, books, bookcodes, chaps
 from ptxprint.gtkpiclist import PicList
 from ptxprint.piclist import PicChecks, PicInfoUpdateProject
@@ -332,6 +332,7 @@ class GtkViewModel(ViewModel):
         self.pendingerror = None
         self.logfile = None
         self.rtl = False
+        self.isDiglotMeasuring = False
         self.lang = args.lang if args.lang is not None else 'en'
         ilang = self.builder.get_object("fcb_interfaceLang")
         llang = self.builder.get_object("ls_interfaceLang")
@@ -1347,7 +1348,7 @@ class GtkViewModel(ViewModel):
                 return
             if j is not None and j.lower() == "right":
                 self.styleEditor.setval(k, "Justification", "Left")
-            elif j is None or j.lower() == "left":
+            elif j is not None and j.lower() == "left":
                 self.styleEditor.setval(k, "Justification", "Right")
 
     def onEditStyleClicked(self, btn):
@@ -2733,3 +2734,28 @@ class GtkViewModel(ViewModel):
             return
         dialog.set_keep_above(False)
         dialog.hide()
+
+    def onDiglotAutoAdjust(self, btn):
+        if self.isDiglotMeasuring:
+            btn.set_active(True)
+            return
+        elif not self.get("c_diglot"):
+            btn.set_active(False)
+            return
+        elif not btn.get_active():
+            return
+        self.isDiglotMeasuring = True
+        btn.set_active(True)
+        xdvname = os.path.join(self.working_dir, self.baseTeXPDFnames()[0] + ".xdv")
+        def score(x):
+            self.set("s_diglotPriFraction", x*100)
+            runjob = self.callback(self, maxruns=1, noview=True)
+            while runjob.thread.is_alive():
+                Gtk.main_iteration_do(False)
+            runres = runjob.res
+            return None if runres else xdvigetpages(xdvname)
+        mid = float(self.get("s_diglotPriFraction")) / 100.
+        res = brent(0., 1., mid, score, 0.001)
+        self.set("s_diglotPriFraction", res*100)
+        self.isDiglotMeasuring = False
+        btn.set_active(False)

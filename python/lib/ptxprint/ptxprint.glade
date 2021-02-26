@@ -1348,6 +1348,13 @@ saved configuration.</property>
     <property name="icon_name">network-idle-symbolic</property>
     <property name="icon_size">3</property>
   </object>
+  <object class="GtkImage" id="icon_adjust_spacing1">
+    <property name="visible">True</property>
+    <property name="sensitive">False</property>
+    <property name="can_focus">False</property>
+    <property name="icon_name">network-idle-symbolic</property>
+    <property name="icon_size">3</property>
+  </object>
   <object class="GtkImage" id="icon_adjust_top">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
@@ -13684,6 +13691,7 @@ This is quite likely required for RTL languages.</property>
                               <packing>
                                 <property name="left_attach">2</property>
                                 <property name="top_attach">0</property>
+                                <property name="width">2</property>
                               </packing>
                             </child>
                             <child>
@@ -13772,7 +13780,47 @@ leave this option checked ON.</property>
                               <packing>
                                 <property name="left_attach">2</property>
                                 <property name="top_attach">3</property>
+                                <property name="width">2</property>
                               </packing>
+                            </child>
+                            <child>
+                              <object class="GtkToggleButton" id="btn_adjust_diglot">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                                <property name="tooltip_text" translatable="yes">Fine Tune Line Spacing:
+
+Click this button to shrink or expand the line spacing 
+slightly to minimise wasted vertical space on the page.
+
+If there is more than half a line of 'spare' space on the 
+page then the line-spacing will decrease slightly to
+fit one more line of text on the page.
+
+If there is less than half a line of 'spare' space on the 
+page then the line-spacing will increase slightly to 
+fill the page more evenly (with the same number of 
+lines of text).
+
+If you prefer to keep the exact line spacing specified, 
+then do NOT click this option. Instead, use the similar
+button to adjust either the Top or Bottom Margin.</property>
+                                <property name="halign">start</property>
+                                <property name="valign">center</property>
+                                <property name="image">icon_adjust_spacing1</property>
+                                <property name="always_show_image">True</property>
+                                <signal name="clicked" handler="onDiglotAutoAdjust" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="left_attach">3</property>
+                                <property name="top_attach">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
                             </child>
                             <child>
                               <placeholder/>

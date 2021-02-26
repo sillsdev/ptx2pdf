@@ -144,10 +144,12 @@ class RunJob:
         self.busy = False
         self.ispdfxa = False
         self.inArchive = inArchive
+        self.noview = False
 
-    def doit(self):
+    def doit(self, noview=False):
         if not lockme(self):
             return False
+        self.noview = noview
         self.texfiles = []
         info = TexModel(self.printer, self.args.paratext, self.printer.ptsettings, self.printer.prjid, inArchive=self.inArchive)
         info.debug = self.args.debug
@@ -162,7 +164,7 @@ class RunJob:
         jobs = self.printer.getBooks(files=True)
 
         self.books = []
-        self.maxRuns = 1 if self.printer.get("c_quickRun") else 5
+        self.maxRuns = 1 if self.printer.get("c_quickRun") else (self.args.runs or 5)
         self.changes = None
         self.checkForMissingDecorations(info)
         info["document/piclistfile"] = ""
@@ -198,7 +200,7 @@ class RunJob:
         pdfname = os.path.join(self.tmpdir, outfname.replace(".tex", ".pdf"))
         print(pdfname)
         if self.res == 0:
-            if self.printer.isDisplay and os.path.exists(pdfname):
+            if not self.noview and self.printer.isDisplay and os.path.exists(pdfname):
                 if sys.platform == "win32":
                     os.startfile(pdfname)
                 elif sys.platform == "linux":
@@ -500,7 +502,7 @@ class RunJob:
                     rererun = True
             if not rererun:
                 break
-        if not self.args.testing and not self.res:
+        if not self.noview and not self.args.testing and not self.res:
             self.printer.incrementProgress()
             cmd = ["xdvipdfmx", "-E"]
             if self.printer.get("c_PDFx1aOutput"):

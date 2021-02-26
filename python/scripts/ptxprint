@@ -25,6 +25,15 @@ def getnsetlang(config):
     config.set("init", "syslang", envlang or "")
     return envlang
 
+class DictAction(argparse.Action):
+    def __call__(self, parser, namespace, values, option_string=None):
+        vals = getattr(namespace, self.dest, None)
+        if vals is None:
+            vals = {}
+            setattr(namespace, self.dest, vals)
+        (k, v) = values.split("=")
+        vals[k] = v
+
 parser = argparse.ArgumentParser()
 # parser.add_argument('-h','--help', help="show this help message and exit")
 parser.add_argument('pid',nargs="?",help="Project id or full path to a ptxprint.cfg file")
@@ -34,6 +43,7 @@ parser.add_argument('-p','--paratext',help="Path to Paratext Projects directory"
 parser.add_argument('-d','--directory',help="Directory to store temporary files in")
 parser.add_argument('-P','--print',action='store_true',help="Hits print")
 parser.add_argument('-b','--books',help='Space separated bookid list to set')
+parser.add_argument('-R','--runs',type=int,default=0,help="limit xetex runs")
 parser.add_argument('-L','--lang',help='Set UI language code')
 parser.add_argument('-m','--macros',help="Directory containing TeX macros (paratext2.tex)")
 parser.add_argument('-l','--logging',action="store_true",help="Output logging to terminal instead of logging window")
@@ -42,6 +52,7 @@ parser.add_argument('-T','--testing',action='store_true',help="Run in testing, o
 parser.add_argument('-f','--fontpath',action='append',help="Directory of fonts to include (repeatable)")
 parser.add_argument('--nofontcache',action="store_true",help="Don't use system fonts")
 parser.add_argument('-A','--archive',help="Create archive of project")
+parser.add_argument('-D','--define',action=DictAction,help="set UI component=value. Repeatable")
 parser.add_argument('--nuseusfmerge',action="store_true",help="Use a different kind of merge for diglot")
 parser.add_argument('--debug',action="store_true",help="Give debug output")
 parser.add_argument("-C","--capture",help="Capture interaction events to file. Not to be used yet")
@@ -143,10 +154,15 @@ elif getattr(sys, 'frozen', False):
 else:
     macrosdir = os.path.join(scriptsdir, "..", "..", "src")
 
-def doit(printer):
+def doit(printer, maxruns=0, noview=False):
     if not isLocked():
+        if maxruns > 0:
+            oldruns = args.runs
+            args.runs = maxruns
         runjob = RunJob(printer, scriptsdir, args)
-        runjob.doit()
+        runjob.doit(noview=noview)
+        if maxruns > 0:
+            args.runs = oldruns
         return runjob
     else:
         return None
@@ -185,6 +201,9 @@ if args.print or args.archive is not None:
         elif args.module is not None and len(args.module):
             mainw.set("r_book", "module")
             mainw.moduleFile = Path(args.module)
+        if args.define is not None:
+            for k, v in args.define.items():
+                mainw.set(k, v)
         mainw.savePics()
         mainw.saveStyles()
         job = doit(mainw)
@@ -204,6 +223,9 @@ else:
         if args.pid:
             mainw.setPrjid(args.pid)
             mainw.setConfigId(args.config or "Default")
+        if args.define is not None:
+            for k, v in args.define.items():
+                mainw.set(k, v)
         mainw.run(doit)
         if mainw.lang != args.lang:
             args.lang = mainw.lang
