@@ -1345,7 +1345,7 @@ saved configuration.</property>
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can_focus">False</property>
-    <property name="icon_name">network-idle-symbolic</property>
+    <property name="icon_name">network-transmit-receive-symbolic</property>
     <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_spacing1">
@@ -13788,23 +13788,8 @@ leave this option checked ON.</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
-                                <property name="tooltip_text" translatable="yes">Fine Tune Line Spacing:
-
-Click this button to shrink or expand the line spacing 
-slightly to minimise wasted vertical space on the page.
-
-If there is more than half a line of 'spare' space on the 
-page then the line-spacing will decrease slightly to
-fit one more line of text on the page.
-
-If there is less than half a line of 'spare' space on the 
-page then the line-spacing will increase slightly to 
-fill the page more evenly (with the same number of 
-lines of text).
-
-If you prefer to keep the exact line spacing specified, 
-then do NOT click this option. Instead, use the similar
-button to adjust either the Top or Bottom Margin.</property>
+                                <property name="tooltip_text" translatable="yes">Auto calculate primary percentage by trying to reduce the page count. This will run your print job up to 10 times or more, so choose a small book to run on.
+You may influence the result depending on where you start the slider. This can help avoid local minimums.</property>
                                 <property name="halign">start</property>
                                 <property name="valign">center</property>
                                 <property name="image">icon_adjust_spacing1</property>
