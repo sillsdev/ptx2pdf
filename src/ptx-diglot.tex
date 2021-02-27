@@ -1071,16 +1071,25 @@
     \let\col@do=\max@val
     \x@\each@col\diglot@list\E % Find height of lastchunk
     \edef\@maxht{\the\dimen1}%
+    \def\v@lpfx{b@selineskip}\def\v@lsfx{}%
+    \let\col@do=\max@val
+    \x@\each@col\cts@list\E % Find biggest baseline skip of those bits of text which are active.
+    \edef\@maxb@seline{\the\dimen1}%
     \dimen1=0pt
     % step 2: position of the ideal next baseline (below last box)
+    \def\v@lpfx{@cur}\def\v@lsfx{ht}%
     \let\col@do=\maxjoint@val
     \x@\each@col\cts@list\E
     \ifdim\dimen1>0pt
       \thisjointDelta=\dimen1
       \advance\thisjointDelta by -\@maxht
-      \advance\thisjointDelta by -\b@selineskipL
+      \advance\thisjointDelta by -\topskip %remove topskip 
     \fi
-    \trace{dP}{Join delta gives \the\dimen1 -\@maxht -\b@selineskipL = \the\thisjointDelta (\the\ht\n@xtpartial+\the\dp\n@xtpartial}%
+    \if\thisjointDelta>\@maxb@seline %sanity check
+      \trace{d}{Insane jointDelta (\the\thisjointDelta) reduced to 0pt}%
+      \thisjointDelta=0pt
+    \fi
+    \trace{dP}{Join delta gives \the\dimen1 -\@maxht -\the\topskip = \the\thisjointDelta (\the\ht\n@xtpartial+\the\dp\n@xtpartial}%
     \global\chunkDelta=\Rht
     \global\advance\chunkDelta by -\Lht\relax
     \trace{dP}{new chunkDelta: \the\Rht - \the\Lht =  \the\chunkDelta}%
@@ -1117,7 +1126,9 @@
         \vskip\ColumnGutterRuleSkip
       \else
         \ifdim\thisjointDelta<0pt
-          \kern\thisjointDelta
+          \if\thisjointDelta>-\@maxb@seline %sanity check
+            \vskip\thisjointDelta
+          \fi
         \fi
       \fi
       \hbox to \textwidth{\ifVisTrace\llap{\copy0}\fi%
