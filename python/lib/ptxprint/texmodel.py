@@ -732,7 +732,7 @@ class TexModel:
                     dat = str(doc)
                     doc = None
                 dat = self.runChanges(self.changes, dat)
-                dat = self.analyzeImageCopyrights(dat)   # MH: Why do we do this here?
+                self.analyzeImageCopyrights(dat)
 
             if self.dict['project/canonicalise']:
                 if doc is None:
@@ -1127,10 +1127,9 @@ class TexModel:
             self.localChanges.append((None, regex.compile(r"\\p \\k {}\\k\* .+\r?\n".format(delGloEntry), flags=regex.M), ""))
 
     def analyzeImageCopyrights(self, txt):
-        for m in re.findall(r"\\(\S+).*?\\zimagecopyrights([A-Z]+)", txt):  # MH: Does this mean we *have* to have a code?
-            self.imageCopyrightLangs[m[1].lower()] = m[0]                   # Also might need to allow lowercase so that it can be
-        # txt = re.sub(r'://', ':/ / ', txt)                                  # typed in Paratext!
-        return txt
+        for m in re.findall(r"\\(\S+).*?\\zimagecopyrights([A-Z]+)", txt):
+            self.imageCopyrightLangs[m[1].lower()] = m[0]
+        return
 
     def generateImageCopyrightText(self):
         artpgs = {}
@@ -1139,7 +1138,7 @@ class TexModel:
         picpagesfile = os.path.join(self.docdir()[0], self['jobname'] + ".picpages")
         crdts = []
         cinfo = self.printer.copyrightInfo
-        self.dict['project/colophontext'] = self.analyzeImageCopyrights(self.dict['project/colophontext'])
+        self.analyzeImageCopyrights(self.dict['project/colophontext'])
         if os.path.exists(picpagesfile):
             with universalopen(picpagesfile) as inf:
                 dat = inf.read()

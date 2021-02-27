@@ -109,8 +109,8 @@
         "allIllustrations": {
             "en": "All illustrations {0}",
             "fr": "Toutes les illustrations {0}",
-            "hu": "Az összes illusztráció",
-            "ro": "Toate ilustrațiile",
+            "hu": "Az összes illusztráció {0}",
+            "ro": "Toate ilustrațiile {0}",
             "es": "Todas las ilustraciones {0}",
             "fr": "Toutes les illustrations {0}"
         },
