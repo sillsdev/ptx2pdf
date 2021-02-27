@@ -974,14 +974,14 @@
        \unpenalty
      \fi
    \fi
-   \ifvoid#2\else
-     \ifdim\ht#2=0pt 
-       \dimen3=\baselineskip
-       \advance\dimen3 by -\topskip
-       \vskip \dimen3
-     \fi
+   \ifvoid#2
+     \trace{D}{Box joint is \join@a-\join@b, no skip}%
+   \else
+     \dimen3=\baselineskip
+     \advance\dimen3 by -\topskip
+     \vskip \dimen3
+     \trace{D}{Box joint is \join@a-\join@b (\the\baselineskip, \the\topskip) (\the\dimen3)}%
    \fi
-   %\trace{D}{Box joint is \join@a-\join@b (\the\dimen5)}%
    %\ifdim\dimen5=0pt\else
      %\kern \dimen5
    %\fi
