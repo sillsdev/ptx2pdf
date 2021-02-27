@@ -32,6 +32,7 @@ class Chunk(list):
         self.verse = verse
         self.end = verse
         self.pnum = pnum
+        self.hasVerse = False
         self.labelled = False
 
     def label(self, chap, verse, end, pnum):
@@ -147,13 +148,14 @@ class Collector:
                 self.end = e
                 self.counts = {}
                 self.currChunk.label(self.chap, self.verse, self.end, 0)
+                self.currChunk.hasVerse = True
             currChunk = self.collect(c, primary=primary) or currChunk
         return currChunk
 
     def reorder(self):
-        # move \c \s to \s \c
+        # move everything after \c up to something with a \v in it, to before the \c
         for i in range(1, len(self.acc)):
-            if self.acc[i-1].type == ChunkType.CHAPTER and self.acc[i].type == ChunkType.HEADING:
+            if self.acc[i-1].type == ChunkType.CHAPTER and not self.acc[i].hasVerse:
                 self.acc[i-1], self.acc[i] = self.acc[i], self.acc[i-1]
         # insert global cl after c in \c
         if self.chaplabel is not None:
@@ -162,13 +164,19 @@ class Collector:
                     a.append(self.chaplabel)
         # merge \c with body chunk following
         for i in range(1, len(self.acc)):
+            if getattr(self.acc[i], 'deleteme', False):
+                continue
             if self.acc[i-1].type == ChunkType.CHAPTER and self.acc[i].type == ChunkType.BODY:
+                tag = self.acc[i][0].name
                 self.acc[i-1].extend(self.acc[i])
                 self.acc[i-1].type = self.acc[i].type
                 self.acc[i].deleteme = True
-                if self.acc[i][0].name == "nb" and i > 1:
+                if tag == "nb" and i > 1:
                     self.acc[i-2].extend(self.acc[i-1])
                     self.acc[i-1].deleteme = True
+                elif tag.startswith("q") and i < len(self.acc) - 1 and self.acc[i+1][0].name.startswith("q"):
+                    self.acc[i-1].extend(self.acc[i+1])
+                    self.acc[i+1].deleteme = True
         self.acc = [x for x in self.acc if not getattr(x, 'deleteme', False)]
 
 

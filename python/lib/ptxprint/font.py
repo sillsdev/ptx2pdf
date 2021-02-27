@@ -478,6 +478,7 @@ class TTFont:
         self.ascent = 0.
         self.descent = 0.
         self.upem = 1
+        self.isGraphite = False
         if self.filename is not None:
             if self.readfont():
                 self.family = self.names.get(1, self.family)
@@ -516,6 +517,7 @@ class TTFont:
             self.readOTLangs(inf)
             self.readhhea(inf)
             self.readhead(inf)
+        self.isGraphite = 'Silf' in self.dict
         return True
 
     def readFeat(self, inf):
@@ -871,6 +873,7 @@ class FontRef:
 
     def _getTeXComponents(self, inarchive=False, root=None):
         f = self.getTtfont()
+        self.isGraphite = self.isGraphite and f.isGraphite
         s = None
         if f.filename is not None and not f.iscore:
             if inarchive:
