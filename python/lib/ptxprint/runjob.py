@@ -579,6 +579,7 @@ class RunJob:
         else:
             self.printer.set("l_missingPictureCount", "(0 Missing)")
             self.printer.set("l_missingPictureString", "")
+        self.printer.incrementProgress()
         return res
 
     def getBorder(self, box, start, end, fn):

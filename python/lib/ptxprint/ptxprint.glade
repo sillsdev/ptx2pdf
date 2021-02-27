@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.2 
+<!-- Generated with glade 3.22.1 
 
 The MIT License (MIT)
 
@@ -1338,28 +1338,28 @@ saved configuration.</property>
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can_focus">False</property>
-    <property name="icon_name">network-idle-symbolic</property>
+    <property name="icon_name">system-run-symbolic</property>
+    <property name="icon_size">3</property>
+  </object>
+  <object class="GtkImage" id="icon_adjust_diglot">
+    <property name="visible">True</property>
+    <property name="sensitive">False</property>
+    <property name="can_focus">False</property>
+    <property name="icon_name">system-run-symbolic</property>
     <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_spacing">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can_focus">False</property>
-    <property name="icon_name">network-transmit-receive-symbolic</property>
-    <property name="icon_size">3</property>
-  </object>
-  <object class="GtkImage" id="icon_adjust_spacing1">
-    <property name="visible">True</property>
-    <property name="sensitive">False</property>
-    <property name="can_focus">False</property>
-    <property name="icon_name">network-idle-symbolic</property>
+    <property name="icon_name">system-run-symbolic</property>
     <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_top">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can_focus">False</property>
-    <property name="icon_name">network-idle-symbolic</property>
+    <property name="icon_name">system-run-symbolic</property>
     <property name="icon_size">3</property>
   </object>
   <object class="GtkListStore" id="ls_NoteBlendInto">
@@ -8625,7 +8625,7 @@ DRAFT\ \isodate\ \hrsmins   would give "DRAFT YYYY-MM-YY HH:MM"
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkRadioButton" id="c_hdrLeftPri">
+                                      <object class="GtkRadioButton" id="r_hdrLeft_Pri">
                                         <property name="label" translatable="yes">Pri</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
@@ -8640,7 +8640,8 @@ Note: To activate or change this
 setting, you must first enable Diglot.</property>
                                         <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
-                                        <property name="group">c_hdrLeftSec</property>
+                                        <property name="group">r_hdrLeft_Sec</property>
+                                        <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
@@ -8648,7 +8649,7 @@ setting, you must first enable Diglot.</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkRadioButton" id="c_hdrLeftSec">
+                                      <object class="GtkRadioButton" id="r_hdrLeft_Sec">
                                         <property name="label" translatable="yes">Sec</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
@@ -8663,6 +8664,8 @@ Note: To activate or change this
 setting, you must first enable Diglot.</property>
                                         <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
+                                        <property name="group">r_hdrLeft_Pri</property>
+                                        <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
@@ -8670,7 +8673,7 @@ setting, you must first enable Diglot.</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkRadioButton" id="c_hdrCenterPri">
+                                      <object class="GtkRadioButton" id="r_hdrCenter_Pri">
                                         <property name="label" translatable="yes">Pri</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
@@ -8686,7 +8689,8 @@ setting, you must first enable Diglot.</property>
                                         <property name="margin_left">10</property>
                                         <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
-                                        <property name="group">c_hdrCenterSec</property>
+                                        <property name="group">r_hdrCenter_Sec</property>
+                                        <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left_attach">2</property>
@@ -8694,7 +8698,7 @@ setting, you must first enable Diglot.</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkRadioButton" id="c_hdrRightPri">
+                                      <object class="GtkRadioButton" id="r_hdrRight_Pri">
                                         <property name="label" translatable="yes">Pri</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
@@ -8710,7 +8714,8 @@ setting, you must first enable Diglot.</property>
                                         <property name="margin_left">10</property>
                                         <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
-                                        <property name="group">c_hdrRightSec</property>
+                                        <property name="group">r_hdrRight_Sec</property>
+                                        <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left_attach">4</property>
@@ -8718,7 +8723,7 @@ setting, you must first enable Diglot.</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkRadioButton" id="c_hdrCenterSec">
+                                      <object class="GtkRadioButton" id="r_hdrCenter_Sec">
                                         <property name="label" translatable="yes">Sec</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
@@ -8734,6 +8739,8 @@ setting, you must first enable Diglot.</property>
                                         <property name="margin_left">10</property>
                                         <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
+                                        <property name="group">r_hdrCenter_Pri</property>
+                                        <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left_attach">2</property>
@@ -8741,7 +8748,7 @@ setting, you must first enable Diglot.</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkRadioButton" id="c_hdrRightSec">
+                                      <object class="GtkRadioButton" id="r_hdrRight_Sec">
                                         <property name="label" translatable="yes">Sec</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
@@ -8757,6 +8764,8 @@ setting, you must first enable Diglot.</property>
                                         <property name="margin_left">10</property>
                                         <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
+                                        <property name="group">r_hdrRight_Pri</property>
+                                        <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left_attach">4</property>
@@ -9163,7 +9172,7 @@ these can be set in the ptxprint-mods.tex file.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkRadioButton" id="c_ftrCenterSec">
+                              <object class="GtkRadioButton" id="r_ftrCenter_Sec">
                                 <property name="label" translatable="yes">Sec</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
@@ -9177,6 +9186,8 @@ header, or the Secondary format.</property>
                                 <property name="margin_left">10</property>
                                 <property name="active">True</property>
                                 <property name="draw_indicator">True</property>
+                                <property name="group">r_ftrCenter_Pri</property>
+                                <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
@@ -9184,7 +9195,7 @@ header, or the Secondary format.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkRadioButton" id="c_ftrCenterPri">
+                              <object class="GtkRadioButton" id="r_ftrCenter_Pri">
                                 <property name="label" translatable="yes">Pri</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
@@ -9197,7 +9208,8 @@ header, or the Secondary format.</property>
                                 <property name="halign">start</property>
                                 <property name="margin_left">10</property>
                                 <property name="draw_indicator">True</property>
-                                <property name="group">c_ftrCenterSec</property>
+                                <property name="group">r_ftrCenter_Sec</property>
+                                <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
@@ -13687,6 +13699,7 @@ on the left (or Inner) side, then check this option.
 This is quite likely required for RTL languages.</property>
                                 <property name="halign">start</property>
                                 <property name="draw_indicator">True</property>
+                                <signal name="clicked" handler="onDiglotSwapSideClicked" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="left_attach">2</property>
@@ -13792,7 +13805,7 @@ leave this option checked ON.</property>
 You may influence the result depending on where you start the slider. This can help avoid local minimums.</property>
                                 <property name="halign">start</property>
                                 <property name="valign">center</property>
-                                <property name="image">icon_adjust_spacing1</property>
+                                <property name="image">icon_adjust_diglot</property>
                                 <property name="always_show_image">True</property>
                                 <signal name="clicked" handler="onDiglotAutoAdjust" swapped="no"/>
                               </object>

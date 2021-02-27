@@ -123,8 +123,8 @@ _sensitivities = {
     "c_includeFootnotes" :     ["bx_fnOptions"],
     "c_includeXrefs" :         ["bx_xrOptions"],
     "c_includeillustrations" : ["gr_IllustrationOptions"],
-    "c_diglot" :               ["gr_diglot", "fcb_diglotPicListSources", "c_hdrLeftPri", "c_hdrCenterPri", "c_hdrRightPri",
-                                "c_ftrCenterPri", "c_hdrLeftSec", "c_hdrCenterSec", "c_hdrRightSec", "c_ftrCenterSec"],
+    "c_diglot" :               ["gr_diglot", "fcb_diglotPicListSources", "r_hdrLeft_Pri", "r_hdrCenter_Pri", "r_hdrRight_Pri",
+                                "r_ftrCenter_Pri", "r_hdrLeft_Sec", "r_hdrCenter_Sec", "r_hdrRight_Sec", "r_ftrCenter_Sec"],
     "c_borders" :              ["gr_borders"],
 
     "c_pagegutter" :           ["s_pagegutter"],
@@ -548,7 +548,7 @@ class GtkViewModel(ViewModel):
         for c in ("tb_Advanced", "tb_ViewerEditor", "tb_Tabs", "tb_DiglotBorder", "tb_StyleEditor",
                   "fr_copyrightLicense", "r_book_module", "btn_chooseBibleModule", "lb_bibleModule", "c_combine",
                   "c_fighiderefs", "lb_selectFigureFolder", "l_indentUnit", "s_indentUnit", "lb_style_s", "lb_style_r", 
-                  "l_btmMrgn", "s_bottommargin", "l_ftrPosn", "s_footerposition", "c_ftrCenterPri", "c_ftrCenterSec", 
+                  "l_btmMrgn", "s_bottommargin", "l_ftrPosn", "s_footerposition", "r_ftrCenter_Pri", "r_ftrCenter_Sec", 
                   "l_missingPictureString", "l_imageTypeOrder", "t_imageTypeOrder", "fr_layoutSpecialBooks", "fr_layoutOther",
                   "s_colgutteroffset", "bx_TopMarginSettings", "gr_HeaderAdvOptions", "l_colgutteroffset",
                   "c_fighiderefs", "c_skipmissingimages", "c_useCustomFolder", "btn_selectFigureFolder", "c_exclusiveFiguresFolder",
@@ -556,7 +556,7 @@ class GtkViewModel(ViewModel):
                   "fr_fallbackFont", "l_colgutteroffset", "fr_hyphenation",
                   "bx_fnCallers", "bx_fnCalleeCaller", "bx_xrCallers", "bx_xrCalleeCaller", "c_fnOverride", "c_xrOverride",
                   "row_ToC", "c_hyphenate", "l_missingPictureCount", "bx_colophon", "btn_deleteConfig", "btn_lockunlock",
-                  "c_hdrLeftPri", "c_hdrLeftSec", "c_hdrCenterPri", "c_hdrCenterSec", "c_hdrRightPri", "c_hdrRightSec", 
+                  "r_hdrLeft_Pri", "r_hdrLeft_Sec", "r_hdrCenter_Pri", "r_hdrCenter_Sec", "r_hdrRight_Pri", "r_hdrRight_Sec", 
                   "c_omitverseone", "c_glueredupwords", "c_firstParaIndent", "c_hangpoetry", "c_preventwidows", 
                   "btn_unpackDBLbundle", "c_cropmarks", "fr_margins", "c_linebreakon", "t_linebreaklocale", 
                   "c_pagegutter", "s_pagegutter", "l_digits", "fcb_digits", "c_quickRun", "c_mirrorpages",
@@ -2336,7 +2336,7 @@ class GtkViewModel(ViewModel):
         wid = self.builder.get_object("pr_runs")
         if val is None:
             val = wid.get_fraction()
-            val = 0.5 if val < 0.1 else 1. - (1. - val) * 0.5
+            val = 0.25 if val < 0.1 else 1. - (1. - val) * 0.5
         wid.set_fraction(val)
 
     def incrementProgress(self):
@@ -2759,3 +2759,10 @@ class GtkViewModel(ViewModel):
         self.set("s_diglotPriFraction", res*100)
         self.isDiglotMeasuring = False
         btn.set_active(False)
+
+    def onDiglotSwapSideClicked(self, btn):
+        if self.get("r_hdrLeft") != self.get("r_hdrRight"):
+            for a in ("r_hdrLeft", "r_hdrRight"):
+                v = self.get(a)
+                v = "Sec" if v == "Pri" else ("Pri" if v == "Sec" else v)
+                self.set(a, v)    

@@ -229,15 +229,15 @@ ModelMap = {
     "header/ifverses":          ("c_hdrverses", lambda w,v :"true" if v else "false"),
     "header/chvseparator":      ("c_sepColon", lambda w,v : ":" if v else "."),
     "header/ifrhrule":          ("c_rhrule", lambda w,v: "" if v else "%"),
-    "header/hdrleftpri":        ("c_hdrLeftPri", None),
+    "header/hdrleftside":       ("r_hdrLeft", None),
     "header/hdrleft":           ("ecb_hdrleft", lambda w,v: v or "-empty-"),
-    "header/hdrcenterpri":      ("c_hdrCenterPri", None),
+    "header/hdrcenterside":     ("r_hdrCenter", None),
     "header/hdrcenter":         ("ecb_hdrcenter", lambda w,v: v or "-empty-"),
-    "header/hdrrightpri":       ("c_hdrRightPri", None),
+    "header/hdrrightside":      ("r_hdrRight", None),
     "header/hdrright":          ("ecb_hdrright", lambda w,v: v or "-empty-"),
     "header/mirrorlayout":      ("c_mirrorpages", lambda w,v: "true" if v else "false"),
     
-    "footer/ftrcenterpri":      ("c_ftrCenterPri", None),
+    "footer/ftrcenterside":     ("r_ftrCenter", None),
     "footer/ftrcenter":         ("ecb_ftrcenter", lambda w,v: v or "-empty-"),
     "footer/ifftrtitlepagenum": ("c_pageNumTitlePage", lambda w,v: "" if v else "%"),
     "footer/ifprintConfigName": ("c_printConfigName", lambda w,v: "" if v else "%"),
@@ -467,7 +467,7 @@ class TexModel:
         """ Update model headers from model UI read values """
         diglot = True if self.dict["document/ifdiglot"] == "" else False
         v = self.dict["footer/ftrcenter"]
-        pri = self.dict["footer/ftrcenterpri"] # boolean
+        pri = self.dict["footer/ftrcenterside"] == "Pri" 
         t = self._hdrmappings.get(v, v)
         if diglot:
             t = self._addLR(t, pri)
@@ -476,7 +476,7 @@ class TexModel:
         mirror = self.asBool("header/mirrorlayout")
         for side in ('left', 'center', 'right'):
             v = self.dict["header/hdr"+side]
-            pri = self.dict["header/hdr"+side+"pri"] # boolean
+            pri = self.dict["header/hdr"+side+"side"] == "Pri"
             t = self._hdrmappings.get(v, v)
             if diglot:
                 t = self._addLR(t, pri)
@@ -550,6 +550,7 @@ class TexModel:
         self.dict['jobname'] = jobname
         self.dict['document/imageCopyrights'] = self.generateImageCopyrightText() \
                 if self.dict['document/includeimg'] else r"\def\zimagecopyrights{}"
+        self.dict['project/colophontext'] = re.sub(r'://', ':/ / ', self.dict['project/colophontext'])
         with universalopen(os.path.join(os.path.dirname(__file__), template)) as inf:
             for l in inf.readlines():
                 if l.startswith(r"\ptxfile"):
@@ -731,7 +732,7 @@ class TexModel:
                     dat = str(doc)
                     doc = None
                 dat = self.runChanges(self.changes, dat)
-                dat = self.analyzeImageCopyrights(dat)
+                dat = self.analyzeImageCopyrights(dat)   # MH: Why do we do this here?
 
             if self.dict['project/canonicalise']:
                 if doc is None:
@@ -1126,9 +1127,9 @@ class TexModel:
             self.localChanges.append((None, regex.compile(r"\\p \\k {}\\k\* .+\r?\n".format(delGloEntry), flags=regex.M), ""))
 
     def analyzeImageCopyrights(self, txt):
-        for m in re.findall(r"\\(\S+).*?\\zimagecopyrights([A-Z]+)", txt):
-            self.imageCopyrightLangs[m[1].lower()] = m[0]
-        txt = re.sub(r'://', ':/ / ', txt)
+        for m in re.findall(r"\\(\S+).*?\\zimagecopyrights([A-Z]+)", txt):  # MH: Does this mean we *have* to have a code?
+            self.imageCopyrightLangs[m[1].lower()] = m[0]                   # Also might need to allow lowercase so that it can be
+        # txt = re.sub(r'://', ':/ / ', txt)                                  # typed in Paratext!
         return txt
 
     def generateImageCopyrightText(self):
