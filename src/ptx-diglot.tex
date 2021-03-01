@@ -299,7 +299,7 @@
 \def\@ddtoexcess{%
   \trace{d}{@ddtoexcess op:\the\outputpenalty\space etp:\endtri@lpen@lty\space hIns=\the\holdinginserts(==1) adding \the\ht255+\the\dp255\space to galleyexc@ss (\the\ht\galleyexc@ss+\the\dp\galleyexc@ss)}%
   \ifvoid\galleyexc@ss
-    \global\setbox\galleyexc@ss\vbox{\TempDim=\dp255\unvbox255\kern-\TempDim\ifnum\outputpenalty=10000\else\ifnum\outputpenalty=\endtri@lpen@lty\else\penalty\outputpenalty\fi\fi}%
+    \global\setbox\galleyexc@ss\vbox{\TempDim=\dp255\unvbox255 \ifdim\TempDim=0pt\else \kern-\TempDim\fi\ifnum\outputpenalty=10000\else\ifnum\outputpenalty=\endtri@lpen@lty\else\penalty\outputpenalty\fi\fi}%
   \else
     \global\setbox\galleyexc@ss\vbox{\joinboxes{\galleyexc@ss}{255}{19}{\ifnum\outputpenalty=10000 0\else\ifnum\endtri@lpen@lty=\outputpenalty 0\else\the\outputpenalty\fi\fi}}%
     % HERE BE DRAGONS. If galleyexc@ss was not emptied by undog@lley, and
@@ -907,12 +907,13 @@
  \s@tbaseline{p}%
  \trace{D}{makevtop #1, before vtop dp=\the\dp#1, ht=\the\ht#1}%
  \TempDim=\dp#1\relax%
- \ifdim\TempDim>\baselineskip \trace{D}{Looks like this is already a vtop}\TempDim=0pt
+ \ifdim\TempDim>\baselineskip \trace{D}{Looks like this is already a vtop}%
+   \TempDim=0pt
  \fi%
- %\bgroup
  \setbox0=\copy#1\setbox1=\vtop{\unvbox 0\setbox2=\lastbox}%Work on a copy so we don't break stuff.
  \trace{D}{pd:\the\dp2, ph=\the\ht2, d:\the\TempDim}%
- \global\setbox#1=\vtop{\unvbox#1\ifdim\dp2=0pt\ifdim\TempDim=0pt\else\kern-\TempDim\fi\fi}}%\egroup}%
+ \global\setbox#1=\vtop{\unvbox#1\ifdim\dp2=0pt\ifdim\TempDim=0pt\else\kern-\TempDim\fi\fi}
+}
 
 \def\joinboxes#1#2#3#4{%Join 2 vtops together and preserve baselineskip%
  \traceNum{d}{joinboxes #1(\the\ht#1+\the\dp#1x\the\wd#1) #2 (\the\ht#2+\the\dp#2x\the\wd#2)called from locn #3, with penalty #4}%
@@ -920,12 +921,10 @@
    \showbox#1\showbox#2
  \fi\relax
  %How do these boxes join?
- \dimen5=0pt
  \ifdim\ht#1>0pt
    \def\join@a{vbox}%
    \ifdim\ht#2=0pt
      \ifdim\dp#2>0pt
-       \dimen5=-\baselineskip
        \def\join@b{vtop}%
      \else
        \def\join@b{void}%
@@ -948,6 +947,7 @@
      \unvbox#1
      %\showlists
      \dimen4=\lastkern%
+     \dimen5=\dimen4
     % \unkern
      \setbox0=\lastbox%
      \copy0
@@ -967,34 +967,34 @@
          %\showbox0
        \fi%
      \fi
+     \dimen5=0pt
    \else
      \dimen4=-\dp#1
      \unvbox#1
+     \dimen5=\lastkern
      \ifnum\lastpenalty<-10000
        \unpenalty
      \fi
    \fi
+   \dimen3=\baselineskip
+   \advance\dimen3 by -\topskip
+   \ifdim\dimen5<10sp \ifdim\dimen5>0sp
+      \count254=\dimen5
+      \dimen6=\dimen5
+      \advance\dimen6 by 1sp
+      \dimen4=-\dimen6 
+      \dimen3=0pt
+      \trace{D}{Re-breaking in the same place as before. Cancelling topskip removal. Indenting VisTrace label by \the\count254}%
+   \fi\fi
    \ifvoid#2
      \trace{D}{Box joint is \join@a-\join@b, no skip}%
    \else
-     \dimen3=\baselineskip
-     \advance\dimen3 by -\topskip
      \vskip \dimen3
      \trace{D}{Box joint is \join@a-\join@b (bls:\the\baselineskip, ts:\the\topskip -> skip: \the\dimen3)}%
    \fi
-   %\ifdim\dimen5=0pt\else
-     %\kern \dimen5
-   %\fi
    \ifVisTrace
   %   \hrule\kern -0.4pt
      \dimen6=1sp\count254=0
-     \ifdim\dimen4<10sp \ifdim\dimen4>0sp
-        \count254=\dimen4
-        \dimen6=\dimen4
-        \advance\dimen6 by 1sp
-        \dimen4=0pt
-        \trace{D}{Indenting label by \the\count254}%
-     \fi\fi
      \kern \dimen4
      \hbox to 0pt{\hss\doVisTrace{j}\box0\kern\dimexpr -20pt * \count254\relax}%
      \kern \dimen6
