@@ -359,7 +359,7 @@
   % the \trial routine is called (again)
   % assumes galley and galleyexc@ss are empty when first run
   % post-galley material is saved  in  \galleyexc@ss WHICH MUST BE EMPTY at the first cycle.
-  \trace{d}{diglot@backingup hIns=\the\holdinginserts(==1) op:\the\outputpenalty,  dc:\the\deadcycles\space ge:\the\ht\galleyexc@ss (0pt at first call)}%
+  \traceNum{d}{diglot@backingup hIns=\the\holdinginserts(==1) op:\the\outputpenalty,  dc:\the\deadcycles\space g:\the\ht\galley, ge:\the\ht\galleyexc@ss (0pt at first call)}%
   \ifnum\holdinginserts=0
     \MSG{*** Internal error caught. Incorrect internal state found in backing up. Text of footnotes may have been lost.}%
   \fi
@@ -369,6 +369,9 @@
     \fi
     \global\galleypenalty=\ifnum \outputpenalty=10000 0\else\outputpenalty\fi
     \global\setbox\galley=\vbox{\unvbox255\penalty\endtri@lpen@lty}%
+    \ifnum\diglotDbgJoinboxes=\TRACEcount
+      \showbox\galley%
+    \fi
   \else
     \@ddtoexcess
   \fi
@@ -403,11 +406,12 @@
   \ifnum\TRACEcount=\diglotDbgJoinboxes
    \showbox\p@rtl\showbox\@xcs
   \fi
+  \s@tbaseline{p}%
+  \trace{D}{baseline: \the\baselineskip, av:\the\availht}%
   \ifdim\availht>\baselineskip
     \trace{D}{Preparing for trial}%
     \global\trialheight=\availht
     \global\let\whichtrial=\after@a@trial
-    \global\vsize=\trialheight
     \global\setbox\trialbox=\box\voidb@x
     \global\setbox\galleyexc@ss=\box\voidb@x
     \global\trialfailedfalse
@@ -426,6 +430,8 @@
       \showbox\@xcs
     \fi
     \global\setbox\p@rtl=\vsplit\@xcs to \trialheight
+    \advance\trialheight by \baselineskip % avoid underfull box in case of footnote
+    \global\vsize=\trialheight
     \csname partial\c@rrdstat penalty\endcsname=0 %FIXME: Isn't there a \splitpenalty??
     \global\galleypenalty=0
     \global\setbox\galley=\vbox{\x@\unvcopy\p@rtl\unpenalty\penalty\endtri@lpen@lty}%
@@ -589,7 +595,7 @@
  %it calls whichtrial 
  %as though it hadn't been here.
  %Assumptions: holdinginserts=1 material in \galley and \galleyexc@ss
-  \trace{d}{diglot@any@trial \the\ht255+\the\dp255\space hIns=\the\holdinginserts(==0 1st time) op=\the\outputpenalty, etp=\endtri@lpen@lty, dc=\the\deadcycles, xs:\the\ht\galleyexc@ss+\the\dp\galleyexc@ss, th:\the\trialheight}%
+  \trace{d}{diglot@any@trial \the\ht255+\the\dp255 \space hIns=\the\holdinginserts(==0 1st time) op=\the\outputpenalty, etp=\endtri@lpen@lty, dc=\the\deadcycles, xs:\the\ht\galleyexc@ss+\the\dp\galleyexc@ss, th:\the\trialheight}%
   %\tracingifs=1
   \ifnum\holdinginserts=0\else
     \ifvoid\trialbox
@@ -621,7 +627,8 @@
     \fi
   \else
     \ifnum 1=\ifdim\ht255>0pt 1 \else \ifdim\dp255>0pt 1 \else 0\fi\fi
-      \trace{D}{Extra content found before end of trial}%
+      \setbox255\vbox{\unvbox255}%
+      \trace{D}{Extra content found before end of trial, \the\ht255+\the\dp255}%
       \global\trialfailedtrue
       \global\vsize=\textheight
       \global\setbox255\box\voidb@x
@@ -978,6 +985,9 @@
    \fi
    \dimen3=\baselineskip
    \advance\dimen3 by -\topskip
+   \ifVisTrace
+     \dimen6=1sp\count254=0
+   \fi
    \ifdim\dimen5<10sp \ifdim\dimen5>0sp
       \count254=\dimen5
       \dimen6=\dimen5
@@ -989,12 +999,11 @@
    \ifvoid#2
      \trace{D}{Box joint is \join@a-\join@b, no skip}%
    \else
-     \vskip \dimen3
+     \vskip \dimen3 
      \trace{D}{Box joint is \join@a-\join@b (bls:\the\baselineskip, ts:\the\topskip -> skip: \the\dimen3)}%
    \fi
    \ifVisTrace
   %   \hrule\kern -0.4pt
-     \dimen6=1sp\count254=0
      \kern \dimen4
      \hbox to 0pt{\hss\doVisTrace{j}\box0\kern\dimexpr -20pt * \count254\relax}%
      \kern \dimen6
@@ -1063,14 +1072,17 @@
   \tmpcount=0\def\v@lpfx{}\def\v@lsfx{ht}\let\cts@list=\empty
   \let\col@do=\count@dim% increments tmpcount by each non-0 value, and sets \cts@list
   \x@\each@col\diglot@list\E
+  \trace{dP}{Columns with contents: \cts@list}%
   \ifnum \tmpcount>0
     \thisjointDelta=0pt %Do we need extra space?
     %Calculate how much extra space we need:
     % step 1: max height of the last box 
     \def\v@lpfx{@cur}\def\v@lsfx{ht}%
+    \dimen1=0pt
     \let\col@do=\max@val
     \x@\each@col\diglot@list\E % Find height of lastchunk
     \edef\@maxht{\the\dimen1}%
+    \dimen1=0pt
     \def\v@lpfx{b@selineskip}\def\v@lsfx{}%
     \let\col@do=\max@val
     \x@\each@col\cts@list\E % Find biggest baseline skip of those bits of text which are active.
@@ -1089,7 +1101,7 @@
       \trace{d}{Insane jointDelta (\the\thisjointDelta) reduced to 0pt}%
       \thisjointDelta=0pt
     \fi
-    \trace{dP}{Join delta gives \the\dimen1 -\@maxht -\the\topskip = \the\thisjointDelta (\the\ht\n@xtpartial+\the\dp\n@xtpartial}%
+    \trace{dP}{Join delta gives \the\dimen1 -\@maxht -\the\topskip = \the\thisjointDelta}%
     \global\chunkDelta=\Rht
     \global\advance\chunkDelta by -\Lht\relax
     \trace{dP}{new chunkDelta: \the\Rht - \the\Lht =  \the\chunkDelta}%
@@ -1126,8 +1138,11 @@
         \vskip\ColumnGutterRuleSkip
       \else
         \ifdim\thisjointDelta<0pt
-          \if\thisjointDelta>-\@maxb@seline %sanity check
+          \ifdim\thisjointDelta>-\@maxb@seline %sanity check
             \vskip\thisjointDelta
+            \trace{dP}{skipping jointDelta: \the\thisjointDelta}%
+          \else
+            \trace{dP}{Insane negative jointDelta \the\thisjointDelta < -\@maxb@seline}%
           \fi
         \fi
       \fi
@@ -1188,7 +1203,7 @@
   \let\col@do=\store@marks
   \x@\each@col\diglot@list\E %remember old marks state
   \s@venotes{\g@tdstat}{2}% remember old notestate 
-  \traceNum{d}{Writing new n@xtpartial : LB:\the\ht\Lbox+\the\dp\Lbox\space RB:\the\ht\Rbox+\the\dp\Rbox\space p@gechunkDelta:\the\p@geChunkDelta}%\space Tot:\the\cumulativeDelta%
+  \traceNum{d}{Arranging new n@xtpartial : LB:\the\ht\Lbox+\the\dp\Lbox\space RB:\the\ht\Rbox+\the\dp\Rbox\space p@gechunkDelta:\the\p@geChunkDelta}%\space Tot:\the\cumulativeDelta%
   \let\\=\upd
   \diglot@arrange@cols
   \TempDim=\dimexpr \ht\n@xtpartial + \dp\n@xtpartial\relax
@@ -1661,12 +1676,15 @@
 
 
 \def\@add@n@xtpartial{% 
-  \trace{d}{@add@n@xtpartial \the\ht\partial+\the\dp\partial, \the\ht\n@xtpartial+\the\dp\n@xtpartial}%
+  \traceNum{d}{@add@n@xtpartial \the\ht\partial+\the\dp\partial, \the\ht\n@xtpartial+\the\dp\n@xtpartial}%
   \ifvoid\n@xtpartial\else
     \ifvoid\partial
       \global\setbox\partial=\box\n@xtpartial
     \else
       \global\setbox\partial=\vtop{\joinb@xes{\partial}{\n@xtpartial}}%
+    \fi
+    \ifnum\diglotDbgJoinboxes=\TRACEcount
+      \showbox\partial
     \fi
     \voidn@xtpartial
     \let\col@do=\p@rtialmarks
@@ -1719,7 +1737,7 @@
     \trace{D}{side \c@rrdstat\space has material to put on the page}%
     \global\not@emptytrue
     \dglt@calc@vailht
-    \ifnum 1 = \ifboxmoved 1 \else \ifdim \availht<\baselineskip 1 \else 0 \fi\fi
+    \ifnum 1 = \ifboxmoved 1 \else \ifdim \availht<-2pt 1 \else 0 \fi\fi
       \late@stage@reflowtrue
       \xdef\refl@wlist{\refl@wlist\c@rrdstat}%
       \trace{D}{No space (\the\availht) for material (now, was \oldavht) reflow:\refl@wlist}%
