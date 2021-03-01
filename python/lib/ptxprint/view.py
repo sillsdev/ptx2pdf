@@ -620,13 +620,13 @@ class ViewModel:
             config.set("project", "colophontext", colophontext)
         if v < 1.503:
             marginmms = config.getfloat("paper", "margins")
-            config.set("paper", "topmargin", "{:.3f}".format(config.getfloat("paper", "topmarginfactor") * marginmms))
-            config.set("paper", "headerpos", "{:.3f}".format(config.getfloat("paper", "topmarginfactor") * marginmms \
-                        - config.getfloat("header", "headerposition") * marginmms\
+            config.set("paper", "topmargin", "{:.3f}".format(config.getfloat("paper", "topmarginfactor", fallback=1.0) * marginmms))
+            config.set("paper", "headerpos", "{:.3f}".format(config.getfloat("paper", "topmarginfactor", fallback=1.0) * marginmms \
+                        - config.getfloat("header", "headerposition", fallback=1.0) * marginmms\
                         - config.getfloat("paper", "fontfactor") * 25.4 / 72.27))
-            config.set("paper", "bottommargin", "{:.3f}".format(config.getfloat("paper", "bottommarginfactor") * marginmms))
-            config.set("paper", "footerpos", "{:.3f}".format(config.getfloat("header", "footerposition") * marginmms))
-            config.set("paper", "rulegap", "{:.3f}".format(config.getfloat("header", "ruleposition")))
+            config.set("paper", "bottommargin", "{:.3f}".format(config.getfloat("paper", "bottommarginfactor", fallback=1.0) * marginmms))
+            config.set("paper", "footerpos", "{:.3f}".format(config.getfloat("header", "footerposition", fallback=1.0) * marginmms))
+            config.set("paper", "rulegap", "{:.3f}".format(config.getfloat("header", "ruleposition", fallback=0.)))
         if v < 1.504:
             try:
                 self._configset(config, "notes/fneachnewline", not config.getboolean("notes", "fnparagraphednotes"))
