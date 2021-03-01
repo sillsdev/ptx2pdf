@@ -8220,8 +8220,8 @@ as a single paragraph (rather than the cross-
 references appearing in a separate block
 underneath the footnotes). If this option is
 used, the Cross-References can only have
-one type of called (rather than a sequence)
-which must be specified here.</property>
+one type of caller (rather than a sequence)
+which must be specified above.</property>
                                         <property name="halign">start</property>
                                         <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
@@ -13801,8 +13801,7 @@ leave this option checked ON.</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
-                                <property name="tooltip_text" translatable="yes">Auto calculate primary percentage by trying to reduce the page count. This will run your print job up to 10 times or more, so choose a small book to run on.
-You may influence the result depending on where you start the slider. This can help avoid local minimums.</property>
+                                <property name="tooltip_text" translatable="yes">Auto calculate primary percentage by trying to reduce the page count. This will run your print job up to 10 times or more, so choose a small book to run on. It will attempt to find the best balance of column widths near to the starting position of the slider.</property>
                                 <property name="halign">start</property>
                                 <property name="valign">center</property>
                                 <property name="image">icon_adjust_diglot</property>
