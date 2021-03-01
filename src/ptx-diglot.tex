@@ -297,11 +297,11 @@
 \newif\ifboxmoved%
 %\galleypenalty %the penalty we FOUND at the break between the %galley and \galleyexc@ss
 \def\@ddtoexcess{%
-  \trace{d}{@ddtoexcess hIns=\the\holdinginserts(==1) adding \the\ht255+\the\dp255\space to galleyexc@ss (\the\ht\galleyexc@ss+\the\dp\galleyexc@ss)}%
+  \trace{d}{@ddtoexcess op:\the\outputpenalty\space etp:\endtri@lpen@lty\space hIns=\the\holdinginserts(==1) adding \the\ht255+\the\dp255\space to galleyexc@ss (\the\ht\galleyexc@ss+\the\dp\galleyexc@ss)}%
   \ifvoid\galleyexc@ss
     \global\setbox\galleyexc@ss\vbox{\TempDim=\dp255\unvbox255\kern-\TempDim\ifnum\outputpenalty=10000\else\ifnum\outputpenalty=\endtri@lpen@lty\else\penalty\outputpenalty\fi\fi}%
   \else
-    \global\setbox\galleyexc@ss\vbox{\joinboxes{\galleyexc@ss}{255}{19}{\ifnum\outputpenalty=10000 0\else\ifnum\outputpenalty=\endtri@lpen@lty 0\else\outputpenalty\fi\fi}}%
+    \global\setbox\galleyexc@ss\vbox{\joinboxes{\galleyexc@ss}{255}{19}{\ifnum\outputpenalty=10000 0\else\ifnum\endtri@lpen@lty=\outputpenalty 0\else\the\outputpenalty\fi\fi}}%
     % HERE BE DRAGONS. If galleyexc@ss was not emptied by undog@lley, and
     % another route into diglot@backingup is used, then there will misordering, 
     % and it will be ever so tempting BUT WRONG! to try to fix it with this:
@@ -915,7 +915,7 @@
  \global\setbox#1=\vtop{\unvbox#1\ifdim\dp2=0pt\ifdim\TempDim=0pt\else\kern-\TempDim\fi\fi}}%\egroup}%
 
 \def\joinboxes#1#2#3#4{%Join 2 vtops together and preserve baselineskip%
- \traceNum{d}{joinboxes #1(\the\ht#1+\the\dp#1x\the\wd#1) #2 called from locn #3}%
+ \traceNum{d}{joinboxes #1(\the\ht#1+\the\dp#1x\the\wd#1) #2 (\the\ht#2+\the\dp#2x\the\wd#2)called from locn #3, with penalty #4}%
  \ifnum\TRACEcount=\diglotDbgJoinboxes
    \showbox#1\showbox#2
  \fi\relax
@@ -980,7 +980,7 @@
      \dimen3=\baselineskip
      \advance\dimen3 by -\topskip
      \vskip \dimen3
-     \trace{D}{Box joint is \join@a-\join@b (\the\baselineskip, \the\topskip) (\the\dimen3)}%
+     \trace{D}{Box joint is \join@a-\join@b (bls:\the\baselineskip, ts:\the\topskip -> skip: \the\dimen3)}%
    \fi
    %\ifdim\dimen5=0pt\else
      %\kern \dimen5
@@ -1719,10 +1719,14 @@
     \trace{D}{side \c@rrdstat\space has material to put on the page}%
     \global\not@emptytrue
     \dglt@calc@vailht
-    \ifnum 1 = \ifboxmoved 1 \else \ifdim \availht<-2pt 1 \else 0 \fi\fi
+    \ifnum 1 = \ifboxmoved 1 \else \ifdim \availht<\baselineskip 1 \else 0 \fi\fi
       \late@stage@reflowtrue
       \xdef\refl@wlist{\refl@wlist\c@rrdstat}%
       \trace{D}{No space (\the\availht) for material (now, was \oldavht) reflow:\refl@wlist}%
+    %\else
+      %\x@\ifvoid\csname excess\c@rrdstat\endcsname\else
+     %  \global\pagefulltrue % If we are here with stuff left to set, then clearly the page has filled up? No, the page-length may have been underestimated.
+      %\fi
     \fi
   \fi
   \x@\ifvoid\csname excess\c@rrdstat\endcsname
@@ -1881,7 +1885,7 @@
   \ifboxmoved % Breaks things?
     %things gone from the triallist should be reflowed,
     % for other things, partialX still contains the previous galley
-    \empty@partials% empties tri@llist
+    \empty@partials% voids partialX for all X in tri@llist, also sets triallist to empty.
   \fi
   %\showlists
   \trace{D}{tri@llist: \tri@llist}%
