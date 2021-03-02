@@ -4330,7 +4330,7 @@ space between lines of text.</property>
                                         <child internal-child="entry">
                                           <object class="GtkEntry">
                                             <property name="can_focus">True</property>
-                                            <property name="width_chars">15</property>
+                                            <property name="width_chars">24</property>
                                             <property name="overwrite_mode">True</property>
                                           </object>
                                         </child>
@@ -5444,6 +5444,8 @@ Use spaces between items.
 Note that you can also use \u0ABC codes
 to enter hard-to-type characters.</property>
                                     <property name="margin_right">6</property>
+                                    <property name="margin_top">3</property>
+                                    <property name="margin_bottom">3</property>
                                     <property name="width_chars">20</property>
                                   </object>
                                   <packing>
@@ -5927,8 +5929,8 @@ gr = Graphite</property>
                                     <property name="margin_left">6</property>
                                     <property name="margin_right">6</property>
                                     <property name="margin_top">6</property>
-                                    <property name="margin_bottom">5</property>
-                                    <property name="row_spacing">12</property>
+                                    <property name="margin_bottom">6</property>
+                                    <property name="row_spacing">14</property>
                                     <property name="column_spacing">6</property>
                                     <child>
                                       <object class="GtkCheckButton" id="c_spacing">
@@ -6119,6 +6121,7 @@ can grow to when necessary.</property>
                                     <property name="can_focus">False</property>
                                     <property name="halign">center</property>
                                     <property name="valign">center</property>
+                                    <property name="margin_top">6</property>
                                     <property name="margin_bottom">6</property>
                                     <property name="row_spacing">6</property>
                                     <property name="column_spacing">12</property>
@@ -10493,6 +10496,8 @@ Ref:</property>
                                                   <object class="GtkEntry" id="t_plAltText">
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">True</property>
+                                                    <property name="margin_top">3</property>
+                                                    <property name="margin_bottom">3</property>
                                                     <property name="hexpand">True</property>
                                                   </object>
                                                   <packing>
@@ -10916,6 +10921,8 @@ Credit...</property>
                                                     <property name="can_focus">True</property>
                                                     <property name="tooltip_text" translatable="yes">Credit overlay position and style</property>
                                                     <property name="halign">start</property>
+                                                    <property name="margin_top">3</property>
+                                                    <property name="margin_bottom">3</property>
                                                     <property name="width_chars">12</property>
                                                   </object>
                                                   <packing>
@@ -11764,8 +11771,8 @@ in this publication, as well as other contexts.</property>
                                   <object class="GtkBox">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="halign">center</property>
-                                    <property name="valign">end</property>
+                                    <property name="halign">end</property>
+                                    <property name="valign">start</property>
                                     <child>
                                       <object class="GtkRadioButton" id="r_image_preview">
                                         <property name="label" translatable="yes">Image
@@ -16726,7 +16733,6 @@ be displayed (in red) just to the left.</property>
                 <property name="margin_top">3</property>
                 <property name="margin_bottom">3</property>
                 <property name="draw_indicator">True</property>
-                <signal name="clicked" handler="tryHidingTreeViewCols" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>

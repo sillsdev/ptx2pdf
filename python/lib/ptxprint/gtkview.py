@@ -244,6 +244,9 @@ _signals = {
     'row-activated': ("TreeView",),
 }
 
+_olst = ["b_print", "fr_SavedConfigSettings", "tb_Layout", "tb_Font", "tb_Body", "tb_NotesRefs", "tb_HeadFoot", "tb_Pictures",
+         "tb_Advanced", "tb_Logging", "tb_Tabs", "tb_DiglotBorder", "tb_StyleEditor", "tb_ViewerEditor", "tb_Help"]
+
 def _doError(text, secondary, title, copy2clip=False):
     dialog = Gtk.MessageDialog(parent=None, message_type=Gtk.MessageType.ERROR,
              buttons=Gtk.ButtonsType.OK, text=text)
@@ -446,12 +449,11 @@ class GtkViewModel(ViewModel):
         fc = initFontCache()
         lsfonts = self.builder.get_object("ls_font")
 
-        olst = ["b_print", "fr_SavedConfigSettings", "tb_Font", "tb_Layout", "tb_Body", "tb_HeadFoot", "tb_Pictures",
-                "tb_Advanced", "tb_Logging", "tb_ViewerEditor", "tb_DiglotBorder"]
         self.getInitValues()
         self.initialised = True
-        for o in olst:
+        for o in _olst:
             self.builder.get_object(o).set_sensitive(False)
+        self.updateDialogTitle()
         if self.pendingPid is not None:
             self.set("fcb_project", self.pendingPid)
             self.pendingPid = None
@@ -523,6 +525,7 @@ class GtkViewModel(ViewModel):
                 self.set(k, v)
         self._setChapRange("from", 1, 999, 1)
         self._setChapRange("to", 1, 999, 1)
+        self.colourTabs()
 
     def onHideAdvancedSettingsClicked(self, c_hideAdvancedSettings, foo):
         val = self.get("c_hideAdvancedSettings")
@@ -767,6 +770,7 @@ class GtkViewModel(ViewModel):
             self.readConfig("Default")
             self.updateDialogTitle()
             self.triggervcs = True
+        self.colourTabs()
 
     def updateBookList(self):
         self.bookNoUpdate = True
@@ -1637,7 +1641,6 @@ class GtkViewModel(ViewModel):
             bl.set_text(" ".join(b for b in booklist))
         if self.get("r_book") in ("single", "multiple"):
             self.set("r_book", "multiple" if len(booklist) else "single")
-        # self.set("c_prettyIntroOutline", False)
         self.updateDialogTitle()
         self.updateExamineBook()
         self.updatePicList()
@@ -1800,8 +1803,7 @@ class GtkViewModel(ViewModel):
         lockBtn.set_sensitive(False)
         self.updateProjectSettings(None, saveCurrConfig=True, configName="Default")
         self.updateSavedConfigList()
-        for o in ["b_print", "fr_SavedConfigSettings", "tb_Font", "tb_Layout", "tb_Body", "tb_HeadFoot", "tb_Pictures",
-                  "tb_Advanced", "tb_Logging", "tb_ViewerEditor", "tb_DiglotBorder"]:
+        for o in _olst:
             self.builder.get_object(o).set_sensitive(True)
         self.updateFonts()
         # self.updateHdrFtrOptions(self.get("c_diglot"))
@@ -2155,13 +2157,6 @@ class GtkViewModel(ViewModel):
         self.set("nbk_Viewer", pgnum)
         self.onViewerChangePage(None,None,pgnum)
 
-    def onEditPicListClicked(self, btn_editPicList):
-        pgnum = 0
-        mpgnum = self.notebooks["Main"].index("tb_ViewerEditor")
-        self.set("nbk_Main", mpgnum)
-        self.set("nbk_Viewer", pgnum)
-        self.onViewerChangePage(None,None,pgnum)
-        
     def ontv_sizeallocate(self, atv, dummy):
         b = atv.get_buffer()
         it = b.get_iter_at_offset(-1)
@@ -2253,16 +2248,22 @@ class GtkViewModel(ViewModel):
             oprjid, oconfig = self.otherDiglot
             self.otherDiglot = None
             btn.set_label(_("Switch to Other\nDiglot Project"))
+            # self.set("c_diglot", True)
+            # self.builder.get_object("c_diglot").set_sensitive(True)
         elif self.get("c_diglot"):
             oprjid = self.get("fcb_diglotSecProject")
             oconfig = self.get("ecb_diglotSecConfig")
             if oprjid is not None and oconfig is not None:
                 self.otherDiglot = (self.prjid, self.configName())
+                # self.set("c_diglot", False)
+                # self.builder.get_object("c_diglot").set_sensitive(False)
                 btn.set_label(_("Save & Return to\nDiglot Project"))
         self.onSaveConfig(None)
         if oprjid is not None and oconfig is not None:
             self.set("fcb_project", oprjid)
             self.set("ecb_savedConfig", oconfig)
+        mpgnum = self.notebooks['Main'].index("tb_DiglotBorder")
+        self.builder.get_object("nbk_Main").set_current_page(mpgnum)
         
     def updateHdrFtrOptions(self, diglot=False):
         l = ["First Reference", "Last Reference", "Reference Range", "Page Number",
@@ -2356,8 +2357,11 @@ class GtkViewModel(ViewModel):
         GLib.idle_add(fn, *args)
 
     def showLogFile(self):
-        self.builder.get_object("nbk_Main").set_current_page(12)   # Switch to the Viewer tab
-        self.builder.get_object("nbk_Viewer").set_current_page(4) # Display the tab with the .log file
+        mpgnum = self.notebooks['Main'].index("tb_ViewerEditor")
+        self.builder.get_object("nbk_Main").set_current_page(mpgnum)
+        vpgnum = self.notebooks['Viewer'].index("scroll_XeTeXlog")
+        self.builder.get_object("nbk_Viewer").set_current_page(vpgnum)
+        # self.onViewerFocus(self, w) # @@@@ MH please FIXME
         # self.builder.get_object("scroll_XeTeXlog").scroll_to_mark(self.buf[4].get_insert(), 0.0, True, 0.5, 0.5)
 
     def onTabsClicked(self, btn):
@@ -2649,9 +2653,6 @@ class GtkViewModel(ViewModel):
         for w in ["l_rhruleoffset", "s_rhruleposition"]:
             self.builder.get_object(w).set_visible(status)        
             self.builder.get_object(w).set_sensitive(status)        
-
-    def tryHidingTreeViewCols(self, btn):
-        status = self.get("c_quickRun")
 
     def _calcBodyHeight(self):
         linespacing = float(self.get("s_linespacing")) * 25.4 / 72.27
