@@ -4,7 +4,9 @@
 
 ```\esb```  boxes may have a colour, which may be transparent (allowing a
 whole-page background image or decoration to show through). They may also have
-their own watermark or background image.  ```
+their own watermark or background image.
+
+```
 
 \Category people
 % The identifier of this category. This command imposes default values on parameters.
@@ -118,3 +120,4 @@ TODO:
 2) FGfigures
 3) BGfigures
 4) Refactor so that the one-time setup only gets triggered once.
+```

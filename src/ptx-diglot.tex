@@ -1120,7 +1120,7 @@
       \advance\thisjointDelta by -\topskip %remove topskip 
     \fi
     \if\thisjointDelta>\@maxb@seline %sanity check
-      \trace{d}{Insane jointDelta (\the\thisjointDelta) reduced to 0pt}%
+      \trace{d}{Unacceptable jointDelta (\the\thisjointDelta) reduced to 0pt}%
       \thisjointDelta=0pt
     \fi
     \trace{dP}{Join delta gives \the\dimen1 -\@maxht -\the\topskip = \the\thisjointDelta}%
@@ -1164,7 +1164,7 @@
             \vskip\thisjointDelta
             \trace{dP}{skipping jointDelta: \the\thisjointDelta}%
           \else
-            \trace{dP}{Insane negative jointDelta \the\thisjointDelta < -\@maxb@seline}%
+            \trace{dP}{Unacceptable negative jointDelta \the\thisjointDelta < -\@maxb@seline}%
           \fi
         \fi
       \fi

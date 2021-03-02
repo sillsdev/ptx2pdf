@@ -81,3 +81,12 @@ Culpa optio nihil a doloribus omnis quidem dolorem inventore. Dolorem quo et ame
 \v 11
 Tenetur deleniti rerum minima dolor. Rerum autem ipsa ipsum autem quo a. Aut ut occaecati et aspernatur voluptatum voluptate consequatur. Alias illum molestiae quia sed blanditiis est. Saepe ipsam omnis beatae magnam culpa.
 
+\v 12 Oh all right then, just one more:
+\p
+
+\esb\cat pictest\cat*
+\p This  esb of category "\showTheCategory" ought to contain a picture.
+
+
+\esbe
+
