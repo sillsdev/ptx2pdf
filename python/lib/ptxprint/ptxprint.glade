@@ -6378,6 +6378,7 @@ been selected on the Basic tab.]</property>
                                         <property name="halign">start</property>
                                         <property name="draw_indicator">True</property>
                                         <signal name="clicked" handler="onSimpleFocusClicked" swapped="no"/>
+                                        <signal name="clicked" handler="onTocClicked" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -6474,7 +6475,6 @@ should be included in the
 generated Table of Contents.</property>
                                             <property name="halign">center</property>
                                             <property name="valign">center</property>
-                                            <property name="active">True</property>
                                             <property name="draw_indicator">True</property>
                                             <signal name="clicked" handler="onTocClicked" swapped="no"/>
                                           </object>
@@ -6493,6 +6493,7 @@ should be included in the
 generated Table of Contents.</property>
                                             <property name="halign">center</property>
                                             <property name="valign">center</property>
+                                            <property name="active">True</property>
                                             <property name="draw_indicator">True</property>
                                             <signal name="clicked" handler="onTocClicked" swapped="no"/>
                                           </object>
@@ -13417,11 +13418,17 @@ For example: PHM TIT; 1JN 2JN 3JN JUD</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
-                                <property name="tooltip_text" translatable="yes">By default the Thumb Tabs use the styling specified
-for the \toc3 marker. If you want to specify different
-styling for the tabs, then select this option.
+                                <property name="tooltip_text" translatable="yes">By default the Thumb Tabs use the styling specified for the \toc3 marker. If 
+you want to specify different styling for the tabs, then select this option.
 
-The USFM extension \zthumbtab'' can be used to set an alternative value for the thumbtab contents. If a book's header contains a \zthumbtab entry, then\toc3 will not set the thumbtab contents. An empty\zthumbtab'' entry specifies that there should be no text in the thumbtab for that book.</property>
+Note that this setting is interconnected with the Table of Contents settings 
+on the Body tab. If \toc3 is not included in the ToC, then you will be forced 
+to use the \zthumbtab setting here (and will need .
+
+The USFM extension \zthumbtab'' can be used to set an alternative value for 
+the thumbtab contents. If a book's header contains a \zthumbtab entry, then 
+\toc3 will not be used as the thumbtab contents. An empty \zthumbtab'' entry 
+specifies that there should be no text in the thumbtab for that book.</property>
                                 <property name="halign">start</property>
                                 <property name="draw_indicator">True</property>
                                 <signal name="clicked" handler="onTabsClicked" swapped="no"/>
@@ -13492,6 +13499,7 @@ the text for the tab.
 Note: If only a single book is currently selected, it will place the Thumb Tab relative to ALL the books listed in the multiple book list.</property>
                             <property name="draw_indicator">True</property>
                             <signal name="clicked" handler="onTabsClicked" swapped="no"/>
+                            <signal name="clicked" handler="onTocClicked" swapped="no"/>
                           </object>
                         </child>
                       </object>

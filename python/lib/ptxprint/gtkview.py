@@ -1691,9 +1691,18 @@ class GtkViewModel(ViewModel):
         
     def onTocClicked(self, btn):
         if not self.get("c_usetoc1") and not self.get("c_usetoc2") and not self.get("c_usetoc3"):
-            toc = self.builder.get_object("c_usetoc1")
-            toc.set_active(True)
-            
+            self.set("c_usetoc1", True)
+        if self.get("c_autoToC"):
+            if self.get("c_thumbtabs"):
+                if not self.get("c_usetoc3"):
+                    self.set("c_thumbIsZthumb", True)
+                else:
+                    pass
+                self.builder.get_object("c_thumbIsZthumb").set_sensitive(self.get("c_usetoc3"))
+        else:
+            self.builder.get_object("c_thumbIsZthumb").set_sensitive(True)
+        
+        
     def _setChapRange(self, fromTo, minimum, maximum, value):
         initChap = int(float(self.get('s_chap'+fromTo)))
         chap = self.builder.get_object('s_chap'+fromTo)
@@ -2767,3 +2776,4 @@ class GtkViewModel(ViewModel):
                 v = self.get(a)
                 v = "Sec" if v == "Pri" else ("Pri" if v == "Sec" else v)
                 self.set(a, v)    
+
