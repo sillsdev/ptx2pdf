@@ -1,5 +1,6 @@
 .SUFFIXES: .dvi .pdf
-all: test.pdf
+all: test.pdf diglot.pdf
+
 DIR:=$(shell dirname `find ../../..  -name paratext2.tex`)
 .tex.pdf:
 	TEXINPUTS=.:$(DIR) xetex -no-pdf $<
@@ -7,6 +8,7 @@ DIR:=$(shell dirname `find ../../..  -name paratext2.tex`)
 	
 
 test.pdf: test.tex test.usfm test.sty $(DIR)/*.tex 
+diglot.pdf: diglot.tex diglot.usfm diglot.sty $(DIR)/*.tex 
 
 bisect:
 	mkdir ../bisect || rm -f ../bisect/*
@@ -14,4 +16,4 @@ bisect:
 
 auto:
 	echo Source code in $(DIR)
-	while inotifywait -e close_write . $(DIR) ; do make test.pdf ; done < /dev/null
+	while inotifywait -e close_write . $(DIR) ; do make ; done < /dev/null
