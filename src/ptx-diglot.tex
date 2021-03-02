@@ -915,7 +915,7 @@
  \trace{D}{makevtop #1, before vtop dp=\the\dp#1, ht=\the\ht#1}%
  \TempDim=\dp#1\relax%
  \ifdim\TempDim>\baselineskip \trace{D}{Looks like this is already a vtop}%
-   \TempDim=0pt
+   %\TempDim=0pt
  \fi%
  \setbox0=\copy#1\setbox1=\vtop{\unvbox 0\setbox2=\lastbox}%Work on a copy so we don't break stuff.
  \trace{D}{pd:\the\dp2, ph=\the\ht2, d:\the\TempDim}%
@@ -1182,8 +1182,8 @@
   \fi\fi
   \setdiglotN@rmal % Left=left (normal) or not?
   \pickn@xtpartial
-  \showboxdepth=3 %
-  \showboxbreadth=1000 %
+  %\showboxdepth=3 %
+  %\showboxbreadth=1000 %
   %\ifnum\pageno=1%
   %\showbox\Lbox%
   %\showbox\Rbox%
@@ -1443,6 +1443,9 @@
   \xdef\nextp@gefirstmark{}%
   \let\col@do=\reset@marks
   \x@\each@col\diglot@list\E% 
+  \def\v@lpfx{@cur}%
+  \let\col@do=\forget@boxdim
+  \x@\each@col\diglot@list\E
   \resetc@rdstat%reset the current diglotstatus
   \xdef\firstLmark{}%
   \xdef\botLmark{}%
@@ -1586,24 +1589,28 @@
   \x@\xdef\csname \v@lpfx#1dp\endcsname{\x@\the\x@\dp\csname #1box\endcsname}%
 } 
 
+\def\forget@boxdim#1{%forget the height & depth of Xbox in \v@lpfx#1ht
+  \x@\xdef\csname \v@lpfx#1ht\endcsname{0pt}%
+  \x@\xdef\csname \v@lpfx#1dp\endcsname{0pt}%
+} 
+
 \def\count@dim#1{%Is the dimension non non-zero? Count using tmpcount and add tag to list
   \x@\ifdim \csname \v@lpfx#1\v@lsfx\endcsname=0pt\else
     \advance\tmpcount by 1
     \edef\cts@list{\cts@list#1}%
   \fi
 }
-\def\check@nxtht#1{%If the nxtchunk#1 height =0 for a previously-not-empty box? Set iftemp if yes , un
+\def\check@nxtht#1{%Is the nxtchunk#1 height =0? Set iftemp if yes , unchanged otherwise
   \x@\ifdim\csname @nxtchunk#1ht\endcsname=0pt 
     \temptrue
   \fi
 }
 \def\set@ht#1{%Set the values of curXht, adding or resetting based on \iftemp  (anything on the page is current by definition)
   \x@\dimen1\x@=\csname @nxtchunk#1ht\endcsname
-  \x@\dimen0\x@=\csname @cur#1ht\endcsname
   \x@\xdef\csname @old#1ht\endcsname{\the\dimen0}%
   \iftemp %one at least is empty
     \ifdim \dimen1 =0pt
-      \dimen1=\dimen0 % new height = old hright
+      \x@\dimen1\x@=\csname @cur#1ht\endcsname % new height = old hright
     \else
       \advance\dimen1 by \m@xht
     \fi
@@ -1681,7 +1688,7 @@
     \ifvoid\partial
       \global\setbox\partial=\box\n@xtpartial
     \else
-      \global\setbox\partial=\vtop{\joinb@xes{\partial}{\n@xtpartial}}%
+      \global\setbox\partial=\vtop{{\baselineskip=0pt \joinb@xes{\partial}{\n@xtpartial}}}%
     \fi
     \ifnum\diglotDbgJoinboxes=\TRACEcount
       \showbox\partial
@@ -1692,7 +1699,7 @@
     % Column height (depth) calcs:
     \tempfalse
     \trace{Df}{Checking for empty boxes}%
-    \let\col@do=\check@nxtht %sets iftemp
+    \let\col@do=\check@nxtht %sets iftemp=true if any box is empty
     \x@\each@col\diglot@list\E
     \iftemp
       \def\v@lpfx{@nxtchunk}\def\v@lsfx{ht}%

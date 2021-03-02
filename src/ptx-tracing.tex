@@ -65,10 +65,10 @@
 \def\tracing#1{\x@\xdef\csname tr@cemode-#1\endcsname{\y@s}\let\trace=\tr@cer}%
 \def\notr@cer#1#2{\relax}%
 \def\tr@cer#1#2{%
-    \let\next=\notr@ceout
-    \x@\ifx\csname tr@cemode-#1\endcsname\y@s \let\next=\tr@ceout\fi
-    \x@\ifx\csname tr@cemode-a\endcsname\y@s \let\next=\tr@ceout\fi
-    \next{#2}}%
+    \let\TRnext=\notr@ceout
+    \x@\ifx\csname tr@cemode-#1\endcsname\y@s \let\TRnext=\tr@ceout\fi
+    \x@\ifx\csname tr@cemode-a\endcsname\y@s \let\TRnext=\tr@ceout\fi
+    \TRnext{#2}}%
 \def\tr@ceout#1{%
     \immediate\write-1{#1}}%
 \def\traceNum#1#2{\global\advance\TRACEcount by 1\trace{#1}{+\the\TRACEcount: #2}}
