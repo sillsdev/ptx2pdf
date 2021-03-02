@@ -258,9 +258,10 @@
  \ifx\mspr@fix\empty\else\edef\f@ntstyle{\mspr@fix\f@ntstyle}\fi % Milestones now on stack
  \ifx\c@tegory\empty\else\s@tc@tpr@fix\edef\f@ntstyle{\c@tprefix\f@ntstyle}\fi % Categories have different styles
  \let\reqf@ntstyle\f@ntstyle
+ \edef\cmpf@ntstyle{#1}%
  \let\d@@=\d@
- \trace{F}{\reqf@ntstyle: Looking for fontsize in style stack: \mcstack}%
- \def\d@##1+##2\E{\edef\tmpa{##2}\ifx\reqf@ntstyle\tmpa\getmcfonts@ze\else
+ \trace{F}{\cmpf@ntstyle (\reqf@ntstyle): Looking for fontsize from style stack: \mcstack}%
+ \def\d@##1+##2\E{\edef\tmpa{##2}\ifx\cmpf@ntstyle\tmpa \getmcfonts@ze\else
 			\csname d@code-##1\endcsname
                         \getp@ram{fontsize}{#1}\ifx\p@ram\relax\xdef\c@rrfontsize{12}%
                         \else\global\let\c@rrfontsize=\p@ram\fi\fi}%
@@ -275,6 +276,7 @@
 %+cchar_setfont
 \xdef\z@ros{000000}%What does ParseColor come out with for black?
 \def\s@tfont#1{%
+ \trace{s}{s@tfont #1}%
  \edef\r@qmkr{#1}\ifx\empty\r@qmkr\trace{F}{Font for empty marker requested. Nonsense! Substituting p}\def\r@qmkr{p}\fi
  \g@tfontname{\r@qmkr}% Sets reqf@ntstyle((cat)(milestone)#1(diglot) and f@ntstyle(which adds size and stack)
  \ifdiglot\setLRspecific\fi % FIXME: Whether diglot or not, it might have been diglot before.

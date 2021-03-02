@@ -695,10 +695,13 @@
   \global\output={\diglotCollect}%Why woudn't it be? Don't know, but sometimes it's not.
   \x@\xdef\csname saved\c@rrdstat penalty\endcsname{\the\savedpenalty}%
   \ifinn@te\errmessage{*** #1text called from inside footnote?!?}\fi
+  \let\@ldstat=\c@rrdstat
   \@@setside{#2}%Set the side to occur after the next swapcols penalty
   \endgraf\penalty\dgl@tPenColSwap\relax %Trigger collection of text.
   % <<< Diglot collect runs HERE! (and sets n@xtc@mmand
   \let\t@mpc@mmand=\n@xtc@mmand% This bit may process the collected input. 
+  \x@\xdef\csname c@rrfontsize\@ldstat\endcsname{\c@rrfontsize}% Remember the fontsize before column-swap
+  \trace{D}{c@rrfontsize saved for side \@ldstat}%
   \global\def\n@xtc@mmand{}%
   \t@mpc@mmand
 } 
@@ -866,6 +869,10 @@
  %All sorts of things should follow if m@rker is set properly...
  \@setside{#1}%Ought to be needless
  \add@to@digl@tc@ntentlist{#1}%
+ \ifcsname c@rrfontsize#1\endcsname
+   \global\x@\let\x@\c@rrfontsize\csname c@rrfontsize#1\endcsname
+   \trace{D}{c@rrfontsize set to \c@rrfontsize}%
+ \fi
  \x@\global\x@\let\x@\m@rker\csname m@rker\c@rrdstat\endcsname
  \trace{D}{m@rker set to \m@rker}%
  \x@\let\x@\w@dth\csname column#1width\endcsname
