@@ -1,7 +1,7 @@
 from gi.repository import Gtk, Pango
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal
 from ptxprint.sfm.style import Marker, CaselessStr
-from ptxprint.styleditor import StyleEditor
+from ptxprint.styleditor import StyleEditor, aliases
 from ptxprint.utils import _, coltotex, textocol
 import re
 
@@ -86,7 +86,13 @@ categorymapping = {
     "Milestone":                   ("Milestones", "milestones"),
     'Other':                       ('Other', None),
     'OBSOLETE':                    ('Obsolete & Deprecated', None),
-    'DEPRECATED':                  ('Obsolete & Deprecated', None)
+    'DEPRECATED':                  ('Obsolete & Deprecated', None),
+    'Module Import':               ('Module', 'modules'),
+    'Module Include Options':      ('Module', 'modules'),
+    'Module Text Replacement':     ('Module', 'modules'),
+    'Module Verse Reference':      ('Module', 'modules'),
+    'Module Verse Reference No Paragraphs':     ('Module', 'modules'),
+    'Module Versification':        ('Module', 'modules') 
 }
 
 stylediverts = {
@@ -276,6 +282,8 @@ class StyleEditorView(StyleEditor):
         return True
 
     def editMarker(self):
+        if self.marker in aliases:
+            self.marker += "1"
         self.isLoading = True
         data = self.sheet.get(self.marker, {})
         old = self.basesheet.get(self.marker, {})

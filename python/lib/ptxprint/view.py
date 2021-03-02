@@ -383,9 +383,7 @@ class ViewModel:
             self.resetToInitValues()
             if configName == "Default":
                 self._copyConfig(None, configName, moving=True)
-            if currprj != self.prjid:
-                self._copyConfig("Default", configName)
-            else:
+            elif currprj == self.prjid:
                 self._copyConfig(self.configId, configName)
             res = self.readConfig(cfgname=configName)
             self.styleEditor.load(self.getStyleSheets(configName))

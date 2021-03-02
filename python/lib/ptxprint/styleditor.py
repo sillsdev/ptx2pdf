@@ -12,6 +12,8 @@ mkrexceptions = {k.lower().title(): k for k in ('BaseLine', 'TextType', 'TextPro
 binarymkrs = {"bold", "italic", "smallcaps"}
 
 absolutes = {"baseline", "raise", "callerraise", "notecallerraise"}
+aliases = {"q", "s", "mt", "to", "imt", "imte", "io", "iq", "is", "ili", "pi",
+           "qm", "sd", "ms", "mt", "mte", "li", "lim", "liv", }
 
 class StyleEditor:
 
@@ -136,7 +138,10 @@ class StyleEditor:
             return mkrexceptions.get(x, x)
         for m in sorted(self.allStyles()):
             markerout = False
-            if inArchive:
+            if m in aliases:
+                sm = self.basesheet.get(m+"1", {}).copy()
+                sm.update(self.sheet.get(m+"1", {}))
+            elif inArchive:
                 sm = self.sheet.get(m, {}).copy()
             else:
                 sm = self.sheet.get(m, {})
