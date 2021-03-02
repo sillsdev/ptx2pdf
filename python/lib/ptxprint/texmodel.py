@@ -36,21 +36,11 @@ ModelMap = {
     "ifdiglotincludefootnotes_":("_diglotinclfn", lambda w,v: "%"),
     "ifdiglotincludexrefs_":    ("_diglotinclxr", lambda w,v: "%"),
 
-    #"config/name":              ("ecb_savedConfig", lambda w,v: v or "default"),
     "config/notes":             ("t_configNotes", lambda w,v: v or ""),
     "config/pwd":               ("t_invisiblePassword", lambda w,v: v or ""),
     "config/version":           ("_version", None),
 
-    # "project/id":               ("fcb_project", None),
     "project/hideadvsettings":  ("c_hideAdvancedSettings", None),
-    # "project/showlayouttab":    ("c_showLayoutTab", None),
-    # "project/showfonttab":      ("c_showFontTab", None),
-    # "project/showbodytab":      ("c_showBodyTab", None),
-    # "project/showheadfoottab":  ("c_showHeadFootTab", None),
-    # "project/showpicturestab":  ("c_showPicturesTab", None),
-    # "project/showadvancedtab":  ("c_showAdvancedTab", None),
-    # "project/showdiglottab":    ("c_showDiglotBorderTab", None),
-    # "project/showviewertab":    ("c_showViewerTab", None),
     "project/pdfx1acompliant":  ("c_PDFx1aOutput", None),
     "project/bookscope":        ("r_book", None),
     "project/combinebooks":     ("c_combine", None),
@@ -92,7 +82,7 @@ ModelMap = {
                                  if (w.get("c_applyWatermark") and w.watermarks is not None and w.watermarks != 'None') else ""),
     "paper/ifcropmarks":        ("c_cropmarks", lambda w,v :"true" if v else "false"),  
     "paper/ifverticalrule":     ("c_verticalrule", lambda w,v :"true" if v else "false"),
-    "paper/margins":            ("s_margins", lambda w,v: round(float(v)) or "14"),
+    "paper/margins":            ("s_margins", lambda w,v: round(float(v)) or "12"),
     "paper/topmargin":          ("s_topmargin", None),
     "paper/bottommargin":       ("s_bottommargin", None),
     "paper/headerpos":          ("s_headerposition", None),
@@ -984,7 +974,7 @@ class TexModel:
         self.localChanges.append((None, regex.compile(r"~", flags=regex.M), r"\u00A0")) 
 
         # Convert hyphens from minus to hyphen
-        self.localChanges.append((None, regex.compile(r"(?<=[*\s][-]*)-", flags=regex.M), r"\u2010"))
+        self.localChanges.append((None, regex.compile(r"((?<=\s)-|-(?=\s))", flags=regex.M), r"\u2011"))
 
         if self.asBool("document/toc"): # Only do this IF the auto Table of Contents is enabled
             for c in range(1,4): # Remove any \toc lines that we don't want appearing in the ToC

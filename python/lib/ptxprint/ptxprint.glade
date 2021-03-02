@@ -75,7 +75,7 @@ THE SOFTWARE.
   </object>
   <object class="GtkAdjustment" id="a_bottommargin">
     <property name="upper">99</property>
-    <property name="value">12</property>
+    <property name="value">10.5</property>
     <property name="step_increment">0.10000000000000001</property>
     <property name="page_increment">1</property>
   </object>
@@ -103,6 +103,7 @@ THE SOFTWARE.
   <object class="GtkAdjustment" id="a_columngutteroffset">
     <property name="lower">-50</property>
     <property name="upper">50</property>
+    <property name="value">5</property>
     <property name="step_increment">0.5</property>
     <property name="page_increment">1</property>
   </object>
@@ -141,7 +142,7 @@ THE SOFTWARE.
   </object>
   <object class="GtkAdjustment" id="a_ftrposition">
     <property name="upper">99</property>
-    <property name="value">8</property>
+    <property name="value">10.5</property>
     <property name="step_increment">0.10000000000000001</property>
     <property name="page_increment">1</property>
   </object>
@@ -166,7 +167,7 @@ THE SOFTWARE.
   </object>
   <object class="GtkAdjustment" id="a_indentUnit">
     <property name="upper">4</property>
-    <property name="value">1</property>
+    <property name="value">0.80000000000000004</property>
     <property name="step_increment">0.050000000000000003</property>
     <property name="page_increment">0.25</property>
   </object>
@@ -4444,7 +4445,7 @@ also affects poetry indentation.
                                         <property name="digits">2</property>
                                         <property name="numeric">True</property>
                                         <property name="update_policy">if-valid</property>
-                                        <property name="value">1</property>
+                                        <property name="value">0.80000000000000004</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
@@ -4637,6 +4638,7 @@ Width (mm):</property>
                                     <property name="climb_rate">1</property>
                                     <property name="digits">1</property>
                                     <property name="numeric">True</property>
+                                    <property name="value">5</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">1</property>
@@ -4844,7 +4846,7 @@ space between the end of the text and the footer line.</property>
                                     <property name="digits">1</property>
                                     <property name="numeric">True</property>
                                     <property name="update_policy">if-valid</property>
-                                    <property name="value">9</property>
+                                    <property name="value">10.5</property>
                                     <signal name="value-changed" handler="onNumTabsChanged" swapped="no"/>
                                   </object>
                                   <packing>
@@ -4926,7 +4928,7 @@ cross-references end.</property>
                                     <property name="digits">1</property>
                                     <property name="numeric">True</property>
                                     <property name="update_policy">if-valid</property>
-                                    <property name="value">12</property>
+                                    <property name="value">10.5</property>
                                     <signal name="value-changed" handler="onBodyHeightChanged" swapped="no"/>
                                     <signal name="value-changed" handler="onNumTabsChanged" swapped="no"/>
                                   </object>
@@ -5169,10 +5171,10 @@ button to adjust either the Line Spacing or Top Margin.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkImage" id="img_Top1FalseFalse">
+                                  <object class="GtkImage" id="img_Top2TrueFalse">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="pixbuf">Top1FalseFalse.png</property>
+                                    <property name="pixbuf">Top2TrueFalse.png</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
@@ -5221,10 +5223,10 @@ button to adjust either the Line Spacing or Top Margin.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkImage" id="img_Top2TrueFalse">
+                                  <object class="GtkImage" id="img_Top1FalseFalse">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="pixbuf">Top2TrueFalse.png</property>
+                                    <property name="pixbuf">Top1FalseFalse.png</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
