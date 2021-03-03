@@ -40,7 +40,7 @@ _checks = {
 
 class PicChecks:
 
-    fname = "picChecks.txt"
+    fname = "picInfo.txt"
 
     def __init__(self, parent):
         self.cfgShared = configparser.ConfigParser()
