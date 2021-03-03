@@ -121,6 +121,8 @@ class TTFontCache:
             for n in names:
                 for s in styles:
                     self.cache.setdefault(n, {})[s] = path
+        if not len(self.cache):
+            print("FClist failed:", files)
         self.fccache = {k: v.copy() for k,v in self.cache.items()}
         self.busy = False
 

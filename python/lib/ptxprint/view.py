@@ -156,6 +156,13 @@ class ViewModel:
         if secondary is not None:
             print(secondary)
 
+    def doStatus(self, txt=""):
+        if txt:
+            print("Status: ", txt)
+
+    def setPrintBtnStatus(self, idnty, txt=""):
+        self.doStatus(txt)
+        
     def msgQuestion(self, q1, q2):
         print("Answering \"no\" to: " + q1)
         print(q2)
@@ -206,7 +213,8 @@ class ViewModel:
         if scope is None:
             scope = self.get("r_book")
         if scope == "single":
-            return [self.get("ecb_book")]
+            bk = self.get("ecb_book")
+            return [] if not bk else [bk]
         elif scope == "multiple" and len(bl):
             blst = []
             for b in bl:
@@ -476,6 +484,7 @@ class ViewModel:
         if self.get("c_diglot"):
             self.diglotView = self.createDiglotView()
         else:
+            self.setPrintBtnStatus(2)
             self.diglotView = None
         self.loadingConfig = False
         if self.get("bl_fontR", skipmissing=True) is None:
@@ -1130,14 +1139,20 @@ class ViewModel:
         return (res, cfgchanges, tmpfiles)
 
     def createDiglotView(self):
+        self.setPrintBtnStatus(2)
         prjid = self.get("fcb_diglotSecProject")
         cfgid = self.get("ecb_diglotSecConfig")
         if prjid is None or cfgid is None:
-            return None
-        digview = ViewModel(self.settings_dir, self.working_dir, self.userconfig, self.scriptsdir)
-        digview.setPrjid(prjid)
-        if cfgid is not None and cfgid != "":
-            digview.setConfigId(cfgid)
+            digview = None
+        else:
+            digview = ViewModel(self.settings_dir, self.working_dir, self.userconfig, self.scriptsdir)
+            if not digview.setPrjid(prjid):
+                digview = None
+            elif cfgid is None or cfgid == "" or not digview.setConfigId(cfgid):
+                digview = None
+        if digview is None:
+            self.setPrintBtnStatus(2, _("No Config found for Diglot"))
+        else:
         return digview
 
     def createArchive(self, filename=None):

@@ -1117,7 +1117,7 @@ class TexModel:
             self.localChanges.append((None, regex.compile(r"\\p \\k {}\\k\* .+\r?\n".format(delGloEntry), flags=regex.M), ""))
 
     def analyzeImageCopyrights(self, txt):
-        for m in re.findall(r"\\(\S+).*?\\zimagecopyrights([A-Z]+)", txt):
+        for m in re.findall(r"\\(\S+).*?\\zimagecopyrights([a-zA-Z]+)", txt):
             self.imageCopyrightLangs[m[1].lower()] = m[0]
         return
 
@@ -1160,7 +1160,7 @@ class TexModel:
             for lang in sorted(langs):
                 hasOut = False
                 mkr = self.imageCopyrightLangs.get(lang, "pc")
-                crdts.append("\\def\\zimagecopyrights{}{{%".format(lang.upper()))
+                crdts.append("\\def\\zimagecopyrights{}{{%".format(lang.lower()))
                 plstr = cinfo["plurals"].get(lang, cinfo["plurals"]["en"])
                 cpytemplate = cinfo['templates']['imageCopyright'].get(lang,
                                         cinfo['templates']['imageCopyright']['en'])
@@ -1204,5 +1204,5 @@ class TexModel:
                     cpystr = template.format(artstr.replace("_", "\u00A0") + exceptPgs)
                     crdts.append("\\{} {}".format(mkr, cpystr))
                 crdts.append("}")
-            crdts.append("\\let\\zimagecopyrights=\\zimagecopyrightsEN")
+            crdts.append("\\let\\zimagecopyrights=\\zimagecopyrightsen")
         return "\n".join(crdts)

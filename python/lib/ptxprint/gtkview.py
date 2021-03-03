@@ -244,7 +244,7 @@ _signals = {
     'row-activated': ("TreeView",),
 }
 
-_olst = ["b_print", "fr_SavedConfigSettings", "tb_Layout", "tb_Font", "tb_Body", "tb_NotesRefs", "tb_HeadFoot", "tb_Pictures",
+_olst = ["fr_SavedConfigSettings", "tb_Layout", "tb_Font", "tb_Body", "tb_NotesRefs", "tb_HeadFoot", "tb_Pictures",
          "tb_Advanced", "tb_Logging", "tb_Tabs", "tb_DiglotBorder", "tb_StyleEditor", "tb_ViewerEditor", "tb_Help"]
 
 def _doError(text, secondary, title, copy2clip=False):
@@ -337,6 +337,7 @@ class GtkViewModel(ViewModel):
         self.logfile = None
         self.rtl = False
         self.isDiglotMeasuring = False
+        self.printReason = 0
         self.lang = args.lang if args.lang is not None else 'en'
         ilang = self.builder.get_object("fcb_interfaceLang")
         llang = self.builder.get_object("ls_interfaceLang")
@@ -451,6 +452,7 @@ class GtkViewModel(ViewModel):
         self.initialised = True
         for o in _olst:
             self.builder.get_object(o).set_sensitive(False)
+        self.setPrintBtnStatus(1, _("No project set"))
         self.updateDialogTitle()
         if self.pendingPid is not None:
             self.set("fcb_project", self.pendingPid)
@@ -520,7 +522,7 @@ class GtkViewModel(ViewModel):
         self.rtl = False
         self.picinfos.clear(self)
         for k, v in self.initValues.items():
-            if v is not None:
+            if k.startswith("bl_") or v is not None:
                 self.set(k, v)
         self._setChapRange("from", 1, 999, 1)
         self._setChapRange("to", 1, 999, 1)
@@ -664,6 +666,18 @@ class GtkViewModel(ViewModel):
         else:
             _doError(txt, secondary, title, copy2clip)
 
+    def doStatus(self, txt=""):
+        self.set("l_statusLine", txt)
+        
+    def setPrintBtnStatus(self, idnty, txt=""):
+        if not txt:
+            self.printReason &= ~idnty
+        else:
+            self.printReason |= idnty
+        if txt or not self.printReason:
+            self.doStatus(txt)
+        self.builder.get_object("b_print").set_sensitive(not self.printReason)
+        
     def onOK(self, btn):
         if isLocked():
             return
@@ -1433,10 +1447,11 @@ class GtkViewModel(ViewModel):
         lb = self.builder.get_object("tv_fontFamily")
         sel = lb.get_selection()
         ls, row = sel.get_selected()
-        name = ls.get_value(row, 0)
-        initFontCache().fill_cbstore(name, lsstyles)
-        self.builder.get_object("fcb_fontFaces").set_active(0)
-        self.set("t_fontFeatures", "")
+        if row is not None:
+            name = ls.get_value(row, 0)
+            initFontCache().fill_cbstore(name, lsstyles)
+            self.builder.get_object("fcb_fontFaces").set_active(0)
+            self.set("t_fontFeatures", "")
 
     def responseToDialog(entry, dialog, response):
         dialog.response(response)
@@ -1701,8 +1716,6 @@ class GtkViewModel(ViewModel):
             if self.get("c_thumbtabs"):
                 if not self.get("c_usetoc3"):
                     self.set("c_thumbIsZthumb", True)
-                else:
-                    pass
                 self.builder.get_object("c_thumbIsZthumb").set_sensitive(self.get("c_usetoc3"))
         else:
             self.builder.get_object("c_thumbIsZthumb").set_sensitive(True)
@@ -1807,6 +1820,7 @@ class GtkViewModel(ViewModel):
         self.updateSavedConfigList()
         for o in _olst:
             self.builder.get_object(o).set_sensitive(True)
+        self.setPrintBtnStatus(1)
         self.updateFonts()
         # self.updateHdrFtrOptions(self.get("c_diglot"))
         if self.ptsettings is not None:
@@ -2239,6 +2253,7 @@ class GtkViewModel(ViewModel):
         if self.get("c_diglot"):
             self.diglotView = self.createDiglotView()
         else:
+            self.setPrintBtnStatus(2)
             self.diglotView = None
         self.loadPics()
         self.updatePicList()
@@ -2294,6 +2309,7 @@ class GtkViewModel(ViewModel):
         if self.get("c_diglot"):
             self.diglotView = self.createDiglotView()
         else:
+            self.setPrintBtnStatus(2)
             self.diglotView = None
         self.loadPics()
         self.updatePicList()
@@ -2370,6 +2386,10 @@ class GtkViewModel(ViewModel):
         self.onSimpleClicked(btn)
         self.colourTabs()
         self.onNumTabsChanged()
+        if self.get("c_thumbtabs"):
+            if not self.get("c_usetoc3"):
+                self.set("c_thumbIsZthumb", True)
+            self.builder.get_object("c_thumbIsZthumb").set_sensitive(self.get("c_usetoc3"))
 
     def onNumTabsChanged(self, *a):
         if not super().onNumTabsChanged(*a):
