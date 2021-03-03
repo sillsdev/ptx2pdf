@@ -70,6 +70,8 @@ class PicList:
     def checkfilter(self, model, i, data):
         if self.loading:
             return False
+        if self.checkfilt <= 0:
+            return True
         try:
             v = newBase(model[i][_pickeys['src']])
         except TypeError:
@@ -133,6 +135,7 @@ class PicList:
         #self.view.set_model(self.model)
         self.model.refilter()
         self.loading = False
+        self.select_row(0)
 
     def get(self, wid, default=None):
         wid = _form_structure.get(wid, wid)
@@ -197,29 +200,15 @@ class PicList:
                     w.emit("focus-out-event", e)
         model, it = selection.get_selected()
         path = model.get_path(it)
-        cpath = path if selection == self.selection else model.convert_path_to_child_path(path)
+        cpath = model.convert_path_to_child_path(path)
         cit = self.model.get_iter(cpath)
         s = self.view.get_selection()
-        if s != selection:
-            self.loading = True
-            m = self.view.get_model()
-            fpath = cpath if s == self.selection else m.convert_child_path_to_path(cpath)
-            if fpath is not None:
-                s.select_path(fpath)
-                self.view.scroll_to_cell(fpath)
-            else:
-                s.unselect_all()
-            self.loading = False
-        if selection != self.selection:
+        if self.curriter != cit:
             self.parent.savePicChecks()
             if not self.model.do_visible(self.model, self.model.get_model(), cit):
                 return
-        if cpath.get_indices()[0] >= len(self.model):
-            print("Too Long!")
-            return
-        else:
-            self.currow = self.model[cit][:]    # copy it so that any edits don't mess with the model if the iterator moves
-            self.curriter = cit
+        self.currow = self.model[cit][:]    # copy it so that any edits don't mess with the model if the iterator moves
+        self.curriter = cit
         pgpos = re.sub(r'^([PF])([lcr])([tb])', r'\1\3\2', self.currow[_pickeys['pgpos']])
         self.parent.pause_logging()
         self.loading = True
@@ -306,8 +295,9 @@ class PicList:
     def select_row(self, i):
         if i >= len(self.model):
             i = len(self.model) - 1
-        treeiter = self.model.get_iter_from_string(str(i))
-        self.selection.select_iter(treeiter)
+        if i >= 0:
+            treeiter = self.model.get_iter_from_string(str(i))
+            self.selection.select_iter(treeiter)
 
     def mask_media(self, row):
         src = row[_pickeys['src']][:2]

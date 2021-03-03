@@ -2758,7 +2758,7 @@ class GtkViewModel(ViewModel):
             rota = self.get("fcb_plCreditRotate")
             bbox = self.get("ecb_plCreditBoxStyle")
             text = self.get("t_plCreditText")
-            crParams = "{}{},{},{}".format(vpos, hpos, rota, bbox)
+            crParams = "{}{},{},{}".format(vpos, hpos, (rota if rota is not None else "0"), bbox)
             self.set("t_piccreditbox", crParams)
             self.set("l_piccredit", text)
         elif response == Gtk.ResponseType.CANCEL:

@@ -39,35 +39,33 @@ class Interlinear:
 
     def replaceindoc(self, doc, curref, lexemes, linelengths, mrk="+wit"):
         lexemes.sort()
-        #allstr = []
         adj = 0
+        vend = (0, 0)
         for e in doc.iterVerse(*curref):
-            #allstr.append(str(e))
             if isinstance(e, sfm.Element):
+                if e.pos.line == vend[0] and e.pos.col == vend[1]:
+                    e.adjust = 1    # Handle where there is no space after verse number in the text but PT presumes it is there
                 if e.name == "v":   # starting col and line
                     startl = e.pos.line - 1
                     startc = e.pos.col - 1
+                    vend = (e.pos.line, e.pos.col + 3 + len(e.args[0]))
                 adj += getattr(e, 'adjust', 0)
                 continue
             if e.parent.name == "fig":
                 continue
             thisadj = adj - getattr(e.parent, 'adjust', 0)
-            lstart = sum(linelengths[startl:e.pos.line-1]) + e.pos.col-1 + startc + thisadj
+            lstart = sum(linelengths[startl:e.pos.line-1]) + e.pos.col-1 + startc
             lend = lstart + len(e)
-            #print(f"{e.pos.chapter}:{e.pos.verse} ({e.pos.col}, {e.pos.line}), ({startc}, {startl}), {lstart}, {lend} {linelengths[startl:e.pos.line-1]}")
             i = 0
             res = []
-            for l in (lex for lex in lexemes if lex[0][0] >= lstart and lex[0][0] < lend):
-                if l[0][0]-lstart >= i:
-                    res.append(e[i:l[0][0]-lstart])
-                res.append(r"\{0} {1}|{2}\{0}*".format(mrk, e[l[0][0]-lstart:l[0][0]+l[0][1]-lstart], l[1]))
-                i = l[0][0] + l[0][1] - lstart
+            for l in ((lex[0][0]-adj, lex[0][1], lex[1]) for lex in lexemes if lex[0][0] >= lstart and lex[0][0] < lend):
+                if l[0]-lstart >= i:
+                    res.append(e[i:l[0]-lstart])
+                res.append(r"\{0} {1}|{2}\{0}*".format(mrk, e[l[0]-lstart:l[0]+l[1]-lstart], l[2]))
+                i = l[0] + l[1] - lstart
             if i < len(e):
                 res.append(e[i:])
             e.data = str("".join(str(s) for s in res))
-        #hashstr =  md5()
-        #hashstr.update("".join(allstr)[:-1].encode("utf-16LE"))
-        #print(curref, allstr, hashstr.hexdigest())
 
     def convertBk(self, bkid, doc, linelengths, mrk="+rb"):
         intname = "Interlinear_{}".format(self.lang)
