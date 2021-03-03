@@ -30,7 +30,7 @@
 %\input "usfmTex-ext.tex"
 %\input "hooks.tex"
 \tracingmacros=0
-\tracingassigns=0
+\tracingassigns=1
 % Set added material in desired form
 \def\addmtlquteht{2pt}
 \def\addmtlqutewd{1.5pt}
@@ -43,8 +43,6 @@
 %\sethook{after}{m}{\kern .5pt \hrule width 10em height .2pt \kern 1pt \hrule width 10em height .2pt}
 %\sethook{start}{m}{\beginadd\beginadd}
 %\sethook{end}{m}{\endadd\endadd}
-\tracingassigns=1
-\tracingassigns=0
 \sethook{before}{add}{|}
 \sethook{after}{add}{|}
 \sethook{start}{add}{\beginadd}
@@ -52,6 +50,6 @@
 \sethook{start}{cat:foo|cat}{}
 \sethook{end}{cat:foo|cat}{foo_hook>>}
 \csname ColorFontstrue\endcsname
-\tracinggroups=1
+%\tracinggroups=1
 \ptxfile{test.usfm}
 \bye
