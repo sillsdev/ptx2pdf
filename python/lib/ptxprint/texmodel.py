@@ -644,8 +644,8 @@ class TexModel:
         mod = Module(infpath, usfms)
         try:
             res = mod.parse()
-        except SyntaxError:
-            return None
+        except SyntaxError as e:
+            return (None, e)
         with open(outfpath, "w", encoding="utf-8") as outf:
             outf.write(sfm.generate(res))
         return outfpath
@@ -691,9 +691,9 @@ class TexModel:
         if fname is None:
             infpath = os.path.join(prjdir, bk)  # assume module
             infpath = self.flattenModule(infpath, outdir)
-            if infpath is None:
+            if isinstance(infpath, tuple) and infpath[0] is None:
                 self.printer.doError("Failed to flatten module text (due to a Syntax Error?):",        
-                secondary="Check for USFM errors and/or problems with a module.", 
+                secondary=str(infpath[1]), 
                 title="PTXprint [{}] - Canonicalise Text Error!".format(self.VersionStr))
                 return None
         else:
