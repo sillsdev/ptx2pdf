@@ -479,9 +479,8 @@ class GtkViewModel(ViewModel):
         self.set("c_hideAdvancedSettings", expert)
         self.onHideAdvancedSettingsClicked(None, None)
         sys.excepthook = self.doSysError
-        fc.wait()
         lsfonts = self.builder.get_object("ls_font")
-        fc.fill_liststore(lsfonts)
+        lsfonts.clear()
         try:
             Gtk.main()
         except Exception as e:
@@ -1457,6 +1456,9 @@ class GtkViewModel(ViewModel):
         f = self.get(btnid)
         lb = self.builder.get_object("tv_fontFamily")
         ls = lb.get_model()
+        fc = initFontCache()
+        fc.wait()
+        fc.fill_liststore(ls)
         dialog = self.builder.get_object("dlg_fontChooser")
         if f is None:
             i = 0
