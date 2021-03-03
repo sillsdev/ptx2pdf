@@ -676,7 +676,8 @@ class GtkViewModel(ViewModel):
             self.printReason |= idnty
         if txt or not self.printReason:
             self.doStatus(txt)
-        self.builder.get_object("b_print").set_sensitive(not self.printReason)
+        for w in ["b_print", "btn_adjust_diglot", "s_diglotPriFraction"]:
+            self.builder.get_object(w).set_sensitive(not self.printReason)
         
     def onOK(self, btn):
         if isLocked():
