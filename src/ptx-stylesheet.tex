@@ -687,7 +687,7 @@
         \csname bookstart-all\endcsname
         \csname bookstart-\id@@@\endcsname}%
  %
- \def\b{\endlastp@rstyle\bgroup % End previous par before making a gap
+ \def\b{\endlastp@rstyle{b}\bgroup % End previous par before making a gap
    \getp@ram{baseline}{b}\ifx\p@ram\relax
      \s@tbaseline{p}\vskip\baselineskip
     \else
