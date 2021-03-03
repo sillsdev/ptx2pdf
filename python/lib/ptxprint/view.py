@@ -1152,7 +1152,6 @@ class ViewModel:
                 digview = None
         if digview is None:
             self.setPrintBtnStatus(2, _("No Config found for Diglot"))
-        else:
         return digview
 
     def createArchive(self, filename=None):

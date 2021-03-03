@@ -2655,6 +2655,51 @@ on the image. Note that there are shortcuts:
                   </packing>
                 </child>
                 <child>
+                  <object class="GtkSeparator">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="margin_left">20</property>
+                    <property name="margin_right">20</property>
+                    <property name="margin_top">6</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
+                    <property name="top_attach">3</property>
+                    <property name="width">4</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkCheckButton" id="c_plCreditApply2all">
+                    <property name="label" translatable="yes">Apply to ALL images in this series</property>
+                    <property name="visible">True</property>
+                    <property name="sensitive">False</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">False</property>
+                    <property name="tooltip_text" translatable="yes">NOT  YET  IMPLEMENTED:
+The same Credit Overlay text can be applied
+to all images that match this illustration's
+filename (e.g. CN01234.tif, CN05654.tif, etc.)
+You can then adjust the position, background
+and rotation for specific illustrations later.
+
+Setting this option will not affect illustrations
+which already have Credit Overlay settings.</property>
+                    <property name="halign">end</property>
+                    <property name="margin_right">6</property>
+                    <property name="margin_top">6</property>
+                    <property name="margin_bottom">6</property>
+                    <property name="draw_indicator">True</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">1</property>
+                    <property name="top_attach">4</property>
+                    <property name="width">3</property>
+                  </packing>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
+                <child>
                   <placeholder/>
                 </child>
                 <child>
@@ -10903,11 +10948,15 @@ generated automatically for you.</property>
                                                 </child>
                                                 <child>
                                                   <object class="GtkButton" id="btn_overlayCredit">
-                                                    <property name="label" translatable="yes">Overlay
-Credit...</property>
+                                                    <property name="label" translatable="yes">© ...</property>
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">True</property>
                                                     <property name="receives_default">True</property>
+                                                    <property name="tooltip_text" translatable="yes">Credit Overlays...
+Some artists (e.g. David C Cook) require that
+each image has a copyright message printed
+on the image itself. The text and location can
+be set here.</property>
                                                     <signal name="clicked" handler="onOverlayCreditClicked" swapped="no"/>
                                                   </object>
                                                   <packing>

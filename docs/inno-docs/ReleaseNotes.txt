@@ -1,5 +1,28 @@
 PTXprint 1.5.14.4 Release Notes 
-20 February 2021
+3 March 2021
+
+
+Bug Fixes and Improvements in 1.5.15
+
+  * Fixed a bunch of bugs that new users would encounter when starting to use PTXprint
+  
+  * Add Credit Overlay for (DCC!) illustrations
+  
+  * Diglot macros have been significantly improved to be more robust [but testing is ongoing...]
+  
+  * Handle syntax errors in referenced scripture from a module
+  
+  * Set footnotes to be smaller by default
+  
+  * Magic button to calculate & optimize column widths for diglot publications
+  
+  * Swap Pri/Sec sides of diglot works now and also makes appropriate changes to headers
+  
+  * Improve diglot merge chunking and reordering
+  
+  * Enable localized \zimagecopyrights (by adding language code) -> \zimagecopyrightsfr (for French)
+  
+  * Fixed issues with \toc3, thumbtabs and ToC
 
 Bug Fixes and Improvements in 1.5.14.4
 
