@@ -228,10 +228,11 @@ else:
                 mainw.set(k, v)
         mainw.run(doit)
         if mainw.lang != args.lang:
-            args.lang = mainw.lang
-            args.pid = mainw.prjid
-            args.config = mainw.configId
             config.set("init", "lang", mainw.lang)
-            goround = True
+            if args.lang is not None:
+                args.lang = mainw.lang
+                args.pid = mainw.prjid
+                args.config = mainw.configId
+                goround = True
     with open(conffile, "w", encoding="utf-8") as outf:
         config.write(outf)

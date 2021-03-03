@@ -230,9 +230,12 @@ class StyleEditorView(StyleEditor):
                 n = self.sheet[k].get('name', k)
                 if n is None:
                     n = k
-                m = re.match(r"^([^-\s])+\s[^-]+(?:-|$)", n)
-                if m and m.group(1) not in ('OBSOLETE', 'DEPRECATED'):
-                    n = k + " - " + n
+                m = re.match(r"^([^-\s]*)\s*([^-]+)(?:-\s*|$)", n)
+                if m:
+                    if m.group(1) and m.group(1) not in ('OBSOLETE', 'DEPRECATED'):
+                        n = k + " - " + n
+                    elif m.group(2):
+                        n = k + " - " + n[m.end():]
             elif k not in self.basesheet:
                 ismarker = False
                 n = k

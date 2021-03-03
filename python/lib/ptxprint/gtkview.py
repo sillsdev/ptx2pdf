@@ -447,8 +447,6 @@ class GtkViewModel(ViewModel):
     def run(self, callback):
         self.callback = callback
         fc = initFontCache()
-        lsfonts = self.builder.get_object("ls_font")
-
         self.getInitValues()
         self.initialised = True
         for o in _olst:
@@ -460,7 +458,6 @@ class GtkViewModel(ViewModel):
         if self.pendingConfig is not None:
             self.set("ecb_savedConfig", self.pendingConfig)
             self.pendingConfig = None
-        fc.fill_liststore(lsfonts)
         tv = self.builder.get_object("tv_fontFamily")
         cr = Gtk.CellRendererText()
         col = Gtk.TreeViewColumn("Family", cr, text=0, weight=1)
@@ -482,6 +479,9 @@ class GtkViewModel(ViewModel):
         self.set("c_hideAdvancedSettings", expert)
         self.onHideAdvancedSettingsClicked(None, None)
         sys.excepthook = self.doSysError
+        fc.wait()
+        lsfonts = self.builder.get_object("ls_font")
+        fc.fill_liststore(lsfonts)
         try:
             Gtk.main()
         except Exception as e:

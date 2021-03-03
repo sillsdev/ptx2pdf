@@ -91,6 +91,10 @@ class TTFontCache:
         self.thread = Thread(target=self.loadFcList)
         self.thread.start()
 
+    def wait(self):
+        if self.busy:
+            self.thread.wait()
+
     def loadFcList(self):
         files = checkoutput(["fc-list", ":file"], path="xetex")
         for f in files.split("\n"):
