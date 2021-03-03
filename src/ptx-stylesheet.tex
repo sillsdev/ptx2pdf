@@ -398,6 +398,7 @@
 % Patch in special handling for \c and \v.
 %+csty_defv
 \newif\ifhangingverse
+
 \lowercase{
  % `~` is set by lowercase to a space for delimiting \ch@rstylepls
  \def\@ddcvhooks{
@@ -686,10 +687,17 @@
         \csname bookstart-all\endcsname
         \csname bookstart-\id@@@\endcsname}%
  %
+ \def\b{\endlastp@rstyle\bgroup % End previous par before making a gap
+   \getp@ram{baseline}{b}\ifx\p@ram\relax
+     \s@tbaseline{p}\vskip\baselineskip
+    \else
+      \vskip\p@ram
+    \fi\egroup} 
  \def\fig{\m@kedigitsother\ptx@fig}% \fig has its own special macro to parse the fields
  %
  \let\nb=\ptx@nb% \nb is a special code that suppresses a paragraph break across \c
 }%
+
 \endgroup
 
 \def\unc@tcodespecials{\def\do##1{\catcode`##1=12 }\dospecials}
