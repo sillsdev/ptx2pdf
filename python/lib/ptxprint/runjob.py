@@ -9,7 +9,7 @@ from ptxprint.ptsettings import ParatextSettings
 from ptxprint.view import ViewModel, VersionStr, refKey
 from ptxprint.font import getfontcache
 from ptxprint.usfmerge import usfmerge
-from ptxprint.utils import _, universalopen
+from ptxprint.utils import _, universalopen, print_traceback
 
 _errmsghelp = {
 "! TeX capacity exceeded, sorry":        _("Uh oh! You've pushed TeX too far! Try turning Hyphenation off, or contact support."),
@@ -97,6 +97,7 @@ _diglot = {
 
 "diglot/docscript" :        "document/script",
 "diglot/docdigitmapping" :  "document/digitmapping",
+"diglot/interlinear":       "project/interlinear",
                             
 "diglot/fontregular" :      "document/fontregular",
 "diglot/fontbold" :         "document/fontbold",
@@ -266,7 +267,12 @@ class RunJob:
 
     def parseLogLines(self):
         # it did NOT finish successfully, so help them troubleshoot what might have gone wrong:
-        finalLogLines = self.loglines[-30:-10]
+        for i in range(1, 30):
+            if self.loglines[-i].startswith("Here is how much of TeX's memory you used:"):
+                break
+        else:
+            i = 0
+        finalLogLines = self.loglines[-i-20:-i]
         foundmsg = False
         finalLogLines.append("-"*90+"\n")
         for l in finalLogLines:
@@ -376,6 +382,7 @@ class RunJob:
                 syntaxErrors.append("{} {} line: {}".format(self.prjid, b, str(e).split('line', maxsplit=1)[1]))
             except Exception as e:
                 syntaxErrors.append("{} {} Error: {}".format(self.prjid, b, str(e)))
+                print_traceback()
             for f in [left, right, outFile, logFile]:
                 texfiles += [os.path.join(self.tmpdir, f)]
 
@@ -434,15 +441,16 @@ class RunJob:
         envtexinputs = os.getenv("TEXINPUTS")
         texinputs = [envtexinputs] if envtexinputs is not None and len(envtexinputs) else []
         texinputs += [os.path.abspath(self.tmpdir), ptxmacrospath]
-        if sys.platform != "win32":
-            texinputs += ["/usr/share/ptx2pdf/texmacros"]
-        os.putenv('TEXINPUTS', pathjoin(texinputs))
         # print("TEXINPUTS=",os.getenv('TEXINPUTS'))
         miscfonts = getfontcache().fontpaths
+        if sys.platform != "win32":
+            texinputs += ["/usr/share/ptx2pdf/texmacros"]
+            miscfonts.append("/usr/share/ptx2pdf/texmacros")
         miscfonts.append(ptxmacrospath)
         miscfonts.append(os.path.join(prjdir, "shared"))
         if len(miscfonts):
             os.putenv("MISCFONTS", pathjoin(miscfonts))
+        os.putenv('TEXINPUTS', pathjoin(texinputs))
         self.thread = Thread(target=self.run_xetex, args=(outfname, info))
         self.busy = True
         self.thread.start()

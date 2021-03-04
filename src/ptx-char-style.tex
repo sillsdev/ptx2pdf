@@ -307,7 +307,7 @@
     \edef\typef@ce{"\p@ram"}% use font name from the stylesheet
   \fi
   \getFp@ramR{fontfeatures}{#1}%
-  \ifx\p@ram\relax\else\edef\typef@ce{\typef@ce:\p@ram}\fi
+  \ifx\p@ram\relax\else\edef\typef@ce{\typef@ce"\p@ram"}\fi
   \getFp@ramR{smallcaps}{#1}%                                           %(1)
   \ifx\p@ram\tru@
     \edef\typef@ce{\typef@ce\SmallCapsSuffix}%

@@ -714,8 +714,12 @@ class TexModel:
             if self.interlinear is not None:
                 doc = self._makeUSFM(dat.splitlines(True), bk)
                 linelengths = [len(x) for x in dat.splitlines(True)]
-                doc.calc_PToffsets()
-                self.interlinear.convertBk(bk, doc, linelengths)
+                if doc is not None:
+                    doc.calc_PToffsets()
+                    self.interlinear.convertBk(bk, doc, linelengths)
+                    if len(self.interlinear.fails):
+                        printer.doError("The following references need to be reapproved: " + " ".join(self.interlinear.fails))
+                        self.interlinear.fails = []
 
             if self.changes is not None:
                 if doc is not None:
@@ -762,7 +766,7 @@ class TexModel:
             syntaxErrors.append("{} {} Error({}): {}".format(self.prjid, bk, type(e), str(e)))
             traceback.print_exc()
         if len(syntaxErrors):
-            self.printer.doError("Failed to canonicalise texts due to a Syntax Error:",        
+            self.printer.doError("Failed to canonicalise texts due to a Syntax Error: ",        
                     secondary="\n".join(syntaxErrors)+"\n\nIf original USFM text is correct, then check "+ \
                     "if PrintDraftChanges.txt has caused the error(s).", 
                     title="PTXprint [{}] - Canonicalise Text Error!".format(self.VersionStr))

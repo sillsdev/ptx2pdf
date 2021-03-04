@@ -1,6 +1,6 @@
 from ptxprint.sfm import usfm, style
 from ptxprint import sfm
-import re, os, traceback
+import re, os, traceback, warnings
 from collections import namedtuple
 from itertools import groupby
 from functools import reduce
@@ -112,9 +112,12 @@ class Usfm:
     def __init__(self, iterable, sheets):
         tag_escapes = r"[^0-9A-Za-z]"
         self.doc = None
-        self.doc = list(usfm.parser(iterable, stylesheet=sheets,
+        with warnings.catch_warnings(record=True) as self.warnings:
+            self.doc = list(usfm.parser(iterable, stylesheet=sheets,
                                 canonicalise_footnotes=False,
+                                error_level=sfm.ErrorLevel.Unrecoverable,
                                 tag_escapes=tag_escapes))
+        # self.warnings is a list of Exception type errors use print(w.message)
         self.cvaddorned = False
         self.tocs = []
 

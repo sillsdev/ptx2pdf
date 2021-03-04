@@ -10,6 +10,7 @@ class Interlinear:
     def __init__(self, lang, prjdir):
         self.lang = lang
         self.prjdir = prjdir
+        self.fails = []
         lexpath = os.path.join(prjdir, "Lexicon.xml")
         if os.path.exists:
             self.read_lexicon(lexpath)
@@ -54,6 +55,8 @@ class Interlinear:
             if e.parent.name == "fig":
                 continue
             thisadj = adj - getattr(e.parent, 'adjust', 0)
+            ispara = e.parent.meta['StyleType'] != 'Character'
+            thismrk = mrk[1:] if ispara else mrk
             lstart = sum(linelengths[startl:e.pos.line-1]) + e.pos.col-1 + startc
             lend = lstart + len(e)
             i = 0
@@ -61,7 +64,7 @@ class Interlinear:
             for l in ((lex[0][0]-adj, lex[0][1], lex[1]) for lex in lexemes if lex[0][0] >= lstart and lex[0][0] < lend):
                 if l[0]-lstart >= i:
                     res.append(e[i:l[0]-lstart])
-                res.append(r"\{0} {1}|{2}\{0}*".format(mrk, e[l[0]-lstart:l[0]+l[1]-lstart], l[2]))
+                res.append(r"\{0} {1}|{2}\{0}*".format(thismrk, e[l[0]-lstart:l[0]+l[1]-lstart], l[2]))
                 i = l[0] + l[1] - lstart
             if i < len(e):
                 res.append(e[i:])
@@ -74,19 +77,23 @@ class Interlinear:
             return
         doc.addorncv()
 
-        for (event, e) in et.iterparse(intfile, ("start", "end")):
-            if event == "start":
-                if e.tag == "Range":
-                    currange = (int(e.get('Index').strip()), int(e.get('Length').strip()))
-                elif e.tag == "Lexeme":
-                    lid = e.get('Id', '')
-                    gid = e.get('GlossId', '')
-                    if lid.startswith('Word:'):
-                        lexemes.append((currange, str(self.lexicon.get(lid, {}).get(gid, ''))))
-            elif event == "end":
-                if e.tag == "string":
-                    curref = self.makeref(e.text)
-                    lexemes = []
-                elif e.tag == "VerseData" and e.get('Hash', "") != "":
-                    self.replaceindoc(doc, curref, lexemes, linelengths, mrk=mrk)
+        with open(intfile, "r", encoding="utf-8", errors="ignore") as inf:
+            for (event, e) in et.iterparse(inf, ("start", "end")):
+                if event == "start":
+                    if e.tag == "Range":
+                        currange = (int(e.get('Index').strip()), int(e.get('Length').strip()))
+                    elif e.tag == "Lexeme":
+                        lid = e.get('Id', '')
+                        gid = e.get('GlossId', '')
+                        if lid.startswith('Word:'):
+                            lexemes.append((currange, str(self.lexicon.get(lid, {}).get(gid, ''))))
+                elif event == "end":
+                    if e.tag == "string":
+                        curref = self.makeref(e.text)
+                        lexemes = []
+                    elif e.tag == "VerseData":
+                        if e.get('Hash', "") != "":
+                            self.replaceindoc(doc, curref, lexemes, linelengths, mrk=mrk)
+                        else:
+                            self.fails.append("{}:{}".format(*curref))
 

@@ -91,7 +91,7 @@ _fields = Marker({
     'OccursUnder':      (unique(sequence(str)), {None}),
     'TextProperties':   (unique(sequence(CaselessStr)), set()),
     'TextType':         (CaselessStr,   'Unspecified'),
-    'StyleType':        (CaselessStr,   None),
+    'StyleType':        (CaselessStr,   ''),
     #'Attributes':       (sequence(str), None)
     # 'Rank':            (int,   None),
     # 'FontSize':        (int,   None),
