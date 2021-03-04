@@ -65,6 +65,7 @@ class Diglot(Snippet):
 \addToRightHooks{{\RTL{diglot/ifrtl}}}
 %{diglot/iflinebreakon}\XeTeXlinebreaklocaleR "{diglot/linebreaklocale}"
 \diglotSwap{document/diglotswapside}
+{diglot/interlinear}\expandafter\def\csname complex-rb\endcsname{{\ruby{project/ruby}{{rb}}{{gloss}}}}
 \catcode `@=12
 
 """
