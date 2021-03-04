@@ -617,7 +617,7 @@ Description):</property>
     <property name="type_hint">dialog</property>
     <property name="gravity">center</property>
     <property name="program_name">PTXprint</property>
-    <property name="version">Version 1.5.15</property>
+    <property name="version">Version 1.5.14.4</property>
     <property name="copyright">© 2020-2021, SIL International</property>
     <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
 the User-Interface. The PDFs are produced by enhanced 
@@ -2697,7 +2697,21 @@ which already have Credit Overlay settings.</property>
                   </packing>
                 </child>
                 <child>
-                  <placeholder/>
+                  <object class="GtkLinkButton" id="lb_style_x-credit|fig">
+                    <property name="label">\x-credit|fig</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="focus_on_click">False</property>
+                    <property name="receives_default">True</property>
+                    <property name="halign">end</property>
+                    <property name="hexpand">True</property>
+                    <property name="relief">none</property>
+                    <property name="uri">Click to edit the Credit Overlay properties on the Styles tab</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">3</property>
+                    <property name="top_attach">0</property>
+                  </packing>
                 </child>
                 <child>
                   <placeholder/>
@@ -7080,7 +7094,7 @@ uncheck the Parallel Passage Refs.</property>
                                     </child>
                                     <child>
                                       <object class="GtkLinkButton" id="lb_style_s">
-                                        <property name="label" translatable="yes">\s</property>
+                                        <property name="label">\s</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="focus_on_click">False</property>
@@ -7129,7 +7143,7 @@ occur below Section Headings.</property>
                                     </child>
                                     <child>
                                       <object class="GtkLinkButton" id="lb_style_r">
-                                        <property name="label" translatable="yes">\r</property>
+                                        <property name="label">\r</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="focus_on_click">False</property>
@@ -7532,7 +7546,7 @@ line then set this option.</property>
                                                     </child>
                                                     <child>
                                                       <object class="GtkLinkButton" id="lb_style_f">
-                                                        <property name="label" translatable="yes">\f</property>
+                                                        <property name="label">\f</property>
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                         <property name="focus_on_click">False</property>
@@ -7800,7 +7814,7 @@ line then set this option.</property>
                                                     </child>
                                                     <child>
                                                       <object class="GtkLinkButton" id="lb_style_x">
-                                                        <property name="label" translatable="yes">\x</property>
+                                                        <property name="label">\x</property>
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                         <property name="focus_on_click">False</property>
@@ -12851,7 +12865,7 @@ markers.</property>
                                         </child>
                                         <child>
                                           <object class="GtkLinkButton" id="lb_style_rb">
-                                            <property name="label" translatable="yes">\rb</property>
+                                            <property name="label">\rb</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="focus_on_click">False</property>
@@ -12872,7 +12886,7 @@ formatting of the ruby text.</property>
                                         </child>
                                         <child>
                                           <object class="GtkLinkButton" id="lb_style_gloss|rb">
-                                            <property name="label" translatable="yes">\gloss|rb</property>
+                                            <property name="label">\gloss|rb</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="focus_on_click">False</property>
@@ -14330,7 +14344,7 @@ to make it fit. </property>
                             </child>
                             <child>
                               <object class="GtkLinkButton" id="lb_style_v">
-                                <property name="label" translatable="yes">\v</property>
+                                <property name="label">\v</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="focus_on_click">False</property>
