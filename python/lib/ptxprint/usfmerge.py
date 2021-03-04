@@ -320,7 +320,8 @@ def usfmerge(infilea, infileb, outfile, stylesheetsa=[], stylesheetsb=[], fsecon
                 outf.write("\\lefttext\n")
                 isright = False
             outf.write(str(p[0]))
-            outf.write("\\p\n")
+            if p[0].type != ChunkType.HEADING and p[0].type != ChunkType.TITLE:
+                outf.write("\\p\n")
         elif i != 0 and isright and p[1] is not None and len(p[1]):
             outf.write("\\nolefttext\n")
         if p[1] is not None and len(p[1]):
@@ -328,7 +329,8 @@ def usfmerge(infilea, infileb, outfile, stylesheetsa=[], stylesheetsb=[], fsecon
                 outf.write("\\righttext\n")
                 isright = True
             outf.write(str(p[1]))
-            outf.write("\\p\n")
+            if p[1].type != ChunkType.HEADING and p[1].type != ChunkType.TITLE:
+                outf.write("\\p\n")
         elif not isright:
             outf.write("\\norighttext\n")
 
