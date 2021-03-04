@@ -536,20 +536,15 @@
 %-cpar_pdfbookmark
 
 %+cpar_pdfchaptermark
-\def\pdfch@ptermark{\csname pdfch@pterm@rk\g@tdstat\endcsname}
-\def\pdfch@pterm@rk{\ifDropActions\else\bgroup\liter@lspecials
-  \special{pdf:dest (\id@@@.\ch@pter) [@thispage /Fit]}%
-  \ifx\b@ok\relax \let\t@mp=\id@@@ \else \let\t@mp=\b@ok \fi
+\def\pdfch@ptermark{\ifDropActions\else\bgroup\liter@lspecials
+  \edef\@@side{\g@tdstat}%
+  \special{pdf:dest (\id@@@\@@side.\ch@pter) [@thispage /Fit]}%
+  \x@\let\x@\t@mp\csname b@ok\@@side\endcsname
+  \ifx\b@ok\relax \let\t@mp=\id@@@ \fi
   \special{pdf:outline 1 << /Title (\t@mp\space\ch@pter)
-           /A << /S /GoTo /D (\id@@@.\ch@pter) >> >>}%
+           /A << /S /GoTo /D (\id@@@\@@side.\ch@pter) >> >>}%
   \egroup\fi}
 
-\def\pdfch@pterm@rkR{\ifDropActions\else\bgroup\liter@lspecials%FIXME: make this work with \c@rrdstat, for polyglot
-  \special{pdf:dest (\id@@@.\ch@pter) [@thispage /Fit]}%
-  \ifx\b@okR\relax \let\t@mp=\id@@@ \else \let\t@mp=\b@okR \fi
-  \special{pdf:outline 1 << /Title (\t@mp\space\ch@pter)
-           /A << /S /GoTo /D (\id@@@.\ch@pter) >> >>}%
-  \egroup\fi}
 %-cpar_pdfchaptermark
 
 %+cpar_initparlocs
@@ -856,9 +851,9 @@
 \def\RaiseItem#1#2#3{%
   \x@\def\csname raise-#1.#2\endcsname{#3}}%
 
-\def\delay@test#1{\trace{C}{delay@test: \id@@@.\ch@pter: \c@rref}%
+\def\delay@test#1{\trace{C}{delay@test: \id@@@\ifdiglot\c@rrdstat\fi.\ch@pter: #1 \c@rref}%
     \x@\let\x@\t@std@lay\csname delay-#1.\c@rref\endcsname}
-\def\raise@test#1{\trace{C}{raise@test: \id@@@.\ch@pter: \c@rref}%
+\def\raise@test#1{\trace{C}{raise@test: \id@@@\ifdiglot\c@rrdstat\fi.\ch@pter: #1 \c@rref}%
     \x@\let\x@\t@str@ise\csname raise-#1.\c@rref\endcsname}
 
 \def\ptx@nb{%
@@ -866,7 +861,7 @@
     \delay@test{chapter}%
     %\x@\let\x@\t@st\csname delay-\id@@@.\ch@pter\endcsname
     \ifx\t@std@lay\relax
-      \MSG{*** no-break at \id@@@\space\ch@pter, re-run to generate \string\DelayedChapter\space setting}%
+      \MSG{*** no-break at \id@@@\ifdiglot \c@rrdstat\fi\space\ch@pter, re-run to generate \string\DelayedChapter\space setting}%
       \def\t@std@lay{0}%
     \else 
       \MSG{* no-break at \id@@@\space\ch@pter (\t@std@lay)}%
@@ -889,7 +884,8 @@
       \pdfb@@kmark\pdfch@ptermark\nobreak}%
      \beginL\pdfsavepos                                                         %(3)
      %\edef\dc@ref@rgs{\string\@delayedchapter\string{\id@@@\string}\string{\ch@pter\string}}%
-     \edef\dc@ref@rgs{\string\@delayedchapter\string{\id@@@\string}\string{\ch@pter\string}}%
+     \ifdiglot\edef\@@ref{\id@@@\c@rrdstat}\else\edef\@@ref{\id@@@}\fi
+     \edef\dc@ref@rgs{\string\@delayedchapter\string{\@@ref\string}\string{\ch@pter\string}}%
      \x@\write\x@\p@rlocs\x@{\dc@ref@rgs{\the\pdflastxpos}{\the\pdflastypos}}\endL
      \dr@ppednumbertrue
      \add@pending{chapter}{\c@rref}{0}{\the\ch@pterwd}{2}{\t@std@lay}{\ifRTL R\else L\fi}%

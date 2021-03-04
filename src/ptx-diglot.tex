@@ -530,7 +530,7 @@
         \x@\global\csname \c@rrdstat boxpenalty\endcsname=\csname saved\c@rrdstat penalty\endcsname
       \else
         \x@\global\csname\c@rrdstat boxpenalty\endcsname =\galleypenalty
-        \x@\global\x@\setbox\csname excess\c@rrdstat\endcsname\vbox{\joinboxes{\galleyexc@ss}{\csname excess\c@rrdstat\endcsname}{4}{\csname partial\c@rrdstat penalty\endcsname}}%
+        \x@\global\x@\setbox\csname excess\c@rrdstat\endcsname\vbox{\joinboxes{\galleyexc@ss}{\csname excess\c@rrdstat\endcsname}{4}{\x@\the\csname partial\c@rrdstat penalty\endcsname}}%
       \fi
       \global\setbox\galleyexc@ss=\box\voidb@x
       \x@\global\x@\setbox\csname partial\c@rrdstat\endcsname\box\galley% Remember the ol galley
@@ -539,7 +539,7 @@
       \x@\global\x@\let\x@\m@rknum\csname m@rknum\c@rrdstat\endcsname
       \update@marks
     \fi
-    \trace{D}{End of after@a@trial LB:\the\ht\Lbox+\the\dp\Lbox, RB:\the\ht\Rbox+\the\dp\Rbox}%
+    \trace{D}{End of after@a@trial (\c@rrdstat) LB:\the\ht\Lbox+\the\dp\Lbox (\the\Lboxpenalty), RB:\the\ht\Rbox+\the\dp\Rbox (\the\Rboxpenalty)}%
     %\showlists
   \fi
   \after@this
@@ -548,7 +548,7 @@
 \def\@trial@failed{%
   \trace{D}{trial failed, (end of?) input moved. refilling excess\c@rrdstat - \refl@wlist}%(the start may have been set already
   %Undo the vsplit (all mtl into excessX)
-  \x@\global\x@\setbox\csname excess\c@rrdstat\endcsname\vbox{\joinboxes{\csname partial\c@rrdstat\endcsname}{\csname excess\c@rrdstat\endcsname}{3}{\csname partial\c@rrdstat penalty\endcsname}}%
+  \x@\global\x@\setbox\csname excess\c@rrdstat\endcsname\vbox{\joinboxes{\csname partial\c@rrdstat\endcsname}{\csname excess\c@rrdstat\endcsname}{3}{\x@\the\csname partial\c@rrdstat penalty\endcsname}}%
   \let\col@do=\restore@oldmarks
   \x@\each@col\diglot@list\E
 }
@@ -678,22 +678,23 @@
 \def\ztmoff{\tracingmacros=0}
 % Change which side we're adding to
 \def\pr@sideswitch#1#2{%
-  \global\savedpenalty=\lastpenalty % This MUST be first, or the last /thing/ won't be a penalty
+  \tmpcount=\lastnodetype
+  \global\savedpenalty=\lastpenalty % This MUST be first (at least, before any writes), or the last /thing/ won't be a penalty
   \ifhe@dings\endhe@dings
     \global\savedpenalty=\lastpenalty % Pick up revised after-heading penalty
   \fi%
+  \x@\xdef\csname saved\c@rrdstat penalty\endcsname{\the\savedpenalty}%
   \endlastp@rstyle{p}%
   \ifx\last@popped@parstyle\relax\else
     \x@\let\csname m@rker\c@rrdstat\endcsname\last@popped@parstyle %save the old (paragraph-style) marker 
   \fi
-  \trace{d}{pr@sideswitch pL:\the\dp\partialL, xL:\the\dp\excessL, pR:\the\dp\partialR, xR\the\dp\excessR, lp:\the\savedpenalty \ifallNeedEmptying allNeedwmptying\fi}%
+  \trace{d}{pr@sideswitch #1 (\c@rrdstat) pL:\the\dp\partialL, xL:\the\dp\excessL, pR:\the\dp\partialR, xR\the\dp\excessR, lp:\the\savedpenalty \ifallNeedEmptying\space  allNeedemptying\fi}%
   %\showlists
   \ifx\c@rrdstat\empty
     \trace{d}{\c@rrdstat is empty, somehow, making it L for sanity}%
     \gdef\c@rrdstat{L}%
   \fi
   \global\output={\diglotCollect}%Why woudn't it be? Don't know, but sometimes it's not.
-  \x@\xdef\csname saved\c@rrdstat penalty\endcsname{\the\savedpenalty}%
   \ifinn@te\errmessage{*** #1text called from inside footnote?!?}\fi
   \let\@ldstat=\c@rrdstat
   \@@setside{#2}%Set the side to occur after the next swapcols penalty
@@ -701,14 +702,14 @@
   % <<< Diglot collect runs HERE! (and sets n@xtc@mmand
   \let\t@mpc@mmand=\n@xtc@mmand% This bit may process the collected input. 
   \x@\xdef\csname c@rrfontsize\@ldstat\endcsname{\c@rrfontsize}% Remember the fontsize before column-swap
-  \trace{D}{c@rrfontsize saved for side \@ldstat}%
+  \trace{D}{c@rrfontsize saved for side \@ldstat.}%
   \global\def\n@xtc@mmand{}%
   \t@mpc@mmand
 } 
 
 
 \outer\def\lefttext{%
-  \pr@sideswitch{left}{L}%
+  \pr@sideswitch{lefttext}{L}%
   \global\allNeedEmptyingfalse
   \swap@diglot{L}%sets diglot state, etc
   \global\vsize=\maxdimen
@@ -720,7 +721,7 @@
 }%
 
 \outer\def\righttext{%
-  \pr@sideswitch{right}{R}%
+  \pr@sideswitch{righttext}{R}%
   \global\allNeedEmptyingtrue % Text after this needs emptying
   \swap@diglot{R}%sets diglot state, etc
   \global\vsize=\maxdimen
@@ -734,7 +735,7 @@
 % to line up nicely...
 \def\norighttext{%
   \global\allNeedEmptyingtrue% Text before the swap needs emptying
-  \pr@sideswitch{noright}{L}%
+  \pr@sideswitch{norighttext}{L}%
   \swap@diglot{L}%sets diglot state, etc
   \global\vsize=\maxdimen
   \global\trialheight=\maxdimen
@@ -745,7 +746,7 @@
 %Similarly when there's no left text, almost-copying \righttext seems OK ...
 \def\nolefttext{%
   \global\allNeedEmptyingtrue% Text before the swap needs emptying
-  \pr@sideswitch{noleft}{R}%
+  \pr@sideswitch{nolefttext}{R}%
   \global\allNeedEmptyingtrue% Text after the swap ALSO needs emptying, in case \righttext not used
   \swap@diglot{R}%sets diglot state, etc
   \global\vsize=\maxdimen
@@ -756,11 +757,12 @@
 
 \def\endcols{%EXPERIMENTAL
   \global\allNeedEmptyingtrue% Text before the swap needs emptying
-  \pr@sideswitch{noleft}{L}%
+  \pr@sideswitch{endcols}{L}%
 }
 
 \def\diglotcolumn#1{%EXPERIMENTAL
   \uppercase{\edef\reqcol{#1}}%
+  \pr@sideswitch{diglotcolumn #1}{\reqcol}%
   \ifx\reqcol\empty\errmessage{diglotcolumn may not be called with an empty argument}\fi
   \ifcsname #1isDiglotColumn\endcsname % 
     \swap@diglot{#1}%sets diglot state, etc
@@ -1069,17 +1071,13 @@
 \def\diglot@arrange@cols{% Xht is the sum of Xbox's depth and height (set by after@a@trial
   \trace{D}{diglot@arrange@cols chnkDlta:\the\chunkDelta}%
   \ifVisTrace
-    \ifdim\ht\Lbox>0pt
+    \ifx\b@xtype\vbox %boxtype is set on discovery of whether this is a heading or not
       \doVisTraceT{L}% sets box0, used ~43 lines below
     \else
       \doVisTrace{L}% sets box0, used ~43 lines below
     \fi
   \fi
   %Is there actually anything to set?
-  \tmpcount=0\def\v@lpfx{}\def\v@lsfx{ht}\let\cts@list=\empty
-  \let\col@do=\count@dim% increments tmpcount by each non-0 value, and sets \cts@list
-  \x@\each@col\diglot@list\E
-  \trace{dP}{Columns with contents: \cts@list}%
   \ifnum \tmpcount>0
     \thisjointDelta=0pt %Do we need extra space?
     %Calculate how much extra space we need:
@@ -1182,11 +1180,20 @@
 \def\upd@tep@rtial{%Actually add stuff to the page.
   \trace{D}{upd@tep@rtial \the\outputpenalty}%
   \trace{D}{plp:\the\partialLpenalty, prp:\the\partialRpenalty, cp:\the\chunkpenalty lcp:\the\lastchunkpenalty, lbp:\the\Lboxpenalty, rbp:\the\Rboxpenalty}%
-  \ifnum\Lboxpenalty=10000 \ifnum\Rboxpenalty=10000
+  \tmpcount=0\def\v@lpfx{}\def\v@lsfx{ht}\let\cts@list=\empty
+  \let\col@do=\count@dim% increments tmpcount by each non-0 value, and sets \cts@list
+  \x@\each@col\diglot@list\E
+  \trace{dP}{Columns with contents: \cts@list}%
+  \temptrue
+  \let\col@do=\chk@head
+  \x@\each@col\cts@list\E
+  \let\b@xtype\vtop %just used as a flag.
+  \iftemp
+    \let\b@xtype\vbox
     \trace{D}{Un vtopping heading}%
     \setbox\Lbox=\vbox{\unvbox\Lbox}%
     \setbox\Rbox=\vbox{\unvbox\Rbox}%
-  \fi\fi
+  \fi
   \setdiglotN@rmal % Left=left (normal) or not?
   \pickn@xtpartial
   %\showboxdepth=3 %
@@ -1471,7 +1478,8 @@
   % assumes: \availht is correct, 
   % Fills: \excessX
   % Empties: \box255
-  \trace{D}{diglotCollect O:\the\outputpenalty, P:\the\savedpenalty, vs:\the\vsize}%
+  \traceNum{D}{diglotCollect O:\the\outputpenalty, P:\the\savedpenalty, vs:\the\vsize}%
+  \ifnum\diglotDbgJoinboxes=\TRACEcount\showbox255\fi
   \x@\let\x@\destb@x\csname excess\c@rrdstat\endcsname
   \diglot@any@primary
   \ifnum\outputpenalty=\dgl@tPenLtrialEnd\relax 
@@ -1491,7 +1499,7 @@
   \ifvoid\destb@x
     \global\setbox\destb@x=\box255
   \else 
-    \global\setbox\destb@x=\vtop{\joinboxes{\destb@x}{255}{1}{\csname partial\c@rrdstat penalty\endcsname}}%
+    \global\setbox\destb@x=\vtop{\joinboxes{\destb@x}{255}{1}{\x@\the\csname partial\c@rrdstat penalty\endcsname}}%
   \fi
   \x@\csname partial\c@rrdstat penalty\endcsname=\tmpcount
   \ifnum\outputpenalty=\dgl@tPenColSwap\relax %Got to the end of the \lefttext
@@ -1607,6 +1615,12 @@
     \edef\cts@list{\cts@list#1}%
   \fi
 }
+\def\chk@head#1{%Is the relevant item a heading? Set tempfalse if not
+  \x@\ifnum\csname \c@rrdstat boxpenalty\endcsname <10000
+    \tempfalse
+  \fi 
+}
+
 \def\check@nxtht#1{%Is the nxtchunk#1 height =0? Set iftemp if yes , unchanged otherwise
   \x@\ifdim\csname @nxtchunk#1ht\endcsname=0pt 
     \temptrue
@@ -1718,18 +1732,24 @@
       \edef\m@xht{0pt}%
     \fi
     \trace{Df}{Saving new Xht values}%
+    \trace{D}{LBP:\the\Lboxpenalty, RBP:\the\Rboxpenalty,  plp:\the\partialLpenalty, prp:\the\partialRpenalty}%
     \let\col@do=\set@ht %uses iftemp and m@xht
     \x@\each@col\diglot@list\E
     %
     %\global\p@geChunkDelta=\chunkDelta%
-    \global\lastchunkpenalty=\chunkpenalty
+    \ifnum\chunkpenalty>-20000
+      \global\lastchunkpenalty=\chunkpenalty
+    \fi
     \global\chunkpenalty=-20000 %Everything ought to be bigger than this.
   \fi
 }
 \def\postponen@xt@partial{%
   \trace{d}{postponen@xtpartial \the\ht\partial+\the\dp\partial, \the\ht\n@xtpartial+\the\dp\n@xtpartial}%
   \global\late@stage@reflowtrue % Need to re-flow all columns.
-  \r@storenotes{\g@tdstat}{1}%
+  \def\col@do{\r@storenotes{\g@tdstat}{1}}%Restore footnotes on all columns.
+  \x@\each@col\diglot@list\E% 
+  \let\col@do=\restore@storedmarks
+  \x@\each@col\diglot@list\E% 
 }
 
 \def\tri@llist{}%Trials to be run.
@@ -1823,14 +1843,13 @@
   \ifboxmoved
     \ifnum\lastchunkpenalty>9999
       \postponen@xt@partial
-      \let\col@do=\restore@storedmarks
-      \x@\each@col\diglot@list\E% 
       \@writep@ge
       \setdiglotN@rmal
       \pickn@xtpartial
       \@add@n@xtpartial
       \let\col@do=\reset@n@xt
       \x@\each@col\diglot@list\E% 
+      \global\lastchunkpenalty=0
     \else
       \@add@n@xtpartial
       \@writep@ge
@@ -1911,7 +1930,7 @@
     \x@\let\x@\tmppen\csname \c@rrdstat boxpenalty\endcsname
     %\tracingassigns=0
     \ifnum \tmppen>\chunkpenalty
-      \chunkpenalty=\tmppen
+      \global\chunkpenalty=\tmppen
     \fi
   \fi
   \ifboxmoved % Breaks things?
