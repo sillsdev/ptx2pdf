@@ -191,7 +191,11 @@
      \else
        \egroup
        \ifx\@ttributes\empty\else% If there are attributes, call an appropriate hook
-         \csname complex-\oldch@rstyle\endcsname
+         \ifcsname complex-\oldch@rstyle\c@rrdstat\endcsname
+           \csname complex-\oldch@rstyle\c@rrdstat\endcsname
+         \else 
+           \csname complex-\oldch@rstyle\endcsname
+         \fi
        \fi
        \ifx\p@ram\relax
          \unhbox0
