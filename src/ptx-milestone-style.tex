@@ -100,14 +100,18 @@
 \newif\ifmst@nestyle \mst@nestylefalse
 
 \def\processmil@stone{\trace{m}{Milestone \thismil@stone (\milestoneOp), \csname thisch@rstyle\endcsname}%
-  \if\milestoneOp s\relax\st@rtmilestone\else
-   \if\milestoneOp e\relax\@ndmilestone\else
-    \st@ndalonemilestone\fi\fi
- \let\milestoneOp\empty
- %\xdef\thisch@rstyle{\mcpeek}%
- \def\d@##1+##2\E{\def\tmp{##2}\csname d@code-##1\endcsname\edef\thisch@rstyle{\tmp}}\mctop
- \trace{m}{Milestone style is \thisch@rstyle}%
- \s@tfont{\thisch@rstyle}% set up font attributes
+  \ifx\milestoneOp\empty
+    \st@ndalonemilestone\else 
+    \if\milestoneOp s\relax\st@rtmilestone\else
+      \if\milestoneOp e\relax\@ndmilestone\else
+      \st@ndalonemilestone\fi 
+    \fi
+  \fi
+   \let\milestoneOp\empty
+   %\xdef\thisch@rstyle{\mcpeek}%
+   \def\d@##1+##2\E{\def\tmp{##2}\csname d@code-##1\endcsname\edef\thisch@rstyle{\tmp}}\mctop
+   \trace{m}{Milestone style is \thisch@rstyle}%
+   \s@tfont{\thisch@rstyle}% set up font attributes
 }
 
 \def\startmst@nestyle{%What actually changes between the beginning of a milestone and the end-marker? Attribute values!
@@ -206,13 +210,19 @@
   \let\attr@b\empty\let\attrid\empty
 }
 \def\st@ndalonemilestone{% FIXME:Potentially some kind of hook? Or use this as an image anchor?
-  \get@ttribute{\attrid}%
+  \trace{m}{st@ndalonemilestone (\attrid)}%
+  \ifx\attrid\empty
+    \let\attr@b\relax
+  \else 
+    \get@ttribute{\attrid}%
+  \fi
   \ifx\attr@b\relax
     \runtrigg@rs{ms:\thismil@stone}%
   \else
+  \runtrigg@rs{\mkp@cref{\id@@@}{}{\attr@b}}%
     \runtrigg@rs{ms:\thismil@stone=\attr@b}%
   \fi
-  \cl@singhooks{after}{\thismil@stone}\the\afterh@@ks
+  \cl@singhooks{after}{\thismil@stone}\the\afterh@@ks\relax
 }%
 \def\upd@teMsPrefix{%Build a prefix based on all currently-in-force milestones.
   \trace{m}{upd@teMsPrefix}%

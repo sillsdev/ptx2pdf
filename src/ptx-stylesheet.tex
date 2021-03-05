@@ -696,6 +696,11 @@
  \def\fig{\m@kedigitsother\ptx@fig}% \fig has its own special macro to parse the fields
  %
  \let\nb=\ptx@nb% \nb is a special code that suppresses a paragraph break across \c
+ \global\let\@k=\k
+ \def\k##1\k*{%\k processing
+    \@k ##1\endch@rstylen* \edef\kr@f{\zap@space ##1 \empty}%
+    \runtrigg@rs{\mkp@cref{\id@@@}{k}{\kr@f}}%
+  }
 }%
 
 \endgroup
