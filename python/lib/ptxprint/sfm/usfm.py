@@ -328,15 +328,12 @@ class parser(sfm.parser):
                 default_meta).copy()
             for n, m in private_metas.items()
         }
-        milestones = {v['Endmarker']: v.copy() for k, v in sty.items()
-                            if v.get('StyleType', '') == 'Milestone' and v.get('Endmarker', None)}
-        for v in milestones.values():
-            del v['Endmarker']
-        for v in sty.values():
+        for v in list(sty.values()):
             if v.get('StyleType', '') == 'Milestone' and v.get('Endmarker', None):
+                k = v['Endmarker']
                 del v['Endmarker']
-        style.update_sheet(sty, style.update_sheet(metas, private_metas))
-        return style.update_sheet(sty, milestones)
+                sty[k] = v.copy()
+        return style.update_sheet(sty, style.update_sheet(metas, private_metas))
 
     def _force_close(self, parent, tok):
         if tok is not sfm.parser._eos \
