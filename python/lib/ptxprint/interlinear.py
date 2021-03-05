@@ -77,6 +77,8 @@ class Interlinear:
             return
         doc.addorncv()
 
+        dones = set()
+        notdones = set()
         with open(intfile, "r", encoding="utf-8", errors="ignore") as inf:
             for (event, e) in et.iterparse(inf, ("start", "end")):
                 if event == "start":
@@ -90,10 +92,19 @@ class Interlinear:
                 elif event == "end":
                     if e.tag == "string":
                         curref = self.makeref(e.text)
+                        m = re.match(r"(\d+)-(\d+)", curref[1])
+                        if m:
+                            vrange = list(range(int(m.group(1)), int(m.group(2))+1))
+                        else:
+                            vrange = [int(curref[1])]
                         lexemes = []
                     elif e.tag == "VerseData":
                         if e.get('Hash', "") != "":
                             self.replaceindoc(doc, curref, lexemes, linelengths, mrk=mrk)
+                            for v in vrange:
+                                dones.add((curref[0], v))
                         else:
-                            self.fails.append("{}:{}".format(*curref))
+                            for v in vrange:
+                                notdones.add((curref[0], v))
+        self.fails.extend(["{} {}:{}".format(bkid, a[0], a[1]) for a in notdones if a not in dones])
 
