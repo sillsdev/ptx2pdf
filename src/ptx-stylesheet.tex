@@ -697,8 +697,13 @@
  %
  \let\nb=\ptx@nb% \nb is a special code that suppresses a paragraph break across \c
  \global\let\@k=\k
+ \def\setkr@f##1{\edef\kr@f{\zap@space ##1 \empty}}
  \def\k##1\k*{%\k processing
-    \@k ##1\endch@rstylen* \edef\kr@f{\zap@space ##1 \empty}%
+    \tracingassigns=1 %
+    \edef\kr@f{\detokenize{##1}}%
+    \x@\setkr@f\x@{\kr@f}%
+    \message{\kr@f}%
+    \@k ##1\endch@rstylen* %
     \runtrigg@rs{\mkp@cref{\id@@@}{k}{\kr@f}}%
   }
 }%
