@@ -141,8 +141,6 @@ class Element(list):
                 sep = ' '
         elif self.meta.get('StyleType') == 'Character':
             body = ' '
-        elif 'Milestone' in self.annotations:
-            endmarker = '*'
 
         if endmarker and 'implicit-closed' not in self.annotations:
             body += f"\\{nested}{endmarker}"
@@ -672,10 +670,6 @@ class parser(collections.Iterable):
             tag = self.__get_tag(parent, tok)
             if tag:  # Parse markers.
                 if tag.name == "*" and parent is not None:
-                    parent.annotations['Milestone'] = True
-                    if len(parent):
-                        parent.args = ["".join(str(x) for x in parent)]
-                        parent.clear()
                     return
                 meta = self.__get_style(tag.name)
                 if self.__need_subnode(parent, tag, meta):
@@ -950,8 +944,6 @@ def generate(doc):
             body = ' '
         elif styletype == 'Paragraph':
             body = os.linesep
-        elif 'Milestone' in e.annotations:
-            end = '*'
         nested = '+' if 'nested' in e.annotations else ''
         if 'implicit-closed' not in e.annotations:
             end = e.meta.get('Endmarker', '') or end

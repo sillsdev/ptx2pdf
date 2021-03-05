@@ -312,8 +312,6 @@ class parser(sfm.parser):
                          stylesheet,
                          default_meta,
                          private_prefix='z',
-                         #tokeniser=re.compile(rf'(?:\\(?:{tag_escapes}(?=\s|$))|[^\s\\])+|\\[^\s\\|]+',
-                         #        re.DOTALL | re.UNICODE),
                          *args, **kwds)
 
     @classmethod
@@ -329,10 +327,11 @@ class parser(sfm.parser):
             for n, m in private_metas.items()
         }
         for v in list(sty.values()):
-            if v.get('StyleType', '') == 'Milestone' and v.get('Endmarker', None):
-                k = v['Endmarker']
-                del v['Endmarker']
-                sty[k] = v.copy()
+            if v.get('StyleType', '') == 'Milestone':
+                k = v.get('Endmarker', None)
+                v['Endmarker'] = '*'
+                if k is not None:
+                    sty[k] = v.copy()
         return style.update_sheet(sty, style.update_sheet(metas, private_metas))
 
     def _force_close(self, parent, tok):
