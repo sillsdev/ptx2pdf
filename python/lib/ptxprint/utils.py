@@ -124,8 +124,19 @@ def universalopen(fname, rewrite=False, cp=65001):
         return fh
     except ValueError:
         pass
-    fh = open(fname, "r", encoding="utf-16")
-    fh.readline()
+    try:
+        fh = open(fname, "r", encoding="utf-16")
+        fh.readline()
+        failed = False
+    except UnicodeError:
+        failed = True
+    if failed:
+        try:
+            fh = open(fname, 'r', encoding="cp1252")
+            fh.readline()
+            failed = False
+        except UnicodeError:
+            return None
     fh.seek(0)
     if rewrite:
         dat = fh.readlines()

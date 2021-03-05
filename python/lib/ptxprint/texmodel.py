@@ -285,6 +285,15 @@ ModelMap = {
     "scrmymr/syllables":        ("c_scrmymrSyllable", None),
 }
 
+Borders = {'c_inclPageBorder':      ('pageborder', 'fancy/pageborderpdf', 'A5 page border.pdf'),
+           'c_inclSectionHeader':   ('sectionheader', 'fancy/sectionheaderpdf', 'A5 section head border.pdf'),
+           'c_inclEndOfBook':       ('endofbook', 'fancy/endofbookpdf', 'decoration.pdf'),
+           'c_inclVerseDecorator':  ('versedecorator', 'fancy/versedecoratorpdf', 'Verse number star.pdf'),
+           'c_inclFrontMatter':     ('FrontPDFs', 'project/frontincludes', '\\includepdf{{{}}}'),
+           'c_inclBackMatter':      ('BackPDFs', 'project/backincludes', '\\includepdf{{{}}}'),
+           'c_applyWatermark':      ('watermarks', 'paper/watermarkpdf', r'\def\MergePDF{{"{}"}}')
+}
+
 
 class TexModel:
     _peripheralBooks = ["FRT", "INT", "GLO", "TDX", "NDX", "CNC", "OTH", "BAK", "XXA", "XXB", "XXC", "XXD", "XXE", "XXF", "XXG"]
@@ -416,6 +425,18 @@ class TexModel:
         regfont = self.printer.get("bl_fontR")
         self.dict["document/spacecntxtlztn"] = "2" if regfont.isCtxtSpace else "0"
         self.calculateMargins()
+        if self.inArchive:
+            for b, a in Borders.items():
+                islist = a[2].startswith("\\")
+                fname = getattr(self.printer, a[0], (None if islist else a[2]))
+                if fname is None:
+                    fname = Path("." if islist else a[2])
+                if islist and not isinstance(fname, (list, tuple)):
+                    fname = [fname]
+                if islist:
+                    self.dict[a[1]] = "\n".join(a[2].format("../shared/ptxprint/{}".format(f.name)) for f in fname)
+                else:
+                    self.dict[a[1]] = "../shared/ptxprint/{}".format(fname.name)
 
     def updatefields(self, a):
         global get

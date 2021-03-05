@@ -427,6 +427,7 @@ class GtkViewModel(ViewModel):
         wide = int(len(allprojects)/16)+1
         self.builder.get_object("fcb_project").set_wrap_width(wide)
         self.builder.get_object("fcb_diglotSecProject").set_wrap_width(wide)
+        self.getInitValues()
 
     def _setup_css(self):
         css = """
@@ -448,7 +449,6 @@ class GtkViewModel(ViewModel):
     def run(self, callback):
         self.callback = callback
         fc = initFontCache()
-        self.getInitValues()
         self.initialised = True
         for o in _olst:
             self.builder.get_object(o).set_sensitive(False)

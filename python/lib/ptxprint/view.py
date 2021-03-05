@@ -1,6 +1,6 @@
 
 import configparser, os, re, regex, random, collections
-from ptxprint.texmodel import ModelMap, TexModel
+from ptxprint.texmodel import ModelMap, TexModel, Borders
 from ptxprint.ptsettings import ParatextSettings, allbooks, books, bookcodes, chaps
 from ptxprint.font import TTFont, cachepath, cacheremovepath, FontRef
 from ptxprint.utils import _, refKey, universalopen, print_traceback, local2globalhdr, global2localhdr, asfloat
@@ -997,13 +997,6 @@ class ViewModel:
                   'c_useModsTex': ("ptxprint-mods.tex", True),
                   'c_usePrintDraftChanges': ("PrintDraftChanges.txt", False),
                   None: ("picChecks.txt", False)}
-        borders = {'c_inclPageBorder': 'pageborder',
-                   'c_inclSectionHeader': 'sectionheader',
-                   'c_inclEndOfBook': 'endofbook',
-                   'c_inclVerseDecorator': 'versedecorator',
-                   'c_inclFontMatter': 'FontPDFs',
-                   'c_inclBackMatter': 'BackPDFs',
-                   'c_applyWatermark': 'watermarks'}
         res = {}
         cfgchanges = {}
         tmpfiles = []
@@ -1062,10 +1055,9 @@ class ViewModel:
                 res[jobpiclist] = cfpath+jobpiclistf
 
         # borders
-        for k, v in borders.items():
+        for k, v in Borders.items():
             if self.get(k):
-                fname = getattr(self, v)
-                print(k, v, fname)
+                fname = getattr(self, v[0])
                 if fname is None: continue
                 if not isinstance(fname, (list, tuple)):
                     fname = [fname]
