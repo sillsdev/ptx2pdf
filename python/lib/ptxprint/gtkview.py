@@ -874,24 +874,23 @@ class GtkViewModel(ViewModel):
 
     def colourTabs(self):
         col = "#688ACC"
+
         ic = " color='"+col+"'" if self.get("c_includeillustrations") else ""
         self.builder.get_object("lb_Pictures").set_markup("<span{}>".format(ic)+_("Pictures")+"</span>")
+
+        tc = " color='"+col+"'" if self.get("c_thumbtabs") else ""
+        self.builder.get_object("lb_Tabs").set_markup("<span{}>".format(tc)+_("Tabs")+"</span>")
+
         dglt = self.get("c_diglot")
         brdr = self.get("c_borders")
-        adv = self.get("c_hideAdvancedSettings")
         dc = "<span color='{}'>".format(col)+_("Diglot")+"</span>" if dglt \
             else "Diglot" if self.builder.get_object("fr_diglot").get_visible() else ""
         bc = "<span color='{}'>".format(col)+_("Border")+"</span>" if brdr \
             else "Border" if self.builder.get_object("fr_borders").get_visible() else ""
-        jn = "+" if ((dglt and brdr) or adv) else ""
+        jn = "+" if ((dglt and brdr) or self.get("c_hideAdvancedSettings")) else ""
         self.builder.get_object("lb_DiglotBorder").set_markup(dc+jn+bc)
-        # Disable Basic Mode if both diglot and borders are enabled
-        disableBasicMode = True if (dglt and brdr) else False
-        self.builder.get_object("c_hideAdvancedSettings").set_sensitive(not disableBasicMode)
 
-        tc = " color='"+col+"'" if self.get("c_thumbtabs") else ""
-        self.builder.get_object("lb_Tabs").set_markup("<span{}>".format(tc)+_("Tabs")+"</span>")
-        
+        self.builder.get_object("c_hideAdvancedSettings").set_sensitive(not (dglt and brdr))
 
     def sensiVisible(self, k, focus=False, state=None):
         if state is None:
