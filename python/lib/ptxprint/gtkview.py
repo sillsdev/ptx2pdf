@@ -677,7 +677,7 @@ class GtkViewModel(ViewModel):
 
     def doError(self, txt, secondary=None, title=None, threaded=False, copy2clip=False):
         if threaded:
-            print("copy2clip = {} but 'threaded' is True - so no clipboard copy!".format(copy2clip))
+            # print("copy2clip = {} but 'threaded' is True - so no clipboard copy!".format(copy2clip))
             self.pendingerror=(txt, secondary, title)
         else:
             _doError(txt, secondary, title, copy2clip)

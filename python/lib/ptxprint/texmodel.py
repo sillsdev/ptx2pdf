@@ -906,6 +906,7 @@ class TexModel:
         if gloStyle is not None:
             self.localChanges.append((None, regex.compile(r"\\\+?w ((?:.(?!\\\+w\*))+?)(\|[^|]+?)?\\\+?w\*", flags=regex.M), gloStyle))
         
+        # @@@ FIXME This will disappear once we have the other system working
         # Remember to preserve \figs ... \figs for books that can't have PicLists (due to no ch:vs refs in them)
         if self.asBool("document/ifinclfigs") and bk in self._peripheralBooks:
             # Remove any illustrations which don't have a |p| 'loc' field IF this setting is on
@@ -1052,7 +1053,7 @@ class TexModel:
                 print(report)
         return self.localChanges
 
-    def figNameChanges(self, printer, bk):
+    def figNameChanges(self, printer, bk): # @@@ FIXME - once we have the other system working...
         # This method will probably disappear once we have a way to handle the peripheral books
         if printer is None:
             return([])
