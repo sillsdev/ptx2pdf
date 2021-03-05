@@ -229,7 +229,7 @@ class RunJob:
             finalLogLines = self.parseLogLines()
             self.printer.doError(_("Failed to create: ")+re.sub(r".+[\\/](.+\.pdf)",r"\1",pdfname),
                     secondary="".join(finalLogLines[-20:]), title="PTXprint [{}] - Error!".format(VersionStr),
-                    threaded=True)
+                    threaded=True, copy2clip=True)
             self.printer.onIdle(self.printer.showLogFile)
         if len(self.rerunReasons):
             self.printer.set("l_statusLine", _("Rerun to fix: ") + ", ".join(self.rerunReasons))

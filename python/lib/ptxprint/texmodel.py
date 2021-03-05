@@ -562,6 +562,8 @@ class TexModel:
         self.dict['document/imageCopyrights'] = self.generateImageCopyrightText() \
                 if self.dict['document/includeimg'] else r"\def\zimagecopyrights{}"
         self.dict['project/colophontext'] = re.sub(r'://', ':/ / ', self.dict['project/colophontext'])
+        self.dict['project/colophontext'] = re.sub(r"(?i)(\\zimagecopyrights)([A-Z]{2,3})", \
+                lambda m:m.group(0).lower(), self.dict['project/colophontext'])
         with universalopen(os.path.join(os.path.dirname(__file__), template)) as inf:
             for l in inf.readlines():
                 if l.startswith(r"\ptxfile"):
@@ -1142,7 +1144,7 @@ class TexModel:
             self.localChanges.append((None, regex.compile(r"\\p \\k {}\\k\* .+\r?\n".format(delGloEntry), flags=regex.M), ""))
 
     def analyzeImageCopyrights(self, txt):
-        for m in re.findall(r"\\(\S+).*?\\zimagecopyrights([a-zA-Z]+)", txt):
+        for m in re.findall(r"(?i)\\(\S+).*?\\zimagecopyrights([A-Z]{2,3})", txt):
             self.imageCopyrightLangs[m[1].lower()] = m[0]
         return
 

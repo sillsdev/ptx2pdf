@@ -9342,9 +9342,10 @@ use the reset button to start with a standard set.
 You can use the following codes to
 automatically include special text 
 using the following markers:
-\zCopyright   - copyright statement from the Basic tab
-\zLicense     - License text from the Basic tab
-\zImageCopyrights   - Automatically generated list of images, page numbers and attributions.
+\zcopyright   - copyright statement from the Basic tab
+\zlicense     - License text from the Basic tab
+\zimagecopyrights   - Automatically generated list of images, page numbers and attributions.
+\zimagecopyrightsfr - as above, but use localized (fr = French) version (ro, hu, es, fr, ru available).
 
 \b can be used to insert a blank line between markers if needed.
  
