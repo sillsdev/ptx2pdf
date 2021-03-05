@@ -312,8 +312,8 @@ class parser(sfm.parser):
                          stylesheet,
                          default_meta,
                          private_prefix='z',
-                         tokeniser=re.compile(rf'(?:\\(?:{tag_escapes})|[^\\])+|\\[^\s\\|]+',
-                                 re.DOTALL | re.UNICODE),
+                         #tokeniser=re.compile(rf'(?:\\(?:{tag_escapes}(?=\s|$))|[^\s\\])+|\\[^\s\\|]+',
+                         #        re.DOTALL | re.UNICODE),
                          *args, **kwds)
 
     @classmethod
@@ -322,14 +322,21 @@ class parser(sfm.parser):
         metas = {
             n: sty.get(
                 cls.__unspecified_metas.get(
-                    (m['TextType'], m['Endmarker'] is None
-                        and m.get('StyleType', None) == 'Paragraph'),
+                    (m['TextType'],
+                     m['Endmarker'] is None and m.get('StyleType', None) == 'Paragraph'),
                     None),
                 default_meta).copy()
             for n, m in private_metas.items()
         }
-        return style.update_sheet(sty,
-                                  style.update_sheet(metas, private_metas))
+        milestones = {v['Endmarker']: v.copy() for k, v in sty.items()
+                            if v.get('StyleType', '') == 'Milestone' and v.get('Endmarker', None)}
+        for v in milestones.values():
+            del v['Endmarker']
+        for v in sty.values():
+            if v.get('StyleType', '') == 'Milestone' and v.get('Endmarker', None):
+                del v['Endmarker']
+        style.update_sheet(sty, style.update_sheet(metas, private_metas))
+        return style.update_sheet(sty, milestones)
 
     def _force_close(self, parent, tok):
         if tok is not sfm.parser._eos \

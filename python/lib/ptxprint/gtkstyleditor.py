@@ -196,6 +196,8 @@ class StyleEditorView(StyleEditor):
                    "Identification": {"toc": {}}}
         for k in sorted(self.allStyles(), key=lambda x:(len(x), x)):
             v = self.sheet.get(k, self.basesheet.get(k, {}))
+            if k not in self.basesheet:
+                v[' deletable'] = True
             if k == "p":
                 foundp = True
             cat = 'Other'

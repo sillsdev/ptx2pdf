@@ -808,6 +808,8 @@ class FontRef:
         if f is None:
             return
         for l in re.split(r"[,;:]", featstring):
+            if not len(l):
+                continue
             k, v = l.split("=")
             if k.strip().lower() == "language":
                 self.lang = v.strip()
@@ -929,13 +931,15 @@ class FontRef:
             style['FontName'] = name
             if len(feats) or len(sfeats):
                 ztexs = []
+                initcolon = True
                 if len(sfeats):
                     ztexs.append("".join(sfeats))
+                    initcolon = False
                 if self.lang is not None:
                     ztexs.append("language={}".format(self.lang))
                 if len(feats):
                     ztexs.extend("=".join(map(str, f)) for f in feats)
-                style["ztexFontFeatures"] = ":".join(ztexs)
+                style["ztexFontFeatures"] = (":" if initcolon else "") + ":".join(ztexs)
             else:
                 style.pop("ztexFontFeatures", None)
 
