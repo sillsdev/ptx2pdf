@@ -419,7 +419,7 @@ class ViewModel:
     def getDialogTitle(self):
         prjid = self.get("fcb_project")
         if prjid is None:
-            return _("PTXprint {} - Bible Layout for Everyone!     Start by selecting a project to work with...").format(VersionStr)
+            return _("PTXprint {} - Bible Layout for Everyone!").format(VersionStr)
         else:
             bks = self.getBooks(files=True)
             if len(bks) == 2:

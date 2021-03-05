@@ -3678,7 +3678,7 @@ PDF files - one for each book.</property>
                                 <property name="halign">start</property>
                                 <property name="valign">center</property>
                                 <property name="margin_left">6</property>
-                                <property name="label" translatable="yes">Paratext Project Name</property>
+                                <property name="label" translatable="yes">&lt;&lt;&lt;&lt; Start by selecting a project</property>
                                 <property name="wrap">True</property>
                                 <attributes>
                                   <attribute name="scale" value="0.90000000000000002"/>
@@ -13613,7 +13613,7 @@ Note: If only a single book is currently selected, it will place the Thumb Tab r
                     <property name="margin_bottom">6</property>
                     <property name="orientation">vertical</property>
                     <child>
-                      <object class="GtkFrame">
+                      <object class="GtkFrame" id="fr_diglot">
                         <property name="width_request">560</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
@@ -13957,7 +13957,7 @@ options here to create a Diglot or Didoc.</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkFrame">
+                      <object class="GtkFrame" id="fr_borders">
                         <property name="width_request">560</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>

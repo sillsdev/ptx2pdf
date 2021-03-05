@@ -12,6 +12,11 @@ from ptxprint.usfmerge import usfmerge
 from ptxprint.utils import _, universalopen, print_traceback
 
 _errmsghelp = {
+"! Argument":                            _("Probably a TeX macro problem - contact support, or post a bug report"),
+"\zcolophon":                            _("This may be caused by an improperly defined Colophon.\n\n" +\
+                                           "Try turning off the Include Colophon setting on Header+Footer page.\n" +\
+                                           "If that works, then try to fix the colophon (maybe \imagecopyrights\n" +\
+                                           "localization has not been defined) and try again."),
 "! TeX capacity exceeded, sorry":        _("Uh oh! You've pushed TeX too far! Try turning Hyphenation off, or contact support."),
 "! Paratext stylesheet":                 _("Check if the stylesheet specified on the Advanced tab exists."),
 "! Unable to load picture":              _("Check if picture file is located in 'Figures', 'local\\figures' or a\n" +\
@@ -51,10 +56,7 @@ _errmsghelp = {
 "Runaway argument?":                     _("Unknown issue. Maybe related to Right-aligned tabbed leaders\n" +\
                                            "Try turning off PrintDraftChanges.txt and both Stylesheets"),
 "Unknown":                               _("Sorry, there is no diagnostic help for this error.\n" +\
-                                           "Ensure that the Basic Checks (in Paratext) pass for all books in list.\n" +\
-                                           "Try turning off various settings, and disable Changes or Stylesheets.\n" +\
-                                           "If peripheral books are selected, try excluding those.\n" +\
-                                           "Sometimes just closing and re-opening PTXprint can make things work again!")
+                                           "Ensure that the Basic Checks (in Paratext) pass for all books in list.\n")
 }
 # \def\LineSpacingFactor{{{paragraph/linespacingfactor}}}
 # \def\VerticalSpaceFactor{{1.0}}
@@ -275,10 +277,11 @@ class RunJob:
         finalLogLines = self.loglines[-i-20:-i]
         foundmsg = False
         finalLogLines.append("-"*90+"\n")
-        for l in finalLogLines:
-            if l[:1] == "!" and not foundmsg:
-                for m in sorted(_errmsghelp.keys(),key=len, reverse=True):
-                    if m in l:
+        for l in reversed(finalLogLines):
+            if not foundmsg: # l[:1] == "!" and 
+                # for m in sorted(_errmsghelp.keys(),key=len, reverse=True):
+                for m in _errmsghelp.keys():
+                    if m in l or l.startswith(m):
                         if l[:-1] != m:
                             finalLogLines.append("{}\n".format(m))
                         finalLogLines.append(_errmsghelp[m]+"\n")

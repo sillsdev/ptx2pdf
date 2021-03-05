@@ -550,7 +550,7 @@ class GtkViewModel(ViewModel):
                 "If the number of options is too overwhelming then use\n" + \
                 "this switch to hide the more complex/advanced options."))
                       
-        for c in ("tb_Advanced", "tb_ViewerEditor", "tb_Tabs", "tb_DiglotBorder", "tb_StyleEditor",
+        for c in ("tb_Advanced", "tb_ViewerEditor", "tb_StyleEditor", "tb_Pictures", "tb_Tabs", "tb_DiglotBorder",
                   "fr_copyrightLicense", "r_book_module", "btn_chooseBibleModule", "lb_bibleModule", "c_combine",
                   "c_fighiderefs", "lb_selectFigureFolder", "l_indentUnit", "s_indentUnit", "lb_style_s", "lb_style_r", 
                   "l_btmMrgn", "s_bottommargin", "l_ftrPosn", "s_footerposition", "r_ftrCenter_Pri", "r_ftrCenter_Sec", 
@@ -569,9 +569,23 @@ class GtkViewModel(ViewModel):
                   "gr_fnAdvOptions", "c_figexclwebapp", "l_glossaryMarkupStyle", "btn_refreshFonts",
                   "fr_spacingAdj", "fr_fallbackFont", "l_complexScript", "b_scrsettings", "c_colorfonts",
                   "scr_picListEdit", "gr_picButtons", "tb_picPreview", "l_linesOnPageLabel", "l_linesOnPage", 
-                  "btn_adjust_spacing", "btn_adjust_top", "btn_adjust_bottom"):
+                  "btn_adjust_spacing", "btn_adjust_top", "btn_adjust_bottom", "fr_diglot", "btn_diglotSwitch", "fr_borders"):
             # print(c)
             self.builder.get_object(c).set_visible(val)
+
+        # Selectively turn things back on if their settings are enabled
+        if not val:
+            if self.get("c_includeillustrations"):
+                self.builder.get_object("tb_Pictures").set_visible(True)
+            if self.get("c_thumbtabs"):
+                self.builder.get_object("tb_Tabs").set_visible(True)
+            if self.get("c_diglot") or self.get("c_borders"):
+                self.builder.get_object("tb_DiglotBorder").set_visible(True)
+                if self.get("c_diglot"):
+                    self.builder.get_object("fr_diglot").set_visible(True)
+                    self.builder.get_object("btn_diglotSwitch").set_visible(True)
+                if self.get("c_borders"):
+                    self.builder.get_object("fr_borders").set_visible(True)
 
         # Disable/Enable the Details and Checklist tabs on the Pictures tab
         for w in ["tb_details", "tb_checklist"]:
@@ -583,7 +597,8 @@ class GtkViewModel(ViewModel):
         for pre in ("l_", "lb_"):
             for h in ("ptxprintdir", "prjdir", "settings_dir", "pdfViewer", "techFAQ", "reportBugs"): 
                 self.builder.get_object("{}{}".format(pre, h)).set_visible(val)
-
+                
+        self.colourTabs()
         # Resize Main UI Window appropriately
         if not val:
             self.mw.resize(828, 292)
@@ -861,13 +876,22 @@ class GtkViewModel(ViewModel):
         col = "#688ACC"
         ic = " color='"+col+"'" if self.get("c_includeillustrations") else ""
         self.builder.get_object("lb_Pictures").set_markup("<span{}>".format(ic)+_("Pictures")+"</span>")
-
-        dc = " color='"+col+"'" if self.get("c_diglot") else ""
-        bc = " color='"+col+"'" if self.get("c_borders") else ""
-        self.builder.get_object("lb_DiglotBorder").set_markup("<span{}>".format(dc)+_("Diglot")+"</span>+<span{}>".format(bc)+_("Border")+"</span>")
+        dglt = self.get("c_diglot")
+        brdr = self.get("c_borders")
+        adv = self.get("c_hideAdvancedSettings")
+        dc = "<span color='{}'>".format(col)+_("Diglot")+"</span>" if dglt \
+            else "Diglot" if self.builder.get_object("fr_diglot").get_visible() else ""
+        bc = "<span color='{}'>".format(col)+_("Border")+"</span>" if brdr \
+            else "Border" if self.builder.get_object("fr_borders").get_visible() else ""
+        jn = "+" if ((dglt and brdr) or adv) else ""
+        self.builder.get_object("lb_DiglotBorder").set_markup(dc+jn+bc)
+        # Disable Basic Mode if both diglot and borders are enabled
+        disableBasicMode = True if (dglt and brdr) else False
+        self.builder.get_object("c_hideAdvancedSettings").set_sensitive(not disableBasicMode)
 
         tc = " color='"+col+"'" if self.get("c_thumbtabs") else ""
         self.builder.get_object("lb_Tabs").set_markup("<span{}>".format(tc)+_("Tabs")+"</span>")
+        
 
     def sensiVisible(self, k, focus=False, state=None):
         if state is None:
