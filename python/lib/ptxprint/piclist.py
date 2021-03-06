@@ -162,6 +162,18 @@ class PicChecks:
                     res[1] = "0"
         return (text, res)
         
+    def setMultiCreditOverlays(self, crdtxt, vpos, hpos, rota, bbox, copysrc):
+        print("crdtxt, vpos, hpos, rota, bbox, copysrc:", crdtxt, vpos, hpos, rota, bbox, copysrc)
+        for k, v in self.items():
+            print(v['src'])
+            if v['src'][:3].lower() == copysrc.lower():
+                if 'x-credit' not in v: # or 'x-creditpos' not in v:
+                    print("Assigning values")
+                    v['x-credit'] = crdtxt
+                    v['x-creditrot'] = rota
+                    v['x-creditbox'] = bbox
+                    v['x-creditpos'] = vpos+hpos
+
 class PicInfo(dict):
 
     srcfkey = 'src path'
@@ -525,7 +537,7 @@ class PicInfo(dict):
     def clearDests(self):
         for k, v in self.items():
             v.pop('dest file', None)
-        
+
 def PicInfoUpdateProject(model, bks, allbooks, picinfos, suffix="", random=False, cols=1, doclear=True, clearsuffix=False):
     newpics = PicInfo(model)
     newpics.read_piclist(os.path.join(model.settings_dir, model.prjid, 'shared',
@@ -547,15 +559,3 @@ def PicInfoUpdateProject(model, bks, allbooks, picinfos, suffix="", random=False
             if v['anchor'][:3] == bk:
                 picinfos[k+suffix] = v
     picinfos.loaded = True
-
-def setMultiCreditOverlays(params, crdtxt):
-    print("params, crdtxt:", params, crdtxt)
-    copysrc = self.get("t_plFilename")[:3]
-    for k, v in self.items():
-        if v['src'][:3] == copysrc:
-            if 'x-credit' not in v or 'x-creditpos' not in v:
-                v['x-credit'] = crdtxt
-                v['x-creditrot'] = params[3]
-                v['x-creditbox'] = params[4]
-                v['x-creditpos'] = params[1]+params[2]
-

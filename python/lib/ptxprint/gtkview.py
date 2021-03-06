@@ -24,7 +24,7 @@ from ptxprint.gtkutils import getWidgetVal, setWidgetVal, setFontButton, makeSpi
 from ptxprint.utils import APP, setup_i18n, brent, xdvigetpages
 from ptxprint.ptsettings import ParatextSettings, allbooks, books, bookcodes, chaps
 from ptxprint.gtkpiclist import PicList
-from ptxprint.piclist import PicChecks, PicInfoUpdateProject, setMultiCreditOverlays
+from ptxprint.piclist import PicChecks, PicInfoUpdateProject
 from ptxprint.gtkstyleditor import StyleEditorView
 from ptxprint.runjob import isLocked, unlockme
 from ptxprint.texmodel import TexModel, ModelMap
@@ -2791,7 +2791,8 @@ class GtkViewModel(ViewModel):
             self.set("t_piccreditbox", crParams)
             self.set("l_piccredit", text)
             if self.get("c_plCreditApply2all"):
-                setMultiCreditOverlays(m, self.get("l_piccredit"))
+                PicChecks.setMultiCreditOverlays(self.picinfos, text, vpos, hpos, \
+                        (rota if rota is not None else "0"), bbox, self.get("t_plFilename")[:3])
         elif response == Gtk.ResponseType.CANCEL:
             pass
         else:
