@@ -642,8 +642,6 @@ class GtkViewModel(ViewModel):
 
     def set(self, wid, value, skipmissing=False):
         w = self.builder.get_object(wid)
-        if wid == "l_margin2header1":
-            print(wid, value, w)
         if w is None and not wid.startswith("r_"):
             if not skipmissing and not wid.startswith("_"):
                 print(_("Can't set {} in the model").format(wid))
@@ -2778,10 +2776,12 @@ class GtkViewModel(ViewModel):
         crParams = self.get("t_piccreditbox")
         m = re.match(r"^([tcb]?)([lrcio]?),(-?9?0?|None),(\w*)", crParams)
         if m:
-            self.set("fcb_plCreditVpos", m[0])
-            self.set("fcb_plCreditHpos", m[1])
-            self.set("fcb_plCreditRotate", m[2])
-            self.set("ecb_plCreditBoxStyle", m[3])
+            self.set("fcb_plCreditVpos", m[1])
+            self.set("fcb_plCreditHpos", m[2])
+            self.set("fcb_plCreditRotate", m[3])
+            self.set("ecb_plCreditBoxStyle", m[4])
+        print(self.get("l_piccredit"))
+        # self.builder.get_object("t_piccredit").set_text(self.get("l_piccredit")) # @@ Why doesn't this work?
         self.set("t_piccredit", self.get("l_piccredit"))
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
