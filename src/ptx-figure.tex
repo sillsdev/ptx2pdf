@@ -615,13 +615,6 @@
         \ins@rtpic{"\the\PicPath\csname figparam-src\endcsname"}%
                      {\picaltdim@n}{\p@cheight}{\sizem@ltiple}{\xtra}{\xtraremains}}%
     \fi
-    \x@\ifx\csname figparam-x-credit\endcsname\empty\else
-        \x@\let\x@\cr@dit\x@=\csname figparam-x-credit\endcsname 
-	\x@\let\x@\cr@ditpos\x@=\csname figparam-x-creditpos\endcsname
-	\x@\let\x@\cr@ditrot\x@=\csname figparam-x-creditrot\endcsname
-	\x@\let\x@\cr@ditbox\x@=\csname figparam-x-creditbox\endcsname
-	\add@credit
-    \fi
     \setbox0=\hbox to \sizem@ltiple\p@cwidth{\hss
       \edef\l@gstring{{\the\im@gecount}{\f@lename}{\csname figparam-pgpos\endcsname}{\csname figparam-copy\endcsname}{\sizem@ltiple x\the\p@cwidth}}% Fully expand figure parameters, but leave page no. to be expanded later.
       \x@\writefigp@gelog\x@{\l@gstring}%
@@ -647,6 +640,16 @@
       \global\def\p@stpic{\iftemp\special{pdf: endtransform}\kern-\dimen0\fi
       }%
       \setbox0\hbox{\pr@pic\box0\p@stpic}%
+    \fi
+    %
+    \x@\ifx\csname figparam-x-credit\endcsname\empty\else
+        \x@\let\x@\cr@dit\x@=\csname figparam-x-credit\endcsname 
+	\x@\let\x@\cr@ditpos\x@=\csname figparam-x-creditpos\endcsname
+	\x@\let\x@\cr@ditrot\x@=\csname figparam-x-creditrot\endcsname
+	\x@\let\x@\cr@ditbox\x@=\csname figparam-x-creditbox\endcsname
+        \setbox1=\box0
+	\add@credit%
+        \setbox0=\box1
     \fi
     %Align image left/right or centre
     \ifx\pic@lign\@lignRight\hbox to \p@cinswid{\hss\box0}%

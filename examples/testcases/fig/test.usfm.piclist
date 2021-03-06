@@ -5,3 +5,4 @@ TST 2.1 Flower [cr0] |loc="cr0" src="image.jpg" alt="Figs are tasty"  ref="v1" s
 TST 2.1 Not fig. [cl3] |loc="cl3" src="image.jpg" alt="Figs are tasty"  ref="v1" size="col*0.25"
 TST 3.1 A larger picture[tr] |pgpos="tr" src="image.jpg" ref="3:1" size="col" scale="0.8" x-credit="© ImageMagick LLC" x-creditpos="br" 
 TST 3.2 A smaller picture[tl] |pgpos="tl" src="image.jpg" ref="3:2" size="col" scale="0.7" x-credit="© ImageMagick LLC" x-creditpos="tl" x-creditbox="dark"
+TST 3.2 A smaller picture[bl] |pgpos="bl" src="image.jpg" ref="3:2" size="col" scale="0.7" x-credit="© ImageMagick LLC" x-creditpos="tl" x-creditbox="dark" mirror="both"
