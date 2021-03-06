@@ -4872,10 +4872,10 @@ to Text (mm):</property>
                                   <object class="GtkLabel" id="l_ftrPosn">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="tooltip_text" translatable="yes">The distance (mm) from the TOP of the 
-footer area to the bottom of the page. Note
-that (by default) only the introduction pages
-use the footer for page numbers.</property>
+                                    <property name="tooltip_text" translatable="yes">The distance (mm) from the TOP of the footer 
+area (the ascender) to the bottom of the page. 
+Note that (by default) only the introduction 
+pages use the footer for page numbers.</property>
                                     <property name="halign">end</property>
                                     <property name="label" translatable="yes">Edge of Page to
 Top of Footer (mm):</property>
