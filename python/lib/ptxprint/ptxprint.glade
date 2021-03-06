@@ -2701,21 +2701,7 @@ which already have Credit Overlay settings.</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkLinkButton" id="lb_style_x-credit|fig">
-                    <property name="label">\x-credit|fig</property>
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="focus_on_click">False</property>
-                    <property name="receives_default">True</property>
-                    <property name="halign">end</property>
-                    <property name="hexpand">True</property>
-                    <property name="relief">none</property>
-                    <property name="uri">Click to edit the Credit Overlay properties on the Styles tab</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">3</property>
-                    <property name="top_attach">0</property>
-                  </packing>
+                  <placeholder/>
                 </child>
                 <child>
                   <placeholder/>
@@ -10531,7 +10517,7 @@ Ref:</property>
                                                 </child>
                                                 <child>
                                                   <object class="GtkEntry" id="t_plRef">
-                                                    <property name="width_request">91</property>
+                                                    <property name="width_request">90</property>
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">True</property>
                                                     <property name="halign">start</property>
@@ -11008,13 +10994,28 @@ be set here.</property>
                                                     <property name="label" translatable="yes">credit text</property>
                                                   </object>
                                                   <packing>
-                                                    <property name="left_attach">5</property>
+                                                    <property name="left_attach">6</property>
                                                     <property name="top_attach">5</property>
                                                     <property name="width">2</property>
                                                   </packing>
                                                 </child>
                                                 <child>
-                                                  <placeholder/>
+                                                  <object class="GtkLinkButton" id="lb_style_x-credit|fig">
+                                                    <property name="label">\x-credit</property>
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">True</property>
+                                                    <property name="focus_on_click">False</property>
+                                                    <property name="receives_default">True</property>
+                                                    <property name="halign">center</property>
+                                                    <property name="valign">start</property>
+                                                    <property name="relief">none</property>
+                                                    <property name="uri">Click to edit the Credit Overlay properties on the Styles tab</property>
+													<signal name="activate-link" handler="onEditStyleClicked" swapped="no"/>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="left_attach">5</property>
+                                                    <property name="top_attach">5</property>
+                                                  </packing>
                                                 </child>
                                                 <child>
                                                   <placeholder/>

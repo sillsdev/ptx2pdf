@@ -8,7 +8,9 @@ Bug Fixes and Improvements in 1.5.16
   
   * Several bug fixes to Diglot handling
   
-  * Enable pictures in non-scripture "books" to print
+  * Updated margin graphics to reflect more accurate bottom margin
+  
+  * Better TeX error log handling
   
 Bug Fixes and Improvements in 1.5.15
 

@@ -264,7 +264,7 @@ def _doError(text, secondary, title, copy2clip=False):
         clipboard.set_text(s, -1)
         clipboard.store() # keep after app crashed
         if secondary is not None:
-            secondary.append("\n\nThe text of this error message has been copied to the clipboard.")
+            secondary += "\n\nThe text of this error message has been copied to the clipboard."
         else:
             secondary = "The text of this error message has been copied to the clipboard."
     if secondary is not None:
@@ -642,6 +642,8 @@ class GtkViewModel(ViewModel):
 
     def set(self, wid, value, skipmissing=False):
         w = self.builder.get_object(wid)
+        if wid == "l_margin2header1":
+            print(wid, value, w)
         if w is None and not wid.startswith("r_"):
             if not skipmissing and not wid.startswith("_"):
                 print(_("Can't set {} in the model").format(wid))
@@ -677,8 +679,7 @@ class GtkViewModel(ViewModel):
 
     def doError(self, txt, secondary=None, title=None, threaded=False, copy2clip=False):
         if threaded:
-            # print("copy2clip = {} but 'threaded' is True - so no clipboard copy!".format(copy2clip))
-            self.pendingerror=(txt, secondary, title)
+            self.pendingerror=(txt, secondary, title, copy2clip)
         else:
             _doError(txt, secondary, title, copy2clip)
 
@@ -2817,7 +2818,7 @@ class GtkViewModel(ViewModel):
             while runjob.thread.is_alive():
                 Gtk.main_iteration_do(False)
             runres = runjob.res
-            return None if runres else xdvigetpages(xdvname)
+            return 20000 if runres else xdvigetpages(xdvname)
         mid = float(self.get("s_diglotPriFraction")) / 100.
         res = brent(0., 1., mid, score, 0.001)
         self.set("s_diglotPriFraction", res*100)

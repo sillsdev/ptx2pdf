@@ -289,9 +289,12 @@ class ViewModel:
 
     def onNumTabsChanged(self, *a):
         if self.loadingConfig:
+            print("Returned from onNumTabsChanged WITHOUT setting anything")
             return False
+        print("in onNumTabsChanged")
         (marginmms, topmarginmms, bottommarginmms, headerpos, footerpos, rulerpos, headerlabel, footerlabel) = self.getMargins()
         self.set("l_margin2header1", "{:.3f}mm".format(headerlabel))
+        print("headerlabel", headerlabel, self.get("l_margin2header1"), self)
         # self.set("l_margin2footer", "{:.1f}pt".format(footerlabel))
         return True
 
@@ -301,6 +304,7 @@ class ViewModel:
         if hfont is None:
             hf = self.get("bl_fontR")
             if hf is not None:
+                print("hf", hf)
                 hfont = hf.getTtfont()
             else:
                 return (0, 0, 0, 0, 0, 0, 0, 0)
@@ -317,6 +321,7 @@ class ViewModel:
         # specified topmargin subtract 0.7 * hfontsize which the macros add in
         headerposmms = float(self.get("s_topmargin")) - asmm(float(self.get("s_headerposition"))) - 0.7 * hfontsizemms
         footerposmms = float(self.get("s_footerposition"))
+        print(headerposmms, hfontheight, hfontsizemms)
         headerlabel = headerposmms - hfontheight * hfontsizemms
         footerlabel = (bottommarginmms - footerposmms - hfontheight * hfontsizemms) * 72.27 / 25.4
         # simply subtract ruler gap from header gap
@@ -399,9 +404,9 @@ class ViewModel:
             if res or forceConfig:
                 self.configId = configName
             if readConfig:  # project changed
-                self.onNumTabsChanged()
                 self.usfms = None
                 self.get_usfms()
+            self.onNumTabsChanged()
             self.readCopyrights()
             self.picChecksView.init(basepath=self.configPath(cfgname=None), configid=self.configId)
             self.loadPics()

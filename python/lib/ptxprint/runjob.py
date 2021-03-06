@@ -211,7 +211,7 @@ class RunJob:
                     subprocess.call(('xdg-open', pdfname))
                 # Only delete the temp files if the PDF was created AND the user did NOT select to keep them
 
-            if not self.args.print: # We don't want pop-up messages if running in command-line mode
+            if not self.noview and not self.args.print: # We don't want pop-up messages if running in command-line mode
                 fname = os.path.join(self.tmpdir, pdfname.replace(".pdf", ".log"))
                 if os.path.exists(fname):
                     with open(fname, "r", encoding="utf-8", errors="ignore") as logfile:
@@ -225,7 +225,7 @@ class RunJob:
                             title=_("PTXprint [{}] - Warning!").format(VersionStr),
                             threaded=True)
 
-        elif not self.args.print: # We don't want pop-up messages if running in command-line mode
+        elif not self.noview and not self.args.print: # We don't want pop-up messages if running in command-line mode
             finalLogLines = self.parseLogLines()
             self.printer.doError(_("Failed to create: ")+re.sub(r".+[\\/](.+\.pdf)",r"\1",pdfname),
                     secondary="".join(finalLogLines[-20:]), title="PTXprint [{}] - Error!".format(VersionStr),
