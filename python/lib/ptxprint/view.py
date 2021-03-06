@@ -927,12 +927,12 @@ class ViewModel:
         # slist = sorted(count.items(), key=lambda pair: pair[0])
         # f = TTFont(*self.get("bl_fontR"))
         f = self.get("bl_fontR").getTtfont()
-        allchars = ''.join([i[0] for i in count.items()])  # @@@@@@ FIXME - this will break for localized lgs
-        if self.get("fcb_glossaryMarkupStyle") == "with ⸤floor⸥ brackets":
+        allchars = ''.join([i[0] for i in count.items()])
+        if self.get("fcb_glossaryMarkupStyle") == "fb":
             allchars += "\u2e24\u2e25"
-        if self.get("fcb_glossaryMarkupStyle") == "with ⌊floor⌋ characters":
+        if self.get("fcb_glossaryMarkupStyle") == "fc":
             allchars += "\u230a\u230b"
-        if self.get("fcb_glossaryMarkupStyle") == "with ⌞corner⌟ characters":
+        if self.get("fcb_glossaryMarkupStyle") == "cc":
             allchars += "\u231e\u231f"
         missing = f.testcmap(allchars)
         self.set("t_missingChars", ' '.join(missing))

@@ -1,7 +1,15 @@
 PTXprint 1.5.15 Release Notes 
-3 March 2021
+6 March 2021
 
 
+Bug Fixes and Improvements in 1.5.16
+
+  * Allow \zimagecopyrights and following language code to be case-insensitive
+  
+  * Several bug fixes to Diglot handling
+  
+  * Enable pictures in non-scripture "books" to print
+  
 Bug Fixes and Improvements in 1.5.15
 
   * Fixed a bunch of bugs that new users would encounter when starting to use PTXprint

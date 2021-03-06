@@ -2241,6 +2241,10 @@ technology, then enable this.</property>
         <col id="0" translatable="yes">circumflex after^ word</col>
         <col id="1">ca</col>
       </row>
+      <row>
+        <col id="0" translatable="yes">\w ...\w* char style</col>
+        <col id="1">ww</col>
+      </row>
     </data>
   </object>
   <object class="GtkListStore" id="ls_interfaceLang">
