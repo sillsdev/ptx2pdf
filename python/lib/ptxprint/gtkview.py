@@ -2781,8 +2781,7 @@ class GtkViewModel(ViewModel):
             self.set("fcb_plCreditRotate", m[3])
             self.set("ecb_plCreditBoxStyle", m[4])
         print(self.get("l_piccredit"))
-        # self.builder.get_object("t_piccredit").set_text(self.get("l_piccredit")) # @@ Why doesn't this work?
-        self.set("t_piccredit", self.get("l_piccredit"))
+        self.set("t_plCreditText", self.get("l_piccredit"))
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
             vpos = self.get("fcb_plCreditVpos")
@@ -2796,9 +2795,19 @@ class GtkViewModel(ViewModel):
         elif response == Gtk.ResponseType.CANCEL:
             pass
         else:
+            if self.get("c_plCreditApply2all"):
+                self.setMultiCreditOverlays(self.get("t_piccreditbox"), self.get("l_piccredit"))
             return
         dialog.set_keep_above(False)
         dialog.hide()
+
+    def setMultiCreditOverlays(self, crdtxt, params):
+        for l in picinfos:
+            print("Setting... ")
+            # if picinfo src startswith current src[:2]
+                # if existing crditText is None or "" OR existing params is None or ""
+                    # do something to set thm
+                
 
     def onDiglotAutoAdjust(self, btn):
         if self.isDiglotMeasuring:
