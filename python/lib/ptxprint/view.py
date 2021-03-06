@@ -124,6 +124,7 @@ class ViewModel:
         self.prjid = None
         self.configId = None
         self.diglotView = None
+        self.isDiglot = False
         self.isDisplay = False
         self.tempFiles = []
         self.usfms = None
@@ -486,7 +487,7 @@ class ViewModel:
         self.loadConfig(config)
         if self.get("ecb_book") == "":
             self.set("ecb_book", list(self.getAllBooks().keys())[0])
-        if self.get("c_diglot"):
+        if self.get("c_diglot") and not self.isDiglot:
             self.diglotView = self.createDiglotView()
         else:
             self.setPrintBtnStatus(2)
@@ -1149,6 +1150,7 @@ class ViewModel:
                 digview = None
         if digview is None:
             self.setPrintBtnStatus(2, _("No Config found for Diglot"))
+        digview.isDiglot = True
         return digview
 
     def createArchive(self, filename=None):
