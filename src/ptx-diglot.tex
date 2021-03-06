@@ -28,8 +28,10 @@
 % authorization from SIL International.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\newcount\diglotDbgJoinboxes%
+\newcount\diglotDbgJoinboxes% FIXME: This doesn't need to be a count, but might break user's code/debug instructions.
 \diglotDbgJoinboxes=-1% Set to the debug message of a joinboxes to execute showbox on that join
+\def\diglotDbgeachcol{-1}% Define to begin tracingmacros and tracing assigns at each@col with TRACEcount
+
 
 \def\diglotbadbrk{\penalty 10000}
 
@@ -274,6 +276,7 @@
 \def\savedRpenalty{0}
 
 \newcount\tmpcount%scratchspace
+\newcount\curactivecols%scratchspace
 \newcount\Lboxpenalty% The penalty that goes between Lbox and partialL
 \newcount\Rboxpenalty%  ~"~
 \newcount\partialLpenalty% The penalty that goes between partialL and excessL (also used while loading excessL during excessL
@@ -1077,8 +1080,7 @@
       \doVisTrace{L}% sets box0, used ~43 lines below
     \fi
   \fi
-  %Is there actually anything to set?
-  \ifnum \tmpcount>0
+  \ifnum \curactivecols>0
     \thisjointDelta=0pt %Do we need extra space?
     %Calculate how much extra space we need:
     % step 1: max height of the last box 
@@ -1180,19 +1182,21 @@
 \def\upd@tep@rtial{%Actually add stuff to the page.
   \trace{D}{upd@tep@rtial \the\outputpenalty}%
   \trace{D}{plp:\the\partialLpenalty, prp:\the\partialRpenalty, cp:\the\chunkpenalty lcp:\the\lastchunkpenalty, lbp:\the\Lboxpenalty, rbp:\the\Rboxpenalty}%
-  \tmpcount=0\def\v@lpfx{}\def\v@lsfx{ht}\let\cts@list=\empty
-  \let\col@do=\count@dim% increments tmpcount by each non-0 value, and sets \cts@list
+  \curactivecols=0\def\v@lpfx{}\def\v@lsfx{ht}\let\cts@list=\empty
+  \let\col@do=\count@dim% increments curactivecols by each non-0 value, and sets \cts@list
   \x@\each@col\diglot@list\E
-  \trace{dP}{Columns with contents: \cts@list}%
-  \temptrue
-  \let\col@do=\chk@head
-  \x@\each@col\cts@list\E
-  \let\b@xtype\vtop %just used as a flag.
-  \iftemp
-    \let\b@xtype\vbox
-    \trace{D}{Un vtopping heading}%
-    \setbox\Lbox=\vbox{\unvbox\Lbox}%
-    \setbox\Rbox=\vbox{\unvbox\Rbox}%
+  \trace{dP}{Columns with contents: \cts@list (\the\curactivecols)}%
+  \ifnum\curactivecols>0 
+    \temptrue
+    \let\col@do=\chk@head %Is the relevant item a heading? Set tempfalse if not
+    \x@\each@col\cts@list\E
+    \let\b@xtype\vtop %just used as a flag.
+    \iftemp
+      \let\b@xtype\vbox
+      \trace{D}{Un vtopping heading}%
+      \setbox\Lbox=\vbox{\unvbox\Lbox}%
+      \setbox\Rbox=\vbox{\unvbox\Rbox}%
+    \fi
   \fi
   \setdiglotN@rmal % Left=left (normal) or not?
   \pickn@xtpartial
@@ -1611,7 +1615,7 @@
 
 \def\count@dim#1{%Is the dimension non non-zero? Count using tmpcount and add tag to list
   \x@\ifdim \csname \v@lpfx#1\v@lsfx\endcsname=0pt\else
-    \advance\tmpcount by 1
+    \advance\curactivecols by 1
     \edef\cts@list{\cts@list#1}%
   \fi
 }
@@ -1679,15 +1683,20 @@
 
 \def\each@col#1#2\E{% General purpose looper
   %\tracingmacros=1 \tracingassigns=1
-  \trace{De}{each@col #1#2}%
-  \edef\t@st{#2}%
-  \ifx\t@st\empty %#2 is empty
+  \trace{De}{each@col #1 #2}%
+  \col@do{#1}%
+  \edef\ect@st{#2}%
+  \ifx\ect@st\empty %#2 is empty
+    \trace{De}{last round}%
     \let\n@xt@col=\cstackrelax
   \else
     \let\n@xt@col=\each@col
   \fi
-  \col@do{#1}%
-  \n@xt@col#2\E
+  \ifnum\TRACEcount=\diglotDbgeachcol
+    \tracingmacros=1\tracingassigns=1
+  \fi
+  \trace{De}{continuing (\ect@st)}\relax
+  \x@\n@xt@col \ect@st \E
 }
 
 \def\digl@tcle@rn@tecl@ss#1{% Diglot-loop friendly version of cle@rn@tecl@ss
