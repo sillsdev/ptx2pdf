@@ -1,6 +1,5 @@
-PTXprint 1.5.15 Release Notes 
+PTXprint 1.5.16 Release Notes 
 6 March 2021
-
 
 Bug Fixes and Improvements in 1.5.16
 
@@ -11,6 +10,8 @@ Bug Fixes and Improvements in 1.5.16
   * Updated margin graphics to reflect more accurate bottom margin
   
   * Better TeX error log handling
+  
+  * Credit Overlays can be applied to multiple pictures
   
 Bug Fixes and Improvements in 1.5.15
 

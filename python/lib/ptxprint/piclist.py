@@ -162,17 +162,21 @@ class PicChecks:
                     res[1] = "0"
         return (text, res)
         
-    def setMultiCreditOverlays(self, crdtxt, vpos, hpos, rota, bbox, copysrc):
-        print("crdtxt, vpos, hpos, rota, bbox, copysrc:", crdtxt, vpos, hpos, rota, bbox, copysrc)
-        for k, v in self.items():
-            print(v['src'])
-            if v['src'][:3].lower() == copysrc.lower():
-                if 'x-credit' not in v: # or 'x-creditpos' not in v:
-                    print("Assigning values")
-                    v['x-credit'] = crdtxt
-                    v['x-creditrot'] = rota
-                    v['x-creditbox'] = bbox
-                    v['x-creditpos'] = vpos+hpos
+    # def allSrcs(self):
+        # return set(list(self.cfgShared.keys()) + list(self.cfgProject.keys()))
+        
+    def setMultiCreditOverlays(self, srcs, crdtxt, crdtbox, copysrc):
+        for k in srcs:
+            print(k)
+            if k is not None and k[:3].lower() == copysrc.lower():
+                k = newBase(k)
+                print(k)
+                if not self.cfgShared.get(k, 'piccredit', fallback=''):
+                    if not self.cfgShared.has_section(k):
+                        self.cfgShared.add_section(k)
+                    print("added k", k)
+                    self.cfgShared.set(k, 'piccredit', crdtxt)
+                    self.cfgShared.set(k, 'piccreditbox', crdtbox)
 
 class PicInfo(dict):
 
