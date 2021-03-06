@@ -24,7 +24,7 @@ from ptxprint.gtkutils import getWidgetVal, setWidgetVal, setFontButton, makeSpi
 from ptxprint.utils import APP, setup_i18n, brent, xdvigetpages
 from ptxprint.ptsettings import ParatextSettings, allbooks, books, bookcodes, chaps
 from ptxprint.gtkpiclist import PicList
-from ptxprint.piclist import PicChecks, PicInfoUpdateProject
+from ptxprint.piclist import PicChecks, PicInfoUpdateProject, setMultiCreditOverlays
 from ptxprint.gtkstyleditor import StyleEditorView
 from ptxprint.runjob import isLocked, unlockme
 from ptxprint.texmodel import TexModel, ModelMap
@@ -1399,8 +1399,6 @@ class GtkViewModel(ViewModel):
             self.set("c_styTextProperties", False)
             mkr = "zthumbtab"
         elif mkr == "x-credit|fig":
-            # close the dialog for them
-            # MH: This doesn't work yet  FIXME
             dialog = self.builder.get_object("dlg_overlayCredit")
             dialog.set_keep_above(False)
             dialog.hide()
@@ -2792,22 +2790,14 @@ class GtkViewModel(ViewModel):
             crParams = "{}{},{},{}".format(vpos, hpos, (rota if rota is not None else "0"), bbox)
             self.set("t_piccreditbox", crParams)
             self.set("l_piccredit", text)
+            if self.get("c_plCreditApply2all"):
+                setMultiCreditOverlays(m, self.get("l_piccredit"))
         elif response == Gtk.ResponseType.CANCEL:
             pass
         else:
-            if self.get("c_plCreditApply2all"):
-                self.setMultiCreditOverlays(self.get("t_piccreditbox"), self.get("l_piccredit"))
             return
         dialog.set_keep_above(False)
         dialog.hide()
-
-    def setMultiCreditOverlays(self, crdtxt, params):
-        for l in picinfos:
-            print("Setting... ")
-            # if picinfo src startswith current src[:2]
-                # if existing crditText is None or "" OR existing params is None or ""
-                    # do something to set thm
-                
 
     def onDiglotAutoAdjust(self, btn):
         if self.isDiglotMeasuring:

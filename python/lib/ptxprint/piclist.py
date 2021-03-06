@@ -548,3 +548,14 @@ def PicInfoUpdateProject(model, bks, allbooks, picinfos, suffix="", random=False
                 picinfos[k+suffix] = v
     picinfos.loaded = True
 
+def setMultiCreditOverlays(params, crdtxt):
+    print("params, crdtxt:", params, crdtxt)
+    copysrc = self.get("t_plFilename")[:3]
+    for k, v in self.items():
+        if v['src'][:3] == copysrc:
+            if 'x-credit' not in v or 'x-creditpos' not in v:
+                v['x-credit'] = crdtxt
+                v['x-creditrot'] = params[3]
+                v['x-creditbox'] = params[4]
+                v['x-creditpos'] = params[1]+params[2]
+
