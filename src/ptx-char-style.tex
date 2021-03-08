@@ -283,7 +283,10 @@
  \trace{s}{s@tfont #1}%
  \edef\r@qmkr{#1}\ifx\empty\r@qmkr\trace{F}{Font for empty marker requested. Nonsense! Substituting p}\def\r@qmkr{p}\fi
  \g@tfontname{\r@qmkr}% Sets reqf@ntstyle((cat)(milestone)#1(diglot) and f@ntstyle(which adds size and stack)
- \ifdiglot\setLRspecific\fi % FIXME: Whether diglot or not, it might have been diglot before.
+ \ifdiglot\else
+   \let\c@rrdstat\empty %Whether diglot or not, it might have been diglot before.
+ \fi 
+ \setLRspecific %Does nothing if there's no change
  \x@\ifx\csname font<\f@ntstyle>\endcsname \relax 
   \trace{F}{s@tfont font for #1 at \c@rrfontsize}%
   \trace{S}{Normal font for \sid@\space is \regular}%

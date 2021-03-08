@@ -39,7 +39,7 @@
 \newinsert\toprightins \count\toprightins=1000 \dimen\toprightins=\maxdimen
 \newinsert\bottomleftins \count\bottomleftins=1000 \dimen\bottomleftins=\maxdimen
 \newinsert\bottomrightins\count\bottomrightins=1000 \dimen\bottomrightins=\maxdimen
-\newbox\wholepagepic
+
  
 %%%%%%%%%%%%%% FIGURES %%%%%%%%%%%%%% 
 % called from \fig or from figure list
@@ -286,7 +286,7 @@
 %+cfig_addcredit
 \newdimen\FigCreditPadding
 \FigCreditPadding=2pt
-\def\add@credit{% Box to add credit to is  box1
+\def\add@credit{% Box to add credit to is  \newpicb@x
   \ifx\cr@ditpos\empty
     \edef\cr@ditpos{ti}% Center, inner edge
   \fi
@@ -350,13 +350,13 @@
   % positive)
   \ifnum \count255>45
     \ifnum \count255<135
-       \dimen0=\ht1
+       \dimen0=\ht\newpicb@x
     \else
-       \dimen0=\wd1
+       \dimen0=\wd\newpicb@x
        \def\r@tSet{}%
     \fi
   \else
-    \dimen0=\wd1
+    \dimen0=\wd\newpicb@x
   \fi
   \advance\dimen0 by -2\FigCreditPadding
   \ifdim\wd0>0.9\dimen0% Credit doesn't comfortably fit on one line. Find out how many it'll take
@@ -405,8 +405,8 @@
     \fi
   \fi
   \trace{g}{credit text is \the\wd0 x (\the\ht0 + \the\dp0)}%
-  \setbox0=\vbox to \ht1{\baselineskip=0pt \hsize=\wd1 \vskip 0pt\ab@vecredit\hbox to \wd1{\beginL\hskip 0pt\pr@credit\box0\p@stcredit\hskip 0pt\endL}\b@lowcredit\vskip 0pt}%
-  \setbox1=\vbox to \ht1{\box1\vss\box0}%
+  \setbox0=\vbox to \ht\newpicb@x{\baselineskip=0pt \hsize=\wd\newpicb@x \vskip 0pt\ab@vecredit\hbox to \wd\newpicb@x{\beginL\hskip 0pt\pr@credit\box0\p@stcredit\hskip 0pt\endL}\b@lowcredit\vskip 0pt}%
+  \setbox\newpicb@x=\vbox to \ht\newpicb@x{\box\newpicb@x\vss\box0}%
 }
 \def\strip@minus#1-{#1}
 \def\p@rseCreditBox#1 #2 #3 #4\end{%
@@ -605,23 +605,23 @@
       \def\picdim@n{width}\def\picaltdim@n{height}%Normal
     \fi
     % First, try to set it at the requested dimension:
-    \setbox1=\hbox{%
+    \setbox\newpicb@x=\hbox{%
       \ins@rtpic{"\the\PicPath\csname figparam-src\endcsname"}%
                      {\picdim@n}{\sizem@ltiple\p@cwidth}{\p@cheight}{\xtra}{\xtraremains}}%
-    \ifdim\ht1>\p@cheight
+    \ifdim\ht\newpicb@x>\p@cheight
       %It doesn't fit. Scale to other dimension:
       \trace{g}{Picture too big set with \picdim@n=\sizem@ltiple\the\p@cwidth}%
-      \setbox1=\hbox{%
+      \setbox\newpicb@x=\hbox{%
         \ins@rtpic{"\the\PicPath\csname figparam-src\endcsname"}%
                      {\picaltdim@n}{\p@cheight}{\sizem@ltiple}{\xtra}{\xtraremains}}%
     \fi
-    \setbox0=\hbox to \sizem@ltiple\p@cwidth{\hss
+    \ifFigurePlaceholders % replace graphic with a frame and the file name
+      \setbox\newpicb@x=\m@kepl@ceholder{\wd\newpicb@x}{\ht\newpicb@x}%
+    \fi
+    \setbox\newpicb@x=\hbox to \sizem@ltiple\p@cwidth{\hss
       \edef\l@gstring{{\the\im@gecount}{\f@lename}{\csname figparam-pgpos\endcsname}{\csname figparam-copy\endcsname}{\sizem@ltiple x\the\p@cwidth}}% Fully expand figure parameters, but leave page no. to be expanded later.
       \x@\writefigp@gelog\x@{\l@gstring}%
-      \box1\hss}%
-    \ifFigurePlaceholders % replace graphic with a frame and the file name
-      \setbox0=\m@kepl@ceholder{\wd0}{\ht0}%
-    \fi
+      \box\newpicb@x\hss}%
 %-cfig_dofigure_3
     % FIXME: Something like this?
 %+cfig_dofigure_4
@@ -635,11 +635,11 @@
          \ifx\mirr@r\val@ven\ifodd\whichp@ge\else\temptrue\fi\fi
          \ifx\mirr@r\valb@th\temptrue\fi
          \iftemp\trace{g}{Mirrored image requested}%
-           \dimen0=\wd0\kern\dimen0\special{pdf:  begintransform}\special{x:scale -1 1}\fi
+           \dimen0=\wd\newpicb@x\kern\dimen0\special{pdf:  begintransform}\special{x:scale -1 1}\fi
       }%
       \global\def\p@stpic{\iftemp\special{pdf: endtransform}\kern-\dimen0\fi
       }%
-      \setbox0\hbox{\pr@pic\box0\p@stpic}%
+      \setbox\newpicb@x\hbox{\pr@pic\box\newpicb@x\p@stpic}%
     \fi
     %
     \x@\ifx\csname figparam-x-credit\endcsname\empty\else
@@ -647,15 +647,13 @@
 	\x@\let\x@\cr@ditpos\x@=\csname figparam-x-creditpos\endcsname
 	\x@\let\x@\cr@ditrot\x@=\csname figparam-x-creditrot\endcsname
 	\x@\let\x@\cr@ditbox\x@=\csname figparam-x-creditbox\endcsname
-        \setbox1=\box0
 	\add@credit%
-        \setbox0=\box1
     \fi
     %Align image left/right or centre
-    \ifx\pic@lign\@lignRight\hbox to \p@cinswid{\hss\box0}%
+    \ifx\pic@lign\@lignRight\hbox to \p@cinswid{\hss\box\newpicb@x}%
     \else
-      \ifx\pic@lign\@lignLeft \hbox to \p@cinswid{\box0\hss}%
-      \else\hbox to \p@cinswid{\hss\box0\hss}\fi
+      \ifx\pic@lign\@lignLeft \hbox to \p@cinswid{\box\newpicb@x\hss}%
+      \else\hbox to \p@cinswid{\hss\box\newpicb@x\hss}\fi
     \fi
     \ifCaptionFirst\vskip 0.5\baselineskip\else\d@caption\fi
   }% END of box0
@@ -937,8 +935,10 @@
 \x@\let\csname ins-\loc@VB\endcsname\verybottomins
 
 
+\newbox\newpicb@x
 \newbox\picb@x % Delayed picture
 \newbox\picb@xR % (diglot, right-hand) delayed picture.
+\newbox\wholepagepic
 \newcount\p@ramnumber
 \newcount\notim@gecount \notim@gecount=0
 \newdimen\p@cinswid

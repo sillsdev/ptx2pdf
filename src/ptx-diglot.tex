@@ -116,7 +116,7 @@
 \def\sp@cificSideDef#1{\ifcsname #1\sfx\endcsname\x@\let\csname#1\x@\endcsname\csname #1\sfx\endcsname
   \trace{S}{SpS: #1\sfx\space selected}\else
   \ifcsname #1\@rig\endcsname\x@\let\csname#1\x@\endcsname\csname #1\@rig\endcsname
-    \trace{S}{SpS: #1 returned to original}\else\trace{S}{SpS: #1 unmodified}\fi\fi}
+    \trace{S}{SpS: #1 returned to original}\else\trace{S}{SpS: #1 unmodified (no #1\sfx, no #1\@rig)}\fi\fi}
 
 % If theres a side-specific version and its >0sp, switch to it. If there's no side-specific verision,
 % switch to the \original version, if that exists.
@@ -142,9 +142,14 @@
 %
 % And these are the interface functions. They should all set \sfx  to L, R or \@rig
 %
-\def\setLRspecific{\edef\sfx{\ifdiglot\c@rrdstat\else \@rig\fi}%
-  \let\wh@t\sp@cificSideDef\pr@cessSpecificDef
-  \let\wh@t\sp@cificSideDim\pr@cessSpecificDim
+\def\l@stLRspecific{}
+\def\setLRspecific{\ifx\l@stLRspecific\c@rrdstat\else
+    \edef\sfx{\ifdiglot\c@rrdstat\else \@rig\fi}%
+    \trace{D}{setLRspecific:\l@stLRspecific -> \sfx}%
+    \let\l@stLRspecific\c@rrdstat
+    \let\wh@t\sp@cificSideDef\pr@cessSpecificDef
+    \let\wh@t\sp@cificSideDim\pr@cessSpecificDim
+  \fi
 }% For use with style definitions, etc.
 
 \def\SSsetLRspecific{\ifx\ds@ffix\empty\def\sfx{\@orig}\else\edef\sfx{\ds@ffix}\fi
@@ -687,6 +692,7 @@
     \global\savedpenalty=\lastpenalty % Pick up revised after-heading penalty
   \fi%
   \x@\xdef\csname saved\c@rrdstat penalty\endcsname{\the\savedpenalty}%
+  \ifinn@te\errmessage{*** #1text called from inside footnote?!?}\fi
   \endlastp@rstyle{p}%
   \ifx\last@popped@parstyle\relax\else
     \x@\let\csname m@rker\c@rrdstat\endcsname\last@popped@parstyle %save the old (paragraph-style) marker 
@@ -698,7 +704,6 @@
     \gdef\c@rrdstat{L}%
   \fi
   \global\output={\diglotCollect}%Why woudn't it be? Don't know, but sometimes it's not.
-  \ifinn@te\errmessage{*** #1text called from inside footnote?!?}\fi
   \let\@ldstat=\c@rrdstat
   \@@setside{#2}%Set the side to occur after the next swapcols penalty
   \endgraf\penalty\dgl@tPenColSwap\relax %Trigger collection of text.
@@ -755,7 +760,7 @@
   \global\vsize=\maxdimen
   \global\trialheight=\maxdimen
   \global\holdinginserts=1
-  \the\diglotLho@ks
+  \the\diglotRho@ks
 }
 
 \def\endcols{%EXPERIMENTAL
@@ -1755,7 +1760,7 @@
 \def\postponen@xt@partial{%
   \trace{d}{postponen@xtpartial \the\ht\partial+\the\dp\partial, \the\ht\n@xtpartial+\the\dp\n@xtpartial}%
   \global\late@stage@reflowtrue % Need to re-flow all columns.
-  \def\col@do##1{\r@storenotes{\g@tdstat}{1}}%Restore footnotes on all columns.
+  \def\col@do##1{\r@storenotes{\if L##1\else ##1\fi}{1}}%Restore footnotes on all columns.
   \x@\each@col\diglot@list\E% 
   \let\col@do=\restore@storedmarks
   \x@\each@col\diglot@list\E% 
@@ -1767,6 +1772,7 @@
   \xdef\tri@llist{#2}%
   \trace{D}{n@xttrial #1 (#2)}%
   \setc@rdstat{#1}
+  \setLRspecific
 }
 
 \def\ch@ckcontents#1#2\E{%
