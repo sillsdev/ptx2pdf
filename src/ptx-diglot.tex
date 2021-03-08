@@ -1755,7 +1755,7 @@
 \def\postponen@xt@partial{%
   \trace{d}{postponen@xtpartial \the\ht\partial+\the\dp\partial, \the\ht\n@xtpartial+\the\dp\n@xtpartial}%
   \global\late@stage@reflowtrue % Need to re-flow all columns.
-  \def\col@do{\r@storenotes{\g@tdstat}{1}}%Restore footnotes on all columns.
+  \def\col@do##1{\r@storenotes{\g@tdstat}{1}}%Restore footnotes on all columns.
   \x@\each@col\diglot@list\E% 
   \let\col@do=\restore@storedmarks
   \x@\each@col\diglot@list\E% 

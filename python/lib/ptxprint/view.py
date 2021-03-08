@@ -152,7 +152,7 @@ class ViewModel:
         self.set("_pdfdate", t.strftime("%Y%m%d%H%M%S")+tzstr)
         self.set("_date", t.strftime("%Y-%m-%d %H:%M:%S ")+tzstr)
 
-    def doError(self, txt, secondary=None, title=None):
+    def doError(self, txt, secondary=None, title=None, show=True):
         print(txt)
         if secondary is not None:
             print(secondary)
