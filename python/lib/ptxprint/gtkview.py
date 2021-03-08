@@ -247,12 +247,7 @@ _signals = {
 _olst = ["fr_SavedConfigSettings", "tb_Layout", "tb_Font", "tb_Body", "tb_NotesRefs", "tb_HeadFoot", "tb_Pictures",
          "tb_Advanced", "tb_Logging", "tb_Tabs", "tb_DiglotBorder", "tb_StyleEditor", "tb_ViewerEditor", "tb_Help"]
 
-def _doError(text, secondary, title, copy2clip=False):
-    dialog = Gtk.MessageDialog(parent=None, message_type=Gtk.MessageType.ERROR,
-             buttons=Gtk.ButtonsType.OK, text=text)
-    if title is None:
-        title = "PTXprint Version " + VersionStr
-    dialog.set_title(title)
+def _doError(text, secondary, title, copy2clip=False, show=True):
     if copy2clip:
         lines = [title]
         if text is not None and len(text):
@@ -267,14 +262,24 @@ def _doError(text, secondary, title, copy2clip=False):
             secondary += "\n\nThe text of this error message has been copied to the clipboard."
         else:
             secondary = "The text of this error message has been copied to the clipboard."
-    if secondary is not None:
-        dialog.format_secondary_text(secondary)
-    if sys.platform == "win32":
-        dialog.set_keep_above(True)
-    dialog.run()
-    if sys.platform == "win32":
-        dialog.set_keep_above(False)
-    dialog.destroy()
+    if show:
+        dialog = Gtk.MessageDialog(parent=None, message_type=Gtk.MessageType.ERROR,
+                 buttons=Gtk.ButtonsType.OK, text=text)
+        if title is None:
+            title = "PTXprint Version " + VersionStr
+        dialog.set_title(title)
+        if secondary is not None:
+            dialog.format_secondary_text(secondary)
+        if sys.platform == "win32":
+            dialog.set_keep_above(True)
+        dialog.run()
+        if sys.platform == "win32":
+            dialog.set_keep_above(False)
+        dialog.destroy()
+    else:
+        print(text)
+        if secondary is not None:
+            print(secondary)
 
 def getPTDir():
     txt = _('''Paratext is not installed on this system.
@@ -675,11 +680,11 @@ class GtkViewModel(ViewModel):
         s = "".join(traceback.format_exception(tp, value, tb))
         self.doError(s, copy2clip=True)
 
-    def doError(self, txt, secondary=None, title=None, threaded=False, copy2clip=False):
+    def doError(self, txt, secondary=None, title=None, threaded=False, copy2clip=False, show=True):
         if threaded:
-            self.pendingerror=(txt, secondary, title, copy2clip)
+            self.pendingerror=(txt, secondary, title, copy2clip, show)
         else:
-            _doError(txt, secondary, title, copy2clip)
+            _doError(txt, secondary, title, copy2clip, show)
 
     def doStatus(self, txt=""):
         self.set("l_statusLine", txt)

@@ -49,10 +49,12 @@ ModelMap = {
     "project/booklist":         ("t_booklist", lambda w,v: v or ""),
     "project/ifinclfrontpdf":   ("c_inclFrontMatter", None),
     "project/frontincludes":    ("btn_selectFrontPDFs", lambda w,v: "\n".join('\\includepdf{{{}}}'.format(s.as_posix()) \
-                                 for s in w.FrontPDFs) if (w.get("c_inclFrontMatter") and w.FrontPDFs is not None and w.FrontPDFs != 'None') else ""),
+                                 for s in w.FrontPDFs) if (w.get("c_inclFrontMatter") and w.FrontPDFs is not None
+                                                                                      and w.FrontPDFs != 'None') else ""),
     "project/ifinclbackpdf":    ("c_inclBackMatter", None),
     "project/backincludes":     ("btn_selectBackPDFs", lambda w,v: "\n".join('\\includepdf{{{}}}'.format(s.as_posix()) \
-                                 for s in w.BackPDFs) if (w.get("c_inclBackMatter") and w.BackPDFs is not None and w.BackPDFs != 'None') else ""),
+                                 for s in w.BackPDFs) if (w.get("c_inclBackMatter") and w.BackPDFs is not None
+                                                                                    and w.BackPDFs != 'None') else ""),
     "project/useprintdraftfolder": ("c_useprintdraftfolder", lambda w,v :"true" if v else "false"),
     "project/processscript":    ("c_processScript", None),
     "project/runscriptafter":   ("c_processScriptAfter", None),
@@ -69,8 +71,10 @@ ModelMap = {
     "project/interlang":        ("t_interlinearLang", None),
     "project/ruby":             ("c_ruby", lambda w,v : "t" if v else "b"),
     "project/license":          ("ecb_licenseText", None),
-    "project/copyright":        ("t_copyrightStatement", None),
-    "project/colophontext":     ("tb_colophon", lambda w,v: v or ""),
+    "project/copyright":        ("t_copyrightStatement", lambda w,v: re.sub(r"\\u([0-9a-fA-F]{4})",
+                                                                            lambda m: chr(int(m.group(1), 16)), v)),
+    "project/colophontext":     ("tb_colophon", lambda w,v: re.sub(r"\\u([0-9a-fA-F]{4})",
+                                                                   lambda m: chr(int(m.group(1), 16)), v) if v is not None else ""),
     "project/ifcolophon":       ("c_colophon", lambda w,v: "" if v else "%"),
     "project/pgbreakcolophon":  ("c_standAloneColophon", lambda w,v: "" if v else "%"),
 
@@ -174,8 +178,10 @@ ModelMap = {
     "document/picresolution":   ("r_pictureRes", None),
     "document/customfiglocn":   ("c_useCustomFolder", lambda w,v :"" if v else "%"),
     "document/exclusivefolder": ("c_exclusiveFiguresFolder", None),
-    "document/customfigfolder": ("btn_selectFigureFolder", lambda w,v: w.customFigFolder.as_posix() if w.customFigFolder is not None else ""),
-    "document/customoutputfolder": ("btn_selectOutputFolder", lambda w,v: w.customOutputFolder.as_posix() if w.customOutputFolder is not None else ""),
+    "document/customfigfolder": ("btn_selectFigureFolder", lambda w,v: w.customFigFolder.as_posix() \
+                                                                       if w.customFigFolder is not None else ""),
+    "document/customoutputfolder": ("btn_selectOutputFolder", lambda w,v: w.customOutputFolder.as_posix() \
+                                                                          if w.customOutputFolder is not None else ""),
     "document/imagetypepref":   ("t_imageTypeOrder", None),
     # "document/spacecntxtlztn":  ("fcb_spaceCntxtlztn", lambda w,v: str({"None": 0, "Some": 1, "Full": 2}.get(v, loosint(v)))),
     "document/glossarymarkupstyle":  ("fcb_glossaryMarkupStyle", None),
@@ -542,7 +548,8 @@ class TexModel:
                 return h
 
     def calculateMargins(self):
-        (marginmms, topmarginmms, bottommarginmms, headerposmms, footerposmms, ruleposmms, headerlabel, footerlabel) = self.printer.getMargins()
+        (marginmms, topmarginmms, bottommarginmms, headerposmms, footerposmms,
+         ruleposmms, headerlabel, footerlabel) = self.printer.getMargins()
         self.dict["paper/topmarginfactor"] = "{:.3f}".format(topmarginmms / marginmms)
         self.dict["paper/bottommarginfactor"] = "{:.3f}".format(bottommarginmms / marginmms)
         self.dict["paper/headerposition"] = "{:.3f}".format(headerposmms / marginmms)
@@ -562,7 +569,7 @@ class TexModel:
         self.dict['jobname'] = jobname
         self.dict['document/imageCopyrights'] = self.generateImageCopyrightText() \
                 if self.dict['document/includeimg'] else r"\def\zimagecopyrights{}"
-        self.dict['project/colophontext'] = re.sub(r'://', ':/ / ', self.dict['project/colophontext'])
+        self.dict['project/colophontext'] = re.sub(r'://', r':/ / ', self.dict['project/colophontext'])
         self.dict['project/colophontext'] = re.sub(r"(?i)(\\zimagecopyrights)([A-Z]{2,3})", \
                 lambda m:m.group(0).lower(), self.dict['project/colophontext'])
         with universalopen(os.path.join(os.path.dirname(__file__), template)) as inf:
@@ -596,12 +603,14 @@ class TexModel:
                         else:
                             res.append(r"\ptxfile{{{}}}".format(fname))
                 elif l.startswith(r"%\extrafont") and self.dict["document/fontextraregular"]:
-                    spclChars = re.sub(r"\[uU]([0-9a-fA-F]{4,6})", lambda m:chr(int(m.group(1), 16)), self.dict["paragraph/missingchars"])
+                    spclChars = re.sub(r"\[uU]([0-9a-fA-F]{4,6})", lambda m:chr(int(m.group(1), 16)),
+                                                                            self.dict["paragraph/missingchars"])
                     # print(spclChars.split(' '), [len(x) for x in spclChars.split(' ')])
                     if self.dict["paragraph/ifusefallback"] and len(spclChars):
                         badlist = "\u2018\u2019\u201c\u201d*#%"
                         specials = spclChars.replace(" ", "").encode("raw_unicode_escape").decode("raw_unicode_escape")
-                        a = ["".join(chr(ord(c) + 16 if ord(c) < 58 else ord(c) - 23) for c in str(hex(ord(x)))[2:]).lower() for x in specials]
+                        a = ["".join(chr(ord(c) + 16 if ord(c) < 58 else ord(c) - 23)
+                             for c in str(hex(ord(x)))[2:]).lower() for x in specials]
                         b = ["".join((c) for c in str(hex(ord(x)))[2:]).lower() for x in specials]
                         c = [x for x in zip(a,b) if chr(int(x[1],16)) not in badlist]
                         if not len(c):
@@ -630,8 +639,10 @@ class TexModel:
                     if self.dict["document/ifchaplabels"] == "%" and len(bks):
                         for bk in bks.split(" "):
                             if bk in self.dict['project/bookids']:
-                                res.append(r"\setbookhook{{start}}{{{}}}{{\gdef\BalanceThreshold{{3}}\clubpenalty=50\widowpenalty=50}}".format(bk))
-                                res.append(r"\setbookhook{{end}}{{{}}}{{\gdef\BalanceThreshold{{0}}\clubpenalty=10000\widowpenalty=10000}}".format(bk))
+                                res.append((r"\setbookhook{{start}}{{{}}}{{\gdef\BalanceThreshold{{3}}\clubpenalty=50"
+                                            + r"\widowpenalty=50}}").format(bk))
+                                res.append((r"\setbookhook{{end}}{{{}}}{{\gdef\BalanceThreshold{{0}}\clubpenalty=10000"
+                                            + r"\widowpenalty=10000}}").format(bk))
                 elif l.startswith(r"%\snippets"):
                     res.append("""
 \\catcode"FDEE=1 \\catcode"FDEF=2
@@ -718,7 +729,8 @@ class TexModel:
             if isinstance(infpath, tuple) and infpath[0] is None:
                 self.printer.doError("Failed to flatten module text (due to a Syntax Error?):",        
                 secondary=str(infpath[1]), 
-                title="PTXprint [{}] - Canonicalise Text Error!".format(self.VersionStr))
+                title="PTXprint [{}] - Canonicalise Text Error!".format(self.VersionStr),
+                show=not self.printer.get("c_quickRun"))
                 return None
         else:
             infpath = os.path.join(prjdir, fname)
@@ -742,7 +754,8 @@ class TexModel:
                     doc.calc_PToffsets()
                     self.interlinear.convertBk(bk, doc, linelengths)
                     if len(self.interlinear.fails):
-                        printer.doError("The following references need to be reapproved: " + " ".join(self.interlinear.fails))
+                        printer.doError("The following references need to be reapproved: " + " ".join(self.interlinear.fails),
+                                        show=not printer.get("c_quickRun"))
                         self.interlinear.fails = []
 
             if self.changes is not None:
@@ -793,7 +806,8 @@ class TexModel:
             self.printer.doError("Failed to canonicalise texts due to a Syntax Error: ",        
                     secondary="\n".join(syntaxErrors)+"\n\nIf original USFM text is correct, then check "+ \
                     "if PrintDraftChanges.txt has caused the error(s).", 
-                    title="PTXprint [{}] - Canonicalise Text Error!".format(self.VersionStr))
+                    title="PTXprint [{}] - Canonicalise Text Error!".format(self.VersionStr),
+                    show=not self.printer.get("c_quickRun"))
             return None
         else:
             return doc
@@ -841,7 +855,8 @@ class TexModel:
                                         m.group(3) or m.group(4) or ""))
                         continue
                 except re.error as e:
-                    self.printer.doError("Regular expression error: {} in changes file at line {}".format(str(e), i+1))
+                    self.printer.doError("Regular expression error: {} in changes file at line {}".format(str(e), i+1),
+                                         show=not self.printer.get("c_quickRun"))
         if not len(changes):
             return None
         if self.printer is not None and self.printer.get("c_tracing"):

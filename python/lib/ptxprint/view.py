@@ -73,7 +73,7 @@ class Path(pathlib.Path):
 posparms = ["alt", "src", "size", "pgpos", "copy", "caption", "ref", "x-xetex", "mirror", "scale"]
 pos3parms = ["src", "size", "pgpos", "ref", "copy", "alt", "x-xetex", "mirror", "scale"]
 
-def doError(txt, secondary=None, title=None):
+def doError(txt, secondary=None, title=None, copy2clip=False, show=True):
     print(txt)
     if secondary is not None:
         print(secondary)
