@@ -82,6 +82,7 @@
 %
 %+cpar_endheadings
 \newif\ifhe@dings
+\newdimen\headingtopspace
 \newbox\he@dingbox
 \def\endhe@dings{\ifhe@dings\TRACE{endhe@dings}%
   \makecutouts \endgraf
@@ -139,16 +140,16 @@
   \ifhmode\endgraf\fi % Not sure why, but sometiems we get here in hmode
   \prevdepth=0pt
   \setbox0=\ifgridp@c\vbox{\box#1}\else\killd@scenders#1\fi
-  \trace{h}{before gridbox: ht0=\the\ht0; dp0=\the\dp0 (\the\dimen4); spacebefore=\headingtopspace*\the\verticalsp@ceunit; depth=\the\lastdepth}%
+  \trace{h}{before gridbox: ht0=\the\ht0; dp0=\the\dp0 (\the\dimen4); spacebefore=\the\headingtopspace; depth=\the\lastdepth}%
   \s@tbaseline{p}\dimen1=\ht0 \dimen0=\baselineskip \m@d \dimen2=\dimen0 % dimen2 is grid space
-  \dimen1=\ht0 \advance\dimen1 by -\headingtopspace \verticalsp@ceunit
+  \dimen1=\ht0 \advance\dimen1 by -\headingtopspace
   \dimen0=\baselineskip \m@d \advance\dimen2 by -\dimen0
-  \advance\dimen2 by \headingtopspace\verticalsp@ceunit                         %(1)
+  \advance\dimen2 by \headingtopspace                                           %(1)
   \ifgridp@c\else
     \ifdim\lastdepth>0pt\advance\dimen2 by -\lastdepth\fi
   \fi
   \ifdiglot\kern\else\vskip\fi\dimen2
-  \vbox{\kern\dimen0\vskip-\headingtopspace\verticalsp@ceunit
+  \vbox{\kern\dimen0\vskip-\headingtopspace
     \trace{h}{after gridbox(\ch@pter.\v@rse): skip \the\dimen2, kern \the\dimen0; baselineskip=\the\baselineskip}%
     \unvbox0}\nobreak
 }
@@ -345,8 +346,8 @@
     \ifhe@dings\nsp@cebeforetrue\s@tbaseline{\m@rker}%In a heading again, may be different so set a new baseline
     \else
         % Headingtopspace gets removed at top of page, preserve for titles.
-        \getp@ram{spacebefore}{\m@rker}\ifx\p@ram\relax\xdef\headingtopspace{0}\else
-          \ift@tle\xdef\headingtopspace{0}\else\xdef\headingtopspace{\p@ram}\fi\fi
+        \getp@ram{spacebefore}{\m@rker}\ifx\p@ram\relax\headingtopspacei=0pt\else
+          \ift@tle\headingtopspace=0pt\else\headingtopspace=\p@ram\verticalsp@ceunit\fi\fi
         \setbox\he@dingbox=\vbox\bgroup\global\he@dingstrue
         \s@tbaseline{\m@rker}% Obey baseline changes for headings
         \linepenalty=1000 % minimize line count
