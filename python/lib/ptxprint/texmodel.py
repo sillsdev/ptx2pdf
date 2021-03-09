@@ -707,7 +707,7 @@ class TexModel:
                 dat = c[0](simple, dat)
         return dat
 
-    def convertBook(self, bk, outdir, prjdir):
+    def convertBook(self, bk, chaprange, outdir, prjdir):
         if self.changes is None:
             if self.asBool('project/usechangesfile'):
                 # print("Applying PrntDrftChgs:", os.path.join(prjdir, 'PrintDraftChanges.txt'))
@@ -716,7 +716,7 @@ class TexModel:
                 self.changes = []
         printer = self.printer
         draft = "-" + (self.printer.configName() or "draft")
-        self.makelocalChanges(printer, bk)
+        self.makelocalChanges(printer, bk, chaprange=chaprange)
         customsty = os.path.join(prjdir, 'custom.sty')
         if not os.path.exists(customsty):
             self.dict["/nocustomsty"] = "%"
@@ -777,6 +777,7 @@ class TexModel:
 
             if self.localChanges is not None:
                 dat = self.runChanges(self.localChanges, dat)
+
         with open(outfpath, "w", encoding="utf-8") as outf:
             outf.write(dat)
         if self.dict['project/runscriptafter']:
@@ -871,12 +872,17 @@ class TexModel:
                     print("Unable to print details of PrintDraftChanges.txt")
         return changes
 
-    def makelocalChanges(self, printer, bk):
+    def makelocalChanges(self, printer, bk, chaprange=None):
         self.localChanges = []
         if bk == "GLO" and self.dict['document/filterglossary']:
             self.filterGlossary(printer)
-        first = int(float(self.dict["document/chapfrom"]))
-        last = int(float(self.dict["document/chapto"]))
+        if chaprange is not None:
+            first, last = chaprange
+        elif self.dict["project/bookscope"] == "single":
+            first = int(float(self.dict["document/chapfrom"]))
+            last = int(float(self.dict["document/chapto"]))
+        else:
+            first, last = (-1, -1)
         
         # Fix things that other parsers accept and we don't
         self.localChanges.append((None, regex.compile(r"(\\[cv] [^ \\\n]+)(\\)", flags=regex.S), r"\1 \2"))
@@ -891,11 +897,10 @@ class TexModel:
             # print("Chapter label: '{}' for '{}' with {}".format(clabel, " ".join(clbooks), bk))
             if len(clabel) and (not len(clbooks) or bk in clbooks):
                 self.localChanges.append((None, regex.compile(r"(\\c 1)(?=\s*\r?\n|\s)", flags=regex.S), r"\\cl {}\n\1".format(clabel)))
-        if self.dict["project/bookscope"] == "single":
-            if first > 1:
-                self.localChanges.append((None, regex.compile(r"\\c 1 ?\r?\n.+(?=\\c {} ?\r?\n)".format(first), flags=regex.S), ""))
-            if last < int(chaps.get(bk, 999)):
-                self.localChanges.append((None, regex.compile(r"\\c {} ?\r?\n.+".format(last+1), flags=regex.S), ""))
+        if first > 1:
+            self.localChanges.append((None, regex.compile(r"\\c 1 ?\r?\n.+(?=\\c {} ?\r?\n)".format(first), flags=regex.S), ""))
+        if last < int(chaps.get(bk, 999)):
+            self.localChanges.append((None, regex.compile(r"\\c {} ?\r?\n.+".format(last+1), flags=regex.S), ""))
 
         # Throw out the known "nonpublishable" markers and their text (if any)
         self.localChanges.append((None, regex.compile(r"\\(usfm|ide|rem|sts|restore|pubinfo)( .*?)?\n(?=\\)", flags=regex.M), ""))

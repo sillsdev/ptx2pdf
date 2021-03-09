@@ -189,6 +189,15 @@ class RunJob:
             digprjdir = os.path.join(self.args.paratext, digprjid)
             digptsettings = ParatextSettings(self.args.paratext, digprjid)
             diginfo = TexModel(self.printer.diglotView, self.args.paratext, digptsettings, digprjid, inArchive=self.inArchive)
+            digbooks = self.printer.diglotView.getAllBooks()
+            badbooks = set()
+            for j in joblist:
+                allj = set(j)
+                j[:] = [b for b in j if b in digbooks]
+                badbooks.update(allj - set(j))
+            if len(badbooks):
+                self.printer.doError("These books are not available in the secondary diglot project", " ".join(sorted(badbooks)),
+                                     show=not self.printer.get("c_quickRun"))
             self.texfiles += sum((self.digdojob(j, info, diginfo, digprjid, digprjdir) for j in joblist), [])
         else: # Normal (non-diglot)
             self.texfiles += sum((self.dojob(j, info) for j in joblist), [])
@@ -316,7 +325,7 @@ class RunJob:
         donebooks = []
         for b in jobs:
             try:
-                out = info.convertBook(b, self.tmpdir, self.prjdir)
+                out = info.convertBook(b, None, self.tmpdir, self.prjdir)
             except FileNotFoundError as e:
                 self.printer.doError(str(e))
                 out = None
@@ -357,9 +366,13 @@ class RunJob:
             diginfo[k]=info[k]
         syntaxErrors = []
         for b in jobs:
+            if len(b) == 1 and info["project/bookscope"] == "single":
+                chaprange = (int(info["document/chapfrom"]), int(info["document/chapto"]))
+            else:
+                chaprange = None
             try:
-                out = info.convertBook(b, self.tmpdir, self.prjdir)
-                digout = diginfo.convertBook(b, self.tmpdir, digprjdir)
+                out = info.convertBook(b, chaprange, self.tmpdir, self.prjdir)
+                digout = diginfo.convertBook(b, chaprange, self.tmpdir, digprjdir)
             except FileNotFoundError as e:
                 self.printer.doError(str(e))
                 out = None
