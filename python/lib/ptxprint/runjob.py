@@ -504,8 +504,6 @@ class RunJob:
             numruns += 1
             self.rerunReasons = []
             rererun = False
-            if self.res:
-                rererun = True
             if info["document/toc"] != "%":
                 tocndata = self.readfile(os.path.join(self.tmpdir, outfname.replace(".tex", ".toc")))
                 if tocdata != tocndata:
@@ -516,6 +514,8 @@ class RunJob:
                         rererun = True
                 else:
                     break
+            if self.res:
+                rererun = False
             if info["document/includeimg"]:
                 picndata = self.readfile(os.path.join(self.tmpdir, outfname.replace(".tex", ".picpages")))
                 if picdata != picndata:

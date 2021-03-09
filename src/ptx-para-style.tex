@@ -346,7 +346,7 @@
     \ifhe@dings\nsp@cebeforetrue\s@tbaseline{\m@rker}%In a heading again, may be different so set a new baseline
     \else
         % Headingtopspace gets removed at top of page, preserve for titles.
-        \getp@ram{spacebefore}{\m@rker}\ifx\p@ram\relax\headingtopspacei=0pt\else
+        \getp@ram{spacebefore}{\m@rker}\ifx\p@ram\relax\headingtopspace=0pt\else
           \ift@tle\headingtopspace=0pt\else\headingtopspace=\p@ram\verticalsp@ceunit\fi\fi
         \setbox\he@dingbox=\vbox\bgroup\global\he@dingstrue
         \s@tbaseline{\m@rker}% Obey baseline changes for headings
