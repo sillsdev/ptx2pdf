@@ -198,6 +198,10 @@ class RunJob:
             if len(badbooks):
                 self.printer.doError("These books are not available in the secondary diglot project", " ".join(sorted(badbooks)),
                                      show=not self.printer.get("c_quickRun"))
+                self.printer.finished()
+                self.busy = False
+                unlockme()
+                return
             self.texfiles += sum((self.digdojob(j, info, diginfo, digprjid, digprjdir) for j in joblist), [])
         else: # Normal (non-diglot)
             self.texfiles += sum((self.dojob(j, info) for j in joblist), [])
@@ -369,7 +373,6 @@ class RunJob:
             chaprange = (int(info["document/chapfrom"]), int(info["document/chapto"]))
         else:
             chaprange = (-1, -1)
-        print("chaprange:", chaprange)
         for b in jobs:
             try:
                 out = info.convertBook(b, chaprange, self.tmpdir, self.prjdir)

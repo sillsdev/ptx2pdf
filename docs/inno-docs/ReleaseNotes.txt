@@ -1,5 +1,17 @@
 PTXprint 1.5.16 Release Notes 
-6 March 2021
+10 March 2021
+
+Bug Fixes and Improvements in 1.5.17
+
+  * Bug fix: Media permission tooltip (in Pictures, Details) works now - was broken since localization was introduced
+  
+  * Diglot printing of chapter ranges for single books now works, and chapter ranges are ignored for multi-book diglots
+  
+  * After the magic column width is calculated it now prints the diglot - so you can immediately see the result
+  
+  * Check to see if all required books are available in BOTH projects before attempting to create a diglot publication
+
+  * Bug fix: false assumption that Andika is installed (changed tracing font to Arial)
 
 Bug Fixes and Improvements in 1.5.16
 

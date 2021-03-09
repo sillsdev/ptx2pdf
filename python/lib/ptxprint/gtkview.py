@@ -254,14 +254,14 @@ def _doError(text, secondary="", title=None, copy2clip=False, show=True):
             lines.append(text)
         if secondary is not None and len(secondary):
             lines.append(secondary)
-        s = "Please send this error message to ptxprint_support@sil.org\n\n{}".format("\n".join(lines))
+        s = _("Please send this error message to:") + "ptxprint_support@sil.org\n\n{}".format("\n\n".join(lines))
         clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
         clipboard.set_text(s, -1)
         clipboard.store() # keep after app crashed
         if secondary is not None:
-            secondary += "\nThe text of this error message has been copied to the clipboard."
+            secondary += "\n\n" + " "*20 + "[" + _("This message has been copied to the clipboard.")+ "]"
         else:
-            secondary = "The text of this error message has been copied to the clipboard."
+            secondary = " "*20 + "[" + _("This message has been copied to the clipboard.")+ "]"
     if show:
         dialog = Gtk.MessageDialog(parent=None, message_type=Gtk.MessageType.ERROR,
                  buttons=Gtk.ButtonsType.OK, text=text)
@@ -291,7 +291,7 @@ Please locate the directory containing your (paratext) project directories. Or c
     if response == Gtk.ResponseType.OK:
         action = Gtk.FileChooserAction.SELECT_FOLDER
         btnlabel = "Select"
-        fdialog = Gtk.FileChooserDialog("Paratext Projects directory", None,
+        fdialog = Gtk.FileChooserDialog("Paratext Projects Directory", None,
             (action),
             (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
             (btnlabel), Gtk.ResponseType.OK))
