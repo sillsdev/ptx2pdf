@@ -2828,6 +2828,7 @@ class GtkViewModel(ViewModel):
         res = brent(0., 1., mid, score, 0.001)
         self.set("s_diglotPriFraction", res*100)
         self.isDiglotMeasuring = False
+        self.callback(self)
         btn.set_active(False)
 
     def onDiglotSwapSideClicked(self, btn):
