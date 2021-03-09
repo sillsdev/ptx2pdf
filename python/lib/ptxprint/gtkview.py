@@ -254,12 +254,12 @@ def _doError(text, secondary="", title=None, copy2clip=False, show=True):
             lines.append(text)
         if secondary is not None and len(secondary):
             lines.append(secondary)
-        s = "Please send this error message to ptxprint_support@sil.org\n\n{}".format("\n\n".join(lines))
+        s = "Please send this error message to ptxprint_support@sil.org\n\n{}".format("\n".join(lines))
         clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
         clipboard.set_text(s, -1)
         clipboard.store() # keep after app crashed
         if secondary is not None:
-            secondary += "\n\nThe text of this error message has been copied to the clipboard."
+            secondary += "\nThe text of this error message has been copied to the clipboard."
         else:
             secondary = "The text of this error message has been copied to the clipboard."
     if show:

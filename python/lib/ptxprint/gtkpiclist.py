@@ -302,7 +302,9 @@ class PicList:
     def mask_media(self, row):
         src = row[_pickeys['src']][:2]
         inf = self.parent.copyrightInfo.get(src.lower(), {"limit": "paw", "tip": {"en": "Default"}})
+        print(self.parent.copyrightInfo)
         tip = inf["tip"].get(lang, inf["tip"]["en"])
+        print("src, inf, tip:", src, inf, tip)
         if inf["tip"]["en"] == 'Default':
             self.builder.get_object("l_plMedia").set_tooltip_text(_("Media permissions unknown\nfor this illustration"))
         else:
@@ -371,6 +373,8 @@ class PicList:
                         if self.picrect is None:
                             picframe = self.builder.get_object("fr_picPreview")
                             self.picrect = picframe.get_allocation()
+                        print("fpath=", fpath)
+                        print("self.picrect=", self.picrect)
                         pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(fpath, self.picrect.width - 6, self.picrect.height - 6)
                         self.setPreview(pixbuf, tooltip=fpath)
                     else:
