@@ -247,7 +247,7 @@ _signals = {
 _olst = ["fr_SavedConfigSettings", "tb_Layout", "tb_Font", "tb_Body", "tb_NotesRefs", "tb_HeadFoot", "tb_Pictures",
          "tb_Advanced", "tb_Logging", "tb_Tabs", "tb_DiglotBorder", "tb_StyleEditor", "tb_ViewerEditor", "tb_Help"]
 
-def _doError(text, secondary, title, copy2clip=False, show=True):
+def _doError(text, secondary="", title=None, copy2clip=False, show=True):
     if copy2clip:
         lines = [title]
         if text is not None and len(text):
