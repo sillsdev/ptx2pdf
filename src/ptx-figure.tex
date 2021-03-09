@@ -677,7 +677,7 @@
     \insert\p@cins{\penalty10000 % make sure this picture does not float away to another page
       \splittopskip\z@skip
       \splitmaxdepth\maxdimen \floatingpenalty20000 % was zero
-      \xdef\headingtopspace{0}%
+      \headingtopspace=0pt
       \gridp@ctrue\gridb@x0\gridp@cfalse% make sure we align to the page grid
     }%
 %-cfig_dofigure_5
@@ -725,7 +725,7 @@
   %\splittopskip\baselineskip
   \def\picc@ntents{%
     \gridp@cfalse% Not true! It's not floating.
-    \xdef\headingtopspace{0}%
+      \headingtopspace=0pt
     \gridb@x#1 
     \ifx\w@tsit\gr@phic
       \dimen9=\lastdepth \kern\dimen9
@@ -752,7 +752,7 @@
     \relax \x@\let\x@\picb@@x\csname picb@x\g@tdstat\endcsname
     \penalty10 % Allow the page to break
     %\gridp@cfalse% Not true. Not a floating image.
-    \xdef\headingtopspace{0}%
+      \headingtopspace=0pt
     \gridb@x\picb@@x
        %\vskip-\prevdepth
     \penalty10
