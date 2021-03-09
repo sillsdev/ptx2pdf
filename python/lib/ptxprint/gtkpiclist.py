@@ -1,7 +1,7 @@
 
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal
 from ptxprint.piclist import newBase
-from ptxprint.utils import refKey, lang, _
+from ptxprint.utils import refKey, getlang, _
 from gi.repository import Gtk, GdkPixbuf, GObject, Gdk
 import os, re
 
@@ -301,10 +301,8 @@ class PicList:
 
     def mask_media(self, row):
         src = row[_pickeys['src']][:2]
-        inf = self.parent.copyrightInfo.get(src.lower(), {"limit": "paw", "tip": {"en": "Default"}})
-        print(self.parent.copyrightInfo)
-        tip = inf["tip"].get(lang, inf["tip"]["en"])
-        print("src, inf, tip:", src, inf, tip)
+        inf = self.parent.copyrightInfo['copyrights'].get(src.lower(), {"media": {"limit": "paw", "tip": {"en": "Default"}}})["media"]
+        tip = inf["tip"].get(getlang()[0], inf["tip"]["en"])
         if inf["tip"]["en"] == 'Default':
             self.builder.get_object("l_plMedia").set_tooltip_text(_("Media permissions unknown\nfor this illustration"))
         else:
@@ -373,8 +371,6 @@ class PicList:
                         if self.picrect is None:
                             picframe = self.builder.get_object("fr_picPreview")
                             self.picrect = picframe.get_allocation()
-                        print("fpath=", fpath)
-                        print("self.picrect=", self.picrect)
                         pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(fpath, self.picrect.width - 6, self.picrect.height - 6)
                         self.setPreview(pixbuf, tooltip=fpath)
                     else:

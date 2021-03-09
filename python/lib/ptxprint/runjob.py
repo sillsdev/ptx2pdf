@@ -365,11 +365,12 @@ class RunJob:
         for k in _digSecSettings:
             diginfo[k]=info[k]
         syntaxErrors = []
+        if len(jobs) == 1 and info["project/bookscope"] == "single":
+            chaprange = (int(info["document/chapfrom"]), int(info["document/chapto"]))
+        else:
+            chaprange = (-1, -1)
+        print("chaprange:", chaprange)
         for b in jobs:
-            if len(b) == 1 and info["project/bookscope"] == "single":
-                chaprange = (int(info["document/chapfrom"]), int(info["document/chapto"]))
-            else:
-                chaprange = None
             try:
                 out = info.convertBook(b, chaprange, self.tmpdir, self.prjdir)
                 digout = diginfo.convertBook(b, chaprange, self.tmpdir, digprjdir)

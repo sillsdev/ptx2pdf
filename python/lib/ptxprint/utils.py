@@ -17,7 +17,9 @@ def setup_i18n(i18nlang):
     localedir = os.path.join(getattr(sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__))), "mo")
     if i18nlang is not None:
         os.environ["LANG"] = i18nlang
-    lang, enc = locale.getdefaultlocale(("LANG", "LANGUAGE"))
+        lang = i18nlang
+    else:
+        lang, enc = locale.getdefaultlocale(("LANG", "LANGUAGE"))
     enc = "UTF-8"
     if sys.platform.startswith('win'):
         from ctypes import cdll, windll
@@ -46,6 +48,10 @@ def putenv(k, v):
         from ctypes.util import find_msvcrt
         cdll.msvcrt._putenv('{}={}'.format(k, v))
     os.putenv(k, v)
+    
+def getlang():
+    global lang
+    return lang.replace('-','_').split('_')
 
 def f_(s):
     frame = currentframe().f_back

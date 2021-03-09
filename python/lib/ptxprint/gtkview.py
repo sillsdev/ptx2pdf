@@ -1105,7 +1105,7 @@ class GtkViewModel(ViewModel):
             self.generateAdjList()
         elif pgid == "scroll_FinalSFM" and bk is not None: # FinalSFM
             tmodel = TexModel(self, self.settings_dir, self.ptsettings, self.prjid)
-            out = tmodel.convertBook(bk, self.working_dir, os.path.join(self.settings_dir, self.prjid))
+            out = tmodel.convertBook(bk, None, self.working_dir, os.path.join(self.settings_dir, self.prjid))
             self.editFile(out, loc="wrk", pgid=pgid)
         self.onViewerChangePage(None,None,pg)
 
