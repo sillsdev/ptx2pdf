@@ -221,11 +221,7 @@
   \ifx\attr@b\relax
     \runtrigg@rs{ms:\thismil@stone}%
   \else
-    \ifx\thismil@stone\figmil@stone
-      \runtrigg@rs{\mkp@cref{\id@@@}{}{\attr@b}}%
-    \else
-      \runtrigg@rs{\mkp@cref{\id@@@}{\thismil@stone}{\attr@b}}%
-    \fi
+  \runtrigg@rs{\mkp@cref{\id@@@}{}{\attr@b}}%
     \runtrigg@rs{ms:\thismil@stone=\attr@b}%
   \fi
   \cl@singhooks{after}{\thismil@stone}\the\afterh@@ks\relax
