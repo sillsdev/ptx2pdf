@@ -542,6 +542,15 @@ class PicInfo(dict):
         for k, v in self.items():
             v.pop('dest file', None)
 
+    def getAnchor(self, src, bk=None):
+        for k, v in self.items():
+            if v.get('src', None) != src:
+                continue
+            if bk is not None and not k.startswith(bk):
+                continue
+            return k
+        return None
+
 def PicInfoUpdateProject(model, bks, allbooks, picinfos, suffix="", random=False, cols=1, doclear=True, clearsuffix=False):
     newpics = PicInfo(model)
     newpics.read_piclist(os.path.join(model.settings_dir, model.prjid, 'shared',

@@ -936,6 +936,11 @@ class TexModel:
             if self.asBool("document/iffigexclwebapp"):
                 self.localChanges.append((None, regex.compile(r'(?i)\\fig ([^|]*\|){3}([aw]+)\|[^\\]*\\fig\*', flags=regex.M), ''))  # USFM2
                 self.localChanges.append((None, regex.compile(r'(?i)\\fig [^\\]*\bloc="[aw]+"[^\\]*\\fig\*', flags=regex.M), ''))    # USFM3
+            def figtozfig(m):
+                a = self.piclist.getAnchor(m.group(1), bk)
+                return "\\xfig|{}\\".format(a) if a is not None else ""
+            self.localChanges.append((None, regex.compile(r'\\fig .*?src="([^"]+)".*?\\fig\*', flags=regex.M), figtozfig))
+            self.localChanges.append((None, regex.compile(r'\\fig .*?|(.*?)|.*?\\fig\*', flags.regex.M), figtzfig))
 
             # Change orig-fname to newbase-name + new extension
             figChangeList = self.figNameChanges(printer, bk)

@@ -1232,7 +1232,7 @@ set FONTCONFIG_FILE="%cd%\\..\\fonts.conf"
 set TEXINPUTS=..\\src"""
         for t in texfiles:
             batfile += '\nif exists "%truetex%" "%truetex%" {}'.format(os.path.basename(t))
-        zf.writestr("{}/runtex.bat".format(self.prjid), batfile)
+        zf.writestr("{}/runtex.txt".format(self.prjid), batfile)
             
 
     def updateThumbLines(self):
