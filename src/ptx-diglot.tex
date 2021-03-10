@@ -1077,7 +1077,7 @@
 }
 
 \def\diglot@arrange@cols{% Xht is the sum of Xbox's depth and height (set by after@a@trial
-  \trace{D}{diglot@arrange@cols chnkDlta:\the\chunkDelta}%
+  \trace{D}{diglot@arrange@cols chnkDlta:\the\chunkDelta. cp:\the\chunkpenalty, lcp:\the\lastchunkpenalty}%
   \ifVisTrace
     \ifx\b@xtype\vbox %boxtype is set on discovery of whether this is a heading or not
       \doVisTraceT{L}% sets box0, used ~43 lines below
@@ -1171,7 +1171,13 @@
       \hbox to\columnRwidth{\box\Rbox\hss}\makediglotgutter{\dimen7}{\dimen8}{\dimen9}%
       \hbox to\columnLwidth{\box\Lbox\hss}%\rlap{\the\ht\Rbox \the\dp\Rbox}%
     }}%
-  \else
+    \ifnum\chunkpenalty>-20000
+      \global\lastchunkpenalty=\chunkpenalty
+    \else
+      \global\lastchunkpenalty=0
+    \fi
+    \global\chunkpenalty=-20000 %Everything ought to be bigger than this.
+ \else
     \traceNum{d}{No content to output}%
   \fi
 }
@@ -1751,10 +1757,6 @@
     \x@\each@col\diglot@list\E
     %
     %\global\p@geChunkDelta=\chunkDelta%
-    \ifnum\chunkpenalty>-20000
-      \global\lastchunkpenalty=\chunkpenalty
-    \fi
-    \global\chunkpenalty=-20000 %Everything ought to be bigger than this.
   \fi
 }
 \def\postponen@xt@partial{%
