@@ -2,7 +2,7 @@
 import configparser, os, re, regex, random, collections
 from ptxprint.texmodel import ModelMap, TexModel, Borders
 from ptxprint.ptsettings import ParatextSettings, allbooks, books, bookcodes, chaps
-from ptxprint.font import TTFont, cachepath, cacheremovepath, FontRef
+from ptxprint.font import TTFont, cachepath, cacheremovepath, FontRef, getfontcache, writefontsconf
 from ptxprint.utils import _, refKey, universalopen, print_traceback, local2globalhdr, global2localhdr, asfloat
 from ptxprint.usfmutils import Sheets, UsfmCollection
 from ptxprint.piclist import PicInfo, PicChecks
@@ -10,7 +10,7 @@ from ptxprint.styleditor import StyleEditor
 import pathlib, os, sys
 from configparser import NoSectionError, NoOptionError, _UNSET
 from tempfile import NamedTemporaryFile
-from zipfile import ZipFile, ZIP_DEFLATED
+from zipfile import ZipFile, ZIP_DEFLATED, ZipInfo
 from io import StringIO
 from shutil import rmtree
 import datetime, time
@@ -1057,12 +1057,17 @@ class ViewModel:
         # borders
         for k, v in Borders.items():
             if self.get(k):
-                fname = getattr(self, v[0])
+                islist = v[2].startswith("\\")
+                fname = getattr(self, v[0], (None if islist else v[2]))
+                if v[0] == "watermark" and fname is None:
+                    fname = "A5-CopyrightWatermark.pdf"
+                print(f"{k=}, {v=}, {fname=}")
                 if fname is None: continue
                 if not isinstance(fname, (list, tuple)):
                     fname = [fname]
                 for f in fname:
                     res[f.as_posix()] = "shared/ptxprint/"+f.name
+                    print(f"{f.as_posix()=}, {f.name=}")
 
         # fonts
         for k, v in TexModel._fonts.items():
@@ -1182,6 +1187,7 @@ class ViewModel:
                 mpath = os.path.join(ptxmacrospath, "mappings", mappingfile)
                 if os.path.exists(mpath):
                     zf.write(mpath, self.prjid+"/src/mappings/"+mappingfile)
+            self._archiveSupportAdd(zf, [x for x in self.tempFiles if x.endswith(".tex")])
         zf.close()
 
     def _archiveAdd(self, zf, books, includeTemps):
@@ -1205,6 +1211,24 @@ class ViewModel:
             self.set(k, v)
         for f in tmpfiles:
             os.unlink(f)
+
+    def _archiveSupportAdd(self, zf, texfiles):
+        addfonts = ['SourceCodePro-Regular.ttf']
+        for a in addfonts:
+            fpath = getfontcache().get('Source Code Pro')
+            if fpath is None:
+                continue
+            zf.write(fpath, arcname="{}/shared/fonts/{}".format(self.prjid, os.path.basename(fpath)))
+
+        # create a fontconfig
+        zf.writestr("{}/fonts.conf".format(self.prjid), writefontsconf(archivedir=True))
+        scriptlines = ["#!/bin/sh", "cd PrintDraft"]
+        for t in texfiles:
+            scriptlines.append("FONTCONFIG_FILE=`pwd`/../fonts.conf TEXINPUTS=../src:. xetex {}".format(os.path.basename(t)))
+        zinfo = ZipInfo("{}/runtex.sh".format(self.prjid))
+        zinfo.external_attr = 0o755 << 16
+        zf.writestr(zinfo, "\n".join(scriptlines))
+            
 
     def updateThumbLines(self):
         munits = float(self.get("s_margins"))

@@ -15,29 +15,36 @@ fontconfig_template = """<?xml version="1.0"?>
 </fontconfig>
 """
 
-def writefontsconf():
+def writefontsconf(archivedir=None):
     inf = {}
     dirs = []
-    if sys.platform.startswith("win"):
-        dirs.append(os.path.join(os.getenv("LOCALAPPDATA"), "Microsoft", "Windows", "Fonts"))
-        dirs.append(os.path.abspath(os.path.join(os.getenv("WINDIR"), "Fonts")))
-        fname = os.path.join(os.getenv("LOCALAPPDATA"), "SIL", "ptxprint", "fonts.conf")
-    else:
+    if sys.platform.startswith("win") or archivedir is not None:
+        dirs.append(os.path.join(os.getenv("LOCALAPPDATA", "/"), "Microsoft", "Windows", "Fonts"))
+        dirs.append(os.path.abspath(os.path.join(os.getenv("WINDIR", "/"), "Fonts")))
+        fname = os.path.join(os.getenv("LOCALAPPDATA", "/"), "SIL", "ptxprint", "fonts.conf")
+    if archivedir is not None or not sys.platform.startswith("win"):
         dirs.append("/usr/share/fonts")
         fname = os.path.expanduser("~/.config/ptxprint/fonts.conf")
-    os.makedirs(os.path.dirname(fname), exist_ok=True)
-    fdir = os.path.join(os.path.dirname(__file__), '..')
-    for a in (['..', 'fonts'], ['..', '..', 'fonts'], ['/usr', 'share', 'ptx2pdf', 'fonts']):
-        fpath = os.path.join(fdir, *a)
-        if os.path.exists(fpath):
-            dirs.insert(0, os.path.abspath(fpath))
-            break
+    if archivedir is not None:
+        dirs.append("../shared/fonts")
     else:
-        dirs.append(os.path.abspath('fonts'))
+        fdir = os.path.join(os.path.dirname(__file__), '..')
+        for a in (['..', 'fonts'], ['..', '..', 'fonts'], ['/usr', 'share', 'ptx2pdf', 'fonts']):
+            fpath = os.path.join(fdir, *a)
+            if os.path.exists(fpath):
+                dirs.insert(0, os.path.abspath(fpath))
+                break
+        else:
+            dirs.append(os.path.abspath('fonts'))
+    os.makedirs(os.path.dirname(fname), exist_ok=True)
     inf['fontsdirs'] = "\n    ".join("<dir>{}</dir>".format(d) for d in dirs)
-    with open(fname, "w", encoding="utf=8") as outf:
-        outf.write(fontconfig_template.format(**inf))
-    return fname
+    res = fontconfig_template.format(**inf)
+    if archivedir is not None:
+        return res
+    else:
+        with open(fname, "w", encoding="utf=8") as outf:
+            outf.write(res)
+        return fname
 
 #pango_styles = {Pango.Style.ITALIC: "italic",
 #    Pango.Style.NORMAL: "",

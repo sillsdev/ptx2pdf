@@ -249,7 +249,7 @@ _olst = ["fr_SavedConfigSettings", "tb_Layout", "tb_Font", "tb_Body", "tb_NotesR
 
 def _doError(text, secondary="", title=None, copy2clip=False, show=True):
     if copy2clip:
-        lines = [title]
+        lines = [title or ""]
         if text is not None and len(text):
             lines.append(text)
         if secondary is not None and len(secondary):
