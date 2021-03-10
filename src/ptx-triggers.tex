@@ -57,15 +57,20 @@
   \the\trigg@rchecks
 }
 
+\def\SetTriggerParagraphSeparator#1{%
+  \xdef\TriggerP@rSep{#1}%
+  \gdef\ch@kparref##1#1##2\E{\def\chkp@rrf{##2}\ifx\chkp@rrf\empty\temptrue\fi}}
+\SetTriggerParagraphSeparator{=}
+
 \def\runtrigg@rspar{%Paragraph trigger
   \advance\p@rnum by 1
   \ifx\v@rse\empty\else
     \settrig@refcv
   \fi
   \let\oc@rref=\c@rref\let\odc@rref=\dc@rref % Preserve old references so that we can restore it later.
-  \xdef\c@rref{\c@rref=\the\p@rnum}%
+  \xdef\c@rref{\c@rref\TriggerP@rSep\the\p@rnum}%
   \ifdiglot
-    \xdef\dc@rref{\odc@rref=\the\p@rnum}%
+    \xdef\dc@rref{\odc@rref\TriggerP@rSep\the\p@rnum}%
   \fi
   \trace{T}{running triggers \c@rref}%
   \the\trigg@rchecks

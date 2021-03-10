@@ -390,15 +390,23 @@ the combinations do not trigger an unprintable page.
   in the USFM. Note that at present only stand-alone milestones trigger figure 
   inclusion.
 - A second or subsequent paragraph within a verse or keyterm entry may be referenced 
-  by appending an equals sign and a number. e.g. ```_bk_ 1.2=3``` will trigger on the third 
-  paragraph within verse 2 of chapter 1. The following should be noted: 
+  by appending a separator (by default an equals sign) and a number. e.g. ```_bk_ 1.2=3``` will 
+  trigger on the third paragraph within verse 2 of chapter 1. The following should be noted: 
   - There is only one paragraph counter which is reset at each change of
     trigger. Thus the above example *will not* trigger if there
     is no 3rd paragraph before the next verse number, nor will it trigger if some other
     potential marker occurs.  
   - As the first paragraph of the verse / key term is the one containing  that
-    item, a suffix of ```=1``` is an invalid trigger point and
-    will never match.
+    item, a suffix of ```=1``` is an invalid trigger point and will never match.
+  - The code assumes that *any* occurance of the separator in the piclist reference 
+    means that what follows is a paragraph number. Using some other separator is now 
+    supported, with the restriction that (a) it sould not be expected to occur 
+    in normal text of a type that might crop up in a key term. (b) it must not contain characters 
+    with a special meaning within TeX (e.g. `#`, `$`, `%`, `{`, `}`). Multiple character separators 
+    are permissible. The command  below (to be included in the `.tex` file before any piclists, etc. are loaded) sets the separator to be the sequence `=@=`, in case a simple = sign is used in the text of a keyword. Piclists would then need to specify paragraphs in form ```_bk_ 1.2=@=3```
+```
+\SetTriggerParagraphSeparator{=@=}
+```
 
 
 ## Captions

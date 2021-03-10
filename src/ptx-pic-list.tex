@@ -53,12 +53,12 @@
 
 \def\mkp@cref#1#2{%format the reference for book,chapter.verse that piclist (and anything wanting to trigger piclist entries) should use
 #1#2-preverse}
-\def\ch@kparref#1=#2\E{\def\chkp@rrf{#2}\ifx\chkp@rrf\empty\temptrue\fi}
  
 \def\parsep@cline #1 #2 #3\endpicline{%
   \uppercase{\def\piclstb@@kref{#1}}%
   \tempfalse
-  \x@\ch@kparref#2=\E
+  \xdef\t@st{#2\TriggerP@rSep}%
+  \x@\ch@kparref\t@st\E
   \iftemp
     \xdef\p@cref{\mkp@cref{\piclstb@@kref}{#2}}%Append -preverse because inline pics should be before the verse number
   \else
