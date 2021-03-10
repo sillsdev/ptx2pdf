@@ -2094,6 +2094,7 @@ class GtkViewModel(ViewModel):
             btn_createZipArchive.set_tooltip_text(str(archiveZipFile[0]))
             try:
                 self.createArchive(str(archiveZipFile[0]))
+                self.openFolder(self.working_dir)
             except Exception as e:
                 s = traceback.format_exc()
                 s += "\n{}: {}".format(type(e), str(e))

@@ -12654,24 +12654,15 @@ PDF (and associated interim files).</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkButton" id="btn_createZipArchive">
-                                    <property name="label" translatable="yes">Create Archive...</property>
-                                    <property name="width_request">140</property>
+                                  <object class="GtkButton" id="btn_removeTempFiles">
+                                    <property name="label" translatable="yes">Remove Temp Files</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
-                                    <property name="tooltip_text" translatable="yes">Create a ZIPped archive of all the files
-required to replicate this configuration
-on a different computer. Mainly used
-for troubleshooting issues. You may
-examine the contents of the ZIPped
-file before sending it to the PTXprint
-e-mail address for support.
-
-It may also be useful for archiving...</property>
-                                    <property name="halign">end</property>
-                                    <property name="valign">start</property>
-                                    <signal name="clicked" handler="onCreateZipArchiveClicked" swapped="no"/>
+                                    <property name="tooltip_text" translatable="yes">Click this to tidy up the output folder (usually PrintDraft).
+This will delete all previous log and intermediate temporary files for the entire project and is a good way to easily remove many unwanted files.</property>
+                                    <property name="margin_top">6</property>
+                                    <signal name="clicked" handler="onDeleteTemporaryFilesClicked" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">1</property>
@@ -12679,18 +12670,16 @@ It may also be useful for archiving...</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkCheckButton" id="c_archiveTemps">
-                                    <property name="label" translatable="yes">Include Temporary
-Files in Archive</property>
+                                  <object class="GtkLinkButton" id="lb_output_folder">
+                                    <property name="label" translatable="yes">Open Folder</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">When this option is checked, several other
-(temporary) files get added to the ZIP
-archive. So only enable this if directed
-to do so by the PTXprint Support team.</property>
-                                    <property name="halign">start</property>
-                                    <property name="draw_indicator">True</property>
+                                    <property name="receives_default">True</property>
+                                    <property name="halign">center</property>
+                                    <property name="valign">start</property>
+                                    <property name="relief">none</property>
+                                    <property name="uri">Click to Open folder</property>
+                                    <signal name="clicked" handler="onOpenFolderOutputClicked" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
@@ -12971,122 +12960,82 @@ glosses for interlinear/ruby text.</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkBox">
+                          <object class="GtkFrame" id="fr_AdvCompat">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="orientation">vertical</property>
+                            <property name="halign">start</property>
+                            <property name="vexpand">True</property>
+                            <property name="label_xalign">0.05000000074505806</property>
                             <child>
-                              <object class="GtkButton" id="btn_removeTempFiles">
-                                <property name="label" translatable="yes">Remove Temp Files</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">True</property>
-                                <property name="tooltip_text" translatable="yes">Click this to tidy up the output folder (usually PrintDraft).
-This will delete all previous log and intermediate temporary files for the entire project and is a good way to easily remove many unwanted files.</property>
-                                <property name="margin_top">6</property>
-                                <signal name="clicked" handler="onDeleteTemporaryFilesClicked" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">True</property>
-                                <property name="position">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel">
+                              <object class="GtkAlignment">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">True</property>
-                                <property name="position">1</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkFrame" id="fr_AdvCompat">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="halign">start</property>
-                                <property name="vexpand">True</property>
-                                <property name="label_xalign">0.05000000074505806</property>
+                                <property name="valign">start</property>
+                                <property name="left_padding">12</property>
                                 <child>
-                                  <object class="GtkAlignment">
+                                  <object class="GtkGrid">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="valign">start</property>
-                                    <property name="left_padding">12</property>
+                                    <property name="margin_top">4</property>
+                                    <property name="margin_bottom">6</property>
+                                    <property name="row_spacing">5</property>
                                     <child>
-                                      <object class="GtkGrid">
+                                      <object class="GtkCheckButton" id="c_AdvCompatLineSpacing">
+                                        <property name="label" translatable="yes">Legacy 1/14 LineSpacing</property>
                                         <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="margin_top">4</property>
-                                        <property name="margin_bottom">6</property>
-                                        <property name="row_spacing">5</property>
-                                        <child>
-                                          <object class="GtkCheckButton" id="c_AdvCompatLineSpacing">
-                                            <property name="label" translatable="yes">Legacy 1/14 LineSpacing</property>
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">True</property>
-                                            <property name="receives_default">False</property>
-                                            <property name="tooltip_text" translatable="yes">In the past, SpaceAbove and SpaceBelow were, in effect units of 1/14 of the base line spacing. This has changed so they are now in units of 1/12 of the base line spacing. Enabling this compatibility reverts the units.</property>
-                                            <property name="draw_indicator">True</property>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">0</property>
-                                            <property name="top_attach">0</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkCheckButton" id="c_tracing">
-                                            <property name="label" translatable="yes">Debug Tracing</property>
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">True</property>
-                                            <property name="receives_default">False</property>
-                                            <property name="tooltip_text" translatable="yes">This advanced feature is for
-troubleshooting use only.</property>
-                                            <property name="opacity">0.80000000000000004</property>
-                                            <property name="halign">start</property>
-                                            <property name="draw_indicator">True</property>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">0</property>
-                                            <property name="top_attach">2</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkCheckButton" id="c_AdvCompatGlyphMetrics">
-                                            <property name="label" translatable="yes">Use glyph metrics</property>
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">True</property>
-                                            <property name="receives_default">False</property>
-                                            <property name="tooltip_text" translatable="yes">ptxprint can use either the actual glyph metrics in a line or the font metrics to calculate line heights and depths.
-Font metrics gives more consistent results.</property>
-                                            <property name="halign">start</property>
-                                            <property name="draw_indicator">True</property>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">0</property>
-                                            <property name="top_attach">1</property>
-                                          </packing>
-                                        </child>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="tooltip_text" translatable="yes">In the past, SpaceAbove and SpaceBelow were, in effect units of 1/14 of the base line spacing. This has changed so they are now in units of 1/12 of the base line spacing. Enabling this compatibility reverts the units.</property>
+                                        <property name="draw_indicator">True</property>
                                       </object>
+                                      <packing>
+                                        <property name="left_attach">0</property>
+                                        <property name="top_attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="c_tracing">
+                                        <property name="label" translatable="yes">Debug Tracing</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="tooltip_text" translatable="yes">This advanced feature is for
+troubleshooting use only.</property>
+                                        <property name="opacity">0.80000000000000004</property>
+                                        <property name="halign">start</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">0</property>
+                                        <property name="top_attach">2</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="c_AdvCompatGlyphMetrics">
+                                        <property name="label" translatable="yes">Use glyph metrics</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="tooltip_text" translatable="yes">ptxprint can use either the actual glyph metrics in a line or the font metrics to calculate line heights and depths.
+Font metrics gives more consistent results.</property>
+                                        <property name="halign">start</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">0</property>
+                                        <property name="top_attach">1</property>
+                                      </packing>
                                     </child>
                                   </object>
                                 </child>
-                                <child type="label">
-                                  <object class="GtkLabel">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="label" translatable="yes">Compatibility</property>
-                                  </object>
-                                </child>
                               </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">True</property>
-                                <property name="position">2</property>
-                              </packing>
+                            </child>
+                            <child type="label">
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes">Compatibility</property>
+                              </object>
                             </child>
                           </object>
                           <packing>
@@ -16598,16 +16547,12 @@ all the required files and then send it to them:</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
                                     <property name="tooltip_text" translatable="yes">Create a ZIPped archive of all the files
-required to replicate this configuration
-on a different computer. Mainly used
-for troubleshooting issues. You may
-examine the contents of the ZIPped
-file before sending it to the PTXprint
-e-mail address for support.
-
-Note that there is an additional option
-on the Advanced tab which you may be
-requested to enable by the support team.</property>
+required to replicate this configuration.
+Useful for long-term archiving; but also
+used to access technical support.
+Examine the contents of the ZIPped 
+archive file before e-mailing it to:
+ptxprint_support@sil.org</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
                                     <property name="margin_left">16</property>

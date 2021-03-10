@@ -1061,13 +1061,13 @@ class ViewModel:
                 fname = getattr(self, v[0], (None if islist else v[2]))
                 if v[0] == "watermark" and fname is None:
                     fname = "A5-CopyrightWatermark.pdf"
-                print(f"{k=}, {v=}, {fname=}")
+                # print(f"{k=}, {v=}, {fname=}")
                 if fname is None: continue
                 if not isinstance(fname, (list, tuple)):
                     fname = [fname]
                 for f in fname:
                     res[f.as_posix()] = "shared/ptxprint/"+f.name
-                    print(f"{f.as_posix()=}, {f.name=}")
+                    # print(f"{f.as_posix()=}, {f.name=}")
 
         # fonts
         for k, v in TexModel._fonts.items():
