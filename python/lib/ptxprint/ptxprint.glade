@@ -2648,7 +2648,7 @@ on the image. Note that there are shortcuts:
                     <property name="tooltip_text" translatable="yes">Type the text for the Credit to be overlaid
 on the image. Note that there are shortcuts:
    (c)   --&gt; ©
-   dcc  --&gt; © David C. Cook
+   dcc  --&gt; © David C Cook
        or --&gt; © DCC   (if Sensitive Project is set)</property>
                     <property name="placeholder_text" translatable="yes">Enter Image Credit text...</property>
                     <signal name="changed" handler="onCopyrightStatementChanged" swapped="no"/>
@@ -2797,7 +2797,7 @@ which already have Credit Overlay settings.</property>
         <col id="1">even</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Both</col>
+        <col id="0" translatable="yes">Always</col>
         <col id="1">both</col>
       </row>
     </data>
@@ -4118,7 +4118,15 @@ reload the saved Config.</property>
                                 <property name="can_focus">True</property>
                                 <property name="tooltip_text" translatable="yes">It is important to include a copyright statement on every publication. By default this will be set according to the Paratext project settings, but you can edit it here if needed. 
 
-Note: If you manually type (c) then the © symbol will magically appear.</property>
+Note: There are several shortcuts you can use:
+   (c) --&gt; ©  the copyright sign
+   (r) --&gt; ®  to denote registered trademarks
+   (tm) --&gt; ™  to denote trademarks in general
+
+Other special codes converted at print time:
+use ~ for places where a non-breaking space is needed
+use // where a line break needs to be forced
+but :// used in URLs will still be preserved</property>
                                 <property name="hexpand">True</property>
                                 <property name="placeholder_text" translatable="yes">© 2021 Wycliffe Bible Translators, Inc.</property>
                                 <signal name="changed" handler="onCopyrightStatementChanged" swapped="no"/>
@@ -4175,8 +4183,17 @@ Paratext project settings.</property>
                                   <object class="GtkEntry">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
-                                    <property name="tooltip_text" translatable="yes">Select one of these licenses, 
-or type a different license.</property>
+                                    <property name="tooltip_text" translatable="yes">Select one of these licenses, or type a different license.
+
+Note: There are several shortcuts you can use:
+   (c) --&gt; ©  the copyright sign
+   (r) --&gt; ®  to denote registered trademarks
+   (tm) --&gt; ™  to denote trademarks in general
+
+Other special codes converted at print time:
+use ~ for places where a non-breaking space is needed
+use // where a line break needs to be forced
+but :// used in URLs will still be preserved</property>
                                   </object>
                                 </child>
                               </object>
@@ -7670,9 +7687,9 @@ or:  †,‡,§,∥,#    or: ✶,☆,✦,✪</property>
 the footnote callers from the
 Paratext project settings.
 
-Note that if the callers have not
-been defined in the Paratext project
-then the default set will be loaded.</property>
+If the callers have not been defined 
+in the Paratext project, or are already
+showing, then a default set will appear.</property>
                                                         <property name="margin_left">6</property>
                                                         <property name="margin_right">6</property>
                                                         <signal name="clicked" handler="onResetFNcallersClicked" swapped="no"/>
@@ -7936,9 +7953,9 @@ or:  †,‡,§,∥,#    or: ✶,☆,✦,✪</property>
 the cross-ref callers from the
 Paratext project settings.
 
-Note that if the callers have not
-been defined in the Paratext project
-then the default set will be loaded.</property>
+If the callers have not been defined 
+in the Paratext project, or are already
+showing, then a default set will appear.</property>
                                                         <property name="margin_left">6</property>
                                                         <property name="margin_right">6</property>
                                                         <signal name="clicked" handler="onResetXRcallersClicked" swapped="no"/>
@@ -9391,6 +9408,15 @@ in order to get accurate Image Copyright Attribution.</property>
                                       <object class="GtkTextView" id="textv_colophon">
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
+                                        <property name="tooltip_text" translatable="yes">Note: There are several shortcuts you can use:
+   (c) --&gt; ©  the copyright sign
+   (r) --&gt; ®  to denote registered trademarks
+   (tm) --&gt; ™  to denote trademarks in general
+
+Other special codes converted at print time:
+use ~ for places where a non-breaking space is needed
+use // where a line break needs to be forced
+but :// used in URLs will still be preserved</property>
                                         <property name="vexpand">True</property>
                                         <property name="wrap_mode">word</property>
                                         <property name="buffer">tb_colophon</property>
@@ -10480,7 +10506,7 @@ more than once (to update the list of page numbers).</property>
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">True</property>
                                                     <property name="halign">start</property>
-                                                    <property name="width_chars">12</property>
+                                                    <property name="width_chars">9</property>
                                                     <signal name="focus-out-event" handler="onAnchorRefChanged" swapped="no"/>
                                                   </object>
                                                   <packing>
@@ -10621,6 +10647,10 @@ Attribution:</property>
                                                   <object class="GtkEntry" id="t_plCopyright">
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">True</property>
+                                                    <property name="tooltip_text" translatable="yes">There are several shortcuts you can use:
+   (c) --&gt; ©  the copyright sign
+   (r) --&gt; ®  to denote registered trademarks
+   (tm) --&gt; ™  to denote trademarks in general</property>
                                                     <property name="hexpand">True</property>
                                                     <property name="placeholder_text" translatable="yes">by Artist Name © Year, Entity Name and License Type</property>
                                                     <signal name="changed" handler="onCopyrightStatementChanged" swapped="no"/>

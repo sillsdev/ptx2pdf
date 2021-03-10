@@ -1355,15 +1355,19 @@ class GtkViewModel(ViewModel):
 
     def onResetFNcallersClicked(self, btn_resetFNcallers):
         w = self.builder.get_object("t_fncallers")
-        w.set_text(re.sub(" ", ",", self.ptsettings.get('footnotes', "")))
-        if w.get_text() == "":
+        ptset = re.sub(" ", ",", self.ptsettings.get('footnotes', ""))
+        if ptset == "" or w.get_text() == ptset:
             w.set_text("a,b,c,d,e,f,✶,☆,✦,✪,†,‡,§")
-        
+        else:
+            w.set_text(ptset)
+
     def onResetXRcallersClicked(self, btn_resetXRcallers):
         w = self.builder.get_object("t_xrcallers")
-        w.set_text(re.sub(" ", ",", self.ptsettings.get('crossrefs', "")))
-        if w.get_text() == "":
+        ptset = re.sub(" ", ",", self.ptsettings.get('crossrefs', ""))
+        if ptset == "" or w.get_text() == ptset:
             w.set_text("†,‡,§,∥,#")
+        else:
+            w.set_text(ptset)
 
     def onFnBlendClicked(self, btn):
         self.onSimpleClicked(btn)
@@ -2560,6 +2564,8 @@ class GtkViewModel(ViewModel):
         t = w.get_text()
         t = re.sub("</?p>", "", t)
         t = re.sub("\([cC]\)", "\u00a9 ", t)
+        t = re.sub("\([rR]\)", "\u00ae ", t)
+        t = re.sub("\([tT][mM]\)", "\u2122 ", t)
         if btname == 't_plCreditText':
             if self.get('c_sensitive'):
                 t = re.sub(r"(?i)dcc", "\u00a9 DCC", t)
