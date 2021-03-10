@@ -366,17 +366,40 @@ A piclist file has a strict format:
   will be met in reading the input. The ptx macros will read the next
   entry and if the anchor reference entry is before or equal to the anchor reference entry
   of the previous entry, it and all future piclist entries will be ignored.
-- The anchor reference is of the form _bk_ _C_._V_, where _bk_ is the 3 letter
-  (all-caps) book identifier. The _C_ and _V_ are chapter and verse references. The verse reference must 
+
+Multiple lines *may* reference the same reference. In this case they will be
+processed in strict order of definition. It is up to the user to ensure that
+the combinations do not trigger an unprintable page.
+
+### Anchor references
+- The anchor for a chapter/verse reference is of the form ```_bk_ _C_._V_```,
+  where ```_bk_``` is the 3 letter (all-caps) book identifier. The ```_C_```
+  and ```_V_``` are chapter and verse references. The verse reference must 
   exactly match what comes after the `\v` tag. 
   The _bk_ may also have a 4th letter of `R` or `L` to indicate which side in a
   diglot is being referenced. Lack of a 4th letter implies it may be matched
   while processing either column, and the user has no preference about
   which font, etc. are used (normally `L` will match it first, but this is not guaranteed).
+- The anchor for a key term (e.g. ```\k This (Odd) Term\k*```) is the book and
+  the exact text (including punctuation) between `\k` and `\k*`, but excluding
+  any spaces. (i.e.  in the above example it will be ```_bk_ This(Odd)Term```
+- The anchor for a stand-alone milestones is the book and the ```id```
+  attribute for that marker e.g. ```\zfiga |id="rabbit123\*``` will trigger piclist 
+  entries starting ```_bk_ rabbit123```  If ```id``` is the default attribute
+  (as it is for ```\zfiga```, the shorter form ```\zfiga|rabbit123``` may also be used 
+  in the USFM. Note that at present only stand-alone milestones trigger figure 
+  inclusion.
+- A second or subsequent paragraph within a verse or keyterm entry may be referenced 
+  by appending an equals sign and a number. e.g. ```_bk_ 1.2=3``` will trigger on the third 
+  paragraph within verse 2 of chapter 1. The following should be noted: 
+  - There is only one paragraph counter which is reset at each change of
+    trigger. Thus the above example *will not* trigger if there
+    is no 3rd paragraph before the next verse number, nor will it trigger if some other
+    potential marker occurs.  
+  - As the first paragraph of the verse / key term is the one containing  that
+    item, a suffix of ```=1``` is an invalid trigger point and
+    will never match.
 
-Multiple lines *may* reference the same reference. In this case they will be
-processed in strict order of definition. It is up to the user to ensure that
-the combinations do not trigger an unprintable page.
 
 ## Captions
 
@@ -417,7 +440,8 @@ in the normal manner in the style sheet, via the `fig` marker, even though offic
 \LeftMargin 0.125
 
 ```
-The text will align to the standard page edge, unless the margins are modified as above. There is no support for controlling indentation of the first line or
+The text will align to the standard page edge, unless the margins are modified
+as above. There is no support for controlling indentation of the first line or
 other paragraphing style elements.
 
 ### Caption font and size
