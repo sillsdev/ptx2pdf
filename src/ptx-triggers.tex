@@ -72,6 +72,11 @@
   \let\c@rref=\oc@rref\let\dc@rref=\odc@rref
 }
 
+\def\runtrigg@rsother#1{%
+    \runtrigg@rs{\mkp@cref{\id@@@}{#1}}%
+    \edef\c@rref{\id@@@#1}\p@rnum=1% Paragraph number (for triggers) resets on keywords
+}
+
 \def\runtrigg@rs#1{%Generic something trigger (milestone, or...)
   \def\c@rref{#1}%
   \ifdiglot\def\dc@rref{#1\g@tdstat}\fi%

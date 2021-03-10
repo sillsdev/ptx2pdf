@@ -51,12 +51,12 @@
 
 \def\mkp@cid{\xdef\p@cid{piclist-\p@cref|\the\p@clistsuff}}
 
-\def\mkp@cref#1#2#3{%format the reference for book,chapter,verse that piclist (and anything wanting to trigger piclist entries) should use
-#1#2.#3-preverse}
+\def\mkp@cref#1#2{%format the reference for book,chapter.verse that piclist (and anything wanting to trigger piclist entries) should use
+#1#2-preverse}
   
-\def\parsep@cline #1 #2.#3 #4\endpicline{%
+\def\parsep@cline #1 #2 #3\endpicline{%
   \uppercase{\def\piclstb@@kref{#1}}%
-  \xdef\p@cref{\mkp@cref{\piclstb@@kref}{#2}{#3}}\gdef\p@cspec{#4}%Append -preverse because inline pics should be before the verse number
+  \xdef\p@cref{\mkp@cref{\piclstb@@kref}{#2}}\gdef\p@cspec{#3}%Append -preverse because inline pics should be before the verse number
   \ifpicslurp
     \ifx\l@stpicref\p@cref\else\p@clistsuff=1\fi
     \loop
@@ -71,7 +71,7 @@
     \iftemp\repeat
     \x@\global\x@\let\csname \p@cid\endcsname\p@cspec
     % Track defined pictures, so we can make a list of unused ones for error reporting
-    \edef\humanp@cref{\piclstb@@kref\space #2.#3\ifnum\p@clistsuff>1 (\the\p@clistsuff)\fi, }%
+    \edef\humanp@cref{\piclstb@@kref\space #2\ifnum\p@clistsuff>1 (\the\p@clistsuff)\fi, }%
     %\tracingassigns=1
     \x@\global\x@\let\csname used\p@cid\endcsname\humanp@cref
     \gdef\picchecklist{\csname used\p@cid\endcsname\picchecklist}%
