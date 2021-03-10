@@ -209,6 +209,8 @@
   \cl@singhooks{after}{\thismil@stone}\the\afterh@@ks
   \let\attr@b\empty\let\attrid\empty
 }
+\def\figmil@stone{zfiga}
+
 \def\st@ndalonemilestone{% FIXME:Potentially some kind of hook? Or use this as an image anchor?
   \trace{m}{st@ndalonemilestone (\attrid)}%
   \ifx\attrid\empty
@@ -219,7 +221,11 @@
   \ifx\attr@b\relax
     \runtrigg@rs{ms:\thismil@stone}%
   \else
-  \runtrigg@rs{\mkp@cref{\id@@@}{\thismil@stone}{\attr@b}}%
+    \ifx\thismil@stone\figmil@stone
+      \runtrigg@rs{\mkp@cref{\id@@@}{}{\attr@b}}%
+    \else
+      \runtrigg@rs{\mkp@cref{\id@@@}{\thismil@stone}{\attr@b}}%
+    \fi
     \runtrigg@rs{ms:\thismil@stone=\attr@b}%
   \fi
   \cl@singhooks{after}{\thismil@stone}\the\afterh@@ks\relax
