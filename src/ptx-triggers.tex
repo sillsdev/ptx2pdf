@@ -38,7 +38,7 @@
 % GEN14.5-preverse  is triggered before the verse number is output. It is possible that this is in vertical mode after a
 % paragraph break.
 % GEN14.5 is triggered after the verse number has been output. 
-%
+% GENk.thisword-preverse is triggered before the key term \k this word k*  is output
 
 \newtoks\trigg@rchecks
 \trigg@rchecks{}
@@ -63,9 +63,9 @@
     \settrig@refcv
   \fi
   \let\oc@rref=\c@rref\let\odc@rref=\dc@rref % Preserve old references so that we can restore it later.
-  \xdef\c@rref{\c@rref-\the\p@rnum}%
+  \xdef\c@rref{\c@rref=\the\p@rnum}%
   \ifdiglot
-    \xdef\dc@rref{\odc@rref-\the\p@rnum}%
+    \xdef\dc@rref{\odc@rref=\the\p@rnum}%
   \fi
   \trace{T}{running triggers \c@rref}%
   \the\trigg@rchecks
