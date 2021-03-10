@@ -1188,6 +1188,9 @@ class ViewModel:
                 if os.path.exists(mpath):
                     zf.write(mpath, self.prjid+"/src/mappings/"+mappingfile)
             self._archiveSupportAdd(zf, [x for x in self.tempFiles if x.endswith(".tex")])
+            self.finished()
+            self.busy = False
+            # unlockme() # FIXME @@@@@@@@@
         zf.close()
 
     def _archiveAdd(self, zf, books, includeTemps):
