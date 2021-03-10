@@ -25,13 +25,13 @@ Close MSYS2 MSYS terminal
 Open Git Bash terminal
 ```
 git clone --single-branch --branch 1_0 https://github.com/sillsdev/ptx2pdf.git
-pwd (this will tell you where to go later)
+pwd (this will tell you which path to cd to in the next step)
 ```
 Close Git Bash terminal
 
 Open MSYS2 MinGW 64-bit terminal
 ```
-cd c:/users/<your username>/ptx2pdf
+cd c:/users/<your username>/ptx2pdf  (which is the path that you got from the previous pwd command)
 python setup.py install
 
 python python/scripts/ptxprint -p test/projects -f test/fonts
