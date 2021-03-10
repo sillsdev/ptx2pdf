@@ -936,29 +936,15 @@ class TexModel:
             if self.asBool("document/iffigexclwebapp"):
                 self.localChanges.append((None, regex.compile(r'(?i)\\fig ([^|]*\|){3}([aw]+)\|[^\\]*\\fig\*', flags=regex.M), ''))  # USFM2
                 self.localChanges.append((None, regex.compile(r'(?i)\\fig [^\\]*\bloc="[aw]+"[^\\]*\\fig\*', flags=regex.M), ''))    # USFM3
-            def figtozfig(m):
-                a = self.piclist.getAnchor(m.group(1), bk)
-                return "\\xfig|{}\\".format(a) if a is not None else ""
-            self.localChanges.append((None, regex.compile(r'\\fig .*?src="([^"]+)".*?\\fig\*', flags=regex.M), figtozfig))
-            self.localChanges.append((None, regex.compile(r'\\fig .*?|(.*?)|.*?\\fig\*', flags.regex.M), figtzfig))
-
-            # Change orig-fname to newbase-name + new extension
-            figChangeList = self.figNameChanges(printer, bk)
-            if len(figChangeList):
-                missingPics = []
-                for origfn,tempfn in figChangeList:
-                    origfn = re.escape(origfn)
-                    if tempfn != "":
-                        self.localChanges.append((None, regex.compile(r"(?i)(?<fig>\\fig .*?\|){}(\|.+?\\fig\*)".format(origfn), \
-                                                     flags=regex.M), r"\g<fig>{}\2".format(tempfn)))                               #USFM2
-                        self.localChanges.append((None, regex.compile(r'(?i)(?<fig>\\fig .*?src="){}(" .+?\\fig\*)'.format(origfn), \
-                                                     flags=regex.M), r"\g<fig>{}\2".format(tempfn)))                               #USFM3
-                    else:
-                        missingPics += [origfn]
-                        if self.asBool("document/iffigskipmissing"):
-                            # print("(?i)(\\fig .*?\|){}(\|.+?\\fig\*)".format(origfn), "--> Skipped!!!!")
-                            self.localChanges.append((None, regex.compile(r"(?i)\\fig .*?\|{}\|.+?\\fig\*".format(origfn), flags=regex.M), ""))     #USFM2
-                            self.localChanges.append((None, regex.compile(r'(?i)\\fig .*?src=\"{}\" .+?\\fig\*'.format(origfn), flags=regex.M), "")) #USFM3
+            print(self.printer.picinfos)
+            def figtozfiga(m):
+                a = self.printer.picinfos.getAnchor(m.group(1), bk)
+                if a is None:
+                    return ""
+                ref = re.sub(r"^.*?\.(.*?)$", r"\1", a)
+                return "\\zfiga|{}\\*".format(ref)
+            self.localChanges.append((None, regex.compile(r'\\fig .*?src="([^"]+?)".*?\\fig\*', flags=regex.M), figtozfiga))
+            self.localChanges.append((None, regex.compile(r'\\fig .*?\|(.*?)\|.*?\\fig\*', flags=regex.M), figtozfiga))
 
             if self.asBool("document/iffighiderefs"): # del ch:vs from caption 
                 self.localChanges.append((None, regex.compile(r"(\\fig [^\\]+?\|)([0-9:.\-,\u2013\u2014]+?)(\\fig\*)", \

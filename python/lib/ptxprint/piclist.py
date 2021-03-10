@@ -306,7 +306,7 @@ class PicInfo(dict):
                     m = re.findall(r"(?ms)\\fig (.*?)\|(.+?\.....?)\|(col|span)[^|]*\|([^\\]+?)?\\fig\*", dat)
                     if len(m):
                         for i, f in enumerate(m):
-                            r = "{}{} 1.{}".format(bk, suffix, i)
+                            r = "{}{} .{}".format(bk, suffix, i)
                             pic = {'anchor': r, 'caption':f[0].strip(), 'src': f[1], 'size': f[2]}
                             key = self.newkey(suffix)
                             self[key] = pic
@@ -546,9 +546,9 @@ class PicInfo(dict):
         for k, v in self.items():
             if v.get('src', None) != src:
                 continue
-            if bk is not None and not k.startswith(bk):
+            if bk is not None and not v['anchor'].startswith(bk):
                 continue
-            return k
+            return v['anchor']
         return None
 
 def PicInfoUpdateProject(model, bks, allbooks, picinfos, suffix="", random=False, cols=1, doclear=True, clearsuffix=False):
