@@ -1,6 +1,8 @@
 PTXprint 1.5.17 Release Notes 
 10 March 2021
 
+"Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
+
 Bug Fixes and Improvements in 1.5.17
 
   * Bug fix: Media permission tooltip (in Pictures, Details) works now - was broken since localization was introduced
