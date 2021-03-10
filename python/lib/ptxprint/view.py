@@ -991,7 +991,7 @@ class ViewModel:
         res.append(os.path.join(cpath, "ptxprint.sty"))
         return res
 
-    def _getArchiveFiles(self, books, includeTemps, prjid=None, cfgid=None):
+    def _getArchiveFiles(self, books, prjid=None, cfgid=None):
         sfiles = {'c_useCustomSty': ("custom.sty", False),
                   'c_useModsSty': ("ptxprint-mods.sty", True),
                   'c_useModsTex': ("ptxprint-mods.tex", True),
@@ -1047,8 +1047,6 @@ class ViewModel:
                 if pic.endswith(".piclist") and pic in picbks:
                     res[os.path.join(piclstpath, pic)] = cfpath+"PicLists/"+pic
         jobpiclistfs = ["{}-{}.piclist".format(prjid, cfgid), "picChecks.txt"]
-        if not includeTemps:
-            jobpiclistfs += ["ptxprint.sty"]
         for jobpiclistf in jobpiclistfs:
             jobpiclist = os.path.join(basecfpath, jobpiclistf)
             if os.path.exists(jobpiclist):
@@ -1087,13 +1085,12 @@ class ViewModel:
                 fname = os.path.basename(f.filename)
                 res[f.filename] = "shared/fonts/"+fname
 
-        if includeTemps:
-            regularfont = self.get("bl_fontR")
-            tempfile = NamedTemporaryFile("w", encoding="utf-8", newline=None, delete=False)
-            self.styleEditor.output_diffile(tempfile, regular=regularfont, inArchive=True)
-            tempfile.close()
-            res[tempfile.name] = cfpath+"ptxprint.sty"
-            tmpfiles.append(tempfile.name)
+        regularfont = self.get("bl_fontR")
+        tempfile = NamedTemporaryFile("w", encoding="utf-8", newline=None, delete=False)
+        self.styleEditor.output_diffile(tempfile, regular=regularfont, inArchive=True)
+        tempfile.close()
+        res[tempfile.name] = cfpath+"ptxprint.sty"
+        tmpfiles.append(tempfile.name)
 
         # config files
         for t, a in sfiles.items():
@@ -1154,7 +1151,6 @@ class ViewModel:
         return digview
 
     def createArchive(self, filename=None):
-        includeTemps = self.get("c_archiveTemps")
         if filename is None:
             filename = os.path.join(self.configPath(self.configName()), "ptxprintArchive.zip")
         if not filename.lower().endswith(".zip"):
@@ -1164,39 +1160,36 @@ class ViewModel:
         except OSError:
             self.doError(_("Error: Cannot create Archive!"), secondary=_("The ZIP file seems to open in another program."))
             return
-        self._archiveAdd(zf, self.getBooks(files=True), includeTemps)
+        self._archiveAdd(zf, self.getBooks(files=True))
         if self.diglotView is not None:
-            self.diglotView._archiveAdd(zf, self.getBooks(files=True), includeTemps)
-        if includeTemps:
-            from ptxprint.runjob import RunJob
-            runjob = RunJob(self, self.scriptsdir, self.args, inArchive=True)
-            runjob.doit()
-            temps = [x.replace(".xdv", ".pdf") for x in self.tempFiles if x.endswith(".xdv")]
-            for f in self.tempFiles + temps:
-                pf = os.path.join(self.working_dir, f)
-                if os.path.exists(pf):
-                    outfname = os.path.relpath(pf, self.settings_dir)
-                    zf.write(pf, outfname)
-            ptxmacrospath = self.scriptsdir
-            for f in os.listdir(ptxmacrospath):
-                if f.endswith(".tex") or f.endswith(".sty"):
-                    zf.write(os.path.join(ptxmacrospath, f), self.prjid+"/src/"+f)
-            mappingfile = self.get("fcb_digits")
-            if mappingfile is not None and mappingfile != "Default":
-                mappingfile = mappingfile.lower()+"digits.tec"
-                mpath = os.path.join(ptxmacrospath, "mappings", mappingfile)
-                if os.path.exists(mpath):
-                    zf.write(mpath, self.prjid+"/src/mappings/"+mappingfile)
-            self._archiveSupportAdd(zf, [x for x in self.tempFiles if x.endswith(".tex")])
-            self.finished()
-            self.busy = False
-            # unlockme() # FIXME @@@@@@@@@
+            self.diglotView._archiveAdd(zf, self.getBooks(files=True))
+        from ptxprint.runjob import RunJob
+        runjob = RunJob(self, self.scriptsdir, self.args, inArchive=True)
+        runjob.doit(noview=True)
+        # unlockme
+        temps = [x.replace(".xdv", ".pdf") for x in self.tempFiles if x.endswith(".xdv")]
+        for f in self.tempFiles + temps:
+            pf = os.path.join(self.working_dir, f)
+            if os.path.exists(pf):
+                outfname = os.path.relpath(pf, self.settings_dir)
+                zf.write(pf, outfname)
+        ptxmacrospath = self.scriptsdir
+        for f in os.listdir(ptxmacrospath):
+            if f.endswith(".tex") or f.endswith(".sty"):
+                zf.write(os.path.join(ptxmacrospath, f), self.prjid+"/src/"+f)
+        mappingfile = self.get("fcb_digits")
+        if mappingfile is not None and mappingfile != "Default":
+            mappingfile = mappingfile.lower()+"digits.tec"
+            mpath = os.path.join(ptxmacrospath, "mappings", mappingfile)
+            if os.path.exists(mpath):
+                zf.write(mpath, self.prjid+"/src/mappings/"+mappingfile)
+        self._archiveSupportAdd(zf, [x for x in self.tempFiles if x.endswith(".tex")])
         zf.close()
 
-    def _archiveAdd(self, zf, books, includeTemps):
+    def _archiveAdd(self, zf, books):
         prjid = self.prjid
         cfgid = self.configName()
-        entries, cfgchanges, tmpfiles = self._getArchiveFiles(books, includeTemps, prjid=prjid, cfgid=cfgid)
+        entries, cfgchanges, tmpfiles = self._getArchiveFiles(books, prjid=prjid, cfgid=cfgid)
         for k, v in entries.items():
             if os.path.exists(k):
                 zf.write(k, arcname=prjid + "/" + v)
@@ -1230,7 +1223,16 @@ class ViewModel:
             scriptlines.append("FONTCONFIG_FILE=`pwd`/../fonts.conf TEXINPUTS=../src:. xetex {}".format(os.path.basename(t)))
         zinfo = ZipInfo("{}/runtex.sh".format(self.prjid))
         zinfo.external_attr = 0o755 << 16
+        zinfo.create_system = 3
         zf.writestr(zinfo, "\n".join(scriptlines))
+        batfile = """@echo off
+for %%i in (xetex.exe) do set truetex=%%~$PATH:i
+if "%truetex%" == "" set truetex=C:\\Program Files\\PTXprint\\xetex\\bin\\xetex.exe
+set FONTCONFIG_FILE="%cd%\\..\\fonts.conf"
+set TEXINPUTS=..\\src"""
+        for t in texfiles:
+            batfile += '\nif exists "%truetex%" "%truetex%" {}'.format(os.path.basename(t))
+        zf.writestr("{}/runtex.bat".format(self.prjid), batfile)
             
 
     def updateThumbLines(self):
