@@ -371,8 +371,11 @@ class PicList:
                         if self.picrect is None:
                             picframe = self.builder.get_object("fr_picPreview")
                             self.picrect = picframe.get_allocation()
-                        pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(fpath, self.picrect.width - 6, self.picrect.height - 6)
-                        self.setPreview(pixbuf, tooltip=fpath)
+                        if self.picrect.width > 10 and self.picrect.height > 10:
+                            pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(fpath, self.picrect.width - 6, self.picrect.height - 6)
+                            self.setPreview(pixbuf, tooltip=fpath)
+                        else:
+                            self.setPreview(None)
                     else:
                         self.setPreview(None)
                 self.parent.updatePicChecks(val)       # only update checks if src exists

@@ -9736,64 +9736,6 @@ content of Headers and Footers.</property>
                                         <child>
                                           <object class="GtkCellRendererText" id="cr_media"/>
                                           <attributes>
-                                            <attribute name="text">17</attribute>
-                                          </attributes>
-                                        </child>
-                                      </object>
-                                    </child>
-                                    <child>
-                                      <object class="GtkTreeViewColumn" id="col_credit">
-                                        <property name="resizable">True</property>
-                                        <property name="spacing">2</property>
-                                        <property name="sizing">fixed</property>
-                                        <property name="fixed_width">100</property>
-                                        <property name="title" translatable="yes">Credit</property>
-                                        <child>
-                                          <object class="GtkCellRendererText" id="cr_credit"/>
-                                          <attributes>
-                                            <attribute name="text">10</attribute>
-                                          </attributes>
-                                        </child>
-                                      </object>
-                                    </child>
-                                    <child>
-                                      <object class="GtkTreeViewColumn" id="col_crrot">
-                                        <property name="spacing">2</property>
-                                        <property name="sizing">fixed</property>
-                                        <property name="fixed_width">38</property>
-                                        <property name="title" translatable="yes">CrRotate</property>
-                                        <property name="alignment">0.5</property>
-                                        <child>
-                                          <object class="GtkCellRendererText" id="cr_crotate"/>
-                                          <attributes>
-                                            <attribute name="text">11</attribute>
-                                          </attributes>
-                                        </child>
-                                      </object>
-                                    </child>
-                                    <child>
-                                      <object class="GtkTreeViewColumn" id="col_crbox">
-                                        <property name="spacing">2</property>
-                                        <property name="sizing">fixed</property>
-                                        <property name="fixed_width">45</property>
-                                        <property name="title" translatable="yes">CrBox</property>
-                                        <child>
-                                          <object class="GtkCellRendererText" id="cr_crbox"/>
-                                          <attributes>
-                                            <attribute name="text">12</attribute>
-                                          </attributes>
-                                        </child>
-                                      </object>
-                                    </child>
-                                    <child>
-                                      <object class="GtkTreeViewColumn" id="col_crposn">
-                                        <property name="spacing">2</property>
-                                        <property name="sizing">fixed</property>
-                                        <property name="fixed_width">20</property>
-                                        <property name="title">CrPosn</property>
-                                        <child>
-                                          <object class="GtkCellRendererText" id="cr_crpos"/>
-                                          <attributes>
                                             <attribute name="text">13</attribute>
                                           </attributes>
                                         </child>

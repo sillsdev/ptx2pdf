@@ -12,6 +12,9 @@ from ptxprint.usfmerge import usfmerge
 from ptxprint.utils import _, universalopen, print_traceback
 
 _errmsghelp = {
+"*** WARNING: Sidebar or colophon might not print on page": \
+                                         _("The colophon seems to be too big for the page.\n" +\
+                                           "Try shortening it, or move it all to the FRT book."),
 "! Argument":                            _("Probably a TeX macro problem - contact support, or post a bug report"),
 "\zcolophon":                            _("This may be caused by an improperly defined Colophon.\n\n" +\
                                            "Try turning off the Include Colophon setting on Header+Footer page.\n" +\
