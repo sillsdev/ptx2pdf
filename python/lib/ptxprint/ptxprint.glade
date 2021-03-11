@@ -1414,8 +1414,8 @@ saved configuration.</property>
         <col id="9">N</col>
         <col id="10">False</col>
         <col id="11">False</col>
-        <col id="12"/>
-        <col id="13"/>
+        <col id="12">MRK 1:16</col>
+        <col id="13">paw</col>
       </row>
       <row>
         <col id="0">JHN 3:16-17</col>
@@ -1430,8 +1430,8 @@ saved configuration.</property>
         <col id="9">N</col>
         <col id="10">False</col>
         <col id="11">False</col>
-        <col id="12"/>
-        <col id="13"/>
+        <col id="12">JHN 3:16-17</col>
+        <col id="13">paw</col>
       </row>
       <row>
         <col id="0">GLO 1:0</col>
@@ -1446,8 +1446,8 @@ saved configuration.</property>
         <col id="9">N</col>
         <col id="10">False</col>
         <col id="11">False</col>
-        <col id="12"/>
-        <col id="13"/>
+        <col id="12">GLO 1:0</col>
+        <col id="13">paw</col>
       </row>
     </data>
   </object>
@@ -3744,6 +3744,7 @@ to create the neccessary file to print from it.</property>
                                 <property name="can_focus">True</property>
                                 <property name="max_length">3</property>
                                 <property name="width_chars">2</property>
+                                <property name="text">1</property>
                                 <property name="progress_pulse_step">0</property>
                                 <property name="adjustment">a_chapfrom</property>
                                 <property name="climb_rate">1</property>
@@ -6119,7 +6120,7 @@ space width.</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="width_chars">3</property>
-                                        <property name="text" translatable="yes">1.0</property>
+                                        <property name="text">1.0</property>
                                         <property name="adjustment">a_letterShrink</property>
                                         <property name="climb_rate">0.20000000000000001</property>
                                         <property name="digits">1</property>
@@ -6135,7 +6136,7 @@ space width.</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="width_chars">3</property>
-                                        <property name="text" translatable="yes">5.0</property>
+                                        <property name="text">5.0</property>
                                         <property name="adjustment">a_letterStretch</property>
                                         <property name="climb_rate">0.20000000000000001</property>
                                         <property name="digits">1</property>
@@ -13135,6 +13136,7 @@ from XeTeX processing.</property>
                                 <property name="can_focus">True</property>
                                 <property name="tooltip_text" translatable="yes">The height of the Thumb Tab measured in millimeters (mm).</property>
                                 <property name="halign">start</property>
+                                <property name="text">6.0</property>
                                 <property name="width_chars">5</property>
                                 <property name="adjustment">a_thumbheight</property>
                                 <property name="climb_rate">0.10000000000000001</property>
@@ -13216,6 +13218,7 @@ Tab Positions:</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="width_chars">5</property>
+                                <property name="text">11</property>
                                 <property name="adjustment">a_thumbtabs</property>
                               </object>
                               <packing>
@@ -13230,6 +13233,7 @@ Tab Positions:</property>
                                 <property name="tooltip_text" translatable="yes">The length of the Thumb Tab measured in millimeters (mm).</property>
                                 <property name="halign">start</property>
                                 <property name="width_chars">5</property>
+                                <property name="text">15</property>
                                 <property name="progress_pulse_step">0</property>
                                 <property name="adjustment">a_thumblength</property>
                                 <property name="climb_rate">0.10000000000000001</property>
@@ -14101,7 +14105,7 @@ font and size to ensure verses fit well.</property>
                               <object class="GtkSpinButton" id="s_verseDecoratorShift">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
-                                <property name="text" translatable="yes">0.0</property>
+                                <property name="text">0.0</property>
                                 <property name="adjustment">a_verseDecoratorShift</property>
                                 <property name="climb_rate">0.10000000000000001</property>
                                 <property name="digits">1</property>
@@ -14128,7 +14132,7 @@ font and size to ensure verses fit well.</property>
                               <object class="GtkSpinButton" id="s_verseDecoratorScale">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
-                                <property name="text" translatable="yes">1.0</property>
+                                <property name="text">1.0</property>
                                 <property name="adjustment">a_verseDecoratorScale</property>
                                 <property name="climb_rate">0.10000000000000001</property>
                                 <property name="digits">1</property>
@@ -14256,7 +14260,7 @@ to make it fit. </property>
                               <object class="GtkSpinButton" id="s_inclSectionShift">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
-                                <property name="text" translatable="yes">0.0</property>
+                                <property name="text">0.0</property>
                                 <property name="adjustment">a_inclSectionShift</property>
                                 <property name="climb_rate">0.10000000000000001</property>
                                 <property name="digits">1</property>
@@ -14270,7 +14274,7 @@ to make it fit. </property>
                               <object class="GtkSpinButton" id="s_inclSectionScale">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
-                                <property name="text" translatable="yes">1.0</property>
+                                <property name="text">1.0</property>
                                 <property name="adjustment">a_inclSectionScale</property>
                                 <property name="climb_rate">0.10000000000000001</property>
                                 <property name="digits">1</property>
