@@ -224,7 +224,7 @@ class PicList:
                 else:
                     val = pgpos[1:] or ""
             elif k == 'nlines':
-                val = re.sub(r'^\D*', "", pgpos)
+                val = re.sub(r'^[^\-\d]*', "", pgpos)
                 try:
                     val = int(val)
                 except (ValueError, TypeError):

@@ -315,23 +315,21 @@ class GtkViewModel(ViewModel):
         gladefile = os.path.join(os.path.dirname(__file__), "ptxprint.glade")
         GObject.type_register(GtkSource.View)
         GObject.type_register(GtkSource.Buffer)
-        if sys.platform.startswith("win"):
-            tree = et.parse(gladefile)
-            for node in tree.iter():
-                if 'translatable' in node.attrib:
-                    node.text = _(node.text)
-                    del node.attrib['translatable']
-                if node.get('name') in ('pixbuf', 'icon', 'logo'):
-                    node.text = os.path.join(os.path.dirname(__file__), node.text)
-                if node.get('id') == 'tb_colophon':
-                    node.set('class', 'GtkSourceBuffer')
-                elif node.get('id') == 'textv_colophon':
-                    node.set('class', 'GtkSourceView')
-            xml_text = et.tostring(tree.getroot(), encoding='unicode', method='xml')
-            self.builder = Gtk.Builder.new_from_string(xml_text, -1)
-        else:
-            self.builder.set_translation_domain(APP)
-            self.builder.add_from_file(gladefile)
+        tree = et.parse(gladefile)
+        for node in tree.iter():
+            if 'translatable' in node.attrib:
+                node.text = _(node.text)
+                del node.attrib['translatable']
+            if node.get('name') in ('pixbuf', 'icon', 'logo'):
+                node.text = os.path.join(os.path.dirname(__file__), node.text)
+            if node.get('id') == 'tb_colophon':
+                node.set('class', 'GtkSourceBuffer')
+            elif node.get('id') == 'textv_colophon':
+                node.set('class', 'GtkSourceView')
+        xml_text = et.tostring(tree.getroot(), encoding='unicode', method='xml')
+        self.builder = Gtk.Builder.new_from_string(xml_text, -1)
+        #    self.builder.set_translation_domain(APP)
+        #    self.builder.add_from_file(gladefile)
         self.builder.connect_signals(self)
         super(GtkViewModel, self).__init__(settings_dir, workingdir, userconfig, scriptsdir, args)
         self.isDisplay = True
