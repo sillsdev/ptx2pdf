@@ -17,7 +17,7 @@ import datetime, time
 import json
 from shutil import copyfile, copytree, move
 
-VersionStr = "1.5.17"
+VersionStr = "1.5.18"
 
 pdfre = re.compile(r".+[\\/](.+)\.pdf")
 
@@ -433,7 +433,11 @@ class ViewModel:
                     bks = bks[0]
                 except IndexError:
                     bks = _("No book selected!")
-            return "PTXprint {}   -  {} ({}) {}".format(VersionStr, prjid, bks, self.get("ecb_savedConfig") or "")
+            prjcfg = "{}:{}".format(prjid, self.get("ecb_savedConfig", "")) 
+            if self.get("c_diglot"):  # self.get("ecb_diglotSecConfig")
+                prjcfg2 = "{}:{}".format(self.get("fcb_diglotSecProject", "!NoSecPrj!"), self.get("ecb_diglotSecConfig", "")) 
+                prjcfg = "[{} + {}]".format(prjcfg, prjcfg2)
+            return "PTXprint {}   -   {}   ({})".format(VersionStr, prjcfg, bks)
 
     def readCopyrights(self):
         with open(os.path.join(os.path.dirname(__file__), "picCopyrights.json"), encoding="utf-8", errors="ignore") as inf:

@@ -117,7 +117,6 @@ _sensitivities = {
         "r_book_single":       ["ecb_book", "l_chapfrom", "s_chapfrom", "l_chapto", "s_chapto"],
         "r_book_multiple":     ["btn_chooseBooks", "t_booklist", "c_combine", "c_autoToC"],
         "r_book_module":       ["btn_chooseBibleModule", "lb_bibleModule"]},
-        # "r_book_dbl":          ["btn_chooseDBLbundle", "l_dblBundle"]},
     "c_mainBodyText" :         ["gr_mainBodyText"],
     "c_doublecolumn" :         ["gr_doubleColumn", "c_singleColLayout", "t_singleColBookList"],
     "c_useFallbackFont" :      ["btn_findMissingChars", "t_missingChars", "l_fallbackFont", "bl_fontExtraR"],
@@ -190,7 +189,6 @@ _object_classes = {
                     "btn_adjust_spacing", "btn_adjust_top", "btn_adjust_bottom", )
 }
 
-    # "Center": "c", 
 _pgpos = {
     "Top": "t", 
     "Bottom": "b", 
@@ -216,6 +214,7 @@ _selcols = {
     "checklist": ["anchor", "caption", "file", "desc"]
 }
 
+_availableColophons = ("fr", "es") # update when .json file gets expanded
 _defaultColophon = r"""\pc \zcopyright
 \pc \zlicense
 \b 
@@ -237,7 +236,6 @@ _signals = {
     'changed': ("ComboBox", "Entry"),
     'color-set': ("ColorButton",),
     'change-current-page': ("Notebook",),
-    #'change-value': ("SpinButton",),
     'value-changed': ("SpinButton",),
     'state-set': ("Switch",),
     'row-activated': ("TreeView",),
@@ -258,9 +256,9 @@ def _doError(text, secondary="", title=None, copy2clip=False, show=True):
         clipboard.set_text(s, -1)
         clipboard.store() # keep after app crashed
         if secondary is not None:
-            secondary += "\n\n" + " "*20 + "[" + _("This message has been copied to the clipboard.")+ "]"
+            secondary += "\n\n" + " "*18 + "[" + _("This message has been copied to the clipboard.")+ "]"
         else:
-            secondary = " "*20 + "[" + _("This message has been copied to the clipboard.")+ "]"
+            secondary = " "*18 + "[" + _("This message has been copied to the clipboard.")+ "]"
     if show:
         dialog = Gtk.MessageDialog(parent=None, message_type=Gtk.MessageType.ERROR,
                  buttons=Gtk.ButtonsType.OK, text=text)
@@ -406,10 +404,6 @@ class GtkViewModel(ViewModel):
             view.connect("focus-out-event", self.onViewerLostFocus)
             view.connect("focus-in-event", self.onViewerFocus)
             
-        # for a in ("colophon", ):
-            # tb = self.builder.get_object("tb_" + a) @@@@
-            
-
         if self.get("c_colophon") and self.get("tb_colophon") == "":
             self.set("tb_colophon", _defaultColophon)
 
@@ -2306,6 +2300,7 @@ class GtkViewModel(ViewModel):
         else:
             self.setPrintBtnStatus(2)
             self.diglotView = None
+        self.updateDialogTitle()
         self.loadPics()
         self.updatePicList()
 
@@ -2353,6 +2348,7 @@ class GtkViewModel(ViewModel):
         
     def ondiglotSecProjectChanged(self, btn):
         self.updateDiglotConfigList()
+        self.updateDialogTitle()
 
     def ondiglotSecConfigChanged(self, btn):
         if self.loadingConfig:
@@ -2564,10 +2560,16 @@ class GtkViewModel(ViewModel):
     def onColophonClicked(self, btn):
         self.onSimpleClicked(btn)
         if self.get("c_colophon") and self.get("tb_colophon") == "":
-            self.set("tb_colophon", _defaultColophon)
+            self.localizeDefColophon()
 
     def onColophonResetClicked(self, btn):
-        self.set("tb_colophon", _defaultColophon)
+        self.localizeDefColophon()
+        
+    def localizeDefColophon(self):
+        ct = _defaultColophon
+        if self.lang in _availableColophons:
+            ct = re.sub(r'\\zimagecopyrights', r'\\zimagecopyrights' + self.lang, ct)
+        self.set("tb_colophon", ct)
 
     def onResetCopyrightClicked(self, btn):
         self.builder.get_object("t_copyrightStatement").set_text(self._getPtSettings().get('Copyright', ""))

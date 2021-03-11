@@ -1,8 +1,24 @@
-PTXprint 1.5.17 Release Notes 
-10 March 2021
+PTXprint 1.5.18 Release Notes 
+12 March 2021
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 
+Bug Fixes and Improvements in 1.5.18
+
+  * Pictures in peripheral books now work and can be manipulated via the PicList settings 
+    Notes: you will need to regenerate the PicList for those peripheral books
+           you can also use a \k keyword or phrase\k* as picture Anchor Ref (e.g. BAK k.keywordorphrase)
+  
+  * Title bar now reflects Diglot project name and config
+  
+  * Adjust margins when upgrading from existing saved configs
+  
+  * Fix AdjList generation so that it is sorted properly
+  
+  * Thumbtab UI improved 
+  
+  * Installer shows the Release Notes BEFORE installation (giving you a chance to back out if needed)
+  
 Bug Fixes and Improvements in 1.5.17
 
   * Bug fix: Media permission tooltip (in Pictures, Details) works now - was broken since localization was introduced
