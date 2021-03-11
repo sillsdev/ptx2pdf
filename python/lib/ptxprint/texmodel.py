@@ -434,6 +434,8 @@ class TexModel:
         self.calculateMargins()
         if self.inArchive:
             for b, a in Borders.items():
+                if self.dict[a[1]] is None or not self.dict[a[1]]:
+                    continue
                 islist = a[2].startswith("\\")
                 fname = getattr(self.printer, a[0], (None if islist else a[2]))
                 if fname is None:
