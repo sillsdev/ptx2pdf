@@ -186,7 +186,7 @@ _object_classes = {
                     "lb_style_rb", "lb_style_gloss|rb", "lb_style_toc3", "lb_style_x-credit|fig"), 
     "stybutton":   ("btn_reloadConfig", "btn_resetCopyright", "btn_resetColophon", "btn_resetFNcallers", "btn_resetXRcallers", 
                     "btn_styAdd", "btn_styEdit", "btn_styDel", "btn_styReset", "btn_refreshFonts", "btn_resetStyFilter",
-                    "btn_plAdd", "btn_plDel", "btn_plGenerate", "btn_plSaveEdits",
+                    "btn_plAdd", "btn_plDel", "btn_plGenerate", "btn_plSaveEdits", "btn_resetTabGroups",
                     "btn_adjust_spacing", "btn_adjust_top", "btn_adjust_bottom", )
 }
 
@@ -1368,6 +1368,9 @@ class GtkViewModel(ViewModel):
             w.set_text("†,‡,§,∥,#")
         else:
             w.set_text(ptset)
+
+    def onResetTabGroupsClicked(self, btn_resetTabGroups):
+        self.set("t_thumbgroups", "GAL EPH PHP COL; 1TI 2TI TIT PHM; JAS 1PE 2PE; 1JN 2JN 3JN JUD")
 
     def onFnBlendClicked(self, btn):
         self.onSimpleClicked(btn)
@@ -2616,8 +2619,13 @@ class GtkViewModel(ViewModel):
         self.picListView.del_row()
 
     def onAnchorRefChanged(self, t_plAnchor, foo): # called on "focus-out-event"
-        # Ensure that the anchor ref only uses . (and not :) as the ch.vs separator and is upperCASE
-        self.set("t_plAnchor", re.sub(r':', r'.', self.get('t_plAnchor').upper()))
+        # Ensure that the anchor ref only uses . (and not :) as the ch.vs separator and that _bk_ is upperCASE
+        a = self.get('t_plAnchor')
+        a = a[:4].upper() + re.sub(r'(\d+):(\d+)', r'\1.\2', a[4:])
+        # Make sure there are no spaces after the _bk_ code (easy to paste in a \k "phrase with spaces:"\k*
+        #                                                   which gets converted to k.phrasewithspaces:
+        a = a[:5] + re.sub(' ', '', a[5:])
+        self.set("t_plAnchor", a)
 
     def resetParam(self, btn, foo):
         label = Gtk.Buildable.get_name(btn.get_child())

@@ -10506,7 +10506,7 @@ more than once (to update the list of page numbers).</property>
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">True</property>
                                                     <property name="halign">start</property>
-                                                    <property name="width_chars">9</property>
+                                                    <property name="width_chars">14</property>
                                                     <signal name="focus-out-event" handler="onAnchorRefChanged" swapped="no"/>
                                                   </object>
                                                   <packing>
@@ -13158,7 +13158,7 @@ from XeTeX processing.</property>
                             <property name="margin_right">6</property>
                             <property name="margin_bottom">6</property>
                             <property name="row_spacing">6</property>
-                            <property name="column_spacing">6</property>
+                            <property name="column_spacing">4</property>
                             <child>
                               <object class="GtkLabel">
                                 <property name="visible">True</property>
@@ -13209,18 +13209,19 @@ from XeTeX processing.</property>
                               <object class="GtkLabel">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="tooltip_text" translatable="yes">Thumb Tabs usually use a dark colour for the Tab with a light (or white) text.</property>
+                                <property name="tooltip_text" translatable="yes">Thumb Tabs usually use a dark colour
+for the Tab with a light (or white) text.</property>
                                 <property name="halign">end</property>
                                 <property name="label" translatable="yes">Tab Colour:</property>
                               </object>
                               <packing>
-                                <property name="left_attach">2</property>
-                                <property name="top_attach">1</property>
+                                <property name="left_attach">6</property>
+                                <property name="top_attach">3</property>
                               </packing>
                             </child>
                             <child>
                               <object class="GtkColorButton" id="col_thumbback">
-                                <property name="width_request">40</property>
+                                <property name="width_request">30</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
@@ -13231,8 +13232,8 @@ from XeTeX processing.</property>
                                 <signal name="color-set" handler="onThumbColourChange" swapped="no"/>
                               </object>
                               <packing>
-                                <property name="left_attach">3</property>
-                                <property name="top_attach">1</property>
+                                <property name="left_attach">7</property>
+                                <property name="top_attach">3</property>
                               </packing>
                             </child>
                             <child>
@@ -13243,6 +13244,7 @@ from XeTeX processing.</property>
                                 <property name="receives_default">False</property>
                                 <property name="tooltip_text" translatable="yes">Rotates the tabs so that the text runs along the edge of the page. This works well for narrow margins, but may result in fewer tab positions per page.</property>
                                 <property name="halign">start</property>
+                                <property name="margin_left">15</property>
                                 <property name="draw_indicator">True</property>
                                 <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                 <signal name="toggled" handler="onNumTabsChanged" swapped="no"/>
@@ -13371,7 +13373,7 @@ For example: PHM TIT; 1JN 2JN 3JN JUD</property>
                             </child>
                             <child>
                               <object class="GtkComboBox" id="fcb_rotateTabs">
-                                <property name="width_request">200</property>
+                                <property name="width_request">180</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="can_default">True</property>
@@ -13448,13 +13450,14 @@ For example: PHM TIT; 1JN 2JN 3JN JUD</property>
                               <object class="GtkSeparator">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="halign">center</property>
+                                <property name="margin_left">14</property>
+                                <property name="margin_right">14</property>
                                 <property name="orientation">vertical</property>
                               </object>
                               <packing>
                                 <property name="left_attach">7</property>
                                 <property name="top_attach">0</property>
-                                <property name="height">2</property>
+                                <property name="height">3</property>
                               </packing>
                             </child>
                             <child>
@@ -13465,12 +13468,13 @@ For example: PHM TIT; 1JN 2JN 3JN JUD</property>
                                 <property name="receives_default">False</property>
                                 <property name="tooltip_text" translatable="yes">Normally books will follow sequentially and if the next tab would be off the bottom of the page, then it will be set to the top for a new cycle of tabs. Setting this starts a new cycle at the start of the New Testament (Matthew).</property>
                                 <property name="halign">start</property>
+                                <property name="margin_left">15</property>
                                 <property name="draw_indicator">True</property>
                               </object>
                               <packing>
-                                <property name="left_attach">6</property>
-                                <property name="top_attach">3</property>
-                                <property name="width">4</property>
+                                <property name="left_attach">2</property>
+                                <property name="top_attach">2</property>
+                                <property name="width">3</property>
                               </packing>
                             </child>
                             <child>
@@ -13493,12 +13497,13 @@ the thumbtab contents. If a book's header contains a \zthumbtab entry, then
 \toc3 will not be used as the thumbtab contents. An empty \zthumbtab'' entry 
 specifies that there should be no text in the thumbtab for that book.</property>
                                 <property name="halign">start</property>
+                                <property name="margin_left">15</property>
                                 <property name="draw_indicator">True</property>
                                 <signal name="clicked" handler="onTabsClicked" swapped="no"/>
                               </object>
                               <packing>
-                                <property name="left_attach">4</property>
-                                <property name="top_attach">2</property>
+                                <property name="left_attach">2</property>
+                                <property name="top_attach">1</property>
                                 <property name="width">2</property>
                               </packing>
                             </child>
@@ -13519,8 +13524,8 @@ formatting of the thumb tabs.</property>
                                 <signal name="activate-link" handler="onEditStyleClicked" swapped="no"/>
                               </object>
                               <packing>
-                                <property name="left_attach">2</property>
-                                <property name="top_attach">2</property>
+                                <property name="left_attach">4</property>
+                                <property name="top_attach">1</property>
                                 <property name="width">2</property>
                               </packing>
                             </child>
@@ -13529,21 +13534,56 @@ formatting of the thumb tabs.</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="halign">start</property>
+                                <property name="margin_right">6</property>
                                 <property name="label" translatable="yes">ColorVal</property>
                               </object>
                               <packing>
-                                <property name="left_attach">4</property>
-                                <property name="top_attach">1</property>
+                                <property name="left_attach">8</property>
+                                <property name="top_attach">3</property>
                               </packing>
                             </child>
                             <child>
-                              <placeholder/>
+                              <object class="GtkButton" id="btn_resetTabGroups">
+                                <property name="label">↺</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                                <property name="tooltip_text" translatable="yes">Clicking this button will reload the
+default values for the Grouped Tabs.</property>
+                                <property name="halign">end</property>
+                                <signal name="clicked" handler="onResetTabGroupsClicked" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="left_attach">5</property>
+                                <property name="top_attach">2</property>
+                              </packing>
                             </child>
                             <child>
-                              <placeholder/>
+                              <object class="GtkLabel">
+                                <property name="width_request">75</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="hexpand">True</property>
+                                <property name="label" translatable="yes"> </property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">6</property>
+                                <property name="top_attach">2</property>
+                              </packing>
                             </child>
                             <child>
-                              <placeholder/>
+                              <object class="GtkLabel">
+                                <property name="width_request">65</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="hexpand">True</property>
+                                <property name="label" translatable="yes"> </property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">8</property>
+                                <property name="top_attach">2</property>
+                                <property name="width">2</property>
+                              </packing>
                             </child>
                             <child>
                               <placeholder/>
