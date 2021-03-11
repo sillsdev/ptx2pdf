@@ -475,6 +475,7 @@
         \box\colA\hbox to \ExtraRMargin{}\hfil}%
       \ifvoid\bottomins\else \vfil\kern-\lastd@pth
         \lastd@pth=0pt \vskip\skip\bottomins \hbox{\hbox to \columnshift{}\box\bottomins} \fi % ouput bottom spanning pictures
+      \ifvoid\verybottomins\vfil\fi
       \f@rstnotetrue%
       \m@kenotebox
       \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2 \space Leaving \the\ht255, \the\dp255}%
@@ -1125,6 +1126,7 @@
         \else \box\colA\makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}\box\colB\hbox to \ExtraRMargin{}\fi}
       \ifvoid\bottomins\else \kern-\lastd@pth
         \lastd@pth=0pt \vskip\skip\bottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\bottomins}}\fi % ouput bottom spanning pictures
+      \ifvoid\verybottomins\vfil\fi
       \f@rstnotetrue
       \m@kenotebox
       \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2}%
@@ -1258,6 +1260,7 @@
 	  \lastd@pth=\dp\partial
       \ifvoid\bottomins\else % \kern-\dimen0
         \lastd@pth=0pt \vskip\skip\bottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\bottomins}}\fi
+      \ifvoid\verybottomins\vfil\fi
       \f@rstnotetrue%
       \m@kenotebox
       \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2}%
