@@ -367,7 +367,7 @@ class PicList:
                         dat = self.picinfo.getFigureSources(data={'1': {'src': val}},
                                     key='path', exclusive=self.parent.get("c_exclusiveFiguresFolder"))
                         fpath = dat['1'].get('path', None)
-                    if fpath is not None:
+                    if fpath is not None and os.path.exists(fpath):
                         if self.picrect is None:
                             picframe = self.builder.get_object("fr_picPreview")
                             self.picrect = picframe.get_allocation()
