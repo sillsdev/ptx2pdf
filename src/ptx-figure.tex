@@ -39,8 +39,27 @@
 \newinsert\toprightins \count\toprightins=1000 \dimen\toprightins=\maxdimen
 \newinsert\bottomleftins \count\bottomleftins=1000 \dimen\bottomleftins=\maxdimen
 \newinsert\bottomrightins\count\bottomrightins=1000 \dimen\bottomrightins=\maxdimen
+\newbox\savebottomins
+\newbox\saveverybottomins
+\newbox\savetopins
+\newbox\savetopleftins
+\newbox\savetoprightins
+\newbox\savebottomleftins
+\newbox\savebottomrightins
+\def\ins@rts{bottomins,verybottomins,topins,toprightins,topleftins,bottomrightins,bottomleftins,}
+\def\s@veins#1\E{\x@\setbox\x@3\x@\copy\csname #1\endcsname\x@\global\x@\setbox\csname save#1\endcsname\box3}
+\def\r@strins#1\E{\x@\setbox\x@3\x@\copy\csname save#1\endcsname\x@\global\x@\setbox\csname #1\endcsname\box3}
+\def\s@veinserts{%loop through \ins@rts and save them 
+  \let\d@=\s@veins
+  \x@\cstackdown\ins@rts\E 
+} 
+\def\r@storeinserts{%loop through \ins@rts and save them 
+  \let\d@=\r@strins
+  \x@\cstackdown\ins@rts\E
+} 
 
- 
+%%%%%%%%%%%%%% FIGURES %%%%%%%%%%%%%% 
+% called from \fig or from figure list
 %%%%%%%%%%%%%% FIGURES %%%%%%%%%%%%%% 
 % called from \fig or from figure list
 
