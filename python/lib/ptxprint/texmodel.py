@@ -929,14 +929,11 @@ class TexModel:
         if gloStyle is not None and len(v) == 2: # otherwise skip over OLD Glossary markup definitions
             self.localChanges.append((None, regex.compile(r"\\\+?w ((?:.(?!\\\+w\*))+?)(\|[^|]+?)?\\\+?w\*", flags=regex.M), gloStyle))
         
-        # @@@ FIXME This will disappear once we have the other system working
-        # Remember to preserve \figs ... \figs for books that can't have PicLists (due to no ch:vs refs in them)
         if self.asBool("document/ifinclfigs") and bk in self._peripheralBooks:
             # Remove any illustrations which don't have a |p| 'loc' field IF this setting is on
             if self.asBool("document/iffigexclwebapp"):
                 self.localChanges.append((None, regex.compile(r'(?i)\\fig ([^|]*\|){3}([aw]+)\|[^\\]*\\fig\*', flags=regex.M), ''))  # USFM2
                 self.localChanges.append((None, regex.compile(r'(?i)\\fig [^\\]*\bloc="[aw]+"[^\\]*\\fig\*', flags=regex.M), ''))    # USFM3
-            print(self.printer.picinfos)
             def figtozfiga(m):
                 a = self.printer.picinfos.getAnchor(m.group(1), bk)
                 if a is None:

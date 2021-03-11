@@ -208,13 +208,12 @@ _horiz = {
     "-":        "-"
 }
 
-_allcols = ["anchor", "caption", "file", "frame", "scale", "posn", "ref", "mirror", "desc", "copy", "media", "credit", "crrot", "crbox", "crposn"]
+_allcols = ["anchor", "caption", "file", "frame", "scale", "posn", "ref", "mirror", "desc", "copy", "media"]
 
 _selcols = {
     "settings":  ["anchor", "caption",         "desc"],
     "details":   ["anchor", "caption", "file", "frame", "scale", "posn", "ref", "mirror", "desc", "copy", "media"],
     "checklist": ["anchor", "caption", "file", "desc"]
-  # "credits":   [          "caption", "file", "credit", "crrot", "crbox", "crposn"]
 }
 
 _defaultColophon = r"""\pc \zcopyright

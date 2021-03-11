@@ -11,15 +11,15 @@ from ptxprint.font import getfontcache
 from ptxprint.usfmerge import usfmerge
 from ptxprint.utils import _, universalopen, print_traceback
 
+# "*** WARNING: Sidebar or colophon might not print on page": \
+                                         # _("The colophon seems to be too big for the page.\n" +\
+                                           # "Try shortening it, or move it all to the FRT book."),
+# "\zcolophon":                            _("This may be caused by an improperly defined Colophon.\n\n" +\
+                                           # "Try turning off the Include Colophon setting on Header+Footer page.\n" +\
+                                           # "If that works, then try to fix the colophon (maybe \imagecopyrights\n" +\
+                                           # "localization has not been defined) and try again."),
 _errmsghelp = {
-"*** WARNING: Sidebar or colophon might not print on page": \
-                                         _("The colophon seems to be too big for the page.\n" +\
-                                           "Try shortening it, or move it all to the FRT book."),
 "! Argument":                            _("Probably a TeX macro problem - contact support, or post a bug report"),
-"\zcolophon":                            _("This may be caused by an improperly defined Colophon.\n\n" +\
-                                           "Try turning off the Include Colophon setting on Header+Footer page.\n" +\
-                                           "If that works, then try to fix the colophon (maybe \imagecopyrights\n" +\
-                                           "localization has not been defined) and try again."),
 "! TeX capacity exceeded, sorry":        _("Uh oh! You've pushed TeX too far! Try turning Hyphenation off, or contact support."),
 "! Paratext stylesheet":                 _("Check if the stylesheet specified on the Advanced tab exists."),
 "! Unable to load picture":              _("Check if picture file is located in 'Figures', 'local\\figures' or a\n" +\
@@ -296,8 +296,8 @@ class RunJob:
         finalLogLines.append("-"*90+"\n")
         for l in reversed(finalLogLines):
             if not foundmsg: # l[:1] == "!" and 
-                # for m in sorted(_errmsghelp.keys(),key=len, reverse=True):
-                for m in _errmsghelp.keys():
+                # for m in _errmsghelp.keys():
+                for m in sorted(_errmsghelp.keys(),key=len, reverse=True):
                     if m in l or l.startswith(m):
                         if l[:-1] != m:
                             finalLogLines.append("{}\n".format(m))
