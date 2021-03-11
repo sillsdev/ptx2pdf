@@ -177,7 +177,7 @@ _nonsensitivities = {
     "c_styFaceSuperscript" :   ["l_styRaise", "s_styRaise"],
 }
 _object_classes = {
-    "printbutton": ("b_print", "btn_refreshFonts"),
+    "printbutton": ("b_print", "btn_refreshFonts", "btn_adjust_diglot"),
     "fontbutton":  ("bl_fontR", "bl_fontB", "bl_fontI", "bl_fontBI"),
     "mainnb":      ("nbk_Main", ),
     "viewernb":    ("nbk_Viewer", "nbk_PicList"),
@@ -313,6 +313,8 @@ class GtkViewModel(ViewModel):
         GLib.set_prgname("ptxprint")
         self.builder = Gtk.Builder()
         gladefile = os.path.join(os.path.dirname(__file__), "ptxprint.glade")
+        GObject.type_register(GtkSource.View)
+        GObject.type_register(GtkSource.Buffer)
         if sys.platform.startswith("win"):
             tree = et.parse(gladefile)
             for node in tree.iter():
@@ -321,6 +323,10 @@ class GtkViewModel(ViewModel):
                     del node.attrib['translatable']
                 if node.get('name') in ('pixbuf', 'icon', 'logo'):
                     node.text = os.path.join(os.path.dirname(__file__), node.text)
+                if node.get('id') == 'tb_colophon':
+                    node.set('class', 'GtkSourceBuffer')
+                elif node.get('id') == 'textv_colophon':
+                    node.set('class', 'GtkSourceView')
             xml_text = et.tostring(tree.getroot(), encoding='unicode', method='xml')
             self.builder = Gtk.Builder.new_from_string(xml_text, -1)
         else:
@@ -402,6 +408,10 @@ class GtkViewModel(ViewModel):
             view.pageid = "scroll_"+k
             view.connect("focus-out-event", self.onViewerLostFocus)
             view.connect("focus-in-event", self.onViewerFocus)
+            
+        # for a in ("colophon", ):
+            # tb = self.builder.get_object("tb_" + a) @@@@
+            
 
         if self.get("c_colophon") and self.get("tb_colophon") == "":
             self.set("tb_colophon", _defaultColophon)
@@ -876,6 +886,9 @@ class GtkViewModel(ViewModel):
                 self.builder.get_object(w).set_sensitive(state)
         self.colorTabs()
         self.updateMarginGraphics()
+        self.onFnBlendClicked(self.builder.get_object('c_blendfnxr'))
+        # self.set("c_blendfnxr", not self.get("c_blendfnxr"))
+        # self.set("c_blendfnxr", not self.get("c_blendfnxr"))
 
     def colorTabs(self):
         col = "#688ACC"

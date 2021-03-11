@@ -838,12 +838,12 @@ class ViewModel:
                             iv = int(re.sub(r"^(\d+).*?$", r"\1", v), 10)
                             if iv < prv:
                                 ch = ch + 1
-                            srtchvs = "{:0>3}{:0>3}{}".format(ch,v,sfx)
-                            tmplist.append(srtchvs+"\u0009"+bk+sfx+" "+str(ch)+"."+v+" +0")
+                            # srtchvs = "{:0>3}{:0>3}{}".format(ch,v,sfx)
+                            tmplist.append(bk+sfx+" "+str(ch)+"."+v)
                             prv = iv
             if len(tmplist):
-                for al in sorted(tmplist):
-                    adjlist.append(al.split("\u0009")[1]+"\n")
+                for al in sorted(tmplist, key=refKey):
+                    adjlist.append(al+" +0\n")
             adjpath = os.path.join(self.configPath(self.configName()), "AdjLists")
             os.makedirs(adjpath, exist_ok=True)
             with open(outfname, "w", encoding="utf-8") as outf:
