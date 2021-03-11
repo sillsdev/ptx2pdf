@@ -1039,7 +1039,7 @@ class ViewModel:
                 res[os.path.join(fpath, intpath, intfile)] = os.path.join(intpath, intfile)
         self.picinfos.getFigureSources(exclusive=self.get("c_exclusiveFiguresFolder"))
         pathkey = 'src path'
-        for f in (p[pathkey] for p in self.picinfos.values() if pathkey in p):
+        for f in (p[pathkey] for p in self.picinfos.values() if pathkey in p and p['anchor'][:3] in books):
                 res[f] = "figures/"+os.path.basename(f)
 
         # adjlists
@@ -1177,9 +1177,11 @@ class ViewModel:
         from ptxprint.runjob import RunJob
         runjob = RunJob(self, self.scriptsdir, self.args, inArchive=True)
         runjob.doit(noview=True)
-        # unlockme
-        temps = [x.replace(".xdv", ".pdf") for x in self.tempFiles if x.endswith(".xdv")]
-        for f in self.tempFiles + temps:
+        res = runjob.wait()
+        temps = []
+        for a in (".pdf", ):
+            temps.extend([x.replace(".xdv", a) for x in self.tempFiles if x.endswith(".xdv")])
+        for f in self.tempFiles + runjob.picfiles + temps:
             pf = os.path.join(self.working_dir, f)
             if os.path.exists(pf):
                 outfname = os.path.relpath(pf, self.settings_dir)
@@ -1231,7 +1233,7 @@ class ViewModel:
         zf.writestr("{}/fonts.conf".format(self.prjid), writefontsconf(archivedir=True))
         scriptlines = ["#!/bin/sh", "cd PrintDraft"]
         for t in texfiles:
-            scriptlines.append("FONTCONFIG_FILE=`pwd`/../fonts.conf TEXINPUTS=../src:. xetex {}".format(os.path.basename(t)))
+            scriptlines.append("hyph_size = 32749 stack_size=32768 FONTCONFIG_FILE=`pwd`/../fonts.conf TEXINPUTS=../src:. xetex {}".format(os.path.basename(t)))
         zinfo = ZipInfo("{}/runtex.sh".format(self.prjid))
         zinfo.external_attr = 0o755 << 16
         zinfo.create_system = 3
@@ -1240,9 +1242,11 @@ class ViewModel:
 for %%i in (xetex.exe) do set truetex=%%~$PATH:i
 if "%truetex%" == "" set truetex=C:\\Program Files\\PTXprint\\xetex\\bin\\xetex.exe
 set FONTCONFIG_FILE="%cd%\\..\\fonts.conf"
-set TEXINPUTS=..\\src"""
+set TEXINPUTS="%cd%\\..\\src;.;"
+set hyph_size=32749
+set stack_size=32768"""
         for t in texfiles:
-            batfile += '\nif exists "%truetex%" "%truetex%" {}'.format(os.path.basename(t))
+            batfile += '\nif exist "%truetex%" "%truetex%" {}'.format(os.path.basename(t))
         zf.writestr("{}/runtex.txt".format(self.prjid), batfile)
             
 

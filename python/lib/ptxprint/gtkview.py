@@ -2403,7 +2403,8 @@ class GtkViewModel(ViewModel):
         
     def openFolder(self, fldrpath):
         path = os.path.realpath(fldrpath)
-        os.startfile(fldrpath)
+        if sys.platform.startswith("win"):
+            os.startfile(fldrpath)
 
     def finished(self):
         GLib.idle_add(lambda: self._incrementProgress(val=0.))

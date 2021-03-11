@@ -141,6 +141,7 @@ class RunJob:
         self.scriptsdir = scriptsdir
         self.printer = printer
         self.tempFiles = []
+        self.picfiles = []
         self.tmpdir = "."
         self.maxRuns = 1
         self.changes = None
@@ -176,7 +177,7 @@ class RunJob:
             self.checkForMissingDecorations(info)
         info["document/piclistfile"] = ""
         if info.asBool("document/ifinclfigs"):
-            self.gatherIllustrations(info, jobs, self.args.paratext)
+            self.picfiles = self.gatherIllustrations(info, jobs, self.args.paratext)
             # self.texfiles += self.gatherIllustrations(info, jobs, self.args.paratext)
         self.ispdfxa = self.printer.get("c_PDFx1aOutput")
         
