@@ -531,7 +531,7 @@ class GtkViewModel(ViewModel):
                 self.set(k, v)
         self._setChapRange("from", 1, 999, 1)
         self._setChapRange("to", 1, 999, 1)
-        self.colourTabs()
+        self.colorTabs()
 
     def onHideAdvancedSettingsClicked(self, c_hideAdvancedSettings, foo):
         val = self.get("c_hideAdvancedSettings")
@@ -603,7 +603,7 @@ class GtkViewModel(ViewModel):
             for h in ("ptxprintdir", "prjdir", "settings_dir", "pdfViewer", "techFAQ", "reportBugs"): 
                 self.builder.get_object("{}{}".format(pre, h)).set_visible(val)
                 
-        self.colourTabs()
+        self.colorTabs()
         # Resize Main UI Window appropriately
         if not val:
             self.mw.resize(828, 292)
@@ -804,7 +804,7 @@ class GtkViewModel(ViewModel):
             self.readConfig("Default")
             self.updateDialogTitle()
             self.triggervcs = True
-        self.colourTabs()
+        self.colorTabs()
 
     def updateBookList(self):
         self.bookNoUpdate = True
@@ -874,10 +874,10 @@ class GtkViewModel(ViewModel):
             state = not self.get(k)
             for w in v:
                 self.builder.get_object(w).set_sensitive(state)
-        self.colourTabs()
+        self.colorTabs()
         self.updateMarginGraphics()
 
-    def colourTabs(self):
+    def colorTabs(self):
         col = "#688ACC"
 
         ic = " color='"+col+"'" if self.get("c_includeillustrations") else ""
@@ -1114,7 +1114,7 @@ class GtkViewModel(ViewModel):
         if pgid == "tb_ViewerEditor": # Viewer tab
             self.onRefreshViewerTextClicked(None)
         elif pgid == "tb_Tabs":
-            self.onThumbColourChange()
+            self.onThumbColorChange()
         # elif pgid == "tb_Pictures":
             # need to get it to hide detail columns
 
@@ -1326,7 +1326,7 @@ class GtkViewModel(ViewModel):
 
     def onUseIllustrationsClicked(self, btn):
         self.onSimpleClicked(btn)
-        self.colourTabs()
+        self.colorTabs()
         if btn.get_active():
             if self.picinfos is None:
                 self.picinfos = PicInfo(self)
@@ -2288,7 +2288,7 @@ class GtkViewModel(ViewModel):
         self.sensiVisible("c_diglot")
         self.sensiVisible("c_borders")
         # self.updateHdrFtrOptions(btn.get_active())
-        self.colourTabs()
+        self.colorTabs()
         if self.loadingConfig:
             return
         if self.get("c_diglot"):
@@ -2339,7 +2339,7 @@ class GtkViewModel(ViewModel):
     def onBorderClicked(self, btn):
         self.sensiVisible("c_diglot")
         self.sensiVisible("c_borders")
-        self.colourTabs()
+        self.colorTabs()
         
     def ondiglotSecProjectChanged(self, btn):
         self.updateDiglotConfigList()
@@ -2425,7 +2425,7 @@ class GtkViewModel(ViewModel):
 
     def onTabsClicked(self, btn):
         self.onSimpleClicked(btn)
-        self.colourTabs()
+        self.colorTabs()
         self.onNumTabsChanged()
         if self.get("c_thumbtabs"):
             if not self.get("c_usetoc3"):
@@ -2437,13 +2437,13 @@ class GtkViewModel(ViewModel):
             return
         if self.get("c_thumbtabs"):
             self.updateThumbLines()
-            self.onThumbColourChange()
+            self.onThumbColorChange()
         self.builder.get_object("l_thumbVerticalL").set_visible(self.get("c_thumbrotate"))
         self.builder.get_object("l_thumbVerticalR").set_visible(self.get("c_thumbrotate"))
         self.builder.get_object("l_thumbHorizontalL").set_visible(not self.get("c_thumbrotate"))
         self.builder.get_object("l_thumbHorizontalR").set_visible(not self.get("c_thumbrotate"))
 
-    def onThumbColourChange(self, *a):
+    def onThumbColorChange(self, *a):
         def coltohex(s):
             vals = s[s.find("(")+1:-1].split(",")
             h = "#"+"".join("{:02x}".format(int(x)) for x in vals)

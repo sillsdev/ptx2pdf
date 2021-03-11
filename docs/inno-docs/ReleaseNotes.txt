@@ -734,7 +734,7 @@ Bug fixes and improvements in: 0.6.4
 
   * "Process text with custom script..." (e.g. call a .bat script, or .py program, etc.) is working, but minimally tested
   
-  * Fixed various TeX issues (missing \Fontsize, spaces in colour code)
+  * Fixed various TeX issues (missing \Fontsize, spaces in color code)
   
   * Fix file chooser filters
 
@@ -798,8 +798,8 @@ List of improvements: 0.5.4
 
 List of improvements: 0.5.3
 
-  * Colour has been added - so that if \Color is defined in the .sty file(s)
-    those colours can be applied in the text if the option is Enabled on the
+  * Color has been added - so that if \Color is defined in the .sty file(s)
+    those colors can be applied in the text if the option is Enabled on the
     Advanced tab
   
   * Eliminate looping in the UI when changing projects and there are multiple

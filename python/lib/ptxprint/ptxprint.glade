@@ -2558,7 +2558,7 @@ Position:</property>
                     <property name="tooltip_text" translatable="yes">Specify the kind of box (Light/Dark background
 or enter the name of a style which should be applied.
 By selecting a (custom) style, you can change multiple
-parameters at once: font, size and colour. </property>
+parameters at once: font, size and color. </property>
                     <property name="halign">start</property>
                     <property name="valign">center</property>
                     <property name="active">0</property>
@@ -5723,7 +5723,7 @@ And remember to Refresh the Font List again.</property>
                                         <property name="tooltip_text" translatable="yes">The marker specifications in stylesheets also
 include the \Color parameter. If this option
 is checked, then these settings will be used
-to produce coloured text output. For example
+to produce colored text output. For example
 the \wj Words of Jesus\wj* marker might
 specify \Color Red which will only take effect
 if this option is also enabled - otherwise all
@@ -13209,10 +13209,10 @@ from XeTeX processing.</property>
                               <object class="GtkLabel">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="tooltip_text" translatable="yes">Thumb Tabs usually use a dark colour
+                                <property name="tooltip_text" translatable="yes">Thumb Tabs usually use a dark color
 for the Tab with a light (or white) text.</property>
                                 <property name="halign">end</property>
-                                <property name="label" translatable="yes">Tab Colour:</property>
+                                <property name="label" translatable="yes">Tab Color:</property>
                               </object>
                               <packing>
                                 <property name="left_attach">6</property>
@@ -13225,11 +13225,11 @@ for the Tab with a light (or white) text.</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
-                                <property name="tooltip_text" translatable="yes">Thumb Tabs usually use a dark colour for the Tab with a light (or white) text.</property>
+                                <property name="tooltip_text" translatable="yes">Thumb Tabs usually use a dark color for the Tab with a light (or white) text.</property>
                                 <property name="halign">start</property>
-                                <property name="title" translatable="yes">Thumb Tab Background Colour</property>
+                                <property name="title" translatable="yes">Thumb Tab Background Color</property>
                                 <property name="rgba">rgb(0,0,0)</property>
-                                <signal name="color-set" handler="onThumbColourChange" swapped="no"/>
+                                <signal name="color-set" handler="onThumbColorChange" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="left_attach">7</property>
@@ -14924,9 +14924,9 @@ properties for this style.</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
-                                        <property name="tooltip_text" translatable="yes">Overrides the colour in the stylesheet for toc3</property>
+                                        <property name="tooltip_text" translatable="yes">Overrides the color in the stylesheet for toc3</property>
                                         <property name="halign">start</property>
-                                        <property name="title" translatable="yes">Text Colour</property>
+                                        <property name="title" translatable="yes">Text Color</property>
                                         <property name="rgba">rgb(0,0,0)</property>
                                         <signal name="color-set" handler="onstyColorSet" swapped="no"/>
                                       </object>
