@@ -38,6 +38,7 @@
 % | f | footnotes
 % | F | fonts
 % | g | figures
+% | gI | figure inserts - tracking saving / restoring of inserts
 % | h | headings
 % | hv | hanging verses
 % | H | Headers, marks, etc
@@ -55,6 +56,7 @@
 % | sC | Stylesheet Cache
 % | S | side-dependent swapping 
 % | T | Triggers
+% | u | 'Unprintable' pages (e.g. triggered images  don't fit)
 % | v | marginal verses
 %-tracing-codes
 
@@ -74,6 +76,7 @@
 \def\traceNum#1#2{\global\advance\TRACEcount by 1\trace{#1}{+\the\TRACEcount: #2}}
 \def\notr@ceout#1{\relax}%
 \let\trace=\notr@cer
+\def\IfTr@ce#1#2{\x@\ifx\csname tr@cemode-#1\endcsname\y@s #2\fi}
 %-tracing
 
 %+tracing-support

@@ -51,6 +51,7 @@
 \newif\ifdiglotN@rmal % Which way round for this page?
 \newif\ifuseLeftMarks %Do we use marks from the left column
 \newif\ifuseRightMarks %Do we use them from the right column
+\newif\ifunprintable % The 'correct' logic results in a page that won't fit. Something breaks.
 \useLeftMarkstrue
 \useRightMarkstrue
 
@@ -239,32 +240,34 @@
       \advance\availht by -\AboveNoteSpace
    \fi
    \trace{Dh}{after notes:\the\availht}%
-   \decr{\availht}{\topins}%pictures
-   % Reduce by the height of whichever top picture takes the most space.
-   \setbox1\copy\topleftins\setbox1\vbox{\unvbox1}%
-   \setbox2\copy\toprightins\setbox2\vbox{\unvbox2}%
-   \trace{D}{inserts: \the\ht1=\the\ht\topleftins? \the\ht2=\the\ht\toprightins?}%
-   \ifdim\ht1>\ht\topleftins
-     \trace{D}{Box was shrunk: \the\ht1 > \the\ht\topleftins}%
-     \ht\topleftins=\ht1
+   \ifunprintable\else 
+     \decr{\availht}{\topins}%pictures
+     % Reduce by the height of whichever top picture takes the most space.
+     \setbox1\copy\topleftins\setbox1\vbox{\unvbox1}%
+     \setbox2\copy\toprightins\setbox2\vbox{\unvbox2}%
+     \trace{D}{inserts: \the\ht1=\the\ht\topleftins? \the\ht2=\the\ht\toprightins?}%
+     \ifdim\ht1>\ht\topleftins
+       \trace{D}{Box was shrunk: \the\ht1 > \the\ht\topleftins}%
+       \ht\topleftins=\ht1
+     \fi
+     \ifdim\ht2>\ht\toprightins
+       \trace{D}{Box was shrunk: \the\ht2 > \the\ht\toprightins}%
+       \ht\toprightins=\ht2
+     \fi
+     \ifdim\ht\topleftins>\ht\toprightins %
+       \decr{\availht}{\topleftins}%
+     \else%
+       \decr{\availht}{\toprightins}%
+     \fi%
+     \trace{Dh}{after top:\the\availht (\the\ht\topleftins,\the\ht\toprightins}%
+     \ifdim\ht\bottomleftins>\ht\bottomrightins %
+       \decr{\availht}{\bottomleftins}%
+     \else%
+       \decr{\availht}{\bottomrightins}%
+     \fi%
+     \decr{\availht}{\bottomins}%
+     \decr{\availht}{\verybottomins}%
    \fi
-   \ifdim\ht2>\ht\toprightins
-     \trace{D}{Box was shrunk: \the\ht2 > \the\ht\toprightins}%
-     \ht\toprightins=\ht2
-   \fi
-   \ifdim\ht\topleftins>\ht\toprightins %
-     \decr{\availht}{\topleftins}%
-   \else%
-     \decr{\availht}{\toprightins}%
-   \fi%
-   \trace{Dh}{after top:\the\availht (\the\ht\topleftins,\the\ht\toprightins}%
-   \ifdim\ht\bottomleftins>\ht\bottomrightins %
-     \decr{\availht}{\bottomleftins}%
-   \else%
-     \decr{\availht}{\bottomrightins}%
-   \fi%
-   \decr{\availht}{\bottomins}%
-   \decr{\availht}{\verybottomins}%
    \x@\global\x@\csname availht\c@rrdstat\endcsname=\availht
    \trace{D}{final:\the\availht}%
 }
@@ -607,7 +610,6 @@
  %as though it hadn't been here.
  %Assumptions: holdinginserts=1 material in \galley and \galleyexc@ss
   \trace{d}{diglot@any@trial \the\ht255+\the\dp255 \space hIns=\the\holdinginserts(==0 1st time) op=\the\outputpenalty, etp=\endtri@lpen@lty, dc=\the\deadcycles, xs:\the\ht\galleyexc@ss+\the\dp\galleyexc@ss, th:\the\trialheight}%
-  %\tracingifs=1
   \ifnum\holdinginserts=0\else
     \ifvoid\trialbox
       \MSG{*** Internal error caught. Incorrect internal state found in during trial run. Text or footnotes may have been lost.}%
@@ -655,7 +657,7 @@
       \ifdim\trialheight<0.5\baselineskip
         \trace{D}{Abandoning trial, no space for galley at all}%
         \r@storenotes{\g@tdstat}{1}% As if galley hadn't happened.
-        \r@storeinserts{col}
+        \r@storeinserts{col}%
         \global\setbox\galleyexc@ss\vbox{\undog@lley}%
         \global\galleypenalty=0 
         \global\setbox255=\box\voidb@x
@@ -1267,12 +1269,46 @@
 \newif\ifNoteGutterRule \NoteGutterRulefalse
 \newif\ifFigGutterRule \FigGutterRulefalse
 \newif\ifJoinGutterRule \FigGutterRulefalse
-\def\MaxPages{2000}
+\newcount\MaxPages
+\def\MaxPagesPerBook{500}
+\MaxPages=\MaxPagesPerBook
+\addtoendptxhooks{{\tmpcount=\pageno\advance\tmpcount by \MaxPagesPerBook\ifnum\tmpcount>\MaxPages \global\MaxPages=\tmpcount\fi}}
+
+\newbox\topchunk
+\newbox\botchunk
+\newbox\notechunk
+
+\def\try@print@unprintable#1\E{%
+  \trace{u}{try@print@unprintable #1}%
+  \IfTr@ce{u}{\tracingassigns=1 }% \tracingmacros=1}%
+  \x@\let\x@\s@mebox\csname #1\endcsname
+  \ifx\pagecontents\empty\else
+    \ifdim\dimexpr \ht\s@mebox+\dp\s@mebox + \dimen0 > \textheight
+      \trace{u}{Printing}%
+      \plainoutput
+      \let\pagecontents\empty
+      \tmpt@ks{}%
+      \dimen0=0pt
+    \fi
+  \fi
+  \ifvoid\s@mebox\else
+    \advance\dimen0 by \ht\s@mebox
+    \advance\dimen0 by \dp\s@mebox
+    \ifx\pagecontents\empty
+      \def\pagecontents{\setdiglotN@rmal\pickn@xtpartial\the\tmpt@ks}
+    \fi
+    \x@\tmpt@ks\x@{\the\tmpt@ks\box\csname#1\endcsname}%
+    \relax
+  \fi
+}
 \def\@writep@ge {%
   \trace{d}{@writep@ge \the\pageno}%
   \ifnum\pageno>\MaxPages
-    \errmessage{Pagecount has exceeded \MaxPages. This probably means something has gone wrong. (or increase MaxPages)}%
+    \errmessage{Pagecount has exceeded \MaxPages. This probably means something has gone wrong. (or you should increase MaxPages or MaxPagesPerBook for this job)}%
   \fi
+  \IfTr@ce{gI}{%
+    \let\d@=\sh@winsertdim\edef\v@lpfx{}\edef\v@lsfx{}\x@\cstackdown\ins@rts\E
+  }%
   \setdiglotN@rmal
   \pickn@xtpartial
   \global\setbox\partial=\vbox{\unvbox\partial}%
@@ -1393,87 +1429,120 @@
   \fi%
   \traceNum{d}{Forming page}%
   \trace{D}{PFM:\p@gefirstmark\space PBM:\p@gebotmark}%
-  %\showbox\partial
-  %\showthe\everyhbox
-  %\showthe\leftskip
-  %\showthe\rightskip
+  \ifnum\TRACEcount=\diglotDbgJoinboxes
+    \showbox\partial
+    \showthe\everyhbox
+    \showthe\leftskip
+    \showthe\rightskip
+  \fi
   \p@gestarttrue
   \setc@rdstat{L}%%
-  \def\pagecontents{%
-   \setdiglotN@rmal
-   \pickn@xtpartial
-   \ifvoid\topins\else \unvbox\topins \vskip\skip\topins \fi%
-   \ifdim\ht\topleftins>\ht\toprightins%
-      \setbox\toprightins=\vbox to \ht\topleftins{\box\toprightins\vss}%
-   \else%
-      \setbox\topleftins=\vbox to \ht\toprightins{\box\topleftins\vss}%
-   \fi%
-   \dimen8=\ht\bottomleftins
-   \ifdim \dimen8 <\ht\toprightins \dimen8=\ht\toprightins \fi
-   \dimen9=\dp\topleftins
-   \ifdim \dimen9 <\dp\toprightins \dimen9=\dp\toprightins \fi
-   \trace{d}{Gutter \the\dimen8 hight, \the\dimen9 deep}%
-   \dimen7=\dimen9
-   \advance\dimen7 by \dimen8
-   \hbox to \textwidth{%\vllap{\the\ht\Lbox \the\dp\Lbox}%
-     \hbox to\columnshift{}%
-     \ifdiglotN@rmal%Are the sides swapped?
-       \hbox to\columnLwidth{\box\topleftins\hss}\ifFigGutterRule\makediglotgutter{\dimen8}{\dimen8}{\dimen9}\else\hskip\gutter\fi %
-       \hbox to\columnRwidth{\box\toprightins\hss}%\rlap{\the\ht\Rbox \the\dp\Rbox}%
-     \else%
-       \hbox to\columnRwidth{\box\toprightins\hss}\ifFigGutterRule\makediglotgutter{\dimen8}{\dimen8}{\dimen9}\else\hskip\gutter\fi %
-       \hbox to\columnLwidth{\box\topleftins\hss}%\rlap{\the\ht\Rbox \the\dp\Rbox}%
-     \fi%
-   }%
-   \lastd@pth=\dp\partial\relax%
-   \unvbox\partial%
-   \ifdim\ht\bottomleftins>\ht\bottomrightins%
-      \setbox\bottomrightins=\vbox to \ht\bottomleftins{\box\bottomrightins\vss}%
-   \else%
-      \setbox\bottomleftins=\vbox to \ht\bottomrightins{\box\bottomleftins\vss}%
-   \fi%
-   \dimen8=\ht\bottomleftins
-   \ifdim \dimen8 <\ht\bottomrightins \dimen8=\ht\bottomrightins \fi
-   \dimen9=\dp\bottomleftins
-   \ifdim \dimen9 <\dp\bottomrightins \dimen9=\dp\bottomrightins \fi
-   \trace{d}{Gutter \the\dimen8 hight, \the\dimen9 deep}%
-   \dimen7=\dimen9
-   \advance\dimen7 by \dimen8
-   \hbox to \textwidth{%\vllap{\the\ht\Lbox \the\dp\Lbox}%
-     \hbox to\columnshift{}%
-     \ifdiglotN@rmal%Are the sides swapped?
-       \hbox to\columnLwidth{\box\bottomleftins\hss}\ifFigGutterRule\makediglotgutter{\dimen8}{\dimen8}{\dimen9}\else\hskip\gutter\fi %
-       \hbox to\columnRwidth{\box\bottomrightins\hss}%\rlap{\the\ht\Rbox \the\dp\Rbox}%
-     \else%
-       \hbox to\columnRwidth{\box\bottomrightins\hss}\ifFigGutterRule\makediglotgutter{\dimen8}{\dimen8}{\dimen9}\else\hskip\gutter\fi %
-       \hbox to\columnLwidth{\box\bottomleftins\hss}%\rlap{\the\ht\Rbox \the\dp\Rbox}%
-     \fi%
-   }%
-   \ifvoid\bottomins\else%\kern-\lastd@pth \dimen0=0pt 
-     \vskip\skip\bottomins \unvbox\bottomins \fi%
-   \ifdiglotSepNotes%
-   \else%
+%
+  \ifdim\ht\topleftins>\ht\toprightins%
+    \setbox\toprightins=\vbox to \ht\topleftins{\box\toprightins\vss}%
+  \else%
+    \setbox\topleftins=\vbox to \ht\toprightins{\box\topleftins\vss}%
+  \fi%
+  \dimen8=\ht\topleftins % heights have been forced to be the same, no check
+  \dimen9=\dp\topleftins
+  \ifdim \dimen9 <\dp\toprightins \dimen9=\dp\toprightins \fi
+  \trace{d}{Gutter \the\dimen8 hight, \the\dimen9 deep}%
+  \dimen7=\dimen9
+  \advance\dimen7 by \dimen8
+  \setbox\topchunk=\hbox to \textwidth{%\vllap{\the\ht\Lbox \the\dp\Lbox}%
+    \hbox to\columnshift{}%
+    \ifdiglotN@rmal%Are the sides swapped?
+      \hbox to\columnLwidth{\box\topleftins\hss}\ifFigGutterRule\makediglotgutter{\dimen8}{\dimen8}{\dimen9}\else\hskip\gutter\fi %
+      \hbox to\columnRwidth{\box\toprightins\hss}%\rlap{\the\ht\Rbox \the\dp\Rbox}%
+    \else%
+      \hbox to\columnRwidth{\box\toprightins\hss}\ifFigGutterRule\makediglotgutter{\dimen8}{\dimen8}{\dimen9}\else\hskip\gutter\fi %
+      \hbox to\columnLwidth{\box\topleftins\hss}%\rlap{\the\ht\Rbox \the\dp\Rbox}%
+    \fi%
+  }
+%
+  \ifdim\ht\bottomleftins>\ht\bottomrightins%
+    \setbox\bottomrightins=\vbox to \ht\bottomleftins{\box\bottomrightins\vss}%
+  \else%
+    \setbox\bottomleftins=\vbox to \ht\bottomrightins{\box\bottomleftins\vss}%
+  \fi%
+  \dimen8=\ht\bottomleftins
+  \ifdim \dimen8 <\ht\bottomrightins \dimen8=\ht\bottomrightins \fi
+  \dimen9=\dp\bottomleftins
+  \ifdim \dimen9 <\dp\bottomrightins \dimen9=\dp\bottomrightins \fi
+  \trace{d}{Gutter \the\dimen8 hight, \the\dimen9 deep}%
+  \dimen7=\dimen9
+  \advance\dimen7 by \dimen8
+  \setbox\botchunk=\hbox to \textwidth{%\vllap{\the\ht\Lbox \the\dp\Lbox}%
+    \hbox to\columnshift{}%
+    \ifdiglotN@rmal%Are the sides swapped?
+      \hbox to\columnLwidth{\box\bottomleftins\hss}\ifFigGutterRule\makediglotgutter{\dimen8}{\dimen8}{\dimen9}\else\hskip\gutter\fi %
+      \hbox to\columnRwidth{\box\bottomrightins\hss}%\rlap{\the\ht\Rbox \the\dp\Rbox}%
+    \else%
+      \hbox to\columnRwidth{\box\bottomrightins\hss}\ifFigGutterRule\makediglotgutter{\dimen8}{\dimen8}{\dimen9}\else\hskip\gutter\fi %
+      \hbox to\columnLwidth{\box\bottomleftins\hss}%\rlap{\the\ht\Rbox \the\dp\Rbox}%
+    \fi%
+  }
+  \ifdiglotSepNotes%
+  \else%
      % RTLness will have been asserted (or not) when the note was defined.
-     {%
-     \ifdiglot\RTLfalse\fi
-     \def\c@rrdstat{L}%
-     \traceNum{d}{Inserting Notes}%
-     \f@rstnotetrue%
-     \m@kenotebox
-     \unvbox2 % defined by m@kenotebox
+     \setbox\notechunk{%
+       \ifdiglot\RTLfalse\fi
+       \def\c@rrdstat{L}%
+       \traceNum{d}{Inserting Notes}%
+       \f@rstnotetrue%
+       \m@kenotebox
+       \unvbox2 % defined by m@kenotebox
      }%
-   \fi%
-   \ifvoid\verybottomins\else % \kern-\dimen0
-     \lastd@pth=0pt \vskip\skip\verybottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\verybottomins}}\fi
-  }%pagecontents
-  \trace{D}{PFM:\p@gefirstmark\space PBM:\p@gebotmark\space NPFM:\nextp@gefirstmark}%
-  \global\adjustp@ge=0pt
+  \fi%
+%
+  \ifunprintable 
+    \edef\b@xseq{topins,topchunk,partial,botchunk,bottomins,notechunk,verybottomins,}
+    \dimen0=0pt
+    \tmpt@ks{}
+    \let\pagecontents\empty
+    \let\d@=\try@print@unprintable
+    \x@\cstackdown\b@xseq\E
+    \ifx\pagecontents\empty\else
+      \trace{u}{Printing final part of page}%
+      \plainoutput%
+    \fi
+    \let\pagecontents\empty
+    \global\unprintablefalse
+  \else
+    \def\pagecontents{%
+     \setdiglotN@rmal
+     \pickn@xtpartial
+     \ifvoid\topins\else
+         \trace{i}{Using topins \the\ht\topins x\the\wd\topins}%
+         \unvbox\topins \vskip\skip\topins \fi%
+    %
+     \box\topchunk
+     \lastd@pth=\dp\partial\relax%
+     \unvbox\partial%
+      %
+     \box\botchunk
+     \ifvoid\bottomins\else%\kern-\lastd@pth \dimen0=0pt 
+       \trace{i}{Using bottomins \the\ht\bottomins x\the\wd\bottomins}%
+       \vskip\skip\bottomins \unvbox\bottomins \fi%
+     \ifdiglotSepNotes%
+     \else%
+       % RTLness will have been asserted (or not) when the note was defined.
+       \box\notechunk%
+     \fi%
+     \ifvoid\verybottomins\else % \kern-\dimen0
+       \trace{i}{Using verybottomins \the\ht\verybottomins x\the\wd\verybottomins}%
+       \lastd@pth=0pt \vskip\skip\verybottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\verybottomins}}\fi
+     }%pagecontents
+   \holdinginserts=1
+   \trace{D}{PFM:\p@gefirstmark\space PBM:\p@gebotmark\space NPFM:\nextp@gefirstmark}%
+   \global\adjustp@ge=0pt
+   \plainoutput%
+  \fi
   \resetvsize%
+  \global\vsize=\availht
   \global\availhtR=\textheight%
   \global\availhtL=\textheight%
   \global\availht=\textheight%
-  \global\vsize=\availht
-  \plainoutput%
   \global\chunkDelta=0pt
   \global\pagefullfalse%
   \p@gestartfalse
@@ -1492,7 +1561,13 @@
   \xdef\botRmark{}%
   \global\setbox\Rbox=\box\voidb@x%
   \global\setbox\Lbox=\box\voidb@x%
+  \@mptyinserts
+  \s@veinserts{chunk}%
+  \s@veinserts{col}%
   \nextshipout
+  \ifnum\pageno=1000
+    \showlists
+  \fi
   %\nonstopmode
   %\showthe\output
   %%somejunk
@@ -1863,12 +1938,18 @@
 
 
 \def\check@and@update{%Checks each column to see if there is stuff to output
-  \trace{d}{check@and@update \the\triall@@pcount \ifboxmoved boxmoved\fi}%
   %and calls upd@tep@rtial as appropriate
   %responds to \ifboxmoved and \pagefull, checking the last chunkpenalty
+  \trace{d}{check@and@update \the\triall@@pcount \ifboxmoved boxmoved\fi}%
   \not@emptyfalse
   \x@\ch@ckcontents\diglot@list\E%Sets not@empty if there's stuff to output
   \ifboxmoved
+    \IfTr@ce{gI}{%
+      \let\d@=\sh@winsertdim\edef\v@lpfx{save}\edef\v@lsfx{chunk}%
+       \x@\cstackdown\ins@rts\E
+      \let\d@=\sh@winsertdim\edef\v@lpfx{}\edef\v@lsfx{}\x@\cstackdown\ins@rts\E
+    }%
+    \r@storeinserts{chunk}%
     \ifnum\lastchunkpenalty>9999
       \postponen@xt@partial
       \@writep@ge
@@ -1879,8 +1960,19 @@
       \x@\each@col\diglot@list\E% 
       \global\lastchunkpenalty=0
     \else
-      \@add@n@xtpartial
-      \@writep@ge
+      \ifdim\dimexpr \ht\partial + \dp\partial + \ht\n@xtpartial + \dp\n@xtpartial=0pt
+        \message{UNPRINTABLE PAGE CONTENTS! Image too big? Somewhere near \c@rref}%
+        \ifunprintable
+          \errmessage{Cannot continue}%
+          \divide \count0 by 0 
+        \else
+          \message{Trying to continue by breaking rules}%
+        \fi
+        \global\unprintabletrue
+      \else
+        \@add@n@xtpartial
+        \@writep@ge
+      \fi
       \let\col@do=\reset@n@xt
       \x@\each@col\diglot@list\E% 
     \fi
@@ -1973,7 +2065,7 @@
     \check@and@update %May trigger a refilling of \tri@llist
     \trace{D}{after check@and@update, tri@llist: \tri@llist, refl@wlist:\refl@wlist}%
     \ifx\refl@wlist\empty\else
-      \trace{d}{Reflowing aborted trials}%
+      \trace{d}{Reflowing aborted trials: \refl@wlist}%
       \let\col@do=\reflow@trial
       \x@\each@col\refl@wlist\E% 
       \global\let\refl@wlist\empty
@@ -1986,7 +2078,6 @@
   \else
     \let\n@xt=\diglot@run@nxt@trial
   \fi
-%  \tracingifs=0
   \n@xt
 }   
 

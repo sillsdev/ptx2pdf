@@ -45,6 +45,7 @@
 \def\m@keinsertb@x#1\E{\x@\newb@x\csname save#1\s@veclass\endcsname}
 \def\s@veins#1\E{\x@\setbox\x@3\x@\copy\csname #1\endcsname\x@\global\x@\setbox\csname save#1\s@veclass\endcsname\box3}
 \def\r@strins#1\E{\x@\setbox\x@3\x@\copy\csname save#1\s@veclass\endcsname\x@\global\x@\setbox\csname #1\endcsname\box3}
+\def\sh@winsertdim#1\E{\x@\let\x@\tmp\csname \v@lpfx#1\v@lsfx\endcsname\immediate\write-1{\v@lpfx#1\v@lsfx: \ifx\tmp\relax\else\the\ht\tmp\space x \the\wd\tmp\fi}}
 
 \def\m@keinsertsaveboxes#1\E{\edef\s@veclass{#1}\let\D@=\d@\let\d@=\m@keinsertb@x
   \x@\cstackdown\ins@rts\E
@@ -52,16 +53,19 @@
 }
 
 \def\s@veinserts#1{%loop through \ins@rts and save them 
+  \trace{gI}{Saving inserts (#1)}%
   \edef\s@veclass{#1}%
   \let\d@=\s@veins
   \x@\cstackdown\ins@rts\E 
 } 
 
 \def\r@storeinserts#1{%loop through \ins@rts and save them 
+  \trace{gI}{Restoring inserts (#1)}%
   \edef\s@veclass{#1}%
   \let\d@=\r@strins
   \x@\cstackdown\ins@rts\E
 } 
+
 
 % Generate the insert save-boxes for each class at start-up
 \addtoinithooks{\let\d@=\m@keinsertsaveboxes\x@\cstackdown\s@veclasses\E}
@@ -637,7 +641,7 @@
                      {\picdim@n}{\sizem@ltiple\p@cwidth}{\p@cheight}{\xtra}{\xtraremains}}%
     \ifdim\ht\newpicb@x>\p@cheight
       %It doesn't fit. Scale to other dimension:
-      \trace{g}{Picture too big set with \picdim@n=\sizem@ltiple\the\p@cwidth}%
+      \trace{g}{Picture too big set with \picdim@n=\sizem@ltiple\space\the\p@cwidth}%
       \setbox\newpicb@x=\hbox{%
         \ins@rtpic{"\the\PicPath\csname figparam-src\endcsname"}%
                      {\picaltdim@n}{\p@cheight}{\sizem@ltiple}{\xtra}{\xtraremains}}%
@@ -646,7 +650,7 @@
       \setbox\newpicb@x=\m@kepl@ceholder{\wd\newpicb@x}{\ht\newpicb@x}%
     \fi
     \setbox\newpicb@x=\hbox to \sizem@ltiple\p@cwidth{\hss
-      \edef\l@gstring{{\the\im@gecount}{\f@lename}{\csname figparam-pgpos\endcsname}{\csname figparam-copy\endcsname}{\sizem@ltiple x\the\p@cwidth}}% Fully expand figure parameters, but leave page no. to be expanded later.
+      \edef\l@gstring{{\the\im@gecount}{\f@lename}{\csname figparam-pgpos\endcsname}{\csname figparam-copy\endcsname}{\picdim@n:\the\wd\newpicb@x x\the\ht\newpicb@x}}% Fully expand figure parameters, but leave page no. to be expanded later.
       \x@\writefigp@gelog\x@{\l@gstring}%
       \box\newpicb@x\hss}%
 %-cfig_dofigure_3
@@ -1012,6 +1016,7 @@
 
 \def\writefigp@gelog#1{%
   \write\picp@ges{\string\figonpage{\the\pageno}#1}%
+  \x@\ifx\csname tr@cemode-gI\endcsname\y@s\immediate\write-1{Figure: #1}\fi
 }
 
 %: `\figonpage` gets written to the picpages auxiliary file at insert use.
