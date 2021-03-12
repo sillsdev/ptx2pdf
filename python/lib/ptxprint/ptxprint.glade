@@ -431,7 +431,7 @@ THE SOFTWARE.
   </object>
   <object class="GtkDialog" id="dlg_DBLbundle">
     <property name="can_focus">False</property>
-    <property name="title" translatable="yes">PTXprint: Set up to use a DBL bundle...</property>
+    <property name="title" translatable="yes">PTXprint: Set up DBL bundle...</property>
     <property name="type_hint">dialog</property>
     <child type="titlebar">
       <placeholder/>
@@ -525,7 +525,9 @@ it as a special project.</property>
 or downloaded DBL bundle (.zip) file.</property>
                     <property name="halign">end</property>
                     <property name="margin_top">12</property>
-                    <property name="label" translatable="yes">Step 2.</property>
+                    <property name="label" translatable="yes">Step 2.
+Locate File:</property>
+                    <property name="justify">right</property>
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
@@ -540,8 +542,11 @@ or downloaded DBL bundle (.zip) file.</property>
 folder with this name. You must NOT use
 the name of an existing Project.</property>
                     <property name="halign">end</property>
-                    <property name="label" translatable="yes">Unpacked DBL 
-Project Name:</property>
+                    <property name="margin_top">6</property>
+                    <property name="label" translatable="yes">Step 3.
+Assign a Name
+to DBL Project:</property>
+                    <property name="justify">right</property>
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
@@ -555,6 +560,8 @@ Project Name:</property>
                     <property name="tooltip_text" translatable="yes">PTXprint will create a NEW Paratext project
 folder with this name. You must NOT use
 the name of an existing Project.</property>
+                    <property name="margin_top">12</property>
+                    <property name="margin_bottom">6</property>
                     <property name="max_length">20</property>
                     <signal name="changed" handler="onDBLprojNameChanged" swapped="no"/>
                   </object>
@@ -570,13 +577,14 @@ the name of an existing Project.</property>
                     <property name="opacity">0.80000000000000004</property>
                     <property name="halign">end</property>
                     <property name="justify">right</property>
+                    <property name="wrap">True</property>
+                    <property name="wrap_mode">char</property>
                     <property name="ellipsize">middle</property>
                     <property name="max_width_chars">50</property>
                   </object>
                   <packing>
-                    <property name="left_attach">0</property>
+                    <property name="left_attach">1</property>
                     <property name="top_attach">2</property>
-                    <property name="width">2</property>
                   </packing>
                 </child>
                 <child>
@@ -585,6 +593,8 @@ the name of an existing Project.</property>
                     <property name="can_focus">False</property>
                     <property name="opacity">0.70196078431372544</property>
                     <property name="halign">start</property>
+                    <property name="wrap">True</property>
+                    <property name="wrap_mode">char</property>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
@@ -596,9 +606,11 @@ the name of an existing Project.</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="halign">end</property>
-                    <property name="label" translatable="yes">Name (or
-Description):</property>
+                    <property name="label" translatable="yes">Filename:</property>
                     <property name="justify">right</property>
+                    <attributes>
+                      <attribute name="foreground" value="#808000008080"/>
+                    </attributes>
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
@@ -617,8 +629,7 @@ Description):</property>
 the Open.Bible website which you may
 download and use in a publication.</property>
                     <property name="halign">center</property>
-                    <property name="valign">end</property>
-                    <property name="margin_top">12</property>
+                    <property name="valign">center</property>
                     <property name="relief">none</property>
                     <property name="uri">https://open.bible/resources/</property>
                   </object>
@@ -638,8 +649,9 @@ online scripture repository.
 If you already have the required DBL bundle,
 then skip this 1st step.</property>
                     <property name="halign">end</property>
-                    <property name="label" translatable="yes">[Optional]
-Step 1.</property>
+                    <property name="label" translatable="yes">[Optional] Step 1.
+Download from
+Online Repository</property>
                     <property name="justify">right</property>
                   </object>
                   <packing>
@@ -652,8 +664,11 @@ Step 1.</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="halign">end</property>
-                    <property name="margin_top">10</property>
-                    <property name="label" translatable="yes">Step 3.</property>
+                    <property name="label" translatable="yes">Description:</property>
+                    <property name="justify">right</property>
+                    <attributes>
+                      <attribute name="foreground" value="#808000008080"/>
+                    </attributes>
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
@@ -3824,7 +3839,7 @@ be viewed or edited in Paratext.</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="halign">start</property>
-                                <property name="margin_left">28</property>
+                                <property name="margin_left">36</property>
                                 <property name="label" translatable="yes">DBL Bundle:</property>
                               </object>
                               <packing>
