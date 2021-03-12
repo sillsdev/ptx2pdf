@@ -354,7 +354,7 @@ class GtkViewModel(ViewModel):
         for n in _notebooks:
             nbk = self.builder.get_object("nbk_"+n)
             self.notebooks[n] = [Gtk.Buildable.get_name(nbk.get_nth_page(i)) for i in range(nbk.get_n_pages())]
-        for fcb in ("interfaceLang", "digits", "script", "diglotPicListSources",
+        for fcb in ("project", "interfaceLang", "digits", "script", "diglotPicListSources",
                     "textDirection", "glossaryMarkupStyle", "fontFaces", "featsLangs",
                     "picaccept", "pubusage", "pubaccept", "chklstFilter|0.75"):
             self.addCR("fcb_"+fcb, 0)

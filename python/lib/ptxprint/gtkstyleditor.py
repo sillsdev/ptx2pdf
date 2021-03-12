@@ -287,6 +287,8 @@ class StyleEditorView(StyleEditor):
         return True
 
     def editMarker(self):
+        if self.marker is None:
+            return
         if self.marker in aliases:
             self.marker += "1"
         self.isLoading = True

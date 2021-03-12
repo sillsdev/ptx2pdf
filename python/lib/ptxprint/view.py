@@ -236,6 +236,8 @@ class ViewModel:
 
     def getAllBooks(self):
         ''' Returns a dict of all books in the project bkid: bookfile_path '''
+        if self.prjid is None:
+            return {}
         prjdir = os.path.join(self.settings_dir, self.prjid)
         res = {}
         for bk in allbooks:

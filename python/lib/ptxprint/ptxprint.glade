@@ -509,7 +509,7 @@ can access the required files.</property>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
-                    <property name="top_attach">0</property>
+                    <property name="top_attach">1</property>
                   </packing>
                 </child>
                 <child>
@@ -520,7 +520,7 @@ can access the required files.</property>
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
-                    <property name="top_attach">0</property>
+                    <property name="top_attach">1</property>
                   </packing>
                 </child>
                 <child>
@@ -535,7 +535,7 @@ Project Name:</property>
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
-                    <property name="top_attach">3</property>
+                    <property name="top_attach">4</property>
                   </packing>
                 </child>
                 <child>
@@ -550,7 +550,7 @@ the name of an existing Project. </property>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
-                    <property name="top_attach">3</property>
+                    <property name="top_attach">4</property>
                   </packing>
                 </child>
                 <child>
@@ -565,7 +565,7 @@ the name of an existing Project. </property>
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
-                    <property name="top_attach">1</property>
+                    <property name="top_attach">2</property>
                     <property name="width">2</property>
                   </packing>
                 </child>
@@ -578,7 +578,7 @@ the name of an existing Project. </property>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
-                    <property name="top_attach">2</property>
+                    <property name="top_attach">3</property>
                   </packing>
                 </child>
                 <child>
@@ -590,7 +590,36 @@ Description):</property>
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
-                    <property name="top_attach">2</property>
+                    <property name="top_attach">3</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLinkButton" id="lb_openBible">
+                    <property name="label" translatable="yes">Download DBL bundle</property>
+                    <property name="name">Visit the Open.Bible page to download a DBL bundle</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="focus_on_click">False</property>
+                    <property name="receives_default">True</property>
+                    <property name="halign">center</property>
+                    <property name="valign">end</property>
+                    <property name="relief">none</property>
+                    <property name="uri">https://open.bible/resources/</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">1</property>
+                    <property name="top_attach">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="label" translatable="yes">Step 1.</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
+                    <property name="top_attach">0</property>
                   </packing>
                 </child>
               </object>
@@ -3476,34 +3505,6 @@ which already have Credit Overlay settings.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkComboBox" id="fcb_project">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="can_default">True</property>
-                                <property name="halign">start</property>
-                                <property name="model">ls_projects</property>
-                                <property name="wrap_width">1</property>
-                                <property name="has_entry">True</property>
-                                <property name="entry_text_column">0</property>
-                                <property name="id_column">0</property>
-                                <signal name="changed" handler="onProjectChange" swapped="no"/>
-                                <child internal-child="entry">
-                                  <object class="GtkEntry">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="halign">start</property>
-                                    <property name="max_length">8</property>
-                                    <property name="width_chars">12</property>
-                                  </object>
-                                </child>
-                              </object>
-                              <packing>
-                                <property name="left_attach">1</property>
-                                <property name="top_attach">0</property>
-                                <property name="width">2</property>
-                              </packing>
-                            </child>
-                            <child>
                               <object class="GtkComboBox" id="ecb_book">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
@@ -3739,6 +3740,69 @@ if need be.</property>
                                 <property name="left_attach">5</property>
                                 <property name="top_attach">1</property>
                               </packing>
+                            </child>
+                            <child>
+                              <object class="GtkComboBox" id="fcb_project">
+                                <property name="width_request">130</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="can_default">True</property>
+                                <property name="halign">start</property>
+                                <property name="model">ls_projects</property>
+                                <property name="wrap_width">1</property>
+                                <property name="entry_text_column">0</property>
+                                <property name="id_column">0</property>
+                                <signal name="changed" handler="onProjectChange" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="top_attach">0</property>
+                                <property name="width">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkButton" id="btn_unpackDBLbundle">
+                                <property name="label" translatable="yes">Choose...</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                                <property name="tooltip_text" translatable="yes">Click to locate a previously created or
+downloaded DBL bundle, and give it
+a project name.
+
+PTXprint will then unpack the bundle 
+and create the neccessary files to print it.</property>
+                                <signal name="clicked" handler="onUnpackDBLbundleClicked" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="top_attach">4</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="halign">start</property>
+                                <property name="margin_left">24</property>
+                                <property name="label" translatable="yes">DBL Bundle:</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">4</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
                             </child>
                           </object>
                         </child>
@@ -14392,44 +14456,10 @@ options here to create a Diglot or Didoc.</property>
                                 <property name="margin_bottom">6</property>
                                 <property name="orientation">vertical</property>
                                 <child>
-                                  <object class="GtkLinkButton" id="lb_openBible">
-                                    <property name="label" translatable="yes">Download DBL bundle</property>
-                                    <property name="name">Visit the Open.Bible page to download a DBL bundle</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="focus_on_click">False</property>
-                                    <property name="receives_default">True</property>
-                                    <property name="halign">center</property>
-                                    <property name="valign">end</property>
-                                    <property name="relief">none</property>
-                                    <property name="uri">https://open.bible/resources/</property>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">0</property>
-                                  </packing>
+                                  <placeholder/>
                                 </child>
                                 <child>
-                                  <object class="GtkButton" id="btn_unpackDBLbundle">
-                                    <property name="label" translatable="yes">Unpack a
-DBL Bundle...</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">True</property>
-                                    <property name="tooltip_text" translatable="yes">Click to locate a previously created or
-downloaded DBL bundle, and give it
-a project name.
-
-PTXprint will then unpack the bundle 
-and create the neccessary files to print it.</property>
-                                    <signal name="clicked" handler="onUnpackDBLbundleClicked" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">1</property>
-                                  </packing>
+                                  <placeholder/>
                                 </child>
                               </object>
                             </child>
