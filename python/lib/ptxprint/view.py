@@ -212,7 +212,11 @@ class ViewModel:
             scope = self.get("r_book")
         if scope == "single":
             bk = self.get("ecb_book")
-            return [] if not bk else [bk]
+            if bk:
+                bname = self.getBookFilename(bk, self.prjid)
+                if os.path.exists(os.path.join(self.settings_dir, self.prjid, bname)):
+                    return [bk]
+            return []
         elif scope == "multiple" and len(bl):
             blst = []
             for b in bl:
