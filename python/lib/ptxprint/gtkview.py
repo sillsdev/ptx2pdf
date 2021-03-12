@@ -1378,6 +1378,7 @@ class GtkViewModel(ViewModel):
             w.set_text(ptset)
 
     def onResetTabGroupsClicked(self, btn_resetTabGroups):
+        # RUT 1SA; EZR NEH EST; ECC SNG; HOS JOL AMO OBA JON MIC; NAM HAB ZEP HAG ZEC MAL; GAL EPH PHP COL; 1TH 2TH 1TI 2TI TIT PHM; JAS 1PE 2PE 1JN 2JN 3JN JUD
         self.set("t_thumbgroups", "GAL EPH PHP COL; 1TI 2TI TIT PHM; JAS 1PE 2PE; 1JN 2JN 3JN JUD")
 
     def onFnBlendClicked(self, btn):

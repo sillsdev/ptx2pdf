@@ -8334,17 +8334,17 @@ to adjust the vertical space between these two sections.</property>
                                       <object class="GtkLabel" id="l_paragraphedNotes">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="tooltip_text" translatable="yes">The horizontal space between Paragraphed
-Footnotes and Cross-References can be set here. 
-The ideal space is calculated as 33% between 
+                                        <property name="tooltip_text" translatable="yes">The horizontal space between notes that are being
+run together as a single paragraph can be set here. 
+The default space is calculated as 33% between 
 min &amp; max values.
 
 For example if min=6pt and max=15pt then the 
-ideal horizontal space between notes would be 9pt.
+default horizontal space between notes would be 9pt.
 
-If this control is disabled, it is because neither the
-Footnotes nor the Cross-References have been set
-to be Paragraphed (see \f and \x settings above).</property>
+If this control is disabled, it is because both the
+Footnotes and Cross-References have been set
+to start on a new line. (see \f and \x settings above).</property>
                                         <property name="halign">end</property>
                                         <property name="margin_left">10</property>
                                         <property name="label" translatable="yes">Paragraphed Notes:</property>
@@ -8358,9 +8358,9 @@ to be Paragraphed (see \f and \x settings above).</property>
                                       <object class="GtkSpinButton" id="s_notespacingmin">
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
-                                        <property name="tooltip_text" translatable="yes">Paragraphed Note spacing is set in points (pts).
-Changing this will increase or decrease the MINIMUM
-horizontal space between Paragraphed notes.</property>
+                                        <property name="tooltip_text" translatable="yes">This spacing is set in points (pts). Changing this will 
+increase or decrease the MINIMUM horizontal space
+between notes that have been run together.</property>
                                         <property name="halign">start</property>
                                         <property name="width_chars">4</property>
                                         <property name="text">7</property>
@@ -8384,9 +8384,9 @@ horizontal space between Paragraphed notes.</property>
                                       <object class="GtkSpinButton" id="s_notespacingmax">
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
-                                        <property name="tooltip_text" translatable="yes">Paragraphed Note spacing is set in points (pts).
-Changing this will increase or decrease the MAXIMUM
-horizontal space between Paragraphed notes.</property>
+                                        <property name="tooltip_text" translatable="yes">This spacing is set in points (pts). Changing this will 
+increase or decrease the MAXIMUM horizontal space
+between notes that have been run together.</property>
                                         <property name="halign">start</property>
                                         <property name="width_chars">4</property>
                                         <property name="text">27</property>
@@ -12141,11 +12141,9 @@ have been enabled.</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
-                                            <property name="tooltip_text" translatable="yes">WARNING:
-Enabling this setting will override
-any conflicting settings here, which
-could make it appear as if settings
-here are not working at all.</property>
+                                            <property name="tooltip_text" translatable="yes">This is the normal file for advanced users to 
+configure TeX. This .tex file executes AFTER 
+all the PTXprint settings. </property>
                                             <property name="halign">start</property>
                                             <property name="draw_indicator">True</property>
                                             <signal name="clicked" handler="onExtraFileClicked" swapped="no"/>
@@ -12421,6 +12419,8 @@ for these to be used by PTXprint.</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
+                                            <property name="tooltip_text" translatable="yes">This .tec file is executed BEFORE any stylesheets of 
+other settings are applied. This file is rarely used.</property>
                                             <property name="halign">start</property>
                                             <property name="draw_indicator">True</property>
                                             <signal name="clicked" handler="onExtraFileClicked" swapped="no"/>
@@ -13444,8 +13444,7 @@ list all the book IDs here - only the special ones which
 need to share the same tab position.
 
 For example: PHM TIT; 1JN 2JN 3JN JUD</property>
-                                <property name="text">GAL EPH PHP COL; 1TI 2TI TIT PHM; JAS 1PE 2PE; 1JN 2JN 3JN JUD</property>
-                                <property name="placeholder_text">GAL EPH PHP COL; 1TI 2TI TIT PHM; JAS 1PE 2PE; 1JN 2JN 3JN JUD</property>
+                                <property name="text">RUT 1SA; EZR NEH EST; ECC SNG; HOS JOL AMO OBA JON MIC; NAM HAB ZEP HAG ZEC MAL; GAL EPH PHP COL; 1TH 2TH 1TI 2TI TIT PHM; JAS 1PE 2PE 1JN 2JN 3JN JUD</property>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
@@ -14982,6 +14981,10 @@ properties for this style.</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
+                                        <property name="tooltip_text" translatable="yes">The superscript option overrides these settings:
+   Font Size Factor is set to 0.75
+   Raise is set to 0.85 time the x-height of the font (which
+   defaults to 1/2 the ascent if not specified in the font).</property>
                                         <property name="halign">start</property>
                                         <property name="draw_indicator">True</property>
                                         <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
@@ -15011,6 +15014,7 @@ properties for this style.</property>
                                       <object class="GtkSpinButton" id="s_styRaise">
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
+                                        <property name="tooltip_text" translatable="yes">How much to raise the text (in pts).</property>
                                         <property name="halign">start</property>
                                         <property name="width_chars">5</property>
                                         <property name="text">1.0</property>
@@ -15124,6 +15128,7 @@ Factor:</property>
                                           <object class="GtkLabel" id="l_styRaise">
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
+                                            <property name="tooltip_text" translatable="yes">How much to raise the text (in pts).</property>
                                             <property name="halign">start</property>
                                             <property name="label" translatable="yes">Raise:</property>
                                             <property name="justify">right</property>
@@ -15140,6 +15145,8 @@ Factor:</property>
                                       <object class="GtkLabel" id="l_styActualFontSize">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
+                                        <property name="tooltip_text" translatable="yes">Calculated absolute point size given the current
+Base Font Size (on the Layout tab).</property>
                                         <property name="halign">start</property>
                                         <property name="label" translatable="yes">11.7pt</property>
                                         <attributes>
@@ -15166,6 +15173,7 @@ Factor:</property>
                                       <object class="GtkLabel" id="l_styColorValue">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
+                                        <property name="tooltip_text" translatable="yes">RGB value in hexadecimal.</property>
                                         <property name="halign">center</property>
                                         <property name="valign">start</property>
                                         <property name="label" translatable="yes">ColorVal</property>
@@ -15421,6 +15429,13 @@ Factor:</property>
                                           <object class="GtkLabel" id="l_styJustification">
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
+                                            <property name="tooltip_text" translatable="yes">If text is justified but Justify Paragraphs is turned off on the
+Body tab then an alignment of Justified here is treated as 
+Left, (and maybe swapped if Right-to-Left).
+
+When the Writing system text flow direction is Right-to-Left
+the interpretation of Left and Right is swapped. Top-to-Bottom
+flow is treated as Left-to-Right.</property>
                                             <property name="label" translatable="yes">Alignment:</property>
                                             <property name="xalign">1</property>
                                           </object>
@@ -15469,7 +15484,10 @@ Indent Factor:</property>
                                             <property name="can_focus">False</property>
                                             <property name="tooltip_text" translatable="yes">This is multiplied by the Base Paragraph Indent
 value (specified on the Layout tab) to get the final
-indentation amount.</property>
+indentation amount. 
+
+When the Writing system text flow direction is Right-to-Left
+the interpretation of Left and Right is swapped.</property>
                                             <property name="halign">end</property>
                                             <property name="label" translatable="yes">Left Indent
 Factor:</property>
@@ -15494,7 +15512,10 @@ Factor:</property>
                                             <property name="can_focus">False</property>
                                             <property name="tooltip_text" translatable="yes">This is multiplied by the Base Paragraph Indent
 value (specified on the Layout tab) to get the final
-indentation amount.</property>
+indentation amount.
+
+When the Writing system text flow direction is Right-to-Left
+the interpretation of Left and Right is swapped.</property>
                                             <property name="halign">end</property>
                                             <property name="label" translatable="yes">Right Indent
 Factor:</property>
