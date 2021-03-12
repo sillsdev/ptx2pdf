@@ -115,7 +115,7 @@ _allbkmap = {k: i for i, k in enumerate(_allbooks)}
 _sensitivities = {
     "r_book": {
         "r_book_single":       ["ecb_book", "l_chapfrom", "s_chapfrom", "l_chapto", "s_chapto"],
-        "r_book_multiple":     ["btn_chooseBooks", "t_booklist", "c_combine", "c_autoToC"],
+        "r_book_multiple":     ["btn_chooseBooks", "t_booklist", "c_autoToC"],
         "r_book_module":       ["btn_chooseBibleModule", "lb_bibleModule"]},
     "c_mainBodyText" :         ["gr_mainBodyText"],
     "c_doublecolumn" :         ["gr_doubleColumn", "c_singleColLayout", "t_singleColBookList"],
@@ -242,7 +242,7 @@ _signals = {
 }
 
 _olst = ["fr_SavedConfigSettings", "tb_Layout", "tb_Font", "tb_Body", "tb_NotesRefs", "tb_HeadFoot", "tb_Pictures",
-         "tb_Advanced", "tb_Logging", "tb_Tabs", "tb_DiglotBorder", "tb_StyleEditor", "tb_ViewerEditor", "tb_Help"]
+         "tb_Advanced", "tb_Logging", "tb_TabsBorders", "tb_Diglot", "tb_StyleEditor", "tb_ViewerEditor", "tb_Help"]
 
 def _doError(text, secondary="", title=None, copy2clip=False, show=True):
     if copy2clip:
@@ -444,7 +444,7 @@ class GtkViewModel(ViewModel):
             .stybutton {font-size: 12px; padding: 4px 6px}
             progress, trough {min-height: 24px}
             .mainnb {background-color: #F0F0F0}
-            .mainnb tab {min-height: 0pt; margin: 0pt; padding-bottom: 8pt}
+            .mainnb tab {min-height: 0pt; margin: 0pt; padding-bottom: 6pt}
             .viewernb {background-color: #F0F0F0}
             .viewernb tab {min-height: 0pt; margin: 0pt; padding-bottom: 3pt}
             .smradio {font-size: 11px; padding: 1px 1px}
@@ -557,8 +557,8 @@ class GtkViewModel(ViewModel):
                 "If the number of options is too overwhelming then use\n" + \
                 "this switch to hide the more complex/advanced options."))
                       
-        for c in ("tb_Advanced", "tb_ViewerEditor", "tb_StyleEditor", "tb_Pictures", "tb_Tabs", "tb_DiglotBorder",
-                  "fr_copyrightLicense", "r_book_module", "btn_chooseBibleModule", "lb_bibleModule", "c_combine",
+        for c in ("tb_Advanced", "tb_ViewerEditor", "tb_StyleEditor", "tb_Pictures", "tb_TabsBorders", "tb_Diglot",
+                  "fr_copyrightLicense", "r_book_module", "btn_chooseBibleModule", "lb_bibleModule",
                   "c_fighiderefs", "lb_selectFigureFolder", "l_indentUnit", "s_indentUnit", "lb_style_s", "lb_style_r", 
                   "l_btmMrgn", "s_bottommargin", "l_ftrPosn", "s_footerposition", "r_ftrCenter_Pri", "r_ftrCenter_Sec", 
                   "l_missingPictureString", "l_imageTypeOrder", "t_imageTypeOrder", "fr_layoutSpecialBooks", "fr_layoutOther",
@@ -584,13 +584,15 @@ class GtkViewModel(ViewModel):
         if not val:
             if self.get("c_includeillustrations"):
                 self.builder.get_object("tb_Pictures").set_visible(True)
-            if self.get("c_thumbtabs"):
-                self.builder.get_object("tb_Tabs").set_visible(True)
-            if self.get("c_diglot") or self.get("c_borders"):
-                self.builder.get_object("tb_DiglotBorder").set_visible(True)
-                if self.get("c_diglot"):
-                    self.builder.get_object("fr_diglot").set_visible(True)
-                    self.builder.get_object("btn_diglotSwitch").set_visible(True)
+                
+            if self.get("c_diglot"):
+                self.builder.get_object("tb_Diglot").set_visible(True)
+                # self.builder.get_object("btn_diglotSwitch").set_visible(True)
+                
+            if self.get("c_thumbtabs") or self.get("c_borders"):
+                self.builder.get_object("tb_TabsBorders").set_visible(True)
+                if self.get("c_thumbtabs"):
+                    self.builder.get_object("fr_tabs").set_visible(True)
                 if self.get("c_borders"):
                     self.builder.get_object("fr_borders").set_visible(True)
 
@@ -888,19 +890,19 @@ class GtkViewModel(ViewModel):
         ic = " color='"+col+"'" if self.get("c_includeillustrations") else ""
         self.builder.get_object("lb_Pictures").set_markup("<span{}>".format(ic)+_("Pictures")+"</span>")
 
-        tc = " color='"+col+"'" if self.get("c_thumbtabs") else ""
-        self.builder.get_object("lb_Tabs").set_markup("<span{}>".format(tc)+_("Tabs")+"</span>")
+        dg = " color='"+col+"'" if self.get("c_diglot") else ""
+        self.builder.get_object("lb_Diglot").set_markup("<span{}>".format(dg)+_("Diglot")+"</span>")
 
-        dglt = self.get("c_diglot")
-        brdr = self.get("c_borders")
-        dc = "<span color='{}'>".format(col)+_("Diglot")+"</span>" if dglt \
-            else "Diglot" if self.builder.get_object("fr_diglot").get_visible() else ""
-        bc = "<span color='{}'>".format(col)+_("Border")+"</span>" if brdr \
-            else "Border" if self.builder.get_object("fr_borders").get_visible() else ""
-        jn = "+" if ((dglt and brdr) or self.get("c_hideAdvancedSettings")) else ""
-        self.builder.get_object("lb_DiglotBorder").set_markup(dc+jn+bc)
+        tb = self.get("c_thumbtabs")
+        bd = self.get("c_borders")
+        tc = "<span color='{}'>".format(col)+_("Tabs")+"</span>" if tb \
+            else "Tabs" if self.builder.get_object("fr_tabs").get_visible() else ""
+        bc = "<span color='{}'>".format(col)+_("Borders")+"</span>" if bd \
+            else "Borders" if self.builder.get_object("fr_borders").get_visible() else ""
+        jn = "+" if ((tb and bd) or self.get("c_hideAdvancedSettings")) else ""
+        self.builder.get_object("lb_TabsBorders").set_markup(tc+jn+bc)
 
-        self.builder.get_object("c_hideAdvancedSettings").set_sensitive(not (dglt and brdr))
+        self.builder.get_object("c_hideAdvancedSettings").set_sensitive(not (tb and bd))
 
     def sensiVisible(self, k, focus=False, state=None):
         if state is None:
@@ -943,6 +945,7 @@ class GtkViewModel(ViewModel):
     def on2colClicked(self, btn):
         self.onSimpleClicked(btn)
         self.updateMarginGraphics()
+        self.updateDialogTitle()
         if self.loadingConfig:
             return
         self.picListView.onRadioChanged()
@@ -1118,7 +1121,7 @@ class GtkViewModel(ViewModel):
         pgid = Gtk.Buildable.get_name(nbk_Main.get_nth_page(pgnum))
         if pgid == "tb_ViewerEditor": # Viewer tab
             self.onRefreshViewerTextClicked(None)
-        elif pgid == "tb_Tabs":
+        elif pgid == "tb_TabsBorders":
             self.onThumbColorChange()
         # elif pgid == "tb_Pictures":
             # need to get it to hide detail columns
@@ -1907,8 +1910,7 @@ class GtkViewModel(ViewModel):
                     self.set("r_book", "single")
                     break
         status = self.get("r_book") == "multiple"
-        for c in ("c_combine", "t_booklist"):
-            self.builder.get_object(c).set_sensitive(status)
+        self.builder.get_object("t_booklist").set_sensitive(status)
         toc = self.builder.get_object("c_autoToC") # Ensure that we're not trying to build a ToC for a single book!
         toc.set_sensitive(status)
         if not status:
@@ -2291,7 +2293,6 @@ class GtkViewModel(ViewModel):
 
     def onDiglotClicked(self, btn):
         self.sensiVisible("c_diglot")
-        self.sensiVisible("c_borders")
         # self.updateHdrFtrOptions(btn.get_active())
         self.colorTabs()
         if self.loadingConfig:
@@ -2326,7 +2327,7 @@ class GtkViewModel(ViewModel):
         if oprjid is not None and oconfig is not None:
             self.set("fcb_project", oprjid)
             self.set("ecb_savedConfig", oconfig)
-        mpgnum = self.notebooks['Main'].index("tb_DiglotBorder")
+        mpgnum = self.notebooks['Main'].index("tb_Diglot")
         self.builder.get_object("nbk_Main").set_current_page(mpgnum)
         
     def updateHdrFtrOptions(self, diglot=False):
@@ -2343,7 +2344,7 @@ class GtkViewModel(ViewModel):
             self.builder.get_object("ecb_ftrcenter").append_text(v)
 
     def onBorderClicked(self, btn):
-        self.sensiVisible("c_diglot")
+        self.sensiVisible("c_thumbtabs")
         self.sensiVisible("c_borders")
         self.colorTabs()
         
@@ -2433,6 +2434,7 @@ class GtkViewModel(ViewModel):
 
     def onTabsClicked(self, btn):
         self.onSimpleClicked(btn)
+        self.sensiVisible("c_borders")
         self.colorTabs()
         self.onNumTabsChanged()
         if self.get("c_thumbtabs"):
@@ -2698,9 +2700,11 @@ class GtkViewModel(ViewModel):
             # DBLfile = [x.relative_to(prjdir) for x in DBLfile]
             self.DBLfile = DBLfile[0]
             self.builder.get_object("lb_DBLbundleFilename").set_label(os.path.basename(DBLfile[0]))
+            self.set("t_DBLprojName", os.path.basename(DBLfile[0])[:8])
             self.builder.get_object("btn_chooseDBLbundle").set_tooltip_text(str(DBLfile[0]))
         else:
             self.builder.get_object("lb_DBLbundleFilename").set_label("")
+            self.set("t_DBLprojName", "")
             self.DBLfile = None
             self.builder.get_object("btn_chooseDBLbundle").set_tooltip_text("")
     

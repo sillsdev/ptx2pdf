@@ -43,7 +43,6 @@ ModelMap = {
     "project/hideadvsettings":  ("c_hideAdvancedSettings", None),
     "project/pdfx1acompliant":  ("c_PDFx1aOutput", None),
     "project/bookscope":        ("r_book", None),
-    "project/combinebooks":     ("c_combine", None),
     "project/book":             ("ecb_book", None),
     "project/modulefile":       ("btn_chooseBibleModule", lambda w,v: v.replace("\\","/") if v is not None else ""),
     "project/booklist":         ("t_booklist", lambda w,v: v or ""),

@@ -199,10 +199,7 @@ class ViewModel:
         else:
             cfgname = "-" + cfgname
         if len(bks) > 1:
-            if force_combine or self.get("c_combine"):
-                fname = "ptxprint{}-{}_{}{}".format(cfgname, bks[0], bks[-1], self.prjid)
-            else:
-                return sum((self.baseTeXPDFnames(bks=[bk]) for bk in bks), [])
+            fname = "ptxprint{}-{}_{}{}".format(cfgname, bks[0], bks[-1], self.prjid)
         elif "." in bks[0]:
             fname = "ptxprint{}-{}{}".format(cfgname, os.path.splitext(os.path.basename(bks[0]))[0], self.prjid)
         else:
@@ -433,11 +430,14 @@ class ViewModel:
                     bks = bks[0]
                 except IndexError:
                     bks = _("No book selected!")
-            prjcfg = "{}:{}".format(prjid, self.get("ecb_savedConfig", "")) 
-            if self.get("c_diglot"):  # self.get("ecb_diglotSecConfig")
-                prjcfg2 = "{}:{}".format(self.get("fcb_diglotSecProject", "!NoSecPrj!"), self.get("ecb_diglotSecConfig", "")) 
+            cfg = ":" + self.get("ecb_savedConfig", "")
+            cfg = ":" + cfg if (not self.get("c_diglot") and self.get("c_doublecolumn", False)) else cfg
+            prjcfg = "{}{}".format(prjid, cfg) 
+            if self.get("c_diglot"):
+                cfg2 = ":" + self.get("ecb_diglotSecConfig", "")
+                prjcfg2 = "{}{}".format(self.get("fcb_diglotSecProject", "!NoSecPrj!"), cfg2) 
                 prjcfg = "[{} + {}]".format(prjcfg, prjcfg2)
-            return "PTXprint {}   -   {}   ({})".format(VersionStr, prjcfg, bks)
+            return "PTXprint {}  -  {}  ({})".format(VersionStr, prjcfg, bks)
 
     def readCopyrights(self):
         with open(os.path.join(os.path.dirname(__file__), "picCopyrights.json"), encoding="utf-8", errors="ignore") as inf:
@@ -799,8 +799,8 @@ class ViewModel:
             if secprjid is not None:
                 secprjdir = os.path.join(self.settings_dir, secprjid)
             else:
-                self.doError(_("No Secondary Project Set"), secondary=_("In order to generate an AdjList for Diglots, the \n"+
-                                                                    "Secondary project must be set on the Diglot+Border tab."))
+                self.doError(_("No Secondary Project Set"), secondary=_("In order to generate an AdjList for a diglot, the \n"+
+                                                                        "Secondary project must be set on the Diglot tab."))
                 return
         prjdir = os.path.join(self.settings_dir, self.prjid)
         for bk in booklist:

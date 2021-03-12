@@ -3587,13 +3587,14 @@ printed, the book codes will be listed here.
 This list is editable, so books can be re-ordered
 if need be.</property>
                                 <property name="margin_left">6</property>
+                                <property name="margin_right">6</property>
                                 <property name="caps_lock_warning">False</property>
                                 <signal name="focus-out-event" handler="onBookListChanged" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="left_attach">2</property>
                                 <property name="top_attach">2</property>
-                                <property name="width">5</property>
+                                <property name="width">4</property>
                               </packing>
                             </child>
                             <child>
@@ -3652,28 +3653,6 @@ if need be.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkCheckButton" id="c_combine">
-                                <property name="label" translatable="yes">Combine as
-a Single PDF</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">False</property>
-                                <property name="tooltip_text" translatable="yes">Select this option if you want all
-the different Biblical books to be
-combined as a single PDF file.
-Highly recommended, otherwise
-you will end up with multiple
-PDF files - one for each book.</property>
-                                <property name="halign">start</property>
-                                <property name="active">True</property>
-                                <property name="draw_indicator">True</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">7</property>
-                                <property name="top_attach">2</property>
-                              </packing>
-                            </child>
-                            <child>
                               <object class="GtkLabel" id="l_projectFullName">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
@@ -3690,7 +3669,7 @@ PDF files - one for each book.</property>
                               <packing>
                                 <property name="left_attach">3</property>
                                 <property name="top_attach">0</property>
-                                <property name="width">5</property>
+                                <property name="width">3</property>
                               </packing>
                             </child>
                             <child>
@@ -3720,22 +3699,7 @@ PDF files - one for each book.</property>
                               <packing>
                                 <property name="left_attach">2</property>
                                 <property name="top_attach">3</property>
-                                <property name="width">5</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkButton" id="btn_unpackDBLbundle">
-                                <property name="label" translatable="yes">DBL Bundle...</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">True</property>
-                                <property name="tooltip_text" translatable="yes">PTXprint can also extract a DBL Bundle file
-to create the neccessary file to print from it.</property>
-                                <signal name="clicked" handler="onUnpackDBLbundleClicked" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="left_attach">7</property>
-                                <property name="top_attach">3</property>
+                                <property name="width">4</property>
                               </packing>
                             </child>
                             <child>
@@ -3775,12 +3739,6 @@ to create the neccessary file to print from it.</property>
                                 <property name="left_attach">5</property>
                                 <property name="top_attach">1</property>
                               </packing>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
                             </child>
                           </object>
                         </child>
@@ -6308,7 +6266,6 @@ hyphenation list in Paratext.
 
 </property>
                                         <property name="halign">start</property>
-                                        <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
                                       <packing>
@@ -13073,7 +13030,7 @@ from XeTeX processing.</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkBox" id="tb_Tabs">
+                  <object class="GtkBox" id="tb_TabsBorders">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="margin_left">6</property>
@@ -13082,7 +13039,7 @@ from XeTeX processing.</property>
                     <property name="margin_bottom">6</property>
                     <property name="orientation">vertical</property>
                     <child>
-                      <object class="GtkFrame">
+                      <object class="GtkFrame" id="fr_tabs">
                         <property name="width_request">670</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
@@ -13136,8 +13093,8 @@ from XeTeX processing.</property>
                                 <property name="can_focus">True</property>
                                 <property name="tooltip_text" translatable="yes">The height of the Thumb Tab measured in millimeters (mm).</property>
                                 <property name="halign">start</property>
-                                <property name="text">6.0</property>
                                 <property name="width_chars">5</property>
+                                <property name="text">6.0</property>
                                 <property name="adjustment">a_thumbheight</property>
                                 <property name="climb_rate">0.10000000000000001</property>
                                 <property name="digits">1</property>
@@ -13154,7 +13111,12 @@ from XeTeX processing.</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="tooltip_text" translatable="yes">Thumb Tabs usually use a dark color
-for the Tab with a light (or white) text.</property>
+for the background with a light color
+(or white) for the foreground text.
+
+The background color is set here, but
+the foreground text color needs to be
+set by clicking the Edit Style link.</property>
                                 <property name="halign">end</property>
                                 <property name="label" translatable="yes">Tab Color:</property>
                               </object>
@@ -13319,7 +13281,7 @@ For example: PHM TIT; 1JN 2JN 3JN JUD</property>
                             </child>
                             <child>
                               <object class="GtkComboBox" id="fcb_rotateTabs">
-                                <property name="width_request">180</property>
+                                <property name="width_request">130</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="can_default">True</property>
@@ -13337,7 +13299,7 @@ For example: PHM TIT; 1JN 2JN 3JN JUD</property>
                                   <object class="GtkEntry">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
-                                    <property name="width_chars">15</property>
+                                    <property name="width_chars">10</property>
                                   </object>
                                 </child>
                               </object>
@@ -13390,6 +13352,7 @@ For example: PHM TIT; 1JN 2JN 3JN JUD</property>
                               <packing>
                                 <property name="left_attach">6</property>
                                 <property name="top_attach">0</property>
+                                <property name="width">3</property>
                               </packing>
                             </child>
                             <child>
@@ -13506,7 +13469,7 @@ default values for the Grouped Tabs.</property>
                             </child>
                             <child>
                               <object class="GtkLabel">
-                                <property name="width_request">75</property>
+                                <property name="width_request">60</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="hexpand">True</property>
@@ -13519,7 +13482,7 @@ default values for the Grouped Tabs.</property>
                             </child>
                             <child>
                               <object class="GtkLabel">
-                                <property name="width_request">65</property>
+                                <property name="width_request">60</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="hexpand">True</property>
@@ -13558,7 +13521,492 @@ Note: If only a single book is currently selected, it will place the Thumb Tab r
                       </packing>
                     </child>
                     <child>
-                      <placeholder/>
+                      <object class="GtkFrame" id="fr_borders">
+                        <property name="width_request">670</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="halign">start</property>
+                        <property name="valign">end</property>
+                        <property name="margin_left">6</property>
+                        <property name="margin_right">6</property>
+                        <property name="margin_top">12</property>
+                        <property name="margin_bottom">6</property>
+                        <property name="label_xalign">0.019999999552965164</property>
+                        <child>
+                          <object class="GtkGrid" id="gr_borders">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="margin_left">12</property>
+                            <property name="margin_right">6</property>
+                            <property name="margin_top">4</property>
+                            <property name="margin_bottom">10</property>
+                            <property name="row_spacing">4</property>
+                            <property name="column_spacing">8</property>
+                            <child>
+                              <object class="GtkButton" id="btn_selectSectionHeaderPDF">
+                                <property name="label" translatable="yes">Select...</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                                <property name="halign">start</property>
+                                <property name="valign">center</property>
+                                <signal name="clicked" handler="onSectionHeaderPDFclicked" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="left_attach">3</property>
+                                <property name="top_attach">0</property>
+                                <property name="height">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="lb_inclPageBorder">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="opacity">0.80000000000000004</property>
+                                <property name="halign">end</property>
+                                <property name="justify">right</property>
+                                <property name="ellipsize">middle</property>
+                                <property name="max_width_chars">30</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">5</property>
+                                <property name="top_attach">1</property>
+                                <property name="width">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="lb_inclSectionHeader">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="opacity">0.80000000000000004</property>
+                                <property name="halign">end</property>
+                                <property name="margin_bottom">6</property>
+                                <property name="justify">right</property>
+                                <property name="ellipsize">middle</property>
+                                <property name="max_width_chars">30</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">1</property>
+                                <property name="width">3</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="lb_inclVerseDecorator">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="opacity">0.80000000000000004</property>
+                                <property name="halign">end</property>
+                                <property name="justify">right</property>
+                                <property name="ellipsize">middle</property>
+                                <property name="max_width_chars">30</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">6</property>
+                                <property name="width">3</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkCheckButton" id="c_inclSectionHeader">
+                                <property name="label" translatable="yes">Section Header</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="tooltip_text" translatable="yes">Section Headings may be adorned with
+a special graphic. Ensure that there is
+adequate space - both horizontal as well
+as vertical to make sure all headings fit.</property>
+                                <property name="halign">start</property>
+                                <property name="margin_top">4</property>
+                                <property name="draw_indicator">True</property>
+                                <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">0</property>
+                                <property name="width">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="lb_inclEndOfBook">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="opacity">0.80000000000000004</property>
+                                <property name="halign">end</property>
+                                <property name="valign">center</property>
+                                <property name="margin_bottom">6</property>
+                                <property name="justify">right</property>
+                                <property name="ellipsize">middle</property>
+                                <property name="max_width_chars">30</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">5</property>
+                                <property name="top_attach">3</property>
+                                <property name="width">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkCheckButton" id="c_inclVerseDecorator">
+                                <property name="label" translatable="yes">Verse Number Decorator</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="tooltip_text" translatable="yes">The Verse numbers may be decorated by
+a PDF graphic. You may also use a special
+font and size to ensure verses fit well.</property>
+                                <property name="halign">start</property>
+                                <property name="margin_top">4</property>
+                                <property name="draw_indicator">True</property>
+                                <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">5</property>
+                                <property name="width">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkButton" id="btn_selectVerseDecorator">
+                                <property name="label" translatable="yes">Select...</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                                <property name="halign">start</property>
+                                <property name="valign">center</property>
+                                <signal name="clicked" handler="onVerseDecoratorPDFclicked" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="left_attach">3</property>
+                                <property name="top_attach">5</property>
+                                <property name="height">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="l_verseDecoratorShift">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="tooltip_text" translatable="yes">Vertical shift in pts of the verse decorator image upwards relative to the text.</property>
+                                <property name="halign">end</property>
+                                <property name="label" translatable="yes">Shift:</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">7</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkSpinButton" id="s_verseDecoratorShift">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="text">0.0</property>
+                                <property name="adjustment">a_verseDecoratorShift</property>
+                                <property name="climb_rate">0.10000000000000001</property>
+                                <property name="digits">1</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="top_attach">7</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="l_verseDecoratorScale">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="tooltip_text" translatable="yes">Scale verse decorator image. 1.0 is unity.</property>
+                                <property name="halign">end</property>
+                                <property name="hexpand">True</property>
+                                <property name="label" translatable="yes">Scale:</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">2</property>
+                                <property name="top_attach">7</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkSpinButton" id="s_verseDecoratorScale">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="text">1.0</property>
+                                <property name="adjustment">a_verseDecoratorScale</property>
+                                <property name="climb_rate">0.10000000000000001</property>
+                                <property name="digits">1</property>
+                                <property name="value">1</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">3</property>
+                                <property name="top_attach">7</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkCheckButton" id="c_inclEndOfBook">
+                                <property name="label" translatable="yes">End of Book</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="tooltip_text" translatable="yes">Section Headings may be adorned with
+a special graphic. Ensure that there is
+adequate space - both horizontal as well
+as vertical to make sure all headings fit.</property>
+                                <property name="halign">start</property>
+                                <property name="margin_top">4</property>
+                                <property name="draw_indicator">True</property>
+                                <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="left_attach">5</property>
+                                <property name="top_attach">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkCheckButton" id="c_inclPageBorder">
+                                <property name="label" translatable="yes">Page Border</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="tooltip_text" translatable="yes">Select a PDF for the Border of the publication.
+Note that after setting this border, it is likely
+that you will need to adjust the page margins
+to make it fit. </property>
+                                <property name="halign">start</property>
+                                <property name="margin_top">4</property>
+                                <property name="draw_indicator">True</property>
+                                <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="left_attach">5</property>
+                                <property name="top_attach">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkButton" id="btn_selectEndOfBookPDF">
+                                <property name="label" translatable="yes">Select...</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                                <property name="halign">end</property>
+                                <property name="valign">center</property>
+                                <signal name="clicked" handler="onEndOfBookPDFclicked" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="left_attach">7</property>
+                                <property name="top_attach">2</property>
+                                <property name="height">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkButton" id="btn_selectPageBorderPDF">
+                                <property name="label" translatable="yes">Select...</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                                <property name="halign">start</property>
+                                <property name="valign">center</property>
+                                <signal name="clicked" handler="onPageBorderPDFclicked" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="left_attach">7</property>
+                                <property name="top_attach">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkCheckButton" id="c_borderPageWide">
+                                <property name="label" translatable="yes">Full page</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="tooltip_text" translatable="yes">If set, the border is expanded to the full page. Otherwise it is expanded only to the gutter margins.</property>
+                                <property name="halign">end</property>
+                                <property name="valign">start</property>
+                                <property name="draw_indicator">True</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">7</property>
+                                <property name="top_attach">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="l_inclSectionShift">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="tooltip_text" translatable="yes">Vertical shift in pts of the section box downwards relative to the text</property>
+                                <property name="halign">end</property>
+                                <property name="label" translatable="yes">Shift:</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="l_inclSectionScale">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="tooltip_text" translatable="yes">Scale section header image. 1.0 is unity.</property>
+                                <property name="halign">end</property>
+                                <property name="hexpand">True</property>
+                                <property name="label" translatable="yes">Scale:</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">2</property>
+                                <property name="top_attach">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkSpinButton" id="s_inclSectionShift">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="text">0.0</property>
+                                <property name="adjustment">a_inclSectionShift</property>
+                                <property name="climb_rate">0.10000000000000001</property>
+                                <property name="digits">1</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="top_attach">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkSpinButton" id="s_inclSectionScale">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="text">1.0</property>
+                                <property name="adjustment">a_inclSectionScale</property>
+                                <property name="climb_rate">0.10000000000000001</property>
+                                <property name="digits">1</property>
+                                <property name="value">1</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">3</property>
+                                <property name="top_attach">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkSeparator">
+                                <property name="visible">True</property>
+                                <property name="sensitive">False</property>
+                                <property name="can_focus">False</property>
+                                <property name="valign">center</property>
+                                <property name="hexpand">True</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">4</property>
+                                <property name="width">8</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkSeparator">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="halign">center</property>
+                                <property name="margin_left">20</property>
+                                <property name="margin_right">20</property>
+                                <property name="margin_bottom">12</property>
+                                <property name="orientation">vertical</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">4</property>
+                                <property name="top_attach">0</property>
+                                <property name="height">4</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLinkButton" id="lb_style_v">
+                                <property name="label">\v</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="focus_on_click">False</property>
+                                <property name="receives_default">True</property>
+                                <property name="halign">start</property>
+                                <property name="relief">none</property>
+                                <property name="uri">Click to edit the \v marker's properties on the Styles tab</property>
+                                <signal name="activate-link" handler="onEditStyleClicked" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="left_attach">2</property>
+                                <property name="top_attach">5</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                          </object>
+                        </child>
+                        <child type="label">
+                          <object class="GtkCheckButton" id="c_borders">
+                            <property name="label" translatable="yes">Decorative Borders and Verses</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">False</property>
+                            <property name="tooltip_text" translatable="yes">Some cultures value ornamental or
+decorative features in their scripture
+publications. This option allows you
+to specify the settings for these.</property>
+                            <property name="draw_indicator">True</property>
+                            <signal name="clicked" handler="onBorderClicked" swapped="no"/>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="position">1</property>
+                      </packing>
                     </child>
                   </object>
                   <packing>
@@ -13566,11 +14014,11 @@ Note: If only a single book is currently selected, it will place the Thumb Tab r
                   </packing>
                 </child>
                 <child type="tab">
-                  <object class="GtkLabel" id="lb_Tabs">
+                  <object class="GtkLabel" id="lb_TabsBorders">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="halign">start</property>
-                    <property name="label" translatable="yes">Tabs</property>
+                    <property name="label" translatable="yes">Tabs+Borders</property>
                   </object>
                   <packing>
                     <property name="position">9</property>
@@ -13578,7 +14026,7 @@ Note: If only a single book is currently selected, it will place the Thumb Tab r
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkBox" id="tb_DiglotBorder">
+                  <object class="GtkBox" id="tb_Diglot">
                     <property name="can_focus">False</property>
                     <property name="halign">start</property>
                     <property name="margin_left">6</property>
@@ -13913,6 +14361,7 @@ options here to create a Diglot or Didoc.</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
                             <property name="halign">end</property>
+                            <property name="valign">start</property>
                             <property name="margin_right">6</property>
                             <signal name="clicked" handler="onDiglotSwitchClicked" swapped="no"/>
                           </object>
@@ -13923,6 +14372,83 @@ options here to create a Diglot or Didoc.</property>
                             <property name="position">0</property>
                           </packing>
                         </child>
+                        <child>
+                          <object class="GtkFrame">
+                            <property name="width_request">200</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="margin_left">6</property>
+                            <property name="margin_right">6</property>
+                            <property name="margin_top">6</property>
+                            <property name="margin_bottom">6</property>
+                            <property name="label_xalign">0.5</property>
+                            <child>
+                              <object class="GtkBox">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="margin_left">6</property>
+                                <property name="margin_right">6</property>
+                                <property name="margin_top">6</property>
+                                <property name="margin_bottom">6</property>
+                                <property name="orientation">vertical</property>
+                                <child>
+                                  <object class="GtkLinkButton" id="lb_openBible">
+                                    <property name="label" translatable="yes">Download DBL bundle</property>
+                                    <property name="name">Visit the Open.Bible page to download a DBL bundle</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="focus_on_click">False</property>
+                                    <property name="receives_default">True</property>
+                                    <property name="halign">center</property>
+                                    <property name="valign">end</property>
+                                    <property name="relief">none</property>
+                                    <property name="uri">https://open.bible/resources/</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkButton" id="btn_unpackDBLbundle">
+                                    <property name="label" translatable="yes">Unpack a
+DBL Bundle...</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <property name="tooltip_text" translatable="yes">Click to locate a previously created or
+downloaded DBL bundle, and give it
+a project name.
+
+PTXprint will then unpack the bundle 
+and create the neccessary files to print it.</property>
+                                    <signal name="clicked" handler="onUnpackDBLbundleClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">1</property>
+                                  </packing>
+                                </child>
+                              </object>
+                            </child>
+                            <child type="label">
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="tooltip_text" translatable="yes">PTXprint can unpack a DBL bundle and 
+create the neccessary files to print it.</property>
+                                <property name="label" translatable="yes">Digital Bible Library Resources</property>
+                              </object>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -13931,487 +14457,7 @@ options here to create a Diglot or Didoc.</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkFrame" id="fr_borders">
-                        <property name="width_request">560</property>
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="halign">start</property>
-                        <property name="valign">end</property>
-                        <property name="margin_bottom">6</property>
-                        <property name="label_xalign">0.019999999552965164</property>
-                        <child>
-                          <object class="GtkGrid" id="gr_borders">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="margin_left">6</property>
-                            <property name="margin_right">6</property>
-                            <property name="margin_top">4</property>
-                            <property name="margin_bottom">10</property>
-                            <property name="column_spacing">6</property>
-                            <child>
-                              <object class="GtkButton" id="btn_selectSectionHeaderPDF">
-                                <property name="label" translatable="yes">Select...</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">True</property>
-                                <property name="halign">start</property>
-                                <property name="valign">center</property>
-                                <signal name="clicked" handler="onSectionHeaderPDFclicked" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="left_attach">3</property>
-                                <property name="top_attach">0</property>
-                                <property name="height">2</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel" id="lb_inclPageBorder">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="opacity">0.80000000000000004</property>
-                                <property name="halign">end</property>
-                                <property name="justify">right</property>
-                                <property name="ellipsize">middle</property>
-                                <property name="max_width_chars">30</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">5</property>
-                                <property name="top_attach">1</property>
-                                <property name="width">2</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel" id="lb_inclSectionHeader">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="opacity">0.80000000000000004</property>
-                                <property name="halign">end</property>
-                                <property name="margin_bottom">6</property>
-                                <property name="justify">right</property>
-                                <property name="ellipsize">middle</property>
-                                <property name="max_width_chars">30</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">0</property>
-                                <property name="top_attach">1</property>
-                                <property name="width">3</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel" id="lb_inclVerseDecorator">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="opacity">0.80000000000000004</property>
-                                <property name="halign">end</property>
-                                <property name="justify">right</property>
-                                <property name="ellipsize">middle</property>
-                                <property name="max_width_chars">30</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">0</property>
-                                <property name="top_attach">6</property>
-                                <property name="width">3</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkCheckButton" id="c_inclSectionHeader">
-                                <property name="label" translatable="yes">Section Header</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">False</property>
-                                <property name="tooltip_text" translatable="yes">Section Headings may be adorned with
-a special graphic. Ensure that there is
-adequate space - both horizontal as well
-as vertical to make sure all headings fit.</property>
-                                <property name="halign">start</property>
-                                <property name="margin_top">4</property>
-                                <property name="draw_indicator">True</property>
-                                <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="left_attach">0</property>
-                                <property name="top_attach">0</property>
-                                <property name="width">2</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel" id="lb_inclEndOfBook">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="opacity">0.80000000000000004</property>
-                                <property name="halign">end</property>
-                                <property name="valign">center</property>
-                                <property name="margin_bottom">6</property>
-                                <property name="justify">right</property>
-                                <property name="ellipsize">middle</property>
-                                <property name="max_width_chars">30</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">5</property>
-                                <property name="top_attach">3</property>
-                                <property name="width">2</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkCheckButton" id="c_inclVerseDecorator">
-                                <property name="label" translatable="yes">Verse Number Decorator</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">False</property>
-                                <property name="tooltip_text" translatable="yes">The Verse numbers may be decorated by
-a PDF graphic. You may also use a special
-font and size to ensure verses fit well.</property>
-                                <property name="halign">start</property>
-                                <property name="margin_top">4</property>
-                                <property name="draw_indicator">True</property>
-                                <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="left_attach">0</property>
-                                <property name="top_attach">5</property>
-                                <property name="width">2</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkButton" id="btn_selectVerseDecorator">
-                                <property name="label" translatable="yes">Select...</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">True</property>
-                                <property name="halign">start</property>
-                                <property name="valign">center</property>
-                                <signal name="clicked" handler="onVerseDecoratorPDFclicked" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="left_attach">3</property>
-                                <property name="top_attach">5</property>
-                                <property name="height">2</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel" id="l_verseDecoratorShift">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="tooltip_text" translatable="yes">Vertical shift in pts of the verse decorator image upwards relative to the text.</property>
-                                <property name="halign">end</property>
-                                <property name="label" translatable="yes">Shift:</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">0</property>
-                                <property name="top_attach">7</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkSpinButton" id="s_verseDecoratorShift">
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="text">0.0</property>
-                                <property name="adjustment">a_verseDecoratorShift</property>
-                                <property name="climb_rate">0.10000000000000001</property>
-                                <property name="digits">1</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">1</property>
-                                <property name="top_attach">7</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel" id="l_verseDecoratorScale">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="tooltip_text" translatable="yes">Scale verse decorator image. 1.0 is unity.</property>
-                                <property name="halign">end</property>
-                                <property name="label" translatable="yes">Scale:</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">2</property>
-                                <property name="top_attach">7</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkSpinButton" id="s_verseDecoratorScale">
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="text">1.0</property>
-                                <property name="adjustment">a_verseDecoratorScale</property>
-                                <property name="climb_rate">0.10000000000000001</property>
-                                <property name="digits">1</property>
-                                <property name="value">1</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">3</property>
-                                <property name="top_attach">7</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkCheckButton" id="c_inclEndOfBook">
-                                <property name="label" translatable="yes">End of Book</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">False</property>
-                                <property name="tooltip_text" translatable="yes">Section Headings may be adorned with
-a special graphic. Ensure that there is
-adequate space - both horizontal as well
-as vertical to make sure all headings fit.</property>
-                                <property name="halign">start</property>
-                                <property name="margin_top">4</property>
-                                <property name="draw_indicator">True</property>
-                                <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="left_attach">5</property>
-                                <property name="top_attach">2</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkCheckButton" id="c_inclPageBorder">
-                                <property name="label" translatable="yes">Page Border</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">False</property>
-                                <property name="tooltip_text" translatable="yes">Select a PDF for the Border of the publication.
-Note that after setting this border, it is likely
-that you will need to adjust the page margins
-to make it fit. </property>
-                                <property name="halign">start</property>
-                                <property name="margin_top">4</property>
-                                <property name="draw_indicator">True</property>
-                                <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="left_attach">5</property>
-                                <property name="top_attach">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkButton" id="btn_selectEndOfBookPDF">
-                                <property name="label" translatable="yes">Select...</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">True</property>
-                                <property name="halign">end</property>
-                                <property name="valign">center</property>
-                                <signal name="clicked" handler="onEndOfBookPDFclicked" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="left_attach">7</property>
-                                <property name="top_attach">2</property>
-                                <property name="height">2</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkButton" id="btn_selectPageBorderPDF">
-                                <property name="label" translatable="yes">Select...</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">True</property>
-                                <property name="halign">start</property>
-                                <property name="valign">center</property>
-                                <signal name="clicked" handler="onPageBorderPDFclicked" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="left_attach">7</property>
-                                <property name="top_attach">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkCheckButton" id="c_borderPageWide">
-                                <property name="label" translatable="yes">Full page</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">False</property>
-                                <property name="tooltip_text" translatable="yes">If set, the border is expanded to the full page. Otherwise it is expanded only to the gutter margins.</property>
-                                <property name="halign">end</property>
-                                <property name="valign">start</property>
-                                <property name="draw_indicator">True</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">7</property>
-                                <property name="top_attach">1</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel" id="l_inclSectionShift">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="tooltip_text" translatable="yes">Vertical shift in pts of the section box downwards relative to the text</property>
-                                <property name="halign">end</property>
-                                <property name="label" translatable="yes">Shift:</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">0</property>
-                                <property name="top_attach">2</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel" id="l_inclSectionScale">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="tooltip_text" translatable="yes">Scale section header image. 1.0 is unity.</property>
-                                <property name="halign">end</property>
-                                <property name="label" translatable="yes">Scale:</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">2</property>
-                                <property name="top_attach">2</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkSpinButton" id="s_inclSectionShift">
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="text">0.0</property>
-                                <property name="adjustment">a_inclSectionShift</property>
-                                <property name="climb_rate">0.10000000000000001</property>
-                                <property name="digits">1</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">1</property>
-                                <property name="top_attach">2</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkSpinButton" id="s_inclSectionScale">
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="text">1.0</property>
-                                <property name="adjustment">a_inclSectionScale</property>
-                                <property name="climb_rate">0.10000000000000001</property>
-                                <property name="digits">1</property>
-                                <property name="value">1</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">3</property>
-                                <property name="top_attach">2</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkSeparator">
-                                <property name="visible">True</property>
-                                <property name="sensitive">False</property>
-                                <property name="can_focus">False</property>
-                                <property name="valign">center</property>
-                                <property name="margin_left">4</property>
-                                <property name="margin_right">4</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">0</property>
-                                <property name="top_attach">4</property>
-                                <property name="width">8</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkSeparator">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="halign">center</property>
-                                <property name="margin_left">12</property>
-                                <property name="margin_right">12</property>
-                                <property name="margin_bottom">12</property>
-                                <property name="orientation">vertical</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">4</property>
-                                <property name="top_attach">0</property>
-                                <property name="height">4</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLinkButton" id="lb_style_v">
-                                <property name="label">\v</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="focus_on_click">False</property>
-                                <property name="receives_default">True</property>
-                                <property name="halign">start</property>
-                                <property name="relief">none</property>
-                                <property name="uri">Click to edit the \v marker's properties on the Styles tab</property>
-                                <signal name="activate-link" handler="onEditStyleClicked" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="left_attach">2</property>
-                                <property name="top_attach">5</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                          </object>
-                        </child>
-                        <child type="label">
-                          <object class="GtkCheckButton" id="c_borders">
-                            <property name="label" translatable="yes">Decorative Borders and Verses</property>
-                            <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="receives_default">False</property>
-                            <property name="tooltip_text" translatable="yes">Some cultures value ornamental or
-decorative features in their scripture
-publications. This option allows you
-to specify the settings for these.</property>
-                            <property name="draw_indicator">True</property>
-                            <signal name="clicked" handler="onBorderClicked" swapped="no"/>
-                          </object>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">False</property>
-                        <property name="position">2</property>
-                      </packing>
+                      <placeholder/>
                     </child>
                   </object>
                   <packing>
@@ -14420,7 +14466,7 @@ to specify the settings for these.</property>
                   </packing>
                 </child>
                 <child type="tab">
-                  <object class="GtkLabel" id="lb_DiglotBorder">
+                  <object class="GtkLabel" id="lb_Diglot">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="tooltip_text" translatable="yes">Create a diglot publication by incorporating 
@@ -14431,7 +14477,7 @@ When "Diglot" or "Border" show in blue
 it lets you know that these features have
 been enabled.</property>
                     <property name="halign">start</property>
-                    <property name="label" translatable="yes">Diglot+Border</property>
+                    <property name="label" translatable="yes">Diglot</property>
                   </object>
                   <packing>
                     <property name="position">10</property>
