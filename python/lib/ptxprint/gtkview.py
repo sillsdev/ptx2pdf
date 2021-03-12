@@ -423,6 +423,7 @@ class GtkViewModel(ViewModel):
                 continue
             try:
                 if os.path.exists(os.path.join(p, 'Settings.xml')) \
+                        or os.path.exists(os.path.join(p, 'ptxSettings.xml')) \
                         or any(x.lower().endswith("sfm") for x in os.listdir(p)):
                     allprojects.append(d)
             except OSError:

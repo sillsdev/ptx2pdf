@@ -232,5 +232,5 @@ def UnpackDBL(dblfile, prjid, prjdir):
         n.text = val
         n.tail = "\n    "
     n.tail = "\n"
-    with open(os.path.join(prjpath, "Settings.xml"), "wb") as outf:
+    with open(os.path.join(prjpath, "ptxSettings.xml"), "wb") as outf:
         outf.write(et.tostring(settings, encoding="utf-8"))

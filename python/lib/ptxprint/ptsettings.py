@@ -29,7 +29,6 @@ bookcodes.update(_endBkCodes)
 chaps = dict(b.split("|") for b in _bookslist.split())
 oneChbooks = [b.split("|")[0] for b in _bookslist.split() if b[-2:] == "|1"]
 
-
 class ParatextSettings:
     def __init__(self, basedir, prjid):
         self.dict = {}
@@ -41,13 +40,17 @@ class ParatextSettings:
 
     def parse(self):
         path = os.path.join(self.basedir, self.prjid, "Settings.xml")
-        if not os.path.exists(path):
-            self.inferValues()
+        pathmeta = os.path.join(self.basedir, self.prjid, "metadata.xml")
+        for a in ("Settings.xml", "ptxSettings.xml"):
+            path = os.path.join(self.basedir, self.prjid, a)
+            if os.path.exists(path):
+                doc = et.parse(path)
+                for c in doc.getroot():
+                    self.dict[c.tag] = c.text
+                self.read_ldml()
+                break
         else:
-            doc = et.parse(path)
-            for c in doc.getroot():
-                self.dict[c.tag] = c.text
-            self.read_ldml()
+            self.inferValues()
         return self
 
     def read_ldml(self):
