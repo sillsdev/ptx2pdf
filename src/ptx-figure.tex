@@ -39,24 +39,32 @@
 \newinsert\toprightins \count\toprightins=1000 \dimen\toprightins=\maxdimen
 \newinsert\bottomleftins \count\bottomleftins=1000 \dimen\bottomleftins=\maxdimen
 \newinsert\bottomrightins\count\bottomrightins=1000 \dimen\bottomrightins=\maxdimen
-\newbox\savebottomins
-\newbox\saveverybottomins
-\newbox\savetopins
-\newbox\savetopleftins
-\newbox\savetoprightins
-\newbox\savebottomleftins
-\newbox\savebottomrightins
+
 \def\ins@rts{bottomins,verybottomins,topins,toprightins,topleftins,bottomrightins,bottomleftins,}
-\def\s@veins#1\E{\x@\setbox\x@3\x@\copy\csname #1\endcsname\x@\global\x@\setbox\csname save#1\endcsname\box3}
-\def\r@strins#1\E{\x@\setbox\x@3\x@\copy\csname save#1\endcsname\x@\global\x@\setbox\csname #1\endcsname\box3}
-\def\s@veinserts{%loop through \ins@rts and save them 
+\def\s@veclasses{col,chunk,} % diglot needs to save two distinct states per box.
+\def\m@keinsertb@x#1\E{\x@\newb@x\csname save#1\s@veclass\endcsname}
+\def\s@veins#1\E{\x@\setbox\x@3\x@\copy\csname #1\endcsname\x@\global\x@\setbox\csname save#1\s@veclass\endcsname\box3}
+\def\r@strins#1\E{\x@\setbox\x@3\x@\copy\csname save#1\s@veclass\endcsname\x@\global\x@\setbox\csname #1\endcsname\box3}
+
+\def\m@keinsertsaveboxes#1\E{\edef\s@veclass{#1}\let\D@=\d@\let\d@=\m@keinsertb@x
+  \x@\cstackdown\ins@rts\E
+  \let\d@=\D@
+}
+
+\def\s@veinserts#1{%loop through \ins@rts and save them 
+  \edef\s@veclass{#1}%
   \let\d@=\s@veins
   \x@\cstackdown\ins@rts\E 
 } 
-\def\r@storeinserts{%loop through \ins@rts and save them 
+
+\def\r@storeinserts#1{%loop through \ins@rts and save them 
+  \edef\s@veclass{#1}%
   \let\d@=\r@strins
   \x@\cstackdown\ins@rts\E
 } 
+
+% Generate the insert save-boxes for each class at start-up
+\addtoinithooks{\let\d@=\m@keinsertsaveboxes\x@\cstackdown\s@veclasses\E}
 
 %%%%%%%%%%%%%% FIGURES %%%%%%%%%%%%%% 
 % called from \fig or from figure list
@@ -568,7 +576,7 @@
         \else\ifx\loc@ption\loc@BR  \otherinsht=\ht\bottomleftins \p@cinswid=\hsize
         \fi\fi\fi\fi
       \else
-        \ifdiglot\MSG{HOW DID THAT HAPPEN? currentcols=\the\c@rrentcols}\fi
+        \ifdiglot\MSG{HOW DID THAT HAPPEN? c@rrentcols=\the\c@rrentcols\space is surprising(incorrect) with diglot}\fi
         \ifx\loc@ption\loc@TL \picw@rning{tl}{t}\let\loc@ption\loc@T
         \else\ifx\loc@ption\loc@TR \picw@rning{tr}{t}\let\loc@ption\loc@T
         \else\ifx\loc@ption\loc@BL \picw@rning{bl}{b}\let\loc@ption\loc@B

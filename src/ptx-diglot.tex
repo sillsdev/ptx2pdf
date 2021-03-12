@@ -346,7 +346,7 @@
 \def\rej@ctgalley{%For calling by trial routines that don't like the galley they've just been given 
   \trace{d}{rej@ctgalley (\c@rrdstat)}%
   \r@storenotes{\g@tdstat}{1}%
-  \r@storeinserts
+  \r@storeinserts{col}
   \restore@oldmarks{\c@rrdstat}%
   \ifdim\trialheight<0pt
     \boxmovedtrue
@@ -431,12 +431,11 @@
     \iflate@stage@reflow
       \trace{D}{restoring notes, re-flowing partial\c@rrdstat\space and excess\c@rrdstat,}%
       \r@storenotes{\g@tdstat}{1}%
-      \r@storeinserts
       % No need to *save* notes after restoring, because they're already saved.
     \else
       \s@venotes{\g@tdstat}{1}%
-      \s@veinserts
     \fi
+    \s@veinserts{col}
     %grab 1st trialheight from excessX
     \ifnum\diglotDbgJoinboxes=\TRACEcount
       \showbox\@xcs
@@ -656,7 +655,7 @@
       \ifdim\trialheight<0.5\baselineskip
         \trace{D}{Abandoning trial, no space for galley at all}%
         \r@storenotes{\g@tdstat}{1}% As if galley hadn't happened.
-        \r@storeinserts
+        \r@storeinserts{col}
         \global\setbox\galleyexc@ss\vbox{\undog@lley}%
         \global\galleypenalty=0 
         \global\setbox255=\box\voidb@x
@@ -667,7 +666,7 @@
         \global\vsize=\trialheight
         \traceNum{D}{Trying again}%
         \r@storenotes{\g@tdstat}{1}%
-        \r@storeinserts
+        \r@storeinserts{col}
         %\setbox\galley\vbox{\unvbox\galley\unvbox\galleyexc@ss\penalty\endtri@lpen@lty}%
         \ifvoid\galleyexc@ss\else
           \setbox\galley\vbox{\undog@lley\penalty\endtri@lpen@lty}%
@@ -1238,7 +1237,7 @@
   \let\col@do=\store@marks
   \x@\each@col\diglot@list\E %remember old marks state
   \s@venotes{\g@tdstat}{2}% remember old notestate 
-  \s@veinserts
+  \s@veinserts{chunk}
   \traceNum{d}{Arranging new n@xtpartial : LB:\the\ht\Lbox+\the\dp\Lbox\space RB:\the\ht\Rbox+\the\dp\Rbox\space p@gechunkDelta:\the\p@geChunkDelta}%\space Tot:\the\cumulativeDelta%
   \let\\=\upd
   \diglot@arrange@cols
@@ -1268,8 +1267,12 @@
 \newif\ifNoteGutterRule \NoteGutterRulefalse
 \newif\ifFigGutterRule \FigGutterRulefalse
 \newif\ifJoinGutterRule \FigGutterRulefalse
+\def\MaxPages{2000}
 \def\@writep@ge {%
-  \trace{d}{@writep@ge}%
+  \trace{d}{@writep@ge \the\pageno}%
+  \ifnum\pageno>\MaxPages
+    \errmessage{Pagecount has exceeded \MaxPages. This probably means something has gone wrong. (or increase MaxPages)}%
+  \fi
   \setdiglotN@rmal
   \pickn@xtpartial
   \global\setbox\partial=\vbox{\unvbox\partial}%
@@ -1773,7 +1776,7 @@
   \x@\each@col\diglot@list\E% 
   \let\col@do=\restore@storedmarks
   \x@\each@col\diglot@list\E% 
-  \r@storeinserts
+  \r@storeinserts{chunk}
 }
 
 \def\tri@llist{}%Trials to be run.

@@ -1217,6 +1217,7 @@
 % to switch back to diglot columns, first set the page  so far 
 % and then change the rest.
 \def\diglotcolumns{
+  \trace{o}{DiglotColumns: partial:\the\ht\partial. Pff:  \PageFullFactor\space\the\textheight}%
   \ifx\@netimesetup\relax%Skip ending diglot if there's no possibily we've started.
     \ifdiglot
       \enddigl@t
