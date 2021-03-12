@@ -431,7 +431,7 @@ THE SOFTWARE.
   </object>
   <object class="GtkDialog" id="dlg_DBLbundle">
     <property name="can_focus">False</property>
-    <property name="title" translatable="yes">PTXprint: Select a DBL Bundle...</property>
+    <property name="title" translatable="yes">PTXprint: Set up to use a DBL bundle...</property>
     <property name="type_hint">dialog</property>
     <child type="titlebar">
       <placeholder/>
@@ -491,20 +491,25 @@ can access the required files.</property>
               <object class="GtkGrid">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="margin_left">6</property>
-                <property name="margin_right">6</property>
-                <property name="margin_top">6</property>
-                <property name="margin_bottom">6</property>
+                <property name="margin_left">8</property>
+                <property name="margin_right">8</property>
+                <property name="margin_top">8</property>
+                <property name="margin_bottom">8</property>
                 <property name="row_spacing">6</property>
                 <property name="column_spacing">6</property>
                 <child>
-                  <object class="GtkButton" id="btn_chooseDBLbundle">
-                    <property name="label" translatable="yes">Ch_oose...</property>
+                  <object class="GtkButton" id="btn_locateDBLbundle">
+                    <property name="label" translatable="yes">Locate...</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
+                    <property name="tooltip_text" translatable="yes">After downloading a DBL module
+you need to tell PTXprint where the
+.zip file is located so that it can install
+it as a special project.</property>
+                    <property name="margin_top">12</property>
                     <property name="use_underline">True</property>
-                    <signal name="clicked" handler="onChooseDBLbundleClicked" swapped="no"/>
+                    <signal name="clicked" handler="onLocateDBLbundleClicked" swapped="no"/>
                     <accelerator key="o" signal="activate" modifiers="GDK_MOD1_MASK"/>
                   </object>
                   <packing>
@@ -516,7 +521,11 @@ can access the required files.</property>
                   <object class="GtkLabel">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">DBL Bundle:</property>
+                    <property name="tooltip_text" translatable="yes">Click to select a previously created
+or downloaded DBL bundle (.zip) file.</property>
+                    <property name="halign">end</property>
+                    <property name="margin_top">12</property>
+                    <property name="label" translatable="yes">Step 2.</property>
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
@@ -528,8 +537,9 @@ can access the required files.</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="tooltip_text" translatable="yes">PTXprint will create a NEW Paratext project
-folder with this name. You cannot choose
-the name of an existing Project. </property>
+folder with this name. You must NOT use
+the name of an existing Project.</property>
+                    <property name="halign">end</property>
                     <property name="label" translatable="yes">Unpacked DBL 
 Project Name:</property>
                   </object>
@@ -543,8 +553,8 @@ Project Name:</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="tooltip_text" translatable="yes">PTXprint will create a NEW Paratext project
-folder with this name. You cannot choose
-the name of an existing Project. </property>
+folder with this name. You must NOT use
+the name of an existing Project.</property>
                     <property name="max_length">20</property>
                     <signal name="changed" handler="onDBLprojNameChanged" swapped="no"/>
                   </object>
@@ -585,12 +595,14 @@ the name of an existing Project. </property>
                   <object class="GtkLabel">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="halign">end</property>
                     <property name="label" translatable="yes">Name (or
 Description):</property>
+                    <property name="justify">right</property>
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
-                    <property name="top_attach">3</property>
+                    <property name="top_attach">2</property>
                   </packing>
                 </child>
                 <child>
@@ -601,8 +613,12 @@ Description):</property>
                     <property name="can_focus">True</property>
                     <property name="focus_on_click">False</property>
                     <property name="receives_default">True</property>
+                    <property name="tooltip_text" translatable="yes">There are several DBL bundles available at
+the Open.Bible website which you may
+download and use in a publication.</property>
                     <property name="halign">center</property>
                     <property name="valign">end</property>
+                    <property name="margin_top">12</property>
                     <property name="relief">none</property>
                     <property name="uri">https://open.bible/resources/</property>
                   </object>
@@ -615,11 +631,33 @@ Description):</property>
                   <object class="GtkLabel">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">Step 1.</property>
+                    <property name="tooltip_text" translatable="yes">If you don't already have a DBL bundle, then
+you may be able to download a text from an
+online scripture repository.
+
+If you already have the required DBL bundle,
+then skip this 1st step.</property>
+                    <property name="halign">end</property>
+                    <property name="label" translatable="yes">[Optional]
+Step 1.</property>
+                    <property name="justify">right</property>
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
                     <property name="top_attach">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="halign">end</property>
+                    <property name="margin_top">10</property>
+                    <property name="label" translatable="yes">Step 3.</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
+                    <property name="top_attach">3</property>
                   </packing>
                 </child>
               </object>
@@ -3491,7 +3529,7 @@ which already have Credit Overlay settings.</property>
                             <property name="margin_top">6</property>
                             <property name="margin_bottom">6</property>
                             <property name="row_spacing">8</property>
-                            <property name="column_spacing">4</property>
+                            <property name="column_spacing">8</property>
                             <child>
                               <object class="GtkLabel">
                                 <property name="visible">True</property>
@@ -3536,7 +3574,7 @@ which already have Credit Overlay settings.</property>
                                 <property name="sensitive">False</property>
                                 <property name="can_focus">False</property>
                                 <property name="halign">end</property>
-                                <property name="margin_left">6</property>
+                                <property name="margin_left">30</property>
                                 <property name="label" translatable="yes">From
 Chapter:</property>
                                 <property name="track_visited_links">False</property>
@@ -3552,7 +3590,7 @@ Chapter:</property>
                                 <property name="sensitive">False</property>
                                 <property name="can_focus">False</property>
                                 <property name="halign">end</property>
-                                <property name="margin_left">6</property>
+                                <property name="margin_left">30</property>
                                 <property name="label" translatable="yes">To
 Chapter:</property>
                                 <property name="track_visited_links">False</property>
@@ -3589,6 +3627,7 @@ This list is editable, so books can be re-ordered
 if need be.</property>
                                 <property name="margin_left">6</property>
                                 <property name="margin_right">6</property>
+                                <property name="hexpand">True</property>
                                 <property name="caps_lock_warning">False</property>
                                 <signal name="focus-out-event" handler="onBookListChanged" swapped="no"/>
                               </object>
@@ -3726,6 +3765,7 @@ if need be.</property>
                               <object class="GtkSpinButton" id="s_chapto">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
+                                <property name="margin_right">6</property>
                                 <property name="max_length">3</property>
                                 <property name="width_chars">2</property>
                                 <property name="text" translatable="yes">1</property>
@@ -3761,18 +3801,18 @@ if need be.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkButton" id="btn_unpackDBLbundle">
+                              <object class="GtkButton" id="btn_DBLbundle">
                                 <property name="label" translatable="yes">Choose...</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
-                                <property name="tooltip_text" translatable="yes">Click to locate a previously created or
-downloaded DBL bundle, and give it
-a project name.
-
-PTXprint will then unpack the bundle 
-and create the neccessary files to print it.</property>
-                                <signal name="clicked" handler="onUnpackDBLbundleClicked" swapped="no"/>
+                                <property name="tooltip_text" translatable="yes">Click to add a DBL bundle to the list of
+available texts to print from. Note that the
+DBL bundle will get unpacked into your 
+regular folder (e.g. My Paratext 9 Projects)
+but will only be used by PTXprint. It cannot
+be viewed or edited in Paratext.</property>
+                                <signal name="clicked" handler="onDBLbundleClicked" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
@@ -3780,11 +3820,11 @@ and create the neccessary files to print it.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkLabel">
+                              <object class="GtkLabel" id="l_DBLbundle">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="halign">start</property>
-                                <property name="margin_left">24</property>
+                                <property name="margin_left">28</property>
                                 <property name="label" translatable="yes">DBL Bundle:</property>
                               </object>
                               <packing>
@@ -4317,7 +4357,7 @@ Gutter (mm):</property>
                                         <property name="receives_default">False</property>
                                         <property name="tooltip_text" translatable="yes">This is the amount of space to be
 given on the inner edge of each
-page for binding.</property>
+page for binding (millimeters).</property>
                                         <property name="halign">end</property>
                                         <property name="valign">center</property>
                                         <property name="draw_indicator">True</property>
@@ -4558,6 +4598,10 @@ also affects poetry indentation.
                                       <object class="GtkLabel" id="l_linesOnPage">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
+                                        <property name="tooltip_text" translatable="yes">This is an approximate calculation of the
+most number of lines that will fit on a page.
+An exact count is difficult due to ascent
+and descent values of the main body font.</property>
                                         <property name="halign">start</property>
                                         <property name="margin_left">3</property>
                                         <property name="label" translatable="yes">99.9</property>
@@ -4574,6 +4618,10 @@ also affects poetry indentation.
                                       <object class="GtkLabel" id="l_linesOnPageLabel">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
+                                        <property name="tooltip_text" translatable="yes">This is an approximate calculation of the
+most number of lines that will fit on a page.
+An exact count is difficult due to ascent
+and descent values of the main body font.</property>
                                         <property name="halign">end</property>
                                         <property name="label" translatable="yes">Max Lines on Page:</property>
                                       </object>
@@ -4589,8 +4637,8 @@ also affects poetry indentation.
                                         <property name="receives_default">True</property>
                                         <property name="tooltip_text" translatable="yes">Fine Tune Line Spacing:
 
-Click this button to shrink or expand the line spacing 
-slightly to minimise wasted vertical space on the page.
+Click this button to make PTXprint shrink or expand the line
+spacing slightly to minimise wasted vertical space on the page.
 
 If there is more than half a line of 'spare' space on the 
 page then the line-spacing will decrease slightly to
@@ -4822,7 +4870,10 @@ Top (pt):</property>
                                     <property name="tooltip_text" translatable="yes">The distance (mm) from the top of the page
 to the top of the main text area. Note that
 the first line actually starts a little bit below
-where the the main text area starts.</property>
+where the the main text area starts.
+
+The top of the main text area is 1 base line spacing 
+above the base line of the first line of the body text.</property>
                                     <property name="halign">end</property>
                                     <property name="margin_top">6</property>
                                     <property name="margin_bottom">6</property>
@@ -4845,7 +4896,10 @@ to Text (mm):</property>
                                     <property name="tooltip_text" translatable="yes">The space (pt) between the bottom of the header
 and the top of the main text area. Note that
 the first line actually starts a little bit below
-where the the main text area starts.</property>
+where the the main text area starts.
+
+The top of the main text area is 1 base line spacing 
+above the base line of the first line of the body text.</property>
                                     <property name="halign">end</property>
                                     <property name="label" translatable="yes">Header to 
 Text Space (pt):</property>
@@ -4865,7 +4919,10 @@ Text Space (pt):</property>
                                     <property name="can_focus">True</property>
                                     <property name="tooltip_text" translatable="yes">This setting determines the vertical positioning
 of the header line by setting the amount of space
-between the header and the top of the text. (pts)</property>
+between the header and the top of the text. (pts)
+
+The top of the main text area is 1 base line spacing 
+above the base line of the first line of the body text.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
                                     <property name="width_chars">5</property>
@@ -4892,7 +4949,12 @@ between the header and the top of the text. (pts)</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="tooltip_text" translatable="yes">The distance (mm) from the bottom of the 
-main text area to the bottom of the page.</property>
+main text area to the bottom of the page.
+
+The bottom of the main text area is calculated
+from the descender of the bottom line of the 
+final line of text (including footnotes).
+</property>
                                     <property name="halign">end</property>
                                     <property name="margin_top">6</property>
                                     <property name="margin_bottom">6</property>
@@ -4978,9 +5040,9 @@ space between the end of the text and the footer line.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="tooltip_text" translatable="yes">The distance (mm) from the top of the page
-to the top of the header area. Note that
-the header text actually starts a little bit below
-where the the header area starts.</property>
+to the top of the header area. Note that due to 
+the ascent of the font, the header text actually 
+starts a little bit below the top of the header area.</property>
                                     <property name="halign">end</property>
                                     <property name="label" translatable="yes">Edge of Page to
 Top of Header:</property>
@@ -4998,6 +5060,10 @@ Top of Header:</property>
                                   <object class="GtkLabel" id="l_margin2header1">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="tooltip_text" translatable="yes">The distance (mm) from the top of the page
+to the top of the header area. Note that due to 
+the ascent of the font, the header text actually 
+starts a little bit below the top of the header area.</property>
                                     <property name="halign">start</property>
                                     <property name="margin_left">12</property>
                                     <property name="label" translatable="yes">8.5mm</property>
@@ -5014,9 +5080,12 @@ Top of Header:</property>
                                   <object class="GtkSpinButton" id="s_bottommargin">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
-                                    <property name="tooltip_text" translatable="yes">This setting set the space at the bottom of the page
-to define where the main text, footnotes and/or 
-cross-references end.</property>
+                                    <property name="tooltip_text" translatable="yes">The distance (mm) from the bottom of the 
+main text area to the bottom of the page.
+
+The bottom of the main text area is calculated
+from the descender of the bottom line of the 
+final line of text (including footnotes).</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
                                     <property name="width_chars">5</property>
@@ -5067,8 +5136,12 @@ Width (mm):</property>
                                   <object class="GtkSpinButton" id="s_margins">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
-                                    <property name="tooltip_text" translatable="yes">The margins are set
-in millimeters (mm).</property>
+                                    <property name="tooltip_text" translatable="yes">The distance (mm) from the edge of the page
+to the start of the text area. Note that the left
+and right (or inner and outer) margins are set
+to be identical. If you require a greater inner
+margin, then use the Binding Gutter setting
+above.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
                                     <property name="width_chars">5</property>
@@ -5098,7 +5171,10 @@ in millimeters (mm).</property>
                                     <property name="tooltip_text" translatable="yes">The space (pt) between the horizontal rule
 and the top of the main text area. Note that
 the first line actually starts a little bit below
-where the the main text area starts.</property>
+where the the main text area starts.
+
+The top of the main text area is 1 base line spacing 
+above the base line of the first line of the body text.</property>
                                     <property name="halign">end</property>
                                     <property name="margin_top">3</property>
                                     <property name="label" translatable="yes">Space from Rule
@@ -5117,6 +5193,13 @@ to Body Text (pt):</property>
                                   <object class="GtkSpinButton" id="s_rhruleposition">
                                     <property name="can_focus">True</property>
                                     <property name="no_show_all">True</property>
+                                    <property name="tooltip_text" translatable="yes">The space (pt) between the horizontal rule
+and the top of the main text area. Note that
+the first line actually starts a little bit below
+where the the main text area starts.
+
+The top of the main text area is 1 base line spacing 
+above the base line of the first line of the body text.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
                                     <property name="width_chars">4</property>
@@ -5168,10 +5251,8 @@ Marks</property>
 on the PDF to show where the page
 should be trimmed after printing.
 
-This is also useful to check that the
-margins have been set correctly, after
-printing a sample page at 100% and
-measuring the physical printout.</property>
+The cropmarks also show the top and
+bottom text margins.</property>
                                     <property name="halign">end</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
@@ -5184,8 +5265,13 @@ measuring the physical printout.</property>
                                   <object class="GtkSpinButton" id="s_topmargin">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
-                                    <property name="tooltip_text" translatable="yes">This setting set the space at the top of the page
-to define where the main body text begins.</property>
+                                    <property name="tooltip_text" translatable="yes">The distance (mm) from the top of the page
+to the top of the main text area. Note that
+the first line actually starts a little bit below
+where the the main text area starts.
+
+The top of the main text area is 1 base line spacing 
+above the base line of the first line of the body text.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
                                     <property name="width_chars">5</property>
@@ -5215,8 +5301,8 @@ to define where the main body text begins.</property>
                                     <property name="receives_default">True</property>
                                     <property name="tooltip_text" translatable="yes">Fine Tune Top Margin:
 
-Click this button to shrink or expand the top margin 
-slightly to minimise wasted vertical space on the page.
+Click this button to make PTXprint shrink or expand the top 
+margin slightly to minimise wasted vertical space on the page.
 
 If there is more than half a line of 'spare' space on the 
 page then the top margin will decrease slightly to
@@ -5247,8 +5333,8 @@ button to adjust either the Line Spacing or Bottom Margin.</property>
                                     <property name="receives_default">True</property>
                                     <property name="tooltip_text" translatable="yes">Fine Tune Bottom Margin:
 
-Click this button to shrink or expand the bottom margin 
-slightly to minimise wasted vertical space on the page.
+Click this button to make PTXprint shrink or expand the bottom 
+margin slightly to minimise wasted vertical space on the page.
 
 If there is more than half a line of 'spare' space on the 
 page then the bottom margin will decrease slightly to
@@ -5479,8 +5565,8 @@ Characters:</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
                                     <property name="tooltip_text" translatable="yes">If the primary font is missing any characters
-(usually special punctuation, or quotes), then
-these can be listed here, and handled using
+(special punctuation, quotes or glossary markers), 
+then these can be listed here, and handled using
 the Font specified below.
 
 It is recommended that you select as many
@@ -5508,8 +5594,8 @@ which are not in the Regular font.
 
 Note that if the label text is RED, it means 
 that the font currently selected doesn't 
-have/support all the missing characters
-either - so it is wise to choose another font.</property>
+have all the missing characters either, 
+so it is wise to choose another font.</property>
                                     <property name="halign">end</property>
                                     <property name="label" translatable="yes">Font to Display any
 Missing Characters:</property>
@@ -5567,8 +5653,8 @@ to enter hard-to-type characters.</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
-                                <property name="tooltip_text" translatable="yes">This setting is used to prevent [] "Tofu" in the
-printed text. If the primary font is missing any
+                                <property name="tooltip_text" translatable="yes">This setting is used to prevent "tofu" boxes [] in 
+the printed text. If the primary font is missing any
 special characters (for example curly quotes),
 then an alternative "fallback" font can be used
 to ensure that they are displayed properly.</property>
@@ -5677,6 +5763,9 @@ to ensure that they are displayed properly.</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
+                                        <property name="tooltip_text" translatable="yes">If you see the style in parentheses (bold)
+this indicates that PTXprint could not
+locate the bold style and will fake the style.</property>
                                         <signal name="clicked" handler="onFontBclicked" swapped="no"/>
                                       </object>
                                       <packing>
@@ -5691,6 +5780,9 @@ to ensure that they are displayed properly.</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
+                                        <property name="tooltip_text" translatable="yes">If you see the style in parentheses (italic)
+this indicates that PTXprint could not
+locate the italic style and will fake the style.</property>
                                         <signal name="clicked" handler="onFontIclicked" swapped="no"/>
                                       </object>
                                       <packing>
@@ -5705,6 +5797,9 @@ to ensure that they are displayed properly.</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
+                                        <property name="tooltip_text" translatable="yes">If you see either of the styles in parentheses (bold)
+or (italic) this indicates that PTXprint could not
+locate the style and will fake the bold-italic style.</property>
                                         <signal name="clicked" handler="onFontBIclicked" swapped="no"/>
                                       </object>
                                       <packing>
@@ -5811,6 +5906,9 @@ text will appear in black.</property>
                                   <object class="GtkLabel" id="l_textDirection">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="tooltip_text" translatable="yes">Select the direction for the text to flow. 
+Note that the option for "Top to Bottom"
+lays out the vertical lines left to right.</property>
                                     <property name="halign">end</property>
                                     <property name="label" translatable="yes">Text Flow
 Direction:</property>
@@ -5825,10 +5923,9 @@ Direction:</property>
                                     <property name="width_request">140</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="tooltip_text" translatable="yes">Select the direction for the
-text to flow. Note that the
-option for "Top to Bottom"
-only supports LTR.</property>
+                                    <property name="tooltip_text" translatable="yes">Select the direction for the text to flow. 
+Note that the option for "Top to Bottom"
+lays out the vertical lines left to right.</property>
                                     <property name="halign">start</property>
                                     <property name="hexpand">False</property>
                                     <property name="model">ls_textDirection</property>
@@ -5860,10 +5957,9 @@ Script:</property>
                                   <object class="GtkComboBox" id="fcb_script">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="tooltip_text" translatable="yes">In most cases XeTeX can auto-detect
-the appropriate script, so leave this
-set as "Default" unless there are
-script-specific rendering issues.</property>
+                                    <property name="tooltip_text" translatable="yes">For some scripts (mymr, thai) PTXprint provides 
+additional typesetting functionality. In most cases
+leave this setting as "Default".</property>
                                     <property name="resize_mode">queue</property>
                                     <property name="model">ls_scripts</property>
                                     <property name="wrap_width">6</property>
@@ -5958,7 +6054,8 @@ Break Locale:</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
                                     <property name="tooltip_text" translatable="yes">Some languages that use complex scripts need
-the locale to be specified for proper line-breaking.
+dictionary support for line breaking. Note that
+the dictionary used will be LWC-specific.
 For example, zh for Chinese, ko for Korean, etc.
 Note that Graphite fonts can also have line breaking
 rules which can be enabled by using the gr locale.</property>
@@ -6065,7 +6162,8 @@ grow paragrahs when balancing pages.</property>
 characters to be adjusted (usually by a very small
 percentage). This can help alleviate space problems.
 Values are in percentage of the text point size and 
-get used everywhere. Only use this if really needed! </property>
+get used everywhere. Only use this if really needed!
+In many situations it can make the text look very ugly.</property>
                                         <property name="halign">start</property>
                                         <property name="draw_indicator">True</property>
                                         <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
@@ -6088,7 +6186,7 @@ or grow. Lower values will enable a 'tighter' text
 and make it more flexible, but keep the readers in
 mind - and their need to distinguish word-breaks
 with ease. This value is a % percentage of a normal
-space width.</property>
+space width. TeX's default value is 66%.</property>
                                         <property name="opacity">0.80000000000000004</property>
                                         <property name="max_length">3</property>
                                         <property name="width_chars">3</property>
@@ -6119,7 +6217,7 @@ or grow. Larger values will enable a 'looser' text
 and make it more flexible to grow, but be careful
 to avoid 'rivers' or white space in paragraphs.
 This value is a % percentage of a normal
-space width.</property>
+space width. TeX's default value is 150%.</property>
                                         <property name="opacity">0.80000000000000004</property>
                                         <property name="max_length">4</property>
                                         <property name="width_chars">2</property>
@@ -6141,6 +6239,7 @@ space width.</property>
                                       <object class="GtkSpinButton" id="s_letterShrink">
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
+                                        <property name="tooltip_text" translatable="yes">Values are in percentage of the text point size.</property>
                                         <property name="width_chars">3</property>
                                         <property name="text">1.0</property>
                                         <property name="adjustment">a_letterShrink</property>
@@ -6157,6 +6256,8 @@ space width.</property>
                                       <object class="GtkSpinButton" id="s_letterStretch">
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
+                                        <property name="tooltip_text" translatable="yes">Values are in percentage of the text point size.
+</property>
                                         <property name="width_chars">3</property>
                                         <property name="text">5.0</property>
                                         <property name="adjustment">a_letterStretch</property>
@@ -6233,8 +6334,7 @@ can grow to when necessary.</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
-                                        <property name="tooltip_text" translatable="yes">Click to view or edit the Para Adj List
-file(s) in the Viewer tab.</property>
+                                        <property name="tooltip_text" translatable="yes">Click to view or edit the Adj List in the Viewer tab.</property>
                                         <signal name="clicked" handler="onEditAdjListClicked" swapped="no"/>
                                       </object>
                                       <packing>
@@ -6251,10 +6351,12 @@ MRK 2.7 +1    (i.e. expand the para at Mark 2.7 by one line)
 MRK 3.20 -1   (i.e. shrink the para at Mark 3:20 by one line)
 %MARK 4.14 +1   (ignore this line - treat it as a comment)   
 MRK 5.8 +2    (i.e. expand the para at Mark 2.7 by two lines)
+MRK 6.23 +1[2]  (expand the paragraph AFTER the paragraph 
+                              which contains MRK 6.23 e.g. a heading.)
 etc.
 Note that adjusting paragraphs needs to be done right at the
-end when all other settings have been finalized. Otherwise you
-are likely to have to re-do it all again.</property>
+end when all other settings and picture placements have been 
+finalized. Otherwise you are likely to have to re-do it all again.</property>
                                         <property name="halign">start</property>
                                         <property name="label" translatable="yes">Adjust Layout by Shrinking
 or Expanding Paragraphs:</property>
@@ -6319,16 +6421,10 @@ or Expanding Paragraphs:</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
-                                        <property name="tooltip_text" translatable="yes">If disabled, hyphens will not cause line breaks. If enabled, then
-any hyphens in the text may cause a line break.
-
-To have hyphenation happen automatically, without having
-to insert them in the source text, you need 
-to click the "Create Hyphenation List" button on the
-left. This will create a XeTeX hyphenation list from the
-hyphenation list in Paratext.
-
-</property>
+                                        <property name="tooltip_text" translatable="yes">To hyphenate properly you need to first create a 
+Hyphenation List using the button on the left.
+This will create a XeTeX hyphenation list from the
+hyphenation list in Paratext.</property>
                                         <property name="halign">start</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
@@ -6346,9 +6442,8 @@ hyphenation list in Paratext.
                                         <property name="tooltip_text" translatable="yes">Click this button to generate a hyphenation 
 list that can be used by XeTeX to optimize
 hyphenation. This will read Paratext's
-HyphenatedWords.txt list and optimize it.
-Note that the Hypenate option on the Body
-tab needs to be checked to make us of this.</property>
+HyphenatedWords.txt list and create a
+TeX hyphen list for this language.</property>
                                         <property name="halign">end</property>
                                         <property name="valign">center</property>
                                         <property name="hexpand">True</property>
@@ -14272,7 +14367,6 @@ This is quite likely required for RTL languages.</property>
                               <packing>
                                 <property name="left_attach">2</property>
                                 <property name="top_attach">0</property>
-                                <property name="width">2</property>
                               </packing>
                             </child>
                             <child>
@@ -14382,6 +14476,26 @@ leave this option checked ON.</property>
                               </packing>
                             </child>
                             <child>
+                              <object class="GtkButton" id="btn_DBLbundleDiglot">
+                                <property name="label" translatable="yes">DBL</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                                <property name="tooltip_text" translatable="yes">Click to add a DBL bundle to the list of
+available texts to print from. Note that the
+DBL bundle will get unpacked into your 
+regular folder (e.g. My Paratext 9 Projects)
+but will only be used by PTXprint. It cannot
+be viewed or edited in Paratext.</property>
+                                <property name="halign">start</property>
+                                <signal name="clicked" handler="onDBLbundleClicked" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="left_attach">3</property>
+                                <property name="top_attach">0</property>
+                              </packing>
+                            </child>
+                            <child>
                               <placeholder/>
                             </child>
                             <child>
@@ -14437,47 +14551,7 @@ options here to create a Diglot or Didoc.</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkFrame">
-                            <property name="width_request">200</property>
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="margin_left">6</property>
-                            <property name="margin_right">6</property>
-                            <property name="margin_top">6</property>
-                            <property name="margin_bottom">6</property>
-                            <property name="label_xalign">0.5</property>
-                            <child>
-                              <object class="GtkBox">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="margin_left">6</property>
-                                <property name="margin_right">6</property>
-                                <property name="margin_top">6</property>
-                                <property name="margin_bottom">6</property>
-                                <property name="orientation">vertical</property>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                              </object>
-                            </child>
-                            <child type="label">
-                              <object class="GtkLabel">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="tooltip_text" translatable="yes">PTXprint can unpack a DBL bundle and 
-create the neccessary files to print it.</property>
-                                <property name="label" translatable="yes">Digital Bible Library Resources</property>
-                              </object>
-                            </child>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">1</property>
-                          </packing>
+                          <placeholder/>
                         </child>
                       </object>
                       <packing>

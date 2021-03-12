@@ -186,7 +186,7 @@ _object_classes = {
     "stybutton":   ("btn_reloadConfig", "btn_resetCopyright", "btn_resetColophon", "btn_resetFNcallers", "btn_resetXRcallers", 
                     "btn_styAdd", "btn_styEdit", "btn_styDel", "btn_styReset", "btn_refreshFonts", "btn_resetStyFilter",
                     "btn_plAdd", "btn_plDel", "btn_plGenerate", "btn_plSaveEdits", "btn_resetTabGroups",
-                    "btn_adjust_spacing", "btn_adjust_top", "btn_adjust_bottom", )
+                    "btn_adjust_spacing", "btn_adjust_top", "btn_adjust_bottom", "btn_DBLbundleDiglot" )
 }
 
 _pgpos = {
@@ -570,7 +570,7 @@ class GtkViewModel(ViewModel):
                   "row_ToC", "c_hyphenate", "l_missingPictureCount", "bx_colophon", "btn_deleteConfig", "btn_lockunlock",
                   "r_hdrLeft_Pri", "r_hdrLeft_Sec", "r_hdrCenter_Pri", "r_hdrCenter_Sec", "r_hdrRight_Pri", "r_hdrRight_Sec", 
                   "c_omitverseone", "c_glueredupwords", "c_firstParaIndent", "c_hangpoetry", "c_preventwidows", 
-                  "btn_unpackDBLbundle", "c_cropmarks", "fr_margins", "c_linebreakon", "t_linebreaklocale", 
+                  "l_DBLbundle", "btn_DBLbundle", "c_cropmarks", "fr_margins", "c_linebreakon", "t_linebreaklocale", 
                   "c_pagegutter", "s_pagegutter", "l_digits", "fcb_digits", "c_quickRun", "c_mirrorpages",
                   "t_invisiblePassword", "t_configNotes", "l_notes", "c_elipsizeMissingVerses", "fcb_glossaryMarkupStyle",
                   "gr_fnAdvOptions", "c_figexclwebapp", "l_glossaryMarkupStyle", "btn_refreshFonts",
@@ -2673,10 +2673,10 @@ class GtkViewModel(ViewModel):
         # //Set scrollbar to ALWAYS be displayed and not as temporary overlay
         # g_object_set( sw , "overlay-scrolling", FALSE , NULL);
 
-    def onUnpackDBLbundleClicked(self, btn):
+    def onDBLbundleClicked(self, btn):
         dialog = self.builder.get_object("dlg_DBLbundle")
         response = dialog.run()
-        if response == Gtk.ResponseType.OK and self.builder.get_object("btn_chooseDBLbundle").get_sensitive:
+        if response == Gtk.ResponseType.OK and self.builder.get_object("btn_locateDBLbundle").get_sensitive:
             prj = self.get("t_DBLprojName")
             if prj != "":
                 UnpackDBL(self.DBLfile, prj, self.settings_dir)
@@ -2690,7 +2690,7 @@ class GtkViewModel(ViewModel):
                 self.set("fcb_project", prj)
         dialog.hide()
 
-    def onChooseDBLbundleClicked(self, btn):
+    def onLocateDBLbundleClicked(self, btn):
         prjdir = os.path.join(self.settings_dir, self.prjid)
         DBLfile = self.fileChooser("Select a DBL Bundle file", 
                 filters = {"DBL Bundles": {"patterns": ["*.zip"] , "mime": "text/plain", "default": True},
@@ -2701,16 +2701,16 @@ class GtkViewModel(ViewModel):
             self.DBLfile = DBLfile[0]
             self.builder.get_object("lb_DBLbundleFilename").set_label(os.path.basename(DBLfile[0]))
             self.set("t_DBLprojName", os.path.basename(DBLfile[0])[:8])
-            self.builder.get_object("btn_chooseDBLbundle").set_tooltip_text(str(DBLfile[0]))
+            self.builder.get_object("btn_locateDBLbundle").set_tooltip_text(str(DBLfile[0]))
         else:
             self.builder.get_object("lb_DBLbundleFilename").set_label("")
             self.set("t_DBLprojName", "")
             self.DBLfile = None
-            self.builder.get_object("btn_chooseDBLbundle").set_tooltip_text("")
+            self.builder.get_object("btn_locateDBLbundle").set_tooltip_text("")
     
     def onDBLprojNameChanged(self, widget):
         text = self.get("t_DBLprojName")
-        btn = self.builder.get_object("btn_chooseDBLbundle")
+        btn = self.builder.get_object("btn_locateDBLbundle")
         lsp = self.builder.get_object("ls_projects")
         allprojects = [x[0] for x in lsp]
         btn.set_sensitive(not text in allprojects)
