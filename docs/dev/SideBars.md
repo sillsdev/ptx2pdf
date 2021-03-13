@@ -36,6 +36,7 @@ their own watermark or background image.
 % NB: Breakable triggers a bug in the page output mechanism and things go gets things horribly wrong
 
 %\BgColour F, T, value(0-1) value(0-1) value(0.1)
+%\BgColor F, T, value(0-1) value(0-1) value(0.1)
 % Disable (F) or reenable (T)  any background colour set earlier (or inherited) 
 % 3 values (0-1) for red, green and blue. With \Alpha below, this defines the colour of the \esb box
 % Note that by default an \esb box has no background colour, so not setting a value here is not the same as setting a value to white. 
@@ -69,6 +70,16 @@ their own watermark or background image.
 % Should a background image come below or above the colour. Line art PDFs may
 % display better above the colour layer, as the colour layer will not wash them
 % out, but .JPGs are probably better below.
+
+%\BgImageAlpha value(0-1)
+% Transparency or alpha value of the background image: 0 is transparent, 1 is solid. This is useful for e.g. turning black lines into a paler shade
+
+%\BgImageColor value(0-1) value(0-1) value(0-1) 
+%\BgImageColour value(0-1) value(0-1) value(0-1) 
+% Some (but not all) PDF line-art images do not set the colour of their lines,
+% relying instead on the 'default' colour. This sets the default colour to
+% something other than black, and thus such images can be recoloured with this
+% option. If the image defines its colour, this option will have no visible effect at all. 
 
 %\BorderWidth measurement
 % Default: 0.5

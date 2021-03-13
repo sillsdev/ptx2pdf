@@ -65,17 +65,31 @@
 \setsbp@ram{posn}{b}
 \setsbp@ram{fgfigspec}{}%Normally no picture.
 \setsbp@ram{bgfigspec}{}%Normally no picture.
+\setsbp@ram{bgfigalpha}{1.0}%Normally solid colour
+\setsbp@ram{bgfigcolour}{1.0 1.0 1.0}%Normally black
 \def\fb@hpadding{1pt}%Added left and right of feintbox content
 \def\fb@vpadding{1pt}%added above and below feintbox content
 
 \newcount\feintb@xnum
 \feintb@xnum=1
 \addtoendhooks{\ifinextended\errmessage{Reached end of book without finding \\esbe.}\fi}
+\def\f@intthing#1#2#3{%
+  % 1 - alpha
+  % 2 - colour (r g b)
+  % 3 - item to set
+  \trace{e}{f@intthing #1 #2}%
+    \edef\thisalpha{#1 }% Important space
+    \special{pdf:put @resources << /ExtGState << /GS0\the\feintb@xnum\space << /Type /ExtGState /CA \thisalpha /ca \thisalpha /AIS false >>  >> >>}%
+     \x@\special\x@{pdf:code q /GS0\the\feintb@xnum\space gs #2 rg}%
+     #3
+     \special{pdf:code Q}%
+  \global\advance\feintb@xnum by 1}%
+
 \def\feintb@x#1#2#3#4#5{%
   % 1 - alpha
   % 2 - colour (r g b)
   % 3 4 5 height, depth, width of colour block
-  \trace{e}{feintbox #1 #2 #3 #4 #5}%
+  \trace{e}{feintbox #1 #2 #3, #4, #5}%
   \bgroup
   \hbox to 0pt{%
     \dimen0=#3\advance\dimen0 by \fb@vpadding
@@ -84,19 +98,17 @@
     \dimen2=#5\advance\dimen2 by 2\dimen3
     \hskip -\dimen3 % Backup so the expanded box is centred properly
     \edef\thisalpha{#1 }%
-    \special{pdf:put @resources << /ExtGState << /GS0\the\feintb@xnum\space << /Type /ExtGState /CA \thisalpha /ca #1 /AIS false >>  >> >>}%
-     \x@\special\x@{pdf:code q /GS0\the\feintb@xnum\space gs #2 rg}%
-     \vrule height \dimen0 depth \dimen1  width \dimen2 %should be possible to get this working in pdf code, but this works.
-     \special{pdf:code Q}%
-     \hss
+    \def\c@de{\vrule height \dimen0 depth \dimen1  width \dimen2}%should be possible to get this working in pdf code, but this works.
+    \f@intthing{#1}{#2}{\c@de}%
+    \hss
   }%
-  \egroup\global\advance\feintb@xnum by 1}
+  \egroup}
 
 \def\feintbox#1#2#3{% Set a (transparent) coloured box as background for box given in #3. #1: alpha, #2: {r g b}  (all numbers in range 0-1.0)
   \vskip-\fb@vpadding% preserve grid
   \setbox0#3%
   \trace{e}{pre-feintbox, ht=\the\ht0, dp=\the\dp0}%
-  \setbox0\hbox{\feintb@x{#1}{#2}{\ht0}{\dp0}{\wd0}\box0}%
+  \setbox0\hbox{\feintb@x{#1}{#2}{\the\ht0}{\the\dp0}{\the\wd0}\box0}%
   \trace{e}{post-feintbox, ht=\the\ht0, dp=\the\dp0}%
   \box0
   %\vskip-\fb@vpadding % preserve grid
@@ -190,12 +202,15 @@
     \trace{e}{basic width of \sb@rpos: \the\dimen1}%
     % And shrink further if s has been specified for the fg picture
     \ifx\fgfigsp@c\relax\else
-      \getsbp@ram{fgfigscale}%
-      \ifx\cp@ram\relax
-        \dimen0=0.2\dimen1
-      \else
-        \dimen0=\cp@ram\dimen1
-      \fi
+      \p@rsefigscale{fg}%
+      \dimen0=\fgfig@dim@wd
+      \edef\fgfigsp@c{\fgfigsp@c \fgfig@scale@wd}%
+      %\getsbp@ram{fgfigscale}%
+      %$\ifx\cp@ram\relax
+        %$\dimen0=0.2\dimen1
+      %$\else
+        %$\dimen0=\cp@ram\dimen1
+      %$\fi
       \if\tempa s
         \trace{e}{Forground picture will be \fgfigsp@c}%
         \advance\dimen1 by -\dimen0
@@ -205,7 +220,7 @@
         \x@\x@\x@\p@rseLoc\x@\tempa\tempb\end
         \ifx\t@mpb\@lignLeft
           \xdef\sb@leftedge{\noexpand\sb@ins@rtpic\fgfigsp@c|\the\dimen0 \noexpand\E\noexpand\let\noexpand\sb@leftedge\noexpand\empty}%
-          \trace{e}{leftedge defined tp \sb@rightedge}%
+          \trace{e}{leftedge defined to sb@ins@rtpic\fgfigsp@c...}%
           \xdef\sb@leftshift{\the\dimen0}%
         \else
           \xdef\sb@rightedge{\noexpand\sb@ins@rtpic\fgfigsp@c|\the\dimen0 \noexpand\E\noexpand\let\noexpand\sb@rightedge\noexpand\empty}%
@@ -350,6 +365,39 @@
   \fi
   \x@\setbox#1\box\b@rderbox
 }
+\def\p@rsef@gsc@le#1x#2x#3\E{% \v@lpfx  fg or bg, params scale which might be of form Xscale x Yscale
+  \edef\fig@h@dim{#1}\edef\fig@v@dim{#2}%
+  \trace{e}{p@rsefigscale:#1,#2,#3}%
+  \ifdim\ht\extb@x=0pt
+    \def\fig@v@dim{}%
+  \fi
+  \ifx\fig@v@dim\empty
+    \x@\def\csname \v@lpfx fig@scale@ht\endcsname{}%
+  \else
+    \dimen0=\fig@v@dim\ht\extb@x
+    \x@\edef\csname \v@lpfx fig@scale@ht\endcsname{ height \the\dimen0}%
+    \trace{e}{Set \v@lpfx fig@scale@ht}%
+  \fi
+  \ifx\fig@h@dim\empty
+    \x@\def\csname \v@lpfx fig@scale@wd\endcsname{}%
+    \x@\edef\csname \v@lpfx fig@dim@wd\endcsname{\the\dimen1}%
+  \else
+    \dimen0=\fig@h@dim\dimen1
+    \x@\edef\csname \v@lpfx fig@scale@wd\endcsname{ width \the\dimen0}%
+    \x@\edef\csname \v@lpfx fig@dim@wd\endcsname{\the\dimen0}%
+    \trace{e}{Set \v@lpfx fig@scale@wd}%
+  \fi
+}
+
+\def\p@rsefigscale#1{%interpret bacground figure scale
+  \ifdim\wd\extb@x>0pt
+    \dimen1=\wd\extb@x
+  \fi
+  \getsbp@ram{#1figscale}%
+  \edef\v@lpfx{#1}
+  \x@\p@rsef@gsc@le\cp@ram xx\E
+  \trace{e}{parsed figure scale: \csname #1fig@scale@wd\endcsname \csname #1fig@scale@ht\endcsname}%
+}
 
 \def\@sbe{%
   \endlastp@rstyle{esbe}%
@@ -382,8 +430,12 @@
   \getsbp@ram{bordertop}\let\b@drtop\cp@ram
   \getsbp@ram{borderbottom}\let\b@drbottom\cp@ram 
   \getsbp@ram{borderwidth}\let\b@drwidth\cp@ram
+  \getsbp@ram{bgfigalpha}\let\bgf@galpha\cp@ram
+  \getsbp@ram{bgfigcolour}\let\bgf@gcol\cp@ram
   \tempfalse
   \ifx\bgf@gsp@c\relax\else
+    \sb@rchunkh@ight=\maxdimen% Background images and page-broken chunks are incompatible 
+    \p@rsefigscale{bg}%
     \if\bgf@gl@w F
       \temptrue
     \fi
@@ -391,13 +443,12 @@
       \temptrue
     \fi
   \fi
-  \ifx\bgf@gsp@c\relax\else % Background images and page-broken chunks are incompatible 
-    \sb@rchunkh@ight=\maxdimen
-  \fi
   \iftemp
     %modify the esbbox to include the picture
-    \edef\t@mpfigspec{\bgf@gsp@c|\the\wd\extb@x}%
-    \setbox\extb@x\vbox to \ht\extb@x{\vbox to 0pt{\vbox to\ht\extb@x{\vfil \x@\sb@ins@rtpic\t@mpfigspec\E \vfil}\vss}\extb@x}%
+    \edef\t@mpfigspec{\bgf@gsp@c \bgfig@scale@ht \bgfig@scale@wd|\bgfig@dim@wd}%
+    \setbox\newpicb@x=\hbox{\x@\sb@ins@rtpic\t@mpfigspec\E}
+    \trace{e}{Including background image below contents: \t@mpfigspec}%
+    \setbox\extb@x\vbox to \ht\extb@x{\vbox to 0pt{\vbox to\ht\extb@x{\vss \hbox to \wd\extb@x{\f@intthing{\bgf@galpha}{\bgf@gcol}{\box\newpicb@x}} \vss}\vss}\box\extb@x}%
     \let\bgf@gsp@c\relax %used it, so if it's still there later, we need to use it.
   \fi
   \let\w@tsit\sb@rb@x % Make sure the item is identified properly - used in debugging and .delayed file
@@ -441,9 +492,11 @@
       \setbox\extchunkb@x\vbox{\hbox{\box\extchunkb@x\hbox to \sb@rightshift{\sb@rightedge\hss}}}\fi
     \trace{e}{Chunk of extbox is \the\ht\extchunkb@x+\the\dp\extchunkb@x (\the\ht\extb@x)}%
     \ifx\h@scol\tr@e
-      \edef\t@mpfigspec{\bgf@gsp@c|\the\wd\extchunkb@x}%
       \setbox\extchunkb@x\vbox{%
-       \ifx\bgf@gsp@c\relax\else\vbox to 0pt{\vbox to\ht\extchunkb@x{\vfil\x@\sb@ins@rtpic\t@mpfigspec\E\vfil}\vss}\fi
+        \ifx\bgf@gsp@c\relax\else
+         \edef\t@mpfigspec{\bgf@gsp@c \bgfig@scale@ht \bgfig@scale@wd|\bgfig@dim@wd}%
+         \trace{e}{Including background image below everything: \t@mpfigspec}%
+         \vbox to 0pt{\vbox to\ht\extchunkb@x{\vfil\f@intthing{\bgf@galpha}{\bgf@gcol}{\x@\sb@ins@rtpic\t@mpfigspec\E}\vfil}\vss}\fi
        % \vskip\baselineskip
        \feintbox{\pdf@lpha}{\pdfBGc@l}{\box\extchunkb@x}}%
        \trace{e}{Chunk is (with box) \the\ht\extchunkb@x+\the\dp\extchunkb@x}%
@@ -532,7 +585,8 @@
 \def\FgImageScale   #1\relax{\initc@t\setsbp@ram{fgfigscale}{#1}\GenC@tFig{fg}}
 \def\BgImage      #1\relax{\initc@t\setsbp@ram{bgfigname}{#1}\GenC@tFig{bg}}
 \def\BgImageScale   #1\relax{\initc@t\setsbp@ram{bgfigscale}{#1}\GenC@tFig{bg}}
-\def\BgImageLow   #1\relax{\initc@t\setsbp@ram{bgfiglow}{\uppercase{#1}}}% What's the right sequence for colour layer and background image
+\def\BgImagePos   #1\relax{\initc@t\setsbp@ram{bgfigpos}{#1}\GenC@tFig{bg}}
+\def\BgImageLow   #1\relax{\initc@t\uppercase{\edef\t@st{#1}}\setsbp@ram{bgfiglow}{\t@st}}% What's the right sequence for colour layer and background image
 
 \def\BgColour   #1\relax{\initc@t\tempfalse\uppercase{\edef\t@st{#1}}\setbox0\hbox{\if F\t@st \global\temptrue\trace{e}{Cancelling colour}\else\if\tr@e\t@st\global\temptrue\fi\fi}\iftemp\setsbp@ram{hascol}{\t@st}\else\setsbp@ram{hascol}{T}\setsbp@ram{bgcolour}{#1}\fi}%For British/Australian/NZ/etc.
 \let\BgColor\BgColour%For Americans
@@ -540,18 +594,21 @@
 \def\BorderWidth        #1\relax{\initc@t\setsbp@ram{borderwidth}{#1}}
 \def\BorderColour       #1\relax{\initc@t\setsbp@ram{bordercolour}{#1}}
 \let\BorderColor=\BorderColour%for Americans
+\def\BgImageColour       #1\relax{\initc@t\setsbp@ram{bgfigcolour}{#1}}
+\let\BgImageColor=\BorderColour%for Americans
+\def\BgImageAlpha       #1\relax{\initc@t\setsbp@ram{bgfigalpha}{#1}}
 \def\Border	#1\relax{\initc@t\x@\p@rseBorder#1 \relax \relax}
 
 \def\GenC@tFig#1{
  \getsbp@ram{#1figname}\ifx\cp@ram\relax\else
    \let\c@tfigname\cp@ram
    \getsbp@ram{#1figscale}%
-   \edef\tmp{\c@tfigname|width}
+   \edef\tmp{\c@tfigname|}
    \x@\setsbp@ram{#1figspec}{\tmp}%
  \fi
 }
 \def\sb@ins@rtpic#1|#2|#3\E{
-  \trace{e}{Figure #1 #2 #3}%
+  \trace{e}{Figure "#1" "#2" "#3"}%
   \dimen0=#3\relax
   \openin\t@stread="#1" 
    \ifeof\t@stread 
@@ -559,7 +616,7 @@
    \else\closein\t@stread
     \let\picfilecomm@nd=\XeTeXpicfile
     \expandafter\ch@ckpdf#1..\endf@lename
-    \hbox to #3{\picfilecomm@nd #1 #2 \the\dimen0\relax}%
+    \hbox to #3{\hss \picfilecomm@nd #1 #2 \relax \hss}%
    \fi}
 
 \def\EndCategory{\gdef\c@tegory{}\global\let\c@tprefix\empty}
@@ -589,3 +646,5 @@
 \def\g@nbox#1{%For some reason, this prefers to be in its own macro.
   \x@\newb@x\csname #1\endcsname
 }
+\def\Override{\m@kedigitsother}
+\def\EndOverride{\m@kedigitsletters}
