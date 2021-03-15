@@ -61,18 +61,38 @@ their own watermark or background image.
 % Default: 0.2
 
 %\BgImage      
-%\BgImageScale   
-% The same meanings as the Fg images, but for a background (watermark) image. 
+% The same meaning as for Fg images, but for a background (watermark) image. 
 % Background images are horizontally and vertically centred, there is no \BgImagePos command.
+
+%\BgImageScale  0.5
+%\BgImageScale  0.9x0.9
+%\BgImageScale  x0.7
+% Background Images can be scaled relative to the width of the box (top format), to both 
+% dimensions of the box, or only to the height (bottom format).
+
+%\BgImageOversize option
+% Options: shrink distort ignore crop
+% If the background image size is specified with a single dimension (height or width) 
+% and the unspecified dimension ends up being too large for a given sidebar
+% then there are four possible behaviours:
+% * Shrink the image without distorting the image's aspect ratio
+% * Shrink the image in the over-sized dimension, distorting the aspect ratio
+% * Ignore the problem, allowing the image to appear outside the box [current behaviour]
+% * Crop the edges of the image
 
 %\BgImageLow option
 % Options: t,f
-% Should a background image come below or above the colour. Line art PDFs may
-% display better above the colour layer, as the colour layer will not wash them
-% out, but .JPGs are probably better below.
+% Should a background image come below or above the colour. Line art PDFs with
+% a tranpsarent background may display better above the colour layer, as the colour 
+% layer will not wash them out, but .JPGs are probably better below, as
+% .JPG images do not have transparency.
 
 %\BgImageAlpha value(0-1)
-% Transparency or alpha value of the background image: 0 is transparent, 1 is solid. This is useful for e.g. turning black lines into a paler shade
+% Transparency or alpha value of the background image: 0 is transparent, 1 is
+% solid. This is useful for e.g. turning black lines into a paler shade. Note that this 
+% will allow the background colour to show through, even if the image is above
+% the background layer, so on a green background black will become a darker
+% shade of green, not grey.
 
 %\BgImageColor value(0-1) value(0-1) value(0-1) 
 %\BgImageColour value(0-1) value(0-1) value(0-1) 

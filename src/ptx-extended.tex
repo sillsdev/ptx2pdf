@@ -122,7 +122,7 @@
    \trace{e}{parsed: \tempa(\tempb), \tempc(\tempd)}%
 }
 
-\def\p@rseBorder#1 #2\relax{
+\def\p@rseBorder#1 #2\relax{%
   \let\n@xtB=\p@rseBorder
   \def\t@st{#1}%
   \trace{e}{Parsing border parameter '#1' '#2'}%
@@ -211,7 +211,7 @@
       %$\else
         %$\dimen0=\cp@ram\dimen1
       %$\fi
-      \if\tempa s
+      \ifx\tempa \pos@Side
         \trace{e}{Forground picture will be \fgfigsp@c}%
         \advance\dimen1 by -\dimen0
         \ifx\tempb\empty\message{No side defined for foreground image in sidebar class '\c@tegory'. Assuming outer.}%
@@ -494,9 +494,9 @@
     \ifx\h@scol\tr@e
       \setbox\extchunkb@x\vbox{%
         \ifx\bgf@gsp@c\relax\else
-         \edef\t@mpfigspec{\bgf@gsp@c \bgfig@scale@ht \bgfig@scale@wd|\bgfig@dim@wd}%
-         \trace{e}{Including background image below everything: \t@mpfigspec}%
-         \vbox to 0pt{\vbox to\ht\extchunkb@x{\vfil\f@intthing{\bgf@galpha}{\bgf@gcol}{\x@\sb@ins@rtpic\t@mpfigspec\E}\vfil}\vss}\fi
+          \edef\t@mpfigspec{\bgf@gsp@c \bgfig@scale@ht \bgfig@scale@wd|\bgfig@dim@wd}%
+          \trace{e}{Including background image below everything: \t@mpfigspec}%
+          \vbox to 0pt{\vbox to\ht\extchunkb@x{\vfil\f@intthing{\bgf@galpha}{\bgf@gcol}{\x@\sb@ins@rtpic\t@mpfigspec\E}\vfil}\vss}\fi
        % \vskip\baselineskip
        \feintbox{\pdf@lpha}{\pdfBGc@l}{\box\extchunkb@x}}%
        \trace{e}{Chunk is (with box) \the\ht\extchunkb@x+\the\dp\extchunkb@x}%
@@ -564,7 +564,7 @@
   \xdef\m@rker{esb}%
   \initc@t
 }
-\def\initc@t{
+\def\initc@t{%
   \ifx\c@tprefix\empty
     \edef\t@stname{\m@rker\ds@ffix:is_defined}%
   \else 
@@ -599,7 +599,7 @@
 \def\BgImageAlpha       #1\relax{\initc@t\setsbp@ram{bgfigalpha}{#1}}
 \def\Border	#1\relax{\initc@t\x@\p@rseBorder#1 \relax \relax}
 
-\def\GenC@tFig#1{
+\def\GenC@tFig#1{%
  \getsbp@ram{#1figname}\ifx\cp@ram\relax\else
    \let\c@tfigname\cp@ram
    \getsbp@ram{#1figscale}%
@@ -607,7 +607,7 @@
    \x@\setsbp@ram{#1figspec}{\tmp}%
  \fi
 }
-\def\sb@ins@rtpic#1|#2|#3\E{
+\def\sb@ins@rtpic#1|#2|#3\E{%
   \trace{e}{Figure "#1" "#2" "#3"}%
   \dimen0=#3\relax
   \openin\t@stread="#1" 
@@ -616,7 +616,7 @@
    \else\closein\t@stread
     \let\picfilecomm@nd=\XeTeXpicfile
     \expandafter\ch@ckpdf#1..\endf@lename
-    \hbox to #3{\hss \picfilecomm@nd #1 #2 \relax \hss}%
+    \hbox{\hskip\sb@leftshift\hbox to #3{\hss \picfilecomm@nd #1 #2 \relax \hss}\hskip\sb@rightshift}%
    \fi}
 
 \def\EndCategory{\gdef\c@tegory{}\global\let\c@tprefix\empty}
