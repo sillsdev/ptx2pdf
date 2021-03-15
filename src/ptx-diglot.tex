@@ -609,7 +609,7 @@
  %it calls whichtrial 
  %as though it hadn't been here.
  %Assumptions: holdinginserts=1 material in \galley and \galleyexc@ss
-  \trace{d}{diglot@any@trial \the\ht255+\the\dp255 \space hIns=\the\holdinginserts(==0 1st time) op=\the\outputpenalty, etp=\endtri@lpen@lty, dc=\the\deadcycles, xs:\the\ht\galleyexc@ss+\the\dp\galleyexc@ss, th:\the\trialheight}%
+  \traceNum{d}{diglot@any@trial \the\ht255+\the\dp255 \space hIns=\the\holdinginserts(==0 1st time) op=\the\outputpenalty, etp=\endtri@lpen@lty, dc=\the\deadcycles, xs:\the\ht\galleyexc@ss+\the\dp\galleyexc@ss, th:\the\trialheight}%
   \ifnum\holdinginserts=0\else
     \ifvoid\trialbox
       \MSG{*** Internal error caught. Incorrect internal state found in during trial run. Text or footnotes may have been lost.}%
@@ -618,6 +618,9 @@
         \showlists
       \fi
     \fi
+  \fi
+  \ifnum\diglotDbgJoinboxes=\TRACEcount
+    \showbox255
   \fi
   \global\holdinginserts=1
   \ifvoid\trialbox
