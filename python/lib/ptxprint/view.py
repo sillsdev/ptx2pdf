@@ -782,9 +782,7 @@ class ViewModel:
         if self.diglotView is None:
             self.picinfos.load_files()
         else:
-            self.picinfos.load_files(suffix="L")
-            self.picinfos.load_files(suffix="R", prjdir=os.path.join(self.settings_dir, self.diglotView.prjid),
-                                     prj=self.diglotView.prjid, cfg=self.diglotView.configName())
+            self.picinfos.load_files(suffix="BL")
 
     def getPicRe(self):
         r = r"(?i)_?(" + "|".join(sorted(self.copyrightInfo['copyrights'].keys(), key=lambda x:(-len(x), x))) \

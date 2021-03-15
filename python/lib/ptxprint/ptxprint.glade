@@ -103,7 +103,7 @@ THE SOFTWARE.
   <object class="GtkAdjustment" id="a_columngutteroffset">
     <property name="lower">-50</property>
     <property name="upper">50</property>
-    <property name="value">5</property>
+    <property name="value">3</property>
     <property name="step_increment">0.5</property>
     <property name="page_increment">1</property>
   </object>
@@ -136,7 +136,7 @@ THE SOFTWARE.
   <object class="GtkAdjustment" id="a_fontsize">
     <property name="lower">2</property>
     <property name="upper">36</property>
-    <property name="value">12</property>
+    <property name="value">11</property>
     <property name="step_increment">0.10000000000000001</property>
     <property name="page_increment">1</property>
   </object>
@@ -150,7 +150,7 @@ THE SOFTWARE.
     <property name="lower">-20</property>
     <property name="upper">99</property>
     <property name="value">15</property>
-    <property name="step_increment">0.5</property>
+    <property name="step_increment">0.10000000000000001</property>
     <property name="page_increment">1</property>
   </object>
   <object class="GtkAdjustment" id="a_inclSectionScale">
@@ -204,7 +204,7 @@ THE SOFTWARE.
   <object class="GtkAdjustment" id="a_linespacing">
     <property name="lower">4</property>
     <property name="upper">100</property>
-    <property name="value">15</property>
+    <property name="value">14</property>
     <property name="step_increment">0.10000000000000001</property>
     <property name="page_increment">1</property>
   </object>
@@ -4444,7 +4444,7 @@ space between lines of text.</property>
                                         <property name="digits">2</property>
                                         <property name="numeric">True</property>
                                         <property name="update_policy">if-valid</property>
-                                        <property name="value">15</property>
+                                        <property name="value">14</property>
                                         <signal name="value-changed" handler="onBodyHeightChanged" swapped="no"/>
                                       </object>
                                       <packing>
@@ -4532,7 +4532,7 @@ Size (pt):</property>
                                         <property name="climb_rate">0.10000000000000001</property>
                                         <property name="digits">2</property>
                                         <property name="numeric">True</property>
-                                        <property name="value">12</property>
+                                        <property name="value">11</property>
                                         <signal name="value-changed" handler="onNumTabsChanged" swapped="no"/>
                                       </object>
                                       <packing>
@@ -4803,7 +4803,7 @@ Width (mm):</property>
                                     <property name="climb_rate">1</property>
                                     <property name="digits">1</property>
                                     <property name="numeric">True</property>
-                                    <property name="value">5</property>
+                                    <property name="value">3</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">1</property>
