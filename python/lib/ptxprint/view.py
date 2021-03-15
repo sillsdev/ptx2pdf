@@ -1157,6 +1157,7 @@ class ViewModel:
             digview = None
         else:
             digview = ViewModel(self.settings_dir, self.working_dir, self.userconfig, self.scriptsdir)
+            digview.isDiglot = True
             if not digview.setPrjid(prjid):
                 digview = None
             elif cfgid is None or cfgid == "" or not digview.setConfigId(cfgid):
