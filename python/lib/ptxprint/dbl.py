@@ -1,6 +1,6 @@
 
 import xml.etree.ElementTree as et
-import re, os
+import re, os, shutil
 from zipfile import ZipFile
 from ptxprint.ptsettings import books, allbooks
 from ptxprint.utils import get_ptsettings
@@ -188,7 +188,9 @@ def UnpackDBL(dblfile, prjid, prjdir):
         ldmlname = "{}_{}.ldml".format(meta.findtext('language/iso'), meta.findtext('language/ldml'))
         for f in (ldmlname, 'release/'+ldmlname):
             try:
-                inzip.extract(f, path=os.path.join(prjpath, ldmlname))
+                with inzip.open(f) as source, \
+                     open(os.path.join(prjpath, ldmlname), "wb") as target:
+                    shutil.copyfileobj(source, target)
                 break
             except KeyError:
                 pass
