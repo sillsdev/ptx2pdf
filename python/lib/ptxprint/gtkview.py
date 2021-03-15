@@ -1083,7 +1083,7 @@ class GtkViewModel(ViewModel):
             rnd = self.get("c_randomPicPosn")
             cols = 2 if self.get("c_doublecolumn") else 1
             if self.diglotView is None:
-                PicInfoUpdateProject(self, procbks, ab, self.picinfos, random=rnd, cols=cols, doclear=doclear)
+                PicInfoUpdateProject(self, procbks, ab, self.picinfos, random=rnd, cols=cols, doclear=doclear, clearsuffix=True)
             else:
                 mode = self.get("fcb_diglotPicListSources")
                 if mode in ("bth", "pri"):

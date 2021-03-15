@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.2 
+<!-- Generated with glade 3.22.1 
 
 The MIT License (MIT)
 
@@ -4495,7 +4495,7 @@ space between lines of text.</property>
                                       <packing>
                                         <property name="left_attach">1</property>
                                         <property name="top_attach">0</property>
-                                        <property name="width">4</property>
+                                        <property name="width">3</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -4626,7 +4626,7 @@ and descent values of the main body font.</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">6</property>
-                                        <property name="top_attach">0</property>
+                                        <property name="top_attach">3</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -4641,8 +4641,9 @@ and descent values of the main body font.</property>
                                         <property name="label" translatable="yes">Max Lines on Page:</property>
                                       </object>
                                       <packing>
-                                        <property name="left_attach">5</property>
-                                        <property name="top_attach">0</property>
+                                        <property name="left_attach">4</property>
+                                        <property name="top_attach">3</property>
+                                        <property name="width">2</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -4679,6 +4680,62 @@ button to adjust either the Top or Bottom Margin.</property>
                                       </packing>
                                     </child>
                                     <child>
+                                      <object class="GtkCheckButton" id="c_mirrorpages">
+                                        <property name="label" translatable="yes">Mirror Pages (use Inner+Outer Layout)</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="tooltip_text" translatable="yes">This will make the left page header the inner header and
+the right page header will be shown on the outer edge
+(i.e. headers on odd and even pages are mirrored).
+
+Behaviour for Diglots:
+Note that when creating a Diglot, this will place the
+primary text as the Inner text (closest to the spine),
+and the secondary text as the Outer text (closest to
+the edge of the page).
+
+If you always want the Primary text on the left and
+Secondary text on the right regardless of whether
+it is an odd or even page, then turn off this option.</property>
+                                        <property name="halign">start</property>
+                                        <property name="margin_top">6</property>
+                                        <property name="active">True</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">0</property>
+                                        <property name="top_attach">3</property>
+                                        <property name="width">4</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="c_cropmarks">
+                                        <property name="label" translatable="yes">Crop Marks</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="tooltip_text" translatable="yes">Some printers require crop marks
+on the PDF to show where the page
+should be trimmed after printing.
+
+The cropmarks also show the top and
+bottom text margins.</property>
+                                        <property name="halign">start</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">5</property>
+                                        <property name="top_attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
                                       <placeholder/>
                                     </child>
                                     <child>
@@ -4710,7 +4767,7 @@ button to adjust either the Top or Bottom Margin.</property>
                             <property name="margin_top">6</property>
                             <property name="margin_bottom">4</property>
                             <property name="hexpand">True</property>
-                            <property name="label_xalign">0.30000001192092896</property>
+                            <property name="label_xalign">0.15000000596046448</property>
                             <child>
                               <object class="GtkGrid" id="gr_doubleColumn">
                                 <property name="visible">True</property>
@@ -4826,6 +4883,9 @@ Top (pt):</property>
                                     <property name="left_attach">0</property>
                                     <property name="top_attach">2</property>
                                   </packing>
+                                </child>
+                                <child>
+                                  <placeholder/>
                                 </child>
                               </object>
                             </child>
@@ -5237,46 +5297,6 @@ above the base line of the first line of the body text.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkCheckButton" id="c_rhrule">
-                                    <property name="label" translatable="yes">Horizontal Rule</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">Check this option to add a horizontal
-line under the page header, before the
-main body text begins.</property>
-                                    <property name="halign">end</property>
-                                    <property name="margin_bottom">3</property>
-                                    <property name="draw_indicator">True</property>
-                                    <signal name="clicked" handler="onRHruleClicked" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">2</property>
-                                    <property name="top_attach">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkCheckButton" id="c_cropmarks">
-                                    <property name="label" translatable="yes">Crop
-Marks</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">Some printers require crop marks
-on the PDF to show where the page
-should be trimmed after printing.
-
-The cropmarks also show the top and
-bottom text margins.</property>
-                                    <property name="halign">end</property>
-                                    <property name="draw_indicator">True</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">5</property>
-                                    <property name="top_attach">0</property>
-                                  </packing>
-                                </child>
-                                <child>
                                   <object class="GtkSpinButton" id="s_topmargin">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
@@ -5489,6 +5509,28 @@ button to adjust either the Line Spacing or Top Margin.</property>
                                     <property name="width">3</property>
                                     <property name="height">2</property>
                                   </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_rhrule">
+                                    <property name="label" translatable="yes">Horizontal Rule Below Header</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">Check this option to add a horizontal
+line under the page header, before the
+main body text begins.</property>
+                                    <property name="halign">end</property>
+                                    <property name="valign">center</property>
+                                    <property name="draw_indicator">True</property>
+                                    <signal name="clicked" handler="onRHruleClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">2</property>
+                                    <property name="top_attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <placeholder/>
                                 </child>
                                 <child>
                                   <placeholder/>
@@ -8989,10 +9031,26 @@ setting, you must first enable Diglot.</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <placeholder/>
+                                      <object class="GtkLabel">
+                                        <property name="width_request">40</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">2</property>
+                                        <property name="top_attach">0</property>
+                                      </packing>
                                     </child>
                                     <child>
-                                      <placeholder/>
+                                      <object class="GtkLabel">
+                                        <property name="width_request">40</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">4</property>
+                                        <property name="top_attach">0</property>
+                                      </packing>
                                     </child>
                                     <child>
                                       <placeholder/>
@@ -9032,7 +9090,7 @@ then check this option.</property>
                                     </child>
                                     <child>
                                       <object class="GtkCheckButton" id="c_hdrverses">
-                                        <property name="label" translatable="yes">Include Verse numbers in Header References</property>
+                                        <property name="label" translatable="yes">Verse numbers in Header References</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
@@ -9174,7 +9232,7 @@ soon as the first scripture book is encountered.</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
-                                    <property name="top_attach">1</property>
+                                    <property name="top_attach">0</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -9206,7 +9264,7 @@ soon as the first scripture book is encountered.</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">1</property>
-                                    <property name="top_attach">1</property>
+                                    <property name="top_attach">0</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -9221,7 +9279,6 @@ to place the page number at the bottom of
 the page (only on Intoductory Pages before 
 the scripture text begins).</property>
                                     <property name="halign">start</property>
-                                    <property name="margin_top">4</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
                                     <signal name="clicked" handler="onPageNumTitlePageChanged" swapped="no"/>
@@ -9243,7 +9300,6 @@ page (of every book) as a reminder for
 later - as to which settings were used
 to produce the PDF.</property>
                                     <property name="halign">start</property>
-                                    <property name="margin_top">6</property>
                                     <property name="draw_indicator">True</property>
                                     <signal name="clicked" handler="onPrintConfigNameChanged" swapped="no"/>
                                   </object>
@@ -9253,26 +9309,10 @@ to produce the PDF.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkCheckButton" id="c_mirrorpages">
-                                    <property name="label" translatable="yes">Mirror Page Headers (Inner+Outer Layout)</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">When this option is checked, the left header will be the inner header and the right header will be shown on the outer edge. Highly recommended.
-
-Note that this setting also affects the Diglot settings:
-making the primary text the Inner text, and the
-secondary text as the Outer text.</property>
-                                    <property name="halign">start</property>
-                                    <property name="margin_top">6</property>
-                                    <property name="active">True</property>
-                                    <property name="draw_indicator">True</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">0</property>
-                                    <property name="top_attach">0</property>
-                                    <property name="width">2</property>
-                                  </packing>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
                                 </child>
                               </object>
                             </child>

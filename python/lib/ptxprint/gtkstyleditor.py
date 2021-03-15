@@ -357,7 +357,7 @@ class StyleEditorView(StyleEditor):
                 if f is not None:
                     asc = f.ascent / f.upem * bfontsize
                     des = f.descent / f.upem * bfontsize
-                    self.set("l_styActualFontSize", "{:.1f}pt (+{:.1f}pt-{:.1f}pt)".format(fsize, asc, des))
+                    self.set("l_styActualFontSize", "{}\n{:.1f}pt (+{:.1f} -{:.1f})".format(fref.name, fsize, asc, -des))
                 else:
                     self.set("l_styActualFontSize", "{:.1f}pt".format(fsize))
             self._setFieldVal(k, v, oldval, val)

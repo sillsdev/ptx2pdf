@@ -496,8 +496,12 @@ class PicInfo(dict):
     def set_positions(self, cols=1, randomize=False, suffix=""):
         picposns = { "L": {"col":  ("tl", "bl"),             "span": ("t")},
                      "R": {"col":  ("tr", "br"),             "span": ("b")},
+                     "i": {"col":  ("ti", "bi"),             "span": ("t")},
+                     "o": {"col":  ("to", "bo"),             "span": ("b")},
                      "":  {"col":  ("tl", "tr", "bl", "br"), "span": ("t", "b")}}
         isdblcol = self.model.get("c_doublecolumn")
+        if suffix and self.model.get('c_mirrorpages'):
+            suffix = 'o' if suffix == 'L' else 'i' # @@@@@@@@@@ fixme
         for k, v in self.items():
             if cols == 1: # Single Column layout so change all tl+tr > t and bl+br > b
                 if 'pgpos' in v:
