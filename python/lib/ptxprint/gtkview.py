@@ -777,6 +777,9 @@ class GtkViewModel(ViewModel):
             self.updateSavedConfigList()
             self.set("lb_settings_dir", self.configPath(self.configName()))
             self.updateDialogTitle()
+        self.userconfig.set("init", "project", self.prjid)
+        if getattr(self, 'configId', None) is not None:
+            self.userconfig.set("init", "config", self.configId)
         self.writeConfig()
         self.savePics(force=force)
         self.saveStyles(force=force)
