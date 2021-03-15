@@ -345,7 +345,21 @@ class StyleEditorView(StyleEditor):
                     val = val != v[2]
                     oldval = oldval != v[2]
             if k == "FontSize":
-                self.set("l_styActualFontSize", "{:.1f}pt".format(float(val) / 12. * float(self.model.get("s_fontsize"))))
+                fstyles = []
+                for a in ("Bold", "Italic"):
+                    if a in self.sheet and self.sheet[a] != "-" \
+                            or a in self.basesheet and self.basesheet[a] != "-":
+                        fstyles.append(a.lower())
+                fref = self.get_font(self.marker, "".join(fstyles))
+                f = fref.getTtfont() if fref is not None else None
+                bfontsize = float(self.model.get("s_fontsize"))
+                fsize = float(val) / 12. * bfontsize
+                if f is not None:
+                    asc = f.ascent / f.upem * bfontsize
+                    des = f.descent / f.upem * bfontsize
+                    self.set("l_styActualFontSize", "{:.1f}pt (+{:.1f}pt-{:.1f}pt)".format(fsize, asc, des))
+                else:
+                    self.set("l_styActualFontSize", "{:.1f}pt".format(fsize))
             self._setFieldVal(k, v, oldval, val)
 
         stype = data.get('StyleType', old.get('StyleType', ''))

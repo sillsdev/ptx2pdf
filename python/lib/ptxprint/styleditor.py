@@ -55,6 +55,13 @@ class StyleEditor:
         elif key in self.basesheet.get(mrk, {}) and val is None:
             del self.basesheet[mrk][key]
 
+    def get_font(self, mrk, style=""):
+        f = self.getval(mrk, " font")
+        if f is not None:
+            return f
+        f = self.model.getFont(style if len(style) else "regular")
+        return f
+
     def registerFn(self, mark, key, fn):
         self.registers.setdefault(mark, {})[key.lower()] = fn
 

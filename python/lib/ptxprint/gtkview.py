@@ -2685,12 +2685,13 @@ class GtkViewModel(ViewModel):
             if prj != "":
                 UnpackDBL(self.DBLfile, prj, self.settings_dir)
                 # add prj to ls_project before selecting it.
-                lsp = self.builder.get_object("ls_projects")
-                allprojects = [x[0] for x in lsp]
-                for i, p in enumerate(allprojects):
-                    if prj.casefold() > p.casefold():
-                        lsp.insert(i, [prj])
-                        break
+                for a in ("ls_projects", "ls_digprojects"):
+                    lsp = self.builder.get_object(a)
+                    allprojects = [x[0] for x in lsp]
+                    for i, p in enumerate(allprojects):
+                        if prj.casefold() > p.casefold():
+                            lsp.insert(i, [prj])
+                            break
                 self.set("fcb_project", prj)
         dialog.hide()
 

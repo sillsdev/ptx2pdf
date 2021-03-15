@@ -291,6 +291,12 @@ class ViewModel:
             if nf is not None:
                 self.set(w, nf)
 
+    def getFont(self, style="regular"):
+        ctl = FontModelMap.get("font"+style, None)
+        if ctl is None:
+            return None
+        return self.get(ctl[0])
+
     def onNumTabsChanged(self, *a):
         if self.loadingConfig:
             return False
