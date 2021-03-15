@@ -280,10 +280,14 @@ class PicInfo(dict):
                     continue
                 m = l.split("|")
                 r = m[0].split(maxsplit=2)
-                if len(r) > 1:
-                    k = "{}{} {}".format(r[0][:3], suffix, r[1])
+                if suffix.startswith("B"):
+                    s = r[0][3:4] or suffix[1:]
                 else:
-                    k = "{}{}".format(r[0], suffix)
+                    s = suffix
+                if len(r) > 1:
+                    k = "{}{} {}".format(r[0][:3], s, r[1])
+                else:
+                    k = "{}{}".format(r[0], s)
                 pic = {'anchor': k, 'caption': r[2] if len(r) > 2 else ""}
                 self[self.newkey(suffix)] = pic
                 if len(m) > 6: # must be USFM2, so|grab|all|the|different|pieces!
