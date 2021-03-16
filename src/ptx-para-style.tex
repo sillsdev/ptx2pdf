@@ -140,6 +140,9 @@
   \ifhmode\endgraf\fi % Not sure why, but sometiems we get here in hmode
   \prevdepth=0pt
   \setbox0=\ifgridp@c\vbox{\box#1}\else\killd@scenders#1\fi
+  \ifVisTraceExtra
+    \setbox0=\vbox{\box0\doVisTraceT{G}\box0}%
+  \fi
   \trace{h}{before gridbox: ht0=\the\ht0; dp0=\the\dp0 (\the\dimen4); spacebefore=\the\headingtopspace; depth=\the\lastdepth}%
   \s@tbaseline{p}\dimen1=\ht0 \dimen0=\baselineskip \m@d \dimen2=\dimen0 % dimen2 is grid space
   \dimen1=\ht0 \advance\dimen1 by -\headingtopspace

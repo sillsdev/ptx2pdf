@@ -699,7 +699,6 @@
  \global\let\@k=\k
  \def\setkr@f##1{\edef\kr@f{\zap@space ##1 \empty}}
  \def\k##1\k*{%\k processing
-    \tracingassigns=0 %
     \edef\kr@f{\detokenize{##1}}%
     \x@\setkr@f\x@{\kr@f}%
     \message{\kr@f}%
@@ -795,7 +794,14 @@
 \def\mcb@rrier#1{\x@\let\csname isb@rrier-#1\endcsname\empty}
 \mcb@rrier{P}
 \mcb@rrier{N}
-\mcb@rrier{b}
+\mcb@rrier{s}
+%Are these style modifiers (category or milestone)  or actual styles?
+\def\msm@dfyname#1{#1-is-modifyer}
+\def\msm@difyer#1{\edef\t@@st{\msm@dfyname{#1}}\x@\xdef\csname\t@@st\endcsname{Y}}
+\def\g@tmodifyer#1{\edef\t@@st{\msm@dfyname{#1}}\x@\let\x@\t@stme\csname\t@@st\endcsname}
+\msm@difyer{t}
+\msm@difyer{M}
+\msm@difyer{m}
 
 \newif\ifp@pping
 \p@ppingfalse
@@ -937,8 +943,9 @@
  \origb@selineskip=\baselineskip
  \s@tupsizes
  \defineheads
+ \ifnum 1=\ifVisTrace 1 \else \ifVisTraceExtra 1 \else 0\fi\fi 
+   \font\VisTracefont="Arial":color=3f7f3f at 6pt\fi
  \ifdiglot\setc@rdstat{L}
-   \ifVisTrace\font\VisTracefont="Arial":color=3f7f3f at 6pt\fi
  \fi
  %\global\lastptxfiletrue
  \let\@netimesetup=\relax}                                                      %(1)
