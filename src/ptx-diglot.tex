@@ -1274,7 +1274,7 @@
 \newif\ifFigGutterRule \FigGutterRulefalse
 \newif\ifJoinGutterRule \FigGutterRulefalse
 \newcount\MaxPages
-\def\MaxPagesPerBook{500}
+\def\MaxPagesPerBook{10000}
 \MaxPages=\MaxPagesPerBook
 \addtoendptxhooks{{\tmpcount=\pageno\advance\tmpcount by \MaxPagesPerBook\ifnum\tmpcount>\MaxPages \global\MaxPages=\tmpcount\fi}}
 
