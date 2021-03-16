@@ -181,7 +181,6 @@
 \def\SpaceStretchFactorL{}\def\SpaceStretchFactorR{}
 \def\SpaceShrinkFactorL{}\def\SpaceShrinkFactorR{}
 \newif\ifRTLL \newif\ifRTLR
-\font\VisTracefont="Arial":color=3f7f3f at 6pt
 \def\doVisTrace#1{%
   \setbox0=\vtop to 0pt{\hrule height 0pt depth 0.5pt width 15pt\hbox{\VisTracefont #1 \the\TRACEcount}\vss}\ht0=0pt\dp0=0pt
 }
@@ -698,6 +697,10 @@
 \def\pr@sideswitch#1#2{%
   \tmpcount=\lastnodetype
   \global\savedpenalty=\lastpenalty % This MUST be first (at least, before any writes), or the last /thing/ won't be a penalty
+  \ifx\c@rrdstat\empty
+    \trace{d}{\c@rrdstat is empty, somehow, making it L for sanity}%
+    \gdef\c@rrdstat{L}%
+  \fi
   \ifhe@dings\endhe@dings
     \global\savedpenalty=\lastpenalty % Pick up revised after-heading penalty
   \fi%
@@ -709,10 +712,6 @@
   \fi
   \trace{d}{pr@sideswitch #1 (\c@rrdstat) pL:\the\dp\partialL, xL:\the\dp\excessL, pR:\the\dp\partialR, xR\the\dp\excessR, lp:\the\savedpenalty \ifallNeedEmptying\space  allNeedemptying\fi}%
   %\showlists
-  \ifx\c@rrdstat\empty
-    \trace{d}{\c@rrdstat is empty, somehow, making it L for sanity}%
-    \gdef\c@rrdstat{L}%
-  \fi
   \global\output={\diglotCollect}%Why woudn't it be? Don't know, but sometimes it's not.
   \let\@ldstat=\c@rrdstat
   \@@setside{#2}%Set the side to occur after the next swapcols penalty
@@ -912,6 +911,12 @@
   \global\baselineskip=12pt
  \fi%
  %Also need to switch hyphenation patterns
+ \tmpcount=\the\pageno
+ \advance\tmpcount by \MaxPagesPerChunk\relax 
+ %\message{\the\pageno + \MaxPagesPerChunk = \the\tmpcount}%
+ \ifnum\tmpcount>\MaxPages \global\MaxPages=\tmpcount
+   %\message{Maxpages now : \the\MaxPages}%
+ \fi
  \expandafter\ifx\csname language#1\endcsname\relax\else\uselanguage{\csname language#1\endcsname}\fi}%
 
 
@@ -1274,9 +1279,8 @@
 \newif\ifFigGutterRule \FigGutterRulefalse
 \newif\ifJoinGutterRule \FigGutterRulefalse
 \newcount\MaxPages
-\def\MaxPagesPerBook{10000}
-\MaxPages=\MaxPagesPerBook
-\addtoendptxhooks{{\tmpcount=\pageno\advance\tmpcount by \MaxPagesPerBook\ifnum\tmpcount>\MaxPages \global\MaxPages=\tmpcount\fi}}
+\edef\MaxPagesPerChunk{300}
+\MaxPages=\MaxPagesPerChunk
 
 \newbox\topchunk
 \newbox\botchunk
@@ -1306,9 +1310,9 @@
   \fi
 }
 \def\@writep@ge {%
-  \trace{d}{@writep@ge \the\pageno}%
+  \trace{d}{@writep@ge \the\pageno (\the\MaxPages)}%
   \ifnum\pageno>\MaxPages
-    \errmessage{Pagecount has exceeded \MaxPages. This probably means something has gone wrong. (or you should increase MaxPages or MaxPagesPerBook for this job)}%
+    \errmessage{Pagecount (\the\pageno) has exceeded \MaxPages (\the\MaxPages). This probably means something has gone wrong. (or you should increase MaxPages or MaxPagesPerChunk (\MaxPagesPerChunk) for this job)}%
   \fi
   \IfTr@ce{gI}{%
     \let\d@=\sh@winsertdim\edef\v@lpfx{}\edef\v@lsfx{}\x@\cstackdown\ins@rts\E
