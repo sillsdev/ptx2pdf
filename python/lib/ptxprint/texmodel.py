@@ -40,6 +40,7 @@ ModelMap = {
     "config/pwd":               ("t_invisiblePassword", lambda w,v: v or ""),
     "config/version":           ("_version", None),
 
+    "showadvoptions_":          ("c_showAdvancedOptions", None),
     "project/hideadvsettings":  ("c_hideAdvancedSettings", None),
     "project/pdfx1acompliant":  ("c_PDFx1aOutput", None),
     "project/bookscope":        ("r_book", None),

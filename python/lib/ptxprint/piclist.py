@@ -167,14 +167,11 @@ class PicChecks:
         
     def setMultiCreditOverlays(self, srcs, crdtxt, crdtbox, copysrc):
         for k in srcs:
-            print(k)
             if k is not None and k[:3].lower() == copysrc.lower():
                 k = newBase(k)
-                print(k)
-                if not self.cfgShared.get(k, 'piccredit', fallback=''):
+                if self.parent.get('c_plCreditOverwrite') or not self.cfgShared.get(k, 'piccredit', fallback=''):
                     if not self.cfgShared.has_section(k):
                         self.cfgShared.add_section(k)
-                    print("added k", k)
                     self.cfgShared.set(k, 'piccredit', crdtxt)
                     self.cfgShared.set(k, 'piccreditbox', crdtbox)
 
@@ -496,12 +493,12 @@ class PicInfo(dict):
     def set_positions(self, cols=1, randomize=False, suffix=""):
         picposns = { "L": {"col":  ("tl", "bl"),             "span": ("t")},
                      "R": {"col":  ("tr", "br"),             "span": ("b")},
-                     "i": {"col":  ("ti", "bi"),             "span": ("t")},
-                     "o": {"col":  ("to", "bo"),             "span": ("b")},
                      "":  {"col":  ("tl", "tr", "bl", "br"), "span": ("t", "b")}}
         isdblcol = self.model.get("c_doublecolumn")
-        if suffix and self.model.get('c_mirrorpages'):
-            suffix = 'o' if suffix == 'L' else 'i' # @@@@@@@@@@ fixme
+        psb = (self.model.get('fcb_diglotPicListSources'))
+        if self.model.get('c_diglot'):
+            cols = 2 if (psb == "bth") else 1
+        print("psb:", psb, "isdblcol:", isdblcol, "cols:", cols)
         for k, v in self.items():
             if cols == 1: # Single Column layout so change all tl+tr > t and bl+br > b
                 if 'pgpos' in v:
@@ -516,7 +513,8 @@ class PicInfo(dict):
                     v['pgpos'] = random.choice(posns)
                 else:
                     v['pgpos'] = posns[0]
-
+            print(v['pgpos'])
+            
     def set_destinations(self, fn=lambda x,y,z:z, keys=None, cropme=False):
         for v in self.values():
             if v.get(' crop', False) == cropme and 'dest file' in v:

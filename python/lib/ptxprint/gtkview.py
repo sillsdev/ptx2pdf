@@ -166,6 +166,7 @@ _sensitivities = {
     "c_thumbtabs":             ["gr_thumbs"],
     "c_thumbrotate":           ["fcb_rotateTabs"],
     "c_colophon":              ["gr_colophon"],
+    "c_plCreditApply2all":     ["c_plCreditOverwrite"],
 }
 # Checkboxes and the different objects they make (in)sensitive when toggled
 # These function OPPOSITE to the ones above (they turn OFF/insensitive when the c_box is active)
@@ -535,6 +536,9 @@ class GtkViewModel(ViewModel):
         self._setChapRange("to", 1, 999, 1)
         self.colorTabs()
 
+    def onShowAdvancedOptionsClicked(self, btn):
+        self.set('c_hideAdvancedSettings', self.get('c_showAdvancedOptions'))
+
     def onHideAdvancedSettingsClicked(self, c_hideAdvancedSettings, foo):
         val = self.get("c_hideAdvancedSettings")
         self.userconfig.set('init', 'expert', 'true' if val else 'false')
@@ -565,17 +569,17 @@ class GtkViewModel(ViewModel):
                   "s_colgutteroffset", "bx_TopMarginSettings", "gr_HeaderAdvOptions", "l_colgutteroffset",
                   "c_fighiderefs", "c_skipmissingimages", "c_useCustomFolder", "btn_selectFigureFolder", "c_exclusiveFiguresFolder",
                   "c_startOnHalfPage", "c_prettyIntroOutline", "c_marginalverses", "s_columnShift", "c_figplaceholders",
-                  "fr_fallbackFont", "l_colgutteroffset", "fr_hyphenation",
+                  "fr_fallbackFont", "l_colgutteroffset", "fr_hyphenation", "lb_style_f", "lb_style_x",
                   "bx_fnCallers", "bx_fnCalleeCaller", "bx_xrCallers", "bx_xrCalleeCaller", "c_fnOverride", "c_xrOverride",
                   "row_ToC", "c_hyphenate", "l_missingPictureCount", "bx_colophon", "btn_deleteConfig", "btn_lockunlock",
                   "r_hdrLeft_Pri", "r_hdrLeft_Sec", "r_hdrCenter_Pri", "r_hdrCenter_Sec", "r_hdrRight_Pri", "r_hdrRight_Sec", 
                   "c_omitverseone", "c_glueredupwords", "c_firstParaIndent", "c_hangpoetry", "c_preventwidows", 
                   "l_DBLbundle", "btn_DBLbundle", "c_cropmarks", "fr_margins", "c_linebreakon", "t_linebreaklocale", 
-                  "c_pagegutter", "s_pagegutter", "l_digits", "fcb_digits", "c_quickRun", "c_mirrorpages",
+                  "c_pagegutter", "s_pagegutter", "l_script", "fcb_script", "c_quickRun", "c_mirrorpages",
                   "t_invisiblePassword", "t_configNotes", "l_notes", "c_elipsizeMissingVerses", "fcb_glossaryMarkupStyle",
                   "gr_fnAdvOptions", "c_figexclwebapp", "l_glossaryMarkupStyle", "btn_refreshFonts",
                   "fr_spacingAdj", "fr_fallbackFont", "l_complexScript", "b_scrsettings", "c_colorfonts",
-                  "scr_picListEdit", "gr_picButtons", "tb_picPreview", "l_linesOnPageLabel", "l_linesOnPage", 
+                  "scr_picListEdit", "gr_picButtons", "tb_picPreview", "l_linesOnPageLabel", "l_linesOnPage", "fr_tabs",
                   "btn_adjust_spacing", "btn_adjust_top", "btn_adjust_bottom", "fr_diglot", "btn_diglotSwitch", "fr_borders"):
             # print(c)
             self.builder.get_object(c).set_visible(val)
@@ -587,7 +591,8 @@ class GtkViewModel(ViewModel):
                 
             if self.get("c_diglot"):
                 self.builder.get_object("tb_Diglot").set_visible(True)
-                # self.builder.get_object("btn_diglotSwitch").set_visible(True)
+                self.builder.get_object("fr_diglot").set_visible(True)
+                self.builder.get_object("btn_diglotSwitch").set_visible(True)
                 
             if self.get("c_thumbtabs") or self.get("c_borders"):
                 self.builder.get_object("tb_TabsBorders").set_visible(True)
@@ -607,6 +612,7 @@ class GtkViewModel(ViewModel):
             for h in ("ptxprintdir", "prjdir", "settings_dir", "pdfViewer", "techFAQ", "reportBugs"): 
                 self.builder.get_object("{}{}".format(pre, h)).set_visible(val)
                 
+        self.set('c_showAdvancedOptions', self.get('c_hideAdvancedSettings'))
         self.colorTabs()
         # Resize Main UI Window appropriately
         if not val:
@@ -906,6 +912,7 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("lb_TabsBorders").set_markup(tc+jn+bc)
 
         self.builder.get_object("c_hideAdvancedSettings").set_sensitive(not (tb and bd))
+        self.builder.get_object("c_showAdvancedOptions").set_sensitive(not (tb and bd))
 
     def sensiVisible(self, k, focus=False, state=None):
         if state is None:
@@ -1095,7 +1102,8 @@ class GtkViewModel(ViewModel):
                                          self.picinfos, suffix="R", random=rnd, cols=cols, doclear=doclear & (mode != "both"), clearsuffix=(mode != "bth"))
             self.updatePicList(procbks)
             self.savePics()
-            self.set("c_filterPicList", False)
+            if self.get('r_generate') == 'all':
+                self.set("c_filterPicList", False)
         if sys.platform == "win32":
             dialog.set_keep_above(False)
         dialog.hide()
@@ -1381,8 +1389,9 @@ class GtkViewModel(ViewModel):
             w.set_text(ptset)
 
     def onResetTabGroupsClicked(self, btn_resetTabGroups):
-        # RUT 1SA; EZR NEH EST; ECC SNG; HOS JOL AMO OBA JON MIC; NAM HAB ZEP HAG ZEC MAL; GAL EPH PHP COL; 1TH 2TH 1TI 2TI TIT PHM; JAS 1PE 2PE 1JN 2JN 3JN JUD
-        self.set("t_thumbgroups", "GAL EPH PHP COL; 1TI 2TI TIT PHM; JAS 1PE 2PE; 1JN 2JN 3JN JUD")
+        grps = "RUT 1SA; EZR NEH EST; ECC SNG; HOS JOL AMO OBA JON MIC; NAM HAB ZEP HAG ZEC MAL; " + \
+               "GAL EPH PHP COL; 1TH 2TH 1TI 2TI TIT PHM; JAS 1PE 2PE 1JN 2JN 3JN JUD"
+        self.set("t_thumbgroups", grps)
 
     def onFnBlendClicked(self, btn):
         self.onSimpleClicked(btn)
@@ -2347,11 +2356,6 @@ class GtkViewModel(ViewModel):
         for i, v in enumerate(l[2:]):
             self.builder.get_object("ecb_ftrcenter").append_text(v)
 
-    def onBorderClicked(self, btn):
-        self.sensiVisible("c_thumbtabs")
-        self.sensiVisible("c_borders")
-        self.colorTabs()
-        
     def ondiglotSecProjectChanged(self, btn):
         self.updateDiglotConfigList()
         self.updateDialogTitle()
@@ -2436,9 +2440,16 @@ class GtkViewModel(ViewModel):
         # self.onViewerFocus(self, w) # @@@@ MH please FIXME
         # self.builder.get_object("scroll_XeTeXlog").scroll_to_mark(self.buf[4].get_insert(), 0.0, True, 0.5, 0.5)
 
+    def onBorderClicked(self, btn):
+        self.onSimpleClicked(btn)
+        # self.sensiVisible("c_thumbtabs")
+        self.sensiVisible("c_borders")
+        self.colorTabs()
+
     def onTabsClicked(self, btn):
         self.onSimpleClicked(btn)
-        self.sensiVisible("c_borders")
+        self.sensiVisible("c_thumbtabs")
+        # self.sensiVisible("c_borders")
         self.colorTabs()
         self.onNumTabsChanged()
         if self.get("c_thumbtabs"):
@@ -2642,9 +2653,10 @@ class GtkViewModel(ViewModel):
         # Ensure that the anchor ref only uses . (and not :) as the ch.vs separator and that _bk_ is upperCASE
         a = self.get('t_plAnchor')
         a = a[:4].upper() + re.sub(r'(\d+):(\d+)', r'\1.\2', a[4:])
-        # Make sure there are no spaces after the _bk_ code (easy to paste in a \k "phrase with spaces:"\k*
-        #                                                   which gets converted to k.phrasewithspaces:
+        # Make sure there are no spaces after the _bk_ code (easy to paste in a \k "Phrase with spaces:"\k*
+        #                                                   which gets converted to k.Phrasewithspaces:
         a = a[:5] + re.sub(' ', '', a[5:])
+        # a = a[:5] + re.sub('\\[a-z0-9\-]+\*? ', '', a[5:])
         self.set("t_plAnchor", a)
 
     def resetParam(self, btn, foo):

@@ -711,7 +711,7 @@ please create an issue in Github.</property>
     <property name="website_label" translatable="yes">Download the latest version</property>
     <property name="authors">Martin Hosken (Project Lead, System Architect, TeX macros)
 Mark Penny (UI Developer, Testing + Documentation)
-David Gardner (TeX Macro Hacks, Tweaks + Bugfixing)
+David Gardner (TeX Macro Coding, Diglot Specialist)
 David Coward (User Acceptance Testing)
 Nicolas Spalinger (Linux Packaging)
 
@@ -2773,11 +2773,11 @@ which already have Credit Overlay settings.</property>
                     <property name="margin_top">6</property>
                     <property name="margin_bottom">6</property>
                     <property name="draw_indicator">True</property>
+                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
                     <property name="top_attach">4</property>
-                    <property name="width">3</property>
                   </packing>
                 </child>
                 <child>
@@ -2796,6 +2796,28 @@ which already have Credit Overlay settings.</property>
                   <packing>
                     <property name="left_attach">3</property>
                     <property name="top_attach">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkCheckButton" id="c_plCreditOverwrite">
+                    <property name="label" translatable="yes">Overwite any existing settings</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">False</property>
+                    <property name="tooltip_text" translatable="yes">WARNING:
+If this option is checked, it will disregard any previous
+settings, and overwrite them with the new overlay
+information, position and other parameters.</property>
+                    <property name="halign">end</property>
+                    <property name="margin_right">6</property>
+                    <property name="margin_top">6</property>
+                    <property name="margin_bottom">6</property>
+                    <property name="draw_indicator">True</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">2</property>
+                    <property name="top_attach">4</property>
+                    <property name="width">2</property>
                   </packing>
                 </child>
                 <child>
@@ -4884,9 +4906,6 @@ Top (pt):</property>
                                     <property name="top_attach">2</property>
                                   </packing>
                                 </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
                               </object>
                             </child>
                             <child type="label">
@@ -5806,6 +5825,10 @@ to ensure that they are displayed properly.</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
+                                        <property name="tooltip_text" translatable="yes">Click to select the main font for the publication.
+Note that the font chooser dialog also has a
+number of other options for setting advanced
+font features and, if needed, Graphite rendering.</property>
                                         <signal name="clicked" handler="onFontRclicked" swapped="no"/>
                                       </object>
                                       <packing>
@@ -5997,7 +6020,7 @@ lays out the vertical lines left to right.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkLabel">
+                                  <object class="GtkLabel" id="l_script">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="halign">end</property>
@@ -6413,7 +6436,7 @@ MRK 6.23 +1[2]  (expand the paragraph AFTER the paragraph
 etc.
 Note that adjusting paragraphs needs to be done right at the
 end when all other settings and picture placements have been 
-finalized. Otherwise you are likely to have to re-do it all again.</property>
+finalized. Otherwise you may need to re-do it all once again.</property>
                                         <property name="halign">start</property>
                                         <property name="label" translatable="yes">Adjust Layout by Shrinking
 or Expanding Paragraphs:</property>
@@ -7072,7 +7095,10 @@ a \m(argin) paragraph with no indentation.</property>
                                     <property name="tooltip_text" translatable="yes">Glossary words are marked up with
 special \w glossary\w* tags. Specify
 how these words should be highlighted
-in the printed output.</property>
+in the printed output.
+
+If you wish to apply your own custom
+styling to \w then select the last option.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
                                     <property name="model">ls_glossaryMarkupStyle</property>
@@ -7164,7 +7190,10 @@ marginal verse numbers. (pts)</property>
                                         <property name="tooltip_text" translatable="yes">Glossary words are marked up with
 special \w glossary\w* tags. Specify
 how these words should be highlighted
-in the printed output.</property>
+in the printed output.
+
+If you wish to apply your own custom
+styling to \w then select the last option.</property>
                                         <property name="halign">end</property>
                                         <property name="hexpand">True</property>
                                         <property name="label" translatable="yes">Glossary Words
@@ -7369,13 +7398,13 @@ occur below Section Headings.</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
-                            <property name="tooltip_text" translatable="yes">LEAVE THIS OPTION TURNED ON!
+                            <property name="tooltip_text" translatable="yes">Normally you should leave this checked.
 
-But if you require a printout of just the
+BUT... if you require a printout of just the
 book introductions (usually for the
 purpose of final checking, or looking
 for consistency) then this option can
-be turned OFF (to omit the main text).</property>
+be unchecked (to omit the main text).</property>
                             <property name="halign">start</property>
                             <property name="active">True</property>
                             <property name="draw_indicator">True</property>
@@ -7464,7 +7493,8 @@ numerals). For example, "Chapter" or "Psalm".
 
 If you want the chapter number to appear centered
 and above the Section Header WITHOUT any preceding
-text, then just put the code \ZWNBSP in here. </property>
+text, then just put the code \ZWNBSP in here. This will
+insert a Zero-Width Non Breaking Space.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
                                   </object>
@@ -7479,7 +7509,12 @@ text, then just put the code \ZWNBSP in here. </property>
                                     <property name="can_focus">False</property>
                                     <property name="tooltip_text" translatable="yes">The chapter “label” to be used when rendering
 chapter divisions as headings (instead of drop-cap
-numerals). For example, "Psalm"</property>
+numerals). For example, "Chapter" or "Psalm".
+
+If you want the chapter number to appear centered
+and above the Section Header WITHOUT any preceding
+text, then just put the code \ZWNBSP in here. This will
+insert a Zero-Width Non Breaking Space.</property>
                                     <property name="halign">end</property>
                                     <property name="label" translatable="yes">Chapter
 Label:</property>
@@ -7500,7 +7535,8 @@ Layout for These Books:</property>
                                     <property name="tooltip_text" translatable="yes">Some books (e.g. Introduction, Glossary, Psalms, and 
 maybe even Proverbs) look better formatted as single
 column, even though most of the books are typeset
-in two column layout.</property>
+in two column layout. This allows the same publication
+to have both single and double column layouts.</property>
                                     <property name="halign">start</property>
                                     <property name="draw_indicator">True</property>
                                     <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
@@ -7556,13 +7592,12 @@ of books that only have a single chapter (OBA, PHM,
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">Trying to get poetry to balance
-columns creates all sorts of
-unforeseen issues and whitespace.
-This option allows unbalanced
-poetry to improve the overall look.
-It also allows Widow and Orphan 
-lines to occur.</property>
+                                    <property name="tooltip_text" translatable="yes">Trying to get  columns of poetry to balance often
+creates all sorts of unforeseen issues and unwanted
+whitespace. This option allows columns to be 
+unbalanced, which might improve the overall look.
+But note that it also allows Widow and Orphan 
+lines to occur, which is a negative side-effect.</property>
                                     <property name="halign">start</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
@@ -8455,7 +8490,9 @@ between notes that have been run together.</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
                                         <property name="tooltip_text" translatable="yes">This is the horizontal rule separating
-the body text from the footnote area.</property>
+the body text from the footnote area.
+The rule covers the entire width even
+if the note is short.</property>
                                         <property name="halign">start</property>
                                         <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
@@ -8544,10 +8581,9 @@ for Each Glossary Entry</property>
                                         <property name="tooltip_text" translatable="yes">[NOT YET IMPLEMENTED]
 If glossary terms have been marked up multiple
 times, it may be frustrating to see the same
-glossary entry occuring in the footnote area time
-and time again. To prevent this, you can select to
-only show the Glossary entry as a footnote the 
-FIRST time that it occurs (in each book).</property>
+glossary entry repeated in the footnote area each
+time. Check this option to only show the Glossary
+entry once as a footnote (in each book).</property>
                                         <property name="halign">start</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
@@ -9634,7 +9670,10 @@ Before Colophon</property>
                                 <property name="tooltip_text" translatable="yes">Normally the colophon is inserted at the end
 of the last page of the last book. If this option
 is checked, then the colophon will appear at the 
-bottom of a new page at the end of the publication.</property>
+bottom of a new page at the end of the publication.
+
+In Diglot publications, the colophon always appears
+on its own page - regardless of this setting. </property>
                                 <property name="valign">start</property>
                                 <property name="draw_indicator">True</property>
                               </object>
@@ -9651,17 +9690,17 @@ bottom of a new page at the end of the publication.</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
-                            <property name="tooltip_text" translatable="yes">NOTE: This Colophon will not appear 
-in the PDF the first time you hit Print, 
-but will appear on subsequent runs.
-
-What is a Colophon?
+                            <property name="tooltip_text" translatable="yes">What is a Colophon?
 A brief statement containing information
 about the publication such as the place of 
 publication, the publisher, and the date of 
 publication. This will be printed at the END
 of the book. Similar to a "biblio-page" or a
-"copyright-page" at the front of a book.</property>
+"copyright-page" at the front of a book.
+
+NOTE: The colophon will not appear 
+the first time you run it, but will appear
+on subsequent runs.</property>
                             <property name="halign">start</property>
                             <property name="active">True</property>
                             <property name="draw_indicator">True</property>
@@ -9685,9 +9724,10 @@ of the book. Similar to a "biblio-page" or a
                   <object class="GtkLabel" id="lb_HeadFoot">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="tooltip_text" translatable="yes">Adjust the spacing at the top
-and bottom of the page and
-content of Headers and Footers.</property>
+                    <property name="tooltip_text" translatable="yes">Adjust the content of headers 
+and footers, and define a
+colophon which gets printed at
+the end of the publication.</property>
                     <property name="halign">start</property>
                     <property name="label" translatable="yes">Header+Footer</property>
                   </object>
@@ -9936,7 +9976,14 @@ content of Headers and Footers.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">Select this option to only display images from the books that are selected to be printed. If unchecked, then images from ALL the books in the project will be listed in the view below.</property>
+                                    <property name="tooltip_text" translatable="yes">The details of ALL the pitures are stored in a single list.
+Select this option to only display the pictures from the
+books that are currently in focus to be printed. 
+When unchecked, then the list will show pictures from
+ALL the books in the project that have been added to
+the PicList. If pictures of a certain book are missing, 
+then you may need to select that book and Generate
+the PicList details just for *that* book.</property>
                                     <property name="halign">center</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
@@ -10004,6 +10051,9 @@ status of the checking values.</property>
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">True</property>
                                                 <property name="receives_default">False</property>
+                                                <property name="tooltip_text" translatable="yes">Flip the results of the
+filtered list to exclude
+any items that match.</property>
                                                 <property name="halign">start</property>
                                                 <property name="draw_indicator">True</property>
                                                 <signal name="toggled" handler="onPicCheckFilterChanged" swapped="no"/>
@@ -10077,7 +10127,11 @@ picture. No confirmation will be asked for!</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
-                                    <property name="tooltip_text" translatable="yes">Shortcut key: &lt;Ctrl-S&gt;</property>
+                                    <property name="tooltip_text" translatable="yes">PTXprint will save the PicList when you click
+on Print, but if you are doing a lot of work to
+manipulate the PicList and want to be sure to
+save your changes, then use this Save button
+from time to time.   Shortcut key: &lt;Ctrl-S&gt;</property>
                                     <property name="halign">start</property>
                                     <property name="use_stock">True</property>
                                     <property name="always_show_image">True</property>
@@ -10361,8 +10415,11 @@ From Folder: </property>
                                                 <property name="can_focus">True</property>
                                                 <property name="receives_default">False</property>
                                                 <property name="tooltip_text" translatable="yes">If this option is selected, PTXprint will scan 
-the selected folder (and all its sub-folders)
-for the required illustrations.</property>
+the selected folder (and ALL its sub-folders)
+for the required illustrations. This might slow
+down processing slightly. If the needed images
+are all located in the same folder, then check the
+'Exclusively Use Selected Folder' option as well.</property>
                                                 <property name="halign">start</property>
                                                 <property name="draw_indicator">True</property>
                                                 <signal name="clicked" handler="onUseCustomFolderclicked" swapped="no"/>
@@ -10401,8 +10458,9 @@ or
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">True</property>
                                                 <property name="tooltip_text" translatable="yes">If multiple versions of an image are located
-(ab12345B.jpg, ab12345C.png or ab12345B.tif
-then which image type should be used?
+(hk12345B.jpg, hk12345C.png or hk12345B.tif
+then which one of these different image types
+should be used in the publication?
 
 Default setting:
 JPG TIF PNG PDF  (use JPGs first, if none then TIFs, PNGs etc.)
@@ -10437,7 +10495,9 @@ locations.
 
 If you would prefer that it only searches in the folder
 specified directly (and NOT look in any other folders
-then enable this option).</property>
+then enable this option). This should speed up searches
+for images, but may result in some images not being
+found at all.</property>
                                                 <property name="halign">end</property>
                                                 <property name="draw_indicator">True</property>
                                                 <signal name="clicked" handler="onPicRescan" swapped="no"/>
@@ -10521,15 +10581,16 @@ images, not just those with lines.</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
-                                            <property name="tooltip_text" translatable="yes">It is important to provide proper copyright attribution for the illustrations used in the publication.
+                                            <property name="tooltip_text" translatable="yes">This setting enables/disables all the 
+other settings relating to pictures.
 
-If you enable this option and insert this code (in Paratext's USFM text):
-      \zImageCopyrights
-then PTXprint will automatically generate the copyright statement(s)
-for each of the artists (with page numbers).
-
-Note that in order for this feature to work, you will need to print
-more than once (to update the list of page numbers).</property>
+Note that it is important to provide proper 
+copyright attribution for the illustrations 
+used in a publication, and this can be done
+very easily using the \zimagecopyrights
+magic code within the Colophon (see
+the Header+Footer tab for details).
+</property>
                                             <property name="draw_indicator">True</property>
                                             <signal name="clicked" handler="onUseIllustrationsClicked" swapped="no"/>
                                           </object>
@@ -10606,6 +10667,28 @@ more than once (to update the list of page numbers).</property>
                                                   <object class="GtkLabel">
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">False</property>
+                                                    <property name="tooltip_text" translatable="yes">The anchor reference specifies which book, chapter and verse this 
+picture needs to be associated with. Ultimately it controls which
+page the picture ends up on. You can alter the Anchor Reference 
+by a few verses to help text flow or balance better.
+
+Anchor Refs for Diglots use an L or R suffix on the 3-letter book code
+to indicate whether the picture is to be associated with the Primary (L) 
+text or the Secondary (R) text.
+
+When generating the PicList PTXprint automatically assigns unique numbers
+in sequence to pictures in peripheral books.  (e.g BAK .1  BAK .2   BAK .3  etc.)
+
+Pictures in peripheral books, for example, the GLOssary book, have special 
+Anchor Ref markup which has no chapter and verse, but uses a unique 
+reference to place the picture precisely.
+
+GLO k.Altar - would link it to \k Altar\k*
+GLO k.JohntheBaptist - would link a picture to
+                 a glossary entry \k John the Baptist\k*
+
+You can copy-and-paste a glossary word or phrase after typing GLO k. and 
+PTXprint will automatically strip the spaces for you.</property>
                                                     <property name="halign">end</property>
                                                     <property name="label" translatable="yes">Anchor Ref:</property>
                                                   </object>
@@ -10631,6 +10714,10 @@ more than once (to update the list of page numbers).</property>
                                                   <object class="GtkLabel">
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">False</property>
+                                                    <property name="tooltip_text" translatable="yes">By default the caption will appear below the picture.
+If you need the caption to come before the picture
+then add this line to your ptxprint-mods.tex file:
+   \CaptionFirsttrue</property>
                                                     <property name="halign">end</property>
                                                     <property name="label" translatable="yes">Caption:</property>
                                                   </object>
@@ -10643,6 +10730,13 @@ more than once (to update the list of page numbers).</property>
                                                   <object class="GtkEntry" id="t_plCaption">
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">True</property>
+                                                    <property name="tooltip_text" translatable="yes">By default the caption will appear below the picture.
+If you need the caption to come before the picture
+then add this line to your ptxprint-mods.tex file:
+   \CaptionFirsttrue
+
+Note that captions are NOT processed by any
+changes specified in the PrintDraftChanges.txt file.</property>
                                                     <property name="hexpand">True</property>
                                                   </object>
                                                   <packing>
@@ -10655,6 +10749,16 @@ more than once (to update the list of page numbers).</property>
                                                   <object class="GtkLabel">
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">False</property>
+                                                    <property name="tooltip_text" translatable="yes">By default, the caption will be followed by a Ch:Vs
+reference in parentheses ( ). 
+
+If you need the Caption Ref to come BEFORE the caption
+text then add this line to your ptxprint-mods.tex file:
+   \CaptionRefFirsttrue
+
+To prevent Caption Refs from appearing globally,
+use Pictures &gt; Settings tab option:
+    'Omit References (ch:vs) From Caption'</property>
                                                     <property name="halign">end</property>
                                                     <property name="valign">end</property>
                                                     <property name="hexpand">True</property>
@@ -10672,6 +10776,10 @@ Ref:</property>
                                                     <property name="width_request">90</property>
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">True</property>
+                                                    <property name="tooltip_text" translatable="yes">The reference in the caption can be a single Ch:Vs or 
+a range of verses 6:17-29. This Caption Ref is different
+from and independent of the Anchor Ref setting.
+</property>
                                                     <property name="halign">start</property>
                                                     <property name="width_chars">8</property>
                                                   </object>
@@ -10746,6 +10854,13 @@ things here in PTXprint.</property>
                                                   <object class="GtkLabel">
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">False</property>
+                                                    <property name="tooltip_text" translatable="yes">For commonly used series of illustrations, PTXprint
+can automatically generate the appropriate copyright
+attribution statement(s) as part of the colophon text.
+
+For other less-known artists' you may enter the appropriate
+copyright information which is usually in the format of:
+   by Artist Name © Year, Entity Name and License Type.</property>
                                                     <property name="halign">end</property>
                                                     <property name="label" translatable="yes">Copyright
 Attribution:</property>
@@ -10778,6 +10893,19 @@ Attribution:</property>
                                                   <object class="GtkLabel">
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">False</property>
+                                                    <property name="tooltip_text" translatable="yes">The frame size determines how large the picture
+will appear on the page.
+
+Span Width only allows a Top or Bottom vertical placement.
+Column Width allows several other more precise placement 
+options: Before Verse, After Paragraph, or Cutout; and these
+can have Left/Inner or Right/Outer Horizontal positioning set. 
+ 
+When using single column layout, there is no
+difference between Column Width and Span Width.
+
+Depending on whether
+you are using 1-col or 2-col layout the</property>
                                                     <property name="halign">end</property>
                                                     <property name="label" translatable="yes">Frame Size:</property>
                                                     <property name="justify">right</property>
@@ -10804,6 +10932,19 @@ Attribution:</property>
                                                   <object class="GtkLabel">
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">False</property>
+                                                    <property name="tooltip_text" translatable="yes">Several options here are extensions to the normal USFM
+markup standard for illustrations and are not expected
+to work in other software. But PTXprint allows a greater
+level of control in placing pictures.
+
+Top: Above everything except the header line
+Bottom: Below all verse text (and footnotes in diglot)
+Before Verse: 'Here' where defined or before its Anchor Ref
+After Paragraph: After this paragraph
+Cutout: A notch/corner cut out of the text, starting at current line
+
+The above options may have other positioning parameters such
+as: Left, Right, Center, no. of lines (up or down).</property>
                                                     <property name="halign">end</property>
                                                     <property name="label" translatable="yes">Vertical
 Position:</property>
@@ -10835,6 +10976,19 @@ Position:</property>
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">False</property>
                                                     <property name="can_default">True</property>
+                                                    <property name="tooltip_text" translatable="yes">Several options here are extensions to the normal USFM
+markup standard for illustrations and are not expected
+to work in other software. But PTXprint allows a greater
+level of control in placing pictures.
+
+Top: Above everything except the header line
+Bottom: Below all verse text (and footnotes in diglot)
+Before Verse: 'Here' where defined or before its Anchor Ref
+After Paragraph: After this paragraph
+Cutout: A notch/corner cut out of the text, starting at current line
+
+The above options may have other positioning parameters such
+as: Left, Right, Center, no. of lines (up or down).</property>
                                                     <property name="halign">start</property>
                                                     <property name="model">ls_plPgPos</property>
                                                     <property name="wrap_width">1</property>
@@ -10861,6 +11015,22 @@ Position:</property>
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">False</property>
                                                     <property name="can_default">True</property>
+                                                    <property name="tooltip_text" translatable="yes">The frame size determines the boundaries of where the
+picture will appear on the page.
+
+Span Width only allows a Top or Bottom vertical placement.
+
+Column Width allows several other more precise placement 
+options: Before Verse, After Paragraph, or Cutout; and these
+can have Left/Inner or Right/Outer Horizontal positioning set. 
+ 
+Page (in Margins) is intended for pictures that will cover an
+entire page (i.e. preventing any scripture text from being on
+that page), but will still show the header.
+
+Page (to Edge) is intended for pictures (or more commonly
+for maps) to fill the entire page, with no margins at all. 
+Captions should not be used with 'Page (to Edge)' images.</property>
                                                     <property name="halign">start</property>
                                                     <property name="model">ls_plSize</property>
                                                     <property name="wrap_width">1</property>
@@ -10885,6 +11055,11 @@ Position:</property>
                                                   <object class="GtkLabel" id="l_plHoriz">
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">False</property>
+                                                    <property name="tooltip_text" translatable="yes">The options available here change based
+on the Frame Size and Vertical Position
+settings. So if you can't find an option 
+you are looking for, then check those
+settings first.</property>
                                                     <property name="halign">end</property>
                                                     <property name="label" translatable="yes">Horizontal
 Position:</property>
@@ -10900,6 +11075,11 @@ Position:</property>
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">False</property>
                                                     <property name="can_default">True</property>
+                                                    <property name="tooltip_text" translatable="yes">The options available here change based
+on the Frame Size and Vertical Position
+settings. So if you can't find an option 
+you are looking for, then check those
+settings first.</property>
                                                     <property name="halign">start</property>
                                                     <property name="model">ls_plHoriz</property>
                                                     <property name="wrap_width">1</property>
@@ -10935,9 +11115,11 @@ a person using his LEFT hand! What an insult!
 
 So this option allows the image to be mirrored (on
 both pages) in order to make the left become right.
+But you should check carefully to see what other
+unwanted side effects this mirroring may cause.
 
-Note that you should check carefully to see what
-other unwanted side effects this mirroring may cause.</property>
+Note: This option will be grayed out if the picture has  
+the "Never Mirror" setting checked on the Checklist tab.</property>
                                                     <property name="halign">end</property>
                                                     <property name="label" translatable="yes">Mirror:</property>
                                                     <property name="justify">right</property>
@@ -10953,10 +11135,10 @@ other unwanted side effects this mirroring may cause.</property>
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">False</property>
                                                     <property name="can_default">True</property>
-                                                    <property name="tooltip_text" translatable="yes">None = The image will never be mirrored
+                                                    <property name="tooltip_text" translatable="yes">Never = The image will never be mirrored
 Odd = Mirrored only if image ends up on an odd page
 Even = Mirrored only if image ends up on an even page
-Both = Always mirrored (regardless of where it ends up)
+Always = Always mirrored (regardless of where it ends up)
 
 Note that if this option is grayed out, it is because 
 you have already restricted the mirroring options 
@@ -10985,6 +11167,12 @@ on the Checklist tab.</property>
                                                   <object class="GtkLabel" id="l_plOffsetNum">
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">False</property>
+                                                    <property name="tooltip_text" translatable="yes">Some vertical position options allow a picture
+to be moved up or down by a number of lines
+or paragraphs.
+
+-Negative (minus) values specify to move UP.
++Positive (plus) values specify to move DOWN.</property>
                                                     <property name="halign">end</property>
                                                     <property name="label" translatable="yes">Number of
 Lines:</property>
@@ -11003,11 +11191,11 @@ Lines:</property>
                                                     <property name="halign">start</property>
                                                     <property name="max_length">3</property>
                                                     <property name="width_chars">3</property>
-                                                    <property name="text">-24</property>
+                                                    <property name="text">0</property>
                                                     <property name="progress_pulse_step">0</property>
+                                                    <property name="input_purpose">number</property>
                                                     <property name="adjustment">a_plLines</property>
                                                     <property name="climb_rate">1</property>
-                                                    <property name="value">-24</property>
                                                   </object>
                                                   <packing>
                                                     <property name="left_attach">6</property>
@@ -11195,9 +11383,14 @@ be set here.</property>
                                   <object class="GtkLabel" id="lb_details">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="tooltip_text" translatable="yes">Use this tab to change the 
-position, size or orientation
-of the images.</property>
+                                    <property name="tooltip_text" translatable="yes">Use this tab to change the position, location, size 
+or orientation of the images.
+
+Note: Any changes you make here will NOT be 
+reflected in the Paratext USFM files. So if you are 
+changing an illustration, its caption or frame size
+(column or span), then it is advisable to do so
+in Paratext before regenerating the PicList here.</property>
                                     <property name="label" translatable="yes">Details</property>
                                   </object>
                                   <packing>
@@ -12107,16 +12300,10 @@ odd/right-hand page of a spread.</property>
                 <child type="tab">
                   <object class="GtkLabel" id="lb_Pictures">
                     <property name="can_focus">False</property>
-                    <property name="tooltip_text" translatable="yes">Illustrations (pictures) to be used
-in the publication. And control
-over what kinds of images are
-used, and where they are located
-(both within the text, and in the
-file system).
-
-When "Pictures" shows in blue
-it lets you know that illustrations
-have been enabled.</property>
+                    <property name="tooltip_text" translatable="yes">Manipulate the pictures to be used
+in the publication. Control everything
+from quality to position, from captions
+to copyrights.</property>
                     <property name="halign">start</property>
                     <property name="label" translatable="yes">Pictures</property>
                   </object>
@@ -12753,8 +12940,7 @@ to store generated PDF file(s).</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
-                                    <property name="tooltip_text" translatable="yes">WARNING: Not yet implemented!
-This button wil allow you to specify
+                                    <property name="tooltip_text" translatable="yes">This button wil allow you to specify
 a different folder for the resulting
 PDF (and associated interim files).</property>
                                     <property name="halign">end</property>
@@ -12853,7 +13039,9 @@ This will delete all previous log and intermediate temporary files for the entir
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
-                                        <property name="tooltip_text" translatable="yes">If you don't know what this means, or want to get rid of black boxes in the PDF then uncheck it. Enable this option to have TeX make overfull lines stand out.</property>
+                                        <property name="tooltip_text" translatable="yes">Enable this option to have TeX make overfull lines stand out.
+If you don't know what this means, or just want to get rid of 
+black boxes at the end of lines in the PDF then uncheck it. </property>
                                         <property name="halign">start</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
@@ -12992,9 +13180,8 @@ Note that  you may need to adjust
 the following marker styles:
   \rb    for the base text 
   \gloss|rb    for the gloss text
-which can be found in the
-"Special Text" section of the
-markers.</property>
+Use the shortcut links on the right
+to locate those styles in the editor.</property>
                                             <property name="halign">start</property>
                                             <property name="draw_indicator">True</property>
                                           </object>
@@ -13174,9 +13361,11 @@ Font metrics gives more consistent results.</property>
                   <object class="GtkLabel" id="lb_Advanced">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="tooltip_text" translatable="yes">Pre-process the text prior
-to creating the PDF. Add Front
-and Back Matter PDFs and Watermarks.</property>
+                    <property name="tooltip_text" translatable="yes">Define stylesheets, tex macros,
+front and back matter PDFs, 
+watermarks and various other
+advanced settings including
+interlinear (&amp; ruby text) output.</property>
                     <property name="halign">start</property>
                     <property name="margin_bottom">2</property>
                     <property name="label" translatable="yes">Advanced</property>
@@ -13488,7 +13677,7 @@ For example: PHM TIT; 1JN 2JN 3JN JUD</property>
                               <packing>
                                 <property name="left_attach">1</property>
                                 <property name="top_attach">3</property>
-                                <property name="width">5</property>
+                                <property name="width">4</property>
                               </packing>
                             </child>
                             <child>
@@ -13595,7 +13784,7 @@ For example: PHM TIT; 1JN 2JN 3JN JUD</property>
                               <packing>
                                 <property name="left_attach">2</property>
                                 <property name="top_attach">2</property>
-                                <property name="width">3</property>
+                                <property name="width">4</property>
                               </packing>
                             </child>
                             <child>
@@ -13671,12 +13860,12 @@ formatting of the thumb tabs.</property>
                                 <property name="receives_default">True</property>
                                 <property name="tooltip_text" translatable="yes">Clicking this button will reload the
 default values for the Grouped Tabs.</property>
-                                <property name="halign">end</property>
+                                <property name="halign">start</property>
                                 <signal name="clicked" handler="onResetTabGroupsClicked" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="left_attach">5</property>
-                                <property name="top_attach">2</property>
+                                <property name="top_attach">3</property>
                               </packing>
                             </child>
                             <child>
@@ -14229,6 +14418,10 @@ to specify the settings for these.</property>
                   <object class="GtkLabel" id="lb_TabsBorders">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="tooltip_text" translatable="yes">Settings for thumb-tabs and
+options to add decorative borders
+or embelishments to the text.
+</property>
                     <property name="halign">start</property>
                     <property name="label" translatable="yes">Tabs+Borders</property>
                   </object>
@@ -14626,13 +14819,8 @@ options here to create a Diglot or Didoc.</property>
                   <object class="GtkLabel" id="lb_Diglot">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="tooltip_text" translatable="yes">Create a diglot publication by incorporating 
-a secondary project. Optionally add decorative
-borders and embelishments to the text.
-
-When "Diglot" or "Border" show in blue
-it lets you know that these features have
-been enabled.</property>
+                    <property name="tooltip_text" translatable="yes">Create a diglot publication by selecting 
+a secondary project and configuration.</property>
                     <property name="halign">start</property>
                     <property name="label" translatable="yes">Diglot</property>
                   </object>
@@ -15078,7 +15266,7 @@ properties for this style.</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
-                                        <property name="tooltip_text" translatable="yes">Overrides the color in the stylesheet for toc3</property>
+                                        <property name="tooltip_text" translatable="yes">Sets text color for text in this style.</property>
                                         <property name="halign">start</property>
                                         <property name="title" translatable="yes">Text Color</property>
                                         <property name="rgba">rgb(0,0,0)</property>
@@ -15184,8 +15372,10 @@ Factor:</property>
                                       <object class="GtkLabel" id="l_styActualFontSize">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="tooltip_text" translatable="yes">Calculated absolute point size given the current
-Base Font Size (on the Layout tab).</property>
+                                        <property name="tooltip_text" translatable="yes">Font name with calculated absolute point size 
+given the current Base Font Size (on the Layout tab).
+The (+Ascender -Descender) values from the base
+line for this font are provided for reference. </property>
                                         <property name="halign">start</property>
                                         <property name="label" translatable="yes">11.7pt</property>
                                         <attributes>
@@ -15990,6 +16180,9 @@ marker will not be included in the output.</property>
                   <object class="GtkLabel" id="lb_StyleEditor">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="tooltip_text" translatable="yes">Edit style information of
+markers without having to
+edit the USFM stylesheet files.</property>
                     <property name="halign">start</property>
                     <property name="label" translatable="yes">Styles</property>
                   </object>
@@ -16365,8 +16558,9 @@ are likely to have to re-do it all again.</property>
                   <object class="GtkLabel" id="lb_ViewerEditor">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="tooltip_text" translatable="yes">The Viewer allows you to view and
-edit various control and log files.</property>
+                    <property name="tooltip_text" translatable="yes">View and edit various control
+and log files. Examine final SFM
+output and tweak adjust lists.</property>
                     <property name="halign">start</property>
                     <property name="label" translatable="yes">View+Edit</property>
                     <signal name="focus" handler="onRefreshViewerTextClicked" swapped="no"/>
@@ -16437,7 +16631,7 @@ edit various control and log files.</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
-                                    <property name="top_attach">3</property>
+                                    <property name="top_attach">0</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -16657,7 +16851,7 @@ to the PTX2PDF Macros:</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">1</property>
-                                    <property name="top_attach">3</property>
+                                    <property name="top_attach">0</property>
                                     <property name="width">2</property>
                                   </packing>
                                 </child>
@@ -16708,8 +16902,7 @@ general users and common solutions.</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">1</property>
-                                    <property name="top_attach">0</property>
-                                    <property name="width">2</property>
+                                    <property name="top_attach">3</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -16725,7 +16918,7 @@ general users and common solutions.</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
-                                    <property name="top_attach">0</property>
+                                    <property name="top_attach">3</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -16807,6 +17000,33 @@ general users and common solutions.</property>
                                     <property name="width">2</property>
                                   </packing>
                                 </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_showAdvancedOptions">
+                                    <property name="label" translatable="yes">Show Advanced Settings</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">There are two views available in PTXprint.
+Basic view - which shows only the essential settings
+          and is intended for novice users.
+Advanced view - which has many more complex 
+          options to fine-tune the typesetting.
+
+Note that if you use Thumb Tabs as well as Borders
+at the same time then the Basic view is not available.</property>
+                                    <property name="halign">end</property>
+                                    <property name="margin_right">6</property>
+                                    <property name="draw_indicator">True</property>
+                                    <signal name="clicked" handler="onShowAdvancedOptionsClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">2</property>
+                                    <property name="top_attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
                               </object>
                             </child>
                           </object>
@@ -16834,6 +17054,9 @@ general users and common solutions.</property>
                   <object class="GtkLabel" id="lb_Help">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="tooltip_text" translatable="yes">Links to useful folders and
+online resources. Where to
+obtain help from others.</property>
                     <property name="halign">start</property>
                     <property name="label" translatable="yes">Help</property>
                   </object>
