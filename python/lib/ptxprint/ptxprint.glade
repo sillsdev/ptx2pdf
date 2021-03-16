@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.2 
+<!-- Generated with glade 3.22.1 
 
 The MIT License (MIT)
 
@@ -10656,25 +10656,29 @@ the Header+Footer tab for details).
                                                   <object class="GtkLabel">
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">False</property>
-                                                    <property name="tooltip_text" translatable="yes">The anchor reference specifies which book, chapter and verse this 
-picture needs to be associated with. Ultimately it controls which
-page the picture ends up on. You can alter the Anchor Reference 
-by a few verses to help text flow or balance better.
+                                                    <property name="tooltip_text" translatable="yes">The anchor specifies what page in a book a picture will appear on.
+It appears on the same page as its anchor in the text. You can alter 
+the Anchor Ref by a few verses to change the page on which it appears.
 
-Anchor Refs for Diglots use an L or R suffix on the 3-letter book code
+An Anchor Ref must consist of a book code, perhaps followed by L or R 
+(in the case of a diglot), then a space, then an in-book location which 
+contains a dot (period). In a scripture book, the in-book location 
+is Chap.Verse where the Verse matches the \v value precisely. In other 
+books, the in-book location can be anything as long as it is unique in 
+that book and contains a dot (period).
+
+Anchor Refs for Diglots use the L or R suffix on the 3-letter book code
 to indicate whether the picture is to be associated with the Primary (L) 
 text or the Secondary (R) text.
 
-When generating the PicList PTXprint automatically assigns unique numbers
-in sequence to pictures in peripheral books.  (e.g BAK .1  BAK .2   BAK .3  etc.)
+In the glossary book (GLO) there is special support for \k Keywords\k* where
+in-book location of k.keyword(s) will anchor a picture to the corresponding term.
+The in-book location must match the value of the \k Keyword or phrase\k* with its
+spaces removed. For example,
 
-Pictures in peripheral books, for example, the GLOssary book, have special 
-Anchor Ref markup which has no chapter and verse, but uses a unique 
-reference to place the picture precisely.
-
-GLO k.Altar - would link it to \k Altar\k*
-GLO k.JohntheBaptist - would link a picture to
-                 a glossary entry \k John the Baptist\k*
+    GLO k.Altar - would link it to \k Altar\k*
+    GLO k.JohntheBaptist - would link a picture to
+               a glossary entry \k John the Baptist\k*
 
 You can copy-and-paste a glossary word or phrase after typing GLO k. and 
 PTXprint will automatically strip the spaces for you.</property>
@@ -10690,6 +10694,32 @@ PTXprint will automatically strip the spaces for you.</property>
                                                   <object class="GtkEntry" id="t_plAnchor">
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">True</property>
+                                                    <property name="tooltip_text" translatable="yes">The anchor specifies what page in a book a picture will appear on.
+It appears on the same page as its anchor in the text. You can alter 
+the Anchor Ref by a few verses to change the page on which it appears.
+
+An Anchor Ref must consist of a book code, perhaps followed by L or R 
+(in the case of a diglot), then a space, then an in-book location which 
+contains a dot (period). In a scripture book, the in-book location 
+is Chap.Verse where the Verse matches the \v value precisely. In other 
+books, the in-book location can be anything as long as it is unique in 
+that book and contains a dot (period).
+
+Anchor Refs for Diglots use the L or R suffix on the 3-letter book code
+to indicate whether the picture is to be associated with the Primary (L) 
+text or the Secondary (R) text.
+
+In the glossary book (GLO) there is special support for \k Keywords\k* where
+in-book location of k.keyword(s) will anchor a picture to the corresponding term.
+The in-book location must match the value of the \k Keyword or phrase\k* with its
+spaces removed. For example,
+
+    GLO k.Altar - would link it to \k Altar\k*
+    GLO k.JohntheBaptist - would link a picture to
+               a glossary entry \k John the Baptist\k*
+
+You can copy-and-paste a glossary word or phrase after typing GLO k. and 
+PTXprint will automatically strip the spaces for you.</property>
                                                     <property name="halign">start</property>
                                                     <property name="width_chars">14</property>
                                                     <signal name="focus-out-event" handler="onAnchorRefChanged" swapped="no"/>
@@ -13989,7 +14019,6 @@ properties for this style.</property>
                                     <child>
                                       <object class="GtkButton" id="bl_font_styFontName">
                                         <property name="label" translatable="yes">Select Font...</property>
-                                        <property name="width_request">180</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
@@ -13999,7 +14028,6 @@ properties for this style.</property>
                                       <packing>
                                         <property name="left_attach">1</property>
                                         <property name="top_attach">0</property>
-                                        <property name="width">3</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -14026,8 +14054,8 @@ properties for this style.</property>
                                     </child>
                                     <child>
                                       <object class="GtkCheckButton" id="c_styFontScale">
-                                        <property name="label" translatable="yes">Scale Relative to Parent</property>
-                                        <property name="width_request">170</property>
+                                        <property name="label" translatable="yes">Scale Relative
+to Parent</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
@@ -14086,9 +14114,9 @@ properties for this style.</property>
                                         <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                       </object>
                                       <packing>
-                                        <property name="left_attach">4</property>
+                                        <property name="left_attach">3</property>
                                         <property name="top_attach">2</property>
-                                        <property name="width">2</property>
+                                        <property name="width">4</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -14124,7 +14152,7 @@ properties for this style.</property>
                                         <property name="value">1</property>
                                       </object>
                                       <packing>
-                                        <property name="left_attach">5</property>
+                                        <property name="left_attach">4</property>
                                         <property name="top_attach">3</property>
                                         <property name="width">3</property>
                                       </packing>
@@ -14142,7 +14170,7 @@ properties for this style.</property>
                                         <signal name="color-set" handler="onstyColorSet" swapped="no"/>
                                       </object>
                                       <packing>
-                                        <property name="left_attach">7</property>
+                                        <property name="left_attach">6</property>
                                         <property name="top_attach">0</property>
                                       </packing>
                                     </child>
@@ -14184,7 +14212,7 @@ properties for this style.</property>
                                         </child>
                                       </object>
                                       <packing>
-                                        <property name="left_attach">6</property>
+                                        <property name="left_attach">5</property>
                                         <property name="top_attach">0</property>
                                       </packing>
                                     </child>
@@ -14233,7 +14261,7 @@ Factor:</property>
                                         </child>
                                       </object>
                                       <packing>
-                                        <property name="left_attach">4</property>
+                                        <property name="left_attach">3</property>
                                         <property name="top_attach">3</property>
                                       </packing>
                                     </child>
@@ -14252,9 +14280,9 @@ line for this font are provided for reference. </property>
                                         </attributes>
                                       </object>
                                       <packing>
-                                        <property name="left_attach">4</property>
+                                        <property name="left_attach">2</property>
                                         <property name="top_attach">0</property>
-                                        <property name="width">2</property>
+                                        <property name="width">3</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -14278,18 +14306,9 @@ line for this font are provided for reference. </property>
                                         <property name="label" translatable="yes">ColorVal</property>
                                       </object>
                                       <packing>
-                                        <property name="left_attach">7</property>
+                                        <property name="left_attach">6</property>
                                         <property name="top_attach">1</property>
                                       </packing>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
                                     </child>
                                     <child>
                                       <placeholder/>
@@ -14356,7 +14375,6 @@ line for this font are provided for reference. </property>
                                       <packing>
                                         <property name="left_attach">1</property>
                                         <property name="top_attach">0</property>
-                                        <property name="width">3</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -14376,7 +14394,7 @@ line for this font are provided for reference. </property>
                                         <property name="value">1</property>
                                       </object>
                                       <packing>
-                                        <property name="left_attach">5</property>
+                                        <property name="left_attach">4</property>
                                         <property name="top_attach">0</property>
                                       </packing>
                                     </child>
@@ -14399,7 +14417,6 @@ line for this font are provided for reference. </property>
                                       <packing>
                                         <property name="left_attach">1</property>
                                         <property name="top_attach">1</property>
-                                        <property name="width">3</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -14419,7 +14436,7 @@ line for this font are provided for reference. </property>
                                         <property name="value">1</property>
                                       </object>
                                       <packing>
-                                        <property name="left_attach">5</property>
+                                        <property name="left_attach">4</property>
                                         <property name="top_attach">1</property>
                                       </packing>
                                     </child>
@@ -14443,7 +14460,6 @@ line for this font are provided for reference. </property>
                                       <packing>
                                         <property name="left_attach">1</property>
                                         <property name="top_attach">2</property>
-                                        <property name="width">3</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -14457,9 +14473,9 @@ line for this font are provided for reference. </property>
                                         <property name="draw_indicator">True</property>
                                       </object>
                                       <packing>
-                                        <property name="left_attach">4</property>
+                                        <property name="left_attach">2</property>
                                         <property name="top_attach">2</property>
-                                        <property name="width">2</property>
+                                        <property name="width">3</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -14481,7 +14497,6 @@ line for this font are provided for reference. </property>
                                       <packing>
                                         <property name="left_attach">1</property>
                                         <property name="top_attach">3</property>
-                                        <property name="width">3</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -14501,7 +14516,7 @@ line for this font are provided for reference. </property>
                                         <property name="value">1</property>
                                       </object>
                                       <packing>
-                                        <property name="left_attach">5</property>
+                                        <property name="left_attach">4</property>
                                         <property name="top_attach">3</property>
                                       </packing>
                                     </child>
@@ -14565,7 +14580,7 @@ Indent Factor:</property>
                                         </child>
                                       </object>
                                       <packing>
-                                        <property name="left_attach">4</property>
+                                        <property name="left_attach">3</property>
                                         <property name="top_attach">0</property>
                                       </packing>
                                     </child>
@@ -14620,7 +14635,7 @@ Factor:</property>
                                         </child>
                                       </object>
                                       <packing>
-                                        <property name="left_attach">4</property>
+                                        <property name="left_attach">3</property>
                                         <property name="top_attach">1</property>
                                       </packing>
                                     </child>
@@ -14692,9 +14707,18 @@ Factor:</property>
                                         </child>
                                       </object>
                                       <packing>
-                                        <property name="left_attach">4</property>
+                                        <property name="left_attach">3</property>
                                         <property name="top_attach">3</property>
                                       </packing>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
                                     </child>
                                   </object>
                                 </child>
@@ -14747,7 +14771,7 @@ Factor:</property>
                                         <property name="value">1</property>
                                       </object>
                                       <packing>
-                                        <property name="left_attach">4</property>
+                                        <property name="left_attach">3</property>
                                         <property name="top_attach">0</property>
                                       </packing>
                                     </child>
@@ -14768,18 +14792,7 @@ Factor:</property>
                                         <property name="value">1</property>
                                       </object>
                                       <packing>
-                                        <property name="left_attach">4</property>
-                                        <property name="top_attach">1</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkLabel">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="hexpand">True</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">2</property>
+                                        <property name="left_attach">3</property>
                                         <property name="top_attach">1</property>
                                       </packing>
                                     </child>
@@ -14792,6 +14805,9 @@ Factor:</property>
                                           <object class="GtkLabel" id="l_styCallerStyle">
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
+                                            <property name="tooltip_text" translatable="yes">The style which is used to style the caller
+in the main text. If none is specified then
+\v is used.</property>
                                             <property name="halign">end</property>
                                             <property name="label" translatable="yes">Caller
 Style:</property>
@@ -14813,6 +14829,8 @@ Style:</property>
                                           <object class="GtkLabel" id="l_styCallerRaise">
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
+                                            <property name="tooltip_text" translatable="yes">Raise the caller in the main text by
+this number of points.</property>
                                             <property name="halign">end</property>
                                             <property name="label" translatable="yes">Caller
 Raise:</property>
@@ -14821,7 +14839,7 @@ Raise:</property>
                                         </child>
                                       </object>
                                       <packing>
-                                        <property name="left_attach">3</property>
+                                        <property name="left_attach">2</property>
                                         <property name="top_attach">0</property>
                                       </packing>
                                     </child>
@@ -14834,6 +14852,9 @@ Raise:</property>
                                           <object class="GtkLabel" id="l_styNoteCallerStyle">
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
+                                            <property name="tooltip_text" translatable="yes">The style which is used to style the caller
+in the note itself. If none is specified then
+\v is used.</property>
                                             <property name="halign">end</property>
                                             <property name="label" translatable="yes">Note Caller
 Style:</property>
@@ -14855,6 +14876,8 @@ Style:</property>
                                           <object class="GtkLabel" id="l_styNoteCallerRaise">
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
+                                            <property name="tooltip_text" translatable="yes">Raise the caller in the note by
+this number of points.</property>
                                             <property name="halign">end</property>
                                             <property name="label" translatable="yes">Note Caller
 Raise:</property>
@@ -14863,7 +14886,7 @@ Raise:</property>
                                         </child>
                                       </object>
                                       <packing>
-                                        <property name="left_attach">3</property>
+                                        <property name="left_attach">2</property>
                                         <property name="top_attach">1</property>
                                       </packing>
                                     </child>
@@ -14876,6 +14899,13 @@ Raise:</property>
                                           <object class="GtkLabel" id="l_NoteBlendInto">
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
+                                            <property name="tooltip_text" translatable="yes">Insert the notes of the marker being defined
+into the collection of notes in the
+marker specified here.
+
+For example, if when defining the \x style,
+if this value was set to f then all cross references
+would be blended into the \f footnotes.</property>
                                             <property name="halign">end</property>
                                             <property name="label" translatable="yes">Note Blend
 Into Style:</property>
@@ -14917,12 +14947,6 @@ Into Style:</property>
                                         <property name="left_attach">1</property>
                                         <property name="top_attach">2</property>
                                       </packing>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
                                     </child>
                                     <child>
                                       <placeholder/>

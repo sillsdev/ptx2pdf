@@ -2437,19 +2437,15 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("nbk_Main").set_current_page(mpgnum)
         vpgnum = self.notebooks['Viewer'].index("scroll_XeTeXlog")
         self.builder.get_object("nbk_Viewer").set_current_page(vpgnum)
-        # self.onViewerFocus(self, w) # @@@@ MH please FIXME
-        # self.builder.get_object("scroll_XeTeXlog").scroll_to_mark(self.buf[4].get_insert(), 0.0, True, 0.5, 0.5)
 
     def onBorderClicked(self, btn):
         self.onSimpleClicked(btn)
-        # self.sensiVisible("c_thumbtabs")
         self.sensiVisible("c_borders")
         self.colorTabs()
 
     def onTabsClicked(self, btn):
         self.onSimpleClicked(btn)
         self.sensiVisible("c_thumbtabs")
-        # self.sensiVisible("c_borders")
         self.colorTabs()
         self.onNumTabsChanged()
         if self.get("c_thumbtabs"):
@@ -2656,7 +2652,7 @@ class GtkViewModel(ViewModel):
         # Make sure there are no spaces after the _bk_ code (easy to paste in a \k "Phrase with spaces:"\k*
         #                                                   which gets converted to k.Phrasewithspaces:
         a = a[:5] + re.sub(' ', '', a[5:])
-        # a = a[:5] + re.sub('\\[a-z0-9\-]+\*? ', '', a[5:])
+        a = re.sub('\\\+?[a-z0-9\-]+\*? ', '', a)
         self.set("t_plAnchor", a)
 
     def resetParam(self, btn, foo):

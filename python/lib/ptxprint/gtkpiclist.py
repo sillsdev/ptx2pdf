@@ -311,12 +311,13 @@ class PicList:
         for c in 'paw':
             w = _form_structure["med"+c.upper()]
             wid = self.builder.get_object(w)
+            if val is None or val == "":
+                isactive = c in inf["limit"]
+            else:
+                isactive = c in val
             if wid is not None:
                 wid.set_sensitive(c in inf["limit"])
-            if val is None or val == "":
-                wid.set_active(True)
-            else:
-                wid.set_active(c in val)
+            wid.set_active(isactive)
 
     def get_pgpos(self):
         res = "".join(self.get(k, default="") for k in _comblist[:-1]).replace("-", "")
@@ -326,7 +327,7 @@ class PicList:
         if len(res) and res[0] in "PF":
             res = res.strip("c")
         lines = self.get("nlines", 0)
-        if lines > 0 and len(res) and res[0] in "pc":
+        if lines != 0 and len(res) and res[0] in "pc":
             res += str(lines)
         return res
 

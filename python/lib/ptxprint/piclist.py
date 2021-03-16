@@ -490,15 +490,13 @@ class PicInfo(dict):
                             data[k][key] = filepath
         return data
 
-    def set_positions(self, cols=1, randomize=False, suffix=""):
+    def set_positions(self, cols=1, randomize=False, suffix="", isBoth=False):
         picposns = { "L": {"col":  ("tl", "bl"),             "span": ("t")},
                      "R": {"col":  ("tr", "br"),             "span": ("b")},
                      "":  {"col":  ("tl", "tr", "bl", "br"), "span": ("t", "b")}}
         isdblcol = self.model.get("c_doublecolumn")
-        psb = (self.model.get('fcb_diglotPicListSources'))
-        if self.model.get('c_diglot'):
-            cols = 2 if (psb == "bth") else 1
-        print("psb:", psb, "isdblcol:", isdblcol, "cols:", cols)
+        if self.model.get('c_diglot') or self.model.isDiglot:
+            cols = 2 if isBoth else 1
         for k, v in self.items():
             if cols == 1: # Single Column layout so change all tl+tr > t and bl+br > b
                 if 'pgpos' in v:
@@ -513,7 +511,6 @@ class PicInfo(dict):
                     v['pgpos'] = random.choice(posns)
                 else:
                     v['pgpos'] = posns[0]
-            print(v['pgpos'])
             
     def set_destinations(self, fn=lambda x,y,z:z, keys=None, cropme=False):
         for v in self.values():
@@ -573,7 +570,7 @@ def PicInfoUpdateProject(model, bks, allbooks, picinfos, suffix="", random=False
         for k in [k for k,v in picinfos.items() if v['anchor'][:3] == bk and (clearsuffix or (suffix != "" and v['anchor'][4] == suffix))]:
             del picinfos[k]
         newpics.read_sfm(bk, bkf, suffix=suffix)
-        newpics.set_positions(randomize=random, suffix=suffix, cols=cols)
+        newpics.set_positions(randomize=random, suffix=suffix, cols=cols, isBoth=not clearsuffix)
         for k, v in newpics.items():
             if v['anchor'][:3] == bk:
                 picinfos[k+suffix] = v
