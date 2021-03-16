@@ -188,7 +188,7 @@ class ViewModel:
         else:
             self.dict[wid] = value
 
-    def baseTeXPDFnames(self, bks=None, force_combine=False):
+    def baseTeXPDFnames(self, bks=None):
         if bks is None:
             bks = self.getBooks(files=True)
         if self.working_dir == None:

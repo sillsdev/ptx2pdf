@@ -181,7 +181,7 @@ class RunJob:
             # self.texfiles += self.gatherIllustrations(info, jobs, self.args.paratext)
         self.ispdfxa = self.printer.get("c_PDFx1aOutput")
         
-        if info.asBool("project/combinebooks"):
+        if True: # info.asBool("project/combinebooks"):
             joblist = [jobs]
         else:
             joblist = [[j] for j in jobs]

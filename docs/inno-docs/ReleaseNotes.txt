@@ -1,7 +1,23 @@
 PTXprint 1.5.18 Release Notes 
-12 March 2021
+17 March 2021
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
+
+Bug Fixes and Improvements in 1.5.19
+
+  * Major review and update to tooltips
+  
+  * Update UI significantly and shuffle some of the pages into a more logical order
+  
+  * PicList generation for Diglot pictures improved significantly
+  
+  * #422 Generate..." Picture references for books UNCHECKS the "Only Show" option
+  
+  * #424 PTXprint reopens previous Project config, after making a new Project Config
+  
+  * DBL Bundle download and install process made more straightforward
+  
+  * Note that the option to "Combine PDFs" has been removed - it is now always the default
 
 Bug Fixes and Improvements in 1.5.18
 

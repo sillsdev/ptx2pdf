@@ -491,8 +491,8 @@ class PicInfo(dict):
         return data
 
     def set_positions(self, cols=1, randomize=False, suffix="", isBoth=False):
-        picposns = { "L": {"col":  ("tl", "bl"),             "span": ("t")},
-                     "R": {"col":  ("tr", "br"),             "span": ("b")},
+        picposns = { "L": {"col":  ("tl", "bl"),             "span": ("t", "b")},
+                     "R": {"col":  ("tr", "br"),             "span": ("b", "t")},
                      "":  {"col":  ("tl", "tr", "bl", "br"), "span": ("t", "b")}}
         isdblcol = self.model.get("c_doublecolumn")
         if self.model.get('c_diglot') or self.model.isDiglot:
