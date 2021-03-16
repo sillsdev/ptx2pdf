@@ -48,7 +48,7 @@ _errmsghelp = {
 "! Emergency stop.":                     _("Probably a TeX macro problem - contact support, or post a bug report"),
 "! Not a letter.":                       _("Possible fault in the hyphenation file\n" +\
                                            "Try turning off Hyphenate option located on the Body tab"),
-"! Font \extrafont":                     _("Fallback Font issue - set a font on the Body tab.\n" +\
+"! Font \extrafont":                     _("Fallback Font issue - set a font on the Fonts+Scripts tab.\n" +\
                                            "(Turn off the option 'Use Fallback Font' or specify a valid font)"),
 "! Font":                                _("Font related issue. The most likely reason for this error is that\n" +\
                                           "the selected font has not been installed for all users. See FAQ."),

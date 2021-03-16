@@ -2665,7 +2665,7 @@ Position:</property>
                   <object class="GtkComboBoxText" id="ecb_plCreditBoxStyle">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="tooltip_text" translatable="yes">Specify the kind of box (Light/Dark background
+                    <property name="tooltip_text" translatable="yes">Specify the kind of box (Light/Dark background)
 or enter the name of a style which should be applied.
 By selecting a (custom) style, you can change multiple
 parameters at once: font, size and color. </property>
@@ -5078,9 +5078,8 @@ above the base line of the first line of the body text.</property>
 main text area to the bottom of the page.
 
 The bottom of the main text area is calculated
-from the descender of the bottom line of the 
-final line of text (including footnotes).
-</property>
+from the descender of the final line of text 
+(including any footnotes).</property>
                                     <property name="halign">end</property>
                                     <property name="margin_top">6</property>
                                     <property name="margin_bottom">6</property>
@@ -5210,8 +5209,8 @@ starts a little bit below the top of the header area.</property>
 main text area to the bottom of the page.
 
 The bottom of the main text area is calculated
-from the descender of the bottom line of the 
-final line of text (including footnotes).</property>
+from the descender of the final line of text 
+(including any footnotes).</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
                                     <property name="width_chars">5</property>
@@ -6462,7 +6461,7 @@ can grow to when necessary.</property>
 MRK 2.7 +1    (i.e. expand the para at Mark 2.7 by one line) 
 MRK 3.20 -1   (i.e. shrink the para at Mark 3:20 by one line)
 %MARK 4.14 +1   (ignore this line - treat it as a comment)   
-MRK 5.8 +2    (i.e. expand the para at Mark 2.7 by two lines)
+MRK 5.8 +2    (i.e. expand the para at Mark 5.8 by two lines)
 MRK 6.23 +1[2]  (expand the paragraph AFTER the paragraph 
                               which contains MRK 6.23 e.g. a heading.)
 etc.
@@ -7527,7 +7526,7 @@ numerals). For example, "Chapter" or "Psalm".
 If you want the chapter number to appear centered
 and above the Section Header WITHOUT any preceding
 text, then just put the code \ZWNBSP in here. This will
-insert a Zero-Width Non Breaking Space.</property>
+insert a Zero Width Non-Break Space.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
                                   </object>
@@ -7547,7 +7546,7 @@ numerals). For example, "Chapter" or "Psalm".
 If you want the chapter number to appear centered
 and above the Section Header WITHOUT any preceding
 text, then just put the code \ZWNBSP in here. This will
-insert a Zero-Width Non Breaking Space.</property>
+insert a Zero Width Non Break Space.</property>
                                     <property name="halign">end</property>
                                     <property name="label" translatable="yes">Chapter
 Label:</property>
@@ -7791,7 +7790,7 @@ Also settings for special books.</property>
                                                         <property name="can_focus">True</property>
                                                         <property name="receives_default">False</property>
                                                         <property name="tooltip_text" translatable="yes">Normally footnotes are arranged one after
-the other to form a block of text. But if If you 
+the other to form a block of text. But if you 
 require each footnote to start on its own new
 line then set this option.</property>
                                                         <property name="halign">start</property>
@@ -8060,7 +8059,7 @@ Print a second time before it applies.</property>
                                                         <property name="can_focus">True</property>
                                                         <property name="receives_default">False</property>
                                                         <property name="tooltip_text" translatable="yes">Normally cross-references are arranged one after
-the other to form a block of text. But if If you 
+the other to form a block of text. But if you 
 require each cross-reference to start on its own new
 line then set this option.</property>
                                                         <property name="halign">start</property>
@@ -10008,7 +10007,7 @@ Active Books</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">The details of ALL the pitures are stored in a single list.
+                                    <property name="tooltip_text" translatable="yes">The details of ALL the pictures are stored in a single list.
 Select this option to only display the pictures from the
 books that are currently in focus to be printed. 
 When unchecked, then the list will show pictures from
@@ -10467,7 +10466,7 @@ following search sequences:
 or
    pdf &gt; png &gt; tif &gt; jpg   - for largest file size</property>
                                                 <property name="halign">end</property>
-                                                <property name="label" translatable="yes">Prefered Image Types:</property>
+                                                <property name="label" translatable="yes">Preferred Image Types:</property>
                                                 <property name="justify">right</property>
                                               </object>
                                               <packing>
@@ -16429,6 +16428,8 @@ MRK 2.7 +1    (i.e. expand the para at Mark 2.7 by one line)
 MRK 3.20 -1   (i.e. shrink the para at Mark 3:20 by one line)
 %MARK 4.14 +1   (ignore this line - treat it as a comment)   
 MRK 5.8 +2    (i.e. expand the para at Mark 5.8 by two lines)
+MRK 6.23 +1[2]  (expand the paragraph AFTER the paragraph 
+                              which contains MRK 6.23 e.g. a heading.)
 etc.
 Note that adjusting paragraphs needs to be done right at the
 end when all other settings have been finalized. Otherwise you
