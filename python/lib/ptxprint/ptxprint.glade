@@ -295,8 +295,8 @@ THE SOFTWARE.
     <property name="lower">5</property>
     <property name="upper">200</property>
     <property name="value">100</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">5</property>
+    <property name="step_increment">5</property>
+    <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="a_ruleposition">
     <property name="lower">-100</property>
@@ -514,7 +514,7 @@ it as a special project.</property>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
-                    <property name="top_attach">1</property>
+                    <property name="top_attach">2</property>
                   </packing>
                 </child>
                 <child>
@@ -522,7 +522,9 @@ it as a special project.</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="tooltip_text" translatable="yes">Click to select a previously created
-or downloaded DBL bundle (.zip) file.</property>
+or downloaded DBL bundle (.zip) file.
+The file is most likely to be located 
+in your 'Downloads' folder.</property>
                     <property name="halign">end</property>
                     <property name="margin_top">12</property>
                     <property name="label" translatable="yes">Step 2.
@@ -531,7 +533,7 @@ Locate File:</property>
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
-                    <property name="top_attach">1</property>
+                    <property name="top_attach">2</property>
                   </packing>
                 </child>
                 <child>
@@ -539,8 +541,9 @@ Locate File:</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="tooltip_text" translatable="yes">PTXprint will create a NEW Paratext project
-folder with this name. You must NOT use
-the name of an existing Project.</property>
+folder with this name. Use 8 characters or
+less for the new project name. You must 
+NOT use the name of an existing Project. </property>
                     <property name="halign">end</property>
                     <property name="margin_top">6</property>
                     <property name="label" translatable="yes">Step 3.
@@ -550,7 +553,7 @@ to DBL Project:</property>
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
-                    <property name="top_attach">4</property>
+                    <property name="top_attach">5</property>
                   </packing>
                 </child>
                 <child>
@@ -567,7 +570,7 @@ the name of an existing Project.</property>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
-                    <property name="top_attach">4</property>
+                    <property name="top_attach">5</property>
                   </packing>
                 </child>
                 <child>
@@ -584,7 +587,7 @@ the name of an existing Project.</property>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
-                    <property name="top_attach">2</property>
+                    <property name="top_attach">3</property>
                   </packing>
                 </child>
                 <child>
@@ -598,7 +601,7 @@ the name of an existing Project.</property>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
-                    <property name="top_attach">3</property>
+                    <property name="top_attach">4</property>
                   </packing>
                 </child>
                 <child>
@@ -614,24 +617,24 @@ the name of an existing Project.</property>
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
-                    <property name="top_attach">2</property>
+                    <property name="top_attach">3</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkLinkButton" id="lb_openBible">
-                    <property name="label" translatable="yes">Download DBL bundle</property>
-                    <property name="name">Visit the Open.Bible page to download a DBL bundle</property>
+                  <object class="GtkLinkButton" id="lb_DBLdownloads">
+                    <property name="label" translatable="yes">Primary DBL site</property>
+                    <property name="name">Visit the Digital Bible Library to download a DBL bundle</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="focus_on_click">False</property>
                     <property name="receives_default">True</property>
-                    <property name="tooltip_text" translatable="yes">There are several DBL bundles available at
-the Open.Bible website which you may
+                    <property name="tooltip_text" translatable="yes">There are hundreds of DBL bundles available at
+the Digital Bible Library website which you may
 download and use in a publication.</property>
                     <property name="halign">center</property>
                     <property name="valign">center</property>
                     <property name="relief">none</property>
-                    <property name="uri">https://open.bible/resources/</property>
+                    <property name="uri">https://app.thedigitalbiblelibrary.org/entries/open_access_entries?type=text</property>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
@@ -643,20 +646,24 @@ download and use in a publication.</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="tooltip_text" translatable="yes">If you don't already have a DBL bundle, then
-you may be able to download a text from an
-online scripture repository.
+you may be able to download a relevant text 
+from an online scripture repository.
 
 If you already have the required DBL bundle,
 then skip this 1st step.</property>
                     <property name="halign">end</property>
-                    <property name="label" translatable="yes">[Optional] Step 1.
-Download from
+                    <property name="margin_left">6</property>
+                    <property name="label" translatable="yes">[Optional]              
+Step 1.
+Download a DBL
+Bundle from an
 Online Repository</property>
                     <property name="justify">right</property>
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
                     <property name="top_attach">0</property>
+                    <property name="height">2</property>
                   </packing>
                 </child>
                 <child>
@@ -672,7 +679,28 @@ Online Repository</property>
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
-                    <property name="top_attach">3</property>
+                    <property name="top_attach">4</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLinkButton" id="lb_openBible">
+                    <property name="label" translatable="yes">Open.Bible site</property>
+                    <property name="name">Visit the Open.Bible site to download a DBL bundle</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="focus_on_click">False</property>
+                    <property name="receives_default">True</property>
+                    <property name="tooltip_text" translatable="yes">There are several DBL bundles available at
+the Open.Bible website which you may
+download and use in a publication.</property>
+                    <property name="halign">center</property>
+                    <property name="valign">center</property>
+                    <property name="relief">none</property>
+                    <property name="uri">https://open.bible/resources/</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">1</property>
+                    <property name="top_attach">1</property>
                   </packing>
                 </child>
               </object>
@@ -4914,6 +4942,10 @@ Top (pt):</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
+                                <property name="tooltip_text" translatable="yes">If this setting is checked on, but
+inactive, it is due to Diglot being
+active (which obviously must use 
+the Two Column layout).</property>
                                 <property name="halign">end</property>
                                 <property name="margin_left">2</property>
                                 <property name="active">True</property>
@@ -6822,6 +6854,7 @@ of Contents</property>
                                     <property name="margin_top">4</property>
                                     <property name="margin_bottom">4</property>
                                     <property name="row_spacing">6</property>
+                                    <property name="column_spacing">20</property>
                                     <child>
                                       <object class="GtkCheckButton" id="c_bookIntro">
                                         <property name="label" translatable="yes">Book Introductions (\i..)</property>
@@ -9964,6 +9997,7 @@ the end of the publication.</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="halign">end</property>
+                                <property name="margin_left">4</property>
                                 <property name="margin_top">6</property>
                                 <property name="row_spacing">4</property>
                                 <property name="column_spacing">4</property>
@@ -10004,7 +10038,7 @@ the PicList details just for *that* book.</property>
                                     <property name="margin_right">4</property>
                                     <property name="margin_top">4</property>
                                     <property name="margin_bottom">4</property>
-                                    <property name="label_xalign">0.05000000074505806</property>
+                                    <property name="label_xalign">0.20000000298023224</property>
                                     <child>
                                       <object class="GtkAlignment">
                                         <property name="visible">True</property>
@@ -10070,7 +10104,7 @@ any items that match.</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="halign">start</property>
-                                        <property name="label" translatable="yes">Filter List</property>
+                                        <property name="label" translatable="yes">Filter Checklist</property>
                                       </object>
                                     </child>
                                   </object>
@@ -10581,6 +10615,7 @@ magic code within the Colophon (see
 the Header+Footer tab for details).
 </property>
                                             <property name="draw_indicator">True</property>
+                                            <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                             <signal name="clicked" handler="onUseIllustrationsClicked" swapped="no"/>
                                           </object>
                                         </child>
@@ -10984,6 +11019,7 @@ Position:</property>
                                                     <property name="text">100</property>
                                                     <property name="progress_pulse_step">0</property>
                                                     <property name="adjustment">a_plScale</property>
+                                                    <property name="climb_rate">5</property>
                                                     <property name="value">100</property>
                                                   </object>
                                                   <packing>
@@ -11111,7 +11147,7 @@ settings first.</property>
                                                       <object class="GtkEntry">
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
-                                                        <property name="width_chars">12</property>
+                                                        <property name="width_chars">10</property>
                                                       </object>
                                                     </child>
                                                   </object>
@@ -14010,6 +14046,7 @@ properties for this style.</property>
                                   <object class="GtkGrid">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="halign">start</property>
                                     <property name="margin_left">6</property>
                                     <property name="margin_right">6</property>
                                     <property name="margin_top">6</property>
@@ -14223,7 +14260,7 @@ to Parent</property>
                                         <signal name="button-release-event" handler="resetParam" swapped="no"/>
                                         <child>
                                           <object class="GtkLabel" id="l_styFontSize">
-                                            <property name="width_request">70</property>
+                                            <property name="width_request">78</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
                                             <property name="tooltip_text" translatable="yes">This a factor or proportion of the base font size.
@@ -14233,7 +14270,6 @@ Layout tab.</property>
                                             <property name="label" translatable="yes">Font Size
 Factor:</property>
                                             <property name="justify">right</property>
-                                            <property name="width_chars">10</property>
                                             <property name="xalign">1</property>
                                           </object>
                                         </child>
@@ -14287,6 +14323,7 @@ line for this font are provided for reference. </property>
                                     </child>
                                     <child>
                                       <object class="GtkLabel">
+                                        <property name="width_request">47</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="hexpand">True</property>
@@ -14470,6 +14507,7 @@ line for this font are provided for reference. </property>
                                         <property name="receives_default">False</property>
                                         <property name="tooltip_text" translatable="yes">The Line Spacing is usually calculated as a factor of the Font Size. If you prefer to specify an exact/absolute line spacing (in points), then enable this option.</property>
                                         <property name="halign">start</property>
+                                        <property name="margin_left">6</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
                                       <packing>
@@ -14603,6 +14641,7 @@ the interpretation of Left and Right is swapped.</property>
                                             <property name="label" translatable="yes">Left Indent
 Factor:</property>
                                             <property name="justify">right</property>
+                                            <property name="xalign">1</property>
                                           </object>
                                         </child>
                                       </object>
@@ -14680,6 +14719,7 @@ Factor:</property>
                                             <property name="label" translatable="yes">Space Before
 Factor:</property>
                                             <property name="justify">right</property>
+                                            <property name="xalign">1</property>
                                           </object>
                                         </child>
                                       </object>
@@ -14812,6 +14852,7 @@ in the main text. If none is specified then
                                             <property name="label" translatable="yes">Caller
 Style:</property>
                                             <property name="justify">right</property>
+                                            <property name="xalign">1</property>
                                           </object>
                                         </child>
                                       </object>
@@ -14859,6 +14900,7 @@ in the note itself. If none is specified then
                                             <property name="label" translatable="yes">Note Caller
 Style:</property>
                                             <property name="justify">right</property>
+                                            <property name="xalign">1</property>
                                           </object>
                                         </child>
                                       </object>
@@ -14874,6 +14916,7 @@ Style:</property>
                                         <signal name="button-release-event" handler="resetParam" swapped="no"/>
                                         <child>
                                           <object class="GtkLabel" id="l_styNoteCallerRaise">
+                                            <property name="width_request">87</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
                                             <property name="tooltip_text" translatable="yes">Raise the caller in the note by
@@ -14882,6 +14925,7 @@ this number of points.</property>
                                             <property name="label" translatable="yes">Note Caller
 Raise:</property>
                                             <property name="justify">right</property>
+                                            <property name="xalign">1</property>
                                           </object>
                                         </child>
                                       </object>
@@ -14897,6 +14941,7 @@ Raise:</property>
                                         <signal name="button-release-event" handler="resetParam" swapped="no"/>
                                         <child>
                                           <object class="GtkLabel" id="l_NoteBlendInto">
+                                            <property name="width_request">78</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
                                             <property name="tooltip_text" translatable="yes">Insert the notes of the marker being defined
@@ -14910,6 +14955,7 @@ would be blended into the \f footnotes.</property>
                                             <property name="label" translatable="yes">Note Blend
 Into Style:</property>
                                             <property name="justify">right</property>
+                                            <property name="xalign">1</property>
                                           </object>
                                         </child>
                                       </object>
@@ -14922,6 +14968,8 @@ Into Style:</property>
                                       <object class="GtkEntry" id="t_styCallerStyle">
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
+                                        <property name="halign">start</property>
+                                        <property name="width_chars">16</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
@@ -14932,6 +14980,8 @@ Into Style:</property>
                                       <object class="GtkEntry" id="t_styNoteCallerStyle">
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
+                                        <property name="halign">start</property>
+                                        <property name="width_chars">16</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
@@ -14942,6 +14992,8 @@ Into Style:</property>
                                       <object class="GtkEntry" id="t_NoteBlendInto">
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
+                                        <property name="halign">start</property>
+                                        <property name="width_chars">16</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
@@ -16549,7 +16601,6 @@ output and tweak adjust lists.</property>
                               <object class="GtkGrid">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="halign">start</property>
                                 <property name="margin_top">6</property>
                                 <property name="margin_bottom">6</property>
                                 <property name="row_spacing">3</property>
@@ -16988,6 +17039,7 @@ Advanced view - which has many more complex
 Note that if you use Thumb Tabs as well as Borders
 at the same time then the Basic view is not available.</property>
                                     <property name="halign">end</property>
+                                    <property name="margin_right">6</property>
                                     <property name="draw_indicator">True</property>
                                     <signal name="clicked" handler="onShowAdvancedOptionsClicked" swapped="no"/>
                                   </object>

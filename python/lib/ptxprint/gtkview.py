@@ -122,7 +122,7 @@ _sensitivities = {
     "c_useFallbackFont" :      ["btn_findMissingChars", "t_missingChars", "l_fallbackFont", "bl_fontExtraR"],
     "c_includeFootnotes" :     ["bx_fnOptions"],
     "c_includeXrefs" :         ["bx_xrOptions"],
-    "c_includeillustrations" : ["gr_IllustrationOptions"],
+    "c_includeillustrations" : ["gr_IllustrationOptions", "tb_details", "lb_details", "tb_checklist", "lb_details"],
     "c_diglot" :               ["gr_diglot", "fcb_diglotPicListSources", "r_hdrLeft_Pri", "r_hdrCenter_Pri", "r_hdrRight_Pri",
                                 "r_ftrCenter_Pri", "r_hdrLeft_Sec", "r_hdrCenter_Sec", "r_hdrRight_Sec", "r_ftrCenter_Sec"],
     "c_borders" :              ["gr_borders"],
@@ -889,9 +889,9 @@ class GtkViewModel(ViewModel):
                 self.builder.get_object(w).set_sensitive(state)
         self.colorTabs()
         self.updateMarginGraphics()
-        self.onFnBlendClicked(self.builder.get_object('c_blendfnxr'))
-        # self.set("c_blendfnxr", not self.get("c_blendfnxr"))
-        # self.set("c_blendfnxr", not self.get("c_blendfnxr"))
+        # self.onFnBlendClicked(self.builder.get_object('c_blendfnxr'))
+        self.set("c_blendfnxr", not self.get("c_blendfnxr"))
+        self.set("c_blendfnxr", not self.get("c_blendfnxr"))
 
     def colorTabs(self):
         col = "#688ACC"
@@ -910,6 +910,15 @@ class GtkViewModel(ViewModel):
             else "Borders" if self.builder.get_object("fr_borders").get_visible() else ""
         jn = "+" if ((tb and bd) or self.get("c_hideAdvancedSettings")) else ""
         self.builder.get_object("lb_TabsBorders").set_markup(tc+jn+bc)
+
+        ad = False
+        for w in ["processScript", "usePrintDraftChanges", "usePreModsTex", "useModsTex", \
+                  "useCustomSty", "useModsSty", "inclFrontMatter", "applyWatermark", "inclBackMatter"]:
+            if self.get("c_" + w):
+                ad = True
+                break
+        ac = " color='"+col+"'" if ad else ""
+        self.builder.get_object("lb_Advanced").set_markup("<span{}>".format(ac)+_("Advanced")+"</span>")
 
         self.builder.get_object("c_hideAdvancedSettings").set_sensitive(not (tb and bd))
         self.builder.get_object("c_showAdvancedOptions").set_sensitive(not (tb and bd))
@@ -947,6 +956,7 @@ class GtkViewModel(ViewModel):
 
     def onSimpleClicked(self, btn):
         self.sensiVisible(Gtk.Buildable.get_name(btn))
+        self.colorTabs()
 
     def onVertRuleClicked(self, btn):
         self.onSimpleClicked(btn)
@@ -1440,6 +1450,7 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("nbk_Main").set_current_page(mpgnum)
 
     def onProcessScriptClicked(self, btn):
+        self.colorTabs()
         if not self.sensiVisible("c_processScript"):
             self.builder.get_object("btn_editScript").set_sensitive(False)
         else:
@@ -2077,6 +2088,7 @@ class GtkViewModel(ViewModel):
 
     def onExtraFileClicked(self, btn):
         self.onSimpleClicked(btn)
+        self.colorTabs()
         if btn.get_active():
             self.triggervcs = True
 
@@ -2312,7 +2324,10 @@ class GtkViewModel(ViewModel):
             return
         if self.get("c_diglot"):
             self.diglotView = self.createDiglotView()
+            self.set("c_doublecolumn", True)
+            self.builder.get_object("c_doublecolumn").set_sensitive(False)
         else:
+            self.builder.get_object("c_doublecolumn").set_sensitive(True)
             self.setPrintBtnStatus(2)
             self.diglotView = None
         self.updateDialogTitle()
@@ -2829,7 +2844,6 @@ class GtkViewModel(ViewModel):
             self.set("fcb_plCreditHpos", m[2])
             self.set("fcb_plCreditRotate", m[3])
             self.set("ecb_plCreditBoxStyle", m[4])
-        print(self.get("l_piccredit"))
         self.set("t_plCreditText", self.get("l_piccredit"))
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
