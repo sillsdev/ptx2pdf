@@ -146,7 +146,7 @@
 \def\vm@kenote#1#2#3{%
   \inn@tetrue%
   \let\next\relax%
-  \def\n@tetype{#1\g@tdstat}%
+  \def\n@tetype{#1\g@tndstat}%
   \TRACE{vm@kenote \n@tetype}%
   \d@note{\x@\insert\csname note-\n@tetype\endcsname}%
   \x@\let\x@\th@sins\csname note-no-insert-\n@tetype\endcsname
@@ -271,7 +271,7 @@
 
 % insert a note class in which each note is on its own line
 \def\separateins@rtn@tecl@ss#1{%
-  \def\cl@ss{#1\g@tdstat}%
+  \def\cl@ss{#1\g@tndstat}%
   \TRACE{seperateins@rtn@tecl@ss \cl@ss}%
   \x@\let\x@\th@cl@ss\csname note-\cl@ss\endcsname % make \th@cl@ss be a synonym for the current note class
   % if the noteclass has content to output ...
@@ -283,7 +283,7 @@
 
 % insert a note class in which each note is in the same paragraph
 \def\parains@rtn@tecl@ss#1{%
-  \def\cl@ss{#1\g@tdstat}%
+  \def\cl@ss{#1\g@tndstat}%
   \x@\let\x@\th@cl@ss\csname note-\cl@ss\endcsname % make \th@cl@ss be a synonym for the current note class
   % if the noteclass has content to output ...
   \ifvoid\th@cl@ss\else
@@ -311,7 +311,7 @@
 
 % determine if a given note class is to be paragraphed
 %+c_paragraphedNotes
-\def\ParagraphedNotes#1{\Par@gr@phedNotes{#1\g@tdstat}}
+\def\ParagraphedNotes#1{\Par@gr@phedNotes{#1\g@tndstat}}
 \def\Par@gr@phedNotes#1{\TRACE{Par@gr@phedNotes #1}\x@\let\csname paranotes-#1\endcsname=1}
 \newif\ifp@ranotes
 \def\checkp@ranotes#1{\x@\ifx\csname paranotes-#1\endcsname\relax
@@ -695,7 +695,7 @@
 
 %+c_reduceavailht_para
 \def\reduceavailht@para#1{
-  \def\cl@sss{#1\ifdiglotSepNotes\g@tdstat\fi}%
+  \def\cl@sss{#1\g@tndstat}%
   \trace{n}{class \cl@sss}%
   \x@\let\x@\th@cl@ss\csname note-\cl@sss\endcsname
   \ifvoid\th@cl@ss\else
@@ -742,7 +742,7 @@
 
 %+c_reduceavailhtsep
 \def\reduceavailht@sep#1{
-  \def\cl@sss{#1\g@tdstat}%
+  \def\cl@sss{#1\g@tndstat}%
   \TRACE{class \cl@sss}%
   \x@\let\x@\th@cl@ss\csname note-\cl@sss\endcsname
   \ifvoid\th@cl@ss\else

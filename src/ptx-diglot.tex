@@ -348,7 +348,7 @@
 
 \def\rej@ctgalley{%For calling by trial routines that don't like the galley they've just been given 
   \trace{d}{rej@ctgalley (\c@rrdstat)}%
-  \r@storenotes{\g@tdstat}{1}%
+  \r@storenotes{\g@tndstat}{1}%
   \r@storeinserts{col}
   \restore@oldmarks{\c@rrdstat}%
   \ifdim\trialheight<0pt
@@ -433,10 +433,10 @@
     %Make sure partialX (last galley) is dropped or recycled ...
     \iflate@stage@reflow
       \trace{D}{restoring notes, re-flowing partial\c@rrdstat\space and excess\c@rrdstat,}%
-      \r@storenotes{\g@tdstat}{1}%
+      \r@storenotes{\g@tndstat}{1}%
       % No need to *save* notes after restoring, because they're already saved.
     \else
-      \s@venotes{\g@tdstat}{1}%
+      \s@venotes{\g@tndstat}{1}%
     \fi
     \s@veinserts{col}
     %grab 1st trialheight from excessX
@@ -659,7 +659,7 @@
       \global\advance\trialheight by -1\baselineskip
       \ifdim\trialheight<0.5\baselineskip
         \trace{D}{Abandoning trial, no space for galley at all}%
-        \r@storenotes{\g@tdstat}{1}% As if galley hadn't happened.
+        \r@storenotes{\g@tndstat}{1}% As if galley hadn't happened.
         \r@storeinserts{col}%
         \global\setbox\galleyexc@ss\vbox{\undog@lley}%
         \global\galleypenalty=0 
@@ -670,7 +670,7 @@
         \global\setbox\trialbox=\box\voidb@x
         \global\vsize=\trialheight
         \traceNum{D}{Trying again}%
-        \r@storenotes{\g@tdstat}{1}%
+        \r@storenotes{\g@tndstat}{1}%
         \r@storeinserts{col}
         %\setbox\galley\vbox{\unvbox\galley\unvbox\galleyexc@ss\penalty\endtri@lpen@lty}%
         \ifvoid\galleyexc@ss\else
@@ -818,6 +818,7 @@
 \def\f@lwgdstat{L}%What is the diglotstate of the 'recent contributions'? (i.e. next material to read)
 \def\c@rrdstat{}%What is the current diglotstate?
 \def\g@tdstat{\ifdiglot\if\c@rrdstat L\else\c@rrdstat\fi\fi}% Returns "" or "R" (Or other state values in the future)
+\def\g@tndstat{\ifdiglotSepNotes \g@tdstat \fi} %if notes are merged, there should be no R (etc)  suffix notes.
 
 \def\show@dstat{\c@rrdstat\f@lwgdstat\n@xtdstat}% for debugging output 
 \def\setc@rdstat#1{\xdef\c@rrdstat{#1}%
@@ -1241,7 +1242,7 @@
   \@add@n@xtpartial
   \let\col@do=\store@marks
   \x@\each@col\diglot@list\E %remember old marks state
-  \s@venotes{\g@tdstat}{2}% remember old notestate 
+  \s@venotes{\g@tndstat}{2}% remember old notestate 
   \s@veinserts{chunk}
   \traceNum{d}{Arranging new n@xtpartial : LB:\the\ht\Lbox+\the\dp\Lbox\space RB:\the\ht\Rbox+\the\dp\Rbox\space p@gechunkDelta:\the\p@geChunkDelta}%\space Tot:\the\cumulativeDelta%
   \let\\=\upd
