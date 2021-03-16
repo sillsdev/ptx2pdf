@@ -511,7 +511,6 @@
   \advancepageno
   \immediate\write\p@rlocs{\string\@pgstart\string{\the\pageno\string}}%
   \global\p@geonefalse
-  \ifnum\pageno>10000\MSG{Error: Runaway page output}\s@ve@nd\fi
   \ifnum\outputpenalty>-\@MM \else\dosupereject\fi\global\m@rksonpagefalse\global\noteseenfalse
   }
 %-c_plainoutput
