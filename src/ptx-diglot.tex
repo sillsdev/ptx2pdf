@@ -1488,7 +1488,7 @@
   \ifdiglotSepNotes%
   \else%
      % RTLness will have been asserted (or not) when the note was defined.
-     \setbox\notechunk{%
+     \setbox\notechunk\vbox{%
        \ifdiglot\RTLfalse\fi
        \def\c@rrdstat{L}%
        \traceNum{d}{Inserting Notes}%
