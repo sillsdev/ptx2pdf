@@ -318,7 +318,8 @@
   %
 %+cpar_parstyle_transition
   \let\styst@k=\empty
-  \s@tstyst@k{#1}%
+  \def\d@##1+##2\E{\edef\tmp{##2}\csname d@code-##1\endcsname\let\t@pstyle\tmp}\mctop
+  \s@tstyst@k{\t@pstyle}%
   \x@\t@stintro\m@rker\relax
   %If the marker is an (ultra-rare) type that occurs in introductions and normal text, then
   %set the intromarker flag based on what the current state (\if@ntro) is.
