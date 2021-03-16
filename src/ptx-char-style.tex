@@ -220,6 +220,8 @@
    \ifx\mcstack\mcstack@mpty\else
      \def\d@##1+##2\E{\edef\tmp{##2}\csname d@code-##1\endcsname\let\thiswh@tvrstyle\tmp}\mctop
    \fi
+   \let\styst@k=\empty
+   \s@tstyst@k{\thiswh@tvrstyle}%
    \s@tfont{\thiswh@tvrstyle}% set up font attributes
 }
 %-cchar_endcharstyle
