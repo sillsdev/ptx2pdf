@@ -10516,8 +10516,8 @@ By default it also searches all the sub-folders of these
 locations.
 
 If you would prefer that it only searches in the folder
-specified directly (and NOT look in any other folders
-then enable this option), select this option. This should speed up searches
+specified directly (and NOT look in any other folders)
+then select this option. This should speed up searches
 for images, but may result in some images not being
 found at all.</property>
                                                 <property name="halign">end</property>
@@ -10957,10 +10957,7 @@ options: Before Verse, After Paragraph, or Cutout; and these
 can have Left/Inner or Right/Outer Horizontal positioning set. 
  
 When using single column layout, there is no
-difference between Column Width and Span Width.
-
-Depending on whether
-you are using 1-col or 2-col layout the</property>
+difference between Column Width and Span Width.</property>
                                                     <property name="halign">end</property>
                                                     <property name="label" translatable="yes">Frame Size:</property>
                                                     <property name="justify">right</property>
