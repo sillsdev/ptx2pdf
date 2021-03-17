@@ -34,14 +34,16 @@
 \newif\if@ntromarker
 \newif\if@ntro \newif\ift@tle \newif\ifb@dy
 \newif\ifstartpara
+\newif\ifintr@done\intr@donefalse % If true, then if@ntro can only be set between the start of a book and the first chapter number
+\newif\ifReenterIntroOK\ReenterIntroOKtrue % If true, then a chapter number does not set intr@done
 
 %+cpar_init
 \def\initp@rastyles{\@ntrofalse \t@tlefalse \b@dyfalse \def\m@rker{p}}
 %-cpar_init
 
-% test if a marker is an "introduction" style (name begins with "i")
+% test if a marker is an "introduction" style (name begins with "i") and we're allowed to enter intro mode.
 %+cpar_testintro
-\def\t@stintro#1#2\relax{\if#1i\global\@ntromarkertrue\else\global\@ntromarkerfalse\fi}
+\def\t@stintro#1#2\relax{\ifnum 1=\if#1i \ifintr@done 0 \else 1 \fi \else 0\fi \global\@ntromarkertrue\else\global\@ntromarkerfalse\fi}
 %-cpar_testintro
 
 %+cpar_starttypes
@@ -323,9 +325,9 @@
   \x@\t@stintro\m@rker\relax
   %If the marker is an (ultra-rare) type that occurs in introductions and normal text, then
   %set the intromarker flag based on what the current state (\if@ntro) is.
-  \settest@mb{\m@rker}\ifx\test@mb\relax\else
-    \if@ntro\@ntromarkertrue\else\@ntromarkerfalse\fi 
-  \fi
+  %\settest@mb{\m@rker}\ifx\test@mb\relax\else
+  %  \if@ntro\@ntromarkertrue\else\@ntromarkerfalse\fi 
+  %\fi
   % \tr is treated as an intro marker if we're already in intro mode
   \if@tablerow\if@ntro\@ntromarkertrue\fi\fi
   \global\he@dingstylefalse
