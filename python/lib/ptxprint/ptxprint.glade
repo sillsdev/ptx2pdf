@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.1 
+<!-- Generated with glade 3.22.2 
 
 The MIT License (MIT)
 
@@ -10480,7 +10480,7 @@ or
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">True</property>
                                                 <property name="tooltip_text" translatable="yes">If multiple versions of an image are located
-(hk12345B.jpg, hk12345C.png or hk12345B.tif
+(hk12345B.jpg, hk12345C.png or hk12345B.tif)
 then which one of these different image types
 should be used in the publication?
 
@@ -10517,7 +10517,7 @@ locations.
 
 If you would prefer that it only searches in the folder
 specified directly (and NOT look in any other folders
-then enable this option). This should speed up searches
+then enable this option), select this option. This should speed up searches
 for images, but may result in some images not being
 found at all.</property>
                                                 <property name="halign">end</property>
@@ -14143,7 +14143,7 @@ to Parent</property>
                                         <property name="receives_default">False</property>
                                         <property name="tooltip_text" translatable="yes">The superscript option overrides these settings:
    Font Size Factor is set to 0.75
-   Raise is set to 0.85 time the x-height of the font (which
+   Raise is set to 0.85 times the x-height of the font (which
    defaults to 1/2 the ascent if not specified in the font).</property>
                                         <property name="halign">start</property>
                                         <property name="draw_indicator">True</property>
@@ -15466,7 +15466,7 @@ for these to be used by PTXprint.</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
-                                            <property name="tooltip_text" translatable="yes">This .tec file is executed BEFORE any stylesheets of 
+                                            <property name="tooltip_text" translatable="yes">This .tex file is executed BEFORE any stylesheets of 
 other settings are applied. This file is rarely used.</property>
                                             <property name="halign">start</property>
                                             <property name="draw_indicator">True</property>
