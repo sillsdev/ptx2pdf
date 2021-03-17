@@ -1326,6 +1326,7 @@
     \LRf@@tnotesfalse%
     \f@rstnotetrue%
     \setc@rdstat{L}%%
+    \setLRspecific
     \lastd@pth=0pt 
     %Arrange Left and Right footnotes
     \global\setbox\Lbox=\vbox{\the\diglotLho@ks\let\\=\ins@rtn@tecl@ss \the\n@tecl@sses}%
@@ -1337,6 +1338,7 @@
     \fi%
     \lastd@pth=0pt 
     \setc@rdstat{R}%%
+    \setLRspecific
     \global\setbox\Rbox=\vbox{\the\diglotRho@ks\let\\=\ins@rtn@tecl@ss \the\n@tecl@sses}%
     \iff@rstnote%
       \trace{f}{No Right footnotes}%

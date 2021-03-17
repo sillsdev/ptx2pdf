@@ -44,6 +44,7 @@
 \let\prev@rsemode\empty
 \def\remember@xists#1{\x@\xdef\csname m@rkerexists-#1\ds@ffix\endcsname{t}}
 \def\should@xist#1{\ifcsname m@rkerexists-#1\endcsname\else
+  \trace{sC}{Remembering that #1 exists as a marker}%
   \remember@xists{#1}%
   \setpp@name{#1}\x@\global\x@\let\csname \pp@name\endcsname\relax%Invalidate old cache
 \fi
