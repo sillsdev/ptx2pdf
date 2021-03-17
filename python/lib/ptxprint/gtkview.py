@@ -191,20 +191,20 @@ _object_classes = {
 }
 
 _pgpos = {
-    _("Top"): "t", 
-    _("Bottom"): "b", 
-    _("Before Verse"): "h",
-    _("After Paragraph"): "p",
-    _("Cutout"): "c"
+    "Top": "t", 
+    "Bottom": "b", 
+    "Before Verse": "h",
+    "After Paragraph": "p",
+    "Cutout": "c"
 }
 
 _horiz = {
-    _("Left"):     "l", 
-    _("Center"):   "c", 
-    _("Right"):    "r",
-    _("Inner"):    "i",
-    _("Outer"):    "o",
-      "-":         "-"
+    "Left":     "l", 
+    "Center":   "c", 
+    "Right":    "r",
+    "Inner":    "i",
+    "Outer":    "o",
+    "-":        "-"
 }
 
 _allcols = ["anchor", "caption", "file", "frame", "scale", "posn", "ref", "mirror", "desc", "copy", "media"]

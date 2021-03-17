@@ -95,11 +95,6 @@ categorymapping = {
     'Module Versification':        ('Module', 'modules') 
 }
 
-stylediverts = {
-    "LineSpacing": ("_linespacing", _("Line Spacing\nFactor:"), _("Baseline:")),
-    "FontSize": ("_fontsize", _("Font Size\nFactor:"), _("Font Scale:"))
-}
-
 widgetsignals = {
     "s": "value-changed",
     "c": "toggled",
@@ -164,6 +159,11 @@ class StyleEditorView(StyleEditor):
             signal = widgetsignals.get(pref, "changed")
             w.connect(signal, self.item_changed, k)
         self.isLoading = False
+        self.stylediverts = {
+            "LineSpacing": ("_linespacing", _("Line Spacing\nFactor:"), _("Baseline:")),
+            "FontSize": ("_fontsize", _("Font Size\nFactor:"), _("Font Scale:"))
+        }
+
 
     def setval(self, mrk, key, val, ifunchanged=False):
         super().setval(mrk, key, val, ifunchanged=ifunchanged)
@@ -334,7 +334,7 @@ class StyleEditorView(StyleEditor):
                         break
                 else:
                     f = v[2]
-                newlabel = stylediverts[controlk][2 if f else 1]
+                newlabel = self.stylediverts[controlk][2 if f else 1]
                 controlw = stylemap[controlk][1]
                 self.set(controlw, newlabel)
                 old[" "+k] = olddat
@@ -427,8 +427,8 @@ class StyleEditorView(StyleEditor):
                 pass
             data['TextProperties'].add(add+'publishable')
             return
-        elif key in stylediverts:
-            newk = stylediverts[key][0]
+        elif key in self.stylediverts:
+            newk = self.stylediverts[key][0]
             newv = stylemap[newk]
             isset = self.get(newv[0], newv[2])
             key = newv[3](isset)
@@ -448,7 +448,7 @@ class StyleEditorView(StyleEditor):
             self._setData(newkey, newval)
             setnewv = data[newkey] if newkey not in stylemap or newv[4] is None else newv[4](data[newkey])
             self.set(newv[0], setnewv)
-            newlabel = stylediverts[controlk][2 if val else 1]
+            newlabel = self.stylediverts[controlk][2 if val else 1]
             controlw = stylemap[controlk][1]
             self.set(controlw, newlabel)
             if otherkey in data:
@@ -572,8 +572,8 @@ class StyleEditorView(StyleEditor):
         else:
             return
         old = self.basesheet.get(self.marker, {})
-        if k in stylediverts:
-            newk = stylediverts[k][0]
+        if k in self.stylediverts:
+            newk = self.stylediverts[k][0]
             newval = old.get(" "+newk, None)
             if newval is not None:
                 self._setFieldVal(k, stylemap[newk], newval, newval)
