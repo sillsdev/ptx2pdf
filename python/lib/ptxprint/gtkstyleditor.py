@@ -83,7 +83,7 @@ categorymapping = {
     'Study':                                    ('Extended Study Content', 'notes_study'),
     'Quotation start/end milestone':            ('Milestones', 'milestones'),
     "Translator's section start/end milestone": ('Milestones', 'milestones'),
-    "Milestone":                   ("Milestones", "milestones"),
+    'Milestone':                   ('Milestones', 'milestones'),
     'Other':                       ('Other', None),
     'OBSOLETE':                    ('Obsolete & Deprecated', None),
     'DEPRECATED':                  ('Obsolete & Deprecated', None),
@@ -96,13 +96,13 @@ categorymapping = {
 }
 
 stylediverts = {
-    'LineSpacing': ('_linespacing', _('Line Spacing\nFactor:'), _('Baseline:')),
-    'FontSize': ('_fontsize', _('Font Size\nFactor:'), _('Font Scale:'))
+    "LineSpacing": ("_linespacing", _("Line Spacing\nFactor:"), _("Baseline:")),
+    "FontSize": ("_fontsize", _("Font Size\nFactor:"), _("Font Scale:"))
 }
 
 widgetsignals = {
-    's': "value-changed",
-    'c': "toggled",
+    "s": "value-changed",
+    "c": "toggled",
     "bl": "clicked",
     "col": "color-set"
 }

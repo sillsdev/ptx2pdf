@@ -191,20 +191,20 @@ _object_classes = {
 }
 
 _pgpos = {
-    "Top": "t", 
-    "Bottom": "b", 
-    "Before Verse": "h",
-    "After Paragraph": "p",
-    "Cutout": "c"
+    _("Top"): "t", 
+    _("Bottom"): "b", 
+    _("Before Verse"): "h",
+    _("After Paragraph"): "p",
+    _("Cutout"): "c"
 }
 
 _horiz = {
-    "Left":     "l", 
-    "Center":   "c", 
-    "Right":    "r",
-    "Inner":    "i",
-    "Outer":    "o",
-    "-":        "-"
+    _("Left"):     "l", 
+    _("Center"):   "c", 
+    _("Right"):    "r",
+    _("Inner"):    "i",
+    _("Outer"):    "o",
+      "-":         "-"
 }
 
 _allcols = ["anchor", "caption", "file", "frame", "scale", "posn", "ref", "mirror", "desc", "copy", "media"]
@@ -280,8 +280,9 @@ def _doError(text, secondary="", title=None, copy2clip=False, show=True):
             print(secondary)
 
 def getPTDir():
-    txt = _('''Paratext is not installed on this system.
-Please locate the directory containing your (paratext) project directories. Or cancel to exit''')
+    txt = _("Paratext is not installed on this system.\n" + \
+            "Please locate the directory containing your\n" +\
+            "(Paratext) project directories. Or cancel to exit")
     dialog = Gtk.MessageDialog(parent=None, message_type=Gtk.MessageType.ERROR,
             buttons=Gtk.ButtonsType.OK_CANCEL, text=txt)
     response = dialog.run()
@@ -905,9 +906,9 @@ class GtkViewModel(ViewModel):
         tb = self.get("c_thumbtabs")
         bd = self.get("c_borders")
         tc = "<span color='{}'>".format(col)+_("Tabs")+"</span>" if tb \
-            else "Tabs" if self.builder.get_object("fr_tabs").get_visible() else ""
+            else _("Tabs") if self.builder.get_object("fr_tabs").get_visible() else ""
         bc = "<span color='{}'>".format(col)+_("Borders")+"</span>" if bd \
-            else "Borders" if self.builder.get_object("fr_borders").get_visible() else ""
+            else _("Borders") if self.builder.get_object("fr_borders").get_visible() else ""
         jn = "+" if ((tb and bd) or self.get("c_hideAdvancedSettings")) else ""
         self.builder.get_object("lb_TabsBorders").set_markup(tc+jn+bc)
 

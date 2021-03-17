@@ -59,7 +59,7 @@ _errmsghelp = {
 "Runaway argument?":                     _("Unknown issue. Maybe related to Right-aligned tabbed leaders\n" +\
                                            "Try turning off PrintDraftChanges.txt and both Stylesheets"),
 "Unknown":                               _("Sorry, there is no diagnostic help for this error.\n" +\
-                                           "Ensure that the Basic Checks (in Paratext) pass for all books in list.\n")
+                                           "Try using Paratext's 'Run Basic Checks' to uncover any Marker errors.")
 }
 # \def\LineSpacingFactor{{{paragraph/linespacingfactor}}}
 # \def\VerticalSpaceFactor{{1.0}}
