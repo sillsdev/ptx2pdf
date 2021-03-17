@@ -325,9 +325,11 @@
   \x@\t@stintro\m@rker\relax
   %If the marker is an (ultra-rare) type that occurs in introductions and normal text, then
   %set the intromarker flag based on what the current state (\if@ntro) is.
-  %\settest@mb{\m@rker}\ifx\test@mb\relax\else
-  %  \if@ntro\@ntromarkertrue\else\@ntromarkerfalse\fi 
-  %\fi
+  \ifReenterIntroOK
+    \settest@mb{\m@rker}\ifx\test@mb\relax\else
+      \if@ntro\@ntromarkertrue\else\@ntromarkerfalse\fi 
+    \fi
+  \fi
   % \tr is treated as an intro marker if we're already in intro mode
   \if@tablerow\if@ntro\@ntromarkertrue\fi\fi
   \global\he@dingstylefalse
