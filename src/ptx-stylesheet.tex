@@ -580,6 +580,7 @@
   \setp@ram{fontsize}{cL}{\dr@psize}%
   \g@tfontname{c}\x@\let\csname font<\f@ntstyle>\endcsname=\relax
   \setc@rdstat{R}%
+  \setLRspecific
   \dropnumbersize=0pt
   \calcdr@psize
   \g@tfontname{c}\x@\let\csname font<\f@ntstyle>\endcsname=\relax
@@ -946,7 +947,7 @@
  \defineheads
  \ifnum 1=\ifVisTrace 1 \else \ifVisTraceExtra 1 \else 0\fi\fi 
    \font\VisTracefont="Arial":color=3f7f3f at 6pt\fi
- \ifdiglot\setc@rdstat{L}
+ \ifdiglot\setc@rdstat{L}%
  \fi
  %\global\lastptxfiletrue
  \let\@netimesetup=\relax}                                                      %(1)

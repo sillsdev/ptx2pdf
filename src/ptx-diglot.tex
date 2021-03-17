@@ -1346,6 +1346,7 @@
       \LRf@@tnotestrue%
     \fi%
     \setc@rdstat{\s@veddstat}%%
+    \setLRspecific
     \ifdiglotBalNotes%
       \trace{f}{Balanced notes}%
       \ifLRf@@tnotes%
@@ -1447,6 +1448,7 @@
   \fi
   \p@gestarttrue
   \setc@rdstat{L}%%
+  \setLRspecific
 %
   \ifdim\ht\topleftins>\ht\toprightins%
     \setbox\toprightins=\vbox to \ht\topleftins{\box\toprightins\vss}%
@@ -1866,8 +1868,7 @@
 \def\n@xttrial#1#2\E{%
   \xdef\tri@llist{#2}%
   \trace{D}{n@xttrial #1 (#2)}%
-  \setc@rdstat{#1}
-  \setLRspecific
+  \setc@rdstat{#1}\setLRspecific
 }
 
 \def\ch@ckcontents#1#2\E{%
