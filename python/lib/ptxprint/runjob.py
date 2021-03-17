@@ -47,7 +47,7 @@ _errmsghelp = {
                                            "Try disabling option 'Right-Align \ior with tabbed leaders' on the Body tab"),
 "! Emergency stop.":                     _("Probably a TeX macro problem - contact support, or post a bug report"),
 "! Not a letter.":                       _("Possible fault in the hyphenation file\n" +\
-                                           "Try turning off Hyphenate option located on the Body tab"),
+                                           "Try turning off Hyphenate option located on the Fonts+Scripts tab"),
 "! Font \extrafont":                     _("Fallback Font issue - set a font on the Fonts+Scripts tab.\n" +\
                                            "(Turn off the option 'Use Fallback Font' or specify a valid font)"),
 "! Font":                                _("Font related issue. The most likely reason for this error is that\n" +\
