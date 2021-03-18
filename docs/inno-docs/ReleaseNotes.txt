@@ -1,9 +1,17 @@
 PTXprint 1.5.21 Release Notes 
-17 March 2021
+18 March 2021
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 
-Bug Fixes and Improvements in 1.5.19
+Bug Fixes in 1.5.22
+
+  * Fix: Unable to print after creating archive
+
+  * Fix broken Tooltips
+  
+  * Fix note spacing problems
+    
+Bug Fixes and Improvements in 1.5.21
 
   * Major review and update to tooltips
   
