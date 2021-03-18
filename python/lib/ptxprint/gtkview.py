@@ -2720,11 +2720,10 @@ class GtkViewModel(ViewModel):
         dialog.hide()
 
     def onLocateDBLbundleClicked(self, btn):
-        prjdir = os.path.join(self.settings_dir, self.prjid)
         DBLfile = self.fileChooser("Select a DBL Bundle file", 
                 filters = {"DBL Bundles": {"patterns": ["*.zip"] , "mime": "text/plain", "default": True},
                            "All Files": {"pattern": "*"}},
-                multiple = False, basedir=os.path.join(prjdir, "Bundles"))
+                multiple = False, basedir=os.path.join(self.settings_dir, "Bundles"))
         if DBLfile is not None:
             # DBLfile = [x.relative_to(prjdir) for x in DBLfile]
             self.DBLfile = DBLfile[0]

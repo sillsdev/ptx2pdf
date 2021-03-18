@@ -153,7 +153,7 @@ _dblMapping = {
     'Name':             ('meta', 'identification/systemId[@type="paratext"]/name'),
     'Language':         ('meta', 'language/name'),
     'Encoding':         ('string', '65001'),
-    'CopyRight':        ('meta', 'copyright/fullStatement/statementContent/p'),
+    'Copyright':        ('metamulti', 'copyright/fullStatement/statementContent/p'),
     'DefaultFont':      ('styles', 'property[@name="font-family"]'),
     'DefaultFontSize':  ('styles', 'property[@name="font-size"]'),
     'FileNamePostPart': ('eval', lambda info: info['prjid']+".USFM"),
@@ -165,6 +165,12 @@ _dblMapping = {
     'Editable':         ('string', 'F'),
     'BooksPresent':     ('eval', lambda info: info['bookspresent'])
 }
+
+def innertext(root, path):
+    res = []
+    for e in root.findall(path):
+        res.append("".join(s.strip() for s in e.itertext()))
+    return res
 
 def UnpackDBL(dblfile, prjid, prjdir):
     info = {'prjid': prjid}
@@ -224,6 +230,8 @@ def UnpackDBL(dblfile, prjid, prjdir):
         t, s = v
         if t == 'meta':
             val = meta.findtext(s)
+        elif t == 'metamulti':
+            val = "//".join(innertext(meta, s))
         elif t == 'styles':
             val = style.findtext(s)
         elif t == 'eval':
