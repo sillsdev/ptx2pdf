@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ptxprint\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-17 16:54+0700\n"
-"PO-Revision-Date: 2021-03-17 09:54\n"
+"POT-Creation-Date: 2021-03-17 23:00+0700\n"
+"PO-Revision-Date: 2021-03-17 16:01\n"
 "Last-Translator: \n"
 "Language-Team: Indonesian\n"
 "Language: id_ID\n"
@@ -27,75 +27,27 @@ msgid "Permission for {} series:\n"
 "{}"
 msgstr ""
 
-#: lib/ptxprint/gtkstyleditor.py:99 lib/ptxprint/ptxprint.glade:14695
+#: lib/ptxprint/gtkstyleditor.py:163 lib/ptxprint/ptxprint.glade:14695
 msgid "Line Spacing\n"
 "Factor:"
 msgstr ""
 
-#: lib/ptxprint/gtkstyleditor.py:99
+#: lib/ptxprint/gtkstyleditor.py:163
 msgid "Baseline:"
 msgstr "Teks Dasar:"
 
-#: lib/ptxprint/gtkstyleditor.py:100 lib/ptxprint/ptxprint.glade:14269
+#: lib/ptxprint/gtkstyleditor.py:164 lib/ptxprint/ptxprint.glade:14269
 msgid "Font Size\n"
 "Factor:"
 msgstr ""
 
-#: lib/ptxprint/gtkstyleditor.py:100
+#: lib/ptxprint/gtkstyleditor.py:164
 msgid "Font Scale:"
 msgstr ""
 
 #: lib/ptxprint/gtkutils.py:87
 msgid "Set Font..."
 msgstr ""
-
-#: lib/ptxprint/gtkview.py:194 lib/ptxprint/ptxprint.glade:2513
-#: lib/ptxprint/ptxprint.glade:2946
-msgid "Top"
-msgstr "Atas"
-
-#: lib/ptxprint/gtkview.py:195 lib/ptxprint/ptxprint.glade:2521
-#: lib/ptxprint/ptxprint.glade:2950
-msgid "Bottom"
-msgstr "Dasar"
-
-#: lib/ptxprint/gtkview.py:196 lib/ptxprint/ptxprint.glade:2954
-msgid "Before Verse"
-msgstr ""
-
-#: lib/ptxprint/gtkview.py:197 lib/ptxprint/ptxprint.glade:2958
-msgid "After Paragraph"
-msgstr ""
-
-#: lib/ptxprint/gtkview.py:198 lib/ptxprint/ptxprint.glade:2962
-msgid "Cutout"
-msgstr ""
-
-#: lib/ptxprint/gtkview.py:202 lib/ptxprint/ptxprint.glade:2461
-#: lib/ptxprint/ptxprint.glade:2886 lib/ptxprint/ptxprint.glade:3123
-msgid "Left"
-msgstr "Kiri"
-
-#: lib/ptxprint/gtkview.py:203 lib/ptxprint/ptxprint.glade:2465
-#: lib/ptxprint/ptxprint.glade:2517 lib/ptxprint/ptxprint.glade:2890
-#: lib/ptxprint/ptxprint.glade:3127 lib/ptxprint/ptxprint.glade:8802
-msgid "Center"
-msgstr "Di Tengah"
-
-#: lib/ptxprint/gtkview.py:204 lib/ptxprint/ptxprint.glade:2469
-#: lib/ptxprint/ptxprint.glade:2894 lib/ptxprint/ptxprint.glade:3131
-msgid "Right"
-msgstr "Kanan"
-
-#: lib/ptxprint/gtkview.py:205 lib/ptxprint/ptxprint.glade:2473
-#: lib/ptxprint/ptxprint.glade:2898
-msgid "Inner"
-msgstr "Dalam"
-
-#: lib/ptxprint/gtkview.py:206 lib/ptxprint/ptxprint.glade:2477
-#: lib/ptxprint/ptxprint.glade:2902
-msgid "Outer"
-msgstr "Luar"
 
 #: lib/ptxprint/gtkview.py:255
 msgid "Please send to:"
@@ -387,7 +339,7 @@ msgstr ""
 
 #: lib/ptxprint/runjob.py:49
 msgid "Possible fault in the hyphenation file\n"
-"Try turning off Hyphenate option located on the Body tab"
+"Try turning off Hyphenate option located on the Fonts+Scripts tab"
 msgstr ""
 
 #: lib/ptxprint/runjob.py:51
@@ -1144,6 +1096,30 @@ msgstr ""
 msgid "Inappropriate"
 msgstr ""
 
+#: lib/ptxprint/ptxprint.glade:2461 lib/ptxprint/ptxprint.glade:2886
+#: lib/ptxprint/ptxprint.glade:3123
+msgid "Left"
+msgstr "Kiri"
+
+#: lib/ptxprint/ptxprint.glade:2465 lib/ptxprint/ptxprint.glade:2517
+#: lib/ptxprint/ptxprint.glade:2890 lib/ptxprint/ptxprint.glade:3127
+#: lib/ptxprint/ptxprint.glade:8802
+msgid "Center"
+msgstr "Di Tengah"
+
+#: lib/ptxprint/ptxprint.glade:2469 lib/ptxprint/ptxprint.glade:2894
+#: lib/ptxprint/ptxprint.glade:3131
+msgid "Right"
+msgstr "Kanan"
+
+#: lib/ptxprint/ptxprint.glade:2473 lib/ptxprint/ptxprint.glade:2898
+msgid "Inner"
+msgstr "Dalam"
+
+#: lib/ptxprint/ptxprint.glade:2477 lib/ptxprint/ptxprint.glade:2902
+msgid "Outer"
+msgstr "Luar"
+
 #: lib/ptxprint/ptxprint.glade:2495
 msgid "Anti-clockwise"
 msgstr ""
@@ -1151,6 +1127,14 @@ msgstr ""
 #: lib/ptxprint/ptxprint.glade:2499
 msgid "Clockwise"
 msgstr ""
+
+#: lib/ptxprint/ptxprint.glade:2513 lib/ptxprint/ptxprint.glade:2946
+msgid "Top"
+msgstr "Atas"
+
+#: lib/ptxprint/ptxprint.glade:2521 lib/ptxprint/ptxprint.glade:2950
+msgid "Bottom"
+msgstr "Dasar"
 
 #: lib/ptxprint/ptxprint.glade:2528
 msgid "Illustration Credit Overlay"
@@ -1253,6 +1237,18 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:2932
 msgid "Always"
+msgstr ""
+
+#: lib/ptxprint/ptxprint.glade:2954
+msgid "Before Verse"
+msgstr ""
+
+#: lib/ptxprint/ptxprint.glade:2958
+msgid "After Paragraph"
+msgstr ""
+
+#: lib/ptxprint/ptxprint.glade:2962
+msgid "Cutout"
 msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:2966 lib/ptxprint/ptxprint.glade:2992

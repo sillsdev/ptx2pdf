@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ptxprint\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-17 16:54+0700\n"
-"PO-Revision-Date: 2021-03-17 09:54\n"
+"POT-Creation-Date: 2021-03-17 23:00+0700\n"
+"PO-Revision-Date: 2021-03-17 16:01\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -29,77 +29,29 @@ msgid "Permission for {} series:\n"
 msgstr "Разрешение для {} серий:\n"
 "{}"
 
-#: lib/ptxprint/gtkstyleditor.py:99 lib/ptxprint/ptxprint.glade:14695
+#: lib/ptxprint/gtkstyleditor.py:163 lib/ptxprint/ptxprint.glade:14695
 msgid "Line Spacing\n"
 "Factor:"
 msgstr "Расстояние линии\n"
 "Фактор:"
 
-#: lib/ptxprint/gtkstyleditor.py:99
+#: lib/ptxprint/gtkstyleditor.py:163
 msgid "Baseline:"
 msgstr "Базовая линия:"
 
-#: lib/ptxprint/gtkstyleditor.py:100 lib/ptxprint/ptxprint.glade:14269
+#: lib/ptxprint/gtkstyleditor.py:164 lib/ptxprint/ptxprint.glade:14269
 msgid "Font Size\n"
 "Factor:"
 msgstr "Размер шрифта\n"
 "Фактор:"
 
-#: lib/ptxprint/gtkstyleditor.py:100
+#: lib/ptxprint/gtkstyleditor.py:164
 msgid "Font Scale:"
 msgstr "Масштаб шрифта:"
 
 #: lib/ptxprint/gtkutils.py:87
 msgid "Set Font..."
 msgstr "Установить шрифт..."
-
-#: lib/ptxprint/gtkview.py:194 lib/ptxprint/ptxprint.glade:2513
-#: lib/ptxprint/ptxprint.glade:2946
-msgid "Top"
-msgstr "Сверху"
-
-#: lib/ptxprint/gtkview.py:195 lib/ptxprint/ptxprint.glade:2521
-#: lib/ptxprint/ptxprint.glade:2950
-msgid "Bottom"
-msgstr "Внизу"
-
-#: lib/ptxprint/gtkview.py:196 lib/ptxprint/ptxprint.glade:2954
-msgid "Before Verse"
-msgstr "До стиха"
-
-#: lib/ptxprint/gtkview.py:197 lib/ptxprint/ptxprint.glade:2958
-msgid "After Paragraph"
-msgstr "После пункта"
-
-#: lib/ptxprint/gtkview.py:198 lib/ptxprint/ptxprint.glade:2962
-msgid "Cutout"
-msgstr "Вырезать"
-
-#: lib/ptxprint/gtkview.py:202 lib/ptxprint/ptxprint.glade:2461
-#: lib/ptxprint/ptxprint.glade:2886 lib/ptxprint/ptxprint.glade:3123
-msgid "Left"
-msgstr "Слева"
-
-#: lib/ptxprint/gtkview.py:203 lib/ptxprint/ptxprint.glade:2465
-#: lib/ptxprint/ptxprint.glade:2517 lib/ptxprint/ptxprint.glade:2890
-#: lib/ptxprint/ptxprint.glade:3127 lib/ptxprint/ptxprint.glade:8802
-msgid "Center"
-msgstr "По центру"
-
-#: lib/ptxprint/gtkview.py:204 lib/ptxprint/ptxprint.glade:2469
-#: lib/ptxprint/ptxprint.glade:2894 lib/ptxprint/ptxprint.glade:3131
-msgid "Right"
-msgstr "Справа"
-
-#: lib/ptxprint/gtkview.py:205 lib/ptxprint/ptxprint.glade:2473
-#: lib/ptxprint/ptxprint.glade:2898
-msgid "Inner"
-msgstr "Внутренний"
-
-#: lib/ptxprint/gtkview.py:206 lib/ptxprint/ptxprint.glade:2477
-#: lib/ptxprint/ptxprint.glade:2902
-msgid "Outer"
-msgstr "Внешний"
 
 #: lib/ptxprint/gtkview.py:255
 msgid "Please send to:"
@@ -416,7 +368,7 @@ msgstr ""
 
 #: lib/ptxprint/runjob.py:49
 msgid "Possible fault in the hyphenation file\n"
-"Try turning off Hyphenate option located on the Body tab"
+"Try turning off Hyphenate option located on the Fonts+Scripts tab"
 msgstr ""
 
 #: lib/ptxprint/runjob.py:51
@@ -1226,6 +1178,30 @@ msgstr "Инопланетянин, но Приемлемый"
 msgid "Inappropriate"
 msgstr "Неуместно"
 
+#: lib/ptxprint/ptxprint.glade:2461 lib/ptxprint/ptxprint.glade:2886
+#: lib/ptxprint/ptxprint.glade:3123
+msgid "Left"
+msgstr "Слева"
+
+#: lib/ptxprint/ptxprint.glade:2465 lib/ptxprint/ptxprint.glade:2517
+#: lib/ptxprint/ptxprint.glade:2890 lib/ptxprint/ptxprint.glade:3127
+#: lib/ptxprint/ptxprint.glade:8802
+msgid "Center"
+msgstr "По центру"
+
+#: lib/ptxprint/ptxprint.glade:2469 lib/ptxprint/ptxprint.glade:2894
+#: lib/ptxprint/ptxprint.glade:3131
+msgid "Right"
+msgstr "Справа"
+
+#: lib/ptxprint/ptxprint.glade:2473 lib/ptxprint/ptxprint.glade:2898
+msgid "Inner"
+msgstr "Внутренний"
+
+#: lib/ptxprint/ptxprint.glade:2477 lib/ptxprint/ptxprint.glade:2902
+msgid "Outer"
+msgstr "Внешний"
+
 #: lib/ptxprint/ptxprint.glade:2495
 msgid "Anti-clockwise"
 msgstr "Анти-часовой стрелка"
@@ -1233,6 +1209,14 @@ msgstr "Анти-часовой стрелка"
 #: lib/ptxprint/ptxprint.glade:2499
 msgid "Clockwise"
 msgstr "По часовой"
+
+#: lib/ptxprint/ptxprint.glade:2513 lib/ptxprint/ptxprint.glade:2946
+msgid "Top"
+msgstr "Сверху"
+
+#: lib/ptxprint/ptxprint.glade:2521 lib/ptxprint/ptxprint.glade:2950
+msgid "Bottom"
+msgstr "Внизу"
 
 #: lib/ptxprint/ptxprint.glade:2528
 msgid "Illustration Credit Overlay"
@@ -1339,6 +1323,18 @@ msgstr "Чётные"
 #: lib/ptxprint/ptxprint.glade:2932
 msgid "Always"
 msgstr ""
+
+#: lib/ptxprint/ptxprint.glade:2954
+msgid "Before Verse"
+msgstr "До стиха"
+
+#: lib/ptxprint/ptxprint.glade:2958
+msgid "After Paragraph"
+msgstr "После пункта"
+
+#: lib/ptxprint/ptxprint.glade:2962
+msgid "Cutout"
+msgstr "Вырезать"
 
 #: lib/ptxprint/ptxprint.glade:2966 lib/ptxprint/ptxprint.glade:2992
 msgid "Page (in Margins)"

@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ptxprint\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-17 16:54+0700\n"
-"PO-Revision-Date: 2021-03-17 09:54\n"
+"POT-Creation-Date: 2021-03-17 23:00+0700\n"
+"PO-Revision-Date: 2021-03-17 16:01\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -27,77 +27,29 @@ msgid "Permission for {} series:\n"
 "{}"
 msgstr ""
 
-#: lib/ptxprint/gtkstyleditor.py:99 lib/ptxprint/ptxprint.glade:14695
+#: lib/ptxprint/gtkstyleditor.py:163 lib/ptxprint/ptxprint.glade:14695
 msgid "Line Spacing\n"
 "Factor:"
 msgstr "线路间距\n"
 "因子："
 
-#: lib/ptxprint/gtkstyleditor.py:99
+#: lib/ptxprint/gtkstyleditor.py:163
 msgid "Baseline:"
 msgstr "基线："
 
-#: lib/ptxprint/gtkstyleditor.py:100 lib/ptxprint/ptxprint.glade:14269
+#: lib/ptxprint/gtkstyleditor.py:164 lib/ptxprint/ptxprint.glade:14269
 msgid "Font Size\n"
 "Factor:"
 msgstr "字体大小\n"
 "因子："
 
-#: lib/ptxprint/gtkstyleditor.py:100
+#: lib/ptxprint/gtkstyleditor.py:164
 msgid "Font Scale:"
 msgstr ""
 
 #: lib/ptxprint/gtkutils.py:87
 msgid "Set Font..."
 msgstr ""
-
-#: lib/ptxprint/gtkview.py:194 lib/ptxprint/ptxprint.glade:2513
-#: lib/ptxprint/ptxprint.glade:2946
-msgid "Top"
-msgstr "顶端"
-
-#: lib/ptxprint/gtkview.py:195 lib/ptxprint/ptxprint.glade:2521
-#: lib/ptxprint/ptxprint.glade:2950
-msgid "Bottom"
-msgstr "底部"
-
-#: lib/ptxprint/gtkview.py:196 lib/ptxprint/ptxprint.glade:2954
-msgid "Before Verse"
-msgstr "在Verse之前"
-
-#: lib/ptxprint/gtkview.py:197 lib/ptxprint/ptxprint.glade:2958
-msgid "After Paragraph"
-msgstr "在段落之后"
-
-#: lib/ptxprint/gtkview.py:198 lib/ptxprint/ptxprint.glade:2962
-msgid "Cutout"
-msgstr "闭合"
-
-#: lib/ptxprint/gtkview.py:202 lib/ptxprint/ptxprint.glade:2461
-#: lib/ptxprint/ptxprint.glade:2886 lib/ptxprint/ptxprint.glade:3123
-msgid "Left"
-msgstr "左侧"
-
-#: lib/ptxprint/gtkview.py:203 lib/ptxprint/ptxprint.glade:2465
-#: lib/ptxprint/ptxprint.glade:2517 lib/ptxprint/ptxprint.glade:2890
-#: lib/ptxprint/ptxprint.glade:3127 lib/ptxprint/ptxprint.glade:8802
-msgid "Center"
-msgstr "居中"
-
-#: lib/ptxprint/gtkview.py:204 lib/ptxprint/ptxprint.glade:2469
-#: lib/ptxprint/ptxprint.glade:2894 lib/ptxprint/ptxprint.glade:3131
-msgid "Right"
-msgstr "右侧"
-
-#: lib/ptxprint/gtkview.py:205 lib/ptxprint/ptxprint.glade:2473
-#: lib/ptxprint/ptxprint.glade:2898
-msgid "Inner"
-msgstr "内置"
-
-#: lib/ptxprint/gtkview.py:206 lib/ptxprint/ptxprint.glade:2477
-#: lib/ptxprint/ptxprint.glade:2902
-msgid "Outer"
-msgstr "外观"
 
 #: lib/ptxprint/gtkview.py:255
 msgid "Please send to:"
@@ -408,7 +360,7 @@ msgstr ""
 
 #: lib/ptxprint/runjob.py:49
 msgid "Possible fault in the hyphenation file\n"
-"Try turning off Hyphenate option located on the Body tab"
+"Try turning off Hyphenate option located on the Fonts+Scripts tab"
 msgstr ""
 
 #: lib/ptxprint/runjob.py:51
@@ -1213,6 +1165,30 @@ msgstr "异名但可接受"
 msgid "Inappropriate"
 msgstr "不适当的"
 
+#: lib/ptxprint/ptxprint.glade:2461 lib/ptxprint/ptxprint.glade:2886
+#: lib/ptxprint/ptxprint.glade:3123
+msgid "Left"
+msgstr "左侧"
+
+#: lib/ptxprint/ptxprint.glade:2465 lib/ptxprint/ptxprint.glade:2517
+#: lib/ptxprint/ptxprint.glade:2890 lib/ptxprint/ptxprint.glade:3127
+#: lib/ptxprint/ptxprint.glade:8802
+msgid "Center"
+msgstr "居中"
+
+#: lib/ptxprint/ptxprint.glade:2469 lib/ptxprint/ptxprint.glade:2894
+#: lib/ptxprint/ptxprint.glade:3131
+msgid "Right"
+msgstr "右侧"
+
+#: lib/ptxprint/ptxprint.glade:2473 lib/ptxprint/ptxprint.glade:2898
+msgid "Inner"
+msgstr "内置"
+
+#: lib/ptxprint/ptxprint.glade:2477 lib/ptxprint/ptxprint.glade:2902
+msgid "Outer"
+msgstr "外观"
+
 #: lib/ptxprint/ptxprint.glade:2495
 msgid "Anti-clockwise"
 msgstr "逆时针"
@@ -1220,6 +1196,14 @@ msgstr "逆时针"
 #: lib/ptxprint/ptxprint.glade:2499
 msgid "Clockwise"
 msgstr "顺时针"
+
+#: lib/ptxprint/ptxprint.glade:2513 lib/ptxprint/ptxprint.glade:2946
+msgid "Top"
+msgstr "顶端"
+
+#: lib/ptxprint/ptxprint.glade:2521 lib/ptxprint/ptxprint.glade:2950
+msgid "Bottom"
+msgstr "底部"
 
 #: lib/ptxprint/ptxprint.glade:2528
 msgid "Illustration Credit Overlay"
@@ -1326,6 +1310,18 @@ msgstr "偶数"
 #: lib/ptxprint/ptxprint.glade:2932
 msgid "Always"
 msgstr ""
+
+#: lib/ptxprint/ptxprint.glade:2954
+msgid "Before Verse"
+msgstr "在Verse之前"
+
+#: lib/ptxprint/ptxprint.glade:2958
+msgid "After Paragraph"
+msgstr "在段落之后"
+
+#: lib/ptxprint/ptxprint.glade:2962
+msgid "Cutout"
+msgstr "闭合"
 
 #: lib/ptxprint/ptxprint.glade:2966 lib/ptxprint/ptxprint.glade:2992
 msgid "Page (in Margins)"

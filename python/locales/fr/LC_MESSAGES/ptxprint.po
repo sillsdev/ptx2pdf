@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ptxprint\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-17 16:54+0700\n"
-"PO-Revision-Date: 2021-03-17 09:54\n"
+"POT-Creation-Date: 2021-03-17 23:00+0700\n"
+"PO-Revision-Date: 2021-03-17 16:01\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -29,77 +29,29 @@ msgid "Permission for {} series:\n"
 msgstr "Permission pour la série {} :\n"
 "{}"
 
-#: lib/ptxprint/gtkstyleditor.py:99 lib/ptxprint/ptxprint.glade:14695
+#: lib/ptxprint/gtkstyleditor.py:163 lib/ptxprint/ptxprint.glade:14695
 msgid "Line Spacing\n"
 "Factor:"
 msgstr "Facteur d'espacement\n"
 "de ligne :"
 
-#: lib/ptxprint/gtkstyleditor.py:99
+#: lib/ptxprint/gtkstyleditor.py:163
 msgid "Baseline:"
 msgstr "Ligne de base :"
 
-#: lib/ptxprint/gtkstyleditor.py:100 lib/ptxprint/ptxprint.glade:14269
+#: lib/ptxprint/gtkstyleditor.py:164 lib/ptxprint/ptxprint.glade:14269
 msgid "Font Size\n"
 "Factor:"
 msgstr "Facteur de taille\n"
 "de police :"
 
-#: lib/ptxprint/gtkstyleditor.py:100
+#: lib/ptxprint/gtkstyleditor.py:164
 msgid "Font Scale:"
 msgstr "Échelle de police :"
 
 #: lib/ptxprint/gtkutils.py:87
 msgid "Set Font..."
 msgstr "Définir la police..."
-
-#: lib/ptxprint/gtkview.py:194 lib/ptxprint/ptxprint.glade:2513
-#: lib/ptxprint/ptxprint.glade:2946
-msgid "Top"
-msgstr "Haut"
-
-#: lib/ptxprint/gtkview.py:195 lib/ptxprint/ptxprint.glade:2521
-#: lib/ptxprint/ptxprint.glade:2950
-msgid "Bottom"
-msgstr "Bas"
-
-#: lib/ptxprint/gtkview.py:196 lib/ptxprint/ptxprint.glade:2954
-msgid "Before Verse"
-msgstr "Avant le verset"
-
-#: lib/ptxprint/gtkview.py:197 lib/ptxprint/ptxprint.glade:2958
-msgid "After Paragraph"
-msgstr "Après le paragraphe"
-
-#: lib/ptxprint/gtkview.py:198 lib/ptxprint/ptxprint.glade:2962
-msgid "Cutout"
-msgstr "Découpe"
-
-#: lib/ptxprint/gtkview.py:202 lib/ptxprint/ptxprint.glade:2461
-#: lib/ptxprint/ptxprint.glade:2886 lib/ptxprint/ptxprint.glade:3123
-msgid "Left"
-msgstr "Gauche"
-
-#: lib/ptxprint/gtkview.py:203 lib/ptxprint/ptxprint.glade:2465
-#: lib/ptxprint/ptxprint.glade:2517 lib/ptxprint/ptxprint.glade:2890
-#: lib/ptxprint/ptxprint.glade:3127 lib/ptxprint/ptxprint.glade:8802
-msgid "Center"
-msgstr "Centre"
-
-#: lib/ptxprint/gtkview.py:204 lib/ptxprint/ptxprint.glade:2469
-#: lib/ptxprint/ptxprint.glade:2894 lib/ptxprint/ptxprint.glade:3131
-msgid "Right"
-msgstr "Droite"
-
-#: lib/ptxprint/gtkview.py:205 lib/ptxprint/ptxprint.glade:2473
-#: lib/ptxprint/ptxprint.glade:2898
-msgid "Inner"
-msgstr "Intérieur"
-
-#: lib/ptxprint/gtkview.py:206 lib/ptxprint/ptxprint.glade:2477
-#: lib/ptxprint/ptxprint.glade:2902
-msgid "Outer"
-msgstr "Extérieur"
 
 #: lib/ptxprint/gtkview.py:255
 msgid "Please send to:"
@@ -113,7 +65,9 @@ msgstr "Ce message a été copié dans le presse-papiers."
 msgid "Paratext is not installed on this system.\n"
 "Please locate the directory containing your\n"
 "(Paratext) project directories. Or cancel to exit"
-msgstr ""
+msgstr "Paratext n'est pas installé sur ce système.\n"
+"Veuillez rechercher le répertoire contenant vos\n"
+"projets de Paratext. Ou annulez pour quitter"
 
 #: lib/ptxprint/gtkview.py:464
 msgid "No project set"
@@ -429,9 +383,8 @@ msgstr "Problème avec le formatage du plan de livre dans l'introduction\n"
 
 #: lib/ptxprint/runjob.py:49
 msgid "Possible fault in the hyphenation file\n"
-"Try turning off Hyphenate option located on the Body tab"
-msgstr "Erreur possible dans le fichier de césure\n"
-"Essayez de désactiver l'option de césure de mots située dans l'onglet Polices+Écriture"
+"Try turning off Hyphenate option located on the Fonts+Scripts tab"
+msgstr ""
 
 #: lib/ptxprint/runjob.py:51
 msgid "Fallback Font issue - set a font on the Fonts+Scripts tab.\n"
@@ -462,7 +415,9 @@ msgstr "Problème inconnu. Peut-être lié l’alignement à droite avec points 
 #: lib/ptxprint/runjob.py:61
 msgid "Sorry, there is no diagnostic help for this error.\n"
 "Try using Paratext's 'Run Basic Checks' to uncover any Marker errors."
-msgstr ""
+msgstr "Désolé, il n'y a pas d'aide au diagnostic pour cette erreur.\n"
+"Essayez d'utiliser la fonction \"Effectuer les vérifications de base\"\n"
+"de Paratext pour découvrir toute erreur de marqueur."
 
 #: lib/ptxprint/runjob.py:238 lib/ptxprint/runjob.py:240
 msgid "Layout problems were encountered on page(s): "
@@ -1269,6 +1224,30 @@ msgstr "Étranger mais acceptable"
 msgid "Inappropriate"
 msgstr "Inapproprié"
 
+#: lib/ptxprint/ptxprint.glade:2461 lib/ptxprint/ptxprint.glade:2886
+#: lib/ptxprint/ptxprint.glade:3123
+msgid "Left"
+msgstr "Gauche"
+
+#: lib/ptxprint/ptxprint.glade:2465 lib/ptxprint/ptxprint.glade:2517
+#: lib/ptxprint/ptxprint.glade:2890 lib/ptxprint/ptxprint.glade:3127
+#: lib/ptxprint/ptxprint.glade:8802
+msgid "Center"
+msgstr "Centre"
+
+#: lib/ptxprint/ptxprint.glade:2469 lib/ptxprint/ptxprint.glade:2894
+#: lib/ptxprint/ptxprint.glade:3131
+msgid "Right"
+msgstr "Droite"
+
+#: lib/ptxprint/ptxprint.glade:2473 lib/ptxprint/ptxprint.glade:2898
+msgid "Inner"
+msgstr "Intérieur"
+
+#: lib/ptxprint/ptxprint.glade:2477 lib/ptxprint/ptxprint.glade:2902
+msgid "Outer"
+msgstr "Extérieur"
+
 #: lib/ptxprint/ptxprint.glade:2495
 msgid "Anti-clockwise"
 msgstr "Sens anti-horaire"
@@ -1276,6 +1255,14 @@ msgstr "Sens anti-horaire"
 #: lib/ptxprint/ptxprint.glade:2499
 msgid "Clockwise"
 msgstr "Sens horaire"
+
+#: lib/ptxprint/ptxprint.glade:2513 lib/ptxprint/ptxprint.glade:2946
+msgid "Top"
+msgstr "Haut"
+
+#: lib/ptxprint/ptxprint.glade:2521 lib/ptxprint/ptxprint.glade:2950
+msgid "Bottom"
+msgstr "Bas"
 
 #: lib/ptxprint/ptxprint.glade:2528
 msgid "Illustration Credit Overlay"
@@ -1402,6 +1389,18 @@ msgstr "Pair"
 #: lib/ptxprint/ptxprint.glade:2932
 msgid "Always"
 msgstr "Toujours"
+
+#: lib/ptxprint/ptxprint.glade:2954
+msgid "Before Verse"
+msgstr "Avant le verset"
+
+#: lib/ptxprint/ptxprint.glade:2958
+msgid "After Paragraph"
+msgstr "Après le paragraphe"
+
+#: lib/ptxprint/ptxprint.glade:2962
+msgid "Cutout"
+msgstr "Découpe"
 
 #: lib/ptxprint/ptxprint.glade:2966 lib/ptxprint/ptxprint.glade:2992
 msgid "Page (in Margins)"
@@ -4527,7 +4526,18 @@ msgid "If multiple versions of an image are located\n"
 "  or\n"
 "TIF  (only use TIFs - ignore all other file types)\n\n"
 "NOTE: TIF files are converted internally to JPGs."
-msgstr ""
+msgstr "Si plusieurs versions d'une image sont trouvées\n"
+"(hk12345B.jpg, hk12345B.png ou hk12345B.tif),\n"
+"quel type d'image doit être utilisé ?\n\n"
+"Paramètre par défaut :\n"
+"JPG TIF PNG PDF  (utilisez d'abord JPGs, sinon TIFs, PNGs etc.)\n"
+"  ou\n"
+"TIF JPG PNG (utilisez d'abord TIFs, sinon JPGs ou PNGs)\n"
+"  ou\n"
+"JPG (n'utiliser que les JPGs - ignorer tous les autres types de fichiers)\n"
+"  ou\n"
+"TIF (n'utiliser que les TIFs - ignorer tous les autres types de fichiers)\n\n"
+"N.B. Les fichiers TIF sont convertis en JPGs."
 
 #: lib/ptxprint/ptxprint.glade:10507
 msgid "Exclusively Use Selected Folder:"
@@ -4544,7 +4554,15 @@ msgid "PTXprint normally searches in multiple locations\n"
 "then enable this option), select this option. This should speed up searches\n"
 "for images, but may result in some images not being\n"
 "found at all."
-msgstr ""
+msgstr "PTXprint recherche normalement dans plusieurs emplacements\n"
+"pour localiser les illustrations nécessaires (y compris \"figures\",\n"
+"\"local/figures\" et dans le dossier spécifié à gauche).\n\n"
+"Par défaut, il recherche également tous les sous-dossiers de ces\n"
+"emplacements.\n\n"
+"Cochez cette option si vous préférez qu'il recherche seulement dans le dossier\n"
+"spécifié directement (et NE regarde PAS dans aucun autre dossier). Cela\n"
+"devrait accélérer les recherches d'images, mais il se peut que certaines\n"
+"images ne soient pas trouvées."
 
 #: lib/ptxprint/ptxprint.glade:10537
 msgid "(0 Missing)"
@@ -5786,7 +5804,8 @@ msgstr "Cliquez pour modifier les propriétés  \n"
 #: lib/ptxprint/ptxprint.glade:14093
 msgid "Scale Relative\n"
 "to Parent"
-msgstr "Échelle relative au parent"
+msgstr "Échelle relative\n"
+"au parent"
 
 #: lib/ptxprint/ptxprint.glade:14098
 msgid "The Font Size is usually calculated as relative to the current Font Size Unit. If you prefer to specify an an amount relative to the underlying (parent) font then enable this option. Note that \\p has a FontSize of 12 in usfm.sty"
@@ -5809,7 +5828,11 @@ msgid "The superscript option overrides these settings:\n"
 "   Font Size Factor is set to 0.75\n"
 "   Raise is set to 0.85 times the x-height of the font (which\n"
 "   defaults to 1/2 the ascent if not specified in the font)."
-msgstr ""
+msgstr "L'option d'exposant remplace ces paramètres :\n"
+"   Le facteur de taille de la police est fixé à 0.75\n"
+"   Le soulèvement est fixée à 0.85 fois la hauteur de la police\n"
+"   (qui correspond par défaut à la moitié de la montée\n"
+"   si elle n'est pas spécifiée dans la police)."
 
 #: lib/ptxprint/ptxprint.glade:14160
 msgid "SmallCaps"
@@ -5900,9 +5923,9 @@ msgstr "Alignement :"
 msgid "This is multiplied by the Base Paragraph Indent\n"
 "value (specified on the Layout tab) to get the final\n"
 "indentation amount."
-msgstr "Ceci est multiplié par la valeur\n"
-"de retrait du paragraphe de base (spécifiée sur l'onglet Layout) pour obtenir le montant final de\n"
-"indentation."
+msgstr "Ceci est multiplié par la valeur de retrait du paragraphe \n"
+"de base (spécifiée sur l'onglet Mise en page) pour obtenir \n"
+"le montant final de retrait."
 
 #: lib/ptxprint/ptxprint.glade:14612
 msgid "First Line\n"
@@ -5919,8 +5942,9 @@ msgid "This is multiplied by the Base Paragraph Indent\n"
 msgstr "Cette valeur est multiplié par la valeur du retrait de paragraphe\n"
 "de base (spécifiée sur l'onglet Mise en page) pour obtenir le\n"
 "montant final de retrait.\n\n"
-"Lorsque la direction du flux de texte du système d'écriture est de droite à gauche\n"
-"l'interprétation de Gauche et Droite est échangée."
+"Lorsque la direction du flux de texte du système d'écriture \n"
+"est de droite à gauche l'interprétation de Gauche et Droite \n"
+"est échangée."
 
 #: lib/ptxprint/ptxprint.glade:14640
 msgid "Left Indent\n"
@@ -5937,8 +5961,9 @@ msgid "This is multiplied by the Base Paragraph Indent\n"
 msgstr "Cette valeur est multiplié par la valeur du retrait de paragraphe\n"
 "de base (spécifiée sur l'onglet Mise en page) pour obtenir le\n"
 "montant final de retrait.\n\n"
-"Lorsque la direction du flux de texte du système d'écriture est de droite à gauche\n"
-"l'interprétation de Gauche et Droite est échangée."
+"Lorsque la direction du flux de texte du système d'écriture \n"
+"est de droite à gauche l'interprétation de Gauche et Droite \n"
+"est échangée."
 
 #: lib/ptxprint/ptxprint.glade:14669
 msgid "Right Indent\n"
@@ -6230,7 +6255,9 @@ msgstr "Appliquer les paramètres initiaux\n"
 #: lib/ptxprint/ptxprint.glade:15469
 msgid "This .tex file is executed BEFORE any stylesheets of \n"
 "other settings are applied. This file is rarely used."
-msgstr ""
+msgstr "Ce fichier .tex est exécuté AVANT que les feuilles de style\n"
+"des autres paramètres ne soient appliqués. Ce fichier est\n"
+"rarement utilisé."
 
 #: lib/ptxprint/ptxprint.glade:15489
 msgid "Text Processing & Stylesheets"
