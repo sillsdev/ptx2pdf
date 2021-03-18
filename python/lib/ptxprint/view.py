@@ -365,7 +365,7 @@ class ViewModel:
                     elif os.path.isdir(srcp):
                         os.makedirs(destp, exist_ok=True)
                         for p in os.listdir(srcp):
-                            op = re.sub(r"-[^-]+\.", "-"+newcfg+".", p)
+                            op = re.sub(r"-[^-]+?\.", "-"+newcfg+".", p)
                             copyfile(os.path.join(srcp, p), os.path.join(destp, op))
                     else:
                         copyfile(srcp, destp)
