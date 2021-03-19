@@ -928,8 +928,9 @@ class TexModel:
         # Glossary Word markup: Remove the second half of the \w word|glossary-form\w* and apply chosen glossary markup
         v = self.dict["document/glossarymarkupstyle"]
         gloStyle = self._glossarymarkup.get(v, v)
-        if gloStyle is not None and len(v) == 2: # otherwise skip over OLD Glossary markup definitions
-            self.localChanges.append((None, regex.compile(r"\\\+?w ((?:.(?!\\\+w\*))+?)(\|[^|]+?)?\\\+?w\*", flags=regex.M), gloStyle))
+        if v is not None:
+            if gloStyle is not None and len(v) == 2: # otherwise skip over OLD Glossary markup definitions
+                self.localChanges.append((None, regex.compile(r"\\\+?w ((?:.(?!\\\+w\*))+?)(\|[^|]+?)?\\\+?w\*", flags=regex.M), gloStyle))
         
         if self.asBool("document/ifinclfigs") and bk in self._peripheralBooks:
             # Remove any illustrations which don't have a |p| 'loc' field IF this setting is on

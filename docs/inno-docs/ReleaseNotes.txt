@@ -1,7 +1,57 @@
-PTXprint 1.5.22 Release Notes 
-18 March 2021
+PTXprint 1.6 Release Notes 
+19 March 2021
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
+
+Improvements in 1.6
+
+  * Diglot code has been re-written to be more robust and adaptable to structural differences between texts
+
+  * Enabled Diglot texts to switch sides (left/right inner/outer - especially useful for RTL)
+  
+  * Button to automate optimizing of the column widths for primary and secondary columns of diglots
+  
+  * Localization of UI is now available through Crowdin via https://crowdin.com/project/ptxprint
+
+  * Added ability to overlay image credits on pictures (specifically to comply with David C Cook image use requirements)
+  
+  * Pictures in peripheral books (INT, BAK, GLO etc.) can now be manipulated via the PicList like all other pictures
+	
+  * PTXprint now ships with its own version of XeTeX so that it can even run without Paratext installed
+
+  * Can now select and use any folder for projects if "My Paratext 8/9 Projects" folder isn't found
+  
+  * Font feature editor added to Font Selection dialog (enabling specific features to enabled/disabled)
+  
+  * Added "Quick Run" option with a Warning/Status message in red on the bottom status bar after a run
+
+  * Page numbering now allows negative numbers - which enables roman numerals for introductory pages
+  
+  * Allow horizontal spacing between footnotes (and cross-references) to be specified with min+max values
+
+  * Spacing before/after footnotes (and/or cross-references) can now be specified in Styles editor
+
+  * Colophon can now be forced to a new page if needed, and can include special characters
+  
+  * Magic codes: \zcopyright, \zlicense and \zimagecopyrights can now also be used in FRT or INT books
+  
+  * Generated \zimagecopyrights statements can now be localized by adding a language code: \zimagecopyrightsfr
+  
+  * DBL bundles and PT modules now work more smoothly 
+
+  * Several Tooltips have been updated to reflect addition of the Styles editor
+
+  * Several tabs have shortcut links to appropriate Styles in the editor, and Styles can now be searched for
+  
+  * All program exceptions (crashes) are reported and copied to the clipboard for easier reporting
+  
+  * Margin settings have been greatly simplified and include graphics to show what exactly is being set
+  
+  * Magic buttons to optimize line spacing or top/bottom margins to optimize layout and minimize wasted space
+
+  * Tooltips updated with more accurate context-specific help information 
+
+  * Dozens of other minor bug fixes since 1.5 
 
 Bug Fixes in 1.5.22
 

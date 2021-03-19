@@ -913,8 +913,8 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("lb_TabsBorders").set_markup(tc+jn+bc)
 
         ad = False
-        for w in ["processScript", "usePrintDraftChanges", "usePreModsTex", "useModsTex", \
-                  "useCustomSty", "useModsSty", "inclFrontMatter", "applyWatermark", "inclBackMatter"]:
+        for w in ["processScript", "usePrintDraftChanges", "usePreModsTex", "useModsTex", "useCustomSty", \
+                  "useModsSty", "interlinear", "inclFrontMatter", "applyWatermark", "inclBackMatter"]:
             if self.get("c_" + w):
                 ad = True
                 break
