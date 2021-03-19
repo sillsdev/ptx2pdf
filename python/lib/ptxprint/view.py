@@ -1043,7 +1043,10 @@ class ViewModel:
                 intpath = "Interlinear_{}".format(interlang)
                 intfile = "{}_{}.xml".format(intpath, bk)
                 res[os.path.join(fpath, intpath, intfile)] = os.path.join(intpath, intfile)
-        self.picinfos.getFigureSources(exclusive=self.get("c_exclusiveFiguresFolder"))
+        exclFigsFolder = self.get("c_exclusiveFiguresFolder")
+        self.picinfos.getFigureSources(exclusive=exclFigsFolder)
+        if self.get("c_useCustomFolder"):
+            cfgchanges["btn_selectFigureFolder"] = (Path("${prjdir}/figures"), "customFigFolder")
         pathkey = 'src path'
         for f in (p[pathkey] for p in self.picinfos.values() if pathkey in p and p['anchor'][:3] in books):
                 res[f] = "figures/"+os.path.basename(f)
@@ -1214,8 +1217,13 @@ class ViewModel:
                 zf.write(k, arcname=prjid + "/" + v)
         tmpcfg = {}
         for k,v in cfgchanges.items():
-            tmpcfg[k] = self.get(k)
-            self.set(k, v)
+            if len(v) == 2 and v[1] is not None:
+                tv = getattr(self, v[1])
+                setattr(self, v[1], v[0])
+            else:
+                tv = None
+            tmpcfg[k] = (self.get(k), tv)
+            self.set(k, str(v if len(v) != 2 else v[0]))
         config = self.createConfig()
         configstr = StringIO()
         config.write(configstr)
@@ -1223,7 +1231,9 @@ class ViewModel:
                     configstr.getvalue())
         configstr.close()
         for k, v in tmpcfg.items():
-            self.set(k, v)
+            self.set(k, str(v[0]))
+            if v[1] is not None:
+                setattr(self, cfgchanges[k][1], v[1])
         for f in tmpfiles:
             os.unlink(f)
 
