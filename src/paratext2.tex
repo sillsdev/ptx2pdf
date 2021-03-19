@@ -218,12 +218,14 @@
           \fi
           }%
         \x@\gdef\csname note-no-insert-#1\endcsname{\x@\afterassignment\csname addt@endnote-#1\endcsname\global\setbox\csname endnote-#1\endcsname\vbox}%
-        \x@\gdef\csname zplacenotes#1\endcsname{\dimen0=\prevdepth%
+        \x@\gdef\csname zplacenotes#1\endcsname{\ifvmode\else\par\fi \dimen0=\prevdepth %
           %\showbox\csname endnote-#1\endcsname
           \checkp@ranotes{#1}%
           \ifp@ranotes
             \ifdim \dimen0>0pt\kern-\dimen0\fi
-            \maken@tepara{\csname endnote-#1\endcsname}{#1}%
+            \ifvoid\csname endnote-#1\endcsname\else
+              \maken@tepara{\csname endnote-#1\endcsname}{#1}%
+            \fi
           \else 
             \s@tbaseline{#1}%
             {%\x@\showbox\csname endnote-#1\endcsname
