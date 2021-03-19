@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ptxprint\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-19 14:43+0700\n"
-"PO-Revision-Date: 2021-03-19 07:44\n"
+"POT-Creation-Date: 2021-03-19 16:38+0700\n"
+"PO-Revision-Date: 2021-03-19 09:38\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -493,7 +493,7 @@ msgstr "可折叠线条"
 msgid "Missing font ({})"
 msgstr ""
 
-#: lib/ptxprint/texmodel.py:1230
+#: lib/ptxprint/texmodel.py:1231
 msgid "\\rem Warning: No copyright statement found for: {} on pages {}"
 msgstr ""
 
@@ -619,15 +619,15 @@ msgstr "请选择一个不同的字体。"
 msgid "The Fallback Font just selected does NOT support all the missing characters listed."
 msgstr "刚刚选择的备用字体不支持列出的所有缺失字符。"
 
-#: lib/ptxprint/view.py:1166
+#: lib/ptxprint/view.py:1168
 msgid "No Config found for Diglot"
 msgstr ""
 
-#: lib/ptxprint/view.py:1179
+#: lib/ptxprint/view.py:1181
 msgid "Error: Cannot create Archive!"
 msgstr ""
 
-#: lib/ptxprint/view.py:1179
+#: lib/ptxprint/view.py:1181
 msgid "The ZIP file seems to be open in another program."
 msgstr ""
 

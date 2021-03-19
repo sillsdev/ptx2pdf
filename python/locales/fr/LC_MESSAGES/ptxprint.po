@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ptxprint\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-19 14:43+0700\n"
-"PO-Revision-Date: 2021-03-19 07:44\n"
+"POT-Creation-Date: 2021-03-19 16:38+0700\n"
+"PO-Revision-Date: 2021-03-19 09:38\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -99,11 +99,11 @@ msgstr "Impossible de définir {} dans le modèle"
 
 #: lib/ptxprint/gtkview.py:715
 msgid "Printing busy"
-msgstr ""
+msgstr "Impression occupée"
 
 #: lib/ptxprint/gtkview.py:719 lib/ptxprint/runjob.py:187
 msgid "No books to print"
-msgstr ""
+msgstr "Aucun livre à imprimer"
 
 #: lib/ptxprint/gtkview.py:742
 msgid "                   >>> PLEASE CLOSE the PDF <<<                     \n\n"
@@ -430,7 +430,7 @@ msgstr "Désolé, il n'y a pas d'aide au diagnostic pour cette erreur.\n"
 
 #: lib/ptxprint/runjob.py:168
 msgid "Illegal Project"
-msgstr ""
+msgstr "Projet illégal"
 
 #: lib/ptxprint/runjob.py:258 lib/ptxprint/runjob.py:260
 msgid "Layout problems were encountered on page(s): "
@@ -520,9 +520,9 @@ msgstr "Casser la syllabe"
 
 #: lib/ptxprint/texmodel.py:490
 msgid "Missing font ({})"
-msgstr ""
+msgstr "Police manquante ({})"
 
-#: lib/ptxprint/texmodel.py:1230
+#: lib/ptxprint/texmodel.py:1231
 msgid "\\rem Warning: No copyright statement found for: {} on pages {}"
 msgstr "\\rem Attention : aucune déclaration de copyright trouvée pour: {} sur les pages {}"
 
@@ -650,15 +650,15 @@ msgstr "Veuillez sélectionner une police différente."
 msgid "The Fallback Font just selected does NOT support all the missing characters listed."
 msgstr "La police de repli que vous avez sélectionné ne prend pas en charge tous les caractères manquants listés."
 
-#: lib/ptxprint/view.py:1166
+#: lib/ptxprint/view.py:1168
 msgid "No Config found for Diglot"
 msgstr "Aucune configuration trouvée pour Diglot"
 
-#: lib/ptxprint/view.py:1179
+#: lib/ptxprint/view.py:1181
 msgid "Error: Cannot create Archive!"
 msgstr "Erreur : Impossible de créer une archive !"
 
-#: lib/ptxprint/view.py:1179
+#: lib/ptxprint/view.py:1181
 msgid "The ZIP file seems to be open in another program."
 msgstr "Le fichier ZIP semble être ouvert dans un autre logiciel."
 
