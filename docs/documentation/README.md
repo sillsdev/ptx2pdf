@@ -33,7 +33,8 @@ A [PDF](../documentation/ptx2pdf-MacroSetupParameters.pdf?attredirects=0/index.h
 -  [**9** Illustrations (Figures)](#ptx2pdf-MacroSetupParameters-Illustrations(Figures))
 -  [**10** Thumb Tabs](#ptx2pdf-MacroSetupParameters-Tabs)
 -  [**11** Hooks](#ptx2pdf-MacroSetupParameters-Hooks)
-    -  [**10.1** Appendix: Common OpenType script tags](#ptx2pdf-MacroSetupParameters-Appendix:CommonOpenTypescripttags)
+-  [**12** Introduction markers](#ptx2pdf-MacroSetupParameters-IntroMarkers)
+   [**A.1** Appendix: Common OpenType script tags](#ptx2pdf-MacroSetupParameters-Appendix:CommonOpenTypescripttags)
 
 Text in ```gray``` represents the portion of the setup parameter syntax which can be configured by the typesetter. Where applicable, default values are indicated in parentheses at the end of the definition.
 
@@ -244,7 +245,7 @@ convenience.
 Literal text can also be included (e.g., to add dashes around a centered page number, ```\\def\RFtitlecenter{- \pagenumber -}```).
 
 
-### <a name="ptx2pdf-MacroSetupParameters-Odd,Even,andTitlepageFooter"></a><a name="ptx2pdf-MacroSetupParameters-OtherHeaderSetup">Other Header Setup</a>
+### <a name="ptx2pdf-MacroSetupParameters-OtherHeaderSetup">Other Header Setup</a>
 
 <a name="ptx2pdf-MacroSetupParameters-OtherHeaderSetup">
 
@@ -253,7 +254,7 @@ Literal text can also be included (e.g., to add dashes around a centered page nu
 
 </a>
 
-## <a name="ptx2pdf-MacroSetupParameters-OtherHeaderSetup"></a><a name="ptx2pdf-MacroSetupParameters-Other">Other</a>
+## <a name="ptx2pdf-MacroSetupParameters-Other">Other</a>
 
 <a name="ptx2pdf-MacroSetupParameters-Other">
 
@@ -261,7 +262,7 @@ Literal text can also be included (e.g., to add dashes around a centered page nu
 
 </a>
 
-## <a name="ptx2pdf-MacroSetupParameters-Other"></a><a name="ptx2pdf-MacroSetupParameters-Notes">Notes</a>
+## <a name="ptx2pdf-MacroSetupParameters-Notes">Notes</a>
 
 <a name="ptx2pdf-MacroSetupParameters-Notes">
 
@@ -276,13 +277,26 @@ Literal text can also be included (e.g., to add dashes around a centered page nu
 *   \ParagraphedNotes{```x```} – Format the note class as a single paragraph, with larger space between note items (specify f _or_ x)
 *   \NoteCallerWidth=```1.2ex``` - Adjust 'standard' width of a footnote-caller in notes area. A small amount of space is added to narrow callers, centering them in a space of this width, so that they and their note text align nicely in the footer. Wider callers take their natural size, without any padding. (default ```1.1ex```) (Control added 22 Sept. 2020)
 
+### End notes
+*   \NoteAtEnd{```f```} – To make the specified note class an endnote (default: only ```fe``` 'endnotes' are endnotes). 
+*   \notesEachBook```false``` – To place endnotes at the end of the entire volume rather than (default) the end of individual books.(default=true)
+*   \def\EndNoteRuleWidth{```0.5```} –  Fraction of column width to make the rule above automatically inserted endnotes (default =```0.5```)
+*   \def\EndNoteRuleHeight{```0.4```} – Fraction of _1pt_ to make the rule above automatically inserted endnotes (default=```0.4```)
+
+#### Custom end-note use
+*   \zplacenotes```x``` – Non-standard USFM marker to place any endnotes collected until now. E.g. If ```\f``` notes are endnotes, ```\zplacenotesf``` will place those notes at the specified place. 
+*   \zendnoterule – Non-standard USFM marker to unconditionally place the endnote rule at this place (for use before the above command)
+*   \zplaceallnotes – Non-standard USFM marker to place all endnotes (with preceding endnote rule if there are any endnotes).
+
+### Footnote rule control
 _For now_, if you want to change the appearance of (or remove) the footnote rule, redefine \def\footnoterule
 
 *   \def\footnoterule{} – No footnote rule will be applied if the definition is empty (as in this example)
+*   \def\zendnoterule{} – No endnote rule will be placed if the definition is empty (as in this example)
 
 </a>
 
-## <a name="ptx2pdf-MacroSetupParameters-Notes"></a><a name="ptx2pdf-MacroSetupParameters-Illustrations(Figures)">Illustrations (Figures)</a>
+## <a name="ptx2pdf-MacroSetupParameters-Illustrations(Figures)">Illustrations (Figures)</a>
 
 <a name="ptx2pdf-MacroSetupParameters-Illustrations(Figures)">
 
@@ -323,7 +337,7 @@ See <a href="thumbtabs.md">the feature-specific documentation</a> for a more ext
 * \TabsEnd=```10pt``` Distance between the lower edge of the lowermost thumb-tab and the bottom page margin (text area). Negative values may be given to extend tabs into the lower margins.
 
 
-## <a name="ptx2pdf-MacroSetupParameters-Illustrations(Figures)"></a><a name="ptx2pdf-MacroSetupParameters-Hooks">Hooks</a>
+## ><a name="ptx2pdf-MacroSetupParameters-Hooks">Hooks</a>
 
 <a name="ptx2pdf-MacroSetupParameters-Hooks">
 
@@ -349,8 +363,8 @@ This allows a verse number at the beginning of a paragraph to be typeset "hangin
 
 ## <a name=#ptx2pdf-MacroSetupParameters-IntroMarkers">
 Introductory markers (those starting i, such as `\ip`) are used for book introductions 
-and so often set in a full-width single column, even when the verse text is in
-dual columns. The code has assumed that this should always be the case.
+and are often set in a full-width single column, even when the verse text is in
+dual columns. The code has, until now, assumed that this should always be the case.
 However, some introductory markers have a dual role, and serve as bridging text
 or chapter introductions. In this use-case they should *not* trigger a swap to 
 single column mode.  In normal scripture, it is thus appropriate that -
@@ -360,8 +374,8 @@ single column mode should be prevented.
 A complication is that in a Paratext module, it is very possible that multiple 
 books appear in a given USFM file, and in this case it would appropriate that
 introductory markers exit from dual column mode, and return to single column
-mode.  The XeTeX macros are unable to decide on their own how the
-markers are being used. The following setup parameters will hopefully help.
+mode.  The XeTeX macros are unable to decide on their own how the markers are
+being used. The following setup parameters will hopefully help.
 
 * \introAmbigious{```iex```} –  The marker specified will not initiate any
   swapping between single or double columns (in either direction). This means
@@ -681,13 +695,6 @@ problematic ambiguous markers are no longer treated as ambiguous, (except for
 
 </a></div>
 
-<a name="ptx2pdf-MacroSetupParameters-Appendix:CommonOpenTypescripttags"></a></div>
-
-<a name="ptx2pdf-MacroSetupParameters-Appendix:CommonOpenTypescripttags"></a></div>
-
-<a name="ptx2pdf-MacroSetupParameters-Appendix:CommonOpenTypescripttags"></a></div>
-
-<a name="ptx2pdf-MacroSetupParameters-Appendix:CommonOpenTypescripttags"></a></div>
 
 <a name="ptx2pdf-MacroSetupParameters-Appendix:CommonOpenTypescripttags">
 <small>Updated on <abbr class="updated" title="2011-05-18T19:45:59.877Z">May 18, 2011</abbr> by <span class="author"><span class="vcard">Jeff Klassen</span> </span>(Version <span class="sites:revision">8</span>)</small>
@@ -695,7 +702,6 @@ problematic ambiguous markers are no longer treated as ambiguous, (except for
 * * *
 
 
-<div><a name="ptx2pdf-MacroSetupParameters-Appendix:CommonOpenTypescripttags">
 
 **Attachments (1)**
 

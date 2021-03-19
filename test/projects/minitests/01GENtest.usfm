@@ -1,15 +1,23 @@
 \id GEN Test file
-\h Hook test file
+\h Small footnote test file
 \c 1
 \s This is a title
 \p
-\v 1 This is normal text. There are 4 hook positions: before, start, end,
-after. I'm putting little NIV-style angle bracket markers around \beginadd T
-and d\endadd\ to show how close they ought to be when they get put in by the hooks.
-The sequence ought to be before..start..text..end..after.
+\v 1 This is normal text.  There should probably be some\f + \ft Needless\f* footnotes, since this is a test of footnotes.
+Distinctio ut quis et optio. Natus nobis quas aperiam et. Accusantium consequatur occaecati optio est eum.
+
+Enim quam perspiciatis eveniet. Est ut ratione nesciunt quo excepturi cum nemo quia. Ut ut repellendus officiis. Et voluptas temporibus rerum omnis commodi consequatur reprehenderit.
+
+Quam nostrum perspiciatis tenetur. Doloremque sed aut minus saepe. Et ea et aliquid quis eaque similique. Asperiores qui reiciendis aut porro earum tenetur. Enim aut eligendi magni in aut sunt. Incidunt quasi similique ex iste quia sint dolor quod.
+
+In eius iste blanditiis impedit qui rem repellendus eos. Mollitia delectus qui ad asperiores provident. Qui doloribus dicta maiores autem. Et necessitatibus quaerat voluptates. Saepe ut nemo quia praesentium asperiores molestias impedit. Voluptatum et velit qui nemo sint alias.
+\p And that was a new parargaph.\f + \fr 1:1 \ft This is a footnote quoting something <<\fq hello\ft >> goodbye\f* 
 \p
-And that was a new parargaph. \add This is in an add\add* this isn't.
-\v 2 Here in verse two  we look at hooks on paragraph breaks.
-\m  That's a class m paragraph break. Let's make the line very very very much longer Lorum Ipsum  blah blah blah
-\p And that was a p class paragraph break
-\p As was that.
+\v 2 Here in verse two we check\x + \xo :2 \xt Acts 17:11\x* some endnotes.\x + \xt Rev 20:14\x*
+\p
+\zendnoterule
+\zplacenotesx
+\p
+The first end-note\x + \xt But not the last\x* was placed above here.
+
+

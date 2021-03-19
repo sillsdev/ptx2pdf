@@ -199,11 +199,16 @@
         \x@\newb@x\csname endnote-#1\endcsname
         \x@\gdef\csname addt@endnote-#1\endcsname{\unvbox\csname endnote-#1\endcsname}%
         \x@\gdef\csname note-no-insert-#1\endcsname{\x@\afterassignment\csname addt@endnote-#1\endcsname\global\setbox\csname endnote-#1\endcsname\vbox}%
-        \x@\gdef\csname zplacenotes#1\endcsname{\unvbox\csname endnote-#1\endcsname}% Individual 
-        \x@\placendnotes\x@{\the\placendnotes\csname zplacenotes#1\endcsname}%
+        \x@\gdef\csname zplacenotes#1\endcsname{\unvbox\csname endnote-#1\endcsname}% Individual note placement
+        \x@\endn@teclasses\x@{\the\endn@teclasses \\{#1}}%
+        \x@\plac@ndnotes\x@{\the\plac@ndnotes\csname zplacenotes#1\endcsname}%
 }
 \let\newb@x=\newbox
-\newtoks\placendnotes
+\newtoks\endn@teclasses
+\newtoks\plac@ndnotes
+\plac@ndnotes{\endn@terule}
+\def\ch@ckendnotes#1{\x@\ifvoid\csname endnote-#1\endcsname\else\temptrue\fi}
+
 \newif\ifnotesEachBook
 \notesEachBooktrue
 \NoteAtEnd{fe}
@@ -311,6 +316,26 @@
     \vrule height 0.4pt width \dimen0}\kern-.4pt % the \hrule is .4pt high
     \kern0.5\AboveNoteSpace%This was commented out, without it the line was going through through some callers
 \everypar=\toks0}
+
+\def\EndNoteRuleWidth{0.5}
+\def\EndNoteRuleHeight{0.4}
+
+\def\endn@terule{
+  \tempfalse
+  \let\\=\ch@ckendnotes\the\endn@teclasses
+  \iftemp\zendnoterule\fi
+}
+\def\zendnoterule{{%
+    \toks0=\everypar\everypar={}\parskip=0pt\parindent=0pt\let\par=\endgraf\parfillskip=0pt%
+%  \noindent\hbox{\noindent\kern\columnshift\vbox{\hrule width \dimen0}}\par
+    \par
+    \vbox{\kern1.5\baselineskip
+      \hbox to \hsize{\hss\vrule width \EndNoteRuleWidth\hsize  height \EndNoteRuleHeight pt\hss}%
+      \kern-\EndNoteRuleHeight pt % 
+      \kern0.5\baselineskip}%
+    \everypar=\toks0 
+  }%
+}
 
 % determine if a given note class is to be paragraphed
 %+c_paragraphedNotes
