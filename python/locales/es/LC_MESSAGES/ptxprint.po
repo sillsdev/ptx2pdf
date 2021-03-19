@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ptxprint\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-19 14:23+0700\n"
-"PO-Revision-Date: 2021-03-19 07:24\n"
+"POT-Creation-Date: 2021-03-19 14:43+0700\n"
+"PO-Revision-Date: 2021-03-19 07:44\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -99,7 +99,7 @@ msgstr "No se puede establecer {} en el modelo"
 msgid "Printing busy"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:719 lib/ptxprint/runjob.py:181
+#: lib/ptxprint/gtkview.py:719 lib/ptxprint/runjob.py:187
 msgid "No books to print"
 msgstr ""
 
@@ -410,87 +410,87 @@ msgid "Sorry, there is no diagnostic help for this error.\n"
 "Try using Paratext's 'Run Basic Checks' to uncover any Marker errors."
 msgstr ""
 
-#: lib/ptxprint/runjob.py:165
+#: lib/ptxprint/runjob.py:168
 msgid "Illegal Project"
 msgstr ""
 
-#: lib/ptxprint/runjob.py:248 lib/ptxprint/runjob.py:250
+#: lib/ptxprint/runjob.py:258 lib/ptxprint/runjob.py:260
 msgid "Layout problems were encountered on page(s): "
 msgstr "Se encontraron problemas de diseño en la(s) página(s): "
 
-#: lib/ptxprint/runjob.py:249
+#: lib/ptxprint/runjob.py:259
 msgid "PDF was created BUT..."
 msgstr "El PDF fue creado PERO..."
 
-#: lib/ptxprint/runjob.py:251
+#: lib/ptxprint/runjob.py:261
 msgid "\n\n"
 "Try changing the PicList and/or AdjList settings to solve issues."
 msgstr "\n\n"
 "Intenta cambiar la configuración de PicList y/o AdjList para resolver los problemas."
 
-#: lib/ptxprint/runjob.py:252
+#: lib/ptxprint/runjob.py:262
 msgid "PTXprint [{}] - Warning!"
 msgstr "PTXprint [{}] - ¡Advertencia!"
 
-#: lib/ptxprint/runjob.py:257
+#: lib/ptxprint/runjob.py:267
 msgid "Failed to create: "
 msgstr "No se ha creado: "
 
-#: lib/ptxprint/runjob.py:262
+#: lib/ptxprint/runjob.py:272
 msgid "Rerun to fix: "
 msgstr "Vuelva a ejecutar para arreglar: "
 
-#: lib/ptxprint/runjob.py:429
+#: lib/ptxprint/runjob.py:439
 msgid "Failed to merge texts due to a Syntax Error:"
 msgstr "No se combinaron los textos debido a un Error de Sintaxis:"
 
-#: lib/ptxprint/runjob.py:430
+#: lib/ptxprint/runjob.py:440
 msgid "\n\n"
 "If original USFM text is correct, then check if PrintDraftChanges.txt has caused the error(s)."
 msgstr "\n\n"
 "Si el texto original del USFM es correcto, verifique si el archivo PrintDraftChanges.txt ha causado el error."
 
-#: lib/ptxprint/runjob.py:432
+#: lib/ptxprint/runjob.py:442
 msgid "PTXprint [{}] - Diglot Merge Error!"
 msgstr "PTXprint [{}] - Error de Combinación Bilingüe!"
 
-#: lib/ptxprint/runjob.py:528
+#: lib/ptxprint/runjob.py:538
 msgid "ToC pages"
 msgstr "Páginas de la ToC"
 
-#: lib/ptxprint/runjob.py:530
+#: lib/ptxprint/runjob.py:540
 msgid "Rerunning because the Table of Contents was updated"
 msgstr "Repitiendo porque actualizó la Tabla de Contenido"
 
-#: lib/ptxprint/runjob.py:539
+#: lib/ptxprint/runjob.py:549
 msgid "image copyrights"
 msgstr "derechos de autor de las imágenes"
 
-#: lib/ptxprint/runjob.py:542
+#: lib/ptxprint/runjob.py:552
 msgid "chapter numbers"
 msgstr "números de capítulo"
 
-#: lib/ptxprint/runjob.py:544
+#: lib/ptxprint/runjob.py:554
 msgid "Rerunning because inline chapter numbers moved"
 msgstr "Repitiendo porque los números de los capítulos en línea se movieron"
 
-#: lib/ptxprint/runjob.py:580
+#: lib/ptxprint/runjob.py:590
 msgid "Warning: Could not locate decorative PDF(s):"
 msgstr "Advertencia: No se puede localizar los PDF decorativos:"
 
-#: lib/ptxprint/runjob.py:703
+#: lib/ptxprint/runjob.py:713
 msgid "Error: Unable to convert/resize image!\n"
 "Image skipped:"
 msgstr "Error: ¡No se puede convertir/transformar la imagen!\n"
 "Imagen omitida:"
 
-#: lib/ptxprint/runjob.py:709
+#: lib/ptxprint/runjob.py:719
 msgid "Error: Unable to copy {}\n"
 "       image to {} in tmpPics folder"
 msgstr "Error: No se puede copiar {}\n"
 "       imagen a {} en la carpeta tmpPics"
 
-#: lib/ptxprint/runjob.py:741
+#: lib/ptxprint/runjob.py:751
 msgid "Warning: Could not delete\n"
 "temporary file(s) or folder(s):"
 msgstr "Advertencia: No se pudo borrar\n"
@@ -500,7 +500,11 @@ msgstr "Advertencia: No se pudo borrar\n"
 msgid "Syllable line breaking"
 msgstr "Rompiendo línea sílabas"
 
-#: lib/ptxprint/texmodel.py:1222
+#: lib/ptxprint/texmodel.py:490
+msgid "Missing font ({})"
+msgstr ""
+
+#: lib/ptxprint/texmodel.py:1230
 msgid "\\rem Warning: No copyright statement found for: {} on pages {}"
 msgstr "\\rem Advertencia: No se ha encontrado una declaración de derechos de autor para: {} en las páginas {}"
 

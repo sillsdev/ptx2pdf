@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ptxprint\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-19 14:23+0700\n"
-"PO-Revision-Date: 2021-03-19 07:24\n"
+"POT-Creation-Date: 2021-03-19 14:43+0700\n"
+"PO-Revision-Date: 2021-03-19 07:44\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -97,7 +97,7 @@ msgstr "无法在模型中设置 {}"
 msgid "Printing busy"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:719 lib/ptxprint/runjob.py:181
+#: lib/ptxprint/gtkview.py:719 lib/ptxprint/runjob.py:187
 msgid "No books to print"
 msgstr ""
 
@@ -399,87 +399,87 @@ msgid "Sorry, there is no diagnostic help for this error.\n"
 "Try using Paratext's 'Run Basic Checks' to uncover any Marker errors."
 msgstr ""
 
-#: lib/ptxprint/runjob.py:165
+#: lib/ptxprint/runjob.py:168
 msgid "Illegal Project"
 msgstr ""
 
-#: lib/ptxprint/runjob.py:248 lib/ptxprint/runjob.py:250
+#: lib/ptxprint/runjob.py:258 lib/ptxprint/runjob.py:260
 msgid "Layout problems were encountered on page(s): "
 msgstr "页面上遇到了布局问题： (s): "
 
-#: lib/ptxprint/runjob.py:249
+#: lib/ptxprint/runjob.py:259
 msgid "PDF was created BUT..."
 msgstr "PDF 已创建 BUT..."
 
-#: lib/ptxprint/runjob.py:251
+#: lib/ptxprint/runjob.py:261
 msgid "\n\n"
 "Try changing the PicList and/or AdjList settings to solve issues."
 msgstr "\n\n"
 "尝试更改 PicList 和/或AdjList 设置来解决问题。"
 
-#: lib/ptxprint/runjob.py:252
+#: lib/ptxprint/runjob.py:262
 msgid "PTXprint [{}] - Warning!"
 msgstr "PTXprint [{}] - 警告 ！"
 
-#: lib/ptxprint/runjob.py:257
+#: lib/ptxprint/runjob.py:267
 msgid "Failed to create: "
 msgstr "创建失败： "
 
-#: lib/ptxprint/runjob.py:262
+#: lib/ptxprint/runjob.py:272
 msgid "Rerun to fix: "
 msgstr ""
 
-#: lib/ptxprint/runjob.py:429
+#: lib/ptxprint/runjob.py:439
 msgid "Failed to merge texts due to a Syntax Error:"
 msgstr "由于语法错误，合并文本失败："
 
-#: lib/ptxprint/runjob.py:430
+#: lib/ptxprint/runjob.py:440
 msgid "\n\n"
 "If original USFM text is correct, then check if PrintDraftChanges.txt has caused the error(s)."
 msgstr "\n\n"
 "如果原始的 USFM 文本是正确的，请检查PrintDraftChanges.txt 是否造成了错误(s)。"
 
-#: lib/ptxprint/runjob.py:432
+#: lib/ptxprint/runjob.py:442
 msgid "PTXprint [{}] - Diglot Merge Error!"
 msgstr "PTXprint [{}] - 数字合并错误！"
 
-#: lib/ptxprint/runjob.py:528
+#: lib/ptxprint/runjob.py:538
 msgid "ToC pages"
 msgstr ""
 
-#: lib/ptxprint/runjob.py:530
+#: lib/ptxprint/runjob.py:540
 msgid "Rerunning because the Table of Contents was updated"
 msgstr "因为目录已更新而重新唤醒。"
 
-#: lib/ptxprint/runjob.py:539
+#: lib/ptxprint/runjob.py:549
 msgid "image copyrights"
 msgstr ""
 
-#: lib/ptxprint/runjob.py:542
+#: lib/ptxprint/runjob.py:552
 msgid "chapter numbers"
 msgstr ""
 
-#: lib/ptxprint/runjob.py:544
+#: lib/ptxprint/runjob.py:554
 msgid "Rerunning because inline chapter numbers moved"
 msgstr "因为内联章节数字移动而重新唤醒。"
 
-#: lib/ptxprint/runjob.py:580
+#: lib/ptxprint/runjob.py:590
 msgid "Warning: Could not locate decorative PDF(s):"
 msgstr "警告：无法定位装饰的 PDF(s):"
 
-#: lib/ptxprint/runjob.py:703
+#: lib/ptxprint/runjob.py:713
 msgid "Error: Unable to convert/resize image!\n"
 "Image skipped:"
 msgstr "错误：无法转换/调整图像大小！\n"
 "图像跳过："
 
-#: lib/ptxprint/runjob.py:709
+#: lib/ptxprint/runjob.py:719
 msgid "Error: Unable to copy {}\n"
 "       image to {} in tmpPics folder"
 msgstr "错误：无法将 {}\n"
 "       图像复制到 tmpPics 文件夹中 {}"
 
-#: lib/ptxprint/runjob.py:741
+#: lib/ptxprint/runjob.py:751
 msgid "Warning: Could not delete\n"
 "temporary file(s) or folder(s):"
 msgstr "警告：无法删除\n"
@@ -489,7 +489,11 @@ msgstr "警告：无法删除\n"
 msgid "Syllable line breaking"
 msgstr "可折叠线条"
 
-#: lib/ptxprint/texmodel.py:1222
+#: lib/ptxprint/texmodel.py:490
+msgid "Missing font ({})"
+msgstr ""
+
+#: lib/ptxprint/texmodel.py:1230
 msgid "\\rem Warning: No copyright statement found for: {} on pages {}"
 msgstr ""
 
