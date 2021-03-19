@@ -347,6 +347,40 @@ A useful hook is the command to "hang" verse numbers into the paragraph indent, 
 
 This allows a verse number at the beginning of a paragraph to be typeset "hanging" into the paragraph indent, so that the text itself starts at the usual indent position. This is often used with poetic sections (\q# markers), so that the actual text stays neatly aligned for lines both with and without verse numbers.
 
+## <a name=#ptx2pdf-MacroSetupParameters-IntroMarkers">
+Introductory markers (those starting i, such as `\ip`) are used for book introductions 
+and so often set in a full-width single column, even when the verse text is in
+dual columns. The code has assumed that this should always be the case.
+However, some introductory markers have a dual role, and serve as bridging text
+or chapter introductions. In this use-case they should *not* trigger a swap to 
+single column mode.  In normal scripture, it is thus appropriate that -
+after the first chapter mark has been met - this swapping between dual and
+single column mode should be prevented.
+
+A complication is that in a Paratext module, it is very possible that multiple 
+books appear in a given USFM file, and in this case it would appropriate that
+introductory markers exit from dual column mode, and return to single column
+mode.  The XeTeX macros are unable to decide on their own how the
+markers are being used. The following setup parameters will hopefully help.
+
+* \introAmbigious{```iex```} –  The marker specified will not initiate any
+  swapping between single or double columns (in either direction). This means
+  it should not ever be the first marker in a book introduction. (default: only
+  `\iex` has been declared ambiguous, as it is sometimes used for bridging
+  material).
+ 
+* ```\ReenterIntroOKtrue``` – old behaviour, a marker starting i (introductory
+marker) will start single-column text, unless it's been declared ambiguous like
+\iex was as a stop-gap measure (this approach presents its own problems -
+ambiguous markers will not start single-column text at the start of a book
+either).
+
+* ```\ReenterIntroOKfalse``` – chapter numbers set an internal flag to true.
+Once this flag is set, then all markers are treated as body-text markers. The
+problematic ambiguous markers are no longer treated as ambiguous, (except for
+```\tr```). The internal flag is set to false at the start of a book.
+
+
 * * *
 
 <a name="ptx2pdf-MacroSetupParameters-scriptTags"></a>
