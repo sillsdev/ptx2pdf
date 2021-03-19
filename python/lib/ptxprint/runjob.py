@@ -155,6 +155,9 @@ class RunJob:
 
     def fail(self, txt):
         self.printer.set("l_statusLine", txt)
+        self.printer.finished()
+        self.busy = False
+        unlockme()
 
     def doit(self, noview=False):
         if not lockme(self):
@@ -176,7 +179,10 @@ class RunJob:
         os.makedirs(self.tmpdir, exist_ok=True)
         jobs = self.printer.getBooks(files=True)
 
-        print(f"{jobs=}")
+        reasons = info.prePrintChecks()
+        if len(reasons):
+            self.fail(", ".join(reasons))
+            return
         if not len(jobs):
             self.fail(_("No books to print"))
             return
@@ -203,6 +209,10 @@ class RunJob:
             digprjdir = os.path.join(self.args.paratext, digprjid)
             digptsettings = ParatextSettings(self.args.paratext, digprjid)
             diginfo = TexModel(self.printer.diglotView, self.args.paratext, digptsettings, digprjid, inArchive=self.inArchive)
+            reasons = diginfo.prePrintChecks()
+            if len(reasons):
+                self.fail(", ".join(reasons) + " in diglot secondary")
+                return
             digbooks = self.printer.diglotView.getAllBooks()
             badbooks = set()
             for j in joblist:

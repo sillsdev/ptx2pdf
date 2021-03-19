@@ -483,6 +483,14 @@ class TexModel:
         else:
             return True
 
+    def prePrintChecks(self):
+        reasons = []
+        for a in ('regular', 'bold', 'italic', 'bolditalic'):
+            if not self.dict['document/font{}'.format(a)]:
+                reasons.append(_("Missing font ({})").format(a))
+            break
+        return reasons
+
     def processHdrFtr(self, printer):
         """ Update model headers from model UI read values """
         diglot = True if self.dict["document/ifdiglot"] == "" else False

@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ptxprint\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-18 10:36+0700\n"
-"PO-Revision-Date: 2021-03-18 03:37\n"
+"POT-Creation-Date: 2021-03-19 14:23+0700\n"
+"PO-Revision-Date: 2021-03-19 07:24\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -95,7 +95,15 @@ msgstr "No se puede obtener {} en el modelo"
 msgid "Can't set {} in the model"
 msgstr "No se puede establecer {} en el modelo"
 
-#: lib/ptxprint/gtkview.py:740
+#: lib/ptxprint/gtkview.py:715
+msgid "Printing busy"
+msgstr ""
+
+#: lib/ptxprint/gtkview.py:719 lib/ptxprint/runjob.py:181
+msgid "No books to print"
+msgstr ""
+
+#: lib/ptxprint/gtkview.py:742
 msgid "                   >>> PLEASE CLOSE the PDF <<<                     \n\n"
 "{}\n\n"
 " Or use a different PDF viewer which will                              \n"
@@ -109,67 +117,67 @@ msgstr "                   >>> POR FAVOR CIERRE el PDF <<<<                     
 " Vea 'Enlaces' en la pestaña Vista para más detalles.                            \n\n"
 "                        ¿Quieres intentarlo de nuevo?"
 
-#: lib/ptxprint/gtkview.py:745
+#: lib/ptxprint/gtkview.py:747
 msgid "The old PDF file is open!"
 msgstr "¡El antiguo archivo PDF está abierto!"
 
-#: lib/ptxprint/gtkview.py:810
+#: lib/ptxprint/gtkview.py:812
 msgid "Internal error occurred, trying to delete a directory tree"
 msgstr "Se produjo un error interno, al tratar de eliminar un árbol de directorios"
 
-#: lib/ptxprint/gtkview.py:810 lib/ptxprint/gtkview.py:815
+#: lib/ptxprint/gtkview.py:812 lib/ptxprint/gtkview.py:817
 msgid "Folder: "
 msgstr "Carpeta: "
 
-#: lib/ptxprint/gtkview.py:815
+#: lib/ptxprint/gtkview.py:817
 msgid "Can't delete that configuration from disk"
 msgstr "No se puede borrar esa configuración del disco"
 
-#: lib/ptxprint/gtkview.py:901 lib/ptxprint/ptxprint.glade:12358
+#: lib/ptxprint/gtkview.py:903 lib/ptxprint/ptxprint.glade:12358
 msgid "Pictures"
 msgstr "Ilustraciones"
 
-#: lib/ptxprint/gtkview.py:904 lib/ptxprint/ptxprint.glade:12757
+#: lib/ptxprint/gtkview.py:906 lib/ptxprint/ptxprint.glade:12757
 msgid "Diglot"
 msgstr "Proyecto Bilingüe"
 
-#: lib/ptxprint/gtkview.py:908 lib/ptxprint/gtkview.py:909
+#: lib/ptxprint/gtkview.py:910 lib/ptxprint/gtkview.py:911
 msgid "Tabs"
 msgstr "Pestañas"
 
-#: lib/ptxprint/gtkview.py:910 lib/ptxprint/gtkview.py:911
+#: lib/ptxprint/gtkview.py:912 lib/ptxprint/gtkview.py:913
 msgid "Borders"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:922 lib/ptxprint/ptxprint.glade:16189
+#: lib/ptxprint/gtkview.py:924 lib/ptxprint/ptxprint.glade:16189
 msgid "Advanced"
 msgstr "Avanzado"
 
-#: lib/ptxprint/gtkview.py:1026 lib/ptxprint/ptxprint.glade:4137
+#: lib/ptxprint/gtkview.py:1028 lib/ptxprint/ptxprint.glade:4137
 msgid "Lock"
 msgstr "Bloquear"
 
-#: lib/ptxprint/gtkview.py:1029
+#: lib/ptxprint/gtkview.py:1031
 msgid "Unlock"
 msgstr "Desbloquear"
 
-#: lib/ptxprint/gtkview.py:1184
+#: lib/ptxprint/gtkview.py:1186
 msgid " PicLists have been renamed and moved!"
 msgstr " ¡Las listas de fotos han sido renombradas y movidas!"
 
-#: lib/ptxprint/gtkview.py:1185
+#: lib/ptxprint/gtkview.py:1187
 msgid " Look on the <Pictures> tab for Details & Checklist along the top row."
 msgstr " Busca en la pestaña <Pictures> detalles y lista de control a lo largo de la fila superior."
 
-#: lib/ptxprint/gtkview.py:1186
+#: lib/ptxprint/gtkview.py:1188
 msgid " A tool to help create Front Matter (the FRT book) may show up here in future."
 msgstr " Una herramienta para ayudar a crear Front Matter (el libro del FRT) puede aparecer aquí en el futuro."
 
-#: lib/ptxprint/gtkview.py:1216
+#: lib/ptxprint/gtkview.py:1218
 msgid " Use the 'Advanced' tab to select which settings you want to view or edit."
 msgstr " Utiliza la pestaña 'Avanzado' para seleccionar los ajustes que deseas ver o editar."
 
-#: lib/ptxprint/gtkview.py:1231
+#: lib/ptxprint/gtkview.py:1233
 msgid "\n\n"
 "-------------------------------------                                            \n"
 "[File has been truncated for display]                                            \n"
@@ -179,7 +187,7 @@ msgstr "\n\n"
 "[El archivo ha sido truncado para su visualización]                                            \n"
 "Haz clic en el botón Ver/Editar... para ver más."
 
-#: lib/ptxprint/gtkview.py:1238
+#: lib/ptxprint/gtkview.py:1240
 msgid "\n"
 "This file doesn't exist yet.\n\n"
 "Try clicking...                                                \n"
@@ -191,27 +199,27 @@ msgstr "\n"
 "   * el botón 'Generar'                                                \n"
 "   * el botón 'Imprimir' para crear primero el PDF"
 
-#: lib/ptxprint/gtkview.py:1468
+#: lib/ptxprint/gtkview.py:1470
 msgid "Remove Intermediate Files and Logs?"
 msgstr "¿Quitar los Archivos y Registros Intermedios?"
 
-#: lib/ptxprint/gtkview.py:1469
+#: lib/ptxprint/gtkview.py:1471
 msgid "Are you sure you want to delete\n"
 "ALL the temporary PTXprint files?"
 msgstr "¿Estás seguro de que quieres borrar\n"
 "Todos los archivos temporales de PTXprint?"
 
-#: lib/ptxprint/gtkview.py:1496
+#: lib/ptxprint/gtkview.py:1498
 msgid "Warning: Could not delete some file(s) or folders(s):"
 msgstr "Advertencia: No se pueden borrar algunos archivos o carpetas:"
 
-#: lib/ptxprint/gtkview.py:1858
+#: lib/ptxprint/gtkview.py:1860
 msgid "'Enable Colored Text' has now been turned on.\n"
 "See Fonts+Script tab for details."
 msgstr "'Habilitar Texto Coloreado' ahora ha sido activado.\n"
 "Vea la pestaña de Fuentes+Script para más detalles."
 
-#: lib/ptxprint/gtkview.py:2031
+#: lib/ptxprint/gtkview.py:2033
 msgid "\n"
 "This file doesn't exist yet!\n\n"
 "Edit here and Click 'Save' to create it."
@@ -219,85 +227,85 @@ msgstr "\n"
 "¡Este archivo no existe todavía!\n\n"
 "Editar aquí y haz clic en 'Guardar' para crearlo."
 
-#: lib/ptxprint/gtkview.py:2073
+#: lib/ptxprint/gtkview.py:2075
 msgid "% This is the .tex file specific for the {} project used by PTXprint.\n"
 "% Saved Configuration name: {}\n"
 msgstr "% Este es el archivo .tex específico para el proyecto {} usado por PTXprint.\n"
 "% Nombre de configuración guardada: {}\n"
 
-#: lib/ptxprint/gtkview.py:2080
+#: lib/ptxprint/gtkview.py:2082
 msgid "% This is the preprocessing .tex file specific for the {} project used by PTXprint.\n"
 "% Saved Configuration name: {}\n"
 msgstr "% Este es el archivo .tex de preprocesamiento específico para el proyecto {} utilizado por PTXprint.\n"
 "% Nombre de configuración guardado: {}\n"
 
-#: lib/ptxprint/gtkview.py:2125
+#: lib/ptxprint/gtkview.py:2127
 msgid "Select the location and name for the Archive file"
 msgstr "Seleccione la ubicación y el nombre para el Archivo"
 
-#: lib/ptxprint/gtkview.py:2176
+#: lib/ptxprint/gtkview.py:2178
 msgid "Select the folder containing image files"
 msgstr "Seleccione la carpeta que contiene los archivos de imagen"
 
-#: lib/ptxprint/gtkview.py:2211
+#: lib/ptxprint/gtkview.py:2213
 msgid "Select one or more PDF(s) for FRONT matter"
 msgstr "Seleccione uno o más PDF(s) para las Páginas Iniciales"
 
-#: lib/ptxprint/gtkview.py:2215
+#: lib/ptxprint/gtkview.py:2217
 msgid "Select one or more PDF(s) for BACK matter"
 msgstr "Seleccione uno o más PDF(s) para las Páginas Finales"
 
-#: lib/ptxprint/gtkview.py:2219
+#: lib/ptxprint/gtkview.py:2221
 msgid "Select Watermark PDF file"
 msgstr "Seleccione el PDF para la Marca de Agua"
 
-#: lib/ptxprint/gtkview.py:2224
+#: lib/ptxprint/gtkview.py:2226
 msgid "Select Page Border PDF file"
 msgstr "Seleccione el PDF para el Borde de Página"
 
-#: lib/ptxprint/gtkview.py:2229
+#: lib/ptxprint/gtkview.py:2231
 msgid "Select Section Header PDF file"
 msgstr "Seleccione el PDF para el Encabezado de Sección"
 
-#: lib/ptxprint/gtkview.py:2234
+#: lib/ptxprint/gtkview.py:2236
 msgid "Select End of Book PDF file"
 msgstr "Seleccione el PDF para el Fin de Libro"
 
-#: lib/ptxprint/gtkview.py:2239
+#: lib/ptxprint/gtkview.py:2241
 msgid "Select Verse Decorator PDF file"
 msgstr "Seleccione el PDF para el Decorador de Versículo"
 
-#: lib/ptxprint/gtkview.py:2344
+#: lib/ptxprint/gtkview.py:2346
 msgid "Switch to Other\n"
 "Diglot Project"
 msgstr "Cambiar a otro\n"
 "Proyecto Bilingüe"
 
-#: lib/ptxprint/gtkview.py:2354
+#: lib/ptxprint/gtkview.py:2356
 msgid "Save & Return to\n"
 "Diglot Project"
 msgstr "Guardar y volver \n"
 "al proyecto Bilingüe"
 
-#: lib/ptxprint/gtkview.py:2401
+#: lib/ptxprint/gtkview.py:2403
 msgid "FYI: The Regular font already supports all the characters in the text."
 msgstr "Para tu información: La Fuente Regular ya soporta todos los caracteres del texto."
 
-#: lib/ptxprint/gtkview.py:2402
+#: lib/ptxprint/gtkview.py:2404
 msgid "A fallback font is not required so\n"
 "the 'Use Fallback Font' option will be disabled."
 msgstr "No se requiere una fuente alternativa, así que...\n"
 "la opción 'Usar Fuente Alternativa' estará desactivada."
 
-#: lib/ptxprint/gtkview.py:2651
+#: lib/ptxprint/gtkview.py:2653
 msgid "Choose Image"
 msgstr "Elegir imagen"
 
-#: lib/ptxprint/gtkview.py:2760
+#: lib/ptxprint/gtkview.py:2761
 msgid "Unsupported Locale"
 msgstr "Localidad no admitida"
 
-#: lib/ptxprint/gtkview.py:2761
+#: lib/ptxprint/gtkview.py:2762
 msgid "This locale is not supported on your system, you may need to install it"
 msgstr "Esta configuración regional no es compatible con su sistema, es posible que tenga que instalarla"
 
@@ -402,83 +410,87 @@ msgid "Sorry, there is no diagnostic help for this error.\n"
 "Try using Paratext's 'Run Basic Checks' to uncover any Marker errors."
 msgstr ""
 
-#: lib/ptxprint/runjob.py:238 lib/ptxprint/runjob.py:240
+#: lib/ptxprint/runjob.py:165
+msgid "Illegal Project"
+msgstr ""
+
+#: lib/ptxprint/runjob.py:248 lib/ptxprint/runjob.py:250
 msgid "Layout problems were encountered on page(s): "
 msgstr "Se encontraron problemas de diseño en la(s) página(s): "
 
-#: lib/ptxprint/runjob.py:239
+#: lib/ptxprint/runjob.py:249
 msgid "PDF was created BUT..."
 msgstr "El PDF fue creado PERO..."
 
-#: lib/ptxprint/runjob.py:241
+#: lib/ptxprint/runjob.py:251
 msgid "\n\n"
 "Try changing the PicList and/or AdjList settings to solve issues."
 msgstr "\n\n"
 "Intenta cambiar la configuración de PicList y/o AdjList para resolver los problemas."
 
-#: lib/ptxprint/runjob.py:242
+#: lib/ptxprint/runjob.py:252
 msgid "PTXprint [{}] - Warning!"
 msgstr "PTXprint [{}] - ¡Advertencia!"
 
-#: lib/ptxprint/runjob.py:247
+#: lib/ptxprint/runjob.py:257
 msgid "Failed to create: "
 msgstr "No se ha creado: "
 
-#: lib/ptxprint/runjob.py:252
+#: lib/ptxprint/runjob.py:262
 msgid "Rerun to fix: "
 msgstr "Vuelva a ejecutar para arreglar: "
 
-#: lib/ptxprint/runjob.py:419
+#: lib/ptxprint/runjob.py:429
 msgid "Failed to merge texts due to a Syntax Error:"
 msgstr "No se combinaron los textos debido a un Error de Sintaxis:"
 
-#: lib/ptxprint/runjob.py:420
+#: lib/ptxprint/runjob.py:430
 msgid "\n\n"
 "If original USFM text is correct, then check if PrintDraftChanges.txt has caused the error(s)."
 msgstr "\n\n"
 "Si el texto original del USFM es correcto, verifique si el archivo PrintDraftChanges.txt ha causado el error."
 
-#: lib/ptxprint/runjob.py:422
+#: lib/ptxprint/runjob.py:432
 msgid "PTXprint [{}] - Diglot Merge Error!"
 msgstr "PTXprint [{}] - Error de Combinación Bilingüe!"
 
-#: lib/ptxprint/runjob.py:519
+#: lib/ptxprint/runjob.py:528
 msgid "ToC pages"
 msgstr "Páginas de la ToC"
 
-#: lib/ptxprint/runjob.py:521
+#: lib/ptxprint/runjob.py:530
 msgid "Rerunning because the Table of Contents was updated"
 msgstr "Repitiendo porque actualizó la Tabla de Contenido"
 
-#: lib/ptxprint/runjob.py:530
+#: lib/ptxprint/runjob.py:539
 msgid "image copyrights"
 msgstr "derechos de autor de las imágenes"
 
-#: lib/ptxprint/runjob.py:533
+#: lib/ptxprint/runjob.py:542
 msgid "chapter numbers"
 msgstr "números de capítulo"
 
-#: lib/ptxprint/runjob.py:535
+#: lib/ptxprint/runjob.py:544
 msgid "Rerunning because inline chapter numbers moved"
 msgstr "Repitiendo porque los números de los capítulos en línea se movieron"
 
-#: lib/ptxprint/runjob.py:571
+#: lib/ptxprint/runjob.py:580
 msgid "Warning: Could not locate decorative PDF(s):"
 msgstr "Advertencia: No se puede localizar los PDF decorativos:"
 
-#: lib/ptxprint/runjob.py:694
+#: lib/ptxprint/runjob.py:703
 msgid "Error: Unable to convert/resize image!\n"
 "Image skipped:"
 msgstr "Error: ¡No se puede convertir/transformar la imagen!\n"
 "Imagen omitida:"
 
-#: lib/ptxprint/runjob.py:700
+#: lib/ptxprint/runjob.py:709
 msgid "Error: Unable to copy {}\n"
 "       image to {} in tmpPics folder"
 msgstr "Error: No se puede copiar {}\n"
 "       imagen a {} en la carpeta tmpPics"
 
-#: lib/ptxprint/runjob.py:732
+#: lib/ptxprint/runjob.py:741
 msgid "Warning: Could not delete\n"
 "temporary file(s) or folder(s):"
 msgstr "Advertencia: No se pudo borrar\n"
@@ -488,7 +500,7 @@ msgstr "Advertencia: No se pudo borrar\n"
 msgid "Syllable line breaking"
 msgstr "Rompiendo línea sílabas"
 
-#: lib/ptxprint/texmodel.py:1221
+#: lib/ptxprint/texmodel.py:1222
 msgid "\\rem Warning: No copyright statement found for: {} on pages {}"
 msgstr "\\rem Advertencia: No se ha encontrado una declaración de derechos de autor para: {} en las páginas {}"
 
@@ -528,102 +540,102 @@ msgstr "Fecha (AAAA-MM-DD)"
 msgid "-empty-"
 msgstr "-vacío-"
 
-#: lib/ptxprint/view.py:431
+#: lib/ptxprint/view.py:433
 msgid "PTXprint {} - Bible Layout for Everyone!"
 msgstr ""
 
-#: lib/ptxprint/view.py:444
+#: lib/ptxprint/view.py:446
 msgid "No book selected!"
 msgstr "¡No se ha seleccionado ningún libro!"
 
-#: lib/ptxprint/view.py:464
+#: lib/ptxprint/view.py:466
 msgid "Json parsing error in {}"
 msgstr "Error de análisis Json en {}"
 
-#: lib/ptxprint/view.py:465
+#: lib/ptxprint/view.py:467
 msgid "{} at line {} col {}"
 msgstr "{} en la línea {} col {}"
 
-#: lib/ptxprint/view.py:812
+#: lib/ptxprint/view.py:808
 msgid "No Secondary Project Set"
 msgstr "Proyecto Secundario No Configurado"
 
-#: lib/ptxprint/view.py:812
+#: lib/ptxprint/view.py:808
 msgid "In order to generate an AdjList for a diglot, the \n"
 "Secondary project must be set on the Diglot tab."
 msgstr ""
 
-#: lib/ptxprint/view.py:822
+#: lib/ptxprint/view.py:818
 msgid "One or more Paragraph Adjust file(s) already exist!"
 msgstr "¡Ya existen uno o más archivos de Ajuste de Párrafo!"
 
-#: lib/ptxprint/view.py:823
+#: lib/ptxprint/view.py:819
 msgid "\n\n"
 "Do you want to OVERWRITE the above-listed file(s)?"
 msgstr "\n\n"
 "¿Quieres sobrescribir los archivos de la lista anterior?"
 
-#: lib/ptxprint/view.py:874
+#: lib/ptxprint/view.py:870
 msgid "Failed to Generate Hyphenation List"
 msgstr "No se generó la Lista de Guiones"
 
-#: lib/ptxprint/view.py:875
+#: lib/ptxprint/view.py:871
 msgid "{} Paratext Project's Hyphenation file not found:\n"
 "{}"
 msgstr "{} No se ha encontrado el archivo de Guiones del Proyecto en Paratext:\n"
 "{}"
 
-#: lib/ptxprint/view.py:916
+#: lib/ptxprint/view.py:912
 msgid "Hyphenation List Generated"
 msgstr "Se generó la Lista de Guiones"
 
-#: lib/ptxprint/view.py:917
+#: lib/ptxprint/view.py:913
 msgid "{} hyphenated words were gathered\n"
 "from Paratext's Hyphenation Word List."
 msgstr "{} se recopilaron palabras con guión\n"
 "de la Lista de Palabras con Guión en Paratext."
 
-#: lib/ptxprint/view.py:919
+#: lib/ptxprint/view.py:915
 msgid "\n\n"
 "Note for Indic languages that {} words containing ZWJ"
 msgstr "\n\n"
 "Nota para los idiomas índicos que {} palabras que contienen ZWJ"
 
-#: lib/ptxprint/view.py:920
+#: lib/ptxprint/view.py:916
 msgid "\n"
 "and ZWNJ characters have been left off the hyphenation list."
 msgstr "\n"
 "y los caracteres ZWNJ se han dejado fuera de la lista de guiones."
 
-#: lib/ptxprint/view.py:923
+#: lib/ptxprint/view.py:919
 msgid "Hyphenation List was NOT Generated"
 msgstr "NO se generó Lista de Guiones"
 
-#: lib/ptxprint/view.py:924
+#: lib/ptxprint/view.py:920
 msgid "No valid words were found in Paratext's Hyphenation List"
 msgstr "No se encontraron palabras válidas de la Lista de Guiones en Paratext"
 
-#: lib/ptxprint/view.py:967
+#: lib/ptxprint/view.py:963
 msgid "The Fallback Font needs to be something other than the Regular Font."
 msgstr "La Fuente Alterna tiene que ser diferente que la Fuente Normal."
 
-#: lib/ptxprint/view.py:968 lib/ptxprint/view.py:976
+#: lib/ptxprint/view.py:964 lib/ptxprint/view.py:972
 msgid "Please select a different Font."
 msgstr "Por favor, seleccione una Fuente diferente."
 
-#: lib/ptxprint/view.py:975
+#: lib/ptxprint/view.py:971
 msgid "The Fallback Font just selected does NOT support all the missing characters listed."
 msgstr "La Fuente Alterna que se acaba de seleccionar NO soporta todos los caracteres que faltan en la lista."
 
-#: lib/ptxprint/view.py:1170
+#: lib/ptxprint/view.py:1166
 msgid "No Config found for Diglot"
 msgstr ""
 
-#: lib/ptxprint/view.py:1183
+#: lib/ptxprint/view.py:1179
 msgid "Error: Cannot create Archive!"
 msgstr "Error: ¡No se puede crear el archivo!"
 
-#: lib/ptxprint/view.py:1183
+#: lib/ptxprint/view.py:1179
 msgid "The ZIP file seems to be open in another program."
 msgstr ""
 
