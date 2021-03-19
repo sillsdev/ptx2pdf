@@ -219,16 +219,16 @@
           }%
         \x@\gdef\csname note-no-insert-#1\endcsname{\x@\afterassignment\csname addt@endnote-#1\endcsname\global\setbox\csname endnote-#1\endcsname\vbox}%
         \x@\gdef\csname zplacenotes#1\endcsname{\dimen0=\prevdepth%
-          \showbox\csname endnote-#1\endcsname
+          %\showbox\csname endnote-#1\endcsname
           \checkp@ranotes{#1}%
           \ifp@ranotes
             \ifdim \dimen0>0pt\kern-\dimen0\fi
             \maken@tepara{\csname endnote-#1\endcsname}{#1}%
           \else 
             \s@tbaseline{#1}%
-            {\x@\showbox\csname endnote-#1\endcsname
+            {%\x@\showbox\csname endnote-#1\endcsname
             \setbox0=\vbox{\unvbox\csname endnote-#1\endcsname}
-            \showbox0
+            %\showbox0
             \unvbox0}%
           \fi
           }% Individual note placement
