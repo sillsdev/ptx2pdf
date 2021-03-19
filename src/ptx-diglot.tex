@@ -1177,6 +1177,7 @@
       \hbox to \textwidth{\ifVisTrace\llap{\copy0}\fi%
         \hbox to\columnshift{}%
         \hbox to\columnLwidth{\copy\Lbox\hss}\makediglotgutter{\dimen7}{\dimen8}{\dimen9}%
+        \hbox to\columnshift{}%
         \hbox to\columnRwidth{\copy\Rbox\hss}%\rlap{\the\ht\Rbox \the\dp\Rbox}%
     }}%
     \global\setbox\n@xtpartialRev\vtop{%
@@ -1367,10 +1368,12 @@
           \hbox to\columnshift{}%
           \ifdiglotN@rmal%are the sides swapped?
             \hbox to\columnLwidth{\copy\Lbox\hss}\ifNoteGutterRule\makediglotgutter{\dimen7}{\dimen8}{\dimen9}\else\hskip\gutter\fi%%%
+            \hbox to\columnshift{}%
             \hbox to\columnRwidth{\copy\Rbox\hss}%\rlap{\the\ht\Rbox \the\dp\Rbox}%
           \else%
             \hbox to\columnshift{}%
             \hbox to\columnRwidth{\copy\Rbox\hss}\ifNoteGutterRule\makediglotgutter{\dimen7}{\dimen8}{\dimen9}\else\hskip\gutter\fi%%
+            \hbox to\columnshift{}%
             \hbox to\columnLwidth{\copy\Lbox\hss}%\rlap{\the\ht\Rbox \the\dp\Rbox}%
           \fi%
         }%
@@ -1465,9 +1468,11 @@
     \hbox to\columnshift{}%
     \ifdiglotN@rmal%Are the sides swapped?
       \hbox to\columnLwidth{\box\topleftins\hss}\ifFigGutterRule\makediglotgutter{\dimen8}{\dimen8}{\dimen9}\else\hskip\gutter\fi %
+      \hbox to\columnshift{}%
       \hbox to\columnRwidth{\box\toprightins\hss}%\rlap{\the\ht\Rbox \the\dp\Rbox}%
     \else%
       \hbox to\columnRwidth{\box\toprightins\hss}\ifFigGutterRule\makediglotgutter{\dimen8}{\dimen8}{\dimen9}\else\hskip\gutter\fi %
+      \hbox to\columnshift{}%
       \hbox to\columnLwidth{\box\topleftins\hss}%\rlap{\the\ht\Rbox \the\dp\Rbox}%
     \fi%
   }
@@ -1488,9 +1493,11 @@
     \hbox to\columnshift{}%
     \ifdiglotN@rmal%Are the sides swapped?
       \hbox to\columnLwidth{\box\bottomleftins\hss}\ifFigGutterRule\makediglotgutter{\dimen8}{\dimen8}{\dimen9}\else\hskip\gutter\fi %
+      \hbox to\columnshift{}%
       \hbox to\columnRwidth{\box\bottomrightins\hss}%\rlap{\the\ht\Rbox \the\dp\Rbox}%
     \else%
       \hbox to\columnRwidth{\box\bottomrightins\hss}\ifFigGutterRule\makediglotgutter{\dimen8}{\dimen8}{\dimen9}\else\hskip\gutter\fi %
+      \hbox to\columnshift{}%
       \hbox to\columnLwidth{\box\bottomleftins\hss}%\rlap{\the\ht\Rbox \the\dp\Rbox}%
     \fi%
   }
