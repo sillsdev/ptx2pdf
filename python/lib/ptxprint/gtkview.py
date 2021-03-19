@@ -712,9 +712,11 @@ class GtkViewModel(ViewModel):
         
     def onOK(self, btn):
         if isLocked():
+            self.set("l_statusLine", _("Printing busy"))
             return
         jobs = self.getBooks(files=True)
         if not len(jobs) or jobs[0] == '':
+            self.set("l_statusLine", _("No books to print"))
             return
         # If the viewer/editor is open on an Editable tab, then "autosave" contents
         if Gtk.Buildable.get_name(self.builder.get_object("nbk_Main").get_nth_page(self.get("nbk_Main"))) == "tb_ViewerEditor":
@@ -1134,7 +1136,7 @@ class GtkViewModel(ViewModel):
         if pgid == "scroll_AdjList": # AdjList
             self.generateAdjList()
         elif pgid == "scroll_FinalSFM" and bk is not None: # FinalSFM
-            tmodel = TexModel(self, self.settings_dir, self.ptsettings, self.prjid)
+            tmodel = TexModel(self, self.settings_dir, self._getPtSettings(self.prjid), self.prjid)
             out = tmodel.convertBook(bk, None, self.working_dir, os.path.join(self.settings_dir, self.prjid))
             self.editFile(out, loc="wrk", pgid=pgid)
         self.onViewerChangePage(None,None,pg)

@@ -153,11 +153,20 @@ class RunJob:
         self.inArchive = inArchive
         self.noview = False
 
+    def fail(self, txt):
+        self.printer.set("l_statusLine", txt)
+        self.printer.finished()
+        self.busy = False
+        unlockme()
+
     def doit(self, noview=False):
         if not lockme(self):
             return False
         self.noview = noview
         self.texfiles = []
+        if self.printer.ptsettings is None:
+            self.fail(_("Illegal Project"))
+            return
         info = TexModel(self.printer, self.args.paratext, self.printer.ptsettings, self.printer.prjid, inArchive=self.inArchive)
         info.debug = self.args.debug
         self.tempFiles = []
@@ -170,6 +179,13 @@ class RunJob:
         os.makedirs(self.tmpdir, exist_ok=True)
         jobs = self.printer.getBooks(files=True)
 
+        reasons = info.prePrintChecks()
+        if len(reasons):
+            self.fail(", ".join(reasons))
+            return
+        if not len(jobs):
+            self.fail(_("No books to print"))
+            return
         self.books = []
         self.maxRuns = 1 if self.printer.get("c_quickRun") else (self.args.runs or 5)
         self.changes = None
@@ -193,6 +209,10 @@ class RunJob:
             digprjdir = os.path.join(self.args.paratext, digprjid)
             digptsettings = ParatextSettings(self.args.paratext, digprjid)
             diginfo = TexModel(self.printer.diglotView, self.args.paratext, digptsettings, digprjid, inArchive=self.inArchive)
+            reasons = diginfo.prePrintChecks()
+            if len(reasons):
+                self.fail(", ".join(reasons) + " in diglot secondary")
+                return
             digbooks = self.printer.diglotView.getAllBooks()
             badbooks = set()
             for j in joblist:
@@ -450,7 +470,6 @@ class RunJob:
         with open(os.path.join(self.tmpdir, outfname), "w", encoding="utf-8") as texf:
             texf.write(texfiledat)
         if self.inArchive:
-            unlockme()
             return [os.path.join(self.tmpdir, outfname.replace(".tex", x)) for x in (".tex", ".xdv")]
         os.putenv("hyph_size", "32749")     # always run with maximum hyphenated words size (xetex is still tiny ~200MB resident)
         os.putenv("stack_size", "32768")    # extra input stack space (up from 5000)

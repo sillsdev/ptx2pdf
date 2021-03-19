@@ -483,6 +483,14 @@ class TexModel:
         else:
             return True
 
+    def prePrintChecks(self):
+        reasons = []
+        for a in ('regular', 'bold', 'italic', 'bolditalic'):
+            if not self.dict['document/font{}'.format(a)]:
+                reasons.append(_("Missing font ({})").format(a))
+            break
+        return reasons
+
     def processHdrFtr(self, printer):
         """ Update model headers from model UI read values """
         diglot = True if self.dict["document/ifdiglot"] == "" else False
@@ -1176,20 +1184,23 @@ class TexModel:
                 dat = inf.read()
 
             # \figonpage{304}{56}{cn01617.jpg}{tl}{© David C. Cook Publishing Co, 1978.}{x170.90504pt}
-            rematch = r"\\figonpage\{(\d+)\}\{\d+\}\{" + self.printer.getPicRe() + "\.[^}]+\}\{.*?\}\{(.*?)?\}\{.+?\}"
+            rematch = r"\\figonpage\{(\d+)\}\{\d+\}\{" + self.printer.getPicRe() + "|(.*?)\.[^}]+\}\{.*?\}\{(.*?)?\}\{.+?\}"
             # print(rematch)
             m = re.findall(rematch, dat)
             msngPgs = []
             customStmt = []
             if len(m):
                 for f in m:
+                    print(f"{f=}")
+                    if not f[0]:
+                        continue
                     a = 'co' if f[1] == 'cn' else f[1] # merge Cook's OT & NT illustrations together
-                    if a == '' and f[2] != '':
+                    if a == '' and f[1] != '':
                         customStmt += [f[0]]
-                        artpgs.setdefault(f[2], []).append(int(f[0]))
-                    elif a == '':
+                        artpgs.setdefault(f[1], []).append(int(f[0]))
+                    elif a == '' and f[5] != '':
                         msngPgs += [f[0]] 
-                        artpgs.setdefault('zz', []).append(int(f[0]))
+                        artpgs.setdefault(f[5], []).append(int(f[0]))
                     else:
                         artpgs.setdefault(a, []).append(int(f[0]))
             if len(artpgs):
@@ -1207,7 +1218,7 @@ class TexModel:
                 cpytemplate = cinfo['templates']['imageCopyright'].get(lang,
                                         cinfo['templates']['imageCopyright']['en'])
                 for art, pgs in artpgs.items():
-                    artinfo = cinfo["copyrights"].get(art, None)
+                    artinfo = cinfo["copyrights"].get(art, {'copyright': {'en': art}, 'sensitive': {'en': art}})
                     if art != artistWithMost:
                         if len(pgs):
                             pgs = sorted(set(pgs))
@@ -1230,7 +1241,7 @@ class TexModel:
                 else:
                     exceptPgs = ""
 
-                artinfo = cinfo["copyrights"].get(artistWithMost, None)
+                artinfo = cinfo["copyrights"].get(artistWithMost, {'copyright': {'en': art}, 'sensitive': {'en': art}})
                 if artinfo is not None:
                     pgs = artpgs[artistWithMost]
                     plurals = pluralstr(plstr, pgs)
