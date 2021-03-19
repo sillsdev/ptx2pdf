@@ -214,7 +214,7 @@ class ViewModel:
             bk = self.get("ecb_book")
             if bk:
                 bname = self.getBookFilename(bk, self.prjid)
-                if os.path.exists(os.path.join(self.settings_dir, self.prjid, bname)):
+                if bname is not None and os.path.exists(os.path.join(self.settings_dir, self.prjid, bname)):
                     return [bk]
             return []
         elif scope == "multiple" and len(bl):
@@ -262,6 +262,8 @@ class ViewModel:
         if any(x in "./\\" for x in bk):
             return None
         ptsettings = self._getPtSettings(prjid)
+        if ptsettings is None:
+            return None
         fbkfm = ptsettings['FileNameBookNameForm']
         bknamefmt = (ptsettings['FileNamePrePart'] or "") + \
                     fbkfm.replace("MAT","{bkid}").replace("41","{bkcode}") + \
