@@ -1158,9 +1158,8 @@ class ViewModel:
         else:
             digview = ViewModel(self.settings_dir, self.working_dir, self.userconfig, self.scriptsdir)
             digview.isDiglot = True
-            if not digview.setPrjid(prjid):
-                digview = None
-            elif cfgid is None or cfgid == "" or not digview.setConfigId(cfgid):
+            digview.setPrjid(prjid)
+            if cfgid is None or cfgid == "" or not digview.setConfigId(cfgid):
                 digview = None
         if digview is None:
             self.setPrintBtnStatus(2, _("No Config found for Diglot"))

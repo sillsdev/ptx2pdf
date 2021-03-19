@@ -1184,27 +1184,25 @@ class TexModel:
                 dat = inf.read()
 
             # \figonpage{304}{56}{cn01617.jpg}{tl}{© David C. Cook Publishing Co, 1978.}{x170.90504pt}
-            rematch = r"\\figonpage\{(\d+)\}\{\d+\}\{" + self.printer.getPicRe() + "|(.*?)\.[^}]+\}\{.*?\}\{(.*?)?\}\{.+?\}"
+            rematch = r"\\figonpage\{(\d+)\}\{\d+\}\{(?:" + self.printer.getPicRe() + "|(.*?))\.[^}]+\}\{.*?\}\{(.*?)?\}\{.+?\}"
             # print(rematch)
             m = re.findall(rematch, dat)
             msngPgs = []
             customStmt = []
             if len(m):
                 for f in m:
-                    print(f"{f=}")
                     if not f[0]:
                         continue
                     a = 'co' if f[1] == 'cn' else f[1] # merge Cook's OT & NT illustrations together
-                    if a == '' and f[1] != '':
-                        customStmt += [f[0]]
-                        artpgs.setdefault(f[1], []).append(int(f[0]))
-                    elif a == '' and f[5] != '':
-                        msngPgs += [f[0]] 
+                    if a == '' and f[5] != '':
                         artpgs.setdefault(f[5], []).append(int(f[0]))
+                    elif a == '':
+                        artpgs.setdefault('zz', []).append(int(f[0]))
+                        msngPgs += [f[0]] 
                     else:
                         artpgs.setdefault(a, []).append(int(f[0]))
             if len(artpgs):
-                artistWithMost = max(artpgs, key=lambda x: len(set(artpgs[x])))
+                artistWithMost = max([a for a in artpgs if a != 'zz'], key=lambda x: len(set(artpgs[x])))
             else:
                 artistWithMost = ""
 
@@ -1218,12 +1216,12 @@ class TexModel:
                 cpytemplate = cinfo['templates']['imageCopyright'].get(lang,
                                         cinfo['templates']['imageCopyright']['en'])
                 for art, pgs in artpgs.items():
-                    artinfo = cinfo["copyrights"].get(art, {'copyright': {'en': art}, 'sensitive': {'en': art}})
-                    if art != artistWithMost:
+                    if art != artistWithMost and art != 'zz':
                         if len(pgs):
                             pgs = sorted(set(pgs))
                             plurals = pluralstr(plstr, pgs)
-                            if artinfo is not None:
+                            artinfo = cinfo["copyrights"].get(art, {'copyright': {'en': art}, 'sensitive': {'en': art}})
+                            if artinfo is not None and (art in cinfo['copyrights'] or len(art) > 5):
                                 artstr = artinfo["copyright"].get(lang, artinfo["copyright"]["en"])
                                 if sensitive and "sensitive" in artinfo:
                                     artstr = artinfo["sensitive"].get(lang, artinfo["sensitive"]["en"])
@@ -1241,21 +1239,22 @@ class TexModel:
                 else:
                     exceptPgs = ""
 
-                artinfo = cinfo["copyrights"].get(artistWithMost, {'copyright': {'en': art}, 'sensitive': {'en': art}})
-                if artinfo is not None:
-                    pgs = artpgs[artistWithMost]
-                    plurals = pluralstr(plstr, pgs)
-                    artstr = artinfo["copyright"].get(lang, artinfo["copyright"]["en"])
-                    if sensitive and "sensitive" in artinfo:
-                        artstr = artinfo["sensitive"].get(lang, artinfo["sensitive"]["en"])
-                    if not hasOut:
-                        template = cinfo['templates']['allIllustrations'].get(lang,
-                            cinfo['templates']['allIllustrations']['en'])
-                    else:
-                        template = cinfo['templates']['exceptIllustrations'].get(lang,
-                            cinfo['templates']['exceptIllustrations']['en'])
-                    cpystr = template.format(artstr.replace("_", "\u00A0") + exceptPgs)
-                    crdts.append("\\{} {}".format(mkr, cpystr))
+                if len(artistWithMost):
+                    artinfo = cinfo["copyrights"].get(artistWithMost, {'copyright': {'en': artistWithMost}, 'sensitive': {'en': artistWithMost}})
+                    if artinfo is not None and (artistWithMost in artinfo or len(artistWithMost) > 5):
+                        pgs = artpgs[artistWithMost]
+                        plurals = pluralstr(plstr, pgs)
+                        artstr = artinfo["copyright"].get(lang, artinfo["copyright"]["en"])
+                        if sensitive and "sensitive" in artinfo:
+                            artstr = artinfo["sensitive"].get(lang, artinfo["sensitive"]["en"])
+                        if not hasOut:
+                            template = cinfo['templates']['allIllustrations'].get(lang,
+                                cinfo['templates']['allIllustrations']['en'])
+                        else:
+                            template = cinfo['templates']['exceptIllustrations'].get(lang,
+                                cinfo['templates']['exceptIllustrations']['en'])
+                        cpystr = template.format(artstr.replace("_", "\u00A0") + exceptPgs)
+                        crdts.append("\\{} {}".format(mkr, cpystr))
                 crdts.append("}")
             crdts.append("\\let\\zimagecopyrights=\\zimagecopyrightsen")
         return "\n".join(crdts)
