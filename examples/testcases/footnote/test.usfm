@@ -1,0 +1,34 @@
+\id TST Test file
+\h small test file
+\c 1
+\s This is a title
+\p
+\v 1 This is normal text.\f + \fr 1:1 \ft Supposedly\f*  There are 4 hook positions: before, start, end,
+after.  But this is about footnotes\fe + \ft and
+endnotes \fe*, not hooks.
+\v 2 Endnotes should\fe + \ft normally\fe*  appear
+after the text in the page\fe + \ft Unless they are
+manually
+inserted\fe* with a centred line above them.
+The grid spacing relative to other line items ought to be preserved.
+Thereforewe need some lorem ispum. There's a nice perl package for generating
+that. 
+\p
+\v 3
+Iure accusamus dolorem ea sunt unde voluptate voluptatem quod. Reiciendis ipsum est voluptates itaque at veritatis ut atque. Esse adipisci id sunt. Id beatae est et ratione omnis ab eaque qui. Voluptas ad est laboriosam distinctio. Voluptates nihil quisquam maxime facere sit quae.
+
+\p
+Nobis ipsam est veritatis enim nihil debitis. Qui delectus possimus eveniet architecto sint veniam neque. Laborum esse possimus consectetur. Fuga modi et quia eius. Vel illum beatae perspiciatis et ducimus. Sit vero est aut laboriosam.
+
+\p
+Omnis laboriosam molestiae corrupti. Explicabo cumque quo eos. Quas quisquam et beatae perspiciatis inventore. Accusamus dolore repellendus vero autem eum est id corporis.
+
+\p
+Voluptate quo consectetur perferendis. Ex illum cum dolorem facilis itaque doloribus repudiandae voluptatem. Officiis unde dolores enim. Doloremque hic vel quis et quia et libero. Distinctio voluptatum ratione amet atque voluptas sunt quam voluptatem. Voluptatum nemo sunt soluta quia iure.
+This should generate a warning:
+
+\zplacenotesf
+
+\p
+Nostrum eaque repellat assumenda nesciunt est non alias. Earum nemo laborum eos recusandae atque. Rerum aliquam dolor fuga impedit. Blanditiis ullam asperiores est enim ullam cupiditate. Fugiat id nam recusandae sequi illo enim occaecati.
+
