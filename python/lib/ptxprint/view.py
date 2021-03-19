@@ -662,12 +662,6 @@ class ViewModel:
         if v < 1.505:
             config.set("paragraph", "useglyphmetrics", "True")
         if v < 1.600:
-            if config.getfloat("paper", "topmargin", fallback=30.0) > 18:
-                config.set("paper", "topmargin", "18")
-            if config.getfloat("paper", "headerpos", fallback=20.0) > 15:
-                config.set("paper", "headerpos", "15")
-            config.set("paper", "rulegap", "0")
-        
             config.set("config", "version", "1.600")
 
         styf = os.path.join(self.configPath(cfgname), "ptxprint.sty")
