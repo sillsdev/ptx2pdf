@@ -238,9 +238,9 @@
 \newif\ifhe@dingstyle
 \newif\ifnsp@cebefore
 \newif\ifJustifyPars \JustifyParstrue
-\def\intro@mbigious#1{\x@\def\csname intro@mbigious-#1\endcsname{t}}
+\def\introAmbigious#1{\x@\def\csname intro@mbigious-#1\endcsname{t}}
 \def\settest@mb#1{\x@\let\x@\test@mb\csname intro@mbigious-#1\endcsname}
-\intro@mbigious{iex} % iex can be intro or not intro.
+\introAmbigious{iex} % iex can be intro or not intro.
 
 \newdimen\lastdepth
 \newcount\dropped@ther@lines
