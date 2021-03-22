@@ -305,6 +305,10 @@ def getPTDir():
     else:
         return None
 
+def reset_gtk_direction():
+    direction = Gtk.get_locale_direction()
+    Gtk.Widget.set_default_direction(direction)
+
 class GtkViewModel(ViewModel):
 
     def __init__(self, settings_dir, workingdir, userconfig, scriptsdir, args=None):

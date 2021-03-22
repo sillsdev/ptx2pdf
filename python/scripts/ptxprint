@@ -19,9 +19,9 @@ def getnsetlang(config):
     envlang = os.getenv("LANG", None)
     oldlang = config.get("init", "syslang", fallback=None)
     newlang = config.get("init", "lang", fallback=None)
-    config.set("init", "lang", envlang or "")
     if envlang is None or oldlang == envlang:
         return newlang
+    config.set("init", "lang", envlang or "")
     config.set("init", "syslang", envlang or "")
     return envlang
 
@@ -73,7 +73,7 @@ from ptxprint.font import initFontCache, cachepath, writefontsconf
 fontconfig_path = writefontsconf()
 putenv("FONTCONFIG_FILE", fontconfig_path)
 if not args.print:
-    from ptxprint.gtkview import GtkViewModel, getPTDir
+    from ptxprint.gtkview import GtkViewModel, getPTDir, reset_gtk_direction
 
 from ptxprint.view import ViewModel, VersionStr, doError
 from ptxprint.runjob import RunJob, isLocked
@@ -214,9 +214,10 @@ if args.print or args.archive is not None:
         mainw.createArchive(args.archive)
     sys.exit(res)
 else:
-    setup_i18n(args.lang)
     goround = True
     while (goround):
+        setup_i18n(args.lang)
+        reset_gtk_direction()
         goround = False
         mainw = GtkViewModel(args.paratext, args.directory, config, macrosdir, args)
         if args.pid:
@@ -227,9 +228,12 @@ else:
                 mainw.set(k, v)
         mainw.run(doit)
         if mainw.lang != args.lang:
+            if not sys.platform.startswith("win"):
+                mainw.lang += ".UTF-8"
             config.set("init", "lang", mainw.lang)
             if args.lang is not None:
                 args.lang = mainw.lang
+                print(f"{args.lang}")
                 args.pid = mainw.prjid
                 args.config = mainw.configId
                 goround = True
