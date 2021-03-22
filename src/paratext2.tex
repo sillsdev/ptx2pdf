@@ -148,11 +148,11 @@
   \let\next\relax%
   \def\n@tetype{#1\g@tndstat}%
   \TRACE{vm@kenote \n@tetype}%
-  \d@note{\x@\insert\csname note-\n@tetype\endcsname}%
   \x@\let\x@\th@sins\csname note-no-insert-\n@tetype\endcsname
   \checkp@ranotes{#1}% check whether this note class is to be paragraphed 
   \ifx\th@sins\relax
-    \n@tewidth=\ifp@ranotes\maxdimen\else\textwidth\advance\n@tewidth by -\columnshift\fi % insert penalties to control breaking of footnotes
+    \n@tewidth=\ifp@ranotes\maxdimen\else\textwidth \advance\n@tewidth by -\columnshift\fi % insert penalties to control breaking of footnotes
+    \d@note{\x@\insert\csname note-\n@tetype\endcsname}%
   \else
     \n@tewidth=\ifp@ranotes\maxdimen\else\hsize\fi
     \d@note{\th@sins}%
@@ -205,43 +205,57 @@
 %+c_endnotes
 
 \def\NoteAtEnd#1{%Treat the specified note as an end-note.
-        \x@\newb@x\csname endnote-#1\endcsname
+        \x@\newb@x\csname endn@te-#1\endcsname
         \x@\gdef\csname addt@endnote-#1\endcsname{%thanks to afterassignment, this gets put immediately after the start of the vbox
           \checkp@ranotes{#1}%
           \ifp@ranotes
             \hsize=\maxdimen
-            \x@\unvbox\csname endnote-#1\endcsname\makehboxofhboxes
-            \setbox0=\hbox{\unhbox0 \removehboxes}%
-            \unhbox0
+            \x@\ifvoid \csname endn@te-#1\endcsname\else
+              %\x@\showbox\csname endn@te-#1\endcsname
+              \vbox{}%Sacrificial box for makehboxofhboxes to consume
+              \x@\unvbox\csname endn@te-#1\endcsname\makehboxofhboxes%
+              %\showbox0
+              \setbox0=\hbox{\unhbox0 \removehboxes}%
+              \unhbox0 %
+            \fi
           \else
-            \unvbox\csname endnote-#1\endcsname
+            \x@\ifvoid \csname endn@te-#1\endcsname
+              \hbox{}%Empty hbox to force some baselineskip at the top of the box
+            \else
+              %\x@\showbox\csname endn@te-#1\endcsname
+              \unvbox\csname endn@te-#1\endcsname
+            \fi
           \fi
           }%
-        \x@\gdef\csname note-no-insert-#1\endcsname{\x@\afterassignment\csname addt@endnote-#1\endcsname\global\setbox\csname endnote-#1\endcsname\vbox}%
-        \x@\gdef\csname zplacenotes#1\endcsname{\ifvmode\else\par\fi \dimen0=\prevdepth %
-          %\showbox\csname endnote-#1\endcsname
+        \x@\gdef\csname note-no-insert-#1\endcsname{\x@\afterassignment\csname addt@endnote-#1\endcsname\global\setbox\csname endn@te-#1\endcsname\vbox}%
+        \x@\gdef\csname zplacenotes-#1\endcsname{% Set the @ndnotesfound flag based on one type of note. 
+            \ifvoid\csname endn@te-#1\endcsname\@ndnotesfoundfalse\else\@ndnotesfoundtrue\fi}%
+        \x@\gdef\csname zplacenotes-#1\endcsname{\ifvmode\else\par\fi \dimen0=\prevdepth %
+          %\showbox\csname endn@te-#1\endcsname
           \checkp@ranotes{#1}%
           \ifp@ranotes
             \ifdim \dimen0>0pt\kern-\dimen0\fi
-            \ifvoid\csname endnote-#1\endcsname\else
-              \maken@tepara{\csname endnote-#1\endcsname}{#1}%
+            \ifvoid\csname endn@te-#1\endcsname\else
+              \maken@tepara{\csname endn@te-#1\endcsname}{#1}%
             \fi
           \else 
             \s@tbaseline{#1}%
-            {%\x@\showbox\csname endnote-#1\endcsname
-            \setbox0=\vbox{\unvbox\csname endnote-#1\endcsname}
+            {%\x@\showbox\csname endn@te-#1\endcsname
+            \setbox0=\vbox{\unvbox\csname endn@te-#1\endcsname}%
             %\showbox0
             \unvbox0}%
           \fi
           }% Individual note placement
         \x@\endn@teclasses\x@{\the\endn@teclasses \\{#1}}%
-        \x@\plac@ndnotes\x@{\the\plac@ndnotes\csname zplacenotes#1\endcsname}%
+        \x@\plac@ndnotes\x@{\the\plac@ndnotes\csname zplacenotes-#1\endcsname}%
 }
 \let\newb@x=\newbox
 \newtoks\endn@teclasses
 \newtoks\plac@ndnotes
-\plac@ndnotes{\endn@terule}
-\def\ch@ckendnotes#1{\x@\ifvoid\csname endnote-#1\endcsname\else\temptrue\fi}
+\newif\if@ndnotesfound
+\plac@ndnotes{\ifhmode\endgraf\fi\endn@terule} % Pre-fill the toklist
+\def\ch@ckendnotes#1{\x@\ifvoid\csname endn@te-#1\endcsname\else\@ndnotesfoundtrue\fi}
+\def\zplaceallnotes{\the\plac@ndnotes}
 
 \newif\ifnotesEachBook
 \notesEachBooktrue
@@ -352,24 +366,40 @@
 \everypar=\toks0}
 
 \def\EndNoteRuleWidth{0.5}
-\def\EndNoteRuleHeight{0.4}
+\def\EndNoteRuleThickness{0.4}
+\def\AboveEndNoteRule{1.2}
+\def\BelowEndNoteRule{0.8}
 
-\def\endn@terule{
-  \tempfalse
+\def\endn@terule{\relax
+  \@ndnotesfoundfalse
   \let\\=\ch@ckendnotes\the\endn@teclasses
-  \iftemp\zendnoterule\fi
+  \if@ndnotesfound\zendnoterule\fi
 }
+\def\EndNoteSeparator{\hbox to \hsize{\hss\vrule width \EndNoteRuleWidth\hsize  height \EndNoteRuleThickness pt\hss}%
+      \kern-\EndNoteRuleThickness pt %
+} 
 \def\zendnoterule{{%
+    \toks0=\everypar\everypar={}\parskip=0pt\parindent=0pt\let\par=\endgraf\parfillskip=0pt%
+%  \noindent\hbox{\noindent\kern\columnshift\vbox{\hrule width \dimen0}}\par
+    \dimen0=\prevdepth\ifdim \dimen0>0pt\kern-\dimen0\fi
+    \vbox{\kern \AboveEndNoteRule\baselineskip
+      \EndNoteSeparator
+      \kern \BelowEndNoteRule\baselineskip}%
+    \everypar=\toks0 
+  }%
+  \penalty 5000 %Not a good place to break. Also protects from unboxing
+}
+
+\def\zpostendnoterule{\if@ndnotesfound{%
     \toks0=\everypar\everypar={}\parskip=0pt\parindent=0pt\let\par=\endgraf\parfillskip=0pt%
 %  \noindent\hbox{\noindent\kern\columnshift\vbox{\hrule width \dimen0}}\par
     \par
     \dimen0=\prevdepth\ifdim \dimen0>0pt\kern-\dimen0\fi
-    \vbox{\kern1.2\baselineskip
-      \hbox to \hsize{\hss\vrule width \EndNoteRuleWidth\hsize  height \EndNoteRuleHeight pt\hss}%
-      \kern-\EndNoteRuleHeight pt % 
-      \kern.8\baselineskip}%
+    \vbox{\kern 0.5\baselineskip
+      \EndNoteSeparator
+      \kern 0.5\baselineskip}%
     \everypar=\toks0 
-  }%
+  }\fi%
 }
 
 % determine if a given note class is to be paragraphed
@@ -461,7 +491,7 @@
 %+c_makehboxofhboxes
 \def\makehboxofhboxes{%
   \setbox0=\hbox{}%
-  \loop\setbox2=\lastbox \ifhbox2 \setbox0=\hbox{\box2\unhbox0}\repeat} 
+  \loop\setbox2=\lastbox \ifhbox2\setbox0=\hbox{\box2\unhbox0}\repeat} 
 %
 % remove inside level of boxing and adding inter note space after each
 %     [[a][b][c]] --> [a \internotespace b \internotespace c \internotespace]
@@ -504,7 +534,7 @@
 \def\onecoltrial{% single-column version of \twocoltrial (see below)
   \tracingparagraphs=0
   %\tracingall=1\tracingoutput=0\tracingpages=0\tracingparagraphs=0\tracingassigns=0\tracingscantokens=0
-  \trace{i}{1c TRIAL with ht=\the\trialheight, vsize=\the\vsize, hIns=\the\holdinginserts}
+  \trace{i}{1c TRIAL with ht=\the\trialheight, vsize=\the\vsize, hIns=\the\holdinginserts}%
   \xdef\p@gebotmark{\botmark}% remember last \mark for running header
   \xdef\t@st{\p@gefirstmark}%
   \ifx\t@st\empty\xdef\p@gefirstmark{\firstmark}\fi % remember first, if not already set
@@ -515,7 +545,7 @@
   \decr{\availht}{\bottomins}%And post-footnote inserts
   \decr{\availht}{\verybottomins}%
   \ifdim\availht<0pt                                                        %(2)
-    \MSG{Page overfull with inserts. Perhaps a little more text and less pictures would help}
+    \MSG{Page overfull with inserts. Perhaps a little more text and less pictures would help}%
   \fi
   \setbox\s@vedpage=\copy255
   % split the galley to the actual size available
@@ -526,14 +556,14 @@
 %-c_onecoltrial_intro
 %+c_onecoltrial_pagecontents
   \iffitonpage
-    \trace{i}{1 SUCCEEDED, shipping page hIns=\the\holdinginserts}
+    \trace{i}{1 SUCCEEDED, shipping page hIns=\the\holdinginserts}%
 % at this point:
 %   \box\colA is the page content
 %   \availht is ht that definitely works
     \def\pagecontents{%                                                     %(3)
 %      \msg{upwards mode = \the\XeTeXupwardsmode}
       \dimen1=\textwidth \advance\dimen1 -\ExtraRMargin
-      \trace{b}{BALANCE pageoutins: cols=1: text=\the\ht\colA, \the\dp\colA: partial=\the\ht\partial, \the\dp\partial: topins=\the\ht\topins: bottomins=\the\ht\bottomins}
+      \trace{b}{BALANCE pageoutins: cols=1: text=\the\ht\colA, \the\dp\colA: partial=\the\ht\partial, \the\dp\partial: topins=\the\ht\topins: bottomins=\the\ht\bottomins}%
       \ifvoid\partial\else \vbox{\hbox to \dimen1{\hskip\columnshift\vbox{\unvbox\partial}}} \fi
       \ifvoid\topins\else \vbox{\hbox to \columnshift{}\box\topins} \vskip\skip\topins \fi
       \iflastpage\setbox\colA\vbox{\unvbox\colA}\fi
@@ -549,7 +579,7 @@
       \unvbox2
       \ifvoid\verybottomins\else\vfil % \kern-\dimen0
         \lastd@pth=0pt \vskip\skip\verybottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\verybottomins}}\fi
-    }
+    }%
 %-c_onecoltrial_pagecontents
 %+c_onecoltrial_pagefit
     \resetvsize
@@ -588,7 +618,7 @@
   \g@tfontname{h}%
   \vbox to 0pt{\kern-\topm@rgin
    \vbox{\kern\HeaderPosition\MarginUnit
-    \setbox0=\vbox{\hbox to \textwidth{\the\headline}}
+    \setbox0=\vbox{\hbox to \textwidth{\the\headline}}%
     \ht0=0.7\fontdimen6\csname font<\f@ntstyle>\endcsname \dp0=0pt \box0
     \ifrhr@le\ifdim\RHruleposition=\maxdimen\else
       \kern\RHruleposition \hrule
@@ -629,14 +659,14 @@
       %\setbox\partial=\vbox{\hskip\columnshift\box\partial}
     \fi
     % reset parameters for 2-column formatting
-    \global\hsize=\colwidth\trace{o}{doublecolumn vsize doubles}
+    \global\hsize=\colwidth\trace{o}{doublecolumn vsize doubles}%
     \global\vsize=2\textheight % in 2 col mode you can put twice the height of text
 	\global\advance\vsize by -2\ht\partial % subtract height of 1 column material
 	\global\advance\vsize by 2\baselineskip % don't get caught short by 1/2 line or so
 	% make a macro reset vsize for remaining pages which do not have 1 column material
-    \trace{o}{Going to 2 col, textheight \the\textheight - \the\ht\partial}
+    \trace{o}{Going to 2 col, textheight \the\textheight - \the\ht\partial}%
     \gdef\resetvsize{\trace{o}{resetvsize2}\global\vsize=2\textheight \global\advance\vsize by \baselineskip} 
-    \global\output={\twocols}
+    \global\output={\twocols}%
     \global\c@rrentcols=2
     % top and bottom inserts effectively use twice their height
 	% (\count of an insertion class is a scaling factor)
@@ -670,16 +700,16 @@
 
 %+c_savepartialpage
 \def\savepartialpage{% save a partially-full page when switching to 2-column format,
-  \xdef\p@gebotmark{\botmark}
+  \xdef\p@gebotmark{\botmark}%
   \global\trialheight=\textheight \global\advance\trialheight by -\ht\partial
   \c@lcavailht
   \setbox\s@vedpage=\copy255
   % split the galley to the actual size available
   \setbox\colA=\vsplit255 to \availht
-  \setbox\colA=\vbox{\unvbox\colA}
+  \setbox\colA=\vbox{\unvbox\colA}%
   % and check if it all fit; if not, we'll have to back up and try again
   \ifvoid255 \fitonpagetrue \else \fitonpagefalse \fi
-  \trace{o}{savepartialpage \the\ht\colA rem=\the\ht255}
+  \trace{o}{savepartialpage \the\ht\colA rem=\the\ht255}%
   \iffitonpage
     \global\setbox\partial=\vbox{
       \ifvoid\partial\else \unvbox\partial \fi
@@ -687,16 +717,16 @@
       \lastd@pth=\dp\colA
       \dimen1=\textwidth \advance\dimen1 -\ExtraRMargin \advance\dimen1 -\columnshift
       \hbox to \dimen1{%\hbox to \columnshift{}%
-        \box\colA\hbox to \ExtraRMargin{}\hfil}
+        \box\colA\hbox to \ExtraRMargin{}\hfil}%
       \ifvoid\bottomins\else%
         \kern-\lastd@pth \lastd@pth=0pt \vskip\skip\bottomins \unvbox\bottomins \fi
       \f@rstnotetrue
       \m@kenotebox
-      \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2}
+      \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2}%
       \unvbox2
       \ifvoid\verybottomins\else%
         \kern-\lastd@pth \lastd@pth=0pt \vskip\skip\verybottomins \unvbox\verybottomins \fi
-    }
+    }%
     \resetvsize%
     \ifdim\ht\colA>\baselineskip\plainoutput
       \xdef\p@gefirstmark{}\xdef\p@gebotmark{} \nextshipout
@@ -710,32 +740,32 @@
     \global\holdinginserts=1
   \else % the contents of the "galley" didn't fit into the actual page,
         % so reduce \vsize and try again with an earlier break
-    \trace{i}{2c REDUCING VSIZE hIns=\the\holdinginserts}
+    \trace{i}{2c REDUCING VSIZE hIns=\the\holdinginserts}%
     \@mptyinserts
     %\global\advance\vsize by -\baselineskip
     \let\\=\cle@rn@tecl@ss \the\n@tecl@sses
     \global\let\whichtrial=\onecoltrial
-    \global\output={\backingup}
+    \global\output={\backingup}%
     \global\rerunsavepartialpagedtrue
     \ifm@rksonpage\else\gdef\p@gefirstmark{}\trace{H}{No marks found. Setting empty mark}\fi%No marks on the page, and it didn't fit, so add a blank mark
     \unvbox\s@vedpage \penalty\ifnum\galleypenalty=10000 0 \else \galleypenalty \fi
-  \fi}
+  \fi}%
   % save 1 column material since we are switching to 2 columns
 \newbox\partial
 %-c_savepartialpage
 
 %+c_twocols
 \def\twocols{% primary output routine in 2-col mode
-  \trace{i}{TWOCOLS @ \ch@pter:\v@rse, txtht=\the\textheight, partial=\the\ht\partial, hIns=\the\holdinginserts}
+  \trace{i}{TWOCOLS @ \ch@pter:\v@rse, txtht=\the\textheight, partial=\the\ht\partial, hIns=\the\holdinginserts}%
   % save copy of current page so we can retry with different heights
-  \trace{b}{BALANCE pagebuild: cols=2: textheight=\the\textheight}
+  \trace{b}{BALANCE pagebuild: cols=2: textheight=\the\textheight}%
   \global\setbox\galley=\copy255
   \bgroup\setbox0=\copy255 \setbox1=\vsplit0 to \maxdimen\egroup
-  \edef\t@mp{\splitbotmark}
+  \edef\t@mp{\splitbotmark}%
   \ifx\t@mp\empty\else\global\m@rksonpagetrue\trace{H}{Found mark \splitbotmark}\fi
   \global\galleypenalty=\outputpenalty % save current penalty so we can restore it at (A)
   \global\trialheight=\textheight \global\advance\trialheight by -\ht\partial
-  \global\output={\twocoltrial}
+  \global\output={\twocoltrial}%
   \global\holdinginserts=0 % when doing trial place insertions into boxes
   \unvbox255 % force invoking \twocoltrial
   \penalty\ifnum\outputpenalty=10000 0 \else \outputpenalty \fi % (A) restore output penalty
@@ -767,7 +797,7 @@
   \x@\let\x@\th@cl@ss\csname note-\cl@sss\endcsname
   \ifvoid\th@cl@ss\else
     \setbox0=\copy\th@cl@ss
-    \setbox0=\vbox{\maken@tepara{0}{#1}}
+    \setbox0=\vbox{\maken@tepara{0}{#1}}%
     \advance\availht by -\ht0
     \advance\availht by -\dp0
     \iff@rstnote\advance\availht by -\AboveNoteSpace \f@rstnotefalse
@@ -890,16 +920,16 @@
 
 %+c_setcolhts
 \def\s@tcolhts#1{
-    \colhtA=#1 \decr{\colhtA}{\topleftins} \decr{\colhtA}{\bottomleftins}
-    \colhtB=#1 \decr{\colhtB}{\toprightins} \decr{\colhtB}{\bottomrightins}
+    \colhtA=#1 \decr{\colhtA}{\topleftins}\decr{\colhtA}{\bottomleftins}%
+    \colhtB=#1 \decr{\colhtB}{\toprightins}\decr{\colhtB}{\bottomrightins}%
     \trace{o}{s@tcolhts: colhtA=\the\colhtA, colhtB=\the\colhtB, toprightins=(\the\skip\toprightins, \the\ht\toprightins), bottomrightins=(\the\skip\bottomrightins, \the\ht\bottomrightins)}%
 }
 %-c_setcolhts
 
 %+c_getcolhts
 \def\g@tcolhts{
-    \colhtA=\ht\colA \incr{\colhtA}{\topleftins} \incr{\colhtA}{\bottomleftins}
-    \colhtB=\ht\colB \incr{\colhtB}{\toprightins} \incr{\colhtB}{\bottomrightins}
+    \colhtA=\ht\colA \incr{\colhtA}{\topleftins}\incr{\colhtA}{\bottomleftins}%
+    \colhtB=\ht\colB \incr{\colhtB}{\toprightins}\incr{\colhtB}{\bottomrightins}%
     \trace{o}{g@tcolhts: colhtA=\the\colhtA, colhtB=\the\colhtB}%
 }
 %-c_getcolhts
@@ -918,7 +948,7 @@
     \ifvoid\colA\ifvoid\colB\else\ifswapcol\ifdim\colhtA<\ht\colB\else
       \trace{o}{splitcols swapping B->A}\setbox\colA=\box\colB\fi\fi\fi\fi
     \ifdim\ht\colA>\colhtA\ifdim\ht\colB<1pt\ifdim\ht\colA<\colhtB\setbox\colB=\box\colA\fi\fi\fi
-    \xdef\p@gebotmark{\splitbotmark}
+    \xdef\p@gebotmark{\splitbotmark}%
 }
 %-c_splitcols
 
@@ -939,7 +969,7 @@
   % and check if it all fit; if not, we'll have to back up and try again
   \ifvoid0 \fitonpagetrue \else \fitonpagefalse \fi
   \rebalancefalse
-  \trace{o}{first \the\availht . col=\the\ht\colA, \the\colhtA . second col=\the\ht\colB, \the\colhtB . rem=\the\ht0}
+  \trace{o}{first \the\availht . col=\the\ht\colA, \the\colhtA . second col=\the\ht\colB, \the\colhtB . rem=\the\ht0}%
   \ifdim\ht\colA<.5\baselineskip\ifdim\ht\colB<.5\baselineskip\MSG{I can't break this page!}    %(2)
     \iffitonpage\s@ve@nd \trace{o}{Abandoning ship}% the split failed and there is nothing left!
     \else\setbox\colA=\box0\setbox\s@vedpage=\box\voidb@x \trace{o}{Everything to colA}% dump it all in colA and bail
@@ -949,7 +979,7 @@
     \advance\shortavail by \colhtA \advance\shortavail by -\ht\colA
     \ifdim\shortavail>5\baselineskip
       \trace{o}{Rebalance trying from average \the\shortavail\space of
-                \the\colhtA =\the\ht\colA, \the\colhtB =\the\ht\colB}
+                \the\colhtA =\the\ht\colA, \the\colhtB =\the\ht\colB}%
       \divide\shortavail 2% \advance\shortavail by -0.5\ht\colA \advance\shortavail by -0.5\ht\colB
       \advance\colhtA by -\shortavail \advance\colhtB by -\shortavail
       \loop\setbox0=\copy\s@vedpage
@@ -958,11 +988,11 @@
         \advance\shortavail by -\baselineskip
         \spl@tcols0
         \trace{o}{Rebalance average loop(\the\shortavail): \the\ht\colA=\the\colhtA,
-                  \the\ht\colB=\the\colhtB\space remainder \the\ht0}
+                  \the\ht\colB=\the\colhtB\space remainder \the\ht0}%
         \ifdim\ht0>0pt \temptrue\else\tempfalse\fi
         \ifdim\shortavail<\baselineskip\tempfalse\fi
         \iftemp\repeat
-      \trace{o}{Rebalance starting with \the\colhtA=\the\colhtA, \the\colhtB=\the\colhtB}
+      \trace{o}{Rebalance starting with \the\colhtA=\the\colhtA, \the\colhtB=\the\colhtB}%
     \fi
     \g@tcolhts                                                                  %(4)
     \shortavail=\colhtA
@@ -1024,7 +1054,7 @@
 %+c_calcboxheights
 \def\c@lcboxheights{
   \g@tcolhts
-  \trace{b}{BALANCE pageout: cols=2: texta=\the\ht\colA , \the\dp\colA : textb=\the\ht\colB , \the\dp\colB : partial=\the\ht\partial, \the\dp\partial : topins=\the\ht\topins+\the\skip\topins, \the\ht\topleftins+\the\skip\topleftins, \the\ht\toprightins+\the\skip\toprightins : bottomins=\the\ht\bottomins+\the\skip\bottomins, \the\ht\bottomleftins+\the\skip\bottomleftins, \the\ht\bottomrightins+\the\skip\bottomrightins}
+  \trace{b}{BALANCE pageout: cols=2: texta=\the\ht\colA , \the\dp\colA : textb=\the\ht\colB , \the\dp\colB : partial=\the\ht\partial, \the\dp\partial : topins=\the\ht\topins+\the\skip\topins, \the\ht\topleftins+\the\skip\topleftins, \the\ht\toprightins+\the\skip\toprightins : bottomins=\the\ht\bottomins+\the\skip\bottomins, \the\ht\bottomleftins+\the\skip\bottomleftins, \the\ht\bottomrightins+\the\skip\bottomrightins}%
   \lastd@pth=\dp\colA \setbox\colA=\vbox to \availht{\unvbox\topleftins\box\colA\vfil\unvbox\bottomleftins}\dp\colA=\lastd@pth
   \ifdim\ht\colB<1pt\setbox\colB\vbox{\noindent\par}\else\ifdim\lastd@pth<\dp\colB\lastd@pth=\dp\colB\fi\fi
   \setbox\colB=\vbox to \availht{\unvbox\toprightins\box\colB\vfil\unvbox\bottomrightins}\dp\colB=\lastd@pth
@@ -1079,8 +1109,8 @@
 \def\savepartialpaged{%
   \global\trialheight=\textheight \global\advance\trialheight by -\ht\partial
   \c@lcavailht
-  \setbox\s@vedpage=\vbox{\unvbox255}
-  \trace{o}{balancing from savepartialpaged, height=\the\ht\s@vedpage, hIns:\the\holdinginserts, vsz=\the\vsize}
+  \setbox\s@vedpage=\vbox{\unvbox255}%
+  \trace{o}{balancing from savepartialpaged, height=\the\ht\s@vedpage, hIns:\the\holdinginserts, vsz=\the\vsize}%
   \ifdim\ht\partial>\baselineskip\swapcolfalse\else\swapcoltrue\fi
   \ifdim\availht<\baselineskip 
     \rem@indertrue % No, I don't know what this does, but once If i  didn't do it then we get lost verses. 
@@ -1104,21 +1134,21 @@
       \dimen5=\textwidth\advance\dimen5 by -\ExtraRMargin\advance\dimen5 by -\columnshift %
       \vbox{\hbox to \dimen5{%\hbox to \columnshift{}
         \ifRTL \hbox to \ExtraRMargin{}\box\colB\makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}\box\colA %
-        \else \box\colA\makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}\box\colB\hbox to \ExtraRMargin{}\fi}}}
+        \else \box\colA\makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}\box\colB\hbox to \ExtraRMargin{}\fi}}}%
     %\advance\dimen3 by \dimen4 \ht\partial=\dimen3
 %-c_savepartialpaged_intro
 %+c_savepartialpaged
-    \trace{o}{sppd: saved partial, ht:\the\ht\partial\space rem:\the\ht\s@vedpage}
+    \trace{o}{sppd: saved partial, ht:\the\ht\partial\space rem:\the\ht\s@vedpage}%
     \global\holdinginserts=1
     \global\setbox255=\box\voidb@x
     \global\trialheight=\textheight \global\advance\trialheight by -\ht\partial
     \c@lcavailht
-    \trace{o}{spdd: partial=\the\ht\partial, textheight=\the\textheight, availht=\the\availht}
+    \trace{o}{spdd: partial=\the\ht\partial, textheight=\the\textheight, availht=\the\availht}%
     \ifdim\availht<2\baselineskip \twocolp@geout \fi
     \unvbox\s@vedpage\penalty\ifnum\outputpenalty=10000 0 \else \outputpenalty \fi
   \else
-    \trace{o}{sppd: Not fit on page}
-    \trace{i}{sppd: emptyinserts hIns=\the\holdinginserts, \the\ht\partial, vs:\the\vsize}
+    \trace{o}{sppd: Not fit on page}%
+    \trace{i}{sppd: emptyinserts hIns=\the\holdinginserts, \the\ht\partial, vs:\the\vsize}%
     \@mptyinserts
     %\global\advance\vsize by -\baselineskip
     %\global\let\whichtrial=\savepartialpaged
@@ -1145,7 +1175,7 @@
   \setbox2=\vbox{
   \let\\=\ins@rtn@tecl@ss \the\n@tecl@sses % output all note classes
   \iff@rstnote % no notes actually occurred!
-    \trace{i}{No notes}
+    \trace{i}{No notes}%
     \ifnoteseen\MSG{Page \the\pageno\space is being printed without any footnotes/xrefs, etc. But at least one was seen earlier. Maybe it's ended up on the previous page or moved to the next one, or maybe it's vanished. Human checking is needed.}\fi
     \kern-\lastd@pth \vfil
   \else
@@ -1161,10 +1191,10 @@
   \global\trialheight=\textheight \global\advance\trialheight by -\ht\partial
   \c@lcavailht%
   \ifdim\availht<0pt
-    \MSG{Page overfull with inserts. Perhaps a little more text and less pictures would help}
+    \MSG{Page overfull with inserts. Perhaps a little more text and less pictures would help}%
   \fi
   \setbox\s@vedpage=\copy255
-  \trace{o}{balance from twocoltrial height \the\ht\s@vedpage}
+  \trace{o}{balance from twocoltrial height \the\ht\s@vedpage}%
   \ifdim\ht\partial>\baselineskip\swapcolfalse\else\swapcoltrue\fi
   \rem@indertrue\balanced
   \iffitonpage\ifvoid\s@vedpage\else\fitonpagefalse\fi
@@ -1184,12 +1214,12 @@
       \ifvoid\partial\else %\msg{2colout partial: \the\ht\partial}\hskip\columnshift
         \vbox{\hbox to \dimen1{\hskip\columnshift\vbox{\unvbox\partial}}}\fi % output partial page
       \ifvoid\topins\else \hbox{\hbox to \columnshift{}\box\topins} \vskip\skip\topins \fi % output top spanning pictures
-      \iflastpage\setbox\colA=\vbox{\unvbox\colA}\setbox\colB=\vbox{\unvbox\colB}
+      \iflastpage\setbox\colA=\vbox{\unvbox\colA}\setbox\colB=\vbox{\unvbox\colB}%
         \ifdim\ht\colA>\ht\colB\ht\colB=\ht\colA\else\ht\colA=\ht\colB\fi\fi
       \trace{p}{Text depth = \the\dimen3}%\showthe\lastd@pth
       \hbox to \dimen1{\hbox to \columnshift{}%
         \ifRTL \hbox to \ExtraRMargin{}\box\colB\makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}\box\colA
-        \else \box\colA\makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}\box\colB\hbox to \ExtraRMargin{}\fi}
+        \else \box\colA\makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}\box\colB\hbox to \ExtraRMargin{}\fi}%
       \ifvoid\bottomins\else \kern-\lastd@pth
         \lastd@pth=0pt \vskip\skip\bottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\bottomins}}\fi % ouput bottom spanning pictures
       \f@rstnotetrue
@@ -1199,7 +1229,7 @@
       \global\noteseenfalse%
       \ifvoid\verybottomins\else\vfil
         \kern-\lastd@pth \lastd@pth=0pt \vskip\skip\verybottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\verybottomins}}\fi % ouput bottom spanning picture
-    }
+    }%
     \global\setbox255=\box\voidb@x                                          %(+)
     \resetvsize % reset size of next page since it will not have any 1 column material
     \plainoutput 
@@ -1219,7 +1249,7 @@
     \@mptyinserts
     \let\\=\cle@rn@tecl@ss \the\n@tecl@sses
     \global\let\whichtrial=\twocoltrial                                     %(+)
-    \global\output={\backingup}
+    \global\output={\backingup}%
     \ifm@rksonpage\else\gdef\p@gefirstmark{}\trace{H}{No marks found. Setting empty mark}\fi%No marks on the page, and it didn't fit, so add a blank mark
     \unvbox\galley \penalty\ifnum\galleypenalty=10000 0 \else \galleypenalty \fi
   \fi}
@@ -1249,11 +1279,11 @@
 %+c_backingup
 \def\backingup{% this output routine is used when we reduce \vsize;
                % it will cause a new page break to be found, and then the \trial routine is called again
-  \trace{o}{backingup hIns=\the\holdinginserts(==1)}
+  \trace{o}{backingup hIns=\the\holdinginserts(==1)}%
   \global\deadcycles=0
   \global\setbox\galley=\copy255
   \global\galleypenalty=\outputpenalty
-  \global\output={\whichtrial}
+  \global\output={\whichtrial}%
   \global\holdinginserts=0
   \unvbox255% eject
   \penalty\ifnum\outputpenalty=10000 0 \else \outputpenalty \fi
@@ -1269,12 +1299,12 @@
   \c@lcavailht
   \vsize=2\availht
   \advance\vsize by \baselineskip
-  \global\output={\savepartialpaged}
-  \global\setbox\galley=\copy255 \global\setbox\galley=\vbox{\unvbox\galley}
+  \global\output={\savepartialpaged}%
+  \global\setbox\galley=\copy255 \global\setbox\galley=\vbox{\unvbox\galley}%
   \bgroup\setbox0=\copy255 \setbox1=\vsplit0 to \maxdimen\egroup
-   \edef\t@mp{\splitbotmark}
+   \edef\t@mp{\splitbotmark}%
    \ifx\t@mp\empty\else\global\m@rksonpagetrue\trace{H}{Found mark \splitbotmark}\fi
-  \trace{o}{sppb hIns=\the\holdinginserts, pt:\the\ht\partial, g:\the\ht255, \the\ht\galley}
+  \trace{o}{sppb hIns=\the\holdinginserts, pt:\the\ht\partial, g:\the\ht255, \the\ht\galley}%
   \global\holdinginserts=0
   \unvbox255\eject
 }
@@ -1305,7 +1335,7 @@
   \gdef\resetvsize{\global\vsize=\textheight \global\advance\vsize by -\ht\partial \global\advance\vsize by 0.5\baselineskip} 
   \global\availht=\vsize
   \global\c@rrentcols=2
-  \global\output={\diglotCollect}
+  \global\output={\diglotCollect}%
   
   % (\count of an insertion class is a scaling factor)
   \count255=1000
@@ -1318,9 +1348,9 @@
 
 %+c_twocolpageout
 \def\twocolp@geout{%This gets used a few times
-  \trace{o}{twocolp@geout cols=1: partial=\the\ht\partial , \the\dp\partial : topins=\the\ht\topins : bottomins=\the\ht\bottomins}
+  \trace{o}{twocolp@geout cols=1: partial=\the\ht\partial , \the\dp\partial : topins=\the\ht\topins : bottomins=\the\ht\bottomins}%
   \def\pagecontents{
-    \trace{b}{BALANCE pageout: cols=1: partial=\the\ht\partial , \the\dp\partial : topins=\the\ht\topins : bottomins=\the\ht\bottomins}
+    \trace{b}{BALANCE pageout: cols=1: partial=\the\ht\partial , \the\dp\partial : topins=\the\ht\topins : bottomins=\the\ht\bottomins}%
     \vbox{\dimen1=\textwidth \advance\dimen1 -\ExtraRMargin
       \ifvoid\partial\else \vbox{\hbox to \dimen1{\hskip\columnshift\box\partial}} \fi
 	  \lastd@pth=\dp\partial
@@ -1355,13 +1385,13 @@
       \twocolp@geout \fi\fi%Set up pagecontents and call \plainoutput
     \global\c@rrentcols=1
     \trace{o}{resetting resetvsize for singlecolumn}\def\resetvsize{\trace{o}{resetvsize}\global\vsize=\textheight} 
-    \global\output={\onecol}
+    \global\output={\onecol}%
     \global\holdinginserts=1
     \count255=1000
     \global\count\topins=\count255
     \global\count\bottomins=\count255
     \let\\=\s@tn@tec@unt \the\n@tecl@sses % reset \count for each note class
-    \ifdim\ht\partial>\baselineskip \vbox{\unvbox\partial}
+    \ifdim\ht\partial>\baselineskip \vbox{\unvbox\partial}%
       \ifendbooknoeject\ifx\p@gefirstmark\t@tle \else\vskip\baselineskip\iflastptxfile\else\hskip-\columnshift\hrule\vskip2\baselineskip\fi\fi\fi
     \fi
   \fi}%

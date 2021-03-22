@@ -281,18 +281,22 @@ Literal text can also be included (e.g., to add dashes around a centered page nu
 *   \NoteAtEnd{```f```} – To make the specified note class an endnote (default: only ```fe``` 'endnotes' are endnotes). 
 *   \notesEachBook```false``` – To place endnotes at the end of the entire volume rather than (default) the end of individual books.(default=true)
 *   \def\EndNoteRuleWidth{```0.5```} –  Fraction of column width to make the rule above automatically inserted endnotes (default =```0.5```)
-*   \def\EndNoteRuleHeight{```0.4```} – Fraction of _1pt_ to make the rule above automatically inserted endnotes (default=```0.4```)
+*   \def\EndNoteRuleThickness{```0.4```} – Fraction of _1pt_ to make the rule above automatically inserted endnotes (default=```0.4```)
+*   \def\SpaceAboveEndNoteRule{```1.2```} – Space (measured relative to the line space currently in force) between the body text and the  end-note separator line.
+*   \def\SpaceBelowEndNoteRule{```0.8```} – Space (measured relative to the line space currently in force) between the separator line and the start of the end-notes. If this and `\EndNoteRuleAbove` add up to a whole number, then (with the default definition for `\EndNoteSeparator`) then gridding will be preserved.
 
 #### Custom end-note use
-*   \zplacenotes```x``` – Non-standard USFM marker to place any endnotes collected until now. E.g. If ```\f``` notes are endnotes, ```\zplacenotesf``` will place those notes at the specified place. 
-*   \zendnoterule – Non-standard USFM marker to unconditionally place the endnote rule at this place (for use before the above command)
-*   \zplaceallnotes – Non-standard USFM marker to place all endnotes (with preceding endnote rule if there are any endnotes).
+*   \zplaceallnotes – Non-standard USFM marker to place any currently-waiting endnotes (with preceding endnote rule and spacing, if there are any endnotes).
+*   \zpostendnoterule – Non-standard USFM marker to place an endnote rule, positioned 0.5 lineskips above the baseline.   This might be wanted, for example, if endnotes are put mid-text, or within a mid-text side-bar. If no endnotes were found during the last call to ```\zplaceallnotes```, this produces no output.
+*   \zendnoterule – Non-standard USFM marker to unconditionally place the (pre-) endnote rule (with surrounding spacing) at this place (for use before the command below)
+*   \zplacenotes-```X``` – Non-standard USFM marker to place endnotes of a particular type collected until now. E.g. If ```\fe``` notes are endnotes, ```\zplacenotes-fe``` will place those notes at the specified place.  This *does not* set the flag used by ```\zpostendnoterule```. 
+*  \ztestnotes-```X``` – Non-standard USFM marker to *test* for currently-waiting end-notes of a particular type. This *does* set or unset the flag used by ```\zpostendnoterule```. Note that the behaviour of this command is not the same as the logic of ```\zplaceallnotes```, which tests to see if *any* end-note has contents. Also note that after the contents have been placed on the page, the end-note is not waiting by definition, therefore this should be used before the relevant ```\zplacenotes-X```
 
 ### Footnote rule control
 _For now_, if you want to change the appearance of (or remove) the footnote rule, redefine \def\footnoterule
 
 *   \def\footnoterule{} – No footnote rule will be applied if the definition is empty (as in this example)
-*   \def\zendnoterule{} – No endnote rule will be placed if the definition is empty (as in this example)
+*   \def\EndNoteSeparator{} – No endnote rule will be placed if the definition is empty (as in this example). Alternatively the definition might include an image.
 
 </a>
 

@@ -50,8 +50,8 @@
 % new note class: append to the list in \n@tecl@sses, and allocate an \insert number
 \def\allocatecl@ss#1{
   \x@\n@tecl@sses\x@{\the\n@tecl@sses \\{#1}}%
-  \ifcsname zplacenotes#1\endcsname\else
-    \x@\gdef\csname zplacenotes#1\endcsname{\write1{WARNING: p.\the\pageno: zplacenotes#1 used in text when #1 is not an endnote.}}
+  \ifcsname zplacenotes-#1\endcsname\else
+    \x@\gdef\csname zplacenotes-#1\endcsname{\write1{WARNING: p.\the\pageno: zplacenotes-#1 used in text when #1 is a footnote, not an endnote.}}
   \fi
   \relax%
   \ifdiglot%
