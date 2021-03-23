@@ -514,7 +514,7 @@
 \let\prevb@ok\relax
 \let\b@okR\relax
 \let\prevb@okR\relax
-\def\pdfb@@kmark{\csname pdfb@@km@rk\g@tdstat\endcsname}
+\def\pdfb@@kmark{\ifdiglot\ifx\c@rrdstat\PDFBookMarkColumn \pdfb@@km@rkD\fi\else\pdfb@@km@rk\fi}
 
 \def\pdfb@@km@rk{\ifx\b@ok\prevb@ok
  \else
@@ -528,31 +528,52 @@
  \fi}
 
 \def\Alternative{\ /\ }%
-\let\b@okC=\relax
+\let\PDFBookMarkColumn=\relax
+\let\b@okDiglot\empty
 
-\def\pdfb@@km@rkR{\ifx\b@okR\prevb@okR %FIXME: make this work with \c@rrdstat, for polyglot. Ideally it should only actually run when all books defined.
- \else\ifDropActions\else
+%Build a \Alternative separated list of book names 
+\def\buildb@@k#1{\edef\bbtmp{#1}\x@\let\x@\t@st\csname b@ok\if L\bbtmp\else\bbtmp\fi\endcsname
+  \ifx\t@st\relax\let\t@st\id@@@\fi
+  \ifx\b@okDiglot\t@st\else 
+    \ifx\b@okDiglot\empty\xdef\b@okDiglot{\t@st}\else\xdef\b@okDiglot{\b@okDiglot\Alternative\t@st}\fi
+  \fi
+}
+
+\def\pdfb@@km@rkD{\ifDropActions\else
+ %\tracingmacros=1
+ %\tracingassigns=1
+ \let\col@do\buildb@@k
+ \let\b@okDiglot\empty
+ \x@\each@col\diglot@list\E
+ \message{Bookname now: \b@okDiglot}%
+ \ifx\b@okDiglot\prevb@okD 
+ \else
   \bgroup\liter@lspecials
    \special{pdf:dest (\id@@@.) [@thispage /Fit]}%
-   \ifx\b@ok\relax \let\t@mpL=\relax \else \let\t@mpL=\b@ok \fi
-   \ifx\b@okR\relax \let\t@mpR=\id@@@ \else \let\t@mpR=\b@okR \fi
-   \ifx\t@mpL\relax \let\b@okC=\t@mpR\else\ifx\b@okR\relax \let\b@okC=\t@mpL\else\def\b@okC{\t@mpL\Alternative\t@mpR}\fi\fi
-   \special{pdf:outline 0 << /Title (\b@okC)
+   \special{pdf:outline 0 << /Title (\b@okDiglot)
             /A << /S /GoTo /D (\id@@@.) >> >>}%
-   \global\let\prevb@okR\b@okR
+   \global\let\prevb@okD\b@okDiglot
   \egroup
  \fi\fi}
 %-cpar_pdfbookmark
 
 %+cpar_pdfchaptermark
-\def\pdfch@ptermark{\ifDropActions\else\bgroup\liter@lspecials
-  \edef\@@side{\g@tdstat}%
-  \special{pdf:dest (\id@@@\@@side.\ch@pter) [@thispage /Fit]}%
-  \x@\let\x@\t@mp\csname b@ok\@@side\endcsname
-  \ifx\b@ok\relax \let\t@mp=\id@@@ \fi
-  \special{pdf:outline 1 << /Title (\t@mp\space\ch@pter)
-           /A << /S /GoTo /D (\id@@@\@@side.\ch@pter) >> >>}%
-  \egroup\fi}
+\def\prevch@p{}
+\def\pdfch@ptermark{\ifDropActions\else
+  \ifx\prevch@p\ch@pter\else
+    \bgroup\liter@lspecials
+    \edef\@@side{\g@tdstat}%
+    \special{pdf:dest (\id@@@.\ch@pter) [@thispage /Fit]}%
+    \ifdiglot
+      \let\t@mp\b@ok
+    \else
+      \let\t@mp\b@okDiglot
+    \fi
+    \x@\let\x@\t@mp\csname b@ok\@@side\endcsname
+    \ifx\b@ok\relax \let\t@mp=\id@@@ \fi
+    \special{pdf:outline 1 << /Title (\t@mp\space\ch@pter)
+             /A << /S /GoTo /D (\id@@@\@@side.\ch@pter) >> >>}%
+  \egroup\fi\fi}
 
 %-cpar_pdfchaptermark
 

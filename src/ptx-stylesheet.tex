@@ -1013,6 +1013,10 @@
  \@netimesetup
  \ifdiglot\bgroup%This must be outside of @onetimesetup as there's no guarantee that diglot will be true for all ptxfiles.
    \diglots@tup
+   \ifx\PDFBookMarkColumn\relax
+     \def\col@do##1{\xdef\PDFBookMarkColumn{##1}}%Very crude... set PDFBookMarkColumn to last column
+     \x@\each@col\diglot@list\E
+   \fi
    \dimen0=\baselineskip
    \setc@rdstat{R}%
    \showLRspecific
