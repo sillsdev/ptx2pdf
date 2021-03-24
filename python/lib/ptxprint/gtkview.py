@@ -1433,15 +1433,6 @@ class GtkViewModel(ViewModel):
             return
         else:
             self.rtl = rtl
-        for k in self.styleEditor.allStyles():
-            try:
-                j = self.styleEditor.getval(k, "Justification")
-            except KeyError:
-                return
-            if j is not None and j.lower() == "right":
-                self.styleEditor.setval(k, "Justification", "Left")
-            elif j is not None and j.lower() == "left":
-                self.styleEditor.setval(k, "Justification", "Right")
 
     def onEditStyleClicked(self, btn):
         mkr = Gtk.Buildable.get_name(btn)[9:]
@@ -1909,8 +1900,9 @@ class GtkViewModel(ViewModel):
             self.builder.get_object("l_projectFullName").set_label("")
             self.builder.get_object("l_projectFullName").set_tooltip_text("")
         pts = self._getPtSettings()
-        if pts is not None and self.get("t_copyrightStatement") == "":
-            self.builder.get_object("t_copyrightStatement").set_text(pts.get('Copyright', ""))
+        if pts is not None:
+            if self.get("t_copyrightStatement") == "":
+                self.builder.get_object("t_copyrightStatement").set_text(pts.get('Copyright', ""))
 
     def updatePrjLinks(self):
         if self.settings_dir != None and self.prjid != None:

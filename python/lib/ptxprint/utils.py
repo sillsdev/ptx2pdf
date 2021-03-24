@@ -36,7 +36,7 @@ def setup_i18n(i18nlang):
     else:
         locale.setlocale(locale.LC_ALL, (lang, enc))
         locale.bindtextdomain(APP, localedir)
-    print(f"Lang = ({lang}, {enc}) from {i18nlang} and LANG={os.environ['LANG']}")
+    # print(f"Lang = ({lang}, {enc}) from {i18nlang} and LANG={os.environ['LANG']}")
     gettext.bindtextdomain(APP, localedir=localedir)
     gettext.textdomain(APP)
     if "_" in lang:

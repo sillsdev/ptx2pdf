@@ -36,6 +36,7 @@ class ParatextSettings:
         self.basedir = basedir
         self.prjid = prjid
         self.langid = None
+        self.dir = "left"
         self.parse()
 
     def parse(self):
@@ -70,6 +71,10 @@ class ParatextSettings:
                     if f.get('type', None) == t:
                         self.dict['DefaultFont'] = f.get('name', '')
                         self.dict['DeafultFontSize'] = float(f.get('size', 1.0)) * 12
+            d = self.ldml.find(".//layout/orientation/characterOrder")
+            if d is not None:
+                if d.text.lower() == "right-to-left":
+                    self.dir = "right"
         else:
             self.ldml = None
 
