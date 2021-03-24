@@ -545,7 +545,7 @@
  \let\col@do\buildb@@k
  \let\b@okDiglot\empty
  \x@\each@col\diglot@list\E
- \message{Bookname now: \b@okDiglot}%
+ %\message{Bookname now: \b@okDiglot}%
  \ifx\b@okDiglot\prevb@okD 
  \else
   \bgroup\liter@lspecials
@@ -559,21 +559,22 @@
 
 %+cpar_pdfchaptermark
 \def\prevch@p{}
-\def\pdfch@ptermark{\ifDropActions\else
+\def\pdfch@ptermark{\ifDropActions\else\ifdiglot\ifx\c@rrdstat\PDFBookMarkColumn \pdfch@pterm@rk\fi\else\pdfch@pterm@rk\fi\fi}
+\def\pdfch@pterm@rk{%
   \ifx\prevch@p\ch@pter\else
     \bgroup\liter@lspecials
     \edef\@@side{\g@tdstat}%
-    \special{pdf:dest (\id@@@.\ch@pter) [@thispage /Fit]}%
+    \special{pdf:dest (\id@@@\@@side.\ch@pter) [@thispage /Fit]}%
     \ifdiglot
-      \let\t@mp\b@ok
-    \else
       \let\t@mp\b@okDiglot
+    \else
+      \let\t@mp\b@ok
     \fi
     \x@\let\x@\t@mp\csname b@ok\@@side\endcsname
     \ifx\b@ok\relax \let\t@mp=\id@@@ \fi
     \special{pdf:outline 1 << /Title (\t@mp\space\ch@pter)
              /A << /S /GoTo /D (\id@@@\@@side.\ch@pter) >> >>}%
-  \egroup\fi\fi}
+  \egroup\fi}
 
 %-cpar_pdfchaptermark
 
