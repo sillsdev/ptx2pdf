@@ -808,6 +808,7 @@ class GtkViewModel(ViewModel):
         if cfg == 'Default':
             # self.doError(_("Can't delete 'Default' configuration!"), secondary=_("Folder: ") + delCfgPath)
             self.resetToInitValues()
+            self.setupDefaults()
             # Note that we may give them an option (later) to delete the entire "Default" including piclists etc.
             # Right now it (only) re-initializes the UI settings.
             return

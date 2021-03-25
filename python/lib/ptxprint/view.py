@@ -352,25 +352,27 @@ class ViewModel:
     def _copyConfig(self, oldcfg, newcfg, moving=False):
         oldp = self.configPath(cfgname=oldcfg, makePath=False)
         newp = self.configPath(cfgname=newcfg, makePath=False)
-        if not os.path.exists(newp):
-            self.triggervcs = True
-            os.makedirs(newp)
-            jobs = {k:k for k in('ptxprint-mods.sty', 'ptxprint.sty', 'ptxprint-mods.tex',
-                                 'ptxprint.cfg', 'PicLists', 'AdjLists')}
-            jobs["{}-{}.piclist".format(self.prjid, oldcfg)] = "{}-{}.piclist".format(self.prjid, newcfg)
-            for f, n in jobs.items():
-                srcp = os.path.join(oldp, f)
-                destp = os.path.join(newp, n)
-                if os.path.exists(srcp):
-                    if moving:
-                        move(srcp, destp)
-                    elif os.path.isdir(srcp):
-                        os.makedirs(destp, exist_ok=True)
-                        for p in os.listdir(srcp):
-                            op = p.replace(oldcfg, newcfg)
-                            copyfile(os.path.join(srcp, p), os.path.join(destp, op))
-                    else:
-                        copyfile(srcp, destp)
+        if os.path.exists(newp):
+            return False
+        self.triggervcs = True
+        os.makedirs(newp)
+        jobs = {k:k for k in('ptxprint-mods.sty', 'ptxprint.sty', 'ptxprint-mods.tex',
+                             'ptxprint.cfg', 'PicLists', 'AdjLists')}
+        jobs["{}-{}.piclist".format(self.prjid, oldcfg)] = "{}-{}.piclist".format(self.prjid, newcfg)
+        for f, n in jobs.items():
+            srcp = os.path.join(oldp, f)
+            destp = os.path.join(newp, n)
+            if os.path.exists(srcp):
+                if moving:
+                    move(srcp, destp)
+                elif os.path.isdir(srcp):
+                    os.makedirs(destp, exist_ok=True)
+                    for p in os.listdir(srcp):
+                        op = p.replace(oldcfg, newcfg)
+                        copyfile(os.path.join(srcp, p), os.path.join(destp, op))
+                else:
+                    copyfile(srcp, destp)
+        return True
 
     def updateProjectSettings(self, prjid, saveCurrConfig=False, configName=None, forceConfig=False, readConfig=False):
         currprj = self.prjid
@@ -402,7 +404,8 @@ class ViewModel:
             self.resetToInitValues()
             if currprj == self.prjid:
                 if configName == "Default":
-                    self._copyConfig(None, configName, moving=True)
+                    if self._copyConfig(None, configName, moving=True):
+                        self.setupDefaults()
                 else:
                     self._copyConfig(self.configId, configName)
             res = self.readConfig(cfgname=configName)
@@ -419,6 +422,10 @@ class ViewModel:
             return res
         else:
             return True
+
+    def setupDefaults(self):
+        if self.ptsettings.dir == "right":
+            self.set("fcb_textDirection", "rtl")
 
     def get_usfms(self):
         if self.usfms is None:
