@@ -1248,7 +1248,7 @@
   \@add@n@xtpartial
   \let\col@do=\store@marks
   \x@\each@col\diglot@list\E %remember old marks state
-  \s@venotes{\g@tndstat}{2}% remember old notestate 
+  \s@veallnotes{2}% remember old notestate 
   \s@veinserts{chunk}
   \traceNum{d}{Arranging new n@xtpartial : LB:\the\ht\Lbox+\the\dp\Lbox\space RB:\the\ht\Rbox+\the\dp\Rbox\space p@gechunkDelta:\the\p@geChunkDelta}%\space Tot:\the\cumulativeDelta%
   \let\\=\upd
@@ -1557,6 +1557,7 @@
    \global\adjustp@ge=0pt
    \plainoutput%
   \fi
+  \trace{d}{@writep@ge: resetting things for next page}%
   \resetvsize%
   \global\vsize=\availht
   \global\availhtR=\textheight%
@@ -1583,6 +1584,9 @@
   \@mptyinserts
   \s@veinserts{chunk}%
   \s@veinserts{col}%
+  \s@veallnotes{1}%
+  \s@veallnotes{2}%
+  \resetc@rdstat%reset the current diglotstatus
   \nextshipout
   %\nonstopmode
   %\showthe\output
