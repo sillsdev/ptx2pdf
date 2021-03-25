@@ -7838,13 +7838,13 @@ line then set this option.</property>
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">True</property>
                                                     <property name="receives_default">False</property>
-                                                    <property name="tooltip_text" translatable="yes">The footnotes specified in Paratext can
-use \f - (with a minus) to omit the caller, 
-or \f +(with a plus) to include the caller.
-or \f * where * itself becomes the caller.
+                                                    <property name="tooltip_text" translatable="yes">The Footnotes specified in Paratext use
+\x +(plus) to cycle through the callers,
+or \x - (minus) to omit the caller.
 
-If this option is enabled, the settings below
-will determine how the callers will be displayed.</property>
+If this option is enabled, the Show Callers
+settings below will override whatever
+has been specified within the text itself.</property>
                                                     <property name="halign">start</property>
                                                     <property name="margin_top">2</property>
                                                     <property name="margin_bottom">6</property>
@@ -8106,13 +8106,13 @@ line then set this option.</property>
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">True</property>
                                                     <property name="receives_default">False</property>
-                                                    <property name="tooltip_text" translatable="yes">Cross-references specified in Paratext can
-use \x - (with a minus) to omit the caller, 
-or \x +(with a plus) to include the caller,
-or \x # where # itself becomes the caller.
+                                                    <property name="tooltip_text" translatable="yes">Cross-references specified in Paratext use
+\x +(plus) to cycle through the callers,
+or \x - (minus) to omit the caller.
 
-If this option is enabled, the settings below
-will determine how the callers will be displayed.</property>
+If this option is enabled, the Show Callers
+settings below will override whatever
+has been specified within the text itself.</property>
                                                     <property name="halign">start</property>
                                                     <property name="margin_top">2</property>
                                                     <property name="margin_bottom">6</property>

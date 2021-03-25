@@ -3,6 +3,28 @@ PTXprint 1.6 Release Notes
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 
+Bug fixes and Improvements in 1.6.0.1
+
+  * Paragraphed endnotes are now working
+  
+  * The whole of the Arabic UI is RTL (when used with the appropriate locale settings)
+  
+  * PDF bookmark list improved
+  
+  * Fixed Adjust Lists in diglots
+  
+  * Make sure all Footnote and Cross-Reference settings are remembered and do as advertised
+
+  * Removed "Persian" digits from list of scripts - use "Arabic-Indic" instead
+  
+  * Added "Fullwidth" digits to list of scripts - mainly used with CJK scripts
+  
+  * Fixed picture media settings: (P)rint  (A)pp  (W)eb  now respect default values
+
+  * Outstanding known issue: There is an occasional problem with (long?) footnotes getting doubled in diglots.
+    This is probably triggered when a footnote is the reason for a heading to be moved onto the next page, so
+	a good workaround is to use the AdjList to jiggle the text at that point until it resolves.
+
 Improvements in 1.6
 
   * Diglot code has been re-written to be more robust and adaptable to structural differences between texts
