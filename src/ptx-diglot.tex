@@ -28,7 +28,7 @@
 % authorization from SIL International.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\newcount\diglotDbgJoinboxes% FIXME: This doesn't need to be a count, but might break user's code/debug instructions.
+\newcount\diglotDbgJoinboxes%
 \diglotDbgJoinboxes=-1% Set to the debug message of a joinboxes to execute showbox on that join
 \def\diglotDbgeachcol{-1}% Define to begin tracingmacros and tracing assigns at each@col with TRACEcount
 
@@ -389,6 +389,7 @@
   \ifnum\outputpenalty=\endtri@lpen@lty
     \global\holdinginserts=0
     \global\trialfailedfalse
+    \global\vsize=\trialheight
     \global\output={\diglot@any@trial}%calls \whichtrial on success
     \unvcopy\galley %process
     %\ifnum\pageno>100
@@ -403,7 +404,7 @@
         \MSG{*** Internal error caught. Incorrect penalty encountered. \the\outputpenalty!=\endtri@lpen@lty}%
       \fi
     \fi
-    \vsize=\textheight
+    \global\vsize=\textheight
   \fi
 }
 
@@ -667,8 +668,8 @@
       \else 
         \global\output={\diglot@backingup}%
         \global\setbox\trialbox=\box\voidb@x
-        \global\vsize=\trialheight
-        \traceNum{D}{Trying again}%
+        \global\vsize=\trialheight% First chunk read by diglot@backingup goes to galley
+        \traceNum{D}{Backing up and trying again (\the\trialheight)}%
         \r@storenotes{\g@tndstat}{1}%
         \r@storeinserts{col}
         %\setbox\galley\vbox{\unvbox\galley\unvbox\galleyexc@ss\penalty\endtri@lpen@lty}%

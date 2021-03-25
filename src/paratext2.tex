@@ -878,7 +878,7 @@
   \x@\let\x@\th@cl@ss\csname note-#1\endcsname
   \global\setbox\th@cl@ss=\box\voidb@x}
 
-\def\s@venotes#1#2{\trace{n}{Saving footnotes}\edef\n@tesavelevel{#2}\edef\n@t@sfx{#1}\let\\=\s@ven@te \the\n@tecl@sses}
+\def\s@venotes#1#2{\trace{nS}{Saving footnotes}\edef\n@tesavelevel{#2}\edef\n@t@sfx{#1}\let\\=\s@ven@te \the\n@tecl@sses}
 \def\s@veallnotes#1{%
   \ifdiglot
     \ifdiglotSepNotes
@@ -894,7 +894,7 @@
   \fi
 }
   
-\def\r@storenotes#1#2{\trace{n}{Restoring footnotes}\edef\n@tesavelevel{#2}\edef\n@t@sfx{#1}\let\\=\r@storen@te \the\n@tecl@sses}
+\def\r@storenotes#1#2{\trace{nS}{Restoring footnotes}\edef\n@tesavelevel{#2}\edef\n@t@sfx{#1}\let\\=\r@storen@te \the\n@tecl@sses}
 \def\tw@{2}
 \def\s@ven@te#1{% Level2 save saves to notesave1-X to notesave2-X
   \ifx\tw@\n@tesavelevel
