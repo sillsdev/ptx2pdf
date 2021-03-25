@@ -236,11 +236,11 @@ ModelMap = {
     "footer/ftrcenterside":     ("r_ftrCenter", None),
     "footer/ftrcenter":         ("ecb_ftrcenter", lambda w,v: v or "-empty-"),
     "footer/ifftrtitlepagenum": ("c_pageNumTitlePage", lambda w,v: "" if v else "%"),
-    "footer/ifprintConfigName": ("c_printConfigName", lambda w,v: "" if v else "%"),
+    "footer/ifprintconfigname": ("c_printConfigName", lambda w,v: "" if v else "%"),
 
     "notes/includefootnotes":   ("c_includeFootnotes", lambda w,v: "%" if v else ""),
     "notes/fneachnewline":      ("c_fneachnewline", lambda w,v: "%" if v else ""),
-    "notes/fnOverride":         ("c_fnOverride", None),
+    "notes/fnoverride":         ("c_fnOverride", None),
     "notes/iffnautocallers":    ("c_fnautocallers", lambda w,v :"true" if v else "false"),
     "notes/fncallers":          ("t_fncallers", lambda w,v: v if w.get("c_fnautocallers") else ""),
     "notes/fnresetcallers":     ("c_fnpageresetcallers", lambda w,v: "" if v else "%"),
@@ -248,7 +248,7 @@ ModelMap = {
 
     "notes/includexrefs":       ("c_includeXrefs", lambda w,v: "%" if v else ""),
     "notes/xreachnewline":      ("c_xreachnewline", lambda w,v: "%" if v else ""),
-    "notes/xrOverride":         ("c_xrOverride", None),
+    "notes/xroverride":         ("c_xrOverride", None),
     "notes/ifxrautocallers":    ("c_xrautocallers", lambda w,v :"true" if v else "false"),
     "notes/xrcallers":          ("t_xrcallers", lambda w,v: v if w.get("c_xrautocallers") else ""),
     "notes/xrresetcallers":     ("c_xrpageresetcallers", lambda w,v: "" if v else "%"),
@@ -284,7 +284,7 @@ ModelMap = {
     "thumbtabs/rotate":         ("c_thumbrotate", None),
     "thumbtabs/rotatetype":     ("fcb_rotateTabs", None),
     "thumbtabs/background":     ("col_thumbback", None),
-    "thumbtabs/thumbIsZthumb":  ("c_thumbIsZthumb", None),
+    "thumbtabs/thumbiszthumb":  ("c_thumbIsZthumb", None),
     "thumbtabs/restart":        ("c_thumbrestart", None),
     "thumbtabs/groups":         ("t_thumbgroups", None),
 

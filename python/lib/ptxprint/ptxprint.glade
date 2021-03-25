@@ -7849,6 +7849,7 @@ will determine how the callers will be displayed.</property>
                                                     <property name="margin_top">2</property>
                                                     <property name="margin_bottom">6</property>
                                                     <property name="draw_indicator">True</property>
+                                                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                                   </object>
                                                   <packing>
                                                     <property name="expand">False</property>
@@ -8054,7 +8055,7 @@ Print a second time before it applies.</property>
                                                     <property name="can_focus">False</property>
                                                     <child>
                                                       <object class="GtkCheckButton" id="c_xreachnewline">
-                                                        <property name="label" translatable="yes">Start each Cross-Reference on a New Line</property>
+                                                        <property name="label" translatable="yes">Start Each Cross-Reference on a New Line</property>
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                         <property name="receives_default">False</property>
@@ -8102,7 +8103,7 @@ line then set this option.</property>
                                                 </child>
                                                 <child>
                                                   <object class="GtkCheckButton" id="c_xrOverride">
-                                                    <property name="label" translatable="yes">Override xRref-Specific -/+ Settings in Text</property>
+                                                    <property name="label" translatable="yes">Override xRef-Specific -/+ Settings in Text</property>
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">True</property>
                                                     <property name="receives_default">False</property>
@@ -8117,6 +8118,7 @@ will determine how the callers will be displayed.</property>
                                                     <property name="margin_top">2</property>
                                                     <property name="margin_bottom">6</property>
                                                     <property name="draw_indicator">True</property>
+                                                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                                   </object>
                                                   <packing>
                                                     <property name="expand">False</property>
