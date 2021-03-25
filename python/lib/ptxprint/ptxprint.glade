@@ -5646,6 +5646,7 @@ Margins, Columns and Rules (lines).</property>
                       <object class="GtkGrid">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="margin_left">6</property>
                         <property name="row_spacing">6</property>
                         <property name="column_spacing">6</property>
                         <child>
@@ -6505,7 +6506,6 @@ or Expanding Paragraphs:</property>
                             <property name="width_request">330</property>
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="margin_left">6</property>
                             <property name="margin_bottom">6</property>
                             <property name="hexpand">False</property>
                             <property name="label_xalign">0.039999999105930328</property>
@@ -7849,7 +7849,6 @@ will determine how the callers will be displayed.</property>
                                                     <property name="margin_top">2</property>
                                                     <property name="margin_bottom">6</property>
                                                     <property name="draw_indicator">True</property>
-                                                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                                   </object>
                                                   <packing>
                                                     <property name="expand">False</property>
@@ -8118,7 +8117,6 @@ will determine how the callers will be displayed.</property>
                                                     <property name="margin_top">2</property>
                                                     <property name="margin_bottom">6</property>
                                                     <property name="draw_indicator">True</property>
-                                                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                                   </object>
                                                   <packing>
                                                     <property name="expand">False</property>
@@ -9581,6 +9579,8 @@ header, or the Secondary format.</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="valign">start</property>
+                        <property name="margin_left">6</property>
+                        <property name="margin_right">6</property>
                         <property name="margin_top">3</property>
                         <property name="margin_bottom">6</property>
                         <property name="label_xalign">0.019999999552965164</property>
@@ -15830,6 +15830,8 @@ This will delete all previous log and intermediate temporary files for the entir
                       <object class="GtkBox">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="margin_left">6</property>
+                        <property name="margin_right">6</property>
                         <property name="spacing">7</property>
                         <child>
                           <object class="GtkFrame" id="fr_AdvOther">
@@ -16084,6 +16086,7 @@ glosses for interlinear/ruby text.</property>
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="halign">start</property>
+                            <property name="margin_left">6</property>
                             <property name="vexpand">True</property>
                             <property name="label_xalign">0.05000000074505806</property>
                             <child>
@@ -16581,6 +16584,7 @@ output and tweak adjust lists.</property>
                   <object class="GtkBox" id="tb_Help">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="margin_left">6</property>
                     <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkFrame">

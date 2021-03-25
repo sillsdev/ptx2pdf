@@ -1013,7 +1013,8 @@ class TexModel:
 
         for c in ("fn", "xr"):
             # Force all footnotes/x-refs to be either '+ ' or '- ' rather than '*/#'
-            if self.asBool("notes/{}Override".format(c)):
+            if self.asBool("notes/{}override".format(c)):
+                print(c, "=", self.asBool("notes/{}override".format(c)))
                 t = "+" if self.asBool("notes/if{}autocallers".format(c)) else "-"
                 self.localChanges.append((None, regex.compile(r"\\{} .".format(c[0])), r"\\{} {}".format(c[0],t)))
             # Remove the [spare] space after a note caller if the caller is omitted AND if after a digit (verse number).

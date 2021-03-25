@@ -122,12 +122,12 @@ class PicList:
                         val = False
                     elif e == "disabled":
                         val = v.get(e, False)
-                    elif e == "media":
-                        val = v.get(e, None)
-                        if val is None:
-                            val = defaultmedia["default"]
-                        else:
-                            val = "".join(x for x in val if x in defaultmedia["limit"])
+                    # elif e == "media":
+                        # val = v.get(e, None)
+                        # if val is None:
+                            # val = defaultmedia["default"]
+                        # else:
+                            # val = "".join(x for x in val if x in defaultmedia["limit"])
                     else:
                         val = v.get(e, "")
                     row.append(val)
@@ -301,7 +301,7 @@ class PicList:
 
     def mask_media(self, row):
         src = row[_pickeys['src']][:2]
-        inf = self.parent.copyrightInfo['copyrights'].get(src.lower(), {"media": {"limit": "paw", "tip": {"en": "Default"}}})["media"]
+        inf = self.parent.copyrightInfo['copyrights'].get(src.lower(), {"media": {"default": "paw", "limit": "paw", "tip": {"en": "Default"}}})["media"]
         tip = inf["tip"].get(getlang()[0], inf["tip"]["en"])
         if inf["tip"]["en"] == 'Default':
             self.builder.get_object("l_plMedia").set_tooltip_text(_("Media permissions unknown\nfor this illustration"))
@@ -312,7 +312,8 @@ class PicList:
             w = _form_structure["med"+c.upper()]
             wid = self.builder.get_object(w)
             if val is None or val == "":
-                isactive = c in inf["limit"]
+                isactive = c in inf["default"]
+                # isactive = False # c in inf["limit"]
             else:
                 isactive = c in val
             if wid is not None:
@@ -344,11 +345,8 @@ class PicList:
             key = "pgpos"
         elif key.startswith("med"):
             val = "".join(v[-1].lower() for k, v in _form_structure.items() if k.startswith("med") and self.get(v))
-            # if self.currow is not None:
-                # src = self.currow[_pickeys['src']][:2]
-                # inf = _picLimitDefault.get(src.lower(), ("paw", "paw", "Default"))
-            if sorted(val) == sorted("paw"):
-                val = ""
+            if val == "":
+                val = "x"
             key = "media"
         else:
             val = self.get(key)

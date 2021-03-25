@@ -129,7 +129,7 @@
             },
             "media": {
                 "default": "x",
-                "limit": "x",
+                "limit": "p",
                 "tip": {
                     "en": "Sorry, but permission to use these images in ANY media has been withdrawn!",
                     "es": "Lo sentimos, pero se ha retirado el permiso para utilizar estas imágenes en CUALQUIER medio de comunicación.",

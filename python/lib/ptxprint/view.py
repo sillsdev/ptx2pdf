@@ -367,7 +367,7 @@ class ViewModel:
                     elif os.path.isdir(srcp):
                         os.makedirs(destp, exist_ok=True)
                         for p in os.listdir(srcp):
-                            op = re.sub(r"-[^-]+?\.", "-"+newcfg+".", p)
+                            op = p.replace(oldcfg, newcfg)
                             copyfile(os.path.join(srcp, p), os.path.join(destp, op))
                     else:
                         copyfile(srcp, destp)
@@ -466,6 +466,15 @@ class ViewModel:
                     self.doError(_("Json parsing error in {}").format(fname),
                                  secondary = _("{} at line {} col {}").format(e.msg, e.lineno, e.colno))
 
+    def picMedia(self, src):
+        if self.copyrightInfo is None:
+            self.readCopyrights()
+        m = re.match(self.getPicRe(), src)
+        if m is not None and m.group(1).lower() in self.copyrightInfo['copyrights']:
+            media = self.copyrightInfo['copyrights'][m.group(1).lower()]['media']
+            return (media['default'], media['limit'])
+        return (None, None)
+    
     def configName(self):
         return self.configId or None
 
@@ -1047,6 +1056,7 @@ class ViewModel:
         self.picinfos.getFigureSources(exclusive=exclFigsFolder)
         if self.get("c_useCustomFolder"):
             cfgchanges["btn_selectFigureFolder"] = (Path("${prjdir}/figures"), "customFigFolder")
+            cfgchanges["c_useCustomFolder"] = False
         pathkey = 'src path'
         for f in (p[pathkey] for p in self.picinfos.values() if pathkey in p and p['anchor'][:3] in books):
                 res[f] = "figures/"+os.path.basename(f)

@@ -344,9 +344,10 @@ class PicInfo(dict):
                             for l in labelParams:
                                 k,v = l.split("=")
                                 pic[k.strip()] = v.strip('"')
-                            if media is not None and key in self:
-                                if 'media' in pic and not any(x in media for x in pic['media']):
-                                    del self[key]
+                            if 'media' not in pic:
+                                default, limit = self.parent.picMedia(pic.get('src', ''))
+                                pic['media'] = 'paw' if default is None else default
+                                    
 
     def out(self, fpath, bks=[], skipkey=None, usedest=False, media=None, checks=None):
         ''' Generate a picinfo file, with given date.
@@ -376,10 +377,14 @@ class PicInfo(dict):
                     continue
                 elif x == "scale" and float(v.get(x, 1.0)) == 1.0:
                     continue
-                elif x == "media" and sorted(v.get(x, 'apw')) == "apw":
-                    if media is not None and media not in v[x]:
+                elif x == "media":
+                    val = v.get(x, None)
+                    if val is None or val == '':
+                        val = self.model.picMedia(v.get('src', ''))[0]
+                    if media is not None and media not in val:
                         break
-                    continue
+                    if val == self.model.picMedia(v.get('src', ''))[0]:
+                        continue
                 elif x == "x-credit":
                     if credittxt is None:
                         continue
