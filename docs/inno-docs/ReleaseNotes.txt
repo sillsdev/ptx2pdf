@@ -13,6 +13,8 @@ Bug fixes and Improvements in 1.6.0.1
   
   * Fixed Adjust Lists in diglots
   
+  * Don't swap left and right style alignment when choosing script direction (as the macros handle it)
+  
   * Make sure all Footnote and Cross-Reference settings are remembered and do as advertised
 
   * Removed "Persian" digits from list of scripts - use "Arabic-Indic" instead
