@@ -1,7 +1,11 @@
 PTXprint 1.6.0.2 Release Notes 
-25 March 2021
+26 March 2021
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
+
+Bug fixes and Improvements in 1.6.0.3
+
+  * Fixed Adjust Lists for diglots (again!)
 
 Bug fixes and Improvements in 1.6.0.2
 
@@ -11,7 +15,7 @@ Bug fixes and Improvements in 1.6.0.2
   
   * PDF bookmark list improved
   
-  * Fixed Adjust Lists in diglots
+  * Fixed Adjust Lists in diglots (not!)
   
   * Don't swap left and right style alignment when choosing script direction (as the macros handle it)
   

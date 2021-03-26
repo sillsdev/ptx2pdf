@@ -810,6 +810,17 @@ class ViewModel:
         res = fname[:doti] + cname + fname[doti:] + ext if doti > 0 else fname + cname + ext
         return res
 
+    def getAdjListFilename(self, bk, ext=".adj"):
+        fname = self.getBookFilename(bk, self.prjid)
+        if fname is None:
+            return None
+        cname = "-" + (self.configName() or "Default")
+        if self.get("c_diglot"):
+            cname = cname + "-diglot"
+        doti = fname.rfind(".")
+        res = fname[:doti] + cname + fname[doti:] + ext if doti > 0 else fname + cname + ext
+        return res
+
     def generateAdjList(self):
         existingFilelist = []
         booklist = self.getBooks()
@@ -826,7 +837,7 @@ class ViewModel:
                 return
         prjdir = os.path.join(self.settings_dir, self.prjid)
         for bk in booklist:
-            fname = self.getDraftFilename(bk, ext=".adj")
+            fname = self.getAdjListFilename(bk, ext=".adj")
             outfname = os.path.join(self.configPath(self.configName()), "AdjLists", fname)
             if os.path.exists(outfname):
                 existingFilelist.append(re.split(r"\\|/",outfname)[-1])
@@ -839,7 +850,7 @@ class ViewModel:
             tmplist = []
             fname = self.getBookFilename(bk)
             outfname = os.path.join(self.configPath(self.configName()),
-                                    "AdjLists", self.getDraftFilename(bk, ext=".adj"))
+                                    "AdjLists", self.getAdjListFilename(bk, ext=".adj"))
             adjlist = []
             flist = [os.path.join(prjdir, fname)]
             if diglot: 
@@ -1070,7 +1081,7 @@ class ViewModel:
 
         # adjlists
         adjpath = os.path.join(basecfpath, "AdjLists")
-        adjbks = set(self.getDraftFilename(bk, ext=".adj") for x in books)
+        adjbks = set(self.getAdjListFilename(bk, ext=".adj") for x in books)
         if os.path.exists(adjpath):
             for adj in os.listdir(adjpath):
                 if adj.endswith(".adj") and adj in adjbks:

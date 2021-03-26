@@ -1202,7 +1202,10 @@ class GtkViewModel(ViewModel):
                 fpath = os.path.join(self.configPath(cfgname=self.configId, makePath=False), fndict[pgid][0], fname)
             doti = fpath.rfind(".")
             if doti > 0:
-                fpath = fpath[:doti] + "-" + (self.configName() or "") + fpath[doti:] + fndict[pgid][1]
+                if self.get("c_diglot"):
+                    fpath = fpath[:doti] + "-" + (self.configName() or "Default") + "-diglot" + fpath[doti:] + fndict[pgid][1]
+                else:
+                    fpath = fpath[:doti] + "-" + (self.configName() or "Default") + fpath[doti:] + fndict[pgid][1]
             if pgnum == 1: # AdjList
                 if self.get("t_invisiblePassword") == "":
                     genBtn.set_sensitive(True)
@@ -1263,7 +1266,7 @@ class GtkViewModel(ViewModel):
         buf = self.fileViews[pg][0]
         if pg == 1:
             bk = self.get("ecb_examineBook")
-            fname = self.getDraftFilename(bk, ext=".adj")
+            fname = self.getAdjListFilename(bk, ext=".adj")
             fdir= os.path.join(self.configPath(self.configName()), "AdjLists")
             os.makedirs(fdir, exist_ok=True)
             fpath = os.path.join(fdir, fname)

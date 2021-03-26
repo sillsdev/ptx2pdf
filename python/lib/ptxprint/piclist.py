@@ -381,7 +381,7 @@ class PicInfo(dict):
                     val = v.get(x, None)
                     if val is None or val == '':
                         val = self.model.picMedia(v.get('src', ''))[0]
-                    if media is not None and media not in val:
+                    if media is not None and val is not None and media not in val:
                         break
                     if val == self.model.picMedia(v.get('src', ''))[0]:
                         continue
