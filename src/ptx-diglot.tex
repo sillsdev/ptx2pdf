@@ -293,6 +293,7 @@
 \newcount\lastchunkpenalty %highest penalty previouschunk
 \newif\ifLneedsemptying
 \newif\ifallNeedEmptying %set by lefttext, etc. to indicate that the current chunk ends with the next side-transition. 
+%\galleypenalty %the penalty we FOUND at the break between the %galley and \galleyexc@ss
 
 % Initial \output routine for any side of scripture.
 \def\diglot@any@primary{%
@@ -305,22 +306,6 @@
 
 
 \newif\ifboxmoved%
-%\galleypenalty %the penalty we FOUND at the break between the %galley and \galleyexc@ss
-\def\@ddtoexcess{%
-  \trace{d}{@ddtoexcess op:\the\outputpenalty\space etp:\endtri@lpen@lty\space hIns=\the\holdinginserts(==1) adding \the\ht255+\the\dp255\space to galleyexc@ss (\the\ht\galleyexc@ss+\the\dp\galleyexc@ss)}%
-  \ifvoid\galleyexc@ss
-    \global\setbox\galleyexc@ss\vbox{\TempDim=\dp255\unvbox255 \ifdim\TempDim=0pt\else \kern-\TempDim\fi\ifnum\outputpenalty=10000\else\ifnum\outputpenalty=\endtri@lpen@lty\else\penalty\outputpenalty\fi\fi}%
-  \else
-    \global\setbox\galleyexc@ss\vbox{\joinboxes{\galleyexc@ss}{255}{19}{\ifnum\outputpenalty=10000 0\else\ifnum\endtri@lpen@lty=\outputpenalty 0\else\the\outputpenalty\fi\fi}}%
-    % HERE BE DRAGONS. If galleyexc@ss was not emptied by undog@lley, and
-    % another route into diglot@backingup is used, then there will misordering, 
-    % and it will be ever so tempting BUT WRONG! to try to fix it with this:
-    % \global\setbox\galleyexc@ss\vbox{\unvbox\galleyexc@ss\unvbox255\ifnum\outputpenalty=10000\else\ifnum\outputpenalty=\endtri@lpen@lty \else\penalty\outputpenalty\fi\fi}%
-    % DONT DO THAT! galleyexc@ss must be empty before diglot@backingup is made the output routine
-  \fi
-  \trace{D}{\the\ht\galleyexc@ss+\the\dp\galleyexc@ss)}%
-  %\showbox\galleyexc@ss
-}
 
 \def\decod@lastnode#1{\ifnum #1<0 none\else \ifcase #1
     char%0
@@ -351,61 +336,60 @@
   \r@storeinserts{col}
   \restore@oldmarks{\c@rrdstat}%
   \ifdim\trialheight<0pt
-    \boxmovedtrue
+    \boxmovedtrue % and drop through
   \else
-    \global\output={\diglot@backingup}%
-    \global\vsize=\trialheight
-    \global\holdinginserts=1
-    \undog@lley
-    \penalty\endtri@lpen@lty
-    \relax
+    \d@resplit@galley %
+    %\global\output={\diglot@backingup}%
+    %\global\intrialtrue
+    %\global\vsize=\trialheight
+    %\global\holdinginserts=1
+    %\undog@lley
+    %\penalty\endtri@lpen@lty
+    %\relax
   \fi
 }
 
-\def\diglot@backingup{%Similar to but more complex than monoglot backing-up
-  % routine. Run with holdinginserts=1
-  % Used by either side, it will cause a new page
-  % break to be found, and
-  % once the end-of-trial penalty is found, 
-  % the \trial routine is called (again)
-  % assumes galley and galleyexc@ss are empty when first run
-  % post-galley material is saved  in  \galleyexc@ss WHICH MUST BE EMPTY at the first cycle.
-  \traceNum{d}{diglot@backingup hIns=\the\holdinginserts(==1) op:\the\outputpenalty,  dc:\the\deadcycles\space g:\the\ht\galley, ge:\the\ht\galleyexc@ss (0pt at first call)}%
-  \ifnum\holdinginserts=0
-    \MSG{*** Internal error caught. Incorrect internal state found in backing up. Text of footnotes may have been lost.}%
+\def\d@resplit@galley{%Old diglot@backingup's use of input stack caused needless problems.
+  \traceNum{d}{d@resplit@galley \the\trialheight}%
+  \dimen0=\vfuzz
+  \vfuzz=\maxdimen
+  \global\setbox\galleyexc@ss\vbox{\undog@lley}%
+  \setbox0\vbox{\penalty9000\unvcopy\galleyexc@ss}%
+  \dimen1=\ht\galleyexc@ss\advance\dimen1 by \dp\galleyexc@ss
+  \ifdim\dimen1<\trialheight
+    \trace{D}{ODD: trialheight bigger than contents. Reducing trialheight from \the\trialheight to \the\dimen1}%
+    \global\trialheight=\dimen1
   \fi
-  \ifvoid\galley
-    \ifnum\deadcycles>0
-      \global\deadcycles=\numexpr \deadcycles - 1\relax% it takes 2 cycles to get here, and can't use advance
-    \fi
-    \global\galleypenalty=\ifnum \outputpenalty=10000 0\else\outputpenalty\fi
-    \global\setbox\galley=\vbox{\unvbox255\penalty\endtri@lpen@lty}%
-    \ifnum\diglotDbgJoinboxes=\TRACEcount
-      \showbox\galley%
-    \fi
-  \else
-    \@ddtoexcess
-  \fi
-  \ifnum\outputpenalty=\endtri@lpen@lty
-    \global\holdinginserts=0
-    \global\trialfailedfalse
-    \global\vsize=\trialheight
-    \global\output={\diglot@any@trial}%calls \whichtrial on success
-    \unvcopy\galley %process
-    %\ifnum\pageno>100
-      %\ifnum\interactionmode=2 %=\scrollmode
-        %\showlists
-      %\fi
-    %\fi
-    %\showbox\galleyexc@ss
+  \setbox1=\vsplit0 to \trialheight
+  \setbox1=\vbox{\unvbox1}%
+  \ifnum 1=\ifdim \ht1=0pt\ifdim\dp1=0pt 1 \else 0\fi \else 0\fi
+    \trace{D}{Nothing wants to split from top of box: trial failed}%
+    \trialfailedtrue
+    \global\trialheight=-\baselineskip
+    \global\setbox\galley\box\voidb@x
+    \vfuzz=\dimen0
+    \let\after@this=\whichtrial
   \else 
-    \ifnum\outputpenalty<-10000
-      \ifnum\outputpenalty>-10010
-        \MSG{*** Internal error caught. Incorrect penalty encountered. \the\outputpenalty!=\endtri@lpen@lty}%
-      \fi
+    \global\setbox\galley=\vsplit\galleyexc@ss to \trialheight
+    \vfuzz=\dimen0
+    \global\setbox\galley=\vbox{\unvbox\galley\global\galleypenalty=\lastpenalty\unpenalty\penalty\endtri@lpen@lty}%
+    \trace{D}{galley/xs now \the\ht\galley+\the\dp\galley, / \the\ht\galleyexc@ss+\the\dp\galleyexc@ss, gp:\the\galleypenalty}%
+    \ifnum\TRACEcount=\diglotDbgJoinboxes
+     \showbox\galley\showbox\galleyexc@ss
     \fi
-    \global\vsize=\textheight
+    \let\after@this=\d@rerun@trial
   \fi
+  \after@this
+}
+
+\def\d@rerun@trial{%
+  \global\holdinginserts=0
+  \global\trialfailedfalse
+  \global\intrialtrue
+  \global\vsize=\availht
+  \global\setbox\trialbox=\box\voidb@x
+  \global\output={\diglot@any@trial}%calls \whichtrial on success
+  \unvcopy\galley\relax %process newly-shrunk galley
 }
 
 \def\run@a@trial{%
@@ -443,9 +427,14 @@
     \ifnum\diglotDbgJoinboxes=\TRACEcount
       \showbox\@xcs
     \fi
-    \global\setbox\p@rtl=\vsplit\@xcs to \trialheight
-    \advance\trialheight by \baselineskip % avoid underfull box in case of footnote
-    \global\vsize=\trialheight
+    \dimen0=\ht\@xcs\advance\dimen0 by \dp\@xcs
+    \ifdim\dimen0<\trialheight
+      \global\trialheight=\dimen0 %save useless trims.
+    \fi
+    \global\setbox\p@rtl=\vsplit\@xcs to \availht
+    \global\advance\availht by \baselineskip % avoid underfull box in case of footnote
+    \global\vsize=\availht
+    \global\advance\availht by -\baselineskip % avoid underfull box in case of footnote
     \csname partial\c@rrdstat penalty\endcsname=0 %FIXME: Isn't there a \splitpenalty??
     \global\galleypenalty=0
     \global\setbox\galley=\vbox{\x@\unvcopy\p@rtl\unpenalty\penalty\endtri@lpen@lty}%
@@ -492,6 +481,9 @@
     LB:\the\ht\Lbox+\the\dp\Lbox, av:\the\availht, vs:\the\vsize, pg:\the\pagegoal iftrialfailed\iftrialfailed true\else false\fi}%
   \ifnum\TRACEcount=\diglotDbgJoinboxes
    \showbox\trialbox\showbox\galleyexc@ss\showlists
+  \fi
+  \ifnum\outputpenalty=\endtri@lpen@lty
+    \global\intrialfalse
   \fi
   \trace{H}{after@a@trial: b:\botmark/\botmarks1/\botmarks2, t:\topmark/\topmarks1/\topmarks2, f:\firstmarks1/\firstmarks2, fr:\firstRmark, br:\botRmark ol:\oldLmark}%
   %
@@ -547,7 +539,7 @@
         \x@\global\x@\setbox\csname excess\c@rrdstat\endcsname\vbox{\joinboxes{\galleyexc@ss}{\csname excess\c@rrdstat\endcsname}{4}{\x@\the\csname partial\c@rrdstat penalty\endcsname}}%
       \fi
       \global\setbox\galleyexc@ss=\box\voidb@x
-      \x@\global\x@\setbox\csname partial\c@rrdstat\endcsname\box\galley% Remember the ol galley
+      \x@\global\x@\setbox\csname partial\c@rrdstat\endcsname\box\galley% Remember the old galley
       \x@\global\csname \c@rrdstat ht\endcsname=\dimexpr \ht\trialbox + \dp\trialbox\relax
       \x@\global\x@\setbox\x@\csname \c@rrdstat box\endcsname\box\trialbox
       \x@\global\x@\let\x@\m@rknum\csname m@rknum\c@rrdstat\endcsname
@@ -603,7 +595,7 @@
 
 
 \def\diglot@any@trial{%output routine for any column
- % Handles calling diglot@backingup
+ % Handles calling d@resplit@galley
  %Stashes set material in \trialbox, discards extra,
  %if the galley fits then there are no discards and 
  %it calls whichtrial 
@@ -622,39 +614,52 @@
   \ifnum\diglotDbgJoinboxes=\TRACEcount
     \showbox255
   \fi
-  \global\holdinginserts=1
+  \dglt@calc@vailht
+  \TempDim=\availht
+  \setbox255\vbox{\unvbox255}%
+  \ifdim\ht255>0pt
+    \advance\TempDim by -\ht255
+    \advance\TempDim by -\dp255
+  \else
+    \advance\TempDim by \ht255
+    \advance\TempDim by -\dp255
+  \fi 
   \ifvoid\trialbox
-    \dglt@calc@vailht
-    \TempDim=\availht
-    \setbox255\vbox{\unvbox255}%
-    \ifdim\ht255>0pt
-      \advance\TempDim by -\ht255
-      \advance\TempDim by -\dp255
-    \else
-      \advance\TempDim by \ht255
-      \advance\TempDim by -\dp255
-    \fi 
     \global\setbox\trialbox=\box255
     \ifdim\TempDim<-0.3\baselineskip % Coarse test. main trial routine can be pickier if it wants
       \trace{D}{Initial Content does not fit (\the\trialheight, \the\TempDim, \the\availht)}%
+      \global\holdinginserts=1
       \global\trialfailedtrue
     \else
-      \trace{D}{Initial content fits(\the\trialheight, \the\TempDim, \the\availht, \the\ht\trialbox)}%
+      \trace{D}{Initial content fits(th:\the\trialheight, av:\the\availht, box:\the\ht\trialbox d:\the\TempDim)}%
+      \ifdim \TempDim > 2\baselineskip
+        \vsize=\TempDim
+      \fi
     \fi
   \else
-    \ifnum 1=\ifdim\ht255>0pt 1 \else \ifdim\dp255>0pt 1 \else 0\fi\fi
-      \setbox255\vbox{\unvbox255}%
+    \advance\TempDim by -\ht\trialbox
+    \advance\TempDim by -\dp\trialbox
+    \ifdim\TempDim<-0.3\baselineskip 
       \trace{D}{Extra content found before end of trial, \the\ht255+\the\dp255}%
+      \global\holdinginserts=1
       \global\trialfailedtrue
       \global\vsize=\textheight
       \global\setbox255\box\voidb@x
     \else
-      \trace{D}{Zero-sized box found.}%
-      \global\setbox\trialbox=\vbox{\unvbox\trialbox\box 255}%
+      \iftrialfailed
+        \global\setbox255\box\voidb@x
+      \else
+        \trace{D}{Extra material found, which also fits (\the\ht255+\the\dp255) \the\TempDim remaining.}%
+        \global\setbox\trialbox=\vbox{\joinboxes{\trialbox}{255}{5}{0}}%
+        \ifdim \TempDim > 2\baselineskip
+          \vsize=\TempDim
+        \fi
+      \fi
     \fi
   \fi
   \let\after@this=\relax
   \ifnum\outputpenalty=\endtri@lpen@lty
+    \global\intrialfalse
     \iftrialfailed
       \global\advance\trialheight by -1\baselineskip
       \ifdim\trialheight<0.5\baselineskip
@@ -666,20 +671,10 @@
         \global\setbox255=\box\voidb@x
         \let\after@this=\whichtrial% 
       \else 
-        \global\output={\diglot@backingup}%
-        \global\setbox\trialbox=\box\voidb@x
-        \global\vsize=\trialheight% First chunk read by diglot@backingup goes to galley
         \traceNum{D}{Backing up and trying again (\the\trialheight)}%
         \r@storenotes{\g@tndstat}{1}%
         \r@storeinserts{col}
-        %\setbox\galley\vbox{\unvbox\galley\unvbox\galleyexc@ss\penalty\endtri@lpen@lty}%
-        \ifvoid\galleyexc@ss\else
-          \setbox\galley\vbox{\undog@lley\penalty\endtri@lpen@lty}%
-        \fi
-        \ifnum\TRACEcount=\diglotDbgJoinboxes
-           \showbox\galley
-        \fi
-        \unvbox\galley\global\setbox\galley=\box\voidb@x
+        \let\after@this=\d@resplit@galley
       \fi
     \else
       \trace{D}{All looks good!  \the\ht\trialbox+\the\dp\trialbox (gp:\the\galleypenalty, op: \the\outputpenalty)}%
@@ -689,7 +684,6 @@
     \fi
   \fi
   \after@this
-  \relax
 }
 
 \def\ztmon{\tracingmacros=1}
@@ -718,6 +712,9 @@
   \@@setside{#2}%Set the side to occur after the next swapcols penalty
   \endgraf\penalty\dgl@tPenColSwap\relax %Trigger collection of text.
   % <<< Diglot collect runs HERE! (and sets n@xtc@mmand
+  \ifintrial 
+    \message{EEK! Still in trial!}
+  \fi
   \let\t@mpc@mmand=\n@xtc@mmand% This bit may process the collected input. 
   \x@\xdef\csname c@rrfontsize\@ldstat\endcsname{\c@rrfontsize}% Remember the fontsize before column-swap
   \trace{D}{c@rrfontsize saved for side \@ldstat.}%
@@ -743,7 +740,6 @@
   \global\allNeedEmptyingtrue % Text after this needs emptying
   \swap@diglot{R}%sets diglot state, etc
   \global\vsize=\maxdimen
-  \global\trialheight=\maxdimen
   \relax\output={\diglotCollect}%
   \global\holdinginserts=1
   \the\diglotRho@ks
@@ -756,7 +752,6 @@
   \pr@sideswitch{norighttext}{L}%
   \swap@diglot{L}%sets diglot state, etc
   \global\vsize=\maxdimen
-  \global\trialheight=\maxdimen
   \global\holdinginserts=1
   \the\diglotLho@ks
 }
@@ -768,7 +763,6 @@
   \global\allNeedEmptyingtrue% Text after the swap ALSO needs emptying, in case \righttext not used
   \swap@diglot{R}%sets diglot state, etc
   \global\vsize=\maxdimen
-  \global\trialheight=\maxdimen
   \global\holdinginserts=1
   \the\diglotRho@ks
 }
@@ -785,7 +779,6 @@
   \ifcsname #1isDiglotColumn\endcsname % 
     \swap@diglot{#1}%sets diglot state, etc
     \global\vsize=\maxdimen
-    \global\trialheight=\maxdimen
     \global\holdinginserts=1
     \x@\the\csname diglot#1ho@ks\endcsname
   \else
