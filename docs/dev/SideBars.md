@@ -4,134 +4,155 @@
 
 ```\esb```  boxes may have a colour, which may be transparent (allowing a
 whole-page background image or decoration to show through). They may also have
-their own watermark or background image.
-
+their own watermark or background image, and a foreground image such as a logo 
+that would further identify the type of information being presented (e.g. a scroll for 
+historic notes, or a map for geographical notes).
 ```
 
-\Category people
-% The identifier of this category. This command imposes default values on parameters.
-% Subsequent modifications to a style should be done using the alternative format
+```\Category people```
+The identifier of this category. This command imposes default values on parameters.
+Subsequent modifications to a style should be done using the alternative format:
 
-\Marker cat:people|esb
+```\Marker cat:people|esb```
 
 
-%\Position option
-% Options: t, tl, tr, ti, to,  b, bl, br, bi, bo, h, p, F, P  and B
-% Default: bl
-% I.e. any image position may be specified. 
-% B indicates that this box goes below any notes on the page (b normally comes above notes).
-% 
-%\Scale  value(0-1)
-% Default: 1
-% Width of the box relative to the nominal size of the containing box.
+```\Position option```
+* Options: `t`, `tl`, `tr`, `ti`, `to`,  `b`, `bl`, `br`, `bi`, `bo`, `h`, `p`, `F`, `P`  or `B`
+* Default: bl
+The position for this class of side-bars.  Any image position may be specified. 
+`B` indicates that this box goes below any notes on the page (b normally comes above notes).
+ 
+```\Scale  value(0-1)```
+* Default: 1
+Width of the box relative to the nominal size of the containing box.
 
-%\Breakable option   !!!DO NOT USE
-% Options: T, F, value(0-1)
-% Default: F
-% Should the contents of this box be forced to be on one page or can it be broken? (Not compatible with background images)
-% With a background colour, the box will be broken into sections and these sections will be added one chunk at a time.
-% If a value is given, this is the smallest fraction of the pageheight that the sections will be, if 't' is given, the fraction 
-% will be 0.2 of the page height. If splitting a given chunk of the box is impossible, the algorithm will increase the chunk-size until 
-% a break IS possible. 
-% NB: Breakable triggers a bug in the page output mechanism and things go gets things horribly wrong
+`\Breakable option`   *!!!DO NOT USE!!!*
+*  Options: T, F, value(0-1)
+*  Default: F
+Should the contents of this box be forced to be on one page or can it be broken? (Not compatible with background images)
+With a background colour, the box will be broken into sections and these sections will be added one chunk at a time.
+If a value is given, this is the smallest fraction of the pageheight that the sections will be, if 't' is given, the fraction 
+will be 0.2 of the page height. If splitting a given chunk of the box is impossible, the algorithm will increase the chunk-size until 
+ a break IS possible. 
 
-%\BgColour F, T, value(0-1) value(0-1) value(0.1)
-%\BgColor F, T, value(0-1) value(0-1) value(0.1)
-% Disable (F) or reenable (T)  any background colour set earlier (or inherited) 
-% 3 values (0-1) for red, green and blue. With \Alpha below, this defines the colour of the \esb box
-% Note that by default an \esb box has no background colour, so not setting a value here is not the same as setting a value to white. 
-% Setting this to white will overwrite any background image. (For Americans, \BgColor is an acceptable alias).
+*NB:* Breakable triggers a bug in the page output mechanism and *things go  horribly wrong* if this option is used.
 
-%\Alpha value(0-1)
-% The transparency or alpha value of the background colour: 0 is transparent, 1 is solid.
+`\BgColour option` 
+`\BgColor option` 
+* Option: `F`, `T`, `value`(0-1) `value`(0-1) `value`(0.1)
+Disable (F) or reenable (T)  any background colour set earlier (or inherited). Alternatively 
+3 values (0-1) for red, green and blue may be specified.
 
-%\FgImage        picturename.jpg
-% Default: no image
-% Name of a foreground image.  The foreground image will appear in the defined place for all occurances of \esb boxes in this category.
-% Note that JPEG has no transparency, use PDF images for line art / transparent images above a coloured background.
+With `\Alpha` below, this defines the colour of the \esb box.
+Note that by default an \esb box has no background colour, so not setting a value here is
+not the same as setting a value to white. 
+Setting this to white will overwrite any background image. (For Americans, \BgColor is an acceptable alias).
 
-%\FgImagePos     option
-% Options: any valid pgpos, plus: sl, sr, si, so
-% Default: cl
-% t and b are reinterpreted to mean the top and bottom of the box. Other out-of line image formats are invalid.  
-% sl and sr position the image to one side of the text, without the text  returning to normal size after the image as would happen with a cutout.
+`\Alpha` value(0-1)
+The transparency or alpha value of the background colour: 0 is transparent, 1 is solid.
 
-%\FgImageScale  value(0-1)
-% Width of the image relatve to the size of the size of the containing box.
-% Default: 0.2
+`\FgImage`   `picturename.jpg`
+* Default: no image
+Name of a foreground image.  The foreground image will appear in the defined place for all occurances of \esb boxes in this category.
+Note that JPEG has no transparency, use PDF images for line art / transparent images above a coloured background.
 
-%\BgImage      
-% The same meaning as for Fg images, but for a background (watermark) image. 
-% Background images are horizontally and vertically centred, there is no \BgImagePos command.
 
-%\BgImageScale  0.5
-%\BgImageScale  0.9x0.9
-%\BgImageScale  x0.7
-% Background Images can be scaled relative to the width of the box (top format), to both 
-% dimensions of the box, or only to the height (bottom format).
+\FgImagePos     option
+* Options for above/below text: `t`  or `tc` (top, centre) , `tl` (top, left), `tr` (top, right), `ti` (top inner), `to` (top outer)  or `b_` (bottom...)
+* Options for beside text: `sl` (side: left), `slt` (side: left, top), `slc` (side: left, centre) , `slb`  (side: left, bottom), `s_` (side: left/inner/outer, ...). 
+* Options for interacting with text: `cl` (cutout left), `cl2` (cutout left, starting 2 lines below top), `c_` (cutout, left/inner/outer ...).
+* Default: cl
 
-%\BgImageOversize option
-% Options: shrink distort ignore crop
-% If the background image size is specified with a single dimension (height or width) 
-% and the unspecified dimension ends up being too large for a given sidebar
-% then there are four possible behaviours:
-% * Shrink the image without distorting the image's aspect ratio
-% * Shrink the image in the over-sized dimension, distorting the aspect ratio
-% * Ignore the problem, allowing the image to appear outside the box [current behaviour]
-% * Crop the edges of the image
+The (default) cutout position leaves the least white-space. the `t` and `b` series of options position the image in a horizontal bar of space that is as tall as the image, the `s` series position the image in a vertical space as wide as the image, reducing the width as if the a cutout continued the whole height of the side-bar.
 
-%\BgImageLow option
-% Options: t,f
-% Should a background image come below or above the colour. Line art PDFs with
-% a tranpsarent background may display better above the colour layer, as the colour 
-% layer will not wash them out, but .JPGs are probably better below, as
-% .JPG images do not have transparency.
 
-%\BgImageAlpha value(0-1)
-% Transparency or alpha value of the background image: 0 is transparent, 1 is
-% solid. This is useful for e.g. turning black lines into a paler shade. Note that this 
-% will allow the background colour to show through, even if the image is above
-% the background layer, so on a green background black will become a darker
-% shade of green, not grey.
+`\FgImageScale`  value(0-1)
+Width of the image relatve to the size of the size of the containing box.
+Default: 0.2
 
-%\BgImageColor value(0-1) value(0-1) value(0-1) 
-%\BgImageColour value(0-1) value(0-1) value(0-1) 
-% Some (but not all) PDF line-art images do not set the colour of their lines,
-% relying instead on the 'default' colour. This sets the default colour to
-% something other than black, and thus such images can be recoloured with this
-% option. If the image defines its colour, this option will have no visible effect at all. 
+`\BgImage`      
+Background images are intended to form a water-mark or fancy border and are
+horizontally and vertically centred, there is no ```\BgImagePos``` command. 
 
-%\BorderWidth measurement
-% Default: 0.5
-% Define the thickness of the border-line around the box, Measured in FontSizeUnits (normal text is 12 FontSizeUnits)
+\BgImageScale  0.5
+\BgImageScale  0.9x0.9
+\BgImageScale  x0.7
+Background Images can be scaled relative to the width of the box (top format), to both 
+dimensions of the box, or only to the height (bottom format).
 
-%\BorderColour value(0-1) value(0-1) value(0.1)
-%\BorderColor value(0-1) value(0-1) value(0.1)
-% Default: 0 0 0 (Black)
-%3 values (0-1) for red, green and blue components of the border-line arount the box
+`\BgImageOversize` option
+Options: shrink distort ignore crop
+Default: ignore
+If the background image size is specified with a single dimension (height or width) and the unspecified dimension ends up being too large for a given
+sidebar then there are four possible behaviours:
+ * Shrink the image without distorting the image's aspect ratio [planned]
+ * Shrink the image in the over-sized dimension, distorting the aspect ratio [planned]
+ * Ignore the problem, allowing the image to appear outside the box [current behaviour]
+ * Crop the edges of the image [may be possible eventually]
 
-%\Border options
-% Options are one or more of these (separated by a space): None Top Bottom Left Right Inner Outer All
-% Which of the 4 possible borders will have a line.
-% Six internal flags are set by these options which are processed in order.
-% (e.g. the flag for the left border on odd pages will be altered by
-% All, Left or Inner).
-% For 'Book opens on the left'  publications (Right-to-left languages, but complicated by diglots), the
-% inner/outer processing requires that \BookOpenLefttrue is specified before
-% the category sheet is processed.
-%
-% The opion None clears all borders set until now. Thus:
-%   \Border All None Left
-% is the same as "\Border None Left". "\Border Left" will retain any previously set or inherited values,
-% While adding a Left-hand border.
+`\BgImageLow`  option
+* Options: `t`, `f`
+* Default: `t`
+Only relevant where there is both a background image *and* a background colour, this defines 
+the order they are put on the page.  Should a background image come below or above the colour. Line art PDFs with
+a tranpsarent background may display better above the colour layer, as the colour 
+layer will not then wash them out, but .JPGs are probably better below, as .JPG images do not have transparency.
 
-%\EndCategory
-% Cancels the current category (sets the value to empty). This is used
-% internally, before and after the categorysheet is defined and is not 
-% necesary if the stylesheet is loaded by \categorysheet.
-% Placing it in a categorysheet file means that until the next \Category,
-% any stylesheet commands behave as though in a normal stylesheet, and options given 
-% above file will apply to \esb boxes without a specified category.
+```\BgImageAlpha`` value(0-1)
+Transparency or alpha value of the background image: 0 is transparent, 1 is
+solid. This is useful for e.g. turning black lines into a paler shade. Note that this 
+will allow the background colour to show through, even if the image is above
+the background layer, so on a green background black will become a darker
+shade of green, not grey.
+
+`\BgImageColor` value(0-1) value(0-1) value(0-1) 
+`\BgImageColour` value(0-1) value(0-1) value(0-1) 
+Some (but not all) PDF line-art images do not set the colour of their lines,
+relying instead on the 'default' colour. This sets the default colour to
+something other than black, and thus such images can be recoloured with this
+option. If the image defines its colour, this option will have no visible effect at all. [*untested*]
+
+`\BorderWidth` measurement
+Default: 0.5
+Define the thickness of the border-line around the box, measured in FontSizeUnits (unless extensive stylesheet 
+modification has been done, normal body text is 12 FontSizeUnits.
+
+`\BorderColour` value(0-1) value(0-1) value(0.1)
+`\BorderColor` value(0-1) value(0-1) value(0.1)
+` Default: 0 0 0 (Black)
+The 3 values (0-1) for red, green and blue components of the border-line arount the box [*Unimplemented*]
+
+`\Border` options
+* Options: are one or more of these (separated by a space): None Top Bottom Left Right Inner Outer All
+Which of the 4 possible borders will have a line.
+Six internal flags: top, bottom, odd-left, even-left, odd-right, even-right
+are set by these options which are processed in order.  (e.g. the flag for the
+left border on odd pages will be altered by All, Left or Inner).
+For 'Book opens on the left'  publications (Right-to-left languages, but complicated by diglots), the
+inner/outer processing requires that `\BookOpenLefttrue` is specified before the category sheet is processed.
+
+The opion None clears all borders set until now. Thus:
+`\Border All None Left`
+ is the same as "\Border None Left". "\Border Left" will retain any previously set or inherited values,
+ while adding a Left-hand border.
+
+`\EndCategory`
+Cancels the current category (sets the value to empty). 
+Placing `\EndCategory` in a categorysheet file means that until the next \Category,
+any stylesheet commands will behave as though in a normal stylesheet, and any category 
+options listed above  will apply to \esb boxes without a specified category.
+
+If the stylesheet is loaded by `\categorysheet`, then is used internally,
+before and after the categorysheet is read, and is not normally necesary.
+
+The `\stylesheet` command should issues a warning if `\Category` is used without an
+`\EndCategory` command towards the end of the file. However, there is no need to place
+`\EndCategory` before a `\Category` instruction, as no formal grouping occurs.
+
+The `\StyleCategory` command assumes that the styling fragments contain neither 
+`\Category` nor `\EndCategory` 
+
+
 ```
 
 ## Thoughts

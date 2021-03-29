@@ -211,29 +211,40 @@
       %$\else
         %$\dimen0=\cp@ram\dimen1
       %$\fi
+      \x@\x@\x@\p@rseLoc\x@\tempa\tempb\end
       \ifx\tempa \pos@Side
         \trace{e}{Forground picture will be \fgfigsp@c}%
         \advance\dimen1 by -\dimen0
         \ifx\tempb\empty\message{No side defined for foreground image in sidebar class '\c@tegory'. Assuming outer.}%
           \let\tempb\@lignOuter
         \fi
-        \x@\x@\x@\p@rseLoc\x@\tempa\tempb\end
+        \def\t@pedge{\vfil}%
+        \def\b@tedge{\vfil}%
         \ifx\t@mpb\@lignLeft
-          \xdef\sb@leftedge{\noexpand\sb@ins@rtpic\fgfigsp@c|\the\dimen0 \noexpand\E\noexpand\let\noexpand\sb@leftedge\noexpand\empty}%
+          \ifx\t@mpc\@lignTop\def\t@pedge{}\fi
+          \ifx\t@mpc\@lignBot\def\b@tedge{}\fi
+          \xdef\sb@leftedge{\t@pedge\noexpand\sb@ins@rtpic\fgfigsp@c|\the\dimen0 \noexpand\E\noexpand\let\noexpand\sb@leftedge\noexpand\empty\b@tedge}%
           \trace{e}{leftedge defined to sb@ins@rtpic\fgfigsp@c...}%
+          \advance\dimen0 by \fb@hpadding
           \xdef\sb@leftshift{\the\dimen0}%
         \else
-          \xdef\sb@rightedge{\noexpand\sb@ins@rtpic\fgfigsp@c|\the\dimen0 \noexpand\E\noexpand\let\noexpand\sb@rightedge\noexpand\empty}%
+          \ifx\t@mpc\@lignTop\def\t@pedge{}\fi
+          \ifx\t@mpc\@lignBot\def\b@tedge{}\fi
+          \xdef\sb@rightedge{\t@pedge\noexpand\sb@ins@rtpic\fgfigsp@c|\the\dimen0 \noexpand\E\noexpand\let\noexpand\sb@rightedge\noexpand\empty\b@tedge}%
+          \advance\dimen0 by \fb@hpadding
           \xdef\sb@rightshift{\the\dimen0}%
         \fi
         \let\fgfigsp@c\empty
-      \else% tempa=s
+      \else% tempa!=s
+        \def\l@ftedge{\hfil}%
+        \ifx\t@mpb\@lignLeft\def\l@ftedge{}\else\ifx\t@mpb\@lignRight\def\l@ftedge{\hfill}\fi\fi
         \ifx\tempa\@lignTop
-          \xdef\sb@rtopedge{\hfil\noexpand\sb@ins@rtpic\fgfigsp@c|\the\dimen0 \noexpand\E\hfil}%
+          \xdef\sb@rtopedge{\l@ftedge\noexpand\sb@ins@rtpic\fgfigsp@c|\the\dimen0 \noexpand\E}%
         \fi
         \ifx\tempa\@lignBot
-          \xdef\sb@rbotedge{\hfil\noexpand\sb@ins@rtpic\fgfigsp@c|\the\dimen0 \noexpand\E\hfil}%
+          \xdef\sb@rbotedge{\l@ftedge\noexpand\sb@ins@rtpic\fgfigsp@c|\the\dimen0 \noexpand\E}%
         \fi
+        \x@\x@\x@\p@rseLoc\x@\tempa\tempb\end
         \ifx\tempa\loc@Cut
           \let\w@tsit\gr@phic
           \def\w@tsit{graphicInSidebar}%
@@ -248,7 +259,6 @@
             \trace{e}{Saved box \wd\this@pic x\ht\this@pic}%
           \fi
           \global\let\fgfig@cutout\tr@e
-          \x@\x@\x@\p@rseLoc\x@\tempa\tempb\end
           \xdef\l@cspec{\t@mpb}%
           \ifx\t@mpc\empty\gdef\c@tskip{0}\else\xdef\c@tskip{\t@mpc}\fi%
           \gdef\sb@rtopedge{\strut
@@ -303,7 +313,7 @@
    \floatingpenalty=500\insertpenalties=0
  \fi\fi
  %\egroup\setbox\extb@x\vbox\bgroup
- \sb@rtopedge
+ \sb@rtopedge\ifhmode\endgraf\fi
 }
 \def\sb@rb@x{sidebarBox}%one word
 \def\tr@e{T}
@@ -409,7 +419,7 @@
    \kill@PossParamCache
    \ifx\fgfigp@s
    \ifhmode\par\fi
-   \sb@rbotedge
+   \sb@rbotedge\ifhmode\endgraf\fi
    \global\let\c@t@gory=\c@tegory\egroup 
   \else\global\let\c@t@gory=\empty \trace{e}{\\ebse called without \\esb}%
   \fi
@@ -484,12 +494,15 @@
       \let\fb@vpadding=\s@vedvpadding
       \let\b@drbottom=\lstb@drbot
     \fi
+    \dimen0=\ht\extchunkb@x
     \ifdim\sb@leftshift>0pt
+      \setbox0\vbox to\ht\extchunkb@x{\sb@leftedge}%
       \trace{e}{Adding \sb@leftshift to left of box}%
-      \setbox\extchunkb@x\vbox{\hbox{\hbox to \sb@leftshift{\hss\sb@leftedge}\box\extchunkb@x}}\fi
+      \setbox\extchunkb@x\vbox{\hbox{\hbox to \sb@leftshift{\hss\box0\hskip\fb@hpadding}\box\extchunkb@x}}\fi
     \ifdim\sb@rightshift>0pt
+      \setbox0\vbox to\ht\extchunkb@x{\sb@rightedge}%
       \trace{e}{Adding \sb@rightshift to left of box}%
-      \setbox\extchunkb@x\vbox{\hbox{\box\extchunkb@x\hbox to \sb@rightshift{\sb@rightedge\hss}}}\fi
+      \setbox\extchunkb@x\vbox{\hbox{\box\extchunkb@x\hbox to \sb@rightshift{\hskip\fb@hpadding\box0\hss}}}\fi
     \trace{e}{Chunk of extbox is \the\ht\extchunkb@x+\the\dp\extchunkb@x (\the\ht\extb@x)}%
     \ifx\h@scol\tr@e
       \setbox\extchunkb@x\vbox{%
