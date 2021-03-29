@@ -466,17 +466,17 @@
 \setp@ram{fontsize}{x-credit|fig}{7}
 %-cfig_hex
 
-\def\m@kepl@ceholder#1#2{%
+\def\m@kepl@ceholder#1#2#3{%
 \vbox to #2{\offinterlineskip
   \hrule height .2pt \kern-.2pt
   \hbox to #1{\vrule height #2 width .2pt \hfil \vrule width .2pt}%
-  \vbox to 0pt{\kern-#2 \vss \hbox to #1{\hss\idf@nt
-    \csname figparam-src\endcsname\hss}\vss}%
+  \vbox to 0pt{\kern-#2 \vss \hbox to #1{\hss\idf@nt #3\hss}\vss}%
   \kern-.2pt \hrule height .2pt}}
+
 \def\ins@rtpic#1#2#3#4#5#6{%
  \openin\t@stread="#1"
    \ifeof\t@stread\dimen0=\ifdim #3>#4\relax #4\else #3\fi
-     \m@kepl@ceholder{\dimen0}{0.618 \dimen0}%
+     \m@kepl@ceholder{\dimen0}{0.618 \dimen0}{missing: \csname figparam-src\endcsname}%
    \else \closein\t@stread \picfilecomm@nd #1 #2 #3 #5 #6\fi
 }
 
@@ -647,7 +647,7 @@
                      {\picaltdim@n}{\p@cheight}{\sizem@ltiple}{\xtra}{\xtraremains}}%
     \fi
     \ifFigurePlaceholders % replace graphic with a frame and the file name
-      \setbox\newpicb@x=\m@kepl@ceholder{\wd\newpicb@x}{\ht\newpicb@x}%
+      \setbox\newpicb@x=\m@kepl@ceholder{\wd\newpicb@x}{\ht\newpicb@x}{\csname figparam-src\endcsname}%
     \fi
     \setbox\newpicb@x=\hbox to \sizem@ltiple\p@cwidth{\hss
       \edef\l@gstring{{\the\im@gecount}{\f@lename}{\csname figparam-pgpos\endcsname}{\csname figparam-copy\endcsname}{\picdim@n:\the\wd\newpicb@x x\the\ht\newpicb@x}}% Fully expand figure parameters, but leave page no. to be expanded later.
@@ -847,7 +847,7 @@
      %\csname\m@rker\endcsname
   \else
      \trace{g}{Cutout in vertical mode.}%
-     \count254=0
+     \tmpcount=0
   \fi
   %\advance\dimen1 by \baselineskip
   \advance\dimen1 by \c@tskip\baselineskip
@@ -858,7 +858,7 @@
     \advance\dimen1 by -\t@str@ise\baselineskip
   \fi
   \setbox#1\vbox to 0pt{\kern\dimen1\kern\count255\baselineskip\vbox to 0pt{\vss\box#1}\vss}%
-  \advance\count254 by \c@tskip
+  \advance\tmpcount by \c@tskip
   \ifx\l@cspec\@lignLeft
     \let\c@tcmd\leftcutout
     \edef\thing@side{L}%
@@ -880,16 +880,16 @@
   \else\MSG{* Cutout for picture \the\im@gecount\space at \c@rref, delay is \t@std@lay}\fi
   %
   \ifx\t@std@lay\relax
-    \count254=0
+    \tmpcount=0
   \else
-    \count254=\t@std@lay
+    \tmpcount=\t@std@lay
   \fi
   %\ifhmode 2|\fi
-  \write@delayedthing{\dr@pthingid}{\the\count254}{\the\dimen2}{\the\count255}{\c@tskip}{\thing@side}%
+  \write@delayedthing{\dr@pthingid}{\the\tmpcount}{\the\dimen2}{\the\count255}{\c@tskip}{\thing@side}%
   \ifx\t@std@lay\relax
     \MSG{*** Image in cutout at \c@rref, re-run to generate \string\DelayedItem\space settings}%
   \else\fi
-  \add@pending{\dr@pthingid}{\c@rref}{0}{\the\dimen2}{\the\count255}{\the\count254}{\thing@side}%
+  \add@pending{\dr@pthingid}{\c@rref}{0}{\the\dimen2}{\the\count255}{\the\tmpcount}{\thing@side}%
   \ifx\gr@phic\w@tsit
     \leavevmode\str@t\vadjust {\vbox to 0pt{\box#1\vss}}%
   \else
@@ -1047,9 +1047,9 @@
   \ifvoid\wholepagepic\else
     \trace{g}{wholepagepic is \the\ht\wholepagepic high}%
     \setbox0=\vsplit\wholepagepic to \PaperHeight
-    \setbox0=\vbox{\unvbox 0\global\count254=\lastpenalty}%
+    \setbox0=\vbox{\unvbox 0\global\tmpcount=\lastpenalty}%
     \trace{g}{lp:\t box0 is \the\ht0\space high, th:\the\textheight}%
-    \ifnum\count254=11
+    \ifnum\tmpcount=11
       \def\pagecontents{%
         \trace{g}{Topins=\the\ht\topins, Bottomins=\the\ht\bottomins, tlins=\the\ht\topleftins, blins=\the\ht\bottomleftins, trins=\the\ht\toprightins, brins=\the\ht\bottomrightins}%
         \box0%

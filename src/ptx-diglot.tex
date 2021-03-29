@@ -319,10 +319,10 @@
   \trace{d}{undog@lley}%
   \dimen9=\dp\galley
   \unvbox\galley\count255=\lastpenalty\unpenalty
-  \count254=\lastnodetype
-  \ifnum\count254=12\else\kern-\dimen9\fi%\lastnotedype=12 is eTeX test for kern (see above for longer list
+  \tmpcount=\lastnodetype
+  \ifnum\tmpcount=12\else\kern-\dimen9\fi%\lastnotedype=12 is eTeX test for kern (see above for longer list
   \ifVisTraceExtra\hbox to 0pt{\doVisTrace{t \the\ht\galleyexc@ss}\box0\hss}\fi
-  \traceNum{D}{removed penalty \the\count255, replacing with \the\galleypenalty. lnt:\the\count254 (\decod@lastnode{\count254})}%
+  \traceNum{D}{removed penalty \the\count255, replacing with \the\galleypenalty. lnt:\the\tmpcount (\decod@lastnode{\tmpcount})}%
   \ifvoid\galleyexc@ss\else
     \penalty\galleypenalty
     \unvbox\galleyexc@ss
@@ -1013,15 +1013,15 @@
    \dimen3=\baselineskip
    \advance\dimen3 by -\topskip
    \ifVisTrace
-     \dimen6=1sp\count254=0
+     \dimen6=1sp\tmpcount=0
    \fi
    \ifdim\dimen5<10sp \ifdim\dimen5>0sp
-      \count254=\dimen5
+      \tmpcount=\dimen5
       \dimen6=\dimen5
       \advance\dimen6 by 1sp
       \dimen4=-\dimen6 
       \dimen3=0pt
-      \trace{D}{Re-breaking in the same place as before. Cancelling topskip removal. Indenting VisTrace label by \the\count254}%
+      \trace{D}{Re-breaking in the same place as before. Cancelling topskip removal. Indenting VisTrace label by \the\tmpcount}%
    \fi\fi
    \ifvoid#2
      \trace{D}{Box joint is \join@a-\join@b, no skip}%
@@ -1032,7 +1032,7 @@
    \kern \dimen4
    \ifVisTrace
   %   \hrule\kern -0.4pt
-     \hbox to 0pt{\hss\doVisTrace{j}\box0\kern\dimexpr -20pt * \count254\relax}%
+     \hbox to 0pt{\hss\doVisTrace{j}\box0\kern\dimexpr -20pt * \tmpcount\relax}%
      \kern \dimen6
    \fi
  \fi%
