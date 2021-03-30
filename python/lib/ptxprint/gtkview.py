@@ -529,10 +529,11 @@ class GtkViewModel(ViewModel):
 
     def getInitValues(self):
         self.initValues = {v[0]: self.get(v[0], skipmissing=True) for k, v in ModelMap.items() if v[0] is not None}
+        self.resetToInitValues()
 
     def resetToInitValues(self):
-        super().resetToInitValues()
         self.rtl = False
+        super().resetToInitValues()
         self.picinfos.clear(self)
         for k, v in self.initValues.items():
             if k.startswith("bl_") or v is not None:
@@ -808,7 +809,6 @@ class GtkViewModel(ViewModel):
         if cfg == 'Default':
             # self.doError(_("Can't delete 'Default' configuration!"), secondary=_("Folder: ") + delCfgPath)
             self.resetToInitValues()
-            self.setupDefaults()
             # Note that we may give them an option (later) to delete the entire "Default" including piclists etc.
             # Right now it (only) re-initializes the UI settings.
             return
@@ -1534,6 +1534,8 @@ class GtkViewModel(ViewModel):
         lb = self.builder.get_object("tv_fontFamily")
         sel = lb.get_selection()
         ls, row = sel.get_selected()
+        if row is None:
+            return (None, None)
         name = ls.get_value(row, 0)
         style = self.get("fcb_fontFaces")
         if style.lower() == "regular":
@@ -1606,6 +1608,8 @@ class GtkViewModel(ViewModel):
 
     def onFontFeaturesClicked(self, btn):
         (name, style) = self._getSelectedFont()
+        if name is None:
+            return
         f = TTFont(name, style)
         if f is None:
             return

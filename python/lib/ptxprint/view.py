@@ -170,7 +170,8 @@ class ViewModel:
         return False
 
     def resetToInitValues(self):
-        pass
+        if self.ptsettings is not None and self.ptsettings.dir == "right":
+            self.set("fcb_textDirection", "rtl")
 
     def parse_fontname(self, font):
         m = re.match(r"^(.*?)(\d+(?:\.\d+?)?)$", font)
@@ -404,8 +405,7 @@ class ViewModel:
             self.resetToInitValues()
             if currprj == self.prjid:
                 if configName == "Default":
-                    if self._copyConfig(None, configName, moving=True):
-                        self.setupDefaults()
+                    self._copyConfig(None, configName, moving=True)
                 else:
                     self._copyConfig(self.configId, configName)
             res = self.readConfig(cfgname=configName)
@@ -422,10 +422,6 @@ class ViewModel:
             return res
         else:
             return True
-
-    def setupDefaults(self):
-        if self.ptsettings.dir == "right":
-            self.set("fcb_textDirection", "rtl")
 
     def get_usfms(self):
         if self.usfms is None:
