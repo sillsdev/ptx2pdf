@@ -81,13 +81,14 @@ Background Images can be scaled relative to the width of the box (top format), t
 dimensions of the box, or only to the height (bottom format).
 
 `\BgImageOversize` option
-Options: shrink distort ignore crop
+Options: ignore shrink distort crop
 Default: ignore
-If the background image size is specified with a single dimension (height or width) and the unspecified dimension ends up being too large for a given
+If the background image size is specified with a single dimension (height or
+width) and the unspecified dimension ends up being too large for a given
 sidebar then there are four possible behaviours:
+ * Ignore the problem, allowing the image to appear outside the box [current behaviour]
  * Shrink the image without distorting the image's aspect ratio [planned]
  * Shrink the image in the over-sized dimension, distorting the aspect ratio [planned]
- * Ignore the problem, allowing the image to appear outside the box [current behaviour]
  * Crop the edges of the image [may be possible eventually]
 
 `\BgImageLow`  option
@@ -107,10 +108,13 @@ shade of green, not grey.
 
 `\BgImageColor` value(0-1) value(0-1) value(0-1) 
 `\BgImageColour` value(0-1) value(0-1) value(0-1) 
-Some (but not all) PDF line-art images do not set the colour of their lines,
-relying instead on the 'default' colour. This sets the default colour to
-something other than black, and thus such images can be recoloured with this
-option. If the image defines its colour, this option will have no visible effect at all. [*untested*]
+Some (rare) PDF line-art images do not set the colour of their lines, relying
+instead on the 'default' colour, which is normally black. This control sets the
+default colour to something other than black, and thus such images can be
+recoloured with this option. If (as most PDF images do) the image defines its
+own colour, this option will have no visible effect at all. It is also possible
+that an image will *partly* contain colour information, but only starting part
+way through the file, a situation that might produce unexpected results.
 
 `\BorderWidth` measurement
 Default: 0.5

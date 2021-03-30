@@ -66,7 +66,7 @@
 \setsbp@ram{fgfigspec}{}%Normally no picture.
 \setsbp@ram{bgfigspec}{}%Normally no picture.
 \setsbp@ram{bgfigalpha}{1.0}%Normally solid colour
-\setsbp@ram{bgfigcolour}{1.0 1.0 1.0}%Normally black
+\setsbp@ram{bgfigcolour}{0 0 0}%Normally black
 \def\fb@hpadding{1pt}%Added left and right of feintbox content
 \def\fb@vpadding{1pt}%added above and below feintbox content
 
@@ -81,7 +81,7 @@
     \edef\thisalpha{#1 }% Important space
     \special{pdf:put @resources << /ExtGState << /GS0\the\feintb@xnum\space << /Type /ExtGState /CA \thisalpha /ca \thisalpha /AIS false >>  >> >>}%
      \x@\special\x@{pdf:code q /GS0\the\feintb@xnum\space gs #2 rg}%
-     #3
+     #3%
      \special{pdf:code Q}%
   \global\advance\feintb@xnum by 1}%
 
@@ -319,6 +319,7 @@
 \def\tr@e{T}
 \def\false{F}
 \def\pos@Side{s}
+\let\b@drcol\relax
 
 \newbox\b@rderbox
 \def\mkb@rder#1{%Put a border around a box
@@ -328,6 +329,11 @@
   \ifx\b@drright\tr@e\temptrue\trace{eb}{Border: right}\fi
   \ifx\b@drtop\tr@e\temptrue\t@mptrue\trace{eb}{Border: Top}\fi
   \ifx\b@drbottom\tr@e\temptrue\t@mptrue\trace{eb}{Border: Bottom}\fi
+  \ifx\b@drcol\relax
+    \def\bc@l{}\def\endbc@l{}%
+  \else
+    \def\bc@l{\special{color push rgb \b@drcol}}\def\endbc@l{\special{color pop}}%
+  \fi
   \def\v@dj{0pt}%
   \iftemp\def\v@dj{\fb@vpadding}\fi
   \dimen0=\fb@vpadding
@@ -337,7 +343,7 @@
   \iftemp % if ANY border, add horizontal padding and any vertical lines
     \setbox\b@rderbox\vbox{%
       \hbox{\ifx\b@drleft\tr@e\trace{eb}{Drawing Border:left}%
-         \vrule width \b@drwidth\FontSizeUnit height \dimen0 depth \dimen1
+         \bc@l\vrule width \b@drwidth\FontSizeUnit height \dimen0 depth \dimen1 \endbc@l
        \else
          \vrule width 0pt height \dimen0 depth \dimen1 %Strut to sort out vertical padding
        \fi
@@ -345,7 +351,7 @@
        \box\b@rderbox
        \hskip \fb@hpadding
        \ifx\b@drright\tr@e \trace{eb}{Drawing Border: right}%
-         \vrule width \b@drwidth\FontSizeUnit height \dimen0 depth \dimen1 
+         \bc@l\vrule width \b@drwidth\FontSizeUnit height \dimen0 depth \dimen1 \endbc@l
        \fi}%
      }%
   \fi
@@ -366,9 +372,9 @@
     \advance\dimen0 by \b@drwidth\FontSizeUnit
     \advance\dimen0 by \b@drwidth\FontSizeUnit
     \setbox\b@rderbox\vbox{\baselineskip=0pt%
-      \ifx\b@drtop\tr@e\vskip\b@xadj\trace{eb}{Drawing Border:top}\hbox{\vrule height\b@drwidth\FontSizeUnit width \b@xw@dth}\fi%
+      \ifx\b@drtop\tr@e\vskip\b@xadj\trace{eb}{Drawing Border:top}\hbox{\bc@l\vrule height\b@drwidth\FontSizeUnit width \b@xw@dth \endbc@l}\fi%
       \unvbox\b@rderbox
-      \ifx\b@drbottom\tr@e\trace{eb}{Drawing Border:bottom}\hbox{\vrule depth\b@drwidth\FontSizeUnit width \b@xw@dth}\vskip\dimen4\fi
+      \ifx\b@drbottom\tr@e\trace{eb}{Drawing Border:bottom}\hbox{\bc@l\vrule depth\b@drwidth\FontSizeUnit width \b@xw@dth \endbc@l}\vskip\dimen4\fi
     }%
     %\nonstopmode
     %\showbox\b@rderbox
@@ -381,8 +387,10 @@
   \ifdim\ht\extb@x=0pt
     \def\fig@v@dim{}%
   \fi
+  \def\ch@ckfigdim{\tempfalse}%
   \ifx\fig@v@dim\empty
     \x@\def\csname \v@lpfx fig@scale@ht\endcsname{}%
+    \def\ch@ckfigdim{\trace{e}{Checking image width \the\dimen3 <\the\ht\extb@x?}\ifdim\dimen4>\ht\extb@x \def\resc@le{ height \the\ht\extb@x}\temptrue\fi}%
   \else
     \dimen0=\fig@v@dim\ht\extb@x
     \x@\edef\csname \v@lpfx fig@scale@ht\endcsname{ height \the\dimen0}%
@@ -391,6 +399,7 @@
   \ifx\fig@h@dim\empty
     \x@\def\csname \v@lpfx fig@scale@wd\endcsname{}%
     \x@\edef\csname \v@lpfx fig@dim@wd\endcsname{\the\dimen1}%
+    \def\ch@ckfigdim{\trace{e}{Checking height \the\dimen4 <\the\dimen1?}\ifdim\dimen3>\dimen1 \def\resc@le{ width \the\dimen1}\temptrue\fi}%
   \else
     \dimen0=\fig@h@dim\dimen1
     \x@\edef\csname \v@lpfx fig@scale@wd\endcsname{ width \the\dimen0}%
@@ -408,6 +417,10 @@
   \x@\p@rsef@gsc@le\cp@ram xx\E
   \trace{e}{parsed figure scale: \csname #1fig@scale@wd\endcsname \csname #1fig@scale@ht\endcsname}%
 }
+
+\def\Img@Shrink{shrink}
+\def\Img@Distort{distort}
+\def\Img@Crop{crop}
 
 \def\@sbe{%
   \endlastp@rstyle{esbe}%
@@ -444,8 +457,25 @@
   \getsbp@ram{bgfigcolour}\let\bgf@gcol\cp@ram
   \tempfalse
   \ifx\bgf@gsp@c\relax\else
-    \sb@rchunkh@ight=\maxdimen% Background images and page-broken chunks are incompatible 
     \p@rsefigscale{bg}%
+    \edef\t@mpfigspec{\bgf@gsp@c \bgfig@scale@ht \bgfig@scale@wd|\bgfig@dim@wd}%
+    \setbox\newpicb@x=\hbox{\x@\sb@ins@rtpic\t@mpfigspec\E}%
+    \ch@ckfigdim
+    \iftemp% It doesn't fit
+      \getsbp@ram{bgfigoversize}%
+      \ifx\cp@ram\Img@Shrink\edef\t@mpfigspec{\bgf@gsp@c \resc@le|\bgfig@dim@wd}\else
+        \ifx\cp@ram\Img@Distort\edef\t@mpfigspec{\bgf@gsp@c \bgfig@scale@ht \bgfig@scale@wd \resc@le|\bgfig@dim@wd}\else
+          \ifx\cp@ram\Img@Crop\message{Image crop not supported}\tempfalse\else
+            \tempfalse
+          \fi
+        \fi
+      \fi
+      \iftemp
+        \setbox\newpicb@x=\hbox{\x@\sb@ins@rtpic\t@mpfigspec\E}%
+      \fi
+    \fi
+    \sb@rchunkh@ight=\maxdimen% Background images and page-broken chunks are incompatible 
+    \tempfalse
     \if\bgf@gl@w F
       \temptrue
     \fi
@@ -455,8 +485,6 @@
   \fi
   \iftemp
     %modify the esbbox to include the picture
-    \edef\t@mpfigspec{\bgf@gsp@c \bgfig@scale@ht \bgfig@scale@wd|\bgfig@dim@wd}%
-    \setbox\newpicb@x=\hbox{\x@\sb@ins@rtpic\t@mpfigspec\E}
     \trace{e}{Including background image below contents: \t@mpfigspec}%
     \setbox\extb@x\vbox to \ht\extb@x{\vbox to 0pt{\vbox to\ht\extb@x{\vss \hbox to \wd\extb@x{\f@intthing{\bgf@galpha}{\bgf@gcol}{\box\newpicb@x}} \vss}\vss}\box\extb@x}%
     \let\bgf@gsp@c\relax %used it, so if it's still there later, we need to use it.
@@ -507,14 +535,15 @@
     \ifx\h@scol\tr@e
       \setbox\extchunkb@x\vbox{%
         \ifx\bgf@gsp@c\relax\else
-          \edef\t@mpfigspec{\bgf@gsp@c \bgfig@scale@ht \bgfig@scale@wd|\bgfig@dim@wd}%
-          \trace{e}{Including background image below everything: \t@mpfigspec}%
-          \vbox to 0pt{\vbox to\ht\extchunkb@x{\vfil\f@intthing{\bgf@galpha}{\bgf@gcol}{\x@\sb@ins@rtpic\t@mpfigspec\E}\vfil}\vss}\fi
+         \trace{e}{Including background image below everything: \t@mpfigspec}%
+          \vbox to 0pt{\vbox to\ht\extchunkb@x{\vfil\f@intthing{\bgf@galpha}{\bgf@gcol}{\box\newpicb@x}\vfil}\vss}\fi
        % \vskip\baselineskip
        \feintbox{\pdf@lpha}{\pdfBGc@l}{\box\extchunkb@x}}%
        \trace{e}{Chunk is (with box) \the\ht\extchunkb@x+\the\dp\extchunkb@x}%
     \fi
     \let\b@drtop=\fstb@drtop
+    \getsbp@ram{bordercolour}%
+    \let\b@drcol\cp@ram
     \mkb@rder{\extchunkb@x}%
     \let\fstb@drtop=\relax
     \trace{e}{Chunk is  now \the\ht\extchunkb@x+\the\dp\extchunkb@x}%
@@ -600,6 +629,10 @@
 \def\BgImageScale   #1\relax{\initc@t\setsbp@ram{bgfigscale}{#1}\GenC@tFig{bg}}
 \def\BgImagePos   #1\relax{\initc@t\setsbp@ram{bgfigpos}{#1}\GenC@tFig{bg}}
 \def\BgImageLow   #1\relax{\initc@t\uppercase{\edef\t@st{#1}}\setsbp@ram{bgfiglow}{\t@st}}% What's the right sequence for colour layer and background image
+\def\BgImageColour       #1\relax{\initc@t\setsbp@ram{bgfigcolour}{#1}}
+\let\BgImageColor=\BgImageColour%for Americans
+\def\BgImageAlpha       #1\relax{\initc@t\setsbp@ram{bgfigalpha}{#1}}
+\def\BgImageOversize       #1\relax{\initc@t\setsbp@ram{bgfigoversize}{#1}}
 
 \def\BgColour   #1\relax{\initc@t\tempfalse\uppercase{\edef\t@st{#1}}\setbox0\hbox{\if F\t@st \global\temptrue\trace{e}{Cancelling colour}\else\if\tr@e\t@st\global\temptrue\fi\fi}\iftemp\setsbp@ram{hascol}{\t@st}\else\setsbp@ram{hascol}{T}\setsbp@ram{bgcolour}{#1}\fi}%For British/Australian/NZ/etc.
 \let\BgColor\BgColour%For Americans
@@ -607,9 +640,6 @@
 \def\BorderWidth        #1\relax{\initc@t\setsbp@ram{borderwidth}{#1}}
 \def\BorderColour       #1\relax{\initc@t\setsbp@ram{bordercolour}{#1}}
 \let\BorderColor=\BorderColour%for Americans
-\def\BgImageColour       #1\relax{\initc@t\setsbp@ram{bgfigcolour}{#1}}
-\let\BgImageColor=\BorderColour%for Americans
-\def\BgImageAlpha       #1\relax{\initc@t\setsbp@ram{bgfigalpha}{#1}}
 \def\Border	#1\relax{\initc@t\x@\p@rseBorder#1 \relax \relax}
 
 \def\GenC@tFig#1{%
@@ -627,9 +657,15 @@
    \ifeof\t@stread 
      \m@kepl@ceholder{\dimen0}{0.618 \dimen0}{#1}%
    \else\closein\t@stread
+    \tracingassigns=1
     \let\picfilecomm@nd=\XeTeXpicfile
     \expandafter\ch@ckpdf#1..\endf@lename
-    \hbox{\hskip\sb@leftshift\hbox to #3{\hss \picfilecomm@nd #1 #2 \relax \hss}\hskip\sb@rightshift}%
+    \tracingassigns=0
+    \setbox0\hbox{\picfilecomm@nd #1 #2}%
+    \global\dimen3=\wd0
+    \global\dimen4=\ht0
+    \trace{e}{Image dims: \the\dimen3 x \the\dimen4}%
+    \hbox{\hskip\sb@leftshift\hbox to #3{\hss\box0\hss}\hskip\sb@rightshift}%
    \fi}
 
 \def\EndCategory{\gdef\c@tegory{}\global\let\c@tprefix\empty}
