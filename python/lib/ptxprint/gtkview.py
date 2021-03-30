@@ -1623,25 +1623,31 @@ class GtkViewModel(ViewModel):
             langs = f.grLangs
             self.currdefaults = f.featdefaults
             langfeats = f.langfeats
+            tips = {}
         else:
             feats = f.otFeats
             vals = f.otVals
             langs = f.otLangs
             self.currdefaults = {}
             langfeats = {}
+            tips = f.tipFeats
+
         numrows = len(feats)
         (lang, setfeats) = parseFeatString(self.get("t_fontFeatures"), defaults=self.currdefaults, langfeats=langfeats)
         for i, (k, v) in enumerate(sorted(feats.items())):
             featbox.insert_row(i)
             l = Gtk.Label(label=v+":")
             l.set_halign(Gtk.Align.END)
+            if k in tips:
+                l.set_tooltip_markup(tips[k])
             featbox.attach(l, 0, i, 1, 1)
             l.show()
             inival = int(setfeats.get(k, "0"))
             if k in vals:
                 if len(vals[k]) < 3:
                     obj = Gtk.CheckButton()
-                    obj.set_tooltip_text(vals[k][1])
+                    if k in vals and len(vals[k]) > 1:
+                        obj.set_tooltip_text(vals[k][1])
                     obj.set_active(inival)
                 else:
                     obj = Gtk.ComboBoxText()
