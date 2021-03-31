@@ -578,7 +578,7 @@ class TexModel:
         docdir, docbase = self.docdir()
         self.dict['jobname'] = jobname
         self.dict['document/imageCopyrights'] = self.generateImageCopyrightText() \
-                if self.dict['document/includeimg'] else r"\def\zimagecopyrights{}"
+                if self.dict['document/includeimg'] else self.generateEmptyImageCopyrights()
         self.dict['project/colophontext'] = re.sub(r'://', r':/ / ', self.dict['project/colophontext'])
         self.dict['project/colophontext'] = re.sub(r"(?i)(\\zimagecopyrights)([A-Z]{2,3})", \
                 lambda m:m.group(0).lower(), self.dict['project/colophontext'])
@@ -1170,6 +1170,13 @@ class TexModel:
         for m in re.findall(r"(?i)\\(\S+).*?\\zimagecopyrights([A-Z]{2,3})", txt):
             self.imageCopyrightLangs[m[1].lower()] = m[0]
         return
+
+    def generateEmptyImageCopyrights(self):
+        self.analyzeImageCopyrights(self.dict['project/colophontext'])
+        res = [r"\def\zimagecopyrights{}"]
+        for k in self.imageCopyrightLangs.keys():
+            res.append(r"\def\zimagecopyrights{}{{}}".format(k))
+        return "\n".join(res)
 
     def generateImageCopyrightText(self):
         artpgs = {}
