@@ -1075,9 +1075,39 @@
 \def\c@lcboxheights{
   \g@tcolhts
   \trace{b}{BALANCE pageout: cols=2: texta=\the\ht\colA , \the\dp\colA : textb=\the\ht\colB , \the\dp\colB : partial=\the\ht\partial, \the\dp\partial : topins=\the\ht\topins+\the\skip\topins, \the\ht\topleftins+\the\skip\topleftins, \the\ht\toprightins+\the\skip\toprightins : bottomins=\the\ht\bottomins+\the\skip\bottomins, \the\ht\bottomleftins+\the\skip\bottomleftins, \the\ht\bottomrightins+\the\skip\bottomrightins}%
-  \lastd@pth=\dp\colA \setbox\colA=\vbox to \availht{\unvbox\topleftins\box\colA\vfil\unvbox\bottomleftins}\dp\colA=\lastd@pth
+  \dimen9=\textheight
+  \decr{\dimen9}{\partial}\decr{\dimen9}{\topins}\decr{\dimen9}{\bottomins}\decr{\dimen9}{\verybottomins}%
+  \ifdim\dimen9<\baselineskip
+    \message{No space for text on page!}%
+  \else
+    \ifdim\ht\topleftins>\dimen9
+      \setbox5=\vsplit\topleftins to \dimen9
+    \else
+      \setbox5=\box\topleftins
+    \fi
+    \ifdim\ht\toprightins>\dimen9
+      \setbox6=\vsplit\toprightins to \dimen9
+    \else
+      \setbox6=\box\topleftins
+    \fi
+    \dimen8=\dimen9
+    \advance\dimen9 by -\ht5
+    \ifdim\ht\bottomleftins>\dimen9
+      \setbox7=\vsplit\bottomleftins to \dimen9
+    \else
+      \setbox7=\box\bottomleftins
+    \fi
+    \dimen9=\dimen8
+    \advance\dimen9 by -\ht6
+    \ifdim\ht\bottomleftins>\dimen9
+      \setbox8=\vsplit\bottomleftins to \dimen9
+    \else
+      \setbox8=\box\bottomleftins
+    \fi
+  \fi
+  \lastd@pth=\dp\colA \setbox\colA=\vbox to \availht{\unvbox5\box\colA\vfil\unvbox7}\dp\colA=\lastd@pth
   \ifdim\ht\colB<1pt\setbox\colB\vbox{\noindent\par}\else\ifdim\lastd@pth<\dp\colB\lastd@pth=\dp\colB\fi\fi
-  \setbox\colB=\vbox to \availht{\unvbox\toprightins\box\colB\vfil\unvbox\bottomrightins}\dp\colB=\lastd@pth
+  \setbox\colB=\vbox to \availht{\unvbox6\box\colB\vfil\unvbox8}\dp\colB=\lastd@pth
   \ifdim\colhtA>\colhtB \dimen3=\colhtA\lastd@pth=\dp\colA\dp\colB=\lastd@pth\else
     \dimen3=\colhtB\lastd@pth=\dp\colB\dp\colA=\lastd@pth\fi
   \advance\dimen3 by \lastd@pth
@@ -1261,6 +1291,9 @@
     \ifrerunsavepartialpaged
       \global\output={\savepartialpaged}\global\rerunsavepartialpagedfalse\unvbox\s@vedpage
     \else\global\output={\twocols}\unvbox\s@vedpage\fi
+    \ifnum\interactionmode=2
+      \showlists
+    \fi
   \else % the contents of the "galley" didn't fit into the columns,         %(+)
         % so reduce \vsize and try again with an earlier break
     \trace{o}{Reducing vsize \the\vsize, by \the\baselineskip}%

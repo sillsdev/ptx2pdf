@@ -29,6 +29,7 @@ Width of the box relative to the nominal size of the containing box.
 `\Breakable option`   *!!!DO NOT USE!!!*
 *  Options: T, F, value(0-1)
 *  Default: F
+*  Incompatible with: Background images; Alpha.
 Should the contents of this box be forced to be on one page or can it be broken? (Not compatible with background images)
 With a background colour, the box will be broken into sections and these sections will be added one chunk at a time.
 If a value is given, this is the smallest fraction of the pageheight that the sections will be, if 't' is given, the fraction 
@@ -49,7 +50,10 @@ not the same as setting a value to white.
 Setting this to white will overwrite any background image. (For Americans, \BgColor is an acceptable alias).
 
 `\Alpha` value(0-1)
-The transparency or alpha value of the background colour: 0 is transparent, 1 is solid.
+* Incompatible with: Breakable.
+The transparency or alpha value of the background colour: 0 is transparent, 1 is solid. While tempting, purpose of alpha is not
+to obtain pastel colours, but to allow a background colour to be used in conjunction with a background image. Using `\Alpha`
+with `\Breakable` is a usage error, that produces ugly stripes where the chunks overlap due to descenders (the amount  of p or q).
 
 `\FgImage`   `picturename.jpg`
 * Default: no image
