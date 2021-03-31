@@ -1240,8 +1240,11 @@ class TexModel:
                     exceptPgs = ""
 
                 if len(artistWithMost):
+                    # print(artistWithMost)
+                    # print("hasOut:", hasOut)
                     artinfo = cinfo["copyrights"].get(artistWithMost, {'copyright': {'en': artistWithMost}, 'sensitive': {'en': artistWithMost}})
-                    if artinfo is not None and (artistWithMost in artinfo or len(artistWithMost) > 5):
+                    # print("artinfo:", artinfo)
+                    if artinfo is not None: # and (artistWithMost in artinfo or len(artistWithMost) > 5):
                         pgs = artpgs[artistWithMost]
                         plurals = pluralstr(plstr, pgs)
                         artstr = artinfo["copyright"].get(lang, artinfo["copyright"]["en"])
@@ -1254,6 +1257,7 @@ class TexModel:
                             template = cinfo['templates']['exceptIllustrations'].get(lang,
                                 cinfo['templates']['exceptIllustrations']['en'])
                         cpystr = template.format(artstr.replace("_", "\u00A0") + exceptPgs)
+                        # print(cpystr)
                         crdts.append("\\{} {}".format(mkr, cpystr))
                 crdts.append("}")
             crdts.append("\\let\\zimagecopyrights=\\zimagecopyrightsen")
