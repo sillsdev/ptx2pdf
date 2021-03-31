@@ -544,12 +544,13 @@
   \decr{\availht}{\topins}% and by the space needed for spanning pictures
   \decr{\availht}{\bottomins}%And post-footnote inserts
   \decr{\availht}{\verybottomins}%
+  \setbox\s@vedpage=\copy255
+  % split the galley to the actual size available
+  \setbox\colA=\vsplit255 to \availht \setbox\colA=\vbox{\unvbox\colA}
+  \decr{\availht}{\colA}
   \ifdim\availht<0pt                                                        %(2)
     \MSG{Page overfull with inserts. Perhaps a little more text and less pictures would help}%
   \fi
-  \setbox\s@vedpage=\copy255
-  % split the galley to the actual size available
-  \setbox\colA=\vsplit255 to \availht
   %\setbox\colA=\vbox{\unvbox\colA}
   % and check if it all fit; if not, we'll have to back up and try again
   \ifvoid255 \fitonpagetrue \else \fitonpagefalse \fi
@@ -564,6 +565,7 @@
 %      \msg{upwards mode = \the\XeTeXupwardsmode}
       \dimen1=\textwidth \advance\dimen1 -\ExtraRMargin
       \trace{b}{BALANCE pageoutins: cols=1: text=\the\ht\colA, \the\dp\colA: partial=\the\ht\partial, \the\dp\partial: topins=\the\ht\topins: bottomins=\the\ht\bottomins}%
+      \dimen9=\ht\partial
       \ifvoid\partial\else \vbox{\hbox to \dimen1{\hskip\columnshift\vbox{\unvbox\partial}}} \fi
       \ifvoid\topins\else \vbox{\hbox to \columnshift{}\box\topins} \vskip\skip\topins \fi
       \iflastpage\setbox\colA\vbox{\unvbox\colA}\fi
@@ -577,8 +579,9 @@
       \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2 \space Leaving \the\ht255, \the\dp255}%
       \ifdim\ht2<-\lastd@pth\trace{b}{Strange notes height: \the\ht2}\fi
       \unvbox2
-      \ifvoid\verybottomins\else\vfil % \kern-\dimen0
-        \lastd@pth=0pt \vskip\skip\verybottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\verybottomins}}\fi
+      \ifvoid\verybottomins\else\ifdim\availht > 0pt\vfil % \kern-\dimen0
+        \trace{o}{verybottomins(onecoltrial): height=\the\ht\verybottomins , availht=\the\availht, textheight=\the\textheight, htpartial=\the\dimen9}
+        \lastd@pth=0pt \vskip\skip\verybottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\verybottomins}}\fi\fi
     }%
 %-c_onecoltrial_pagecontents
 %+c_onecoltrial_pagefit
@@ -587,6 +590,7 @@
       \xdef\p@gefirstmark{}\xdef\p@gebotmark{}%
       \nextshipout
     \else\setbox0=\box255\deadcycles=0\fi % dump empty pages (typically at end)
+    \fin@lverybottom
     \global\holdinginserts=1
     \ifrerunsavepartialpaged\trace{o}{onecoltrial: rerunsavepartialpage}%
       \global\output={\savepartialpage}% leave flag set to allow caller to trigger extra \eject   %(+)
@@ -673,7 +677,7 @@
     \count255=2000
     \global\count\topins=\count255
     \global\count\bottomins=\count255
-    \global\count\verybottomins=\count255
+    \global\count\verybottomins=0
     \let\\=\s@tn@tec@unt \the\n@tecl@sses % reset \count for each note class
     \global\holdinginserts=1 % don't pull out inserts yet, we are still adjusting page
     %\msg{Starting 2col partial: \the\ht\partial, pagetotal: \the\pagetotal, vsize: \the\vsize}
@@ -724,11 +728,12 @@
       \m@kenotebox
       \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2}%
       \unvbox2
-      \ifvoid\verybottomins\else%
-        \kern-\lastd@pth \lastd@pth=0pt \vskip\skip\verybottomins \unvbox\verybottomins \fi
+      \ifvoid\verybottomins\else\ifdim\availht > 0pt%
+        \trace{o}{verybottomins(savepartialpage): height=\the\ht\verybottomins , availht=\the\availht, textheight=\the\textheight}
+        \kern-\lastd@pth \lastd@pth=0pt \vskip\skip\verybottomins \unvbox\verybottomins \fi\fi
     }%
     \resetvsize%
-    \ifdim\ht\colA>\baselineskip\plainoutput
+    \ifdim\ht\colA>\baselineskip\plainoutput\fin@lverybottom
       \xdef\p@gefirstmark{}\xdef\p@gebotmark{} \nextshipout
     \else\trace{o}{Page empty cols=\the\ht\colA, \the\ht\colB, partial=\the\ht\partial}\setbox0=\box255\deadcycles=0\fi % dump empty pages (typically at end)
       \tempfalse%
@@ -1243,6 +1248,7 @@
       \unvbox2
       \global\noteseenfalse%
       \ifvoid\verybottomins\else\vfil
+        \trace{o}{verybottomins(twocoltrial): height=\the\ht\verybottomins , availht=\the\availht, textheight=\the\textheight}
         \kern-\lastd@pth \lastd@pth=0pt \vskip\skip\verybottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\verybottomins}}\fi % ouput bottom spanning picture
     }%
     \global\setbox255=\box\voidb@x                                          %(+)
@@ -1375,11 +1381,24 @@
       \m@kenotebox
       \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2}%
       \unvbox2
-      \ifvoid\verybottomins\else % \kern-\dimen0
-        \lastd@pth=0pt \vskip 0pt plus 1fill\vskip\skip\verybottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\verybottomins}}\fi
+      \ifvoid\verybottomins\else\ifdim\availht > 0pt % \kern-\dimen0
+        \trace{o}{verybottomins(twocolp@geout): height=\the\ht\verybottomins , availht=\the\availht, textheight=\the\textheight}
+        \lastd@pth=0pt \vskip 0pt plus 1fill\vskip\skip\verybottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\verybottomins}}\fi\fi
     }}\plainoutput
     \xdef\p@gefirstmark{}\xdef\p@gebotmark{}%
-    \nextshipout
+    \nextshipout\fin@lverybottom
+}
+\def\fin@lverybottom{%
+    \ifvoid\verybottomins\else
+      %\setbox0=\vbox{\unvbox\verybottomins\setbox1=\lastbox}
+      \loop
+        \trace{o}{verybottom(fin@lverybottom) height=\the\ht\verybottomins, textheight=\the\textheight, vsize=\the\vsize,
+                  verybottomins=\the\count\verybottomins, \the\dimen\verybottomins}
+        \setbox0=\vsplit\verybottomins to \textheight
+        \def\pagecontents{\vfil\hbox{\hbox to \columnshift{}\vbox{\unvbox0}}}
+        \plainoutput
+        \ifvoid\verybottomins\tempfalse\else\temptrue\fi\iftemp\repeat
+    \fi
 }
 %-c_twocolpageout
 
