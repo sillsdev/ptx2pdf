@@ -34,7 +34,7 @@
 % Inserts
 \count\topins=1000 \dimen\topins=\maxdimen \skip\topins=0pt
 \newinsert\bottomins \count\bottomins=1000 \dimen\bottomins=\maxdimen
-\newinsert\verybottomins \count\bottomins=1000 \dimen\bottomins=\maxdimen
+\newinsert\verybottomins \count\verybottomins=0 \dimen\bottomins=\maxdimen
 \newinsert\topleftins \count\topleftins=0 \dimen\topleftins=\maxdimen
 \newinsert\toprightins \count\toprightins=0 \dimen\toprightins=\maxdimen
 \newinsert\bottomleftins \count\bottomleftins=0 \dimen\bottomleftins=\maxdimen
@@ -1063,6 +1063,8 @@
     \fi
   \fi
 }
-\let\nextshipout=\dofigp@ge
+\newtoks\onship@ut 
+\def\addtonextshipout#1{\x@\global\x@\onship@ut\x@{\the\onship@ut #1}}
+\def\nextshipout{\the\onship@ut\onship@ut{}\dofigp@ge}
 %-cfig_dofigpage
 
