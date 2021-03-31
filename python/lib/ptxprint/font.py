@@ -905,6 +905,7 @@ class FontRef:
         f = self.getTtfont()
         self.isGraphite = self.isGraphite and f.isGraphite
         s = None
+        f.iscore = True
         if f.filename is not None and not f.iscore:
             if inarchive:
                 fname = f"../shared/fonts/{f.filename.name}"

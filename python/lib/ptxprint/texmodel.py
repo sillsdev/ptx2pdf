@@ -1244,7 +1244,7 @@ class TexModel:
                     # print("hasOut:", hasOut)
                     artinfo = cinfo["copyrights"].get(artistWithMost, {'copyright': {'en': artistWithMost}, 'sensitive': {'en': artistWithMost}})
                     # print("artinfo:", artinfo)
-                    if artinfo is not None: # and (artistWithMost in artinfo or len(artistWithMost) > 5):
+                    if artinfo is not None and (artistWithMost in cinfo["copyrights"] or len(artistWithMost) > 5):
                         pgs = artpgs[artistWithMost]
                         plurals = pluralstr(plstr, pgs)
                         artstr = artinfo["copyright"].get(lang, artinfo["copyright"]["en"])
