@@ -32,7 +32,7 @@ a = Analysis(['python/scripts/ptxprint', 'python/scripts/usfmerge'],
              pathex =   ['python/lib'] + pathex,
              binaries = binaries
                       + [('python/lib/ptxprint/PDFassets/border-art/'+y, 'ptxprint/PDFassets/border-art') for y in 
-                            ('A5 section head border.pdf', 'A5 section head border(RTL).pdf',
+                            ('A5 section head border.pdf', 'A5 section head border 2 column.pdf', 'A5 section head border(RTL).pdf',
                              'A5 page border.pdf', 'A5 page border - no footer.pdf', 'Verse number star.pdf', 'decoration.pdf')]
                       + [('python/lib/ptxprint/PDFassets/watermarks/'+z, 'ptxprint/PDFassets/watermarks') for z in 
                             ('A4-Grid.pdf', 'A4-Draft.pdf', 'A5-Grid.pdf', 'A5-Draft.pdf', 'A5-EBAUCHE.pdf',
