@@ -549,7 +549,8 @@
   \fi
   \setbox\s@vedpage=\copy255
   % split the galley to the actual size available
-  \setbox\colA=\vsplit255 to \availht
+  \setbox\colA=\vsplit255 to \availht \setbox0\copy\colA \setbox0=\vbox{\unvbox0}
+  \decr{\availht}{0}
   %\setbox\colA=\vbox{\unvbox\colA}
   % and check if it all fit; if not, we'll have to back up and try again
   \ifvoid255 \fitonpagetrue \else \fitonpagefalse \fi
@@ -577,8 +578,8 @@
       \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2 \space Leaving \the\ht255, \the\dp255}%
       \ifdim\ht2<-\lastd@pth\trace{b}{Strange notes height: \the\ht2}\fi
       \unvbox2
-      \ifvoid\verybottomins\else\vfil % \kern-\dimen0
-        \lastd@pth=0pt \vskip\skip\verybottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\verybottomins}}\fi
+      \ifvoid\verybottomins\else\ifdim\availht>0pt\vfil % \kern-\dimen0
+        \lastd@pth=0pt \vskip\skip\verybottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\verybottomins}}\fi\fi
     }%
 %-c_onecoltrial_pagecontents
 %+c_onecoltrial_pagefit
@@ -587,6 +588,7 @@
       \xdef\p@gefirstmark{}\xdef\p@gebotmark{}%
       \nextshipout
     \else\setbox0=\box255\deadcycles=0\fi % dump empty pages (typically at end)
+    \fin@lverybottom
     \global\holdinginserts=1
     \ifrerunsavepartialpaged\trace{o}{onecoltrial: rerunsavepartialpage}%
       \global\output={\savepartialpage}% leave flag set to allow caller to trigger extra \eject   %(+)
@@ -673,7 +675,6 @@
     \count255=2000
     \global\count\topins=\count255
     \global\count\bottomins=\count255
-    \global\count\verybottomins=\count255
     \let\\=\s@tn@tec@unt \the\n@tecl@sses % reset \count for each note class
     \global\holdinginserts=1 % don't pull out inserts yet, we are still adjusting page
     %\msg{Starting 2col partial: \the\ht\partial, pagetotal: \the\pagetotal, vsize: \the\vsize}
@@ -724,19 +725,20 @@
       \m@kenotebox
       \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2}%
       \unvbox2
-      \ifvoid\verybottomins\else%
-        \kern-\lastd@pth \lastd@pth=0pt \vskip\skip\verybottomins \unvbox\verybottomins \fi
+      \ifvoid\verybottomins\else\ifdim\availht>0pt%
+        \kern-\lastd@pth \lastd@pth=0pt \vskip\skip\verybottomins \unvbox\verybottomins \fi\fi
     }%
     \resetvsize%
     \ifdim\ht\colA>\baselineskip\plainoutput
-      \xdef\p@gefirstmark{}\xdef\p@gebotmark{} \nextshipout
+      \xdef\p@gefirstmark{}\xdef\p@gebotmark{}
     \else\trace{o}{Page empty cols=\the\ht\colA, \the\ht\colB, partial=\the\ht\partial}\setbox0=\box255\deadcycles=0\fi % dump empty pages (typically at end)
       \tempfalse%
       \ifdim\ht\partial>\PageFullFactor\textheight \temptrue\fi%
       \ifnum\outputpenalty<-10000 \temptrue\fi%
       \iftemp\def\pagecontents{\box\partial}\plainoutput 
-      \xdef\p@gefirstmark{}\xdef\p@gebotmark{}\nextshipout
+      \xdef\p@gefirstmark{}\xdef\p@gebotmark{}
     \fi
+    \nextshipout\fin@lverybottom
     \global\holdinginserts=1
   \else % the contents of the "galley" didn't fit into the actual page,
         % so reduce \vsize and try again with an earlier break
@@ -1375,11 +1377,22 @@
       \m@kenotebox
       \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2}%
       \unvbox2
-      \ifvoid\verybottomins\else % \kern-\dimen0
-        \lastd@pth=0pt \vskip 0pt plus 1fill\vskip\skip\verybottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\verybottomins}}\fi
+      \ifvoid\verybottomins\else\ifdim\availht>0pt % \kern-\dimen0
+        \lastd@pth=0pt \vskip 0pt plus 1fill
+        \vskip\skip\verybottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\verybottomins}}\fi\fi
     }}\plainoutput
     \xdef\p@gefirstmark{}\xdef\p@gebotmark{}%
-    \nextshipout
+    \nextshipout\fin@lverybottom
+}
+
+\def\fin@lverybottom{%
+  \ifvoid\verybottomins\else
+    \loop
+      \setbox0=\vsplit\verybottomins to \textheight
+      \def\pagecontents{\vfil\hbox{\hbox to \columnshift{}\vbox{\unvbox0}}}
+      \plainoutput
+      \ifvoid\verybottomins\tempfalse\else\temptrue\fi \iftemp\repeat
+  \fi
 }
 %-c_twocolpageout
 
