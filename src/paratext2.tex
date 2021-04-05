@@ -1514,7 +1514,7 @@
 \def\FOURPEREMSPACE{\hskip .25em}
 \def\SIXPEREMSPACE{\hskip .1666em}
 \def\THINSPACE{\hskip .2em}
-\def\HAIRSPACE{\hskip 1sp}
+\def\HAIRSPACE{\penalty\the\badspacepenalty\hskip 1sp}
 \def\HYPHEN{\-}
 \def\emdash{\char"2014\relax}
 %endash defined in ptx-references.tex
@@ -1558,7 +1558,7 @@
   \def\pr@tect{}%
   \def\NBSP{^^a0}%
   \def\SFTHYPHEN{^^ad}%
-  \def\ZWSP{^^^^200b}%
+  %\def\ZWSP{^^^^200b}%
   \def\WJ{^^^^2060}%
   \def\ZWNBSP{^^^^feff}%
   \def\NBHYPH{^^^^2011}%

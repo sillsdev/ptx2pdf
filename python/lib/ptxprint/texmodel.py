@@ -1218,6 +1218,9 @@ class TexModel:
             for lang in sorted(langs):
                 hasOut = False
                 mkr = self.imageCopyrightLangs.get(lang, "pc")
+                rtl = lang in cinfo['rtl']
+                if rtl == (self.dict['document/ifrtl'] == "false"):
+                    mkr += "\\begin" + ("R" if rtl else "L")
                 crdts.append("\\def\\zimagecopyrights{}{{%".format(lang.lower()))
                 plstr = cinfo["plurals"].get(lang, cinfo["plurals"]["en"])
                 cpytemplate = cinfo['templates']['imageCopyright'].get(lang,
