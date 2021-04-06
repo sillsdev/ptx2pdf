@@ -110,6 +110,8 @@
 
 \addtotrigg@rchecks{\stdtrigger}
 
+\def\NewTrigger#1#2\EndTrigger{\settrign@me{#1}\x@\x@\x@\gdef\x@\x@\x@\csname\x@\trign@me\x@\endcsname\x@{\csname trign@me\endcsname #2}}
+
 \def\settrig@refcv{%
   \xdef\c@rref{\id@@@\ch@pter.\v@rse}%
   \ifdiglot
