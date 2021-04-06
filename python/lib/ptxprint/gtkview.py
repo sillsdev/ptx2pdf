@@ -545,7 +545,7 @@ class GtkViewModel(ViewModel):
             for v in a:
                 w = self.builder.get_object("r_{}_{}".format(r, v))
                 if w.get_active():
-                    self.initValues[r] = v
+                    self.initValues["r_{}".format(r)] = v
         self.resetToInitValues()
 
     def resetToInitValues(self):
