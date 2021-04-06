@@ -811,10 +811,11 @@
 \p@ppingfalse
 \def\last@popped@parstyle{}
 \def\itp@psstore{}
-\def\endit@c{\endch@rstyle*}
+\def\endit@c{\endch@rstylepls*}
 \def\endit@C{\endch@rstyle*}
 \def\whileitp@ps#1+#2\E{% This almost does the same as \end@llcharstyle, but uses the new mechanism
-  \p@ppingtrue
+  \global\p@ppingtrue
+  \global\let\wip@do=\d@
   \trace{s}{whileitp@ps:\mcch@cking:#1+#2 (\mcstack)}%
   \x@\let\x@\tmp\csname\mct@stname{\mcch@cking}{#1}\endcsname
   \ifx\tmp\relax %No specific style pop, is there a generic?
@@ -828,26 +829,30 @@
     \if Y\tmp\relax  %end it and pop it
       \if #1\ss@Para\relax\xdef\last@popped@parstyle{#2}\fi
       \ifcsname endit@#1\endcsname
-        \trace{s}{endit@#1}% endit@ macros are assumed(requrired) to call mcpop 
+        \trace{s}{Complex pop endit@#1}% endit@ macros are assumed(requrired) to call mcpop 
       	\csname endit@#1\endcsname
       \else 
+        \trace{s}{Simple pop suficcient}%
 	\mcpopsimple
       \fi
     \else
-      \let\d@=\cstackrelax %stop here
+      \let\wip@do=\cstackrelax %stop here
       \if P\tmp\relax % ....but end it and pop first
 	 \ifcsname endit@#1\endcsname
-	   \trace{s}{endit@#1}% endit@ macros are assumed(requrired) to call mcpop 
+	   \trace{s}{Complex pop endit@#1}% endit@ macros are assumed(requrired) to call mcpop 
 	   \csname endit@#1\endcsname
 	 \else 
+           \trace{s}{Simple pop suficcient}%
 	   \mcpopsimple
 	 \fi
        \fi
      \fi
   \fi
-  \p@ppingfalse
+  \trace{s}{whileitp@ps END:\mcch@cking:#1+#2 (\mcstack)}%
+  \global\p@ppingfalse
+  \let\d@=\wip@do
 }
-\def\end@llpoppedstyles#1{\let\itp@psstore\empty\edef\mcch@cking{#1}\let\d@=\whileitp@ps\mcdown\ifx\itp@psstore\empty\else\edef\mcstack{\itp@psstore\mcstack}\fi}
+\def\end@llpoppedstyles#1{\trace{s}{end@llpoppedstyles #1}\let\itp@psstore\empty\edef\mcch@cking{#1}\let\d@=\whileitp@ps\mcdown\ifx\itp@psstore\empty\else\edef\mcstack{\itp@psstore\mcstack}\fi\trace{s}{end@llpoppedstyles END: \mcstack}}
 
 \def\s@tstyst@k#1{%Get a + separated list of styles that ought to uniquely define a font/etc.
   %List excludes marker #1 and stops at a barrier (e.g. a par/note/sidebar)
