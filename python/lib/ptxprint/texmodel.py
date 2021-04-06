@@ -118,6 +118,7 @@ ModelMap = {
                                             if (w.endofbook is not None and w.endofbook != 'None') \
                                             else get("/ptxprintlibpath")+"/decoration.pdf"),
     "fancy/versedecorator":     ("c_inclVerseDecorator", lambda w,v: "" if v else "%"),
+    "fancy/versedecoratortype": ("r_decorator", None),
     "fancy/versedecoratorpdf":  ("btn_selectVerseDecorator", lambda w,v: w.versedecorator.as_posix() \
                                             if (w.versedecorator is not None and w.versedecorator != 'None') \
                                             else get("/ptxprintlibpath")+"/Verse number star.pdf"),
