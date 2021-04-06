@@ -587,8 +587,7 @@
 %+c_onecoltrial_pagefit
     \resetvsize
     \ifdim\ht\colA>\baselineskip\plainoutput\trace{p}{plainoutput from onecoltrial}%    %(+)
-      \xdef\p@gefirstmark{}\xdef\p@gebotmark{}%
-      \nextshipout
+      \s@tpage
     \else\setbox0=\box255\deadcycles=0\fi % dump empty pages (typically at end)
     \fin@lverybottom
     \global\holdinginserts=1
@@ -603,12 +602,7 @@
     \trace{i}{1c REDUCING VSIZE hIns=\the\holdinginserts}%
     \global\advance\vsize by -\baselineskip
     \trace{b}{BALANCE 1col go round vsize=\the\vsize}%
-    \global\setbox\topins=\box\voidb@x
-    \global\setbox\bottomins=\box\voidb@x
-    \global\setbox\verybottomins=\box\voidb@x
-    \let\\=\cle@rn@tecl@ss \the\n@tecl@sses
-    \global\setbox255=\box\voidb@x
-    \global\holdinginserts=1
+    \res@tpage
     \global\let\whichtrial=\onecoltrial
     \global\output={\backingup}%
     \unvbox\galley \penalty\ifnum\galleypenalty=10000 0 \else \galleypenalty \fi
@@ -734,21 +728,21 @@
     }%
     \resetvsize%
     \ifdim\ht\colA>\baselineskip\plainoutput\fin@lverybottom
-      \xdef\p@gefirstmark{}\xdef\p@gebotmark{} \nextshipout
+      \s@tpage
     \else\trace{o}{Page empty cols=\the\ht\colA, \the\ht\colB, partial=\the\ht\partial}\setbox0=\box255\deadcycles=0\fi % dump empty pages (typically at end)
-      \tempfalse%
-      \ifdim\ht\partial>\PageFullFactor\textheight \temptrue\fi%
-      \ifnum\outputpenalty<-10000 \temptrue\fi%
-      \iftemp\def\pagecontents{\box\partial}\plainoutput 
-      \xdef\p@gefirstmark{}\xdef\p@gebotmark{}\nextshipout
+    \tempfalse%
+    \ifdim\ht\partial>\PageFullFactor\textheight \temptrue\fi%
+    \ifnum\outputpenalty<-10000 \temptrue\fi%
+    \iftemp\def\pagecontents{\box\partial}\plainoutput 
+      \s@tpage
     \fi
+    \fin@lverybottom
     \global\holdinginserts=1
   \else % the contents of the "galley" didn't fit into the actual page,
         % so reduce \vsize and try again with an earlier break
     \trace{i}{2c REDUCING VSIZE hIns=\the\holdinginserts}%
-    \@mptyinserts
+    \res@tpage
     %\global\advance\vsize by -\baselineskip
-    \let\\=\cle@rn@tecl@ss \the\n@tecl@sses
     \global\let\whichtrial=\onecoltrial
     \global\output={\backingup}%
     \global\rerunsavepartialpagedtrue
@@ -1114,7 +1108,7 @@
 }
 %-c_calcboxheights
 
-\def\@mptyinserts{
+\def\@mptyinserts{%
   \trace{i}{Emptying Inserts}%
   \global\setbox\topins=\box\voidb@x
   \global\setbox\bottomins=\box\voidb@x
@@ -1123,8 +1117,17 @@
   \global\setbox\bottomleftins=\box\voidb@x
   \global\setbox\bottomrightins=\box\voidb@x
   \global\setbox\verybottomins=\box\voidb@x
+}
+\def\res@tpage{%Restore page to post-setup state
+  \r@storeinserts{chunk}%
   \global\setbox255=\box\voidb@x
   \global\holdinginserts=1
+  \let\\=\cle@rn@tecl@ss \the\n@tecl@sses
+}
+\def\s@tpage{%Save post-shipout state / reset other stuff that needs to happen after shipout 
+  \s@veinserts{chunk}%
+  \xdef\p@gefirstmark{}\xdef\p@gebotmark{}%
+  \nextshipout
 }
 
 %+c_calcavailht
@@ -1284,9 +1287,7 @@
     \global\setbox255=\box\voidb@x                                          %(+)
     \resetvsize % reset size of next page since it will not have any 1 column material
     \plainoutput 
-    \xdef\p@gefirstmark{}%
-    \xdef\p@gebotmark{}%
-    \nextshipout
+    \s@tpage
     \global\holdinginserts=1
     \ifrerunsavepartialpaged
       \global\output={\savepartialpaged}\global\rerunsavepartialpagedfalse\unvbox\s@vedpage
@@ -1300,8 +1301,7 @@
     \global\advance\vsize by -\baselineskip
 	% clear insertions
     \trace{i}{2coltrial: emptyinserts hIns=\the\holdinginserts}%
-    \@mptyinserts
-    \let\\=\cle@rn@tecl@ss \the\n@tecl@sses
+    \res@tpage
     \global\let\whichtrial=\twocoltrial                                     %(+)
     \global\output={\backingup}%
     \ifm@rksonpage\else\gdef\p@gefirstmark{}\trace{H}{No marks found. Setting empty mark}\fi%No marks on the page, and it didn't fit, so add a blank mark
@@ -1418,20 +1418,21 @@
         \trace{o}{verybottomins(twocolp@geout): height=\the\ht\verybottomins , availht=\the\availht, textheight=\the\textheight}
         \lastd@pth=0pt \vskip 0pt plus 1fill\vskip\skip\verybottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\verybottomins}}\fi\fi
     }}\plainoutput
-    \xdef\p@gefirstmark{}\xdef\p@gebotmark{}%
-    \nextshipout\fin@lverybottom
+    \s@tpage
+    \fin@lverybottom
 }
 \def\fin@lverybottom{%
-    \ifvoid\verybottomins\else
+  \ifvoid\verybottomins\else
       %\setbox0=\vbox{\unvbox\verybottomins\setbox1=\lastbox}
-      \loop
-        \trace{o}{verybottom(fin@lverybottom) height=\the\ht\verybottomins, textheight=\the\textheight, vsize=\the\vsize,
-                  verybottomins=\the\count\verybottomins, \the\dimen\verybottomins}
-        \setbox0=\vsplit\verybottomins to \textheight
-        \def\pagecontents{\vfil\hbox{\hbox to \columnshift{}\vbox{\unvbox0}}}
-        \plainoutput
-        \ifvoid\verybottomins\tempfalse\else\temptrue\fi\iftemp\repeat
-    \fi
+    \loop
+      \trace{o}{verybottom(fin@lverybottom) height=\the\ht\verybottomins, textheight=\the\textheight, vsize=\the\vsize,
+                verybottomins=\the\count\verybottomins, \the\dimen\verybottomins}
+      \setbox0=\vsplit\verybottomins to \textheight
+      \def\pagecontents{\vfil\hbox{\hbox to \columnshift{}\vbox{\unvbox0}}}
+      \plainoutput
+      \s@tpage
+      \ifvoid\verybottomins\tempfalse\else\temptrue\fi\iftemp\repeat
+  \fi
 }
 %-c_twocolpageout
 
