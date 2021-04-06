@@ -447,6 +447,12 @@ class TexModel:
                     self.dict[a[1]] = "\n".join(a[2].format("../shared/ptxprint/{}".format(f.name)) for f in fname)
                 else:
                     self.dict[a[1]] = "../shared/ptxprint/{}".format(fname.name)
+        if self.dict["fancy/versedecorator"] != "%":
+            self.dict["fancy/versedecoratorisfile"] = "" if self.dict["fancy/versedecoratortype"] == "type" else "%"
+            self.dict["fancy/versedecoratorisayah"] = "" if self.dict["fancy/versedecoratortype"] == "ayah" else "%"
+        else:
+            self.dict["fancy/versedecoratorisfile"] = "%"
+            self.dict["fancy/versedecoratorisayah"] = "%"
 
     def updatefields(self, a):
         global get
@@ -1199,7 +1205,7 @@ class TexModel:
             customStmt = []
             if len(m):
                 for f in m:
-                    if not f[0]:
+                    if not len(f) or not f[0]:
                         continue
                     a = 'co' if f[1] == 'cn' else f[1] # merge Cook's OT & NT illustrations together
                     if a == '' and f[5] != '':
@@ -1209,10 +1215,11 @@ class TexModel:
                         msngPgs += [f[0]] 
                     else:
                         artpgs.setdefault(a, []).append(int(f[0]))
+            artistWithMost = ""
             if len(artpgs):
-                artistWithMost = max([a for a in artpgs if a != 'zz'], key=lambda x: len(set(artpgs[x])))
-            else:
-                artistWithMost = ""
+                artpgcmp = [a for a in artpgs if a != 'zz']
+                if len(artpgcmp):
+                    artistWithMost = max(artpgcmp, key=lambda x: len(set(artpgs[x])))
 
             langs = set(self.imageCopyrightLangs.keys())
             langs.add("en")

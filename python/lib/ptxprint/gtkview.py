@@ -317,6 +317,7 @@ class GtkViewModel(ViewModel):
 
     def __init__(self, settings_dir, workingdir, userconfig, scriptsdir, args=None):
         self._setup_css()
+        self.radios = {}
         GLib.set_prgname("ptxprint")
         self.builder = Gtk.Builder()
         gladefile = os.path.join(os.path.dirname(__file__), "ptxprint.glade")
@@ -327,12 +328,19 @@ class GtkViewModel(ViewModel):
             if 'translatable' in node.attrib:
                 node.text = _(node.text)
                 del node.attrib['translatable']
+            nid = node.get('id')
             if node.get('name') in ('pixbuf', 'icon', 'logo'):
                 node.text = os.path.join(os.path.dirname(__file__), node.text)
-            if node.get('id') == 'tb_colophon':
+            if nid is None:
+                pass
+            elif nid == 'tb_colophon':
                 node.set('class', 'GtkSourceBuffer')
-            elif node.get('id') == 'textv_colophon':
+            elif nid == 'textv_colophon':
                 node.set('class', 'GtkSourceView')
+            elif nid.startswith("r_"):
+                m = re.match(r"^r_(.+)?_(.+)$", nid)
+                if m:
+                    self.radios.setdefault(m.group(1), set()).add(m.group(2))
         xml_text = et.tostring(tree.getroot(), encoding='unicode', method='xml')
         self.builder = Gtk.Builder.new_from_string(xml_text, -1)
         #    self.builder.set_translation_domain(APP)
@@ -533,6 +541,11 @@ class GtkViewModel(ViewModel):
 
     def getInitValues(self):
         self.initValues = {v[0]: self.get(v[0], skipmissing=True) for k, v in ModelMap.items() if v[0] is not None}
+        for r, a in self.radios.items():
+            for v in a:
+                w = self.builder.get_object("r_{}_{}".format(r, v))
+                if w.get_active():
+                    self.initValues[r] = v
         self.resetToInitValues()
 
     def resetToInitValues(self):
