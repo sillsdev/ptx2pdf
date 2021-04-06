@@ -1076,27 +1076,31 @@
   \else
     \ifdim\ht\topleftins>\dimen9
       \setbox5=\vsplit\topleftins to \dimen9
+      \trace{i}{topleft split to \the\dimen9 (\the\ht\topleftins)}%
     \else
       \setbox5=\box\topleftins
     \fi
     \ifdim\ht\toprightins>\dimen9
       \setbox6=\vsplit\toprightins to \dimen9
+      \trace{i}{topleft split to \the\dimen9 (\the\ht\toprightins)}%
     \else
-      \setbox6=\box\topleftins
+      \setbox6=\box\toprightins
     \fi
     \dimen8=\dimen9
     \advance\dimen9 by -\ht5
     \ifdim\ht\bottomleftins>\dimen9
       \setbox7=\vsplit\bottomleftins to \dimen9
+      \trace{i}{topleft split to \the\dimen9 (\the\ht\bottomleftins)}%
     \else
       \setbox7=\box\bottomleftins
     \fi
     \dimen9=\dimen8
     \advance\dimen9 by -\ht6
-    \ifdim\ht\bottomleftins>\dimen9
-      \setbox8=\vsplit\bottomleftins to \dimen9
+    \ifdim\ht\bottomrightins>\dimen9
+      \setbox8=\vsplit\bottomrightins to \dimen9
+      \trace{i}{topleft split to \the\dimen9 (\the\ht\bottomrightins)}%
     \else
-      \setbox8=\box\bottomleftins
+      \setbox8=\box\bottomrightins
     \fi
   \fi
   \lastd@pth=\dp\colA \setbox\colA=\vbox to \availht{\unvbox5\box\colA\vfil\unvbox7}\dp\colA=\lastd@pth
@@ -1119,12 +1123,15 @@
   \global\setbox\verybottomins=\box\voidb@x
 }
 \def\res@tpage{%Restore page to post-setup state
+  \trace{i}{Restoring inserts}%
   \r@storeinserts{chunk}%
   \global\setbox255=\box\voidb@x
   \global\holdinginserts=1
   \let\\=\cle@rn@tecl@ss \the\n@tecl@sses
 }
+
 \def\s@tpage{%Save post-shipout state / reset other stuff that needs to happen after shipout 
+  \trace{i}{Saving inserts}%
   \s@veinserts{chunk}%
   \xdef\p@gefirstmark{}\xdef\p@gebotmark{}%
   \nextshipout
@@ -1202,7 +1209,7 @@
   \else
     \trace{o}{sppd: Not fit on page}%
     \trace{i}{sppd: emptyinserts hIns=\the\holdinginserts, \the\ht\partial, vs:\the\vsize}%
-    \@mptyinserts
+    \res@tpage
     %\global\advance\vsize by -\baselineskip
     %\global\let\whichtrial=\savepartialpaged
     \global\let\whichtrial=\twocoltrial

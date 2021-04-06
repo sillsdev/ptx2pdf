@@ -103,13 +103,13 @@
     \hss
   }%
   \egroup}
-
+\def\fb@htadjust{0pt}
 \def\feintbox#1#2#3{% Set a (transparent) coloured box as background for box given in #3. #1: alpha, #2: {r g b}  (all numbers in range 0-1.0)
   \vskip-\fb@vpadding% preserve grid
   \setbox0#3%
-  \trace{e}{pre-feintbox, ht=\the\ht0, dp=\the\dp0}%
-  \setbox0\hbox{\feintb@x{#1}{#2}{\the\ht0}{\the\dp0}{\the\wd0}\box0}%
-  \trace{e}{post-feintbox, ht=\the\ht0, dp=\the\dp0}%
+  \trace{e}{pre-feintb@x, ht=\the\ht0 - \fb@htadjust, dp=\the\dp0}%
+  \setbox0\hbox{\feintb@x{#1}{#2}{\the\dimexpr \ht0 - \fb@htadjust\relax}{\the\dp0}{\the\wd0}\box0}%
+  \trace{e}{post-feintb@x, ht=\the\ht0, dp=\the\dp0}%
   \box0
   %\vskip-\fb@vpadding % preserve grid
   }
@@ -523,8 +523,6 @@
       \let\fb@vpadding=\s@vedvpadding
       \let\b@drbottom=\lstb@drbot
     \fi
-    \dimen0=\ht\extchunkb@x
-    \advance\dimen0 by -\lstch@nkdp
     \ifdim\sb@leftshift>0pt
       \setbox0\vbox to\ht\extchunkb@x{\sb@leftedge}%
       \trace{e}{Adding \sb@leftshift to left of box}%
@@ -535,20 +533,33 @@
       \setbox\extchunkb@x\vbox{\hbox{\box\extchunkb@x\hbox to \sb@rightshift{\hskip\fb@hpadding\box0\hss}}}\fi
     \trace{e}{Chunk of extbox is \the\ht\extchunkb@x+\the\dp\extchunkb@x (\the\ht\extb@x)}%
     \ifx\h@scol\tr@e
+      %\dimen0=\ht\extchunkb@x
+      %\advance\dimen0 by -\lstch@nkdp
+      \xdef\thsch@nkdp{\the\dimexpr \dp\extchunkb@x\relax}%
+      %\dp\extchunkb@x=\lstch@nkdp
       \setbox\extchunkb@x\vbox{%
         \ifx\bgf@gsp@c\relax\else
          \trace{e}{Including background image below everything: \t@mpfigspec}%
           \vbox to 0pt{\vbox to\ht\extchunkb@x{\vfil\f@intthing{\bgf@galpha}{\bgf@gcol}{\box\newpicb@x}\vfil}\vss}\fi
        % \vskip\baselineskip
-       \feintbox{\pdf@lpha}{\pdfBGc@l}{\box\extchunkb@x}}%
-       \trace{e}{Chunk is (with box) \the\ht\extchunkb@x+\the\dp\extchunkb@x}%
+        \let\fb@htadjust=\lstch@nkdp
+        \feintbox{\pdf@lpha}{\pdfBGc@l}{\box\extchunkb@x}}%
+      %\setbox\extchunkb@x\vbox{%
+        %\vskip \lstch@nkdp
+        %\unvbox\extchunkb@x}%
+      %\dimen0=\ht\extchunkb@x
+      %\advance\dimen0 by -\thsch@nkdp
+      %\ht\extchunkb@x=\dimen0
+      %\dp\extchunkb@x=\thsch@nkdp
+      \xdef\lstch@nkdp{\thsch@nkdp}%
+      \trace{e}{Chunk is (with box) \the\ht\extchunkb@x+\the\dp\extchunkb@x}%
     \fi
     \let\b@drtop=\fstb@drtop
     \getsbp@ram{bordercolour}%
     \let\b@drcol\cp@ram
     \mkb@rder{\extchunkb@x}%
     \let\fstb@drtop=\relax
-    \trace{e}{Chunk is  now \the\ht\extchunkb@x+\the\dp\extchunkb@x}%
+    \trace{e}{After border, chunk is  now \the\ht\extchunkb@x+\the\dp\extchunkb@x}%
     \x@\let\x@\@xtins\csname ins-\loc@ption\endcsname
     \ifpicUsesIns
       \trace{e}{using ins-\loc@ption}%

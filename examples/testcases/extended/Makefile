@@ -17,3 +17,6 @@ bisect:
 auto:
 	echo Source code in $(DIR)
 	while inotifywait -e close_write . $(DIR) ; do make test.pdf ; done < /dev/null
+auto2:
+	echo Source code in $(DIR)
+	while inotifywait -e close_write . $(DIR) ; do make test2.pdf ; done < /dev/null
