@@ -448,11 +448,12 @@ class TexModel:
                 else:
                     self.dict[a[1]] = "../shared/ptxprint/{}".format(fname.name)
         if self.dict["fancy/versedecorator"] != "%":
-            self.dict["fancy/versedecoratorisfile"] = "" if self.dict["fancy/versedecoratortype"] == "type" else "%"
+            self.dict["fancy/versedecoratorisfile"] = "" if self.dict["fancy/versedecoratortype"] == "file" else "%"
             self.dict["fancy/versedecoratorisayah"] = "" if self.dict["fancy/versedecoratortype"] == "ayah" else "%"
         else:
             self.dict["fancy/versedecoratorisfile"] = "%"
             self.dict["fancy/versedecoratorisayah"] = "%"
+        # print(", ".join("{}={}".format(a, self.dict["fancy/versedecorator"+a]) for a in ("", "type", "isfile", "isayah")))
 
     def updatefields(self, a):
         global get
