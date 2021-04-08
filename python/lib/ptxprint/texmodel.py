@@ -124,6 +124,7 @@ ModelMap = {
                                             else get("/ptxprintlibpath")+"/Verse number star.pdf"),
     "fancy/versedecoratorshift":   ("s_verseDecoratorShift", lambda w,v: float(v or "0")),
     "fancy/versedecoratorscale":   ("s_verseDecoratorScale", lambda w,v: int(float(v or "1.0")*1000)),
+    "fancy/endayah":            ("c_decorator_endayah", None),
 
     "paragraph/linespacing":       ("s_linespacing", lambda w,v: "{:.3f}".format(float(v)) if v else "15.000"),
     "paragraph/linespacebase":  ("c_AdvCompatLineSpacing", lambda w,v: 14 if v else 12),
@@ -789,6 +790,9 @@ class TexModel:
                 if doc is not None:
                     if self.dict["document/ifletter"] == "":
                         doc.letter_space("\uFDD0")
+
+            if self.dict['fancy/endayah'] and doc is not None:
+                doc.versesToEnd()
                 
             if doc is not None and getattr(doc, 'doc', None) is not None:
                 dat = str(doc)

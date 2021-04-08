@@ -112,6 +112,7 @@ class Usfm:
     def __init__(self, iterable, sheets):
         tag_escapes = r"[^0-9A-Za-z]"
         self.doc = None
+        self.sheets = sheets
         with warnings.catch_warnings(record=True) as self.warnings:
             self.doc = list(usfm.parser(iterable, stylesheet=sheets,
                                 canonicalise_footnotes=False,
@@ -246,6 +247,14 @@ class Usfm:
                         yield c1
         return iterfn(e)
 
+    def iiterel(self, i, e):
+        def iterfn(il, el):
+            if isinstance(el, sfm.Element):
+                yield (il, el)
+                for il, c in list(enumerate(el)):
+                    yield from iterfn(il, c)
+        return iterfn(i, e)
+
     def iterVerse(self, chap, verse):
         start = self.chapters[chap]
         it = self.iter(start)
@@ -255,7 +264,7 @@ class Usfm:
             if e.name == "c" and int(e.args[0]) != chap:
                 # print(e.name, e.args, len(e))
                 return
-            elif e.name == "v" and e.args[0] == verse:
+            elif verse == "0" or (e.name == "v" and e.args[0] == verse):
                 yield e
                 break
         else:
@@ -264,6 +273,60 @@ class Usfm:
             if isinstance(e, sfm.Element) and (e.name == "c" or e.name == "v"):
                 break
             yield e
+
+    def versesToEnd(self):
+        it = self.iiterel(0, self.doc[0])
+        currjob = None
+        lastpara = None
+        for i, e in it:
+            if not isinstance(e, sfm.Element):
+                continue
+            etype = e.meta.get('texttype', '').lower()
+            style = e.meta.get('styletype', '').lower()
+            if style == 'paragraph' and etype == 'versetext':
+                thispara = e
+                offset = 0
+            elif style == 'paragraph':
+                thispara = None
+            if e.name == 'v':
+                if currjob is not None:
+                    if currjob.parent == thispara:
+                        if i > 0:
+                            last = thispara[i+offset-1]
+                            if isinstance(last, sfm.Text) and last.data[-1] in " \n":
+                                newstr = last.data.rstrip()
+                                lc = last.data[len(newstr):]
+                                last.data = newstr
+                            else:
+                                lc = None
+                        else:
+                            lc = None
+                        thispara.insert(i+offset, currjob)
+                        offset += 1
+                        if lc is not None:
+                            thispara.insert(i+offset, sfm.Text(lc, pos=e.pos, parent=thispara))
+                            offset += 1
+                    else:
+                        currjob.parent=lastpara
+                        if i > 0:
+                            last = lastpara[-1]
+                            if isinstance(last, sfm.Text) and last.data[-1] in " \n":
+                                newstr = last.data.rstrip()
+                                lc = last.data[len(newstr):]
+                                last.data = newstr
+                            else:
+                                lc = None
+                        else:
+                            lc = None
+                        lastpara.append(currjob)
+                        if lc is not None:
+                            lastpara.append(sfm.Text(lc, pos=e.pos, parent=thispara))
+                currjob = sfm.Element('vp', e.pos, parent=e.parent, meta=self.sheets['vp'])
+                currjob.append(sfm.Text(e.args[0], pos=e.pos, parent=currjob))
+            if thispara is not None and thispara is not e:
+                lastpara = thispara
+        if currjob is not None:
+            lastpara.append(currjob)
 
     def normalise(self):
         ''' Normalise USFM in place '''

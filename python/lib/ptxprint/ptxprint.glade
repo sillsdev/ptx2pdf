@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.1 
+<!-- Generated with glade 3.22.2 
 
 The MIT License (MIT)
 
@@ -13643,7 +13643,7 @@ font to decorate the verse number.</property>
                                           <packing>
                                             <property name="left_attach">0</property>
                                             <property name="top_attach">0</property>
-                                            <property name="width">3</property>
+                                            <property name="width">2</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -13682,7 +13682,7 @@ the graphic.</property>
                                             <signal name="activate-link" handler="onEditStyleClicked" swapped="no"/>
                                           </object>
                                           <packing>
-                                            <property name="left_attach">3</property>
+                                            <property name="left_attach">4</property>
                                             <property name="top_attach">0</property>
                                           </packing>
                                         </child>
@@ -13776,7 +13776,28 @@ the graphic.</property>
                                           <packing>
                                             <property name="left_attach">3</property>
                                             <property name="top_attach">3</property>
+                                            <property name="width">2</property>
                                           </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkCheckButton" id="c_decorator_endayah">
+                                            <property name="label" translatable="yes">Move Ayah</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">False</property>
+                                            <property name="draw_indicator">True</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">2</property>
+                                            <property name="top_attach">0</property>
+                                            <property name="width">2</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
                                         </child>
                                         <child>
                                           <placeholder/>
