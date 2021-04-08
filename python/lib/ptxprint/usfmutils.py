@@ -308,14 +308,11 @@ class Usfm:
                             offset += 1
                     else:
                         currjob.parent=lastpara
-                        if i > 0:
-                            last = lastpara[-1]
-                            if isinstance(last, sfm.Text) and last.data[-1] in " \n":
-                                newstr = last.data.rstrip()
-                                lc = last.data[len(newstr):]
-                                last.data = newstr
-                            else:
-                                lc = None
+                        last = lastpara[-1]
+                        if isinstance(last, sfm.Text) and last.data[-1] in " \n":
+                            newstr = last.data.rstrip()
+                            lc = last.data[len(newstr):]
+                            last.data = newstr
                         else:
                             lc = None
                         lastpara.append(currjob)

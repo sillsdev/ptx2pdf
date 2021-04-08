@@ -112,6 +112,8 @@ class FancyBorders(Snippet):
 {%E%fancy/versedecoratorisfile}\def\AdornVerseNumber%D%#1{{\beginL\rlap{{\hbox to \wd\versestarbox%D%{{\hfil #1\hfil}}}}%
 {%E%fancy/versedecoratorisfile}    \raise {%E%fancy/versedecoratorshift}pt\copy\versestarbox%D%\endL}}
 {%E%fancy/versedecoratorisayah}\def\AdornVerseNumber#1{{\char"06DD #1}}
+{%E%fancy/endayah}\newbox\endayahbox \sethook{{start}}{{vp}}{{\setbox\endayahbox=\hbox\bgroup}}
+{%E%fancy/endayah}\sethook{{end}}{{vp}}{{\egroup\AdornVerseNumber{{\unhbox\endayahbox}}}}
 """.replace("%D%", replaceD).replace("%E%", replaceE)
         return res.format(**texmodel.dict)
 
