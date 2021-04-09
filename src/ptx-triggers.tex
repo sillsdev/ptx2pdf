@@ -110,7 +110,16 @@
 
 \addtotrigg@rchecks{\stdtrigger}
 
-\def\NewTrigger#1#2\EndTrigger{\settrign@me{#1}\x@\x@\x@\gdef\x@\x@\x@\csname\x@\trign@me\x@\endcsname\x@{\csname trign@me\endcsname #2}}
+\def\NewTrigger#1#2\EndTrigger{\tracingassigns=1
+  \settrign@me{#1}%
+  \x@\let\x@\tmp\csname \trign@me\endcsname
+  \ifx\tmp\relax
+    \def\tmpb{#2}%
+  \else
+    \x@\def\x@\tmpb\x@{\tmp#2}%
+  \fi
+  \x@\global\x@\let\csname\trign@me\endcsname\tmpb
+  \tracingassigns=0}
 
 \def\settrig@refcv{%
   \xdef\c@rref{\id@@@\ch@pter.\v@rse}%
