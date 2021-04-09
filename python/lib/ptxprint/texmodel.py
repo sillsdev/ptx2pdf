@@ -791,7 +791,9 @@ class TexModel:
                     if self.dict["document/ifletter"] == "":
                         doc.letter_space("\uFDD0")
 
-            if self.dict['fancy/endayah'] == "" and doc is not None:
+            if self.dict['fancy/endayah'] == "":
+                if doc is None:
+                    doc = self._makeUSFM(dat.splitlines(True), bk)
                 doc.versesToEnd()
                 
             if doc is not None and getattr(doc, 'doc', None) is not None:

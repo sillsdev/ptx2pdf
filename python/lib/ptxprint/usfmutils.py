@@ -278,6 +278,7 @@ class Usfm:
         it = self.iiterel(0, self.doc[0])
         currjob = None
         lastpara = None
+        thispara = None
         for i, e in it:
             if not isinstance(e, sfm.Element):
                 continue
@@ -288,6 +289,7 @@ class Usfm:
                 offset = 0
             elif style == 'paragraph':
                 thispara = None
+                offset = 0
             if e.name == 'v':
                 if currjob is not None:
                     if currjob.parent == thispara:
@@ -317,13 +319,14 @@ class Usfm:
                             lc = None
                         lastpara.append(currjob)
                         if lc is not None:
-                            lastpara.append(sfm.Text(lc, pos=e.pos, parent=thispara))
+                            lastpara.append(sfm.Text(lc, pos=e.pos, parent=lastpara))
                 currjob = sfm.Element('vp', e.pos, parent=e.parent, meta=self.sheets['vp'])
                 currjob.append(sfm.Text(e.args[0], pos=e.pos, parent=currjob))
             if thispara is not None and thispara is not e:
                 lastpara = thispara
         if currjob is not None:
             lastpara.append(currjob)
+            lastpara.append(sfm.Text("\n", parent=lastpara))
 
     def normalise(self):
         ''' Normalise USFM in place '''
