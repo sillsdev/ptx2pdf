@@ -42,11 +42,12 @@ class Interlinear:
         lexemes.sort()
         adj = 0
         vend = (0, 0)
+        startl = None
         for e in doc.iterVerse(*curref):
             if isinstance(e, sfm.Element):
                 if e.pos.line == vend[0] and e.pos.col == vend[1]:
                     e.adjust = 1    # Handle where there is no space after verse number in the text but PT presumes it is there
-                if e.name == "v":   # starting col and line
+                if startl is None:   # starting col and line
                     startl = e.pos.line - 1
                     startc = e.pos.col - 1
                     vend = (e.pos.line, e.pos.col + 3 + len(e.args[0]))

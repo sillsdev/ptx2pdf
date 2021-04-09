@@ -117,6 +117,11 @@ _sensitivities = {
         "r_book_single":       ["ecb_book", "l_chapfrom", "s_chapfrom", "l_chapto", "s_chapto"],
         "r_book_multiple":     ["btn_chooseBooks", "t_booklist", "c_autoToC"],
         "r_book_module":       ["btn_chooseBibleModule", "lb_bibleModule"]},
+    "r_decorator": {
+        "r_decorator_file":    ["btn_selectVerseDecorator", "lb_inclVerseDecorator", "lb_style_v",
+                                "l_verseDecoratorShift", "l_verseDecoratorScale",
+                                "s_verseDecoratorShift", "s_verseDecoratorScale"],
+        "r_decorator_ayah":    ["lb_style_v"]},
     "c_mainBodyText" :         ["gr_mainBodyText"],
     "c_doublecolumn" :         ["gr_doubleColumn", "c_singleColLayout", "t_singleColBookList"],
     "c_useFallbackFont" :      ["btn_findMissingChars", "t_missingChars", "l_fallbackFont", "bl_fontExtraR"],
@@ -159,9 +164,7 @@ _sensitivities = {
                                 "l_inclSectionShift", "l_inclSectionScale", 
                                 "s_inclSectionShift", "s_inclSectionScale"],
     "c_inclEndOfBook" :        ["btn_selectEndOfBookPDF", "lb_inclEndOfBook"],
-    "c_inclVerseDecorator" :   ["btn_selectVerseDecorator", "lb_inclVerseDecorator", "lb_style_v",
-                                "l_verseDecoratorShift", "l_verseDecoratorScale",
-                                "s_verseDecoratorShift", "s_verseDecoratorScale"],
+    "c_inclVerseDecorator" :   ["gr_verseDecorator", "r_decorator_ayah", "r_decorator_file"],
     "c_fontFake":              ["s_fontBold", "s_fontItalic", "l_fontBold", "l_fontItalic"],
     "c_thumbtabs":             ["gr_thumbs"],
     "c_thumbrotate":           ["fcb_rotateTabs"],
@@ -252,7 +255,8 @@ def _doError(text, secondary="", title=None, copy2clip=False, show=True):
             lines.append(text)
         if secondary is not None and len(secondary):
             lines.append(secondary)
-        s = _("Please send to:") + " ptxprint_support@sil.org\n\n{}".format("\n\n".join(lines))
+        s = _("PTXprint Version {}\nPlease send to:").format(VersionStr) \
+          + " ptxprint_support@sil.org\n\n{}".format("\n\n".join(lines))
         clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
         clipboard.set_text(s, -1)
         clipboard.store() # keep after app crashed
@@ -313,6 +317,7 @@ class GtkViewModel(ViewModel):
 
     def __init__(self, settings_dir, workingdir, userconfig, scriptsdir, args=None):
         self._setup_css()
+        self.radios = {}
         GLib.set_prgname("ptxprint")
         self.builder = Gtk.Builder()
         gladefile = os.path.join(os.path.dirname(__file__), "ptxprint.glade")
@@ -323,12 +328,19 @@ class GtkViewModel(ViewModel):
             if 'translatable' in node.attrib:
                 node.text = _(node.text)
                 del node.attrib['translatable']
+            nid = node.get('id')
             if node.get('name') in ('pixbuf', 'icon', 'logo'):
                 node.text = os.path.join(os.path.dirname(__file__), node.text)
-            if node.get('id') == 'tb_colophon':
+            if nid is None:
+                pass
+            elif nid == 'tb_colophon':
                 node.set('class', 'GtkSourceBuffer')
-            elif node.get('id') == 'textv_colophon':
+            elif nid == 'textv_colophon':
                 node.set('class', 'GtkSourceView')
+            elif nid.startswith("r_"):
+                m = re.match(r"^r_(.+)?_(.+)$", nid)
+                if m:
+                    self.radios.setdefault(m.group(1), set()).add(m.group(2))
         xml_text = et.tostring(tree.getroot(), encoding='unicode', method='xml')
         self.builder = Gtk.Builder.new_from_string(xml_text, -1)
         #    self.builder.set_translation_domain(APP)
@@ -529,10 +541,16 @@ class GtkViewModel(ViewModel):
 
     def getInitValues(self):
         self.initValues = {v[0]: self.get(v[0], skipmissing=True) for k, v in ModelMap.items() if v[0] is not None}
+        for r, a in self.radios.items():
+            for v in a:
+                w = self.builder.get_object("r_{}_{}".format(r, v))
+                if w.get_active():
+                    self.initValues["r_{}".format(r)] = v
+        self.resetToInitValues()
 
     def resetToInitValues(self):
-        super().resetToInitValues()
         self.rtl = False
+        super().resetToInitValues()
         self.picinfos.clear(self)
         for k, v in self.initValues.items():
             if k.startswith("bl_") or v is not None:
@@ -808,7 +826,7 @@ class GtkViewModel(ViewModel):
         if cfg == 'Default':
             # self.doError(_("Can't delete 'Default' configuration!"), secondary=_("Folder: ") + delCfgPath)
             self.resetToInitValues()
-            self.setupDefaults()
+            self.onFontChanged(None)
             # Note that we may give them an option (later) to delete the entire "Default" including piclists etc.
             # Right now it (only) re-initializes the UI settings.
             return
@@ -1534,6 +1552,8 @@ class GtkViewModel(ViewModel):
         lb = self.builder.get_object("tv_fontFamily")
         sel = lb.get_selection()
         ls, row = sel.get_selected()
+        if row is None:
+            return (None, None)
         name = ls.get_value(row, 0)
         style = self.get("fcb_fontFaces")
         if style.lower() == "regular":
@@ -1606,6 +1626,8 @@ class GtkViewModel(ViewModel):
 
     def onFontFeaturesClicked(self, btn):
         (name, style) = self._getSelectedFont()
+        if name is None:
+            return
         f = TTFont(name, style)
         if f is None:
             return
@@ -1619,25 +1641,31 @@ class GtkViewModel(ViewModel):
             langs = f.grLangs
             self.currdefaults = f.featdefaults
             langfeats = f.langfeats
+            tips = {}
         else:
             feats = f.otFeats
             vals = f.otVals
             langs = f.otLangs
             self.currdefaults = {}
             langfeats = {}
+            tips = f.tipFeats
+
         numrows = len(feats)
         (lang, setfeats) = parseFeatString(self.get("t_fontFeatures"), defaults=self.currdefaults, langfeats=langfeats)
         for i, (k, v) in enumerate(sorted(feats.items())):
             featbox.insert_row(i)
             l = Gtk.Label(label=v+":")
             l.set_halign(Gtk.Align.END)
+            if k in tips:
+                l.set_tooltip_markup(tips[k])
             featbox.attach(l, 0, i, 1, 1)
             l.show()
             inival = int(setfeats.get(k, "0"))
             if k in vals:
                 if len(vals[k]) < 3:
                     obj = Gtk.CheckButton()
-                    obj.set_tooltip_text(vals[k][1])
+                    if k in vals and len(vals[k]) > 1:
+                        obj.set_tooltip_text(vals[k][1])
                     obj.set_active(inival)
                 else:
                     obj = Gtk.ComboBoxText()
@@ -2720,6 +2748,7 @@ class GtkViewModel(ViewModel):
                             break
                     else:
                         lsp.append([prj])
+                self.resetToInitValues()
                 self.set("fcb_project", prj)
         dialog.hide()
 

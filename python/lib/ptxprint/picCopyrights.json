@@ -1,4 +1,5 @@
 {
+    "rtl": [ ],
     "plurals": {
         "en": {
             "2": "{0} and {1}",
@@ -202,7 +203,8 @@
         "lb": {
             "copyright": {
                 "en": "by_Louise_Bass ©_The_British \\& Foreign Bible Society, 1994.",
-                "es": "por_Louise_Bass ©_The_British \\& Foreign Bible Society, 1994."
+                "es": "por_Louise_Bass ©_The_British \\& Foreign Bible Society, 1994.",
+                "fr": "de_Louise_Bass ©_The_British \\& Foreign Bible Society, 1994."
             },
             "sensitive": {
                 "en": "©_BFBS,_1994."

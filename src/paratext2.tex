@@ -548,6 +548,10 @@
   % split the galley to the actual size available
   \setbox\colA=\vsplit255 to \availht \setbox\colA=\vbox{\unvbox\colA}
   \decr{\availht}{\colA}
+  \setbox\s@vedpage=\copy255
+  % split the galley to the actual size available
+  \setbox\colA=\vsplit255 to \availht \setbox0\copy\colA \setbox0=\vbox{\unvbox0}
+  \decr{\availht}{0}
   \ifdim\availht<0pt                                                        %(2)
     \MSG{Page overfull with inserts. Perhaps a little more text and less pictures would help}%
   \fi
@@ -671,7 +675,7 @@
     \count255=2000
     \global\count\topins=\count255
     \global\count\bottomins=\count255
-    \global\count\verybottomins=0
+    \global\count\verybottomins=\count255
     \let\\=\s@tn@tec@unt \the\n@tecl@sses % reset \count for each note class
     \global\holdinginserts=1 % don't pull out inserts yet, we are still adjusting page
     %\msg{Starting 2col partial: \the\ht\partial, pagetotal: \the\pagetotal, vsize: \the\vsize}
@@ -1561,7 +1565,7 @@
 \def\FOURPEREMSPACE{\hskip .25em}
 \def\SIXPEREMSPACE{\hskip .1666em}
 \def\THINSPACE{\hskip .2em}
-\def\HAIRSPACE{\hskip 1sp}
+\def\HAIRSPACE{\penalty\the\badspacepenalty\hskip 1sp}
 \def\HYPHEN{\-}
 \def\emdash{\char"2014\relax}
 %endash defined in ptx-references.tex
@@ -1605,7 +1609,7 @@
   \def\pr@tect{}%
   \def\NBSP{^^a0}%
   \def\SFTHYPHEN{^^ad}%
-  \def\ZWSP{^^^^200b}%
+  %\def\ZWSP{^^^^200b}%
   \def\WJ{^^^^2060}%
   \def\ZWNBSP{^^^^feff}%
   \def\NBHYPH{^^^^2011}%

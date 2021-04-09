@@ -118,11 +118,13 @@ ModelMap = {
                                             if (w.endofbook is not None and w.endofbook != 'None') \
                                             else get("/ptxprintlibpath")+"/decoration.pdf"),
     "fancy/versedecorator":     ("c_inclVerseDecorator", lambda w,v: "" if v else "%"),
+    "fancy/versedecoratortype": ("r_decorator", None),
     "fancy/versedecoratorpdf":  ("btn_selectVerseDecorator", lambda w,v: w.versedecorator.as_posix() \
                                             if (w.versedecorator is not None and w.versedecorator != 'None') \
                                             else get("/ptxprintlibpath")+"/Verse number star.pdf"),
     "fancy/versedecoratorshift":   ("s_verseDecoratorShift", lambda w,v: float(v or "0")),
     "fancy/versedecoratorscale":   ("s_verseDecoratorScale", lambda w,v: int(float(v or "1.0")*1000)),
+    "fancy/endayah":            ("c_decorator_endayah", lambda w,v: "" if v else "%"),
 
     "paragraph/linespacing":       ("s_linespacing", lambda w,v: "{:.3f}".format(float(v)) if v else "15.000"),
     "paragraph/linespacebase":  ("c_AdvCompatLineSpacing", lambda w,v: 14 if v else 12),
@@ -446,6 +448,13 @@ class TexModel:
                     self.dict[a[1]] = "\n".join(a[2].format("../shared/ptxprint/{}".format(f.name)) for f in fname)
                 else:
                     self.dict[a[1]] = "../shared/ptxprint/{}".format(fname.name)
+        if self.dict["fancy/versedecorator"] != "%":
+            self.dict["fancy/versedecoratorisfile"] = "" if self.dict["fancy/versedecoratortype"] == "file" else "%"
+            self.dict["fancy/versedecoratorisayah"] = "" if self.dict["fancy/versedecoratortype"] == "ayah" else "%"
+        else:
+            self.dict["fancy/versedecoratorisfile"] = "%"
+            self.dict["fancy/versedecoratorisayah"] = "%"
+        # print(", ".join("{}={}".format(a, self.dict["fancy/versedecorator"+a]) for a in ("", "type", "isfile", "isayah")))
 
     def updatefields(self, a):
         global get
@@ -578,7 +587,7 @@ class TexModel:
         docdir, docbase = self.docdir()
         self.dict['jobname'] = jobname
         self.dict['document/imageCopyrights'] = self.generateImageCopyrightText() \
-                if self.dict['document/includeimg'] else r"\def\zimagecopyrights{}"
+                if self.dict['document/includeimg'] else self.generateEmptyImageCopyrights()
         self.dict['project/colophontext'] = re.sub(r'://', r':/ / ', self.dict['project/colophontext'])
         self.dict['project/colophontext'] = re.sub(r"(?i)(\\zimagecopyrights)([A-Z]{2,3})", \
                 lambda m:m.group(0).lower(), self.dict['project/colophontext'])
@@ -781,6 +790,11 @@ class TexModel:
                 if doc is not None:
                     if self.dict["document/ifletter"] == "":
                         doc.letter_space("\uFDD0")
+
+            if self.dict['fancy/endayah'] == "":
+                if doc is None:
+                    doc = self._makeUSFM(dat.splitlines(True), bk)
+                doc.versesToEnd()
                 
             if doc is not None and getattr(doc, 'doc', None) is not None:
                 dat = str(doc)
@@ -1171,6 +1185,13 @@ class TexModel:
             self.imageCopyrightLangs[m[1].lower()] = m[0]
         return
 
+    def generateEmptyImageCopyrights(self):
+        self.analyzeImageCopyrights(self.dict['project/colophontext'])
+        res = [r"\def\zimagecopyrights{}"]
+        for k in self.imageCopyrightLangs.keys():
+            res.append(r"\def\zimagecopyrights{}{{}}".format(k))
+        return "\n".join(res)
+
     def generateImageCopyrightText(self):
         artpgs = {}
         mkr='pc'
@@ -1191,7 +1212,7 @@ class TexModel:
             customStmt = []
             if len(m):
                 for f in m:
-                    if not f[0]:
+                    if not len(f) or not f[0]:
                         continue
                     a = 'co' if f[1] == 'cn' else f[1] # merge Cook's OT & NT illustrations together
                     if a == '' and f[5] != '':
@@ -1201,16 +1222,20 @@ class TexModel:
                         msngPgs += [f[0]] 
                     else:
                         artpgs.setdefault(a, []).append(int(f[0]))
+            artistWithMost = ""
             if len(artpgs):
-                artistWithMost = max([a for a in artpgs if a != 'zz'], key=lambda x: len(set(artpgs[x])))
-            else:
-                artistWithMost = ""
+                artpgcmp = [a for a in artpgs if a != 'zz']
+                if len(artpgcmp):
+                    artistWithMost = max(artpgcmp, key=lambda x: len(set(artpgs[x])))
 
             langs = set(self.imageCopyrightLangs.keys())
             langs.add("en")
             for lang in sorted(langs):
                 hasOut = False
                 mkr = self.imageCopyrightLangs.get(lang, "pc")
+                rtl = lang in cinfo['rtl']
+                if rtl == (self.dict['document/ifrtl'] == "false"):
+                    mkr += "\\begin" + ("R" if rtl else "L")
                 crdts.append("\\def\\zimagecopyrights{}{{%".format(lang.lower()))
                 plstr = cinfo["plurals"].get(lang, cinfo["plurals"]["en"])
                 cpytemplate = cinfo['templates']['imageCopyright'].get(lang,
@@ -1240,8 +1265,11 @@ class TexModel:
                     exceptPgs = ""
 
                 if len(artistWithMost):
+                    # print(artistWithMost)
+                    # print("hasOut:", hasOut)
                     artinfo = cinfo["copyrights"].get(artistWithMost, {'copyright': {'en': artistWithMost}, 'sensitive': {'en': artistWithMost}})
-                    if artinfo is not None and (artistWithMost in artinfo or len(artistWithMost) > 5):
+                    # print("artinfo:", artinfo)
+                    if artinfo is not None and (artistWithMost in cinfo["copyrights"] or len(artistWithMost) > 5):
                         pgs = artpgs[artistWithMost]
                         plurals = pluralstr(plstr, pgs)
                         artstr = artinfo["copyright"].get(lang, artinfo["copyright"]["en"])
@@ -1254,6 +1282,7 @@ class TexModel:
                             template = cinfo['templates']['exceptIllustrations'].get(lang,
                                 cinfo['templates']['exceptIllustrations']['en'])
                         cpystr = template.format(artstr.replace("_", "\u00A0") + exceptPgs)
+                        # print(cpystr)
                         crdts.append("\\{} {}".format(mkr, cpystr))
                 crdts.append("}")
             crdts.append("\\let\\zimagecopyrights=\\zimagecopyrightsen")

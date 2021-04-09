@@ -589,9 +589,21 @@ class TTFont:
                 fnum, value = struct.unpack(">LH", setdat[j*8:j*8+6])
                 self.langfeats[langtag][num2tag(fnum)] = value
 
+    def make_tooltip(self, feat, nid, tid, sid, parmCount):
+        if tid or sid:
+            txt = self.names.get(tid, "")
+            stxt = self.names.get(sid, "")
+            if len(stxt):
+                txt += ("\n" if len(txt) else "") + \
+                       " -> ".join('<span font_family="{}" font_features="{}={}">{}</span>'.format(self.family, feat, i, stxt) for i in range(parmCount+1))
+        else:
+            txt = ""
+        return txt
+
     def readOTFeats(self, inf):
         self.otFeats = {}
         self.otVals = {}
+        self.tipFeats = {}
         for a in ('GSUB', 'GPOS'):
             if a not in self.dict:
                 continue
@@ -612,15 +624,18 @@ class TTFont:
                 po = struct.unpack(">H", dataf)[0]
                 if po != 0 and (feat.startswith("cv") or feat.startswith("ss")):
                     inf.seek(self.dict[a][0]+featOffset+o+po)
-                    dataf = inf.read(4)
-                    _, nid = struct.unpack(">HH", dataf)
+                    dataf = inf.read(8)
+                    _, nid, tid, sid = struct.unpack(">HHHH", dataf)
                     self.otFeats[feat] = self.names.get(nid, feat)
                     if feat.startswith("cv"):
                         dataf = inf.read(8)
-                        parmCount, parmid = struct.unpack(">HH", dataf[4:])
+                        parmCount, parmid = struct.unpack(">HH", dataf[:4])
+                        self.tipFeats[feat] = self.make_tooltip(feat, nid, tid, sid, parmCount)
                         valdict = {i+1: self.names.get(parmid+i, str(i)) for i in range(parmCount)}
                         valdict[0] = "Off"
                         self.otVals[feat] = valdict
+                    else:
+                        self.tipFeats[feat] = self.make_tooltip(feat, nid, tid, sid, 1)
                 else:
                     self.otFeats[feat] = OTFeatNames.get(feat, feat)
 
@@ -890,6 +905,7 @@ class FontRef:
         f = self.getTtfont()
         self.isGraphite = self.isGraphite and f.isGraphite
         s = None
+        f.iscore = True
         if f.filename is not None and not f.iscore:
             if inarchive:
                 fname = f"../shared/fonts/{f.filename.name}"
