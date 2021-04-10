@@ -168,7 +168,10 @@ def get_ucd(cp, key):
     global local_ucd
     if local_ucd is None:
         local_ucd = UCD()
-    return local_ucd.get(cp, key)
+    try:
+        return local_ucd.get(cp, key)
+    except KeyError:
+        return ""
 
 if __name__ == '__main__':
     import sys, pickle

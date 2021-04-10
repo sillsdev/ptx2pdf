@@ -34,6 +34,7 @@ takslc_cats = {'Lu', 'Ll', 'Lt', 'Lm', 'Lo', 'Sm', 'Sc', 'Sk', 'So',
                'Nd', 'Nl', 'No', 
                'Pd', 'Pc', 'Pe', 'Ps', 'Pi', 'Pf', 'Po'}
 space_cats = { 'Zs', 'Zl', 'Zp', 'Cf' }
+viramas = "\u1A60\u1039"
 
 class _Reference(sfm.Position):
     def __new__(cls, pos, ref):
@@ -411,7 +412,8 @@ class Usfm:
                     done = True
                 else:
                     res.append(chars)
-                lastspace = get_ucd(ord(chars[-1]), "gc") in space_cats
+                # lastspace = (get_ucd(ord(chars[-1]), "gc") in space_cats) or (chars[-1] in viramas)
+                lastspace = get_ucd(ord(chars[-1]), "InSC") == "Invisible_Stacker"
             # if done:
                 # print("{} -> {}".format(e, "".join(res)))
             return sfm.Text("".join(res), e.pos, e.parent) if done else e

@@ -116,7 +116,7 @@ _diglot = {
 "diglotfancy/versedecoratorscale":  "fancy/versedecoratorscale",
 "diglotfancy/versedecoratorisfile": "fancy/versedecoratorisfile",
 "diglotfancy/versedecoratorisayah": "fancy/versedecoratorisayah",
-"diglotfancy/endayah":              "fancy/endaya",
+"diglotfancy/endayah":              "fancy/endayah",
 "diglotfancy/sectionheader":    "fancy/sectionheader",
 "diglotfancy/sectionheadershift":   "fancy/sectionheadershift",
 "diglotfancy/sectionheaderscale":   "fancy/sectionheaderscale",
