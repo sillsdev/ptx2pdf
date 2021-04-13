@@ -450,7 +450,7 @@ class PicInfo(dict):
         self.extensions = {x:i for i, x in enumerate(extuser) if x in extdflt}
         if not len(self.extensions):   # If the user hasn't defined any extensions 
             # self.extensions = extdflt  # then we can assign defaults
-            if self.get("c_useLowResPics"):
+            if self.model.get("r_pictureRes_Low"):
                 self.extensions = extdflt
             else:
                 self.extensions = {x:i for i, x in enumerate(["tif", "tiff", "png", "jpg", "jpeg", "bmp", "pdf"])}
@@ -460,8 +460,8 @@ class PicInfo(dict):
         ''' Add source filename information to each figinfo, stored with the key '''
         if data is None:
             data = self
-        if self.srchlist is None or not len(self.srchlist):
-            self.build_searchlist()
+        # if self.srchlist is None: # or not len(self.srchlist):
+        self.build_searchlist()
         res = {}
         newfigs = {}
         for k, f in data.items():
@@ -496,7 +496,7 @@ class PicInfo(dict):
                             new = self.extensions.get(os.path.splitext(filepath)[1].lower()[1:], 10000)
                             if new < old:
                                 data[k][key] = filepath
-                            elif old == new and (self.get("c_useLowResPics") \
+                            elif old == new and (self.model.get("r_pictureRes_Low") \
                                                 != bool(os.path.getsize(data[k][key]) < os.path.getsize(filepath))):
                                 data[k][key] = filepath
                         else:
