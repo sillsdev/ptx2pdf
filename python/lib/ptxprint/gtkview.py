@@ -1402,6 +1402,7 @@ class GtkViewModel(ViewModel):
         
     def onPicRescan(self, btn):
         self.picListView.clearSrcPaths()
+        self.picListView.onRadioChanged()
         
     def onPageNumTitlePageChanged(self, btn):
         if self.get("c_pageNumTitlePage"):
@@ -2215,6 +2216,9 @@ class GtkViewModel(ViewModel):
                 self.set("lb_selectFigureFolder", "")
                 self.set("c_useCustomFolder", False)
                 self.builder.get_object("btn_selectFigureFolder").set_sensitive(False)
+            if self.picListView is not None and self.picListView.picinfo is not None:
+                self.picListView.picinfo.build_searchlist()
+                self.picListView.onRadioChanged()
 
     def _onPDFClicked(self, title, isSingle, basedir, ident, attr, btn):
         vals = self.fileChooser(title,

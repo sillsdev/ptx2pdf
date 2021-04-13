@@ -278,6 +278,8 @@ class ViewModel:
 
     def onFontChanged(self, fbtn):
         font_info = self.get("bl_fontR")
+        if font_info is None:
+            return
         f = font_info.getTtfont()
         silns = "{urn://www.sil.org/ldml/0.1}"
         if not len(font_info.feats):
@@ -788,9 +790,14 @@ class ViewModel:
         if not self.get("c_includeillustrations"):
             return
         if self.diglotView is None:
-            self.picinfos.load_files()
+            res = self.picinfos.load_files()
         else:
-            self.picinfos.load_files(suffix="BL")
+            res = self.picinfos.load_files(suffix="BL")
+        if not res:
+            self.onGeneratePicListClicked(None)
+            
+    def onGeneratePicListClicked(self, btn):
+        pass
 
     def getPicRe(self):
         r = r"(?i)_?(" + "|".join(sorted(self.copyrightInfo['copyrights'].keys(), key=lambda x:(-len(x), x))) \

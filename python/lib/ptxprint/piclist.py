@@ -231,8 +231,8 @@ class PicInfo(dict):
         if not havepiclists:
             self.inthread = True
             self.threadUsfms(suffix)
-            #self.thread = Thread(target=self.threadUsfms, args=(suffix,))
-            #return False
+            # self.thread = Thread(target=self.threadUsfms, args=(suffix,))
+            return False
         else:
             self.model.savePics()
         return True
