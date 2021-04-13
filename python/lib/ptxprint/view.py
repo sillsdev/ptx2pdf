@@ -410,9 +410,10 @@ class ViewModel:
                     self._copyConfig(None, configName, moving=True)
                 else:
                     self._copyConfig(self.configId, configName)
-            res = self.readConfig(cfgname=configName)
+            oldVersion = self.readConfig(cfgname=configName)
             self.styleEditor.load(self.getStyleSheets(configName))
-            if res or forceConfig:
+            self.updateStyles(oldVersion)
+            if oldVersion >= 0 or forceConfig:
                 self.configId = configName
             if readConfig:  # project changed
                 self.usfms = None
@@ -421,7 +422,7 @@ class ViewModel:
             self.readCopyrights()
             self.picChecksView.init(basepath=self.configPath(cfgname=None), configid=self.configId)
             self.loadPics()
-            return res
+            return oldVersion >= 0
         else:
             return True
 
@@ -503,11 +504,11 @@ class ViewModel:
             cfgname = self.configName() or ""
         path = os.path.join(self.configPath(cfgname, makePath=False), "ptxprint.cfg")
         if not os.path.exists(path):
-            return False
+            return -1
         config = configparser.ConfigParser()
         with open(path, encoding="utf-8", errors="ignore") as inf:
             config.read_file(inf)
-        self.versionFwdConfig(config, cfgname)
+        oldversion = self.versionFwdConfig(config, cfgname)
         self.loadingConfig = True
         self.localiseConfig(config)
         self.loadConfig(config)
@@ -532,7 +533,7 @@ class ViewModel:
                     os.makedirs(path2del, exist_ok=True)
                 except (OSError, PermissionError):
                     pass
-        return True
+        return oldversion
 
     def writeConfig(self, cfgname=None):
         if cfgname is None:
@@ -675,13 +676,15 @@ class ViewModel:
                 pass
         if v < 1.505:
             config.set("paragraph", "useglyphmetrics", "True")
-        if v < 1.600:
-            config.set("config", "version", "1.600")
+        if v < 1.601:
+            # invert right and left in Justification in styles
+            config.set("config", "version", "1.601")
 
         styf = os.path.join(self.configPath(cfgname), "ptxprint.sty")
         if not os.path.exists(styf):
             with open(styf, "w", encoding="utf-8") as outf:
                 outf.write("# This file left intentionally blank\n")
+        return v
 
     def localiseConfig(self, config):
         for a in ("header/hdrleft", "header/hdrcenter", "header/hdrright", "footer/ftrcenter"):
@@ -759,6 +762,18 @@ class ViewModel:
                 setv(ModelMap[k][0], self.ptsettings.dict.get(v, ""))
         if self.get("c_thumbtabs"):
             self.updateThumbLines()
+
+    def updateStyles(self, version):
+        if version < 1.601:
+           if self.get("fcb_textDirection", "") == "rtl":
+                for k, v in self.styleEditor.allStyles().items():
+                    j = v.get('Justification', None)
+                    if j == "Right":
+                        self.styleEditor.setval(k, 'Justification', 'Left')
+                    elif j == "Left":
+                        self.styleEditor.setval(k, 'Justification', 'Right')
+        if self.get('c_blendfnxr', False):
+            self.styleEditor.setval('x', 'NoteBlendInto', 'f')
 
     def editFile_delayed(self, *a):
         pass

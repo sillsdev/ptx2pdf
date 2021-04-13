@@ -404,9 +404,12 @@ class PicInfo(dict):
                 line.append('{}="{}"'.format(pos3parms[i], val))
             else:
                 lines.append("{} {}|".format(outk, v.get('caption', ''))+ " ".join(line))
-        dat = "\n".join(lines)+"\n"
-        with open(fpath, "w", encoding="utf-8") as outf:
-            outf.write(dat)
+        if len(lines):
+            dat = "\n".join(lines)+"\n"
+            with open(fpath, "w", encoding="utf-8") as outf:
+                outf.write(dat)
+        elif os.path.exists(fpath):
+            os.unlink(fpath)
 
     def rmdups(self): # MH {checking I understand this right} Does this assume we can't have 2 pics with the same anchor?
         allkeys = {}

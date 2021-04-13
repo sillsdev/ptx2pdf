@@ -395,9 +395,9 @@
    \ifx\p@ram\c@nter
     \leftskip=0pt plus \hsize \rightskip=\leftskip \parfillskip=0pt
    \else\ifx\p@ram\l@ft
-    \rightskip=0pt plus .25\hsize \ifRTL\parfillskip=0pt\fi
+    \ifRTL\leftskip\else\rightskip\fi=0pt plus .25\hsize \ifRTL\parfillskip=0pt\fi
    \else\ifx\p@ram\r@ght
-    \leftskip=0pt plus .25\hsize \ifRTL\else\parfillskip=0pt\fi
+    \ifRTL\rightskip\else\leftskip\fi=0pt plus .25\hsize \ifRTL\else\parfillskip=0pt\fi
    \fi\fi\fi
    \getp@ram{leftmargin}{\m@rker}%                                              %(1)
    \ifx\p@ram\relax \else \advance \ifRTL\rightskip\else\leftskip\fi\p@ram \IndentUnit \fi

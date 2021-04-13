@@ -125,7 +125,7 @@
       \inc@utonum{\newn@testyle}%
       \x@\gen@utonum\x@{\newn@testyle}%
     \else\ifx\t@st\min@s \def\them@rk{}% if it is - then there is no caller
-    \else \def\them@rk{#1}% otherwise the caller is the parameter
+    \else \trace{s}{the note parameter is \t@st \space and is \ifx\t@st\-\else not\fi\space \- \space catcode - is \the\catcode`\-}\def\them@rk{#1}% otherwise the caller is the parameter
     \fi\fi
     \begingroup
     \x@\let\x@\aftern@te\csname after-\newn@testyle\endcsname
