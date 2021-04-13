@@ -318,12 +318,12 @@ class parser(sfm.parser):
     def __synthesise_private_meta(cls, sty, default_meta):
         private_metas = dict(r for r in sty.items() if r[0].startswith('z'))
         metas = {
-            n: sty.get(
+            n: deepcopy(sty.get(
                 cls.__unspecified_metas.get(
                     (m['TextType'],
                      m['Endmarker'] is None and m.get('StyleType', None) == 'Paragraph'),
                     None),
-                default_meta).copy()
+                default_meta))
             for n, m in private_metas.items()
         }
         for v in list(sty.values()):
@@ -331,7 +331,7 @@ class parser(sfm.parser):
                 k = v.get('Endmarker', None)
                 v['Endmarker'] = '*'
                 if k is not None:
-                    sty[k] = v.copy()
+                    sty[k] = deepcopy(v)
         return style.update_sheet(sty, style.update_sheet(metas, private_metas))
 
     def _force_close(self, parent, tok):
