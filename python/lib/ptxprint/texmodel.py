@@ -1038,7 +1038,7 @@ class TexModel:
         self.localChanges.append((None, regex.compile(r"~", flags=regex.M), r"\u00A0")) 
 
         # Convert hyphens from minus to hyphen
-        self.localChanges.append((None, regex.compile(r"((?<=\s)-|-(?=\s))", flags=regex.M), r"\u2011"))
+        self.localChanges.append((None, regex.compile(r"(?<!\\[fx]\s)((?<=\s)-|-(?=\s))", flags=regex.M), r"\u2011"))
 
         if self.asBool("document/toc"): # Only do this IF the auto Table of Contents is enabled
             for c in range(1,4): # Remove any \toc lines that we don't want appearing in the ToC
