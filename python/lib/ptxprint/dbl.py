@@ -175,8 +175,15 @@ def innertext(root, path):
 def UnpackDBL(dblfile, prjid, prjdir):
     info = {'prjid': prjid}
     bookshere = [0] * len(allbooks)
+    subFolder = ""
     with ZipFile(dblfile) as inzip:
-        with inzip.open("metadata.xml") as inmeta:
+        for name in inzip.namelist():
+            if name.endswith("/metadata.xml"):
+                subFolder = name[:-12]
+                break
+        else:
+            return False
+        with inzip.open(subFolder + "metadata.xml") as inmeta:
             metadoc = et.parse(inmeta)
             meta = metadoc.getroot()
         if prjid is None:
@@ -185,7 +192,7 @@ def UnpackDBL(dblfile, prjid, prjdir):
         os.makedirs(prjpath, exist_ok=True)
         for f in ('styles.xml', 'release/styles.xml'):
             try:
-                with inzip.open(f) as instyle:
+                with inzip.open(subFolder + f) as instyle:
                     style = et.parse(instyle)
                 break
             except KeyError:
@@ -194,7 +201,7 @@ def UnpackDBL(dblfile, prjid, prjdir):
         ldmlname = "{}_{}.ldml".format(meta.findtext('language/iso'), meta.findtext('language/ldml'))
         for f in (ldmlname, 'release/'+ldmlname):
             try:
-                with inzip.open(f) as source, \
+                with inzip.open(subFolder + f) as source, \
                      open(os.path.join(prjpath, ldmlname), "wb") as target:
                     shutil.copyfileobj(source, target)
                 break
@@ -206,7 +213,7 @@ def UnpackDBL(dblfile, prjid, prjdir):
             bookshere[bkindex-1] = 1
             outfname = "{:02}{}{}.USFM".format(bkindex, bkid, prjid)
             outpath = os.path.join(prjpath, outfname)
-            with inzip.open(infname) as inf:
+            with inzip.open(subFolder + infname) as inf:
                 with open(outpath, "w", encoding="utf-8") as outf:
                     usx2usfm(inf, outf)
 
@@ -244,3 +251,4 @@ def UnpackDBL(dblfile, prjid, prjdir):
     n.tail = "\n"
     with open(os.path.join(prjpath, "ptxSettings.xml"), "wb") as outf:
         outf.write(et.tostring(settings, encoding="utf-8"))
+    return True

@@ -2738,23 +2738,26 @@ class GtkViewModel(ViewModel):
     def onDBLbundleClicked(self, btn):
         dialog = self.builder.get_object("dlg_DBLbundle")
         response = dialog.run()
+        dialog.hide()
         if response == Gtk.ResponseType.OK and self.builder.get_object("btn_locateDBLbundle").get_sensitive:
             prj = self.get("t_DBLprojName")
             if prj != "":
-                UnpackDBL(self.DBLfile, prj, self.settings_dir)
-                # add prj to ls_project before selecting it.
-                for a in ("ls_projects", "ls_digprojects"):
-                    lsp = self.builder.get_object(a)
-                    allprojects = [x[0] for x in lsp]
-                    for i, p in enumerate(allprojects):
-                        if prj.casefold() > p.casefold():
-                            lsp.insert(i, [prj])
-                            break
-                    else:
-                        lsp.append([prj])
-                self.resetToInitValues()
-                self.set("fcb_project", prj)
-        dialog.hide()
+                if UnpackDBL(self.DBLfile, prj, self.settings_dir):
+                    # add prj to ls_project before selecting it.
+                    for a in ("ls_projects", "ls_digprojects"):
+                        lsp = self.builder.get_object(a)
+                        allprojects = [x[0] for x in lsp]
+                        for i, p in enumerate(allprojects):
+                            if prj.casefold() > p.casefold():
+                                lsp.insert(i, [prj])
+                                break
+                        else:
+                            lsp.append([prj])
+                    self.resetToInitValues()
+                    self.set("fcb_project", prj)
+                else:
+                    self.doError("Faulty DBL Bundle", "Please check that you have selected a valid DBL bundle (ZIP) file. "
+                                                      "Or contact the DBL bundle provider.")
 
     def onLocateDBLbundleClicked(self, btn):
         DBLfile = self.fileChooser("Select a DBL Bundle file", 
