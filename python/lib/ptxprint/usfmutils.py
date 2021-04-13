@@ -286,6 +286,8 @@ class Usfm:
             etype = e.meta.get('texttype', '').lower()
             style = e.meta.get('styletype', '').lower()
             if style == 'paragraph' and etype == 'versetext':
+                # if e.parent is not None and e.parent.name == 'p':
+                    # print(e)
                 thispara = e
                 offset = 0
             elif style == 'paragraph':

@@ -449,7 +449,12 @@ class PicInfo(dict):
         extuser = re.sub("[ ,;/><]"," ",imgord).split()
         self.extensions = {x:i for i, x in enumerate(extuser) if x in extdflt}
         if not len(self.extensions):   # If the user hasn't defined any extensions 
-            self.extensions = extdflt  # then we can assign defaults
+            # self.extensions = extdflt  # then we can assign defaults
+            if self.get("c_useLowResPics"):
+                self.extensions = extdflt
+            else:
+                self.extensions = {x:i for i, x in enumerate(["tif", "tiff", "png", "jpg", "jpeg", "bmp", "pdf"])}
+                
 
     def getFigureSources(self, filt=newBase, key='src path', keys=None, exclusive=False, data=None):
         ''' Add source filename information to each figinfo, stored with the key '''
@@ -487,9 +492,9 @@ class PicInfo(dict):
                         if 'dest file' in data[k]:
                             continue
                         if key in data[k]:
-                            old = self.extensions.get(os.path.splitext(data[k][key])[1].lower(), 10000)
-                            new = self.extensions.get(os.path.splitext(filepath)[1].lower(), 10000)
-                            if old > new:
+                            old = self.extensions.get(os.path.splitext(data[k][key])[1].lower()[1:], 10000)
+                            new = self.extensions.get(os.path.splitext(filepath)[1].lower()[1:], 10000)
+                            if new < old:
                                 data[k][key] = filepath
                             elif old == new and (self.get("c_useLowResPics") \
                                                 != bool(os.path.getsize(data[k][key]) < os.path.getsize(filepath))):

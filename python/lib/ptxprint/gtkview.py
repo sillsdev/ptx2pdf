@@ -1393,11 +1393,18 @@ class GtkViewModel(ViewModel):
         else:
             self.picinfos.clear(self)
             self.picListView.clear()
+        self.onPicRescan(btn)
 
     def onUseCustomFolderclicked(self, btn):
         status = self.sensiVisible("c_useCustomFolder")
         if not status:
             self.builder.get_object("c_exclusiveFiguresFolder").set_active(status)
+        else:
+            if self.get("lb_selectFigureFolder") == "":
+                self.onSelectFigureFolderClicked(None)
+        self.onPicRescan(btn)
+        
+    def onPrefImageTypeFocusOut(self, btn, foo):
         self.onPicRescan(btn)
         
     def onPicRescan(self, btn):

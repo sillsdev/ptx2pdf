@@ -722,6 +722,7 @@ class ViewModel:
                         else:
                             val = Path(val, self) if val is not None else None
                             if w[2] is not None and val is not None:
+                                print(w[2], val)
                                 setv(w[2], pdfre.sub(r"\1", val.as_posix()))
                         setattr(self, w[0], val)
                     else:

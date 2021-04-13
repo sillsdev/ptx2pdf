@@ -10476,6 +10476,7 @@ TIF  (only use TIFs - ignore all other file types)
 NOTE: TIF files are converted internally to JPGs.</property>
                                                 <property name="width_chars">16</property>
                                                 <property name="text">JPG PNG TIF BMP PDF</property>
+                                                <signal name="focus-out-event" handler="onPrefImageTypeFocusOut" swapped="no"/>
                                               </object>
                                               <packing>
                                                 <property name="left_attach">3</property>

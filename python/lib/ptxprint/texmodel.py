@@ -432,8 +432,9 @@ class TexModel:
             self.interlinear = Interlinear(self.dict["project/interlang"],
                                             os.path.join(self.dict["/ptxpath"], self.dict["project/id"]))
         regfont = self.printer.get("bl_fontR")
-        self.dict["document/spacecntxtlztn"] = "2" if regfont.isCtxtSpace else "0"
-        self.calculateMargins()
+        if regfont is not None:
+            self.dict["document/spacecntxtlztn"] = "2" if regfont.isCtxtSpace else "0"
+            self.calculateMargins()
         if self.inArchive:
             for b, a in Borders.items():
                 if self.dict[a[1]] is None or not self.dict[a[1]]:
@@ -495,6 +496,7 @@ class TexModel:
     def prePrintChecks(self):
         reasons = []
         for a in ('regular', 'bold', 'italic', 'bolditalic'):
+            print("Checking {}: {}".format(a, self.dict['document/font{}'.format(a)]))
             if not self.dict['document/font{}'.format(a)]:
                 reasons.append(_("Missing font ({})").format(a))
             break

@@ -443,7 +443,8 @@ class PicList:
         ind = model.get_path(i)
         if ind is None:
             indt = model.get_iter_first()
-            ind = model.get_path(indt)
+            if indt is not None:
+                ind = model.get_path(indt)
         if ind is not None:         # otherwise we have an empty list
             self.select_row(ind.get_indices()[0])
 

@@ -1,8 +1,38 @@
 PTXprint 1.6.0.4 Release Notes 
-1 April 2021
+13 April 2021
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 
+Bug fixes and Improvements in 1.6.1
+
+WARNING: For those using RTL scripts:
+		 The TeX macros have been changed for RTL for Right and Left Justification 
+         such that they are swapped. This means that you no longer have to swap the 
+		 Right and Left Justifications on markers like \q. If justification is Left, 
+		 it will be Right-justified. PTXprint *should* update your styles automatically.		 
+
+  * Add "End-of-Ayah" option for verse decorator on the Tabs+Border tab 
+  
+  * Added option to move "End-of-Ayah" to end of verse
+
+  * If "Include Pictures" is checked but no PicList is found, auto-initiate "Generate" dialog
+  
+  * Autoinsert beginL/R in zimagecopyrights
+  
+  * Make DBL bundle unzipping more intelligent so that it finds the metadata file even if buried
+  
+  * Update styles by version
+  
+  * Provide helpful feedback if user tries to print when fonts have not yet been set 
+  
+  * Add "How?" link to Pictures "Omit only app and web pics" option
+  
+  * Fix derived fonts on reset configurations
+  
+  * Fix interlinear for Intro matter (ch1:vs0)
+  
+  * Fixed Preferred image type handling to follow the list of extensions strictly
+  
 Bug fixes and Improvements in 1.6.0.4
 
   * Added Decorative Section Heading graphic for 2-col layouts
