@@ -751,7 +751,7 @@
   \ifnum\the\prev@y<\thing@y % para start was lower than chapter number, must have passed a col/page break
     %%\def\this@thing{#1}% What is it?
     %\def\thing@ref{#2}% Unique id.
-    \MSG{* saved pending  \string\DelayedItem{#1}{#2}}%
+    \trace{C}{* saved pending  \string\DelayedItem{#1}{#2}}%
     \add@pending{#1}{#2}{\the\thing@y}{#4}{#5}{#6}{#7}%
   \else % para start level with or above chapter number; OK to calculate # of lines
     %First, remember where the bottom of the item
@@ -766,7 +766,7 @@
     \advance\tmp@lines by -\thing@y
     \divide\tmp@lines by \baselineskip
     \advance\tmp@lines by #6
-    \MSG{* calculated \string\DelayedItem{#1}{#2}{\the\tmp@lines} (#4 x#5 @#6)}%
+    \trace{C}{* calculated \string\DelayedItem{#1}{#2}{\the\tmp@lines} (#4 x#5 @#6)}%
     %\add@pending{#1}{#2}{\the\thing@y}{#4}{#5}{\the\tmp@lines}{#7}%
     \wr@teDelayedItem{#1}{#2}{\the\tmp@lines}{(#4x#5@#6)#7}%
   \fi}
@@ -799,7 +799,7 @@
     %\ifx\t@str@ise\relax \else \count255=\t@str@ise\advance\tmp@lines by -\count255\fi
     %\ifnum\tmp@lines <0 \count255=-\tmp@lines\else\count255=\tmp@lines\fi
     \g@tCutoutSlop{#1}%
-    \MSG{tmplines=\the\tmp@lines, \r@isemin, \r@isemax}%
+    \trace{C}{tmplines=\the\tmp@lines, \r@isemin, \r@isemax}%
     \tempfalse
     \ifnum \tmp@lines<\r@isemin\relax \temptrue\fi
     \ifnum \tmp@lines>\r@isemax\relax \temptrue\fi  % if new delay is <2 away than old, we can use \RaiseItem
@@ -808,7 +808,7 @@
     \else
       \th@sdelay=\pr@vdelay % Retain past delay
       \multiply\tmp@lines by -1 % turn delta into raise.
-      \ifnum\tmp@lines=0\t@str@ise
+      \ifnum\tmp@lines=\t@str@ise
         \ifnum\tmp@lines=0\relax\else % Need the same RaiseItem we had last time. 
           \immediate\write\delayf@le{\string\RaiseItem{#1}{#2}{\the\tmp@lines}}%
           % \MSG{PARLOC: OK.  RaiseItem still needed at #1 #2}%

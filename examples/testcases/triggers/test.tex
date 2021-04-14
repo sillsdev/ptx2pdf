@@ -9,26 +9,27 @@
 \stylesheet{usfm_sb.sty}
 \stylesheet{default-custom.sty}
 \stylesheet{test.sty}
-\tracing{sc}
-\tracing{sC}
-\tracing{C}
-\tracing{e}
-\tracing{A}
-\tracing{m}
-\tracing{eb}
-\tracing{s}
-\tracing{g}
+%\tracing{sc}
+%\tracing{sC}
+%\tracing{C}
+%\tracing{e}
+%\tracing{A}
+%\tracing{m}
+%\tracing{eb}
+%\tracing{s}
+%\tracing{g}
 %\tracingmacros=1
 %\tracingassigns=1
 \categorysheet{mycats.sty}
-%\unbalancedfalse
-\unbalancedtrue
+\unbalancedfalse
+%\unbalancedtrue
 %\dimen\toprightins=13cm
 %\StyleCategory{People}{
 % \stylesheet{default-custom.sty}
 % \stylesheet{usfm.sty}
 %}
 \input "usfmTex-settings.tex"
+
 %\input "usfmTex-ext.tex"
 %\input "hooks.tex"
 % Set added material in desired form
@@ -51,5 +52,6 @@
 \sethook{end}{cat:foo|cat}{foo_hook>>}
 \csname ColorFontstrue\endcsname
 %\tracinggroups=1
+\relax
 \ptxfile{test.usfm}
 \bye

@@ -1,0 +1,28 @@
+\id TST
+\h Test file
+\c 1 
+\s Test file for trigger-based text inclusion
+\p
+\v 1 Labore nobis suscipit aut qui aut et. Quia quia ex qui ex quia illo. Sunt occaecati quasi libero omnis distinctio accusamus cumque ullam. Eum at dignissimos occaecati expedita ut libero quidem.
+\p
+\v 2 Mollitia quo totam nihil est dignissimos et dolores. Aperiam et natus aut illum aspernatur. Ea voluptas qui placeat praesentium qui voluptatibus consectetur. Debitis nobis neque velit laudantium dolorum deserunt. Voluptates ad nihil ad vel blanditiis. Cupiditate in laborum necessitatibus quaerat qui quidem.
+\v 3 Enim placeat est et blanditiis nobis maiores dolore eum. 
+\p 
+Culpa et aperiam quis aut eos. Et reprehenderit enim quasi est et sunt. Consectetur reprehenderit suscipit vitae quibusdam quidem neque qui.
+\p
+\v 4 Repudiandae porro optio nobis quod dolores eum nemo tempore. Ut eius autem sapiente qui quaerat autem molestiae est. Cum voluptatibus est est illo quibusdam reprehenderit. Omnis magnam quibusdam voluptatum. Aut qui distinctio reprehenderit omnis perferendis.
+\p
+\v 5 Ex adipisci id dolore labore. Rerum numquam libero accusamus voluptatum et sint quam. Voluptatem et nostrum aut in laboriosam. Qui veritatis sint tempora culpa voluptatibus aspernatur.
+\p
+\v 6 Quos cum consequatur ut. Maxime ad nulla pariatur ad laborum. Tempore expedita ex dolor. Adipisci dicta eaque aut sed consequuntur assumenda magnam. Dolorem quasi beatae maxime nobis eos dolor minima ut. Consectetur optio accusantium excepturi dolorum at asperiores fugit.
+\p
+\v 7 Doloremque iure autem facilis officia assumenda repudiandae eligendi. Ullam consequatur quia aliquam modi. Nihil minus dolore ut aperiam. Voluptas consequatur beatae nostrum.
+\v 8 Iure id debitis modi. Sit cupiditate ut voluptatem soluta at ratione velit est. Voluptatem beatae consequuntur reprehenderit. Velit nihil similique cumque praesentium aliquam cum doloremque temporibus.
+\v 9 Harum blanditiis inventore ut eaque eum velit sequi laboriosam. Sapiente ab iste ullam pariatur. Error cum voluptatibus dolorem facere sunt.
+\p
+\v 10 Ullam sequi voluptatem neque itaque expedita possimus. Et autem enim aut. Qui omnis dicta est illo possimus in eos. Id repellat temporibus iste consectetur deserunt quis recusandae. Tempora ea aut nobis.
+
+\s Glossary
+\p
+\k Word\k* Is a part of speech that could be uttered in isolation.  Consult a linguist for lots of technical extra bits we won't bother with.
+\p This is the second paragraph in the definition of word.

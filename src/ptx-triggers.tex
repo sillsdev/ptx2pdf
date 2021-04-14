@@ -38,7 +38,9 @@
 % GEN14.5-preverse  is triggered before the verse number is output. It is possible that this is in vertical mode after a
 % paragraph break.
 % GEN14.5 is triggered after the verse number has been output. 
-% GENk.thisword-preverse is triggered before the key term \k this word k*  is output
+% GEN14.5=2 is triggered by the start of the second paragraph in verse 5. (assuming no other trigger point intervenes)
+% ?? GENk.thisword-preverse is triggered before the key term \k this word k*  is output
+% k.thisword is triggered after the key term \k this word\k* is output 
 
 \newtoks\trigg@rchecks
 \trigg@rchecks{}
@@ -77,6 +79,12 @@
   \let\c@rref=\oc@rref\let\dc@rref=\odc@rref
 }
 
+\def\opentriglist "#1" {%
+  \openin\t@stread="#1"
+  \ifeof\t@stread \def\n@xt{\MSG{Trigger list "#1" not found -- ignored}}%
+  \else \closein\t@stread \def\n@xt{\m@kedigitsletters\input "\the\PtxFilePath#1"\relax\m@kedigitsother}\fi
+  \n@xt
+}
 \def\runtrigg@rsother#1{%
     \runtrigg@rs{\mkp@cref{\id@@@}{#1}}%
     \edef\c@rref{\id@@@#1}\p@rnum=1% Paragraph number (for triggers) resets on keywords
@@ -90,7 +98,13 @@
 }
 \def\settrign@me#1{\edef\trign@me{trigger-#1}}
 
-\def\addtrigger#1#2{%Add trigger code trigger on reference #1 (to do #2). 
+\def\addtrigger#1#2{\addtr@gger{#1}{#2}}% Not expected to be long 
+
+\long\def\NewTrigger#1 #2\EndTrigger{% #1 is space-delimited, input may contain blank lines.
+  \addtr@gger{#1}{#2}%
+}
+
+\long\def\addtr@gger#1#2{%Add trigger code trigger on reference #1 (to do #2). 
    %Much of the complication is so the triggers concatenate roughly like a toklist
    \settrign@me{#1}\x@\let\x@\tr@gtmp\csname\trign@me\endcsname
    \ifx\tr@gtmp\relax
@@ -98,7 +112,7 @@
    \else
      \x@\def\x@\tr@gtmp\x@{\tr@gtmp#2}%
    \fi
-   \x@\let\csname\trign@me\endcsname\tr@gtmp
+   \x@\global\x@\let\csname\trign@me\endcsname\tr@gtmp
 }
 
 \def\stdtrigger{%Run any triggers if they exist.
@@ -109,6 +123,7 @@
 }
 
 \addtotrigg@rchecks{\stdtrigger}
+
 
 \def\settrig@refcv{%
   \xdef\c@rref{\id@@@\ch@pter.\v@rse}%

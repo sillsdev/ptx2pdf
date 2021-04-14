@@ -777,7 +777,7 @@
     \else \global\setbox\picb@@x\vbox{\hbox to \colwidth{\hss\box\picb@@x}}\trace{g}{Pic aligned right}%
     \fi
   \fi
-  \edef\eotpn@me{at@ndofthispar\c@rrdstat}% Which endofthispar macro?\emspace
+  \edef\eotpn@me{at@ndofthispar\c@rrdstat}% Which at@ndofthispar macro?\emspace
   \trace{g}{\eotpn@me\space defined}%
   \x@\gdef\csname \eotpn@me\endcsname{%
     \relax \x@\let\x@\picb@@x\csname picb@x\g@tdstat\endcsname
@@ -924,7 +924,7 @@
 \def\ch@ckpdf#1.#2.#3\endf@lename{\lowercase{\edef\@xt{#2}}%
   \ifx\@xt\@pdf \let\picfilecomm@nd\XeTeXpdffile \fi}
 %-cfig_checkpdf
-%\def\@pdf{pdf}
+\def\@pdf{pdf}
 
 %+cfig_declare
 \def\picw@rning#1#2{\msg{converted picture placement "#1" to "#2" in single-column layout}}
@@ -1004,7 +1004,7 @@
 \def\l@stfignum{0}
 \def\finishpicp@ges "#1"{\immediate\closeout\picp@ges % close the picpages file, then re-read it and check for changes
    \tempfalse
-   \trace{g}{lastfignum was \l@stfignum, \the\im@gecount}%
+   \trace{g}{lastfignum was \l@stfignum, count now:\the\im@gecount}%
    \ifnum\im@gecount=\l@stfignum\else
      \temptrue
      \trace{g}{Number of images has changed}%
@@ -1028,7 +1028,9 @@
 % #6 ~ Anything else that might affect page breaking or alignment (e.g. size, rotation)
 \def\figonpage#1#2#3#4#5#6{\x@\gdef\csname fig#2p@ge\endcsname{#1}%Page number
 \x@\gdef\csname fig#2p@ram\endcsname{#3#4#6}% Any other parameters that might affect page-breaking.
-  \xdef\l@stfignum{#2}%
+  \ifnum\l@stfignum>#2 \else
+    \xdef\l@stfignum{#2}%
+  \fi
 %\trace{P}{Picture "#3" turned up on page #1}%
 }%
 \def\checkfigpage#1#2#3#4#5#6{%
@@ -1063,6 +1065,8 @@
     \fi
   \fi
 }
-\let\nextshipout=\dofigp@ge
+\newtoks\onship@ut 
+\def\addtonextshipout#1{\x@\global\x@\onship@ut\x@{\the\onship@ut #1}}
+\def\nextshipout{\the\onship@ut\onship@ut{}\dofigp@ge}
 %-cfig_dofigpage
 

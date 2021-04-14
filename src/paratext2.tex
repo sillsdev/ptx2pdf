@@ -544,13 +544,13 @@
   \decr{\availht}{\topins}% and by the space needed for spanning pictures
   \decr{\availht}{\bottomins}%And post-footnote inserts
   \decr{\availht}{\verybottomins}%
-  \ifdim\availht<0pt                                                        %(2)
-    \MSG{Page overfull with inserts. Perhaps a little more text and less pictures would help}%
-  \fi
   \setbox\s@vedpage=\copy255
   % split the galley to the actual size available
   \setbox\colA=\vsplit255 to \availht \setbox0\copy\colA \setbox0=\vbox{\unvbox0}
   \decr{\availht}{0}
+  \ifdim\availht<0pt                                                        %(2)
+    \MSG{Page overfull with inserts. Perhaps a little more text and less pictures would help}%
+  \fi
   %\setbox\colA=\vbox{\unvbox\colA}
   % and check if it all fit; if not, we'll have to back up and try again
   \ifvoid255 \fitonpagetrue \else \fitonpagefalse \fi
@@ -565,6 +565,7 @@
 %      \msg{upwards mode = \the\XeTeXupwardsmode}
       \dimen1=\textwidth \advance\dimen1 -\ExtraRMargin
       \trace{b}{BALANCE pageoutins: cols=1: text=\the\ht\colA, \the\dp\colA: partial=\the\ht\partial, \the\dp\partial: topins=\the\ht\topins: bottomins=\the\ht\bottomins}%
+      \dimen9=\ht\partial
       \ifvoid\partial\else \vbox{\hbox to \dimen1{\hskip\columnshift\vbox{\unvbox\partial}}} \fi
       \ifvoid\topins\else \vbox{\hbox to \columnshift{}\box\topins} \vskip\skip\topins \fi
       \iflastpage\setbox\colA\vbox{\unvbox\colA}\fi
@@ -578,15 +579,15 @@
       \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2 \space Leaving \the\ht255, \the\dp255}%
       \ifdim\ht2<-\lastd@pth\trace{b}{Strange notes height: \the\ht2}\fi
       \unvbox2
-      \ifvoid\verybottomins\else\ifdim\availht>0pt\vfil % \kern-\dimen0
+      \ifvoid\verybottomins\else\ifdim\availht > 0pt\vfil % \kern-\dimen0
+        \trace{o}{verybottomins(onecoltrial): height=\the\ht\verybottomins , availht=\the\availht, textheight=\the\textheight, htpartial=\the\dimen9}
         \lastd@pth=0pt \vskip\skip\verybottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\verybottomins}}\fi\fi
     }%
 %-c_onecoltrial_pagecontents
 %+c_onecoltrial_pagefit
     \resetvsize
     \ifdim\ht\colA>\baselineskip\plainoutput\trace{p}{plainoutput from onecoltrial}%    %(+)
-      \xdef\p@gefirstmark{}\xdef\p@gebotmark{}%
-      \nextshipout
+      \s@tpage
     \else\setbox0=\box255\deadcycles=0\fi % dump empty pages (typically at end)
     \fin@lverybottom
     \global\holdinginserts=1
@@ -601,12 +602,7 @@
     \trace{i}{1c REDUCING VSIZE hIns=\the\holdinginserts}%
     \global\advance\vsize by -\baselineskip
     \trace{b}{BALANCE 1col go round vsize=\the\vsize}%
-    \global\setbox\topins=\box\voidb@x
-    \global\setbox\bottomins=\box\voidb@x
-    \global\setbox\verybottomins=\box\voidb@x
-    \let\\=\cle@rn@tecl@ss \the\n@tecl@sses
-    \global\setbox255=\box\voidb@x
-    \global\holdinginserts=1
+    \res@tpage
     \global\let\whichtrial=\onecoltrial
     \global\output={\backingup}%
     \unvbox\galley \penalty\ifnum\galleypenalty=10000 0 \else \galleypenalty \fi
@@ -675,6 +671,7 @@
     \count255=2000
     \global\count\topins=\count255
     \global\count\bottomins=\count255
+    \global\count\verybottomins=\count255
     \let\\=\s@tn@tec@unt \the\n@tecl@sses % reset \count for each note class
     \global\holdinginserts=1 % don't pull out inserts yet, we are still adjusting page
     %\msg{Starting 2col partial: \the\ht\partial, pagetotal: \the\pagetotal, vsize: \the\vsize}
@@ -725,27 +722,27 @@
       \m@kenotebox
       \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2}%
       \unvbox2
-      \ifvoid\verybottomins\else\ifdim\availht>0pt%
+      \ifvoid\verybottomins\else\ifdim\availht > 0pt%
+        \trace{o}{verybottomins(savepartialpage): height=\the\ht\verybottomins , availht=\the\availht, textheight=\the\textheight}
         \kern-\lastd@pth \lastd@pth=0pt \vskip\skip\verybottomins \unvbox\verybottomins \fi\fi
     }%
     \resetvsize%
-    \ifdim\ht\colA>\baselineskip\plainoutput
-      \xdef\p@gefirstmark{}\xdef\p@gebotmark{}
+    \ifdim\ht\colA>\baselineskip\plainoutput\fin@lverybottom
+      \s@tpage
     \else\trace{o}{Page empty cols=\the\ht\colA, \the\ht\colB, partial=\the\ht\partial}\setbox0=\box255\deadcycles=0\fi % dump empty pages (typically at end)
-      \tempfalse%
-      \ifdim\ht\partial>\PageFullFactor\textheight \temptrue\fi%
-      \ifnum\outputpenalty<-10000 \temptrue\fi%
-      \iftemp\def\pagecontents{\box\partial}\plainoutput 
-      \xdef\p@gefirstmark{}\xdef\p@gebotmark{}
+    \tempfalse%
+    \ifdim\ht\partial>\PageFullFactor\textheight \temptrue\fi%
+    \ifnum\outputpenalty<-10000 \temptrue\fi%
+    \iftemp\def\pagecontents{\box\partial}\plainoutput 
+      \s@tpage
     \fi
-    \nextshipout\fin@lverybottom
+    \fin@lverybottom
     \global\holdinginserts=1
   \else % the contents of the "galley" didn't fit into the actual page,
         % so reduce \vsize and try again with an earlier break
     \trace{i}{2c REDUCING VSIZE hIns=\the\holdinginserts}%
-    \@mptyinserts
+    \res@tpage
     %\global\advance\vsize by -\baselineskip
-    \let\\=\cle@rn@tecl@ss \the\n@tecl@sses
     \global\let\whichtrial=\onecoltrial
     \global\output={\backingup}%
     \global\rerunsavepartialpagedtrue
@@ -1072,16 +1069,50 @@
 \def\c@lcboxheights{
   \g@tcolhts
   \trace{b}{BALANCE pageout: cols=2: texta=\the\ht\colA , \the\dp\colA : textb=\the\ht\colB , \the\dp\colB : partial=\the\ht\partial, \the\dp\partial : topins=\the\ht\topins+\the\skip\topins, \the\ht\topleftins+\the\skip\topleftins, \the\ht\toprightins+\the\skip\toprightins : bottomins=\the\ht\bottomins+\the\skip\bottomins, \the\ht\bottomleftins+\the\skip\bottomleftins, \the\ht\bottomrightins+\the\skip\bottomrightins}%
-  \lastd@pth=\dp\colA \setbox\colA=\vbox to \availht{\unvbox\topleftins\box\colA\vfil\unvbox\bottomleftins}\dp\colA=\lastd@pth
+  \dimen9=\textheight
+  \decr{\dimen9}{\partial}\decr{\dimen9}{\topins}\decr{\dimen9}{\bottomins}\decr{\dimen9}{\verybottomins}%
+  \ifdim\dimen9<\baselineskip
+    \message{No space for text on page!}%
+  \else
+    \ifdim\ht\topleftins>\dimen9
+      \setbox5=\vsplit\topleftins to \dimen9
+      \trace{i}{topleft split to \the\dimen9 (\the\ht\topleftins)}%
+    \else
+      \setbox5=\box\topleftins
+    \fi
+    \ifdim\ht\toprightins>\dimen9
+      \setbox6=\vsplit\toprightins to \dimen9
+      \trace{i}{topleft split to \the\dimen9 (\the\ht\toprightins)}%
+    \else
+      \setbox6=\box\toprightins
+    \fi
+    \dimen8=\dimen9
+    \advance\dimen9 by -\ht5
+    \ifdim\ht\bottomleftins>\dimen9
+      \setbox7=\vsplit\bottomleftins to \dimen9
+      \trace{i}{topleft split to \the\dimen9 (\the\ht\bottomleftins)}%
+    \else
+      \setbox7=\box\bottomleftins
+    \fi
+    \dimen9=\dimen8
+    \advance\dimen9 by -\ht6
+    \ifdim\ht\bottomrightins>\dimen9
+      \setbox8=\vsplit\bottomrightins to \dimen9
+      \trace{i}{topleft split to \the\dimen9 (\the\ht\bottomrightins)}%
+    \else
+      \setbox8=\box\bottomrightins
+    \fi
+  \fi
+  \lastd@pth=\dp\colA \setbox\colA=\vbox to \availht{\unvbox5\box\colA\vfil\unvbox7}\dp\colA=\lastd@pth
   \ifdim\ht\colB<1pt\setbox\colB\vbox{\noindent\par}\else\ifdim\lastd@pth<\dp\colB\lastd@pth=\dp\colB\fi\fi
-  \setbox\colB=\vbox to \availht{\unvbox\toprightins\box\colB\vfil\unvbox\bottomrightins}\dp\colB=\lastd@pth
+  \setbox\colB=\vbox to \availht{\unvbox6\box\colB\vfil\unvbox8}\dp\colB=\lastd@pth
   \ifdim\colhtA>\colhtB \dimen3=\colhtA\lastd@pth=\dp\colA\dp\colB=\lastd@pth\else
     \dimen3=\colhtB\lastd@pth=\dp\colB\dp\colA=\lastd@pth\fi
   \advance\dimen3 by \lastd@pth
 }
 %-c_calcboxheights
 
-\def\@mptyinserts{
+\def\@mptyinserts{%
   \trace{i}{Emptying Inserts}%
   \global\setbox\topins=\box\voidb@x
   \global\setbox\bottomins=\box\voidb@x
@@ -1090,8 +1121,20 @@
   \global\setbox\bottomleftins=\box\voidb@x
   \global\setbox\bottomrightins=\box\voidb@x
   \global\setbox\verybottomins=\box\voidb@x
+}
+\def\res@tpage{%Restore page to post-setup state
+  \trace{i}{Restoring inserts}%
+  \r@storeinserts{chunk}%
   \global\setbox255=\box\voidb@x
   \global\holdinginserts=1
+  \let\\=\cle@rn@tecl@ss \the\n@tecl@sses
+}
+
+\def\s@tpage{%Save post-shipout state / reset other stuff that needs to happen after shipout 
+  \trace{i}{Saving inserts}%
+  \s@veinserts{chunk}%
+  \xdef\p@gefirstmark{}\xdef\p@gebotmark{}%
+  \nextshipout
 }
 
 %+c_calcavailht
@@ -1166,7 +1209,7 @@
   \else
     \trace{o}{sppd: Not fit on page}%
     \trace{i}{sppd: emptyinserts hIns=\the\holdinginserts, \the\ht\partial, vs:\the\vsize}%
-    \@mptyinserts
+    \res@tpage
     %\global\advance\vsize by -\baselineskip
     %\global\let\whichtrial=\savepartialpaged
     \global\let\whichtrial=\twocoltrial
@@ -1245,26 +1288,27 @@
       \unvbox2
       \global\noteseenfalse%
       \ifvoid\verybottomins\else\vfil
+        \trace{o}{verybottomins(twocoltrial): height=\the\ht\verybottomins , availht=\the\availht, textheight=\the\textheight}
         \kern-\lastd@pth \lastd@pth=0pt \vskip\skip\verybottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\verybottomins}}\fi % ouput bottom spanning picture
     }%
     \global\setbox255=\box\voidb@x                                          %(+)
     \resetvsize % reset size of next page since it will not have any 1 column material
     \plainoutput 
-    \xdef\p@gefirstmark{}%
-    \xdef\p@gebotmark{}%
-    \nextshipout
+    \s@tpage
     \global\holdinginserts=1
     \ifrerunsavepartialpaged
       \global\output={\savepartialpaged}\global\rerunsavepartialpagedfalse\unvbox\s@vedpage
     \else\global\output={\twocols}\unvbox\s@vedpage\fi
+    \ifnum\interactionmode=2
+      \showlists
+    \fi
   \else % the contents of the "galley" didn't fit into the columns,         %(+)
         % so reduce \vsize and try again with an earlier break
     \trace{o}{Reducing vsize \the\vsize, by \the\baselineskip}%
     \global\advance\vsize by -\baselineskip
 	% clear insertions
     \trace{i}{2coltrial: emptyinserts hIns=\the\holdinginserts}%
-    \@mptyinserts
-    \let\\=\cle@rn@tecl@ss \the\n@tecl@sses
+    \res@tpage
     \global\let\whichtrial=\twocoltrial                                     %(+)
     \global\output={\backingup}%
     \ifm@rksonpage\else\gdef\p@gefirstmark{}\trace{H}{No marks found. Setting empty mark}\fi%No marks on the page, and it didn't fit, so add a blank mark
@@ -1377,21 +1421,24 @@
       \m@kenotebox
       \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2}%
       \unvbox2
-      \ifvoid\verybottomins\else\ifdim\availht>0pt % \kern-\dimen0
-        \lastd@pth=0pt \vskip 0pt plus 1fill
-        \vskip\skip\verybottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\verybottomins}}\fi\fi
+      \ifvoid\verybottomins\else\ifdim\availht > 0pt % \kern-\dimen0
+        \trace{o}{verybottomins(twocolp@geout): height=\the\ht\verybottomins , availht=\the\availht, textheight=\the\textheight}
+        \lastd@pth=0pt \vskip 0pt plus 1fill\vskip\skip\verybottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\verybottomins}}\fi\fi
     }}\plainoutput
-    \xdef\p@gefirstmark{}\xdef\p@gebotmark{}%
-    \nextshipout\fin@lverybottom
+    \s@tpage
+    \fin@lverybottom
 }
-
 \def\fin@lverybottom{%
   \ifvoid\verybottomins\else
+      %\setbox0=\vbox{\unvbox\verybottomins\setbox1=\lastbox}
     \loop
+      \trace{o}{verybottom(fin@lverybottom) height=\the\ht\verybottomins, textheight=\the\textheight, vsize=\the\vsize,
+                verybottomins=\the\count\verybottomins, \the\dimen\verybottomins}
       \setbox0=\vsplit\verybottomins to \textheight
       \def\pagecontents{\vfil\hbox{\hbox to \columnshift{}\vbox{\unvbox0}}}
       \plainoutput
-      \ifvoid\verybottomins\tempfalse\else\temptrue\fi \iftemp\repeat
+      \s@tpage
+      \ifvoid\verybottomins\tempfalse\else\temptrue\fi\iftemp\repeat
   \fi
 }
 %-c_twocolpageout

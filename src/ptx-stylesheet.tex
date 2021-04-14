@@ -706,8 +706,9 @@
     \edef\kr@f{\detokenize{##1}}%
     \x@\setkr@f\x@{\kr@f}%
     \message{\kr@f}%
-    \@k ##1\endch@rstylen* %
     \runtrigg@rsother{k.\kr@f}%
+    \@k ##1\endch@rstylen* %
+    \runtrigg@rs{\id@@@ k.\kr@f}%
   }
 }%
 
@@ -941,7 +942,7 @@
 
 %+csty_onetime
 \def\@netimesetup{
- % stuff to execute after loading all stylesheets but before processing the first USFM file
+ % stuff to execute after loading all stylesheets but (just) before processing the first USFM file
  \ifdiglot
   \trace{d}{Onetimesetup, (\c@rrdstat)}%
  \else
@@ -957,6 +958,7 @@
  \ifdiglot\setc@rdstat{L}%
  \fi
  %\global\lastptxfiletrue
+ \opentriglist "\jobname.triggers"
  \let\@netimesetup=\relax}                                                      %(1)
 
 \def\@netimesetuplater{
@@ -1050,6 +1052,7 @@
 %+csty_ptxfile_start
  \openadjlist "\the\AdjListPath#1.adj"
  \openpiclist "\the\PicListPath#1.piclist"
+ \opentriglist "\the\TrigListPath#1.triggers"
  \openpicpages "\jobname.picpages"
  \lastpagefalse
  \prepusfm
@@ -1081,6 +1084,7 @@
 \newread\t@stread
 \newtoks\AdjListPath % path to look for adjustment files
 \newtoks\PicListPath % path to look for picture list files
+\newtoks\TrigListPath % path to look for trigger list files
 \newtoks\PtxFilePath % path to look for main ptx input files
 
 % mechanism to define active chars within the ptx files
