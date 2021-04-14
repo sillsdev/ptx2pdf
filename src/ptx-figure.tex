@@ -1004,7 +1004,7 @@
 \def\l@stfignum{0}
 \def\finishpicp@ges "#1"{\immediate\closeout\picp@ges % close the picpages file, then re-read it and check for changes
    \tempfalse
-   \trace{g}{lastfignum was \l@stfignum, \the\im@gecount}%
+   \trace{g}{lastfignum was \l@stfignum, count now:\the\im@gecount}%
    \ifnum\im@gecount=\l@stfignum\else
      \temptrue
      \trace{g}{Number of images has changed}%
@@ -1028,7 +1028,9 @@
 % #6 ~ Anything else that might affect page breaking or alignment (e.g. size, rotation)
 \def\figonpage#1#2#3#4#5#6{\x@\gdef\csname fig#2p@ge\endcsname{#1}%Page number
 \x@\gdef\csname fig#2p@ram\endcsname{#3#4#6}% Any other parameters that might affect page-breaking.
-  \xdef\l@stfignum{#2}%
+  \ifnum\l@stfignum>#2 \else
+    \xdef\l@stfignum{#2}%
+  \fi
 %\trace{P}{Picture "#3" turned up on page #1}%
 }%
 \def\checkfigpage#1#2#3#4#5#6{%
