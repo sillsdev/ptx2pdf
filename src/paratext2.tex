@@ -546,10 +546,6 @@
   \decr{\availht}{\verybottomins}%
   \setbox\s@vedpage=\copy255
   % split the galley to the actual size available
-  \setbox\colA=\vsplit255 to \availht \setbox\colA=\vbox{\unvbox\colA}
-  \decr{\availht}{\colA}
-  \setbox\s@vedpage=\copy255
-  % split the galley to the actual size available
   \setbox\colA=\vsplit255 to \availht \setbox0\copy\colA \setbox0=\vbox{\unvbox0}
   \decr{\availht}{0}
   \ifdim\availht<0pt                                                        %(2)
