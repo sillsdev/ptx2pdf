@@ -1,4 +1,4 @@
-\NewTrigger{TST1.2-preverse}
+\NewTrigger TST1.2-preverse
 \esb\cat inl\cat*
 \s Triggered from verse 2
 \p
@@ -6,12 +6,30 @@ This esb is included from a separate file, triggered before the verse number for
 \esbe
 \EndTrigger
 
-\NewTrigger{TST1.2-preverse}
+\NewTrigger TST1.2-preverse
 \s Also triggered from verse 2
 \p
  So is the above heading and this bit of text.
 \EndTrigger
 
-\NewTrigger{TST1.2}
+\NewTrigger  TST1.2  
 \bd This bit of text is triggered after the verse number.\bd*
+\EndTrigger
+
+\NewTrigger TST1.3=2
+\s Extra heading 
+
+\p
+\EndTrigger
+
+\NewTrigger TSTk.Word-preverse
+++ 
+\EndTrigger
+
+\NewTrigger TSTk.Word
+-- 
+\EndTrigger
+
+\NewTrigger TSTk.Word=2
+==
 \EndTrigger

@@ -7,7 +7,7 @@ DIR:=$(shell dirname `find ../../..  -name paratext2.tex`)
 	TEXINPUTS=.:$(DIR) xetex $<
 	
 
-test.pdf: test.tex usfmTex-ext.tex usfmTex-settings.tex test.usfm $(DIR)/*.tex *.sty test.triggers
+test.pdf: test.tex usfmTex-ext.tex usfmTex-settings.tex test.usfm $(DIR)/*.tex *.sty test.usfm.triggers
 test2.pdf: test2.tex usfmTex-ext.tex usfmTex-settings.tex test2.usfm $(DIR)/*.tex *.sty
 
 bisect:
