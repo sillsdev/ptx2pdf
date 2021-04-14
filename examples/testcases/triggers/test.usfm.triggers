@@ -19,7 +19,7 @@ This esb is included from a separate file, triggered before the verse number for
 \NewTrigger TST1.3=2
 \s Extra heading 
 
-\p
+\p Extra text triggered by the paragraph mark
 \EndTrigger
 
 \NewTrigger TSTk.Word-preverse
