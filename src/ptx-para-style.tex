@@ -776,7 +776,7 @@
 %+cpar_writedelayed
 \def\setCutoutSlop#1#2#3{\x@\edef\csname raiselimits-#1\endcsname{#2,#3}}
 \setCutoutSlop{chapter}{1}{0}
-\def\g@tCutoutSlop#1{\x@\let\x@\r@iselimit\csname raiselimits-#1\endcsname\ifx\r@iselimit\relax\x@\p@rselimit 2,2\E\else\x@\p@rselimit\r@iselimit\E\fi}
+\def\g@tCutoutSlop#1{\x@\let\x@\r@iselimit\csname raiselimits-#1\endcsname\ifx\r@iselimit\relax\x@\p@rselimit 2,1\E\else\x@\p@rselimit\r@iselimit\E\fi}
 \def\p@rselimit#1,#2\E{\edef\r@isemin{-#1}\edef\r@isemax{#2}}
 
 \def\wr@teDelayedItem#1#2#3#4{% Part of post-run processing
@@ -789,10 +789,13 @@
   \else \pr@vdelay=\t@std@lay\fi
   \th@sdelay=#3\relax
   \ifnum\pr@vdelay=\th@sdelay % if the delay value is unchanged, all is good
-    \ifx\t@str@ise\relax \else
-       \MSG{PARLOC: Rerun. RaiseItem was applied for #1 #2, but not needed}%
+    \ifx\t@str@ise\relax
+      \trace{C}{PARLOC:ok}%
+    \else
+       \ifnum\t@str@ise=0\else
+         \MSG{PARLOC: Rerun. RaiseItem was applied for #1 #2, but not needed}%
+       \fi
     \fi
-    %\MSG{PARLOC: OK}%
   \else
     \tmp@lines=\pr@vdelay
     \advance\tmp@lines by -\th@sdelay
@@ -806,20 +809,28 @@
     \iftemp
       \MSG{PARLOC: Rerun. Delayed #1 setting changed (from \the\pr@vdelay to \the\th@sdelay) at #2}%
     \else
-      \th@sdelay=\pr@vdelay % Retain past delay
-      \multiply\tmp@lines by -1 % turn delta into raise.
-      \ifnum\tmp@lines=\t@str@ise
-        \ifnum\tmp@lines=0\relax\else % Need the same RaiseItem we had last time. 
-          \immediate\write\delayf@le{\string\RaiseItem{#1}{#2}{\the\tmp@lines}}%
-          % \MSG{PARLOC: OK.  RaiseItem still needed at #1 #2}%
+      \th@sdelay=\pr@vdelay % Retain past delay and (if needed) use raiseitem
+      \multiply\tmp@lines by -1 % change sign to match semantics of raise.
+      \ifx\t@str@ise\relax
+        \ifnum\tmp@lines=0\else
+          \ifx\t@std@lay\relax\else
+            \MSG{PARLOC: Rerun. RaiseItem needed at #1 #2}%
+            \temptrue
+          \fi
         \fi
-      \else
-        %\MSG{PARLOC: Rerun. RaiseItem needed at #1 #2 now \the\tmp@lines}%
-        \ifx\t@std@lay\relax \MSG{PARLOC: Rerun. RaiseItem needed at #1 #2}%
+      \else 
+        \ifnum\tmp@lines=\t@str@ise
+          \ifnum\tmp@lines=0\relax\else % Need the same RaiseItem we had last time. 
+            \trace{C}{PARLOC: OK.  RaiseItem still needed at #1 #2}%
+            \temptrue
+          \fi
         \else 
-          \MSG{PARLOC: Rerun with new RaiseItem (by \the\tmp@lines was \t@str@ise) at #1 #2}%
-          \immediate\write\delayf@le{\string\RaiseItem{#1}{#2}{\the\tmp@lines}}%
+          \MSG{PARLOC: Rerun with new RaiseItem (by \the\tmp@lines was \t@str@ise) at #1 #2}%   
+          \temptrue
         \fi
+      \fi
+      \iftemp
+        \immediate\write\delayf@le{\string\RaiseItem{#1}{#2}{\the\tmp@lines}}%
       \fi
     \fi
   \fi

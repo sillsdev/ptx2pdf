@@ -846,7 +846,8 @@
      \fi
      %\csname\m@rker\endcsname
   \else
-     \trace{g}{Cutout in vertical mode.}%
+     \trace{g}{Cutout was in vertical mode.}%
+     \leavevmode %needed for keyterm-based figures, at least
      \tmpcount=0
   \fi
   %\advance\dimen1 by \baselineskip

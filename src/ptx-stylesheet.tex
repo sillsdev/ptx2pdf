@@ -703,6 +703,7 @@
  \global\let\@k=\k
  \def\setkr@f##1{\edef\kr@f{\zap@space ##1 \empty}}
  \def\k##1\k*{%\k processing
+    \let\v@rse=\empty % Normally verses and keywords don't co-occur
     \edef\kr@f{\detokenize{##1}}%
     \x@\setkr@f\x@{\kr@f}%
     \message{\kr@f}%

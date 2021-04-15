@@ -94,7 +94,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \def\ch@ckadjustments{% check if the current reference is the place for the next adjustment
- \settrig@refcv
+ \ifx\v@rse\empty\else
+   \settrig@refcv
+ \fi
  \ifdiglot
    \let\adjc@rref\dc@rref
    \edef\adjc@rref{\x@\detokenize\x@{\dc@rref}}%

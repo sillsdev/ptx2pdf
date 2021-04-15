@@ -1,5 +1,4 @@
 TST k.Brillig  Roses like it to be sunny when brillig (about 4pm)|loc="h" src="image.jpg" alt="Figs are tasty"  size="col*0.4"
-TST k.(Slithy)Toves |loc="cr1" src="SlithyToves.jpg" copy="By Sir John Tenniel (1820-1914)." size="col*0.25"
-TST k.(Slithy)Toves=@=2 Toves as they gyred and gimbled|loc="h" src="SlithyToves.jpg" copy="By Sir John Tenniel (1820-1914)." size="col*0.5"
-TST k.(Slithy)Toves=2 Toves when they gyred and gimbled(ignored)|loc="h" src="SlithyToves.jpg" copy="By Sir John Tenniel (1820-1914)." size="col*0.5"
+TST k.(Slithy)Toves |loc="cr0" src="SlithyToves.jpg" copy="By Sir John Tenniel (1820-1914)." size="col*0.25"
 TST Borogroves This is a rose, not a Borogrove |loc="cr0" src="image.jpg" alt="Figs are tasty"   size="col*0.28" x-credit="© IM"
+TST k.(Slithy)Toves=@=3 Toves as they gyred and gimbled|loc="h" src="SlithyToves.jpg" copy="By Sir John Tenniel (1820-1914)." size="col*0.7"

@@ -49,13 +49,13 @@
 \def\runtrigg@rscv{%after the verse number
   \p@rnum=1
   \settrig@refcv
-  \trace{T}{running triggers \c@rref}%
+  \trace{T}{running (cv) triggers \c@rref}%
   \the\trigg@rchecks
 }
 \def\runtrigg@rsprecv{% before the verse number
   \p@rnum=0
   \settrig@refprecv
-  \trace{T}{running triggers \c@rref}%
+  \trace{T}{running (precv) triggers \c@rref}%
   \the\trigg@rchecks
 }
 
@@ -65,6 +65,7 @@
 \SetTriggerParagraphSeparator{=}
 
 \def\runtrigg@rspar{%Paragraph trigger
+  \trace{T}{runtrigg@rspar}%
   \advance\p@rnum by 1
   \ifx\v@rse\empty\else
     \settrig@refcv
@@ -86,11 +87,13 @@
   \n@xt
 }
 \def\runtrigg@rsother#1{%
+    \trace{T}{runtrigg@rsother #1}%
     \runtrigg@rs{\mkp@cref{\id@@@}{#1}}%
     \edef\c@rref{\id@@@#1}\p@rnum=1% Paragraph number (for triggers) resets on keywords
 }
 
 \def\runtrigg@rs#1{%Generic something trigger (milestone, or...)
+  \trace{T}{runtrigg@rs #1}%
   \def\c@rref{#1}%
   \ifdiglot\def\dc@rref{#1\g@tdstat}\fi%
   \trace{T}{running triggers \c@rref}%
@@ -100,7 +103,7 @@
 
 \def\addtrigger#1#2{\addtr@gger{#1}{#2}}% Not expected to be long 
 
-\long\def\NewTrigger#1 #2\EndTrigger{% #1 is space-delimited, input may contain blank lines.
+\long\def\AddTrigger#1 #2\EndTrigger{% #1 is space-delimited, input may contain blank lines.
   \addtr@gger{#1}{#2}%
 }
 
@@ -126,6 +129,7 @@
 
 
 \def\settrig@refcv{%
+  \trace{T}{settrig@refcv}%
   \xdef\c@rref{\id@@@\ch@pter.\v@rse}%
   \ifdiglot
     \xdef\dc@rref{\id@@@\c@rrdstat\ch@pter.\v@rse}%
