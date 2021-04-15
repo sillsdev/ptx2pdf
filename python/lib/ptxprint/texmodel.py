@@ -124,7 +124,7 @@ ModelMap = {
                                             else get("/ptxprintlibpath")+"/Verse number star.pdf"),
     "fancy/versedecoratorshift":   ("s_verseDecoratorShift", lambda w,v: float(v or "0")),
     "fancy/versedecoratorscale":   ("s_verseDecoratorScale", lambda w,v: int(float(v or "1.0")*1000)),
-    "fancy/endayah":            ("c_decorator_endayah", lambda w,v: "" if v else "%"),
+    "fancy/endayah":            ("c_decorator_endayah", lambda w,v: "" if v else "%"), # In the UI this is "Move Ayah"
 
     "paragraph/linespacing":       ("s_linespacing", lambda w,v: "{:.3f}".format(float(v)) if v else "15.000"),
     "paragraph/linespacebase":  ("c_AdvCompatLineSpacing", lambda w,v: 14 if v else 12),
