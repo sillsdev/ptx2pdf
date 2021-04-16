@@ -1,4 +1,4 @@
-PTXprint 1.6.1 Release Notes 
+PTXprint 1.6.1.1 Release Notes 
 16 April 2021
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
@@ -12,6 +12,8 @@ WARNING: For those using RTL scripts:
 Bug fixes and Improvements in 1.6.1.1
 
   * Fix TeX macro which was causing a crash when 'Minus'/'Plus' occured after a verse number
+  
+  * Various minor improvements to TeX macros
 
 Bug fixes and Improvements in 1.6.1
 
