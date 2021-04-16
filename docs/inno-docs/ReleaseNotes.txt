@@ -1,15 +1,19 @@
 PTXprint 1.6.1 Release Notes 
-13 April 2021
+16 April 2021
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
-
-Bug fixes and Improvements in 1.6.1
 
 WARNING: For those using RTL scripts:
 		 The TeX macros have been changed for RTL for Right and Left Justification 
          such that they are swapped. This means that you no longer have to swap the 
 		 Right and Left Justifications on markers like \q. If justification is Left, 
 		 it will be Right-justified. PTXprint *should* update your styles automatically.		 
+
+Bug fixes and Improvements in 1.6.1.1
+
+  * Fix TeX macro which was causing a crash when 'Minus'/'Plus' occured after a verse number
+
+Bug fixes and Improvements in 1.6.1
 
   * Add "End-of-Ayah" option for verse decorator on the Tabs+Border tab 
   

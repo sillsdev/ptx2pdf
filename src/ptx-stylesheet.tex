@@ -439,7 +439,7 @@
      \trace{hv}{Hanging verse \reference}%
      \hangingversefalse
    \fi
-   \nobreak\hskip0.5sp % let \x detect that there's "space" (or maybe drop-chapter) here
+   \nobreak\hskip0.5sp\relax% let \x detect that there's "space" (or maybe drop-chapter) here
   }
   \let\C@T\cat %Preserve \cat definition from stylesheet in case that's ever useful, and then restore it to correct version
   \let\cat\c@t
