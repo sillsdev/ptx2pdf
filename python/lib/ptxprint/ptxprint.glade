@@ -42,6 +42,20 @@ THE SOFTWARE.
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
+  <object class="GtkAdjustment" id="a_abovenotespace">
+    <property name="lower">1</property>
+    <property name="upper">50</property>
+    <property name="value">3</property>
+    <property name="step_increment">0.5</property>
+    <property name="page_increment">1</property>
+  </object>
+  <object class="GtkAdjustment" id="a_belownotespace">
+    <property name="lower">1</property>
+    <property name="upper">50</property>
+    <property name="value">3</property>
+    <property name="step_increment">0.5</property>
+    <property name="page_increment">1</property>
+  </object>
   <object class="GtkAdjustment" id="a_bindinggutter">
     <property name="lower">-200</property>
     <property name="upper">200</property>
@@ -247,13 +261,6 @@ THE SOFTWARE.
     <property name="value">2</property>
     <property name="step_increment">0.10000000000000001</property>
     <property name="page_increment">1</property>
-  </object>
-  <object class="GtkAdjustment" id="a_notespace">
-    <property name="lower">1</property>
-    <property name="upper">50</property>
-    <property name="value">6</property>
-    <property name="step_increment">0.5</property>
-    <property name="page_increment">5</property>
   </object>
   <object class="GtkAdjustment" id="a_notespacingmax">
     <property name="lower">6</property>
@@ -8308,50 +8315,16 @@ Print a second time before it applies.</property>
                                     <property name="row_spacing">8</property>
                                     <property name="column_spacing">4</property>
                                     <child>
-                                      <object class="GtkLabel">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="halign">start</property>
-                                        <property name="label" translatable="yes">Space Separating...</property>
-                                        <attributes>
-                                          <attribute name="weight" value="semibold"/>
-                                          <attribute name="scale" value="1"/>
-                                        </attributes>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">3</property>
-                                        <property name="top_attach">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkLabel">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="tooltip_text" translatable="yes">Enter the minimum vertical space/gap (pts) that
-must exist between the main text body and the
-footnote and cross-reference area at the bottom
-of the page.</property>
-                                        <property name="halign">end</property>
-                                        <property name="margin_left">10</property>
-                                        <property name="label" translatable="yes">Main Text and Notes:</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">3</property>
-                                        <property name="top_attach">2</property>
-                                      </packing>
-                                    </child>
-                                    <child>
                                       <object class="GtkSpinButton" id="s_abovenotespace">
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
-                                        <property name="tooltip_text" translatable="yes">Enter the minimum vertical space/gap (pts) that
+                                        <property name="tooltip_text" translatable="yes">This is the (minimum) vertical space/gap (pts) that
 must exist between the main text body and the
-footnote and cross-reference area at the bottom
-of the page.</property>
+footnote rule.</property>
                                         <property name="halign">start</property>
                                         <property name="text">10.0</property>
                                         <property name="input_purpose">number</property>
-                                        <property name="adjustment">a_notespace</property>
+                                        <property name="adjustment">a_abovenotespace</property>
                                         <property name="climb_rate">0.5</property>
                                         <property name="digits">1</property>
                                         <property name="numeric">True</property>
@@ -8360,7 +8333,7 @@ of the page.</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">4</property>
-                                        <property name="top_attach">2</property>
+                                        <property name="top_attach">3</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -8374,11 +8347,12 @@ another block just below. This setting (pts) allows you
 to adjust the vertical space between these two sections.</property>
                                         <property name="halign">end</property>
                                         <property name="margin_left">6</property>
-                                        <property name="label" translatable="yes">Footnote and xRef Blocks:</property>
+                                        <property name="label" translatable="yes">Vertical Space Separating
+Footnotes and xRefs:</property>
                                       </object>
                                       <packing>
-                                        <property name="left_attach">3</property>
-                                        <property name="top_attach">3</property>
+                                        <property name="left_attach">4</property>
+                                        <property name="top_attach">4</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -8401,8 +8375,8 @@ to adjust the vertical space between these two sections.</property>
                                         <property name="value">3.5</property>
                                       </object>
                                       <packing>
-                                        <property name="left_attach">4</property>
-                                        <property name="top_attach">3</property>
+                                        <property name="left_attach">5</property>
+                                        <property name="top_attach">4</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -8412,7 +8386,7 @@ to adjust the vertical space between these two sections.</property>
                                         <property name="halign">start</property>
                                         <property name="valign">end</property>
                                         <property name="margin_left">30</property>
-                                        <property name="label" translatable="yes">Min/Shrink</property>
+                                        <property name="label" translatable="yes">Minimum Space</property>
                                         <attributes>
                                           <attribute name="style" value="italic"/>
                                         </attributes>
@@ -8429,7 +8403,7 @@ to adjust the vertical space between these two sections.</property>
                                         <property name="halign">start</property>
                                         <property name="valign">end</property>
                                         <property name="margin_left">30</property>
-                                        <property name="label" translatable="yes">Max/Stretch</property>
+                                        <property name="label" translatable="yes">Maximum Space</property>
                                         <attributes>
                                           <attribute name="style" value="italic"/>
                                         </attributes>
@@ -8456,7 +8430,8 @@ Footnotes and Cross-References have been set
 to start on a new line. (see \f and \x settings above).</property>
                                         <property name="halign">end</property>
                                         <property name="margin_left">10</property>
-                                        <property name="label" translatable="yes">Paragraphed Notes:</property>
+                                        <property name="label" translatable="yes">Horizontal Space
+Separating Notes:</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">3</property>
@@ -8526,12 +8501,13 @@ the body text from the footnote area.
 The rule covers the entire width even
 if the note is short.</property>
                                         <property name="halign">start</property>
+                                        <property name="margin_left">12</property>
                                         <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
                                       <packing>
-                                        <property name="left_attach">5</property>
-                                        <property name="top_attach">2</property>
+                                        <property name="left_attach">3</property>
+                                        <property name="top_attach">3</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -8550,13 +8526,14 @@ used, the Cross-References can only have
 one type of caller (rather than a sequence)
 which must be specified above.</property>
                                         <property name="halign">start</property>
+                                        <property name="margin_left">12</property>
                                         <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
                                         <signal name="clicked" handler="onFnBlendClicked" swapped="no"/>
                                       </object>
                                       <packing>
-                                        <property name="left_attach">5</property>
-                                        <property name="top_attach">3</property>
+                                        <property name="left_attach">3</property>
+                                        <property name="top_attach">4</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -8570,7 +8547,7 @@ which must be specified above.</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">2</property>
-                                        <property name="top_attach">0</property>
+                                        <property name="top_attach">1</property>
                                         <property name="height">4</property>
                                       </packing>
                                     </child>
@@ -8598,7 +8575,7 @@ need to be checked for understanding).</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
-                                        <property name="top_attach">2</property>
+                                        <property name="top_attach">3</property>
                                         <property name="width">2</property>
                                       </packing>
                                     </child>
@@ -8621,7 +8598,7 @@ entry once as a footnote (in each book).</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
-                                        <property name="top_attach">3</property>
+                                        <property name="top_attach">4</property>
                                         <property name="width">2</property>
                                       </packing>
                                     </child>
@@ -8641,7 +8618,7 @@ elements visually distinct.</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
-                                        <property name="top_attach">1</property>
+                                        <property name="top_attach">2</property>
                                         <property name="width">2</property>
                                       </packing>
                                     </child>
@@ -8661,9 +8638,78 @@ so that they don't get split across lines.</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
-                                        <property name="top_attach">0</property>
+                                        <property name="top_attach">1</property>
                                         <property name="width">2</property>
                                       </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkSpinButton" id="s_belownotespace">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="tooltip_text" translatable="yes">This is the vertical space/gap (pts) between the 
+footnote rule and the area at the bottom of the 
+page for footnotes and cross-references. </property>
+                                        <property name="halign">start</property>
+                                        <property name="text">6.0</property>
+                                        <property name="input_purpose">number</property>
+                                        <property name="adjustment">a_belownotespace</property>
+                                        <property name="climb_rate">0.5</property>
+                                        <property name="digits">1</property>
+                                        <property name="numeric">True</property>
+                                        <property name="update_policy">if-valid</property>
+                                        <property name="value">6</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">5</property>
+                                        <property name="top_attach">3</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel" id="l_min1">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="halign">start</property>
+                                        <property name="valign">end</property>
+                                        <property name="label" translatable="yes">Space Above Rule</property>
+                                        <attributes>
+                                          <attribute name="style" value="italic"/>
+                                        </attributes>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">4</property>
+                                        <property name="top_attach">2</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel" id="l_max1">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="halign">start</property>
+                                        <property name="valign">end</property>
+                                        <property name="label" translatable="yes">Space Below Rule</property>
+                                        <attributes>
+                                          <attribute name="style" value="italic"/>
+                                        </attributes>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">5</property>
+                                        <property name="top_attach">2</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
                                     </child>
                                   </object>
                                   <packing>
