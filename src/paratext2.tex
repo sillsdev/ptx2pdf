@@ -332,7 +332,7 @@
   \x@\let\x@\th@cl@ss\csname note-\cl@ss\endcsname % make \th@cl@ss be a synonym for the current note class
   % if the noteclass has content to output ...
   \ifvoid\th@cl@ss\TRACE{no note}\else%
-    \iff@rstnote\kern-\lastd@pth\ifvoid\verybottomins\vfil\fi\fi % ignore depth of body text; fill space
+    \iff@rstnote\ifvoid\verybottomins\vfil\fi\fi % ignore depth of body text; fill space
     \vskip\AboveNoteSpace % output above note class space
     \iff@rstnote\footnoterule\global\f@rstnotefalse\fi % output rule before first note
     \hbox{\hskip\columnshift \vbox{\unvbox\th@cl@ss}}\fi}% output notes
@@ -578,7 +578,7 @@
       \m@kenotebox
       \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2 \space Leaving \the\ht255, \the\dp255}%
       \ifdim\ht2<-\lastd@pth\trace{b}{Strange notes height: \the\ht2}\fi
-      \unvbox2
+      \unvbox2 %\kern-\lastd@pth\lastdepth=\dp2\unvbox2
       \ifvoid\verybottomins\else\ifdim\availht > 0pt\vfil % \kern-\dimen0
         \trace{o}{verybottomins(onecoltrial): height=\the\ht\verybottomins , availht=\the\availht, textheight=\the\textheight, htpartial=\the\dimen9}
         \lastd@pth=0pt \vskip\skip\verybottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\verybottomins}}\fi\fi
@@ -721,7 +721,7 @@
       \f@rstnotetrue
       \m@kenotebox
       \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2}%
-      \unvbox2
+      \unvbox2 %\kern-\lastd@pth\lastdepth=\dp2\unvbox2
       \ifvoid\verybottomins\else\ifdim\availht > 0pt%
         \trace{o}{verybottomins(savepartialpage): height=\the\ht\verybottomins , availht=\the\availht, textheight=\the\textheight}
         \kern-\lastd@pth \lastd@pth=0pt \vskip\skip\verybottomins \unvbox\verybottomins \fi\fi
@@ -833,7 +833,7 @@
     \global\advance\availht by -\dimen1
     \iff@rstnote\global\advance\availht by -\AboveNoteSpace \f@rstnotefalse
     \else \global\advance\availht by -\InterNoteSpace\fi
-    \message{reduced by=\the\dimen1}%
+    \trace{n}{reduced by=\the\dimen1}%
   \fi\egroup}
 
 %+c_reduceavailhtsep
@@ -1150,15 +1150,15 @@
   \f@rstnotetrue
   \let\\=\reduceavailht\the\n@tecl@sses % reduce it by the space needed for each note class
   \trace{i}{after inserts: \the\availht}%
-  \trace{o}{availht = \the\availht, depth = \the\dp255}%
-  \advance\availht -\dp255
+  \trace{o}{availht = \the\availht, depth = \the\dp\pstr@t}%
   % Round to lines accurate to 1/8pt in lineskip. 1/10pt causes overflow on longer pages. Support two column legal.
   \dimen0=8\baselineskip
   \multiply\availht by 8 \divide\availht by\dimen0 \multiply\availht by\dimen0 \divide\availht by 8
   \decr{\availht}{\topins}% and by the space needed for spanning pictures
   \decr{\availht}{\bottomins}%
   \decr{\availht}{\verybottomins}%
-  \advance\availht by \dp255 % split includes depth so give it space for that
+  \advance\availht -\dp\pstr@t
+  %\advance\availht by \dp255 % split includes depth so give it space for that
   \trace{o}{new availht=\the\availht, topins=\the\ht\topins, bottomins=\the\ht\bottomins, baselineskip=\the\baselineskip}%
   \splittopskip=\topskip
 }
@@ -1237,7 +1237,7 @@
   \iff@rstnote % no notes actually occurred!
     \trace{i}{No notes}%
     \ifnoteseen\MSG{Page \the\pageno\space is being printed without any footnotes/xrefs, etc. But at least one was seen earlier. Maybe it's ended up on the previous page or moved to the next one, or maybe it's vanished. Human checking is needed.}\fi
-    \kern-\lastd@pth \vfil
+    \vfil
   \else
     \setbox0=\lastbox
     \trace{i}{Inserted notes, ht \the\ht0\space dp \the\lastd@pth,\the\dp0}%
@@ -1285,8 +1285,7 @@
       \f@rstnotetrue
       \m@kenotebox
       \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2}%
-      \ifvoid2\else \kern-\lastd@pth
-      \unvbox2\lastd@pth=\prevdepth\fi
+      \unvbox2 %\kern-\lastd@pth\lastdepth=\dp2\unvbox2
       \global\noteseenfalse%
       \ifvoid\verybottomins\else\vfil
         \trace{o}{verybottomins(twocoltrial): height=\the\ht\verybottomins , availht=\the\availht, textheight=\the\textheight}
@@ -1421,7 +1420,7 @@
       \f@rstnotetrue%
       \m@kenotebox
       \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2}%
-      \unvbox2
+      \unvbox2 %\kern-\lastd@pth\lastdepth=\dp2\unvbox2
       \ifvoid\verybottomins\else\ifdim\availht > 0pt % \kern-\dimen0
         \trace{o}{verybottomins(twocolp@geout): height=\the\ht\verybottomins , availht=\the\availht, textheight=\the\textheight}
         \lastd@pth=0pt \vskip 0pt plus 1fill\vskip\skip\verybottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\verybottomins}}\fi\fi

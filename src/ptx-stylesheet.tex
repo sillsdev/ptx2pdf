@@ -523,6 +523,7 @@
 
 }
 
+\newbox\pstr@t
 \def\calcdr@psize{%
   \ifdiglot 
     \trace{d}{Calculating drop: \c@rrdstat}%
@@ -536,6 +537,7 @@
     %\ifdim\dropnumbersize<\dimen255
       \edef\@seglyphmetrics{\the\XeTeXuseglyphmetrics}%
       \s@tfont{p}%workaround for Lotus Elam Bold issue - ensure the \p font is loaded first
+      \mkstr@t\setbox\pstr@t=\copy\str@tbox
       \XeTeXuseglyphmetrics=0\relax\setbox1=\hbox{0}% get font metrics          %(1)
       \XeTeXuseglyphmetrics=3\s@tfont{c}\relax\setbox0=\hbox{0123456789}% set a box at the size specified by the \c marker
       \XeTeXuseglyphmetrics=\@seglyphmetrics% \tracingcommands=0\MSG{useglyphmetrics=\the\XeTeXuseglyphmetrics}
