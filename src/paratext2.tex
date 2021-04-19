@@ -333,8 +333,8 @@
   % if the noteclass has content to output ...
   \ifvoid\th@cl@ss\TRACE{no note}\else%
     \iff@rstnote\ifvoid\verybottomins\vfil\fi\fi % ignore depth of body text; fill space
-    \vskip\AboveNoteSpace % output above note class space
-    \iff@rstnote\footnoterule\global\f@rstnotefalse\fi % output rule before first note
+    \kern\AboveNoteSpace % output above note class space
+    \iff@rstnote\kern-\dp\pstr@t \footnoterule\global\f@rstnotefalse\fi % output rule before first note
     \hbox{\hskip\columnshift \vbox{\unvbox\th@cl@ss}}\fi}% output notes
 
 % insert a note class in which each note is in the same paragraph
@@ -344,7 +344,8 @@
   % if the noteclass has content to output ...
   \ifvoid\th@cl@ss\else
     \iff@rstnote\ifvoid\verybottomins\vfil\fi %\kern-\lastd@pth\vfil % ignore depth of body text; fill space
-      \vskip\AboveNoteSpace
+      \kern\AboveNoteSpace
+      %\kern-\dp\pstr@t
       {\footnoterule}\global\f@rstnotefalse % output rule before first note
     \else\vskip\InterNoteSpace\fi
     {\maken@tepara{\th@cl@ss}{#1}}%
@@ -846,7 +847,8 @@
     \f@rstnotefalse
     \advance\availht by -\ht\th@cl@ss
     \advance\availht by -\dp\th@cl@ss
-    \iff@rstnote\advance\availht by -\AboveNoteSpace \f@rstnotefalse
+    \iff@rstnote\advance\availht by -\AboveNoteSpace
+     \advance\availht -\dp\pstr@t \f@rstnotefalse % ensure we don't impinge on the depth
     \else \advance\availht by -\InterNoteSpace\fi
     \advance\availht by -\AboveNoteSpace
   \fi}
@@ -860,6 +862,7 @@
   \ifdim\dimen1>0pt 
     \advance\availht by -\dimen1
     \iff@rstnote\advance\availht by -\AboveNoteSpace \f@rstnotefalse
+      \advance\availht -\dp\pstr@t  % ensure we don't impinge on the depth
     \else \advance\availht by -\InterNoteSpace\fi
   \fi}
 
@@ -1242,7 +1245,7 @@
   \else
     \setbox0=\lastbox
     \trace{i}{Inserted notes, ht \the\ht0\space dp \the\lastd@pth,\the\dp0}%
-    \lastd@pth=\dp0 \box0 \kern-\lastd@pth
+    \lastd@pth=\dp0 \box0% \kern-\lastd@pth
   \fi}}
 %-c_makenotebox
 
