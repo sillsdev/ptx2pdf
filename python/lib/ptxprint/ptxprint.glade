@@ -8501,13 +8501,14 @@ the body text from the footnote area.
 The rule covers the entire width even
 if the note is short.</property>
                                         <property name="halign">start</property>
+                                        <property name="valign">end</property>
                                         <property name="margin_left">12</property>
                                         <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">3</property>
-                                        <property name="top_attach">3</property>
+                                        <property name="top_attach">2</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -8697,7 +8698,23 @@ page for footnotes and cross-references. </property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <placeholder/>
+                                      <object class="GtkLabel" id="l_paragraphedNotes1">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="tooltip_text" translatable="yes">The vertical space between the body text and the
+area containing footnotes and cross-references.
+
+If the Footnote Rule is not shown, the vertical
+space will still be calculated as the Space Above
+plus the Space Below (the imaginary) Rule.</property>
+                                        <property name="halign">end</property>
+                                        <property name="label" translatable="yes">Vertical Space Separating
+Body Text From Notes:</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">3</property>
+                                        <property name="top_attach">3</property>
+                                      </packing>
                                     </child>
                                     <child>
                                       <placeholder/>
