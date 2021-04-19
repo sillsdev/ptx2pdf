@@ -6,25 +6,21 @@ There is some barcode-creating code available (one package uses secial fonts, bu
 
 Someone was working on producing covers. It would be good to get them involved and merge efforts.
 
-
 -----------------
 
-### Categories
-\esb \cat People \cat*  
-\esb*
-  Might be added to  sidebars, etc, and is expected to alter formatting of any/all elements in the study matter. These in some way give an attribute (see above) to 
-blocks of extended study material.
-\cat may  appear within footnotes too. There should be some (pseudo stylesheet?) method of applying styling to elements in a given category.
+### Background colour  for section titles
+### Background colour for normal paragraphs
+coloured breakable/ normal paragraphs, could extend parlocs file to mark top left / bottom right of each column.
 
-What sort of things could a \cat alter / impose?
-* Font, fontsize, justification, baseline etc, potentially for all elements
-* Background colour, default foreground colour
-* Watermark / cutout image.
+Consider lifting magic from conText? - No, context doesn't do breakable blocks, so we have that functionality.
 
+----------------
 
-Consider lifting magic from context?
+### On-the-fly generation / inclusion of heading or page borders
+ pgfornaments looks like it may be a good starting point. A bit too latex-focussed, 
+but pgf itself is plaintex - friendly
 
-coloured breakable/ normal paragraphs, could extend parlocs file  to mark top left / bottom right of each column.
+-----------------
 
 ### PDF-X/1a
 (if that's the right code).
@@ -39,9 +35,7 @@ Colours are specified in the following places:
 a) FontColor (xRRGGBB or r+256*(g+256*b) -> \font...:color=RRGGBB 
   There is no way to specify CMYK in a \font definition, however the macros COULD be modified to use \special{color: cmyk ...}
 b) Images (not addressable in macros)
-  
 c) Colour of tabs (r g b)
-
 d) Background colour for side-bars
 
 

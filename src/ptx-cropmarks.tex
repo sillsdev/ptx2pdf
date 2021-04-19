@@ -136,6 +136,7 @@
   \n@xtcmd #2,\endtab}
 
 
+\def\cp@p{\special{color pop}}%
 \def\colourbox#1#2#3#4#5#6#7{%1 - box colour, 2 - text colour 
   % 3- boxwidth 
   % 4- box depth 
@@ -168,7 +169,6 @@
       \fi
     \fi
   \fi
-  \def\cp@p{\special{color pop}}%
   \edef\bgc@l{#1}\ifx\bgc@l\empty\let\endbgc@l\empty\else\edef\bgc@l{\special{color push rgb #1}}\let\endbgc@l=\cp@p\fi%
   \edef\fgc@l{#2}\ifx\fgc@l\empty\let\endfgc@l\empty\else\edef\fgc@l{\special{color push rgb #2}}\let\endfgc@l=\cp@p\fi%
   \setbox0\hbox{\hbox to 0pt{\bgc@l\vrule depth #4 height #5 width #3 \hss}\endbgc@l\fgc@l\raise \dimen2\box0}\ht0=#5\dp0=#4\box0\endfgc@l}
@@ -354,6 +354,9 @@
  \XeTeXuseglyphmetrics=\@seglyphmetrics% Restore to normal value.
 }
 \def\shipwithcr@pmarks#1{% \shipout box #1, adding cropmarks if required
+  \ifGraphPaper
+    \setbox1\vbox{\do@graphpaper}%
+  \fi
   \dimen0=0\ifCropMarks .5\fi in
   \advance\pdfpagewidth by 2\dimen0 % increase PDF media size
   \advance\pdfpageheight by 2\dimen0
@@ -394,6 +397,9 @@
     \m@rgepdf
     \pl@ceborder % add PageBorder (or watermark) graphic, if defined
     \offinterlineskip
+    \ifGraphPaper
+      \vbox to 0pt{\vbox to \ifrotate\pdfpagewidth\else\pdfpageheight\fi{\ifCropMarks\kern0.5in\hbox{\kern 0.5in\box1}\else\box1\fi\vss}\vss}%
+    \fi
     \vbox to \ifrotate\pdfpagewidth\else\pdfpageheight\fi{\vss
       \kern\topm@rgin
       %\trace{g}{\the\topm@rgin - \the\bottomm@rgin}%
@@ -472,6 +478,111 @@
       }
     \fi}
 %-c_docropmarks
+
+%+c_graphpaper
+\newif\ifGraphPaper
+\def\GraphPaperX{1mm}
+\def\GraphPaperY{1mm}
+\def\GraphPaperXoffset{0.0cm}
+\def\GraphPaperYoffset{0.0cm}
+\def\GraphPaperMajorDiv{10} % How many minor divisions are there between major ones?
+\def\GraphPaperLineMajor{0.4pt}
+\def\GraphPaperLineMinor{0.1pt}
+\def\GraphPaperColMajor{0.9 0.9 0.9} % Colour (R G B)
+\def\GraphPaperColMinor{0.9 1.0 1.0} % Colour (R G B)
+\def\l@stgprule{}
+\def\gpc@l{
+  \ifx\th@sgprule\l@stgprule\else
+    \ifx\th@sgprule\empty\else
+      \cp@p
+    \fi
+    \x@\special{color push rgb \csname GraphPaperCol\th@sgprule\endcsname}%
+    \let\l@stgprule\th@sgprule
+    \x@\let\x@\gprulew@d\csname GraphPaperLine\th@sgprule\endcsname
+  \fi
+}
+\def\gp@hrule{% Horizontal rule across page
+  \gpc@l %change colour/width if necessary
+  \bgroup\parindent=0pt
+    \dimen0=\gprulew@d
+    \hbox to 0pt{\kern\GraphPaperXoffset\vrule height 0.5\dimen0 depth 0.5\dimen0 width\dimen3 \hss}%
+    \vskip -\dimen0\relax
+  \egroup
+}
+\def\gp@vrule{% Horizontal rule across page
+  \gpc@l %change colour/width if necessary
+  \bgroup\parindent=0pt
+    \hbox to 0pt{\vbox to 0pt{\kern\GraphPaperYoffset\vrule height \dimen3 width \gprulew@d\vss}%
+    \hskip -\gprulew@d\relax}%
+  \egroup
+}
+
+\def\gp@vrules{%
+  \setbox0\hbox{\unhbox0\hskip\dimen1\gp@vrule}%
+  \gp@step
+  \ifdim\wd0<\dimen2
+    \let\gp@nxt\gp@vrules
+  \else
+    \let\gp@nxt\relax
+  \fi
+  \gp@nxt
+}
+\def\gp@hrules{%
+  \setbox0\vbox{\unvbox0\vskip\dimen1\gp@hrule}%
+  \gp@step
+  \ifdim\ht0<\dimen2
+    \let\gp@nxt\gp@hrules
+  \else
+    \let\gp@nxt\relax
+  \fi
+  \gp@nxt
+}
+
+\def\gp@step{%
+  \advance\count255 by -1
+  \ifnum\count255<1
+    \count255=\GraphPaperMajorDiv
+    \def\th@sgprule{Major}%
+  \else
+    \def\th@sgprule{Minor}%
+  \fi
+}
+
+\def\do@graphpaper{%
+  \bgroup\topskip=0pt\baselineskip=0pt\parindent=0pt\everypar{}\relax
+    \def\th@sgprule{Major}%
+    \count255=\GraphPaperMajorDiv
+    \dimen1=\GraphPaperX
+    \dimen2=\pdfpagewidth
+    \dimen3=\pdfpageheight
+    \dimen0=\GraphPaperYoffset
+    \advance\dimen3 by -2\dimen0
+    \advance\dimen2 by -\dimen1
+    \advance\dimen2 by -\GraphPaperXoffset
+    \setbox0=\hbox{\kern\GraphPaperXoffset\gp@vrule}%
+    \gp@step
+    \gp@vrules
+    \vbox to 0pt{\hbox to 0pt{\unhbox 0\gp@vrule\hss}\vss}%
+    \def\th@sgprule{Major}%
+    \count255=\GraphPaperMajorDiv
+    \dimen1=\GraphPaperY
+    \dimen2=\pdfpageheight
+    \advance\dimen2 by -\dimen1
+    \advance\dimen2 by -\GraphPaperYoffset
+    \dimen3=\pdfpagewidth
+    \dimen0=\GraphPaperXoffset
+    \advance\dimen3 by -2\dimen0
+    \setbox0=\vbox{\kern\GraphPaperXoffset\gp@hrule}%
+    \gp@step
+    \gp@hrules
+    \vbox to 0pt{\unvbox 0\gp@hrule\vss}%
+    \ifx\th@sgprule\empty\else% End the current colour
+      \cp@p
+    \fi
+  \egroup
+}
+
+%-c_graphpaper
 
 %+c_pageborders
 \def\PageBorder{}
