@@ -67,6 +67,7 @@ class Sheets(dict):
         for s in init:
             if os.path.exists(s):
                 self.append(s)
+        usfm.resolve_milestones(self)
 
     def append(self, sf):
         if os.path.exists(sf):

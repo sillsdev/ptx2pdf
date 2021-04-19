@@ -196,6 +196,9 @@ class StyleEditorView(StyleEditor):
                    "Identification": {"toc": {}}}
         for k in sorted(self.allStyles(), key=lambda x:(len(x), x)):
             v = self.sheet.get(k, self.basesheet.get(k, {}))
+            if 'zDerived' in v:
+                self.sheet[v['zDerived']][' endMilestone']=k
+                continue
             if k not in self.basesheet:
                 v[' deletable'] = True
             if k == "p":
@@ -545,14 +548,36 @@ class StyleEditorView(StyleEditor):
                 data['EndMarker'] = key + "*"
                 if data['styletype'] == 'Character':
                     data['OccursUnder'].add("NEST")
+                self.resolveEndMarker(data, key, None)
+            elif data['styletype'] == 'Milestone':
+                self.resolveEndMarker(data, key, data['EndMarker'])
+                del data['EndMarker']
             self.marker = key
             self.treeview.get_selection().select_iter(selecti)
             #self.editMarker()
         dialog.hide()
 
-    def delKey(self):
-        if self.sheet.get(self.marker, {}).get(" deletable", False):
-            del self.sheet[self.marker]
+    def resolveEndMarker(self, newdata, key, newval):
+        endm = self.getval(key, ' endMilestone')
+        if endm is not None and endm is not ' None' and endm != newval:
+            derivation = self.getval(endm, 'zDerived')
+            if derivation is not None:
+                if endm in self.sheet:
+                    del self.sheet[endm]
+                if endm in self.basesheet:
+                    del self.basesheet[endm]
+        if newdata['styletype'] == 'Milestone':
+            if newval is None:
+                if ' endMarker' in self.basesheet.get(key, {}):
+                    newdata[' endMarker'] = ' None'
+            elif newval != endm:
+                newdata[' endMarker'] = newval
+
+    def delKey(self, key=None):
+        if key is None:
+            key = self.marker
+        if self.sheet.get(key, {}).get(" deletable", False):
+            del self.sheet[key]
             selection = self.treeview.get_selection()
             model, i = selection.get_selected()
             model.remove(i)

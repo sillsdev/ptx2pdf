@@ -1285,7 +1285,8 @@
       \f@rstnotetrue
       \m@kenotebox
       \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2}%
-      \unvbox2
+      \ifvoid2\else \kern-\lastd@pth
+      \unvbox2\lastd@pth=\prevdepth\fi
       \global\noteseenfalse%
       \ifvoid\verybottomins\else\vfil
         \trace{o}{verybottomins(twocoltrial): height=\the\ht\verybottomins , availht=\the\availht, textheight=\the\textheight}

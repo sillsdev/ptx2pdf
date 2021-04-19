@@ -127,7 +127,7 @@ class StyleEditor:
             if key.lower() == "textproperties":
                 res = " ".join(x.lower().title() if x else "" for x in sorted(v))
             else:
-                res = " ".join(self._str_val(x, key) for x in v)
+                res = " ".join(self._str_val(x, key) for x in sorted(v))
         elif key.lower() in absolutes:
             fv = self.asFloatPts(str(v))
             res = "{:.3f} pt".format(fv)
@@ -153,6 +153,8 @@ class StyleEditor:
             else:
                 sm = self.sheet.get(m, {})
             om = self.basesheet.get(m, {})
+            if 'zDerived' in om or 'zDerived' in sm:
+                continue
             if " font" in sm:
                 sm[" font"].updateTeXStyle(sm, regular=regular, inArchive=inArchive, root=root)
             for k,v in sm.items():

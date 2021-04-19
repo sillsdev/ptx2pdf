@@ -105,8 +105,9 @@ def resolve_milestones(sheet):
             if 'endmarker' in v:
                 newm = v['endmarker']
                 v['endmarker'] = None
-                if newm not in sheet:
+                if newm is not None and newm not in sheet:
                     sheet[newm] = deepcopy(v)
+                    sheet[newm]['zDerived'] = k
     return sheet
 
 default_stylesheet = resolve_milestones(_load_cached_stylesheet('usfm.sty'))
