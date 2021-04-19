@@ -262,7 +262,8 @@ ModelMap = {
     "notes/keepbookwithrefs":   ("c_keepBookWithRefs", None),
     "notes/glossaryfootnotes":  ("c_glossaryFootnotes", None),
 
-    "notes/abovenotespace":     ("s_abovenotespace", lambda w,v: "{:.3f}".format(float(v))),
+    "notes/abovenotespace":     ("s_abovenotespace", None),
+#    "notes/belownoterulespace": ("s_belownotepace", None),
     "notes/internotespace":     ("s_internote", lambda w,v: "{:.3f}".format(float(v))),
 
     "notes/horiznotespacemin":  ("s_notespacingmin", lambda w,v: "{:.3f}".format(float(v)) if v is not None else "7.000"),
@@ -455,6 +456,7 @@ class TexModel:
         else:
             self.dict["fancy/versedecoratorisfile"] = "%"
             self.dict["fancy/versedecoratorisayah"] = "%"
+        self.dict['notes/abovenotetotal'] = "{:.3f}".format(float(self.dict['notes/abovenotespace']))# + float(self.dict['notes/belownotespace']))
         # print(", ".join("{}={}".format(a, self.dict["fancy/versedecorator"+a]) for a in ("", "type", "isfile", "isayah")))
 
     def updatefields(self, a):

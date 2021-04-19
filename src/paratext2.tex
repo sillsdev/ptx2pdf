@@ -350,9 +350,10 @@
     {\maken@tepara{\th@cl@ss}{#1}}%
   \fi}
 
+\def\BelowNoteRuleSpace{0.5\AboveNoteSpace}
 \newif\iff@rstnote
 \f@rstnotetrue
-\def\footnoterule{\kern-0.5\AboveNoteSpace
+\def\footnoterule{\kern-\BelowNoteRuleSpace
   \setn@tewidth{-}%
   \dimen0=\n@tewidth
   \ifdiglot\else
@@ -362,7 +363,7 @@
 %  \noindent\hbox{\noindent\kern\columnshift\vbox{\hrule width \dimen0}}\par
   \hbox{\ifdiglot\else\kern\columnshift\fi
     \vrule height 0.4pt width \dimen0}\kern-.4pt % the \hrule is .4pt high
-    \kern0.5\AboveNoteSpace%This was commented out, without it the line was going through through some callers
+    \kern\BelowNoteRuleSpace%This was commented out, without it the line was going through through some callers
 \everypar=\toks0}
 
 \def\EndNoteRuleWidth{0.5}
@@ -1157,7 +1158,7 @@
   \decr{\availht}{\topins}% and by the space needed for spanning pictures
   \decr{\availht}{\bottomins}%
   \decr{\availht}{\verybottomins}%
-  \advance\availht -\dp\pstr@t
+  %\advance\availht -\dp\pstr@t
   %\advance\availht by \dp255 % split includes depth so give it space for that
   \trace{o}{new availht=\the\availht, topins=\the\ht\topins, bottomins=\the\ht\bottomins, baselineskip=\the\baselineskip}%
   \splittopskip=\topskip
