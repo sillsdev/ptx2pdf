@@ -374,7 +374,7 @@ class GtkViewModel(ViewModel):
             self.notebooks[n] = [Gtk.Buildable.get_name(nbk.get_nth_page(i)) for i in range(nbk.get_n_pages())]
         for fcb in ("project", "interfaceLang", "digits", "script", "diglotPicListSources",
                     "textDirection", "glossaryMarkupStyle", "fontFaces", "featsLangs",
-                    "picaccept", "pubusage", "pubaccept", "chklstFilter|0.75"):
+                    "picaccept", "pubusage", "pubaccept", "chklstFilter|0.75", "gridUnits", "gridOffset"):
             self.addCR("fcb_"+fcb, 0)
         self.cb_savedConfig = self.builder.get_object("ecb_savedConfig")
         self.ecb_diglotSecConfig = self.builder.get_object("ecb_diglotSecConfig")
@@ -400,9 +400,9 @@ class GtkViewModel(ViewModel):
             digits.append([d, v])
         self.fcb_digits.set_active_id(_alldigits[0])
 
-        for d in ("dlg_multiBookSelector", "dlg_fontChooser", "dlg_password", "dlg_overlayCredit",
-                  "dlg_generate", "dlg_styModsdialog", "dlg_DBLbundle", "dlg_features"):
-            dialog = self.builder.get_object(d)
+        for d in ("multiBookSelector", "fontChooser", "password", "overlayCredit",
+                  "generate", "styModsdialog", "DBLbundle", "features", "gridsGuides"):
+            dialog = self.builder.get_object("dlg_" + d)
             dialog.add_buttons(
                 Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
                 Gtk.STOCK_OK, Gtk.ResponseType.OK)
@@ -2715,6 +2715,18 @@ class GtkViewModel(ViewModel):
     def resetParam(self, btn, foo):
         label = Gtk.Buildable.get_name(btn.get_child())
         self.styleEditor.resetParam(label)
+
+    def adjustGuideGrid(self, btn, foo):
+        if self.get('c_grid'):
+            dialog = self.builder.get_object("dlg_gridsGuides")
+            dialog.set_keep_above(True)
+            response = dialog.run()
+            if response == Gtk.ResponseType.OK:
+                pass
+            elif response == Gtk.ResponseType.CANCEL:
+                pass
+            dialog.set_keep_above(False)
+            dialog.hide()
 
     def onPLpageChanged(self, nbk_PicList, scrollObject, pgnum):
         page = nbk_PicList.get_nth_page(pgnum)

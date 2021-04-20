@@ -159,6 +159,23 @@ THE SOFTWARE.
     <property name="step_increment">0.10000000000000001</property>
     <property name="page_increment">1</property>
   </object>
+  <object class="GtkAdjustment" id="a_gridMajorThick">
+    <property name="upper">2</property>
+    <property name="value">0.59999999999999998</property>
+    <property name="step_increment">0.10000000000000001</property>
+    <property name="page_increment">0.10000000000000001</property>
+  </object>
+  <object class="GtkAdjustment" id="a_gridMinorDivisions">
+    <property name="upper">25</property>
+    <property name="value">5</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">5</property>
+  </object>
+  <object class="GtkAdjustment" id="a_gridMinorThick">
+    <property name="upper">2</property>
+    <property name="step_increment">0.10000000000000001</property>
+    <property name="page_increment">0.10000000000000001</property>
+  </object>
   <object class="GtkAdjustment" id="a_hdrposition">
     <property name="lower">-20</property>
     <property name="upper">99</property>
@@ -2362,6 +2379,437 @@ technology, then enable this.</property>
         <col id="1">ww</col>
       </row>
     </data>
+  </object>
+  <object class="GtkListStore" id="ls_gridOffset">
+    <columns>
+      <!-- column-name OffsetPosn -->
+      <column type="gchararray"/>
+      <!-- column-name OffsetCode -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">Edge of Page</col>
+        <col id="1">page</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Top-Left Margin</col>
+        <col id="1">margin</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Body Text Area</col>
+        <col id="1">body</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkListStore" id="ls_gridUnits">
+    <columns>
+      <!-- column-name UnitName -->
+      <column type="gchararray"/>
+      <!-- column-name UnitAbbrev -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">Points</col>
+        <col id="1">pt</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Millimeters</col>
+        <col id="1">mm</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Centimeters</col>
+        <col id="1">cm</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Inches</col>
+        <col id="1">in</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkDialog" id="dlg_gridsGuides">
+    <property name="can_focus">False</property>
+    <property name="title" translatable="yes">Rules and Guides or Grid</property>
+    <property name="icon">Google-Noto-Emoji-Objects-62859-open-book.ico</property>
+    <property name="type_hint">dialog</property>
+    <child type="titlebar">
+      <placeholder/>
+    </child>
+    <child internal-child="vbox">
+      <object class="GtkBox">
+        <property name="can_focus">False</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox">
+            <property name="can_focus">False</property>
+            <property name="layout_style">end</property>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkBox" id="tb_gridsGuides">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="margin_left">6</property>
+            <property name="margin_right">6</property>
+            <property name="margin_top">6</property>
+            <property name="margin_bottom">6</property>
+            <property name="orientation">vertical</property>
+            <property name="spacing">12</property>
+            <child>
+              <object class="GtkFrame">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label_xalign">0.019999999552965164</property>
+                <child>
+                  <object class="GtkAlignment">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="left_padding">12</property>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="halign">start</property>
+                        <property name="margin_left">6</property>
+                        <property name="margin_right">6</property>
+                        <property name="margin_top">9</property>
+                        <property name="margin_bottom">12</property>
+                        <property name="label" translatable="yes">Select this (default) option to turn on various guides (showing
+margins, headers, footers, etc.) and the baselines of the body text.</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child type="label">
+                  <object class="GtkRadioButton" id="r_grid_guides">
+                    <property name="label" translatable="yes">Rules and Guides</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">False</property>
+                    <property name="active">True</property>
+                    <property name="draw_indicator">True</property>
+                    <property name="group">r_grid_graph</property>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkFrame">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label_xalign">0.019999999552965164</property>
+                <child>
+                  <object class="GtkAlignment">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="left_padding">12</property>
+                    <child>
+                      <object class="GtkGrid">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="margin_left">6</property>
+                        <property name="margin_right">6</property>
+                        <property name="margin_bottom">12</property>
+                        <property name="row_spacing">8</property>
+                        <property name="column_spacing">8</property>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="label" translatable="yes">Major Lines:</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">0</property>
+                            <property name="top_attach">1</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="label" translatable="yes">Minor Lines:</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">0</property>
+                            <property name="top_attach">2</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="valign">end</property>
+                            <property name="label" translatable="yes">Color</property>
+                            <attributes>
+                              <attribute name="style" value="italic"/>
+                            </attributes>
+                          </object>
+                          <packing>
+                            <property name="left_attach">1</property>
+                            <property name="top_attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="valign">end</property>
+                            <property name="label" translatable="yes">Line Thickness (pt)</property>
+                            <attributes>
+                              <attribute name="style" value="italic"/>
+                            </attributes>
+                          </object>
+                          <packing>
+                            <property name="left_attach">2</property>
+                            <property name="top_attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="label" translatable="yes">Divisions:</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">3</property>
+                            <property name="top_attach">2</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkColorButton" id="col_gridMajor">
+                            <property name="width_request">30</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <property name="tooltip_text" translatable="yes">Thumb Tabs usually use a dark color for the Tab with a light (or white) text.</property>
+                            <property name="halign">start</property>
+                            <property name="title" translatable="yes">Color of major lines in grid.</property>
+                            <property name="rgba">rgb(186,189,182)</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">1</property>
+                            <property name="top_attach">1</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkColorButton" id="col_gridMinor">
+                            <property name="width_request">30</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <property name="tooltip_text" translatable="yes">Thumb Tabs usually use a dark color for the Tab with a light (or white) text.</property>
+                            <property name="halign">start</property>
+                            <property name="title" translatable="yes">Color of minor lines in grid.</property>
+                            <property name="rgba">rgb(0,255,255)</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">1</property>
+                            <property name="top_attach">2</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="label" translatable="yes">Units:</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">3</property>
+                            <property name="top_attach">1</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkSpinButton" id="s_gridMajorThick">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="text">0.0</property>
+                            <property name="adjustment">a_gridMajorThick</property>
+                            <property name="climb_rate">0.10000000000000001</property>
+                            <property name="digits">1</property>
+                            <property name="value">0.59999999999999998</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">2</property>
+                            <property name="top_attach">1</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkSpinButton" id="s_gridMinorThick">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="text">0.0</property>
+                            <property name="adjustment">a_gridMinorThick</property>
+                            <property name="climb_rate">0.10000000000000001</property>
+                            <property name="digits">1</property>
+                            <property name="value">0.29999999999999999</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">2</property>
+                            <property name="top_attach">2</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkComboBox" id="fcb_gridUnits">
+                            <property name="width_request">130</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="can_default">True</property>
+                            <property name="tooltip_text" translatable="yes">If you choose to Rotate the tabs, there are various options as to how these should be oriented. The preview (right) will show how these will appear on facing pages.</property>
+                            <property name="halign">start</property>
+                            <property name="model">ls_gridUnits</property>
+                            <property name="wrap_width">1</property>
+                            <property name="active">0</property>
+                            <property name="has_entry">True</property>
+                            <property name="entry_text_column">0</property>
+                            <property name="id_column">1</property>
+                            <property name="active_id">1</property>
+                            <child internal-child="entry">
+                              <object class="GtkEntry">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="width_chars">10</property>
+                              </object>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="left_attach">4</property>
+                            <property name="top_attach">1</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkSpinButton" id="s_gridMinorDivisions">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="tooltip_text" translatable="yes">Specify the number of minor divisions there should
+be between the thicker (major) lines. Usually 2, 5, or 10 for centimeters, and 3, 4, 6, or 12 for inches.
+</property>
+                            <property name="width_chars">5</property>
+                            <property name="text">0</property>
+                            <property name="adjustment">a_gridMinorDivisions</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">4</property>
+                            <property name="top_attach">2</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="halign">end</property>
+                            <property name="label" translatable="yes">Start Grid At:</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">0</property>
+                            <property name="top_attach">3</property>
+                            <property name="width">2</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="tooltip_text" translatable="yes">X,Y Coordinates of starting position of the grid.</property>
+                            <property name="halign">start</property>
+                            <property name="label" translatable="yes">(12.0, 10.5)</property>
+                            <attributes>
+                              <attribute name="foreground" value="#cece5c5c0000"/>
+                            </attributes>
+                          </object>
+                          <packing>
+                            <property name="left_attach">4</property>
+                            <property name="top_attach">3</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkComboBox" id="fcb_gridOffset">
+                            <property name="width_request">130</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="can_default">True</property>
+                            <property name="tooltip_text" translatable="yes">By default the grid starts at the top-left edge
+of the Page. If you need it to start from the
+top-left margin, or top-left of the body text
+area, then select that here.</property>
+                            <property name="halign">start</property>
+                            <property name="model">ls_gridOffset</property>
+                            <property name="wrap_width">1</property>
+                            <property name="active">1</property>
+                            <property name="has_entry">True</property>
+                            <property name="entry_text_column">0</property>
+                            <property name="id_column">1</property>
+                            <property name="active_id">1</property>
+                            <child internal-child="entry">
+                              <object class="GtkEntry">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="width_chars">17</property>
+                              </object>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="left_attach">2</property>
+                            <property name="top_attach">3</property>
+                            <property name="width">2</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <placeholder/>
+                        </child>
+                        <child>
+                          <placeholder/>
+                        </child>
+                        <child>
+                          <placeholder/>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child type="label">
+                  <object class="GtkRadioButton" id="r_grid_graph">
+                    <property name="label" translatable="yes">Grid (Graph Paper)</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">False</property>
+                    <property name="draw_indicator">True</property>
+                    <property name="group">r_grid_guides</property>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+      </object>
+    </child>
   </object>
   <object class="GtkListStore" id="ls_interfaceLang">
     <columns>
@@ -4786,12 +5234,19 @@ bottom text margins.</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkCheckButton" id="c_grid">
-                                        <property name="label" translatable="yes">Grid</property>
+                                      <object class="GtkEventBox">
                                         <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="draw_indicator">True</property>
+                                        <property name="can_focus">False</property>
+                                        <signal name="button-release-event" handler="adjustGuideGrid" swapped="no"/>
+                                        <child>
+                                          <object class="GtkCheckButton" id="c_grid">
+                                            <property name="label" translatable="yes">Grid</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">False</property>
+                                            <property name="draw_indicator">True</property>
+                                          </object>
+                                        </child>
                                       </object>
                                       <packing>
                                         <property name="left_attach">6</property>

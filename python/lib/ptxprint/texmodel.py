@@ -101,6 +101,15 @@ ModelMap = {
     # "paper/fontfactor":         ("s_fontsize", lambda w,v: round((v / 12), 3) or "1.000"),
     "paper/fontfactor":         ("s_fontsize", lambda w,v: "{:.3f}".format(float(v) / 12) if v else "1.000"),
 
+    "grid/guidesgrid":          ("r_grid", None),
+    "grid/majorcolor":          ("col_gridMajor", None),
+    "grid/minorcolor":          ("col_gridMinor", None),
+    "grid/majorthickness":      ("s_gridMajorThick", None),
+    "grid/minorthickness":      ("s_gridMinorThick", None),
+    "grid/units":               ("fcb_gridUnits", None),
+    "grid/divisions":           ("s_gridMinorDivisions", None),
+    "grid/xyoffset":            ("fcb_gridOffset", None),
+    
     "fancy/enableborders":      ("c_borders", lambda w,v: "" if v else "%"),
     "fancy/pageborder":         ("c_inclPageBorder", lambda w,v: "" if v else "%"),
     "fancy/pageborderfullpage": ("c_borderPageWide", lambda w,v: "" if v else "%"),
