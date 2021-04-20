@@ -355,7 +355,9 @@
 }
 \def\shipwithcr@pmarks#1{% \shipout box #1, adding cropmarks if required
   \ifx\doLines\empty\else
-    \setbox1\vbox{\doLines}%
+    \ifvoid\gp@box
+      \global\setbox\gp@box\vbox{\doLines}%
+    \fi
   \fi
   \dimen0=0\ifCropMarks .5\fi in
   \advance\pdfpagewidth by 2\dimen0 % increase PDF media size
@@ -397,8 +399,8 @@
     \m@rgepdf
     \pl@ceborder % add PageBorder (or watermark) graphic, if defined
     \offinterlineskip
-    \ifx\doLines\empty\else
-      \vbox to 0pt{\vbox to \ifrotate\pdfpagewidth\else\pdfpageheight\fi{\ifCropMarks\kern0.5in\hbox{\kern 0.5in\box1}\else\box1\fi\vss}\vss}%
+    \ifvoid\gp@box\else
+      \vbox to 0pt{\vbox to \ifrotate\pdfpagewidth\else\pdfpageheight\fi{\ifCropMarks\kern0.5in\hbox{\kern 0.5in\copy\gp@box}\else\copy\gp@box\fi\vss}\vss}%
     \fi
     \vbox to \ifrotate\pdfpagewidth\else\pdfpageheight\fi{%\vss
       \ifCropMarks\kern 0.5in\fi
@@ -487,19 +489,23 @@
 \def\GraphPaperXoffset{0.0cm}
 \def\GraphPaperYoffset{0.0cm}
 \def\GraphPaperMajorDiv{5} % How many minor divisions are there between major ones?
-\def\GraphPaperLineMajor{0.6pt}
-\def\GraphPaperLineMinor{0.3pt}
-\def\GraphPaperColMajor{0.8 0.6 0.6} % Colour (R G B)
-\def\GraphPaperColMinor{0.85 0.85 1.0} % Colour (R G B)
+\def\GraphPaperLineMajor{0.3pt}
+\def\GraphPaperLineMinor{0.1pt}
+\def\GraphPaperColMajor{0.8 1.0 0.8} % Colour (R G B)
+\def\GraphPaperColMinor{0.9 1.0 1.0} % Colour (R G B)
+\def\GridPaperLineMajor{0.6pt}
+\def\GridPaperLineMinor{0.3pt}
+\def\GridPaperColMajor{0.8 0.6 0.6} % Colour (R G B)
+\def\GridPaperColMinor{0.85 0.85 1.0} % Colour (R G B)
 \def\l@stgprule{}
 \def\gpc@l{
   \ifx\th@sgprule\l@stgprule\trace{G}{Color test \th@sgprule==\l@stgprule}\else
     \ifx\l@stgprule\empty\else
       \cp@p
     \fi
-    \x@\special{color push rgb \csname GraphPaperCol\th@sgprule\endcsname}%
+    \x@\special{color push rgb \csname \gp@type Col\th@sgprule\endcsname}%
     \xdef\l@stgprule{\th@sgprule}%
-    \global\x@\let\x@\gprulew@d\csname GraphPaperLine\th@sgprule\endcsname
+    \global\x@\let\x@\gprulew@d\csname \gp@type Line\th@sgprule\endcsname
   \fi
 }
 \def\gp@hrule{% Horizontal rule across the page
@@ -551,9 +557,13 @@
   \fi
 }
 
+\newbox\gp@box
 \def\doGraphPaper{%
   \bgroup\topskip=0pt\baselineskip=0pt\parindent=0pt\everypar{}\relax
+    %vertical rules
+    %
     \def\th@sgprule{Major}%
+    \def\gp@type{GraphPaper}%
     \count255=\GraphPaperMajorDiv
     \dimen1=\GraphPaperX
     \dimen2=\pdfpagewidth
@@ -566,6 +576,8 @@
     \gp@step
     \gp@vrules
     \vbox to 0pt{\hbox to 0pt{\unhbox 0\gp@vrule\hss}\vss}%
+    % Horizontal rules
+    %
     \def\th@sgprule{Major}%
     \count255=\GraphPaperMajorDiv
     \dimen1=\GraphPaperY
@@ -575,24 +587,23 @@
     \dimen3=\pdfpagewidth
     \dimen0=\GraphPaperXoffset
     \advance\dimen3 by -2\dimen0
-    \setbox0=\vbox{\kern\GraphPaperXoffset\gp@hrule}%
+    \setbox0=\vbox{\kern\GraphPaperYoffset\gp@hrule}%
     \gp@step
     \gp@hrules
     \vbox to 0pt{\unvbox 0\gp@hrule\vss}%
-    \ifx\th@sgprule\empty\else% End the current colour
-      \cp@p
-    \fi
+    \cp@p\global\let\l@stgprule\empty
   \egroup
 }
 
-\def\doGridLines{
+\def\doGridLines{%
   \bgroup\topskip=0pt\parindent=0pt\everypar{}\relax
     \hsize=\pdfpagewidth\vsize=\pdfpageheight
     \leftskip=0pt\parshape=0\hangindent=0pt\parindent=0pt
     \let\par=\endgraf
     \s@tfont{h}\mkstr@t
-
+    %
     % horizontal rules
+    \def\gp@type{GridPaper}%
     \def\th@sgprule{Minor}%
     \count255=500
     \dimen3=\pdfpagewidth
@@ -627,7 +638,7 @@
     \setbox0=\vbox{\unvbox0\vskip\dimen2\gp@hrule}
     \vbox to 0pt{\unvbox0\vbox{\unvbox0\vskip\ht\str@tbox\gp@hrule}\vss}
     \edef\GraphPaperXoffset{\the\dimen6}
-
+    %
     % vertical rules
     \dimen6=\GraphPaperYoffset
     \edef\GraphPaperYoffset{0pt}
@@ -656,7 +667,7 @@
     \dimen4=0.5\textwidth\advance\dimen4 by -\dimen2
     \setbox0=\hbox{\unhbox0\hskip\dimen4\gp@vrule}
     \vbox to 0pt{\hbox to 0pt{\unhbox 0\hss}\vss}%
-    \ifx\th@sgprule\empty\else\cp@p\global\let\l@stgprule\empty\fi
+    \cp@p\global\let\l@stgprule\empty
     \edef\GraphPaperYoffset{\the\dimen6}
   \egroup
 }

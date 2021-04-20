@@ -34,6 +34,8 @@ A [PDF](../documentation/ptx2pdf-MacroSetupParameters.pdf?attredirects=0/index.h
 -  [**10** Thumb Tabs](#ptx2pdf-MacroSetupParameters-Tabs)
 -  [**11** Hooks](#ptx2pdf-MacroSetupParameters-Hooks)
 -  [**12** Introduction markers](#ptx2pdf-MacroSetupParameters-IntroMarkers)
+-  [**12** Grid and Graphpaper](#ptx2pdf-MacroSetupParameters-Graphpaper)
+
    [**A.1** Appendix: Common OpenType script tags](#ptx2pdf-MacroSetupParameters-Appendix:CommonOpenTypescripttags)
 
 Text in ```gray``` represents the portion of the setup parameter syntax which can be configured by the typesetter. Where applicable, default values are indicated in parentheses at the end of the definition.
@@ -365,7 +367,7 @@ A useful hook is the command to "hang" verse numbers into the paragraph indent, 
 
 This allows a verse number at the beginning of a paragraph to be typeset "hanging" into the paragraph indent, so that the text itself starts at the usual indent position. This is often used with poetic sections (\q# markers), so that the actual text stays neatly aligned for lines both with and without verse numbers.
 
-## <a name=#ptx2pdf-MacroSetupParameters-IntroMarkers">
+## <a name=#ptx2pdf-MacroSetupParameters-IntroMarkers">Introductory Markers</a>
 Introductory markers (those starting i, such as `\ip`) are used for book introductions 
 and are often set in a full-width single column, even when the verse text is in
 dual columns. The code has, until now, assumed that this should always be the case.
@@ -382,7 +384,7 @@ mode.  The XeTeX macros are unable to decide on their own how the markers are
 being used. The following setup parameters will hopefully help.
 
 * \introAmbigious{```iex```} –  The marker specified will not initiate any
-  swapping between single or double columns (in either direction). This means
+  swapping between single or double columns (in either direction). This also means
   it should not ever be the first marker in a book introduction. (default: only
   `\iex` has been declared ambiguous, as it is sometimes used for bridging
   material).
@@ -399,6 +401,36 @@ problematic ambiguous markers are no longer treated as ambiguous, (except for
 ```\tr```). The internal flag is set to false at the start of a book.
 
 
+## <a name="#ptx2pdf-MacroSetupParameters-Graphpaper"> Graph-paper and Grid</a>
+
+Sometimes it is useful to display a graph-paper-like measurement grid or  the
+grid which the text is (should be) layed out to.
+ * ```\def\doLines{\doGraphPaper}``` Display graph-paper
+ * ```\def\doLines{\doGridLines}``` Display gridlines
+ * ```\def\doLines{\doGraphPaper\doGridLines}``` Display both gridlines and graphpaper
+
+The grid is set up using the page parameters, and the graph-paper as below. If
+any of these are changed part-way through a control-file (e.g. line spacing is altered 
+before the start of the glossary) then the (cached) 'background page' should be
+cleared, so that the old page is not reused.
+```
+  \setbox\gp@box=\box\voidb@x
+```
+### Graph-paper setup
+ * ```\def\GraphPaperX{2mm}``` Horizontal spacing of the the grid lines on the graph-paper
+ * ```\def\GraphPaperY{2mm}``` Vertical spacing of the grid lines on the graph-paper
+ * ```\def\GraphPaperMajorDiv{5}``` Every fifth division will be styled as a major division.
+ * ```\def\GraphPaperXoffset{0.0cm}```	Start (and stop) of the graph-paper relative to the nearest horizontal edge
+ * ```\def\GraphPaperYoffset{0.0cm}```	Start (and stop) of the graph-paper relative to the nearest vertical edge
+ * ```\def\GraphPaperLineMajor{0.6pt}``` Width of a major graph-paper line
+ * ```\def\GraphPaperColMajor{0.8 0.6 0.6} ```  Colour a major graph-paper line (R G B)
+ * ```\def\GraphPaperLineMinor{0.3pt}```Width of a minor graph-paper line
+ * ```\def\GraphPaperColMinor{0.85 0.85 1.0} ```  Colour a minor graph-paperline (R G B)
+ * ```\def\GridPaperLineMajor{0.6pt}``` Width of a major grid-paper line
+ * ```\def\GridPaperColMajor{0.8 0.6 0.6} ```  Colour of of a major grid-paper line
+ * ```\def\GridPaperLineMinor{0.3pt}``` Width of a minor grid-paperline
+ * ```\def\GridPaperColMinor{0.85 0.85 1.0}```   Colour of a minor grid-paper line (R G B)
+ 
 * * *
 
 <a name="ptx2pdf-MacroSetupParameters-scriptTags"></a>
