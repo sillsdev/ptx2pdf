@@ -678,7 +678,11 @@ class ViewModel:
             config.set("paragraph", "useglyphmetrics", "True")
         if v < 1.601:
             # invert right and left in Justification in styles
-            config.set("config", "version", "1.601")
+            pass
+        if v < 1.602:
+            config.set("notes", "belownoterulespace", "3.0")
+            config.set("notes", "abovenotespace", "{:.3f}".format(config.getfloat("notes", "abovenotespace", fallback=6.0) - 3.0))
+            config.set("config", "version", "1.602")
 
         styf = os.path.join(self.configPath(cfgname), "ptxprint.sty")
         if not os.path.exists(styf):
