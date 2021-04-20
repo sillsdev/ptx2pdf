@@ -178,6 +178,8 @@ def UnpackDBL(dblfile, prjid, prjdir):
     subFolder = ""
     with ZipFile(dblfile) as inzip:
         for name in inzip.namelist():
+            if name == "metadata.xml":
+                break
             if name.endswith("/metadata.xml"):
                 subFolder = name[:-12]
                 break
