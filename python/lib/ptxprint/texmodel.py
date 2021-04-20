@@ -85,6 +85,7 @@ ModelMap = {
     "paper/watermarkpdf":       ("btn_selectWatermarkPDF", lambda w,v: '\def\MergePDF{{"{}"}}'.format(w.watermarks.as_posix()) \
                                  if (w.get("c_applyWatermark") and w.watermarks is not None and w.watermarks != 'None') else ""),
     "paper/ifcropmarks":        ("c_cropmarks", lambda w,v :"true" if v else "false"),  
+    "paper/ifgrid":             ("c_grid", lambda w,v :"true" if v else "false"),  
     "paper/ifverticalrule":     ("c_verticalrule", lambda w,v :"true" if v else "false"),
     "paper/margins":            ("s_margins", lambda w,v: round(float(v)) if v else "12"),
     "paper/topmargin":          ("s_topmargin", None),
@@ -263,7 +264,7 @@ ModelMap = {
     "notes/glossaryfootnotes":  ("c_glossaryFootnotes", None),
 
     "notes/abovenotespace":     ("s_abovenotespace", None),
-#    "notes/belownoterulespace": ("s_belownotepace", None),
+    "notes/belownoterulespace": ("s_belownoterulespace", None),
     "notes/internotespace":     ("s_internote", lambda w,v: "{:.3f}".format(float(v))),
 
     "notes/horiznotespacemin":  ("s_notespacingmin", lambda w,v: "{:.3f}".format(float(v)) if v is not None else "7.000"),
@@ -456,7 +457,8 @@ class TexModel:
         else:
             self.dict["fancy/versedecoratorisfile"] = "%"
             self.dict["fancy/versedecoratorisayah"] = "%"
-        self.dict['notes/abovenotetotal'] = "{:.3f}".format(float(self.dict['notes/abovenotespace']))# + float(self.dict['notes/belownotespace']))
+        self.dict['notes/abovenotetotal'] = "{:.3f}".format(float(self.dict['notes/abovenotespace'])
+                                                          + float(self.dict['notes/belownoterulespace']))
         # print(", ".join("{}={}".format(a, self.dict["fancy/versedecorator"+a]) for a in ("", "type", "isfile", "isayah")))
 
     def updatefields(self, a):
