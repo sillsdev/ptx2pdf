@@ -590,6 +590,7 @@
     \hsize=\pdfpagewidth\vsize=\pdfpageheight
     \leftskip=0pt\parshape=0\hangindent=0pt\parindent=0pt
     \let\par=\endgraf
+    \s@tfont{h}\mkstr@t
 
     % horizontal rules
     \def\th@sgprule{Minor}%
@@ -601,7 +602,13 @@
     \dimen1=\baselineskip
     \baselineskip=0pt
     \dimen0=\HeaderPosition\MarginUnit
+    \edef\GraphPaperXoffset{\SideMarginFactor\MarginUnit}
+    \dimen3=\GraphPaperXoffset \multiply\dimen3 by -2 \advance\dimen3 by \pdfpagewidth
     \setbox0=\vbox{\kern\dimen0\gp@hrule}
+    \setbox0=\vbox{\unvbox0\vskip\ht\str@tbox\gp@hrule}
+    \edef\GraphPaperXoffset{0pt}
+    \dimen3=\pdfpagewidth
+    \advance\dimen0 by \ht\str@tbox
     \advance\dimen0 by -\topm@rgin
     \dimen0=-\dimen0
     \def\th@sgprule{Major}
@@ -614,9 +621,14 @@
     \dimen2=\bottomm@rgin
     \advance\dimen2 by -\FooterPosition\MarginUnit
     \def\th@sgprule{Minor}
-    \vbox to 0pt{\unvbox0\vbox{\unvbox0\vskip\dimen2\gp@hrule}\vss}
+    \edef\GraphPaperXoffset{\SideMarginFactor\MarginUnit}
+    \dimen3=\GraphPaperXoffset \multiply\dimen3 by -2 \advance\dimen3 by \pdfpagewidth
+    \setbox0=\vbox{\unvbox0\vskip\dimen2\gp@hrule}
+    \vbox to 0pt{\unvbox0\vbox{\unvbox0\vskip\ht\str@tbox\gp@hrule}\vss}
+    \edef\GraphPaperXoffset{0pt}
 
     % vertical rules
+    \def\th@sgprule{Major}
     \dimen3=\pdfpageheight
     \dimen4=\SideMarginFactor\MarginUnit
     \setbox0=\hbox{\kern\dimen4\gp@vrule}
