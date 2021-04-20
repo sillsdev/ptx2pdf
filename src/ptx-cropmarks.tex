@@ -355,7 +355,7 @@
 }
 \def\shipwithcr@pmarks#1{% \shipout box #1, adding cropmarks if required
   \ifGraphPaper
-    \setbox1\vbox{\do@graphpaper}%
+    \setbox1\vbox{\do@gr@phpaper}%
   \fi
   \dimen0=0\ifCropMarks .5\fi in
   \advance\pdfpagewidth by 2\dimen0 % increase PDF media size
@@ -400,7 +400,8 @@
     \ifGraphPaper
       \vbox to 0pt{\vbox to \ifrotate\pdfpagewidth\else\pdfpageheight\fi{\ifCropMarks\kern0.5in\hbox{\kern 0.5in\box1}\else\box1\fi\vss}\vss}%
     \fi
-    \vbox to \ifrotate\pdfpagewidth\else\pdfpageheight\fi{\vss
+    \vbox to \ifrotate\pdfpagewidth\else\pdfpageheight\fi{%\vss
+      \ifCropMarks\kern 0.5in\fi
       \kern\topm@rgin
       %\trace{g}{\the\topm@rgin - \the\bottomm@rgin}%
       \vbox{\hbox to \ifrotate\pdfpageheight\else\pdfpagewidth\fi{\hss\hbox{%
@@ -409,8 +410,8 @@
         #1%
         \if\g@tterside R\kern\BindingGutter\fi
       }\hss}}
-      \kern\bottomm@rgin
-      \vss}
+      \kern\bottomm@rgin}
+      %\vss}
     \vss
     \docr@pmarks
     \putthumbtab
@@ -489,11 +490,11 @@
 \def\GraphPaperLineMajor{0.6pt}
 \def\GraphPaperLineMinor{0.3pt}
 \def\GraphPaperColMajor{0.8 0.8 0.8} % Colour (R G B)
-\def\GraphPaperColMinor{0.8 1.0 1.0} % Colour (R G B)
+\def\GraphPaperColMinor{0.6 0.6 0.8} % Colour (R G B)
 \def\l@stgprule{}
 \def\gpc@l{
   \ifx\th@sgprule\l@stgprule\else
-    \ifx\th@sgprule\empty\else
+    \ifx\l@stgprue\empty\else
       \cp@p
     \fi
     \x@\special{color push rgb \csname GraphPaperCol\th@sgprule\endcsname}%
@@ -579,6 +580,49 @@
     \ifx\th@sgprule\empty\else% End the current colour
       \cp@p
     \fi
+  \egroup
+}
+
+\def\do@gr@phpaper{
+  \bgroup\topskip=0pt\parindent=0pt\everypar{}\relax
+    \def\th@sgprule{Major}%
+    \def\GraphPaperMajorDiv{1}
+    \count255=\GraphPaperMajorDiv
+    \dimen3=\pdfpagewidth
+    \dimen2=\pdfpageheight
+    \advance\dimen2 by -\bottomm@rgin
+    \s@tbaseline{p}
+    \dimen1=\baselineskip
+    \baselineskip=0pt
+    \setbox0=\vbox{\kern\topm@rgin\gp@hrule}
+    \gp@step
+    \gp@hrules
+    \vbox to 0pt{\unvbox0\gp@hrule\vss}
+    \def\th@sgprule{Major}
+    \dimen3=\pdfpageheight
+    \dimen4=\SideMarginFactor\MarginUnit
+    \setbox0=\hbox{\kern\dimen4\gp@vrule}
+    \def\th@sgprule{Minor}
+    %\dimen4=\IndentUnit
+    \ifdim\columnshift>0pt
+        \setbox0=\hbox{\unhbox0\hskip\columnshift\gp@vrule}
+        \advance\dimen1\columnshift
+    %    \advance\dimen4 by -\columnshift
+    \fi
+    %\setbox0=\hbox{\unhbox0\hskip\dimen4\gp@vrule}
+    %\advance\dimen1\dimen4
+    \dimen4 = 0.5\textwidth
+    \advance\dimen4 by -\ColumnGutterRuleSkip
+    \setbox0=\hbox{\unhbox0\hskip\dimen4\gp@vrule}
+    \def\th@sgprule{Major}
+    \setbox0=\hbox{\unhbox0\hskip\ColumnGutterRuleSkip\gp@vrule}
+    \def\th@sgprule{Minor}
+    \setbox0=\hbox{\unhbox0\hskip\ColumnGutterRuleSkip\gp@vrule}
+    \def\th@sgprule{Major}
+    \dimen4=0.5\textwidth\advance\dimen4 by -\ColumnGutterRuleSkip
+    \setbox0=\hbox{\unhbox0\hskip\dimen4\gp@vrule}
+    \vbox to 0pt{\hbox to 0pt{\unhbox 0\hss}\vss}%
+    \ifx\th@sgprule\empty\else\cp@p\fi
   \egroup
 }
 
