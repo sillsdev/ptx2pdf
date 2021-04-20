@@ -630,14 +630,15 @@
     %\setbox0=\hbox{\unhbox0\hskip\dimen4\gp@vrule}
     %\advance\dimen1\dimen4
     \dimen4 = 0.5\textwidth
-    \advance\dimen4 by -\ColumnGutterRuleSkip
+    \dimen2=\ColumnGutterFactor\FontSizeUnit \divide\dimen2 by 2
+    \advance\dimen4 by -\dimen2
     \setbox0=\hbox{\unhbox0\hskip\dimen4\gp@vrule}
     \def\th@sgprule{Major}
-    \setbox0=\hbox{\unhbox0\hskip\ColumnGutterRuleSkip\gp@vrule}
+    \setbox0=\hbox{\unhbox0\hskip\dimen2\gp@vrule}
     \def\th@sgprule{Minor}
-    \setbox0=\hbox{\unhbox0\hskip\ColumnGutterRuleSkip\gp@vrule}
+    \setbox0=\hbox{\unhbox0\hskip\dimen2\gp@vrule}
     \def\th@sgprule{Major}
-    \dimen4=0.5\textwidth\advance\dimen4 by -\ColumnGutterRuleSkip
+    \dimen4=0.5\textwidth\advance\dimen4 by -\dimen2
     \setbox0=\hbox{\unhbox0\hskip\dimen4\gp@vrule}
     \vbox to 0pt{\hbox to 0pt{\unhbox 0\hss}\vss}%
     \ifx\th@sgprule\empty\else\cp@p\global\let\l@stgprule\empty\fi
