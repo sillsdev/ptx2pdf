@@ -590,7 +590,9 @@
     \hsize=\pdfpagewidth\vsize=\pdfpageheight
     \leftskip=0pt\parshape=0\hangindent=0pt\parindent=0pt
     \let\par=\endgraf
-    \def\th@sgprule{Major}%
+
+    % horizontal rules
+    \def\th@sgprule{Minor}%
     \count255=500
     \dimen3=\pdfpagewidth
     \dimen2=\pdfpageheight
@@ -598,12 +600,23 @@
     \s@tbaseline{p}
     \dimen1=\baselineskip
     \baselineskip=0pt
-    \setbox0=\vbox{\kern\topm@rgin\gp@hrule}
+    \dimen0=\HeaderPosition\MarginUnit
+    \setbox0=\vbox{\kern\dimen0\gp@hrule}
+    \advance\dimen0 by -\topm@rgin
+    \dimen0=-\dimen0
+    \def\th@sgprule{Major}
+    \setbox0=\vbox{\unvbox0\vskip\dimen0\gp@hrule}
     \gp@step
     \gp@hrules
     \advance\dimen2 by -\ht0
     \def\th@sgprule{Major}
+    \setbox0=\vbox{\unvbox0\vskip\dimen2\gp@hrule}
+    \dimen2=\bottomm@rgin
+    \advance\dimen2 by -\FooterPosition\MarginUnit
+    \def\th@sgprule{Minor}
     \vbox to 0pt{\unvbox0\vbox{\unvbox0\vskip\dimen2\gp@hrule}\vss}
+
+    % vertical rules
     \dimen3=\pdfpageheight
     \dimen4=\SideMarginFactor\MarginUnit
     \setbox0=\hbox{\kern\dimen4\gp@vrule}
