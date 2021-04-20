@@ -85,7 +85,7 @@ ModelMap = {
     "paper/watermarkpdf":       ("btn_selectWatermarkPDF", lambda w,v: '\def\MergePDF{{"{}"}}'.format(w.watermarks.as_posix()) \
                                  if (w.get("c_applyWatermark") and w.watermarks is not None and w.watermarks != 'None') else ""),
     "paper/ifcropmarks":        ("c_cropmarks", lambda w,v :"true" if v else "false"),  
-    "paper/ifgrid":             ("c_grid", lambda w,v :"true" if v else "false"),  
+    "paper/ifgrid":             ("c_grid", lambda w,v :"" if v else "%"),
     "paper/ifverticalrule":     ("c_verticalrule", lambda w,v :"true" if v else "false"),
     "paper/margins":            ("s_margins", lambda w,v: round(float(v)) if v else "12"),
     "paper/topmargin":          ("s_topmargin", None),

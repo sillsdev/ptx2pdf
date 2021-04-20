@@ -354,8 +354,8 @@
  \XeTeXuseglyphmetrics=\@seglyphmetrics% Restore to normal value.
 }
 \def\shipwithcr@pmarks#1{% \shipout box #1, adding cropmarks if required
-  \ifGraphPaper
-    \setbox1\vbox{\do@gr@phpaper}%
+  \ifx\doLines\empty\else
+    \setbox1\vbox{\doLines}%
   \fi
   \dimen0=0\ifCropMarks .5\fi in
   \advance\pdfpagewidth by 2\dimen0 % increase PDF media size
@@ -397,7 +397,7 @@
     \m@rgepdf
     \pl@ceborder % add PageBorder (or watermark) graphic, if defined
     \offinterlineskip
-    \ifGraphPaper
+    \ifx\doLines\empty\else
       \vbox to 0pt{\vbox to \ifrotate\pdfpagewidth\else\pdfpageheight\fi{\ifCropMarks\kern0.5in\hbox{\kern 0.5in\box1}\else\box1\fi\vss}\vss}%
     \fi
     \vbox to \ifrotate\pdfpagewidth\else\pdfpageheight\fi{%\vss
@@ -551,7 +551,7 @@
   \fi
 }
 
-\def\do@graphpaper{%
+\def\doGraphPaper{%
   \bgroup\topskip=0pt\baselineskip=0pt\parindent=0pt\everypar{}\relax
     \def\th@sgprule{Major}%
     \count255=\GraphPaperMajorDiv
@@ -585,7 +585,7 @@
   \egroup
 }
 
-\def\do@gr@phpaper{
+\def\doGridLines{
   \bgroup\topskip=0pt\parindent=0pt\everypar{}\relax
     \hsize=\pdfpagewidth\vsize=\pdfpageheight
     \leftskip=0pt\parshape=0\hangindent=0pt\parindent=0pt
@@ -602,6 +602,7 @@
     \dimen1=\baselineskip
     \baselineskip=0pt
     \dimen0=\HeaderPosition\MarginUnit
+    \dimen6=\GraphPaperXoffset
     \edef\GraphPaperXoffset{\SideMarginFactor\MarginUnit}
     \dimen3=\GraphPaperXoffset \multiply\dimen3 by -2 \advance\dimen3 by \pdfpagewidth
     \setbox0=\vbox{\kern\dimen0\gp@hrule}
@@ -625,9 +626,11 @@
     \dimen3=\GraphPaperXoffset \multiply\dimen3 by -2 \advance\dimen3 by \pdfpagewidth
     \setbox0=\vbox{\unvbox0\vskip\dimen2\gp@hrule}
     \vbox to 0pt{\unvbox0\vbox{\unvbox0\vskip\ht\str@tbox\gp@hrule}\vss}
-    \edef\GraphPaperXoffset{0pt}
+    \edef\GraphPaperXoffset{\the\dimen6}
 
     % vertical rules
+    \dimen6=\GraphPaperYoffset
+    \edef\GraphPaperYoffset{0pt}
     \def\th@sgprule{Major}
     \dimen3=\pdfpageheight
     \dimen4=\SideMarginFactor\MarginUnit
@@ -654,8 +657,11 @@
     \setbox0=\hbox{\unhbox0\hskip\dimen4\gp@vrule}
     \vbox to 0pt{\hbox to 0pt{\unhbox 0\hss}\vss}%
     \ifx\th@sgprule\empty\else\cp@p\global\let\l@stgprule\empty\fi
+    \edef\GraphPaperYoffset{\the\dimen6}
   \egroup
 }
+
+\def\doLines{}
 
 %-c_graphpaper
 
