@@ -135,6 +135,7 @@ _sensitivities = {
     "c_pagegutter" :           ["s_pagegutter"],
     "c_verticalrule" :         ["l_colgutteroffset", "s_colgutteroffset"],
     "c_rhrule" :               ["s_rhruleposition"],
+    "c_grid" :                 ["btn_adjustGrid"],
     "c_gridGraph" :            ["gr_graphPaper"],
     "c_introOutline" :         ["c_prettyIntroOutline"],
     "c_sectionHeads" :         ["c_parallelRefs", "lb_style_s", "lb_style_r"],
@@ -604,7 +605,8 @@ class GtkViewModel(ViewModel):
                   "gr_fnAdvOptions", "c_figexclwebapp", "l_glossaryMarkupStyle", "btn_refreshFonts",
                   "fr_spacingAdj", "fr_fallbackFont", "l_complexScript", "b_scrsettings", "c_colorfonts",
                   "scr_picListEdit", "gr_picButtons", "tb_picPreview", "l_linesOnPageLabel", "l_linesOnPage", "fr_tabs",
-                  "btn_adjust_spacing", "btn_adjust_top", "btn_adjust_bottom", "fr_diglot", "btn_diglotSwitch", "fr_borders"):
+                  "btn_adjust_spacing", "btn_adjust_top", "btn_adjust_bottom", "fr_diglot", "btn_diglotSwitch", "fr_borders",
+                  "c_grid", "btn_adjustGrid", "c_noInkFooter"):
             # print(c)
             self.builder.get_object(c).set_visible(val)
 
@@ -2717,17 +2719,25 @@ class GtkViewModel(ViewModel):
         label = Gtk.Buildable.get_name(btn.get_child())
         self.styleEditor.resetParam(label)
 
-    def adjustGuideGrid(self, btn, foo):
-        if self.get('c_grid'):
-            dialog = self.builder.get_object("dlg_gridsGuides")
-            dialog.set_keep_above(True)
-            response = dialog.run()
-            if response == Gtk.ResponseType.OK:
-                pass
-            elif response == Gtk.ResponseType.CANCEL:
-                pass
-            dialog.set_keep_above(False)
-            dialog.hide()
+    def adjustGuideGrid(self, btn):
+        # if self.get('c_grid'):
+        dialog = self.builder.get_object("dlg_gridsGuides")
+        dialog.set_keep_above(True)
+        response = dialog.run()
+        if response == Gtk.ResponseType.OK:
+            pass
+        elif response == Gtk.ResponseType.CANCEL:
+            pass
+        dialog.set_keep_above(False)
+        dialog.hide()
+
+    def onRefreshGridDefaults(self, btn):
+        self.set("fcb_gridUnits", "cm")
+        self.set("s_gridMinorDivisions", "5")
+        self.set("fcb_gridOffset", "page")
+        self.set("s_gridMajorThick", "0.6")
+        self.set("s_gridMinorThick", "0.3")
+        self.set("l_XYgrid", "(0.0, 0.0)")
 
     def onPLpageChanged(self, nbk_PicList, scrollObject, pgnum):
         page = nbk_PicList.get_nth_page(pgnum)

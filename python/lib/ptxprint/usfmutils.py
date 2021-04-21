@@ -27,6 +27,8 @@ class RefRange(namedtuple("RefRange", ["fromc", "fromv", "toc", "tov"])):
 def isScriptureText(e):
     if 'nonvernacular' in e.meta.get('TextProperties', []):
         return False
+    if e.meta.get('TextType', "") != "VerseText":
+        return False
     if e.name in ("h", "id"):
         return False
     return True

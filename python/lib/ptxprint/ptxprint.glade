@@ -1483,6 +1483,11 @@ saved configuration.</property>
     <property name="icon_name">system-run-symbolic</property>
     <property name="icon_size">3</property>
   </object>
+  <object class="GtkImage" id="icon_adjust_grid">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-page-setup</property>
+  </object>
   <object class="GtkImage" id="icon_adjust_spacing">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
@@ -1496,6 +1501,11 @@ saved configuration.</property>
     <property name="can_focus">False</property>
     <property name="icon_name">system-run-symbolic</property>
     <property name="icon_size">3</property>
+  </object>
+  <object class="GtkImage" id="icon_refresh">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-refresh</property>
   </object>
   <object class="GtkListStore" id="ls_NoteBlendInto">
     <columns>
@@ -2680,7 +2690,7 @@ and 3, 4, 6, or 12 for inches.</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel">
+                          <object class="GtkLabel" id="l_XYgrid">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="tooltip_text" translatable="yes">X,Y Coordinates of starting position of the grid.</property>
@@ -2729,14 +2739,15 @@ area, then select that here.</property>
                         </child>
                         <child>
                           <object class="GtkButton" id="btn_resetGrid">
-                            <property name="label">↺</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
-                            <property name="tooltip_text" translatable="yes">Clicking this button will reload
+                            <property name="tooltip_text" translatable="yes">Clicking this button will refresh
 the default Grid settings:
 Centimeters with 5 divisions (2mm each) 
 gray 0.6pt and light blue (0.3pt) lines.</property>
+                            <property name="image">icon_refresh</property>
+                            <signal name="clicked" handler="onRefreshGridDefaults" swapped="no"/>
                           </object>
                           <packing>
                             <property name="left_attach">4</property>
@@ -2760,6 +2771,7 @@ gray 0.6pt and light blue (0.3pt) lines.</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
                     <property name="draw_indicator">True</property>
+                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                   </object>
                 </child>
               </object>
@@ -5211,27 +5223,19 @@ bottom text margins.</property>
                                           </packing>
                                         </child>
                                         <child>
-                                          <object class="GtkEventBox">
+                                          <object class="GtkCheckButton" id="c_grid">
+                                            <property name="label" translatable="yes">Guides
+&amp; Grid</property>
                                             <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">False</property>
                                             <property name="halign">start</property>
-                                            <property name="visible_window">False</property>
-                                            <signal name="button-release-event" handler="adjustGuideGrid" swapped="no"/>
-                                            <child>
-                                              <object class="GtkCheckButton" id="c_grid">
-                                                <property name="label" translatable="yes">Grids &amp;
-Guides</property>
-                                                <property name="visible">True</property>
-                                                <property name="can_focus">True</property>
-                                                <property name="receives_default">False</property>
-                                                <property name="halign">start</property>
-                                                <property name="draw_indicator">True</property>
-                                              </object>
-                                            </child>
+                                            <property name="draw_indicator">True</property>
+                                            <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                           </object>
                                           <packing>
                                             <property name="expand">False</property>
-                                            <property name="fill">False</property>
+                                            <property name="fill">True</property>
                                             <property name="position">1</property>
                                           </packing>
                                         </child>
@@ -5243,7 +5247,24 @@ Guides</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <placeholder/>
+                                      <object class="GtkButton" id="btn_adjustGrid">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">True</property>
+                                        <property name="tooltip_text" translatable="yes">Credit Overlays...
+Some artists (e.g. David C Cook) require that
+each image has a copyright message printed
+on the image itself. The text and location can
+be set here.</property>
+                                        <property name="halign">end</property>
+                                        <property name="valign">center</property>
+                                        <property name="image">icon_adjust_grid</property>
+                                        <signal name="clicked" handler="adjustGuideGrid" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">6</property>
+                                        <property name="top_attach">0</property>
+                                      </packing>
                                     </child>
                                     <child>
                                       <placeholder/>
@@ -10064,12 +10085,12 @@ header, or the Secondary format.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkCheckButton">
+                              <object class="GtkCheckButton" id="c_noInkFooter">
                                 <property name="label" translatable="yes">No Ink in Footer Area</property>
-                                <property name="name">c_noInkFooter</property>
-                                <property name="visible">True</property>
+                                <property name="sensitive">False</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
+                                <property name="no_show_all">True</property>
                                 <property name="tooltip_text" translatable="yes">This option will prevent the descenders of footnotes 
 and cross-references from going into the footer area.</property>
                                 <property name="halign">start</property>
