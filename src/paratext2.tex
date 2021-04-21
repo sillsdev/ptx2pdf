@@ -159,6 +159,7 @@
   \fi%
   \trace{f}{Footnote (\n@tetype) will be \the\n@tewidth wide (page is \the\hsize)}%
   \the\d@note\bgroup% insert note-f (or note-x)
+    \XeTeXuseglyphmetrics=3 % so that notes sit on the baseline based on content and not font descender
     \hsize=\n@tewidth
 %%% single-column notes:
     \interlinepenalty\interfootnotelinepenalty % set penalty to break lines
@@ -198,7 +199,7 @@
 %  \splitmaxdepth\dp\f@@tstrut
   \mcpush{N+#2}%
   %\getp@ram{fontsize}{#2}\edef\c@rrfontsize{\ifx\p@ram\relax12\else\p@ram\fi}%
-  \s@tfont{#2}\XeTeXuseglyphmetrics=3%
+  \s@tfont{#2}%
   \futurelet\next\fo@t}% use plain.tex footnote processor
 %-c_vmakenote
 
@@ -479,6 +480,8 @@
     \advance\leftskip by \columnshift%
   \fi
   %\showbox0
+  \edef\@seglyphmetrics{\the\XeTeXuseglyphmetrics}%
+  \XeTeXuseglyphmetrics=3
   \noindent % starting making new paragraph
   \ifRTL\beginR\fi % respect directionality
   \ifNoteTracing\tracingparagraphs=1\fi
@@ -487,8 +490,8 @@
   % set penalty which allows breaking between notes unless this would cause
   % an extra line to be created.
   \linepenalty50
-  \trace{f}{Note #2 baselineskip=\the\baselineskip}%
-  \par\leftskip=0pt\ifNoteTracing\tracingparagraphs=0\fi}
+  \trace{f}{Note #2 baselineskip=\the\baselineskip, useglyphmetrics=\the\XeTeXuseglyphmetrics}%
+  \par\leftskip=0pt\XeTeXuseglyphmetrics=\@seglyphmetrics\ifNoteTracing\tracingparagraphs=0\fi}
 %-c_makenotepara
 % make box0 = an hbox contining all the contents of this class
 %+c_makehboxofhboxes
@@ -1249,7 +1252,7 @@
     \vfil
   \else
     \setbox0=\lastbox
-    \trace{i}{Inserted notes, ht \the\ht0\space dp \the\lastd@pth,\the\dp0}%
+    \trace{i}{Inserted notes, ht \the\ht0, dp \the\lastd@pth,\the\dp0}%
     \lastd@pth=\dp0 \dp0=0pt \box0 \kern\lastd@pth
   \fi}}
 %-c_makenotebox
