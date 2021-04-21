@@ -135,6 +135,7 @@ _sensitivities = {
     "c_pagegutter" :           ["s_pagegutter"],
     "c_verticalrule" :         ["l_colgutteroffset", "s_colgutteroffset"],
     "c_rhrule" :               ["s_rhruleposition"],
+    "c_gridGraph" :            ["gr_graphPaper"],
     "c_introOutline" :         ["c_prettyIntroOutline"],
     "c_sectionHeads" :         ["c_parallelRefs", "lb_style_s", "lb_style_r"],
     "c_parallelRefs" :         ["lb_style_r"],

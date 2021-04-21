@@ -2412,14 +2412,6 @@ technology, then enable this.</property>
     </columns>
     <data>
       <row>
-        <col id="0" translatable="yes">Points</col>
-        <col id="1">pt</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Millimeters</col>
-        <col id="1">mm</col>
-      </row>
-      <row>
         <col id="0" translatable="yes">Centimeters</col>
         <col id="1">cm</col>
       </row>
@@ -2470,41 +2462,16 @@ technology, then enable this.</property>
             <property name="orientation">vertical</property>
             <property name="spacing">12</property>
             <child>
-              <object class="GtkFrame">
+              <object class="GtkCheckButton" id="c_gridLines">
+                <property name="label" translatable="yes">Rules and Guides</property>
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="label_xalign">0.019999999552965164</property>
-                <child>
-                  <object class="GtkAlignment">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="left_padding">12</property>
-                    <child>
-                      <object class="GtkLabel">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="halign">start</property>
-                        <property name="margin_left">6</property>
-                        <property name="margin_right">6</property>
-                        <property name="margin_top">9</property>
-                        <property name="margin_bottom">12</property>
-                        <property name="label" translatable="yes">Select this (default) option to turn on various guides (showing
-margins, headers, footers, etc.) and the baselines of the body text.</property>
-                      </object>
-                    </child>
-                  </object>
-                </child>
-                <child type="label">
-                  <object class="GtkRadioButton" id="r_grid_guides">
-                    <property name="label" translatable="yes">Rules and Guides</property>
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">False</property>
-                    <property name="active">True</property>
-                    <property name="draw_indicator">True</property>
-                    <property name="group">r_grid_graph</property>
-                  </object>
-                </child>
+                <property name="can_focus">True</property>
+                <property name="receives_default">False</property>
+                <property name="tooltip_text" translatable="yes">Enabling this option will turn on various guides 
+(showing the margins, headers, footers) as well 
+as the baselines of the body text.</property>
+                <property name="margin_left">6</property>
+                <property name="draw_indicator">True</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -2523,7 +2490,7 @@ margins, headers, footers, etc.) and the baselines of the body text.</property>
                     <property name="can_focus">False</property>
                     <property name="left_padding">12</property>
                     <child>
-                      <object class="GtkGrid">
+                      <object class="GtkGrid" id="gr_graphPaper">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="margin_left">6</property>
@@ -2535,28 +2502,6 @@ margins, headers, footers, etc.) and the baselines of the body text.</property>
                           <object class="GtkLabel">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">Major Lines:</property>
-                          </object>
-                          <packing>
-                            <property name="left_attach">0</property>
-                            <property name="top_attach">1</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkLabel">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">Minor Lines:</property>
-                          </object>
-                          <packing>
-                            <property name="left_attach">0</property>
-                            <property name="top_attach">2</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkLabel">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
                             <property name="valign">end</property>
                             <property name="label" translatable="yes">Color</property>
                             <attributes>
@@ -2564,7 +2509,7 @@ margins, headers, footers, etc.) and the baselines of the body text.</property>
                             </attributes>
                           </object>
                           <packing>
-                            <property name="left_attach">1</property>
+                            <property name="left_attach">2</property>
                             <property name="top_attach">0</property>
                           </packing>
                         </child>
@@ -2579,18 +2524,24 @@ margins, headers, footers, etc.) and the baselines of the body text.</property>
                             </attributes>
                           </object>
                           <packing>
-                            <property name="left_attach">2</property>
+                            <property name="left_attach">3</property>
                             <property name="top_attach">0</property>
+                            <property name="width">2</property>
                           </packing>
                         </child>
                         <child>
                           <object class="GtkLabel">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">Divisions:</property>
+                            <property name="tooltip_text" translatable="yes">Specify the number of minor divisions there should
+be between the thicker (major) lines. 
+Recommendations: 2, 5, or 10 for centimeters, 
+and 3, 4, 6, or 12 for inches.</property>
+                            <property name="halign">end</property>
+                            <property name="label" translatable="yes">Minor Divisions:</property>
                           </object>
                           <packing>
-                            <property name="left_attach">3</property>
+                            <property name="left_attach">0</property>
                             <property name="top_attach">2</property>
                           </packing>
                         </child>
@@ -2606,7 +2557,7 @@ margins, headers, footers, etc.) and the baselines of the body text.</property>
                             <property name="rgba">rgb(186,189,182)</property>
                           </object>
                           <packing>
-                            <property name="left_attach">1</property>
+                            <property name="left_attach">2</property>
                             <property name="top_attach">1</property>
                           </packing>
                         </child>
@@ -2622,7 +2573,7 @@ margins, headers, footers, etc.) and the baselines of the body text.</property>
                             <property name="rgba">rgb(0,255,255)</property>
                           </object>
                           <packing>
-                            <property name="left_attach">1</property>
+                            <property name="left_attach">2</property>
                             <property name="top_attach">2</property>
                           </packing>
                         </child>
@@ -2630,10 +2581,11 @@ margins, headers, footers, etc.) and the baselines of the body text.</property>
                           <object class="GtkLabel">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">Units:</property>
+                            <property name="halign">end</property>
+                            <property name="label" translatable="yes">Major Units:</property>
                           </object>
                           <packing>
-                            <property name="left_attach">3</property>
+                            <property name="left_attach">0</property>
                             <property name="top_attach">1</property>
                           </packing>
                         </child>
@@ -2648,8 +2600,9 @@ margins, headers, footers, etc.) and the baselines of the body text.</property>
                             <property name="value">0.59999999999999998</property>
                           </object>
                           <packing>
-                            <property name="left_attach">2</property>
+                            <property name="left_attach">3</property>
                             <property name="top_attach">1</property>
+                            <property name="width">2</property>
                           </packing>
                         </child>
                         <child>
@@ -2663,8 +2616,9 @@ margins, headers, footers, etc.) and the baselines of the body text.</property>
                             <property name="value">0.29999999999999999</property>
                           </object>
                           <packing>
-                            <property name="left_attach">2</property>
+                            <property name="left_attach">3</property>
                             <property name="top_attach">2</property>
+                            <property name="width">2</property>
                           </packing>
                         </child>
                         <child>
@@ -2673,11 +2627,12 @@ margins, headers, footers, etc.) and the baselines of the body text.</property>
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="can_default">True</property>
-                            <property name="tooltip_text" translatable="yes">If you choose to Rotate the tabs, there are various options as to how these should be oriented. The preview (right) will show how these will appear on facing pages.</property>
+                            <property name="tooltip_text" translatable="yes">The grid can use Centimeters or 
+Inches as the major units.</property>
                             <property name="halign">start</property>
                             <property name="model">ls_gridUnits</property>
                             <property name="wrap_width">1</property>
-                            <property name="active">0</property>
+                            <property name="active">1</property>
                             <property name="has_entry">True</property>
                             <property name="entry_text_column">0</property>
                             <property name="id_column">1</property>
@@ -2691,7 +2646,7 @@ margins, headers, footers, etc.) and the baselines of the body text.</property>
                             </child>
                           </object>
                           <packing>
-                            <property name="left_attach">4</property>
+                            <property name="left_attach">1</property>
                             <property name="top_attach">1</property>
                           </packing>
                         </child>
@@ -2700,14 +2655,15 @@ margins, headers, footers, etc.) and the baselines of the body text.</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="tooltip_text" translatable="yes">Specify the number of minor divisions there should
-be between the thicker (major) lines. Usually 2, 5, or 10 for centimeters, and 3, 4, 6, or 12 for inches.
-</property>
+be between the thicker (major) lines. 
+Recommendations: 2, 5, or 10 for centimeters, 
+and 3, 4, 6, or 12 for inches.</property>
                             <property name="width_chars">5</property>
                             <property name="text">0</property>
                             <property name="adjustment">a_gridMinorDivisions</property>
                           </object>
                           <packing>
-                            <property name="left_attach">4</property>
+                            <property name="left_attach">1</property>
                             <property name="top_attach">2</property>
                           </packing>
                         </child>
@@ -2721,7 +2677,6 @@ be between the thicker (major) lines. Usually 2, 5, or 10 for centimeters, and 3
                           <packing>
                             <property name="left_attach">0</property>
                             <property name="top_attach">3</property>
-                            <property name="width">2</property>
                           </packing>
                         </child>
                         <child>
@@ -2730,13 +2685,13 @@ be between the thicker (major) lines. Usually 2, 5, or 10 for centimeters, and 3
                             <property name="can_focus">False</property>
                             <property name="tooltip_text" translatable="yes">X,Y Coordinates of starting position of the grid.</property>
                             <property name="halign">start</property>
-                            <property name="label" translatable="yes">(12.0, 10.5)</property>
+                            <property name="label" translatable="yes">(0.0, 0.0)</property>
                             <attributes>
                               <attribute name="foreground" value="#cece5c5c0000"/>
                             </attributes>
                           </object>
                           <packing>
-                            <property name="left_attach">4</property>
+                            <property name="left_attach">3</property>
                             <property name="top_attach">3</property>
                           </packing>
                         </child>
@@ -2762,18 +2717,31 @@ area, then select that here.</property>
                               <object class="GtkEntry">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
-                                <property name="width_chars">17</property>
+                                <property name="width_chars">20</property>
                               </object>
                             </child>
                           </object>
                           <packing>
-                            <property name="left_attach">2</property>
+                            <property name="left_attach">1</property>
                             <property name="top_attach">3</property>
                             <property name="width">2</property>
                           </packing>
                         </child>
                         <child>
-                          <placeholder/>
+                          <object class="GtkButton" id="btn_resetGrid">
+                            <property name="label">↺</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <property name="tooltip_text" translatable="yes">Clicking this button will reload
+the default Grid settings:
+Centimeters with 5 divisions (2mm each) 
+gray 0.6pt and light blue (0.3pt) lines.</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">4</property>
+                            <property name="top_attach">3</property>
+                          </packing>
                         </child>
                         <child>
                           <placeholder/>
@@ -2786,13 +2754,12 @@ area, then select that here.</property>
                   </object>
                 </child>
                 <child type="label">
-                  <object class="GtkRadioButton" id="r_grid_graph">
+                  <object class="GtkCheckButton" id="c_gridGraph">
                     <property name="label" translatable="yes">Grid (Graph Paper)</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
                     <property name="draw_indicator">True</property>
-                    <property name="group">r_grid_guides</property>
                   </object>
                 </child>
               </object>
@@ -8806,7 +8773,13 @@ Print a second time before it applies.</property>
                                         <property name="can_focus">True</property>
                                         <property name="tooltip_text" translatable="yes">This is the (minimum) vertical space/gap (pts) that
 must exist between the main text body and the
-footnote rule.</property>
+footnote rule.
+
+Note: if you make this value less than the descenders
+of the last lines of text, then the footnotes will push
+down into the footer area. If you see this happening,
+increase this value to trigger an earlier page break to
+solve the problem</property>
                                         <property name="halign">start</property>
                                         <property name="text">10.0</property>
                                         <property name="input_purpose">number</property>
@@ -9967,6 +9940,7 @@ to produce the PDF.</property>
                             <property name="halign">center</property>
                             <property name="margin_left">6</property>
                             <property name="margin_right">6</property>
+                            <property name="margin_top">6</property>
                             <property name="margin_bottom">6</property>
                             <property name="row_spacing">7</property>
                             <property name="column_spacing">2</property>
@@ -10015,7 +9989,7 @@ these can be set in the ptxprint-mods.tex file.</property>
                               </object>
                               <packing>
                                 <property name="left_attach">2</property>
-                                <property name="top_attach">1</property>
+                                <property name="top_attach">0</property>
                                 <property name="width">3</property>
                                 <property name="height">2</property>
                               </packing>
@@ -10040,7 +10014,7 @@ these can be set in the ptxprint-mods.tex file.</property>
                               </object>
                               <packing>
                                 <property name="left_attach">0</property>
-                                <property name="top_attach">1</property>
+                                <property name="top_attach">0</property>
                                 <property name="height">2</property>
                               </packing>
                             </child>
@@ -10064,7 +10038,7 @@ header, or the Secondary format.</property>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
-                                <property name="top_attach">2</property>
+                                <property name="top_attach">1</property>
                               </packing>
                             </child>
                             <child>
@@ -10086,23 +10060,27 @@ header, or the Secondary format.</property>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
-                                <property name="top_attach">1</property>
+                                <property name="top_attach">0</property>
                               </packing>
                             </child>
                             <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
+                              <object class="GtkCheckButton">
+                                <property name="label" translatable="yes">No Ink in Footer Area</property>
+                                <property name="name">c_noInkFooter</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="tooltip_text" translatable="yes">This option will prevent the descenders of footnotes 
+and cross-references from going into the footer area.</property>
+                                <property name="halign">start</property>
+                                <property name="margin_left">12</property>
+                                <property name="draw_indicator">True</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">5</property>
+                                <property name="top_attach">0</property>
+                                <property name="height">2</property>
+                              </packing>
                             </child>
                           </object>
                         </child>
@@ -10178,7 +10156,7 @@ in order to get accurate Image Copyright Attribution.</property>
                             </child>
                             <child>
                               <object class="GtkScrolledWindow" id="scroll_colophon">
-                                <property name="height_request">110</property>
+                                <property name="height_request">140</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="valign">start</property>

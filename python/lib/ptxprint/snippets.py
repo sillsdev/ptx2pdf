@@ -261,3 +261,22 @@ class Colophon(Snippet):
 \\unprepusfm
 
 """
+
+class Grid:
+    regexes = []
+    processTex = True
+    texCode = """
+\def\GraphPaperX{{{grid/xyadvance}{grid/units}}}
+\def\GraphPaperY{{{grid/xyadvance}{grid/units}}}
+\def\GraphPaperX{{{grid/xyadvance}{grid/units}}}
+\def\GraphPaperY{{{grid/xyadvance}{grid/units}}}
+\def\GraphPaperXoffset{{0.0{grid/units}}}
+\def\GraphPaperYoffset{{0.0{grid/units}}}
+\def\GraphPaperMajorDiv{{{grid/divisions}}}
+\def\GraphPaperLineMajor{{{grid/majorthickness}pt}}
+\def\GraphPaperLineMinor{{{grid/minorthickness}pt}}
+\def\GraphPaperColMajor{{0.8 0.8 0.8}} % Colour (R G B)
+\def\GraphPaperColMinor{{0.8 1.0 1.0}} % Colour (R G B)
+"""
+    takesDiglot = False
+

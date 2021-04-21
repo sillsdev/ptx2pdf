@@ -16,7 +16,7 @@ import ptxprint.scriptsnippets as scriptsnippets
 from ptxprint.interlinear import Interlinear
 
 # After universalopen to resolve circular import. Kludge
-from ptxprint.snippets import FancyIntro, PDFx1aOutput, Diglot, FancyBorders, ThumbTabs, Colophon
+from ptxprint.snippets import FancyIntro, PDFx1aOutput, Diglot, FancyBorders, ThumbTabs, Colophon, Grid
 
 def loosint(x):
     try:
@@ -101,13 +101,15 @@ ModelMap = {
     # "paper/fontfactor":         ("s_fontsize", lambda w,v: round((v / 12), 3) or "1.000"),
     "paper/fontfactor":         ("s_fontsize", lambda w,v: "{:.3f}".format(float(v) / 12) if v else "1.000"),
 
-    "grid/guidesgrid":          ("r_grid", None),
+    "grid/gridlines":           ("c_gridLines", lambda w,v :"\doGridLines" if v else ""),
+    "grid/gridgraph":           ("c_gridGraph", lambda w,v :"\doGraphPaper" if v else ""),
     "grid/majorcolor":          ("col_gridMajor", None),
     "grid/minorcolor":          ("col_gridMinor", None),
     "grid/majorthickness":      ("s_gridMajorThick", None),
     "grid/minorthickness":      ("s_gridMinorThick", None),
     "grid/units":               ("fcb_gridUnits", None),
-    "grid/divisions":           ("s_gridMinorDivisions", None),
+    "grid/divisions":           ("s_gridMinorDivisions", lambda w,v: int(float(v)) if v else "10"),
+    "grid/xyadvance":           ("s_gridMinorDivisions", lambda w,v: (1 / float(v)) if v else "0.25"),
     "grid/xyoffset":            ("fcb_gridOffset", None),
     
     "fancy/enableborders":      ("c_borders", lambda w,v: "" if v else "%"),
@@ -249,6 +251,7 @@ ModelMap = {
     "footer/ftrcenter":         ("ecb_ftrcenter", lambda w,v: v or "-empty-"),
     "footer/ifftrtitlepagenum": ("c_pageNumTitlePage", lambda w,v: "" if v else "%"),
     "footer/ifprintconfigname": ("c_printConfigName", lambda w,v: "" if v else "%"),
+    "footer/noinkinfooter":     ("c_noInkFooter", None),
 
     "notes/includefootnotes":   ("c_includeFootnotes", lambda w,v: "%" if v else ""),
     "notes/fneachnewline":      ("c_fneachnewline", lambda w,v: "%" if v else ""),
@@ -352,7 +355,8 @@ class TexModel:
         "snippets/diglot":                ("c_diglot", Diglot),
         "snippets/fancyborders":          ("c_borders", FancyBorders),
         "snippets/thumbtabs":             ("c_thumbtabs", ThumbTabs),
-        "snippets/colophon":              ("c_colophon", Colophon)
+        "snippets/colophon":              ("c_colophon", Colophon),
+        "snippets/grid":                  ("c_grid", Grid)
     }
     _settingmappings = {
         "notes/xrcallers": "crossrefs",
