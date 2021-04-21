@@ -656,13 +656,19 @@
     %\setbox0=\hbox{\unhbox0\hskip\dimen4\gp@vrule}
     %\advance\dimen1\dimen4
     \dimen4 = 0.5\textwidth
-    \dimen2=\ColumnGutterFactor\FontSizeUnit \divide\dimen2 by 2
+    \ifnum\BodyColumns=2\dimen2=\ColumnGutterFactor\FontSizeUnit\else\dimen2=0pt\fi
+    \divide\dimen2 by 2
     \advance\dimen4 by -\dimen2
-    \setbox0=\hbox{\unhbox0\hskip\dimen4\gp@vrule}
-    \def\th@sgprule{Major}
-    \setbox0=\hbox{\unhbox0\hskip\dimen2\gp@vrule}
-    \def\th@sgprule{Minor}
-    \setbox0=\hbox{\unhbox0\hskip\dimen2\gp@vrule}
+    \ifnum\BodyColumns=2
+      \setbox0=\hbox{\unhbox0\hskip\dimen4\gp@vrule}
+      \def\th@sgprule{Major}
+      \setbox0=\hbox{\unhbox0\hskip\dimen2\gp@vrule}
+      \def\th@sgprule{Minor}
+      \setbox0=\hbox{\unhbox0\hskip\dimen2\gp@vrule}
+    \else
+      \def\th@sgprule{Major}
+      \setbox0=\hbox{\unhbox0\hskip\dimen4\gp@vrule}
+    \fi
     \def\th@sgprule{Major}
     \dimen4=0.5\textwidth\advance\dimen4 by -\dimen2
     \setbox0=\hbox{\unhbox0\hskip\dimen4\gp@vrule}

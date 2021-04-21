@@ -198,7 +198,7 @@
 %  \splitmaxdepth\dp\f@@tstrut
   \mcpush{N+#2}%
   %\getp@ram{fontsize}{#2}\edef\c@rrfontsize{\ifx\p@ram\relax12\else\p@ram\fi}%
-  \s@tfont{#2}%
+  \s@tfont{#2}\XeTeXuseglyphmetrics=3%
   \futurelet\next\fo@t}% use plain.tex footnote processor
 %-c_vmakenote
 
@@ -344,7 +344,8 @@
   % if the noteclass has content to output ...
   \ifvoid\th@cl@ss\else
     \iff@rstnote\ifvoid\verybottomins\vfil\fi %\kern-\lastd@pth\vfil % ignore depth of body text; fill space
-      \kern\AboveNoteSpace
+      \dimen5=\AboveNoteSpace\advance\dimen5 by -\BelowNoteRuleSpace\advance\dimen5 by -0.2pt
+      \vskip\ifdim\dimen5>0pt \AboveNoteSpace minus \dimen5\else\AboveNoteSpace\fi
       %\kern-\dp\pstr@t
       {\footnoterule}\global\f@rstnotefalse % output rule before first note
     \else\vskip\InterNoteSpace\fi
@@ -364,7 +365,7 @@
 %  \noindent\hbox{\noindent\kern\columnshift\vbox{\hrule width \dimen0}}\par
   \hbox{\ifdiglot\else\kern\columnshift\fi
     \vrule height 0.4pt width \dimen0}\kern-.4pt % the \hrule is .4pt high
-    \kern\BelowNoteRuleSpace%This was commented out, without it the line was going through through some callers
+    \vskip\BelowNoteRuleSpace minus \BelowNoteRuleSpace
 \everypar=\toks0}
 
 \def\EndNoteRuleWidth{0.5}
@@ -537,15 +538,16 @@
   \tracingparagraphs=0
   %\tracingall=1\tracingoutput=0\tracingpages=0\tracingparagraphs=0\tracingassigns=0\tracingscantokens=0
   \trace{i}{1c TRIAL with ht=\the\trialheight, vsize=\the\vsize, hIns=\the\holdinginserts}%
-  \xdef\p@gebotmark{\botmark}% remember last \mark for running header
-  \xdef\t@st{\p@gefirstmark}%
-  \ifx\t@st\empty\xdef\p@gefirstmark{\firstmark}\fi % remember first, if not already set
-  \availht=\trialheight % amount of space we think is available             %(1)
-  \f@rstnotetrue
-  \let\\=\reduceavailht \the\n@tecl@sses % reduce it by the space needed for each note class
-  \decr{\availht}{\topins}% and by the space needed for spanning pictures
-  \decr{\availht}{\bottomins}%And post-footnote inserts
-  \decr{\availht}{\verybottomins}%
+  \c@lcavailht
+  %\xdef\p@gebotmark{\botmark}% remember last \mark for running header
+  %\xdef\t@st{\p@gefirstmark}%
+  %\ifx\t@st\empty\xdef\p@gefirstmark{\firstmark}\fi % remember first, if not already set
+  %\availht=\trialheight % amount of space we think is available             %(1)
+  %\f@rstnotetrue
+  %\let\\=\reduceavailht \the\n@tecl@sses % reduce it by the space needed for each note class
+  %\decr{\availht}{\topins}% and by the space needed for spanning pictures
+  %\decr{\availht}{\bottomins}%And post-footnote inserts
+  %\decr{\availht}{\verybottomins}%
   \setbox\s@vedpage=\copy255
   % split the galley to the actual size available
   \setbox\colA=\vsplit255 to \availht \setbox0\copy\colA \setbox0=\vbox{\unvbox0}
@@ -801,7 +803,10 @@
     \setbox0=\vbox{\maken@tepara{0}{#1}}%
     \advance\availht by -\ht0
     \advance\availht by -\dp0
-    \iff@rstnote\advance\availht by -\AboveNoteSpace \f@rstnotefalse
+    \iff@rstnote
+      \advance\availht by -\AboveNoteSpace
+      \advance\availht by -\BelowNoteRuleSpace
+      \f@rstnotefalse
     \else \advance\availht by -\InterNoteSpace\fi
     %\getp@ram{baseline}{#1}\ifx\p@ram\relax\else\advance\availht-\p@ram\fi
   \fi}
@@ -1245,7 +1250,7 @@
   \else
     \setbox0=\lastbox
     \trace{i}{Inserted notes, ht \the\ht0\space dp \the\lastd@pth,\the\dp0}%
-    \lastd@pth=\dp0 \box0% \kern-\lastd@pth
+    \lastd@pth=\dp0 \dp0=0pt \box0 \kern\lastd@pth
   \fi}}
 %-c_makenotebox
 

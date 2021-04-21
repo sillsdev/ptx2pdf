@@ -5,6 +5,7 @@ from collections import namedtuple
 from itertools import groupby
 from functools import reduce
 from copy import deepcopy
+import regex
 
 verse_reg = re.compile(r"^\s*(\d+)(\D*?)(?:\s*(-)\s*(\d+)(\D*?))?\s*$")
 def make_rangetuple(chap, verse, start=True):
@@ -34,7 +35,6 @@ takslc_cats = {'Lu', 'Ll', 'Lt', 'Lm', 'Lo', 'Sm', 'Sc', 'Sk', 'So',
                'Nd', 'Nl', 'No', 
                'Pd', 'Pc', 'Pe', 'Ps', 'Pi', 'Pf', 'Po'}
 space_cats = { 'Zs', 'Zl', 'Zp', 'Cf' }
-viramas = "\u1A60\u1039"
 
 class _Reference(sfm.Position):
     def __new__(cls, pos, ref):
@@ -403,7 +403,7 @@ class Usfm:
             if not isScriptureText(e.parent):
                 return e
             done = False
-            lastspace = False
+            lastspace = True
             res = []
             for (islet, c) in groupby(str(e), key=lambda x:get_ucd(ord(x), "gc") in takslc_cats):
                 chars = "".join(c)
@@ -415,10 +415,7 @@ class Usfm:
                     done = True
                 else:
                     res.append(chars)
-                # lastspace = (get_ucd(ord(chars[-1]), "gc") in space_cats) or (chars[-1] in viramas)
-                lastspace = get_ucd(ord(chars[-1]), "InSC") == "Invisible_Stacker"
-            # if done:
-                # print("{} -> {}".format(e, "".join(res)))
+                lastspace = get_ucd(ord(chars[-1]), "InSC") in ("Invisible_Stacker", "Virama")
             return sfm.Text("".join(res), e.pos, e.parent) if done else e
         if self.doc is None or not len(self.doc):
                return            
