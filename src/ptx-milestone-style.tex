@@ -223,6 +223,8 @@
   \else
     \runtrigg@rs{\mkp@cref{\id@@@}{\attr@b}}%
     \runtrigg@rs{ms:\thismil@stone=\attr@b}%
+    \xdef\c@rref{\id@@@\attr@b}%
+    \ifx\v@rse\empty\global\p@rnum=1\fi
   \fi
   \cl@singhooks{after}{\thismil@stone}\the\afterh@@ks\relax
 }%

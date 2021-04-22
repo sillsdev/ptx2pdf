@@ -13,6 +13,9 @@ Which will execute `\code` at the specified trigger point. Note that `\code` her
 include any USFM codes such as `\s1` that contain a number, and nor can it
 include any blank lines.
 
+Note that piclists require a space after the book id, but this is deleted in the 
+trigger code, and should not be present in `\addtrigger`.
+
 As a more friendly interface, separate trigger files  may be used.  Both job-wide 
 (```[jobname].trigger```) and SFM-file specific (```Whatever.SFM.trigger```) 
 trigger files are checked.
@@ -42,10 +45,11 @@ blocks can occur in either.  See later for *inappropriate* uses.
 
 ## Trigger points expecting blocks (if at start of paragraph) or words
 * ```REV20.14-preverse``` Triggers before the verse number. 
-* ```GLOk.LakeofFire-preverse``` Triggers before the glossary entry ```\k Lake of Fire\k*```
-* ```ms:zif```	Triggers before any stand-alone milestone  of type ```zif```, e.g.  ```\zif |file="wombats"\*```
-* ```ms:zwombat=a542``` Triggers before the unique stand-alone milestone ```\zwombat| id="a542"\*```
-* ```Borrogroves``` Triggers at any stand-alone milestone with a matching  id ```\zfiga|Borrogroves```
+* ```GLOk.LakeofFire-preverse``` Triggers before the glossary entry ```\k Lake of Fire\k*```, in the book with id `GLO`
+* ```ms:zif```	Triggers before any stand-alone milestone  of type ```zif```, e.g.  ```\zif |file="wombats"\*``` in any book.
+* ```ms:zwombat=a542``` Triggers before the unique stand-alone milestone ```\zwombat| id="a542"\*``` in any book.
+* ```GENa542``` Triggers before the unique stand-alone milestone ```\zwombat| id="a542"\*``` in Genesis.
+* ```XXABorrogroves``` Triggers at any stand-alone milestone with a matching  id ```\zfiga|Borrogroves``` in book with id `XXA`.
 
 ## Trigger points expecting words.
 
@@ -60,7 +64,7 @@ separator between the identifier and the paragraph number if ```=``` is somehow 
 * ```GLOk.HerrodTheGreat=2``` Triggers before any content (includin the indent) at the second paragraph of the definition.
 * ```ms:zif=2``` Triggers the second paragraph after ```\zif |file="wombats"\*```, if this is in introductory matter or 
 after the glossary section, or other book in which the verse counter has not been used.
-* ```Borrogroves=3``` Triggers the third paragraph after ```\zfigb |id="Borrogroves"\*```, if this is in introductory matter, after 
+* ```GLOBorrogroves=3``` Triggers the third paragraph after ```\zfigb |id="Borrogroves"\*```, if this is in introductory matter, after 
 the glossary, or in another book in which the verse counter has not been used.
 
 
