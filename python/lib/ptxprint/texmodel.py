@@ -10,7 +10,7 @@ from ptxprint.runner import checkoutput
 from ptxprint import sfm
 from ptxprint.sfm import usfm, style
 from ptxprint.usfmutils import Usfm, Sheets, isScriptureText, Module
-from ptxprint.utils import _, universalopen, localhdrmappings, pluralstr, multstr
+from ptxprint.utils import _, universalopen, localhdrmappings, pluralstr, multstr, coltoonemax, loctoXYoffset
 from ptxprint.dimension import Dimension
 import ptxprint.scriptsnippets as scriptsnippets
 from ptxprint.interlinear import Interlinear
@@ -101,16 +101,20 @@ ModelMap = {
     # "paper/fontfactor":         ("s_fontsize", lambda w,v: round((v / 12), 3) or "1.000"),
     "paper/fontfactor":         ("s_fontsize", lambda w,v: "{:.3f}".format(float(v) / 12) if v else "1.000"),
 
-    "grid/gridlines":           ("c_gridLines", lambda w,v :"\doGridLines" if v else ""),
-    "grid/gridgraph":           ("c_gridGraph", lambda w,v :"\doGraphPaper" if v else ""),
+    "grid/gridlines":           ("c_gridLines", lambda w,v: "\doGridLines" if v else ""),
+    "grid/gridgraph":           ("c_gridGraph", lambda w,v: "\doGraphPaper" if v else ""),
     "grid/majorcolor":          ("col_gridMajor", None),
+    "majorcolor_":              ("col_gridMajor", lambda w,v: "{:.2f} {:.2f} {:.2f}".format(*coltoonemax(v)) if v else "0.8 0.8 0.8"),
     "grid/minorcolor":          ("col_gridMinor", None),
+    "minorcolor_":              ("col_gridMinor", lambda w,v: "{:.2f} {:.2f} {:.2f}".format(*coltoonemax(v)) if v else "0.8 1.0 1.0"),
     "grid/majorthickness":      ("s_gridMajorThick", None),
     "grid/minorthickness":      ("s_gridMinorThick", None),
     "grid/units":               ("fcb_gridUnits", None),
     "grid/divisions":           ("s_gridMinorDivisions", lambda w,v: int(float(v)) if v else "10"),
     "grid/xyadvance":           ("s_gridMinorDivisions", lambda w,v: (1 / float(v)) if v else "0.25"),
     "grid/xyoffset":            ("fcb_gridOffset", None),
+    "gridxoffset_":             ("fcb_gridOffset", lambda w,v: "{:.2f}".format(loctoXYoffset(v)[0]) if v else "0.0"),
+    "gridyoffset_":             ("fcb_gridOffset", lambda w,v: "{:.2f}".format(loctoXYoffset(v)[1]) if v else "0.0"),
     
     "fancy/enableborders":      ("c_borders", lambda w,v: "" if v else "%"),
     "fancy/pageborder":         ("c_inclPageBorder", lambda w,v: "" if v else "%"),

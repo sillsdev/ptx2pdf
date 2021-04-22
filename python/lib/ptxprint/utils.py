@@ -71,6 +71,12 @@ def coltotex(s):
     except (ValueError, TypeError):
         return ""
 
+def coltoonemax(s):
+    try:
+        return [float(x)/256. for x in s[s.find("(")+1:-1].split(",")]
+    except (ValueError, TypeError):
+        return [0.8, 0.8, 0.8]
+
 def textocol(s):
     if s.startswith("x"):
         try:
@@ -88,6 +94,14 @@ def textocol(s):
             v //= 256
         vals.extend([0] * (3 - len(vals)))
     return "rgb({0},{1},{2})".format(*vals)
+
+def loctoXYoffset(s):  # Fixme! @@@@@@@@@@@@
+    if s == "body":
+        return [12.0, 18.0]
+    elif s == "margin":
+        return [12.0, 12.0]
+    else: # "page":
+        return [0.0, 0.0]
 
 _wincodepages = {
     'cp950' : 'big5',

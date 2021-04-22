@@ -4,6 +4,7 @@ import sys, os, re, regex, gi, subprocess, traceback
 gi.require_version('Gtk', '3.0')
 gi.require_version('Gdk', '3.0')
 from shutil import rmtree
+from ptxprint.utils import loctoXYoffset
 import time, locale
 
 from gi.repository import Gdk, Gtk, Pango, GObject, GLib, GdkPixbuf
@@ -192,7 +193,8 @@ _object_classes = {
     "stybutton":   ("btn_reloadConfig", "btn_resetCopyright", "btn_resetColophon", "btn_resetFNcallers", "btn_resetXRcallers", 
                     "btn_styAdd", "btn_styEdit", "btn_styDel", "btn_styReset", "btn_refreshFonts", "btn_resetStyFilter",
                     "btn_plAdd", "btn_plDel", "btn_plGenerate", "btn_plSaveEdits", "btn_resetTabGroups",
-                    "btn_adjust_spacing", "btn_adjust_top", "btn_adjust_bottom", "btn_DBLbundleDiglot" )
+                    "btn_adjust_spacing", "btn_adjust_top", "btn_adjust_bottom", "btn_DBLbundleDiglot",
+                    "btn_resetGrid")
 }
 
 _pgpos = {
@@ -2736,8 +2738,13 @@ class GtkViewModel(ViewModel):
         self.set("s_gridMinorDivisions", "5")
         self.set("fcb_gridOffset", "page")
         self.set("s_gridMajorThick", "0.6")
+        self.set("col_gridMajor", "rgb(205,205,205)")
         self.set("s_gridMinorThick", "0.3")
+        self.set("col_gridMinor", "rgb(205,256,256)")
         self.set("l_XYgrid", "(0.0, 0.0)")
+        
+    def onGridOffsetchanged(self, foo):
+        self.set("l_XYgrid", "X,Y({:.2f}, {:.2f})".format(*loctoXYoffset(self.get('fcb_gridOffset'))))
 
     def onPLpageChanged(self, nbk_PicList, scrollObject, pgnum):
         page = nbk_PicList.get_nth_page(pgnum)
