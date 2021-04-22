@@ -301,7 +301,6 @@ ModelMap = {
     "thumbtabs/background":     ("col_thumbback", None),
     "thumbtabs/rotate":         ("c_thumbrotate", None),
     "thumbtabs/rotatetype":     ("fcb_rotateTabs", None),
-    "thumbtabs/background":     ("col_thumbback", None),
     "thumbtabs/thumbiszthumb":  ("c_thumbIsZthumb", None),
     "thumbtabs/restart":        ("c_thumbrestart", None),
     "thumbtabs/groups":         ("t_thumbgroups", None),
