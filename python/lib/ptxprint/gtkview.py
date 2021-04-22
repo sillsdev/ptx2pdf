@@ -2316,7 +2316,7 @@ class GtkViewModel(ViewModel):
         dialog.set_default_size(400, 300)
         dialog.set_select_multiple(multiple)
         if basedir is not None:
-            dialog.set_current_folder(basedir)
+            dialog.set_current_folder(str(basedir))
         if save:
             dialog.set_do_overwrite_confirmation(True)
             if defaultSaveName is None:

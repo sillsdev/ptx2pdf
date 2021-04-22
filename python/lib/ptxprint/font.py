@@ -61,7 +61,8 @@ styles_order = {
     "Regular": 1,
     "Bold": 2,
     "Italic": 3,
-    "Bold Italic": 4
+    "Bold Italic": 4,
+    "Medium": 1
 }
 
 def num2tag(n):
@@ -721,7 +722,8 @@ _fontstylemap = {
     'Italic': '/I',
     'Bold Italic': '/BI',
     'Oblique': '/I',
-    'Bold Oblique': 'BI'
+    'Bold Oblique': 'BI',
+    'Medium': ''
 }
 
 FontRef = None
