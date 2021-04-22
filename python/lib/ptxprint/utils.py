@@ -95,14 +95,6 @@ def textocol(s):
         vals.extend([0] * (3 - len(vals)))
     return "rgb({0},{1},{2})".format(*vals)
 
-def loctoXYoffset(s):  # Fixme! @@@@@@@@@@@@
-    if s == "body":
-        return [12.0, 18.0]
-    elif s == "margin":
-        return [12.0, 12.0]
-    else: # "page":
-        return [0.0, 0.0]
-
 _wincodepages = {
     'cp950' : 'big5',
     'cp951' : 'big5hkscs',

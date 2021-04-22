@@ -1485,8 +1485,10 @@ saved configuration.</property>
   </object>
   <object class="GtkImage" id="icon_adjust_grid">
     <property name="visible">True</property>
+    <property name="sensitive">False</property>
     <property name="can_focus">False</property>
-    <property name="stock">gtk-page-setup</property>
+    <property name="icon_name">view-grid-symbolic</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_spacing">
     <property name="visible">True</property>
@@ -2407,10 +2409,6 @@ technology, then enable this.</property>
         <col id="0" translatable="yes">Top-Left Margin</col>
         <col id="1">margin</col>
       </row>
-      <row>
-        <col id="0" translatable="yes">Body Text Area</col>
-        <col id="1">body</col>
-      </row>
     </data>
   </object>
   <object class="GtkListStore" id="ls_gridUnits">
@@ -2433,7 +2431,7 @@ technology, then enable this.</property>
   </object>
   <object class="GtkDialog" id="dlg_gridsGuides">
     <property name="can_focus">False</property>
-    <property name="title" translatable="yes">Rules and Guides or Grid</property>
+    <property name="title" translatable="yes">Guides and Grid Settings</property>
     <property name="window_position">mouse</property>
     <property name="icon">Google-Noto-Emoji-Objects-62859-open-book.ico</property>
     <property name="type_hint">dialog</property>
@@ -2474,14 +2472,16 @@ technology, then enable this.</property>
             <property name="spacing">12</property>
             <child>
               <object class="GtkCheckButton" id="c_gridLines">
-                <property name="label" translatable="yes">Rules and Guides</property>
+                <property name="label" translatable="yes">Guides (Rules and Baselines)</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">False</property>
                 <property name="tooltip_text" translatable="yes">Enabling this option will turn on various guides 
 (showing the margins, headers, footers) as well 
 as the baselines of the body text.</property>
+                <property name="halign">start</property>
                 <property name="margin_left">6</property>
+                <property name="active">True</property>
                 <property name="draw_indicator">True</property>
               </object>
               <packing>
@@ -2563,7 +2563,9 @@ and 3, 4, 6, or 12 for inches.</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
                             <property name="tooltip_text" translatable="yes">Thumb Tabs usually use a dark color for the Tab with a light (or white) text.</property>
-                            <property name="halign">start</property>
+                            <property name="halign">center</property>
+                            <property name="margin_left">6</property>
+                            <property name="margin_right">6</property>
                             <property name="title" translatable="yes">Color of major lines in grid.</property>
                             <property name="rgba">rgb(186,189,182)</property>
                           </object>
@@ -2579,7 +2581,9 @@ and 3, 4, 6, or 12 for inches.</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
                             <property name="tooltip_text" translatable="yes">Thumb Tabs usually use a dark color for the Tab with a light (or white) text.</property>
-                            <property name="halign">start</property>
+                            <property name="halign">center</property>
+                            <property name="margin_left">6</property>
+                            <property name="margin_right">6</property>
                             <property name="title" translatable="yes">Color of minor lines in grid.</property>
                             <property name="rgba">rgb(0,255,255)</property>
                           </object>
@@ -2604,6 +2608,8 @@ and 3, 4, 6, or 12 for inches.</property>
                           <object class="GtkSpinButton" id="s_gridMajorThick">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
+                            <property name="tooltip_text" translatable="yes">Specify the thickness
+of the major lines.</property>
                             <property name="text">0.0</property>
                             <property name="adjustment">a_gridMajorThick</property>
                             <property name="climb_rate">0.10000000000000001</property>
@@ -2620,6 +2626,8 @@ and 3, 4, 6, or 12 for inches.</property>
                           <object class="GtkSpinButton" id="s_gridMinorThick">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
+                            <property name="tooltip_text" translatable="yes">Specify the line thickness
+of the minor divisions.</property>
                             <property name="text">0.0</property>
                             <property name="adjustment">a_gridMinorThick</property>
                             <property name="climb_rate">0.10000000000000001</property>
@@ -2655,31 +2663,14 @@ and 3, 4, 6, or 12 for inches.</property>
                             <property name="can_focus">False</property>
                             <property name="tooltip_text" translatable="yes">Depending on what you are trying
 to measure, it can be helpful to
-position the top-left corner of the
-grid at the page, margin or body.</property>
+position the grid at the top-left 
+corner of the page, or margins.</property>
                             <property name="halign">end</property>
                             <property name="label" translatable="yes">Start Grid At:</property>
                           </object>
                           <packing>
                             <property name="left_attach">0</property>
                             <property name="top_attach">3</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkLabel" id="l_XYgrid">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="tooltip_text" translatable="yes">X,Y Coordinates of starting position of the grid.</property>
-                            <property name="halign">start</property>
-                            <property name="label" translatable="yes">(0.0, 0.0)</property>
-                            <attributes>
-                              <attribute name="foreground" value="#cece5c5c0000"/>
-                            </attributes>
-                          </object>
-                          <packing>
-                            <property name="left_attach">2</property>
-                            <property name="top_attach">3</property>
-                            <property name="width">2</property>
                           </packing>
                         </child>
                         <child>
@@ -2726,11 +2717,8 @@ Inches as the major units.</property>
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="can_default">True</property>
-                            <property name="tooltip_text" translatable="yes">By default the grid starts at the top-left edge
-of the Page. If you need it to start from the
-top-left margin, or top-left of the body text
-area, then select that here. The (X,Y) offset 
-position is displayed on the right (in mm).</property>
+                            <property name="tooltip_text" translatable="yes">The grid can start at the top-left corner
+of the Page, or at the top-left Margin.</property>
                             <property name="halign">start</property>
                             <property name="model">ls_gridOffset</property>
                             <property name="wrap_width">1</property>
@@ -2738,12 +2726,15 @@ position is displayed on the right (in mm).</property>
                             <property name="entry_text_column">0</property>
                             <property name="id_column">1</property>
                             <property name="active_id">1</property>
-                            <signal name="changed" handler="onGridOffsetchanged" swapped="no"/>
                           </object>
                           <packing>
                             <property name="left_attach">1</property>
                             <property name="top_attach">3</property>
+                            <property name="width">2</property>
                           </packing>
+                        </child>
+                        <child>
+                          <placeholder/>
                         </child>
                         <child>
                           <placeholder/>
@@ -5189,10 +5180,12 @@ it is an odd or even page, then turn off this option.</property>
                                     </child>
                                     <child>
                                       <object class="GtkBox">
+                                        <property name="width_request">124</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="halign">start</property>
-                                        <property name="margin_left">10</property>
+                                        <property name="margin_left">2</property>
+                                        <property name="margin_right">2</property>
                                         <property name="resize_mode">immediate</property>
                                         <child>
                                           <object class="GtkCheckButton" id="c_cropmarks">
@@ -5223,12 +5216,13 @@ bottom text margins.</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
-                                            <property name="tooltip_text" translatable="yes">When setting up, or making final adjustments, it is
-very helpful to display various guides (showing the 
-margins, headers, footers) as well as the baselines 
-of the body text. There is also an option to generate
-a graph-paper-like grid for precise measuring.
-</property>
+                                            <property name="tooltip_text" translatable="yes">Display Guides and/or Grid behind the text
+to assist with setup or final adjustments.
+
+The button beside allows you to choose whether
+you want Guides (margins, baselines, etc.) and/or 
+a graph-paper-like Grid; and grid settings can be
+customized as needed.</property>
                                             <property name="halign">start</property>
                                             <property name="draw_indicator">True</property>
                                             <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
@@ -5251,9 +5245,11 @@ a graph-paper-like grid for precise measuring.
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
-                                        <property name="tooltip_text" translatable="yes">Click to set whether to display Guides or Grid
-or both, and customize the Grid settings.</property>
-                                        <property name="halign">end</property>
+                                        <property name="tooltip_text" translatable="yes">Show dialog to choose Guides (margins, 
+baselines, etc.) and/or a graph-paper-like 
+Grid for precise measuring. Grid settings 
+can be customized.</property>
+                                        <property name="halign">start</property>
                                         <property name="valign">center</property>
                                         <property name="image">icon_adjust_grid</property>
                                         <signal name="clicked" handler="adjustGuideGrid" swapped="no"/>
@@ -15905,7 +15901,9 @@ Custom Script at:</property>
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">True</property>
                                                 <property name="receives_default">False</property>
-                                                <property name="tooltip_text" translatable="yes">Processes the .usfm file through a program of your choosing. The program is run as `prog infile outfile` where infile is the source .usfm file and outfile the output .usfm that will then be typeset.</property>
+                                                <property name="tooltip_text" translatable="yes">Processes the .usfm file through a program of your choosing. 
+The program is run as `prog infile outfile` where infile is the 
+source .usfm file and outfile the output .usfm that will then be typeset.</property>
                                                 <property name="draw_indicator">True</property>
                                                 <signal name="clicked" handler="onProcessScriptClicked" swapped="no"/>
                                               </object>
@@ -16327,10 +16325,9 @@ file is selected, then these will appear in alphabetical order.</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
                                             <property name="tooltip_text" translatable="yes">A watermark can be applied to all pages of 
-the publication. The file must be a PDF.
-
-Also note that you can use a Grid-PDF
-to show gridlines for finetuning settings.</property>
+the publication. The file must be a PDF and
+should ideally have the same dimensions as 
+the publication being printed.</property>
                                             <property name="halign">start</property>
                                             <property name="margin_top">4</property>
                                             <property name="draw_indicator">True</property>

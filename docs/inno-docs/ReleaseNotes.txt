@@ -1,13 +1,35 @@
 PTXprint 1.6.1.1 Release Notes 
-16 April 2021
+22 April 2021
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 
 WARNING: For those using RTL scripts:
-		 The TeX macros have been changed for RTL for Right and Left Justification 
-         such that they are swapped. This means that you no longer have to swap the 
-		 Right and Left Justifications on markers like \q. If justification is Left, 
-		 it will be Right-justified. PTXprint *should* update your styles automatically.		 
+     The TeX macros have been changed for RTL for Right and Left Justification 
+     such that they are swapped. This means that you no longer have to swap the 
+     Right and Left Justifications on markers like \q. If justification is Left, 
+     it will be Right-justified. PTXprint *should* update your styles automatically.		 
+
+NOTE: For those previously using various Border and Grid PDFs as watermarks:
+     There is now a better system for Guides and Grids (see Layout page), so the
+	 various Border and Grid PDFs have been removed from the Watermark PDFassets.
+
+Bug fixes and Improvements in 1.6.9
+
+  * Added option to include Guides (rules and baselines) and/or custom Grid behind text
+  
+  * Fixed overflowing pages with footnotes
+  
+  * Footnotes don't overfill the page now (but could have extra space at end of page)
+  
+  * Fix footnote spacing below text
+  
+  * Space above and below footnote rule can now be set independently
+  
+  * Fixed another bug in unpacking DBL bundles
+  
+  * Letter spacing no longer breaks strings with stacking viramas, ZWJs or ZWNJs
+  
+  * Generate Table of Contents no longer crashes when Letter Spacing is enabled
 
 Bug fixes and Improvements in 1.6.1.1
 

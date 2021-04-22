@@ -268,8 +268,8 @@ class Grid:
     texCode = """
 \def\GraphPaperX{{{grid/xyadvance}{grid/units}}}
 \def\GraphPaperY{{{grid/xyadvance}{grid/units}}}
-\def\GraphPaperXoffset{{{gridxoffset_}mm}}
-\def\GraphPaperYoffset{{{gridyoffset_}mm}}
+\def\GraphPaperXoffset{{{grid/xoffset_}mm}}
+\def\GraphPaperYoffset{{{grid/yoffset_}mm}}
 \def\GraphPaperMajorDiv{{{grid/divisions}}}
 \def\GraphPaperLineMajor{{{grid/majorthickness}pt}}
 \def\GraphPaperLineMinor{{{grid/minorthickness}pt}}

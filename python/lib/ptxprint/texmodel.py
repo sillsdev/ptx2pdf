@@ -10,7 +10,7 @@ from ptxprint.runner import checkoutput
 from ptxprint import sfm
 from ptxprint.sfm import usfm, style
 from ptxprint.usfmutils import Usfm, Sheets, isScriptureText, Module
-from ptxprint.utils import _, universalopen, localhdrmappings, pluralstr, multstr, coltoonemax, loctoXYoffset
+from ptxprint.utils import _, universalopen, localhdrmappings, pluralstr, multstr, coltoonemax
 from ptxprint.dimension import Dimension
 import ptxprint.scriptsnippets as scriptsnippets
 from ptxprint.interlinear import Interlinear
@@ -113,8 +113,6 @@ ModelMap = {
     "grid/divisions":           ("s_gridMinorDivisions", lambda w,v: int(float(v)) if v else "10"),
     "grid/xyadvance":           ("s_gridMinorDivisions", lambda w,v: (1 / float(v)) if v else "0.25"),
     "grid/xyoffset":            ("fcb_gridOffset", None),
-    "gridxoffset_":             ("fcb_gridOffset", lambda w,v: "{:.2f}".format(loctoXYoffset(v)[0]) if v else "0.0"),
-    "gridyoffset_":             ("fcb_gridOffset", lambda w,v: "{:.2f}".format(loctoXYoffset(v)[1]) if v else "0.0"),
     
     "fancy/enableborders":      ("c_borders", lambda w,v: "" if v else "%"),
     "fancy/pageborder":         ("c_inclPageBorder", lambda w,v: "" if v else "%"),
@@ -477,6 +475,15 @@ class TexModel:
         self.dict['notes/abovenotetotal'] = "{:.3f}".format(float(self.dict['notes/abovenotespace'])
                                                           + float(self.dict['notes/belownoterulespace']))
         # print(", ".join("{}={}".format(a, self.dict["fancy/versedecorator"+a]) for a in ("", "type", "isfile", "isayah")))
+        
+        a = self.printer.get('fcb_gridOffset')
+        print(a)
+        if a == 'margin':
+            vals = (self.dict["paper/margins"], self.dict["paper/topmargin"])
+        else:
+            vals = ("0.0", "0.0")
+        print(vals)
+        (self.dict["grid/xoffset_"], self.dict["grid/yoffset_"]) = vals
 
     def updatefields(self, a):
         global get

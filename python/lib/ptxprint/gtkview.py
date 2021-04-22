@@ -4,7 +4,6 @@ import sys, os, re, regex, gi, subprocess, traceback
 gi.require_version('Gtk', '3.0')
 gi.require_version('Gdk', '3.0')
 from shutil import rmtree
-from ptxprint.utils import loctoXYoffset
 import time, locale
 
 from gi.repository import Gdk, Gtk, Pango, GObject, GLib, GdkPixbuf
@@ -608,7 +607,7 @@ class GtkViewModel(ViewModel):
                   "fr_spacingAdj", "fr_fallbackFont", "l_complexScript", "b_scrsettings", "c_colorfonts",
                   "scr_picListEdit", "gr_picButtons", "tb_picPreview", "l_linesOnPageLabel", "l_linesOnPage", "fr_tabs",
                   "btn_adjust_spacing", "btn_adjust_top", "btn_adjust_bottom", "fr_diglot", "btn_diglotSwitch", "fr_borders",
-                  "c_grid", "btn_adjustGrid", "c_noInkFooter"):
+                  "c_grid", "btn_adjustGrid"): #, "c_noInkFooter"):
             # print(c)
             self.builder.get_object(c).set_visible(val)
 
@@ -2741,10 +2740,6 @@ class GtkViewModel(ViewModel):
         self.set("col_gridMajor", "rgb(205,205,205)")
         self.set("s_gridMinorThick", "0.3")
         self.set("col_gridMinor", "rgb(205,256,256)")
-        self.set("l_XYgrid", "(0.0, 0.0)")
-        
-    def onGridOffsetchanged(self, foo):
-        self.set("l_XYgrid", "X,Y({:.2f}, {:.2f})".format(*loctoXYoffset(self.get('fcb_gridOffset'))))
 
     def onPLpageChanged(self, nbk_PicList, scrollObject, pgnum):
         page = nbk_PicList.get_nth_page(pgnum)
