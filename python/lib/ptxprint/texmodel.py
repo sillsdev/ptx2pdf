@@ -476,12 +476,10 @@ class TexModel:
         # print(", ".join("{}={}".format(a, self.dict["fancy/versedecorator"+a]) for a in ("", "type", "isfile", "isayah")))
         
         a = self.printer.get('fcb_gridOffset')
-        print(a)
         if a == 'margin':
             vals = (self.dict["paper/margins"], self.dict["paper/topmargin"])
         else:
             vals = ("0.0", "0.0")
-        print(vals)
         (self.dict["grid/xoffset_"], self.dict["grid/yoffset_"]) = vals
 
     def updatefields(self, a):
