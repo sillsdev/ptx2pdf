@@ -288,8 +288,8 @@ def _doError(text, secondary="", title=None, copy2clip=False, show=True):
 
 def getPTDir():
     txt = _("Paratext is not installed on this system.\n" + \
-            "Please locate the directory containing your\n" +\
-            "(Paratext) project directories. Or cancel to exit")
+            "Please locate the directory where your USFM projects\n" +\
+            "are (or will be) stored. Or click cancel to exit.")
     dialog = Gtk.MessageDialog(parent=None, message_type=Gtk.MessageType.ERROR,
             buttons=Gtk.ButtonsType.OK_CANCEL, text=txt)
     response = dialog.run()
