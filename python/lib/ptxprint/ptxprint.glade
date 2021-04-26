@@ -10363,6 +10363,7 @@ the end of the publication.</property>
                                     </child>
                                     <child>
                                       <object class="GtkTreeViewColumn" id="col_anchor">
+                                        <property name="resizable">True</property>
                                         <property name="spacing">2</property>
                                         <property name="sizing">fixed</property>
                                         <property name="fixed_width">72</property>
