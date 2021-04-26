@@ -975,10 +975,11 @@ class FontRef:
 
     def asTeXFont(self, inarchive=False):
         (name, sfeats, feats) = self._getTeXComponents(inarchive)
-        res = [name, "".join(sfeats)]
+        res = ['{}'.format(name), "".join(sfeats)]
         if self.lang is not None:
             res.append(":language={}".format(self.lang))
-        res.append(":" + ":".join("=".join(map(str, f)) for f in feats))
+        if len(feats):
+            res.append(":" + ":".join("=".join(map(str, f)) for f in feats))
         return "".join(res)
 
     def asConfig(self):

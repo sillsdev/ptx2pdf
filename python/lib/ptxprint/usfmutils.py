@@ -278,6 +278,32 @@ class Usfm:
                 break
             yield e
 
+    def _insertVerse(self, job, parent, offset, e):
+        job.parent = parent
+        if offset != 0:
+            last = parent[offset - (1 if offset > 0 else 0)]
+            if isinstance(last, sfm.Text) and last.data[-1] in " \n":
+                newstr = last.data.rstrip()
+                lc = last.data[len(newstr):]
+                last.data = newstr
+            else:
+                lc = None
+        else:
+            lc = None
+        if offset >= 0:
+            parent.insert(offset, job)
+            offset += 1
+        else:
+            parent.append(job)
+        if lc is not None:
+            t = sfm.Text(lc, pos=e.pos, parent=parent)
+            if offset > 0:
+                parent.insert(offset, t)
+                offset += 1
+            else:
+                parent.append(t)
+        return offset
+
     def versesToEnd(self):
         it = self.iiterel(0, self.doc[0])
         currjob = None
@@ -294,38 +320,17 @@ class Usfm:
                 thispara = e
                 offset = 0
             elif style == 'paragraph':
+                if currjob is not None:
+                    self._insertVerse(currjob, lastpara, -1, e)
+                    currjob = None
                 thispara = None
                 offset = 0
             if e.name == 'v':
                 if currjob is not None:
-                    if currjob.parent == thispara:
-                        if i > 0:
-                            last = thispara[i+offset-1]
-                            if isinstance(last, sfm.Text) and last.data[-1] in " \n":
-                                newstr = last.data.rstrip()
-                                lc = last.data[len(newstr):]
-                                last.data = newstr
-                            else:
-                                lc = None
-                        else:
-                            lc = None
-                        thispara.insert(i+offset, currjob)
-                        offset += 1
-                        if lc is not None:
-                            thispara.insert(i+offset, sfm.Text(lc, pos=e.pos, parent=thispara))
-                            offset += 1
+                    if thispara is not None and i > 1:
+                        offset = self._insertVerse(currjob, thispara, i+offset, e) - i
                     else:
-                        currjob.parent=lastpara
-                        last = lastpara[-1]
-                        if isinstance(last, sfm.Text) and last.data[-1] in " \n":
-                            newstr = last.data.rstrip()
-                            lc = last.data[len(newstr):]
-                            last.data = newstr
-                        else:
-                            lc = None
-                        lastpara.append(currjob)
-                        if lc is not None:
-                            lastpara.append(sfm.Text(lc, pos=e.pos, parent=lastpara))
+                        self._insertVerse(currjob, lastpara, -1, e)
                 currjob = sfm.Element('vp', e.pos, parent=e.parent, meta=self.sheets['vp'])
                 currjob.append(sfm.Text(e.args[0], pos=e.pos, parent=currjob))
             if thispara is not None and thispara is not e:

@@ -400,6 +400,9 @@
 %+csty_defv
 \newif\ifhangingverse
 
+\catcode`-=11
+\def\spl@tprintableverse{\x@\spl@tverses\print@bleVerse --\relax}
+\catcode`-=12
 \lowercase{
  % `~` is set by lowercase to a space for delimiting \ch@rstylepls
  \def\@ddcvhooks{
@@ -413,8 +416,7 @@
    \ifx\mayb@vp\vp\let\nxt\@@VP@@\fi\nxt}%
   \def\@@VP@@\vp ##1\vp*{\xdef\print@bleVerse{##1}\@@V@@}
   \def\@@V@@{%
-   \the\prev@rsehooks
-   \x@\spl@tverses\print@bleVerse--\relax % split verse in a verse bridge (e.g. 3-4) into \v@rsefrom, \v@rseto
+   \the\prev@rsehooks \spl@tprintableverse
    %\ if not cancelling first verse, output verse number
    \ifc@ncelfirstverse\else
     \ifrotate
@@ -520,8 +522,8 @@
   \ifdiglot \resetdropc@p\fi%Can't do this here since things get lowercased
  }
 %-csty_dropchap
-
 }
+\catcode`=12
 
 \newbox\pstr@t
 \def\calcdr@psize{%

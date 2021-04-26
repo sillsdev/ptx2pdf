@@ -112,9 +112,10 @@
 % extract the starting reference of a (possible) range
 % putting the result into \@book, \@chapter, \@verse
 %
+\catcode`-=11
 \def\extr@ctfirst#1:#2:#3\relax{%
  \def\@book{#1}\def\@chapter{#2}\def\t@st{#3}%
- \x@\spl@tverses\t@st--\relax
+ \catcode`-=11\x@\spl@tverses\t@st --\relax\catcode`-=12
  \edef\@verse{\v@rsefrom}}
 
 %
@@ -123,16 +124,18 @@
 %
 \def\extr@ctlast#1:#2:#3\relax{%
  \def\@@book{#1}\def\@@chapter{#2}\def\t@st{#3}%
- \x@\spl@tverses\t@st--\relax
+ \catcode`-=11\x@\spl@tverses\t@st --\relax\catcode`-=12
  \edef\@@verse{\v@rseto}}
 
 %
 % split a possible verse range on hyphen, setting \v@rsefrom and \v@rseto
 %
+\def\getcatcodes#1#2\E{#1=\the\catcode`#1 \space \ifx #2\relax\else\getcatcodes #2\E\fi}
+\message{catcode - = \the\catcode`-}
 \def\spl@tverses#1-#2-#3\relax{%
  \edef\v@rsefrom{#1}\edef\v@rseto{#2}%
  \ifx\v@rseto\empty\let\v@rseto=\v@rsefrom\fi}
-
+\catcode`-=12
 \newif\ifVerseRefs % whether to include verse numbers, or only book+chapter
 
 %

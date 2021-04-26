@@ -120,6 +120,18 @@ class Element(list):
             + (self and [f'content={super().__repr__()}'])
         return f"Element({', '.join(args)!s})"
 
+    def pprint(self, indent=0, children=None):
+        if indent > 0:
+            i = "\n" + (" " * indent)
+        else:
+            i = ""
+        indent += 2
+        args = [repr(self.name)] \
+            + (self.args and [f'args={self.args!r}']) \
+            + (self and ["content=[" + "".join(x.pprint(indent, children-x if children is not None and len(children) else children)
+                        for x in self if children is None or not len(children) or x in children) + "]"])
+        return f"{i}Element({', '.join(args)!s})"
+
     def __eq__(self, rhs):
         if not isinstance(rhs, Element):
             return False
@@ -245,6 +257,10 @@ class Text(collections.UserString):
 
     def __repr__(self):
         return f'Text({super().__repr__()!s})'
+
+    def pprint(self, indent=0, children=None):
+        i = "\n" + (" " * indent) if indent > 0 else ""
+        return f'{i}Text({super().__repr__()!s})'
 
     def __add__(self, rhs):
         return Text(super().__add__(rhs), self.pos, self.parent)

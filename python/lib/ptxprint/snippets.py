@@ -111,9 +111,11 @@ class FancyBorders(Snippet):
 {%E%fancy/versedecoratorisfile}\setbox\versestarbox%D%=\hbox{{\XeTeXpdffile "{%E%fancy/versedecoratorpdf}" scaled {%E%fancy/versedecoratorscale} \relax}}
 {%E%fancy/versedecoratorisfile}\def\AdornVerseNumber%D%#1{{\beginL\rlap{{\hbox to \wd\versestarbox%D%{{\hfil #1\hfil}}}}%
 {%E%fancy/versedecoratorisfile}    \raise {%E%fancy/versedecoratorshift}pt\copy\versestarbox%D%\endL}}
-{%E%fancy/versedecoratorisayah}\def\AdornVerseNumber#1{{\char"06DD #1}}
-{%E%fancy/endayah}\newbox\endayahbox \sethook{{start}}{{vp}}{{\setbox\endayahbox=\hbox\bgroup}}
-{%E%fancy/endayah}\sethook{{end}}{{vp}}{{\egroup\AdornVerseNumber{{\unhbox\endayahbox}}}}
+{%E%fancy/versedecoratorisayah}\catcode`@=11\catcode`-=11\catcode`\~=12\lccode`\~=32\lowercase{{%
+{%E%fancy/versedecoratorisayah} \def\vp #1\vp*{{\edef\temp{{#1}}\x@\spl@tverses\temp --\relax
+{%E%fancy/versedecoratorisayah}  \ch@rstyle{{vp}}~\printv@rse\ch@rstylepls{{vp}}*\kern 2\FontSizeUnit}}}}
+{%E%fancy/versedecoratorisayah}\catcode`@=12\catcode`=12
+{%E%fancy/versedecoratorisayah}\def\AdornVerseNumber#1{{\hbox{{\char"06DD #1}}}}
 """.replace("%D%", replaceD).replace("%E%", replaceE)
         return res.format(**texmodel.dict)
 

@@ -11,8 +11,7 @@
 {\catcode`\~=12 \lccode`\~=32 \catcode`\*=12 \lowercase{%
 \gdef\marginverse #1 {%
     \gdef\v@rse{#1}\global\let\print@bleVerse\v@rse
-    \the\prev@rsehooks
-    \x@\spl@tverses\v@rse--\relax
+    \the\prev@rsehooks\spl@tprintableverse
     \global\setbox2\hbox{\ifc@ncelfirstverse\else\myoldv ~\printv@rse\myoldv *\fi}%
     \egroup\str@t\dimen0=\ht2\advance\dimen0 by \dp\str@tbox
     \myeverypar=\everypar\everypar={}%
