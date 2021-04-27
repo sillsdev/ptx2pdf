@@ -307,7 +307,7 @@ class PicInfo(dict):
                     m = re.findall(r"(?ms)\\fig (.*?)\|(.+?\.....?)\|(col|span)[^|]*\|([^\\]+?)?\\fig\*", dat)
                     if len(m):
                         for i, f in enumerate(m):
-                            r = "{}{} .{}".format(bk, suffix, i)
+                            r = "{}{} p{:03d}".format(bk, suffix, i+1)
                             pic = {'anchor': r, 'caption':f[0].strip(), 'src': f[1], 'size': f[2]}
                             key = self.newkey(suffix)
                             self[key] = pic
@@ -335,8 +335,8 @@ class PicInfo(dict):
                             # lastv = f[0] or lastv
                             if "|" in f[1]:
                                 break
-                            a = (1, i+1) if isperiph else (c, lastv)
-                            r = "{}{} {}.{}".format(bk, suffix, *a)
+                            a = ("p", "", "{:03d}".format(i+1)) if isperiph else (c, ".", lastv)
+                            r = "{}{} {}{}{}".format(bk, suffix, *a)
                             pic = {'caption':f[0].strip(), 'anchor': r}
                             key = self.newkey(suffix)
                             self[key] = pic

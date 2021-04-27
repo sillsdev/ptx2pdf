@@ -990,8 +990,8 @@ class TexModel:
                 a = self.printer.picinfos.getAnchor(m.group(1), bk)
                 if a is None:
                     return ""
-                #ref = re.sub(r"^.*?\.(.*?)$", r"\1", a)
-                return "\\zfiga|{}\\*".format(a)
+                ref = re.sub(r"^\S+\s+", r"", a)
+                return "\\zfiga|{}\\*".format(ref)
             self.localChanges.append((None, regex.compile(r'\\fig .*?src="([^"]+?)".*?\\fig\*', flags=regex.M), figtozfiga))
             self.localChanges.append((None, regex.compile(r'\\fig(?: .*?)?\|(.*?)\|.*?\\fig\*', flags=regex.M), figtozfiga))
 
