@@ -990,10 +990,10 @@ class TexModel:
                 a = self.printer.picinfos.getAnchor(m.group(1), bk)
                 if a is None:
                     return ""
-                ref = re.sub(r"^.*?\.(.*?)$", r"\1", a)
-                return "\\zfiga|{}\\*".format(ref)
+                #ref = re.sub(r"^.*?\.(.*?)$", r"\1", a)
+                return "\\zfiga|{}\\*".format(a)
             self.localChanges.append((None, regex.compile(r'\\fig .*?src="([^"]+?)".*?\\fig\*', flags=regex.M), figtozfiga))
-            self.localChanges.append((None, regex.compile(r'\\fig .*?\|(.*?)\|.*?\\fig\*', flags=regex.M), figtozfiga))
+            self.localChanges.append((None, regex.compile(r'\\fig(?: .*?)?\|(.*?)\|.*?\\fig\*', flags=regex.M), figtozfiga))
 
             if self.asBool("document/iffighiderefs"): # del ch:vs from caption 
                 self.localChanges.append((None, regex.compile(r"(\\fig [^\\]+?\|)([0-9:.\-,\u2013\u2014]+?)(\\fig\*)", \
