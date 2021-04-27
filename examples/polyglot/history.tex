@@ -1,0 +1,35 @@
+\input paratext2.tex
+\def\regularL{"Gentium Plus"}
+\def\regularR{"Gentium Plus"}
+\VisTracetrue
+\tracing{d}
+\showboxdepth=10
+\showboxbreadth=10
+\tracing{D}
+%\scrollmode
+\newDiglotCol{A}
+\def\DiglotLFraction{0.3}
+\def\DiglotRFraction{0.3}
+\def\DiglotAFraction{0.3}
+\def\diglotcols
+\diglottrue
+\stylesheet{usfm.sty}
+\stylesheet{default-custom.sty}
+\let\reflectbox=\mirror
+\def\XeTeX{\leavevmode
+  \setbox0=\hbox{X\lower.5ex
+  \hbox{\kern-.15em
+    \ifnum\XeTeXcharglyph"018E>0
+      \char"018E
+     \else
+      \XeTeXuseglyphmetrics=1
+      \setbox0=\hbox{E}\dimen0=\ht0 \advance\dimen0 by \dp0
+      \raise\dimen0\hbox{\rotatebox{180}{\box0}}%
+    \fi
+  }\kern-.1667em \TeX}%
+  \dp0=0pt \ht0=0pt \box0 }
+
+\diglottrue
+\diglotcolumns
+\ptxfile{history.usfm}
+\bye
