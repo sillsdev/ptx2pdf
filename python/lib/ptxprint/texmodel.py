@@ -5,12 +5,12 @@ from functools import reduce
 from inspect import signature
 import regex
 from ptxprint.font import TTFont
-from ptxprint.ptsettings import chaps, books, bookcodes, oneChbooks
 from ptxprint.runner import checkoutput
 from ptxprint import sfm
 from ptxprint.sfm import usfm, style
 from ptxprint.usfmutils import Usfm, Sheets, isScriptureText, Module
-from ptxprint.utils import _, universalopen, localhdrmappings, pluralstr, multstr, coltoonemax
+from ptxprint.utils import _, universalopen, localhdrmappings, pluralstr, multstr, coltoonemax, \
+                            chaps, books, bookcodes, oneChbooks
 from ptxprint.dimension import Dimension
 import ptxprint.scriptsnippets as scriptsnippets
 from ptxprint.interlinear import Interlinear

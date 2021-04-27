@@ -21,8 +21,8 @@ import xml.etree.ElementTree as et
 from ptxprint.font import TTFont, initFontCache, fccache, FontRef, parseFeatString
 from ptxprint.view import ViewModel, Path, VersionStr
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal, setFontButton, makeSpinButton
-from ptxprint.utils import APP, setup_i18n, brent, xdvigetpages
-from ptxprint.ptsettings import ParatextSettings, allbooks, books, bookcodes, chaps
+from ptxprint.utils import APP, setup_i18n, brent, xdvigetpages, allbooks, books, bookcodes, chaps
+from ptxprint.ptsettings import ParatextSettings
 from ptxprint.gtkpiclist import PicList
 from ptxprint.piclist import PicChecks, PicInfoUpdateProject
 from ptxprint.gtkstyleditor import StyleEditorView

@@ -1,9 +1,10 @@
 
 import configparser, os, re, regex, random, collections
 from ptxprint.texmodel import ModelMap, TexModel, Borders
-from ptxprint.ptsettings import ParatextSettings, allbooks, books, bookcodes, chaps
+from ptxprint.ptsettings import ParatextSettings
 from ptxprint.font import TTFont, cachepath, cacheremovepath, FontRef, getfontcache, writefontsconf
-from ptxprint.utils import _, refKey, universalopen, print_traceback, local2globalhdr, global2localhdr, asfloat
+from ptxprint.utils import _, refKey, universalopen, print_traceback, local2globalhdr, \
+                            global2localhdr, asfloat, allbooks, books, bookcodes, chaps
 from ptxprint.usfmutils import Sheets, UsfmCollection
 from ptxprint.piclist import PicInfo, PicChecks
 from ptxprint.styleditor import StyleEditor
