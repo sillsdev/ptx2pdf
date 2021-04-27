@@ -1,0 +1,9 @@
+
+# Modules to install
+regex
+pyGObject >= 3.0.0
+fonttools
+pycairo
+appdirs
+winreg; sys_platform == 'win32'
+Pillow

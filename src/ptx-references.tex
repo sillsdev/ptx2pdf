@@ -95,13 +95,13 @@
    \ifOmitChapterNumberRH\else
     \ifx\@chapter\empty\else
      \@chapter
-     \ifx\@chapter\@@chapter\else
+     \ifx\@chapter\@@chapter\else\ifx\@@chapter\empty\else
       \setbox0=\hbox{\tracinglostchars=0
       \global\c@untA=0\@chapter \global\c@untB=0\@@chapter}%
       \advance\c@untA by 1
       \ifnum\c@untA=\c@untB \pairs@p \else \ranges@p \fi
       \@@chapter
-     \fi
+     \fi\fi
     \fi
    \fi
   \fi
