@@ -191,7 +191,6 @@ class StyleEditorView(StyleEditor):
 
     def load(self, sheetfiles):
         super().load(sheetfiles)
-        print(sheetfiles[-1], self.sheet.get('it', {}))
         results = {"Tables": {"th": {"thc": {}, "thr": {}}, "tc": {"tcc": {}, "tcr": {}}},
                    "Peripheral Materials": {"zpa-": {}},
                    "Identification": {"toc": {}}}
@@ -333,10 +332,10 @@ class StyleEditorView(StyleEditor):
                         val = data[m]
                         if m.lower() == "baseline":
                             val = re.sub(r"(-?\d*\.?\d*)(\D|$)", r"\1", str(val))
-                        if self.marker == "it" and k == "_fontsize":
-                            print(f"{m=} {val=} {olddat=} {oldval=} {data=}")
                         self._setFieldVal(m, v, olddat, f)
                         v = stylemap[v[3](False)]
+                        if f and v[3] is not None:
+                            val = v[3](val)
                         break
                 else:
                     f = v[2]
@@ -562,7 +561,7 @@ class StyleEditorView(StyleEditor):
 
     def resolveEndMarker(self, newdata, key, newval):
         endm = self.getval(key, ' endMilestone')
-        if endm is not None and endm is not ' None' and endm != newval:
+        if endm is not None and endm != ' None' and endm != newval:
             derivation = self.getval(endm, 'zDerived')
             if derivation is not None:
                 if endm in self.sheet:
