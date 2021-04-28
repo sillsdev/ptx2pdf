@@ -1169,12 +1169,14 @@
 
 \let\@do@prepare@doublespread=\@do@prepare@simplecols
 
+\def\@@simplecols#1{\hbox to\columnshift{}\ifx\l@stcol\empty\else\unhcopy1 \fi
+    \hbox to \csname column#1width\endcsname{\x@\copy\csname #1box\endcsname\hss}\xdef\l@stcol{#1}}
+  %
+
 \def\@do@layout@simplecols{%
   \setbox1\hbox{\makediglotgutter{\dimen7}{\dimen8}{\dimen9}}%
   \let\l@stcol\empty
-  \def\col@do##1{\hbox to\columnshift{}\ifx\l@stcol\empty\else\unhcopy1 \fi
-    \hbox to \csname column##1width\endcsname{\x@\copy\csname ##1box\endcsname\hss}\xdef\l@stcol{##1\l@stcol}}
-  %
+  \let\col@do=\@@simplecols
   % Normal
   %
   \global\setbox\n@xtpartialNrml\vtop{%
@@ -1194,14 +1196,13 @@
       \x@\each@col\diglot@list\E
     }%
   }%
-  \let\rev@list\l@stcol
   \let\l@stcol\empty
   \global\setbox\n@xtpartialRev\vtop{%For the next page, thus no joint delta considerations
     \iftemp
       \vskip\ColumnGutterRuleSkip
     \fi
     \hbox to \textwidth{\ifVisTrace\llap{\box0}\fi%
-      \x@\each@col\rev@list\E
+      \x@\each@col\rev@diglot@list\E
   }}%
   \def\v@lpfx{}\def\v@lsfx{box}
   \let\col@do=\void@boxes %
@@ -1253,9 +1254,9 @@
     \let\b@xtype\vtop %just used as a flag.
     \iftemp
       \let\b@xtype\vbox
-      \trace{D}{Un vtopping heading}%
-      \setbox\Lbox=\vbox{\unvbox\Lbox}%
-      \setbox\Rbox=\vbox{\unvbox\Rbox}%
+      \trace{D}{Un vtopping headings}%
+      \def\col@do##1{\x@\setbox\csname ##1box\endcsname\vbox{\unvbox\csname ##1box\endcsname}}
+      \x@\each@col\cts@list\E
     \fi
   \fi
   \setdiglotN@rmal % Left=left (normal) or not?
@@ -1342,6 +1343,89 @@
     \relax
   \fi
 }
+
+\def\diglot@fill@sep@note@box#1{\let\s@veddstat=\c@rrdstat\setc@rdstat{#1}\setLRspecific\f@rstnotetrue
+  \lastd@pth=0pt
+  \global\setbox\csname #1box\endcsname=\vbox{\x@\the\csname diglot#1ho@ks\endcsname\let\\=\ins@rtn@tecl@ss \the\n@tecl@sses}%
+  \iff@rstnote
+      \trace{f}{No footnotes for #1}%
+  \else\LRf@@tnotestrue\fi
+  \setc@rdstat{\s@veddstat}}
+
+\def\@do@prepare@balnotes@simplecols{%
+  \dimen1=0pt
+  \let\col@do=\max@boxht\def\v@lpfx{}\def\v@lsfx{box}%
+  \x@\each@col\diglot@list\E% 
+  \let\col@do=\reb@xht
+  \x@\each@col\diglot@list\E% 
+  \dimen8=\dimen1
+  \dimen1=0pt
+  \let\col@do=\max@boxdp
+  \x@\each@col\diglot@list\E% 
+  \dimen9=\dimen1
+  \trace{d}{Gutter \the\dimen8 high, \the\dimen9 deep}%
+  \dimen7=0pt
+}
+\def\@do@arrange@balnotes@simplecols{%
+  \setbox1\hbox{\makediglotgutter{\dimen7}{\dimen8}{\dimen9}}%
+  \let\col@do=\@@simplecols\let\l@stcol\empty
+  \setbox\Lbox=\hbox to \textwidth{%\vllap{\the\ht\Lbox \the\dp\Lbox}%
+  \hbox to\columnshift{}%
+  \ifdiglotN@rmal%are the sides swapped?
+    \x@\each@col\diglot@list\E
+  \else
+    \x@\each@col\rev@diglot@list\E
+  \fi
+  }%
+  \global\setbox\partial=\vbox{\unvbox\partial\box\Lbox}%
+}
+
+\def\@do@prepare@unbalnotes@simplecols{%
+  %Implement meshing algorithm:
+  \trace{Df}{Saving fn dimensions}%
+  \edef\v@lpfx{@fn}\let\col@do=\save@boxdim %Save footnote @fnXht @fnXdp values
+  \x@\each@col\diglot@list\E
+  \edef\v@lsfx{ht}%
+  \trace{Df}{Finding max \v@lpfx X\v@lsfx}%
+  \let\col@do=\max@val\dimen1=0pt
+  \x@\each@col\diglot@list\E
+  \dimen2=\dimen1 %dimen2=note height 
+  \dimen8=\dimen1 %dimen8=note height (needed for rule)
+  \edef\v@lpfx{@cur}\dimen1=0pt
+  \trace{Df}{Finding max \v@lpfx X\v@lsfx}%
+  \x@\each@col\diglot@list\E
+  \advance\dimen2 by \dimen1%dimen2 now contains total natural height of text from last true synch-point and notes.
+  \edef\v@lpfxb{@fn}\dimen1=\dimen2
+  \trace{Df}{Finding min note sep \v@lpfxb Xht}%
+  \let\col@do=\min@note@sep% subtracts \v@lpfxb Xht and \v@lpfx Xht from dimen2, returning the smalles value in dimen1
+  \x@\each@col\diglot@list\E
+  \dimen3=\dimen1
+  %rule calcs: is #1 (dimen7) high, #3(dimen9) deep, and fits in a box #2(dimen8 - found earlier)high
+  \edef\v@lpfx{@fn}
+  \edef\v@lsfx{dp}\let\col@do=\max@val\dimen1=0pt
+  \trace{Df}{Finding max \v@lpfx X\v@lsfx}%
+  \x@\each@col\diglot@list\E
+  \dimen9=\dimen1
+  \advance\dimen8 by -\AboveNoteSpace\relax %stop the line a little short
+  \dimen7=\dimen8
+  \trace{d}{Gutter \the\dimen8 tall, \the\dimen9 deep}%
+}
+
+\def\@do@arrange@unbalnotes@simplecols{%
+  \setbox1\hbox{\makediglotgutter{\dimen7}{\dimen8}{\dimen9}}%
+  \let\col@do=\@@simplecols\let\l@stcol\empty
+  \setbox\Lbox\hbox to \textwidth{%\vllap{\the\ht\Lbox \the\dp\Lbox}%
+    \ifdiglotN@rmal%are the sides swapped?
+      \x@\each@col\diglot@list\E
+    \else%
+      \x@\each@col\rev@diglot@list\E
+    \fi%
+  }%
+  \trace{f}{Adjusting footnotebox}%
+  \trace{D}{Raising footnotebox by \the\dimen3}%
+  \global\setbox\partial=\vbox{\unvbox\partial\kern -\dimen3\vskip 0.5\AboveNoteSpace plus 1fil \box\Lbox}%
+}%
+
 \def\@writep@ge {%
   \trace{d}{@writep@ge \the\pageno (\the\MaxPages)}%
   \ifnum\pageno>\MaxPages
@@ -1355,121 +1439,32 @@
   \global\setbox\partial=\vbox{\unvbox\partial}%
   \ifdiglotSepNotes%
     \trace{D}{Sep notes}%
-    \let\s@veddstat=\c@rrdstat
     \LRf@@tnotesfalse%
-    \f@rstnotetrue%
-    \setc@rdstat{L}%%
-    \setLRspecific
-    \lastd@pth=0pt 
     %Arrange Left and Right footnotes
-    \global\setbox\Lbox=\vbox{\the\diglotLho@ks\let\\=\ins@rtn@tecl@ss \the\n@tecl@sses}%
-    \iff@rstnote%
-      \trace{f}{No Left footnotes}%
-    \else%
-      \LRf@@tnotestrue%
-      \f@rstnotetrue%
-    \fi%
-    \lastd@pth=0pt 
-    \setc@rdstat{R}%%
-    \setLRspecific
-    \global\setbox\Rbox=\vbox{\the\diglotRho@ks\let\\=\ins@rtn@tecl@ss \the\n@tecl@sses}%
-    \iff@rstnote%
-      \trace{f}{No Right footnotes}%
-    \else%
-      \LRf@@tnotestrue%
-    \fi%
-    \setc@rdstat{\s@veddstat}%%
-    \setLRspecific
-    \ifdiglotBalNotes%
+    \let\col@do=\diglot@fill@sep@note@box
+    \x@\each@col\diglot@list\E% 
+    \setLRspecific % c@rrdstat is restored by diglot@fill@sep@note@box.
+    \ifLRf@@tnotes%
+      \ifdiglotBalNotes%
       \trace{f}{Balanced notes}%
-      \ifLRf@@tnotes%
-        \kern\lastd@pth%
+        % \kern\lastd@pth % This, if at all valid for anything, is from the last note.
         \trace{f}{Footnotes}%
-        \ifdim\ht\Lbox>\ht\Rbox%
-          \setbox\Rbox=\vbox to \ht\Lbox{\box\Rbox\vss}%
-        \else%
-          \setbox\Lbox=\vbox to \ht\Rbox{\box\Lbox\vss}%
-        \fi%
-        \dimen8=\ht\Lbox
-        \ifdim \dimen8 <\ht\Rbox \dimen8=\ht\Rbox \fi
-        \dimen9=\dp\Lbox
-        \ifdim \dimen9 <\dp\Rbox \dimen9=\dp\Rbox \fi
-        \trace{d}{Gutter \the\dimen8 high, \the\dimen9 deep}%
-        \dimen7=0pt
-        \setbox\Lbox=\hbox to \textwidth{%\vllap{\the\ht\Lbox \the\dp\Lbox}%
-          \hbox to\columnshift{}%
-          \ifdiglotN@rmal%are the sides swapped?
-            \hbox to\columnLwidth{\copy\Lbox\hss}\ifNoteGutterRule\makediglotgutter{\dimen7}{\dimen8}{\dimen9}\else\hskip\gutter\fi%%%
-            \hbox to\columnshift{}%
-            \hbox to\columnRwidth{\copy\Rbox\hss}%\rlap{\the\ht\Rbox \the\dp\Rbox}%
-          \else%
-            \hbox to\columnshift{}%
-            \hbox to\columnRwidth{\copy\Rbox\hss}\ifNoteGutterRule\makediglotgutter{\dimen7}{\dimen8}{\dimen9}\else\hskip\gutter\fi%%
-            \hbox to\columnshift{}%
-            \hbox to\columnLwidth{\copy\Lbox\hss}%\rlap{\the\ht\Rbox \the\dp\Rbox}%
-          \fi%
-        }%
-      \else%
-        \trace{f}{No footnotes}%
-      \fi %LRf@@tnotes
-      \setbox\partial=\vbox{\unvbox\partial\box\Lbox}%
-    \else %BalNotes
-      \trace{f}{unBalanced notes}%
-      \ifLRf@@tnotes%
+        \csname @do@prepare@balnotes@\diglotlayout\endcsname
+        \csname @do@arrange@balnotes@\diglotlayout\endcsname
+      \else %BalNotes
+        \trace{f}{unBalanced notes}%
         %curLht and curRht hold the height of the last boxes that joined the
         %page,
         %Need to find out where to put the footnotes, as one of them should
         %be close to its respective text.
         {
-        %Implement meshing algorithm:
-        \trace{Df}{Saving fn dimensions}%
-        \edef\v@lpfx{@fn}\let\col@do=\save@boxdim %Save footnote @fnXht @fnXdp values
-        \x@\each@col\diglot@list\E
-        \edef\v@lsfx{ht}%
-        \trace{Df}{Finding max \v@lpfx X\v@lsfx}%
-        \let\col@do=\max@val\dimen1=0pt
-        \x@\each@col\diglot@list\E
-        \dimen2=\dimen1 %dimen2=note height 
-        \dimen8=\dimen1 %dimen8=note height (needed for rule)
-        \edef\v@lpfx{@cur}\dimen1=0pt
-        \trace{Df}{Finding max \v@lpfx X\v@lsfx}%
-        \x@\each@col\diglot@list\E
-        \advance\dimen2 by \dimen1%dimen2 now contains total natural height of text from last true synch-point and notes.
-        \edef\v@lpfxb{@fn}\dimen1=\dimen2
-        \trace{Df}{Finding min note sep \v@lpfxb Xht}%
-        \let\col@do=\min@note@sep% subtracts \v@lpfxb Xht and \v@lpfx Xht from dimen2, returning the smalles value in dimen1
-        \x@\each@col\diglot@list\E
-        \dimen3=\dimen1
-        %rule calcs: is #1 (dimen7) high, #3(dimen9) deep, and fits in a box #2(dimen8 - found earlier)high
-        \edef\v@lpfx{@fn}
-        \edef\v@lsfx{dp}\let\col@do=\max@val\dimen1=0pt
-        \trace{Df}{Finding max \v@lpfx X\v@lsfx}%
-        \x@\each@col\diglot@list\E
-        \dimen9=\dimen1
-        \advance\dimen8 by -\AboveNoteSpace\relax %stop the line a little short
-        \dimen7=\dimen8
-        %
-        \trace{d}{Gutter \the\dimen8 tall, \the\dimen9 deep}%
-        \setbox\Lbox\hbox to \textwidth{%\vllap{\the\ht\Lbox \the\dp\Lbox}%
-          \hbox to\columnshift{}%
-          \ifdiglotN@rmal%are the sides swapped?
-            \hbox to\columnLwidth{\copy\Lbox\hss}\ifNoteGutterRule\makediglotgutter{\dimen7}{\dimen8}{\dimen9}\else\hskip\gutter\fi%
-            \hbox to\columnshift{}%
-            \hbox to\columnRwidth{\copy\Rbox\hss}%\rlap{\the\ht\Rbox \the\dp\Rbox}%
-          \else%
-            \hbox to\columnRwidth{\copy\Rbox\hss}\ifNoteGutterRule\makediglotgutter{\dimen7}{\dimen8}{\dimen9}\else\hskip\gutter\fi%
-            \hbox to\columnshift{}%
-            \hbox to\columnLwidth{\copy\Lbox\hss}%\rlap{\the\ht\Rbox \the\dp\Rbox}%
-          \fi%
-        }%
-        \trace{f}{Adjusting footnotebox}%
-        \trace{D}{Raising footnotebox by \the\dimen3}%
-        \global\setbox\partial=\vbox{\unvbox\partial\kern -\dimen3\vskip 0.5\AboveNoteSpace plus 1fil \box\Lbox}%
-        }%
-      \else%
-        \trace{f}{No footnotes}%
-      \fi%
-    \fi %BalNotes
+          \csname @do@prepare@unbalnotes@\diglot@list\endcsname
+          \csname @do@arrange@unbalnotes@\diglot@list\endcsname
+        }
+      \fi %BalNotes
+    \else%
+      \trace{f}{No footnotes}%
+    \fi %LRf@@tnotes
   \else %SepNotes
     \trace{f}{Merged notes}%
   \fi%
@@ -1768,7 +1763,7 @@
   \fi
 }
 \def\chk@head#1{%Is the relevant item a heading? Set tempfalse if not
-  \x@\ifnum\csname \c@rrdstat boxpenalty\endcsname <10000
+  \x@\ifnum\csname #1boxpenalty\endcsname <10000
     \tempfalse
   \fi 
 }
@@ -1790,6 +1785,8 @@
   \fi
   \x@\xdef\csname @cur#1ht\endcsname{\the\dimen1}%
 }
+
+\def\mkrev@list#1{\xdef\rev@diglot@list{#1\rev@diglot@list}}
 
 \def\max@val#1{\x@\let\x@\t@st\csname \v@lpfx#1\v@lsfx\endcsname
   \ifdim\dimen1<\t@st
@@ -1828,6 +1825,11 @@
     \fi
   \fi
 }
+
+\def\reb@xht#1{\x@\let\x@\t@mp\csname \v@lpfx#1\v@lsfx\endcsname
+  \ifdim\ht\t@mp=\dimen1 \else
+    \setbox\t@mp=\vbox to \dimen1{\box\t@mp\vss}%
+  \fi}
 
 \def\void@boxes#1{\x@\global\x@\setbox\csname \v@lpfx#1\v@lsfx\endcsname=\box\voidb@x
  }
@@ -1969,6 +1971,7 @@
 }
 
 \edef\diglot@list{LR}%
+\edef\rev@diglot@list{RL}%
 \edef\digl@tc@ntentlist{}%
 
 \def\set@cseq#1#2{\x@\xdef\csname #1\endcsname{#2}}% Helper function
@@ -1985,6 +1988,10 @@
     \add@to@digl@tc@ntentlist{#1}%
     \let\diglot@list=\digl@tc@ntentlist
     \let\digl@tc@ntentlist=\old@cts
+    %Now make the reversed list
+    \let\col@do=\mkrev@list
+    \xdef\rev@diglot@list{}
+    \x@\each@col\diglot@list\E% 
     \x@\csname #1isDiglotColumn\endcsname\empty
     \x@\newb@x\csname #1box\endcsname
     \x@\newb@x\csname partial#1\endcsname

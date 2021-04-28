@@ -32,14 +32,10 @@ got an enormous help from Kew's \XeTeX.
 \endcols
 \diglotcolumn L
 \s The birth of diglot 
-\p
-\endcols
 \diglotcolumn A
 \s First steps
-\p
 \diglotcolumn B
 \s Showing off 
-\p
 \endcols
 
 \diglotcolumn L
@@ -52,6 +48,7 @@ got an enormous help from Kew's \XeTeX.
 \v 4 And David took ptxplus and did bend it in diverse places to make diglot.  Diglot dwelt in darkness and created beauty or disaster depending upon many factors.
 \p
 \diglotcolumn A
+\p
 \v 4 In 2006, David made a complicated mess out of ptxplus, and it worked to
 make diglots. That is, as long as you didn't get too adventurous, or hit one of
 the numerous bugs.
