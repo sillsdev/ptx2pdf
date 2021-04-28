@@ -14,6 +14,7 @@ binarymkrs = {"bold", "italic", "smallcaps"}
 absolutes = {"baseline", "raise", "callerraise", "notecallerraise"}
 aliases = {"q", "s", "mt", "to", "imt", "imte", "io", "iq", "is", "ili", "pi",
            "qm", "sd", "ms", "mt", "mte", "li", "lim", "liv", }
+_defFields = {"Marker", "EndMarker", "Name", "Description", "OccursUnder", "TextProperties", "TextType", "StyleType"}
 
 class StyleEditor:
 
@@ -39,7 +40,10 @@ class StyleEditor:
     def getval(self, mrk, key):
         if self.sheet is None:
             raise KeyError(f"stylesheet missing: {mrk} + {key}")
-        return self.sheet.get(mrk, {}).get(key, self.basesheet.get(mrk, {}).get(key, None))
+        res = self.sheet.get(mrk, {}).get(key, None)
+        if res is None or (mrk in _defFields and not len(res)):
+            res = self.basesheet.get(mrk, {}).get(key, None)
+        return res
 
     def setval(self, mrk, key, val, ifunchanged=False):
         if self.sheet is None:

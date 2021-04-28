@@ -195,13 +195,15 @@ class StyleEditorView(StyleEditor):
                    "Peripheral Materials": {"zpa-": {}},
                    "Identification": {"toc": {}}}
         for k in sorted(self.allStyles(), key=lambda x:(len(x), x)):
-            v = self.sheet.get(k, self.basesheet.get(k, {}))
+            # v = self.sheet.get(k, self.basesheet.get(k, {}))
+            v = self.asStyle(k)
             if 'zDerived' in v:
                 # self.sheet[v['zDerived']][' endMilestone']=k
                 self.setval(v['zDerived'], ' endMilestone', k)
                 continue
             if k not in self.basesheet:
-                v[' deletable'] = True
+                # v[' deletable'] = True
+                self.setval(k, ' deletable', True)
             if k == "p":
                 foundp = True
             cat = 'Other'
@@ -215,8 +217,10 @@ class StyleEditorView(StyleEditor):
                 else:
                     cat = str(v['Name']).strip()
                 cat, url = categorymapping.get(cat, (cat, None))
-                v[' category'] = cat
-                v[' url'] = url
+                # v[' category'] = cat
+                self.setval(k, ' category', cat)
+                # v[' url'] = url
+                self.setval(k, ' url', url)
             else:
                 print(k)
             triefit(k, results.setdefault(cat, {}), 1)
@@ -230,10 +234,12 @@ class StyleEditorView(StyleEditor):
             keyfn = lambda x:(catorder.get(x[0], len(catorder)), x[0])
         else:
             keyfn = lambda x:(len(x[0]), x[0])
+        allStyles = self.allStyles()
         for k, v in sorted(d.items(), key=keyfn):
             ismarker = True
-            if k in self.sheet:
-                n = self.sheet[k].get('name', k)
+            if k in allStyles:
+                # n = self.sheet[k].get('name', k)
+                n = self.getval(k, 'name')
                 if n is None:
                     n = k
                 m = re.match(r"^([^-\s]*)\s*([^-]+)(?:-\s*|$)", n)
@@ -348,7 +354,8 @@ class StyleEditorView(StyleEditor):
                 old[" "+k] = olddat
             else:
                 oldval = old.get(k, v[2])
-                val = data.get(k, oldval)
+                # val = data.get(k, oldval)
+                val = self.getval(self.marker, k)
                 if v[0].startswith("c_"):
                     val = val != v[2]
                     oldval = oldval != v[2]
@@ -368,6 +375,8 @@ class StyleEditorView(StyleEditor):
                     self.set("l_styActualFontSize", "{}\n{:.1f}pt (+{:.1f} -{:.1f})".format(fref.name, fsize, asc, -des))
                 else:
                     self.set("l_styActualFontSize", "{:.1f}pt".format(fsize))
+            if k == "Description":
+                print(self.marker, k, data)
             self._setFieldVal(k, v, oldval, val)
 
         stype = data.get('StyleType', old.get('StyleType', ''))
