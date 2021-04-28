@@ -191,6 +191,7 @@ class StyleEditorView(StyleEditor):
 
     def load(self, sheetfiles):
         super().load(sheetfiles)
+        print(sheetfiles[-1], self.sheet.get('it', {}))
         results = {"Tables": {"th": {"thc": {}, "thr": {}}, "tc": {"tcc": {}, "tcr": {}}},
                    "Peripheral Materials": {"zpa-": {}},
                    "Identification": {"toc": {}}}
@@ -332,6 +333,8 @@ class StyleEditorView(StyleEditor):
                         val = data[m]
                         if m.lower() == "baseline":
                             val = re.sub(r"(-?\d*\.?\d*)(\D|$)", r"\1", str(val))
+                        if self.marker == "it" and k == "_fontsize":
+                            print(f"{m=} {val=} {olddat=} {oldval=} {data=}")
                         self._setFieldVal(m, v, olddat, f)
                         v = stylemap[v[3](False)]
                         break

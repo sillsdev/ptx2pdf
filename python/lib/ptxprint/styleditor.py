@@ -71,7 +71,7 @@ class StyleEditor:
         foundp = False
         self.basesheet = Sheets(sheetfiles[:-1])
         self._createFonts(self.basesheet)
-        self.sheet = Sheets(sheetfiles[-1:], base=self.basesheet)
+        self.sheet = Sheets(sheetfiles[-1:])
         self._createFonts(self.sheet)
 
     def _createFonts(self, sheet):

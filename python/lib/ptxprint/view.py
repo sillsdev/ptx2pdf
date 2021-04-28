@@ -771,8 +771,8 @@ class ViewModel:
     def updateStyles(self, version):
         if version < 1.601:
            if self.get("fcb_textDirection", "") == "rtl":
-                for k, v in self.styleEditor.allStyles().items():
-                    j = v.get('Justification', None)
+                for k in self.styleEditor.allStyles():
+                    j = self.styleEditor.getval(k, 'Justification')
                     if j == "Right":
                         self.styleEditor.setval(k, 'Justification', 'Left')
                     elif j == "Left":
