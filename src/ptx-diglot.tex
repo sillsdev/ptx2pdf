@@ -1344,12 +1344,19 @@
   \fi
 }
 
-\def\diglot@fill@sep@note@box#1{\let\s@veddstat=\c@rrdstat\setc@rdstat{#1}\setLRspecific\f@rstnotetrue
+\def\diglot@fill@sep@note@box#1{\let\s@veddstat=\c@rrdstat
+  \setc@rdstat{#1}%
+  \setLRspecific
+  \f@rstnotetrue
   \lastd@pth=0pt
-  \global\setbox\csname #1box\endcsname=\vbox{\x@\the\csname diglot#1ho@ks\endcsname\let\\=\ins@rtn@tecl@ss \the\n@tecl@sses}%
+  \global\setbox\csname #1box\endcsname=\vbox{%
+     \x@\the\csname diglot#1ho@ks\endcsname
+     \let\\=\ins@rtn@tecl@ss \the\n@tecl@sses}%
   \iff@rstnote
       \trace{f}{No footnotes for #1}%
-  \else\LRf@@tnotestrue\fi
+  \else\LRf@@tnotestrue
+    %\x@\showbox\csname #1box\endcsname
+  \fi
   \setc@rdstat{\s@veddstat}}
 
 \def\@do@prepare@balnotes@simplecols{%
@@ -1426,7 +1433,7 @@
   \global\setbox\partial=\vbox{\unvbox\partial\kern -\dimen3\vskip 0.5\AboveNoteSpace plus 1fil \box\Lbox}%
 }%
 
-\def\@writep@ge {%
+\def\@writep@ge{%
   \trace{d}{@writep@ge \the\pageno (\the\MaxPages)}%
   \ifnum\pageno>\MaxPages
     \errmessage{Pagecount (\the\pageno) has exceeded \MaxPages (\the\MaxPages). This probably means something has gone wrong. (or you should increase MaxPages or MaxPagesPerChunk (\MaxPagesPerChunk) for this job)}%
@@ -1458,8 +1465,8 @@
         %Need to find out where to put the footnotes, as one of them should
         %be close to its respective text.
         {
-          \csname @do@prepare@unbalnotes@\diglot@list\endcsname
-          \csname @do@arrange@unbalnotes@\diglot@list\endcsname
+          \csname @do@prepare@unbalnotes@\diglotlayout\endcsname
+          \csname @do@arrange@unbalnotes@\diglotlayout\endcsname
         }
       \fi %BalNotes
     \else%
@@ -1611,8 +1618,12 @@
   \@mptyinserts
   \s@veinserts{chunk}%
   \s@veinserts{col}%
-  \s@veallnotes{1}%
-  \s@veallnotes{2}%
+  \def\col@do##1{%
+    \setc@rdstat{##1}%
+    \s@veallnotes{1}%
+    \s@veallnotes{2}%
+  }% 
+  \x@\each@col\diglot@list\E
   \resetc@rdstat%reset the current diglotstatus
   \nextshipout
   %\nonstopmode

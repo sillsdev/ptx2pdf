@@ -151,7 +151,7 @@
   \x@\let\x@\th@sins\csname note-no-insert-\n@tetype\endcsname
   \checkp@ranotes{#1}% check whether this note class is to be paragraphed 
   \ifx\th@sins\relax
-    \n@tewidth=\ifp@ranotes\maxdimen\else\textwidth \advance\n@tewidth by -\columnshift\fi % insert penalties to control breaking of footnotes
+    \ifp@ranotes\n@tewidth=\maxdimen \else\setn@tewidth{#1}\fi
     \d@note{\x@\insert\csname note-\n@tetype\endcsname}%
   \else
     \n@tewidth=\ifp@ranotes\maxdimen\else\hsize\fi
@@ -332,7 +332,7 @@
 % insert a note class in which each note is on its own line
 \def\separateins@rtn@tecl@ss#1{%
   \def\cl@ss{#1\g@tndstat}%
-  \TRACE{seperateins@rtn@tecl@ss \cl@ss}%
+  \trace{n}{seperateins@rtn@tecl@ss \cl@ss}%
   \x@\let\x@\th@cl@ss\csname note-\cl@ss\endcsname % make \th@cl@ss be a synonym for the current note class
   % if the noteclass has content to output ...
   \ifvoid\th@cl@ss\TRACE{no note}\else%
@@ -344,6 +344,7 @@
 % insert a note class in which each note is in the same paragraph
 \def\parains@rtn@tecl@ss#1{%
   \def\cl@ss{#1\g@tndstat}%
+  \trace{n}{parains@rtn@tecl@ss \cl@ss}%
   \x@\let\x@\th@cl@ss\csname note-\cl@ss\endcsname % make \th@cl@ss be a synonym for the current note class
   % if the noteclass has content to output ...
   \ifvoid\th@cl@ss\else
@@ -441,11 +442,15 @@
     \ifnum\c@rrentcols=1
       \n@tewidth=\textwidth
     \else
-      \n@tewidth=\colwidth
+      \ifdiglot
+        \n@tewidth=\csname column\c@rrdstat width\endcsname
+      \else
+        \n@tewidth=\colwidth
+      \fi
     \fi
     %\advance\n@tewidth by -\columnshift
   \fi
-  \trace{f}{end-setn@tewidth: \the\n@tewidth}%
+  \trace{f}{end-setn@tewidth #1: \the\n@tewidth}%
 }
 %-c_setnotewidth
 
