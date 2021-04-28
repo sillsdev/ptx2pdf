@@ -527,6 +527,7 @@
 
 \newbox\pstr@t
 \def\calcdr@psize{%
+  \should@xist{c}%
   \ifdiglot 
     \trace{d}{Calculating drop: \c@rrdstat}%
     \should@xist{c\c@rrdstat}%
@@ -534,9 +535,11 @@
   \else
     \s@tbaseline{p}%
   \fi
-    \getp@ram{fontsize}{c}\dropnumbersize=0\p@ram\FontSizeUnit \relax % C in following
+    \getp@ram{fontsize}{c}\dropnumbersize=0\ifx\p@ram\relax pt\else\FontSizeUnit\fi \relax % C in following
 	% if font size specified for chapter number stylesheet is less than 2*paragraph font size ...
-    %\ifdim\dropnumbersize<\dimen255
+      \ifdim\dropnumbersize<1pt
+        \dropnumbersize=\baselineskip
+      \fi
       \edef\@seglyphmetrics{\the\XeTeXuseglyphmetrics}%
       \s@tfont{p}%workaround for Lotus Elam Bold issue - ensure the \p font is loaded first
       \mkstr@t\setbox\pstr@t=\copy\str@tbox
@@ -1031,11 +1034,15 @@
    \fi
    \dimen0=\baselineskip
    \message{Setting up column-specific values for \diglot@list}%
+   \baselineDelta=-\maxdimen
    \def\col@do##1{% Per-column setup
      \setc@rdstat{##1}%
      \showLRspecific
      \setLRspecific\s@tb@dyb@seline{##1}%
      \x@\global\csname baselineDelta##1\endcsname=\dimexpr \baselineskip - \topskip\relax
+     \ifdim\baselineDelta<\csname baselineDelta##1\endcsname
+       \baselineDelta=\csname baselineDelta##1\endcsname
+     \fi
      \saveLRspecificSide{##1}%
    }
    \x@\each@col\diglot@list\E 
@@ -1180,6 +1187,7 @@
 %+csty_hooks
 %Hook-runners for paragraph and character styles
 \def\op@ninghooks#1#2{% for <start> and <before> hooks
+   \trace{s}{op@ninghooks #1 #2}%
    \csname #1-#2\endcsname % 
    \ifx\c@tegory\empty\else\csname #1-\c@tprefix#2\endcsname\fi
    \ifdiglot\setsid@ % \MSG{start-\thisch@rstyle\sid@}%
@@ -1192,6 +1200,7 @@
 \newtoks\c@th@@ks
 \newtoks\afterh@@ks
 \def\cl@singhooks#1#2{% for <end> and <after> hooks. For <after> hooks, it's necessary to end the group after these are defined 
+  \trace{s}{op@ninghooks #1 #2}%
   \global\let\n@xt\relax
   \global\let\n@@xt\relax
   \global\let\n@@@xt\relax
@@ -1285,7 +1294,10 @@
  \textwidth=\dimen0
  \colwidth=0.5\textwidth \advance\colwidth by -0.5\gutter\advance\colwidth by -\columnshift
 % Diglot dimensions
- \advance\dimen0 by -\gutter\advance\dimen0 by -2\columnshift
+ \def\col@do##1{\advance\count255 by 1}%
+ \count255=0
+ \x@\each@col\diglot@list\E
+ \advance\dimen0 by -\numexpr \count255 - 1\relax\gutter\advance\dimen0 by -\count255\columnshift
  \ifcsname DiglotLFraction\endcsname\else
     \let\DiglotLFraction=\DiglotLeftFraction
  \fi

@@ -4,7 +4,7 @@ DIR:=$(shell dirname `find ../..  -name paratext2.tex`)
 SCRIPTDIR:=$(shell dirname `find ../..  -name diglot_merge.pl | grep -v bisect`)
 
 .tex.pdf:
-	TEXINPUTS=.:../../src xetex $<
+	TEXINPUTS=.:../../src xetex $< < /dev/null
 	TEXINPUTS=.:../../src xetex $<
 
 Galatians.pdf: Galatians.tex Galatians-setup.tex intro.usfm mergedGal.usfm mergedGalV.usfm ../../src/*.tex *.sty

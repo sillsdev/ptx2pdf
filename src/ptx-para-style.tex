@@ -291,10 +291,10 @@
  \else % else we need to actually process it!
   \ifx\m@rker\relax\else
     \getp@ram{spaceafter}{\m@rker}% output any <spaceafter> for the previous style
-  \fi
-  \ifx\p@ram\relax \else
-    \ifhe@dings\nobreak\fi
-    \vskip\p@ram\verticalsp@ceunit                                              %(1)
+    \ifx\p@ram\relax \else
+      \ifhe@dings\nobreak\fi
+      \vskip\p@ram\verticalsp@ceunit                                              %(1)
+    \fi
   \fi
   %\ifx\mcstack\mcstack@mpty\else
     %\def\d@##1+##2\E{\edef\tmp{##2}%

@@ -68,10 +68,17 @@
 \def\LeftMarksfalse{\useLeftMarkstrue\useRigthMarkstrue}
 
 %Defined penalties
-\def\dgl@tPenColSwap{-10001}%
-\def\dgl@tPenInternalRpt{-10002}
-\def\dgl@tPenLtrialEnd{-10005}% FIXME - expand to get rid of special caseing
-\def\dgl@tPenRtrialEnd{-10006}
+\xdef\sp@cialpen{-10001}
+\def\newsp@cialpen#1{%define a new special penalty {#1}  which gets set as the next special penalty number (assuming all marksN are registered with this function.
+  {\count255=\numexpr \sp@cialpen-1\relax
+  \x@\xdef\x@\sp@cialpen{\the\count255}%
+  \x@\xdef\csname #1\endcsname{\sp@cialpen}}%
+}
+\newsp@cialpen{dgl@tPenColSwap}%
+\newsp@cialpen{dgl@tPenInternalRpt}
+\newsp@cialpen{dgl@tPenLtrialEnd}
+\newsp@cialpen{dgl@tPenRtrialEnd}
+
 \def\oldRmark{}
 \def\oldLmark{}
 \def\p@gebotmark{}
@@ -397,7 +404,7 @@
 }
 
 \def\run@a@trial{%
-  \x@\global\x@\let\x@\endtri@lpen@lty\csname dgl@tPen\c@rrdstat trialEnd\endcsname
+  \x@\global\x@\endtri@lpen@lty\x@=\csname dgl@tPen\c@rrdstat trialEnd\endcsname
   \traceNum{d}{run@a@trial \show@dstat, \the\availht>\the\baselineskip?, etp:\endtri@lpen@lty}%
   \x@\let\x@\p@rtl\csname partial\c@rrdstat\endcsname
   \x@\let\x@\@xcs\csname excess\c@rrdstat\endcsname
@@ -468,6 +475,7 @@
   \x@\xdef\x@\m@rksm@x{\the\count255}%
   \x@\xdef\csname m@rknum#1\endcsname{\m@rksm@x}}%
 }
+
 \newm@rknum{L}% registers m@rknumL
 \newm@rknum{R}% registers m@rknumR
 
@@ -804,8 +812,9 @@
 \newdimen\availhtR
 \newdimen\chunkDelta % Difference between the last boxes prepared for the page (-ve=left longer)
 \newdimen\p@geChunkDelta \p@geChunkDelta=0pt %as above, but *added* to the page.
-\newdimen\baselineDeltaL % semi-constant: difference between the L baseline and \topskip.  Set in ptx-stylesheet (-ve=left longer) 
-\newdimen\baselineDeltaR % semi-constant: difference between the R baseline and \topskip.  Set in ptx-stylesheet (-ve=left longer) 
+\newdimen\baselineDelta % semi-constant: largest difference between any  baselines and \topskip.  
+\newdimen\baselineDeltaL % semi-constant: difference between the L baseline and \topskip.  Set in ptx-stylesheet (-ve=topskip longer) 
+\newdimen\baselineDeltaR % semi-constant: difference between the R baseline and \topskip.  Set in ptx-stylesheet (-ve=topskip longer) 
 \newdimen\thisjointDelta % difference between the L and R boxes (-ve=left longer)
 \newcount\cumulativeDelta % Sum of \chunkDelta values, in points
 \cumulativeDelta=0
@@ -817,7 +826,8 @@
 \def\n@xtdstat{L}%What does the diglotstate become at the next \dgl@tPenColSwap penalty?
 \def\f@lwgdstat{L}%What is the diglotstate of the 'recent contributions'? (i.e. next material to read)
 \def\c@rrdstat{}%What is the current diglotstate?
-\def\g@tdstat{\ifdiglot\if\c@rrdstat L\else\c@rrdstat\fi\fi}% Returns "" or "R" (Or other state values in the future)
+\def\@g@tdst@t#1{\ifdiglot\if L#1\else#1\fi\fi}% Returns "" or "R" (Or other state values in the future)
+\def\g@tdstat{\@g@tdst@t\c@rrdstat}% Normal access routine for above
 \def\g@tndstat{\ifdiglotSepNotes \g@tdstat \fi} %if notes are merged, there should be no R (etc)  suffix notes.
 
 \def\show@dstat{\c@rrdstat\f@lwgdstat\n@xtdstat}% for debugging output 
@@ -1093,16 +1103,7 @@
   \egroup
 }
 
-\def\diglot@arrange@cols{% Xht is the sum of Xbox's depth and height (set by after@a@trial
-  \trace{D}{diglot@arrange@cols chnkDlta:\the\chunkDelta. cp:\the\chunkpenalty, lcp:\the\lastchunkpenalty}%
-  \ifVisTrace
-    \ifx\b@xtype\vbox %boxtype is set on discovery of whether this is a heading or not
-      \doVisTraceT{L}% sets box0, used ~43 lines below
-    \else
-      \doVisTrace{L}% sets box0, used ~43 lines below
-    \fi
-  \fi
-  \ifnum \curactivecols>0
+\def\@do@prepare@simplecols{%
     \thisjointDelta=0pt %Do we need extra space?
     %Calculate how much extra space we need:
     % step 1: max height of the last box 
@@ -1146,10 +1147,12 @@
     \ifdim\thisjointDelta>0pt
       \advance\dimen8 by \thisjointDelta\relax
     \fi
-    \advance\dimen8 by \ht\Lbox
-    \ifdim \dimen8 <\ht\Rbox \dimen8=\ht\Rbox \fi
-    \dimen9=\dp\Lbox
-    \ifdim \dimen9 <\dp\Rbox \dimen9=\dp\Rbox \fi
+    \def\v@lpfx{}\def\v@lsfx{box}\let\col@do=\max@boxht\dimen1=0pt
+    \x@\each@col\diglot@list\E
+    \advance\dimen8 by \dimen1
+    \let\col@do=\max@boxdp\dimen1=0pt
+    \x@\each@col\diglot@list\E
+    \dimen9=\dimen1
     % apply columngutterruleskip?
     \tempfalse
     \ifdim\ht\partial=0pt\ifdim\dp\partial=0pt
@@ -1162,33 +1165,61 @@
     \fi\fi
     \trace{d}{Gutter \the\dimen8 height, \the\dimen9 deep}%
     \dimen7=\dimen8%.5\baselineskip
-    \global\setbox\n@xtpartialNrml\vtop{%
-      \iftemp
-        \vskip\ColumnGutterRuleSkip
-      \else
-        \ifdim\thisjointDelta<0pt
-          \ifdim\thisjointDelta>-\@maxb@seline %sanity check
-            \vskip\thisjointDelta
-            \trace{dP}{skipping jointDelta: \the\thisjointDelta}%
-          \else
-            \trace{dP}{Unacceptable negative jointDelta \the\thisjointDelta < -\@maxb@seline}%
-          \fi
+}
+
+\let\@do@prepare@doublespread=\@do@prepare@simplecols
+
+\def\@do@layout@simplecols{%
+  \setbox1\hbox{\makediglotgutter{\dimen7}{\dimen8}{\dimen9}}%
+  \let\l@stcol\empty
+  \def\col@do##1{\hbox to\columnshift{}\ifx\l@stcol\empty\else\unhcopy1 \fi
+    \hbox to \csname column##1width\endcsname{\x@\copy\csname ##1box\endcsname\hss}\xdef\l@stcol{##1\l@stcol}}
+  %
+  % Normal
+  %
+  \global\setbox\n@xtpartialNrml\vtop{%
+    \iftemp
+      \vskip\ColumnGutterRuleSkip
+    \else
+      \ifdim\thisjointDelta<0pt
+        \ifdim\thisjointDelta>-\@maxb@seline %sanity check
+          \vskip\thisjointDelta
+          \trace{dP}{skipping jointDelta: \the\thisjointDelta}%
+        \else
+          \trace{dP}{Unacceptable negative jointDelta \the\thisjointDelta < -\@maxb@seline}%
         \fi
       \fi
-      \hbox to \textwidth{\ifVisTrace\llap{\copy0}\fi%
-        \hbox to\columnshift{}%
-        \hbox to\columnLwidth{\copy\Lbox\hss}\makediglotgutter{\dimen7}{\dimen8}{\dimen9}%
-        \hbox to\columnshift{}%
-        \hbox to\columnRwidth{\copy\Rbox\hss}%\rlap{\the\ht\Rbox \the\dp\Rbox}%
-    }}%
-    \global\setbox\n@xtpartialRev\vtop{%
-      \iftemp
-        \vskip\ColumnGutterRuleSkip
-      \fi
-      \hbox to \textwidth{\ifVisTrace\llap{\box0}\fi%
-      \hbox to\columnRwidth{\box\Rbox\hss}\makediglotgutter{\dimen7}{\dimen8}{\dimen9}%
-      \hbox to\columnLwidth{\box\Lbox\hss}%\rlap{\the\ht\Rbox \the\dp\Rbox}%
-    }}%
+    \fi
+    \hbox to \textwidth{\ifVisTrace\llap{\copy0}\fi%
+      \x@\each@col\diglot@list\E
+    }%
+  }%
+  \let\rev@list\l@stcol
+  \let\l@stcol\empty
+  \global\setbox\n@xtpartialRev\vtop{%For the next page, thus no joint delta considerations
+    \iftemp
+      \vskip\ColumnGutterRuleSkip
+    \fi
+    \hbox to \textwidth{\ifVisTrace\llap{\box0}\fi%
+      \x@\each@col\rev@list\E
+  }}%
+  \def\v@lpfx{}\def\v@lsfx{box}
+  \let\col@do=\void@boxes %
+  \x@\each@col\diglot@list\E
+}
+
+\def\diglot@arrange@cols{% Xht is the sum of Xbox's depth and height (set by after@a@trial
+  \trace{D}{diglot@arrange@cols chnkDlta:\the\chunkDelta. cp:\the\chunkpenalty, lcp:\the\lastchunkpenalty}%
+  \ifVisTrace
+    \ifx\b@xtype\vbox %boxtype is set on discovery of whether this is a heading or not
+      \doVisTraceT{L}% sets box0, used ~43 lines below
+    \else
+      \doVisTrace{L}% sets box0, used ~43 lines below
+    \fi
+  \fi
+  \ifnum \curactivecols>0
+    \csname @do@prepare@\diglotlayout\endcsname
+    \csname @do@layout@\diglotlayout\endcsname
     \ifnum\chunkpenalty>-20000
       \global\lastchunkpenalty=\chunkpenalty
     \else
@@ -1781,8 +1812,27 @@
     \fi
   \fi
 }
+\def\max@boxht#1{\x@\let\x@\t@st\csname \v@lpfx#1\v@lsfx\endcsname
+  \ifvoid\t@st \else
+    \dimen0=\ht\t@st
+    \ifdim\dimen1<\dimen0
+      \dimen1=\dimen0
+    \fi
+  \fi
+}
+\def\max@boxdp#1{\x@\let\x@\t@st\csname \v@lpfx#1\v@lsfx\endcsname
+  \ifvoid\t@st \else
+    \dimen0=\dp\t@st
+    \ifdim\dimen1<\dimen0
+      \dimen1=\dimen0
+    \fi
+  \fi
+}
 
-\def\max@boxszB#1{\max@boxsz{\if #1L\else #1\fi}}
+\def\void@boxes#1{\x@\global\x@\setbox\csname \v@lpfx#1\v@lsfx\endcsname=\box\voidb@x
+ }
+
+\def\max@boxszB#1{\max@boxsz{\if #1L\else #1\fi}} 
 
 \def\min@note@sep#1{%
   \x@\let\x@\t@st\csname \v@lpfx#1ht\endcsname
@@ -1921,7 +1971,7 @@
 \edef\diglot@list{LR}%
 \edef\digl@tc@ntentlist{}%
 
-\def\set@cseq#1#2{\x@\xdef\csname #1\endcsname{#1}}% Helper function
+\def\set@cseq#1#2{\x@\xdef\csname #1\endcsname{#2}}% Helper function
 \def\empty@cseq#1{\x@\xdef\csname #1\endcsname{}}% Helper function
 
 \def\newDiglotCol#1{%
@@ -1936,23 +1986,34 @@
     \let\diglot@list=\digl@tc@ntentlist
     \let\digl@tc@ntentlist=\old@cts
     \x@\csname #1isDiglotColumn\endcsname\empty
+    \x@\newb@x\csname #1box\endcsname
     \x@\newb@x\csname partial#1\endcsname
     \x@\newb@x\csname excess#1\endcsname
     \x@\newb@x\csname picb@x#1\endcsname
+    \x@\newt@ks\csname diglot#1ho@ks\endcsname
     \x@\newc@unt\csname partial#1penalty\endcsname
+    \x@\newc@unt\csname #1boxpenalty\endcsname
     \newm@rknum{#1}%
     \x@\newdim@n\csname column#1width\endcsname
     \x@\newdim@n\csname baselineDelta#1\endcsname
+    \x@\newdim@n\csname availht#1\endcsname
+    \x@\newdim@n\csname #1ht\endcsname
+    \x@\xdef\csname at@ndofthispar#1\endcsname{}%
+    \x@\xdef\csname m@rker#1\endcsname{}%
+    \newsp@cialpen{dgl@tPen#1trialEnd}%
     \empty@cseq{n@xtbot#1mark}% Last X mark in the next chunk 
     \empty@cseq{n@xtfirst#1mark}%First X mark in the next chunk 
     \empty@cseq{old#1mark}%last X mark 
     \empty@cseq{first#1mark}%First X mark on this pave
     \empty@cseq{bot#1mark}%bottom X mark on this page
     \empty@cseq{b@ok#1}% Name of book to put in PDF.
+    \empty@cseq{ch@plabel#1}% Chapter label
+    \set@cseq{@cur#1ht}{0pt}% 
+    \set@cseq{@cur#1dp}{0pt}% 
 %TODO:
 %FIXMEs needing to be solved before implementing this: 
 %pdfb@@km@rkR  - rewrite, generating combined book name.
-%something like newnummarks for this: dgl@tPenRtrialEnd{-10006}
+%something like newm@rknum for this: dgl@tPenRtrialEnd{-10006}
 %pdfch@pterm@rkR 
 %resetdropc@p
 % UI!
@@ -2149,6 +2210,8 @@
     \dp4=#3
     \box4
   \hss}}
+
+\def\diglotlayout{simplecols}
 
 \def\diglotgr@db@x#1{%
  \ifdiglot\vbox{\gr@db@@x{#1}\penalty 10000}\penalty10000\else\gr@db@@x{#1}\fi

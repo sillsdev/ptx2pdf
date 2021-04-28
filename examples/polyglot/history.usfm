@@ -16,16 +16,32 @@ a child called ptxplus.
 \v 3 \XeTeX\ begat paratext2, paratext2 begat ptxplus.
 
 \diglotcolumn A
+\h The advent of polyglot
 \c 1 
-\v 1 Eh up? What's all this then? 
-\v 2 
+\p
+\v 1 So, what's all this about \it di-\it*glots? We can do multiple columns now!
+\v 2 Of course it's all rooted in \TeX. But then setting unicode and modern fonts
+got an enormous help from Kew's \XeTeX.
+\v 3 The early paratext macros became ptx2pdf, and that got enhanced to ptxplus.  
+\p
+\diglotcolumn B
+\h Polyglot rules?
+\c 1
+\p 
+\v 1 Are four columns possible? Yes. But sane? Probably not
 \endcols
 \diglotcolumn L
 \s The birth of diglot 
 \p
 \endcols
-
+\diglotcolumn A
+\s First steps
+\p
+\diglotcolumn B
+\s Showing off 
+\p
 \endcols
+
 \diglotcolumn L
 \p
 \v 4 David took ptxplus and tweaked it in various places and so diglot came into being, and it lived in dark obscurity for many years, sometimes crafting text, sometimes creating strange things.
@@ -35,6 +51,10 @@ a child called ptxplus.
 \p
 \v 4 And David took ptxplus and did bend it in diverse places to make diglot.  Diglot dwelt in darkness and created beauty or disaster depending upon many factors.
 \p
+\diglotcolumn A
+\v 4 In 2006, David made a complicated mess out of ptxplus, and it worked to
+make diglots. That is, as long as you didn't get too adventurous, or hit one of
+the numerous bugs.
 \endcols
 \diglotcolumn L
 \p 
@@ -45,9 +65,16 @@ a child called ptxplus.
 \p 
 \v 5 And then did Mark and Martin come together and used Something Completely Different,  named python, and crafted the wondrous ptxprint. And David was asked if diglot would wed ptxprint. And David found the precious  treasure called time, and trimmed some strangenesses from diglot, and even from ptxprint  also. And behold, the two became one and marched forth into the world.
 
+\diglotcolumn A
+\v 5 Skipping on to 2019, Mark and Martin started working on ptxprint, and
+David joined them to merge in diglot, patching a few bugs and mistakenly
+thinking that diglot was now pretty robust.
 \endcols
 \diglotcolumn L
 \s2 The rebirth of diglot
+\p
+\diglotcolumn A
+\s2 Diglot2
 \p
 \endcols
 \diglotcolumn L
