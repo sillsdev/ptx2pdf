@@ -197,7 +197,8 @@ class StyleEditorView(StyleEditor):
         for k in sorted(self.allStyles(), key=lambda x:(len(x), x)):
             v = self.sheet.get(k, self.basesheet.get(k, {}))
             if 'zDerived' in v:
-                self.sheet[v['zDerived']][' endMilestone']=k
+                # self.sheet[v['zDerived']][' endMilestone']=k
+                self.setval(v['zDerived'], ' endMilestone', k)
                 continue
             if k not in self.basesheet:
                 v[' deletable'] = True
@@ -297,6 +298,8 @@ class StyleEditorView(StyleEditor):
         self.isLoading = True
         data = self.sheet.get(self.marker, {})
         old = self.basesheet.get(self.marker, {})
+        if self.marker == "f":
+            print(data)
         oldval = None
         if 'LineSpacing' not in old and 'BaseLine' not in old:
             old['LineSpacing'] = "1"
@@ -322,7 +325,7 @@ class StyleEditorView(StyleEditor):
                 val = data.get(basekey, oldval)
                 olddat = v[2]
                 controlk = v[3](False)
-                for m, f in ((v[3](x), x) for x in (v[2], not v[2])):
+                for m, f in ((v[3](x), x) for x in (not v[2], v[2])):
                     if m in old:
                         olddat = f
                         oldval = old[m]
@@ -407,6 +410,8 @@ class StyleEditorView(StyleEditor):
                 self.set("l_styColorValue", val)
             else:
                 newval = val
+            if newval is None:
+                print(f"{v[0]}: {newval} from {oldval}")
             setWidgetVal(v[0], w, newval if v[4] is None else v[4](newval))
         if v[1] is not None:
             ctxt = self.builder.get_object(v[1]).get_style_context()

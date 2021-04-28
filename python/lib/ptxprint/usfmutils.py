@@ -63,7 +63,8 @@ class Sheets(dict):
     default = usfm._load_cached_stylesheet('usfm_sb.sty')
 
     def __init__(self, init=[], base=None):
-        self.update(deepcopy(base) if base is not None else deepcopy(self.default))
+        if base != "":
+            self.update(deepcopy(base) if base is not None else deepcopy(self.default))
         if init is None or not len(init):
             return
         for s in init:
