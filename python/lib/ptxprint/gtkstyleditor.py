@@ -354,8 +354,7 @@ class StyleEditorView(StyleEditor):
                 old[" "+k] = olddat
             else:
                 oldval = old.get(k, v[2])
-                # val = data.get(k, oldval)
-                val = self.getval(self.marker, k)
+                val = self.getval(self.marker, k, v[2])
                 if v[0].startswith("c_"):
                     val = val != v[2]
                     oldval = oldval != v[2]
@@ -375,11 +374,9 @@ class StyleEditorView(StyleEditor):
                     self.set("l_styActualFontSize", "{}\n{:.1f}pt (+{:.1f} -{:.1f})".format(fref.name, fsize, asc, -des))
                 else:
                     self.set("l_styActualFontSize", "{:.1f}pt".format(fsize))
-            if k == "Description":
-                print(self.marker, k, data)
             self._setFieldVal(k, v, oldval, val)
 
-        stype = data.get('StyleType', old.get('StyleType', ''))
+        stype = self.getval(self.marker, 'StyleType')
         _showgrid = {'Para': (True, True, False), 'Char': (False, True, False), 'Note': (True, True, True)}
         visibles = _showgrid.get(stype[:4] if stype is not None else "",(True, True, True))
         for i, w in enumerate(('Para', 'Char', 'Note')):
@@ -419,8 +416,6 @@ class StyleEditorView(StyleEditor):
                 self.set("l_styColorValue", val)
             else:
                 newval = val
-            if newval is None:
-                print(f"{v[0]}: {newval} from {oldval}")
             setWidgetVal(v[0], w, newval if v[4] is None else v[4](newval))
         if v[1] is not None:
             ctxt = self.builder.get_object(v[1]).get_style_context()

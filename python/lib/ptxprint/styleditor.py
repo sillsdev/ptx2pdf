@@ -37,12 +37,12 @@ class StyleEditor:
         res.update(self.sheet.get(m, {}))
         return res
 
-    def getval(self, mrk, key):
+    def getval(self, mrk, key, default=None):
         if self.sheet is None:
             raise KeyError(f"stylesheet missing: {mrk} + {key}")
         res = self.sheet.get(mrk, {}).get(key, None)
         if res is None or (mrk in _defFields and not len(res)):
-            res = self.basesheet.get(mrk, {}).get(key, None)
+            res = self.basesheet.get(mrk, {}).get(key, default)
         return res
 
     def setval(self, mrk, key, val, ifunchanged=False):
@@ -76,14 +76,19 @@ class StyleEditor:
         self.basesheet = Sheets(sheetfiles[:-1])
         self._createFonts(self.basesheet)
         self.sheet = Sheets(sheetfiles[-1:], base = "")
-        print(self.sheet["f"], self.basesheet["f"])
         self._createFonts(self.sheet)
 
     def _createFonts(self, sheet):
-        for k, v in sheet.items():
+        for k in self.allStyles():
+            if 'FontName' in self.sheet.get(k, {}):
+                v = self.sheet[k]
+            elif 'FontName' in self.basesheet.get(k, {}):
+                v = self.basesheet[k]
+            else:
+                continue
             f = FontRef.fromTeXStyle(v)
             if f is not None:
-                v[" font"] = f
+                self.setval(k, " font", f)
 
     def _convertabs(self, key, valstr):
         def asfloat(v, d):

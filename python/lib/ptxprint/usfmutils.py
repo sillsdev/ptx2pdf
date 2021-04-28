@@ -69,13 +69,14 @@ class Sheets(dict):
             return
         for s in init:
             if os.path.exists(s):
-                self.append(s)
+                self.append(s, nodefaults=base == "")
         usfm.resolve_milestones(self)
 
-    def append(self, sf):
+    def append(self, sf, nodefaults=False):
         if os.path.exists(sf):
             with open(sf, encoding="utf-8", errors="ignore") as s:
-                self.update_sheet(style.parse(s))
+                sp = style.parse(s, fields = style.Marker({})) if nodefaults else style.parse(s)
+                self.update_sheet(sp)
 
     def update_sheet(self, d):
         style.update_sheet(self, d, field_replace=True)

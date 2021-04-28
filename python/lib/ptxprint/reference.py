@@ -10,18 +10,24 @@ class Reference:
         self.verse = verse
         self.subverse = subverse
 
-    def __str__(self, context=None, level=0, lastref=None):
+    def __str__(self, context=None, level=0, lastref=None, addsep="; ,"):
+        sep = ""
         if lastref is None or lastref.book != self.book:
             res = ["{}".format(self.book if context is None else context.getBook(self.book, level))]
+            if lastref is not None and lastref.book is not None:
+                sep = addsep[:-1] 
         else:
             res = []
         if self.chap > 0 and self.book not in oneChbooks and (lastref is None or lastref.chap != self.chap):
+            if not len(res):
+                sep = addsep[:-2]
             res.append("{}{}".format(" " if len(res) else "", self.chap))
             if self.verse > 0:
                 res.append(":{}{}".format(*([self.verse, self.subverse or ""] if self.verse < 200 else ["end", ""])))
         elif (lastref is None or lastref.verse != self.verse) and 0 < self.verse:
             res.append("{}{}{}".format(" " if len(res) else "", *[self.verse if self.verse < 200 else "end", self.subverse or ""]))
-        return "".join(res)
+            sep = addsep[-1:]
+        return sep + "".join(res)
 
     def __eq__(self, o):
         if not isinstance(o, Reference):
@@ -55,6 +61,9 @@ class Reference:
     def __ge__(self, o):
         return not self < o
 
+    def __hash__(self):
+        return hash((self.book, self.chap, self.verse, self.subverse))
+
     def copy(self):
         res = self.__class__(self.book, self.chap, self.verse, self.subverse)
         return res
@@ -67,7 +76,7 @@ class RefRange:
 
     def __str__(self, context=None, level=0, lastref=None):
         res = "{}-{}".format(self.first.__str__(context, level, lastref),
-                             self.last.__str__(context, level, self.first))
+                             self.last.__str__(context, level, self.first, addsep=""))
         return res
 
     def __eq__(self, other):
@@ -200,7 +209,7 @@ class RefList(list):
         for r in self:
             res.append(r.__str__(context, level, lastref))
             lastref = r.last if isinstance(r, RefRange) else r
-        return ", ".join(res)
+        return "".join(res)
 
     def __eq__(self, other):
         return len(self) == len(other) and all(z[0] == z[1] for z in zip(self, other))
@@ -209,14 +218,30 @@ class RefList(list):
         self.append(curr if start is None else RefRange(start, curr))
         return Reference(curr.book, 0, 0)
 
+    def simplify(self):
+        res = []
+        lastref = Reference(None, 0, 0)
+        for r in self:
+            t, u = (r.first, r.last) if isinstance(r, RefRange) else (r, r)
+            if t.book == lastref.book and t.chap == lastref.chap:
+                if t.verse.subverse is None and t.verse == lastref.verse + 1:
+                    if isinstance(res[-1], RefRange):
+                        res[-1].last = u
+                    else:
+                        res.append(RefRange(lastref, u))
+                    lastref = u
+                    continue
+            res.append(r)
+            lastref = u
+        self[:] = res
+
 
 class TestException(Exception):
     pass
 
 
 def tests():
-    def r(b, c, v, sv=None):
-        return Reference(b, c, v, sv)
+    r = Reference
     def t(s, *r):
         res = RefList.fromStr(s)
         if len(res) != len(r):
