@@ -2,8 +2,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ptxprint\n"
 "Report-Msgid-Bugs-To: \n"
+<<<<<<< HEAD
 "POT-Creation-Date: 2021-04-29 11:20+0700\n"
 "PO-Revision-Date: 2021-04-29 04:21\n"
+=======
+"POT-Creation-Date: 2021-04-22 12:13+0700\n"
+"PO-Revision-Date: 2021-04-28 22:14\n"
+>>>>>>> 60bd1ebb (Temporarily add ID localized strings for feedback before release)
 "Last-Translator: \n"
 "Language-Team: Indonesian\n"
 "Language: id_ID\n"
@@ -5775,7 +5780,11 @@ msgstr "Untuk menyeimbangkan kolom teks di halaman, Anda bisa menentukan\n"
 "mempersiapkan terbitan, waktu semua penempatan gambar dan pengaturan lain \n"
 "telah ditetapkan. Kalau tidak, mungkin Anda harus melakukan semua itu kembali."
 
+<<<<<<< HEAD
 #: lib/ptxprint/ptxprint.glade:17131
+=======
+#: lib/ptxprint/ptxprint.glade:17130
+>>>>>>> 60bd1ebb (Temporarily add ID localized strings for feedback before release)
 msgid "Adj List"
 msgstr "Daftar Penyesuaian"
 
