@@ -384,3 +384,50 @@ def brent(left, right, mid, fn, tol, log=None, maxiter=20):
                 fv = fu
     return xm
 
+# MLCS algorithm by Gareth Rees from https://codereview.stackexchange.com/questions/90194/multiple-longest-common-subsequence-another-algorithm
+
+from bisect import bisect
+
+def mlcs(strings):
+    """Return a long common subsequence of the strings.
+    Uses a greedy algorithm, so the result is not necessarily the
+    longest common subsequence.
+
+    """
+    if not strings:
+        raise ValueError("mlcs() argument is an empty sequence")
+    strings = list(set(strings)) # deduplicate
+    alphabet = set.intersection(*(set(s) for s in strings))
+
+    # indexes[letter][i] is list of indexes of letter in strings[i].
+    indexes = {letter:[[] for _ in strings] for letter in alphabet}
+    for i, s in enumerate(strings):
+        for j, letter in enumerate(s):
+            if letter in alphabet:
+                indexes[letter][i].append(j)
+
+    # pos[i] is current position of search in strings[i].
+    pos = [len(s) for s in strings]
+
+    # Generate candidate positions for next step in search.
+    def candidates():
+        for letter, letter_indexes in indexes.items():
+            distance, candidate = 0, []
+            for ind, p in zip(letter_indexes, pos):
+                i = bisect.bisect_right(ind, p - 1) - 1
+                q = ind[i]
+                if i < 0 or q > p - 1:
+                    break
+                candidate.append(q)
+                distance += (p - q)**2
+            else:
+                yield distance, letter, candidate
+
+    result = []
+    while True:
+        try:
+            # Choose the closest candidate position, if any.
+            _, letter, pos = min(candidates())
+        except ValueError:
+            return ''.join(reversed(result))
+        result.append(letter)
