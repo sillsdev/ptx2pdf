@@ -521,7 +521,7 @@ class TexModel:
     def prePrintChecks(self):
         reasons = []
         for a in ('regular', 'bold', 'italic', 'bolditalic'):
-            print("Checking {}: {}".format(a, self.dict['document/font{}'.format(a)]))
+            # print("Checking {}: {}".format(a, self.dict['document/font{}'.format(a)]))
             if not self.dict['document/font{}'.format(a)]:
                 reasons.append(_("Missing font ({})").format(a))
             break

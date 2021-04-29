@@ -2112,7 +2112,7 @@ in the Windows system.</property>
                             <property name="visible">True</property>
                             <property name="sensitive">False</property>
                             <property name="can_focus">False</property>
-                            <property name="tooltip_text" translatable="yes">If the required font doesn't have a BOLD typeface, you can use this setting to create the BOLD effect. (For example, setting Embolden to 1.6 would thicken the Regular typeface making it appear as bold).</property>
+                            <property name="tooltip_text" translatable="yes">If the required font doesn't have a BOLD typeface, you can use this setting to create the BOLD effect. (For example, setting Embolden to 1.6 would thicken the Regular typeface making it appear as bold.)</property>
                             <property name="halign">center</property>
                             <property name="label" translatable="yes">Embolden</property>
                             <property name="justify">center</property>
@@ -2131,7 +2131,7 @@ in the Windows system.</property>
                             <property name="visible">True</property>
                             <property name="sensitive">False</property>
                             <property name="can_focus">True</property>
-                            <property name="tooltip_text" translatable="yes">If the required font doesn't have a BOLD typeface, you can use this setting to create the BOLD effect. (For example, setting Embolden to 1.6 would thicken the Regular typeface making it appear as bold).</property>
+                            <property name="tooltip_text" translatable="yes">If the required font doesn't have a BOLD typeface, you can use this setting to create the BOLD effect. (For example, setting Embolden to 1.6 would thicken the Regular typeface making it appear as bold.)</property>
                             <property name="width_chars">5</property>
                             <property name="text">1.6</property>
                             <property name="caps_lock_warning">False</property>
@@ -2152,7 +2152,7 @@ in the Windows system.</property>
                             <property name="visible">True</property>
                             <property name="sensitive">False</property>
                             <property name="can_focus">True</property>
-                            <property name="tooltip_text" translatable="yes">If the required font does not have an ITALIC typeface, you can use this setting to create the ITALIC effect. (For example, setting Slant to 0.15 would slant the Regular typeface by 15% making it appear as italic).</property>
+                            <property name="tooltip_text" translatable="yes">If the required font does not have an ITALIC typeface, you can use this setting to create the ITALIC effect. (For example, setting Slant to 0.15 would slant the Regular typeface by 15% making it appear as italic.)</property>
                             <property name="width_chars">5</property>
                             <property name="text">0.15</property>
                             <property name="caps_lock_warning">False</property>
@@ -2173,7 +2173,7 @@ in the Windows system.</property>
                             <property name="visible">True</property>
                             <property name="sensitive">False</property>
                             <property name="can_focus">False</property>
-                            <property name="tooltip_text" translatable="yes">If the required font does not have an ITALIC typeface, you can use this setting to create the ITALIC effect. (For example, setting Slant to 0.15 would slant the Regular typeface by 15% making it appear as italic).</property>
+                            <property name="tooltip_text" translatable="yes">If the required font does not have an ITALIC typeface, you can use this setting to create the ITALIC effect. (For example, setting Slant to 0.15 would slant the Regular typeface by 15% making it appear as italic.)</property>
                             <property name="halign">center</property>
                             <property name="label" translatable="yes">Slant</property>
                             <property name="justify">right</property>
@@ -8079,7 +8079,7 @@ numbers then check this option.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">Select this option to supress the 1 at the begining
+                                    <property name="tooltip_text" translatable="yes">Select this option to suppress the 1 at the beginning
 of books that only have a single chapter (OBA, PHM,
 2JN, 3JN, JUD, etc.)</property>
                                     <property name="halign">start</property>
@@ -8793,7 +8793,7 @@ Note: if you make this value less than the descenders
 of the last lines of text, then the footnotes will push
 down into the footer area. If you see this happening,
 increase this value to trigger an earlier page break to
-solve the problem</property>
+solve the problem.</property>
                                         <property name="halign">start</property>
                                         <property name="text">10.0</property>
                                         <property name="input_purpose">number</property>
@@ -14231,8 +14231,8 @@ font to decorate the verse number.</property>
                                             <property name="receives_default">False</property>
                                             <property name="tooltip_text" translatable="yes">Use a PDF graphic to decorate the verse 
 number. You may need to also adjust the
-font properties to ensure verses fit within
-the graphic.</property>
+font properties to ensure the verse numbers
+fit within the graphic.</property>
                                             <property name="halign">start</property>
                                             <property name="draw_indicator">True</property>
                                             <property name="group">r_decorator_ayah</property>
