@@ -236,6 +236,7 @@ ModelMap = {
     "document/diglotswapside":  ("c_diglotSwapSide", lambda w,v: "true" if v else "false"),
     "document/diglotsepnotes":  ("c_diglotSeparateNotes", lambda w,v: "true" if v else "false"),
     "document/diglotsecconfig": ("ecb_diglotSecConfig", None),
+    "document/diglotmergemode": ("c_diglotMerge", lambda w,v: "simple" if v else "doc"),
 
     "header/ifomitrhchapnum":   ("c_omitrhchapnum", lambda w,v :"true" if v else "false"),
     "header/ifverses":          ("c_hdrverses", lambda w,v :"true" if v else "false"),

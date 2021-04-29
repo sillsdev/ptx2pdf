@@ -8,7 +8,7 @@ from ptxprint.texmodel import TexModel
 from ptxprint.ptsettings import ParatextSettings
 from ptxprint.view import ViewModel, VersionStr, refKey
 from ptxprint.font import getfontcache
-from ptxprint.usfmerge import usfmerge
+from ptxprint.usfmerge import usfmerge2
 from ptxprint.utils import _, universalopen, print_traceback
 
 # "*** WARNING: Sidebar or colophon might not print on page": \
@@ -425,7 +425,7 @@ class RunJob:
             sheetsa = info.printer.getStyleSheets()
             sheetsb = diginfo.printer.getStyleSheets()
             try:
-                usfmerge(left, right, outFile, stylesheetsa=sheetsa, stylesheetsb=sheetsb)
+                usfmerge2(left, right, outFile, stylesheetsa=sheetsa, stylesheetsb=sheetsb, mode=info["document/diglotmergemode"])
             except SyntaxError as e:
                 syntaxErrors.append("{} {} line: {}".format(self.prjid, b, str(e).split('line', maxsplit=1)[1]))
             except Exception as e:
