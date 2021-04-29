@@ -36,8 +36,7 @@ a = Analysis(['python/scripts/ptxprint', 'python/scripts/usfmerge'],
                              'A5 page border.pdf', 'A5 page border - no footer.pdf', 'Verse number star.pdf', 'decoration.pdf')]
                       + [('python/lib/ptxprint/PDFassets/watermarks/'+z, 'ptxprint/PDFassets/watermarks') for z in 
                             ('A4-Draft.pdf', 'A5-Draft.pdf', 'A5-EBAUCHE.pdf',
-                             '5.8x8.7-12mmBorderDraft.pdf', '5.8x8.7-Draft.pdf', 'BSI-12mmBorder.pdf',
-                             'A4-CopyrightWatermark.pdf', 'A5-CopyrightWatermark.pdf')]
+                             '5.8x8.7-Draft.pdf', 'A4-CopyrightWatermark.pdf', 'A5-CopyrightWatermark.pdf')]
                       + [('python/lib/ptxprint/'+x, 'ptxprint') for x in 
                             ('Google-Noto-Emoji-Objects-62859-open-book.ico', '62859-open-book-icon(128).png', 
 							 'picLocationPreviews.png', 'ps_cmyk.icc', 
