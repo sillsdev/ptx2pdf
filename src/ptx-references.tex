@@ -241,8 +241,10 @@
 
 
 \def\s@treffont{\let\tmp@dstat\c@rrdstat\ifuseRightMarks\setc@rdstat{R}\else\setc@rdstat{L}\fi\s@tfont{h}\setc@rdstat{\tmp@dstat}}
-\def\headfootL#1{\bgroup\ifRTL\beginR\fi\let\tmp@dstat\c@rrdstat\setc@rdstat{L}\s@tfont{h}#1\setc@rdstat{\tmp@dstat}\ifRTL\endR\fi\egroup}
-\def\headfootR#1{\bgroup\ifRTL\beginR\fi\let\tmp@dstat\c@rrdstat\setc@rdstat{R}\s@tfont{h}#1\setc@rdstat{\tmp@dstat}\ifRTL\endR\fi\egroup}
+\def\headfootL#1{\headfoot L{#1}}
+\def\headfootR#1{\headfoot R{#1}}
+\def\headfoot#1#2{\bgroup\let\tmp@dstat\c@rrdstat\setc@rdstat{#1}\x@\the\csname diglot#1ho@ks\endcsname\ifRTL\beginR\fi\s@tfont{h}#2\ifRTL\endR\fi\setc@rdstat{\tmp@dstat}\egroup}
+
 %
 % user-level macros for use within the running header
 %
@@ -250,36 +252,27 @@
 \def\lastref{\ifRTL\beginR\fi\bgroup\ifdiglot\s@treffont\fi\l@stref{\p@gebotmark}\egroup\ifRTL\endR\fi}
 \def\rangeref{\ifRTL\beginR\fi\bgroup\ifdiglot\s@treffont\fi\r@ngerefs{\p@gefirstmark}{\p@gebotmark}\egroup\ifRTL\endR\fi}
 
-\def\firstrefL{\headfootL{\f@rstref{\firstLmark}}}
-\def\lastrefL{\headfootL{\l@stref{\botLmark}}}
-\def\rangerefL{\headfootL{\r@ngerefs{\firstLmark}{\botLmark}}}
-
-\def\firstrefR{\headfootR{\f@rstref{\firstRmark}}}
-\def\lastrefR{\headfootR{\l@stref{\botRmark}}}
-\def\rangerefR{\headfootR{\r@ngerefs{\firstRmark}{\botRmark}}}
+\def\header@defs#1{%polyglot references
+  \def@cseq{firstref#1}{\headfoot #1{\f@rstref{\csname first#1mark\endcsname}}}
+  \def@cseq{lastref#1}{\headfoot #1{\l@stref{\csname bot#1mark\endcsname}}}
+  \def@cseq{rangeref#1}{\headfoot #1{\r@ngerefs{\csname first#1mark\endcsname}{\csname bot#1mark\endcsname}}}
+  \def@cseq{pagenumber#1}{\headfoot #1{\folio}}
+  \def@cseq{usdate#1}{\headfoot #1{\usdate}}
+  \def@cseq{ukdate#1}{\headfoot #1{\ukdate}}
+  \def@cseq{isodate#1}{\headfoot #1{\isodate}}
+  \def@cseq{hrsmins#1}{\headfoot #1{\hrsmins}}
+  \def@cseq{timestamp#1}{\headfoot #1{\timestamp}}
+}
 
 \let\pagenumber=\folio
-\def\pagenumberL{\headfootL{\folio}}
-\def\pagenumberR{\headfootR{\folio}}
 
 \def\ROMANnumeral#1{\expandafter\uppercase\expandafter{\romannumeral#1}}
 \def\usdate{\number\month/\number\day/\number\year}
-\def\usdateL{\headfootL{\usdate}}
-\def\usdateR{\headfootR{\usdate}}
 \def\ukdate{\number\day/\number\month/\number\year}
-\def\ukdateL{\headfootL{\ukdate}}
-\def\ukdateR{\headfootR{\ukdate}}
 \def\isodate{\number\year-\ifnum\month<10 0\fi\number\month-\ifnum\day<10 0\fi\number\day}
-\def\isodateL{\headfootL{\isodate}}
-\def\isodateR{\headfootR{\isodate}}
 
-\def\hrsminsL{\headfootL{\hrsmins}}
-\def\hrsminsR{\headfootR{\hrsmins}}
-\def\timestampL{\headfootL{\timestamp}}
-\def\timestampR{\headfootR{\timestamp}}
-
-
-
+\header@defs{L}
+\header@defs{R}
 %
 % default settings of the running header components
 %

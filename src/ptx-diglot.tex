@@ -779,14 +779,14 @@
   \the\diglotRho@ks
 }
 
-\def\endcols{%EXPERIMENTAL
+\def\polyglotendcols{%
   \global\allNeedEmptyingtrue% Text before the swap needs emptying
   \pr@sideswitch{endcols}{L}%
   \diglot@run@trials
   \global\allNeedEmptyingfalse
 }
 
-\def\diglotcolumn#1{%EXPERIMENTAL
+\def\polyglotcolumn#1{%
   \uppercase{\edef\reqcol{#1}}%
   \pr@sideswitch{diglotcolumn #1}{\reqcol}%
   \ifx\reqcol\empty\errmessage{diglotcolumn may not be called with an empty argument}\fi
@@ -802,9 +802,6 @@
 
 \let\LisDiglotColumn\empty
 \let\RisDiglotColumn\empty
-
-\def\pagenumberL{\bgroup\setc@rdstat{L}\s@tfont{h}\pagenumber\egroup}%
-\def\pagenumberR{\bgroup\setc@rdstat{R}\s@tfont{h}\pagenumber\egroup}
 
 \newdimen\columnLwidth%
 \newdimen\columnRwidth%
@@ -1981,7 +1978,8 @@
 \edef\rev@diglot@list{RL}%
 \edef\digl@tc@ntentlist{}%
 
-\def\set@cseq#1#2{\x@\xdef\csname #1\endcsname{#2}}% Helper function
+\def\xdef@cseq#1#2{\x@\xdef\csname #1\endcsname{#2}}% Helper function
+\def\def@cseq#1#2{\x@\def\csname #1\endcsname{#2}}% Helper function
 \def\empty@cseq#1{\x@\xdef\csname #1\endcsname{}}% Helper function
 
 \def\newDiglotCol#1{%
@@ -2022,8 +2020,9 @@
     \empty@cseq{bot#1mark}%bottom X mark on this page
     \empty@cseq{b@ok#1}% Name of book to put in PDF.
     \empty@cseq{ch@plabel#1}% Chapter label
-    \set@cseq{@cur#1ht}{0pt}% 
-    \set@cseq{@cur#1dp}{0pt}% 
+    \xdef@cseq{@cur#1ht}{0pt}% 
+    \xdef@cseq{@cur#1dp}{0pt}% 
+    \header@defs{#1}% All the possible header contents
 %TODO:
 %FIXMEs needing to be solved before implementing this: 
 %pdfb@@km@rkR  - rewrite, generating combined book name.
