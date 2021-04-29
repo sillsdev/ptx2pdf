@@ -471,7 +471,7 @@
    \fi % hanging verse number?
    %\trace{hv}{lastkern \the\dimen0}%
    \ll@p\bgroup\@v@}%
-  % \ll@p\bgroup\m@kedigitsother\@v@}%
+  %{.. was: \ll@p\bgroup\m@kedigitsother\@v@}%
   % remember chapter macro for later
 %-csty_verse
 %+csty_chapdef
@@ -519,7 +519,7 @@
     \calcdr@psize
   \fi
   \def\m@rker{c}\defp@ram{fontsize}{\dr@psize}%
-  \ifdiglot \resetdropc@p\fi%Can't do this here since things get lowercased
+  \ifdiglot \repeatsetdropc@p\fi%Can't do this here since things get lowercased
  }
 %-csty_dropchap
 }
@@ -584,17 +584,23 @@
     \edef\dr@psize{\strip@pt\dropnumbersize}%
 }
 
-\def\resetdropc@p{%The above code is in \lowercase which  breaks L and R
-  \message{Setting L drop-cap size to \dr@psize}%
-  \setp@ram{fontsize}{cL}{\dr@psize}%
+\def\repeatsetdropc@p{%The above code is in \lowercase which  breaks L and R
+  \message{Setting \c@rrdstat drop-cap size to \dr@psize}%
+  \setp@ram{fontsize}{c\c@rrdstat}{\dr@psize}%
   \g@tfontname{c}\x@\let\csname font<\f@ntstyle>\endcsname=\relax
-  \setc@rdstat{R}%
-  \setLRspecific
-  \dropnumbersize=0pt
-  \calcdr@psize
-  \g@tfontname{c}\x@\let\csname font<\f@ntstyle>\endcsname=\relax
-  \message{ Setting R drop-cap size to \dr@psize}%
-  \setp@ram{fontsize}{cR}{\dr@psize}%
+  \let\d@neit\c@rrdstat
+  \def\col@do#1{
+    \setc@rdstat{#1}%
+    \ifx\c@rrdstat\d@neit\else% Avoid double-processing
+      \setLRspecific
+      \dropnumbersize=0pt
+      \calcdr@psize
+      \g@tfontname{c}\x@\let\csname font<\f@ntstyle>\endcsname=\relax
+      \message{ Setting \ drop-cap size to \dr@psize}%
+      \setp@ram{fontsize}{c#1}{\dr@psize}%
+    \fi
+  }%
+  \x@\each@col\diglot@list
   %\x@\let\csname font<cL>\endcsname=\relax %
   %\x@\let\csname font<cR>\endcsname=\relax %
 }
