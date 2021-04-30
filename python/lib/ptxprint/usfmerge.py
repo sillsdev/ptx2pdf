@@ -272,18 +272,12 @@ def alignSimple(pchunks, schunks, pkeys, skeys):
             print(op, debstr(pkeys[ab:ae]), debstr(skeys[bb:be]))
         if action == "equal":
             pairs.extend([[pchunks[ab+i], schunks[bb+i]] for i in range(ae-ab)])
-        elif action == "delete":
-            appendpair(pairs, 0, pchunks[ab:ae])
-        elif action == "insert":
-            appendpair(pairs, 1, schunks[bb:be])
-        elif action == "replace":
-            pc = pchunks[ab]
-            for c in pchunks[ab+1:ae]:
-                pc.extend(c)
-            sc = schunks[bb]
-            for c in schunks[bb+1:be]:
-                sc.extend(c)
-            pairs.append([pc, sc])
+        if action in ("delete", "replace"):
+            for c in pchunks[ab:ae]:
+                pairs[-1][0].extend(c)
+        if action in ("insert", "replace"):
+            for c in schunks[bb:be]:
+                pairs[-1][1].extend(c)
     return pairs
 
 def appendsheet(fname, sheet):

@@ -10,7 +10,7 @@ from ptxprint import sfm
 from ptxprint.sfm import usfm, style
 from ptxprint.usfmutils import Usfm, Sheets, isScriptureText, Module
 from ptxprint.utils import _, universalopen, localhdrmappings, pluralstr, multstr, coltoonemax, \
-                            chaps, books, bookcodes, oneChbooks
+                            chaps, books, bookcodes, oneChbooks, asfloat
 from ptxprint.dimension import Dimension
 import ptxprint.scriptsnippets as scriptsnippets
 from ptxprint.interlinear import Interlinear
@@ -111,7 +111,7 @@ ModelMap = {
     "grid/minorthickness":      ("s_gridMinorThick", None),
     "grid/units":               ("fcb_gridUnits", None),
     "grid/divisions":           ("s_gridMinorDivisions", lambda w,v: int(float(v)) if v else "10"),
-    "grid/xyadvance":           ("s_gridMinorDivisions", lambda w,v: (1 / float(v)) if v else "0.25"),
+    "grid/xyadvance":           ("s_gridMinorDivisions", lambda w,v: (1 / max(asfloat(v, 4), 1)) if v else "0.25"),
     "grid/xyoffset":            ("fcb_gridOffset", None),
     
     "fancy/enableborders":      ("c_borders", lambda w,v: "" if v else "%"),
