@@ -1,4 +1,4 @@
-PTXprint 1.6.9 Release Notes 
+PTXprint 1.7 Release Notes 
 30 April 2021
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
@@ -12,6 +12,7 @@ WARNING: For those using RTL scripts:
 NOTE: For those previously using various Border and Grid PDFs as watermarks:
      There is now a better system for Guides and Grids (see Layout page), so the
 	 various Border and Grid PDFs have been removed from the Watermark PDFassets.
+	 Also note that the 'Crop Marks' option still exists, but on the Advanced tab.
 
 Bug fixes and Improvements in 1.7
 
