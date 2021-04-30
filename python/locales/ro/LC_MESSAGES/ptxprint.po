@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ptxprint\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-30 15:39+0700\n"
-"PO-Revision-Date: 2021-04-30 08:39\n"
+"POT-Creation-Date: 2021-04-30 17:04+0700\n"
+"PO-Revision-Date: 2021-04-30 10:04\n"
 "Last-Translator: \n"
 "Language-Team: Romanian\n"
 "Language: ro_RO\n"
@@ -162,22 +162,14 @@ msgid "Unlock"
 msgstr "Deblocare"
 
 #: lib/ptxprint/gtkview.py:1213
-msgid " PicLists have been renamed and moved!"
-msgstr " PicListele au fost redenumite şi mutate!"
-
-#: lib/ptxprint/gtkview.py:1214
-msgid " Look on the <Pictures> tab for Settings, Details & Checklist."
-msgstr ""
-
-#: lib/ptxprint/gtkview.py:1215
 msgid " A tool to help create Front Matter (the FRT book) may show up here in future."
 msgstr " Un instrument pentru a ajuta la crearea Front Matter (Cartea FRT) poate apărea aici în viitor."
 
-#: lib/ptxprint/gtkview.py:1248
+#: lib/ptxprint/gtkview.py:1246
 msgid " Use the 'Advanced' tab to select which settings you want to view or edit."
 msgstr " Utilizați fila \"Avansat\" pentru a selecta setările pe care doriți să le vedeți sau să le editați."
 
-#: lib/ptxprint/gtkview.py:1263
+#: lib/ptxprint/gtkview.py:1261
 msgid "\n\n"
 "-------------------------------------                                            \n"
 "[File has been truncated for display]                                            \n"
@@ -187,7 +179,7 @@ msgstr "\n\n"
 "[Fișierul a fost trunchiat pentru afișare]                                            \n"
 "Faceți clic pe butonul Vizualizare/Edit... pentru a vedea mai multe."
 
-#: lib/ptxprint/gtkview.py:1270
+#: lib/ptxprint/gtkview.py:1268
 msgid "\n"
 "This file doesn't exist yet.\n\n"
 "Try clicking...                                                \n"
@@ -199,26 +191,26 @@ msgstr "\n"
 "   * butonul 'Generează'                                                \n"
 "   * butonul 'Imprimare' pentru a crea PDF mai întâi"
 
-#: lib/ptxprint/gtkview.py:1499
+#: lib/ptxprint/gtkview.py:1497
 msgid "Remove Intermediate Files and Logs?"
 msgstr "Eliminați fișierele și jurnalele intermediare?"
 
-#: lib/ptxprint/gtkview.py:1500
+#: lib/ptxprint/gtkview.py:1498
 msgid "Are you sure you want to delete\n"
 "ALL the temporary PTXprint files?"
 msgstr "Sunteţi sigur că doriţi să ştergeţi\n"
 "TOATE fişierele temporare PTXprint?"
 
-#: lib/ptxprint/gtkview.py:1527
+#: lib/ptxprint/gtkview.py:1525
 msgid "Warning: Could not delete some file(s) or folders(s):"
 msgstr "Avertisment: Nu s-au putut șterge unele fișiere sau dosare:"
 
-#: lib/ptxprint/gtkview.py:1899
+#: lib/ptxprint/gtkview.py:1897
 msgid "'Enable Colored Text' has now been turned on.\n"
 "See Fonts+Script tab for details."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:2073
+#: lib/ptxprint/gtkview.py:2071
 msgid "\n"
 "This file doesn't exist yet!\n\n"
 "Edit here and Click 'Save' to create it."
@@ -226,85 +218,85 @@ msgstr "\n"
 "Acest fişier nu există încă!\n\n"
 "Editaţi aici şi faceţi clic pe 'Salvează' pentru a-l crea."
 
-#: lib/ptxprint/gtkview.py:2115
+#: lib/ptxprint/gtkview.py:2113
 msgid "% This is the .tex file specific for the {} project used by PTXprint.\n"
 "% Saved Configuration name: {}\n"
 msgstr "% Acesta este fișierul .tex specific pentru proiectul {} folosit de PTXprint.\n"
 "% Nume de configurare salvat: {}\n"
 
-#: lib/ptxprint/gtkview.py:2122
+#: lib/ptxprint/gtkview.py:2120
 msgid "% This is the preprocessing .tex file specific for the {} project used by PTXprint.\n"
 "% Saved Configuration name: {}\n"
 msgstr "% Acesta este fișierul .tex preprocesat specific proiectului {} folosit de PTXprint.\n"
 "% Nume de configurare salvat: {}\n"
 
-#: lib/ptxprint/gtkview.py:2167
+#: lib/ptxprint/gtkview.py:2165
 msgid "Select the location and name for the Archive file"
 msgstr "Selectează locația și numele fișierului arhivă"
 
-#: lib/ptxprint/gtkview.py:2218
+#: lib/ptxprint/gtkview.py:2216
 msgid "Select the folder containing image files"
 msgstr "Selectaţi folderul care conţine fişiere imagine"
 
-#: lib/ptxprint/gtkview.py:2256
+#: lib/ptxprint/gtkview.py:2254
 msgid "Select one or more PDF(s) for FRONT matter"
 msgstr "Selectaţi unul sau mai multe PDF(uri) pentru materia FRONT"
 
-#: lib/ptxprint/gtkview.py:2260
+#: lib/ptxprint/gtkview.py:2258
 msgid "Select one or more PDF(s) for BACK matter"
 msgstr "Selectaţi unul sau mai multe PDF(uri) pentru materia BACK"
 
-#: lib/ptxprint/gtkview.py:2264
+#: lib/ptxprint/gtkview.py:2262
 msgid "Select Watermark PDF file"
 msgstr "Selectați fișierul PDF filigran"
 
-#: lib/ptxprint/gtkview.py:2269
+#: lib/ptxprint/gtkview.py:2267
 msgid "Select Page Border PDF file"
 msgstr "Selectați fișierul PDF pagină"
 
-#: lib/ptxprint/gtkview.py:2274
+#: lib/ptxprint/gtkview.py:2272
 msgid "Select Section Header PDF file"
 msgstr "Selectaţi fişierul PDF secţiune antet"
 
-#: lib/ptxprint/gtkview.py:2279
+#: lib/ptxprint/gtkview.py:2277
 msgid "Select End of Book PDF file"
 msgstr "Selectați Sfârșitul fișierului PDF al Cărții"
 
-#: lib/ptxprint/gtkview.py:2284
+#: lib/ptxprint/gtkview.py:2282
 msgid "Select Verse Decorator PDF file"
 msgstr "Selectați fișierul PDF al Decoratorului Verse"
 
-#: lib/ptxprint/gtkview.py:2389
+#: lib/ptxprint/gtkview.py:2387
 msgid "Switch to Other\n"
 "Diglot Project"
 msgstr "Comutați la proiectul Alt\n"
 "Diglot"
 
-#: lib/ptxprint/gtkview.py:2399
+#: lib/ptxprint/gtkview.py:2397
 msgid "Save & Return to\n"
 "Diglot Project"
 msgstr "Salvați și reveniți la proiectul\n"
 "Diglot"
 
-#: lib/ptxprint/gtkview.py:2446
+#: lib/ptxprint/gtkview.py:2444
 msgid "FYI: The Regular font already supports all the characters in the text."
 msgstr "FYI: Fontul obișnuit acceptă deja toate caracterele din text."
 
-#: lib/ptxprint/gtkview.py:2447
+#: lib/ptxprint/gtkview.py:2445
 msgid "A fallback font is not required so\n"
 "the 'Use Fallback Font' option will be disabled."
 msgstr "Un font de rezervă nu este necesar astfel încât\n"
 "opțiunea „Folosește Fallback Font” va fi dezactivată."
 
-#: lib/ptxprint/gtkview.py:2696
+#: lib/ptxprint/gtkview.py:2694
 msgid "Choose Image"
 msgstr "Alege imagine"
 
-#: lib/ptxprint/gtkview.py:2831
+#: lib/ptxprint/gtkview.py:2829
 msgid "Unsupported Locale"
 msgstr "Localizare nesuportată"
 
-#: lib/ptxprint/gtkview.py:2832
+#: lib/ptxprint/gtkview.py:2830
 msgid "This locale is not supported on your system, you may need to install it"
 msgstr "Această localizare nu este suportată pe sistemul dvs., poate fi necesar să o instalați"
 

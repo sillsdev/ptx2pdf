@@ -410,7 +410,8 @@ class parser(sfm.parser):
                 e.parent.annotations['content-promoted'] = True
                 if len(e.parent) > 0:
                     prev = e.parent[-1]
-                    if isinstance(prev, sfm.Element) and prev.meta['StyleType'] == 'Character' and 'implicit-closed' in prev.annotations:
+                    if isinstance(prev, sfm.Element) and prev.meta['StyleType'] == 'Character' \
+                                and 'implicit-closed' in prev.annotations:
                         del prev.annotations['implicit-closed']
                 return e
             else:

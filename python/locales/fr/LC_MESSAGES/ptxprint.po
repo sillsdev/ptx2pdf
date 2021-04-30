@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ptxprint\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-30 15:39+0700\n"
-"PO-Revision-Date: 2021-04-30 08:39\n"
+"POT-Creation-Date: 2021-04-30 17:04+0700\n"
+"PO-Revision-Date: 2021-04-30 10:04\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -166,22 +166,14 @@ msgid "Unlock"
 msgstr "Déverrouiller"
 
 #: lib/ptxprint/gtkview.py:1213
-msgid " PicLists have been renamed and moved!"
-msgstr " Les listes de photos ont été renommées et déplacées !"
-
-#: lib/ptxprint/gtkview.py:1214
-msgid " Look on the <Pictures> tab for Settings, Details & Checklist."
-msgstr ""
-
-#: lib/ptxprint/gtkview.py:1215
 msgid " A tool to help create Front Matter (the FRT book) may show up here in future."
 msgstr " Un outil pour aider à créer les pages de gardes (le livre FRT) peut apparaître ici à l'avenir."
 
-#: lib/ptxprint/gtkview.py:1248
+#: lib/ptxprint/gtkview.py:1246
 msgid " Use the 'Advanced' tab to select which settings you want to view or edit."
 msgstr " Utilisez l'onglet 'Avancé' pour sélectionner les paramètres que vous voulez voir ou modifier."
 
-#: lib/ptxprint/gtkview.py:1263
+#: lib/ptxprint/gtkview.py:1261
 msgid "\n\n"
 "-------------------------------------                                            \n"
 "[File has been truncated for display]                                            \n"
@@ -191,7 +183,7 @@ msgstr "\n\n"
 "[Le fichier a été tronqué pour l'affichage]                                            \n"
 "Cliquez sur le bouton Affichage/Éditer... pour en voir plus."
 
-#: lib/ptxprint/gtkview.py:1270
+#: lib/ptxprint/gtkview.py:1268
 msgid "\n"
 "This file doesn't exist yet.\n\n"
 "Try clicking...                                                \n"
@@ -203,27 +195,27 @@ msgstr "\n"
 "   * le bouton 'Générer'                                                \n"
 "   * le bouton 'Imprimer' pour d'abord créer le fichier PDF"
 
-#: lib/ptxprint/gtkview.py:1499
+#: lib/ptxprint/gtkview.py:1497
 msgid "Remove Intermediate Files and Logs?"
 msgstr "Supprimer les fichiers et journaux intermédiaires ?"
 
-#: lib/ptxprint/gtkview.py:1500
+#: lib/ptxprint/gtkview.py:1498
 msgid "Are you sure you want to delete\n"
 "ALL the temporary PTXprint files?"
 msgstr "Êtes-vous sûr de vouloir supprimer\n"
 "TOUS les fichiers PTXprint temporaires ?"
 
-#: lib/ptxprint/gtkview.py:1527
+#: lib/ptxprint/gtkview.py:1525
 msgid "Warning: Could not delete some file(s) or folders(s):"
 msgstr "Attention : Impossible de supprimer certains fichier(s) ou dossier(s) :"
 
-#: lib/ptxprint/gtkview.py:1899
+#: lib/ptxprint/gtkview.py:1897
 msgid "'Enable Colored Text' has now been turned on.\n"
 "See Fonts+Script tab for details."
 msgstr "L'option \"Activer le texte en couleur\" est maintenant activée.\n"
 "Voir l'onglet Polices+Écriture pour plus de détails."
 
-#: lib/ptxprint/gtkview.py:2073
+#: lib/ptxprint/gtkview.py:2071
 msgid "\n"
 "This file doesn't exist yet!\n\n"
 "Edit here and Click 'Save' to create it."
@@ -231,85 +223,85 @@ msgstr "\n"
 "Ce fichier n'existe pas encore !\n\n"
 "Éditez ici et cliquez sur 'Enregistrer' pour le créer."
 
-#: lib/ptxprint/gtkview.py:2115
+#: lib/ptxprint/gtkview.py:2113
 msgid "% This is the .tex file specific for the {} project used by PTXprint.\n"
 "% Saved Configuration name: {}\n"
 msgstr "% Ceci est le fichier .tex spécifique pour le projet {} utilisé par PTXprint.\n"
 "% Nom de configuration enregistré : {}\n"
 
-#: lib/ptxprint/gtkview.py:2122
+#: lib/ptxprint/gtkview.py:2120
 msgid "% This is the preprocessing .tex file specific for the {} project used by PTXprint.\n"
 "% Saved Configuration name: {}\n"
 msgstr "% Ceci est le fichier de prétraitement .tex spécifique pour le projet {} utilisé par PTXprint.\n"
 "% Nom de configuration enregistré : {}\n"
 
-#: lib/ptxprint/gtkview.py:2167
+#: lib/ptxprint/gtkview.py:2165
 msgid "Select the location and name for the Archive file"
 msgstr "Sélectionnez l'emplacement et le nom du fichier d'archive"
 
-#: lib/ptxprint/gtkview.py:2218
+#: lib/ptxprint/gtkview.py:2216
 msgid "Select the folder containing image files"
 msgstr "Sélectionnez le dossier contenant des fichiers d’image"
 
-#: lib/ptxprint/gtkview.py:2256
+#: lib/ptxprint/gtkview.py:2254
 msgid "Select one or more PDF(s) for FRONT matter"
 msgstr "Sélectionnez un ou plusieurs fichiers PDF(s) pour les pages de garde"
 
-#: lib/ptxprint/gtkview.py:2260
+#: lib/ptxprint/gtkview.py:2258
 msgid "Select one or more PDF(s) for BACK matter"
 msgstr "Sélectionnez un ou plusieurs PDF(s) pour les annexes"
 
-#: lib/ptxprint/gtkview.py:2264
+#: lib/ptxprint/gtkview.py:2262
 msgid "Select Watermark PDF file"
 msgstr "Sélectionnez un fichier PDF pour le filigrane"
 
-#: lib/ptxprint/gtkview.py:2269
+#: lib/ptxprint/gtkview.py:2267
 msgid "Select Page Border PDF file"
 msgstr "Sélectionnez le fichier PDF de la bordure de la page"
 
-#: lib/ptxprint/gtkview.py:2274
+#: lib/ptxprint/gtkview.py:2272
 msgid "Select Section Header PDF file"
 msgstr "Sélectionnez le fichier PDF de l'en-tête de section"
 
-#: lib/ptxprint/gtkview.py:2279
+#: lib/ptxprint/gtkview.py:2277
 msgid "Select End of Book PDF file"
 msgstr "Sélectionnez le fichier PDF de décoration de fin de livre"
 
-#: lib/ptxprint/gtkview.py:2284
+#: lib/ptxprint/gtkview.py:2282
 msgid "Select Verse Decorator PDF file"
 msgstr "Sélectionnez le fichier PDF de décoration de numéro de verset"
 
-#: lib/ptxprint/gtkview.py:2389
+#: lib/ptxprint/gtkview.py:2387
 msgid "Switch to Other\n"
 "Diglot Project"
 msgstr "Basculer vers l'autre\n"
 "projet Diglot"
 
-#: lib/ptxprint/gtkview.py:2399
+#: lib/ptxprint/gtkview.py:2397
 msgid "Save & Return to\n"
 "Diglot Project"
 msgstr "Enregistrer et revenir\n"
 "au projet Diglot"
 
-#: lib/ptxprint/gtkview.py:2446
+#: lib/ptxprint/gtkview.py:2444
 msgid "FYI: The Regular font already supports all the characters in the text."
 msgstr "PVI : La police régulière prend déjà en charge tous les caractères du texte."
 
-#: lib/ptxprint/gtkview.py:2447
+#: lib/ptxprint/gtkview.py:2445
 msgid "A fallback font is not required so\n"
 "the 'Use Fallback Font' option will be disabled."
 msgstr "Une police de repli n'est pas nécessaire donc\n"
 "l'option 'Utiliser une police de repli' sera désactivée."
 
-#: lib/ptxprint/gtkview.py:2696
+#: lib/ptxprint/gtkview.py:2694
 msgid "Choose Image"
 msgstr "Choisir une image"
 
-#: lib/ptxprint/gtkview.py:2831
+#: lib/ptxprint/gtkview.py:2829
 msgid "Unsupported Locale"
 msgstr "Locale non prise en charge"
 
-#: lib/ptxprint/gtkview.py:2832
+#: lib/ptxprint/gtkview.py:2830
 msgid "This locale is not supported on your system, you may need to install it"
 msgstr "Cette locale n'est pas prise en charge sur votre système, vous devrez peut-être l'installer"
 
@@ -2170,7 +2162,7 @@ msgstr "Afficher la boîte de dialogue pour choisir les guides\n"
 
 #: lib/ptxprint/ptxprint.glade:5202
 msgid "Guides & Grid"
-msgstr ""
+msgstr "Guides & Grille"
 
 #: lib/ptxprint/ptxprint.glade:5206
 msgid "Display Guides and/or Grid behind the text\n"
@@ -5666,7 +5658,7 @@ msgstr "BBN"
 
 #: lib/ptxprint/ptxprint.glade:13220
 msgid "Alternate Merging"
-msgstr ""
+msgstr "Fusionnement Alternatif"
 
 #: lib/ptxprint/ptxprint.glade:13224
 msgid "This uses an alternative method for\n"
@@ -6756,7 +6748,7 @@ msgstr "Cliquez pour aller au marqueur \\gloss|rb \n"
 
 #: lib/ptxprint/ptxprint.glade:16748
 msgid "Crop Marks"
-msgstr ""
+msgstr "Repères de coupe des pages"
 
 #: lib/ptxprint/ptxprint.glade:16752
 msgid "Some printers require crop marks\n"
