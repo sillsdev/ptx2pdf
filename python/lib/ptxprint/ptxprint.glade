@@ -16526,6 +16526,7 @@ This will delete all previous log and intermediate temporary files for the entir
                                   <object class="GtkGrid">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="margin_top">4</property>
                                     <property name="margin_bottom">6</property>
                                     <property name="row_spacing">3</property>
                                     <property name="column_spacing">16</property>
@@ -16540,6 +16541,7 @@ This will delete all previous log and intermediate temporary files for the entir
 If you don't know what this means, or just want to get rid of 
 black boxes at the end of lines in the PDF then uncheck it. </property>
                                         <property name="halign">start</property>
+                                        <property name="margin_top">4</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
                                       <packing>
@@ -16561,6 +16563,7 @@ acronyms (e.g. BFBS or DCC) for some artists.
 And if PDF/X-1a:2003 Format is selected above, then
 the meta-data will not contain any sensitive data.</property>
                                         <property name="halign">start</property>
+                                        <property name="margin_top">6</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
                                       <packing>
@@ -16606,6 +16609,7 @@ process to fail - giving you helpful feedback
 about how to fix the issue before re-trying 
 to print.</property>
                                         <property name="halign">start</property>
+                                        <property name="margin_top">6</property>
                                         <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
@@ -16752,6 +16756,7 @@ should be trimmed after printing.
 The cropmarks also show the top and
 bottom text margins.</property>
                                         <property name="halign">start</property>
+                                        <property name="margin_top">6</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
                                       <packing>
@@ -16805,6 +16810,7 @@ bottom text margins.</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
                                         <property name="tooltip_text" translatable="yes">In the past, SpaceAbove and SpaceBelow were, in effect units of 1/14 of the base line spacing. This has changed so they are now in units of 1/12 of the base line spacing. Enabling this compatibility reverts the units.</property>
+                                        <property name="margin_top">4</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
                                       <packing>
@@ -16822,6 +16828,7 @@ bottom text margins.</property>
 troubleshooting use only.</property>
                                         <property name="opacity">0.80000000000000004</property>
                                         <property name="halign">start</property>
+                                        <property name="margin_top">6</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
                                       <packing>
@@ -16838,6 +16845,7 @@ troubleshooting use only.</property>
                                         <property name="tooltip_text" translatable="yes">ptxprint can use either the actual glyph metrics in a line or the font metrics to calculate line heights and depths.
 Font metrics gives more consistent results.</property>
                                         <property name="halign">start</property>
+                                        <property name="margin_top">6</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
                                       <packing>

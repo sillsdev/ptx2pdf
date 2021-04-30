@@ -1211,7 +1211,7 @@ class GtkViewModel(ViewModel):
 
         if pgid == "scroll_FrontMatter": # This hasn't been built yet, but is coming soon!
             self.fileViews[pgnum][0].set_text("\n"  +_(" PicLists have been renamed and moved!") + \
-                                              "\n"  +_(" Look on the <Pictures> tab for Details & Checklist along the top row.") + \
+                                              "\n"  +_(" Look on the <Pictures> tab for Settings, Details & Checklist.") + \
                                               "\n"*2+_(" A tool to help create Front Matter (the FRT book) may show up here in future."))
             return
 

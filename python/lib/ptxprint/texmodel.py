@@ -237,7 +237,7 @@ ModelMap = {
     "document/diglotsepnotes":  ("c_diglotSeparateNotes", lambda w,v: "true" if v else "false"),
     "document/diglotsecconfig": ("ecb_diglotSecConfig", None),
     "document/diglotmergemode": ("c_diglotMerge", lambda w,v: "simple" if v else "doc"),
-    "document/diglotadjcenter": ("c_diclotAdjCenter", None),
+    "document/diglotadjcenter": ("c_diglotAdjCenter", None),
 
     "header/ifomitrhchapnum":   ("c_omitrhchapnum", lambda w,v :"true" if v else "false"),
     "header/ifverses":          ("c_hdrverses", lambda w,v :"true" if v else "false"),
@@ -539,7 +539,7 @@ class TexModel:
             t = self._addLR(t, pri)
             swap = self.dict['document/diglotswapside'] == 'true'
             ratio = float(self.dict['document/diglotprifraction'])
-            print(f"{ratio=}")
+            # print(f"{ratio=}")
             if ratio > 0.5:
                 lhfil = "\\hskip 0pt plus {:.3f}fil".format(ratio/(1-ratio)-1)
                 rhfil = ""
