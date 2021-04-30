@@ -1,5 +1,5 @@
 PTXprint 1.6.9 Release Notes 
-22 April 2021
+30 April 2021
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 
@@ -13,6 +13,28 @@ NOTE: For those previously using various Border and Grid PDFs as watermarks:
      There is now a better system for Guides and Grids (see Layout page), so the
 	 various Border and Grid PDFs have been removed from the Watermark PDFassets.
 
+Bug fixes and Improvements in 1.7
+
+  * Added UI localisation for Indonesian (tooltips yet to be done) - thanks to DC & RN
+  
+  * Add Western-Cham digits as an option
+  
+  * Add alternative diglot merging/aligning scheme
+  
+  * Add diglot feature "Adjust Center Header" to align with the gutter/line 
+  
+  * Allow Anchor Reference column to be resized in PicList viewer
+  
+  * Disable splitting footnotes across pages (caused duplicate FN fragments to show up)
+
+  * Fix moving end of ayahs and end of ayah marks around verse ranges
+  
+  * Fix fontscale switching messing with the value
+  
+  * #441 Fix strange rangeref with no verses in a column issue
+  
+  * #438 Pictures now work more predictably in non-scripture books (FRT, BAK etc.)
+  
 Bug fixes and Improvements in 1.6.9
 
   * Added option to include Guides (rules and baselines) and/or custom Grid behind text
