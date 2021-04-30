@@ -237,6 +237,7 @@ ModelMap = {
     "document/diglotsepnotes":  ("c_diglotSeparateNotes", lambda w,v: "true" if v else "false"),
     "document/diglotsecconfig": ("ecb_diglotSecConfig", None),
     "document/diglotmergemode": ("c_diglotMerge", lambda w,v: "simple" if v else "doc"),
+    "document/diglotadjcenter": ("c_diclotAdjCenter", None),
 
     "header/ifomitrhchapnum":   ("c_omitrhchapnum", lambda w,v :"true" if v else "false"),
     "header/ifverses":          ("c_hdrverses", lambda w,v :"true" if v else "false"),
@@ -536,6 +537,15 @@ class TexModel:
         t = self._hdrmappings.get(v, v)
         if diglot:
             t = self._addLR(t, pri)
+            swap = self.dict['document/diglotswapside'] == 'true'
+            ratio = float(self.dict['document/diglotprifraction'])
+            print(f"{ratio=}")
+            if ratio > 0.5:
+                lhfil = "\\hskip 0pt plus {:.3f}fil".format(ratio/(1-ratio)-1)
+                rhfil = ""
+            else:
+                rhfil = "\\hskip 0pt plus {:.3f}fil".format((1-ratio)/ratio-1)
+                lhfil = ""
         self.dict['footer/oddcenter'] = t
 
         mirror = self.asBool("header/mirrorlayout")
@@ -545,12 +555,15 @@ class TexModel:
             t = self._hdrmappings.get(v, v)
             if diglot:
                 t = self._addLR(t, pri)
-                    
             self.dict['header/odd{}'.format(side)] = t
             if mirror:
                 self.dict['header/even{}'.format(self._swapRL[side])] = self.mirrorHeaders(t, diglot)
             else:
                 self.dict['header/even{}'.format(side)] = t
+            if side == "center" and diglot and self.dict["document/diglotadjcenter"]:
+                self.dict['header/odd{}'.format(side)] = (rhfil if swap else lhfil) + self.dict['header/odd{}'.format(side)] + (lhfil if swap else rhfil)
+                self.dict['header/even{}'.format(side)] = (rhfil if mirror ^ swap else lhfil) \
+                                    + self.dict['header/even{}'.format(side)] + (lhfil if mirror ^ swap else rhfil)
                 
             if t.startswith((r'\first', r'\last', r'\range')): # ensure noVodd + noVeven is \empty
                 self.dict['header/noVodd{}'.format(side)] = r'\empty'
