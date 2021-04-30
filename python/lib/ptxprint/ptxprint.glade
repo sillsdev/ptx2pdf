@@ -5179,68 +5179,6 @@ it is an odd or even page, then turn off this option.</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkBox">
-                                        <property name="width_request">124</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="halign">start</property>
-                                        <property name="margin_left">2</property>
-                                        <property name="margin_right">2</property>
-                                        <property name="resize_mode">immediate</property>
-                                        <child>
-                                          <object class="GtkCheckButton" id="c_cropmarks">
-                                            <property name="label" translatable="yes">Crop
-Marks</property>
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">True</property>
-                                            <property name="receives_default">False</property>
-                                            <property name="tooltip_text" translatable="yes">Some printers require crop marks
-on the PDF to show where the page
-should be trimmed after printing.
-
-The cropmarks also show the top and
-bottom text margins.</property>
-                                            <property name="halign">start</property>
-                                            <property name="draw_indicator">True</property>
-                                          </object>
-                                          <packing>
-                                            <property name="expand">False</property>
-                                            <property name="fill">True</property>
-                                            <property name="position">0</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkCheckButton" id="c_grid">
-                                            <property name="label" translatable="yes">Guides
-&amp; Grid</property>
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">True</property>
-                                            <property name="receives_default">False</property>
-                                            <property name="tooltip_text" translatable="yes">Display Guides and/or Grid behind the text
-to assist with setup or final adjustments.
-
-The button beside allows you to choose whether
-you want Guides (margins, baselines, etc.) and/or 
-a graph-paper-like Grid; and grid settings can be
-customized as needed.</property>
-                                            <property name="halign">start</property>
-                                            <property name="draw_indicator">True</property>
-                                            <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
-                                          </object>
-                                          <packing>
-                                            <property name="expand">False</property>
-                                            <property name="fill">True</property>
-                                            <property name="position">1</property>
-                                          </packing>
-                                        </child>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">4</property>
-                                        <property name="top_attach">0</property>
-                                        <property name="width">2</property>
-                                      </packing>
-                                    </child>
-                                    <child>
                                       <object class="GtkButton" id="btn_adjustGrid">
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
@@ -5257,6 +5195,30 @@ can be customized.</property>
                                       <packing>
                                         <property name="left_attach">6</property>
                                         <property name="top_attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="c_grid">
+                                        <property name="label" translatable="yes">Guides &amp; Grid</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="tooltip_text" translatable="yes">Display Guides and/or Grid behind the text
+to assist with setup or final adjustments.
+
+The button beside allows you to choose whether
+you want Guides (margins, baselines, etc.) and/or 
+a graph-paper-like Grid; and grid settings can be
+customized as needed.</property>
+                                        <property name="halign">end</property>
+                                        <property name="margin_left">2</property>
+                                        <property name="draw_indicator">True</property>
+                                        <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">4</property>
+                                        <property name="top_attach">0</property>
+                                        <property name="width">2</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -12986,7 +12948,7 @@ to copyrights.</property>
                               <packing>
                                 <property name="left_attach">1</property>
                                 <property name="top_attach">2</property>
-                                <property name="width">2</property>
+                                <property name="width">3</property>
                               </packing>
                             </child>
                             <child>
@@ -13065,7 +13027,7 @@ settings for the project)</property>
                                 <property name="tooltip_text" translatable="yes">Select the project for the other text
 to be printed. This will usually appear
 in the right-hand (or outer) column.</property>
-                                <property name="halign">end</property>
+                                <property name="halign">start</property>
                                 <property name="model">ls_digprojects</property>
                                 <property name="wrap_width">1</property>
                                 <property name="has_entry">True</property>
@@ -13081,6 +13043,7 @@ in the right-hand (or outer) column.</property>
                               <packing>
                                 <property name="left_attach">1</property>
                                 <property name="top_attach">0</property>
+                                <property name="width">2</property>
                               </packing>
                             </child>
                             <child>
@@ -13123,7 +13086,7 @@ This is quite likely required for RTL languages.</property>
                                 <signal name="clicked" handler="onDiglotSwapSideClicked" swapped="no"/>
                               </object>
                               <packing>
-                                <property name="left_attach">2</property>
+                                <property name="left_attach">3</property>
                                 <property name="top_attach">0</property>
                               </packing>
                             </child>
@@ -13131,10 +13094,9 @@ This is quite likely required for RTL languages.</property>
                               <object class="GtkCheckButton" id="c_diglotAdjCenter">
                                 <property name="label" translatable="yes">Adjust Center Header 
 Based on Column Widths</property>
-                                <property name="sensitive">False</property>
+                                <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
-                                <property name="no_show_all">True</property>
                                 <property name="tooltip_text" translatable="yes">If the column widths of the two sides of the
 diglot are unequal, PTXprint can ensure that
 the content of the center header matches the
@@ -13144,8 +13106,8 @@ different columns).</property>
                                 <property name="draw_indicator">True</property>
                               </object>
                               <packing>
-                                <property name="left_attach">1</property>
-                                <property name="top_attach">4</property>
+                                <property name="left_attach">2</property>
+                                <property name="top_attach">3</property>
                               </packing>
                             </child>
                             <child>
@@ -13211,8 +13173,9 @@ leave this option checked ON.</property>
                                 <property name="draw_indicator">True</property>
                               </object>
                               <packing>
-                                <property name="left_attach">2</property>
+                                <property name="left_attach">3</property>
                                 <property name="top_attach">3</property>
+                                <property name="width">2</property>
                               </packing>
                             </child>
                             <child>
@@ -13228,7 +13191,7 @@ leave this option checked ON.</property>
                                 <signal name="clicked" handler="onDiglotAutoAdjust" swapped="no"/>
                               </object>
                               <packing>
-                                <property name="left_attach">3</property>
+                                <property name="left_attach">4</property>
                                 <property name="top_attach">2</property>
                               </packing>
                             </child>
@@ -13248,14 +13211,13 @@ be viewed or edited in Paratext.</property>
                                 <signal name="clicked" handler="onDBLbundleClicked" swapped="no"/>
                               </object>
                               <packing>
-                                <property name="left_attach">3</property>
+                                <property name="left_attach">4</property>
                                 <property name="top_attach">0</property>
                               </packing>
                             </child>
                             <child>
                               <object class="GtkCheckButton" id="c_diglotMerge">
-                                <property name="label" translatable="yes">Alternate
-Merging</property>
+                                <property name="label" translatable="yes">Alternate Merging</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
@@ -13264,12 +13226,17 @@ merging (or aligning) texts which
 have less structure in common.
 It only tries to align at places where 
 paragraphs start in the same verse.</property>
+                                <property name="halign">start</property>
                                 <property name="draw_indicator">True</property>
                               </object>
                               <packing>
                                 <property name="left_attach">3</property>
-                                <property name="top_attach">3</property>
+                                <property name="top_attach">1</property>
+                                <property name="width">2</property>
                               </packing>
+                            </child>
+                            <child>
+                              <placeholder/>
                             </child>
                             <child>
                               <placeholder/>
@@ -16241,6 +16208,7 @@ other settings are applied. This file is rarely used.</property>
                                         <property name="margin_right">3</property>
                                         <property name="margin_bottom">6</property>
                                         <property name="column_spacing">8</property>
+                                        <property name="row_homogeneous">True</property>
                                         <child>
                                           <object class="GtkCheckButton" id="c_inclFrontMatter">
                                             <property name="label" translatable="yes">Include Front Matter PDF(s)</property>
@@ -16561,7 +16529,7 @@ This will delete all previous log and intermediate temporary files for the entir
                                     <property name="margin_bottom">6</property>
                                     <property name="row_spacing">3</property>
                                     <property name="column_spacing">16</property>
-                                    <property name="row_homogeneous">True</property>
+                                    <property name="column_homogeneous">True</property>
                                     <child>
                                       <object class="GtkCheckButton" id="c_showHboxErrorBars">
                                         <property name="label" translatable="yes">Show Error Bars For Overfull Lines</property>
@@ -16575,8 +16543,9 @@ black boxes at the end of lines in the PDF then uncheck it. </property>
                                         <property name="draw_indicator">True</property>
                                       </object>
                                       <packing>
-                                        <property name="left_attach">1</property>
+                                        <property name="left_attach">0</property>
                                         <property name="top_attach">0</property>
+                                        <property name="width">2</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -16619,8 +16588,8 @@ and so on...</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
                                       <packing>
-                                        <property name="left_attach">0</property>
-                                        <property name="top_attach">0</property>
+                                        <property name="left_attach">1</property>
+                                        <property name="top_attach">2</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -16641,8 +16610,8 @@ to print.</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
                                       <packing>
-                                        <property name="left_attach">1</property>
-                                        <property name="top_attach">1</property>
+                                        <property name="left_attach">0</property>
+                                        <property name="top_attach">2</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -16766,8 +16735,28 @@ glosses for interlinear/ruby text.</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
-                                        <property name="top_attach">2</property>
+                                        <property name="top_attach">3</property>
                                         <property name="width">2</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="c_cropmarks">
+                                        <property name="label" translatable="yes">Crop Marks</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="tooltip_text" translatable="yes">Some printers require crop marks
+on the PDF to show where the page
+should be trimmed after printing.
+
+The cropmarks also show the top and
+bottom text margins.</property>
+                                        <property name="halign">start</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">1</property>
+                                        <property name="top_attach">1</property>
                                       </packing>
                                     </child>
                                   </object>
