@@ -589,18 +589,18 @@
   \setp@ram{fontsize}{c\c@rrdstat}{\dr@psize}%
   \g@tfontname{c}\x@\let\csname font<\f@ntstyle>\endcsname=\relax
   \let\d@neit\c@rrdstat
-  \def\col@do#1{
-    \setc@rdstat{#1}%
+  \def\col@do##1{
+    \setc@rdstat{##1}%
     \ifx\c@rrdstat\d@neit\else% Avoid double-processing
       \setLRspecific
       \dropnumbersize=0pt
       \calcdr@psize
       \g@tfontname{c}\x@\let\csname font<\f@ntstyle>\endcsname=\relax
       \message{ Setting \ drop-cap size to \dr@psize}%
-      \setp@ram{fontsize}{c#1}{\dr@psize}%
+      \setp@ram{fontsize}{c##1}{\dr@psize}%
     \fi
   }%
-  \x@\each@col\diglot@list
+  \x@\each@col\diglot@list\E
   %\x@\let\csname font<cL>\endcsname=\relax %
   %\x@\let\csname font<cR>\endcsname=\relax %
 }

@@ -34,13 +34,14 @@
 
 % Fonts to use for "plain", "bold", "italic", and "bold italic" from the Paratext stylesheet
 % (they need not really be italic, etc, of course)
-\def\regular{"Gentium Basic:+liga,+salt"}
+\def\regular{"Gentium Plus"}
 \def\bold{"TeX Gyre Termes/B"}
 \def\italic{"Gentium Basic/I"}
 \def\bolditalic{"TeX Gyre Schola/BI"}
 
 % Can override the defaults for Left or Right:  (It doesn't make sense to do both)
 \def\regularL{"Gentium Plus"}
+\def\regularR{"Charis SIL"}
 \def\boldR{"TeX Gyre Adventor/B"}
 
 % Use right-to-left layout mode
@@ -62,11 +63,11 @@
 %   \pagenumber = the page number
 %   \empty = print nothing in this position
 \def\RHoddleft{\rangerefL}
-\def\RHoddcenter{\rangeref}
+\def\RHoddcenter{\rangerefA}
 \def\RHoddright{\rangerefR}
 
 \def\RHevenleft{\rangerefL}
-\def\RHevencenter{\rangeref}
+\def\RHevencenter{\rangerefA}
 \def\RHevenright{\rangerefR}
 
 \def\RHtitleleft{\empty}
@@ -76,8 +77,9 @@
 \def\RFoddcenter{\pagenumber}
 \def\RFevencenter{\pagenumber}
 \def\RFtitlecenter{\pagenumber}
-\def\DiglotLeftFraction{0.39} % In case texts fit better with unequal columns
-\def\DiglotRightFraction{0.61} 
+\def\DiglotLFraction{0.3} % In case texts fit better with unequal columns
+\def\DiglotRFraction{0.26} 
+\def\DiglotAFraction{0.44} 
 
 \VerseRefstrue % whether to include verse number in running head, or only chapter
 

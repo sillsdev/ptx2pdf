@@ -1,7 +1,7 @@
 .SUFFIXES: .dvi .pdf
 all: Galatians.pdf
 DIR:=$(shell dirname `find ../..  -name paratext2.tex`)
-SCRIPTDIR:=$(shell dirname `find ../..  -name diglot_merge.pl | grep -v bisect`)
+SCRIPTDIR:=$(shell dirname `find ../..  -name polyglot_merge.pl | grep -v bisect`)
 
 .tex.pdf:
 	TEXINPUTS=.:../../src xetex $< < /dev/null
@@ -32,14 +32,16 @@ Gal_wyc.usfm 78-GALengwyc2018.usfm: engwyc2018_usfm.zip
 Gal_web.usfm: engwebp_usfm.zip
 	unzip $< 78-GALengwebp.usfm
 	perl -CSD -pe 's/\\w ([^|]+?)\|[^\\]*?\\w\*/\1/og; s/\\sls/\\+sls/og' 78-GALengwebp.usfm > $@
+Gal_grk.usfm: ../../test/projects/OGNT/49GALOGNT.SFM
+	cp $< $@
 	
-mergedGal.usfm: Gal_wyc.usfm Gal_web.usfm Makefile $(SCRIPTDIR)/diglot_merge.pl 
-	$(SCRIPTDIR)/diglot_merge.pl -s -l -C -L merge.log -o merged.out Gal_web.usfm Gal_wyc.usfm 
+mergedGal.usfm: Gal_wyc.usfm Gal_web.usfm Gal_grk.usfm Makefile $(SCRIPTDIR)/polyglot_merge.pl 
+	DEBUG=merge.dbg $(SCRIPTDIR)/polyglot_merge.pl -s -p -C -L merge.log -o merged.out Gal_web.usfm Gal_grk.usfm Gal_wyc.usfm 
 	cat merged.out | grep -Ev '\\sts|\\rem' > $@
 	rm merged.out
 
-mergedGalV.usfm: Gal_wyc.usfm Gal_web.usfm Makefile $(SCRIPTDIR)/diglot_merge.pl 
-	$(SCRIPTDIR)/diglot_merge.pl -s -v -C -L merge.log -o merged.out Gal_web.usfm Gal_wyc.usfm 
+mergedGalV.usfm: Gal_wyc.usfm Gal_web.usfm Makefile $(SCRIPTDIR)/polyglot_merge.pl 
+	DEBUG=merge.dbg $(SCRIPTDIR)/polyglot_merge.pl -s -v -C -L merge.log -o merged.out Gal_web.usfm Gal_grk.usfm Gal_wyc.usfm 
 	cat merged.out | grep -Ev '\\sts|\\rem' > $@
 
 autohist:	

@@ -788,15 +788,15 @@
 
 \def\polyglotcolumn#1{%
   \uppercase{\edef\reqcol{#1}}%
-  \pr@sideswitch{diglotcolumn #1}{\reqcol}%
-  \ifx\reqcol\empty\errmessage{diglotcolumn may not be called with an empty argument}\fi
+  \pr@sideswitch{polyglotcolumn #1}{\reqcol}%
+  \ifx\reqcol\empty\errmessage{polyglotcolumn may not be called with an empty argument}\fi
   \ifcsname #1isDiglotColumn\endcsname % 
     \swap@diglot{#1}%sets diglot state, etc
     \global\vsize=\maxdimen
     \global\holdinginserts=1
     \x@\the\csname diglot#1ho@ks\endcsname
   \else
-    \errmessage{diglotcolumn must be followed by a sensible argument. '#1' Hasn't been specified as a diglot column}%
+    \errmessage{polyglotcolumn must be followed by a sensible argument. '#1' Hasn't been specified as a polyglot column (with newPolyglotCol)}%
   \fi
 }
 
@@ -1982,7 +1982,7 @@
 \def\def@cseq#1#2{\x@\def\csname #1\endcsname{#2}}% Helper function
 \def\empty@cseq#1{\x@\xdef\csname #1\endcsname{}}% Helper function
 
-\def\newDiglotCol#1{%
+\def\newPolyglotCol#1{%
   \ifcsname #1isDiglotColumn\endcsname
     \message{#1 is already a diglot column. You can only define it as one once!}%
   \else
@@ -2020,6 +2020,8 @@
     \empty@cseq{bot#1mark}%bottom X mark on this page
     \empty@cseq{b@ok#1}% Name of book to put in PDF.
     \empty@cseq{ch@plabel#1}% Chapter label
+    \empty@cseq{@ch@pter#1}% Chapter Nuber
+    \empty@cseq{@v@rse#1}% Chapter label
     \xdef@cseq{@cur#1ht}{0pt}% 
     \xdef@cseq{@cur#1dp}{0pt}% 
     \header@defs{#1}% All the possible header contents
@@ -2030,6 +2032,7 @@
   \fi
 }
 
+\let\newDiglotCol=\newPolyglotCol
 
 
 \def\check@and@update{%Checks each column to see if there is stuff to output
