@@ -2,10 +2,10 @@
 
 import sys, os, argparse
 try:
-    from ptxprint.usfmerge import usfmerge
+    from ptxprint.usfmerge import usfmerge2
 except ImportError:
     sys.path.append(os.path.join(os.path.dirname(__file__), "..", "lib"))
-    from ptxprint.usfmerge import usfmerge
+    from ptxprint.usfmerge import usfmerge2
 
 parser = argparse.ArgumentParser()
 parser.add_argument("infilea", help="Main input file")
@@ -20,4 +20,4 @@ args = parser.parse_args()
 
 sheetsa = args.stylesheet + args.astylesheet
 sheetsb = args.stylesheet + args.bstylesheet
-usfmerge(args.infilea, args.infileb, args.outfile, stylesheetsa=sheetsa, stylesheetsb=sheetsb, fsecondary=args.fsecondary, debug=args.debug)
+usfmerge2(args.infilea, args.infileb, args.outfile, stylesheetsa=sheetsa, stylesheetsb=sheetsb, fsecondary=args.fsecondary, debug=args.debug)

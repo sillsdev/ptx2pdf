@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: ptxprint\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-04-30 17:04+0700\n"
-"PO-Revision-Date: 2021-04-30 10:04\n"
+"PO-Revision-Date: 2021-04-30 10:21\n"
 "Last-Translator: \n"
 "Language-Team: Indonesian\n"
 "Language: id_ID\n"
@@ -5497,7 +5497,8 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:16269
 msgid "Include Back Matter PDF(s)"
-msgstr "Sertakan PDF untuk bagian belakang buku"
+msgstr "Sertakan PDF untuk\n"
+"bagian belakang buku"
 
 #: lib/ptxprint/ptxprint.glade:16273
 msgid "One or more previously created PDF file(s) can be included\n"
@@ -5557,8 +5558,7 @@ msgstr "Buka Folder"
 
 #: lib/ptxprint/ptxprint.glade:16536
 msgid "Show Error Bars For Overfull Lines"
-msgstr "Tampilkan Tanda Kesalahan untuk \n"
-"Baris yang Terlalu Panjang"
+msgstr "Tampilkan Tanda Kesalahan untuk Baris yang Terlalu Panjang"
 
 #: lib/ptxprint/ptxprint.glade:16540
 msgid "Enable this option to have TeX make overfull lines stand out.\n"
