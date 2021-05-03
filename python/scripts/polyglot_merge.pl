@@ -227,7 +227,7 @@ sub do_output {
 			$_='';
 		};
 	} @$chunkref;
-	if (($maxcols+1)==grep {$$chunkref[0] eq ""} (0..$maxcols) ) {
+	if (($maxcols+1)==grep {$$chunkref[$_] eq ""} (0..$maxcols) ) {
 		printf DBG ("skipping output at $pos since it's boring\n") if (defined($debug));
 		printf LOG ("skipping output at $pos since it's boring\n") if (defined($logfile));
 		return(0);
@@ -569,15 +569,17 @@ while( 0<scalar( grep {$#{$data[$_]}>=0} (0..$maxcols ) )) {
 					my (@tmppos)=(@pos);
 					# We declare the headingstack to be at current position but with 'H' as the section code, just like real major section headers.
 					if ($tmppos[$activeheading] eq '_') {
+						$tmppos[$fragment]++;
 						$tmppos[$activeheading]='H';
 					}
 					my $chk=$#{$cur};
 					if ($earlyreclaim==2) {
+						$tmppos[$fragment]++;
 						$tmppos[$activeheading]='HH';
 						$chk--;
 						#early reclaim==2 means output the previous stack, not this value
 					}
-					my $sectpos=join('::',@tmppos);
+					$newpos=join('::',@tmppos);
 					logit($side,"Gone into range - using the headingstack:");
 					for my $n (1..$chk) { # stacklevel n=0 is empty, so isheading returns a non-zero integer
 						if (defined($$cur[$n])) {
@@ -592,7 +594,7 @@ while( 0<scalar( grep {$#{$data[$_]}>=0} (0..$maxcols ) )) {
 					print LOG "$reclaim";
 
 					if($earlyreclaim) {
-						push @{$chunks[$side]},$sectpos,$reclaim; # straight to output chunk
+						push @{$chunks[$side]},$newpos,$reclaim; # straight to output chunk
 						$reclaim='';
 						if($earlyreclaim ==2) {
 							$cl=$$cur[$#{$cur}].$cl;
@@ -603,17 +605,18 @@ while( 0<scalar( grep {$#{$data[$_]}>=0} (0..$maxcols ) )) {
 					@{$oldhead[$side]}=(@{$headingstack[$side]});
 				}
 				if ($clsections==2) {
-					my (@tmppos)=(@pos);
 					updpos($activeheading,'HH',\@pos); 
-					my $sectpos=join('::',@pos);
-					logit($side,"new position:",$sectpos);
+					$pos[$fragment]++;
+					$newpos=join('::',@pos);
+					logit($side,"new position:",$newpos);
 					
-					push @{$chunks[$side]},$sectpos,$chapter[$side]; # straight to output chunk
+					$position[$side]=$newpos;
+					push @{$chunks[$side]},$newpos,$chapter[$side]; # straight to output chunk
 					logit($side,"writing chunk for chapter, cl:",$chapter[$side]);
-					if (defined($chunkscore{$sectpos})) {
-						$chunkscore{$sectpos}+=$score;
+					if (defined($chunkscore{$newpos})) {
+						$chunkscore{$newpos}+=$score;
 					} else  {
-						$chunkscore{$sectpos}=$score;
+						$chunkscore{$newpos}=$score;
 					}
 					$chapter[$side]=undef;
 					$clsections=1;
@@ -692,24 +695,25 @@ foreach my $n (0 .. $#tmp) {
 
 
 
+my @combined;
 foreach my $side (0..$maxcols) {
-	$data[$side]=0;
+	$combined[$side].=${$chunks[$side]}[1]; # Always include the header.
+	$data[$side]=2;
 }
 foreach my $chunk (@chunklist,"999::999::999::") {
-	my @combined;
 	foreach my $side (0..$maxcols) {
 		$combined[$side]='';
 	}
 	foreach my $side (0..$maxcols) {
-		do {
+		while ($data[$side]<=$#{$chunks[$side]} and (${$chunks[$side]}[$data[$side]] lt  $chunk)) {
 			$data[$side]++;
 			$combined[$side].=${$chunks[$side]}[$data[$side]];
 			$data[$side]++;
-		} while ($data[$side]<=$#{$chunks[$side]} and (${$chunks[$side]}[$data[$side]] lt  $chunk));
+		} 
 	}
 	$,=', ';
-	print DBG $chunk,@data,$chunks[$side][$data[$side]],"\n" if (defined($debug));
-	do_output($position[$side],\@combined);
+	print DBG $chunk,"--->\n",@combined,"<---\n",$chunks[$side][$data[$side]],"\n" if (defined($debug));
+	do_output($chunk,\@combined);
 }
 	
 exit(0);

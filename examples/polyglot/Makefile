@@ -41,7 +41,7 @@ mergedGal.usfm: Gal_wyc.usfm Gal_web.usfm Gal_grk.usfm Makefile $(SCRIPTDIR)/pol
 	rm merged.out
 
 mergedGalV.usfm: Gal_wyc.usfm Gal_web.usfm Makefile $(SCRIPTDIR)/polyglot_merge.pl 
-	DEBUG=merge.dbg $(SCRIPTDIR)/polyglot_merge.pl -s -v -C -L merge.log -o merged.out Gal_web.usfm Gal_grk.usfm Gal_wyc.usfm 
+	DEBUG=mergeV.dbg $(SCRIPTDIR)/polyglot_merge.pl -s -v -C -L mergeV.log -o merged.out Gal_web.usfm Gal_grk.usfm Gal_wyc.usfm 
 	cat merged.out | grep -Ev '\\sts|\\rem' > $@
 
 autohist:	
