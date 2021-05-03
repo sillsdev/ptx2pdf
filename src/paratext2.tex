@@ -411,6 +411,7 @@
 \def\ParagraphedNotes#1{\Par@gr@phedNotes{#1\g@tndstat}}
 \def\Par@gr@phedNotes#1{\TRACE{Par@gr@phedNotes #1}\x@\let\csname paranotes-#1\endcsname=1}
 \newif\ifp@ranotes
+\newif\ifColNotes \ColNotesfalse
 \def\checkp@ranotes#1{\x@\ifx\csname paranotes-#1\endcsname\relax
   \p@ranotesfalse\else\p@ranotestrue\fi}
 %-c_paragraphedNotes
@@ -432,7 +433,7 @@
           \n@tewidth=\csname columnLwidth\endcsname
         \fi
      \else\n@tewidth=\textwidth\fi
-   \else\n@tewidth=\textwidth\fi
+   \else\n@tewidth=\ifColNotes\colwidth\else\textwidth\fi\fi
   \else
     %Assume that the note will be inserted using the current text width.
     \ifnum\c@rrentcols=1
@@ -949,6 +950,7 @@
 \def\s@tcolhts#1{
     \colhtA=#1 \decr{\colhtA}{\topleftins}\decr{\colhtA}{\bottomleftins}%
     \colhtB=#1 \decr{\colhtB}{\toprightins}\decr{\colhtB}{\bottomrightins}%
+    \ifColNotes\advance\colhtB by -\ht\coln@tebox\fi
     \trace{o}{s@tcolhts: colhtA=\the\colhtA, colhtB=\the\colhtB, toprightins=(\the\skip\toprightins, \the\ht\toprightins), bottomrightins=(\the\skip\bottomrightins, \the\ht\bottomrightins)}%
 }
 %-c_setcolhts
@@ -957,6 +959,7 @@
 \def\g@tcolhts{
     \colhtA=\ht\colA \incr{\colhtA}{\topleftins}\incr{\colhtA}{\bottomleftins}%
     \colhtB=\ht\colB \incr{\colhtB}{\toprightins}\incr{\colhtB}{\bottomrightins}%
+    \ifColNotes\advance\colhtB by \ht\coln@tebox\fi
     \trace{o}{g@tcolhts: colhtA=\the\colhtA, colhtB=\the\colhtB}%
 }
 %-c_getcolhts
@@ -1000,6 +1003,10 @@
   \ifdim\ht\colA<.5\baselineskip\ifdim\ht\colB<.5\baselineskip\MSG{I can't break this page!}    %(2)
     \iffitonpage\s@ve@nd \trace{o}{Abandoning ship}% the split failed and there is nothing left!
     \else\setbox\colA=\box0\setbox\s@vedpage=\box\voidb@x \trace{o}{Everything to colA}% dump it all in colA and bail
+  \fi\fi\fi
+  \ifColNotes\iffitonpage\ifdim\ht\coln@tebox>0pt
+    \setbox\colB=\vbox to \colhtA{\unvbox\colB \vfil \unvbox\coln@tebox\unkern}
+    \fitonpagefalse\rebalancetrue % bail early
   \fi\fi\fi
   \iffitonpage
     \shortavail=\colhtB \advance\shortavail by -\ht\colB                        %(3)
@@ -1074,6 +1081,11 @@
     \advance\shortavail by \ifdim\dp\colA>\dp\colB \dp\colA\else\dp\colB\fi     %(9)
     \s@tcolhts{\shortavail}\spl@tcols\s@vedpage
     \trace{o}{A = \the\colhtA , B = \the\colhtB , remaining = \the\ht\s@vedpage}%
+  \else
+    \ifColNotes\ifrebalance
+      \trace{o}{ColNotes A=\the\colhtA, \the\ht\colA, B=\the\colhtB, \the\ht\colB }
+      \fitonpagetrue\setbox\s@vedpage=\box\voidb@x
+    \fi\fi % come from colnotes
   \fi
 }
 %-c_balanced_loop
@@ -1152,6 +1164,7 @@
 
 %+c_calcavailht
 \xdef\p@gebotmark{}% No guarantee this will be universally set
+\newbox\coln@tebox
 \def\c@lcavailht{
   \edef\t@st{\p@gefirstmark}%
   \ifx\t@st\empty\xdef\p@gefirstmark{\firstmark}\fi% remember first, if not already set
@@ -1161,7 +1174,12 @@
   \availht=\trialheight % amount of space we think is available
   \trace{i}{C@lcavailht partial:\the\ht\partial \space available:\the\availht}%
   \f@rstnotetrue
-  \let\\=\reduceavailht\the\n@tecl@sses % reduce it by the space needed for each note class
+  \ifColNotes
+    \m@kenotebox\setbox\coln@tebox=\vbox{\unvbox2}
+    %\ifdim\ht\coln@tebox>0pt\showboxbreadth=300\showboxdepth=300\showbox\coln@tebox\fi
+  \else
+    \let\\=\reduceavailht\the\n@tecl@sses % reduce it by the space needed for each note class
+  \fi
   \trace{i}{after inserts: \the\availht}%
   \trace{o}{availht = \the\availht, depth = \the\dp\pstr@t}%
   % Round to lines accurate to 1/8pt in lineskip. 1/10pt causes overflow on longer pages. Support two column legal.
@@ -1254,7 +1272,7 @@
   \else
     \setbox0=\lastbox
     \trace{i}{Inserted notes, ht \the\ht0, dp \the\lastd@pth,\the\dp0}%
-    \lastd@pth=\dp0 \dp0=0pt \box0 \kern\lastd@pth
+    \lastd@pth=\dp0 \dp0=0pt \prevdepth=-1000pt \box0 \kern\lastd@pth
   \fi}}
 %-c_makenotebox
 
@@ -1296,9 +1314,10 @@
       \ifvoid\bottomins\else \kern-\lastd@pth
         \lastd@pth=0pt \vskip\skip\bottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\bottomins}}\fi % ouput bottom spanning pictures
       \f@rstnotetrue
-      \m@kenotebox
-      \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2}%
-      \unvbox2 %\kern-\lastd@pth\lastdepth=\dp2\unvbox2
+      \ifColNotes\else\m@kenotebox
+        \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2}%
+        \unvbox2 %\kern-\lastd@pth\lastdepth=\dp2\unvbox2
+      \fi
       \global\noteseenfalse%
       \ifvoid\verybottomins\else\vfil
         \trace{o}{verybottomins(twocoltrial): height=\the\ht\verybottomins , availht=\the\availht, textheight=\the\textheight}
@@ -1431,9 +1450,10 @@
       \ifvoid\bottomins\else % \kern-\dimen0
         \lastd@pth=0pt \vskip\skip\bottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\bottomins}}\fi
       \f@rstnotetrue%
-      \m@kenotebox
-      \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2}%
-      \unvbox2 %\kern-\lastd@pth\lastdepth=\dp2\unvbox2
+      \ifColNotes\else \m@kenotebox
+        \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2}%
+        \unvbox2 %\kern-\lastd@pth\lastdepth=\dp2\unvbox2
+      \fi
       \ifvoid\verybottomins\else\ifdim\availht > 0pt % \kern-\dimen0
         \trace{o}{verybottomins(twocolp@geout): height=\the\ht\verybottomins , availht=\the\availht, textheight=\the\textheight}
         \lastd@pth=0pt \vskip 0pt plus 1fill\vskip\skip\verybottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\verybottomins}}\fi\fi
