@@ -278,6 +278,7 @@ ModelMap = {
     "notes/addcolon":           ("c_addColon", None),
     "notes/keepbookwithrefs":   ("c_keepBookWithRefs", None),
     "notes/glossaryfootnotes":  ("c_glossaryFootnotes", None),
+    "notes/columnnotes":        ("c_columnNotes", lambda w,v: "true" if v and w.get("c_doublecolumn") else "false"),
 
     "notes/abovenotespace":     ("s_abovenotespace", None),
     "notes/belownoterulespace": ("s_belownoterulespace", None),
