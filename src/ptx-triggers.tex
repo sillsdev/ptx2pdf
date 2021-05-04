@@ -107,16 +107,16 @@
 
 \def\AddTrigger#1 {% #1 is space-delimited, input may contain blank lines.
   \settrign@me{#1}%
-  \catcode"FDEF=0\catcode`\\=12
+  \catcode"FDEC=0\catcode`\\=12
   \@@AddTrigger}
 
 \def\r@storbkslsh{\catcode`\\=0}
 {
- \catcode"FDEF=0\catcode`\\=12
- ﷯long﷯gdef﷯@@AddTrigger#1\EndTrigger{%
-  ﷯r@storbkslsh
-  ﷯addtr@gger{#1}}%
- ﷯r@storbkslsh
+ \catcode"FDEC=0\catcode`\\=12
+ ﷬long﷬gdef﷬@@AddTrigger#1\EndTrigger{%
+  ﷬r@storbkslsh
+  ﷬addtr@gger{#1}}%
+ ﷬r@storbkslsh
 }
 
 \long\def\addtr@gger#1{%Add trigger code trigger on reference #1 (to do #2). 
@@ -130,8 +130,6 @@
    \x@\global\x@\let\csname\trign@me\endcsname\tr@gtmp
 }
 
-\catcode"FDEE=1 
-%\catcode"FDEF=2
 \def\r@ntr@g#1\E{\scantokens{#1\noexpand}}
 %\def\r@ntr@g#1\E{
   %\toks0={#1}%
