@@ -189,7 +189,7 @@
      \ifx\@ttriblist\empty
        \ifx\p@ram\relax\else \egroup\dimen9=\p@ram\ifdim\dimen9<0pt\lower-\dimen9\else\raise\dimen9\fi\box0 \fi
      \else
-       \egroup
+       \egroup % Close the box0 hbox started either by raise or @ttrib
        \ifx\@ttributes\empty\else% If there are attributes, call an appropriate hook
          \ifcsname complex-\oldch@rstyle\c@rrdstat\endcsname
            \csname complex-\oldch@rstyle\c@rrdstat\endcsname
@@ -199,7 +199,7 @@
        \fi
        \ifx\p@ram\relax
          \unhbox0
-       \else\dimen9=\p@ram\ifdim\dimen9<0pt\lower-\dimen9\else\raise\dimen9\fi\box0 \fi
+       \else\dimen9=\p@ram\ifdim\dimen9<0pt\lower-\dimen9 \else\raise\dimen9 \fi\box0 \fi
      \fi
      \cl@singhooks{after}{\oldch@rstyle}% discover any <after> hooks
      \ifnum\n@tenesting>0 \global\advance\n@tenesting by -1 % decrement nesting level

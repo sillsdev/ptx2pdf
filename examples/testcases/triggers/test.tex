@@ -16,10 +16,12 @@
 %\tracing{A}
 %\tracing{m}
 %\tracing{eb}
-%\tracing{s}
+\tracing{s}
 %\tracing{g}
 \tracing{T}
-%\tracingmacros=1
+\def\tmstart{\tracingmacros=0 \tracingassigns=1 \tracinggroups=1}
+\def\tmstop{\tracingmacros=0 \tracingassigns=0 \tracinggroups=0}
+
 %\tracingassigns=1
 \categorysheet{mycats.sty}
 \unbalancedfalse

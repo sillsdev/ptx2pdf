@@ -83,7 +83,7 @@
 \def\opentriglist "#1" {%
   \openin\t@stread="#1"
   \ifeof\t@stread \def\n@xt{\MSG{Trigger list "#1" not found -- ignored}}%
-  \else \closein\t@stread \def\n@xt{\m@kedigitsletters\input "\the\PtxFilePath#1"\relax\m@kedigitsother}\fi
+  \else \closein\t@stread \def\n@xt{\prepusfm\relax\input "\the\PtxFilePath#1"\relax\unprepusfm}\fi
   \n@xt
 }
 \def\runtrigg@rsother#1{%
@@ -101,27 +101,56 @@
 }
 \def\settrign@me#1{\edef\trign@me{trigger-#1}}
 
-\def\addtrigger#1#2{\addtr@gger{#1}{#2}}% Not expected to be long 
+\def\addtrigger#1#2{%
+  \settrign@me{#1}%
+  \addtr@gger{#2}}% Not expected to be long 
 
-\long\def\AddTrigger#1 #2\EndTrigger{% #1 is space-delimited, input may contain blank lines.
-  \addtr@gger{#1}{#2}%
+\def\AddTrigger#1 {% #1 is space-delimited, input may contain blank lines.
+  \settrign@me{#1}%
+  \catcode"FDEF=0\catcode`\\=12
+  \@@AddTrigger}
+
+\def\r@storbkslsh{\catcode`\\=0}
+{
+ \catcode"FDEF=0\catcode`\\=12
+ ﷯long﷯gdef﷯@@AddTrigger#1\EndTrigger{%
+  ﷯r@storbkslsh
+  ﷯addtr@gger{#1}}%
+ ﷯r@storbkslsh
 }
 
-\long\def\addtr@gger#1#2{%Add trigger code trigger on reference #1 (to do #2). 
+\long\def\addtr@gger#1{%Add trigger code trigger on reference #1 (to do #2). 
    %Much of the complication is so the triggers concatenate roughly like a toklist
-   \settrign@me{#1}\x@\let\x@\tr@gtmp\csname\trign@me\endcsname
+   \x@\let\x@\tr@gtmp\csname\trign@me\endcsname
    \ifx\tr@gtmp\relax
-     \def\tr@gtmp{#2}%
+     \def\tr@gtmp{#1}%
    \else
-     \x@\def\x@\tr@gtmp\x@{\tr@gtmp#2}%
+     \x@\def\x@\tr@gtmp\x@{\tr@gtmp#1}%
    \fi
    \x@\global\x@\let\csname\trign@me\endcsname\tr@gtmp
 }
 
+\catcode"FDEE=1 
+%\catcode"FDEF=2
+\def\r@ntr@g#1\E{\scantokens{#1\noexpand}}
+%\def\r@ntr@g#1\E{
+  %\toks0={#1}%
+  %\immediate\openout0=tmptrigfile\relax
+  %\immediate\write0{\the\toks0}
+  %\immediate\closeout0
+  %\input tmptrigfile\relax
+%}
+
+
 \def\stdtrigger{%Run any triggers if they exist.
-   \settrign@me{\c@rref}\csname\trign@me\endcsname
+   \settrign@me{\c@rref}\x@\let\x@\tmp\csname\trign@me\endcsname\ifx\relax\tmp\else
+      \catcode"FDEF=2
+      \bgroup
+      \x@\x@\x@\r@ntr@g\x@\detokenize\x@{\tmp}\E
+      \egroup
+      \fi%
    \ifdiglot
-     \settrign@me{\dc@rref}\csname\trign@me\endcsname
+     \settrign@me{\dc@rref}\x@\let\x@\tmp\csname\trign@me\endcsname\ifx\relax\tmp\else\x@\x@\x@\scantokens\x@{\tmp}\fi%
    \fi
 }
 
