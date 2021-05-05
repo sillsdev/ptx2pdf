@@ -1,5 +1,5 @@
 %:strip
-% ptx-polyglot.tex: Advanced polyglot processing processing for xetex paratext2.tex
+% ptx-polyglot.tex: multi-page polyglot processing for xetex paratext2.tex
 % Copyright (c) 2021 by SIL International 
 % written by David Gardner
 % 
@@ -32,8 +32,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-\ifcsname polyglot@module@lo@ded\endcsname\else
-\let\polyglot@module@lo@ded\empty
+\module@startif{polyglot-simplepages}
 \newcount\p@lyp@geno
 
 \def\p@lyp@ges{0}
@@ -131,4 +130,4 @@
   \fi
 }
 
-\fi
+\module@endif

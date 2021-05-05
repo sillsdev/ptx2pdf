@@ -49,3 +49,41 @@ now contain the caller and the footnote will appear like this:
 3. line three
 ```
 
+
+## Modules
+The idea of modules is to reduce loading time and memory requirements.
+It is envisaged that modules will be for output-related changes, not input-related changes.
+I.e. a modification that alters code to add fancy borders would be a candidate for being a module, 
+but code that implements part of the the USFM standard should not be.
+
+Possibly this principle means that ptx-triggers, ptx-pic-list and ptx-adj-list should be modules.
+However, it is not considered 
+
+ptx-modules.tex includes a list of modules
+for processing `\def\modulelist{all}` 
+
+Correct sequencing should be done in that macro.
+
+If a module requires one or more other module, this should be indicated like this:
+```
+\modules@needed{polyglot-simplepages,border-font}
+```
+
+The polyglot-simplepages mod includes this re-insertion prevention wrapper. Other modules should also 
+include similar code. 
+```
+\module@startif{polyglot-simplepages}
+.  .  .
+\module@endif
+```
+
+This expands to:
+```
+\ifcsname polyglot-simplepages@module@lo@ded\endcsname\else
+\let\polyglot-simplepages@module@lo@ded\empty
+. . .
+\fi
+```
+
+In both cases, the filename (without the .tex) should exactly match, otherwise the automatic inclusion by `\modules@needed` will fail.
+

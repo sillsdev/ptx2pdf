@@ -3,8 +3,8 @@
 % Copyright (c) 2021 by SIL International 
 % written by David Gardner
 % 
-% This optional plug-in  extends the basic diglot engine to provide polyglot 
-% options
+% This plug-in mechanism extends the basic diglot engine
+% to provide additional output options
 %
 % Permission is hereby granted, free of charge, to any person obtaining
 % a copy of this software and associated documentation files (the  
@@ -31,15 +31,29 @@
 % authorization from SIL International.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\def\kn@wnmodules{ptx-polyglot}
+\def\kn@wnmodules{polyglot-simplepages}
 \def\modules@ll{all}
+\def\module@startif#1{%
+  \ifcsname #1@module@loaded\endcsname\else
+  \x@\let\csname #1@module@loaded\endcsname\empty
+}
+\def\module@endif{\fi}
+\def\module@check#1\E{%
+  \ifcsname #1@module@loaded\endcsname\else
+    \input #1.tex
+  \fi}
+
+\def\modules@needed#1{% Expects a comma-separated list of modules that should be loaded. For use in modules.
+  \let\do=\module@check
+  \cstackdown#1,\E 
+}
 
 \ifcsname modulelist\endcsname
-  \def\d@#1{\input #1.tex}%
+  \def\d@#1\E{\input #1.tex\relax}%
   \ifx\modulelist\modules@ll
-    \cstackdown\modulelist,\E 
+    \x@\cstackdown\kn@wnmodules,\E 
   \else
-    \cstackdown\modulelist,\E 
+    \x@\cstackdown\modulelist,\E 
   \fi
 \else
  \lowercase{\message{load optional modules with (some of) |def|modulelist{\kn@wnmodules} or |def|modulelist{all}}}
