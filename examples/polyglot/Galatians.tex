@@ -1,3 +1,4 @@
+\def\modulelist{ptx-polyglot}
 \input paratext2.tex
 %\let\TRACEdiglot=\doTRACEdiglot% Generate (numbered) trace
 %\VisTracetrue% Every chunk joined, mark with the current trace number
@@ -10,6 +11,9 @@
 
 %\diglotInnerOutertrue
 \newPolyglotCol A
+\def\DiglotLFraction{0.3} % In case texts fit better with unequal columns
+\def\DiglotRFraction{0.26} 
+\def\DiglotAFraction{0.44} 
 
 \input Galatians-setup.tex
 \iffalse

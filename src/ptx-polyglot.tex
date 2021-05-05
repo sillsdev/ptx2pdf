@@ -1,0 +1,134 @@
+%:strip
+% ptx-polyglot.tex: Advanced polyglot processing processing for xetex paratext2.tex
+% Copyright (c) 2021 by SIL International 
+% written by David Gardner
+% 
+% This optional plug-in  extends the basic diglot engine to provide polyglot 
+% options
+%
+% Permission is hereby granted, free of charge, to any person obtaining
+% a copy of this software and associated documentation files (the  
+% "Software"), to deal in the Software without restriction, including  
+% without limitation the rights to use, copy, modify, merge, publish,  
+% distribute, sublicense, and/or sell copies of the Software, and to  
+% permit persons to whom the Software is furnished to do so, subject to  
+% the following conditions:
+%
+% The above copyright notice and this permission notice shall be  
+% included in all copies or substantial portions of the Software.
+%
+% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,  
+% EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF  
+% MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND  
+% NONINFRINGEMENT. IN NO EVENT SHALL SIL INTERNATIONAL BE LIABLE FOR  
+% ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF  
+% CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION  
+% WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+%
+% Except as contained in this notice, the name of SIL International  
+% shall not be used in advertising or otherwise to promote the sale,  
+% use or other dealings in this Software without prior written  
+% authorization from SIL International.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\ifcsname polyglot@module@lo@ded\endcsname\else
+\let\polyglot@module@lo@ded\empty
+\newcount\p@lyp@geno
+
+\def\p@lyp@ges{0}
+\def\p@lyp@gestring{\the\p@lyp@geno}
+\def\p@lyp@gessuffx{@poly@\p@lyp@gestring}
+\def\s@tpolyp@ge#1{%
+  \x@\xdef\csname p@lyp@ge#1\endcsname{\p@lyp@gestring}}
+\def\s@tpolyp@ges#1{%
+  \xdef@cseq{p@lyp@gecols\the\p@lyp@geno}{#1}% p@lyp@gecols0 ... p@lyp@gecolsN give list the columns for the respective page
+  \each@col#1\E
+  \xdef\p@lyp@ges{\the\p@lyp@geno}
+  \edef\tmpname{partial\p@lyp@gestring }
+  \ifcsname \tmpname\endcsname\else
+    \new@poly@page
+  \fi
+  \advance\p@lyp@geno by 1}
+
+\def\new@poly@page{%called with p@lyp@geno=new page
+  \x@\newb@x\csname \tmpname\endcsname
+  \let\d@=\m@kepolyb@x
+  \x@\cstackdown\p@lyins@rts\E
+}
+
+%
+% Boxes
+% Each page-related box (\partial and picture insert boxes) has a separate copy for each page. 
+% on switching between columns / pages, the appropriate page's copy becomes 'active' i.e. \partial points to \partial@poly@0
+\def\polyglot@onetime@setup{%
+  \global\let\polyglot@onetime@setup\relax
+  \edef\@ut{\ins@rts}%
+  \let\d@\gen@p@lyins@rts
+  \x@\cstackdown \s@veclasses\E
+  \global\let\p@lyins@rts\@ut
+  \trace{dmp}{poly@inserts defined as: \@ut}%
+  \let\d@=\poly@setup@inserts
+  \x@\cstackdown partial,\p@lyins@rts\E
+} 
+\def\polyglot@eachtime@setup{%
+  \p@lyp@geno=0
+}
+
+\def\poly@setup@inserts#1\E{\x@\let\x@\tmp\csname #1\endcsname \x@\global\x@\let\csname #1@poly@0\endcsname} %Make each valid insert type have a page-number suffix
+
+\def\poly@rename@inserts#1\E{\x@\let\x@\tmp\csname #1\p@lyp@gessuffx\endcsname \x@\global\x@\let\csname #1\endcsname} %Point the normal insert name to the page-numbered version
+
+\def\m@kepolyb@x#1\E{\x@\newb@x\csname #1\p@lyp@gessuffx\endcsname}
+
+\def\switch@polypage#1{%
+  \global\p@lyp@geno=\csname p@lyp@ge#1\endcsname
+  \let\d@=\poly@rename@inserts
+  \x@\cstackdown partial,\p@lyins@rts\E
+}
+
+\def\gen@p@lyins@rts#1\E{\edef\s@veclass{#1}\let\D@=\d@\let\d@=\cs@apply\let\do@it=\s@veclass@name
+  \x@\cstackdown\ins@rts\E
+  \let\d@=\D@
+}
+
+\def\polyglotpages#1{%comma separated list of concatenated columns to put on different pages (e.g. LR,AB) specifies 2 pages, pg1 shows L+R, pg2 A+B
+  \trace{dmp}{polyglotpages #1}%
+  \polyglot@onetime@setup
+  \p@lyp@geno=0
+  \let\d@=\s@tpolyp@ges
+  \let\col@do=\s@tpolyp@ge
+  \x@\cstackdown#1,\E
+  \polyglot@eachtime@setup
+  \message{Polyglot: layout across \the\p@lyp@geno pages}%
+  \edef\diglotlayout{simplepages}
+}
+ 
+%%%% Diglot module interface functions.
+
+\let\@do@prepare@simplepages=\@do@prepare@simplecols
+\def\@do@setup@simplepages{}%No special setup
+
+\def\@@do@layout@simplepage{%
+  \x@\let\x@\layout@list\csname\p@lyp@gecols\the\p@lyp@geno\endcsname
+  \let\col@do=\mkrev@list
+  \xdef\rev@layout@list{}\def\list@type{layout}%
+  \x@\each@col\layout@list\E%
+  \@do@layout@simplecols
+}
+
+\def\@do@layout@simplepages{%
+  \p@lyp@geno=0
+  \@@do@prepare@simplepage
+}
+\def\@do@arrange@balnotes@simplepages{}%
+\def\@do@arrange@unbalnotes@simplepages{}%
+
+\def\@postswap@simplepages#1{}
+\def\@preswap@simplepages#1{
+  \ifnum \p@lyp@geno=\csname p@lyp@ge#1\endcsname\else
+    \switch@polypage{#1}%
+  \fi
+}
+
+\fi

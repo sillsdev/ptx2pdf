@@ -42,9 +42,10 @@
 
 \def\ins@rts{bottomins,verybottomins,topins,toprightins,topleftins,bottomrightins,bottomleftins,}
 \def\s@veclasses{col,chunk,} % diglot needs to save two distinct states per box.
-\def\m@keinsertb@x#1\E{\x@\newb@x\csname save#1\s@veclass\endcsname}
-\def\s@veins#1\E{\x@\setbox\x@3\x@\copy\csname #1\endcsname\x@\global\x@\setbox\csname save#1\s@veclass\endcsname\box3}
-\def\r@strins#1\E{\x@\setbox\x@3\x@\copy\csname save#1\s@veclass\endcsname\x@\global\x@\setbox\csname #1\endcsname\box3}
+\def\s@veclass@name#1{save#1\s@veclass}
+\def\m@keinsertb@x#1\E{\x@\newb@x\csname \s@veclass@name{#1}\endcsname}
+\def\s@veins#1\E{\x@\setbox\x@3\x@\copy\csname #1\endcsname\x@\global\x@\setbox\csname \s@veclass@name{#1}\endcsname\box3}
+\def\r@strins#1\E{\x@\setbox\x@3\x@\copy\csname \s@veclass@name{#1}\endcsname\x@\global\x@\setbox\csname #1\endcsname\box3}
 \def\sh@winsertdim#1\E{\x@\let\x@\tmp\csname \v@lpfx#1\v@lsfx\endcsname\immediate\write-1{\v@lpfx#1\v@lsfx: \ifx\tmp\relax\else\the\ht\tmp\space x \the\wd\tmp\fi}}
 
 \def\m@keinsertsaveboxes#1\E{\edef\s@veclass{#1}\let\D@=\d@\let\d@=\m@keinsertb@x
@@ -70,8 +71,6 @@
 % Generate the insert save-boxes for each class at start-up
 \addtoinithooks{\let\d@=\m@keinsertsaveboxes\x@\cstackdown\s@veclasses\E}
 
-%%%%%%%%%%%%%% FIGURES %%%%%%%%%%%%%% 
-% called from \fig or from figure list
 %%%%%%%%%%%%%% FIGURES %%%%%%%%%%%%%% 
 % called from \fig or from figure list
 

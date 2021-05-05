@@ -1,4 +1,4 @@
-%:skip
+%skip
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Part of the ptx2pdf macro package for formatting USFM text
 % copyright (c) 2007 by SIL International
@@ -106,7 +106,8 @@
 \input ptxplus-character-kerning.tex
 % We want to import this module here, but it has to come after the stylesheet is loaded.
 %\input ptxplus-marginalverses.tex
-\input ptx-extended.tex % \esb and friends.
+%\input ptx-extended.tex % \esb and friends.
+\input ptx-modules.tex % Load optional modules
 %-c_imports
 
 %+c_fonts-basic

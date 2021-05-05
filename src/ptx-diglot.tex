@@ -788,17 +788,21 @@
 
 \def\polyglotcolumn#1{%
   \uppercase{\edef\reqcol{#1}}%
-  \pr@sideswitch{polyglotcolumn #1}{\reqcol}%
   \ifx\reqcol\empty\errmessage{polyglotcolumn may not be called with an empty argument}\fi
+  \pr@sideswitch{polyglotcolumn #1}{\reqcol}%
+
   \ifcsname #1isDiglotColumn\endcsname % 
+    \csname @preswap@\diglotlayout\endcsname{#1}%
     \swap@diglot{#1}%sets diglot state, etc
+    \csname @postswap@\diglotlayout\endcsname{#1}%
     \global\vsize=\maxdimen
     \global\holdinginserts=1
     \x@\the\csname diglot#1ho@ks\endcsname
   \else
-    \errmessage{polyglotcolumn must be followed by a sensible argument. '#1' Hasn't been specified as a polyglot column (with newPolyglotCol)}%
+    \errmessage{polyglotcolumn must be followed by a sensible argument. '#1' Hasn't been specified as a polyglot column (with newPolyglotCol), before any USFM files are read.}%
   \fi
 }
+
 
 \let\LisDiglotColumn\empty
 \let\RisDiglotColumn\empty
@@ -1164,7 +1168,8 @@
     \dimen7=\dimen8%.5\baselineskip
 }
 
-\let\@do@prepare@doublespread=\@do@prepare@simplecols
+\def\@preswap@simplecols#1{}
+\def\@postswap@simplecols#1{}
 
 \def\@@simplecols#1{\hbox to\columnshift{}\ifx\l@stcol\empty\else\unhcopy1 \fi
     \hbox to \csname column#1width\endcsname{\x@\copy\csname #1box\endcsname\hss}\xdef\l@stcol{#1}}
@@ -1190,7 +1195,7 @@
       \fi
     \fi
     \hbox to \textwidth{\ifVisTrace\llap{\copy0}\fi%
-      \x@\each@col\diglot@list\E
+      \x@\each@col\layout@list\E
     }%
   }%
   \let\l@stcol\empty
@@ -1199,7 +1204,7 @@
       \vskip\ColumnGutterRuleSkip
     \fi
     \hbox to \textwidth{\ifVisTrace\llap{\box0}\fi%
-      \x@\each@col\rev@diglot@list\E
+      \x@\each@col\rev@layout@list\E
   }}%
   \def\v@lpfx{}\def\v@lsfx{box}
   \let\col@do=\void@boxes %
@@ -1217,6 +1222,7 @@
   \fi
   \ifnum \curactivecols>0
     \csname @do@prepare@\diglotlayout\endcsname
+    \csname @do@setup@\diglotlayout\endcsname
     \csname @do@layout@\diglotlayout\endcsname
     \ifnum\chunkpenalty>-20000
       \global\lastchunkpenalty=\chunkpenalty
@@ -1356,6 +1362,13 @@
   \fi
   \setc@rdstat{\s@veddstat}}
 
+\def\@do@setup@simplecols{%
+  \let\layout@list=\diglot@list % default
+  \let\col@do=\mkrev@list
+  \xdef\rev@layout@list{}\def\list@type{layout}%
+  \x@\each@col\layout@list\E% 
+}
+
 \def\@do@prepare@balnotes@simplecols{%
   \dimen1=0pt
   \let\col@do=\max@boxht\def\v@lpfx{}\def\v@lsfx{box}%
@@ -1370,15 +1383,16 @@
   \trace{d}{Gutter \the\dimen8 high, \the\dimen9 deep}%
   \dimen7=0pt
 }
+
 \def\@do@arrange@balnotes@simplecols{%
   \setbox1\hbox{\makediglotgutter{\dimen7}{\dimen8}{\dimen9}}%
   \let\col@do=\@@simplecols\let\l@stcol\empty
   \setbox\Lbox=\hbox to \textwidth{%\vllap{\the\ht\Lbox \the\dp\Lbox}%
   \hbox to\columnshift{}%
   \ifdiglotN@rmal%are the sides swapped?
-    \x@\each@col\diglot@list\E
+    \x@\each@col\layout@list\E
   \else
-    \x@\each@col\rev@diglot@list\E
+    \x@\each@col\rev@layout@list\E
   \fi
   }%
   \global\setbox\partial=\vbox{\unvbox\partial\box\Lbox}%
@@ -1420,7 +1434,7 @@
   \let\col@do=\@@simplecols\let\l@stcol\empty
   \setbox\Lbox\hbox to \textwidth{%\vllap{\the\ht\Lbox \the\dp\Lbox}%
     \ifdiglotN@rmal%are the sides swapped?
-      \x@\each@col\diglot@list\E
+      \x@\each@col\layout@list\E
     \else%
       \x@\each@col\rev@diglot@list\E
     \fi%
@@ -1790,7 +1804,7 @@
   \x@\xdef\csname @cur#1ht\endcsname{\the\dimen1}%
 }
 
-\def\mkrev@list#1{\xdef\rev@diglot@list{#1\rev@diglot@list}}
+\def\mkrev@list#1{\x@\xdef\csname rev@\list@type @list\endcsname{#1\csname rev@\list@type @list\endcsname}}
 
 \def\max@val#1{\x@\let\x@\t@st\csname \v@lpfx#1\v@lsfx\endcsname
   \ifdim\dimen1<\t@st
@@ -1975,6 +1989,7 @@
 }
 
 \edef\diglot@list{LR}%
+\edef\layout@list{LR}%
 \edef\rev@diglot@list{RL}%
 \edef\digl@tc@ntentlist{}%
 
@@ -1986,15 +2001,14 @@
   \ifcsname #1isDiglotColumn\endcsname
     \message{#1 is already a diglot column. You can only define it as one once!}%
   \else
-    \message{Defining #1 as an additional diglot column.}%
-    \message{+++ This code isn't tested yet}%
+    \message{Defining #1 as an additional polyglot column.}%
     \let\old@cts\digl@tc@ntentlist
     \let\digl@tc@ntentlist=\diglot@list
     \add@to@digl@tc@ntentlist{#1}%
     \let\diglot@list=\digl@tc@ntentlist
     \let\digl@tc@ntentlist=\old@cts
     %Now make the reversed list
-    \let\col@do=\mkrev@list
+    \let\col@do=\mkrev@list\def\list@type{diglot}%
     \xdef\rev@diglot@list{}
     \x@\each@col\diglot@list\E% 
     \x@\csname #1isDiglotColumn\endcsname\empty
