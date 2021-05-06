@@ -790,14 +790,15 @@
   \uppercase{\edef\reqcol{#1}}%
   \ifx\reqcol\empty\errmessage{polyglotcolumn may not be called with an empty argument}\fi
   \pr@sideswitch{polyglotcolumn #1}{\reqcol}%
-
   \ifcsname #1isDiglotColumn\endcsname % 
+    \relax
     \csname @preswap@\diglotlayout\endcsname{#1}%
+    \relax
     \swap@diglot{#1}%sets diglot state, etc
     \csname @postswap@\diglotlayout\endcsname{#1}%
     \global\vsize=\maxdimen
-    \global\holdinginserts=1
-    \x@\the\csname diglot#1ho@ks\endcsname
+    \global\holdinginserts=1\relax
+    \x@\the\csname diglot#1ho@ks\endcsname\relax
   \else
     \errmessage{polyglotcolumn must be followed by a sensible argument. '#1' Hasn't been specified as a polyglot column (with newPolyglotCol), before any USFM files are read.}%
   \fi
@@ -2249,4 +2250,6 @@
  }%
 \addtoendhooks{\ifdiglot\ifvoid\partial\else\@writep@ge\fi\fi}
 
+% The polyglot-style input is almost free. -simplecols layout is what we get with old-style diglot2. 
+\x@\let\csname polyglot-simplecols@module@loaded\endcsname\empty 
 \endinput

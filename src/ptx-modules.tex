@@ -49,7 +49,7 @@
 }
 
 \ifcsname modulelist\endcsname
-  \def\d@#1\E{\input #1.tex\relax}%
+  \def\d@#1\E{\module@check #1\E}%
   \ifx\modulelist\modules@ll
     \x@\cstackdown\kn@wnmodules,\E 
   \else
