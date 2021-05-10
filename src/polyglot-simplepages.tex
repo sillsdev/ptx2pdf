@@ -37,25 +37,29 @@
 
 \def\p@lyp@ges{0}
 \def\p@lyp@gestring{\the\p@lyp@geno}
-\def\p@lyp@gessuffx{@poly@\p@lyp@gestring}
+\def\p@lyp@gesuffx{@poly@\p@lyp@gestring}
 \def\s@tpolyp@ge#1{%
+  \trace{dmp}{ #1 is on page \p@lyp@gestring}%
   \x@\xdef\csname p@lyp@ge#1\endcsname{\p@lyp@gestring}}
+
 \def\s@tpolyp@ges#1\E{%
   \let\spp@d@=\d@
   \xdef@cseq{p@lyp@gecols\the\p@lyp@geno}{#1}% p@lyp@gecols0 ... p@lyp@gecolsN give list the columns for the respective page
   \let\col@do=\s@tpolyp@ge
   \each@col#1\E
   \xdef\p@lyp@ges{\the\p@lyp@geno}
-  \edef\tmpname{partial\p@lyp@gestring }
-  \ifcsname \tmpname\endcsname\else
-    \new@poly@page
+  \edef\tmpname{partial\p@lyp@gesuffx }
+  \ifnum \p@lyp@geno>0  % new@poly@page doesn't get run for page0, as those take over the unaffixed IDs
+    \ifcsname \tmpname\endcsname\else
+      \new@poly@page
+    \fi
   \fi
-  \advance\p@lyp@geno by 1
+  \global\advance\p@lyp@geno by 1
   \let\d@=\spp@d@
   }
 
 \def\new@poly@page{%called with p@lyp@geno=new page
-  \x@\newb@x\csname \tmpname\endcsname
+  %\x@\newb@x\csname \tmpname\endcsname
   \let\d@=\m@kepolyb@x
   \x@\cstackdown\p@lyins@rts,\E
 }
@@ -66,46 +70,59 @@
 % Each page-related box (\partial and picture insert boxes) has a separate copy for each page. 
 % on switching between columns / pages, the appropriate page's copy becomes 'active' i.e. \partial points to \partial@poly@0
 \def\polyglot@onetime@setup{%
-  \global\let\polyglot@onetime@setup\relax
   \edef\@ut{\x@\e@tcomma\ins@rts\E}%
-  \let\d@\gen@p@lyins@rts
+  \let\d@\gen@p@lyins@rts %populates \@ut with insert save names
   \x@\cstackdown \s@veclasses\E
-  \xdef\p@lyins@rts{partial,\@ut,}%
+  \xdef\p@lyins@rts{partial,n@xtpartialNrml,n@xtpartialRev,\@ut,}%
   \trace{dmp}{poly@inserts defined as: \p@lyins@rts}%
-  \let\d@=\poly@setup@inserts
-  \x@\cstackdown \p@lyins@rts,\E
+  % Now setup copies of boxes.
+  \addtoinithooks{%
+    %\tracingassigns=1
+    \let\d@=\poly@setup@inserts
+    \x@\cstackdown \p@lyins@rts,\E
+    %\tracingassigns=0
+    }%
+  \global\let\polyglot@onetime@setup\relax
 } 
 \def\polyglot@eachtime@setup{%
-  \p@lyp@geno=0
 }
 
 \def\poly@setup@inserts#1\E{\x@\let\x@\tmp\csname #1\endcsname \x@\global\x@\let\csname #1@poly@0\endcsname\tmp} %Make each valid insert type have a page-number suffix
 
-\def\poly@rename@inserts#1\E{\x@\let\x@\tmp\csname #1\p@lyp@gessuffx\endcsname \x@\global\x@\let\csname #1\endcsname\tmp} %Point the normal insert name to the page-numbered version
+\def\poly@rename@inserts#1\E{%
+  \x@\let\x@\tmp\csname #1\p@lyp@gesuffx\endcsname
+  \x@\global\x@\let\csname #1\endcsname\tmp
+} %Point the normal insert name to the page-numbered version
 
-\def\m@kepolyb@x#1\E{\x@\newb@x\csname #1\p@lyp@gessuffx\endcsname}
+\def\m@kepolyb@x#1\E{\x@\newb@x\csname #1\p@lyp@gesuffx\endcsname}
 
 \def\switch@polypage#1{%
-  \trace{dmp}{@preswap@simplepages #1}%
   \global\p@lyp@geno=\csname p@lyp@ge#1\endcsname
+  \trace{dmp}{switch@polypage #1 -> \the\p@lyp@geno}%
+  %\tracingassigns=1
   \let\d@=\poly@rename@inserts
   \x@\cstackdown \p@lyins@rts,\E
+  %\tracingassigns=0
 }
 
-\def\gen@p@lyins@rts#1\E{\edef\s@veclass{#1}\let\D@=\d@\let\d@=\cs@apply\let\do@it=\s@veclass@name
+\def\gen@p@lyins@rts#1\E{\edef\s@veclass{#1}\let\gpiD@=\d@\let\d@=\cs@apply\let\do@it=\s@veclass@name
   \x@\cstackdown\ins@rts\E
-  \let\d@=\D@
+  \let\d@=\gpiD@
 }
 
 \def\polyglotpages#1{%comma separated list of concatenated columns to put on different pages (e.g. LR,AB) specifies 2 pages, pg1 shows L+R, pg2 A+B
   \trace{dmp}{polyglotpages #1}%
   \polyglot@onetime@setup
+  \polyglot@eachtime@setup
   \p@lyp@geno=0
   \let\d@=\s@tpolyp@ges
-  \x@\cstackdown#1,\E
-  \polyglot@eachtime@setup
+  \cstackdown#1,\E
   \message{Polyglot: layout across \the\p@lyp@geno pages}%
-  \edef\diglotlayout{simplepages}
+  \ifnum\p@lyp@geno=1 
+    \edef\diglotlayout{simplecols}
+  \else
+    \edef\diglotlayout{simplepages}
+  \fi
 }
  
 %%%% Diglot module interface functions.
@@ -113,36 +130,86 @@
 \let\@do@prepare@simplepages=\@do@prepare@simplecols
 \def\@do@setup@simplepages{}%No special setup
 
-\def\@@do@layout@simplepage{%
+\def\@@do@simplepage@{%
   \x@\let\x@\layout@list\csname p@lyp@gecols\the\p@lyp@geno\endcsname
+  \trace{dmp}{\spt@sk \the\p@lyp@geno:\layout@list \the\ht\partial+\the\dp\partial}%
+  %make reverse layout list
   \let\col@do=\mkrev@list
   \xdef\rev@layout@list{}\def\list@type{layout}%
   \x@\each@col\layout@list\E%
-  \@do@layout@simplecols
+  \trace{dmp}{revlist: \rev@layout@list}%
+  %pick correct inserts
+  \let\d@=\poly@rename@inserts
+  \x@\cstackdown \p@lyins@rts,\E
+  %populate page
+  \scol@cmd
+  %Itterate
   \ifnum\p@lyp@geno<\p@lyp@ges
     \advance\p@lyp@geno by 1
-    \let\n@xtlsp=\@@do@layout@simplepage
+    \let\n@xtlsp=\@@do@simplepage@
   \else
     \let\n@xtlsp=\relax
   \fi
   \n@xtlsp
 }
 
-\def\@do@layout@simplepages{%
-  \p@lyp@geno=0
-  \@@do@layout@simplepage
+\def\@@do@simplepage@B{%
+  \x@\let\x@\layout@list\csname p@lyp@gecols\the\p@lyp@geno\endcsname
+  \trace{dmp}{\spt@sk \the\p@lyp@geno:\layout@list \the\ht\partial+\the\dp\partial}%
+  %make reverse layout list
+  \let\col@do=\mkrev@list
+  \xdef\rev@layout@list{}\def\list@type{layout}%
+  \x@\each@col\layout@list\E%
+  \trace{dmp}{revlist: \rev@layout@list}%
+  %pick correct inserts
+  \let\d@=\poly@rename@inserts
+  \x@\cstackdown \p@lyins@rts,\E
+  %populate page
+  \scol@cmd
+  %Itterate
+  \ifnum\p@lyp@geno<\p@lyp@ges\relax
+    \advance\p@lyp@geno by 1
+    \let\n@xtlsp=\@@do@simplepage@B
+  \else
+    \let\n@xtlsp=\relax
+    \p@lyp@geno=0
+  \fi
+  %\n@xtlsp
 }
-\def\@do@arrange@balnotes@simplepages{}%
-\def\@do@arrange@unbalnotes@simplepages{}%
+
+\def\@writep@ge@simplepages{%
+  \edef\spt@sk{@writep@ge@simplepages }%
+  \p@lyp@geno=0 \let\scol@cmd=\@writep@ge@simplecols
+  \@@do@simplepage@
+}
+\def\@do@layout@simplepages{%
+  \edef\spt@sk{@do@layout@simplepages \l@gdims{\csname partial@poly@0\endcsname}, \l@gdims{\csname partial@poly@1\endcsname} \l@gdims{\partial}}%
+  \p@lyp@geno=0 \let\scol@cmd=\@do@layout@simplecols
+  \@@do@simplepage@B
+  %\pagecontents{\x@\box\csname partial@poly@0\endcsname}\plainoutput
+  %\pagecontents{\x@\box\csname partial@poly@1\endcsname}\plainoutput
+  %\@@do@simplepage@B
+}
+\def\@do@arrange@balnotes@simplepages{
+  \@do@arrange@balnotes@simplecols
+}%
+\def\@do@arrange@unbalnotes@simplepages{
+  \@do@arrange@unbalnotes@simplecols
+}%
 
 \def\@postswap@simplepages#1{}
 
-\def\@preswap@simplepages#1{
+\def\@preswap@simplepages#1{%
   \trace{dmp}{@preswap@simplepages #1}%
   \ifnum \p@lyp@geno=\csname p@lyp@ge#1\endcsname \relax
   \else
     \switch@polypage{#1}%
   \fi
 }
+%\let\@writep@ge@simplepages=\@writep@ge@simplecols
+%\let\@do@layout@simplepages=\@do@layout@simplecols
+\let\@do@setup@simplepages=\@do@setup@simplecols
+\let\end@writep@ge@simplepage=\end@writep@ge@simplecols
+
 
 \module@endif

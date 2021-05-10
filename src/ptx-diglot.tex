@@ -789,11 +789,9 @@
 \def\polyglotcolumn#1{%
   \uppercase{\edef\reqcol{#1}}%
   \ifx\reqcol\empty\errmessage{polyglotcolumn may not be called with an empty argument}\fi
-  \pr@sideswitch{polyglotcolumn #1}{\reqcol}%
+  \pr@sideswitch{polyglotcolumn #1}{\reqcol}% Before any non-fatal writes
   \ifcsname #1isDiglotColumn\endcsname % 
-    \relax
     \csname @preswap@\diglotlayout\endcsname{#1}%
-    \relax
     \swap@diglot{#1}%sets diglot state, etc
     \csname @postswap@\diglotlayout\endcsname{#1}%
     \global\vsize=\maxdimen
@@ -968,8 +966,9 @@
  \global\setbox#1=\vtop{\unvbox#1\ifdim\dp2=0pt\ifdim\TempDim=0pt\else\kern-\TempDim\fi\fi}
 }
 
+\def\l@gdims#1{\the\ht#1 + \the\dp#1 x \the\wd#1}
 \def\joinboxes#1#2#3#4{%Join 2 vtops together and preserve baselineskip%
- \traceNum{d}{joinboxes #1(\the\ht#1+\the\dp#1x\the\wd#1) #2 (\the\ht#2+\the\dp#2x\the\wd#2)called from locn #3, with penalty #4}%
+ \traceNum{d}{joinboxes #1(\l@gdims{#1}) #2(\l@gdims{#2}) called from locn #3, with penalty #4}%
  \ifnum\TRACEcount=\diglotDbgJoinboxes
    \showbox#1\showbox#2
  \fi\relax
@@ -1004,7 +1003,7 @@
     % \unkern
      \setbox0=\lastbox%
      \copy0
-     \trace{D}{lk: \the\dimen4, final bit of deconstructed first box: \the\ht0+\the\dp0, 2nd box: \the\ht#2+\the\dp#2}%
+     \trace{D}{lk: \the\dimen4, final bit of deconstructed first box: \l@gdims{0}, 2nd box: \l@gdims{#2}}%
      \ifdim\dp0>0pt \ifdim\dimen4=0pt \ifdim\ht0>0pt
          \dimen4=-\dp0
      \fi\fi\fi
@@ -1106,6 +1105,7 @@
 }
 
 \def\@do@prepare@simplecols{%
+    \trace{d}{@do@layout@simplecols \l@gdims{\partial}}%
     \thisjointDelta=0pt %Do we need extra space?
     %Calculate how much extra space we need:
     % step 1: max height of the last box 
@@ -1177,6 +1177,7 @@
   %
 
 \def\@do@layout@simplecols{%
+  \let\@d@lsimpcol@do=\d@
   \setbox1\hbox{\makediglotgutter{\dimen7}{\dimen8}{\dimen9}}%
   \let\l@stcol\empty
   \let\col@do=\@@simplecols
@@ -1210,6 +1211,7 @@
   \def\v@lpfx{}\def\v@lsfx{box}
   \let\col@do=\void@boxes %
   \x@\each@col\diglot@list\E
+  \let\d@=\@d@lsimpcol@do
 }
 
 \def\diglot@arrange@cols{% Xht is the sum of Xbox's depth and height (set by after@a@trial
@@ -1287,7 +1289,7 @@
   \x@\each@col\diglot@list\E %remember old marks state
   \s@veallnotes{2}% remember old notestate 
   \s@veinserts{chunk}
-  \traceNum{d}{Arranging new n@xtpartial : LB:\the\ht\Lbox+\the\dp\Lbox\space RB:\the\ht\Rbox+\the\dp\Rbox\space p@gechunkDelta:\the\p@geChunkDelta}%\space Tot:\the\cumulativeDelta%
+  \traceNum{d}{Arranging new n@xtpartial : LB:\l@gdims{\Lbox} RB:\l@gdims{\Rbox} p@gechunkDelta:\the\p@geChunkDelta}%\space Tot:\the\cumulativeDelta%
   \let\\=\upd
   \diglot@arrange@cols
   \TempDim=\dimexpr \ht\n@xtpartial + \dp\n@xtpartial\relax
@@ -1388,7 +1390,7 @@
 \def\@do@arrange@balnotes@simplecols{%
   \setbox1\hbox{\makediglotgutter{\dimen7}{\dimen8}{\dimen9}}%
   \let\col@do=\@@simplecols\let\l@stcol\empty
-  \setbox\Lbox=\hbox to \textwidth{%\vllap{\the\ht\Lbox \the\dp\Lbox}%
+  \setbox0=\hbox to \textwidth{%\vllap{\the\ht\Lbox \the\dp\Lbox}%
   \hbox to\columnshift{}%
   \ifdiglotN@rmal%are the sides swapped?
     \x@\each@col\layout@list\E
@@ -1396,7 +1398,7 @@
     \x@\each@col\rev@layout@list\E
   \fi
   }%
-  \global\setbox\partial=\vbox{\unvbox\partial\box\Lbox}%
+  \global\setbox\partial=\vbox{\unvbox\partial\box0}%
 }
 
 \def\@do@prepare@unbalnotes@simplecols{%
@@ -1450,6 +1452,11 @@
   \ifnum\pageno>\MaxPages
     \errmessage{Pagecount (\the\pageno) has exceeded \MaxPages (\the\MaxPages). This probably means something has gone wrong. (or you should increase MaxPages or MaxPagesPerChunk (\MaxPagesPerChunk) for this job)}%
   \fi
+  \csname @writep@ge@\diglotlayout\endcsname
+  \csname end@writep@ge@\diglotlayout\endcsname
+}
+
+\def\@writep@ge@simplecols{
   \IfTr@ce{gI}{%
     \let\d@=\sh@winsertdim\edef\v@lpfx{}\edef\v@lsfx{}\x@\cstackdown\ins@rts\E
   }%
@@ -1603,7 +1610,10 @@
    \global\adjustp@ge=0pt
    \plainoutput%
   \fi
-  \trace{d}{@writep@ge: resetting things for next page}%
+}
+
+\def\end@writep@ge@simplecols{%
+  \trace{d}{end@writep@ge: resetting things for next page}%
   \resetvsize%
   \global\vsize=\availht
   \global\availhtR=\textheight%
