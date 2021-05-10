@@ -411,6 +411,7 @@ class TexModel:
         docdir, base = self.docdir()
         self.dict["document/directory"] = "." # os.path.abspath(docdir).replace("\\","/")
         self.dict['project/adjlists'] = rel(j(cpath, "AdjLists"), docdir).replace("\\","/") + "/"
+        self.dict['project/triggers'] = rel(j(cpath, "triggers"), docdir).replace("\\","/") + "/"
         self.dict['project/piclists'] = rel(j(self.printer.working_dir, "tmpPicLists"), docdir).replace("\\","/") + "/"
         self.dict['project/id'] = self.printer.prjid
         self.dict['config/name'] = self.printer.configId

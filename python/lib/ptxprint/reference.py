@@ -1,7 +1,15 @@
 
 from collections import namedtuple
-import re
-from ptxprint.utils import chaps, oneChbooks, books
+import re, sys
+from ptxprint.utils import chaps, oneChbooks, books, allbooks, binsearch
+from base64 import b64encode
+from functools import reduce
+
+startchaps = list(zip([b for b in allbooks if 0 < int(chaps[b]) < 99] + ["ZZZ"],
+                      reduce(lambda a,x: a + [a[-1]+x], (int(chaps[b]) for b in allbooks if 0 < int(chaps[b]) < 99), [0])))
+startbooks = dict(startchaps)
+b64codes = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+b64lkup = {b:i for i, b in enumerate(b64codes)}
 
 class Reference:
     def __init__(self, book, chap, verse, subverse=None):
@@ -10,23 +18,24 @@ class Reference:
         self.verse = verse
         self.subverse = subverse
 
-    def __str__(self, context=None, level=0, lastref=None, addsep="; ,"):
+    def __str__(self, context=None, level=0, lastref=None, addsep=("; ", ";", ",")):
         sep = ""
         if lastref is None or lastref.book != self.book:
-            res = ["{}".format(self.book if context is None else context.getBook(self.book, level))]
+            res = ["{}".format(self.book if context is None else context.getLocalBook(self.book, level))]
             if lastref is not None and lastref.book is not None:
-                sep = addsep[:-1] 
+                sep = addsep[0]
         else:
             res = []
-        if self.chap > 0 and self.book not in oneChbooks and (lastref is None or lastref.chap != self.chap):
+        if self.chap > 0 and self.book not in oneChbooks and (lastref is None or lastref.book != self.book or lastref.chap != self.chap):
             if not len(res):
-                sep = addsep[:-2]
+                sep = addsep[1]
             res.append("{}{}".format(" " if len(res) else "", self.chap))
             if self.verse > 0:
                 res.append(":{}{}".format(*([self.verse, self.subverse or ""] if self.verse < 200 else ["end", ""])))
         elif (lastref is None or lastref.verse != self.verse) and 0 < self.verse:
             res.append("{}{}{}".format(" " if len(res) else "", *[self.verse if self.verse < 200 else "end", self.subverse or ""]))
-            sep = addsep[-1:]
+            if lastref is not None:
+                sep = addsep[2]
         return sep + "".join(res)
 
     def __eq__(self, o):
@@ -68,15 +77,59 @@ class Reference:
         res = self.__class__(self.book, self.chap, self.verse, self.subverse)
         return res
 
+    def astag(self):
+        if self.subverse:
+            subverse = str(ord(self.subverse.lower()) - 0x61)
+        else:
+            subverse = ""
+        if self.book == "PSA" and self.chap == 119 and self.verse > 127:
+            c = startchaps["ZZZ"]
+            v = self.verse - 127
+        else:
+            c = startbooks[self.book] + self.chap
+            v = min(self.verse, 127)
+        vals = [(c >> 5) & 63, ((v & 64) >> 6) + ((c & 31) << 1), v & 63]
+        return subverse + "".join(b64codes[v] for v in vals)
+
+    @classmethod
+    def fromtag(cls, s, remainder=False):
+        if s[0] in "0123456789":
+            subverse = chr(0x61 + int(s[0]))
+            s = s[1:]
+        else:
+            subverse = None
+        v = [b64lkup.get(x, 0) for x in s[:3]]
+        verse = v[2] + ((v[1] & 1) << 6)
+        c = (v[1] >> 1) + (v[0] << 5)
+        def chcmp(a, i, cv):
+            if a[i][1] > cv:
+                return 1
+            elif i < len(a) and a[i+1][1] < cv:
+                return -1
+            return 0
+        i = binsearch(startchaps, c, chcmp)
+        bk, start = startchaps[i]
+        chap = c - start
+        if bk == "ZZZ":
+            if chap == 0:
+                bk = "PSA"
+                chap = 119
+                verse += 128
+        elif verse == 127:
+            verse = 200
+        res = cls(bk, chap, verse, subverse=subverse)
+        if remainder:
+            return (res, s[3:])
+        return res
 
 class RefRange:
     def __init__(self, first, last):
         self.first = first
         self.last = last
 
-    def __str__(self, context=None, level=0, lastref=None):
-        res = "{}-{}".format(self.first.__str__(context, level, lastref),
-                             self.last.__str__(context, level, self.first, addsep=""))
+    def __str__(self, context=None, level=0, lastref=None, addsep=("; ", ";", ",")):
+        res = "{}-{}".format(self.first.__str__(context, level, lastref, addsep=addsep),
+                             self.last.__str__(context, level, self.first, addsep=("", "", "")))
         return res
 
     def __eq__(self, other):
@@ -96,17 +149,37 @@ class RefRange:
     def __ge__(self, o):
         return self.first >= (o if isinstance(o, Reference) else o.first)
 
+    def astag(self):
+        return "{}-{}".format(self.first.astag(), self.last.astag())
+
+    @classmethod
+    def fromtag(cls, s, remainder=False):
+        first, s = Reference.fromtag(s, remainder=True)
+        if len(s) and s[0] == "-":
+            last, s = Reference.fromtag(s[1:], remainder=True)
+            res = cls(first, last)
+        else:
+            res = first
+        if remainder:
+            return (res, s)
+        return res
+
 
 class BaseBooks:
     bookStrs = chaps
+    bookNames = {k: [k, k, k] for k,v in chaps.items() if 0 < int(v) < 999}
 
     @classmethod
     def getBook(cls, s):
         ''' Returns canonical book name if the book is matched in our list '''
-        res = cls.bookStrs.get(s, 0)
-        if res != 0 and res != 999:
+        res = int(cls.bookStrs.get(s, 0))
+        if 0 < res < 999:
             return s
         return None
+
+    @classmethod
+    def getLocalBook(cls, s, level=0):
+        return cls.bookNames[s][level]
 
 
 class BookNames(BaseBooks):
@@ -118,7 +191,7 @@ class BookNames(BaseBooks):
         doc = et.parse(fpath)
         for b in doc.findall("//book"):
             bkid = b.get("code")
-            strs = [b.get(a) for a in ("long", "short", "abbr")]
+            strs = [b.get(a) for a in ("abbr", "short", "long")]
             cls.bookNames[bkid] = strs
             for s in strs:
                 for i in range(len(s)):
@@ -156,13 +229,13 @@ class RefList(list):
                     mode = "b"
                     b = b[m.end():]
                     continue
-                m = re.match(r"^(\d+)[:.](\d+)([a-z]?)", b)
+                m = re.match(r"^(\d+)[:.](\d+|end)([a-z]?)", b)
                 if m:
                     if mode not in "br":
                         curr = self._addRefOrRange(start, curr)
                     curr.chap = int(m.group(1))
                     if m.group(2):
-                        curr.verse = int(m.group(2))
+                        curr.verse = 200 if m.group(2) == "end" else int(m.group(2))
                     if m.group(3):
                         curr.subverse = m.group(3) or None
                     b = b[m.end():]
@@ -203,11 +276,11 @@ class RefList(list):
             self._addRefOrRange(start, curr)
         return self
 
-    def __str__(self, context=None, level=0):
+    def __str__(self, context=None, level=0, addsep=("; ", ";", ",")):
         res = []
-        lastref = Reference(None, 0, 0)
+        lastref = None # Reference(None, 0, 0)
         for r in self:
-            res.append(r.__str__(context, level, lastref))
+            res.append(r.__str__(context, level, lastref, addsep=addsep))
             lastref = r.last if isinstance(r, RefRange) else r
         return "".join(res)
 
@@ -235,6 +308,17 @@ class RefList(list):
             lastref = u
         self[:] = res
 
+    def astag(self):
+        return "".join(r.astag() for r in self)
+
+    @classmethod
+    def fromtag(cls, s):
+        res = cls()
+        while len(s) > 2:
+            l, s = RefRange.fromtag(s, remainder=True)
+            res.append(l)
+        return res
+
 
 class TestException(Exception):
     pass
@@ -242,23 +326,35 @@ class TestException(Exception):
 
 def tests():
     r = Reference
-    def t(s, *r):
+    def t(s, t, *r):
         res = RefList.fromStr(s)
+        tag = res.astag()
+        tagref = RefList.fromtag(tag)
         if len(res) != len(r):
             raise TestException("Failed '{}' resulted in {} references, {}, rather than {}".format(s, len(res), res, len(r)))
         for z in zip(res, r):
             if z[0] != z[1]:
-                raise TestException("Failed '{}', {} != {}".format(s, z[0], z[1]))
+                raise TestException("Reference list failed '{}', {} != {}".format(s, z[0], z[1]))
+        for z in zip(tagref, r):
+            if z[0] != z[1]:
+                raise TestException("Reference list from tag ailed '{}', {} != {}: tag={}".format(s, z[0], z[1], tag))
         if str(res) != s:
             raise TestException("{} != canonical string of {}".format(s, str(res)))
+        if tag != t:
+            raise TestException("{} != {}".format(tag, t))
 
-    t("GEN 1:1", r("GEN", 1, 1))
-    t("JHN 3", r("JHN", 3, 0))
-    t("3JN 3", r("3JN", 1, 3))
-    t("1CO 6:5a", r("1CO", 6, 5, "a"))
-    t("MAT 5:1-7", RefRange(r("MAT", 5, 1), r("MAT", 5, 7)))
-    t("MAT 7:1, 2, 8:6b-9:4", r("MAT", 7, 1), r("MAT", 7, 2), RefRange(r("MAT", 8, 6, "b"), r("MAT", 9, 4)))
-    t("LUK 3:47-end", RefRange(r("LUK", 3, 47), r("LUK", 3, 200)))
+    t("GEN 1:1", "ACB", r("GEN", 1, 1))
+    t("JHN 3", "akA", r("JHN", 3, 0))
+    t("3JN 3", "fwD", r("3JN", 1, 3))
+    t("1CO 6:5a", "0csF", r("1CO", 6, 5, "a"))
+    t("MAT 5:1-7", "YgB-YgH", RefRange(r("MAT", 5, 1), r("MAT", 5, 7)))
+    t("MAT 7:1,2;8:6b-9:4", "YkBYkC1YmG-YoE", r("MAT", 7, 1), r("MAT", 7, 2), RefRange(r("MAT", 8, 6, "b"), r("MAT", 9, 4)))
+    t("LUK 3:47-end", "Z0v-Z1/", RefRange(r("LUK", 3, 47), r("LUK", 3, 200)))
 
 if __name__ == "__main__":
-    tests()
+    if len(sys.argv) > 1:
+        res = RefList.fromStr(" ".join(sys.argv[1:]))
+        tag = res.astag()
+        print("{}: {}".format(res, tag))
+    else:
+        tests()

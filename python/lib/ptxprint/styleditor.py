@@ -33,8 +33,8 @@ class StyleEditor:
         return res
 
     def asStyle(self, m):
-        res = self.basesheet.get(m, {}).copy()
-        res.update(self.sheet.get(m, {}))
+        res = {k: str(v) for k, v in self.basesheet.get(m, {}).items()}
+        res.update({k: str(v) for k, v in self.sheet.get(m, {}).items()})
         return res
 
     def getval(self, mrk, key, default=None):

@@ -240,8 +240,6 @@ class StyleEditorView(StyleEditor):
             if k in allStyles:
                 # n = self.sheet[k].get('name', k)
                 n = self.getval(k, 'name')
-                if n is None:
-                    n = k
                 m = re.match(r"^([^-\s]*)\s*([^-]+)(?:-\s*|$)", n)
                 if m:
                     if m.group(1) and m.group(1) not in ('OBSOLETE', 'DEPRECATED'):
@@ -253,7 +251,7 @@ class StyleEditorView(StyleEditor):
                 n = k
             else:
                 n = k
-            s = [k, n, ismarker]
+            s = [str(k), str(n), ismarker]
             this = self.treestore.append(parent, s)
             if len(v):
                 self._fill_store(v, this)
