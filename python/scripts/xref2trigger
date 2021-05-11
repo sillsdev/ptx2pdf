@@ -48,7 +48,7 @@ if args.paratext is None:
 
 ptsettings = ParatextSettings(args.paratext, args.pid)
 results = {}
-with open(args.infile) as inf:
+with open(args.infile, encoding="utf-8") as inf:
     for l in inf.readlines():
         if "#" in l:
             continue
@@ -67,7 +67,7 @@ for b in args.book:
     i = fname.rindex(".")
     if i >= 0:
         fname = fname[:i]+"-"+args.config+fname[i:]
-    with open(os.path.join(fpath, fname + ".triggers"), "w") as outf:
+    with open(os.path.join(fpath, fname + ".triggers"), "w", encoding="utf-8") as outf:
         for k, v in sorted(((k,v) for k, v in results.items() if k.book == b)):
             v.sort()
             outf.write(template.format(bk=k.book, chap=k.chap, verse=k.verse, refs=v.__str__(ptsettings, addsep=addsep)))
