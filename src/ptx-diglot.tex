@@ -294,7 +294,8 @@
 \def\savedRpenalty{0}
 
 \newcount\tmpcount%scratchspace
-\newcount\curactivecols%scratchspace
+\newcount\curactivecols%how many active columns
+\newcount\curdispcols%how many displayable columns
 \newcount\Lboxpenalty% The penalty that goes between Lbox and partialL
 \newcount\Rboxpenalty%  ~"~
 \newcount\partialLpenalty% The penalty that goes between partialL and excessL (also used while loading excessL during excessL
@@ -965,8 +966,17 @@
  \trace{D}{pd:\the\dp2, ph=\the\ht2, d:\the\TempDim}%
  \global\setbox#1=\vtop{\unvbox#1\ifdim\dp2=0pt\ifdim\TempDim=0pt\else\kern-\TempDim\fi\fi}
 }
+\let\lAd@do\relax
+\let\log@ut\empty
 
 \def\l@gdims#1{\the\ht#1 + \the\dp#1 x \the\wd#1}
+\def\l@gboxdims#1{\edef\lb@tmpnam{\v@lpfx#1\v@lsfx}\x@\let\x@\lb@tmptb@x\csname\lb@tmpnam\endcsname \edef\log@ut{\log@ut\space \lb@tmpnam: \the\ht\lb@tmptb@x +\the\dp\lb@tmptb@x\space x \the\wd\lb@tmptb@x}}
+% Log dimensions of all columns
+\def\l@gm@dims{\relax\let\lAd@do=\col@do\let\col@do=\l@gboxdims
+  \x@\each@col\diglot@list\E
+  \let\col@do=\lAd@do
+}
+
 \def\joinboxes#1#2#3#4{%Join 2 vtops together and preserve baselineskip%
  \traceNum{d}{joinboxes #1(\l@gdims{#1}) #2(\l@gdims{#2}) called from locn #3, with penalty #4}%
  \ifnum\TRACEcount=\diglotDbgJoinboxes
@@ -1105,7 +1115,7 @@
 }
 
 \def\@do@prepare@simplecols{%
-    \trace{d}{@do@layout@simplecols \l@gdims{\partial}}%
+    \trace{d}{@do@prepare@simplecols \l@gdims{\partial}}%
     \thisjointDelta=0pt %Do we need extra space?
     %Calculate how much extra space we need:
     % step 1: max height of the last box 
@@ -1177,6 +1187,7 @@
   %
 
 \def\@do@layout@simplecols{%
+  \trace{d}{@do@layout@simplecols \l@gdims{\partial}}%
   \let\@d@lsimpcol@do=\d@
   \setbox1\hbox{\makediglotgutter{\dimen7}{\dimen8}{\dimen9}}%
   \let\l@stcol\empty
@@ -1198,6 +1209,7 @@
     \fi
     \hbox to \textwidth{\ifVisTrace\llap{\copy0}\fi%
       \x@\each@col\layout@list\E
+      \vrule height \dimen7 depth \dimen9 width 0pt
     }%
   }%
   \let\l@stcol\empty
@@ -1207,15 +1219,18 @@
     \fi
     \hbox to \textwidth{\ifVisTrace\llap{\box0}\fi%
       \x@\each@col\rev@layout@list\E
+      \vrule height \dimen7 depth \dimen9 width 0pt
   }}%
-  \def\v@lpfx{}\def\v@lsfx{box}
+}
+\def\@do@cleanup@simplecols{%
+  \def\v@lpfx{}\def\v@lsfx{box}%
   \let\col@do=\void@boxes %
-  \x@\each@col\diglot@list\E
+  \x@\each@col\layout@list\E
   \let\d@=\@d@lsimpcol@do
 }
 
 \def\diglot@arrange@cols{% Xht is the sum of Xbox's depth and height (set by after@a@trial
-  \trace{D}{diglot@arrange@cols chnkDlta:\the\chunkDelta. cp:\the\chunkpenalty, lcp:\the\lastchunkpenalty}%
+  \trace{d}{diglot@arrange@cols chnkDlta:\the\chunkDelta. cp:\the\chunkpenalty, lcp:\the\lastchunkpenalty}%
   \ifVisTrace
     \ifx\b@xtype\vbox %boxtype is set on discovery of whether this is a heading or not
       \doVisTraceT{L}% sets box0, used ~43 lines below
@@ -1227,6 +1242,7 @@
     \csname @do@prepare@\diglotlayout\endcsname
     \csname @do@setup@\diglotlayout\endcsname
     \csname @do@layout@\diglotlayout\endcsname
+    \csname @do@cleanup@\diglotlayout\endcsname
     \ifnum\chunkpenalty>-20000
       \global\lastchunkpenalty=\chunkpenalty
     \else
@@ -1249,11 +1265,11 @@
 \def\upd@tep@rtial{%Actually add stuff to the page.
   \trace{D}{upd@tep@rtial \the\outputpenalty}%
   \trace{D}{plp:\the\partialLpenalty, prp:\the\partialRpenalty, cp:\the\chunkpenalty lcp:\the\lastchunkpenalty, lbp:\the\Lboxpenalty, rbp:\the\Rboxpenalty}%
-  \curactivecols=0\def\v@lpfx{}\def\v@lsfx{ht}\let\cts@list=\empty
-  \let\col@do=\count@dim% increments curactivecols by each non-0 value, and sets \cts@list
+  \curdispcols=0 \curactivecols=0 \def\v@lpfx{}\def\v@lsfx{ht}\let\cts@list=\empty
+  \x@\let\x@\col@do\csname count@dim@\diglotlayout\endcsname% increments curactivecols by each non-0 value, and sets \cts@list
   \x@\each@col\diglot@list\E
   \trace{dP}{Columns with contents: \cts@list (\the\curactivecols)}%
-  \ifnum\curactivecols>0 
+  \ifnum\curdispcols>0 
     \temptrue
     \let\col@do=\chk@head %Is the relevant item a heading? Set tempfalse if not
     \x@\each@col\cts@list\E
@@ -1288,9 +1304,12 @@
   \let\col@do=\store@marks
   \x@\each@col\diglot@list\E %remember old marks state
   \s@veallnotes{2}% remember old notestate 
-  \s@veinserts{chunk}
-  \traceNum{d}{Arranging new n@xtpartial : LB:\l@gdims{\Lbox} RB:\l@gdims{\Rbox} p@gechunkDelta:\the\p@geChunkDelta}%\space Tot:\the\cumulativeDelta%
-  \let\\=\upd
+  \s@veinserts{chunk}%
+  \IfTr@ce{d}{%
+    \let\log@ut\empty\def\v@lpfx{}\def\v@lsfx{box}%
+    \l@gm@dims
+    \traceNum{d}{Arranging new n@xtpartial: \log@ut. p@gechunkDelta:\the\p@geChunkDelta}%\space Tot:\the\cumulativeDelta%
+  }%
   \diglot@arrange@cols
   \TempDim=\dimexpr \ht\n@xtpartial + \dp\n@xtpartial\relax
   \dglt@calc@vailht
@@ -1785,7 +1804,7 @@
   \x@\xdef\csname \v@lpfx#1dp\endcsname{0pt}%
 } 
 
-\def\count@dim#1{%Is the dimension non non-zero? Count using tmpcount and add tag to list
+\def\count@dim@simplecols#1{%Is the dimension non non-zero? Count using curactivecols and add tag to list
   \x@\ifdim \csname \v@lpfx#1\v@lsfx\endcsname=0pt\else
     \advance\curactivecols by 1
     \edef\cts@list{\cts@list#1}%
@@ -2002,6 +2021,7 @@
 \edef\diglot@list{LR}%
 \edef\layout@list{LR}%
 \edef\rev@diglot@list{RL}%
+\edef\rev@layout@list{RL}%
 \edef\digl@tc@ntentlist{}%
 
 \def\xdef@cseq#1#2{\x@\xdef\csname #1\endcsname{#2}}% Helper function
@@ -2022,6 +2042,7 @@
     \let\col@do=\mkrev@list\def\list@type{diglot}%
     \xdef\rev@diglot@list{}
     \x@\each@col\diglot@list\E% 
+    \global\let\rev@layout@list\rev@diglot@list
     \x@\csname #1isDiglotColumn\endcsname\empty
     \x@\newb@x\csname #1box\endcsname
     \x@\newb@x\csname partial#1\endcsname

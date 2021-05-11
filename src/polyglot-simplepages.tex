@@ -3,8 +3,8 @@
 % Copyright (c) 2021 by SIL International 
 % written by David Gardner
 % 
-% This optional plug-in  extends the basic diglot engine to provide polyglot 
-% options
+% This optional module (see ptx-modules) extends the basic diglot engine to
+% provide polyglot options
 %
 % Permission is hereby granted, free of charge, to any person obtaining
 % a copy of this software and associated documentation files (the  
@@ -48,8 +48,8 @@
   \let\col@do=\s@tpolyp@ge
   \each@col#1\E
   \xdef\p@lyp@ges{\the\p@lyp@geno}
-  \edef\tmpname{partial\p@lyp@gesuffx }
-  \ifnum \p@lyp@geno>0  % new@poly@page doesn't get run for page0, as those take over the unaffixed IDs
+  \ifnum \p@lyp@geno>0  % new@poly@page doesn't get run for page0, as those take over the standard boxes
+    \edef\tmpname{partial\p@lyp@gesuffx }
     \ifcsname \tmpname\endcsname\else
       \new@poly@page
     \fi
@@ -59,12 +59,11 @@
   }
 
 \def\new@poly@page{%called with p@lyp@geno=new page
-  %\x@\newb@x\csname \tmpname\endcsname
   \let\d@=\m@kepolyb@x
   \x@\cstackdown\p@lyins@rts,\E
 }
 
-\def\e@tcomma#1,\E{#1}
+\def\e@tcomma#1,\E{#1} %Remove the trailing comma from a list.
 %
 % Boxes
 % Each page-related box (\partial and picture insert boxes) has a separate copy for each page. 
@@ -87,24 +86,30 @@
 \def\polyglot@eachtime@setup{%
 }
 
-\def\poly@setup@inserts#1\E{\x@\let\x@\tmp\csname #1\endcsname \x@\global\x@\let\csname #1@poly@0\endcsname\tmp} %Make each valid insert type have a page-number suffix
+\def\poly@setup@inserts#1\E{\x@\let\x@\tmp@ins\csname #1\endcsname \x@\global\x@\let\csname #1@poly@0\endcsname\tmp@ins} %Make each valid insert type have a page-number suffix
 
 \def\poly@rename@inserts#1\E{%
-  \x@\let\x@\tmp\csname #1\p@lyp@gesuffx\endcsname
-  \x@\global\x@\let\csname #1\endcsname\tmp
+  \x@\let\x@\tmp@ins\csname #1\p@lyp@gesuffx\endcsname
+  \x@\global\x@\let\csname #1\endcsname\tmp@ins
 } %Point the normal insert name to the page-numbered version
 
 \def\m@kepolyb@x#1\E{\x@\newb@x\csname #1\p@lyp@gesuffx\endcsname}
 
-\def\switch@polypage#1{%
-  \global\p@lyp@geno=\csname p@lyp@ge#1\endcsname
-  \trace{dmp}{switch@polypage #1 -> \the\p@lyp@geno}%
-  %\tracingassigns=1
-  \let\d@=\poly@rename@inserts
-  \x@\cstackdown \p@lyins@rts,\E
-  %\tracingassigns=0
+\def\switch@polypage#1{%Switch to the relevant page for the column selected.
+  \x@\let\x@\sp@lynum\csname p@lyp@ge#1\endcsname
+  \ifnum\p@lyp@geno=\sp@lynum\relax
+    \trace{dmp}{switch@polypage #1, on \the\p@lyp@geno already}%
+  \else
+    \trace{dmp}{switch@polypage #1 -> \sp@lynum}%
+    \@s@tp@lypage{\sp@lynum}%
+  \fi
 }
 
+\def\@s@tp@lypage#1{%
+    \global\p@lyp@geno=#1\relax
+    \let\d@=\poly@rename@inserts
+    \x@\cstackdown \p@lyins@rts,\E
+}
 \def\gen@p@lyins@rts#1\E{\edef\s@veclass{#1}\let\gpiD@=\d@\let\d@=\cs@apply\let\do@it=\s@veclass@name
   \x@\cstackdown\ins@rts\E
   \let\d@=\gpiD@
@@ -130,32 +135,10 @@
 \let\@do@prepare@simplepages=\@do@prepare@simplecols
 \def\@do@setup@simplepages{}%No special setup
 
+
 \def\@@do@simplepage@{%
   \x@\let\x@\layout@list\csname p@lyp@gecols\the\p@lyp@geno\endcsname
-  \trace{dmp}{\spt@sk \the\p@lyp@geno:\layout@list \the\ht\partial+\the\dp\partial}%
-  %make reverse layout list
-  \let\col@do=\mkrev@list
-  \xdef\rev@layout@list{}\def\list@type{layout}%
-  \x@\each@col\layout@list\E%
-  \trace{dmp}{revlist: \rev@layout@list}%
-  %pick correct inserts
-  \let\d@=\poly@rename@inserts
-  \x@\cstackdown \p@lyins@rts,\E
-  %populate page
-  \scol@cmd
-  %Itterate
-  \ifnum\p@lyp@geno<\p@lyp@ges
-    \advance\p@lyp@geno by 1
-    \let\n@xtlsp=\@@do@simplepage@
-  \else
-    \let\n@xtlsp=\relax
-  \fi
-  \n@xtlsp
-}
-
-\def\@@do@simplepage@B{%
-  \x@\let\x@\layout@list\csname p@lyp@gecols\the\p@lyp@geno\endcsname
-  \trace{dmp}{\spt@sk \the\p@lyp@geno:\layout@list \the\ht\partial+\the\dp\partial}%
+  \trace{dmp}{\spt@sk \the\p@lyp@geno:\layout@list\space \the\ht\partial+\the\dp\partial}%
   %make reverse layout list
   \let\col@do=\mkrev@list
   \xdef\rev@layout@list{}\def\list@type{layout}%
@@ -169,12 +152,11 @@
   %Itterate
   \ifnum\p@lyp@geno<\p@lyp@ges\relax
     \advance\p@lyp@geno by 1
-    \let\n@xtlsp=\@@do@simplepage@B
+    \let\n@xtlsp=\@@do@simplepage@
   \else
     \let\n@xtlsp=\relax
-    \p@lyp@geno=0
   \fi
-  %\n@xtlsp
+  \n@xtlsp
 }
 
 \def\@writep@ge@simplepages{%
@@ -183,12 +165,13 @@
   \@@do@simplepage@
 }
 \def\@do@layout@simplepages{%
-  \edef\spt@sk{@do@layout@simplepages \l@gdims{\csname partial@poly@0\endcsname}, \l@gdims{\csname partial@poly@1\endcsname} \l@gdims{\partial}}%
+  \edef\spt@sk{@do@layout@simplepages \space0:\l@gdims{\csname partial@poly@0\endcsname}, 1:\l@gdims{\csname partial@poly@1\endcsname} p:\l@gdims{\partial}}%
   \p@lyp@geno=0 \let\scol@cmd=\@do@layout@simplecols
-  \@@do@simplepage@B
+  \@@do@simplepage@
   %\pagecontents{\x@\box\csname partial@poly@0\endcsname}\plainoutput
   %\pagecontents{\x@\box\csname partial@poly@1\endcsname}\plainoutput
   %\@@do@simplepage@B
+  \@s@tp@lypage{0}%
 }
 \def\@do@arrange@balnotes@simplepages{
   \@do@arrange@balnotes@simplecols
@@ -199,17 +182,36 @@
 
 \def\@postswap@simplepages#1{}
 
+\def\count@dim@simplepages#1{%Is the dimension non non-zero? Count using curactivecols and add tag to list IF it is on the present page
+  \x@\ifdim \csname \v@lpfx#1\v@lsfx\endcsname=0pt\else
+    \advance\curactivecols by 1
+    \x@\let\x@\sp@lynum\csname p@lyp@ge#1\endcsname
+    \ifnum\p@lyp@geno=\sp@lynum\relax
+      \edef\cts@list{\cts@list#1}%
+    \fi
+  \fi
+}
+
 \def\@preswap@simplepages#1{%
-  \trace{dmp}{@preswap@simplepages #1}%
-  \ifnum \p@lyp@geno=\csname p@lyp@ge#1\endcsname \relax
+  %\tracingmacros=1
+  %\tracingassigns=1
+  \let\log@ut\empty\def\v@lpfx{}\def\v@lsfx{box}%
+  \l@gm@dims
+  %\tracingmacros=0
+  %\tracingassigns=0
+  \trace{dmp}{@preswap@simplepages #1 \log@ut}%
+  \tracingassigns=1
+  \x@\let\x@\ps@sp@tmp\csname p@lyp@ge#1\endcsname
+  \tracingassigns=0
+  \ifnum\p@lyp@geno=\ps@sp@tmp\relax
   \else
     \switch@polypage{#1}%
   \fi
 }
-%\let\@writep@ge@simplepages=\@writep@ge@simplecols
 %\let\@do@layout@simplepages=\@do@layout@simplecols
-\let\@do@setup@simplepages=\@do@setup@simplecols
-\let\end@writep@ge@simplepage=\end@writep@ge@simplecols
+%\let\@do@setup@simplepages=\@do@setup@simplecols
+%\let\@do@cleanup@simplepages=\@do@cleanup@simplecols
+%\let\end@writep@ge@simplepage=\end@writep@ge@simplecols
 
 
 \module@endif
