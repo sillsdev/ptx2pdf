@@ -33,8 +33,8 @@ class StyleEditor:
         return res
 
     def asStyle(self, m):
-        res = self.basesheet.get(m, {}).copy()
-        res.update(self.sheet.get(m, {}))
+        res = {str(k):v for k, v in self.basesheet.get(m, {}).items()}
+        res.update({str(k):v for k, v in self.sheet.get(m, {}).items()})
         return res
 
     def getval(self, mrk, key, default=None):
@@ -109,7 +109,7 @@ class StyleEditor:
 
     def _setData(self, key, val):
         if self.basesheet.get(self.marker, {}).get(key, None) != val:
-            self.sheet[self.marker][key] = val
+            self.sheet.setdefault(self.marker, {})[key] = val
             fn = self.registers.get(self.marker, {}).get(key.lower(), None)
             if fn is not None:
                 fn(key, val)

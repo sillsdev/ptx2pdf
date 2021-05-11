@@ -427,7 +427,7 @@ class StyleEditorView(StyleEditor):
     def item_changed(self, w, key):
         if self.isLoading:
             return
-        data = self.sheet[self.marker]
+        data = self.asStyle(self.marker)
         v = stylemap[key]
         val = self.get(v[0], v[2])
         if key == '_publishable':
@@ -460,8 +460,9 @@ class StyleEditorView(StyleEditor):
             oldval = data.get(otherkey, None)
             newval = self._convertabs(newkey, oldval)
             self._setData(newkey, newval)
-            setnewv = data[newkey] if newkey not in stylemap or newv[4] is None else newv[4](data[newkey])
-            self.set(newv[0], setnewv)
+            setnewv = data.get(newkey, None) if newkey not in stylemap or newv[4] is None else newv[4](data[newkey])
+            if setnewv is not None:
+                self.set(newv[0], setnewv)
             newlabel = self.stylediverts[controlk][2 if val else 1]
             controlw = stylemap[controlk][1]
             self.set(controlw, newlabel)
