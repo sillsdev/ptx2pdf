@@ -366,7 +366,7 @@
 %  \noindent\hbox{\noindent\kern\columnshift\vbox{\hrule width \dimen0}}\par
   \hbox{\ifdiglot\else\kern\columnshift\fi
     \vrule height 0.4pt width \dimen0}\kern-.4pt % the \hrule is .4pt high
-    \vskip\BelowNoteRuleSpace minus \BelowNoteRuleSpace
+    \vskip\BelowNoteRuleSpace minus \BelowNoteRuleSpace\kern0pt
 \everypar=\toks0}
 
 \def\EndNoteRuleWidth{0.5}
@@ -462,6 +462,7 @@
   \everypar={}% don't do body text formatting
   \unvbox#1 % open up the vbox of notes to get at the list of individual note boxes
   \makehboxofhboxes % make a single hbox for all notes of this class
+  \unskip\unskip
   \setbox0=\hbox{\unhbox0 \removehboxes}% add internote space                   %(1)
   \trace{j}{maken@tepara #2 \c@rrdstat: baseline was \the\baselineskip}%
   %\getp@ram{baseline}{#2}\ifx\p@ram\relax\else\baselineskip=\p@ram\fi
@@ -503,7 +504,7 @@
 % remove inside level of boxing and adding inter note space after each
 %     [[a][b][c]] --> [a \internotespace b \internotespace c \internotespace]
 \def\removehboxes{%
-  \setbox0=\lastbox 
+  \setbox0=\lastbox
   \ifhbox0{\removehboxes}\unhbox0\internotespace\fi}
 %
 % skip between notes in paragraph. skip is good place to break.
@@ -1277,7 +1278,7 @@
         \ifvoid\verybottomins\vfill\fi %\kern-\lastd@pth\vfil % ignore depth of body text; fill space
         \dimen5=\AboveNoteSpace\advance\dimen5 by -\BelowNoteRuleSpace\advance\dimen5 by -0.2pt
         \vskip\ifdim\dimen5>0pt \AboveNoteSpace minus \dimen5\else\AboveNoteSpace\fi
-        {\footnoterule}\box1\fi
+        {\footnoterule}\prevdepth=-10000pt\box1\kern0pt\fi
       \fi
       \setbox0\lastbox\dimen1=\ht0\dimen0=\dp0\box0\ifdim\dimen1>0pt\kern-\dimen0\vskip\bmg@p\fi}
   \fi
@@ -1467,6 +1468,7 @@
 
 %makecolumngutter{rule height}{vbox height}{depth}
 
+\def\XrefNotesMargin{1pt}
 \def\makecolumngutter#1#2#3#4{\hfil
   \trace{o}{makecolumngutter: rule height=#1, box height=#2, box depth=#3, total height=#4, ColumnGutterRuleSkip=\the\ColumnGutterRuleSkip}%
 % #1: Height of gutter rule, #2: height of gutter rule box, #3: depth of gutter rule box
@@ -1478,10 +1480,15 @@
       \vfil}%
     \if\XrefNotes\relax\else
       \trace{o}{makecolumngutter: xr@fbox=\the\ht\xr@fbox}%
-      \ifdim\ht\xr@fbox=0pt\message{Empty cross references box for Xrefs: "\XrefNotes"}\fi
       \copy4
       \dimen0=#2
-      \hbox to 1pt{}\vbox to #4{\vbox to #2{\ifdim\ht\xr@fbox>0.9\dimen0 \unvbox\xr@fbox\else\unvbox\xr@fbox\vfil\fi}\vfil}\hbox to 1pt{}%
+      % todo: ensure empty box doesn't collapse
+      % todo: allow user defined inner margin also on grid
+      \hbox to \XrefNotesMargin{}%
+      \vbox to #4{\vbox to #2{\ifdim\ht\xr@fbox>0.9\dimen0 \unvbox\xr@fbox
+        \else\ifdim\ht\xr@fbox=0pt\hskip\XrefNotesWidth\else
+          \unvbox\xr@fbox\fi\vfil\fi}\vfil}%
+      \hbox to \XrefNotesMargin{}%
     \fi
     \box4
   \fi
