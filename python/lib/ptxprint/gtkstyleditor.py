@@ -253,7 +253,7 @@ class StyleEditorView(StyleEditor):
                 n = k
             else:
                 n = k
-            s = [k, n, ismarker]
+            s = [str(k), str(n), ismarker]
             this = self.treestore.append(parent, s)
             if len(v):
                 self._fill_store(v, this)
