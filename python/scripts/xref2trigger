@@ -72,7 +72,8 @@ def addranges(results, ranges):
         for r in iterref(ra, results):
             acc.extend(results[r])
             del results[r]
-        results[ra] = acc
+        if len(acc):
+            results[ra] = acc
 
 class NoBook:
     @classmethod
