@@ -18,22 +18,24 @@ class Reference:
         self.verse = verse
         self.subverse = subverse
 
-    def __str__(self, context=None, level=0, lastref=None, addsep=("; ", ";", ",")):
+    def __str__(self, context=None, level=0, lastref=None, addsep=("; ", ";", ",", ":")):
         sep = ""
+        hasbook = False
         if lastref is None or lastref.book != self.book:
             res = ["{}".format(self.book if context is None else context.getLocalBook(self.book, level))]
             if lastref is not None and lastref.book is not None:
                 sep = addsep[0]
+            hasbook = len(res[0]) != 0
         else:
             res = []
         if self.chap > 0 and self.book not in oneChbooks and (lastref is None or lastref.book != self.book or lastref.chap != self.chap):
             if not len(res):
                 sep = addsep[1]
-            res.append("{}{}".format(" " if len(res) else "", self.chap))
+            res.append("{}{}".format(" " if hasbook else "", self.chap))
             if self.verse > 0:
-                res.append(":{}{}".format(*([self.verse, self.subverse or ""] if self.verse < 200 else ["end", ""])))
+                res.append("{}{}{}".format(addsep[3], *([self.verse, self.subverse or ""] if self.verse < 200 else ["end", ""])))
         elif (lastref is None or lastref.verse != self.verse) and 0 < self.verse:
-            res.append("{}{}{}".format(" " if len(res) else "", *[self.verse if self.verse < 200 else "end", self.subverse or ""]))
+            res.append("{}{}{}".format(" " if hasbook else "", *[self.verse if self.verse < 200 else "end", self.subverse or ""]))
             if lastref is not None:
                 sep = addsep[2]
         return sep + "".join(res)
@@ -72,6 +74,14 @@ class Reference:
 
     def __hash__(self):
         return hash((self.book, self.chap, self.verse, self.subverse))
+
+    @property
+    def first(self):
+        return self
+
+    @property
+    def last(self):
+        return self
 
     def copy(self):
         res = self.__class__(self.book, self.chap, self.verse, self.subverse)
@@ -127,9 +137,9 @@ class RefRange:
         self.first = first
         self.last = last
 
-    def __str__(self, context=None, level=0, lastref=None, addsep=("; ", ";", ",")):
+    def __str__(self, context=None, level=0, lastref=None, addsep=("; ", ";", ",", ":")):
         res = "{}-{}".format(self.first.__str__(context, level, lastref, addsep=addsep),
-                             self.last.__str__(context, level, self.first, addsep=("", "", "")))
+                             self.last.__str__(context, level, self.first, addsep=("", "", "", addsep[3])))
         return res
 
     def __eq__(self, other):
@@ -148,6 +158,12 @@ class RefRange:
 
     def __ge__(self, o):
         return self.first >= (o if isinstance(o, Reference) else o.first)
+
+    def __hash__(self):
+        return hash((self.first, self.last))
+
+    def __contains__(self, r):
+        return self.first <= r <= self.last
 
     def astag(self):
         return "{}-{}".format(self.first.astag(), self.last.astag())
@@ -276,7 +292,7 @@ class RefList(list):
             self._addRefOrRange(start, curr)
         return self
 
-    def __str__(self, context=None, level=0, addsep=("; ", ";", ",")):
+    def __str__(self, context=None, level=0, addsep=("; ", ";", ",", ":")):
         res = []
         lastref = None # Reference(None, 0, 0)
         for r in self:
