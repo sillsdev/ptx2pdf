@@ -1113,6 +1113,13 @@
   \global\advance\cumulativeDelta by \count255
   \egroup
 }
+\def\@do@baselinediff@simplecols{%
+    \dimen1=0pt
+    \def\v@lpfx{b@selineskip}\def\v@lsfx{}%
+    \let\col@do=\max@val
+    \x@\each@col\cts@list\E % Find biggest baseline skip of those bits of text which are active.
+    \edef\@maxball@seline{\the\dimen1}%
+}
 
 \def\@do@prepare@simplecols{%
     \trace{d}{@do@prepare@simplecols \l@gdims{\partial}}%
@@ -1124,11 +1131,7 @@
     \let\col@do=\max@val
     \x@\each@col\diglot@list\E % Find height of lastchunk
     \edef\@maxht{\the\dimen1}%
-    \dimen1=0pt
-    \def\v@lpfx{b@selineskip}\def\v@lsfx{}%
-    \let\col@do=\max@val
-    \x@\each@col\cts@list\E % Find biggest baseline skip of those bits of text which are active.
-    \edef\@maxb@seline{\the\dimen1}%
+    \csname @do@baselinediff@\diglotlayout\endcsname
     \dimen1=0pt
     % step 2: position of the ideal next baseline (below last box)
     \def\v@lpfx{@cur}\def\v@lsfx{ht}%
@@ -1262,12 +1265,17 @@
   \diglotN@rmaltrue \else \diglotN@rmalfalse \fi
 }
 
+\def\s@tctslist@simplecols{%
+  \let\cts@list=\empty
+  \x@\let\x@\col@do\csname count@dim@\diglotlayout\endcsname
+  \x@\each@col\diglot@list\E
+}
+
 \def\upd@tep@rtial{%Actually add stuff to the page.
   \trace{D}{upd@tep@rtial \the\outputpenalty}%
   \trace{D}{plp:\the\partialLpenalty, prp:\the\partialRpenalty, cp:\the\chunkpenalty lcp:\the\lastchunkpenalty, lbp:\the\Lboxpenalty, rbp:\the\Rboxpenalty}%
-  \curdispcols=0 \curactivecols=0 \def\v@lpfx{}\def\v@lsfx{ht}\let\cts@list=\empty
-  \x@\let\x@\col@do\csname count@dim@\diglotlayout\endcsname% increments curactivecols by each non-0 value, and sets \cts@list
-  \x@\each@col\diglot@list\E
+  \curdispcols=0 \curactivecols=0 \def\v@lpfx{}\def\v@lsfx{ht}%
+  \csname s@tctslist@\diglotlayout\endcsname % increments curactivecols by each non-0 value, and sets \cts@list
   \trace{dP}{Columns with contents: \cts@list (\the\curactivecols)}%
   \ifnum\curdispcols>0 
     \temptrue
@@ -1794,6 +1802,7 @@
   \x@\xdef\csname @nxtchunk#1ht\endcsname{\x@\the\csname #1ht\endcsname}%
   \x@\global\x@\csname #1ht\endcsname=0pt
 }
+
 \def\save@boxdim#1{%Save the height & depth of Xbox in \v@lpfx#1ht
   \x@\xdef\csname \v@lpfx#1ht\endcsname{\x@\the\x@\ht\csname #1box\endcsname}%
   \x@\xdef\csname \v@lpfx#1dp\endcsname{\x@\the\x@\dp\csname #1box\endcsname}%
@@ -1806,7 +1815,8 @@
 
 \def\count@dim@simplecols#1{%Is the dimension non non-zero? Count using curactivecols and add tag to list
   \x@\ifdim \csname \v@lpfx#1\v@lsfx\endcsname=0pt\else
-    \advance\curactivecols by 1
+    \advance\curactivecols by 1 % how many columns contain text?
+    \advance\curdispcols by 1 % how mny are we displaying? (all of them!)
     \edef\cts@list{\cts@list#1}%
   \fi
 }
@@ -1927,11 +1937,25 @@
 }
 
 \newif\ifnot@empty % Is this chunk empty
-
-
-\def\@add@n@xtpartial{% 
-  \traceNum{d}{@add@n@xtpartial \the\ht\partial+\the\dp\partial, \the\ht\n@xtpartial+\the\dp\n@xtpartial}%
+\def\@tst@n@xtpartial@simplecols{%
   \ifvoid\n@xtpartial\else
+    \temptrue
+  \fi
+}
+
+\def\@add@n@xtpartial{%
+  \traceNum{d}{@add@n@xtpartial}%
+  \tracingassigns=1
+  \tempfalse
+  \csname @tst@n@xtpartial@\diglotlayout\endcsname
+  \iftemp
+    \csname @add@n@xtpartial@\diglotlayout\endcsname
+    \csname @after@add@n@xtpartial@\diglotlayout\endcsname
+  \fi
+}
+
+\def\@add@n@xtpartial@simplecols{% 
+  \traceNum{d}{@add@n@xtpartial@simplecols \the\ht\partial+\the\dp\partial, \the\ht\n@xtpartial+\the\dp\n@xtpartial}%
     \ifvoid\partial
       \global\setbox\partial=\box\n@xtpartial
     \else
@@ -1941,6 +1965,10 @@
       \showbox\partial
     \fi
     \voidn@xtpartial
+}
+
+\def\@after@add@n@xtpartial@simplecols{%
+  \trace{d}{@after@add@n@xtpartial@simplecols}%
     \let\col@do=\p@rtialmarks
     \x@\each@col\diglot@list\E
     % Column height (depth) calcs:
@@ -1963,8 +1991,8 @@
     \x@\each@col\diglot@list\E
     %
     %\global\p@geChunkDelta=\chunkDelta%
-  \fi
 }
+
 \def\postponen@xt@partial{%
   \trace{d}{postponen@xtpartial \the\ht\partial+\the\dp\partial, \the\ht\n@xtpartial+\the\dp\n@xtpartial}%
   \global\late@stage@reflowtrue % Need to re-flow all columns.

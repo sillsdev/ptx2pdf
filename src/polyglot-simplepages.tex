@@ -159,11 +159,18 @@
   \n@xtlsp
 }
 
+\def\@add@n@xtpartial@simplepages{%
+  \edef\spt@sk{@add@n@xtpartial@simplepages }%
+  \p@lyp@geno=0 \let\scol@cmd=\@add@n@xtpartial@simplecols
+  \@@do@simplepage@
+}
+
 \def\@writep@ge@simplepages{%
   \edef\spt@sk{@writep@ge@simplepages }%
   \p@lyp@geno=0 \let\scol@cmd=\@writep@ge@simplecols
   \@@do@simplepage@
 }
+
 \def\@do@layout@simplepages{%
   \edef\spt@sk{@do@layout@simplepages \space0:\l@gdims{\csname partial@poly@0\endcsname}, 1:\l@gdims{\csname partial@poly@1\endcsname} p:\l@gdims{\partial}}%
   \p@lyp@geno=0 \let\scol@cmd=\@do@layout@simplecols
@@ -173,6 +180,14 @@
   %\@@do@simplepage@B
   \@s@tp@lypage{0}%
 }
+\def\@tst@n@xtpartial@simplepages{%
+  \edef\spt@sk{@do@layout@simplepages \space0:\l@gdims{\csname partial@poly@0\endcsname}, 1:\l@gdims{\csname partial@poly@1\endcsname}}%
+  \p@lyp@geno=0 \let\scol@cmd=\@tst@n@xtpartial@simplecols
+  \@@do@simplepage@
+}
+
+
+
 \def\@do@arrange@balnotes@simplepages{
   \@do@arrange@balnotes@simplecols
 }%
@@ -181,15 +196,33 @@
 }%
 
 \def\@postswap@simplepages#1{}
+\edef\allcts@list{}%
 
 \def\count@dim@simplepages#1{%Is the dimension non non-zero? Count using curactivecols and add tag to list IF it is on the present page
   \x@\ifdim \csname \v@lpfx#1\v@lsfx\endcsname=0pt\else
     \advance\curactivecols by 1
+     \edef\allcts@list{\cts@list#1}%
     \x@\let\x@\sp@lynum\csname p@lyp@ge#1\endcsname
     \ifnum\p@lyp@geno=\sp@lynum\relax
       \edef\cts@list{\cts@list#1}%
+      \advance\curdispcols by 1
     \fi
   \fi
+}
+
+\def\s@tctslist@simplepages{%
+  \let\cts@list=\empty
+  \let\allcts@list=\empty
+  \x@\let\x@\col@do\csname count@dim@\diglotlayout\endcsname
+  \x@\each@col\diglot@list\E
+}
+
+\def\@do@baselinediff@simplepages{%
+    \dimen1=0pt
+    \def\v@lpfx{b@selineskip}\def\v@lsfx{}%
+    \let\col@do=\max@val
+    \x@\each@col\allcts@list\E % Find biggest baseline skip of those bits of text which are active.
+    \edef\@maxb@seline{\the\dimen1}%
 }
 
 \def\@preswap@simplepages#1{%
@@ -210,8 +243,12 @@
 }
 %\let\@do@layout@simplepages=\@do@layout@simplecols
 %\let\@do@setup@simplepages=\@do@setup@simplecols
-%\let\@do@cleanup@simplepages=\@do@cleanup@simplecols
-%\let\end@writep@ge@simplepage=\end@writep@ge@simplecols
+
+
+% 
+\let\@do@cleanup@simplepages=\@do@cleanup@simplecols
+\let\end@writep@ge@simplepages=\end@writep@ge@simplecols
+\let\@after@add@n@xtpartial@simplepages=\@after@add@n@xtpartial@simplecols
 
 
 \module@endif
