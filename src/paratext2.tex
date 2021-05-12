@@ -1278,9 +1278,9 @@
         \ifvoid\verybottomins\vfill\fi %\kern-\lastd@pth\vfil % ignore depth of body text; fill space
         \dimen5=\AboveNoteSpace\advance\dimen5 by -\BelowNoteRuleSpace\advance\dimen5 by -0.2pt
         \vskip\ifdim\dimen5>0pt \AboveNoteSpace minus \dimen5\else\AboveNoteSpace\fi
-        {\footnoterule}\prevdepth=-10000pt\box1\kern0pt\fi
+        {\footnoterule}\prevdepth=-10000pt\box1\fi
       \fi
-      \setbox0\lastbox\dimen1=\ht0\dimen0=\dp0\box0\ifdim\dimen1>0pt\kern-\dimen0\vskip\bmg@p\fi}
+      \setbox0\lastbox\dimen1=\ht0\dimen0=\dp0\box0\ifdim\dimen1>0pt\kern-\dimen0\fi\vskip\bmg@p}
   \fi
   \splittopskip=\topskip
 }
