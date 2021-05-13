@@ -108,7 +108,7 @@ with open(args.infile, encoding="utf-8") as inf:
 
 addsep = ("; ", ";\u200B", ",\u200B", ":") if args.zwsp else ("; ", ";", ",", ":")
 
-template = "\n\\AddTrigger {book}{dotref}-preverse\n\\x - \\xo {colnobook} \\xt {refs}\\x*\n\\EndTrigger\n"
+template = "\n\\AddTrigger {book}{dotref}\n\\x - \\xo {colnobook} \\xt {refs}\\x*\n\\EndTrigger\n"
 fpath = os.path.join(args.paratext, args.pid, "shared", "ptxprint", args.config, "triggers")
 os.makedirs(fpath, exist_ok=True)
 view = ViewModel(args.paratext, None, args.config, None, args)

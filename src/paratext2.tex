@@ -521,23 +521,19 @@
 \def\m@ke@te@mp#1{
   \dimen0=\ht\xr@fbox \advance\dimen0 by \baselineskip \advance\dimen0 by -\dp\xr@fbox\advance\dimen0 by -\dimen2
   \setbox0=\hbox{}
-  \trace{o}{m@kexrefbox: new height = \the\dimen0, against \the#1}%
   \ifdim\dimen0>#1\loop
     \setbox1=\vbox{\unvbox1\unskip\unpenalty\global\setbox3=\lastbox\unskip}%
     \ifdim\ht3>0pt\setbox0=\hbox{\unhbox3\unskip\unpenalty\space\unhbox0}\repeat\setbox1=\box\voidb@x
   \else\loop
     \setbox1=\vbox{\unvbox1 \unskip\unpenalty\global\setbox3=\lastbox\unskip}%
-    \trace{o}{+m@kexrefbox: box3=\the\ht3x\the\dp3+\the\wd3, box1=\the\ht1}
     \ifdim\ht3>0pt\setbox0=\hbox{\unhbox3\unskip\unpenalty\space\unhbox0}
     \else\ifvoid3\else\trace{o}{m@kexrefbox: Weird nonempty box3 \the\ht3+\the\dp3}\fi\fi
     \dimen1=\dimen0 \advance\dimen1 by \ht1
     \advance\dimen1 by 0pt % This is redundant, but makes it work by I think separating the \fi\ifdim
-    \trace{o}{+m@kexrefbox: height=\the\dimen1 \space against \the#1 \space for addedbox=\the\ht1, collected=\the\wd0}
     \ifdim\dimen1>#1\repeat
   \fi}
 \def\m@kexrefbox#1#2#3{
 % #1: height, #2: xrefbox width, #3: note marker/style returns vbox
-  \trace{o}{m@kexrefbox \the#1, \the#2, marker #3}
   \setbox\xr@fbox=\box\voidb@x
   \temptrue
   \let\par=\endgraf\ch@pterfalse
@@ -549,18 +545,15 @@
   \loop
     \setbox0=\lastbox
     \dimen2=\ht0
-    %\trace{o}{m@kexrefbox: \the\ht0, \ifvbox0 is vbox\fi\ifhbox0 is hbox\fi}
     \ifdim\ht0>0pt
       \dimen1=\ht0
-      \setbox1=\vbox{\unhbox0}
+      \setbox1=\vbox{\unhbox0}%
       \dimen0=\ht\xr@fbox \advance\dimen0 by \ht1 \advance\dimen0 by \baselineskip
       \advance\dimen0 by -\dimen1 \advance\dimen0 by -\dp\xr@fbox
-      %\trace{o}{m@kexrefbox: \the\dimen0 from \the#1}
       \ifdim\dimen0>#1
         \tempfalse % we done with the main loop
         \setbox0=\hbox{}
         \m@ke@te@mp{#1}
-        \trace{o}{m@kexrexbox: after reducing, adding=\the\ht1+\the\dimen1 \space to \the\ht\xr@fbox}%
         \ifdim\ht0>0pt\hbox{\unhbox0\unskip\unskip\unpenalty\unskip\unpenalty}\fi
       \fi
       \dimen1=\baselineskip\advance\dimen1-\dp\xr@fbox\advance\dimen1-\dimen2
@@ -572,10 +565,10 @@
   \setbox1=\vbox{}
   \loop
     \setbox0\lastbox
-    \ifdim\ht0>0pt\setbox1=\vbox{\unvbox1\box0}
+    \ifdim\ht0>0pt\setbox1=\vbox{\unvbox1\box0}%
   \repeat
-  \trace{o}{m@kerefbox: othernotes=\the\ht1, dimensions of xr@fbox= \the\ht\xr@fbox x \the\wd\xr@fbox}
-  \prevdepth=-10000pt\maken@tepara{1}{#3}
+  \trace{o}{m@kerefbox(\the#1, \the#2, marker #3): othernotes=\the\ht1, dimensions of xr@fbox= \the\ht\xr@fbox x \the\wd\xr@fbox}%
+  \prevdepth=-10000pt\maken@tepara{1}{#3}%
 }
 %-c_makehboxofhboxes
 
@@ -1259,7 +1252,7 @@
     \let\\=\reduceavailht\the\n@tecl@sses % reduce it by the space needed for each note class
   \fi
   \trace{i}{after inserts: \the\availht}%
-  \trace{o}{availht = \the\availht, depth = \the\dp\pstr@t}%
+  \trace{o}{c@lcavailht = \the\availht, depth = \the\dp\pstr@t}%
   % Round to lines accurate to 1/8pt in lineskip. 1/10pt causes overflow on longer pages. Support two column legal.
   \bmg@p=\availht
   \dimen0=8\baselineskip
@@ -1269,16 +1262,16 @@
   %\advance\availht by \dp255 % split includes depth so give it space for that
   \trace{o}{new availht=\the\availht, topins=\the\ht\topins, bottomins=\the\ht\bottomins, baselineskip=\the\baselineskip}%
   \ifColNotes
-    \ifx\XrefNotes\empty\relax\setbox1=\box\voidb@x\else
-      \setbox1=\vbox{\m@kexrefbox{\availht}{\XrefNotesWidth}{\XrefNotes}}
+    \ifx\XrefNotes\empty\relax\setbox5=\box\voidb@x\else
+      \setbox5=\vbox{\m@kexrefbox{\availht}{\XrefNotesWidth}{\XrefNotes}}%
     \fi
-    \m@kenotebox\setbox\coln@tebox=\vbox{
-      \ifdim\ht2>0pt\unvbox2\ifdim\ht1>0pt\vskip\InterNoteSpace \unvbox1\fi
-      \else\ifdim\ht1>0pt\
+    \m@kenotebox\setbox\coln@tebox=\vbox{%
+      \ifdim\ht2>0pt\unvbox2\ifdim\ht5>0pt\vskip\InterNoteSpace \unvbox5\fi
+      \else\ifdim\ht5>0pt
         \ifvoid\verybottomins\vfill\fi %\kern-\lastd@pth\vfil % ignore depth of body text; fill space
         \dimen5=\AboveNoteSpace\advance\dimen5 by -\BelowNoteRuleSpace\advance\dimen5 by -0.2pt
         \vskip\ifdim\dimen5>0pt \AboveNoteSpace minus \dimen5\else\AboveNoteSpace\fi
-        {\footnoterule}\prevdepth=-10000pt\box1\fi
+        {\footnoterule}\prevdepth=-10000pt\unvbox5\fi
       \fi
       \setbox0\lastbox\dimen1=\ht0\dimen0=\dp0\box0\ifdim\dimen1>0pt\kern-\dimen0\fi\vskip\bmg@p}
   \fi
