@@ -431,3 +431,18 @@ def mlcs(strings):
         except ValueError:
             return ''.join(reversed(result))
         result.append(letter)
+
+def binsearch(arr, v, fn):
+    low = 0
+    high = len(arr) - 1
+    mid = 0
+    while low <= high:
+        mid = (high + low) // 2
+        res = fn(arr, mid, v)
+        if res < 0:
+            low = mid + 1
+        elif res > 0:
+            high = mid - 1
+        else:
+            return mid
+    return mid

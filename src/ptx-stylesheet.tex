@@ -1286,6 +1286,8 @@
  \advance\dimen0 by -1\ExtraRMargin
  \textwidth=\dimen0
  \colwidth=0.5\textwidth \advance\colwidth by -0.5\gutter\advance\colwidth by -\columnshift
+ \advance\colwidth by -0.5\XrefNotesWidth
+ \advance\colwidth by -\XrefNotesMargin
 % Diglot dimensions
  \advance\dimen0 by -\gutter\advance\dimen0 by -2\columnshift
  \ifcsname DiglotLFraction\endcsname\else
@@ -1306,6 +1308,9 @@
  \advance\dimen0 by -\topm@rgin
  \advance\dimen0 by -\bottomm@rgin
  \textheight=\dimen0
+ \advance\dimen0 by -\topskip
+ \dimen1=\dimen0 \dimen0=\baselineskip \m@d
+ \bmg@p=\baselineskip \advance\bmg@p-\dimen0
  \vsize=\textheight
  \iffalse % Code for testing breakable inserts. It breaks things!
    \dimen\topins=\textheight
@@ -1322,6 +1327,7 @@
  \trace{p}{setupsizes: \the\pdfpagewidth, \the\pdfpageheight}
  \resetvsize
 }
+
 %-csty_setupsizes
 \def\LineSpaceBase{14}
 \newdimen\le@dingunit
@@ -1329,10 +1335,11 @@
 \newdimen\verticalsp@ceunit
 \newdimen\topm@rgin
 \newdimen\bottomm@rgin
+\newdimen\bmg@p     % gap between last baseline and bottom margin
 \newdimen\textwidth
 \newdimen\textheight
 \newdimen\colwidth
 \newdimen\ExtraRMargin \ExtraRMargin=0pt
 \newdimen\gutter \gutter=20pt
-
+\newdimen\XrefNotesWidth \XrefNotesWidth=0pt
 \endinput

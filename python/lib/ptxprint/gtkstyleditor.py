@@ -240,8 +240,6 @@ class StyleEditorView(StyleEditor):
             if k in allStyles:
                 # n = self.sheet[k].get('name', k)
                 n = self.getval(k, 'name')
-                if n is None:
-                    n = k
                 m = re.match(r"^([^-\s]*)\s*([^-]+)(?:-\s*|$)", n)
                 if m:
                     if m.group(1) and m.group(1) not in ('OBSOLETE', 'DEPRECATED'):

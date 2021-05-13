@@ -810,9 +810,9 @@ class ViewModel:
         if not self.get("c_includeillustrations"):
             return
         if self.diglotView is None:
-            res = self.picinfos.load_files()
+            res = self.picinfos.load_files(self)
         else:
-            res = self.picinfos.load_files(suffix="BL")
+            res = self.picinfos.load_files(self, suffix="BL")
         if not res:
             self.onGeneratePicListClicked(None)
             
@@ -1103,12 +1103,13 @@ class ViewModel:
                 res[f] = "figures/"+os.path.basename(f)
 
         # adjlists
-        adjpath = os.path.join(basecfpath, "AdjLists")
-        adjbks = set(self.getAdjListFilename(bk, ext=".adj") for x in books)
-        if os.path.exists(adjpath):
-            for adj in os.listdir(adjpath):
-                if adj.endswith(".adj") and adj in adjbks:
-                    res[os.path.join(adjpath, adj)] = cfpath+"AdjLists/"+adj
+        for a,e in (("AdjLists", ".adj"), ("triggers", ".triggers")):
+            adjpath = os.path.join(basecfpath, a)
+            adjbks = set(self.getAdjListFilename(bk, ext=e) for x in books)
+            if os.path.exists(adjpath):
+                for adj in os.listdir(adjpath):
+                    if adj.endswith(e) and adj in adjbks:
+                        res[os.path.join(adjpath, adj)] = cfpath+a+"/"+adj
 
         # piclists
         piclstpath = os.path.join(basecfpath, "PicLists")
