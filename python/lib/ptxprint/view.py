@@ -810,9 +810,9 @@ class ViewModel:
         if not self.get("c_includeillustrations"):
             return
         if self.diglotView is None:
-            res = self.picinfos.load_files()
+            res = self.picinfos.load_files(self)
         else:
-            res = self.picinfos.load_files(suffix="BL")
+            res = self.picinfos.load_files(self, suffix="BL")
         if not res:
             self.onGeneratePicListClicked(None)
             
