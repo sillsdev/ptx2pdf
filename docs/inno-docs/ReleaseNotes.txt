@@ -14,6 +14,10 @@ NOTE: For those previously using various Border and Grid PDFs as watermarks:
 	 various Border and Grid PDFs have been removed from the Watermark PDFassets.
 	 Also note that the 'Crop Marks' option still exists, but on the Advanced tab.
 
+Bug fixes in 1.7.2
+
+  * Fix bug in PicList generation for USFM3 files
+
 Bug fixes in 1.7.1
 
   * TypeError bug fix for Style editor
