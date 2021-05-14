@@ -20,7 +20,7 @@ _defFields = {"Marker", "EndMarker", "Name", "Description", "OccursUnder", "Text
 def asFloatPts(self, s, mrk=None, model=None):
     if mrk is None:
         mrk = self.marker
-    m = re.match(r"^\s*(-?\d+(?:\.\d*))\s*(\D*?)\s*$", str(s))
+    m = re.match(r"^\s*(-?\d+(?:\.\d+)?)\s*(\D*?)\s*$", str(s))
     if m:
         try:
             v = float(m[1])
@@ -90,6 +90,9 @@ def fromFont(self, s, mrk=None, model=None):
         mrk = self.marker
     class Shim:
         def get(subself, key, default=None):
+            if key == 'FontName':
+                return self.sheet.get(mrk, {}).get(key,
+                        self.basesheet.get(mrk, {}).get(key, default))
             return self.getval(mrk, key, default)
     return FontRef.fromTeXStyle(Shim())
 
@@ -100,11 +103,16 @@ def toFont(self, v, mrk=None, model=None):
         mrk = self.marker
     class Shim:
         def __setitem__(subself, key, val):
-            self.setval(mrk, key, val)
+            if key == 'FontName':
+                self.sheet.setdefault(mrk, {})[key] = val
+            else:
+                self.setval(mrk, key, val)
         def __contains__(subself, key):
             return self.haskey(mrk, key)
         def __delitem__(subself, key):
             return self.sheet.get(mrk, {}).pop(key, None)
+        def pop(subself, key, dflt):
+            return self.sheet.get(mrk, {}).pop(key, dflt)
     regularfont = model.get("bl_fontR")
     return v.updateTeXStyle(Shim(), regular=regularfont)
 
@@ -165,8 +173,12 @@ class StyleEditor:
         if ifunchanged and self.basesheet.get(mrk, {}).get(key, None) != \
                 self.sheet.get(mrk, {}).get(key, None):
             return
-        if key in _fieldmap:
-            val = _fieldmap[key][1](self, val, mrk=mrk, model=self.model)
+        if val is not None and key in _fieldmap:
+            newval = _fieldmap[key][1](self, val, mrk=mrk, model=self.model)
+            if newval is None and val is not None:
+                return      # Probably a font which has edited the object for us
+            else:
+                val = newval
         if key in self.sheet.get(mrk, {}) and (val is None or val == self.basesheet.get(mrk, {}).get(key, None)):
             del self.sheet[mrk][key]
             return
@@ -208,22 +220,13 @@ class StyleEditor:
             if f is not None:
                 self.setval(k, " font", f)
 
-    def _convertabs(self, key, valstr):
-        def asfloat(v, d):
-            try:
-                return float(v)
-            except (ValueError, TypeError):
-                return d
+    def _convertabs(self, key, val):
         baseline = float(self.model.get("s_linespacing", 1.))
-        if key.lower() == "fontsize":
-            res = asfloat(valstr, 1.) * 12.
-        elif key.lower() == "baseline":
-            res = asfloat(valstr, 12.) * baseline
-        elif key.lower() == "fontscale": 
-            res = asfloat(valstr, 12.) / 12.
+        if key.lower() == "baseline":
+            return val * baseline
         elif key.lower() == "linespacing":
-            res = asfloat(valstr, baseline) / baseline
-        return res
+            return val / baseline
+        return val
 
     def _eq_val(self, a, b, key=""):
         if key.lower() in absolutes:
@@ -268,8 +271,6 @@ class StyleEditor:
             om = self.basesheet.get(m, {})
             if 'zDerived' in om or 'zDerived' in sm:
                 continue
-            if " font" in sm:
-                sm[" font"].updateTeXStyle(sm, regular=regular, inArchive=inArchive, root=root)
             for k,v in sm.items():
                 if k.startswith(" "):
                     continue

@@ -797,12 +797,6 @@ class FontRef:
             f = TTFont(None, filename=name[1:-1])
             name = f.family
         styles = []
-        for a in ("Bold", "Italic"):
-            if a in name:
-                name = name.replace(a, "")
-                styles.append(a)
-            elif style.get(a, "-") != "-":
-                styles.append(a)
         res = cls(name.strip(), " ".join(styles), isCtxtSpace=(style.get("ztexFontGrSpace", "0")!="0"))
         res.updateTeXFeats(style.get("ztexFontFeatures", ""))
         return res
@@ -979,6 +973,8 @@ class FontRef:
                 style["ztexFontGrSpace"] = "2"
             else:
                 style.pop("ztexFontGrSpace", None)
+            for a in ("Bold", "Italic"):
+                del style[a]
 
     def asTeXFont(self, inarchive=False):
         (name, sfeats, feats) = self._getTeXComponents(inarchive)

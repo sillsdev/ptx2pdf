@@ -43,6 +43,7 @@ catorder = {k: i for i, k in enumerate(topLevelOrder)}
 
 noEndmarker = ('fr', 'fq', 'fqa', 'fk', 'fl', 'fw', 'fp', 'ft', 'xo', 'xk', 'xq', 'xt', 'xta')
 fxceptions  = ('fig', 'fs', 'xtSee', 'xtSeeAlso')
+dualmarkers = {'BaseLine': 'LineSpacing', 'FontScale': 'FontSize'}
 
 name_reg = re.compile(r"^(OBSOLETE|DEPRECATED)?\s*(.*?)\s+-\s+([^-]*?)\s*(?:-\s*(.*?)\s*)?$")
 
@@ -168,7 +169,7 @@ class StyleEditorView(StyleEditor):
     def setval(self, mrk, key, val, ifunchanged=False):
         super().setval(mrk, key, val, ifunchanged=ifunchanged)
         if mrk == self.marker:
-            v = stylemap.get(key)
+            v = stylemap.get(dualmarkers.get(key, key))
             if v is None:
                 return
             self.loading = True
@@ -324,8 +325,8 @@ class StyleEditorView(StyleEditor):
                 val = 'nonpublishable' in data.get('TextProperties', '')
                 oldval = 'nonpublishable' in old.get('TextProperties', '')
             elif k.startswith("_"):
-                basekey = v[3](v[2])        # default data key
-                obasekey = v[3](not v[2])   # non-default data key
+                basekey = v[3](v[2])        # default data key e.g. "FontSize"
+                obasekey = v[3](not v[2])   # non-default data key e.g. "FontScale"
                 oldval = self.getval(self.marker, basekey, self.getval(self.marker, obasekey, baseonly=True), baseonly=True)
                 val = self.getval(self.marker, basekey)
                 olddat = v[2]
@@ -338,12 +339,12 @@ class StyleEditorView(StyleEditor):
                     if m in data:
                         val = self.getval(self.marker, m)
                         self._setFieldVal(m, v, olddat, f)
-                        v = stylemap[v[3](False)]
-                        if f and v[3] is not None:
-                            val = v[3](val)
                         break
                 else:
-                    f = v[2]
+                    f = olddat
+                    val = oldval
+                r = v[3](f)
+                v = stylemap[dualmarkers.get(r, r)]
                 newlabel = self.stylediverts[controlk][2 if f else 1]
                 controlw = stylemap[controlk][1]
                 self.set(controlw, newlabel)
@@ -354,16 +355,14 @@ class StyleEditorView(StyleEditor):
                 if v[0].startswith("c_"):
                     val = val or False
                     oldval = oldval or False
-            if k == "FontSize":
+            if k == "_fontsize":
                 fstyles = []
-                for a in ("Bold", "Italic"):
-                    if a in self.sheet and self.sheet[a] != "-" \
-                            or a in self.basesheet and self.basesheet[a] != "-":
-                        fstyles.append(a.lower())
-                fref = self.get_font(self.marker, "".join(fstyles))
+                fref = self.getval(self.marker, 'FontName')
+                if fref is None:
+                    fref = self.model.get("bl_fontR")
                 f = fref.getTtfont() if fref is not None else None
                 bfontsize = float(self.model.get("s_fontsize"))
-                fsize = float(val) / 12. * bfontsize
+                fsize = float(val) * bfontsize
                 if f is not None:
                     asc = f.ascent / f.upem * bfontsize
                     des = f.descent / f.upem * bfontsize
@@ -443,10 +442,11 @@ class StyleEditorView(StyleEditor):
             newk = self.stylediverts[key][0]
             newv = stylemap[newk]
             isset = self.get(newv[0], newv[2])
+            print(f"{key=}[{isset=}=>{newv[3](isset)}]: {val=}")
             key = newv[3](isset)
             other = newv[3](not isset)
             if other in data:
-                del data[other]
+                super(self.__class__, self).setval(self.marker, key, None)
             value = val if isset or v[3] is None else v[3](val) # v[4 if isset else 3] is None else v[4 if isset else 3](val)
         elif v[0].startswith("col_"):
             value = coltotex(val)
@@ -458,11 +458,12 @@ class StyleEditorView(StyleEditor):
             oldval = self.getval(self.marker, otherkey)
             newval = self._convertabs(newkey, oldval)
             self.setval(self.marker, newkey, newval)
+            print(f"{newkey}: {oldval=} -> {newval=} | {self.getval(self.marker, newkey)}")
             newlabel = self.stylediverts[controlk][2 if val else 1]
             controlw = stylemap[controlk][1]
             self.set(controlw, newlabel)
             if otherkey in data:
-                del data[otherkey]
+                super(self.__class__, self).setval(self.marker, otherkey, None)
             value = val
             # value = val if newv[3] is None else newv[3](val)
         elif v[3] is not None:
@@ -472,7 +473,7 @@ class StyleEditorView(StyleEditor):
         if not key.startswith("_"):
             super(self.__class__, self).setval(self.marker, key, value)
             if key == "FontSize":
-                self.set("l_styActualFontSize", "{:.1f}pt".format(float(value) / 12. * float(self.model.get("s_fontsize"))))
+                self.set("l_styActualFontSize", "{:.1f}pt".format(float(value) * float(self.model.get("s_fontsize"))))
         if v[1] is not None:
             ctxt = self.builder.get_object(v[1]).get_style_context()
             if key.startswith("_"):
