@@ -310,6 +310,12 @@ def multstr(template, lang, num, text, addon=""):
         res += " " + addon
     return res
 
+def f2s(x, dp=3) :
+    res = ("{:." + str(dp) + "f}").format(x)
+    if res.endswith("." + ("0" * dp)) :
+        return res[:-dp-1]
+    return re.sub(r"0*$", "", res)
+
 def xdvigetpages(xdv):
     with open(xdv, "rb") as inf:
         inf.seek(-12, 2)

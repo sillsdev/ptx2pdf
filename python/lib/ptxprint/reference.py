@@ -5,8 +5,9 @@ from ptxprint.utils import chaps, oneChbooks, books, allbooks, binsearch
 from base64 import b64encode
 from functools import reduce
 
-startchaps = list(zip([b for b in allbooks if 0 < int(chaps[b]) < 99] + ["ZZZ"],
-                      reduce(lambda a,x: a + [a[-1]+x], (int(chaps[b]) for b in allbooks if 0 < int(chaps[b]) < 99), [0])))
+startchaps = list(zip([b for b in allbooks if 0 < int(chaps[b]) < 999],
+                      reduce(lambda a,x: a + [a[-1]+x], (int(chaps[b]) for b in allbooks if 0 < int(chaps[b]) < 999), [0])))
+startchaps += [("special", startchaps[-1][1]+1)]
 startbooks = dict(startchaps)
 b64codes = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
 b64lkup = {b:i for i, b in enumerate(b64codes)}
@@ -92,9 +93,9 @@ class Reference:
             subverse = str(ord(self.subverse.lower()) - 0x61)
         else:
             subverse = ""
-        if self.book == "PSA" and self.chap == 119 and self.verse > 127:
-            c = startchaps["ZZZ"]
-            v = self.verse - 127
+        if self.book == "PSA" and self.chap == 119 and self.verse > 126:
+            c = startbooks["special"] + 1
+            v = self.verse - 126
         else:
             c = startbooks[self.book] + self.chap
             v = min(self.verse, 127)
@@ -112,19 +113,19 @@ class Reference:
         verse = v[2] + ((v[1] & 1) << 6)
         c = (v[1] >> 1) + (v[0] << 5)
         def chcmp(a, i, cv):
-            if a[i][1] > cv:
+            if a[i][1] >= cv:
                 return 1
-            elif i < len(a) and a[i+1][1] < cv:
+            elif i < len(a)-1 and a[i+1][1] < cv:
                 return -1
             return 0
         i = binsearch(startchaps, c, chcmp)
         bk, start = startchaps[i]
         chap = c - start
-        if bk == "ZZZ":
-            if chap == 0:
+        if bk == "special":
+            if chap == 1:
                 bk = "PSA"
                 chap = 119
-                verse += 128
+                verse += 126
         elif verse == 127:
             verse = 200
         res = cls(bk, chap, verse, subverse=subverse)
@@ -133,6 +134,7 @@ class Reference:
         return res
 
 class RefRange:
+    ''' Inclusive range of verses with first and last '''
     def __init__(self, first, last):
         self.first = first
         self.last = last
@@ -313,7 +315,7 @@ class RefList(list):
         for r in self:
             t, u = (r.first, r.last) if isinstance(r, RefRange) else (r, r)
             if t.book == lastref.book and t.chap == lastref.chap:
-                if t.verse.subverse is None and t.verse == lastref.verse + 1:
+                if t.subverse is None and t.verse == lastref.verse + 1:
                     if isinstance(res[-1], RefRange):
                         res[-1].last = u
                     else:
@@ -353,23 +355,26 @@ def tests():
                 raise TestException("Reference list failed '{}', {} != {}".format(s, z[0], z[1]))
         for z in zip(tagref, r):
             if z[0] != z[1]:
-                raise TestException("Reference list from tag ailed '{}', {} != {}: tag={}".format(s, z[0], z[1], tag))
+                raise TestException("Reference list from tag failed '{}', {} != {}: tag={}".format(s, z[0], z[1], tag))
         if str(res) != s:
             raise TestException("{} != canonical string of {}".format(s, str(res)))
         if tag != t:
-            raise TestException("{} != {}".format(tag, t))
+            raise TestException("{} != {} in {}".format(tag, t, s))
 
     t("GEN 1:1", "ACB", r("GEN", 1, 1))
-    t("JHN 3", "akA", r("JHN", 3, 0))
-    t("3JN 3", "fwD", r("3JN", 1, 3))
-    t("1CO 6:5a", "0csF", r("1CO", 6, 5, "a"))
-    t("MAT 5:1-7", "YgB-YgH", RefRange(r("MAT", 5, 1), r("MAT", 5, 7)))
-    t("MAT 7:1,2;8:6b-9:4", "YkBYkC1YmG-YoE", r("MAT", 7, 1), r("MAT", 7, 2), RefRange(r("MAT", 8, 6, "b"), r("MAT", 9, 4)))
-    t("LUK 3:47-end", "Z0v-Z1/", RefRange(r("LUK", 3, 47), r("LUK", 3, 200)))
+    t("JHN 3", "fQA", r("JHN", 3, 0))
+    t("3JN 3", "kcD", r("3JN", 1, 3))
+    t("1CO 6:5a", "0hYF", r("1CO", 6, 5, "a"))
+    t("MAT 5:1-7", "dMB-dMH", RefRange(r("MAT", 5, 1), r("MAT", 5, 7)))
+    t("MAT 7:1,2;8:6b-9:4", "dQBdQC1dSG-dUE", r("MAT", 7, 1), r("MAT", 7, 2), RefRange(r("MAT", 8, 6, "b"), r("MAT", 9, 4)))
+    t("LUK 3:47-end", "egv-eh/", RefRange(r("LUK", 3, 47), r("LUK", 3, 200)))
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
-        res = RefList.fromStr(" ".join(sys.argv[1:]))
+        if len(sys.argv) == 2 and 2 < len(sys.argv[1]) < 5:
+            res = Reference.fromtag(sys.argv[1])
+        else:
+            res = RefList.fromStr(" ".join(sys.argv[1:]))
         tag = res.astag()
         print("{}: {}".format(res, tag))
     else:

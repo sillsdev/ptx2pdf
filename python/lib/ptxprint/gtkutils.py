@@ -65,11 +65,11 @@ def setWidgetVal(wid, w, value, noui=False):
             value = value.lower() == "true"
         w.set_active(value)
     elif wid.startswith("s_"):
-        w.set_value(float(value))
+        w.set_value(float(value or 0))
     elif wid.startswith("btn_"):
         w.set_tooltip_text(value)
     elif wid.startswith("bl_"):
-        setFontButton(w, value)
+        setFontButton(w, value or None)
     elif wid.startswith("lb_"):
         w.set_label(value)
     elif wid.startswith("l_"):

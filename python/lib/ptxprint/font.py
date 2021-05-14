@@ -722,7 +722,7 @@ _fontstylemap = {
     'Italic': '/I',
     'Bold Italic': '/BI',
     'Oblique': '/I',
-    'Bold Oblique': 'BI',
+    'Bold Oblique': '/BI',
     'Medium': ''
 }
 
@@ -788,20 +788,24 @@ class FontRef:
 
     @classmethod
     def fromTeXStyle(cls, style):
-        if 'FontName' in style:
-            name = style['FontName']
-            if name.startswith("[") and name.endswith("]") and os.path.exists(name[1:-1]):
-                f = TTFont(None, filename=name[1:-1])
-                name = f.family
-            styles = []
-            for a in ("Bold", "Italic"):
-                if a in name:
-                    name = name.replace(a, "")
-                    styles.append(a)
-            res = cls(name.strip(), " ".join(styles), isCtxtSpace=(style.get("ztexFontGrSpace", "0")!="0"))
-            res.updateTeXFeats(style.get("ztexFontFeatures", ""))
-            return res
-        return None
+        """ Reads stylesheet values. Returns None if no FontName, and leaves
+            the caller to work out Bold, etc. """
+        name = style.get('FontName', None)
+        if name is None:
+            return None
+        if name.startswith("[") and name.endswith("]") and os.path.exists(name[1:-1]):
+            f = TTFont(None, filename=name[1:-1])
+            name = f.family
+        styles = []
+        for a in ("Bold", "Italic"):
+            if a in name:
+                name = name.replace(a, "")
+                styles.append(a)
+            elif style.get(a, "-") != "-":
+                styles.append(a)
+        res = cls(name.strip(), " ".join(styles), isCtxtSpace=(style.get("ztexFontGrSpace", "0")!="0"))
+        res.updateTeXFeats(style.get("ztexFontFeatures", ""))
+        return res
 
     def copy(self, cls=None):
         res = (cls or FontRef)(self.name, self.style, self.isGraphite, self.isCtxtSpace, self.feats)
@@ -918,6 +922,7 @@ class FontRef:
             name = "[{}]".format(fname)
         elif self.style is not None and len(self.style):
             s = _fontstylemap.get(self.style, None)
+            # add style to name if not one of the standard ones
             name = self.name + (" "+self.style if s is None else "")
         else:
             name = self.name
@@ -938,22 +943,24 @@ class FontRef:
                 feats.append(("+"+k, v))
         return (name, sfeats, feats)
 
-    def updateTeXStyle(self, style, regular=None, inArchive=False, root=None):
+    def updateTeXStyle(self, style, regular=None, inArchive=False, rootpath=None):
         res = []
-        if regular is not None and self.name == regular.name:
+        # only use of main regular fonts use the \Bold etc.
+        if regular is not None and regular.name == self.name:
             for a in ("Bold", "Italic"):
-                x = a in (regular.style or "")
-                y = a in (self.style or "")
+                x = a in parentstyle
+                y = a in self.style
                 if x and not y:
                     style[a] = "-"
                 elif y and not x:
                     style[a] = ""
-                elif x:
+                elif x:     # implies: and y
                     del style[a]
+        # All other non-main fonts use /B, etc.
         else:
-            (name, sfeats, feats) = self._getTeXComponents(inarchive=inArchive, root=root)
             # print(f"updateTeXStyle: {name}, {sfeats}, {feats}")
-            style['FontName'] = name
+            (name, sfeats, feats) = self._getTeXComponents(inarchive=inArchive, root=rootpath)
+            style['FontName'] = self.name
             if len(feats) or len(sfeats):
                 ztexs = []
                 initcolon = True
