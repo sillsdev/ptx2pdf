@@ -274,7 +274,8 @@ ModelMap = {
     "notes/xromitcaller":       ("c_xromitcaller", lambda w,v: "%" if v else ""),
 
     "notes/iffootnoterule":     ("c_footnoterule", lambda w,v: "%" if v else ""),
-    "notes/ifblendfnxr":        ("c_blendfnxr", None),
+    # "notes/ifblendfnxr":        ("c_blendfnxr", None),
+    "notes/xrlocation":         ("r_xrLocn", None),
     "notes/addcolon":           ("c_addColon", None),
     "notes/keepbookwithrefs":   ("c_keepBookWithRefs", None),
     "notes/glossaryfootnotes":  ("c_glossaryFootnotes", None),

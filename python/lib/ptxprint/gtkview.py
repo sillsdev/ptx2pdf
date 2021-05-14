@@ -122,11 +122,21 @@ _sensitivities = {
                                 "l_verseDecoratorShift", "l_verseDecoratorScale",
                                 "s_verseDecoratorShift", "s_verseDecoratorScale"],
         "r_decorator_ayah":    ["lb_style_v"]},
+    "r_xrLocn": {
+        "r_xrLocn_below" :     ["l_internote", "s_internote", "l_xrColWid", "s_centreColWidth", "c_columnNotes"],
+        "r_xrLocn_blend" :     [],
+        "r_xrLocn_centre" :    ["l_xrColWid", "s_centreColWidth"]},
+        
+    "r_xrSource": {
+        "r_xrSource_standard": ["s_xrSourceSize", "l_xrSourceSize", "l_xrSourceLess", "l_xrSourceMore"],
+        "r_xrSource_custom" :  ["btn_selectXrFile"]},
     "c_mainBodyText" :         ["gr_mainBodyText"],
     "c_doublecolumn" :         ["gr_doubleColumn", "c_singleColLayout", "t_singleColBookList", "c_columnNotes"],
     "c_useFallbackFont" :      ["btn_findMissingChars", "t_missingChars", "l_fallbackFont", "bl_fontExtraR"],
     "c_includeFootnotes" :     ["bx_fnOptions"],
     "c_includeXrefs" :         ["bx_xrOptions"],
+    "c_useXrefList" :          ["gr_useXrefList"],
+    
     "c_includeillustrations" : ["gr_IllustrationOptions", "tb_details", "lb_details", "tb_checklist", "lb_details"],
     "c_diglot" :               ["gr_diglot", "fcb_diglotPicListSources", "r_hdrLeft_Pri", "r_hdrCenter_Pri", "r_hdrRight_Pri",
                                 "r_ftrCenter_Pri", "r_hdrLeft_Sec", "r_hdrCenter_Sec", "r_hdrRight_Sec", "r_ftrCenter_Sec"],
@@ -177,7 +187,6 @@ _sensitivities = {
 # These function OPPOSITE to the ones above (they turn OFF/insensitive when the c_box is active)
 _nonsensitivities = {
     "c_omitrhchapnum" :        ["c_hdrverses"],
-    "c_blendfnxr" :            ["l_internote", "s_internote"],
     "c_useprintdraftfolder" :  ["btn_selectOutputFolder"],
     "c_styFaceSuperscript" :   ["l_styRaise", "s_styRaise"],
 }
@@ -919,9 +928,6 @@ class GtkViewModel(ViewModel):
                 self.builder.get_object(w).set_sensitive(state)
         self.colorTabs()
         self.updateMarginGraphics()
-        # self.onFnBlendClicked(self.builder.get_object('c_blendfnxr'))
-        self.set("c_blendfnxr", not self.get("c_blendfnxr"))
-        self.set("c_blendfnxr", not self.get("c_blendfnxr"))
 
     def colorTabs(self):
         col = "#688ACC"
