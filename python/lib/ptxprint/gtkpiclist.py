@@ -1,7 +1,7 @@
 
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal
 from ptxprint.piclist import newBase
-from ptxprint.utils import refKey, getlang, _
+from ptxprint.utils import refKey, getlang, _, f2s
 from gi.repository import Gtk, GdkPixbuf, GObject, Gdk
 import os, re
 
@@ -157,7 +157,7 @@ class PicList:
                     allkeys.add(row[i])
                     continue
                 elif e == 'scale':
-                    val = "{:.3f}".format(row[i] / 100.)
+                    val = f2s(row[i] / 100.)
                 elif e == "cleardest":
                     if row[i] and 'dest file' in p:
                         del p['dest file']

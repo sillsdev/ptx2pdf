@@ -10,7 +10,7 @@ from ptxprint import sfm
 from ptxprint.sfm import usfm, style
 from ptxprint.usfmutils import Usfm, Sheets, isScriptureText, Module
 from ptxprint.utils import _, universalopen, localhdrmappings, pluralstr, multstr, coltoonemax, \
-                            chaps, books, bookcodes, oneChbooks, asfloat
+                            chaps, books, bookcodes, oneChbooks, asfloat, f2s
 from ptxprint.dimension import Dimension
 import ptxprint.scriptsnippets as scriptsnippets
 from ptxprint.interlinear import Interlinear
@@ -100,7 +100,7 @@ ModelMap = {
     "paper/colgutteroffset":    ("s_colgutteroffset", lambda w,v: "{:.1f}".format(float(v)) if v else "0.0"),
     "paper/columns":            ("c_doublecolumn", lambda w,v: "2" if v else "1"),
     # "paper/fontfactor":         ("s_fontsize", lambda w,v: round((v / 12), 3) or "1.000"),
-    "paper/fontfactor":         ("s_fontsize", lambda w,v: "{:.3f}".format(float(v) / 12) if v else "1.000"),
+    "paper/fontfactor":         ("s_fontsize", lambda w,v: f2s(float(v) / 12) if v else "1.000"),
 
     "grid/gridlines":           ("c_gridLines", lambda w,v: "\doGridLines" if v else ""),
     "grid/gridgraph":           ("c_gridGraph", lambda w,v: "\doGraphPaper" if v else ""),
@@ -141,7 +141,7 @@ ModelMap = {
     "fancy/versedecoratorscale":   ("s_verseDecoratorScale", lambda w,v: int(float(v or "1.0")*1000)),
     "fancy/endayah":            ("c_decorator_endayah", lambda w,v: "" if v else "%"), # In the UI this is "Move Ayah"
 
-    "paragraph/linespacing":       ("s_linespacing", lambda w,v: "{:.3f}".format(float(v)) if v else "15.000"),
+    "paragraph/linespacing":       ("s_linespacing", lambda w,v: f2s(float(v)) if v else "15"),
     "paragraph/linespacebase":  ("c_AdvCompatLineSpacing", lambda w,v: 14 if v else 12),
     "paragraph/useglyphmetrics":   ("c_AdvCompatGlyphMetrics", lambda w,v: "%" if v else ""),
     # "paragraph/linespacingfactor": ("s_linespacing", lambda w,v: "{:.3f}".format(float(v or "15") / 12)),
@@ -288,10 +288,10 @@ ModelMap = {
 
     "notes/abovenotespace":     ("s_abovenotespace", None),
     "notes/belownoterulespace": ("s_belownoterulespace", None),
-    "notes/internotespace":     ("s_internote", lambda w,v: "{:.3f}".format(float(v))),
+    "notes/internotespace":     ("s_internote", lambda w,v: f2s(float(v))),
 
-    "notes/horiznotespacemin":  ("s_notespacingmin", lambda w,v: "{:.3f}".format(float(v)) if v is not None else "7.000"),
-    "notes/horiznotespacemax":  ("s_notespacingmax", lambda w,v: "{:.3f}".format(float(v)) if v is not None else "27.000"),
+    "notes/horiznotespacemin":  ("s_notespacingmin", lambda w,v: f2s(float(v)) if v is not None else "7"),
+    "notes/horiznotespacemax":  ("s_notespacingmax", lambda w,v: f2s(float(v)) if v is not None else "27"),
 
     "document/fontregular":              ("bl_fontR", lambda w,v,s: v.asTeXFont(s.inArchive) if v else ""),
     "document/fontbold":                 ("bl_fontB", lambda w,v,s: v.asTeXFont(s.inArchive) if v else ""),
@@ -441,7 +441,7 @@ class TexModel:
         self.dict['/premodspath'] = rel(fpath, docdir).replace("\\","/")
         if "document/diglotcfgrpath" not in self.dict:
             self.dict["document/diglotcfgrpath"] = ""
-        self.dict['paragraph/linespacingfactor'] = "{:.3f}".format(float(self.dict['paragraph/linespacing']) \
+        self.dict['paragraph/linespacingfactor'] = f2s(float(self.dict['paragraph/linespacing']) \
                     / self.dict["paragraph/linespacebase"] / float(self.dict['paper/fontfactor']))
         self.dict['paragraph/ifhavehyphenate'] = "" if os.path.exists(os.path.join(self.printer.configPath(""), \
                                                        "hyphen-"+self.dict["project/id"]+".tex")) else "%"
@@ -481,7 +481,7 @@ class TexModel:
         else:
             self.dict["fancy/versedecoratorisfile"] = "%"
             self.dict["fancy/versedecoratorisayah"] = "%"
-        self.dict['notes/abovenotetotal'] = "{:.3f}".format(float(self.dict['notes/abovenotespace'])
+        self.dict['notes/abovenotetotal'] = f2s(float(self.dict['notes/abovenotespace'])
                                                           + float(self.dict['notes/belownoterulespace']))
         # print(", ".join("{}={}".format(a, self.dict["fancy/versedecorator"+a]) for a in ("", "type", "isfile", "isayah")))
         
@@ -549,10 +549,10 @@ class TexModel:
             ratio = float(self.dict['document/diglotprifraction'])
             # print(f"{ratio=}")
             if ratio > 0.5:
-                lhfil = "\\hskip 0pt plus {:.3f}fil".format(ratio/(1-ratio)-1)
+                lhfil = "\\hskip 0pt plus {}fil".format(f2s(ratio/(1-ratio)-1))
                 rhfil = ""
             else:
-                rhfil = "\\hskip 0pt plus {:.3f}fil".format((1-ratio)/ratio-1)
+                rhfil = "\\hskip 0pt plus {}fil".format(f2s((1-ratio)/ratio-1))
                 lhfil = ""
         self.dict['footer/oddcenter'] = t
 
@@ -618,11 +618,11 @@ class TexModel:
     def calculateMargins(self):
         (marginmms, topmarginmms, bottommarginmms, headerposmms, footerposmms,
          ruleposmms, headerlabel, footerlabel) = self.printer.getMargins()
-        self.dict["paper/topmarginfactor"] = "{:.3f}".format(topmarginmms / marginmms)
-        self.dict["paper/bottommarginfactor"] = "{:.3f}".format(bottommarginmms / marginmms)
-        self.dict["paper/headerposition"] = "{:.3f}".format(headerposmms / marginmms)
-        self.dict["paper/footerposition"] = "{:.3f}".format(footerposmms / marginmms)
-        self.dict["paper/ruleposition"] = "{:.3f}".format(ruleposmms * 72.27 / 25.4)
+        self.dict["paper/topmarginfactor"] = f2s(topmarginmms / marginmms)
+        self.dict["paper/bottommarginfactor"] = f2s(bottommarginmms / marginmms)
+        self.dict["paper/headerposition"] = f2s(headerposmms / marginmms)
+        self.dict["paper/footerposition"] = f2s(footerposmms / marginmms)
+        self.dict["paper/ruleposition"] = f2s(ruleposmms * 72.27 / 25.4)
         
     def texfix(self, path):
         return path.replace(" ", r"\ ")
@@ -701,7 +701,7 @@ class TexModel:
                     tgts = mins + ((maxs - mins) / 3)
                     minus = tgts - mins
                     plus = maxs - tgts
-                    res.append(r"\internoteskip={:.3f}pt plus {:.3f}pt minus {:.3f}pt".format(tgts, plus, minus))
+                    res.append(r"\internoteskip={}pt plus {}pt minus {}pt".format(f2s(tgts), f2s(plus), f2s(minus)))
                 elif l.startswith(r"%\optimizepoetry"):
                     bks = self.dict["document/clabelbooks"]
                     if self.dict["document/ifchaplabels"] == "%" and len(bks):

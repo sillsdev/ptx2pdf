@@ -208,18 +208,6 @@ class StyleEditor:
         self.basesheet = Sheets(sheetfiles[:-1])
         self.sheet = Sheets(sheetfiles[-1:], base = "")
 
-    def _createFonts(self, sheet):
-        for k in self.allStyles():
-            if 'FontName' in self.sheet.get(k, {}):
-                v = self.sheet[k]
-            elif 'FontName' in self.basesheet.get(k, {}):
-                v = self.basesheet[k]
-            else:
-                continue
-            f = FontRef.fromTeXStyle(v)
-            if f is not None:
-                self.setval(k, " font", f)
-
     def _convertabs(self, key, val):
         baseline = float(self.model.get("s_linespacing", 1.))
         if key.lower() == "baseline":

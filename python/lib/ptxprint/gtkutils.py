@@ -1,5 +1,5 @@
 from gi.repository import Gtk, Gdk
-from ptxprint.utils import _
+from ptxprint.utils import _, f2s
 
 def getWidgetVal(wid, w, default=None, asstr=False, sub=0):
     v = None
@@ -23,7 +23,7 @@ def getWidgetVal(wid, w, default=None, asstr=False, sub=0):
     elif wid.startswith("c_"):
         v = w.get_active()
     elif wid.startswith("s_"):
-        v = "{:.3f}".format(w.get_value())
+        v = f2s(w.get_value())
     elif wid.startswith("btn_"):
         v = w.get_tooltip_text()
     elif wid.startswith("bl_"):

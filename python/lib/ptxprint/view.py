@@ -4,7 +4,7 @@ from ptxprint.texmodel import ModelMap, TexModel, Borders
 from ptxprint.ptsettings import ParatextSettings
 from ptxprint.font import TTFont, cachepath, cacheremovepath, FontRef, getfontcache, writefontsconf
 from ptxprint.utils import _, refKey, universalopen, print_traceback, local2globalhdr, \
-                            global2localhdr, asfloat, allbooks, books, bookcodes, chaps
+                            global2localhdr, asfloat, allbooks, books, bookcodes, chaps, f2s
 from ptxprint.usfmutils import Sheets, UsfmCollection
 from ptxprint.piclist import PicInfo, PicChecks
 from ptxprint.styleditor import StyleEditor
@@ -188,7 +188,7 @@ class ViewModel:
 
     def set(self, wid, value, skipmissing=False):
         if wid.startswith("s_"):
-            self.dict[wid] = "{:.3f}".format(float(value))
+            self.dict[wid] = f2s(float(value))
         else:
             self.dict[wid] = value
 
@@ -309,7 +309,7 @@ class ViewModel:
         if self.loadingConfig:
             return False
         (marginmms, topmarginmms, bottommarginmms, headerpos, footerpos, rulerpos, headerlabel, footerlabel) = self.getMargins()
-        self.set("l_margin2header1", "{:.3f}mm".format(headerlabel))
+        self.set("l_margin2header1", "{}mm".format(f2s(headerlabel)))
         return True
 
     def getMargins(self):
@@ -664,13 +664,13 @@ class ViewModel:
             config.set("project", "colophontext", colophontext)
         if v < 1.503:
             marginmms = config.getfloat("paper", "margins")
-            config.set("paper", "topmargin", "{:.3f}".format(config.getfloat("paper", "topmarginfactor", fallback=1.0) * marginmms))
-            config.set("paper", "headerpos", "{:.3f}".format(config.getfloat("paper", "topmarginfactor", fallback=1.0) * marginmms \
+            config.set("paper", "topmargin", f2s(config.getfloat("paper", "topmarginfactor", fallback=1.0) * marginmms))
+            config.set("paper", "headerpos", f2s(config.getfloat("paper", "topmarginfactor", fallback=1.0) * marginmms \
                         - config.getfloat("header", "headerposition", fallback=1.0) * marginmms\
                         - config.getfloat("paper", "fontfactor") * 25.4 / 72.27))
-            config.set("paper", "bottommargin", "{:.3f}".format(config.getfloat("paper", "bottommarginfactor", fallback=1.0) * marginmms))
-            config.set("paper", "footerpos", "{:.3f}".format(config.getfloat("header", "footerposition", fallback=1.0) * marginmms))
-            config.set("paper", "rulegap", "{:.3f}".format(config.getfloat("header", "ruleposition", fallback=0.)))
+            config.set("paper", "bottommargin", f2s(config.getfloat("paper", "bottommarginfactor", fallback=1.0) * marginmms))
+            config.set("paper", "footerpos", f2s(config.getfloat("header", "footerposition", fallback=1.0) * marginmms))
+            config.set("paper", "rulegap", f2s(config.getfloat("header", "ruleposition", fallback=0.)))
         if v < 1.504:
             try:
                 self._configset(config, "notes/fneachnewline", not config.getboolean("notes", "fnparagraphednotes"))
@@ -684,7 +684,7 @@ class ViewModel:
             pass
         if v < 1.602:
             config.set("notes", "belownoterulespace", "3.0")
-            config.set("notes", "abovenotespace", "{:.3f}".format(config.getfloat("notes", "abovenotespace", fallback=6.0) - 3.0))
+            config.set("notes", "abovenotespace", f2s(config.getfloat("notes", "abovenotespace", fallback=6.0) - 3.0))
             config.set("config", "version", "1.602")
 
         styf = os.path.join(self.configPath(cfgname), "ptxprint.sty")
