@@ -994,6 +994,13 @@ class GtkViewModel(ViewModel):
         self.sensiVisible(Gtk.Buildable.get_name(btn))
         self.colorTabs()
 
+    def onXrefLocnClicked(self, btn):
+        if self.get("r_xrLocn") == "blend":
+            self.set("c_columnNotes", False)
+        elif self.get("r_xrLocn") == "centre":
+            self.set("c_columnNotes", True)
+        self.onSimpleClicked(btn)
+    
     def onVertRuleClicked(self, btn):
         self.onSimpleClicked(btn)
         self.updateMarginGraphics()
@@ -2161,6 +2168,21 @@ class GtkViewModel(ViewModel):
             self.builder.get_object("c_processScript").set_active(False)
             for c in ("c_processScriptBefore", "c_processScriptAfter", "btn_editScript"):
                 self.builder.get_object(c).set_sensitive(False)
+
+    def onSelectXrFileClicked(self, btn_selectXrFile):
+        prjdir = os.path.join(self.settings_dir, self.prjid)
+        customXRfile = self.fileChooser("Select a Custom Cross-Reference file", 
+                filters = {"Paratext XRF Files": {"patterns": "*.xrf", "mime": "text/plain", "default": True},
+                           "All Files": {"pattern": "*"}},
+                multiple = False, basedir=os.path.join(prjdir, "..", "_Cross References"))
+        if customXRfile is not None:
+            self.customXRfile = customXRfile[0]
+            self.builder.get_object("r_xrSource_custom").set_active(True)
+            btn_selectXrFile.set_tooltip_text(str(customXRfile[0]))
+        else:
+            self.customXRfile = None
+            btn_selectXrFile.set_tooltip_text("")
+            self.builder.get_object("r_xrSource_custom").set_active(False)
 
     def onUsePrintDraftFolderClicked(self, c_useprintdraftfolder):
         self.sensiVisible("c_useprintdraftfolder")

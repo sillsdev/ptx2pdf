@@ -85,6 +85,7 @@ class ViewModel:
         "project/frontincludes":    ("FrontPDFs", True, "lb_inclFrontMatter"),
         "project/backincludes":     ("BackPDFs", True, "lb_inclBackMatter"),
         "project/selectscript":     ("customScript", False, None),
+        "project/customXRfile":     ("customXRfile", False, None),
         "project/modulefile":       ("moduleFile", False, "lb_bibleModule"),
         "paper/watermarkpdf":       ("watermarks", False, "lb_applyWatermark"),
         "fancy/pageborderpdf":      ("pageborder", False, "lb_inclPageBorder"),
@@ -113,6 +114,7 @@ class ViewModel:
         self.FrontPDFs = None
         self.BackPDFs = None
         self.customScript = None
+        self.customXRfile = None
         self.moduleFile = None
         self.DBLfile = None
         self.watermarks = None
