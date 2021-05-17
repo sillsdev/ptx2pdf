@@ -942,8 +942,8 @@ class FontRef:
         # only use of main regular fonts use the \Bold etc.
         if regular is not None and regular.name == self.name:
             for a in ("Bold", "Italic"):
-                x = a in regular.style
-                y = a in self.style
+                x = a in (regular.style or ())
+                y = a in (self.style or ())
                 if x and not y:
                     style[a] = "-"
                 elif y and not x:
