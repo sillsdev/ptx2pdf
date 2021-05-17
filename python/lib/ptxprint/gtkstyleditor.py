@@ -442,7 +442,7 @@ class StyleEditorView(StyleEditor):
             newk = self.stylediverts[key][0]
             newv = stylemap[newk]
             isset = self.get(newv[0], newv[2])
-            print(f"{key=}[{isset=}=>{newv[3](isset)}]: {val=}")
+            # print(f"{key=}[{isset=}=>{newv[3](isset)}]: {val=}")
             key = newv[3](isset)
             other = newv[3](not isset)
             if other in data:
@@ -458,7 +458,7 @@ class StyleEditorView(StyleEditor):
             oldval = self.getval(self.marker, otherkey)
             newval = self._convertabs(newkey, oldval)
             self.setval(self.marker, newkey, newval)
-            print(f"{newkey}: {oldval=} -> {newval=} | {self.getval(self.marker, newkey)}")
+            # print(f"{newkey}: {oldval=} -> {newval=} | {self.getval(self.marker, newkey)}")
             newlabel = self.stylediverts[controlk][2 if val else 1]
             controlw = stylemap[controlk][1]
             self.set(controlw, newlabel)
