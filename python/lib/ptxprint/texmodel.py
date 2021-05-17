@@ -276,7 +276,7 @@ ModelMap = {
     "notes/xromitcaller":       ("c_xromitcaller", lambda w,v: "%" if v else ""),
 
     "notes/iffootnoterule":     ("c_footnoterule", lambda w,v: "%" if v else ""),
-    "notes/xrlocation":         ("r_xrLocn", None),
+    "notes/xrlocation":         ("r_xrLocn", lambda w,v: r"" if v == "centre" else "%"),
     "notes/xrcentrecolwidth":   ("s_centreColWidth", lambda w,v: int(float(v)) if v else "80"),
     "notes/ifxrexternalist":    ("c_useXrefList", None),
     "notes/xrlistsource":       ("r_xrSource", None),
@@ -1383,7 +1383,7 @@ class TexModel:
     def createXrefTriggers(self, bk, prjdir, outpath):
         cfilter = self.dict['notes/xrfilterbooks']
         if cfilter == "pub":
-            bl = self.get("t_booklist", "").split()
+            bl = self.printer.get("t_booklist", "").split()
             filters = set(bl)
         elif cfilter == "prj":
             filters = set(self.printer.getAllBooks().keys())
@@ -1393,6 +1393,8 @@ class TexModel:
             filters = allbooks[:39]
         elif cfilter == "ot":
             filters = allbooks[40:67]
+        if filters is not None and len(filters) == 0:
+            filters = None
         if self.dict['notes/xrlistsource'] == "custom":
             self.xrefdat = {}
             with open(self.dict['project/selectxrfile']) as inf:
