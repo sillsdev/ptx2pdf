@@ -238,6 +238,7 @@ class RefList(list):
                 if b == "end":
                     if mode != "r":
                         curr = self._addRefOrRange(start, curr)
+                        start = None
                     if curr.chap > 0 and curr.verse == 0:
                         curr.chap = 200
                         mode = "c"
@@ -250,6 +251,7 @@ class RefList(list):
                 if m:
                     if mode != "r" and mode != "":
                         curr = self._addRefOrRange(start, curr)
+                        start = None
                     curr.book = context.getBook(m.group(0))
                     mode = "b"
                     b = b[m.end():]
@@ -258,6 +260,7 @@ class RefList(list):
                 if m:
                     if mode not in "br":
                         curr = self._addRefOrRange(start, curr)
+                        start = None
                     curr.chap = int(m.group(1))
                     if m.group(2):
                         curr.verse = 200 if m.group(2) == "end" else int(m.group(2))
@@ -278,12 +281,14 @@ class RefList(list):
                         if mode not in "bcr":
                             c = curr.chap
                             curr = self._addRefOrRange(start, curr)
+                            start = None
                             curr.chap = c
                         curr.subverse = m.group(2) or None
                         curr.verse = v
                     else:
                         if mode not in "bcr":
                             curr = self._addRefOrRange(start, curr)
+                            start = None
                         mode = "c"
                         curr.chap = v
                     mode = "v"
@@ -323,16 +328,15 @@ class RefList(list):
         res = []
         lastref = Reference(None, 0, 0)
         for r in self:
-            t, u = (r.first, r.last) if isinstance(r, RefRange) else (r, r)
-            if t.book == lastref.book and t.chap == lastref.chap:
-                if t.subverse is None and t.verse == lastref.verse + 1:
-                    if isinstance(res[-1], RefRange):
-                        res[-1].last = u
-                    else:
-                        res.append(RefRange(lastref, u))
-                    lastref = u
-                    continue
-            res.append(r)
+            t, u = (r.first, r.last)
+            if t.book == lastref.book and t.chap == lastref.chap \
+                    and t.subverse is None and t.verse == lastref.verse + 1:
+                if isinstance(res[-1], RefRange):
+                    res[-1].last = u
+                else:
+                    res[-1] = RefRange(lastref, u)
+            else:
+                res.append(r)
             lastref = u
         self[:] = res
 

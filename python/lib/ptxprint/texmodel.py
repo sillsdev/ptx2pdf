@@ -1447,6 +1447,8 @@ class TexModel:
                     v.filterBooks(filters)
                 v.sort()
                 v.simplify()
+                if not len(v):
+                    continue
                 info = {
                     "book":         k.first.book,
                     "dotref":       k.__str__(context=NoBook, addsep=("; ", ";", ",", ".")),
