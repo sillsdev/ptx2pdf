@@ -29,8 +29,10 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newcount\diglotDbgJoinboxes%
+\newcount\diglotDbgTrace%
 \diglotDbgJoinboxes=-1% Set to the debug message of a joinboxes to execute showbox on that join
 \def\diglotDbgeachcol{-1}% Define to begin tracingmacros and tracing assigns at each@col with TRACEcount
+\def\diglotDbgupdtPtl{-1}% Define to begin tracingmacros and tracing assigns at n@xtpartial  with TRACEcount
 
 
 \def\diglotbadbrk{\penalty 10000}
@@ -295,7 +297,6 @@
 
 \newcount\tmpcount%scratchspace
 \newcount\curactivecols%how many active columns
-\newcount\curdispcols%how many displayable columns
 \newcount\Lboxpenalty% The penalty that goes between Lbox and partialL
 \newcount\Rboxpenalty%  ~"~
 \newcount\partialLpenalty% The penalty that goes between partialL and excessL (also used while loading excessL during excessL
@@ -1113,30 +1114,30 @@
   \global\advance\cumulativeDelta by \count255
   \egroup
 }
-\def\@do@baselinediff@simplecols{%
-    \dimen1=0pt
-    \def\v@lpfx{b@selineskip}\def\v@lsfx{}%
-    \let\col@do=\max@val
-    \x@\each@col\cts@list\E % Find biggest baseline skip of those bits of text which are active.
-    \edef\@maxball@seline{\the\dimen1}%
-}
-
-\def\@do@prepare@simplecols{%
-    \trace{d}{@do@prepare@simplecols \l@gdims{\partial}}%
-    \thisjointDelta=0pt %Do we need extra space?
-    %Calculate how much extra space we need:
+\def\@do@jointcalc@simplecols{%
     % step 1: max height of the last box 
     \def\v@lpfx{@cur}\def\v@lsfx{ht}%
     \dimen1=0pt
     \let\col@do=\max@val
     \x@\each@col\diglot@list\E % Find height of lastchunk
     \edef\@maxht{\the\dimen1}%
-    \csname @do@baselinediff@\diglotlayout\endcsname
+    \dimen1=0pt
+    \def\v@lpfx{b@selineskip}\def\v@lsfx{}%
+    \let\col@do=\max@val
+    \x@\each@col\cts@list\E % Find biggest baseline skip of those bits of text which are active.
+    \edef\@maxball@seline{\the\dimen1}%
     \dimen1=0pt
     % step 2: position of the ideal next baseline (below last box)
     \def\v@lpfx{@cur}\def\v@lsfx{ht}%
     \let\col@do=\maxjoint@val
     \x@\each@col\cts@list\E
+}
+
+\def\@do@prepare@simplecols{%
+    \trace{d}{@do@prepare@simplecols \l@gdims{\partial}}%
+    \thisjointDelta=0pt %Do we need extra space?
+    %Calculate how much extra space we need:
+    \csname @do@jointcalc@\diglotlayout\endcsname
     \ifdim\dimen1>0pt
       \thisjointDelta=\dimen1
       \advance\thisjointDelta by -\@maxht
@@ -1191,7 +1192,8 @@
 
 \def\@do@layout@simplecols{%
   \trace{d}{@do@layout@simplecols \l@gdims{\partial}}%
-  \let\@d@lsimpcol@do=\d@
+  \let\@d@lsimp@d@=\d@
+  \let\@d@lsimpcol@do=\col@do
   \setbox1\hbox{\makediglotgutter{\dimen7}{\dimen8}{\dimen9}}%
   \let\l@stcol\empty
   \let\col@do=\@@simplecols
@@ -1224,16 +1226,19 @@
       \x@\each@col\rev@layout@list\E
       \vrule height \dimen7 depth \dimen9 width 0pt
   }}%
+  \let\col@do=\@d@lsimpcol@do
+  \let\d@=\@d@lsimp@d@
 }
 \def\@do@cleanup@simplecols{%
   \def\v@lpfx{}\def\v@lsfx{box}%
   \let\col@do=\void@boxes %
   \x@\each@col\layout@list\E
-  \let\d@=\@d@lsimpcol@do
 }
 
 \def\diglot@arrange@cols{% Xht is the sum of Xbox's depth and height (set by after@a@trial
   \trace{d}{diglot@arrange@cols chnkDlta:\the\chunkDelta. cp:\the\chunkpenalty, lcp:\the\lastchunkpenalty}%
+  \let\ac@d@=\d@
+  \let\ac@col@do=\col@do
   \ifVisTrace
     \ifx\b@xtype\vbox %boxtype is set on discovery of whether this is a heading or not
       \doVisTraceT{L}% sets box0, used ~43 lines below
@@ -1266,18 +1271,27 @@
 }
 
 \def\s@tctslist@simplecols{%
+  \curactivecols=0 
+  \def\v@lpfx{}\def\v@lsfx{ht}%
   \let\cts@list=\empty
   \x@\let\x@\col@do\csname count@dim@\diglotlayout\endcsname
   \x@\each@col\diglot@list\E
 }
 
-\def\upd@tep@rtial{%Actually add stuff to the page.
-  \trace{D}{upd@tep@rtial \the\outputpenalty}%
+\def\restore@trace@updatepartial{}
+\def\upd@tep@rtial{%route called to actually add stuff to the page.
+  \traceNum{d}{upd@tep@rtial \the\outputpenalty (\diglotDbgupdtPtl)}%
   \trace{D}{plp:\the\partialLpenalty, prp:\the\partialRpenalty, cp:\the\chunkpenalty lcp:\the\lastchunkpenalty, lbp:\the\Lboxpenalty, rbp:\the\Rboxpenalty}%
-  \curdispcols=0 \curactivecols=0 \def\v@lpfx{}\def\v@lsfx{ht}%
+  \ifnum\diglotDbgupdtPtl=\TRACEcount
+    \xdef\restore@trace@updatepartial{\global\tracingmacros=\the\tracingmacros \global\tracingassigns=\the\tracingassigns}%
+    \global\tracingmacros=1\global\tracingassigns=1
+  \else 
+    \restore@trace@updatepartial
+  \fi
+  \csname start@upd@tep@rtial@\diglotlayout\endcsname % Any setup?
   \csname s@tctslist@\diglotlayout\endcsname % increments curactivecols by each non-0 value, and sets \cts@list
   \trace{dP}{Columns with contents: \cts@list (\the\curactivecols)}%
-  \ifnum\curdispcols>0 
+  \ifnum\curactivecols>0 
     \temptrue
     \let\col@do=\chk@head %Is the relevant item a heading? Set tempfalse if not
     \x@\each@col\cts@list\E
@@ -1335,9 +1349,9 @@
     \@writep@ge%
       \let\col@do=\reset@n@xt
       \x@\each@col\diglot@list\E% 
-    \global\pagefullfalse
     \global\deadcycles=0 %That counts as an action too.
   \fi%
+  \csname end@upd@tep@rtial@\diglotlayout\endcsname % any cleanup?
 }
 
 
@@ -1479,6 +1493,7 @@
   \ifnum\pageno>\MaxPages
     \errmessage{Pagecount (\the\pageno) has exceeded \MaxPages (\the\MaxPages). This probably means something has gone wrong. (or you should increase MaxPages or MaxPagesPerChunk (\MaxPagesPerChunk) for this job)}%
   \fi
+  \csname start@writep@ge@\diglotlayout\endcsname
   \csname @writep@ge@\diglotlayout\endcsname
   \csname end@writep@ge@\diglotlayout\endcsname
 }
@@ -1816,7 +1831,6 @@
 \def\count@dim@simplecols#1{%Is the dimension non non-zero? Count using curactivecols and add tag to list
   \x@\ifdim \csname \v@lpfx#1\v@lsfx\endcsname=0pt\else
     \advance\curactivecols by 1 % how many columns contain text?
-    \advance\curdispcols by 1 % how mny are we displaying? (all of them!)
     \edef\cts@list{\cts@list#1}%
   \fi
 }
@@ -1832,6 +1846,7 @@
   \fi
 }
 \def\set@ht#1{%Set the values of curXht, adding or resetting based on \iftemp  (anything on the page is current by definition)
+  \def\errt@st{#1}\ifx\errt@st\empty\errmessage{set@ht passed null value}\fi
   \x@\dimen1\x@=\csname @nxtchunk#1ht\endcsname
   \x@\xdef\csname @old#1ht\endcsname{\the\dimen0}%
   \iftemp %one at least is empty
@@ -1945,7 +1960,6 @@
 
 \def\@add@n@xtpartial{%
   \traceNum{d}{@add@n@xtpartial}%
-  \tracingassigns=1
   \tempfalse
   \csname @tst@n@xtpartial@\diglotlayout\endcsname
   \iftemp
@@ -2100,9 +2114,10 @@
     \xdef@cseq{@cur#1dp}{0pt}% 
     \header@defs{#1}% All the possible header contents
 %TODO:
-%FIXMEs needing to be solved before implementing this: 
+%FIXMEs needing for polyglot processing:
 % UI!
-% 
+% The column-delta totals should be per-column, and be summed as cross-column deltas compared to the average.
+
   \fi
 }
 
