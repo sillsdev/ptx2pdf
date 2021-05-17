@@ -7,13 +7,15 @@ try:
 except ImportError:
     sys.path.append(os.path.join(os.path.dirname(__file__), "..", "lib"))
     import ptxprint
-from ptxprint.utils import get_ptsettings, allbooks
+from ptxprint.utils import get_ptsettings, allbooks, f2s
 from ptxprint.reference import BookNames, RefList, RefRange, Reference
 from ptxprint.ptsettings import ParatextSettings
 from ptxprint.view import ViewModel
 from ptxprint.usfmutils import Sheets, Usfm
 import ptxprint.sfm
 from functools import reduce
+from timeit import timeit
+import pickle, contextlib, bz2, gzip
 
 _bkcodes = ("Gen", "Exod", "Lev", "Num", "Deut", "Josh", "Judg", "Ruth", "1Sam",
         "2Sam", "1Kgs", "2Kgs", "1Chr", "2Chr", "Ezra", "Neh", "Esth", "Job",
@@ -163,11 +165,41 @@ elif args.mode in ("bin", "tag"):
             else:
                 outf.write("|".join([str(k)] + [str(l) for l in lists]))
             outf.write("\n")
-else:
+elif args.mode == "convert":
     with open(args.pid) as inf:
         for l in inf.readlines():
             d = l.split("|")
             k = Reference.fromtag(d[0])
             v = [RefList.fromtag(s) for s in d[1:]]
             print(str(k) + "|" + "|".join(str(x) for x in v))
+elif args.mode == "timeit":
+    results = {}
+    def dotest(infile, fn):
+        with open(infile) as inf:
+            for l in inf.readlines():
+                d = l.split("|")
+                v = [fn(s) for s in d]
+                results[v[0][0]] = v[1:]
+    def dotestbz2(infile, fn):
+        with contextlib.closing(bz2.BZ2File(infile)) as inf:
+            for l in inf.readlines():
+                d = l.decode("ASCII").split("|")
+                v = [fn(s) for s in d]
+                results[v[0][0]] = v[1:]
+    def fs(infile):
+        return f2s(os.path.getsize(infile) / 1000000.)
 
+    print("refs({} MB):\t\t{}".format(fs(args.infile), timeit("dotest(args.infile, RefList.fromStr)", number=3, globals=globals())))
+    print("tags({} MB):\t\t{}".format(fs(args.pid), timeit("dotest(args.pid, RefList.fromtag)", number=3, globals=globals())))
+    with contextlib.closing(bz2.BZ2File("test.pickle.bz2", "wb")) as outf:
+        pickle.dump(results, outf)
+    with contextlib.closing(gzip.open("test.pickle.gz", "wb")) as outf:
+        pickle.dump(results, outf)
+    with open("test.pickle", "wb") as outf:
+        pickle.dump(results, outf)
+    print("pickle({} MB):\t{}".format(fs("test.pickle"), timeit("with open('test.pickle', 'rb') as inf: results=pickle.load(inf)", number=3, globals=globals())))
+    print("pickle+gz({} MB):\t{}".format(fs("test.pickle.bz2"), timeit("with contextlib.closing(gzip.open('test.pickle.gz', 'rb')) as inf: results=pickle.load(inf)", number=3, globals=globals())))
+    print("pickle+bz2({} MB):\t{}".format(fs("test.pickle.bz2"), timeit("with contextlib.closing(bz2.BZ2File('test.pickle.bz2', 'rb')) as inf: results=pickle.load(inf)", number=3, globals=globals())))
+    print("refs+bz2({} MB):\t{}".format(fs(args.infile+".bz2"), timeit("dotestbz2(args.infile+'.bz2', RefList.fromStr)", number=3, globals=globals())))
+    print("tags+bz2({} MB):\t{}".format(fs(args.pid+".bz2"), timeit("dotestbz2(args.pid+'.bz2', RefList.fromtag)", number=3, globals=globals())))
+    print("Results size: {} MB, len={}".format(f2s(sys.getsizeof(results) / 1000000.), len(results)))

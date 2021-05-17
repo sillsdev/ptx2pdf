@@ -7,13 +7,14 @@ import regex
 from ptxprint.font import TTFont
 from ptxprint.runner import checkoutput
 from ptxprint import sfm
-from ptxprint.sfm import usfm, style
+from ptxprint.sfm import usfm, style, Text
 from ptxprint.usfmutils import Usfm, Sheets, isScriptureText, Module
 from ptxprint.utils import _, universalopen, localhdrmappings, pluralstr, multstr, coltoonemax, \
-                            chaps, books, bookcodes, oneChbooks, asfloat, f2s
+                            chaps, books, bookcodes, oneChbooks, asfloat, f2s, cachedData
 from ptxprint.dimension import Dimension
 import ptxprint.scriptsnippets as scriptsnippets
 from ptxprint.interlinear import Interlinear
+from ptxprint.reference import Reference, RefRange, RefList
 
 # After universalopen to resolve circular import. Kludge
 from ptxprint.snippets import FancyIntro, PDFx1aOutput, Diglot, FancyBorders, ThumbTabs, Colophon, Grid
@@ -59,7 +60,7 @@ ModelMap = {
     "project/processscript":    ("c_processScript", None),
     "project/runscriptafter":   ("c_processScriptAfter", None),
     "project/selectscript":     ("btn_selectScript", lambda w,v: w.customScript.as_posix() if w.customScript is not None else ""),
-    "project/selectxrfile":     ("btn_selectXrFile", lambda w,v: w.customXRfile.as_posix() if w.customXRfile is not None else ""),
+    "project/selectxrfile":     ("btn_selectXrFile", None),
     "project/usechangesfile":   ("c_usePrintDraftChanges", lambda w,v :"true" if v else "false"),
     "project/ifusemodstex":     ("c_useModsTex", lambda w,v: "" if v else "%"),
     "project/ifusepremodstex":  ("c_usePreModsTex", lambda w,v: "" if v else "%"),
@@ -372,6 +373,7 @@ class TexModel:
         "notes/xrcallers": "crossrefs",
         "notes/fncallers": "footnotes"
     }
+    _crossRefInfo = None
 
     def __init__(self, printer, path, ptsettings, prjid=None, inArchive=False):
         from ptxprint.view import VersionStr
@@ -1336,3 +1338,118 @@ class TexModel:
                 crdts.append("}")
             crdts.append("\\let\\zimagecopyrights=\\zimagecopyrightsen")
         return "\n".join(crdts)
+
+    def _getVerseRanges(self, sfm, bk):
+        class Result(list):
+            def __init__(self):
+                super().__init__(self)
+                self.chap = 0
+
+        def process(a, e):
+            if isinstance(e, (str, Text)):
+                return a
+            if e.name == "c":
+                a.chap = int(e.args[0])
+            elif e.name == "v" and "-" in e.args[0]:
+                m = re.match(r"^(\d+)-(\d+)", e.args[0])
+                if m is not None:
+                    first = int(m.group(1))
+                    last = int(m.group(2))
+                    a.append(RefRange(Reference(bk, a.chap, first), Reference(bk, a.chap, last)))
+            for c in e:
+                process(a, c)
+            return a
+        return reduce(process, sfm, Result())
+
+    def _iterref(self, ra, allrefs):
+        curr = ra.first.copy()
+        while curr <= ra.last:
+            if curr in allrefs:
+                yield curr
+                curr.verse += 1
+            else:
+                curr.chap += 1
+                curr.verse = 1
+
+    def _addranges(self, results, ranges):
+        for ra in ranges:
+            acc = RefList()
+            for r in self._iterref(ra, results):
+                acc.extend(results[r])
+                del results[r]
+            if len(acc):
+                results[ra] = acc
+
+    def createXrefTriggers(self, bk, prjdir, outpath):
+        cfilter = self.dict['notes/xrfilterbooks']
+        if cfilter == "pub":
+            bl = self.get("t_booklist", "").split()
+            filters = set(bl)
+        elif cfilter == "prj":
+            filters = set(self.printer.getAllBooks().keys())
+        elif cfilter == "all":
+            filters = None
+        elif cfilter == "nt":
+            filters = allbooks[:39]
+        elif cfilter == "ot":
+            filters = allbooks[40:67]
+        if self.dict['notes/xrlistsource'] == "custom":
+            self.xrefdat = {}
+            with open(self.dict['project/selectxrfile']) as inf:
+                for l in inf.readlines():
+                    if '=' in l:
+                        continue
+                    v = RefList()
+                    for d in re.sub(r"[{}]", "", l).split():
+                        v.extend(RefList.fromStr(d.replace(".", " ")))
+                    k = v.pop(0)
+                    self.xrefdat[k] = [v]
+        else:       # standard
+            if self._crossRefInfo == None:
+                def procxref(inf):
+                    results = {}
+                    for l in inf.readlines():
+                        d = l.split("|")
+                        v = [RefList.fromStr(s) for s in d]
+                        results[v[0][0]] = v[1:]
+                    return results
+                self.__class__._crossRefInfo = cachedData(os.path.join(os.path.dirname(__file__), "cross_references.txt"), procxref)
+            self.xrefdat = self.__class__._crossRefInfo
+        results = {}
+        for k, v in self.xrefdat.items():
+            if k.first.book != bk:
+                continue
+            outl = v[0]
+            if len(v) > 1 and self.dict['notes/xrlistsize'] > 1:
+                outl = sum(v[0:self.dict['notes/xrlistsize']], RefList())
+            results[k] = outl
+        fname = self.printer.getBookFilename(bk)
+        infpath = os.path.join(prjdir, fname)
+        with open(infpath) as inf:
+            try:
+                sfm = Usfm(inf, self.sheets)
+            except:
+                sfm = None
+            if sfm is not None:
+                ranges = self._getVerseRanges(sfm.doc, bk)
+                self._addranges(results, ranges)
+        class NoBook:
+            @classmethod
+            def getLocalBook(cls, s, level=0):
+                return ""
+        addsep = ("; ", ";\u200B", ",\u200B", ":")
+        template = "\n\\AddTrigger {book}{dotref}\n\\x - \\xo {colnobook} \\xt {refs}\\x*\n\\EndTrigger\n"
+        with open(outpath + ".triggers", "w", encoding="utf-8") as outf:
+            for k, v in sorted(results.items()):
+                if filters is not None:
+                    v.filterBooks(filters)
+                v.sort()
+                v.simplify()
+                info = {
+                    "book":         k.first.book,
+                    "dotref":       k.__str__(context=NoBook, addsep=("; ", ";", ",", ".")),
+                    "colnobook":    k.__str__(context=NoBook),
+                    "refs":         v.__str__(self.ptsettings, addsep=addsep)
+                }
+                outf.write(template.format(**info))
+

@@ -9,6 +9,7 @@ startchaps = list(zip([b for b in allbooks if 0 < int(chaps[b]) < 999],
                       reduce(lambda a,x: a + [a[-1]+x], (int(chaps[b]) for b in allbooks if 0 < int(chaps[b]) < 999), [0])))
 startchaps += [("special", startchaps[-1][1]+1)]
 startbooks = dict(startchaps)
+allchaps = ['GEN'] + sum([[b] * int(chaps[b]) for b in allbooks if 0 < int(chaps[b]) < 999], []) + ['special']
 b64codes = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
 b64lkup = {b:i for i, b in enumerate(b64codes)}
 
@@ -118,8 +119,10 @@ class Reference:
             elif i < len(a)-1 and a[i+1][1] < cv:
                 return -1
             return 0
-        i = binsearch(startchaps, c, chcmp)
-        bk, start = startchaps[i]
+        #i = binsearch(startchaps, c, chcmp)
+        #bk, start = startchaps[i]
+        bk = allchaps[c]
+        start = startbooks[bk]
         chap = c - start
         if bk == "special":
             if chap == 1:
@@ -222,11 +225,15 @@ class BookNames(BaseBooks):
 class RefList(list):
     @classmethod
     def fromStr(cls, s, context=BaseBooks, starting=None):
+        rerefs = re.compile(r"[\s;,]+")
+        rebook = re.compile(r"^\d?[^0-9\-:]+")
+        recv = re.compile(r"^(\d+)[:.](\d+|end)([a-z]?)")
+        rec = re.compile(r"(\d+)([a-z]?)")
         self = cls()
         curr = Reference(None, 0, 0) if starting is None else starting
         start = None
         mode = ""
-        for b in re.split(r"[\s;,]+", s):
+        for b in rerefs.split(s):
             while len(b):
                 if b == "end":
                     if mode != "r":
@@ -239,7 +246,7 @@ class RefList(list):
                         mode = "v"
                     b = ""
                     continue
-                m = re.match(r"^\d?[^0-9\-:]+", b)
+                m = rebook.match(b)
                 if m:
                     if mode != "r" and mode != "":
                         curr = self._addRefOrRange(start, curr)
@@ -247,7 +254,7 @@ class RefList(list):
                     mode = "b"
                     b = b[m.end():]
                     continue
-                m = re.match(r"^(\d+)[:.](\d+|end)([a-z]?)", b)
+                m = recv.match(b)
                 if m:
                     if mode not in "br":
                         curr = self._addRefOrRange(start, curr)
@@ -259,7 +266,7 @@ class RefList(list):
                     b = b[m.end():]
                     mode = "v"
                     continue
-                m = re.match(r"(\d+)([a-z]?)", b)
+                m = rec.match(b)
                 if m:
                     v = int(m.group(1))
                     if m.group(2) or curr.verse > 0 or curr.book in oneChbooks:
@@ -305,6 +312,9 @@ class RefList(list):
     def __eq__(self, other):
         return len(self) == len(other) and all(z[0] == z[1] for z in zip(self, other))
 
+    def __add__(self, other):
+        return self.__class__(self[:] + other[:])
+
     def _addRefOrRange(self, start, curr):
         self.append(curr if start is None else RefRange(start, curr))
         return Reference(curr.book, 0, 0)
@@ -325,6 +335,9 @@ class RefList(list):
             res.append(r)
             lastref = u
         self[:] = res
+
+    def filterBooks(self, books):
+        self[:] = [r for r in self if r.first.book in books]
 
     def astag(self):
         return "".join(r.astag() for r in self)

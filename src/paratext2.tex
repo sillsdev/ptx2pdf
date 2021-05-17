@@ -539,7 +539,8 @@
   \let\par=\endgraf\ch@pterfalse
   \everypar={}% don't do body text formatting
   \x@\let\x@\th@cl@ss\csname note-#3\endcsname % make \th@cl@ss be a synonym for the current note class
-  \hsize=#2\advance\hsize by -2pt\leftskip=0pt\rightskip=0pt plus 0.8\hsize\unvbox\th@cl@ss
+  \hsize=#2%\advance\hsize-\XrefNotesMargin\advance\hsize-\XrefNotesMargin
+  \leftskip=0pt\rightskip=0pt plus 0.8\hsize\unvbox\th@cl@ss
   \r@versevb@x{3}\unvbox3
   \s@tbaseline{#3}
   \loop
@@ -561,6 +562,7 @@
     \else \tempfalse
     \fi
   \iftemp\repeat
+  %\ifdim\ht\xr@fbox=0pt\message{empty xref box}\setbox\xr@fbox=\vbox{\hbox to \hsize{\space}}\fi
 % completed the main box. Now capture the rest as a normal paragraphed note
   \setbox1=\vbox{}
   \loop
@@ -778,7 +780,7 @@
   \trace{o}{savepartialpage \the\ht\colA rem=\the\ht255}%
   \iffitonpage
     \global\setbox\partial=\vbox{
-      \ifvoid\partial\else \unvbox\partial \fi
+      \ifvoid\partial\else \vbox{\hbox to \dimen1{\hskip\columnshift\vbox{\unvbox\partial}}} \fi
       \ifvoid\topins\else \unvbox\topins \vskip\skip\topins \fi
       \lastd@pth=\dp\colA
       \dimen1=\textwidth \advance\dimen1 -\ExtraRMargin \advance\dimen1 -\columnshift
@@ -1313,7 +1315,7 @@
       % bodge the partial box which should really have been properly textually merged
       % the problem is that savepartialpaged can get called twice in succession because
       % not all the output text (after a \singlecolumn) was passed the first time
-      \ifvoid\partial\else\trace{o}{nested partial}\unvbox\partial\vskip -2\dimen5\fi
+      \ifvoid\partial\else \vbox{\hbox to \dimen1{\hskip\columnshift\vbox{\unvbox\partial}}\vskip -2\dimen5} \fi
       \ifvoid\topins\else \hbox{\hbox to \columnshift{}\box\topins} \vskip\skip\topins \fi % output top spanning pictures
       \dimen5=\textwidth\advance\dimen5 by -\ExtraRMargin\advance\dimen5 by -\columnshift %
       \dimen2=\dimen3 \advance\dimen2\bmg@p
@@ -1479,7 +1481,7 @@
       % todo: allow user defined inner margin also on grid
       \hbox to \XrefNotesMargin{}%
       \vbox to #4{\vbox to #2{\ifdim\ht\xr@fbox>0.9\dimen0 \unvbox\xr@fbox
-        \else\ifdim\ht\xr@fbox=0pt\hskip\XrefNotesWidth\else
+        \else\ifdim\ht\xr@fbox=0pt\message{empty xrefbox}\vbox{\hsize=\XrefNotesWidth\hskip\XrefNotesWidth\hbox{}}\else
           \unvbox\xr@fbox\fi\vfil\fi}\vfil}%
       \hbox to \XrefNotesMargin{}%
     \fi

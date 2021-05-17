@@ -64,7 +64,8 @@ class ParatextSettings:
         doc = et.parse(fpath)
         for b in doc.findall(".//book"):
             bkid = b.get("code")
-            strs = [b.get(a) for a in ("abbr", "short", "long")]
+            strs = list(reversed([b.get(a, None) for a in ("abbr", "short", "long")]))
+            strs = list(reversed([s or strs[i-1] for i, s in enumerate(strs)]))
             self.bookNames[bkid] = strs
             for s in strs:
                 for i in range(len(s)):

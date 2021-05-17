@@ -139,6 +139,7 @@ def isLocked():
     return _joblock is not None
 
 class RunJob:
+
     def __init__(self, printer, scriptsdir, args, inArchive=False):
         self.scriptsdir = scriptsdir
         self.printer = printer
@@ -361,6 +362,8 @@ class RunJob:
                 out = None
             if out is None:
                 continue
+            if info["notes/ifxrexternalist"]:
+                info.createXrefTriggers(b, self.prjdir, os.path.join(self.tmpdir, out))
             donebooks.append(out)
         if not len(donebooks):
             unlockme()
@@ -798,3 +801,4 @@ class RunJob:
         num = float(re.sub(r"([0-9\.]+).*", r"\1", str(measure)))
         unit = str(measure)[len(str(num)):].strip(" ")
         return (num * _unitConv[unit]) if unit in units else num
+

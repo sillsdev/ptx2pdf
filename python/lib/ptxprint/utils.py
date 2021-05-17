@@ -4,6 +4,7 @@ import os, sys, re
 import xml.etree.ElementTree as et
 from inspect import currentframe
 from struct import unpack
+import contextlib, appdirs, pickle, gzip
 
 # For future Reference on how Paratext treats this list:
 # G                                     M M                         RT                P        X      FBO    ICGTND          L  OT X NT DC  -  X Y  -  Z  --  L
@@ -315,6 +316,17 @@ def f2s(x, dp=3) :
     if res.endswith("." + ("0" * dp)) :
         return res[:-dp-1]
     return re.sub(r"0*$", "", res)
+
+def cachedData(filepath, fn):
+    cfgfilepath = os.path.join(appdirs.user_config_dir("ptxprint", "SIL"), os.path.basename(filepath+".pickle.gz"))
+    if os.path.exists(cfgfilepath):
+        with contextlib.closing(gzip.open(cfgfilepath, "rb")) as inf:
+            return pickle.load(inf)
+    with open(filepath, "r") as inf:
+        res = fn(inf)
+    with contextlib.closing(gzip.open(cfgfilepath, "wb")) as outf:
+        pickle.dump(res, outf)
+    return res
 
 def xdvigetpages(xdv):
     with open(xdv, "rb") as inf:
