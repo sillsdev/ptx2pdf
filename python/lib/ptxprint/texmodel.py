@@ -10,7 +10,7 @@ from ptxprint import sfm
 from ptxprint.sfm import usfm, style, Text
 from ptxprint.usfmutils import Usfm, Sheets, isScriptureText, Module
 from ptxprint.utils import _, universalopen, localhdrmappings, pluralstr, multstr, coltoonemax, \
-                            chaps, books, bookcodes, oneChbooks, asfloat, f2s, cachedData
+                            chaps, books, bookcodes, allbooks, oneChbooks, asfloat, f2s, cachedData
 from ptxprint.dimension import Dimension
 import ptxprint.scriptsnippets as scriptsnippets
 from ptxprint.interlinear import Interlinear
@@ -1004,7 +1004,10 @@ class TexModel:
         if v is not None:
             if gloStyle is not None and len(v) == 2: # otherwise skip over OLD Glossary markup definitions
                 self.localChanges.append((None, regex.compile(r"\\\+?w ((?:.(?!\\\+w\*))+?)(\|[^|]+?)?\\\+?w\*", flags=regex.M), gloStyle))
-        
+
+        if self.asBool("notes/includexrefs"): # This seems back-to-front, but it is correct because of the % if v
+            self.localChanges.append((None, regex.compile(r'(?i)\\x .+?\\x\*', flags=regex.M), ''))
+            
         if self.asBool("document/ifinclfigs") and bk in self._peripheralBooks:
             # Remove any illustrations which don't have a |p| 'loc' field IF this setting is on
             if self.asBool("document/iffigexclwebapp"):
@@ -1389,9 +1392,9 @@ class TexModel:
             filters = set(self.printer.getAllBooks().keys())
         elif cfilter == "all":
             filters = None
-        elif cfilter == "nt":
-            filters = allbooks[:39]
         elif cfilter == "ot":
+            filters = allbooks[:39]
+        elif cfilter == "nt":
             filters = allbooks[40:67]
         if filters is not None and len(filters) == 0:
             filters = None
