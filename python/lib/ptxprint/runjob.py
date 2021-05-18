@@ -362,10 +362,15 @@ class RunJob:
                 out = None
             if out is None:
                 continue
+            outpath = os.path.join(self.tmpdir, out)
             if info["notes/ifxrexternalist"]:
-                info.createXrefTriggers(b, self.prjdir, os.path.join(self.tmpdir, out))
+                info.createXrefTriggers(b, self.prjdir, outpath)
             else:
-                os.remove(out+".triggers")
+                try:
+                    print(f"Removing {outpath}.triggers")
+                    os.remove(outpath+".triggers")
+                except FileNotFoundError:
+                    pass
             donebooks.append(out)
         if not len(donebooks):
             unlockme()

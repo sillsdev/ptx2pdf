@@ -159,6 +159,8 @@ class StyleEditorView(StyleEditor):
             (pref, name) = v[0].split("_", 1)
             signal = widgetsignals.get(pref, "changed")
             w.connect(signal, self.item_changed, k)
+            # if v[0].startswith("s_"):
+            #     w.connect("focus-out-event", self.item_changed, k)
         self.isLoading = False
         self.stylediverts = {
             "LineSpacing": ("_linespacing", _("Line Spacing\nFactor:"), _("Baseline:")),
@@ -421,9 +423,10 @@ class StyleEditorView(StyleEditor):
             else:
                 ctxt.remove_class("changed")
 
-    def item_changed(self, w, key):
+    def item_changed(self, w, *a):
         if self.isLoading:
             return
+        key = a[-1]
         data = self.asStyle(self.marker)
         v = stylemap[key]
         val = self.get(v[0], v[2])

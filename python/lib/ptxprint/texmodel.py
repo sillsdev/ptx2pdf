@@ -24,8 +24,6 @@ def loosint(x):
         return int(x)
     except (ValueError, TypeError):
         return 0
-    except ValueError:
-        return 0
 
 ModelMap = {
     "L_":                       ("c_diglot", lambda w,v: "L" if v else ""),
@@ -1342,12 +1340,19 @@ class TexModel:
                         cpystr = template.format(artstr.replace("_", "\u00A0") + exceptPgs)
                         # print(cpystr)
                         crdts.append("\\{} {}".format(mkr, cpystr))
-            if self.dict['notes/ifxrexternalist'] and self.dict['notes/xrlistsource'] == "standard":
-                if not crdtsstarted:
-                    crdts.append("\\def\\zimagecopyrights{}{{%".format(lang.lower()))
-                crdts.append("\\{} {}".format(mkr, cinfo['templates']['openbible.info'].get(lang,
-                                cinfo['templates']['openbible.info']['en']).replace("_", "\u00A0")))
-            crdts.append("}")
+            if self.dict['notes/ifxrexternalist']:
+                if self.dict['notes/xrlistsource'] == "standard":
+                    msg = "\\{} {}".format(mkr, cinfo['templates']['openbible.info'].get(lang,
+                                cinfo['templates']['openbible.info']['en']).replace("_", "\u00A0"))
+                else:
+                    msg = getattr(self, 'xrefcopyright', None)
+                if msg is not None:
+                    if not crdtsstarted:
+                        crdts.append("\\def\\zimagecopyrights{}{{%".format(lang.lower()))
+                        crdtsstarted
+                    crdts.append(msg)
+            if crdtsstarted:
+                crdts.append("}")
         if len(crdts):
             crdts.append("\\let\\zimagecopyrights=\\zimagecopyrightsen")
         return "\n".join(crdts)
@@ -1413,7 +1418,9 @@ class TexModel:
             with open(self.dict['project/selectxrfile']) as inf:
                 for l in inf.readlines():
                     if '=' in l:
-                        continue
+                        (k, v) = l.split("=", maxsplit=1)
+                        if k.strip() == "attribution":
+                            self.xrefcopyright = v.strip()
                     v = RefList()
                     for d in re.sub(r"[{}]", "", l).split():
                         v.extend(RefList.fromStr(d.replace(".", " ")))
@@ -1439,6 +1446,8 @@ class TexModel:
                 outl = sum(v[0:self.dict['notes/xrlistsize']], RefList())
             results[k] = outl
         fname = self.printer.getBookFilename(bk)
+        if fname is None:
+            return
         infpath = os.path.join(prjdir, fname)
         with open(infpath) as inf:
             try:
