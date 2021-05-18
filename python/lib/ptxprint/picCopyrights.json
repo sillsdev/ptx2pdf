@@ -119,6 +119,9 @@
             "en": "All other illustrations {0}",
             "fr": "Toute autre illustration {0}",
             "es": "Todas las demás ilustraciones {0}"
+        },
+        "openbible.info": {
+            "en": "Cross references from www.openbible.info, ©_2021 licensed under CC-BY"
         }
     },
     "copyrights": {

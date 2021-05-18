@@ -8,7 +8,7 @@ except ImportError:
     sys.path.append(os.path.join(os.path.dirname(__file__), "..", "lib"))
     import ptxprint
 from ptxprint.utils import get_ptsettings, allbooks, f2s
-from ptxprint.reference import BookNames, RefList, RefRange, Reference
+from ptxprint.reference import BookNames, RefList, RefRange, Reference, RefSeparators
 from ptxprint.ptsettings import ParatextSettings
 from ptxprint.view import ViewModel
 from ptxprint.usfmutils import Sheets, Usfm
@@ -110,7 +110,7 @@ if args.mode is None:
                 results.setdefault(parse(b[0]), RefList()).append(parse(b[1]))
 
     ptsettings = ParatextSettings(args.paratext, args.pid)
-    addsep = ("; ", ";\u200B", ",\u200B", ":") if args.zwsp else ("; ", ";", ",", ":")
+    addsep = RefSeparators(books="; ", chaps=";\u200B", verses=",\u200B") if args.zwsp else RefSeparators()
     template = "\n\\AddTrigger {book}{dotref}\n\\x - \\xo {colnobook} \\xt {refs}\\x*\n\\EndTrigger\n"
 
     fpath = os.path.join(args.paratext, args.pid, "shared", "ptxprint", args.config, "triggers")

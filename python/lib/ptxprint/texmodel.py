@@ -14,7 +14,7 @@ from ptxprint.utils import _, universalopen, localhdrmappings, pluralstr, multst
 from ptxprint.dimension import Dimension
 import ptxprint.scriptsnippets as scriptsnippets
 from ptxprint.interlinear import Interlinear
-from ptxprint.reference import Reference, RefRange, RefList
+from ptxprint.reference import Reference, RefRange, RefList, RefSeparators
 
 # After universalopen to resolve circular import. Kludge
 from ptxprint.snippets import FancyIntro, PDFx1aOutput, Diglot, FancyBorders, ThumbTabs, Colophon, Grid
@@ -637,8 +637,8 @@ class TexModel:
         resetPageDone = self.dict['document/startpagenum'] >= 0
         docdir, docbase = self.docdir()
         self.dict['jobname'] = jobname
-        self.dict['document/imageCopyrights'] = self.generateImageCopyrightText() \
-                if self.dict['document/includeimg'] else self.generateEmptyImageCopyrights()
+        self.dict['document/imageCopyrights'] = self.generateImageCopyrightText()
+                # if self.dict['document/includeimg'] else self.generateEmptyImageCopyrights()
         self.dict['project/colophontext'] = re.sub(r'://', r':/ / ', self.dict['project/colophontext'])
         self.dict['project/colophontext'] = re.sub(r"(?i)(\\zimagecopyrights)([A-Z]{2,3})", \
                 lambda m:m.group(0).lower(), self.dict['project/colophontext'])
@@ -1282,15 +1282,18 @@ class TexModel:
                 if len(artpgcmp):
                     artistWithMost = max(artpgcmp, key=lambda x: len(set(artpgs[x])))
 
-            langs = set(self.imageCopyrightLangs.keys())
-            langs.add("en")
-            for lang in sorted(langs):
+        langs = set(self.imageCopyrightLangs.keys())
+        langs.add("en")
+        for lang in sorted(langs):
+            crdtsstarted = False
+            if os.path.exists(picpagesfile):
                 hasOut = False
                 mkr = self.imageCopyrightLangs.get(lang, "pc")
                 rtl = lang in cinfo['rtl']
                 if rtl == (self.dict['document/ifrtl'] == "false"):
                     mkr += "\\begin" + ("R" if rtl else "L")
                 crdts.append("\\def\\zimagecopyrights{}{{%".format(lang.lower()))
+                crdtsstarted = True
                 plstr = cinfo["plurals"].get(lang, cinfo["plurals"]["en"])
                 cpytemplate = cinfo['templates']['imageCopyright'].get(lang,
                                         cinfo['templates']['imageCopyright']['en'])
@@ -1321,7 +1324,8 @@ class TexModel:
                 if len(artistWithMost):
                     # print(artistWithMost)
                     # print("hasOut:", hasOut)
-                    artinfo = cinfo["copyrights"].get(artistWithMost, {'copyright': {'en': artistWithMost}, 'sensitive': {'en': artistWithMost}})
+                    artinfo = cinfo["copyrights"].get(artistWithMost, 
+                                {'copyright': {'en': artistWithMost}, 'sensitive': {'en': artistWithMost}})
                     # print("artinfo:", artinfo)
                     if artinfo is not None and (artistWithMost in cinfo["copyrights"] or len(artistWithMost) > 5):
                         pgs = artpgs[artistWithMost]
@@ -1338,7 +1342,13 @@ class TexModel:
                         cpystr = template.format(artstr.replace("_", "\u00A0") + exceptPgs)
                         # print(cpystr)
                         crdts.append("\\{} {}".format(mkr, cpystr))
-                crdts.append("}")
+            if self.dict['notes/ifxrexternalist'] and self.dict['notes/xrlistsource'] == "standard":
+                if not crdtsstarted:
+                    crdts.append("\\def\\zimagecopyrights{}{{%".format(lang.lower()))
+                crdts.append("\\{} {}".format(mkr, cinfo['templates']['openbible.info'].get(lang,
+                                cinfo['templates']['openbible.info']['en']).replace("_", "\u00A0")))
+            crdts.append("}")
+        if len(crdts):
             crdts.append("\\let\\zimagecopyrights=\\zimagecopyrightsen")
         return "\n".join(crdts)
 
@@ -1442,7 +1452,8 @@ class TexModel:
             @classmethod
             def getLocalBook(cls, s, level=0):
                 return ""
-        addsep = ("; ", ";\u200B", ",\u200B", ":")
+        addsep = RefSeparators(books="; ", chaps=";\u200B", verses=",\u200B", bkcv="\u2000")
+        dotsep = RefSeparators(cv=".")
         template = "\n\\AddTrigger {book}{dotref}\n\\x - \\xo {colnobook} \\xt {refs}\\x*\n\\EndTrigger\n"
         with open(outpath + ".triggers", "w", encoding="utf-8") as outf:
             for k, v in sorted(results.items()):
@@ -1454,7 +1465,7 @@ class TexModel:
                     continue
                 info = {
                     "book":         k.first.book,
-                    "dotref":       k.__str__(context=NoBook, addsep=("; ", ";", ",", ".")),
+                    "dotref":       k.__str__(context=NoBook, addsep=dotsep),
                     "colnobook":    k.__str__(context=NoBook),
                     "refs":         v.__str__(self.ptsettings, addsep=addsep)
                 }

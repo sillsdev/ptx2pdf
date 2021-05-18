@@ -364,6 +364,8 @@ class RunJob:
                 continue
             if info["notes/ifxrexternalist"]:
                 info.createXrefTriggers(b, self.prjdir, os.path.join(self.tmpdir, out))
+            else:
+                os.remove(out+".triggers")
             donebooks.append(out)
         if not len(donebooks):
             unlockme()

@@ -13,6 +13,20 @@ allchaps = ['GEN'] + sum([[b] * int(chaps[b]) for b in allbooks if 0 < int(chaps
 b64codes = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
 b64lkup = {b:i for i, b in enumerate(b64codes)}
 
+class RefSeparators(dict):
+    _defaults = {
+        "books": "; ",
+        "chaps": ";",
+        "verses": ",",
+        "cv": ":",
+        "bkc": " "
+    }
+    def __init__(self, **kw):
+        self.update(kw)
+        for k, v in self._defaults.items():
+            if k not in self:
+                self[k] = v
+
 class Reference:
     def __init__(self, book, chap, verse, subverse=None):
         self.book = book
@@ -20,26 +34,26 @@ class Reference:
         self.verse = verse
         self.subverse = subverse
 
-    def __str__(self, context=None, level=0, lastref=None, addsep=("; ", ";", ",", ":")):
+    def __str__(self, context=None, level=0, lastref=None, addsep=RefSeparators()):
         sep = ""
         hasbook = False
         if lastref is None or lastref.book != self.book:
             res = ["{}".format(self.book if context is None else context.getLocalBook(self.book, level))]
             if lastref is not None and lastref.book is not None:
-                sep = addsep[0]
+                sep = addsep['books']
             hasbook = len(res[0]) != 0
         else:
             res = []
         if self.chap > 0 and self.book not in oneChbooks and (lastref is None or lastref.book != self.book or lastref.chap != self.chap):
             if not len(res):
-                sep = addsep[1]
-            res.append("{}{}".format(" " if hasbook else "", self.chap))
+                sep = addsep['chaps']
+            res.append("{}{}".format(addsep['bkc'] if hasbook else "", self.chap))
             if self.verse > 0:
-                res.append("{}{}{}".format(addsep[3], *([self.verse, self.subverse or ""] if self.verse < 200 else ["end", ""])))
+                res.append("{}{}{}".format(addsep['cv'], *([self.verse, self.subverse or ""] if self.verse < 200 else ["end", ""])))
         elif (lastref is None or lastref.verse != self.verse) and 0 < self.verse:
             res.append("{}{}{}".format(" " if hasbook else "", *[self.verse if self.verse < 200 else "end", self.subverse or ""]))
             if lastref is not None:
-                sep = addsep[2]
+                sep = addsep['verses']
         return sep + "".join(res)
 
     def __eq__(self, o):
@@ -142,9 +156,10 @@ class RefRange:
         self.first = first
         self.last = last
 
-    def __str__(self, context=None, level=0, lastref=None, addsep=("; ", ";", ",", ":")):
+    def __str__(self, context=None, level=0, lastref=None, addsep=RefSeparators()):
+        lastsep = RefSeparators(books="", chaps="", verses="", cv=addsep['cv'])
         res = "{}-{}".format(self.first.__str__(context, level, lastref, addsep=addsep),
-                             self.last.__str__(context, level, self.first, addsep=("", "", "", addsep[3])))
+                             self.last.__str__(context, level, self.first, addsep=lastsep))
         return res
 
     def __eq__(self, other):
@@ -306,7 +321,7 @@ class RefList(list):
             self._addRefOrRange(start, curr)
         return self
 
-    def __str__(self, context=None, level=0, addsep=("; ", ";", ",", ":")):
+    def __str__(self, context=None, level=0, addsep=RefSeparators()):
         res = []
         lastref = None # Reference(None, 0, 0)
         for r in self:
