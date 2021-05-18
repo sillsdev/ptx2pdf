@@ -277,7 +277,7 @@ ModelMap = {
 
     "notes/iffootnoterule":     ("c_footnoterule", lambda w,v: "%" if v else ""),
     "notes/xrlocation":         ("r_xrLocn", lambda w,v: r"" if v == "centre" else "%"),
-    "notes/xrcentrecolwidth":   ("s_centreColWidth", lambda w,v: int(float(v)) if v else "80"),
+    "notes/xrcentrecolwidth":   ("s_centreColWidth", lambda w,v: int(float(v)) if v else "60"),
     "notes/ifxrexternalist":    ("c_useXrefList", lambda w,v: "%" if v else ""),
     "notes/xrlistsource":       ("r_xrSource", None),
     "notes/xrlistsize":         ("s_xrSourceSize", lambda w,v: int(float(v)) if v else "3"),

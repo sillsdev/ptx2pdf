@@ -1223,7 +1223,10 @@ class GtkViewModel(ViewModel):
             bk = bks[0]
             self.builder.get_object("ecb_examineBook").set_active_id(bk)
         for o in ("l_examineBook", "ecb_examineBook"):
-            self.builder.get_object(o).set_sensitive(pgid in allpgids[1:3])
+            if self.get("r_book") == "module":
+                self.builder.get_object(o).set_sensitive(False)
+            else:
+                self.builder.get_object(o).set_sensitive(pgid in allpgids[1:3])
 
         fndict = {"scroll_AdjList" : ("AdjLists", ".adj"), "scroll_FinalSFM" : ("", ""),
                   "scroll_TeXfile" : ("", ".tex"), "scroll_XeTeXlog" : ("", ".log"), "scroll_Settings": ("", ""), "tb_Links": ("", "")}
@@ -1244,7 +1247,12 @@ class GtkViewModel(ViewModel):
                 if self.get("c_diglot"):
                     fpath = fpath[:doti] + "-" + (self.configName() or "Default") + "-diglot" + fpath[doti:] + fndict[pgid][1]
                 else:
-                    fpath = fpath[:doti] + "-" + (self.configName() or "Default") + fpath[doti:] + fndict[pgid][1]
+                    if self.get("r_book") == "module":
+                        modname = os.path.basename(self.moduleFile)
+                        doti = modname.rfind(".")
+                        fpath = os.path.join(self.working_dir, modname[:doti] + "-flat" + modname[doti:])
+                    else:
+                        fpath = fpath[:doti] + "-" + (self.configName() or "Default") + fpath[doti:] + fndict[pgid][1]
             if pgnum == 1: # AdjList
                 if self.get("t_invisiblePassword") == "":
                     genBtn.set_sensitive(True)
