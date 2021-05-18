@@ -938,6 +938,9 @@ class GtkViewModel(ViewModel):
         dg = " color='"+col+"'" if self.get("c_diglot") else ""
         self.builder.get_object("lb_Diglot").set_markup("<span{}>".format(dg)+_("Diglot")+"</span>")
 
+        xl = " color='"+col+"'" if self.get("c_useXrefList") else ""
+        self.builder.get_object("lb_NotesRefs").set_markup(_("Notes+")+"<span{}>".format(xl)+_("Refs")+"</span>")
+
         tb = self.get("c_thumbtabs")
         bd = self.get("c_borders")
         tc = "<span color='{}'>".format(col)+_("Tabs")+"</span>" if tb \
@@ -3001,5 +3004,8 @@ class GtkViewModel(ViewModel):
             for a in ("r_hdrLeft", "r_hdrRight"):
                 v = self.get(a)
                 v = "Sec" if v == "Pri" else ("Pri" if v == "Sec" else v)
-                self.set(a, v)    
+                self.set(a, v)
 
+    def onXrefListClicked(self, btn):
+        if self.get("c_useXrefList"):
+            self.set("c_includeXrefs", False)

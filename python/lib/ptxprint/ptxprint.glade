@@ -9038,7 +9038,10 @@ elements visually distinct.</property>
                                         <property name="receives_default">False</property>
                                         <property name="tooltip_text" translatable="yes">This option inserts a No-Break Space (\u00A0)
 between the book name and the Ch:Vs refs
-so that they don't get split across lines.</property>
+so that they don't get split across lines.
+
+Note:  This setting currently has no effect on
+cross-references imported from external lists.</property>
                                         <property name="halign">start</property>
                                         <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
@@ -9150,7 +9153,7 @@ Body Text From Notes:</property>
                                                     <property name="can_focus">True</property>
                                                     <property name="receives_default">False</property>
                                                     <property name="tooltip_text" translatable="yes">The Standard List contains more 
-than 300,000 cross-references.</property>
+than 340,000 cross-references.</property>
                                                     <property name="active">True</property>
                                                     <property name="draw_indicator">True</property>
                                                     <property name="group">r_xrSource_custom</property>
@@ -9200,7 +9203,7 @@ fewer xRefs will be included (i.e. only those that
 are the MOST popular). Conversely, if the slider
 is moved toward the More side, then many more
 xRefs will be included (including some of the less
-popular and more spurious references).</property>
+popular or more obscure references).</property>
                                                     <property name="valign">center</property>
                                                     <property name="adjustment">a_diglotPriFraction1</property>
                                                     <property name="fill_level">5</property>
@@ -9297,6 +9300,7 @@ to Include:</property>
                                                     <property name="valign">center</property>
                                                     <property name="margin_left">3</property>
                                                     <property name="margin_right">3</property>
+                                                    <property name="margin_top">2</property>
                                                     <property name="margin_bottom">4</property>
                                                   </object>
                                                   <packing>
@@ -9316,7 +9320,7 @@ to Include:</property>
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">False</property>
                                                         <property name="tooltip_text" translatable="yes">The Standard List of cross-references contains
-more than 300,000 references. You may want
+more than 340,000 references. You may want
 to only include target references that are
 currently available to your readers by 
 selecting a subset of Biblical books.
@@ -9325,9 +9329,10 @@ So for example, if there is no Old Testament
 yet, you may want to only include target 
 cross-references to NT Books.
 
-If you select Books in "This Publication", then only
-cross-references targetting books in the list of Multiple
-Books on the Basic tab will be included.</property>
+If you select Books in "This Publication", 
+then only cross-references targetting 
+books in the list of Multiple Books on 
+the Basic tab will be included.</property>
                                                         <property name="halign">start</property>
                                                         <property name="label" translatable="yes">Include xRefs
 for Books in:</property>
@@ -9403,8 +9408,20 @@ Books on the Basic tab will be included.</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
+                                            <property name="tooltip_text" translatable="yes">Instead of using a handful of cross-references
+as specified within the project's USFM text, you
+can select an external list containing many 1000's
+of cross-references. These will automatically be
+localized into the project's language using the
+\toc3 values specified in the Paratext project
+settings (See: Scripture reference settings...)
+
+This feature is usually used for Study or
+Reference Bibles in conjunction with the 
+'Centre Column xRefs' location option.</property>
                                             <property name="draw_indicator">True</property>
                                             <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                                            <signal name="clicked" handler="onXrefListClicked" swapped="no"/>
                                           </object>
                                         </child>
                                       </object>
@@ -9579,7 +9596,7 @@ reducing the size of the \x font (to approx 6pt).</property>
                                                   <object class="GtkSeparator">
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">False</property>
-                                                    <property name="margin_top">3</property>
+                                                    <property name="margin_top">6</property>
                                                     <property name="margin_bottom">3</property>
                                                   </object>
                                                   <packing>
