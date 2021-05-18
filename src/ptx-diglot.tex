@@ -29,7 +29,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newcount\diglotDbgJoinboxes%
-\newcount\diglotDbgTrace%
 \diglotDbgJoinboxes=-1% Set to the debug message of a joinboxes to execute showbox on that join
 \def\diglotDbgeachcol{-1}% Define to begin tracingmacros and tracing assigns at each@col with TRACEcount
 \def\diglotDbgupdtPtl{-1}% Define to begin tracingmacros and tracing assigns at n@xtpartial  with TRACEcount
@@ -232,7 +231,7 @@
 
 % Not the same as \c@lcavailht from paratext2.tex
 \def\dglt@calc@vailht{%
-   \trace{D}{dglt@calc@vailht \c@rrdstat}%
+   \trace{D}{dglt@calc@vailht \c@rrdstat \number\partial, \the\dimexpr \ht\partial+\dp\partial\relax + \the\dimexpr \ht\n@xtpartial+\dp\n@xtpartial\relax}%
    \global\availht=\textheight %
    \global\advance\availht by \adjustp@ge\relax % Panic measure..
    \global\advance\availht by -\ht\partial %
@@ -1125,7 +1124,7 @@
     \def\v@lpfx{b@selineskip}\def\v@lsfx{}%
     \let\col@do=\max@val
     \x@\each@col\cts@list\E % Find biggest baseline skip of those bits of text which are active.
-    \edef\@maxball@seline{\the\dimen1}%
+    \edef\@maxb@seline{\the\dimen1}%
     \dimen1=0pt
     % step 2: position of the ideal next baseline (below last box)
     \def\v@lpfx{@cur}\def\v@lsfx{ht}%
@@ -1133,8 +1132,8 @@
     \x@\each@col\cts@list\E
 }
 
-\def\@do@prepare@simplecols{%
-    \trace{d}{@do@prepare@simplecols \l@gdims{\partial}}%
+\def\@prepare@layout@simplecols{%
+    \trace{d}{@prepare@layout@simplecols \l@gdims{\partial}}%
     \thisjointDelta=0pt %Do we need extra space?
     %Calculate how much extra space we need:
     \csname @do@jointcalc@\diglotlayout\endcsname
@@ -1197,30 +1196,35 @@
   \setbox1\hbox{\makediglotgutter{\dimen7}{\dimen8}{\dimen9}}%
   \let\l@stcol\empty
   \let\col@do=\@@simplecols
+  % Skip calculations:
+  \dimen6=0pt
+  \iftemp
+    \dimen6=\ColumnGutterRuleSkip
+  \else
+    \ifdim\thisjointDelta<0pt
+      \ifdim\thisjointDelta>-\@maxb@seline %sanity check
+        \dimen6=\thisjointDelta
+        \trace{dP}{skipping jointDelta: \the\thisjointDelta}%
+      \else
+        \trace{dP}{Unacceptable negative jointDelta \the\thisjointDelta < -\@maxb@seline}%
+      \fi
+    \fi
+  \fi
   % Normal
   %
   \global\setbox\n@xtpartialNrml\vtop{%
-    \iftemp
-      \vskip\ColumnGutterRuleSkip
-    \else
-      \ifdim\thisjointDelta<0pt
-        \ifdim\thisjointDelta>-\@maxb@seline %sanity check
-          \vskip\thisjointDelta
-          \trace{dP}{skipping jointDelta: \the\thisjointDelta}%
-        \else
-          \trace{dP}{Unacceptable negative jointDelta \the\thisjointDelta < -\@maxb@seline}%
-        \fi
-      \fi
+    \ifdim\dimen6=0pt\else
+      \vskip\dimen6
     \fi
     \hbox to \textwidth{\ifVisTrace\llap{\copy0}\fi%
       \x@\each@col\layout@list\E
       \vrule height \dimen7 depth \dimen9 width 0pt
     }%
   }%
-  \let\l@stcol\empty
+  \let\l@stcol\empty %Reset this so that @@simplecols behaves properly
   \global\setbox\n@xtpartialRev\vtop{%For the next page, thus no joint delta considerations
-    \iftemp
-      \vskip\ColumnGutterRuleSkip
+    \ifdim\dimen6=0pt\else
+      \vskip\dimen6
     \fi
     \hbox to \textwidth{\ifVisTrace\llap{\box0}\fi%
       \x@\each@col\rev@layout@list\E
@@ -1232,7 +1236,7 @@
 \def\@do@cleanup@simplecols{%
   \def\v@lpfx{}\def\v@lsfx{box}%
   \let\col@do=\void@boxes %
-  \x@\each@col\layout@list\E
+  \x@\each@col\diglot@list\E
 }
 
 \def\diglot@arrange@cols{% Xht is the sum of Xbox's depth and height (set by after@a@trial
@@ -1247,8 +1251,8 @@
     \fi
   \fi
   \ifnum \curactivecols>0
-    \csname @do@prepare@\diglotlayout\endcsname
-    \csname @do@setup@\diglotlayout\endcsname
+    \csname @prepare@layout@\diglotlayout\endcsname
+    \csname @setup@layout@\diglotlayout\endcsname
     \csname @do@layout@\diglotlayout\endcsname
     \csname @do@cleanup@\diglotlayout\endcsname
     \ifnum\chunkpenalty>-20000
@@ -1278,22 +1282,11 @@
   \x@\each@col\diglot@list\E
 }
 
-\def\restore@trace@updatepartial{}
-\def\upd@tep@rtial{%route called to actually add stuff to the page.
-  \traceNum{d}{upd@tep@rtial \the\outputpenalty (\diglotDbgupdtPtl)}%
-  \trace{D}{plp:\the\partialLpenalty, prp:\the\partialRpenalty, cp:\the\chunkpenalty lcp:\the\lastchunkpenalty, lbp:\the\Lboxpenalty, rbp:\the\Rboxpenalty}%
-  \ifnum\diglotDbgupdtPtl=\TRACEcount
-    \xdef\restore@trace@updatepartial{\global\tracingmacros=\the\tracingmacros \global\tracingassigns=\the\tracingassigns}%
-    \global\tracingmacros=1\global\tracingassigns=1
-  \else 
-    \restore@trace@updatepartial
-  \fi
-  \csname start@upd@tep@rtial@\diglotlayout\endcsname % Any setup?
-  \csname s@tctslist@\diglotlayout\endcsname % increments curactivecols by each non-0 value, and sets \cts@list
-  \trace{dP}{Columns with contents: \cts@list (\the\curactivecols)}%
+\def\@prepare@upd@tep@rtial@simplecols{%
+  \trace{dp}{columns with contents: \cts@list (\the\curactivecols)}%
   \ifnum\curactivecols>0 
     \temptrue
-    \let\col@do=\chk@head %Is the relevant item a heading? Set tempfalse if not
+    \let\col@do=\chk@head %is the relevant item a heading? set tempfalse if not
     \x@\each@col\cts@list\E
     \let\b@xtype\vtop %just used as a flag.
     \iftemp
@@ -1303,17 +1296,12 @@
       \x@\each@col\cts@list\E
     \fi
   \fi
-  \setdiglotN@rmal % Left=left (normal) or not?
-  \pickn@xtpartial
   %\showboxdepth=3 %
   %\showboxbreadth=1000 %
   %\ifnum\pageno=1%
   %\showbox\Lbox%
   %\showbox\Rbox%
   %\fi%
-  \global\def\n@xtc@mmand{}%
-  \message{|}%
-  \hsize=\textwidth%
   \edef\t@st{\p@gebotmark}%
   \ifx\t@st\empty%
     \ifuseLeftMarks \let\b@xbotmark\botLmark\fi
@@ -1321,12 +1309,41 @@
     \trace{H}{updp1: Setting p@gebotmark to \b@xbotmark, since it's empty }%
     \xdef\p@gebotmark{\b@xbotmark}%
   \fi%
+}
+
+\def\restore@trace@updatepartial{}
+\def\upd@tep@rtial{%routine called to add stuff to the partial page.
+  \traceNum{d}{upd@tep@rtial \the\outputpenalty (\diglotDbgupdtPtl)}%
+  \trace{D}{plp:\the\partialLpenalty, prp:\the\partialRpenalty, cp:\the\chunkpenalty lcp:\the\lastchunkpenalty, lbp:\the\Lboxpenalty, rbp:\the\Rboxpenalty}%
+  \ifnum\diglotDbgupdtPtl=\TRACEcount
+    \xdef\restore@trace@updatepartial{\global\tracingmacros=\the\tracingmacros \global\tracingassigns=\the\tracingassigns}%
+    \global\tracingmacros=1\global\tracingassigns=1
+  \else 
+    \restore@trace@updatepartial
+  \fi
+  \csname @start@upd@tep@rtial@\diglotlayout\endcsname % Any setup?
+  \csname s@tctslist@\diglotlayout\endcsname % increments curactivecols by each non-0 value, and sets \cts@list
+  \setdiglotN@rmal % Left=left (normal) or not?
+  \pickn@xtpartial
+  \csname @prepare@upd@tep@rtial@\diglotlayout\endcsname % Sort out headings, etc.
+  %
+  % Add the contents
+  %
+  \global\def\n@xtc@mmand{}%
+  \message{|}%
+  \hsize=\textwidth%
   \trace{d}{Adding old n@xtpartial(\the\ht\n@xtpartial+\the\dp\n@xtpartial) to page}%
   \@add@n@xtpartial
+  %
+  % Save mark state, note state, etc.
+  %
   \let\col@do=\store@marks
   \x@\each@col\diglot@list\E %remember old marks state
   \s@veallnotes{2}% remember old notestate 
   \s@veinserts{chunk}%
+  %
+  % Save current column contents as n@xtp@rtial
+  %
   \IfTr@ce{d}{%
     \let\log@ut\empty\def\v@lpfx{}\def\v@lsfx{box}%
     \l@gm@dims
@@ -1345,11 +1362,15 @@
     \global\vsize=\trialheight\relax%
   \fi
   \ifpagefull%
+    %\message{+}%
     \@add@n@xtpartial
     \@writep@ge%
       \let\col@do=\reset@n@xt
       \x@\each@col\diglot@list\E% 
     \global\deadcycles=0 %That counts as an action too.
+    \global\pagefullfalse
+  \else
+    %\message{-}%
   \fi%
   \csname end@upd@tep@rtial@\diglotlayout\endcsname % any cleanup?
 }
@@ -1406,14 +1427,14 @@
   \fi
   \setc@rdstat{\s@veddstat}}
 
-\def\@do@setup@simplecols{%
+\def\@setup@layout@simplecols{%
   \let\layout@list=\diglot@list % default
   \let\col@do=\mkrev@list
   \xdef\rev@layout@list{}\def\list@type{layout}%
   \x@\each@col\layout@list\E% 
 }
 
-\def\@do@prepare@balnotes@simplecols{%
+\def\@prepare@balnotes@simplecols{%
   \dimen1=0pt
   \let\col@do=\max@boxht\def\v@lpfx{}\def\v@lsfx{box}%
   \x@\each@col\diglot@list\E% 
@@ -1428,7 +1449,7 @@
   \dimen7=0pt
 }
 
-\def\@do@arrange@balnotes@simplecols{%
+\def\@do@balnotes@simplecols{%
   \setbox1\hbox{\makediglotgutter{\dimen7}{\dimen8}{\dimen9}}%
   \let\col@do=\@@simplecols\let\l@stcol\empty
   \setbox0=\hbox to \textwidth{%\vllap{\the\ht\Lbox \the\dp\Lbox}%
@@ -1442,7 +1463,7 @@
   \global\setbox\partial=\vbox{\unvbox\partial\box0}%
 }
 
-\def\@do@prepare@unbalnotes@simplecols{%
+\def\@prepare@unbalnotes@simplecols{%
   %Implement meshing algorithm:
   \trace{Df}{Saving fn dimensions}%
   \edef\v@lpfx{@fn}\let\col@do=\save@boxdim %Save footnote @fnXht @fnXdp values
@@ -1473,7 +1494,7 @@
   \trace{d}{Gutter \the\dimen8 tall, \the\dimen9 deep}%
 }
 
-\def\@do@arrange@unbalnotes@simplecols{%
+\def\@do@unbalnotes@simplecols{%
   \setbox1\hbox{\makediglotgutter{\dimen7}{\dimen8}{\dimen9}}%
   \let\col@do=\@@simplecols\let\l@stcol\empty
   \setbox\Lbox\hbox to \textwidth{%\vllap{\the\ht\Lbox \the\dp\Lbox}%
@@ -1493,18 +1514,15 @@
   \ifnum\pageno>\MaxPages
     \errmessage{Pagecount (\the\pageno) has exceeded \MaxPages (\the\MaxPages). This probably means something has gone wrong. (or you should increase MaxPages or MaxPagesPerChunk (\MaxPagesPerChunk) for this job)}%
   \fi
-  \csname start@writep@ge@\diglotlayout\endcsname
-  \csname @writep@ge@\diglotlayout\endcsname
-  \csname end@writep@ge@\diglotlayout\endcsname
-}
-
-\def\@writep@ge@simplecols{
-  \IfTr@ce{gI}{%
-    \let\d@=\sh@winsertdim\edef\v@lpfx{}\edef\v@lsfx{}\x@\cstackdown\ins@rts\E
-  }%
+  \csname @start@writep@ge@\diglotlayout\endcsname
   \setdiglotN@rmal
   \pickn@xtpartial
-  \global\setbox\partial=\vbox{\unvbox\partial}%
+  \csname @prep@writep@ge@\diglotlayout\endcsname
+  \csname @do@writep@ge@\diglotlayout\endcsname
+  \csname @end@writep@ge@\diglotlayout\endcsname
+}
+
+\def\@prep@writep@ge@simplecols{
   \ifdiglotSepNotes%
     \trace{D}{Sep notes}%
     \LRf@@tnotesfalse%
@@ -1517,8 +1535,8 @@
       \trace{f}{Balanced notes}%
         % \kern\lastd@pth % This, if at all valid for anything, is from the last note.
         \trace{f}{Footnotes}%
-        \csname @do@prepare@balnotes@\diglotlayout\endcsname
-        \csname @do@arrange@balnotes@\diglotlayout\endcsname
+        \csname @prepare@balnotes@\diglotlayout\endcsname
+        \csname @do@balnotes@\diglotlayout\endcsname
       \else %BalNotes
         \trace{f}{unBalanced notes}%
         %curLht and curRht hold the height of the last boxes that joined the
@@ -1526,8 +1544,8 @@
         %Need to find out where to put the footnotes, as one of them should
         %be close to its respective text.
         {
-          \csname @do@prepare@unbalnotes@\diglotlayout\endcsname
-          \csname @do@arrange@unbalnotes@\diglotlayout\endcsname
+          \csname @prepare@unbalnotes@\diglotlayout\endcsname
+          \csname @do@unbalnotes@\diglotlayout\endcsname
         }
       \fi %BalNotes
     \else%
@@ -1536,7 +1554,15 @@
   \else %SepNotes
     \trace{f}{Merged notes}%
   \fi%
-  \traceNum{d}{Forming page}%
+}
+
+\def\@do@writep@ge@simplecols{
+  \trace{d}{@do@writep@ge@simplecols \the\pageno (\the\MaxPages)}%
+  \IfTr@ce{gI}{%
+    \let\d@=\sh@winsertdim\edef\v@lpfx{}\edef\v@lsfx{}\x@\cstackdown\ins@rts\E
+  }%
+  \global\setbox\partial=\vbox{\unvbox\partial}%
+    \traceNum{d}{Forming page}%
   \trace{D}{PFM:\p@gefirstmark\space PBM:\p@gebotmark}%
   \ifnum\TRACEcount=\diglotDbgJoinboxes
     \showbox\partial
@@ -1654,7 +1680,7 @@
   \fi
 }
 
-\def\end@writep@ge@simplecols{%
+\def\@end@writep@ge@simplecols{%
   \trace{d}{end@writep@ge: resetting things for next page}%
   \resetvsize%
   \global\vsize=\availht
@@ -1923,7 +1949,14 @@
 }
 
 
-\def\each@col#1#2\E{% General purpose looper
+\def\each@col#1\E{% General purpose looper
+  \edef\ect@st{#1}%
+  \ifx\ect@st\empty\else
+    \e@ch@col#1\E
+  \fi
+}
+
+\def\e@ch@col#1#2\E{% General purpose looper, if there is at least one item.
   %\tracingmacros=1 \tracingassigns=1
   \trace{De}{each@col #1 #2}%
   \col@do{#1}%
@@ -1932,7 +1965,7 @@
     \trace{De}{last round}%
     \let\n@xt@col=\cstackrelax
   \else
-    \let\n@xt@col=\each@col
+    \let\n@xt@col=\e@ch@col
   \fi
   \ifnum\TRACEcount=\diglotDbgeachcol
     \tracingmacros=1\tracingassigns=1
@@ -1958,7 +1991,7 @@
   \fi
 }
 
-\def\@add@n@xtpartial{%
+\def\@add@n@xtpartial{% Actually make the page-changes
   \traceNum{d}{@add@n@xtpartial}%
   \tempfalse
   \csname @tst@n@xtpartial@\diglotlayout\endcsname
@@ -1970,15 +2003,17 @@
 
 \def\@add@n@xtpartial@simplecols{% 
   \traceNum{d}{@add@n@xtpartial@simplecols \the\ht\partial+\the\dp\partial, \the\ht\n@xtpartial+\the\dp\n@xtpartial}%
-    \ifvoid\partial
-      \global\setbox\partial=\box\n@xtpartial
-    \else
-      \global\setbox\partial=\vtop{{\baselineskip=0pt \joinb@xes{\partial}{\n@xtpartial}}}%
-    \fi
-    \ifnum\diglotDbgJoinboxes=\TRACEcount
-      \showbox\partial
-    \fi
-    \voidn@xtpartial
+  \setdiglotN@rmal
+  \pickn@xtpartial
+  \ifvoid\partial
+    \global\setbox\partial=\box\n@xtpartial
+  \else
+    \global\setbox\partial=\vtop{{\baselineskip=0pt \joinb@xes{\partial}{\n@xtpartial}}}%
+  \fi
+  \ifnum\diglotDbgJoinboxes=\TRACEcount
+    \showbox\partial
+  \fi
+  \voidn@xtpartial
 }
 
 \def\@after@add@n@xtpartial@simplecols{%
@@ -2127,7 +2162,7 @@
 \def\check@and@update{%Checks each column to see if there is stuff to output
   %and calls upd@tep@rtial as appropriate
   %responds to \ifboxmoved and \pagefull, checking the last chunkpenalty
-  \trace{d}{check@and@update \the\triall@@pcount \ifboxmoved boxmoved\fi}%
+  \trace{d}{check@and@update \the\triall@@pcount \ifboxmoved boxmoved\fi \the\lastchunkpenalty}%
   \not@emptyfalse
   \x@\ch@ckcontents\diglot@list\E%Sets not@empty if there's stuff to output
   \ifboxmoved

@@ -43,9 +43,14 @@
   \x@\xdef\csname p@lyp@ge#1\endcsname{\p@lyp@gestring}}
 
 \def\s@tpolyp@ges#1\E{%
-  \xdef@cseq{p@lyp@gecols\the\p@lyp@geno}{#1}% p@lyp@gecols0 ... p@lyp@gecolsN give list the columns for the respective page
-  \let\col@do=\s@tpolyp@ge
-  \each@col#1\E
+  \edef\tmp{#1}%
+  \ifx\tmp\h@phen
+    \xdef@cseq{p@lyp@gecols\the\p@lyp@geno}{}% p@lyp@gecols0 ... p@lyp@gecolsN give list the columns for the respective page
+  \else 
+    \xdef@cseq{p@lyp@gecols\the\p@lyp@geno}{#1}% p@lyp@gecols0 ... p@lyp@gecolsN give list the columns for the respective page
+    \let\col@do=\s@tpolyp@ge
+    \each@col#1\E
+  \fi
   \xdef\p@lyp@ges{\the\p@lyp@geno}
   \ifnum \p@lyp@geno>0  % new@poly@page doesn't get run for page0, as those take over the standard boxes
     \edef\tmpname{partial\p@lyp@gesuffx }
@@ -54,7 +59,7 @@
     \fi
   \fi
   \global\advance\p@lyp@geno by 1
-  }
+}
 
 \def\new@poly@page{%called with p@lyp@geno=new page
   \let\npp@d@=\d@
@@ -105,11 +110,13 @@
 
 \def\@s@tp@lypage#1{%
     \ifnum #1=\p@lyp@geno\else
+      \trace{dmp}{switch@polypage > #1}%
       \p@lyp@geno=#1\relax
       \@@s@tpolyp@ge
     \fi
 }
 \def\@@s@tpolyp@ge{% 
+    \trace{dmp}{@@s@tpolyp@ge}%
     \let\spp@d@=\d@
     \let\d@=\poly@rename@inserts
     \x@\cstackdown \p@lyins@rts,\E
@@ -137,8 +144,8 @@
  
 %%%% Diglot module interface functions.
 
-\let\@do@prepare@simplepages=\@do@prepare@simplecols
-\def\@do@setup@simplepages{}%No special setup
+\let\@prepare@layout@simplepages=\@prepare@layout@simplecols
+\def\@setup@layout@simplepages{}%No special setup
 
 
 \def\@@do@simplepage@{% iterate through page numbers 
@@ -147,13 +154,16 @@
   \trace{dmp}{\spt@sk\space [\the\p@lyp@geno:\layout@list] \the\ht\partial+\the\dp\partial}%
   %pick correct inserts
   \@@s@tpolyp@ge
-  %make reverse layout list
-  \let\col@do=\mkrev@list
-  \xdef\rev@layout@list{}\def\list@type{layout}%
-  \x@\each@col\layout@list\E%
+  \ifx\layout@list\empty\else
+    %make reverse layout list
+    \let\col@do=\mkrev@list
+    \xdef\rev@layout@list{}\def\list@type{layout}%
+    \x@\each@col\layout@list\E%
+  \fi
   \trace{dmp}{revlist: \rev@layout@list}%
   %populate page
   \edef\sdp@pgno{\the\p@lyp@geno}% scol@cmd shouldn't touch p@lypageno, but just in case 
+  \pre@scol@cmd
   \scol@cmd
   \p@lyp@geno=\sdp@pgno
   %Itterate
@@ -168,19 +178,32 @@
 
 \def\@add@n@xtpartial@simplepages{%
   \edef\spt@sk{@add@n@xtpartial@simplepages }%
-  \p@lyp@geno=0 \relax\let\scol@cmd=\@add@n@xtpartial@simplecols
+  %\def\pagecontents{Page0 ptl\endgraf \x@\copy\csname n@xtpartialNrml@poly@0\endcsname}\plainoutput
+  %\def\pagecontents{page1 ptl\endgraf \x@\copy\csname n@xtpartialNrml@poly@1\endcsname}\plainoutput
+  \let\scol@cmd=\@add@n@xtpartial@simplecols
+  \let\pre@scol@cmd\relax
+  \global\p@lyp@geno=0
   \@@do@simplepage@
+  %\def\pagecontents{Page0\endgraf \x@\copy\csname partial@poly@0\endcsname}\plainoutput
+  %\def\pagecontents{page1\endgraf \x@\copy\csname partial@poly@1\endcsname}\plainoutput
 }
 
-\def\@writep@ge@simplepages{%
+\def\@do@writep@ge@simplepages{%
   \edef\spt@sk{@writep@ge@simplepages }%
-  \p@lyp@geno=0 \relax\let\scol@cmd=\@writep@ge@simplecols
+  \ifm@rksonpage
+    \let\pre@scol@cmd=\m@rksonpagetrue
+  \else
+    \let\pre@scol@cmd=\m@rksonpagefalse
+  \fi
+  \let\scol@cmd=\@do@writep@ge@simplecols
+  \global\p@lyp@geno=0 \relax
   \@@do@simplepage@
 }
 
 \def\@do@layout@simplepages{%
   \edef\spt@sk{@do@layout@simplepages }%
   \let\scol@cmd=\@do@layout@simplecols
+  \let\pre@scol@cmd\relax
   \p@lyp@geno=0 \relax
   \@@do@simplepage@
   \edef\spt@sk{@do@layout@simplepages \space0b:\l@gdims{\csname n@xtpartialNrml@poly@0\endcsname}, 1b:\l@gdims{\csname n@xtpartialNrml@poly@1\endcsname} p:\l@gdims{\partial}}%
@@ -191,16 +214,23 @@
 \def\@tst@n@xtpartial@simplepages{%
   \edef\spt@sk{@tst@n@xtpartial@simplepages \space0:\l@gdims{\csname partial@poly@0\endcsname}, 1:\l@gdims{\csname partial@poly@1\endcsname} }%
   \p@lyp@geno=0 \let\scol@cmd=\@tst@n@xtpartial@simplecols
+  \let\pre@scol@cmd\relax
   \@@do@simplepage@
 }
 
 
 
-\def\@do@arrange@balnotes@simplepages{
-  \@do@arrange@balnotes@simplecols
+\def\@do@balnotes@simplepages{%TODO?
+  \edef\spt@sk{@do@balnotes@simplepages}%
+  \let\pre@scol@cmd\relax
+  \let\scol@cmd=\@do@balnotes@simplecols
+  \@@do@simplepage@
 }%
-\def\@do@arrange@unbalnotes@simplepages{
-  \@do@arrange@unbalnotes@simplecols
+\def\@do@unbalnotes@simplepages{%TODO?
+  \edef\spt@sk{@do@unbalnotes@simplepages}%
+  \let\pre@scol@cmd\relax
+  \let\scol@cmd=\@do@unbalnotes@simplecols
+  \@do@unbalnotes@simplecols
 }%
 
 \def\@postswap@simplepages#1{}
@@ -209,7 +239,7 @@
 \def\count@dim@simplepages#1{%Is the dimension non non-zero? Count using curactivecols and add tag to list IF it is on the present page
   \x@\ifdim \csname \v@lpfx#1\v@lsfx\endcsname=0pt\else
     \advance\curactivecols by 1
-     \edef\cts@list{\cts@list#1}%
+    \edef\cts@list{\cts@list#1}%
     \x@\let\x@\sp@lynum\csname p@lyp@ge#1\endcsname
     \ifnum\p@lyp@geno=\sp@lynum\relax
       \edef\pagects@list{\pagects@list#1}%
@@ -256,28 +286,35 @@
   \fi
 }
 
-\iftrue
+\iffalse
 %\let\@do@layout@simplepages=\@do@layout@simplecols
-%\let\@do@setup@simplepages=\@do@setup@simplecols
-\def\@do@setup@simplepages{\xdef\layout@list{\diglot@list}\xdef\rev@layout@list{\diglot@list}}
+%\let\@setup@layout@simplepages=\@setup@layout@simplecols
+\def\@setup@layout@simplepages{\xdef\layout@list{\diglot@list}\xdef\rev@layout@list{\diglot@list}}
 \fi
 
 % 
 \let\@do@cleanup@simplepages=\@do@cleanup@simplecols
-\def\start@writep@ge@simplepages{%
+\def\@start@writep@ge@simplepages{%
   \xdef\old@pp{\the\p@lyp@geno}% Cache old value
 } 
-\def\end@writep@ge@simplepages{%
+
+\let\@prep@writep@ge@simplespages=\@prep@writep@ge@simplecols
+
+\def\@end@writep@ge@simplepages{%
   \@s@tp@lypage{\old@pp}%
-  \end@writep@ge@simplecols
+  \@end@writep@ge@simplecols
 }
-\def\start@upd@tep@rtial@simplepages{%
-  \def\pagecontents{Page0\endgraf \x@\copy\csname n@xtpartialNrml@poly@0\endcsname}\plainoutput
-  \def\pagecontents{page1\endgraf \x@\copy\csname n@xtpartialNrml@poly@1\endcsname}\plainoutput
+
+\def\@start@upd@tep@rtial@simplepages{%
+  \switch@polypage{\c@rrdstat}%
+  %\def\pagecontents{Page0\endgraf \x@\copy\csname n@xtpartialNrml@poly@0\endcsname}\plainoutput
+  %\def\pagecontents{page1\endgraf \x@\copy\csname n@xtpartialNrml@poly@1\endcsname}\plainoutput
   \xdef\updp@old@pp{\the\p@lyp@geno}% Cache old value
 }
-\def\end@upd@tep@rtial@simplepages{%
+\def\@end@upd@tep@rtial@simplepages{%
   \@s@tp@lypage{\updp@old@pp}%
+  %\def\pagecontents{Page0\endgraf \x@\copy\csname n@xtpartialNrml@poly@0\endcsname}\plainoutput
+  %\def\pagecontents{page1\endgraf \x@\copy\csname n@xtpartialNrml@poly@1\endcsname}\plainoutput
 }
 
 \let\@after@add@n@xtpartial@simplepages=\@after@add@n@xtpartial@simplecols

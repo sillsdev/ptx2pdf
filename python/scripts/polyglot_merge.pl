@@ -698,9 +698,10 @@ foreach my $n (0 .. $#tmp) {
 my @combined;
 foreach my $side (0..$maxcols) {
 	$combined[$side].=${$chunks[$side]}[1]; # Always include the header.
-	do_output('head',\@combined);
 	$data[$side]=2;
 }
+do_output('head',\@combined);
+
 foreach my $chunk (@chunklist,"999::999::999::") {
 	foreach my $side (0..$maxcols) {
 		$combined[$side]='';

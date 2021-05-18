@@ -1,9 +1,11 @@
 # Diglot options and settings (XeTeX macros)
 
 ## General overview
-The diglot options allow for typesetting two versions in parallel, aligned by verse or paragraph. If that makes no sense, have a look at the samaple below, where the right hand column's paragraphs are one line shorter, but still the paragraphs in the two columns line up. To do this the two peices of text require an extra pre-processing step and then a number of extra configuration controls to make things really beautiful.
-The preprocessing step picks `pairs' of things that ought to be aligned, and puts these pairs into what we can call a *chunk*. These pairs might be verses, paragraphs at the same  place, and so on. 
-At the moment this step is done by a perl program (or by hand for small sections of text). Efforts will eventually be underway to make a python version, which would integrate better with the rest of ptxprint.
+The diglot options allow for typesetting two (or more) versions in parallel, aligned by verse or paragraph. If that makes no sense, have a look at the samaple below, where the right hand column's paragraphs are one line shorter, but still the paragraphs in the two columns line up. To do this the two peices of text require an extra pre-processing step and then a number of extra configuration controls to make things really beautiful.
+The preprocessing step picks `pairs' (or groups) of things that ought to be aligned, and puts these into what we can call a *chunk*. These
+pairs/tripples/quadruples  might be verses, paragraphs at the same  place, and so on. 
+At the moment this step is done by a python program, one of 2 perl programs,  or by hand for small sections of text. The python program integrates better 
+with ptxprint, one of the perl programs is considerably older and both have more powerful/complex options.
 
 ![History of diglot](../../examples/diglot/history.png  "An example.")
 
@@ -22,6 +24,30 @@ The preprocessing step "shuffles" the two files together, interspersing them wit
 \v 4 And David took ptxplus and did bend it in diverse places to make diglot.  Diglot dwelt in darkness and created beauty or disaster depending upon many factors.
 ```
 
+## The structure of a polyglot-friendly usfm file
+The polyglot version of the above would look like this:
+```
+\polyglotcolumn L
+\s The birth of diglot 
+\p
+\polyglotendcols
+\polyglotcolumn L
+\p
+\v 4 David took ptxplus and tweaked it in various places and so diglot came into being, and it lived in dark obscurity for many years, sometimes crafting text, sometimes creating strange things.
+\p
+\polyglotcolumn R
+\p
+\v 4 And David took ptxplus and did bend it in diverse places to make diglot.  Diglot dwelt in darkness and created beauty or disaster depending upon many factors.
+\polyglotendcols
+```
+
+Note that now there is simply a column designator which follows `\polyglotcolumn` and the chunk-ending `\polyglotendcols`. The equivalent of `\norighttext` is to simply not specify anything for that column.
+
+Additional columns should be defined in the controlling `.tex` file:
+```
+\newPolyglotCol A
+```
+Note that this  must occur before any USFM files or stylesheets are loaded.
 
 ## Diglot-specific configuration items to go in custom stylesheets:
 
@@ -50,6 +76,9 @@ and the right column will use:
 
 ## Configuration items to go in foo-setup.tex (or main .tex file)
 
+### Extra columns
+\newPolyglotCol A
+
 ###True/false options
 
 - ```\diglottrue```
@@ -61,6 +90,29 @@ If the footnotes from the 2 languages should be split (true) or merged together 
 - ```\diglotBalNotesfalse```
 If a left column footnote steals space from the right column also, and vise-versa (default: ```\diglotBalNotesfalse```). If this is a good idea or not probably depends on a lot of factors. 
 
+
+
+- ```\VisTracetrue``` 
+- ```\VisTraceExtratrue``` 
+Debugging options for really sticky problems; see end of this document.
+
+### Header macros
+- ```\rangerefL```,  ```\rangerefR```, ```\rangerefA```   (and their companions ```\firstrefL,R,A``` and ```\lastrefL,R,A```) have now been defined, which display the book/chapter/verse ranges on a given column only. The appropriate font will be selected from the stylesheet(s) (```\Marker h```, ```hL``` and ```hR```, as above).
+
+### Page layout options
+- ```\def\ColumnGutterFactor{15}``` 
+Gutter between the 2 cols, (measured in ```\FontSizeUnit```s), just like in two column mode.
+
+- ```\def\DiglotLFraction{0.55}```  
+Fraction of the space that is used by column L.  Similarly `\DiglotRFraction`, `\DiglotAFraction` etc. Unless multiple page layout (experimental)
+is used, the sum of all the fractions should be  1.0. No automatic verification of this is currently done, you'll just get ugly results.
+
+-  ```\def\DiglotLeftFraction{0.5}``` ```\def\DiglotRightFraction{0.5}``` 
+Deprecated synonym for `\def\DiglotLFraction{0.5}` and `..goltRFraction...`
+
+Hopefully, the  above fractional controls (and the font-sizes from they style sheet) should enable even the most widely different translation styles and languages to balance in an overall pleasing way, without huge gaps under every chunk on one column.
+
+###Deprecated true/false options
 - ```\useLeftMarkstrue```
 - ```\useRightMarkstrue```
 When you've got just one page and two texts, and one text goes until verse 15  and the other manages to fit verse 16 and 17 on as well, what do you put in the header 15 or 17?
@@ -69,25 +121,6 @@ When you've got just one page and two texts, and one text goes until verse 15  a
 - ```\LeftMarkstrue```
 This used to be the only control that affected what went into the header (defaulting to true). It is now a short-hand for \useLeftMarkstrue\useRightMarksfalse.
  
-
-- ```\VisTracefalse``` 
-A debugging option for really sticky problems; see end of this document.
-
-### Header macros
-- ```\rangerefL``` and ```\rangerefR``` (and their companions ```\firstrefL,R``` and ```\lastrefL,R```) have now been defined, which display the book/chapter/verse ranges on a given column only. The appropriate font will be selected from the stylesheet(s) (```\Marker h```, ```hL``` and ```hR```, as above).
-
-### Page layout options
-- ```\def\ColumnGutterFactor{15}``` 
-Gutter between the 2 cols, (measured in ```\FontSizeUnit```s), just like in two column mode.
-
--  ```\def\DiglotLeftFraction{0.5}``` 
-Fraction of the space is used by the left column
-
--  ```\def\DiglotRightFraction{0.5}``` 
-Fraction of the space is used by the right column 
-
-Hopefully, the  above fractional controls (and the font-sizes from they style sheet) should enable even the most widely different translation styles and languages to balance in an overall pleasing way, without huge gaps under every chunk on one column.
-
 
 ### Hooks
 Like the markers, hooks can be made to apply to left or right columns. e.g.:
@@ -184,8 +217,14 @@ Generate 15-20 lines of debugging information per chunk. Most will be numbered.
 Generate large quantities of additional debugging information. Most are not numbered.
 
 - ```\VisTracetrue``` 
-A debugging option to help match the numbers from the log file with position in the output. Any time a chunk is added to a page, also put the current debugging number in there.
+A debugging option to help match the numbers from the log file with position in the output. Any time a chunk is added to a page, also put the current debugging number in there. If all is working correctly, there should be no change to the document's pagination from turning this on or off.
+- ```\VisTraceExtratrue``` 
+This command adds even more markers, but the markers may alter what appears on which page. 
 
 - ```\diglotDbgJoinboxes=132```
 At various points in the process, boxes (see later) get joined together, by a macro called ```\joinboxes```. This is a debugging option to help check that what's happening there is what ought to be happening.  XeTeX has a debugging command ```\showbox```, which stops processing and writes information about a given box (in the case here, a box is the stack of lines separated by spaceing).  This command fires the ```\showbox```  command if the number given is the current debug message number when joinboxes is called.  If the number is set to 0, and the command ```\tracing{d}``` has not been given, then every single call to joinboxes will result in a ```\showbox```.  **You almost certainly don't want to do this!** 
+
+- ```\def\diglotDbgeachcol{134}```
+- ```\def\diglotDbgdiglotDbgupdtPtl{213}```
+Trigger detailed debugging code for a particular occurance of the (frequently met) `\each@col` and `\upd@tep@rtial` macros.
 
