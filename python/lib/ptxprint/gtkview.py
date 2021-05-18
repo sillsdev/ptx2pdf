@@ -131,7 +131,7 @@ _sensitivities = {
         "r_xrSource_standard": ["s_xrSourceSize", "l_xrSourceSize", "l_xrSourceLess", "l_xrSourceMore"],
         "r_xrSource_custom" :  ["btn_selectXrFile"]},
     "c_mainBodyText" :         ["gr_mainBodyText"],
-    "c_doublecolumn" :         ["gr_doubleColumn", "c_singleColLayout", "t_singleColBookList", "c_columnNotes"],
+    "c_doublecolumn" :         ["gr_doubleColumn", "c_singleColLayout", "t_singleColBookList", "c_columnNotes", "r_xrLocn_centre"],
     "c_useFallbackFont" :      ["btn_findMissingChars", "t_missingChars", "l_fallbackFont", "bl_fontExtraR"],
     "c_includeFootnotes" :     ["bx_fnOptions"],
     "c_includeXrefs" :         ["bx_xrOptions"],
@@ -1000,6 +1000,10 @@ class GtkViewModel(ViewModel):
         elif self.get("r_xrLocn") == "centre":
             self.set("c_columnNotes", True)
         self.onSimpleClicked(btn)
+        try:
+            self.styleEditor.setval("x", "NoteBlendInto", "f" if self.get("r_xrLocn") == "blend" else None)
+        except KeyError:
+            return
     
     def onVertRuleClicked(self, btn):
         self.onSimpleClicked(btn)
@@ -1018,6 +1022,8 @@ class GtkViewModel(ViewModel):
         else:
             val = float(val) * 2
         self.set("s_indentUnit", val)
+        if not btn.get_active() and self.get("r_xrLocn") == "centre":
+            self.set("r_xrLocn", "below")
 
     def onSimpleFocusClicked(self, btn):
         self.sensiVisible(Gtk.Buildable.get_name(btn), focus=True)
@@ -1454,13 +1460,6 @@ class GtkViewModel(ViewModel):
         grps = "RUT 1SA; EZR NEH EST; ECC SNG; HOS JOL AMO OBA JON MIC; NAM HAB ZEP HAG ZEC MAL; " + \
                "GAL EPH PHP COL; 1TH 2TH 1TI 2TI TIT PHM; JAS 1PE 2PE 1JN 2JN 3JN JUD"
         self.set("t_thumbgroups", grps)
-
-    def onFnBlendClicked(self, btn):
-        self.onSimpleClicked(btn)
-        try:
-            self.styleEditor.setval("x", "NoteBlendInto", "f" if btn.get_active() else None)
-        except KeyError:
-            return
 
     def onverseNumbersClicked(self, btn):
         self.onSimpleClicked(btn)

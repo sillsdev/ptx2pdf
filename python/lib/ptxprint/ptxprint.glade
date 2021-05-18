@@ -97,7 +97,7 @@ THE SOFTWARE.
   <object class="GtkAdjustment" id="a_centreColWidth">
     <property name="lower">30</property>
     <property name="upper">150</property>
-    <property name="value">80</property>
+    <property name="value">60</property>
     <property name="step_increment">5</property>
     <property name="page_increment">10</property>
   </object>
@@ -9169,12 +9169,12 @@ than 300,000 cross-references.</property>
                                                     <property name="can_focus">True</property>
                                                     <property name="receives_default">False</property>
                                                     <property name="tooltip_text" translatable="yes">You can use a specially-curated list of cross-references
-in the form of an .xrf file. For example, in Windows, the 
-UBS-supplied cross-references are available in this folder:
-C:\My Paratext X Projects\_Cross References
+in the form of an .xrf file. For example, the UBS-supplied
+cross-references are available in:
+       \My Paratext X Projects\_Cross References
 
 It is also possible to extract cross-references from another
-project (as an .xrf file) and then use them in this project.</property>
+project (as an .xrf file) to be included in this project.</property>
                                                     <property name="active">True</property>
                                                     <property name="draw_indicator">True</property>
                                                     <property name="group">r_xrSource_standard</property>
@@ -9306,10 +9306,16 @@ to Include:</property>
                                                   </packing>
                                                 </child>
                                                 <child>
-                                                  <object class="GtkLabel">
+                                                  <object class="GtkBox">
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">False</property>
-                                                    <property name="tooltip_text" translatable="yes">The Standard List of cross-references contains
+                                                    <property name="margin_right">3</property>
+                                                    <property name="spacing">3</property>
+                                                    <child>
+                                                      <object class="GtkLabel">
+                                                        <property name="visible">True</property>
+                                                        <property name="can_focus">False</property>
+                                                        <property name="tooltip_text" translatable="yes">The Standard List of cross-references contains
 more than 300,000 references. You may want
 to only include target references that are
 currently available to your readers by 
@@ -9322,57 +9328,66 @@ cross-references to NT Books.
 If you select Books in "This Publication", then only
 cross-references targetting books in the list of Multiple
 Books on the Basic tab will be included.</property>
-                                                    <property name="label" translatable="yes">Include xRefs
+                                                        <property name="halign">start</property>
+                                                        <property name="label" translatable="yes">Include xRefs
 for Books in:</property>
+                                                      </object>
+                                                      <packing>
+                                                        <property name="expand">False</property>
+                                                        <property name="fill">True</property>
+                                                        <property name="position">0</property>
+                                                      </packing>
+                                                    </child>
+                                                    <child>
+                                                      <object class="GtkComboBox" id="fcb_filterXrefs">
+                                                        <property name="width_request">120</property>
+                                                        <property name="visible">True</property>
+                                                        <property name="can_focus">False</property>
+                                                        <property name="can_default">True</property>
+                                                        <property name="tooltip_text" translatable="yes">The Standard List of cross-references contains
+more than 300,000 references. You may want
+to only include target references that are
+currently available to your readers by 
+selecting a subset of Biblical books.
+
+So for example, if there is no Old Testament 
+yet, you may want to only include target 
+cross-references to NT Books.
+
+If you select Books in "This Publication", then only
+cross-references targetting books in the list of Multiple
+Books on the Basic tab will be included.</property>
+                                                        <property name="halign">start</property>
+                                                        <property name="margin_right">4</property>
+                                                        <property name="margin_top">4</property>
+                                                        <property name="margin_bottom">4</property>
+                                                        <property name="model">ls_filterXrefs</property>
+                                                        <property name="wrap_width">1</property>
+                                                        <property name="active">1</property>
+                                                        <property name="has_entry">True</property>
+                                                        <property name="entry_text_column">0</property>
+                                                        <property name="id_column">1</property>
+                                                        <property name="active_id">all</property>
+                                                        <child internal-child="entry">
+                                                          <object class="GtkEntry">
+                                                            <property name="visible">True</property>
+                                                            <property name="can_focus">False</property>
+                                                            <property name="editable">False</property>
+                                                            <property name="width_chars">15</property>
+                                                          </object>
+                                                        </child>
+                                                      </object>
+                                                      <packing>
+                                                        <property name="expand">False</property>
+                                                        <property name="fill">True</property>
+                                                        <property name="position">1</property>
+                                                      </packing>
+                                                    </child>
                                                   </object>
                                                   <packing>
                                                     <property name="left_attach">0</property>
                                                     <property name="top_attach">4</property>
-                                                  </packing>
-                                                </child>
-                                                <child>
-                                                  <object class="GtkComboBox" id="fcb_filterXrefs">
-                                                    <property name="width_request">120</property>
-                                                    <property name="visible">True</property>
-                                                    <property name="can_focus">False</property>
-                                                    <property name="can_default">True</property>
-                                                    <property name="tooltip_text" translatable="yes">The Standard List of cross-references contains
-more than 300,000 references. You may want
-to only include target references that are
-currently available to your readers by 
-selecting a subset of Biblical books.
-
-So for example, if there is no Old Testament 
-yet, you may want to only include target 
-cross-references to NT Books.
-
-If you select Books in "This Publication", then only
-cross-references targetting books in the list of Multiple
-Books on the Basic tab will be included.</property>
-                                                    <property name="halign">start</property>
-                                                    <property name="margin_right">4</property>
-                                                    <property name="margin_top">4</property>
-                                                    <property name="margin_bottom">4</property>
-                                                    <property name="model">ls_filterXrefs</property>
-                                                    <property name="wrap_width">1</property>
-                                                    <property name="active">1</property>
-                                                    <property name="has_entry">True</property>
-                                                    <property name="entry_text_column">0</property>
-                                                    <property name="id_column">1</property>
-                                                    <property name="active_id">all</property>
-                                                    <child internal-child="entry">
-                                                      <object class="GtkEntry">
-                                                        <property name="visible">True</property>
-                                                        <property name="can_focus">False</property>
-                                                        <property name="editable">False</property>
-                                                        <property name="width_chars">11</property>
-                                                      </object>
-                                                    </child>
-                                                  </object>
-                                                  <packing>
-                                                    <property name="left_attach">1</property>
-                                                    <property name="top_attach">4</property>
-                                                    <property name="width">2</property>
+                                                    <property name="width">3</property>
                                                   </packing>
                                                 </child>
                                                 <child>
@@ -9428,6 +9443,9 @@ Books on the Basic tab will be included.</property>
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">True</property>
                                                     <property name="receives_default">False</property>
+                                                    <property name="tooltip_text" translatable="yes">Cross-references will be listed in a separate block
+underneath the footnotes (rather than combined
+along with the footnotes as a single paragraph).</property>
                                                     <property name="halign">start</property>
                                                     <property name="active">True</property>
                                                     <property name="draw_indicator">True</property>
@@ -9446,6 +9464,13 @@ Books on the Basic tab will be included.</property>
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">True</property>
                                                     <property name="receives_default">False</property>
+                                                    <property name="tooltip_text" translatable="yes">This feature is only available for 2-column layouts 
+and is normally used for Study/Reference Bibles.
+
+When there are numerous cross-references (usually
+when using an external list of references) then it
+may be useful to place them in their own space in 
+a column between the two columns of text.</property>
                                                     <property name="halign">start</property>
                                                     <property name="active">True</property>
                                                     <property name="draw_indicator">True</property>
@@ -9504,9 +9529,17 @@ to adjust the vertical space between these two sections.</property>
                                                   <object class="GtkSpinButton" id="s_centreColWidth">
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">True</property>
-                                                    <property name="tooltip_text" translatable="yes">This spacing is set in points (pts). Changing this will 
-increase or decrease the MAXIMUM horizontal space
-between notes that have been run together.</property>
+                                                    <property name="tooltip_text" translatable="yes">This sets the width of the centre column in points.
+Note that 72pts is 1 inch, and increasing the size
+here will decrease the amount of space available
+for the 2 columns of scripture text.
+
+Consider using a larger page size if you want to
+use Centre Column xRefs.
+
+If this centre column isn't wide enough to fit
+the references, then you should also consider
+reducing the size of the \x font (to approx 6pt).</property>
                                                     <property name="halign">start</property>
                                                     <property name="width_chars">4</property>
                                                     <property name="text">27</property>
@@ -9518,7 +9551,7 @@ between notes that have been run together.</property>
                                                     <property name="climb_rate">5</property>
                                                     <property name="numeric">True</property>
                                                     <property name="update_policy">if-valid</property>
-                                                    <property name="value">80</property>
+                                                    <property name="value">60</property>
                                                   </object>
                                                   <packing>
                                                     <property name="left_attach">2</property>
