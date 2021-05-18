@@ -316,16 +316,15 @@ class ViewModel:
         def asmm(v): return v * 25.4 / 72.27
         hfont = self.styleEditor.getval("h", " font")
         if hfont is None:
-            hf = self.get("bl_fontR")
-            if hf is not None:
-                hfont = hf.getTtfont()
-            else:
+            hfont = self.get("bl_fontR")
+            if hfont is None:
                 return (0, 0, 0, 0, 0, 0, 0, 0)
+        hfont = hfont.getTtfont()
         #fontheight = 1. + float(font.descent) / font.upem
         hfontheight = float(hfont.ascent) / hfont.upem
         fontsizemms = asmm(float(self.get("s_fontsize")))
         linespacemms = asmm(float(self.get("s_linespacing")))
-        hfontsizemms = asfloat(self.styleEditor.getval("h", "FontSize"), 12.) / 12. * fontsizemms
+        hfontsizemms = asfloat(self.styleEditor.getval("h", "FontSize"), 1.) * fontsizemms
         marginmms = float(self.get("s_margins"))
         # in the macros, topmargin is set to topmargin - baselineskip + 12*FontSizeUnit
         # Reverse that here, so that what appears on the page is what they ask for.
