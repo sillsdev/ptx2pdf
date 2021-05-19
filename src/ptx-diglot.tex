@@ -98,8 +98,9 @@
 \def\addToRightHooks#1{\x@\global\x@\diglotRho@ks\x@{\the\diglotRho@ks #1}}
 %-cdig_define-hooks
 
-\def\stylesheetL#1{\gdef\ds@ffix{L}\stylesheet{#1}\gdef\ds@ffix{}}%Need to reset ds@ffix to {}, so that side-specific settings can be applied.
-\def\stylesheetR#1{\gdef\ds@ffix{R}\stylesheet{#1}\gdef\ds@ffix{}}
+\def\stylesheetL{\gdef\ds@ffix{L}\stylesh@@t}%Need to reset ds@ffix to {}, so that side-specific settings can be applied.
+\def\stylesheetR{\gdef\ds@ffix{R}\stylesh@@t}
+\def\stylesh@@t#1{\stylesheet{#1}\gdef\ds@ffix{}}
 
 %LRspecific holds a list of things that get redefined on side-switching. Now split into Definitions and Dimensions.
 \def\LRspecificDef{AdornVerseNumber,VerticalSpaceFactor,LineSpacingFactor,regular,bold,italic,bolditalic,SpaceStretchFactor,SpaceShrinkFactor}
@@ -142,7 +143,7 @@
   \else\MSG{No global definition for #1}\fi} % If the item exists, save its current value. 
 \def\ch@ckLR#1#2{\ifcsname#1#2\endcsname\trace{S}{SpS: #1#2 exists}\else\x@\let\csname #1#2\x@\endcsname\csname #1\@rig\endcsname
   \ifdiglot\MSG{Side-specific #1#2 not defined, global #1 will be used}\fi\fi}% Helper function
-
+\def\n@wSpecificDim#1{\x@\newdim@n\csname #1\sfx\endcsname}
 % If the item exists, save its current value. 
 \def\s@veSpecificSideDef#1{\ifcsname #1\endcsname \x@\let\csname #1\sfx\x@\endcsname\csname #1\endcsname\fi}
 \def\s@veSpecificSideDim#1{\ifcsname #1\endcsname\ifcsname #1\sfx\endcsname  \x@\global\csname #1\sfx\endcsname=\csname #1\endcsname\else\errmessage{dimension #1 does not exist}\fi\else\errmessage{dimension #1\sfx does not exist}\fi}
@@ -1495,9 +1496,10 @@
 }
 
 \def\@do@unbalnotes@simplecols{%
+  \traceNum{d}{@do@unbalnotes@simplecols \layout@list}%
   \setbox1\hbox{\makediglotgutter{\dimen7}{\dimen8}{\dimen9}}%
   \let\col@do=\@@simplecols\let\l@stcol\empty
-  \setbox\Lbox\hbox to \textwidth{%\vllap{\the\ht\Lbox \the\dp\Lbox}%
+  \setbox\notechunk\hbox to \textwidth{%\vllap{\the\ht\Lbox \the\dp\Lbox}%
     \ifdiglotN@rmal%are the sides swapped?
       \x@\each@col\layout@list\E
     \else%
@@ -1505,8 +1507,8 @@
     \fi%
   }%
   \trace{f}{Adjusting footnotebox}%
-  \trace{D}{Raising footnotebox by \the\dimen3}%
-  \global\setbox\partial=\vbox{\unvbox\partial\kern -\dimen3\vskip 0.5\AboveNoteSpace plus 1fil \box\Lbox}%
+  \trace{D}{Raising footnotebox by \the\dimen3\space \l@gdims{\notechunk}}%
+  \global\setbox\partial=\vbox{\unvbox\partial\kern -\dimen3\vskip 0.5\AboveNoteSpace plus 1fil \box\notechunk}%
 }%
 
 \def\@writep@ge{%
@@ -1543,10 +1545,10 @@
         %page,
         %Need to find out where to put the footnotes, as one of them should
         %be close to its respective text.
-        {
+        \tracingmacros=1
           \csname @prepare@unbalnotes@\diglotlayout\endcsname
           \csname @do@unbalnotes@\diglotlayout\endcsname
-        }
+        \tracingmacros=0
       \fi %BalNotes
     \else%
       \trace{f}{No footnotes}%
@@ -1698,13 +1700,14 @@
   \def\v@lpfx{@cur}%
   \let\col@do=\forget@boxdim
   \x@\each@col\diglot@list\E
+  \def\v@lpfx{}\def\v@lsfx{box}%
+  \let\col@do=\void@boxes %
+  \x@\each@col\diglot@list\E
   \resetc@rdstat%reset the current diglotstatus
   \xdef\firstLmark{}%
   \xdef\botLmark{}%
   \xdef\firstRmark{}%
   \xdef\botRmark{}%
-  \global\setbox\Rbox=\box\voidb@x%
-  \global\setbox\Lbox=\box\voidb@x%
   \@mptyinserts
   \s@veinserts{chunk}%
   \s@veinserts{col}%
@@ -2104,7 +2107,6 @@
 \def\xdef@cseq#1#2{\x@\xdef\csname #1\endcsname{#2}}% Helper function
 \def\def@cseq#1#2{\x@\def\csname #1\endcsname{#2}}% Helper function
 \def\empty@cseq#1{\x@\xdef\csname #1\endcsname{}}% Helper function
-
 \def\newPolyglotCol#1{%
   \ifcsname #1isDiglotColumn\endcsname
     \message{#1 is already a diglot column. You can only define it as one once!}%
@@ -2119,6 +2121,7 @@
     \let\col@do=\mkrev@list\def\list@type{diglot}%
     \xdef\rev@diglot@list{}
     \x@\each@col\diglot@list\E% 
+    {\edef\sfx{#1}\let\wh@t\n@wSpecificDim \pr@cessSpecificDim}
     \global\let\rev@layout@list\rev@diglot@list
     \x@\csname #1isDiglotColumn\endcsname\empty
     \x@\newb@x\csname #1box\endcsname
@@ -2148,6 +2151,8 @@
     \xdef@cseq{@cur#1ht}{0pt}% 
     \xdef@cseq{@cur#1dp}{0pt}% 
     \header@defs{#1}% All the possible header contents
+    \def@cseq{stylesheet#1}{\gdef\ds@ffix{#1}\stylesh@@t}% column-specific stylesheet
+
 %TODO:
 %FIXMEs needing for polyglot processing:
 % UI!

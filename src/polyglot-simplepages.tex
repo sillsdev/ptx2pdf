@@ -220,17 +220,22 @@
 
 
 
+\let\@prepare@balnotes@simplepages=\@prepare@balnotes@simplecols%
+\let\@prepare@unbalnotes@simplepages=\@prepare@unbalnotes@simplecols%
+
 \def\@do@balnotes@simplepages{%TODO?
   \edef\spt@sk{@do@balnotes@simplepages}%
   \let\pre@scol@cmd\relax
   \let\scol@cmd=\@do@balnotes@simplecols
+  \p@lyp@geno=0
   \@@do@simplepage@
 }%
 \def\@do@unbalnotes@simplepages{%TODO?
   \edef\spt@sk{@do@unbalnotes@simplepages}%
   \let\pre@scol@cmd\relax
   \let\scol@cmd=\@do@unbalnotes@simplecols
-  \@do@unbalnotes@simplecols
+  \p@lyp@geno=0
+  \@@do@simplepage@
 }%
 
 \def\@postswap@simplepages#1{}
@@ -298,7 +303,7 @@
   \xdef\old@pp{\the\p@lyp@geno}% Cache old value
 } 
 
-\let\@prep@writep@ge@simplespages=\@prep@writep@ge@simplecols
+\let\@prep@writep@ge@simplepages=\@prep@writep@ge@simplecols
 
 \def\@end@writep@ge@simplepages{%
   \@s@tp@lypage{\old@pp}%
