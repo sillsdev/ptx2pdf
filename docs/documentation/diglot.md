@@ -77,7 +77,8 @@ and the right column will use:
 ## Configuration items to go in foo-setup.tex (or main .tex file)
 
 ### Extra columns
-\newPolyglotCol A
+`\newPolyglotCol A` This specifies that just `L` and `R` are a bit boring, and you wish to use another column (`A`) as well. The perl program to merge files uses L,R,A,B,C.... as column identifiers.
+
 
 ###True/false options
 
@@ -111,6 +112,12 @@ is used, the sum of all the fractions should be  1.0. No automatic verification 
 Deprecated synonym for `\def\DiglotLFraction{0.5}` and `..goltRFraction...`
 
 Hopefully, the  above fractional controls (and the font-sizes from they style sheet) should enable even the most widely different translation styles and languages to balance in an overall pleasing way, without huge gaps under every chunk on one column.
+
+### Column-dependent configuration parameters
+The following may be defined with a column-dependent suffix (`L`, `R`, `A`, ...).
+ `AdornVerseNumber`, `VerticalSpaceFactor`, `LineSpacingFactor`, `regular`, `bold`, `italic`, `bolditalic`, `SpaceStretchFactor`, `SpaceShrinkFactor`
+
+These dimensions can similarly have column-specific values: `FontSizeUnit`, `IndentUnit`
 
 ###Deprecated true/false options
 - ```\useLeftMarkstrue```
