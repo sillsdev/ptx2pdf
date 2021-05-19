@@ -109,6 +109,7 @@ _diglot = {
 "diglot/fontitalic" :       "document/fontitalic",
 "diglot/fontbolditalic" :   "document/fontbolditalic",
 "diglot/ifshowversenums" :  "document/ifshowversenums",
+"diglot/xrlocation" :       "notes/xrlocation",
 "diglotfancy/versedecorator":       "fancy/versedecorator",
 "diglotfancy/versedecoratorpdf":    "fancy/versedecoratorpdf",
 "diglotfancy/versedecoratorshift":  "fancy/versedecoratorshift",
@@ -390,7 +391,7 @@ class RunJob:
                            "paper/headerposition", "paper/footerposition", "paper/ruleposition",
                            "document/ch1pagebreak", "document/bookintro", "document/introoutline", 
                            "document/parallelrefs", "document/elipsizemptyvs", "notes/iffootnoterule",
-                           "notes/includefootnotes", "notes/includexrefs", 
+                           "notes/xrlocation", "notes/includefootnotes", "notes/includexrefs", 
                            "notes/fneachnewline", "notes/xreachnewline", "document/filterglossary", 
                            "document/chapfrom", "document/chapto", "document/ifcolorfonts", "document/ifomitsinglechnum"]
         diginfo["project/bookids"] = jobs
