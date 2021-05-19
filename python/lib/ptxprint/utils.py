@@ -105,7 +105,9 @@ def coltoonemax(s):
         return [0.8, 0.8, 0.8]
 
 def textocol(s):
-    if s.startswith("x"):
+    if s is None:
+        vals = [0, 0, 0]
+    elif s.startswith("x"):
         try:
             vals = [int(s[1:3], 16), int(s[3:5], 16), int(s[5:7], 16)]
         except (ValueError, TypeError):

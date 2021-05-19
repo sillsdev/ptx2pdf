@@ -526,6 +526,7 @@
 \catcode`=12
 
 \newbox\pstr@t
+\newif\ifCalcChapSize \CalcChapSizetrue
 \def\calcdr@psize{%
   \ifdiglot 
     \trace{d}{Calculating drop: \c@rrdstat}%
@@ -537,6 +538,7 @@
     \getp@ram{fontsize}{c}\dropnumbersize=0\p@ram\FontSizeUnit \relax % C in following
 	% if font size specified for chapter number stylesheet is less than 2*paragraph font size ...
     %\ifdim\dropnumbersize<\dimen255
+    \ifCalcChapSize
       \edef\@seglyphmetrics{\the\XeTeXuseglyphmetrics}%
       \s@tfont{p}%workaround for Lotus Elam Bold issue - ensure the \p font is loaded first
       \mkstr@t\setbox\pstr@t=\copy\str@tbox
@@ -577,7 +579,7 @@
         \setp@ram{raise}{c\ifdiglot\c@rrdstat\fi}{\the\dimen3}%
       \fi
       \trace{h}{dropnumbersize = \the\dropnumbersize, dropnumberraise = \the\dropnumberraise}%
-    %\fi
+    \fi
     \edef\dr@psize{\strip@pt\dropnumbersize}%
 }
 

@@ -1270,12 +1270,13 @@
     \m@kenotebox\setbox\coln@tebox=\vbox{%
       \ifdim\ht2>0pt\unvbox2\ifdim\ht5>0pt\vskip\InterNoteSpace \unvbox5\fi
       \else\ifdim\ht5>0pt
-        \ifvoid\verybottomins\vfill\fi %\kern-\lastd@pth\vfil % ignore depth of body text; fill space
-        \dimen5=\AboveNoteSpace\advance\dimen5 by -\BelowNoteRuleSpace\advance\dimen5 by -0.2pt
-        \vskip\ifdim\dimen5>0pt \AboveNoteSpace minus \dimen5\else\AboveNoteSpace\fi
-        {\footnoterule}\prevdepth=-10000pt\unvbox5\fi
-      \fi
-      \setbox0\lastbox\dimen1=\ht0\dimen0=\dp0\box0\ifdim\dimen1>0pt\kern-\dimen0\fi\vskip\bmg@p}
+          \trace{o}{got colnotes=\the\ht5}%
+          \ifvoid\verybottomins\vfill\fi %\kern-\lastd@pth\vfil % ignore depth of body text; fill space
+          \dimen5=\AboveNoteSpace\advance\dimen5 by -\BelowNoteRuleSpace\advance\dimen5 by -0.2pt
+          \vskip\ifdim\dimen5>0pt \AboveNoteSpace minus \dimen5\else\AboveNoteSpace\fi
+          {\footnoterule}\prevdepth=-10000pt\unvbox5
+          \setbox0\lastbox\dimen1=\ht0\dimen0=\dp0\box0\ifdim\dimen1>0pt\kern-\dimen0\fi\vskip\bmg@p
+      \fi\fi}%
   \fi
   \splittopskip=\topskip
 }

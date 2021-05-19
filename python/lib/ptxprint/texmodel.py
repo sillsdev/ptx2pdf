@@ -1349,7 +1349,7 @@ class TexModel:
                 if msg is not None:
                     if not crdtsstarted:
                         crdts.append("\\def\\zimagecopyrights{}{{%".format(lang.lower()))
-                        crdtsstarted
+                        crdtsstarted = True
                     crdts.append(msg)
             if crdtsstarted:
                 crdts.append("}")

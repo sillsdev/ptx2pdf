@@ -25,9 +25,8 @@ def writefontsconf(archivedir=None):
     if archivedir is not None or not sys.platform.startswith("win"):
         dirs.append("/usr/share/fonts")
         fname = os.path.expanduser("~/.config/ptxprint/fonts.conf")
-    if archivedir is not None:
-        dirs.append("../shared/fonts")
-    else:
+    dirs.append("../shared/fonts")
+    if archivedir is None:
         fdir = os.path.join(os.path.dirname(__file__), '..')
         for a in (['..', 'fonts'], ['..', '..', 'fonts'], ['/usr', 'share', 'ptx2pdf', 'fonts']):
             fpath = os.path.join(fdir, *a)
