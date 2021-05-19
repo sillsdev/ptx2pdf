@@ -657,8 +657,8 @@ class TexModel:
                             res.append(r"\pageno=1")
                             resetPageDone = True
                         if self.asBool('document/ifomitsinglechnum') and \
-                           not self.asBool('document/showchapternums') and \
-                           f in oneChbooks:                                 # showchapternums is inverted
+                           self.asBool('document/ifshowchapternums', '%') and \
+                           f in oneChbooks:
                             res.append(r"\OmitChapterNumbertrue")
                             res.append(r"\ptxfile{{{}}}".format(fname))
                             res.append(r"\OmitChapterNumberfalse")

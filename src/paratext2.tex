@@ -1268,15 +1268,16 @@
       \setbox5=\vbox{\m@kexrefbox{\availht}{\XrefNotesWidth}{\XrefNotes}}%
     \fi
     \m@kenotebox\setbox\coln@tebox=\vbox{%
-      \ifdim\ht2>0pt\unvbox2\ifdim\ht5>0pt\vskip\InterNoteSpace \unvbox5\fi
+      \trace{o}{coln@tebox in=\the\ht5+\the\dp5, notes=\the\ht2+\the\dp2}%
+      \ifdim\ht2>0pt\unvbox2\ifdim\ht5>0pt\setbox0\lastbox\dimen0=\dp0\box0\vskip\dimen0\vskip\InterNoteSpace \unvbox5\fi
       \else\ifdim\ht5>0pt
-          \trace{o}{got colnotes=\the\ht5}%
           \ifvoid\verybottomins\vfill\fi %\kern-\lastd@pth\vfil % ignore depth of body text; fill space
           \dimen5=\AboveNoteSpace\advance\dimen5 by -\BelowNoteRuleSpace\advance\dimen5 by -0.2pt
           \vskip\ifdim\dimen5>0pt \AboveNoteSpace minus \dimen5\else\AboveNoteSpace\fi
           {\footnoterule}\prevdepth=-10000pt\unvbox5
           \setbox0\lastbox\dimen1=\ht0\dimen0=\dp0\box0\ifdim\dimen1>0pt\kern-\dimen0\fi\vskip\bmg@p
       \fi\fi}%
+      \trace{o}{coln@tebox out=\the\ht\coln@tebox+\the\dp\coln@tebox}%
   \fi
   \splittopskip=\topskip
 }
