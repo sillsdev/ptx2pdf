@@ -368,7 +368,7 @@ class RunJob:
                 info.createXrefTriggers(b, self.prjdir, outpath)
             else:
                 try:
-                    print(f"Removing {outpath}.triggers")
+                    # print(f"Removing {outpath}.triggers")
                     os.remove(outpath+".triggers")
                 except FileNotFoundError:
                     pass

@@ -39,7 +39,7 @@ a = Analysis(['python/scripts/ptxprint'],
                              '5.8x8.7-Draft.pdf', 'A4-CopyrightWatermark.pdf', 'A5-CopyrightWatermark.pdf')]
                       + [('python/lib/ptxprint/'+x, 'ptxprint') for x in 
                             ('Google-Noto-Emoji-Objects-62859-open-book.ico', '62859-open-book-icon(128).png', 
-							 'picLocationPreviews.png', 'ps_cmyk.icc', 
+							 'picLocationPreviews.png', 'ps_cmyk.icc', 'cross_references.txt',
 							 'Top1FalseFalse.png', 'Top1FalseTrue.png', 'Top2FalseFalse.png',
 							 'Top2FalseTrue.png', 'Top2TrueFalse.png', 'Top2TrueTrue.png',
 							 'Bottom1False.png', 'Bottom2False.png', 'Bottom2True.png')]
