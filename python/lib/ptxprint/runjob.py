@@ -508,7 +508,7 @@ class RunJob:
         miscfonts.append(os.path.join(self.tmpdir, "shared", "fonts"))
         if len(miscfonts):
             os.putenv("MISCFONTS", pathjoin(miscfonts))
-        print(f"{pathjoin(miscfonts)=}")
+        # print(f"{pathjoin(miscfonts)=}")
         os.putenv('TEXINPUTS', pathjoin(texinputs))
         self.thread = Thread(target=self.run_xetex, args=(outfname, info))
         self.busy = True

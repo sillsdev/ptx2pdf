@@ -125,7 +125,7 @@ _sensitivities = {
     "r_xrLocn": {
         "r_xrLocn_below" :     ["l_internote", "s_internote", "l_xrColWid", "s_centreColWidth", "c_columnNotes"],
         "r_xrLocn_blend" :     [],
-        "r_xrLocn_centre" :    ["l_xrColWid", "s_centreColWidth"]},
+        "r_xrLocn_centre" :    ["l_internote", "s_internote", "l_xrColWid", "s_centreColWidth"]},
         
     "r_xrSource": {
         "r_xrSource_standard": ["s_xrSourceSize", "l_xrSourceSize", "l_xrSourceLess", "l_xrSourceMore"],
@@ -189,6 +189,10 @@ _nonsensitivities = {
     "c_omitrhchapnum" :        ["c_hdrverses"],
     "c_useprintdraftfolder" :  ["btn_selectOutputFolder"],
     "c_styFaceSuperscript" :   ["l_styRaise", "s_styRaise"],
+    "r_xrLocn": {
+        "r_xrLocn_below" :     [],
+        "r_xrLocn_blend" :     ["l_internote", "s_internote"],
+        "r_xrLocn_centre" :    []},
 }
 _object_classes = {
     "printbutton": ("b_print", "btn_refreshFonts", "btn_adjust_diglot"),
@@ -919,10 +923,14 @@ class GtkViewModel(ViewModel):
         self.updateBookList()
         super(GtkViewModel, self).loadConfig(config)
         for k, v in _sensitivities.items():
+            if k.startswith("r_"):
+                continue
             state = self.get(k)
             for w in v:
                 self.builder.get_object(w).set_sensitive(state)
         for k, v in _nonsensitivities.items():
+            if k.startswith("r_"):
+                continue
             state = not self.get(k)
             for w in v:
                 self.builder.get_object(w).set_sensitive(state)
@@ -979,7 +987,7 @@ class GtkViewModel(ViewModel):
                         if wid is not None:
                             wid.set_sensitive(l(s))
                 if not anyset:
-                    v = d[d[k].keys()[0]]
+                    v = list(d[k].values())[0]
                     for w in v:
                         wid = self.builder.get_object(w)
                         if wid is not None:
