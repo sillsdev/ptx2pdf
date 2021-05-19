@@ -175,8 +175,8 @@ ModelMap = {
     "document/marginalverses":  ("c_marginalverses", lambda w,v: "" if v else "%"),
     "document/columnshift":     ("s_columnShift", lambda w,v: v or "16"),
     "document/ifshowchapternums": ("c_chapterNumber", lambda w,v: "%" if v else ""),
-    "document/showxtrachapnums":  ("c_showNonScriptureChapters", lambda w,v: v),
-    "document/ifomitsinglechnum": ("c_omitChap1ChBooks", lambda w,v: v),
+    "document/showxtrachapnums":  ("c_showNonScriptureChapters", None),
+    "document/ifomitsinglechnum": ("c_omitChap1ChBooks", None),
     "document/ifomitverseone":  ("c_omitverseone", lambda w,v: "true" if v else "false"),
     "document/ifshowversenums":   ("c_verseNumbers", lambda w,v: "%" if v else ""),
     "document/ifmainbodytext":  ("c_mainBodyText", None),
@@ -657,8 +657,8 @@ class TexModel:
                             res.append(r"\pageno=1")
                             resetPageDone = True
                         if self.asBool('document/ifomitsinglechnum') and \
-                           self.asBool('document/showchapternums') and \
-                           f in oneChbooks:
+                           not self.asBool('document/showchapternums') and \
+                           f in oneChbooks:                                 # showchapternums is inverted
                             res.append(r"\OmitChapterNumbertrue")
                             res.append(r"\ptxfile{{{}}}".format(fname))
                             res.append(r"\OmitChapterNumberfalse")
