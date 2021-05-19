@@ -109,7 +109,7 @@ _diglot = {
 "diglot/fontitalic" :       "document/fontitalic",
 "diglot/fontbolditalic" :   "document/fontbolditalic",
 "diglot/ifshowversenums" :  "document/ifshowversenums",
-"diglot/ifblendfnxr" :      "notes/ifblendfnxr",
+"diglot/xrlocation" :       "notes/xrlocation",
 "diglotfancy/versedecorator":       "fancy/versedecorator",
 "diglotfancy/versedecoratorpdf":    "fancy/versedecoratorpdf",
 "diglotfancy/versedecoratorshift":  "fancy/versedecoratorshift",
@@ -140,6 +140,7 @@ def isLocked():
     return _joblock is not None
 
 class RunJob:
+
     def __init__(self, printer, scriptsdir, args, inArchive=False):
         self.scriptsdir = scriptsdir
         self.printer = printer
@@ -362,6 +363,15 @@ class RunJob:
                 out = None
             if out is None:
                 continue
+            outpath = os.path.join(self.tmpdir, out)
+            if info["notes/ifxrexternalist"]:
+                info.createXrefTriggers(b, self.prjdir, outpath)
+            else:
+                try:
+                    print(f"Removing {outpath}.triggers")
+                    os.remove(outpath+".triggers")
+                except FileNotFoundError:
+                    pass
             donebooks.append(out)
         if not len(donebooks):
             unlockme()
@@ -381,7 +391,7 @@ class RunJob:
                            "paper/headerposition", "paper/footerposition", "paper/ruleposition",
                            "document/ch1pagebreak", "document/bookintro", "document/introoutline", 
                            "document/parallelrefs", "document/elipsizemptyvs", "notes/iffootnoterule",
-                           "notes/ifblendfnxr", "notes/includefootnotes", "notes/includexrefs", 
+                           "notes/xrlocation", "notes/includefootnotes", "notes/includexrefs", 
                            "notes/fneachnewline", "notes/xreachnewline", "document/filterglossary", 
                            "document/chapfrom", "document/chapto", "document/ifcolorfonts", "document/ifomitsinglechnum"]
         diginfo["project/bookids"] = jobs
@@ -495,9 +505,10 @@ class RunJob:
             texinputs += ["/usr/share/ptx2pdf/texmacros"]
             miscfonts.append("/usr/share/ptx2pdf/texmacros")
         miscfonts.append(ptxmacrospath)
-        miscfonts.append(os.path.join(prjdir, "shared"))
+        miscfonts.append(os.path.join(self.tmpdir, "shared", "fonts"))
         if len(miscfonts):
             os.putenv("MISCFONTS", pathjoin(miscfonts))
+        # print(f"{pathjoin(miscfonts)=}")
         os.putenv('TEXINPUTS', pathjoin(texinputs))
         self.thread = Thread(target=self.run_xetex, args=(outfname, info))
         self.busy = True
@@ -799,3 +810,4 @@ class RunJob:
         num = float(re.sub(r"([0-9\.]+).*", r"\1", str(measure)))
         unit = str(measure)[len(str(num)):].strip(" ")
         return (num * _unitConv[unit]) if unit in units else num
+

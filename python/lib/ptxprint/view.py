@@ -4,7 +4,7 @@ from ptxprint.texmodel import ModelMap, TexModel, Borders
 from ptxprint.ptsettings import ParatextSettings
 from ptxprint.font import TTFont, cachepath, cacheremovepath, FontRef, getfontcache, writefontsconf
 from ptxprint.utils import _, refKey, universalopen, print_traceback, local2globalhdr, \
-                            global2localhdr, asfloat, allbooks, books, bookcodes, chaps
+                            global2localhdr, asfloat, allbooks, books, bookcodes, chaps, f2s
 from ptxprint.usfmutils import Sheets, UsfmCollection
 from ptxprint.piclist import PicInfo, PicChecks
 from ptxprint.styleditor import StyleEditor
@@ -85,6 +85,7 @@ class ViewModel:
         "project/frontincludes":    ("FrontPDFs", True, "lb_inclFrontMatter"),
         "project/backincludes":     ("BackPDFs", True, "lb_inclBackMatter"),
         "project/selectscript":     ("customScript", False, None),
+        "project/customXRfile":     ("customXRfile", False, None),
         "project/modulefile":       ("moduleFile", False, "lb_bibleModule"),
         "paper/watermarkpdf":       ("watermarks", False, "lb_applyWatermark"),
         "fancy/pageborderpdf":      ("pageborder", False, "lb_inclPageBorder"),
@@ -113,6 +114,7 @@ class ViewModel:
         self.FrontPDFs = None
         self.BackPDFs = None
         self.customScript = None
+        self.customXRfile = None
         self.moduleFile = None
         self.DBLfile = None
         self.watermarks = None
@@ -186,7 +188,7 @@ class ViewModel:
 
     def set(self, wid, value, skipmissing=False):
         if wid.startswith("s_"):
-            self.dict[wid] = "{:.3f}".format(float(value))
+            self.dict[wid] = f2s(float(value))
         else:
             self.dict[wid] = value
 
@@ -307,23 +309,22 @@ class ViewModel:
         if self.loadingConfig:
             return False
         (marginmms, topmarginmms, bottommarginmms, headerpos, footerpos, rulerpos, headerlabel, footerlabel) = self.getMargins()
-        self.set("l_margin2header1", "{:.3f}mm".format(headerlabel))
+        self.set("l_margin2header1", "{}mm".format(f2s(headerlabel)))
         return True
 
     def getMargins(self):
         def asmm(v): return v * 25.4 / 72.27
         hfont = self.styleEditor.getval("h", " font")
         if hfont is None:
-            hf = self.get("bl_fontR")
-            if hf is not None:
-                hfont = hf.getTtfont()
-            else:
+            hfont = self.get("bl_fontR")
+            if hfont is None:
                 return (0, 0, 0, 0, 0, 0, 0, 0)
+        hfont = hfont.getTtfont()
         #fontheight = 1. + float(font.descent) / font.upem
         hfontheight = float(hfont.ascent) / hfont.upem
         fontsizemms = asmm(float(self.get("s_fontsize")))
         linespacemms = asmm(float(self.get("s_linespacing")))
-        hfontsizemms = asfloat(self.styleEditor.getval("h", "FontSize"), 12.) / 12. * fontsizemms
+        hfontsizemms = asfloat(self.styleEditor.getval("h", "FontSize"), 1.) * fontsizemms
         marginmms = float(self.get("s_margins"))
         # in the macros, topmargin is set to topmargin - baselineskip + 12*FontSizeUnit
         # Reverse that here, so that what appears on the page is what they ask for.
@@ -662,13 +663,13 @@ class ViewModel:
             config.set("project", "colophontext", colophontext)
         if v < 1.503:
             marginmms = config.getfloat("paper", "margins")
-            config.set("paper", "topmargin", "{:.3f}".format(config.getfloat("paper", "topmarginfactor", fallback=1.0) * marginmms))
-            config.set("paper", "headerpos", "{:.3f}".format(config.getfloat("paper", "topmarginfactor", fallback=1.0) * marginmms \
+            config.set("paper", "topmargin", f2s(config.getfloat("paper", "topmarginfactor", fallback=1.0) * marginmms))
+            config.set("paper", "headerpos", f2s(config.getfloat("paper", "topmarginfactor", fallback=1.0) * marginmms \
                         - config.getfloat("header", "headerposition", fallback=1.0) * marginmms\
                         - config.getfloat("paper", "fontfactor") * 25.4 / 72.27))
-            config.set("paper", "bottommargin", "{:.3f}".format(config.getfloat("paper", "bottommarginfactor", fallback=1.0) * marginmms))
-            config.set("paper", "footerpos", "{:.3f}".format(config.getfloat("header", "footerposition", fallback=1.0) * marginmms))
-            config.set("paper", "rulegap", "{:.3f}".format(config.getfloat("header", "ruleposition", fallback=0.)))
+            config.set("paper", "bottommargin", f2s(config.getfloat("paper", "bottommarginfactor", fallback=1.0) * marginmms))
+            config.set("paper", "footerpos", f2s(config.getfloat("header", "footerposition", fallback=1.0) * marginmms))
+            config.set("paper", "rulegap", f2s(config.getfloat("header", "ruleposition", fallback=0.)))
         if v < 1.504:
             try:
                 self._configset(config, "notes/fneachnewline", not config.getboolean("notes", "fnparagraphednotes"))
@@ -682,7 +683,7 @@ class ViewModel:
             pass
         if v < 1.602:
             config.set("notes", "belownoterulespace", "3.0")
-            config.set("notes", "abovenotespace", "{:.3f}".format(config.getfloat("notes", "abovenotespace", fallback=6.0) - 3.0))
+            config.set("notes", "abovenotespace", f2s(config.getfloat("notes", "abovenotespace", fallback=6.0) - 3.0))
             config.set("config", "version", "1.602")
 
         styf = os.path.join(self.configPath(cfgname), "ptxprint.sty")
@@ -777,7 +778,7 @@ class ViewModel:
                         self.styleEditor.setval(k, 'Justification', 'Left')
                     elif j == "Left":
                         self.styleEditor.setval(k, 'Justification', 'Right')
-        if self.get('c_blendfnxr', False):
+        if self.get('r_xrLocn') == "blend":
             self.styleEditor.setval('x', 'NoteBlendInto', 'f')
 
     def editFile_delayed(self, *a):

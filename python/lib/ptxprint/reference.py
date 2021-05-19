@@ -5,11 +5,28 @@ from ptxprint.utils import chaps, oneChbooks, books, allbooks, binsearch
 from base64 import b64encode
 from functools import reduce
 
-startchaps = list(zip([b for b in allbooks if 0 < int(chaps[b]) < 99] + ["ZZZ"],
-                      reduce(lambda a,x: a + [a[-1]+x], (int(chaps[b]) for b in allbooks if 0 < int(chaps[b]) < 99), [0])))
+startchaps = list(zip([b for b in allbooks if 0 < int(chaps[b]) < 999],
+                      reduce(lambda a,x: a + [a[-1]+x], (int(chaps[b]) for b in allbooks if 0 < int(chaps[b]) < 999), [0])))
+startchaps += [("special", startchaps[-1][1]+1)]
 startbooks = dict(startchaps)
+allchaps = ['GEN'] + sum([[b] * int(chaps[b]) for b in allbooks if 0 < int(chaps[b]) < 999], []) + ['special']
 b64codes = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
 b64lkup = {b:i for i, b in enumerate(b64codes)}
+
+class RefSeparators(dict):
+    _defaults = {
+        "books": "; ",      # separator between references in different books
+        "chaps": ";",       # separator between references in different chapters
+        "verses": ",",      # separator between references in the same chapter
+        "cv": ":",          # separator between chapter and verse
+        "bkc": " ",         # separator between book and chapter
+        "onechap": False    # output chapter in single chapter books
+    }
+    def __init__(self, **kw):
+        self.update(kw)
+        for k, v in self._defaults.items():
+            if k not in self:
+                self[k] = v
 
 class Reference:
     def __init__(self, book, chap, verse, subverse=None):
@@ -18,26 +35,27 @@ class Reference:
         self.verse = verse
         self.subverse = subverse
 
-    def __str__(self, context=None, level=0, lastref=None, addsep=("; ", ";", ",", ":")):
+    def __str__(self, context=None, level=0, lastref=None, addsep=RefSeparators()):
         sep = ""
         hasbook = False
         if lastref is None or lastref.book != self.book:
             res = ["{}".format(self.book if context is None else context.getLocalBook(self.book, level))]
             if lastref is not None and lastref.book is not None:
-                sep = addsep[0]
+                sep = addsep['books']
             hasbook = len(res[0]) != 0
         else:
             res = []
-        if self.chap > 0 and self.book not in oneChbooks and (lastref is None or lastref.book != self.book or lastref.chap != self.chap):
+        if self.chap > 0 and (addsep['onechap'] or self.book not in oneChbooks) \
+                    and (lastref is None or lastref.book != self.book or lastref.chap != self.chap):
             if not len(res):
-                sep = addsep[1]
-            res.append("{}{}".format(" " if hasbook else "", self.chap))
+                sep = addsep['chaps']
+            res.append("{}{}".format(addsep['bkc'] if hasbook else "", self.chap))
             if self.verse > 0:
-                res.append("{}{}{}".format(addsep[3], *([self.verse, self.subverse or ""] if self.verse < 200 else ["end", ""])))
+                res.append("{}{}{}".format(addsep['cv'], *([self.verse, self.subverse or ""] if self.verse < 200 else ["end", ""])))
         elif (lastref is None or lastref.verse != self.verse) and 0 < self.verse:
             res.append("{}{}{}".format(" " if hasbook else "", *[self.verse if self.verse < 200 else "end", self.subverse or ""]))
             if lastref is not None:
-                sep = addsep[2]
+                sep = addsep['verses']
         return sep + "".join(res)
 
     def __eq__(self, o):
@@ -92,9 +110,9 @@ class Reference:
             subverse = str(ord(self.subverse.lower()) - 0x61)
         else:
             subverse = ""
-        if self.book == "PSA" and self.chap == 119 and self.verse > 127:
-            c = startchaps["ZZZ"]
-            v = self.verse - 127
+        if self.book == "PSA" and self.chap == 119 and self.verse > 126:
+            c = startbooks["special"] + 1
+            v = self.verse - 126
         else:
             c = startbooks[self.book] + self.chap
             v = min(self.verse, 127)
@@ -112,19 +130,21 @@ class Reference:
         verse = v[2] + ((v[1] & 1) << 6)
         c = (v[1] >> 1) + (v[0] << 5)
         def chcmp(a, i, cv):
-            if a[i][1] > cv:
+            if a[i][1] >= cv:
                 return 1
-            elif i < len(a) and a[i+1][1] < cv:
+            elif i < len(a)-1 and a[i+1][1] < cv:
                 return -1
             return 0
-        i = binsearch(startchaps, c, chcmp)
-        bk, start = startchaps[i]
+        #i = binsearch(startchaps, c, chcmp)
+        #bk, start = startchaps[i]
+        bk = allchaps[c]
+        start = startbooks[bk]
         chap = c - start
-        if bk == "ZZZ":
-            if chap == 0:
+        if bk == "special":
+            if chap == 1:
                 bk = "PSA"
                 chap = 119
-                verse += 128
+                verse += 126
         elif verse == 127:
             verse = 200
         res = cls(bk, chap, verse, subverse=subverse)
@@ -133,13 +153,15 @@ class Reference:
         return res
 
 class RefRange:
+    ''' Inclusive range of verses with first and last '''
     def __init__(self, first, last):
         self.first = first
         self.last = last
 
-    def __str__(self, context=None, level=0, lastref=None, addsep=("; ", ";", ",", ":")):
+    def __str__(self, context=None, level=0, lastref=None, addsep=RefSeparators()):
+        lastsep = RefSeparators(books="", chaps="", verses="", cv=addsep['cv'])
         res = "{}-{}".format(self.first.__str__(context, level, lastref, addsep=addsep),
-                             self.last.__str__(context, level, self.first, addsep=("", "", "", addsep[3])))
+                             self.last.__str__(context, level, self.first, addsep=lastsep))
         return res
 
     def __eq__(self, other):
@@ -220,15 +242,20 @@ class BookNames(BaseBooks):
 class RefList(list):
     @classmethod
     def fromStr(cls, s, context=BaseBooks, starting=None):
+        rerefs = re.compile(r"[\s;,]+")
+        rebook = re.compile(r"^\d?[^0-9\-:]+")
+        recv = re.compile(r"^(\d+)[:.](\d+|end)([a-z]?)")
+        rec = re.compile(r"(\d+)([a-z]?)")
         self = cls()
         curr = Reference(None, 0, 0) if starting is None else starting
         start = None
         mode = ""
-        for b in re.split(r"[\s;,]+", s):
+        for b in rerefs.split(s):
             while len(b):
                 if b == "end":
                     if mode != "r":
                         curr = self._addRefOrRange(start, curr)
+                        start = None
                     if curr.chap > 0 and curr.verse == 0:
                         curr.chap = 200
                         mode = "c"
@@ -237,18 +264,20 @@ class RefList(list):
                         mode = "v"
                     b = ""
                     continue
-                m = re.match(r"^\d?[^0-9\-:]+", b)
+                m = rebook.match(b)
                 if m:
                     if mode != "r" and mode != "":
                         curr = self._addRefOrRange(start, curr)
+                        start = None
                     curr.book = context.getBook(m.group(0))
                     mode = "b"
                     b = b[m.end():]
                     continue
-                m = re.match(r"^(\d+)[:.](\d+|end)([a-z]?)", b)
+                m = recv.match(b)
                 if m:
                     if mode not in "br":
                         curr = self._addRefOrRange(start, curr)
+                        start = None
                     curr.chap = int(m.group(1))
                     if m.group(2):
                         curr.verse = 200 if m.group(2) == "end" else int(m.group(2))
@@ -257,7 +286,7 @@ class RefList(list):
                     b = b[m.end():]
                     mode = "v"
                     continue
-                m = re.match(r"(\d+)([a-z]?)", b)
+                m = rec.match(b)
                 if m:
                     v = int(m.group(1))
                     if m.group(2) or curr.verse > 0 or curr.book in oneChbooks:
@@ -269,12 +298,14 @@ class RefList(list):
                         if mode not in "bcr":
                             c = curr.chap
                             curr = self._addRefOrRange(start, curr)
+                            start = None
                             curr.chap = c
                         curr.subverse = m.group(2) or None
                         curr.verse = v
                     else:
                         if mode not in "bcr":
                             curr = self._addRefOrRange(start, curr)
+                            start = None
                         mode = "c"
                         curr.chap = v
                     mode = "v"
@@ -292,7 +323,7 @@ class RefList(list):
             self._addRefOrRange(start, curr)
         return self
 
-    def __str__(self, context=None, level=0, addsep=("; ", ";", ",", ":")):
+    def __str__(self, context=None, level=0, addsep=RefSeparators()):
         res = []
         lastref = None # Reference(None, 0, 0)
         for r in self:
@@ -303,6 +334,9 @@ class RefList(list):
     def __eq__(self, other):
         return len(self) == len(other) and all(z[0] == z[1] for z in zip(self, other))
 
+    def __add__(self, other):
+        return self.__class__(self[:] + other[:])
+
     def _addRefOrRange(self, start, curr):
         self.append(curr if start is None else RefRange(start, curr))
         return Reference(curr.book, 0, 0)
@@ -311,18 +345,20 @@ class RefList(list):
         res = []
         lastref = Reference(None, 0, 0)
         for r in self:
-            t, u = (r.first, r.last) if isinstance(r, RefRange) else (r, r)
-            if t.book == lastref.book and t.chap == lastref.chap:
-                if t.verse.subverse is None and t.verse == lastref.verse + 1:
-                    if isinstance(res[-1], RefRange):
-                        res[-1].last = u
-                    else:
-                        res.append(RefRange(lastref, u))
-                    lastref = u
-                    continue
-            res.append(r)
+            t, u = (r.first, r.last)
+            if t.book == lastref.book and t.chap == lastref.chap \
+                    and t.subverse is None and t.verse == lastref.verse + 1:
+                if isinstance(res[-1], RefRange):
+                    res[-1].last = u
+                else:
+                    res[-1] = RefRange(lastref, u)
+            else:
+                res.append(r)
             lastref = u
         self[:] = res
+
+    def filterBooks(self, books):
+        self[:] = [r for r in self if r.first.book in books]
 
     def astag(self):
         return "".join(r.astag() for r in self)
@@ -353,23 +389,26 @@ def tests():
                 raise TestException("Reference list failed '{}', {} != {}".format(s, z[0], z[1]))
         for z in zip(tagref, r):
             if z[0] != z[1]:
-                raise TestException("Reference list from tag ailed '{}', {} != {}: tag={}".format(s, z[0], z[1], tag))
+                raise TestException("Reference list from tag failed '{}', {} != {}: tag={}".format(s, z[0], z[1], tag))
         if str(res) != s:
             raise TestException("{} != canonical string of {}".format(s, str(res)))
         if tag != t:
-            raise TestException("{} != {}".format(tag, t))
+            raise TestException("{} != {} in {}".format(tag, t, s))
 
     t("GEN 1:1", "ACB", r("GEN", 1, 1))
-    t("JHN 3", "akA", r("JHN", 3, 0))
-    t("3JN 3", "fwD", r("3JN", 1, 3))
-    t("1CO 6:5a", "0csF", r("1CO", 6, 5, "a"))
-    t("MAT 5:1-7", "YgB-YgH", RefRange(r("MAT", 5, 1), r("MAT", 5, 7)))
-    t("MAT 7:1,2;8:6b-9:4", "YkBYkC1YmG-YoE", r("MAT", 7, 1), r("MAT", 7, 2), RefRange(r("MAT", 8, 6, "b"), r("MAT", 9, 4)))
-    t("LUK 3:47-end", "Z0v-Z1/", RefRange(r("LUK", 3, 47), r("LUK", 3, 200)))
+    t("JHN 3", "fQA", r("JHN", 3, 0))
+    t("3JN 3", "kcD", r("3JN", 1, 3))
+    t("1CO 6:5a", "0hYF", r("1CO", 6, 5, "a"))
+    t("MAT 5:1-7", "dMB-dMH", RefRange(r("MAT", 5, 1), r("MAT", 5, 7)))
+    t("MAT 7:1,2;8:6b-9:4", "dQBdQC1dSG-dUE", r("MAT", 7, 1), r("MAT", 7, 2), RefRange(r("MAT", 8, 6, "b"), r("MAT", 9, 4)))
+    t("LUK 3:47-end", "egv-eh/", RefRange(r("LUK", 3, 47), r("LUK", 3, 200)))
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
-        res = RefList.fromStr(" ".join(sys.argv[1:]))
+        if len(sys.argv) == 2 and 2 < len(sys.argv[1]) < 5:
+            res = Reference.fromtag(sys.argv[1])
+        else:
+            res = RefList.fromStr(" ".join(sys.argv[1:]))
         tag = res.astag()
         print("{}: {}".format(res, tag))
     else:

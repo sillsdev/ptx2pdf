@@ -7,13 +7,14 @@ import regex
 from ptxprint.font import TTFont
 from ptxprint.runner import checkoutput
 from ptxprint import sfm
-from ptxprint.sfm import usfm, style
+from ptxprint.sfm import usfm, style, Text
 from ptxprint.usfmutils import Usfm, Sheets, isScriptureText, Module
 from ptxprint.utils import _, universalopen, localhdrmappings, pluralstr, multstr, coltoonemax, \
-                            chaps, books, bookcodes, oneChbooks, asfloat
+                            chaps, books, bookcodes, allbooks, oneChbooks, asfloat, f2s, cachedData
 from ptxprint.dimension import Dimension
 import ptxprint.scriptsnippets as scriptsnippets
 from ptxprint.interlinear import Interlinear
+from ptxprint.reference import Reference, RefRange, RefList, RefSeparators
 
 # After universalopen to resolve circular import. Kludge
 from ptxprint.snippets import FancyIntro, PDFx1aOutput, Diglot, FancyBorders, ThumbTabs, Colophon, Grid
@@ -22,8 +23,6 @@ def loosint(x):
     try:
         return int(x)
     except (ValueError, TypeError):
-        return 0
-    except ValueError:
         return 0
 
 ModelMap = {
@@ -59,6 +58,7 @@ ModelMap = {
     "project/processscript":    ("c_processScript", None),
     "project/runscriptafter":   ("c_processScriptAfter", None),
     "project/selectscript":     ("btn_selectScript", lambda w,v: w.customScript.as_posix() if w.customScript is not None else ""),
+    "project/selectxrfile":     ("btn_selectXrFile", None),
     "project/usechangesfile":   ("c_usePrintDraftChanges", lambda w,v :"true" if v else "false"),
     "project/ifusemodstex":     ("c_useModsTex", lambda w,v: "" if v else "%"),
     "project/ifusepremodstex":  ("c_usePreModsTex", lambda w,v: "" if v else "%"),
@@ -99,7 +99,7 @@ ModelMap = {
     "paper/colgutteroffset":    ("s_colgutteroffset", lambda w,v: "{:.1f}".format(float(v)) if v else "0.0"),
     "paper/columns":            ("c_doublecolumn", lambda w,v: "2" if v else "1"),
     # "paper/fontfactor":         ("s_fontsize", lambda w,v: round((v / 12), 3) or "1.000"),
-    "paper/fontfactor":         ("s_fontsize", lambda w,v: "{:.3f}".format(float(v) / 12) if v else "1.000"),
+    "paper/fontfactor":         ("s_fontsize", lambda w,v: f2s(float(v) / 12) if v else "1.000"),
 
     "grid/gridlines":           ("c_gridLines", lambda w,v: "\doGridLines" if v else ""),
     "grid/gridgraph":           ("c_gridGraph", lambda w,v: "\doGraphPaper" if v else ""),
@@ -140,7 +140,7 @@ ModelMap = {
     "fancy/versedecoratorscale":   ("s_verseDecoratorScale", lambda w,v: int(float(v or "1.0")*1000)),
     "fancy/endayah":            ("c_decorator_endayah", lambda w,v: "" if v else "%"), # In the UI this is "Move Ayah"
 
-    "paragraph/linespacing":       ("s_linespacing", lambda w,v: "{:.3f}".format(float(v)) if v else "15.000"),
+    "paragraph/linespacing":       ("s_linespacing", lambda w,v: f2s(float(v)) if v else "15"),
     "paragraph/linespacebase":  ("c_AdvCompatLineSpacing", lambda w,v: 14 if v else 12),
     "paragraph/useglyphmetrics":   ("c_AdvCompatGlyphMetrics", lambda w,v: "%" if v else ""),
     # "paragraph/linespacingfactor": ("s_linespacing", lambda w,v: "{:.3f}".format(float(v or "15") / 12)),
@@ -175,8 +175,8 @@ ModelMap = {
     "document/marginalverses":  ("c_marginalverses", lambda w,v: "" if v else "%"),
     "document/columnshift":     ("s_columnShift", lambda w,v: v or "16"),
     "document/ifshowchapternums": ("c_chapterNumber", lambda w,v: "%" if v else ""),
-    "document/showxtrachapnums":  ("c_showNonScriptureChapters", lambda w,v: v),
-    "document/ifomitsinglechnum": ("c_omitChap1ChBooks", lambda w,v: v),
+    "document/showxtrachapnums":  ("c_showNonScriptureChapters", None),
+    "document/ifomitsinglechnum": ("c_omitChap1ChBooks", None),
     "document/ifomitverseone":  ("c_omitverseone", lambda w,v: "true" if v else "false"),
     "document/ifshowversenums":   ("c_verseNumbers", lambda w,v: "%" if v else ""),
     "document/ifmainbodytext":  ("c_mainBodyText", None),
@@ -274,7 +274,12 @@ ModelMap = {
     "notes/xromitcaller":       ("c_xromitcaller", lambda w,v: "%" if v else ""),
 
     "notes/iffootnoterule":     ("c_footnoterule", lambda w,v: "%" if v else ""),
-    "notes/ifblendfnxr":        ("c_blendfnxr", None),
+    "notes/xrlocation":         ("r_xrLocn", lambda w,v: r"" if v == "centre" else "%"),
+    "notes/xrcentrecolwidth":   ("s_centreColWidth", lambda w,v: int(float(v)) if v else "60"),
+    "notes/ifxrexternalist":    ("c_useXrefList", lambda w,v: "%" if v else ""),
+    "notes/xrlistsource":       ("r_xrSource", None),
+    "notes/xrlistsize":         ("s_xrSourceSize", lambda w,v: int(float(v)) if v else "3"),
+    "notes/xrfilterbooks":      ("fcb_filterXrefs", None),
     "notes/addcolon":           ("c_addColon", None),
     "notes/keepbookwithrefs":   ("c_keepBookWithRefs", None),
     "notes/glossaryfootnotes":  ("c_glossaryFootnotes", None),
@@ -282,10 +287,10 @@ ModelMap = {
 
     "notes/abovenotespace":     ("s_abovenotespace", None),
     "notes/belownoterulespace": ("s_belownoterulespace", None),
-    "notes/internotespace":     ("s_internote", lambda w,v: "{:.3f}".format(float(v))),
+    "notes/internotespace":     ("s_internote", lambda w,v: f2s(float(v))),
 
-    "notes/horiznotespacemin":  ("s_notespacingmin", lambda w,v: "{:.3f}".format(float(v)) if v is not None else "7.000"),
-    "notes/horiznotespacemax":  ("s_notespacingmax", lambda w,v: "{:.3f}".format(float(v)) if v is not None else "27.000"),
+    "notes/horiznotespacemin":  ("s_notespacingmin", lambda w,v: f2s(float(v)) if v is not None else "7"),
+    "notes/horiznotespacemax":  ("s_notespacingmax", lambda w,v: f2s(float(v)) if v is not None else "27"),
 
     "document/fontregular":              ("bl_fontR", lambda w,v,s: v.asTeXFont(s.inArchive) if v else ""),
     "document/fontbold":                 ("bl_fontB", lambda w,v,s: v.asTeXFont(s.inArchive) if v else ""),
@@ -366,6 +371,7 @@ class TexModel:
         "notes/xrcallers": "crossrefs",
         "notes/fncallers": "footnotes"
     }
+    _crossRefInfo = None
 
     def __init__(self, printer, path, ptsettings, prjid=None, inArchive=False):
         from ptxprint.view import VersionStr
@@ -435,7 +441,7 @@ class TexModel:
         self.dict['/premodspath'] = rel(fpath, docdir).replace("\\","/")
         if "document/diglotcfgrpath" not in self.dict:
             self.dict["document/diglotcfgrpath"] = ""
-        self.dict['paragraph/linespacingfactor'] = "{:.3f}".format(float(self.dict['paragraph/linespacing']) \
+        self.dict['paragraph/linespacingfactor'] = f2s(float(self.dict['paragraph/linespacing']) \
                     / self.dict["paragraph/linespacebase"] / float(self.dict['paper/fontfactor']))
         self.dict['paragraph/ifhavehyphenate'] = "" if os.path.exists(os.path.join(self.printer.configPath(""), \
                                                        "hyphen-"+self.dict["project/id"]+".tex")) else "%"
@@ -475,7 +481,7 @@ class TexModel:
         else:
             self.dict["fancy/versedecoratorisfile"] = "%"
             self.dict["fancy/versedecoratorisayah"] = "%"
-        self.dict['notes/abovenotetotal'] = "{:.3f}".format(float(self.dict['notes/abovenotespace'])
+        self.dict['notes/abovenotetotal'] = f2s(float(self.dict['notes/abovenotespace'])
                                                           + float(self.dict['notes/belownoterulespace']))
         # print(", ".join("{}={}".format(a, self.dict["fancy/versedecorator"+a]) for a in ("", "type", "isfile", "isayah")))
         
@@ -543,10 +549,10 @@ class TexModel:
             ratio = float(self.dict['document/diglotprifraction'])
             # print(f"{ratio=}")
             if ratio > 0.5:
-                lhfil = "\\hskip 0pt plus {:.3f}fil".format(ratio/(1-ratio)-1)
+                lhfil = "\\hskip 0pt plus {}fil".format(f2s(ratio/(1-ratio)-1))
                 rhfil = ""
             else:
-                rhfil = "\\hskip 0pt plus {:.3f}fil".format((1-ratio)/ratio-1)
+                rhfil = "\\hskip 0pt plus {}fil".format(f2s((1-ratio)/ratio-1))
                 lhfil = ""
         self.dict['footer/oddcenter'] = t
 
@@ -612,11 +618,11 @@ class TexModel:
     def calculateMargins(self):
         (marginmms, topmarginmms, bottommarginmms, headerposmms, footerposmms,
          ruleposmms, headerlabel, footerlabel) = self.printer.getMargins()
-        self.dict["paper/topmarginfactor"] = "{:.3f}".format(topmarginmms / marginmms)
-        self.dict["paper/bottommarginfactor"] = "{:.3f}".format(bottommarginmms / marginmms)
-        self.dict["paper/headerposition"] = "{:.3f}".format(headerposmms / marginmms)
-        self.dict["paper/footerposition"] = "{:.3f}".format(footerposmms / marginmms)
-        self.dict["paper/ruleposition"] = "{:.3f}".format(ruleposmms * 72.27 / 25.4)
+        self.dict["paper/topmarginfactor"] = f2s(topmarginmms / marginmms)
+        self.dict["paper/bottommarginfactor"] = f2s(bottommarginmms / marginmms)
+        self.dict["paper/headerposition"] = f2s(headerposmms / marginmms)
+        self.dict["paper/footerposition"] = f2s(footerposmms / marginmms)
+        self.dict["paper/ruleposition"] = f2s(ruleposmms * 72.27 / 25.4)
         
     def texfix(self, path):
         return path.replace(" ", r"\ ")
@@ -629,8 +635,8 @@ class TexModel:
         resetPageDone = self.dict['document/startpagenum'] >= 0
         docdir, docbase = self.docdir()
         self.dict['jobname'] = jobname
-        self.dict['document/imageCopyrights'] = self.generateImageCopyrightText() \
-                if self.dict['document/includeimg'] else self.generateEmptyImageCopyrights()
+        self.dict['document/imageCopyrights'] = self.generateImageCopyrightText()
+                # if self.dict['document/includeimg'] else self.generateEmptyImageCopyrights()
         self.dict['project/colophontext'] = re.sub(r'://', r':/ / ', self.dict['project/colophontext'])
         self.dict['project/colophontext'] = re.sub(r"(?i)(\\zimagecopyrights)([A-Z]{2,3})", \
                 lambda m:m.group(0).lower(), self.dict['project/colophontext'])
@@ -651,7 +657,7 @@ class TexModel:
                             res.append(r"\pageno=1")
                             resetPageDone = True
                         if self.asBool('document/ifomitsinglechnum') and \
-                           self.asBool('document/showchapternums') and \
+                           self.asBool('document/ifshowchapternums', '%') and \
                            f in oneChbooks:
                             res.append(r"\OmitChapterNumbertrue")
                             res.append(r"\ptxfile{{{}}}".format(fname))
@@ -695,7 +701,7 @@ class TexModel:
                     tgts = mins + ((maxs - mins) / 3)
                     minus = tgts - mins
                     plus = maxs - tgts
-                    res.append(r"\internoteskip={:.3f}pt plus {:.3f}pt minus {:.3f}pt".format(tgts, plus, minus))
+                    res.append(r"\internoteskip={}pt plus {}pt minus {}pt".format(f2s(tgts), f2s(plus), f2s(minus)))
                 elif l.startswith(r"%\optimizepoetry"):
                     bks = self.dict["document/clabelbooks"]
                     if self.dict["document/ifchaplabels"] == "%" and len(bks):
@@ -996,7 +1002,10 @@ class TexModel:
         if v is not None:
             if gloStyle is not None and len(v) == 2: # otherwise skip over OLD Glossary markup definitions
                 self.localChanges.append((None, regex.compile(r"\\\+?w ((?:.(?!\\\+w\*))+?)(\|[^|]+?)?\\\+?w\*", flags=regex.M), gloStyle))
-        
+
+        if self.asBool("notes/includexrefs"): # This seems back-to-front, but it is correct because of the % if v
+            self.localChanges.append((None, regex.compile(r'(?i)\\x .+?\\x\*', flags=regex.M), ''))
+            
         if self.asBool("document/ifinclfigs") and bk in self._peripheralBooks:
             # Remove any illustrations which don't have a |p| 'loc' field IF this setting is on
             if self.asBool("document/iffigexclwebapp"):
@@ -1271,15 +1280,18 @@ class TexModel:
                 if len(artpgcmp):
                     artistWithMost = max(artpgcmp, key=lambda x: len(set(artpgs[x])))
 
-            langs = set(self.imageCopyrightLangs.keys())
-            langs.add("en")
-            for lang in sorted(langs):
+        langs = set(self.imageCopyrightLangs.keys())
+        langs.add("en")
+        for lang in sorted(langs):
+            crdtsstarted = False
+            if os.path.exists(picpagesfile):
                 hasOut = False
                 mkr = self.imageCopyrightLangs.get(lang, "pc")
                 rtl = lang in cinfo['rtl']
                 if rtl == (self.dict['document/ifrtl'] == "false"):
                     mkr += "\\begin" + ("R" if rtl else "L")
                 crdts.append("\\def\\zimagecopyrights{}{{%".format(lang.lower()))
+                crdtsstarted = True
                 plstr = cinfo["plurals"].get(lang, cinfo["plurals"]["en"])
                 cpytemplate = cinfo['templates']['imageCopyright'].get(lang,
                                         cinfo['templates']['imageCopyright']['en'])
@@ -1310,7 +1322,8 @@ class TexModel:
                 if len(artistWithMost):
                     # print(artistWithMost)
                     # print("hasOut:", hasOut)
-                    artinfo = cinfo["copyrights"].get(artistWithMost, {'copyright': {'en': artistWithMost}, 'sensitive': {'en': artistWithMost}})
+                    artinfo = cinfo["copyrights"].get(artistWithMost, 
+                                {'copyright': {'en': artistWithMost}, 'sensitive': {'en': artistWithMost}})
                     # print("artinfo:", artinfo)
                     if artinfo is not None and (artistWithMost in cinfo["copyrights"] or len(artistWithMost) > 5):
                         pgs = artpgs[artistWithMost]
@@ -1327,6 +1340,143 @@ class TexModel:
                         cpystr = template.format(artstr.replace("_", "\u00A0") + exceptPgs)
                         # print(cpystr)
                         crdts.append("\\{} {}".format(mkr, cpystr))
+            if self.dict['notes/ifxrexternalist']:
+                if self.dict['notes/xrlistsource'] == "standard":
+                    msg = "\\{} {}".format(mkr, cinfo['templates']['openbible.info'].get(lang,
+                                cinfo['templates']['openbible.info']['en']).replace("_", "\u00A0"))
+                else:
+                    msg = getattr(self, 'xrefcopyright', None)
+                if msg is not None:
+                    if not crdtsstarted:
+                        crdts.append("\\def\\zimagecopyrights{}{{%".format(lang.lower()))
+                        crdtsstarted = True
+                    crdts.append(msg)
+            if crdtsstarted:
                 crdts.append("}")
+        if len(crdts):
             crdts.append("\\let\\zimagecopyrights=\\zimagecopyrightsen")
         return "\n".join(crdts)
+
+    def _getVerseRanges(self, sfm, bk):
+        class Result(list):
+            def __init__(self):
+                super().__init__(self)
+                self.chap = 0
+
+        def process(a, e):
+            if isinstance(e, (str, Text)):
+                return a
+            if e.name == "c":
+                a.chap = int(e.args[0])
+            elif e.name == "v" and "-" in e.args[0]:
+                m = re.match(r"^(\d+)-(\d+)", e.args[0])
+                if m is not None:
+                    first = int(m.group(1))
+                    last = int(m.group(2))
+                    a.append(RefRange(Reference(bk, a.chap, first), Reference(bk, a.chap, last)))
+            for c in e:
+                process(a, c)
+            return a
+        return reduce(process, sfm, Result())
+
+    def _iterref(self, ra, allrefs):
+        curr = ra.first.copy()
+        while curr <= ra.last:
+            if curr in allrefs:
+                yield curr
+                curr.verse += 1
+            else:
+                curr.chap += 1
+                curr.verse = 1
+
+    def _addranges(self, results, ranges):
+        for ra in ranges:
+            acc = RefList()
+            for r in self._iterref(ra, results):
+                acc.extend(results[r])
+                del results[r]
+            if len(acc):
+                results[ra] = acc
+
+    def createXrefTriggers(self, bk, prjdir, outpath):
+        cfilter = self.dict['notes/xrfilterbooks']
+        if cfilter == "pub":
+            bl = self.printer.get("t_booklist", "").split()
+            filters = set(bl)
+        elif cfilter == "prj":
+            filters = set(self.printer.getAllBooks().keys())
+        elif cfilter == "all":
+            filters = None
+        elif cfilter == "ot":
+            filters = allbooks[:39]
+        elif cfilter == "nt":
+            filters = allbooks[40:67]
+        if filters is not None and len(filters) == 0:
+            filters = None
+        if self.dict['notes/xrlistsource'] == "custom":
+            self.xrefdat = {}
+            with open(self.dict['project/selectxrfile']) as inf:
+                for l in inf.readlines():
+                    if '=' in l:
+                        (k, v) = l.split("=", maxsplit=1)
+                        if k.strip() == "attribution":
+                            self.xrefcopyright = v.strip()
+                    v = RefList()
+                    for d in re.sub(r"[{}]", "", l).split():
+                        v.extend(RefList.fromStr(d.replace(".", " ")))
+                    k = v.pop(0)
+                    self.xrefdat[k] = [v]
+        else:       # standard
+            if self._crossRefInfo == None:
+                def procxref(inf):
+                    results = {}
+                    for l in inf.readlines():
+                        d = l.split("|")
+                        v = [RefList.fromStr(s) for s in d]
+                        results[v[0][0]] = v[1:]
+                    return results
+                self.__class__._crossRefInfo = cachedData(os.path.join(os.path.dirname(__file__), "cross_references.txt"), procxref)
+            self.xrefdat = self.__class__._crossRefInfo
+        results = {}
+        for k, v in self.xrefdat.items():
+            if k.first.book != bk:
+                continue
+            outl = v[0]
+            if len(v) > 1 and self.dict['notes/xrlistsize'] > 1:
+                outl = sum(v[0:self.dict['notes/xrlistsize']], RefList())
+            results[k] = outl
+        fname = self.printer.getBookFilename(bk)
+        if fname is None:
+            return
+        infpath = os.path.join(prjdir, fname)
+        with open(infpath) as inf:
+            try:
+                sfm = Usfm(inf, self.sheets)
+            except:
+                sfm = None
+            if sfm is not None:
+                ranges = self._getVerseRanges(sfm.doc, bk)
+                self._addranges(results, ranges)
+        class NoBook:
+            @classmethod
+            def getLocalBook(cls, s, level=0):
+                return ""
+        addsep = RefSeparators(books="; ", chaps=";\u200B", verses=",\u200B", bkcv="\u2000")
+        dotsep = RefSeparators(cv=".", onechap=True)
+        template = "\n\\AddTrigger {book}{dotref}\n\\x - \\xo {colnobook} \\xt {refs}\\x*\n\\EndTrigger\n"
+        with open(outpath + ".triggers", "w", encoding="utf-8") as outf:
+            for k, v in sorted(results.items()):
+                if filters is not None:
+                    v.filterBooks(filters)
+                v.sort()
+                v.simplify()
+                if not len(v):
+                    continue
+                info = {
+                    "book":         k.first.book,
+                    "dotref":       k.__str__(context=NoBook, addsep=dotsep),
+                    "colnobook":    k.__str__(context=NoBook),
+                    "refs":         v.__str__(self.ptsettings, addsep=addsep)
+                }
+                outf.write(template.format(**info))
+

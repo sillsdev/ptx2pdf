@@ -122,11 +122,21 @@ _sensitivities = {
                                 "l_verseDecoratorShift", "l_verseDecoratorScale",
                                 "s_verseDecoratorShift", "s_verseDecoratorScale"],
         "r_decorator_ayah":    ["lb_style_v"]},
+    "r_xrLocn": {
+        "r_xrLocn_below" :     ["l_internote", "s_internote", "l_xrColWid", "s_centreColWidth", "c_columnNotes"],
+        "r_xrLocn_blend" :     [],
+        "r_xrLocn_centre" :    ["l_internote", "s_internote", "l_xrColWid", "s_centreColWidth"]},
+        
+    "r_xrSource": {
+        "r_xrSource_standard": ["s_xrSourceSize", "l_xrSourceSize", "l_xrSourceLess", "l_xrSourceMore"],
+        "r_xrSource_custom" :  ["btn_selectXrFile"]},
     "c_mainBodyText" :         ["gr_mainBodyText"],
-    "c_doublecolumn" :         ["gr_doubleColumn", "c_singleColLayout", "t_singleColBookList", "c_columnNotes"],
+    "c_doublecolumn" :         ["gr_doubleColumn", "c_singleColLayout", "t_singleColBookList", "c_columnNotes", "r_xrLocn_centre"],
     "c_useFallbackFont" :      ["btn_findMissingChars", "t_missingChars", "l_fallbackFont", "bl_fontExtraR"],
     "c_includeFootnotes" :     ["bx_fnOptions"],
     "c_includeXrefs" :         ["bx_xrOptions"],
+    "c_useXrefList" :          ["gr_useXrefList"],
+    
     "c_includeillustrations" : ["gr_IllustrationOptions", "tb_details", "lb_details", "tb_checklist", "lb_details"],
     "c_diglot" :               ["gr_diglot", "fcb_diglotPicListSources", "r_hdrLeft_Pri", "r_hdrCenter_Pri", "r_hdrRight_Pri",
                                 "r_ftrCenter_Pri", "r_hdrLeft_Sec", "r_hdrCenter_Sec", "r_hdrRight_Sec", "r_ftrCenter_Sec"],
@@ -177,9 +187,12 @@ _sensitivities = {
 # These function OPPOSITE to the ones above (they turn OFF/insensitive when the c_box is active)
 _nonsensitivities = {
     "c_omitrhchapnum" :        ["c_hdrverses"],
-    "c_blendfnxr" :            ["l_internote", "s_internote"],
     "c_useprintdraftfolder" :  ["btn_selectOutputFolder"],
     "c_styFaceSuperscript" :   ["l_styRaise", "s_styRaise"],
+    "r_xrLocn": {
+        "r_xrLocn_below" :     [],
+        "r_xrLocn_blend" :     ["l_internote", "s_internote"],
+        "r_xrLocn_centre" :    []},
 }
 _object_classes = {
     "printbutton": ("b_print", "btn_refreshFonts", "btn_adjust_diglot"),
@@ -910,18 +923,19 @@ class GtkViewModel(ViewModel):
         self.updateBookList()
         super(GtkViewModel, self).loadConfig(config)
         for k, v in _sensitivities.items():
+            if k.startswith("r_"):
+                continue
             state = self.get(k)
             for w in v:
                 self.builder.get_object(w).set_sensitive(state)
         for k, v in _nonsensitivities.items():
+            if k.startswith("r_"):
+                continue
             state = not self.get(k)
             for w in v:
                 self.builder.get_object(w).set_sensitive(state)
         self.colorTabs()
         self.updateMarginGraphics()
-        # self.onFnBlendClicked(self.builder.get_object('c_blendfnxr'))
-        self.set("c_blendfnxr", not self.get("c_blendfnxr"))
-        self.set("c_blendfnxr", not self.get("c_blendfnxr"))
 
     def colorTabs(self):
         col = "#688ACC"
@@ -931,6 +945,9 @@ class GtkViewModel(ViewModel):
 
         dg = " color='"+col+"'" if self.get("c_diglot") else ""
         self.builder.get_object("lb_Diglot").set_markup("<span{}>".format(dg)+_("Diglot")+"</span>")
+
+        xl = " color='"+col+"'" if self.get("c_useXrefList") else ""
+        self.builder.get_object("lb_NotesRefs").set_markup(_("Notes+")+"<span{}>".format(xl)+_("Refs")+"</span>")
 
         tb = self.get("c_thumbtabs")
         bd = self.get("c_borders")
@@ -970,7 +987,7 @@ class GtkViewModel(ViewModel):
                         if wid is not None:
                             wid.set_sensitive(l(s))
                 if not anyset:
-                    v = d[d[k].keys()[0]]
+                    v = list(d[k].values())[0]
                     for w in v:
                         wid = self.builder.get_object(w)
                         if wid is not None:
@@ -988,6 +1005,17 @@ class GtkViewModel(ViewModel):
         self.sensiVisible(Gtk.Buildable.get_name(btn))
         self.colorTabs()
 
+    def onXrefLocnClicked(self, btn):
+        if self.get("r_xrLocn") == "blend":
+            self.set("c_columnNotes", False)
+        elif self.get("r_xrLocn") == "centre":
+            self.set("c_columnNotes", True)
+        self.onSimpleClicked(btn)
+        try:
+            self.styleEditor.setval("x", "NoteBlendInto", "f" if self.get("r_xrLocn") == "blend" else None)
+        except KeyError:
+            return
+    
     def onVertRuleClicked(self, btn):
         self.onSimpleClicked(btn)
         self.updateMarginGraphics()
@@ -1005,6 +1033,8 @@ class GtkViewModel(ViewModel):
         else:
             val = float(val) * 2
         self.set("s_indentUnit", val)
+        if not btn.get_active() and self.get("r_xrLocn") == "centre":
+            self.set("r_xrLocn", "below")
 
     def onSimpleFocusClicked(self, btn):
         self.sensiVisible(Gtk.Buildable.get_name(btn), focus=True)
@@ -1204,7 +1234,10 @@ class GtkViewModel(ViewModel):
             bk = bks[0]
             self.builder.get_object("ecb_examineBook").set_active_id(bk)
         for o in ("l_examineBook", "ecb_examineBook"):
-            self.builder.get_object(o).set_sensitive(pgid in allpgids[1:3])
+            if self.get("r_book") == "module":
+                self.builder.get_object(o).set_sensitive(False)
+            else:
+                self.builder.get_object(o).set_sensitive(pgid in allpgids[1:3])
 
         fndict = {"scroll_AdjList" : ("AdjLists", ".adj"), "scroll_FinalSFM" : ("", ""),
                   "scroll_TeXfile" : ("", ".tex"), "scroll_XeTeXlog" : ("", ".log"), "scroll_Settings": ("", ""), "tb_Links": ("", "")}
@@ -1225,7 +1258,12 @@ class GtkViewModel(ViewModel):
                 if self.get("c_diglot"):
                     fpath = fpath[:doti] + "-" + (self.configName() or "Default") + "-diglot" + fpath[doti:] + fndict[pgid][1]
                 else:
-                    fpath = fpath[:doti] + "-" + (self.configName() or "Default") + fpath[doti:] + fndict[pgid][1]
+                    if self.get("r_book") == "module":
+                        modname = os.path.basename(self.moduleFile)
+                        doti = modname.rfind(".")
+                        fpath = os.path.join(self.working_dir, modname[:doti] + "-flat" + modname[doti:])
+                    else:
+                        fpath = fpath[:doti] + "-" + (self.configName() or "Default") + fpath[doti:] + fndict[pgid][1]
             if pgnum == 1: # AdjList
                 if self.get("t_invisiblePassword") == "":
                     genBtn.set_sensitive(True)
@@ -1441,13 +1479,6 @@ class GtkViewModel(ViewModel):
         grps = "RUT 1SA; EZR NEH EST; ECC SNG; HOS JOL AMO OBA JON MIC; NAM HAB ZEP HAG ZEC MAL; " + \
                "GAL EPH PHP COL; 1TH 2TH 1TI 2TI TIT PHM; JAS 1PE 2PE 1JN 2JN 3JN JUD"
         self.set("t_thumbgroups", grps)
-
-    def onFnBlendClicked(self, btn):
-        self.onSimpleClicked(btn)
-        try:
-            self.styleEditor.setval("x", "NoteBlendInto", "f" if btn.get_active() else None)
-        except KeyError:
-            return
 
     def onverseNumbersClicked(self, btn):
         self.onSimpleClicked(btn)
@@ -2155,6 +2186,21 @@ class GtkViewModel(ViewModel):
             self.builder.get_object("c_processScript").set_active(False)
             for c in ("c_processScriptBefore", "c_processScriptAfter", "btn_editScript"):
                 self.builder.get_object(c).set_sensitive(False)
+
+    def onSelectXrFileClicked(self, btn_selectXrFile):
+        prjdir = os.path.join(self.settings_dir, self.prjid)
+        customXRfile = self.fileChooser("Select a Custom Cross-Reference file", 
+                filters = {"Paratext XRF Files": {"patterns": "*.xrf", "mime": "text/plain", "default": True},
+                           "All Files": {"pattern": "*"}},
+                multiple = False, basedir=os.path.join(prjdir, "..", "_Cross References"))
+        if customXRfile is not None:
+            self.customXRfile = customXRfile[0]
+            self.builder.get_object("r_xrSource_custom").set_active(True)
+            btn_selectXrFile.set_tooltip_text(str(customXRfile[0]))
+        else:
+            self.customXRfile = None
+            btn_selectXrFile.set_tooltip_text("")
+            self.builder.get_object("r_xrSource_custom").set_active(False)
 
     def onUsePrintDraftFolderClicked(self, c_useprintdraftfolder):
         self.sensiVisible("c_useprintdraftfolder")
@@ -2966,5 +3012,8 @@ class GtkViewModel(ViewModel):
             for a in ("r_hdrLeft", "r_hdrRight"):
                 v = self.get(a)
                 v = "Sec" if v == "Pri" else ("Pri" if v == "Sec" else v)
-                self.set(a, v)    
+                self.set(a, v)
 
+    def onXrefListClicked(self, btn):
+        if self.get("c_useXrefList"):
+            self.set("c_includeXrefs", False)

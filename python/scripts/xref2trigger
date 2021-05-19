@@ -7,13 +7,15 @@ try:
 except ImportError:
     sys.path.append(os.path.join(os.path.dirname(__file__), "..", "lib"))
     import ptxprint
-from ptxprint.utils import get_ptsettings, allbooks
-from ptxprint.reference import BookNames, RefList, RefRange, Reference
+from ptxprint.utils import get_ptsettings, allbooks, f2s
+from ptxprint.reference import BookNames, RefList, RefRange, Reference, RefSeparators
 from ptxprint.ptsettings import ParatextSettings
 from ptxprint.view import ViewModel
 from ptxprint.usfmutils import Sheets, Usfm
 import ptxprint.sfm
 from functools import reduce
+from timeit import timeit
+import pickle, contextlib, bz2, gzip
 
 _bkcodes = ("Gen", "Exod", "Lev", "Num", "Deut", "Josh", "Judg", "Ruth", "1Sam",
         "2Sam", "1Kgs", "2Kgs", "1Chr", "2Chr", "Ezra", "Neh", "Esth", "Job",
@@ -88,49 +90,116 @@ parser.add_argument('-i',"--infile",required=True,help="Input TSV (ref, target, 
 parser.add_argument('-b','--book',action="append",default=[],help="Book to generate for")
 parser.add_argument('-v','--votes',type=int,default=0,help="Must have this many votes to be included")
 parser.add_argument('-z','--zwsp',action='store_true',help='Add ZWSP after ; and ,')
+parser.add_argument('-m','--mode', help='Do other things!')
 args = parser.parse_args()
 
-if args.paratext is None:
-    args.paratext = os.getenv("PTXPRINT_PROJECTSDIR", None)
+if args.mode is None:
     if args.paratext is None:
-        args.paratext = get_ptsettings()
+        args.paratext = os.getenv("PTXPRINT_PROJECTSDIR", None)
+        if args.paratext is None:
+            args.paratext = get_ptsettings()
 
-ptsettings = ParatextSettings(args.paratext, args.pid)
-results = {}
-with open(args.infile, encoding="utf-8") as inf:
-    for l in inf.readlines():
-        if "#" in l:
-            continue
-        b = l.split()
-        votes = int(b[2]) if len(b) > 2 else 0
-        if votes > args.votes:
-            results.setdefault(parse(b[0]), RefList()).append(parse(b[1]))
+    results = {}
+    with open(args.infile, encoding="utf-8") as inf:
+        for l in inf.readlines():
+            if "#" in l:
+                continue
+            b = l.split()
+            votes = int(b[2]) if len(b) > 2 else 0
+            if votes > args.votes:
+                results.setdefault(parse(b[0]), RefList()).append(parse(b[1]))
 
-addsep = ("; ", ";\u200B", ",\u200B", ":") if args.zwsp else ("; ", ";", ",", ":")
+    ptsettings = ParatextSettings(args.paratext, args.pid)
+    addsep = RefSeparators(books="; ", chaps=";\u200B", verses=",\u200B") if args.zwsp else RefSeparators()
+    template = "\n\\AddTrigger {book}{dotref}\n\\x - \\xo {colnobook} \\xt {refs}\\x*\n\\EndTrigger\n"
 
-template = "\n\\AddTrigger {book}{dotref}\n\\x - \\xo {colnobook} \\xt {refs}\\x*\n\\EndTrigger\n"
-fpath = os.path.join(args.paratext, args.pid, "shared", "ptxprint", args.config, "triggers")
-os.makedirs(fpath, exist_ok=True)
-view = ViewModel(args.paratext, None, args.config, None, args)
-sheets = Sheets(view.getStyleSheets())
-for b in args.book:
-    fname = ptsettings.getBookFilename(b)
-    with open(os.path.join(args.paratext, args.pid, fname), encoding="utf-8") as insfm:
-        sfm = Usfm(insfm, sheets)
-        ranges = getVerseRanges(sfm.doc, b)
-        addranges(results, ranges)
+    fpath = os.path.join(args.paratext, args.pid, "shared", "ptxprint", args.config, "triggers")
+    os.makedirs(fpath, exist_ok=True)
+    view = ViewModel(args.paratext, None, args.config, None, args)
+    sheets = Sheets(view.getStyleSheets())
+    for b in args.book:
+        fname = ptsettings.getBookFilename(b)
+        with open(os.path.join(args.paratext, args.pid, fname), encoding="utf-8") as insfm:
+            sfm = Usfm(insfm, sheets)
+            ranges = getVerseRanges(sfm.doc, b)
+            addranges(results, ranges)
 
-    i = fname.rindex(".")
-    if i >= 0:
-        fname = fname[:i]+"-"+args.config+fname[i:]
-    with open(os.path.join(fpath, fname + ".triggers"), "w", encoding="utf-8") as outf:
-        for k, v in sorted(((k,v) for k, v in results.items() if k.first.book == b)):
-            v.sort()
-            info = {
-                "book":         k.first.book,
-                "dotref":       k.__str__(context=NoBook, addsep=("; ", ";", ",", ".")),
-                "colnobook":    k.__str__(context=NoBook),
-                "refs":         v.__str__(ptsettings, addsep=addsep)
-            }
-            outf.write(template.format(**info))
+        i = fname.rindex(".")
+        if i >= 0:
+            fname = fname[:i]+"-"+args.config+fname[i:]
+        with open(os.path.join(fpath, fname + ".triggers"), "w", encoding="utf-8") as outf:
+            for k, v in sorted(((k,v) for k, v in results.items() if k.first.book == b)):
+                v.sort()
+                info = {
+                    "book":         k.first.book,
+                    "dotref":       k.__str__(context=NoBook, addsep=("; ", ";", ",", ".")),
+                    "colnobook":    k.__str__(context=NoBook),
+                    "refs":         v.__str__(ptsettings, addsep=addsep)
+                }
+                outf.write(template.format(**info))
+elif args.mode in ("bin", "tag"):
+    votebins = [6, 4, 3, 2, 0]
+    def binvote(v):
+        for i, t in enumerate(votebins):
+            if v >= t:
+                return i
+    results = {}
+    with open(args.infile, encoding="utf-8") as inf:
+        for l in inf.readlines():
+            if "#" in l:
+                continue
+            b = l.split()
+            votes = int(b[2]) if len(b) > 2 else 0
+            if votes > args.votes:
+                results.setdefault(parse(b[0]), [RefList() for i in range(5)])[binvote(votes)].append(parse(b[1]))
+    def simplify(v):
+        v.sort()
+        # v.simplify()
+        return v
+    # import pdb; pdb.set_trace()
+    with open(args.pid, "w") as outf:
+        for k, v in sorted(results.items()):
+            lists = [simplify(l) for l in v]
+            if args.mode == "tag":
+                outf.write("|".join([k.astag()] + [l.astag() for l in lists]))
+            else:
+                outf.write("|".join([str(k)] + [str(l) for l in lists]))
+            outf.write("\n")
+elif args.mode == "convert":
+    with open(args.pid) as inf:
+        for l in inf.readlines():
+            d = l.split("|")
+            k = Reference.fromtag(d[0])
+            v = [RefList.fromtag(s) for s in d[1:]]
+            print(str(k) + "|" + "|".join(str(x) for x in v))
+elif args.mode == "timeit":
+    results = {}
+    def dotest(infile, fn):
+        with open(infile) as inf:
+            for l in inf.readlines():
+                d = l.split("|")
+                v = [fn(s) for s in d]
+                results[v[0][0]] = v[1:]
+    def dotestbz2(infile, fn):
+        with contextlib.closing(bz2.BZ2File(infile)) as inf:
+            for l in inf.readlines():
+                d = l.decode("ASCII").split("|")
+                v = [fn(s) for s in d]
+                results[v[0][0]] = v[1:]
+    def fs(infile):
+        return f2s(os.path.getsize(infile) / 1000000.)
 
+    print("refs({} MB):\t\t{}".format(fs(args.infile), timeit("dotest(args.infile, RefList.fromStr)", number=3, globals=globals())))
+    print("tags({} MB):\t\t{}".format(fs(args.pid), timeit("dotest(args.pid, RefList.fromtag)", number=3, globals=globals())))
+    with contextlib.closing(bz2.BZ2File("test.pickle.bz2", "wb")) as outf:
+        pickle.dump(results, outf)
+    with contextlib.closing(gzip.open("test.pickle.gz", "wb")) as outf:
+        pickle.dump(results, outf)
+    with open("test.pickle", "wb") as outf:
+        pickle.dump(results, outf)
+    print("pickle({} MB):\t{}".format(fs("test.pickle"), timeit("with open('test.pickle', 'rb') as inf: results=pickle.load(inf)", number=3, globals=globals())))
+    print("pickle+gz({} MB):\t{}".format(fs("test.pickle.bz2"), timeit("with contextlib.closing(gzip.open('test.pickle.gz', 'rb')) as inf: results=pickle.load(inf)", number=3, globals=globals())))
+    print("pickle+bz2({} MB):\t{}".format(fs("test.pickle.bz2"), timeit("with contextlib.closing(bz2.BZ2File('test.pickle.bz2', 'rb')) as inf: results=pickle.load(inf)", number=3, globals=globals())))
+    print("refs+bz2({} MB):\t{}".format(fs(args.infile+".bz2"), timeit("dotestbz2(args.infile+'.bz2', RefList.fromStr)", number=3, globals=globals())))
+    print("tags+bz2({} MB):\t{}".format(fs(args.pid+".bz2"), timeit("dotestbz2(args.pid+'.bz2', RefList.fromtag)", number=3, globals=globals())))
+    print("Results size: {} MB, len={}".format(f2s(sys.getsizeof(results) / 1000000.), len(results)))
