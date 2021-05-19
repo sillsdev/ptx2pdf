@@ -1462,7 +1462,7 @@ class TexModel:
             def getLocalBook(cls, s, level=0):
                 return ""
         addsep = RefSeparators(books="; ", chaps=";\u200B", verses=",\u200B", bkcv="\u2000")
-        dotsep = RefSeparators(cv=".")
+        dotsep = RefSeparators(cv=".", onechap=True)
         template = "\n\\AddTrigger {book}{dotref}\n\\x - \\xo {colnobook} \\xt {refs}\\x*\n\\EndTrigger\n"
         with open(outpath + ".triggers", "w", encoding="utf-8") as outf:
             for k, v in sorted(results.items()):

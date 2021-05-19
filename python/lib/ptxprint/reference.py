@@ -15,11 +15,12 @@ b64lkup = {b:i for i, b in enumerate(b64codes)}
 
 class RefSeparators(dict):
     _defaults = {
-        "books": "; ",
-        "chaps": ";",
-        "verses": ",",
-        "cv": ":",
-        "bkc": " "
+        "books": "; ",      # separator between references in different books
+        "chaps": ";",       # separator between references in different chapters
+        "verses": ",",      # separator between references in the same chapter
+        "cv": ":",          # separator between chapter and verse
+        "bkc": " ",         # separator between book and chapter
+        "onechap": False    # output chapter in single chapter books
     }
     def __init__(self, **kw):
         self.update(kw)
@@ -44,7 +45,8 @@ class Reference:
             hasbook = len(res[0]) != 0
         else:
             res = []
-        if self.chap > 0 and self.book not in oneChbooks and (lastref is None or lastref.book != self.book or lastref.chap != self.chap):
+        if self.chap > 0 and (addsep['onechap'] or self.book not in oneChbooks) \
+                    and (lastref is None or lastref.book != self.book or lastref.chap != self.chap):
             if not len(res):
                 sep = addsep['chaps']
             res.append("{}{}".format(addsep['bkc'] if hasbook else "", self.chap))
