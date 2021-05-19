@@ -1,8 +1,18 @@
 PTXprint 1.7 Release Notes 
-30 April 2021
+19 May 2021
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 
+Bug fixes and Improvements in 1.7.9
+
+  * Added new feature to include cross-references from external lists in centre column
+  
+  * Fixed #447 Can't adjust size of drop-cap chapter (\c) numbers (added \CalcChapSizefalse)
+  
+  * Show flattened module in Final SFM tab when typesetting a module
+  
+  * Fixed not showing chapter numbers in single chapter books
+  
 WARNING: For those using RTL scripts:
      The TeX macros have been changed for RTL for Right and Left Justification 
      such that they are swapped. This means that you no longer have to swap the 
