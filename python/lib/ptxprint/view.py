@@ -1308,10 +1308,15 @@ class ViewModel:
         zinfo.create_system = 3
         zf.writestr(zinfo, "\n".join(scriptlines))
         batfile = """@echo off
+REM In order to run this script at the Windows CMD prompt:
+REM   1. Change the extension from .txt to .bat
+REM   2. Change current directory to PrintDraft using: cd PrintDraft
+REM   3. Then to run it, use: ..\runtex.bat
+REM e.g. C:\Users\<Username>\Downloads\WSG\PrintDraft>..\runtex.bat
 for %%i in (xetex.exe) do set truetex=%%~$PATH:i
 if "%truetex%" == "" set truetex=C:\\Program Files\\PTXprint\\xetex\\bin\\xetex.exe
-set FONTCONFIG_FILE="%cd%\\..\\fonts.conf"
-set TEXINPUTS="%cd%\\..\\src;.;"
+set FONTCONFIG_FILE=%cd%\\..\\fonts.conf
+set TEXINPUTS=.;%cd%\\..\\src\\;
 set hyph_size=32749
 set stack_size=32768"""
         for t in texfiles:
