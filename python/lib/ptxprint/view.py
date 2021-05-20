@@ -1311,8 +1311,8 @@ class ViewModel:
 REM In order to run this script at the Windows CMD prompt:
 REM   1. Change the extension from .txt to .bat
 REM   2. Change current directory to PrintDraft using: cd PrintDraft
-REM   3. Then to run it, use: ..\runtex.bat
-REM e.g. C:\Users\<Username>\Downloads\WSG\PrintDraft>..\runtex.bat
+REM   3. Then to run it, use: ..\\runtex.bat
+REM e.g. C:\\Users\\<Username>\\Downloads\\WSG\\PrintDraft>..\\runtex.bat
 for %%i in (xetex.exe) do set truetex=%%~$PATH:i
 if "%truetex%" == "" set truetex=C:\\Program Files\\PTXprint\\xetex\\bin\\xetex.exe
 set FONTCONFIG_FILE=%cd%\\..\\fonts.conf

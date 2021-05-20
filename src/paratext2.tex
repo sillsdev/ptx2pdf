@@ -1304,15 +1304,19 @@
   \fi
   \iffitonpage
     \c@lcboxheights
-    \locs@startstop{\colA}%
-    \locs@startstop{\colB}%
     \dimen3=\ifdim\colhtA>\colhtB\colhtA\else\colhtB\fi
     \ifdim\dimen3>\availht\dimen3=\availht\fi
     \ifColNotes\ifdim\ht\xr@fbox>\dimen3\dimen3=\ht\xr@fbox\fi\fi
-    \trace{p}{savepartialpaged: calculate dimen3 as min(\the\availht, max(\the\colhtA, \the\colhtB, \the\ht\xr@fbox))}
-    \ht\colA=\dimen3 \ht\colB=\dimen3
+    % strip off full page height from c@lcboxheights and grab the depth
+    \setbox\colA=\vbox to \dimen3{\unvbox\colA\unskip\setbox0\lastbox\global\dimen8=\dp0\box0}%
+    \setbox\colB=\vbox to \dimen3{\unvbox\colB\unskip\setbox0\lastbox\global\dimen9=\dp0\box0}%
+    \lastd@pth=\ifdim\dimen8>\dimen9\dimen8\else\dimen9\fi
+    \ifColNotes\ifdim\dp\xr@fbox>\lastd@pth \lastd@pth=\dp\xr@fbox\fi\fi
+    % do this after we have the final boxes
+    \locs@startstop{\colA}\locs@startstop{\colB}%
     \dimen4=\ht\partial \dimen5=\dp\partial
     \global\setbox\partial=\vbox{
+      \dimen1=\textwidth\advance\dimen1 by -\ExtraRMargin
       \dimen2=\availht\advance\dimen2\bmg@p
       % bodge the partial box which should really have been properly textually merged
       % the problem is that savepartialpaged can get called twice in succession because
@@ -1320,11 +1324,11 @@
       \ifvoid\partial\else \vbox{\hbox to \dimen1{\hskip\columnshift\vbox{\unvbox\partial}}\vskip -2\dimen5} \fi
       \ifvoid\topins\else \hbox{\hbox to \columnshift{}\box\topins} \vskip\skip\topins \fi % output top spanning pictures
       \dimen5=\textwidth\advance\dimen5 by -\ExtraRMargin\advance\dimen5 by -\columnshift %
-      \dimen2=\dimen3 \advance\dimen2\bmg@p
-      \vbox{\hbox to \dimen5{%\hbox to \columnshift{}
-        \ifRTL \hbox to \ExtraRMargin{}\box\colB\makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen2}\box\colA %
-        \else \box\colA\makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen2}\box\colB\hbox to \ExtraRMargin{}\fi}}}%
-    %\advance\dimen3 by \dimen4 \ht\partial=\dimen3
+      \dimen2=\dimen3% \advance\dimen2\bmg@p
+      \vbox{\hbox to \dimen5{%\hbox to \columnshift{}%
+          \ifRTL \hbox to \ExtraRMargin{}\box\colB\makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen2}\box\colA
+          \else \box\colA\makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen2}\box\colB\hbox to \ExtraRMargin{}\fi}
+        \kern\lastd@pth}}%
 %-c_savepartialpaged_intro
 %+c_savepartialpaged
     \trace{o}{sppd: saved partial, ht:\the\ht\partial\space rem:\the\ht\s@vedpage}%
@@ -1367,10 +1371,11 @@
     \trace{i}{No notes}%
     \ifnoteseen\MSG{Page \the\pageno\space is being printed without any footnotes/xrefs, etc. But at least one was seen earlier. Maybe it's ended up on the previous page or moved to the next one, or maybe it's vanished. Human checking is needed.}\fi
     \vfil
-  %\else
-    %\setbox0=\lastbox
-    %\trace{i}{Inserted notes, ht \the\ht0, dp \the\lastd@pth,\the\dp0}%
-    %\lastd@pth=\dp0 \dp0=0pt \prevdepth=-1000pt \box0 \kern\lastd@pth
+  \else
+    %Removed because depth is descended not true box depth
+    \setbox0=\lastbox
+    \trace{i}{Inserted notes, ht \the\ht0, dp \the\lastd@pth,\the\dp0}%
+    \lastd@pth=\dp0 \dp0=0pt \box0 \kern\lastd@pth
   \fi}}
 %-c_makenotebox
 
@@ -1410,7 +1415,7 @@
       \dimen1=\textwidth\advance\dimen1 by -\ExtraRMargin
       \dimen2=\availht\advance\dimen2\bmg@p
       \ifvoid\partial\else %\msg{2colout partial: \the\ht\partial}\hskip\columnshift
-        \vbox{\hbox to \dimen1{\hskip\columnshift\vbox{\unvbox\partial}}}\fi % output partial page
+        \vbox{\hbox to \dimen1{\hskip\columnshift\vbox{\unvbox\partial}}}\fi % output partial page % \vskip -2\dimen5
       \ifvoid\topins\else \hbox{\hbox to \columnshift{}\box\topins} \vskip\skip\topins \fi % output top spanning pictures
       \iflastpage\setbox\colA=\vbox{\unvbox\colA}\setbox\colB=\vbox{\unvbox\colB}%
         \ifdim\ht\colA>\ht\colB\ht\colB=\ht\colA\else\ht\colA=\ht\colB\fi\fi
