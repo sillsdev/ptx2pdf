@@ -1307,7 +1307,7 @@ class ViewModel:
         zinfo.external_attr = 0o755 << 16
         zinfo.create_system = 3
         zf.writestr(zinfo, "\n".join(scriptlines))
-        batfile = """@echo off
+        batfile = r"""@echo off
 REM In order to run this script at the Windows CMD prompt:
 REM   1. Change the extension from .txt to .bat
 REM   2. Change current directory to PrintDraft using: cd PrintDraft
