@@ -17,8 +17,31 @@ Note that piclists require a space after the book id, but this is deleted in the
 trigger code, and should not be present in `\addtrigger`.
 
 As a more friendly interface, separate trigger files  may be used.  Both job-wide 
-(```[jobname].trigger```) and SFM-file specific (```Whatever.SFM.trigger```) 
-trigger files are checked.
+(```[jobname].triggers```) and SFM-file specific (e.g.  ```01GENMyTranslation.SFM.triggers```) trigger files are checked. 
+
+If a specification 
+```\TrigListPath{Path/to/trigger/files/}```  
+has been given, [ if non-empty, it must end with the appropriate path separator (`/` or `\\`). The default is empty.] then that path will also be tried for SFM-file specific trigger lists.
+
+*Also* checked are files of the type 
+```[trigger list path]01GENMyTranslation.SFM-1.triggers```,
+```[trigger list path]01GENMyTranslation.SFM-2.triggers```, and so on.
+
+If  GEN.usfm-(N).triggers is can be read, GEN.usfm-(N+1).triggers will be tried; if not, processing stops. I.e. the code will not try to read `-3` if there is no `-1` file.
+
+## Additional trigger files
+If the above mechanism is insufficient, then further trigger files may
+be loaded using 
+```
+\opentriglist "[path]filename.triggers"
+``` to load one file, or
+```
+\multitriglists "[path]filename"
+```
+to load multiple files. Note that while ```\opentriglist``` expects a
+fully specified filename, which could have a different extension,
+```\multitriglists``` always appends a hyphen, a number (starting at
+1) and `.triggers`
 
 ##  Trigger file format 
 ``` 

@@ -1060,7 +1060,11 @@
  \openadjlist "\the\AdjListPath#1.adj"
  \openpiclist "\the\PicListPath#1.piclist"
  \opentriglist "#1.triggers"
- \opentriglist "\the\TrigListPath#1.triggers"
+ \edef\tmp{\the\TrigListPath}\ifx\tmp\empty % Avoid opening same file twice 
+ \else
+   \opentriglist "\the\TrigListPath#1.triggers"
+ \fi
+ \multitriglists "\the\TrigListPath#1"
  \openpicpages "\jobname.picpages"
  \lastpagefalse
  \prepusfm

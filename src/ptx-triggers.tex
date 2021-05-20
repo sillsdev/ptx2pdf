@@ -86,6 +86,20 @@
   \else \closein\t@stread \def\n@xt{\prepusfm\relax\input "\the\PtxFilePath#1"\relax\unprepusfm}\fi
   \n@xt
 }
+\def\multitriglists "#1" {%
+  \temptrue\loopcount=1% use loopcount as file counter
+  \m@ltitriglists{#1}%
+}
+\def\m@ltitriglists#1{%
+  \edef\t@mptrigfilename{#1-\the\loopcount.triggers}%
+  \advance\loopcount by 1
+  \openin\t@stread="\t@mptrigfilename"
+  \ifeof\t@stread \def\n@xt{\MSG{Trigger list "\t@mptrigfilename" not found -- not checking for more}}%
+  \else \closein\t@stread \def\n@xt{\prepusfm\relax\input "\t@mptrigfilename"\relax\unprepusfm\m@ltitriglists{#1}}\fi
+  \n@xt
+}
+  
+
 \def\runtrigg@rsother#1{%
     \trace{T}{runtrigg@rsother #1}%
     \runtrigg@rs{\mkp@cref{\id@@@}{#1}}%
@@ -139,16 +153,28 @@
   %\input tmptrigfile\relax
 %}
 
+\newif\ifkeeptrigger
+\def\c@llr@ntr@g{%Trigger contents is in \tmp, trigger name is in \trign@me
+  \catcode"FDEF=2
+  \keeptriggerfalse
+  \bgroup
+    \x@\x@\x@\r@ntr@g\x@\detokenize\x@{\tmp}\E
+  \egroup
+  \ifkeeptrigger\else% Triggers should normally only fire once. Kill it, unless the trigger has set keeptriggertrue
+    \x@\global\x@\let\csname\trign@me\endcsname=\relax 
+  \fi
+}
 
 \def\stdtrigger{%Run any triggers if they exist.
-   \settrign@me{\c@rref}\x@\let\x@\tmp\csname\trign@me\endcsname\ifx\relax\tmp\else
-      \catcode"FDEF=2
-      \bgroup
-      \x@\x@\x@\r@ntr@g\x@\detokenize\x@{\tmp}\E
-      \egroup
-      \fi%
+   \settrign@me{\c@rref}\x@\let\x@\tmp\csname\trign@me\endcsname
+   \ifx\relax\tmp\else
+      \c@llr@ntr@g
+   \fi%
    \ifdiglot
-     \settrign@me{\dc@rref}\x@\let\x@\tmp\csname\trign@me\endcsname\ifx\relax\tmp\else\x@\x@\x@\scantokens\x@{\tmp}\fi%
+     \settrign@me{\dc@rref}\x@\let\x@\tmp\csname\trign@me\endcsname
+     \ifx\relax\tmp\else
+      \c@llr@ntr@g
+     \fi%
    \fi
 }
 
