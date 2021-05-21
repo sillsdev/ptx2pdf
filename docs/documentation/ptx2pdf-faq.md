@@ -382,4 +382,25 @@ used in a diglot publication if the two sides use different fonts.
 ### I'm setting a diglot and the fonts switch around 
 To ensure a particular font, use the ```\headfootL{}``` and ```\headfootR{}``` macros, putting the text inside the curly-brackets. e.g.: ```\headfootL{Draft: \isodate}```. Simlarly to the verse reference macros above, ```\hrsmins```, ```\timestamp```  and the date macros now have ....L and ...R variants as a convenience. 
 
+## Marginal Verses
+
+It is possible to have verse numbers printed in a left of text margin.
+
+Sometimes, where there is a short verse, two verse numbers appear in the same
+line. This causes a crash between the two marginal verse numbers. One way around
+this is to tell the ptx macros to bridge two verses. This can be done using, for
+example:
+
+```
+\bridgeVerses ROM3.17-18.
+```
+The structure of this command is very precise. The book must be the 3 letter
+book id. The chapter must be included even for single chapter books. The
+separator between the chapter and verse must be a period. The number after the
+hyphen must be the next verse after the first verse and there must be a final
+period to complete the specification. Apart from all that, this is a very
+convenient way to bridge verses without having to edit the source text. It may
+also be used not in a marginal verses context.
+
+
 

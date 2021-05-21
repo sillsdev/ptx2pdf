@@ -401,6 +401,8 @@
 \newif\ifhangingverse
 
 \catcode`-=11
+\def\setPrintVerse #1 #2.{\gdef\print@bleVerse{#1-#2}}
+\def\noPrintVerse{\global\c@ncelfirstversetrue}
 \def\spl@tprintableverse{\x@\spl@tverses\print@bleVerse --\relax}
 \catcode`-=12
 \lowercase{
@@ -523,7 +525,10 @@
  }
 %-csty_dropchap
 }
-\catcode`=12
+\def\bridgeVerses #1.#2-#3.{
+  \addtrigger{#1.#2-preverse}{\setPrintVerse #2 #3.}
+  \addtrigger{#1.#3-preverse}{\noPrintVerse}
+}
 
 \newbox\pstr@t
 \newif\ifCalcChapSize \CalcChapSizetrue
