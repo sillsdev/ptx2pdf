@@ -335,7 +335,9 @@
   \ifvoid\th@cl@ss\TRACE{no note}\else%
     \iff@rstnote\ifvoid\verybottomins\vfill\fi\fi % ignore depth of body text; fill space
     \kern\AboveNoteSpace % output above note class space
-    \iff@rstnote\kern-\dp\pstr@t \footnoterule\global\f@rstnotefalse\fi % output rule before first note
+    \iff@rstnote\kern-\dp\pstr@t \footnoterule\global\f@rstnotefalse
+      \vskip\BelowNoteRuleSpace minus \BelowNoteRuleSpace\kern0pt
+    \fi % output rule before first note
     \hbox{\hskip\columnshift \vbox{\unvbox\th@cl@ss}}\fi}% output notes
 
 % insert a note class in which each note is in the same paragraph
@@ -349,6 +351,7 @@
       \vskip\ifdim\dimen5>0pt \AboveNoteSpace minus \dimen5\else\AboveNoteSpace\fi
       %\kern-\dp\pstr@t
       {\footnoterule}\global\f@rstnotefalse % output rule before first note
+      \vskip\BelowNoteRuleSpace minus \BelowNoteRuleSpace\kern0pt
     \else\vskip\InterNoteSpace\fi
     {\maken@tepara{\th@cl@ss}{#1}}%
   \fi}
@@ -366,7 +369,6 @@
 %  \noindent\hbox{\noindent\kern\columnshift\vbox{\hrule width \dimen0}}\par
   \hbox{\ifdiglot\else\kern\columnshift\fi
     \vrule height 0.4pt width \dimen0}\kern-.4pt % the \hrule is .4pt high
-    \vskip\BelowNoteRuleSpace minus \BelowNoteRuleSpace\kern0pt
 \everypar=\toks0}
 
 \def\EndNoteRuleWidth{0.5}
@@ -1275,6 +1277,7 @@
           \dimen5=\AboveNoteSpace\advance\dimen5 by -\BelowNoteRuleSpace\advance\dimen5 by -0.2pt
           \vskip\ifdim\dimen5>0pt \AboveNoteSpace minus \dimen5\else\AboveNoteSpace\fi
           {\footnoterule}\prevdepth=-10000pt\unvbox5
+          \vskip\BelowNoteRuleSpace minus \BelowNoteRuleSpace\kern0pt
           \setbox0\lastbox\dimen1=\ht0\dimen0=\dp0\box0\ifdim\dimen1>0pt\kern-\dimen0\fi\vskip\bmg@p
       \fi\fi}%
       \trace{o}{coln@tebox out=\the\ht\coln@tebox+\the\dp\coln@tebox}%
@@ -1375,7 +1378,7 @@
     %Removed because depth is descended not true box depth
     \setbox0=\lastbox
     \trace{i}{Inserted notes, ht \the\ht0, dp \the\lastd@pth,\the\dp0}%
-    \lastd@pth=\dp0 \dp0=0pt \box0 \kern\lastd@pth
+    \lastd@pth=\dp0 \dp0=0pt \prevdepth=-1000pt \box0 \kern\lastd@pth
   \fi}}
 %-c_makenotebox
 

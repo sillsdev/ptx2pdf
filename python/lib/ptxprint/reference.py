@@ -48,14 +48,14 @@ class Reference:
         if self.chap > 0 and (addsep['onechap'] or self.book not in oneChbooks) \
                     and (lastref is None or lastref.book != self.book or lastref.chap != self.chap):
             if not len(res):
-                sep = addsep['chaps']
+                sep = sep or addsep['chaps']
             res.append("{}{}".format(addsep['bkc'] if hasbook else "", self.chap))
             if self.verse > 0:
                 res.append("{}{}{}".format(addsep['cv'], *([self.verse, self.subverse or ""] if self.verse < 200 else ["end", ""])))
         elif (lastref is None or lastref.verse != self.verse) and 0 < self.verse:
             res.append("{}{}{}".format(" " if hasbook else "", *[self.verse if self.verse < 200 else "end", self.subverse or ""]))
             if lastref is not None:
-                sep = addsep['verses']
+                sep = sep or addsep['verses']
         return sep + "".join(res)
 
     def __eq__(self, o):
