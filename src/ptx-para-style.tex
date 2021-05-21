@@ -583,14 +583,14 @@
 \newread\readp@rlocs
 \def\initp@rlocs{%
   % check if there's a delayed-chapters file from a previous run
-  \openin\readp@rlocs="\jobname.delayed"
+  \openin\readp@rlocs="\j@bname.delayed"
   \ifeof\readp@rlocs \let\n@xt\relax
-  \else \def\n@xt{\input "\jobname.delayed"}\fi
+  \else \def\n@xt{\input "\j@bname.delayed"}\fi
   \closein\readp@rlocs
   % and if so, read it so we'll use those settings
   \n@xt
   % open the parlocs file to record paragraph and no-break-chapter locations
-  \immediate\openout\p@rlocs="\jobname.parlocs"
+  \immediate\openout\p@rlocs="\j@bname.parlocs"
 }
 \addtoinithooks{\initp@rlocs}
 \def\locs@startstop#1{%
@@ -617,8 +617,8 @@
 \def\finishp@rlocs{%
   \immediate\closeout\p@rlocs
   \catcode`\{=1 \catcode`\}=2 \m@kedigitsother \catcode`\@=11
-  \immediate\openout\delayf@le="\jobname.delayed"
-  \input "\jobname.parlocs"
+  \immediate\openout\delayf@le="\j@bname.delayed"
+  \input "\j@bname.parlocs"
   \immediate\closeout\delayf@le
 }
 \newif\ifdelay@pen

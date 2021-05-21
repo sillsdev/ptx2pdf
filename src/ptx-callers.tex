@@ -98,9 +98,9 @@
 \newwrite\n@tepages
 \newread\n@tepagetest
 \def\@nputn@tepages{
-    \openin\n@tepagetest = "\jobname.notepages" % test if notepages file exists from prev run
+    \openin\n@tepagetest = "\j@bname.notepages" % test if notepages file exists from prev run
     \ifeof\n@tepagetest \let\n@xt\relax
-    \else \def\n@xt{\input "\jobname.notepages"}
+    \else \def\n@xt{\input "\j@bname.notepages"}
     \fi \closein\n@tepagetest
     \n@xt
 }
@@ -110,7 +110,7 @@
     \@nputn@tepages
     \pagec@llerstrue
     \addtoendhooks{\finishc@llers}
-    \openout\n@tepages="\jobname.notepages"
+    \openout\n@tepages="\j@bname.notepages"
   \fi
   \expandafter\let\csname page-caller #1\endcsname=1 % record that this note class wants per-page callers
 }
