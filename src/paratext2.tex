@@ -37,6 +37,9 @@
 \catcode`\@=11
 \let\x@=\expandafter
 \newif\iftemp \tempfalse
+\def\stripqu@tes#1"#2"#3\relax{#2} Strip quotes if present
+\edef\t@mp{\jobname}%
+\xdef\j@bname{\x@\x@\x@\stripqu@tes\x@\t@mp\x@"\t@mp"\relax}
 
 \def\MSG{\immediate\write16 } % shorthand to write a message to the terminal
 \def\TRACE#1{}%\let\TRACE=\MSG % default - consume messages
@@ -81,6 +84,7 @@
 \edef\hrsmins{\hrsmins
   \ifnum\count255<10 0\fi \number\count255}%
 \edef\timestamp{\timestamp \hrsmins}
+
 %-c_timestamp
 
 %+c_imports
