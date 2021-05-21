@@ -9631,6 +9631,7 @@ underneath the footnotes). If this option is
 used, the Cross-References can only have
 one type of caller (rather than a sequence)
 which must be specified above.</property>
+                                                    <property name="halign">start</property>
                                                     <property name="active">True</property>
                                                     <property name="draw_indicator">True</property>
                                                     <property name="group">r_xrLocn_below</property>
@@ -9640,13 +9641,8 @@ which must be specified above.</property>
                                                   <packing>
                                                     <property name="left_attach">0</property>
                                                     <property name="top_attach">1</property>
+                                                    <property name="width">3</property>
                                                   </packing>
-                                                </child>
-                                                <child>
-                                                  <placeholder/>
-                                                </child>
-                                                <child>
-                                                  <placeholder/>
                                                 </child>
                                                 <child>
                                                   <placeholder/>

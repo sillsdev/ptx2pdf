@@ -1,12 +1,27 @@
 PTXprint 1.7.9 Release Notes 
-19 May 2021
+22 May 2021
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 
-Bug fixes and Improvements in 1.7.9
+NOTE: The child markers of \f and \x now follow the settings of their parent marker styles.
+      As a result there may be changes in the way footnotes and cross-references appear.
+	  It is recommended that your reset these styles to use the default settings prior
+	  to trying to remedy settings manually.
+	  
+Bug fixes and Improvements in 1.8
 
   * Added new feature to include cross-references from external lists in centre column
   
+  * Fix centring header centre when marginal verses
+  
+  * Provide more context in error messages to help track issues better
+  
+  * Add bridgeVerses macro enabling on-the-fly bridged verses (useful for marginal verses)
+  
+  * Ensure .triggers files are included in .zip archives
+
+Bug fixes and Improvements in 1.7.9
+
   * Show flattened module in Final SFM tab when typesetting a module
   
   * Fixed not showing chapter numbers in single chapter books
