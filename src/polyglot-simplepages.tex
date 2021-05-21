@@ -33,6 +33,8 @@
 
 
 \module@startif{polyglot-simplepages}
+\modules@needed{polyglot-simplecols} % Just in case it becomes separate.
+
 \newcount\p@lyp@geno
 
 \def\p@lyp@ges{0}
@@ -74,6 +76,7 @@
 % Each page-related box (\partial and picture insert boxes) has a separate copy for each page. 
 % on switching between columns / pages, the appropriate page's copy becomes 'active' i.e. \partial points to \partial@poly@0
 \def\polyglot@onetime@setup{%
+  \tracingmacros=1
   \edef\@ut{\x@\e@tcomma\ins@rts\E}%
   \let\d@\gen@p@lyins@rts %populates \@ut with insert save names
   \x@\cstackdown \s@veclasses\E
@@ -84,6 +87,7 @@
     \let\d@=\poly@setup@inserts
     \x@\cstackdown \p@lyins@rts,\E
     }%
+  \tracingmacros=0
   \global\let\polyglot@onetime@setup\relax
 } 
 \def\polyglot@eachtime@setup{%
@@ -120,6 +124,7 @@
     \let\spp@d@=\d@
     \let\d@=\poly@rename@inserts
     \x@\cstackdown \p@lyins@rts,\E
+    \alias@inserts
     \let\d@=\spp@d@
 }
 \def\gen@p@lyins@rts#1\E{\edef\s@veclass{#1}\let\gpiD@=\d@\let\d@=\cs@apply\let\do@it=\s@veclass@name

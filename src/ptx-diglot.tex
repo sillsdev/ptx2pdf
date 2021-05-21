@@ -1892,6 +1892,7 @@
 
 \def\max@val#1{\x@\let\x@\t@st\csname \v@lpfx#1\v@lsfx\endcsname
   \ifdim\dimen1<\t@st
+     \edef\m@x@at@col{#1}%
     \dimen1=\t@st
   \fi
 }
@@ -1899,6 +1900,7 @@
   \advance \dimen0 by \csname b@selineskip#1\endcsname
   \trace{dP}{joint ht for #1 = \the\dimen0}%
   \ifdim\dimen1<\dimen0
+    \edef\m@x@at@col{#1}%
     \dimen1=\dimen0
   \fi
 }
@@ -1907,6 +1909,7 @@
   \ifvoid\t@st \else
     \dimen0=\ht\t@st \advance\dimen0 by \dp\t@st
     \ifdim\dimen1<\dimen0
+      \edef\m@x@at@col{#1}%
       \dimen1=\dimen0
     \fi
   \fi
@@ -1915,6 +1918,7 @@
   \ifvoid\t@st \else
     \dimen0=\ht\t@st
     \ifdim\dimen1<\dimen0
+      \edef\m@x@at@col{#1}%
       \dimen1=\dimen0
     \fi
   \fi
@@ -1923,6 +1927,7 @@
   \ifvoid\t@st \else
     \dimen0=\dp\t@st
     \ifdim\dimen1<\dimen0
+      \edef\m@x@at@col{#1}%
       \dimen1=\dimen0
     \fi
   \fi
@@ -2103,65 +2108,6 @@
 \edef\rev@diglot@list{RL}%
 \edef\rev@layout@list{RL}%
 \edef\digl@tc@ntentlist{}%
-
-\def\xdef@cseq#1#2{\x@\xdef\csname #1\endcsname{#2}}% Helper function
-\def\def@cseq#1#2{\x@\def\csname #1\endcsname{#2}}% Helper function
-\def\empty@cseq#1{\x@\xdef\csname #1\endcsname{}}% Helper function
-\def\newPolyglotCol#1{%
-  \ifcsname #1isDiglotColumn\endcsname
-    \message{#1 is already a diglot column. You can only define it as one once!}%
-  \else
-    \message{Defining #1 as an additional polyglot column.}%
-    \let\old@cts\digl@tc@ntentlist
-    \let\digl@tc@ntentlist=\diglot@list
-    \add@to@digl@tc@ntentlist{#1}%
-    \let\diglot@list=\digl@tc@ntentlist
-    \let\digl@tc@ntentlist=\old@cts
-    %Now make the reversed list
-    \let\col@do=\mkrev@list\def\list@type{diglot}%
-    \xdef\rev@diglot@list{}
-    \x@\each@col\diglot@list\E% 
-    {\edef\sfx{#1}\let\wh@t\n@wSpecificDim \pr@cessSpecificDim}
-    \global\let\rev@layout@list\rev@diglot@list
-    \x@\csname #1isDiglotColumn\endcsname\empty
-    \x@\newb@x\csname #1box\endcsname
-    \x@\newb@x\csname partial#1\endcsname
-    \x@\newb@x\csname excess#1\endcsname
-    \x@\newb@x\csname picb@x#1\endcsname
-    \x@\newt@ks\csname diglot#1ho@ks\endcsname
-    \x@\newc@unt\csname partial#1penalty\endcsname
-    \x@\newc@unt\csname #1boxpenalty\endcsname
-    \newm@rknum{#1}%
-    \x@\newdim@n\csname column#1width\endcsname
-    \x@\newdim@n\csname baselineDelta#1\endcsname
-    \x@\newdim@n\csname availht#1\endcsname
-    \x@\newdim@n\csname #1ht\endcsname
-    \x@\xdef\csname at@ndofthispar#1\endcsname{}%
-    \x@\xdef\csname m@rker#1\endcsname{}%
-    \newsp@cialpen{dgl@tPen#1trialEnd}%
-    \empty@cseq{n@xtbot#1mark}% Last X mark in the next chunk 
-    \empty@cseq{n@xtfirst#1mark}%First X mark in the next chunk 
-    \empty@cseq{old#1mark}%last X mark 
-    \empty@cseq{first#1mark}%First X mark on this pave
-    \empty@cseq{bot#1mark}%bottom X mark on this page
-    \empty@cseq{b@ok#1}% Name of book to put in PDF.
-    \empty@cseq{ch@plabel#1}% Chapter label
-    \empty@cseq{@ch@pter#1}% Chapter Nuber
-    \empty@cseq{@v@rse#1}% Chapter label
-    \xdef@cseq{@cur#1ht}{0pt}% 
-    \xdef@cseq{@cur#1dp}{0pt}% 
-    \header@defs{#1}% All the possible header contents
-    \def@cseq{stylesheet#1}{\gdef\ds@ffix{#1}\stylesh@@t}% column-specific stylesheet
-
-%TODO:
-%FIXMEs needing for polyglot processing:
-% UI!
-% The column-delta totals should be per-column, and be summed as cross-column deltas compared to the average.
-
-  \fi
-}
-
-\let\newDiglotCol=\newPolyglotCol
 
 
 \def\check@and@update{%Checks each column to see if there is stuff to output
@@ -2365,5 +2311,79 @@
 \addtoendhooks{\ifdiglot\ifvoid\partial\else\@writep@ge\fi\fi}
 
 % The polyglot-style input is almost free. -simplecols layout is what we get with old-style diglot2. 
+
+
+%%%%%%%% This might one day be moved to polyglot-simplecols.tex
+% Below here are pieces of code that extend the basic diglot2 (2 column) layout into more columns.
+%
+\def\xdef@cseq#1#2{\x@\xdef\csname #1\endcsname{#2}}% Helper function
+\def\def@cseq#1#2{\x@\def\csname #1\endcsname{#2}}% Helper function
+\def\empty@cseq#1{\x@\xdef\csname #1\endcsname{}}% Helper function
+
+\def\newPolyglotCol#1{%
+  \ifcsname #1isDiglotColumn\endcsname
+    \message{#1 is already a diglot column. You can only define it as one once!}%
+  \else
+    \message{Defining #1 as an additional polyglot column.}%
+    \newcolins@rt{t#1}% column top insert
+    \newcolins@rt{b#1}% column bottom insert
+    \let\old@cts\digl@tc@ntentlist
+    \let\digl@tc@ntentlist=\diglot@list
+    \add@to@digl@tc@ntentlist{#1}%
+    \let\diglot@list=\digl@tc@ntentlist
+    \let\digl@tc@ntentlist=\old@cts
+    %Now make the reversed list
+    \let\col@do=\mkrev@list\def\list@type{diglot}%
+    \xdef\rev@diglot@list{}
+    \x@\each@col\diglot@list\E% 
+    {\edef\sfx{#1}\let\wh@t\n@wSpecificDim \pr@cessSpecificDim}
+    \global\let\rev@layout@list\rev@diglot@list
+    \x@\csname #1isDiglotColumn\endcsname\empty
+    \x@\newb@x\csname #1box\endcsname
+    \x@\newb@x\csname partial#1\endcsname
+    \x@\newb@x\csname excess#1\endcsname
+    \x@\newb@x\csname picb@x#1\endcsname
+    \x@\newt@ks\csname diglot#1ho@ks\endcsname
+    \x@\newc@unt\csname partial#1penalty\endcsname
+    \x@\newc@unt\csname #1boxpenalty\endcsname
+    \newm@rknum{#1}%
+    \x@\newdim@n\csname column#1width\endcsname
+    \x@\newdim@n\csname baselineDelta#1\endcsname
+    \x@\newdim@n\csname availht#1\endcsname
+    \x@\newdim@n\csname #1ht\endcsname
+    \x@\xdef\csname at@ndofthispar#1\endcsname{}%
+    \x@\xdef\csname m@rker#1\endcsname{}%
+    \newsp@cialpen{dgl@tPen#1trialEnd}%
+    \empty@cseq{n@xtbot#1mark}% Last X mark in the next chunk 
+    \empty@cseq{n@xtfirst#1mark}%First X mark in the next chunk 
+    \empty@cseq{old#1mark}%last X mark 
+    \empty@cseq{first#1mark}%First X mark on this pave
+    \empty@cseq{bot#1mark}%bottom X mark on this page
+    \empty@cseq{b@ok#1}% Name of book to put in PDF.
+    \empty@cseq{ch@plabel#1}% Chapter label
+    \empty@cseq{@ch@pter#1}% Chapter Nuber
+    \empty@cseq{@v@rse#1}% Chapter label
+    \xdef@cseq{@cur#1ht}{0pt}% 
+    \xdef@cseq{@cur#1dp}{0pt}% 
+    \header@defs{#1}% All the possible header contents
+    \def@cseq{stylesheet#1}{\gdef\ds@ffix{#1}\stylesh@@t}% column-specific stylesheet
+%TODO:
+%FIXMEs needing for polyglot processing:
+% UI!
+% The column-delta totals should be per-column, and be summed as cross-column deltas compared to the average.
+  \fi
+}
+
+\def\newcolins@rt#1{%
+  \ifcsname colinsert@#1\endcsname\else
+    \def\ins@name{colinsert@#1}%
+    \xdef\columnins@rts{\columnins@rts\ins@name,}%
+    \x@\newins@rt\csname \ins@name\endcsname
+    \xdef\ins@rts{\columnins@rts\pageins@rts}
+    \x@\m@keinsertsaveboxes \ins@name\E
+  \fi
+}
+
 \x@\let\csname polyglot-simplecols@module@loaded\endcsname\empty 
+
 \endinput

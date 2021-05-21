@@ -7,11 +7,11 @@ SCRIPTDIR:=$(shell dirname `find ../..  -name polyglot_merge.pl | grep -v bisect
 	TEXINPUTS=.:../../src time xetex $< < /dev/null
 	#TEXINPUTS=.:../../src xetex $<
 
-Galatians.pdf: Galatians.tex Galatians-setup.tex intro.usfm mergedGal.usfm mergedGalV.usfm ../../src/*.tex *.sty
+Galatians.pdf: Galatians.tex Galatians-setup.tex intro.usfm mergedGal.usfm mergedGal.usfm.piclist mergedGalV.usfm ../../src/*.tex *.sty 
 John.pdf: John.tex John-setup.tex  mergedJhn.usfm ../../src/*.tex *.sty
 
-Galatians2.pdf: Galatians2.tex Galatians-setup.tex intro.usfm mergedGal.usfm mergedGalV.usfm ../../src/*.tex *.sty
-Galatians3.pdf: Galatians3.tex Galatians-setup.tex intro.usfm mergedGal.usfm mergedGalV.usfm ../../src/*.tex *.sty
+Galatians2.pdf: Galatians2.tex Galatians-setup.tex intro.usfm mergedGal.usfm mergedGal.usfm.piclist mergedGalV.usfm ../../src/*.tex *.sty
+Galatians3.pdf: Galatians3.tex Galatians-setup.tex intro.usfm mergedGal.usfm mergedGal.usfm.piclist mergedGalV.usfm ../../src/*.tex *.sty
 history.pdf: history.tex history.usfm $(DIR)/*.tex
 
 history.png: history.pdf Makefile 
@@ -44,6 +44,7 @@ mergedJhn.usfm: Makefile $(SCRIPTDIR)/polyglot_merge.pl 44JHNOGNT.SFM  44JHNSGA.
 
 mergedGal.usfm: Gal_wyc.usfm Gal_web.usfm Gal_grk.usfm Makefile $(SCRIPTDIR)/polyglot_merge.pl 
 	DEBUG=merge.dbg $(SCRIPTDIR)/polyglot_merge.pl -s -p -C -L merge.log -o merged.out Gal_web.usfm Gal_grk.usfm Gal_wyc.usfm 
+	cat merged.out | grep -Ev '\\sts|\\rem' > $@
 	rm merged.out
 
 mergedGalV.usfm: Gal_wyc.usfm Gal_web.usfm Makefile $(SCRIPTDIR)/polyglot_merge.pl 

@@ -39,17 +39,26 @@
 \newinsert\toprightins \count\toprightins=0 \dimen\toprightins=\maxdimen
 \newinsert\bottomleftins \count\bottomleftins=0 \dimen\bottomleftins=\maxdimen
 \newinsert\bottomrightins\count\bottomrightins=0 \dimen\bottomrightins=\maxdimen
+\let\colinsert@tL\topleftins
+\let\colinsert@bL\bottomleftins
+\let\colinsert@tR\toprightins
+\let\colinsert@bR\bottomrightins
 
-\def\ins@rts{bottomins,verybottomins,topins,toprightins,topleftins,bottomrightins,bottomleftins,}
+\def\pageins@rts{bottomins,verybottomins,topins,}
+\def\columnins@rts{colinsert@tL,colinsert@tR,colinsert@bL,colinsert@bR,}
+%toprightins, bottomleftins etc. are now aliases
+\edef\ins@rts{\columnins@rts\pageins@rts}
+
 \def\s@veclasses{col,chunk,} % diglot needs to save two distinct states per box.
-\def\s@veclass@name#1{save#1\s@veclass}
-\def\m@keinsertb@x#1\E{\x@\newb@x\csname \s@veclass@name{#1}\endcsname}
+\def\s@veins@class@name#1#2{save#1#2}
+\def\s@veclass@name#1{\s@veins@class@name{#1}{\s@veclass}}
+\def\m@kes@veb@x#1\E{\x@\newb@x\csname \s@veins@class@name{\ins@base}{#1}\endcsname}
 \def\s@veins#1\E{\x@\setbox\x@3\x@\copy\csname #1\endcsname\x@\global\x@\setbox\csname \s@veclass@name{#1}\endcsname\box3}
 \def\r@strins#1\E{\x@\setbox\x@3\x@\copy\csname \s@veclass@name{#1}\endcsname\x@\global\x@\setbox\csname #1\endcsname\box3}
 \def\sh@winsertdim#1\E{\x@\let\x@\tmp\csname \v@lpfx#1\v@lsfx\endcsname\immediate\write-1{\v@lpfx#1\v@lsfx: \ifx\tmp\relax\else\the\ht\tmp\space x \the\wd\tmp\fi}}
 
-\def\m@keinsertsaveboxes#1\E{\edef\s@veclass{#1}\let\D@=\d@\let\d@=\m@keinsertb@x
-  \x@\cstackdown\ins@rts\E
+\def\m@keinsertsaveboxes#1\E{\edef\ins@base{#1}\let\D@=\d@\let\d@=\m@kes@veb@x
+  \x@\cstackdown\s@veclasses\E
   \let\d@=\D@
 }
 
@@ -69,7 +78,7 @@
 
 
 % Generate the insert save-boxes for each class at start-up
-\addtoinithooks{\let\d@=\m@keinsertsaveboxes\x@\cstackdown\s@veclasses\E}
+\addtoinithooks{\let\d@=\m@keinsertsaveboxes\x@\cstackdown\ins@rts\E}
 
 %%%%%%%%%%%%%% FIGURES %%%%%%%%%%%%%% 
 % called from \fig or from figure list
@@ -223,59 +232,59 @@
 
 %+cfig_parsepicuse
 \def\p@rsePicXtra#1#2\end{% Parse optional new picture options, and remember them
-  \xdef\t@mpb{#1}\xdef\t@mpc{#2}%
+  \xdef\l@cspec@b{#1}\xdef\l@cspec@c{#2}%
 }
 \def\gr@phic{graphic}
 \def\p@rseLoc#1#2\end{% Parse the new picture options, and remember them
-  \edef\t@mp{#1}\edef\t@mpb{#2}%
-  \ifx\t@mpb\empty\let\t@mpc=\t@mpb\else\x@\p@rsePicXtra\t@mpb\end\fi
-  \trace{g}{p@rseLoc: #1 \t@mpb \t@mpc}%
+  \edef\l@cspec@a{#1}\edef\l@cspec@b{#2}%
+  \ifx\l@cspec@b\empty\let\l@cspec@c=\l@cspec@b\else\x@\p@rsePicXtra\l@cspec@b\end\fi
+  \trace{g}{p@rseLoc: #1 \l@cspec@b \l@cspec@c}%
   % inner/outer support for everything
   \tempfalse
   %Switch relative (inner/outer) to absolute (left/right) depending on page number for this image.
-  \ifx\t@mpb\@lignOuter\temptrue\ifodd\whichp@ge\let\t@mpb=\@lignRight\else\let\t@mpb=\@lignLeft\fi\fi
-  \ifx\t@mpb\@lignInner\temptrue\ifodd\whichp@ge\let\t@mpb=\@lignLeft\else\let\t@mpb=\@lignRight\fi\fi
+  \ifx\l@cspec@b\@lignOuter\temptrue\ifodd\whichp@ge\let\l@cspec@b=\@lignRight\else\let\l@cspec@b=\@lignLeft\fi\fi
+  \ifx\l@cspec@b\@lignInner\temptrue\ifodd\whichp@ge\let\l@cspec@b=\@lignLeft\else\let\l@cspec@b=\@lignRight\fi\fi
 }
 
 \def\p@rsePicUse#1\end{% Parse the new picture options, and remember them
-  \x@\p@rseLoc#1\end % sets \t@mp, \t@mpb, \t@mpc to chars 1, 2, 3+
+  \x@\p@rseLoc#1\end % sets \l@cspec@a, \l@cspec@b, \l@cspec@c to chars 1, 2, 3+
   \iftemp
     % inner/outer support for inserts
-    \trace{g}{Page \the\whichp@ge, defined #1 to \t@mp, \t@mpb, \t@mpc}%
+    \trace{g}{Page \the\whichp@ge, defined #1 to \l@cspec@a, \l@cspec@b, \l@cspec@c}%
     \tempfalse
-    \ifx\t@mp\loc@T\temptrue\fi
-    \ifx\t@mp\loc@B\temptrue\fi
+    \ifx\l@cspec@a\loc@T\temptrue\fi
+    \ifx\l@cspec@a\loc@B\temptrue\fi
     \iftemp
       %redefine loc@ption
-      \xdef\loc@ption{\t@mp\t@mpb}%
+      \xdef\loc@ption{\l@cspec@a\l@cspec@b}%
   \fi\fi
   % new options
-  \ifx\t@mp\loc@Inl
+  \ifx\l@cspec@a\loc@Inl
     \trace{g}{Experimental inline \w@tsit}%
-    \global\let\picl@c\loc@Inl\xdef\pic@lign{\t@mpb}\global\picUsesInsfalse\p@cinswid=\hsize
-    \ifx\t@mpb\@lignLeft\picNarrowtrue\fi
-    \ifx\t@mpb\@lignRight\picNarrowtrue\fi
+    \global\let\picl@c\loc@Inl\xdef\pic@lign{\l@cspec@b}\global\picUsesInsfalse\p@cinswid=\hsize
+    \ifx\l@cspec@b\@lignLeft\picNarrowtrue\fi
+    \ifx\l@cspec@b\@lignRight\picNarrowtrue\fi
   \fi
-  \ifx\t@mp\loc@Cut
+  \ifx\l@cspec@a\loc@Cut
     \global\let\picl@c\loc@Cut\global\picUsesInsfalse\global\picNarrowtrue\p@cinswid=\hsize
-    \xdef\l@cspec{\t@mpb}%
-    \ifx\t@mpc\empty\gdef\c@tskip{0}\else\xdef\c@tskip{\t@mpc}\fi%
+    \xdef\l@cspec{\l@cspec@b}%
+    \ifx\l@cspec@c\empty\gdef\c@tskip{0}\else\xdef\c@tskip{\l@cspec@c}\fi%
     \trace{g}{Experimental \w@tsit in cutout, after \c@tskip lines}%
   \fi
-  \ifx\t@mp\loc@Par
+  \ifx\l@cspec@a\loc@Par
     \global\let\picl@c=\loc@Par\p@cinswid=\hsize\trace{g}{Experimental after-paragraph \w@tsit}%
-    \xdef\pic@lign{\t@mpb}\global\picUsesInsfalse
-    \ifx\t@mpb\@lignLeft\picNarrowtrue\fi
-    \ifx\t@mpb\@lignRight\picNarrowtrue\fi
-    \ifx\t@mpc\empty\gdef\c@tskip{0}\else\xdef\c@tskip{\t@mpc}\fi%Borrow cutskip for parskip
+    \xdef\pic@lign{\l@cspec@b}\global\picUsesInsfalse
+    \ifx\l@cspec@b\@lignLeft\picNarrowtrue\fi
+    \ifx\l@cspec@b\@lignRight\picNarrowtrue\fi
+    \ifx\l@cspec@c\empty\gdef\c@tskip{0}\else\xdef\c@tskip{\l@cspec@c}\fi%Borrow cutskip for parskip
   \fi
   % full-page options
   \tempfalse
-  \ifx\t@mp\loc@Page\global\let\picl@c=\loc@Pag\global\picUsesInsfalse\p@cinswid=\PaperWidth\temptrue\fi
-  \ifx\t@mp\loc@Full\global\let\picl@c=\loc@Full\global\picUsesInsfalse\temptrue\fi
+  \ifx\l@cspec@a\loc@Page\global\let\picl@c=\loc@Pag\global\picUsesInsfalse\p@cinswid=\PaperWidth\temptrue\fi
+  \ifx\l@cspec@a\loc@Full\global\let\picl@c=\loc@Full\global\picUsesInsfalse\temptrue\fi
   \iftemp
     \trace{g}{Experimental page / full-page \w@tsit}%
-    \xdef\pic@lign{\t@mpb}\xdef\picV@lign{\t@mpc}%
+    \xdef\pic@lign{\l@cspec@b}\xdef\picV@lign{\l@cspec@c}%
   \fi
 }
 %-cfig_parsepicuse
@@ -321,7 +330,7 @@
     \edef\cr@ditpos{ti}% Center, inner edge
   \fi
   \x@\p@rseLoc\cr@ditpos\end
-  \edef\cred@v{\t@mp}\edef\cred@h{\t@mpb}%
+  \edef\cred@v{\l@cspec@a}\edef\cred@h{\l@cspec@b}%
   \trace{g}{creditrot="\cr@ditrot"}%
   \ifx\cr@ditrot\empty % Set some kind of a defaults
     \ifx\cred@h\@lignLeft
@@ -570,14 +579,26 @@
   % make \p@cins point to insertion class for this location
   \otherinsht=0pt % subtract this from the insert height.
   \ifx\loc@ption\loc@T \let\p@cins=\topins
-  \else\ifx\loc@ption\loc@B \let\p@cins=\bottomins
   \else
+    \ifx\loc@ption\loc@B \let\p@cins=\bottomins
+    \else
+      \ifdiglot %For diglot, need to know the height of the tallest insert
+        \ifx\l@cspec@a\loc@T %(Only affects top)
+          \let\col@do=\max@boxht \dimen1=0pt
+          \def\v@lpfx{colinsert@t}\def\v@lsfx{}%
+          \x@\each@col\diglot@list\E
+          \uppercase{\def\t@mp{\l@cspec@b}}%
+          \ifx\t@mp\m@x@at@col\else %don't adjust height if this box is already highest
+            \otherinsht=\dimen1
+          \fi
+        \fi
+      \fi
       \ifnum\c@rrentcols>1
-        \ifx\loc@ption\loc@TL  \otherinsht=\ht\toprightins \p@cinswid=\hsize
-        \else\ifx\loc@ption\loc@TR  \otherinsht=\ht\topleftins \p@cinswid=\hsize
-        \else\ifx\loc@ption\loc@BL  \otherinsht=\ht\bottomrightins \p@cinswid=\hsize
-        \else\ifx\loc@ption\loc@BR  \otherinsht=\ht\bottomleftins \p@cinswid=\hsize
-        \fi\fi\fi\fi
+        \ifx\l@cspec@b\loc@T
+          \p@cinswid=\hsize
+        \else\ifx\l@cspec@b\loc@B
+          \p@cinswid=\hsize
+        \fi\fi
       \else
         \ifdiglot\MSG{HOW DID THAT HAPPEN? c@rrentcols=\the\c@rrentcols\space is surprising(incorrect) with diglot}\fi
         \ifx\loc@ption\loc@TL \picw@rning{tl}{t}\let\loc@ption\loc@T
@@ -833,7 +854,7 @@
   \dimen1=-\baselineskip %where does the picture go? Starting point is the lowest point of the current line(i.e. this includes descenders, but we'll deal with that via the strutb@x)
   \advance\dimen1 by -\dp\str@tbox
   \ifhmode
-     \trace{g}{Cutout in horizontal mode. ref:\c@rref}%
+     \trace{g}{Cutout in horizontal mode. ref:\ifdiglot\dc@rref\else\c@rref\fi}%
      \ifx\prev@rsemode\empty
        \trace{g}{we were in horizontal mode even before the verse number.}%
      %  \dimen1=0pt
@@ -876,8 +897,8 @@
     \fi
   \fi
   \delay@test{\dr@pthingid}%
-  \ifx\t@std@lay\relax \MSG{*** Cutout for picture \the\im@gecount, (\c@rref) re-run to generate \string\DelayedItem\space setting}%
-  \else\MSG{* Cutout for picture \the\im@gecount\space at \c@rref, delay is \t@std@lay}\fi
+  \ifx\t@std@lay\relax \MSG{*** Cutout for picture \the\im@gecount, (\ifdiglot\dc@rref\else\c@rref\fi) re-run to generate \string\DelayedItem\space setting}%
+  \else\MSG{* Cutout for picture \the\im@gecount\space at \ifdiglot\dc@rref\else\c@rref\fi, delay is \t@std@lay}\fi
   %
   \ifx\t@std@lay\relax
     \tmpcount=0
@@ -887,9 +908,9 @@
   %\ifhmode 2|\fi
   \write@delayedthing{\dr@pthingid}{\the\tmpcount}{\the\dimen2}{\the\count255}{\c@tskip}{\thing@side}%
   \ifx\t@std@lay\relax
-    \MSG{*** Image in cutout at \c@rref, re-run to generate \string\DelayedItem\space settings}%
+    \MSG{*** Image in cutout at \ifdiglot\dc@rref\else\c@rref\fi, re-run to generate \string\DelayedItem\space settings}%
   \else\fi
-  \add@pending{\dr@pthingid}{\c@rref}{0}{\the\dimen2}{\the\count255}{\the\tmpcount}{\thing@side}%
+  \add@pending{\dr@pthingid}{\ifdiglot\dc@rref\else\c@rref\fi}{0}{\the\dimen2}{\the\count255}{\the\tmpcount}{\thing@side}%
   \ifx\gr@phic\w@tsit
     \leavevmode\str@t\vadjust {\vbox to 0pt{\box#1\vss}}%
   \else
@@ -933,6 +954,7 @@
 \def\size@SPAN{span}
 \def\size@PAGE{page}% a page, within the margins
 \def\size@FULL{full}% the paper size
+% tA,bA  etc are reserved for the top and bottom of polyglot column A
 \def\loc@T{t}
 \def\loc@B{b}
 \def\loc@VB{B}
@@ -957,14 +979,15 @@
 \def\valb@th{both}
 \def\val@BIND{binding}
 \def\val@EDGE{edge}
-\x@\let\csname ins-\loc@TL\endcsname\topleftins
-\x@\let\csname ins-\loc@TR\endcsname\toprightins
-\x@\let\csname ins-\loc@BL\endcsname\bottomleftins
-\x@\let\csname ins-\loc@BR\endcsname\bottomrightins
-\x@\let\csname ins-\loc@T\endcsname\topins
-\x@\let\csname ins-\loc@B\endcsname\bottomins
-\x@\let\csname ins-\loc@VB\endcsname\verybottomins
-
+\def\alias@inserts{%
+  \x@\let\csname ins-\loc@TL\endcsname\topleftins
+  \x@\let\csname ins-\loc@TR\endcsname\toprightins
+  \x@\let\csname ins-\loc@BL\endcsname\bottomleftins
+  \x@\let\csname ins-\loc@BR\endcsname\bottomrightins
+  \x@\let\csname ins-\loc@T\endcsname\topins
+  \x@\let\csname ins-\loc@B\endcsname\bottomins
+  \x@\let\csname ins-\loc@VB\endcsname\verybottomins
+}
 
 \newbox\newpicb@x
 \newbox\picb@x % Delayed picture
