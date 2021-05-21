@@ -778,8 +778,19 @@ class ViewModel:
                         self.styleEditor.setval(k, 'Justification', 'Left')
                     elif j == "Left":
                         self.styleEditor.setval(k, 'Justification', 'Right')
+        elif version < 1.602:
+            for a in "fx":
+                for b in "klmopqrtvw":
+                    v = self.styleEditor.getval(a+b, 'FontSize', None)
+                    if v is not None:
+                        self.styleEditor.setval(a+b, 'FontSize', None)
+                        self.styleEditor.setval(a+b, 'FontScale', v)
+
         if self.get('r_xrLocn') == "blend":
             self.styleEditor.setval('x', 'NoteBlendInto', 'f')
+        else:
+            self.styleEditor.setval('x', 'NoteBlendInto', None)
+
 
     def editFile_delayed(self, *a):
         pass

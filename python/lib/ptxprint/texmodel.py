@@ -501,11 +501,14 @@ class TexModel:
             if v[1] is None:
                 self.dict[k] = val
             else:
-                sig = signature(v[1])
-                if len(sig.parameters) == 2:
-                    self.dict[k] = v[1](self.printer, val)
-                else:
-                    self.dict[k] = v[1](self.printer, val, self)
+                try:
+                    sig = signature(v[1])
+                    if len(sig.parameters) == 2:
+                        self.dict[k] = v[1](self.printer, val)
+                    else:
+                        self.dict[k] = v[1](self.printer, val, self)
+                except Exception as e:
+                    raise type(e)("In TeXModel with key {}, ".format(k) + str(e))
 
     def __getitem__(self, key):
         return self.dict[key]
