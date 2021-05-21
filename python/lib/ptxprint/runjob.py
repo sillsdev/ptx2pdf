@@ -380,7 +380,9 @@ class RunJob:
         info["project/bookids"] = jobs
         info["project/books"] = donebooks
         res = self.sharedjob(jobs, info)
-        return [os.path.join(self.tmpdir, out)] + res
+        if info['notes/ifxrexternalist']:
+            res += [os.path.join(self.tmpdir, out+".triggers") for out in donebooks]
+        return [os.path.join(self.tmpdir, out) for out in donebooks] + res
 
     def digdojob(self, jobs, info, diginfo, digprjid, digprjdir):
         texfiles = []
