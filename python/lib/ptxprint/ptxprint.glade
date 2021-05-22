@@ -4179,6 +4179,7 @@ if need be.</property>
                                 <property name="draw_indicator">True</property>
                                 <property name="group">r_book_single</property>
                                 <signal name="clicked" handler="onRadioChanged" swapped="no"/>
+                                <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="left_attach">0</property>
@@ -4197,6 +4198,7 @@ if need be.</property>
                                 <property name="draw_indicator">True</property>
                                 <property name="group">r_book_single</property>
                                 <signal name="clicked" handler="onRadioChanged" swapped="no"/>
+                                <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="left_attach">0</property>

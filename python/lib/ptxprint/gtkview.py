@@ -2243,10 +2243,13 @@ class GtkViewModel(ViewModel):
 
     def onSelectModuleClicked(self, btn):
         prjdir = os.path.join(self.settings_dir, self.prjid)
+        tgtfldr = os.path.join(prjdir, "Modules")
+        if not os.path.exists(tgtfldr):
+            tgtfldr = os.path.join(self.settings_dir, "_Modules")
         moduleFile = self.fileChooser("Select a Paratext Module", 
                 filters = {"Modules": {"patterns": ["*.sfm"] , "mime": "text/plain", "default": True},
                            "All Files": {"pattern": "*"}},
-                multiple = False, basedir=os.path.join(prjdir, "Modules"))
+                multiple = False, basedir=tgtfldr)
         if moduleFile is not None:
             moduleFile = [Path(os.path.relpath(x, prjdir)) for x in moduleFile]
             self.moduleFile = moduleFile[0]
@@ -2257,6 +2260,7 @@ class GtkViewModel(ViewModel):
             self.builder.get_object("lb_bibleModule").set_label("")
             self.moduleFile = None
             self.builder.get_object("btn_chooseBibleModule").set_tooltip_text("")
+        self.updateDialogTitle()
 
     def onSelectFigureFolderClicked(self, btn_selectFigureFolder):
         customFigFolder = self.fileChooser(_("Select the folder containing image files"),
