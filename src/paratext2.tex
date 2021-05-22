@@ -37,7 +37,7 @@
 \catcode`\@=11
 \let\x@=\expandafter
 \newif\iftemp \tempfalse
-\def\stripqu@tes#1"#2"#3\relax{#2} Strip quotes if present
+\def\stripqu@tes#1"#2"#3\relax{#2}% Strip quotes if present
 \edef\t@mp{\jobname}%
 \xdef\j@bname{\x@\x@\x@\stripqu@tes\x@\t@mp\x@"\t@mp"\relax}
 
