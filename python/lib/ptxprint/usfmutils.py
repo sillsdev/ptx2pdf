@@ -194,7 +194,7 @@ class Usfm:
                     ind = int(m.group(1))
                     if ind > len(self.tocs):
                         self.tocs.extend([""] * (ind - len(self.tocs) + 1))
-                    self.tocs[ind-1] = e[0]
+                    self.tocs[ind-1] = e[0].strip()
 
     def getwords(self, init=None, constrain=None):
         ''' Counts words found in the document. If constrain then is a set or
@@ -540,8 +540,7 @@ class Module:
 
     def parse_element(self, e):
         if isinstance(e, sfm.Text):
-            t = self.localise_re.sub(self.localref, str(e)
-)
+            t = self.localise_re.sub(self.localref, str(e))
             if t != e:
                 return [sfm.Text(t, e.pos, e.parent)]
             return [e]
