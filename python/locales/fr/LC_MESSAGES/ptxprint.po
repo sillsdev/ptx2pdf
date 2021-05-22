@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: ptxprint\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-05-21 18:40+0700\n"
-"PO-Revision-Date: 2021-05-21 11:40\n"
+"PO-Revision-Date: 2021-05-22 03:49\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -3857,7 +3857,8 @@ msgstr "Ceci est la règle horizontale qui sépare le corps\n"
 
 #: lib/ptxprint/ptxprint.glade:8967
 msgid "Show All Glossary Entries as Footnotes"
-msgstr "Afficher toutes les entrées du glossaire comme notes de bas de page"
+msgstr "Afficher toutes les entrées du glossaire \n"
+"comme notes de bas de page"
 
 #: lib/ptxprint/ptxprint.glade:8971
 msgid "Glossary entries for ALL marked-up\n"
@@ -3917,7 +3918,8 @@ msgstr "Certains projets préfèrent séparer le\n"
 
 #: lib/ptxprint/ptxprint.glade:9035
 msgid "Keep Book Names and Refs Together"
-msgstr "Conserver les noms de livres et les références ensemble"
+msgstr "Conserver les noms de livres \n"
+"et les références ensemble"
 
 #: lib/ptxprint/ptxprint.glade:9039
 msgid "This option inserts a No-Break Space (\\u00A0)\n"
@@ -4187,8 +4189,8 @@ msgstr "Si les notes de bas de page et les références croisées ne sont pas\n"
 #: lib/ptxprint/ptxprint.glade:9513
 msgid "Vertical Space Separating\n"
 "Footnotes and xRefs:"
-msgstr "Espace vertical entre les notes de bas\n"
-"de page et les références croisées :"
+msgstr "Espace vertical entre les notes \n"
+"et les références croisées :"
 
 #: lib/ptxprint/ptxprint.glade:9549
 msgid "This sets the width of the centre column in points.\n"
@@ -4224,7 +4226,8 @@ msgstr "Largeur de la colonne (pts) :"
 
 #: lib/ptxprint/ptxprint.glade:9622
 msgid "Blend with Footnotes"
-msgstr "Mélanger avec les notes de bas de page"
+msgstr "Mélanger avec les \n"
+"notes de bas de page"
 
 #: lib/ptxprint/ptxprint.glade:9626
 msgid "To save space in the footnote area, you can\n"
