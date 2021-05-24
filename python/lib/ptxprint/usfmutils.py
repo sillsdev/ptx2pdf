@@ -1,28 +1,12 @@
 from ptxprint.sfm import usfm, style
 from ptxprint import sfm
+from ptxprint.reference import RefList, RefRange, Reference
 import re, os, traceback, warnings
 from collections import namedtuple
 from itertools import groupby
 from functools import reduce
 from copy import deepcopy
 import regex
-
-verse_reg = re.compile(r"^\s*(\d+)(\D*?)(?:\s*(-)\s*(\d+)(\D*?))?\s*$")
-def make_rangetuple(chap, verse, start=True):
-    m = verse_reg.match(verse)
-    if m:
-        if m.group(3) and not start:
-            return (int(chap), int(m.group(4)), m.group(5))
-        else:
-            return (int(chap), int(m.group(1)), m.group(2))
-    else:
-        return (int(chap), 0, verse)
-
-class RefRange(namedtuple("RefRange", ["fromc", "fromv", "toc", "tov"])):
-    def __init__(self, *a, **kw):
-        super().__init__()
-        self.start = make_rangetuple(self[0], self[1])
-        self.end = make_rangetuple(self[2], self[3], start=False)
 
 def isScriptureText(e):
     if 'nonvernacular' in e.meta.get('TextProperties', []):
@@ -41,22 +25,12 @@ space_cats = { 'Zs', 'Zl', 'Zp', 'Cf' }
 class _Reference(sfm.Position):
     def __new__(cls, pos, ref):
         p = super().__new__(cls, *pos[:2])
-        p.book = ref[0]
-        p.chapter = ref[1]
-        p.verse = ref[2]
-        p.startref = make_rangetuple(p.chapter, p.verse)
-        p.endref = make_rangetuple(p.chapter, p.verse, start=False)
+        p.ref = RefList.fromStr("{} {}:{}".format(*ref))[0]
         return p
 
     def __str__(self):
         return f"{self.book} {self.chapter}:{self.verse} line {self.line},{self.col}"
 
-    def cmp_range(self, r):
-        if self.endref < r.start:
-            return -1
-        elif self.startref > r.end:
-            return 1
-        return 0
 
 class Sheets(dict):
 
@@ -212,17 +186,16 @@ class Usfm:
         words = self.sreduce(nullelement, addwords, self.doc, init)
         return words
 
-    def subdoc(self, ref, removes={}, strippara=False):
+    def subdoc(self, refrange, removes={}, strippara=False):
         ''' Creates a document consisting of only the text covered by the reference
             ranges. ref is a tuple in the form:
                 (fromc, fromv, toc, tov)
             The list must include overlapping ranges'''
         self.addorncv()
         ispara = sfm.text_properties('paragraph')
-        r = RefRange(*ref)
-        chaps = self.chapters[r.start[0]:r.end[0]+1]
+        chaps = self.chapters[refrange.first.chap:refrange.last.chap+1]
         def pred(e):
-            if isinstance(e.pos, _Reference) and e.pos.cmp_range(r) == 0:
+            if isinstance(e.pos, _Reference) and e.pos.ref in refrange:
                 if strippara and isinstance(e, sfm.Element) and ispara(e):
                     return False
                 return True
@@ -456,40 +429,6 @@ def read_module(inf, sheets):
         lines.insert(0, "\\id MOD Module\n")
     return Usfm(lines, sheets)
 
-def parse_refs(s):
-    bits = re.split(r"([,;])", s)
-    bk = ""
-    c = "0"
-    for ref, sep in zip(bits[::2], [""] + bits[1::2]):
-        m = re.match(r"^\s*([A-Z]{3})?\s*(\d+[a-z]?)\s*(?:([.:])\s*(\d*[a-z]?))?\s*(?:(-)\s*(\d*[a-z]?)\s*(?:([.:])\s*(\d*[a-z]?))?)?", ref)
-        if m:
-            bk = m.group(1) or bk
-            if m.group(3):
-                firstc = m.group(2) or c
-                firstv = m.group(4)
-            elif sep == ",":
-                firstc = c
-                firstv = m.group(2)
-            else:
-                firstc = m.group(2) or c
-                firstv = "0"
-            if m.group(5):
-                if m.group(7):
-                    c = m.group(6) or firstc
-                    lastv = m.group(8) or "200"
-                elif firstv == "":
-                    c = m.group(6) or firstc
-                    lastv = "200"
-                else:
-                    c = firstc
-                    lastv = m.group(6) or "200"
-            else:
-                c = firstc
-                lastv = "200" if firstv == "0" else firstv
-            yield (bk, firstc, firstv or "0", c, lastv or "0")
-        else:
-            print("Bad ref: {}".format(ref))
-
 exclusionmap = {
     'v': ['v'],
     'x': ['x'],
@@ -560,7 +499,7 @@ class Module:
                             re.compile(r"\b"+m.group(1).replace("...","[^\n\r]+")+"(\\b|(?=\\s)|$)"),
                             m.group(2)))
                 del e.parent[curr+1]
-            for r in parse_refs(str(e[0])):
+            for r in RefList.fromStr(str(e[0])):
                 p = self.get_passage(r, removes=self.removes, strippara=e.name=="refnp")
                 if e.name == "ref":
                     for i, t in enumerate(p):
@@ -591,10 +530,10 @@ class Module:
         return [e]
 
     def get_passage(self, ref, removes={}, strippara=False):
-        book = self.usfms.get(ref[0])
+        book = self.usfms.get(ref.first.book)
         if book is None:
             return []
-        return book.subdoc(ref[1:], removes=removes, strippara=strippara)
+        return book.subdoc(ref, removes=removes, strippara=strippara)
 
     def new_element(self, e, name, content):
         return sfm.Element(name, e.pos, [], e.parent, content=[sfm.Text("\n", e.pos)] \

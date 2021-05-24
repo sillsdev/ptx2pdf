@@ -63,6 +63,9 @@ class Reference:
             return False
         return all(getattr(self, a) == getattr(o, a) for a in ("book", "chap", "verse", "subverse"))
 
+    def __contains__(self, o):
+        return self == o
+
     def __lt__(self, o):
         if not isinstance(o, Reference):
             return not o < self or o == self
@@ -185,6 +188,8 @@ class RefRange:
         return hash((self.first, self.last))
 
     def __contains__(self, r):
+        if isinstance(r, RefRange):
+            return self.first <= r.first and r.last <= self.last
         return self.first <= r <= self.last
 
     def astag(self):
@@ -336,6 +341,9 @@ class RefList(list):
 
     def __add__(self, other):
         return self.__class__(self[:] + other[:])
+
+    def __contains__(self, other):
+        return any(other in x for x in self)
 
     def _addRefOrRange(self, start, curr):
         self.append(curr if start is None else RefRange(start, curr))
