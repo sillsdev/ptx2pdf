@@ -75,6 +75,7 @@
 % Boxes
 % Each page-related box (\partial and picture insert boxes) has a separate copy for each page. 
 % on switching between columns / pages, the appropriate page's copy becomes 'active' i.e. \partial points to \partial@poly@0
+% *Inserts* must be genuine inserts on each page.
 \def\polyglot@onetime@setup{%
   \tracingmacros=1
   \edef\@ut{\x@\e@tcomma\ins@rts\E}%
@@ -127,7 +128,8 @@
     \alias@inserts
     \let\d@=\spp@d@
 }
-\def\gen@p@lyins@rts#1\E{\edef\s@veclass{#1}\let\gpiD@=\d@\let\d@=\cs@apply\let\do@it=\s@veclass@name
+\def\gen@p@lyins@rts#1\E{%add names of inserts (saveclass #1) to \@ut
+  \edef\s@veclass{#1}\let\gpiD@=\d@\let\d@=\cs@apply\let\do@it=\s@veclass@name 
   \x@\cstackdown\ins@rts\E
   \let\d@=\gpiD@
 }
