@@ -99,7 +99,7 @@ categorymapping = {
 widgetsignals = {
     "s": "value-changed",
     "c": "toggled",
-    "bl": "clicked",
+    "bl": None,
     "col": "color-set"
 }
 
@@ -158,7 +158,8 @@ class StyleEditorView(StyleEditor):
             #key = stylediverts.get(k, k)
             (pref, name) = v[0].split("_", 1)
             signal = widgetsignals.get(pref, "changed")
-            w.connect(signal, self.item_changed, k)
+            if signal is not None:
+                w.connect(signal, self.item_changed, k)
             # if v[0].startswith("s_"):
             #     w.connect("focus-out-event", self.item_changed, k)
         self.isLoading = False
@@ -370,7 +371,9 @@ class StyleEditorView(StyleEditor):
                 if f is not None:
                     asc = f.ascent / f.upem * bfontsize
                     des = f.descent / f.upem * bfontsize
+                    self.set("l_styActualFontSize", "{}\n{:.1f}pt (+{:.1f} -{:.1f})".format(fref.name, fsize, asc, -des))
                 else:
+                    self.set("l_styActualFontSize", "{:.1f}pt".format(fsize))
             self._setFieldVal(k, v, oldval, val)
 
         stype = self.getval(self.marker, 'StyleType')
@@ -474,6 +477,7 @@ class StyleEditorView(StyleEditor):
         else:
             value = val
         if not key.startswith("_"):
+            print(f"{self.marker} {key} {value}")
             super(self.__class__, self).setval(self.marker, key, value)
             if key == "FontSize":
                 self.set("l_styActualFontSize", "{:.1f}pt".format(float(value) * float(self.model.get("s_fontsize"))))

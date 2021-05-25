@@ -175,6 +175,8 @@ class StyleEditor:
             return
         if val is not None and key in _fieldmap:
             newval = _fieldmap[key][1](self, val, mrk=mrk, model=self.model)
+            if key == "FontName":
+                print(f"{mrk}{key}{val}{newval}")
             if newval is None and val is not None:
                 return      # Probably a font which has edited the object for us
             else:
