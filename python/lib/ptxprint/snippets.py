@@ -256,7 +256,6 @@ class Colophon(Snippet):
 \\catcode"FDEE=1 \\catcode"FDEF=2
 \\prepusfm
 \\def\\zcolophon\uFDEE
-\\p
 \\esb\\cat colophon\\cat*
 \\bigskip
 {project/colophontext}

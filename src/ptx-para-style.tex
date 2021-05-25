@@ -277,11 +277,17 @@
  \mcpop
 }
 
+\newif\iftoplevelp@r
 \def\endlastp@rstyle#1{%
  \ifsk@pping \egroup \fi % if we were skipping nonpublishable text, end that mode
  \let\p@r=\par
  \the\p@rstylehooks % allow other modules to hook in here
  \end@llpoppedstyles{P}%
+ \ifx\mcstack\mcstack@mpty
+   \toplevelp@rtrue
+ \else
+   \toplevelp@rfalse
+ \fi
 %-cpar_parstyle_intro
 %+cpar_parstyle_after
  \t@stpublishability{#1}% test if the new marker is nonpublishable
@@ -337,18 +343,18 @@
   \ifx\p@ram\t@tle
     \mark{\t@tle}\ifdiglot\marks\csname m@rknum\c@rrdstat\endcsname{\t@tle}\fi% 
     \ift@tle\else\ifhe@dings\endhe@dings\fi\fi
-    \st@rttitle
+    \iftoplevelp@r\st@rttitle\fi
     \global\he@dingstyletrue 
   \else\ifx\p@ram\s@ction                                                       %(1)
     \ift@tle\ifhe@dings\endhe@dings\fi\fi
-    \if@ntromarker\st@rtintro\else\st@rtbody\fi
+    \iftoplevelp@r \if@ntromarker\st@rtintro\else\st@rtbody\fi\fi
     \global\he@dingstyletrue
   \else\ifx\p@ram\oth@r
     \ift@tle\ifhe@dings\endhe@dings\fi\fi
-    \if@ntromarker\st@rtintro\else\st@rtbody\fi
+    \iftoplevelp@r \if@ntromarker\st@rtintro\else\st@rtbody\fi\fi
     \if@ntromarker\else\global\he@dingstyletrue\fi
   \else
-    \if@ntromarker\st@rtintro\else\st@rtbody\fi
+    \iftoplevelp@r \if@ntromarker\st@rtintro\else\st@rtbody\fi\fi
   \fi\fi\fi                                                                     %(2)
   \ifhe@dingstyle\trace{s}{headingstyle true}%
     \ifhe@dings\nsp@cebeforetrue\s@tbaseline{\m@rker}%In a heading again, may be different so set a new baseline
