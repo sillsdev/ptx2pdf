@@ -2,7 +2,7 @@ from gi.repository import Gtk, Pango
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal
 from ptxprint.sfm.style import Marker, CaselessStr
 from ptxprint.styleditor import StyleEditor, aliases
-from ptxprint.utils import _, coltotex, textocol
+from ptxprint.utils import _, coltotex, textocol, asfloat
 import re
 
 stylemap = {
@@ -268,7 +268,9 @@ class StyleEditorView(StyleEditor):
         model, i = selection.get_selected()
         if not model[i][2]:
             return
+        print(f"-{self.marker}: {self.asStyle(self.marker)}")
         self.marker = model[i][0]
+        print(f"+{self.marker}: {self.asStyle(self.marker)}")
         self.editMarker()
 
     def selectMarker(self, marker):
@@ -364,13 +366,11 @@ class StyleEditorView(StyleEditor):
                     fref = self.model.get("bl_fontR")
                 f = fref.getTtfont() if fref is not None else None
                 bfontsize = float(self.model.get("s_fontsize"))
-                fsize = float(val) * bfontsize
+                fsize = asfloat(val, 1.) * bfontsize
                 if f is not None:
                     asc = f.ascent / f.upem * bfontsize
                     des = f.descent / f.upem * bfontsize
-                    self.set("l_styActualFontSize", "{}\n{:.1f}pt (+{:.1f} -{:.1f})".format(fref.name, fsize, asc, -des))
                 else:
-                    self.set("l_styActualFontSize", "{:.1f}pt".format(fsize))
             self._setFieldVal(k, v, oldval, val)
 
         stype = self.getval(self.marker, 'StyleType')

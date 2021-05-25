@@ -717,7 +717,7 @@
     \ifrerunsavepartialpaged\eject\rerunsavepartialpagedfalse\fi % save any partially-full page
 	% if single column material already fills 3/4 page, go to next page to start double columns
     \dimen0=\ht\partial
-    \trace{o}{DoubleColumns: \the\dimen0\space > \PageFullFactor\space * \the\textheight}%
+    \trace{o}{DoubleColumns: partial=\the\dimen0\space > \PageFullFactor\space * \the\textheight}%
     \ifdim\dimen0>\PageFullFactor\textheight
 %%%      \msg{Output full page from 1 to 2 columns}%
       \global\output={\onecol} % but output it immediately if 75% full
