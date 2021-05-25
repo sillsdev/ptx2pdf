@@ -64,7 +64,9 @@ class Reference:
         return all(getattr(self, a) == getattr(o, a) for a in ("book", "chap", "verse", "subverse"))
 
     def __contains__(self, o):
-        return self == o
+        if isinstance(o, RefRange):
+            return self in o
+        return self == o        
 
     def __lt__(self, o):
         if not isinstance(o, Reference):

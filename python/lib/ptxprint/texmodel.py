@@ -78,8 +78,8 @@ ModelMap = {
     "project/ifcolophon":       ("c_colophon", lambda w,v: "" if v else "%"),
     "project/pgbreakcolophon":  ("c_standAloneColophon", lambda w,v: "" if v else "%"),
 
-    "paper/height":             ("ecb_pagesize", lambda w,v: re.sub(r"^.*?,\s*(.+?)\s*(?:\(.*|$)", r"\1", v or "210mm")),
-    "paper/width":              ("ecb_pagesize", lambda w,v: re.sub(r"^(.*?)\s*,.*$", r"\1", v or "148mm")),
+    "paper/height":             ("ecb_pagesize", lambda w,v: re.sub(r"^.*?[,xX]\s*(.+?)\s*(?:\(.*|$)", r"\1", v or "210mm")),
+    "paper/width":              ("ecb_pagesize", lambda w,v: re.sub(r"^(.*?)\s*[,xX].*$", r"\1", v or "148mm")),
     "paper/pagesize":           ("ecb_pagesize", None),
     "paper/ifwatermark":        ("c_applyWatermark", lambda w,v: "" if v else "%"),
     "paper/watermarkpdf":       ("btn_selectWatermarkPDF", lambda w,v: '\def\MergePDF{{"{}"}}'.format(w.watermarks.as_posix()) \

@@ -1338,7 +1338,7 @@ set stack_size=32768"""
     def updateThumbLines(self):
         munits = float(self.get("s_margins"))
         unitConv = {'mm':1, 'cm':10, 'in':25.4, '"':25.4}
-        m = re.match(r"^.*?,\s*([\d.]+)(\S+)\s*(?:.*|$)", self.get("ecb_pagesize"))
+        m = re.match(r"^.*?[,xX]\s*([\d.]+)(\S+)\s*(?:.*|$)", self.get("ecb_pagesize"))
         if m:
             pageheight = float(m.group(1)) * unitConv.get(m.group(2), 1)
         else:
