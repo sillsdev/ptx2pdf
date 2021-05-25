@@ -1092,7 +1092,9 @@
  \closeadjlist
  \unprepusfm
  \lastpagetrue
- \singlecolumn\iflastptxfile\csname bookend-final\endcsname\fi\bookendpagebreak
+ \iflastptxfile\csname bookend-final\endcsname\fi
+ \singlecolumn % must come after bookend-final, as that might include 2col content.
+ \bookendpagebreak
  %\ifendbooknoeject\else\global\output={\global\setbox255=\box\voidb@x}\eject\xdef\p@gefirstmark{}\setbox\partial=\box\voidb@x\fi
  \ifendbooknoeject\else\global\output={\shipout\vbox{\box\partial\box255}}\eject\xdef\p@gefirstmark{}\setbox\partial=\box\voidb@x\fi
  \global\output={\onecol}
