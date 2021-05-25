@@ -233,7 +233,7 @@
           \fi
           }%
         \x@\gdef\csname note-no-insert-#1\endcsname{\x@\afterassignment\csname addt@endnote-#1\endcsname\global\setbox\csname endn@te-#1\endcsname\vbox}%
-        \x@\gdef\csname zplacenotes-#1\endcsname{% Set the @ndnotesfound flag based on one type of note. 
+        \x@\gdef\csname ztestnotes-#1\endcsname{% Set the @ndnotesfound flag based on one type of note. 
             \ifvoid\csname endn@te-#1\endcsname\@ndnotesfoundfalse\else\@ndnotesfoundtrue\fi}%
         \x@\gdef\csname zplacenotes-#1\endcsname{\ifvmode\else\par\fi \dimen0=\prevdepth %
           %\showbox\csname endn@te-#1\endcsname
@@ -260,7 +260,7 @@
 \newif\if@ndnotesfound
 \plac@ndnotes{\ifhmode\endgraf\fi\endn@terule} % Pre-fill the toklist
 \def\ch@ckendnotes#1{\x@\ifvoid\csname endn@te-#1\endcsname\else\@ndnotesfoundtrue\fi}
-\def\zplaceallnotes{\the\plac@ndnotes}
+\def\zplaceallnotes{\bgroup\setbox0\vbox{\the\plac@ndnotes}\unvbox0\egroup}
 
 \newif\ifnotesEachBook
 \notesEachBooktrue
@@ -467,6 +467,12 @@
   \let\par=\endgraf\ch@pterfalse
   \everypar={}% don't do body text formatting
   \unvbox#1 % open up the vbox of notes to get at the list of individual note boxes
+  %\ifvmode %odd situation
+    %\showboxdepth=99
+    %\showboxbreadth=99
+    %\message{gt: \the\currentgrouptype}
+  %  \showlists
+  %\fi
   \makehboxofhboxes % make a single hbox for all notes of this class
   \unskip\unskip
   \setbox0=\hbox{\unhbox0 \removehboxes}% add internote space                   %(1)
