@@ -161,7 +161,7 @@
     \n@tewidth=\ifp@ranotes\maxdimen\else\hsize\fi
     \d@note{\th@sins}%
   \fi%
-  \trace{f}{Footnote (\n@tetype) will be \the\n@tewidth wide (page is \the\hsize)}%
+  \trace{f}{Footnote (\n@tetype) [\reference] will be \the\n@tewidth wide (page is \the\hsize)}%
   \the\d@note\bgroup% insert note-f (or note-x)
     \XeTeXuseglyphmetrics=3 % so that notes sit on the baseline based on content and not font descender
     \hsize=\n@tewidth
@@ -210,49 +210,49 @@
 %+c_endnotes
 
 \def\NoteAtEnd#1{%Treat the specified note as an end-note.
-        \x@\newb@x\csname endn@te-#1\endcsname
-        \x@\gdef\csname addt@endnote-#1\endcsname{%thanks to afterassignment, this gets put immediately after the start of the vbox
-          \checkp@ranotes{#1}%
-          \ifp@ranotes
-            \hsize=\maxdimen
-            \x@\ifvoid \csname endn@te-#1\endcsname\else
-              %\x@\showbox\csname endn@te-#1\endcsname
-              \vbox{}%Sacrificial box for makehboxofhboxes to consume
-              \x@\unvbox\csname endn@te-#1\endcsname\makehboxofhboxes%
-              %\showbox0
-              \setbox0=\hbox{\unhbox0 \removehboxes}%
-              \unhbox0 %
-            \fi
-          \else
-            \x@\ifvoid \csname endn@te-#1\endcsname
-              \hbox{}%Empty hbox to force some baselineskip at the top of the box
-            \else
-              %\x@\showbox\csname endn@te-#1\endcsname
-              \unvbox\csname endn@te-#1\endcsname
-            \fi
-          \fi
-          }%
-        \x@\gdef\csname note-no-insert-#1\endcsname{\x@\afterassignment\csname addt@endnote-#1\endcsname\global\setbox\csname endn@te-#1\endcsname\vbox}%
-        \x@\gdef\csname ztestnotes-#1\endcsname{% Set the @ndnotesfound flag based on one type of note. 
-            \ifvoid\csname endn@te-#1\endcsname\@ndnotesfoundfalse\else\@ndnotesfoundtrue\fi}%
-        \x@\gdef\csname zplacenotes-#1\endcsname{\ifvmode\else\par\fi \dimen0=\prevdepth %
-          %\showbox\csname endn@te-#1\endcsname
-          \checkp@ranotes{#1}%
-          \ifp@ranotes
-            \ifdim \dimen0>0pt\kern-\dimen0\fi
-            \ifvoid\csname endn@te-#1\endcsname\else
-              \maken@tepara{\csname endn@te-#1\endcsname}{#1}%
-            \fi
-          \else 
-            \s@tbaseline{#1}%
-            {%\x@\showbox\csname endn@te-#1\endcsname
-            \setbox0=\vbox{\unvbox\csname endn@te-#1\endcsname}%
-            %\showbox0
-            \unvbox0}%
-          \fi
-          }% Individual note placement
-        \x@\endn@teclasses\x@{\the\endn@teclasses \\{#1}}%
-        \x@\plac@ndnotes\x@{\the\plac@ndnotes\csname zplacenotes-#1\endcsname}%
+  \x@\newb@x\csname endn@te-#1\endcsname
+  \x@\gdef\csname addt@endnote-#1\endcsname{%thanks to afterassignment, this gets put immediately after the start of the vbox
+    \checkp@ranotes{#1}%
+    \ifp@ranotes
+      \hsize=\maxdimen
+      \x@\ifvoid \csname endn@te-#1\endcsname\else
+        %\x@\showbox\csname endn@te-#1\endcsname
+        \vbox{}%Sacrificial box for makehboxofhboxes to consume
+        \x@\unvbox\csname endn@te-#1\endcsname\makehboxofhboxes%
+        %\showbox0
+        \setbox0=\hbox{\unhbox0 \removehboxes}%
+        \unhbox0 %
+      \fi
+    \else
+      \x@\ifvoid \csname endn@te-#1\endcsname
+        \hbox{}%Empty hbox to force some baselineskip at the top of the box
+      \else
+        %\x@\showbox\csname endn@te-#1\endcsname
+        \unvbox\csname endn@te-#1\endcsname
+      \fi
+    \fi
+    }%
+  \x@\gdef\csname note-no-insert-#1\endcsname{\x@\afterassignment\csname addt@endnote-#1\endcsname\global\setbox\csname endn@te-#1\endcsname\vbox}%
+  \x@\gdef\csname ztestnotes-#1\endcsname{% Set the @ndnotesfound flag based on one type of note. 
+      \ifvoid\csname endn@te-#1\endcsname\@ndnotesfoundfalse\else\@ndnotesfoundtrue\fi}%
+  \x@\gdef\csname zplacenotes-#1\endcsname{\ifvmode\else\par\fi \dimen0=\prevdepth %
+    %\showbox\csname endn@te-#1\endcsname
+    \checkp@ranotes{#1}%
+    \ifp@ranotes
+      \ifdim \dimen0>0pt\kern-\dimen0\fi
+      \ifvoid\csname endn@te-#1\endcsname\else
+        \maken@tepara{\csname endn@te-#1\endcsname}{#1}%
+      \fi
+    \else 
+      \s@tbaseline{#1}%
+      {%\x@\showbox\csname endn@te-#1\endcsname
+      \setbox0=\vbox{\unvbox\csname endn@te-#1\endcsname}%
+      %\showbox0
+      \unvbox0}%
+    \fi
+    }% Individual note placement
+  \x@\endn@teclasses\x@{\the\endn@teclasses \\{#1}}%
+  \x@\plac@ndnotes\x@{\the\plac@ndnotes\csname zplacenotes-#1\endcsname}%
 }
 \let\newb@x=\newbox
 \newtoks\endn@teclasses
@@ -769,7 +769,7 @@
   % Diglot prefers to get things closer 1st time round...
   %\global\count\th@cl@ss=\ifp@ranotes \ifdiglot 500\else 0\fi \else 0\fi %\count255 \fi
   \global\count\th@cl@ss=\ifdiglot 100\else 0\fi
-  \global\skip\th@cl@ss=\AboveNoteSpace }
+  \global\skip\th@cl@ss=0pt} %\AboveNoteSpace }
 %-c_setnotecount
 
 %+c_resetvsize
@@ -876,7 +876,7 @@
   \def\cl@sss{#1\g@tndstat}%
   \trace{n}{class \cl@sss}%
   \x@\let\x@\th@cl@ss\csname note-\cl@sss\endcsname
-  \ifvoid\th@cl@ss\else
+  \ifvoid\th@cl@ss\trace{f}{ParaNotes[#1] empty}\else
     \setbox0=\copy\th@cl@ss
     \setbox0=\vbox{\maken@tepara{0}{#1}}%
     \advance\availht by -\ht0
@@ -885,7 +885,11 @@
       \advance\availht by -\AboveNoteSpace
       \advance\availht by -\BelowNoteRuleSpace
       \f@rstnotefalse
-    \else \advance\availht by -\InterNoteSpace\fi
+      \trace{f}{ParaNotes[#1] cost \the\ht0+\the\dp0 + \the\AboveNoteSpace + \the\BelowNoteSpace}%
+    \else
+      \advance\availht by -\InterNoteSpace
+      \trace{f}{ParaNotes[#1] cost \the\ht0+\the\dp0 + \the\InterNoteSpace}%
+    \fi
     %\getp@ram{baseline}{#1}\ifx\p@ram\relax\else\advance\availht-\p@ram\fi
   \fi}
 %-c_reduceavailht_para
@@ -926,13 +930,17 @@
   \def\cl@sss{#1\g@tndstat}%
   \TRACE{class \cl@sss}%
   \x@\let\x@\th@cl@ss\csname note-\cl@sss\endcsname
-  \ifvoid\th@cl@ss\else
+  \ifvoid\th@cl@ss\trace{f}{Notes[#1] empty}\else
     \f@rstnotefalse
     \advance\availht by -\ht\th@cl@ss
     \advance\availht by -\dp\th@cl@ss
     \iff@rstnote\advance\availht by -\AboveNoteSpace
+      \trace{f}{Notes[#1] cost \the\ht\th@cl@ss+\the\dp\th@cl@ss + \dp\pstr@t + 2*\the\AboveNoteSpace}%
      \advance\availht -\dp\pstr@t \f@rstnotefalse % ensure we don't impinge on the depth
-    \else \advance\availht by -\InterNoteSpace\fi
+    \else
+      \advance\availht by -\InterNoteSpace
+      \trace{f}{Notes[#1] cost \the\ht\th@cl@ss0+\the\dp\th@cl@ss + \the\InterNoteSpace + \the\AboveNoteSpace}%
+    \fi
     \advance\availht by -\AboveNoteSpace
   \fi}
 %-c_reduceavailhtsep

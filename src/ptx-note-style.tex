@@ -80,7 +80,7 @@
 }
 \def\s@tn@tep@r@ms#1{%
   %% !!!FIXME!!! This guesses p@ranotes take half a line each. There are better ways. 
-  \x@\count\csname note-#1\endcsname=\ifdiglot 100 \else \ifp@ranotes 500 \else 1000 \fi\fi 
+  \x@\count\csname note-#1\endcsname=\ifdiglot 100 \else \ifp@ranotes 100 \else 100 \fi\fi 
   \x@\skip\csname note-#1\endcsname=\AboveNoteSpace %Skip before footntoes
   \x@\dimen\csname note-#1\endcsname=\maxdimen %Max note skip
 }
