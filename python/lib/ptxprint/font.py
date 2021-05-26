@@ -936,10 +936,11 @@ class FontRef:
                 feats.append(("+"+k, v))
         return (name, sfeats, feats)
 
-    def updateTeXStyle(self, style, regular=None, inArchive=False, rootpath=None):
+    def updateTeXStyle(self, style, regular=None, inArchive=False, rootpath=None, force=False):
         res = []
         # only use of main regular fonts use the \Bold etc.
-        if regular is not None and regular.name == self.name:
+        if not force and regular is not None and regular.name == self.name:
+            del style['FontName']
             for a in ("Bold", "Italic"):
                 x = a in (regular.style or ())
                 y = a in (self.style or ())

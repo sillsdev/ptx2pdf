@@ -269,9 +269,7 @@ class StyleEditorView(StyleEditor):
         model, i = selection.get_selected()
         if not model[i][2]:
             return
-        print(f"-{self.marker}: {self.asStyle(self.marker)}")
         self.marker = model[i][0]
-        print(f"+{self.marker}: {self.asStyle(self.marker)}")
         self.editMarker()
 
     def selectMarker(self, marker):
@@ -477,7 +475,6 @@ class StyleEditorView(StyleEditor):
         else:
             value = val
         if not key.startswith("_"):
-            print(f"{self.marker} {key} {value}")
             super(self.__class__, self).setval(self.marker, key, value)
             if key == "FontSize":
                 self.set("l_styActualFontSize", "{:.1f}pt".format(float(value) * float(self.model.get("s_fontsize"))))

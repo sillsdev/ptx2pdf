@@ -114,7 +114,8 @@ def toFont(self, v, mrk=None, model=None):
         def pop(subself, key, dflt):
             return self.sheet.get(mrk, {}).pop(key, dflt)
     regularfont = model.get("bl_fontR")
-    return v.updateTeXStyle(Shim(), regular=regularfont)
+    oldfont = self.basesheet.get(mrk, {}).get("FontName", None)
+    return v.updateTeXStyle(Shim(), regular=regularfont, force=oldfont is not None)
 
 _fieldmap = {
     'Bold':             (fromBool, toBool),
