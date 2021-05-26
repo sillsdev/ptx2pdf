@@ -1,5 +1,5 @@
 %:strip
-% ptx-modules.tex: module processing for xetex paratext2.tex
+% ptx-plugins.tex: plugin processing for xetex paratext2.tex
 % Copyright (c) 2021 by SIL International 
 % written by David Gardner
 % 
@@ -31,31 +31,31 @@
 % authorization from SIL International.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\def\kn@wnmodules{polyglot-simplecols,polyglot-simplepages}
-\def\modules@ll{all}
-\def\module@startif#1{%
-  \ifcsname #1@module@loaded\endcsname\else
-  \x@\let\csname #1@module@loaded\endcsname\empty
+\def\kn@wnplugins{polyglot-simplecols,polyglot-simplepages}
+\def\plugins@ll{all}
+\def\plugin@startif#1{%
+  \ifcsname #1@plugin@loaded\endcsname\else
+  \x@\let\csname #1@plugin@loaded\endcsname\empty
 }
-\def\module@endif{\fi}
-\def\module@check#1\E{%
-  \ifcsname #1@module@loaded\endcsname\else
+\def\plugin@endif{\fi}
+\def\plugin@check#1\E{%
+  \ifcsname #1@plugin@loaded\endcsname\else
     \input #1.tex
   \fi}
 
-\def\modules@needed#1{% Expects a comma-separated list of modules that should be loaded. For use in modules.
-  \let\do=\module@check
+\def\plugins@needed#1{% Expects a comma-separated list of plugins that should be loaded. For use in plugins.
+  \let\do=\plugin@check
   \cstackdown#1,\E 
 }
 
-\ifcsname modulelist\endcsname
-  \def\d@#1\E{\module@check #1\E}%
-  \ifx\modulelist\modules@ll
-    \x@\cstackdown\kn@wnmodules,\E 
+\ifcsname pluginlist\endcsname
+  \def\d@#1\E{\plugin@check #1\E}%
+  \ifx\pluginlist\plugins@ll
+    \x@\cstackdown\kn@wnplugins,\E 
   \else
-    \x@\cstackdown\modulelist,\E 
+    \x@\cstackdown\pluginlist,\E 
   \fi
 \else
- \lowercase{\message{load optional modules with (some of) |def|modulelist{\kn@wnmodules} or |def|modulelist{all}}}
+ \lowercase{\message{n.b. You can load optional plugins with (some of) |def|pluginlist{\kn@wnplugins} or |def|pluginlist{all}}}
 \fi
 

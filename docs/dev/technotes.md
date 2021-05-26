@@ -50,40 +50,44 @@ now contain the caller and the footnote will appear like this:
 ```
 
 
-## Modules
-The idea of modules is to reduce loading time and memory requirements.
-It is envisaged that modules will be for output-related changes, not input-related changes.
-I.e. a modification that alters code to add fancy borders would be a candidate for being a module, 
-but code that implements part of the the USFM standard should not be.
+## Plugins
+The idea of plugins is to reduce loading time and memory requirements for those that don't need rarely used features.
+It is envisaged that plugins will be for output-related changes, not input-related changes.
+I.e. a modification that alters code to add fancy borders would be a candidate for being a plugins, 
+but code that implements part of the the USFM standard should not be, to reduce unexpected problems for users.
 
-Possibly this principle means that ptx-triggers, ptx-pic-list and ptx-adj-list should be modules.
-However, it is not considered 
+Possibly this principle means that ptx-triggers, ptx-pic-list and ptx-adj-list should be plugins.
+However, these are now a core part of ptxprint and so won't be considered for plugins. Marginal verses, 
+however, might be a good candidate.
 
-ptx-modules.tex includes a list of modules
-for processing `\def\modulelist{all}` 
+Extensions are requested by defining `\pluginlist` to a comma-separated list. e.g. 
+```
+\def\pluginlist{polyglot-simplepages,borders-doubleruled}
+```
 
+ptx-plugins.tex includes a list of plugins for processing `\def\pluginlist{all}` 
 Correct sequencing should be done in that macro.
 
-If a module requires one or more other module, this should be indicated like this:
+However, if a plugin requires one or more other plugins, this should be indicated like this:
 ```
-\modules@needed{polyglot-simplepages,border-font}
+\plugins@needed{polyglot-simplepages,borders-font}
 ```
 
-The polyglot-simplepages mod includes this re-insertion prevention wrapper. Other modules should also 
+The only-written plugin so far, `polyglot-simplepages` includes this re-insertion prevention wrapper. Other plugins should also 
 include similar code. 
 ```
-\module@startif{polyglot-simplepages}
+\plugin@startif{polyglot-simplepages}
 .  .  .
-\module@endif
+\plugin@endif
 ```
 
 This expands to:
 ```
-\ifcsname polyglot-simplepages@module@lo@ded\endcsname\else
-\let\polyglot-simplepages@module@lo@ded\empty
+\ifcsname polyglot-simplepages@plugin@lo@ded\endcsname\else
+\let\polyglot-simplepages@plugin@lo@ded\empty
 . . .
 \fi
 ```
 
-In both cases, the filename (without the .tex) should exactly match, otherwise the automatic inclusion by `\modules@needed` will fail.
+In both cases, the filename (without the .tex) should exactly match the plugin name, otherwise the automatic inclusion by `\plugins@needed` will fail.
 

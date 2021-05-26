@@ -3,7 +3,7 @@
 % Copyright (c) 2021 by SIL International 
 % written by David Gardner
 % 
-% This optional module (see ptx-modules) extends the basic diglot engine to
+% This optional plugin (see ptx-plugins) extends the basic diglot engine to
 % provide multipage polyglot  options
 %
 % Permission is hereby granted, free of charge, to any person obtaining
@@ -32,8 +32,8 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-\module@startif{polyglot-simplepages}
-\modules@needed{polyglot-simplecols} % Just in case it becomes separate.
+\plugin@startif{polyglot-simplepages}
+\plugins@needed{polyglot-simplecols} % Just in case it becomes separate.
 
 \newcount\p@lyp@geno
 
@@ -149,7 +149,7 @@
   \fi
 }
  
-%%%% Diglot module interface functions.
+%%%% Diglot plugin interface functions.
 
 \let\@prepare@layout@simplepages=\@prepare@layout@simplecols
 \def\@setup@layout@simplepages{}%No special setup
@@ -332,4 +332,4 @@
 \let\@after@add@n@xtpartial@simplepages=\@after@add@n@xtpartial@simplecols
 
 
-\module@endif
+\plugin@endif
