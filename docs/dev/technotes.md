@@ -49,3 +49,45 @@ now contain the caller and the footnote will appear like this:
 3. line three
 ```
 
+
+## Plugins
+The idea of plugins is to reduce loading time and memory requirements for those that don't need rarely used features.
+It is envisaged that plugins will be for output-related changes, not input-related changes.
+I.e. a modification that alters code to add fancy borders would be a candidate for being a plugins, 
+but code that implements part of the the USFM standard should not be, to reduce unexpected problems for users.
+
+Possibly this principle means that ptx-triggers, ptx-pic-list and ptx-adj-list should be plugins.
+However, these are now a core part of ptxprint and so won't be considered for plugins. Marginal verses, 
+however, might be a good candidate.
+
+Extensions are requested by defining `\pluginlist` to a comma-separated list. e.g. 
+```
+\def\pluginlist{polyglot-simplepages,borders-doubleruled}
+```
+
+ptx-plugins.tex includes a list of plugins for processing `\def\pluginlist{all}` 
+Correct sequencing should be done in that macro.
+
+However, if a plugin requires one or more other plugins, this should be indicated like this:
+```
+\plugins@needed{polyglot-simplepages,borders-font}
+```
+
+The only-written plugin so far, `polyglot-simplepages` includes this re-insertion prevention wrapper. Other plugins should also 
+include similar code. 
+```
+\plugin@startif{polyglot-simplepages}
+.  .  .
+\plugin@endif
+```
+
+This expands to:
+```
+\ifcsname polyglot-simplepages@plugin@lo@ded\endcsname\else
+\let\polyglot-simplepages@plugin@lo@ded\empty
+. . .
+\fi
+```
+
+In both cases, the filename (without the .tex) should exactly match the plugin name, otherwise the automatic inclusion by `\plugins@needed` will fail.
+
