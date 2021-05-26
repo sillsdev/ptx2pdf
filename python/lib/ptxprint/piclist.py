@@ -198,7 +198,7 @@ class PicInfo(dict):
         self.loaded = False
         self.srchlist = []
 
-    def load_files(self, suffix="", prjdir=None, prj=None, cfg=None):
+    def load_files(self, parent, suffix="", prjdir=None, prj=None, cfg=None):
         if self.inthread:
             return False
         else:
@@ -230,18 +230,18 @@ class PicInfo(dict):
         self.loaded = True
         if not havepiclists:
             self.inthread = True
-            self.threadUsfms(suffix)
+            self.threadUsfms(parent, suffix)
             # self.thread = Thread(target=self.threadUsfms, args=(suffix,))
             return False
         else:
             self.model.savePics()
         return True
 
-    def threadUsfms(self, suffix):
+    def threadUsfms(self, parent, suffix):
         bks = self.model.getAllBooks()
         for bk, bkp in bks.items():
             if os.path.exists(bkp):
-                self.read_sfm(bk, bkp, suffix=suffix)
+                self.read_sfm(bk, bkp, parent, suffix=suffix)
         self.set_positions(cols=2, randomize=True, suffix=suffix)
         self.model.savePics()
         self.inthread = False
@@ -297,7 +297,7 @@ class PicInfo(dict):
                         pic[d[0]] = d[1]
         self.rmdups()
 
-    def read_sfm(self, bk, fname, suffix="", media=None):
+    def read_sfm(self, bk, fname, parent, suffix="", media=None):
         isperiph = bk in TexModel._peripheralBooks
         with universalopen(fname) as inf:
             dat = inf.read()
@@ -345,7 +345,7 @@ class PicInfo(dict):
                                 k,v = l.split("=")
                                 pic[k.strip()] = v.strip('"')
                             if 'media' not in pic:
-                                default, limit = self.parent.picMedia(pic.get('src', ''))
+                                default, limit = parent.picMedia(pic.get('src', ''))
                                 pic['media'] = 'paw' if default is None else default
                                     
 
@@ -582,7 +582,7 @@ def PicInfoUpdateProject(model, bks, allbooks, picinfos, suffix="", random=False
             del newpics[k]
         for k in [k for k,v in picinfos.items() if v['anchor'][:3] == bk and (clearsuffix or (suffix != "" and v['anchor'][4] == suffix))]:
             del picinfos[k]
-        newpics.read_sfm(bk, bkf, suffix=suffix)
+        newpics.read_sfm(bk, bkf, model, suffix=suffix)
         newpics.set_positions(randomize=random, suffix=suffix, cols=cols, isBoth=not clearsuffix)
         for k, v in newpics.items():
             if v['anchor'][:3] == bk:

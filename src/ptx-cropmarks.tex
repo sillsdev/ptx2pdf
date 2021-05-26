@@ -662,8 +662,11 @@
     %\setbox0=\hbox{\unhbox0\hskip\dimen4\gp@vrule}
     %\advance\dimen1\dimen4
     \dimen4 = 0.5\textwidth
-    \ifnum\BodyColumns=2\dimen2=\ColumnGutterFactor\FontSizeUnit\else\dimen2=0pt\fi
+    \ifnum\BodyColumns=2\dimen2=\ColumnGutterFactor\FontSizeUnit
+      \advance\dimen2 by \XrefNotesWidth
+    \else\dimen2=0pt\fi
     \divide\dimen2 by 2
+    \advance\dimen2 \XrefNotesMargin
     \advance\dimen4 by -\dimen2
     \ifdim\columnshift>0pt\advance\dimen4 by -\columnshift\fi
     \ifnum\BodyColumns=2

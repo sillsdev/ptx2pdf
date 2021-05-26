@@ -4,7 +4,7 @@ from ptxprint.texmodel import ModelMap, TexModel, Borders
 from ptxprint.ptsettings import ParatextSettings
 from ptxprint.font import TTFont, cachepath, cacheremovepath, FontRef, getfontcache, writefontsconf
 from ptxprint.utils import _, refKey, universalopen, print_traceback, local2globalhdr, \
-                            global2localhdr, asfloat, allbooks, books, bookcodes, chaps
+                            global2localhdr, asfloat, allbooks, books, bookcodes, chaps, f2s
 from ptxprint.usfmutils import Sheets, UsfmCollection
 from ptxprint.piclist import PicInfo, PicChecks
 from ptxprint.styleditor import StyleEditor
@@ -18,7 +18,7 @@ import datetime, time
 import json
 from shutil import copyfile, copytree, move
 
-VersionStr = "1.6.9"
+VersionStr = "1.8"
 
 pdfre = re.compile(r".+[\\/](.+)\.pdf")
 
@@ -85,6 +85,7 @@ class ViewModel:
         "project/frontincludes":    ("FrontPDFs", True, "lb_inclFrontMatter"),
         "project/backincludes":     ("BackPDFs", True, "lb_inclBackMatter"),
         "project/selectscript":     ("customScript", False, None),
+        "project/customXRfile":     ("customXRfile", False, None),
         "project/modulefile":       ("moduleFile", False, "lb_bibleModule"),
         "paper/watermarkpdf":       ("watermarks", False, "lb_applyWatermark"),
         "fancy/pageborderpdf":      ("pageborder", False, "lb_inclPageBorder"),
@@ -113,6 +114,7 @@ class ViewModel:
         self.FrontPDFs = None
         self.BackPDFs = None
         self.customScript = None
+        self.customXRfile = None
         self.moduleFile = None
         self.DBLfile = None
         self.watermarks = None
@@ -186,7 +188,7 @@ class ViewModel:
 
     def set(self, wid, value, skipmissing=False):
         if wid.startswith("s_"):
-            self.dict[wid] = "{:.3f}".format(float(value))
+            self.dict[wid] = f2s(float(value))
         else:
             self.dict[wid] = value
 
@@ -307,23 +309,22 @@ class ViewModel:
         if self.loadingConfig:
             return False
         (marginmms, topmarginmms, bottommarginmms, headerpos, footerpos, rulerpos, headerlabel, footerlabel) = self.getMargins()
-        self.set("l_margin2header1", "{:.3f}mm".format(headerlabel))
+        self.set("l_margin2header1", "{}mm".format(f2s(headerlabel)))
         return True
 
     def getMargins(self):
         def asmm(v): return v * 25.4 / 72.27
         hfont = self.styleEditor.getval("h", " font")
         if hfont is None:
-            hf = self.get("bl_fontR")
-            if hf is not None:
-                hfont = hf.getTtfont()
-            else:
+            hfont = self.get("bl_fontR")
+            if hfont is None:
                 return (0, 0, 0, 0, 0, 0, 0, 0)
+        hfont = hfont.getTtfont()
         #fontheight = 1. + float(font.descent) / font.upem
         hfontheight = float(hfont.ascent) / hfont.upem
         fontsizemms = asmm(float(self.get("s_fontsize")))
         linespacemms = asmm(float(self.get("s_linespacing")))
-        hfontsizemms = asfloat(self.styleEditor.getval("h", "FontSize"), 12.) / 12. * fontsizemms
+        hfontsizemms = asfloat(self.styleEditor.getval("h", "FontSize"), 1.) * fontsizemms
         marginmms = float(self.get("s_margins"))
         # in the macros, topmargin is set to topmargin - baselineskip + 12*FontSizeUnit
         # Reverse that here, so that what appears on the page is what they ask for.
@@ -662,13 +663,13 @@ class ViewModel:
             config.set("project", "colophontext", colophontext)
         if v < 1.503:
             marginmms = config.getfloat("paper", "margins")
-            config.set("paper", "topmargin", "{:.3f}".format(config.getfloat("paper", "topmarginfactor", fallback=1.0) * marginmms))
-            config.set("paper", "headerpos", "{:.3f}".format(config.getfloat("paper", "topmarginfactor", fallback=1.0) * marginmms \
+            config.set("paper", "topmargin", f2s(config.getfloat("paper", "topmarginfactor", fallback=1.0) * marginmms))
+            config.set("paper", "headerpos", f2s(config.getfloat("paper", "topmarginfactor", fallback=1.0) * marginmms \
                         - config.getfloat("header", "headerposition", fallback=1.0) * marginmms\
                         - config.getfloat("paper", "fontfactor") * 25.4 / 72.27))
-            config.set("paper", "bottommargin", "{:.3f}".format(config.getfloat("paper", "bottommarginfactor", fallback=1.0) * marginmms))
-            config.set("paper", "footerpos", "{:.3f}".format(config.getfloat("header", "footerposition", fallback=1.0) * marginmms))
-            config.set("paper", "rulegap", "{:.3f}".format(config.getfloat("header", "ruleposition", fallback=0.)))
+            config.set("paper", "bottommargin", f2s(config.getfloat("paper", "bottommarginfactor", fallback=1.0) * marginmms))
+            config.set("paper", "footerpos", f2s(config.getfloat("header", "footerposition", fallback=1.0) * marginmms))
+            config.set("paper", "rulegap", f2s(config.getfloat("header", "ruleposition", fallback=0.)))
         if v < 1.504:
             try:
                 self._configset(config, "notes/fneachnewline", not config.getboolean("notes", "fnparagraphednotes"))
@@ -682,7 +683,7 @@ class ViewModel:
             pass
         if v < 1.602:
             config.set("notes", "belownoterulespace", "3.0")
-            config.set("notes", "abovenotespace", "{:.3f}".format(config.getfloat("notes", "abovenotespace", fallback=6.0) - 3.0))
+            config.set("notes", "abovenotespace", f2s(config.getfloat("notes", "abovenotespace", fallback=6.0) - 3.0))
             config.set("config", "version", "1.602")
 
         styf = os.path.join(self.configPath(cfgname), "ptxprint.sty")
@@ -771,14 +772,25 @@ class ViewModel:
     def updateStyles(self, version):
         if version < 1.601:
            if self.get("fcb_textDirection", "") == "rtl":
-                for k, v in self.styleEditor.allStyles().items():
-                    j = v.get('Justification', None)
+                for k in self.styleEditor.allStyles():
+                    j = self.styleEditor.getval(k, 'Justification')
                     if j == "Right":
                         self.styleEditor.setval(k, 'Justification', 'Left')
                     elif j == "Left":
                         self.styleEditor.setval(k, 'Justification', 'Right')
-        if self.get('c_blendfnxr', False):
+        elif version < 1.602:
+            for a in "fx":
+                for b in "klmopqrtvw":
+                    v = self.styleEditor.getval(a+b, 'FontSize', None)
+                    if v is not None:
+                        self.styleEditor.setval(a+b, 'FontSize', None)
+                        self.styleEditor.setval(a+b, 'FontScale', v)
+
+        if self.get('r_xrLocn') == "blend":
             self.styleEditor.setval('x', 'NoteBlendInto', 'f')
+        else:
+            self.styleEditor.setval('x', 'NoteBlendInto', None)
+
 
     def editFile_delayed(self, *a):
         pass
@@ -810,9 +822,9 @@ class ViewModel:
         if not self.get("c_includeillustrations"):
             return
         if self.diglotView is None:
-            res = self.picinfos.load_files()
+            res = self.picinfos.load_files(self)
         else:
-            res = self.picinfos.load_files(suffix="BL")
+            res = self.picinfos.load_files(self, suffix="BL")
         if not res:
             self.onGeneratePicListClicked(None)
             
@@ -1103,12 +1115,13 @@ class ViewModel:
                 res[f] = "figures/"+os.path.basename(f)
 
         # adjlists
-        adjpath = os.path.join(basecfpath, "AdjLists")
-        adjbks = set(self.getAdjListFilename(bk, ext=".adj") for x in books)
-        if os.path.exists(adjpath):
-            for adj in os.listdir(adjpath):
-                if adj.endswith(".adj") and adj in adjbks:
-                    res[os.path.join(adjpath, adj)] = cfpath+"AdjLists/"+adj
+        for a,e in (("AdjLists", ".adj"), ("triggers", ".triggers")):
+            adjpath = os.path.join(basecfpath, a)
+            adjbks = set(self.getAdjListFilename(bk, ext=e) for x in books)
+            if os.path.exists(adjpath):
+                for adj in os.listdir(adjpath):
+                    if adj.endswith(e) and adj in adjbks:
+                        res[os.path.join(adjpath, adj)] = cfpath+a+"/"+adj
 
         # piclists
         piclstpath = os.path.join(basecfpath, "PicLists")
@@ -1305,11 +1318,16 @@ class ViewModel:
         zinfo.external_attr = 0o755 << 16
         zinfo.create_system = 3
         zf.writestr(zinfo, "\n".join(scriptlines))
-        batfile = """@echo off
+        batfile = r"""@echo off
+REM In order to run this script at the Windows CMD prompt:
+REM   1. Change the extension from .txt to .bat
+REM   2. Change current directory to PrintDraft using: cd PrintDraft
+REM   3. Then to run it, use: ..\\runtex.bat
+REM e.g. C:\\Users\\<Username>\\Downloads\\WSG\\PrintDraft>..\\runtex.bat
 for %%i in (xetex.exe) do set truetex=%%~$PATH:i
 if "%truetex%" == "" set truetex=C:\\Program Files\\PTXprint\\xetex\\bin\\xetex.exe
-set FONTCONFIG_FILE="%cd%\\..\\fonts.conf"
-set TEXINPUTS="%cd%\\..\\src;.;"
+set FONTCONFIG_FILE=%cd%\\..\\fonts.conf
+set TEXINPUTS=.;%cd%\\..\\src\\;
 set hyph_size=32749
 set stack_size=32768"""
         for t in texfiles:
@@ -1320,7 +1338,7 @@ set stack_size=32768"""
     def updateThumbLines(self):
         munits = float(self.get("s_margins"))
         unitConv = {'mm':1, 'cm':10, 'in':25.4, '"':25.4}
-        m = re.match(r"^.*?,\s*([\d.]+)(\S+)\s*(?:.*|$)", self.get("ecb_pagesize"))
+        m = re.match(r"^.*?[,xX]\s*([\d.]+)(\S+)\s*(?:.*|$)", self.get("ecb_pagesize"))
         if m:
             pageheight = float(m.group(1)) * unitConv.get(m.group(2), 1)
         else:

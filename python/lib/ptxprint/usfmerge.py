@@ -263,13 +263,35 @@ def alignChunks(pchunks, schunks, pkeys, skeys):
                         appendpair(pairs, 0, sum(pgg[sg:aeg], []))
     return pairs
 
+def alignSimple(pchunks, schunks, pkeys, skeys):
+    pairs = []
+    diff = difflib.SequenceMatcher(None, pkeys, skeys)
+    for op in diff.get_opcodes():
+        (action, ab, ae, bb, be) = op
+        if debugPrint:
+            print(op, debstr(pkeys[ab:ae]), debstr(skeys[bb:be]))
+        if action == "equal":
+            pairs.extend([[pchunks[ab+i], schunks[bb+i]] for i in range(ae-ab)])
+        if action in ("delete", "replace"):
+            for c in pchunks[ab:ae]:
+                pairs[-1][0].extend(c)
+        if action in ("insert", "replace"):
+            for c in schunks[bb:be]:
+                pairs[-1][1].extend(c)
+    return pairs
+
 def appendsheet(fname, sheet):
     if os.path.exists(fname):
         with open(fname) as s:
             sheet = style.update_sheet(sheet, style.parse(s))
     return sheet
 
-def usfmerge(infilea, infileb, outfile, stylesheetsa=[], stylesheetsb=[], fsecondary=False, debug=False):
+modes = {
+    "doc": alignChunks,
+    "simple": alignSimple
+}
+
+def usfmerge2(infilea, infileb, outfile, stylesheetsa=[], stylesheetsb=[], fsecondary=False, mode="doc", debug=False):
     global debugPrint, debstr
     debugPrint = debug
     stylesheeta = usfm._load_cached_stylesheet('usfm.sty')
@@ -306,7 +328,9 @@ def usfmerge(infilea, infileb, outfile, stylesheetsa=[], stylesheetsb=[], fsecon
     secondchunks = {c.ident: c for c in scoll.acc}
     mainkeys = ["_".join(str(x) for x in c.ident) for c in pcoll.acc]
     secondkeys = ["_".join(str(x) for x in c.ident) for c in scoll.acc]
-    pairs = alignChunks(pcoll.acc, scoll.acc, mainkeys, secondkeys)
+    f = modes[mode]
+    pairs = f(pcoll.acc, scoll.acc, mainkeys, secondkeys)
+    #pairs = alignChunks(pcoll.acc, scoll.acc, mainkeys, secondkeys)
 
     if outfile is not None:
         outf = open(outfile, "w", encoding="utf-8")

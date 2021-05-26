@@ -150,7 +150,9 @@
 {notes/xromitcaller}\OmitCallerInNote{{x}}
 {notes/xreachnewline}\ParagraphedNotes{{x}}
 %\NumericCallers{{x}}
-{notes/includexrefs}\expandafter\def\csname x:properties\endcsname{{nonpublishable}}
+{notes/includexrefs}{notes/ifxrexternalist}\expandafter\def\csname x:properties\endcsname{{nonpublishable}}
+{notes/xrlocation}\def\XrefNotes{{x}}\def\XrefNotesMargin{{1.5pt}}\XrefNotesWidth={notes/xrcentrecolwidth}pt
+\ColNotes{notes/columnnotes}
 %%%{notes/includexrefs}\expandafter\def\csname x{L_}:properties\endcsname{{nonpublishable}}
 %%%{ifdiglotincludexrefs_}\expandafter\def\csname x{R_}:properties\endcsname{{nonpublishable}}
 
@@ -209,6 +211,7 @@
 \PicPath={{{document/directory}/tmpPics/}}
 {document/ifusepiclist}\PicListPath={{{project/piclists}}}
 \AdjListPath={{{project/adjlists}}}
+\TrigListPath={{{project/triggers}}}
 {document/ifusepiclist}\openpiclist "{document/piclistfile}"
 
 % tweak to enable blank lines

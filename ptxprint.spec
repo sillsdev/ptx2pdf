@@ -28,7 +28,7 @@ else:
     pathex = []
     binaries = []
 
-a = Analysis(['python/scripts/ptxprint', 'python/scripts/usfmerge'],
+a = Analysis(['python/scripts/ptxprint'],
              pathex =   ['python/lib'] + pathex,
              binaries = binaries
                       + [('python/lib/ptxprint/PDFassets/border-art/'+y, 'ptxprint/PDFassets/border-art') for y in 
@@ -36,11 +36,10 @@ a = Analysis(['python/scripts/ptxprint', 'python/scripts/usfmerge'],
                              'A5 page border.pdf', 'A5 page border - no footer.pdf', 'Verse number star.pdf', 'decoration.pdf')]
                       + [('python/lib/ptxprint/PDFassets/watermarks/'+z, 'ptxprint/PDFassets/watermarks') for z in 
                             ('A4-Draft.pdf', 'A5-Draft.pdf', 'A5-EBAUCHE.pdf',
-                             '5.8x8.7-12mmBorderDraft.pdf', '5.8x8.7-Draft.pdf', 'BSI-12mmBorder.pdf',
-                             'A4-CopyrightWatermark.pdf', 'A5-CopyrightWatermark.pdf')]
+                             '5.8x8.7-Draft.pdf', 'A4-CopyrightWatermark.pdf', 'A5-CopyrightWatermark.pdf')]
                       + [('python/lib/ptxprint/'+x, 'ptxprint') for x in 
                             ('Google-Noto-Emoji-Objects-62859-open-book.ico', '62859-open-book-icon(128).png', 
-							 'picLocationPreviews.png', 'ps_cmyk.icc', 
+							 'picLocationPreviews.png', 'ps_cmyk.icc', 'cross_references.txt',
 							 'Top1FalseFalse.png', 'Top1FalseTrue.png', 'Top2FalseFalse.png',
 							 'Top2FalseTrue.png', 'Top2TrueFalse.png', 'Top2TrueTrue.png',
 							 'Bottom1False.png', 'Bottom2False.png', 'Bottom2True.png')]

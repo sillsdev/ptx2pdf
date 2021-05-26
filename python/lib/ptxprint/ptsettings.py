@@ -1,7 +1,7 @@
 import os, re
 import xml.etree.ElementTree as et
 import regex
-from ptxprint.utils import allbooks, books, bookcodes
+from ptxprint.utils import allbooks, books, bookcodes, chaps
 
 
 class ParatextSettings:
@@ -27,6 +27,11 @@ class ParatextSettings:
                 break
         else:
             self.inferValues()
+        path = os.path.join(self.basedir, self.prjid, "BookNames.xml")
+        if os.path.exists(path):
+            self.read_bookNames(path)
+        else:
+            self.default_bookNames()
         return self
 
     def read_ldml(self):
@@ -52,6 +57,29 @@ class ParatextSettings:
                     self.dir = "right"
         else:
             self.ldml = None
+
+    def read_bookNames(self, fpath):
+        bkstrs = {}
+        self.bookNames = {}
+        doc = et.parse(fpath)
+        for b in doc.findall(".//book"):
+            bkid = b.get("code")
+            strs = list(reversed([b.get(a, None) for a in ("abbr", "short", "long")]))
+            strs = list(reversed([s or strs[i-1] for i, s in enumerate(strs)]))
+            self.bookNames[bkid] = strs
+            for s in strs:
+                for i in range(len(s)):
+                    if s[i] == " ":
+                        break
+                    bkstrs[s[:i+1]] = "" if bkstrs.get(s[:i+1], bkid) != bkid else bkid
+        self.bookStrs = {k:v for k,v in bkstrs.items() if v != ""}
+
+    def default_bookNames(self):
+        self.bkstrs = {k: k for k, v in chaps.items() if 0 < int(v) < 999}
+        self.bookNames = {k: [k] * 3 for k in self.bkstrs.keys()}
+
+    def getLocalBook(self, s, level=0):
+        return self.bookNames.get(s, [s]*(level+1))[level]
 
     def __getitem__(self, key):
         return self.dict[key]
@@ -114,13 +142,14 @@ class ParatextSettings:
 
     def getArchiveFiles(self):
         res = {}
-        path = os.path.join(self.basedir, self.prjid, "Settings.xml")
-        if os.path.exists(path):
-            res[path] = "Settings.xml"
-            if self.langid is None:
-                return res
-            fname = os.path.join(self.basedir, self.prjid, self.langid+".ldml")
-            if os.path.exists(fname):
-                res[fname] = self.langid+".ldml"
+        for a in ("Settings.xml", "BookNames.xml", "ptxSettings.xml"):
+            path = os.path.join(self.basedir, self.prjid, a)
+            if os.path.exists(path):
+                res[path] = a
+        if self.langid is None:
+            return res
+        fname = os.path.join(self.basedir, self.prjid, self.langid+".ldml")
+        if os.path.exists(fname):
+            res[fname] = self.langid+".ldml"
         return res
 

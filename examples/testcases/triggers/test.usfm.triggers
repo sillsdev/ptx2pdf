@@ -4,12 +4,15 @@
 \p
 This esb is included from a separate file, triggered before the verse number for v.2
 \esbe
+\tmstart
 \EndTrigger
 
 \AddTrigger TST1.2-preverse
 \s Also triggered from verse 2
 \p
- So is the above heading and this bit of text.
+ So is the above heading\f + \fr 1.2\fr* \ft and this footnote \f* and this bit of text.
+\p
+\tmstop
 \EndTrigger
 
 \AddTrigger  TST1.2  

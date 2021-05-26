@@ -111,7 +111,7 @@ _fields = Marker({
 })
 
 
-def parse(source, error_level=ErrorLevel.Content):
+def parse(source, error_level=ErrorLevel.Content, fields=_fields):
     '''
     >>> from pprint import pprint
     >>> r = parse(r"""
@@ -181,7 +181,7 @@ def parse(source, error_level=ErrorLevel.Content):
                         no_comments,
                         records.Schema(
                             'Marker', 
-                            type(_fields)({CaselessStr(k):v for k,v in _fields.items()})),
+                            type(fields)({CaselessStr(k):v for k,v in fields.items()})),
                         error_level=error_level)
         rec_parser.source = getattr(source, 'name', '<string>')
         recs = iter(rec_parser)

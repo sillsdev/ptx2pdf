@@ -404,6 +404,8 @@
 \newif\ifhangingverse
 
 \catcode`-=11
+\def\setPrintVerse #1 #2.{\gdef\print@bleVerse{#1-#2}}
+\def\noPrintVerse{\global\c@ncelfirstversetrue}
 \def\spl@tprintableverse{\x@\spl@tverses\print@bleVerse --\relax}
 \catcode`-=12
 \lowercase{
@@ -526,9 +528,13 @@
  }
 %-csty_dropchap
 }
-\catcode`=12
+\def\bridgeVerses #1.#2-#3.{
+  \addtrigger{#1.#2-preverse}{\setPrintVerse #2 #3.}
+  \addtrigger{#1.#3-preverse}{\noPrintVerse}
+}
 
 \newbox\pstr@t
+\newif\ifCalcChapSize \CalcChapSizetrue
 \def\calcdr@psize{%
   \should@xist{c}%
   \ifdiglot 
@@ -540,6 +546,8 @@
   \fi
     \getp@ram{fontsize}{c}\dropnumbersize=0\ifx\p@ram\relax pt\else\FontSizeUnit\fi \relax % C in following
 	% if font size specified for chapter number stylesheet is less than 2*paragraph font size ...
+    %\ifdim\dropnumbersize<\dimen255
+    \ifCalcChapSize
       \ifdim\dropnumbersize<1pt
         \dropnumbersize=\baselineskip
       \fi
@@ -583,7 +591,7 @@
         \setp@ram{raise}{c\ifdiglot\c@rrdstat\fi}{\the\dimen3}%
       \fi
       \trace{h}{dropnumbersize = \the\dropnumbersize, dropnumberraise = \the\dropnumberraise}%
-    %\fi
+    \fi
     \edef\dr@psize{\strip@pt\dropnumbersize}%
 }
 
@@ -975,7 +983,7 @@
  \ifdiglot\setc@rdstat{L}%
  \fi
  %\global\lastptxfiletrue
- \opentriglist "\jobname.triggers"
+ \opentriglist "\j@bname.triggers"
  \let\@netimesetup=\relax}                                                      %(1)
 
 \def\@netimesetuplater{
@@ -1071,8 +1079,13 @@
 %+csty_ptxfile_start
  \openadjlist "\the\AdjListPath#1.adj"
  \openpiclist "\the\PicListPath#1.piclist"
- \opentriglist "\the\TrigListPath#1.triggers"
- \openpicpages "\jobname.picpages"
+ \opentriglist "#1.triggers"
+ \edef\tmp{\the\TrigListPath}\ifx\tmp\empty % Avoid opening same file twice 
+ \else
+   \opentriglist "\the\TrigListPath#1.triggers"
+ \fi
+ \multitriglists "\the\TrigListPath#1"
+ \openpicpages "\j@bname.picpages"
  \lastpagefalse
  \prepusfm
  \openin\t@stread="\the\PtxFilePath#1"
@@ -1089,12 +1102,14 @@
  \ifx\b@ok\relax\else\csname bookend-\id@@@\endcsname\relax\fi
  \csname bookend-all\endcsname
  \the\@ndptxhooks
- \ifnum \ifnotesEachBook 1\else\iflastptxfile 1\else 0\fi\fi =1 \the\plac@ndnotes\fi
+ \ifnum \ifnotesEachBook 1\else\iflastptxfile 1\else 0\fi\fi =1 \zplaceallnotes\fi
  \iflastptxfile\closepiclist\fi
  \closeadjlist
  \unprepusfm
  \lastpagetrue
- \singlecolumn\iflastptxfile\csname bookend-final\endcsname\fi\bookendpagebreak
+ \iflastptxfile\csname bookend-final\endcsname\fi
+ \singlecolumn % must come after bookend-final, as that might include 2col content.
+ \bookendpagebreak
  %\ifendbooknoeject\else\global\output={\global\setbox255=\box\voidb@x}\eject\xdef\p@gefirstmark{}\setbox\partial=\box\voidb@x\fi
  \ifendbooknoeject\else\global\output={\shipout\vbox{\box\partial\box255}}\eject\xdef\p@gefirstmark{}\setbox\partial=\box\voidb@x\fi
  \global\output={\onecol}
@@ -1302,6 +1317,8 @@
  \advance\dimen0 by -1\ExtraRMargin
  \textwidth=\dimen0
  \colwidth=0.5\textwidth \advance\colwidth by -0.5\gutter\advance\colwidth by -\columnshift
+ \advance\colwidth by -0.5\XrefNotesWidth
+ \advance\colwidth by -\XrefNotesMargin
 % Diglot dimensions
  \def\col@do##1{\advance\count255 by 1}%
  \count255=0
@@ -1325,6 +1342,9 @@
  \advance\dimen0 by -\topm@rgin
  \advance\dimen0 by -\bottomm@rgin
  \textheight=\dimen0
+ \advance\dimen0 by -\topskip
+ \dimen1=\dimen0 \dimen0=\baselineskip \m@d
+ \bmg@p=\baselineskip \advance\bmg@p-\dimen0
  \vsize=\textheight
  \iffalse % Code for testing breakable inserts. It breaks things!
    \dimen\topins=\textheight
@@ -1341,6 +1361,7 @@
  \trace{p}{setupsizes: \the\pdfpagewidth, \the\pdfpageheight}
  \resetvsize
 }
+
 %-csty_setupsizes
 \def\LineSpaceBase{14}
 \newdimen\le@dingunit
@@ -1348,10 +1369,11 @@
 \newdimen\verticalsp@ceunit
 \newdimen\topm@rgin
 \newdimen\bottomm@rgin
+\newdimen\bmg@p     % gap between last baseline and bottom margin
 \newdimen\textwidth
 \newdimen\textheight
 \newdimen\colwidth
 \newdimen\ExtraRMargin \ExtraRMargin=0pt
 \newdimen\gutter \gutter=20pt
-
+\newdimen\XrefNotesWidth \XrefNotesWidth=0pt
 \endinput

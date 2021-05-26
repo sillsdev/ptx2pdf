@@ -202,17 +202,17 @@
 \newtoks\noVevenhead
 \def\defineheads{
   \ifnum\BodyColumns=2
-    \oddhead={\hbox to \columnshift{}\rlap{\RHoddleft}\hfil\hbox to 0.5\columnshift{}\RHoddcenter\hfil\hbox to \columnshift{}\llap{\RHoddright}}
-    \evenhead={\hbox to \columnshift{}\rlap{\RHevenleft}\hfil\hbox to 0.5\columnshift{}\RHevencenter\hfil\hbox to \columnshift{}\llap{\RHevenright}}
-    \noVoddhead={\hbox to \columnshift{}\rlap{\RHnoVoddleft}\hfil\hbox to 0.5\columnshift{}\RHnoVoddcenter\hfil\hbox to \columnshift{}\llap{\RHnoVoddright}}
-    \noVevenhead={\hbox to \columnshift{}\rlap{\RHnoVevenleft}\hfil\hbox to 0.5\columnshift{}\RHnoVevencenter\hfil\hbox to \columnshift{}\llap{\RHnoVevenright}}
-    \titlehead={\hbox to \columnshift{}\rlap{\RHtitleleft}\hfil\hbox to 0.5\columnshift{}\RHtitlecenter\hfil\hbox to \columnshift{}\llap{\RHtitleright}}
+    \oddhead={\hbox to \columnshift{}\rlap{\RHoddleft}\hfil\RHoddcenter\hfil\hbox to \columnshift{}\llap{\RHoddright}}
+    \evenhead={\hbox to \columnshift{}\rlap{\RHevenleft}\hfil\RHevencenter\hfil\hbox to \columnshift{}\llap{\RHevenright}}
+    \noVoddhead={\hbox to \columnshift{}\rlap{\RHnoVoddleft}\hfil\RHnoVoddcenter\hfil\hbox to \columnshift{}\llap{\RHnoVoddright}}
+    \noVevenhead={\hbox to \columnshift{}\rlap{\RHnoVevenleft}\hfil\RHnoVevencenter\hfil\hbox to \columnshift{}\llap{\RHnoVevenright}}
+    \titlehead={\hbox to \columnshift{}\rlap{\RHtitleleft}\hfil\RHtitlecenter\hfil\hbox to \columnshift{}\llap{\RHtitleright}}
   \else
-    \oddhead={\hbox to \columnshift{}\rlap{\RHoddleft}\hfil\hbox to 0.5\columnshift{}\RHoddcenter\hfil\llap{\RHoddright}}
-    \evenhead={\hbox to \columnshift{}\rlap{\RHevenleft}\hfil\hbox to 0.5\columnshift{}\RHevencenter\hfil\llap{\RHevenright}}
-    \noVoddhead={\hbox to \columnshift{}\rlap{\RHnoVoddleft}\hfil\hbox to 0.5\columnshift{}\RHnoVoddcenter\hfil\llap{\RHnoVoddright}}
-    \noVevenhead={\hbox to \columnshift{}\rlap{\RHnoVevenleft}\hfil\hbox to 0.5\columnshift{}\RHnoVevencenter\hfil\llap{\RHnoVevenright}}
-    \titlehead={\hbox to \columnshift{}\rlap{\RHtitleleft}\hfil\hbox to 0.5\columnshift{}\RHtitlecenter\hfil\llap{\RHtitleright}}
+    \oddhead={\hbox to \columnshift{}\rlap{\RHoddleft}\hfil\RHoddcenter\hfil\hbox to \columnshift{}\llap{\RHoddright}}
+    \evenhead={\hbox to \columnshift{}\rlap{\RHevenleft}\hfil\RHevencenter\hfil\hbox to \columnshift{}\llap{\RHevenright}}
+    \noVoddhead={\hbox to \columnshift{}\rlap{\RHnoVoddleft}\hfil\RHnoVoddcenter\hfil\hbox to \columnshift{}\llap{\RHnoVoddright}}
+    \noVevenhead={\hbox to \columnshift{}\rlap{\RHnoVevenleft}\hfil\RHnoVevencenter\hfil\hbox to \columnshift{}\llap{\RHnoVevenright}}
+    \titlehead={\hbox to \columnshift{}\rlap{\RHtitleleft}\hfil\RHtitlecenter\hfil\hbox to \columnshift{}\llap{\RHtitleright}}
   \fi
 }
 

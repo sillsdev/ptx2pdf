@@ -2,7 +2,7 @@ from gi.repository import Gtk, Pango
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal
 from ptxprint.sfm.style import Marker, CaselessStr
 from ptxprint.styleditor import StyleEditor, aliases
-from ptxprint.utils import _, coltotex, textocol
+from ptxprint.utils import _, coltotex, textocol, asfloat
 import re
 
 stylemap = {
@@ -10,26 +10,26 @@ stylemap = {
     'Description':  ('l_styDescription',    None,               None, None, None),
     'TextType':     ('fcb_styTextType',     'l_styTextType',    'Paragraph', None, None),
     'StyleType':    ('fcb_styStyleType',    'l_styStyleType',   'Paragraph', None, None),
-    ' font':        ('bl_font_styFontName', 'l_styFontName',    None, None, None),
+    'FontName':     ('bl_font_styFontName', 'l_styFontName',    None, None, None),
     'Color':        ('col_styColor',        'l_styColor',       'x000000', None, None),
-    'FontSize':     ('s_styFontSize',       'l_styFontSize',    '12', lambda v: "{:.3f}".format(float(v) * 12), lambda v:float(v) / 12),
-    'Bold':         ('c_styFaceBold',       'c_styFaceBold',    '-', lambda v: "" if v else "-", None),
-    'Italic':       ('c_styFaceItalic',     'c_styFaceItalic',  '-', lambda v: "" if v else "-", None),
-    'Smallcaps':    ('c_stySmallCap',       'c_stySmallCap',    '-', lambda v: "" if v else "-", None),
-    'Superscript':  ('c_styFaceSuperscript', 'c_styFaceSuperscript', '-', lambda v: "" if v else "-", None),
-    'Raise':        ('s_styRaise',          'l_styRaise',       '0', None, lambda v: re.sub(r"(?<=\d)\D+$", "", v)),
+    'FontSize':     ('s_styFontSize',       'l_styFontSize',    1, None, None),
+    'Bold':         ('c_styFaceBold',       'c_styFaceBold',    False, None, None),
+    'Italic':       ('c_styFaceItalic',     'c_styFaceItalic',  False, None, None),
+    'Smallcaps':    ('c_stySmallCap',       'c_stySmallCap',    False, None, None),
+    'Superscript':  ('c_styFaceSuperscript', 'c_styFaceSuperscript', False, None, None),
+    'Raise':        ('s_styRaise',          'l_styRaise',       0, None, None, None),
     'Justification': ('fcb_styJustification', 'l_styJustification', 'Justified', lambda v: "" if v == "Justified" else v, None),
     'FirstLineIndent': ('s_styFirstLineIndent', 'l_styFirstLineIndent', '0', None, None),
-    'LeftMargin':   ('s_styLeftMargin',     'l_styLeftMargin',  '0', None, None),
-    'RightMargin':  ('s_styRightMargin',    'l_styRightMargin', '0', None, None),
-    'LineSpacing':  ('s_styLineSpacing',    'l_styLineSpacing', '1', None, None),
-    'SpaceBefore':  ('s_stySpaceBefore',    'l_stySpaceBefore', '0', lambda v: "{:.3f}".format(float(v) * 12), lambda v:float(v) / 12),
-    'SpaceAfter':   ('s_stySpaceAfter',     'l_stySpaceAfter',  '0', lambda v: "{:.3f}".format(float(v) * 12), lambda v:float(v) / 12),
+    'LeftMargin':   ('s_styLeftMargin',     'l_styLeftMargin',  0, None, None),
+    'RightMargin':  ('s_styRightMargin',    'l_styRightMargin', 0, None, None),
+    'LineSpacing':  ('s_styLineSpacing',    'l_styLineSpacing', 1, None, None),
+    'SpaceBefore':  ('s_stySpaceBefore',    'l_stySpaceBefore', 0, None, None),
+    'SpaceAfter':   ('s_stySpaceAfter',     'l_stySpaceAfter',  0, None, None),
     'CallerStyle':  ('t_styCallerStyle',  'l_styCallerStyle', '', None, None),
     'NoteCallerStyle': ('t_styNoteCallerStyle', 'l_styNoteCallerStyle', '', None, None),
     'NoteBlendInto': ('t_NoteBlendInto',  'l_NoteBlendInto',  '', None, None),
-    'CallerRaise':  ('s_styCallerRaise',    'l_styCallerRaise', '0', None, None),
-    'NoteCallerRaise': ('s_styNoteCallerRaise', 'l_styNoteCallerRaise', '0', None, None),
+    'CallerRaise':  ('s_styCallerRaise',    'l_styCallerRaise', 0, None, None),
+    'NoteCallerRaise': ('s_styNoteCallerRaise', 'l_styNoteCallerRaise', 0, None, None),
     '_fontsize':    ('c_styFontScale',      'c_styFontScale',   False, lambda v: "FontScale" if v else "FontSize", None),
     '_linespacing': ('c_styAbsoluteLineSpacing', 'c_styAbsoluteLineSpacing', False, lambda v: "BaseLine" if v else 'LineSpacing', None),
     '_publishable': ('c_styTextProperties', 'c_styTextProperties', False, None, None)
@@ -43,6 +43,7 @@ catorder = {k: i for i, k in enumerate(topLevelOrder)}
 
 noEndmarker = ('fr', 'fq', 'fqa', 'fk', 'fl', 'fw', 'fp', 'ft', 'xo', 'xk', 'xq', 'xt', 'xta')
 fxceptions  = ('fig', 'fs', 'xtSee', 'xtSeeAlso')
+dualmarkers = {'BaseLine': 'LineSpacing', 'FontScale': 'FontSize'}
 
 name_reg = re.compile(r"^(OBSOLETE|DEPRECATED)?\s*(.*?)\s+-\s+([^-]*?)\s*(?:-\s*(.*?)\s*)?$")
 
@@ -98,7 +99,7 @@ categorymapping = {
 widgetsignals = {
     "s": "value-changed",
     "c": "toggled",
-    "bl": "clicked",
+    "bl": None,
     "col": "color-set"
 }
 
@@ -157,7 +158,10 @@ class StyleEditorView(StyleEditor):
             #key = stylediverts.get(k, k)
             (pref, name) = v[0].split("_", 1)
             signal = widgetsignals.get(pref, "changed")
-            w.connect(signal, self.item_changed, k)
+            if signal is not None:
+                w.connect(signal, self.item_changed, k)
+            # if v[0].startswith("s_"):
+            #     w.connect("focus-out-event", self.item_changed, k)
         self.isLoading = False
         self.stylediverts = {
             "LineSpacing": ("_linespacing", _("Line Spacing\nFactor:"), _("Baseline:")),
@@ -168,7 +172,7 @@ class StyleEditorView(StyleEditor):
     def setval(self, mrk, key, val, ifunchanged=False):
         super().setval(mrk, key, val, ifunchanged=ifunchanged)
         if mrk == self.marker:
-            v = stylemap.get(key)
+            v = stylemap.get(dualmarkers.get(key, key))
             if v is None:
                 return
             self.loading = True
@@ -187,7 +191,10 @@ class StyleEditorView(StyleEditor):
         w = self.builder.get_object(key)
         if w is None:
             return
-        setWidgetVal(key, w, value)
+        try:
+            setWidgetVal(key, w, value)
+        except ValueError as e:
+            raise ValueError("{} for widget {}".format(e, key))
 
     def load(self, sheetfiles):
         super().load(sheetfiles)
@@ -195,12 +202,15 @@ class StyleEditorView(StyleEditor):
                    "Peripheral Materials": {"zpa-": {}},
                    "Identification": {"toc": {}}}
         for k in sorted(self.allStyles(), key=lambda x:(len(x), x)):
-            v = self.sheet.get(k, self.basesheet.get(k, {}))
+            # v = self.sheet.get(k, self.basesheet.get(k, {}))
+            v = self.asStyle(k)
             if 'zDerived' in v:
-                self.sheet[v['zDerived']][' endMilestone']=k
+                # self.sheet[v['zDerived']][' endMilestone']=k
+                self.setval(v['zDerived'], ' endMilestone', k)
                 continue
             if k not in self.basesheet:
-                v[' deletable'] = True
+                # v[' deletable'] = True
+                self.setval(k, ' deletable', True)
             if k == "p":
                 foundp = True
             cat = 'Other'
@@ -214,8 +224,10 @@ class StyleEditorView(StyleEditor):
                 else:
                     cat = str(v['Name']).strip()
                 cat, url = categorymapping.get(cat, (cat, None))
-                v[' category'] = cat
-                v[' url'] = url
+                # v[' category'] = cat
+                self.setval(k, ' category', cat)
+                # v[' url'] = url
+                self.setval(k, ' url', url)
             else:
                 print(k)
             triefit(k, results.setdefault(cat, {}), 1)
@@ -229,12 +241,12 @@ class StyleEditorView(StyleEditor):
             keyfn = lambda x:(catorder.get(x[0], len(catorder)), x[0])
         else:
             keyfn = lambda x:(len(x[0]), x[0])
+        allStyles = self.allStyles()
         for k, v in sorted(d.items(), key=keyfn):
             ismarker = True
-            if k in self.sheet:
-                n = self.sheet[k].get('name', k)
-                if n is None:
-                    n = k
+            if k in allStyles:
+                # n = self.sheet[k].get('name', k)
+                n = self.getval(k, 'name')
                 m = re.match(r"^([^-\s]*)\s*([^-]+)(?:-\s*|$)", n)
                 if m:
                     if m.group(1) and m.group(1) not in ('OBSOLETE', 'DEPRECATED'):
@@ -246,7 +258,7 @@ class StyleEditorView(StyleEditor):
                 n = k
             else:
                 n = k
-            s = [k, n, ismarker]
+            s = [str(k), str(n), ismarker]
             this = self.treestore.append(parent, s)
             if len(v):
                 self._fill_store(v, this)
@@ -316,47 +328,44 @@ class StyleEditorView(StyleEditor):
                 val = 'nonpublishable' in data.get('TextProperties', '')
                 oldval = 'nonpublishable' in old.get('TextProperties', '')
             elif k.startswith("_"):
-                basekey = v[3](v[2])
-                obasekey = v[3](not v[2])
-                oldval = old.get(basekey, old.get(obasekey, ''))
-                val = data.get(basekey, oldval)
+                basekey = v[3](v[2])        # default data key e.g. "FontSize"
+                obasekey = v[3](not v[2])   # non-default data key e.g. "FontScale"
+                oldval = self.getval(self.marker, basekey, self.getval(self.marker, obasekey, baseonly=True), baseonly=True)
+                val = self.getval(self.marker, basekey)
                 olddat = v[2]
                 controlk = v[3](False)
-                for m, f in ((v[3](x), x) for x in (v[2], not v[2])):
-                    if m in old:
-                        olddat = f
-                        oldval = old[m]
-                        if m.lower() == "baseline":
-                            oldval = re.sub(r"(-?\d*\.?\d*)(\D|$)", r"\1", str(oldval))
+                # try each switch state
+                for m, f in ((v[3](x), x) for x in (not v[2], v[2])):
+                    if m in old:            # key in underlying?
+                        olddat = f          # set the state and get the val
+                        oldval = self.getval(self.marker, m)
                     if m in data:
-                        val = data[m]
-                        if m.lower() == "baseline":
-                            val = re.sub(r"(-?\d*\.?\d*)(\D|$)", r"\1", str(val))
+                        val = self.getval(self.marker, m)
                         self._setFieldVal(m, v, olddat, f)
-                        v = stylemap[v[3](False)]
                         break
                 else:
-                    f = v[2]
+                    f = olddat
+                    val = oldval
+                r = v[3](f)
+                v = stylemap[dualmarkers.get(r, r)]
                 newlabel = self.stylediverts[controlk][2 if f else 1]
                 controlw = stylemap[controlk][1]
                 self.set(controlw, newlabel)
                 old[" "+k] = olddat
             else:
-                oldval = old.get(k, v[2])
-                val = data.get(k, oldval)
+                oldval = self.getval(self.marker, k, v[2], baseonly=True)
+                val = self.getval(self.marker, k, v[2])
                 if v[0].startswith("c_"):
-                    val = val != v[2]
-                    oldval = oldval != v[2]
-            if k == "FontSize":
+                    val = val or False
+                    oldval = oldval or False
+            if k == "_fontsize":
                 fstyles = []
-                for a in ("Bold", "Italic"):
-                    if a in self.sheet and self.sheet[a] != "-" \
-                            or a in self.basesheet and self.basesheet[a] != "-":
-                        fstyles.append(a.lower())
-                fref = self.get_font(self.marker, "".join(fstyles))
+                fref = self.getval(self.marker, 'FontName')
+                if fref is None:
+                    fref = self.model.get("bl_fontR")
                 f = fref.getTtfont() if fref is not None else None
                 bfontsize = float(self.model.get("s_fontsize"))
-                fsize = float(val) / 12. * bfontsize
+                fsize = asfloat(val, 1.) * bfontsize
                 if f is not None:
                     asc = f.ascent / f.upem * bfontsize
                     des = f.descent / f.upem * bfontsize
@@ -365,7 +374,7 @@ class StyleEditorView(StyleEditor):
                     self.set("l_styActualFontSize", "{:.1f}pt".format(fsize))
             self._setFieldVal(k, v, oldval, val)
 
-        stype = data.get('StyleType', old.get('StyleType', ''))
+        stype = self.getval(self.marker, 'StyleType')
         _showgrid = {'Para': (True, True, False), 'Char': (False, True, False), 'Note': (True, True, True)}
         visibles = _showgrid.get(stype[:4] if stype is not None else "",(True, True, True))
         for i, w in enumerate(('Para', 'Char', 'Note')):
@@ -394,8 +403,6 @@ class StyleEditorView(StyleEditor):
             return a == b
 
     def _setFieldVal(self, k, v, oldval, val):
-        if val is None:
-            val = self.getval('p', k)
         w = self.builder.get_object(v[0])
         if w is None:
             print("Can't find widget {}".format(v[0]))
@@ -405,7 +412,11 @@ class StyleEditorView(StyleEditor):
                 self.set("l_styColorValue", val)
             else:
                 newval = val
-            setWidgetVal(v[0], w, newval if v[4] is None else v[4](newval))
+            if newval is None:
+                dflt = self.getval('p', k)
+                self.set(v[0], dflt)
+            else:
+                self.set(v[0], newval)
         if v[1] is not None:
             ctxt = self.builder.get_object(v[1]).get_style_context()
             if oldval is not None and not self._cmp(val, oldval):
@@ -413,10 +424,11 @@ class StyleEditorView(StyleEditor):
             else:
                 ctxt.remove_class("changed")
 
-    def item_changed(self, w, key):
+    def item_changed(self, w, *a):
         if self.isLoading:
             return
-        data = self.sheet[self.marker]
+        key = a[-1]
+        data = self.asStyle(self.marker)
         v = stylemap[key]
         val = self.get(v[0], v[2])
         if key == '_publishable':
@@ -434,10 +446,11 @@ class StyleEditorView(StyleEditor):
             newk = self.stylediverts[key][0]
             newv = stylemap[newk]
             isset = self.get(newv[0], newv[2])
+            # print(f"{key=}[{isset=}=>{newv[3](isset)}]: {val=}")
             key = newv[3](isset)
             other = newv[3](not isset)
             if other in data:
-                del data[other]
+                super(self.__class__, self).setval(self.marker, key, None)
             value = val if isset or v[3] is None else v[3](val) # v[4 if isset else 3] is None else v[4 if isset else 3](val)
         elif v[0].startswith("col_"):
             value = coltotex(val)
@@ -446,16 +459,15 @@ class StyleEditorView(StyleEditor):
             otherkey = v[3](not val)
             controlk = v[3](False)
             newv = stylemap.get(newkey, stylemap.get(otherkey, [None]))
-            oldval = data.get(otherkey, None)
+            oldval = self.getval(self.marker, otherkey)
             newval = self._convertabs(newkey, oldval)
-            self._setData(newkey, newval)
-            setnewv = data[newkey] if newkey not in stylemap or newv[4] is None else newv[4](data[newkey])
-            self.set(newv[0], setnewv)
+            self.setval(self.marker, newkey, newval)
+            # print(f"{newkey}: {oldval=} -> {newval=} | {self.getval(self.marker, newkey)}")
             newlabel = self.stylediverts[controlk][2 if val else 1]
             controlw = stylemap[controlk][1]
             self.set(controlw, newlabel)
             if otherkey in data:
-                del data[otherkey]
+                super(self.__class__, self).setval(self.marker, otherkey, None)
             value = val
             # value = val if newv[3] is None else newv[3](val)
         elif v[3] is not None:
@@ -463,17 +475,17 @@ class StyleEditorView(StyleEditor):
         else:
             value = val
         if not key.startswith("_"):
-            self._setData(key, value)
+            super(self.__class__, self).setval(self.marker, key, value)
             if key == "FontSize":
-                self.set("l_styActualFontSize", "{:.1f}pt".format(float(value) / 12. * float(self.model.get("s_fontsize"))))
+                self.set("l_styActualFontSize", "{:.1f}pt".format(float(value) * float(self.model.get("s_fontsize"))))
         if v[1] is not None:
             ctxt = self.builder.get_object(v[1]).get_style_context()
             if key.startswith("_"):
-                oldval = self.basesheet.get(" "+key, False)
+                oldval = self.basesheet.get(self.marker, {}).get(" "+key, False)
             else:
-                oldval = self.basesheet.get(self.marker, {}).get(key, v[2])
+                oldval = self.getval(self.marker, key, v[2], baseonly=True)
             if v[0].startswith("s_"):
-                diff = abs(self.asFloatPts(str(oldval)) - self.asFloatPts(str(value))) > 0.05
+                diff = abs(float(oldval) - float(value)) > 0.001
             else:
                 diff = oldval != value
             if diff:
@@ -559,7 +571,7 @@ class StyleEditorView(StyleEditor):
 
     def resolveEndMarker(self, newdata, key, newval):
         endm = self.getval(key, ' endMilestone')
-        if endm is not None and endm is not ' None' and endm != newval:
+        if endm is not None and endm != ' None' and endm != newval:
             derivation = self.getval(endm, 'zDerived')
             if derivation is not None:
                 if endm in self.sheet:
@@ -602,5 +614,5 @@ class StyleEditorView(StyleEditor):
             newval = old.get(" "+newk, None)
             if newval is not None:
                 self._setFieldVal(k, stylemap[newk], newval, newval)
-        oldval = old.get(k, v[2])
+        oldval = self.getval(self.marker, k, baseonly=True)
         self._setFieldVal(k, v, oldval, oldval)

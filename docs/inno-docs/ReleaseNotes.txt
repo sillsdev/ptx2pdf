@@ -1,8 +1,36 @@
-PTXprint 1.6.9 Release Notes 
-22 April 2021
+PTXprint 1.8 Release Notes 
+22 May 2021
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 
+NOTE: The child markers of \f and \x now follow the settings of their parent marker styles.
+      As a result there may be changes in the way footnotes and cross-references appear.
+	  It is recommended that your reset these styles to use the default settings prior
+	  to trying to remedy settings manually.
+	  
+Bug fixes and Improvements in 1.8
+
+  * Added new feature to include cross-references from external lists in centre column
+  
+  * Fix bug which caused modules with spaces in their name to create an unopenable PDF
+  
+  * Fix centring header centre when marginal verses
+  
+  * Provide more context in error messages to help track issues better
+  
+  * Add bridgeVerses macro enabling on-the-fly bridged verses (useful for marginal verses)
+  
+  * Ensure .triggers files are included in .zip archives
+
+Bug fixes and Improvements in 1.7.9
+
+  * Show flattened module in Final SFM tab when typesetting a module
+  
+  * Fixed not showing chapter numbers in single chapter books
+
+  * #447 Add \CalcChapSizefalse to force user-specified chapter size and raise
+    rather than auto-calculated values
+  
 WARNING: For those using RTL scripts:
      The TeX macros have been changed for RTL for Right and Left Justification 
      such that they are swapped. This means that you no longer have to swap the 
@@ -12,7 +40,38 @@ WARNING: For those using RTL scripts:
 NOTE: For those previously using various Border and Grid PDFs as watermarks:
      There is now a better system for Guides and Grids (see Layout page), so the
 	 various Border and Grid PDFs have been removed from the Watermark PDFassets.
+	 Also note that the 'Crop Marks' option still exists, but on the Advanced tab.
 
+Bug fixes in 1.7.2
+
+  * Fix bug in PicList generation for USFM3 files
+
+Bug fixes in 1.7.1
+
+  * TypeError bug fix for Style editor
+
+Bug fixes and Improvements in 1.7
+
+  * Added UI localisation for Indonesian (tooltips yet to be done) - thanks to DC & RN
+  
+  * Add Western-Cham digits as an option
+  
+  * Add alternative diglot merging/aligning scheme
+  
+  * Add diglot feature "Adjust Center Header" to align with the gutter/line 
+  
+  * Allow Anchor Reference column to be resized in PicList viewer
+  
+  * Disable splitting footnotes across pages (caused duplicate FN fragments to show up)
+
+  * Fix moving end of ayahs and end of ayah marks around verse ranges
+  
+  * Fix fontscale switching messing with the value
+  
+  * #441 Fix strange rangeref with no verses in a column issue
+  
+  * #438 Pictures now work more predictably in non-scripture books (FRT, BAK etc.)
+  
 Bug fixes and Improvements in 1.6.9
 
   * Added option to include Guides (rules and baselines) and/or custom Grid behind text

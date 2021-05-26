@@ -8,7 +8,7 @@ from ptxprint.texmodel import TexModel
 from ptxprint.ptsettings import ParatextSettings
 from ptxprint.view import ViewModel, VersionStr, refKey
 from ptxprint.font import getfontcache
-from ptxprint.usfmerge import usfmerge
+from ptxprint.usfmerge import usfmerge2
 from ptxprint.utils import _, universalopen, print_traceback
 
 # "*** WARNING: Sidebar or colophon might not print on page": \
@@ -109,7 +109,7 @@ _diglot = {
 "diglot/fontitalic" :       "document/fontitalic",
 "diglot/fontbolditalic" :   "document/fontbolditalic",
 "diglot/ifshowversenums" :  "document/ifshowversenums",
-"diglot/ifblendfnxr" :      "notes/ifblendfnxr",
+"diglot/xrlocation" :       "notes/xrlocation",
 "diglotfancy/versedecorator":       "fancy/versedecorator",
 "diglotfancy/versedecoratorpdf":    "fancy/versedecoratorpdf",
 "diglotfancy/versedecoratorshift":  "fancy/versedecoratorshift",
@@ -140,6 +140,7 @@ def isLocked():
     return _joblock is not None
 
 class RunJob:
+
     def __init__(self, printer, scriptsdir, args, inArchive=False):
         self.scriptsdir = scriptsdir
         self.printer = printer
@@ -362,6 +363,15 @@ class RunJob:
                 out = None
             if out is None:
                 continue
+            outpath = os.path.join(self.tmpdir, out)
+            if info["notes/ifxrexternalist"]:
+                info.createXrefTriggers(b, self.prjdir, outpath)
+            else:
+                try:
+                    # print(f"Removing {outpath}.triggers")
+                    os.remove(outpath+".triggers")
+                except FileNotFoundError:
+                    pass
             donebooks.append(out)
         if not len(donebooks):
             unlockme()
@@ -370,7 +380,9 @@ class RunJob:
         info["project/bookids"] = jobs
         info["project/books"] = donebooks
         res = self.sharedjob(jobs, info)
-        return [os.path.join(self.tmpdir, out)] + res
+        if info['notes/ifxrexternalist']:
+            res += [os.path.join(self.tmpdir, out+".triggers") for out in donebooks]
+        return [os.path.join(self.tmpdir, out) for out in donebooks] + res
 
     def digdojob(self, jobs, info, diginfo, digprjid, digprjdir):
         texfiles = []
@@ -381,7 +393,7 @@ class RunJob:
                            "paper/headerposition", "paper/footerposition", "paper/ruleposition",
                            "document/ch1pagebreak", "document/bookintro", "document/introoutline", 
                            "document/parallelrefs", "document/elipsizemptyvs", "notes/iffootnoterule",
-                           "notes/ifblendfnxr", "notes/includefootnotes", "notes/includexrefs", 
+                           "notes/xrlocation", "notes/includefootnotes", "notes/includexrefs", 
                            "notes/fneachnewline", "notes/xreachnewline", "document/filterglossary", 
                            "document/chapfrom", "document/chapto", "document/ifcolorfonts", "document/ifomitsinglechnum"]
         diginfo["project/bookids"] = jobs
@@ -425,7 +437,7 @@ class RunJob:
             sheetsa = info.printer.getStyleSheets()
             sheetsb = diginfo.printer.getStyleSheets()
             try:
-                usfmerge(left, right, outFile, stylesheetsa=sheetsa, stylesheetsb=sheetsb)
+                usfmerge2(left, right, outFile, stylesheetsa=sheetsa, stylesheetsb=sheetsb, mode=info["document/diglotmergemode"])
             except SyntaxError as e:
                 syntaxErrors.append("{} {} line: {}".format(self.prjid, b, str(e).split('line', maxsplit=1)[1]))
             except Exception as e:
@@ -495,9 +507,10 @@ class RunJob:
             texinputs += ["/usr/share/ptx2pdf/texmacros"]
             miscfonts.append("/usr/share/ptx2pdf/texmacros")
         miscfonts.append(ptxmacrospath)
-        miscfonts.append(os.path.join(prjdir, "shared"))
+        miscfonts.append(os.path.join(self.tmpdir, "shared", "fonts"))
         if len(miscfonts):
             os.putenv("MISCFONTS", pathjoin(miscfonts))
+        # print(f"{pathjoin(miscfonts)=}")
         os.putenv('TEXINPUTS', pathjoin(texinputs))
         self.thread = Thread(target=self.run_xetex, args=(outfname, info))
         self.busy = True
@@ -799,3 +812,4 @@ class RunJob:
         num = float(re.sub(r"([0-9\.]+).*", r"\1", str(measure)))
         unit = str(measure)[len(str(num)):].strip(" ")
         return (num * _unitConv[unit]) if unit in units else num
+

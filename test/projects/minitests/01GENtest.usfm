@@ -16,7 +16,9 @@ In eius iste blanditiis impedit qui rem repellendus eos. Mollitia delectus qui a
 \v 2 Here in verse two we check\x + \xo :2 \xt Acts 17:11\x* some endnotes.\x + \xt Rev 20:14\x*
 \p
 \zendnoterule
-\zplacenotesx
+\ztestnotes-x
+\zplacenotes-x
+\zpostendnoterule
 \p
 The first end-note\x + \xt But not the last\x* was placed above here.
 
