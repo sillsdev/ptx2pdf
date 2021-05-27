@@ -1,0 +1,7 @@
+GALL 1.3 This is a rose, not a fig (cl) |loc="cl" src="image.jpg" alt="Figs are tasty"  ref="1:3" size="col*0.25"
+GALA 1.5 This is a rose, not a fig (p) |loc="p" src="image.jpg" alt="Figs are tasty"  ref="1:5" size="col*0.25" x-credit="© IM"
+GALA 1.7 This is a rose, not a fig [cr0] |loc="cr0" src="image.jpg" alt="Figs are tasty"  ref="1:7" size="col*0.28"
+GALL 2.1 Flower [cr0] |loc="cr0" src="image.jpg" alt="Figs are tasty"  ref="v1" size="col*0.3"
+GALR 2.1 Not fig. [cl3] |loc="cl3" src="image.jpg" alt="Figs are tasty"  ref="v1" size="col*0.25"
+GALA 3.1 A larger picture[b] |pgpos="b" src="image.jpg" ref="3:1" size="col" scale="0.4" x-credit="© ImageMagick LLC" x-creditpos="br" 
+GALA 3.2 A smaller picture[t] |pgpos="t" src="image.jpg" ref="3:2" size="col" scale="0.35" x-credit="© ImageMagick LLC" x-creditpos="tl" x-creditbox="dark"
