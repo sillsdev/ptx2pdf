@@ -111,7 +111,7 @@
 % We want to import this module here, but it has to come after the stylesheet is loaded.
 %\input ptxplus-marginalverses.tex
 \input ptx-extended.tex % \esb and friends.
-\input ptx-modules.tex % Load optional modules
+\input ptx-plugins.tex % Load optional plugins
 %-c_imports
 
 %+c_fonts-basic
@@ -895,7 +895,7 @@
       \advance\availht by -\AboveNoteSpace
       \advance\availht by -\BelowNoteRuleSpace
       \f@rstnotefalse
-      \trace{f}{ParaNotes[#1] cost \the\ht0+\the\dp0 + \the\AboveNoteSpace + \the\BelowNoteSpace}%
+      \trace{f}{ParaNotes[#1] cost \the\ht0+\the\dp0 + \the\AboveNoteSpace + \BelowNoteRuleSpace}%
     \else
       \advance\availht by -\InterNoteSpace
       \trace{f}{ParaNotes[#1] cost \the\ht0+\the\dp0 + \the\InterNoteSpace}%

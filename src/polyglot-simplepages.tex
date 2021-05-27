@@ -44,16 +44,24 @@
   \trace{dmp}{ #1 is on page \p@lyp@gestring}%
   \x@\xdef\csname p@lyp@ge#1\endcsname{\p@lyp@gestring}}
 
-\def\s@tpolyp@ges#1\E{%
+\def\s@tpolyp@ges#1\E{%Called by polyglot pages, once per page. #1 is the columns for this page.
   \edef\tmp{#1}%
+  \xdef\p@lyp@ges{\the\p@lyp@geno}
   \ifx\tmp\h@phen
-    \xdef@cseq{p@lyp@gecols\the\p@lyp@geno}{}% p@lyp@gecols0 ... p@lyp@gecolsN give list the columns for the respective page
+    \xdef@cseq{p@lyp@gecols\p@lyp@gestring}{}% p@lyp@gecols0 ... p@lyp@gecolsN list the columns for the respective page
+    \xdef@cseq{revp@lyp@gecols\p@lyp@gestring}{}% revp@lyp@gecols0 ... revp@lyp@gecolsN list the reversed columns for the respective page
   \else 
-    \xdef@cseq{p@lyp@gecols\the\p@lyp@geno}{#1}% p@lyp@gecols0 ... p@lyp@gecolsN give list the columns for the respective page
+    \xdef@cseq{p@lyp@gecols\p@lyp@gestring}{#1}% p@lyp@gecols0 ... p@lyp@gecolsN give list the columns for\let\col@do=\mkrev@list
+    \let\col@do=\mkrev@list
+    \def\rev@layout@list{}\def\list@type{layout}%
+    \x@\each@col\tmp\E%
+    \xdef@cseq{revp@lyp@gecols\p@lyp@gestring}{\rev@layout@list}% revp@lyp@gecols0 ... revp@lyp@gecolsN list the reversed columns for the respective page
+    %For chosing the correct inserts:
+    \xdef@cseq{left@p@ly@col\p@lyp@gestring}{\x@\first@item\layout@list\E}%
+    \xdef@cseq{right@p@ly@col\p@lyp@gestring}{\x@\first@item\rev@layout@list\E}%
     \let\col@do=\s@tpolyp@ge
     \each@col#1\E
   \fi
-  \xdef\p@lyp@ges{\the\p@lyp@geno}
   \ifnum \p@lyp@geno>0  % new@poly@page doesn't get run for page0, as those take over the standard boxes
     \edef\tmpname{partial\p@lyp@gesuffx }
     \ifcsname \tmpname\endcsname\else
@@ -66,35 +74,39 @@
 \def\new@poly@page{%called with p@lyp@geno=new page
   \let\npp@d@=\d@
   \let\d@=\m@kepolyb@x
-  \x@\cstackdown\p@lyins@rts,\E
-  \let\d@=\npp@d@
+  \x@\cstackdown\p@lyb@xes,\E
+  \let\d@=\npp@d@ \let\npp@d@=\undefined
 }
 
 \def\e@tcomma#1,\E{#1} %Remove the trailing comma from a list.
 %
 % Boxes
-% Each page-related box (\partial and picture insert boxes) has a separate copy for each page. 
-% on switching between columns / pages, the appropriate page's copy becomes 'active' i.e. \partial points to \partial@poly@0
-% *Inserts* must be genuine inserts on each page.
+% Each page-related box (\partial and similar boxes) has a separate copy for each page. 
+% on switching between columns / pages, the appropriate page's copy becomes
+% 'active' i.e. \partial points to \partial@poly@0, save boxes are saved to ...@poly@0,
+% verybottomins points to the insert verybottomins@poly@0
+% *Inserts* must be made as genuine inserts on each page.
+% 
 \def\polyglot@onetime@setup{%
   \tracingmacros=1
   \edef\@ut{\x@\e@tcomma\ins@rts\E}%
   \let\d@\gen@p@lyins@rts %populates \@ut with insert save names
   \x@\cstackdown \s@veclasses\E
-  \xdef\p@lyins@rts{partial,n@xtpartialNrml,n@xtpartialRev,\@ut,}%
-  \trace{dmp}{poly@inserts defined as: \p@lyins@rts}%
+  \xdef\p@lyb@xes{partial,n@xtpartialNrml,n@xtpartialRev,\@ut,}%
+  \trace{dmp}{poly@b@xes defined as: \p@lyb@xes}%
   % Now setup copies of boxes.
   \addtoinithooks{%
-    \let\d@=\poly@setup@inserts
-    \x@\cstackdown \p@lyins@rts,\E
+    \let\d@=\poly@setup@boxaliases
+    \x@\cstackdown \p@lyb@xes\pageins@rts,\E
     }%
   \tracingmacros=0
+  \let\@ut=\undefined
   \global\let\polyglot@onetime@setup\relax
 } 
 \def\polyglot@eachtime@setup{%
 }
 
-\def\poly@setup@inserts#1\E{\x@\let\x@\tmp@ins\csname #1\endcsname \x@\global\x@\let\csname #1@poly@0\endcsname\tmp@ins} %Make each valid insert type have a page-number suffix
+\def\poly@setup@boxaliases#1\E{\x@\let\x@\tmp@ins\csname #1\endcsname \x@\global\x@\let\csname #1@poly@0\endcsname\tmp@ins} %Make each valid insert type have a page-number suffixed alias
 
 \def\poly@rename@inserts#1\E{%
   \x@\let\x@\tmp@ins\csname #1\p@lyp@gesuffx\endcsname
@@ -124,14 +136,20 @@
     \trace{dmp}{@@s@tpolyp@ge}%
     \let\spp@d@=\d@
     \let\d@=\poly@rename@inserts
-    \x@\cstackdown \p@lyins@rts,\E
+    \x@\cstackdown \p@lyb@xes\pageins@rts,\E
+    \x@\let\x@\left@col\csname left@p@ly@col\p@lyp@gestring\endcsname
+    \x@\let\x@\right@col\csname right@p@ly@col\p@lyp@gestring\endcsname
+    \x@\global\x@\let\x@\topleftins\csname \colinsert@name{\loc@T\left@col}\endcsname
+    \x@\global\x@\let\x@\toprightins\csname \colinsert@name{\loc@T\right@col}\endcsname
+    \x@\global\x@\let\x@\bottomleftins\csname \colinsert@name{\loc@B\left@col}\endcsname
+    \x@\global\x@\let\x@\bottomrightins\csname \colinsert@name{\loc@B\right@col}\endcsname
     \alias@inserts
-    \let\d@=\spp@d@
+    \let\d@=\spp@d@\let\spp@d@=\undefined
 }
 \def\gen@p@lyins@rts#1\E{%add names of inserts (saveclass #1) to \@ut
   \edef\s@veclass{#1}\let\gpiD@=\d@\let\d@=\cs@apply\let\do@it=\s@veclass@name 
-  \x@\cstackdown\ins@rts\E
-  \let\d@=\gpiD@
+  \x@\cstackdown\pageins@rts\E
+  \let\d@=\gpiD@\let\gpiD@=\undefined
 }
 
 \def\polyglotpages#1{%comma separated list of concatenated columns to put on different pages (e.g. LR,AB) specifies 2 pages, pg1 shows L+R, pg2 A+B
@@ -154,25 +172,26 @@
 \let\@prepare@layout@simplepages=\@prepare@layout@simplecols
 \def\@setup@layout@simplepages{}%No special setup
 
-
+\def\first@item#1#2\E{#1}
 \def\@@do@simplepage@{% iterate through page numbers 
   \s@tctslist@simplepages
   \x@\let\x@\layout@list\csname p@lyp@gecols\the\p@lyp@geno\endcsname
   \trace{dmp}{\spt@sk\space [\the\p@lyp@geno:\layout@list] \the\ht\partial+\the\dp\partial}%
   %pick correct inserts
-  \@@s@tpolyp@ge
   \ifx\layout@list\empty\else
     %make reverse layout list
     \let\col@do=\mkrev@list
     \xdef\rev@layout@list{}\def\list@type{layout}%
     \x@\each@col\layout@list\E%
+    %choose correct column inserts
   \fi
+  \@@s@tpolyp@ge
   \trace{dmp}{revlist: \rev@layout@list}%
   %populate page
-  \edef\sdp@pgno{\the\p@lyp@geno}% scol@cmd shouldn't touch p@lypageno, but just in case 
+  \edef\sdp@pgno{\the\p@lyp@geno}% scol@cmd shouldn't touch p@lyp@geno, but just in case 
   \pre@scol@cmd
   \scol@cmd
-  \p@lyp@geno=\sdp@pgno
+  \p@lyp@geno=\sdp@pgno \let\sdp@pgno=\undefined
   %Itterate
   \ifnum\p@lyp@geno<\p@lyp@ges\relax
     \advance\p@lyp@geno by 1

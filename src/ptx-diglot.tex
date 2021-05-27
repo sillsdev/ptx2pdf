@@ -818,8 +818,11 @@
 \newdimen\baselineDeltaL % semi-constant: difference between the L baseline and \topskip.  Set in ptx-stylesheet (-ve=topskip longer) 
 \newdimen\baselineDeltaR % semi-constant: difference between the R baseline and \topskip.  Set in ptx-stylesheet (-ve=topskip longer) 
 \newdimen\thisjointDelta % difference between the L and R boxes (-ve=left longer)
+\newcount\cumulativeDeltaL % Sum of \chunkDelta values, in points
+\newcount\cumulativeDeltaR % Sum of \chunkDelta values, in points
+\cumulativeDeltaL=0
+\cumulativeDeltaR=0
 \newcount\cumulativeDelta % Sum of \chunkDelta values, in points
-\cumulativeDelta=0
 \newdimen\adjustp@ge %emergency stretch to page
 \adjustp@ge=0pt
 \def\m@rkerL{}
@@ -2325,8 +2328,8 @@
     \message{#1 is already a diglot column. You can only define it as one once!}%
   \else
     \message{Defining #1 as an additional polyglot column.}%
-    \newcolins@rt{t#1}% column top insert
-    \newcolins@rt{b#1}% column bottom insert
+    \newcolins@rt{\loc@T#1}% column top insert
+    \newcolins@rt{\loc@B#1}% column bottom insert
     \let\old@cts\digl@tc@ntentlist
     \let\digl@tc@ntentlist=\diglot@list
     \add@to@digl@tc@ntentlist{#1}%
@@ -2373,15 +2376,22 @@
 % The column-delta totals should be per-column, and be summed as cross-column deltas compared to the average.
   \fi
 }
+\def\colinsert@name#1{colinsert@#1}
+\def\extra@insert@alias#1#2{% Assumption: #1 is already in the form \foo, #2 is in the form \csname something\endcsname
+    \x@\x@\x@\gdef\x@\x@\x@\alias@inserts\x@\x@\x@{\x@\alias@inserts\x@\let\x@#1#2}}
 
 \def\newcolins@rt#1{%
-  \ifcsname colinsert@#1\endcsname\else
-    \def\ins@name{colinsert@#1}%
+  \edef\ins@name{\colinsert@name{#1}}%
+  \ifcsname \ins@name\endcsname\else
     \xdef\columnins@rts{\columnins@rts\ins@name,}%
     \x@\newins@rt\csname \ins@name\endcsname
-    \xdef\ins@rts{\columnins@rts\pageins@rts}
+    \x@\global\x@\count\csname \ins@name\endcsname=0
+    \x@\global\x@\dimen\csname \ins@name\endcsname=\maxdimen
+    \xdef\ins@rts{\columnins@rts\pageins@rts}%
     \x@\m@keinsertsaveboxes \ins@name\E
+    \x@\extra@insert@alias\x@{\csname ins-#1\endcsname}{\csname \ins@name\endcsname}%FIXME
   \fi
+  \let\ins@name=\undefined
 }
 
 \x@\let\csname polyglot-simplecols@plugin@loaded\endcsname\empty 
