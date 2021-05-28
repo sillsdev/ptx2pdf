@@ -1,13 +1,29 @@
 PTXprint 1.8 Release Notes 
-22 May 2021
+28 May 2021
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 
 NOTE: The child markers of \f and \x now follow the settings of their parent marker styles.
       As a result there may be changes in the way footnotes and cross-references appear.
-	  It is recommended that your reset these styles to use the default settings prior
+	  It is recommended that you RESET these styles to use the default settings prior
 	  to trying to remedy settings manually.
 	  
+Bug fixes and Improvements in 1.8.1
+
+  * Fixed Paratext module processing to be more robust
+  
+  * Fix resetting style font to main font
+  
+  * Fixed Hyphenation file generation issues
+  
+  * Fixed #452 Adding a new style fails
+  
+  * Fixed #451 Footnote problems
+
+  * Allow page size separator to use , or x as dimension separator
+  
+  * Fix strange colophon behaviour
+  
 Bug fixes and Improvements in 1.8
 
   * Added new feature to include cross-references from external lists in centre column

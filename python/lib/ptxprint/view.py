@@ -967,7 +967,7 @@ class ViewModel:
                     u.getwords(init=acc, constrain=hyphwords)
                 hyphcounts = {k:acc.get(k.replace("-",""), 0) for k in hyphenatedWords}
                 hyphenatedWords = [k for k, v in sorted(hyphcounts.items(), key = lambda x: (-x[1], -len(x[0])))][:listlimit]
-                m2b = "\n\nThat is too many for XeTeX! List truncated to longest {} words found in the active sources.".format(len(hyphenatedWords))
+                m2b = _("\n\nThat is too many for XeTeX! List truncated to longest {} words found in the active sources.").format(len(hyphenatedWords))
             hyphenatedWords.sort(key = lambda s: s.casefold())
             outlist = '\\catcode"200C=11\n\\catcode"200D=11\n\\hyphenation{' + "\n".join(hyphenatedWords) + "}"
             with open(outfname, "w", encoding="utf-8") as outf:
