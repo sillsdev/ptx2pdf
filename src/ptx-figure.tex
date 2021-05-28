@@ -39,6 +39,7 @@
 \newinsert\toprightins \count\toprightins=0 \dimen\toprightins=\maxdimen
 \newinsert\bottomleftins \count\bottomleftins=0 \dimen\bottomleftins=\maxdimen
 \newinsert\bottomrightins\count\bottomrightins=0 \dimen\bottomrightins=\maxdimen
+\def\colinsert@name#1{colinsert@#1}
 \let\colinsert@tL\topleftins
 \let\colinsert@bL\bottomleftins
 \let\colinsert@tR\toprightins
@@ -585,7 +586,7 @@
       \ifdiglot %For diglot, need to know the height of the tallest insert
         \ifx\l@cspec@a\loc@T %(Only affects top)
           \let\col@do=\max@boxht \dimen1=0pt
-          \def\v@lpfx{colinsert@t}\def\v@lsfx{}%
+          \edef\v@lpfx{\colinsert@name{t}}\def\v@lsfx{}%
           \x@\each@col\diglot@list\E
           \uppercase{\def\t@mp{\l@cspec@b}}%
           \ifx\t@mp\m@x@at@col\else %don't adjust height if this box is already highest
@@ -611,13 +612,23 @@
   \ifpicUsesIns
     \x@\let\x@\p@cins\csname ins-\loc@ption\endcsname
     \ifx\p@cins\relax
-      %\errmessage{Unknown picture location "\loc@ption",
-      %  expected one of t,b,tl,tr,bl,br}%
-      \ifnum\c@rrentcols>1
-        \p@cinswid=\hsize
-        \iffiglocleft\let\p@cins=\topleftins\figlocleftfalse \otherinsht=\ht\toprightins
-        \else\let\p@cins=\toprightins\figloclefttrue \otherinsht=\ht\topleftins\fi
-      \else \let\p@cins=\topins\fi
+      \x@\let\x@\p@cins\csname \colinsert@name{\loc@ption}\endcsname
+      \ifx\p@cins\relax
+        \message{Unknown picture location "\loc@ption",
+          expected one of t,b,tl,tr,bl,br,tL,tR,bL,bR or an inline one}%
+        \ifnum\c@rrentcols>1
+          \p@cinswid=\hsize
+          \iffiglocleft\let\p@cins=\topleftins\figlocleftfalse \otherinsht=\ht\toprightins
+          \else\let\p@cins=\toprightins\figloclefttrue \otherinsht=\ht\topleftins\fi
+        \else \let\p@cins=\topins\fi
+      \else
+        \ifdiglot
+          \x@\let\x@\tmp\csname column\l@cspec@b width\endcsname
+          \ifx\tmp\relax\else
+            \p@cinswid=\tmp
+          \fi
+        \fi
+      \fi
     \fi
   \fi
   \ifdiglot\else\otherinsht=0pt \fi %Nothing to subtract if not diglot

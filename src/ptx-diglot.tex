@@ -1576,10 +1576,10 @@
         %page,
         %Need to find out where to put the footnotes, as one of them should
         %be close to its respective text.
-        \tracingmacros=1
+        %\tracingmacros=1
           \csname @prepare@unbalnotes@\diglotlayout\endcsname
           \csname @do@unbalnotes@\diglotlayout\endcsname
-        \tracingmacros=0
+        %\tracingmacros=0
       \fi %BalNotes
     \else%
       \trace{f}{No footnotes}%
@@ -2419,7 +2419,6 @@
 % The column-delta totals should be per-column, and be summed as cross-column deltas compared to the average.
   \fi
 }
-\def\colinsert@name#1{colinsert@#1}
 \def\extra@insert@alias#1#2{% Assumption: #1 is already in the form \foo, #2 is in the form \csname something\endcsname
     \x@\x@\x@\gdef\x@\x@\x@\alias@inserts\x@\x@\x@{\x@\alias@inserts\x@\let\x@#1#2}}
 

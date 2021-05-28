@@ -88,8 +88,8 @@
 % *Inserts* must be made as genuine inserts on each page.
 % 
 \def\polyglot@onetime@setup{%
-  \tracingmacros=1
-  \edef\@ut{\x@\e@tcomma\ins@rts\E}%
+  %\tracingmacros=1
+  \edef\@ut{\x@\e@tcomma\pageins@rts\E}%
   \let\d@\gen@p@lyins@rts %populates \@ut with insert save names
   \x@\cstackdown \s@veclasses\E
   \xdef\p@lyb@xes{partial,n@xtpartialNrml,n@xtpartialRev,\@ut,}%
@@ -99,7 +99,7 @@
     \let\d@=\poly@setup@boxaliases
     \x@\cstackdown \p@lyb@xes\pageins@rts,\E
     }%
-  \tracingmacros=0
+  %\tracingmacros=0
   \let\@ut=\undefined
   \global\let\polyglot@onetime@setup\relax
 } 
@@ -135,7 +135,8 @@
 \def\@@s@tpolyp@ge{% 
     \trace{dmp}{@@s@tpolyp@ge}%
     \let\spp@d@=\d@
-    \let\d@=\poly@rename@inserts
+    \let\d@=\poly@rename@inserts    
+    \tracingassigns=1
     \x@\cstackdown \p@lyb@xes\pageins@rts,\E
     \x@\let\x@\left@col\csname left@p@ly@col\p@lyp@gestring\endcsname
     \x@\let\x@\right@col\csname right@p@ly@col\p@lyp@gestring\endcsname
@@ -144,6 +145,7 @@
     \x@\global\x@\let\x@\bottomleftins\csname \colinsert@name{\loc@B\left@col}\endcsname
     \x@\global\x@\let\x@\bottomrightins\csname \colinsert@name{\loc@B\right@col}\endcsname
     \alias@inserts
+    \tracingassigns=0
     \let\d@=\spp@d@\let\spp@d@=\undefined
 }
 \def\gen@p@lyins@rts#1\E{%add names of inserts (saveclass #1) to \@ut
