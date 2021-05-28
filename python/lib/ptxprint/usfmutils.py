@@ -1,4 +1,4 @@
-from ptxprint.sfm import usfm, style
+from ptxprint.sfm import usfm, style, sreduce
 from ptxprint import sfm
 from ptxprint.reference import RefList, RefRange, Reference
 import re, os, traceback, warnings
@@ -178,12 +178,15 @@ class Usfm:
         if init is None:
             init = {}
         def addwords(s, a):
-            for w in wre.split(s)[1::2]:
+            if s is None:
+                return a
+            for w in wre.split(str(s))[1::2]:
                 if constrain is None or w in constrain:
                     a[w] = a.get(w, 0) + 1
+            return a
         def nullelement(e, a, c):
-            pass
-        words = self.sreduce(nullelement, addwords, self.doc, init)
+            return a
+        words = sreduce(nullelement, addwords, self.doc, init)
         return words
 
     def subdoc(self, refrange, removes={}, strippara=False):
@@ -382,7 +385,7 @@ class Usfm:
     def letter_space(self, inschar, doc=None):
         from ptxprint.sfm.ucd import get_ucd
         def fn(e):
-            if not isScriptureText(e.parent):
+            if not e.parent or not isScriptureText(e.parent):
                 return e
             done = False
             lastspace = True
@@ -421,7 +424,7 @@ class Usfm:
             return None
         def _gt(e, a):
             return None
-        sfm.sreduce(_ge, _gt, self.doc, None)
+        sreduce(_ge, _gt, self.doc, None)
 
 def read_module(inf, sheets):
     lines = inf.readlines()

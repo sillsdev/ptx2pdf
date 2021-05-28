@@ -5,7 +5,7 @@ from ptxprint.ptsettings import ParatextSettings
 from ptxprint.font import TTFont, cachepath, cacheremovepath, FontRef, getfontcache, writefontsconf
 from ptxprint.utils import _, refKey, universalopen, print_traceback, local2globalhdr, \
                             global2localhdr, asfloat, allbooks, books, bookcodes, chaps, f2s
-from ptxprint.usfmutils import Sheets, UsfmCollection
+from ptxprint.usfmutils import Sheets, UsfmCollection, Usfm
 from ptxprint.piclist import PicInfo, PicChecks
 from ptxprint.styleditor import StyleEditor
 import pathlib, os, sys
@@ -934,11 +934,13 @@ class ViewModel:
         else:
             m2b = ""
             m2c = ""
+            m2d = ""
             z = 0
+            nohyphendata = []
             with universalopen(infname) as inf:
                 for l in inf.readlines()[8:]: # Skip over the Paratext header lines
                     l = l.strip().replace(u"\uFEFF", "")
-                    l = re.sub(r"\*", "", l)
+                    l = re.sub(r"[*\",;:!?']", "", l) # to be continued...
                     l = re.sub(r"-", "\u2010", l)
                     l = re.sub(r"=", "-", l)
                     # Paratext doesn't seem to allow segments of 1 character to be hyphenated  (for example: a-shame-d) 
@@ -951,21 +953,21 @@ class ViewModel:
                         else:
                             if l[0] != "-":
                                 hyphenatedWords.append(l)
+                    elif "\u2010" not in l:
+                        lng = len(l)
+                        if lng > 9:
+                            nohyphendata.append(l)
             c = len(hyphenatedWords)
             if c >= listlimit:
                 hyphwords = set([x.replace("-", "") for x in hyphenatedWords])
-                sheets = usfmutils.load_stylesheets(self.getStyleSheets())
                 acc = {}
+                usfms = self.get_usfms()
                 for bk in self.getBooks():
-                    f = os.path.join(self.prjdir, self.getBookFilename(bk, self.prjdir))
-                    u = usfmutils.Usfm(f, stylesheets=sheets)
+                    u = usfms.get(bk)
                     u.getwords(init=acc, constrain=hyphwords)
-                if len(acc) >= listlimit:
-                    shortlist = [k for k, v in sorted(acc.items(), key=lambda x:(-x[1], -len(x[0])))][:listlimit]
-                else:
-                    shortlist = sorted(acc.keys())
-                m2b = "\n\nThat is too many for XeTeX! List truncated to longest {} words found in the active sources.".format(len(shortlist))
-                hyphenatedWords = shortlist
+                hyphcounts = {k:acc.get(k.replace("-",""), 0) for k in hyphenatedWords}
+                hyphenatedWords = [k for k, v in sorted(hyphcounts.items(), key = lambda x: (-x[1], -len(x[0])))][:listlimit]
+                m2b = "\n\nThat is too many for XeTeX! List truncated to longest {} words found in the active sources.".format(len(hyphenatedWords))
             hyphenatedWords.sort(key = lambda s: s.casefold())
             outlist = '\\catcode"200C=11\n\\catcode"200D=11\n\\hyphenation{' + "\n".join(hyphenatedWords) + "}"
             with open(outfname, "w", encoding="utf-8") as outf:
@@ -976,7 +978,9 @@ class ViewModel:
                 if z > 0:
                     m2c = _("\n\nNote for Indic languages that {} words containing ZWJ").format(z) + \
                             _("\nand ZWNJ characters have been left off the hyphenation list.")
-                m2 = m2a + m2b + m2c
+                if len(nohyphendata) > 0:
+                    m2d = _("\n\n{} words were at least 10 characters long but had no hyphenation marked").format(len(nohyphendata))
+                m2 = m2a + m2b + m2c + m2d
             else:
                 m1 = _("Hyphenation List was NOT Generated")
                 m2 = _("No valid words were found in Paratext's Hyphenation List")
