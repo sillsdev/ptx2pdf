@@ -441,7 +441,8 @@ class Comparator:
             command = ops[0][3]
             match = None
             if command == "font":
-                match = self.readers[0].activefont == self.readers[1].activefont
+                #match = self.readers[0].activefont == self.readers[1].activefont
+                match = True
             elif command == "xxxquick":
                 match = ops[0][1:-1] == ops[1][1:-1]
             elif command == "xglyphsquick":

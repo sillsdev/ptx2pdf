@@ -10,6 +10,7 @@ from ptxprint.view import ViewModel, VersionStr, refKey
 from ptxprint.font import getfontcache
 from ptxprint.usfmerge import usfmerge2
 from ptxprint.utils import _, universalopen, print_traceback
+from datetime import datetime
 
 # "*** WARNING: Sidebar or colophon might not print on page": \
                                          # _("The colophon seems to be too big for the page.\n" +\
@@ -524,13 +525,21 @@ class RunJob:
 
     def run_xetex(self, outfname, info):
         numruns = 0
+        cachedata = {}
+        cacheexts = {"toc":     (_("table of contents"), True), 
+                    "picpages": (_("image copyrights"), False), 
+                    "delayed":  (_("chapter numbers"), True),
+                    "parlocs":  (_("chapter positions"), True)}
+        for a in cacheexts.keys():
+            cachedata[a] = self.readfile(os.path.join(self.tmpdir, outfname.replace(".tex", "."+a)))
         while numruns < self.maxRuns:
             self.printer.incrementProgress()
-            if info["document/toc"] != "%":
-                tocdata = self.readfile(os.path.join(self.tmpdir, outfname.replace(".tex", ".toc")))
-            if info["document/includeimg"]:
-                picdata = self.readfile(os.path.join(self.tmpdir, outfname.replace(".tex", ".picpages")))
-            cmd = ["xetex", "-halt-on-error", "-interaction=nonstopmode", "-no-pdf"]
+            commentstr = " ".join([
+                    "date="+datetime.today().isoformat(),
+                    "ptxprint_version="+VersionStr,
+                    "run="+str(numruns)])
+            cmd = ["xetex", "-halt-on-error", "-interaction=nonstopmode",
+                   '-output-comment="'+commentstr+'"', "-no-pdf"]
             runner = call(cmd + [outfname], cwd=self.tmpdir)
             if isinstance(runner, subprocess.Popen) and runner is not None:
                 try:
@@ -546,29 +555,17 @@ class RunJob:
             info.printer.editFile_delayed(logfname, "wrk", "scroll_XeTeXlog", False)
             numruns += 1
             self.rerunReasons = []
-            rererun = False
-            if info["document/toc"] != "%":
-                tocndata = self.readfile(os.path.join(self.tmpdir, outfname.replace(".tex", ".toc")))
-                if tocdata != tocndata:
-                    if numruns >= self.maxRuns:
-                        self.rerunReasons.append(_("ToC pages"))
+            rererun = rerun
+            for a in cacheexts.keys():
+                testdata = cachedata[a]
+                cachedata[a] = self.readfile(os.path.join(self.tmpdir, outfname.replace(".tex", "."+a)))
+                if testdata != cachedata[a]:
+                    if numruns >= self.maxRuns or not cacheexts[a][1]:
+                        self.rerunReasons.append(cacheexts[a][0])
                     else:
-                        print(_("Rerunning because the Table of Contents was updated"))
+                        print(_("Rerunning because the {} changed").format(cacheexts[a][0]))
                         rererun = True
-                else:
-                    break
-            if self.res:
-                rererun = False
-            if info["document/includeimg"]:
-                picndata = self.readfile(os.path.join(self.tmpdir, outfname.replace(".tex", ".picpages")))
-                if picdata != picndata:
-                    self.rerunReasons.append(_("image copyrights"))
-            if rerun:
-                if numruns >= self.maxRuns:
-                    self.rerunReasons.append(_("chapter numbers"))
-                else:
-                    print(_("Rerunning because inline chapter numbers moved"))
-                    rererun = True
+                        break
             if not rererun:
                 break
         if not self.noview and not self.args.testing and not self.res:

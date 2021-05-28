@@ -739,16 +739,20 @@ class FontRef:
     def __repr__(self):
         return str(type(self)) + self.asConfig()
 
-    def __eq__(self, other):
+    def _iseq(self, other, ignorestyle=False):
         if id(self) == id(other):
             return True
-        if self is None or other is None:
+        if other is None:
             return False
-        if self.name != other.name or self.style != other.style or self.isGraphite != other.isGraphite:
+        if self.name != other.name or (not ignorestyle and self.style != other.style) \
+                                   or self.isGraphite != other.isGraphite:
             return False
         if self.lang != other.lang:
             return False
         return self.feats == other.feats
+
+    def __eq__(self, other):
+        return self._iseq(other)
 
     @classmethod
     def fromConfig(cls, txt):
@@ -939,8 +943,10 @@ class FontRef:
     def updateTeXStyle(self, style, regular=None, inArchive=False, rootpath=None, force=False):
         res = []
         # only use of main regular fonts use the \Bold etc.
-        if not force and regular is not None and regular.name == self.name:
-            del style['FontName']
+        if not force and regular is not None and self._iseq(regular, ignorestyle=True):
+            for a in ('FontName', 'ztexFontFeatures', 'ztexFontGrSpace'):
+                if a in style:
+                    del style[a]
             for a in ("Bold", "Italic"):
                 x = a in (regular.style or ())
                 y = a in (self.style or ())
