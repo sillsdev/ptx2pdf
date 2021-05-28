@@ -1320,21 +1320,15 @@
  \advance\colwidth by -0.5\XrefNotesWidth
  \advance\colwidth by -\XrefNotesMargin
 % Diglot dimensions
- \def\col@do##1{\advance\count255 by 1}%
- \count255=0
- \x@\each@col\diglot@list\E
- \advance\dimen0 by -\numexpr \count255 - 1\relax\gutter\advance\dimen0 by -\count255\columnshift
  \ifcsname DiglotLFraction\endcsname\else
     \let\DiglotLFraction=\DiglotLeftFraction
  \fi
  \ifcsname DiglotRFraction\endcsname\else
     \let\DiglotRFraction=\DiglotRightFraction
  \fi
- \def\col@do##1{\csname column##1width\endcsname=\csname Diglot##1Fraction\endcsname\dimen0}%
- \x@\each@col\diglot@list\E
- %\columnLwidth=\DiglotLeftFraction\dimen0
- %\columnRwidth=\DiglotRightFraction\dimen0
- \hsize=\textwidth \advance\hsize by -2\columnshift
+ \csname set@col@widths@\diglotlayout\endcsname
+%
+  \hsize=\textwidth \advance\hsize by -2\columnshift
  \topm@rgin=\TopMarginFactor\MarginUnit
  \advance\topm@rgin by -\topskip \advance\topm@rgin by 12\FontSizeUnit
  \bottomm@rgin=\BottomMarginFactor\MarginUnit

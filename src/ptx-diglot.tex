@@ -1109,14 +1109,31 @@
 \egroup}
 
 
-\def\update@cumulative@delta{\bgroup
+\def\update@cumulative@delta#1{\bgroup
+  \dimen0=\dimexpr \csname \v@lpfx#1\v@lsfx\endcsname - \dimen1\relax
   \dimen2=1pt
-  \traceNum{dP}{Adding \the\dimen0 \space to cumulativeDelta}%
+  \traceNum{dP}{Adding \the\dimen0 \space to cumulativeDelta#1}%
   \divide\dimen0 by \dimen2
   \count255=\dimen0
-  \global\advance\cumulativeDelta by \count255
+  \x@\global\x@\advance\x@\csname cumulativeDelta#1\endcsname by \count255
   \egroup
 }
+
+\def\set@col@widths@simplecols{%
+  \trace{d}{set@col@widths@simplecols}%
+  \dimen0=\textwidth
+  \def\col@do##1{\advance\count255 by 1}%
+  \count255=0
+  \x@\each@col\layout@list\E
+  \advance\dimen0 by -\numexpr \count255 - 1\relax\gutter\advance\dimen0 by -\count255\columnshift
+  \def\col@do##1{%
+    \csname column##1width\endcsname=\csname Diglot##1Fraction\endcsname\dimen0
+    \traceNum{dP}{Setting column##1width to \the\csname column##1width\endcsname}}%
+  \x@\each@col\layout@list\E
+  %\columnLwidth=\DiglotLeftFraction\dimen0
+  %\columnRwidth=\DiglotRightFraction\dimen0
+}
+
 \def\@do@jointcalc@simplecols{%
     % step 1: max height of the last box 
     \def\v@lpfx{@cur}\def\v@lsfx{ht}%
@@ -1137,7 +1154,22 @@
 }
 
 \def\@prepare@layout@simplecols{%
-    \trace{d}{@prepare@layout@simplecols \l@gdims{\partial}}%
+    \bgroup
+      \trace{d}{@prepare@layout@simplecols \l@gdims{\partial}}%
+      % caclulate column deltas.
+      \def\v@lpfx{}\def\v@lsfx{ht}\dimen1=0pt%
+      \let\col@do\sum@val
+      \x@\each@col\cts@list\E
+      \divide \dimen1 by \curactivecols
+      \dimen0=\chunkDelta
+      %\message{c255: \the\dimen0}%
+      \let\col@do\update@cumulative@delta
+      \x@\each@col\cts@list\E
+    \egroup
+    
+    
+    
+    
     \thisjointDelta=0pt %Do we need extra space?
     %Calculate how much extra space we need:
     \csname @do@jointcalc@\diglotlayout\endcsname
@@ -1157,11 +1189,6 @@
     %save Lht and Rht (as "nxtchunkXht) and reset Xht
     \let\col@do\save@reset@ht
     \x@\each@col\diglot@list\E
-    \bgroup
-      \dimen0=\chunkDelta
-      %\message{c255: \the\dimen0}%
-      \update@cumulative@delta
-    \egroup
     \dimen8=0pt
     \ifdim\thisjointDelta>0pt
       \advance\dimen8 by \thisjointDelta\relax
@@ -1314,6 +1341,7 @@
     \xdef\p@gebotmark{\b@xbotmark}%
   \fi%
 }
+
 
 \def\restore@trace@updatepartial{}
 \def\upd@tep@rtial{%routine called to add stuff to the partial page.
@@ -1560,6 +1588,7 @@
     \trace{f}{Merged notes}%
   \fi%
 }
+
 
 \def\@do@writep@ge@simplecols{
   \trace{d}{@do@writep@ge@simplecols \the\pageno (\the\MaxPages)}%
@@ -1899,6 +1928,11 @@
     \dimen1=\t@st
   \fi
 }
+%Sum values (for averaging)
+\def\sum@val#1{\x@\let\x@\t@st\csname \v@lpfx#1\v@lsfx\endcsname
+  \advance\dimen1 by \t@st
+}
+
 \def\maxjoint@val#1{\dimen0=\csname \v@lpfx#1\v@lsfx\endcsname
   \advance \dimen0 by \csname b@selineskip#1\endcsname
   \trace{dP}{joint ht for #1 = \the\dimen0}%
@@ -1907,6 +1941,7 @@
     \dimen1=\dimen0
   \fi
 }
+
 
 \def\max@boxsz#1{\x@\let\x@\t@st\csname \v@lpfx#1\v@lsfx\endcsname
   \ifvoid\t@st \else
@@ -2308,8 +2343,15 @@
 }
 \def\testmarker{\hbox to 0pt{\vrule height 7pt depth 0pt width 0.5pt \kern-0.5pt}\message{_}}
 
+\def\log@cumulative#1{\x@\let\x@\tmp\csname cumulativeDelta#1\endcsname\edef\logt@mp{\logt@mp\space #1:\the\tmp (\the\numexpr \tmp / ( 1+\pageno - \ptxst@rtp@ge)\relax\space pt/pg)} \global\tmp=0\relax}
+%\def\log@cumulative#1{:#1:}
+
 \addtoendptxhooks{%
-       \bgroup\ifdiglot\ifnum\pageno>0 \count255=\cumulativeDelta \divide\count255 by \numexpr 1+\pageno-\ptxst@rtp@ge\relax \message{Column delta for book:\the\cumulativeDelta pt (\the\count255 pt/ pg)\space(-ve means left longer)}\fi\fi\egroup\cumulativeDelta=0\relax
+    \bgroup\ifdiglot\ifnum\pageno>0 \relax
+    \let\col@do=\log@cumulative 
+    \def\logt@mp{}
+    \x@\each@col\diglot@list\E
+     \message{Column deltas for book: \logt@mp} \fi\fi\egroup \relax
  }%
 \addtoendhooks{\ifdiglot\ifvoid\partial\else\@writep@ge\fi\fi}
 
@@ -2349,6 +2391,7 @@
     \x@\newt@ks\csname diglot#1ho@ks\endcsname
     \x@\newc@unt\csname partial#1penalty\endcsname
     \x@\newc@unt\csname #1boxpenalty\endcsname
+    \x@\newc@unt\csname cumulativeDelta#1\endcsname
     \newm@rknum{#1}%
     \x@\newdim@n\csname column#1width\endcsname
     \x@\newdim@n\csname baselineDelta#1\endcsname
@@ -2395,5 +2438,4 @@
 }
 
 \x@\let\csname polyglot-simplecols@plugin@loaded\endcsname\empty 
-
 \endinput

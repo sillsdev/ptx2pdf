@@ -172,6 +172,20 @@
 \let\@prepare@layout@simplepages=\@prepare@layout@simplecols
 \def\@setup@layout@simplepages{}%No special setup
 
+\def\set@col@widths@simplepages{
+  \trace{d}{set@col@widths@simplepages (\p@lyp@ges)}%
+  \p@lyp@geno=0
+  \loop
+    \x@\let\x@\layout@list\csname p@lyp@gecols\the\p@lyp@geno\endcsname
+    \set@col@widths@simplecols
+    \trace{d}{pp now(\p@lyp@gestring/\p@lyp@ges)}%
+  \ifnum\p@lyp@geno<\p@lyp@ges
+    \advance\p@lyp@geno by 1
+    \repeat
+  \trace{d}{set@col@widths@simplepages end}%
+}
+  
+  
 \def\first@item#1#2\E{#1}
 \def\@@do@simplepage@{% iterate through page numbers 
   \s@tctslist@simplepages
