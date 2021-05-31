@@ -340,9 +340,11 @@
 \fi
 
 % 
+
 \let\@do@cleanup@simplepages=\@do@cleanup@simplecols
 \def\@start@writep@ge@simplepages{%
   \xdef\old@pp{\the\p@lyp@geno}% Cache old value
+  \ifodd\p@lyp@ges\need@evenpage\fi
 } 
 
 \let\@prep@writep@ge@simplepages=\@prep@writep@ge@simplecols

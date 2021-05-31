@@ -249,18 +249,15 @@ Literal text can also be included (e.g., to add dashes around a centered page nu
 
 ### <a name="ptx2pdf-MacroSetupParameters-OtherHeaderSetup">Other Header Setup</a>
 
-<a name="ptx2pdf-MacroSetupParameters-OtherHeaderSetup">
 
 *   \RHruleposition=```6pt``` – Position of a rule below the running header (default = 10pt)
 *   \VerseRefs```true``` – Whether to include verse numbers in header/footer references, or only chapter numbers (default = false)
 
-</a>
-
 ## <a name="ptx2pdf-MacroSetupParameters-Other">Other</a>
 
-<a name="ptx2pdf-MacroSetupParameters-Other">
-
 *   \IndentAfterHeading```true``` – Remove paragraph indentation on the first paragraph after a section heading (default = false)
+*   ```\def\TPILB{\hfil This Page Intentionally Left Blank}``` Message to appear on intentionally empty pages. The `\hfil` at the start will centre a single line of text. (default empty). 
+*  `\EmptyPage` – Insert an intentionally empty page. The macro `\TPILB` will be used to provide any filler content.  Headers and footers will be the `...noV...` versions.
 
 </a>
 

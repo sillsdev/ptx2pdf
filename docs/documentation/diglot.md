@@ -149,7 +149,7 @@ will apply the ```\hangversenumber``` only for the left column.
 
 The font-switching code requires that ```\diglottrue``` is specified before 
 any style sheets are loaded. 
-If ```\diglottrue``` has been specified, then any usfm code text is set in the left column until a ```\righttext``` is encountered. 
+If ```\diglottrue``` has been specified, then any usfm code text is set in the left column (L) until a ```\righttext``` is encountered. 
 If ```\diglotfalse``` is in force, then the non-diglot parameters will take effect, e.g.:
 ```
 \TitleColumns=1 
@@ -165,6 +165,7 @@ necesary to specify \diglotfalse before switching.
 - ```\Alternative```
   The PDF bookmarks are produced (by default) with a ```/``` separating the chapter name. The slash is actually produced by ```\Alternative```, in case 
 slash not the correct symbol to use. 
+
 
 ## Easy solutions to common problems
 

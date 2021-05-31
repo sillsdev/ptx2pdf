@@ -113,6 +113,9 @@ Pl   | 'Page', left           | An image that replaces the normal text on the pa
 Plt  | 'Page', left, top[8]   | An image that replaces the normal text on the page, left-aligned | width of page
 F    | 'Full page'            | The entirety of the paper [9]                                    | width of paper, may be off the page.
 Flt | 'Full page', as above  | The entirety of the paper [9] pushed to whatever edge is indicated   | width of paper, may be off the page.
+-----|------------------------|       ***Polyglot  Additions***                              |----------------------------
+tL   | 'Top-of-L'	      | At the top of column L (substitute L for R, A, B...)		| width of column
+bL   | 'Bottom-of-L'	      | At the top of column L						| width of column
 
 Notes:
 [1] Only if two columns are in use.
