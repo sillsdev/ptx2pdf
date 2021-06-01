@@ -1,6 +1,6 @@
 from ptxprint.sfm import usfm, style, sreduce
 from ptxprint import sfm
-from ptxprint.reference import RefList, RefRange, Reference
+from ptxprint.reference import RefList, RefRange, Reference, BookNames
 import re, os, traceback, warnings
 from collections import namedtuple
 from itertools import groupby
@@ -75,6 +75,7 @@ class UsfmCollection:
         self.sheets = sheets
         self.books = {}
         self.tocs = []
+        self.booknames = None
 
     def get(self, bk):
         if bk not in self.books:
@@ -87,6 +88,34 @@ class UsfmCollection:
             with open(bkfile, encoding="utf-8") as inf:
                 self.books[bk] = Usfm(inf, self.sheets)
         return self.books[bk]
+
+    def makeBookNames(self):
+        if self.booknames is not None:
+            return
+        self.booknames = BookNames()
+        bknamesp = os.path.join(self.basedir, "BookNames.xml")
+        if os.path.exists(bknamesp):
+           self.booknames.readBookNames(bknamesp)
+        else:
+            tocre = re.compile(r"^\\toc(\d)\s+(.*)\s*$")
+            for bk in list(self.booknames.bookStrs.keys()):
+                tocs = [None]*3
+                bkfile = self.bkmapper(bk)
+                if bkfile is None:
+                    continue
+                bkfile = os.path.join(self.basedir, bkfile)
+                if not os.path.exists(bkfile):
+                    continue
+                with open(bkfile, encoding="utf-8") as inf:
+                    for i in range(20):
+                        l = inf.readline()
+                        m = tocre.match(l)
+                        if m:
+                            r = int(m.group(1))
+                            if r < len(tocs):
+                                tocs[r] = m.group(2)
+                tocs = reversed([x or tocs[i-1:i] for i,x in enumerate(tocs)])
+                self.booknames.addBookName(bk, *tocs)
 
 class Usfm:
     def __init__(self, iterable, sheets):
@@ -442,12 +471,13 @@ exclusionmap = {
 
 class Module:
 
-    localise_re = re.compile(r"\$([asl]?)\(\s*(\S+)\s+(\d+):([^)\s]+)\s*\)")
-    localcodes = {'a': 3, 's': 2, 'l': 1}
+    localise_re = re.compile(r"\$([asl]?)\(\s*(\S+\s+\d+:[^)\s]+)\s*\)")
+    localcodes = {'a': 0, 's': 1, 'l': 2}
 
     def __init__(self, fname, usfms):
         self.fname = fname
         self.usfms = usfms
+        self.usfms.makeBookNames()
         self.sheets = self.usfms.sheets.copy()
         modinfo = { 'OccursUnder': {'id'}, 'TextType': 'Other', 'EndMarker': None, 'StyleType': 'Paragraph'}
         modsheet = {k: style.Marker(modinfo) for k in ('inc', 'vrs', 'ref', 'refnp', 'rep', 'mod')}
@@ -466,19 +496,10 @@ class Module:
         return final
 
     def localref(self, m):
+        rl = RefList.fromStr(m.group(2), context=self.usfms.booknames)
         loctype = m.group(1) or "a"
-        bk = m.group(2).upper()
-        c = m.group(3)
-        v = m.group(4)
-        book = self.usfms.get(bk)
-        if book is None:
-            return ''
-        book.readnames()
         tocindex = self.localcodes.get(loctype.lower(), 0)
-        if tocindex > len(book.tocs):
-            return ''
-        else:
-            return '{} {}:{}'.format(book.tocs[tocindex-1], c, v)
+        return rl.str(context=self.usfms.booknames, level=tocindex)
 
     def parse_element(self, e):
         if isinstance(e, sfm.Text):
@@ -502,7 +523,7 @@ class Module:
                             re.compile(r"\b"+m.group(1).replace("...","[^\n\r]+")+"(\\b|(?=\\s)|$)"),
                             m.group(2)))
                 del e.parent[curr+1]
-            for r in RefList.fromStr(str(e[0])):
+            for r in RefList.fromStr(str(e[0]), context=self.usfms.booknames):
                 p = self.get_passage(r, removes=self.removes, strippara=e.name=="refnp")
                 if e.name == "ref":
                     for i, t in enumerate(p):

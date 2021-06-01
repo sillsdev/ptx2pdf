@@ -35,7 +35,7 @@ class Reference:
         self.verse = verse
         self.subverse = subverse
 
-    def __str__(self, context=None, level=0, lastref=None, addsep=RefSeparators()):
+    def str(self, context=None, level=0, lastref=None, addsep=RefSeparators()):
         sep = ""
         hasbook = False
         if lastref is None or lastref.book != self.book:
@@ -57,6 +57,9 @@ class Reference:
             if lastref is not None:
                 sep = sep or addsep['verses']
         return sep + "".join(res)
+
+    def __str__(self):
+        return self.str()
 
     def __eq__(self, o):
         if not isinstance(o, Reference):
@@ -163,11 +166,14 @@ class RefRange:
         self.first = first
         self.last = last
 
-    def __str__(self, context=None, level=0, lastref=None, addsep=RefSeparators()):
+    def str(self, context=None, level=0, lastref=None, addsep=RefSeparators()):
         lastsep = RefSeparators(books="", chaps="", verses="", cv=addsep['cv'])
-        res = "{}-{}".format(self.first.__str__(context, level, lastref, addsep=addsep),
-                             self.last.__str__(context, level, self.first, addsep=lastsep))
+        res = "{}-{}".format(self.first.str(context, level, lastref, addsep=addsep),
+                             self.last.str(context, level, self.first, addsep=lastsep))
         return res
+
+    def __str__(self):
+        return self.str()
 
     def __eq__(self, other):
         if not isinstance(other, RefRange):
@@ -211,39 +217,52 @@ class RefRange:
 
 
 class BaseBooks:
-    bookStrs = chaps
-    bookNames = {k: [k, k, k, k] for k,v in chaps.items() if 0 < int(v) < 999}
+    bookStrs = {k: [k]*3 for k, v in chaps.items() if 0 < int(v) < 999}
+    bookNames = {k: k for k,v in chaps.items() if 0 < int(v) < 999}
 
     @classmethod
     def getBook(cls, s):
         ''' Returns canonical book name if the book is matched in our list '''
-        res = int(cls.bookStrs.get(s, int(cls.bookStrs.get(s.upper(), 0))))
-        if 0 < res < 999:
-            return cls.bookNames.get(s, cls.bookNames.get(s.upper(), [s]*4))[3]
-        return None
+        return cls.bookNames.get(s, cls.bookNames.get(s.upper(), None))
 
     @classmethod
     def getLocalBook(cls, s, level=0):
-        return cls.bookNames[s][level]
+        return cls.bookStrs[s][level]
 
 
 class BookNames(BaseBooks):
-    @classmethod
-    def readBookNames(cls, fpath):
-        bkstrs = {}
-        cls.bookNames = {}
+    bookStrs = {}
+    bookNames = {}
+
+    def __init__(self):
+        self.bookStrs = BaseBooks.bookStrs.copy()
+        self.bookNames = BaseBooks.bookNames.copy()
+
+    def getBook(self, s):
+        ''' Returns canonical book name if the book is matched in our list '''
+        return self.bookNames.get(s, self.bookNames.get(s.upper(), None))
+
+    def getLocalBook(self, s, level=0):
+        return self.bookStrs[s][level]
+
+    def readBookNames(self, fpath):
         from xml.etree import ElementTree as et
         doc = et.parse(fpath)
         for b in doc.findall("//book"):
             bkid = b.get("code")
-            strs = [b.get(a) for a in ("abbr", "short", "long")]+[bkid]
-            cls.bookNames[bkid] = strs
-            for s in strs:
-                for i in range(len(s)):
-                    if s[i] == " ":
-                        break
-                    bkstrs[s[:i+1]] = "" if bkstrs.get(s[:i+1], bkid) != bkid else bkid
-        cls.bookStrs = {k:v for k,v in bkstrs.items() if v != ""}
+            strs = [b.get(a) for a in ("abbr", "short", "long")]
+            self.addBookName(bkid, *strs)
+
+    def addBookName(self, bkid, *strs):
+        self.bookNames[bkid] = bkid
+        self.bookStrs[bkid] = strs
+        bkstrs = {}
+        for s in strs:
+            for i in range(len(s)):
+                if s[i] == " ":
+                    break
+                bkstrs[s[:i+1]] = "" if bkstrs.get(s[:i+1], bkid) != bkid else bkid
+                self.bookNames.update({k:v for k,v in bkstrs.items() if v != ""})
 
 
 class RefList(list):
@@ -330,13 +349,16 @@ class RefList(list):
             self._addRefOrRange(start, curr)
         return self
 
-    def __str__(self, context=None, level=0, addsep=RefSeparators()):
+    def str(self, context=None, level=0, addsep=RefSeparators()):
         res = []
         lastref = None # Reference(None, 0, 0)
         for r in self:
-            res.append(r.__str__(context, level, lastref, addsep=addsep))
+            res.append(r.str(context, level, lastref, addsep=addsep))
             lastref = r.last if isinstance(r, RefRange) else r
         return "".join(res)
+
+    def __str__(self):
+        return self.str()
 
     def __eq__(self, other):
         return len(self) == len(other) and all(z[0] == z[1] for z in zip(self, other))
