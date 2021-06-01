@@ -263,7 +263,7 @@ class ViewModel:
         return ptsettings
 
     def getBookFilename(self, bk, prjid=None):
-        if any(x in "./\\" for x in bk):
+        if bk is None or any(x in "./\\" for x in bk):
             return None
         ptsettings = self._getPtSettings(prjid)
         if ptsettings is None:

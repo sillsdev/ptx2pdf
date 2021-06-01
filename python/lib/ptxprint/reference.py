@@ -212,14 +212,14 @@ class RefRange:
 
 class BaseBooks:
     bookStrs = chaps
-    bookNames = {k: [k, k, k] for k,v in chaps.items() if 0 < int(v) < 999}
+    bookNames = {k: [k, k, k, k] for k,v in chaps.items() if 0 < int(v) < 999}
 
     @classmethod
     def getBook(cls, s):
         ''' Returns canonical book name if the book is matched in our list '''
-        res = int(cls.bookStrs.get(s.upper(), 0))
+        res = int(cls.bookStrs.get(s, int(cls.bookStrs.get(s.upper(), 0))))
         if 0 < res < 999:
-            return s
+            return cls.bookNames.get(s, cls.bookNames.get(s.upper(), [s]*4))[3]
         return None
 
     @classmethod
@@ -236,7 +236,7 @@ class BookNames(BaseBooks):
         doc = et.parse(fpath)
         for b in doc.findall("//book"):
             bkid = b.get("code")
-            strs = [b.get(a) for a in ("abbr", "short", "long")]
+            strs = [b.get(a) for a in ("abbr", "short", "long")]+[bkid]
             cls.bookNames[bkid] = strs
             for s in strs:
                 for i in range(len(s)):

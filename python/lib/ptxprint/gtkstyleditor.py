@@ -325,8 +325,10 @@ class StyleEditorView(StyleEditor):
                         urlmkr += "-" + data['Endmarker'].strip('\*')
                 urlmkr = re.sub(r'\d', '', urlmkr)
             elif k == '_publishable':
-                val = 'nonpublishable' in data.get('TextProperties', '')
-                oldval = 'nonpublishable' in old.get('TextProperties', '')
+                # val = 'nonpublishable' in data.get('TextProperties', '')
+                val = 'nonpublishable' in (x.lower() for x in data.get('TextProperties', []))
+                # oldval = 'nonpublishable' in old.get('TextProperties', '')
+                oldval = 'nonpublishable' in (x.lower() for x in old.get('TextProperties', []))
             elif k.startswith("_"):
                 basekey = v[3](v[2])        # default data key e.g. "FontSize"
                 obasekey = v[3](not v[2])   # non-default data key e.g. "FontScale"
@@ -437,6 +439,9 @@ class StyleEditorView(StyleEditor):
             else:
                 add, rem = "", "non"
             props = self.sheet.setdefault(self.marker, {}).setdefault('TextProperties', set())
+            if props is None:
+                props = set()
+                self.sheet[self.marker]['TextProperties'] = props
             try:
                 props.remove(rem+'publishable')
             except KeyError:

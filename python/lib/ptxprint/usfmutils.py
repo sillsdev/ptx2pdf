@@ -467,7 +467,7 @@ class Module:
 
     def localref(self, m):
         loctype = m.group(1) or "a"
-        bk = m.group(2)
+        bk = m.group(2).upper()
         c = m.group(3)
         v = m.group(4)
         book = self.usfms.get(bk)
@@ -533,7 +533,7 @@ class Module:
         return [e]
 
     def get_passage(self, ref, removes={}, strippara=False):
-        book = self.usfms.get(ref.first.book)
+        book = self.usfms.get(ref.first.book.upper())
         if book is None:
             return []
         return book.subdoc(ref, removes=removes, strippara=strippara)
