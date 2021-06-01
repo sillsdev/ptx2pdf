@@ -76,14 +76,20 @@ def to12(self, v, mrk=None, model=None):
     return f2s(float(v) * 12.)
 
 def fromBool(self, s, mrk=None, model=None):
-    if s is None or s is False or s == "-":
-        res= False
-    else:
-        res= True
-    return res
+    return s is not None and s and s != "-"
 
 def toBool(self, v, mrk=None, model=None):
     return "" if v else "-"
+
+def fromSet(self, s, mrk=None, model=None):
+    if isinstance(s, set):
+        return s
+    return set(s.split())
+
+def toSet(self, s, mrk=None, model=None):
+    if isinstance(s, set):
+        return " ".join(s)
+    return s
 
 def fromFont(self, s, mrk=None, model=None):
     if mrk is None:
@@ -133,7 +139,8 @@ _fieldmap = {
     'FontSize':         (from12, to12),
     'SpaceBefore':      (from12, to12),
     'SpaceAfter':       (from12, to12),
-    'FontName':         (fromFont, toFont)
+    'FontName':         (fromFont, toFont),
+    'TextProperties':   (fromSet, toSet)
 # color?
 }
 

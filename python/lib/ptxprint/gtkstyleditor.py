@@ -326,7 +326,10 @@ class StyleEditorView(StyleEditor):
                 urlmkr = re.sub(r'\d', '', urlmkr)
             elif k == '_publishable':
                 # val = 'nonpublishable' in data.get('TextProperties', '')
-                val = 'nonpublishable' in (x.lower() for x in data.get('TextProperties', []))
+                props = data.get('TextProperties', set())
+                if not isinstance(props, set):
+                    props = set(props.split())
+                val = 'nonpublishable' in (x.lower() for x in props)
                 # oldval = 'nonpublishable' in old.get('TextProperties', '')
                 oldval = 'nonpublishable' in (x.lower() for x in old.get('TextProperties', []))
             elif k.startswith("_"):
@@ -557,17 +560,18 @@ class StyleEditorView(StyleEditor):
                 if k == 'Marker':
                     continue
                 val = self.model.get(v)
+                # print(f"{k=} {v=} -> {val=}")
                 if k.lower() == 'occursunder':
                     val = set(val.split())
                     data[k] = val
                 elif val:
                     data[k] = CaselessStr(val)
-            if data['styletype'] == 'Character' or data['styletype'] == 'Note':
+            if data['StyleType'] == 'Character' or data['StyleType'] == 'Note':
                 data['EndMarker'] = key + "*"
-                if data['styletype'] == 'Character':
+                if data['StyleType'] == 'Character':
                     data['OccursUnder'].add("NEST")
                 self.resolveEndMarker(data, key, None)
-            elif data['styletype'] == 'Milestone':
+            elif data['StyleType'] == 'Milestone':
                 self.resolveEndMarker(data, key, data['EndMarker'])
                 del data['EndMarker']
             self.marker = key

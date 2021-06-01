@@ -1,0 +1,18 @@
+#!/usr/bin/python3
+
+import argparse
+from ptxprint.xdv import XDVi
+
+parser = argparse.ArgumentParser(description="Prints the comment string from an xdvi file")
+parser.add_argument("infile",help="Input xdvi file")
+args = parser.parse_args()
+
+with XDVi(args.infile) as xdv:
+    for (opc, data) in xdv:
+        if opc[0] == "pre":
+            s = xdv.readbytes(data[4])
+            print(s.decode("utf-8"))
+            break
+        elif opc[2] == "postpost":
+            break
+
