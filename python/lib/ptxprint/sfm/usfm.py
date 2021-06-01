@@ -335,17 +335,34 @@ class parser(sfm.parser):
                     sty[k] = deepcopy(v)
         return style.update_sheet(sty, style.update_sheet(metas, private_metas))
 
-    def _force_close(self, parent, tok):
-        if tok is not sfm.parser._eos \
-                and ('NoteText' in parent.meta.get('TextType', [])
-                     or parent.meta.get('StyleType', None) == 'Character'):
+    def _force_close(self, parent, tok, tag):
+        if tok is sfm.parser._eos:
+            return False
+        if 'NoteText' in parent.meta.get('TextType', []) \
+                     or parent.meta.get('StyleType', None) == 'Character':
             self._error(ErrorLevel.Note,
                         'implicit end marker before {token}: \\{0.name} '
                         '(line {0.pos.line},{0.pos.col}) '
                         'should be closed with \\{1}', tok, parent,
                         parent.meta['Endmarker'])
-        else:
-            super()._force_close(parent, tok)
+            return False
+        meta = self.__get_style(tag.name)
+        occurs = meta['OccursUnder']
+        stype = meta['StyleType'].lower()
+        ptype = parent.meta['StyleType'].lower()
+        pttype = parent.meta['TextType'].lower()
+        if (stype == 'character' and ptype == 'paragraph') \
+                or (style == 'paragraph' and (pttype in ('chapternumber', 'notetext')
+                                              or parent.name == "id")):
+            if len(occurs) and parent.name not in occurs:
+                p = parent.parent
+                while p is not None:
+                    if p.name in occurs:
+                        return False
+                    p = p.parent
+            return True
+        super()._force_close(parent, tok, tag)
+        return False
 
     def _ChapterNumber_(self, chapter_marker):
         tok = next(self._tokens)

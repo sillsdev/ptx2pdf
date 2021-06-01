@@ -217,7 +217,7 @@ class BaseBooks:
     @classmethod
     def getBook(cls, s):
         ''' Returns canonical book name if the book is matched in our list '''
-        res = int(cls.bookStrs.get(s, 0))
+        res = int(cls.bookStrs.get(s.upper(), 0))
         if 0 < res < 999:
             return s
         return None

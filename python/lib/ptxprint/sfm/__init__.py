@@ -265,14 +265,14 @@ class Text(collections.UserString):
     def __add__(self, rhs):
         return Text(super().__add__(rhs), self.pos, self.parent)
 
-    def __getslice__(self, i, j): return self.__getitem__(slice(i, j))
+#    def __getslice__(self, i, j): return self.__getitem__(slice(i, j))
 
-    def __getitem__(self, i):
-        return Text(super().__getitem__(i),
-                    Position(self.pos.line,
-                             self.pos.col
-                             + (i.start or 0 if isinstance(i, slice) else i)),
-                    self.parent)
+#    def __getitem__(self, i):
+#        return Text(super().__getitem__(i),
+#                    Position(self.pos.line,
+#                             self.pos.col
+#                             + (i.start or 0 if isinstance(i, slice) else i)),
+#                    self.parent)
 
 
 class _put_back_iter(collections.Iterator):
@@ -682,13 +682,14 @@ class parser(collections.Iterable):
         return parent_tag in occurs
 
     def _default_(self, parent):
+        force_need = False
         for tok in self._tokens:
             tag = self.__get_tag(parent, tok)
             if tag:  # Parse markers.
                 if tag.name == "*" and parent is not None:
                     return
                 meta = self.__get_style(tag.name)
-                if self.__need_subnode(parent, tag, meta):
+                if force_need or self.__need_subnode(parent, tag, meta):
                     sub_parser = meta.get('TextType')
                     if not sub_parser:
                         return
@@ -719,11 +720,12 @@ class parser(collections.Iterable):
                     tok = Text(tag, tok.pos, tok.parent)
                     # Do implicit closure only for non-inline markers or
                     # markers inside NoteText type markers'.
+                    force_need = self._force_close(parent, tok, tag)
                     if parent.meta['Endmarker']:
-                        self._force_close(parent, tok)
                         parent.annotations['implicit-closed'] = True
                     self._tokens.put_back(tok)
-                    return
+                    if not force_need:
+                        return
             else:   # Pass non marker data through with a litte fix-up
                 if parent is not None \
                         and len(parent) == 0 \
@@ -734,7 +736,7 @@ class parser(collections.Iterable):
                     yield tok
         if parent is not None:
             if parent.meta['Endmarker']:
-                self._force_close(parent, self._eos)
+                self._force_close(parent, self._eos, None)
                 parent.annotations['implicit-closed'] = True
         return
 
@@ -747,7 +749,7 @@ class parser(collections.Iterable):
     _Unspecified_ = _default_
     _unspecified_ = _Unspecified_
 
-    def _force_close(self, parent, tok):
+    def _force_close(self, parent, tok, tag):
         """
         Called by the parser when it needs to force an element, which has an
         Endmarker, closed due to implicit closure, such as an outer inline
@@ -759,12 +761,13 @@ class parser(collections.Iterable):
         parent: The Element being forced closed.
         tok: The token causing the implicit closure.
         """
-        self._error(
-            ErrorLevel.Structure,
-            'invalid end marker {token}: \\{0.name} '
-            '(line {0.pos.line},{0.pos.col}) can only be closed with \\{1}',
-            tok, parent,
-            parent.meta['Endmarker'])
+        if parent.meta['Endmarker']:
+            self._error(
+                ErrorLevel.Structure,
+                'invalid end marker {token}: \\{0.name} '
+                '(line {0.pos.line},{0.pos.col}) can only be closed with \\{1}',
+                tok, parent,
+                parent.meta['Endmarker'])
 
 
 def sreduce(elementf, textf, trees, initial):

@@ -436,11 +436,12 @@ class StyleEditorView(StyleEditor):
                 add, rem = "non", ""
             else:
                 add, rem = "", "non"
+            props = self.sheet.setdefault(self.marker, {}).setdefault('TextProperties', set())
             try:
-                data['TextProperties'].remove(rem+'publishable')
+                props.remove(rem+'publishable')
             except KeyError:
                 pass
-            data['TextProperties'].add(add+'publishable')
+            props.add(add+'publishable')
             return
         elif key in self.stylediverts:
             newk = self.stylediverts[key][0]
