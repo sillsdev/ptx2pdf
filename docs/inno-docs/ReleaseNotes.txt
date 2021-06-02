@@ -1,5 +1,5 @@
 PTXprint 1.8.1 Release Notes 
-28 May 2021
+2 June 2021
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 
@@ -8,6 +8,16 @@ NOTE: The child markers of \f and \x now follow the settings of their parent mar
 	  It is recommended that you RESET these styles to use the default settings prior
 	  to trying to remedy settings manually.
 	  
+Bug fixes and Improvements in 1.8.2
+
+  * Fixed module handling (again) to be more flexible with references
+  
+  * #457 Vertical Space Separating Footnotes and XRefs fixed
+  
+  * #458 Indent First Paragraph fixed
+  
+  * #459 Hide/Exclude Contents of Marker fixed for all markers
+  
 Bug fixes and Improvements in 1.8.1
 
   * Fixed Paratext module processing to be more robust
