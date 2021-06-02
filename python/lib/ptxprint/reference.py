@@ -248,7 +248,7 @@ class BookNames(BaseBooks):
     def readBookNames(self, fpath):
         from xml.etree import ElementTree as et
         doc = et.parse(fpath)
-        for b in doc.findall("//book"):
+        for b in doc.findall(".//book"):
             bkid = b.get("code")
             strs = [b.get(a) for a in ("abbr", "short", "long")]
             self.addBookName(bkid, *strs)

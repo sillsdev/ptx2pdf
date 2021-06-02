@@ -1477,9 +1477,9 @@ class TexModel:
                     continue
                 info = {
                     "book":         k.first.book,
-                    "dotref":       k.__str__(context=NoBook, addsep=dotsep),
-                    "colnobook":    k.__str__(context=NoBook),
-                    "refs":         v.__str__(self.ptsettings, addsep=addsep)
+                    "dotref":       k.str(context=NoBook, addsep=dotsep),
+                    "colnobook":    k.str(context=NoBook),
+                    "refs":         v.str(self.ptsettings, addsep=addsep)
                 }
                 outf.write(template.format(**info))
 
