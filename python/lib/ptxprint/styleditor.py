@@ -76,7 +76,7 @@ def to12(self, v, mrk=None, model=None):
     return f2s(float(v) * 12.)
 
 def fromBool(self, s, mrk=None, model=None):
-    return s is not None and s and s != "-"
+    return not(s is None or s is False or s == "-")
 
 def toBool(self, v, mrk=None, model=None):
     return "" if v else "-"
