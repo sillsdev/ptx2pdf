@@ -696,12 +696,12 @@
     \trace{d}{\c@rrdstat is empty, somehow, making it L for sanity}%
     \gdef\c@rrdstat{L}%
   \fi
+  \endlastp@rstyle{p}%
   \ifhe@dings\endhe@dings
     \global\savedpenalty=\lastpenalty % Pick up revised after-heading penalty
   \fi%
   \x@\xdef\csname saved\c@rrdstat penalty\endcsname{\the\savedpenalty}%
   \ifinn@te\errmessage{*** #1text called from inside footnote?!?}\fi
-  \endlastp@rstyle{p}%
   \ifx\last@popped@parstyle\relax\else
     \x@\let\csname m@rker\c@rrdstat\endcsname\last@popped@parstyle %save the old (paragraph-style) marker 
   \fi

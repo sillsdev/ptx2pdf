@@ -99,7 +99,7 @@ ModelMap = {
     "paper/colgutteroffset":    ("s_colgutteroffset", lambda w,v: "{:.1f}".format(float(v)) if v else "0.0"),
     "paper/columns":            ("c_doublecolumn", lambda w,v: "2" if v else "1"),
     # "paper/fontfactor":         ("s_fontsize", lambda w,v: round((v / 12), 3) or "1.000"),
-    "paper/fontfactor":         ("s_fontsize", lambda w,v: f2s(float(v) / 12) if v else "1.000"),
+    "paper/fontfactor":         ("s_fontsize", lambda w,v: f2s(float(v) / 12, dp=8) if v else "1.000"),
 
     "grid/gridlines":           ("c_gridLines", lambda w,v: "\doGridLines" if v else ""),
     "grid/gridgraph":           ("c_gridGraph", lambda w,v: "\doGraphPaper" if v else ""),
@@ -140,7 +140,7 @@ ModelMap = {
     "fancy/versedecoratorscale":   ("s_verseDecoratorScale", lambda w,v: int(float(v or "1.0")*1000)),
     "fancy/endayah":            ("c_decorator_endayah", lambda w,v: "" if v else "%"), # In the UI this is "Move Ayah"
 
-    "paragraph/linespacing":       ("s_linespacing", lambda w,v: f2s(float(v)) if v else "15"),
+    "paragraph/linespacing":       ("s_linespacing", lambda w,v: f2s(float(v), dp=8) if v else "15"),
     "paragraph/linespacebase":  ("c_AdvCompatLineSpacing", lambda w,v: 14 if v else 12),
     "paragraph/useglyphmetrics":   ("c_AdvCompatGlyphMetrics", lambda w,v: "%" if v else ""),
     # "paragraph/linespacingfactor": ("s_linespacing", lambda w,v: "{:.3f}".format(float(v or "15") / 12)),
@@ -442,7 +442,7 @@ class TexModel:
         if "document/diglotcfgrpath" not in self.dict:
             self.dict["document/diglotcfgrpath"] = ""
         self.dict['paragraph/linespacingfactor'] = f2s(float(self.dict['paragraph/linespacing']) \
-                    / self.dict["paragraph/linespacebase"] / float(self.dict['paper/fontfactor']))
+                    / self.dict["paragraph/linespacebase"] / float(self.dict['paper/fontfactor']), dp=8)
         self.dict['paragraph/ifhavehyphenate'] = "" if os.path.exists(os.path.join(self.printer.configPath(""), \
                                                        "hyphen-"+self.dict["project/id"]+".tex")) else "%"
         # forward cleanup. If ask for ptxprint-mods.tex but don't have it, copy PrintDraft-mods.tex
