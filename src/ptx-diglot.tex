@@ -2128,7 +2128,7 @@
   \trace{D}{makediglotgutter \the #1,\the #2,\the #3}%
   \dimen4=#1\advance \dimen4 by #3
    \setbox4=\vbox to #2{%
-     \hbox to 1pt{%
+     \hbox to 1pt{\hfil
        \ifColumnGutterRule
         \vrule height \the\dimen4 
        \fi
