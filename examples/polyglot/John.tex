@@ -1,0 +1,83 @@
+\def\pluginlist{polyglot-simplepages}
+\input paratext2.tex
+%\def\diglotDbgupdtPtl{20}
+\tracing{dmp}
+%\let\TRACEdiglot=\doTRACEdiglot% Generate (numbered) trace
+%\VisTracetrue% Every chunk joined, mark with the current trace number
+%\VisTraceExtratrue% Extra debugging
+%\diglotDbgJoinboxes=1246 % And if that's not enough, assuming trace entry 1246
+%is from joinboxes (which pastes 2 left or 2 right columns together) show the
+%boxes joined.
+%\showboxdepth=100 %.... In all their gory detail
+%\showboxbreadth=100
+%\tracingifs=1
+
+%\diglotInnerOutertrue
+%\tracingmacros=1
+%\tracingassigns=1
+\def\regularR{"Suranna UI:"}
+\def\boldR{"Suranna UI:embolden=2.0"}
+\def\italicR{"Suranna UI:slant=0.16"}
+\def\bolditalicR{"Suranna UI:embolden=2.0:slant=0.15"}
+\newPolyglotCol A
+\newPolyglotCol B
+\newPolyglotCol C
+\def\regularC{"Annapurna SIL/GR:litr=1:ital=1"}
+\def\boldC{"Annapurna SIL/GR:embolden=1.8:litr=1:ital=1"}
+\def\italicC{"Annapurna SIL/GR:slant=0.17:litr=1:ital=1"}
+\def\bolditalicC{"Annapurna SIL/GR:slant=0.17:litr=1:ital=1"}
+
+\def\DiglotLFraction{0.336} % In case texts fit better with unequal columns
+\def\DiglotAFraction{0.332} 
+\def\DiglotBFraction{0.332} 
+\def\DiglotRFraction{0.505}
+\def\DiglotCFraction{0.495} 
+\polyglotpages{LAB,RC}
+%4 pages? \polyglotpages{L,R,A,-}
+
+\input John-setup.tex
+%\iffalse
+% \tracing{H}
+\tracing{d}
+\tracing{D}
+% \tracing{F}
+\tracing{dP}
+% \tracing{s}
+\tracing{n}
+\tracing{f}
+\tracing{Df}
+% \tracing{sC}
+% \VisTracetrue
+\tracing{Dh}
+%\fi
+
+\def\LineSpacingFactorL{1.2}
+\def\LineSpacingFactorR{1.1}
+\pageno=-1
+%\tracing{s}\tracing{S}
+%\uselanguage{british}
+%\diglotfalse
+%\singlecolumn
+%\ptxfile{intro.usfm}
+
+\def\OKbk{\penalty 2}
+\def\tighter{\looseness=-1}
+\pageno=1
+\diglotSepNotesfalse
+\diglotcolumns
+%\addToLeftHooks{\RTLfalse}
+%\addToRightHooks{\RTLtrue}
+\diglotSepNotestrue
+\gdef\diglotDbgupd@tep@rtial{20}
+\diglotBalNotesfalse
+\ptxfile{mergedJhn.usfm}
+
+%\shipout\vbox{\hbox{partial}\unvbox\partial}
+%\shipout\vbox{\hbox{partialL}\unvbox\partialL}
+%\shipout\vbox{\hbox{partialR}\unvbox\partialR}
+%\shipout\vbox{\hbox{excessL}\unvbox\excessL}
+%\shipout\vbox{\hbox{excessR}\unvbox\excessR}
+%\output={\unvbox\partial\shipout\box255}
+%\pagebreak
+%\tracingall
+\end

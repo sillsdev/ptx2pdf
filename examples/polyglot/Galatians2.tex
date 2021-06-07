@@ -1,6 +1,10 @@
+\def\pluginlist{polyglot-simplepages}
 \input paratext2.tex
+%\def\diglotDbgupdtPtl{20}
+\tracing{dmp}
 %\let\TRACEdiglot=\doTRACEdiglot% Generate (numbered) trace
 %\VisTracetrue% Every chunk joined, mark with the current trace number
+%\VisTraceExtratrue% Extra debugging
 %\diglotDbgJoinboxes=1246 % And if that's not enough, assuming trace entry 1246
 %is from joinboxes (which pastes 2 left or 2 right columns together) show the
 %boxes joined.
@@ -9,41 +13,56 @@
 %\tracingifs=1
 
 %\diglotInnerOutertrue
+%\tracingmacros=1
+%\tracingassigns=1
+\newPolyglotCol A
+\def\DiglotLFraction{0.55} % In case texts fit better with unequal columns
+\def\DiglotRFraction{0.45} 
+\def\DiglotAFraction{1} 
+\polyglotpages{LR,A}
+%4 pages? \polyglotpages{L,R,A,-}
+
 \input Galatians-setup.tex
-\iffalse
- \tracing{H}
- \tracing{d}
- \tracing{F}
- \tracing{dP}
- \tracing{s}
- \tracing{n}
- \tracing{sC}
- \VisTracetrue
- \tracing{D}
-\fi
+%\iffalse
+% \tracing{H}
+\tracing{d}
+\tracing{D}
+% \tracing{F}
+\tracing{dP}
+% \tracing{s}
+%\tracing{n}
+%\tracing{f}
+\tracing{Df}
+\tracing{g}
+\tracing{p}
+\tracing{gI}
+%\tracing{T}
+% \VisTracetrue
+%\tracing{Dh}
+%\fi
 
 \def\LineSpacingFactorL{1.2}
 \def\LineSpacingFactorR{1.1}
 \pageno=-1
 %\tracing{s}\tracing{S}
 %\uselanguage{british}
-\diglotfalse
-\singlecolumn
-\ptxfile{intro.usfm}
+%\diglotfalse
+%\singlecolumn
+%\ptxfile{intro.usfm}
 
 \def\OKbk{\penalty 2}
 \def\tighter{\looseness=-1}
 \pageno=1
-%\tracingmacros 1
 \diglotcolumns
 %\addToLeftHooks{\RTLfalse}
 %\addToRightHooks{\RTLtrue}
 \diglotSepNotestrue
-\diglotBalNotestrue
+\gdef\diglotDbgupd@tep@rtial{20}
+\diglotBalNotesfalse
 \ptxfile{mergedGal.usfm}
 \diglotcolumns
 \diglotSepNotesfalse
-\ptxfile{mergedGalV.usfm}
+%\ptxfile{mergedGalV.usfm}
 
 %\shipout\vbox{\hbox{partial}\unvbox\partial}
 %\shipout\vbox{\hbox{partialL}\unvbox\partialL}

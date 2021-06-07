@@ -1,0 +1,106 @@
+\polyglotcolumn L
+\id HIS History of Diglot
+\h The history of diglot
+\c 1
+\p
+\v 1 This is the begining of the story of diglot.
+\v 2 First Knuth made \TeX, then Kew made \XeTeX\ from \TeX.
+\v 3 \XeTeX\ had a child called paratext2, and paratext2 had
+a child called ptxplus.
+\polyglotcolumn R
+\h The history of diglot
+\c 1
+\p
+\v 1 Hereby beginneth the account of the nation of diglot.
+\v 2 Knuth begat \TeX, Kew took \TeX\ unto himself and begat \XeTeX.
+\v 3 \XeTeX\ begat paratext2, paratext2 begat ptxplus.
+
+\polyglotcolumn A
+\h The advent of polyglot
+\c 1 
+\p
+\v 1 So, what's all this about \it di-\it*glots? We can do multiple columns now!
+\v 2 Of course it's all rooted in \TeX, but things have changed since the '80s.
+Unicode and modern fonts got an enormous help from Kew's \XeTeX.
+\v 3 The early paratext macros became ptx2pdf, and that got enhanced to ptxplus.  
+\p
+\polyglotcolumn B
+\h Polyglot rules?
+\c 1
+\p 
+\v 1 Are four columns possible? Yes. But sane? Probably not
+\polyglotendcols
+\polyglotcolumn L
+\s The birth of diglot 
+\polyglotcolumn A
+\s First steps
+\polyglotcolumn B
+\s Showing off 
+\polyglotendcols
+
+\polyglotcolumn L
+\p
+\v 4 David took ptxplus\f + \ft Around 2006\f* and tweaked it in various places and so diglot came into being, and it lived in dark obscurity for many years, sometimes crafting text, sometimes creating strange things.
+\p
+
+\polyglotcolumn R
+\p
+\v 4 And\f + \ft In the Year of the Lord 2006 or thereabouts\f* David took ptxplus and did bend it in diverse places to make diglot.  Diglot dwelt in darkness and created beauty or disaster depending upon many factors.
+\p
+\polyglotcolumn A
+\p
+\v 4 In 2006\f + \ft Or thereabouts\f*, David made a complicated mess out of ptxplus, and it worked to
+make diglots. That is, as long as you didn't get too adventurous, or hit one of
+the numerous bugs.
+\polyglotcolumn B
+\p
+\v 4 While diglots have been possible since then, they took a lot of tweaking, 
+and it was only really suitable for a single book.
+\polyglotendcols
+\polyglotcolumn L
+\p 
+\v 5 Then Mark and Martin created  of a beautiful thing called ptxprint  using Something Completely Different called python, and asked David to possibly make the diglot code fit into it. And David had time, and patched some bugs in diglot and also in ptxprint. And so it was that diglot ventured out into the world. 
+
+\p
+\polyglotcolumn R
+\p 
+\v 5 And then did Mark and Martin come together and used Something Completely Different,  named python, and crafted the wondrous ptxprint. And David was asked if diglot would wed ptxprint. And David found the precious  treasure called time, and trimmed some strangenesses from diglot, and even from ptxprint  also. And behold, the two became one and marched forth into the world.
+
+\polyglotcolumn A
+\v 5 Skipping on to 2019, Mark and Martin started working on ptxprint, and
+David joined them to merge in diglot, patching a few bugs and mistakenly
+thinking that diglot was now pretty robust.
+\polyglotendcols
+\polyglotcolumn L
+\s2 The rebirth of diglot
+\p
+\polyglotcolumn A
+\s2 Diglot2
+\p
+\polyglotendcols
+\polyglotcolumn L
+\p
+\v 6 After meeting a lot of bugs that were seemed increasingly complex to track
+down and fix, David (encouraged by Martin) delved deep into the insides of
+diglot and re-wrote the 'text collection' part significantly.  
+\v 7 Then, meeting
+yet more bugs, he went on to rip out the old horrendously complex
+column-filling/refilling/side swapping and layout portions of diglot.
+\v 8 Triglot (or more) is not yet possible, but it's now almost within touching
+distance.
+\p
+
+\polyglotcolumn R 
+\p
+\v 6 Devious and pernicious were the bugs that
+ailed diglot and David did valiantly battle
+them, but it became apparent in the end
+surgery more drastic was demanded.
+\p
+\v 7 And by the hefty sword known as \it rewrite\it*, David
+conquered some of the bugs, and then he swung again at the innards of diglot
+and diglot2 was born from the mess.
+\p
+\v 8 And with the coming of diglot2 there is the beacon of hope, for diglot2 is written such that triglots and polyglots may come to pass.
+\p
+\polyglotendcols

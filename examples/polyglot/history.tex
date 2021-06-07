@@ -1,0 +1,40 @@
+\def\pluginlist{all}
+\input paratext2.tex
+\diglottrue
+\def\regularL{"Gentium Plus"}
+\def\regularR{"Gentium Plus"}
+\def\regular{"Gentium Plus"}
+\diglotBalNotesfalse
+\VisTracetrue
+\tracing{d}
+\tracing{s}
+\tracing{sC}
+\tracing{f}
+\tracing{n}
+\FontSizeUnit=0.90pt
+\ColumnGutterRuletrue
+\showboxdepth=10
+\showboxbreadth=10
+\tracing{D}
+%\scrollmode
+\newDiglotCol{A}
+\newDiglotCol{B}
+\def\DiglotLFraction{0.2666}
+\def\DiglotRFraction{0.2666}
+\def\DiglotAFraction{0.2666}
+\def\DiglotBFraction{0.2}
+
+\stylesheet{usfm_sb.sty}
+\stylesheet{default-custom.sty}
+\let\reflectbox=\mirror
+\def\XeTeX{\leavevmode
+  \setbox0=\hbox{X\lower.5ex
+  \hbox{\kern-.15em
+      \char"018E
+  }\kern-.1667em \TeX}%
+  \dp0=0pt \ht0=0pt \box0 }
+\diglottrue
+\diglotcolumns
+%\tracingmacros=1
+\ptxfile{history.usfm}
+\bye

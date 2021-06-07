@@ -1,0 +1,372 @@
+%:strip
+% polyglot-simplepages.tex: multi-page polyglot processing for xetex paratext2.tex
+% Copyright (c) 2021 by SIL International 
+% written by David Gardner
+% 
+% This optional plugin (see ptx-plugins) extends the basic diglot engine to
+% provide multipage polyglot  options
+%
+% Permission is hereby granted, free of charge, to any person obtaining
+% a copy of this software and associated documentation files (the  
+% "Software"), to deal in the Software without restriction, including  
+% without limitation the rights to use, copy, modify, merge, publish,  
+% distribute, sublicense, and/or sell copies of the Software, and to  
+% permit persons to whom the Software is furnished to do so, subject to  
+% the following conditions:
+%
+% The above copyright notice and this permission notice shall be  
+% included in all copies or substantial portions of the Software.
+%
+% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,  
+% EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF  
+% MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND  
+% NONINFRINGEMENT. IN NO EVENT SHALL SIL INTERNATIONAL BE LIABLE FOR  
+% ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF  
+% CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION  
+% WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+%
+% Except as contained in this notice, the name of SIL International  
+% shall not be used in advertising or otherwise to promote the sale,  
+% use or other dealings in this Software without prior written  
+% authorization from SIL International.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\plugin@startif{polyglot-simplepages}
+\plugins@needed{polyglot-simplecols} % Just in case it becomes separate.
+
+\newcount\p@lyp@geno
+
+\def\p@lyp@ges{0}
+\def\p@lyp@gestring{\the\p@lyp@geno}
+\def\p@lyp@gesuffx{@poly@\p@lyp@gestring}
+\def\s@tpolyp@ge#1{%
+  \trace{dmp}{ #1 is on page \p@lyp@gestring}%
+  \x@\xdef\csname p@lyp@ge#1\endcsname{\p@lyp@gestring}}
+
+\def\s@tpolyp@ges#1\E{%Called by polyglot pages, once per page. #1 is the columns for this page.
+  \edef\tmp{#1}%
+  \xdef\p@lyp@ges{\the\p@lyp@geno}
+  \ifx\tmp\h@phen
+    \xdef@cseq{p@lyp@gecols\p@lyp@gestring}{}% p@lyp@gecols0 ... p@lyp@gecolsN list the columns for the respective page
+    \xdef@cseq{revp@lyp@gecols\p@lyp@gestring}{}% revp@lyp@gecols0 ... revp@lyp@gecolsN list the reversed columns for the respective page
+  \else 
+    \xdef@cseq{p@lyp@gecols\p@lyp@gestring}{#1}% p@lyp@gecols0 ... p@lyp@gecolsN give list the columns for\let\col@do=\mkrev@list
+    \let\col@do=\mkrev@list
+    \def\rev@layout@list{}\def\list@type{layout}%
+    \x@\each@col\tmp\E%
+    \xdef@cseq{revp@lyp@gecols\p@lyp@gestring}{\rev@layout@list}% revp@lyp@gecols0 ... revp@lyp@gecolsN list the reversed columns for the respective page
+    %For chosing the correct inserts:
+    \xdef@cseq{left@p@ly@col\p@lyp@gestring}{\x@\first@item\layout@list\E}%
+    \xdef@cseq{right@p@ly@col\p@lyp@gestring}{\x@\first@item\rev@layout@list\E}%
+    \let\col@do=\s@tpolyp@ge
+    \each@col#1\E
+  \fi
+  \ifnum \p@lyp@geno>0  % new@poly@page doesn't get run for page0, as those take over the standard boxes
+    \edef\tmpname{partial\p@lyp@gesuffx }
+    \ifcsname \tmpname\endcsname\else
+      \new@poly@page % side effect: trashes \d@
+    \fi
+  \fi
+  \global\advance\p@lyp@geno by 1
+}
+
+\def\new@poly@page{%called with p@lyp@geno=new page
+  \let\npp@d@=\d@
+  \let\d@=\m@kepolyb@x
+  \x@\cstackdown\p@lyb@xes,\E
+  \let\d@=\npp@d@ \let\npp@d@=\undefined
+}
+
+\def\e@tcomma#1,\E{#1} %Remove the trailing comma from a list.
+%
+% Boxes
+% Each page-related box (\partial and similar boxes) has a separate copy for each page. 
+% on switching between columns / pages, the appropriate page's copy becomes
+% 'active' i.e. \partial points to \partial@poly@0, save boxes are saved to ...@poly@0,
+% verybottomins points to the insert verybottomins@poly@0
+% *Inserts* must be made as genuine inserts on each page.
+% 
+\def\polyglot@onetime@setup{%
+  %\tracingmacros=1
+  \edef\@ut{\x@\e@tcomma\pageins@rts\E}%
+  \let\d@\gen@p@lyins@rts %populates \@ut with insert save names
+  \x@\cstackdown \s@veclasses\E
+  \xdef\p@lyb@xes{partial,n@xtpartialNrml,n@xtpartialRev,\@ut,}%
+  \trace{dmp}{poly@b@xes defined as: \p@lyb@xes}%
+  % Now setup copies of boxes.
+  \addtoinithooks{%
+    \let\d@=\poly@setup@boxaliases
+    \x@\cstackdown \p@lyb@xes\pageins@rts,\E
+    }%
+  %\tracingmacros=0
+  \let\@ut=\undefined
+  \global\let\polyglot@onetime@setup\relax
+} 
+\def\polyglot@eachtime@setup{%
+}
+
+\def\poly@setup@boxaliases#1\E{\x@\let\x@\tmp@ins\csname #1\endcsname \x@\global\x@\let\csname #1@poly@0\endcsname\tmp@ins} %Make each valid insert type have a page-number suffixed alias
+
+\def\poly@rename@inserts#1\E{%
+  \x@\let\x@\tmp@ins\csname #1\p@lyp@gesuffx\endcsname
+  \x@\global\x@\let\csname #1\endcsname\tmp@ins
+} %Point the normal insert name to the page-numbered version
+
+\def\m@kepolyb@x#1\E{\x@\newb@x\csname #1\p@lyp@gesuffx\endcsname}
+
+\def\switch@polypage#1{%Switch to the relevant page for the column selected.
+  \x@\let\x@\sp@lynum\csname p@lyp@ge#1\endcsname
+  \ifnum\p@lyp@geno=\sp@lynum\relax
+    \trace{dmp}{switch@polypage #1, on \the\p@lyp@geno already}%
+  \else
+    \trace{dmp}{switch@polypage #1 -> \sp@lynum}%
+    \@s@tp@lypage{\sp@lynum}%
+  \fi
+}
+
+\def\@s@tp@lypage#1{%
+    \ifnum #1=\p@lyp@geno\else
+      \trace{dmp}{switch@polypage > #1}%
+      \p@lyp@geno=#1\relax
+      \@@s@tpolyp@ge
+    \fi
+}
+\def\@@s@tpolyp@ge{% 
+    \trace{dmp}{@@s@tpolyp@ge}%
+    \let\spp@d@=\d@
+    \let\d@=\poly@rename@inserts    
+    \tracingassigns=1
+    \x@\cstackdown \p@lyb@xes\pageins@rts,\E
+    \x@\let\x@\left@col\csname left@p@ly@col\p@lyp@gestring\endcsname
+    \x@\let\x@\right@col\csname right@p@ly@col\p@lyp@gestring\endcsname
+    \x@\global\x@\let\x@\topleftins\csname \colinsert@name{\loc@T\left@col}\endcsname
+    \x@\global\x@\let\x@\toprightins\csname \colinsert@name{\loc@T\right@col}\endcsname
+    \x@\global\x@\let\x@\bottomleftins\csname \colinsert@name{\loc@B\left@col}\endcsname
+    \x@\global\x@\let\x@\bottomrightins\csname \colinsert@name{\loc@B\right@col}\endcsname
+    \alias@inserts
+    \tracingassigns=0
+    \let\d@=\spp@d@\let\spp@d@=\undefined
+}
+\def\gen@p@lyins@rts#1\E{%add names of inserts (saveclass #1) to \@ut
+  \edef\s@veclass{#1}\let\gpiD@=\d@\let\d@=\cs@apply\let\do@it=\s@veclass@name 
+  \x@\cstackdown\pageins@rts\E
+  \let\d@=\gpiD@\let\gpiD@=\undefined
+}
+
+\def\polyglotpages#1{%comma separated list of concatenated columns to put on different pages (e.g. LR,AB) specifies 2 pages, pg1 shows L+R, pg2 A+B
+  \trace{dmp}{polyglotpages #1}%
+  \polyglot@onetime@setup
+  \polyglot@eachtime@setup
+  \p@lyp@geno=0
+  \let\d@=\s@tpolyp@ges
+  \cstackdown#1,\E
+  \message{Polyglot: layout across \the\p@lyp@geno pages}%
+  \ifnum\p@lyp@geno=1 
+    \edef\diglotlayout{simplecols}
+  \else
+    \edef\diglotlayout{simplepages}
+  \fi
+}
+ 
+%%%% Diglot plugin interface functions.
+
+\let\@prepare@layout@simplepages=\@prepare@layout@simplecols
+\def\@setup@layout@simplepages{}%No special setup
+
+\def\set@col@widths@simplepages{
+  \trace{d}{set@col@widths@simplepages (\p@lyp@ges)}%
+  \p@lyp@geno=0
+  \loop
+    \x@\let\x@\layout@list\csname p@lyp@gecols\the\p@lyp@geno\endcsname
+    \set@col@widths@simplecols
+    \trace{d}{pp now(\p@lyp@gestring/\p@lyp@ges)}%
+  \ifnum\p@lyp@geno<\p@lyp@ges
+    \advance\p@lyp@geno by 1
+    \repeat
+  \trace{d}{set@col@widths@simplepages end}%
+}
+  
+  
+\def\first@item#1#2\E{#1}
+\def\@@do@simplepage@{% iterate through page numbers 
+  \s@tctslist@simplepages
+  \x@\let\x@\layout@list\csname p@lyp@gecols\the\p@lyp@geno\endcsname
+  \trace{dmp}{\spt@sk\space [\the\p@lyp@geno:\layout@list] \the\ht\partial+\the\dp\partial}%
+  %pick correct inserts
+  \ifx\layout@list\empty\else
+    %make reverse layout list
+    \let\col@do=\mkrev@list
+    \xdef\rev@layout@list{}\def\list@type{layout}%
+    \x@\each@col\layout@list\E%
+    %choose correct column inserts
+  \fi
+  \@@s@tpolyp@ge
+  \trace{dmp}{revlist: \rev@layout@list}%
+  %populate page
+  \edef\sdp@pgno{\the\p@lyp@geno}% scol@cmd shouldn't touch p@lyp@geno, but just in case 
+  \pre@scol@cmd
+  \scol@cmd
+  \p@lyp@geno=\sdp@pgno \let\sdp@pgno=\undefined
+  %Itterate
+  \ifnum\p@lyp@geno<\p@lyp@ges\relax
+    \advance\p@lyp@geno by 1
+    \let\n@xtlsp=\@@do@simplepage@
+  \else
+    \let\n@xtlsp=\relax
+  \fi
+  \n@xtlsp
+}
+
+\def\@add@n@xtpartial@simplepages{%
+  \edef\spt@sk{@add@n@xtpartial@simplepages }%
+  %\def\pagecontents{Page0 ptl\endgraf \x@\copy\csname n@xtpartialNrml@poly@0\endcsname}\plainoutput
+  %\def\pagecontents{page1 ptl\endgraf \x@\copy\csname n@xtpartialNrml@poly@1\endcsname}\plainoutput
+  \let\scol@cmd=\@add@n@xtpartial@simplecols
+  \let\pre@scol@cmd\relax
+  \global\p@lyp@geno=0
+  \@@do@simplepage@
+  %\def\pagecontents{Page0\endgraf \x@\copy\csname partial@poly@0\endcsname}\plainoutput
+  %\def\pagecontents{page1\endgraf \x@\copy\csname partial@poly@1\endcsname}\plainoutput
+}
+
+\def\@do@writep@ge@simplepages{%
+  \edef\spt@sk{@writep@ge@simplepages }%
+  \ifm@rksonpage
+    \let\pre@scol@cmd=\m@rksonpagetrue
+  \else
+    \let\pre@scol@cmd=\m@rksonpagefalse
+  \fi
+  \let\scol@cmd=\@do@writep@ge@simplecols
+  \global\p@lyp@geno=0 \relax
+  \@@do@simplepage@
+}
+
+\def\@do@layout@simplepages{%
+  \edef\spt@sk{@do@layout@simplepages }%
+  \let\scol@cmd=\@do@layout@simplecols
+  \let\pre@scol@cmd\relax
+  \p@lyp@geno=0 \relax
+  \@@do@simplepage@
+  \edef\spt@sk{@do@layout@simplepages \space0b:\l@gdims{\csname n@xtpartialNrml@poly@0\endcsname}, 1b:\l@gdims{\csname n@xtpartialNrml@poly@1\endcsname} p:\l@gdims{\partial}}%
+  \trace{dmp}{\spt@sk}%
+  %\def\pagecontents{Page0\endgraf \x@\copy\csname n@xtpartialNrml@poly@0\endcsname}\plainoutput
+  %\def\pagecontents{page1\endgraf \x@\copy\csname n@xtpartialNrml@poly@1\endcsname}\plainoutput
+}
+\def\@tst@n@xtpartial@simplepages{%
+  \edef\spt@sk{@tst@n@xtpartial@simplepages \space0:\l@gdims{\csname partial@poly@0\endcsname}, 1:\l@gdims{\csname partial@poly@1\endcsname} }%
+  \p@lyp@geno=0 \let\scol@cmd=\@tst@n@xtpartial@simplecols
+  \let\pre@scol@cmd\relax
+  \@@do@simplepage@
+}
+
+
+
+\let\@prepare@balnotes@simplepages=\@prepare@balnotes@simplecols%
+\let\@prepare@unbalnotes@simplepages=\@prepare@unbalnotes@simplecols%
+
+\def\@do@balnotes@simplepages{%TODO?
+  \edef\spt@sk{@do@balnotes@simplepages}%
+  \let\pre@scol@cmd\relax
+  \let\scol@cmd=\@do@balnotes@simplecols
+  \p@lyp@geno=0
+  \@@do@simplepage@
+}%
+\def\@do@unbalnotes@simplepages{%TODO?
+  \edef\spt@sk{@do@unbalnotes@simplepages}%
+  \let\pre@scol@cmd\relax
+  \let\scol@cmd=\@do@unbalnotes@simplecols
+  \p@lyp@geno=0
+  \@@do@simplepage@
+}%
+
+\def\@postswap@simplepages#1{}
+\edef\pagects@list{}%
+
+\def\count@dim@simplepages#1{%Is the dimension non non-zero? Count using curactivecols and add tag to list IF it is on the present page
+  \x@\ifdim \csname \v@lpfx#1\v@lsfx\endcsname=0pt\else
+    \advance\curactivecols by 1
+    \edef\cts@list{\cts@list#1}%
+    \x@\let\x@\sp@lynum\csname p@lyp@ge#1\endcsname
+    \ifnum\p@lyp@geno=\sp@lynum\relax
+      \edef\pagects@list{\pagects@list#1}%
+    \fi
+  \fi
+}
+
+\def\s@tctslist@simplepages{%
+  \curactivecols=0 
+  \def\v@lpfx{}\def\v@lsfx{ht}%
+  \let\cts@list=\empty
+  \let\pagects@list=\empty
+  \x@\let\x@\col@do\csname count@dim@\diglotlayout\endcsname
+  \x@\each@col\diglot@list\E
+}
+
+\def\@do@jointcalc@simplepages{%
+    % step 1: max height of the last box 
+    \def\v@lpfx{@cur}\def\v@lsfx{ht}%
+    \dimen1=0pt
+    \let\col@do=\max@val
+    \x@\each@col\diglot@list\E % Find height of lastchunk
+    \edef\@maxht{\the\dimen1}%
+    \dimen1=0pt
+    \def\v@lpfx{b@selineskip}\def\v@lsfx{}%
+    \let\col@do=\max@val
+    \x@\each@col\cts@list\E % Find biggest baseline skip of those bits of text which are active.
+    \edef\@maxb@seline{\the\dimen1}%
+    \dimen1=0pt
+    % step 2: position of the ideal next baseline (below last box)
+    \def\v@lpfx{@cur}\def\v@lsfx{ht}%
+    \let\col@do=\maxjoint@val
+    \x@\each@col\cts@list\E
+}
+
+\def\@preswap@simplepages#1{%
+  \let\log@ut\empty\def\v@lpfx{}\def\v@lsfx{box}%
+  \l@gm@dims
+  \trace{dmp}{@preswap@simplepages #1 \log@ut}%
+  \x@\let\x@\ps@sp@tmp\csname p@lyp@ge#1\endcsname
+  \ifnum\p@lyp@geno=\ps@sp@tmp\relax
+  \else
+    \switch@polypage{#1}%
+  \fi
+}
+
+\iffalse
+%\let\@do@layout@simplepages=\@do@layout@simplecols
+%\let\@setup@layout@simplepages=\@setup@layout@simplecols
+\def\@setup@layout@simplepages{\xdef\layout@list{\diglot@list}\xdef\rev@layout@list{\diglot@list}}
+\fi
+
+% 
+
+\let\@do@cleanup@simplepages=\@do@cleanup@simplecols
+\def\@start@writep@ge@simplepages{%
+  \xdef\old@pp{\the\p@lyp@geno}% Cache old value
+  \ifodd\p@lyp@ges\need@evenpage\fi
+} 
+
+\let\@prep@writep@ge@simplepages=\@prep@writep@ge@simplecols
+
+\def\@end@writep@ge@simplepages{%
+  \@s@tp@lypage{\old@pp}%
+  \@end@writep@ge@simplecols
+}
+
+\def\@start@upd@tep@rtial@simplepages{%
+  \switch@polypage{\c@rrdstat}%
+  %\def\pagecontents{Page0\endgraf \x@\copy\csname n@xtpartialNrml@poly@0\endcsname}\plainoutput
+  %\def\pagecontents{page1\endgraf \x@\copy\csname n@xtpartialNrml@poly@1\endcsname}\plainoutput
+  \xdef\updp@old@pp{\the\p@lyp@geno}% Cache old value
+}
+\def\@end@upd@tep@rtial@simplepages{%
+  \@s@tp@lypage{\updp@old@pp}%
+  %\def\pagecontents{Page0\endgraf \x@\copy\csname n@xtpartialNrml@poly@0\endcsname}\plainoutput
+  %\def\pagecontents{page1\endgraf \x@\copy\csname n@xtpartialNrml@poly@1\endcsname}\plainoutput
+}
+
+\let\@after@add@n@xtpartial@simplepages=\@after@add@n@xtpartial@simplecols
+
+
+\plugin@endif

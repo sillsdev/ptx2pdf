@@ -220,16 +220,16 @@
         \fi
         \def\t@pedge{\vfil}%
         \def\b@tedge{\vfil}%
-        \ifx\t@mpb\@lignLeft
-          \ifx\t@mpc\@lignTop\def\t@pedge{}\fi
-          \ifx\t@mpc\@lignBot\def\b@tedge{}\fi
+        \ifx\l@cspec@b\@lignLeft
+          \ifx\l@cspec@c\@lignTop\def\t@pedge{}\fi
+          \ifx\l@cspec@c\@lignBot\def\b@tedge{}\fi
           \xdef\sb@leftedge{\t@pedge\noexpand\sb@ins@rtpic\fgfigsp@c|\the\dimen0 \noexpand\E\noexpand\let\noexpand\sb@leftedge\noexpand\empty\b@tedge}%
           \trace{e}{leftedge defined to sb@ins@rtpic\fgfigsp@c...}%
           \advance\dimen0 by \fb@hpadding
           \xdef\sb@leftshift{\the\dimen0}%
         \else
-          \ifx\t@mpc\@lignTop\def\t@pedge{}\fi
-          \ifx\t@mpc\@lignBot\def\b@tedge{}\fi
+          \ifx\l@cspec@c\@lignTop\def\t@pedge{}\fi
+          \ifx\l@cspec@c\@lignBot\def\b@tedge{}\fi
           \xdef\sb@rightedge{\t@pedge\noexpand\sb@ins@rtpic\fgfigsp@c|\the\dimen0 \noexpand\E\noexpand\let\noexpand\sb@rightedge\noexpand\empty\b@tedge}%
           \advance\dimen0 by \fb@hpadding
           \xdef\sb@rightshift{\the\dimen0}%
@@ -237,7 +237,7 @@
         \let\fgfigsp@c\empty
       \else% tempa!=s
         \def\l@ftedge{\hfil}%
-        \ifx\t@mpb\@lignLeft\def\l@ftedge{}\else\ifx\t@mpb\@lignRight\def\l@ftedge{\hfill}\fi\fi
+        \ifx\l@cspec@b\@lignLeft\def\l@ftedge{}\else\ifx\l@cspec@b\@lignRight\def\l@ftedge{\hfill}\fi\fi
         \ifx\tempa\@lignTop
           \xdef\sb@rtopedge{\l@ftedge\noexpand\sb@ins@rtpic\fgfigsp@c|\the\dimen0 \noexpand\E}%
         \fi
@@ -259,8 +259,8 @@
             \trace{e}{Saved box \wd\this@pic x\ht\this@pic}%
           \fi
           \global\let\fgfig@cutout\tr@e
-          \xdef\l@cspec{\t@mpb}%
-          \ifx\t@mpc\empty\gdef\c@tskip{0}\else\xdef\c@tskip{\t@mpc}\fi%
+          \xdef\l@cspec{\l@cspec@b}%
+          \ifx\l@cspec@c\empty\gdef\c@tskip{0}\else\xdef\c@tskip{\l@cspec@c}\fi%
           \gdef\sb@rtopedge{\strut
             \dimen0=\ht\this@pic \advance\dimen0 by \dp\this@pic %
             \count255=\dimen0

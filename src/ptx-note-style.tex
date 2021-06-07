@@ -55,8 +55,8 @@
   \fi
   \relax%
   \ifdiglot%
-    \n@wnoteins@rt{#1}%
-    \n@wnoteins@rt{#1R}% May not always need this, but somsone might change their minds.
+    \def\col@do##1{\n@wnoteins@rt{#1\@g@tdst@t{##1}}}%
+    \x@\each@col\diglot@list\E
   \else%
     \n@wnoteins@rt{#1}%
   \fi%
@@ -93,7 +93,7 @@
 % Each USFM note marker is defined to call \n@testyle, with the marker name as parameter
 %
 %+cnote_notestyle
-\def\n@testyle#1{\TRACE{n@testyle:#1}%
+\def\n@testyle#1{\trace{n}{n@testyle:#1}%
  \def\newn@testyle{#1}%
  \catcode32=12\relax % look ahead to see if space or * follows (like char styles)
  \futurelet\n@xt\don@testyle}

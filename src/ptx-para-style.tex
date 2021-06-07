@@ -302,10 +302,10 @@
  \else % else we need to actually process it!
   \ifx\m@rker\relax\else
     \getp@ram{spaceafter}{\m@rker}% output any <spaceafter> for the previous style
-  \fi
-  \ifx\p@ram\relax \else
-    \ifhe@dings\nobreak\fi
-    \vskip\p@ram\verticalsp@ceunit                                              %(1)
+    \ifx\p@ram\relax \else
+      \ifhe@dings\nobreak\fi
+      \vskip\p@ram\verticalsp@ceunit                                              %(1)
+    \fi
   \fi
   %\ifx\mcstack\mcstack@mpty\else
     %\def\d@##1+##2\E{\edef\tmp{##2}%
@@ -941,11 +941,11 @@
      \edef\dc@ref@rgs{\string\@delayedchapter\string{\@@ref\string}\string{\ch@pter\string}}%
      \x@\write\x@\p@rlocs\x@{\dc@ref@rgs{\the\pdflastxpos}{\the\pdflastypos}}\endL
      \dr@ppednumbertrue
-     \add@pending{chapter}{\c@rref}{0}{\the\ch@pterwd}{2}{\t@std@lay}{\ifRTL R\else L\fi}%
+     \add@pending{chapter}{\ifdiglot\dc@rref\else\c@rref\fi}{0}{\the\ch@pterwd}{2}{\t@std@lay}{\ifRTL R\else L\fi}%
      \run@pending
     \fi
   \else
-    \MSG{nb ignored near \c@rref: not after chapter}%
+    \MSG{nb ignored near \ifdiglot\dc@rref\else\c@rref\fi: not after chapter}%
   \fi}
 
 \newbox\str@tbox

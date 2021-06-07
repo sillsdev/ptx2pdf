@@ -31,6 +31,7 @@
 \newcount\diglotDbgJoinboxes%
 \diglotDbgJoinboxes=-1% Set to the debug message of a joinboxes to execute showbox on that join
 \def\diglotDbgeachcol{-1}% Define to begin tracingmacros and tracing assigns at each@col with TRACEcount
+\def\diglotDbgupdtPtl{-1}% Define to begin tracingmacros and tracing assigns at n@xtpartial  with TRACEcount
 
 
 \def\diglotbadbrk{\penalty 10000}
@@ -68,10 +69,17 @@
 \def\LeftMarksfalse{\useLeftMarkstrue\useRigthMarkstrue}
 
 %Defined penalties
-\def\dgl@tPenColSwap{-10001}%
-\def\dgl@tPenInternalRpt{-10002}
-\def\dgl@tPenLtrialEnd{-10005}% FIXME - expand to get rid of special caseing
-\def\dgl@tPenRtrialEnd{-10006}
+\xdef\sp@cialpen{-10001}
+\def\newsp@cialpen#1{%define a new special penalty {#1}  which gets set as the next special penalty number (assuming all marksN are registered with this function.
+  {\count255=\numexpr \sp@cialpen-1\relax
+  \x@\xdef\x@\sp@cialpen{\the\count255}%
+  \x@\xdef\csname #1\endcsname{\sp@cialpen}}%
+}
+\newsp@cialpen{dgl@tPenColSwap}%
+\newsp@cialpen{dgl@tPenInternalRpt}
+\newsp@cialpen{dgl@tPenLtrialEnd}
+\newsp@cialpen{dgl@tPenRtrialEnd}
+
 \def\oldRmark{}
 \def\oldLmark{}
 \def\p@gebotmark{}
@@ -90,8 +98,9 @@
 \def\addToRightHooks#1{\x@\global\x@\diglotRho@ks\x@{\the\diglotRho@ks #1}}
 %-cdig_define-hooks
 
-\def\stylesheetL#1{\gdef\ds@ffix{L}\stylesheet{#1}\gdef\ds@ffix{}}%Need to reset ds@ffix to {}, so that side-specific settings can be applied.
-\def\stylesheetR#1{\gdef\ds@ffix{R}\stylesheet{#1}\gdef\ds@ffix{}}
+\def\stylesheetL{\gdef\ds@ffix{L}\stylesh@@t}%Need to reset ds@ffix to {}, so that side-specific settings can be applied.
+\def\stylesheetR{\gdef\ds@ffix{R}\stylesh@@t}
+\def\stylesh@@t#1{\stylesheet{#1}\gdef\ds@ffix{}}
 
 %LRspecific holds a list of things that get redefined on side-switching. Now split into Definitions and Dimensions.
 \def\LRspecificDef{AdornVerseNumber,VerticalSpaceFactor,LineSpacingFactor,regular,bold,italic,bolditalic,SpaceStretchFactor,SpaceShrinkFactor}
@@ -127,10 +136,14 @@
     \trace{S}{SpS: #1 returned to original}\else\trace{S}{SpS: #1 unmodified}\fi\fi}
 
 \def\s@veSpecificOrig#1{\ifcsname #1\endcsname \x@\let\csname #1\@rig\x@\endcsname\csname #1\endcsname
-  \ch@ckLR{#1}{L}\ch@ckLR{#1}{R}\else\MSG{No global definition for #1}\fi} % If the item exists, save its current value. 
+    \let\sSotmp=\col@do
+    \def\col@do##1{\ch@ckLR{#1}{##1}}%
+    \x@\each@col\diglot@list\E % Check all columns
+    \let\col@do=\sSotmp
+  \else\MSG{No global definition for #1}\fi} % If the item exists, save its current value. 
 \def\ch@ckLR#1#2{\ifcsname#1#2\endcsname\trace{S}{SpS: #1#2 exists}\else\x@\let\csname #1#2\x@\endcsname\csname #1\@rig\endcsname
   \ifdiglot\MSG{Side-specific #1#2 not defined, global #1 will be used}\fi\fi}% Helper function
-
+\def\n@wSpecificDim#1{\x@\newdim@n\csname #1\sfx\endcsname}
 % If the item exists, save its current value. 
 \def\s@veSpecificSideDef#1{\ifcsname #1\endcsname \x@\let\csname #1\sfx\x@\endcsname\csname #1\endcsname\fi}
 \def\s@veSpecificSideDim#1{\ifcsname #1\endcsname\ifcsname #1\sfx\endcsname  \x@\global\csname #1\sfx\endcsname=\csname #1\endcsname\else\errmessage{dimension #1 does not exist}\fi\else\errmessage{dimension #1\sfx does not exist}\fi}
@@ -219,7 +232,7 @@
 
 % Not the same as \c@lcavailht from paratext2.tex
 \def\dglt@calc@vailht{%
-   \trace{D}{dglt@calc@vailht \c@rrdstat}%
+   \trace{D}{dglt@calc@vailht \c@rrdstat \number\partial, \the\dimexpr \ht\partial+\dp\partial\relax + \the\dimexpr \ht\n@xtpartial+\dp\n@xtpartial\relax}%
    \global\availht=\textheight %
    \global\advance\availht by \adjustp@ge\relax % Panic measure..
    \global\advance\availht by -\ht\partial %
@@ -283,7 +296,7 @@
 \def\savedRpenalty{0}
 
 \newcount\tmpcount%scratchspace
-\newcount\curactivecols%scratchspace
+\newcount\curactivecols%how many active columns
 \newcount\Lboxpenalty% The penalty that goes between Lbox and partialL
 \newcount\Rboxpenalty%  ~"~
 \newcount\partialLpenalty% The penalty that goes between partialL and excessL (also used while loading excessL during excessL
@@ -393,7 +406,7 @@
 }
 
 \def\run@a@trial{%
-  \x@\global\x@\let\x@\endtri@lpen@lty\csname dgl@tPen\c@rrdstat trialEnd\endcsname
+  \x@\global\x@\endtri@lpen@lty\x@=\csname dgl@tPen\c@rrdstat trialEnd\endcsname
   \traceNum{d}{run@a@trial \show@dstat, \the\availht>\the\baselineskip?, etp:\endtri@lpen@lty}%
   \x@\let\x@\p@rtl\csname partial\c@rrdstat\endcsname
   \x@\let\x@\@xcs\csname excess\c@rrdstat\endcsname
@@ -464,6 +477,7 @@
   \x@\xdef\x@\m@rksm@x{\the\count255}%
   \x@\xdef\csname m@rknum#1\endcsname{\m@rksm@x}}%
 }
+
 \newm@rknum{L}% registers m@rknumL
 \newm@rknum{R}% registers m@rknumR
 
@@ -767,30 +781,32 @@
   \the\diglotRho@ks
 }
 
-\def\endcols{%EXPERIMENTAL
+\def\polyglotendcols{%
   \global\allNeedEmptyingtrue% Text before the swap needs emptying
   \pr@sideswitch{endcols}{L}%
+  \diglot@run@trials
+  \global\allNeedEmptyingfalse
 }
 
-\def\diglotcolumn#1{%EXPERIMENTAL
+\def\polyglotcolumn#1{%
   \uppercase{\edef\reqcol{#1}}%
-  \pr@sideswitch{diglotcolumn #1}{\reqcol}%
-  \ifx\reqcol\empty\errmessage{diglotcolumn may not be called with an empty argument}\fi
+  \ifx\reqcol\empty\errmessage{polyglotcolumn may not be called with an empty argument}\fi
+  \pr@sideswitch{polyglotcolumn #1}{\reqcol}% Before any non-fatal writes
   \ifcsname #1isDiglotColumn\endcsname % 
+    \csname @preswap@\diglotlayout\endcsname{#1}%
     \swap@diglot{#1}%sets diglot state, etc
+    \csname @postswap@\diglotlayout\endcsname{#1}%
     \global\vsize=\maxdimen
-    \global\holdinginserts=1
-    \x@\the\csname diglot#1ho@ks\endcsname
+    \global\holdinginserts=1\relax
+    \x@\the\csname diglot#1ho@ks\endcsname\relax
   \else
-    \errmessage{diglotcolumn must be followed by a sensible argument. '#1' Hasn't been specified as a diglot column}%
+    \errmessage{polyglotcolumn must be followed by a sensible argument. '#1' Hasn't been specified as a polyglot column (with newPolyglotCol), before any USFM files are read.}%
   \fi
 }
 
+
 \let\LisDiglotColumn\empty
 \let\RisDiglotColumn\empty
-
-\def\pagenumberL{\bgroup\setc@rdstat{L}\s@tfont{h}\pagenumber\egroup}%
-\def\pagenumberR{\bgroup\setc@rdstat{R}\s@tfont{h}\pagenumber\egroup}
 
 \newdimen\columnLwidth%
 \newdimen\columnRwidth%
@@ -798,10 +814,15 @@
 \newdimen\availhtR
 \newdimen\chunkDelta % Difference between the last boxes prepared for the page (-ve=left longer)
 \newdimen\p@geChunkDelta \p@geChunkDelta=0pt %as above, but *added* to the page.
-\newdimen\baselineDelta % semi-constant: difference between the L and R baselines.  Set in ptx-stylesheet (-ve=left longer) 
+\newdimen\baselineDelta % semi-constant: largest difference between any  baselines and \topskip.  
+\newdimen\baselineDeltaL % semi-constant: difference between the L baseline and \topskip.  Set in ptx-stylesheet (-ve=topskip longer) 
+\newdimen\baselineDeltaR % semi-constant: difference between the R baseline and \topskip.  Set in ptx-stylesheet (-ve=topskip longer) 
 \newdimen\thisjointDelta % difference between the L and R boxes (-ve=left longer)
+\newcount\cumulativeDeltaL % Sum of \chunkDelta values, in points
+\newcount\cumulativeDeltaR % Sum of \chunkDelta values, in points
+\cumulativeDeltaL=0
+\cumulativeDeltaR=0
 \newcount\cumulativeDelta % Sum of \chunkDelta values, in points
-\cumulativeDelta=0
 \newdimen\adjustp@ge %emergency stretch to page
 \adjustp@ge=0pt
 \def\m@rkerL{}
@@ -810,7 +831,8 @@
 \def\n@xtdstat{L}%What does the diglotstate become at the next \dgl@tPenColSwap penalty?
 \def\f@lwgdstat{L}%What is the diglotstate of the 'recent contributions'? (i.e. next material to read)
 \def\c@rrdstat{}%What is the current diglotstate?
-\def\g@tdstat{\ifdiglot\if\c@rrdstat L\else\c@rrdstat\fi\fi}% Returns "" or "R" (Or other state values in the future)
+\def\@g@tdst@t#1{\ifdiglot\if L#1\else#1\fi\fi}% Returns "" or "R" (Or other state values in the future)
+\def\g@tdstat{\@g@tdst@t\c@rrdstat}% Normal access routine for above
 \def\g@tndstat{\ifdiglotSepNotes \g@tdstat \fi} %if notes are merged, there should be no R (etc)  suffix notes.
 
 \def\show@dstat{\c@rrdstat\f@lwgdstat\n@xtdstat}% for debugging output 
@@ -948,9 +970,19 @@
  \trace{D}{pd:\the\dp2, ph=\the\ht2, d:\the\TempDim}%
  \global\setbox#1=\vtop{\unvbox#1\ifdim\dp2=0pt\ifdim\TempDim=0pt\else\kern-\TempDim\fi\fi}
 }
+\let\lAd@do\relax
+\let\log@ut\empty
+
+\def\l@gdims#1{\the\ht#1 + \the\dp#1 x \the\wd#1}
+\def\l@gboxdims#1{\edef\lb@tmpnam{\v@lpfx#1\v@lsfx}\x@\let\x@\lb@tmptb@x\csname\lb@tmpnam\endcsname \edef\log@ut{\log@ut\space \lb@tmpnam: \the\ht\lb@tmptb@x +\the\dp\lb@tmptb@x\space x \the\wd\lb@tmptb@x}}
+% Log dimensions of all columns
+\def\l@gm@dims{\relax\let\lAd@do=\col@do\let\col@do=\l@gboxdims
+  \x@\each@col\diglot@list\E
+  \let\col@do=\lAd@do
+}
 
 \def\joinboxes#1#2#3#4{%Join 2 vtops together and preserve baselineskip%
- \traceNum{d}{joinboxes #1(\the\ht#1+\the\dp#1x\the\wd#1) #2 (\the\ht#2+\the\dp#2x\the\wd#2)called from locn #3, with penalty #4}%
+ \traceNum{d}{joinboxes #1(\l@gdims{#1}) #2(\l@gdims{#2}) called from locn #3, with penalty #4}%
  \ifnum\TRACEcount=\diglotDbgJoinboxes
    \showbox#1\showbox#2
  \fi\relax
@@ -985,7 +1017,7 @@
     % \unkern
      \setbox0=\lastbox%
      \copy0
-     \trace{D}{lk: \the\dimen4, final bit of deconstructed first box: \the\ht0+\the\dp0, 2nd box: \the\ht#2+\the\dp#2}%
+     \trace{D}{lk: \the\dimen4, final bit of deconstructed first box: \l@gdims{0}, 2nd box: \l@gdims{#2}}%
      \ifdim\dp0>0pt \ifdim\dimen4=0pt \ifdim\ht0>0pt
          \dimen4=-\dp0
      \fi\fi\fi
@@ -1077,27 +1109,32 @@
 \egroup}
 
 
-\def\update@cumulative@delta{\bgroup
+\def\update@cumulative@delta#1{\bgroup
+  \dimen0=\dimexpr \csname \v@lpfx#1\v@lsfx\endcsname - \dimen1\relax
   \dimen2=1pt
-  \traceNum{dP}{Adding \the\dimen0 \space to cumulativeDelta}%
+  \traceNum{dP}{Adding \the\dimen0 \space to cumulativeDelta#1}%
   \divide\dimen0 by \dimen2
   \count255=\dimen0
-  \global\advance\cumulativeDelta by \count255
+  \x@\global\x@\advance\x@\csname cumulativeDelta#1\endcsname by \count255
   \egroup
 }
 
-\def\diglot@arrange@cols{% Xht is the sum of Xbox's depth and height (set by after@a@trial
-  \trace{D}{diglot@arrange@cols chnkDlta:\the\chunkDelta. cp:\the\chunkpenalty, lcp:\the\lastchunkpenalty}%
-  \ifVisTrace
-    \ifx\b@xtype\vbox %boxtype is set on discovery of whether this is a heading or not
-      \doVisTraceT{L}% sets box0, used ~43 lines below
-    \else
-      \doVisTrace{L}% sets box0, used ~43 lines below
-    \fi
-  \fi
-  \ifnum \curactivecols>0
-    \thisjointDelta=0pt %Do we need extra space?
-    %Calculate how much extra space we need:
+\def\set@col@widths@simplecols{%
+  \trace{d}{set@col@widths@simplecols}%
+  \dimen0=\textwidth
+  \def\col@do##1{\advance\count255 by 1}%
+  \count255=0
+  \x@\each@col\layout@list\E
+  \advance\dimen0 by -\numexpr \count255 - 1\relax\gutter\advance\dimen0 by -\count255\columnshift
+  \def\col@do##1{%
+    \csname column##1width\endcsname=\csname Diglot##1Fraction\endcsname\dimen0
+    \traceNum{dP}{Setting column##1width to \the\csname column##1width\endcsname}}%
+  \x@\each@col\layout@list\E
+  %\columnLwidth=\DiglotLeftFraction\dimen0
+  %\columnRwidth=\DiglotRightFraction\dimen0
+}
+
+\def\@do@jointcalc@simplecols{%
     % step 1: max height of the last box 
     \def\v@lpfx{@cur}\def\v@lsfx{ht}%
     \dimen1=0pt
@@ -1114,6 +1151,28 @@
     \def\v@lpfx{@cur}\def\v@lsfx{ht}%
     \let\col@do=\maxjoint@val
     \x@\each@col\cts@list\E
+}
+
+\def\@prepare@layout@simplecols{%
+    \bgroup
+      \trace{d}{@prepare@layout@simplecols \l@gdims{\partial}}%
+      % caclulate column deltas.
+      \def\v@lpfx{}\def\v@lsfx{ht}\dimen1=0pt%
+      \let\col@do\sum@val
+      \x@\each@col\cts@list\E
+      \divide \dimen1 by \curactivecols
+      \dimen0=\chunkDelta
+      %\message{c255: \the\dimen0}%
+      \let\col@do\update@cumulative@delta
+      \x@\each@col\cts@list\E
+    \egroup
+    
+    
+    
+    
+    \thisjointDelta=0pt %Do we need extra space?
+    %Calculate how much extra space we need:
+    \csname @do@jointcalc@\diglotlayout\endcsname
     \ifdim\dimen1>0pt
       \thisjointDelta=\dimen1
       \advance\thisjointDelta by -\@maxht
@@ -1130,19 +1189,16 @@
     %save Lht and Rht (as "nxtchunkXht) and reset Xht
     \let\col@do\save@reset@ht
     \x@\each@col\diglot@list\E
-    \bgroup
-      \dimen0=\chunkDelta
-      %\message{c255: \the\dimen0}%
-      \update@cumulative@delta
-    \egroup
     \dimen8=0pt
     \ifdim\thisjointDelta>0pt
       \advance\dimen8 by \thisjointDelta\relax
     \fi
-    \advance\dimen8 by \ht\Lbox
-    \ifdim \dimen8 <\ht\Rbox \dimen8=\ht\Rbox \fi
-    \dimen9=\dp\Lbox
-    \ifdim \dimen9 <\dp\Rbox \dimen9=\dp\Rbox \fi
+    \def\v@lpfx{}\def\v@lsfx{box}\let\col@do=\max@boxht\dimen1=0pt
+    \x@\each@col\diglot@list\E
+    \advance\dimen8 by \dimen1
+    \let\col@do=\max@boxdp\dimen1=0pt
+    \x@\each@col\diglot@list\E
+    \dimen9=\dimen1
     % apply columngutterruleskip?
     \tempfalse
     \ifdim\ht\partial=0pt\ifdim\dp\partial=0pt
@@ -1155,33 +1211,81 @@
     \fi\fi
     \trace{d}{Gutter \the\dimen8 height, \the\dimen9 deep}%
     \dimen7=\dimen8%.5\baselineskip
-    \global\setbox\n@xtpartialNrml\vtop{%
-      \iftemp
-        \vskip\ColumnGutterRuleSkip
+}
+
+\def\@preswap@simplecols#1{}
+\def\@postswap@simplecols#1{}
+
+\def\@@simplecols#1{\hbox to\columnshift{}\ifx\l@stcol\empty\else\unhcopy1 \fi
+    \hbox to \csname column#1width\endcsname{\x@\copy\csname #1box\endcsname\hss}\xdef\l@stcol{#1}}
+  %
+
+\def\@do@layout@simplecols{%
+  \trace{d}{@do@layout@simplecols \l@gdims{\partial}}%
+  \let\@d@lsimp@d@=\d@
+  \let\@d@lsimpcol@do=\col@do
+  \setbox1\hbox{\makediglotgutter{\dimen7}{\dimen8}{\dimen9}}%
+  \let\l@stcol\empty
+  \let\col@do=\@@simplecols
+  % Skip calculations:
+  \dimen6=0pt
+  \iftemp
+    \dimen6=\ColumnGutterRuleSkip
+  \else
+    \ifdim\thisjointDelta<0pt
+      \ifdim\thisjointDelta>-\@maxb@seline %sanity check
+        \dimen6=\thisjointDelta
+        \trace{dP}{skipping jointDelta: \the\thisjointDelta}%
       \else
-        \ifdim\thisjointDelta<0pt
-          \ifdim\thisjointDelta>-\@maxb@seline %sanity check
-            \vskip\thisjointDelta
-            \trace{dP}{skipping jointDelta: \the\thisjointDelta}%
-          \else
-            \trace{dP}{Unacceptable negative jointDelta \the\thisjointDelta < -\@maxb@seline}%
-          \fi
-        \fi
+        \trace{dP}{Unacceptable negative jointDelta \the\thisjointDelta < -\@maxb@seline}%
       \fi
-      \hbox to \textwidth{\ifVisTrace\llap{\copy0}\fi%
-        \hbox to\columnshift{}%
-        \hbox to\columnLwidth{\copy\Lbox\hss}\makediglotgutter{\dimen7}{\dimen8}{\dimen9}%
-        \hbox to\columnshift{}%
-        \hbox to\columnRwidth{\copy\Rbox\hss}%\rlap{\the\ht\Rbox \the\dp\Rbox}%
-    }}%
-    \global\setbox\n@xtpartialRev\vtop{%
-      \iftemp
-        \vskip\ColumnGutterRuleSkip
-      \fi
-      \hbox to \textwidth{\ifVisTrace\llap{\box0}\fi%
-      \hbox to\columnRwidth{\box\Rbox\hss}\makediglotgutter{\dimen7}{\dimen8}{\dimen9}%
-      \hbox to\columnLwidth{\box\Lbox\hss}%\rlap{\the\ht\Rbox \the\dp\Rbox}%
-    }}%
+    \fi
+  \fi
+  % Normal
+  %
+  \global\setbox\n@xtpartialNrml\vtop{%
+    \ifdim\dimen6=0pt\else
+      \vskip\dimen6
+    \fi
+    \hbox to \textwidth{\ifVisTrace\llap{\copy0}\fi%
+      \x@\each@col\layout@list\E
+      \vrule height \dimen7 depth \dimen9 width 0pt
+    }%
+  }%
+  \let\l@stcol\empty %Reset this so that @@simplecols behaves properly
+  \global\setbox\n@xtpartialRev\vtop{%For the next page, thus no joint delta considerations
+    \ifdim\dimen6=0pt\else
+      \vskip\dimen6
+    \fi
+    \hbox to \textwidth{\ifVisTrace\llap{\box0}\fi%
+      \x@\each@col\rev@layout@list\E
+      \vrule height \dimen7 depth \dimen9 width 0pt
+  }}%
+  \let\col@do=\@d@lsimpcol@do
+  \let\d@=\@d@lsimp@d@
+}
+\def\@do@cleanup@simplecols{%
+  \def\v@lpfx{}\def\v@lsfx{box}%
+  \let\col@do=\void@boxes %
+  \x@\each@col\diglot@list\E
+}
+
+\def\diglot@arrange@cols{% Xht is the sum of Xbox's depth and height (set by after@a@trial
+  \trace{d}{diglot@arrange@cols chnkDlta:\the\chunkDelta. cp:\the\chunkpenalty, lcp:\the\lastchunkpenalty}%
+  \let\ac@d@=\d@
+  \let\ac@col@do=\col@do
+  \ifVisTrace
+    \ifx\b@xtype\vbox %boxtype is set on discovery of whether this is a heading or not
+      \doVisTraceT{L}% sets box0, used ~43 lines below
+    \else
+      \doVisTrace{L}% sets box0, used ~43 lines below
+    \fi
+  \fi
+  \ifnum \curactivecols>0
+    \csname @prepare@layout@\diglotlayout\endcsname
+    \csname @setup@layout@\diglotlayout\endcsname
+    \csname @do@layout@\diglotlayout\endcsname
+    \csname @do@cleanup@\diglotlayout\endcsname
     \ifnum\chunkpenalty>-20000
       \global\lastchunkpenalty=\chunkpenalty
     \else
@@ -1201,36 +1305,34 @@
   \diglotN@rmaltrue \else \diglotN@rmalfalse \fi
 }
 
-\def\upd@tep@rtial{%Actually add stuff to the page.
-  \trace{D}{upd@tep@rtial \the\outputpenalty}%
-  \trace{D}{plp:\the\partialLpenalty, prp:\the\partialRpenalty, cp:\the\chunkpenalty lcp:\the\lastchunkpenalty, lbp:\the\Lboxpenalty, rbp:\the\Rboxpenalty}%
-  \curactivecols=0\def\v@lpfx{}\def\v@lsfx{ht}\let\cts@list=\empty
-  \let\col@do=\count@dim% increments curactivecols by each non-0 value, and sets \cts@list
+\def\s@tctslist@simplecols{%
+  \curactivecols=0 
+  \def\v@lpfx{}\def\v@lsfx{ht}%
+  \let\cts@list=\empty
+  \x@\let\x@\col@do\csname count@dim@\diglotlayout\endcsname
   \x@\each@col\diglot@list\E
-  \trace{dP}{Columns with contents: \cts@list (\the\curactivecols)}%
+}
+
+\def\@prepare@upd@tep@rtial@simplecols{%
+  \trace{dp}{columns with contents: \cts@list (\the\curactivecols)}%
   \ifnum\curactivecols>0 
     \temptrue
-    \let\col@do=\chk@head %Is the relevant item a heading? Set tempfalse if not
+    \let\col@do=\chk@head %is the relevant item a heading? set tempfalse if not
     \x@\each@col\cts@list\E
     \let\b@xtype\vtop %just used as a flag.
     \iftemp
       \let\b@xtype\vbox
-      \trace{D}{Un vtopping heading}%
-      \setbox\Lbox=\vbox{\unvbox\Lbox}%
-      \setbox\Rbox=\vbox{\unvbox\Rbox}%
+      \trace{D}{Un vtopping headings}%
+      \def\col@do##1{\x@\setbox\csname ##1box\endcsname\vbox{\unvbox\csname ##1box\endcsname}}
+      \x@\each@col\cts@list\E
     \fi
   \fi
-  \setdiglotN@rmal % Left=left (normal) or not?
-  \pickn@xtpartial
   %\showboxdepth=3 %
   %\showboxbreadth=1000 %
   %\ifnum\pageno=1%
   %\showbox\Lbox%
   %\showbox\Rbox%
   %\fi%
-  \global\def\n@xtc@mmand{}%
-  \message{|}%
-  \hsize=\textwidth%
   \edef\t@st{\p@gebotmark}%
   \ifx\t@st\empty%
     \ifuseLeftMarks \let\b@xbotmark\botLmark\fi
@@ -1238,14 +1340,47 @@
     \trace{H}{updp1: Setting p@gebotmark to \b@xbotmark, since it's empty }%
     \xdef\p@gebotmark{\b@xbotmark}%
   \fi%
+}
+
+
+\def\restore@trace@updatepartial{}
+\def\upd@tep@rtial{%routine called to add stuff to the partial page.
+  \traceNum{d}{upd@tep@rtial \the\outputpenalty (\diglotDbgupdtPtl)}%
+  \trace{D}{plp:\the\partialLpenalty, prp:\the\partialRpenalty, cp:\the\chunkpenalty lcp:\the\lastchunkpenalty, lbp:\the\Lboxpenalty, rbp:\the\Rboxpenalty}%
+  \ifnum\diglotDbgupdtPtl=\TRACEcount
+    \xdef\restore@trace@updatepartial{\global\tracingmacros=\the\tracingmacros \global\tracingassigns=\the\tracingassigns}%
+    \global\tracingmacros=1\global\tracingassigns=1
+  \else 
+    \restore@trace@updatepartial
+  \fi
+  \csname @start@upd@tep@rtial@\diglotlayout\endcsname % Any setup?
+  \csname s@tctslist@\diglotlayout\endcsname % increments curactivecols by each non-0 value, and sets \cts@list
+  \setdiglotN@rmal % Left=left (normal) or not?
+  \pickn@xtpartial
+  \csname @prepare@upd@tep@rtial@\diglotlayout\endcsname % Sort out headings, etc.
+  %
+  % Add the contents
+  %
+  \global\def\n@xtc@mmand{}%
+  \message{|}%
+  \hsize=\textwidth%
   \trace{d}{Adding old n@xtpartial(\the\ht\n@xtpartial+\the\dp\n@xtpartial) to page}%
   \@add@n@xtpartial
+  %
+  % Save mark state, note state, etc.
+  %
   \let\col@do=\store@marks
   \x@\each@col\diglot@list\E %remember old marks state
   \s@veallnotes{2}% remember old notestate 
-  \s@veinserts{chunk}
-  \traceNum{d}{Arranging new n@xtpartial : LB:\the\ht\Lbox+\the\dp\Lbox\space RB:\the\ht\Rbox+\the\dp\Rbox\space p@gechunkDelta:\the\p@geChunkDelta}%\space Tot:\the\cumulativeDelta%
-  \let\\=\upd
+  \s@veinserts{chunk}%
+  %
+  % Save current column contents as n@xtp@rtial
+  %
+  \IfTr@ce{d}{%
+    \let\log@ut\empty\def\v@lpfx{}\def\v@lsfx{box}%
+    \l@gm@dims
+    \traceNum{d}{Arranging new n@xtpartial: \log@ut. p@gechunkDelta:\the\p@geChunkDelta}%\space Tot:\the\cumulativeDelta%
+  }%
   \diglot@arrange@cols
   \TempDim=\dimexpr \ht\n@xtpartial + \dp\n@xtpartial\relax
   \dglt@calc@vailht
@@ -1259,13 +1394,17 @@
     \global\vsize=\trialheight\relax%
   \fi
   \ifpagefull%
+    %\message{+}%
     \@add@n@xtpartial
     \@writep@ge%
       \let\col@do=\reset@n@xt
       \x@\each@col\diglot@list\E% 
-    \global\pagefullfalse
     \global\deadcycles=0 %That counts as an action too.
+    \global\pagefullfalse
+  \else
+    %\message{-}%
   \fi%
+  \csname end@upd@tep@rtial@\diglotlayout\endcsname % any cleanup?
 }
 
 
@@ -1304,138 +1443,160 @@
     \relax
   \fi
 }
-\def\@writep@ge {%
+
+\def\diglot@fill@sep@note@box#1{\let\s@veddstat=\c@rrdstat
+  \setc@rdstat{#1}%
+  \setLRspecific
+  \f@rstnotetrue
+  \lastd@pth=0pt
+  \global\setbox\csname #1box\endcsname=\vbox{%
+     \x@\the\csname diglot#1ho@ks\endcsname
+     \let\\=\ins@rtn@tecl@ss \the\n@tecl@sses}%
+  \iff@rstnote
+      \trace{f}{No footnotes for #1}%
+  \else\LRf@@tnotestrue
+    %\x@\showbox\csname #1box\endcsname
+  \fi
+  \setc@rdstat{\s@veddstat}}
+
+\def\@setup@layout@simplecols{%
+  \let\layout@list=\diglot@list % default
+  \let\col@do=\mkrev@list
+  \xdef\rev@layout@list{}\def\list@type{layout}%
+  \x@\each@col\layout@list\E% 
+}
+
+\def\@prepare@balnotes@simplecols{%
+  \dimen1=0pt
+  \let\col@do=\max@boxht\def\v@lpfx{}\def\v@lsfx{box}%
+  \x@\each@col\diglot@list\E% 
+  \let\col@do=\reb@xht
+  \x@\each@col\diglot@list\E% 
+  \dimen8=\dimen1
+  \dimen1=0pt
+  \let\col@do=\max@boxdp
+  \x@\each@col\diglot@list\E% 
+  \dimen9=\dimen1
+  \trace{d}{Gutter \the\dimen8 high, \the\dimen9 deep}%
+  \dimen7=0pt
+}
+
+\def\@do@balnotes@simplecols{%
+  \setbox1\hbox{\makediglotgutter{\dimen7}{\dimen8}{\dimen9}}%
+  \let\col@do=\@@simplecols\let\l@stcol\empty
+  \setbox0=\hbox to \textwidth{%\vllap{\the\ht\Lbox \the\dp\Lbox}%
+  \hbox to\columnshift{}%
+  \ifdiglotN@rmal%are the sides swapped?
+    \x@\each@col\layout@list\E
+  \else
+    \x@\each@col\rev@layout@list\E
+  \fi
+  }%
+  \global\setbox\partial=\vbox{\unvbox\partial\box0}%
+}
+
+\def\@prepare@unbalnotes@simplecols{%
+  %Implement meshing algorithm:
+  \trace{Df}{Saving fn dimensions}%
+  \edef\v@lpfx{@fn}\let\col@do=\save@boxdim %Save footnote @fnXht @fnXdp values
+  \x@\each@col\diglot@list\E
+  \edef\v@lsfx{ht}%
+  \trace{Df}{Finding max \v@lpfx X\v@lsfx}%
+  \let\col@do=\max@val\dimen1=0pt
+  \x@\each@col\diglot@list\E
+  \dimen2=\dimen1 %dimen2=note height 
+  \dimen8=\dimen1 %dimen8=note height (needed for rule)
+  \edef\v@lpfx{@cur}\dimen1=0pt
+  \trace{Df}{Finding max \v@lpfx X\v@lsfx}%
+  \x@\each@col\diglot@list\E
+  \advance\dimen2 by \dimen1%dimen2 now contains total natural height of text from last true synch-point and notes.
+  \edef\v@lpfxb{@fn}\dimen1=\dimen2
+  \trace{Df}{Finding min note sep \v@lpfxb Xht}%
+  \let\col@do=\min@note@sep% subtracts \v@lpfxb Xht and \v@lpfx Xht from dimen2, returning the smalles value in dimen1
+  \x@\each@col\diglot@list\E
+  \dimen3=\dimen1
+  %rule calcs: is #1 (dimen7) high, #3(dimen9) deep, and fits in a box #2(dimen8 - found earlier)high
+  \edef\v@lpfx{@fn}
+  \edef\v@lsfx{dp}\let\col@do=\max@val\dimen1=0pt
+  \trace{Df}{Finding max \v@lpfx X\v@lsfx}%
+  \x@\each@col\diglot@list\E
+  \dimen9=\dimen1
+  \advance\dimen8 by -\AboveNoteSpace\relax %stop the line a little short
+  \dimen7=\dimen8
+  \trace{d}{Gutter \the\dimen8 tall, \the\dimen9 deep}%
+}
+
+\def\@do@unbalnotes@simplecols{%
+  \traceNum{d}{@do@unbalnotes@simplecols \layout@list}%
+  \setbox1\hbox{\makediglotgutter{\dimen7}{\dimen8}{\dimen9}}%
+  \let\col@do=\@@simplecols\let\l@stcol\empty
+  \setbox\notechunk\hbox to \textwidth{%\vllap{\the\ht\Lbox \the\dp\Lbox}%
+    \ifdiglotN@rmal%are the sides swapped?
+      \x@\each@col\layout@list\E
+    \else%
+      \x@\each@col\rev@diglot@list\E
+    \fi%
+  }%
+  \trace{f}{Adjusting footnotebox}%
+  \trace{D}{Raising footnotebox by \the\dimen3\space \l@gdims{\notechunk}}%
+  \global\setbox\partial=\vbox{\unvbox\partial\kern -\dimen3\vskip 0.5\AboveNoteSpace plus 1fil \box\notechunk}%
+}%
+
+\def\@writep@ge{%
   \trace{d}{@writep@ge \the\pageno (\the\MaxPages)}%
   \ifnum\pageno>\MaxPages
     \errmessage{Pagecount (\the\pageno) has exceeded \MaxPages (\the\MaxPages). This probably means something has gone wrong. (or you should increase MaxPages or MaxPagesPerChunk (\MaxPagesPerChunk) for this job)}%
   \fi
-  \IfTr@ce{gI}{%
-    \let\d@=\sh@winsertdim\edef\v@lpfx{}\edef\v@lsfx{}\x@\cstackdown\ins@rts\E
-  }%
+  \csname @start@writep@ge@\diglotlayout\endcsname
   \setdiglotN@rmal
   \pickn@xtpartial
-  \global\setbox\partial=\vbox{\unvbox\partial}%
+  \csname @prep@writep@ge@\diglotlayout\endcsname
+  \csname @do@writep@ge@\diglotlayout\endcsname
+  \csname @end@writep@ge@\diglotlayout\endcsname
+}
+
+\def\@prep@writep@ge@simplecols{
   \ifdiglotSepNotes%
     \trace{D}{Sep notes}%
-    \let\s@veddstat=\c@rrdstat
     \LRf@@tnotesfalse%
-    \f@rstnotetrue%
-    \setc@rdstat{L}%%
-    \setLRspecific
-    \lastd@pth=0pt 
     %Arrange Left and Right footnotes
-    \global\setbox\Lbox=\vbox{\the\diglotLho@ks\let\\=\ins@rtn@tecl@ss \the\n@tecl@sses}%
-    \iff@rstnote%
-      \trace{f}{No Left footnotes}%
-    \else%
-      \LRf@@tnotestrue%
-      \f@rstnotetrue%
-    \fi%
-    \lastd@pth=0pt 
-    \setc@rdstat{R}%%
-    \setLRspecific
-    \global\setbox\Rbox=\vbox{\the\diglotRho@ks\let\\=\ins@rtn@tecl@ss \the\n@tecl@sses}%
-    \iff@rstnote%
-      \trace{f}{No Right footnotes}%
-    \else%
-      \LRf@@tnotestrue%
-    \fi%
-    \setc@rdstat{\s@veddstat}%%
-    \setLRspecific
-    \ifdiglotBalNotes%
+    \let\col@do=\diglot@fill@sep@note@box
+    \x@\each@col\diglot@list\E% 
+    \setLRspecific % c@rrdstat is restored by diglot@fill@sep@note@box.
+    \ifLRf@@tnotes%
+      \ifdiglotBalNotes%
       \trace{f}{Balanced notes}%
-      \ifLRf@@tnotes%
-        \kern\lastd@pth%
+        % \kern\lastd@pth % This, if at all valid for anything, is from the last note.
         \trace{f}{Footnotes}%
-        \ifdim\ht\Lbox>\ht\Rbox%
-          \setbox\Rbox=\vbox to \ht\Lbox{\box\Rbox\vss}%
-        \else%
-          \setbox\Lbox=\vbox to \ht\Rbox{\box\Lbox\vss}%
-        \fi%
-        \dimen8=\ht\Lbox
-        \ifdim \dimen8 <\ht\Rbox \dimen8=\ht\Rbox \fi
-        \dimen9=\dp\Lbox
-        \ifdim \dimen9 <\dp\Rbox \dimen9=\dp\Rbox \fi
-        \trace{d}{Gutter \the\dimen8 high, \the\dimen9 deep}%
-        \dimen7=0pt
-        \setbox\Lbox=\hbox to \textwidth{%\vllap{\the\ht\Lbox \the\dp\Lbox}%
-          \hbox to\columnshift{}%
-          \ifdiglotN@rmal%are the sides swapped?
-            \hbox to\columnLwidth{\copy\Lbox\hss}\ifNoteGutterRule\makediglotgutter{\dimen7}{\dimen8}{\dimen9}\else\hskip\gutter\fi%%%
-            \hbox to\columnshift{}%
-            \hbox to\columnRwidth{\copy\Rbox\hss}%\rlap{\the\ht\Rbox \the\dp\Rbox}%
-          \else%
-            \hbox to\columnshift{}%
-            \hbox to\columnRwidth{\copy\Rbox\hss}\ifNoteGutterRule\makediglotgutter{\dimen7}{\dimen8}{\dimen9}\else\hskip\gutter\fi%%
-            \hbox to\columnshift{}%
-            \hbox to\columnLwidth{\copy\Lbox\hss}%\rlap{\the\ht\Rbox \the\dp\Rbox}%
-          \fi%
-        }%
-      \else%
-        \trace{f}{No footnotes}%
-      \fi %LRf@@tnotes
-      \setbox\partial=\vbox{\unvbox\partial\box\Lbox}%
-    \else %BalNotes
-      \trace{f}{unBalanced notes}%
-      \ifLRf@@tnotes%
+        \csname @prepare@balnotes@\diglotlayout\endcsname
+        \csname @do@balnotes@\diglotlayout\endcsname
+      \else %BalNotes
+        \trace{f}{unBalanced notes}%
         %curLht and curRht hold the height of the last boxes that joined the
         %page,
         %Need to find out where to put the footnotes, as one of them should
         %be close to its respective text.
-        {
-        %Implement meshing algorithm:
-        \trace{Df}{Saving fn dimensions}%
-        \edef\v@lpfx{@fn}\let\col@do=\save@boxdim %Save footnote @fnXht @fnXdp values
-        \x@\each@col\diglot@list\E
-        \edef\v@lsfx{ht}%
-        \trace{Df}{Finding max \v@lpfx X\v@lsfx}%
-        \let\col@do=\max@val\dimen1=0pt
-        \x@\each@col\diglot@list\E
-        \dimen2=\dimen1 %dimen2=note height 
-        \dimen8=\dimen1 %dimen8=note height (needed for rule)
-        \edef\v@lpfx{@cur}\dimen1=0pt
-        \trace{Df}{Finding max \v@lpfx X\v@lsfx}%
-        \x@\each@col\diglot@list\E
-        \advance\dimen2 by \dimen1%dimen2 now contains total natural height of text from last true synch-point and notes.
-        \edef\v@lpfxb{@fn}\dimen1=\dimen2
-        \trace{Df}{Finding min note sep \v@lpfxb Xht}%
-        \let\col@do=\min@note@sep% subtracts \v@lpfxb Xht and \v@lpfx Xht from dimen2, returning the smalles value in dimen1
-        \x@\each@col\diglot@list\E
-        \dimen3=\dimen1
-        %rule calcs: is #1 (dimen7) high, #3(dimen9) deep, and fits in a box #2(dimen8 - found earlier)high
-        \edef\v@lpfx{@fn}
-        \edef\v@lsfx{dp}\let\col@do=\max@val\dimen1=0pt
-        \trace{Df}{Finding max \v@lpfx X\v@lsfx}%
-        \x@\each@col\diglot@list\E
-        \dimen9=\dimen1
-        \advance\dimen8 by -\AboveNoteSpace\relax %stop the line a little short
-        \dimen7=\dimen8
-        %
-        \trace{d}{Gutter \the\dimen8 tall, \the\dimen9 deep}%
-        \setbox\Lbox\hbox to \textwidth{%\vllap{\the\ht\Lbox \the\dp\Lbox}%
-          \hbox to\columnshift{}%
-          \ifdiglotN@rmal%are the sides swapped?
-            \hbox to\columnLwidth{\copy\Lbox\hss}\ifNoteGutterRule\makediglotgutter{\dimen7}{\dimen8}{\dimen9}\else\hskip\gutter\fi%
-            \hbox to\columnshift{}%
-            \hbox to\columnRwidth{\copy\Rbox\hss}%\rlap{\the\ht\Rbox \the\dp\Rbox}%
-          \else%
-            \hbox to\columnRwidth{\copy\Rbox\hss}\ifNoteGutterRule\makediglotgutter{\dimen7}{\dimen8}{\dimen9}\else\hskip\gutter\fi%
-            \hbox to\columnshift{}%
-            \hbox to\columnLwidth{\copy\Lbox\hss}%\rlap{\the\ht\Rbox \the\dp\Rbox}%
-          \fi%
-        }%
-        \trace{f}{Adjusting footnotebox}%
-        \trace{D}{Raising footnotebox by \the\dimen3}%
-        \global\setbox\partial=\vbox{\unvbox\partial\kern -\dimen3\vskip 0.5\AboveNoteSpace plus 1fil \box\Lbox}%
-        }%
-      \else%
-        \trace{f}{No footnotes}%
-      \fi%
-    \fi %BalNotes
+        %\tracingmacros=1
+          \csname @prepare@unbalnotes@\diglotlayout\endcsname
+          \csname @do@unbalnotes@\diglotlayout\endcsname
+        %\tracingmacros=0
+      \fi %BalNotes
+    \else%
+      \trace{f}{No footnotes}%
+    \fi %LRf@@tnotes
   \else %SepNotes
     \trace{f}{Merged notes}%
   \fi%
-  \traceNum{d}{Forming page}%
+}
+
+
+\def\@do@writep@ge@simplecols{
+  \trace{d}{@do@writep@ge@simplecols \the\pageno (\the\MaxPages)}%
+  \IfTr@ce{gI}{%
+    \let\d@=\sh@winsertdim\edef\v@lpfx{}\edef\v@lsfx{}\x@\cstackdown\ins@rts\E
+  }%
+  \global\setbox\partial=\vbox{\unvbox\partial}%
+    \traceNum{d}{Forming page}%
   \trace{D}{PFM:\p@gefirstmark\space PBM:\p@gebotmark}%
   \ifnum\TRACEcount=\diglotDbgJoinboxes
     \showbox\partial
@@ -1551,7 +1712,10 @@
    \global\adjustp@ge=0pt
    \plainoutput%
   \fi
-  \trace{d}{@writep@ge: resetting things for next page}%
+}
+
+\def\@end@writep@ge@simplecols{%
+  \trace{d}{end@writep@ge: resetting things for next page}%
   \resetvsize%
   \global\vsize=\availht
   \global\availhtR=\textheight%
@@ -1568,13 +1732,14 @@
   \def\v@lpfx{@cur}%
   \let\col@do=\forget@boxdim
   \x@\each@col\diglot@list\E
+  \def\v@lpfx{}\def\v@lsfx{box}%
+  \let\col@do=\void@boxes %
+  \x@\each@col\diglot@list\E
   \resetc@rdstat%reset the current diglotstatus
   \xdef\firstLmark{}%
   \xdef\botLmark{}%
   \xdef\firstRmark{}%
   \xdef\botRmark{}%
-  \global\setbox\Rbox=\box\voidb@x%
-  \global\setbox\Lbox=\box\voidb@x%
   \@mptyinserts
   \s@veinserts{chunk}%
   \s@veinserts{col}%
@@ -1713,6 +1878,7 @@
   \x@\xdef\csname @nxtchunk#1ht\endcsname{\x@\the\csname #1ht\endcsname}%
   \x@\global\x@\csname #1ht\endcsname=0pt
 }
+
 \def\save@boxdim#1{%Save the height & depth of Xbox in \v@lpfx#1ht
   \x@\xdef\csname \v@lpfx#1ht\endcsname{\x@\the\x@\ht\csname #1box\endcsname}%
   \x@\xdef\csname \v@lpfx#1dp\endcsname{\x@\the\x@\dp\csname #1box\endcsname}%
@@ -1723,14 +1889,14 @@
   \x@\xdef\csname \v@lpfx#1dp\endcsname{0pt}%
 } 
 
-\def\count@dim#1{%Is the dimension non non-zero? Count using tmpcount and add tag to list
+\def\count@dim@simplecols#1{%Is the dimension non non-zero? Count using curactivecols and add tag to list
   \x@\ifdim \csname \v@lpfx#1\v@lsfx\endcsname=0pt\else
-    \advance\curactivecols by 1
+    \advance\curactivecols by 1 % how many columns contain text?
     \edef\cts@list{\cts@list#1}%
   \fi
 }
 \def\chk@head#1{%Is the relevant item a heading? Set tempfalse if not
-  \x@\ifnum\csname \c@rrdstat boxpenalty\endcsname <10000
+  \x@\ifnum\csname #1boxpenalty\endcsname <10000
     \tempfalse
   \fi 
 }
@@ -1741,6 +1907,7 @@
   \fi
 }
 \def\set@ht#1{%Set the values of curXht, adding or resetting based on \iftemp  (anything on the page is current by definition)
+  \def\errt@st{#1}\ifx\errt@st\empty\errmessage{set@ht passed null value}\fi
   \x@\dimen1\x@=\csname @nxtchunk#1ht\endcsname
   \x@\xdef\csname @old#1ht\endcsname{\the\dimen0}%
   \iftemp %one at least is empty
@@ -1753,29 +1920,66 @@
   \x@\xdef\csname @cur#1ht\endcsname{\the\dimen1}%
 }
 
+\def\mkrev@list#1{\x@\xdef\csname rev@\list@type @list\endcsname{#1\csname rev@\list@type @list\endcsname}}
+
 \def\max@val#1{\x@\let\x@\t@st\csname \v@lpfx#1\v@lsfx\endcsname
   \ifdim\dimen1<\t@st
+     \edef\m@x@at@col{#1}%
     \dimen1=\t@st
   \fi
 }
+%Sum values (for averaging)
+\def\sum@val#1{\x@\let\x@\t@st\csname \v@lpfx#1\v@lsfx\endcsname
+  \advance\dimen1 by \t@st
+}
+
 \def\maxjoint@val#1{\dimen0=\csname \v@lpfx#1\v@lsfx\endcsname
   \advance \dimen0 by \csname b@selineskip#1\endcsname
   \trace{dP}{joint ht for #1 = \the\dimen0}%
   \ifdim\dimen1<\dimen0
+    \edef\m@x@at@col{#1}%
     \dimen1=\dimen0
   \fi
 }
+
 
 \def\max@boxsz#1{\x@\let\x@\t@st\csname \v@lpfx#1\v@lsfx\endcsname
   \ifvoid\t@st \else
     \dimen0=\ht\t@st \advance\dimen0 by \dp\t@st
     \ifdim\dimen1<\dimen0
+      \edef\m@x@at@col{#1}%
+      \dimen1=\dimen0
+    \fi
+  \fi
+}
+\def\max@boxht#1{\x@\let\x@\t@st\csname \v@lpfx#1\v@lsfx\endcsname
+  \ifvoid\t@st \else
+    \dimen0=\ht\t@st
+    \ifdim\dimen1<\dimen0
+      \edef\m@x@at@col{#1}%
+      \dimen1=\dimen0
+    \fi
+  \fi
+}
+\def\max@boxdp#1{\x@\let\x@\t@st\csname \v@lpfx#1\v@lsfx\endcsname
+  \ifvoid\t@st \else
+    \dimen0=\dp\t@st
+    \ifdim\dimen1<\dimen0
+      \edef\m@x@at@col{#1}%
       \dimen1=\dimen0
     \fi
   \fi
 }
 
-\def\max@boxszB#1{\max@boxsz{\if #1L\else #1\fi}}
+\def\reb@xht#1{\x@\let\x@\t@mp\csname \v@lpfx#1\v@lsfx\endcsname
+  \ifdim\ht\t@mp=\dimen1 \else
+    \setbox\t@mp=\vbox to \dimen1{\box\t@mp\vss}%
+  \fi}
+
+\def\void@boxes#1{\x@\global\x@\setbox\csname \v@lpfx#1\v@lsfx\endcsname=\box\voidb@x
+ }
+
+\def\max@boxszB#1{\max@boxsz{\if #1L\else #1\fi}} 
 
 \def\min@note@sep#1{%
   \x@\let\x@\t@st\csname \v@lpfx#1ht\endcsname
@@ -1791,7 +1995,14 @@
 }
 
 
-\def\each@col#1#2\E{% General purpose looper
+\def\each@col#1\E{% General purpose looper
+  \edef\ect@st{#1}%
+  \ifx\ect@st\empty\else
+    \e@ch@col#1\E
+  \fi
+}
+
+\def\e@ch@col#1#2\E{% General purpose looper, if there is at least one item.
   %\tracingmacros=1 \tracingassigns=1
   \trace{De}{each@col #1 #2}%
   \col@do{#1}%
@@ -1800,7 +2011,7 @@
     \trace{De}{last round}%
     \let\n@xt@col=\cstackrelax
   \else
-    \let\n@xt@col=\each@col
+    \let\n@xt@col=\e@ch@col
   \fi
   \ifnum\TRACEcount=\diglotDbgeachcol
     \tracingmacros=1\tracingassigns=1
@@ -1820,20 +2031,39 @@
 }
 
 \newif\ifnot@empty % Is this chunk empty
-
-
-\def\@add@n@xtpartial{% 
-  \traceNum{d}{@add@n@xtpartial \the\ht\partial+\the\dp\partial, \the\ht\n@xtpartial+\the\dp\n@xtpartial}%
+\def\@tst@n@xtpartial@simplecols{%
   \ifvoid\n@xtpartial\else
-    \ifvoid\partial
-      \global\setbox\partial=\box\n@xtpartial
-    \else
-      \global\setbox\partial=\vtop{{\baselineskip=0pt \joinb@xes{\partial}{\n@xtpartial}}}%
-    \fi
-    \ifnum\diglotDbgJoinboxes=\TRACEcount
-      \showbox\partial
-    \fi
-    \voidn@xtpartial
+    \temptrue
+  \fi
+}
+
+\def\@add@n@xtpartial{% Actually make the page-changes
+  \traceNum{d}{@add@n@xtpartial}%
+  \tempfalse
+  \csname @tst@n@xtpartial@\diglotlayout\endcsname
+  \iftemp
+    \csname @add@n@xtpartial@\diglotlayout\endcsname
+    \csname @after@add@n@xtpartial@\diglotlayout\endcsname
+  \fi
+}
+
+\def\@add@n@xtpartial@simplecols{% 
+  \traceNum{d}{@add@n@xtpartial@simplecols \the\ht\partial+\the\dp\partial, \the\ht\n@xtpartial+\the\dp\n@xtpartial}%
+  \setdiglotN@rmal
+  \pickn@xtpartial
+  \ifvoid\partial
+    \global\setbox\partial=\box\n@xtpartial
+  \else
+    \global\setbox\partial=\vtop{{\baselineskip=0pt \joinb@xes{\partial}{\n@xtpartial}}}%
+  \fi
+  \ifnum\diglotDbgJoinboxes=\TRACEcount
+    \showbox\partial
+  \fi
+  \voidn@xtpartial
+}
+
+\def\@after@add@n@xtpartial@simplecols{%
+  \trace{d}{@after@add@n@xtpartial@simplecols}%
     \let\col@do=\p@rtialmarks
     \x@\each@col\diglot@list\E
     % Column height (depth) calcs:
@@ -1856,8 +2086,8 @@
     \x@\each@col\diglot@list\E
     %
     %\global\p@geChunkDelta=\chunkDelta%
-  \fi
 }
+
 \def\postponen@xt@partial{%
   \trace{d}{postponen@xtpartial \the\ht\partial+\the\dp\partial, \the\ht\n@xtpartial+\the\dp\n@xtpartial}%
   \global\late@stage@reflowtrue % Need to re-flow all columns.
@@ -1912,48 +2142,16 @@
 }
 
 \edef\diglot@list{LR}%
+\edef\layout@list{LR}%
+\edef\rev@diglot@list{RL}%
+\edef\rev@layout@list{RL}%
 \edef\digl@tc@ntentlist{}%
-
-\def\set@cseq#1#2{\x@\xdef\csname #1\endcsname{#1}}% Helper function
-\def\empty@cseq#1{\x@\xdef\csname #1\endcsname{}}% Helper function
-
-\def\newDiglotCol#1{%
-  \ifcsname #1isDiglotColumn\endcsname
-    \message{#1 is already a diglot column. You can only define it as one once!}%
-  \else
-    \message{Defining #1 as an additional diglot column.}%
-    \message{+++ This code isn't tested yet}%
-    \add@to@digl@tc@ntentlist{#1}%
-    \x@\csname #1isDiglotColumn\endcsname\empty
-    \x@\newb@x\csname partial#1\endcsname
-    \x@\newb@x\csname excess#1\endcsname
-    \x@\newb@x\csname picb@x#1\endcsname
-    \x@\newc@unt\csname partial#1penalty\endcsname
-    \newm@rknum{#1}%
-    \x@\newdim@n\csname column#1width\endcsname
-    \empty@cseq{n@xtbot#1mark}% Last X mark in the next chunk 
-    \empty@cseq{n@xtfirst#1mark}%First X mark in the next chunk 
-    \empty@cseq{old#1mark}%last X mark 
-    \empty@cseq{first#1mark}%First X mark on this pave
-    \empty@cseq{bot#1mark}%bottom X mark on this page
-    \empty@cseq{b@ok#1}% Name of book to put in PDF.
-%TODO:
-%FIXMEs needing to be solved before implementing this: 
-%pdfb@@km@rkR  - rewrite, generating combined book name.
-%something like newnummarks for this: dgl@tPenRtrialEnd{-10006}
-%pdfch@pterm@rkR 
-%resetdropc@p
-% UI!
-% 
-  \fi
-}
-
 
 
 \def\check@and@update{%Checks each column to see if there is stuff to output
   %and calls upd@tep@rtial as appropriate
   %responds to \ifboxmoved and \pagefull, checking the last chunkpenalty
-  \trace{d}{check@and@update \the\triall@@pcount \ifboxmoved boxmoved\fi}%
+  \trace{d}{check@and@update \the\triall@@pcount \ifboxmoved boxmoved\fi \the\lastchunkpenalty}%
   \not@emptyfalse
   \x@\ch@ckcontents\diglot@list\E%Sets not@empty if there's stuff to output
   \ifboxmoved
@@ -2138,14 +2336,105 @@
     \box4
   \hss}}
 
+\def\diglotlayout{simplecols}
+
 \def\diglotgr@db@x#1{%
  \ifdiglot\vbox{\gr@db@@x{#1}\penalty 10000}\penalty10000\else\gr@db@@x{#1}\fi
 }
 \def\testmarker{\hbox to 0pt{\vrule height 7pt depth 0pt width 0.5pt \kern-0.5pt}\message{_}}
 
+\def\log@cumulative#1{\x@\let\x@\tmp\csname cumulativeDelta#1\endcsname\edef\logt@mp{\logt@mp\space #1:\the\tmp (\the\numexpr \tmp / ( 1+\pageno - \ptxst@rtp@ge)\relax\space pt/pg)} \global\tmp=0\relax}
+%\def\log@cumulative#1{:#1:}
+
 \addtoendptxhooks{%
-       \bgroup\ifdiglot\ifnum\pageno>0 \count255=\cumulativeDelta \divide\count255 by \numexpr 1+\pageno-\ptxst@rtp@ge\relax \message{Column delta for book:\the\cumulativeDelta pt (\the\count255 pt/ pg)\space(-ve means left longer)}\fi\fi\egroup\cumulativeDelta=0\relax
+    \bgroup\ifdiglot\ifnum\pageno>0 \relax
+    \let\col@do=\log@cumulative 
+    \def\logt@mp{}
+    \x@\each@col\diglot@list\E
+     \message{Column deltas for book: \logt@mp} \fi\fi\egroup \relax
  }%
 \addtoendhooks{\ifdiglot\ifvoid\partial\else\@writep@ge\fi\fi}
 
+% The polyglot-style input is almost free. -simplecols layout is what we get with old-style diglot2. 
+
+
+%%%%%%%% This might one day be moved to polyglot-simplecols.tex
+% Below here are pieces of code that extend the basic diglot2 (2 column) layout into more columns.
+%
+\def\xdef@cseq#1#2{\x@\xdef\csname #1\endcsname{#2}}% Helper function
+\def\def@cseq#1#2{\x@\def\csname #1\endcsname{#2}}% Helper function
+\def\empty@cseq#1{\x@\xdef\csname #1\endcsname{}}% Helper function
+
+\def\newPolyglotCol#1{%
+  \ifcsname #1isDiglotColumn\endcsname
+    \message{#1 is already a diglot column. You can only define it as one once!}%
+  \else
+    \message{Defining #1 as an additional polyglot column.}%
+    \newcolins@rt{\loc@T#1}% column top insert
+    \newcolins@rt{\loc@B#1}% column bottom insert
+    \let\old@cts\digl@tc@ntentlist
+    \let\digl@tc@ntentlist=\diglot@list
+    \add@to@digl@tc@ntentlist{#1}%
+    \let\diglot@list=\digl@tc@ntentlist
+    \let\digl@tc@ntentlist=\old@cts
+    %Now make the reversed list
+    \let\col@do=\mkrev@list\def\list@type{diglot}%
+    \xdef\rev@diglot@list{}
+    \x@\each@col\diglot@list\E% 
+    {\edef\sfx{#1}\let\wh@t\n@wSpecificDim \pr@cessSpecificDim}
+    \global\let\rev@layout@list\rev@diglot@list
+    \x@\csname #1isDiglotColumn\endcsname\empty
+    \x@\newb@x\csname #1box\endcsname
+    \x@\newb@x\csname partial#1\endcsname
+    \x@\newb@x\csname excess#1\endcsname
+    \x@\newb@x\csname picb@x#1\endcsname
+    \x@\newt@ks\csname diglot#1ho@ks\endcsname
+    \x@\newc@unt\csname partial#1penalty\endcsname
+    \x@\newc@unt\csname #1boxpenalty\endcsname
+    \x@\newc@unt\csname cumulativeDelta#1\endcsname
+    \newm@rknum{#1}%
+    \x@\newdim@n\csname column#1width\endcsname
+    \x@\newdim@n\csname baselineDelta#1\endcsname
+    \x@\newdim@n\csname availht#1\endcsname
+    \x@\newdim@n\csname #1ht\endcsname
+    \x@\xdef\csname at@ndofthispar#1\endcsname{}%
+    \x@\xdef\csname m@rker#1\endcsname{}%
+    \newsp@cialpen{dgl@tPen#1trialEnd}%
+    \empty@cseq{n@xtbot#1mark}% Last X mark in the next chunk 
+    \empty@cseq{n@xtfirst#1mark}%First X mark in the next chunk 
+    \empty@cseq{old#1mark}%last X mark 
+    \empty@cseq{first#1mark}%First X mark on this pave
+    \empty@cseq{bot#1mark}%bottom X mark on this page
+    \empty@cseq{b@ok#1}% Name of book to put in PDF.
+    \empty@cseq{ch@plabel#1}% Chapter label
+    \empty@cseq{@ch@pter#1}% Chapter Nuber
+    \empty@cseq{@v@rse#1}% Chapter label
+    \xdef@cseq{@cur#1ht}{0pt}% 
+    \xdef@cseq{@cur#1dp}{0pt}% 
+    \header@defs{#1}% All the possible header contents
+    \def@cseq{stylesheet#1}{\gdef\ds@ffix{#1}\stylesh@@t}% column-specific stylesheet
+%TODO:
+%FIXMEs needing for polyglot processing:
+% UI!
+% The column-delta totals should be per-column, and be summed as cross-column deltas compared to the average.
+  \fi
+}
+\def\extra@insert@alias#1#2{% Assumption: #1 is already in the form \foo, #2 is in the form \csname something\endcsname
+    \x@\x@\x@\gdef\x@\x@\x@\alias@inserts\x@\x@\x@{\x@\alias@inserts\x@\let\x@#1#2}}
+
+\def\newcolins@rt#1{%
+  \edef\ins@name{\colinsert@name{#1}}%
+  \ifcsname \ins@name\endcsname\else
+    \xdef\columnins@rts{\columnins@rts\ins@name,}%
+    \x@\newins@rt\csname \ins@name\endcsname
+    \x@\global\x@\count\csname \ins@name\endcsname=0
+    \x@\global\x@\dimen\csname \ins@name\endcsname=\maxdimen
+    \xdef\ins@rts{\columnins@rts\pageins@rts}%
+    \x@\m@keinsertsaveboxes \ins@name\E
+    \x@\extra@insert@alias\x@{\csname ins-#1\endcsname}{\csname \ins@name\endcsname}%FIXME
+  \fi
+  \let\ins@name=\undefined
+}
+
+\x@\let\csname polyglot-simplecols@plugin@loaded\endcsname\empty 
 \endinput

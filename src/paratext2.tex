@@ -1,4 +1,4 @@
-%:skip
+%skip
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Part of the ptx2pdf macro package for formatting USFM text
 % copyright (c) 2007 by SIL International
@@ -87,6 +87,16 @@
 
 %-c_timestamp
 
+%+c_evenpage
+% Some things need to start on an odd-numbered page, others on an even numbered page
+\def\TPILB{}
+\def\EmptyPage{\message{Blank page for \the\pageno}\bgroup\m@rksonpagefalse\pagecontents\def\pagecontents{\vfill\TPILB}\plainoutput\egroup}
+\def\need@evenpage{\ifodd\pageno\EmptyPage\fi}
+\def\need@oddpage{\ifodd\pageno\else\EmptyPage\fi}
+\def\need@quadpage{\ifodd\pageno\EmptyPage\need@quadpage\fi \ifodd\numexpr \pageno/2\relax \EmptyPage\EmptyPage\fi}
+
+%-c_evenpage
+
 %+c_imports
 \input ptx-diglot.tex
 \input ptx-tracing.tex
@@ -156,7 +166,7 @@
   \x@\let\x@\th@sins\csname note-no-insert-\n@tetype\endcsname
   \checkp@ranotes{#1}% check whether this note class is to be paragraphed 
   \ifx\th@sins\relax
-    \n@tewidth=\ifp@ranotes\maxdimen\else\textwidth \advance\n@tewidth by -\columnshift\fi % insert penalties to control breaking of footnotes
+    \ifp@ranotes\n@tewidth=\maxdimen \else\setn@tewidth{#1}\fi
     \d@note{\x@\insert\csname note-\n@tetype\endcsname}%
   \else
     \n@tewidth=\ifp@ranotes\maxdimen\else\hsize\fi
@@ -256,6 +266,10 @@
   \x@\plac@ndnotes\x@{\the\plac@ndnotes\csname zplacenotes-#1\endcsname}%
 }
 \let\newb@x=\newbox
+\let\newc@unt=\newcount
+\let\newt@ks=\newtoks
+\let\newdim@n=\newdimen
+\let\newins@rt=\newinsert
 \newtoks\endn@teclasses
 \newtoks\plac@ndnotes
 \newif\if@ndnotesfound
@@ -334,7 +348,7 @@
 % insert a note class in which each note is on its own line
 \def\separateins@rtn@tecl@ss#1{%
   \def\cl@ss{#1\g@tndstat}%
-  \TRACE{seperateins@rtn@tecl@ss \cl@ss}%
+  \trace{n}{seperateins@rtn@tecl@ss \cl@ss}%
   \x@\let\x@\th@cl@ss\csname note-\cl@ss\endcsname % make \th@cl@ss be a synonym for the current note class
   % if the noteclass has content to output ...
   \ifvoid\th@cl@ss\TRACE{no note}\else%
@@ -348,6 +362,7 @@
 % insert a note class in which each note is in the same paragraph
 \def\parains@rtn@tecl@ss#1{%
   \def\cl@ss{#1\g@tndstat}%
+  \trace{n}{parains@rtn@tecl@ss \cl@ss}%
   \x@\let\x@\th@cl@ss\csname note-\cl@ss\endcsname % make \th@cl@ss be a synonym for the current note class
   % if the noteclass has content to output ...
   \ifvoid\th@cl@ss\else
@@ -446,11 +461,15 @@
     \ifnum\c@rrentcols=1
       \n@tewidth=\textwidth
     \else
-      \n@tewidth=\colwidth
+      \ifdiglot
+        \n@tewidth=\csname column\c@rrdstat width\endcsname
+      \else
+        \n@tewidth=\colwidth
+      \fi
     \fi
     %\advance\n@tewidth by -\columnshift
   \fi
-  \trace{f}{end-setn@tewidth: \the\n@tewidth}%
+  \trace{f}{end-setn@tewidth #1: \the\n@tewidth}%
 }
 %-c_setnotewidth
 
@@ -886,7 +905,7 @@
       \advance\availht by -\AboveNoteSpace
       \advance\availht by -\BelowNoteRuleSpace
       \f@rstnotefalse
-      \trace{f}{ParaNotes[#1] cost \the\ht0+\the\dp0 + \the\AboveNoteSpace + \the\BelowNoteSpace}%
+      \trace{f}{ParaNotes[#1] cost \the\ht0+\the\dp0 + \the\AboveNoteSpace + \BelowNoteRuleSpace}%
     \else
       \advance\availht by -\InterNoteSpace
       \trace{f}{ParaNotes[#1] cost \the\ht0+\the\dp0 + \the\InterNoteSpace}%

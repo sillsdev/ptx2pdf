@@ -294,11 +294,14 @@
 
 \def\stackg@tp@ram#1\E{\getp@r@m{\p@ramcheck}{#1}\ifx\p@ram\relax\else\let\d@=\cstackrelax\fi}
 \def\getp@r@m#1#2{\x@\let\x@\p@ram\csname#2:#1\endcsname \ifx\p@ram\relax\else\trace{s}{#2:#1 found: \p@ram}\fi}
+% prepend \@lso to #1 and build comma separated list of results
 \def\cspr@pend#1\E{\ifx\@ut\empty\xdef\@ut{\@lso#1}\else\xdef\@ut{\@ut,\@lso#1}\fi}
+% apply function do@it to #1, and build comma-separated list of results
+\def\cs@apply#1\E{\ifx\@ut\empty\xdef\@ut{\do@it{#1}}\else\xdef\@ut{\@ut,\do@it{#1}}\fi}
+% like cspr@pend, but also record unprepended item.
 \def\cs@lsolist#1\E{\trace{s}{expanding #1->\@lso#1,#1}\ifx\@ut\empty\xdef\@ut{\@lso#1,#1}\else\xdef\@ut{\@ut,\@lso#1,#1}\fi}
 \def\cscheck@xist#1\E{\ifcsname m@rkerexists-#1\endcsname\ifx\@ut\empty\xdef\@ut{#1}\else\xdef\@ut{\@ut,#1}\fi\fi}
 
-%\def\cs@lsolist#1\E{\trace{s}{expanding #1->\@lso#1,#1}\@lso#1,#1}
 %-csty_getparam
 
 %+csty_getmcparam
@@ -473,7 +476,7 @@
    \fi % hanging verse number?
    %\trace{hv}{lastkern \the\dimen0}%
    \ll@p\bgroup\@v@}%
-  % \ll@p\bgroup\m@kedigitsother\@v@}%
+  %{.. was: \ll@p\bgroup\m@kedigitsother\@v@}%
   % remember chapter macro for later
 %-csty_verse
 %+csty_chapdef
@@ -521,7 +524,7 @@
     \calcdr@psize
   \fi
   \def\m@rker{c}\defp@ram{fontsize}{\dr@psize}%
-  \ifdiglot \resetdropc@p\fi%Can't do this here since things get lowercased
+  \ifdiglot \repeatsetdropc@p\fi%Can't do this here since things get lowercased
  }
 %-csty_dropchap
 }
@@ -533,6 +536,7 @@
 \newbox\pstr@t
 \newif\ifCalcChapSize \CalcChapSizetrue
 \def\calcdr@psize{%
+  \should@xist{c}%
   \ifdiglot 
     \trace{d}{Calculating drop: \c@rrdstat}%
     \should@xist{c\c@rrdstat}%
@@ -540,10 +544,13 @@
   \else
     \s@tbaseline{p}%
   \fi
-    \getp@ram{fontsize}{c}\dropnumbersize=0\p@ram\FontSizeUnit \relax % C in following
+    \getp@ram{fontsize}{c}\dropnumbersize=0\ifx\p@ram\relax pt\else\FontSizeUnit\fi \relax % C in following
 	% if font size specified for chapter number stylesheet is less than 2*paragraph font size ...
     %\ifdim\dropnumbersize<\dimen255
     \ifCalcChapSize
+      \ifdim\dropnumbersize<1pt
+        \dropnumbersize=\baselineskip
+      \fi
       \edef\@seglyphmetrics{\the\XeTeXuseglyphmetrics}%
       \s@tfont{p}%workaround for Lotus Elam Bold issue - ensure the \p font is loaded first
       \mkstr@t\setbox\pstr@t=\copy\str@tbox
@@ -588,17 +595,23 @@
     \edef\dr@psize{\strip@pt\dropnumbersize}%
 }
 
-\def\resetdropc@p{%The above code is in \lowercase which  breaks L and R
-  \message{Setting L drop-cap size to \dr@psize}%
-  \setp@ram{fontsize}{cL}{\dr@psize}%
+\def\repeatsetdropc@p{%The above code is in \lowercase which  breaks L and R
+  \message{Setting \c@rrdstat drop-cap size to \dr@psize}%
+  \setp@ram{fontsize}{c\c@rrdstat}{\dr@psize}%
   \g@tfontname{c}\x@\let\csname font<\f@ntstyle>\endcsname=\relax
-  \setc@rdstat{R}%
-  \setLRspecific
-  \dropnumbersize=0pt
-  \calcdr@psize
-  \g@tfontname{c}\x@\let\csname font<\f@ntstyle>\endcsname=\relax
-  \message{ Setting R drop-cap size to \dr@psize}%
-  \setp@ram{fontsize}{cR}{\dr@psize}%
+  \let\d@neit\c@rrdstat
+  \def\col@do##1{
+    \setc@rdstat{##1}%
+    \ifx\c@rrdstat\d@neit\else% Avoid double-processing
+      \setLRspecific
+      \dropnumbersize=0pt
+      \calcdr@psize
+      \g@tfontname{c}\x@\let\csname font<\f@ntstyle>\endcsname=\relax
+      \message{ Setting \ drop-cap size to \dr@psize}%
+      \setp@ram{fontsize}{c##1}{\dr@psize}%
+    \fi
+  }%
+  \x@\each@col\diglot@list\E
   %\x@\let\csname font<cL>\endcsname=\relax %
   %\x@\let\csname font<cR>\endcsname=\relax %
 }
@@ -737,8 +750,8 @@
 \def\cstackpop#1,#2\E{#2}
 \def\cstackpush#1#2{#2,#1}
 \def\cstackpeek#1,#2\E{#1}
-\def\cstackup#1,#2\E{\edef\tmp{#2}\ifx\tmp\empty\let\n@x=\relax\else\let\n@x=\cstackup\fi\n@x #2\E\edef\tmp{#1}\ifx\tmp\empty\else\d@ #1\E\fi}                  %(1)
-\def\cstackdown#1,#2\E{\edef\tmp{#1}\ifx\tmp\empty\else\d@ #1\E\fi\edef\tmp{#2}\ifx\tmp\empty\let\n@x=\relax\else\let\n@x=\cstackdown\fi\n@x #2\E}
+\def\cstackup#1,#2\E{\edef\tmp{#2}\ifx\tmp\empty\let\n@x=\cstackrelax\else\let\n@x=\cstackup\fi\n@x #2\E\edef\tmp{#1}\ifx\tmp\empty\else\d@ #1\E\fi}                  %(1)
+\def\cstackdown#1,#2\E{\edef\tmp{#1}\ifx\tmp\empty\else\d@ #1\E\fi\edef\tmp{#2}\ifx\tmp\empty\let\n@x=\cstackrelax\else\let\n@x=\cstackdown\fi\n@x #2\E}
 \def\cstacktop#1,#2\E{\edef\temp{#1}\ifx\temp\empty\else\d@ #1\E\fi}
 \def\cstackrelax#1\E{}
 %-csty_stack
@@ -1037,17 +1050,19 @@
      \x@\each@col\diglot@list\E
    \fi
    \dimen0=\baselineskip
-   \setc@rdstat{R}%
-   \showLRspecific
-   \setLRspecific\s@tb@dyb@seline{R}%
-   \global\baselineDelta=\baselineskip
-   \saveLRspecificSide{R}%
-   \baselineskip=\dimen0
-   \setc@rdstat{L}%
-   \showLRspecific
-   \setLRspecific\s@tb@dyb@seline{L}%
-   \global\advance\baselineDelta by -\baselineskip
-   \saveLRspecificSide{L}%
+   \message{Setting up column-specific values for \diglot@list}%
+   \baselineDelta=-\maxdimen
+   \def\col@do##1{% Per-column setup
+     \setc@rdstat{##1}%
+     \showLRspecific
+     \setLRspecific\s@tb@dyb@seline{##1}%
+     \x@\global\csname baselineDelta##1\endcsname=\dimexpr \baselineskip - \topskip\relax
+     \ifdim\baselineDelta<\csname baselineDelta##1\endcsname
+       \baselineDelta=\csname baselineDelta##1\endcsname
+     \fi
+     \saveLRspecificSide{##1}%
+   }
+   \x@\each@col\diglot@list\E 
    \baselineskip=\dimen0
    \egroup
    \global\let\gridb@x\diglotgr@db@x
@@ -1196,6 +1211,7 @@
 %+csty_hooks
 %Hook-runners for paragraph and character styles
 \def\op@ninghooks#1#2{% for <start> and <before> hooks
+   \trace{s}{op@ninghooks #1 #2}%
    \csname #1-#2\endcsname % 
    \ifx\c@tegory\empty\else\csname #1-\c@tprefix#2\endcsname\fi
    \ifdiglot\setsid@ % \MSG{start-\thisch@rstyle\sid@}%
@@ -1208,6 +1224,7 @@
 \newtoks\c@th@@ks
 \newtoks\afterh@@ks
 \def\cl@singhooks#1#2{% for <end> and <after> hooks. For <after> hooks, it's necessary to end the group after these are defined 
+  \trace{s}{op@ninghooks #1 #2}%
   \global\let\n@xt\relax
   \global\let\n@@xt\relax
   \global\let\n@@@xt\relax
@@ -1303,18 +1320,15 @@
  \advance\colwidth by -0.5\XrefNotesWidth
  \advance\colwidth by -\XrefNotesMargin
 % Diglot dimensions
- \advance\dimen0 by -\gutter\advance\dimen0 by -2\columnshift
  \ifcsname DiglotLFraction\endcsname\else
     \let\DiglotLFraction=\DiglotLeftFraction
  \fi
  \ifcsname DiglotRFraction\endcsname\else
     \let\DiglotRFraction=\DiglotRightFraction
  \fi
- \def\col@do##1{\csname column##1width\endcsname=\csname Diglot##1Fraction\endcsname\dimen0}%
- \x@\each@col\diglot@list\E
- %\columnLwidth=\DiglotLeftFraction\dimen0
- %\columnRwidth=\DiglotRightFraction\dimen0
- \hsize=\textwidth \advance\hsize by -2\columnshift
+ \csname set@col@widths@\diglotlayout\endcsname
+%
+  \hsize=\textwidth \advance\hsize by -2\columnshift
  \topm@rgin=\TopMarginFactor\MarginUnit
  \advance\topm@rgin by -\topskip \advance\topm@rgin by 12\FontSizeUnit
  \bottomm@rgin=\BottomMarginFactor\MarginUnit
