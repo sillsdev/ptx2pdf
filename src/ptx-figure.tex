@@ -284,17 +284,28 @@
 %+cfig_docaption
 \def\DecorateRef#1{(#1)}
 
-\def\d@caption{%
-  \xdef\r@f{\csname figparam-ref\endcsname}% get reference
-  \stripspace\r@f\end/ \end/\relax\r@f \edef\r@f{\p@ram}% strip space
-  \edef\c@ption{\csname figparam-caption\endcsname}% get caption
-  \trace{g}{Fig caption: [\c@ption] \ifx\r@f\relax\else(\r@f)\fi}%
+\def\d@c@ption#1{% Called with #1= diglot column or {} for normal.
+  \x@\let\x@\thsr@f\csname figparam-ref#1\endcsname% get reference
+  \xdef\@r@f{\ifx\thsr@f\relax \r@f\else\thsr@f\fi}%
+  \stripspace\@r@f\end/ \end/\relax\@r@f \edef\@r@f{\p@ram}% strip space
+  \edef\c@ption{\csname figparam-caption#1\endcsname}% get caption
+  \trace{g}{Fig caption#1: [\c@ption] \ifx\@r@f\empty\else(\@r@f)\fi}%
   \ifx\c@ption\empty\else
-    \edef\@r@f{\ifx\r@f\empty\else\DecorateRef{\r@f\unskip}\fi}%
-    % insert caption box
-    \t@xtfragment{fig}{\ifCaptionRefFirst\@r@f\nobreak\ \fi
+    \edef\@@r@f{\ifx\@r@f\empty\else\DecorateRef{\@r@f\unskip}\fi}%
+    \t@xtfragment{fig}{\ifCaptionRefFirst\@@r@f\nobreak\ \fi
       \s@tfont{fig}\c@ption\unskip
-      \ifCaptionRefFirst\else\nobreak\ \@r@f\fi}%
+      \ifCaptionRefFirst\else\nobreak\ \@@r@f\fi}%
+  \fi
+}    
+
+\def\d@caption{% 
+  \xdef\r@f{\csname figparam-ref\endcsname}% get reference
+  \d@c@ption{}%Normal monoglot caption.
+  \ifdiglot 
+    \bgroup %Alternative captions
+      \def\col@do#1{\def\c@rrdstat{#1}\d@c@ption{#1}}%
+      \x@\each@col\diglot@list\E
+    \egroup
   \fi
   \vskip.5\baselineskip
 }
