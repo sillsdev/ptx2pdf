@@ -155,7 +155,7 @@
   \dimen1=\ht0 \advance\dimen1 by -\headingtopspace
   \dimen0=\baselineskip \m@d \advance\dimen2 by -\dimen0
   \advance\dimen2 by \headingtopspace                                           %(1)
-  \ifgridp@c\ifdiglot\else\else
+  \ifgridp@c\else\ifdiglot\else
     \ifdim\lastdepth>0pt\advance\dimen2 by -\lastdepth\fi
   \fi\fi
   \ifdiglot\kern\else\vskip\fi\dimen2

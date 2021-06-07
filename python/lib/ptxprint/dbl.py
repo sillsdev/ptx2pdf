@@ -15,10 +15,10 @@ def proc_start_ms(el, tag, pref, emit, ws):
         extra += " \\{0}p {1}".format(pref, el.get("pubnumber"))
     emit("\\{0} {1}{2}{3}".format(el.get("style"), el.get("number"), extra, ws))
 
-def append_attribs(el, emit, tag=None):
+def append_attribs(el, emit, tag=None, nows=False):
     if tag is not None and type(tag) != tuple:
         tag = (tag, tag)
-    at_start = tag is None
+    at_start = tag is None and not nows
     if tag is None:
         l = el.attrib.items()
     elif tag[1] not in el.attrib:
@@ -136,7 +136,7 @@ def usx2usfm(fname, outf):
             elif el.tag in ("char", "link"):
                 nested = "+" if parent is not None and parent.tag == "char" else ""
                 if el.get("closed", "true") == "true":
-                    append_attribs(el, emit)
+                    append_attribs(el, emit, nows=True)
                     emit("\\{}*".format(nested + s))
             elif el.tag == "figure":
                 for k in ("alt", ("src", "file"), "size", "loc", "copy", "ref"):

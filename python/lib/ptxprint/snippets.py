@@ -36,6 +36,7 @@ class PDFx1aOutput(Snippet):
 /DestOutputProfile @OBJCVR
 /RegistryName (http://www.color.og)
 >> ] >>}}
+\XeTeXgenerateactualtext=1
 
 """
     
