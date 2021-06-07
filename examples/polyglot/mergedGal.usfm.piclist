@@ -1,6 +1,6 @@
 GALL 1.3 This is a rose, not a fig (cl) |loc="cl" src="image.jpg" alt="Figs are tasty"  ref="1:3" size="col*0.25"
-GALA 1.5 This is a rose, not a fig (p) |loc="p" src="image.jpg" alt="Figs are tasty"  ref="1:5" size="col*0.25" x-credit="© IM"
-GALA 1.7 This is a rose, not a fig [cr0] |loc="cr0" src="image.jpg" alt="Figs are tasty"  ref="1:7" size="col*0.28"
+GALA 1.5 This is a rose, not a fig (cr0) |loc="cr0" src="image.jpg" alt="Figs are tasty"  ref="1:5" size="col*0.25" x-credit="© IM"
+GALA 1.7 A rose, not a fig, just as there is no other Gospel [p] |loc="p" src="image.jpg" alt="Figs are tasty"  ref="1:7" size="col*0.28" captionL="But there isn’t another “good news.”" refR="1:6+7" captionR="εἰς ἕτερον ὃ εὐαγγέλιον, οὐκ ἔστιν ἄλλο,"
 GALL 2.1 Flower [cr0] |loc="cr0" src="image.jpg" alt="Figs are tasty"  ref="v1" size="col*0.3"
 GALR 2.1 Not fig. [cl3] |loc="cl3" src="image.jpg" alt="Figs are tasty"  ref="v1" size="col*0.32"
 GALA 3.14 A larger picture[bL] |pgpos="bL" src="image.jpg" ref="3:1" size="col" scale="0.4" x-credit="© ImageMagick LLC" x-creditpos="br" 

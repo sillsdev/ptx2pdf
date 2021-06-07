@@ -294,16 +294,28 @@
 \def\DecorateRef#1{(#1)}
 
 \def\d@c@ption#1{% Called with #1= diglot column or {} for normal.
+  \edef\cpt@mp{#1}%
   \x@\let\x@\thsr@f\csname figparam-ref#1\endcsname% get reference
-  \xdef\@r@f{\ifx\thsr@f\relax \r@f\else\thsr@f\fi}%
+  \ifx\thsr@f\relax
+    \xdef\@r@f{\r@f}\else
+    \xdef\@r@f{\thsr@f}\x@\global\x@\let\csname figparam-ref#1\endcsname\undefined% 
+  \fi%
   \stripspace\@r@f\end/ \end/\relax\@r@f \edef\@r@f{\p@ram}% strip space
-  \edef\c@ption{\csname figparam-caption#1\endcsname}% get caption
+  \x@\let\x@\c@ption\csname figparam-caption#1\endcsname% get caption
+  \ifx\c@ption\relax\let\c@ption\empty\else
+    \x@\global\x@\let\csname figparam-caption#1\endcsname\undefined% 
+  \fi
   \trace{g}{Fig caption#1: [\c@ption] \ifx\@r@f\empty\else(\@r@f)\fi}%
   \ifx\c@ption\empty\else
+    \bgroup
+    \ifx\cpt@mp\empty\else\setLRspecific\fi
     \edef\@@r@f{\ifx\@r@f\empty\else\DecorateRef{\@r@f\unskip}\fi}%
-    \t@xtfragment{fig}{\ifCaptionRefFirst\@@r@f\nobreak\ \fi
-      \s@tfont{fig}\c@ption\unskip
+    \t@xtfragment{fig}{%
+      \s@tfont{fig}%
+      \ifCaptionRefFirst\@@r@f\nobreak\ \fi
+      \c@ption\unskip
       \ifCaptionRefFirst\else\nobreak\ \@@r@f\fi}%
+    \egroup
   \fi
 }    
 
@@ -312,7 +324,7 @@
   \d@c@ption{}%Normal monoglot caption.
   \ifdiglot 
     \bgroup %Alternative captions
-      \def\col@do#1{\def\c@rrdstat{#1}\d@c@ption{#1}}%
+      \def\col@do##1{\def\c@rrdstat{##1}\d@c@ption{##1}}%
       \x@\each@col\diglot@list\E
     \egroup
   \fi
@@ -494,6 +506,7 @@
   \kern-.2pt \hrule height .2pt}}
 
 \def\ins@rtpic#1#2#3#4#5#6{%
+ \trace{g}{ins@rtpic #1 #2 #3 #4 #5 #6}%
  \openin\t@stread="#1"
    \ifeof\t@stread\dimen0=\ifdim #3>#4\relax #4\else #3\fi
      \m@kepl@ceholder{\dimen0}{0.618 \dimen0}{missing: \csname figparam-src\endcsname}%
@@ -503,7 +516,10 @@
 %+cfig_dofigure_intro
 \def\d@figure#1{%
  \ifIncludeFigures
-  \trace{g}{In d@figure #1}\usfmthreefalse
+  \ifdim\hsize=0pt
+    \hsize=\colwidth
+  \fi
+  \trace{g}{In d@figure #1 (hsz=\the\hsize)}\usfmthreefalse
   \rotimagefalse
   \edef\hs@ze{\the\hsize}% Current col size
   \gdef\p@rams{#1|}% ensure there is a trailing | separator
@@ -680,7 +696,7 @@
     % First, try to set it at the requested dimension:
     \setbox\newpicb@x=\hbox{%
       \ins@rtpic{"\the\PicPath\csname figparam-src\endcsname"}%
-                     {\picdim@n}{\sizem@ltiple\p@cwidth}{\p@cheight}{\xtra}{\xtraremains}}%
+                     {\picdim@n}{\the\dimexpr\sizem@ltiple\p@cwidth\relax}{\the\dimexpr\p@cheight\relax}{\xtra}{\xtraremains}}%
     \ifdim\ht\newpicb@x>\p@cheight
       %It doesn't fit. Scale to other dimension:
       \trace{g}{Picture too big set with \picdim@n=\sizem@ltiple\space\the\p@cwidth}%

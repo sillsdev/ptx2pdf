@@ -2375,7 +2375,8 @@
     \let\old@cts\digl@tc@ntentlist
     \let\digl@tc@ntentlist=\diglot@list
     \add@to@digl@tc@ntentlist{#1}%
-    \let\diglot@list=\digl@tc@ntentlist
+    \global\let\diglot@list=\digl@tc@ntentlist
+    \global\let\layout@list=\digl@tc@ntentlist % BY default, layout is all columns.
     \let\digl@tc@ntentlist=\old@cts
     %Now make the reversed list
     \let\col@do=\mkrev@list\def\list@type{diglot}%
