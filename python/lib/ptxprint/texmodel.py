@@ -778,6 +778,9 @@ class TexModel:
             if self.debug: print(c)
             if c[0] is None:
                 dat = c[1].sub(c[2], dat)
+            elif isinstance(c[0], str):
+                if c[0] == bk:
+                    dat = c[1].sub(c[2], dat)
             else:
                 def simple(s):
                     return c[1].sub(c[2], s)
@@ -905,7 +908,6 @@ class TexModel:
                     return reg.sub(domatch, s) if bk is None or b == bk else s
             else:
                 def compfn(fn, b, s):
-                    print(reg, bk, b)
                     return reg.sub(lambda m:fn(m.group(0)), s) if bk is None or b == bk else s
             return compfn
         return reduce(lambda currfn, are: makefn(are, currfn), reversed([c for c in changes if c is not None]), None)
@@ -952,8 +954,10 @@ class TexModel:
                         for at in atcontexts:
                             if at is None:
                                 context = self.make_contextsfn(None, *contexts) if len(contexts) else None
-                            else:
+                            elif len(contexts) or at[1] is not None:
                                 context = self.make_contextsfn(at[0], at[1], *contexts)
+                            else:
+                                context = at[0]
                             changes.append((context, regex.compile(m.group(1) or m.group(2), flags=regex.M),
                                             m.group(3) or m.group(4) or ""))
                         continue
