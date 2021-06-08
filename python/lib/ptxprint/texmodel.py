@@ -785,12 +785,12 @@ class TexModel:
         return dat
 
     def convertBook(self, bk, chaprange, outdir, prjdir):
-        # if self.changes is None:  ### Fixme ###
-        if self.asBool('project/usechangesfile'):
-            # print("Applying PrntDrftChgs:", os.path.join(prjdir, 'PrintDraftChanges.txt'))
-            self.changes = self.readChanges(os.path.join(prjdir, 'PrintDraftChanges.txt'), bk)
-        else:
-            self.changes = []
+        if self.changes is None:
+            if self.asBool('project/usechangesfile'):
+                # print("Applying PrntDrftChgs:", os.path.join(prjdir, 'PrintDraftChanges.txt'))
+                self.changes = self.readChanges(os.path.join(prjdir, 'PrintDraftChanges.txt'), bk)
+            else:
+                self.changes = []
         printer = self.printer
         draft = "-" + (self.printer.configName() or "draft")
         self.makelocalChanges(printer, bk, chaprange=chaprange)
@@ -905,6 +905,7 @@ class TexModel:
                     return reg.sub(domatch, s) if bk is None or b == bk else s
             else:
                 def compfn(fn, b, s):
+                    print(reg, bk, b)
                     return reg.sub(lambda m:fn(m.group(0)), s) if bk is None or b == bk else s
             return compfn
         return reduce(lambda currfn, are: makefn(are, currfn), reversed([c for c in changes if c is not None]), None)
@@ -926,6 +927,7 @@ class TexModel:
                     # test for "at" command
                     m = re.match(r"^\s*at\s+(.*?)\s+(?=in|['\"])", l)
                     if m:
+                        # import pdb; pdb.set_trace()
                         atref = RefList.fromStr(m.group(1))
                         for r in atref.allrefs():
                             if r.chap == 0:
@@ -934,7 +936,7 @@ class TexModel:
                                 atcontexts.append((r.book, regex.compile(r"(?<=\\c {}).*?($|\\[cv] )".format(r.chap), flags=regex.S)))
                             else:
                                 atcontexts.append((r.book, regex.compile(r"(?<=\\c {}.*?\\v {}).*?($|\\[cv] )".format(r.chap, r.verse), flags=regex.S)))
-                        l = l[m.end():]
+                        l = l[m.end():].strip()
                     else:
                         atcontexts = [None]
                     # test for 1+ "in" commands
@@ -943,7 +945,7 @@ class TexModel:
                         if not m:
                             break
                         contexts.append(regex.compile(m.group(1) or m.group(2), flags=regex.M))
-                        l = l[m.end():]
+                        l = l[m.end():].strip()
                     # capture the actual change
                     m = re.match(r"^"+qreg+r"\s*>\s*"+qreg, l)
                     if m:
@@ -1102,9 +1104,9 @@ class TexModel:
             self.localChanges.append((None, regex.compile(r"(\\[fx]q .+?):* ?(\\[fx]t)", flags=regex.M), r"\1: \2")) 
         
         if self.asBool("notes/keepbookwithrefs"): # keep Booknames and ch:vs nums together within \xt and \xo 
-            self.localChanges.append((self.make_contextsfn(regex.compile(r"(\\[xf]t [^\\]+)")),
+            self.localChanges.append((self.make_contextsfn(None, regex.compile(r"(\\[xf]t [^\\]+)")),
                                     regex.compile(r"(\d?[^\s\d\-\\,;]{3,}[^\\\s]*?) (\d+[:.]\d+)"), r"\1\u00A0\2"))
-            self.localChanges.append((self.make_contextsfn(regex.compile(r"(\\[xf]t [^\\]+)")),
+            self.localChanges.append((self.make_contextsfn(None, regex.compile(r"(\\[xf]t [^\\]+)")),
                                     regex.compile(r"( .) "), r"\1\u00A0")) # What is this one doing?
 
         # keep \xo & \fr refs with whatever follows (i.e the bookname or footnote) so it doesn't break at end of line
