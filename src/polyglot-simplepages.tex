@@ -345,6 +345,11 @@
 \def\@start@writep@ge@simplepages{%
   \xdef\old@pp{\the\p@lyp@geno}% Cache old value
   \ifodd\p@lyp@ges\need@evenpage\fi
+  %Set all top insert boxes to have the same height
+  \let\col@do=\max@boxht\def\v@lpfx{\colinsert@name{t}}\def\v@lsfx{}\dimen1=0pt
+  \x@\each@col\diglot@list\E% 
+  \let\col@do=\reb@xht
+  \x@\each@col\diglot@list\E% 
 } 
 
 \let\@prep@writep@ge@simplepages=\@prep@writep@ge@simplecols

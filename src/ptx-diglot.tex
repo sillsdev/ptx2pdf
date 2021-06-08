@@ -255,22 +255,13 @@
    \ifunprintable\else 
      \decr{\availht}{\topins}%pictures
      % Reduce by the height of whichever top picture takes the most space.
-     \setbox1\copy\topleftins\setbox1\vbox{\unvbox1}%
-     \setbox2\copy\toprightins\setbox2\vbox{\unvbox2}%
-     \trace{D}{inserts: \the\ht1=\the\ht\topleftins? \the\ht2=\the\ht\toprightins?}%
-     \ifdim\ht1>\ht\topleftins
-       \trace{D}{Box was shrunk: \the\ht1 > \the\ht\topleftins}%
-       \ht\topleftins=\ht1
+     \let\col@do=\resetb@xht \dimen1=0pt
+     \edef\v@lpfx{\colinsert@name{t}}\def\v@lsfx{}%
+     \x@\each@col\diglot@list\E
+     \ifdim\dimen1>0pt
+       \x@\let\x@\t@mp\csname\colinsert@name{t\m@x@at@col}\endcsname
+       \decr{\availht}{\t@mp}%
      \fi
-     \ifdim\ht2>\ht\toprightins
-       \trace{D}{Box was shrunk: \the\ht2 > \the\ht\toprightins}%
-       \ht\toprightins=\ht2
-     \fi
-     \ifdim\ht\topleftins>\ht\toprightins %
-       \decr{\availht}{\topleftins}%
-     \else%
-       \decr{\availht}{\toprightins}%
-     \fi%
      \trace{Dh}{after top:\the\availht (\the\ht\topleftins,\the\ht\toprightins}%
      \ifdim\ht\bottomleftins>\ht\bottomrightins %
        \decr{\availht}{\bottomleftins}%
@@ -1971,6 +1962,23 @@
   \fi
 }
 
+% Set boxes to be their natural height, and measure the maximum (into dimen1)
+\def\resetb@xht#1{\x@\let\x@\t@mp\csname \v@lpfx#1\v@lsfx\endcsname
+  \setbox1=\vbox{\unvcopy\t@mp}%
+  \dimen0=\ht1
+  \ifdim\dimen0>\ht\t@mp
+    \trace{D}{Box \v@lpfx#1\v@lsfx was shrunk: \the\ht1 > \the\ht\topleftins}%
+    \ht\t@mp=\dimen0
+  \fi
+  \ifdim\dimen1<\dimen0
+    \edef\m@x@at@col{#1}%
+    \dimen1=\dimen0
+  \fi
+}
+  
+  
+
+% Set boxes to be dimen1 high
 \def\reb@xht#1{\x@\let\x@\t@mp\csname \v@lpfx#1\v@lsfx\endcsname
   \ifdim\ht\t@mp=\dimen1 \else
     \setbox\t@mp=\vbox to \dimen1{\box\t@mp\vss}%
