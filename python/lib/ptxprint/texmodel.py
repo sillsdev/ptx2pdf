@@ -782,7 +782,7 @@ class TexModel:
         if self.changes is None:
             if self.asBool('project/usechangesfile'):
                 # print("Applying PrntDrftChgs:", os.path.join(prjdir, 'PrintDraftChanges.txt'))
-                self.changes = self.readChanges(os.path.join(prjdir, 'PrintDraftChanges.txt'))
+                self.changes = self.readChanges(os.path.join(prjdir, 'PrintDraftChanges.txt'), bk)
             else:
                 self.changes = []
         printer = self.printer
@@ -836,7 +836,7 @@ class TexModel:
                 dat = self.runChanges(self.changes, dat)
                 self.analyzeImageCopyrights(dat)
 
-            if self.dict['project/canonicalise']:
+            if self.dict['project/canonicalise'] or self.dict['docuemnt/ifletter'] == "":
                 if doc is None:
                     doc = self._makeUSFM(dat.splitlines(True), bk)
                 if doc is not None:
@@ -901,9 +901,9 @@ class TexModel:
                 def compfn(fn, s):
                     return reg.sub(lambda m:fn(m.group(0)), s)
             return compfn
-        return reduce(lambda currfn, are: makefn(are, currfn), reversed(changes), None)
+        return reduce(lambda currfn, are: makefn(are, currfn), reversed([c for c in changes if c is not None]), None)
 
-    def readChanges(self, fname):
+    def readChanges(self, fname, bk):
         changes = []
         if not os.path.exists(fname):
             return []
@@ -914,26 +914,52 @@ class TexModel:
                 l = re.sub(r"\s*#.*$", "", l)
                 if not len(l):
                     continue
-                context = []
+                contexts = []
+                atcontexts = []
                 try:
+                    # test for "at" command
+                    m = re.match(r"^\s*at\s+(.*?)\s+(?=in|['\"])", l)
+                    if m:
+                        atref = RefList.fromStr(m.group(1))
+                        for r in atref.allrefs():
+                            if r.book != bk:
+                                continue
+                            elif r.chap == 0:
+                                atcontexts.append(None)
+                            elif r.verse == 0:
+                                atcontexts.append(regex.compile(r"(?<=\\c {}).*?($|\\[cv] )".format(r.chap), flags=regex.S))
+                            else:
+                                atcontexts.append(regex.compile(r"(?<=\\c {}.*?\\v {}).*?($|\\[cv] )".format(r.chap, r.verse), flags=regex.S))
+                        l = l[m.end():]
+                    else:
+                        atcontexts = [None]
+                    # test for 1+ "in" commands
                     while True:
                         m = re.match(r"^\s*in\s+"+qreg+r"\s*:\s*", l)
                         if not m:
                             break
-                        context.append(regex.compile(m.group(1) or m.group(2), flags=regex.M))
+                        contexts.append(regex.compile(m.group(1) or m.group(2), flags=regex.M))
                         l = l[m.end():]
-                    if not len(context):
-                        context = None
-                    else:
-                        context = self.make_contextsfn(*context)
+                    # capture the actual change
                     m = re.match(r"^"+qreg+r"\s*>\s*"+qreg, l)
                     if m:
-                        changes.append((context, regex.compile(m.group(1) or m.group(2), flags=regex.M),
-                                        m.group(3) or m.group(4) or ""))
+                        for at in atcontexts:
+                            if not len(contexts):
+                                context = self.make_contextsfn(at) if at is not None else None
+                            else:
+                                context = self.make_contextsfn(at, *context)
+                            changes.append((context, regex.compile(m.group(1) or m.group(2), flags=regex.M),
+                                            m.group(3) or m.group(4) or ""))
                         continue
                 except re.error as e:
                     self.printer.doError("Regular expression error: {} in changes file at line {}".format(str(e), i+1),
                                          show=not self.printer.get("c_quickRun"))
+        script = self.dict["document/script"]
+        if len(script):
+            sscript = getattr(scriptsnippets, script[8:].lower(), None)
+            if sscript is not None:
+                changes.extend(sscript.regexes(self))
+
         if not len(changes):
             return None
         if self.printer is not None and self.printer.get("c_tracing"):
@@ -1120,12 +1146,6 @@ class TexModel:
                     pass
                 else:
                     self.localChanges.extend(c[1].regexes)
-
-        script = self.dict["document/script"]
-        if len(script):
-            sscript = getattr(scriptsnippets, script[8:].lower(), None)
-            if sscript is not None:
-                self.localChanges.extend(sscript.regexes(self))
 
         ## Final tweaks
         # Strip out any spaces either side of an en-quad 
