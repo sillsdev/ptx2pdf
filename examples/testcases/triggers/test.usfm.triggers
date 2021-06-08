@@ -33,6 +33,14 @@ This esb is included from a separate file, triggered before the verse number for
 -- 
 \EndTrigger
 
+\AddTrigger TST1.9=2
+\small-s\*
+\EndTrigger
+
+\AddTrigger TST1.9=3
+\small-e\*
+\EndTrigger
+
 \AddTrigger TSTk.Word=2
 Spot the indent->
 \EndTrigger
