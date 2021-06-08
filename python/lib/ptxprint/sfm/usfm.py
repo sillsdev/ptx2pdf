@@ -348,7 +348,7 @@ class parser(sfm.parser):
             return False
         meta = self.__get_style(tag.name)
         occurs = meta['OccursUnder']
-        stype = meta['StyleType'].lower()
+        stype = (meta['StyleType'] or '').lower()
         ptype = parent.meta['StyleType'].lower()
         pttype = parent.meta['TextType'].lower()
         if (stype == 'character' and ptype == 'paragraph') \

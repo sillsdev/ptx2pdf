@@ -779,12 +779,12 @@ class TexModel:
         return dat
 
     def convertBook(self, bk, chaprange, outdir, prjdir):
-        if self.changes is None:
-            if self.asBool('project/usechangesfile'):
-                # print("Applying PrntDrftChgs:", os.path.join(prjdir, 'PrintDraftChanges.txt'))
-                self.changes = self.readChanges(os.path.join(prjdir, 'PrintDraftChanges.txt'), bk)
-            else:
-                self.changes = []
+        # if self.changes is None:  ### Fixme ###
+        if self.asBool('project/usechangesfile'):
+            # print("Applying PrntDrftChgs:", os.path.join(prjdir, 'PrintDraftChanges.txt'))
+            self.changes = self.readChanges(os.path.join(prjdir, 'PrintDraftChanges.txt'), bk)
+        else:
+            self.changes = []
         printer = self.printer
         draft = "-" + (self.printer.configName() or "draft")
         self.makelocalChanges(printer, bk, chaprange=chaprange)
@@ -947,7 +947,7 @@ class TexModel:
                             if not len(contexts):
                                 context = self.make_contextsfn(at) if at is not None else None
                             else:
-                                context = self.make_contextsfn(at, *context)
+                                context = self.make_contextsfn(at, *contexts)
                             changes.append((context, regex.compile(m.group(1) or m.group(2), flags=regex.M),
                                             m.group(3) or m.group(4) or ""))
                         continue
