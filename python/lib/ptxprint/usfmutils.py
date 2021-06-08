@@ -11,9 +11,11 @@ import regex
 def isScriptureText(e):
     if 'nonvernacular' in e.meta.get('TextProperties', []):
         return False
-    if e.meta.get('TextType', "") != "VerseText":
-        return False
-    if e.name in ("h", "id"):
+    if e.meta.get('TextType', "").lower() == "versetext":
+        return True
+    if e.meta.get('TextType', "").lower() == "other" and e.name.startswith("i"):
+        return True
+    if e.name in ("h", "id", "mt", "toc1", "toc2", "toc3"):
         return False
     return True
 
@@ -429,7 +431,7 @@ class Usfm:
                     done = True
                 else:
                     res.append(chars)
-                lastspace = get_ucd(ord(chars[-1]), "InSC") in ("Invisible_Stacker", "Virama")
+                lastspace = get_ucd(ord(chars[-1]), "InSC") in ("Invisible_Stacker", "Virama") or get_ucd(ord(chars[-1]), "gc") in ("Cf", "WS")
             return sfm.Text("".join(res), e.pos, e.parent) if done else e
         if self.doc is None or not len(self.doc):
                return            

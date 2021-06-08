@@ -215,6 +215,15 @@ class RefRange:
             return (res, s)
         return res
 
+    def allrefs(self):
+        r = self.first.copy()
+        while r <= self.last:
+            yield r
+            r.verse += 1
+            if r.verse > 180:
+                r.chap += 1
+                r.verse = 1
+
 
 class BaseBooks:
     bookStrs = {k: [k]*3 for k, v in chaps.items() if 0 < int(v) < 999}
@@ -269,7 +278,7 @@ class RefList(list):
     @classmethod
     def fromStr(cls, s, context=BaseBooks, starting=None):
         rerefs = re.compile(r"[\s;,]+")
-        rebook = re.compile(r"^\d?[^0-9\-:]+")
+        rebook = re.compile(r"^\d?[^0-9\-:.]+")
         recv = re.compile(r"^(\d+)[:.](\d+|end)([a-z]?)")
         rec = re.compile(r"(\d+)([a-z]?)")
         self = cls()
@@ -402,6 +411,13 @@ class RefList(list):
             l, s = RefRange.fromtag(s, remainder=True)
             res.append(l)
         return res
+
+    def allrefs(self):
+        for r in self:
+            if isinstance(r, RefRange):
+                yield from r.allrefs()
+            else:
+                yield r
 
 
 class TestException(Exception):
