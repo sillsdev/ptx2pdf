@@ -558,6 +558,7 @@ class TexModel:
                 rhfil = "\\hskip 0pt plus {}fil".format(f2s((1-ratio)/ratio-1))
                 lhfil = ""
         self.dict['footer/oddcenter'] = t
+        self.dict['footer/evencenter'] = t
 
         mirror = self.asBool("header/mirrorlayout")
         for side in ('left', 'center', 'right'):
@@ -572,9 +573,14 @@ class TexModel:
             else:
                 self.dict['header/even{}'.format(side)] = t
             if side == "center" and diglot and self.dict["document/diglotadjcenter"]:
-                self.dict['header/odd{}'.format(side)] = (rhfil if swap else lhfil) + self.dict['header/odd{}'.format(side)] + (lhfil if swap else rhfil)
+                self.dict['header/odd{}'.format(side)] = (rhfil if swap else lhfil) \
+                                    + self.dict['header/odd{}'.format(side)] + (lhfil if swap else rhfil)
                 self.dict['header/even{}'.format(side)] = (rhfil if mirror ^ swap else lhfil) \
                                     + self.dict['header/even{}'.format(side)] + (lhfil if mirror ^ swap else rhfil)
+                self.dict['footer/odd{}'.format(side)] = (rhfil if swap else lhfil) \
+                                    + self.dict['footer/odd{}'.format(side)] + (lhfil if swap else rhfil)
+                self.dict['footer/even{}'.format(side)] = (rhfil if mirror ^ swap else lhfil) \
+                                    + self.dict['footer/even{}'.format(side)] + (lhfil if mirror ^ swap else rhfil)
                 
             if t.startswith((r'\first', r'\last', r'\range')): # ensure noVodd + noVeven is \empty
                 self.dict['header/noVodd{}'.format(side)] = r'\empty'
@@ -767,7 +773,7 @@ class TexModel:
             checkoutput(cmd) # dont't pass cmd as list when shell=True
         return outfpath
 
-    def runChanges(self, changes, dat):
+    def runChanges(self, changes, bk, dat):
         for c in changes:
             if self.debug: print(c)
             if c[0] is None:
@@ -775,7 +781,7 @@ class TexModel:
             else:
                 def simple(s):
                     return c[1].sub(c[2], s)
-                dat = c[0](simple, dat)
+                dat = c[0](simple, bk, dat)
         return dat
 
     def convertBook(self, bk, chaprange, outdir, prjdir):
@@ -833,7 +839,7 @@ class TexModel:
                 if doc is not None:
                     dat = str(doc)
                     doc = None
-                dat = self.runChanges(self.changes, dat)
+                dat = self.runChanges(self.changes, bk, dat)
                 self.analyzeImageCopyrights(dat)
 
             if self.dict['project/canonicalise'] or self.dict['docuemnt/ifletter'] == "":
@@ -852,7 +858,7 @@ class TexModel:
                 dat = str(doc)
 
             if self.localChanges is not None:
-                dat = self.runChanges(self.localChanges, dat)
+                dat = self.runChanges(self.localChanges, bk, dat)
 
         with open(outfpath, "w", encoding="utf-8") as outf:
             outf.write(dat)
@@ -889,17 +895,17 @@ class TexModel:
         else:
             return doc
 
-    def make_contextsfn(self, *changes):
+    def make_contextsfn(self, bk, *changes):
         # functional programmers eat your hearts out
         def makefn(reg, currfn):
             if currfn is not None:
-                def compfn(fn, s):
+                def compfn(fn, b, s):
                     def domatch(m):
                         return currfn(lambda x:fn(x.group(0)), m.group(0))
-                    return reg.sub(domatch, s)
+                    return reg.sub(domatch, s) if bk is None or b == bk else s
             else:
-                def compfn(fn, s):
-                    return reg.sub(lambda m:fn(m.group(0)), s)
+                def compfn(fn, b, s):
+                    return reg.sub(lambda m:fn(m.group(0)), s) if bk is None or b == bk else s
             return compfn
         return reduce(lambda currfn, are: makefn(are, currfn), reversed([c for c in changes if c is not None]), None)
 
@@ -922,14 +928,12 @@ class TexModel:
                     if m:
                         atref = RefList.fromStr(m.group(1))
                         for r in atref.allrefs():
-                            if r.book != bk:
-                                continue
-                            elif r.chap == 0:
-                                atcontexts.append(None)
+                            if r.chap == 0:
+                                atcontexts.append((r.book, None))
                             elif r.verse == 0:
-                                atcontexts.append(regex.compile(r"(?<=\\c {}).*?($|\\[cv] )".format(r.chap), flags=regex.S))
+                                atcontexts.append((r.book, regex.compile(r"(?<=\\c {}).*?($|\\[cv] )".format(r.chap), flags=regex.S)))
                             else:
-                                atcontexts.append(regex.compile(r"(?<=\\c {}.*?\\v {}).*?($|\\[cv] )".format(r.chap, r.verse), flags=regex.S))
+                                atcontexts.append((r.book, regex.compile(r"(?<=\\c {}.*?\\v {}).*?($|\\[cv] )".format(r.chap, r.verse), flags=regex.S)))
                         l = l[m.end():]
                     else:
                         atcontexts = [None]
@@ -944,10 +948,10 @@ class TexModel:
                     m = re.match(r"^"+qreg+r"\s*>\s*"+qreg, l)
                     if m:
                         for at in atcontexts:
-                            if not len(contexts):
-                                context = self.make_contextsfn(at) if at is not None else None
+                            if at is None:
+                                context = self.make_contextsfn(None, *contexts) if len(contexts) else None
                             else:
-                                context = self.make_contextsfn(at, *contexts)
+                                context = self.make_contextsfn(at[0], at[1], *contexts)
                             changes.append((context, regex.compile(m.group(1) or m.group(2), flags=regex.M),
                                             m.group(3) or m.group(4) or ""))
                         continue

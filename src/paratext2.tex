@@ -1768,6 +1768,7 @@
 \def\THINSPACE{\hskip .2em}
 \def\HAIRSPACE{\penalty\the\badspacepenalty\hskip 1sp}
 \def\HYPHEN{\-}
+\def\LINESEP{\break}
 \def\emdash{\char"2014\relax}
 %endash defined in ptx-references.tex
 
@@ -1789,6 +1790,7 @@
   \let\THINSPACE=\relax
   \let\HAIRSPACE=\relax
   \let\HYPHEN=\relax
+  \let\LINESEP=\relax
 }
 
 \catcode"A0=12
@@ -1824,6 +1826,7 @@
   \def\THINSPACE{^^^^2009}%
   \def\HAIRSPACE{^^^^200a}%
   \def\HYPHEN{^^^^2010}%
+  \def\LINESEP{^^^^2028}%
 }
 
 \catcode"A0=\active   \def^^a0{\pr@tect\NBSP}
@@ -1844,6 +1847,7 @@
 \catcode"2010=\active \def^^^^2010{\pr@tect\HYPHEN}
 \lccode"2010="2010
 \catcode`\@=12
+\catcode"2028=\active \def^^^^2028{\pr@tect\LINESEP}
 
 \parskip=0pt
 \lineskip=0pt
