@@ -787,7 +787,7 @@ class TexModel:
                 dat = c[0](simple, bk, dat)
         return dat
 
-    def convertBook(self, bk, chaprange, outdir, prjdir):
+    def convertBook(self, bk, chaprange, outdir, prjdir, letterspace="\uFDD0"):
         if self.changes is None:
             if self.asBool('project/usechangesfile'):
                 # print("Applying PrntDrftChgs:", os.path.join(prjdir, 'PrintDraftChanges.txt'))
@@ -850,7 +850,7 @@ class TexModel:
                     doc = self._makeUSFM(dat.splitlines(True), bk)
                 if doc is not None:
                     if self.dict["document/ifletter"] == "":
-                        doc.letter_space("\uFDD0")
+                        doc.letter_space(letterspace)
 
             if self.dict['fancy/endayah'] == "":
                 if doc is None:

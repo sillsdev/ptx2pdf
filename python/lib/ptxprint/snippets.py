@@ -67,6 +67,9 @@ class Diglot(Snippet):
 %{diglot/iflinebreakon}\XeTeXlinebreaklocaleR "{diglot/linebreaklocale}"
 \diglotSwap{document/diglotswapside}
 {diglot/interlinear}\expandafter\def\csname complex-rb\endcsname{{\ruby{project/ruby}{{rb}}{{gloss}}}}
+{diglot/ifletter}\newskip\intercharskipR \intercharskip=0pt plus {diglot/letterstretch:.2f}em minus {diglot/lettershrink:.2f}em
+{diglot/ifletter}\def\letterspaceR{{\leavevmode\nobreak\hskip\intercharskipR}}
+{diglot/ifletter}\DefineActiveChar{{^^^^fdd1}}{{\letterspaceR}}
 \catcode `@=12
 
 """

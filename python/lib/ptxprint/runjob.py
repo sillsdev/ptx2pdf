@@ -101,6 +101,10 @@ _diglot = {
 "diglot/iflinebreakon" :    "document/iflinebreakon",
 "diglot/linebreaklocale" :  "document/linebreaklocale",
 
+"diglot/ifletter":          "document/ifletter",
+"diglot/letterstretch":     "document/letterstretch",
+"diglot/lettershrink":      "document/lettershrink",
+
 "diglot/docscript" :        "document/script",
 "diglot/docdigitmapping" :  "document/digitmapping",
 "diglot/interlinear":       "project/interlinear",
@@ -416,7 +420,7 @@ class RunJob:
         for b in jobs:
             try:
                 out = info.convertBook(b, chaprange, self.tmpdir, self.prjdir)
-                digout = diginfo.convertBook(b, chaprange, self.tmpdir, digprjdir)
+                digout = diginfo.convertBook(b, chaprange, self.tmpdir, digprjdir, letterspace="\ufdd1")
             except FileNotFoundError as e:
                 self.printer.doError(str(e))
                 out = None
