@@ -845,7 +845,7 @@ class TexModel:
                 dat = self.runChanges(self.changes, bk, dat)
                 self.analyzeImageCopyrights(dat)
 
-            if self.dict['project/canonicalise'] or self.dict['docuemnt/ifletter'] == "":
+            if self.dict['project/canonicalise'] or self.dict['document/ifletter'] == "":
                 if doc is None:
                     doc = self._makeUSFM(dat.splitlines(True), bk)
                 if doc is not None:
