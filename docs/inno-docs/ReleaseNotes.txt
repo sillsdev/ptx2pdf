@@ -1,5 +1,5 @@
 PTXprint 1.8.2 Release Notes 
-2 June 2021
+9 June 2021
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 
@@ -8,6 +8,20 @@ NOTE: The child markers of \f and \x now follow the settings of their parent mar
 	  It is recommended that you RESET these styles to use the default settings prior
 	  to trying to remedy settings manually.
 	  
+Bug fixes and Improvements in 1.8.3
+
+  * Fix handling of Grk/Hbr embedded within RTL/LTR text e.g. \wh Hebrew\wh*
+  
+  * Fix bug in style editor affecting the setting of bold italic etc.
+  
+  * Fix diglot gridlines
+  
+  * Enable diglot captions (2 captions for the same picture)
+  
+  * Allow PrintDraftChanges.txt to do location-specific changes using keyword 'at'
+    e.g.  at GAL 3:16 "yesukrist" > "yesu krist"  (only make this change in one verse)
+	or    at JHN "kurpa" > "permata daya"         (only make this change in one book)
+
 Bug fixes and Improvements in 1.8.2
 
   * Fixed module handling (again) to be more flexible with references
