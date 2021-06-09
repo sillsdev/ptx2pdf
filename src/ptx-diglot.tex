@@ -1760,6 +1760,9 @@
   \traceNum{D}{diglotCollect O:\the\outputpenalty, P:\the\savedpenalty, vs:\the\vsize}%
   \ifnum\diglotDbgJoinboxes=\TRACEcount\showbox255\fi
   \x@\let\x@\destb@x\csname excess\c@rrdstat\endcsname
+  \ifx\destb@x\relax
+    \errmessage{! ERROR! Impropper state; '\c@rrdstat' should be 'L' 'R' or some other defined column. Maybe there was output before columns were set up?}%
+  \fi
   \diglot@any@primary
   \ifnum\outputpenalty=\dgl@tPenLtrialEnd\relax 
     \trace{D}{Why are we in diglotCollect after a trial?}%
