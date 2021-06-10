@@ -12,13 +12,6 @@ from ptxprint.usfmerge import usfmerge2
 from ptxprint.utils import _, universalopen, print_traceback
 from datetime import datetime
 
-# "*** WARNING: Sidebar or colophon might not print on page": \
-                                         # _("The colophon seems to be too big for the page.\n" +\
-                                           # "Try shortening it, or move it all to the FRT book."),
-# "\zcolophon":                            _("This may be caused by an improperly defined Colophon.\n\n" +\
-                                           # "Try turning off the Include Colophon setting on Header+Footer page.\n" +\
-                                           # "If that works, then try to fix the colophon (maybe \imagecopyrights\n" +\
-                                           # "localization has not been defined) and try again."),
 _errmsghelp = {
 "! Argument":                            _("Probably a TeX macro problem - contact support, or post a bug report"),
 "! TeX capacity exceeded, sorry":        _("Uh oh! You've pushed TeX too far! Try turning Hyphenation off, or contact support."),
@@ -59,8 +52,11 @@ _errmsghelp = {
 "! I can't find file `ptx-tracing.tex'.": _("Possibly a faulty installation."),
 "Runaway argument?":                     _("Unknown issue. Maybe related to Right-aligned tabbed leaders\n" +\
                                            "Try turning off PrintDraftChanges.txt and both Stylesheets"),
-"Unknown":                               _("Sorry, there is no diagnostic help for this error.\n" +\
-                                           "Try using Paratext's 'Run Basic Checks' to uncover any Marker errors.")
+"Unknown":                               _("Oops! Something unexpected happened causing this error.\n" +\
+                                           "If you are unable to solve this issue yourself, use the 'Create Archive...' button\n" +\
+                                           "on the Help page to create a .zip file and send it to <ptxprint_support@sil.org>\n" +\
+                                           "for further assistance. Please include a description of the problem, and if\n" +\
+                                           "known, tell us which setting was changed since it last worked.")
 }
 # \def\LineSpacingFactor{{{paragraph/linespacingfactor}}}
 # \def\VerticalSpaceFactor{{1.0}}

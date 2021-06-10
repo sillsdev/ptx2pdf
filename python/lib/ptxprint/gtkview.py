@@ -189,6 +189,7 @@ _nonsensitivities = {
     "c_omitrhchapnum" :        ["c_hdrverses"],
     "c_useprintdraftfolder" :  ["btn_selectOutputFolder"],
     "c_styFaceSuperscript" :   ["l_styRaise", "s_styRaise"],
+    "c_interlinear" :          ["c_letterSpacing", "s_letterShrink", "s_letterStretch"],
     "r_xrLocn": {
         "r_xrLocn_below" :     [],
         "r_xrLocn_blend" :     ["l_internote", "s_internote"],
@@ -3022,3 +3023,11 @@ class GtkViewModel(ViewModel):
     def onXrefListClicked(self, btn):
         if self.get("c_useXrefList"):
             self.set("c_includeXrefs", False)
+
+    def onInterlinearClicked(self, btn):
+        if self.sensiVisible("c_interlinear"):
+            if self.get("c_letterSpacing"):
+                self.set("c_letterSpacing", False)
+                self.doError(_("FYI: This Interlinear option is not compatible with the\n" +\
+                               "'Spacing Adjustments Between Letters' on the Fonts+Script page.\n" +\
+                               "So that option has just been disabled."))

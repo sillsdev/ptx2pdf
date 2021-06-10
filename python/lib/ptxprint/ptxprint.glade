@@ -6759,7 +6759,11 @@ characters to be adjusted (usually by a very small
 percentage). This can help alleviate space problems.
 Values are in percentage of the text point size and 
 get used everywhere. Only use this if really needed!
-In many situations it can make the text look very ugly.</property>
+In many situations it can make the text look very ugly.
+
+Note that if this option is disabled, then it is due to
+the Interlinear option being set on the Advanced page.
+These two settings are mutually exclusive.</property>
                                         <property name="halign">start</property>
                                         <property name="draw_indicator">True</property>
                                         <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
@@ -17145,8 +17149,14 @@ interlinear text can be printed.
 Note that  you may need to adjust 
 the following marker styles:
   \rb    for the base text 
-  \gloss|rb    for the gloss text</property>
+  \gloss|rb    for the gloss text
+
+Note that if this Interlinear option is enabled, then
+the Spacing Adjustments Between Letters (on the
+Fonts+Scripts page) will be disabled as these two
+settings are mutually exclusive.</property>
                                             <property name="draw_indicator">True</property>
+                                            <signal name="clicked" handler="onInterlinearClicked" swapped="no"/>
                                           </object>
                                           <packing>
                                             <property name="expand">False</property>
