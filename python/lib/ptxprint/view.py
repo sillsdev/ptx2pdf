@@ -898,9 +898,11 @@ class ViewModel:
                 while i < len(adjlist) or j < len(dadjlist):
                     a = adjlist[i] if i < len(adjlist) else None
                     d = dadjlist[j] if j < len(dadjlist) else None
-                    if a is not None and (a[1] < d[1] or \
-                            (a[1] == d[1] and a[2] < d[2]) or \
-                            (a[1] == d[1] and a[2] == d[2] and a[3] < d[3])):
+                    va = int(re.sub(r"^(\d+).*?$", r"\1", a[2])) if a is not None else 0
+                    vd = int(re.sub(r"^(\d+).*?$", r"\1", d[2])) if d is not None else 0
+                    if d is None or (a is not None and (a[1] < d[1] or \
+                            (a[1] == d[1] and va < vd) or \
+                            (a[1] == d[1] and va == vd and a[3] < d[3]) or a == d)):
                         nadjlist.append((a[0]+"L", a[1], a[2], a[3]))
                         i += 1
                     elif d is not None:

@@ -16,7 +16,7 @@ Bug fixes and Improvements in 1.8.3
   
   * Fix diglot gridlines
   
-  * Enable diglot captions (2 captions for the same picture)
+  * Fixed AdjList generation
   
   * Allow PrintDraftChanges.txt to do location-specific changes using keyword 'at'
     e.g.  at GAL 3:16 "yesukrist" > "yesu krist"  (only make this change in one verse)

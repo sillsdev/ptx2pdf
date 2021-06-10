@@ -189,7 +189,7 @@ class Usfm:
         isparaprop = sfm.text_properties('paragraph', 'publishable', 'vernacular')
         def ispara(e):
             return e.meta.get('TextType', '').lower() in ("section", "versetext") and isparaprop(e)
-        ref = ["", "0", "0", 0]
+        ref = ["", 0, "0", 0]
         pending = [None]
 
         def _g(adjs, e):
@@ -201,8 +201,7 @@ class Usfm:
                         ref[3] += 1
                         adjs.append(ref[:])
                         pending[0] = None
-                    ref[1] = e.args[0]
-                    c = int(ref[1])
+                    ref[1] = int(e.args[0])
                     ref[2] = "0"
                     ref[3] = 0
                 elif e.name == 'v':
@@ -457,9 +456,10 @@ class Usfm:
             if not e.parent or not isScriptureText(e.parent):
                 return e
             done = False
-            lastspace = True
+            lastspace = id(e.parent[0]) != id(e)
+
             res = []
-            for (islet, c) in groupby(str(e), key=lambda x:get_ucd(ord(x), "gc") in takslc_cats):
+            for (islet, c) in groupby(str(e), key=lambda x:get_ucd(ord(x), "gc") in takslc_cats and x != "|"):
                 chars = "".join(c)
                 # print("{} = {}".format(chars, islet))
                 if not len(chars):
@@ -469,7 +469,9 @@ class Usfm:
                     done = True
                 else:
                     res.append(chars)
-                lastspace = get_ucd(ord(chars[-1]), "InSC") in ("Invisible_Stacker", "Virama") or get_ucd(ord(chars[-1]), "gc") in ("Cf", "WS")
+                lastspace = get_ucd(ord(chars[-1]), "InSC") in ("Invisible_Stacker", "Virama") \
+                            or get_ucd(ord(chars[-1]), "gc") in ("Cf", "WS") \
+                            or chars[-1] in (r"\|")                
             return sfm.Text("".join(res), e.pos, e.parent) if done else e
         if self.doc is None or not len(self.doc):
                return            
