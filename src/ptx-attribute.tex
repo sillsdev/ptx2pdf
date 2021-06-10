@@ -41,6 +41,14 @@
 \def\use@ttrGrab{%
     \let|=\start@ttributegrab %have to build attributes char-by-char, sadly.
 }
+\def\use@ttrSpecific{%
+   %\tracingmacros=1
+   %\tracingassigns=1
+   \setgr@bname{\thiswh@tstyle}%
+   \trace{A}{grabname set to \gr@bname}%
+   \x@\let\x@|\csname \gr@bname\endcsname
+  
+}
 \catcode`\|=12
 \def\kill@ttrib #1\E{%
   \trace{A}{removing (old) attribute '#1'}%
@@ -78,12 +86,30 @@
   \ifmst@nestyle
     \use@ttrSlash
   \else
-    \use@ttrGrab
+    \use@ttrSpecific % based on style
+    %\use@ttrGrab % char-by-char 
   \fi
   \in@ttribfalse
   \xdef\@ttributes{}%
 }
 
+%%%%%%%%%
+%
+\def\def@endm@rker#1+#2\E{\edef\end@marker{\if #1\ss@ChrP +\fi#2}}
+% make something that swallows everything up to a given end-marker
+\def\s@tend@marker#1{\let\end@marker\relax\let\d@\def@endm@rker\mctop\ifx\end@marker\relax\edef\end@marker{#1}\fi}
+\def\setgr@bname#1{%
+  \s@tend@marker{#1}%
+  \edef\gr@bname{@attr@grab-\end@marker}%
+  \trace{A}{Grab@name: \gr@bname}%
+  \x@\ifcsname \gr@bname\endcsname\else
+    \trace{A}{New grabber: \gr@bname\space about to be defined}%
+    \x@\setup@ttr@grab\x@{\csname \end@marker\endcsname}%
+  \fi
+}
+
+\def\setup@ttr@grab#1{%
+  \x@\gdef\csname \gr@bname\endcsname##1#1{\xdef\attrib@rgs{##1}\trace{A}{\gr@bname:found \attrib@rgs}#1}}
 
 \def\proc@ttribs{%
   \trace{A}{Processing attributes (\ifin@ttrib true\else false\fi)}%
@@ -110,17 +136,7 @@
   \x@\xdef\csname \@ttrlistname\endcsname{\tmp,#2}}
 
 \edef\p@stattribcmd{}% Parse the attributes, run any code.
-\def\store@ttributes#1{\def\newbit{#1}\edef\@ttributes{\@ttributes\newbit}\futurelet\nxt\isitslash}
-\def\startp@stattribcmd#1{\futurelet\nxt\isitcmd}
-\def\storep@stattribcmd#1{\def\newbit{#1}\edef\p@stattribcmd{\p@stattribcmd\newbit}\futurelet\nxt\isitcmd}
-\lccode`\~=32
-\lowercase{
- \gdef\isitcmd{%
-        \let\c@ntinue\storep@stattribcmd
-        \ifcat a\nxt\else%\ifcat=\nxt \else
-	\let\c@ntinue\end@ttributegrab\fi%\fi
-	\c@ntinue}%
-}
+
 %\def\foo#1{Thatsit "#1"}
 
 \def\oddc@tcodes{\xdef\sl@shcode{\the\catcode`\/}\catcode`"=11 \catcode`==11
@@ -132,16 +148,34 @@
 
 \xdef\attribsus@d{}% List of used attributes.
 
+%%%%%%%%%%%%
+%
+% Grabbing attribute values char-by-char 
+%
 \def\start@ttributegrab{\let\c@ntinue\isitslash\oddc@tcodes\futurelet\nxt\c@ntinue}
 \def\end@ttributegrab{%
   \xdef\@ttributes{\x@\noexpand\x@{\@ttributes}}% Make it all strings.
   \trace{A}{Now executing \p@stattribcmd}%
   \csname\p@stattribcmd\endcsname}% 
 
+\def\store@ttributes#1{\def\newbit{#1}\edef\@ttributes{\@ttributes\newbit}\futurelet\nxt\isitslash}
+\def\startp@stattribcmd#1{\futurelet\nxt\isitcmd}
+\def\storep@stattribcmd#1{\def\newbit{#1}\edef\p@stattribcmd{\p@stattribcmd\newbit}\futurelet\nxt\isitcmd}
+\lccode`\~=32
+\lowercase{
+ \gdef\isitcmd{%
+        \let\c@ntinue\storep@stattribcmd
+        \ifcat a\nxt\else%\ifcat=\nxt \else
+	\let\c@ntinue\end@ttributegrab\fi%\fi
+	\c@ntinue}%
+}
 \oddc@tcodes%NO SPACES until |normalc@tcodes is called.
 |gdef|isitslash{|let|c@ntinue|store@ttributes|if|nxt\|let|c@ntinue|startp@stattribcmd|normalc@tcodes|fi|c@ntinue}%
 |normalc@tcodes%
 %
+%
+%
+%%%%%%%%%%%%
 
 %Parse key="value" or value.
 \def\default@ttrkey{} % What unnamed attributes get saved 
