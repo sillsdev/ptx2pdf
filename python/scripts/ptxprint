@@ -51,7 +51,7 @@ parser.add_argument('--timeout',default=200,type=int,help='xetex runtime timeout
 parser.add_argument('-T','--testing',action='store_true',help="Run in testing, output xdv")
 parser.add_argument('-f','--fontpath',action='append',help="Directory of fonts to include (repeatable)")
 parser.add_argument('--nofontcache',action="store_true",help="Don't use system fonts")
-parser.add_argument('-A','--archive',help="Create archive of project")
+parser.add_argument('-A','--action',help="Run view method instead of print")
 parser.add_argument('-D','--define',action=DictAction,help="set UI component=value. Repeatable")
 parser.add_argument('--debug',action="store_true",help="Give debug output")
 parser.add_argument("-C","--capture",help="Capture interaction events to file. Not to be used yet")
@@ -180,7 +180,7 @@ if args.pid:
         if not os.path.exists(pdir):
             args.config = None
 
-if args.print or args.archive is not None:
+if args.print or args.action is not None:
     mainw = ViewModel(args.paratext, args.directory, config, macrosdir, args)
     if args.pid:
         mainw.setPrjid(args.pid)
@@ -210,8 +210,8 @@ if args.print or args.archive is not None:
             res = job.wait()
         else:
             res = False
-    if args.archive:
-        mainw.createArchive(args.archive)
+    if args.action:
+        getattr(mainw, args.action)()
     sys.exit(res)
 else:
     goround = True

@@ -871,6 +871,9 @@ class ViewModel:
                                                                         "Secondary project must be set on the Diglot tab."))
                 return
         prjdir = os.path.join(self.settings_dir, self.prjid)
+        usfms = self.get_usfms()
+        if diglot:
+            dusfms = self.diglotView.get_usfms()
         for bk in booklist:
             fname = self.getAdjListFilename(bk, ext=".adj")
             outfname = os.path.join(self.configPath(self.configName()), "AdjLists", fname)
@@ -882,44 +885,35 @@ class ViewModel:
             if not self.msgQuestion(q1, q2):
                 return
         for bk in booklist:
-            tmplist = []
+            u = usfms.get(bk)
+            adjlist = u.make_adjlist()
             fname = self.getBookFilename(bk)
             outfname = os.path.join(self.configPath(self.configName()),
                                     "AdjLists", self.getAdjListFilename(bk, ext=".adj"))
-            adjlist = []
-            flist = [os.path.join(prjdir, fname)]
             if diglot: 
-                secfname = self.getBookFilename(bk, secprjid)
-                flist += [os.path.join(secprjdir, secfname)]
-            if len(flist) == 2:
-                sfx = 'L'
-            else:
-                sfx = ""
-            for infname in flist:
-                if len(flist) == 2 and infname == flist[1]:
-                    sfx = 'R'
-                with open(infname, "r", encoding="utf-8") as inf:
-                    dat = inf.read()
-                    # It would be good to make this more inclusive (\p \m \q1 \q2 etc.) 
-                    # and also include \s Section Heads as comments to help show whichs paragraphs are within a single section
-                    m = re.findall(r"\\p ?\r?\n\\v (\S+)",dat)
-                    if m is not None:
-                        prv = 0
-                        ch = 1
-                        for v in m:
-                            iv = int(re.sub(r"^(\d+).*?$", r"\1", v), 10)
-                            if iv < prv:
-                                ch = ch + 1
-                            # srtchvs = "{:0>3}{:0>3}{}".format(ch,v,sfx)
-                            tmplist.append(bk+sfx+" "+str(ch)+"."+v)
-                            prv = iv
-            if len(tmplist):
-                for al in sorted(tmplist, key=refKey):
-                    adjlist.append(al+" +0\n")
+                du = dusfms.get(bk)
+                dadjlist = du.make_adjlist()
+                nadjlist = []
+                i = 0; j = 0
+                while i < len(adjlist) or j < len(dadjlist):
+                    a = adjlist[i] if i < len(adjlist) else None
+                    d = dadjlist[j] if j < len(dadjlist) else None
+                    if a is not None and (a[1] < d[1] or \
+                            (a[1] == d[1] and a[2] < d[2]) or \
+                            (a[1] == d[1] and a[2] == d[2] and a[3] < d[3])):
+                        nadjlist.append((a[0]+"L", a[1], a[2], a[3]))
+                        i += 1
+                    elif d is not None:
+                        nadjlist.append((d[0]+"R", d[1], d[2], d[3]))
+                        j += 1
+                adjlist = nadjlist
             adjpath = os.path.join(self.configPath(self.configName()), "AdjLists")
             os.makedirs(adjpath, exist_ok=True)
             with open(outfname, "w", encoding="utf-8") as outf:
-                outf.write("".join(adjlist))
+                outf.write("% syntax bk c.v +num[paragraph]. E.g. JHN 3.18 +1[2] for para after 3.18\n")
+                for (b, c, v, p) in adjlist:
+                    if p == 0 and v != 0 and c != 0:
+                        outf.write("{} {}.{} +0\n".format(b, c, v))
 
     def generateHyphenationFile(self):
         listlimit = 27836 # 32749

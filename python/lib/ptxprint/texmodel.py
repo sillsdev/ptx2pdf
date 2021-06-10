@@ -721,14 +721,7 @@ class TexModel:
                                 res.append((r"\setbookhook{{end}}{{{}}}{{\gdef\BalanceThreshold{{0}}\clubpenalty=10000"
                                             + r"\widowpenalty=10000}}").format(bk))
                 elif l.startswith(r"%\snippets"):
-                    res.append("""
-\\catcode"FDEE=1 \\catcode"FDEF=2
-\\prepusfm
-\\def\\zcopyright\uFDEE{project/copyright}\uFDEF
-\\def\\zlicense\uFDEE{project/license}\uFDEF
-\\unprepusfm
-""".format(**self.dict))
-                    for k, c in self._snippets.items():
+                    for k, c in sorted(self._snippets.items(), key=lambda x: x[1][1].order):
                         v = self.asBool(k)
                         if v:
                             fn = getattr(c[1], 'generateTex', None)
@@ -743,6 +736,13 @@ class TexModel:
                         sclass = getattr(scriptsnippets, script[8:].lower(), None)
                         if sclass is not None:
                             res.append(sclass.tex(self))
+                    res.append("""
+\\catcode"FDEE=1 \\catcode"FDEF=2
+\\prepusfm
+\\def\\zcopyright\uFDEE{project/copyright}\uFDEF
+\\def\\zlicense\uFDEE{project/license}\uFDEF
+\\unprepusfm
+""".format(**self.dict))
                 else:
                     res.append(l.rstrip().format(**self.dict))
         return "\n".join(res).replace("\\OmitChapterNumberfalse\n\\OmitChapterNumbertrue\n","")
@@ -1145,7 +1145,7 @@ class TexModel:
         # self.localChanges.append((None, regex.compile(r"(\\c\s1\s?\r?\n)", flags=regex.S), r"\\par\\vskip\\baselineskip\\hskip-\\columnshift\\hrule\\vskip 2\\baselineskip\n\1"))
 
         # Apply any changes specified in snippets
-        for k, c in self._snippets.items():
+        for k, c in sorted(self._snippets.items(), key=lambda x: x[1][1].order):
             if self.printer is None:
                 v = self.asBool(k)
             else:

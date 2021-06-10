@@ -4,6 +4,7 @@ from .texmodel import universalopen
 from .ptsettings import bookcodes
 
 class Snippet:
+    order = 0
     regexes = []
     processTex = False
     texCode = ""
@@ -255,6 +256,7 @@ class ThumbTabs(Snippet):
         return "\n".join(texlines)+"\n"
 
 class Colophon(Snippet):
+    order = 10
     processTex = True
     texCode = """
 \\catcode"FDEE=1 \\catcode"FDEF=2
@@ -268,7 +270,7 @@ class Colophon(Snippet):
 
 """
 
-class Grid:
+class Grid(Snippet):
     regexes = []
     processTex = True
     texCode = """

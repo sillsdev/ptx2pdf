@@ -185,6 +185,44 @@ class Usfm:
         reduce(_g, self.doc, None)
         self.cvaddorned = True
 
+    def make_adjlist(self):
+        isparaprop = sfm.text_properties('paragraph', 'publishable', 'vernacular')
+        def ispara(e):
+            return e.meta.get('TextType', '').lower() in ("section", "versetext") and isparaprop(e)
+        ref = ["", "0", "0", 0]
+        pending = [None]
+
+        def _g(adjs, e):
+            if isinstance(e, sfm.Element):
+                if e.name == 'id':
+                    ref[0] = str(e[0]).split()[0]
+                elif e.name == 'c':
+                    if pending[0] is not None:
+                        ref[3] += 1
+                        adjs.append(ref[:])
+                        pending[0] = None
+                    ref[1] = e.args[0]
+                    c = int(ref[1])
+                    ref[2] = "0"
+                    ref[3] = 0
+                elif e.name == 'v':
+                    ref[2] = e.args[0]
+                    ref[3] = 0
+                    if pending[0] is not None:
+                        adjs.append(ref[:])
+                        pending[0] = None
+                elif ispara(e):
+                    if pending[0] is not None:
+                        ref[3] += 1
+                        adjs.append(ref[:])
+                        pending[0] = None
+                    pending[0] = e
+                e.pos = _Reference(e.pos, ref)
+                return reduce(_g, e, adjs)
+            else:
+                return adjs
+        return reduce(_g, self.doc, []) 
+
     def readnames(self):
         if len(self.tocs) > 0:
             return
