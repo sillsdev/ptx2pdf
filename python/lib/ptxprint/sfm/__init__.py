@@ -265,14 +265,14 @@ class Text(collections.UserString):
     def __add__(self, rhs):
         return Text(super().__add__(rhs), self.pos, self.parent)
 
-#    def __getslice__(self, i, j): return self.__getitem__(slice(i, j))
+    def __getslice__(self, i, j): return self.__getitem__(slice(i, j))
 
-#    def __getitem__(self, i):
-#        return Text(super().__getitem__(i),
-#                    Position(self.pos.line,
-#                             self.pos.col
-#                             + (i.start or 0 if isinstance(i, slice) else i)),
-#                    self.parent)
+    def __getitem__(self, i):
+        return Text(super().__getitem__(i),
+                    Position(self.pos.line,
+                             self.pos.col
+                             + (i.start or 0 if isinstance(i, slice) else i)),
+                    self.parent)
 
 
 class _put_back_iter(collections.Iterator):
