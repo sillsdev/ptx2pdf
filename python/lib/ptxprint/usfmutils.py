@@ -220,7 +220,10 @@ class Usfm:
                 return reduce(_g, e, adjs)
             else:
                 return adjs
-        return reduce(_g, self.doc, []) 
+        res = reduce(_g, self.doc, [])
+        if pending[0] is not None:
+            ref[3] += 1
+            res.append(ref[:]) 
 
     def readnames(self):
         if len(self.tocs) > 0:
