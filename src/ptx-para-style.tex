@@ -758,7 +758,7 @@
 
 %
 \def\@delayedthing#1#2#3#4#5#6#7#8#9{\thing@y=#9\relax %Part of post-run processing
-  \trace{C}{delayedthing #1 #2 #3 #4 #5 #6 #7 #8 #9}%
+  \trace{C}{delayedthing (prev:\the\prev@y) #1 #2 #3 #4 #5 #6 #7 #8 #9}%
   \ifnum\the\prev@y<\thing@y % para start was lower than chapter number, must have passed a col/page break
     %%\def\this@thing{#1}% What is it?
     %\def\thing@ref{#2}% Unique id.

@@ -1,7 +1,7 @@
 \id TST Test file
 \h small test file
 \c 1
-\s2 This is a title
+\s2 Testing cutouts and other picture placement options
 \p
 \v 1 This is normal text.  Dolorem
 ad ducimus quia ducimus
@@ -17,7 +17,6 @@ minima aperiam ab saepe qui
 \v 7 Stoici autem, quod finem bonorum in una virtute ponunt, similes sunt illorum; Quod praeceptum quia maius erat, quam ut ab homine videretur, idcirco assignatum est deo.
 \v 8  Expectoque quid ad id, quod quaerebam, respondeas. Et quidem saepe quaerimus verbum Latinum par Graeco et quod idem valeat; Tum ego: Non mehercule, inquam, soleo temere
 contra Stoicos, non quo illis admodum assentiar, sed pudore impedior; 
-\p
 \v 9 Idem etiam dolorem saepe perpetiuntur, ne, si id non faciant, incidant in maiorem. 
 \v 10 Quicquid porro
 animo cernimus, id omne oritur a sensibus; Sed non alienum est, quo facilius vis verbi intellegatur, rationem huius verbi faciendi Zenonis exponere. Quodsi Graeci leguntur
