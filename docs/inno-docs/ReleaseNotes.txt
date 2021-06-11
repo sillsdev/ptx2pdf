@@ -1,5 +1,5 @@
-PTXprint 1.8.2 Release Notes 
-9 June 2021
+PTXprint 1.8.3 Release Notes 
+11 June 2021
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 
@@ -16,7 +16,11 @@ Bug fixes and Improvements in 1.8.3
   
   * Fix diglot gridlines
   
+  * Polyglot support now available in TeX macros (but not yet in PTXprint user-interface)
+
   * Fixed AdjList generation
+  
+  * Fixed interlinear alignment issues
   
   * Allow PrintDraftChanges.txt to do location-specific changes using keyword 'at'
     e.g.  at GAL 3:16 "yesukrist" > "yesu krist"  (only make this change in one verse)
