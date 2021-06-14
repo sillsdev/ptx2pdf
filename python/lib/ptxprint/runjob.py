@@ -10,6 +10,7 @@ from ptxprint.view import ViewModel, VersionStr, refKey
 from ptxprint.font import getfontcache
 from ptxprint.usfmerge import usfmerge2
 from ptxprint.utils import _, universalopen, print_traceback
+from ptxprint.pdf.fixcol import fixpdfcmyk
 from datetime import datetime
 
 _errmsghelp = {
@@ -574,9 +575,10 @@ class RunJob:
                 break
         if not self.noview and not self.args.testing and not self.res:
             self.printer.incrementProgress()
+            x1aout = self.printer.get("c_PDFx1aOutput")
             cmd = ["xdvipdfmx", "-E"]
-            if self.printer.get("c_PDFx1aOutput"):
-                cmd += ["-z", "0"]
+            if x1aout:
+                cmd += ["-z", "0", "-o", outfname.replace(".tex", ".prepress.pdf")]
             if self.args.extras & 1:
                 cmd += ["-vv"]
             runner = call(cmd + [outfname.replace(".tex", ".xdv")], cwd=self.tmpdir)
@@ -588,6 +590,10 @@ class RunJob:
                 except subprocess.TimeoutExpired:
                     print("Timed out!")
                     self.res = runner.returncode
+            if x1aout:
+                outpath = os.path.join(self.tmpdir, outfname[:-4])
+                fixpdfcmyk(outpath + ".prepress.pdf", outpath + ".pdf")
+                os.remove(outpath + ".prepress.pdf")
         print("Done")
         self.done_job(outfname, info)
 

@@ -1,10 +1,9 @@
-#!/usr/bin/python3
 
-import argparse, re
 from ptxprint.pdfrw import *
 from ptxprint.pdfrw.objects.pdfindirect import PdfIndirect
 from ptxprint.pdfrw.objects.pdfname import BasePdfName
 from ptxprint.pdfrw.uncompress import uncompress
+import re
 
 def simplefloat(s, dp=3):
     return ("{:."+str(dp)+"f}").format(s).rstrip("0").rstrip(".")
@@ -30,6 +29,7 @@ class PageState:
         self.currgs = None
         self.threshold = threshold
         self.gstates = gstates
+        self.testnumcols = False
 
     def gs(self, op, operands):
         self.currgs = str(operands[-1])
@@ -37,7 +37,7 @@ class PageState:
 
     def k(self, op, operands):
         try:
-            b = float(operands[-1])
+            overprintme = self.overprinttest(operands)
         except (ValueError, TypeError):
             return operands + [op]
         extras = []
@@ -95,25 +95,30 @@ class PageState:
                 operands = []
         return "\r\n".join(res)
 
-parser = argparse.ArgumentParser()
-parser.add_argument("infile", help="Input PDF file")
-parser.add_argument("outfile", help="Output PDF file")
-parser.add_argument("-t","--threshold",type=float,default=1.0,help="Overprint black threshold [1.0]")
-args = parser.parse_args()
+    def overprinttest(self, operands):
+        vals = list(map(float, operands))
+        if vals >= self.threshold:
+            return True
+        if self.testnumcols:
+            numcols = sum(1 for v in vals if v > 0.)
+            if numcols > 1:
+                return True
+        return False
 
-trailer = PdfReader(args.infile)
+def fixpdfcmyk(infile, outfile, threshold=1.):
+    trailer = PdfReader(infile)
 
-for pagenum, page in enumerate(trailer.pages, 1):
-    pstate = PageState(args.threshold, page.Resources.ExtGState)
-    instrm = page.Contents
-    if not isinstance(instrm, PdfArray):
-        instrm = [instrm]
-    for i in instrm:
-        if isinstance(i, PdfIndirect):
-            i = i.real_value()
-        uncompress([i])
-        strm = pstate.parsestream(trailer, i.stream)
-        i.stream = strm
+    for pagenum, page in enumerate(trailer.pages, 1):
+        pstate = PageState(threshold, page.Resources.ExtGState)
+        instrm = page.Contents
+        if not isinstance(instrm, PdfArray):
+            instrm = [instrm]
+        for i in instrm:
+            if isinstance(i, PdfIndirect):
+                i = i.real_value()
+            uncompress([i])
+            strm = pstate.parsestream(trailer, i.stream)
+            i.stream = strm
 
-PdfWriter(args.outfile, trailer=trailer).write()
-        
+    PdfWriter(outfile, trailer=trailer).write()
+
