@@ -2,7 +2,7 @@
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal
 from ptxprint.piclist import newBase
 from ptxprint.utils import refKey, getlang, _, f2s
-from gi.repository import Gtk, GdkPixbuf, GObject, Gdk
+from gi.repository import Gtk, GdkPixbuf, GObject, Gdk, GLib
 import os, re
 
 _form_structure = {
@@ -371,7 +371,10 @@ class PicList:
                             picframe = self.builder.get_object("fr_picPreview")
                             self.picrect = picframe.get_allocation()
                         if self.picrect.width > 10 and self.picrect.height > 10:
-                            pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(fpath, self.picrect.width - 6, self.picrect.height - 6)
+                            try:
+                                pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(fpath, self.picrect.width - 6, self.picrect.height - 6)
+                            except GLib.GError:
+                                pixbuf = None
                             self.setPreview(pixbuf, tooltip=fpath)
                         else:
                             self.setPreview(None)
