@@ -1127,7 +1127,7 @@
   \do@ctive=\x@\x@\x@{\x@\the\x@\do@ctive
     \x@\d@something\the\count255 }%
   \lccode`\~=\count255
-  \def\t@mp{\noexpand#2} \lowercase{\edef~{\t@mp}}}
+  \def\t@mp{\noexpand#2} \lowercase{\edef~{\relax\t@mp}}}
 \newtoks\do@ctive
 
 \def\@ctivate{\x@\edef\csname save-cat-\the\count255\endcsname{\the\catcode\count255}%

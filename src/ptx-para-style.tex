@@ -282,6 +282,11 @@
  \mcpop
 }
 
+\def\writep@rstart#1{%Call with #1 = fully expanded baselineskip
+   \beginL\pdfsavepos
+   \write\p@rlocs{\noexpand\@parstart{#1}{\the\pdflastxpos}{\the\pdflastypos}}\endL
+}
+
 \newif\iftoplevelp@r
 \def\endlastp@rstyle#1{%
  \ifsk@pping \egroup \fi % if we were skipping nonpublishable text, end that mode
@@ -398,8 +403,7 @@
    % or something like a verse number); then we'll set up margins/indents and font
    %
    \the\@veryparhooks
-   \beginL\pdfsavepos
-   \write\p@rlocs{\noexpand\@parstart{\the\pdflastxpos}{\the\pdflastypos}}\endL
+   \x@\writep@rstart\x@{\the\baselineskip}%baselineskip must fully expanded as macro param, else it remains a macro and only L baseline is output on diglot/polyglot.
    \ifRTL \rightskip\else\leftskip\fi =0pt
    \ifRTL \beginR \leftskip\else\rightskip\fi =0pt \ifJustifyPars\else plus .25\hsize\fi
    \getp@ram{justification}{\m@rker}%
@@ -647,32 +651,48 @@
 %
 \newcount\prev@y \newcount\this@y \newcount\thing@y
 \newcount\tmp@lines \newcount\thispar@lines
+\newcount\p@rlinesgoneMonoglot
+\let\p@rlinesgone\p@rlinesgoneMonoglot
+
 \def\this@pgno{}
 \let\par@items\cstackempty
 
-\def\@parstart#1#2{\prev@y=#2\relax\let\par@items\cstackempty}
+\def\calc@p@rlinesgone#1#2{%
+      \baselineskip=\csname baselineskip\c@rrdstat\endcsname
+      \advance\p@rlinesgone by \numexpr \dimexpr \numexpr \prev@y-#1\relax sp / \baselineskip \relax\relax
+      \trace{C}{#2: \the\prev@y - \the\this@y -> \the\p@rlinesgone}%
+}
+
+\def\@parstart#1#2#3{\prev@y=#3\relax\x@\edef\csname baselineskip\c@rrdstat\endcsname{#1}\relax\p@rlinesgone=0\relax\let\par@items\cstackempty}
 
 \def\@parend#1#2{%
-      \this@y=#2\relax}
+      \this@y=#2\relax
+      \calc@p@rlinesgone{\this@y}{parend}%
+}
 
 \def\@pgstart#1{%
       \edef\this@pgno{#1}}
-
-\def\@colstart#1#2#3#4#5{%
+\def\@@colstart#1#2#3#4#5{%
       \edef\prev@col@x{#4}%
       \edef\prev@col@y{#5}%
+      \prev@y=#5\relax
       \edef\prev@col@ht{#1}%
       \edef\prev@col@wd{#2}%
       \edef\prev@col@dp{#3}%
 }
-\def\@colstop#1#2{%
+\def\@@colstop#1#2{%
       \edef\this@col@x{#1}%
       \edef\this@col@y{#2}%
       \trace{C}{colstop: \par@items}%
+      \calc@p@rlinesgone{\this@col@y}{colstop}%
       \let\d@=\check@pagefoot
       \x@\cstackdown\par@items\E
 }
-
+\def\@colstart#1#2#3#4#5{%
+  \let\p@rlinesgone=\p@rlinesgoneMonoglot
+  \@@colstart{#1}{#2}{#3}{#4}{#5}}
+\def\@colstop#1#2{\def\c@rrdstat{}%%
+  \@@colstop{#1}{#2}}
 %Do somehing clever for items that are near 
 %the end of the column.. Problem: the ones we're
 %interested in doing clever things with were not put

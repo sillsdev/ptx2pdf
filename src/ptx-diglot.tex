@@ -1216,6 +1216,7 @@
 \def\@preswap@simplecols#1{}
 \def\@postswap@simplecols#1{}
 
+
 \def\@@simplecols#1{\hbox to\columnshift{}\ifx\l@stcol\empty\else\unhcopy1 \fi
     \hbox to \csname column#1width\endcsname{\x@\copy\csname #1box\endcsname\hss}\xdef\l@stcol{#1}}
   %
@@ -1313,6 +1314,21 @@
   \x@\each@col\diglot@list\E
 }
 
+%write column start and stop information
+\def\@@simple@colstart#1#2{%
+    \x@\xdef\csname dc@ref@rgs#2\endcsname{\string\@Poly@colstart{\the\ht#1}{\the\dp#1}{\the\wd#1}}%
+    \pdfsavepos
+    \x@\write\x@\p@rlocs\x@{\csname dc@ref@rgs#2\endcsname{\the\pdflastxpos}{\the\pdflastypos}{#2}}%
+}
+\xdef\dc@ref@rgse{\string\@Poly@colstop}%
+\def\@@simple@colstop#1{%
+    \pdfsavepos
+    \write\p@rlocs{\dc@ref@rgse{\the\pdflastxpos}{\the\pdflastypos}{#1}}%
+}
+
+\def\@Poly@colstart#1#2#3#4#5#6{\edef\c@rrdstat{#6}\baselineskip=#3\relax\@@colstart{#1}{#2}{#3}{#4}{#5}}
+\def\@Poly@colstop#1#2#3{\edef\c@rrdstat{#3}\relax\@@colstop{#1}{#2}}
+
 \def\@prepare@upd@tep@rtial@simplecols{%
   \trace{dp}{columns with contents: \cts@list (\the\curactivecols)}%
   \ifnum\curactivecols>0 
@@ -1323,7 +1339,11 @@
     \iftemp
       \let\b@xtype\vbox
       \trace{D}{Un vtopping headings}%
-      \def\col@do##1{\x@\setbox\csname ##1box\endcsname\vbox{\unvbox\csname ##1box\endcsname}}
+      \def\col@do##1{\x@\setbox\csname ##1box\endcsname\vbox{\@@simple@colstart{\csname ##1box\endcsname}{##1}\unvbox\csname ##1box\endcsname\@@simple@colstop{##1}}}
+      \x@\each@col\cts@list\E
+    \else
+      \trace{D}{marking column start and stop}%
+      \def\col@do##1{\x@\setbox\csname ##1box\endcsname\vtop{\@@simple@colstart{\csname ##1box\endcsname}{##1}\unvbox\csname ##1box\endcsname\@@simple@colstop{##1}}}
       \x@\each@col\cts@list\E
     \fi
   \fi
