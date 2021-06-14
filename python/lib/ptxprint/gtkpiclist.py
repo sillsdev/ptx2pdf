@@ -149,8 +149,8 @@ class PicList:
         allkeys = set()
         for row in self.model:
             k = row[_pickeys['key']]
-            if k.startswith("row"):
-                print(f"{k} added")
+            # if k.startswith("row"):
+                # print(f"{k} added")
             p = picinfos.setdefault(k, {})
             for i, e in enumerate(_piclistfields):
                 if e == 'key':

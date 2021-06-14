@@ -621,7 +621,7 @@ class GtkViewModel(ViewModel):
                   "fr_spacingAdj", "fr_fallbackFont", "l_complexScript", "b_scrsettings", "c_colorfonts",
                   "scr_picListEdit", "gr_picButtons", "tb_picPreview", "l_linesOnPageLabel", "l_linesOnPage", "fr_tabs",
                   "btn_adjust_spacing", "btn_adjust_top", "btn_adjust_bottom", "fr_diglot", "btn_diglotSwitch", "fr_borders",
-                  "c_grid", "btn_adjustGrid"): #, "c_noInkFooter"):
+                  "c_grid", "btn_adjustGrid", "lb_omitPics"): #, "c_noInkFooter"):
             # print(c)
             self.builder.get_object(c).set_visible(val)
 
@@ -2744,7 +2744,7 @@ class GtkViewModel(ViewModel):
 
             return pixbuf
         picfile = self.fileChooser(_("Choose Image"),
-                                  filters={"Images": {"patterns": ['*.tif', '*.png', '*.jpg'], "mime": "application/image"}},
+                                  filters={"Images": {"patterns": ['*.tif', '*.png', '*.jpg', '*.pdf'], "mime": "application/image"}},
                                    multiple=False, basedir=picdir, preview=update_preview)
         if picfile is not None:
             self.set("nbk_PicList", 1)

@@ -720,6 +720,9 @@ class RunJob:
     def carefulCopy(self, ratio, srcpath, tgtfile, cropme):
         tmpPicPath = os.path.join(self.printer.working_dir, "tmpPics")
         tgtpath = os.path.join(tmpPicPath, tgtfile)
+        if os.path.splitext(srcpath)[1].lower().startswith(".pdf"):
+            copyfile(srcpath, tgtpath)
+            return os.path.basename(tgtpath)
         try:
             im = Image.open(srcpath)
             iw = im.size[0]
