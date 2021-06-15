@@ -608,14 +608,14 @@
   \immediate\openout\p@rlocs="\j@bname.parlocs"
 }
 \addtoinithooks{\initp@rlocs}
-\def\locs@startstop#1{%
+\def\locs@startstop#1#2{%
   %\showboxdepth=99
   %\showboxbreadth=99
   \let\old@ep=\everypar
   \everypar{}%
   \setbox#1\vbox{%
     %\hsize=\wd#1%
-    \edef\dc@ref@rgs{\string\@colstart{\the\ht#1}{\the\dp#1}{\the\wd#1}}%
+    \edef\dc@ref@rgs{\string\@colstart{\the\ht#2}{\the\dp#2}{\the\wd#2}}%
     \pdfsavepos
     \x@\write\x@\p@rlocs\x@{\dc@ref@rgs{\the\pdflastxpos}{\the\pdflastypos}}%
     \box#1%
@@ -656,37 +656,50 @@
 
 \def\this@pgno{}
 \let\par@items\cstackempty
+\x@\newif\csname ifinp@r-\endcsname
 
 \def\calc@p@rlinesgone#1#2{%
-      \baselineskip=\csname baselineskip@\c@rrdstat\endcsname
-      \advance\p@rlinesgone by \numexpr \dimexpr \numexpr \prev@y-#1\relax sp / \baselineskip \relax\relax
-      \trace{C}{#2: \the\prev@y - \the\this@y -> \the\p@rlinesgone}%
+  \baselineskip=\csname baselineskip@\c@rrdstat\endcsname
+  \advance\p@rlinesgone by \numexpr \dimexpr #1 / \baselineskip \relax\relax
+  \trace{C}{#2: ( #1  / \the\baselineskip) -> \the\p@rlinesgone}%
 }
 
-\def\@parstart#1#2#3{\prev@y=#3\relax\x@\edef\csname baselineskip@\c@rrdstat\endcsname{#1}\relax\p@rlinesgone=0\relax\let\par@items\cstackempty}
+\def\@parstart#1#2#3{
+  \prev@y=#3\relax
+  \dimen1=\numexpr \prev@col@y - \prev@y\relax sp\relax
+  \edef\prev@col@ht{\the\dimexpr \tot@col@ht - \dimen1\relax}%
+  \trace{C}{@parstart \tot@col@ht - \the\dimen1 = \prev@col@ht}%
+  \csname inp@r-\c@rrdstat true\endcsname
+  \x@\edef\csname baselineskip@\c@rrdstat\endcsname{#1}\relax\p@rlinesgone=1\relax\let\par@items\cstackempty}
 
 \def\@parend#1#2{%
-      \this@y=#2\relax
-      \calc@p@rlinesgone{\this@y}{parend}%
+  \this@y=#2\relax
+  \calc@p@rlinesgone{\the\dimexpr \numexpr \prev@y-\this@y\relax sp\relax}{parend}%
+  \csname inp@r-\c@rrdstat false\endcsname
 }
 
 \def\@pgstart#1{%
-      \edef\this@pgno{#1}}
+  \edef\this@pgno{#1}}
 \def\@@colstart#1#2#3#4#5{%
-      \edef\prev@col@x{#4}%
-      \edef\prev@col@y{#5}%
-      \prev@y=#5\relax
-      \edef\prev@col@ht{#1}%
-      \edef\prev@col@wd{#2}%
-      \edef\prev@col@dp{#3}%
+  \trace{C}{@colstart: \the\p@rlinesgone.}
+  \edef\prev@col@x{#4}%
+  \edef\prev@col@y{#5}%
+  \prev@y=#5\relax
+  \edef\tot@col@ht{#1}%
+  \edef\prev@col@ht{#1}%
+  \edef\prev@col@dp{#2}%
+  \edef\prev@col@wd{#3}%
 }
 \def\@@colstop#1#2{%
-      \edef\this@col@x{#1}%
-      \edef\this@col@y{#2}%
-      \trace{C}{colstop: \par@items}%
-      \calc@p@rlinesgone{\this@col@y}{colstop}%
-      \let\d@=\check@pagefoot
-      \x@\cstackdown\par@items\E
+  \edef\this@col@x{#1}%
+  \edef\this@col@y{#2}%
+  %\prev@y=#1
+  \trace{C}{colstop: \par@items}%
+  \csname ifinp@r-\c@rrdstat\endcsname
+    \calc@p@rlinesgone{\the\dimexpr \prev@col@ht+\prev@col@dp\relax}{colstop}%
+  \fi
+  \let\d@=\check@pagefoot
+  \x@\cstackdown\par@items\E
 }
 \def\@colstart#1#2#3#4#5{%
   \let\p@rlinesgone=\p@rlinesgoneMonoglot
@@ -700,9 +713,9 @@
 %...  Do somthing with it. At the moment just moan.
 \def\check@pagefoot#1|#2|#3\E{
   \ifnum #3 < \this@col@y
-    \dimen1=\this@col@y sp
-    \advance \dimen1 by -#3 sp
-    \MSG{*** item type '#1' in cutout at #2 drops below the bottom of the column(by more than \the\dimen1)}%
+  \dimen1=\this@col@y sp
+  \advance \dimen1 by -#3 sp
+  \MSG{*** item type '#1' in cutout at #2 drops below the bottom of the column(by more than \the\dimen1)}%
   \fi
 }
 
@@ -715,6 +728,10 @@
       %\let\pendingch@pter\empty\let\pendingb@@k\empty
     %\fi
   %\fi
+  \trace{C}{parlines: \the\thispar@lines =\the\p@rlinesgone?}%
+  \ifnum \thispar@lines=\p@rlinesgone\else
+    \MSG{*** Mismatch between calculated and reported lines on page \this@pgno. Cutouts may not have been calculated properly}%
+  \fi
   \ifx\pending@items\cstackempty\else
     \trace{C}{Before parlines: pending: \pending@items}%
    % \thispar@lines=\prev@y\advance\thispar@lines by -\this@y
@@ -798,6 +815,7 @@
     \divide\tmp@lines by \baselineskip
     \advance\tmp@lines by #6
     \advance\tmp@lines by \p@rlinesgone
+    \advance\tmp@lines by -1 % starting on 1st line is 0, not 1.
     \trace{C}{* calculated \string\DelayedItem{#1}{#2}{\the\tmp@lines} (#4 x#5 @#6)}%
     %\add@pending{#1}{#2}{\the\thing@y}{#4}{#5}{\the\tmp@lines}{#7}%
     \wr@teDelayedItem{#1}{#2}{\the\tmp@lines}{(#4x#5@#6)#7}%
@@ -816,11 +834,11 @@
   %\wr@teDelayedItem{thingtype}{curref}{delay}{cutout wd}{cutout ht}{cutout after}{cutout side}%
   \def\c@rref{#2}%
   \trace{C}{wDI}%
-  \delay@test{#1}%
+  \delay@test{#1}% 
   \raise@test{#1}%
   \ifx\t@std@lay\relax \pr@vdelay=0 
   \else \pr@vdelay=\t@std@lay\fi
-  \th@sdelay=#3\relax
+  \th@sdelay=#3\relax % Delay calculated here
   \ifnum\pr@vdelay=\th@sdelay % if the delay value is unchanged, all is good
     \ifx\t@str@ise\relax
       \trace{C}{PARLOC:ok}%
@@ -835,7 +853,7 @@
     %\ifx\t@str@ise\relax \else \count255=\t@str@ise\advance\tmp@lines by -\count255\fi
     %\ifnum\tmp@lines <0 \count255=-\tmp@lines\else\count255=\tmp@lines\fi
     \g@tCutoutSlop{#1}%
-    \trace{C}{tmplines=\the\tmp@lines, \r@isemin, \r@isemax}%
+    \trace{C}{tmplines. OK if \r@isemin <= \the\tmp@lines <=  \r@isemax}%
     \tempfalse
     \ifnum \tmp@lines<\r@isemin\relax \temptrue\fi
     \ifnum \tmp@lines>\r@isemax\relax \temptrue\fi  % if new delay is <2 away than old, we can use \RaiseItem
@@ -926,10 +944,11 @@
 \def\RaiseItem#1#2#3{%
   \x@\def\csname raise-#1.#2\endcsname{#3}}%
 
-\def\delay@test#1{\trace{C}{delay@test: \id@@@\ifdiglot\c@rrdstat\fi.\ch@pter: #1 \c@rref}%
-    \x@\let\x@\t@std@lay\csname delay-#1.\c@rref\endcsname}
-\def\raise@test#1{\trace{C}{raise@test: \id@@@\ifdiglot\c@rrdstat\fi.\ch@pter: #1 \c@rref}%
-    \x@\let\x@\t@str@ise\csname raise-#1.\c@rref\endcsname}
+\def\delay@test#1{\x@\let\x@\t@std@lay\csname delay-#1.\c@rref\endcsname
+  \trace{C}{delay@test: \id@@@\ifdiglot\c@rrdstat\fi.\ch@pter: #1 \c@rref ::\t@std@lay}}%
+
+\def\raise@test#1{\x@\let\x@\t@str@ise\csname raise-#1.\c@rref\endcsname
+  \trace{C}{raise@test: \id@@@\ifdiglot\c@rrdstat\fi.\ch@pter: #1 \c@rref ::\t@str@ise}}%
 
 \def\ptx@nb{%
   \ifch@pter
