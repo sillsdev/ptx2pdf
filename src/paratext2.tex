@@ -653,7 +653,7 @@
   \ifdim\availht<0pt                                                        %(2)
     \MSG{Page overfull with inserts. Perhaps a little more text and less pictures would help}%
   \fi
-  %\setbox\colA=\vbox{\unvbox\colA}
+  %\setbox\colA=\vbox{\unvbox\colA}%
   % and check if it all fit; if not, we'll have to back up and try again
   \ifvoid255 \fitonpagetrue \else \fitonpagefalse \fi
 %-c_onecoltrial_intro
@@ -670,8 +670,10 @@
       \dimen9=\ht\partial
       \ifvoid\partial\else \vbox{\hbox to \dimen1{\hskip\columnshift\vbox{\unvbox\partial}}} \fi
       \ifvoid\topins\else \vbox{\hbox to \columnshift{}\box\topins} \vskip\skip\topins \fi
+      \setbox1=\vbox{\unvcopy\colA\unskip}%
       \iflastpage\setbox\colA\vbox{\unvbox\colA}\fi
       \lastd@pth=\dp\colA
+      \locs@startstop{\colA}{1}%
       \hbox to \dimen1{\hbox to \columnshift{}%
         \box\colA\hbox to \ExtraRMargin{}\hfil}%
       \ifvoid\bottomins\else \vfil\kern-\lastd@pth
@@ -812,6 +814,8 @@
   \ifvoid255 \fitonpagetrue \else \fitonpagefalse \fi
   \trace{o}{savepartialpage \the\ht\colA rem=\the\ht255}%
   \iffitonpage
+    \setbox1=\vbox{\unvcopy\colA\unskip}%
+    \locs@startstop{\colA}{1}%
     \global\setbox\partial=\vbox{
       \ifvoid\partial\else \vbox{\hbox to \dimen1{\hskip\columnshift\vbox{\unvbox\partial}}} \fi
       \ifvoid\topins\else \unvbox\topins \vskip\skip\topins \fi

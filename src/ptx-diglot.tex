@@ -194,6 +194,9 @@
 \def\SpaceStretchFactorL{}\def\SpaceStretchFactorR{}
 \def\SpaceShrinkFactorL{}\def\SpaceShrinkFactorR{}
 \newif\ifRTLL \newif\ifRTLR
+\x@\newif\csname ifinp@r-L\endcsname % Used for parlocs analysis
+\x@\newif\csname ifinp@r-R\endcsname % Used for parlocs analysis
+
 \def\doVisTrace#1{%
   \setbox0=\vtop to 0pt{\hrule height 0pt depth 0.5pt width 15pt\hbox{\VisTracefont #1 \the\TRACEcount}\vss}\ht0=0pt\dp0=0pt
 }
