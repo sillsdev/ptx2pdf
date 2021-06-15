@@ -140,3 +140,15 @@ def fixpdfcmyk(infile, outfile, threshold=1.):
 
     PdfWriter(outfile, trailer=trailer).write()
 
+def pagebbox(infile, pagenum=0):
+    trailer = PdfReader(infile)
+    if pagenum == 0:
+        pagenum = 1
+    pagenum -= 1
+    pagenum = min(len(trailer.pages), pagenum)
+    page = trailer.pages[pagenum]
+    cropbox = page.inheritable.CropBox
+    return cropbox
+
+
+

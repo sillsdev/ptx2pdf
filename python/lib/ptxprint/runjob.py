@@ -195,13 +195,13 @@ class RunJob:
         self.books = []
         self.maxRuns = 1 if self.printer.get("c_quickRun") else (self.args.runs or 5)
         self.changes = None
+        self.ispdfxa = self.printer.get("c_PDFx1aOutput")
         if not self.inArchive:
             self.checkForMissingDecorations(info)
         info["document/piclistfile"] = ""
         if info.asBool("document/ifinclfigs"):
             self.picfiles = self.gatherIllustrations(info, jobs, self.args.paratext)
             # self.texfiles += self.gatherIllustrations(info, jobs, self.args.paratext)
-        self.ispdfxa = self.printer.get("c_PDFx1aOutput")
         
         if True: # info.asBool("project/combinebooks"):
             joblist = [jobs]
@@ -578,7 +578,7 @@ class RunJob:
             x1aout = self.printer.get("c_PDFx1aOutput")
             cmd = ["xdvipdfmx", "-E"]
             if x1aout:
-                cmd += ["-z", "0", "-o", outfname.replace(".tex", ".prepress.pdf")]
+                cmd += ["-q", "-z", "0", "-o", outfname.replace(".tex", ".prepress.pdf")]
             if self.args.extras & 1:
                 cmd += ["-vv"]
             runner = call(cmd + [outfname.replace(".tex", ".xdv")], cwd=self.tmpdir)
@@ -689,10 +689,9 @@ class RunJob:
     def convertToJPGandResize(self, ratio, infile, outfile, cropme):
         if self.ispdfxa:
             white = (0, 0, 0, 0)
-            fmt = fmta = "CMYK"
+            fmt = "CMYK"
         else:
             white = (255, 255, 255, 255)
-            fmta = "RGBA"
             fmt = "RGB"
         with open(infile,"rb") as inf:
             rawdata = inf.read()
@@ -701,21 +700,39 @@ class RunJob:
         if cropme:
             im = self.cropBorder(im)
         p = im.load()
-        onlyRGBAimage = im.convert(fmta)
         iw = im.size[0]
         ih = im.size[1]
         if iw/ih < ratio:
+            onlyRGBAimage = im.convert("RGBA")
             newWidth = int(ih * ratio)
-            newimg = Image.new(fmta, (newWidth, ih), color=white)
-            newimg.alpha_composite(onlyRGBAimage, (int((newWidth-iw)/2),0))
-            iw = newimg.size[0]
-            ih = newimg.size[1]
-            onlyRGBimage = newimg.convert(fmt)
-            onlyRGBimage.save(outfile)
+            compimg = Image.new("RGBA", (newWidth, ih), color=white)
+            compimg.alpha_composite(onlyRGBAimage, (int((newWidth-iw)/2),0))
+            iw = compimg.size[0]
+            ih = compimg.size[1]
+            newimage = compimg.convert(fmt)
+        elif im.mode != "fmt":
+            newimage = im.convert(fmt)
         else:
-            onlyRGBimage = onlyRGBAimage.convert(fmt)
-            onlyRGBimage.save(outfile)
+            newimage = im
+        if fmt == "CMYK":
+            self.cmytocmyk(newimage)
+        newimage.save(outfile)
         return True
+
+    def cmytocmyk(self, im):
+        for y in range(im.height):
+            for x in range(im.width):
+                im.putpixel((x, y), self._cmytocmyk(*im.getpixel((x, y))))
+
+    @staticmethod
+    def _cmytocmyk(c, m, y, k):
+        dk = min(c, m, y)
+        if dk + k > 255:
+            dk = 255 - k
+            k = 255
+        else:
+            k += dk
+        return (c - dk, m - dk, y - dk, k)
 
     def carefulCopy(self, ratio, srcpath, tgtfile, cropme):
         tmpPicPath = os.path.join(self.printer.working_dir, "tmpPics")
@@ -731,6 +748,7 @@ class RunJob:
             print(("Failed to get size of (image) file:"), srcpath)
         # If either the source image is a TIF (or) the proportions aren't right for page dimensions 
         # then we first need to convert to a JPG and/or pad with which space on either side
+        print(f"{srcpath} isxa={self.ispdfxa}")
         if cropme or self.ispdfxa or iw/ih < ratio or os.path.splitext(srcpath)[1].lower().startswith(".tif"): # (.tif or .tiff)
             tgtpath = os.path.splitext(tgtpath)[0]+".jpg"
             try:
