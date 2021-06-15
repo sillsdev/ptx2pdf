@@ -658,12 +658,12 @@
 \let\par@items\cstackempty
 
 \def\calc@p@rlinesgone#1#2{%
-      \baselineskip=\csname baselineskip\c@rrdstat\endcsname
+      \baselineskip=\csname baselineskip@\c@rrdstat\endcsname
       \advance\p@rlinesgone by \numexpr \dimexpr \numexpr \prev@y-#1\relax sp / \baselineskip \relax\relax
       \trace{C}{#2: \the\prev@y - \the\this@y -> \the\p@rlinesgone}%
 }
 
-\def\@parstart#1#2#3{\prev@y=#3\relax\x@\edef\csname baselineskip\c@rrdstat\endcsname{#1}\relax\p@rlinesgone=0\relax\let\par@items\cstackempty}
+\def\@parstart#1#2#3{\prev@y=#3\relax\x@\edef\csname baselineskip@\c@rrdstat\endcsname{#1}\relax\p@rlinesgone=0\relax\let\par@items\cstackempty}
 
 \def\@parend#1#2{%
       \this@y=#2\relax
@@ -779,12 +779,12 @@
 %
 \def\@delayedthing#1#2#3#4#5#6#7#8#9{\thing@y=#9\relax %Part of post-run processing
   \trace{C}{delayedthing (prev:\the\prev@y) #1 #2 #3 #4 #5 #6 #7 #8 #9}%
-  \ifnum\the\prev@y<\thing@y % para start was lower than chapter number, must have passed a col/page break
+  %\ifnum\the\prev@y<\thing@y % Lower number means lower on page. para start was lower than chapter number, must have passed a col/page break
     %%\def\this@thing{#1}% What is it?
     %\def\thing@ref{#2}% Unique id.
-    \trace{C}{* saved pending  \string\DelayedItem{#1}{#2}}%
-    \add@pending{#1}{#2}{\the\thing@y}{#4}{#5}{#6}{#7}%
-  \else % para start level with or above chapter number; OK to calculate # of lines
+    %\trace{C}{* saved pending  \string\DelayedItem{#1}{#2}}%
+    %\add@pending{#1}{#2}{\the\thing@y}{#4}{#5}{#6}{#7}%
+  %\else % para start level with or above chapter number; OK to calculate # of lines
     %First, remember where the bottom of the item
     %probably is.
     \tmp@lines=\thing@y
@@ -797,10 +797,12 @@
     \advance\tmp@lines by -\thing@y
     \divide\tmp@lines by \baselineskip
     \advance\tmp@lines by #6
+    \advance\tmp@lines by \p@rlinesgone
     \trace{C}{* calculated \string\DelayedItem{#1}{#2}{\the\tmp@lines} (#4 x#5 @#6)}%
     %\add@pending{#1}{#2}{\the\thing@y}{#4}{#5}{\the\tmp@lines}{#7}%
     \wr@teDelayedItem{#1}{#2}{\the\tmp@lines}{(#4x#5@#6)#7}%
-  \fi}
+  %\fi
+}
 
 %-cpar_delayedchap
 
