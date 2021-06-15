@@ -2,13 +2,17 @@
 all: test.pdf
 DIR:=$(shell dirname `find ../../..  -name paratext2.tex`)
 .tex.pdf:
-	-mkdir 1 2 3 4 5
+	-mkdir 1 2 3 4 5 6 7 8 9
 	TEXINPUTS=.:$(DIR) xetex $<
 	cp test.pdf test.parlocs test.delayed test.log 1
 	if grep Rerun test.log ; then TEXINPUTS=.:$(DIR) xetex $<  && cp test.pdf test.parlocs test.delayed test.log 2; else rm  -f 2/* ; fi 
 	if grep Rerun test.log ; then TEXINPUTS=.:$(DIR) xetex $<  && cp test.pdf test.parlocs test.delayed test.log 3;  else rm  -f 3/* ; fi 
 	if grep Rerun test.log ; then TEXINPUTS=.:$(DIR) xetex $<  && cp test.pdf test.parlocs test.delayed test.log 4; else rm  -f 4/* ; fi 
 	if grep Rerun test.log ; then TEXINPUTS=.:$(DIR) xetex $<  && cp test.pdf test.parlocs test.delayed test.log 5; else rm  -f 5/* ; fi 
+	if grep Rerun test.log ; then TEXINPUTS=.:$(DIR) xetex $<  && cp test.pdf test.parlocs test.delayed test.log 6; else rm  -f 6/* ; fi 
+	if grep Rerun test.log ; then TEXINPUTS=.:$(DIR) xetex $<  && cp test.pdf test.parlocs test.delayed test.log 7; else rm  -f 7/* ; fi 
+	if grep Rerun test.log ; then TEXINPUTS=.:$(DIR) xetex $<  && cp test.pdf test.parlocs test.delayed test.log 8; else rm  -f 8/* ; fi 
+	if grep Rerun test.log ; then TEXINPUTS=.:$(DIR) xetex $<  && cp test.pdf test.parlocs test.delayed test.log 9; else rm  -f 9/* ; fi 
 	
 
 test.pdf: test.tex usfmTex-ext.tex usfmTex-settings.tex test.usfm $(DIR)/*.tex *.sty test.usfm test.usfm.piclist
