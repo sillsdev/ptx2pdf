@@ -825,10 +825,12 @@
 %-cpar_delayedchap
 
 %+cpar_writedelayed
-\def\setCutoutSlop#1#2#3{\x@\edef\csname raiselimits-#1\endcsname{#2,#3}}
-\setCutoutSlop{chapter}{1}{0}
-\def\g@tCutoutSlop#1{\x@\let\x@\r@iselimit\csname raiselimits-#1\endcsname\ifx\r@iselimit\relax\x@\p@rselimit 2,1\E\else\x@\p@rselimit\r@iselimit\E\fi}
-\def\p@rselimit#1,#2\E{\edef\r@isemin{-#1}\edef\r@isemax{#2}}
+\def\setCutoutSlop#1#2#3{\x@\xdef\csname raiselimits-#1\endcsname{#2,#3}}
+\def\setCutoutSlopDefault#1#2{\xdef\defaultSlop{#1,#2}}
+\setCutoutSlop{chapter}{1}{0} % Up,Down
+\setCutoutSlopDefault{2}{1}% 2 up, 1 down
+\def\g@tCutoutSlop#1{\x@\let\x@\r@iselimit\csname raiselimits-#1\endcsname\ifx\r@iselimit\relax\x@\p@rselimit\defaultSlop\E\else\x@\p@rselimit\r@iselimit\E\fi}
+\def\p@rselimit#1,#2\E{\edef\@djustmin{-#1}\edef\@djustmax{#2}}
 
 \def\wr@teDelayedItem#1#2#3#4{% Part of post-run processing
   %\wr@teDelayedItem{thingtype}{curref}{delay}{cutout wd}{cutout ht}{cutout after}{cutout side}%
@@ -849,16 +851,26 @@
     \fi
   \else
     \tmp@lines=\pr@vdelay
-    \advance\tmp@lines by -\th@sdelay
+    \advance\tmp@lines by -\th@sdelay % Negative if the image/chapnum is going up, +ve if going down
     %\ifx\t@str@ise\relax \else \count255=\t@str@ise\advance\tmp@lines by -\count255\fi
     %\ifnum\tmp@lines <0 \count255=-\tmp@lines\else\count255=\tmp@lines\fi
     \g@tCutoutSlop{#1}%
-    \trace{C}{tmplines. OK if \r@isemin <= \the\tmp@lines <=  \r@isemax}%
+    \trace{C}{tmplines =\the\tmp@lines. OK if \@djustmin <= tmplines <=  \@djustmax}%
     \tempfalse
-    \ifnum \tmp@lines<\r@isemin\relax \temptrue\fi
-    \ifnum \tmp@lines>\r@isemax\relax \temptrue\fi  % if new delay is <2 away than old, we can use \RaiseItem
+    \edef\@accept@djmin{\@djustmin}%
+    \edef\@accept@djmax{\@djustmax}%
+    \ifnum \tmp@lines<\@djustmin\relax 
+      \edef\@accept@djmin{\the\tmp@lines}%
+      \temptrue
+    \fi
+    \ifnum \tmp@lines>\@djustmax\relax 
+      \edef\@accept@djmax{\the\tmp@lines}%
+      \temptrue
+    \fi  % if new delay is <2 away than old, we can use \RaiseItem
     \iftemp
-      \MSG{PARLOC: Rerun. Delayed #1 setting changed (from \the\pr@vdelay to \the\th@sdelay) at #2}%
+      \MSG{PARLOC: Rerun. Delayed #1 setting changed (from \the\pr@vdelay to \the\th@sdelay) at #2.}
+      \message{Current slop: \string\setCutoutSlop{#1}{\the\numexpr -\@djustmin\relax}{\@djustmax}}%
+      \message{Would use RaiseItem if: \string\setCutoutSlop{#1}{\the\numexpr -\@accept@djmin\relax}{\@accept@djmax}}%
     \else
       \th@sdelay=\pr@vdelay % Retain past delay and (if needed) use raiseitem
       \multiply\tmp@lines by -1 % change sign to match semantics of raise.
