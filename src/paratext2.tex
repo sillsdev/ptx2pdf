@@ -270,6 +270,7 @@
 \let\newt@ks=\newtoks
 \let\newdim@n=\newdimen
 \let\newins@rt=\newinsert
+\let\n@wif=\newif
 \newtoks\endn@teclasses
 \newtoks\plac@ndnotes
 \newif\if@ndnotesfound
@@ -1348,13 +1349,15 @@
     \dimen3=\ifdim\colhtA>\colhtB\colhtA\else\colhtB\fi
     \ifdim\dimen3>\availht\dimen3=\availht\fi
     \ifColNotes\ifdim\ht\xr@fbox>\dimen3\dimen3=\ht\xr@fbox\fi\fi
+    \setbox1=\vbox{\unvcopy\colA\unskip}%
+    \setbox2=\vbox{\unvcopy\colB\unskip}%
     % strip off full page height from c@lcboxheights and grab the depth
     \setbox\colA=\vbox to \dimen3{\unvbox\colA\unskip\setbox0\lastbox\global\dimen8=\dp0\box0}%
     \setbox\colB=\vbox to \dimen3{\unvbox\colB\unskip\setbox0\lastbox\global\dimen9=\dp0\box0}%
     \lastd@pth=\ifdim\dimen8>\dimen9\dimen8\else\dimen9\fi
     \ifColNotes\ifdim\dp\xr@fbox>\lastd@pth \lastd@pth=\dp\xr@fbox\fi\fi
     % do this after we have the final boxes
-    \locs@startstop{\colA}\locs@startstop{\colB}%
+    \locs@startstop{\colA}{1}\locs@startstop{\colB}{2}%
     \dimen4=\ht\partial \dimen5=\dp\partial
     \global\setbox\partial=\vbox{
       \dimen1=\textwidth\advance\dimen1 by -\ExtraRMargin
@@ -1441,8 +1444,10 @@
 %+c_twocoltrial
   \iffitonpage
     \c@lcboxheights
-    \locs@startstop{\colA}%
-    \locs@startstop{\colB}%
+    \setbox1=\vbox{\unvcopy\colA\unskip}%
+    \setbox2=\vbox{\unvcopy\colB\unskip}%
+    \locs@startstop{\colA}{1}%
+    \locs@startstop{\colB}{2}%
     \ifdim\ht\colB<1pt\setbox\colB\vbox{\noindent\par}\fi
     %\ht\colA=\the\availht \ht\colB=\the\availht                             %(1)
     \lastd@pth=\dp\colA\ifdim\dp\colB<\lastd@pth \lastd@pth=\dp\colB\fi

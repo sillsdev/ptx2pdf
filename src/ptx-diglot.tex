@@ -2436,6 +2436,7 @@
     \xdef@cseq{@cur#1ht}{0pt}% 
     \xdef@cseq{@cur#1dp}{0pt}% 
     \header@defs{#1}% All the possible header contents
+    \x@\n@wif\csname ifinp@r-#1\endcsname % Used for parlocs analysis
     \def@cseq{stylesheet#1}{\gdef\ds@ffix{#1}\stylesh@@t}% column-specific stylesheet
 %TODO:
 %FIXMEs needing for polyglot processing:

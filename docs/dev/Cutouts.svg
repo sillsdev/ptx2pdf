@@ -20,7 +20,162 @@
    inkscape:export-xdpi="96"
    inkscape:export-ydpi="96">
   <defs
-     id="defs2" />
+     id="defs2">
+    <marker
+       inkscape:stockid="Arrow1Mend"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker5494"
+       style="overflow:visible;"
+       inkscape:isstock="true">
+      <path
+         id="path5492"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
+         transform="scale(0.4) rotate(180) translate(10,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mstart"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker5482"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         id="path5480"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
+         transform="scale(0.4) translate(10,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker5468"
+       style="overflow:visible;"
+       inkscape:isstock="true">
+      <path
+         id="path5466"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
+         transform="scale(0.8) rotate(180) translate(12.5,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mstart"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker5040"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         id="path5038"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
+         transform="scale(0.4) translate(10,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mstart"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker5028"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         id="path5026"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
+         transform="scale(0.4) translate(10,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker5016"
+       style="overflow:visible;"
+       inkscape:isstock="true">
+      <path
+         id="path5014"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
+         transform="scale(0.8) rotate(180) translate(12.5,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Lstart"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker5008"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         id="path5006"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
+         transform="scale(0.8) translate(12.5,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mend"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow1Mend"
+       style="overflow:visible;"
+       inkscape:isstock="true">
+      <path
+         id="path4695"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
+         transform="scale(0.4) rotate(180) translate(10,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mstart"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow1Mstart"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         id="path4692"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
+         transform="scale(0.4) translate(10,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow1Lend"
+       style="overflow:visible;"
+       inkscape:isstock="true">
+      <path
+         id="path4689"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
+         transform="scale(0.8) rotate(180) translate(12.5,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Lstart"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow1Lstart"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         id="path4686"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
+         transform="scale(0.8) translate(12.5,0)" />
+    </marker>
+  </defs>
   <sodipodi:namedview
      id="base"
      pagecolor="#ffffff"
@@ -29,8 +184,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.9899495"
-     inkscape:cx="275.55269"
-     inkscape:cy="540.43917"
+     inkscape:cx="485.56337"
+     inkscape:cy="810.04005"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -38,10 +193,10 @@
      inkscape:snap-to-guides="true"
      inkscape:snap-global="true"
      inkscape:snap-bbox="false"
-     inkscape:window-width="1346"
-     inkscape:window-height="644"
-     inkscape:window-x="216"
-     inkscape:window-y="60"
+     inkscape:window-width="1508"
+     inkscape:window-height="848"
+     inkscape:window-x="0"
+     inkscape:window-y="24"
      inkscape:window-maximized="0"
      inkscape:snap-text-baseline="true">
     <inkscape:grid
@@ -361,12 +516,12 @@
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:125%;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        x="31.75"
-       y="40.354164"
+       y="8.604167"
        id="text4700"><tspan
          sodipodi:role="line"
          id="tspan4698"
          x="31.75"
-         y="40.354164"
+         y="8.604167"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';stroke-width:0.26458332px">A</tspan></text>
     <text
        xml:space="preserve"
@@ -419,16 +574,16 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:125%;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';text-align:end;letter-spacing:0px;word-spacing:0px;text-anchor:end;fill:#008000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="21.166666"
-       y="85.333328"
+       x="38.364582"
+       y="69.458336"
        id="text4716"><tspan
          sodipodi:role="line"
          id="tspan4714"
-         x="21.166666"
-         y="85.333328"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';fill:#008000;stroke-width:0.26458332px">yA<tspan
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:64.99999762%;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';baseline-shift:sub;fill:#008000"
-   id="tspan4718">e</tspan></tspan></text>
+         x="38.364582"
+         y="69.458336"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';fill:#008000;stroke-width:0.26458332px">hA<tspan
+   style="font-size:64.99999762%;baseline-shift:sub"
+   id="tspan4671">0</tspan></tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:125%;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';text-align:end;letter-spacing:0px;word-spacing:0px;text-anchor:end;fill:#008000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -445,16 +600,16 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:125%;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#008000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="47.625"
-       y="85.333336"
+       x="58.208332"
+       y="41.677082"
        id="text4716-0"><tspan
          sodipodi:role="line"
          id="tspan4714-1"
-         x="47.625"
-         y="85.333336"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';text-align:start;text-anchor:start;fill:#008000;stroke-width:0.26458332px">yB<tspan
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.2930553px;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';text-align:start;baseline-shift:sub;text-anchor:start;fill:#008000;stroke-width:0.26458332px"
-   id="tspan4718-3">e</tspan></tspan></text>
+         x="58.208332"
+         y="41.677082"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';text-align:start;text-anchor:start;fill:#008000;stroke-width:0.26458332px">hB<tspan
+   style="font-size:64.99999762%;baseline-shift:sub"
+   id="tspan4675">0</tspan></tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:125%;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';text-align:end;letter-spacing:0px;word-spacing:0px;text-anchor:end;fill:#008000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -521,7 +676,7 @@
          id="tspan4834" /></text>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:sans-serif;text-align:end;letter-spacing:0px;word-spacing:0px;text-anchor:end;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:125%;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';text-align:end;letter-spacing:0px;word-spacing:0px;text-anchor:end;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"
        x="7.9375"
        y="103.85416"
        id="text4838"><tspan
@@ -529,7 +684,7 @@
          id="tspan4836"
          x="7.9375"
          y="106.97541"
-         style="stroke-width:0.26458332px" /></text>
+         style="stroke-width:0.26458332px;-inkscape-font-specification:'Times New Roman, ';font-family:'Times New Roman';font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal;" /></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:125%;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -543,91 +698,98 @@
          id="tspan4886"><tspan
    style="fill:#008000"
    id="tspan955">1) At a \@parstart, a new counter, \p@rlinesgone, is initialised and (as at present) y</tspan><tspan
-   style="font-size:64.99999762%;baseline-shift:sub;fill:#008000"
-   id="tspan4918">0</tspan><tspan
+   id="tspan4918"
+   style="font-size:64.99999762%;baseline-shift:sub;fill:#008000">0</tspan><tspan
    style="fill:#008000"
-   id="tspan957"> stored</tspan>.</tspan><tspan
+   id="tspan957"> stored</tspan>. </tspan><tspan
          sodipodi:role="line"
          x="7.9375"
          y="108.58814"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';text-align:start;text-anchor:start;fill:#008000;stroke-width:0.26458332px"
-         id="tspan4904">2) At each \@colstop, the number of lines of text encountered so-far could be calculated from y<tspan
-   style="font-size:64.99999762%;baseline-shift:sub;fill:#008000"
-   id="tspan4874">0</tspan> and the end-of-column pdf position yA<tspan
-   style="font-size:64.99999762%;baseline-shift:sub;fill:#008000"
-   id="tspan4872">e</tspan>. </tspan><tspan
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';text-align:start;text-anchor:start;stroke-width:0.26458332px"
+         id="tspan5539">Also the distance to the end of text hA<tspan
+   style="font-size:64.99999762%;baseline-shift:sub"
+   id="tspan5541">0</tspan> is calculated (as the text may not fill the column).</tspan><tspan
          sodipodi:role="line"
          x="7.9375"
          y="113.32213"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';text-align:start;text-anchor:start;fill:#008000;stroke-width:0.26458332px"
-         id="tspan4912">This value can then be added to \p@rlinesgone.</tspan><tspan
+         id="tspan4904">2) At each \@colstop, the number of lines of text encountered so-far could be calculated from the natural height/depth of the column hA<tspan
+   id="tspan4678"
+   style="font-size:64.99999762%;baseline-shift:sub">0</tspan>. </tspan><tspan
          sodipodi:role="line"
          x="7.9375"
-         y="117.73185"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';text-align:start;text-anchor:start;fill:#ff0000;stroke-width:0.26458332px"
-         id="tspan4894"><tspan
-   style="fill:#008000"
-   id="tspan4695">3) At each \@colstart, the yB</tspan><tspan
-   style="font-size:64.99999762%;baseline-shift:sub;fill:#008000"
-   id="tspan4896">0 </tspan><tspan
-   style="fill:#008000"
-   id="tspan4689">can is remembered as a new y0 and the process continues</tspan>.</tspan><tspan
+         y="118.05611"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';text-align:start;text-anchor:start;fill:#008000;stroke-width:0.26458332px"
+         id="tspan5521">This value can then be added to \p@rlinesgone. </tspan><tspan
          sodipodi:role="line"
          x="7.9375"
          y="122.46584"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';text-align:start;text-anchor:start;fill:#ff0000;stroke-width:0.26458332px"
+         id="tspan4894"><tspan
+   style="fill:#008000"
+   id="tspan4695">3) At each \@colstart, the yB</tspan><tspan
+   id="tspan4896"
+   style="font-size:64.99999762%;baseline-shift:sub;fill:#008000">0 </tspan><tspan
+   style="fill:#008000"
+   id="tspan4689">can is remembered as a new y0 and the process continues</tspan>.</tspan><tspan
+         sodipodi:role="line"
+         x="7.9375"
+         y="127.19982"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';text-align:start;text-anchor:start;fill:#008000;stroke-width:0.26458332px"
          id="tspan4920">4) When a \@delayedchapter or \@delayedthing is encountered, the original 'below the paragraph start' calculation is used, </tspan><tspan
          sodipodi:role="line"
          x="7.9375"
-         y="126.87556"
+         y="131.60954"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';text-align:start;text-anchor:start;fill:#ff0000;stroke-width:0.26458332px"
-         id="tspan4922">but adding \p@rlinesgone.</tspan><tspan
+         id="tspan4922"><tspan
+   style="fill:#008000"
+   id="tspan965">but adding \p@rlinesgone</tspan>.</tspan><tspan
          sodipodi:role="line"
          x="7.9375"
-         y="131.28528"
+         y="136.01927"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';text-align:start;text-anchor:start;stroke-width:0.26458332px"
          id="tspan4924"><tspan
    style="fill:#ff0000"
    id="tspan959">5) At a \@parlines, \p@rlinesgone is compared to N and horrible error messsages are generated if they don't agr</tspan>ee.</tspan><tspan
          sodipodi:role="line"
          x="7.9375"
-         y="135.69501"
+         y="140.42899"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';text-align:start;text-anchor:start;stroke-width:0.26458332px"
          id="tspan5477" /><tspan
          sodipodi:role="line"
          x="7.9375"
-         y="140.10472"
+         y="144.83871"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';text-align:start;text-anchor:start;stroke-width:0.26458332px"
          id="tspan4898" /></text>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:sans-serif;text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:125%;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        x="7.9375"
-       y="138.25"
+       y="148.83333"
        id="text5481"><tspan
          sodipodi:role="line"
          id="tspan5479"
          x="7.9375"
-         y="138.25"
-         style="text-align:start;text-anchor:start;stroke-width:0.26458332px">Why might \p@rlinesgone not agree with N?</tspan><tspan
+         y="148.83333"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';text-align:start;text-anchor:start;stroke-width:0.26458332px">Why might \p@rlinesgone not agree with N?</tspan><tspan
          sodipodi:role="line"
          x="7.9375"
-         y="142.65973"
-         style="text-align:start;text-anchor:start;stroke-width:0.26458332px"
+         y="153.24306"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';text-align:start;text-anchor:start;stroke-width:0.26458332px"
          id="tspan5483">1) Inserted images and other material -&gt; \p@rlinesgone will be too high</tspan><tspan
          sodipodi:role="line"
          x="7.9375"
-         y="147.06944"
-         style="text-align:start;text-anchor:start;stroke-width:0.26458332px"
+         y="157.65277"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';text-align:start;text-anchor:start;stroke-width:0.26458332px"
          id="tspan5485">2) Text does not fit within \baseline  -&gt; \p@rlinesgone will be too low</tspan><tspan
          sodipodi:role="line"
          x="7.9375"
-         y="151.47917"
-         style="text-align:start;text-anchor:start;stroke-width:0.26458332px"
+         y="162.0625"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';text-align:start;text-anchor:start;stroke-width:0.26458332px"
          id="tspan5487">3) Rounding errors, incorrect maths, significant descenders?</tspan></text>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:sans-serif;text-align:end;letter-spacing:0px;word-spacing:0px;text-anchor:end;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:125%;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';text-align:end;letter-spacing:0px;word-spacing:0px;text-anchor:end;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"
        x="7.9375"
        y="156.77084"
        id="text5491"><tspan
@@ -635,54 +797,54 @@
          id="tspan5489"
          x="7.9375"
          y="159.89211"
-         style="stroke-width:0.26458332px" /></text>
+         style="stroke-width:0.26458332px;-inkscape-font-specification:'Times New Roman, ';font-family:'Times New Roman';font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal;" /></text>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:sans-serif;text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:125%;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        x="7.9375"
-       y="159.41667"
+       y="167.35417"
        id="text5495"><tspan
          sodipodi:role="line"
          id="tspan5493"
          x="7.9375"
-         y="159.41667"
-         style="font-weight:bold;stroke-width:0.26458332px">What about polyglots?</tspan><tspan
+         y="167.35417"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';stroke-width:0.26458332px">What about polyglots?</tspan><tspan
          sodipodi:role="line"
          x="7.9375"
-         y="163.8264"
-         style="stroke-width:0.26458332px"
+         y="171.7639"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';stroke-width:0.26458332px"
          id="tspan939">*  Diglot at present does not issue \@colstart and \@colstop: <tspan
-   style="font-weight:bold;fill:#008000"
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';fill:#008000"
    id="tspan1154">SOLVED</tspan></tspan><tspan
          sodipodi:role="line"
          x="7.9375"
-         y="168.23611"
-         style="stroke-width:0.26458332px"
+         y="176.17361"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';stroke-width:0.26458332px"
          id="tspan1156">*  Diglot will need to have per-column counters and  -&gt; Special colstart/stop commands that record </tspan><tspan
          sodipodi:role="line"
          x="7.9375"
-         y="172.64584"
-         style="stroke-width:0.26458332px"
+         y="180.58334"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';stroke-width:0.26458332px"
          id="tspan4673">the column:<tspan
-   style="fill:#008000"
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';fill:#008000"
    id="tspan961"> </tspan><tspan
-   style="font-weight:bold;fill:#008000"
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';fill:#008000"
    id="tspan1158">DONE</tspan>.</tspan><tspan
          sodipodi:role="line"
          x="7.9375"
-         y="177.05556"
-         style="stroke-width:0.26458332px"
+         y="184.99306"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';stroke-width:0.26458332px"
          id="tspan4668">*  Baselineskip must be saved (and used) for each separate paragraph.  <tspan
-   style="font-weight:bold;fill:#008000"
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';fill:#008000"
    id="tspan4677">DONE</tspan></tspan><tspan
          sodipodi:role="line"
          x="7.9375"
-         y="181.46529"
-         style="stroke-width:0.26458332px"
+         y="189.40279"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';stroke-width:0.26458332px"
          id="tspan947" /></text>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:sans-serif;text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:125%;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"
        x="88.635414"
        y="171.32292"
        id="text1138"><tspan
@@ -690,21 +852,23 @@
          id="tspan1136"
          x="88.635414"
          y="174.44418"
-         style="stroke-width:0.26458332px" /></text>
+         style="stroke-width:0.26458332px;-inkscape-font-specification:'Times New Roman, ';font-family:'Times New Roman';font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal;" /></text>
     <flowRoot
        xml:space="preserve"
        id="flowRoot1144"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:13.33333302px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:sans-serif;text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:13.33333302px;line-height:125%;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"
        transform="scale(0.26458333)"><flowRegion
-         id="flowRegion1146"><rect
+         id="flowRegion1146"
+         style="-inkscape-font-specification:'Times New Roman, ';font-family:'Times New Roman';font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal;"><rect
            id="rect1148"
            width="385"
            height="45"
            x="30"
-           y="692.51971" /></flowRegion><flowPara
+           y="692.51971"
+           style="-inkscape-font-specification:'Times New Roman, ';font-family:'Times New Roman';font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal;" /></flowRegion><flowPara
          id="flowPara1150" /></flowRoot>    <text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:sans-serif;text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:125%;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"
        x="82.020836"
        y="98.5625"
        id="text4693"><tspan
@@ -712,6 +876,36 @@
          id="tspan4691"
          x="82.020836"
          y="98.5625"
-         style="stroke-width:0.26458332px"> </tspan></text>
+         style="stroke-width:0.26458332px;-inkscape-font-specification:'Times New Roman, ';font-family:'Times New Roman';font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal;"> </tspan></text>
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.26499999;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#Arrow1Mstart);marker-end:url(#Arrow1Mend)"
+       d="m 31.75,49.614583 0,30.427084"
+       id="path4684"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:url(#marker5482);marker-end:url(#marker5494)"
+       d="M 56.885417,9.9270833 V 84.010417"
+       id="path5004"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 21.166666,11.25 V 45.645834 H 42.333333 V 11.25"
+       id="path5525"
+       inkscape:connector-curvature="0" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:125%;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="15.875"
+       y="11.25"
+       id="text5529"><tspan
+         sodipodi:role="line"
+         id="tspan5527"
+         x="15.875"
+         y="11.25"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';stroke-width:0.26458332px">yA<tspan
+   style="font-size:65%;baseline-shift:sub"
+   id="tspan5537">0</tspan></tspan></text>
   </g>
 </svg>

@@ -21,6 +21,11 @@ bisect:
 	mkdir ../bisect || rm -f ../bisect/*
 	cp *.tex *.usfm *.sty *.piclist Makefile image.jpg ../bisect
 
+map.jpg:?/test.pdf Makefile
+	for  A in `seq 1 8` ; do test -f $$A/test.pdf && gs -q -dNOPAUSE -dSAFER -sDEVICE=jpeg -dFirstPage=1 -dLastPage=1 -dBATCH -r144x144 -dTextAlphaBits=4 -dDownScaleFactor=2 -sOutputFile=$$A/test.jpg $$A/test.pdf  ; done
+	montage [0-9]/test.jpg -tile 4x3 -geometry +0+0 maps.jpg
+
+	
 auto:
 	echo Source code in $(DIR)
 	while inotifywait -e close_write . $(DIR) ; do make test.pdf ; done < /dev/null
