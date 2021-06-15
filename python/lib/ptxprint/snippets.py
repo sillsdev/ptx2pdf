@@ -34,9 +34,12 @@ class PDFx1aOutput(Snippet):
 /S/GTS_PDFX
 /OutputCondition (An Unknown print device)
 /OutputConditionIdentifier (Custom)
+/Ifno (Boilerplate null output intent)
 /DestOutputProfile @OBJCVR
 /RegistryName (http://www.color.og)
->> ] >>}}
+>> ]
+/MarkInfo <</Marked false>>
+>>}}
 \XeTeXgenerateactualtext=1
 
 """

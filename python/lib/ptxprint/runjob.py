@@ -576,7 +576,7 @@ class RunJob:
         if not self.noview and not self.args.testing and not self.res:
             self.printer.incrementProgress()
             x1aout = self.printer.get("c_PDFx1aOutput")
-            cmd = ["xdvipdfmx", "-E"]
+            cmd = ["xdvipdfmx", "-E", "-d", "4"]
             if x1aout:
                 cmd += ["-q", "-z", "0", "-o", outfname.replace(".tex", ".prepress.pdf")]
             if self.args.extras & 1:
@@ -748,7 +748,6 @@ class RunJob:
             print(("Failed to get size of (image) file:"), srcpath)
         # If either the source image is a TIF (or) the proportions aren't right for page dimensions 
         # then we first need to convert to a JPG and/or pad with which space on either side
-        print(f"{srcpath} isxa={self.ispdfxa}")
         if cropme or self.ispdfxa or iw/ih < ratio or os.path.splitext(srcpath)[1].lower().startswith(".tif"): # (.tif or .tiff)
             tgtpath = os.path.splitext(tgtpath)[0]+".jpg"
             try:

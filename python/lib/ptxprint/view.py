@@ -1258,7 +1258,15 @@ class ViewModel:
             pf = os.path.join(self.working_dir, f)
             if os.path.exists(pf):
                 outfname = os.path.relpath(pf, self.settings_dir)
-                zf.write(pf, outfname)
+                if pf.endswith(".pdf") and "PrintDraft" not in pf:
+                    trailer = PdfReader(pf)
+                    trailer.read_all()
+                    outf = BytesIO()
+                    PdfWriter(outf, trailer=trailer).write()
+                    outf.close()
+                    zf.writestr(outfname, outf.getval())
+                else:
+                    zf.write(pf, outfname)
         ptxmacrospath = self.scriptsdir
         for f in os.listdir(ptxmacrospath):
             if f.endswith(".tex") or f.endswith(".sty"):
