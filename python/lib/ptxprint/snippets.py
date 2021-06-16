@@ -23,8 +23,8 @@ class PDFx1aOutput(Snippet):
 /ModDate(D:{pdfdate_})%
 /Producer(XeTeX)%
 /Trapped /False
-/GTS_PDFXVersion(PDF/X-1:2001)%
-/GTS_PDFXConformance(PDF/X-1a:2001)%
+/GTS_PDFXVersion(PDF/X-1a:2003)%
+/GTS_PDFXConformance(PDF/X-1a:2003)%
 >> }} 
 \special{{pdf:fstream @OBJCVR ({/iccfpath})}}
 \special{{pdf:put @OBJCVR <</N 4>>}}

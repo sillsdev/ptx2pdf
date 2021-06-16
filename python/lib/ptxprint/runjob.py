@@ -688,11 +688,9 @@ class RunJob:
         return im
 
     def convertToJPGandResize(self, ratio, infile, outfile, cropme):
-        if self.ispdfxa:
-            white = (0, 0, 0, 0)
+        if self.ispdfxa != "None":
             fmt = "CMYK"
         else:
-            white = (255, 255, 255, 255)
             fmt = "RGB"
         with open(infile,"rb") as inf:
             rawdata = inf.read()
@@ -706,12 +704,12 @@ class RunJob:
         if iw/ih < ratio:
             onlyRGBAimage = im.convert("RGBA")
             newWidth = int(ih * ratio)
-            compimg = Image.new("RGBA", (newWidth, ih), color=white)
+            compimg = Image.new("RGBA", (newWidth, ih), color=(255, 255, 255, 255))
             compimg.alpha_composite(onlyRGBAimage, (int((newWidth-iw)/2),0))
             iw = compimg.size[0]
             ih = compimg.size[1]
             newimage = compimg.convert(fmt)
-        elif im.mode != "fmt":
+        elif im.mode != fmt:
             newimage = im.convert(fmt)
         else:
             newimage = im
@@ -749,7 +747,7 @@ class RunJob:
             print(("Failed to get size of (image) file:"), srcpath)
         # If either the source image is a TIF (or) the proportions aren't right for page dimensions 
         # then we first need to convert to a JPG and/or pad with which space on either side
-        if cropme or self.ispdfxa or iw/ih < ratio or os.path.splitext(srcpath)[1].lower().startswith(".tif"): # (.tif or .tiff)
+        if cropme or self.ispdfxa != "None" or iw/ih < ratio or os.path.splitext(srcpath)[1].lower().startswith(".tif"): # (.tif or .tiff)
             tgtpath = os.path.splitext(tgtpath)[0]+".jpg"
             try:
                 self.convertToJPGandResize(ratio, srcpath, tgtpath, cropme)
