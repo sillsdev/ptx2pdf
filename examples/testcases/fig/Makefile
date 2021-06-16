@@ -1,7 +1,7 @@
 .SUFFIXES: .dvi .pdf
 all: test.pdf
 DIR:=$(shell dirname `find ../../..  -name paratext2.tex`)
-.tex.pdf:
+test.pdf:test.tex
 	-mkdir 1 2 3 4 5 6 7 8 9
 	TEXINPUTS=.:$(DIR) xetex $<
 	cp test.pdf test.parlocs test.delayed test.log 1

@@ -5,6 +5,7 @@ SCRIPTDIR:=$(shell dirname `find ../..  -name polyglot_merge.pl | grep -v bisect
 
 .tex.pdf:
 	TEXINPUTS=.:../../src time xetex $< < /dev/null
+	while grep Rerun $(subst .tex,.log,$<) ; do TEXINPUTS=.:../../src time xetex $< < /dev/null ; done
 	#TEXINPUTS=.:../../src xetex $<
 
 Galatians.pdf: Galatians.tex Galatians-setup.tex intro.usfm mergedGal.usfm mergedGal.usfm.piclist mergedGalV.usfm ../../src/*.tex *.sty 

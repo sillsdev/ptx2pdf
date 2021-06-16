@@ -633,6 +633,7 @@
   \immediate\closeout\p@rlocs
   \catcode`\{=1 \catcode`\}=2 \m@kedigitsother \catcode`\@=11
   \immediate\openout\delayf@le="\j@bname.delayed"
+  %\tracingassigns=1
   \input "\j@bname.parlocs"
   \immediate\closeout\delayf@le
 }
@@ -685,9 +686,8 @@
   \edef\prev@col@x{#4}%
   \edef\prev@col@y{#5}%
   \prev@y=#5\relax
-  \edef\tot@col@ht{#1}%
-  \edef\prev@col@ht{#1}%
-  \edef\prev@col@dp{#2}%
+  \edef\tot@col@ht{\the\dimexpr #1 + #2\relax}%
+  \let\prev@col@ht\tot@col@ht
   \edef\prev@col@wd{#3}%
 }
 \def\@@colstop#1#2{%
@@ -696,7 +696,7 @@
   %\prev@y=#1
   \trace{C}{colstop:\c@rrdstat:\par@items}%
   \csname ifinp@r-\c@rrdstat\endcsname
-    \calc@p@rlinesgone{\the\dimexpr \prev@col@ht+\prev@col@dp\relax}{colstop}%
+    \calc@p@rlinesgone{\the\dimexpr \prev@col@ht\relax}{colstop}%
   \fi
   \let\d@=\check@pagefoot
   \x@\cstackdown\par@items\E
@@ -793,23 +793,37 @@
   \trace{C}{delayedchapter #1 #2 #3 #4}%
   \@delayedthing{chapter}{#1#2.0}{#4}{\the\ch@pterwd}{2}{0}{\ifRTL R\else L\fi}{#3}{#4}}
 
-%
-\def\@delayedthing#1#2#3#4#5#6#7#8#9{\thing@y=#9\relax %Part of post-run processing
-  \trace{C}{delayedthing (prev:\the\prev@y) #1 #2 #3 #4 #5 #6 #7 #8 #9}%
+% @delayedthing
+% #1 - type-code (determines flexibility of position
+% #2 - Reference trigger point
+% #3 - ?
+% #4 - cutout width  (pt)
+% #5 - cutout length (lines)
+% #6 - Cutout delay
+% #7 - cutout side
+% #8 - pdfpos X
+% #9 - pdfpos Y
+\def\@delayedthing#1#2#3#4#5#6#7#8#9{%Part of post-run processing
+  \thing@y=#9\relax 
+  \baselineskip=\csname baselineskip@\c@rrdstat\endcsname
+  \trace{C}{delayedthing (prev:\the\prev@y) #1 #2 #3 #4 #5 #6 #7 #8 #9, bl:\the\baselineskip}%
   %\ifnum\the\prev@y<\thing@y % Lower number means lower on page. para start was lower than chapter number, must have passed a col/page break
     %%\def\this@thing{#1}% What is it?
     %\def\thing@ref{#2}% Unique id.
     %\trace{C}{* saved pending  \string\DelayedItem{#1}{#2}}%
     %\add@pending{#1}{#2}{\the\thing@y}{#4}{#5}{#6}{#7}%
   %\else % para start level with or above chapter number; OK to calculate # of lines
-    %First, remember where the bottom of the item
-    %probably is.
+    %
+    %First, remember where the bottom of the item probably is.
     \tmp@lines=\thing@y
-    \dimen1=#4
+    \trace{C}{\the\tmp@lines}% 
+    \dimen1=\dimexpr #5 \baselineskip\relax %how many lines the item is
+    \trace{C}{... -\the\dimen1}% 
     \advance\tmp@lines by -\dimen1
-    \dimen1=#6\baselineskip
+    \dimen1=#6 \baselineskip % delay of the item
+    \trace{C}{... -\the\dimen1}% 
     \advance\tmp@lines by -\dimen1
-    \edef\par@items{\cstackpush{\par@items}{#1|#2|\the\tmp@lines}}%
+    \edef\par@items{\cstackpush{\par@items}{#1|#2|\the\tmp@lines}}% Add end-point to stack checking.
     \tmp@lines=\prev@y
     \advance\tmp@lines by -\thing@y
     \divide\tmp@lines by \baselineskip
