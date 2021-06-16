@@ -28,13 +28,52 @@ class PDFx1aOutput(Snippet):
 \special{{pdf:fstream @OBJCVR ({/iccfpath})}}
 \special{{pdf:put @OBJCVR <</N 4>>}}
 %\special{{pdf:close @OBJCVR}}
+\special{{pdf:stream @OBJCMR (<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-ref-syntax-ns"
+       xmlns:xmp="http://ns.adobe.com/xap/1.0/"
+       xmlns:dc="http://purl.org/dc/elements/1.1/"
+       xmlns:pdf="http://ns.adobe.com/pdf/1.3/"
+       xmlns:pdfaid="http://www.aiim.org/pdfa/ns/id/">
+  <rdf:Description rdf:about="">
+    <dc:creator>
+      <rdf:Seq>
+        <rdf:li>{document/author}</rdf:li>
+      </rdf:Seq>
+    </dc:creator>
+    <xmp:CreateDate>{pdfdate_}</xmp:CreateDate>
+    <xmp:ModifyDate>{pdfdate_}</xmp:ModifyDate>
+    <dc:title>
+      <rdf:Alt>
+        <rdf:li xml:lang="x-default">{document/title}</rdf:li>
+      </rdf:Alt>
+    </dc:title>
+    <dc:subject>
+      <rdf:Bag>
+        <rdf:li>{document/subject}</rdf:li>
+      </rdf:Bag>
+    </dc:subject>
+    <xmp:CreatorTool>PTXprint ({config/name})</xmp:CreatorTool>
+    <pdf:Producer>XeTeX</pdf:Producer>
+    <pdfaid:part>1</pdfaid:part>
+    <pdfaid:conformance>B</pdfaid:conformance>
+  </rdf:Description>
+</rdf:RDF>)}}
+\special{{pdf:put @OBJCMR <</Type /Metadata /Subtype /XML>>}}
 \special{{pdf:docview <<
+/Metadata @OBJCMR
 /OutputIntents [ <<
 /Type/OutputIntent
 /S/GTS_PDFX
 /OutputCondition (An Unknown print device)
 /OutputConditionIdentifier (Custom)
-/Ifno (Boilerplate null output intent)
+/Info (Boilerplate null output intent)
+/DestOutputProfile @OBJCVR
+/RegistryName (http://www.color.og)
+>> <<
+/Type/OutputIntent
+/S/GTS_PDFA1
+/OutputCondition (An Unknown print device)
+/OutputConditionIdentifier (Custom)
+/Info (Boilerplate null output intent)
 /DestOutputProfile @OBJCVR
 /RegistryName (http://www.color.og)
 >> ]
