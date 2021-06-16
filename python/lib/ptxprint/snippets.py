@@ -11,8 +11,9 @@ class Snippet:
     takesDiglot = False
 
 class PDFx1aOutput(Snippet):
-    processTex = True
-    texCode = r"""
+
+    def generateTex(self, model, diglotSide=""):
+        res = r"""
 \special{{pdf:docinfo<<
 /Title({document/title})%
 /Subject({document/subject})%
@@ -79,9 +80,10 @@ class PDFx1aOutput(Snippet):
 >> ]
 /MarkInfo <</Marked false>>
 >>}}
-\XeTeXgenerateactualtext=1
-
 """
+        if model['snippets/pdfoutput'] == "PDF/A-1":
+            res += "\XeTeXgenerateactualtext=1\n"
+        return res.format(**model.dict) + "\n"
     
 class FancyIntro(Snippet):
     texCode = r"""
@@ -118,7 +120,6 @@ class Diglot(Snippet):
 """
 
 class FancyBorders(Snippet):
-    processTex = True
     takesDiglot = True
     def generateTex(self, texmodel, diglotSide=""):
         res = r"""

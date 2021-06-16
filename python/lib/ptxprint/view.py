@@ -684,7 +684,10 @@ class ViewModel:
         if v < 1.602:
             config.set("notes", "belownoterulespace", "3.0")
             config.set("notes", "abovenotespace", f2s(config.getfloat("notes", "abovenotespace", fallback=6.0) - 3.0))
-            config.set("config", "version", "1.602")
+        if v < 1.7:
+            if config.getboolean("document", "pdfx1aoutput", fallback=False):
+                config.set("document", "pdfoutput", "PDF/X-1A")
+            config.set("config", "version", "1.7")
 
         styf = os.path.join(self.configPath(cfgname), "ptxprint.sty")
         if not os.path.exists(styf):

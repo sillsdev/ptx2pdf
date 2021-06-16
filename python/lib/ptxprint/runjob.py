@@ -155,7 +155,7 @@ class RunJob:
         self.res = 0
         self.thread = None
         self.busy = False
-        self.ispdfxa = False
+        self.ispdfxa = "None"
         self.inArchive = inArchive
         self.noview = False
 
@@ -195,7 +195,7 @@ class RunJob:
         self.books = []
         self.maxRuns = 1 if self.printer.get("c_quickRun") else (self.args.runs or 5)
         self.changes = None
-        self.ispdfxa = self.printer.get("c_PDFx1aOutput")
+        self.ispdfxa = self.printer.get("fcb_outputFormat")
         if not self.inArchive:
             self.checkForMissingDecorations(info)
         info["document/piclistfile"] = ""
@@ -575,10 +575,11 @@ class RunJob:
                 break
         if not self.noview and not self.args.testing and not self.res:
             self.printer.incrementProgress()
-            x1aout = self.printer.get("c_PDFx1aOutput")
             cmd = ["xdvipdfmx", "-E", "-V", "1.4"]
-            if x1aout:
-                cmd += ["-q", "-z", "0", "-o", outfname.replace(".tex", ".prepress.pdf")]
+            if self.ispdfxa != "None":
+                cmd += ["-q", "-o", outfname.replace(".tex", ".prepress.pdf")]
+            if self.ispdfxa == "PDF/A-1":
+                cmd += ["-z", "0"]
             if self.args.extras & 1:
                 cmd += ["-vv"]
             runner = call(cmd + [outfname.replace(".tex", ".xdv")], cwd=self.tmpdir)
@@ -590,7 +591,7 @@ class RunJob:
                 except subprocess.TimeoutExpired:
                     print("Timed out!")
                     self.res = runner.returncode
-            if x1aout:
+            if self.ispdfxa != "None":
                 outpath = os.path.join(self.tmpdir, outfname[:-4])
                 fixpdfcmyk(outpath + ".prepress.pdf", outpath + ".pdf")
                 os.remove(outpath + ".prepress.pdf")

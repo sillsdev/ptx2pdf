@@ -41,7 +41,6 @@ ModelMap = {
 
     "showadvoptions_":          ("c_showAdvancedOptions", None),
     "project/hideadvsettings":  ("c_hideAdvancedSettings", None),
-    "project/pdfx1acompliant":  ("c_PDFx1aOutput", None),
     "project/bookscope":        ("r_book", None),
     "project/book":             ("ecb_book", None),
     "project/modulefile":       ("btn_chooseBibleModule", lambda w,v: v.replace("\\","/") if v is not None else ""),
@@ -298,7 +297,7 @@ ModelMap = {
     "document/fontbolditalic":           ("bl_fontBI", lambda w,v,s: v.asTeXFont(s.inArchive) if v else ""),
     "document/fontextraregular":         ("bl_fontExtraR", lambda w,v,s: v.asTeXFont(s.inArchive) if v else ""),
     "snippets/fancyintro":      ("c_prettyIntroOutline", None),
-    "snippets/pdfx1aoutput":    ("c_PDFx1aOutput", None),
+    "snippets/pdfoutput":       ("fcb_outputFormat", None),
     "snippets/diglot":          ("c_diglot", lambda w,v: True if v else False),
     "snippets/fancyborders":    ("c_borders", None),
     "document/includeimg":      ("c_includeillustrations", None),
@@ -359,13 +358,13 @@ class TexModel:
         "ww":  r"\\w \1\\w*"        # "\w ...\w* char style":  
     }
     _snippets = {
-        "snippets/fancyintro":            ("c_prettyIntroOutline", FancyIntro),
-        "snippets/pdfx1aoutput":          ("c_PDFx1aOutput", PDFx1aOutput),
-        "snippets/diglot":                ("c_diglot", Diglot),
-        "snippets/fancyborders":          ("c_borders", FancyBorders),
-        "snippets/thumbtabs":             ("c_thumbtabs", ThumbTabs),
-        "snippets/colophon":              ("c_colophon", Colophon),
-        "snippets/grid":                  ("c_grid", Grid)
+        "snippets/fancyintro":            ("c_prettyIntroOutline", None, FancyIntro),
+        "snippets/pdfoutput":             ("fcb_outputFormat", lambda x: x != "None", PDFx1aOutput),
+        "snippets/diglot":                ("c_diglot", None, Diglot),
+        "snippets/fancyborders":          ("c_borders", None, FancyBorders),
+        "snippets/thumbtabs":             ("c_thumbtabs", None, ThumbTabs),
+        "snippets/colophon":              ("c_colophon", None, Colophon),
+        "snippets/grid":                  ("c_grid", None, Grid)
     }
     _settingmappings = {
         "notes/xrcallers": "crossrefs",
@@ -721,16 +720,19 @@ class TexModel:
                                 res.append((r"\setbookhook{{end}}{{{}}}{{\gdef\BalanceThreshold{{0}}\clubpenalty=10000"
                                             + r"\widowpenalty=10000}}").format(bk))
                 elif l.startswith(r"%\snippets"):
-                    for k, c in sorted(self._snippets.items(), key=lambda x: x[1][1].order):
-                        v = self.asBool(k)
+                    for k, c in sorted(self._snippets.items(), key=lambda x: x[1][2].order):
+                        if c[1] is None:
+                            v = self.asBool(k)
+                        else:
+                            v = c[1](self.dict[k])
                         if v:
-                            fn = getattr(c[1], 'generateTex', None)
+                            fn = getattr(c[2], 'generateTex', None)
                             if fn is not None:
                                 res.append(fn(v, self))
-                            elif c[1].processTex:
-                                res.append(c[1].texCode.format(**self.dict))
+                            elif c[2].processTex:
+                                res.append(c[2].texCode.format(**self.dict))
                             else:
-                                res.append(c[1].texCode)
+                                res.append(c[2].texCode)
                     script = self.dict["document/script"]
                     if len(script) > 0:
                         sclass = getattr(scriptsnippets, script[8:].lower(), None)
@@ -1145,17 +1147,20 @@ class TexModel:
         # self.localChanges.append((None, regex.compile(r"(\\c\s1\s?\r?\n)", flags=regex.S), r"\\par\\vskip\\baselineskip\\hskip-\\columnshift\\hrule\\vskip 2\\baselineskip\n\1"))
 
         # Apply any changes specified in snippets
-        for k, c in sorted(self._snippets.items(), key=lambda x: x[1][1].order):
+        for k, c in sorted(self._snippets.items(), key=lambda x: x[1][2].order):
             if self.printer is None:
-                v = self.asBool(k)
-            else:
+                v = self.asBool(k) if c[1] is None else c[1](self.dict[k])
+            elif c[1] is None:
                 v = self.printer.get(c[0])
                 self.dict[k] = "true" if v else "false"
+            else:
+                self.dict[k] = self.printer.get(c[0])
+                v = c[1](self.dict[k])
             if v: # if the c_checkbox is true then extend the list with those changes
                 if k == "snippets/fancyintro" and bk in self._peripheralBooks: # Only allow fancyIntros for scripture books
                     pass
                 else:
-                    self.localChanges.extend(c[1].regexes)
+                    self.localChanges.extend(c[2].regexes)
 
         ## Final tweaks
         # Strip out any spaces either side of an en-quad 
