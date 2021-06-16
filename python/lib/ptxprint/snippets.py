@@ -47,11 +47,11 @@ class PDFx1aOutput(Snippet):
         <rdf:li xml:lang="x-default">{document/title}</rdf:li>
       </rdf:Alt>
     </dc:title>
-    <dc:subject>
-      <rdf:Bag>
-        <rdf:li>{document/subject}</rdf:li>
-      </rdf:Bag>
-    </dc:subject>
+    <dc:description>
+      <rdf:Alt>
+        <rdf:li xml:lang="x-default">{document/subject}</rdf:li>
+      </rdf:Alt>
+    </dc:description>
     <xmp:CreatorTool>PTXprint ({config/name})</xmp:CreatorTool>
     <pdf:Producer>XeTeX</pdf:Producer>
     <pdfaid:part>1</pdfaid:part>
