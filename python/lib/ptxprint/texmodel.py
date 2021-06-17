@@ -28,8 +28,9 @@ def loosint(x):
 ModelMap = {
     "L_":                       ("c_diglot", lambda w,v: "L" if v else ""),
     "R_":                       ("c_diglot", lambda w,v: "R" if v else ""),
-    "date_":                    ("_date", lambda w,v: v),
-    "pdfdate_":                 ("_pdfdate", lambda w,v: v),
+    "date_":                    ("_date", None),
+    "pdfdate_":                 ("_pdfdate", None),
+    "xmpdate_":                 ("_xmpdate", None),
     "ifusediglotcustomsty_":    ("_diglotcustomsty", lambda w,v: "%"),
     "ifusediglotmodsty_":       ("_diglotmodsty", lambda w,v: "%"),
     "ifdiglotincludefootnotes_":("_diglotinclfn", lambda w,v: "%"),

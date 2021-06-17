@@ -154,6 +154,7 @@ class ViewModel:
             tzstr = "{0:+03}'{1:02}'".format(tzhrs, tzmins)
         self.set("_pdfdate", t.strftime("%Y%m%d%H%M%S")+tzstr)
         self.set("_date", t.strftime("%Y-%m-%d %H:%M:%S ")+tzstr)
+        self.set("_xmpdate", t.strftime("%Y-%m-%d%H:%M:%S")+tzstr.replace("'", ":").rstrip(":"))
 
     def doError(self, txt, secondary=None, title=None, show=True, copy2clip=False):
         print(txt)
