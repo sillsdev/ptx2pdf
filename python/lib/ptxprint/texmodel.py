@@ -40,8 +40,7 @@ ModelMap = {
     "config/pwd":               ("t_invisiblePassword", lambda w,v: v or ""),
     "config/version":           ("_version", None),
 
-    "showadvoptions_":          ("c_showAdvancedOptions", None),
-    "project/hideadvsettings":  ("c_hideAdvancedSettings", None),
+    "project/hideadvsettings":  ("c_showAdvancedOptions", lambda w,v: not v),
     "project/bookscope":        ("r_book", None),
     "project/book":             ("ecb_book", None),
     "project/modulefile":       ("btn_chooseBibleModule", lambda w,v: v.replace("\\","/") if v is not None else ""),
@@ -360,7 +359,7 @@ class TexModel:
     }
     _snippets = {
         "snippets/fancyintro":            ("c_prettyIntroOutline", None, FancyIntro),
-        "snippets/pdfoutput":             ("fcb_outputFormat", lambda x: x != "None", PDFx1aOutput),
+        "snippets/pdfoutput":             ("fcb_outputFormat", lambda x: True, PDFx1aOutput),
         "snippets/diglot":                ("c_diglot", None, Diglot),
         "snippets/fancyborders":          ("c_borders", None, FancyBorders),
         "snippets/thumbtabs":             ("c_thumbtabs", None, ThumbTabs),

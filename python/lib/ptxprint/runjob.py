@@ -195,7 +195,7 @@ class RunJob:
         self.books = []
         self.maxRuns = 1 if self.printer.get("c_quickRun") else (self.args.runs or 5)
         self.changes = None
-        self.ispdfxa = self.printer.get("fcb_outputFormat")
+        self.ispdfxa = self.printer.get("fcb_outputFormat") or "None"
         if not self.inArchive:
             self.checkForMissingDecorations(info)
         info["document/piclistfile"] = ""
@@ -562,9 +562,9 @@ class RunJob:
                 fpath = os.path.join(self.tmpdir, outfname.replace(".tex", "."+a))
                 cachedata[a] = self.readfile(fpath)
                 if testdata != cachedata[a]:
-                    if a == "delayed" and len(testdata) and numruns < self.maxRuns:
-                        os.remove(fpath)
-                        cachedata[a] = ""
+                    #if a == "delayed" and len(testdata) and numruns < self.maxRuns:
+                    #    os.remove(fpath)
+                    #    cachedata[a] = ""
                     if numruns >= self.maxRuns or not cacheexts[a][1]:
                         self.rerunReasons.append(cacheexts[a][0])
                     else:
@@ -635,7 +635,7 @@ class RunJob:
             return []
         picinfos.build_searchlist()
         for j in jobs:
-            picinfos.getFigureSources(keys=j, exclusive=self.printer.get("c_exclusiveFiguresFolder"))
+            picinfos.getFigureSources(keys=j, exclusive=self.printer.get("c_exclusiveFiguresFolder"), mode=self.ispdfxa)
             picinfos.set_destinations(fn=carefulCopy, keys=j, cropme=cropme)
         missingPics = [v['src'] for v in picinfos.values() if v['anchor'][:3] in jobs and 'dest file' not in v and 'src' in v]
         res = [os.path.join("tmpPics", v['dest file']) for v in picinfos.values() if 'dest file' in v]
