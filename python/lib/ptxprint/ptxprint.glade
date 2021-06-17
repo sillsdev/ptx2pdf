@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.2 
+<!-- Generated with glade 3.22.1 
 
 The MIT License (MIT)
 
@@ -5514,6 +5514,7 @@ the Two Column layout).</property>
                               <object class="GtkGrid">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="margin_right">6</property>
                                 <property name="margin_top">4</property>
                                 <property name="margin_bottom">6</property>
                                 <property name="row_spacing">5</property>
@@ -5679,13 +5680,13 @@ space between the end of the text and the footer line.</property>
                                     <property name="valign">center</property>
                                     <property name="margin_left">30</property>
                                     <property name="margin_right">30</property>
-                                    <property name="margin_top">12</property>
-                                    <property name="margin_bottom">12</property>
+                                    <property name="margin_top">17</property>
+                                    <property name="margin_bottom">17</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
                                     <property name="top_attach">4</property>
-                                    <property name="width">5</property>
+                                    <property name="width">3</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -5707,27 +5708,7 @@ Top of Header:</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">3</property>
-                                    <property name="top_attach">3</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkLabel" id="l_margin2header1">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="tooltip_text" translatable="yes">The distance (mm) from the top of the page
-to the top of the header area. Note that due to 
-the ascent of the font, the header text actually 
-starts a little bit below the top of the header area.</property>
-                                    <property name="halign">start</property>
-                                    <property name="margin_left">12</property>
-                                    <property name="label" translatable="yes">8.5mm</property>
-                                    <attributes>
-                                      <attribute name="foreground" value="#2b0a4be2f850"/>
-                                    </attributes>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">4</property>
-                                    <property name="top_attach">3</property>
+                                    <property name="top_attach">0</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -5772,7 +5753,7 @@ and right (or inner and outer) margins are set
 to be identical. If you require a greater inner
 margin, then use the Binding Gutter setting
 above.</property>
-                                    <property name="halign">end</property>
+                                    <property name="halign">start</property>
                                     <property name="valign">center</property>
                                     <property name="margin_left">6</property>
                                     <property name="label" translatable="yes">Side Margin
@@ -5840,7 +5821,7 @@ to Body Text (pt):</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">3</property>
-                                    <property name="top_attach">0</property>
+                                    <property name="top_attach">4</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -5872,7 +5853,7 @@ above the base line of the first line of the body text.</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">4</property>
-                                    <property name="top_attach">0</property>
+                                    <property name="top_attach">4</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -6098,21 +6079,78 @@ button to adjust either the Line Spacing or Top Margin.</property>
                                     <property name="tooltip_text" translatable="yes">Check this option to add a horizontal
 line under the page header, before the
 main body text begins.</property>
-                                    <property name="halign">end</property>
+                                    <property name="halign">start</property>
                                     <property name="valign">center</property>
                                     <property name="draw_indicator">True</property>
                                     <signal name="clicked" handler="onRHruleClicked" swapped="no"/>
                                   </object>
                                   <packing>
-                                    <property name="left_attach">2</property>
-                                    <property name="top_attach">0</property>
+                                    <property name="left_attach">3</property>
+                                    <property name="top_attach">3</property>
+                                    <property name="width">3</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <placeholder/>
+                                  <object class="GtkBox">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <child>
+                                      <object class="GtkLabel" id="l_margin2header1">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="tooltip_text" translatable="yes">The distance (mm) from the top of the page
+to the top of the header area. Note that due to 
+the ascent of the font, the header text actually 
+starts a little bit below the top of the header area.</property>
+                                        <property name="halign">start</property>
+                                        <property name="margin_left">12</property>
+                                        <property name="label" translatable="yes">8.5mm</property>
+                                        <attributes>
+                                          <attribute name="foreground" value="#2b0a4be2f850"/>
+                                        </attributes>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="margin_left">6</property>
+                                        <property name="label" translatable="yes">(calculated from
+the values below)</property>
+                                        <attributes>
+                                          <attribute name="scale" value="0.90000000000000002"/>
+                                          <attribute name="foreground" value="#2b094be2f850"/>
+                                        </attributes>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">1</property>
+                                      </packing>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">4</property>
+                                    <property name="top_attach">0</property>
+                                    <property name="width">2</property>
+                                  </packing>
                                 </child>
                                 <child>
-                                  <placeholder/>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="hexpand">True</property>
+                                    <property name="label" translatable="yes"> </property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">2</property>
+                                    <property name="top_attach">0</property>
+                                  </packing>
                                 </child>
                                 <child>
                                   <placeholder/>
@@ -17422,28 +17460,7 @@ Font metrics gives more consistent results.</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkCheckButton" id="c_PDFx1aOutput">
-                                        <property name="label" translatable="yes">PDF/X-1a:2003</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="tooltip_text" translatable="yes">What is a PDF/X-1a file?
-PDF/X-1a files are regular PDF 1.3 or PDF 1.4 files to which a number of restrictions apply:
-* All fonts must be embedded in the file.
-* All color data must be grayscale, CMYK or named spot colors. The file should not contain any RGB, LAB,… data.
-* Compliant files cannot contain non-printable annotations.
-* Only a limited number of compression algorithms are supported.
-* Encryption cannot be used.
-* The file contains an output intent which describes the intended printing condition (in this case an ICC color profile). 
-and so on...</property>
-                                        <property name="halign">start</property>
-                                        <property name="margin_top">6</property>
-                                        <property name="draw_indicator">True</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">0</property>
-                                        <property name="top_attach">3</property>
-                                      </packing>
+                                      <placeholder/>
                                     </child>
                                   </object>
                                 </child>
