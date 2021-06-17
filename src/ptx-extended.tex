@@ -69,21 +69,40 @@
 \setsbp@ram{bgfigcolour}{0 0 0}%Normally black
 \def\fb@hpadding{1pt}%Added left and right of feintbox content
 \def\fb@vpadding{1pt}%added above and below feintbox content
-
+\newif\ifNoTransparency
+\NoTransparencyfalse
 \newcount\feintb@xnum
 \feintb@xnum=1
+\def\remove@transpancy#1 #2 #3|#4\E{\@lphacalc{#4}{#1} \@lphacalc{#4}{#2} \@lphacalc{#4}{#3}}
+\def\@lphacalc#1#2{\strip@pt{\dimexpr #2\dimexpr #1 pt\relax + 1pt -\dimexpr #1 pt\relax\relax} }
+
 \addtoendhooks{\ifinextended\errmessage{Reached end of book without finding \\esbe.}\fi}
 \def\f@intthing#1#2#3{%
   % 1 - alpha
   % 2 - colour (r g b)
   % 3 - item to set
   \trace{e}{f@intthing #1 #2}%
+  \edef\thisalpha{#1}%
+  \edef\thisRGB{#2}%
+  \ifNoTransparency
+    \ifdim 1pt = #1 pt\relax\else
+      \tracingmacros=1
+      \edef\thisRGB{\x@\remove@transpancy\thisRGB|\thisalpha\noexpand\E }%
+      \edef\thisalpha{1}%
+      \MSG{* Transparency is disabled, anything behind transparent item will be hidden. #2 -> \thisRGB}%
+    \fi
+  \fi
+  \ifdim 1pt = \thisalpha pt\relax %Not feint
+    \x@\special\x@{pdf:code q \thisRGB rg}%
+  \else 
     \edef\thisalpha{#1 }% Important space
-    \special{pdf:put @resources << /ExtGState << /GS0\the\feintb@xnum\space << /Type /ExtGState /CA \thisalpha /ca \thisalpha /AIS false >>  >> >>}%
-     \x@\special\x@{pdf:code q /GS0\the\feintb@xnum\space gs #2 rg}%
-     #3%
-     \special{pdf:code Q}%
-  \global\advance\feintb@xnum by 1}%
+    \x@\special\x@{pdf:put @resources << /ExtGState << /GS0\the\feintb@xnum\space << /Type /ExtGState /CA \thisalpha /ca \thisalpha /AIS false >>  >> >>}%
+    \x@\special\x@{pdf:code q /GS0\the\feintb@xnum\space gs \thisRGB rg}%
+    \global\advance\feintb@xnum by 1
+  \fi
+  #3%
+  \special{pdf:code Q}%
+}%
 
 \def\feintb@x#1#2#3#4#5{%
   % 1 - alpha
@@ -97,7 +116,6 @@
     \dimen3=\fb@hpadding
     \dimen2=#5\advance\dimen2 by 2\dimen3
     \hskip -\dimen3 % Backup so the expanded box is centred properly
-    \edef\thisalpha{#1 }%
     \def\c@de{\vrule height \dimen0 depth \dimen1  width \dimen2}%should be possible to get this working in pdf code, but this works.
     \f@intthing{#1}{#2}{\c@de}%
     \hss

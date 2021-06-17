@@ -730,11 +730,11 @@
 % redefine plain TeX's output routine to add the cropmarks
 \def\plainoutput{%
   \ifm@rksonpage\else\trace{m}{No marks on page \the\pageno}\fi
+  \immediate\write\p@rlocs{\string\@pgstart\string{\the\pageno\string}}%
   \dimen9=\pdfpagewidth \dimen8=\pdfpageheight
   \shipwithcr@pmarks{\vbox{\makeheadline\pagebody\makefootline}}%
   \pdfpagewidth=\dimen9 \pdfpageheight=\dimen8
   \advancepageno
-  \immediate\write\p@rlocs{\string\@pgstart\string{\the\pageno\string}}%
   \global\p@geonefalse
   \ifnum\outputpenalty>-\@MM \else\dosupereject\fi\global\m@rksonpagefalse\global\noteseenfalse
   }
