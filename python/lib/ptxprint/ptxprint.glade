@@ -30,6 +30,15 @@ THE SOFTWARE.
   <!-- interface-name ptxprint -->
   <!-- interface-description USFM typesetting -->
   <!-- interface-copyright SIL International -->
+  <object class="GtkApplicationWindow">
+    <property name="can_focus">False</property>
+    <child>
+      <placeholder/>
+    </child>
+    <child>
+      <placeholder/>
+    </child>
+  </object>
   <object class="GtkAdjustment" id="a_PriColWidth">
     <property name="lower">20</property>
     <property name="upper">300</property>
@@ -18487,17 +18496,18 @@ from XeTeX processing.</property>
             <property name="can_focus">False</property>
             <property name="valign">end</property>
             <child>
-              <object class="GtkButton" id="btn_about">
-                <property name="label">gtk-about</property>
+              <object class="GtkButton" id="btn_showMoreOrLess">
+                <property name="label" translatable="yes">More/Less</property>
+                <property name="width_request">90</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <property name="halign">start</property>
+                <property name="margin_left">2</property>
+                <property name="margin_right">3</property>
                 <property name="margin_top">3</property>
                 <property name="margin_bottom">3</property>
-                <property name="use_stock">True</property>
                 <property name="always_show_image">True</property>
-                <signal name="clicked" handler="onAboutClicked" swapped="no"/>
+                <signal name="clicked" handler="onShowMoreOrLessClicked" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -18506,17 +18516,19 @@ from XeTeX processing.</property>
               </packing>
             </child>
             <child>
-              <object class="GtkSwitch" id="c_hideAdvancedSettings">
+              <object class="GtkButton" id="btn_about">
+                <property name="label">gtk-about</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="tooltip_text" translatable="yes">Show Advanced Settings:
-
-There are many more complex options available for use within PTXprint.</property>
-                <property name="margin_left">12</property>
-                <property name="margin_right">12</property>
-                <property name="margin_top">7</property>
-                <property name="margin_bottom">7</property>
-                <signal name="state-set" handler="onHideAdvancedSettingsClicked" swapped="no"/>
+                <property name="receives_default">True</property>
+                <property name="halign">start</property>
+                <property name="margin_left">3</property>
+                <property name="margin_right">3</property>
+                <property name="margin_top">3</property>
+                <property name="margin_bottom">3</property>
+                <property name="use_stock">True</property>
+                <property name="always_show_image">True</property>
+                <signal name="clicked" handler="onAboutClicked" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -18554,7 +18566,6 @@ chosen language.</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="hexpand">True</property>
-                <property name="label" translatable="yes"> </property>
               </object>
               <packing>
                 <property name="expand">False</property>
