@@ -584,7 +584,13 @@
       \insert\@xtins{%\vskip\baselineskip
 	    \vskip-\v@dj
         \dimen0=\dp\extchunkb@x
-        \penalty10000\unvbox\extchunkb@x\vskip-\the\dimen0\ifdim\ht\extb@x>0pt \penalty5000 \fi}%
+        \penalty10000
+        \pdfsavepos
+        \write\p@rlocs{\noexpand\@nontextstart{\the\pdflastxpos}{\the\pdflastypos}}%
+        \unvbox\extchunkb@x\vskip-\the\dimen0
+        \pdfsavepos
+        \write\p@rlocs{\noexpand\@nontextstop{\the\pdflastxpos}{\the\pdflastypos}}%
+        \ifdim\ht\extb@x>0pt \penalty5000 \fi}%
     \else
       \ifx\picl@c\empty
         \message{Could not interpret position \loc@ption for \c@tegory:\sb@rmarker}%

@@ -736,6 +736,8 @@
   \pdfpagewidth=\dimen9 \pdfpageheight=\dimen8
   \advancepageno
   \global\p@geonefalse
+%NB: dosupereject (from plain.tex) will continue triggering outputs as long as
+%there are footnotes/floats coming.
   \ifnum\outputpenalty>-\@MM \else\dosupereject\fi\global\m@rksonpagefalse\global\noteseenfalse
   }
 %-c_plainoutput

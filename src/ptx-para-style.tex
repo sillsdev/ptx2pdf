@@ -159,7 +159,7 @@
     \ifdim\lastdepth>0pt\advance\dimen2 by -\lastdepth\fi
   \fi\fi
   \ifdiglot\kern\else\vskip\fi\dimen2
-  \trace{h}{after gridbox(\ch@pter.\v@rse): skip \the\dimen2, kern \the\dimen0; baselineskip=\the\baselineskip; ht0=\the\ht0; dp0=\the\dp0}%
+  \trace{h}{after gridbox(\ch@pter.\v@rse): skip \the\dimen2, kern \the\dimen0; baselineskip=\the\baselineskip; dim1=\the\dimen1;  ht0=\the\ht0; dp0=\the\dp0}%
   \vbox{\kern\dimen0\vskip-\headingtopspace\unvbox0}
   \nobreak%\dimen0=\prevdepth\trace{h}{prevdepth=\the\dimen0}%
 }
@@ -678,9 +678,21 @@
   \calc@p@rlinesgone{\the\dimexpr \numexpr \prev@y-\this@y\relax sp\relax}{parend}%
   \csname inp@r-\c@rrdstat false\endcsname
 }
+\def\@nontextstart#1#2{\def\n@ntextstart{#2}}%
+\def\@nontextstop#1#2{%
+  \csname ifinp@r-\c@rrdstat\endcsname
+    \dimen1=\dimexpr \n@ntextstart sp - #2 sp\relax
+    \trace{C}{Non text for \n@ntextstart -#2 (=\the\dimen1)}%
+    \edef\tot@col@ht{\the\dimexpr \tot@col@ht -\dimen1\relax}
+    \edef\prev@col@ht{\the\dimexpr \prev@col@ht -\dimen1\relax}
+  \fi
+}%
 
 \def\@pgstart#1{%
   \edef\this@pgno{#1}}
+
+\newif\ifp@rlengthimportant
+
 \def\@@colstart#1#2#3#4#5{%
   \trace{C}{@colstart: \the\p@rlinesgone.}
   \edef\prev@col@x{#4}%
@@ -689,6 +701,7 @@
   \edef\tot@col@ht{\the\dimexpr #1 + #2\relax}%
   \let\prev@col@ht\tot@col@ht
   \edef\prev@col@wd{#3}%
+  \p@rlengthimportantfalse
 }
 \def\@@colstop#1#2{%
   \edef\this@col@x{#1}%
@@ -730,7 +743,9 @@
   %\fi
   \trace{C}{parlines: \the\thispar@lines =\the\p@rlinesgone?}%
   \ifnum \thispar@lines=\p@rlinesgone\else
-    \MSG{*** Mismatch between calculated and reported lines on page \this@pgno. Cutouts may not have been calculated properly}%
+    \ifp@rlengthimportant\let\tmp\MSG\else\let\tmp\message\fi
+    \tmp{*** Mismatch between calculated and reported lines on page \this@pgno. Cutouts may not have been calculated properly}%
+    \let\tmp\undefined
   \fi
   \ifx\pending@items\cstackempty\else
     \trace{C}{Before parlines: pending: \pending@items}%
@@ -832,6 +847,7 @@
     \advance\tmp@lines by -1 % starting on 1st line is 0, not 1.
     \trace{C}{* calculated \string\DelayedItem{#1}{#2}{\the\tmp@lines} (#4 x#5 @#6)}%
     %\add@pending{#1}{#2}{\the\thing@y}{#4}{#5}{\the\tmp@lines}{#7}%
+    \ifnum\tmp@lines>3 \p@rlengthimportanttrue\fi
     \wr@teDelayedItem{#1}{#2}{\the\tmp@lines}{(#4x#5@#6)#7}%
   %\fi
 }

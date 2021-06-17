@@ -767,7 +767,11 @@
       \splittopskip\z@skip
       \splitmaxdepth\maxdimen \floatingpenalty20000 % was zero
       \headingtopspace=0pt
+      \pdfsavepos
+      \write\p@rlocs{\noexpand\@nontextstart{\the\pdflastxpos}{\the\pdflastypos}}%
       \gridp@ctrue\gridb@x0\gridp@cfalse% make sure we align to the page grid
+      \pdfsavepos
+      \write\p@rlocs{\noexpand\@nontextstop{\the\pdflastxpos}{\the\pdflastypos}}%
     }%
 %-cfig_dofigure_5
 %+cfig_dofigure_6
