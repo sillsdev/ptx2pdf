@@ -84,8 +84,8 @@ class PDFx1aOutput(Snippet):
 \catcode`\#=6
 """
         extras = {'_gtspdfx': '', '_gtspdfaid': ''}
-        pdftype = model['snippets/pdfoutput']
-        if pdftype is None:
+        pdftype = model['snippets/pdfoutput'] or "None"
+        if pdftype == "None":
             extras['_gtspdfx'] = "/GTS_PDFXVersion(PDF/X-4)%\n"
         else:
             extras['_gtspdfx'] = "/GTS_PDFXVersion(PDF/X-1a:2003)%\n/GTS_PDFXConformance(PDF/X-1a:2003)%\n"
