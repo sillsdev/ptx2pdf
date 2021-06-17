@@ -2527,13 +2527,14 @@ class GtkViewModel(ViewModel):
             os.startfile(fldrpath)
 
     def finished(self):
+        print("Reset progress bar")
         GLib.idle_add(lambda: self._incrementProgress(val=0.))
 
     def _incrementProgress(self, val=None):
         wid = self.builder.get_object("pr_runs")
         if val is None:
             val = wid.get_fraction()
-            val = 0.25 if val < 0.1 else 1. - (1. - val) * 0.5
+            val = 0.25 if val < 0.1 else (1. + val) * 0.5
         wid.set_fraction(val)
 
     def incrementProgress(self):

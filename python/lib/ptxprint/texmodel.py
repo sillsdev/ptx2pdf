@@ -360,7 +360,7 @@ class TexModel:
     }
     _snippets = {
         "snippets/fancyintro":            ("c_prettyIntroOutline", None, FancyIntro),
-        "snippets/pdfoutput":             ("fcb_outputFormat", lambda x: x != "None", PDFx1aOutput),
+        "snippets/pdfoutput":             ("fcb_outputFormat", lambda x: True, PDFx1aOutput),
         "snippets/diglot":                ("c_diglot", None, Diglot),
         "snippets/fancyborders":          ("c_borders", None, FancyBorders),
         "snippets/thumbtabs":             ("c_thumbtabs", None, ThumbTabs),

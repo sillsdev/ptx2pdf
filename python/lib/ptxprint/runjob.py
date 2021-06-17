@@ -562,9 +562,9 @@ class RunJob:
                 fpath = os.path.join(self.tmpdir, outfname.replace(".tex", "."+a))
                 cachedata[a] = self.readfile(fpath)
                 if testdata != cachedata[a]:
-                    if a == "delayed" and len(testdata) and numruns < self.maxRuns:
-                        os.remove(fpath)
-                        cachedata[a] = ""
+                    #if a == "delayed" and len(testdata) and numruns < self.maxRuns:
+                    #    os.remove(fpath)
+                    #    cachedata[a] = ""
                     if numruns >= self.maxRuns or not cacheexts[a][1]:
                         self.rerunReasons.append(cacheexts[a][0])
                     else:

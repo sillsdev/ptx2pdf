@@ -23,9 +23,7 @@ class PDFx1aOutput(Snippet):
 /ModDate(D:{pdfdate_})%
 /Producer(XeTeX)%
 /Trapped /False
-/GTS_PDFXVersion(PDF/X-1a:2003)%
-/GTS_PDFXConformance(PDF/X-1a:2003)%
->> }} 
+{_gtspdfx}>> }} 
 \special{{pdf:fstream @OBJCVR ({/iccfpath})}}
 \special{{pdf:put @OBJCVR <</N 4>>}}
 %\special{{pdf:close @OBJCVR}}
@@ -57,9 +55,7 @@ class PDFx1aOutput(Snippet):
       </dc:description>
       <xmp:CreatorTool>PTXprint ({config/name})</xmp:CreatorTool>
       <pdf:Producer>XeTeX</pdf:Producer>
-      <pdfaid:part>1</pdfaid:part>
-      <pdfaid:conformance>B</pdfaid:conformance>
-    </rdf:Description>
+{_gtspdfaid}    </rdf:Description>
   </rdf:RDF>
 </x:xmpmeta>
 <?xpacket end="w"?>)}}
@@ -87,9 +83,16 @@ class PDFx1aOutput(Snippet):
 >>}}
 \catcode`\#=6
 """
+        extras = {'_gtspdfx': '', '_gtspdfaid': ''}
+        pdftype = model['snippets/pdfoutput']
+        if pdftype is None:
+            extras['_gtspdfx'] = "/GTS_PDFXVersion(PDF/X-4)%\n"
+        else:
+            extras['_gtspdfx'] = "/GTS_PDFXVersion(PDF/X-1a:2003)%\n/GTS_PDFXConformance(PDF/X-1a:2003)%\n"
+            extras['_gtspdfaid'] = "      <pdfaid:part>1</pdfaid:part>\n      <pdfaid:conformance>B</pdfaid:conformance>\n"
         if model['snippets/pdfoutput'] == "PDF/A-1":
             res += "\XeTeXgenerateactualtext=1\n"
-        return res.format(**model.dict) + "\n"
+        return res.format(**{**model.dict, **extras}) + "\n"
     
 class FancyIntro(Snippet):
     texCode = r"""
