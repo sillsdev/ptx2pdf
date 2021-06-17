@@ -716,6 +716,7 @@
     \gdef\c@rrdstat{L}%
   \fi
   \endlastp@rstyle{p}%
+  \global\let\layoutstylebreak\enddigl@t % 
   \ifhe@dings\endhe@dings
     \global\savedpenalty=\lastpenalty % Pick up revised after-heading penalty
   \fi%
@@ -795,6 +796,7 @@
 
 \def\polyglotcolumn#1{%
   \uppercase{\edef\reqcol{#1}}%
+  \global\let\layoutstylebreak\enddigl@t
   \ifx\reqcol\empty\errmessage{polyglotcolumn may not be called with an empty argument}\fi
   \pr@sideswitch{polyglotcolumn #1}{\reqcol}% Before any non-fatal writes
   \ifcsname #1isDiglotColumn\endcsname % 
