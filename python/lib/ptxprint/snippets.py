@@ -29,36 +29,40 @@ class PDFx1aOutput(Snippet):
 \special{{pdf:fstream @OBJCVR ({/iccfpath})}}
 \special{{pdf:put @OBJCVR <</N 4>>}}
 %\special{{pdf:close @OBJCVR}}
-\catcode`#=12
-\special{{pdf:stream @OBJCMR (<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-ref-syntax-ns#"
-     xmlns:xmp="http://ns.adobe.com/xap/1.0/"
-     xmlns:dc="http://purl.org/dc/elements/1.1/"
-     xmlns:pdf="http://ns.adobe.com/pdf/1.3/"
-     xmlns:pdfaid="http://www.aiim.org/pdfa/ns/id/">
-  <rdf:Description rdf:about="">
-    <dc:creator>
-      <rdf:Seq>
-        <rdf:li>{document/author}</rdf:li>
-      </rdf:Seq>
-    </dc:creator>
-    <xmp:CreateDate>{xmpdate_}</xmp:CreateDate>
-    <xmp:ModifyDate>{xmpdate_}</xmp:ModifyDate>
-    <dc:title>
-      <rdf:Alt>
-        <rdf:li xml:lang="x-default">{document/title}</rdf:li>
-      </rdf:Alt>
-    </dc:title>
-    <dc:description>
-      <rdf:Alt>
-        <rdf:li xml:lang="x-default">{document/subject}</rdf:li>
-      </rdf:Alt>
-    </dc:description>
-    <xmp:CreatorTool>PTXprint ({config/name})</xmp:CreatorTool>
-    <pdf:Producer>XeTeX</pdf:Producer>
-    <pdfaid:part>1</pdfaid:part>
-    <pdfaid:conformance>B</pdfaid:conformance>
-  </rdf:Description>
-</rdf:RDF>)}}
+\catcode`\#=12
+\special{{pdf:stream @OBJCMR (
+<x:xmpmeta xmlns:x="adobe:ns:meta/">
+  <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-ref-syntax-ns#"
+       xmlns:xmp="http://ns.adobe.com/xap/1.0/"
+       xmlns:dc="http://purl.org/dc/elements/1.1/"
+       xmlns:pdf="http://ns.adobe.com/pdf/1.3/"
+       xmlns:pdfaid="http://www.aiim.org/pdfa/ns/id/">
+    <rdf:Description rdf:about="">
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>{document/author}</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <xmp:CreateDate>{xmpdate_}</xmp:CreateDate>
+      <xmp:ModifyDate>{xmpdate_}</xmp:ModifyDate>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li xml:lang="x-default">{document/title}</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:description>
+        <rdf:Alt>
+          <rdf:li xml:lang="x-default">{document/subject}</rdf:li>
+        </rdf:Alt>
+      </dc:description>
+      <xmp:CreatorTool>PTXprint ({config/name})</xmp:CreatorTool>
+      <pdf:Producer>XeTeX</pdf:Producer>
+      <pdfaid:part>1</pdfaid:part>
+      <pdfaid:conformance>B</pdfaid:conformance>
+    </rdf:Description>
+  </rdf:RDF>
+</x:xmpmeta>
+<?xpacket end="w"?>)}}
 \special{{pdf:put @OBJCMR <</Type /Metadata /Subtype /XML>>}}
 \special{{pdf:docview <<
 /Metadata @OBJCMR
