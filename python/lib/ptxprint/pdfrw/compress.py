@@ -18,6 +18,8 @@ def compress(mylist):
     for obj in streamobjects(mylist):
         ftype = obj.Filter
         if ftype is not None:
+            if not len(ftype):
+                obj.Filter = None
             continue
         oldstr = obj.stream
         newstr = convert_load(zlib.compress(convert_store(oldstr)))

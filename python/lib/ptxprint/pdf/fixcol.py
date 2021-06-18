@@ -138,7 +138,10 @@ def fixpdfcmyk(infile, outfile, threshold=1.):
             strm = pstate.parsestream(trailer, i.stream)
             i.stream = strm
 
-    w = PdfWriter(outfile, trailer=trailer, version='1.4')
+    meta = trailer.Root.Metadata
+    if meta is not None:
+        meta.Filter = []
+    w = PdfWriter(outfile, trailer=trailer, version='1.4', compress=True)
     w.write()
 
 def pagebbox(infile, pagenum=0):

@@ -578,8 +578,8 @@ class RunJob:
             cmd = ["xdvipdfmx", "-E", "-V", "1.4"]
             if self.ispdfxa != "None":
                 cmd += ["-q", "-o", outfname.replace(".tex", ".prepress.pdf")]
-            if self.ispdfxa == "PDF/A-1":
-                cmd += ["-z", "0"]
+            #if self.ispdfxa == "PDF/A-1":
+            #    cmd += ["-z", "0"]
             if self.args.extras & 1:
                 cmd += ["-vv"]
             runner = call(cmd + [outfname.replace(".tex", ".xdv")], cwd=self.tmpdir)

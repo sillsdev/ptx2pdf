@@ -35,6 +35,7 @@ ModelMap = {
     "ifusediglotmodsty_":       ("_diglotmodsty", lambda w,v: "%"),
     "ifdiglotincludefootnotes_":("_diglotinclfn", lambda w,v: "%"),
     "ifdiglotincludexrefs_":    ("_diglotinclxr", lambda w,v: "%"),
+    "transparency_":            ("fcb_outputFormat", lambda w,v: "false" if v in (None, "None", "PDF/X-4") else "true"),
 
     "config/notes":             ("t_configNotes", lambda w,v: v or ""),
     "config/pwd":               ("t_invisiblePassword", lambda w,v: v or ""),

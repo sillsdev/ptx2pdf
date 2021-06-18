@@ -114,6 +114,7 @@ for pagenum, page in enumerate(trailer.pages, 1):
         uncompress([i])
         strm = pstate.parsestream(trailer, i.stream)
         i.stream = strm
+        i.Filter = PdfName.FlateDecode
 
 PdfWriter(args.outfile, trailer=trailer).write()
         

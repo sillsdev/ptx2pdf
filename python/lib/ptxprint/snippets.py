@@ -94,12 +94,13 @@ class PDFx1aOutput(Snippet):
         extras = {'_gtspdfx': '', '_gtspdfaid': ''}
         pdftype = model['snippets/pdfoutput'] or "None"
         libpath = os.path.abspath(os.path.dirname(__file__))
-        if pdftype == "None":
+        if pdftype in ("None", "CMYK"):
             extras['_gtspdfx'] = "/GTS_PDFXVersion(PDF/X-4)%\n"
-            model.dict["/iccfpath"] = os.path.join(libpath, "default_rgb.icc").replace("\\","/")
         else:
             extras['_gtspdfx'] = "/GTS_PDFXVersion(PDF/X-1a:2003)%\n/GTS_PDFXConformance(PDF/X-1a:2003)%\n"
-            extras['_gtspdfaid'] = "      <pdfaid:part>1</pdfaid:part>\n      <pdfaid:conformance>B</pdfaid:conformance>\n"
+        if pdftype == "None":
+            model.dict["/iccfpath"] = os.path.join(libpath, "default_rgb.icc").replace("\\","/")
+        extras['_gtspdfaid'] = "      <pdfaid:part>1</pdfaid:part>\n      <pdfaid:conformance>B</pdfaid:conformance>\n"
         if model['snippets/pdfoutput'] == "PDF/A-1":
             res += "\XeTeXgenerateactualtext=1\n"
         return res.format(**{**model.dict, **extras}) + "\n"
