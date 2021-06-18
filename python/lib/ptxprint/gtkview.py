@@ -955,7 +955,7 @@ class GtkViewModel(ViewModel):
             else _("Tabs") if self.builder.get_object("fr_tabs").get_visible() else ""
         bc = "<span color='{}'>".format(col)+_("Borders")+"</span>" if bd \
             else _("Borders") if self.builder.get_object("fr_borders").get_visible() else ""
-        jn = "+" if ((tb and bd) or not self.get("c_showAdvancedOptions")) else ""
+        jn = "+" if ((tb and bd) or self.get("c_showAdvancedOptions")) else ""
         self.builder.get_object("lb_TabsBorders").set_markup(tc+jn+bc)
 
         ad = False

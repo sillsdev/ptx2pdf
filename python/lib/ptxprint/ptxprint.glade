@@ -6128,7 +6128,7 @@ starts a little bit below the top of the header area.</property>
                                       <object class="GtkLabel">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="margin_left">6</property>
+                                        <property name="margin_left">5</property>
                                         <property name="label" translatable="yes">(calculated from
 the values below)</property>
                                         <attributes>
@@ -17101,6 +17101,7 @@ the PDF for its intended purpose.</property>
                                     <property name="has_entry">True</property>
                                     <property name="entry_text_column">0</property>
                                     <property name="id_column">1</property>
+                                    <property name="active_id">None</property>
                                     <child internal-child="entry">
                                       <object class="GtkEntry">
                                         <property name="visible">True</property>
@@ -17467,9 +17468,6 @@ Font metrics gives more consistent results.</property>
                                         <property name="left_attach">0</property>
                                         <property name="top_attach">1</property>
                                       </packing>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
                                     </child>
                                   </object>
                                 </child>
@@ -18497,7 +18495,7 @@ from XeTeX processing.</property>
             <property name="valign">end</property>
             <child>
               <object class="GtkButton" id="btn_showMoreOrLess">
-                <property name="label" translatable="yes">More/Less</property>
+                <property name="label" translatable="yes">v More /^ Less</property>
                 <property name="width_request">90</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
