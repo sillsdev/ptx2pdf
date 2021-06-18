@@ -34,7 +34,9 @@ class PDFx1aOutput(Snippet):
        xmlns:xmp="http://ns.adobe.com/xap/1.0/"
        xmlns:dc="http://purl.org/dc/elements/1.1/"
        xmlns:pdf="http://ns.adobe.com/pdf/1.3/"
-       xmlns:pdfaid="http://www.aiim.org/pdfa/ns/id/">
+       xmlns:pdfaid="http://www.aiim.org/pdfa/ns/id/"
+       xmlns:xmpMM="http://ns.adobe.com/xap/1.0/mm/"
+       xmlns:pdfxid="http://www.npes.org/pdfx/ns/id/">
     <rdf:Description rdf:about="">
       <dc:creator>
         <rdf:Seq>
@@ -43,6 +45,12 @@ class PDFx1aOutput(Snippet):
       </dc:creator>
       <xmp:CreateDate>{xmpdate_}</xmp:CreateDate>
       <xmp:ModifyDate>{xmpdate_}</xmp:ModifyDate>
+      <xmp:MetadataDate>{xmpdate_}</xmp:MetadataDate>
+      <xmp:CreatorTool>PTXprint ({config/name})</xmp:CreatorTool>
+      <xmpMM:DocumentID>uuid:5589311-bbc3-4ac7-9aaf-fc8ab4739b3c</xmpMM:DocumentID>
+      <xmpMM:RenditionClass>default</xmpMM:RenditionClass>
+      <xmpMM:VersionID>1</xmpMM:VersionID>
+      <pdfxid:GTS_PDFXVersion>PDF/X-4</pdfxid:GTS_PDFXVersion>
       <dc:title>
         <rdf:Alt>
           <rdf:li xml:lang="x-default">{document/title}</rdf:li>
@@ -53,8 +61,8 @@ class PDFx1aOutput(Snippet):
           <rdf:li xml:lang="x-default">{document/subject}</rdf:li>
         </rdf:Alt>
       </dc:description>
-      <xmp:CreatorTool>PTXprint ({config/name})</xmp:CreatorTool>
       <pdf:Producer>XeTeX</pdf:Producer>
+      <pdf:Trapped>False</pdf:Trapped>
 {_gtspdfaid}    </rdf:Description>
   </rdf:RDF>
 </x:xmpmeta>
@@ -85,8 +93,10 @@ class PDFx1aOutput(Snippet):
 """
         extras = {'_gtspdfx': '', '_gtspdfaid': ''}
         pdftype = model['snippets/pdfoutput'] or "None"
+        libpath = os.path.abspath(os.path.dirname(__file__))
         if pdftype == "None":
             extras['_gtspdfx'] = "/GTS_PDFXVersion(PDF/X-4)%\n"
+            model.dict["/iccfpath"] = os.path.join(libpath, "default_rgb.icc").replace("\\","/")
         else:
             extras['_gtspdfx'] = "/GTS_PDFXVersion(PDF/X-1a:2003)%\n/GTS_PDFXConformance(PDF/X-1a:2003)%\n"
             extras['_gtspdfaid'] = "      <pdfaid:part>1</pdfaid:part>\n      <pdfaid:conformance>B</pdfaid:conformance>\n"
