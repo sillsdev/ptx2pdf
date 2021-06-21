@@ -71,7 +71,7 @@
 	\unhbox0
 	\ifx\tmpb\relax\else
           \edef\tmp{\tmpb}\tmp\fi
-      }
+      }%
   \fi
 }
 \def\Spec@lAttribName#1#2{attr-spec-#1-#2}
@@ -124,7 +124,9 @@
   \in@ttribfalse
   \xdef\@ttributes{}%
 }
-\SetSpeciallAttribs{link-href}{\special{pdf:bann<</Type/Annot/Subtype/Link/Border[0 0 1]/H/I/C[.1 .1 .1]/A<</S/URI/URI(\attr@b)>>>>}}{\noexpand\special{pdf:eann}}
+\def\LinkBorderstyle{/S/U/W 1} % Underline
+%\def\LinkBorderstyle{}
+\SetSpeciallAttribs{link-href}{\special{pdf:bann<</Type/Annot/Subtype/Link/Border[0 0 1]\ifx\LinkBorderstyle\empty\else/BS<<\LinkBorderstyle>>\fi/H/I/C[.5 .5 .5]/A<</S/URI/URI(\attr@b)>>>>}}{\special{pdf:eann}}
 \SetSpeciallAttribs{link-name}{}{}
 
 %%%%%%%%%
