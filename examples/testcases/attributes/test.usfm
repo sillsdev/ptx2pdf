@@ -1,7 +1,7 @@
 \id TST Test file
 \h small test file
 \c 1
-\s This is a title
+\s \jmp |link-id="pgtop1"\jmp*This is a title
 \p
 \v 1 This is normal text.\f + \fr 1:1 \ft A footnote\f* 
 \nd NDtext and other character styles can cross a milestone boundary like this -> \qt-s\* 
@@ -36,4 +36,4 @@ dignissimos ducimus\w qui|a\w*blanditiis praesentium voluptatum deleniti atque c
 \p
 \v 5 \qt-s|foo\*Unknown attribution\qt-e\* libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus.
 \p 
-\v 5b Now here is a \w link|link-href="http://localhost"\w* and this isn't.
+\v 5b Now here is a \w jump|link-href="#pgtop1"\w* and this isn't.
