@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.2 
+<!-- Generated with glade 3.22.1 
 
 The MIT License (MIT)
 
@@ -5199,7 +5199,7 @@ and descent values of the main body font.</property>
                                         <property name="margin_left">3</property>
                                         <property name="label" translatable="yes">99.9</property>
                                         <attributes>
-                                          <attribute name="foreground" value="#cece5c5c0000"/>
+                                          <attribute name="foreground" value="#2b0a4be2f850"/>
                                         </attributes>
                                       </object>
                                       <packing>
@@ -5534,6 +5534,7 @@ the Two Column layout).</property>
                                 <property name="column_spacing">6</property>
                                 <child>
                                   <object class="GtkLabel">
+                                    <property name="height_request">35</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="tooltip_text" translatable="yes">The distance (mm) from the top of the page
@@ -5544,10 +5545,9 @@ where the the main text area starts.
 The top of the main text area is 1 base line spacing 
 above the base line of the first line of the body text.</property>
                                     <property name="halign">end</property>
-                                    <property name="margin_top">6</property>
-                                    <property name="margin_bottom">6</property>
-                                    <property name="label" translatable="yes">Top Margin 
-to Text (mm):</property>
+                                    <property name="valign">center</property>
+                                    <property name="label" translatable="yes">Start of Page to 
+Top of Text (mm):</property>
                                     <property name="justify">right</property>
                                     <attributes>
                                       <attribute name="foreground" value="#cccc00000000"/>
@@ -5555,11 +5555,13 @@ to Text (mm):</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">3</property>
-                                    <property name="top_attach">1</property>
+                                    <property name="top_attach">0</property>
                                   </packing>
                                 </child>
                                 <child>
                                   <object class="GtkLabel">
+                                    <property name="width_request">110</property>
+                                    <property name="height_request">35</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="tooltip_text" translatable="yes">The space (pt) between the bottom of the header
@@ -5570,20 +5572,22 @@ where the the main text area starts.
 The top of the main text area is 1 base line spacing 
 above the base line of the first line of the body text.</property>
                                     <property name="halign">end</property>
-                                    <property name="label" translatable="yes">Header to 
-Text Space (pt):</property>
+                                    <property name="valign">center</property>
+                                    <property name="label" translatable="yes">Bottom of Header
+to Top of Text (pt):</property>
                                     <property name="justify">right</property>
                                     <attributes>
-                                      <attribute name="foreground" value="#cece5c5c0000"/>
+                                      <attribute name="foreground" value="#808000008080"/>
                                     </attributes>
                                   </object>
                                   <packing>
                                     <property name="left_attach">3</property>
-                                    <property name="top_attach">2</property>
+                                    <property name="top_attach">1</property>
                                   </packing>
                                 </child>
                                 <child>
                                   <object class="GtkSpinButton" id="s_headerposition">
+                                    <property name="height_request">35</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="tooltip_text" translatable="yes">This setting determines the vertical positioning
@@ -5610,7 +5614,7 @@ above the base line of the first line of the body text.</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">4</property>
-                                    <property name="top_attach">2</property>
+                                    <property name="top_attach">1</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -5626,8 +5630,8 @@ from the descender of the final line of text
                                     <property name="halign">end</property>
                                     <property name="margin_top">6</property>
                                     <property name="margin_bottom">6</property>
-                                    <property name="label" translatable="yes">Bottom Margin 
-to Text (mm):</property>
+                                    <property name="label" translatable="yes">Bottom of Text to
+End of Page (mm):</property>
                                     <property name="justify">right</property>
                                     <attributes>
                                       <attribute name="foreground" value="#cccc00000000"/>
@@ -5647,8 +5651,10 @@ area (the ascender) to the bottom of the page.
 Note that (by default) only the introduction 
 pages use the footer for page numbers.</property>
                                     <property name="halign">end</property>
-                                    <property name="label" translatable="yes">Edge of Page to
-Top of Footer (mm):</property>
+                                    <property name="margin_top">6</property>
+                                    <property name="margin_bottom">6</property>
+                                    <property name="label" translatable="yes">Top of Footer to
+End of Page (mm):</property>
                                     <property name="justify">right</property>
                                     <attributes>
                                       <attribute name="foreground" value="#2b0a4be2f850"/>
@@ -5692,36 +5698,13 @@ space between the end of the text and the footer line.</property>
                                     <property name="can_focus">False</property>
                                     <property name="valign">center</property>
                                     <property name="margin_left">30</property>
-                                    <property name="margin_right">30</property>
-                                    <property name="margin_top">17</property>
-                                    <property name="margin_bottom">17</property>
+                                    <property name="margin_top">6</property>
+                                    <property name="margin_bottom">6</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
                                     <property name="top_attach">4</property>
-                                    <property name="width">3</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkLabel">
-                                    <property name="width_request">95</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="tooltip_text" translatable="yes">The distance (mm) from the top of the page
-to the top of the header area. Note that due to 
-the ascent of the font, the header text actually 
-starts a little bit below the top of the header area.</property>
-                                    <property name="halign">end</property>
-                                    <property name="label" translatable="yes">Edge of Page to
-Top of Header:</property>
-                                    <property name="justify">right</property>
-                                    <attributes>
-                                      <attribute name="foreground" value="#2b0a4be2f850"/>
-                                    </attributes>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">3</property>
-                                    <property name="top_attach">0</property>
+                                    <property name="width">5</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -5772,7 +5755,7 @@ above.</property>
                                     <property name="label" translatable="yes">Side Margin
 Width (mm):</property>
                                     <attributes>
-                                      <attribute name="foreground" value="#808000008080"/>
+                                      <attribute name="foreground" value="#cece5c5c0000"/>
                                     </attributes>
                                   </object>
                                   <packing>
@@ -5814,6 +5797,7 @@ above.</property>
                                 </child>
                                 <child>
                                   <object class="GtkLabel" id="l_rhruleoffset">
+                                    <property name="height_request">35</property>
                                     <property name="can_focus">False</property>
                                     <property name="no_show_all">True</property>
                                     <property name="tooltip_text" translatable="yes">The space (pt) between the horizontal rule
@@ -5824,9 +5808,9 @@ where the the main text area starts.
 The top of the main text area is 1 base line spacing 
 above the base line of the first line of the body text.</property>
                                     <property name="halign">end</property>
-                                    <property name="margin_top">3</property>
-                                    <property name="label" translatable="yes">Space from Rule
-to Body Text (pt):</property>
+                                    <property name="valign">center</property>
+                                    <property name="label" translatable="yes">Space between Rule
+and Top of Text (pt):</property>
                                     <property name="justify">right</property>
                                     <attributes>
                                       <attribute name="foreground" value="#22228b8b2222"/>
@@ -5834,11 +5818,12 @@ to Body Text (pt):</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">3</property>
-                                    <property name="top_attach">4</property>
+                                    <property name="top_attach">3</property>
                                   </packing>
                                 </child>
                                 <child>
                                   <object class="GtkSpinButton" id="s_rhruleposition">
+                                    <property name="height_request">35</property>
                                     <property name="can_focus">True</property>
                                     <property name="no_show_all">True</property>
                                     <property name="tooltip_text" translatable="yes">The space (pt) between the horizontal rule
@@ -5866,11 +5851,12 @@ above the base line of the first line of the body text.</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">4</property>
-                                    <property name="top_attach">4</property>
+                                    <property name="top_attach">3</property>
                                   </packing>
                                 </child>
                                 <child>
                                   <object class="GtkSpinButton" id="s_topmargin">
+                                    <property name="height_request">35</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="tooltip_text" translatable="yes">The distance (mm) from the top of the page
@@ -5899,7 +5885,7 @@ above the base line of the first line of the body text.</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">4</property>
-                                    <property name="top_attach">1</property>
+                                    <property name="top_attach">0</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -5931,7 +5917,7 @@ button to adjust either the Line Spacing or Bottom Margin.</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">5</property>
-                                    <property name="top_attach">1</property>
+                                    <property name="top_attach">0</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -6085,7 +6071,8 @@ button to adjust either the Line Spacing or Top Margin.</property>
                                 </child>
                                 <child>
                                   <object class="GtkCheckButton" id="c_rhrule">
-                                    <property name="label" translatable="yes">Horizontal Rule Below Header</property>
+                                    <property name="label" translatable="yes">Horizontal Rule</property>
+                                    <property name="height_request">23</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
@@ -6099,8 +6086,8 @@ main body text begins.</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">3</property>
-                                    <property name="top_attach">3</property>
-                                    <property name="width">3</property>
+                                    <property name="top_attach">2</property>
+                                    <property name="width">2</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -6108,16 +6095,18 @@ main body text begins.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <child>
-                                      <object class="GtkLabel" id="l_margin2header1">
+                                      <object class="GtkLabel">
+                                        <property name="width_request">95</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="tooltip_text" translatable="yes">The distance (mm) from the top of the page
 to the top of the header area. Note that due to 
 the ascent of the font, the header text actually 
 starts a little bit below the top of the header area.</property>
-                                        <property name="halign">start</property>
-                                        <property name="margin_left">12</property>
-                                        <property name="label" translatable="yes">8.5mm</property>
+                                        <property name="halign">end</property>
+                                        <property name="label" translatable="yes">Start of Page to
+Top of Header:</property>
+                                        <property name="justify">right</property>
                                         <attributes>
                                           <attribute name="foreground" value="#2b0a4be2f850"/>
                                         </attributes>
@@ -6129,15 +6118,18 @@ starts a little bit below the top of the header area.</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkLabel">
+                                      <object class="GtkLabel" id="l_margin2header1">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="margin_left">5</property>
-                                        <property name="label" translatable="yes">(calculated from
-the values below)</property>
+                                        <property name="tooltip_text" translatable="yes">The distance (mm) from the top of the page
+to the top of the header area. Note that due to 
+the ascent of the font, the header text actually 
+starts a little bit below the top of the header area.</property>
+                                        <property name="halign">start</property>
+                                        <property name="margin_left">2</property>
+                                        <property name="label" translatable="yes">8.5mm</property>
                                         <attributes>
-                                          <attribute name="scale" value="0.90000000000000002"/>
-                                          <attribute name="foreground" value="#2b094be2f850"/>
+                                          <attribute name="foreground" value="#2b0a4be2f850"/>
                                         </attributes>
                                       </object>
                                       <packing>
@@ -6146,19 +6138,28 @@ the values below)</property>
                                         <property name="position">1</property>
                                       </packing>
                                     </child>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">4</property>
-                                    <property name="top_attach">0</property>
-                                    <property name="width">2</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkLabel">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="hexpand">True</property>
-                                    <property name="label" translatable="yes"> </property>
+                                    <child>
+                                      <object class="GtkLabel">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="tooltip_text" translatable="yes">This value is calculated using the
+other values (Start of Page to
+Top of Text, and Bottom of Header
+to Top of Text).</property>
+                                        <property name="margin_left">6</property>
+                                        <property name="label" translatable="yes">(value is
+derived)</property>
+                                        <attributes>
+                                          <attribute name="scale" value="0.90000000000000002"/>
+                                          <attribute name="foreground" value="#2b094be2f850"/>
+                                        </attributes>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">2</property>
+                                      </packing>
+                                    </child>
                                   </object>
                                   <packing>
                                     <property name="left_attach">2</property>
@@ -6166,7 +6167,40 @@ the values below)</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <placeholder/>
+                                  <object class="GtkLabel">
+                                    <property name="height_request">35</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="label" translatable="yes"> </property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">5</property>
+                                    <property name="top_attach">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="height_request">23</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="label" translatable="yes"> </property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">5</property>
+                                    <property name="top_attach">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="height_request">35</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="label" translatable="yes"> </property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">5</property>
+                                    <property name="top_attach">1</property>
+                                  </packing>
                                 </child>
                                 <child>
                                   <placeholder/>
