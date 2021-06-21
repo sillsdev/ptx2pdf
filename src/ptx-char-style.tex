@@ -190,7 +190,9 @@
        \ifx\p@ram\relax\else \egroup\dimen9=\p@ram\ifdim\dimen9<0pt\lower-\dimen9\else\raise\dimen9\fi\box0 \fi
      \else
        \egroup % Close the box0 hbox started either by raise or @ttrib
-       \ifx\@ttributes\empty\else% If there are attributes, call an appropriate hook
+       \ifx\@ttributes\empty\else% If there are attributes, call an appropriate hook	
+	 \let\d@\apply@attr@specials
+	 \x@\cstackdown \attribsus@d,\E
          \ifcsname complex-\oldch@rstyle\c@rrdstat\endcsname
            \csname complex-\oldch@rstyle\c@rrdstat\endcsname
          \else 

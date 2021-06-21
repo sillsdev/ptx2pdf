@@ -54,6 +54,35 @@
   \trace{A}{removing (old) attribute '#1'}%
   \x@\global\x@\let\csname attr:#1\endcsname=\undefined
 }
+\def\apply@attr@specials #1\E{% Apply 'simple' attribute features - one feature=one atribute.
+  \x@\let\x@\tmpa\csname \Spec@lAttribName{#1}{start}\endcsname
+  \x@\let\x@\tmpb\csname \Spec@lAttribName{#1}{end}\endcsname
+  \temptrue
+  \ifx\tmpa\relax
+    \ifx\tmpb\relax\tempfalse
+    \fi
+  \fi
+  \iftemp
+    \get@ttribute{#1}%
+    \trace{A}{Special #1 :\attr@b}%
+    \setbox0\hbox{%
+	\ifx\tmpa\relax\else\tmpa\fi
+	\unhbox0
+	\ifx\tmpb\relax\else\tmpb\fi
+      }
+  \fi
+}
+\def\Spec@lAttribName#1#2{attr-spec-#1-#2}
+\def\SetOneSpecialAttrib#1#2#3{%
+  \edef\tmp{#3}\def\tmpa{\Spec@lAttribName{#1}{#2}}\ifx\tmp\empty
+    \x@\let\csname\tmpa\endcsname\relax
+  \else
+    \x@\let\csname\tmpa\endcsname\tmp
+  \fi}
+\def\SetSpeciallAttribs#1#2#3{\tracingassigns=1\relax%
+  \SetOneSpecialAttrib{#1}{start}{#2}%
+  \SetOneSpecialAttrib{#1}{end}{#3}\tracingassigns=0\relax}%
+
 \def\unset@ttribs{% Remove any current attibute definitions
   \let\d@=\kill@ttrib
   \x@\cstackdown \attribsus@d,\E
@@ -93,6 +122,9 @@
   \in@ttribfalse
   \xdef\@ttributes{}%
 }
+\SetSpeciallAttribs{link-href}{pdf:bann \attr@b-http://localhost-}
+}{\noexpand\special{pdf:eann}}
+\SetSpeciallAttribs{link-name}{}{}
 
 %%%%%%%%%
 %
