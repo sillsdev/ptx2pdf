@@ -736,6 +736,7 @@
 
 %+c_doublecolumns
 \def\PageFullFactor{0.9}
+\gdef\layoutstylebreak@doublecolumn{\global\output={\savepartialpagedbounce}\eject\eject}
 \def\doublecolumns{
   \ifnum\c@rrentcols=1
     % make switch from single to double column
@@ -743,7 +744,8 @@
     \ifhe@dings\endhe@dings\fi % if headings in process, end headings
     \penalty-100\vskip\baselineskip % ensure blank line between single and double column material
     \global\output={\savepartialpage}\eject
-    \ifrerunsavepartialpaged\eject\rerunsavepartialpagedfalse\fi % save any partially-full page
+    \layoutstylebreak
+    \global\let\layoutstylebreak\layoutstylebreak@doublecolumn
 	% if single column material already fills 3/4 page, go to next page to start double columns
     \dimen0=\ht\partial
     \trace{o}{DoubleColumns: partial=\the\dimen0\space > \PageFullFactor\space * \the\textheight}%
@@ -775,7 +777,7 @@
     \count255=2000
     \global\count\topins=\count255
     \global\count\bottomins=\count255
-    \global\count\verybottomins=\count255
+    \global\count\verybottomins=100%\count255
     \let\\=\s@tn@tec@unt \the\n@tecl@sses % reset \count for each note class
     \global\holdinginserts=1 % don't pull out inserts yet, we are still adjusting page
     %\msg{Starting 2col partial: \the\ht\partial, pagetotal: \the\pagetotal, vsize: \the\vsize}
@@ -1593,6 +1595,7 @@
       \enddigl@t
     \fi
   \fi
+  \global\let\layoutstylebreak\enddigl@t
   \global\diglottrue\diglots@tup
 }
 
@@ -1658,12 +1661,18 @@
 
 %+c_singlecolumn
 % to switch back to single column, we reset the page size parameters
+\def\layoutstylebreak@singlecolumn{
+  \ifhe@dings\endhe@dings\fi
+  \par
+  \ifrerunsavepartialpaged\eject\rerunsavepartialpagedfalse\fi}
+\let\layoutstylebreak\layoutstylebreak@singlecolumn
+
 \def\singlecolumn{%
   \trace{o}{singlecolumn hIns=\the\holdinginserts}%\tracingmacros=1
   \ifnum\c@rrentcols>1
-    \ifhe@dings\endhe@dings\fi
     %\temptrue
-    \global\output={\savepartialpagedbounce}\eject\eject % save any partially-full page into a box.
+    \layoutstylebreak % save any partially-full page into \partial
+    \global\let\layoutstylebreak\layoutstylebreak@singlecolumn
     %LOTS happens before this line is reached!
     \global\hsize=\textwidth \advance\hsize by -\columnshift
     \global\vsize=\textheight

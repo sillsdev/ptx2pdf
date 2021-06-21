@@ -138,5 +138,21 @@ def fixpdfcmyk(infile, outfile, threshold=1.):
             strm = pstate.parsestream(trailer, i.stream)
             i.stream = strm
 
-    PdfWriter(outfile, trailer=trailer).write()
+    meta = trailer.Root.Metadata
+    if meta is not None:
+        meta.Filter = []
+    w = PdfWriter(outfile, trailer=trailer, version='1.4', compress=True)
+    w.write()
+
+def pagebbox(infile, pagenum=0):
+    trailer = PdfReader(infile)
+    if pagenum == 0:
+        pagenum = 1
+    pagenum -= 1
+    pagenum = min(len(trailer.pages), pagenum)
+    page = trailer.pages[pagenum]
+    cropbox = page.inheritable.CropBox
+    return cropbox
+
+
 

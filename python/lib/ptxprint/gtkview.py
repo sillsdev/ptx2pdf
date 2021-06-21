@@ -520,8 +520,8 @@ class GtkViewModel(ViewModel):
                     GObject.add_emission_hook(getattr(Gtk, w), k, self.emission_hook, k)
             self.logactive = True
         expert = self.userconfig.getboolean('init', 'expert', fallback=False)
-        self.set("c_hideAdvancedSettings", expert)
-        self.onHideAdvancedSettingsClicked(None, None)
+        self.set("c_showAdvancedOptions", not expert)
+        self.onShowAdvancedOptionsClicked(None)
         sys.excepthook = self.doSysError
         lsfonts = self.builder.get_object("ls_font")
         lsfonts.clear()
@@ -576,30 +576,30 @@ class GtkViewModel(ViewModel):
         self._setChapRange("to", 1, 999, 1)
         self.colorTabs()
 
+    def onShowMoreOrLessClicked(self, btn):
+        self.set("c_showAdvancedOptions", not self.get("c_showAdvancedOptions"))
+    
     def onShowAdvancedOptionsClicked(self, btn):
-        self.set('c_hideAdvancedSettings', self.get('c_showAdvancedOptions'))
-
-    def onHideAdvancedSettingsClicked(self, c_hideAdvancedSettings, foo):
-        val = self.get("c_hideAdvancedSettings")
+        val = not self.get("c_showAdvancedOptions")
         self.userconfig.set('init', 'expert', 'true' if val else 'false')
-        if not val:
+        if val:
             for c in ("c_startOnHalfPage", "c_marginalverses", "c_figplaceholders"):
                 self.builder.get_object(c).set_active(False)
 
             # Turn Essential Settings ON
             for c in ("c_mainBodyText", "c_skipmissingimages"):
                 self.builder.get_object(c).set_active(True)
-            self.builder.get_object("c_hideAdvancedSettings").set_opacity(0.5)
-            self.builder.get_object("c_hideAdvancedSettings").set_tooltip_text( \
-                _("Show Advanced Settings:\n\n" + \
+            self.builder.get_object("btn_showMoreOrLess").set_label("v  Show More")
+            self.builder.get_object("btn_showMoreOrLess").set_tooltip_text( \
+                _("Show More Settings:\n" + \
                 "There are many more complex options\n" + \
                 "available for use within PTXprint."))
         else:
-            self.builder.get_object("c_hideAdvancedSettings").set_opacity(1.0)
-            self.builder.get_object("c_hideAdvancedSettings").set_tooltip_text( \
-                _("Hide Advanced Settings:\n\n" + \
-                "If the number of options is too overwhelming then use\n" + \
-                "this switch to hide the more complex/advanced options."))
+            self.builder.get_object("btn_showMoreOrLess").set_label("^  Show Less")
+            self.builder.get_object("btn_showMoreOrLess").set_tooltip_text( \
+                _("Show Fewer Settings:\n" + \
+                "If the settings are too overwhelming then\n" + \
+                "you can hide all the advanced options."))
                       
         for c in ("tb_Advanced", "tb_ViewerEditor", "tb_StyleEditor", "tb_Pictures", "tb_TabsBorders", "tb_Diglot",
                   "fr_copyrightLicense", "r_book_module", "btn_chooseBibleModule", "lb_bibleModule",
@@ -623,10 +623,10 @@ class GtkViewModel(ViewModel):
                   "btn_adjust_spacing", "btn_adjust_top", "btn_adjust_bottom", "fr_diglot", "btn_diglotSwitch", "fr_borders",
                   "c_grid", "btn_adjustGrid", "lb_omitPics"): #, "c_noInkFooter"):
             # print(c)
-            self.builder.get_object(c).set_visible(val)
+            self.builder.get_object(c).set_visible(not val)
 
         # Selectively turn things back on if their settings are enabled
-        if not val:
+        if val:
             if self.get("c_includeillustrations"):
                 self.builder.get_object("tb_Pictures").set_visible(True)
                 
@@ -644,19 +644,18 @@ class GtkViewModel(ViewModel):
 
         # Disable/Enable the Details and Checklist tabs on the Pictures tab
         for w in ["tb_details", "tb_checklist"]:
-            self.builder.get_object(w).set_sensitive(val)        
+            self.builder.get_object(w).set_sensitive(not val)        
         for w in ["tb_plTopPane", "tb_picPreview", "scr_detailsBottom", "scr_checklistBottom", "l_globalPicSettings"]: 
-            self.builder.get_object(w).set_visible(val)        
+            self.builder.get_object(w).set_visible(not val)        
             
         # Show Hide specific Help items
         for pre in ("l_", "lb_"):
             for h in ("ptxprintdir", "prjdir", "settings_dir", "pdfViewer", "techFAQ", "reportBugs"): 
-                self.builder.get_object("{}{}".format(pre, h)).set_visible(val)
+                self.builder.get_object("{}{}".format(pre, h)).set_visible(not val)
                 
-        self.set('c_showAdvancedOptions', self.get('c_hideAdvancedSettings'))
         self.colorTabs()
         # Resize Main UI Window appropriately
-        if not val:
+        if val:
             self.mw.resize(828, 292)
         else:
             self.mw.resize(830, 594)
@@ -956,7 +955,7 @@ class GtkViewModel(ViewModel):
             else _("Tabs") if self.builder.get_object("fr_tabs").get_visible() else ""
         bc = "<span color='{}'>".format(col)+_("Borders")+"</span>" if bd \
             else _("Borders") if self.builder.get_object("fr_borders").get_visible() else ""
-        jn = "+" if ((tb and bd) or self.get("c_hideAdvancedSettings")) else ""
+        jn = "+" if ((tb and bd) or self.get("c_showAdvancedOptions")) else ""
         self.builder.get_object("lb_TabsBorders").set_markup(tc+jn+bc)
 
         ad = False
@@ -968,7 +967,6 @@ class GtkViewModel(ViewModel):
         ac = " color='"+col+"'" if ad else ""
         self.builder.get_object("lb_Advanced").set_markup("<span{}>".format(ac)+_("Advanced")+"</span>")
 
-        self.builder.get_object("c_hideAdvancedSettings").set_sensitive(not (tb and bd))
         self.builder.get_object("c_showAdvancedOptions").set_sensitive(not (tb and bd))
 
     def sensiVisible(self, k, focus=False, state=None):
@@ -1067,12 +1065,12 @@ class GtkViewModel(ViewModel):
         invPW = self.get("t_invisiblePassword")
         if invPW == None or invPW == "": # No existing PW, so set a new one
             self.builder.get_object("t_invisiblePassword").set_text(pw)
-            self.builder.get_object("c_hideAdvancedSettings").set_sensitive(False)
+            self.builder.get_object("btn_showMoreOrLess").set_sensitive(False)
             self.onSaveConfig(None, force=True)     # Always save the config when locking
         else: # try to unlock the settings by removing the settings
             if pw == invPW:
                 self.builder.get_object("t_invisiblePassword").set_text("")
-                self.builder.get_object("c_hideAdvancedSettings").set_sensitive(True)
+                self.builder.get_object("btn_showMoreOrLess").set_sensitive(True)
             else: # Mismatching password - Don't do anything
                 pass
         self.builder.get_object("t_password").set_text("")
@@ -1087,7 +1085,7 @@ class GtkViewModel(ViewModel):
         else:
             status = False
             lockBtn.set_label(_("Unlock"))
-        for c in ["btn_saveConfig", "btn_deleteConfig", "t_configNotes", "c_hideAdvancedSettings", 
+        for c in ["btn_saveConfig", "btn_deleteConfig", "t_configNotes", "btn_showMoreOrLess", 
                   "btn_Generate", "btn_plAdd", "btn_plDel"]:
             self.builder.get_object(c).set_sensitive(status)
         
@@ -2030,7 +2028,7 @@ class GtkViewModel(ViewModel):
             lockBtn.set_sensitive(False)
         if self.configNoUpdate or self.get("ecb_savedConfig") == "":
             return
-        self.builder.get_object("c_hideAdvancedSettings").set_sensitive(True)
+        self.builder.get_object("btn_showMoreOrLess").set_sensitive(True)
         lockBtn.set_label("Lock")
         self.builder.get_object("t_invisiblePassword").set_text("")
         self.builder.get_object("btn_saveConfig").set_sensitive(True)
@@ -2527,13 +2525,14 @@ class GtkViewModel(ViewModel):
             os.startfile(fldrpath)
 
     def finished(self):
+        print("Reset progress bar")
         GLib.idle_add(lambda: self._incrementProgress(val=0.))
 
     def _incrementProgress(self, val=None):
         wid = self.builder.get_object("pr_runs")
         if val is None:
             val = wid.get_fraction()
-            val = 0.25 if val < 0.1 else 1. - (1. - val) * 0.5
+            val = 0.25 if val < 0.1 else (1. + val) * 0.5
         wid.set_fraction(val)
 
     def incrementProgress(self):

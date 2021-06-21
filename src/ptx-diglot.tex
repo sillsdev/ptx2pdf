@@ -196,6 +196,8 @@
 \newif\ifRTLL \newif\ifRTLR
 \x@\newif\csname ifinp@r-L\endcsname % Used for parlocs analysis
 \x@\newif\csname ifinp@r-R\endcsname % Used for parlocs analysis
+\x@\newcount\csname p@rlinesgone-L\endcsname % Used for parlocs analysis
+\x@\newcount\csname p@rlinesgone-R\endcsname % Used for parlocs analysis
 
 \def\doVisTrace#1{%
   \setbox0=\vtop to 0pt{\hrule height 0pt depth 0.5pt width 15pt\hbox{\VisTracefont #1 \the\TRACEcount}\vss}\ht0=0pt\dp0=0pt
@@ -714,6 +716,7 @@
     \gdef\c@rrdstat{L}%
   \fi
   \endlastp@rstyle{p}%
+  \global\let\layoutstylebreak\enddigl@t % 
   \ifhe@dings\endhe@dings
     \global\savedpenalty=\lastpenalty % Pick up revised after-heading penalty
   \fi%
@@ -793,6 +796,7 @@
 
 \def\polyglotcolumn#1{%
   \uppercase{\edef\reqcol{#1}}%
+  \global\let\layoutstylebreak\enddigl@t
   \ifx\reqcol\empty\errmessage{polyglotcolumn may not be called with an empty argument}\fi
   \pr@sideswitch{polyglotcolumn #1}{\reqcol}% Before any non-fatal writes
   \ifcsname #1isDiglotColumn\endcsname % 
@@ -1329,7 +1333,10 @@
     \write\p@rlocs{\dc@ref@rgse{\the\pdflastxpos}{\the\pdflastypos}{#1}}%
 }
 
-\def\@Poly@colstart#1#2#3#4#5#6{\edef\c@rrdstat{#6}\baselineskip=#3\relax\@@colstart{#1}{#2}{#3}{#4}{#5}}
+\def\@Poly@colstart#1#2#3#4#5#6{\edef\c@rrdstat{#6}\relax
+  \x@\let\x@\p@rlinesgone\csname p@rlinesgone-\c@rrdstat\endcsname
+  \@@colstart{#1}{#2}{#3}{#4}{#5}
+}
 \def\@Poly@colstop#1#2#3{\edef\c@rrdstat{#3}\relax\@@colstop{#1}{#2}}
 
 \def\@prepare@upd@tep@rtial@simplecols{%
@@ -2440,6 +2447,7 @@
     \xdef@cseq{@cur#1dp}{0pt}% 
     \header@defs{#1}% All the possible header contents
     \x@\n@wif\csname ifinp@r-#1\endcsname % Used for parlocs analysis
+    \x@\newc@unt\csname p@rlinesgone-#1\endcsname % Used for parlocs analysis
     \def@cseq{stylesheet#1}{\gdef\ds@ffix{#1}\stylesh@@t}% column-specific stylesheet
 %TODO:
 %FIXMEs needing for polyglot processing:

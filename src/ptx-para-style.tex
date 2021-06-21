@@ -159,7 +159,7 @@
     \ifdim\lastdepth>0pt\advance\dimen2 by -\lastdepth\fi
   \fi\fi
   \ifdiglot\kern\else\vskip\fi\dimen2
-  \trace{h}{after gridbox(\ch@pter.\v@rse): skip \the\dimen2, kern \the\dimen0; baselineskip=\the\baselineskip; ht0=\the\ht0; dp0=\the\dp0}%
+  \trace{h}{after gridbox(\ch@pter.\v@rse): skip \the\dimen2, kern \the\dimen0; baselineskip=\the\baselineskip; dim1=\the\dimen1;  ht0=\the\ht0; dp0=\the\dp0}%
   \vbox{\kern\dimen0\vskip-\headingtopspace\unvbox0}
   \nobreak%\dimen0=\prevdepth\trace{h}{prevdepth=\the\dimen0}%
 }
@@ -633,6 +633,7 @@
   \immediate\closeout\p@rlocs
   \catcode`\{=1 \catcode`\}=2 \m@kedigitsother \catcode`\@=11
   \immediate\openout\delayf@le="\j@bname.delayed"
+  %\tracingassigns=1
   \input "\j@bname.parlocs"
   \immediate\closeout\delayf@le
 }
@@ -678,17 +679,30 @@
   \csname inp@r-\c@rrdstat false\endcsname
 }
 
+\def\@nontextstart#1#2{\def\n@ntextstart{#2}}%
+\def\@nontextstop#1#2{%
+  \csname ifinp@r-\c@rrdstat\endcsname
+    \dimen1=\dimexpr \n@ntextstart sp - #2 sp\relax
+    \trace{C}{Non text for \n@ntextstart -#2 (=\the\dimen1)}%
+    \edef\tot@col@ht{\the\dimexpr \tot@col@ht -\dimen1\relax}
+    \edef\prev@col@ht{\the\dimexpr \prev@col@ht -\dimen1\relax}
+  \fi
+}%
+
 \def\@pgstart#1{%
   \edef\this@pgno{#1}}
+
+\newif\ifp@rlengthimportant
+
 \def\@@colstart#1#2#3#4#5{%
   \trace{C}{@colstart: \the\p@rlinesgone.}
   \edef\prev@col@x{#4}%
   \edef\prev@col@y{#5}%
   \prev@y=#5\relax
-  \edef\tot@col@ht{#1}%
-  \edef\prev@col@ht{#1}%
-  \edef\prev@col@dp{#2}%
+  \edef\tot@col@ht{\the\dimexpr #1 + #2\relax}%
+  \let\prev@col@ht\tot@col@ht
   \edef\prev@col@wd{#3}%
+  \p@rlengthimportantfalse
 }
 \def\@@colstop#1#2{%
   \edef\this@col@x{#1}%
@@ -696,7 +710,7 @@
   %\prev@y=#1
   \trace{C}{colstop:\c@rrdstat:\par@items}%
   \csname ifinp@r-\c@rrdstat\endcsname
-    \calc@p@rlinesgone{\the\dimexpr \prev@col@ht+\prev@col@dp\relax}{colstop}%
+    \calc@p@rlinesgone{\the\dimexpr \prev@col@ht\relax}{colstop}%
   \fi
   \let\d@=\check@pagefoot
   \x@\cstackdown\par@items\E
@@ -730,7 +744,9 @@
   %\fi
   \trace{C}{parlines: \the\thispar@lines =\the\p@rlinesgone?}%
   \ifnum \thispar@lines=\p@rlinesgone\else
-    \MSG{*** Mismatch between calculated and reported lines on page \this@pgno. Cutouts may not have been calculated properly}%
+    \ifp@rlengthimportant\let\tmp\MSG\else\let\tmp\message\fi
+    \tmp{*** Mismatch between calculated and reported lines on page \this@pgno. Cutouts may not have been calculated properly}%
+    \let\tmp\undefined
   \fi
   \ifx\pending@items\cstackempty\else
     \trace{C}{Before parlines: pending: \pending@items}%
@@ -793,23 +809,37 @@
   \trace{C}{delayedchapter #1 #2 #3 #4}%
   \@delayedthing{chapter}{#1#2.0}{#4}{\the\ch@pterwd}{2}{0}{\ifRTL R\else L\fi}{#3}{#4}}
 
-%
-\def\@delayedthing#1#2#3#4#5#6#7#8#9{\thing@y=#9\relax %Part of post-run processing
-  \trace{C}{delayedthing (prev:\the\prev@y) #1 #2 #3 #4 #5 #6 #7 #8 #9}%
+% @delayedthing
+% #1 - type-code (determines flexibility of position
+% #2 - Reference trigger point
+% #3 - ?
+% #4 - cutout width  (pt)
+% #5 - cutout length (lines)
+% #6 - Cutout delay
+% #7 - cutout side
+% #8 - pdfpos X
+% #9 - pdfpos Y
+\def\@delayedthing#1#2#3#4#5#6#7#8#9{%Part of post-run processing
+  \thing@y=#9\relax 
+  \baselineskip=\csname baselineskip@\c@rrdstat\endcsname
+  \trace{C}{delayedthing (prev:\the\prev@y) #1 #2 #3 #4 #5 #6 #7 #8 #9, bl:\the\baselineskip}%
   %\ifnum\the\prev@y<\thing@y % Lower number means lower on page. para start was lower than chapter number, must have passed a col/page break
     %%\def\this@thing{#1}% What is it?
     %\def\thing@ref{#2}% Unique id.
     %\trace{C}{* saved pending  \string\DelayedItem{#1}{#2}}%
     %\add@pending{#1}{#2}{\the\thing@y}{#4}{#5}{#6}{#7}%
   %\else % para start level with or above chapter number; OK to calculate # of lines
-    %First, remember where the bottom of the item
-    %probably is.
+    %
+    %First, remember where the bottom of the item probably is.
     \tmp@lines=\thing@y
-    \dimen1=#4
+    \trace{C}{\the\tmp@lines}% 
+    \dimen1=\dimexpr #5 \baselineskip\relax %how many lines the item is
+    \trace{C}{... -\the\dimen1}% 
     \advance\tmp@lines by -\dimen1
-    \dimen1=#6\baselineskip
+    \dimen1=#6 \baselineskip % delay of the item
+    \trace{C}{... -\the\dimen1}% 
     \advance\tmp@lines by -\dimen1
-    \edef\par@items{\cstackpush{\par@items}{#1|#2|\the\tmp@lines}}%
+    \edef\par@items{\cstackpush{\par@items}{#1|#2|\the\tmp@lines}}% Add end-point to stack checking.
     \tmp@lines=\prev@y
     \advance\tmp@lines by -\thing@y
     \divide\tmp@lines by \baselineskip
@@ -818,6 +848,7 @@
     \advance\tmp@lines by -1 % starting on 1st line is 0, not 1.
     \trace{C}{* calculated \string\DelayedItem{#1}{#2}{\the\tmp@lines} (#4 x#5 @#6)}%
     %\add@pending{#1}{#2}{\the\thing@y}{#4}{#5}{\the\tmp@lines}{#7}%
+    \ifnum\tmp@lines>3 \p@rlengthimportanttrue\fi
     \wr@teDelayedItem{#1}{#2}{\the\tmp@lines}{(#4x#5@#6)#7}%
   %\fi
 }

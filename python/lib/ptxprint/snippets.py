@@ -11,8 +11,9 @@ class Snippet:
     takesDiglot = False
 
 class PDFx1aOutput(Snippet):
-    processTex = True
-    texCode = r"""
+
+    def generateTex(self, model, diglotSide=""):
+        res = r"""
 \special{{pdf:docinfo<<
 /Title({document/title})%
 /Subject({document/subject})%
@@ -22,24 +23,87 @@ class PDFx1aOutput(Snippet):
 /ModDate(D:{pdfdate_})%
 /Producer(XeTeX)%
 /Trapped /False
-/GTS_PDFXVersion(PDF/X-1:2001)%
-/GTS_PDFXConformance(PDF/X-1a:2001)%
->> }} 
+{_gtspdfx}>> }} 
 \special{{pdf:fstream @OBJCVR ({/iccfpath})}}
 \special{{pdf:put @OBJCVR <</N 4>>}}
 %\special{{pdf:close @OBJCVR}}
+\catcode`\#=12
+\special{{pdf:stream @OBJCMR (
+<x:xmpmeta xmlns:x="adobe:ns:meta/">
+  <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-ref-syntax-ns#"
+       xmlns:xmp="http://ns.adobe.com/xap/1.0/"
+       xmlns:dc="http://purl.org/dc/elements/1.1/"
+       xmlns:pdf="http://ns.adobe.com/pdf/1.3/"
+       xmlns:pdfaid="http://www.aiim.org/pdfa/ns/id/"
+       xmlns:xmpMM="http://ns.adobe.com/xap/1.0/mm/"
+       xmlns:pdfxid="http://www.npes.org/pdfx/ns/id/">
+    <rdf:Description rdf:about="">
+      <dc:creator>
+        <rdf:Seq>
+          <rdf:li>{document/author}</rdf:li>
+        </rdf:Seq>
+      </dc:creator>
+      <xmp:CreateDate>{xmpdate_}</xmp:CreateDate>
+      <xmp:ModifyDate>{xmpdate_}</xmp:ModifyDate>
+      <xmp:MetadataDate>{xmpdate_}</xmp:MetadataDate>
+      <xmp:CreatorTool>PTXprint ({config/name})</xmp:CreatorTool>
+      <xmpMM:DocumentID>uuid:5589311-bbc3-4ac7-9aaf-fc8ab4739b3c</xmpMM:DocumentID>
+      <xmpMM:RenditionClass>default</xmpMM:RenditionClass>
+      <xmpMM:VersionID>1</xmpMM:VersionID>
+      <pdfxid:GTS_PDFXVersion>PDF/X-4</pdfxid:GTS_PDFXVersion>
+      <dc:title>
+        <rdf:Alt>
+          <rdf:li xml:lang="x-default">{document/title}</rdf:li>
+        </rdf:Alt>
+      </dc:title>
+      <dc:description>
+        <rdf:Alt>
+          <rdf:li xml:lang="x-default">{document/subject}</rdf:li>
+        </rdf:Alt>
+      </dc:description>
+      <pdf:Producer>XeTeX</pdf:Producer>
+      <pdf:Trapped>False</pdf:Trapped>
+{_gtspdfaid}    </rdf:Description>
+  </rdf:RDF>
+</x:xmpmeta>
+<?xpacket end="w"?>)}}
+\special{{pdf:put @OBJCMR <</Type /Metadata /Subtype /XML>>}}
 \special{{pdf:docview <<
+/Metadata @OBJCMR
 /OutputIntents [ <<
 /Type/OutputIntent
 /S/GTS_PDFX
 /OutputCondition (An Unknown print device)
 /OutputConditionIdentifier (Custom)
+/Info (Boilerplate null output intent)
 /DestOutputProfile @OBJCVR
 /RegistryName (http://www.color.og)
->> ] >>}}
-\XeTeXgenerateactualtext=1
-
+>> <<
+/Type/OutputIntent
+/S/GTS_PDFA1
+/OutputCondition (An Unknown print device)
+/OutputConditionIdentifier (Custom)
+/Info (Boilerplate null output intent)
+/DestOutputProfile @OBJCVR
+/RegistryName (http://www.color.og)
+>> ]
+/MarkInfo <</Marked false>>
+>>}}
+\catcode`\#=6
 """
+        extras = {'_gtspdfx': '', '_gtspdfaid': ''}
+        pdftype = model['snippets/pdfoutput'] or "None"
+        libpath = os.path.abspath(os.path.dirname(__file__))
+        if pdftype in ("None", "CMYK"):
+            extras['_gtspdfx'] = "/GTS_PDFXVersion(PDF/X-4)%\n"
+        else:
+            extras['_gtspdfx'] = "/GTS_PDFXVersion(PDF/X-1a:2003)%\n/GTS_PDFXConformance(PDF/X-1a:2003)%\n"
+        if pdftype == "None":
+            model.dict["/iccfpath"] = os.path.join(libpath, "default_rgb.icc").replace("\\","/")
+        extras['_gtspdfaid'] = "      <pdfaid:part>1</pdfaid:part>\n      <pdfaid:conformance>B</pdfaid:conformance>\n"
+        if model['snippets/pdfoutput'] == "PDF/A-1":
+            res += "\XeTeXgenerateactualtext=1\n"
+        return res.format(**{**model.dict, **extras}) + "\n"
     
 class FancyIntro(Snippet):
     texCode = r"""
@@ -76,7 +140,6 @@ class Diglot(Snippet):
 """
 
 class FancyBorders(Snippet):
-    processTex = True
     takesDiglot = True
     def generateTex(self, texmodel, diglotSide=""):
         res = r"""

@@ -154,6 +154,7 @@ class ViewModel:
             tzstr = "{0:+03}'{1:02}'".format(tzhrs, tzmins)
         self.set("_pdfdate", t.strftime("%Y%m%d%H%M%S")+tzstr)
         self.set("_date", t.strftime("%Y-%m-%d %H:%M:%S ")+tzstr)
+        self.set("_xmpdate", t.strftime("%Y-%m-%dT%H:%M:%S")+tzstr.replace("'", ":").rstrip(":"))
 
     def doError(self, txt, secondary=None, title=None, show=True, copy2clip=False):
         print(txt)
@@ -684,7 +685,10 @@ class ViewModel:
         if v < 1.602:
             config.set("notes", "belownoterulespace", "3.0")
             config.set("notes", "abovenotespace", f2s(config.getfloat("notes", "abovenotespace", fallback=6.0) - 3.0))
-            config.set("config", "version", "1.602")
+        if v < 1.7:
+            if config.getboolean("document", "pdfx1aoutput", fallback=False):
+                config.set("document", "pdfoutput", "PDF/X-1A")
+            config.set("config", "version", "1.7")
 
         styf = os.path.join(self.configPath(cfgname), "ptxprint.sty")
         if not os.path.exists(styf):
@@ -1258,7 +1262,15 @@ class ViewModel:
             pf = os.path.join(self.working_dir, f)
             if os.path.exists(pf):
                 outfname = os.path.relpath(pf, self.settings_dir)
-                zf.write(pf, outfname)
+                if pf.endswith(".pdf") and "PrintDraft" not in pf:
+                    trailer = PdfReader(pf)
+                    trailer.read_all()
+                    outf = BytesIO()
+                    PdfWriter(outf, trailer=trailer).write()
+                    outf.close()
+                    zf.writestr(outfname, outf.getval())
+                else:
+                    zf.write(pf, outfname)
         ptxmacrospath = self.scriptsdir
         for f in os.listdir(ptxmacrospath):
             if f.endswith(".tex") or f.endswith(".sty"):

@@ -155,7 +155,7 @@ class RunJob:
         self.res = 0
         self.thread = None
         self.busy = False
-        self.ispdfxa = False
+        self.ispdfxa = "None"
         self.inArchive = inArchive
         self.noview = False
 
@@ -195,13 +195,13 @@ class RunJob:
         self.books = []
         self.maxRuns = 1 if self.printer.get("c_quickRun") else (self.args.runs or 5)
         self.changes = None
+        self.ispdfxa = self.printer.get("fcb_outputFormat") or "None"
         if not self.inArchive:
             self.checkForMissingDecorations(info)
         info["document/piclistfile"] = ""
         if info.asBool("document/ifinclfigs"):
             self.picfiles = self.gatherIllustrations(info, jobs, self.args.paratext)
             # self.texfiles += self.gatherIllustrations(info, jobs, self.args.paratext)
-        self.ispdfxa = self.printer.get("c_PDFx1aOutput")
         
         if True: # info.asBool("project/combinebooks"):
             joblist = [jobs]
@@ -562,9 +562,9 @@ class RunJob:
                 fpath = os.path.join(self.tmpdir, outfname.replace(".tex", "."+a))
                 cachedata[a] = self.readfile(fpath)
                 if testdata != cachedata[a]:
-                    if a == "delayed" and len(testdata) and numruns < self.maxRuns:
-                        os.remove(fpath)
-                        cachedata[a] = ""
+                    #if a == "delayed" and len(testdata) and numruns < self.maxRuns:
+                    #    os.remove(fpath)
+                    #    cachedata[a] = ""
                     if numruns >= self.maxRuns or not cacheexts[a][1]:
                         self.rerunReasons.append(cacheexts[a][0])
                     else:
@@ -575,10 +575,11 @@ class RunJob:
                 break
         if not self.noview and not self.args.testing and not self.res:
             self.printer.incrementProgress()
-            x1aout = self.printer.get("c_PDFx1aOutput")
-            cmd = ["xdvipdfmx", "-E"]
-            if x1aout:
-                cmd += ["-z", "0", "-o", outfname.replace(".tex", ".prepress.pdf")]
+            cmd = ["xdvipdfmx", "-E", "-V", "1.4"]
+            if self.ispdfxa != "None":
+                cmd += ["-q", "-o", outfname.replace(".tex", ".prepress.pdf")]
+            #if self.ispdfxa == "PDF/A-1":
+            #    cmd += ["-z", "0"]
             if self.args.extras & 1:
                 cmd += ["-vv"]
             runner = call(cmd + [outfname.replace(".tex", ".xdv")], cwd=self.tmpdir)
@@ -590,7 +591,7 @@ class RunJob:
                 except subprocess.TimeoutExpired:
                     print("Timed out!")
                     self.res = runner.returncode
-            if x1aout:
+            if self.ispdfxa != "None":
                 outpath = os.path.join(self.tmpdir, outfname[:-4])
                 fixpdfcmyk(outpath + ".prepress.pdf", outpath + ".pdf")
                 os.remove(outpath + ".prepress.pdf")
@@ -634,7 +635,7 @@ class RunJob:
             return []
         picinfos.build_searchlist()
         for j in jobs:
-            picinfos.getFigureSources(keys=j, exclusive=self.printer.get("c_exclusiveFiguresFolder"))
+            picinfos.getFigureSources(keys=j, exclusive=self.printer.get("c_exclusiveFiguresFolder"), mode=self.ispdfxa)
             picinfos.set_destinations(fn=carefulCopy, keys=j, cropme=cropme)
         missingPics = [v['src'] for v in picinfos.values() if v['anchor'][:3] in jobs and 'dest file' not in v and 'src' in v]
         res = [os.path.join("tmpPics", v['dest file']) for v in picinfos.values() if 'dest file' in v]
@@ -687,12 +688,9 @@ class RunJob:
         return im
 
     def convertToJPGandResize(self, ratio, infile, outfile, cropme):
-        if self.ispdfxa:
-            white = (0, 0, 0, 0)
-            fmt = fmta = "CMYK"
+        if self.ispdfxa != "None":
+            fmt = "CMYK"
         else:
-            white = (255, 255, 255, 255)
-            fmta = "RGBA"
             fmt = "RGB"
         with open(infile,"rb") as inf:
             rawdata = inf.read()
@@ -701,21 +699,39 @@ class RunJob:
         if cropme:
             im = self.cropBorder(im)
         p = im.load()
-        onlyRGBAimage = im.convert(fmta)
         iw = im.size[0]
         ih = im.size[1]
         if iw/ih < ratio:
+            onlyRGBAimage = im.convert("RGBA")
             newWidth = int(ih * ratio)
-            newimg = Image.new(fmta, (newWidth, ih), color=white)
-            newimg.alpha_composite(onlyRGBAimage, (int((newWidth-iw)/2),0))
-            iw = newimg.size[0]
-            ih = newimg.size[1]
-            onlyRGBimage = newimg.convert(fmt)
-            onlyRGBimage.save(outfile)
+            compimg = Image.new("RGBA", (newWidth, ih), color=(255, 255, 255, 255))
+            compimg.alpha_composite(onlyRGBAimage, (int((newWidth-iw)/2),0))
+            iw = compimg.size[0]
+            ih = compimg.size[1]
+            newimage = compimg.convert(fmt)
+        elif im.mode != fmt:
+            newimage = im.convert(fmt)
         else:
-            onlyRGBimage = onlyRGBAimage.convert(fmt)
-            onlyRGBimage.save(outfile)
+            newimage = im
+        if fmt == "CMYK":
+            self.cmytocmyk(newimage)
+        newimage.save(outfile)
         return True
+
+    def cmytocmyk(self, im):
+        for y in range(im.height):
+            for x in range(im.width):
+                im.putpixel((x, y), self._cmytocmyk(*im.getpixel((x, y))))
+
+    @staticmethod
+    def _cmytocmyk(c, m, y, k):
+        dk = min(c, m, y)
+        if dk + k > 255:
+            dk = 255 - k
+            k = 255
+        else:
+            k += dk
+        return (c - dk, m - dk, y - dk, k)
 
     def carefulCopy(self, ratio, srcpath, tgtfile, cropme):
         tmpPicPath = os.path.join(self.printer.working_dir, "tmpPics")
@@ -731,7 +747,7 @@ class RunJob:
             print(("Failed to get size of (image) file:"), srcpath)
         # If either the source image is a TIF (or) the proportions aren't right for page dimensions 
         # then we first need to convert to a JPG and/or pad with which space on either side
-        if cropme or self.ispdfxa or iw/ih < ratio or os.path.splitext(srcpath)[1].lower().startswith(".tif"): # (.tif or .tiff)
+        if cropme or self.ispdfxa != "None" or iw/ih < ratio or os.path.splitext(srcpath)[1].lower().startswith(".tif"): # (.tif or .tiff)
             tgtpath = os.path.splitext(tgtpath)[0]+".jpg"
             try:
                 self.convertToJPGandResize(ratio, srcpath, tgtpath, cropme)

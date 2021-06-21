@@ -184,6 +184,7 @@ class PicInfo(dict):
         self.clear(model)
         self.inthread = False
         self.keycounter = 0
+        self.mode = None
 
     def clear(self, model=None):
         super().clear()
@@ -456,7 +457,7 @@ class PicInfo(dict):
                 self.extensions = {x:i for i, x in enumerate(["tif", "tiff", "png", "jpg", "jpeg", "bmp", "pdf"])}
                 
 
-    def getFigureSources(self, filt=newBase, key='src path', keys=None, exclusive=False, data=None):
+    def getFigureSources(self, filt=newBase, key='src path', keys=None, exclusive=False, data=None, mode=None):
         ''' Add source filename information to each figinfo, stored with the key '''
         if data is None:
             data = self
@@ -490,7 +491,10 @@ class PicInfo(dict):
                         continue
                     for k in newfigs[nB]:
                         if 'dest file' in data[k]:
-                            continue
+                            if mode == self.mode:
+                                continue
+                            else:
+                                del data[k]['dest file']
                         if key in data[k]:
                             old = self.extensions.get(os.path.splitext(data[k][key])[1].lower()[1:], 10000)
                             new = self.extensions.get(os.path.splitext(filepath)[1].lower()[1:], 10000)
@@ -501,6 +505,7 @@ class PicInfo(dict):
                                 data[k][key] = filepath
                         else:
                             data[k][key] = filepath
+        self.mode = mode
         return data
 
     def set_positions(self, cols=1, randomize=False, suffix="", isBoth=False):

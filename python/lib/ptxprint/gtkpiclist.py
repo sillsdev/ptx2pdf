@@ -364,7 +364,8 @@ class PicList:
                     fpath = None
                     if self.picinfo is not None:
                         dat = self.picinfo.getFigureSources(data={'1': {'src': val}},
-                                    key='path', exclusive=self.parent.get("c_exclusiveFiguresFolder"))
+                                    key='path', exclusive=self.parent.get("c_exclusiveFiguresFolder"),
+                                    mode=self.picinfo.mode)
                         fpath = dat['1'].get('path', None)
                     if fpath is not None and os.path.exists(fpath):
                         if self.picrect is None:
