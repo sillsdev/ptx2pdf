@@ -153,7 +153,7 @@
    \leavevmode % in case the paragraph hasn't started yet               %(2)
    \op@ninghooks{before}{\newch@rstyle}% execute any <before> hook
    \x@\let\x@\@ttriblist\csname @ttriblist-\newch@rstyle\endcsname
-     \bgroup % start a group to encapsulate the style's formatting changes
+    \bgroup % start a group to encapsulate the style's formatting changes
     \let\thisch@rstyle=\newch@rstyle % remember the current style
     \s@tfont{\thisch@rstyle}% set up font attributes
     \ifnum\n@tenesting>0 \global\advance\n@tenesting by 1 % record nesting level in para or note
@@ -164,7 +164,7 @@
     \ifx\@ttriblist\empty\else\temptrue\fi
     \iftemp\setbox0=\hbox\bgroup \fi                     %(3)
     \op@ninghooks{start}{\thisch@rstyle}%% execute any <start> hook
-  \fi
+  \fi%
   \csname init@ttribs\endcsname %If ptx-attribute is in use, use it... 
 }
 %-cchar_startcharstyle

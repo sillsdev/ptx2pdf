@@ -539,13 +539,12 @@
   \gp@nxt
 }
 \def\gp@hrules{%
-  \dimen5=\ht0\advance\dimen5 by \dimen1
-  \ifdim\dimen5<\dimen2
-    \setbox0\vbox{\unvbox0\vskip\dimen1\gp@hrule}%
+  \setbox0\vbox{\unvbox0\vskip\dimen1\gp@hrule}%
+  \ifdim\ht0>\dimen2
+    \let\gp@nxt\relax
+  \else
     \gp@step
     \let\gp@nxt\gp@hrules
-  \else
-    \let\gp@nxt\relax
   \fi
   \gp@nxt
 }
@@ -588,14 +587,14 @@
     \dimen1=\GraphPaperY
     \dimen2=\pdfpageheight
     \advance\dimen2 by -\dimen1
-    \advance\dimen2 by -\GraphPaperYoffset
+    %\advance\dimen2 by -\GraphPaperYoffset
     \dimen3=\pdfpagewidth
     \dimen0=\GraphPaperXoffset
     \advance\dimen3 by -2\dimen0 % assume identical lr margins
     \setbox0=\vbox{\kern\GraphPaperYoffset\gp@hrule}%
     \gp@step
     \gp@hrules
-    \vbox to 0pt{\unvbox 0\gp@hrule\vss}%
+    \vbox to 0pt{\unvbox 0\vss}%
     \cp@p\global\let\l@stgprule\empty
   \egroup
 }
@@ -694,7 +693,7 @@
   \egroup
 }
 
-\def\doLines{}
+\def\doLines{} % GraphPaper/Gridlines
 
 %-c_graphpaper
 

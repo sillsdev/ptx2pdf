@@ -114,7 +114,7 @@
   \fi
   \edef\attrid{\milestoneOp id}% id / sid / eid, depending.
   \catcode`\|=\active
-  \catcode`\/=12
+  \catcode`\/=12\relax
   \ifmst@nestyle
     \use@ttrSlash
   \else
@@ -139,7 +139,7 @@
   \edef\gr@bname{@attr@grab-\end@marker}%
   \trace{A}{Grab@name: \gr@bname}%
   \x@\ifcsname \gr@bname\endcsname\else
-    \trace{A}{New grabber: \gr@bname\space about to be defined}%
+    \trace{A}{New grabber: \gr@bname\space about to be defined, endmarker: \end@marker}%
     \x@\setup@ttr@grab\x@{\csname \end@marker\endcsname}%
   \fi
 }
@@ -170,7 +170,8 @@
   \ifx\tmp\relax
     \x@\let\x@\tmp\csname defaultattrkey-#1\endcsname
   \fi
-  \x@\xdef\csname \@ttrlistname\endcsname{\tmp,#2}}
+  \x@\xdef\csname \@ttrlistname\endcsname{\tmp,#2}%
+}
 
 \edef\p@stattribcmd{}% Parse the attributes, run any code.
 
@@ -298,7 +299,7 @@
   \let\D@first=\interpr@tother@ttrib
   \let\save@ttrib=\extend@ttriblist
 }
-\def\interpr@tother@ttrib#1{
+\def\interpr@tother@ttrib#1{%
   \x@\interpr@t@ttrib #1??\E
 }
 \def\store@nattrib#1-#2|#3\E{%Ignore - in milestone markers
@@ -307,7 +308,7 @@
 
 
 \def\interpr@t@ttrib#1?#2?#3\E{% There may be a preceding ? mark. Also setdefaultattrib needs to not have the -s / -e for milestones. 
-  \def\tmp{#1}
+  \def\tmp{#1}%
   \ifx\tmp\empty
      \trace{A}{Attribute '#2' is optional (#1,#2,#3)}%
      \x@\store@nattrib\m@rker-|#2\E
