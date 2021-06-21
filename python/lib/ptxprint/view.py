@@ -310,7 +310,7 @@ class ViewModel:
         if self.loadingConfig:
             return False
         (marginmms, topmarginmms, bottommarginmms, headerpos, footerpos, rulerpos, headerlabel, footerlabel) = self.getMargins()
-        self.set("l_margin2header1", "{}mm".format(f2s(headerlabel)))
+        self.set("l_margin2header1", "{}mm".format(f2s(headerlabel, 1)))
         return True
 
     def getMargins(self):
@@ -334,7 +334,8 @@ class ViewModel:
         # specified topmargin subtract 0.7 * hfontsize which the macros add in
         headerposmms = float(self.get("s_topmargin")) - asmm(float(self.get("s_headerposition"))) - 0.7 * hfontsizemms
         footerposmms = float(self.get("s_footerposition"))
-        headerlabel = headerposmms - hfontheight * hfontsizemms
+        # report top of TeX headerbox then add that box back on and remove the 'true' height of the font
+        headerlabel = headerposmms - (hfontheight - 0.7) * hfontsizemms
         footerlabel = (bottommarginmms - footerposmms - hfontheight * hfontsizemms) * 72.27 / 25.4
         # simply subtract ruler gap from header gap
         rulerposmms = asmm(float(self.get("s_headerposition")) - float(self.get("s_rhruleposition")))

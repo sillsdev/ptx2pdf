@@ -2525,7 +2525,7 @@ class GtkViewModel(ViewModel):
             os.startfile(fldrpath)
 
     def finished(self):
-        print("Reset progress bar")
+        # print("Reset progress bar")
         GLib.idle_add(lambda: self._incrementProgress(val=0.))
 
     def _incrementProgress(self, val=None):
@@ -2785,10 +2785,10 @@ class GtkViewModel(ViewModel):
         self.set("fcb_gridUnits", "cm")
         self.set("s_gridMinorDivisions", "5")
         self.set("fcb_gridOffset", "page")
-        self.set("s_gridMajorThick", "0.6")
-        self.set("col_gridMajor", "rgb(205,205,205)")
-        self.set("s_gridMinorThick", "0.3")
-        self.set("col_gridMinor", "rgb(205,256,256)")
+        self.set("s_gridMajorThick", "0.2")
+        self.set("col_gridMajor", "rgb(204,0,0)")
+        self.set("s_gridMinorThick", "0.2")
+        self.set("col_gridMinor", "rgb(115,210,22)")
 
     def onPLpageChanged(self, nbk_PicList, scrollObject, pgnum):
         page = nbk_PicList.get_nth_page(pgnum)

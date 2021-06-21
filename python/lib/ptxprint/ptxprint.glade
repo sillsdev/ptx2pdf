@@ -185,7 +185,7 @@ THE SOFTWARE.
   </object>
   <object class="GtkAdjustment" id="a_gridMajorThick">
     <property name="upper">2</property>
-    <property name="value">0.59999999999999998</property>
+    <property name="value">0.20000000000000001</property>
     <property name="step_increment">0.10000000000000001</property>
     <property name="page_increment">0.10000000000000001</property>
   </object>
@@ -197,6 +197,7 @@ THE SOFTWARE.
   </object>
   <object class="GtkAdjustment" id="a_gridMinorThick">
     <property name="upper">2</property>
+    <property name="value">0.20000000000000001</property>
     <property name="step_increment">0.10000000000000001</property>
     <property name="page_increment">0.10000000000000001</property>
   </object>
@@ -2648,7 +2649,7 @@ and 3, 4, 6, or 12 for inches.</property>
                             <property name="margin_left">6</property>
                             <property name="margin_right">6</property>
                             <property name="title" translatable="yes">Color of major lines in grid.</property>
-                            <property name="rgba">rgb(186,189,182)</property>
+                            <property name="rgba">rgb(204,0,0)</property>
                           </object>
                           <packing>
                             <property name="left_attach">2</property>
@@ -2666,7 +2667,7 @@ and 3, 4, 6, or 12 for inches.</property>
                             <property name="margin_left">6</property>
                             <property name="margin_right">6</property>
                             <property name="title" translatable="yes">Color of minor lines in grid.</property>
-                            <property name="rgba">rgb(0,255,255)</property>
+                            <property name="rgba">rgb(115,210,22)</property>
                           </object>
                           <packing>
                             <property name="left_attach">2</property>
@@ -2695,7 +2696,7 @@ of the major lines.</property>
                             <property name="adjustment">a_gridMajorThick</property>
                             <property name="climb_rate">0.10000000000000001</property>
                             <property name="digits">1</property>
-                            <property name="value">0.59999999999999998</property>
+                            <property name="value">0.20000000000000001</property>
                           </object>
                           <packing>
                             <property name="left_attach">3</property>
@@ -2713,7 +2714,7 @@ of the minor divisions.</property>
                             <property name="adjustment">a_gridMinorThick</property>
                             <property name="climb_rate">0.10000000000000001</property>
                             <property name="digits">1</property>
-                            <property name="value">0.29999999999999999</property>
+                            <property name="value">0.20000000000000001</property>
                           </object>
                           <packing>
                             <property name="left_attach">3</property>
@@ -2762,7 +2763,7 @@ corner of the page, or margins.</property>
                             <property name="tooltip_text" translatable="yes">Clicking this button will refresh
 the default Grid settings:
 Centimeters with 5 divisions (2mm each) 
-gray 0.6pt and light blue (0.3pt) lines.</property>
+red and light green lines (0.2pt thickness).</property>
                             <property name="image">icon_refresh</property>
                             <signal name="clicked" handler="onRefreshGridDefaults" swapped="no"/>
                           </object>
@@ -6119,15 +6120,16 @@ Top of Header:</property>
                                     </child>
                                     <child>
                                       <object class="GtkLabel" id="l_margin2header1">
+                                        <property name="width_request">56</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="tooltip_text" translatable="yes">The distance (mm) from the top of the page
 to the top of the header area. Note that due to 
 the ascent of the font, the header text actually 
 starts a little bit below the top of the header area.</property>
-                                        <property name="halign">start</property>
-                                        <property name="margin_left">2</property>
+                                        <property name="halign">end</property>
                                         <property name="label" translatable="yes">8.5mm</property>
+                                        <property name="justify">right</property>
                                         <attributes>
                                           <attribute name="foreground" value="#2b0a4be2f850"/>
                                         </attributes>
