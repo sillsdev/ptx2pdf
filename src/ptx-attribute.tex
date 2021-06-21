@@ -66,15 +66,17 @@
     \get@ttribute{#1}%
     \trace{A}{Special #1 :\attr@b}%
     \setbox0\hbox{%
-	\ifx\tmpa\relax\else\tmpa\fi
+	\ifx\tmpa\relax\else
+          \edef\tmp{\tmpa}\tmp\fi
 	\unhbox0
-	\ifx\tmpb\relax\else\tmpb\fi
+	\ifx\tmpb\relax\else
+          \edef\tmp{\tmpb}\tmp\fi
       }
   \fi
 }
 \def\Spec@lAttribName#1#2{attr-spec-#1-#2}
 \def\SetOneSpecialAttrib#1#2#3{%
-  \edef\tmp{#3}\def\tmpa{\Spec@lAttribName{#1}{#2}}\ifx\tmp\empty
+  \def\tmp{#3}\def\tmpa{\Spec@lAttribName{#1}{#2}}\ifx\tmp\empty
     \x@\let\csname\tmpa\endcsname\relax
   \else
     \x@\let\csname\tmpa\endcsname\tmp
@@ -122,8 +124,7 @@
   \in@ttribfalse
   \xdef\@ttributes{}%
 }
-\SetSpeciallAttribs{link-href}{pdf:bann \attr@b-http://localhost-}
-}{\noexpand\special{pdf:eann}}
+\SetSpeciallAttribs{link-href}{\special{pdf:bann<</Type/Annot/Subtype/Link/Border[0 0 1]/H/I/C[.1 .1 .1]/A<</S/URI/URI(\attr@b)>>>>}}{\noexpand\special{pdf:eann}}
 \SetSpeciallAttribs{link-name}{}{}
 
 %%%%%%%%%
