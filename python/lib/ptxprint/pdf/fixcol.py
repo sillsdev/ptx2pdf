@@ -136,16 +136,61 @@ def fixpdfcmyk(trailer, threshold=1.):
             strm = pstate.parsestream(trailer, i.stream)
             i.stream = strm
 
-def fixhighlights(trailer):
+def fixhighlights(trailer, parlocs=None):
+    annotlocs = {}
+    if parlocs is not None and os.path.exists(parlocs):
+        with open(parlocs) as inf:
+            for l in parlocs:
+                m = re.match("^(start|end)annot\{(.*?)\}\{(.*?)\}\{(.*?)\}")
+                if m:
+                    pos = (float(m.group(3)) / 65536, float(m.group(4)) / 65536)
+                    if m.group(1) == "start":
+                        annotlocs[m.group(2)] = (pos, pos)
+                    else:
+                        annotlocs[m.group(2)] = (annotlocs[m.group(2)][0], pos)
     for pagenum, page in enumerate(trailer.pages, 1):
         annots = page.Annots
         if annots is None:
             continue
+        newannots = {}
         for ann in annots:
             if ann.SubType == "/Highlight" and ann.QuadPoints is None:
                 r = ann.Rect
-                q = [r[0], r[1], r[2], r[1], r[2], r[3], r[0], r[3]]
-                ann.QuadPoints = PdfArray(q)
+                if ann.Ref is not None:
+                    if ann.Ref not in newannots:
+                        newannots[ann.Ref] = ann
+                        ann.QuadPoints = []
+                    newannots[ann.Ref].QuadPoints.append(ann.Rect)
+            else:
+                newannots.setdefault(None, []).append(ann)
+        page.Annots = PdfArray()
+        for k, v in newannots:
+            if k is None:
+                page.Annots.extend(v)
+            v.Subtype = v.SubType
+            v.SubType = None
+            q = []
+            rect = []
+            for i, r in enumerate(v.QuadPoints):
+                if k in annots and i == 0:
+                    xmin = annots[k][0][0]
+                else:
+                    xmin = min(r[0], r[2])
+                if k in annots and i == len(v.QuadPoints) - 1:
+                    xmax = annots[k][1][0]
+                else:
+                    xmax = max(r[0], r[2])
+                ymin = min(r[1], r[3])
+                ymax = max(r[1], r[3])
+                q += [xmin, ymax, xmax, ymax, xmax, ymin, xmin, ymin]
+                if i == 0:
+                    rect = (xmin, ymin, xmax, ymax)
+                else:
+                    rect = (min(r[0], xmin), min(r[1], ymin), max(r[2], xmax), max(r[3], ymax))
+            v.QuadPoints = PdfArray(q)
+            v.Rect = PdfArray(rect)
+            v.Ref = None
+            page.Annots.append(v)
 
 def pagebbox(infile, pagenum=0):
     trailer = PdfReader(infile)
@@ -161,7 +206,7 @@ def fixpdffile(infile, outfile, **kw):
     trailer = PdfReader(infile)
 
     fixpdfcmyk(trailer, kw.get('threshold', 1.))
-    fixhighlights(trailer)
+    # fixhighlights(trailer)
 
     meta = trailer.Root.Metadata
     if meta is not None:

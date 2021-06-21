@@ -37,33 +37,6 @@ class PDFx1aOutput(Snippet):
        xmlns:pdfaid="http://www.aiim.org/pdfa/ns/id/"
        xmlns:xmpMM="http://ns.adobe.com/xap/1.0/mm/"
        xmlns:pdfxid="http://www.npes.org/pdfx/ns/id/">
-    <rdf:Description rdf:about="">
-      <dc:creator>
-        <rdf:Seq>
-          <rdf:li>{document/author}</rdf:li>
-        </rdf:Seq>
-      </dc:creator>
-      <xmp:CreateDate>{xmpdate_}</xmp:CreateDate>
-      <xmp:ModifyDate>{xmpdate_}</xmp:ModifyDate>
-      <xmp:MetadataDate>{xmpdate_}</xmp:MetadataDate>
-      <xmp:CreatorTool>PTXprint ({config/name})</xmp:CreatorTool>
-      <xmpMM:DocumentID>uuid:5589311-bbc3-4ac7-9aaf-fc8ab4739b3c</xmpMM:DocumentID>
-      <xmpMM:RenditionClass>default</xmpMM:RenditionClass>
-      <xmpMM:VersionID>1</xmpMM:VersionID>
-      <pdfxid:GTS_PDFXVersion>PDF/X-4</pdfxid:GTS_PDFXVersion>
-      <dc:title>
-        <rdf:Alt>
-          <rdf:li xml:lang="x-default">{document/title}</rdf:li>
-        </rdf:Alt>
-      </dc:title>
-      <dc:description>
-        <rdf:Alt>
-          <rdf:li xml:lang="x-default">{document/subject}</rdf:li>
-        </rdf:Alt>
-      </dc:description>
-      <pdf:Producer>XeTeX</pdf:Producer>
-      <pdf:Trapped>False</pdf:Trapped>
-{_gtspdfaid}    </rdf:Description>
       <rdf:Description rdf:about="" xmlns:pdfaExtension="http://www.aiim.org/pdfa/ns/extension/" xmlns:pdfaSchema="http://www.aiim.org/pdfa/ns/schema#" xmlns:pdfaProperty="http://www.aiim.org/pdfa/ns/property#">
         <pdfaExtension:schemas>
           <rdf:Bag>
@@ -71,13 +44,23 @@ class PDFx1aOutput(Snippet):
               <pdfaSchema:namespaceURI>http://ns.adobe.com/pdf/1.3/</pdfaSchema:namespaceURI>
               <pdfaSchema:prefix>pdf</pdfaSchema:prefix>
               <pdfaSchema:schema>Adobe PDF Schema</pdfaSchema:schema>
+              <pdfaSchema:property>
+                <rdf:Seq>
+                  <rdf:li rdf:parseType="Resource">
+                    <pdfaProperty:category>internal</pdfaProperty:category>
+                    <pdfaProperty:description>Trapped property</pdfaProperty:description>
+                    <pdfaProperty:name>Trapped</pdfaProperty:name>
+                    <pdfaProperty:valueType>Boolean</pdfaProperty:valueType>
+                  </rdf:li>
+                </rdf:Seq>
+              </pdfaSchema:property>
             </rdf:li>
             <rdf:li rdf:parseType="Resource">
               <pdfaSchema:namespaceURI>http://ns.adobe.com/xap/1.0/mm/</pdfaSchema:namespaceURI>
               <pdfaSchema:prefix>xmpMM</pdfaSchema:prefix>
               <pdfaSchema:schema>XMP Media Management Schema</pdfaSchema:schema>
               <pdfaSchema:property>
-               <rdf:Seq>
+                <rdf:Seq>
                   <rdf:li rdf:parseType="Resource">
                     <pdfaProperty:category>internal</pdfaProperty:category>
                     <pdfaProperty:description>UUID based identifier for specific incarnation of a document</pdfaProperty:description>
@@ -111,12 +94,46 @@ class PDFx1aOutput(Snippet):
                       <pdfaProperty:name>conformance</pdfaProperty:name>
                       <pdfaProperty:valueType>Text</pdfaProperty:valueType>
                     </rdf:li>
+                    <rdf:li rdf:parseType="Resource">
+                      <pdfaProperty:category>internal</pdfaProperty:category>
+                      <pdfaProperty:description>PDF/X version</pdfaProperty:description>
+                      <pdfaProperty:name>GTS_PDFXVersion</pdfaProperty:name>
+                      <pdfaProperty:valueType>Text</pdfaProperty:valueType>
+                    </rdf:li>
                   </rdf:Seq>
                 </pdfaSchema:property>
               </rdf:li>
-            </rdf:Bag>
-          </pdfaExtension:schemas>
-        </rdf:Description>
+            </rdf:li>
+          </rdf:Bag>
+        </pdfaExtension:schemas>
+      </rdf:Description>
+      <rdf:Description rdf:about="">
+        <dc:creator>
+          <rdf:Seq>
+            <rdf:li>{document/author}</rdf:li>
+          </rdf:Seq>
+        </dc:creator>
+        <xmp:CreateDate>{xmpdate_}</xmp:CreateDate>
+        <xmp:ModifyDate>{xmpdate_}</xmp:ModifyDate>
+        <xmp:MetadataDate>{xmpdate_}</xmp:MetadataDate>
+        <xmp:CreatorTool>PTXprint ({config/name})</xmp:CreatorTool>
+        <xmpMM:DocumentID>uuid:5589311-bbc3-4ac7-9aaf-fc8ab4739b3c</xmpMM:DocumentID>
+        <xmpMM:RenditionClass>default</xmpMM:RenditionClass>
+        <xmpMM:VersionID>1</xmpMM:VersionID>
+        <pdfxid:GTS_PDFXVersion>PDF/X-4</pdfxid:GTS_PDFXVersion>
+        <dc:title>
+          <rdf:Alt>
+            <rdf:li xml:lang="x-default">{document/title}</rdf:li>
+          </rdf:Alt>
+        </dc:title>
+        <dc:description>
+          <rdf:Alt>
+            <rdf:li xml:lang="x-default">{document/subject}</rdf:li>
+          </rdf:Alt>
+        </dc:description>
+        <pdf:Producer>XeTeX</pdf:Producer>
+        <pdf:Trapped>False</pdf:Trapped>
+{_gtspdfaid}      </rdf:Description>
   </rdf:RDF>
 </x:xmpmeta>
 <?xpacket end="w"?>)}}
