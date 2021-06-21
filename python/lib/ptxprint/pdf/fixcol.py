@@ -123,9 +123,7 @@ class PageState(PdfStreamParser):
         return newim.getpixel(0, 0)
 
 
-def fixpdfcmyk(infile, outfile, threshold=1.):
-    trailer = PdfReader(infile)
-
+def fixpdfcmyk(trailer, threshold=1.):
     for pagenum, page in enumerate(trailer.pages, 1):
         pstate = PageState(threshold, page.Resources.ExtGState)
         instrm = page.Contents
@@ -138,11 +136,16 @@ def fixpdfcmyk(infile, outfile, threshold=1.):
             strm = pstate.parsestream(trailer, i.stream)
             i.stream = strm
 
-    meta = trailer.Root.Metadata
-    if meta is not None:
-        meta.Filter = []
-    w = PdfWriter(outfile, trailer=trailer, version='1.4', compress=True)
-    w.write()
+def fixhighlights(trailer):
+    for pagenum, page in enumerate(trailer.pages, 1):
+        annots = page.Annots
+        if annots is None:
+            continue
+        for ann in annots:
+            if ann.SubType == "/Highlight" and ann.QuadPoints is None:
+                r = ann.Rect
+                q = [r[0], r[1], r[2], r[1], r[2], r[3], r[0], r[3]]
+                ann.QuadPoints = PdfArray(q)
 
 def pagebbox(infile, pagenum=0):
     trailer = PdfReader(infile)
@@ -154,5 +157,15 @@ def pagebbox(infile, pagenum=0):
     cropbox = page.inheritable.CropBox
     return cropbox
 
+def fixpdffile(infile, outfile, **kw):
+    trailer = PdfReader(infile)
 
+    fixpdfcmyk(trailer, kw.get('threshold', 1.))
+    fixhighlights(trailer)
+
+    meta = trailer.Root.Metadata
+    if meta is not None:
+        meta.Filter = []
+    w = PdfWriter(outfile, trailer=trailer, version='1.4', compress=True)
+    w.write()
 

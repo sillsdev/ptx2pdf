@@ -10,7 +10,7 @@ from ptxprint.view import ViewModel, VersionStr, refKey
 from ptxprint.font import getfontcache
 from ptxprint.usfmerge import usfmerge2
 from ptxprint.utils import _, universalopen, print_traceback
-from ptxprint.pdf.fixcol import fixpdfcmyk
+from ptxprint.pdf.fixcol import fixpdffile
 from datetime import datetime
 
 _errmsghelp = {
@@ -593,7 +593,7 @@ class RunJob:
                     self.res = runner.returncode
             if self.ispdfxa != "None":
                 outpath = os.path.join(self.tmpdir, outfname[:-4])
-                fixpdfcmyk(outpath + ".prepress.pdf", outpath + ".pdf")
+                fixpdffile(outpath + ".prepress.pdf", outpath + ".pdf")
                 os.remove(outpath + ".prepress.pdf")
         print("Done")
         self.done_job(outfname, info)

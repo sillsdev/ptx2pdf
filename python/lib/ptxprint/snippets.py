@@ -64,6 +64,59 @@ class PDFx1aOutput(Snippet):
       <pdf:Producer>XeTeX</pdf:Producer>
       <pdf:Trapped>False</pdf:Trapped>
 {_gtspdfaid}    </rdf:Description>
+      <rdf:Description rdf:about="" xmlns:pdfaExtension="http://www.aiim.org/pdfa/ns/extension/" xmlns:pdfaSchema="http://www.aiim.org/pdfa/ns/schema#" xmlns:pdfaProperty="http://www.aiim.org/pdfa/ns/property#">
+        <pdfaExtension:schemas>
+          <rdf:Bag>
+            <rdf:li rdf:parseType="Resource">
+              <pdfaSchema:namespaceURI>http://ns.adobe.com/pdf/1.3/</pdfaSchema:namespaceURI>
+              <pdfaSchema:prefix>pdf</pdfaSchema:prefix>
+              <pdfaSchema:schema>Adobe PDF Schema</pdfaSchema:schema>
+            </rdf:li>
+            <rdf:li rdf:parseType="Resource">
+              <pdfaSchema:namespaceURI>http://ns.adobe.com/xap/1.0/mm/</pdfaSchema:namespaceURI>
+              <pdfaSchema:prefix>xmpMM</pdfaSchema:prefix>
+              <pdfaSchema:schema>XMP Media Management Schema</pdfaSchema:schema>
+              <pdfaSchema:property>
+               <rdf:Seq>
+                  <rdf:li rdf:parseType="Resource">
+                    <pdfaProperty:category>internal</pdfaProperty:category>
+                    <pdfaProperty:description>UUID based identifier for specific incarnation of a document</pdfaProperty:description>
+                    <pdfaProperty:name>InstanceID</pdfaProperty:name>
+                    <pdfaProperty:valueType>URI</pdfaProperty:valueType>
+                  </rdf:li>
+                </rdf:Seq>
+                </pdfaSchema:property>
+              </rdf:li>
+              <rdf:li rdf:parseType="Resource">
+                <pdfaSchema:namespaceURI>http://www.aiim.org/pdfa/ns/id/</pdfaSchema:namespaceURI>
+                <pdfaSchema:prefix>pdfaid</pdfaSchema:prefix>
+                <pdfaSchema:schema>PDF/A ID Schema</pdfaSchema:schema>
+                <pdfaSchema:property>
+                  <rdf:Seq>
+                    <rdf:li rdf:parseType="Resource">
+                      <pdfaProperty:category>internal</pdfaProperty:category>
+                      <pdfaProperty:description>Part of PDF/A standard</pdfaProperty:description>
+                      <pdfaProperty:name>part</pdfaProperty:name>
+                      <pdfaProperty:valueType>Integer</pdfaProperty:valueType>
+                    </rdf:li>
+                    <rdf:li rdf:parseType="Resource">
+                      <pdfaProperty:category>internal</pdfaProperty:category>
+                      <pdfaProperty:description>Amendment of PDF/A standard</pdfaProperty:description>
+                      <pdfaProperty:name>amd</pdfaProperty:name>
+                      <pdfaProperty:valueType>Text</pdfaProperty:valueType>
+                    </rdf:li>
+                    <rdf:li rdf:parseType="Resource">
+                      <pdfaProperty:category>internal</pdfaProperty:category>
+                      <pdfaProperty:description>Conformance level of PDF/A standard</pdfaProperty:description>
+                      <pdfaProperty:name>conformance</pdfaProperty:name>
+                      <pdfaProperty:valueType>Text</pdfaProperty:valueType>
+                    </rdf:li>
+                  </rdf:Seq>
+                </pdfaSchema:property>
+              </rdf:li>
+            </rdf:Bag>
+          </pdfaExtension:schemas>
+        </rdf:Description>
   </rdf:RDF>
 </x:xmpmeta>
 <?xpacket end="w"?>)}}
