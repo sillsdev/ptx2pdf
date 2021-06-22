@@ -68,41 +68,40 @@ class PDFx1aOutput(Snippet):
                     <pdfaProperty:valueType>URI</pdfaProperty:valueType>
                   </rdf:li>
                 </rdf:Seq>
-                </pdfaSchema:property>
-              </rdf:li>
-              <rdf:li rdf:parseType="Resource">
-                <pdfaSchema:namespaceURI>http://www.aiim.org/pdfa/ns/id/</pdfaSchema:namespaceURI>
-                <pdfaSchema:prefix>pdfaid</pdfaSchema:prefix>
-                <pdfaSchema:schema>PDF/A ID Schema</pdfaSchema:schema>
-                <pdfaSchema:property>
-                  <rdf:Seq>
-                    <rdf:li rdf:parseType="Resource">
-                      <pdfaProperty:category>internal</pdfaProperty:category>
-                      <pdfaProperty:description>Part of PDF/A standard</pdfaProperty:description>
-                      <pdfaProperty:name>part</pdfaProperty:name>
-                      <pdfaProperty:valueType>Integer</pdfaProperty:valueType>
-                    </rdf:li>
-                    <rdf:li rdf:parseType="Resource">
-                      <pdfaProperty:category>internal</pdfaProperty:category>
-                      <pdfaProperty:description>Amendment of PDF/A standard</pdfaProperty:description>
-                      <pdfaProperty:name>amd</pdfaProperty:name>
-                      <pdfaProperty:valueType>Text</pdfaProperty:valueType>
-                    </rdf:li>
-                    <rdf:li rdf:parseType="Resource">
-                      <pdfaProperty:category>internal</pdfaProperty:category>
-                      <pdfaProperty:description>Conformance level of PDF/A standard</pdfaProperty:description>
-                      <pdfaProperty:name>conformance</pdfaProperty:name>
-                      <pdfaProperty:valueType>Text</pdfaProperty:valueType>
-                    </rdf:li>
-                    <rdf:li rdf:parseType="Resource">
-                      <pdfaProperty:category>internal</pdfaProperty:category>
-                      <pdfaProperty:description>PDF/X version</pdfaProperty:description>
-                      <pdfaProperty:name>GTS_PDFXVersion</pdfaProperty:name>
-                      <pdfaProperty:valueType>Text</pdfaProperty:valueType>
-                    </rdf:li>
-                  </rdf:Seq>
-                </pdfaSchema:property>
-              </rdf:li>
+              </pdfaSchema:property>
+            </rdf:li>
+            <rdf:li rdf:parseType="Resource">
+              <pdfaSchema:namespaceURI>http://www.aiim.org/pdfa/ns/id/</pdfaSchema:namespaceURI>
+              <pdfaSchema:prefix>pdfaid</pdfaSchema:prefix>
+              <pdfaSchema:schema>PDF/A ID Schema</pdfaSchema:schema>
+              <pdfaSchema:property>
+                <rdf:Seq>
+                  <rdf:li rdf:parseType="Resource">
+                    <pdfaProperty:category>internal</pdfaProperty:category>
+                    <pdfaProperty:description>Part of PDF/A standard</pdfaProperty:description>
+                    <pdfaProperty:name>part</pdfaProperty:name>
+                    <pdfaProperty:valueType>Integer</pdfaProperty:valueType>
+                  </rdf:li>
+                  <rdf:li rdf:parseType="Resource">
+                    <pdfaProperty:category>internal</pdfaProperty:category>
+                    <pdfaProperty:description>Amendment of PDF/A standard</pdfaProperty:description>
+                    <pdfaProperty:name>amd</pdfaProperty:name>
+                    <pdfaProperty:valueType>Text</pdfaProperty:valueType>
+                  </rdf:li>
+                  <rdf:li rdf:parseType="Resource">
+                    <pdfaProperty:category>internal</pdfaProperty:category>
+                    <pdfaProperty:description>Conformance level of PDF/A standard</pdfaProperty:description>
+                    <pdfaProperty:name>conformance</pdfaProperty:name>
+                    <pdfaProperty:valueType>Text</pdfaProperty:valueType>
+                  </rdf:li>
+                  <rdf:li rdf:parseType="Resource">
+                    <pdfaProperty:category>internal</pdfaProperty:category>
+                    <pdfaProperty:description>PDF/X version</pdfaProperty:description>
+                    <pdfaProperty:name>GTS_PDFXVersion</pdfaProperty:name>
+                    <pdfaProperty:valueType>Text</pdfaProperty:valueType>
+                  </rdf:li>
+                </rdf:Seq>
+              </pdfaSchema:property>
             </rdf:li>
           </rdf:Bag>
         </pdfaExtension:schemas>
