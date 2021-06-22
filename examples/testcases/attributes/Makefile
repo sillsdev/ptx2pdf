@@ -4,7 +4,8 @@ all: test.pdf diglot.pdf
 DIR:=$(shell dirname `find ../../..  -name paratext2.tex`)
 .tex.pdf:
 	TEXINPUTS=.:$(DIR) xetex -no-pdf $<
-	TEXINPUTS=.:$(DIR) xetex $<
+	TEXINPUTS=.:$(DIR) xetex -no-pdf $<
+	dvipdfmx -C16 $(subst .tex,.xdv,$<)
 	
 
 test.pdf: test.tex test.usfm test.sty $(DIR)/*.tex 

@@ -453,7 +453,10 @@
     \global\advance\availht by \baselineskip % avoid underfull box in case of footnote
     \global\vsize=\availht
     \global\advance\availht by -\baselineskip % avoid underfull box in case of footnote
-    \csname partial\c@rrdstat penalty\endcsname=0 %FIXME: Isn't there a \splitpenalty??
+    \ifvoid\@xcs\else
+      \trace{D}{Resetting partial\c@rrdstat penalty from \the\csname partial\c@rrdstat penalty\endcsname to 0}%
+      \global\csname partial\c@rrdstat penalty\endcsname=0 %FIXME: Isn't there a \splitpenalty??
+    \fi
     \global\galleypenalty=0
     \global\setbox\galley=\vbox{\x@\unvcopy\p@rtl\unpenalty\penalty\endtri@lpen@lty}%
     \trace{D}{Running trial \the\trialheight, \the\ht\galley+\the\dp\galley (\the\ht\@xcs+\the\dp\@xcs left for next time)}%
@@ -710,7 +713,11 @@
 % Change which side we're adding to
 \def\pr@sideswitch#1#2{%
   \tmpcount=\lastnodetype
-  \global\savedpenalty=\lastpenalty % This MUST be first (at least, before any writes), or the last /thing/ won't be a penalty
+  \ifnum\lastpenalty=10000 
+    \global\savedpenalty=0% This MUST be first (at least, before any writes), or the last /thing/ won't be a penalty
+  \else
+    \global\savedpenalty=\lastpenalty
+  \fi 
   \ifx\c@rrdstat\empty
     \trace{d}{\c@rrdstat is empty, somehow, making it L for sanity}%
     \gdef\c@rrdstat{L}%
@@ -719,7 +726,15 @@
   \global\let\layoutstylebreak\enddigl@t % 
   \ifhe@dings\endhe@dings
     \global\savedpenalty=\lastpenalty % Pick up revised after-heading penalty
+    \traceNum{D}{Got \the\savedpenalty from headings}%
+    \ifnum\TRACEcount=\diglotDbgJoinboxes
+      \showboxbreadth=100
+      \showlists
+    \fi
   \fi%
+  \ifnum\outputpenalty=-10000 %User-pagebreak
+    \global\savedpenalty=\outputpenalty
+  \fi
   \x@\xdef\csname saved\c@rrdstat penalty\endcsname{\the\savedpenalty}%
   \ifinn@te\errmessage{*** #1text called from inside footnote?!?}\fi
   \ifx\last@popped@parstyle\relax\else
@@ -727,6 +742,7 @@
   \fi
   \trace{d}{pr@sideswitch #1 (\c@rrdstat) pL:\the\dp\partialL, xL:\the\dp\excessL, pR:\the\dp\partialR, xR\the\dp\excessR, lp:\the\savedpenalty \ifallNeedEmptying\space  allNeedemptying\fi}%
   %\showlists
+  \global\savedpenalty=0 % avoid cross-contamination
   \global\output={\diglotCollect}%Why woudn't it be? Don't know, but sometimes it's not.
   \let\@ldstat=\c@rrdstat
   \@@setside{#2}%Set the side to occur after the next swapcols penalty
@@ -1813,7 +1829,7 @@
   \else 
     \global\setbox\destb@x=\vtop{\joinboxes{\destb@x}{255}{1}{\x@\the\csname partial\c@rrdstat penalty\endcsname}}%
   \fi
-  \x@\csname partial\c@rrdstat penalty\endcsname=\tmpcount
+  \global\x@\csname partial\c@rrdstat penalty\endcsname=\tmpcount
   \ifnum\outputpenalty=\dgl@tPenColSwap\relax %Got to the end of the \lefttext
     \trace{D}{Reached end of diglotCollect. \ifallNeedEmptying Running trials soon\fi}%
     \ifallNeedEmptying
@@ -2166,6 +2182,13 @@
     \trace{D}{side \c@rrdstat\space has stuff to typeset}%
     \xdef\tri@llist{\tri@llist#1}% More trials to run 
   \fi
+  \ifnum\csname \c@rrdstat boxpenalty\endcsname<-9999
+    \trace{d}{side \c@rrdstat\space wants a pagebreak}%
+    \pagefulltrue
+    \x@\gdef\csname saved\c@rrdstat penalty\endcsname{0}%Saved penalty is used now.
+    \global\csname \c@rrdstat boxpenalty\endcsname=-9999 %
+  \fi
+    
   \edef\n@xtarg{#2}%
   \let\afterch@ckcontents\ch@ckcontents
   \ifx\n@xtarg\empty
