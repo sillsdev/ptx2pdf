@@ -535,10 +535,10 @@
  \else
   \global\dr@ppednumberfalse
   \ifDropActions\else\bgroup\liter@lspecials
-    \special{pdf:dest (\id@@@.) [@thispage /Fit]}%
+    \special{pdf:dest (\id@@@.\ch@pter) [@thispage /Fit]}%
     \ifx\b@ok\relax \let\t@mp=\id@@@ \else \let\t@mp=\b@ok\fi
     \special{pdf:outline 0 << /Title (\t@mp)
-             /A << /S /GoTo /D (\id@@@.) >> >>}%
+             /A << /S /GoTo /D (\id@@@.\ch@pter) >> >>}%
     \global\let\prevb@ok\b@ok\egroup\fi
  \fi}
 
