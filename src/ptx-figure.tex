@@ -319,16 +319,21 @@
   \fi
 }    
 
+\newif\ifDoCaptions
+\DoCaptionstrue
+
 \def\d@caption{% 
-  \xdef\r@f{\csname figparam-ref\endcsname}% get reference
-  \d@c@ption{}%Normal monoglot caption.
-  \ifdiglot 
-    \bgroup %Alternative captions
-      \def\col@do##1{\def\c@rrdstat{##1}\d@c@ption{##1}}%
-      \x@\each@col\diglot@list\E
-    \egroup
+  \ifDoCaptions
+    \xdef\r@f{\csname figparam-ref\endcsname}% get reference
+    \d@c@ption{}%Normal monoglot caption.
+    \ifdiglot 
+      \bgroup %Alternative captions
+        \def\col@do##1{\def\c@rrdstat{##1}\d@c@ption{##1}}%
+        \x@\each@col\diglot@list\E
+      \egroup
+    \fi
+    \vskip.5\baselineskip
   \fi
-  \vskip.5\baselineskip
 }
 
 \def\t@xtfragment#1#2{\bgroup\everypar={}\let\par\endgraf

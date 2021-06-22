@@ -461,3 +461,8 @@ As noted above, caption styling is controled via the `fig` marker in the stylesh
 For multi-line captions, the line spacing may be controlled by modification of `\LineSpacing` (in the same scaleable units as parameter `\FontSize`) or 
 `\BaseLine` (units must be supplied).
 
+### No Captions and references at all
+```
+\DoCaptionsfalse
+```
+
