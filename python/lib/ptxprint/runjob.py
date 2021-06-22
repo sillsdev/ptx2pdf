@@ -591,10 +591,10 @@ class RunJob:
                 except subprocess.TimeoutExpired:
                     print("Timed out!")
                     self.res = runner.returncode
-            if self.ispdfxa != "None":
-                outpath = os.path.join(self.tmpdir, outfname[:-4])
-                fixpdffile(outpath + ".prepress.pdf", outpath + ".pdf")
-                os.remove(outpath + ".prepress.pdf")
+            outpath = os.path.join(self.tmpdir, outfname[:-4])
+            fixpdffile(outpath + ".prepress.pdf", outpath + ".pdf",
+                        colour="rgb" if self.ispdfxa == "None" else "cmyk")
+            os.remove(outpath + ".prepress.pdf")
         print("Done")
         self.done_job(outfname, info)
 

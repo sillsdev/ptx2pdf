@@ -99,13 +99,6 @@ class PageState(PdfStreamParser):
         newop = "k" if op.lower() == op else "K"
         return [simplefloat(x) for x in cmyk] + [newop]
 
-    def cm(self, op, operands):
-        ins = self.kw.get('ins', None)
-        print(ins)
-        extras = [ins] if ins is not None and len(ins) else []
-        self.kw['ins'] = None
-        return operands + [op] + extras
-
     def _addgstate(self, newgs, gs, **kw):
         res = self.gstates[gs].copy()
         self.gstates[PdfName(newgs)] = res
@@ -131,9 +124,8 @@ class PageState(PdfStreamParser):
         return newim.getpixel(0, 0)
 
 
-def fixpdfcmyk(trailer, threshold=1., inserts=[], **kw):
+def fixpdfcmyk(trailer, threshold=1., **kw):
     for pagenum, page in enumerate(trailer.pages, 1):
-        ins = inserts[pagenum - 1] if pagenum <= len(inserts) else None
         pstate = PageState(threshold, page.Resources.ExtGState)
         instrm = page.Contents
         if not isinstance(instrm, PdfArray):
@@ -142,7 +134,7 @@ def fixpdfcmyk(trailer, threshold=1., inserts=[], **kw):
             if isinstance(i, PdfIndirect):
                 i = i.real_value()
             uncompress([i])
-            strm = pstate.parsestream(trailer, i.stream, ins=ins, **kw)
+            strm = pstate.parsestream(trailer, i.stream, **kw)
             i.stream = strm
         annots = page.Annots
         if annots is not None:
@@ -189,6 +181,7 @@ def fixhighlights(trailer, parlocs=None):
             rect = []
             blefts = []
             brights = []
+            margin = float(v.Margin) if v.Margin is not None else 0.
             for i, r in enumerate(v.QuadPoints):
                 ymin = min(r[1], r[3])
                 ymax = max(r[1], r[3])
@@ -201,8 +194,8 @@ def fixhighlights(trailer, parlocs=None):
                 else:
                     xmax = max(r[0], r[2])
                 q += [xmin, ymin, xmax, ymin, xmin, ymax, xmax, ymax]
-                blefts += [(xmin, ymax), (xmin, ymin)]  # top to bottom
-                brights += [(xmax, ymax), (xmax, ymin)]
+                blefts += [(xmin - margin, ymax), (xmin - margin, ymin)]  # top to bottom
+                brights += [(xmax + margin, ymax), (xmax + margin, ymin)]
                 if i == 0:
                     rect = (xmin, ymin, xmax, ymax)
                 else:
@@ -246,11 +239,12 @@ def pagebbox(infile, pagenum=0):
     cropbox = page.inheritable.CropBox
     return cropbox
 
-def fixpdffile(infile, outfile, **kw):
+def fixpdffile(infile, outfile, colour="rgb", **kw):
     trailer = PdfReader(infile)
 
     fixhighlights(trailer, parlocs=kw.get('parlocs', None))
-    fixpdfcmyk(trailer, threshold=kw.get('threshold', 1.))
+    if colour == "cmyk":
+        fixpdfcmyk(trailer, threshold=kw.get('threshold', 1.))
 
     meta = trailer.Root.Metadata
     if meta is not None:
