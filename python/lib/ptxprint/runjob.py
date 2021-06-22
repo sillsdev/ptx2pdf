@@ -593,7 +593,8 @@ class RunJob:
                     self.res = runner.returncode
             outpath = os.path.join(self.tmpdir, outfname[:-4])
             fixpdffile(outpath + ".prepress.pdf", outpath + ".pdf",
-                        colour="rgb" if self.ispdfxa == "None" else "cmyk")
+                        colour="rgb" if self.ispdfxa == "None" else "cmyk",
+                        parlocs = outpath + ".parlocs")
             os.remove(outpath + ".prepress.pdf")
         print("Done")
         self.done_job(outfname, info)

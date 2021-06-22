@@ -150,9 +150,9 @@ def fixhighlights(trailer, parlocs=None):
     if parlocs is not None and os.path.exists(parlocs):
         with open(parlocs) as inf:
             for l in inf.readlines():
-                m = re.match(r"^\\(start|end)annot\{(.*?)\}\{(.*?)\}\{(.*?)\}", l)
+                m = re.match(r"^\\(start|end)annot\{(.*?)\}\{(.*?)\}\{(.*?)\}\{(.*)\}", l)
                 if m:
-                    pos = (float(m.group(3)) / 65536, float(m.group(4)) / 65536)
+                    pos = (float(m.group(3)) / 65536, float(m.group(4)) / 65536, int(m.group(5)))
                     if m.group(1) == "start":
                         annotlocs[m.group(2)] = (pos, pos)
                     else:
@@ -182,14 +182,15 @@ def fixhighlights(trailer, parlocs=None):
             blefts = []
             brights = []
             margin = float(v.Margin) if v.Margin is not None else 0.
+            # collect rectangles in QuadPoints
             for i, r in enumerate(v.QuadPoints):
                 ymin = min(r[1], r[3])
                 ymax = max(r[1], r[3])
-                if k in annotlocs and i == 0 and ymin <= annotlocs[k][0][1] <= ymax:
+                if k in annotlocs and i == 0 and annotlocs[k][0][2] == pagenum and ymin <= annotlocs[k][0][1] <= ymax:
                     xmin = annotlocs[k][0][0]
                 else:
                     xmin = min(r[0], r[2])
-                if k in annotlocs and i == len(v.QuadPoints) - 1 and ymin <= annotlocs[k][1][1] <= ymax:
+                if k in annotlocs and i == len(v.QuadPoints) - 1 and annotlocs[k][1][2] == pagenum and ymin <= annotlocs[k][1][1] <= ymax:
                     xmax = annotlocs[k][1][0]
                 else:
                     xmax = max(r[0], r[2])
@@ -201,12 +202,12 @@ def fixhighlights(trailer, parlocs=None):
                 else:
                     rect = (min(rect[0], xmin), min(rect[1], ymin), max(rect[2], xmax), max(rect[3], ymax))
             if v.Subtype == "/Highlight":
-                print(newannots.get(k, ""), annotlocs.get(k, ""), q, rect)
                 v.QuadPoints = PdfArray(q)
                 v.Rect = PdfArray(rect)
                 v.Ref = None
                 pannots.append(v)
             elif v.Subtype == "/Background":
+                # convert rectangles to bounding polygon and graphics op stream
                 brect = []
                 for p in brights + list(reversed(blefts)):
                     if len(brect) > 1:
@@ -221,12 +222,11 @@ def fixhighlights(trailer, parlocs=None):
                 for p in brect[1:]:
                     action.append("{} {} l".format(simplefloat(p[0]), simplefloat(p[1])))
                 action.append("h f")
-                print(action)
                 pres.append("\n".join(action))
-            if len(pres):
-                pres.insert(0, "q")
-                pres.append("Q")
-                page.Contents.insert(0, PdfDict(indirect=True, stream="\n".join(pres)))
+        if len(pres):
+            pres.insert(0, "q")
+            pres.append("Q")
+            page.Contents.insert(0, PdfDict(indirect=True, stream="\n".join(pres)))
         page.Annots = pannots if len(pannots) else None
 
 def pagebbox(infile, pagenum=0):

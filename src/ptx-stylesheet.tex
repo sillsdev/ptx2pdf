@@ -496,6 +496,7 @@
   \ifReenterIntroOK\else\global\intr@donetrue\fi% Are markers starting 'i' allowed to flip us back into one-column mode?
   \uppercase{\xdef\c@rref{\id@@@\ifdiglot\c@rrdstat\fi\ch@pter.0}}%
   \global\let\print@bleVerse=\v@rse
+  \op@ninghooks{c}{start}%
   \m@kedigitsletters
    % If omitting chapter number, skip this. 
    % We would have to set \OmitChapterNumbertrue on a book by book basis

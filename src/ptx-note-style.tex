@@ -191,6 +191,8 @@
   \loop \ifnum\count255>26 \advance\count255 by -26 \repeat
   \advance\count255 by 96 \edef\them@rk{\char\count255}}
 \fi
+
+\def\resetautonum#1{\x@\xdef\csname autonum #1\endscname{0}}
 %-cnote_autonum
 
 %+cnote_declare
