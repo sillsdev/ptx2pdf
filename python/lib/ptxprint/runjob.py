@@ -575,9 +575,8 @@ class RunJob:
                 break
         if not self.noview and not self.args.testing and not self.res:
             self.printer.incrementProgress()
-            cmd = ["xdvipdfmx", "-E", "-V", "1.4", "-C", "16"]
-            if self.ispdfxa != "None":
-                cmd += ["-q", "-o", outfname.replace(".tex", ".prepress.pdf")]
+            cmd = ["xdvipdfmx", "-E", "-V", "1.4", "-C", "16", "-q",
+                   "-o", outfname.replace(".tex", ".prepress.pdf")]
             #if self.ispdfxa == "PDF/A-1":
             #    cmd += ["-z", "0"]
             if self.args.extras & 1:
