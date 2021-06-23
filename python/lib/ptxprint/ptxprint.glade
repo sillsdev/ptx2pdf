@@ -154,9 +154,9 @@ THE SOFTWARE.
     <property name="lower">20</property>
     <property name="upper">80</property>
     <property name="value">50</property>
-    <property name="step_increment">0.5</property>
-    <property name="page_increment">1</property>
-    <property name="page_size">5</property>
+    <property name="step_increment">0.10000000000000001</property>
+    <property name="page_increment">0.5</property>
+    <property name="page_size">1</property>
   </object>
   <object class="GtkAdjustment" id="a_diglotPriFraction1">
     <property name="lower">1</property>
@@ -2937,16 +2937,16 @@ the text. This may be useful for precise measuring.</property>
         <col id="1">None</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Print (PDF/X-1A)</col>
+        <col id="0" translatable="yes">Print (PDF/X-1a:2003)</col>
         <col id="1">PDF/X-1A</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Archive (print+text)</col>
-        <col id="1">PDF/A-1</col>
       </row>
       <row>
         <col id="0" translatable="yes">Transparency (PDF/X-4 + CMYK)</col>
         <col id="1" translatable="yes">CMYK</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Archive (PDF/A-1 + text)</col>
+        <col id="1">PDF/A-1</col>
       </row>
     </data>
   </object>
@@ -5057,6 +5057,7 @@ space between lines of text.</property>
                                         <items>
                                           <item translatable="yes">210mm, 297mm (A4)</item>
                                           <item translatable="yes">148mm, 210mm (A5)</item>
+                                          <item translatable="yes">176mm, 250mm (B5)</item>
                                           <item translatable="yes">8.5in, 11in (Letter)</item>
                                           <item translatable="yes">5.5in, 8.5in (1/2 Letter)</item>
                                           <item translatable="yes">5.25in, 8.25in (133x210mm)</item>
@@ -13586,6 +13587,8 @@ to copyrights.</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="adjustment">a_diglotPriFraction</property>
+                                <property name="lower_stepper_sensitivity">on</property>
+                                <property name="upper_stepper_sensitivity">on</property>
                                 <property name="show_fill_level">True</property>
                                 <property name="fill_level">100</property>
                                 <property name="round_digits">1</property>
@@ -17135,8 +17138,13 @@ This will delete all previous log and intermediate temporary files for the entir
                                     <property name="tooltip_text" translatable="yes">Select the appropriate standard 
 for the output format to optimize
 the PDF for its intended purpose.
-All conform to PDF/A-1b.
-PDF/X-1a is PDF/X-1a:2003</property>
+
+Note: All conform to PDF/A-1b.
+
+Digital (smallest size, for local printing)
+Print (for professional printers)
+Transparency (use if needed by printers)
+Archive (largest size, for keeping long-term)</property>
                                     <property name="halign">start</property>
                                     <property name="model">ls_outputFormat</property>
                                     <property name="wrap_width">1</property>
@@ -17164,8 +17172,13 @@ PDF/X-1a is PDF/X-1a:2003</property>
                                     <property name="tooltip_text" translatable="yes">Select the appropriate standard 
 for the output format to optimize
 the PDF for its intended purpose.
-All conform to PDF/A-1b.
-PDF/X-1a is PDF/X-1a:2003</property>
+
+Note: All conform to PDF/A-1b.
+
+Digital (smallest size, for local printing)
+Print (for professional printers)
+Transparency (use if needed by printers)
+Archive (largest size, for keeping long-term)</property>
                                     <property name="label" translatable="yes">PDF Output Format:</property>
                                   </object>
                                   <packing>
