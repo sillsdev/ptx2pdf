@@ -425,7 +425,8 @@
    \ifx\mayb@vp\vp\let\nxt\@@VP@@\fi\nxt}%
   \def\@@VP@@\vp ##1\vp*{\xdef\print@bleVerse{##1}\@@V@@}
   \def\@@V@@{%
-   \the\prev@rsehooks \spl@tprintableverse
+   \the\prev@rsehooks
+   \spl@tprintableverse
    \pdfv@rsemark % make book.chapter:verse mark (plural if this is a range)
    %\ if not cancelling first verse, output verse number
    \ifc@ncelfirstverse\else
@@ -1235,7 +1236,7 @@
 \newtoks\c@th@@ks
 \newtoks\afterh@@ks
 \def\cl@singhooks#1#2{% for <end> and <after> hooks. For <after> hooks, it's necessary to end the group after these are defined 
-  \trace{s}{op@ninghooks #1 #2}%
+  \trace{s}{cl@singhooks #1 #2}%
   \global\let\n@xt\relax
   \global\let\n@@xt\relax
   \global\let\n@@@xt\relax
