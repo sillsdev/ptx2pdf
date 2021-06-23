@@ -205,9 +205,14 @@ def fixpdfrgb(trailer, **kw):
         while "/CS"+str(i) in colrs:
             i += 1
         key = "CS"+str(i)
-        colrs[PdfName(key)] = PdfArray([PdfName("ICCBased"), icc])
+        iccclr = colrs[PdfName(key)] = PdfArray([PdfName("ICCBased"), icc])
         pstate = PageRGBState()
         pstate.parsepage(page, trailer, cskey=key, **kw)
+        xobjs = r.XObject
+        if xobjs is not None:
+            for k, v in xobjs.items():
+                if v.ColorSpace == "/DeviceRGB":
+                    v.ColorSpace = iccclr
 
 def fixhighlights(trailer, parlocs=None):
     annotlocs = {}
