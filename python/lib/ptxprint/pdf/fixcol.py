@@ -137,14 +137,17 @@ class PageCMYKState(PdfStreamParser):
 
 
 class PageRGBState(PdfStreamParser):
-    opmap = {'RG': 'rg'}
+    opmap = {'RG': 'rg', 'G': 'rg', 'g': 'rg'}
 
     def rg(self, op, operands, cskey=None, **kw):
-        newop, newcs = (x.upper() if op[0]=="R" else x for x in ("scn", "cs"))
+        newop, newcs = (x.upper() if op[0] in "RG" else x for x in ("scn", "cs"))
         extras = []
         if cskey is not None:
             extras = ["/"+cskey, newcs]
+        if op.lower() == "g":
+            operands = operands * 3
         return extras + operands + [newop]
+
 
 def compress(mylist):
     flate = PdfName.FlateDecode
