@@ -190,6 +190,7 @@ _nonsensitivities = {
     "c_useprintdraftfolder" :  ["btn_selectOutputFolder"],
     "c_styFaceSuperscript" :   ["l_styRaise", "s_styRaise"],
     "c_interlinear" :          ["c_letterSpacing", "s_letterShrink", "s_letterStretch"],
+    "c_fighidecaptions" :      ["c_fighiderefs"],
     "r_xrLocn": {
         "r_xrLocn_below" :     [],
         "r_xrLocn_blend" :     ["l_internote", "s_internote"],
@@ -602,11 +603,11 @@ class GtkViewModel(ViewModel):
                 "you can hide all the advanced options."))
                       
         for c in ("tb_Advanced", "tb_ViewerEditor", "tb_StyleEditor", "tb_Pictures", "tb_TabsBorders", "tb_Diglot",
-                  "fr_copyrightLicense", "r_book_module", "btn_chooseBibleModule", "lb_bibleModule",
-                  "c_fighiderefs", "lb_selectFigureFolder", "l_indentUnit", "s_indentUnit", "lb_style_s", "lb_style_r", 
+                  "fr_copyrightLicense", "r_book_module", "btn_chooseBibleModule", "lb_bibleModule", 
+                  "lb_selectFigureFolder", "l_indentUnit", "s_indentUnit", "lb_style_s", "lb_style_r", 
                   "l_btmMrgn", "s_bottommargin", "l_ftrPosn", "s_footerposition", "r_ftrCenter_Pri", "r_ftrCenter_Sec", 
                   "l_missingPictureString", "l_imageTypeOrder", "t_imageTypeOrder", "fr_layoutSpecialBooks", "fr_layoutOther",
-                  "s_colgutteroffset", "bx_TopMarginSettings", "gr_HeaderAdvOptions", "l_colgutteroffset",
+                  "s_colgutteroffset", "bx_TopMarginSettings", "gr_HeaderAdvOptions", "l_colgutteroffset", "c_fighidecaptions",
                   "c_fighiderefs", "c_skipmissingimages", "c_useCustomFolder", "btn_selectFigureFolder", "c_exclusiveFiguresFolder",
                   "c_startOnHalfPage", "c_prettyIntroOutline", "c_marginalverses", "s_columnShift", "c_figplaceholders",
                   "fr_fallbackFont", "l_colgutteroffset", "fr_hyphenation", "lb_style_f", "lb_style_x",

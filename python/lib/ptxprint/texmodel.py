@@ -188,6 +188,7 @@ ModelMap = {
     "document/iffigskipmissing": ("c_skipmissingimages", None),
     "document/iffigcrop":       ("c_cropborders", None),
     "document/iffigplaceholders": ("c_figplaceholders", lambda w,v: "true" if v else "false"),
+    "document/iffigshowcaptions": ("c_fighidecaptions", lambda w,v: "false" if v else "true"),
     "document/iffighiderefs":   ("c_fighiderefs", None),
     # "document/usesmallpics":    ("c_useLowResPics", lambda w,v :"" if v else "%"),
     # "document/uselargefigs":    ("c_useHighResPics", lambda w,v :"" if v else "%"),

@@ -2491,7 +2491,7 @@ technology, then enable this.</property>
   </object>
   <object class="GtkDialog" id="dlg_gridsGuides">
     <property name="can_focus">False</property>
-    <property name="title" translatable="yes">Guides and Grid Settings</property>
+    <property name="title" translatable="yes">Crop Marks, Guides and Grid Settings</property>
     <property name="window_position">mouse</property>
     <property name="icon">Google-Noto-Emoji-Objects-62859-open-book.ico</property>
     <property name="type_hint">dialog</property>
@@ -2941,11 +2941,11 @@ the text. This may be useful for precise measuring.</property>
         <col id="1">PDF/X-1A</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Transparency (PDF/X-4 + CMYK)</col>
+        <col id="0" translatable="yes">Transparency (Digital+CMYK)</col>
         <col id="1" translatable="yes">CMYK</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Archive (PDF/A-1 + text)</col>
+        <col id="0" translatable="yes">Archive (Print+Unicode Text)</col>
         <col id="1">PDF/A-1</col>
       </row>
     </data>
@@ -11519,21 +11519,6 @@ all the required illustrations.</property>
                                               </packing>
                                             </child>
                                             <child>
-                                              <object class="GtkCheckButton" id="c_fighiderefs">
-                                                <property name="label" translatable="yes">Omit References (ch:vs) From Caption </property>
-                                                <property name="visible">True</property>
-                                                <property name="can_focus">True</property>
-                                                <property name="receives_default">False</property>
-                                                <property name="halign">start</property>
-                                                <property name="draw_indicator">True</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left_attach">0</property>
-                                                <property name="top_attach">2</property>
-                                                <property name="width">2</property>
-                                              </packing>
-                                            </child>
-                                            <child>
                                               <object class="GtkCheckButton" id="c_skipmissingimages">
                                                 <property name="label" translatable="yes">Omit Missing Pictures           ...</property>
                                                 <property name="visible">True</property>
@@ -11776,6 +11761,48 @@ attribute.  Note: w= web, a=app, p=print.</property>
                                               <packing>
                                                 <property name="left_attach">0</property>
                                                 <property name="top_attach">1</property>
+                                                <property name="width">2</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkBox">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">False</property>
+                                                <child>
+                                                  <object class="GtkCheckButton" id="c_fighidecaptions">
+                                                    <property name="label" translatable="yes">Omit Captions </property>
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">True</property>
+                                                    <property name="receives_default">False</property>
+                                                    <property name="halign">start</property>
+                                                    <property name="draw_indicator">True</property>
+                                                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="expand">False</property>
+                                                    <property name="fill">True</property>
+                                                    <property name="position">0</property>
+                                                  </packing>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkCheckButton" id="c_fighiderefs">
+                                                    <property name="label" translatable="yes">Omit References (ch:vs)</property>
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">True</property>
+                                                    <property name="receives_default">False</property>
+                                                    <property name="halign">start</property>
+                                                    <property name="draw_indicator">True</property>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="expand">False</property>
+                                                    <property name="fill">True</property>
+                                                    <property name="position">1</property>
+                                                  </packing>
+                                                </child>
+                                              </object>
+                                              <packing>
+                                                <property name="left_attach">0</property>
+                                                <property name="top_attach">2</property>
                                                 <property name="width">2</property>
                                               </packing>
                                             </child>
@@ -17139,12 +17166,12 @@ This will delete all previous log and intermediate temporary files for the entir
 for the output format to optimize
 the PDF for its intended purpose.
 
-Note: All conform to PDF/A-1b.
-
 Digital (smallest size, for local printing)
 Print (for professional printers)
-Transparency (use if needed by printers)
-Archive (largest size, for keeping long-term)</property>
+Transparency (if CMYK is required)
+Archive (largest size, for keeping long-term)
+
+Note: All comply with archive standard PDF/A-1b.</property>
                                     <property name="halign">start</property>
                                     <property name="model">ls_outputFormat</property>
                                     <property name="wrap_width">1</property>
@@ -17173,12 +17200,12 @@ Archive (largest size, for keeping long-term)</property>
 for the output format to optimize
 the PDF for its intended purpose.
 
-Note: All conform to PDF/A-1b.
-
 Digital (smallest size, for local printing)
 Print (for professional printers)
-Transparency (use if needed by printers)
-Archive (largest size, for keeping long-term)</property>
+Transparency (if CMYK is required)
+Archive (largest size, for keeping long-term)
+
+Note: All comply with archive standard PDF/A-1b.</property>
                                     <property name="label" translatable="yes">PDF Output Format:</property>
                                   </object>
                                   <packing>
