@@ -1744,8 +1744,8 @@
 \def\pagebreak{
   \ifsk@pping \egroup \fi%
   \ifhe@dings\endhe@dings\fi%
+  \ifdiglot \vbox to 0pt{}\fi%
   \vfill\eject%
-  \message{pagebreak on page \the\pageno}%
 }
 \def\bookendpagebreak{
   \ifsk@pping \egroup \fi%
