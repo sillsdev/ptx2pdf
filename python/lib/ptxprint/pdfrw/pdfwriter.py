@@ -254,6 +254,7 @@ class PdfWriter(object):
         self.fname = fname
         self.version = version
         self.compress = compress
+        self.do_compress = kwargs.pop("do_compress", do_compress)
 
         if kwargs:
             for name, value in iteritems(kwargs):
@@ -355,7 +356,7 @@ class PdfWriter(object):
 
         try:
             FormatObjects(f, trailer, self.version, self.compress,
-                          self.killobj, user_fmt=user_fmt)
+                          self.killobj, user_fmt=user_fmt, do_compress=self.do_compress)
         finally:
             if not preexisting:
                 f.close()

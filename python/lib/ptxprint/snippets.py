@@ -25,7 +25,7 @@ class PDFx1aOutput(Snippet):
 /Trapped /False
 {_gtspdfx}>> }} 
 \special{{pdf:fstream @OBJCVR ({/iccfpath})}}
-\special{{pdf:put @OBJCVR <</N 4>>}}
+\special{{pdf:put @OBJCVR <</N {_iccnumcols}>>}}
 %\special{{pdf:close @OBJCVR}}
 \catcode`\#=12
 \special{{pdf:stream @OBJCMR (
@@ -168,7 +168,10 @@ class PDFx1aOutput(Snippet):
         else:
             extras['_gtspdfx'] = "/GTS_PDFXVersion(PDF/X-1a:2003)%\n/GTS_PDFXConformance(PDF/X-1a:2003)%\n"
         if pdftype == "None":
-            model.dict["/iccfpath"] = os.path.join(libpath, "default_rgb.icc").replace("\\","/")
+            model.dict["/iccfpath"] = os.path.join(libpath, "sRGB.icc").replace("\\","/")
+            extras['_iccnumcols'] = "3"
+        else:
+            extras['_iccnumcols'] = "4"
         extras['_gtspdfaid'] = "      <pdfaid:part>1</pdfaid:part>\n      <pdfaid:conformance>B</pdfaid:conformance>\n"
         if model['snippets/pdfoutput'] == "PDF/A-1":
             res += "\XeTeXgenerateactualtext=1\n"
