@@ -408,6 +408,10 @@
 \def\noPrintVerse{\global\c@ncelfirstversetrue}
 \def\spl@tprintableverse{\x@\spl@tverses\print@bleVerse --\relax}
 \catcode`-=12
+\def\pdfv@rsemark{%TODO: Not every verse.
+  \special{pdf:dest (\id@@@\c@rrdstat.\ch@pter:\v@rsefrom) [@thispage /XYZ @xpos @ypos null]}%
+}%
+
 \lowercase{
  % `~` is set by lowercase to a space for delimiting \ch@rstylepls
  \def\@ddcvhooks{
@@ -422,6 +426,7 @@
   \def\@@VP@@\vp ##1\vp*{\xdef\print@bleVerse{##1}\@@V@@}
   \def\@@V@@{%
    \the\prev@rsehooks \spl@tprintableverse
+   \pdfv@rsemark % make book.chapter:verse mark (plural if this is a range)
    %\ if not cancelling first verse, output verse number
    \ifc@ncelfirstverse\else
     \ifrotate
