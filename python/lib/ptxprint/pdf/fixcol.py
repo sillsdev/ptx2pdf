@@ -160,7 +160,7 @@ def compress(mylist):
         oldstr = obj.stream
         if obj.Binary is not None:
             obj.Binary = None
-            newstr = zlib.compress(oldstr)
+            newstr = convert_load(zlib.compress(oldstr))
         else:
             newstr = convert_load(zlib.compress(convert_store(oldstr)))
         if len(newstr) < len(oldstr) + 30:
@@ -187,8 +187,9 @@ def fixpdfrgb(trailer, **kw):
         iccprofile = oi[0].DestOutputProfile
         if isinstance(iccprofile, PdfIndirect):
             iccprofile = iccprofile.real_value()
-            uncompress([iccprofile], leave_raw=True)
-            iccdat = iccprofile.stream
+        uncompress([iccprofile], leave_raw=True)
+        iccprofile[PdfName('Binary')] = True
+        iccdat = iccprofile.stream
     if iccdat is None:
         iccfile = os.path.join(os.path.dirname(__file__), "..", "sRGB.icc")
         if os.path.exists(iccfile):
@@ -196,7 +197,8 @@ def fixpdfrgb(trailer, **kw):
                 iccdat = inf.read()
     if iccdat is None:
         return
-    icc = PdfDict(indirect=True, Binary=True, N=3, Alternate=PdfName("DeviceRGB"), stream=iccdat)
+    icc = PdfDict(indirect=True, Binary=True, N=3,
+                  Alternate=PdfName("DeviceRGB"), stream=iccdat)
     for pagenum, page in enumerate(trailer.pages, 1):
         r = page.Resources
         if r is None:
@@ -209,6 +211,7 @@ def fixpdfrgb(trailer, **kw):
             i += 1
         key = "CS"+str(i)
         iccclr = colrs[PdfName(key)] = PdfArray([PdfName("ICCBased"), icc])
+        iccclr.indirect = True
         pstate = PageRGBState()
         pstate.parsepage(page, trailer, cskey=key, **kw)
         xobjs = r.XObject
