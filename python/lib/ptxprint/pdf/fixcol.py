@@ -2,7 +2,8 @@
 from ptxprint.pdfrw import *
 from ptxprint.pdfrw.objects.pdfindirect import PdfIndirect
 from ptxprint.pdfrw.objects.pdfname import BasePdfName
-from ptxprint.pdfrw.uncompress import uncompress
+from ptxprint.pdfrw.uncompress import uncompress, streamobjects
+from ptxprint.pdfrw.py23_diffs import zlib, convert_load, convert_store
 from PIL.ImageCms import applyTransform, buildTransform
 from PIL import Image
 
@@ -27,6 +28,17 @@ def rgb2cmyk(r, g, b):
     return [c, m, y, k]
 
 class PdfStreamParser:
+
+    def parsepage(self, page, trailer, **kw):
+        instrm = page.Contents
+        if not isinstance(instrm, PdfArray):
+            instrm = [instrm]
+        for i in instrm:
+            if isinstance(i, PdfIndirect):
+                i = i.real_value()
+            uncompress([i])
+            strm = self.parsestream(trailer, i.stream, **kw)
+            i.stream = strm
 
     def parsestream(self, rdr, strm, **kw):
         self.kw = kw
@@ -54,12 +66,12 @@ class PdfStreamParser:
                 if fn is None:
                     res.append(" ".join(str(x) for x in (operands + [t])))
                 else:
-                    res.append(" ".join(fn(t, operands)))
+                    res.append(" ".join(fn(t, operands, **kw)))
                 operands = []
         return "\r\n".join(res)
 
 
-class PageState(PdfStreamParser):
+class PageCMYKState(PdfStreamParser):
     opmap = {'K': 'k', 'RG': 'rg'}
     def __init__(self, threshold, gstates):
         self.currgs = None
@@ -71,11 +83,11 @@ class PageState(PdfStreamParser):
     def setProfiles(self, inprofile, outprofile):
         self.profile = buildTransform(inprofile, outprofile, "RGB", "CMYK")
 
-    def gs(self, op, operands):
+    def gs(self, op, operands, **kw):
         self.currgs = str(operands[-1])
         return operands + [op]
 
-    def k(self, op, operands):
+    def k(self, op, operands, **kw):
         try:
             overprintme = self.overprinttest(operands)
         except (ValueError, TypeError):
@@ -93,7 +105,7 @@ class PageState(PdfStreamParser):
                 self.currgs = "/"+newgs
         return extras + operands + [op]
 
-    def rg(self, op, operands):
+    def rg(self, op, operands, **kw):
         rgb = [float(x) for x in operands[-3:]]
         cmyk = self.rgb2cmyk(*rgb)
         newop = "k" if op.lower() == op else "K"
@@ -124,18 +136,39 @@ class PageState(PdfStreamParser):
         return newim.getpixel(0, 0)
 
 
+class PageRGBState(PdfStreamParser):
+    opmap = {'RG': 'rg'}
+
+    def rg(self, op, operands, cskey=None, **kw):
+        newop, newcs = (x.upper() if op[0]=="R" else x for x in ("scn", "cs"))
+        extras = []
+        if cskey is not None:
+            extras = ["/"+cskey, newcs]
+        return extras + operands + [newop]
+
+def compress(mylist):
+    flate = PdfName.FlateDecode
+    for obj in streamobjects(mylist):
+        ftype = obj.Filter
+        if ftype is not None:
+            if not len(ftype):
+                obj.Filter = None
+            continue
+        oldstr = obj.stream
+        if obj.Binary is not None:
+            obj.Binary = None
+            newstr = zlib.compress(oldstr)
+        else:
+            newstr = convert_load(zlib.compress(convert_store(oldstr)))
+        if len(newstr) < len(oldstr) + 30:
+            obj.stream = newstr
+            obj.Filter = flate
+            obj.DecodeParms = None
+
 def fixpdfcmyk(trailer, threshold=1., **kw):
     for pagenum, page in enumerate(trailer.pages, 1):
-        pstate = PageState(threshold, page.Resources.ExtGState)
-        instrm = page.Contents
-        if not isinstance(instrm, PdfArray):
-            instrm = [instrm]
-        for i in instrm:
-            if isinstance(i, PdfIndirect):
-                i = i.real_value()
-            uncompress([i])
-            strm = pstate.parsestream(trailer, i.stream, **kw)
-            i.stream = strm
+        pstate = PageCMYKState(threshold, page.Resources.ExtGState)
+        pstate.parsepage(page, trailer, **kw)
         annots = page.Annots
         if annots is not None:
             for a in annots:
@@ -143,6 +176,38 @@ def fixpdfcmyk(trailer, threshold=1., **kw):
                 if len(col) == 3:
                     newc = rgb2cmyk(*map(float, col))
                     a.C = PdfArray(list(map(PdfObject, newc)))
+
+def fixpdfrgb(trailer, **kw):
+    oi = trailer.Root.OutputIntents
+    iccdat = None
+    if oi is not None and len(oi):
+        iccprofile = oi[0].DestOutputProfile
+        if isinstance(iccprofile, PdfIndirect):
+            iccprofile = iccprofile.real_value()
+            uncompress([iccprofile], leave_raw=True)
+            iccdat = iccprofile.stream
+    if iccdat is None:
+        iccfile = os.path.join(os.path.dirname(__file__), "..", "sRGB.icc")
+        if os.path.exists(iccfile):
+            with open(iccfile, "rb") as inf:
+                iccdat = inf.read()
+    if iccdat is None:
+        return
+    icc = PdfDict(indirect=True, Binary=True, N=3, Alternate=PdfName("DeviceRGB"), stream=iccdat)
+    for pagenum, page in enumerate(trailer.pages, 1):
+        r = page.Resources
+        if r is None:
+            r = page.Resources = PdfDict()
+        colrs = r.ColorSpace
+        if colrs is None:
+            colrs = r.ColorSpace = PdfDict()
+        i = 0
+        while "/CS"+str(i) in colrs:
+            i += 1
+        key = "CS"+str(i)
+        colrs[PdfName(key)] = PdfArray([PdfName("ICCBased"), icc])
+        pstate = PageRGBState()
+        pstate.parsepage(page, trailer, cskey=key, **kw)
 
 def fixhighlights(trailer, parlocs=None):
     annotlocs = {}
@@ -244,11 +309,13 @@ def fixpdffile(infile, outfile, colour="rgb", **kw):
 
     fixhighlights(trailer, parlocs=kw.get('parlocs', None))
     if colour == "cmyk":
-        fixpdfcmyk(trailer, threshold=kw.get('threshold', 1.))
+        fixpdfcmyk(trailer, threshold=kw.get('threshold', 1.), **kw)
+    elif colour == "rgbx4":
+        fixpdfrgb(trailer, **kw)
 
     meta = trailer.Root.Metadata
     if meta is not None:
         meta.Filter = []
-    w = PdfWriter(outfile, trailer=trailer, version='1.4', compress=True)
+    w = PdfWriter(outfile, trailer=trailer, version='1.4', compress=True, do_compress=compress)
     w.write()
 
