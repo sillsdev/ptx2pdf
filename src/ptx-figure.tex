@@ -1111,6 +1111,11 @@
   \fi
   \edef\ch@ck{#1}%
   \x@\ifx\csname fig#2p@ge\endcsname\ch@ck\else\trace{g}{Figure #2 page changed from \ch@ck \space to \csname fig#2p@ge\endcsname}\temptrue\fi
+  \x@\let\x@\ch@ck\csname fig#2occurrences\endcsname
+  \ifx\ch@ck\relax\x@\edef\csname fig#2occurrences\endcsname{#1}\else
+    \message{*** Figure #2 on page #1, but previously seen on \ch@ck. Work-around is to move the anchor to a different verse or alter the size/placement.}%
+    \x@\edef\csname fig#2occurrences\endcsname{\ch@ck, #1}%
+  \fi
 }
 %-cfig_openpicpages
 
