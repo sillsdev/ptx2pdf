@@ -490,37 +490,37 @@
   % Define a macro to process space delimited chapter number
   % ## is necessary because this is a nested macro definition
   \def\@c@ ##1 {\ifsk@pping \egroup \fi % if we were skipping, stop it
-  \gdef\ch@pter{##1}% remember chapter number
-  \gdef\ch@ptert@xt{##1}% the chapter number we will actually output
-  \gdef\v@rse{}% clear verse number
-  \ifdiglot
-    \trace{c}{Saving chapter number '\ch@pter' for side: \c@rrdstat}%
-    \x@\global\x@\let\csname @ch@pter\g@tdstat\endcsname\ch@pter
-    \x@\global\x@\let\csname @ch@ptert@xt\g@tdstat\endcsname\ch@ptert@xt
-    \x@\global\x@\let\csname @v@rse\g@tdstat\endcsname\v@rse
-  \fi
-  \ifReenterIntroOK\else\global\intr@donetrue\fi% Are markers starting 'i' allowed to flip us back into one-column mode?
-  \uppercase{\xdef\c@rref{\id@@@\ifdiglot\c@rrdstat\fi\ch@pter.0}}%
-  \global\let\print@bleVerse=\v@rse
-  \op@ninghooks{c}{start}%
-  \m@kedigitsletters
-   % If omitting chapter number, skip this. 
-   % We would have to set \OmitChapterNumbertrue on a book by book basis
-   % in the configuration file in order to omit chapter numbers for single chapter books.
-  \ifOmitChapterNumber
-    \trace{c}{Chapter numbers ommitted}%
-  \else
-    % if chapter label not present, set \ch@ptertrue to cause chapter number to be printed
-    % at start of first text paragraph.
-    \x@\global\x@\let\x@\ch@pl@bel\csname ch@plabel\g@tdstat\endcsname% global as p@rstyle{cl} may end a group.
-    \ifx\ch@pl@bel\empty \global\ch@ptertrue 
-      \trace{c}{No chapter label in use : \ch@pter}%
-    \else % if \cl present, output chapter label here
-      \trace{c}{Chapter label in use: \ch@pl@bel \ch@pter}%
-      \p@rstyle{cl}\ch@pl@bel\ \ch@pter
-      \pdfb@@kmark \pdfch@ptermark
+    \gdef\ch@pter{##1}% remember chapter number
+    \gdef\ch@ptert@xt{##1}% the chapter number we will actually output
+    \gdef\v@rse{}% clear verse number
+    \ifdiglot
+      \trace{c}{Saving chapter number '\ch@pter' for side: \c@rrdstat}%
+      \x@\global\x@\let\csname @ch@pter\g@tdstat\endcsname\ch@pter
+      \x@\global\x@\let\csname @ch@ptert@xt\g@tdstat\endcsname\ch@ptert@xt
+      \x@\global\x@\let\csname @v@rse\g@tdstat\endcsname\v@rse
     \fi
-  \fi}
+    \ifReenterIntroOK\else\global\intr@donetrue\fi% Are markers starting 'i' allowed to flip us back into one-column mode?
+    \uppercase{\xdef\c@rref{\id@@@\ifdiglot\c@rrdstat\fi\ch@pter.0}}%
+    \global\let\print@bleVerse=\v@rse
+    \op@ninghooks{start}{c}%
+    \m@kedigitsletters
+     % If omitting chapter number, skip this. 
+     % We would have to set \OmitChapterNumbertrue on a book by book basis
+     % in the configuration file in order to omit chapter numbers for single chapter books.
+    \ifOmitChapterNumber
+      \trace{c}{Chapter numbers ommitted}%
+    \else
+      % if chapter label not present, set \ch@ptertrue to cause chapter number to be printed
+      % at start of first text paragraph.
+      \x@\global\x@\let\x@\ch@pl@bel\csname ch@plabel\g@tdstat\endcsname% global as p@rstyle{cl} may end a group.
+      \ifx\ch@pl@bel\empty \global\ch@ptertrue 
+        \trace{c}{No chapter label in use : \ch@pter}%
+      \else % if \cl present, output chapter label here
+        \trace{c}{Chapter label in use: \ch@pl@bel \ch@pter}%
+        \p@rstyle{cl}\ch@pl@bel\ \ch@pter
+        \pdfb@@kmark \pdfch@ptermark
+      \fi
+    \fi}
   %
   \def\c{\m@kedigitsother\@c@}
   \def\cp ##1 {\gdef\ch@ptert@xt{##1}}
