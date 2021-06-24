@@ -355,14 +355,14 @@
 }
 \def\shipwithcr@pmarks#1{% \shipout box #1, adding cropmarks if required
   \def\g@tterside{L} % figure out if we're adding a binding gutter, and which side
-  \ifBindingGutter
+  %\ifBindingGutter
     \ifDoubleSided
       \ifodd\pageno\ifBookOpenLeft\def\g@tterside{R} \else\def\g@tterside{L}\fi
       \else\ifBookOpenLeft\def\g@tterside{L} \else\def\g@tterside{R}\fi
       \fi
     \else\ifBookOpenLeft\def\g@tterside{R}\else\def\g@tterside{L}\fi
     \fi
-  \fi
+  %\fi
   \ifx\doLines\empty\else
     \x@\ifvoid\csname gp@box\g@tterside\endcsname
       \global\x@\setbox\csname gp@box\g@tterside\endcsname\vbox{\doLines}%
@@ -665,7 +665,7 @@
     \else\dimen2=0pt\fi
     \divide\dimen2 by 2
     \ifx\XrefNotes\empty\else\advance\dimen2 \XrefNotesMargin\fi
-    \ifdiglot\dimen4=\columnLwidth\advance\dimen4 0.5\gutter\else\dimen4=0.5\textwidth\fi
+    \ifdiglot\dimen4=\csname column\g@tterside width\endcsname\advance\dimen4 0.5\gutter\else\dimen4=0.5\textwidth\fi
     \advance\dimen4 by -\dimen2
     \ifdim\columnshift>0pt\advance\dimen4 by -\columnshift\fi % compensate for earlier added columnshift
     \ifnum\BodyColumns=2
@@ -684,7 +684,7 @@
       \advance\dimen2\columnshift
     \fi
     \def\th@sgprule{Major}
-    \ifdiglot\dimen4=\columnRwidth\else\dimen4=0.5\textwidth\advance\dimen4 by -\dimen2\fi
+    \ifdiglot\dimen4=\csname column\if L\g@tterside R\else L\fi width\endcsname\else\dimen4=0.5\textwidth\advance\dimen4 by -\dimen2\fi
     %\ifBindingGutter\if R\g@tterside\advance\dimen4 by -\BindingGutter\fi\fi
     \setbox0=\hbox{\unhbox0\hskip\dimen4\gp@vrule}
     \vbox to 0pt{\hbox to 0pt{\unhbox 0\hss}\vss}%
