@@ -102,7 +102,7 @@
 
 %+cpar_killdescenders
 \def\killd@scenders#1{%
-  \vbox{
+  \vbox{%
   \trace{h}{killing descenders: ht=\the\ht#1, dp=\the\dp#1}%
   \unvbox#1 \skip0=\lastskip\unskip \count255=\lastpenalty\unpenalty
     \setbox0=\lastbox\global\dimen4=\dp0  % Remember last box's depth
@@ -665,7 +665,7 @@
   \trace{C}{#2: ( #1  / \the\baselineskip) -> \the\p@rlinesgone}%
 }
 
-\def\@parstart#1#2#3{
+\def\@parstart#1#2#3{%
   \prev@y=#3\relax
   \dimen1=\numexpr \prev@col@y - \prev@y\relax sp\relax
   \edef\prev@col@ht{\the\dimexpr \tot@col@ht - \dimen1\relax}%
@@ -684,8 +684,8 @@
   \csname ifinp@r-\c@rrdstat\endcsname
     \dimen1=\dimexpr \n@ntextstart sp - #2 sp\relax
     \trace{C}{Non text for \n@ntextstart -#2 (=\the\dimen1)}%
-    \edef\tot@col@ht{\the\dimexpr \tot@col@ht -\dimen1\relax}
-    \edef\prev@col@ht{\the\dimexpr \prev@col@ht -\dimen1\relax}
+    \edef\tot@col@ht{\the\dimexpr \tot@col@ht -\dimen1\relax}%
+    \edef\prev@col@ht{\the\dimexpr \prev@col@ht -\dimen1\relax}%
   \fi
 }%
 
@@ -725,7 +725,7 @@
 %interested in doing clever things with were not put
 %on the pending stack. Use a new stack, \par@items and
 %...  Do somthing with it. At the moment just moan.
-\def\check@pagefoot#1|#2|#3\E{
+\def\check@pagefoot#1|#2|#3\E{%
   \ifnum #3 < \this@col@y
   \dimen1=\this@col@y sp
   \advance \dimen1 by -#3 sp
