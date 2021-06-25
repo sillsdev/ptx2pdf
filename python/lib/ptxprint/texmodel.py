@@ -757,8 +757,8 @@ class TexModel:
         if doti > 0:
             outfpath = outfpath[:doti] + "-flat" + outfpath[doti:]
         usfms = self.printer.get_usfms()
-        mod = Module(infpath, usfms)
         try:
+            mod = Module(infpath, usfms)
             res = mod.parse()
         except SyntaxError as e:
             return (None, e)
@@ -852,9 +852,6 @@ class TexModel:
             if self.dict['project/canonicalise'] or self.dict['document/ifletter'] == "":
                 if doc is None:
                     doc = self._makeUSFM(dat.splitlines(True), bk)
-                if doc is not None:
-                    if self.dict["document/ifletter"] == "":
-                        doc.letter_space(letterspace)
 
             if self.dict['fancy/endayah'] == "":
                 if doc is None:
