@@ -3,7 +3,7 @@ PTXprint 1.8.9 Release Notes
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 
-Bug fixes and Improvements in 1.8.9
+Bug fixes and Improvements in 1.8.9.1 (1.9rc)
 
   * Added option to Omit Captions for illustrations
   
