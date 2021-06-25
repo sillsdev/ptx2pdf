@@ -688,7 +688,7 @@ class RunJob:
         return im
 
     def convertToJPGandResize(self, ratio, infile, outfile, cropme):
-        if self.ispdfxa != "None":
+        if self.ispdfxa != "None" and not self.printer.get("c_figplaceholders"):
             fmt = "CMYK"
         else:
             fmt = "RGB"

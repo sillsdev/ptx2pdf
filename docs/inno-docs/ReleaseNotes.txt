@@ -1,15 +1,42 @@
 PTXprint 1.8.3 Release Notes 
-11 June 2021
+25 June 2021
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
+
+Bug fixes and Improvements in 1.8.9
+
+  * Added option to Omit Captions for illustrations
+  
+  * Added PDF Output Format option for PDF standards conformance (Advanced page)
+    (Digital=RGB, Print=CYMK, Transparency, and Archive)
+  
+  * Allow PDFs to be used as illustrations
+  
+  * Updated wording and graphics on the Layout page
+  
+  * Changed hard-to-find Adv/Basic mode slider to a Show More/Less button
+  
+  * Added hook to allow triggering of caller reset on chapter breaks
+  
+  * Fixed bug in auto-numbered callers and enable 
+  
+  * Fixed chapter number cutouts for \nb (no-break para over chapter boundary)
+
+  * Fixed calculation for 'Space above header' on Layout page
+  
+  * Fixed error with picture positioning set for 'After Paragraph'
+  
+  * Fixed position of final major line in graph-paper
+
+  * Fixed page break \pb or \pagebreak support in diglots
+
+Bug fixes and Improvements in 1.8.3
 
 NOTE: The child markers of \f and \x now follow the settings of their parent marker styles.
       As a result there may be changes in the way footnotes and cross-references appear.
 	  It is recommended that you RESET these styles to use the default settings prior
 	  to trying to remedy settings manually.
 	  
-Bug fixes and Improvements in 1.8.3
-
   * Fix handling of Grk/Hbr embedded within RTL/LTR text e.g. \wh Hebrew\wh*
   
   * Fix bug in style editor affecting the setting of bold italic etc.
