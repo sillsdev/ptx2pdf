@@ -638,13 +638,11 @@
                  \else\endash\AdornVerseNumber{\v@rseto}\fi}
 \def\hangprintv@rse{\ifx\v@rsefrom\v@rseto\relax\AdornVerseNumber{\v@rsefrom}%
     \else
-         \dimen1=\SuperscriptFactor\baselineskip \multiply\dimen1 by 2
          \getp@ram{baseline}{v}\baselineskip=\ifx\p@ram\relax\baselineskip\else\p@ram\fi
          \dimen0=\SuperscriptFactor\baselineskip \advance\dimen0 by -\baselineskip
          \setbox1=\hbox{\endash\AdornVerseNumber{\v@rseto}}%
          \setbox0=\vtop{\hbox to \wd1{\hfil\AdornVerseNumber{\v@rsefrom}}%
                         \kern\dimen0\box1}%
-         \ht0=0.5\dimen1 \dp0=0pt
          \hbox{\box0}\fi}
 \let\printv@rse=\simpleprintv@rse                                               %(1)
 \def\@ne{1}
