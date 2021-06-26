@@ -938,7 +938,7 @@ class TexModel:
                             elif r.verse == 0:
                                 atcontexts.append((r.book, regex.compile(r"(?<=\\c {}).*?($|\\[cv] )".format(r.chap), flags=regex.S)))
                             else:
-                                atcontexts.append((r.book, regex.compile(r"(?<=\\c {}.*?\\v {}).*?($|\\[cv] )".format(r.chap, r.verse), flags=regex.S)))
+                                atcontexts.append((r.book, regex.compile(r"(?<=\\c {}(?:.(?!\\c))*?)\\v {} .*?($|\\[cv] )".format(r.chap, r.verse), flags=regex.S)))
                         l = l[m.end():].strip()
                     else:
                         atcontexts = [None]
