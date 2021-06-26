@@ -18,7 +18,6 @@ hdr=r"""
 final=r"""
 \XeTeXinterchartoks 0 0{\intercharspace}
 \XeTeXinterchartoks \KclassCM 0{\intercharspace}
-\def\intercharspace{}
 \XeTeXinterchartokenstate=0
 """
 res = [hdr]

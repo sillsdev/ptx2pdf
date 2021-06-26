@@ -314,7 +314,7 @@ ModelMap = {
     "thumbtabs/restart":        ("c_thumbrestart", None),
     "thumbtabs/groups":         ("t_thumbgroups", None),
 
-    "scrmymr/syllables":        ("c_scrmymrSyllable", None),
+    "scripts/mymr/syllables":   ("c_scrmymrSyllable", None),
 }
 
 Borders = {'c_inclPageBorder':      ('pageborder', 'fancy/pageborderpdf', 'A5 page border.pdf'),
@@ -498,7 +498,7 @@ class TexModel:
         def get(k): return self[k]
         for k in a:
             v = ModelMap[k]
-            val = self.printer.get(v[0]) if v[0] is not None else None
+            val = self.printer.get(v[0], skipmissing=k.startswith("scripts/")) if v[0] is not None else None
             if v[1] is None:
                 self.dict[k] = val
             else:
@@ -965,17 +965,17 @@ class TexModel:
                 except re.error as e:
                     self.printer.doError("Regular expression error: {} in changes file at line {}".format(str(e), i+1),
                                          show=not self.printer.get("c_quickRun"))
+        return changes
+
+    def makelocalChanges(self, printer, bk, chaprange=None):
         script = self.dict["document/script"]
         if len(script):
             sscript = getattr(scriptsnippets, script[8:].lower(), None)
             if sscript is not None:
-                changes.extend(sscript.regexes(self))
-
-        if not len(changes):
-            return None
+                self.changes.extend(sscript.regexes(self))
         if self.printer is not None and self.printer.get("c_tracing"):
             print("List of PrintDraftChanges:-------------------------------------------------------------")
-            report = "\n".join("{} -> {}".format(p[1].pattern, p[2]) for p in changes)
+            report = "\n".join("{} -> {}".format(p[1].pattern, p[2]) for p in self.changes)
             if getattr(self.printer, "logger", None) is not None:
                 self.printer.logger.insert_at_cursor(v)
             else:
@@ -983,9 +983,6 @@ class TexModel:
                     print(report)
                 except UnicodeEncodeError:
                     print("Unable to print details of PrintDraftChanges.txt")
-        return changes
-
-    def makelocalChanges(self, printer, bk, chaprange=None):
         self.localChanges = []
         if bk == "GLO" and self.dict['document/filterglossary']:
             self.filterGlossary(printer)
@@ -1112,7 +1109,7 @@ class TexModel:
             self.localChanges.append((self.make_contextsfn(None, regex.compile(r"(\\[xf]t [^\\]+)")),
                                     regex.compile(r"(\d?[^\s\d\-\\,;]{3,}[^\\\s]*?) (\d+[:.]\d+)"), r"\1\u00A0\2"))
             self.localChanges.append((self.make_contextsfn(None, regex.compile(r"(\\[xf]t [^\\]+)")),
-                                    regex.compile(r"( .) "), r"\1\u00A0")) # What is this one doing?
+                                    regex.compile(r"( .) "), r"\1\u00A0")) # Ensure no floating single chars in note text
 
         # keep \xo & \fr refs with whatever follows (i.e the bookname or footnote) so it doesn't break at end of line
         self.localChanges.append((None, regex.compile(r"(\\(xo|fr) (\d+[:.]\d+([-,]\d+)?)) "), r"\1\u00A0"))
@@ -1165,7 +1162,7 @@ class TexModel:
         # Strip out any spaces either side of an en-quad 
         self.localChanges.append((None, regex.compile(r"\s?\u2000\s?", flags=regex.M), r"\u2000")) 
         # Change double-spaces to singles
-        self.localChanges.append((None, regex.compile(r"  ", flags=regex.M), r" ")) 
+        self.localChanges.append((None, regex.compile(r" {2,}", flags=regex.M), r" ")) 
         # Escape special codes % and $ that could be in the text itself
         self.localChanges.append((None, regex.compile(r"([%$])", flags=regex.M), r"\\\1")) 
 

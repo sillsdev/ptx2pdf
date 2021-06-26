@@ -686,9 +686,10 @@ class GtkViewModel(ViewModel):
     def get(self, wid, default=None, sub=0, asstr=False, skipmissing=False):
         w = self.builder.get_object(wid)
         if w is None:
+            res = super().get(wid, default=default)
             if not skipmissing and not (wid.startswith("_") or wid.startswith("r_")):
-                print(_("Can't get {} in the model").format(wid))
-            return super().get(wid, default=default)
+                print(_("Can't get {} in the model. Returning {}").format(wid, res))
+            return res
         if wid.startswith("r_"):
             bits = wid.split("_")[1:]
             if len(bits) > 1:
@@ -1351,8 +1352,6 @@ class GtkViewModel(ViewModel):
     def onScriptChanged(self, btn):
         # If there is a matching digit style for the script that has just been set, 
         # then also turn that on (but it can be overridden by the user if needed).
-        if self.loadingConfig:
-            return
         self.fcb_digits.set_active_id(self.get('fcb_script'))
         script = self.get("fcb_script")
         if script is not None:

@@ -689,7 +689,9 @@ class ViewModel:
         if v < 1.7:
             if config.getboolean("document", "pdfx1aoutput", fallback=False):
                 config.set("document", "pdfoutput", "PDF/X-1A")
-            config.set("config", "version", "1.7")
+        if v < 1.9:
+            self._configset(config, "scripts/mymr/syllables", config.getboolean("scrmymr", "syllables", fallback=False))
+            config.set("config", "version", "1.9")
 
         styf = os.path.join(self.configPath(cfgname), "ptxprint.sty")
         if not os.path.exists(styf):

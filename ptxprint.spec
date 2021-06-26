@@ -44,7 +44,7 @@ a = Analysis(['python/scripts/ptxprint'],
 							 'Top2FalseTrue.png', 'Top2TrueFalse.png', 'Top2TrueTrue.png',
 							 'Bottom1False.png', 'Bottom2False.png', 'Bottom2True.png')]
                       + [('python/lib/ptxprint/sfm/*.bz2', 'ptxprint/sfm')]
-                      + [('fonts/' + f, 'fonts/' + f) for f in ('Empties.ttf', 'SourceCodePro-Regular.ttf')]
+                      + [('fonts/' + f, 'fonts/' + f) for f in ('empties.ttf', 'SourceCodePro-Regular.ttf')]
                       + [('src/mappings/*.tec', 'ptx2pdf/mappings')],
 #					  + [('python/lib/ptxprint/mo/' + y +'/LC_MESSAGES/ptxprint.mo', 'mo/' + y + '/LC_MESSAGES') for y in os.listdir('python/lib/ptxprint/mo')],
              datas =    [('python/lib/ptxprint/'+x, 'ptxprint') for x in 

@@ -1771,10 +1771,10 @@
 \XeTeXdashbreakstate=1 % allow line-break after en- and em-dash even if no space
 
 %% various Unicode characters that we handle in TeX... and protect in TOC and PDF bookmarks
-
+\def\intercharspace{\hskip0pt}
 \def\SFTHYPHEN{\-}
 \def\NBSP{\nobreak\space} % make Unicode NO-BREAK SPACE into a no-break space
-\def\ZWSP{\hskip0pt\relax} % ZERO WIDTH SPACE is a possible break
+\def\ZWSP{\intercharspace\penalty0\relax} % ZERO WIDTH SPACE is a possible break
 \def\WJ{\leavevmode\nobreak} % WORD JOINER
 \def\ZWNBSP{\WJ} % ZERO WIDTH NO-BREAK SPACE
 \def\NBHYPH{\leavevmode\hbox{-}} % NON-BREAKING HYPHEN
@@ -1786,7 +1786,7 @@
 \def\FOURPEREMSPACE{\hskip .25em}
 \def\SIXPEREMSPACE{\hskip .1666em}
 \def\THINSPACE{\hskip .2em}
-\def\HAIRSPACE{\penalty\the\badspacepenalty\hskip 1sp}
+\def\HAIRSPACE{\penalty\the\badspacepenalty\hskip 1sp\intercharspace}
 \def\HYPHEN{\-}
 \def\LINESEP{\break}
 \def\emdash{\char"2014\relax}
