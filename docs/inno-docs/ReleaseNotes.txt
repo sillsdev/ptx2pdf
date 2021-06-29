@@ -3,7 +3,7 @@ PTXprint 1.8.9.1 Release Notes
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 
-Bug fixes and Improvements in 1.8.9.1 (1.9rc)
+Bug fixes and Improvements in 1.8.9.1 (1.9rc) (25 Jun 2021) 
 
   * Added option to Omit Captions for illustrations
   
@@ -30,7 +30,7 @@ Bug fixes and Improvements in 1.8.9.1 (1.9rc)
 
   * Fixed page break \pb or \pagebreak support in diglots
 
-Bug fixes and Improvements in 1.8.3
+Bug fixes and Improvements in 1.8.3 (11 Jun 2021)
 
 NOTE: The child markers of \f and \x now follow the settings of their parent marker styles.
       As a result there may be changes in the way footnotes and cross-references appear.
@@ -53,7 +53,7 @@ NOTE: The child markers of \f and \x now follow the settings of their parent mar
     e.g.  at GAL 3:16 "yesukrist" > "yesu krist"  (only make this change in one verse)
 	or    at JHN "kurpa" > "permata daya"         (only make this change in one book)
 
-Bug fixes and Improvements in 1.8.2
+Bug fixes and Improvements in 1.8.2 (2 Jun 2021)
 
   * Fixed module handling (again) to be more flexible with references
   
@@ -63,7 +63,7 @@ Bug fixes and Improvements in 1.8.2
   
   * #459 Hide/Exclude Contents of Marker fixed for all markers
   
-Bug fixes and Improvements in 1.8.1
+Bug fixes and Improvements in 1.8.1 (29 May 2021)
 
   * Fixed Paratext module processing to be more robust
   
@@ -79,7 +79,7 @@ Bug fixes and Improvements in 1.8.1
   
   * Fix strange colophon behaviour
   
-Bug fixes and Improvements in 1.8
+Bug fixes and Improvements in 1.8 (24 May 2021)
 
   * Added new feature to include cross-references from external lists in centre column
   
@@ -93,7 +93,7 @@ Bug fixes and Improvements in 1.8
   
   * Ensure .triggers files are included in .zip archives
 
-Bug fixes and Improvements in 1.7.9
+Bug fixes and Improvements in 1.7.9 (20 May 2021)
 
   * Show flattened module in Final SFM tab when typesetting a module
   
@@ -113,15 +113,15 @@ NOTE: For those previously using various Border and Grid PDFs as watermarks:
 	 various Border and Grid PDFs have been removed from the Watermark PDFassets.
 	 Also note that the 'Crop Marks' option still exists, but on the Advanced tab.
 
-Bug fixes in 1.7.2
+Bug fixes in 1.7.2 (15? May 2021)
 
   * Fix bug in PicList generation for USFM3 files
 
-Bug fixes in 1.7.1
+Bug fixes in 1.7.1 (11 May 2021)
 
   * TypeError bug fix for Style editor
 
-Bug fixes and Improvements in 1.7
+Bug fixes and Improvements in 1.7 (30 Apr 2021)
 
   * Added UI localisation for Indonesian (tooltips yet to be done) - thanks to DC & RN
   
@@ -143,7 +143,7 @@ Bug fixes and Improvements in 1.7
   
   * #438 Pictures now work more predictably in non-scripture books (FRT, BAK etc.)
   
-Bug fixes and Improvements in 1.6.9
+Bug fixes and Improvements in 1.6.9 (23 Apr 2021)
 
   * Added option to include Guides (rules and baselines) and/or custom Grid behind text
   
@@ -161,13 +161,13 @@ Bug fixes and Improvements in 1.6.9
   
   * Generate Table of Contents no longer crashes when Letter Spacing is enabled
 
-Bug fixes and Improvements in 1.6.1.1
+Bug fixes and Improvements in 1.6.1.1 (16 Apr 2021)
 
   * Fix TeX macro which was causing a crash when 'Minus'/'Plus' occured after a verse number
   
   * Various minor improvements to TeX macros
 
-Bug fixes and Improvements in 1.6.1
+Bug fixes and Improvements in 1.6.1 (13 Apr 2021)
 
   * Add "End-of-Ayah" option for verse decorator on the Tabs+Border tab 
   
@@ -191,7 +191,7 @@ Bug fixes and Improvements in 1.6.1
   
   * Fixed Preferred image type handling to follow the list of extensions strictly
   
-Bug fixes and Improvements in 1.6.0.4
+Bug fixes and Improvements in 1.6.0.4 (1 Apr 2021)
 
   * Added Decorative Section Heading graphic for 2-col layouts
   
@@ -205,11 +205,11 @@ Bug fixes and Improvements in 1.6.0.4
   
   * Turn off image copyrights for colophon if pictures are not enabled
 
-Bug fixes and Improvements in 1.6.0.3
+Bug fixes and Improvements in 1.6.0.3 (26 Mar 2021)
 
   * Fixed Adjust Lists for diglots (again!)
 
-Bug fixes and Improvements in 1.6.0.2
+Bug fixes and Improvements in 1.6.0.2 (25 Mar 2021)
 
   * Paragraphed endnotes are now working
   
@@ -233,7 +233,7 @@ Bug fixes and Improvements in 1.6.0.2
     This is probably triggered when a footnote is the reason for a heading to be moved onto the next page, so
 	a good workaround is to use the AdjList to jiggle the text at that point until it resolves.
 
-Improvements in 1.6
+Improvements in 1.6 (19 Mar 2021)
 
   * Diglot code has been re-written to be more robust and adaptable to structural differences between texts
 
@@ -283,7 +283,7 @@ Improvements in 1.6
 
   * Dozens of other minor bug fixes since 1.5 
 
-Bug Fixes in 1.5.22
+Bug Fixes in 1.5.22 (18 Mar 2021)
 
   * Fix: Unable to print after creating archive
 
@@ -291,7 +291,7 @@ Bug Fixes in 1.5.22
   
   * Fix note spacing problems
     
-Bug Fixes and Improvements in 1.5.21
+Bug Fixes and Improvements in 1.5.21 (17 Mar 2021)
 
   * Major review and update to tooltips
   
@@ -307,7 +307,7 @@ Bug Fixes and Improvements in 1.5.21
   
   * Note that the option to "Combine PDFs" has been removed - it is now always the default
 
-Bug Fixes and Improvements in 1.5.18
+Bug Fixes and Improvements in 1.5.18 (12 Mar 2021)
 
   * Pictures in peripheral books now work and can be manipulated via the PicList settings 
     Notes: you will need to regenerate the PicList for those peripheral books
@@ -323,7 +323,7 @@ Bug Fixes and Improvements in 1.5.18
   
   * Installer shows the Release Notes BEFORE installation (giving you a chance to back out if needed)
   
-Bug Fixes and Improvements in 1.5.17
+Bug Fixes and Improvements in 1.5.17 (10 Mar 2021)
 
   * Bug fix: Media permission tooltip (in Pictures, Details) works now - was broken since localization was introduced
   
@@ -335,7 +335,7 @@ Bug Fixes and Improvements in 1.5.17
 
   * Bug fix: false assumption that Andika is installed (changed tracing font to Arial)
 
-Bug Fixes and Improvements in 1.5.16
+Bug Fixes and Improvements in 1.5.16 (6 Mar 2021)
 
   * Allow \zimagecopyrights and following language code to be case-insensitive
   
@@ -347,7 +347,7 @@ Bug Fixes and Improvements in 1.5.16
   
   * Credit Overlays can be applied to multiple pictures
   
-Bug Fixes and Improvements in 1.5.15
+Bug Fixes and Improvements in 1.5.15 (4 Mar 2021)
 
   * Fixed a bunch of bugs that new users would encounter when starting to use PTXprint
   
@@ -369,7 +369,7 @@ Bug Fixes and Improvements in 1.5.15
   
   * Fixed issues with \toc3, thumbtabs and ToC
 
-Bug Fixes and Improvements in 1.5.14.4
+Bug Fixes and Improvements in 1.5.14.4 (25 Feb 2021)
 
   * Fix module loading
 
@@ -377,7 +377,7 @@ Bug Fixes and Improvements in 1.5.14.4
 
   * Fix Linux PPA building
 
-Bug Fixes and Improvements in 1.5.14.1
+Bug Fixes and Improvements in 1.5.14.1 (22 Feb 2021)
 
   * Fix fatal (Faux) error when trying to switch UI languages
   
@@ -397,7 +397,7 @@ Bug Fixes and Improvements in 1.5.14.1
   
   * Fix #406 regexes for excluding intro materials
   
-Bug Fixes and Improvements in 1.5.13
+Bug Fixes and Improvements in 1.5.13 (21 Feb 2021)
 
   * Allow \zimagecopyrights to be localized by adding language code to end of marker
   
@@ -417,7 +417,7 @@ Bug Fixes and Improvements in 1.5.13
   
   * Prevent letter spacing from messing up page breaks
   
-Bug Fixes and Improvements in 1.5.12
+Bug Fixes and Improvements in 1.5.12 (15 Feb 2021)
 
   * Added missing margin graphics files to installer
   
@@ -425,7 +425,7 @@ Bug Fixes and Improvements in 1.5.12
   
   * Added missing icon(s): Clear edit, Selected Checkmark
 
-Bug Fixes and Improvements in 1.5.11
+Bug Fixes and Improvements in 1.5.11 (15 Feb 2021)
 
   * Font Size Factor now has a label displaying the (actual) calculated point size
 
@@ -442,7 +442,7 @@ Bug Fixes and Improvements in 1.5.11
   
   * #390 Saving edits to a named project
   
-Bug Fixes and Improvements in 1.5.10
+Bug Fixes and Improvements in 1.5.10 (8 Feb 2021)
 
   * Font Size Factor on Styles tab is now exactly that - rather than a point size
     (Note: we still need to add a label/tooltip displaying the actual calculated point size)
@@ -471,13 +471,13 @@ Bug Fixes and Improvements in 1.5.10
 
   * Prevent crash from occurring if you hit print with an empty Settings page open (in View+Edit)
   
-Bug Fixes and Improvements in 1.5.9.3
+Bug Fixes and Improvements in 1.5.9.3 (3 Feb 2021)
 
   * Fix non-starting PTXprint due to lack of lang code in user config
   
   * Get rtl and ttb working again
 
-Bug Fixes and Improvements in 1.5.9.1
+Bug Fixes and Improvements in 1.5.9.1 (3 Feb 2021)
 
   * #368 Added Localization selection from within PTXPrint
   
@@ -489,7 +489,7 @@ Bug Fixes and Improvements in 1.5.9.1
   
   * Show subset of Fonts+Script tab settings for basic users
   
-Bug Fixes and Improvements in 1.5.9 (RC for ver 1.6)
+Bug Fixes and Improvements in 1.5.9 (RC for ver 1.6) (2 Feb 2021)
 
   * Ensure settings are actually reset when reverting to default values in Style editor
   
@@ -505,7 +505,7 @@ Bug Fixes and Improvements in 1.5.9 (RC for ver 1.6)
   
   * Various refinements to underlying XeTeX macros
 
-Bug Fixes and Improvements in 1.5.8.4
+Bug Fixes and Improvements in 1.5.8.4 (28 Jan 2021)
 
   * Localization of UI is now available through Crowdin - contributions welcome! https://crowdin.com/project/ptxprint
     (aiming to release several languages for ver 1.6)
@@ -524,7 +524,7 @@ Bug Fixes and Improvements in 1.5.8.4
   
   * PTXprint will prompt for a folder with the (Paratext) Project Data if Paratext isn't installed 
   
-Bug Fixes and Improvements in 1.5.7
+Bug Fixes and Improvements in 1.5.7 (25 Jan 2021)
 
   * Allow configurations to be reloaded, and Default config to be "Deleted" (or re-initialized)
   
@@ -536,7 +536,7 @@ Bug Fixes and Improvements in 1.5.7
   
   * Note that Colophon display has a known issue - spreads over multiple pages - (to be resolved next week)
 
-Bug Fixes and Improvements in 1.5.6
+Bug Fixes and Improvements in 1.5.6 (21 Jan 2021)
 
   * Fixed issue with saving/naming configurations
   
@@ -548,11 +548,11 @@ Bug Fixes and Improvements in 1.5.6
   
   * Updated help in several Tooltips to reflect addition of Styles editor
 
-Bug Fixes and Improvements in 1.5.5
+Bug Fixes and Improvements in 1.5.5 (20 Jan 2021)
 
   * Fix exception generated from multi-threading
 
-Bug Fixes and Improvements in 1.5.4
+Bug Fixes and Improvements in 1.5.4 (18 Jan 2021)
 
   * Enable searching for Styles
   
@@ -560,7 +560,7 @@ Bug Fixes and Improvements in 1.5.4
   
   * Change some default values (poetry left aligned instead of justified; custom.sty is OFF by default)
 
-Bug Fixes and Improvements in 1.5.3
+Bug Fixes and Improvements in 1.5.3 (14 Jan 2021)
 
   * Several PicList bugs fixed - especially relating to diglot illustrations
   
@@ -568,13 +568,11 @@ Bug Fixes and Improvements in 1.5.3
   
   * Fixed broken ImageCredits in colophon
   
-Bug Fixes and Improvements in 1.5.2
+Bug Fixes and Improvements in 1.5.2 (12 Jan 2021)
 
   * Pictures tab: Enable/Disable Details and Checklist tabs when Show/Hide Advanced features is clicked
   
   * Fix pictures not displaying without section headings present
-
-Bug Fixes and Improvements in 1.5.1
 
   * Font feature editor added to Font Selection dialog
   
@@ -586,7 +584,7 @@ Bug Fixes and Improvements in 1.5.1
   
   #339 - Xref callers problem fixed
   
-Bug Fixes and Improvements in 1.5
+Bug Fixes and Improvements in 1.5 (23 Dec 2020)
 
   * Interlinear/Ruby glossing is now possible (for early testing and feedback)
   
@@ -598,7 +596,7 @@ Bug Fixes and Improvements in 1.5
   
   * Printing possible from a DBL bundle (minimally tested, work in progress) 
 
-Bug Fixes and Improvements in 1.4.3
+Bug Fixes and Improvements in 1.4.3 (3 Dec 2020)
 
   * Switch \LineSpacing to be a multiple of base line spacing. 1.0 means base line spacing.
 
@@ -610,7 +608,7 @@ Bug Fixes and Improvements in 1.4.3
 
   * Give visual traceback for errors in archive creation
 
-Bug Fixes and Improvements in 1.4.2
+Bug Fixes and Improvements in 1.4.2 (1 Dec 2020)
 
   * Eliminate the need for NestedStyles.sty (this file can now be deleted permanently)
   
@@ -630,7 +628,7 @@ Bug Fixes and Improvements in 1.4.2
 
   * Moved "Variable Line Spacing" to Advanced tab [currently still broken] 
   
-Bug Fixes and Improvements in 1.3.8
+Bug Fixes and Improvements in 1.3.8 (19 Nov 2020)
 
   * Re-arrange Pictures UI items and fix multiple bugs relating to picture handling
 
@@ -644,7 +642,7 @@ Bug Fixes and Improvements in 1.3.8
   
   * #291 Add filter for Checking Status of Pictures
 
-Bug Fixes and Improvements in 1.3.3
+Bug Fixes and Improvements in 1.3.3 (14 Nov 2020)
 
   * Localized UI for Spanish (es) added - thanks to Phil Leckrone and team
 
@@ -656,7 +654,7 @@ Bug Fixes and Improvements in 1.3.3
   
   * Prevent PTXprint locking up completely after failed outputs
   
-Bug Fixes in 1.3.2
+Bug Fixes in 1.3.2 (11 Nov 2020)
 
   * Localized references now display properly in Modules
   
@@ -666,7 +664,7 @@ Bug Fixes in 1.3.2
 
   * Linux: Fixed description and icon entry
   
-Bug Fixes and Improvements in 1.3.1
+Bug Fixes and Improvements in 1.3.1 (5 Nov 2020)
 
   * Endnotes should now display at the end of each book
   
@@ -690,7 +688,7 @@ Bug Fixes and Improvements in 1.3.1
 
   * Fixed: #275 Selecting "Letter spacing" prevents printing
   
-Bug Fixes and Improvements in 1.3
+Bug Fixes and Improvements in 1.3 (23 Oct 2020)
 
   * Stylesheet editor
   
@@ -712,7 +710,7 @@ Bug Fixes and Improvements in 1.3
   
   * Fixed file-naming issues when creating new config
   
-Significant Improvements in 1.2
+Significant Improvements in 1.2 (3 Oxt 2020)
 
   * Interface is now localizable (ask for details if you want to contribute a translated interface)
   
@@ -738,7 +736,7 @@ Significant Improvements in 1.2
 
   * Auto-update PicList and other config filenames to now be based on new file naming system which includes the config name
   
-Bug Fixes since version 1.1
+Bug Fixes since version 1.1 (3 Oxt 2020)
    
   * Ensure captions in PicList display in the right font for the project
   
@@ -770,7 +768,7 @@ Bug Fixes since version 1.1
 
   * Fix certificate (again!) so no warnings are issued during installation
   
-Bug Fixes and Improvements in: 1.1
+Bug Fixes and Improvements in: 1.1 (21 Sep 2020)
 
   * Last-used Project name and Config settings are now preserved between sessions
   
@@ -794,7 +792,7 @@ Bug Fixes and Improvements in: 1.1
   
   * Fix installer certificate
 
-First Public Release: 1.0
+First Public Release: 1.0 - (13 Aug 2020)
 
   * Minor UI adjustments
   
