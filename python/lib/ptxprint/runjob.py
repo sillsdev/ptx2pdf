@@ -84,6 +84,13 @@ def newBase(fpath):
     else:
         return re.sub('[()&+,.;: ]', '_', base(fpath).lower())
 
+_diglotprinter = {
+"_diglotcustomsty":         "c_useCustomSty",
+"_diglotmodsty":            "c_useModsTex",
+"_diglotincludefn":         "c_includeFootnotes",
+"_diglotincludexr":         "c_includeXrefs"
+}
+
 _diglot = {
 "ifusediglotcustomsty_":    "project/ifusecustomsty",
 "ifusediglotmodsty_":       "project/ifusemodssty",
@@ -415,6 +422,7 @@ class RunJob:
         else:
             chaprange = (-1, -1)
         for b in jobs:
+            import pdb; pdb.set_trace()
             try:
                 out = info.convertBook(b, chaprange, self.tmpdir, self.prjdir)
                 digout = diginfo.convertBook(b, chaprange, self.tmpdir, digprjdir, letterspace="\ufdd1")
@@ -465,6 +473,8 @@ class RunJob:
         # Pass all the needed parameters for the snippet from diginfo to info
         for k,v in _diglot.items():
             info[k]=diginfo[v]
+        for k,v in _diglotprinter.items():
+            info.printer.set(k, diginfo.printer.get(v))
         info["document/diglotcfgrpath"] = os.path.relpath(diginfo.printer.configPath(diginfo.printer.configName()), docdir).replace("\\","/")
         info["_isDiglot"] = True
         res = self.sharedjob(jobs, info, extra="-diglot")
@@ -607,12 +617,18 @@ class RunJob:
         if info.asBool("fancy/enableborders"):
             for k,v in deco.items():
                 if info.asBool("fancy/"+k):
-                    f = info.dict["fancy/{}pdf".format(k)] or ""
-                    if not os.path.exists(f):
-                        warnings += ["{} Decorator\n{}\n\n".format(v, f)]
-            if len(warnings):
-                self.printer.doError(_("Warning: Could not locate decorative PDF(s):"),
-                        secondary="\n".join(warnings))
+                    ftype = "fancy/{}type".format(k)
+                    if ftype not in info.dict or info[ftype] == "file":
+                        f = info.dict["fancy/{}pdf".format(k)] or ""
+                        if not os.path.exists(f):
+                            warnings += ["{} Decorator\n{}\n\n".format(v, f)]
+        if info.asBool("paper/ifwatermark"):
+            f = info["paper/watermarkpdf"]
+            if not os.path.exists(f):
+                warnings += ["Watermark\n{}\n\n".format(f)]
+        if len(warnings):
+            self.printer.doError(_("Warning: Could not locate decorative PDF(s):"),
+                    secondary="\n".join(warnings))
 
     def gatherIllustrations(self, info, jobs, ptfolder):
         picinfos = self.printer.picinfos

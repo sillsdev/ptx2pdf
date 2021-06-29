@@ -31,10 +31,10 @@ ModelMap = {
     "date_":                    ("_date", None),
     "pdfdate_":                 ("_pdfdate", None),
     "xmpdate_":                 ("_xmpdate", None),
-    "ifusediglotcustomsty_":    ("_diglotcustomsty", lambda w,v: "%"),
-    "ifusediglotmodsty_":       ("_diglotmodsty", lambda w,v: "%"),
-    "ifdiglotincludefootnotes_":("_diglotinclfn", lambda w,v: "%"),
-    "ifdiglotincludexrefs_":    ("_diglotinclxr", lambda w,v: "%"),
+    "ifusediglotcustomsty_":    ("_diglotcustomsty", lambda w,v: "%" if not v else ""),
+    "ifusediglotmodsty_":       ("_diglotmodsty", lambda w,v: "%" if not v else ""),
+    "ifdiglotincludefootnotes_":("_diglotinclfn", lambda w,v: "%" if not v else ""),
+    "ifdiglotincludexrefs_":    ("_diglotinclxr", lambda w,v: "%" if not v else ""),
     "transparency_":            ("fcb_outputFormat", lambda w,v: "false" if v in (None, "None", "PDF/X-4") else "true"),
 
     "config/notes":             ("t_configNotes", lambda w,v: v or ""),
@@ -82,7 +82,7 @@ ModelMap = {
     "paper/width":              ("ecb_pagesize", lambda w,v: re.sub(r"^(.*?)\s*[,xX].*$", r"\1", v or "148mm")),
     "paper/pagesize":           ("ecb_pagesize", None),
     "paper/ifwatermark":        ("c_applyWatermark", lambda w,v: "" if v else "%"),
-    "paper/watermarkpdf":       ("btn_selectWatermarkPDF", lambda w,v: '\def\MergePDF{{"{}"}}'.format(w.watermarks.as_posix()) \
+    "paper/watermarkpdf":       ("btn_selectWatermarkPDF", lambda w,v: w.watermarks.as_posix() \
                                  if (w.get("c_applyWatermark") and w.watermarks is not None and w.watermarks != 'None') else ""),
     "paper/ifcropmarks":        ("c_cropmarks", lambda w,v :"true" if v else "false"),  
     "paper/ifgrid":             ("c_grid", lambda w,v :"" if v else "%"),
