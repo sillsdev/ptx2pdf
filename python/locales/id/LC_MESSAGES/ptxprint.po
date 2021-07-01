@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ptxprint\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-23 17:44+0700\n"
-"PO-Revision-Date: 2021-06-23 10:45\n"
+"POT-Creation-Date: 2021-07-01 09:00+0700\n"
+"PO-Revision-Date: 2021-07-01 02:01\n"
 "Last-Translator: \n"
 "Language-Team: Indonesian\n"
 "Language: id_ID\n"
@@ -79,31 +79,35 @@ msgstr "Tidak ada proyek yang dipilih"
 msgid "Show More Settings:\n"
 "There are many more complex options\n"
 "available for use within PTXprint."
-msgstr ""
+msgstr "Tampilkan Lebih Banyak Pengaturan:\n"
+"Ada banyak pilihan lebih rumit\n"
+"yang tersedia dalam PTXprint."
 
 #: lib/ptxprint/gtkview.py:601
 msgid "Show Fewer Settings:\n"
 "If the settings are too overwhelming then\n"
 "you can hide all the advanced options."
+msgstr "Tampilkan Lebih Sedikit Pengaturan:\n"
+"Jika pengaturannya terlalu berlebihan maka Anda \n"
+"dapat menyembunyikan semua pengaturan lanjutan."
+
+#: lib/ptxprint/gtkview.py:691
+msgid "Can't get {} in the model. Returning {}"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:690
-msgid "Can't get {} in the model"
-msgstr "Tidak bisa dapatkan {} di model"
-
-#: lib/ptxprint/gtkview.py:703
+#: lib/ptxprint/gtkview.py:704
 msgid "Can't set {} in the model"
 msgstr "Tidak bisa mengatur {} di model"
 
-#: lib/ptxprint/gtkview.py:755
+#: lib/ptxprint/gtkview.py:756
 msgid "Printing busy"
 msgstr "Sarana cetak sibuk"
 
-#: lib/ptxprint/gtkview.py:759 lib/ptxprint/runjob.py:193
+#: lib/ptxprint/gtkview.py:760 lib/ptxprint/runjob.py:200
 msgid "No books to print"
 msgstr "Belum ada kitab siap dicetak"
 
-#: lib/ptxprint/gtkview.py:782
+#: lib/ptxprint/gtkview.py:783
 msgid "                   >>> PLEASE CLOSE the PDF <<<                     \n\n"
 "{}\n\n"
 " Or use a different PDF viewer which will                              \n"
@@ -117,67 +121,67 @@ msgstr "                   >>> TOLONG MENUTUPI FILE PDF-NYA <<<          \n\n"
 " Lihatlah pilihan PERTOLONGAN untuk informasi selanjutnya.                            \n\n"
 "                       Apakah mau coba lagi?"
 
-#: lib/ptxprint/gtkview.py:787
+#: lib/ptxprint/gtkview.py:788
 msgid "The old PDF file is open!"
 msgstr "File PDF yang lama masih terbuka!"
 
-#: lib/ptxprint/gtkview.py:853
+#: lib/ptxprint/gtkview.py:854
 msgid "Internal error occurred, trying to delete a directory tree"
 msgstr "Kesalahan internal telah terjadi, berusaha menghapus hirarki folder"
 
-#: lib/ptxprint/gtkview.py:853 lib/ptxprint/gtkview.py:858
+#: lib/ptxprint/gtkview.py:854 lib/ptxprint/gtkview.py:859
 msgid "Folder: "
 msgstr "Folder: "
 
-#: lib/ptxprint/gtkview.py:858
+#: lib/ptxprint/gtkview.py:859
 msgid "Can't delete that configuration from disk"
 msgstr "Tidak dapat menghapus konfigurasi ini dari komputer"
 
-#: lib/ptxprint/gtkview.py:945 lib/ptxprint/ptxprint.glade:13573
+#: lib/ptxprint/gtkview.py:946 lib/ptxprint/ptxprint.glade:13573
 msgid "Pictures"
 msgstr "Gambar"
 
-#: lib/ptxprint/gtkview.py:948 lib/ptxprint/ptxprint.glade:13995
+#: lib/ptxprint/gtkview.py:949 lib/ptxprint/ptxprint.glade:13995
 msgid "Diglot"
 msgstr "Dua Bahasa"
 
-#: lib/ptxprint/gtkview.py:951
+#: lib/ptxprint/gtkview.py:952
 msgid "Notes+"
 msgstr "Catatan+"
 
-#: lib/ptxprint/gtkview.py:951
+#: lib/ptxprint/gtkview.py:952
 msgid "Refs"
 msgstr "Acuan"
 
-#: lib/ptxprint/gtkview.py:955 lib/ptxprint/gtkview.py:956
+#: lib/ptxprint/gtkview.py:956 lib/ptxprint/gtkview.py:957
 msgid "Tabs"
 msgstr "Tab"
 
-#: lib/ptxprint/gtkview.py:957 lib/ptxprint/gtkview.py:958
+#: lib/ptxprint/gtkview.py:958 lib/ptxprint/gtkview.py:959
 msgid "Borders"
 msgstr "Bingkai"
 
-#: lib/ptxprint/gtkview.py:969 lib/ptxprint/ptxprint.glade:17598
+#: lib/ptxprint/gtkview.py:970 lib/ptxprint/ptxprint.glade:17598
 msgid "Advanced"
 msgstr "Lanjutan"
 
-#: lib/ptxprint/gtkview.py:1085 lib/ptxprint/ptxprint.glade:4666
+#: lib/ptxprint/gtkview.py:1086 lib/ptxprint/ptxprint.glade:4666
 msgid "Lock"
 msgstr "Kunci"
 
-#: lib/ptxprint/gtkview.py:1088
+#: lib/ptxprint/gtkview.py:1089
 msgid "Unlock"
 msgstr "Buka kunci"
 
-#: lib/ptxprint/gtkview.py:1246
+#: lib/ptxprint/gtkview.py:1247
 msgid " A tool to help create Front Matter (the FRT book) may show up here in future."
 msgstr " Perkakas untuk membuat bagian depan di buku (yaitu buku FRT) mungkin akan ada di sini nanti."
 
-#: lib/ptxprint/gtkview.py:1284
+#: lib/ptxprint/gtkview.py:1285
 msgid " Use the 'Advanced' tab to select which settings you want to view or edit."
 msgstr " Gunakan bagian 'Lanjutan' untuk memilih pengaturan mana yang ingin Anda lihat atau robah."
 
-#: lib/ptxprint/gtkview.py:1299
+#: lib/ptxprint/gtkview.py:1300
 msgid "\n\n"
 "-------------------------------------                                            \n"
 "[File has been truncated for display]                                            \n"
@@ -187,7 +191,7 @@ msgstr "\n\n"
 "[Tampilan file telah dipendekkan]                                            \n"
 "Klik di tombol Lihat/Sunting... untuk melihat lebih banyak."
 
-#: lib/ptxprint/gtkview.py:1306
+#: lib/ptxprint/gtkview.py:1307
 msgid "\n"
 "This file doesn't exist yet.\n\n"
 "Try clicking...                                                \n"
@@ -199,27 +203,27 @@ msgstr "\n"
 "   * tombol 'Buat'                                                \n"
 "   * tombol 'Print' untuk membuat PDF lebih dahulu"
 
-#: lib/ptxprint/gtkview.py:1528
+#: lib/ptxprint/gtkview.py:1527
 msgid "Remove Intermediate Files and Logs?"
 msgstr "Hapus file tahap menengah dan daftar tindakan?"
 
-#: lib/ptxprint/gtkview.py:1529
+#: lib/ptxprint/gtkview.py:1528
 msgid "Are you sure you want to delete\n"
 "ALL the temporary PTXprint files?"
 msgstr "Betulkah mau hapus SEMUA file\n"
 "sementara digunakan oleh PTXprint?"
 
-#: lib/ptxprint/gtkview.py:1556
+#: lib/ptxprint/gtkview.py:1555
 msgid "Warning: Could not delete some file(s) or folders(s):"
 msgstr "Peringatan: Ada file atau folder yang tidak dapat dihapus:"
 
-#: lib/ptxprint/gtkview.py:1928
+#: lib/ptxprint/gtkview.py:1927
 msgid "'Enable Colored Text' has now been turned on.\n"
 "See Fonts+Script tab for details."
 msgstr "Teks berwarna sudah dapat digunakan.\n"
 "Lihat bagian Fon+Tulisan untuk melihat rincian."
 
-#: lib/ptxprint/gtkview.py:2102
+#: lib/ptxprint/gtkview.py:2101
 msgid "\n"
 "This file doesn't exist yet!\n\n"
 "Edit here and Click 'Save' to create it."
@@ -227,93 +231,95 @@ msgstr "\n"
 "File ini belum ada!\n\n"
 "Untuk membuatnya, sunting di sini lalu klik 'Simpan'."
 
-#: lib/ptxprint/gtkview.py:2144
+#: lib/ptxprint/gtkview.py:2143
 msgid "% This is the .tex file specific for the {} project used by PTXprint.\n"
 "% Saved Configuration name: {}\n"
 msgstr "% Ini adalah file .tex yang khusus untuk proyek {} yang digunakan PTXprint.\n"
 "% Nama konfigurasi tersimpan: {}\n"
 
-#: lib/ptxprint/gtkview.py:2151
+#: lib/ptxprint/gtkview.py:2150
 msgid "% This is the preprocessing .tex file specific for the {} project used by PTXprint.\n"
 "% Saved Configuration name: {}\n"
 msgstr "% Ini adalah file .tex tahap awal yang khusus untuk proyek {} yang digunakan PTXprint.\n"
 "% Nama konfigurasi tersimpan: {}\n"
 
-#: lib/ptxprint/gtkview.py:2211
+#: lib/ptxprint/gtkview.py:2210
 msgid "Select the location and name for the Archive file"
 msgstr "Pilih tempat dan nama untuk file Arsip"
 
-#: lib/ptxprint/gtkview.py:2266
+#: lib/ptxprint/gtkview.py:2265
 msgid "Select the folder containing image files"
 msgstr "Pilih lokasi map file gambar-gambar"
 
-#: lib/ptxprint/gtkview.py:2304
+#: lib/ptxprint/gtkview.py:2303
 msgid "Select one or more PDF(s) for FRONT matter"
 msgstr "Pilih salah satu lebih file PDF untuk bagian DEPAN"
 
-#: lib/ptxprint/gtkview.py:2308
+#: lib/ptxprint/gtkview.py:2307
 msgid "Select one or more PDF(s) for BACK matter"
 msgstr "Pilih salah satu lebih file PDF untuk bagian BELAKAN"
 
-#: lib/ptxprint/gtkview.py:2312
+#: lib/ptxprint/gtkview.py:2311
 msgid "Select Watermark PDF file"
 msgstr "Pilih file PDF sebagai gambar latar belakang"
 
-#: lib/ptxprint/gtkview.py:2317
+#: lib/ptxprint/gtkview.py:2316
 msgid "Select Page Border PDF file"
 msgstr "Pilih file PDF sebagai gambar Bingkai Halaman"
 
-#: lib/ptxprint/gtkview.py:2322
+#: lib/ptxprint/gtkview.py:2321
 msgid "Select Section Header PDF file"
 msgstr "Pilih file PDF sebagai gambar Judul Bagian"
 
-#: lib/ptxprint/gtkview.py:2327
+#: lib/ptxprint/gtkview.py:2326
 msgid "Select End of Book PDF file"
 msgstr "Pilih file PDF sebagai gambar Ujung Kitab"
 
-#: lib/ptxprint/gtkview.py:2332
+#: lib/ptxprint/gtkview.py:2331
 msgid "Select Verse Decorator PDF file"
 msgstr "Pilih file PDF sebagai gambar Hiasan Nomor Ayat"
 
-#: lib/ptxprint/gtkview.py:2437
+#: lib/ptxprint/gtkview.py:2436
 msgid "Switch to Other\n"
 "Diglot Project"
 msgstr "Beralih ke Proyek Dua Bahasa\n"
 "yang Lain"
 
-#: lib/ptxprint/gtkview.py:2447
+#: lib/ptxprint/gtkview.py:2446
 msgid "Save & Return to\n"
 "Diglot Project"
 msgstr "Simpan dan Kembali ke\n"
 "Proyek Dua Bahasa"
 
-#: lib/ptxprint/gtkview.py:2494
+#: lib/ptxprint/gtkview.py:2493
 msgid "FYI: The Regular font already supports all the characters in the text."
 msgstr "Fon Dasar digunakan dalam proyek ini bisa cetak semua huruf dan tanda baca dalam teksnya."
 
-#: lib/ptxprint/gtkview.py:2495
+#: lib/ptxprint/gtkview.py:2494
 msgid "A fallback font is not required so\n"
 "the 'Use Fallback Font' option will be disabled."
 msgstr "Fon pengganti tidak wajib jadi pilihan\n"
 "'Pakai Fon Pengganti' akan dinonaktifkan."
 
-#: lib/ptxprint/gtkview.py:2746
+#: lib/ptxprint/gtkview.py:2745
 msgid "Choose Image"
 msgstr "Pilih Gambar"
 
-#: lib/ptxprint/gtkview.py:2881
+#: lib/ptxprint/gtkview.py:2880
 msgid "Unsupported Locale"
 msgstr "Tempat Tidak Didukung"
 
-#: lib/ptxprint/gtkview.py:2882
+#: lib/ptxprint/gtkview.py:2881
 msgid "This locale is not supported on your system, you may need to install it"
 msgstr "Tempat ini tidak didukung di komputer Anda, mungkin Anda perlu memasangnya"
 
-#: lib/ptxprint/gtkview.py:3031
+#: lib/ptxprint/gtkview.py:3030
 msgid "FYI: This Interlinear option is not compatible with the\n"
 "'Spacing Adjustments Between Letters' on the Fonts+Script page.\n"
 "So that option has just been disabled."
-msgstr ""
+msgstr "Pilihan Interlinear ini tidak cocok dengan pilihan\n"
+"'Penyesuaian Spasi Antar Huruf' pada halaman Fon+Tulisan.\n"
+"Jadi pilihan itu telah dinonaktifkan."
 
 #: lib/ptxprint/runjob.py:17 lib/ptxprint/runjob.py:43
 msgid "Probably a TeX macro problem - contact support, or post a bug report"
@@ -431,89 +437,93 @@ msgid "Oops! Something unexpected happened causing this error.\n"
 "on the Help page to create a .zip file and send it to <ptxprint_support@sil.org>\n"
 "for further assistance. Please include a description of the problem, and if\n"
 "known, tell us which setting was changed since it last worked."
-msgstr ""
+msgstr "Sesuatu yang tidak terduga telah menyebabkan kesalahan ini.\n"
+"Jika Anda tidak dapat menyelesaikan masalah ini sendiri, gunakan tombol 'Buat Arsip...'\n"
+"pada halaman Bantuan untuk membuat file .zip lalu mengirimkannya ke <ptxprint_support@sil.org>\n"
+"untuk bantuan selanjutnya. Harap sertakan deskripsi masalah, dan kalau\n"
+"bisa, beri tahu kami pengaturan mana yang diubah sesudah terakhir kali berfungsi."
 
-#: lib/ptxprint/runjob.py:174
+#: lib/ptxprint/runjob.py:181
 msgid "Illegal Project"
 msgstr "Proyek Tidak Diizinkan"
 
-#: lib/ptxprint/runjob.py:264 lib/ptxprint/runjob.py:266
+#: lib/ptxprint/runjob.py:271 lib/ptxprint/runjob.py:273
 msgid "Layout problems were encountered on page(s): "
 msgstr "Masalah dengan tata letak terdapat di halaman: "
 
-#: lib/ptxprint/runjob.py:265
+#: lib/ptxprint/runjob.py:272
 msgid "PDF was created BUT..."
 msgstr "File PDF telah dibuat TETAPI..."
 
-#: lib/ptxprint/runjob.py:267
+#: lib/ptxprint/runjob.py:274
 msgid "\n\n"
 "Try changing the PicList and/or AdjList settings to solve issues."
 msgstr "\n\n"
 "Coba ubah pengaturan PicList dan/atau AdjList untuk mengatasi masalah."
 
-#: lib/ptxprint/runjob.py:268
+#: lib/ptxprint/runjob.py:275
 msgid "PTXprint [{}] - Warning!"
 msgstr "PTXprint [{}] - Peringatan!"
 
-#: lib/ptxprint/runjob.py:273
+#: lib/ptxprint/runjob.py:280
 msgid "Failed to create: "
 msgstr "Tidak dapat dibuat: "
 
-#: lib/ptxprint/runjob.py:278
+#: lib/ptxprint/runjob.py:285
 msgid "Rerun to fix: "
 msgstr "Jalankan ulang untuk memperbaiki: "
 
-#: lib/ptxprint/runjob.py:456
+#: lib/ptxprint/runjob.py:464
 msgid "Failed to merge texts due to a Syntax Error:"
 msgstr "Tidak berhasil menggabungkan teks oleh karena kesalahan sintaksis:"
 
-#: lib/ptxprint/runjob.py:457
+#: lib/ptxprint/runjob.py:465
 msgid "\n\n"
 "If original USFM text is correct, then check if PrintDraftChanges.txt has caused the error(s)."
 msgstr "\n\n"
 "Kalau teks USFM sudah betul, periksa apakah file PrintDraftChanges.txt yang menyebabkan masalah."
 
-#: lib/ptxprint/runjob.py:459
+#: lib/ptxprint/runjob.py:467
 msgid "PTXprint [{}] - Diglot Merge Error!"
 msgstr "PTXprint [{}] - Masalah di proses Menggabungkan Teks Dua Bahasa!"
 
-#: lib/ptxprint/runjob.py:530
+#: lib/ptxprint/runjob.py:540
 msgid "table of contents"
-msgstr ""
+msgstr "daftar isi"
 
-#: lib/ptxprint/runjob.py:531
+#: lib/ptxprint/runjob.py:541
 msgid "image copyrights"
 msgstr "hak cipta gambar"
 
-#: lib/ptxprint/runjob.py:532
+#: lib/ptxprint/runjob.py:542
 msgid "chapter numbers"
 msgstr "nomor pasal"
 
-#: lib/ptxprint/runjob.py:533
+#: lib/ptxprint/runjob.py:543
 msgid "chapter positions"
-msgstr ""
+msgstr "posisi pasal"
 
-#: lib/ptxprint/runjob.py:571
+#: lib/ptxprint/runjob.py:581
 msgid "Rerunning because the {} changed"
-msgstr ""
+msgstr "Dijalankan kembali karena {} berubah"
 
-#: lib/ptxprint/runjob.py:614
+#: lib/ptxprint/runjob.py:630
 msgid "Warning: Could not locate decorative PDF(s):"
 msgstr "Peringatan: Tidak dapat menemukan PDF yang menghiasi:"
 
-#: lib/ptxprint/runjob.py:755
+#: lib/ptxprint/runjob.py:771
 msgid "Error: Unable to convert/resize image!\n"
 "Image skipped:"
 msgstr "Kesalahan: Tidak dapat mengubah gambar!\n"
 "Gambar yang diabaikan:"
 
-#: lib/ptxprint/runjob.py:761
+#: lib/ptxprint/runjob.py:777
 msgid "Error: Unable to copy {}\n"
 "       image to {} in tmpPics folder"
 msgstr "Kesalahan: Tidak dapat menyalin gambar {}\n"
 "       ke {} di folder tmpPics"
 
-#: lib/ptxprint/runjob.py:793
+#: lib/ptxprint/runjob.py:809
 msgid "Warning: Could not delete\n"
 "temporary file(s) or folder(s):"
 msgstr "Peringatan: Tidak dapat menghapus\n"
@@ -527,7 +537,7 @@ msgstr "Memutuskan baris di tengah kata"
 msgid "Missing font ({})"
 msgstr "Fon tidak ada ({})"
 
-#: lib/ptxprint/texmodel.py:1351
+#: lib/ptxprint/texmodel.py:1345
 msgid "\\rem Warning: No copyright statement found for: {} on pages {}"
 msgstr "\\rem Peringatan: Tidak ada pernyataan tentang hak cipta untuk: {} di halaman {}"
 
@@ -583,95 +593,97 @@ msgstr "Kesalahan pada penguraian JSON di {}"
 msgid "{} at line {} col {}"
 msgstr "{} di baris {} kolom {}"
 
-#: lib/ptxprint/view.py:875
+#: lib/ptxprint/view.py:877
 msgid "No Secondary Project Set"
 msgstr "Proyek Sekunder Belum Ditentukan"
 
-#: lib/ptxprint/view.py:875
+#: lib/ptxprint/view.py:877
 msgid "In order to generate an AdjList for a diglot, the \n"
 "Secondary project must be set on the Diglot tab."
 msgstr "Untuk membuat AdjList untuk terbitan dua bahasa,\n"
 "Proyek Sekunder harus ditentukan di bagian Dua Bahasa."
 
-#: lib/ptxprint/view.py:888
+#: lib/ptxprint/view.py:890
 msgid "One or more Paragraph Adjust file(s) already exist!"
 msgstr "File Mengatur Paragraf sudah ada!"
 
-#: lib/ptxprint/view.py:889
+#: lib/ptxprint/view.py:891
 msgid "\n\n"
 "Do you want to OVERWRITE the above-listed file(s)?"
 msgstr "\n\n"
 "Apakah Anda ingin MENGGANTI file-file yang terdaftar di atas?"
 
-#: lib/ptxprint/view.py:933
+#: lib/ptxprint/view.py:935
 msgid "Failed to Generate Hyphenation List"
 msgstr "Tidak Berhasil Membuat Daftar Pemenggalan Kata"
 
-#: lib/ptxprint/view.py:934
+#: lib/ptxprint/view.py:936
 msgid "{} Paratext Project's Hyphenation file not found:\n"
 "{}"
 msgstr "File Pemenggalan Kata untuk proyek {} tidak ditemukan:\n"
 "{}"
 
-#: lib/ptxprint/view.py:971
+#: lib/ptxprint/view.py:973
 msgid "\n\n"
 "That is too many for XeTeX! List truncated to longest {} words found in the active sources."
-msgstr ""
+msgstr "\n\n"
+"Itu terlalu banyak untuk XeTeX! Daftar terpotong menjadi kata {} terpanjang yang ditemukan di sumber aktif."
 
-#: lib/ptxprint/view.py:977
+#: lib/ptxprint/view.py:979
 msgid "Hyphenation List Generated"
 msgstr "Daftar Pemenggalan Kata Telah Dibuat"
 
-#: lib/ptxprint/view.py:978
+#: lib/ptxprint/view.py:980
 msgid "{} hyphenated words were gathered\n"
 "from Paratext's Hyphenation Word List."
 msgstr "Sebanyak {} kata yang diberi tanda garis telah dikumpul\n"
 "dari Daftar Pemenggalan Kata di Paratext."
 
-#: lib/ptxprint/view.py:980
+#: lib/ptxprint/view.py:982
 msgid "\n\n"
 "Note for Indic languages that {} words containing ZWJ"
 msgstr ""
 
-#: lib/ptxprint/view.py:981
+#: lib/ptxprint/view.py:983
 msgid "\n"
 "and ZWNJ characters have been left off the hyphenation list."
 msgstr ""
 
-#: lib/ptxprint/view.py:983
+#: lib/ptxprint/view.py:985
 msgid "\n\n"
 "{} words were at least 10 characters long but had no hyphenation marked"
-msgstr ""
+msgstr "\n\n"
+"{} kata ada setidaknya 10 karakter tetapi tidak diberikan tanda hubung"
 
-#: lib/ptxprint/view.py:986
+#: lib/ptxprint/view.py:988
 msgid "Hyphenation List was NOT Generated"
 msgstr "Daftar Pemenggalan Kata TIDAK Dibuat"
 
-#: lib/ptxprint/view.py:987
+#: lib/ptxprint/view.py:989
 msgid "No valid words were found in Paratext's Hyphenation List"
 msgstr "Tidak ada kata berlaku yang terdapat di Daftar Pemenggalan Kata"
 
-#: lib/ptxprint/view.py:1030
+#: lib/ptxprint/view.py:1032
 msgid "The Fallback Font needs to be something other than the Regular Font."
 msgstr "Fon Pengganti tidak boleh sama dengan fon yang biasa dipakai di teks."
 
-#: lib/ptxprint/view.py:1031 lib/ptxprint/view.py:1039
+#: lib/ptxprint/view.py:1033 lib/ptxprint/view.py:1041
 msgid "Please select a different Font."
 msgstr "Silakan pilih fon yang lain."
 
-#: lib/ptxprint/view.py:1038
+#: lib/ptxprint/view.py:1040
 msgid "The Fallback Font just selected does NOT support all the missing characters listed."
 msgstr "Fon Pengganti yang baru dipilih TIDAK mendukung semua karakter yang diperlukan."
 
-#: lib/ptxprint/view.py:1237
+#: lib/ptxprint/view.py:1239
 msgid "No Config found for Diglot"
 msgstr "Pengaturan untuk terbitan dua bahasa tidak ditemukan"
 
-#: lib/ptxprint/view.py:1250
+#: lib/ptxprint/view.py:1252
 msgid "Error: Cannot create Archive!"
 msgstr "Kesalahan: Tidak dapat membuat Arsip!"
 
-#: lib/ptxprint/view.py:1250
+#: lib/ptxprint/view.py:1252
 msgid "The ZIP file seems to be open in another program."
 msgstr "Sepertinya file ZIP telah dibuka di program lain."
 
@@ -981,7 +993,10 @@ msgid "Set which marks are to be displayed. Any\n"
 "combination of Crop marks, Guides (margins,\n"
 "baselines, etc.) and/or a graph-paper-like Grid\n"
 "can be set."
-msgstr ""
+msgstr "Tetapkan tanda mana yang akan ditampilkan. \n"
+"Kombinasi apa saja dapat diatur untuk tanda \n"
+"Pangkas, Panduan (tepi halaman, garis dasar, \n"
+"dll.) dan/atau Kisi seperti kertas grafik."
 
 #: lib/ptxprint/ptxprint.glade:1660
 msgid "NONE"
@@ -1085,7 +1100,7 @@ msgstr "Gaya Fon:"
 
 #: lib/ptxprint/ptxprint.glade:2175 lib/ptxprint/ptxprint.glade:2194
 msgid "If the required font doesn't have a BOLD typeface, you can use this setting to create the BOLD effect. (For example, setting Embolden to 1.6 would thicken the Regular typeface making it appear as bold.)"
-msgstr ""
+msgstr "Kalau fon yang diperlukan tidak ada gaya TEBAL, Anda dapat menggunakan pengaturan ini untuk meniru gaya tebal. (Misalnya, mengatur \"Membuat Tebal\" menjadi 1,6 akan membuat gaya fon Biasa kelihatan seperti gaya fon Tebal.)"
 
 #: lib/ptxprint/ptxprint.glade:2177
 msgid "Embolden"
@@ -1093,7 +1108,7 @@ msgstr "Membuat Tebal"
 
 #: lib/ptxprint/ptxprint.glade:2215 lib/ptxprint/ptxprint.glade:2236
 msgid "If the required font does not have an ITALIC typeface, you can use this setting to create the ITALIC effect. (For example, setting Slant to 0.15 would slant the Regular typeface by 15% making it appear as italic.)"
-msgstr ""
+msgstr "Kalau fon yang diperlukan tidak ada gaya TEBAL, Anda dapat menggunakan pengaturan ini untuk meniru gaya tebal. (Misalnya, mengatur \"Membuat Tebal\" menjadi 1,6 akan membuat gaya fon Biasa kelihatan seperti gaya fon Tebal.)"
 
 #: lib/ptxprint/ptxprint.glade:2238
 msgid "Slant"
@@ -1221,11 +1236,11 @@ msgstr "Inci"
 
 #: lib/ptxprint/ptxprint.glade:2494
 msgid "Crop Marks, Guides and Grid Settings"
-msgstr ""
+msgstr "Pengaturan Tanda Pangkas, Panduan, dan Kisi"
 
 #: lib/ptxprint/ptxprint.glade:2535
 msgid "Crop Marks (Shows Page Edge for Trimming)"
-msgstr ""
+msgstr "Tanda Pangkas (Menunjukkan Tepi Halaman untuk Pemangkasan)"
 
 #: lib/ptxprint/ptxprint.glade:2539
 msgid "Some printers require crop marks\n"
@@ -1247,7 +1262,9 @@ msgstr "Penunjuk (Garis Pengukur dan Paduk)"
 msgid "Enabling this option will turn on various guides \n"
 "(showing the margins, headers, footers) as well \n"
 "as the baselines of the body text."
-msgstr ""
+msgstr "Mengaktifkan pilihan ini akan mengaktifkan \n"
+"berbagai panduan (menunjukkan tepi halaman, \n"
+"hulu, suku) dan juga garis dasar dari teks badan."
 
 #: lib/ptxprint/ptxprint.glade:2599
 msgid "Color"
@@ -1262,7 +1279,10 @@ msgid "Specify the number of minor divisions there should\n"
 "be between the thicker (major) lines. \n"
 "Recommendations: 2, 5, or 10 for centimeters, \n"
 "and 3, 4, 6, or 12 for inches."
-msgstr ""
+msgstr "Tentukan jumlah bagian kecil yang harus ada\n"
+"berada di antara garis yang lebih tebal (utama).\n"
+"Rekomendasi: 2, 5, atau 10 sentimeter,\n"
+"dan 3, 4, 6, atau 12 inci."
 
 #: lib/ptxprint/ptxprint.glade:2634
 msgid "Minor Divisions:"
@@ -1271,7 +1291,7 @@ msgstr "Bagian Kecil:"
 #: lib/ptxprint/ptxprint.glade:2647 lib/ptxprint/ptxprint.glade:2665
 #: lib/ptxprint/ptxprint.glade:14104
 msgid "Thumb Tabs usually use a dark color for the Tab with a light (or white) text."
-msgstr ""
+msgstr "Label Jempol biasanya menggunakan warna gelap untuk latar belakang dengan teks yang terang (atau putih)."
 
 #: lib/ptxprint/ptxprint.glade:2651
 msgid "Color of major lines in grid."
@@ -1302,7 +1322,10 @@ msgid "Depending on what you are trying\n"
 "to measure, it can be helpful to\n"
 "position the grid at the top-left \n"
 "corner of the page, or margins."
-msgstr ""
+msgstr "Tergantung pada apa yang ingin Anda\n"
+"ukur, mungkin sebaiknya memposisikan \n"
+"kisi di sudut kiri atas halaman, \n"
+"atau di sudut kiri atas teks badan."
 
 #: lib/ptxprint/ptxprint.glade:2751
 msgid "Start Grid At:"
@@ -1313,17 +1336,22 @@ msgid "Clicking this button will refresh\n"
 "the default Grid settings:\n"
 "Centimeters with 5 divisions (2mm each) \n"
 "red and light green lines (0.2pt thickness)."
-msgstr ""
+msgstr "Mengklik tombol ini akan membuat pengaturan \n"
+"Kisi kembali ke yang standar:\n"
+"Sentimeter dengan 5 bagian (masing-masing 2mm)\n"
+"garis merah dan hijau muda (tebalnya 0.2pt)."
 
 #: lib/ptxprint/ptxprint.glade:2781
 msgid "The grid can use Centimeters or \n"
 "Inches as the major units."
-msgstr ""
+msgstr "Kisi dapat menggunakan Sentimeter \n"
+"atau Inci sebagai unit utama."
 
 #: lib/ptxprint/ptxprint.glade:2802
 msgid "The grid can start at the top-left corner\n"
 "of the Page, or at the top-left Margin."
-msgstr ""
+msgstr "Kisi dapat dimulai dari sudut kiri atas\n"
+"Halaman, atau di sudut kiri atas Teks Badan."
 
 #: lib/ptxprint/ptxprint.glade:2833
 msgid "Grid (Graph Paper)"
@@ -1333,7 +1361,9 @@ msgstr "Kisi"
 msgid "If the standard Rules and Guides are inadequate\n"
 "you can generate a graph-paper-like grid behind\n"
 "the text. This may be useful for precise measuring."
-msgstr ""
+msgstr "Jika Pengukur dan Panduan yang standar tidak memadai,\n"
+"Anda dapat membuat kisi seperti kertas grafik di belakang\n"
+"teks. Kisi ini mungkin berguna untuk pengukuran yang tepat."
 
 #: lib/ptxprint/ptxprint.glade:2870
 msgid "Arabic"
@@ -1389,23 +1419,23 @@ msgstr "Thai"
 
 #: lib/ptxprint/ptxprint.glade:2936
 msgid "Digital (PDF/X-4)"
-msgstr ""
+msgstr "Digital (PDF/X-4)"
 
 #: lib/ptxprint/ptxprint.glade:2940
 msgid "Print (PDF/X-1a:2003)"
-msgstr ""
+msgstr "Print (PDF/X-1a:2003)"
 
 #: lib/ptxprint/ptxprint.glade:2944
 msgid "Transparency (Digital+CMYK)"
-msgstr ""
+msgstr "Transparansi (Digital+CMYK)"
 
 #: lib/ptxprint/ptxprint.glade:2945
 msgid "CMYK"
-msgstr ""
+msgstr "CMYK"
 
 #: lib/ptxprint/ptxprint.glade:2948
 msgid "Archive (Print+Unicode Text)"
-msgstr ""
+msgstr "Arsip (Print+Teks Unicode)"
 
 #: lib/ptxprint/ptxprint.glade:2962 lib/ptxprint/ptxprint.glade:3548
 #: lib/ptxprint/ptxprint.glade:3574 lib/ptxprint/ptxprint.glade:12775
@@ -1760,7 +1790,12 @@ msgid "Click to add a DBL bundle to the list of\n"
 "regular folder (e.g. My Paratext 9 Projects)\n"
 "but will only be used by PTXprint. It cannot\n"
 "be viewed or edited in Paratext."
-msgstr ""
+msgstr "Klik untuk menambahkan gabungan DBL ke daftar\n"
+"teks yang tersedia untuk dicetak. Perhatikan bahwa\n"
+"gabungan DBL akan dibongkar ke dalam folder \n"
+"biasa Anda (mis. My Paratext 9 Projects) tetapi\n"
+"hanya akan digunakan oleh PTXprint. Folder itu \n"
+"tidak bisa dilihat atau disunting di Paratext."
 
 #: lib/ptxprint/ptxprint.glade:4422
 msgid "DBL Bundle:"
@@ -1779,7 +1814,14 @@ msgid "Type a name for the current configuration\n"
 "of the same Paratext project.\n\n"
 "Alternatively, select a previously-saved\n"
 "configuration to retrieve those settings."
-msgstr ""
+msgstr "Ketik nama untuk konfigurasi saat ini\n"
+"untuk disimpan lalu klik tombol Simpan.\n"
+"Ketika proyek Paratext dibagikan melalui\n"
+"Kirim/Terima, semua konfigurasi yang disimpan \n"
+"akan juga tersedia untuk pengguna PTXprint \n"
+"lainnya dari proyek Paratext yang sama.\n\n"
+"Atau, pilih konfigurasi yang disimpan sebelumnya \n"
+"untuk mengambil pengaturan tersebut."
 
 #: lib/ptxprint/ptxprint.glade:4501
 msgid "Configuration Name: "
@@ -1791,7 +1833,11 @@ msgid "Save the current settings with the \n"
 "Note that these settings are also automatically\n"
 "updated (saved) when you click Print.\n\n"
 "Shortcut key: <Ctrl-S>"
-msgstr ""
+msgstr "Simpan pengaturan saat ini dengan\n"
+"Nama Konfigurasi yang disediakan.\n\n"
+"Perhatikan bahwa pengaturan ini juga secara otomatis\n"
+"diperbarui (disimpan) ketika Anda mengklik Cetak.\n\n"
+"Tombol pintasan: <Ctrl S>"
 
 #: lib/ptxprint/ptxprint.glade:4540
 msgid "Delete the currently selected\n"
@@ -1799,7 +1845,11 @@ msgid "Delete the currently selected\n"
 "If the Default configuration is selected,\n"
 "then this will RESET all the settings to\n"
 "their default values."
-msgstr ""
+msgstr "Segera hapus Konfigurasi Tersimpan \n"
+"yang saat ini dipilih.\n\n"
+"Jika konfigurasi Standar dipilih, maka \n"
+"ini akan KEMBALIKAN semua pengaturan \n"
+"ke nilai yang standar."
 
 #: lib/ptxprint/ptxprint.glade:4562
 msgid "Select a previously-saved\n"
@@ -1810,7 +1860,14 @@ msgid "Select a previously-saved\n"
 "Send/Recv, all saved configurations will be\n"
 "also made available to other PTXprint users \n"
 "of the same Paratext project."
-msgstr ""
+msgstr "Pilih konfigurasi yang disimpan sebelumnya \n"
+"untuk memakai pengaturan tersebut.\n\n"
+"Atau ketik nama untuk konfigurasi saat ini\n"
+"untuk disimpan lalu klik tombol Simpan.\n"
+"Ketika proyek Paratext dibagikan melalui\n"
+"Kirim/Terima, semua konfigurasi yang disimpan \n"
+"akan tersedia juga untuk pengguna PTXprint \n"
+"lainnya dari proyek Paratext yang sama."
 
 #: lib/ptxprint/ptxprint.glade:4585
 msgid "Enter a name for the configuration to be saved.\n\n"
@@ -1819,12 +1876,18 @@ msgid "Enter a name for the configuration to be saved.\n\n"
 "parentheses, underscores and hyphens.\n\n"
 "Longer descriptions may be typed into\n"
 "the Notes field below."
-msgstr ""
+msgstr "Ketik nama untuk konfigurasi yang akan disimpan.\n\n"
+"Perhatikan bahwa hanya huruf Romawi/Latin\n"
+"didukung menggunakan: a-z, A-Z, 0-9,\n"
+"tanda kurung, garis bawah, dan tanda hubung.\n\n"
+"Deskripsi yang lebih panjang dapat diketik dalam\n"
+"kolom Catatan di bawah ini."
 
 #: lib/ptxprint/ptxprint.glade:4609 lib/ptxprint/ptxprint.glade:4623
 msgid "Optional: Provide a description about the\n"
 "saved/shared configuration named above."
-msgstr ""
+msgstr "Kalau mau, Anda bisa memberikan deskripsi \n"
+"tentang konfigurasi yang disebutkan di atas."
 
 #: lib/ptxprint/ptxprint.glade:4612
 msgid "Notes:"
@@ -1836,7 +1899,11 @@ msgid "Dots show that a password\n"
 "configuration, and allows\n"
 "you to see the length of\n"
 "the password that was set."
-msgstr ""
+msgstr "Titik-titik menunjukkan bahwa \n"
+"kata sandi telah ditetapkan untuk \n"
+"konfigurasi yang disimpan, dan \n"
+"memperlihatkan panjangnya\n"
+"sandi yang telah ditetapkan."
 
 #: lib/ptxprint/ptxprint.glade:4655
 msgid "No Password Set"
@@ -1856,12 +1923,25 @@ msgid "When Config is UNLOCKED:\n"
 "saved or the configuration to be deleted.\n\n"
 "Note that the Default config cannot be\n"
 "locked."
-msgstr ""
+msgstr "Kalau Konfigurasi DIBUKA:\n"
+"Klik untuk menetapkan kata sandi \n"
+"untuk mencegah siapa pun dari \n"
+"menghapus pengaturan yang disimpan, \n"
+"dan juga mencegah orang dari merubah \n"
+"konfigurasi ini lalu menyimpannya \n"
+"kembali dengan nama yang sama.\n\n"
+"Kalau Konfigurasi TERKUNCI:\n"
+"Klik untuk mengetik kata sandi untuk \n"
+"membuka konfigurasi ini dan mengizinkan \n"
+"perubahan disimpan atau konfigurasi dihapus.\n\n"
+"Perhatikan bahwa konfigurasi Standar tidak \n"
+"dapat dikunci."
 
 #: lib/ptxprint/ptxprint.glade:4701
 msgid "Clicking this button will \n"
 "reload the saved Config."
-msgstr ""
+msgstr "Mengklik tombol ini akan muat \n"
+"ulang Konfigurasi yang disimpan."
 
 #: lib/ptxprint/ptxprint.glade:4727
 msgid "Saved/Shared Configuration"
@@ -1899,7 +1979,9 @@ msgstr "© 2021 Wycliffe Bible Translators, Inc."
 msgid "Clicking this button will reload\n"
 "the Copyright Statement from the\n"
 "Paratext project settings."
-msgstr ""
+msgstr "Mengklik tombol ini akan memuat ulang\n"
+"Pernyataan Hak Cipta dari\n"
+"pengaturan proyek Paratext."
 
 #: lib/ptxprint/ptxprint.glade:4818
 msgid "License:"
@@ -1954,7 +2036,10 @@ msgid "Select the Project and Book(s),\n"
 "to be used to create the PDF file.\n\n"
 "You can also Save/Share\n"
 "Configuration settings."
-msgstr ""
+msgstr "Pilih Proyek dan Buku yang akan \n"
+"digunakan untuk membuat file PDF.\n\n"
+"Anda juga dapat Simpan/Bagikan\n"
+"pengaturan Konfigurasi."
 
 #: lib/ptxprint/ptxprint.glade:4897
 msgid "Basic"
@@ -1970,17 +2055,21 @@ msgstr "Tepi Halaman Dekat\n"
 msgid "This is the amount of space to be\n"
 "given on the inner edge of each\n"
 "page for binding (millimeters)."
-msgstr ""
+msgstr "Ini adalah jumlah ruang (milimeter) \n"
+"yang akan diberikan di tepi bagian \n"
+"dalam di tiap halaman untuk penjilidan."
 
 #: lib/ptxprint/ptxprint.glade:5009
 msgid "Base Line spacing in points (pts).\n"
 "Change to increase or decrease\n"
 "space between lines of text."
-msgstr ""
+msgstr "Jarak Garis Dasar dalam point (pt).\n"
+"Ubah untuk menambah atau mengurangi\n"
+"jarak antara baris-baris teks."
 
 #: lib/ptxprint/ptxprint.glade:5039 lib/ptxprint/ptxprint.glade:5053
 msgid "If the required size is not displayed, then just type the required page width and height separated by a comma. For example: 140mm,210mm"
-msgstr ""
+msgstr "Jika ukuran yang diperlukan tidak ditampilkan, silakan ketik lebar dan tinggi halaman yang diperlukan, dipisahkan dengan koma. Misalnya: 140mm,210mm"
 
 #: lib/ptxprint/ptxprint.glade:5042
 msgid "Page Size:"
@@ -1996,7 +2085,7 @@ msgstr "158mm, 210mm (A4)"
 
 #: lib/ptxprint/ptxprint.glade:5060
 msgid "176mm, 250mm (B5)"
-msgstr ""
+msgstr "176mm, 250mm (B5)"
 
 #: lib/ptxprint/ptxprint.glade:5061
 msgid "8.5in, 11in (Letter)"
@@ -2018,7 +2107,9 @@ msgstr "5,8in x 8,7in (147x221mm)"
 msgid "This is the base font size for default paragraph \n"
 "text. All other font sizes are calculated (according \n"
 "to their factor size) based on this value."
-msgstr ""
+msgstr "Ini adalah ukuran font dasar untuk teks standard \n"
+"di paragraf. Semua ukuran font lainnya dihitung \n"
+"(menurut faktor ukurannya) berdasarkan nilai ini."
 
 #: lib/ptxprint/ptxprint.glade:5091
 msgid "Base Font\n"
@@ -2028,7 +2119,7 @@ msgstr "Ukuran Fon\n"
 
 #: lib/ptxprint/ptxprint.glade:5104
 msgid "Set the point size of the main body text."
-msgstr ""
+msgstr "Tentukan ukuran point (pt) untuk teks badan."
 
 #: lib/ptxprint/ptxprint.glade:5128
 msgid "This is the base line spacing \n"
@@ -2135,25 +2226,41 @@ msgid "This will make the left page header the inner header and\n"
 "If you always want the Primary text on the left and\n"
 "Secondary text on the right regardless of whether\n"
 "it is an odd or even page, then turn off this option."
-msgstr ""
+msgstr "Ini akan membuat hulu halaman kiri menjadi hulu bagian \n"
+"dalam dan hulu halaman kanan akan ditampilkan di tepi luar\n"
+"(jadi hulu pada halaman ganjil dan genap dicerminkan).\n\n"
+"Untuk Terbitan Dua Bahasa:\n"
+"Kalau membuat Terbitan Dua Bahasa, pilihan ini akan \n"
+"menempatkan teks utama sebagai teks bagian dalam \n"
+"(paling dekat dengan jilidan buku), dan teks sekunder \n"
+"sebagai teks luar (paling dekat dengan tepi halaman).\n\n"
+"Jika Anda selalu menginginkan Teks Utama di sebelah kiri \n"
+"dan Teks Sekunder di sebelah kanan, terlepas dari apakah\n"
+"ini adalah halaman ganjil atau genap, matikan opsi ini."
 
 #: lib/ptxprint/ptxprint.glade:5297
 msgid "Show dialog to choose Guides (margins, \n"
 "baselines, etc.) and/or a graph-paper-like \n"
 "Grid for precise measuring. Grid settings \n"
 "can be customized."
-msgstr ""
+msgstr "Tampilkan kotak dialog untuk memilih Panduan \n"
+"(tepi halaman, garis dasar, dll.) dan/atau Kisi \n"
+"seperti kertas grafik untuk mengukur dengan \n"
+"tepat. Pengaturan Kisi dapat disesuaikan."
 
 #: lib/ptxprint/ptxprint.glade:5313
 msgid "Crop Marks,\n"
 "Guides, Grid"
-msgstr ""
+msgstr "Tanda Pangkas,\n"
+"Panduan, Kisi"
 
 #: lib/ptxprint/ptxprint.glade:5318
 msgid "Enable Guides and/or Grid behind the text\n"
 "to assist with setup or final adjustments; or\n"
 "turn on the Crop marks for the printer."
-msgstr ""
+msgstr "Aktifkan Panduan dan/atau Kisi di belakang teks untuk \n"
+"membantu dengan pengaturan atau penyesuaian akhir; \n"
+"atau memperlihatkan Tanda Pangkas untuk percetakan."
 
 #: lib/ptxprint/ptxprint.glade:5346
 msgid "Page Setup"
@@ -2169,7 +2276,7 @@ msgstr "Ini jaraknya di antara kedua\n"
 
 #: lib/ptxprint/ptxprint.glade:5402
 msgid "Vertical Rule in Gutter"
-msgstr "Penggaris Vertikal di Tepi\n"
+msgstr "Pengukur Vertikal di Tepi\n"
 "Halaman Dekat Jilidan"
 
 #: lib/ptxprint/ptxprint.glade:5406
@@ -2192,13 +2299,15 @@ msgstr "Lebar Tepi Halaman\n"
 
 #: lib/ptxprint/ptxprint.glade:5445
 msgid "This setting can raise (if -ve) or lower (if +ve) the starting point of the vertical rule between columns. (Value is pts)."
-msgstr ""
+msgstr "Pengaturan ini dapat menaikkan (-) atau menurunkan (+) titik awal pengukur vertikal antar kolom. (Nilai diukur dengan point.)"
 
 #: lib/ptxprint/ptxprint.glade:5468
 msgid "This setting raises (using a negative value) or \n"
 "lowers (using a positive value) the starting \n"
 "point of the vertical rule between columns."
-msgstr ""
+msgstr "Pengaturan ini menaikkan (menggunakan nilai negatif) atau\n"
+"menurunkan (menggunakan nilai positif) titik awal\n"
+"garis pengukur vertikal antar kolom."
 
 #: lib/ptxprint/ptxprint.glade:5472
 msgid "Adjust\n"
@@ -2215,7 +2324,10 @@ msgid "If this setting is checked on, but\n"
 "inactive, it is due to Diglot being\n"
 "active (which obviously must use \n"
 "the Two Column layout)."
-msgstr ""
+msgstr "Jika pilihan ini dicentang, tetapi \n"
+"tidak aktif, berarti pilihan Terbitan \n"
+"Dua Bahasasedang aktif (yang harus \n"
+"menggunakan tata letak Dua Kolom)."
 
 #: lib/ptxprint/ptxprint.glade:5542 lib/ptxprint/ptxprint.glade:5864
 msgid "The distance (mm) from the top of the page\n"
@@ -2224,12 +2336,18 @@ msgid "The distance (mm) from the top of the page\n"
 "where the the main text area starts.\n\n"
 "The top of the main text area is 1 base line spacing \n"
 "above the base line of the first line of the body text."
-msgstr ""
+msgstr "Jarak (mm) dari pinggir atas halaman\n"
+"ke tepi atas bagian teks. Ingat bahwa \n"
+"barispertama sebenarnya dimulai sedikit \n"
+"di bawah tepi atas bagian teks.\n\n"
+"Tepi atas bagian teks dimulai 1 ukuran baris \n"
+"di atas tepi bawah baris pertama teks badan."
 
 #: lib/ptxprint/ptxprint.glade:5551
 msgid "Start of Page to \n"
 "Top of Text (mm):"
-msgstr ""
+msgstr "Tepi Atas Halaman ke\n"
+"Bagian Atas Teks (mm):"
 
 #: lib/ptxprint/ptxprint.glade:5569
 msgid "The space (pt) between the bottom of the header\n"
@@ -2238,12 +2356,18 @@ msgid "The space (pt) between the bottom of the header\n"
 "where the the main text area starts.\n\n"
 "The top of the main text area is 1 base line spacing \n"
 "above the base line of the first line of the body text."
-msgstr ""
+msgstr "Jarak (pt) di antara bagian bawah hulu\n"
+"dan tepi atas bagian teks badan. Ingat bahwa \n"
+"barispertama sebenarnya dimulai sedikit \n"
+"di bawah tepi atas bagian teks.\n\n"
+"Tepi atas bagian teks dimulai 1 ukuran baris \n"
+"di atas tepi bawah baris pertama teks badan."
 
 #: lib/ptxprint/ptxprint.glade:5578
 msgid "Bottom of Header\n"
 "to Top of Text (pt):"
-msgstr ""
+msgstr "Bawah Hulu\n"
+"ke Atas Teks (pt):"
 
 #: lib/ptxprint/ptxprint.glade:5595
 msgid "This setting determines the vertical positioning\n"
@@ -2251,7 +2375,11 @@ msgid "This setting determines the vertical positioning\n"
 "between the header and the top of the text. (pts)\n\n"
 "The top of the main text area is 1 base line spacing \n"
 "above the base line of the first line of the body text."
-msgstr ""
+msgstr "Pengaturan ini menentukan posisi vertikal\n"
+"baris hulu, dengan mengatur jumlah ruang\n"
+"antara hulu dan tepi atas bagian teks. (pt)\n\n"
+"Tepi atas bagian teks dimulai 1 ukuran baris \n"
+"di atas tepi bawah baris pertama teks badan."
 
 #: lib/ptxprint/ptxprint.glade:5626 lib/ptxprint/ptxprint.glade:5716
 msgid "The distance (mm) from the bottom of the \n"
@@ -2259,29 +2387,39 @@ msgid "The distance (mm) from the bottom of the \n"
 "The bottom of the main text area is calculated\n"
 "from the descender of the final line of text \n"
 "(including any footnotes)."
-msgstr ""
+msgstr "Jarak (mm) dari tepi bawah bagian \n"
+"teks badan ke tepi bawah halaman.\n\n"
+"Tepi bawah bagian teks badan dihitung\n"
+"dari tepi bawah baris terakhir di teks\n"
+"(termasuk catatan kaki)."
 
 #: lib/ptxprint/ptxprint.glade:5635
 msgid "Bottom of Text to\n"
 "End of Page (mm):"
-msgstr ""
+msgstr "Bawah Teks ke Tepi \n"
+"Bawah Halaman (mm):"
 
 #: lib/ptxprint/ptxprint.glade:5651
 msgid "The distance (mm) from the TOP of the footer \n"
 "area (the ascender) to the bottom of the page. \n"
 "Note that (by default) only the introduction \n"
 "pages use the footer for page numbers."
-msgstr ""
+msgstr "Jarak (mm) dari TEPI ATAS suku halaman\n"
+"ke tepi bawah halaman. Perhatikan bahwa \n"
+"(menurut standar) hanya halaman pendahuluan\n"
+"menggunakan suku untuk nomor halaman."
 
 #: lib/ptxprint/ptxprint.glade:5658
 msgid "Top of Footer to\n"
 "End of Page (mm):"
-msgstr ""
+msgstr "Atas Suku ke Tepi \n"
+"Bawah Halaman (mm):"
 
 #: lib/ptxprint/ptxprint.glade:5674
 msgid "This setting can be used to increase/decrease the \n"
 "space between the end of the text and the footer line."
-msgstr ""
+msgstr "Pengaturan ini dapat digunakan untuk menambah/mengurangi\n"
+"jarak antara akhir teks dan baris suku halaman."
 
 #: lib/ptxprint/ptxprint.glade:5748 lib/ptxprint/ptxprint.glade:5772
 msgid "The distance (mm) from the edge of the page\n"
@@ -2290,7 +2428,12 @@ msgid "The distance (mm) from the edge of the page\n"
 "to be identical. If you require a greater inner\n"
 "margin, then use the Binding Gutter setting\n"
 "above."
-msgstr ""
+msgstr "Jarak (mm) dari tepi halaman ke tepi bagian \n"
+"teks. Perhatikan bahwa tepi kiri dan kanan \n"
+"(atau dalam dan luar) diatur menjadi \n"
+"ukuran yang sama. Jika Anda membutuhkan \n"
+"tepi dalam yang lebih luas, gunakan pengaturan \n"
+"Tepi Halaman Dekat Jilidan di atas."
 
 #: lib/ptxprint/ptxprint.glade:5757
 msgid "Side Margin\n"
@@ -2309,12 +2452,16 @@ msgid "The space (pt) between the horizontal rule\n"
 "where the the main text area starts.\n\n"
 "The top of the main text area is 1 base line spacing \n"
 "above the base line of the first line of the body text."
-msgstr ""
+msgstr "Jarak (pt) antara pengukur horisontal\n"
+"dan tepi atas bagian teks badan.\n\n"
+"Tepi atas bagian teks dimulai 1 ukuran baris \n"
+"di atas tepi bawah baris pertama teks badan."
 
 #: lib/ptxprint/ptxprint.glade:5814
 msgid "Space between Rule\n"
 "and Top of Text (pt):"
-msgstr ""
+msgstr "Jarak antara Penggaris\n"
+"dan Bagian Atas Teks (pt):"
 
 #: lib/ptxprint/ptxprint.glade:5898
 msgid "Fine Tune Top Margin:\n\n"
@@ -2350,7 +2497,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:6076
 msgid "Horizontal Rule"
-msgstr ""
+msgstr "Garis Pengukur Horisontal"
 
 #: lib/ptxprint/ptxprint.glade:6081
 msgid "Check this option to add a horizontal\n"
@@ -2368,7 +2515,8 @@ msgstr ""
 #: lib/ptxprint/ptxprint.glade:6109
 msgid "Start of Page to\n"
 "Top of Header:"
-msgstr ""
+msgstr "Pinggir Atas Halaman\n"
+"ke Atas Hulu:"
 
 #: lib/ptxprint/ptxprint.glade:6132
 msgid "8.5mm"
@@ -2379,12 +2527,16 @@ msgid "This value is calculated using the\n"
 "other values (Start of Page to\n"
 "Top of Text, and Bottom of Header\n"
 "to Top of Text)."
-msgstr ""
+msgstr "Nilai ini dihitung menggunakan\n"
+"nilai lain (Pinggir Atas Halaman ke\n"
+"Bagian Atas Teks, dan Bagian \n"
+"Bawah Hulu ke Bagian Atas Teks)."
 
 #: lib/ptxprint/ptxprint.glade:6153
 msgid "(value is\n"
 "derived)"
-msgstr ""
+msgstr "(nilai \n"
+"diturunkan)"
 
 #: lib/ptxprint/ptxprint.glade:6177 lib/ptxprint/ptxprint.glade:6189
 #: lib/ptxprint/ptxprint.glade:6201 lib/ptxprint/ptxprint.glade:11343
@@ -2660,7 +2812,15 @@ msgid "Enabling letter spacing allows the spaces between\n"
 "Note that if this option is disabled, then it is due to\n"
 "the Interlinear option being set on the Advanced page.\n"
 "These two settings are mutually exclusive."
-msgstr ""
+msgstr "Mengaktifkan Penyesuaian Jarak Antar Huruf memungkinkan jarak antara\n"
+"karakter disesuaikan (biasanya dengan persentase sangat kecil). \n"
+"Ini dapat membantu meringankan masalah ruang. Nilai dalam persentase \n"
+"dari ukuran teks (pt) dan akan digunakan di mana saja. Gunakan \n"
+"pengaturan ini hanya jika benar-benar dibutuhkan! Dalam banyak \n"
+"situasi pengaturan ini dapat membuat teks terlihat sangat jelek.\n\n"
+"Jika pilihan ini dinonaktifkan, berarti pilihan Interlinear telah \n"
+"diatur pada halaman Lanjutan. Kedua pengaturan tersebut \n"
+"tidak dapat digunakan bersama."
 
 #: lib/ptxprint/ptxprint.glade:6914
 msgid "When justifying paragraphs, and especially when\n"
@@ -3507,7 +3667,7 @@ msgstr ""
 #: lib/ptxprint/ptxprint.glade:9222
 msgid "Space Above Rule"
 msgstr "Ruang Kosong\n"
-"di Atas Garis"
+"di Atas Garis Pengukur"
 
 #: lib/ptxprint/ptxprint.glade:9238
 msgid "Space Below Rule"
@@ -4348,11 +4508,11 @@ msgstr "Bagaimana?"
 
 #: lib/ptxprint/ptxprint.glade:11773
 msgid "Omit Captions "
-msgstr ""
+msgstr "Sembunyikan Keterangan Gambar "
 
 #: lib/ptxprint/ptxprint.glade:11789
 msgid "Omit References (ch:vs)"
-msgstr ""
+msgstr "Sembunyikan Referensi (psl:ayat)"
 
 #: lib/ptxprint/ptxprint.glade:11813
 msgid "Include Pictures (illustrations)"
@@ -5828,11 +5988,18 @@ msgid "Select the appropriate standard \n"
 "Transparency (if CMYK is required)\n"
 "Archive (largest size, for keeping long-term)\n\n"
 "Note: All comply with archive standard PDF/A-1b."
-msgstr ""
+msgstr "Pilih standar yang diperlukan\n"
+"agar format PDF dapat dioptimalkan\n"
+"untuk tujuan yang dimaksudkan.\n\n"
+"Digital (ukuran terkecil, untuk pencetakan lokal)\n"
+"Cetak (untuk percetakan profesional)\n"
+"Transparansi (jika CMYK diperlukan)\n"
+"Arsip (ukuran terbesar, untuk penyimpanan jangka panjang)\n\n"
+"Catatan: Semuanya mematuhi standar arsip PDF/A-1b."
 
 #: lib/ptxprint/ptxprint.glade:17209
 msgid "PDF Output Format:"
-msgstr ""
+msgstr "Format PDF:"
 
 #: lib/ptxprint/ptxprint.glade:17269
 msgid "Show Error Bars For Overfull Lines"
@@ -5886,7 +6053,17 @@ msgid "Convert Paratext's interlinear data\n"
 "the Spacing Adjustments Between Letters (on the\n"
 "Fonts+Scripts page) will be disabled as these two\n"
 "settings are mutually exclusive."
-msgstr ""
+msgstr "Konversi teks interlinear Paratext\n"
+"ke ruby ​​(glossing) supaya\n"
+"teks interlinear dapat dicetak.\n\n"
+"Anda mungkin perlu menyesuaikan\n"
+"gaya markah berikut:\n"
+"   \\rb untuk teks dasar\n"
+"   \\gloss|rb untuk teks arti singkat\n\n"
+"Jika pilihan Interlinear ini diaktifkan, maka\n"
+"Penyesuaian Jarak Antar Huruf (pada Halaman \n"
+"Fon+Tulisan) akan dinonaktifkan karena dua \n"
+"pengaturan tersebut tidak cocok satu sama lain."
 
 #: lib/ptxprint/ptxprint.glade:17367
 msgid "Interlinear language code to use.\n"
@@ -6287,7 +6464,7 @@ msgstr "Lgk"
 
 #: lib/ptxprint/ptxprint.glade:18582
 msgid "v More /^ Less"
-msgstr ""
+msgstr "v Lebih banyak /^ Lebih sedikit"
 
 #: lib/ptxprint/ptxprint.glade:18625
 msgid "Several PTXprint interface languages are \n"
