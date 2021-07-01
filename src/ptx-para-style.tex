@@ -1013,8 +1013,11 @@
        \kern\ifRTL\rightskip\else\leftskip\fi}%
      %\ifRTL\let\c@tcmd=\rightcutout\else\let\c@tcmd=\leftcutout\fi
      %\x@\c@tcmd\x@{\the\ch@pterwd}{\t@std@lay}{2}%
+     \raise@test{chapter}%
+     \ifx\t@str@ise\else\ifnum \t@str@ise=1
+      \vadjust pre {\nobreak}% Prevent break before this line if the box is raised
+     \fi\fi
      \vadjust{\vbox to 0pt{\kern-\dp\str@tbox \kern-\ht\ch@pterbox              %(2)
-      \raise@test{chapter}%
       \ifx\t@str@ise\relax \else \kern-\t@str@ise\baselineskip \fi
       \ifRTL\let\n@xt\rightline\else\let\n@xt\leftline\fi
       \n@xt{\ifRTL\beginR\fi\box\ch@pterbox\ifRTL\endR\fi}\vss}%
