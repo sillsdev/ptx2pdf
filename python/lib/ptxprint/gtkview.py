@@ -590,13 +590,13 @@ class GtkViewModel(ViewModel):
             # Turn Essential Settings ON
             for c in ("c_mainBodyText", "c_skipmissingimages"):
                 self.builder.get_object(c).set_active(True)
-            self.builder.get_object("btn_showMoreOrLess").set_label("v  Show More")
+            self.builder.get_object("btn_showMoreOrLess").set_label(_("v  Show More"))
             self.builder.get_object("btn_showMoreOrLess").set_tooltip_text( \
                 _("Show More Settings:\n" + \
                 "There are many more complex options\n" + \
                 "available for use within PTXprint."))
         else:
-            self.builder.get_object("btn_showMoreOrLess").set_label("^  Show Less")
+            self.builder.get_object("btn_showMoreOrLess").set_label(_("^  Show Less"))
             self.builder.get_object("btn_showMoreOrLess").set_tooltip_text( \
                 _("Show Fewer Settings:\n" + \
                 "If the settings are too overwhelming then\n" + \
@@ -752,6 +752,9 @@ class GtkViewModel(ViewModel):
             self.builder.get_object(w).set_sensitive(not self.printReason)
         
     def onOK(self, btn):
+        if self.otherDiglot is not None:
+            self.onDiglotSwitchClicked(self.builder.get_object("btn_diglotSwitch"))
+            return
         if isLocked():
             self.set("l_statusLine", _("Printing busy"))
             return
@@ -2436,6 +2439,7 @@ class GtkViewModel(ViewModel):
             btn.set_label(_("Switch to Other\nDiglot Project"))
             # self.set("c_diglot", True)
             # self.builder.get_object("c_diglot").set_sensitive(True)
+            self.builder.get_object("b_print").set_label(_("Print"))
         elif self.get("c_diglot"):
             oprjid = self.get("fcb_diglotSecProject")
             oconfig = self.get("ecb_diglotSecConfig")
@@ -2444,6 +2448,7 @@ class GtkViewModel(ViewModel):
                 # self.set("c_diglot", False)
                 # self.builder.get_object("c_diglot").set_sensitive(False)
                 btn.set_label(_("Save & Return to\nDiglot Project"))
+                self.builder.get_object("b_print").set_label(_("Return"))
         self.onSaveConfig(None)
         if oprjid is not None and oconfig is not None:
             self.set("fcb_project", oprjid)

@@ -11774,6 +11774,9 @@ attribute.  Note: w= web, a=app, p=print.</property>
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">True</property>
                                                     <property name="receives_default">False</property>
+                                                    <property name="tooltip_text" translatable="yes">If you want to suppress the picture
+captions from being displayed below
+the picture, then check this option.</property>
                                                     <property name="halign">start</property>
                                                     <property name="draw_indicator">True</property>
                                                     <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
@@ -11790,6 +11793,11 @@ attribute.  Note: w= web, a=app, p=print.</property>
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">True</property>
                                                     <property name="receives_default">False</property>
+                                                    <property name="tooltip_text" translatable="yes">If you only want to suppress the 
+reference part of the caption,
+then check this option. Note that
+it is not possible to just have the
+references without the captions.</property>
                                                     <property name="halign">start</property>
                                                     <property name="draw_indicator">True</property>
                                                   </object>
@@ -12038,7 +12046,7 @@ Ref:</property>
                                                 </child>
                                                 <child>
                                                   <object class="GtkEntry" id="t_plRef">
-                                                    <property name="width_request">90</property>
+                                                    <property name="width_request">115</property>
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">True</property>
                                                     <property name="tooltip_text" translatable="yes">The reference in the caption can be a single Ch:Vs or 
@@ -12046,7 +12054,7 @@ a range of verses 6:17-29. This Caption Ref is different
 from and independent of the Anchor Ref setting.
 </property>
                                                     <property name="halign">start</property>
-                                                    <property name="width_chars">8</property>
+                                                    <property name="width_chars">0</property>
                                                   </object>
                                                   <packing>
                                                     <property name="left_attach">6</property>
@@ -12084,6 +12092,7 @@ from and independent of the Anchor Ref setting.
                                                 </child>
                                                 <child>
                                                   <object class="GtkEntry" id="t_plFilename">
+                                                    <property name="width_request">115</property>
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">True</property>
                                                     <property name="tooltip_text" translatable="yes">Note that any changes you make to the filename
@@ -12093,7 +12102,7 @@ information manually in Paratext if you change
 things here in PTXprint.</property>
                                                     <property name="halign">start</property>
                                                     <property name="hexpand">True</property>
-                                                    <property name="width_chars">14</property>
+                                                    <property name="width_chars">0</property>
                                                   </object>
                                                   <packing>
                                                     <property name="left_attach">6</property>
@@ -12588,13 +12597,14 @@ be set here.</property>
                                                 </child>
                                                 <child>
                                                   <object class="GtkEntry" id="t_piccreditbox">
+                                                    <property name="width_request">115</property>
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">True</property>
                                                     <property name="tooltip_text" translatable="yes">Credit overlay position and style</property>
                                                     <property name="halign">start</property>
                                                     <property name="margin_top">3</property>
                                                     <property name="margin_bottom">3</property>
-                                                    <property name="width_chars">12</property>
+                                                    <property name="width_chars">0</property>
                                                   </object>
                                                   <packing>
                                                     <property name="left_attach">6</property>
@@ -18761,6 +18771,12 @@ be displayed (in red) just to the left.</property>
                 <property name="tooltip_text" translatable="yes">Apply any changes specified, save the
 current configuration (if not locked) and
 produce a PDF with the settings specified.
+
+If this button is labelled 'Return' then it
+means you are currently adjusting the 
+settings for a project associated to a
+Diglot project, and will need to return to
+the primary project before you can print.
 
 Shortcut key: &lt;Ctrl-P&gt;</property>
                 <property name="halign">start</property>
