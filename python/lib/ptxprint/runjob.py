@@ -422,7 +422,6 @@ class RunJob:
         else:
             chaprange = (-1, -1)
         for b in jobs:
-            import pdb; pdb.set_trace()
             try:
                 out = info.convertBook(b, chaprange, self.tmpdir, self.prjdir)
                 digout = diginfo.convertBook(b, chaprange, self.tmpdir, digprjdir, letterspace="\ufdd1")
