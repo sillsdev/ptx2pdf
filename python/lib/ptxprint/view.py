@@ -1261,7 +1261,7 @@ class ViewModel:
         temps = []
         for a in (".pdf", ):
             temps.extend([x.replace(".xdv", a) for x in self.tempFiles if x.endswith(".xdv")])
-        for f in self.tempFiles + runjob.picfiles + temps:
+        for f in set(self.tempFiles + runjob.picfiles + temps):
             pf = os.path.join(self.working_dir, f)
             if os.path.exists(pf):
                 outfname = os.path.relpath(pf, self.settings_dir)
