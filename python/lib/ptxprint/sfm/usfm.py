@@ -361,6 +361,8 @@ class parser(sfm.parser):
                         return False
                     p = p.parent
             return True
+        elif self._escaped_tag.match(str(tok)):
+            return True
         super()._force_close(parent, tok, tag)
         return False
 
