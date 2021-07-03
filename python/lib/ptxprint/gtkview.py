@@ -2499,7 +2499,7 @@ class GtkViewModel(ViewModel):
                     _("A fallback font is not required so\nthe 'Use Fallback Font' option will be disabled."))
         self.sensiVisible("c_useFallbackFont")
         
-    def msgQuestion(self, title, question):
+    def msgQuestion(self, title, question, default=False):
         par = self.builder.get_object('ptxprint')
         dialog = Gtk.MessageDialog(parent=par, flags=Gtk.DialogFlags.MODAL, type=Gtk.MessageType.QUESTION, buttons=Gtk.ButtonsType.YES_NO, message_format=title)
         dialog.format_secondary_text(question)

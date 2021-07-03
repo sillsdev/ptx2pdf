@@ -168,10 +168,10 @@ class ViewModel:
     def setPrintBtnStatus(self, idnty, txt=""):
         self.doStatus(txt)
         
-    def msgQuestion(self, q1, q2):
+    def msgQuestion(self, q1, q2, default=False):
         print("Answering \"no\" to: " + q1)
         print(q2)
-        return False
+        return default
 
     def resetToInitValues(self):
         if self.ptsettings is not None and self.ptsettings.dir == "right":
@@ -889,7 +889,7 @@ class ViewModel:
         if len(existingFilelist):
             q1 = _("One or more Paragraph Adjust file(s) already exist!")
             q2 = "\n".join(existingFilelist)+_("\n\nDo you want to OVERWRITE the above-listed file(s)?")
-            if not self.msgQuestion(q1, q2):
+            if not self.msgQuestion(q1, q2, default=True):
                 return
         for bk in booklist:
             try:
