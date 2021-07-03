@@ -895,8 +895,9 @@ class ViewModel:
             try:
                 u = usfms.get(bk)
             except SyntaxError:
-                self.doError(_("Syntax error in UFSM data"), secondary=_("In order to generate an AdjList for this book the \n"+
-                                                                         "syntax error(s) in the data need to be resolved."))
+                self.doError(_("Syntax error in UFSM data for {}".format(bk)), \
+                            secondary=_("In order to generate an AdjList for this book the \n"+
+                                        "syntax error(s) in the data need to be resolved."))
                 return
             adjlist = u.make_adjlist()
             fname = self.getBookFilename(bk)
