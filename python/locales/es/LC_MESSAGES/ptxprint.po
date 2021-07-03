@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ptxprint\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-01 09:00+0700\n"
-"PO-Revision-Date: 2021-07-01 02:01\n"
+"POT-Creation-Date: 2021-07-03 18:19+0700\n"
+"PO-Revision-Date: 2021-07-03 11:20\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -29,7 +29,7 @@ msgid "Permission for {} series:\n"
 msgstr "Permiso para la serie {}:\n"
 "{}"
 
-#: lib/ptxprint/gtkstyleditor.py:167 lib/ptxprint/ptxprint.glade:16043
+#: lib/ptxprint/gtkstyleditor.py:167 lib/ptxprint/ptxprint.glade:16053
 msgid "Line Spacing\n"
 "Factor:"
 msgstr "Factor de Espaciado \n"
@@ -39,7 +39,7 @@ msgstr "Factor de Espaciado \n"
 msgid "Baseline:"
 msgstr "Línea base:"
 
-#: lib/ptxprint/gtkstyleditor.py:168 lib/ptxprint/ptxprint.glade:15617
+#: lib/ptxprint/gtkstyleditor.py:168 lib/ptxprint/ptxprint.glade:15627
 msgid "Font Size\n"
 "Factor:"
 msgstr "Factor de tamaño \n"
@@ -75,6 +75,10 @@ msgstr "Paratext no está instalado en este sistema.\n"
 msgid "No project set"
 msgstr "No hay proyectos"
 
+#: lib/ptxprint/gtkview.py:593
+msgid "v  Show More"
+msgstr ""
+
 #: lib/ptxprint/gtkview.py:595
 msgid "Show More Settings:\n"
 "There are many more complex options\n"
@@ -82,6 +86,10 @@ msgid "Show More Settings:\n"
 msgstr "Mostrar más ajustes:\n"
 "Hay muchas opciones más complejas\n"
 "disponibles para usar dentro de PTXprint."
+
+#: lib/ptxprint/gtkview.py:599
+msgid "^  Show Less"
+msgstr ""
 
 #: lib/ptxprint/gtkview.py:601
 msgid "Show Fewer Settings:\n"
@@ -93,21 +101,21 @@ msgstr "Mostrar menos ajustes:\n"
 
 #: lib/ptxprint/gtkview.py:691
 msgid "Can't get {} in the model. Returning {}"
-msgstr ""
+msgstr "No se puede obtener {} en el modelo. Devuelve {}"
 
 #: lib/ptxprint/gtkview.py:704
 msgid "Can't set {} in the model"
 msgstr "No se puede establecer {} en el modelo"
 
-#: lib/ptxprint/gtkview.py:756
+#: lib/ptxprint/gtkview.py:759
 msgid "Printing busy"
 msgstr "Impresora ocupada"
 
-#: lib/ptxprint/gtkview.py:760 lib/ptxprint/runjob.py:200
+#: lib/ptxprint/gtkview.py:763 lib/ptxprint/runjob.py:200
 msgid "No books to print"
 msgstr "No hay libros para imprimir"
 
-#: lib/ptxprint/gtkview.py:783
+#: lib/ptxprint/gtkview.py:786
 msgid "                   >>> PLEASE CLOSE the PDF <<<                     \n\n"
 "{}\n\n"
 " Or use a different PDF viewer which will                              \n"
@@ -121,67 +129,67 @@ msgstr "                   >>> POR FAVOR CIERRE el PDF <<<<                     
 " Vea 'Enlaces' en la pestaña Vista para más detalles.                            \n\n"
 "                        ¿Quieres intentarlo de nuevo?"
 
-#: lib/ptxprint/gtkview.py:788
+#: lib/ptxprint/gtkview.py:791
 msgid "The old PDF file is open!"
 msgstr "¡El antiguo archivo PDF está abierto!"
 
-#: lib/ptxprint/gtkview.py:854
+#: lib/ptxprint/gtkview.py:857
 msgid "Internal error occurred, trying to delete a directory tree"
 msgstr "Se produjo un error interno al tratar de eliminar un árbol de directorios"
 
-#: lib/ptxprint/gtkview.py:854 lib/ptxprint/gtkview.py:859
+#: lib/ptxprint/gtkview.py:857 lib/ptxprint/gtkview.py:862
 msgid "Folder: "
 msgstr "Carpeta: "
 
-#: lib/ptxprint/gtkview.py:859
+#: lib/ptxprint/gtkview.py:862
 msgid "Can't delete that configuration from disk"
 msgstr "No se puede borrar esa configuración del disco"
 
-#: lib/ptxprint/gtkview.py:946 lib/ptxprint/ptxprint.glade:13573
+#: lib/ptxprint/gtkview.py:949 lib/ptxprint/ptxprint.glade:13583
 msgid "Pictures"
 msgstr "Ilustraciones"
 
-#: lib/ptxprint/gtkview.py:949 lib/ptxprint/ptxprint.glade:13995
+#: lib/ptxprint/gtkview.py:952 lib/ptxprint/ptxprint.glade:14005
 msgid "Diglot"
 msgstr "Proyecto bilingüe"
 
-#: lib/ptxprint/gtkview.py:952
+#: lib/ptxprint/gtkview.py:955
 msgid "Notes+"
 msgstr "Notas+"
 
-#: lib/ptxprint/gtkview.py:952
+#: lib/ptxprint/gtkview.py:955
 msgid "Refs"
 msgstr "Referencias"
 
-#: lib/ptxprint/gtkview.py:956 lib/ptxprint/gtkview.py:957
+#: lib/ptxprint/gtkview.py:959 lib/ptxprint/gtkview.py:960
 msgid "Tabs"
 msgstr "Pestañas"
 
-#: lib/ptxprint/gtkview.py:958 lib/ptxprint/gtkview.py:959
+#: lib/ptxprint/gtkview.py:961 lib/ptxprint/gtkview.py:962
 msgid "Borders"
 msgstr "Bordes"
 
-#: lib/ptxprint/gtkview.py:970 lib/ptxprint/ptxprint.glade:17598
+#: lib/ptxprint/gtkview.py:973 lib/ptxprint/ptxprint.glade:17608
 msgid "Advanced"
 msgstr "Avanzado"
 
-#: lib/ptxprint/gtkview.py:1086 lib/ptxprint/ptxprint.glade:4666
+#: lib/ptxprint/gtkview.py:1089 lib/ptxprint/ptxprint.glade:4666
 msgid "Lock"
 msgstr "Bloquear"
 
-#: lib/ptxprint/gtkview.py:1089
+#: lib/ptxprint/gtkview.py:1092
 msgid "Unlock"
 msgstr "Desbloquear"
 
-#: lib/ptxprint/gtkview.py:1247
+#: lib/ptxprint/gtkview.py:1250
 msgid " A tool to help create Front Matter (the FRT book) may show up here in future."
 msgstr " Una herramienta para ayudar a crear Portada (el libro del FRT) puede aparecer aquí en el futuro."
 
-#: lib/ptxprint/gtkview.py:1285
+#: lib/ptxprint/gtkview.py:1288
 msgid " Use the 'Advanced' tab to select which settings you want to view or edit."
 msgstr " Utiliza la pestaña 'Avanzado' para seleccionar los ajustes que deseas ver o editar."
 
-#: lib/ptxprint/gtkview.py:1300
+#: lib/ptxprint/gtkview.py:1303
 msgid "\n\n"
 "-------------------------------------                                            \n"
 "[File has been truncated for display]                                            \n"
@@ -191,7 +199,7 @@ msgstr "\n\n"
 "[El archivo ha sido truncado para su visualización]                                            \n"
 "Haz clic en el botón Ver/Editar... para ver más."
 
-#: lib/ptxprint/gtkview.py:1307
+#: lib/ptxprint/gtkview.py:1310
 msgid "\n"
 "This file doesn't exist yet.\n\n"
 "Try clicking...                                                \n"
@@ -203,27 +211,27 @@ msgstr "\n"
 "   * el botón 'Generar'                                                \n"
 "   * el botón 'Imprimir' para crear primero el PDF"
 
-#: lib/ptxprint/gtkview.py:1527
+#: lib/ptxprint/gtkview.py:1530
 msgid "Remove Intermediate Files and Logs?"
 msgstr "¿Quitar los archivos y registros intermedios?"
 
-#: lib/ptxprint/gtkview.py:1528
+#: lib/ptxprint/gtkview.py:1531
 msgid "Are you sure you want to delete\n"
 "ALL the temporary PTXprint files?"
 msgstr "¿Estás seguro de que quieres borrar\n"
 "TODOS los archivos temporales de PTXprint?"
 
-#: lib/ptxprint/gtkview.py:1555
+#: lib/ptxprint/gtkview.py:1558
 msgid "Warning: Could not delete some file(s) or folders(s):"
 msgstr "Advertencia: No se pueden borrar algunos archivos o carpetas:"
 
-#: lib/ptxprint/gtkview.py:1927
+#: lib/ptxprint/gtkview.py:1930
 msgid "'Enable Colored Text' has now been turned on.\n"
 "See Fonts+Script tab for details."
 msgstr "'Habilitar Texto Coloreado' ahora ha sido activado.\n"
 "Vea la pestaña de Fuentes+Script para más detalles."
 
-#: lib/ptxprint/gtkview.py:2101
+#: lib/ptxprint/gtkview.py:2104
 msgid "\n"
 "This file doesn't exist yet!\n\n"
 "Edit here and Click 'Save' to create it."
@@ -231,89 +239,98 @@ msgstr "\n"
 "¡Este archivo no existe todavía!\n\n"
 "Edite aquí y haga clic en 'Guardar' para crearlo."
 
-#: lib/ptxprint/gtkview.py:2143
+#: lib/ptxprint/gtkview.py:2146
 msgid "% This is the .tex file specific for the {} project used by PTXprint.\n"
 "% Saved Configuration name: {}\n"
 msgstr "% Este es el archivo .tex específico para el proyecto {} usado por PTXprint.\n"
 "% Nombre de configuración guardada: {}\n"
 
-#: lib/ptxprint/gtkview.py:2150
+#: lib/ptxprint/gtkview.py:2153
 msgid "% This is the preprocessing .tex file specific for the {} project used by PTXprint.\n"
 "% Saved Configuration name: {}\n"
 msgstr "% Este es el archivo .tex de preprocesamiento específico para el proyecto {} utilizado por PTXprint.\n"
 "% Nombre de configuración guardado: {}\n"
 
-#: lib/ptxprint/gtkview.py:2210
+#: lib/ptxprint/gtkview.py:2213
 msgid "Select the location and name for the Archive file"
 msgstr "Seleccione la ubicación y el nombre para el archivo"
 
-#: lib/ptxprint/gtkview.py:2265
+#: lib/ptxprint/gtkview.py:2268
 msgid "Select the folder containing image files"
 msgstr "Seleccione la carpeta que contiene los archivos de imagen"
 
-#: lib/ptxprint/gtkview.py:2303
+#: lib/ptxprint/gtkview.py:2306
 msgid "Select one or more PDF(s) for FRONT matter"
 msgstr "Seleccione uno o más PDF(s) para las páginas Iniciales"
 
-#: lib/ptxprint/gtkview.py:2307
+#: lib/ptxprint/gtkview.py:2310
 msgid "Select one or more PDF(s) for BACK matter"
 msgstr "Seleccione uno o más PDF(s) para las páginas finales"
 
-#: lib/ptxprint/gtkview.py:2311
+#: lib/ptxprint/gtkview.py:2314
 msgid "Select Watermark PDF file"
 msgstr "Seleccione el archivo PDF para la marca de agua"
 
-#: lib/ptxprint/gtkview.py:2316
+#: lib/ptxprint/gtkview.py:2319
 msgid "Select Page Border PDF file"
 msgstr "Seleccione el PDF para el Borde de Página"
 
-#: lib/ptxprint/gtkview.py:2321
+#: lib/ptxprint/gtkview.py:2324
 msgid "Select Section Header PDF file"
 msgstr "Seleccione el PDF para el Encabezado de Sección"
 
-#: lib/ptxprint/gtkview.py:2326
+#: lib/ptxprint/gtkview.py:2329
 msgid "Select End of Book PDF file"
 msgstr "Seleccione el PDF para el Fin de Libro"
 
-#: lib/ptxprint/gtkview.py:2331
+#: lib/ptxprint/gtkview.py:2334
 msgid "Select Verse Decorator PDF file"
 msgstr "Seleccione el PDF para el Decorador de Versículo"
 
-#: lib/ptxprint/gtkview.py:2436
+#: lib/ptxprint/gtkview.py:2439
 msgid "Switch to Other\n"
 "Diglot Project"
 msgstr "Cambiar a otro\n"
 "Proyecto bilingüe"
 
-#: lib/ptxprint/gtkview.py:2446
+#: lib/ptxprint/gtkview.py:2442 lib/ptxprint/ptxprint.glade:12504
+#: lib/ptxprint/ptxprint.glade:18766
+msgid "Print"
+msgstr "Imprimir"
+
+#: lib/ptxprint/gtkview.py:2450
 msgid "Save & Return to\n"
 "Diglot Project"
 msgstr "Guardar y volver \n"
 "al proyecto bilingüe"
 
-#: lib/ptxprint/gtkview.py:2493
+#: lib/ptxprint/gtkview.py:2451
+msgid "Return"
+msgstr ""
+
+#: lib/ptxprint/gtkview.py:2498
 msgid "FYI: The Regular font already supports all the characters in the text."
 msgstr "Para tu información: La Fuente Regular ya soporta todos los caracteres del texto."
 
-#: lib/ptxprint/gtkview.py:2494
+#: lib/ptxprint/gtkview.py:2499
 msgid "A fallback font is not required so\n"
 "the 'Use Fallback Font' option will be disabled."
 msgstr "No se requiere una fuente alternativa, así que...\n"
 "la opción 'Usar fuente alternativa' estará desactivada."
 
-#: lib/ptxprint/gtkview.py:2745
+#: lib/ptxprint/gtkview.py:2750
 msgid "Choose Image"
 msgstr "Elegir imagen"
 
-#: lib/ptxprint/gtkview.py:2880
+#: lib/ptxprint/gtkview.py:2885
 msgid "Unsupported Locale"
 msgstr "Localidad no admitida"
 
-#: lib/ptxprint/gtkview.py:2881
+#: lib/ptxprint/gtkview.py:2886
 msgid "This locale is not supported on your system, you may need to install it"
 msgstr "Esta configuración regional no es compatible con su sistema, es posible que tenga que instalarla"
 
-#: lib/ptxprint/gtkview.py:3030
+#: lib/ptxprint/gtkview.py:3035
 msgid "FYI: This Interlinear option is not compatible with the\n"
 "'Spacing Adjustments Between Letters' on the Fonts+Script page.\n"
 "So that option has just been disabled."
@@ -474,57 +491,57 @@ msgstr "No se ha creado: "
 msgid "Rerun to fix: "
 msgstr "Vuelva a ejecutar para arreglar: "
 
-#: lib/ptxprint/runjob.py:464
+#: lib/ptxprint/runjob.py:463
 msgid "Failed to merge texts due to a Syntax Error:"
 msgstr "No se combinaron los textos debido a un error de sintaxis:"
 
-#: lib/ptxprint/runjob.py:465
+#: lib/ptxprint/runjob.py:464
 msgid "\n\n"
 "If original USFM text is correct, then check if PrintDraftChanges.txt has caused the error(s)."
 msgstr "\n\n"
 "Si el texto original de USFM es correcto, verifique si el archivo PrintDraftChanges.txt ha causado el error."
 
-#: lib/ptxprint/runjob.py:467
+#: lib/ptxprint/runjob.py:466
 msgid "PTXprint [{}] - Diglot Merge Error!"
 msgstr "PTXprint [{}] - Error de combinación bilingüe!"
 
-#: lib/ptxprint/runjob.py:540
+#: lib/ptxprint/runjob.py:539
 msgid "table of contents"
 msgstr "índice de contenidos"
 
-#: lib/ptxprint/runjob.py:541
+#: lib/ptxprint/runjob.py:540
 msgid "image copyrights"
 msgstr "derechos de autor de las imágenes"
 
-#: lib/ptxprint/runjob.py:542
+#: lib/ptxprint/runjob.py:541
 msgid "chapter numbers"
 msgstr "números de capítulo"
 
-#: lib/ptxprint/runjob.py:543
+#: lib/ptxprint/runjob.py:542
 msgid "chapter positions"
 msgstr "posiciones del capítulo"
 
-#: lib/ptxprint/runjob.py:581
+#: lib/ptxprint/runjob.py:580
 msgid "Rerunning because the {} changed"
 msgstr "Volviendo a ejecutar porque el {} ha cambiado"
 
-#: lib/ptxprint/runjob.py:630
+#: lib/ptxprint/runjob.py:629
 msgid "Warning: Could not locate decorative PDF(s):"
 msgstr "Advertencia: No se puede localizar los PDF decorativos:"
 
-#: lib/ptxprint/runjob.py:771
+#: lib/ptxprint/runjob.py:770
 msgid "Error: Unable to convert/resize image!\n"
 "Image skipped:"
 msgstr "Error: ¡No se puede convertir/transformar la imagen!\n"
 "Imagen omitida:"
 
-#: lib/ptxprint/runjob.py:777
+#: lib/ptxprint/runjob.py:776
 msgid "Error: Unable to copy {}\n"
 "       image to {} in tmpPics folder"
 msgstr "Error: No se puede copiar {}\n"
 "       imagen a {} en la carpeta tmpPics"
 
-#: lib/ptxprint/runjob.py:809
+#: lib/ptxprint/runjob.py:808
 msgid "Warning: Could not delete\n"
 "temporary file(s) or folder(s):"
 msgstr "Advertencia: No se pudo borrar\n"
@@ -614,79 +631,88 @@ msgid "\n\n"
 msgstr "\n\n"
 "¿Quieres sobrescribir los archivos de la lista anterior?"
 
-#: lib/ptxprint/view.py:935
+#: lib/ptxprint/view.py:898
+msgid "Syntax error in UFSM data for {}"
+msgstr ""
+
+#: lib/ptxprint/view.py:899
+msgid "In order to generate an AdjList for this book the \n"
+"syntax error(s) in the data need to be resolved."
+msgstr ""
+
+#: lib/ptxprint/view.py:941
 msgid "Failed to Generate Hyphenation List"
 msgstr "No se generó la división de palabras"
 
-#: lib/ptxprint/view.py:936
+#: lib/ptxprint/view.py:942
 msgid "{} Paratext Project's Hyphenation file not found:\n"
 "{}"
 msgstr "{} No se ha encontrado el archivo de división de palabras del Proyecto en Paratext:\n"
 "{}"
 
-#: lib/ptxprint/view.py:973
+#: lib/ptxprint/view.py:979
 msgid "\n\n"
 "That is too many for XeTeX! List truncated to longest {} words found in the active sources."
 msgstr "\n\n"
 "¡Eso es demasiado para XeTeX! Lista truncada a las {} palabras más largas encontradas en las fuentes activas."
 
-#: lib/ptxprint/view.py:979
+#: lib/ptxprint/view.py:985
 msgid "Hyphenation List Generated"
 msgstr "Se generó la lista de división de palabras"
 
-#: lib/ptxprint/view.py:980
+#: lib/ptxprint/view.py:986
 msgid "{} hyphenated words were gathered\n"
 "from Paratext's Hyphenation Word List."
 msgstr "{} se recopilaron palabras con guión\n"
 "de la Lista de Palabras con Guión en Paratext."
 
-#: lib/ptxprint/view.py:982
+#: lib/ptxprint/view.py:988
 msgid "\n\n"
 "Note for Indic languages that {} words containing ZWJ"
 msgstr "\n\n"
 "Nota para los idiomas índicos que {} palabras que contienen ZWJ"
 
-#: lib/ptxprint/view.py:983
+#: lib/ptxprint/view.py:989
 msgid "\n"
 "and ZWNJ characters have been left off the hyphenation list."
 msgstr "\n"
 "y los caracteres ZWNJ se han dejado fuera de la lista de división de palabras."
 
-#: lib/ptxprint/view.py:985
+#: lib/ptxprint/view.py:991
 msgid "\n\n"
 "{} words were at least 10 characters long but had no hyphenation marked"
 msgstr "\n\n"
 "{} palabras tenían al menos 10 caracteres de longitud pero no tenían ningún guión marcado"
 
-#: lib/ptxprint/view.py:988
+#: lib/ptxprint/view.py:994
 msgid "Hyphenation List was NOT Generated"
 msgstr "NO se generó la lista de división de palabras"
 
-#: lib/ptxprint/view.py:989
+#: lib/ptxprint/view.py:995
 msgid "No valid words were found in Paratext's Hyphenation List"
 msgstr "No se encontraron palabras válidas en el archivo hyphenatedWords.txt de Paratext"
 
-#: lib/ptxprint/view.py:1032
+#: lib/ptxprint/view.py:1038
 msgid "The Fallback Font needs to be something other than the Regular Font."
 msgstr "La fuente alternativa tiene que ser diferente que la fuente normal."
 
-#: lib/ptxprint/view.py:1033 lib/ptxprint/view.py:1041
+#: lib/ptxprint/view.py:1039 lib/ptxprint/view.py:1047
 msgid "Please select a different Font."
 msgstr "Por favor, seleccione una fuente diferente."
 
-#: lib/ptxprint/view.py:1040
+#: lib/ptxprint/view.py:1046
 msgid "The Fallback Font just selected does NOT support all the missing characters listed."
 msgstr "La fuente alternativa que se acaba de seleccionar NO soporta todos los caracteres que faltan en la lista."
 
-#: lib/ptxprint/view.py:1239
+#: lib/ptxprint/view.py:1245
 msgid "No Config found for Diglot"
 msgstr "No se encontró configuración para el Proyecto bilingüe"
 
-#: lib/ptxprint/view.py:1252
+#: lib/ptxprint/view.py:1258
 msgid "Error: Cannot create Archive!"
 msgstr "Error: ¡No se puede crear el archivo!"
 
-#: lib/ptxprint/view.py:1252
+#: lib/ptxprint/view.py:1258
 msgid "The ZIP file seems to be open in another program."
 msgstr "El archivo ZIP parece que esta abierto en otro programa."
 
@@ -760,7 +786,7 @@ msgstr "PTXprint creará una NUEVA carpeta de proyecto Paratext\n"
 "con este nombre. No debe utilizar el nombre \n"
 "de un proyecto existente."
 
-#: lib/ptxprint/ptxprint.glade:662 lib/ptxprint/ptxprint.glade:12110
+#: lib/ptxprint/ptxprint.glade:662 lib/ptxprint/ptxprint.glade:12119
 msgid "Filename:"
 msgstr "Nombre de archivo:"
 
@@ -845,7 +871,7 @@ msgid "This option will ADD to any existing entries\n"
 "in the PicList and/or replace entries for the \n"
 "book(s) listed below."
 msgstr "Esta opción añadirá a cualquier entrada existente\n"
-"en la Lista de imágenes y/o reemplazará las entradas para \n"
+"en la PicList y/o reemplazará las entradas para \n"
 "libro(s) listados a continuación."
 
 #: lib/ptxprint/ptxprint.glade:917
@@ -1295,7 +1321,7 @@ msgid "Minor Divisions:"
 msgstr "Divisiones menores:"
 
 #: lib/ptxprint/ptxprint.glade:2647 lib/ptxprint/ptxprint.glade:2665
-#: lib/ptxprint/ptxprint.glade:14104
+#: lib/ptxprint/ptxprint.glade:14114
 msgid "Thumb Tabs usually use a dark color for the Tab with a light (or white) text."
 msgstr "Las Pestañas de Pulgar suelen usar un color oscuro para la Pestaña con un texto claro (o blanco)."
 
@@ -1444,7 +1470,7 @@ msgid "Archive (Print+Unicode Text)"
 msgstr "Archivo (Imprimir + Texto Unicode)"
 
 #: lib/ptxprint/ptxprint.glade:2962 lib/ptxprint/ptxprint.glade:3548
-#: lib/ptxprint/ptxprint.glade:3574 lib/ptxprint/ptxprint.glade:12775
+#: lib/ptxprint/ptxprint.glade:3574 lib/ptxprint/ptxprint.glade:12785
 msgid "Unknown"
 msgstr "Desconocido"
 
@@ -1504,13 +1530,13 @@ msgstr "Inferior"
 msgid "Illustration Credit Overlay"
 msgstr "Superposición de créditos de ilustración"
 
-#: lib/ptxprint/ptxprint.glade:3106 lib/ptxprint/ptxprint.glade:12212
+#: lib/ptxprint/ptxprint.glade:3106 lib/ptxprint/ptxprint.glade:12221
 msgid "Vertical\n"
 "Position:"
 msgstr "Posición\n"
 "vertical:"
 
-#: lib/ptxprint/ptxprint.glade:3145 lib/ptxprint/ptxprint.glade:12330
+#: lib/ptxprint/ptxprint.glade:3145 lib/ptxprint/ptxprint.glade:12339
 msgid "Horizontal\n"
 "Position:"
 msgstr "Posición\n"
@@ -1790,7 +1816,7 @@ msgstr "1"
 msgid "Choose..."
 msgstr "Elegir..."
 
-#: lib/ptxprint/ptxprint.glade:4403 lib/ptxprint/ptxprint.glade:13880
+#: lib/ptxprint/ptxprint.glade:4403 lib/ptxprint/ptxprint.glade:13890
 msgid "Click to add a DBL bundle to the list of\n"
 "available texts to print from. Note that the\n"
 "DBL bundle will get unpacked into your \n"
@@ -2353,8 +2379,8 @@ msgstr "La distancia (mm) desde la parte superior de la página\n"
 #: lib/ptxprint/ptxprint.glade:5551
 msgid "Start of Page to \n"
 "Top of Text (mm):"
-msgstr "Del inicio de la página al \n"
-"inicio de texto (mm):"
+msgstr "Del inicio de la página a la \n"
+"parte superior del texto (mm):"
 
 #: lib/ptxprint/ptxprint.glade:5569
 msgid "The space (pt) between the bottom of the header\n"
@@ -2581,7 +2607,7 @@ msgstr "(el valor es\n"
 
 #: lib/ptxprint/ptxprint.glade:6177 lib/ptxprint/ptxprint.glade:6189
 #: lib/ptxprint/ptxprint.glade:6201 lib/ptxprint/ptxprint.glade:11343
-#: lib/ptxprint/ptxprint.glade:14445 lib/ptxprint/ptxprint.glade:14458
+#: lib/ptxprint/ptxprint.glade:14455 lib/ptxprint/ptxprint.glade:14468
 msgid " "
 msgstr " "
 
@@ -2652,7 +2678,7 @@ msgstr "Fuente para mostrar cualquier\n"
 
 #: lib/ptxprint/ptxprint.glade:6335 lib/ptxprint/ptxprint.glade:6472
 #: lib/ptxprint/ptxprint.glade:6490 lib/ptxprint/ptxprint.glade:6507
-#: lib/ptxprint/ptxprint.glade:6524 lib/ptxprint/ptxprint.glade:15405
+#: lib/ptxprint/ptxprint.glade:6524 lib/ptxprint/ptxprint.glade:15415
 msgid "Select Font..."
 msgstr "Seleccionar Fuente..."
 
@@ -2841,10 +2867,11 @@ msgid "All known unicode-encoded number/digit systems\n"
 "Latin/Arabic numbers [0-9], you can pick the\n"
 "appropriate script here. (Make sure the font you\n"
 "are using supports these digits too.)"
-msgstr "Todos los sistemas conocidos de números/dígitos codificados en Unicode\n"
-"son proveídos. Así que si no quieres usar los\n"
-"números latinos/árabes [0-9], puedes elegir el\n"
-"el script apropiado aquí. (Asegúrase de que la fuente que\n"
+msgstr "Todos los sistemas conocidos de números/dígitos \n"
+"codificados en Unicode son proveídos. \n"
+"Así que si no quieres usar los\n"
+"números árabes [0-9], puedes elegir el\n"
+"el script apropiado aquí. (Asegúrese de que la fuente que\n"
 "esté usando soporte estos dígitos también.)"
 
 #: lib/ptxprint/ptxprint.glade:6734
@@ -3879,12 +3906,13 @@ msgstr "Al hacer clic en este botón se recargarán\n"
 msgid "Usually the \"Caller\" symbol is also shown\n"
 "in the notes area which helps the reader \n"
 "quickly find the cross-reference from the text."
-msgstr "Normalmente el símbolo de \"Llamador\" también se muestra en el área de notas que ayuda al lector \n"
+msgstr "Normalmente el símbolo de \"Llamador\" también \n"
+"se muestra en el área de notas que ayuda al lector \n"
 "a encontrar rápidamente la referencia cruzada del texto."
 
 #: lib/ptxprint/ptxprint.glade:8899
 msgid "Include Cross-References (From Project Text)"
-msgstr "Incluye referencias múltiples (Desde el texto del proyecto)"
+msgstr "Incluye referencias cruzadas (Desde el texto del proyecto)"
 
 #: lib/ptxprint/ptxprint.glade:8936
 msgid "This is the (minimum) vertical space/gap (pts) that\n"
@@ -4128,11 +4156,11 @@ msgstr "Puede ajustar cuántas de las referencias cruzadas\n"
 "xRefs (incluyendo algunas de las menos\n"
 "populares o más oscuras)."
 
-#: lib/ptxprint/ptxprint.glade:9361 lib/ptxprint/ptxprint.glade:14536
-#: lib/ptxprint/ptxprint.glade:14676 lib/ptxprint/ptxprint.glade:14777
-#: lib/ptxprint/ptxprint.glade:14926 lib/ptxprint/ptxprint.glade:16632
-#: lib/ptxprint/ptxprint.glade:16907 lib/ptxprint/ptxprint.glade:16925
-#: lib/ptxprint/ptxprint.glade:16963
+#: lib/ptxprint/ptxprint.glade:9361 lib/ptxprint/ptxprint.glade:14546
+#: lib/ptxprint/ptxprint.glade:14686 lib/ptxprint/ptxprint.glade:14787
+#: lib/ptxprint/ptxprint.glade:14936 lib/ptxprint/ptxprint.glade:16642
+#: lib/ptxprint/ptxprint.glade:16917 lib/ptxprint/ptxprint.glade:16935
+#: lib/ptxprint/ptxprint.glade:16973
 msgid "Select..."
 msgstr "Seleccionar..."
 
@@ -4550,7 +4578,7 @@ msgstr "Puede ser útil imprimir el nombre de\n"
 "más tarde - en cuanto a los ajustes que se utilizaron\n"
 "para producir el PDF."
 
-#: lib/ptxprint/ptxprint.glade:10533 lib/ptxprint/ptxprint.glade:17475
+#: lib/ptxprint/ptxprint.glade:10533 lib/ptxprint/ptxprint.glade:17485
 msgid "Other"
 msgstr "Otro"
 
@@ -4866,7 +4894,7 @@ msgstr "Invierte los resultados de la lista\n"
 msgid "Filter Checklist"
 msgstr "Filtrar la lista"
 
-#: lib/ptxprint/ptxprint.glade:11266 lib/ptxprint/ptxprint.glade:15316
+#: lib/ptxprint/ptxprint.glade:11266 lib/ptxprint/ptxprint.glade:15326
 msgid "Add"
 msgstr "Agregar"
 
@@ -4875,7 +4903,7 @@ msgid "Click to add another picture to the PicList. You\n"
 "will need to fill in all the details in the area below."
 msgstr "Haga clic para añadir otra imagen a la PicList. Necesitará rellenar todos los detalles en el área de abajo."
 
-#: lib/ptxprint/ptxprint.glade:11283 lib/ptxprint/ptxprint.glade:15330
+#: lib/ptxprint/ptxprint.glade:11283 lib/ptxprint/ptxprint.glade:15340
 msgid "Del"
 msgstr "Eliminar"
 
@@ -5175,15 +5203,29 @@ msgstr "¿Cómo?"
 msgid "Omit Captions "
 msgstr "Omitir leyendas "
 
-#: lib/ptxprint/ptxprint.glade:11789
+#: lib/ptxprint/ptxprint.glade:11777
+msgid "If you want to suppress the picture\n"
+"captions from being displayed below\n"
+"the picture, then check this option."
+msgstr ""
+
+#: lib/ptxprint/ptxprint.glade:11792
 msgid "Omit References (ch:vs)"
 msgstr "Omitir referencias (ch:vs)"
 
-#: lib/ptxprint/ptxprint.glade:11813
+#: lib/ptxprint/ptxprint.glade:11796
+msgid "If you only want to suppress the \n"
+"reference part of the caption,\n"
+"then check this option. Note that\n"
+"it is not possible to just have the\n"
+"references without the captions."
+msgstr ""
+
+#: lib/ptxprint/ptxprint.glade:11821
 msgid "Include Pictures (illustrations)"
 msgstr "Incluir Imágenes (Ilustraciones)"
 
-#: lib/ptxprint/ptxprint.glade:11817
+#: lib/ptxprint/ptxprint.glade:11825
 msgid "This setting enables/disables all the \n"
 "other settings relating to pictures.\n\n"
 "Note that it is important to provide proper \n"
@@ -5201,15 +5243,15 @@ msgstr "Este ajuste activa/desactiva todos los \n"
 "dentro del Colofón (ver la pestaña de Encabezado+Pie de página \n"
 "para más detalles).\n"
 
-#: lib/ptxprint/ptxprint.glade:11860
+#: lib/ptxprint/ptxprint.glade:11868
 msgid "Overview of the Pictures used in the publication."
 msgstr "Resumen de las ilustraciones utilizadas en la publicación."
 
-#: lib/ptxprint/ptxprint.glade:11861 lib/ptxprint/ptxprint.glade:17952
+#: lib/ptxprint/ptxprint.glade:11869 lib/ptxprint/ptxprint.glade:17962
 msgid "Settings"
 msgstr "Configuración"
 
-#: lib/ptxprint/ptxprint.glade:11904 lib/ptxprint/ptxprint.glade:11942
+#: lib/ptxprint/ptxprint.glade:11912 lib/ptxprint/ptxprint.glade:11950
 msgid "The anchor specifies what page in a book a picture will appear on.\n"
 "It appears on the same page as its anchor in the text. You can alter \n"
 "the Anchor Ref by a few verses to change the page on which it appears.\n\n"
@@ -5253,11 +5295,11 @@ msgstr "El ancla especifica en qué página del libro aparecerá una imagen.\n"
 "Puede copiar y pegar una palabra o frase del glosario después de escribir GLO k. y \n"
 "PTXprint eliminará automáticamente los espacios por usted."
 
-#: lib/ptxprint/ptxprint.glade:11931
+#: lib/ptxprint/ptxprint.glade:11939
 msgid "Anchor Ref:"
 msgstr "Ref. de Anclaje:"
 
-#: lib/ptxprint/ptxprint.glade:11981
+#: lib/ptxprint/ptxprint.glade:11989
 msgid "By default the caption will appear below the picture.\n"
 "If you need the caption to come before the picture\n"
 "then add this line to your ptxprint-mods.tex file:\n"
@@ -5267,11 +5309,11 @@ msgstr "Por defecto la leyenda aparecerá debajo de la imagen.\n"
 "entonces añade esta línea a tu archivo ptxprint-mods.tex:\n"
 "   \\CaptionFirsttrue"
 
-#: lib/ptxprint/ptxprint.glade:11986
+#: lib/ptxprint/ptxprint.glade:11994
 msgid "Caption:"
 msgstr "Leyenda:"
 
-#: lib/ptxprint/ptxprint.glade:11997
+#: lib/ptxprint/ptxprint.glade:12005
 msgid "By default the caption will appear below the picture.\n"
 "If you need the caption to come before the picture\n"
 "then add this line to your ptxprint-mods.tex file:\n"
@@ -5285,7 +5327,7 @@ msgstr "Por defecto la leyenda aparecerá debajo de la imagen.\n"
 "Ten en cuenta que las leyendas NO son procesados por ningún\n"
 "cambio especificado en el archivo PrintDraftChanges.txt."
 
-#: lib/ptxprint/ptxprint.glade:12016
+#: lib/ptxprint/ptxprint.glade:12024
 msgid "By default, the caption will be followed by a Ch:Vs\n"
 "reference in parentheses ( ). \n\n"
 "If you need the Caption Ref to come BEFORE the caption\n"
@@ -5303,13 +5345,13 @@ msgstr "Por defecto, la leyenda irá seguido de una referencia Ch:Vs\n"
 "utiliza la opción de la pestaña Illustraciones > Ajustes\n"
 "    'Omitir referencias (ch:vs) de las leyendas'"
 
-#: lib/ptxprint/ptxprint.glade:12029
+#: lib/ptxprint/ptxprint.glade:12037
 msgid "Caption\n"
 "Ref:"
 msgstr "Ref. de \n"
 "Leyenda:"
 
-#: lib/ptxprint/ptxprint.glade:12044
+#: lib/ptxprint/ptxprint.glade:12052
 msgid "The reference in the caption can be a single Ch:Vs or \n"
 "a range of verses 6:17-29. This Caption Ref is different\n"
 "from and independent of the Anchor Ref setting.\n"
@@ -5317,13 +5359,13 @@ msgstr "La referencia de la leyenda puede ser un solo Cap:Vs o \n"
 "un rango de versículos 6:17-29. Esta Ref. de leyenda es diferente\n"
 "de la configuración de Ref. de anclaje e independiente de ella.\n"
 
-#: lib/ptxprint/ptxprint.glade:12062
+#: lib/ptxprint/ptxprint.glade:12070
 msgid "Description:\n"
 "(Alt Text)"
 msgstr "Descripción:\n"
 "(Texto Alterno)"
 
-#: lib/ptxprint/ptxprint.glade:12089
+#: lib/ptxprint/ptxprint.glade:12098
 msgid "Note that any changes you make to the filename\n"
 "here will NOT automatically be updated in the\n"
 "Paratext USFM files. Please edit/fit the figure\n"
@@ -5335,7 +5377,7 @@ msgstr "Ten en cuenta que cualquier cambio que hagas en el nombre de archivo\n"
 "manualmente en Paratext si cambia\n"
 "cosas aquí en PTXprint."
 
-#: lib/ptxprint/ptxprint.glade:12123
+#: lib/ptxprint/ptxprint.glade:12132
 msgid "For commonly used series of illustrations, PTXprint\n"
 "can automatically generate the appropriate copyright\n"
 "attribution statement(s) as part of the colophon text.\n\n"
@@ -5351,13 +5393,13 @@ msgstr "Para las series de ilustraciones de uso común, PTXprint\n"
 "   por Nombre del artista © Año, \n"
 "Nombre de la entidad y Tipo de licencia."
 
-#: lib/ptxprint/ptxprint.glade:12131
+#: lib/ptxprint/ptxprint.glade:12140
 msgid "Copyright\n"
 "Attribution:"
 msgstr "Atribución de\n"
 "Derechos de Autor:"
 
-#: lib/ptxprint/ptxprint.glade:12144
+#: lib/ptxprint/ptxprint.glade:12153
 msgid "There are several shortcuts you can use:\n"
 "   (c) --> ©  the copyright sign\n"
 "   (r) --> ®  to denote registered trademarks\n"
@@ -5367,11 +5409,11 @@ msgstr "Hay varios atajos que puede usar:\n"
 "   (r) --> ® para denotar marcas registradas\n"
 "   (tm) --> ™ para denotar marcas en general"
 
-#: lib/ptxprint/ptxprint.glade:12149
+#: lib/ptxprint/ptxprint.glade:12158
 msgid "by Artist Name © Year, Entity Name and License Type"
 msgstr "por Nombre de Artista © Año, Nombre de Entidad y Tipo de Licencia"
 
-#: lib/ptxprint/ptxprint.glade:12162
+#: lib/ptxprint/ptxprint.glade:12171
 msgid "The frame size determines how large the picture\n"
 "will appear on the page.\n\n"
 "Span Width only allows a Top or Bottom vertical placement.\n"
@@ -5392,16 +5434,16 @@ msgstr "El tamaño del marco determina el tamaño de la imagen\n"
 "Cuando se utiliza el diseño de una sola columna, no hay\n"
 "diferencia entre el ancho de la columna y el ancho de la página."
 
-#: lib/ptxprint/ptxprint.glade:12173
+#: lib/ptxprint/ptxprint.glade:12182
 msgid "Frame Size:"
 msgstr "Tamaño del marco:"
 
-#: lib/ptxprint/ptxprint.glade:12186 lib/ptxprint/ptxprint.glade:14603
-#: lib/ptxprint/ptxprint.glade:14994
+#: lib/ptxprint/ptxprint.glade:12195 lib/ptxprint/ptxprint.glade:14613
+#: lib/ptxprint/ptxprint.glade:15004
 msgid "Scale:"
 msgstr "Escala:"
 
-#: lib/ptxprint/ptxprint.glade:12198 lib/ptxprint/ptxprint.glade:12243
+#: lib/ptxprint/ptxprint.glade:12207 lib/ptxprint/ptxprint.glade:12252
 msgid "Several options here are extensions to the normal USFM\n"
 "markup standard for illustrations and are not expected\n"
 "to work in other software. But PTXprint allows a greater\n"
@@ -5425,7 +5467,7 @@ msgstr "Varias opciones aquí son extensiones del estándar de marcado USFM\n"
 "Las opciones anteriores pueden tener otros parámetros de posicionamiento como\n"
 "como: Izquierda, Derecha, Centro, nº de líneas (arriba o abajo)."
 
-#: lib/ptxprint/ptxprint.glade:12283
+#: lib/ptxprint/ptxprint.glade:12292
 msgid "The frame size determines the boundaries of where the\n"
 "picture will appear on the page.\n\n"
 "Span Width only allows a Top or Bottom vertical placement.\n\n"
@@ -5454,7 +5496,7 @@ msgstr "El tamaño del marco determina los límites de dónde aparecerá \n"
 "para los mapas) ocupen toda la página, sin márgenes. \n"
 "Los pies de foto no deben utilizarse con las imágenes \"Página (al borde)\"."
 
-#: lib/ptxprint/ptxprint.glade:12324 lib/ptxprint/ptxprint.glade:12344
+#: lib/ptxprint/ptxprint.glade:12333 lib/ptxprint/ptxprint.glade:12353
 msgid "The options available here change based\n"
 "on the Frame Size and Vertical Position\n"
 "settings. So if you can't find an option \n"
@@ -5465,7 +5507,7 @@ msgstr "Las opciones disponibles aquí cambian basándose\n"
 "Así que si no puede encontrar una opción que esté buscando, \n"
 "entonces compruebe primero esos ajustes."
 
-#: lib/ptxprint/ptxprint.glade:12373
+#: lib/ptxprint/ptxprint.glade:12382
 msgid "It is good typesetting practice to make people\n"
 "look outwards from the gutter, so you can set\n"
 "whether the image is to be mirrored just on \n"
@@ -5495,11 +5537,11 @@ msgstr "Es una buena práctica tipográfica hacer que la gente\n"
 "Nota: Esta opción aparecerá en gris si la imagen tiene  \n"
 "marcada la opción \"Nunca espejar\" en la pestaña Lista de preguntas."
 
-#: lib/ptxprint/ptxprint.glade:12391
+#: lib/ptxprint/ptxprint.glade:12400
 msgid "Mirror:"
 msgstr "Espejar:"
 
-#: lib/ptxprint/ptxprint.glade:12405
+#: lib/ptxprint/ptxprint.glade:12414
 msgid "Never = The image will never be mirrored\n"
 "Odd = Mirrored only if image ends up on an odd page\n"
 "Even = Mirrored only if image ends up on an even page\n"
@@ -5515,7 +5557,7 @@ msgstr "Nunca = La imagen nunca será espejado\n"
 "ya ha restringido las opciones de espejando\n"
 "en la pestaña Lista de preguntas."
 
-#: lib/ptxprint/ptxprint.glade:12439
+#: lib/ptxprint/ptxprint.glade:12448
 msgid "Some vertical position options allow a picture\n"
 "to be moved up or down by a number of lines\n"
 "or paragraphs.\n\n"
@@ -5527,41 +5569,37 @@ msgstr "Algunas opciones de posición vertical permiten que una imagen\n"
 "- Los valores negativos (menos) especifican que se mueva hacia ARRIBA.\n"
 "+ Los valores positivos (más) especifican que se mueva hacia ABAJO."
 
-#: lib/ptxprint/ptxprint.glade:12446
+#: lib/ptxprint/ptxprint.glade:12455
 msgid "Number of\n"
 "Lines:"
 msgstr "Número de\n"
 "Líneas:"
 
-#: lib/ptxprint/ptxprint.glade:12485
+#: lib/ptxprint/ptxprint.glade:12494
 msgid "Media:"
 msgstr "Medios:"
 
-#: lib/ptxprint/ptxprint.glade:12495 lib/ptxprint/ptxprint.glade:18756
-msgid "Print"
-msgstr "Imprimir"
-
-#: lib/ptxprint/ptxprint.glade:12499
+#: lib/ptxprint/ptxprint.glade:12508
 msgid "Can be used in Print/PDF publications. "
 msgstr "Se puede utilizar en publicaciones Print/PDF. "
 
-#: lib/ptxprint/ptxprint.glade:12510
+#: lib/ptxprint/ptxprint.glade:12519
 msgid "App"
 msgstr "App"
 
-#: lib/ptxprint/ptxprint.glade:12514
+#: lib/ptxprint/ptxprint.glade:12523
 msgid "Can be used in mobile phone Apps. "
 msgstr "Se puede utilizar en aplicaciones para teléfono móvil. "
 
-#: lib/ptxprint/ptxprint.glade:12525
+#: lib/ptxprint/ptxprint.glade:12534
 msgid "Web"
 msgstr "Web"
 
-#: lib/ptxprint/ptxprint.glade:12529
+#: lib/ptxprint/ptxprint.glade:12538
 msgid "Can be used on websites. "
 msgstr "Se puede utilizar en sitios web. "
 
-#: lib/ptxprint/ptxprint.glade:12549
+#: lib/ptxprint/ptxprint.glade:12558
 msgid "If the image is from the recognized\n"
 "set of pictures commonly used in\n"
 "Scripture publications, then there is\n"
@@ -5575,15 +5613,15 @@ msgstr "Si la imagen pertenece al conjunto \n"
 "el campo Atribución de derechos de autor, \n"
 "ya que se generará automáticamente para usted."
 
-#: lib/ptxprint/ptxprint.glade:12557
+#: lib/ptxprint/ptxprint.glade:12566
 msgid "Automatic"
 msgstr "Automático"
 
-#: lib/ptxprint/ptxprint.glade:12569
+#: lib/ptxprint/ptxprint.glade:12578
 msgid "© ..."
 msgstr "© ..."
 
-#: lib/ptxprint/ptxprint.glade:12573
+#: lib/ptxprint/ptxprint.glade:12582
 msgid "Credit Overlays...\n"
 "Some artists (e.g. David C Cook) require that\n"
 "each image has a copyright message printed\n"
@@ -5595,15 +5633,15 @@ msgstr "Superposición de créditos...\n"
 "en la propia imagen. El texto y la ubicación pueden\n"
 "establecerse aquí."
 
-#: lib/ptxprint/ptxprint.glade:12593
+#: lib/ptxprint/ptxprint.glade:12603
 msgid "Credit overlay position and style"
 msgstr "Posición y estilo de la superposición de créditos"
 
-#: lib/ptxprint/ptxprint.glade:12614
+#: lib/ptxprint/ptxprint.glade:12624
 msgid "    "
 msgstr "    "
 
-#: lib/ptxprint/ptxprint.glade:12651
+#: lib/ptxprint/ptxprint.glade:12661
 msgid "Use this tab to change the position, location, size \n"
 "or orientation of the images.\n\n"
 "Note: Any changes you make here will NOT be \n"
@@ -5619,45 +5657,45 @@ msgstr "Utilice esta pestaña para cambiar la posición, la ubicación, el tama�
 "(columna o página), entonces es aconsejable hacerlo\n"
 "en Paratext antes de regenerar la PicList aquí."
 
-#: lib/ptxprint/ptxprint.glade:12659
+#: lib/ptxprint/ptxprint.glade:12669
 msgid "Details"
 msgstr "Detalles"
 
-#: lib/ptxprint/ptxprint.glade:12714
+#: lib/ptxprint/ptxprint.glade:12724
 msgid "Is there anything confusing or misleading in this image that the reader might misunderstand if they look at this picture apart from the text? Yes and no are both appropriate answers as some images may need to be seen alongside text in order to be understood."
 msgstr "¿Hay algo confuso o engañoso en esta ilustración que el lector podría malinterpretar si mira esta ilustración aparte del texto? Tanto el sí como el no son respuestas apropiadas ya que algunas ilustraciones pueden necesitar ser vistas junto al texto para ser entendidas."
 
-#: lib/ptxprint/ptxprint.glade:12716
+#: lib/ptxprint/ptxprint.glade:12726
 msgid "Is it clear what is happening in this image?"
 msgstr "¿Es claro lo que está ocurriendo en esta imagen?"
 
-#: lib/ptxprint/ptxprint.glade:12727
+#: lib/ptxprint/ptxprint.glade:12737
 msgid "First consider whether this picture is appropriate and culturally acceptable in any publications for this project."
 msgstr "Primero considere si esta ilustración es apropiada y culturalmente aceptable en cualquier publicación para este proyecto."
 
-#: lib/ptxprint/ptxprint.glade:12729
+#: lib/ptxprint/ptxprint.glade:12739
 msgid "Across Various Publications:"
 msgstr "A través de varias publicaciones:"
 
-#: lib/ptxprint/ptxprint.glade:12743 lib/ptxprint/ptxprint.glade:13001
-#: lib/ptxprint/ptxprint.glade:13049
+#: lib/ptxprint/ptxprint.glade:12753 lib/ptxprint/ptxprint.glade:13011
+#: lib/ptxprint/ptxprint.glade:13059
 msgid "Yes"
 msgstr "Sí"
 
-#: lib/ptxprint/ptxprint.glade:12759 lib/ptxprint/ptxprint.glade:13017
-#: lib/ptxprint/ptxprint.glade:13065
+#: lib/ptxprint/ptxprint.glade:12769 lib/ptxprint/ptxprint.glade:13027
+#: lib/ptxprint/ptxprint.glade:13075
 msgid "No"
 msgstr "No"
 
-#: lib/ptxprint/ptxprint.glade:12793
+#: lib/ptxprint/ptxprint.glade:12803
 msgid "Be sure that there is nothing offensive or inappropriate in this image. This could be the way people are clothed, what actions they are doing, how they are depicted, etc. “Culturally Appropriate” means this image is in a style from this culture or a related one, “Acceptable” means this picture might be from a different culture or in a different style, but there are no issues using it. “Inappropriate” means there are issues that should prevent this image from being used. Answering “Inappropriate” will help avoid this image being used in other publications."
 msgstr "Asegúrate de que no hay nada ofensivo o inapropiado en esta ilustración. Esta podría ser la forma en que la gente se viste, qué acciones están haciendo, cómo son representados, etc. \"Culturalmente Apropiada\" significa que esta ilustración es de un estilo de esta cultura o de una relacionada, \"Aceptable\" significa que esta ilustración puede ser de una cultura diferente o de un estilo diferente, pero no hay problemas para usarla. \"Inapropiado\" significa que hay cuestiones que deberían impedir el uso de esta ilustración. Responder \"Inapropiado\" ayudará a evitar que esta ilustración sea utilizada en otras publicaciones."
 
-#: lib/ptxprint/ptxprint.glade:12795
+#: lib/ptxprint/ptxprint.glade:12805
 msgid "Is this image acceptable in your culture?"
 msgstr "¿Esta imagen es aceptable en su cultura?"
 
-#: lib/ptxprint/ptxprint.glade:12806
+#: lib/ptxprint/ptxprint.glade:12816
 msgid "Sometimes mirroring (reversing) an image makes it\n"
 "acceptable since a left hand becomes a right hand, etc.\n\n"
 "Some artists' pictures do not take into account\n"
@@ -5671,60 +5709,60 @@ msgstr "A veces reflejar (invertir) una imagen la hace\n"
 "\"incómodo\" utilizar un cuadro en el que Jesús está curando\n"
 "a una persona utilizando su mano izquierda!"
 
-#: lib/ptxprint/ptxprint.glade:12814
+#: lib/ptxprint/ptxprint.glade:12824
 msgid "Would the image be culturally acceptable if \n"
 "the image was mirrored (left becomes right)?"
 msgstr "¿Sería la imagen culturalmente aceptable si \n"
 "la imagen fuera reflejada (la izquierda se vuelve derecha)?"
 
-#: lib/ptxprint/ptxprint.glade:12826 lib/ptxprint/ptxprint.glade:13133
+#: lib/ptxprint/ptxprint.glade:12836 lib/ptxprint/ptxprint.glade:13143
 msgid "Now consider whether there are any issues with using this picture in this particular publication (config-specific)."
 msgstr "Ahora considere si hay algún problema con el uso de esta ilustración en esta publicación en particular (config-specific)."
 
-#: lib/ptxprint/ptxprint.glade:12828
+#: lib/ptxprint/ptxprint.glade:12838
 msgid "In This Publication:"
 msgstr "En esta publicación:"
 
-#: lib/ptxprint/ptxprint.glade:12844
+#: lib/ptxprint/ptxprint.glade:12854
 msgid "Consider how this image is used alongside the text and what function it serves. Maybe it depicts a building or item from a biblical culture, or a scene from a story."
 msgstr "Considere cómo se utiliza esta imagen junto con el texto y qué función cumple. Tal vez representa un edificio o un elemento de una cultura bíblica, o una escena de una historia."
 
-#: lib/ptxprint/ptxprint.glade:12846
+#: lib/ptxprint/ptxprint.glade:12856
 msgid "Is this picture intended for: clarification,\n"
 "story enhancement, filler, unknown?"
 msgstr "¿Esta ilustración está destinada para: aclaración,\n"
 "mejora de la historia, relleno, desconocido?"
 
-#: lib/ptxprint/ptxprint.glade:12858
+#: lib/ptxprint/ptxprint.glade:12868
 msgid "Does the image support what the text is saying? As they read the passage does the image help in their understanding?"
 msgstr "¿La imagen apoya lo que dice el texto? Al leer el pasaje, ¿la imagen ayuda a su comprensión?"
 
-#: lib/ptxprint/ptxprint.glade:12860
+#: lib/ptxprint/ptxprint.glade:12870
 msgid "In the context of this passage, is it clear \n"
 "what is happening in this image?"
 msgstr "En el contexto de este pasaje, ¿está claro \n"
 "¿qué está pasando en esta imagen?"
 
-#: lib/ptxprint/ptxprint.glade:12872
+#: lib/ptxprint/ptxprint.glade:12882
 msgid "For example, do the colors have the same meaning in the local culture? Is there anything in the background that is distracting from the story? Are there any objects, gestures, or other things that imply something unintended or that isn’t in the passage? Are there any anachronisms in the picture (a minaret in Bethlehem)?"
 msgstr "Por ejemplo, ¿los colores tienen el mismo significado en la cultura local? ¿Hay algo en el fondo que esté distrayendo de la historia? ¿Hay algún objeto, gestos u otras cosas que impliquen algo no intencionado o que no esté en el pasaje? ¿Hay algún anacronismo en el cuadro (un minarete en Belén)?"
 
-#: lib/ptxprint/ptxprint.glade:12874
+#: lib/ptxprint/ptxprint.glade:12884
 msgid "Does the image communicate something \n"
 "that it should not in this particular context?"
 msgstr "¿La imagen comunica algo \n"
 "que no debería en este contexto en particular?"
 
-#: lib/ptxprint/ptxprint.glade:12886
+#: lib/ptxprint/ptxprint.glade:12896
 msgid "Do the images and their style fit with the type of publication, i.e. Scripture, children’s materials, lectionary, etc.? Are people and actions depicted in acceptable ways?"
 msgstr "¿Las imágenes y su estilo encajan con el tipo de publicación, es decir, Escritura, materiales para niños, leccionario, etc.? ¿Las personas y las acciones son representadas de manera aceptable?"
 
-#: lib/ptxprint/ptxprint.glade:12888
+#: lib/ptxprint/ptxprint.glade:12898
 msgid "Is the image appropriate for the publication?"
 msgstr "¿Es la imagen apropiada para la publicación?"
 
-#: lib/ptxprint/ptxprint.glade:12900 lib/ptxprint/ptxprint.glade:12982
-#: lib/ptxprint/ptxprint.glade:13084
+#: lib/ptxprint/ptxprint.glade:12910 lib/ptxprint/ptxprint.glade:12992
+#: lib/ptxprint/ptxprint.glade:13094
 msgid "Glossary words are marked up with\n"
 "special \\w glossary\\w* tags. Specify\n"
 "how these words should be highlighted\n"
@@ -5734,25 +5772,25 @@ msgstr "Las palabras del glosario están marcadas con\n"
 "cómo deben resaltarse estas palabras\n"
 "en la impresión."
 
-#: lib/ptxprint/ptxprint.glade:12919
+#: lib/ptxprint/ptxprint.glade:12929
 msgid "OK to\n"
 "mirror"
 msgstr "Aceptar a\n"
 "espejar"
 
-#: lib/ptxprint/ptxprint.glade:12924
+#: lib/ptxprint/ptxprint.glade:12934
 msgid "It is fine to mirror the image if needed. It would\n"
 "not change the impact or response of the readers."
 msgstr "Está bien espejar la imagen si fuera necesario.\n"
 "no cambiaría el impacto o la respuesta de los lectores."
 
-#: lib/ptxprint/ptxprint.glade:12938
+#: lib/ptxprint/ptxprint.glade:12948
 msgid "Never\n"
 "mirror"
 msgstr "Nunca\n"
 "espejar"
 
-#: lib/ptxprint/ptxprint.glade:12943
+#: lib/ptxprint/ptxprint.glade:12953
 msgid "Ensure that this image is always shown\n"
 "as currently depicted in the preview. Do\n"
 "NOT allow it to be mirrored (reversed)."
@@ -5760,13 +5798,13 @@ msgstr "Asegúrese de que esta imagen se muestre siempre\n"
 "como se muestra actualmente en la vista previa.\n"
 "NO permita que se replice (invertido)."
 
-#: lib/ptxprint/ptxprint.glade:12958
+#: lib/ptxprint/ptxprint.glade:12968
 msgid "Always\n"
 "mirror"
 msgstr "Siempre\n"
 "espejar"
 
-#: lib/ptxprint/ptxprint.glade:12963
+#: lib/ptxprint/ptxprint.glade:12973
 msgid "Ensure that this image is always mirrored from\n"
 "what is currently shown in the preview. Therefore\n"
 "actions being done with the left hand will show as\n"
@@ -5776,51 +5814,51 @@ msgstr "Asegúrate de que esta imagen siempre sea espejada de\n"
 "las acciones que se realicen con la mano izquierda se mostrarán como\n"
 "haciendo con la mano derecha, y viceversa."
 
-#: lib/ptxprint/ptxprint.glade:13033 lib/ptxprint/ptxprint.glade:13114
+#: lib/ptxprint/ptxprint.glade:13043 lib/ptxprint/ptxprint.glade:13124
 msgid "Unchecked"
 msgstr "No Revisado"
 
-#: lib/ptxprint/ptxprint.glade:13135
+#: lib/ptxprint/ptxprint.glade:13145
 msgid "Consultant Approval:"
 msgstr "Aprobación consultiva:"
 
-#: lib/ptxprint/ptxprint.glade:13151
+#: lib/ptxprint/ptxprint.glade:13161
 msgid "The most recent date that the\n"
 "consultant approval updated."
 msgstr "La fecha más reciente que la aprobación del consultor\n"
 "actualizó."
 
-#: lib/ptxprint/ptxprint.glade:13157
+#: lib/ptxprint/ptxprint.glade:13167
 msgid "Date"
 msgstr "Fecha"
 
-#: lib/ptxprint/ptxprint.glade:13173
+#: lib/ptxprint/ptxprint.glade:13183
 msgid "Initials"
 msgstr "Iniciales"
 
-#: lib/ptxprint/ptxprint.glade:13186
+#: lib/ptxprint/ptxprint.glade:13196
 msgid "any publication"
 msgstr "cualquier publicación"
 
-#: lib/ptxprint/ptxprint.glade:13201
+#: lib/ptxprint/ptxprint.glade:13211
 msgid "this publication"
 msgstr "esta publicación"
 
-#: lib/ptxprint/ptxprint.glade:13216
+#: lib/ptxprint/ptxprint.glade:13226
 msgid "Approved to\n"
 "be used in:"
 msgstr "Aprobado para\n"
 "ser utilizado en:"
 
-#: lib/ptxprint/ptxprint.glade:13233
+#: lib/ptxprint/ptxprint.glade:13243
 msgid "     "
 msgstr "     "
 
-#: lib/ptxprint/ptxprint.glade:13246
+#: lib/ptxprint/ptxprint.glade:13256
 msgid "By:"
 msgstr "Por:"
 
-#: lib/ptxprint/ptxprint.glade:13299
+#: lib/ptxprint/ptxprint.glade:13309
 msgid "Use the notes area below to record anything \n"
 "about this picture, or to dialog with the consultant.\n"
 "The notes entered here will be available and editable \n"
@@ -5830,11 +5868,11 @@ msgstr "Utilice el siguiente área de notas para grabar cualquier \n"
 "Las notas introducidas aquí estarán disponibles y editables \n"
 "en TODAS las publicaciones de este proyecto (no solo en uno)."
 
-#: lib/ptxprint/ptxprint.glade:13304
+#: lib/ptxprint/ptxprint.glade:13314
 msgid "Notes About This Picture:"
 msgstr "Notas sobre esta ilustración:"
 
-#: lib/ptxprint/ptxprint.glade:13384
+#: lib/ptxprint/ptxprint.glade:13394
 msgid "Pictures are best used in situations where:\n"
 "1. The physical situation is not understood, or not common in the target culture.\n"
 "2. Where the physical situation is important to understanding the meaning of the passage (e.g., the type of clothing is often not important, but in some passages it might be).\n"
@@ -5846,11 +5884,11 @@ msgstr "Las ilustraciones se usan mejor en situaciones en las que:\n"
 "3. Cuando ayudan al lector a comprender el pasaje.\n"
 "4. Cuando incita al lector a leer el pasaje."
 
-#: lib/ptxprint/ptxprint.glade:13389
+#: lib/ptxprint/ptxprint.glade:13399
 msgid "Questions to Consider"
 msgstr "Preguntas a Considerar"
 
-#: lib/ptxprint/ptxprint.glade:13415
+#: lib/ptxprint/ptxprint.glade:13425
 msgid "This tab encourages you to think through\n"
 "the appropriateness of the pictures used\n"
 "in this publication, as well as other contexts."
@@ -5858,15 +5896,15 @@ msgstr "Esta pestaña te anima a pensar en\n"
 "la idoneidad de las ilustraciones utilizadas\n"
 "en esta publicación, así como en otros contextos."
 
-#: lib/ptxprint/ptxprint.glade:13418
+#: lib/ptxprint/ptxprint.glade:13428
 msgid "Checklist"
 msgstr "Lista de preguntas"
 
-#: lib/ptxprint/ptxprint.glade:13452
+#: lib/ptxprint/ptxprint.glade:13462
 msgid "Image Preview"
 msgstr "Vista previa de la imagen"
 
-#: lib/ptxprint/ptxprint.glade:13456
+#: lib/ptxprint/ptxprint.glade:13466
 msgid "Display the picture currently in focus.\n"
 "Note that this is dependent on the image\n"
 "being located in the specified folder(s)."
@@ -5874,12 +5912,12 @@ msgstr "Mostrar la imagen actualmente en enfoque.\n"
 "Tenga en cuenta que esto depende de que la imagen\n"
 "se encuentre en las carpetas especificadas."
 
-#: lib/ptxprint/ptxprint.glade:13473
+#: lib/ptxprint/ptxprint.glade:13483
 msgid "Location on Page"
 msgstr "Ubicación\n"
 "en la página"
 
-#: lib/ptxprint/ptxprint.glade:13477
+#: lib/ptxprint/ptxprint.glade:13487
 msgid "Show the relative position of the picture\n"
 "on the page. When Inner/Outer is used,\n"
 "the position displayed represents the \n"
@@ -5889,7 +5927,7 @@ msgstr "Mostrar la posición relativa de la imagen\n"
 "la posición mostrada representa la página \n"
 "impar/derecha de un spread."
 
-#: lib/ptxprint/ptxprint.glade:13568
+#: lib/ptxprint/ptxprint.glade:13578
 msgid "Manipulate the pictures to be used\n"
 "in the publication. Control everything\n"
 "from quality to position, from captions\n"
@@ -5900,13 +5938,13 @@ msgstr "Manipule las imágenes que se utilizarán\n"
 "desde las leyendas\n"
 "hasta los derechos de autor."
 
-#: lib/ptxprint/ptxprint.glade:13634
+#: lib/ptxprint/ptxprint.glade:13644
 msgid "Percentage of Page Width to \n"
 "be Used by Primary (Left) Text"
 msgstr "Porcentaje de Anchura de Página a \n"
 "ser Utilizado por Texto Primario (izquierda)"
 
-#: lib/ptxprint/ptxprint.glade:13647 lib/ptxprint/ptxprint.glade:13703
+#: lib/ptxprint/ptxprint.glade:13657 lib/ptxprint/ptxprint.glade:13713
 msgid "Select the project for the other text\n"
 "to be printed. This will usually appear\n"
 "in the right-hand (or outer) column."
@@ -5914,17 +5952,17 @@ msgstr "Seleccione el proyecto para el otro texto\n"
 "para ser impreso. Esto normalmente aparecerá\n"
 "en la columna derecha (o externo)."
 
-#: lib/ptxprint/ptxprint.glade:13651
+#: lib/ptxprint/ptxprint.glade:13661
 msgid "Secondary (other) Project:"
 msgstr "Proyecto Secundario (otros):"
 
-#: lib/ptxprint/ptxprint.glade:13664
+#: lib/ptxprint/ptxprint.glade:13674
 msgid "Use Saved Configuration\n"
 "(from Secondary Project):"
 msgstr "Usar configuración guardada\n"
 "(del proyecto secundario):"
 
-#: lib/ptxprint/ptxprint.glade:13678
+#: lib/ptxprint/ptxprint.glade:13688
 msgid "Select a previously-saved/shared\n"
 "configuration to retrieve those settings.\n\n"
 "(Leaving this blank will use the default\n"
@@ -5934,17 +5972,17 @@ msgstr "Seleccione una configuración previamente\n"
 "(Dejando esto en blanco usará la configuración por defecto\n"
 "de los ajustes para el proyecto)"
 
-#: lib/ptxprint/ptxprint.glade:13687
+#: lib/ptxprint/ptxprint.glade:13697
 msgid "(None)"
 msgstr "(Ninguno)"
 
-#: lib/ptxprint/ptxprint.glade:13727
+#: lib/ptxprint/ptxprint.glade:13737
 msgid "Use Default Header\n"
 "Settings for Diglot"
 msgstr "Usar Ajustes de Cabecera\n"
 "Predeterminado para Bilingue"
 
-#: lib/ptxprint/ptxprint.glade:13732
+#: lib/ptxprint/ptxprint.glade:13742
 msgid "Checking this option will override\n"
 "the header settings and place the\n"
 "Reference Ranges on the outer edges\n"
@@ -5954,13 +5992,13 @@ msgstr "Marcar esta opción anulará\n"
 "Rangos de Referencia en los bordes exteriores\n"
 "y el Número de Página en (o cerca de) el medio."
 
-#: lib/ptxprint/ptxprint.glade:13747
+#: lib/ptxprint/ptxprint.glade:13757
 msgid "Secondary on\n"
 "Left (or Inner)"
 msgstr "Secundario en\n"
 "Izquierda (o Interior)"
 
-#: lib/ptxprint/ptxprint.glade:13752
+#: lib/ptxprint/ptxprint.glade:13762
 msgid "Normally the Primary text is on the Left\n"
 "and the Secondary text is positioned on\n"
 "the right side of the page.\n\n"
@@ -5974,13 +6012,13 @@ msgstr "Normalmente el texto Principal está a la Izquierda\n"
 "en el lado izquierdo (o Interior), entonces marque esta opción. \n\n"
 "Es muy probable que esto sea necesario para los idiomas RTL."
 
-#: lib/ptxprint/ptxprint.glade:13771
+#: lib/ptxprint/ptxprint.glade:13781
 msgid "Adjust Center Header \n"
 "Based on Column Widths"
 msgstr "Ajustar Cabecera de Centro \n"
 "Basado en Anchos de Columna"
 
-#: lib/ptxprint/ptxprint.glade:13776
+#: lib/ptxprint/ptxprint.glade:13786
 msgid "If the column widths of the two sides of the\n"
 "diglot are unequal, PTXprint can ensure that\n"
 "the content of the center header matches the\n"
@@ -5992,7 +6030,7 @@ msgstr "Si los anchos de columna de los dos lados del\n"
 "posición del medianil (espacio entre los dos\n"
 "diferentes columnas)."
 
-#: lib/ptxprint/ptxprint.glade:13793 lib/ptxprint/ptxprint.glade:13814
+#: lib/ptxprint/ptxprint.glade:13803 lib/ptxprint/ptxprint.glade:13824
 msgid "When generating a PicList for a\n"
 "Diglot/DiScript publication, you\n"
 "need to decide which images to\n"
@@ -6006,19 +6044,19 @@ msgstr "Cuando se genera una lista de PicList para\n"
 "Tome en cuenta que este control sigue siendo\n"
 "inactivo hasta que se active Bilingue."
 
-#: lib/ptxprint/ptxprint.glade:13801
+#: lib/ptxprint/ptxprint.glade:13811
 msgid "When Creating a PicList for \n"
 "a Diglot use Pictures from:"
 msgstr "Al crear una PicList para \n"
 "un proyecto bilingüe use ilustraciones de:"
 
-#: lib/ptxprint/ptxprint.glade:13835
+#: lib/ptxprint/ptxprint.glade:13845
 msgid "Separate Notes\n"
 "in Two Columns"
 msgstr "Separar Notas\n"
 "en Dos Columnas"
 
-#: lib/ptxprint/ptxprint.glade:13840
+#: lib/ptxprint/ptxprint.glade:13850
 msgid "If this option is disabled, the footnotes from\n"
 "both sides of the diglot get merged together\n"
 "and are interspersed one after the other.\n\n"
@@ -6032,19 +6070,19 @@ msgstr "Si esta opción está desactivada, las notas al pie\n"
 "esto puede o no ser deseable. En caso de duda,\n"
 "deje esta opción marcada como ON."
 
-#: lib/ptxprint/ptxprint.glade:13862
+#: lib/ptxprint/ptxprint.glade:13872
 msgid "Auto calculate primary percentage by trying to reduce the page count. This will run your print job up to 10 times or more, so choose a small book to run on. It will attempt to find the best balance of column widths near to the starting position of the slider."
 msgstr "Calcula automáticamente el porcentaje primario tratando de reducir el número de páginas. Esto hará que su trabajo de impresión se ejecute hasta 10 veces o más, así que elija un libro pequeño para ejecutarlo. Intentará encontrar el mejor equilibrio de anchos de columna cerca de la posición inicial del deslizador."
 
-#: lib/ptxprint/ptxprint.glade:13876
+#: lib/ptxprint/ptxprint.glade:13886
 msgid "DBL"
 msgstr "DBL"
 
-#: lib/ptxprint/ptxprint.glade:13896
+#: lib/ptxprint/ptxprint.glade:13906
 msgid "Alternate Merging"
 msgstr "Combinación alternativa"
 
-#: lib/ptxprint/ptxprint.glade:13900
+#: lib/ptxprint/ptxprint.glade:13910
 msgid "This uses an alternative method for\n"
 "merging (or aligning) texts which\n"
 "have less structure in common.\n"
@@ -6056,11 +6094,11 @@ msgstr "Esto utiliza un método alternativo para\n"
 "Sólo intenta alinearse en lugares donde \n"
 "párrafos empiezan en el mismo versículo."
 
-#: lib/ptxprint/ptxprint.glade:13927
+#: lib/ptxprint/ptxprint.glade:13937
 msgid "Diglot or Discript"
 msgstr "Bilingue o Discript"
 
-#: lib/ptxprint/ptxprint.glade:13931
+#: lib/ptxprint/ptxprint.glade:13941
 msgid "A Diglot publication contains more than\n"
 "one language, or script, or text. Set the\n"
 "options here to create a Diglot or Didoc."
@@ -6068,35 +6106,35 @@ msgstr "Una publicación Bilingue contiene más de\n"
 "un idioma, o un script, o un texto. Ponga las\n"
 "opciones aquí para crear un Bilingue o un Didoc."
 
-#: lib/ptxprint/ptxprint.glade:13951
+#: lib/ptxprint/ptxprint.glade:13961
 msgid "Switch to Other\n"
 "  Diglot Project"
 msgstr "Cambiar a Otro\n"
 "Proyecto Bilingue"
 
-#: lib/ptxprint/ptxprint.glade:13992
+#: lib/ptxprint/ptxprint.glade:14002
 msgid "Create a diglot publication by selecting \n"
 "a secondary project and configuration."
 msgstr "Cree una publicación bilingüe seleccionando \n"
 "un proyecto y una configuración secundarios."
 
-#: lib/ptxprint/ptxprint.glade:14036 lib/ptxprint/ptxprint.glade:14165
+#: lib/ptxprint/ptxprint.glade:14046 lib/ptxprint/ptxprint.glade:14175
 msgid "The length of the Thumb Tab measured in millimeters (mm)."
 msgstr "La longitud de la Pestaña de Pulgar medida en milímetros (mm)."
 
-#: lib/ptxprint/ptxprint.glade:14038
+#: lib/ptxprint/ptxprint.glade:14048
 msgid "Length:"
 msgstr "Largo:"
 
-#: lib/ptxprint/ptxprint.glade:14050 lib/ptxprint/ptxprint.glade:14064
+#: lib/ptxprint/ptxprint.glade:14060 lib/ptxprint/ptxprint.glade:14074
 msgid "The height of the Thumb Tab measured in millimeters (mm)."
 msgstr "La altura de la Pestaña de Pulgar medida en milímetros (mm)."
 
-#: lib/ptxprint/ptxprint.glade:14052
+#: lib/ptxprint/ptxprint.glade:14062
 msgid "Height:"
 msgstr "Altura:"
 
-#: lib/ptxprint/ptxprint.glade:14083
+#: lib/ptxprint/ptxprint.glade:14093
 msgid "Thumb Tabs usually use a dark color\n"
 "for the background with a light color\n"
 "(or white) for the foreground text.\n\n"
@@ -6110,41 +6148,41 @@ msgstr "Las pestañas de pulgares suelen utilizar \n"
 "el color del texto en primer plano necesita ser\n"
 "establecido haciendo clic en el enlace Editar estilo."
 
-#: lib/ptxprint/ptxprint.glade:14091
+#: lib/ptxprint/ptxprint.glade:14101
 msgid "Tab Color:"
 msgstr "Color de la pestaña:"
 
-#: lib/ptxprint/ptxprint.glade:14106
+#: lib/ptxprint/ptxprint.glade:14116
 msgid "Thumb Tab Background Color"
 msgstr "Color de fondo de la pestaña"
 
-#: lib/ptxprint/ptxprint.glade:14117
+#: lib/ptxprint/ptxprint.glade:14127
 msgid "Rotate Tabs:"
 msgstr "Girar Pestañas:"
 
-#: lib/ptxprint/ptxprint.glade:14121
+#: lib/ptxprint/ptxprint.glade:14131
 msgid "Rotates the tabs so that the text runs along the edge of the page. This works well for narrow margins, but may result in fewer tab positions per page."
 msgstr "Gira las pestañas de manera que el texto se mueve a lo largo del borde de la página. Esto funciona bien para márgenes estrechos, pero puede dar resultado a menos posiciones de pestañas por página."
 
-#: lib/ptxprint/ptxprint.glade:14137
+#: lib/ptxprint/ptxprint.glade:14147
 msgid "How many tabs can there be down a page. This is automatically calculated from the Width, Height, Page size and Margins. If any of these change then this value will be updated. Increasing it, makes tabs overlap. Reducing it spreads them apart."
 msgstr "¿Cuántas pestañas puede haber en una página? Esto se calcula automáticamente a partir de la Anchura, Altura, Tamaño Página y Márgenes. Si alguno de estos cambia, este valor se actualizará. Aumentarlo, hace que las pestañas se superpongan. Reducirlo, las separa."
 
-#: lib/ptxprint/ptxprint.glade:14139
+#: lib/ptxprint/ptxprint.glade:14149
 msgid "Number of\n"
 "Tab Positions:"
 msgstr "Número de\n"
 "Posiciones de Pestañas:"
 
-#: lib/ptxprint/ptxprint.glade:14188 lib/ptxprint/ptxprint.glade:14287
+#: lib/ptxprint/ptxprint.glade:14198 lib/ptxprint/ptxprint.glade:14297
 msgid "<span background=\"black\" foreground=\"white\" font-weight=\"bold\">  Vertical  </span>"
 msgstr "<span background=\"black\" foreground=\"white\" font-weight=\"bold\">  Vertical  </span>"
 
-#: lib/ptxprint/ptxprint.glade:14205 lib/ptxprint/ptxprint.glade:14317
+#: lib/ptxprint/ptxprint.glade:14215 lib/ptxprint/ptxprint.glade:14327
 msgid "<span background=\"black\" foreground=\"white\" font-weight=\"bold\">  Horizontal  </span>"
 msgstr "<span background=\"black\" foreground=\"white\" font-weight=\"bold\">  Horizontal  </span>"
 
-#: lib/ptxprint/ptxprint.glade:14219
+#: lib/ptxprint/ptxprint.glade:14229
 msgid "When several shorter adjacent books occur, it is\n"
 "common to group them together to use the same\n"
 "tab position (but still have differently named tabs)."
@@ -6152,11 +6190,11 @@ msgstr "Cuando ocurren varios libros adyacentes más cortos, es\n"
 "común agruparlos juntos para usar la misma posición\n"
 "de la pestaña (pero todavía tienen un nombre diferente de pestañas)."
 
-#: lib/ptxprint/ptxprint.glade:14224
+#: lib/ptxprint/ptxprint.glade:14234
 msgid "Grouped Tabs:"
 msgstr "Pestañas Agrupadas:"
 
-#: lib/ptxprint/ptxprint.glade:14236
+#: lib/ptxprint/ptxprint.glade:14246
 msgid "List book IDs of short books to be grouped together\n"
 "at the same tab position. Use spaces between book \n"
 "IDs, and use ; to separate groups. There is no need to\n"
@@ -6170,23 +6208,23 @@ msgstr "Lista de IDs de libros de libros cortos a agrupar\n"
 "necesitan compartir la misma posición de la pestaña.\n\n"
 "Por ejemplo: PHM TIT; 1JN 2JN 3JN JUD"
 
-#: lib/ptxprint/ptxprint.glade:14257
+#: lib/ptxprint/ptxprint.glade:14267
 msgid "If you choose to Rotate the tabs, there are various options as to how these should be oriented. The preview (right) will show how these will appear on facing pages."
 msgstr "Si eliges Girar las pestañas, hay varias opciones sobre cómo deben orientarse. La vista previa (derecha) mostrará cómo aparecerán en las páginas opuestas."
 
-#: lib/ptxprint/ptxprint.glade:14343
+#: lib/ptxprint/ptxprint.glade:14353
 msgid "Restart Tabs at MAT"
 msgstr "Reiniciar las pestañas en MAT"
 
-#: lib/ptxprint/ptxprint.glade:14347
+#: lib/ptxprint/ptxprint.glade:14357
 msgid "Normally books will follow sequentially and if the next tab would be off the bottom of the page, then it will be set to the top for a new cycle of tabs. Setting this starts a new cycle at the start of the New Testament (Matthew)."
 msgstr "Normalmente los libros seguirán secuencialmente y si la siguiente pestaña está fuera de la parte inferior de la página, entonces se pondrá en la parte superior para un nuevo ciclo de pestañas. Al establecer esto se inicia un nuevo ciclo al comienzo del Nuevo Testamento (Mateo)."
 
-#: lib/ptxprint/ptxprint.glade:14360
+#: lib/ptxprint/ptxprint.glade:14370
 msgid "Use \\zthumbtab Style"
 msgstr "Usar estilo \\zspapertab"
 
-#: lib/ptxprint/ptxprint.glade:14364
+#: lib/ptxprint/ptxprint.glade:14374
 msgid "By default the Thumb Tabs use the styling specified for the \\toc3 marker. If \n"
 "you want to specify different styling for the tabs, then select this option.\n\n"
 "Note that this setting is interconnected with the Table of Contents settings \n"
@@ -6211,11 +6249,11 @@ msgstr "Por defecto, las pestañas de pulgares utilizan el estilo especificado p
 "\\toc3 no se utilizará como contenido de la pestaña del pulgar. Una entrada \\zthumbtab'' vacía \n"
 "especifica que no debe haber texto en la pestaña del pulgar para ese libro."
 
-#: lib/ptxprint/ptxprint.glade:14390
+#: lib/ptxprint/ptxprint.glade:14400
 msgid "Edit Style"
 msgstr "Editar estilo"
 
-#: lib/ptxprint/ptxprint.glade:14395
+#: lib/ptxprint/ptxprint.glade:14405
 msgid "Click to jump to the appropriate\n"
 "(\\toc3 or \\zthumbtab) marker in\n"
 "the style editor to change the\n"
@@ -6225,22 +6263,22 @@ msgstr "Haga clic para saltar al marcador apropiado\n"
 "el editor de estilos para cambiar el\n"
 "formato de las pestañas del pulgar."
 
-#: lib/ptxprint/ptxprint.glade:14416 lib/ptxprint/ptxprint.glade:15690
+#: lib/ptxprint/ptxprint.glade:14426 lib/ptxprint/ptxprint.glade:15700
 msgid "ColorVal"
 msgstr "ColorVal"
 
-#: lib/ptxprint/ptxprint.glade:14429
+#: lib/ptxprint/ptxprint.glade:14439
 msgid "Clicking this button will reload the\n"
 "default values for the Grouped Tabs."
 msgstr "Al hacer clic en este botón se recargarán \n"
 "los valores predeterminados de\n"
 "para las pestañas agrupadas."
 
-#: lib/ptxprint/ptxprint.glade:14473
+#: lib/ptxprint/ptxprint.glade:14483
 msgid "Thumb Tabs"
 msgstr "Pestañas de Pulgar"
 
-#: lib/ptxprint/ptxprint.glade:14477
+#: lib/ptxprint/ptxprint.glade:14487
 msgid "Thumb Tabs are sometimes used in longer publications to help the user find a scripture book easier. By default\n"
 "these use the \\toc3 element in a USFM file to provide\n"
 "the text for the tab.\n"
@@ -6250,23 +6288,23 @@ msgstr "Las Pestañas de Pulgar a veces se utilizan en publicaciones más largas
 "el texto para la pestaña.\n"
 "Nota: Si un solo libro está seleccionado actualmente, colocará la pestaña del pulgar en relación a TODOS los libros listados en la lista de libros múltiples."
 
-#: lib/ptxprint/ptxprint.glade:14572
+#: lib/ptxprint/ptxprint.glade:14582
 msgid "Vertical shift in pts of the section box downwards relative to the text"
 msgstr "Desplazamiento vertical en pts del cuadro de sección hacia abajo relativo al texto"
 
-#: lib/ptxprint/ptxprint.glade:14574 lib/ptxprint/ptxprint.glade:14964
+#: lib/ptxprint/ptxprint.glade:14584 lib/ptxprint/ptxprint.glade:14974
 msgid "Shift:"
-msgstr "Shift:"
+msgstr "Desplazamiento:"
 
-#: lib/ptxprint/ptxprint.glade:14600
+#: lib/ptxprint/ptxprint.glade:14610
 msgid "Scale section header image. 1.0 is unity."
 msgstr "Imagen de cabecera de sección de escala. 1.0 es unidad."
 
-#: lib/ptxprint/ptxprint.glade:14631
+#: lib/ptxprint/ptxprint.glade:14641
 msgid "Section Header"
 msgstr "Encabezado de Sección"
 
-#: lib/ptxprint/ptxprint.glade:14635 lib/ptxprint/ptxprint.glade:14828
+#: lib/ptxprint/ptxprint.glade:14645 lib/ptxprint/ptxprint.glade:14838
 msgid "Section Headings may be adorned with\n"
 "a special graphic. Ensure that there is\n"
 "adequate space - both horizontal as well\n"
@@ -6276,19 +6314,19 @@ msgstr "Los Encabezados de Sección pueden estar adornados\n"
 "espacio adecuado - tanto horizontal como\n"
 "vertical para asegurar que todos los encabezados encajen."
 
-#: lib/ptxprint/ptxprint.glade:14691
+#: lib/ptxprint/ptxprint.glade:14701
 msgid "Full page"
 msgstr "Página completa"
 
-#: lib/ptxprint/ptxprint.glade:14695
+#: lib/ptxprint/ptxprint.glade:14705
 msgid "If set, the border is expanded to the full page. Otherwise it is expanded only to the gutter margins."
 msgstr "Si se establece, el borde se expande a toda la página. De lo contrario, se expande sólo hasta los márgenes del medianil."
 
-#: lib/ptxprint/ptxprint.glade:14729
+#: lib/ptxprint/ptxprint.glade:14739
 msgid "Page Border"
 msgstr "Borde de página"
 
-#: lib/ptxprint/ptxprint.glade:14733
+#: lib/ptxprint/ptxprint.glade:14743
 msgid "Select a PDF for the Border of the publication.\n"
 "Note that after setting this border, it is likely\n"
 "that you will need to adjust the page margins\n"
@@ -6298,25 +6336,25 @@ msgstr "Selecciona un PDF para el Borde de la publicación.\n"
 "es probable que necesitará ajustar los márgenes de\n"
 "la página para que encaje. "
 
-#: lib/ptxprint/ptxprint.glade:14824
+#: lib/ptxprint/ptxprint.glade:14834
 msgid "End of Book"
 msgstr "Fin de libro"
 
-#: lib/ptxprint/ptxprint.glade:14867
+#: lib/ptxprint/ptxprint.glade:14877
 msgid "End of Ayah"
 msgstr "Fin del Ayah"
 
-#: lib/ptxprint/ptxprint.glade:14871
+#: lib/ptxprint/ptxprint.glade:14881
 msgid "Use the End of Ayah character in the\n"
 "font to decorate the verse number."
 msgstr "Utiliza el carácter de Fin del Ayah en la fuente\n"
 "para decorar el número del verso."
 
-#: lib/ptxprint/ptxprint.glade:14886
+#: lib/ptxprint/ptxprint.glade:14896
 msgid "Verse Border Graphic"
 msgstr "Gráfico del borde del versículo"
 
-#: lib/ptxprint/ptxprint.glade:14890
+#: lib/ptxprint/ptxprint.glade:14900
 msgid "Use a PDF graphic to decorate the verse \n"
 "number. You may need to also adjust the\n"
 "font properties to ensure the verse numbers\n"
@@ -6326,34 +6364,34 @@ msgstr "Utilice un gráfico PDF para decorar el número del versículo. \n"
 "para asegurarse de que los números del versículo\n"
 "se ajusten al gráfico."
 
-#: lib/ptxprint/ptxprint.glade:14962
+#: lib/ptxprint/ptxprint.glade:14972
 msgid "Vertical shift in pts of the verse decorator image upwards relative to the text."
-msgstr "Cambios verticales en pts de la imagen decoradora de versículo hacia arriba en relación al texto."
+msgstr "Desplazamiento vertical en pts de la imagen decoradora de versículo hacia arriba en relación al texto."
 
-#: lib/ptxprint/ptxprint.glade:14991
+#: lib/ptxprint/ptxprint.glade:15001
 msgid "Scale verse decorator image. 1.0 is unity."
 msgstr "Escala versículo decorador imagen. 1.0 es unidad."
 
-#: lib/ptxprint/ptxprint.glade:15019
+#: lib/ptxprint/ptxprint.glade:15029
 msgid "Move Ayah"
 msgstr "Mover el Ayah"
 
-#: lib/ptxprint/ptxprint.glade:15052
+#: lib/ptxprint/ptxprint.glade:15062
 msgid "Verse Number Decorator"
 msgstr "Decorador Número de Versículo"
 
-#: lib/ptxprint/ptxprint.glade:15056
+#: lib/ptxprint/ptxprint.glade:15066
 msgid "Verse numbers can be decorated using\n"
 "either of the options shown below."
 msgstr "Los números de los versículos pueden \n"
 "ser decorados usando cualquiera de las \n"
 "opciones que se muestran abajo."
 
-#: lib/ptxprint/ptxprint.glade:15074
+#: lib/ptxprint/ptxprint.glade:15084
 msgid "Decorative Borders and Verses"
 msgstr "Bordes y Versículos Decorativos"
 
-#: lib/ptxprint/ptxprint.glade:15078
+#: lib/ptxprint/ptxprint.glade:15088
 msgid "Some cultures value ornamental or\n"
 "decorative features in their scripture\n"
 "publications. This option allows you\n"
@@ -6363,7 +6401,7 @@ msgstr "Algunas culturas valoran lo ornamental o\n"
 "de escrituras. Esta opción le permite\n"
 "especificar los ajustes para estos."
 
-#: lib/ptxprint/ptxprint.glade:15102
+#: lib/ptxprint/ptxprint.glade:15112
 msgid "Settings for thumb-tabs and\n"
 "options to add decorative borders\n"
 "or embelishments to the text.\n"
@@ -6371,11 +6409,11 @@ msgstr "Configuración para las pestañas automáticas y\n"
 "opciones para añadir bordes decorativos\n"
 "o embelesamientos al texto.\n"
 
-#: lib/ptxprint/ptxprint.glade:15107
+#: lib/ptxprint/ptxprint.glade:15117
 msgid "Tabs+Borders"
 msgstr "Pestañas+Bordes"
 
-#: lib/ptxprint/ptxprint.glade:15136 lib/ptxprint/ptxprint.glade:15152
+#: lib/ptxprint/ptxprint.glade:15146 lib/ptxprint/ptxprint.glade:15162
 msgid "If you are not sure which category\n"
 "your marker can be found under,\n"
 "then use this Search tool to find\n"
@@ -6385,11 +6423,11 @@ msgstr "Si no estás seguro de qué categoría\n"
 "luego utilice esta herramienta de Búsqueda para encontrar\n"
 "el marcador que necesita."
 
-#: lib/ptxprint/ptxprint.glade:15140
+#: lib/ptxprint/ptxprint.glade:15150
 msgid "Search Markers:"
 msgstr "Buscar marcadores:"
 
-#: lib/ptxprint/ptxprint.glade:15175
+#: lib/ptxprint/ptxprint.glade:15185
 msgid "Clicking this button will reset\n"
 "the Search/Filter to SHOW ALL\n"
 "markers/styles in the list below."
@@ -6397,15 +6435,15 @@ msgstr "Al hacer clic en este botón se restablecerá\n"
 "la búsqueda/filtro a TODOS\n"
 "marcadores/estilos en la lista de abajo."
 
-#: lib/ptxprint/ptxprint.glade:15278
+#: lib/ptxprint/ptxprint.glade:15288
 msgid "More Info..."
 msgstr "Más información..."
 
-#: lib/ptxprint/ptxprint.glade:15320
+#: lib/ptxprint/ptxprint.glade:15330
 msgid "Find a style within the appropriate section which is similar to the new style you wish to create. Then click this Add button to create a new style based on the currently selected style."
 msgstr "Encuentra un estilo dentro de la sección apropiada que sea similar al nuevo estilo que deseas crear. Luego haga clic en este botón Añadir para crear un nuevo estilo basado en el estilo seleccionado actualmente."
 
-#: lib/ptxprint/ptxprint.glade:15334
+#: lib/ptxprint/ptxprint.glade:15344
 msgid "Click to delete this style.\n"
 "Warning: There is no \n"
 "confirmation or undo!"
@@ -6413,45 +6451,45 @@ msgstr "Haga clic para eliminar este estilo.\n"
 "Advertencia: ¡No hay \n"
 "confirmación o deshacer!"
 
-#: lib/ptxprint/ptxprint.glade:15350
+#: lib/ptxprint/ptxprint.glade:15360
 msgid "Click to reset this style's\n"
 "settings to default values."
 msgstr "Haga clic para restablecer la configuración de este estilo\n"
 "a los valores predeterminados."
 
-#: lib/ptxprint/ptxprint.glade:15361
+#: lib/ptxprint/ptxprint.glade:15371
 msgid "Edit"
 msgstr "Editar"
 
-#: lib/ptxprint/ptxprint.glade:15365
+#: lib/ptxprint/ptxprint.glade:15375
 msgid "Click to Edit additional  \n"
 "properties for this style."
 msgstr "Haga clic para editar propiedades  \n"
 "adicionales para este estilo."
 
-#: lib/ptxprint/ptxprint.glade:15441
+#: lib/ptxprint/ptxprint.glade:15451
 msgid "Scale Relative\n"
 "to Parent"
 msgstr "Escala relativa\n"
 "al padre"
 
-#: lib/ptxprint/ptxprint.glade:15446
+#: lib/ptxprint/ptxprint.glade:15456
 msgid "The Font Size is usually calculated as relative to the current Font Size Unit. If you prefer to specify an an amount relative to the underlying (parent) font then enable this option. Note that \\p has a FontSize of 12 in usfm.sty"
 msgstr "El tamaño de la fuente normalmente se calcula en relación a la unidad de tamaño de la fuente actual. Si prefiere especificar una cantidad relativa a la fuente subyacente (padre) habilite esta opción. Tenga en cuenta que \\p tiene un tamaño de fuente de 12 en usfm.sty"
 
-#: lib/ptxprint/ptxprint.glade:15458
+#: lib/ptxprint/ptxprint.glade:15468
 msgid "Bold"
 msgstr "Negrita"
 
-#: lib/ptxprint/ptxprint.glade:15472
+#: lib/ptxprint/ptxprint.glade:15482
 msgid "Italic"
 msgstr "Cursiva"
 
-#: lib/ptxprint/ptxprint.glade:15487
+#: lib/ptxprint/ptxprint.glade:15497
 msgid "Superscript"
 msgstr "Superíndice"
 
-#: lib/ptxprint/ptxprint.glade:15492
+#: lib/ptxprint/ptxprint.glade:15502
 msgid "The superscript option overrides these settings:\n"
 "   Font Size Factor is set to 0.75\n"
 "   Raise is set to 0.85 times the x-height of the font (which\n"
@@ -6461,31 +6499,31 @@ msgstr "La opción de superíndice anula estos ajustes:\n"
 "   Subir se establece en 0.85 veces la altura x de la fuente (que\n"
 "   por defecto es 1/2 de la subida si no se especifica en la fuente)."
 
-#: lib/ptxprint/ptxprint.glade:15508
+#: lib/ptxprint/ptxprint.glade:15518
 msgid "SmallCaps"
 msgstr "Mayúsculas pequeñas"
 
-#: lib/ptxprint/ptxprint.glade:15525 lib/ptxprint/ptxprint.glade:15638
+#: lib/ptxprint/ptxprint.glade:15535 lib/ptxprint/ptxprint.glade:15648
 msgid "How much to raise the text (in pts)."
 msgstr "Cuánto hay que subir el texto (en pts)."
 
-#: lib/ptxprint/ptxprint.glade:15550
+#: lib/ptxprint/ptxprint.glade:15560
 msgid "Sets text color for text in this style."
 msgstr "Establece el color del texto en este estilo."
 
-#: lib/ptxprint/ptxprint.glade:15552
+#: lib/ptxprint/ptxprint.glade:15562
 msgid "Text Color"
 msgstr "Color del texto"
 
-#: lib/ptxprint/ptxprint.glade:15572
+#: lib/ptxprint/ptxprint.glade:15582
 msgid "Font:"
 msgstr "Fuente:"
 
-#: lib/ptxprint/ptxprint.glade:15593
+#: lib/ptxprint/ptxprint.glade:15603
 msgid "Color:"
 msgstr "Color:"
 
-#: lib/ptxprint/ptxprint.glade:15613
+#: lib/ptxprint/ptxprint.glade:15623
 msgid "This a factor or proportion of the base font size.\n"
 "So 1.0 is the same as the base font size from the \n"
 "Layout tab."
@@ -6493,11 +6531,11 @@ msgstr "Es un factor o proporción del tamaño de la fuente base.\n"
 "Así que 1.0 es el mismo que el tamaño de la fuente base \n"
 "de la pestaña Diseño."
 
-#: lib/ptxprint/ptxprint.glade:15640
+#: lib/ptxprint/ptxprint.glade:15650
 msgid "Raise:"
 msgstr "Subir:"
 
-#: lib/ptxprint/ptxprint.glade:15655
+#: lib/ptxprint/ptxprint.glade:15665
 msgid "Font name with calculated absolute point size \n"
 "given the current Base Font Size (on the Layout tab).\n"
 "The (+Ascender -Descender) values from the base\n"
@@ -6507,27 +6545,27 @@ msgstr "Nombre de fuente con el tamaño de punto absoluto calculado \n"
 "Los valores (+Ascender -Descender) de la línea base\n"
 "para esta fuente se proporcionan para referencia. "
 
-#: lib/ptxprint/ptxprint.glade:15660
+#: lib/ptxprint/ptxprint.glade:15670
 msgid "11.7pt"
 msgstr "11.7pt"
 
-#: lib/ptxprint/ptxprint.glade:15687
+#: lib/ptxprint/ptxprint.glade:15697
 msgid "RGB value in hexadecimal."
 msgstr "Valor RGB en hexadecimal."
 
-#: lib/ptxprint/ptxprint.glade:15712
+#: lib/ptxprint/ptxprint.glade:15722
 msgid "Character Settings"
 msgstr "Ajustes de carácter"
 
-#: lib/ptxprint/ptxprint.glade:15851
+#: lib/ptxprint/ptxprint.glade:15861
 msgid "Use Absolute Spacing (in pts)"
 msgstr "Usar espacio absoluto (en pts)"
 
-#: lib/ptxprint/ptxprint.glade:15855
+#: lib/ptxprint/ptxprint.glade:15865
 msgid "The Line Spacing is usually calculated as a factor of the Font Size. If you prefer to specify an exact/absolute line spacing (in points), then enable this option."
 msgstr "El Espaciado de Línea generalmente se calcula como un factor del Tamaño de Fuente. Si prefiere especificar un espaciado de línea exacto/absoluto (en puntos), habilite esta opción."
 
-#: lib/ptxprint/ptxprint.glade:15928
+#: lib/ptxprint/ptxprint.glade:15938
 msgid "If text is justified but Justify Paragraphs is turned off on the\n"
 "Body tab then an alignment of Justified here is treated as \n"
 "Left, (and maybe swapped if Right-to-Left).\n\n"
@@ -6541,11 +6579,11 @@ msgstr "Si el texto está justificado pero Justificar Párrafos está desactivad
 "se intercambia la interpretación de Izquierda y Derecha. El flujo de arriba a abajo\n"
 "se trata como de izquierda a derecha."
 
-#: lib/ptxprint/ptxprint.glade:15935
+#: lib/ptxprint/ptxprint.glade:15945
 msgid "Alignment:"
 msgstr "Alineación:"
 
-#: lib/ptxprint/ptxprint.glade:15956
+#: lib/ptxprint/ptxprint.glade:15966
 msgid "This is multiplied by the Base Paragraph Indent\n"
 "value (specified on the Layout tab) to get the final\n"
 "indentation amount."
@@ -6553,13 +6591,13 @@ msgstr "Esto es multiplicado por el valor\n"
 "del Indento de párrafo base (especificado en la pestaña Diseño) para obtener la cantidad final\n"
 "de sangría."
 
-#: lib/ptxprint/ptxprint.glade:15960
+#: lib/ptxprint/ptxprint.glade:15970
 msgid "First Line\n"
 "Indent Factor:"
 msgstr "Factor de sangría \n"
 "de primera línea:"
 
-#: lib/ptxprint/ptxprint.glade:15981
+#: lib/ptxprint/ptxprint.glade:15991
 msgid "This is multiplied by the Base Paragraph Indent\n"
 "value (specified on the Layout tab) to get the final\n"
 "indentation amount. \n\n"
@@ -6571,13 +6609,13 @@ msgstr "Esto se multiplica por el valor de la sangría de párrafo base\n"
 "Cuando la dirección del flujo de texto del sistema de escritura es de \n"
 "derecha a izquierda se intercambia la interpretación de izquierda y derecha."
 
-#: lib/ptxprint/ptxprint.glade:15988
+#: lib/ptxprint/ptxprint.glade:15998
 msgid "Left Indent\n"
 "Factor:"
 msgstr "Factor de\n"
 "sangría izquierda:"
 
-#: lib/ptxprint/ptxprint.glade:16010
+#: lib/ptxprint/ptxprint.glade:16020
 msgid "This is multiplied by the Base Paragraph Indent\n"
 "value (specified on the Layout tab) to get the final\n"
 "indentation amount.\n\n"
@@ -6589,13 +6627,13 @@ msgstr "Esto se multiplica por el valor de la sangría de párrafo base\n"
 "Cuando la dirección del flujo de texto del sistema de escritura es de \n"
 "derecha a izquierda se intercambia la interpretación de izquierda y derecha."
 
-#: lib/ptxprint/ptxprint.glade:16017
+#: lib/ptxprint/ptxprint.glade:16027
 msgid "Right Indent\n"
 "Factor:"
 msgstr "Factor de\n"
 "sangría derecha:"
 
-#: lib/ptxprint/ptxprint.glade:16039
+#: lib/ptxprint/ptxprint.glade:16049
 msgid "This a proportion of the base line spacing.\n"
 "So 1.0 is the same as the base line spacing from the Layout tab.\n"
 "If Absolute Spacing is set, then this value is the line spacing in pts."
@@ -6603,31 +6641,31 @@ msgstr "Esta es una proporción de la distancia entre líneas de base.\n"
 "Así que 1.0 es la misma que la distancia entre líneas de base de la pestaña Diseño.\n"
 "Si se establece Espaciado Absoluto, este valor es el espaciado de línea en pts."
 
-#: lib/ptxprint/ptxprint.glade:16064
+#: lib/ptxprint/ptxprint.glade:16074
 msgid "Amount of space to insert before the paragraph. The actual space is this factor multiplied by the base line spacing from the Layout tab."
 msgstr "Cantidad de espacio a insertar antes del párrafo. El espacio real es este factor multiplicado por la distancia entre líneas de base de la pestaña Diseño."
 
-#: lib/ptxprint/ptxprint.glade:16066
+#: lib/ptxprint/ptxprint.glade:16076
 msgid "Space Before\n"
 "Factor:"
 msgstr "Factor de espacio \n"
 "antes:"
 
-#: lib/ptxprint/ptxprint.glade:16087
+#: lib/ptxprint/ptxprint.glade:16097
 msgid "Amount of space to insert after the paragraph. The actual space is this factor multiplied by the base line spacing from the layout tab."
 msgstr "Cantidad de espacio a insertar después del párrafo. El espacio real es este factor multiplicado por la distancia entre líneas de base de la pestaña de diseño."
 
-#: lib/ptxprint/ptxprint.glade:16089
+#: lib/ptxprint/ptxprint.glade:16099
 msgid "Space After\n"
 "Factor:"
 msgstr "Factor de espacio \n"
 "después:"
 
-#: lib/ptxprint/ptxprint.glade:16116
+#: lib/ptxprint/ptxprint.glade:16126
 msgid "Paragraph Settings"
 msgstr "Configuración de párrafos"
 
-#: lib/ptxprint/ptxprint.glade:16195
+#: lib/ptxprint/ptxprint.glade:16205
 msgid "The style which is used to style the caller\n"
 "in the main text. If none is specified then\n"
 "\\v is used."
@@ -6635,25 +6673,25 @@ msgstr "El estilo que se utiliza para dar estilo al llamador\n"
 "en el texto principal. Si no se especifica ninguno, \n"
 "se utilizará \\v."
 
-#: lib/ptxprint/ptxprint.glade:16199
+#: lib/ptxprint/ptxprint.glade:16209
 msgid "Caller\n"
 "Style:"
 msgstr "Estilo\n"
 "del Llamador:"
 
-#: lib/ptxprint/ptxprint.glade:16220
+#: lib/ptxprint/ptxprint.glade:16230
 msgid "Raise the caller in the main text by\n"
 "this number of points."
 msgstr "Eleva el llamador en el texto principal en\n"
 "este número de puntos."
 
-#: lib/ptxprint/ptxprint.glade:16223
+#: lib/ptxprint/ptxprint.glade:16233
 msgid "Caller\n"
 "Raise:"
 msgstr "Elevar\n"
 "el llamador:"
 
-#: lib/ptxprint/ptxprint.glade:16243
+#: lib/ptxprint/ptxprint.glade:16253
 msgid "The style which is used to style the caller\n"
 "in the note itself. If none is specified then\n"
 "\\v is used."
@@ -6661,25 +6699,25 @@ msgstr "El estilo que se utiliza para dar estilo al llamador\n"
 "en la nota misma. Si no se especifica ninguno, \n"
 "se utilizará \\v."
 
-#: lib/ptxprint/ptxprint.glade:16247
+#: lib/ptxprint/ptxprint.glade:16257
 msgid "Note Caller\n"
 "Style:"
 msgstr "Estilo del Llamador \n"
 "de notas:"
 
-#: lib/ptxprint/ptxprint.glade:16269
+#: lib/ptxprint/ptxprint.glade:16279
 msgid "Raise the caller in the note by\n"
 "this number of points."
 msgstr "Eleva el llamador en la nota en\n"
 "este número de puntos."
 
-#: lib/ptxprint/ptxprint.glade:16272
+#: lib/ptxprint/ptxprint.glade:16282
 msgid "Note Caller\n"
 "Raise:"
 msgstr "Elevar \n"
 "Llamador de nota:"
 
-#: lib/ptxprint/ptxprint.glade:16294
+#: lib/ptxprint/ptxprint.glade:16304
 msgid "Insert the notes of the marker being defined\n"
 "into the collection of notes in the\n"
 "marker specified here.\n\n"
@@ -6694,17 +6732,17 @@ msgstr "Inserta las notas del marcador que se está \n"
 "todas las referencias cruzadas\n"
 "se mezclarían en las notas a pie de página \\f."
 
-#: lib/ptxprint/ptxprint.glade:16302
+#: lib/ptxprint/ptxprint.glade:16312
 msgid "Note Blend\n"
 "Into Style:"
 msgstr "Mezclado de notas\n"
 "en estilo:"
 
-#: lib/ptxprint/ptxprint.glade:16362
+#: lib/ptxprint/ptxprint.glade:16372
 msgid "Note  Settings"
 msgstr "Configuración de notas"
 
-#: lib/ptxprint/ptxprint.glade:16395
+#: lib/ptxprint/ptxprint.glade:16405
 msgid "When a setting's name is in bold it indicates that \n"
 "the value is different from what is in the stylesheet.\n\n"
 "Note that you can click on a bold setting name of \n"
@@ -6714,11 +6752,11 @@ msgstr "Cuando el nombre de una configuración está en negrita, indica que \n"
 "Tenga en cuenta que puede hacer clic en un nombre de ajuste en negrita de \n"
 "cualquier parámetro para reestablecerlo al valor de la hoja de estilo."
 
-#: lib/ptxprint/ptxprint.glade:16402
+#: lib/ptxprint/ptxprint.glade:16412
 msgid "Why are some parameter names in bold?"
 msgstr "¿Por qué hay algunos nombres de parámetros en negrita?"
 
-#: lib/ptxprint/ptxprint.glade:16417
+#: lib/ptxprint/ptxprint.glade:16427
 msgid "It is recommended that you make changes in this Style editor which overrides all the stylesheets below. The settings modified here are stored in each config's ptxprint.sty file.\n\n"
 "[Optional: ptxprint-mods.sty can be edited using the Advanced tab, and contains style modifications specific to a publication/configuration.]\n\n"
 "[Optional: custom.sty contains style modifications that are project-wide and also affect display of text within Paratext itseld (can also be edited using the shortcut on the Advanced tab)]\n\n"
@@ -6730,15 +6768,15 @@ msgstr "Se recomienda hacer cambios en este editor de estilos que anulan todas l
 "ptx2pdf.sty contiene modificaciones específicas de PTXprint para hacer que las cosas funcionen mejor (no para ser editadas)\n\n"
 "usfm_sb.sty es la hoja de estilo de Paratext (que nunca debería ser editada)"
 
-#: lib/ptxprint/ptxprint.glade:16428
+#: lib/ptxprint/ptxprint.glade:16438
 msgid "How are the various Stylesheets applied?"
 msgstr "¿Cómo se aplican las diferentes hojas de estilo?"
 
-#: lib/ptxprint/ptxprint.glade:16443
+#: lib/ptxprint/ptxprint.glade:16453
 msgid "Hide/Exclude Contents of Marker"
 msgstr "Ocultar/Excluir contenidos del marcador"
 
-#: lib/ptxprint/ptxprint.glade:16447
+#: lib/ptxprint/ptxprint.glade:16457
 msgid "If this option is checked, the marker becomes \n"
 "\"non-publishable\" and the contents of this \n"
 "marker will not be included in the output."
@@ -6746,7 +6784,7 @@ msgstr "Si se marca esta opción, el marcador se convierte en \n"
 "\"no publicable\" y el contenido de este \n"
 "marcador no se incluirá en la salida."
 
-#: lib/ptxprint/ptxprint.glade:16473
+#: lib/ptxprint/ptxprint.glade:16483
 msgid "Edit style information of\n"
 "markers without having to\n"
 "edit the USFM stylesheet files."
@@ -6755,15 +6793,15 @@ msgstr "Editar la información de \n"
 "sin tener que editar los archivos \n"
 "de hojas de estilo USFM."
 
-#: lib/ptxprint/ptxprint.glade:16477
+#: lib/ptxprint/ptxprint.glade:16487
 msgid "Styles"
 msgstr "Estilos"
 
-#: lib/ptxprint/ptxprint.glade:16535
+#: lib/ptxprint/ptxprint.glade:16545
 msgid "Apply Customized Settings (ptxprint-mods.tex)"
 msgstr "Aplicar configuraciones personalizadas (ptxprint-mods.tex)"
 
-#: lib/ptxprint/ptxprint.glade:16539
+#: lib/ptxprint/ptxprint.glade:16549
 msgid "This is the normal file for advanced users to \n"
 "configure TeX. This .tex file executes AFTER \n"
 "all the PTXprint settings. "
@@ -6771,13 +6809,13 @@ msgstr "Este es el archivo normal para los usuarios avanzados para \n"
 "configurar TeX. Este archivo .tex se ejecuta DESPUÉS de \n"
 "todas las configuraciones de PTXprint. "
 
-#: lib/ptxprint/ptxprint.glade:16558
+#: lib/ptxprint/ptxprint.glade:16568
 msgid "Process Text With \n"
 "Custom Script at:"
 msgstr "Procesar Texto Con \n"
 "Script Personalizado en:"
 
-#: lib/ptxprint/ptxprint.glade:16563
+#: lib/ptxprint/ptxprint.glade:16573
 msgid "Processes the .usfm file through a program of your choosing. \n"
 "The program is run as `prog infile outfile` where infile is the \n"
 "source .usfm file and outfile the output .usfm that will then be typeset."
@@ -6786,39 +6824,39 @@ msgstr "Procesa el archivo .usfm a través de un programa de su elección. \n"
 "el archivo .usfm de origen y outfile el .usfm de salida que luego \n"
 "será tipografiado."
 
-#: lib/ptxprint/ptxprint.glade:16583
+#: lib/ptxprint/ptxprint.glade:16593
 msgid "start"
 msgstr "inicio"
 
-#: lib/ptxprint/ptxprint.glade:16587
+#: lib/ptxprint/ptxprint.glade:16597
 msgid "Execute processing script BEFORE running \n"
 "any printdraftchanges, canonicalisation \n"
 "(i.e. Auto-Correct USFM) or local changes\n"
 "which are all specified below."
 msgstr "Ejecutar script de procesamiento ANTES de ejecutar \n"
-"cualquier tipo de borrador de impresión, canonización \n"
+"cualquier tipo de printdraftchanges, canonización \n"
 "(es decir, autoCorregir USFM) o cambios locales\n"
 "que se especifican a continuación."
 
-#: lib/ptxprint/ptxprint.glade:16604
+#: lib/ptxprint/ptxprint.glade:16614
 msgid "end"
 msgstr "fin"
 
-#: lib/ptxprint/ptxprint.glade:16608
+#: lib/ptxprint/ptxprint.glade:16618
 msgid "Execute processing script AFTER running \n"
 "any printdraftchanges, canonicalisation \n"
 "(i.e. Auto-Correct USFM) or local changes\n"
 "which are all specified below."
 msgstr "Ejecutar script de procesamiento DESPUÉS de ejecutar \n"
-"cualquier tipo de borrador de impresión, canonización \n"
+"cualquier tipo de printdraftchanges, canonización \n"
 "(es decir, autoCorregir USFM) o cambios locales\n"
 "que se especifican a continuación."
 
-#: lib/ptxprint/ptxprint.glade:16656
+#: lib/ptxprint/ptxprint.glade:16666
 msgid "Apply Changes Specified (PrintDraftChanges.txt)"
 msgstr "Aplicar Cambios Especificados (PrintDraftChanges.txt)"
 
-#: lib/ptxprint/ptxprint.glade:16660
+#: lib/ptxprint/ptxprint.glade:16670
 msgid "If there are changes that you wish to\n"
 "apply to the USFM file(s) prior to\n"
 "producing the printout, then these\n"
@@ -6828,17 +6866,17 @@ msgstr "Si hay cambios que deseas que\n"
 "producir la impresión, entonces estos\n"
 "pueden ser especificados en este archivo."
 
-#: lib/ptxprint/ptxprint.glade:16676 lib/ptxprint/ptxprint.glade:16692
-#: lib/ptxprint/ptxprint.glade:16708 lib/ptxprint/ptxprint.glade:16768
-#: lib/ptxprint/ptxprint.glade:16784 lib/ptxprint/ptxprint.glade:16801
+#: lib/ptxprint/ptxprint.glade:16686 lib/ptxprint/ptxprint.glade:16702
+#: lib/ptxprint/ptxprint.glade:16718 lib/ptxprint/ptxprint.glade:16778
+#: lib/ptxprint/ptxprint.glade:16794 lib/ptxprint/ptxprint.glade:16811
 msgid "Edit..."
 msgstr "Editar..."
 
-#: lib/ptxprint/ptxprint.glade:16724
+#: lib/ptxprint/ptxprint.glade:16734
 msgid "Apply Stylesheet Overrides (ptxprint-mods.sty)"
 msgstr "Aplicar hojas de estilo (ptxprint-mods.sty)"
 
-#: lib/ptxprint/ptxprint.glade:16728
+#: lib/ptxprint/ptxprint.glade:16738
 msgid "It is recommended to leave \n"
 "this option unchecked (off)\n"
 "unless you have intentionally\n"
@@ -6852,11 +6890,11 @@ msgstr "Se recomienda dejar \n"
 "hojas de estilo ptxprint-mods.sty y \n"
 "desea que estos sean utilizados por PTXprint."
 
-#: lib/ptxprint/ptxprint.glade:16746
+#: lib/ptxprint/ptxprint.glade:16756
 msgid "Apply Customized Styles (custom.sty)"
 msgstr "Aplicar estilos personalizados (custom.sty)"
 
-#: lib/ptxprint/ptxprint.glade:16750
+#: lib/ptxprint/ptxprint.glade:16760
 msgid "It is recommended to leave \n"
 "this option unchecked (off)\n"
 "unless you have intentionally\n"
@@ -6870,38 +6908,38 @@ msgstr "Se recomienda dejar \n"
 "hoja de estilo custom.sty y desea \n"
 "que estos sean utilizados por PTXprint."
 
-#: lib/ptxprint/ptxprint.glade:16788
+#: lib/ptxprint/ptxprint.glade:16798
 msgid "Edit the processing script"
 msgstr "Editar el script de procesamiento"
 
-#: lib/ptxprint/ptxprint.glade:16815
+#: lib/ptxprint/ptxprint.glade:16825
 msgid "Apply Initial Settings (ptxprint-premods.tex)"
 msgstr "Aplicar configuraciones iniciales (ptxprint-premods.tex)"
 
-#: lib/ptxprint/ptxprint.glade:16819
+#: lib/ptxprint/ptxprint.glade:16829
 msgid "This .tex file is executed BEFORE any stylesheets of \n"
 "other settings are applied. This file is rarely used."
 msgstr "Este archivo .tex se ejecuta ANTES de que se apliquen las hojas de estilo de \n"
 "otras configuraciones. Este archivo se utiliza raramente."
 
-#: lib/ptxprint/ptxprint.glade:16839
+#: lib/ptxprint/ptxprint.glade:16849
 msgid "Text Processing & Stylesheets"
 msgstr "Procesamiento de Texto & Hojas de Estilo"
 
-#: lib/ptxprint/ptxprint.glade:16889
+#: lib/ptxprint/ptxprint.glade:16899
 msgid "Include Front Matter PDF(s)"
 msgstr "Incluir Páginas Iniciales PDF(s)"
 
-#: lib/ptxprint/ptxprint.glade:16893
+#: lib/ptxprint/ptxprint.glade:16903
 msgid "One or more previously created PDF file(s) can be included BEFORE the scripture material being typeset. If more than one\n"
 "file is selected, then these will appear in alphabetical order."
 msgstr "Se pueden incluir uno o más archivos PDF previamente creados ANTES de que el material de las escrituras sea tipografiada. Si más de uno es seleccionado, entonces estos aparecerán en orden alfabético."
 
-#: lib/ptxprint/ptxprint.glade:16944
+#: lib/ptxprint/ptxprint.glade:16954
 msgid "Include Back Matter PDF(s)"
 msgstr "Incluir Páginas Finales PDF(s)"
 
-#: lib/ptxprint/ptxprint.glade:16948
+#: lib/ptxprint/ptxprint.glade:16958
 msgid "One or more previously created PDF file(s) can be included\n"
 "AFTER the scripture material being typeset. If more than one\n"
 "file is selected, then these will appear in alphabetical order."
@@ -6909,11 +6947,11 @@ msgstr "Se pueden incluir uno o más archivos PDF previamente creados\n"
 "DESPUÉS de que el material de las escrituras haya sido tipografiada. Si más de uno\n"
 "es seleccionado, entonces estos aparecerán en orden alfabético."
 
-#: lib/ptxprint/ptxprint.glade:16982
+#: lib/ptxprint/ptxprint.glade:16992
 msgid "Apply Watermark PDF"
 msgstr "Aplicar Marca de Agua PDF"
 
-#: lib/ptxprint/ptxprint.glade:16986
+#: lib/ptxprint/ptxprint.glade:16996
 msgid "A watermark can be applied to all pages of \n"
 "the publication. The file must be a PDF and\n"
 "should ideally have the same dimensions as \n"
@@ -6924,27 +6962,27 @@ msgstr "Se puede aplicar una marca de agua a todas \n"
 "las mismas dimensiones que la publicación \n"
 "que se imprime."
 
-#: lib/ptxprint/ptxprint.glade:17068
+#: lib/ptxprint/ptxprint.glade:17078
 msgid "Include Other PDFs"
 msgstr "Incluir Otros PDFs"
 
-#: lib/ptxprint/ptxprint.glade:17089
+#: lib/ptxprint/ptxprint.glade:17099
 msgid "Output to Project's\n"
 "PrintDraft Folder"
 msgstr "Imprimir a la Carpeta\n"
 "PrintDraft del Proyecto"
 
-#: lib/ptxprint/ptxprint.glade:17094
+#: lib/ptxprint/ptxprint.glade:17104
 msgid "Use the Project Printdraft directory \n"
 "to store generated PDF file(s)."
 msgstr "Utilice el directorio Printdraft del Proyecto \n"
 "para almacenar los archivos PDF generados."
 
-#: lib/ptxprint/ptxprint.glade:17108
+#: lib/ptxprint/ptxprint.glade:17118
 msgid "Set Output Folder..."
 msgstr "Establecer la Carpeta de Salida..."
 
-#: lib/ptxprint/ptxprint.glade:17113
+#: lib/ptxprint/ptxprint.glade:17123
 msgid "This button wil allow you to specify\n"
 "a different folder for the resulting\n"
 "PDF (and associated interim files)."
@@ -6952,21 +6990,21 @@ msgstr "Este botón le permitirá especificar una carpeta \n"
 "diferente para el PDF resultante \n"
 "(y los archivos intermedios asociados)."
 
-#: lib/ptxprint/ptxprint.glade:17127
+#: lib/ptxprint/ptxprint.glade:17137
 msgid "Remove Temp Files"
 msgstr "Eliminar archivos temporales"
 
-#: lib/ptxprint/ptxprint.glade:17132
+#: lib/ptxprint/ptxprint.glade:17142
 msgid "Click this to tidy up the output folder (usually PrintDraft).\n"
 "This will delete all previous log and intermediate temporary files for the entire project and is a good way to easily remove many unwanted files."
 msgstr "Haga clic en esto para optimizar la carpeta de salida (normalmente PrintDraft).\n"
 "Esto eliminará todos los registros anteriores y los archivos temporales intermedios para todo el proyecto y es una buena manera de eliminar fácilmente muchos archivos no deseados."
 
-#: lib/ptxprint/ptxprint.glade:17144
+#: lib/ptxprint/ptxprint.glade:17154
 msgid "Open Folder"
 msgstr "Abrir Carpeta"
 
-#: lib/ptxprint/ptxprint.glade:17165 lib/ptxprint/ptxprint.glade:17199
+#: lib/ptxprint/ptxprint.glade:17175 lib/ptxprint/ptxprint.glade:17209
 msgid "Select the appropriate standard \n"
 "for the output format to optimize\n"
 "the PDF for its intended purpose.\n\n"
@@ -6984,15 +7022,15 @@ msgstr "Seleccione el estándar adecuado \n"
 "Archivo (tamaño más grande, para conservar a largo plazo)\n\n"
 "Nota: Todos cumplen con el estándar de archivo PDF/A-1b."
 
-#: lib/ptxprint/ptxprint.glade:17209
+#: lib/ptxprint/ptxprint.glade:17219
 msgid "PDF Output Format:"
 msgstr "Formato de salida PDF:"
 
-#: lib/ptxprint/ptxprint.glade:17269
+#: lib/ptxprint/ptxprint.glade:17279
 msgid "Show Error Bars For Overfull Lines"
 msgstr "Mostrar Barras de Error Para Líneas Sobrecargadas"
 
-#: lib/ptxprint/ptxprint.glade:17273
+#: lib/ptxprint/ptxprint.glade:17283
 msgid "Enable this option to have TeX make overfull lines stand out.\n"
 "If you don't know what this means, or just want to get rid of \n"
 "black boxes at the end of lines in the PDF then uncheck it. "
@@ -7000,11 +7038,11 @@ msgstr "Habilite esta opción para que TeX haga resaltar las líneas sobrecargad
 "Si no sabe lo que significa esto, o simplemente quiere deshacerse de \n"
 "cuadros negros al final de las líneas en el PDF, entonces desmarque esta opción. "
 
-#: lib/ptxprint/ptxprint.glade:17288
+#: lib/ptxprint/ptxprint.glade:17298
 msgid "Sensitive Project"
 msgstr "Proyecto Sensible"
 
-#: lib/ptxprint/ptxprint.glade:17292
+#: lib/ptxprint/ptxprint.glade:17302
 msgid "In sensitive locations the illustration copyright\n"
 "statement(s) can just contain the appropriate\n"
 "acronyms (e.g. BFBS or DCC) for some artists.\n\n"
@@ -7016,11 +7054,11 @@ msgstr "En lugares sensibles, las declaraciones de derechos de autor\n"
 "Y si se selecciona el formato PDF/X-1a:2003 arriba, entonces\n"
 "los metadatos no contendrán ningún dato sensible."
 
-#: lib/ptxprint/ptxprint.glade:17309
+#: lib/ptxprint/ptxprint.glade:17319
 msgid "Auto-Correct USFM"
 msgstr "Corrección automática USFM"
 
-#: lib/ptxprint/ptxprint.glade:17313
+#: lib/ptxprint/ptxprint.glade:17323
 msgid "PTXprint can analyze the USFM files and\n"
 "automatically correct some common \n"
 "errors in syntax. It will also notify you of \n"
@@ -7035,11 +7073,11 @@ msgstr "PTXprint puede analizar los archivos USFM y\n"
 "de impresión - dándole una útil retroalimentación\n"
 "sobre cómo arreglar el asunto antes de volver a imprimir."
 
-#: lib/ptxprint/ptxprint.glade:17337
+#: lib/ptxprint/ptxprint.glade:17347
 msgid "Interlinear  &  Code:"
 msgstr "Interlineal y código:"
 
-#: lib/ptxprint/ptxprint.glade:17341
+#: lib/ptxprint/ptxprint.glade:17351
 msgid "Convert Paratext's interlinear data\n"
 "text to ruby (glossing) so that an\n"
 "interlinear text can be printed.\n\n"
@@ -7064,7 +7102,7 @@ msgstr "Convertir los datos interlineales de Paratext\n"
 "estarán desactivados, ya que estos dos ajustes\n"
 "son mutuamente excluyentes."
 
-#: lib/ptxprint/ptxprint.glade:17367
+#: lib/ptxprint/ptxprint.glade:17377
 msgid "Interlinear language code to use.\n"
 "To find which code to use, look \n"
 "in the project folder for a folder \n"
@@ -7082,11 +7120,11 @@ msgstr "Código de idioma interlineal a utilizar.\n"
 "sido glosado en inglés, entonces \n"
 "el código sería \"en\"."
 
-#: lib/ptxprint/ptxprint.glade:17388
+#: lib/ptxprint/ptxprint.glade:17398
 msgid "Ruby Text Above"
 msgstr "Texto Ruby arriba"
 
-#: lib/ptxprint/ptxprint.glade:17392
+#: lib/ptxprint/ptxprint.glade:17402
 msgid "Treat ruby text as ruby rather than \n"
 "interlinear text by placing it above \n"
 "the base text rather than below.\n\n"
@@ -7106,7 +7144,7 @@ msgstr "Trata el texto ruby como ruby en lugar de \n"
 "Utilice los enlaces de acceso directo de la derecha\n"
 "para encontrar esos estilos en el editor."
 
-#: lib/ptxprint/ptxprint.glade:17418
+#: lib/ptxprint/ptxprint.glade:17428
 msgid "Click to jump to the \\rb marker in\n"
 "the style editor to change the\n"
 "formatting of the ruby text."
@@ -7114,7 +7152,7 @@ msgstr "Haga clic para saltar al \\rb marker en\n"
 "el editor de estilos para cambiar el\n"
 "formato del texto de ruby."
 
-#: lib/ptxprint/ptxprint.glade:17439
+#: lib/ptxprint/ptxprint.glade:17449
 msgid "Click to jump to the \\gloss|rb \n"
 "marker in the style editor to \n"
 "change the formatting of the \n"
@@ -7124,38 +7162,38 @@ msgstr "Haga clic para saltar al marcador \n"
 "cambiar el formato de las \n"
 "glosas para texto interlineal/ruby."
 
-#: lib/ptxprint/ptxprint.glade:17508
+#: lib/ptxprint/ptxprint.glade:17518
 msgid "Legacy 1/14 LineSpacing"
 msgstr "Legado 1/14 LineSpacing"
 
-#: lib/ptxprint/ptxprint.glade:17512
+#: lib/ptxprint/ptxprint.glade:17522
 msgid "In the past, SpaceAbove and SpaceBelow were, in effect units of 1/14 of the base line spacing. This has changed so they are now in units of 1/12 of the base line spacing. Enabling this compatibility reverts the units."
 msgstr "En el pasado, SpaceAbove y SpaceBelow eran, en efecto unidades de 1/14 de la línea base de espaciado. Esto ha cambiado así que ahora están en unidades de 1/12 del espaciado de línea base. Habilitar esta compatibilidad revierte las unidades."
 
-#: lib/ptxprint/ptxprint.glade:17523
+#: lib/ptxprint/ptxprint.glade:17533
 msgid "Debug Tracing"
 msgstr "Seguimiento de depuración"
 
-#: lib/ptxprint/ptxprint.glade:17527
+#: lib/ptxprint/ptxprint.glade:17537
 msgid "This advanced feature is for\n"
 "troubleshooting use only."
 msgstr "Esta característica avanzada es sólo\n"
 "para la solución de problemas."
 
-#: lib/ptxprint/ptxprint.glade:17541
+#: lib/ptxprint/ptxprint.glade:17551
 msgid "Use glyph metrics"
 msgstr "Usar métricas de glifos"
 
-#: lib/ptxprint/ptxprint.glade:17545
+#: lib/ptxprint/ptxprint.glade:17555
 msgid "ptxprint can use either the actual glyph metrics in a line or the font metrics to calculate line heights and depths.\n"
 "Font metrics gives more consistent results."
 msgstr "PTXprint puede utilizar la métrica real de los glifos en una línea o la métrica de la fuente para calcular las alturas y profundidades de las líneas. La métrica de la fuente da resultados más consistentes."
 
-#: lib/ptxprint/ptxprint.glade:17564
+#: lib/ptxprint/ptxprint.glade:17574
 msgid "Compatibility"
 msgstr "Compatibilidad"
 
-#: lib/ptxprint/ptxprint.glade:17591
+#: lib/ptxprint/ptxprint.glade:17601
 msgid "Define stylesheets, tex macros,\n"
 "front and back matter PDFs, \n"
 "watermarks and various other\n"
@@ -7167,7 +7205,7 @@ msgstr "Defina hojas de estilo, macros de textos,\n"
 "configuraciones avanzadas, incluyendo\n"
 "salida interlineal (& texto rubí)."
 
-#: lib/ptxprint/ptxprint.glade:17632
+#: lib/ptxprint/ptxprint.glade:17642
 msgid "If you edit any of these files, you should\n"
 "save them before moving to a different\n"
 "tab (otherwise your changes will be lost.)\n\n"
@@ -7177,7 +7215,7 @@ msgstr "Si edita alguno de estos archivos, debe\n"
 "pestaña (de lo contrario, sus cambios se perderán.)\n\n"
 "Tecla de acceso directo: <Ctrl-S>"
 
-#: lib/ptxprint/ptxprint.glade:17656
+#: lib/ptxprint/ptxprint.glade:17666
 msgid "Discard away any changes that have \n"
 "been made and restore the contents\n"
 "of this file as it was when last saved."
@@ -7185,13 +7223,13 @@ msgstr "Descarta cualquier cambio que se haya \n"
 "realizado y restaura el contenido\n"
 "de este archivo tal y como estaba la última vez que se guardó."
 
-#: lib/ptxprint/ptxprint.glade:17676
+#: lib/ptxprint/ptxprint.glade:17686
 msgid "Book in\n"
 "Focus:"
 msgstr "Libro en\n"
 "Enfoque:"
 
-#: lib/ptxprint/ptxprint.glade:17688
+#: lib/ptxprint/ptxprint.glade:17698
 msgid "Choose any book (including\n"
 "those which are not currently\n"
 "in the list to be printed.)"
@@ -7199,11 +7237,11 @@ msgstr "Elija cualquier libro (incluyendo\n"
 "los que no están actualmente\n"
 "en la lista que se imprimirá.)"
 
-#: lib/ptxprint/ptxprint.glade:17717
+#: lib/ptxprint/ptxprint.glade:17727
 msgid "Generate"
 msgstr "Generar"
 
-#: lib/ptxprint/ptxprint.glade:17721
+#: lib/ptxprint/ptxprint.glade:17731
 msgid "This button will (re-)generate the PicList(s) or\n"
 "AdjList(s) for all/any books which have been\n"
 "selected for printing.\n\n"
@@ -7219,11 +7257,11 @@ msgstr "Este botón volverá a generar las PicLists o\n"
 "Básica. De lo contrario, se volverá a generar una lista Pic/Lista de Ajustes\n"
 "para cada uno de los libros listados para imprimir."
 
-#: lib/ptxprint/ptxprint.glade:17741
+#: lib/ptxprint/ptxprint.glade:17751
 msgid "View/Edit..."
 msgstr "Ver/Editar..."
 
-#: lib/ptxprint/ptxprint.glade:17745
+#: lib/ptxprint/ptxprint.glade:17755
 msgid "If you would prefer to view or edit this file in\n"
 "the Editor Application designated by your \n"
 "system then click here.\n"
@@ -7239,7 +7277,7 @@ msgstr "Si prefiere ver o editar este archivo en\n"
 "tipo de archivo (.sfm, .piclist, .adjlist, .tex, .log, .sty etc.)\n"
 "con un editor de texto (tal como Bloc de Notas o NP++)."
 
-#: lib/ptxprint/ptxprint.glade:17798
+#: lib/ptxprint/ptxprint.glade:17808
 msgid "A PicList is used to specify the \n"
 "position of illustrations on the page. \n"
 "Any one of the following are possible:\n"
@@ -7253,11 +7291,11 @@ msgstr "Se utiliza una PicList para especificar la \n"
 "para \"col\": tl=superior izquierda, tr=superior derecha,\n"
 "        bl=inferior izquierda,  br=inferior derecha"
 
-#: lib/ptxprint/ptxprint.glade:17804
+#: lib/ptxprint/ptxprint.glade:17814
 msgid "Front Matter"
 msgstr "Material delantero"
 
-#: lib/ptxprint/ptxprint.glade:17829
+#: lib/ptxprint/ptxprint.glade:17839
 msgid "To balance columns of text on a page it is possible\n"
 "to specify paragraphs adjustments (shrink or expand):\n\n"
 "A Paragraph Adjust List needs to be in this format:\n"
@@ -7285,23 +7323,23 @@ msgstr "Para equilibrar las columnas de texto en una página es posible\n"
 "cuando todas las demás configuraciones hayan sido finalizadas. De lo contrario, es probable que\n"
 "tenga que volver a hacerlo todo de nuevo."
 
-#: lib/ptxprint/ptxprint.glade:17843
+#: lib/ptxprint/ptxprint.glade:17853
 msgid "Adj List"
 msgstr "Lista de ajustes"
 
-#: lib/ptxprint/ptxprint.glade:17874
+#: lib/ptxprint/ptxprint.glade:17884
 msgid "Final SFM"
 msgstr "SFM Final"
 
-#: lib/ptxprint/ptxprint.glade:17900
+#: lib/ptxprint/ptxprint.glade:17910
 msgid ".tex file"
 msgstr "archivo .tex"
 
-#: lib/ptxprint/ptxprint.glade:17926
+#: lib/ptxprint/ptxprint.glade:17936
 msgid "XeTeX Log"
 msgstr "Registro XeTeX"
 
-#: lib/ptxprint/ptxprint.glade:17975
+#: lib/ptxprint/ptxprint.glade:17985
 msgid "View and edit various control\n"
 "and log files. Examine final SFM\n"
 "output and tweak adjust lists."
@@ -7309,23 +7347,23 @@ msgstr "Ver y editar varios archivos de control\n"
 "y de registro. Examinar la salida final de SFM\n"
 "y ajustar las listas de ajuste."
 
-#: lib/ptxprint/ptxprint.glade:17979
+#: lib/ptxprint/ptxprint.glade:17989
 msgid "View+Edit"
 msgstr "Vista+Editar"
 
-#: lib/ptxprint/ptxprint.glade:18021
+#: lib/ptxprint/ptxprint.glade:18031
 msgid "Current Project Path:"
 msgstr "Ruta Actual de Proyecto:"
 
-#: lib/ptxprint/ptxprint.glade:18035
+#: lib/ptxprint/ptxprint.glade:18045
 msgid "Configuration Settings:"
 msgstr "Configuración:"
 
-#: lib/ptxprint/ptxprint.glade:18049
+#: lib/ptxprint/ptxprint.glade:18059
 msgid "Output PDF Location:"
 msgstr "Localización de PDF de Salida:"
 
-#: lib/ptxprint/ptxprint.glade:18062
+#: lib/ptxprint/ptxprint.glade:18072
 msgid "To use PTXprint effectively you need a good PDF viewer\n"
 "which allows the PDF file to be refreshed (reloaded)\n"
 "without closing it each time the PDF is to be re-created.\n\n"
@@ -7343,17 +7381,17 @@ msgstr "Para utilizar PTXprint de forma efectiva necesitas un buen visor de PDF\
 "establecer SumatraPDf como visor de PDF predeterminado\n"
 "para obtener mejores resultados."
 
-#: lib/ptxprint/ptxprint.glade:18073
+#: lib/ptxprint/ptxprint.glade:18083
 msgid "Using a good\n"
 "PDF Viewer:"
 msgstr "Usando un buen\n"
 "visor PDF:"
 
-#: lib/ptxprint/ptxprint.glade:18085
+#: lib/ptxprint/ptxprint.glade:18095
 msgid "Visit SumatraPDF Download Page"
 msgstr "Visita la Página de descarga de SumatraPDF"
 
-#: lib/ptxprint/ptxprint.glade:18105
+#: lib/ptxprint/ptxprint.glade:18115
 msgid "PTXprint is built with Python & PyGTK3, using Glade for\n"
 "the User-Interface. The PDFs are produced by recently\n"
 "enhanced XeTeX macros with a long and reliable history.\n"
@@ -7369,21 +7407,21 @@ msgstr "PTXprint está construido con Python & PyGTK3, usando Glade para\n"
 "un problema usando este enlace. Los desarrolladores trabajan en esto\n"
 "en su tiempo libre, así que por favor tengan paciencia para una respuesta."
 
-#: lib/ptxprint/ptxprint.glade:18113
+#: lib/ptxprint/ptxprint.glade:18123
 msgid "How to Report Bugs, \n"
 "Annoyances or Other Issues:"
 msgstr "Cómo reportar errores, \n"
 "molestias u otros problemas:"
 
-#: lib/ptxprint/ptxprint.glade:18125
+#: lib/ptxprint/ptxprint.glade:18135
 msgid "Report an Issue via GitHub"
 msgstr "Reportar un problema a través de GitHub"
 
-#: lib/ptxprint/ptxprint.glade:18144
+#: lib/ptxprint/ptxprint.glade:18154
 msgid "Visit PTXprint's Home Page to Download Latest Version"
 msgstr "Visite la página principal de PTXprint para descargar la última versión"
 
-#: lib/ptxprint/ptxprint.glade:18164
+#: lib/ptxprint/ptxprint.glade:18174
 msgid "PTXprint does not have an auto-updating\n"
 "feature, so you are encouraged to check\n"
 "for new updates at the Home Page.\n"
@@ -7395,13 +7433,13 @@ msgstr "PTXprint no tiene una función de auto-actualización, \n"
 "Por favor, asegúrese de que está utilizando la última versión\n"
 "antes de informar de un problema."
 
-#: lib/ptxprint/ptxprint.glade:18170
+#: lib/ptxprint/ptxprint.glade:18180
 msgid "Home Page for Documentation, \n"
 "Videos, FAQs and Latest Updates:"
 msgstr "Página de inicio para Documentación, videos, \n"
 "preguntas frecuentes (FAQs) y últimas actualizaciones:"
 
-#: lib/ptxprint/ptxprint.glade:18198
+#: lib/ptxprint/ptxprint.glade:18208
 msgid "For technical FAQs relating to how the TeX macros\n"
 "work and how to customize the stylesheets even\n"
 "further, this FAQ document is worth visiting."
@@ -7410,43 +7448,43 @@ msgstr "Para preguntas técnicas más frecuentes relacionadas \n"
 "y cómo personalizar aún más las hojas de estilo, \n"
 "vale la pena visitar este documento de preguntas frecuentes."
 
-#: lib/ptxprint/ptxprint.glade:18202
+#: lib/ptxprint/ptxprint.glade:18212
 msgid "Technical FAQs Related \n"
 "to the PTX2PDF Macros:"
 msgstr "Preguntas técnicas relacionados \n"
 "a los macros PTX2PDF:"
 
-#: lib/ptxprint/ptxprint.glade:18214
+#: lib/ptxprint/ptxprint.glade:18224
 msgid "See PTX2PDF Macros FAQ"
 msgstr "Ver las preguntas frecuentes sobre macros PTX2PDF"
 
-#: lib/ptxprint/ptxprint.glade:18233 lib/ptxprint/ptxprint.glade:18319
+#: lib/ptxprint/ptxprint.glade:18243 lib/ptxprint/ptxprint.glade:18329
 msgid "prjdir"
 msgstr "prjdir"
 
-#: lib/ptxprint/ptxprint.glade:18251
+#: lib/ptxprint/ptxprint.glade:18261
 msgid "settings_dir"
 msgstr "configuración_dir"
 
-#: lib/ptxprint/ptxprint.glade:18268
+#: lib/ptxprint/ptxprint.glade:18278
 msgid "working_dir"
 msgstr "trabajando_dir"
 
-#: lib/ptxprint/ptxprint.glade:18285
+#: lib/ptxprint/ptxprint.glade:18295
 msgid "Answers to Frequently Asked Questions (FAQs)"
 msgstr "Respuestas a las Preguntas Frecuentes (FAQs)"
 
-#: lib/ptxprint/ptxprint.glade:18305 lib/ptxprint/ptxprint.glade:18423
+#: lib/ptxprint/ptxprint.glade:18315 lib/ptxprint/ptxprint.glade:18433
 msgid "Frequently Asked Questions (FAQs) from\n"
 "general users and common solutions."
 msgstr "Preguntas frecuentes (FAQs) de\n"
 "usuarios particulares y soluciones comunes."
 
-#: lib/ptxprint/ptxprint.glade:18308
+#: lib/ptxprint/ptxprint.glade:18318
 msgid "PTXprint FAQ page:"
 msgstr "Página de FAQ de PTXprint:"
 
-#: lib/ptxprint/ptxprint.glade:18339
+#: lib/ptxprint/ptxprint.glade:18349
 msgid "Among other things, this folder contains:\n"
 "* ReleaseNotes.txt\n"
 "* AboutPTXprint.txt\n"
@@ -7456,11 +7494,11 @@ msgstr "Entre otras cosas, esta carpeta contiene:\n"
 "* AboutPTXprint.txt\n"
 "* MIT License.txt"
 
-#: lib/ptxprint/ptxprint.glade:18344
+#: lib/ptxprint/ptxprint.glade:18354
 msgid "PTXprint Docs Path:"
 msgstr "Ruta de PTXprint Docs:"
 
-#: lib/ptxprint/ptxprint.glade:18357
+#: lib/ptxprint/ptxprint.glade:18367
 msgid "In order to keep the size of the file to a minimum\n"
 "you are encouraged to turn off features (pictures?)\n"
 "that don't affect the issue being reported. To transfer\n"
@@ -7472,7 +7510,7 @@ msgstr "Con el fin de mantener el tamaño del archivo al mínimo\n"
 "el archivo .ZIP a los desarrolladores, subir y enviar\n"
 "un enlace, o enviarlo por correo electrónico a ptxprint_support@sil.org "
 
-#: lib/ptxprint/ptxprint.glade:18365
+#: lib/ptxprint/ptxprint.glade:18375
 msgid "The easiest way for the developers to replicate\n"
 "an issue is for you to Create an Archive with\n"
 "all the required files and then send it to them:"
@@ -7480,11 +7518,11 @@ msgstr "La forma más fácil para los desarrolladores de replicar\n"
 "un problema es crear un archivo con\n"
 "todos los archivos necesarios y luego enviárselo a ellos:"
 
-#: lib/ptxprint/ptxprint.glade:18379
+#: lib/ptxprint/ptxprint.glade:18389
 msgid "Create Archive..."
 msgstr "Crear archivo..."
 
-#: lib/ptxprint/ptxprint.glade:18384
+#: lib/ptxprint/ptxprint.glade:18394
 msgid "Create a ZIPped archive of all the files\n"
 "required to replicate this configuration.\n"
 "Useful for long-term archiving; but also\n"
@@ -7500,19 +7538,19 @@ msgstr "Crear un archivo ZIP de todos los archivos\n"
 "antes de enviarlo por correo electrónico a:\n"
 "ptxprint_support@sil.org"
 
-#: lib/ptxprint/ptxprint.glade:18403
+#: lib/ptxprint/ptxprint.glade:18413
 msgid "Get help from other PTXprint users"
 msgstr "Obtener ayuda de otros usuarios de PTXprint"
 
-#: lib/ptxprint/ptxprint.glade:18426
+#: lib/ptxprint/ptxprint.glade:18436
 msgid "PTXprint User Community:"
 msgstr "Comunidad de usuarios de PTXprint:"
 
-#: lib/ptxprint/ptxprint.glade:18437
+#: lib/ptxprint/ptxprint.glade:18447
 msgid "Show Advanced Settings"
 msgstr "Mostrar configuración avanzada"
 
-#: lib/ptxprint/ptxprint.glade:18441
+#: lib/ptxprint/ptxprint.glade:18451
 msgid "There are two views available in PTXprint.\n"
 "Basic view - which shows only the essential settings\n"
 "          and is intended for novice users.\n"
@@ -7528,11 +7566,11 @@ msgstr "Hay dos vistas disponibles en PTXprint.\n"
 "Tenga en cuenta que si utiliza las pestañas de pulgar así como los bordes\n"
 "al mismo tiempo, la vista básica no estará disponible."
 
-#: lib/ptxprint/ptxprint.glade:18470
+#: lib/ptxprint/ptxprint.glade:18480
 msgid "Helpful Links"
 msgstr "Enlaces útiles"
 
-#: lib/ptxprint/ptxprint.glade:18489
+#: lib/ptxprint/ptxprint.glade:18499
 msgid "Links to useful folders and\n"
 "online resources. Where to\n"
 "obtain help from others."
@@ -7540,25 +7578,25 @@ msgstr "Enlaces a carpetas útiles y\n"
 "recursos en línea. Dónde\n"
 "obtener ayuda de otros."
 
-#: lib/ptxprint/ptxprint.glade:18493
+#: lib/ptxprint/ptxprint.glade:18503
 msgid "Help"
 msgstr "Ayuda"
 
-#: lib/ptxprint/ptxprint.glade:18545
+#: lib/ptxprint/ptxprint.glade:18555
 msgid "Display the output log \n"
 "from XeTeX processing."
 msgstr "Mostrar el registro de salida \n"
 "del procesamiento de XeTeX."
 
-#: lib/ptxprint/ptxprint.glade:18548
+#: lib/ptxprint/ptxprint.glade:18558
 msgid "Log"
 msgstr "Registro"
 
-#: lib/ptxprint/ptxprint.glade:18582
+#: lib/ptxprint/ptxprint.glade:18592
 msgid "v More /^ Less"
 msgstr "v Más /^ Menos"
 
-#: lib/ptxprint/ptxprint.glade:18625
+#: lib/ptxprint/ptxprint.glade:18635
 msgid "Several PTXprint interface languages are \n"
 "available. On selecting a language, the\n"
 "program will close and re-open in the\n"
@@ -7568,11 +7606,11 @@ msgstr "Varios idiomas de la interfaz PTXprint están \n"
 "se cerrará y volverá a abrir en el idioma\n"
 "elegido."
 
-#: lib/ptxprint/ptxprint.glade:18683
+#: lib/ptxprint/ptxprint.glade:18693
 msgid "Quick Run"
 msgstr "Impresión rápida"
 
-#: lib/ptxprint/ptxprint.glade:18687
+#: lib/ptxprint/ptxprint.glade:18697
 msgid "Ordinarily, PTXprint reruns the typesetting\n"
 "process (multiple times) in order to ensure\n"
 "everything is positioned precisely, and the\n"
@@ -7588,9 +7626,9 @@ msgid "Ordinarily, PTXprint reruns the typesetting\n"
 "be displayed (in red) just to the left."
 msgstr "Ordinariamente, PTXprint vuelve a ejecutar el proceso\n"
 "de tipografía (múltiples veces) para asegurar\n"
-"que todo está posicionado con precisión, y los números en la página\n"
-"Índice de contenido e Imagen de derechos de autor\n"
-"son precisos.\n"
+"que todo está posicionado con precisión, y los números \n"
+"en la páginas del Índice de contenido e de derechos de autor\n"
+"de los imagines son precisos.\n"
 "  \n"
 "Esto da un resultado final mucho más claro, pero \n"
 "obviamente tarda más. Si prefiere\n"
@@ -7600,25 +7638,27 @@ msgstr "Ordinariamente, PTXprint vuelve a ejecutar el proceso\n"
 "un resultado perfecto, un mensaje de recordatorio (en rojo)\n"
 "se mostrará a la izquierda."
 
-#: lib/ptxprint/ptxprint.glade:18737
+#: lib/ptxprint/ptxprint.glade:18747
 msgid "Close the PTXprint tool without re-creating the PDF."
 msgstr "Cierre la herramienta PTXprint sin volver a crear el PDF."
 
-#: lib/ptxprint/ptxprint.glade:18761
+#: lib/ptxprint/ptxprint.glade:18771
 msgid "Apply any changes specified, save the\n"
 "current configuration (if not locked) and\n"
 "produce a PDF with the settings specified.\n\n"
+"If this button is labelled 'Return' then it\n"
+"means you are currently adjusting the \n"
+"settings for a project associated to a\n"
+"Diglot project, and will need to return to\n"
+"the primary project before you can print.\n\n"
 "Shortcut key: <Ctrl-P>"
-msgstr "Aplique cualquier cambio especificado, guarde\n"
-"la configuración actual (si no está bloqueada) y\n"
-"produzca un PDF con la configuración especificada.\n\n"
-"Tecla de acceso directo: <Ctrl-P>"
+msgstr ""
 
-#: lib/ptxprint/ptxprint.glade:18796
+#: lib/ptxprint/ptxprint.glade:18812
 msgid "Welcome to PTXprint!"
 msgstr "Bienvenido a PTXprint!"
 
-#: lib/ptxprint/ptxprint.glade:18825
+#: lib/ptxprint/ptxprint.glade:18841
 msgid "Loading Font List...\n\n"
 "If you have enough time to read this message, \n"
 "then you probably have too many fonts installed!\n\n"
@@ -7628,7 +7668,7 @@ msgstr "Cargando la lista de fuentes...\n\n"
 "¡probablemente tenga demasiadas fuentes instaladas!\n\n"
 "Considere la posibilidad de desinstalar las que nunca se utilizan."
 
-#: lib/ptxprint/ptxprint.glade:18842
+#: lib/ptxprint/ptxprint.glade:18858
 msgid "PTXprint"
 msgstr "PTXprint"
 
