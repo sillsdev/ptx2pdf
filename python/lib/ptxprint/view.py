@@ -892,7 +892,12 @@ class ViewModel:
             if not self.msgQuestion(q1, q2):
                 return
         for bk in booklist:
-            u = usfms.get(bk)
+            try:
+                u = usfms.get(bk)
+            except SyntaxError:
+                self.doError(_("Syntax error in UFSM data"), secondary=_("In order to generate an AdjList for this book the \n"+
+                                                                         "syntax error(s) in the data need to be resolved."))
+                return
             adjlist = u.make_adjlist()
             fname = self.getBookFilename(bk)
             outfname = os.path.join(self.configPath(self.configName()),
