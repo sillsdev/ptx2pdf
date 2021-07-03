@@ -352,7 +352,7 @@ class parser(sfm.parser):
         ptype = parent.meta['StyleType'].lower()
         pttype = parent.meta['TextType'].lower()
         if (stype == 'character' and ptype == 'paragraph') \
-                or (style == 'paragraph' and (pttype in ('chapternumber', 'notetext')
+                or (stype in ('paragraph', '') and (pttype in ('chapternumber', 'notetext', 'other')
                                               or parent.name == "id")):
             if len(occurs) and parent.name not in occurs:
                 p = parent.parent

@@ -690,7 +690,8 @@ class ViewModel:
             if config.getboolean("document", "pdfx1aoutput", fallback=False):
                 config.set("document", "pdfoutput", "PDF/X-1A")
         if v < 1.9:
-            self._configset(config, "scripts/mymr/syllables", config.getboolean("scrmymr", "syllables", fallback=False))
+            val = self._config_get(config, "scrmymr", "syllables", fallback="")
+            self._configset(config, "scripts/mymr/syllables", config.getboolean("scrmymr", "syllables", fallback=False) if val else False)
             config.set("config", "version", "1.9")
 
         styf = os.path.join(self.configPath(cfgname), "ptxprint.sty")
@@ -863,9 +864,9 @@ class ViewModel:
         res = fname[:doti] + cname + fname[doti:] + ext if doti > 0 else fname + cname + ext
         return res
 
-    def generateAdjList(self):
+    def generateAdjList(self, books=None):
         existingFilelist = []
-        booklist = self.getBooks()
+        booklist = self.getBooks() if books is None else books
         diglot  = self.get("c_diglot")
         prjid = self.get("fcb_project")
         secprjid = ""
@@ -894,10 +895,10 @@ class ViewModel:
         for bk in booklist:
             try:
                 u = usfms.get(bk)
-            except SyntaxError:
+            except SyntaxError as e:
                 self.doError(_("Syntax error in UFSM data for {}".format(bk)), \
-                            secondary=_("In order to generate an AdjList for this book the \n"+
-                                        "syntax error(s) in the data need to be resolved."))
+                            secondary=_("In order to generate an AdjList for this book the \n" +
+                                        "syntax error(s) in the data need to be resolved.\n" + str(e)))
                 return
             adjlist = u.make_adjlist()
             fname = self.getBookFilename(bk)

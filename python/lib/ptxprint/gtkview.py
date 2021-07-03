@@ -1195,7 +1195,7 @@ class GtkViewModel(ViewModel):
         bk = self.get("ecb_examineBook")
         bk = bk if bk in bks2gen else None
         if pgid == "scroll_AdjList": # AdjList
-            self.generateAdjList()
+            self.generateAdjList(books = [bk])
         elif pgid == "scroll_FinalSFM" and bk is not None: # FinalSFM
             tmodel = TexModel(self, self.settings_dir, self._getPtSettings(self.prjid), self.prjid)
             out = tmodel.convertBook(bk, None, self.working_dir, os.path.join(self.settings_dir, self.prjid))
