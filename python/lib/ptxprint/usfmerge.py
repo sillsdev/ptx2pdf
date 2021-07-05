@@ -23,6 +23,16 @@ _textype_map = {
     "Other":     ChunkType.INTRO,
     "VerseText": ChunkType.BODY
 }
+_marker_modes = {
+    'id': ChunkType.TITLE,
+    'ide': ChunkType.TITLE,
+    'h': ChunkType.TITLE,
+    'toc1': ChunkType.TITLE,
+    'toc2': ChunkType.TITLE,
+    'toc3': ChunkType.TITLE,
+
+    'cl': ChunkType.CHAPTER,
+}
 
 class Chunk(list):
     def __init__(self, *a, mode=None, chap=0, verse=0, end=0, pnum=0):
@@ -69,7 +79,6 @@ class Collector:
         self.chap = 0
         self.verse = 0
         self.end = 0
-        self.chaplabel = None
         self.counts = {}
         self.currChunk = None
         self.mode = ChunkType.INTRO
@@ -88,7 +97,10 @@ class Collector:
         if c is None:
             currChunk = Chunk(mode=self.mode)
         else:
-            mode = _textype_map.get(str(c.meta.get('TextType')), self.mode)
+            if c.name == "cl" and self.chap == 0:
+                mode = ChunkType.TITLE
+            else:
+                mode = _marker_modes.get(c.name, _textype_map.get(str(c.meta.get('TextType')), self.mode))
             currChunk = Chunk(mode=mode, chap=self.chap, verse=self.verse, end=self.end, pnum=self.pnum(c))
             self.mode = mode
         self.acc.append(currChunk)
@@ -109,13 +121,11 @@ class Collector:
                     root.remove(c)
                     continue
             newchunk = False
-            if c.name == "cl" and self.chap == 0:
-                self.chaplabel = c
             if ispara(c):
-                newmode = _textype_map.get(str(c.meta.get('TextType')), self.mode)
+                newmode = _marker_modes.get(c.name, _textype_map.get(str(c.meta.get('TextType')), self.mode))
                 if newmode != self.mode:
                     newchunk = True
-                elif self.mode == ChunkType.HEADING:
+                elif self.mode in (ChunkType.HEADING, ChunkType.TITLE):
                     pass
                 elif c.name not in nestedparas:
                     newchunk = True
@@ -153,15 +163,17 @@ class Collector:
         return currChunk
 
     def reorder(self):
+        bi = None
+        for i in range(1, len(self.acc)):
+            if self.acc[i].type == ChunkType.TITLE and self.acc[i-1].type == ChunkType.TITLE:
+                if bi is None:
+                    bi = i-1
+                self.acc[bi].extend(self.acc[i])
+                self.acc[i].deleteme = True
         # move everything after \c up to something with a \v in it, to before the \c
         for i in range(1, len(self.acc)):
             if self.acc[i-1].type == ChunkType.CHAPTER and not self.acc[i].hasVerse:
                 self.acc[i-1], self.acc[i] = self.acc[i], self.acc[i-1]
-        # insert global cl after c in \c
-        if self.chaplabel is not None:
-            for a in self.acc:
-                if a.type == ChunkType.CHAPTER:
-                    a.append(self.chaplabel)
         # merge \c with body chunk following
         for i in range(1, len(self.acc)):
             if getattr(self.acc[i], 'deleteme', False):

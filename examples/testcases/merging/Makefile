@@ -1,13 +1,14 @@
 .SUFFIXES: .dvi .pdf
 all: test.pdf
 DIR:=$(shell dirname `find ../../..  -name paratext2.tex`)
+usfmerge=../../../python/scripts/usfmerge
 
 mergedAB.usfm: SampleA.usfm SampleB.usfm
-	usfmerge SampleA.usfm SampleB.usfm > $@
+	${usfmerge} SampleA.usfm SampleB.usfm > $@
 mergedBC.usfm: SampleC.usfm SampleB.usfm
-	usfmerge SampleB.usfm SampleC.usfm > $@
+	${usfmerge} SampleB.usfm SampleC.usfm > $@
 mergedCB.usfm: SampleC.usfm SampleB.usfm
-	usfmerge SampleC.usfm SampleB.usfm > $@
+	${usfmerge} SampleC.usfm SampleB.usfm > $@
 
 test.pdf:test.tex mergedAB.usfm mergedBC.usfm mergedCB.usfm ${DIR}/*.tex
 	-rm test.delayed
