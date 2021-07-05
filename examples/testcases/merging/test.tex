@@ -50,7 +50,9 @@
 \TitleColumns=1
 \IntroColumns=1
 \BodyColumns=2
-
+\OmitChapterNumberLtrue
+\OmitChapterNumberfalse
+\OmitChapterNumberLdefault % Override OmitChapterNumberLtrue  and let non-specific value take control
 
 %\diglotInnerOutertrue
 \iffalse
@@ -79,6 +81,7 @@
 \diglotfalse
 \ptxfile{SampleC.usfm}
 \diglotcolumns
+\def\MakeChapterLabelL#1#2{#2. #1}
 \ptxfile{mergedAB.usfm}
 \ptxfile{mergedBC.usfm}
 \ptxfile{mergedCB.usfm}

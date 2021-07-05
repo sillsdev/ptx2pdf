@@ -412,6 +412,8 @@
   \special{pdf:dest (\id@@@\c@rrdstat.\ch@pter:\v@rsefrom) [@thispage /XYZ @xpos @ypos null]}%
 }%
 
+\def\MakeChapterLabel#1#2{#1\ #2}
+
 \lowercase{
  % `~` is set by lowercase to a space for delimiting \ch@rstylepls
  \def\@ddcvhooks{
@@ -509,6 +511,7 @@
      % in the configuration file in order to omit chapter numbers for single chapter books.
     \ifOmitChapterNumber
       \trace{c}{Chapter numbers ommitted}%
+      \pdfb@@kmark \pdfch@ptermark
     \else
       % if chapter label not present, set \ch@ptertrue to cause chapter number to be printed
       % at start of first text paragraph.
@@ -517,7 +520,7 @@
         \trace{c}{No chapter label in use : \ch@pter}%
       \else % if \cl present, output chapter label here
         \trace{c}{Chapter label in use: \ch@pl@bel \ch@pter}%
-        \p@rstyle{cl}\ch@pl@bel\ \ch@pter
+        \p@rstyle{cl}\MakeChapterLabel{\ch@pl@bel}{\ch@pter}%
         \pdfb@@kmark \pdfch@ptermark
       \fi
     \fi}

@@ -169,8 +169,7 @@ You can also specify a font definition like this directly in a stylesheet marker
 *   \OmitChapterNumberRH```true``` – Omit the chapter numbers in the running header (RH). (default = false)
 *   \def\AdornVerseNumber#1{```(```#1```)```} – Put parentheses around the verse number (which is represented by #1)
 *   \def\AfterVerseSpaceFactor{```0```} – Remove extra space after verse numbers, when you have set them to be "invisible", or a very small size, such as \Marker v \FontSize 0.0001
-
-</a>
+*   ```\def\MakeChapterLabel#1#2{#1\ #2}```   – If there is a global (before `\c 1`) `\cl`, how should that be combined with the chapter number. The default is to put the label (`#1`) before the number (`#2`). Altering this macro would to `\def\MakeChapterLabel#1#2{#2. #1}`  will make Hungarian-style numbering (`23. Zsoltár`) the default rather than English-style (`Psalm 23`).
 
 ## <a name="ptx2pdf-MacroSetupParameters-RunningHeader/Footer">Running Header/Footer</a>
 

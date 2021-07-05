@@ -103,7 +103,7 @@
 \def\stylesh@@t#1{\stylesheet{#1}\gdef\ds@ffix{}}
 
 %LRspecific holds a list of things that get redefined on side-switching. Now split into Definitions and Dimensions.
-\def\LRspecificDef{AdornVerseNumber,VerticalSpaceFactor,LineSpacingFactor,regular,bold,italic,bolditalic,SpaceStretchFactor,SpaceShrinkFactor}
+\def\LRspecificDef{AdornVerseNumber,VerticalSpaceFactor,LineSpacingFactor,regular,bold,italic,bolditalic,SpaceStretchFactor,SpaceShrinkFactor,ifOmitChapterNumber,ifOmitVerseNumberOne,MakeChapterLabel}
 \def\LRspecificDim{FontSizeUnit,le@dingunit,onel@neunit,verticalsp@ceunit,IndentUnit} 
 
 
@@ -198,6 +198,15 @@
 \x@\newif\csname ifinp@r-R\endcsname % Used for parlocs analysis
 \x@\newcount\csname p@rlinesgone-L\endcsname % Used for parlocs analysis
 \x@\newcount\csname p@rlinesgone-R\endcsname % Used for parlocs analysis
+\def\newsideSpecificIf#1{% 'Tristate' if - true / false / default (where default means the side-specific logic ought to let the global value take precedence
+  \x@\def\csname #1true\endcsname{\x@\let\csname if#1\endcsname\iftrue}%
+  \x@\def\csname #1false\endcsname{\x@\let\csname if#1\endcsname\iffalse}%
+  \x@\def\csname #1default\endcsname{\x@\let\csname if#1\endcsname\undefined}%
+}
+\newsideSpecificIf{OmitChapterNumberL}
+\newsideSpecificIf{OmitVerseNumberOneL}
+\newsideSpecificIf{OmitChapterNumberR}
+\newsideSpecificIf{OmitVerseNumberOneR}
 
 \def\doVisTrace#1{%
   \setbox0=\vtop to 0pt{\hrule height 0pt depth 0.5pt width 15pt\hbox{\VisTracefont #1 \the\TRACEcount}\vss}\ht0=0pt\dp0=0pt
@@ -2465,7 +2474,9 @@
     \empty@cseq{b@ok#1}% Name of book to put in PDF.
     \empty@cseq{ch@plabel#1}% Chapter label
     \empty@cseq{@ch@pter#1}% Chapter Nuber
-    \empty@cseq{@v@rse#1}% Chapter label
+    \empty@cseq{@v@rse#1}% verse label
+    \newsideSpecificIf{OmitChapterNumber#1} % Control option
+    \newsideSpecificIf{OmitVerseNumberOne#1} % Control option
     \xdef@cseq{@cur#1ht}{0pt}% 
     \xdef@cseq{@cur#1dp}{0pt}% 
     \header@defs{#1}% All the possible header contents
