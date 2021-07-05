@@ -18738,8 +18738,7 @@ be displayed (in red) just to the left.</property>
             </child>
             <child>
               <object class="GtkButton" id="b_print2ndDiglotText">
-                <property name="label" translatable="yes">Print This 
-Part Only</property>
+                <property name="label" translatable="yes">Print</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="no_show_all">True</property>

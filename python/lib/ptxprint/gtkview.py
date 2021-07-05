@@ -198,7 +198,7 @@ _nonsensitivities = {
 }
 _object_classes = {
     "printbutton": ("b_print", "btn_refreshFonts", "btn_adjust_diglot"),
-    "fontbutton":  ("bl_fontR", "bl_fontB", "bl_fontI", "bl_fontBI", "b_print2ndDiglotText"),
+    "fontbutton":  ("bl_fontR", "bl_fontB", "bl_fontI", "bl_fontBI"),
     "mainnb":      ("nbk_Main", ),
     "viewernb":    ("nbk_Viewer", "nbk_PicList"),
     "thumbtabs":   ("l_thumbVerticalL", "l_thumbVerticalR", "l_thumbHorizontalL", "l_thumbHorizontalR"),
