@@ -18287,7 +18287,7 @@ to the PTX2PDF Macros:</property>
                                   <packing>
                                     <property name="left_attach">2</property>
                                     <property name="top_attach">0</property>
-                                    <property name="width">4</property>
+                                    <property name="width">3</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -18467,6 +18467,25 @@ at the same time then the Basic view is not available.</property>
                                   </packing>
                                 </child>
                                 <child>
+                                  <object class="GtkButton" id="btn_about">
+                                    <property name="label">gtk-about</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <property name="halign">end</property>
+                                    <property name="margin_right">6</property>
+                                    <property name="margin_top">3</property>
+                                    <property name="margin_bottom">3</property>
+                                    <property name="use_stock">True</property>
+                                    <property name="always_show_image">True</property>
+                                    <signal name="clicked" handler="onAboutClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">5</property>
+                                    <property name="top_attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
                                   <placeholder/>
                                 </child>
                               </object>
@@ -18608,27 +18627,6 @@ from XeTeX processing.</property>
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="btn_about">
-                <property name="label">gtk-about</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <property name="halign">start</property>
-                <property name="margin_left">3</property>
-                <property name="margin_right">3</property>
-                <property name="margin_top">3</property>
-                <property name="margin_bottom">3</property>
-                <property name="use_stock">True</property>
-                <property name="always_show_image">True</property>
-                <signal name="clicked" handler="onAboutClicked" swapped="no"/>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">1</property>
-              </packing>
-            </child>
-            <child>
               <object class="GtkComboBox" id="fcb_interfaceLang">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
@@ -18650,7 +18648,7 @@ chosen language.</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">2</property>
+                <property name="position">1</property>
               </packing>
             </child>
             <child>
@@ -18662,7 +18660,7 @@ chosen language.</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">3</property>
+                <property name="position">2</property>
               </packing>
             </child>
             <child>
@@ -18685,7 +18683,7 @@ chosen language.</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">4</property>
+                <property name="position">3</property>
               </packing>
             </child>
             <child>
@@ -18718,7 +18716,7 @@ be displayed (in red) just to the left.</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">5</property>
+                <property name="position">4</property>
               </packing>
             </child>
             <child>
@@ -18731,6 +18729,36 @@ be displayed (in red) just to the left.</property>
                 <property name="margin_left">6</property>
                 <property name="margin_right">6</property>
                 <property name="vexpand">False</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">5</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="b_print2ndDiglotText">
+                <property name="label" translatable="yes">Print This 
+Part Only</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="no_show_all">True</property>
+                <property name="tooltip_text" translatable="yes">The current configuration displayed is
+for the (second) part of the Diglot. If you
+want to print this text by itself (to check
+what the PDF appears like with the settings
+specified here) then use this button.
+
+Otherwise, use the 'Return' button to get
+back to the primary project in order to 
+print a diglot with both texts.</property>
+                <property name="halign">start</property>
+                <property name="margin_top">3</property>
+                <property name="margin_bottom">3</property>
+                <property name="resize_mode">immediate</property>
+                <property name="always_show_image">True</property>
+                <signal name="clicked" handler="print2ndDiglotTextClicked" swapped="no"/>
+                <accelerator key="p" signal="activate" modifiers="GDK_CONTROL_MASK"/>
               </object>
               <packing>
                 <property name="expand">False</property>

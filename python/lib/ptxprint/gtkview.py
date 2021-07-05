@@ -198,7 +198,7 @@ _nonsensitivities = {
 }
 _object_classes = {
     "printbutton": ("b_print", "btn_refreshFonts", "btn_adjust_diglot"),
-    "fontbutton":  ("bl_fontR", "bl_fontB", "bl_fontI", "bl_fontBI"),
+    "fontbutton":  ("bl_fontR", "bl_fontB", "bl_fontI", "bl_fontBI", "b_print2ndDiglotText"),
     "mainnb":      ("nbk_Main", ),
     "viewernb":    ("nbk_Viewer", "nbk_PicList"),
     "thumbtabs":   ("l_thumbVerticalL", "l_thumbVerticalR", "l_thumbHorizontalL", "l_thumbHorizontalR"),
@@ -748,11 +748,17 @@ class GtkViewModel(ViewModel):
             self.printReason |= idnty
         if txt or not self.printReason:
             self.doStatus(txt)
-        for w in ["b_print", "btn_adjust_diglot", "s_diglotPriFraction"]:
+        for w in ["b_print", "b_print2ndDiglotText", "btn_adjust_diglot", "s_diglotPriFraction"]:
             self.builder.get_object(w).set_sensitive(not self.printReason)
+
+    def print2ndDiglotTextClicked(self, btn):
+        print("Clicked print2ndDiglotText button")
+        self.onOK(btn)
         
     def onOK(self, btn):
-        if self.otherDiglot is not None:
+        if btn == self.builder.get_object("b_print2ndDiglotText"):
+            pass
+        elif self.otherDiglot is not None:
             self.onDiglotSwitchClicked(self.builder.get_object("btn_diglotSwitch"))
             return
         if isLocked():
@@ -2437,24 +2443,28 @@ class GtkViewModel(ViewModel):
             oprjid, oconfig = self.otherDiglot
             self.otherDiglot = None
             btn.set_label(_("Switch to Other\nDiglot Project"))
-            # self.set("c_diglot", True)
-            # self.builder.get_object("c_diglot").set_sensitive(True)
-            self.builder.get_object("b_print").set_label(_("Print"))
+            self.builder.get_object("b_print2ndDiglotText").set_visible(False)
+            self.changeLabel("b_print", _("Print"))
         elif self.get("c_diglot"):
             oprjid = self.get("fcb_diglotSecProject")
             oconfig = self.get("ecb_diglotSecConfig")
             if oprjid is not None and oconfig is not None:
                 self.otherDiglot = (self.prjid, self.configName())
-                # self.set("c_diglot", False)
-                # self.builder.get_object("c_diglot").set_sensitive(False)
                 btn.set_label(_("Save & Return to\nDiglot Project"))
-                self.builder.get_object("b_print").set_label(_("Return"))
+            self.builder.get_object("b_print2ndDiglotText").set_visible(True)
+            self.changeLabel("b_print", _("Return"))
         self.onSaveConfig(None)
         if oprjid is not None and oconfig is not None:
             self.set("fcb_project", oprjid)
             self.set("ecb_savedConfig", oconfig)
         mpgnum = self.notebooks['Main'].index("tb_Diglot")
         self.builder.get_object("nbk_Main").set_current_page(mpgnum)
+
+    def changeLabel(self, w, lbl):
+        b = self.builder.get_object(w)
+        b.set_visible(False)
+        b.set_label(lbl)
+        b.set_visible(True)
         
     def updateHdrFtrOptions(self, diglot=False):
         l = ["First Reference", "Last Reference", "Reference Range", "Page Number",
