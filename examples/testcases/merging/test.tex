@@ -1,0 +1,85 @@
+\input paratext2.tex
+%\let\TRACEdiglot=\doTRACEdiglot% Generate (numbered) trace
+%\VisTracetrue% Every chunk joined, mark with the current trace number
+%\diglotDbgJoinboxes=1246 % And if that's not enough, assuming trace entry 1246
+%is from joinboxes (which pastes 2 left or 2 right columns together) show the
+%boxes joined.
+%\showboxdepth=100 %.... In all their gory detail
+%\showboxbreadth=100
+%\tracingifs=1
+\PaperWidth=148.5mm
+\PaperHeight=210mm
+\diglottrue %Diglot edition (2 languages/translations)
+\CropMarksfalse
+\ColorFontstrue
+\MarginUnit=.5in
+\def\TopMarginFactor{1.0}
+\def\BottomMarginFactor{1.0}
+\def\SideMarginFactor{0.75}
+\def\regular{"Gentium Basic:+liga,+salt"}
+\def\bold{"TeX Gyre Termes/B"}
+\def\italic{"Gentium Basic/I"}
+\def\bolditalic{"TeX Gyre Schola/BI"}
+\def\regularL{"Gentium Plus"}
+\def\boldR{"TeX Gyre Adventor/B"}
+\FontSizeUnit=0.9pt
+\def\LineSpacingFactor{1.04}
+\def\VerticalSpaceFactor{1.0}
+\stylesheet{usfm_sb.sty}
+\def\RHoddleft{\rangerefL}
+\def\RHoddcenter{\rangeref}
+\def\RHoddright{\rangerefR}
+
+\def\RHevenleft{\rangerefL}
+\def\RHevencenter{\rangeref}
+\def\RHevenright{\rangerefR}
+
+\def\RHtitleleft{\empty}
+\def\RHtitlecenter{\empty}
+\def\RHtitleright{\empty}
+
+\def\RFoddcenter{\pagenumber}
+\def\RFevencenter{\pagenumber}
+\def\RFtitlecenter{\pagenumber}
+\def\DiglotLeftFraction{0.50} % In case texts fit better with unequal columns
+\def\DiglotRightFraction{0.50} 
+\VerseRefstrue % whether to include verse number in running head, or only chapter
+\OmitVerseNumberOnetrue % whether to skip printing verse number 1 at start of chapter
+\ParagraphedNotes{x} % reformat \x notes as a single paragraph
+\ParagraphedNotes{f} % reformat \f notes as a single paragraph
+\TitleColumns=1
+\IntroColumns=1
+\BodyColumns=2
+
+
+%\diglotInnerOutertrue
+\iffalse
+ \tracing{H}
+ \tracing{d}
+ \tracing{F}
+ \tracing{dP}
+ \tracing{s}
+ \tracing{n}
+ \tracing{sC}
+ \VisTracetrue
+ \tracing{D}
+\fi
+
+\def\LineSpacingFactorL{1.2}
+\def\LineSpacingFactorR{1.1}
+\pageno=-1
+%\tracing{s}\tracing{S}
+%\uselanguage{british}
+\diglotfalse
+\singlecolumn
+\pageno=1
+%\tracingmacros 1
+\diglotSepNotestrue
+\diglotBalNotesfalse
+\diglotfalse
+\ptxfile{SampleC.usfm}
+\diglotcolumns
+\ptxfile{mergedAB.usfm}
+\ptxfile{mergedBC.usfm}
+\ptxfile{mergedCB.usfm}
+\end
