@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ptxprint\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-03 18:19+0700\n"
-"PO-Revision-Date: 2021-07-03 11:20\n"
+"POT-Creation-Date: 2021-07-05 16:31+0700\n"
+"PO-Revision-Date: 2021-07-05 09:32\n"
 "Last-Translator: \n"
 "Language-Team: Arabic\n"
 "Language: ar_SA\n"
@@ -98,15 +98,15 @@ msgstr ""
 msgid "Can't set {} in the model"
 msgstr "لا يمكن تعيين {} في النموذج"
 
-#: lib/ptxprint/gtkview.py:759
+#: lib/ptxprint/gtkview.py:765
 msgid "Printing busy"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:763 lib/ptxprint/runjob.py:200
+#: lib/ptxprint/gtkview.py:769 lib/ptxprint/runjob.py:200
 msgid "No books to print"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:786
+#: lib/ptxprint/gtkview.py:792
 msgid "                   >>> PLEASE CLOSE the PDF <<<                     \n\n"
 "{}\n\n"
 " Or use a different PDF viewer which will                              \n"
@@ -120,67 +120,67 @@ msgstr "                   >>> قم بترك ملف PDF <<<                     
 " راجع 'Links' على علامة التبويب للعارض لمزيد من التفاصيل.                            \n\n"
 "                        هل تريد المحاولة مرة أخرى؟"
 
-#: lib/ptxprint/gtkview.py:791
+#: lib/ptxprint/gtkview.py:797
 msgid "The old PDF file is open!"
 msgstr "ملف PDF القديم مفتوح!"
 
-#: lib/ptxprint/gtkview.py:857
+#: lib/ptxprint/gtkview.py:863
 msgid "Internal error occurred, trying to delete a directory tree"
 msgstr "حدث خطأ داخلي، محاولة حذف شجرة الدليل"
 
-#: lib/ptxprint/gtkview.py:857 lib/ptxprint/gtkview.py:862
+#: lib/ptxprint/gtkview.py:863 lib/ptxprint/gtkview.py:868
 msgid "Folder: "
 msgstr "مجلد: "
 
-#: lib/ptxprint/gtkview.py:862
+#: lib/ptxprint/gtkview.py:868
 msgid "Can't delete that configuration from disk"
 msgstr "لا يمكن حذف هذا التكوين من القرص"
 
-#: lib/ptxprint/gtkview.py:949 lib/ptxprint/ptxprint.glade:13583
+#: lib/ptxprint/gtkview.py:955 lib/ptxprint/ptxprint.glade:13583
 msgid "Pictures"
 msgstr "صور"
 
-#: lib/ptxprint/gtkview.py:952 lib/ptxprint/ptxprint.glade:14005
+#: lib/ptxprint/gtkview.py:958 lib/ptxprint/ptxprint.glade:14005
 msgid "Diglot"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:955
+#: lib/ptxprint/gtkview.py:961
 msgid "Notes+"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:955
+#: lib/ptxprint/gtkview.py:961
 msgid "Refs"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:959 lib/ptxprint/gtkview.py:960
+#: lib/ptxprint/gtkview.py:965 lib/ptxprint/gtkview.py:966
 msgid "Tabs"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:961 lib/ptxprint/gtkview.py:962
+#: lib/ptxprint/gtkview.py:967 lib/ptxprint/gtkview.py:968
 msgid "Borders"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:973 lib/ptxprint/ptxprint.glade:17608
+#: lib/ptxprint/gtkview.py:979 lib/ptxprint/ptxprint.glade:17608
 msgid "Advanced"
 msgstr "متقدم"
 
-#: lib/ptxprint/gtkview.py:1089 lib/ptxprint/ptxprint.glade:4666
+#: lib/ptxprint/gtkview.py:1095 lib/ptxprint/ptxprint.glade:4666
 msgid "Lock"
 msgstr "قفل"
 
-#: lib/ptxprint/gtkview.py:1092
+#: lib/ptxprint/gtkview.py:1098
 msgid "Unlock"
 msgstr "فتح"
 
-#: lib/ptxprint/gtkview.py:1250
+#: lib/ptxprint/gtkview.py:1256
 msgid " A tool to help create Front Matter (the FRT book) may show up here in future."
 msgstr " قد تظهر هنا في المستقبل أداة للمساعدة في إنشاء الأمر الأمامي (كتاب FRT)."
 
-#: lib/ptxprint/gtkview.py:1288
+#: lib/ptxprint/gtkview.py:1294
 msgid " Use the 'Advanced' tab to select which settings you want to view or edit."
 msgstr " استخدم علامة التبويب 'المتقدمة' لتحديد الإعدادات التي تريد عرضها أو تعديلها."
 
-#: lib/ptxprint/gtkview.py:1303
+#: lib/ptxprint/gtkview.py:1309
 msgid "\n\n"
 "-------------------------------------                                            \n"
 "[File has been truncated for display]                                            \n"
@@ -190,7 +190,7 @@ msgstr "\n\n"
 "[تم اقتطاع الملف لعرضه]                                            \n"
 "انقر على زر عرض/تحرير لرؤية المزيد."
 
-#: lib/ptxprint/gtkview.py:1310
+#: lib/ptxprint/gtkview.py:1316
 msgid "\n"
 "This file doesn't exist yet.\n\n"
 "Try clicking...                                                \n"
@@ -202,26 +202,26 @@ msgstr "\n"
 "   * الزر 'إنشاء'                                                \n"
 "   * الزر 'طباعة' لإنشاء PDF أولا"
 
-#: lib/ptxprint/gtkview.py:1530
+#: lib/ptxprint/gtkview.py:1536
 msgid "Remove Intermediate Files and Logs?"
 msgstr "إزالة الملفات والسجلات المتوسطة؟"
 
-#: lib/ptxprint/gtkview.py:1531
+#: lib/ptxprint/gtkview.py:1537
 msgid "Are you sure you want to delete\n"
 "ALL the temporary PTXprint files?"
 msgstr "هل أنت متأكد من أنك تريد حذف\n"
 "جميع ملفات PTXprint المؤقتة؟"
 
-#: lib/ptxprint/gtkview.py:1558
+#: lib/ptxprint/gtkview.py:1564
 msgid "Warning: Could not delete some file(s) or folders(s):"
 msgstr "تحذير: لا يمكن حذف بعض الملفات أو المجلدات :"
 
-#: lib/ptxprint/gtkview.py:1930
+#: lib/ptxprint/gtkview.py:1936
 msgid "'Enable Colored Text' has now been turned on.\n"
 "See Fonts+Script tab for details."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:2104
+#: lib/ptxprint/gtkview.py:2110
 msgid "\n"
 "This file doesn't exist yet!\n\n"
 "Edit here and Click 'Save' to create it."
@@ -229,98 +229,98 @@ msgstr "\n"
 "هذا الملف غير موجود بعد!\n\n"
 "قم بتحرير هنا ثم انقر فوق 'حفظ' لإنشائه."
 
-#: lib/ptxprint/gtkview.py:2146
+#: lib/ptxprint/gtkview.py:2152
 msgid "% This is the .tex file specific for the {} project used by PTXprint.\n"
 "% Saved Configuration name: {}\n"
 msgstr "% هذا هو ملف .tex المحدد لمشروع {} المستخدم من قبل PTXprint.\n"
 "% اسم التكوين المحفوظ: {}\n"
 
-#: lib/ptxprint/gtkview.py:2153
+#: lib/ptxprint/gtkview.py:2159
 msgid "% This is the preprocessing .tex file specific for the {} project used by PTXprint.\n"
 "% Saved Configuration name: {}\n"
 msgstr "% هذا هو ملف التجهيز المسبق .tex المحدد لمشروع {} المستخدم من قبل PTXprint.\n"
 "% اسم التكوين المحفوظ: {}\n"
 
-#: lib/ptxprint/gtkview.py:2213
+#: lib/ptxprint/gtkview.py:2219
 msgid "Select the location and name for the Archive file"
 msgstr "حدد الموقع والاسم لملف الأرشيف"
 
-#: lib/ptxprint/gtkview.py:2268
+#: lib/ptxprint/gtkview.py:2274
 msgid "Select the folder containing image files"
 msgstr "حدد المجلد الذي يحتوي على ملفات الصور"
 
-#: lib/ptxprint/gtkview.py:2306
+#: lib/ptxprint/gtkview.py:2312
 msgid "Select one or more PDF(s) for FRONT matter"
 msgstr "حدد واحد أو أكثر من PDF(s) للمادة"
 
-#: lib/ptxprint/gtkview.py:2310
+#: lib/ptxprint/gtkview.py:2316
 msgid "Select one or more PDF(s) for BACK matter"
 msgstr "حدد واحد أو أكثر من PDF(s) لمواد BACK"
 
-#: lib/ptxprint/gtkview.py:2314
+#: lib/ptxprint/gtkview.py:2320
 msgid "Select Watermark PDF file"
 msgstr "حدد ملف PDF العلامة المائية"
 
-#: lib/ptxprint/gtkview.py:2319
+#: lib/ptxprint/gtkview.py:2325
 msgid "Select Page Border PDF file"
 msgstr "حدد ملف PDF حدود الصفحة"
 
-#: lib/ptxprint/gtkview.py:2324
+#: lib/ptxprint/gtkview.py:2330
 msgid "Select Section Header PDF file"
 msgstr "حدد ملف PDF رأس القسم"
 
-#: lib/ptxprint/gtkview.py:2329
+#: lib/ptxprint/gtkview.py:2335
 msgid "Select End of Book PDF file"
 msgstr "حدد نهاية ملف PDF"
 
-#: lib/ptxprint/gtkview.py:2334
+#: lib/ptxprint/gtkview.py:2340
 msgid "Select Verse Decorator PDF file"
 msgstr "حدد ملف PDF المشكّل الآمر"
 
-#: lib/ptxprint/gtkview.py:2439
+#: lib/ptxprint/gtkview.py:2445
 msgid "Switch to Other\n"
 "Diglot Project"
 msgstr "التبديل إلى مشروع\n"
 "آخر"
 
-#: lib/ptxprint/gtkview.py:2442 lib/ptxprint/ptxprint.glade:12504
-#: lib/ptxprint/ptxprint.glade:18766
+#: lib/ptxprint/gtkview.py:2447 lib/ptxprint/ptxprint.glade:12504
+#: lib/ptxprint/ptxprint.glade:18741 lib/ptxprint/ptxprint.glade:18793
 msgid "Print"
 msgstr "طباعة"
 
-#: lib/ptxprint/gtkview.py:2450
+#: lib/ptxprint/gtkview.py:2453
 msgid "Save & Return to\n"
 "Diglot Project"
 msgstr "حفظ والعودة إلى\n"
 "مشروع ديجوت"
 
-#: lib/ptxprint/gtkview.py:2451
+#: lib/ptxprint/gtkview.py:2455
 msgid "Return"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:2498
+#: lib/ptxprint/gtkview.py:2508
 msgid "FYI: The Regular font already supports all the characters in the text."
 msgstr "FYI: الخط العادي يدعم بالفعل جميع الأحرف في النص."
 
-#: lib/ptxprint/gtkview.py:2499
+#: lib/ptxprint/gtkview.py:2509
 msgid "A fallback font is not required so\n"
 "the 'Use Fallback Font' option will be disabled."
 msgstr "الخط الخلفي غير مطلوب لذلك\n"
 "سيتم تعطيل خيار \"استخدام الخط الخلفي\"."
 
-#: lib/ptxprint/gtkview.py:2750
+#: lib/ptxprint/gtkview.py:2760
 msgid "Choose Image"
 msgstr "اختر صورة"
 
-#: lib/ptxprint/gtkview.py:2885
+#: lib/ptxprint/gtkview.py:2895
 msgid "Unsupported Locale"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:2886
+#: lib/ptxprint/gtkview.py:2896
 msgid "This locale is not supported on your system, you may need to install it"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:3035
+#: lib/ptxprint/gtkview.py:3045
 msgid "FYI: This Interlinear option is not compatible with the\n"
 "'Spacing Adjustments Between Letters' on the Fonts+Script page.\n"
 "So that option has just been disabled."
@@ -577,105 +577,105 @@ msgstr ""
 msgid "{} at line {} col {}"
 msgstr ""
 
-#: lib/ptxprint/view.py:877
+#: lib/ptxprint/view.py:878
 msgid "No Secondary Project Set"
 msgstr "لا توجد مجموعة مشاريع ثانوية"
 
-#: lib/ptxprint/view.py:877
+#: lib/ptxprint/view.py:878
 msgid "In order to generate an AdjList for a diglot, the \n"
 "Secondary project must be set on the Diglot tab."
 msgstr ""
 
-#: lib/ptxprint/view.py:890
+#: lib/ptxprint/view.py:891
 msgid "One or more Paragraph Adjust file(s) already exist!"
 msgstr "واحد أو أكثر من ملفات تعديل الفقرة موجودة مسبقاً!"
 
-#: lib/ptxprint/view.py:891
+#: lib/ptxprint/view.py:892
 msgid "\n\n"
 "Do you want to OVERWRITE the above-listed file(s)?"
 msgstr "\n\n"
 "هل تريد الحصول على الملف (الملفات) الواردة أعلاه؟"
 
-#: lib/ptxprint/view.py:898
+#: lib/ptxprint/view.py:899
 msgid "Syntax error in UFSM data for {}"
 msgstr ""
 
-#: lib/ptxprint/view.py:899
+#: lib/ptxprint/view.py:900
 msgid "In order to generate an AdjList for this book the \n"
-"syntax error(s) in the data need to be resolved."
+"syntax error(s) in the data need to be resolved.\n"
 msgstr ""
 
-#: lib/ptxprint/view.py:941
+#: lib/ptxprint/view.py:942
 msgid "Failed to Generate Hyphenation List"
 msgstr "فشل في توليد قائمة هايفن"
 
-#: lib/ptxprint/view.py:942
+#: lib/ptxprint/view.py:943
 msgid "{} Paratext Project's Hyphenation file not found:\n"
 "{}"
 msgstr "{} لم يتم العثور على ملف Hyvination الخاص بمشروع Paratext Project :\n"
 "{}"
 
-#: lib/ptxprint/view.py:979
+#: lib/ptxprint/view.py:980
 msgid "\n\n"
 "That is too many for XeTeX! List truncated to longest {} words found in the active sources."
 msgstr ""
 
-#: lib/ptxprint/view.py:985
+#: lib/ptxprint/view.py:986
 msgid "Hyphenation List Generated"
 msgstr "تم إنشاء قائمة هايفن"
 
-#: lib/ptxprint/view.py:986
+#: lib/ptxprint/view.py:987
 msgid "{} hyphenated words were gathered\n"
 "from Paratext's Hyphenation Word List."
 msgstr "{} تم جمع الكلمات الموصولة\n"
 "من قائمة كلمات هايفنت Paratext."
 
-#: lib/ptxprint/view.py:988
+#: lib/ptxprint/view.py:989
 msgid "\n\n"
 "Note for Indic languages that {} words containing ZWJ"
 msgstr "\n\n"
 "ملاحظة للغات الهندية التي {} كلمة تحتوي على ZWJ"
 
-#: lib/ptxprint/view.py:989
+#: lib/ptxprint/view.py:990
 msgid "\n"
 "and ZWNJ characters have been left off the hyphenation list."
 msgstr "\n"
 "و ZWNJ قد تم تركهما من قائمة الوميل."
 
-#: lib/ptxprint/view.py:991
+#: lib/ptxprint/view.py:992
 msgid "\n\n"
 "{} words were at least 10 characters long but had no hyphenation marked"
 msgstr ""
 
-#: lib/ptxprint/view.py:994
+#: lib/ptxprint/view.py:995
 msgid "Hyphenation List was NOT Generated"
 msgstr "قائمة هايفن لم يتم إنشاؤها"
 
-#: lib/ptxprint/view.py:995
+#: lib/ptxprint/view.py:996
 msgid "No valid words were found in Paratext's Hyphenation List"
 msgstr "لم يتم العثور على أي كلمات صحيحة في قائمة هيفن Paratext"
 
-#: lib/ptxprint/view.py:1038
+#: lib/ptxprint/view.py:1039
 msgid "The Fallback Font needs to be something other than the Regular Font."
 msgstr "الخط الاحتياطي يجب أن يكون شيئا آخر غير الخط العادي."
 
-#: lib/ptxprint/view.py:1039 lib/ptxprint/view.py:1047
+#: lib/ptxprint/view.py:1040 lib/ptxprint/view.py:1048
 msgid "Please select a different Font."
 msgstr "الرجاء تحديد خط مختلف."
 
-#: lib/ptxprint/view.py:1046
+#: lib/ptxprint/view.py:1047
 msgid "The Fallback Font just selected does NOT support all the missing characters listed."
 msgstr "خط الرجوع المحدد فقط لا يدعم جميع الأحرف المفقودة المدرجة في القائمة."
 
-#: lib/ptxprint/view.py:1245
+#: lib/ptxprint/view.py:1246
 msgid "No Config found for Diglot"
 msgstr ""
 
-#: lib/ptxprint/view.py:1258
+#: lib/ptxprint/view.py:1259
 msgid "Error: Cannot create Archive!"
 msgstr ""
 
-#: lib/ptxprint/view.py:1258
+#: lib/ptxprint/view.py:1259
 msgid "The ZIP file seems to be open in another program."
 msgstr ""
 
@@ -6584,46 +6584,46 @@ msgid "There are two views available in PTXprint.\n"
 "at the same time then the Basic view is not available."
 msgstr ""
 
-#: lib/ptxprint/ptxprint.glade:18480
+#: lib/ptxprint/ptxprint.glade:18499
 msgid "Helpful Links"
 msgstr "روابط مفيدة"
 
-#: lib/ptxprint/ptxprint.glade:18499
+#: lib/ptxprint/ptxprint.glade:18518
 msgid "Links to useful folders and\n"
 "online resources. Where to\n"
 "obtain help from others."
 msgstr ""
 
-#: lib/ptxprint/ptxprint.glade:18503
+#: lib/ptxprint/ptxprint.glade:18522
 msgid "Help"
 msgstr "مساعدة"
 
-#: lib/ptxprint/ptxprint.glade:18555
+#: lib/ptxprint/ptxprint.glade:18574
 msgid "Display the output log \n"
 "from XeTeX processing."
 msgstr "عرض سجل الإخراج \n"
 "من معالجة XeTeX."
 
-#: lib/ptxprint/ptxprint.glade:18558
+#: lib/ptxprint/ptxprint.glade:18577
 msgid "Log"
 msgstr "سجل"
 
-#: lib/ptxprint/ptxprint.glade:18592
+#: lib/ptxprint/ptxprint.glade:18611
 msgid "v More /^ Less"
 msgstr ""
 
-#: lib/ptxprint/ptxprint.glade:18635
+#: lib/ptxprint/ptxprint.glade:18633
 msgid "Several PTXprint interface languages are \n"
 "available. On selecting a language, the\n"
 "program will close and re-open in the\n"
 "chosen language."
 msgstr ""
 
-#: lib/ptxprint/ptxprint.glade:18693
+#: lib/ptxprint/ptxprint.glade:18691
 msgid "Quick Run"
 msgstr ""
 
-#: lib/ptxprint/ptxprint.glade:18697
+#: lib/ptxprint/ptxprint.glade:18695
 msgid "Ordinarily, PTXprint reruns the typesetting\n"
 "process (multiple times) in order to ensure\n"
 "everything is positioned precisely, and the\n"
@@ -6639,11 +6639,22 @@ msgid "Ordinarily, PTXprint reruns the typesetting\n"
 "be displayed (in red) just to the left."
 msgstr ""
 
-#: lib/ptxprint/ptxprint.glade:18747
+#: lib/ptxprint/ptxprint.glade:18745
+msgid "The current configuration displayed is\n"
+"for the (second) part of the Diglot. If you\n"
+"want to print this text by itself (to check\n"
+"what the PDF appears like with the settings\n"
+"specified here) then use this button.\n\n"
+"Otherwise, use the 'Return' button to get\n"
+"back to the primary project in order to \n"
+"print a diglot with both texts."
+msgstr ""
+
+#: lib/ptxprint/ptxprint.glade:18774
 msgid "Close the PTXprint tool without re-creating the PDF."
 msgstr "أغلق أداة PTXprint دون إعادة إنشاء PDF."
 
-#: lib/ptxprint/ptxprint.glade:18771
+#: lib/ptxprint/ptxprint.glade:18798
 msgid "Apply any changes specified, save the\n"
 "current configuration (if not locked) and\n"
 "produce a PDF with the settings specified.\n\n"
@@ -6655,11 +6666,11 @@ msgid "Apply any changes specified, save the\n"
 "Shortcut key: <Ctrl-P>"
 msgstr ""
 
-#: lib/ptxprint/ptxprint.glade:18812
+#: lib/ptxprint/ptxprint.glade:18839
 msgid "Welcome to PTXprint!"
 msgstr "مرحبا بكم في PTXprint!"
 
-#: lib/ptxprint/ptxprint.glade:18841
+#: lib/ptxprint/ptxprint.glade:18868
 msgid "Loading Font List...\n\n"
 "If you have enough time to read this message, \n"
 "then you probably have too many fonts installed!\n\n"
@@ -6669,7 +6680,7 @@ msgstr "تحميل قائمة الخطوط...\n\n"
 "ربما لديك الكثير من الخطوط المثبتة!\n\n"
 "النظر في إلغاء تثبيت تلك التي لم تستخدم أبدا."
 
-#: lib/ptxprint/ptxprint.glade:18858
+#: lib/ptxprint/ptxprint.glade:18885
 msgid "PTXprint"
 msgstr ""
 
