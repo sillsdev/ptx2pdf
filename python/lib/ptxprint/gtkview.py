@@ -2433,7 +2433,7 @@ class GtkViewModel(ViewModel):
             self.setPrintBtnStatus(2)
             self.diglotView = None
         self.updateDialogTitle()
-        self.loadPics()
+        self.loadPics(mustLoad=False)
         self.updatePicList()
 
     def onDiglotSwitchClicked(self, btn):

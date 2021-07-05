@@ -1023,9 +1023,9 @@ class TexModel:
 
         # Elipsize ranges of MISSING/Empty verses in the text (if 3 or more verses in a row are empty...) 
         if self.asBool("document/elipsizemptyvs"):
-            self.localChanges.append((None, regex.compile(r"\\v (\d+)([-,]\d+)? ?\r?\n(\\v (\d+)([-,]\d+)? ?\r?\n){1,}", flags=regex.M), r"\\v \1-\4 {...} "))
+            self.localChanges.append((None, regex.compile(r"\\v (\d+)([-,]\d+)?\s*\r?\n(\\v (\d+)([-,]\d+)?\s*\r?\n){1,}", flags=regex.M), r"\\v \1-\4 {...} "))
             # self.localChanges.append((None, regex.compile(r"(\r?\n\\c \d+ ?)(\r?\n\\v 1)", flags=regex.M), r"\1\r\n\\p \2"))
-            self.localChanges.append((None, regex.compile(r" (\\c \d+ ?)(\r?\n\\v 1)", flags=regex.M), r" \r\n\1\r\n\\p \2"))
+            self.localChanges.append((None, regex.compile(r" (\\c \d+)\s*(\r?\n\\v 1)", flags=regex.M), r" \r\n\1\r\n\\p \2"))
             # self.localChanges.append((None, regex.compile(r"(\{\.\.\.\}) (\\c \d+ ?)\r?\n\\v", flags=regex.M), r"\1\r\n\2\r\n\\p \\v"))
             self.localChanges.append((None, regex.compile(r"(\\c \d+ ?(\r?\n)+\\p (\r?\n)?\\v [\d-]+ \{\.\.\.\} ?(\r?\n)+)(?=\\c)", flags=regex.M), r"\1\\m {...}\r\n"))
 

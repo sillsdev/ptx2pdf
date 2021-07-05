@@ -819,7 +819,7 @@ class ViewModel:
             self.picinfos.out(os.path.join(self.configPath(self.configName()),
                                     "{}-{}.piclist".format(self.prjid, self.configName())))
 
-    def loadPics(self):
+    def loadPics(self, mustLoad=True):
         if self.loadingConfig:
             return
         if self.picinfos is None:
@@ -833,7 +833,7 @@ class ViewModel:
             res = self.picinfos.load_files(self)
         else:
             res = self.picinfos.load_files(self, suffix="BL")
-        if not res:
+        if not res and mustLoad:
             self.onGeneratePicListClicked(None)
             
     def onGeneratePicListClicked(self, btn):
