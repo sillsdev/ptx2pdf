@@ -14,10 +14,12 @@ parser.add_argument("-o","--outfile",help="output file")
 parser.add_argument("-a","--astylesheet",default=[],action="append",help="add another stylesheet for infilea")
 parser.add_argument("-b","--bstylesheet",default=[],action="append",help="add another stylesheet for infileb")
 parser.add_argument("-s","--stylesheet",default=[],action="append",help="add another stylesheet for both files")
+parser.add_argument("-m","--mode",default="doc",help="alignment algorithm: simple, *doc")
 parser.add_argument("--fsecondary",action="store_true",help="Use fig elements from secondary not primary source")
 parser.add_argument("--debug",action="store_true",help="Print out debug statements")
 args = parser.parse_args()
 
 sheetsa = args.stylesheet + args.astylesheet
 sheetsb = args.stylesheet + args.bstylesheet
-usfmerge2(args.infilea, args.infileb, args.outfile, stylesheetsa=sheetsa, stylesheetsb=sheetsb, fsecondary=args.fsecondary, debug=args.debug)
+usfmerge2(args.infilea, args.infileb, args.outfile, stylesheetsa=sheetsa, 
+          stylesheetsb=sheetsb, fsecondary=args.fsecondary, mode=args.mode, debug=args.debug)

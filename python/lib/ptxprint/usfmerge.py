@@ -287,9 +287,11 @@ def alignSimple(pchunks, schunks, pkeys, skeys):
         if action in ("delete", "replace"):
             for c in pchunks[ab:ae]:
                 pairs[-1][0].extend(c)
+                pairs[-1][0].type = c.type
         if action in ("insert", "replace"):
             for c in schunks[bb:be]:
                 pairs[-1][1].extend(c)
+                pairs[-1][1].type = c.type
     return pairs
 
 def appendsheet(fname, sheet):
@@ -306,6 +308,7 @@ modes = {
 def usfmerge2(infilea, infileb, outfile, stylesheetsa=[], stylesheetsb=[], fsecondary=False, mode="doc", debug=False):
     global debugPrint, debstr
     debugPrint = debug
+    print(f"{stylesheetsa=}, {stylesheetsb=}, {fsecondary=}, {mode=}, {debug=}")
     stylesheeta = usfm._load_cached_stylesheet('usfm.sty')
     stylesheetb = {k: v.copy() for k, v in stylesheeta.items()}
     tag_escapes = r"[^a-zA-Z0-9]"
