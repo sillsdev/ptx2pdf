@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: ptxprint\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-07-05 16:31+0700\n"
-"PO-Revision-Date: 2021-07-05 09:32\n"
+"PO-Revision-Date: 2021-07-06 02:54\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -77,7 +77,7 @@ msgstr "No hay proyectos"
 
 #: lib/ptxprint/gtkview.py:593
 msgid "v  Show More"
-msgstr ""
+msgstr "v Mostrar más"
 
 #: lib/ptxprint/gtkview.py:595
 msgid "Show More Settings:\n"
@@ -89,7 +89,7 @@ msgstr "Mostrar más ajustes:\n"
 
 #: lib/ptxprint/gtkview.py:599
 msgid "^  Show Less"
-msgstr ""
+msgstr "^ Mostrar menos"
 
 #: lib/ptxprint/gtkview.py:601
 msgid "Show Fewer Settings:\n"
@@ -306,7 +306,7 @@ msgstr "Guardar y volver \n"
 
 #: lib/ptxprint/gtkview.py:2455
 msgid "Return"
-msgstr ""
+msgstr "Regresar"
 
 #: lib/ptxprint/gtkview.py:2508
 msgid "FYI: The Regular font already supports all the characters in the text."
@@ -477,7 +477,7 @@ msgstr "El PDF fue creado PERO..."
 msgid "\n\n"
 "Try changing the PicList and/or AdjList settings to solve issues."
 msgstr "\n\n"
-"Intente cambiar la configuración de PicList y/o Lista de Ajustes para resolver los problemas."
+"Intente cambiar la configuración de PicList y/o AdjList para resolver los problemas."
 
 #: lib/ptxprint/runjob.py:275
 msgid "PTXprint [{}] - Warning!"
@@ -618,7 +618,7 @@ msgstr "Proyecto Secundario No Configurado"
 #: lib/ptxprint/view.py:878
 msgid "In order to generate an AdjList for a diglot, the \n"
 "Secondary project must be set on the Diglot tab."
-msgstr "Para poder generar una Lista de Ajustes para un proyecto bilingüe, \n"
+msgstr "Para poder generar una AdjList para un proyecto bilingüe, \n"
 "el proyecto secundario debe estar configurado en la pestaña Proyecto bilingüe."
 
 #: lib/ptxprint/view.py:891
@@ -633,12 +633,14 @@ msgstr "\n\n"
 
 #: lib/ptxprint/view.py:899
 msgid "Syntax error in UFSM data for {}"
-msgstr ""
+msgstr "Error de sintaxis en los datos de USFM para {}"
 
 #: lib/ptxprint/view.py:900
 msgid "In order to generate an AdjList for this book the \n"
 "syntax error(s) in the data need to be resolved.\n"
-msgstr ""
+msgstr "Para poder generar un AdjList para este libro \n"
+"es necesario resolver los errores de sintaxis \n"
+"en los datos.\n"
 
 #: lib/ptxprint/view.py:942
 msgid "Failed to Generate Hyphenation List"
@@ -5021,7 +5023,7 @@ msgstr "Si se selecciona esta opción, primero buscará \n"
 
 #: lib/ptxprint/ptxprint.glade:11506
 msgid "Select Folder..."
-msgstr "Seleccione la Carpeta..."
+msgstr "Seleccione la carpeta..."
 
 #: lib/ptxprint/ptxprint.glade:11510
 msgid "PTXprint will scan the selected folder \n"
@@ -5207,7 +5209,9 @@ msgstr "Omitir leyendas "
 msgid "If you want to suppress the picture\n"
 "captions from being displayed below\n"
 "the picture, then check this option."
-msgstr ""
+msgstr "Si desea suprimir los leyendas\n"
+"para que no aparezcan debajo de\n"
+"la imagen, marque esta opción."
 
 #: lib/ptxprint/ptxprint.glade:11792
 msgid "Omit References (ch:vs)"
@@ -5219,7 +5223,11 @@ msgid "If you only want to suppress the \n"
 "then check this option. Note that\n"
 "it is not possible to just have the\n"
 "references without the captions."
-msgstr ""
+msgstr "Si sólo quiere suprimir la parte \n"
+"de la referencia del leyenda,\n"
+"entonces marque esta opción. \n"
+"Tenga en cuenta que no es posible \n"
+"tener sólo las referencias sin leyendas."
 
 #: lib/ptxprint/ptxprint.glade:11821
 msgid "Include Pictures (illustrations)"
@@ -5886,7 +5894,7 @@ msgstr "Las ilustraciones se usan mejor en situaciones en las que:\n"
 
 #: lib/ptxprint/ptxprint.glade:13399
 msgid "Questions to Consider"
-msgstr "Preguntas a Considerar"
+msgstr "Preguntas a considerar"
 
 #: lib/ptxprint/ptxprint.glade:13425
 msgid "This tab encourages you to think through\n"
@@ -6154,7 +6162,7 @@ msgstr "Color de la pestaña:"
 
 #: lib/ptxprint/ptxprint.glade:14116
 msgid "Thumb Tab Background Color"
-msgstr "Color de fondo de la pestaña"
+msgstr "Color de fondo de la pestaña de pulgar"
 
 #: lib/ptxprint/ptxprint.glade:14127
 msgid "Rotate Tabs:"
@@ -6222,7 +6230,7 @@ msgstr "Normalmente los libros seguirán secuencialmente y si la siguiente pesta
 
 #: lib/ptxprint/ptxprint.glade:14370
 msgid "Use \\zthumbtab Style"
-msgstr "Usar estilo \\zspapertab"
+msgstr "Usar el estilo \\zthumbtab"
 
 #: lib/ptxprint/ptxprint.glade:14374
 msgid "By default the Thumb Tabs use the styling specified for the \\toc3 marker. If \n"
@@ -6259,7 +6267,7 @@ msgid "Click to jump to the appropriate\n"
 "the style editor to change the\n"
 "formatting of the thumb tabs."
 msgstr "Haga clic para saltar al marcador apropiado\n"
-"(\\toc3 o \\zump tab) en\n"
+"(\\toc3 o \\zthumbtab) en\n"
 "el editor de estilos para cambiar el\n"
 "formato de las pestañas del pulgar."
 
@@ -7250,11 +7258,11 @@ msgid "This button will (re-)generate the PicList(s) or\n"
 "Basic tab. Otherwise it will (re-)generate a Pic/Adj\n"
 "list for each of the books listed for printing."
 msgstr "Este botón volverá a generar las PicLists o\n"
-"Lista de Ajustes para todos o algunos libros que hayan sido\n"
+"AdjList para todos o algunos libros que hayan sido\n"
 "seleccionados para la impresión.\n\n"
 "Si sólo desea volver a generar una Lista para un \n"
 "solo libro, entonces sólo tiene que seleccionar ese libro en la pestaña \n"
-"Básica. De lo contrario, se volverá a generar una lista Pic/Lista de Ajustes\n"
+"Básica. De lo contrario, se volverá a generar una lista Pic/Adj list\n"
 "para cada uno de los libros listados para imprimir."
 
 #: lib/ptxprint/ptxprint.glade:17751
@@ -7478,7 +7486,7 @@ msgstr "Respuestas a las Preguntas Frecuentes (FAQs)"
 msgid "Frequently Asked Questions (FAQs) from\n"
 "general users and common solutions."
 msgstr "Preguntas frecuentes (FAQs) de\n"
-"usuarios particulares y soluciones comunes."
+"usuarios y soluciones comunes."
 
 #: lib/ptxprint/ptxprint.glade:18318
 msgid "PTXprint FAQ page:"
@@ -7496,7 +7504,7 @@ msgstr "Entre otras cosas, esta carpeta contiene:\n"
 
 #: lib/ptxprint/ptxprint.glade:18354
 msgid "PTXprint Docs Path:"
-msgstr "Ruta de PTXprint Docs:"
+msgstr "Ruta de documentos de PTXprint:"
 
 #: lib/ptxprint/ptxprint.glade:18367
 msgid "In order to keep the size of the file to a minimum\n"
@@ -7647,7 +7655,14 @@ msgid "The current configuration displayed is\n"
 "Otherwise, use the 'Return' button to get\n"
 "back to the primary project in order to \n"
 "print a diglot with both texts."
-msgstr ""
+msgstr "La configuración actual que se muestra es\n"
+"para la (segunda) parte del Proyecto bilingüe. \n"
+"Si desea imprimir este texto por sí mismo \n"
+"(para comprobar cómo se ve el PDF con la \n"
+"configuración especificados aquí), utilice este botón.\n\n"
+"De lo contrario, utilice el botón \"Volver\" para\n"
+"volver al proyecto principal para imprimir \n"
+"imprimir un diglot con ambos textos."
 
 #: lib/ptxprint/ptxprint.glade:18774
 msgid "Close the PTXprint tool without re-creating the PDF."
@@ -7663,7 +7678,15 @@ msgid "Apply any changes specified, save the\n"
 "Diglot project, and will need to return to\n"
 "the primary project before you can print.\n\n"
 "Shortcut key: <Ctrl-P>"
-msgstr ""
+msgstr "Aplicar cualquier cambio especificado, guardar \n"
+"la configuración actual (si no está bloqueada) y\n"
+"producir un PDF con la configuración especificada.\n\n"
+"Si este botón está etiquetado como 'Regresar' \n"
+"entonces significa que está ajustando actualmente \n"
+"la configuración de un proyecto asociado con \n"
+"un proyecto bilingüe, y tendrá que volver al proyecto \n"
+"principal antes de poder imprimir.\n\n"
+"Tecla de acceso directo: <Ctrl-P>"
 
 #: lib/ptxprint/ptxprint.glade:18839
 msgid "Welcome to PTXprint!"
