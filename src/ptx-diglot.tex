@@ -722,11 +722,7 @@
 % Change which side we're adding to
 \def\pr@sideswitch#1#2{%
   \tmpcount=\lastnodetype
-  \ifnum\lastpenalty=10000 
-    \global\savedpenalty=0% This MUST be first (at least, before any writes), or the last /thing/ won't be a penalty
-  \else
-    \global\savedpenalty=\lastpenalty
-  \fi 
+  \global\savedpenalty=\lastpenalty% This MUST be first (at least, before any writes), or the last /thing/ won't be a penalty
   \ifx\c@rrdstat\empty
     \trace{d}{\c@rrdstat is empty, somehow, making it L for sanity}%
     \gdef\c@rrdstat{L}%
@@ -741,6 +737,7 @@
       \showlists
     \fi
   \fi%
+  \trace{d}{pr@sideswitch #1 #2, sp:\the\savedpenalty lnt:\the\tmpcount}%
   \ifnum\outputpenalty=-10000 %User-pagebreak
     \global\savedpenalty=\outputpenalty
   \fi
@@ -893,7 +890,7 @@
 }
 
 \def\oldboole@n#1#2{%
-  \message{diglot#1true is deprecated. The normal column switching method is to use (no)lefttext / (no)righttext or the new  diglotcolumn and endcols macros}%
+  \message{diglot#1true is deprecated. The normal column switching method is to use (no)lefttext / (no)righttext or the new  polyglotcolumn and endcols macros}%
   \polyglotcolumn{#1}%
 }
 
