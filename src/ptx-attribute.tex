@@ -134,8 +134,11 @@
 \def\h@sh{#}
 \catcode`\#=\h@shcatcode
 
-\def\pdfG@T@#1#2\E{\edef\tmp{#1}\ifx\tmp\h@sh \edef\tmp{#2}\else\edef\tmp{#1#2}\fi\special{pdf:bann<</Type/Annot/Subtype/Link/Border[0 0 1]\ifx\GOTOLinkBorderstyle\empty\else/BS<<\GOTOLinkBorderstyle>>\fi/H/I/C[.9 .5 .5]/A<</S/GoTo/D(\tmp)>>>>}}
-\def\pdfGOTO#1{\x@\pdfG@T@#1\E}
+\def\pdfG@T@#1#2 #3\E{\edef\tmp{#1}\ifx\tmp\h@sh \edef\tmp{#2}\else\edef\tmp{#3}\ifx\tmp\empty\edef\tmp{#1#2}\else\edef\tmp{\zap@space #1#2.#3 \empty}\fi\fi
+  \special{pdf:bann<</Type/Annot/Subtype/Link/Border[0 0 1]\ifx\GOTOLinkBorderstyle\empty\else/BS<<\GOTOLinkBorderstyle>>\fi/H/I/C[.9 .5 .5]/A<</S/GoTo/D(\tmp)>>>>}%
+  \trace{A}{link is GOTO to '\tmp'}%
+}
+\def\pdfGOTO#1{\x@\pdfG@T@#1 \E}
 \def\pdfURLorGOTO#1:#2\end{\edef\tmp{#1:schema}\x@\ifcsname\tmp\endcsname\csname\tmp\endcsname{\attr@b}\else\pdfGOTO{\attr@b}\fi}
 \def\pdfPRJ#1{}
 
