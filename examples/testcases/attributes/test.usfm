@@ -28,7 +28,7 @@ consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit ess
 \p
 \s A test \w foo|demo\w* of word attributes
 \p
-\v 3b Now here is a \w link|link-href="http://localhost"\w* and this isn't.
+\v 3b Now here is a \w link|link-href="Http://localhost"\w* and this isn't.
 \p
 \v 4 At vero eos \bd et \+w gratuitous slash-w|akkumulator\+w* et iusto odio \bd*
 dignissimos ducimus\w qui|a\w*blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga.

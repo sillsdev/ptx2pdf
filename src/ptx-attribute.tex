@@ -139,7 +139,7 @@
   \trace{A}{link is GOTO to '\tmp'}%
 }
 \def\pdfGOTO#1{\x@\pdfG@T@#1 \E}
-\def\pdfURLorGOTO#1:#2\end{\edef\tmp{#1:schema}\x@\ifcsname\tmp\endcsname\csname\tmp\endcsname{\attr@b}\else\pdfGOTO{\attr@b}\fi}
+\def\pdfURLorGOTO#1:#2\end{\lowercase{\edef\tmp{#1:schema}}\x@\ifcsname\tmp\endcsname\csname\tmp\endcsname{\attr@b}\else\pdfGOTO{\attr@b}\fi}
 \def\pdfPRJ#1{}
 
 \x@\let\csname http:schema\endcsname\pdfURL
