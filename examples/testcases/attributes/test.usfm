@@ -7,7 +7,7 @@
 \nd NDtext and other character styles can cross a milestone boundary like this -> \qt-s\* 
 now inside an unattributed  qt-s..qt-e block \nd* The end of the ND style returns to what it was before the ND started,
 if it doesn't call setfont.
-\p The paragraph break 
+\p The paragraph break  (praise the \nd Lord!\nd*)
 \v 2 sets\f + \fr 1:2 \ft in the case that setfont fails\f*  things back to what they 
 ought to be before the end of the block ->
 \qt-e\* And now out of the unattributed nd block again. Everything ought to be normal\f + \fr 1:2 

@@ -172,7 +172,7 @@
 % Rather than attempt to code \ifs for all possible 8 options, it now builds a comma-separated list of them, 
 % and finds the first match. This results in cleaner code.
 
-\def\s@tpossParams#1{\trace{s}{setpossParam #1 (\styst@kskip/\styst@kfirst/\styst@k)}%
+\def\s@tpossParams#1{\trace{s}{setpossParam {#1} (\styst@kskip / \styst@kfirst / \styst@k)}%
   \ifdiglot
      \edef\p@ssParams{#1\c@rrdstat,#1}%
   \else
@@ -180,7 +180,14 @@
   \fi
   \edef\tmp{#1}\ifx\tmp\styst@k\else
     \ifx\styst@k\empty\else
-      \ifx\tmp\styst@kfirst\else
+      \ifx\tmp\styst@kfirst
+	\ifx\tmp\styst@kskip\else
+	   % We get here with attributed milestones. Should we allow fall-back to the milestone's default style?
+	   \ifAttrMilestoneMatchesUnattr
+	     \edef\p@ssParams{\p@ssParams,\styst@kskip}%
+	   \fi
+        \fi
+      \else
          \edef\p@ssParams{#1+\styst@kfirst,\p@ssParams}%
       \fi
       \ifx\styst@k\styst@kfirst\else%styst@k may be the same as styst@kfirst
@@ -206,6 +213,13 @@
   \global\let\p@ssParams=\@ut
   \trace{s}{3. Shrunk list:\p@ssParams}%
 }
+
+% Should a milestone with a defined attribute (e.g. \qt-s|Jesus\*) match the
+% main stylesheet entry for the milestone? (without a defined attribute).
+\newif\ifAttrMilestoneMatchesUnattr
+\AttrMilestoneMatchesUnattrtrue% Default: yes.
+
+
 \def\kill@cache #1\E{%Remove listed item
    \x@\global\x@\let\csname #1\endcsname\relax}
 
