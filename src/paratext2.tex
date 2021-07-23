@@ -457,7 +457,7 @@
           \n@tewidth=\csname columnLwidth\endcsname
         \fi
      \else\n@tewidth=\textwidth\fi
-   \else\n@tewidth=\ifColNotes\colwidth\else\textwidth\fi\fi
+   \else\n@tewidth=\ifColNotes\ifnum\c@rrentcols=2\colwidth\else\textwidth\fi\else\textwidth\fi\fi
   \else
     %Assume that the note will be inserted using the current text width.
     \ifnum\c@rrentcols=1
@@ -638,6 +638,7 @@
   %\tracingall=1\tracingoutput=0\tracingpages=0\tracingparagraphs=0\tracingassigns=0\tracingscantokens=0
   \trace{i}{1c TRIAL with ht=\the\trialheight, vsize=\the\vsize, hIns=\the\holdinginserts}%
   \c@lcavailht
+  \ifColNotes\advance\availht by -\ht\coln@tebox\fi
   %\xdef\p@gebotmark{\botmark}% remember last \mark for running header
   %\xdef\t@st{\p@gefirstmark}%
   %\ifx\t@st\empty\xdef\p@gefirstmark{\firstmark}\fi % remember first, if not already set
@@ -673,17 +674,20 @@
       \ifvoid\topins\else \vbox{\hbox to \columnshift{}\box\topins} \vskip\skip\topins \fi
       \setbox1=\vbox{\unvcopy\colA\unskip}%
       \iflastpage\setbox\colA\vbox{\unvbox\colA}\fi
+      \ifColNotes\setbox\colA\vbox{\unvbox\colA\box\coln@tebox}\fi
       \lastd@pth=\dp\colA
       \locs@startstop{\colA}{1}%
       \hbox to \dimen1{\hbox to \columnshift{}%
         \box\colA\hbox to \ExtraRMargin{}\hfil}%
       \ifvoid\bottomins\else \vfil\kern-\lastd@pth
         \lastd@pth=0pt \vskip\skip\bottomins \hbox{\hbox to \columnshift{}\box\bottomins} \fi % ouput bottom spanning pictures
-      \f@rstnotetrue%
-      \m@kenotebox
-      \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2 \space Leaving \the\ht255, \the\dp255}%
-      \ifdim\ht2<-\lastd@pth\trace{b}{Strange notes height: \the\ht2}\fi
-      \unvbox2 %\kern-\lastd@pth\lastdepth=\dp2\unvbox2
+      \ifColNotes\else
+        \f@rstnotetrue%
+        \m@kenotebox
+        \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2 \space Leaving \the\ht255, \the\dp255}%
+        \ifdim\ht2<-\lastd@pth\trace{b}{Strange notes height: \the\ht2}\fi
+        \unvbox2 %\kern-\lastd@pth\lastdepth=\dp2\unvbox2
+      \fi
       \ifvoid\verybottomins\else\ifdim\availht > 0pt\vfil % \kern-\dimen0
         \trace{o}{verybottomins(onecoltrial): height=\the\ht\verybottomins , availht=\the\availht, textheight=\the\textheight, htpartial=\the\dimen9}
         \lastd@pth=0pt \vskip\skip\verybottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\verybottomins}}\fi\fi
@@ -907,8 +911,8 @@
   \ifvoid\th@cl@ss\trace{f}{ParaNotes[#1] empty}\else
     \setbox0=\copy\th@cl@ss
     \setbox0=\vbox{\maken@tepara{0}{#1}}%
-    \advance\availht by -\ht0
-    \advance\availht by -\dp0
+    \global\advance\availht by -\ht0
+    \global\advance\availht by -\dp0
     \iff@rstnote
       \advance\availht by -\AboveNoteSpace
       \advance\availht by -\BelowNoteRuleSpace
