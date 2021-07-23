@@ -72,7 +72,7 @@ from ptxprint.font import initFontCache, cachepath, writefontsconf
 
 fontconfig_path = writefontsconf()
 putenv("FONTCONFIG_FILE", fontconfig_path)
-if not args.print:
+if not args.print and not args.action:
     from ptxprint.gtkview import GtkViewModel, getPTDir, reset_gtk_direction
 
 from ptxprint.view import ViewModel, VersionStr, doError

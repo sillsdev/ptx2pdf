@@ -1109,10 +1109,10 @@ class ViewModel:
         for bk in books:
             fname = self.getBookFilename(bk, prjid)
             if fname is None:
-                scope = self.get("r_books")
+                scope = self.get("r_book")
                 if scope == "module":
                     res[os.path.join(fpath, bk)] = os.path.basename(bk)
-                    cfgchanges['btn_chooseBibleModule'] = os.path.basename(fname)
+                    cfgchanges['btn_chooseBibleModule'] = os.path.basename(bk)
             else:
                 res[os.path.join(fpath, fname)] = os.path.basename(fname)
             if interlang is not None:
