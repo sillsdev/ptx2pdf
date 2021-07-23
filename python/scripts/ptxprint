@@ -186,7 +186,7 @@ if args.print or args.action is not None:
         mainw.setPrjid(args.pid)
         mainw.setConfigId(args.config or "Default")
     res = 0
-    initFontCache(nofclist=args.nofontcache)
+    initFontCache(nofclist=args.nofontcache).wait()
     if args.print:
         if args.books is not None and len(args.books):
             mainw.bookNoUpdate = True

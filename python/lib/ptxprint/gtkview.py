@@ -4,7 +4,7 @@ import sys, os, re, regex, gi, subprocess, traceback
 gi.require_version('Gtk', '3.0')
 gi.require_version('Gdk', '3.0')
 from shutil import rmtree
-import time, locale
+import time, locale, urllib.request, json
 
 from gi.repository import Gdk, Gtk, Pango, GObject, GLib, GdkPixbuf
 
@@ -526,6 +526,7 @@ class GtkViewModel(ViewModel):
         sys.excepthook = self.doSysError
         lsfonts = self.builder.get_object("ls_font")
         lsfonts.clear()
+        self.checkUpdates(False)
         try:
             Gtk.main()
         except Exception as e:
@@ -3045,3 +3046,25 @@ class GtkViewModel(ViewModel):
                 self.doError(_("FYI: This Interlinear option is not compatible with the\n" +\
                                "'Spacing Adjustments Between Letters' on the Fonts+Script page.\n" +\
                                "So that option has just been disabled."))
+
+    def checkUpdates(self, background=True):
+        version = None
+        if not background:
+            self.builder.get_object("btn_download_update").set_visible(False)
+        with urllib.request.urlopen("https://software.sil.org/downloads/r/ptxprint/latest.win.json") as inf:
+            info = json.load(inf)
+            version = info['version']
+        if version is None:
+            return
+        newv = [int(x) for x in version.split('.')]
+        currv = [int(x) for x in VersionStr.split('.')]
+        if newv <= currv:
+            return
+        def enabledownload():
+            wid = self.builder.get_object("btn_download_update")
+            wid.set_visible(True)
+        if background:
+            GLib.idle_add(enabledownload)
+        else:
+            enabledownload()
+        
