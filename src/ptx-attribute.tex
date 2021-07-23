@@ -128,8 +128,10 @@
 \def\URLLinkBorderstyle{/S/U/W 1} % Underline
 \def\GOTOLinkBorderCol{.9 .5 .5}% pale red
 \def\URLLinkBorderCol{.5 .5 .5}% Gry
+
 %\def\LinkBorderstyle{}
-\def\pdfURL#1{\special{pdf:bann<</Type/Annot/Subtype/Link/Border[0 0 1]\ifx\URLLinkBorderstyle\empty\else/BS<<\URLLinkBorderstyle>>\fi/H/I/C[\URLLinkBorderCol]/A<</S/URI/URI(#1)>>>>}}
+
+\def\pdfURL#1{\special{pdf:bann<</Type/Annot/Subtype/Link/Border[0 0 1]\ifx\URLLinkBorderstyle\empty\else/BS<<\URLLinkBorderstyle>>\fi/H/I\ifx\GOTOLinkBorderCol\empty\else/C[\URLLinkBorderCol]\fi/A<</S/URI/URI(#1)>>>>}}
 
 \edef\h@shcatcode{\the\catcode`\#}
 \catcode`\#=12
@@ -137,7 +139,7 @@
 \catcode`\#=\h@shcatcode
 
 \def\pdfG@T@#1#2 #3\E{\edef\tmp{#1}\ifx\tmp\h@sh \edef\tmp{#2}\else\edef\tmp{#3}\ifx\tmp\empty\edef\tmp{#1#2}\else\edef\tmp{\zap@space #1#2.#3 \empty}\fi\fi
-  \special{pdf:bann<</Type/Annot/Subtype/Link/Border[0 0 1]\ifx\GOTOLinkBorderstyle\empty\else/BS<<\GOTOLinkBorderstyle>>\fi/H/I/C[\GOTOLinkBorderCol]/A<</S/GoTo/D(\tmp)>>>>}%
+  \special{pdf:bann<</Type/Annot/Subtype/Link/Border[0 0 1]\ifx\GOTOLinkBorderstyle\empty\else/BS<<\GOTOLinkBorderstyle>>\fi/H/I\ifx\GOTOLinkBorderCol\empty\else/C[\GOTOLinkBorderCol]\fi/A<</S/GoTo/D(\tmp)>>>>}%
   \trace{A}{link is GOTO to '\tmp'}%
 }
 \def\pdfGOTO#1{\x@\pdfG@T@#1 \E}
