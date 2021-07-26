@@ -3067,4 +3067,12 @@ class GtkViewModel(ViewModel):
             GLib.idle_add(enabledownload)
         else:
             enabledownload()
-        
+
+    def openURL(self, url):
+        if sys.platform == "win32":
+            os.system("start \"\" {}".format(url))
+        elif sys.platform == "linux":
+            os.system("xdg-open \"\" {}".format(url))
+
+    def onUpdateButtonClicked(self, btn):
+        self.openURL("https://software.sil.org/ptxprint/download")       
