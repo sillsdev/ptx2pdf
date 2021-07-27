@@ -1269,10 +1269,7 @@ class TexModel:
 
     def analyzeImageCopyrights(self, txt):
         for m in re.findall(r"(?i)\\(\S+).*?\\zimagecopyrights([A-Z]{2,3})?", txt):
-            if not m[1]:
-                self.imageCopyrightLangs["en"] = m[0]
-            else:
-                self.imageCopyrightLangs[m[1].lower()] = m[0]
+            self.imageCopyrightLangs[m[1].lower() if m[1] else "en"] = m[0]
         return
 
     def generateEmptyImageCopyrights(self):
