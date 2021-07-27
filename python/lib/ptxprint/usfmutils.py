@@ -500,6 +500,19 @@ class Usfm:
         def _gt(e, a):
             return None
         sreduce(_ge, _gt, self.doc, None)
+        
+    def stripIntro(self, noIntro=True, noOutline=True):
+        newdoc = []
+        for e in self.doc[0]:
+            if not isinstance(e, sfm.Element):
+                newdoc.append(e)
+                continue
+            if noOutline and e.name.startswith("io"):
+                continue
+            if noIntro and e.name.startswith("i") and not e.name.startswith("io"):
+                continue
+            newdoc.append(e)
+        self.doc[0][:] = newdoc
 
 def read_module(inf, sheets):
     lines = inf.readlines()

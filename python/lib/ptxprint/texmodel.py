@@ -849,9 +849,12 @@ class TexModel:
                 dat = self.runChanges(self.changes, bk, dat)
                 self.analyzeImageCopyrights(dat)
 
-            if self.dict['project/canonicalise'] or self.dict['document/ifletter'] == "":
+            if self.dict['project/canonicalise'] or self.dict['document/ifletter'] == "" \
+                        or not self.asBool("document/bookintro") or not self.asBool("document/introoutline"):
                 if doc is None:
                     doc = self._makeUSFM(dat.splitlines(True), bk)
+                if not self.asBool("document/bookintro") or not self.asBool("document/introoutline"):
+                    doc.stripIntro(not self.asBool("document/bookintro"), not self.asBool("document/introoutline"))
 
             if self.dict['fancy/endayah'] == "":
                 if doc is None:
@@ -1065,15 +1068,6 @@ class TexModel:
         else:
             # Strip out all \figs from the USFM as an internally generated temp PicList will do the same job
             self.localChanges.append((None, regex.compile(r'\\fig[\s|][^\\]+?\\fig\*', flags=regex.M), ""))
-        
-        if not self.asBool("document/bookintro"): # Drop Introductory matter
-            # self.localChanges.append((None, regex.compile(r"\\i(b|ex?|m[iqt]?|mt[1234]?|mte[12]?|p[iqr]?|q[123]?|s[12]?|li[12]?)\s?.*?\r?\n", flags=regex.M), "")) 
-            self.localChanges.append((None, regex.compile(r"(\\i(b|ex?|m[iqt]?|mt[1234]?|mte[12]?|p[iqr]?|q[123]?|s[12]?|li[12]?)\s?.*?\r?\n)+(?=\\c )", flags=regex.M), "")) 
-
-        if not self.asBool("document/introoutline"): # Drop ALL Intro Outline matter & Intro Outline References
-            # Wondering whether we should restrict this to just the GEN...REV books (as some xtra books only use \ixx markers for content)
-            self.localChanges.append((None, regex.compile(r"\\(iot|io[1234]?) [^\\]+", flags=regex.M), ""))
-            self.localChanges.append((None, regex.compile(r"\\ior .+?\\ior\*\s?\r?\n", flags=regex.M), ""))
 
         if not self.asBool("document/sectionheads"): # Drop ALL Section Headings (which also drops the Parallel passage refs now)
             self.localChanges.append((None, regex.compile(r"\\[sr] .+", flags=regex.M), ""))
