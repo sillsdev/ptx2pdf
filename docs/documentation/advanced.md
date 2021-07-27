@@ -16,7 +16,7 @@ they do and how to control them.
 # \XeTeXuseglyphmetrics
 
 Normally XeTeX measures the height of a line based on a fixed value as specified
-by the font. This is equivalent of \XeTeXuseglyphmetrics=1. But there are some
+by the font. This is equivalent of \XeTeXuseglyphmetrics=0. But there are some
 scripts with extremely variable line heights for which setting a fixed line
 height on the maximum possible would be uncomfortably wide for the average text
 case. Readers are willing to put up with the occasional irregular wide line to
@@ -27,7 +27,7 @@ circumstances. Bearing all that in mind, if you really need such irregular line
 spacing, then add:
 
 ```tex
-\XeTeXuseglyphmetrics=0
+\XeTeXuseglyphmetrics=1
 ```
 
 to your ptxprint-mods.tex and have the surety of never crashing lines again.
