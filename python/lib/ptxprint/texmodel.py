@@ -1067,7 +1067,8 @@ class TexModel:
             self.localChanges.append((None, regex.compile(r'\\fig[\s|][^\\]+?\\fig\*', flags=regex.M), ""))
         
         if not self.asBool("document/bookintro"): # Drop Introductory matter
-            self.localChanges.append((None, regex.compile(r"\\i(b|ex?|m[iqt]?|mt[1234]?|mte[12]?|p[iqr]?|q[123]?|s[12]?|li[12]?)\s?.*?\r?\n", flags=regex.M), "")) 
+            # self.localChanges.append((None, regex.compile(r"\\i(b|ex?|m[iqt]?|mt[1234]?|mte[12]?|p[iqr]?|q[123]?|s[12]?|li[12]?)\s?.*?\r?\n", flags=regex.M), "")) 
+            self.localChanges.append((None, regex.compile(r"(\\i(b|ex?|m[iqt]?|mt[1234]?|mte[12]?|p[iqr]?|q[123]?|s[12]?|li[12]?)\s?.*?\r?\n)+(?=\\c )", flags=regex.M), "")) 
 
         if not self.asBool("document/introoutline"): # Drop ALL Intro Outline matter & Intro Outline References
             # Wondering whether we should restrict this to just the GEN...REV books (as some xtra books only use \ixx markers for content)
@@ -1267,8 +1268,11 @@ class TexModel:
             self.localChanges.append((None, regex.compile(r"\\p \\k {}\\k\* .+\r?\n".format(delGloEntry), flags=regex.M), ""))
 
     def analyzeImageCopyrights(self, txt):
-        for m in re.findall(r"(?i)\\(\S+).*?\\zimagecopyrights([A-Z]{2,3})", txt):
-            self.imageCopyrightLangs[m[1].lower()] = m[0]
+        for m in re.findall(r"(?i)\\(\S+).*?\\zimagecopyrights([A-Z]{2,3})?", txt):
+            if not m[1]:
+                self.imageCopyrightLangs["en"] = m[0]
+            else:
+                self.imageCopyrightLangs[m[1].lower()] = m[0]
         return
 
     def generateEmptyImageCopyrights(self):
