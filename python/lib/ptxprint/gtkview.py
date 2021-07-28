@@ -3061,9 +3061,12 @@ class GtkViewModel(ViewModel):
         version = None
         if not background:
             self.builder.get_object("btn_download_update").set_visible(False)
-        with urllib.request.urlopen("https://software.sil.org/downloads/r/ptxprint/latest.win.json") as inf:
-            info = json.load(inf)
-            version = info['version']
+        try:
+            with urllib.request.urlopen("https://software.sil.org/downloads/r/ptxprint/latest.win.json") as inf:
+                info = json.load(inf)
+                version = info['version']
+        except ssl.SSLCertVerificationError:
+            pass
         if version is None:
             return
         newv = [int(x) for x in version.split('.')]
