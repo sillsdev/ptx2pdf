@@ -242,6 +242,12 @@ _defaultColophon = r"""\pc \zcopyright
 \b 
 \pc \zimagecopyrights
 """
+_defaultDigColophon = r"""\usediglot\empty\pc \zcopyright
+\pc \zlicense
+\usediglot R \pc \zcopyrightR\usediglot\empty
+\b 
+\pc \zimagecopyrights
+"""
 
 _notebooks = ("Main", "Viewer", "PicList")
 
@@ -2707,7 +2713,7 @@ class GtkViewModel(ViewModel):
         self.localizeDefColophon()
         
     def localizeDefColophon(self):
-        ct = _defaultColophon
+        ct = _defaultDigColophon if self.get("c_diglot") else _defaultColophon
         if self.lang in _availableColophons:
             ct = re.sub(r'\\zimagecopyrights', r'\\zimagecopyrights' + self.lang, ct)
         self.set("tb_colophon", ct)

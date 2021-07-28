@@ -745,8 +745,10 @@ class TexModel:
 \\prepusfm
 \\def\\zcopyright\uFDEE{project/copyright}\uFDEF
 \\def\\zlicense\uFDEE{project/license}\uFDEF
-\\unprepusfm
 """.format(**self.dict))
+                    if "diglot/copyright" in self.dict:
+                        res.append("\\def\\zcopyrightR\uFDEE{}\uFDEF".format(self.dict["diglot/copyright"]))
+                    res.append("\\unprepusfm")
                 else:
                     res.append(l.rstrip().format(**self.dict))
         return "\n".join(res).replace("\\OmitChapterNumberfalse\n\\OmitChapterNumbertrue\n","")

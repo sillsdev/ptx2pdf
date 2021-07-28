@@ -119,6 +119,10 @@ _diglot = {
 "diglot/fontbolditalic" :   "document/fontbolditalic",
 "diglot/ifshowversenums" :  "document/ifshowversenums",
 "diglot/xrlocation" :       "notes/xrlocation",
+
+"diglot/copyright":         "project/copyright",
+"diglot/license":           "project/license",
+
 "diglotfancy/versedecorator":       "fancy/versedecorator",
 "diglotfancy/versedecoratorpdf":    "fancy/versedecoratorpdf",
 "diglotfancy/versedecoratorshift":  "fancy/versedecoratorshift",
@@ -476,8 +480,6 @@ class RunJob:
             info.printer.set(k, diginfo.printer.get(v))
         info["document/diglotcfgrpath"] = os.path.relpath(diginfo.printer.configPath(diginfo.printer.configName()), docdir).replace("\\","/")
         info["_isDiglot"] = True
-        if diginfo.dict.get("project/colophontext", ""):
-            info["project/colophontext"] += "\n" + re.sub(r"\s*\\zimagecopyrights\S+\s*", "", diginfo["project/colophontext"])
         res = self.sharedjob(jobs, info, extra="-diglot")
         texfiles += res
         return texfiles
