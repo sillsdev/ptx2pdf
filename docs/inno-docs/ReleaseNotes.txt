@@ -5,9 +5,11 @@ PTXprint 1.9 Release Notes
 
 Bug fixes and Improvements in 1.9.1 (28 Jul 2021) 
 
-  * Added new Update button to status bar (shows if a newer version is available)
+  * Added Update button to status bar (shows if a newer version is available)
   
   * Diglot should obey nobreaks after headings better now
+  
+  * Added diglot copyright default (enabling info from both projects to be displayed)
   
   * Fixed bug to support \zimagecopyrights with no lang be formatted with non \pc markers
   
@@ -15,7 +17,7 @@ Bug fixes and Improvements in 1.9.1 (28 Jul 2021)
   
   * Fixed missing missing page number on even Intro pages (NoVevenfooter)
   
-  * Improved hiding of Intro and Intro-Outline to be more reliable
+  * Improved hiding of Intro matter and Intro-Outlines to be more reliable
   
 Bug fixes and Improvements in 1.9 (6 Jul 2021) 
 

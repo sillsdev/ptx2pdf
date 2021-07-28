@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-import sys, os, re, regex, gi, subprocess, traceback
+import sys, os, re, regex, gi, subprocess, traceback, ssl
 gi.require_version('Gtk', '3.0')
 gi.require_version('Gdk', '3.0')
 from shutil import rmtree
@@ -35,6 +35,7 @@ from ptxprint.utils import _, f_, textocol
 import configparser
 from threading import Thread
 
+ssl._create_default_https_context = ssl._create_unverified_context
 pdfre = re.compile(r".+[\\/](.+)\.pdf")
 
 # xmlstarlet sel -t -m '//iso_15924_entry' -o '"' -v '@alpha_4_code' -o '" : "' -v '@name' -o '",' -n /usr/share/xml/iso-codes/iso_15924.xml
@@ -3056,6 +3057,7 @@ class GtkViewModel(ViewModel):
     def checkUpdates(self, background=True):
         if sys.platform != "win32":
             return
+        os.environ["PYTHONHTTPSVERIFY"] = "0"
         version = None
         if not background:
             self.builder.get_object("btn_download_update").set_visible(False)
@@ -3066,8 +3068,8 @@ class GtkViewModel(ViewModel):
             return
         newv = [int(x) for x in version.split('.')]
         currv = [int(x) for x in VersionStr.split('.')]
-        # if newv <= currv:
-            # return
+        if newv <= currv:
+            return
         def enabledownload():
             wid = self.builder.get_object("btn_download_update")
             wid.set_visible(True)
