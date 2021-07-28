@@ -3066,8 +3066,8 @@ class GtkViewModel(ViewModel):
             return
         newv = [int(x) for x in version.split('.')]
         currv = [int(x) for x in VersionStr.split('.')]
-        if newv <= currv:
-            return
+        # if newv <= currv:
+            # return
         def enabledownload():
             wid = self.builder.get_object("btn_download_update")
             wid.set_visible(True)

@@ -1537,7 +1537,7 @@ can be set.</property>
   <object class="GtkImage" id="icon_download">
     <property name="sensitive">False</property>
     <property name="can_focus">False</property>
-    <property name="icon_name">preferences-system-network</property>
+    <property name="icon_name">software-update-available-symbolic</property>
     <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_refresh">
