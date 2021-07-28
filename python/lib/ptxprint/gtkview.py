@@ -3048,6 +3048,8 @@ class GtkViewModel(ViewModel):
                                "So that option has just been disabled."))
 
     def checkUpdates(self, background=True):
+        if sys.platform != "win32":
+            return
         version = None
         if not background:
             self.builder.get_object("btn_download_update").set_visible(False)
