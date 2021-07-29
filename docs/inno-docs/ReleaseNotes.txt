@@ -1,8 +1,12 @@
 PTXprint 1.9.1 Release Notes 
-28 July 2021
+29 July 2021
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 
+Bug fixes and Improvements in 1.9.2 (29 Jul 2021) 
+
+  * Temporarily removed "Update Available" feature due to current Python SSL bug
+  
 Bug fixes and Improvements in 1.9.1 (28 Jul 2021) 
 
   * Added Update button to status bar (shows if a newer version is available)

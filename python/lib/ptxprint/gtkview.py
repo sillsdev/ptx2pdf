@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-import sys, os, re, regex, gi, subprocess, traceback, ssl
+import sys, os, re, regex, gi, subprocess, traceback #, ssl
 gi.require_version('Gtk', '3.0')
 gi.require_version('Gdk', '3.0')
 from shutil import rmtree
@@ -35,7 +35,7 @@ from ptxprint.utils import _, f_, textocol
 import configparser
 from threading import Thread
 
-ssl._create_default_https_context = ssl._create_unverified_context
+# ssl._create_default_https_context = ssl._create_unverified_context
 pdfre = re.compile(r".+[\\/](.+)\.pdf")
 
 # xmlstarlet sel -t -m '//iso_15924_entry' -o '"' -v '@alpha_4_code' -o '" : "' -v '@name' -o '",' -n /usr/share/xml/iso-codes/iso_15924.xml
@@ -3055,9 +3055,10 @@ class GtkViewModel(ViewModel):
                                "So that option has just been disabled."))
 
     def checkUpdates(self, background=True):
-        if sys.platform != "win32":
+        if True: # WAITING for Python fix!   sys.platform != "win32":
+            self.builder.get_object("btn_download_update").set_visible(False)
             return
-        os.environ["PYTHONHTTPSVERIFY"] = "0"
+        # os.environ["PYTHONHTTPSVERIFY"] = "0"
         version = None
         if not background:
             self.builder.get_object("btn_download_update").set_visible(False)
@@ -3065,7 +3066,8 @@ class GtkViewModel(ViewModel):
             with urllib.request.urlopen("https://software.sil.org/downloads/r/ptxprint/latest.win.json") as inf:
                 info = json.load(inf)
                 version = info['version']
-        except ssl.SSLCertVerificationError:
+        except (OSError, KeyError, ValueError) as e:
+        # except ssl.SSLCertVerificationError:
             pass
         if version is None:
             return
