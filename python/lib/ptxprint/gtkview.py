@@ -3066,8 +3066,7 @@ class GtkViewModel(ViewModel):
             with urllib.request.urlopen("https://software.sil.org/downloads/r/ptxprint/latest.win.json") as inf:
                 info = json.load(inf)
                 version = info['version']
-        except (OSError, KeyError, ValueError) as e:
-        # except ssl.SSLCertVerificationError:
+        except (OSError, KeyError, ValueError):
             pass
         if version is None:
             return
