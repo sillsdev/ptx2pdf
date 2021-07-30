@@ -301,12 +301,14 @@ class Usfm:
                         yield c1
         return iterfn(e)
 
-    def iiterel(self, i, e):
+    def iiterel(self, i, e, endfn=None):
         def iterfn(il, el):
             if isinstance(el, sfm.Element):
                 yield (il, el)
                 for il, c in list(enumerate(el)):
                     yield from iterfn(il, c)
+                if endfn is not None:
+                    endfn(el)
         return iterfn(i, e)
 
     def iterVerse(self, chap, verse):
@@ -513,6 +515,36 @@ class Usfm:
                 continue
             newdoc.append(e)
         self.doc[0][:] = newdoc
+
+    # def stripEmptyChVs(self, diaeresis=False):
+        # for e in self.doc[0][:]:
+            # if not isinstance(e, sfm.Element) or e.name != "c":
+                # continue
+            # newCh = []
+            # lastv = None
+            # for c in e:
+                # if not isinstance(c, sfm.Element) or c.name != "v":
+                    # if lastv is not None:
+                        # newCh.append(lastv)
+                        # lastv = None
+                    # newCh.append(c)
+                # else:
+                    # lastv = c
+            # if len(newCh):
+                # e[:] = newCh
+            # else:
+                # e.parent.remove(e)
+
+    def stripEmptyChVs(self, diaeresis=False):
+        def onEndEl(e):
+            if e.meta.get("styletype", "").lower() == "paragraph" and len(e) == 0:
+                e.parent.remove(e)
+        lastv = (None, 0)
+        for i, e in self.iiterel(0, self.doc[0], onEndEl):
+            if e.name == "v":
+                if lastv[0] is not None and lastv[0].parent == e.parent and lastv[1] == i - 1:
+                    e.parent.remove(lastv[0])
+                lastv = (e, i)
 
 def read_module(inf, sheets):
     lines = inf.readlines()

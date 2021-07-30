@@ -851,12 +851,14 @@ class TexModel:
                 dat = self.runChanges(self.changes, bk, dat)
                 self.analyzeImageCopyrights(dat)
 
-            if self.dict['project/canonicalise'] or self.dict['document/ifletter'] == "" \
+            if self.dict['project/canonicalise'] or self.dict['document/ifletter'] == "" or self.asBool("document/elipsizemptyvs") \
                         or not self.asBool("document/bookintro") or not self.asBool("document/introoutline"):
                 if doc is None:
                     doc = self._makeUSFM(dat.splitlines(True), bk)
                 if not self.asBool("document/bookintro") or not self.asBool("document/introoutline"):
                     doc.stripIntro(not self.asBool("document/bookintro"), not self.asBool("document/introoutline"))
+                if self.asBool("document/elipsizemptyvs"):
+                    doc.stripEmptyChVs()
 
             if self.dict['fancy/endayah'] == "":
                 if doc is None:
@@ -1027,12 +1029,12 @@ class TexModel:
             self.localChanges.append((None, regex.compile(r"\\c 1 ?\r?\n.+".format(first), flags=regex.S), ""))
 
         # Elipsize ranges of MISSING/Empty verses in the text (if 3 or more verses in a row are empty...) 
-        if self.asBool("document/elipsizemptyvs"):
-            self.localChanges.append((None, regex.compile(r"\\v (\d+)([-,]\d+)?\s*\r?\n(\\v (\d+)([-,]\d+)?\s*\r?\n){1,}", flags=regex.M), r"\\v \1-\4 {...} "))
+        # if self.asBool("document/elipsizemptyvs"):
+            # self.localChanges.append((None, regex.compile(r"\\v (\d+)([-,]\d+)?\s*\r?\n(\\v (\d+)([-,]\d+)?\s*\r?\n){1,}", flags=regex.M), r"\\v \1-\4 {...} "))
             # self.localChanges.append((None, regex.compile(r"(\r?\n\\c \d+ ?)(\r?\n\\v 1)", flags=regex.M), r"\1\r\n\\p \2"))
-            self.localChanges.append((None, regex.compile(r" (\\c \d+)\s*(\r?\n\\v 1)", flags=regex.M), r" \r\n\1\r\n\\p \2"))
+            # self.localChanges.append((None, regex.compile(r" (\\c \d+)\s*(\r?\n\\v 1)", flags=regex.M), r" \r\n\1\r\n\\p \2"))
             # self.localChanges.append((None, regex.compile(r"(\{\.\.\.\}) (\\c \d+ ?)\r?\n\\v", flags=regex.M), r"\1\r\n\2\r\n\\p \\v"))
-            self.localChanges.append((None, regex.compile(r"(\\c \d+ ?(\r?\n)+\\p (\r?\n)?\\v [\d-]+ \{\.\.\.\} ?(\r?\n)+)(?=\\c)", flags=regex.M), r"\1\\m {...}\r\n"))
+            # self.localChanges.append((None, regex.compile(r"(\\c \d+ ?(\r?\n)+\\p (\r?\n)?\\v [\d-]+ \{\.\.\.\} ?(\r?\n)+)(?=\\c)", flags=regex.M), r"\1\\m {...}\r\n"))
 
         # Probably need to make this more efficient for multi-book and lengthy glossaries (cache the GLO & changes reqd etc.)
         if self.asBool("notes/glossaryfootnotes"):
