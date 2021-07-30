@@ -536,15 +536,38 @@ class Usfm:
                 # e.parent.remove(e)
 
     def stripEmptyChVs(self, diaeresis=False):
-        def onEndEl(e):
-            if e.meta.get("styletype", "").lower() == "paragraph" and len(e) == 0:
-                e.parent.remove(e)
-        lastv = (None, 0)
-        for i, e in self.iiterel(0, self.doc[0], onEndEl):
-            if e.name == "v":
-                if lastv[0] is not None and lastv[0].parent == e.parent and lastv[1] == i - 1:
-                    e.parent.remove(lastv[0])
-                lastv = (e, i)
+        def iterfn(el):
+            if isinstance(el, sfm.Element):
+                lastv = None
+                predels = []
+                for c in el[:]:
+                    if not isinstance(c, sfm.Element) or c.name != "v":
+                        if iterfn(c):
+                            lastv = None
+                            predels = []
+                        else:
+                            predels.append(c)
+                    elif isinstance(c, sfm.Element) and c.name == "v":
+                        if lastv is not None:
+                            if len(predels):
+                                for p in predels:
+                                    p.parent.remove(p)
+                                predels = []
+                            lastv.parent.remove(lastv)
+                        lastv = c
+                if lastv is not None:
+                    lastv.parent.remove(lastv)
+                    if len(predels):
+                        for p in predels:
+                            p.parent.remove(p)
+                        predels = []
+                if el.meta.get("styletype", "").lower() == "paragraph" and len(el) == len(predels):
+                    el.parent.remove(el)
+                    return False
+            elif re.match(r"^\s*$", str(el)):
+                return False
+            return True
+        iterfn(self.doc[0])
 
 def read_module(inf, sheets):
     lines = inf.readlines()
