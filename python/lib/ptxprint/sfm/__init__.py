@@ -702,6 +702,7 @@ class parser(collections.Iterable):
                         e.annotations['nested'] = True
                     e.extend(sub_parser(e))
                     yield e
+                    force_need = False
                 elif parent is None:
                     tok = Text(tag, tok.pos, tok.parent)
                     # We've failed to find a home for marker tag, poor thing.
