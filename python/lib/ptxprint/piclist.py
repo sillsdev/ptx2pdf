@@ -166,14 +166,17 @@ class PicChecks:
         # return set(list(self.cfgShared.keys()) + list(self.cfgProject.keys()))
         
     def setMultiCreditOverlays(self, srcs, crdtxt, crdtbox, copysrc):
-        for k in srcs:
-            if k is not None and k[:3].lower() == copysrc.lower():
-                k = newBase(k)
-                if self.parent.get('c_plCreditOverwrite') or not self.cfgShared.get(k, 'piccredit', fallback=''):
-                    if not self.cfgShared.has_section(k):
-                        self.cfgShared.add_section(k)
-                    self.cfgShared.set(k, 'piccredit', crdtxt)
-                    self.cfgShared.set(k, 'piccreditbox', crdtbox)
+        srcseries = re.findall(r"(?i)_?((?=ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib)..\d{5})[abcABC]?", copysrc)
+        if len(srcseries):
+            for k in srcs:
+                kseries = re.findall(r"(?i)_?((?=ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib)..\d{5})[abcABC]?", k)
+                if len(kseries) and kseries[0][:3].lower() == srcseries[0][:3].lower():
+                    k = newBase(k)
+                    if self.parent.get('c_plCreditOverwrite') or not self.cfgShared.get(k, 'piccredit', fallback=''):
+                        if not self.cfgShared.has_section(k):
+                            self.cfgShared.add_section(k)
+                        self.cfgShared.set(k, 'piccredit', crdtxt)
+                        self.cfgShared.set(k, 'piccreditbox', crdtbox)
 
 class PicInfo(dict):
 

@@ -3030,7 +3030,7 @@ class GtkViewModel(ViewModel):
             self.set("l_piccredit", text)
             if self.get("c_plCreditApply2all"):
                 srcs = set(v.get('src', None) for v in self.picinfos.values())
-                self.picChecksView.setMultiCreditOverlays(srcs, text, crParams, self.get("t_plFilename")[:3])
+                self.picChecksView.setMultiCreditOverlays(srcs, text, crParams, self.get("t_plFilename"))
         elif response == Gtk.ResponseType.CANCEL:
             pass
         else:
