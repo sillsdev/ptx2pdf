@@ -472,6 +472,16 @@ THE SOFTWARE.
     <property name="step_increment">0.10000000000000001</property>
     <property name="page_increment">1</property>
   </object>
+  <object class="GtkAdjustment" id="a_zvarListadjustment1">
+    <property name="upper">100</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="a_zvarListadjustment2">
+    <property name="upper">100</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
   <object class="GtkAdjustment" id="c_columnShift">
     <property name="lower">1</property>
     <property name="upper">50</property>
@@ -3976,6 +3986,36 @@ information, position and other parameters.</property>
       <row>
         <col id="0" translatable="yes">Top-to-Bottom</col>
         <col id="1">ttb</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkListStore" id="ls_zvarList">
+    <columns>
+      <!-- column-name Name -->
+      <column type="gchararray"/>
+      <!-- column-name Value -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">maintitle</col>
+        <col id="1" translatable="yes">God's Holy Word</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">subtitle</col>
+        <col id="1" translatable="yes">The New Testament with Psalms and Proverbs</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">copiesprinted</col>
+        <col id="1" translatable="yes">300</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">languagename</col>
+        <col id="1" translatable="yes">Wakawaka</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes"/>
+        <col id="1" translatable="yes"/>
       </row>
     </data>
   </object>
@@ -10961,180 +11001,7 @@ and cross-references from going into the footer area.</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkFrame" id="bx_colophon">
-                        <property name="width_request">675</property>
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="valign">start</property>
-                        <property name="margin_left">6</property>
-                        <property name="margin_right">6</property>
-                        <property name="margin_top">3</property>
-                        <property name="margin_bottom">6</property>
-                        <property name="label_xalign">0.019999999552965164</property>
-                        <child>
-                          <object class="GtkGrid" id="gr_colophon">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="valign">start</property>
-                            <property name="margin_top">6</property>
-                            <property name="margin_bottom">6</property>
-                            <property name="row_spacing">6</property>
-                            <property name="column_spacing">6</property>
-                            <child>
-                              <object class="GtkLabel">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="tooltip_text" translatable="yes">Enter your Colophon text here - using standard
-USFM codes for formatting. You may want to
-use the reset button to start with a standard set.
-
-You can use the following codes to
-automatically include special text 
-using the following markers:
-\zcopyright   - copyright statement from the Basic tab
-\zlicense     - License text from the Basic tab
-\zimagecopyrights   - Automatically generated list of images, page numbers and attributions.
-\zimagecopyrightsfr - as above, but use localized (fr = French) version (ro, hu, es, fr, ru available).
-
-\b can be used to insert a blank line between markers if needed.
- 
-These special codes may also be used in other
-books such as the front matter book (FRT). 
-
-IMPORTANT: You will have to click Print a second time
-in order to get accurate Image Copyright Attribution.</property>
-                                <property name="halign">end</property>
-                                <property name="valign">start</property>
-                                <property name="margin_top">6</property>
-                                <property name="label" translatable="yes">Colophon Text:</property>
-                                <property name="justify">right</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">0</property>
-                                <property name="top_attach">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkScrolledWindow" id="scroll_colophon">
-                                <property name="height_request">140</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="valign">start</property>
-                                <property name="margin_right">6</property>
-                                <property name="hexpand">True</property>
-                                <property name="shadow_type">etched-in</property>
-                                <property name="overlay_scrolling">False</property>
-                                <child>
-                                  <object class="GtkViewport">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="margin_left">4</property>
-                                    <property name="margin_right">12</property>
-                                    <property name="margin_top">4</property>
-                                    <property name="margin_bottom">4</property>
-                                    <property name="vexpand">True</property>
-                                    <child>
-                                      <object class="GtkTextView" id="textv_colophon">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="tooltip_text" translatable="yes">Note: There are several shortcuts you can use:
-   (c) --&gt; ©  the copyright sign
-   (r) --&gt; ®  to denote registered trademarks
-   (tm) --&gt; ™  to denote trademarks in general
-
-Other special codes converted at print time:
-use ~ for places where a non-breaking space is needed
-use // where a line break needs to be forced
-but :// used in URLs will still be preserved</property>
-                                        <property name="vexpand">True</property>
-                                        <property name="wrap_mode">word</property>
-                                        <property name="buffer">tb_colophon</property>
-                                      </object>
-                                    </child>
-                                  </object>
-                                </child>
-                              </object>
-                              <packing>
-                                <property name="left_attach">1</property>
-                                <property name="top_attach">0</property>
-                                <property name="width">2</property>
-                                <property name="height">3</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkButton" id="btn_resetColophon">
-                                <property name="label">↺</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">True</property>
-                                <property name="tooltip_text" translatable="yes">Clicking this button will reload the 
-default Colophon text markers which
-include the Copyright statement tag,
-the License statement tag, and the
-Illustration credits tag.</property>
-                                <property name="halign">end</property>
-                                <property name="valign">end</property>
-                                <signal name="clicked" handler="onColophonResetClicked" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="left_attach">0</property>
-                                <property name="top_attach">2</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkCheckButton" id="c_standAloneColophon">
-                                <property name="label" translatable="yes">Force Page Break 
-Before Colophon</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">False</property>
-                                <property name="tooltip_text" translatable="yes">Normally the colophon is inserted at the end
-of the last page of the last book. If this option
-is checked, then the colophon will appear at the 
-bottom of a new page at the end of the publication.
-
-In Diglot publications, the colophon always appears
-on its own page - regardless of this setting. </property>
-                                <property name="valign">start</property>
-                                <property name="draw_indicator">True</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">0</property>
-                                <property name="top_attach">1</property>
-                              </packing>
-                            </child>
-                          </object>
-                        </child>
-                        <child type="label">
-                          <object class="GtkCheckButton" id="c_colophon">
-                            <property name="label" translatable="yes">Include Colophon</property>
-                            <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="receives_default">False</property>
-                            <property name="tooltip_text" translatable="yes">What is a Colophon?
-A brief statement containing information
-about the publication such as the place of 
-publication, the publisher, and the date of 
-publication. This will be printed at the END
-of the book. Similar to a "biblio-page" or a
-"copyright-page" at the front of a book.
-
-NOTE: The colophon will not appear 
-the first time you run it, but will appear
-on subsequent runs.</property>
-                            <property name="halign">start</property>
-                            <property name="active">True</property>
-                            <property name="draw_indicator">True</property>
-                            <signal name="clicked" handler="onColophonClicked" swapped="no"/>
-                            <signal name="toggled" handler="onColophonClicked" swapped="no"/>
-                          </object>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">3</property>
-                      </packing>
+                      <placeholder/>
                     </child>
                   </object>
                   <packing>
@@ -11145,10 +11012,8 @@ on subsequent runs.</property>
                   <object class="GtkLabel" id="lb_HeadFoot">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="tooltip_text" translatable="yes">Adjust the content of headers 
-and footers, and define a
-colophon which gets printed at
-the end of the publication.</property>
+                    <property name="tooltip_text" translatable="yes">Adjust the content of 
+headers and footers.</property>
                     <property name="halign">start</property>
                     <property name="label" translatable="yes">Header+Footer</property>
                   </object>
@@ -18012,6 +17877,25 @@ with a text editor (such as Notepad or NP++).</property>
                           </packing>
                         </child>
                         <child>
+                          <object class="GtkButton">
+                            <property name="label" translatable="yes">View/Edit
+Variables...</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <property name="tooltip_text" translatable="yes">If you have used \zvar_variable names
+in the front matter template, these may
+be edited on the "Pub. Info" tab. Click
+this button to show that tab.</property>
+                            <property name="halign">center</property>
+                            <property name="valign">center</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">9</property>
+                            <property name="top_attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
                           <placeholder/>
                         </child>
                         <child>
@@ -18047,12 +17931,19 @@ with a text editor (such as Notepad or NP++).</property>
                           <object class="GtkLabel" id="l_FrontMatter">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="tooltip_text" translatable="yes">A PicList is used to specify the 
-position of illustrations on the page. 
-Any one of the following are possible:
-for "span": t=top, b=bottom  of page
-for "col": tl=top left, tr=top right,
-        bl=bottom left,  br=bottom right</property>
+                            <property name="tooltip_text" translatable="yes">You can use the following \zspecialcodes to
+automatically include special text using the 
+following markers:
+\zcopyright   - copyright statement from the Basic tab
+\zlicense     - License text from the Basic tab
+\zimagecopyrights   - Automatically generated list of images, page numbers and attributions.
+\zimagecopyrightsfr - as above, but use localized (fr = French) version (ro, hu, es, fr, ru available).
+
+\b can be used to insert a blank line between markers if needed.
+
+In addition to the above-mentioned codes, you may use
+\zvar_variables as generic place-holders. The values of these
+need to be filled in on the Pub.Info tab.</property>
                             <property name="label" translatable="yes">Front Matter</property>
                           </object>
                           <packing>
@@ -18233,6 +18124,408 @@ output and tweak adjust lists.</property>
                   </object>
                   <packing>
                     <property name="position">11</property>
+                    <property name="tab_fill">False</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkBox" id="tb_PubInfo">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="margin_left">6</property>
+                    <property name="margin_right">6</property>
+                    <property name="orientation">vertical</property>
+                    <property name="spacing">3</property>
+                    <child>
+                      <object class="GtkFrame" id="bx_frontmatter">
+                        <property name="width_request">675</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="margin_top">6</property>
+                        <property name="margin_bottom">6</property>
+                        <property name="vexpand">False</property>
+                        <property name="label_xalign">0.019999999552965164</property>
+                        <child>
+                          <object class="GtkGrid" id="gr_frontmatter">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="margin_right">6</property>
+                            <property name="margin_top">6</property>
+                            <property name="margin_bottom">6</property>
+                            <property name="vexpand">True</property>
+                            <property name="row_spacing">6</property>
+                            <property name="column_spacing">6</property>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="tooltip_text" translatable="yes">This table lists all the standard \zvar_codes which
+can be used in front matter and/or colophon. As 
+these \zvar_codes are customizable, you can
+add your own as needed. For example, you may
+need the \zvar_maintitle in more than one language
+so you can add 'fr' or 'es' to create a new one:
+  \zvar_maintitlefr
+or you might want to add a custom variable such as:
+   \zvar_printedby.
+
+All the \zvar_values are saved with the config as
+they may vary from one publication to another.</property>
+                                <property name="halign">end</property>
+                                <property name="valign">start</property>
+                                <property name="margin_top">5</property>
+                                <property name="label" translatable="yes">\zvar_ Variables:</property>
+                                <property name="justify">right</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkButton" id="btn_rescanFRTvars">
+                                <property name="label">↺</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                                <property name="tooltip_text" translatable="yes">Clicking this button will rescan the
+Front Matter \zvar_variables to be
+listed in this table.</property>
+                                <property name="halign">end</property>
+                                <property name="valign">end</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">3</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkCheckButton" id="c_periphPageBreak">
+                                <property name="label" translatable="yes">Force Page Break 
+at each Periph</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="tooltip_text" translatable="yes">This option is normally checked so that each
+different section of the front matter will begin
+on a new page.</property>
+                                <property name="valign">start</property>
+                                <property name="margin_left">3</property>
+                                <property name="active">True</property>
+                                <property name="draw_indicator">True</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkButton">
+                                <property name="label" translatable="yes">View/Edit
+Front Matter</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                                <property name="halign">center</property>
+                                <property name="valign">center</property>
+                                <property name="margin_left">3</property>
+                                <property name="margin_right">3</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkViewport">
+                                <property name="height_request">270</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="hexpand">True</property>
+                                <property name="vexpand">True</property>
+                                <child>
+                                  <object class="GtkScrolledWindow" id="scr_zvarlist">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="vexpand">True</property>
+                                    <property name="hscrollbar_policy">always</property>
+                                    <property name="vscrollbar_policy">always</property>
+                                    <property name="shadow_type">in</property>
+                                    <property name="overlay_scrolling">False</property>
+                                    <property name="propagate_natural_width">True</property>
+                                    <property name="propagate_natural_height">True</property>
+                                    <child>
+                                      <object class="GtkTreeView" id="tv_zvarEdit">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="hadjustment">a_zvarListadjustment1</property>
+                                        <property name="vadjustment">a_zvarListadjustment2</property>
+                                        <property name="vscroll_policy">natural</property>
+                                        <property name="model">ls_zvarList</property>
+                                        <property name="reorderable">True</property>
+                                        <property name="rules_hint">True</property>
+                                        <property name="enable_search">False</property>
+                                        <property name="search_column">0</property>
+                                        <property name="fixed_height_mode">True</property>
+                                        <property name="show_expanders">False</property>
+                                        <child internal-child="selection">
+                                          <object class="GtkTreeSelection"/>
+                                        </child>
+                                        <child>
+                                          <object class="GtkTreeViewColumn" id="col_zvar_name">
+                                            <property name="resizable">True</property>
+                                            <property name="spacing">2</property>
+                                            <property name="sizing">fixed</property>
+                                            <property name="fixed_width">150</property>
+                                            <property name="title" translatable="yes">Name</property>
+                                            <property name="clickable">True</property>
+                                            <property name="reorderable">True</property>
+                                            <property name="sort_indicator">True</property>
+                                            <child>
+                                              <object class="GtkCellRendererText" id="cr_anchor1"/>
+                                              <attributes>
+                                                <attribute name="text">0</attribute>
+                                              </attributes>
+                                            </child>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkTreeViewColumn" id="col_zvar_value">
+                                            <property name="resizable">True</property>
+                                            <property name="spacing">2</property>
+                                            <property name="sizing">fixed</property>
+                                            <property name="fixed_width">250</property>
+                                            <property name="title" translatable="yes">Value</property>
+                                            <child>
+                                              <object class="GtkCellRendererText" id="cr_caption1"/>
+                                              <attributes>
+                                                <attribute name="text">1</attribute>
+                                              </attributes>
+                                            </child>
+                                          </object>
+                                        </child>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="top_attach">0</property>
+                                <property name="width">2</property>
+                                <property name="height">4</property>
+                              </packing>
+                            </child>
+                          </object>
+                        </child>
+                        <child type="label">
+                          <object class="GtkCheckButton" id="c_frontmatter">
+                            <property name="label" translatable="yes">Include Front Matter</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">False</property>
+                            <property name="halign">start</property>
+                            <property name="draw_indicator">True</property>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkFrame" id="bx_colophon">
+                        <property name="width_request">675</property>
+                        <property name="height_request">185</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="valign">end</property>
+                        <property name="margin_top">3</property>
+                        <property name="margin_bottom">6</property>
+                        <property name="label_xalign">0.019999999552965164</property>
+                        <child>
+                          <object class="GtkGrid" id="gr_colophon">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="valign">start</property>
+                            <property name="margin_right">6</property>
+                            <property name="margin_top">6</property>
+                            <property name="margin_bottom">6</property>
+                            <property name="row_spacing">6</property>
+                            <property name="column_spacing">6</property>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="tooltip_text" translatable="yes">Enter your Colophon text here - using standard
+USFM codes for formatting. You may want to
+use the reset button to start with a standard set.
+
+You can use the following codes to
+automatically include special text 
+using the following markers:
+\zcopyright   - copyright statement from the Basic tab
+\zlicense     - License text from the Basic tab
+\zimagecopyrights   - Automatically generated list of images, page numbers and attributions.
+\zimagecopyrightsfr - as above, but use localized (fr = French) version (ro, hu, es, fr, ru available).
+
+\b can be used to insert a blank line between markers if needed.
+ 
+These special codes may also be used in other
+books such as the front matter book (FRT). 
+
+IMPORTANT: You will have to click Print a second time
+in order to get accurate Image Copyright Attribution.</property>
+                                <property name="halign">end</property>
+                                <property name="valign">start</property>
+                                <property name="margin_top">6</property>
+                                <property name="label" translatable="yes">Colophon Text:</property>
+                                <property name="justify">right</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkScrolledWindow" id="scroll_colophon">
+                                <property name="height_request">140</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="valign">start</property>
+                                <property name="hexpand">True</property>
+                                <property name="shadow_type">etched-in</property>
+                                <property name="overlay_scrolling">False</property>
+                                <child>
+                                  <object class="GtkViewport">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="margin_top">4</property>
+                                    <property name="margin_bottom">4</property>
+                                    <property name="vexpand">True</property>
+                                    <child>
+                                      <object class="GtkTextView" id="textv_colophon">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="tooltip_text" translatable="yes">Note: There are several shortcuts you can use:
+   (c) --&gt; ©  the copyright sign
+   (r) --&gt; ®  to denote registered trademarks
+   (tm) --&gt; ™  to denote trademarks in general
+
+Other special codes converted at print time:
+use ~ for places where a non-breaking space is needed
+use // where a line break needs to be forced
+but :// used in URLs will still be preserved</property>
+                                        <property name="vexpand">True</property>
+                                        <property name="wrap_mode">word</property>
+                                        <property name="buffer">tb_colophon</property>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="top_attach">0</property>
+                                <property name="width">2</property>
+                                <property name="height">3</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkButton" id="btn_resetColophon">
+                                <property name="label">↺</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                                <property name="tooltip_text" translatable="yes">Clicking this button will reload the 
+default Colophon text markers which
+include the Copyright statement tag,
+the License statement tag, and the
+Illustration credits tag.</property>
+                                <property name="halign">end</property>
+                                <property name="valign">end</property>
+                                <signal name="clicked" handler="onColophonResetClicked" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkCheckButton" id="c_standAloneColophon">
+                                <property name="label" translatable="yes">Force Page Break 
+Before Colophon</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="tooltip_text" translatable="yes">Normally the colophon is inserted at the end
+of the last page of the last book. If this option
+is checked, then the colophon will appear at the 
+bottom of a new page at the end of the publication.
+
+In Diglot publications, the colophon always appears
+on its own page - regardless of this setting. </property>
+                                <property name="valign">start</property>
+                                <property name="margin_left">3</property>
+                                <property name="draw_indicator">True</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">1</property>
+                              </packing>
+                            </child>
+                          </object>
+                        </child>
+                        <child type="label">
+                          <object class="GtkCheckButton" id="c_colophon">
+                            <property name="label" translatable="yes">Include Colophon at End</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">False</property>
+                            <property name="tooltip_text" translatable="yes">What is a Colophon?
+A brief statement containing information
+about the publication such as the place of 
+publication, the publisher, and the date of 
+publication. This will be printed at the END
+of the book. Similar to a "biblio-page" or a
+"copyright-page" at the front of a book.
+
+NOTE: The colophon will not appear 
+the first time you run it, but will appear
+on subsequent runs.</property>
+                            <property name="halign">start</property>
+                            <property name="active">True</property>
+                            <property name="draw_indicator">True</property>
+                            <signal name="clicked" handler="onColophonClicked" swapped="no"/>
+                            <signal name="toggled" handler="onColophonClicked" swapped="no"/>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="position">12</property>
+                  </packing>
+                </child>
+                <child type="tab">
+                  <object class="GtkLabel" id="lb_PubInfo">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="tooltip_text" translatable="yes">Publication Information
+Define front matter, and/or
+colophon which gets printed
+at the end of the publication.</property>
+                    <property name="halign">start</property>
+                    <property name="label" translatable="yes">Pub. Info</property>
+                  </object>
+                  <packing>
+                    <property name="position">12</property>
                     <property name="tab_fill">False</property>
                   </packing>
                 </child>
@@ -18750,7 +19043,7 @@ at the same time then the Basic view is not available.</property>
                     </child>
                   </object>
                   <packing>
-                    <property name="position">12</property>
+                    <property name="position">13</property>
                   </packing>
                 </child>
                 <child type="tab">
@@ -18764,7 +19057,7 @@ obtain help from others.</property>
                     <property name="label" translatable="yes">Help</property>
                   </object>
                   <packing>
-                    <property name="position">12</property>
+                    <property name="position">13</property>
                     <property name="tab_fill">False</property>
                   </packing>
                 </child>
@@ -18806,7 +19099,7 @@ obtain help from others.</property>
                     </child>
                   </object>
                   <packing>
-                    <property name="position">13</property>
+                    <property name="position">14</property>
                   </packing>
                 </child>
                 <child type="tab">
@@ -18819,7 +19112,7 @@ from XeTeX processing.</property>
                     <property name="label" translatable="yes">Log</property>
                   </object>
                   <packing>
-                    <property name="position">13</property>
+                    <property name="position">14</property>
                     <property name="tab_fill">False</property>
                   </packing>
                 </child>
