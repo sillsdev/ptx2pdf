@@ -426,7 +426,7 @@ class GtkViewModel(ViewModel):
         self.fcb_digits.set_active_id(_alldigits[0])
 
         for d in ("multiBookSelector", "fontChooser", "password", "overlayCredit",
-                  "generate", "styModsdialog", "DBLbundle", "features", "gridsGuides"):
+                  "generateFRT", "generatePL", "styModsdialog", "DBLbundle", "features", "gridsGuides"):
             dialog = self.builder.get_object("dlg_" + d)
             dialog.add_buttons(
                 Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
@@ -1163,7 +1163,7 @@ class GtkViewModel(ViewModel):
             return
         ab = self.getAllBooks()
         bks = bks2gen
-        dialog = self.builder.get_object("dlg_generate")
+        dialog = self.builder.get_object("dlg_generatePL")
         self.set("l_generate_booklist", " ".join(bks))
         if sys.platform == "win32":
             dialog.set_keep_above(True)
@@ -1196,6 +1196,28 @@ class GtkViewModel(ViewModel):
             dialog.set_keep_above(False)
         dialog.hide()
 
+    def onGenerateFrontMatterClicked(self, btn):
+        dialog = self.builder.get_object("dlg_generateFRT")
+        if sys.platform == "win32":
+            dialog.set_keep_above(True)
+        response = dialog.run()
+        if response == Gtk.ResponseType.OK:
+            if self.get("r_generateFRT") == "basic":
+                print("Clicked basic - keep it simple, mate!")
+            elif self.get("r_generateFRT") == "advanced":
+                print("Clicked advanced - give 'em all you've got!")
+            elif self.get("r_generateFRT") == "paratext":
+                print("This option should only appear IF there is an FRT book in the project")
+                print("Clicked Paratext's FRT")
+            else:
+                # this should never happen
+                pass
+        incCoverSections = self.get("c_includeCoverSections")
+        print("Inc.Cover:", incCoverSections)
+        if sys.platform == "win32":
+            dialog.set_keep_above(False)
+        dialog.hide()
+
     def onFilterPicListClicked(self, btn):
         self.updatePicList()
 
@@ -1208,9 +1230,11 @@ class GtkViewModel(ViewModel):
             return
         bk = self.get("ecb_examineBook")
         bk = bk if bk in bks2gen else None
-        if pgid == "scroll_AdjList": # AdjList
+        if pgid == "scroll_FrontMatter":
+            self.onGenerateFrontMatterClicked(None)
+        if pgid == "scroll_AdjList":
             self.generateAdjList(books = [bk])
-        elif pgid == "scroll_FinalSFM" and bk is not None: # FinalSFM
+        elif pgid == "scroll_FinalSFM" and bk is not None:
             tmodel = TexModel(self, self.settings_dir, self._getPtSettings(self.prjid), self.prjid)
             out = tmodel.convertBook(bk, None, self.working_dir, os.path.join(self.settings_dir, self.prjid))
             self.editFile(out, loc="wrk", pgid=pgid)
@@ -1261,10 +1285,15 @@ class GtkViewModel(ViewModel):
                   "scroll_TeXfile" : ("", ".tex"), "scroll_XeTeXlog" : ("", ".log"), "scroll_Settings": ("", ""), "tb_Links": ("", "")}
 
         if pgid == "scroll_FrontMatter": # This hasn't been built yet, but is coming soon!
-            self.fileViews[pgnum][0].set_text("\n" +_(" A tool to help create Front Matter (the FRT book) may show up here in future."))
-            return
+            self.fileViews[pgnum][0].set_text("\n" +_(" Click the Generate button (above) to start the process of creating Front Matter..."))
+            if self.get("t_invisiblePassword") == "":
+                genBtn.set_sensitive(True)
+            else:
+                self.builder.get_object("btn_saveEdits").set_sensitive(False)
+            # @@@@@@@@@@ Add code here to check for the existence of a LOCAL FRT book, and if found, set fpath to it
+            return # temp only
 
-        elif pgid in ("scroll_AdjList", "scroll_FinalSFM"):  # (AdjList,SFM)
+        elif pgid in ("scroll_AdjList", "scroll_FinalSFM"):
             fname = self.getBookFilename(bk, prjid)
             if pgid == "scroll_FinalSFM":
                 fpath = os.path.join(self.working_dir, fndict[pgid][0], fname)
@@ -1282,12 +1311,12 @@ class GtkViewModel(ViewModel):
                         fpath = os.path.join(self.working_dir, modname[:doti] + "-flat" + modname[doti:])
                     else:
                         fpath = fpath[:doti] + "-" + (self.configName() or "Default") + fpath[doti:] + fndict[pgid][1]
-            if pgnum == 1: # AdjList
+            if pgid == "scroll_AdjList":
                 if self.get("t_invisiblePassword") == "":
                     genBtn.set_sensitive(True)
                 else:
                     self.builder.get_object("btn_saveEdits").set_sensitive(False)
-            else: # scroll_FinalSFM
+            elif pgid == "scroll_FinalSFM":
                 self.builder.get_object("btn_saveEdits").set_sensitive(False)
                 self.builder.get_object("btn_refreshViewerText").set_sensitive(False)
 
