@@ -116,7 +116,7 @@ _allbkmap = {k: i for i, k in enumerate(_allbooks)}
 _sensitivities = {
     "r_book": {
         "r_book_single":       ["ecb_book", "l_chapfrom", "s_chapfrom", "l_chapto", "s_chapto"],
-        "r_book_multiple":     ["btn_chooseBooks", "t_booklist", "c_autoToC"],
+        "r_book_multiple":     ["btn_chooseBooks", "t_booklist"],
         "r_book_module":       ["btn_chooseBibleModule", "lb_bibleModule"]},
     "r_decorator": {
         "r_decorator_file":    ["btn_selectVerseDecorator", "lb_inclVerseDecorator", "lb_style_v",
@@ -527,6 +527,8 @@ class GtkViewModel(ViewModel):
                 for w in v:
                     GObject.add_emission_hook(getattr(Gtk, w), k, self.emission_hook, k)
             self.logactive = True
+        el = self.userconfig.getboolean('init', 'englinks', fallback=False)
+        self.set("c_useEngLinks", el)
         expert = self.userconfig.getboolean('init', 'expert', fallback=False)
         self.set("c_showAdvancedOptions", not expert)
         self.onShowAdvancedOptionsClicked(None)
@@ -845,6 +847,7 @@ class GtkViewModel(ViewModel):
             self.set("lb_settings_dir", self.configPath(self.configName()))
             self.updateDialogTitle()
         self.userconfig.set("init", "project", self.prjid)
+        self.userconfig.set("init", "englinks", "true" if self.get("c_useEngLinks") else "false")
         if getattr(self, 'configId', None) is not None:
             self.userconfig.set("init", "config", self.configId)
         self.writeConfig()
@@ -1119,10 +1122,10 @@ class GtkViewModel(ViewModel):
         if status and self.get("t_booklist") == "" and self.prjid is not None:
             self.updateDialogTitle()
         else:
-            toc = self.builder.get_object("c_autoToC") # Ensure that we're not trying to build a ToC for a single book!
-            toc.set_sensitive(status)
-            if not status:
-                toc.set_active(False)
+            # toc = self.builder.get_object("c_autoToC") # Ensure that we're not trying to build a ToC for a single book!
+            # toc.set_sensitive(status)
+            # if not status:
+                # toc.set_active(False)
             self.updateDialogTitle()
             bks = self.getBooks()
             if len(bks) > 1:
@@ -2052,10 +2055,10 @@ class GtkViewModel(ViewModel):
                     break
         status = self.get("r_book") == "multiple"
         self.builder.get_object("t_booklist").set_sensitive(status)
-        toc = self.builder.get_object("c_autoToC") # Ensure that we're not trying to build a ToC for a single book!
-        toc.set_sensitive(status)
-        if not status:
-            toc.set_active(False)
+        # toc = self.builder.get_object("c_autoToC") # Ensure that we're not trying to build a ToC for a single book!
+        # toc.set_sensitive(status)
+        # if not status:
+            # toc.set_active(False)
         for i in self.notebooks['Viewer']:
             obj = self.builder.get_object("l_{1}".format(*i.split("_")))
             if obj is not None:

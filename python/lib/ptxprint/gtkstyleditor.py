@@ -386,8 +386,15 @@ class StyleEditorView(StyleEditor):
             self.builder.get_object("ex_sty"+w).set_expanded(visibles[i])
             
         site = 'https://ubsicap.github.io/usfm'
+        tl = self.get("fcb_interfaceLang") # target language for Google Translate
+        ggltrans = "" 
+        if not self.builder.get_object("c_useEngLinks") and \
+               tl in ['ar_SA', 'my', 'zh', 'en', 'fr', 'hi', 'hu', 'id', 'ko', 'pt', 'ro', 'ru', 'es', 'th']:
+            ggltrans = r"https://translate.google.com/translate?sl=en&tl={}&u=".format(tl)
+            if tl == 'zh':
+                ggltrans = re.sub("google\.com", "google.cn", ggltrans)
         if urlcat is None:
-            self.builder.get_object("l_url_usfm").set_uri('{}/search.html?q=%5C{}&check_keywords=yes&area=default'.format(site, urlmkr.split('-')[0]))
+            self.builder.get_object("l_url_usfm").set_uri('{}{}/search.html?q=%5C{}&check_keywords=yes&area=default'.format(ggltrans, site, urlmkr.split('-')[0]))
         else:
             usfmkeys = tuple(usfmpgname.keys())
             pgname = 'index'
@@ -396,7 +403,7 @@ class StyleEditorView(StyleEditor):
                     if urlmkr[:i] in usfmkeys:
                         pgname = usfmpgname.get(urlmkr[:i])
                         continue
-            self.builder.get_object("l_url_usfm").set_uri('{}/{}/{}.html#{}'.format(site, urlcat, pgname, urlmkr))
+            self.builder.get_object("l_url_usfm").set_uri('{}{}/{}/{}.html#{}'.format(ggltrans, site, urlcat, pgname, urlmkr))
         self.isLoading = False
 
     def _cmp(self, a, b):

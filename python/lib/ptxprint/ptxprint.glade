@@ -17576,7 +17576,27 @@ glosses for interlinear/ruby text.</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <placeholder/>
+                                      <object class="GtkCheckButton" id="c_useEngLinks">
+                                        <property name="label" translatable="yes">Only Use English Links</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="tooltip_text" translatable="yes">When using a non-English interface (such as French,
+Spanish, Hindi, etc.) most links to external websites get
+sent via the Google Translate site so that you can read
+the information in the same language as the selected
+interface.
+
+Enable this option if Google is blocked in your country,
+or you simply prefer to read the original page in English.</property>
+                                        <property name="halign">start</property>
+                                        <property name="margin_top">6</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">1</property>
+                                        <property name="top_attach">1</property>
+                                      </packing>
                                     </child>
                                     <child>
                                       <placeholder/>
