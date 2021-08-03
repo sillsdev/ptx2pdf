@@ -260,10 +260,10 @@
 %%%%% Front Matter PDF file(s) get included here %%%%%
 {project/frontincludes}
 
-{document/toc}\GenerateTOC[{document/toctitle}]{{{jobname}.toc}}
-{document/toc}\BodyColumns=1     % Temporarily set this to Single Column for the ToC page(s)
-{document/toc}\ptxfile{{{jobname}.toc}}
-{document/toc}\BodyColumns={paper/columns}     % But ensure it goes back to the chosen Single/Double setting for the main body text
+{document/toc}{document/multibook}\GenerateTOC[{document/toctitle}]{{{jobname}.toc}}
+{document/toc}{document/multibook}\BodyColumns=1     % Temporarily set this to Single Column for the ToC page(s)
+{document/toc}{document/multibook}\ptxfile{{{jobname}.toc}}
+{document/toc}{document/multibook}\BodyColumns={paper/columns}     % But ensure it goes back to the chosen Single/Double setting for the main body text
 
 %%%%% Load Paratext USFM %%%%%
 \XeTeXdefaultencoding "utf-8"

@@ -181,6 +181,7 @@ _sensitivities = {
     "c_fontFake":              ["s_fontBold", "s_fontItalic", "l_fontBold", "l_fontItalic"],
     "c_thumbtabs":             ["gr_thumbs"],
     "c_thumbrotate":           ["fcb_rotateTabs"],
+    "c_frontmatter":           ["gr_frontmatter"],
     "c_colophon":              ["gr_colophon"],
     "c_plCreditApply2all":     ["c_plCreditOverwrite"],
 }
@@ -1199,28 +1200,6 @@ class GtkViewModel(ViewModel):
             dialog.set_keep_above(False)
         dialog.hide()
 
-    def onGenerateFrontMatterClicked(self, btn):
-        dialog = self.builder.get_object("dlg_generateFRT")
-        if sys.platform == "win32":
-            dialog.set_keep_above(True)
-        response = dialog.run()
-        if response == Gtk.ResponseType.OK:
-            if self.get("r_generateFRT") == "basic":
-                print("Clicked basic - keep it simple, mate!")
-            elif self.get("r_generateFRT") == "advanced":
-                print("Clicked advanced - give 'em all you've got!")
-            elif self.get("r_generateFRT") == "paratext":
-                print("This option should only appear IF there is an FRT book in the project")
-                print("Clicked Paratext's FRT")
-            else:
-                # this should never happen
-                pass
-        incCoverSections = self.get("c_includeCoverSections")
-        print("Inc.Cover:", incCoverSections)
-        if sys.platform == "win32":
-            dialog.set_keep_above(False)
-        dialog.hide()
-
     def onFilterPicListClicked(self, btn):
         self.updatePicList()
 
@@ -1234,9 +1213,19 @@ class GtkViewModel(ViewModel):
         bk = self.get("ecb_examineBook")
         bk = bk if bk in bks2gen else None
         if pgid == "scroll_FrontMatter":
-            self.onGenerateFrontMatterClicked(None)
+            dialog = self.builder.get_object("dlg_generateFRT")
+            if sys.platform == "win32":
+                dialog.set_keep_above(True)
+            response = dialog.run()
+            if response == Gtk.ResponseType.OK:
+                self.generateFrontMatter(self.get("r_generateFRT"), self.get("c_includeCoverSections"))
+            if sys.platform == "win32":
+                dialog.set_keep_above(False)
+            dialog.hide()
+
         if pgid == "scroll_AdjList":
             self.generateAdjList(books = [bk])
+
         elif pgid == "scroll_FinalSFM" and bk is not None:
             tmodel = TexModel(self, self.settings_dir, self._getPtSettings(self.prjid), self.prjid)
             out = tmodel.convertBook(bk, None, self.working_dir, os.path.join(self.settings_dir, self.prjid))
@@ -1257,17 +1246,19 @@ class GtkViewModel(ViewModel):
         self.onViewerChangePage(None, None, pg)
 
     def onViewerChangePage(self, nbk_Viewer, scrollObject, pgnum):
-        allpgids = ("tb_settings", "scroll_AdjList", "scroll_FinalSFM", "scroll_TeXfile",
-                    "scroll_XeTeXlog", "scroll_Settings", "tb_Links")
+        allpgids = ("scroll_FrontMatter", "scroll_Settings", "scroll_AdjList", "scroll_FinalSFM", 
+                    "scroll_TeXfile", "scroll_XeTeXlog")
         if nbk_Viewer is None:
             nbk_Viewer = self.builder.get_object("nbk_Viewer")
         page = nbk_Viewer.get_nth_page(pgnum)
         if page == None:
             return
-        for w in ["gr_editableButtons", "l_examineBook", "ecb_examineBook", "btn_Generate", 
-                  "btn_saveEdits", "btn_refreshViewerText", "btn_viewEdit"]:
+        for w in ["gr_editableButtons", "l_examineBook", "ecb_examineBook", "btn_saveEdits", 
+                  "btn_refreshViewerText", "btn_viewEdit"]: # "btn_Generate", "btn_editZvars", "btn_removeZeros", 
             self.builder.get_object(w).set_sensitive(True)
         self.builder.get_object("btn_Generate").set_sensitive(False)
+        self.builder.get_object("btn_editZvars").set_sensitive(False)
+        self.builder.get_object("btn_removeZeros").set_sensitive(False)
         pgid = Gtk.Buildable.get_name(page)
         self.bookNoUpdate = True
         prjid = self.get("fcb_project")
@@ -1284,13 +1275,14 @@ class GtkViewModel(ViewModel):
             else:
                 self.builder.get_object(o).set_sensitive(pgid in allpgids[1:3])
 
-        fndict = {"scroll_AdjList" : ("AdjLists", ".adj"), "scroll_FinalSFM" : ("", ""),
-                  "scroll_TeXfile" : ("", ".tex"), "scroll_XeTeXlog" : ("", ".log"), "scroll_Settings": ("", ""), "tb_Links": ("", "")}
+        fndict = {"scroll_FrontMatter" : ("", ""), "scroll_AdjList" : ("AdjLists", ".adj"), "scroll_FinalSFM" : ("", ""),
+                  "scroll_TeXfile" : ("", ".tex"), "scroll_XeTeXlog" : ("", ".log"), "scroll_Settings": ("", "")}
 
         if pgid == "scroll_FrontMatter": # This hasn't been built yet, but is coming soon!
             self.fileViews[pgnum][0].set_text("\n" +_(" Click the Generate button (above) to start the process of creating Front Matter..."))
             if self.get("t_invisiblePassword") == "":
                 genBtn.set_sensitive(True)
+                self.builder.get_object("btn_editZvars").set_sensitive(True)
             else:
                 self.builder.get_object("btn_saveEdits").set_sensitive(False)
             # @@@@@@@@@@ Add code here to check for the existence of a LOCAL FRT book, and if found, set fpath to it
@@ -1317,6 +1309,7 @@ class GtkViewModel(ViewModel):
             if pgid == "scroll_AdjList":
                 if self.get("t_invisiblePassword") == "":
                     genBtn.set_sensitive(True)
+                    self.builder.get_object("btn_removeZeros").set_sensitive(True)
                 else:
                     self.builder.get_object("btn_saveEdits").set_sensitive(False)
             elif pgid == "scroll_FinalSFM":
@@ -3122,3 +3115,39 @@ class GtkViewModel(ViewModel):
 
     def onUpdateButtonClicked(self, btn):
         self.openURL("https://software.sil.org/ptxprint/download")       
+
+    def picListMultiselectclicked(self, btn):
+        val = self.get("c_plMultiSelect")
+        for w in ['l_plAnchor', 't_plAnchor', 'l_plMedia', 'c_plMediaP', 'c_plMediaA', 'c_plMediaW', 'l_plFilename', 't_plFilename', 
+                  'l_plCaption', 't_plCaption', 'l_plRef', 't_plRef', 'l_plAltText', 't_plAltText', 'l_plCopyright', 't_plCopyright', 'img_picPreview']:
+            self.builder.get_object(w).set_sensitive(not val)
+        return # TO DO: Fix the code below - so that we don't wipe out the contents of a row of the PicList
+        for w in ['t_plAnchor', 't_plFilename', 't_plCaption', 't_plRef', 't_plAltText', 't_plCopyright']:
+            self.set(w, "")
+        self.builder.get_object("t_plFilename").set_tooltip_text(tooltip)
+
+        for w in ['c_plMediaP', 'c_plMediaA', 'c_plMediaW']:
+            self.set(w, False)
+
+        pic = self.builder.get_object("img_picPreview")
+        pic.clear()
+        pic.set_tooltip_text("")
+
+    def editZvarsClicked(self, btn):
+        mpgnum = self.notebooks['Main'].index("tb_PubInfo")
+        self.builder.get_object("nbk_Main").set_current_page(mpgnum)
+        self.set("c_frontmatter", True)
+
+    def editFrontMatterClicked(self, btn):
+        mpgnum = self.notebooks['Main'].index("tb_ViewerEditor")
+        self.builder.get_object("nbk_Main").set_current_page(mpgnum)
+        pgnum = self.notebooks["Viewer"].index("scroll_FrontMatter")
+        self.builder.get_object("nbk_Viewer").set_current_page(pgnum)
+
+    def removeZerosClicked(self, btn):
+        pgnum = self.notebooks["Viewer"].index("scroll_AdjList")
+        buf = self.fileViews[pgnum][0]
+        titer = buf.get_iter_at_mark(buf.get_insert())
+        self.cursors[pgnum] = (titer.get_line(), titer.get_line_offset())
+        oldlist = buf.get_text(buf.get_start_iter(), buf.get_end_iter(), True)
+        self.fileViews[pgnum][0].set_text(re.sub(r".+?\+0\s?\r?\n", "", oldlist))

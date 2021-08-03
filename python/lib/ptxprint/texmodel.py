@@ -157,6 +157,7 @@ ModelMap = {
     "document/author":          (None, lambda w,v: "" if w.get("c_sensitive") else w.ptsettings.get('Copyright', "")),
 
     "document/startpagenum":    ("s_startPageNum", lambda w,v: int(float(v)) if v else "1"),
+    "document/multibook":       ("r_book_multiple", lambda w,v: "" if v else "%"),
     "document/toc":             ("c_autoToC", lambda w,v: "" if v else "%"),
     "document/toctitle":        ("t_tocTitle", lambda w,v: v or ""),
     "document/usetoc1":         ("c_usetoc1", None),
@@ -855,10 +856,11 @@ class TexModel:
                         or not self.asBool("document/bookintro") or not self.asBool("document/introoutline"):
                 if doc is None:
                     doc = self._makeUSFM(dat.splitlines(True), bk)
-                if not self.asBool("document/bookintro") or not self.asBool("document/introoutline"):
-                    doc.stripIntro(not self.asBool("document/bookintro"), not self.asBool("document/introoutline"))
-                if self.asBool("document/elipsizemptyvs"):
-                    doc.stripEmptyChVs()
+                if doc is not None:
+                    if not self.asBool("document/bookintro") or not self.asBool("document/introoutline"):
+                        doc.stripIntro(not self.asBool("document/bookintro"), not self.asBool("document/introoutline"))
+                    if self.asBool("document/elipsizemptyvs"):
+                        doc.stripEmptyChVs()
 
             if self.dict['fancy/endayah'] == "":
                 if doc is None:
@@ -1128,7 +1130,8 @@ class TexModel:
         # Convert hyphens from minus to hyphen
         self.localChanges.append((None, regex.compile(r"(?<!\\[fx]\s)((?<=\s)-|-(?=\s))", flags=regex.M), r"\u2011"))
 
-        if self.asBool("document/toc"): # Only do this IF the auto Table of Contents is enabled
+        if self.asBool("document/toc") and self.asBool("document/multibook"):
+            # Only do this IF the auto Table of Contents is enabled AND there is more than one book
             for c in range(1,4): # Remove any \toc lines that we don't want appearing in the ToC
                 if not self.asBool("document/usetoc{}".format(c)):
                     self.localChanges.append((None, regex.compile(r"(\\toc{} .+)".format(c), flags=regex.M), ""))

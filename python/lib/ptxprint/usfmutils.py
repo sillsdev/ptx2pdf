@@ -516,25 +516,6 @@ class Usfm:
             newdoc.append(e)
         self.doc[0][:] = newdoc
 
-    # def stripEmptyChVs(self, diaeresis=False):
-        # for e in self.doc[0][:]:
-            # if not isinstance(e, sfm.Element) or e.name != "c":
-                # continue
-            # newCh = []
-            # lastv = None
-            # for c in e:
-                # if not isinstance(c, sfm.Element) or c.name != "v":
-                    # if lastv is not None:
-                        # newCh.append(lastv)
-                        # lastv = None
-                    # newCh.append(c)
-                # else:
-                    # lastv = c
-            # if len(newCh):
-                # e[:] = newCh
-            # else:
-                # e.parent.remove(e)
-
     def stripEmptyChVs(self, diaeresis=False):
         def iterfn(el):
             if isinstance(el, sfm.Element):

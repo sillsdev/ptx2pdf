@@ -930,6 +930,33 @@ class ViewModel:
                 for (b, c, v, p) in adjlist:
                     if p == 0 and v != 0 and c != 0:
                         outf.write("{} {}.{} +0\n".format(b, c, v))
+                        
+    def generateFrontMatter(self, frtype="basic", inclcover=False):
+        # TO DO: Work in progress...
+        prjid = self.get("fcb_project")
+        outfname = os.path.join(self.settings_dir, prjid, "shared", "ptxprint", "FRTlocal.sfm")
+        if frtype == "basic":
+            with open(outfname, "w", encoding="utf-8") as outf:
+                outf.write(r"""\id FRT local
+\periph Title Page|id="title"
+\mt1 \zvar_maintitle
+\mt2 \zvar_subtitle
+
+\periph Publication Data|id="pubdata"
+\pc \zvar_maintitle 
+\pc \zvar_subtitle
+\pc \zvar_languagename
+\b
+\pc \zcopyright
+\pc \zlicense
+\b
+\pc \zimagecopyrights
+
+\periph Table of Contents|id="contents"
+\zcontents            
+""")
+        else:
+            print("WE need to handle Adv and Paratext FRT here below")
 
     def generateHyphenationFile(self):
         listlimit = 27836 # 32749

@@ -4013,10 +4013,6 @@ information, position and other parameters.</property>
         <col id="0" translatable="yes">languagename</col>
         <col id="1" translatable="yes">Wakawaka</col>
       </row>
-      <row>
-        <col id="0" translatable="yes"/>
-        <col id="1" translatable="yes"/>
-      </row>
     </data>
   </object>
   <object class="GtkTextBuffer" id="tb_colophon"/>
@@ -7578,19 +7574,17 @@ for characters missing in primary font.</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
                                         <property name="tooltip_text" translatable="yes">This will automatically generate the Table of Contents
-for all the books included in the publication using
-the \toc1, \toc2 and \toc3 fields.
+for all the books included in the publication using one
+or more of the \toc1, \toc2 and \toc3 fields as specified.
+This option is ignored unless the "Multiple Books" 
+option has been set on the Basic tab.
 
 NOTE that when this option is selected, the
 print process will be run at least twice - the
-first time the ToC index is built. The second
+first time the ToC index gets built. The second
 time, the ToC itself gets included. So it may
 be worth leaving this option OFF until the
-final run.
-
-[If this option is not enabled, it is because it
-is only possible when multiple books have
-been selected on the Basic tab.]</property>
+final run.</property>
                                         <property name="halign">start</property>
                                         <property name="draw_indicator">True</property>
                                         <signal name="clicked" handler="onSimpleFocusClicked" swapped="no"/>
@@ -8205,7 +8199,7 @@ in a style is subject to this setting.</property>
                                 </child>
                                 <child>
                                   <object class="GtkCheckButton" id="c_elipsizeMissingVerses">
-                                    <property name="label" translatable="yes">Bridge Empty Verses &amp; Add {...}</property>
+                                    <property name="label" translatable="yes">Hide Empty Verses</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
@@ -11455,7 +11449,29 @@ the Basic tab.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <placeholder/>
+                                  <object class="GtkCheckButton" id="c_plMultiSelect">
+                                    <property name="label" translatable="yes">Select Multiple</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">The details of ALL the pictures are stored in a single list.
+Select this option to only display the pictures from the
+books that are currently in focus to be printed. 
+When unchecked, then the list will show pictures from
+ALL the books in the project that have been added to
+the PicList. If pictures of a certain book are missing, 
+then you may need to select that book and Generate
+the PicList details just for *that* book.</property>
+                                    <property name="halign">center</property>
+                                    <property name="active">True</property>
+                                    <property name="draw_indicator">True</property>
+                                    <signal name="clicked" handler="picListMultiselectclicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">3</property>
+                                    <property name="width">2</property>
+                                  </packing>
                                 </child>
                               </object>
                               <packing>
@@ -12013,7 +12029,7 @@ the Header+Footer tab for details).
                                                 <property name="row_spacing">6</property>
                                                 <property name="column_spacing">2</property>
                                                 <child>
-                                                  <object class="GtkLabel">
+                                                  <object class="GtkLabel" id="l_plAnchor">
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">False</property>
                                                     <property name="tooltip_text" translatable="yes">The anchor specifies what page in a book a picture will appear on.
@@ -12090,7 +12106,7 @@ PTXprint will automatically strip the spaces for you.</property>
                                                   </packing>
                                                 </child>
                                                 <child>
-                                                  <object class="GtkLabel">
+                                                  <object class="GtkLabel" id="l_plCaption">
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">False</property>
                                                     <property name="tooltip_text" translatable="yes">By default the caption will appear below the picture.
@@ -12125,7 +12141,7 @@ changes specified in the PrintDraftChanges.txt file.</property>
                                                   </packing>
                                                 </child>
                                                 <child>
-                                                  <object class="GtkLabel">
+                                                  <object class="GtkLabel" id="l_plRef">
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">False</property>
                                                     <property name="tooltip_text" translatable="yes">By default, the caption will be followed by a Ch:Vs
@@ -12170,7 +12186,7 @@ from and independent of the Anchor Ref setting.
                                                   </packing>
                                                 </child>
                                                 <child>
-                                                  <object class="GtkLabel">
+                                                  <object class="GtkLabel" id="l_plAltText">
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">False</property>
                                                     <property name="halign">end</property>
@@ -12218,7 +12234,7 @@ things here in PTXprint.</property>
                                                   </packing>
                                                 </child>
                                                 <child>
-                                                  <object class="GtkLabel">
+                                                  <object class="GtkLabel" id="l_plFilename">
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">False</property>
                                                     <property name="halign">end</property>
@@ -12233,7 +12249,7 @@ things here in PTXprint.</property>
                                                   </packing>
                                                 </child>
                                                 <child>
-                                                  <object class="GtkLabel">
+                                                  <object class="GtkLabel" id="l_plCopyright">
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">False</property>
                                                     <property name="tooltip_text" translatable="yes">For commonly used series of illustrations, PTXprint
@@ -17780,7 +17796,7 @@ Shortcut key: &lt;Ctrl-S&gt;</property>
                             <accelerator key="s" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                           </object>
                           <packing>
-                            <property name="left_attach">6</property>
+                            <property name="left_attach">3</property>
                             <property name="top_attach">0</property>
                           </packing>
                         </child>
@@ -17801,7 +17817,7 @@ of this file as it was when last saved.</property>
                             <signal name="clicked" handler="onRefreshViewerTextClicked" swapped="no"/>
                           </object>
                           <packing>
-                            <property name="left_attach">7</property>
+                            <property name="left_attach">4</property>
                             <property name="top_attach">0</property>
                           </packing>
                         </child>
@@ -17869,7 +17885,7 @@ list for each of the books listed for printing.</property>
                             <signal name="clicked" handler="onGenerateClicked" swapped="no"/>
                           </object>
                           <packing>
-                            <property name="left_attach">4</property>
+                            <property name="left_attach">2</property>
                             <property name="top_attach">0</property>
                           </packing>
                         </child>
@@ -17892,14 +17908,13 @@ with a text editor (such as Notepad or NP++).</property>
                             <signal name="clicked" handler="onOpenInSystemEditor" swapped="no"/>
                           </object>
                           <packing>
-                            <property name="left_attach">8</property>
+                            <property name="left_attach">7</property>
                             <property name="top_attach">0</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkButton">
-                            <property name="label" translatable="yes">View/Edit
-Variables...</property>
+                          <object class="GtkButton" id="btn_editZvars">
+                            <property name="label" translatable="yes">Edit Variables...</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
@@ -17907,22 +17922,38 @@ Variables...</property>
 in the front matter template, these may
 be edited on the "Pub. Info" tab. Click
 this button to show that tab.</property>
-                            <property name="halign">center</property>
+                            <property name="halign">start</property>
                             <property name="valign">center</property>
+                            <signal name="clicked" handler="editZvarsClicked" swapped="no"/>
                           </object>
                           <packing>
-                            <property name="left_attach">9</property>
+                            <property name="left_attach">5</property>
                             <property name="top_attach">0</property>
                           </packing>
                         </child>
                         <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
+                          <object class="GtkButton" id="btn_removeZeros">
+                            <property name="label" translatable="yes">Remove +0's</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <property name="tooltip_text" translatable="yes">When you generate an AdjList with all the
+possible paragraph adjustment positions, it
+saves a lot of typing. But once you've made
+some adjustments, it is hard to see specifically
+which places have been adjust because the
+list is so long. Clicking this button will remove
+all the redundant lines (i.e. those with +0 which
+have no effect on the output) so that you can see
+more clearly where changes are being made.</property>
+                            <property name="halign">start</property>
+                            <property name="valign">center</property>
+                            <signal name="clicked" handler="removeZerosClicked" swapped="no"/>
+                          </object>
+                          <packing>
+                            <property name="left_attach">6</property>
+                            <property name="top_attach">0</property>
+                          </packing>
                         </child>
                       </object>
                       <packing>
@@ -18239,7 +18270,7 @@ on a new page.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkButton">
+                              <object class="GtkButton" id="btn_editFrontMatter">
                                 <property name="label" translatable="yes">View/Edit
 Front Matter</property>
                                 <property name="visible">True</property>
@@ -18249,6 +18280,7 @@ Front Matter</property>
                                 <property name="valign">center</property>
                                 <property name="margin_left">3</property>
                                 <property name="margin_right">3</property>
+                                <signal name="clicked" handler="editFrontMatterClicked" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="left_attach">0</property>
@@ -18288,7 +18320,9 @@ Front Matter</property>
                                         <property name="fixed_height_mode">True</property>
                                         <property name="show_expanders">False</property>
                                         <child internal-child="selection">
-                                          <object class="GtkTreeSelection"/>
+                                          <object class="GtkTreeSelection">
+                                            <property name="mode">multiple</property>
+                                          </object>
                                         </child>
                                         <child>
                                           <object class="GtkTreeViewColumn" id="col_zvar_name">
@@ -18300,8 +18334,9 @@ Front Matter</property>
                                             <property name="clickable">True</property>
                                             <property name="reorderable">True</property>
                                             <property name="sort_indicator">True</property>
+                                            <property name="sort_column_id">0</property>
                                             <child>
-                                              <object class="GtkCellRendererText" id="cr_anchor1"/>
+                                              <object class="GtkCellRendererText" id="cr_zvar_name"/>
                                               <attributes>
                                                 <attribute name="text">0</attribute>
                                               </attributes>
@@ -18315,8 +18350,11 @@ Front Matter</property>
                                             <property name="sizing">fixed</property>
                                             <property name="fixed_width">250</property>
                                             <property name="title" translatable="yes">Value</property>
+                                            <property name="reorderable">True</property>
+                                            <property name="sort_indicator">True</property>
+                                            <property name="sort_column_id">1</property>
                                             <child>
-                                              <object class="GtkCellRendererText" id="cr_caption1"/>
+                                              <object class="GtkCellRendererText" id="cr_zvar_value"/>
                                               <attributes>
                                                 <attribute name="text">1</attribute>
                                               </attributes>
@@ -18345,6 +18383,7 @@ Front Matter</property>
                             <property name="receives_default">False</property>
                             <property name="halign">start</property>
                             <property name="draw_indicator">True</property>
+                            <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                           </object>
                         </child>
                       </object>
