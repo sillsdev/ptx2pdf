@@ -19302,7 +19302,6 @@ Click to visit download page on the website.</property>
             </child>
             <child>
               <object class="GtkCheckButton" id="c_quickRun">
-                <property name="label" translatable="yes"> </property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">False</property>
@@ -19322,10 +19321,10 @@ check this option to only run ONCE.
 If it detects that it needs to be re-run for
 a perfect result, a reminder message will
 be displayed (in red) just to the left.</property>
-                <property name="halign">end</property>
+                <property name="halign">center</property>
                 <property name="valign">center</property>
-                <property name="margin_left">2</property>
-                <property name="margin_right">2</property>
+                <property name="margin_left">3</property>
+                <property name="margin_right">3</property>
                 <property name="margin_top">3</property>
                 <property name="margin_bottom">3</property>
                 <property name="draw_indicator">True</property>
@@ -19343,8 +19342,8 @@ be displayed (in red) just to the left.</property>
                 <property name="can_focus">False</property>
                 <property name="halign">center</property>
                 <property name="valign">center</property>
-                <property name="margin_left">6</property>
-                <property name="margin_right">6</property>
+                <property name="margin_left">3</property>
+                <property name="margin_right">3</property>
                 <property name="vexpand">False</property>
               </object>
               <packing>

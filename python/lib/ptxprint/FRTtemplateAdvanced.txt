@@ -1,0 +1,121 @@
+\id FRT XYZ Project Name \zcopyright
+
+\rem -------------------------------------------------------------------------
+\rem This template has been created for use with PTXprint for semi-automatic 
+\rem generation of Front matter. Though it is structured on the USFM specification
+\rem for Paratext's FRT book, there are additional \zvar_codes used which make it
+\rem unsuitable for use within Paratext without prior modification.
+
+\rem -------------------------------------------------------------------------
+\periph Title Page|id="title"
+\rem -------------------------------------------------------------------------
+\mt1 \zvar_maintitle
+\mt2 \zvar_subtitle
+\pc \fig |xyzLogo.jpg|span||||\fig*
+\pc [Wycliffe Bible Translators, Inc. / Bible Society of Country / or Your Organization Name]
+
+\rem ---------RARELY USED -------------
+\periph Half Title Page|id="halftitle"
+\rem ----------------------------------
+\mt1 \zvar_maintitle
+\mt2 \zvar_subtitle
+\pc \fig |xyzLogo.jpg|span||||\fig*
+
+\rem ---------RARELY USED -------------
+\periph Promotional Page|id="promo"
+\rem ----------------------------------
+
+\rem ---------RARELY USED -------------
+\periph Imprimatur|id="imprimatur"
+\rem ----------------------------------
+
+\rem -------------------------------------------------------------------------
+\periph Publication Data|id="pubdata"
+\rem -------------------------------------------------------------------------
+\pc \zvar_maintitle 
+\pc \zvar_subtitle
+\pc Trial edition, limited distribution
+\pc Language: \zvar_languagename (\zvar_langiso)
+\pc Script: \zvar_script
+\pc Copies: \zvar_copiesprinted
+\pc ISBN: \zvar_isbn
+\pc \zcopyright
+\pc \zlicense
+\pc \zvar_licensetext
+\rem Permission requests:\bd* The text of this publication may be quoted (in written, visual or electronic form) up to one thousand (1,000) verses, or up to two hundred and fifty (250) verses for audio use without express written permission of the publisher, provided the verses quoted do not amount to a complete book of the NT, nor 50 percent or more of the total text of the work in which they are quoted.
+\b
+\pc \zimagecopyrights
+\b
+\pc \zvar_printedby
+\rem Acme Printers Pvt. Ltd., SomeCity - Postcode
+
+\rem -------------------------------------------------------------------------
+\periph Foreword|id="foreword"
+\rem -------------------------------------------------------------------------
+\h Foreword
+\mt1 Foreword
+\p The \bk Wakawaka Translation\bk* of the Bible is a translation which seeks to state clearly,
+accurately and naturally the meaning of the original texts in words and forms that are widely
+accepted by people who use the Wakawaka language as a means of communication.
+\p We trust that the reading and study of this translation will result in a better understanding 
+of the meaning of the Bible.
+
+\rem -------------------------------------------------------------------------
+\periph Preface|id="preface"
+\rem -------------------------------------------------------------------------
+\h Preface
+\mt1 Preface
+\ie
+\mt2 to the New Testament in the Wakawaka language
+\p The translation of the Bible into the Wakawaka language began in ... when ... due to an invitation from ...
+\s1 The translation process
+\p In order to achieve the highest quality, a rigorous process has been used ...
+\s2 The text used for this translation
+\p ...
+\s2 How this translation is different to other translations of the Bible
+\p ...
+\s2 How trustworthy is this translation?
+\p ...
+\pr Wakawaka Translation Committee
+\pr 2021
+
+\s1 Helps for the reader
+\m Keep these matters in mind while reading:
+\li 1. Wherever there is a word or phrase \w marked like this\w* it shows that this is a new or difficult word (for example, baptism, synagogue, or Pharisee). Words like these have an explanation in the glossary section at the end of the book.
+\li 2. In order to understand more about a word or phrase which is marked with a symbol like this* you need to read about it at the bottom of the page. 
+\li 3. And a symbol like this† indicated that this matter also is contained in another book - look for the reference at the bottom of the page.
+\li 4. In some places, in the original language books, where these words are not there, and in some books where verses have been missed, in order to show them, *[we have marked in square brackets like this] and have explained about them at the bottom of the page.
+
+\rem -------------------------------------------------------------------------
+\periph Table of Contents|id="contents"
+\rem -------------------------------------------------------------------------
+\h Table of Contents
+\mt Contents
+\zcontents
+
+\rem -------------------------------------------------------------------------
+\periph Alphabetical Contents|id="alphacontents"
+\rem -------------------------------------------------------------------------
+\zalphacontents
+
+\rem ---------RARELY USED -------------
+\periph Table of Abbreviations|id="abbreviations"
+\rem ----------------------------------
+\mt1 Alphabetical List of Biblical Books and Abbreviations
+\zabbreviations
+\rem                 or
+\tr  \th1 Name \th2 Abbrev.  \thr3 Page
+\tr  \tc1 Acts \tc2 Ac \tcr3 #
+\tr  \tc1 Amos \tc2 Am \tcr3 #
+\tr  \tc1 1 Chronicles \tc2 1Ch \tcr3 #
+\tr  \tc1 2 Chronicles \tc2 2Ch \tcr3 #
+\tr  \tc1 Colossians \tc2 Col \tcr3 #
+\tr  \tc1 1 Corinthians \tc2 1Co \tcr3 #
+\tr  \tc1 2 Corinthians \tc2 2Co \tcr3 #
+\tr  \tc1 Daniel \tc2 Dn \tcr3 #
+
+\s1 Other Abbreviations
+\tr  \tc1 Circa (around) \tc2 c \tc3 #
+\tr  \tc1 Old Testament \tc2 OT \tc3 #
+\tr  \tc1 New Testament \tc2 NT \tc3 #
+\tr  \tc1 Septuagint \tc2 LXX \tc3 #

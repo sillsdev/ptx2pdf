@@ -1,0 +1,18 @@
+\id FRT
+
+\periph Title Page|id="title"
+\mt1 \zvar_maintitle
+\mt2 \zvar_subtitle
+
+\periph Publication Data|id="pubdata"
+\pc \zvar_maintitle 
+\pc \zvar_subtitle
+\pc \zvar_languagename
+\b
+\pc \zcopyright
+\pc \zlicense
+\b
+\pc \zimagecopyrights
+
+\periph Table of Contents|id="contents"
+\zcontents
