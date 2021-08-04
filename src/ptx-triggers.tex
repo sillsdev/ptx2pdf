@@ -108,7 +108,7 @@
 
 \def\runtrigg@rs#1{%Generic something trigger (milestone, or...)
   \trace{T}{runtrigg@rs #1}%
-  \def\c@rref{#1}%
+  \edef\c@rref{#1}%
   \ifdiglot\def\dc@rref{#1\g@tdstat}\fi%
   \trace{T}{running triggers \c@rref}%
   \the\trigg@rchecks

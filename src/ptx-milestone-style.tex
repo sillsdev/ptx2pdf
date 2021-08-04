@@ -224,7 +224,9 @@
     \runtrigg@rs{\mkp@cref{\id@@@}{\attr@b}}%
     \runtrigg@rs{ms:\thismil@stone=\attr@b}%
     \xdef\c@rref{\id@@@\attr@b}%
-    \ifx\v@rse\empty\global\p@rnum=1\fi
+    \ifx\v@rse\empty\global\p@rnum=\ifhmode 1\else 0\fi
+     \ch@ckadjustments
+    \fi
   \fi
   \cl@singhooks{after}{\thismil@stone}\the\afterh@@ks\relax
 }%

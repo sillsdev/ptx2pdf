@@ -72,7 +72,7 @@ blocks can occur in either.  See later for *inappropriate* uses.
 * ```ms:zif```	Triggers before any stand-alone milestone  of type ```zif```, e.g.  ```\zif |file="wombats"\*``` in any book.
 * ```ms:zwombat=a542``` Triggers before the unique stand-alone milestone ```\zwombat| id="a542"\*``` in any book.
 * ```GENa542``` Triggers before the unique stand-alone milestone ```\zwombat| id="a542"\*``` in Genesis.
-* ```XXABorrogroves``` Triggers at any stand-alone milestone with a matching  id ```\zfiga|Borrogroves``` in book with id `XXA`.
+* ```XXABorrogroves``` Triggers at any stand-alone milestone with a matching  id (e.g. ```\zfiga|Borrogroves```) in book with id `XXA`.
 
 ## Trigger points expecting words.
 
@@ -83,11 +83,11 @@ blocks can occur in either.  See later for *inappropriate* uses.
 NB for all of these (and piclist entries) ```\SetTriggerParagraphSeparator{=@=}``` or similar may be used to define the
 separator between the identifier and the paragraph number if ```=``` is somehow inappropriate.
 
-* ```REV20.14=2``` Triggers before any content (includin the indent) at the second paragraph of the verse.
+* ```REV20.14=2``` Triggers before any content (including the indent) at the second paragraph of the verse.
 * ```GLOk.HerrodTheGreat=2``` Triggers before any content (includin the indent) at the second paragraph of the definition.
 * ```ms:zif=2``` Triggers the second paragraph after ```\zif |file="wombats"\*```, if this is in introductory matter or 
 after the glossary section, or other book in which the verse counter has not been used.
-* ```GLOBorrogroves=3``` Triggers the third paragraph after ```\zfigb |id="Borrogroves"\*```, if this is in introductory matter, after 
+* ```GLOBorrogroves=3``` Triggers the third paragraph after ```\zfiga |id="Borrogroves"\*```, if this is in introductory matter, after 
 the glossary, or in another book in which the verse counter has not been used.
 
 
