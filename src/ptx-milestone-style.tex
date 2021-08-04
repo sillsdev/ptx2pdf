@@ -29,6 +29,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Milestone macros
+\def\notlocation#1{\x@\let\csname n@tLocn@#1\endcsname\@ne} %Not all milestones are locations.                                         
+\def\ch@ckislocation#1{\keeptriggerfalse\ifcsname n@tLocn@#1\endcsname\keeptriggertrue\fi}
+
 \def\mst@nestyle#1{\trace{m}{mst@nestyle:#1 (\milestoneOp)}%
  \gdef\thismil@stone{\detokenize{#1}}% record the name of the style
  \catcode32=12 % make <space> an "other" character, so it won't be skipped by \futurelet
@@ -101,7 +104,8 @@
 
 \def\processmil@stone{\trace{m}{Milestone \thismil@stone (\milestoneOp), \csname thisch@rstyle\endcsname}%
   \ifx\milestoneOp\empty
-    \st@ndalonemilestone\else 
+    \st@ndalonemilestone
+  \else 
     \if\milestoneOp s\relax\st@rtmilestone\else
       \if\milestoneOp e\relax\@ndmilestone\else
       \st@ndalonemilestone\fi 
@@ -208,6 +212,7 @@
   \upd@teMsPrefix
   \cl@singhooks{after}{\thismil@stone}\the\afterh@@ks
   \let\attr@b\empty\let\attrid\empty
+  \let\thismil@stone\empty
 }
 \def\figmil@stone{zfiga}
 
@@ -219,21 +224,28 @@
     \get@ttribute{\attrid}%
   \fi
   \op@ninghooks{start}{\thismil@stone}%
-  \ifx\attr@b\relax\else\ifcsname ms:\thismil@stone=\attr@b\endcsname
-    \csname ms:\thismil@stone=\attr@b\endcsname
-  \fi\fi
+  \let\oldc@rref\c@rref\let\olddc@rref\dc@rref
+  %\ifx\attr@b\relax\else\ifcsname ms:\thismil@stone=\attr@b\endcsname
+    %\csname ms:\thismil@stone=\attr@b\endcsname
+  %\fi\fi
   \ifx\attr@b\relax
     \runtrigg@rs{ms:\thismil@stone}%
   \else
     \runtrigg@rs{\mkp@cref{\id@@@}{\attr@b}}%
     \runtrigg@rs{ms:\thismil@stone=\attr@b}%
-    \xdef\c@rref{\id@@@\attr@b}%
-    \ifx\v@rse\empty\global\p@rnum=\ifhmode 1\else 0\fi
-     \ch@ckadjustments
+    \ch@ckislocation{\thismil@stone}% Non-locations can be multiple use, so their value is kept. Sets keeptrigger true if this is not a location. 
+    \ifkeeptrigger% Not a location, leave c@rref what it used to be
+      \global\let\c@rref\oldc@rref\global\let\dc@rref\olddc@rref
+    \else% This milestone is a named location 
+      \xdef\c@rref{\id@@@\attr@b}%
+      \ifx\v@rse\empty\global\p@rnum=\ifhmode 1\else 0\fi
+       \ch@ckadjustments
+      \fi
     \fi
   \fi
   \cl@singhooks{end}{\thismil@stone}%
   \cl@singhooks{after}{\thismil@stone}\the\afterh@@ks\relax
+  \let\thismil@stone\empty
 }%
 \def\upd@teMsPrefix{%Build a prefix based on all currently-in-force milestones.
   \trace{m}{upd@teMsPrefix}%
@@ -285,5 +297,5 @@
 }
 %-csty_milestone
 \def\attrid{}
-
+\notlocation{zvar}
 

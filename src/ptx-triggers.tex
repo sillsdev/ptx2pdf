@@ -82,7 +82,7 @@
 
 \def\opentriglist "#1" {%
   \openin\t@stread="#1"
-  \ifeof\t@stread \def\n@xt{\trace{T}{Trigger list "#1" not found -- ignored}}%
+  \ifeof\t@stread \def\n@xt{\MSG{Trigger list "#1" not found -- ignored}}%
   \else \closein\t@stread \def\n@xt{\prepusfm\relax\input "\the\PtxFilePath#1"\relax\unprepusfm}\fi
   \n@xt
 }
@@ -94,7 +94,7 @@
   \edef\t@mptrigfilename{#1-\the\loopcount.triggers}%
   \advance\loopcount by 1
   \openin\t@stread="\t@mptrigfilename"
-  \ifeof\t@stread \def\n@xt{\trace{T}{Trigger list "\t@mptrigfilename" not found -- not checking for more}}%
+  \ifeof\t@stread \def\n@xt{\MSG{Trigger list "\t@mptrigfilename" not found -- not checking for more}}%
   \else \closein\t@stread \def\n@xt{\prepusfm\relax\input "\t@mptrigfilename"\relax\unprepusfm\m@ltitriglists{#1}}\fi
   \n@xt
 }
@@ -108,7 +108,7 @@
 
 \def\runtrigg@rs#1{%Generic something trigger (milestone, or...)
   \trace{T}{runtrigg@rs #1}%
-  \edef\c@rref{#1}%
+  \def\c@rref{#1}%
   \ifdiglot\def\dc@rref{#1\g@tdstat}\fi%
   \trace{T}{running triggers \c@rref}%
   \the\trigg@rchecks
@@ -156,7 +156,11 @@
 \newif\ifkeeptrigger
 \def\c@llr@ntr@g{%Trigger contents is in \tmp, trigger name is in \trign@me
   \catcode"FDEF=2
-  \keeptriggerfalse
+  \ifx\thismil@stone\empty
+    \keeptriggerfalse
+  \else
+    \ch@ckislocation{\thismil@stone}%
+  \fi
   \bgroup
     \x@\x@\x@\r@ntr@g\x@\detokenize\x@{\tmp}\E
   \egroup

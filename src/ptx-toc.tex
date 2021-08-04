@@ -183,4 +183,4 @@
 
 \addtoeveryparhooks{\checkfort@c}
 
-\def\defTOC#1#2{\x@\def\csname ms:ztoc=#1\endcsname{#2}}
+\def\defTOC#1#2{\x@\def\csname ms:ztoc=#1\endcsname{\global\keeptriggertrue #2}}
