@@ -162,9 +162,9 @@ ModelMap = {
     "document/multibook":       ("r_book_multiple", lambda w,v: "" if v else "%"),
     "document/toc":             ("c_autoToC", lambda w,v: "" if v else "%"),
     "document/toctitle":        ("t_tocTitle", lambda w,v: v or ""),
-    "document/usetoc1":         ("c_usetoc1", None),
-    "document/usetoc2":         ("c_usetoc2", None),
-    "document/usetoc3":         ("c_usetoc3", None),
+    "document/usetoc1":         ("c_usetoc1", lambda w,v: "true" if v else "false"),
+    "document/usetoc2":         ("c_usetoc2", lambda w,v: "true" if v else "false"),
+    "document/usetoc3":         ("c_usetoc3", lambda w,v: "true" if v else "false"),
     "document/chapfrom":        ("s_chapfrom", lambda w,v: int(float(v)) if v else "1"),
     "document/chapto":          ("s_chapto", lambda w,v: int(float(v)) if v else "999"),
     "document/colgutterfactor": ("s_colgutterfactor", lambda w,v: round(float(v)*3) or "12"), # Hack to be fixed
@@ -242,6 +242,8 @@ ModelMap = {
     "document/diglotsecconfig": ("ecb_diglotSecConfig", None),
     "document/diglotmergemode": ("c_diglotMerge", lambda w,v: "simple" if v else "doc"),
     "document/diglotadjcenter": ("c_diglotAdjCenter", None),
+
+    "document/hasnofront":      (None, lambda w,v: ""),
 
     "header/ifomitrhchapnum":   ("c_omitrhchapnum", lambda w,v :"true" if v else "false"),
     "header/ifverses":          ("c_hdrverses", lambda w,v :"true" if v else "false"),

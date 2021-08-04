@@ -250,7 +250,7 @@
 {project/ifcolophon}{project/pgbreakcolophon}\pb
 {project/ifcolophon}\zcolophon}}
 % Looks in local Config folder for ptxprint-mods.tex, and drops back to shared/ptxprint .tex if not found 
-{project/ifusemodstex}\input "{/modspath}"% adjust/override setup parameters here
+%{project/ifusemodstex}\includeifpresent{{{/modspath}}}% adjust/override setup parameters here
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% all settings need to come before this line %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -260,10 +260,15 @@
 %%%%% Front Matter PDF file(s) get included here %%%%%
 {project/frontincludes}
 
-{document/toc}{document/multibook}\GenerateTOC[{document/toctitle}]{{{jobname}.toc}}
-{document/toc}{document/multibook}\BodyColumns=1     % Temporarily set this to Single Column for the ToC page(s)
-{document/toc}{document/multibook}\ptxfile{{{jobname}.toc}}
-{document/toc}{document/multibook}\BodyColumns={paper/columns}     % But ensure it goes back to the chosen Single/Double setting for the main body text
+{document/toc}\BodyColumns=1     % Temporarily set this to Single Column for the ToC page(s)
+{document/toc}\includeifpresent{{{jobname}.toc}}
+{document/toc}{document/hasnofront}\preptxfile\prepusfm\id FRT -- toc
+{document/toc}{document/hasnofront}\is {document/toctitle} \ip \ztoc |main\* \postptxfile
+{document/toc}\BodyColumns={paper/columns}     % But ensure it goes back to the chosen Single/Double setting for the main body text
+\useTOCone{document/usetoc1}
+\useTOCtwo{document/usetoc2}
+\useTOCthree{document/usetoc3}
+{document/toc}\GenerateTOC[{document/toctitle}]{{{jobname}.toc}}
 
 %%%%% Load Paratext USFM %%%%%
 \XeTeXdefaultencoding "utf-8"

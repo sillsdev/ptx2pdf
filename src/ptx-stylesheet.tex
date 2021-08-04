@@ -149,11 +149,11 @@
 % `csname` is required here in order to build a macro name containing a colon and possibly a number.
 %
 
-\def\defp@ram#1#2{\x@\def\csname\c@tprefix\m@rker\ds@ffix:#1\endcsname{#2}\trace{s}{\c@tprefix\m@rker\ds@ffix:#1 -> #2}}
+\def\defp@ram#1#2{\x@\def\csname\c@tprefix\m@rker\ds@ffix:#1\endcsname{#2}\trace{s}{def \c@tprefix\m@rker\ds@ffix:#1 -> #2}}
 \def\condp@ram#1#2#3{\edef\t@mp{#1}\ifx\t@mp\h@phen\relax\def\t@mp{#3}\else\def\t@mp{#2}\fi\t@mp}
 \def\defbinp@ram#1#2{\edef\t@mp{#2}\ifx\t@mp\h@phen\defp@ram{#1}{false}\else\defp@ram{#1}{true}\fi}
 \def\setp@ram#1#2#3{
-  \x@\xdef\csname\c@tprefix#2\ds@ffix:#1\endcsname{#3}\trace{s}{\c@tprefix#2\ds@ffix:#1 -> #3}
+  \x@\xdef\csname\c@tprefix#2\ds@ffix:#1\endcsname{#3}\trace{s}{set \c@tprefix#2\ds@ffix:#1 -> #3}
   \should@xist{#2}%Ensure that the marker is in the exists list
 } % expand now, not later 
 %-csty_defparam
@@ -905,7 +905,7 @@
   \global\p@ppingfalse
   \let\d@=\wip@do
 }
-\def\end@llpoppedstyles#1{\trace{s}{end@llpoppedstyles #1}\let\itp@psstore\empty\edef\mcch@cking{#1}\let\d@=\whileitp@ps\mcdown\ifx\itp@psstore\empty\else\edef\mcstack{\itp@psstore\mcstack}\fi\trace{s}{end@llpoppedstyles END: \mcstack}}
+\def\end@llpoppedstyles#1{\trace{s}{end@llpoppedstyles #1}\let\itp@psstore\empty\xdef\mcch@cking{#1}\let\d@=\whileitp@ps\mcdown\ifx\itp@psstore\empty\else\edef\mcstack{\itp@psstore\mcstack}\fi\trace{s}{end@llpoppedstyles END: \mcstack}}
 
 \def\s@tstyst@k#1{%Get a + separated list of styles that ought to uniquely define a font/etc.
   %List excludes marker #1 and stops at a barrier (e.g. a par/note/sidebar)
@@ -1046,7 +1046,6 @@
 
 \def\unprepusfm{
  \m@kedigitsother
- \catcode`\%=14 % The return of commentary
  \deactiv@tecustomch@rs
  \catcode13=5
  \catcode`\/=12
@@ -1058,7 +1057,7 @@
 % Read the files associated with this book: usfm, adjustment list, picture list
 %+csty_ptxfile_intro
 \def\ptxst@rtp@ge{1}
-\def\ptxfile#1{
+\def\preptxfile{
  \saveLRspecificOrig%This becomes a \relax after first use. Always call it.
  \kill@PossParamCache
  \global\intr@donefalse
@@ -1068,7 +1067,7 @@
       \gdef\c@rrdstat{L}%
     \fi
     \setLRspecific% \@netimesetup needs actual values, in a diglot there may be no use of generic FontSizeUnit, etc.
-  \fi
+ \fi
  \@netimesetup
  \ifdiglot\bgroup%This must be outside of @onetimesetup as there's no guarantee that diglot will be true for all ptxfiles.
    \diglots@tup
@@ -1102,8 +1101,11 @@
  \initp@rastyles
  \initn@testyles
  \ifendbooknoeject\else\p@geonetrue\fi
+}
 %-csty_ptxfile_intro
 %+csty_ptxfile_start
+\def\ptxfile#1{
+ \preptxfile
  \openadjlist "\the\AdjListPath#1.adj"
  \openpiclist "\the\PicListPath#1.piclist"
  \opentriglist "#1.triggers"
@@ -1119,8 +1121,11 @@
    \ifeof\t@stread \def\n@xt{\MSG{USFM file "\the\PtxFilePath#1" not found -- ignored}}
    \else \closein\t@stread \def\n@xt{\input "\the\PtxFilePath#1"\relax}\fi
  \n@xt
+ \postptxfile
+}
 %-csty_ptxfile_start
 %+csty_ptxfile_end
+\def\postptxfile{
  \ifhmode \unskip\end@llpoppedstyles{P}\par \fi
  \ifsk@pping\egroup\fi
  \ifhe@dings\endhe@dings\fi
@@ -1311,7 +1316,7 @@
 %+csty_setupsizes
 \def\s@tb@dyb@seline#1{%Parameter is {} for monoglot, L / R for diglot.
  \baselineskip=\origb@selineskip
- \le@dingunit=\LineSpacingFactor\FontSizeUnit
+ \global\le@dingunit=\LineSpacingFactor\FontSizeUnit
  \onel@neunit=\LineSpaceBase\le@dingunit
  \verticalsp@ceunit=\VerticalSpaceFactor\le@dingunit
  \trace{F}{le@dingunit(\the\le@dingunit)=\LineSpacingFactor * \the\FontSizeUnit, onel@neunit(\the\onel@neunit)=\LineSpaceBase * \the\le@dingunit}

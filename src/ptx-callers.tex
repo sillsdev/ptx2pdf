@@ -110,11 +110,11 @@
     \@nputn@tepages
     \pagec@llerstrue
     \addtoendhooks{\finishc@llers}
-    \openout\n@tepages="\j@bname.notepages"
+    \immediate\openout\n@tepages="\j@bname.notepages"
   \fi
   \expandafter\let\csname page-caller #1\endcsname=1 % record that this note class wants per-page callers
 }
-\newif\ifpagec@llers
+\newif\ifpagec@llers \pagec@llersfalse
 \def\noteonpage#1#2#3{% style, number, page: defines \notepage-<style>-<number> as the page number where this note occurs
   \expandafter\def\csname notepage-#1-#2\endcsname{#3}}
 \def\finishc@llers{\immediate\closeout\n@tepages % close the notepages file, then re-read it and check for changes
