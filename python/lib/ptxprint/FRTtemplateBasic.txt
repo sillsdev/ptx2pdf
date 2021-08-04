@@ -1,18 +1,16 @@
-\id FRT
-
 \periph Title Page|id="title"
-\mt1 \zvar_maintitle
-\mt2 \zvar_subtitle
-
+\mt1 \zvar|maintitle\*
+\mt2 \zvar|subtitle\*
+\rem -------------------------------------
 \periph Publication Data|id="pubdata"
-\pc \zvar_maintitle 
-\pc \zvar_subtitle
-\pc \zvar_languagename
+\pc \zvar|maintitle\*
+\pc \zvar|subtitle\*
+\pc \zvar|languagename\*
 \b
 \pc \zcopyright
 \pc \zlicense
 \b
 \pc \zimagecopyrights
-
+\rem -------------------------------------
 \periph Table of Contents|id="contents"
 \zcontents

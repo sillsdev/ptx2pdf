@@ -73,6 +73,8 @@ ModelMap = {
     "project/license":          ("ecb_licenseText", None),
     "project/copyright":        ("t_copyrightStatement", lambda w,v: re.sub(r"\\u([0-9a-fA-F]{4})",
                                                                    lambda m: chr(int(m.group(1), 16)), v) if v is not None else ""),
+    "project/iffrontmatter":    ("c_frontmatter", lambda w,v: "" if v else "%"),
+    "project/periphpagebreak":  ("c_periphPageBreak", None),
     "project/colophontext":     ("tb_colophon", lambda w,v: re.sub(r"\\u([0-9a-fA-F]{4})",
                                                                    lambda m: chr(int(m.group(1), 16)), v) if v is not None else ""),
     "project/ifcolophon":       ("c_colophon", lambda w,v: "" if v else "%"),

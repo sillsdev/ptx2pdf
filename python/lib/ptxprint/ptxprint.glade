@@ -911,6 +911,7 @@ information followed by a table of contents.</property>
                         <property name="active">True</property>
                         <property name="draw_indicator">True</property>
                         <property name="group">r_generateFRT_advanced</property>
+                        <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
@@ -946,6 +947,7 @@ For example:
                         <property name="halign">start</property>
                         <property name="draw_indicator">True</property>
                         <property name="group">r_generateFRT_basic</property>
+                        <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
@@ -1040,6 +1042,7 @@ is no need to generate Front Matter here.</property>
                         <property name="halign">start</property>
                         <property name="draw_indicator">True</property>
                         <property name="group">r_generateFRT_basic</property>
+                        <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
@@ -3376,6 +3379,7 @@ Position:</property>
                     <property name="has_entry">True</property>
                     <property name="entry_text_column">0</property>
                     <property name="id_column">1</property>
+                    <property name="active_id">0</property>
                     <child internal-child="entry">
                       <object class="GtkEntry">
                         <property name="visible">True</property>
@@ -3415,6 +3419,7 @@ Position:</property>
                     <property name="has_entry">True</property>
                     <property name="entry_text_column">0</property>
                     <property name="id_column">1</property>
+                    <property name="active_id">0</property>
                     <child internal-child="entry">
                       <object class="GtkEntry">
                         <property name="visible">True</property>
@@ -3500,6 +3505,7 @@ to be rotated.
                     <property name="has_entry">True</property>
                     <property name="entry_text_column">0</property>
                     <property name="id_column">1</property>
+                    <property name="active_id">0</property>
                     <child internal-child="entry">
                       <object class="GtkEntry">
                         <property name="visible">True</property>
@@ -15386,13 +15392,14 @@ markers/styles in the list below.</property>
                                 <property name="margin_right">6</property>
                                 <property name="margin_top">6</property>
                                 <property name="margin_bottom">6</property>
-                                <property name="column_spacing">6</property>
+                                <property name="column_spacing">3</property>
                                 <child>
                                   <object class="GtkLabel" id="l_styDescription">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="halign">start</property>
-                                    <property name="valign">center</property>
+                                    <property name="valign">start</property>
+                                    <property name="margin_top">12</property>
                                     <property name="hexpand">True</property>
                                     <property name="wrap">True</property>
                                     <attributes>
@@ -15423,8 +15430,11 @@ markers/styles in the list below.</property>
                                 </child>
                                 <child>
                                   <object class="GtkLabel" id="l_styleTag">
+                                    <property name="width_request">100</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="valign">start</property>
+                                    <property name="margin_top">10</property>
                                     <attributes>
                                       <attribute name="weight" value="bold"/>
                                       <attribute name="scale" value="1.2"/>
@@ -17608,14 +17618,35 @@ or you simply prefer to read the original page in English.</property>
                                         <property name="halign">start</property>
                                         <property name="margin_top">6</property>
                                         <property name="draw_indicator">True</property>
+                                        <signal name="clicked" handler="onEnglishClicked" swapped="no"/>
+                                        <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">1</property>
+                                        <property name="top_attach">2</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="c_noInternet">
+                                        <property name="label" translatable="yes">Disable ALL Internet Use</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="tooltip_text" translatable="yes">PTXprint checks for program updates and also
+contains links to external sites (mainly from 
+the Styles tab and the Help tab). If this is an
+issue, then check this option to prevent
+PTXprint from accessing the internet.</property>
+                                        <property name="halign">start</property>
+                                        <property name="margin_top">6</property>
+                                        <property name="draw_indicator">True</property>
+                                        <signal name="clicked" handler="noInternetClicked" swapped="no"/>
+                                        <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
                                         <property name="top_attach">1</property>
                                       </packing>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
                                     </child>
                                   </object>
                                 </child>
@@ -18224,7 +18255,8 @@ they may vary from one publication to another.</property>
                                 <property name="halign">end</property>
                                 <property name="valign">start</property>
                                 <property name="margin_top">5</property>
-                                <property name="label" translatable="yes">\zvar_ Variables:</property>
+                                <property name="label" translatable="yes">User-defined List 
+of \zvar|variables\*</property>
                                 <property name="justify">right</property>
                               </object>
                               <packing>
@@ -18243,6 +18275,7 @@ Front Matter \zvar_variables to be
 listed in this table.</property>
                                 <property name="halign">end</property>
                                 <property name="valign">end</property>
+                                <signal name="clicked" handler="rescanFRTvarsClicked" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="left_attach">0</property>

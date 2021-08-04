@@ -3,22 +3,22 @@
 \rem -------------------------------------------------------------------------
 \rem This template has been created for use with PTXprint for semi-automatic 
 \rem generation of Front matter. Though it is structured on the USFM specification
-\rem for Paratext's FRT book, there are additional \zvar_codes used which make it
+\rem for Paratext's FRT book, there are additional \zvar|codes\* used making it
 \rem unsuitable for use within Paratext without prior modification.
 
 \rem -------------------------------------------------------------------------
 \periph Title Page|id="title"
 \rem -------------------------------------------------------------------------
-\mt1 \zvar_maintitle
-\mt2 \zvar_subtitle
+\mt1 \zvar|maintitle\*
+\mt2 \zvar|subtitle\*
 \pc \fig |xyzLogo.jpg|span||||\fig*
 \pc [Wycliffe Bible Translators, Inc. / Bible Society of Country / or Your Organization Name]
 
 \rem ---------RARELY USED -------------
 \periph Half Title Page|id="halftitle"
 \rem ----------------------------------
-\mt1 \zvar_maintitle
-\mt2 \zvar_subtitle
+\mt1 \zvar|maintitle\*
+\mt2 \zvar|subtitle\*
 \pc \fig |xyzLogo.jpg|span||||\fig*
 
 \rem ---------RARELY USED -------------
@@ -32,21 +32,21 @@
 \rem -------------------------------------------------------------------------
 \periph Publication Data|id="pubdata"
 \rem -------------------------------------------------------------------------
-\pc \zvar_maintitle 
-\pc \zvar_subtitle
+\pc \zvar|maintitle\* 
+\pc \zvar|subtitle\*
 \pc Trial edition, limited distribution
-\pc Language: \zvar_languagename (\zvar_langiso)
-\pc Script: \zvar_script
-\pc Copies: \zvar_copiesprinted
-\pc ISBN: \zvar_isbn
+\pc Language: \zvar|languagename\* (\zvar|langiso\*)
+\pc Script: \zvar|script\*
+\pc Copies: \zvar|copiesprinted\*
+\pc ISBN: \zvar|isbn\*
 \pc \zcopyright
 \pc \zlicense
-\pc \zvar_licensetext
+\pc \zvar|licensetext\*
 \rem Permission requests:\bd* The text of this publication may be quoted (in written, visual or electronic form) up to one thousand (1,000) verses, or up to two hundred and fifty (250) verses for audio use without express written permission of the publisher, provided the verses quoted do not amount to a complete book of the NT, nor 50 percent or more of the total text of the work in which they are quoted.
 \b
 \pc \zimagecopyrights
 \b
-\pc \zvar_printedby
+\pc \zvar|printedby\*
 \rem Acme Printers Pvt. Ltd., SomeCity - Postcode
 
 \rem -------------------------------------------------------------------------

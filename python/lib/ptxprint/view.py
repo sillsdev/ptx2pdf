@@ -932,31 +932,17 @@ class ViewModel:
                         outf.write("{} {}.{} +0\n".format(b, c, v))
                         
     def generateFrontMatter(self, frtype="basic", inclcover=False):
-        # TO DO: Work in progress...
         prjid = self.get("fcb_project")
-        outfname = os.path.join(self.settings_dir, prjid, "shared", "ptxprint", "FRTlocal.sfm")
+        destp = os.path.join(self.settings_dir, prjid, "shared", "ptxprint", "FRTlocal.sfm")
         if frtype == "basic":
-            with open(outfname, "w", encoding="utf-8") as outf:
-                outf.write(r"""\id FRT local
-\periph Title Page|id="title"
-\mt1 \zvar_maintitle
-\mt2 \zvar_subtitle
-
-\periph Publication Data|id="pubdata"
-\pc \zvar_maintitle 
-\pc \zvar_subtitle
-\pc \zvar_languagename
-\b
-\pc \zcopyright
-\pc \zlicense
-\b
-\pc \zimagecopyrights
-
-\periph Table of Contents|id="contents"
-\zcontents            
-""")
-        else:
-            print("WE need to handle Adv and Paratext FRT here below")
+            srcp = os.path.join(os.path.dirname(__file__), "FRTtemplateBasic.txt")
+        elif frtype == "advanced":
+            srcp = os.path.join(os.path.dirname(__file__), "FRTtemplateAdvanced.txt")
+        elif frtype == "paratext":
+            srcp = os.path.join(self.settings_dir, prjid, self.getBookFilename("FRT", prjid))
+            print("ptxfrt src:", srcp)
+            
+        copyfile(srcp, destp)
 
     def generateHyphenationFile(self):
         listlimit = 27836 # 32749

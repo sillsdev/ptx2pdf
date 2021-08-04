@@ -5,7 +5,7 @@ gi.require_version('Gtk', '3.0')
 gi.require_version('Gdk', '3.0')
 from shutil import rmtree
 import time, locale, urllib.request, json
-
+from ptxprint.utils import universalopen
 from gi.repository import Gdk, Gtk, Pango, GObject, GLib, GdkPixbuf
 
 if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
@@ -188,6 +188,7 @@ _sensitivities = {
 # Checkboxes and the different objects they make (in)sensitive when toggled
 # These function OPPOSITE to the ones above (they turn OFF/insensitive when the c_box is active)
 _nonsensitivities = {
+    "c_noInternet" :           ["c_useEngLinks"],
     "c_omitrhchapnum" :        ["c_hdrverses"],
     "c_useprintdraftfolder" :  ["btn_selectOutputFolder"],
     "c_styFaceSuperscript" :   ["l_styRaise", "s_styRaise"],
@@ -528,6 +529,8 @@ class GtkViewModel(ViewModel):
                 for w in v:
                     GObject.add_emission_hook(getattr(Gtk, w), k, self.emission_hook, k)
             self.logactive = True
+        noInt = self.userconfig.getboolean('init', 'nointernet', fallback=False)
+        self.set("c_noInternet", noInt)
         el = self.userconfig.getboolean('init', 'englinks', fallback=False)
         self.set("c_useEngLinks", el)
         expert = self.userconfig.getboolean('init', 'expert', fallback=False)
@@ -536,6 +539,7 @@ class GtkViewModel(ViewModel):
         sys.excepthook = self.doSysError
         lsfonts = self.builder.get_object("ls_font")
         lsfonts.clear()
+        self.noInternetClicked(None)
         self.checkUpdates(False)
         try:
             Gtk.main()
@@ -671,6 +675,15 @@ class GtkViewModel(ViewModel):
             self.mw.resize(828, 292)
         else:
             self.mw.resize(830, 594)
+
+    def noInternetClicked(self, btn):
+        val = self.get("c_noInternet")
+        for w in ["lb_omitPics", "l_url_usfm", 
+                   "l_homePage",  "l_community",  "l_faq",  "l_pdfViewer",  "l_techFAQ",  "l_reportBugs", 
+                  "lb_homePage", "lb_community", "lb_faq", "lb_pdfViewer", "lb_techFAQ", "lb_reportBugs"]:
+            self.builder.get_object(w).set_visible(not val)
+        self.userconfig.set("init", "nointernet", "true" if self.get("c_noInternet") else "false")
+        self.styleEditor.editMarker()
 
     def addCR(self, name, index):
         if "|" in name:
@@ -848,6 +861,7 @@ class GtkViewModel(ViewModel):
             self.set("lb_settings_dir", self.configPath(self.configName()))
             self.updateDialogTitle()
         self.userconfig.set("init", "project", self.prjid)
+        self.userconfig.set("init", "nointernet", "true" if self.get("c_noInternet") else "false")
         self.userconfig.set("init", "englinks", "true" if self.get("c_useEngLinks") else "false")
         if getattr(self, 'configId', None) is not None:
             self.userconfig.set("init", "config", self.configId)
@@ -1279,14 +1293,15 @@ class GtkViewModel(ViewModel):
                   "scroll_TeXfile" : ("", ".tex"), "scroll_XeTeXlog" : ("", ".log"), "scroll_Settings": ("", "")}
 
         if pgid == "scroll_FrontMatter": # This hasn't been built yet, but is coming soon!
-            self.fileViews[pgnum][0].set_text("\n" +_(" Click the Generate button (above) to start the process of creating Front Matter..."))
+            fpath = os.path.join(self.settings_dir, prjid, "shared", "ptxprint", "FRTlocal.sfm")
+            if not os.path.exists(fpath):
+                self.fileViews[pgnum][0].set_text("\n" +_(" Click the Generate button (above) to start the process of creating Front Matter..."))
+                fpath = None
             if self.get("t_invisiblePassword") == "":
                 genBtn.set_sensitive(True)
                 self.builder.get_object("btn_editZvars").set_sensitive(True)
             else:
                 self.builder.get_object("btn_saveEdits").set_sensitive(False)
-            # @@@@@@@@@@ Add code here to check for the existence of a LOCAL FRT book, and if found, set fpath to it
-            return # temp only
 
         elif pgid in ("scroll_AdjList", "scroll_FinalSFM"):
             fname = self.getBookFilename(bk, prjid)
@@ -2755,7 +2770,7 @@ class GtkViewModel(ViewModel):
         t = re.sub("\([cC]\)", "\u00a9 ", t)
         t = re.sub("\([rR]\)", "\u00ae ", t)
         t = re.sub("\([tT][mM]\)", "\u2122 ", t)
-        if btname == 't_plCreditText':
+        if btname == 't_plCreditText' and len(t) == 3:
             if self.get('c_sensitive'):
                 t = re.sub(r"(?i)dcc", "\u00a9 DCC", t)
             else:
@@ -3087,6 +3102,8 @@ class GtkViewModel(ViewModel):
         version = None
         if not background:
             self.builder.get_object("btn_download_update").set_visible(False)
+        if self.get("c_noInternet"):
+            return
         try:
             with urllib.request.urlopen("https://software.sil.org/downloads/r/ptxprint/latest.win.json") as inf:
                 info = json.load(inf)
@@ -3108,12 +3125,16 @@ class GtkViewModel(ViewModel):
             enabledownload()
 
     def openURL(self, url):
+        if self.get("c_noInternet"):
+            return
         if sys.platform == "win32":
             os.system("start \"\" {}".format(url))
         elif sys.platform == "linux":
             os.system("xdg-open \"\" {}".format(url))
 
     def onUpdateButtonClicked(self, btn):
+        if self.get("c_noInternet"):
+            return
         self.openURL("https://software.sil.org/ptxprint/download")       
 
     def picListMultiselectclicked(self, btn):
@@ -3151,3 +3172,16 @@ class GtkViewModel(ViewModel):
         self.cursors[pgnum] = (titer.get_line(), titer.get_line_offset())
         oldlist = buf.get_text(buf.get_start_iter(), buf.get_end_iter(), True)
         self.fileViews[pgnum][0].set_text(re.sub(r".+?\+0\s?\r?\n", "", oldlist))
+
+    def rescanFRTvarsClicked(self, btn):
+        prjid = self.get("fcb_project")
+        self.onSaveEdits(None) # make sure that FRTlocal has been saved
+        with universalopen(os.path.join(self.settings_dir, prjid, "shared", "ptxprint", "FRTlocal.sfm")) as inf:
+            frtxt = inf.read()
+        vlst = re.findall(r"(?<=\\zvar\|)([a-zA-Z0-9]+)\\\*", frtxt)
+        print(set(vlst))
+        
+    def onEnglishClicked(self, btn):
+        self.styleEditor.editMarker()
+        self.userconfig.set("init", "englinks", "true" if self.get("c_useEngLinks") else "false")
+        
