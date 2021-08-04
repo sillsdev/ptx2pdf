@@ -1,0 +1,16 @@
+\periph Title Page|id="title"
+\mt1 \zvar|maintitle\*
+\mt2 \zvar|subtitle\*
+\rem -------------------------------------
+\periph Publication Data|id="pubdata"
+\pc \zvar|maintitle\*
+\pc \zvar|subtitle\*
+\pc \zvar|languagename\*
+\b
+\pc \zcopyright
+\pc \zlicense
+\b
+\pc \zimagecopyrights
+\rem -------------------------------------
+\periph Table of Contents|id="contents"
+\zcontents

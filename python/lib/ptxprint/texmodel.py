@@ -73,6 +73,8 @@ ModelMap = {
     "project/license":          ("ecb_licenseText", None),
     "project/copyright":        ("t_copyrightStatement", lambda w,v: re.sub(r"\\u([0-9a-fA-F]{4})",
                                                                    lambda m: chr(int(m.group(1), 16)), v) if v is not None else ""),
+    "project/iffrontmatter":    ("c_frontmatter", lambda w,v: "" if v else "%"),
+    "project/periphpagebreak":  ("c_periphPageBreak", None),
     "project/colophontext":     ("tb_colophon", lambda w,v: re.sub(r"\\u([0-9a-fA-F]{4})",
                                                                    lambda m: chr(int(m.group(1), 16)), v) if v is not None else ""),
     "project/ifcolophon":       ("c_colophon", lambda w,v: "" if v else "%"),
@@ -157,11 +159,12 @@ ModelMap = {
     "document/author":          (None, lambda w,v: "" if w.get("c_sensitive") else w.ptsettings.get('Copyright', "")),
 
     "document/startpagenum":    ("s_startPageNum", lambda w,v: int(float(v)) if v else "1"),
+    "document/multibook":       ("r_book_multiple", lambda w,v: "" if v else "%"),
     "document/toc":             ("c_autoToC", lambda w,v: "" if v else "%"),
     "document/toctitle":        ("t_tocTitle", lambda w,v: v or ""),
-    "document/usetoc1":         ("c_usetoc1", None),
-    "document/usetoc2":         ("c_usetoc2", None),
-    "document/usetoc3":         ("c_usetoc3", None),
+    "document/usetoc1":         ("c_usetoc1", lambda w,v: "true" if v else "false"),
+    "document/usetoc2":         ("c_usetoc2", lambda w,v: "true" if v else "false"),
+    "document/usetoc3":         ("c_usetoc3", lambda w,v: "true" if v else "false"),
     "document/chapfrom":        ("s_chapfrom", lambda w,v: int(float(v)) if v else "1"),
     "document/chapto":          ("s_chapto", lambda w,v: int(float(v)) if v else "999"),
     "document/colgutterfactor": ("s_colgutterfactor", lambda w,v: round(float(v)*3) or "12"), # Hack to be fixed
@@ -239,6 +242,8 @@ ModelMap = {
     "document/diglotsecconfig": ("ecb_diglotSecConfig", None),
     "document/diglotmergemode": ("c_diglotMerge", lambda w,v: "simple" if v else "doc"),
     "document/diglotadjcenter": ("c_diglotAdjCenter", None),
+
+    "document/hasnofront":      (None, lambda w,v: ""),
 
     "header/ifomitrhchapnum":   ("c_omitrhchapnum", lambda w,v :"true" if v else "false"),
     "header/ifverses":          ("c_hdrverses", lambda w,v :"true" if v else "false"),
@@ -855,10 +860,11 @@ class TexModel:
                         or not self.asBool("document/bookintro") or not self.asBool("document/introoutline"):
                 if doc is None:
                     doc = self._makeUSFM(dat.splitlines(True), bk)
-                if not self.asBool("document/bookintro") or not self.asBool("document/introoutline"):
-                    doc.stripIntro(not self.asBool("document/bookintro"), not self.asBool("document/introoutline"))
-                if self.asBool("document/elipsizemptyvs"):
-                    doc.stripEmptyChVs()
+                if doc is not None:
+                    if not self.asBool("document/bookintro") or not self.asBool("document/introoutline"):
+                        doc.stripIntro(not self.asBool("document/bookintro"), not self.asBool("document/introoutline"))
+                    if self.asBool("document/elipsizemptyvs"):
+                        doc.stripEmptyChVs()
 
             if self.dict['fancy/endayah'] == "":
                 if doc is None:
@@ -1128,7 +1134,8 @@ class TexModel:
         # Convert hyphens from minus to hyphen
         self.localChanges.append((None, regex.compile(r"(?<!\\[fx]\s)((?<=\s)-|-(?=\s))", flags=regex.M), r"\u2011"))
 
-        if self.asBool("document/toc"): # Only do this IF the auto Table of Contents is enabled
+        if self.asBool("document/toc") and self.asBool("document/multibook"):
+            # Only do this IF the auto Table of Contents is enabled AND there is more than one book
             for c in range(1,4): # Remove any \toc lines that we don't want appearing in the ToC
                 if not self.asBool("document/usetoc{}".format(c)):
                     self.localChanges.append((None, regex.compile(r"(\\toc{} .+)".format(c), flags=regex.M), ""))

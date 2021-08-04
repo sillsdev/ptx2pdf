@@ -218,6 +218,10 @@
   \else 
     \get@ttribute{\attrid}%
   \fi
+  \op@ninghooks{start}{\thismil@stone}%
+  \ifx\attr@b\relax\else\ifcsname ms:\thismil@stone=\attr@b\endcsname
+    \csname ms:\thismil@stone=\attr@b\endcsname
+  \fi\fi
   \ifx\attr@b\relax
     \runtrigg@rs{ms:\thismil@stone}%
   \else
@@ -228,6 +232,7 @@
      \ch@ckadjustments
     \fi
   \fi
+  \cl@singhooks{end}{\thismil@stone}%
   \cl@singhooks{after}{\thismil@stone}\the\afterh@@ks\relax
 }%
 \def\upd@teMsPrefix{%Build a prefix based on all currently-in-force milestones.

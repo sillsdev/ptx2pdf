@@ -656,7 +656,7 @@
 \let\p@rlinesgone\p@rlinesgoneMonoglot
 
 \def\this@pgno{}
-\let\par@items\cstackempty
+\def\par@items{,}   % \cstackempty but not defined yet
 \x@\newif\csname ifinp@r-\endcsname
 
 \def\calc@p@rlinesgone#1#2{%
@@ -671,7 +671,7 @@
   \edef\prev@col@ht{\the\dimexpr \tot@col@ht - \dimen1\relax}%
   \trace{C}{@parstart \tot@col@ht - \the\dimen1 = \prev@col@ht}%
   \csname inp@r-\c@rrdstat true\endcsname
-  \x@\edef\csname baselineskip@\c@rrdstat\endcsname{#1}\relax\p@rlinesgone=1\relax\let\par@items\cstackempty}
+  \x@\xdef\csname baselineskip@\c@rrdstat\endcsname{#1}\relax\p@rlinesgone=1\relax\let\par@items\cstackempty}
 
 \def\@parend#1#2{%
   \this@y=#2\relax
@@ -839,7 +839,7 @@
     \dimen1=#6 \baselineskip % delay of the item
     \trace{C}{... -\the\dimen1}% 
     \advance\tmp@lines by -\dimen1
-    \edef\par@items{\cstackpush{\par@items}{#1|#2|\the\tmp@lines}}% Add end-point to stack checking.
+    \xdef\par@items{\cstackpush{\par@items}{#1|#2|\the\tmp@lines}}% Add end-point to stack checking.
     \tmp@lines=\prev@y
     \advance\tmp@lines by -\thing@y
     \divide\tmp@lines by \baselineskip

@@ -569,6 +569,12 @@ class RunJob:
             info.printer.editFile_delayed(logfname, "wrk", "scroll_XeTeXlog", False)
             numruns += 1
             self.rerunReasons = []
+            if self.res > 0:
+                rerun = False
+                tocfname = outfname.replace(".tex", ".toc")
+                if os.path.exists(tocfname):
+                    os.remove(tocfname)
+                break
             rererun = rerun
             for a in cacheexts.keys():
                 testdata = cachedata[a]

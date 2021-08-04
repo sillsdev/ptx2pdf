@@ -384,26 +384,25 @@ class StyleEditorView(StyleEditor):
         visibles = _showgrid.get(stype[:4] if stype is not None else "",(True, True, True))
         for i, w in enumerate(('Para', 'Char', 'Note')):
             self.builder.get_object("ex_sty"+w).set_expanded(visibles[i])
-            
-        site = 'https://ubsicap.github.io/usfm'
-        tl = self.get("fcb_interfaceLang") # target language for Google Translate
-        ggltrans = "" 
-        if not self.builder.get_object("c_useEngLinks") and \
-               tl in ['ar_SA', 'my', 'zh', 'en', 'fr', 'hi', 'hu', 'id', 'ko', 'pt', 'ro', 'ru', 'es', 'th']:
-            ggltrans = r"https://translate.google.com/translate?sl=en&tl={}&u=".format(tl)
-            if tl == 'zh':
-                ggltrans = re.sub("google\.com", "google.cn", ggltrans)
-        if urlcat is None:
-            self.builder.get_object("l_url_usfm").set_uri('{}{}/search.html?q=%5C{}&check_keywords=yes&area=default'.format(ggltrans, site, urlmkr.split('-')[0]))
-        else:
-            usfmkeys = tuple(usfmpgname.keys())
-            pgname = 'index'
-            if urlmkr.split('-')[0] not in fxceptions and urlmkr.startswith(usfmkeys):
-                for i in range(len(urlmkr), 0, -1):
-                    if urlmkr[:i] in usfmkeys:
-                        pgname = usfmpgname.get(urlmkr[:i])
-                        continue
-            self.builder.get_object("l_url_usfm").set_uri('{}{}/{}/{}.html#{}'.format(ggltrans, site, urlcat, pgname, urlmkr))
+
+        if not self.model.get("c_noInternet"):
+            site = 'https://ubsicap.github.io/usfm'
+            tl = self.get("fcb_interfaceLang") # target language for Google Translate
+            ggltrans = "" 
+            if not self.model.get("c_useEngLinks") and \
+                   tl in ['ar_SA', 'my', 'zh', 'fr', 'hi', 'hu', 'id', 'ko', 'pt', 'ro', 'ru', 'es', 'th']:
+                ggltrans = r"https://translate.google.com/translate?sl=en&tl={}&u=".format(tl)
+            if urlcat is None:
+                self.builder.get_object("l_url_usfm").set_uri('{}{}/search.html?q=%5C{}&check_keywords=yes&area=default'.format(ggltrans, site, urlmkr.split('-')[0]))
+            else:
+                usfmkeys = tuple(usfmpgname.keys())
+                pgname = 'index'
+                if urlmkr.split('-')[0] not in fxceptions and urlmkr.startswith(usfmkeys):
+                    for i in range(len(urlmkr), 0, -1):
+                        if urlmkr[:i] in usfmkeys:
+                            pgname = usfmpgname.get(urlmkr[:i])
+                            continue
+                self.builder.get_object("l_url_usfm").set_uri('{}{}/{}/{}.html#{}'.format(ggltrans, site, urlcat, pgname, urlmkr))
         self.isLoading = False
 
     def _cmp(self, a, b):
