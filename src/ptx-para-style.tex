@@ -143,25 +143,28 @@
 \def\m@d{\dimen3=\dimen1\divide\dimen1\dimen0\multiply\dimen1\dimen0\advance\dimen3 by -\dimen1\advance\dimen0 by -\dimen3}
 
 \def\gr@db@@x#1{%
-  \ifhmode\endgraf\fi % Not sure why, but sometiems we get here in hmode
-  \prevdepth=0pt
-  \setbox0=\ifgridp@c\vbox{\box#1}\else\killd@scenders{#1}\fi
-  \trace{h}{after killingdescenders: ht=\the\ht0, dp=\the\dp0}
-  \ifVisTraceExtra
-    \setbox0=\vbox{\box0\doVisTraceT{G}\box0}%
+  \ifdim\baselineskip < 0.5pt\unvbox#1
+  \else
+      \ifhmode\endgraf\fi % Not sure why, but sometiems we get here in hmode
+      \prevdepth=0pt
+      \setbox0=\ifgridp@c\vbox{\box#1}\else\killd@scenders{#1}\fi
+      \trace{h}{after killingdescenders: ht=\the\ht0, dp=\the\dp0}
+      \ifVisTraceExtra
+        \setbox0=\vbox{\box0\doVisTraceT{G}\box0}%
+      \fi
+      \trace{h}{before gridbox: ht0=\the\ht0; dp0=\the\dp0 (\the\dimen4); spacebefore=\the\headingtopspace; depth=\the\lastdepth}%
+      \s@tbaseline{p}\dimen1=\ht0 \dimen0=\baselineskip \m@d \dimen2=\dimen0 % dimen2 is grid space
+      \dimen1=\ht0 \advance\dimen1 by -\headingtopspace
+      \dimen0=\baselineskip \m@d \advance\dimen2 by -\dimen0
+      \advance\dimen2 by \headingtopspace                                           %(1)
+      \ifgridp@c\else\ifdiglot\else
+        \ifdim\lastdepth>0pt\advance\dimen2 by -\lastdepth\fi
+      \fi\fi
+      \ifdiglot\kern\else\vskip\fi\dimen2
+      \trace{h}{after gridbox(\ch@pter.\v@rse): skip \the\dimen2, kern \the\dimen0; baselineskip=\the\baselineskip; dim1=\the\dimen1;  ht0=\the\ht0; dp0=\the\dp0}%
+      \vbox{\kern\dimen0\vskip-\headingtopspace\unvbox0}
+      \nobreak%\dimen0=\prevdepth\trace{h}{prevdepth=\the\dimen0}%
   \fi
-  \trace{h}{before gridbox: ht0=\the\ht0; dp0=\the\dp0 (\the\dimen4); spacebefore=\the\headingtopspace; depth=\the\lastdepth}%
-  \s@tbaseline{p}\dimen1=\ht0 \dimen0=\baselineskip \m@d \dimen2=\dimen0 % dimen2 is grid space
-  \dimen1=\ht0 \advance\dimen1 by -\headingtopspace
-  \dimen0=\baselineskip \m@d \advance\dimen2 by -\dimen0
-  \advance\dimen2 by \headingtopspace                                           %(1)
-  \ifgridp@c\else\ifdiglot\else
-    \ifdim\lastdepth>0pt\advance\dimen2 by -\lastdepth\fi
-  \fi\fi
-  \ifdiglot\kern\else\vskip\fi\dimen2
-  \trace{h}{after gridbox(\ch@pter.\v@rse): skip \the\dimen2, kern \the\dimen0; baselineskip=\the\baselineskip; dim1=\the\dimen1;  ht0=\the\ht0; dp0=\the\dp0}%
-  \vbox{\kern\dimen0\vskip-\headingtopspace\unvbox0}
-  \nobreak%\dimen0=\prevdepth\trace{h}{prevdepth=\the\dimen0}%
 }
 
 \newif\ifsquashgridbox\squashgridboxtrue                                        %(2)

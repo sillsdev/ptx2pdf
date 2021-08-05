@@ -225,9 +225,9 @@
   \fi
   \op@ninghooks{start}{\thismil@stone}%
   \let\oldc@rref\c@rref\let\olddc@rref\dc@rref
-  %\ifx\attr@b\relax\else\ifcsname ms:\thismil@stone=\attr@b\endcsname
-    %\csname ms:\thismil@stone=\attr@b\endcsname
-  %\fi\fi
+  \ifx\attr@b\relax\else\ifcsname ms:\thismil@stone=\attr@b\endcsname
+    \csname ms:\thismil@stone=\attr@b\endcsname
+  \fi\fi
   \ifx\attr@b\relax
     \runtrigg@rs{ms:\thismil@stone}%
   \else
@@ -298,4 +298,5 @@
 %-csty_milestone
 \def\attrid{}
 \notlocation{zvar}
+\def\defzvar#1#2{\x@\def\csname ms:zvar=#1\endcsname{#2}}
 

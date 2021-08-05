@@ -11,6 +11,7 @@ from ptxprint.font import getfontcache
 from ptxprint.usfmerge import usfmerge2
 from ptxprint.utils import _, universalopen, print_traceback
 from ptxprint.pdf.fixcol import fixpdffile
+from ptxprint.toc import parsetoc, createtocvariants, generateTex
 from datetime import datetime
 
 _errmsghelp = {
@@ -169,6 +170,7 @@ class RunJob:
         self.ispdfxa = "None"
         self.inArchive = inArchive
         self.noview = False
+        self.nothreads = False
 
     def fail(self, txt):
         self.printer.set("l_statusLine", txt)
@@ -485,6 +487,7 @@ class RunJob:
         return texfiles
 
     def sharedjob(self, jobs, info, prjid=None, prjdir=None, extra=""):
+        genfiles = []
         if prjid is None:
             prjid = self.prjid
         if prjdir is None:
@@ -496,11 +499,16 @@ class RunJob:
             cfgname = "-" + cfgname
         outfname = info.printer.baseTeXPDFnames(jobs)[0] + ".tex"
         info.update()
+        if info['project/iffrontmatter'] != '%':
+            frtfname = os.path.join(self.tmpdir, outfname.replace(".tex", "_FRT.tex"))
+            info.createFrontMatter(frtfname)
+            genfiles.append(frtfname)
         texfiledat = info.asTex(filedir=self.tmpdir, jobname=outfname.replace(".tex", ""), extra=extra)
         with open(os.path.join(self.tmpdir, outfname), "w", encoding="utf-8") as texf:
             texf.write(texfiledat)
+        genfiles += [os.path.join(self.tmpdir, outfname.replace(".tex", x)) for x in (".tex", ".xdv")]
         if self.inArchive:
-            return [os.path.join(self.tmpdir, outfname.replace(".tex", x)) for x in (".tex", ".xdv")]
+            return genfiles
         os.putenv("hyph_size", "32749")     # always run with maximum hyphenated words size (xetex is still tiny ~200MB resident)
         os.putenv("stack_size", "32768")    # extra input stack space (up from 5000)
         ptxmacrospath = os.path.abspath(os.path.join(self.scriptsdir, "..", "..", "src"))
@@ -527,10 +535,13 @@ class RunJob:
             os.putenv("MISCFONTS", pathjoin(miscfonts))
         # print(f"{pathjoin(miscfonts)=}")
         os.putenv('TEXINPUTS', pathjoin(texinputs))
-        self.thread = Thread(target=self.run_xetex, args=(outfname, info))
-        self.busy = True
-        self.thread.start()
-        return [os.path.join(self.tmpdir, outfname.replace(".tex", x)) for x in (".tex", ".xdv")]
+        if self.nothreads:
+            self.run_xetex(outfname, info)
+        else:
+            self.thread = Thread(target=self.run_xetex, args=(outfname, info))
+            self.busy = True
+            self.thread.start()
+        return genfiles
 
     def wait(self):
         if self.busy:
@@ -569,9 +580,9 @@ class RunJob:
             info.printer.editFile_delayed(logfname, "wrk", "scroll_XeTeXlog", False)
             numruns += 1
             self.rerunReasons = []
+            tocfname = os.path.join(self.tmpdir, outfname.replace(".tex", ".toc"))
             if self.res > 0:
                 rerun = False
-                tocfname = outfname.replace(".tex", ".toc")
                 if os.path.exists(tocfname):
                     os.remove(tocfname)
                 break
@@ -590,8 +601,13 @@ class RunJob:
                         print(_("Rerunning because the {} changed").format(cacheexts[a][0]))
                         rererun = True
                         break
+            if os.path.exists(tocfname):
+                newtoc = generateTex(createtocvariants(parsetoc(tocfname)))
+                with open(tocfname, "w", encoding="utf-8") as outf:
+                    outf.write(newtoc)
             if not rererun:
                 break
+
         if not self.noview and not self.args.testing and not self.res:
             self.printer.incrementProgress()
             cmd = ["xdvipdfmx", "-E", "-V", "1.4", "-C", "16", "-q",

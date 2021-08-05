@@ -89,9 +89,14 @@ of the meaning of the Bible.
 \rem -------------------------------------------------------------------------
 \periph Table of Contents|id="contents"
 \rem -------------------------------------------------------------------------
-\h Table of Contents
-\mt Contents
-\zcontents
+\mt \zvar |contentsheader\*
+\is Old Testament
+\ip \ztoc |ot\*
+\is New Testament
+\ip \ztoc |nt\*
+\is Alphabetical Order
+\ip \ztoc |sortc\*
+\ip
 
 \rem -------------------------------------------------------------------------
 \periph Alphabetical Contents|id="alphacontents"
