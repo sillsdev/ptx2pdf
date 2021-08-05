@@ -243,7 +243,7 @@ ModelMap = {
     "document/diglotmergemode": ("c_diglotMerge", lambda w,v: "simple" if v else "doc"),
     "document/diglotadjcenter": ("c_diglotAdjCenter", None),
 
-    "document/hasnofront":      (None, lambda w,v: ""),
+    "document/hasnofront_":     ("c_frontmatter", lambda w,v: "%" if v else ""),
 
     "header/ifomitrhchapnum":   ("c_omitrhchapnum", lambda w,v :"true" if v else "false"),
     "header/ifverses":          ("c_hdrverses", lambda w,v :"true" if v else "false"),
@@ -390,6 +390,7 @@ class TexModel:
         self.debug = False
         self.interlinear = None
         self.imageCopyrightLangs = {}
+        self.frontperiphs = None
         libpath = os.path.abspath(os.path.dirname(__file__))
         self.dict = {"/ptxpath": str(path).replace("\\","/"),
                      "/ptxprintlibpath": libpath.replace("\\","/"),
@@ -497,6 +498,7 @@ class TexModel:
         else:
             vals = ("0.0", "0.0")
         (self.dict["grid/xoffset_"], self.dict["grid/yoffset_"]) = vals
+        self.dict['project/frontfile'] = ''
 
     def updatefields(self, a):
         global get
@@ -657,7 +659,7 @@ class TexModel:
                 lambda m:m.group(0).lower(), self.dict['project/colophontext'])
         with universalopen(os.path.join(os.path.dirname(__file__), template)) as inf:
             for l in inf.readlines():
-                if l.startswith(r"\ptxfile"):
+                if l.startswith(r"%\ptxfile"):
                     res.append(r"\PtxFilePath={"+os.path.relpath(filedir, docdir).replace("\\","/")+"/}")
                     for i, f in enumerate(self.dict['project/bookids']):
                         fname = self.dict['project/books'][i]
@@ -754,9 +756,60 @@ class TexModel:
                     if "diglot/copyright" in self.dict:
                         res.append("\\def\\zcopyrightR\uFDEE{}\uFDEF".format(self.dict["diglot/copyright"]))
                     res.append("\\unprepusfm")
+                elif l.startswith(r"%\defzvar"):
+                    for k in self.printer.allvars():
+                        res.append(r"\defzvar{{{}}}{{{}}}".format(k, self.printer.getvar(k)))
+                    for k, e in (('contentsheader', 'document/toctitle'),):
+                        res.append(r"\defzvar{{{}}}{{{}}}".format(k, self.dict[e]))
                 else:
                     res.append(l.rstrip().format(**self.dict))
         return "\n".join(res).replace("\\OmitChapterNumberfalse\n\\OmitChapterNumbertrue\n","")
+
+    def _doperiph(self, m):
+        if self.frontperiphs is None:
+            frtfile = os.path.join(self.printer.settings_dir, self.printer.prjid, self.printer.getBookFilename("FRT"))
+            self.frontperiphs = {}
+            if not os.path.exists(frtfile):
+                return ""
+            with open(frtfile, encoding="utf-8") as inf:
+                mode = 0        # default
+                currperiphs = []
+                currk = None
+                for l in inf.readlines():
+                    ma = re.match(r'\periph\s+([^|]+)(?:\|\s*(?:id\s*=\s*"([^"]+)|(\S+))', l)
+                    if ma:
+                        if mode == 1:    # already collecting so save
+                            self.frontperiphs[currk] = "\n".join(currperiphs)
+                        currk = m[2] or m[3]
+                        if not currk:
+                            currk = self._periphids.get(m[1], "")
+                        currperiphs = []
+                        mode = 1
+                    elif mode == 1:
+                        currperiphs.append(l.rstrip())
+                if currk is not None:
+                    self.frontperiphs[currk] = "\n".join(currperiphs)
+        k = m[1]
+        if k in self.frontperiphs:
+            return self.frontperiphs[k]
+        else:
+            return ""
+
+    def createFrontMatter(self, outfname):
+        self.dict['project/frontfile'] = os.path.basename(outfname)
+        infpath = self.printer.configFRT()
+        if os.path.exists(infpath):
+            fcontent = []
+            with open(infpath, encoding="utf-8") as inf:
+                seenperiph = False
+                for l in inf.readlines():
+                    if l.strip().startswith(r"\periph"):
+                        l = r"\pb" if self.dict['project/periphpagebreak'] and seenperiph else ""
+                        seenperiph = True
+                    l = re.sub(r"\\zperiphfrt\s*\|([^\\\s]+)", self._doperiph, l)
+                    fcontent.append(l.rstrip())
+            with open(outfname, "w", encoding="utf-8") as outf:
+                outf.write("\n".join(fcontent))
 
     def flattenModule(self, infpath, outdir):
         outfpath = os.path.join(outdir, os.path.basename(infpath))

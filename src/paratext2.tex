@@ -1310,7 +1310,9 @@
   % Round to lines accurate to 1/8pt in lineskip. 1/10pt causes overflow on longer pages. Support two column legal.
   \bmg@p=\availht
   \dimen0=8\baselineskip
-  \multiply\availht by 8 \divide\availht by\dimen0 \multiply\availht by\dimen0 \divide\availht by 8
+  \ifdim\dimen0>0.5pt
+      \multiply\availht by 8 \divide\availht by\dimen0 \multiply\availht by\dimen0 \divide\availht by 8
+  \fi
   \advance\bmg@p by -\availht
   %\advance\availht -\dp\pstr@t
   %\advance\availht by \dp255 % split includes depth so give it space for that

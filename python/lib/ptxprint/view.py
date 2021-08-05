@@ -137,6 +137,7 @@ class ViewModel:
         self.styleEditor = StyleEditor(self)
         self.triggervcs = False
         self.copyrightInfo = {}
+        self.pubvars = {}
 
         # private to this implementation
         self.dict = {}
@@ -192,6 +193,18 @@ class ViewModel:
             self.dict[wid] = f2s(float(value))
         else:
             self.dict[wid] = value
+
+    def getvar(self, k):
+        return self.pubvars.get(k, "")
+
+    def setvar(self, k, v):
+        self.pubvars[k] = v
+
+    def allvars(self):
+        return self.pubvars.keys()
+
+    def clearvars(self):
+        self.pubvars = {}
 
     def baseTeXPDFnames(self, bks=None):
         if bks is None:
@@ -485,6 +498,9 @@ class ViewModel:
             return (media['default'], media['limit'])
         return (None, None)
     
+    def configFRT(self):
+        return os.path.join(self.configPath(self.configName()), "FRTlocal.sfm")
+
     def configName(self):
         return self.configId or None
 
@@ -596,6 +612,8 @@ class ViewModel:
                 if val == "" or val == self.ptsettings.dict.get(self._settingmappings[k], ""):
                     continue
             self._configset(config, k, str(val) if val is not None else "")
+        for k in self.allvars():
+            self._configset(config, "vars/"+str(k), self.getvar(str(k)))
         return config
 
     def _config_get(self, config, section, option, conv=None, fallback=_UNSET, **kw):
@@ -718,6 +736,7 @@ class ViewModel:
 
     def loadConfig(self, config):
         def setv(k, v): self.set(k, v, skipmissing=True)
+        self.clearvars()
         for sect in config.sections():
             for opt in config.options(sect):
                 key = "{}/{}".format(sect, opt)
@@ -749,7 +768,9 @@ class ViewModel:
                             if val is not None:
                                 setv(v[0], val)
                         except AttributeError:
-                            pass # ignore missing keys 
+                            pass # ignore missing keys
+                elif sect == "vars":
+                    self.setvar(opt, val)
                 elif sect in FontModelMap:
                     v = FontModelMap[sect]
                     if v[0].startswith("bl_") and opt == "name":    # legacy
@@ -933,7 +954,7 @@ class ViewModel:
                         
     def generateFrontMatter(self, frtype="basic", inclcover=False):
         prjid = self.get("fcb_project")
-        destp = os.path.join(self.settings_dir, prjid, "shared", "ptxprint", "FRTlocal.sfm")
+        destp = self.configFRT()
         if frtype == "basic":
             srcp = os.path.join(os.path.dirname(__file__), "FRTtemplateBasic.txt")
         elif frtype == "advanced":

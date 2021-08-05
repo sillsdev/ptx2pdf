@@ -252,18 +252,21 @@
 % Looks in local Config folder for ptxprint-mods.tex, and drops back to shared/ptxprint .tex if not found 
 %{project/ifusemodstex}\includeifpresent{{{/modspath}}}% adjust/override setup parameters here
 
+%\defzvar
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% all settings need to come before this line %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%% Watermark PDF file or Grid PDF etc. %%%%%
 {paper/ifwatermark}\def\MergePDF{{"{paper/watermarkpdf}"}}
 
 %%%%% Front Matter PDF file(s) get included here %%%%%
-{project/frontincludes}
-
 {document/toc}\BodyColumns=1     % Temporarily set this to Single Column for the ToC page(s)
+
 {document/toc}\includeifpresent{{{jobname}.toc}}
-{document/toc}{document/hasnofront}\preptxfile\prepusfm\id FRT -- toc
-{document/toc}{document/hasnofront}\is {document/toctitle} \ip \ztoc |main\*\ip \postptxfile
+{document/toc}{document/hasnofront_}\preptxfile\prepusfm\id FRT -- toc
+{document/toc}{document/hasnofront_}\is {document/toctitle} \ip \ztoc |main\*\ip \postptxfile
+{project/frontincludes}
+\ptxfile{{{project/frontfile}}}
 {document/toc}\BodyColumns={paper/columns}     % But ensure it goes back to the chosen Single/Double setting for the main body text
 \useTOCone{document/usetoc1}
 \useTOCtwo{document/usetoc2}
@@ -275,7 +278,7 @@
 \def\closeadjlist{{\relax}}
 \def\closepiclist{{\relax}}
 % job files:
-\ptxfile{{PrintDraft/41MATprojid-draft.SFM}}
+%\ptxfile{{PrintDraft/41MATprojid-draft.SFM}}
 %%%%% Back Matter PDF file(s) get included here %%%%%
 {project/backincludes}
 

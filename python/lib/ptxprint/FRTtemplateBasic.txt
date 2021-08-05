@@ -13,4 +13,6 @@
 \pc \zimagecopyrights
 \rem -------------------------------------
 \periph Table of Contents|id="contents"
-\zcontents
+\is \zvar |contentsheader\*
+\ip \ztoc |main\*
+\ip

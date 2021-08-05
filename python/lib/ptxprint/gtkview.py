@@ -454,6 +454,7 @@ class GtkViewModel(ViewModel):
 
         self.picListView = PicList(self.builder.get_object('tv_picListEdit'), self.builder, self)
         self.styleEditor = StyleEditorView(self)
+        self.pubvarlist = self.builder.get_object("ls_zvarList")
 
         self.mw = self.builder.get_object("ptxprint")
 
@@ -512,12 +513,14 @@ class GtkViewModel(ViewModel):
         if self.pendingConfig is not None:
             self.set("ecb_savedConfig", self.pendingConfig)
             self.pendingConfig = None
+
         tv = self.builder.get_object("tv_fontFamily")
         cr = Gtk.CellRendererText()
         col = Gtk.TreeViewColumn("Family", cr, text=0, weight=1)
         tv.append_column(col)
         ts = self.builder.get_object("t_fontSearch")
         tv.set_search_entry(ts)
+
         self.mw.resize(830, 594)
         self.mw.show_all()
         GObject.timeout_add(1000, self.monitor)
@@ -740,6 +743,25 @@ class GtkViewModel(ViewModel):
                 w.set_active(True)
             return
         setWidgetVal(wid, w, value)
+
+    def getvar(self, k):
+        for r in self.pubvarlist:
+            if r[0] == k:
+                return r[1]
+
+    def setvar(self, k, v):
+        for r in self.pubvarlist:
+            if r[0] == k:
+                r[1] = v
+                break
+        else:
+            self.pubvarlist.append([k, v])
+
+    def allvars(self):
+        return [r[0] for r in self.pubvarlist]
+
+    def clearvars(self):
+        self.pubvarlist.clear()
 
     def onDestroy(self, btn):
         if self.logfile != None:
@@ -1293,7 +1315,7 @@ class GtkViewModel(ViewModel):
                   "scroll_TeXfile" : ("", ".tex"), "scroll_XeTeXlog" : ("", ".log"), "scroll_Settings": ("", "")}
 
         if pgid == "scroll_FrontMatter": # This hasn't been built yet, but is coming soon!
-            fpath = os.path.join(self.settings_dir, prjid, "shared", "ptxprint", "FRTlocal.sfm")
+            fpath = self.configFRT()
             if not os.path.exists(fpath):
                 self.fileViews[pgnum][0].set_text("\n" +_(" Click the Generate button (above) to start the process of creating Front Matter..."))
                 fpath = None
@@ -1376,16 +1398,24 @@ class GtkViewModel(ViewModel):
     def onSavePicListEdits(self, btn):
         self.savePics()
 
-    def onSaveEdits(self, btn):
-        pg = self.builder.get_object("nbk_Viewer").get_current_page()
-        pgid = self.notebooks["Viewer"][pg]
+    def onSaveEdits(self, btn, pgid=None):
+        if pgid is not None:
+            try:
+                pg = self.notebooks["Viewer"].index(pgid)
+            except ValueError:
+                pg = 0
+        else:
+            pg = self.builder.get_object("nbk_Viewer").get_current_page()
+            pgid = self.notebooks["Viewer"][pg]
         buf = self.fileViews[pg][0]
-        if pg == 1:
+        if pgid == "scroll_AdjList":
             bk = self.get("ecb_examineBook")
             fname = self.getAdjListFilename(bk, ext=".adj")
             fdir= os.path.join(self.configPath(self.configName()), "AdjLists")
             os.makedirs(fdir, exist_ok=True)
             fpath = os.path.join(fdir, fname)
+        elif pgid == "scroll_FrontMatter":
+            fpath = self.configFRT()
         else:
             fpath = self.builder.get_object("l_{1}".format(*pgid.split("_"))).get_tooltip_text()
         if fpath is None: return
@@ -3175,13 +3205,43 @@ class GtkViewModel(ViewModel):
 
     def rescanFRTvarsClicked(self, btn):
         prjid = self.get("fcb_project")
-        self.onSaveEdits(None) # make sure that FRTlocal has been saved
-        with universalopen(os.path.join(self.settings_dir, prjid, "shared", "ptxprint", "FRTlocal.sfm")) as inf:
+        self.onSaveEdits(None, pgid="scroll_FrontMatter") # make sure that FRTlocal has been saved
+        fpath = self.configFRT()
+        with universalopen(fpath) as inf:
             frtxt = inf.read()
-        vlst = re.findall(r"(?<=\\zvar\|)([a-zA-Z0-9]+)\\\*", frtxt)
+        vlst = re.findall(r"(?<=\\zvar\s*\|)([a-zA-Z0-9]+)\\\*", frtxt)
         print(set(vlst))
         
     def onEnglishClicked(self, btn):
         self.styleEditor.editMarker()
         self.userconfig.set("init", "englinks", "true" if self.get("c_useEngLinks") else "false")
         
+    def onzvarEdit(self, tv, path, text): #cr, path, text, tv):
+        if len(text) > 0:
+            model = tv.get_model()
+            it = model.get_iter_from_string(path)
+            if it:
+                model.set(it, 1, text)
+
+    def onzvarAdd(self, btn):
+        def responseToDialog(entry, dialog, response):
+            dialog.response(response)
+        dialog = Gtk.MessageDialog(parent=None, message_type=Gtk.MessageType.QUESTION,
+                 buttons=Gtk.ButtonsType.OK_CANCEL, text=_("Variable Name"))
+        entry = Gtk.Entry()
+        entry.connect("activate", responseToDialog, dialog, Gtk.ResponseType.OK)
+        dbox = dialog.get_content_area()
+        dbox.pack_end(entry, False, False, 0)
+        dialog.set_keep_above(True)
+        dialog.show_all()
+        response = dialog.run()
+        if response == Gtk.ResponseType.OK:
+            k = entry.get_text()
+            self.setvar(k, "")
+        dialog.destroy()
+
+    def onzvarDel(self, btn):
+        tv = self.builder.get_object("tv_zvarEdit")
+        selection = tv.get_selection()
+        model, i = selection.get_selected()
+        model.remove(i)
