@@ -11,6 +11,7 @@ from ptxprint.font import getfontcache
 from ptxprint.usfmerge import usfmerge2
 from ptxprint.utils import _, universalopen, print_traceback
 from ptxprint.pdf.fixcol import fixpdffile
+from ptxprint.toc import parsetoc, createtocvariants, generateTex
 from datetime import datetime
 
 _errmsghelp = {
@@ -569,9 +570,9 @@ class RunJob:
             info.printer.editFile_delayed(logfname, "wrk", "scroll_XeTeXlog", False)
             numruns += 1
             self.rerunReasons = []
+            tocfname = os.path.join(self.tmpdir, outfname.replace(".tex", ".toc"))
             if self.res > 0:
                 rerun = False
-                tocfname = outfname.replace(".tex", ".toc")
                 if os.path.exists(tocfname):
                     os.remove(tocfname)
                 break
@@ -590,8 +591,13 @@ class RunJob:
                         print(_("Rerunning because the {} changed").format(cacheexts[a][0]))
                         rererun = True
                         break
+            if os.path.exists(tocfname):
+                newtoc = generateTex(createtocvariants(parsetoc(tocfname)))
+                with open(tocfname, "w", encoding="utf-8") as outf:
+                    outf.write(newtoc)
             if not rererun:
                 break
+
         if not self.noview and not self.args.testing and not self.res:
             self.printer.incrementProgress()
             cmd = ["xdvipdfmx", "-E", "-V", "1.4", "-C", "16", "-q",
