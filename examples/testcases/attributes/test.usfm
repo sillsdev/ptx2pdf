@@ -37,3 +37,8 @@ dignissimos ducimus\w qui|a\w*blanditiis praesentium voluptatum deleniti atque c
 \v 5 \qt-s|foo\*Unknown attribution\qt-e\* libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus.
 \p 
 \v 5b Now here is a \w jump|link-href="#pgtop1"\w*, as is \w this|link-href="TST 1:3"\w*, but this isn't.
+\zmine-s\*
+\s A test of a custom milestone
+\p 
+\v 6 Maybe this is disputed text or something \zmine-e\* but this isn't
+\v 7 And then \zmine-s\* another bit of disputed text\zmine-e\*

@@ -1,7 +1,10 @@
 \id TST Test file
 \h small test file
+\mt Testing Footnotes
+\is1 This is an introductory title\f + \ft And a footnote on an introductory title\f*
+\ip And this is an introductory paragraph\f + \ft With a footnote on it\f*
 \c 1
-\s This is a title
+\s This is a title\f + \ft And this is a footnote on a title\f*
 \p
 \v 1 This is normal text.\f + \fr 1:1 \ft Supposedly\f*  There are 4 hook positions: before, start, end,
 after.  But this is about footnotes\fe + \ft and endnotes \fe*, not hooks.
@@ -41,4 +44,6 @@ This should generate a warning:
 \p
 \v 6
 Nostrum eaque repellat assumenda nesciunt est non alias. Earum nemo laborum eos recusandae atque. Rerum aliquam dolor fuga impedit. Blanditiis ullam asperiores est enim ullam cupiditate. Fugiat id nam recusandae sequi illo enim occaecati.
+
+\ip This is another intro paragraph\f + \ft An uninformative note\f*. I need to make it long enough so we can see how wide it is.
 
