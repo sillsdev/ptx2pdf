@@ -7,3 +7,4 @@ pycairo
 appdirs
 winreg; sys_platform == 'win32'
 Pillow
+icu

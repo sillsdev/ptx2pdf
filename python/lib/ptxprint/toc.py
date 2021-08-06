@@ -2,7 +2,7 @@
 
 import re
 from ptxprint.utils import bookcodes
-from icu import Collator
+from ptxprint.sfm.ducet import get_sortkey
 
 def parsetoc(infname):
     mode = 0
@@ -31,12 +31,11 @@ def createtocvariants(toc):
         for e in toc:
             if r[0] < int(bookcodes.get(e[0], -1)) < r[1]:
                 ttoc.append(e)
-    coll = Collator.createInstance()        # or RuleBasedCollator(rules)
     for i in range(3):
         ttoc = []
         k = "sort"+chr(97+i)
         res[k] = ttoc
-        for e in sorted(toc, key=lambda x:coll.getSortKey(x[i+1])):
+        for e in sorted(toc, key=lambda x:get_sortkey(x[i+1])):
             ttoc.append(e)
     return res
 

@@ -51,7 +51,7 @@ a = Analysis(['python/scripts/ptxprint'],
              datas =    [('python/lib/ptxprint/'+x, 'ptxprint') for x in 
                             ('ptxprint.glade', 'template.tex', 'picCopyrights.json', 'sRGB.icc', 'default_cmyk.icc')]
 					  + sum(([('python/lib/ptxprint/{}/*.*y'.format(x), 'ptxprint/{}'.format(x))] for x in ('sfm', 'pdf', 'pdfrw', 'pdfrw/objects')), [])
-                      + [('python/lib/ptxprint/sfm/*.*y', 'ptxprint/sfm')]
+                      + [('python/lib/ptxprint/sfm/*.txt', 'ptxprint/sfm')]
                       + [('docs/inno-docs/*.txt', 'ptxprint')]
                       + [('src/*.tex', 'ptx2pdf'), ('src/ptx2pdf.sty', 'ptx2pdf'), ('src/usfm_sb.sty', 'ptx2pdf')],
              hiddenimports = ['_winreg'],
