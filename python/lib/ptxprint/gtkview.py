@@ -3210,6 +3210,7 @@ class GtkViewModel(ViewModel):
         with universalopen(fpath) as inf:
             frtxt = inf.read()
         vlst = re.findall(r"(?<=\\zvar\s*\|)([a-zA-Z0-9]+)\\\*", frtxt)
+        # To do: need to add these to the ls_zvarList if they are not already there
         print(set(vlst))
         
     def onEnglishClicked(self, btn):
