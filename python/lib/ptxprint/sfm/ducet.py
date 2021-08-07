@@ -43,9 +43,9 @@ class DUCET(dict):
             currk = c
         if currk:
             colls.append(self.lookup(currk))
-        for i in range(level, 3):
-            res.append(b"".join(bytes(a) for k in colls for a in zip(k[2*i::6], k[2*i+1::6])))
-        return res
+        for i in range(0, level or 3):
+            res.append(b"".join(bytes(a) for k in colls for a in zip(k[2*i::6], k[2*i+1::6]) if a != (0,0)))
+        return b"\00\00".join(res)
 
 local_ducet = None
 def _get_local_ducet():
@@ -58,10 +58,7 @@ def get_sortkey(s, level=0):
     return _get_local_ducet().sortkey(s, level)
 
 def strkey(key):
-    res = []
-    for k in key:
-        res.append(".".join("{:04X}".format(*unpack(">H", e)) for e in (bytes(a) for a in zip(k[::2], k[1::2]))))
-    return str(res)
+    return ".".join("{:04X}".format(*unpack(">H", e)) for e in (bytes(a) for a in zip(key[::2], key[1::2])))
 
 
 if __name__ == "__main__":
@@ -69,5 +66,5 @@ if __name__ == "__main__":
 
     if len(sys.argv) == 2:
         ducet = _get_local_ducet()
-        k = ducet.sortkey(sys.argv[1])
+        k = ducet.sortkey(re.sub(r"\\u([0-9A-Fa-f]{4,6})", lmabda m:chr(int(m[1], 16)), sys.argv[1])
         print(strkey(k))
