@@ -748,7 +748,9 @@
     \vskip-\lastdepth
     \ifhe@dings\endhe@dings\fi % if headings in process, end headings
     \penalty-100\vskip\baselineskip % ensure blank line between single and double column material
+    \holdinginserts=0
     \global\output={\savepartialpage}\eject
+    \holdinginserts=1
     \layoutstylebreak
     \global\let\layoutstylebreak\layoutstylebreak@doublecolumn
 	% if single column material already fills 3/4 page, go to next page to start double columns
@@ -761,7 +763,10 @@
       %\vbox{\hskip-\columnshift\box\partial}
       \unvbox\partial
       \ifdim\dimen0>\PageFullFactor\textheight\vfill\eject
-        \else\global\output={\savepartialpage}\eject
+      \else
+	\holdinginserts=0
+	\global\output={\savepartialpage}\eject
+	\holdinginserts=1
       \fi
     \else
       %\hsize=\textwidth
@@ -839,6 +844,9 @@
       \ifvoid\verybottomins\else\ifdim\availht > 0pt%
         \trace{o}{verybottomins(savepartialpage): height=\the\ht\verybottomins , availht=\the\availht, textheight=\the\textheight}
         \kern-\lastd@pth \lastd@pth=0pt \vskip\skip\verybottomins \unvbox\verybottomins \fi\fi
+      \iff@rstnote\else
+	\vskip\baselineskip
+      \fi
     }%
     \resetvsize%
     \ifdim\ht\colA>\baselineskip\plainoutput\fin@lverybottom
