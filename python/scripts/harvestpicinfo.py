@@ -2,7 +2,7 @@
 
 import sys, os, re, regex, gi
 import xml.etree.ElementTree as et
-from collections import Counter
+# from collections import Counter
 
 _bookslist = """GEN|50 EXO|40 LEV|27 NUM|36 DEU|34 JOS|24 JDG|21 RUT|4 1SA|31 2SA|24 1KI|22 2KI|25 1CH|29 2CH|36 EZR|10 NEH|13
         EST|10 JOB|42 PSA|150 PRO|31 ECC|12 SNG|8 ISA|66 JER|52 LAM|5 EZK|48 DAN|12 HOS|14 JOL|3 AMO|9 OBA|1 JON|4 MIC|7 NAM|3
@@ -147,7 +147,7 @@ def parsePTstngs(prjid):
         for c in doc.getroot():
             ptstngs[c.tag] = c.text
     else:
-        inferValues()
+        ptstngs = None
     return ptstngs
 
 def get(key, default=None):
@@ -155,42 +155,6 @@ def get(key, default=None):
     if res is None:
         return default
     return res
-
-def inferValues():
-    print("--infering setting values")
-    path = os.path.join(settings_dir, prjid)
-    sfmfiles = [x for x in os.listdir(path) if x.lower().endswith("sfm")]
-    for f in sfmfiles:
-        m = re.search(r"(\d{2})", f)
-        if not m:
-            continue
-        bk = allbooks[int(m.group(1))-1]
-        bki = f.lower().find(bk.lower())
-        if bki < 0:
-            continue
-        numi = m.start(1)
-        s = min(bki, numi)
-        e = max(bki+3, numi+2)
-        (pre, main, post) = f[:s], f[s:e], f[e:]
-        ptstngs['FileNamePrePart'] = pre
-        ptstngs['FileNamePostPart'] = post
-        main = main[:numi-s] + "41" + main[numi-s+2:]
-        main = main[:bki-s] + "MAT" + main[bki-s+3:]
-        ptstngs['FileNameBookNameForm'] = main
-        break
-
-    ptstngs['DefaultFont'] = ""
-    ptstngs['Encoding'] = 65001
-    
-    fbkfm = ptstngs['FileNameBookNameForm']
-    bknamefmt = get('FileNamePrePart', "") + \
-                fbkfm.replace("MAT","{bkid}").replace("41","{bkcode}") + \
-                get('FileNamePostPart', "")
-    bookspresent = [0] * len(allbooks)
-    for k, v in books.items():
-        if os.path.exists(os.path.join(path, bknamefmt.format(bkid=k, bkcode=v))):
-            bookspresent[v-1] = 1
-    ptstngs['BooksPresent'] = "".join(str(x) for x in bookspresent)
 
 for d in os.listdir(settings_dir):
     p = os.path.join(settings_dir, d)
@@ -205,7 +169,7 @@ for d in os.listdir(settings_dir):
                 allprojects.append(d)
                 try:
                     pts = _getPtSettings(d)
-                except:
+                except NameError:
                     continue
                 if pts is not None:
                     bks = getAllBooks(d)
