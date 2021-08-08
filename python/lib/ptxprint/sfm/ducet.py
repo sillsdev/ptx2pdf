@@ -66,5 +66,5 @@ if __name__ == "__main__":
 
     if len(sys.argv) == 2:
         ducet = _get_local_ducet()
-        k = ducet.sortkey(re.sub(r"\\u([0-9A-Fa-f]{4,6})", lmabda m:chr(int(m[1], 16)), sys.argv[1])
+        k = ducet.sortkey(re.sub(r"\\u([0-9A-Fa-f]{4,6})", lambda m:chr(int(m[1], 16)), sys.argv[1]))
         print(strkey(k))

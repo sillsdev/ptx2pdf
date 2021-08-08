@@ -20,7 +20,7 @@ def parsetoc(infname):
                     break
     return tocentries
 
-bkranges = {'ot': (0, 40), 'nt': (40, 68), 'deut': (67, 87)}
+bkranges = {'ot': (0, 40), 'nt': (40, 68), 'dc': (67, 87)}
 
 def createtocvariants(toc):
     res = {}
