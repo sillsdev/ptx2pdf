@@ -3209,7 +3209,7 @@ class GtkViewModel(ViewModel):
         fpath = self.configFRT()
         with universalopen(fpath) as inf:
             frtxt = inf.read()
-        vlst = re.findall(r"(?<=\\zvar\s*\|)([a-zA-Z0-9]+)\\\*", frtxt)
+        vlst = re.findall(r"(?<=\\zvar \|)([a-zA-Z0-9]+)\\\*", frtxt)
         # To do: need to add these to the ls_zvarList if they are not already there
         print(set(vlst))
         
