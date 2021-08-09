@@ -82,7 +82,7 @@
 
 \def\opentriglist "#1" {%
   \openin\t@stread="#1"
-  \ifeof\t@stread \def\n@xt{\MSG{Trigger list "#1" not found -- ignored}}%
+  \ifeof\t@stread \let\n@xt=\relax %\def\n@xt{\MSG{Trigger list "#1" not found -- ignored}}%
   \else \closein\t@stread \def\n@xt{\prepusfm\relax\input "\the\PtxFilePath#1"\relax\unprepusfm}\fi
   \n@xt
 }
@@ -94,7 +94,7 @@
   \edef\t@mptrigfilename{#1-\the\loopcount.triggers}%
   \advance\loopcount by 1
   \openin\t@stread="\t@mptrigfilename"
-  \ifeof\t@stread \def\n@xt{\MSG{Trigger list "\t@mptrigfilename" not found -- not checking for more}}%
+  \ifeof\t@stread \let\n@xt=\relax %\def\n@xt{\MSG{Trigger list "\t@mptrigfilename" not found -- not checking for more}}%
   \else \closein\t@stread \def\n@xt{\prepusfm\relax\input "\t@mptrigfilename"\relax\unprepusfm\m@ltitriglists{#1}}\fi
   \n@xt
 }

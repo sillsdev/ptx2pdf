@@ -6,8 +6,9 @@ This module contains the basic ucd information for every character in Unicode.
 
 SYNOPSIS:
 
-    from palaso.unicode.ucd import get_ucd
+    from palaso.unicode.ucd import get_ucd, norm_ucd
     print(get_ucd(0x0041, 'scx'))
+    nfc = normal_ucd(astring, "NFC")
 
 If you want to use your own data file (perhaps the module data is stale) the use
 the object interface:
@@ -38,6 +39,19 @@ _fields = ['_b0', 'age', 'na', 'JSN', 'gc', 'ccc', 'dt', 'dm', 'nt', 'nv',
            'scf', 'cf', 'jt', 'jg', 'ea', 'lb', 'sc', 'scx', 'NFKC_CF', 'FC_NFKC', 'InSC',
            'InPC', 'vo', 'blk', 'NFC_QC', 'NFD_QC', 'NFKC_QC', 'NFKD_QC']
 _fieldmap = dict((x, i) for i, x in enumerate(_fields))
+
+SBase = 0xAC00
+LBase = 0x1100
+VBase = 0x1161
+TBase = 0x11A7
+LCount = 19
+VCount = 21
+TCount = 28
+NCount = 581 # VCount * TCount
+SCount = 11039 # NCount * LCount
+LBaseEnd = 0x1113
+SBaseEnd = 0xD71F
+TBaseEnd = 0x11C3
 
 class _Codepoint(tuple):
     """Represents the complete information for a particular codepoint"""
@@ -181,31 +195,23 @@ class UCD(list):
 
     def isnormalized(self, txt, normtype):
         # Treat MAYBE as NO
+        if not len(txt):
+            return True
         qck = normtype+'_QC'
         tv = self.enums[qck].index('N')
         def testc(v):
             return v[qck] == tv
-        if not all(testc(self[c]) for c in txt):
+        if not all(testc(self[ord(c)]) for c in txt):
             return False
-        lastccc = self.get(txt[0], "ccc")
+        lastccc = self.get(ord(txt[0]), "ccc")
         for i in range(1, len(txt)):
-            nextccc = self.get(txt[i], "ccc")
+            nextccc = self.get(ord(txt[i]), "ccc")
             if nextccc < lastccc and nextccc != 0:
                 return False
             lastccc = nextccc
         return True
 
     def nfd(self, txt, compat=False):
-        SBase = 0xAC00
-        LBase = 0x1100
-        VBase = 0x1161
-        TBase = 0x11A7
-        LCount = 19
-        VCount = 21
-        TCount = 28
-        NCount = 581 # VCount * TCount
-        SCount = 11039 # NCount * LCount
-        SBaseEnd = 0xD71F
         def jamox(c):
             i = ord(c) - SBase
             l = LBase + (i // NCount)
@@ -219,11 +225,11 @@ class UCD(list):
                 r = self.get(c, 'dm', chr(c))
                 return r, r != c
         else:
-            dtnone = self.enums["dt"].index("none")
+            dtnone = self.enums["dt"].index("can")
             def expand(c):
                 if SBase <= c < SBaseEnd:
                     return jamox(c), False
-                elif self.get(c, "dt", noenum=True) != dtnone:
+                elif self.get(c, "dt", noenum=True) == dtnone:
                     return self.get(c, "dm"), True
                 else:
                     return chr(c), False
@@ -246,13 +252,43 @@ class UCD(list):
                 flat.insert(j, flat.pop(i))
         return "".join(flat)
 
+    def _combjamo(self, curr):
+        l = ord(curr[0]) - LBase
+        v = ord(curr[1]) - VBase
+        if len(curr) > 2:
+            t = ord(curr[2]) - TBase
+        else:
+            t = 0
+        code = SBase + (l * VCount + v) * TCount + t
+        return chr(code)
+
     def nfc(self, txt, compat=False):
         flat = self.nfd(txt, compat=compat)
         comps = self.komps if compat else self.comps
         stack = []
         curr = ""
         res = []
+        injamo = False
         for c in flat:
+            if injamo and LBaseEnd <= ord(c) < TBaseEnd:
+                curr += c
+                continue
+            elif LBase <= ord(c) < LBaseEnd:
+                if injamo:
+                    res.append(self._combjamo(curr))
+                    curr = ""
+                else:
+                    res.append(curr + "".join(stack))
+                stack.clear()
+                curr = c
+                injamo = True
+                continue
+            elif injamo:
+                res.append(self._combjamo(curr))
+                injamo = False
+                curr = ""
+                # fall through
+
             if curr + c in comps:
                 curr = comps[curr+c]
             elif int(self.get(ord(c), 'ccc')) > 0:
@@ -265,6 +301,9 @@ class UCD(list):
         return "".join(res)
 
     def normalize(self, txt, form="NFC"):
+        form = form.upper()
+        if self.isnormalized(txt, form):
+            return txt
         if form == "NFC":
             return self.nfc(txt)
         elif form == "NFD":
