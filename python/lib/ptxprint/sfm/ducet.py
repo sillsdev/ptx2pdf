@@ -13,7 +13,10 @@ zeroce = b"\00"*10
 
 
 class DUCET(dict):
-    def __init__(self, localfile=None):
+    def __init__(self, localfile=None, basedict=None):
+        if basedict is not None:
+            super().__init__(basedict)
+            return
         if localfile is None:
             localfile = os.path.join(os.path.dirname(__file__), "allkeys.txt")
         self.implicits = []
@@ -92,8 +95,8 @@ class DUCET(dict):
             return b""
         res = []
         colls = []
-        currk = txt[0]
         txt = normal_ucd(txt, 'NFD')
+        currk = txt[0]
         folvar = False
         for c in txt[1:]:
             if currk+c in self:
@@ -111,6 +114,71 @@ class DUCET(dict):
             else:
                 res.append(b"".join(bytes(a) for k in colls for a in zip(k[2*i::10], k[2*i+1::10]) if a != (0,0)))
         return b"\00\00".join(res)
+
+def splitkey(key):
+    res = [[]]
+    for i in range(0, len(key), 2):
+        if key[i:i+2] == b"\00\00":
+            res.append([])
+        else:
+            res[-1].append(key[i:i+2])
+    return [b"".join(r) for r in res]
+
+def makekey(bits):
+    maxe = max(len(x) for x in bits)
+    res = b"".join(b"".join(bits[i][j:j+2] if j < len(bits[i]) else b"\00\00" for i in range(3)) \
+                        for j in range(0, maxe, 2))
+    return res
+
+def tailored(ducet, tailoring):
+    res = DUCET(basedict=ducet)
+    expressions = tailoring.split('&')
+    for exp in expressions:
+        e = exp.strip()
+        if not len(e):
+            continue
+        bits = re.split(r"(<+|=)", e)
+        lastbase = None
+        lastcmp = 0
+        if len(bits) & 1 != 0:
+            bits += [""]
+        for b, o in zip(bits[::2], bits[1::2]):
+            base = b.strip()
+            if base.startswith("["):
+                raise SyntaxError("Can't handle complex tailorings, yet for {}".format(base))
+            (newkey, exp) = base.split("/",1) if "/" in base else (base, "")
+            nextcmp = 4 if o == "=" else len(o)
+            if lastbase is not None:
+                basebits = splitkey(lastbase)[:3]
+                if lastcmp == 4:
+                    pass
+                for i, below in enumerate((True, False, False)):
+                    if lastcmp == i + 1:
+                        lastp = unpack(">H", basebits[i][-2:])[0]
+                        if (below and lastp < 0x01FF) or (not below and lastp > 0x01FF):
+                            basebits[i] = basebits[i][:-2] + pack(">H", lastp+1)
+                        else:
+                            basebits[i] += b"\01\00" if below else b"\02\00"
+                        break
+                if exp:
+                    expbits = splitkey(res.sortkey(exp))[:3]
+                    newbits = [basebits[i] + expbits[i] for i in range(len(basebits))]
+                else:
+                    newbits = basebits
+                basekey = makekey(newbits)
+                res[newkey] = (basekey, False)
+                for i in range(2,len(newkey)):
+                    if newkey[0:i] not in res:
+                        a = splitkey(res.sortkey(newkey[0:i-1]))[:3]
+                        b = splitkey(res.sortkey(newkey[i-1]))[:3]
+                        nkey = [a[i] + b[i] for i in range(3)]
+                        res[newkey[0:i]] = makekey(nkey)
+                print("{}={}".format(repr(newkey), strkey(res.sortkey(newkey))))
+                lastbase = b"\00\00".join(basebits)
+            else:
+                lastbase = res.sortkey(newkey)
+            lastcmp = nextcmp
+    return res
 
 local_ducet = None
 def _get_local_ducet():
@@ -133,3 +201,5 @@ if __name__ == "__main__":
         ducet = _get_local_ducet()
         k = ducet.sortkey(re.sub(r"\\u([0-9A-Fa-f]{4,6})", lambda m:chr(int(m[1], 16)), sys.argv[1]), variable=SHIFTTRIM)
         print(strkey(k))
+        t = tailored(ducet, "&C<cs<<<cS<<<Cs<<<CS &cs<<<ccs/cs<<<ccS/cS<<<cCs/Cs<<<cCS/CS")
+
