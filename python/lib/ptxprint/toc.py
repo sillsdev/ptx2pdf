@@ -2,7 +2,7 @@
 
 import re
 from ptxprint.utils import bookcodes
-from ptxprint.sfm.ducet import get_sortkey
+from ptxprint.sfm.ducet import get_sortkey, SHIFTTRIM
 
 def parsetoc(infname):
     mode = 0
@@ -35,7 +35,7 @@ def createtocvariants(toc):
         ttoc = []
         k = "sort"+chr(97+i)
         res[k] = ttoc
-        for e in sorted(toc, key=lambda x:get_sortkey(x[i+1])):
+        for e in sorted(toc, key=lambda x:get_sortkey(x[i+1], variable=SHIFTTRIM)):
             ttoc.append(e)
     return res
 

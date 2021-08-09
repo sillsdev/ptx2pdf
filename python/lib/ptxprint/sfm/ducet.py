@@ -25,7 +25,11 @@ class DUCET(dict):
                 if line.startswith("@implicitweights "):
                     chrange, base = line[17:].split(";")
                     start, end = chrange.split("..")
-                    self.implicits.append((int(start, 16), int(end, 16), int(base, 16)))
+                    basev = pack(">H", int(base, 16))
+                    starti = int(start, 16)
+                    for i in range(starti, int(end, 16)+1):
+                        key = chr(i)
+                        self[key] = basev + b"\00\00\00\00" + pack(">H", i - starti + 0x8000) + b"\00\00\00\00"
                     continue
                 k, v = line.split(";", 1)
                 key = "".join(chr(int(x, 16)) for x in k.rstrip().split())
@@ -34,6 +38,13 @@ class DUCET(dict):
                 for vm in vs:
                     vals.append(b"".join(pack(">H", int(x, 16)) for x in vm[1:]))
                 self[key] = (b"".join(vals), vm[0][0] == '*')
+
+    def __getitem__(self, k):
+        if k in self:
+            return super().get(k)
+        elif len(k) == 1:
+            return pack(">H", (ord(k) >> 15) + 0xFBC0) + b"\00\00\00\00"
+        return None
 
     def _shifttest(self, val, variable, l4, folvar):
         zero = b"\00"*4
@@ -77,16 +88,16 @@ class DUCET(dict):
             return (b"".join(bytes(val[x:x+6]) + l4 for x in range(0, len(val), 6)), False)
 
     def sortkey(self, txt, level=0, back=-1, variable=NONIGNORE):
+        if not len(txt):
+            return b""
         res = []
         colls = []
-        currk = ""
+        currk = txt[0]
         txt = normal_ucd(txt, 'NFD')
         folvar = False
-        for c in txt:
+        for c in txt[1:]:
             if currk+c in self:
                 currk += c
-                continue
-            if not currk:
                 continue
             (ce, folvar) = self.lookup(currk, variable, folvar)
             colls.append(ce)
