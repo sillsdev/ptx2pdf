@@ -78,7 +78,7 @@
   \edef\attrid{\milestoneOp id}% id / sid / eid, depending.
 }
 
-\def\@ttrSlash#1\*{\trace{m}{@ttrSlash}\xdef\attrib@rgs{#1}\message{Attr:\attrib@rgs}\in@ttribtrue\*}
+\def\@ttrSlash#1\*{\xdef\attrib@rgs{#1}\trace{m}{@ttrSlash: Attr:\attrib@rgs}\in@ttribtrue\*}
 
 \def\*{%This might end a + style (c)  or a normal style character style(C), or a milestone style
   \trace{m}{slash *}%
@@ -176,8 +176,8 @@
   \fi
   \trace{m}{Stack now: \mcstack}%
   \iftemp
-    \message{End-milestone of class '\MSch@cking', id '\MSch@ckid' partially matched one or more open milestones, but no match on the id was
-    found, sid and eid must match exactly}%
+    \message{End-milestone of class '\MSch@cking', id '\MSch@ckid' partially matched one or 
+      more open milestones, but no match on the id was found, sid and eid must match exactly}%
   \fi
 }
 %+csty_milestone
