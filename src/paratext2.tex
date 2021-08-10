@@ -814,10 +814,14 @@
 \def\msg#1{\immediate\write16{#1}}
 
 %+c_savepartialpage
+\newif\ifMidPageFootnotes % Should footnotes go before a single-double column transition
+\MidPageFootnotesfalse
+
 \def\savepartialpage{% save a partially-full page when switching to 2-column format,
   \xdef\p@gebotmark{\botmark}%
   \s@ttrialheight
   \c@lcavailht
+  \s@veallnotes{1}%
   \setbox\s@vedpage=\copy255
   % split the galley to the actual size available
   \setbox\colA=\vsplit255 to \availht
@@ -837,15 +841,18 @@
         \box\colA\hbox to \ExtraRMargin{}\hfil}%
       \ifvoid\bottomins\else%
         \kern-\lastd@pth \lastd@pth=0pt \vskip\skip\bottomins \unvbox\bottomins \fi
-      \f@rstnotetrue
-      \m@kenotebox
-      \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2}%
-      \unvbox2 %\kern-\lastd@pth\lastdepth=\dp2\unvbox2
-      \ifvoid\verybottomins\else\ifdim\availht > 0pt%
-        \trace{o}{verybottomins(savepartialpage): height=\the\ht\verybottomins , availht=\the\availht, textheight=\the\textheight}
-        \kern-\lastd@pth \lastd@pth=0pt \vskip\skip\verybottomins \unvbox\verybottomins \fi\fi
-      \iff@rstnote\else
-	\vskip\baselineskip
+      \ifMidPageFootnotes
+	\f@rstnotetrue
+	\m@kenotebox
+	\trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2}%
+	\unvbox2 %\kern-\lastd@pth\lastdepth=\dp2\unvbox2
+	\ifvoid\verybottomins\else\ifdim\availht > 0pt%
+	  \trace{o}{verybottomins(savepartialpage): height=\the\ht\verybottomins , availht=\the\availht, textheight=\the\textheight}
+	  \kern-\lastd@pth \lastd@pth=0pt \vskip\skip\verybottomins \unvbox\verybottomins \fi\fi
+	\iff@rstnote\else
+	  \vskip\baselineskip
+	\fi
+	\s@veallnotes{1}% save the state after notes are used.
       \fi
     }%
     \resetvsize%
@@ -1282,14 +1289,16 @@
 \def\res@tpage{%Restore page to post-setup state
   \trace{i}{Restoring inserts}%
   \r@storeinserts{chunk}%
+  \r@storenotes{}{1}%
   \global\setbox255=\box\voidb@x
   \global\holdinginserts=1
-  \let\\=\cle@rn@tecl@ss \the\n@tecl@sses
+  %\let\\=\cle@rn@tecl@ss \the\n@tecl@sses
 }
 
 \def\s@tpage{%Save post-shipout state / reset other stuff that needs to happen after shipout 
   \trace{i}{Saving inserts}%
   \s@veinserts{chunk}%
+  \s@veallnotes{1}%
   \xdef\p@gefirstmark{}\xdef\p@gebotmark{}%
   \nextshipout
 }
@@ -1352,7 +1361,8 @@
 
 %+c_savepartialpaged_intro
 \newif\ifrerunsavepartialpaged
-\def\savepartialpaged{%
+\def\savepartialpaged{%Double columnn version of save partial page
+  \trace{o}{savepartialpaged}%
   \s@ttrialheight
   \c@lcavailht
   \setbox\s@vedpage=\vbox{\unvbox255}%
@@ -1367,6 +1377,7 @@
   \fi
   \iffitonpage
     \c@lcboxheights
+    \s@veallnotes{1}%
     \dimen3=\ifdim\colhtA>\colhtB\colhtA\else\colhtB\fi
     \ifdim\dimen3>\availht\dimen3=\availht\fi
     \ifColNotes\ifdim\ht\xr@fbox>\dimen3\dimen3=\ht\xr@fbox\fi\fi
@@ -1491,7 +1502,7 @@
       \hbox to \dimen1{\hbox to \columnshift{}%
         \ifRTL \hbox to \ExtraRMargin{}\box\colB\makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen2}\box\colA
         \else \box\colA\makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen2}\box\colB\hbox to \ExtraRMargin{}\fi}%
-        %\else \box\colA\makecolumngutter{\the\dimen3}{\the\textheight}{0pt}\box\colB\hbox to \ExtraRMargin{}\fi}%
+        %\else \box\colA\makecolumngutter{\the\dimen3}{\the\textheight}{0pt}\box\colB\hbox to \ExtraRMargin{\fi}%
       \ifvoid\bottomins\else \kern-\lastd@pth
         \lastd@pth=0pt \vskip\skip\bottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\bottomins}}\fi % ouput bottom spanning pictures
       \f@rstnotetrue
@@ -1520,7 +1531,7 @@
     \trace{o}{Reducing vsize \the\vsize, by \the\baselineskip}%
     \global\advance\vsize by -\baselineskip
 	% clear insertions
-    \trace{i}{2coltrial: emptyinserts hIns=\the\holdinginserts}%
+    \trace{i}{2coltrial: emptyinserts hIns=\the\holdinginserts, vsz:\the\vsize}%
     \res@tpage
     \global\let\whichtrial=\twocoltrial                                     %(+)
     \global\output={\backingup}%
@@ -1568,8 +1579,7 @@
 
 %+c_backingup
 \def\backingup{% this output routine is used when we reduce \vsize;
-               % it will cause a new page break to be found, and then the \trial routine is called again
-  \trace{o}{backingup hIns=\the\holdinginserts(==1)}%
+               % it will cause a new page break to be found, and then the \trial routine is called again \trace{o}{backingup hIns=\the\holdinginserts(==1)}%
   \global\deadcycles=0
   \global\setbox\galley=\copy255
   \global\galleypenalty=\outputpenalty
@@ -1632,8 +1642,7 @@
   \count255=1000
   \global\count\topins=\count255
   \global\count\bottomins=\count255
-  %\let\\=\s@tn@tec@unt \the\n@tecl@sses % NECESSARY? reset \count for each note class
-  \global\holdinginserts=1 % don't pull out inserts yet, we are still adjusting page
+  %\let\\=\s@tn@tec@unt \the\n@tecl@sses % NECESSARY? reset \count for each note class \global\holdinginserts=1 % don't pull out inserts yet, we are still adjusting page
   %\msg{Starting diglot partial: \the\ht\partial, pagetotal: \the\pagetotal, vsize: \the\vsize}
 } 
 
