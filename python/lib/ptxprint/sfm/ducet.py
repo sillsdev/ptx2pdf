@@ -20,6 +20,20 @@ class DUCET(dict):
         if localfile is None:
             localfile = os.path.join(os.path.dirname(__file__), "allkeys.txt")
         self.implicits = []
+        self.specials = {   'first tertiary ignorable': (0, 0, 0),
+                            'last tertial ignorable': (0, 0, 0),
+                            'first secondary ignorable': (0, 0, 0),
+                            'last secondary ignorable': (0, 0, 0x1F),   # not really, but highest tertiary value
+                            'first primary ignorable': (0, 0x20, 0),
+                            'last primary ignorable': (0, 0, 0),    # calculated
+                            'first variable': (0x0200, 0, 0),
+                            'last variable': (0, 0, 0),     # calculated
+                            'first regular': (0xFFFF, 0, 0),    # calculated
+                            'last regular': (0, 0, 0),      # calculated
+                            'last implicit': (0xFCC1, 0, 0),     # 0xFBC0 + 0x10FFFF >> 15
+                            'first trailing': (0xFCC2, 0, 0),   # next after last implicit
+                            'last trailing': (0xFFFC, 0, 0)
+                        }
         with open(localfile) as inf:
             for l in inf.readlines():
                 line = l.split("#", 1)[0].rstrip()
@@ -41,7 +55,17 @@ class DUCET(dict):
                 for vm in vs:
                     vals.append(b"".join(pack(">H", int(x, 16)) for x in vm[1:]))
                 self[key] = (b"".join(vals), vm[0][0] == '*')
-
+                ce = tuple(int(x, 16) for x in vs[0][1:])
+                if vs[0][0] == "*" and ce > self.specials['last variable']:
+                    self.specials['last variable'] = ce
+                if vs[0][0] == "." and ce < self.specials['first regular']:
+                    self.specials['first regular'] = ce
+                if ce[0] < 0xFFF0 and ce > self.specials['last regular']:
+                    self.specials['last regular'] = ce
+                if vs[0][1] == "0000" and vs[0][2] != "0000" and \
+                        int(vm[0][2], 16) > self.specials['last primary ignorable'][1]:
+                    self.specials['last primary ignorable'] = (0, int(vm[0][2], 16), 0)
+                     
     def __getitem__(self, k):
         if k in self:
             return super().get(k)
@@ -145,20 +169,33 @@ def tailored(ducet, tailoring):
         for b, o in zip(bits[::2], bits[1::2]):
             base = b.strip()
             if base.startswith("["):
-                raise SyntaxError("Can't handle complex tailorings, yet for {}".format(base))
+                m = re.match(r"\[\s*before\s+(\d)\s*\]", base)
+                if m:
+                    before = int(m.group(1))
+                    base = base[m.end():].lstrip()
+                m = re.match(r"\[\s*(.*?)\s*\]", base)
+                if m:
+                    if lastbase is not None:
+                        raise SyntaxError("Special {} must occur after a reset".format(base))
+                    if m.group(1) in res.specials and lastbase is None:
+                        lastbase = "\00\00".join(pack(">H", x) for x in res.specials[m.group(1)])
+                        continue
+                    else:
+                        raise SyntaxError("Unexpected special {}".format(base))
             (newkey, exp) = base.split("/",1) if "/" in base else (base, "")
             nextcmp = 4 if o == "=" else len(o)
             if lastbase is not None:
                 basebits = splitkey(lastbase)[:3]
                 if lastcmp == 4:
                     pass
-                for i, below in enumerate((True, False, False)):
+                for i, startk in enumerate(('first trailing', 'last primary ignorable', 'last secondary ignorable')):
+                    start = res.specials[startk]
                     if lastcmp == i + 1:
                         lastp = unpack(">H", basebits[i][-2:])[0]
-                        if (below and lastp < 0x01FF) or (not below and lastp > 0x01FF):
+                        if (lastp > start[i]):
                             basebits[i] = basebits[i][:-2] + pack(">H", lastp+1)
                         else:
-                            basebits[i] += b"\01\00" if below else b"\02\00"
+                            basebits[i] += pack(">H", start[i]+1)
                         break
                 if exp:
                     expbits = splitkey(res.sortkey(exp))[:3]
@@ -187,8 +224,8 @@ def _get_local_ducet():
         local_ducet = DUCET()
     return local_ducet
 
-def get_sortkey(s, level=0):
-    return _get_local_ducet().sortkey(s, level)
+def get_sortkey(s, level=0, variable=NONIGNORE):
+    return _get_local_ducet().sortkey(s, level, variable=variable)
 
 def strkey(key):
     return ".".join("{:04X}".format(*unpack(">H", e)) for e in (bytes(a) for a in zip(key[::2], key[1::2])))
