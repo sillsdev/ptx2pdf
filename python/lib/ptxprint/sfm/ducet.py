@@ -34,6 +34,19 @@ class DUCET(dict):
                             'first trailing': (0xFCC2, 0, 0),   # next after last implicit
                             'last trailing': (0xFFFC, 0, 0)
                         }
+        self.parameters = { 'alternate': 'non-ignorable',
+                            'maxVariable': 'punct',
+                            'normalization': 'off',
+                            'strength': '3',
+                            'backwards': '0',
+                            'caseLevel': 'off',
+                            'caseFirst': 'off',
+                            'numericOrdering': 'off',
+                            'hiraganaQ': 'off',
+                            'supressContractions': '',
+                            'optimize': '',
+                            'reorder': ''
+                          }
         with open(localfile) as inf:
             for l in inf.readlines():
                 line = l.split("#", 1)[0].rstrip()
@@ -54,7 +67,7 @@ class DUCET(dict):
                 vs = re.findall(r"\[([.*])([0-9a-fA-F]{4})\.([0-9a-fA-F]{4})\.([0-9a-fA-F]{4})\]\s*", v.lstrip())
                 for vm in vs:
                     vals.append(b"".join(pack(">H", int(x, 16)) for x in vm[1:]))
-                self[key] = (b"".join(vals), vm[0][0] == '*')
+                self[key] = (b"".join(vals), vs[0][0] == '*')
                 ce = tuple(int(x, 16) for x in vs[0][1:])
                 if vs[0][0] == "*" and ce > self.specials['last variable']:
                     self.specials['last variable'] = ce
@@ -63,8 +76,8 @@ class DUCET(dict):
                 if ce[0] < 0xFFF0 and ce > self.specials['last regular']:
                     self.specials['last regular'] = ce
                 if vs[0][1] == "0000" and vs[0][2] != "0000" and \
-                        int(vm[0][2], 16) > self.specials['last primary ignorable'][1]:
-                    self.specials['last primary ignorable'] = (0, int(vm[0][2], 16), 0)
+                        int(vs[0][2], 16) > self.specials['last primary ignorable'][1]:
+                    self.specials['last primary ignorable'] = (0, int(vs[0][2], 16), 0)
                      
     def __getitem__(self, k):
         if k in self:
@@ -139,7 +152,7 @@ class DUCET(dict):
                 res.append(b"".join(bytes(a) for k in colls for a in zip(k[2*i::10], k[2*i+1::10]) if a != (0,0)))
         return b"\00\00".join(res)
 
-def splitkey(key):
+def _splitkey(key):
     res = [[]]
     for i in range(0, len(key), 2):
         if key[i:i+2] == b"\00\00":
@@ -148,13 +161,15 @@ def splitkey(key):
             res[-1].append(key[i:i+2])
     return [b"".join(r) for r in res]
 
-def makekey(bits):
+def _makekey(bits):
     maxe = max(len(x) for x in bits)
     res = b"".join(b"".join(bits[i][j:j+2] if j < len(bits[i]) else b"\00\00" for i in range(3)) \
                         for j in range(0, maxe, 2))
     return res
 
-def tailored(ducet, tailoring):
+def tailored(tailoring, ducet=None):
+    if ducet is None:
+        ducet = _get_local_ducet()
     res = DUCET(basedict=ducet)
     expressions = tailoring.split('&')
     for exp in expressions:
@@ -166,26 +181,27 @@ def tailored(ducet, tailoring):
         lastcmp = 0
         if len(bits) & 1 != 0:
             bits += [""]
+        before = 0
         for b, o in zip(bits[::2], bits[1::2]):
-            base = b.strip()
-            if base.startswith("["):
-                m = re.match(r"\[\s*before\s+(\d)\s*\]", base)
-                if m:
-                    before = int(m.group(1))
-                    base = base[m.end():].lstrip()
-                m = re.match(r"\[\s*(.*?)\s*\]", base)
-                if m:
-                    if lastbase is not None:
-                        raise SyntaxError("Special {} must occur after a reset".format(base))
-                    if m.group(1) in res.specials and lastbase is None:
-                        lastbase = "\00\00".join(pack(">H", x) for x in res.specials[m.group(1)])
-                        continue
-                    else:
-                        raise SyntaxError("Unexpected special {}".format(base))
+            base = b.strip().replace('\\', '')
+            done = False
+            for m in re.findall(r"\s*\[\s*(.*?)\s*\]\s*", base):
+                s = m.group(1)
+                if a := re.match(r"before\s+(\d)", s):
+                    before = int(a.group(1))
+                elif s in res.specials:
+                    if lastbase is None:
+                        lastbase = res.specials[s]
+                        done = True
+                elif a := match(r"(\S+)\s+(\S+)", s):
+                    if m.group(1) in res.parameters:
+                        res.parameters[m.group(1)] = m.group(2)
+            if done:
+                continue
             (newkey, exp) = base.split("/",1) if "/" in base else (base, "")
             nextcmp = 4 if o == "=" else len(o)
             if lastbase is not None:
-                basebits = splitkey(lastbase)[:3]
+                basebits = _splitkey(lastbase)[:3]
                 if lastcmp == 4:
                     pass
                 for i, startk in enumerate(('first trailing', 'last primary ignorable', 'last secondary ignorable')):
@@ -198,18 +214,18 @@ def tailored(ducet, tailoring):
                             basebits[i] += pack(">H", start[i]+1)
                         break
                 if exp:
-                    expbits = splitkey(res.sortkey(exp))[:3]
+                    expbits = _splitkey(res.sortkey(exp))[:3]
                     newbits = [basebits[i] + expbits[i] for i in range(len(basebits))]
                 else:
                     newbits = basebits
-                basekey = makekey(newbits)
+                basekey = _makekey(newbits)
                 res[newkey] = (basekey, False)
                 for i in range(2,len(newkey)):
                     if newkey[0:i] not in res:
-                        a = splitkey(res.sortkey(newkey[0:i-1]))[:3]
-                        b = splitkey(res.sortkey(newkey[i-1]))[:3]
+                        a = _splitkey(res.sortkey(newkey[0:i-1]))[:3]
+                        b = _splitkey(res.sortkey(newkey[i-1]))[:3]
                         nkey = [a[i] + b[i] for i in range(3)]
-                        res[newkey[0:i]] = makekey(nkey)
+                        res[newkey[0:i]] = _makekey(nkey)
                 print("{}={}".format(repr(newkey), strkey(res.sortkey(newkey))))
                 lastbase = b"\00\00".join(basebits)
             else:
@@ -224,8 +240,10 @@ def _get_local_ducet():
         local_ducet = DUCET()
     return local_ducet
 
-def get_sortkey(s, level=0, variable=NONIGNORE):
-    return _get_local_ducet().sortkey(s, level, variable=variable)
+def get_sortkey(s, level=0, variable=NONIGNORE, ducet=None):
+    if ducet is None:
+        ducet = _get_local_ducet()
+    return ducet.sortkey(s, level, variable=variable)
 
 def strkey(key):
     return ".".join("{:04X}".format(*unpack(">H", e)) for e in (bytes(a) for a in zip(key[::2], key[1::2])))

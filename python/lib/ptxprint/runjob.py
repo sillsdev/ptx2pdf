@@ -602,7 +602,10 @@ class RunJob:
                         rererun = True
                         break
             if os.path.exists(tocfname):
-                newtoc = generateTex(createtocvariants(parsetoc(tocfname)))
+                tailoring = self.printer.ptsettings.getCollation()
+                ducet = tailor(tailoring.text) if tailoring else None
+                print(tailoring.text)
+                newtoc = generateTex(createtocvariants(parsetoc(tocfname), ducet=ducet))
                 with open(tocfname, "w", encoding="utf-8") as outf:
                     outf.write(newtoc)
             if not rererun:

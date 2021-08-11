@@ -153,3 +153,5 @@ class ParatextSettings:
             res[fname] = self.langid+".ldml"
         return res
 
+    def getCollation(self):
+        return self.find_ldml('collations/collation[@type="standard"]/cr')
