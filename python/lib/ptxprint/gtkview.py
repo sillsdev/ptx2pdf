@@ -181,7 +181,7 @@ _sensitivities = {
     "c_fontFake":              ["s_fontBold", "s_fontItalic", "l_fontBold", "l_fontItalic"],
     "c_thumbtabs":             ["gr_thumbs"],
     "c_thumbrotate":           ["fcb_rotateTabs"],
-    "c_frontmatter":           ["gr_frontmatter"],
+    "c_frontmatter":           ["c_periphPageBreak", "btn_editFrontMatter"],
     "c_colophon":              ["gr_colophon"],
     "c_plCreditApply2all":     ["c_plCreditOverwrite"],
 }
@@ -207,11 +207,11 @@ _object_classes = {
     "thumbtabs":   ("l_thumbVerticalL", "l_thumbVerticalR", "l_thumbHorizontalL", "l_thumbHorizontalR"),
     "stylinks":    ("lb_style_s", "lb_style_r", "lb_style_v", "lb_style_f", "lb_style_x", 
                     "lb_style_rb", "lb_style_gloss|rb", "lb_style_toc3", "lb_style_x-credit|fig"), 
-    "stybutton":   ("btn_reloadConfig", "btn_resetCopyright", "btn_resetColophon", "btn_resetFNcallers", "btn_resetXRcallers", 
-                    "btn_styAdd", "btn_styEdit", "btn_styDel", "btn_styReset", "btn_refreshFonts", "btn_resetStyFilter",
-                    "btn_plAdd", "btn_plDel", "btn_plGenerate", "btn_plSaveEdits", "btn_resetTabGroups",
-                    "btn_adjust_spacing", "btn_adjust_top", "btn_adjust_bottom", "btn_DBLbundleDiglot",
-                    "btn_resetGrid")
+    "stybutton":   ("btn_reloadConfig", "btn_resetCopyright", "btn_rescanFRTvars", "btn_resetColophon", 
+                    "btn_resetFNcallers", "btn_resetXRcallers", "btn_styAdd", "btn_styEdit", "btn_styDel", 
+                    "btn_styReset", "btn_refreshFonts", "btn_resetStyFilter", "btn_plAdd", "btn_plDel", 
+                    "btn_plGenerate", "btn_plSaveEdits", "btn_resetTabGroups", "btn_adjust_spacing", 
+                    "btn_adjust_top", "btn_adjust_bottom", "btn_DBLbundleDiglot", "btn_resetGrid")
 }
 
 _pgpos = {
@@ -640,7 +640,8 @@ class GtkViewModel(ViewModel):
                   "fr_spacingAdj", "fr_fallbackFont", "l_complexScript", "b_scrsettings", "c_colorfonts",
                   "scr_picListEdit", "gr_picButtons", "tb_picPreview", "l_linesOnPageLabel", "l_linesOnPage", "fr_tabs",
                   "btn_adjust_spacing", "btn_adjust_top", "btn_adjust_bottom", "fr_diglot", "btn_diglotSwitch", "fr_borders",
-                  "c_grid", "btn_adjustGrid", "lb_omitPics"): #, "c_noInkFooter"):
+                  "c_grid", "btn_adjustGrid", "lb_omitPics", "tb_PubInfo", "bx_frontmatter", "bx_colophon"): #, "c_noInkFooter"):
+                  
             # print(c)
             self.builder.get_object(c).set_visible(not val)
 
@@ -661,6 +662,14 @@ class GtkViewModel(ViewModel):
                 if self.get("c_borders"):
                     self.builder.get_object("fr_borders").set_visible(True)
 
+            if self.get("c_frontmatter"):
+                self.builder.get_object("tb_PubInfo").set_visible(True)
+                self.builder.get_object("bx_frontmatter").set_visible(True)
+
+            if self.get("c_colophon"):
+                self.builder.get_object("tb_PubInfo").set_visible(True)
+                self.builder.get_object("bx_colophon").set_visible(True)
+
         # Disable/Enable the Details and Checklist tabs on the Pictures tab
         for w in ["tb_details", "tb_checklist"]:
             self.builder.get_object(w).set_sensitive(not val)        
@@ -671,7 +680,8 @@ class GtkViewModel(ViewModel):
         for pre in ("l_", "lb_"):
             for h in ("ptxprintdir", "prjdir", "settings_dir", "pdfViewer", "techFAQ", "reportBugs"): 
                 self.builder.get_object("{}{}".format(pre, h)).set_visible(not val)
-                
+
+        self.noInternetClicked(None)
         self.colorTabs()
         # Resize Main UI Window appropriately
         if val:
@@ -748,6 +758,7 @@ class GtkViewModel(ViewModel):
         for r in self.pubvarlist:
             if r[0] == k:
                 return r[1]
+        return None
 
     def setvar(self, k, v):
         for r in self.pubvarlist:
@@ -998,6 +1009,9 @@ class GtkViewModel(ViewModel):
 
     def colorTabs(self):
         col = "#688ACC"
+
+        pi = " color='"+col+"'" if (self.get("c_frontmatter") or self.get("c_colophon")) else ""
+        self.builder.get_object("lb_PubInfo").set_markup("<span{}>".format(pi)+_("Publication Info")+"</span>")
 
         ic = " color='"+col+"'" if self.get("c_includeillustrations") else ""
         self.builder.get_object("lb_Pictures").set_markup("<span{}>".format(ic)+_("Pictures")+"</span>")
@@ -3209,9 +3223,10 @@ class GtkViewModel(ViewModel):
         fpath = self.configFRT()
         with universalopen(fpath) as inf:
             frtxt = inf.read()
-        vlst = re.findall(r"(?<=\\zvar \|)([a-zA-Z0-9]+)\\\*", frtxt)
-        # To do: need to add these to the ls_zvarList if they are not already there
-        print(set(vlst))
+        vlst = regex.findall(r"(\\zvar ?\|)([a-zA-Z0-9]+)\\\*", frtxt)
+        for a, b in vlst:
+            if self.getvar(b) is None:
+                self.setvar(b, "")
         
     def onEnglishClicked(self, btn):
         self.styleEditor.editMarker()
@@ -3238,11 +3253,13 @@ class GtkViewModel(ViewModel):
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
             k = entry.get_text()
-            self.setvar(k, "")
+            if self.getvar(k) is None:
+                self.setvar(k, "")
         dialog.destroy()
 
     def onzvarDel(self, btn):
         tv = self.builder.get_object("tv_zvarEdit")
         selection = tv.get_selection()
         model, i = selection.get_selected()
-        model.remove(i)
+        model.remove(i)  # - this doesn't work
+        # ??? need to mimic: piclist.del_row(i)   - see gtkpiclist line 443

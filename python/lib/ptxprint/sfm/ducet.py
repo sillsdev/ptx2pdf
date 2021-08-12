@@ -187,15 +187,15 @@ def tailored(tailoring, ducet=None):
             done = False
             for m in re.findall(r"\s*\[\s*(.*?)\s*\]\s*", base):
                 s = m.group(1)
-                a = re.match(r"before\s+(\d)", s):
-                if a
+                a = re.match(r"before\s+(\d)", s)
+                if a:
                     before = int(a.group(1))            # We need to do something with this
                 elif s in res.specials:
                     if lastbase is None:
                         lastbase = res.specials[s]
                         done = True
                 else:
-                    a := match(r"(\S+)\s+(\S+)", s):
+                    a = re.match(r"(\S+)\s+(\S+)", s)
                     if a and a.group(1) in res.parameters:
                         res.parameters[a.group(1)] = a.group(2)
             if done:
