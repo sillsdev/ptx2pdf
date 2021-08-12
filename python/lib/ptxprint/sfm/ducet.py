@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 import re, os
 from struct import pack, unpack
-import pickle, bz2
+import pickle, bz2, copy
 from ptxprint.sfm.ucd import normal_ucd
 
 NONIGNORE = 0
@@ -16,12 +16,11 @@ class DUCET(dict):
     def __init__(self, localfile=None, basedict=None):
         if basedict is not None:
             super().__init__(basedict)
-            return
         if localfile is None:
             localfile = os.path.join(os.path.dirname(__file__), "allkeys.txt")
         self.implicits = []
         self.specials = {   'first tertiary ignorable': (0, 0, 0),
-                            'last tertial ignorable': (0, 0, 0),
+                            'last tertiary ignorable': (0, 0, 0),
                             'first secondary ignorable': (0, 0, 0),
                             'last secondary ignorable': (0, 0, 0x1F),   # not really, but highest tertiary value
                             'first primary ignorable': (0, 0x20, 0),
@@ -47,6 +46,8 @@ class DUCET(dict):
                             'optimize': '',
                             'reorder': ''
                           }
+        if basedict is not None:
+            return
         with open(localfile) as inf:
             for l in inf.readlines():
                 line = l.split("#", 1)[0].rstrip()
@@ -75,9 +76,8 @@ class DUCET(dict):
                     self.specials['first regular'] = ce
                 if ce[0] < 0xFFF0 and ce > self.specials['last regular']:
                     self.specials['last regular'] = ce
-                if vs[0][1] == "0000" and vs[0][2] != "0000" and \
-                        int(vs[0][2], 16) > self.specials['last primary ignorable'][1]:
-                    self.specials['last primary ignorable'] = (0, int(vs[0][2], 16), 0)
+                if ce[0] == 0 and ce[1] > self.specials['last primary ignorable'][1]:
+                    self.specials['last primary ignorable'] = (0, ce[1], 0)
                      
     def __getitem__(self, k):
         if k in self:
@@ -170,7 +170,7 @@ def _makekey(bits):
 def tailored(tailoring, ducet=None):
     if ducet is None:
         ducet = _get_local_ducet()
-    res = DUCET(basedict=ducet)
+    res = copy.copy(ducet)
     expressions = tailoring.split('&')
     for exp in expressions:
         e = exp.strip()
@@ -184,24 +184,28 @@ def tailored(tailoring, ducet=None):
         before = 0
         for b, o in zip(bits[::2], bits[1::2]):
             base = b.strip().replace('\\', '')
+            nextcmp = 4 if o == "=" else len(o)
             done = False
-            for m in re.findall(r"\s*\[\s*(.*?)\s*\]\s*", base):
+            end = 0
+            for m in re.finditer(r"\s*\[\s*(.*?)\s*\]\s*", base):
                 s = m.group(1)
+                end = m.end()
                 a = re.match(r"before\s+(\d)", s)
                 if a:
                     before = int(a.group(1))            # We need to do something with this
                 elif s in res.specials:
                     if lastbase is None:
-                        lastbase = res.specials[s]
+                        lastbase = b"".join(pack(">H", x) for x in res.specials[s])
                         done = True
                 else:
                     a = re.match(r"(\S+)\s+(\S+)", s)
                     if a and a.group(1) in res.parameters:
                         res.parameters[a.group(1)] = a.group(2)
             if done:
+                lastcmp = nextcmp
                 continue
+            base = base[end:].strip()
             (newkey, exp) = base.split("/",1) if "/" in base else (base, "")
-            nextcmp = 4 if o == "=" else len(o)
             if lastbase is not None:
                 basebits = _splitkey(lastbase)[:3]
                 if lastcmp == 4:
