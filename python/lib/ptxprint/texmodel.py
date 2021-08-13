@@ -807,7 +807,12 @@ class TexModel:
                         l = r"\pb" if self.dict['project/periphpagebreak'] and seenperiph else ""
                         seenperiph = True
                     l = re.sub(r"\\zperiphfrt\s*\|([^\\\s]+)", self._doperiph, l)
-                    fcontent.append(l.rstrip())
+                    f = re.findall(r"(.+)\*(\d+) ?", l.rstrip())
+                    if len(f):
+                        for x in range(0,int(f[0][1])):
+                            fcontent.append(f[0][0])
+                    else:
+                        fcontent.append(l.rstrip())
             with open(outfname, "w", encoding="utf-8") as outf:
                 outf.write("\n".join(fcontent))
 
@@ -1087,14 +1092,6 @@ class TexModel:
         if not self.asBool("document/ifmainbodytext"):
             self.localChanges.append((None, regex.compile(r"\\c 1 ?\r?\n.+".format(first), flags=regex.S), ""))
 
-        # Elipsize ranges of MISSING/Empty verses in the text (if 3 or more verses in a row are empty...) 
-        # if self.asBool("document/elipsizemptyvs"):
-            # self.localChanges.append((None, regex.compile(r"\\v (\d+)([-,]\d+)?\s*\r?\n(\\v (\d+)([-,]\d+)?\s*\r?\n){1,}", flags=regex.M), r"\\v \1-\4 {...} "))
-            # self.localChanges.append((None, regex.compile(r"(\r?\n\\c \d+ ?)(\r?\n\\v 1)", flags=regex.M), r"\1\r\n\\p \2"))
-            # self.localChanges.append((None, regex.compile(r" (\\c \d+)\s*(\r?\n\\v 1)", flags=regex.M), r" \r\n\1\r\n\\p \2"))
-            # self.localChanges.append((None, regex.compile(r"(\{\.\.\.\}) (\\c \d+ ?)\r?\n\\v", flags=regex.M), r"\1\r\n\2\r\n\\p \\v"))
-            # self.localChanges.append((None, regex.compile(r"(\\c \d+ ?(\r?\n)+\\p (\r?\n)?\\v [\d-]+ \{\.\.\.\} ?(\r?\n)+)(?=\\c)", flags=regex.M), r"\1\\m {...}\r\n"))
-
         # Probably need to make this more efficient for multi-book and lengthy glossaries (cache the GLO & changes reqd etc.)
         if self.asBool("notes/glossaryfootnotes"):
             self.makeGlossaryFootnotes(printer, bk)
@@ -1139,8 +1136,6 @@ class TexModel:
             self.localChanges.append((None, regex.compile(r"\\r .+", flags=regex.M), ""))
 
         if self.asBool("document/preventorphans"): # Prevent orphans at end of *any* paragraph [anything that isn't followed by a \v]
-            # self.localChanges.append((None, regex.compile(r" ([^\\ ]+?) ([^\\ ]+?\r?\n)(?!\\v)", flags=regex.S), r" \1\u00A0\2"))
-            # OLD RegEx: Keep final two words of \q lines together [but doesn't work if there is an \f or \x at the end of the line] 
             self.localChanges.append((None, regex.compile(r"(\\q\d?(\s?\r?\n?\\v)?( \S+)+( (?!\\)[^\\\s]+)) (\S+\s*\n)", \
                                             flags=regex.M), r"\1\u00A0\5"))
             self.localChanges.append((None, regex.compile(r"(\s+[^ 0-9\\\n\u2000\u00A0]+) ([^ 0-9\\\n\u2000\u00A0]+\n(?:\\[pmqsc]|$))", flags=regex.S), r"\1\u00A0\2"))
@@ -1234,46 +1229,11 @@ class TexModel:
                 print(report)
         return self.localChanges
 
-    def figNameChanges(self, printer, bk): # @@@ FIXME - once we have the other system working...
-        # This method will probably disappear once we have a way to handle the peripheral books
-        if printer is None:
-            return([])
-        figlist = []
-        figchngs = []
-        prjid = self.dict['project/id']
-        prjdir = os.path.join(self.ptsettings.basedir, prjid)
-        picdir = os.path.join(prjdir, 'PrintDraft', 'tmpPics') #.replace("\\","/")
-        fname = printer.getBookFilename(bk, prjdir)
-        infpath = os.path.join(prjdir, fname)
-        extOrder = printer.getExtOrder()
-        with universalopen(infpath) as inf:
-            dat = inf.read()
-            inf.close()
-            figlist += re.findall(r"(?i)\\fig .*?\|(.+?\.(?=jpg|jpeg|tif|tiff|bmp|png|pdf)....?)\|.+?\\fig\*", dat)    # Finds USFM2-styled markup in text:
-            figlist += re.findall(r'(?i)\\fig .+src="(.+?\.(?=jpg|jpeg|tif|tiff|bmp|png|pdf)....?)" .+?\\fig\*', dat)  # Finds USFM3-styled markup in text:
-            for f in figlist:
-                found = False
-                for ext in extOrder:
-                    if ext.lower().startswith("tif"):
-                        ext = "jpg"
-                    tmpf = self.newBase(f)+"."+ext
-                    fname = os.path.join(picdir, tmpf)
-                    if os.path.exists(fname):
-                        figchngs.append((f,tmpf))
-                        found = True
-                        break
-                if not found:
-                    figchngs.append((f,"")) 
-        if len(figchngs):
-            print(figchngs)
-        return(figchngs)
-
     def base(self, fpath):
         doti = fpath.rfind(".")
         return os.path.basename(fpath[:doti])
 
     def codeLower(self, fpath):
-        #cl = re.findall(r"(?i)_?((?=ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib)..\d{5})[abcABC]?$", self.base(fpath))
         cl = re.match(self.printer.getPicRe()+"$", self.base(fpath))
         if cl:
             return cl[0].lower()

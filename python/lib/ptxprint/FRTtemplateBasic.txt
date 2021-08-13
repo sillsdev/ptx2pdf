@@ -1,18 +1,25 @@
+\rem ----------Page 1----------------
 \periph Title Page|id="title"
+\mt1
+\b*6
 \mt1 \zvar|maintitle\*
 \mt2 \zvar|subtitle\*
-\rem -------------------------------------
+
+\rem ----------Page 2----------------
 \periph Publication Data|id="pubdata"
-\pc \zvar|maintitle\*
+\mt
+\b*2
+\pc \zvar|maintitle\* 
 \pc \zvar|subtitle\*
 \pc \zvar|languagename\*
-\b
+\b*2
 \pc \zcopyright
 \pc \zlicense
-\b
+\b*2
 \pc \zimagecopyrights
-\rem -------------------------------------
+
+\rem ----------Page 3----------------
 \periph Table of Contents|id="contents"
-\is \zvar |contentsheader\*
-\ip \ztoc |main\*
+\is \zvar|contentsheader\*
+\ip \ztoc|main\*
 \ip

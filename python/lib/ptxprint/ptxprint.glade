@@ -935,15 +935,15 @@ You can also remove unwanted sections if they
 are inappropriate for this publication.
 Note: In order to make this template generic for
 several different publications in this project, you
-are encouraged to use \zvar_codes which will be
+are encouraged to use \zvar|variables\*  which will be
 replaced with publication-specific info when printed.
 For example:
-\mt1 \zvar_maintitle
-\mt2 \zvar_subtitle
-\pc \zvar_maintitlefr
-\pc \zvar_subtitlefr
-\pc \zvar_languagename
-\pc \zvar_copiesprinted</property>
+\mt1 \zvar|maintitle\*
+\mt2 \zvar|subtitle\*
+\pc \zvar|maintitlefr\*
+\pc \zvar|subtitlefr\*
+\pc \zvar|languagename\*
+\pc \zvar|copiesprinted\*</property>
                         <property name="halign">start</property>
                         <property name="draw_indicator">True</property>
                         <property name="group">r_generateFRT_basic</property>
@@ -959,8 +959,10 @@ For example:
                       <object class="GtkCheckButton" id="c_includeCoverSections">
                         <property name="label" translatable="yes">Include sections for a separate cover page</property>
                         <property name="visible">True</property>
+                        <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">False</property>
+                        <property name="no_show_all">True</property>
                         <property name="tooltip_text" translatable="yes">(Not yet implemented)
 Enable this option if you want to include the following
 sections (used for creating a cover page):
@@ -1026,14 +1028,14 @@ If in doubt, click Cancel.</property>
                     <child>
                       <object class="GtkRadioButton" id="r_generateFRT_paratext">
                         <property name="label" translatable="yes">PARATEXT: Make a copy of the Project's FRT book 
-(which may be edited to make use of \zvar_codes)</property>
+(which may be edited to make use of \zvar|variables\*)</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">False</property>
                         <property name="tooltip_text" translatable="yes">This option will create a COPY the Paratext project's
 FRT book to be used exclusively by PTXprint. This is
 only necessary if you wish to further edit the front
-matter to make use of PTXprint-specific \zvar_codes.
+matter to make use of PTXprint-specific \zvar|variables\*.
 
 If you just want to use Paratext's FRT book with no
 customization, then select the FRT book from the
@@ -17902,12 +17904,11 @@ in the list to be printed.)</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
-                            <property name="tooltip_text" translatable="yes">This button will (re-)generate the PicList(s) or
-AdjList(s) for all/any books which have been
-selected for printing.
+                            <property name="tooltip_text" translatable="yes">This button will (re-)generate content for 
+Front Matter, AdjList(s) and Final SFM.
 
-If you only want to (re-)generate a List for a 
-single book, then just select that book on the 
+If you only want to (re-)generate an Adj List for 
+a single book, then just select that book on the 
 Basic tab. Otherwise it will (re-)generate a Pic/Adj
 list for each of the books listed for printing.</property>
                             <property name="halign">start</property>

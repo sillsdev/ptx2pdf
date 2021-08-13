@@ -1,25 +1,23 @@
-\id FRT XYZ Project Name \zcopyright
-
-\rem -------------------------------------------------------------------------
 \rem This template has been created for use with PTXprint for semi-automatic 
-\rem generation of Front matter. Though it is structured on the USFM specification
-\rem for Paratext's FRT book, there are additional \zvar|codes\* used making it
-\rem unsuitable for use within Paratext without prior modification.
+\rem generation of front matter. Though it is structured on the USFM specification
+\rem for Paratext's FRT book, there are additional \zvar|variables\* used which
+\rem make it unsuitable for use within Paratext without prior modification.
+
+\rem !!! DELETE any unwanted sections and sample text before use !!!
 
 \rem -------------------------------------------------------------------------
 \periph Title Page|id="title"
 \rem -------------------------------------------------------------------------
+\mt1
+\b*6
 \mt1 \zvar|maintitle\*
 \mt2 \zvar|subtitle\*
-\pc \fig |xyzLogo.jpg|span||||\fig*
-\pc [Wycliffe Bible Translators, Inc. / Bible Society of Country / or Your Organization Name]
 
 \rem ---------RARELY USED -------------
 \periph Half Title Page|id="halftitle"
 \rem ----------------------------------
 \mt1 \zvar|maintitle\*
 \mt2 \zvar|subtitle\*
-\pc \fig |xyzLogo.jpg|span||||\fig*
 
 \rem ---------RARELY USED -------------
 \periph Promotional Page|id="promo"
@@ -32,22 +30,24 @@
 \rem -------------------------------------------------------------------------
 \periph Publication Data|id="pubdata"
 \rem -------------------------------------------------------------------------
+\mt
+\b*2
 \pc \zvar|maintitle\* 
 \pc \zvar|subtitle\*
-\pc Trial edition, limited distribution
+\b*2
 \pc Language: \zvar|languagename\* (\zvar|langiso\*)
 \pc Script: \zvar|script\*
-\pc Copies: \zvar|copiesprinted\*
-\pc ISBN: \zvar|isbn\*
+\pc Trial edition for limited distribution
+\pc Copies printed: \zvar|copiesprinted\*
+\b*2
 \pc \zcopyright
 \pc \zlicense
 \pc \zvar|licensetext\*
 \rem Permission requests:\bd* The text of this publication may be quoted (in written, visual or electronic form) up to one thousand (1,000) verses, or up to two hundred and fifty (250) verses for audio use without express written permission of the publisher, provided the verses quoted do not amount to a complete book of the NT, nor 50 percent or more of the total text of the work in which they are quoted.
-\b
+\b*2
 \pc \zimagecopyrights
-\b
-\pc \zvar|printedby\*
-\rem Acme Printers Pvt. Ltd., SomeCity - Postcode
+\b*3
+\pc Printed by: \zvar|printedby\*
 
 \rem -------------------------------------------------------------------------
 \periph Foreword|id="foreword"
@@ -67,7 +67,7 @@ of the meaning of the Bible.
 \mt1 Preface
 \ie
 \mt2 to the New Testament in the Wakawaka language
-\p The translation of the Bible into the Wakawaka language began in ... when ... due to an invitation from ...
+\p The translation of the Bible into the Wakawaka language began in ... when an invitation from ...
 \s1 The translation process
 \p In order to achieve the highest quality, a rigorous process has been used ...
 \s2 The text used for this translation
@@ -77,7 +77,7 @@ of the meaning of the Bible.
 \s2 How trustworthy is this translation?
 \p ...
 \pr Wakawaka Translation Committee
-\pr 2021
+\pr YYYY
 
 \s1 Helps for the reader
 \m Keep these matters in mind while reading:
@@ -89,26 +89,23 @@ of the meaning of the Bible.
 \rem -------------------------------------------------------------------------
 \periph Table of Contents|id="contents"
 \rem -------------------------------------------------------------------------
-\mt \zvar |contentsheader\*
+\mt \zvar|contentsheader\*
 \is Old Testament
-\ip \ztoc |ot\*
+\ip \ztoc|ot\*
 \is New Testament
-\ip \ztoc |nt\*
-\is Alphabetical Order
-\ip \ztoc |sortc\*
-\ip
+\ip \ztoc|nt\*
 
 \rem -------------------------------------------------------------------------
 \periph Alphabetical Contents|id="alphacontents"
 \rem -------------------------------------------------------------------------
-\zalphacontents
+\is Alphabetical Order of Books
+\ip \ztoc|sortc\*
+\ip
 
 \rem ---------RARELY USED -------------
 \periph Table of Abbreviations|id="abbreviations"
 \rem ----------------------------------
 \mt1 Alphabetical List of Biblical Books and Abbreviations
-\zabbreviations
-\rem                 or
 \tr  \th1 Name \th2 Abbrev.  \thr3 Page
 \tr  \tc1 Acts \tc2 Ac \tcr3 #
 \tr  \tc1 Amos \tc2 Am \tcr3 #

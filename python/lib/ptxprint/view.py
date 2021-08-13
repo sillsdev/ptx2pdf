@@ -961,7 +961,6 @@ class ViewModel:
             srcp = os.path.join(os.path.dirname(__file__), "FRTtemplateAdvanced.txt")
         elif frtype == "paratext":
             srcp = os.path.join(self.settings_dir, prjid, self.getBookFilename("FRT", prjid))
-            print("ptxfrt src:", srcp)
             
         copyfile(srcp, destp)
 

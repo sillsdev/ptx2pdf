@@ -388,6 +388,7 @@ class GtkViewModel(ViewModel):
         self.logfile = None
         self.rtl = False
         self.isDiglotMeasuring = False
+        self.warnedSIL = False
         self.printReason = 0
         self.lang = args.lang if args.lang is not None else 'en'
         ilang = self.builder.get_object("fcb_interfaceLang")
@@ -1263,6 +1264,8 @@ class GtkViewModel(ViewModel):
         bk = self.get("ecb_examineBook")
         bk = bk if bk in bks2gen else None
         if pgid == "scroll_FrontMatter":
+            ptFRT = os.path.exists(os.path.join(self.settings_dir, self.prjid, self.getBookFilename("FRT", self.prjid)))
+            self.builder.get_object("r_generateFRT_paratext").set_sensitive(ptFRT)
             dialog = self.builder.get_object("dlg_generateFRT")
             if sys.platform == "win32":
                 dialog.set_keep_above(True)
@@ -1306,7 +1309,8 @@ class GtkViewModel(ViewModel):
         for w in ["gr_editableButtons", "l_examineBook", "ecb_examineBook", "btn_saveEdits", 
                   "btn_refreshViewerText", "btn_viewEdit"]: # "btn_Generate", "btn_editZvars", "btn_removeZeros", 
             self.builder.get_object(w).set_sensitive(True)
-        self.builder.get_object("btn_Generate").set_sensitive(False)
+        genBtn = self.builder.get_object("btn_Generate")
+        genBtn.set_sensitive(False)
         self.builder.get_object("btn_editZvars").set_sensitive(False)
         self.builder.get_object("btn_removeZeros").set_sensitive(False)
         pgid = Gtk.Buildable.get_name(page)
@@ -1315,7 +1319,6 @@ class GtkViewModel(ViewModel):
         prjdir = os.path.join(self.settings_dir, prjid)
         bks = self.getBooks()
         bk = self.get("ecb_examineBook")
-        genBtn = self.builder.get_object("btn_Generate")
         if bk == None or bk == "" and len(bks):
             bk = bks[0]
             self.builder.get_object("ecb_examineBook").set_active_id(bk)
@@ -2810,6 +2813,13 @@ class GtkViewModel(ViewModel):
         btname = Gtk.Buildable.get_name(btn)
         w = self.builder.get_object(btname)
         t = w.get_text()
+        if not self.warnedSIL:
+            chkSIL = re.findall(r"(?i)s\.?i\.?l\.?", t)
+            if len(chkSIL):
+                self.doError(_("Warning! SIL's Executive Limitations do not permit SIL to publish scripture."), 
+                   secondary=_("Contact your entity's Publishing Coordinator for advice regarding protocols."))
+                t = re.sub(r"(?i)s\.?i\.?l\.?", "", t)
+                self.warnedSIL = True
         t = re.sub("</?p>", "", t)
         t = re.sub("\([cC]\)", "\u00a9 ", t)
         t = re.sub("\([rR]\)", "\u00ae ", t)
@@ -3260,6 +3270,7 @@ class GtkViewModel(ViewModel):
     def onzvarDel(self, btn):
         tv = self.builder.get_object("tv_zvarEdit")
         selection = tv.get_selection()
-        model, i = selection.get_selected()
-        model.remove(i)  # - this doesn't work
-        # ??? need to mimic: piclist.del_row(i)   - see gtkpiclist line 443
+        model, i = selection.get_selected_rows()
+        for r in i:
+            itr = model.get_iter(r)
+            model.remove(itr)
