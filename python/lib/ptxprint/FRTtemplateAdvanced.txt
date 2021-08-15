@@ -1,9 +1,9 @@
 \rem This template has been created for use with PTXprint for semi-automatic 
 \rem generation of front matter. Though it is structured on the USFM specification
-\rem for Paratext's FRT book, there are additional \zvar|variables\* used which
+\rem for Paratext's FRT book, there are additional \zvar variables used which
 \rem make it unsuitable for use within Paratext without prior modification.
 
-\rem !!! DELETE any unwanted sections and sample text before use !!!
+\rem !!! DELETE any unwanted sections (e.g. Promo) and sample text before use !!!
 
 \rem -------------------------------------------------------------------------
 \periph Title Page|id="title"
@@ -43,7 +43,7 @@
 \pc \zcopyright
 \pc \zlicense
 \pc \zvar|licensetext\*
-\rem Permission requests:\bd* The text of this publication may be quoted (in written, visual or electronic form) up to one thousand (1,000) verses, or up to two hundred and fifty (250) verses for audio use without express written permission of the publisher, provided the verses quoted do not amount to a complete book of the NT, nor 50 percent or more of the total text of the work in which they are quoted.
+\rem Permission requests: The text of this publication may be quoted (in written, visual or electronic form) up to one thousand (1,000) verses, or up to two hundred and fifty (250) verses for audio use without express written permission of the publisher, provided the verses quoted do not amount to a complete book of the NT, nor 50 percent or more of the total text of the work in which they are quoted.
 \b*2
 \pc \zimagecopyrights
 \b*3
@@ -99,25 +99,16 @@ of the meaning of the Bible.
 \periph Alphabetical Contents|id="alphacontents"
 \rem -------------------------------------------------------------------------
 \is Alphabetical Order of Books
+\rem sorta will sort by \toc1, sortb by \toc2, sortc by \toc3
 \ip \ztoc|sortc\*
 \ip
 
 \rem ---------RARELY USED -------------
 \periph Table of Abbreviations|id="abbreviations"
 \rem ----------------------------------
-\mt1 Alphabetical List of Biblical Books and Abbreviations
-\tr  \th1 Name \th2 Abbrev.  \thr3 Page
-\tr  \tc1 Acts \tc2 Ac \tcr3 #
-\tr  \tc1 Amos \tc2 Am \tcr3 #
-\tr  \tc1 1 Chronicles \tc2 1Ch \tcr3 #
-\tr  \tc1 2 Chronicles \tc2 2Ch \tcr3 #
-\tr  \tc1 Colossians \tc2 Col \tcr3 #
-\tr  \tc1 1 Corinthians \tc2 1Co \tcr3 #
-\tr  \tc1 2 Corinthians \tc2 2Co \tcr3 #
-\tr  \tc1 Daniel \tc2 Dn \tcr3 #
-
-\s1 Other Abbreviations
+\mt Abbreviations
 \tr  \tc1 Circa (around) \tc2 c \tc3 #
 \tr  \tc1 Old Testament \tc2 OT \tc3 #
 \tr  \tc1 New Testament \tc2 NT \tc3 #
 \tr  \tc1 Septuagint \tc2 LXX \tc3 #
+\ip

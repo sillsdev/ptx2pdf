@@ -1272,6 +1272,7 @@ class GtkViewModel(ViewModel):
             response = dialog.run()
             if response == Gtk.ResponseType.OK:
                 self.generateFrontMatter(self.get("r_generateFRT"), self.get("c_includeCoverSections"))
+                self.rescanFRTvarsClicked(None)
             if sys.platform == "win32":
                 dialog.set_keep_above(False)
             dialog.hide()
@@ -2814,11 +2815,11 @@ class GtkViewModel(ViewModel):
         w = self.builder.get_object(btname)
         t = w.get_text()
         if not self.warnedSIL:
-            chkSIL = re.findall(r"(?i)s\.?i\.?l\.?", t)
+            chkSIL = re.findall(r"(?i)\bs\.?i\.?l\.?\b", t)
             if len(chkSIL):
                 self.doError(_("Warning! SIL's Executive Limitations do not permit SIL to publish scripture."), 
                    secondary=_("Contact your entity's Publishing Coordinator for advice regarding protocols."))
-                t = re.sub(r"(?i)s\.?i\.?l\.?", "", t)
+                t = re.sub(r"(?i)\bs\.?i\.?l\.?\b", "", t)
                 self.warnedSIL = True
         t = re.sub("</?p>", "", t)
         t = re.sub("\([cC]\)", "\u00a9 ", t)
