@@ -32,8 +32,10 @@ from ptxprint.minidialog import MiniDialog
 from ptxprint.dbl import UnpackDBL
 import ptxprint.scriptsnippets as scriptsnippets
 from ptxprint.utils import _, f_, textocol
-import configparser
+import configparser, logging
 from threading import Thread
+
+logger = logging.getLogger(__name__)
 
 # ssl._create_default_https_context = ssl._create_unverified_context
 pdfre = re.compile(r".+[\\/](.+)\.pdf")
@@ -501,8 +503,10 @@ class GtkViewModel(ViewModel):
         Gtk.StyleContext().add_provider_for_screen(Gdk.Screen.get_default(), provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 
     def run(self, callback):
+        logger.debug("Starting to run gtkview")
         self.callback = callback
         fc = initFontCache()
+        logger.debug("Fonts initialised, well perhaps started")
         self.initialised = True
         for o in _olst:
             self.builder.get_object(o).set_sensitive(False)

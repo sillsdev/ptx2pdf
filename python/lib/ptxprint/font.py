@@ -3,6 +3,9 @@ import struct, re, os, sys
 # from gi.repository import Pango
 from pathlib import Path
 from threading import Thread
+import logging
+
+logger = logging.getLogger(__name__)
 
 fontconfig_template = """<?xml version="1.0"?>
 <fontconfig>
@@ -100,7 +103,9 @@ class TTFontCache:
 
     def wait(self):
         if self.busy:
+            logger.debug("Waiting for fonts thread")
             self.thread.join()
+            logger.debug("Fonts initialised")
 
     def loadFcList(self):
         files = checkoutput(["fc-list", ":file"], path="xetex")
