@@ -1272,7 +1272,7 @@ class GtkViewModel(ViewModel):
             response = dialog.run()
             if response == Gtk.ResponseType.OK:
                 self.generateFrontMatter(self.get("r_generateFRT"), self.get("c_includeCoverSections"))
-                self.rescanFRTvarsClicked(None)
+                self.rescanFRTvarsClicked(None, autosave=False)
             if sys.platform == "win32":
                 dialog.set_keep_above(False)
             dialog.hide()
@@ -3228,13 +3228,14 @@ class GtkViewModel(ViewModel):
         oldlist = buf.get_text(buf.get_start_iter(), buf.get_end_iter(), True)
         self.fileViews[pgnum][0].set_text(re.sub(r".+?\+0\s?\r?\n", "", oldlist))
 
-    def rescanFRTvarsClicked(self, btn):
+    def rescanFRTvarsClicked(self, btn, autosave=True):
         prjid = self.get("fcb_project")
-        self.onSaveEdits(None, pgid="scroll_FrontMatter") # make sure that FRTlocal has been saved
+        if autosave:
+            self.onSaveEdits(None, pgid="scroll_FrontMatter") # make sure that FRTlocal has been saved
         fpath = self.configFRT()
         with universalopen(fpath) as inf:
             frtxt = inf.read()
-        vlst = regex.findall(r"(\\zvar ?\|)([a-zA-Z0-9]+)\\\*", frtxt)
+        vlst = regex.findall(r"(\\zvar ?\|)([a-zA-Z0-9\-]+)\\\*", frtxt)
         for a, b in vlst:
             if self.getvar(b) is None:
                 self.setvar(b, "")
@@ -3272,6 +3273,6 @@ class GtkViewModel(ViewModel):
         tv = self.builder.get_object("tv_zvarEdit")
         selection = tv.get_selection()
         model, i = selection.get_selected_rows()
-        for r in i:
+        for r in reversed(i):
             itr = model.get_iter(r)
             model.remove(itr)

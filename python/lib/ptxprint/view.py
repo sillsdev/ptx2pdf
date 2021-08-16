@@ -955,6 +955,7 @@ class ViewModel:
     def generateFrontMatter(self, frtype="basic", inclcover=False):
         prjid = self.get("fcb_project")
         destp = self.configFRT()
+        print(destp)
         if frtype == "basic":
             srcp = os.path.join(os.path.dirname(__file__), "FRTtemplateBasic.txt")
         elif frtype == "advanced":
@@ -962,6 +963,7 @@ class ViewModel:
         elif frtype == "paratext":
             srcp = os.path.join(self.settings_dir, prjid, self.getBookFilename("FRT", prjid))
             
+        print("Copying:", srcp, "===>", destp)
         copyfile(srcp, destp)
 
     def generateHyphenationFile(self):
