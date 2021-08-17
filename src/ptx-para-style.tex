@@ -317,7 +317,7 @@
       \ifhe@dings\nobreak\fi
       \vskip\p@ram\verticalsp@ceunit                                              %(1)
     \fi
-    \edef\spc@ut{pdf:code EMC}\x@\special\x@{\spc@ut}%
+    %\edef\spc@ut{pdf:code EMC}\x@\special\x@{\spc@ut}%
   \fi
   %\ifx\mcstack\mcstack@mpty\else
     %\def\d@##1+##2\E{\edef\tmp{##2}%
@@ -411,7 +411,7 @@
    %
    \the\@veryparhooks
    \x@\writep@rstart\x@{\the\baselineskip}%baselineskip must fully expanded as macro param, else it remains a macro and only L baseline is output on diglot/polyglot.
-   \edef\spc@ut{pdf:code /\c@rref \space BMC}\x@\special\x@{\spc@ut}%
+   %\edef\spc@ut{pdf:code /\c@rref \space BMC}\x@\special\x@{\spc@ut}%
    \ifRTL \rightskip\else\leftskip\fi =0pt
    \ifRTL \beginR \leftskip\else\rightskip\fi =0pt \ifJustifyPars\else plus .25\hsize\fi
    \getp@ram{justification}{\m@rker}%

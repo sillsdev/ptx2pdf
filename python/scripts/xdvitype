@@ -20,36 +20,36 @@ opcodes += [
     ("simple", [], "nop"),
     ("bop", [4]*11, "bop"),
     ("simple", [], "eop"),       # code 140
-    ("simple", [], "push"),
-    ("simple", [], "pop"),
-    ("parmop", [-1], "right"),
-    ("parmop", [-2], "right"),
-    ("parmop", [-3], "right"),
-    ("parmop", [-4], "right"),
-    ("simple", [], "w"),
-    ("parmop", [-1], "w"),
-    ("parmop", [-2], "w"),
-    ("parmop", [-3], "w"),         # code 150
-    ("parmop", [-4], "w"),
-    ("simple", [], "x"),
-    ("parmop", [-1], "x"),
-    ("parmop", [-2], "x"),
-    ("parmop", [-3], "x"),
-    ("parmop", [-4], "x"),
-    ("parmop", [-1], "down"),
-    ("parmop", [-2], "down"),
-    ("parmop", [-3], "down"),
-    ("parmop", [-4], "down"),
-    ("simple", [], "y"),
-    ("parmop", [-1], "y"),
-    ("parmop", [-2], "y"),
-    ("parmop", [-3], "y"),
-    ("parmop", [-4], "y"),
-    ("simple", [], "z"),
-    ("parmop", [-1], "z"),
-    ("parmop", [-2], "z"),
-    ("parmop", [-3], "z"),
-    ("parmop", [-4], "z")]         # code 170
+    ("push", [], "push"),
+    ("pop", [], "pop"),
+    ("parmdim", [-1], "right"),
+    ("parmdim", [-2], "right"),
+    ("parmdim", [-3], "right"),
+    ("parmdim", [-4], "right"),
+    ("dim", [], "w"),
+    ("parmdim", [-1], "w"),
+    ("parmdim", [-2], "w"),
+    ("parmdim", [-3], "w"),         # code 150
+    ("parmdim", [-4], "w"),
+    ("dim", [], "x"),
+    ("parmdim", [-1], "x"),
+    ("parmdim", [-2], "x"),
+    ("parmdim", [-3], "x"),
+    ("parmdim", [-4], "x"),
+    ("parmdim", [-1], "down"),
+    ("parmdim", [-2], "down"),
+    ("parmdim", [-3], "down"),
+    ("parmdim", [-4], "down"),
+    ("dim", [], "y"),
+    ("parmdim", [-1], "y"),
+    ("parmdim", [-2], "y"),
+    ("parmdim", [-3], "y"),
+    ("parmdim", [-4], "y"),
+    ("dim", [], "z"),
+    ("parmdim", [-1], "z"),
+    ("parmdim", [-2], "z"),
+    ("parmdim", [-3], "z"),
+    ("parmdim", [-4], "z")]         # code 170
 opcodes += [("font", [], i) for i in range(64)]
 opcodes += [
     ("font", [1], None),
@@ -80,8 +80,16 @@ class XDviType:
     def __init__(self, fname, diffable=False):
         self.fonts = {}
         self.file = open(fname, "rb")
+        self.stack = []
         self.diffable = diffable
         self.pageno = 0
+        self.dviratio = 1.
+        self.h = 0      # all in dvi units
+        self.v = 0
+        self.w = 0
+        self.x = 0
+        self.y = 0
+        self.z = 0
 
     def readbytes(self, num):
         return self.file.read(num)
@@ -108,8 +116,12 @@ class XDviType:
             lastparm = opc[2]
             getattr(self, opc[0])(op, lastparm, data)
 
+    def asdimen(self, value):
+        res = value * self.dviratio
+        return "{:.2f}pt".format(res)
+
     def out(self, txt):
-        print(("pg[{}] ".format(self.pageno) + txt).encode("utf-8"))
+        print ("pg[{}] ".format(self.pageno) + txt)
         
     def setchar(self, opcode, parm, data):
         self.out("setchar({})".format(opcode))
@@ -120,12 +132,47 @@ class XDviType:
     def parmop(self, opcode, parm, data):
         self.out("{}({}) [{}]".format(parm, opcode, data[0]))
 
+    def parmdim(self, opcode, parm, data):
+        if parm in "wxyz":
+            setattr(self, parm, data[0])
+        acc = None
+        if parm in "wx" or parm == "right":
+            acc = 'h'
+        elif parm in "yz" or parm == "down":
+            acc = 'v'
+        if acc is not None:
+            setattr(self, acc, getattr(self, acc) + data[0])
+            self.out("{}[{}]({}={}) ({}:={})".format(parm, opcode, data[0], self.asdimen(data[0]),
+                        acc, self.asdimen(getattr(self, acc))))
+
+    def dim(self, opcode, parm, data):
+        if parm in "wx":
+            self.h += getattr(self, parm)
+            self.out("{} (h={})".format(parm, self.asdimen(self.h)))
+        elif parm in "yz":
+            self.v += getattr(self, parm)
+            self.out("{} (v={})".format(parm, self.asdimen(self.v)))
+
     def simple(self, opcode, parm, data):
         self.out("{}".format(parm))
+
+    def push(self, opcode, parm, data):
+        self.stack.append([getattr(self, x) for x in "hvwxyz"])
+        self.out("{}".format(parm))
+
+    def pop(self, opcode, parm, data):
+        vs = self.stack.pop(-1)
+        desc = []
+        for i,x in enumerate("hvwxyz"):
+            setattr(self, x, vs[i])
+            desc.append("{}({}={})".format(x, vs[i], self.asdimen(vs[i])))
+        self.out("{}: ".format(parm) + " ".join(desc))
 
     def bop(self, opcode, parm, data):
         self.pageno = data[0]
         self.out("{}({}) [{}]".format(parm, opcode, data[0]))
+        for a in "hvwxyz":
+            setattr(self, a, 0)
 
     def font(self, opcode, parm, data):
         if parm is not None:
@@ -146,7 +193,8 @@ class XDviType:
     def pre(self, opcode, parm, data):
         (i, n, d, m, k) = data
         x = self.readbytes(k)
-        res = "pre num={}, den={}, mag={}".format(n, d, m)
+        self.dviratio = m * n / d / 1000. / 10000 / 25.4 * 72.27      # map to pt not .0001mm
+        res = "pre num={}, den={}, mag={} => ratio={}".format(n, d, m, 1./self.dviratio)
         if not self.diffable:
             res += " " + x.decode("utf-8")
         self.out(res)
@@ -179,7 +227,7 @@ class XDviType:
         else:
             pos = [(self.readval(4), 0) for i in range(slen)]
         glyphs = [self.readval(2) for i in range(slen)]
-        res = ["{}@({},{})".format(glyphs[i], *pos[i]) for i in range(slen)]
+        res = ["{}@({}={},{})".format(glyphs[i], pos[i][0], self.asdimen(pos[i][0]), pos[i][1]) for i in range(slen)]
         self.out("xglyphs: {}".format(res))
 
     def xpic(self, opcode, parm, data):

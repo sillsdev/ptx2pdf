@@ -303,7 +303,7 @@ class parser(sfm.parser):
                  stylesheet=default_stylesheet,
                  default_meta=_default_meta,
                  canonicalise_footnotes=True,
-                 tag_escapes=r"\\",
+                 tag_escapes=r"[\\+%!@#$^&()=-_`/]",
                  *args, **kwds):
         if not canonicalise_footnotes:
             self._canonicalise_footnote = lambda x: x
@@ -313,6 +313,7 @@ class parser(sfm.parser):
                          stylesheet,
                          default_meta,
                          private_prefix='z',
+                         tag_escapes=tag_escapes,
                          *args, **kwds)
 
     @classmethod
