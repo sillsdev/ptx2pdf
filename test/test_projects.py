@@ -97,28 +97,29 @@ def make_paths(projectsdir, project, config, xdv=False):
     stddir = os.path.join(projectsdir, '..', 'standards', project)
     return (stddir, filename, testsdir, ptxcmd)
 
-XdvInfo = namedtuple("XdvInfo", ["projectsdir", "project", "config", "stddir", "filename", "filebasepath", "testsdir"])
+XdvInfo = namedtuple("XdvInfo", ["projectsdir", "project", "config", "stddir", "filename", "pdfpath", "xdvpath", "testsdir"])
 
 @pytest.fixture(scope="class")
 def xdv(request, projectsdir, project, config, starttime):
     (stddir, filename, testsdir, ptxcmd) = make_paths(projectsdir, project, config, xdv=True)
-    pdftpath = os.path.join(projectsdir, project, "PrintDraft")
-    os.makedirs(pdftpath, exist_ok=True)
-    filebasepath = os.path.join(pdftpath, "ptxprint-"+filename)
-    lockfile = filebasepath+".lock"
+    pdftpath = os.path.join(projectsdir, project, "local", "ptxprint")
+    os.makedirs(os.path.join(pdftpath, config), exist_ok=True)
+    pdfpath = os.path.join(pdftpath, "ptxprint-"+filename+".pdf")
+    xdvpath = os.path.join(pdftpath, config, "ptxprint-"+filename+".xdv")
+    lockfile = xdvpath.replace(".xdv", ".lock")
     with FileLock(lockfile):
         try:
-            t = os.path.getmtime(filebasepath)
+            t = os.path.getmtime(xdvpath)
         except FileNotFoundError:
             t = 0
         if t < starttime:
            assert call(ptxcmd) == 0
-    request.cls.xdv = XdvInfo(projectsdir, project, config, stddir, filename, filebasepath, testsdir)
+    request.cls.xdv = XdvInfo(projectsdir, project, config, stddir, filename, pdfpath, xdvpath, testsdir)
 
 @pytest.mark.usefixtures("xdv")
 class TestXetex: #(unittest.TestCase):
     def test_pdf(self):
-        xdvcmd = " ".join([quote(w2u(pt_bindir, True)+"xdvipdfmx"),"-q", "-E", "-o", quote(w2u(self.xdv.filebasepath, False)+".pdf") + " " + quote(w2u(self.xdv.filebasepath, False)+".xdv")])
+        xdvcmd = " ".join([quote(w2u(pt_bindir, True)+"xdvipdfmx"),"-q", "-E", "-o", quote(w2u(self.xdv.pdfpath, False)) + " " + quote(w2u(self.xdv.xdvpath, False))])
         assert call(xdvcmd, shell=True) == 0
 
     def test_xdv(self, updatedata, pypy):
@@ -128,7 +129,7 @@ class TestXetex: #(unittest.TestCase):
         elif sys.platform == "win32":
             xdvcmd.insert(0, "python")
 
-        fromfile = self.xdv.filebasepath+".xdv"
+        fromfile = self.xdv.xdvpath
         tofile = os.path.join(self.xdv.stddir, self.xdv.filename+".xdv")
         if updatedata or (not os.path.exists(tofile) and os.path.exists(fromfile)):
             if not os.path.exists(self.xdv.stddir):

@@ -260,7 +260,8 @@ class RunJob:
             cfgname = "-"+cfgname
         else:
             cfgname = ""
-        print(pdfname)
+        if pdfname is not None:
+            print(pdfname)
         if self.res == 0:
             if not self.noview and self.printer.isDisplay and os.path.exists(pdfname):
                 if sys.platform == "win32":
@@ -612,6 +613,7 @@ class RunJob:
             if not rererun:
                 break
 
+        pdffile = None
         if not self.noview and not self.args.testing and not self.res:
             self.printer.incrementProgress()
             cmd = ["xdvipdfmx", "-E", "-V", "1.4", "-C", "16", "-q",
