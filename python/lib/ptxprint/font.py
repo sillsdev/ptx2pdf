@@ -28,7 +28,7 @@ def writefontsconf(archivedir=None):
     if archivedir is not None or not sys.platform.startswith("win"):
         dirs.append("/usr/share/fonts")
         fname = os.path.expanduser("~/.config/ptxprint/fonts.conf")
-    dirs.append("../shared/fonts")
+    dirs.append("../../../shared/fonts")
     if archivedir is None:
         fdir = os.path.join(os.path.dirname(__file__), '..')
         for a in (['..', 'fonts'], ['..', '..', 'fonts'], ['/usr', 'share', 'ptx2pdf', 'fonts']):
@@ -916,7 +916,7 @@ class FontRef:
         f.iscore = True
         if f.filename is not None and not f.iscore:
             if inarchive:
-                fname = f"../shared/fonts/{f.filename.name}"
+                fname = f"../../../shared/fonts/{f.filename.name}"
             elif root is not None:
                 fname = os.path.relpath(f.filename, root)
             else:

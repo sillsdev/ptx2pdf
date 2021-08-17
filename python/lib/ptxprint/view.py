@@ -209,9 +209,9 @@ class ViewModel:
     def baseTeXPDFnames(self, bks=None):
         if bks is None:
             bks = self.getBooks(files=True)
-        if self.working_dir == None:
-            self.working_dir = os.path.join(self.settings_dir, self.prjid, 'PrintDraft')
         cfgname = self.configName()
+        if self.working_dir == None:
+            self.working_dir = os.path.join(self.settings_dir, self.prjid, "local", "ptxprint", cfgname)
         if cfgname is None:
             cfgname = ""
         else:
@@ -414,8 +414,6 @@ class ViewModel:
                 self.updateBookList()
             if not self.prjid:
                 return False
-            if not self.fixed_wd:
-                self.working_dir = os.path.join(self.settings_dir, self.prjid, 'PrintDraft')
             fdir = os.path.join(self.settings_dir, self.prjid, 'shared', 'fonts')
             if os.path.exists(fdir):
                 cachepath(fdir)
@@ -427,6 +425,8 @@ class ViewModel:
                     self._copyConfig(None, configName, moving=True)
                 else:
                     self._copyConfig(self.configId, configName)
+            if not self.fixed_wd:
+                self.working_dir = os.path.join(self.settings_dir, self.prjid, "local", "ptxprint", configName)
             oldVersion = self.readConfig(cfgname=configName)
             self.styleEditor.load(self.getStyleSheets(configName))
             self.updateStyles(oldVersion)
@@ -829,7 +829,7 @@ class ViewModel:
             return
         fname = os.path.join(self.configPath(self.configName(), makePath=True), "ptxprint.sty")
         regularfont = self.get("bl_fontR")
-        root = os.path.join(self.settings_dir, self.prjid, "PrintDraft")
+        root = os.path.join(self.settings_dir, self.prjid, "local", "ptxprint", self.configName())
         with open(fname, "w", encoding="Utf-8") as outf:
             self.styleEditor.output_diffile(outf, regular=regularfont, root=root)
 
@@ -1308,7 +1308,7 @@ class ViewModel:
             pf = os.path.join(self.working_dir, f)
             if os.path.exists(pf):
                 outfname = os.path.relpath(pf, self.settings_dir)
-                if pf.endswith(".pdf") and "PrintDraft" not in pf:
+                if pf.endswith(".pdf") and "local/ptxprint" not in pf:
                     trailer = PdfReader(pf)
                     trailer.read_all()
                     outf = BytesIO()
@@ -1369,9 +1369,9 @@ class ViewModel:
 
         # create a fontconfig
         zf.writestr("{}/fonts.conf".format(self.prjid), writefontsconf(archivedir=True))
-        scriptlines = ["#!/bin/sh", "cd PrintDraft"]
+        scriptlines = ["#!/bin/sh", "cd local/ptxprint/{}".format(self.configName())]
         for t in texfiles:
-            scriptlines.append("hyph_size=32749 stack_size=32768 FONTCONFIG_FILE=`pwd`/../fonts.conf TEXINPUTS=../src:. xetex {}".format(os.path.basename(t)))
+            scriptlines.append("hyph_size=32749 stack_size=32768 FONTCONFIG_FILE=`pwd`/../../../fonts.conf TEXINPUTS=../../../src:. xetex {}".format(os.path.basename(t)))
         zinfo = ZipInfo("{}/runtex.sh".format(self.prjid))
         zinfo.external_attr = 0o755 << 16
         zinfo.create_system = 3
@@ -1381,11 +1381,11 @@ REM In order to run this script at the Windows CMD prompt:
 REM   1. Change the extension from .txt to .bat
 REM   2. Change current directory to PrintDraft using: cd PrintDraft
 REM   3. Then to run it, use: ..\\runtex.bat
-REM e.g. C:\\Users\\<Username>\\Downloads\\WSG\\PrintDraft>..\\runtex.bat
+REM e.g. C:\\Users\\<Username>\\Downloads\\WSG\\local\\ptxprint\\Default>..\\..\\..\\runtex.bat
 for %%i in (xetex.exe) do set truetex=%%~$PATH:i
 if "%truetex%" == "" set truetex=C:\\Program Files\\PTXprint\\xetex\\bin\\xetex.exe
-set FONTCONFIG_FILE=%cd%\\..\\fonts.conf
-set TEXINPUTS=.;%cd%\\..\\src\\;
+set FONTCONFIG_FILE=%cd%\\..\\..\\..\\fonts.conf
+set TEXINPUTS=.;%cd%\\..\\..\\..\\src\\;
 set hyph_size=32749
 set stack_size=32768"""
         for t in texfiles:

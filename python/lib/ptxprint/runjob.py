@@ -190,11 +190,14 @@ class RunJob:
         info.debug = self.args.debug
         self.tempFiles = []
         self.prjid = info.dict["project/id"]
+        configid = info.dict["config/name"]
         self.prjdir = os.path.join(self.args.paratext, self.prjid)
         if self.prjid is None or not len(self.prjid):     # can't print no project
             return
-        self.tmpdir = os.path.join(self.prjdir, 'PrintDraft') if info.asBool("project/useprintdraftfolder") \
-                                                                 or self.args.directory is None else self.args.directory
+        if info.asBool("project/useprintdraftfolder") or self.args.directory is None:
+            self.tmpdir = os.path.join(self.prjdir, 'local', 'ptxprint', configid)
+        else:
+            self.tmpdir = self.args.directory
         os.makedirs(self.tmpdir, exist_ok=True)
         jobs = self.printer.getBooks(files=True)
 
@@ -250,14 +253,13 @@ class RunJob:
             self.texfiles += sum((self.dojob(j, info) for j in joblist), [])
         self.printer.tempFiles = self.texfiles  # Always do this now - regardless!
 
-    def done_job(self, outfname, info):
+    def done_job(self, outfname, pdfname, info):
         # Work out what the resulting PDF was called
         cfgname = info['config/name']
         if cfgname is not None and cfgname != "":
             cfgname = "-"+cfgname
         else:
             cfgname = ""
-        pdfname = os.path.join(self.tmpdir, outfname.replace(".tex", ".pdf"))
         print(pdfname)
         if self.res == 0:
             if not self.noview and self.printer.isDisplay and os.path.exists(pdfname):
@@ -419,7 +421,7 @@ class RunJob:
         diginfo["fancy/pageborder"] = "%"
         diginfo["document/clsinglecol"] = False
         diginfo["snippets/diglot"] = False
-        docdir = os.path.join(info["/ptxpath"], info["project/id"], "PrintDraft")
+        docdir = os.path.join(info["/ptxpath"], info["project/id"], "local", "ptxprint", info["config/name"])
         for k in _digSecSettings:
             diginfo[k]=info[k]
         syntaxErrors = []
@@ -628,12 +630,16 @@ class RunJob:
                     print("Timed out!")
                     self.res = runner.returncode
             outpath = os.path.join(self.tmpdir, outfname[:-4])
-            fixpdffile(outpath + ".prepress.pdf", outpath + ".pdf",
+            if self.tmpdir == os.path.join(self.prjdir, "local", "ptxprint", info['config/name']):
+                pdffile = os.path.join(self.prjdir, "local", "ptxprint", outfname[:-4]+".pdf") 
+            else:
+                pdffile = outpath + ".pdf"
+            fixpdffile(outpath + ".prepress.pdf", pdffile,
                         colour="rgbx4" if self.ispdfxa == "None" else "cmyk",
                         parlocs = outpath + ".parlocs")
             os.remove(outpath + ".prepress.pdf")
         print("Done")
-        self.done_job(outfname, info)
+        self.done_job(outfname, pdffile, info)
 
     def checkForMissingDecorations(self, info):
         deco = {"pageborder" :     "Page Border",
