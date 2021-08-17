@@ -83,7 +83,7 @@ elif args.logging:
     if isinstance(loglevel, int):
         parms = {'level': loglevel, 'datefmt': '%d/%b/%Y %H:%M:%S', 'format': '%(asctime)s %(levelname)s:%(module)s(%(lineno)d) %(message)s'}
         if args.logfile.lower != "none":
-            parms.update(filename=args.logfile, filemode="w", encoding="utf-8")
+            parms.update(filename=args.logfile, filemode="w") #, encoding="utf-8")
         logging.basicConfig(**parms)
     log = logging.getLogger('ptxprint')
 

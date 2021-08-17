@@ -224,7 +224,7 @@ def fixhighlights(trailer, parlocs=None):
     annotlocs = {}
     res = []
     if parlocs is not None and os.path.exists(parlocs):
-        with open(parlocs) as inf:
+        with open(parlocs, encoding="utf-8") as inf:
             for l in inf.readlines():
                 m = re.match(r"^\\(start|end)annot\{(.*?)\}\{(.*?)\}\{(.*?)\}\{(.*)\}", l)
                 if m:

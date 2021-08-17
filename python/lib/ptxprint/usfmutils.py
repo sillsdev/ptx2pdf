@@ -544,7 +544,7 @@ class Usfm:
                         predels = []
                 st = el.meta.get("styletype", "") 
                 if (st is None or st.lower() == "paragraph") \
-                            and (len(el) == len(predels) or len(el) == 1 and str(el[0]) == '...'):
+                            and (len(el) == len(predels) or (len(el) == 1 and str(el[0]) == '...')):
                     el.parent.remove(el)
                     return False
             elif re.match(r"^\s*$", str(el)):

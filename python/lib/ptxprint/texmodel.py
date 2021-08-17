@@ -776,17 +776,20 @@ class TexModel:
                 currperiphs = []
                 currk = None
                 for l in inf.readlines():
-                    ma = re.match(r'\periph\s+([^|]+)(?:\|\s*(?:id\s*=\s*"([^"]+)|(\S+))', l)
+                    ma = re.match(r'\\periph\s+([^|]+)(?:\|\s*(?:id\s*=\s*"([^"]+)|(\S+)))', l)
                     if ma:
                         if mode == 1:    # already collecting so save
                             self.frontperiphs[currk] = "\n".join(currperiphs)
-                        currk = m[2] or m[3]
+                        currk = ma[2] or ma[3]
                         if not currk:
-                            currk = self._periphids.get(m[1], "")
+                            currk = self._periphids.get(ma[1], "")
                         currperiphs = []
                         mode = 1
                     elif mode == 1:
-                        currperiphs.append(l.rstrip())
+                        if r"\periph" in l:
+                            mode = 0
+                        else:
+                            currperiphs.append(l.rstrip())
                 if currk is not None:
                     self.frontperiphs[currk] = "\n".join(currperiphs)
         k = m[1]
@@ -806,7 +809,7 @@ class TexModel:
                     if l.strip().startswith(r"\periph"):
                         l = r"\pb" if self.dict['project/periphpagebreak'] and seenperiph else ""
                         seenperiph = True
-                    l = re.sub(r"\\zperiphfrt\s*\|([^\\\s]+)", self._doperiph, l)
+                    l = re.sub(r"\\zperiphfrt\s*\|([^\\\s]+)\s*\\\*", self._doperiph, l)
                     f = re.findall(r"(.+)\*(\d+) ?", l.rstrip())
                     if len(f):
                         for x in range(0,int(f[0][1])):
