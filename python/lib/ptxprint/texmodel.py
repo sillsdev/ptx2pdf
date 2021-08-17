@@ -379,6 +379,36 @@ class TexModel:
     }
     _crossRefInfo = None
 
+    _periphids = {
+        "title page": "title",
+        "half title page": "halftitle",
+        "promotional page": "promo",
+        "imprimatur": "imprimatur",
+        "publication data": "pubdata",
+        "foreword": "foreword",
+        "preface": "preface",
+        "table of contents": "contents",
+        "alphabetical contents": "alphacontents",
+        "table of abbreviations": "abbreviations",
+        "bible introduction": "intbible",
+        "old testament introduction": "intot",
+        "pentateuch introduction": "intpent",
+        "history introduction": "inthistory",
+        "poetry introduction": "intpoetry",
+        "prophecy introduction": "intprophesy",
+        "deuterocanon introduction": "intdc",
+        "new testament introduction": "intnt",
+        "gospels introduction": "intgospels",
+        "epistles introduction": "intepistles",
+        "letters introduction": "intletters",
+        "chronology": "chron",
+        "weights and measures": "measures",
+        "map index": "maps",
+        "lxx quotes in nt": "lxxquotes",
+        "cover": "cover",
+        "spine": "spine"
+    }
+
     def __init__(self, printer, path, ptsettings, prjid=None, inArchive=False):
         from ptxprint.view import VersionStr
         self.VersionStr = VersionStr
@@ -782,7 +812,7 @@ class TexModel:
                             self.frontperiphs[currk] = "\n".join(currperiphs)
                         currk = ma[2] or ma[3]
                         if not currk:
-                            currk = self._periphids.get(ma[1], "")
+                            currk = self._periphids.get(m[1].lower(), m[1].lower())
                         currperiphs = []
                         mode = 1
                     elif mode == 1:

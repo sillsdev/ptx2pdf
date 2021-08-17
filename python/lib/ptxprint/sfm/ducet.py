@@ -232,7 +232,7 @@ def tailored(tailoring, ducet=None):
                         b = _splitkey(res.sortkey(newkey[i-1]))[:3]
                         nkey = [a[i] + b[i] for i in range(3)]
                         res[newkey[0:i]] = _makekey(nkey)
-                print("{}={}".format(repr(newkey), strkey(res.sortkey(newkey))))
+                #print("{}={}".format(repr(newkey), strkey(res.sortkey(newkey))))
                 lastbase = b"\00\00".join(basebits)
             else:
                 lastbase = res.sortkey(newkey)
