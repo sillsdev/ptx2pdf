@@ -35,4 +35,7 @@
 \sethook{end}{wh}{^^^^2069}
 \sethook{start}{wg}{^^^^2066}
 \sethook{end}{wg}{^^^^2069}
-
+\catcode`\@=12
+\def\@zpdf #1^^M{\egroup\includepdf{#1}}
+\def\zpdf{\bgroup\obeylines\unc@tcodespecials\m@kedigitsother\catcode32=10 \@zpdf}
+\catcode`\@=11

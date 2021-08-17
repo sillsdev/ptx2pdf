@@ -377,7 +377,7 @@ class ViewModel:
         self.triggervcs = True
         os.makedirs(newp)
         jobs = {k:k for k in('ptxprint-mods.sty', 'ptxprint.sty', 'ptxprint-mods.tex',
-                             'ptxprint.cfg', 'PicLists', 'AdjLists')}
+                             'ptxprint.cfg', 'FRTlocal.sfm', 'PicLists', 'AdjLists')}
         jobs["{}-{}.piclist".format(self.prjid, oldcfg)] = "{}-{}.piclist".format(self.prjid, newcfg)
         for f, n in jobs.items():
             srcp = os.path.join(oldp, f)
@@ -1124,6 +1124,7 @@ class ViewModel:
                   'c_useModsSty': ("ptxprint-mods.sty", True),
                   'c_useModsTex': ("ptxprint-mods.tex", True),
                   'c_usePrintDraftChanges': ("PrintDraftChanges.txt", False),
+                  'c_frontmatter': ("FRTlocal.sfm", True),
                   None: ("picChecks.txt", False)}
         res = {}
         cfgchanges = {}
