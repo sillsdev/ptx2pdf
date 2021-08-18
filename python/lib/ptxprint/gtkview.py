@@ -431,7 +431,7 @@ class GtkViewModel(ViewModel):
             digits.append([d, v])
         self.fcb_digits.set_active_id(_alldigits[0])
 
-        for d in ("multiBookSelector", "fontChooser", "password", "overlayCredit",
+        for d in ("multiBookSelector", "multiProjSelector", "fontChooser", "password", "overlayCredit",
                   "generateFRT", "generatePL", "styModsdialog", "DBLbundle", "features", "gridsGuides"):
             dialog = self.builder.get_object("dlg_" + d)
             dialog.add_buttons(
@@ -1917,6 +1917,36 @@ class GtkViewModel(ViewModel):
         self.updateDialogTitle()
         self.updateExamineBook()
         self.updatePicList()
+        dialog.set_keep_above(False)
+        dialog.hide()
+        
+    def onChooseTargetProjectsClicked(self, btn):
+        dialog = self.builder.get_object("dlg_multiProjSelector")
+        dialog.set_keep_above(True)
+        mps_grid = self.builder.get_object("mps_grid")
+        mps_grid.forall(mps_grid.remove)
+        self.alltoggles = []
+        prjs = self.builder.get_object("ls_projects")
+        prjCtr = len(prjs)
+        rows = int(prjCtr**0.6) if prjCtr <= 140 else 16
+        for i, b in enumerate(prjs):
+            if self.prjid == b[0]: # Another option is to leave a 'blank' where the source project would be
+                tbox = Gtk.ToggleButton(">>> Src:{} <<<".format(b[0]))
+            else:
+                tbox = Gtk.ToggleButton(b[0])
+            tbox.show()
+            self.alltoggles.append(tbox)
+            mps_grid.attach(tbox, i // rows, i % rows, 1, 1)
+        response = dialog.run()
+        projlist = []
+        if response == Gtk.ResponseType.OK:
+            projlist = (b.get_label() for b in self.alltoggles if b.get_active())
+            for p in projlist:
+                print(p)
+                # Now do a "careful copy" of the Config tree files changing whatever 
+                # needs to be changed as part of the copy/duplicate process.
+                # Also need to 'honour' c_overwriteExisting and skip over any existing
+                # target configs unless this is True.
         dialog.set_keep_above(False)
         dialog.hide()
         
