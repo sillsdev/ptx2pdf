@@ -379,9 +379,10 @@ class ViewModel:
         os.makedirs(newp)
         jobs = {k:k for k in('ptxprint-mods.sty', 'ptxprint.sty', 'ptxprint-mods.tex',
                              'ptxprint.cfg', 'FRTlocal.sfm', 'PicLists', 'AdjLists')}
-        jobs["{}-{}.piclist".format(self.prjid, oldcfg)] = "{}-{}.piclist".format(self.prjid, newcfg)
         if newprj is not None:
             del jobs['AdjLists']
+        else:
+            jobs["{}-{}.piclist".format(self.prjid, oldcfg)] = "{}-{}.piclist".format(self.prjid, newcfg)
         for f, n in jobs.items():
             srcp = os.path.join(oldp, f)
             destp = os.path.join(newp, n)
