@@ -1713,7 +1713,8 @@ current configuration (source) should be copied to:</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="orientation">vertical</property>
-                        <property name="column_spacing">10</property>
+                        <property name="row_spacing">2</property>
+                        <property name="column_spacing">4</property>
                         <property name="row_homogeneous">True</property>
                         <property name="column_homogeneous">True</property>
                         <child>
@@ -4955,7 +4956,7 @@ be viewed or edited in Paratext.</property>
                                     <property name="margin_left">16</property>
                                     <property name="margin_top">3</property>
                                     <property name="margin_bottom">3</property>
-                                    <property name="column_spacing">6</property>
+                                    <property name="column_spacing">3</property>
                                     <child>
                                       <object class="GtkLabel">
                                         <property name="visible">True</property>
@@ -5124,6 +5125,7 @@ the password that was set.</property>
                                         <property name="invisible_char">●</property>
                                         <property name="width_chars">16</property>
                                         <property name="caps_lock_warning">False</property>
+                                        <property name="progress_pulse_step">0</property>
                                         <property name="placeholder_text" translatable="yes">No Password Set</property>
                                         <property name="input_purpose">password</property>
                                         <signal name="changed" handler="onPasswordChanged" swapped="no"/>
@@ -5194,8 +5196,10 @@ having to manually re-create all the same
 settings for a similar project.</property>
                                         <property name="halign">end</property>
                                         <property name="valign">center</property>
-                                        <property name="margin_left">20</property>
+                                        <property name="margin_left">18</property>
                                         <property name="margin_right">6</property>
+                                        <property name="margin_top">6</property>
+                                        <property name="margin_bottom">6</property>
                                         <property name="image">icon_targetProj</property>
                                         <signal name="clicked" handler="onChooseTargetProjectsClicked" swapped="no"/>
                                       </object>
@@ -8538,12 +8542,12 @@ has been translated so far.</property>
                                     </child>
                                     <child>
                                       <object class="GtkCheckButton" id="c_elipsizeMissingVerses">
-                                        <property name="label" translatable="yes">Show {...}</property>
+                                        <property name="label" translatable="yes">Show '...'</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
-                                        <property name="tooltip_text" translatable="yes">Indicate using elipses that verses and/or 
-entire chapters are missing by placing {...}
+                                        <property name="tooltip_text" translatable="yes">Indicate using ellipsis that verses and/or 
+entire chapters are missing by placing '...'
 in the text to alert the reader that some
 parts of the text have been skipped.</property>
                                         <property name="halign">start</property>
@@ -11706,7 +11710,6 @@ the PicList. If pictures of a certain book are missing,
 then you may need to select that book and Generate
 the PicList details just for *that* book.</property>
                                     <property name="halign">center</property>
-                                    <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
                                     <signal name="clicked" handler="picListMultiselectclicked" swapped="no"/>
                                   </object>

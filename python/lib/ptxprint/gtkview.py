@@ -1930,8 +1930,10 @@ class GtkViewModel(ViewModel):
         prjCtr = len(prjs)
         rows = int(prjCtr**0.6) if prjCtr <= 140 else 16
         for i, b in enumerate(prjs):
-            if self.prjid == b[0]: # Another option is to leave a 'blank' where the source project would be
-                tbox = Gtk.ToggleButton(">>> Src:{} <<<".format(b[0]))
+            if self.prjid == b[0]:
+                tbox = Gtk.Label()
+                tbox.set_text('<span background="black" foreground="white" font-weight="bold">  {} </span>'.format(b[0]))
+                tbox.set_use_markup(True)
             else:
                 tbox = Gtk.ToggleButton(b[0])
             tbox.show()

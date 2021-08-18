@@ -955,8 +955,8 @@ class TexModel:
                 if doc is not None:
                     if not self.asBool("document/bookintro") or not self.asBool("document/introoutline"):
                         doc.stripIntro(not self.asBool("document/bookintro"), not self.asBool("document/introoutline"))
-                    if self.asBool("document/elipsizemptyvs"):
-                        doc.stripEmptyChVs()
+                    if self.asBool("document/hidemptyverses"):
+                        doc.stripEmptyChVs(ellipsis=self.asBool("document/elipsizemptyvs"))
 
             if self.dict['fancy/endayah'] == "":
                 if doc is None:
