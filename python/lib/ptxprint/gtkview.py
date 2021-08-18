@@ -1943,7 +1943,13 @@ class GtkViewModel(ViewModel):
         projlist = []
         if response == Gtk.ResponseType.OK:
             cfg = self.configName()
-            projlist = (b.get_label() for b in self.alltoggles if b.get_active())
+            # projlist = (b.get_label() for b in self.alltoggles if b.get_active())
+            for b in self.alltoggles:
+                try:
+                    if b.get_active():
+                        projlist.append(b.get_label())
+                except AttributeError:
+                    pass
             for p in projlist:
                 newcdir = self.configPath(cfgname=cfg, makePath=False, prjid=p)
                 if self.get("c_overwriteExisting") and os.path.exists(newcdir):
