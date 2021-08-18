@@ -1943,10 +1943,10 @@ class GtkViewModel(ViewModel):
             cfg = self.configName()
             projlist = (b.get_label() for b in self.alltoggles if b.get_active())
             for p in projlist:
-                newpdir = os.path.join(self.settings_dir, p)
-                newcdir = os.path.join(newpdir, "shared", "ptxprint", cfg)
-                if self.get("c_overwriteExisting") or not os.path.exists(newcdir):
-                    self._copyConfig(cfg, cfg, newprj=p)
+                newcdir = self.configPath(cfgname=cfg, makePath=False, prjid=p)
+                if self.get("c_overwriteExisting") and os.path.exists(newcdir):
+                    rmtree(newcdir)
+                self._copyConfig(cfg, cfg, newprj=p)
         dialog.set_keep_above(False)
         dialog.hide()
         
