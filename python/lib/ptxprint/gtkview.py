@@ -2090,7 +2090,7 @@ class GtkViewModel(ViewModel):
             self.builder.get_object("lb_ptxprintdir").set_label(os.path.dirname(__file__))
             self.builder.get_object("lb_prjdir").set_label(os.path.join(self.settings_dir, self.prjid))
             self.builder.get_object("lb_settings_dir").set_label(self.configPath(cfgname=self.configName()) or "")
-            self.builder.get_object("lb_working_dir").set_label(self.working_dir or "")
+            self.builder.get_object("lb_working_dir").set_label(os.path.join(self.settings_dir, self.prjid, "local", "ptxprint") or "")
             
     def updateProjectSettings(self, prjid, saveCurrConfig=False, configName=None, readConfig=False):
         self.picListView.clear()
@@ -2632,8 +2632,9 @@ class GtkViewModel(ViewModel):
         self.openFolder(self.configPath(cfgname=self.configName()))
         
     def onOpenFolderOutputClicked(self, btn):
-        self.openFolder(self.working_dir)
-        
+        self.openFolder(os.path.join(self.working_dir, "..", "..", "ptxprint"))
+        # self.openFolder(os.path.join(self.settings_dir, self.prjid, "local", "ptxprint"))
+
     def openFolder(self, fldrpath):
         path = os.path.realpath(fldrpath)
         if sys.platform.startswith("win"):

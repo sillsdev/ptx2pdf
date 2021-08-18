@@ -286,7 +286,7 @@ class RunJob:
 
         elif not self.noview and not self.args.print: # We don't want pop-up messages if running in command-line mode
             finalLogLines = self.parseLogLines()
-            self.printer.doError(_("Failed to create: ")+re.sub(r".+[\\/](.+\.pdf)",r"\1",pdfname),
+            self.printer.doError(_("Failed to create: ")+re.sub(r"\.tex",r".pdf",outfname),
                     secondary="".join(finalLogLines[-20:]), title="PTXprint [{}] - Error!".format(VersionStr),
                     threaded=True, copy2clip=True)
             self.printer.onIdle(self.printer.showLogFile)
@@ -294,10 +294,6 @@ class RunJob:
             self.printer.set("l_statusLine", _("Rerun to fix: ") + ", ".join(self.rerunReasons))
         else:
             self.printer.set("l_statusLine", "")
-        # if info.asBool("project/keeptempfiles"):
-            # self.printer.tempFiles = self.texfiles
-        # else:
-            # self.removeTempFiles(self.texfiles)
         self.printer.finished()
         self.busy = False
         unlockme()

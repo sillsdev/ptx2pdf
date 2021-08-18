@@ -232,7 +232,7 @@ def tailored(tailoring, ducet=None):
                         b = _splitkey(res.sortkey(newkey[i-1]))[:3]
                         nkey = [a[i] + b[i] for i in range(3)]
                         res[newkey[0:i]] = _makekey(nkey)
-                #print("{}={}".format(repr(newkey), strkey(res.sortkey(newkey))))
+                # print("{}={}".format(repr(newkey), strkey(res.sortkey(newkey))))
                 lastbase = b"\00\00".join(basebits)
             else:
                 lastbase = res.sortkey(newkey)
@@ -261,6 +261,6 @@ if __name__ == "__main__":
     if len(sys.argv) == 2:
         ducet = _get_local_ducet()
         k = ducet.sortkey(re.sub(r"\\u([0-9A-Fa-f]{4,6})", lambda m:chr(int(m[1], 16)), sys.argv[1]), variable=SHIFTTRIM)
-        print(strkey(k))
+        # print(strkey(k))
         t = tailored(ducet, "&C<cs<<<cS<<<Cs<<<CS &cs<<<ccs/cs<<<ccS/cS<<<cCs/Cs<<<cCS/CS")
 
