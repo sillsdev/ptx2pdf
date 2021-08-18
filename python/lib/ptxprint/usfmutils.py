@@ -516,18 +516,23 @@ class Usfm:
             newdoc.append(e)
         self.doc[0][:] = newdoc
 
-    def stripEmptyChVs(self, diaeresis=False):
-        #import pdb; pdb.set_trace()
-        def iterfn(el):
+    def stripEmptyChVs(self, ellipsis=False):
+        def iterfn(el, top=False):
             if isinstance(el, sfm.Element):
                 lastv = None
                 predels = []
                 for c in el[:]:
                     if not isinstance(c, sfm.Element) or c.name != "v":
                         if iterfn(c):
-                            for p in predels:
-                                if isinstance(p, sfm.Element) and p.name == "c":
-                                    p.parent.remove(p)
+                            if len(predels):
+                                if isinstance(predels[-1], sfm.Element) \
+                                                 and predels[-1].name == "p" \
+                                                 and len(predels[-1]) == 1 \
+                                                 and str(predels[-1][0]).strip() == "...":
+                                    predels.pop(-1)
+                                for p in predels:
+                                    if isinstance(p, sfm.Element):
+                                        p.parent.remove(p)
                             lastv = None
                             predels = []
                         else:
@@ -537,13 +542,31 @@ class Usfm:
                             for p in predels:
                                 p.parent.remove(p)
                             predels = []
-                            lastv.parent.remove(lastv)
+                            if ellipsis:
+                                i = lastv.parent.index(lastv)
+                                ell = sfm.Text("...", parent=lastv.parent)
+                                lastv.parent.insert(i, ell)
+                                predels.append(ell)
+                                lastv.parent.pop(i+1)
+                            else:
+                                lastv.parent.remove(lastv)
                         lastv = c
                 if lastv is not None:
                     lastv.parent.remove(lastv)
-                for p in predels:
-                    p.parent.remove(p)
-                predels = []
+                if len(predels):
+                    if ellipsis:
+                        p = predels[0]
+                        i = p.parent.index(p)
+                        st = p.parent.meta.get("styletype", "")
+                        if st is None or st.lower() == "paragraph":
+                            ell = sfm.Text("...", parent=p.parent)
+                        else:
+                            ell = sfm.Element('p', parent=p.parent, meta=self.sheets['p'])
+                            ell.append(sfm.Text("...\n", parent=ell))
+                        p.parent.insert(i, ell)
+                    for p in predels:
+                        p.parent.remove(p)
+                    predels = [ell] if ellipsis else []
                 st = el.meta.get("styletype", "") 
                 if (st is None or st.lower() == "paragraph") and len(el) == len(predels):
                     # el.parent.remove(el)
@@ -551,7 +574,7 @@ class Usfm:
             elif re.match(r"^\s*$", str(el)) or re.match(r"\.{3}\s*$", str(el)):
                 return False
             return True
-        iterfn(self.doc[0])
+        iterfn(self.doc[0], top=True)
 
 def read_module(inf, sheets):
     lines = inf.readlines()
