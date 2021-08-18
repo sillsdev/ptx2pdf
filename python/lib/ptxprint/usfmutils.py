@@ -517,6 +517,7 @@ class Usfm:
         self.doc[0][:] = newdoc
 
     def stripEmptyChVs(self, diaeresis=False):
+        #import pdb; pdb.set_trace()
         def iterfn(el):
             if isinstance(el, sfm.Element):
                 lastv = None
@@ -524,30 +525,30 @@ class Usfm:
                 for c in el[:]:
                     if not isinstance(c, sfm.Element) or c.name != "v":
                         if iterfn(c):
+                            for p in predels:
+                                if isinstance(p, sfm.Element) and p.name == "c":
+                                    p.parent.remove(p)
                             lastv = None
                             predels = []
                         else:
                             predels.append(c)
                     elif isinstance(c, sfm.Element) and c.name == "v":
                         if lastv is not None:
-                            if len(predels):
-                                for p in predels:
-                                    p.parent.remove(p)
-                                predels = []
+                            for p in predels:
+                                p.parent.remove(p)
+                            predels = []
                             lastv.parent.remove(lastv)
                         lastv = c
                 if lastv is not None:
                     lastv.parent.remove(lastv)
-                    if len(predels):
-                        for p in predels:
-                            p.parent.remove(p)
-                        predels = []
+                for p in predels:
+                    p.parent.remove(p)
+                predels = []
                 st = el.meta.get("styletype", "") 
-                if (st is None or st.lower() == "paragraph") \
-                            and (len(el) == len(predels) or (len(el) == 1 and str(el[0]) == '...')):
-                    el.parent.remove(el)
+                if (st is None or st.lower() == "paragraph") and len(el) == len(predels):
+                    # el.parent.remove(el)
                     return False
-            elif re.match(r"^\s*$", str(el)):
+            elif re.match(r"^\s*$", str(el)) or re.match(r"\.{3}\s*$", str(el)):
                 return False
             return True
         iterfn(self.doc[0])

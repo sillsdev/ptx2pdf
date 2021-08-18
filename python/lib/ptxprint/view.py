@@ -8,6 +8,7 @@ from ptxprint.utils import _, refKey, universalopen, print_traceback, local2glob
 from ptxprint.usfmutils import Sheets, UsfmCollection, Usfm
 from ptxprint.piclist import PicInfo, PicChecks
 from ptxprint.styleditor import StyleEditor
+from ptxprint.pdfrw.pdfreader import PdfReader
 import pathlib, os, sys
 from configparser import NoSectionError, NoOptionError, _UNSET
 from tempfile import NamedTemporaryFile
@@ -1381,8 +1382,8 @@ REM In order to run this script at the Windows CMD prompt:
 REM   1. Change the extension from .txt to .bat
 REM   2. Change current directory to PrintDraft using: cd PrintDraft
 REM   3. Then to run it, use: ..\\runtex.bat
-REM e.g. C:\\Users\\<Username>\\Downloads\\WSG\\local\\ptxprint\\{}>..\\..\\..\\runtex.bat
-cd local\\ptxprint\\{}
+REM e.g. C:\\Users\\<Username>\\Downloads\\WSG\\local\\ptxprint\\{0}>..\\..\\..\\runtex.bat
+cd local\\ptxprint\\{0}
 for %%i in (xetex.exe) do set truetex=%%~$PATH:i
 if "%truetex%" == "" set truetex=C:\\Program Files\\PTXprint\\xetex\\bin\\xetex.exe
 set FONTCONFIG_FILE=%cd%\\..\\..\\..\\fonts.conf
