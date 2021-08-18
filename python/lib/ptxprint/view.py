@@ -370,9 +370,9 @@ class ViewModel:
     def setConfigId(self, configid, saveCurrConfig=False, force=False):
         return self.updateProjectSettings(self.prjid, saveCurrConfig=saveCurrConfig, configName=configid, forceConfig=force)
 
-    def _copyConfig(self, oldcfg, newcfg, moving=False):
+    def _copyConfig(self, oldcfg, newcfg, moving=False, newprj=None):
         oldp = self.configPath(cfgname=oldcfg, makePath=False)
-        newp = self.configPath(cfgname=newcfg, makePath=False)
+        newp = self.configPath(cfgname=newcfg, makePath=False, prjid=newprj)
         if os.path.exists(newp):
             return False
         self.triggervcs = True
@@ -380,6 +380,8 @@ class ViewModel:
         jobs = {k:k for k in('ptxprint-mods.sty', 'ptxprint.sty', 'ptxprint-mods.tex',
                              'ptxprint.cfg', 'FRTlocal.sfm', 'PicLists', 'AdjLists')}
         jobs["{}-{}.piclist".format(self.prjid, oldcfg)] = "{}-{}.piclist".format(self.prjid, newcfg)
+        if newprj is not None:
+            del jobs['AdjLists']
         for f, n in jobs.items():
             srcp = os.path.join(oldp, f)
             destp = os.path.join(newp, n)

@@ -34,7 +34,7 @@ import site
 
 _PALASO_DATA = os.path.join(
     site.getuserbase(),
-    'palaso-python', 'sfm')
+    'ptxprint', 'sfm')
 _package_dir = os.path.dirname(__file__)
 
 

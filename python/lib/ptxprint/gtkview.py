@@ -1940,13 +1940,13 @@ class GtkViewModel(ViewModel):
         response = dialog.run()
         projlist = []
         if response == Gtk.ResponseType.OK:
+            cfg = self.configName()
             projlist = (b.get_label() for b in self.alltoggles if b.get_active())
             for p in projlist:
-                print(p)
-                # Now do a "careful copy" of the Config tree files changing whatever 
-                # needs to be changed as part of the copy/duplicate process.
-                # Also need to 'honour' c_overwriteExisting and skip over any existing
-                # target configs unless this is True.
+                newpdir = os.path.join(self.settings_dir, p)
+                newcdir = os.path.join(newpdir, "shared", "ptxprint", cfg)
+                if self.get("c_overwriteExisting") or not os.path.exists(newcdir):
+                    self._copyConfig(cfg, cfg, newprj=p)
         dialog.set_keep_above(False)
         dialog.hide()
         
