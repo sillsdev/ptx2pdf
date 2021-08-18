@@ -156,6 +156,7 @@ _sensitivities = {
     "c_useChapterLabel" :      ["t_clBookList", "l_clHeading", "t_clHeading", "c_optimizePoetryLayout"],
     "c_singleColLayout" :      ["t_singleColBookList"],
     "c_autoToC" :              ["t_tocTitle", "gr_toc", "l_toc"],
+    "c_hideEmptyVerses" :      ["c_elipsizeMissingVerses"],
     "c_marginalverses" :       ["s_columnShift"],
     "c_hdrverses" :            ["c_sepPeriod", "c_sepColon"],
     "c_fnautocallers" :        ["t_fncallers", "btn_resetFNcallers", "c_fnomitcaller", "c_fnpageresetcallers"],
@@ -1331,7 +1332,7 @@ class GtkViewModel(ViewModel):
             if self.get("r_book") == "module":
                 self.builder.get_object(o).set_sensitive(False)
             else:
-                self.builder.get_object(o).set_sensitive(pgid in allpgids[1:3])
+                self.builder.get_object(o).set_sensitive(pgid in allpgids[2:4])
 
         fndict = {"scroll_FrontMatter" : ("", ""), "scroll_AdjList" : ("AdjLists", ".adj"), "scroll_FinalSFM" : ("", ""),
                   "scroll_TeXfile" : ("", ".tex"), "scroll_XeTeXlog" : ("", ".log"), "scroll_Settings": ("", "")}
@@ -1500,11 +1501,15 @@ class GtkViewModel(ViewModel):
             fallbacks.append(digfontr.name)
         pangostr = fontr.asPango(fallbacks, fsize)
         p = Pango.FontDescription(pangostr)
-        for w in ("t_clHeading", "t_tocTitle", "t_configNotes", "scroll_FinalSFM", \
+        for w in ("t_clHeading", "t_tocTitle", "t_configNotes", "scroll_FinalSFM", "scroll_FrontMatter", \
                   "ecb_ftrcenter", "ecb_hdrleft", "ecb_hdrcenter", "ecb_hdrright", "t_fncallers", "t_xrcallers", \
                   "l_projectFullName", "t_plCaption", "t_plRef", "t_plAltText", "t_plCopyright", "textv_colophon"):
             self.builder.get_object(w).modify_font(p)
         self.picListView.modify_font(p)
+
+        w = self.builder.get_object("cr_zvar_value")
+        w.set_property("font-desc", p)
+
 
     def onRadioChanged(self, btn):
         n = Gtk.Buildable.get_name(btn)

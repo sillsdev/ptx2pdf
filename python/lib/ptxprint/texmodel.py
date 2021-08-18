@@ -216,6 +216,7 @@ ModelMap = {
     "document/indentunit":      ("s_indentUnit", lambda w,v: round(float(v or "1.0"), 1)),
     "document/firstparaindent": ("c_firstParaIndent", lambda w,v: "true" if v else "false"),
     "document/ifhidehboxerrors": ("c_showHboxErrorBars", lambda w,v :"%" if v else ""),
+    "document/hidemptyverses":  ("c_hideEmptyVerses", None),
     "document/elipsizemptyvs":  ("c_elipsizeMissingVerses", None),
     "document/ifspacing":       ("c_spacing", lambda w,v :"" if v else "%"),
     "document/spacestretch":    ("s_maxSpace", lambda w,v : str((int(float(v)) - 100) / 100.)),

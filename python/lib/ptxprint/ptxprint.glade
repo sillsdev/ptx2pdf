@@ -8206,29 +8206,6 @@ in a style is subject to this setting.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkCheckButton" id="c_elipsizeMissingVerses">
-                                    <property name="label" translatable="yes">Hide Empty Verses</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">If groups of 2 or more verses are found
-to be empty, then group these together 
-as a bridged verse followed by {...}
-
-e.g.  \v 4 Verse text. \v 5-11 {...} \v 12 Verse text.
-
-Useful for when only part of the text has been
-drafted but you still need a printout of what has 
-been done so far.</property>
-                                    <property name="halign">start</property>
-                                    <property name="draw_indicator">True</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">2</property>
-                                    <property name="top_attach">3</property>
-                                  </packing>
-                                </child>
-                                <child>
                                   <object class="GtkBox">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
@@ -8324,6 +8301,55 @@ occur below Section Headings.</property>
                                   <packing>
                                     <property name="left_attach">2</property>
                                     <property name="top_attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkBox">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <child>
+                                      <object class="GtkCheckButton" id="c_hideEmptyVerses">
+                                        <property name="label" translatable="yes">Hide Empty Verses</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="tooltip_text" translatable="yes">Do not print any empty chapters or verses.
+Useful for when only part of the text has been
+drafted but you still need a printout of whatever
+has been translated so far.</property>
+                                        <property name="halign">start</property>
+                                        <property name="draw_indicator">True</property>
+                                        <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="c_elipsizeMissingVerses">
+                                        <property name="label" translatable="yes">Show {...}</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="tooltip_text" translatable="yes">Indicate using elipses that verses and/or 
+entire chapters are missing by placing {...}
+in the text to alert the reader that some
+parts of the text have been skipped.</property>
+                                        <property name="halign">start</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">1</property>
+                                      </packing>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">2</property>
+                                    <property name="top_attach">3</property>
                                   </packing>
                                 </child>
                               </object>
