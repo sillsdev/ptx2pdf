@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: ptxprint\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-07-05 16:31+0700\n"
-"PO-Revision-Date: 2021-07-05 09:32\n"
+"PO-Revision-Date: 2021-08-19 03:49\n"
 "Last-Translator: \n"
 "Language-Team: Hindi\n"
 "Language: hi_IN\n"
@@ -47,7 +47,7 @@ msgstr "फ़ॉन्ट स्केल"
 
 #: lib/ptxprint/gtkutils.py:90
 msgid "Set Font..."
-msgstr ""
+msgstr "फ़ॉन्ट्स सेट करें"
 
 #: lib/ptxprint/gtkview.py:276
 msgid "PTXprint Version {}\n"
@@ -56,7 +56,7 @@ msgstr ""
 
 #: lib/ptxprint/gtkview.py:282 lib/ptxprint/gtkview.py:284
 msgid "This message has been copied to the clipboard."
-msgstr ""
+msgstr "यह पते की क्लिपबोर्ड पर कॉपी बनाई गई है ।"
 
 #: lib/ptxprint/gtkview.py:305
 msgid "Paratext is not installed on this system.\n"
@@ -70,7 +70,7 @@ msgstr ""
 
 #: lib/ptxprint/gtkview.py:593
 msgid "v  Show More"
-msgstr ""
+msgstr "v और दिखाएं"
 
 #: lib/ptxprint/gtkview.py:595
 msgid "Show More Settings:\n"
@@ -80,7 +80,7 @@ msgstr ""
 
 #: lib/ptxprint/gtkview.py:599
 msgid "^  Show Less"
-msgstr ""
+msgstr "^ कम दिखाएं"
 
 #: lib/ptxprint/gtkview.py:601
 msgid "Show Fewer Settings:\n"
@@ -98,7 +98,7 @@ msgstr ""
 
 #: lib/ptxprint/gtkview.py:765
 msgid "Printing busy"
-msgstr ""
+msgstr "छपाई में व्यस्त"
 
 #: lib/ptxprint/gtkview.py:769 lib/ptxprint/runjob.py:200
 msgid "No books to print"
@@ -115,7 +115,7 @@ msgstr ""
 
 #: lib/ptxprint/gtkview.py:797
 msgid "The old PDF file is open!"
-msgstr ""
+msgstr "पुरानी पीडीएफ फाइल खुली है!"
 
 #: lib/ptxprint/gtkview.py:863
 msgid "Internal error occurred, trying to delete a directory tree"
@@ -135,7 +135,7 @@ msgstr "चित्र"
 
 #: lib/ptxprint/gtkview.py:958 lib/ptxprint/ptxprint.glade:14005
 msgid "Diglot"
-msgstr ""
+msgstr "द्विभाषिक"
 
 #: lib/ptxprint/gtkview.py:961
 msgid "Notes+"
@@ -151,7 +151,7 @@ msgstr "टैब्स"
 
 #: lib/ptxprint/gtkview.py:967 lib/ptxprint/gtkview.py:968
 msgid "Borders"
-msgstr ""
+msgstr "सीमाएँ"
 
 #: lib/ptxprint/gtkview.py:979 lib/ptxprint/ptxprint.glade:17608
 msgid "Advanced"
@@ -240,28 +240,28 @@ msgstr ""
 
 #: lib/ptxprint/gtkview.py:2320
 msgid "Select Watermark PDF file"
-msgstr ""
+msgstr "वॉटरमार्क पीडीएफ फाइल चुनें"
 
 #: lib/ptxprint/gtkview.py:2325
 msgid "Select Page Border PDF file"
-msgstr ""
+msgstr "पेज बॉर्डर पीडीएफ फाइल चुनें"
 
 #: lib/ptxprint/gtkview.py:2330
 msgid "Select Section Header PDF file"
-msgstr ""
+msgstr "सेक्शन हैडर पीडीएफ फाइल चुनें"
 
 #: lib/ptxprint/gtkview.py:2335
 msgid "Select End of Book PDF file"
-msgstr ""
+msgstr "पुस्तक का अंत पीडीएफ फाइल चुनें"
 
 #: lib/ptxprint/gtkview.py:2340
 msgid "Select Verse Decorator PDF file"
-msgstr ""
+msgstr "वाक्य नं सजाने का पीडीएफ फाइल चुनें"
 
 #: lib/ptxprint/gtkview.py:2445
 msgid "Switch to Other\n"
 "Diglot Project"
-msgstr ""
+msgstr "अन्य डिग्लॉट परियोजना में बदलें"
 
 #: lib/ptxprint/gtkview.py:2447 lib/ptxprint/ptxprint.glade:12504
 #: lib/ptxprint/ptxprint.glade:18741 lib/ptxprint/ptxprint.glade:18793
@@ -271,11 +271,11 @@ msgstr "प्रिंट करें"
 #: lib/ptxprint/gtkview.py:2453
 msgid "Save & Return to\n"
 "Diglot Project"
-msgstr ""
+msgstr "सहेजें और द्विभाषिक परियोजना पर लौटें"
 
 #: lib/ptxprint/gtkview.py:2455
 msgid "Return"
-msgstr ""
+msgstr "लौटें"
 
 #: lib/ptxprint/gtkview.py:2508
 msgid "FYI: The Regular font already supports all the characters in the text."
