@@ -1334,6 +1334,10 @@
    \x@\xdef\csname b@selineskip#1\endcsname{\the\baselineskip}%
  \fi
 }
+\def\onecolwidth#1{#1=\textwidth
+  \advance #1 by -2\columnshift\advance #1 by -\XrefNotesWidth
+  \advance #1 by -\XrefNotesMargin\advance #1 by -\gutter
+}
 \def\s@tupsizes{
  \s@tb@dyb@seline{}%
  %\tracingifs=1
@@ -1361,7 +1365,9 @@
  \fi
  \csname set@col@widths@\diglotlayout\endcsname
 %
-  \hsize=\textwidth \advance\hsize by -2\columnshift
+  \onecolwidth{\hsize}%
+  %\hsize=\textwidth \advance\hsize by -2\columnshift\advance\hsize by -\XrefNotesWidth\advance\hsize by -\XrefNotesMargin\advance\hsize by -\XrefNotesMargin
+  \trace{o}{hsize=\the\hsize, notes width=\the\XrefNotesWidth, margin=\XrefNotesMargin}%
  \topm@rgin=\TopMarginFactor\MarginUnit
  \advance\topm@rgin by -\topskip \advance\topm@rgin by 12\FontSizeUnit
  \bottomm@rgin=\BottomMarginFactor\MarginUnit
@@ -1403,4 +1409,5 @@
 \newdimen\ExtraRMargin \ExtraRMargin=0pt
 \newdimen\gutter \gutter=20pt
 \newdimen\XrefNotesWidth \XrefNotesWidth=0pt
+\newdimen\XrefNotesMargin \XrefNotesMargin=1pt
 \endinput

@@ -664,7 +664,6 @@
       \advance\dimen2 by \XrefNotesWidth
     \else\dimen2=0pt\fi
     \divide\dimen2 by 2
-    \ifx\XrefNotes\empty\else\advance\dimen2 \XrefNotesMargin\fi
     \ifdiglot\dimen4=\csname column\g@tterside width\endcsname\advance\dimen4 0.5\gutter\else\dimen4=0.5\textwidth\fi
     \advance\dimen4 by -\dimen2
     \ifdim\columnshift>0pt\advance\dimen4 by -\columnshift\fi % compensate for earlier added columnshift

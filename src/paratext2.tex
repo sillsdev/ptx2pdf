@@ -457,12 +457,10 @@
           \n@tewidth=\csname columnLwidth\endcsname
         \fi
      \else\n@tewidth=\textwidth\fi
-   \else\n@tewidth=\ifColNotes\ifnum\c@rrentcols=2\colwidth\else\textwidth\fi\else\textwidth\fi\fi
+   \else\ifColNotes\ifnum\c@rrentcols=2\n@tewidth=\colwidth\else\onecolwidth{\n@tewidth}\fi\else\n@tewidth=\textwidth\fi\fi
   \else
     %Assume that the note will be inserted using the current text width.
-    \ifnum\c@rrentcols=1
-      \n@tewidth=\textwidth
-    \else
+    \ifnum\c@rrentcols=1\onecolwidth{\n@tewidth}\else
       \ifdiglot
         \n@tewidth=\csname column\c@rrdstat width\endcsname
       \else
@@ -633,6 +631,20 @@
 }
 %-c_onecol
 %+c_onecoltrial_intro
+\def\testXrefSideL{\xdef\tmp{0}\if\XrefNotes\relax\else
+  \ifnum\pageno<1\else
+    \ifnum\XrefSide=1\xdef\tmp{1}\else
+      \ifnum\XrefSide=3\ifodd\pageno \xdef\tmp{1}\fi
+      \else\ifnum\XrefSide=4
+        \ifodd\else \xdef\tmp{1}\fi
+  \fi\fi\fi\fi\fi}
+\def\testXrefSideR{\xdef\tmp{0}\if\XrefNotes\relax\else
+  \ifnum\pageno<1\else
+    \ifnum\XrefSide=2 \xdef\tmp{1}\else
+      \ifnum\XrefSide=4\ifodd\pageno \xdef\tmp{1}\fi
+      \else\ifnum\XrefSide=3
+        \ifodd\pageno\else \xdef\tmp{1}\fi
+  \fi\fi\fi\fi\fi}
 \def\onecoltrial{% single-column version of \twocoltrial (see below)
   \tracingparagraphs=0
   %\tracingall=1\tracingoutput=0\tracingpages=0\tracingparagraphs=0\tracingassigns=0\tracingscantokens=0
@@ -650,7 +662,7 @@
   %\decr{\availht}{\verybottomins}%
   \setbox\s@vedpage=\copy255
   % split the galley to the actual size available
-  \setbox\colA=\vsplit255 to \availht \setbox0\copy\colA \setbox0=\vbox{\unvbox0}
+  \setbox\colA=\vsplit255 to \availht \setbox0\copy\colA \setbox0=\vbox{\unvbox0\vfil}
   \decr{\availht}{0}
   \ifdim\availht<0pt                                                        %(2)
     \MSG{Page overfull with inserts. Perhaps a little more text and less pictures would help}%
@@ -667,7 +679,7 @@
 %   \availht is ht that definitely works
     \def\pagecontents{%                                                     %(3)
 %      \msg{upwards mode = \the\XeTeXupwardsmode}
-      \dimen1=\textwidth \advance\dimen1 -\ExtraRMargin
+      \dimen1=\textwidth% \advance\dimen1 -\ExtraRMargin
       \trace{b}{BALANCE pageoutins: cols=1: text=\the\ht\colA, \the\dp\colA: partial=\the\ht\partial, \the\dp\partial: topins=\the\ht\topins: bottomins=\the\ht\bottomins}%
       \dimen9=\ht\partial
       \ifvoid\partial\else \vbox{\hbox to \dimen1{\hskip\columnshift\vbox{\unvbox\partial}}} \fi
@@ -676,9 +688,21 @@
       \iflastpage\setbox\colA\vbox{\unvbox\colA}\fi
       \ifColNotes\setbox\colA\vbox{\unvbox\colA\box\coln@tebox}\fi
       \lastd@pth=\dp\colA
+      \ifColNotes\ifdim\dp\xr@fbox<\lastd@pth \lastd@pth=\dp\xr@fbox\fi\fi
       \locs@startstop{\colA}{1}%
-      \hbox to \dimen1{\hbox to \columnshift{}%
-        \box\colA\hbox to \ExtraRMargin{}\hfil}%
+      \dimen3=\ht\colA
+      \ifColNotes\ifdim\ht\xr@fbox>\dimen3\dimen3=\ht\xr@fbox\fi\fi
+      \hbox to \dimen1{\testXrefSideL\ifnum\tmp=1
+          \trace{o}{onecoltrial lcolgutter makecolumngutter}%
+          \makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen3}{2}%
+        \fi
+        \hbox to \columnshift{}%
+        \vbox to\dimen3{\box\colA\vfil}%
+        \testXrefSideR\ifnum\tmp=1
+          \trace{o}{onecoltrial rcolgutter makecolumngutter}%
+          \makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen3}{1}%
+        \fi
+        \hbox to \ExtraRMargin{}}%
       \ifvoid\bottomins\else \vfil\kern-\lastd@pth
         \lastd@pth=0pt \vskip\skip\bottomins \hbox{\hbox to \columnshift{}\box\bottomins} \fi % ouput bottom spanning pictures
       \ifColNotes\else
@@ -825,7 +849,7 @@
   \setbox\s@vedpage=\copy255
   % split the galley to the actual size available
   \setbox\colA=\vsplit255 to \availht
-  \setbox\colA=\vbox{\unvbox\colA}%
+  \setbox\colA=\vbox{\unvbox\colA\vfil}%
   % and check if it all fit; if not, we'll have to back up and try again
   \ifvoid255 \fitonpagetrue \else \fitonpagefalse \fi
   \trace{o}{savepartialpage \the\ht\colA rem=\the\ht255}%
@@ -836,9 +860,20 @@
       \ifvoid\partial\else \vbox{\hbox to \dimen1{\hskip\columnshift\vbox{\unvbox\partial}}} \fi
       \ifvoid\topins\else \unvbox\topins \vskip\skip\topins \fi
       \lastd@pth=\dp\colA
+      \ifColNotes\ifdim\dp\xr@fbox<\lastd@pth \lastd@pth=\dp\xr@fbox\fi\fi
       \dimen1=\textwidth \advance\dimen1 -\ExtraRMargin \advance\dimen1 -\columnshift
-      \hbox to \dimen1{%\hbox to \columnshift{}%
-        \box\colA\hbox to \ExtraRMargin{}\hfil}%
+      \dimen3=\ht\colA
+      \ifColNotes\ifdim\ht\xr@fbox>\dimen3\dimen3=\ht\xr@fbox\fi\fi
+      \hbox to \dimen1{
+        \testXrefSideL\ifnum\tmp=1
+          \makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen3}{2}
+        \fi
+        \hbox to \columnshift{}%
+        \box\colA
+        \testXrefSideR\ifnum\tmp=1
+          \makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen3}{1}
+        \fi
+        \hbox to \ExtraRMargin{}\hfil}%
       \ifvoid\bottomins\else%
         \kern-\lastd@pth \lastd@pth=0pt \vskip\skip\bottomins \unvbox\bottomins \fi
       \ifMidPageFootnotes
@@ -1345,9 +1380,9 @@
           \ifvoid\verybottomins\vfill\fi %\kern-\lastd@pth\vfil % ignore depth of body text; fill space
           \dimen5=\AboveNoteSpace\advance\dimen5 by -\BelowNoteRuleSpace\advance\dimen5 by -0.2pt
           \vskip\ifdim\dimen5>0pt \AboveNoteSpace minus \dimen5\else\AboveNoteSpace\fi
-          {\footnoterule}\prevdepth=-10000pt\unvbox5
+          {\footnoterule}\prevdepth=-10000pt
           \vskip\BelowNoteRuleSpace minus \BelowNoteRuleSpace\kern0pt
-          \setbox0\lastbox\dimen1=\ht0\dimen0=\dp0\box0\ifdim\dimen1>0pt\kern-\dimen0\fi\vskip\bmg@p
+          \unvbox5\setbox0\lastbox\dimen1=\ht0\dimen0=\dp0\box0\ifdim\dimen1>0pt\kern-\dimen0\fi\vskip\bmg@p
       \fi\fi}%
       \trace{o}{coln@tebox out=\the\ht\coln@tebox+\the\dp\coln@tebox}%
   \fi
@@ -1402,8 +1437,8 @@
       \dimen5=\textwidth\advance\dimen5 by -\ExtraRMargin\advance\dimen5 by -\columnshift %
       \dimen2=\dimen3% \advance\dimen2\bmg@p
       \vbox{\hbox to \dimen5{%\hbox to \columnshift{}%
-          \ifRTL \hbox to \ExtraRMargin{}\box\colB\makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen2}\box\colA
-          \else \box\colA\makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen2}\box\colB\hbox to \ExtraRMargin{}\fi}
+          \ifRTL \hbox to \ExtraRMargin{}\box\colB\makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen2}{3}\box\colA
+          \else \box\colA\makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen2}{3}\box\colB\hbox to \ExtraRMargin{}\fi}
         \kern\lastd@pth}}%
 %-c_savepartialpaged_intro
 %+c_savepartialpaged
@@ -1500,8 +1535,8 @@
       \trace{p}{Text depth = \the\dimen3}%\showthe\lastd@pth
       \dimen2=\availht \advance\dimen2\bmg@p
       \hbox to \dimen1{\hbox to \columnshift{}%
-        \ifRTL \hbox to \ExtraRMargin{}\box\colB\makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen2}\box\colA
-        \else \box\colA\makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen2}\box\colB\hbox to \ExtraRMargin{}\fi}%
+        \ifRTL \hbox to \ExtraRMargin{}\box\colB\makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen2}{3}\box\colA
+        \else \box\colA\makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen2}{3}\box\colB\hbox to \ExtraRMargin{}\fi}%
         %\else \box\colA\makecolumngutter{\the\dimen3}{\the\textheight}{0pt}\box\colB\hbox to \ExtraRMargin{\fi}%
       \ifvoid\bottomins\else \kern-\lastd@pth
         \lastd@pth=0pt \vskip\skip\bottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\bottomins}}\fi % ouput bottom spanning pictures
@@ -1548,10 +1583,11 @@
 
 %makecolumngutter{rule height}{vbox height}{depth}
 
-\def\XrefNotesMargin{1pt}
-\def\makecolumngutter#1#2#3#4{\hfil
-  \trace{o}{makecolumngutter: rule height=#1, box height=#2, box depth=#3, total height=#4, ColumnGutterRuleSkip=\the\ColumnGutterRuleSkip}%
-% #1: Height of gutter rule, #2: height of gutter rule box, #3: depth of gutter rule box
+\def\makecolumngutter#1#2#3#4#5{\ifnum#5=1\hfil\else\ifnum#5=3\hfil\fi\fi
+  \trace{o}{makecolumngutter: rule height=#1, box height=#2, box depth=#3, total height=#4, lineside=#5 bits
+            ColumnGutterRuleSkip=\the\ColumnGutterRuleSkip}%
+% #1: Height of gutter rule, #2: height of gutter rule box, #3: depth of gutter rule box, #4: total height
+% #5: line sides bit 0=left, 1=right
   \dimen4=#1\advance\dimen4-\ColumnGutterRuleSkip%\advance\dimen4 by #3
   \ifColumnGutterRule
     \setbox4=\vbox to #4{
@@ -1560,19 +1596,19 @@
       \vfil}%
     \if\XrefNotes\relax\else
       \trace{o}{makecolumngutter: xr@fbox=\the\ht\xr@fbox}%
-      \copy4
+      \ifnum#5=1\copy4\else\ifnum#5=3\copy4\fi\fi
       \dimen0=#2
       % todo: ensure empty box doesn't collapse
       % todo: allow user defined inner margin also on grid
-      \hbox to \XrefNotesMargin{}%
+      \ifnum#5=1\hbox to \XrefNotesMargin{}\else\ifnum#5=3\hbox to \XrefNotesMargin{}\fi\fi
       \vbox to #4{\vbox to #2{\ifdim\ht\xr@fbox>0.9\dimen0 \unvbox\xr@fbox
         \else\ifdim\ht\xr@fbox=0pt\message{empty xrefbox}\vbox{\hsize=\XrefNotesWidth\hskip\XrefNotesWidth\hbox{}}\else
           \unvbox\xr@fbox\fi\vfil\fi}\vfil}%
-      \hbox to \XrefNotesMargin{}%
+      \ifnum#5>1\hbox to \XrefNotesMargin{}\fi
     \fi
-    \box4
+    \ifnum#5>1\box4\fi
   \fi
-  \hfil
+  \ifnum#5>1\hfil\fi
   \hbox to \columnshift{}}
 \newif\ifColumnGutterRule
 %-c_makecolumngutter
@@ -1698,7 +1734,7 @@
     \layoutstylebreak % save any partially-full page into \partial
     \global\let\layoutstylebreak\layoutstylebreak@singlecolumn
     %LOTS happens before this line is reached!
-    \global\hsize=\textwidth \advance\hsize by -\columnshift
+    \onecolwidth{\hsize}%
     \global\vsize=\textheight
     %\tempfalse
     \trace{o}{SingleColumn: \the\ht\partial > \PageFullFactor\space\the\textheight}%

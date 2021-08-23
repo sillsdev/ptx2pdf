@@ -88,7 +88,7 @@ ModelMap = {
                                  if (w.get("c_applyWatermark") and w.watermarks is not None and w.watermarks != 'None') else ""),
     "paper/ifcropmarks":        ("c_cropmarks", lambda w,v :"true" if v else "false"),  
     "paper/ifgrid":             ("c_grid", lambda w,v :"" if v else "%"),
-    "paper/ifverticalrule":     ("c_verticalrule", lambda w,v :"true" if v else "false"),
+    "paper/ifverticalrule":     ("c_verticalrule", lambda w,v :"true" if v or w.get("r_xrLocn") == "centre" else "false"),
     "paper/margins":            ("s_margins", lambda w,v: round(float(v)) if v else "12"),
     "paper/topmargin":          ("s_topmargin", None),
     "paper/bottommargin":       ("s_bottommargin", None),
@@ -290,7 +290,7 @@ ModelMap = {
     "notes/addcolon":           ("c_addColon", None),
     "notes/keepbookwithrefs":   ("c_keepBookWithRefs", None),
     "notes/glossaryfootnotes":  ("c_glossaryFootnotes", None),
-    "notes/columnnotes":        ("c_columnNotes", lambda w,v: "true" if v and w.get("c_doublecolumn") else "false"),
+    "notes/columnnotes":        ("c_columnNotes", lambda w,v: "true" if v else "false"),
 
     "notes/abovenotespace":     ("s_abovenotespace", None),
     "notes/belownoterulespace": ("s_belownoterulespace", None),
