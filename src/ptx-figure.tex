@@ -528,6 +528,7 @@
    \else \closein\t@stread \picfilecomm@nd #1 #7 #2 #3 #5 #6\fi
 }
 
+\def\ch@ckpathfwd#1/#2\E{\edef\t@mp{#2}\ifx\t@mp\empty\else\temptrue\fi}
 %+cfig_dofigure_intro
 \def\d@figure#1{%
  \ifIncludeFigures
@@ -710,9 +711,17 @@
       \def\picdim@n{width}\def\picaltdim@n{height}%Normal
     \fi
     % First, try to set it at the requested dimension:
-    \setbox\newpicb@x=\hbox{%
-      \ins@rtpic{"\the\PicPath\csname figparam-src\endcsname"}%
+    \tempfalse
+    \x@\ch@ckpathfwd\csname figparam-src\endcsname/\E
+    \iftemp
+      \setbox\newpicb@x=\hbox{%
+        \ins@rtpic{"\csname figparam-src\endcsname"}%
                      {\picdim@n}{\the\dimexpr\sizem@ltiple\p@cwidth\relax}{\the\dimexpr\p@cheight\relax}{\xtra}{\xtraremains}{\picp@ge}}%
+    \else
+      \setbox\newpicb@x=\hbox{%
+        \ins@rtpic{"\the\PicPath\csname figparam-src\endcsname"}%
+                     {\picdim@n}{\the\dimexpr\sizem@ltiple\p@cwidth\relax}{\the\dimexpr\p@cheight\relax}{\xtra}{\xtraremains}{\picp@ge}}%
+    \fi
     \ifdim\ht\newpicb@x>\p@cheight
       %It doesn't fit. Scale to other dimension:
       \trace{g}{Picture too big set with \picdim@n=\sizem@ltiple\space\the\p@cwidth}%
