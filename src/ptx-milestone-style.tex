@@ -217,12 +217,12 @@
 \def\figmil@stone{zfiga}
 
 \def\st@ndalonemilestone{% FIXME:Potentially some kind of hook? Or use this as an image anchor?
-  \trace{m}{st@ndalonemilestone (\attrid)}%
   \ifx\attrid\empty
     \let\attr@b\relax
   \else 
     \get@ttribute{\attrid}%
   \fi
+  \trace{m}{st@ndalonemilestone(\thismil@stone) \attrid=\attr@b}%
   \op@ninghooks{start}{\thismil@stone}%
   \let\oldc@rref\c@rref\let\olddc@rref\dc@rref
   \ifx\attr@b\relax\else\ifcsname ms:\thismil@stone=\attr@b\endcsname

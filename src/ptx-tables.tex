@@ -124,7 +124,7 @@
     \@ndcell
     \st@rtcell
     \x@\xdef\csname align-\the\tabler@ws-\the\tablec@l\endcsname{#2}%
-    \trace{t}{Define cell [\the\tabler@ws, \the\tablec@l] = #2}%
+    \trace{t}{Define cell [\the\tabler@ws, \the\tablec@l] = #2 in style #1}%
     \ifnum\tablec@l>\maxtablec@l \global\maxtablec@l=\tablec@l \fi
     \ch@rstyle{#1}~\ignorespaces}%
 }
@@ -170,6 +170,7 @@
         \setbox\c@rrentcolbox=\vbox{\hbox{}\unvbox\c@rrentcolbox}%
         \repeat
     \fi
+    \trace{t}{Add cell width \the\wd\cellb@x, to row \the\tabler@ws}%
     \setbox\c@rrentcolbox=\vbox{\box\cellb@x\unvbox\c@rrentcolbox}%
       % note that this stacks the cells upwards! they'll be reversed later
   \fi}
@@ -183,7 +184,7 @@
     \tabler@ws=0
     \tablec@l=0
     \global\maxtablec@l=0
-    \doingt@bletrue
+    \doingt@bletrue\inn@tetrue
     \message{starting table}%
   \fi}
 
@@ -196,7 +197,7 @@
     \f@reachcol{\advance\t@talwidth by \wd\c@rrentcolbox}%
     \endt@blewrap
     \f@reachcol{\setbox\c@rrentcolbox=\box\voidb@x}%
-    \doingt@blefalse
+    \doingt@blefalse\inn@tefalse
   \fi}
 \newif\ifdoingt@ble
 
@@ -229,6 +230,7 @@
         \c@rrentcolwidth=\wd\c@rrentcolbox
       \fi
     \fi
+    %\message{Table col width \the\c@rrentcolwidth}%
   }%
 %  \f@reachcol{%
 %    \MSG{column \the\@col: width=\the\c@rrentcolwidth\space
@@ -268,11 +270,10 @@
  \else \global\let\@@@NEXT\relax \fi \@@@NEXT}
 \let\@@@REPEAT\fi
 
-\def\wr@pcolumn{\@row=1 \setbox\c@rrentcolbox=\vbox{\unvbox\c@rrentcolbox \wr@pboxes}}
+\def\wr@pcolumn{\@row=1\setbox\c@rrentcolbox=\vbox{\unvbox\c@rrentcolbox \wr@pboxes}}
 \def\wr@pboxes{% line-wrap a list of \hboxes
   \setbox0=\lastbox 
   \ifhbox0 {\advance\@row by 1 \wr@pboxes}\fi
-%  \MSG{before wrap:}\showbox0
   \setbox0=\vbox{\hsize=\c@rrentcolwidth
     \everypar={}\resetp@rstyle\noindent
     \ifRTL\beginR\fi
@@ -305,7 +306,6 @@
     \fi\fi
     \par}%
   \wd0=\c@rrentcolwidth
-%  \MSG{after wrap:}\showbox0
   \box0 }
 \def\cell@r{r}
 \def\cell@c{c}
@@ -315,9 +315,10 @@
 \def\updatelinec@unt{% count lines in \c@rrentcell, update \linec@unt if more than current value
   \global\lct@mp=0
   \setbox0=\vbox{\unvcopy\c@rrentcell \c@untlines}%
-  \ifnum\lct@mp>\linec@unt \linec@unt=\lct@mp \fi}
+  \ifnum\lct@mp>\linec@unt \global\linec@unt=\lct@mp \fi}
 \def\c@untlines{\setbox0=\lastbox
   \ifhbox0 \global\advance\lct@mp by 1 \unskip\unpenalty\c@untlines
+  \trace{t}{countd \the\lct@mp\space lines}%
   \fi}
 \def\getnth@line{% return content of line nth@line from box \c@rrentcell
   \lct@mp=0

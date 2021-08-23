@@ -161,25 +161,34 @@
   \ifx\toc@C\empty \else \let\n@xt\maket@cline \fi
   \n@xt}
 
-\def\doTOCline#1#2#3#4#5{%
+\def\fnname{doTOCline}
+\catcode`\~=12 \lccode`\~=32 % we'll use \lowercase{~} when we need a category-12 space
+\lowercase{
+\x@\def\csname\fnname\endcsname#1#2#3#4#5{%
 % ID, cell1, cell2, cell3, pagenum
   \tr
-  \global\tocc@l=1
-  \x@\edef\csname t@mp1\endcsname{#2}
-  \x@\edef\csname t@mp2\endcsname{#3}
-  \x@\edef\csname t@mp3\endcsname{#4}
-  \count254=1
-  \loop
-    \global\edef\t@mp{\csname t@mp\the\tocc@l\endcsname}
-    \ifx\t@mp\empty\else
-        \csname tc\the\count254\endcsname \t@mp
-        \advance\count254 by 1
-    \fi
-    \global\advance\tocc@l by 1
-  \ifnum\tocc@l<4\repeat
-  \relax
-  \csname tcr\the\count254\endcsname #5
-}
+  \edef\t@mpa{#2}%
+  \edef\t@mpb{#3}%
+  \edef\t@mpc{#4}%
+  \count252=1
+  \ifx\t@mpa\empty\else
+    \edef\t@mpd{tc\the\count252}%
+    \csname \t@mpd\endcsname~\t@mpa
+    \advance\count252 by 1
+  \fi
+  \ifx\t@mpb\empty\else
+    \edef\t@mpd{tc\the\count252}%
+    \csname \t@mpd\endcsname~\t@mpb
+    \advance\count252 by 1
+  \fi
+  \ifx\t@mpc\empty\else
+    \edef\t@mpd{tc\the\count252}%
+    \csname \t@mpd\endcsname~\t@mpc
+    \advance\count252 by 1
+  \fi
+  \edef\t@mpd{tcr\the\count252}%
+  \csname\t@mpd\endcsname~#5
+}}
 
 \addtoeveryparhooks{\checkfort@c}
 
