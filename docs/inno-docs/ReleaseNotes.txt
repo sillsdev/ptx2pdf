@@ -1,7 +1,32 @@
 PTXprint 1.9.2 Release Notes 
-29 July 2021
+20 August 2021
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
+
+Bug fixes and Improvements in 1.9.3 (20 Aug 2021) 
+  
+  * Added Publication Info tab to UI for better handling of config-specific front matter:
+  
+  * Added feature to create config-specific front matter with variables
+  
+  * Added ability to import Paratext FRT periph sections, or entire PDFs as part of front matter
+  
+  * Improved generated table of contents, including various options to categorize and sort ToCs
+  
+  * Added feature to copy configs to other Paratext projects
+  
+  * Changed output location from “PrintDraft” folder to “PRJID\local\ptxprint” folder
+  
+  * Improved 'Hide Empty Verses' and added option to show ellipsis
+  
+  * Added warning for lack of EL Compliance if 'SIL' found in copyright statement
+  
+  * Added advanced option 'Disable ALL internet use', 
+    and 'Only use English Links' - helpful when using non-English UI
+  
+  * Fixed Multi Credit Overlays to work with verbose picture filenames
+  
+  * #475 Preserve notes on 1->2 and 2->1 column transitions
 
 Bug fixes and Improvements in 1.9.2 (29 Jul 2021) 
 

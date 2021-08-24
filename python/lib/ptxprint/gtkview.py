@@ -208,8 +208,8 @@ _object_classes = {
     "mainnb":      ("nbk_Main", ),
     "viewernb":    ("nbk_Viewer", "nbk_PicList"),
     "thumbtabs":   ("l_thumbVerticalL", "l_thumbVerticalR", "l_thumbHorizontalL", "l_thumbHorizontalR"),
-    "stylinks":    ("lb_style_s", "lb_style_r", "lb_style_v", "lb_style_f", "lb_style_x", 
-                    "lb_style_rb", "lb_style_gloss|rb", "lb_style_toc3", "lb_style_x-credit|fig"), 
+    "stylinks":    ("lb_style_s", "lb_style_r", "lb_style_v", "lb_style_f", "lb_style_x", "lb_style_fig",
+                    "lb_style_rb", "lb_style_gloss|rb", "lb_style_toc3", "lb_style_x-credit|fig", "lb_omitPics"), 
     "stybutton":   ("btn_reloadConfig", "btn_resetCopyright", "btn_rescanFRTvars", "btn_resetColophon", 
                     "btn_resetFNcallers", "btn_resetXRcallers", "btn_styAdd", "btn_styEdit", "btn_styDel", 
                     "btn_styReset", "btn_refreshFonts", "btn_resetStyFilter", "btn_plAdd", "btn_plDel", 
@@ -682,11 +682,6 @@ class GtkViewModel(ViewModel):
         for w in ["tb_plTopPane", "tb_picPreview", "scr_detailsBottom", "scr_checklistBottom", "l_globalPicSettings"]: 
             self.builder.get_object(w).set_visible(not val)        
             
-        # Show Hide specific Help items
-        for pre in ("l_", "lb_"):
-            for h in ("ptxprintdir", "prjdir", "settings_dir", "pdfViewer", "techFAQ", "reportBugs"): 
-                self.builder.get_object("{}{}".format(pre, h)).set_visible(not val)
-
         self.noInternetClicked(None)
         self.colorTabs()
         # Resize Main UI Window appropriately
@@ -703,6 +698,11 @@ class GtkViewModel(ViewModel):
             self.builder.get_object(w).set_visible(not val)
         self.userconfig.set("init", "nointernet", "true" if self.get("c_noInternet") else "false")
         self.styleEditor.editMarker()
+        adv = self.get("c_showAdvancedOptions")
+        # Show Hide specific Help items
+        for pre in ("l_", "lb_"):
+            for h in ("ptxprintdir", "prjdir", "settings_dir", "pdfViewer", "techFAQ", "reportBugs"): 
+                self.builder.get_object("{}{}".format(pre, h)).set_visible(not(not adv or val))
 
     def addCR(self, name, index):
         if "|" in name:

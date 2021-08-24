@@ -1032,15 +1032,15 @@ If in doubt, click Cancel.</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">False</property>
-                        <property name="tooltip_text" translatable="yes">This option will create a COPY the Paratext project's
+                        <property name="tooltip_text" translatable="yes">This option will create a COPY of the Paratext project's
 FRT book to be used exclusively by PTXprint. This is
 only necessary if you wish to further edit the front
 matter to make use of PTXprint-specific \zvar|variables\*.
 
 If you just want to use Paratext's FRT book with no
 customization, then select the FRT book from the
-book selector on the Basic tab. In that case, there
-is no need to generate Front Matter here.</property>
+book selector on the Basic tab. In that case, click
+'Cancel' as there is no need to generate Front Matter.</property>
                         <property name="halign">start</property>
                         <property name="draw_indicator">True</property>
                         <property name="group">r_generateFRT_basic</property>
@@ -3789,10 +3789,11 @@ which already have Credit Overlay settings.</property>
                     <property name="can_focus">True</property>
                     <property name="focus_on_click">False</property>
                     <property name="receives_default">True</property>
+                    <property name="tooltip_text" translatable="yes">Click to edit the Credit Overlay properties on the Styles tab.</property>
                     <property name="halign">center</property>
                     <property name="valign">start</property>
                     <property name="relief">none</property>
-                    <property name="uri">Click to edit the Credit Overlay properties on the Styles tab</property>
+                    <property name="uri">Click to view the Styles tab</property>
                     <signal name="clicked" handler="onEditStyleClicked" swapped="no"/>
                   </object>
                   <packing>
@@ -4193,20 +4194,20 @@ information, position and other parameters.</property>
     </columns>
     <data>
       <row>
-        <col id="0" translatable="yes">maintitle</col>
-        <col id="1" translatable="yes">God's Holy Word</col>
+        <col id="0">maintitle</col>
+        <col id="1">God's Word</col>
       </row>
       <row>
-        <col id="0" translatable="yes">subtitle</col>
-        <col id="1" translatable="yes">The New Testament with Psalms and Proverbs</col>
+        <col id="0">subtitle</col>
+        <col id="1">The New Testament with Psalms and Proverbs</col>
       </row>
       <row>
-        <col id="0" translatable="yes">copiesprinted</col>
-        <col id="1" translatable="yes">300</col>
+        <col id="0">copiesprinted</col>
+        <col id="1">50</col>
       </row>
       <row>
-        <col id="0" translatable="yes">languagename</col>
-        <col id="1" translatable="yes">Wakawaka</col>
+        <col id="0">languagename</col>
+        <col id="1">Wakawaka</col>
       </row>
     </data>
   </object>
@@ -4948,17 +4949,17 @@ be viewed or edited in Paratext.</property>
                               <object class="GtkAlignment">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="left_padding">12</property>
+                                <property name="left_padding">6</property>
                                 <child>
                                   <object class="GtkGrid">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="margin_left">16</property>
                                     <property name="margin_top">3</property>
                                     <property name="margin_bottom">3</property>
-                                    <property name="column_spacing">3</property>
+                                    <property name="column_spacing">6</property>
                                     <child>
                                       <object class="GtkLabel">
+                                        <property name="width_request">80</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="tooltip_text" translatable="yes">Type a name for the current configuration
@@ -4970,8 +4971,11 @@ of the same Paratext project.
 
 Alternatively, select a previously-saved
 configuration to retrieve those settings.</property>
-                                        <property name="halign">start</property>
-                                        <property name="label" translatable="yes">Name: </property>
+                                        <property name="halign">end</property>
+                                        <property name="margin_left">6</property>
+                                        <property name="label" translatable="yes">Name:</property>
+                                        <property name="justify">right</property>
+                                        <property name="xalign">1</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
@@ -5077,12 +5081,16 @@ the Notes field below.</property>
                                     </child>
                                     <child>
                                       <object class="GtkLabel" id="l_notes">
+                                        <property name="width_request">80</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="tooltip_text" translatable="yes">Optional: Provide a description about the
 saved/shared configuration named above.</property>
-                                        <property name="halign">start</property>
+                                        <property name="halign">end</property>
+                                        <property name="margin_left">6</property>
                                         <property name="label" translatable="yes">Notes:</property>
+                                        <property name="justify">right</property>
+                                        <property name="xalign">1</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">0</property>
@@ -5249,7 +5257,7 @@ settings for a similar project.</property>
                           <object class="GtkGrid">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="margin_left">10</property>
+                            <property name="margin_left">6</property>
                             <property name="margin_right">6</property>
                             <property name="margin_top">6</property>
                             <property name="margin_bottom">6</property>
@@ -5257,11 +5265,14 @@ settings for a similar project.</property>
                             <property name="column_spacing">6</property>
                             <child>
                               <object class="GtkLabel">
+                                <property name="width_request">80</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="halign">end</property>
-                                <property name="margin_left">8</property>
+                                <property name="margin_left">6</property>
                                 <property name="label" translatable="yes">Copyright:</property>
+                                <property name="justify">right</property>
+                                <property name="xalign">1</property>
                               </object>
                               <packing>
                                 <property name="left_attach">0</property>
@@ -5274,7 +5285,7 @@ settings for a similar project.</property>
                                 <property name="can_focus">True</property>
                                 <property name="tooltip_text" translatable="yes">It is important to include a copyright statement on every publication. By default this will be set according to the Paratext project settings, but you can edit it here if needed. 
 
-Note: There are several shortcuts you can use:
+These keyboard sequences can be used:
    (c) --&gt; ©  the copyright sign
    (r) --&gt; ®  to denote registered trademarks
    (tm) --&gt; ™  to denote trademarks in general
@@ -5284,7 +5295,7 @@ use ~ for places where a non-breaking space is needed
 use // where a line break needs to be forced
 but :// used in URLs will still be preserved</property>
                                 <property name="hexpand">True</property>
-                                <property name="placeholder_text" translatable="yes">© 2021 Wycliffe Bible Translators, Inc.</property>
+                                <property name="placeholder_text" translatable="yes">&lt;Enter copyright holder here. For example, © 2021 Wycliffe Bible Translators, Inc.&gt;</property>
                                 <signal name="changed" handler="onCopyrightStatementChanged" swapped="no"/>
                               </object>
                               <packing>
@@ -5311,10 +5322,14 @@ Paratext project settings.</property>
                             </child>
                             <child>
                               <object class="GtkLabel">
+                                <property name="width_request">80</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="halign">end</property>
+                                <property name="margin_left">5</property>
                                 <property name="label" translatable="yes">License:</property>
+                                <property name="justify">right</property>
+                                <property name="xalign">1</property>
                               </object>
                               <packing>
                                 <property name="left_attach">0</property>
@@ -5371,7 +5386,7 @@ but :// used in URLs will still be preserved</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
-                        <property name="fill">False</property>
+                        <property name="fill">True</property>
                         <property name="position">2</property>
                       </packing>
                     </child>
@@ -8450,10 +8465,11 @@ uncheck the Parallel Passage Refs.</property>
                                         <property name="can_focus">True</property>
                                         <property name="focus_on_click">False</property>
                                         <property name="receives_default">True</property>
+                                        <property name="tooltip_text" translatable="yes">Click to edit the \s marker's properties on the Styles tab.</property>
                                         <property name="halign">start</property>
                                         <property name="valign">center</property>
                                         <property name="relief">none</property>
-                                        <property name="uri">Click to edit the \s marker's properties on the Styles tab</property>
+                                        <property name="uri">Click to view the Styles tab</property>
                                         <signal name="activate-link" handler="onEditStyleClicked" swapped="no"/>
                                       </object>
                                       <packing>
@@ -8499,9 +8515,10 @@ occur below Section Headings.</property>
                                         <property name="can_focus">True</property>
                                         <property name="focus_on_click">False</property>
                                         <property name="receives_default">True</property>
+                                        <property name="tooltip_text" translatable="yes">Click to edit the \r marker's properties on the Styles tab.</property>
                                         <property name="halign">start</property>
                                         <property name="relief">none</property>
-                                        <property name="uri">Click to edit the \r marker's properties on the Styles tab</property>
+                                        <property name="uri">Click to view the Styles tab</property>
                                         <signal name="activate-link" handler="onEditStyleClicked" swapped="no"/>
                                       </object>
                                       <packing>
@@ -8957,11 +8974,12 @@ line then set this option.</property>
                                                         <property name="can_focus">True</property>
                                                         <property name="focus_on_click">False</property>
                                                         <property name="receives_default">True</property>
+                                                        <property name="tooltip_text" translatable="yes">Click to edit the Footnote properties on the Styles tab.</property>
                                                         <property name="halign">end</property>
                                                         <property name="margin_right">6</property>
                                                         <property name="hexpand">True</property>
                                                         <property name="relief">none</property>
-                                                        <property name="uri">Click to edit the Footnote properties on the Styles tab</property>
+                                                        <property name="uri">Click to view the Styles tab</property>
                                                         <signal name="activate-link" handler="onEditStyleClicked" swapped="no"/>
                                                       </object>
                                                       <packing>
@@ -9225,11 +9243,12 @@ line then set this option.</property>
                                                         <property name="can_focus">True</property>
                                                         <property name="focus_on_click">False</property>
                                                         <property name="receives_default">True</property>
+                                                        <property name="tooltip_text" translatable="yes">Click to edit the Cross-Reference properties on the Styles tab.</property>
                                                         <property name="halign">end</property>
                                                         <property name="margin_right">6</property>
                                                         <property name="hexpand">True</property>
                                                         <property name="relief">none</property>
-                                                        <property name="uri">Click to edit the Cross-Reference properties on the Styles tab</property>
+                                                        <property name="uri">Click to view the Styles tab</property>
                                                         <signal name="activate-link" handler="onEditStyleClicked" swapped="no"/>
                                                       </object>
                                                       <packing>
@@ -10139,17 +10158,15 @@ along with the footnotes as a single paragraph).</property>
                                                 </child>
                                                 <child>
                                                   <object class="GtkRadioButton" id="r_xrLocn_centre">
-                                                    <property name="label" translatable="yes">Centre Column xRefs</property>
+                                                    <property name="label" translatable="yes">Vertical Column of xRefs</property>
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">True</property>
                                                     <property name="receives_default">False</property>
-                                                    <property name="tooltip_text" translatable="yes">This feature is only available for 2-column layouts 
-and is normally used for Study/Reference Bibles.
-
-When there are numerous cross-references (usually
+                                                    <property name="tooltip_text" translatable="yes">When there are numerous cross-references (usually
 when using an external list of references) then it
-may be useful to place them in their own space in 
-a column between the two columns of text.</property>
+may be useful to place them in their own column. 
+
+The cross references will appear in a narrow vertical column similar to a study/reference Bible layout.</property>
                                                     <property name="halign">start</property>
                                                     <property name="active">True</property>
                                                     <property name="draw_indicator">True</property>
@@ -11698,9 +11715,10 @@ the Basic tab.</property>
                                 <child>
                                   <object class="GtkCheckButton" id="c_plMultiSelect">
                                     <property name="label" translatable="yes">Select Multiple</property>
-                                    <property name="visible">True</property>
+                                    <property name="sensitive">False</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
+                                    <property name="no_show_all">True</property>
                                     <property name="tooltip_text" translatable="yes">The details of ALL the pictures are stored in a single list.
 Select this option to only display the pictures from the
 books that are currently in focus to be printed. 
@@ -12368,25 +12386,6 @@ then add this line to your ptxprint-mods.tex file:
                                                   </packing>
                                                 </child>
                                                 <child>
-                                                  <object class="GtkEntry" id="t_plCaption">
-                                                    <property name="visible">True</property>
-                                                    <property name="can_focus">True</property>
-                                                    <property name="tooltip_text" translatable="yes">By default the caption will appear below the picture.
-If you need the caption to come before the picture
-then add this line to your ptxprint-mods.tex file:
-   \CaptionFirsttrue
-
-Note that captions are NOT processed by any
-changes specified in the PrintDraftChanges.txt file.</property>
-                                                    <property name="hexpand">True</property>
-                                                  </object>
-                                                  <packing>
-                                                    <property name="left_attach">1</property>
-                                                    <property name="top_attach">3</property>
-                                                    <property name="width">3</property>
-                                                  </packing>
-                                                </child>
-                                                <child>
                                                   <object class="GtkLabel" id="l_plRef">
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">False</property>
@@ -12999,6 +12998,60 @@ be set here.</property>
                                                     <property name="left_attach">5</property>
                                                     <property name="top_attach">5</property>
                                                     <property name="width">2</property>
+                                                  </packing>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkBox">
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">False</property>
+                                                    <property name="hexpand">True</property>
+                                                    <child>
+                                                      <object class="GtkEntry" id="t_plCaption">
+                                                        <property name="width_request">260</property>
+                                                        <property name="visible">True</property>
+                                                        <property name="can_focus">True</property>
+                                                        <property name="tooltip_text" translatable="yes">By default the caption will appear below the picture.
+If you need the caption to come before the picture
+then add this line to your ptxprint-mods.tex file:
+   \CaptionFirsttrue
+
+Note that captions are NOT processed by any
+changes specified in the PrintDraftChanges.txt file.</property>
+                                                        <property name="hexpand">True</property>
+                                                      </object>
+                                                      <packing>
+                                                        <property name="expand">False</property>
+                                                        <property name="fill">True</property>
+                                                        <property name="position">0</property>
+                                                      </packing>
+                                                    </child>
+                                                    <child>
+                                                      <object class="GtkLinkButton" id="lb_style_fig">
+                                                        <property name="label">\fig</property>
+                                                        <property name="width_request">2</property>
+                                                        <property name="visible">True</property>
+                                                        <property name="can_focus">True</property>
+                                                        <property name="focus_on_click">False</property>
+                                                        <property name="receives_default">True</property>
+                                                        <property name="tooltip_text" translatable="yes">Click to edit the Figure Caption properties on the Styles tab.</property>
+                                                        <property name="halign">center</property>
+                                                        <property name="margin_left">2</property>
+                                                        <property name="relief">none</property>
+                                                        <property name="uri">Click to view the Styles tab</property>
+                                                        <signal name="activate-link" handler="onEditStyleClicked" swapped="no"/>
+                                                      </object>
+                                                      <packing>
+                                                        <property name="expand">False</property>
+                                                        <property name="fill">False</property>
+                                                        <property name="pack_type">end</property>
+                                                        <property name="position">1</property>
+                                                      </packing>
+                                                    </child>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="left_attach">1</property>
+                                                    <property name="top_attach">3</property>
+                                                    <property name="width">3</property>
                                                   </packing>
                                                 </child>
                                                 <child>
@@ -15289,10 +15342,11 @@ fit within the graphic.</property>
                                             <property name="can_focus">True</property>
                                             <property name="focus_on_click">False</property>
                                             <property name="receives_default">True</property>
+                                            <property name="tooltip_text" translatable="yes">Click to edit the \v marker's properties on the Styles tab.</property>
                                             <property name="halign">end</property>
                                             <property name="valign">center</property>
                                             <property name="relief">none</property>
-                                            <property name="uri">Click to edit the \v marker's properties on the Styles tab</property>
+                                            <property name="uri">Click to view the Styles tab</property>
                                             <signal name="activate-link" handler="onEditStyleClicked" swapped="no"/>
                                           </object>
                                           <packing>
@@ -17470,12 +17524,12 @@ the publication being printed.</property>
                                 <child>
                                   <object class="GtkCheckButton" id="c_useprintdraftfolder">
                                     <property name="label" translatable="yes">Output to Project's
-PrintDraft Folder</property>
+local\ptxprint Folder</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">Use the Project Printdraft directory 
-to store generated PDF file(s).</property>
+                                    <property name="tooltip_text" translatable="yes">The generated PDF file is normally created
+in the &lt;ProjID&gt;\local\ptxprint folder.</property>
                                     <property name="halign">start</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
@@ -18211,7 +18265,7 @@ this button to show that tab.</property>
 possible paragraph adjustment positions, it
 saves a lot of typing. But once you've made
 some adjustments, it is hard to see specifically
-which places have been adjust because the
+which places have been adjusted because the
 list is so long. Clicking this button will remove
 all the redundant lines (i.e. those with +0 which
 have no effect on the output) so that you can see
@@ -18252,19 +18306,19 @@ more clearly where changes are being made.</property>
                           <object class="GtkLabel" id="l_FrontMatter">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="tooltip_text" translatable="yes">You can use the following \zspecialcodes to
-automatically include special text using the 
-following markers:
-\zcopyright   - copyright statement from the Basic tab
-\zlicense     - License text from the Basic tab
-\zimagecopyrights   - Automatically generated list of images, page numbers and attributions.
-\zimagecopyrightsfr - as above, but use localized (fr = French) version (ro, hu, es, fr, ru available).
+                            <property name="tooltip_text" translatable="yes">You may use the following \zspecialcodes to
+include special text in the front matter:
 
-\b can be used to insert a blank line between markers if needed.
+\zcopyright - copyright statement from the Basic tab
+\zlicense - license statement from the Basic tab
+\zimagecopyrights - generated list of images with copyright attribution
+\zimagecopyrightsfr - as above, but localized (fr = French)
+\zbl # - inserts # blank lines (e.g. '\zbl 3' inserts 3 blank lines)
 
-In addition to the above-mentioned codes, you may use
-\zvar_variables as generic place-holders. The values of these
-need to be filled in on the Pub.Info tab.</property>
+In addition to the above-mentioned codes, you may specify
+your own config-specific \zvar |variables\* as place-holders.
+Click on 'Edit Variables...' to assign values to these variables
+on the Publication Info tab.</property>
                             <property name="label" translatable="yes">Front Matter</property>
                           </object>
                           <packing>
