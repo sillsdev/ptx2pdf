@@ -76,7 +76,8 @@
 %  \fi
   \tob@dyfalse
   \global\b@dytrue\global\@ntrofalse\global\t@tlefalse
-  \ifnum\BodyColumns=1 \onecolwidth{\hsize}\ifhmode\trace{o}{st@rtbody in hmode!}\else\kern 0pt\fi\fi
+  % set up for single column from single column. Empty vbox to say we are not at the start of a page
+  \ifnum\BodyColumns=1 \onecolwidth{\hsize}\ifdim\ht\partial>\baselineskip\vbox{\kern0pt}\fi\fi
 \fi}
 
 \newcount\c@rrentcols \global\c@rrentcols=1
