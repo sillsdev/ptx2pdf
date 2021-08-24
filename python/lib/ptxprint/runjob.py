@@ -87,7 +87,7 @@ def newBase(fpath):
 
 _diglotprinter = {
 "_diglotcustomsty":         "c_useCustomSty",
-"_diglotmodsty":            "c_useModsTex",
+"_diglotmodsty":            "c_useModsSty",
 "_diglotincludefn":         "c_includeFootnotes",
 "_diglotincludexr":         "c_includeXrefs"
 }
