@@ -9,6 +9,7 @@ from ptxprint.usfmutils import Sheets, UsfmCollection, Usfm
 from ptxprint.piclist import PicInfo, PicChecks
 from ptxprint.styleditor import StyleEditor
 from ptxprint.pdfrw.pdfreader import PdfReader
+import ptxprint.pdfrw.errors
 import pathlib, os, sys
 from configparser import NoSectionError, NoOptionError, _UNSET
 from tempfile import NamedTemporaryFile
@@ -1313,12 +1314,15 @@ class ViewModel:
             if os.path.exists(pf):
                 outfname = os.path.relpath(pf, self.settings_dir)
                 if pf.endswith(".pdf") and "local/ptxprint" not in pf:
-                    trailer = PdfReader(pf)
-                    trailer.read_all()
-                    outf = BytesIO()
-                    PdfWriter(outf, trailer=trailer).write()
-                    outf.close()
-                    zf.writestr(outfname, outf.getval())
+                    try:
+                        trailer = PdfReader(pf)
+                        trailer.read_all()
+                        outf = BytesIO()
+                        PdfWriter(outf, trailer=trailer).write()
+                        outf.close()
+                        zf.writestr(outfname, outf.getval())
+                    except ptxprint.pdfrw.errors:
+                        pass
                 else:
                     zf.write(pf, outfname)
         ptxmacrospath = self.scriptsdir
