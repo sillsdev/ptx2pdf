@@ -2131,6 +2131,29 @@ settings for a similar project.</property>
       </row>
     </data>
   </object>
+  <object class="GtkListStore" id="ls_colXRside">
+    <columns>
+      <!-- column-name HorizPosition -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">Left</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Right</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Inner</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Outer</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Centre</col>
+      </row>
+    </data>
+  </object>
   <object class="GtkListStore" id="ls_columns">
     <columns>
       <!-- column-name number -->
@@ -4515,6 +4538,13 @@ information, position and other parameters.</property>
       <!-- column-name active -->
       <column type="gboolean"/>
     </columns>
+  </object>
+  <object class="GtkAdjustment" id="xrGutterWidth">
+    <property name="lower">0.10000000000000001</property>
+    <property name="upper">20</property>
+    <property name="value">2</property>
+    <property name="step_increment">0.10000000000000001</property>
+    <property name="page_increment">0.5</property>
   </object>
   <object class="GtkDialog" id="ptxprint">
     <property name="can_focus">False</property>
@@ -8938,9 +8968,10 @@ Also settings for special books.</property>
                                                 <property name="can_focus">False</property>
                                                 <property name="halign">start</property>
                                                 <property name="valign">start</property>
-                                                <property name="margin_top">4</property>
+                                                <property name="margin_top">2</property>
+                                                <property name="margin_bottom">2</property>
                                                 <property name="orientation">vertical</property>
-                                                <property name="homogeneous">True</property>
+                                                <property name="spacing">2</property>
                                                 <child>
                                                   <object class="GtkBox">
                                                     <property name="visible">True</property>
@@ -9208,9 +9239,10 @@ Print a second time before it applies.</property>
                                                 <property name="can_focus">False</property>
                                                 <property name="halign">start</property>
                                                 <property name="valign">start</property>
-                                                <property name="margin_top">4</property>
+                                                <property name="margin_top">2</property>
+                                                <property name="margin_bottom">2</property>
                                                 <property name="orientation">vertical</property>
-                                                <property name="homogeneous">True</property>
+                                                <property name="spacing">2</property>
                                                 <child>
                                                   <object class="GtkBox">
                                                     <property name="visible">True</property>
@@ -9867,7 +9899,7 @@ project (as an .xrf file) to be included in this project.</property>
                                                   </object>
                                                   <packing>
                                                     <property name="left_attach">0</property>
-                                                    <property name="top_attach">2</property>
+                                                    <property name="top_attach">3</property>
                                                   </packing>
                                                 </child>
                                                 <child>
@@ -9912,7 +9944,7 @@ popular or more obscure references).</property>
                                                   </object>
                                                   <packing>
                                                     <property name="left_attach">1</property>
-                                                    <property name="top_attach">2</property>
+                                                    <property name="top_attach">3</property>
                                                   </packing>
                                                 </child>
                                                 <child>
@@ -9986,7 +10018,7 @@ to Include:</property>
                                                   </object>
                                                   <packing>
                                                     <property name="left_attach">0</property>
-                                                    <property name="top_attach">3</property>
+                                                    <property name="top_attach">4</property>
                                                     <property name="width">3</property>
                                                   </packing>
                                                 </child>
@@ -10072,9 +10104,30 @@ Books on the Basic tab will be included.</property>
                                                   </object>
                                                   <packing>
                                                     <property name="left_attach">0</property>
-                                                    <property name="top_attach">4</property>
+                                                    <property name="top_attach">5</property>
                                                     <property name="width">3</property>
                                                   </packing>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkRadioButton" id="r_xrSource_bibleWorks">
+                                                    <property name="label" translatable="yes">"The Works" from BibleWorks™</property>
+                                                    <property name="visible">True</property>
+                                                    <property name="sensitive">False</property>
+                                                    <property name="can_focus">True</property>
+                                                    <property name="receives_default">False</property>
+                                                    <property name="tooltip_text" translatable="yes">This BibleWorks list contains carefully
+selected cross-references for both NT and OT.</property>
+                                                    <property name="draw_indicator">True</property>
+                                                    <property name="group">r_xrSource_custom</property>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="left_attach">0</property>
+                                                    <property name="top_attach">2</property>
+                                                    <property name="width">2</property>
+                                                  </packing>
+                                                </child>
+                                                <child>
+                                                  <placeholder/>
                                                 </child>
                                                 <child>
                                                   <placeholder/>
@@ -10133,7 +10186,7 @@ Reference Bibles in conjunction with the
                                                 <property name="margin_right">6</property>
                                                 <property name="margin_top">3</property>
                                                 <property name="margin_bottom">4</property>
-                                                <property name="row_spacing">8</property>
+                                                <property name="row_spacing">3</property>
                                                 <property name="column_spacing">5</property>
                                                 <child>
                                                   <object class="GtkRadioButton" id="r_xrLocn_below">
@@ -10158,7 +10211,7 @@ along with the footnotes as a single paragraph).</property>
                                                 </child>
                                                 <child>
                                                   <object class="GtkRadioButton" id="r_xrLocn_centre">
-                                                    <property name="label" translatable="yes">Vertical Column of xRefs</property>
+                                                    <property name="label" translatable="yes">Column of xRefs</property>
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">True</property>
                                                     <property name="receives_default">False</property>
@@ -10168,6 +10221,7 @@ may be useful to place them in their own column.
 
 The cross references will appear in a narrow vertical column similar to a study/reference Bible layout.</property>
                                                     <property name="halign">start</property>
+                                                    <property name="margin_top">5</property>
                                                     <property name="active">True</property>
                                                     <property name="draw_indicator">True</property>
                                                     <property name="group">r_xrLocn_blend</property>
@@ -10176,7 +10230,7 @@ The cross references will appear in a narrow vertical column similar to a study/
                                                   </object>
                                                   <packing>
                                                     <property name="left_attach">0</property>
-                                                    <property name="top_attach">2</property>
+                                                    <property name="top_attach">3</property>
                                                   </packing>
                                                 </child>
                                                 <child>
@@ -10251,7 +10305,7 @@ reducing the size of the \x font (to approx 6pt).</property>
                                                   </object>
                                                   <packing>
                                                     <property name="left_attach">2</property>
-                                                    <property name="top_attach">2</property>
+                                                    <property name="top_attach">4</property>
                                                   </packing>
                                                 </child>
                                                 <child>
@@ -10261,27 +10315,16 @@ reducing the size of the \x font (to approx 6pt).</property>
                                                     <property name="can_focus">True</property>
                                                     <property name="receives_default">False</property>
                                                     <property name="tooltip_text" translatable="yes">Place notes within the bottom of the second column in 2 column text</property>
-                                                    <property name="halign">start</property>
+                                                    <property name="halign">end</property>
                                                     <property name="margin_left">24</property>
+                                                    <property name="margin_bottom">10</property>
                                                     <property name="draw_indicator">True</property>
                                                   </object>
                                                   <packing>
-                                                    <property name="left_attach">0</property>
-                                                    <property name="top_attach">4</property>
+                                                    <property name="left_attach">1</property>
+                                                    <property name="top_attach">1</property>
                                                     <property name="width">2</property>
-                                                  </packing>
-                                                </child>
-                                                <child>
-                                                  <object class="GtkSeparator">
-                                                    <property name="visible">True</property>
-                                                    <property name="can_focus">False</property>
-                                                    <property name="margin_top">6</property>
-                                                    <property name="margin_bottom">3</property>
-                                                  </object>
-                                                  <packing>
-                                                    <property name="left_attach">0</property>
-                                                    <property name="top_attach">3</property>
-                                                    <property name="width">3</property>
+                                                    <property name="height">2</property>
                                                   </packing>
                                                 </child>
                                                 <child>
@@ -10293,7 +10336,7 @@ reducing the size of the \x font (to approx 6pt).</property>
                                                   </object>
                                                   <packing>
                                                     <property name="left_attach">1</property>
-                                                    <property name="top_attach">2</property>
+                                                    <property name="top_attach">4</property>
                                                   </packing>
                                                 </child>
                                                 <child>
@@ -10311,6 +10354,8 @@ used, the Cross-References can only have
 one type of caller (rather than a sequence)
 which must be specified above.</property>
                                                     <property name="halign">start</property>
+                                                    <property name="valign">center</property>
+                                                    <property name="margin_top">10</property>
                                                     <property name="active">True</property>
                                                     <property name="draw_indicator">True</property>
                                                     <property name="group">r_xrLocn_below</property>
@@ -10320,8 +10365,93 @@ which must be specified above.</property>
                                                   <packing>
                                                     <property name="left_attach">0</property>
                                                     <property name="top_attach">1</property>
-                                                    <property name="width">3</property>
+                                                    <property name="width">2</property>
+                                                    <property name="height">2</property>
                                                   </packing>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkLabel" id="l_xrColSpace">
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">False</property>
+                                                    <property name="halign">end</property>
+                                                    <property name="label" translatable="yes">Gutter Width (pts):</property>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="left_attach">1</property>
+                                                    <property name="top_attach">5</property>
+                                                  </packing>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkSpinButton" id="s_xrGutterWidth">
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">True</property>
+                                                    <property name="tooltip_text" translatable="yes">This sets the space between the main body
+text and the column of cross-references.</property>
+                                                    <property name="halign">start</property>
+                                                    <property name="width_chars">4</property>
+                                                    <property name="text">60</property>
+                                                    <property name="caps_lock_warning">False</property>
+                                                    <property name="progress_pulse_step">0</property>
+                                                    <property name="placeholder_text">0.0</property>
+                                                    <property name="input_purpose">number</property>
+                                                    <property name="adjustment">xrGutterWidth</property>
+                                                    <property name="climb_rate">0.5</property>
+                                                    <property name="digits">1</property>
+                                                    <property name="numeric">True</property>
+                                                    <property name="update_policy">if-valid</property>
+                                                    <property name="value">2</property>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="left_attach">2</property>
+                                                    <property name="top_attach">5</property>
+                                                  </packing>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkComboBox" id="fcb_colXRside">
+                                                    <property name="width_request">116</property>
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">False</property>
+                                                    <property name="can_default">True</property>
+                                                    <property name="tooltip_text" translatable="yes">Select where the column of cross-references
+should be located on the page. Note that the
+2-column layout insists on the cross-references
+being positioned between the columns of text.</property>
+                                                    <property name="halign">start</property>
+                                                    <property name="model">ls_colXRside</property>
+                                                    <property name="wrap_width">1</property>
+                                                    <property name="active">0</property>
+                                                    <property name="has_entry">True</property>
+                                                    <property name="entry_text_column">0</property>
+                                                    <property name="id_column">1</property>
+                                                    <property name="active_id">1</property>
+                                                    <child internal-child="entry">
+                                                      <object class="GtkEntry">
+                                                        <property name="visible">True</property>
+                                                        <property name="can_focus">True</property>
+                                                        <property name="editable">False</property>
+                                                        <property name="width_chars">10</property>
+                                                      </object>
+                                                    </child>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="left_attach">2</property>
+                                                    <property name="top_attach">3</property>
+                                                  </packing>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkLabel" id="l_colXRside">
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">False</property>
+                                                    <property name="halign">end</property>
+                                                    <property name="label" translatable="yes">Side of page:</property>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="left_attach">1</property>
+                                                    <property name="top_attach">3</property>
+                                                  </packing>
+                                                </child>
+                                                <child>
+                                                  <placeholder/>
                                                 </child>
                                                 <child>
                                                   <placeholder/>
@@ -17522,78 +17652,6 @@ the publication being printed.</property>
                                 <property name="row_spacing">9</property>
                                 <property name="column_spacing">6</property>
                                 <child>
-                                  <object class="GtkCheckButton" id="c_useprintdraftfolder">
-                                    <property name="label" translatable="yes">Output to Project's
-local\ptxprint Folder</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">The generated PDF file is normally created
-in the &lt;ProjID&gt;\local\ptxprint folder.</property>
-                                    <property name="halign">start</property>
-                                    <property name="active">True</property>
-                                    <property name="draw_indicator">True</property>
-                                    <signal name="clicked" handler="onUsePrintDraftFolderClicked" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">0</property>
-                                    <property name="top_attach">1</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkButton" id="btn_selectOutputFolder">
-                                    <property name="label" translatable="yes">Set Output Folder...</property>
-                                    <property name="width_request">150</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">True</property>
-                                    <property name="tooltip_text" translatable="yes">This button wil allow you to specify
-a different folder for the resulting
-PDF (and associated interim files).</property>
-                                    <property name="halign">end</property>
-                                    <property name="valign">center</property>
-                                    <signal name="clicked" handler="onSelectOutputFolderClicked" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">1</property>
-                                    <property name="top_attach">1</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkButton" id="btn_removeTempFiles">
-                                    <property name="label" translatable="yes">Remove Temp Files</property>
-                                    <property name="width_request">150</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">True</property>
-                                    <property name="tooltip_text" translatable="yes">Click this to tidy up the output folder (usually PrintDraft).
-This will delete all previous log and intermediate temporary files for the entire project and is a good way to easily remove many unwanted files.</property>
-                                    <property name="margin_top">6</property>
-                                    <signal name="clicked" handler="onDeleteTemporaryFilesClicked" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">1</property>
-                                    <property name="top_attach">2</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkLinkButton" id="lb_output_folder">
-                                    <property name="label" translatable="yes">Open Folder</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">True</property>
-                                    <property name="halign">center</property>
-                                    <property name="valign">start</property>
-                                    <property name="relief">none</property>
-                                    <property name="uri">Click to Open folder</property>
-                                    <signal name="clicked" handler="onOpenFolderOutputClicked" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">0</property>
-                                    <property name="top_attach">2</property>
-                                  </packing>
-                                </child>
-                                <child>
                                   <object class="GtkComboBox" id="fcb_outputFormat">
                                     <property name="width_request">150</property>
                                     <property name="visible">True</property>
@@ -17649,6 +17707,18 @@ Note: All comply with archive standard PDF/A-1b.</property>
                                     <property name="left_attach">0</property>
                                     <property name="top_attach">0</property>
                                   </packing>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
                                 </child>
                               </object>
                               <packing>

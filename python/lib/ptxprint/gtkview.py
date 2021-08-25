@@ -128,7 +128,7 @@ _sensitivities = {
     "r_xrLocn": {
         "r_xrLocn_below" :     ["l_internote", "s_internote", "l_xrColWid", "s_centreColWidth", "c_columnNotes"],
         "r_xrLocn_blend" :     [],
-        "r_xrLocn_centre" :    ["l_internote", "s_internote", "l_xrColWid", "s_centreColWidth"]},
+        "r_xrLocn_centre" :    ["l_internote", "s_internote", "l_xrColWid", "s_centreColWidth", "l_xrColSpace", "s_xrGutterWidth", "l_colXRside", "fcb_colXRside"]},
         
     "r_xrSource": {
         "r_xrSource_standard": ["s_xrSourceSize", "l_xrSourceSize", "l_xrSourceLess", "l_xrSourceMore"],
@@ -193,7 +193,6 @@ _sensitivities = {
 _nonsensitivities = {
     "c_noInternet" :           ["c_useEngLinks"],
     "c_omitrhchapnum" :        ["c_hdrverses"],
-    "c_useprintdraftfolder" :  ["btn_selectOutputFolder"],
     "c_styFaceSuperscript" :   ["l_styRaise", "s_styRaise"],
     "c_interlinear" :          ["c_letterSpacing", "s_letterShrink", "s_letterStretch"],
     "c_fighidecaptions" :      ["c_fighiderefs"],
@@ -627,7 +626,7 @@ class GtkViewModel(ViewModel):
                 "you can hide all the advanced options."))
                       
         for c in ("tb_Advanced", "tb_ViewerEditor", "tb_StyleEditor", "tb_Pictures", "tb_TabsBorders", "tb_Diglot",
-                  "fr_copyrightLicense", "r_book_module", "btn_chooseBibleModule", "lb_bibleModule", 
+                  "fr_copyrightLicense", "r_book_module", "btn_chooseBibleModule", "lb_bibleModule", "lb_omitPics",
                   "lb_selectFigureFolder", "l_indentUnit", "s_indentUnit", "lb_style_s", "lb_style_r", 
                   "l_btmMrgn", "s_bottommargin", "l_ftrPosn", "s_footerposition", "r_ftrCenter_Pri", "r_ftrCenter_Sec", 
                   "l_missingPictureString", "l_imageTypeOrder", "t_imageTypeOrder", "fr_layoutSpecialBooks", "fr_layoutOther",
@@ -642,7 +641,7 @@ class GtkViewModel(ViewModel):
                   "l_DBLbundle", "btn_DBLbundle", "c_cropmarks", "fr_margins", "c_linebreakon", "t_linebreaklocale", 
                   "c_pagegutter", "s_pagegutter", "l_script", "fcb_script", "c_quickRun", "c_mirrorpages",
                   "t_invisiblePassword", "t_configNotes", "l_notes", "c_elipsizeMissingVerses", "fcb_glossaryMarkupStyle",
-                  "gr_fnAdvOptions", "c_figexclwebapp", "l_glossaryMarkupStyle", "btn_refreshFonts",
+                  "gr_fnAdvOptions", "c_figexclwebapp", "l_glossaryMarkupStyle", "btn_refreshFonts", "btn_copyToTargetProj",
                   "fr_spacingAdj", "fr_fallbackFont", "l_complexScript", "b_scrsettings", "c_colorfonts",
                   "scr_picListEdit", "gr_picButtons", "tb_picPreview", "l_linesOnPageLabel", "l_linesOnPage", "fr_tabs",
                   "btn_adjust_spacing", "btn_adjust_top", "btn_adjust_bottom", "fr_diglot", "btn_diglotSwitch", "fr_borders",
@@ -692,13 +691,13 @@ class GtkViewModel(ViewModel):
 
     def noInternetClicked(self, btn):
         val = self.get("c_noInternet")
+        adv = self.get("c_showAdvancedOptions")
         for w in ["lb_omitPics", "l_url_usfm", 
                    "l_homePage",  "l_community",  "l_faq",  "l_pdfViewer",  "l_techFAQ",  "l_reportBugs", 
                   "lb_homePage", "lb_community", "lb_faq", "lb_pdfViewer", "lb_techFAQ", "lb_reportBugs"]:
-            self.builder.get_object(w).set_visible(not val)
+            self.builder.get_object(w).set_visible(adv and not val)
         self.userconfig.set("init", "nointernet", "true" if self.get("c_noInternet") else "false")
         self.styleEditor.editMarker()
-        adv = self.get("c_showAdvancedOptions")
         # Show Hide specific Help items
         for pre in ("l_", "lb_"):
             for h in ("ptxprintdir", "prjdir", "settings_dir", "pdfViewer", "techFAQ", "reportBugs"): 
@@ -2353,9 +2352,6 @@ class GtkViewModel(ViewModel):
             btn_selectXrFile.set_tooltip_text("")
             self.builder.get_object("r_xrSource_custom").set_active(False)
 
-    def onUsePrintDraftFolderClicked(self, c_useprintdraftfolder):
-        self.sensiVisible("c_useprintdraftfolder")
-
     def onCreateZipArchiveClicked(self, btn_createZipArchive):
         cfname = self.configName()
         zfname = self.prjid+("-"+cfname if cfname else "")+"PTXprintArchive.zip"
@@ -2375,22 +2371,6 @@ class GtkViewModel(ViewModel):
         else:
             # self.archiveZipFile = None
             btn_createZipArchive.set_tooltip_text("No Archive File Created")
-
-    def onSelectOutputFolderClicked(self, btn_selectOutputFolder):
-        customOutputFolder = self.fileChooser("Select the output folder", 
-                filters = None, multiple = False, folder = True)
-        if customOutputFolder is not None and len(customOutputFolder):
-            self.customOutputFolder = customOutputFolder[0]
-            btn_selectOutputFolder.set_tooltip_text(str(customOutputFolder[0]))
-            self.builder.get_object("c_useprintdraftfolder").set_active(False)
-            self.working_dir = self.customOutputFolder
-            self.set("btn_selectOutputFolder", str(self.customOutputFolder))
-            self.fixed_wd = True
-        else:
-            self.customOutputFolder = None
-            btn_selectOutputFolder.set_tooltip_text("")
-            self.builder.get_object("c_useprintdraftfolder").set_active(True)
-            self.builder.get_object("btn_selectOutputFolder").set_sensitive(False)
 
     def onSelectModuleClicked(self, btn):
         prjdir = os.path.join(self.settings_dir, self.prjid)

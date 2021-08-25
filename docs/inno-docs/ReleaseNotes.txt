@@ -1,33 +1,39 @@
-PTXprint 1.9.2 Release Notes 
-20 August 2021
+PTXprint 1.9.3 Release Notes 
+25 August 2021
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 
-Bug fixes and Improvements in 1.9.3 (20 Aug 2021) 
+Bug fixes and Improvements in 1.9.3 (25 Aug 2021) 
   
-  * Added Publication Info tab to UI for better handling of config-specific front matter:
+  * !Changed! output location from “PRJID\PrintDraft” to “PRJID\local\ptxprint” folder
+	* All temporary files are now neatly hidden away in sub-folders of this target folder
   
-  * Added feature to create config-specific front matter with variables
+  * Added Publication Info tab to UI for better handling of config-specific front matter
+
+	* Added feature to create config-specific front matter with variables
+	* Added feature to import Paratext entire PDFs as part of front matter
+	* Added feature to import Paratext FRT periph sections as part of front matter
+	* Improved generated table of contents, including various options to categorize and sort ToCs
   
-  * Added ability to import Paratext FRT periph sections, or entire PDFs as part of front matter
+  * Added feature to copy configs to other Paratext projects #480
   
-  * Improved generated table of contents, including various options to categorize and sort ToCs
+  * Improved 'Hide Empty Verses' and added option to show ellipsis #478
+
+  * Improved 'Vertical Column of xRefs' feature so it now also works with single-column layouts
   
-  * Added feature to copy configs to other Paratext projects
+  * Added warning for lack of EL compliance if 'SIL' found in copyright statement
   
-  * Changed output location from “PrintDraft” folder to “PRJID\local\ptxprint” folder
+  * Non-English UI web links (to USFM help) are routed through translate.Google.com
+	* and 'Only use English Links' option added to counteract this new behaviour when needed
   
-  * Improved 'Hide Empty Verses' and added option to show ellipsis
-  
-  * Added warning for lack of EL Compliance if 'SIL' found in copyright statement
-  
-  * Added advanced option 'Disable ALL internet use', 
-    and 'Only use English Links' - helpful when using non-English UI
-  
+  * Added advanced option 'Disable ALL internet use' - especially for sensitive locations
+
   * Fixed Multi Credit Overlays to work with verbose picture filenames
   
   * #475 Preserve notes on 1->2 and 2->1 column transitions
 
+  * #483 fix ptxprint-mod.sty not being included from secondary diglot text 
+  
 Bug fixes and Improvements in 1.9.2 (29 Jul 2021) 
 
   * Temporarily removed "Update Available" feature due to current Python SSL bug

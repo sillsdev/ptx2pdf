@@ -54,7 +54,6 @@ ModelMap = {
     "project/backincludes":     ("btn_selectBackPDFs", lambda w,v: "\n".join('\\includepdf{{{}}}'.format(s.as_posix()) \
                                  for s in w.BackPDFs) if (w.get("c_inclBackMatter") and w.BackPDFs is not None
                                                                                     and w.BackPDFs != 'None') else ""),
-    "project/useprintdraftfolder": ("c_useprintdraftfolder", lambda w,v :"true" if v else "false"),
     "project/processscript":    ("c_processScript", None),
     "project/runscriptafter":   ("c_processScriptAfter", None),
     "project/selectscript":     ("btn_selectScript", lambda w,v: w.customScript.as_posix() if w.customScript is not None else ""),
@@ -200,8 +199,6 @@ ModelMap = {
     "document/exclusivefolder": ("c_exclusiveFiguresFolder", None),
     "document/customfigfolder": ("btn_selectFigureFolder", lambda w,v: w.customFigFolder.as_posix() \
                                                                        if w.customFigFolder is not None else ""),
-    "document/customoutputfolder": ("btn_selectOutputFolder", lambda w,v: w.customOutputFolder.as_posix() \
-                                                                          if w.customOutputFolder is not None else ""),
     "document/imagetypepref":   ("t_imageTypeOrder", None),
     # "document/spacecntxtlztn":  ("fcb_spaceCntxtlztn", lambda w,v: str({"None": 0, "Some": 1, "Full": 2}.get(v, loosint(v)))),
     "document/glossarymarkupstyle":  ("fcb_glossaryMarkupStyle", None),
@@ -282,7 +279,9 @@ ModelMap = {
 
     "notes/iffootnoterule":     ("c_footnoterule", lambda w,v: "%" if v else ""),
     "notes/xrlocation":         ("r_xrLocn", lambda w,v: r"" if v == "centre" else "%"),
+    "notes/xrcolside":          ("fcb_colXRside", None),
     "notes/xrcentrecolwidth":   ("s_centreColWidth", lambda w,v: int(float(v)) if v else "60"),
+    "notes/xrguttermargin":     ("s_xrGutterWidth", lambda w,v: "{:.1f}".format(float(v)) if v else "2.0"),
     "notes/ifxrexternalist":    ("c_useXrefList", lambda w,v: "%" if v else ""),
     "notes/xrlistsource":       ("r_xrSource", None),
     "notes/xrlistsize":         ("s_xrSourceSize", lambda w,v: int(float(v)) if v else "3"),

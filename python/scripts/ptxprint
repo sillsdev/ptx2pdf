@@ -75,6 +75,8 @@ args = parser.parse_args()
 
 log = None
 logconffile = os.path.join(appdirs.user_config_dir("ptxprint", "SIL"), "ptxprint_logging.cfg")
+if sys.platform == 'win32' and args.logfile == 'ptxprint.log':
+    args.logfile = os.path.join(appdirs.user_config_dir("ptxprint", "SIL"), "ptxprint.log")
 if os.path.exists(logconffile):
     logging.config.fileConfig(logconffile)
     log = logging.getLogger('ptxprint')
@@ -88,8 +90,8 @@ elif args.logging:
     log = logging.getLogger('ptxprint')
 
 if log is not None and getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
-    sys.stdio = StreamToLogger(log, logging.INFO)
-    sys.stderr = StreamToLogger(log, logging.ERROR)
+    sys.stdio = StreamLogger(log, logging.INFO)
+    sys.stderr = StreamLogger(log, logging.ERROR)
 
 from ptxprint.utils import _, setup_i18n, get_ptsettings, pt_bindir, putenv
 from ptxprint.font import initFontCache, cachepath, writefontsconf
