@@ -650,7 +650,9 @@
   %\tracingall=1\tracingoutput=0\tracingpages=0\tracingparagraphs=0\tracingassigns=0\tracingscantokens=0
   \s@ttrialheight
   \trace{i}{1c TRIAL with ht=\the\trialheight, vsize=\the\vsize, hIns=\the\holdinginserts}%
+  %\t@xttrialheight=\ht255
   \c@lcavailht
+  %\t@xttrialheight=0pt
   \ifColNotes\advance\availht by -\ht\coln@tebox\fi
   %\xdef\p@gebotmark{\botmark}% remember last \mark for running header
   %\xdef\t@st{\p@gefirstmark}%
@@ -693,7 +695,7 @@
       \locs@startstop{\colA}{1}%
       \dimen3=\ht\colA
       \ifColNotes\ifdim\ht\xr@fbox>\dimen3\dimen3=\ht\xr@fbox\fi\fi
-      \hbox to \dimen1{\ifb@dy\testXrefSideL\ifnum\tmp=1
+      \hbox to \dimen1{\noindent\ifb@dy\testXrefSideL\ifnum\tmp=1
           \trace{o}{onecoltrial lcolgutter makecolumngutter}%
           \makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen3}{2}%
         \fi\fi
@@ -842,36 +844,40 @@
 \newif\ifMidPageFootnotes % Should footnotes go before a single-double column transition
 \MidPageFootnotesfalse
 
+\newdimen\t@xttrialheight
 \def\savepartialpage{% save a partially-full page when switching to 2-column format,
   \xdef\p@gebotmark{\botmark}%
+  \trace{o}{savepartialpage: partial=\the\ht\partial}%
   \s@ttrialheight
   \trace{o}{savepartialpage: b@dy\ifb@dy true\else false\fi\space for trialheight \the\trialheight}%
+  \setbox0=\vbox{\unvcopy255}%
+  \global\t@xttrialheight=\ht0
   \c@lcavailht
   \s@veallnotes{1}%
   \setbox\s@vedpage=\copy255
   % split the galley to the actual size available
   \setbox\colA=\vsplit255 to \availht
-  \setbox\colA=\vbox{\unvbox\colA\vfil}%
+  \setbox1=\vbox{\unvcopy\colA}
+  \dimen1=\textwidth\advance\dimen1 by -\ExtraRMargin\advance\dimen1 by -\columnshift
+  \dimen3=\ht1\advance\dimen3 by \dp1
+  \ifColNotes\ifdim\dimen3<\ht\coln@tebox\dimen3=\ht\coln@tebox\fi\fi
   % and check if it all fit; if not, we'll have to back up and try again
+  \trace{o}{savepartialpage \the\dimen3 \space rem=\the\ht255}%
   \ifvoid255 \fitonpagetrue \else \fitonpagefalse \fi
-  \trace{o}{savepartialpage \the\ht\colA\space rem=\the\ht255}%
   \iffitonpage
-    \setbox1=\vbox{\unvcopy\colA\unskip}%
     \locs@startstop{\colA}{1}%
     \global\setbox\partial=\vbox{
       \ifvoid\partial\else \vbox{\hbox to \dimen1{\hskip\columnshift\vbox{\unvbox\partial}}} \fi
       \ifvoid\topins\else \unvbox\topins \vskip\skip\topins \fi
       \lastd@pth=\dp\colA
       \ifColNotes\ifdim\dp\xr@fbox<\lastd@pth \lastd@pth=\dp\xr@fbox\fi\fi
-      \dimen1=\textwidth \advance\dimen1 -\ExtraRMargin \advance\dimen1 -\columnshift
-      \dimen3=\ht\colA
-      \ifColNotes\ifdim\ht\xr@fbox>\dimen3\dimen3=\ht\xr@fbox\fi\fi
-      \hbox to \dimen1{
+      \dimen1=\textwidth \advance\dimen1 -\ExtraRMargin \advance\dimen1 by -\columnshift
+      \hbox to \dimen1{\noindent
         \ifb@dy\testXrefSideL\ifnum\tmp=1
           \makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen3}{2}
         \fi\fi
         \hbox to \columnshift{}%
-        \box\colA
+        \special{"testme1"}\vbox to \dimen3{\unvbox\colA\vfil}\special{"testme2"}%
         \ifb@dy\testXrefSideR\ifnum\tmp=1
           \makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen3}{1}
         \fi\fi
@@ -898,8 +904,8 @@
     \else\trace{o}{Page empty cols=\the\ht\colA, \the\ht\colB, partial=\the\ht\partial}\setbox0=\box255\deadcycles=0\fi % dump empty pages (typically at end)
     \tempfalse%
     \ifdim\ht\partial>\PageFullFactor\textheight \temptrue\fi%
-    \ifnum\outputpenalty<-10000 \temptrue\fi%
-    \iftemp\trace{o}{savepartial eject partial=\the\ht\partial}\def\pagecontents{\box\partial}\plainoutput 
+    \ifnum\outputpenalty<-10000 \temptrue\else\trace{o}{outputpenalty = \the\outputpenalty}\fi%
+    \iftemp\trace{o}{savepartial eject partial=\the\ht\partial, bottom=\the\ht\verybottomins}\def\pagecontents{\box\partial}\plainoutput 
       \s@tpage
     \fi
     \fin@lverybottom
@@ -914,7 +920,9 @@
     \global\rerunsavepartialpagedtrue
     \ifm@rksonpage\else\gdef\p@gefirstmark{}\trace{H}{No marks found. Setting empty mark}\fi%No marks on the page, and it didn't fit, so add a blank mark
     \unvbox\s@vedpage \penalty\ifnum\galleypenalty=10000 0 \else \galleypenalty \fi
-  \fi}%
+  \fi
+  \global\t@xttrialheight=0pt
+}%
   % save 1 column material since we are switching to 2 columns
 \newbox\partial
 %-c_savepartialpage
@@ -1116,7 +1124,7 @@
     \colhtA=#1 \decr{\colhtA}{\topleftins}\decr{\colhtA}{\bottomleftins}%
     \colhtB=#1 \decr{\colhtB}{\toprightins}\decr{\colhtB}{\bottomrightins}%
     \ifColNotes\advance\colhtB by -\ht\coln@tebox\fi
-    \trace{o}{s@tcolhts: colhtA=\the\colhtA, colhtB=\the\colhtB, toprightins=(\the\skip\toprightins, \the\ht\toprightins), bottomrightins=(\the\skip\bottomrightins, \the\ht\bottomrightins)}%
+    \trace{o}{s@tcolhts: colhtA=\the\colhtA, colhtB=\the\colhtB, toprightins=(\the\skip\toprightins, \the\ht\toprightins), bottomrightins=(\the\skip\bottomrightins, \the\ht\bottomrightins), colnotebox=\the\ht\coln@tebox}%
 }
 %-c_setcolhts
 
@@ -1138,7 +1146,9 @@
     \setbox9=\copy#1
     \setbox\colA=\vsplit#1 to \colhtA \ifnum\badness>999999\setbox#1=\box9\setbox\colA\box\voidb@x\else\setbox\colA=\vbox{\unvbox\colA}\fi
     \setbox9=\copy#1
-    \setbox\colB=\vsplit#1 to \colhtB \ifnum\badness>999999\setbox#1=\box9\setbox\colB\box\voidb@x\else\setbox\colB=\vbox{\unvbox\colB}\fi
+    \ifdim\colhtB<0pt\setbox#1=\box9\setbox\colB\box\voidb@x\else
+      \setbox\colB=\vsplit#1 to \colhtB \ifnum\badness>999999\setbox#1=\box9\setbox\colB\box\voidb@x\else\setbox\colB=\vbox{\unvbox\colB}\fi
+    \fi
     % swap boxes if either, colA is empty and colB full, or colB is empty and colA is over full.
     \ifvoid\colA\ifvoid\colB\else\ifswapcol\ifdim\colhtA<\ht\colB\else
       \trace{o}{splitcols swapping B->A}\setbox\colA=\box\colB\fi\fi\fi\fi
@@ -1154,7 +1164,8 @@
 
 \def\balanced{
   \setbox0=\copy\s@vedpage
-  \s@tcolhts{\availht}\spl@tcols0                                               %(1)
+  \s@tcolhts{\availht}
+  \spl@tcols0                                               %(1)
   \ifnum\BalanceThreshold>0
     \availA=\colhtA \availB=\colhtB
     \advance\availA by -\BalanceThreshold\baselineskip
@@ -1370,10 +1381,10 @@
   \advance\bmg@p by -\availht
   %\advance\availht -\dp\pstr@t
   %\advance\availht by \dp255 % split includes depth so give it space for that
-  \trace{o}{new availht=\the\availht, topins=\the\ht\topins, bottomins=\the\ht\bottomins, baselineskip=\the\baselineskip}%
+  \trace{o}{new availht=\the\availht, texttrialheight=\the\t@xttrialheight, topins=\the\ht\topins, bottomins=\the\ht\bottomins, baselineskip=\the\baselineskip}%
   \ifColNotes\ifb@dy
     \ifx\XrefNotes\empty\relax\setbox5=\box\voidb@x\else
-      \setbox5=\vbox{\m@kexrefbox{\availht}{\XrefNotesWidth}{\XrefNotes}}%
+      \setbox5=\vbox{\m@kexrefbox{\ifdim\t@xttrialheight>0pt\ifdim\t@xttrialheight<\availht\t@xttrialheight\else\availht\fi\else\availht\fi}{\XrefNotesWidth}{\XrefNotes}}%
     \fi
     \m@kenotebox\setbox\coln@tebox=\vbox{%
       \trace{o}{coln@tebox in=\the\ht5+\the\dp5, notes=\the\ht2+\the\dp2}%
@@ -1417,9 +1428,12 @@
   \iffitonpage
     \c@lcboxheights
     \s@veallnotes{1}%
+    \lastd@pth=\dp\colA\ifdim\dp\colB<\lastd@pth \lastd@pth=\dp\colB\fi
+    \ifColNotes\ifdim\dp\xr@fbox<\lastd@pth \lastd@pth=\dp\xr@fbox\fi\fi
     \dimen3=\ifdim\colhtA>\colhtB\colhtA\else\colhtB\fi
     \ifdim\dimen3>\availht\dimen3=\availht\fi
     \ifColNotes\ifdim\ht\xr@fbox>\dimen3\dimen3=\ht\xr@fbox\fi\fi
+    \advance\dimen3\lastd@pth
     \setbox1=\vbox{\unvcopy\colA\unskip}%
     \setbox2=\vbox{\unvcopy\colB\unskip}%
     % strip off full page height from c@lcboxheights and grab the depth
@@ -1440,7 +1454,7 @@
       \ifvoid\topins\else \hbox{\hbox to \columnshift{}\box\topins} \vskip\skip\topins \fi % output top spanning pictures
       \dimen5=\textwidth\advance\dimen5 by -\ExtraRMargin\advance\dimen5 by -\columnshift %
       \dimen2=\dimen3% \advance\dimen2\bmg@p
-      \vbox{\hbox to \dimen5{%\hbox to \columnshift{}%
+      \vbox{\hbox to \dimen5{\noindent%\hbox to \columnshift{}%
           \ifRTL \hbox to \ExtraRMargin{}\box\colB\makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen2}{3}\box\colA
           \else \box\colA\makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen2}{3}\box\colB\hbox to \ExtraRMargin{}\fi}
         \kern\lastd@pth}}%
@@ -1524,9 +1538,11 @@
     \lastd@pth=\dp\colA\ifdim\dp\colB<\lastd@pth \lastd@pth=\dp\colB\fi
     \ifColNotes\ifdim\dp\xr@fbox<\lastd@pth \lastd@pth=\dp\xr@fbox\fi\fi
     \trace{p}{twocoltrial: calculate dimen3 as min(\the\availht, max(\the\colhtA, \the\colhtB, \the\ht\xr@fbox))}
-    \dimen3=\colhtA\ifdim\colhtB>\dimen3\dimen3=\colhtB\fi
-    \ifdim\dimen3>\availht\dimen3=\availht\fi
+    \dimen3=\colhtA \ifdim\colhtB>\dimen3\dimen3=\colhtB\fi
     \ifColNotes\ifdim\ht\xr@fbox>\dimen3\dimen3=\ht\xr@fbox\fi\fi
+    \ifdim\dimen3>\availht\dimen3=\availht\fi
+    \advance\dimen4 by \lastd@pth
+    \trace{o}{box height = \the\availht + \the\bmg@p}%
     \def\pagecontents{%
       \trace{o}{Topins=\the\ht\topins, Bottomins=\the\ht\bottomins, tlins=\the\ht\topleftins, blins=\the\ht\bottomleftins, trins=\the\ht\toprightins, brins=\the\ht\bottomrightins}%
       \dimen1=\textwidth\advance\dimen1 by -\ExtraRMargin
@@ -1537,10 +1553,9 @@
       \iflastpage\setbox\colA=\vbox{\unvbox\colA}\setbox\colB=\vbox{\unvbox\colB}%
         \ifdim\ht\colA>\ht\colB\ht\colB=\ht\colA\else\ht\colA=\ht\colB\fi\fi
       \trace{p}{Text depth = \the\dimen3}%\showthe\lastd@pth
-      \dimen2=\availht \advance\dimen2\bmg@p
-      \hbox to \dimen1{\hbox to \columnshift{}%
-        \ifRTL \hbox to \ExtraRMargin{}\box\colB\makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen2}{3}\box\colA
-        \else \box\colA\makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen2}{3}\box\colB\hbox to \ExtraRMargin{}\fi}%
+      \hbox to \dimen1{\noindent\hbox to \columnshift{}%
+        \ifRTL \hbox to \ExtraRMargin{}\vbox to \dimen2{\unvbox\colB\vfil}\makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen2}{3}\vbox to \dimen2{\unvbox\colA\vfil}
+        \else \vbox to \dimen2{\unvbox\colA\vfil}\makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen2}{3}\vbox to \dimen2{\unvbox\colB\vfil}\hbox to \ExtraRMargin{}\fi}%
         %\else \box\colA\makecolumngutter{\the\dimen3}{\the\textheight}{0pt}\box\colB\hbox to \ExtraRMargin{\fi}%
       \ifvoid\bottomins\else \kern-\lastd@pth
         \lastd@pth=0pt \vskip\skip\bottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\bottomins}}\fi % ouput bottom spanning pictures
@@ -1598,7 +1613,7 @@
       \vskip\ColumnGutterRuleSkip
       \hbox to 1pt{\hfil\vrule height \the\dimen4\hfil}%\dp5=#3 \box5
       \vfil}%
-    \if\XrefNotes\relax\else
+    \if\XrefNotes\relax\else\ifdim\ht\xr@fbox>0pt
       \trace{o}{makecolumngutter: xr@fbox=\the\ht\xr@fbox}%
       \ifnum#5=1\copy4\else\ifnum#5=3\copy4\fi\fi
       \dimen0=#2
@@ -1609,7 +1624,7 @@
         \else\ifdim\ht\xr@fbox=0pt\message{empty xrefbox}\vbox{\hsize=\XrefNotesWidth\hskip\XrefNotesWidth\hbox{}}\else
           \unvbox\xr@fbox\fi\vfil\fi}\vfil}%
       \ifnum#5>1\hbox to \XrefNotesMargin{}\fi
-    \fi
+    \fi\fi
     \ifnum#5>1\box4\fi
   \fi
   \ifnum#5>1\hfil\fi
@@ -1732,7 +1747,8 @@
 \let\layoutstylebreak\layoutstylebreak@singlecolumn
 
 \def\singlecolumn{%
-  \trace{o}{singlecolumn hIns=\the\holdinginserts, cols=\the\c@rrentcols}%\tracingmacros=1
+  %\tracingmacros=0\tracingassigns=0
+  \trace{o}{singlecolumn hIns=\the\holdinginserts, cols=\the\c@rrentcols, partial=\the\ht\partial}%\tracingmacros=1
   \ifnum\c@rrentcols>1
     %\temptrue
     \layoutstylebreak % save any partially-full page into \partial
@@ -1745,12 +1761,12 @@
     \ifdim\ht\partial>\PageFullFactor\textheight\iflastptxfile\else
       \twocolp@geout \fi\fi%Set up pagecontents and call \plainoutput
     \global\c@rrentcols=1
-  \else
+  \else\ifdim\ht\partial<\baselineskip
     \global\holdinginserts=0
     \global\output={\savepartialpage}%
     \eject
     \global\holdinginserts=1
-  \fi
+  \fi\fi
   \trace{o}{resetting resetvsize for singlecolumn. Partial ht=\the\ht\partial}\def\resetvsize{\trace{o}{resetvsize}\global\vsize=\textheight} 
   \global\output={\onecol}%
   \global\holdinginserts=1
@@ -1758,9 +1774,10 @@
   \global\count\topins=\count255
   \global\count\bottomins=\count255
   \let\\=\s@tn@tec@unt \the\n@tecl@sses % reset \count for each note class
-  \iftob@dy\else\ifdim\ht\partial>\baselineskip \vbox{\unvbox\partial}%
+  \iftob@dy\else\ifdim\ht\partial>\baselineskip% \vbox{\unvbox\partial}%
     \ifendbooknoeject\ifx\p@gefirstmark\t@tle \else\vskip\baselineskip\iflastptxfile\else\hskip-\columnshift\hrule\vskip2\baselineskip\fi\fi\fi
   \fi\fi
+  %\ifnum\pageno>10\tracingmacros=1\tracingassigns=1\fi
 }%
 %-c_singlecolumn
 

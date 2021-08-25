@@ -630,7 +630,7 @@
     \edef\dc@ref@rgs{\string\@colstart{\the\ht#2}{\the\dp#2}{\the\wd#2}}%
     \pdfsavepos
     \x@\write\x@\p@rlocs\x@{\dc@ref@rgs{\the\pdflastxpos}{\the\pdflastypos}}%
-    \box#1%
+    \unvbox#1%
     \pdfsavepos
     \write\p@rlocs{\string\@colstop{\the\pdflastxpos}{\the\pdflastypos}}%
     %\MSG{\dc@ref@rgs (\the\hsize) ->}%
