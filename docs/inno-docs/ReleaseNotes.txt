@@ -13,18 +13,18 @@ Bug fixes and Improvements in 1.9.3 (25 Aug 2021)
 	* Added feature to create config-specific front matter with variables
 	* Added feature to import Paratext entire PDFs as part of front matter
 	* Added feature to import Paratext FRT periph sections as part of front matter
-	* Improved generated table of contents, including various options to categorize and sort ToCs
+	* Improved table of contents, including various options to categorize and sort
   
   * Added feature to copy configs to other Paratext projects #480
   
   * Improved 'Hide Empty Verses' and added option to show ellipsis #478
 
-  * Improved 'Vertical Column of xRefs' feature so it now also works with single-column layouts
+  * Improved 'Column of xRefs' feature so it now also works with single-column layouts
   
   * Added warning for lack of EL compliance if 'SIL' found in copyright statement
   
   * Non-English UI web links (to USFM help) are routed through translate.Google.com
-	* and 'Only use English Links' option added to counteract this new behaviour when needed
+	* and 'Only use English Links' option added to prevent the new behaviour if needed
   
   * Added advanced option 'Disable ALL internet use' - especially for sensitive locations
 

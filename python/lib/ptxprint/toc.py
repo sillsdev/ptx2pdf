@@ -29,7 +29,12 @@ def createtocvariants(toc, ducet=None):
         ttoc = []
         res[k] = ttoc
         for e in toc:
-            if r[0] < int(bookcodes.get(e[0], -1)) < r[1]:
+            print(bookcodes.get(e[0], -1), e)
+            print()
+            try:
+                if r[0] < int(bookcodes.get(e[0], -1)) < r[1]:
+                    ttoc.append(e)
+            except ValueError:
                 ttoc.append(e)
     for i in range(3):
         ttoc = []
