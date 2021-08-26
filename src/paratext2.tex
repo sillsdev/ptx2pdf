@@ -550,6 +550,7 @@
     \setbox#1=\vbox{\unvbox#1\box0}\repeat
 }
 \newbox\xr@fbox
+\newdimen\XrefSkip \XrefSkip=0pt
 \def\m@ke@te@mp#1{
   \dimen0=\ht\xr@fbox \advance\dimen0 by \baselineskip \advance\dimen0 by -\dp\xr@fbox\advance\dimen0 by -\dimen2
   \setbox0=\hbox{}
@@ -589,7 +590,7 @@
         \m@ke@te@mp{#1}
         \ifdim\ht0>0pt\hbox{\unhbox0\unskip\unskip\unpenalty\unskip\unpenalty}\fi
       \fi
-      \dimen1=\baselineskip\advance\dimen1-\dp\xr@fbox\advance\dimen1-\dimen2
+      \dimen1=\baselineskip\advance\dimen1-\dp\xr@fbox\advance\dimen1-\dimen2\advance\dimen2\XrefSkip
       \ifdim\ht1>0pt\global\setbox\xr@fbox=\vbox{\unvbox\xr@fbox\vskip\dimen1\unvbox1}\fi
     \else \tempfalse
     \fi
@@ -636,7 +637,7 @@
     \ifnum\XrefSide=1\xdef\tmp{1}\else
       \ifnum\XrefSide=3\ifodd\pageno \xdef\tmp{1}\fi
       \else\ifnum\XrefSide=4
-        \ifodd\else \xdef\tmp{1}\fi
+        \ifodd\pageno\else \xdef\tmp{1}\fi
   \fi\fi\fi\fi\fi}
 \def\testXrefSideR{\xdef\tmp{0}\if\XrefNotes\relax\else
   \ifnum\pageno<1\else
@@ -1620,7 +1621,7 @@
       % todo: ensure empty box doesn't collapse
       % todo: allow user defined inner margin also on grid
       \ifnum#5=1\hbox to \XrefNotesMargin{}\else\ifnum#5=3\hbox to \XrefNotesMargin{}\fi\fi
-      \vbox to #4{\vbox to #2{\ifdim\ht\xr@fbox>0.9\dimen0 \unvbox\xr@fbox
+      \vbox to #4{\vbox to #2{\ifdim\ht\xr@fbox>0.5\dimen0 \unvbox\xr@fbox
         \else\ifdim\ht\xr@fbox=0pt\message{empty xrefbox}\vbox{\hsize=\XrefNotesWidth\hskip\XrefNotesWidth\hbox{}}\else
           \unvbox\xr@fbox\fi\vfil\fi}\vfil}%
       \ifnum#5>1\hbox to \XrefNotesMargin{}\fi

@@ -545,6 +545,7 @@ class RunJob:
     def wait(self):
         if self.busy:
             self.thread.join()
+        unlockme()
         return self.res
 
     def run_xetex(self, outfname, info):

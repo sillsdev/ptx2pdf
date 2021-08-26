@@ -202,7 +202,7 @@ _nonsensitivities = {
         "r_xrLocn_centre" :    []},
 }
 _object_classes = {
-    "printbutton": ("b_print", "btn_refreshFonts", "btn_adjust_diglot"),
+    "printbutton": ("b_print", "btn_refreshFonts", "btn_adjust_diglot", "btn_createZipArchiveXtra"),
     "fontbutton":  ("bl_fontR", "bl_fontB", "bl_fontI", "bl_fontBI"),
     "mainnb":      ("nbk_Main", ),
     "viewernb":    ("nbk_Viewer", "nbk_PicList"),
@@ -814,7 +814,6 @@ class GtkViewModel(ViewModel):
             self.builder.get_object(w).set_sensitive(not self.printReason)
 
     def print2ndDiglotTextClicked(self, btn):
-        print("Clicked print2ndDiglotText button")
         self.onOK(btn)
         
     def onOK(self, btn):
