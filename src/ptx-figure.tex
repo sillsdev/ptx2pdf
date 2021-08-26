@@ -528,7 +528,11 @@
    \else \closein\t@stread \picfilecomm@nd #1 #7 #2 #3 #5 #6\fi
 }
 
-\def\ch@ckpathfwd#1/#2\E{\edef\t@mp{#2}\ifx\t@mp\empty\else\temptrue\fi}
+\oddc@tcodes%NO SPACES until |normalc@tcodes is called.
+|def|ch@ckpathfwd#1/#2|E{|edef|t@mp{#2}|ifx|t@mp|empty|else||global|temptrue|fi}
+|def|ch@ckpathback#1\#2|E{|edef|t@mp{#2}|ifx|t@mp|empty|else|global|temptrue|fi}%
+|def|ch@ckpath#1{|global|tempfalse|ch@ckpathfwd#1/|E|ch@ckpathback#1\|E}%
+|normalc@tcodes%
 %+cfig_dofigure_intro
 \def\d@figure#1{%
  \ifIncludeFigures
@@ -712,7 +716,7 @@
     \fi
     % First, try to set it at the requested dimension:
     \tempfalse
-    \x@\ch@ckpathfwd\csname figparam-src\endcsname/\E
+    \x@\ch@ckpath\x@{\csname figparam-src\endcsname}
     \iftemp
       \setbox\newpicb@x=\hbox{%
         \ins@rtpic{"\csname figparam-src\endcsname"}%

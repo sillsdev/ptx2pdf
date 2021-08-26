@@ -1456,8 +1456,8 @@
       \dimen5=\textwidth\advance\dimen5 by -\ExtraRMargin\advance\dimen5 by -\columnshift %
       \dimen2=\dimen3% \advance\dimen2\bmg@p
       \vbox{\hbox to \dimen5{\noindent%\hbox to \columnshift{}%
-          \ifRTL \hbox to \ExtraRMargin{}\box\colB\makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen2}{3}\box\colA
-          \else \box\colA\makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen2}{3}\box\colB\hbox to \ExtraRMargin{}\fi}
+          \ifRTL \hbox to \ExtraRMargin{}\vbox to \dimen2{\unvbox\colB\vfil}\makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen2}{3}\vbox to \dimen2{\unvbox\colA\vfil}
+          \else \vbox to \dimen2{\unvbox\colA\vfil}\makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen2}{3}\vbox to \dimen2{\unvbox\colB\vfil}\hbox to \ExtraRMargin{}\fi}
         \kern\lastd@pth}}%
 %-c_savepartialpaged_intro
 %+c_savepartialpaged
@@ -1614,19 +1614,18 @@
       \vskip\ColumnGutterRuleSkip
       \hbox to 1pt{\hfil\vrule height \the\dimen4\hfil}%\dp5=#3 \box5
       \vfil}%
-    \if\XrefNotes\relax\else\ifdim\ht\xr@fbox>0pt
+    \if\XrefNotes\ifnum#5>1\box4\fi\else\ifdim\ht\xr@fbox>0pt
       \trace{o}{makecolumngutter: xr@fbox=\the\ht\xr@fbox}%
       \ifnum#5=1\copy4\else\ifnum#5=3\copy4\fi\fi
       \dimen0=#2
       % todo: ensure empty box doesn't collapse
       % todo: allow user defined inner margin also on grid
       \ifnum#5=1\hbox to \XrefNotesMargin{}\else\ifnum#5=3\hbox to \XrefNotesMargin{}\fi\fi
-      \vbox to #4{\vbox to #2{\ifdim\ht\xr@fbox>0.5\dimen0 \unvbox\xr@fbox
+      \vbox to #4{\vbox to #2{\ifdim\ht\xr@fbox>0.9\dimen0 \unvbox\xr@fbox\unpenalty\unskip
         \else\ifdim\ht\xr@fbox=0pt\message{empty xrefbox}\vbox{\hsize=\XrefNotesWidth\hskip\XrefNotesWidth\hbox{}}\else
           \unvbox\xr@fbox\fi\vfil\fi}\vfil}%
-      \ifnum#5>1\hbox to \XrefNotesMargin{}\fi
+      \ifnum#5>1\hbox to \XrefNotesMargin{}\box4\fi
     \fi\fi
-    \ifnum#5>1\box4\fi
   \fi
   \ifnum#5>1\hfil\fi
   \hbox to \columnshift{}}
