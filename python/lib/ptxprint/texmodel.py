@@ -840,12 +840,8 @@ class TexModel:
                         l = r"\pb" if self.dict['project/periphpagebreak'] and seenperiph else ""
                         seenperiph = True
                     l = re.sub(r"\\zperiphfrt\s*\|([^\\\s]+)\s*\\\*", self._doperiph, l)
-                    f = re.findall(r"(.+)\*(\d+) ?", l.rstrip())
-                    if len(f):
-                        for x in range(0,int(f[0][1])):
-                            fcontent.append(f[0][0])
-                    else:
-                        fcontent.append(l.rstrip())
+                    l = re.sub(r"\\zbl\s*\|(\d+)\\\*", lambda m: "\\b\n" * int(m.group(1)), l)
+                    fcontent.append(l.rstrip())
             with open(outfname, "w", encoding="utf-8") as outf:
                 outf.write("\n".join(fcontent))
 

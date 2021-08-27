@@ -604,7 +604,8 @@ class RunJob:
             if os.path.exists(tocfname):
                 tailoring = self.printer.ptsettings.getCollation()
                 ducet = tailor(tailoring.text) if tailoring else None
-                newtoc = generateTex(createtocvariants(parsetoc(tocfname), ducet=ducet))
+                bklist = self.printer.getBooks()
+                newtoc = generateTex(createtocvariants(parsetoc(tocfname), bklist, ducet=ducet))
                 with open(tocfname, "w", encoding="utf-8") as outf:
                     outf.write(newtoc)
             if not rererun:

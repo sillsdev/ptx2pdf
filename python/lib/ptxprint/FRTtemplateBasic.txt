@@ -1,21 +1,21 @@
 \rem ----------Page 1----------------
 \periph Title Page|id="title"
 \mt1
-\zbl 6
+\zbl|6\*
 \mt1 \zvar|maintitle\*
 \mt2 \zvar|subtitle\*
 
 \rem ----------Page 2----------------
 \periph Publication Data|id="pubdata"
 \mt
-\zbl 2
+\zbl|2\*
 \pc \zvar|maintitle\* 
 \pc \zvar|subtitle\*
 \pc \zvar|languagename\*
-\zbl 2
+\zbl|2\*
 \pc \zcopyright
 \pc \zlicense
-\zbl 2
+\zbl|2\*
 \pc \zimagecopyrights
 
 \rem ----------Page 3----------------

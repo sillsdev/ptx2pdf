@@ -379,6 +379,7 @@ class GtkViewModel(ViewModel):
         self.isDisplay = True
         self.config_dir = None
         self.initialised = False
+        self.configKeypressed = False
         self.configNoUpdate = False
         self.chapNoUpdate = False
         self.bookNoUpdate = False
@@ -2173,6 +2174,12 @@ class GtkViewModel(ViewModel):
         self.onBodyHeightChanged(None)
 
     def onConfigNameChanged(self, cb_savedConfig):
+        if self.configKeypressed:
+            self.configKeypressed = False
+            return
+        self.doConfigNameChange()
+
+    def doConfigNameChange(self):
         lockBtn = self.builder.get_object("btn_lockunlock")
         if self.configName() == "Default":
             lockBtn.set_sensitive(False)
@@ -2192,7 +2199,14 @@ class GtkViewModel(ViewModel):
         cpath = self.configPath(cfgname=self.configName(), makePath=False)
         if cpath is not None and os.path.exists(cpath):
             self.updateProjectSettings(self.prjid, saveCurrConfig=False, configName=self.configName()) # False means DON'T Save!
-        self.updateDialogTitle()
+            self.updateDialogTitle()
+
+    def onConfigKeyPressed(self, btn, *a):
+        self.configKeypressed = True
+
+    def onCfgFocusOutEvent(self, btn, *a):
+        self.configKeypressed = False
+        self.doConfigNameChange()
 
     def updateFonts(self):
         if self.ptsettings is None:

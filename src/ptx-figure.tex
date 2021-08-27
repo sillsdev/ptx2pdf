@@ -715,8 +715,9 @@
       \def\picdim@n{width}\def\picaltdim@n{height}%Normal
     \fi
     % First, try to set it at the requested dimension:
-    \tempfalse
+    \tempfalse\tracingmacros=1\tracingassigns=1
     \x@\ch@ckpath\x@{\csname figparam-src\endcsname}
+	\tracingmacros=0\tracingassigns=0
     \iftemp
       \setbox\newpicb@x=\hbox{%
         \ins@rtpic{"\csname figparam-src\endcsname"}%

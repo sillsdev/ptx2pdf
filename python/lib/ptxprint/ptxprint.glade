@@ -5066,53 +5066,6 @@ their default values.</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkComboBoxText" id="ecb_savedConfig">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="tooltip_text" translatable="yes">Select a previously-saved
-configuration to retrieve those settings.
-
-Or type a name for the current configuration
-to be saved as and click the Save button.
-When the Paratext project is shared through
-Send/Recv, all saved configurations will be
-also made available to other PTXprint users 
-of the same Paratext project.</property>
-                                        <property name="halign">start</property>
-                                        <property name="margin_top">6</property>
-                                        <property name="margin_bottom">6</property>
-                                        <property name="active">0</property>
-                                        <property name="has_entry">True</property>
-                                        <property name="active_id">0</property>
-                                        <items>
-                                          <item translatable="yes">Default</item>
-                                        </items>
-                                        <signal name="changed" handler="onConfigNameChanged" swapped="no"/>
-                                        <child internal-child="entry">
-                                          <object class="GtkEntry" id="t_savedConfig">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">True</property>
-                                            <property name="tooltip_text" translatable="yes">Enter a name for the configuration to be saved.
-
-Note that only Roman/Latin names
-are supported using: a-z A-Z, 0-9,
-parentheses, underscores and hyphens.
-
-Longer descriptions may be typed into
-the Notes field below.</property>
-                                            <property name="halign">start</property>
-                                            <property name="max_length">32</property>
-                                            <property name="width_chars">30</property>
-                                            <property name="progress_pulse_step">0</property>
-                                          </object>
-                                        </child>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">1</property>
-                                        <property name="top_attach">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
                                       <object class="GtkLabel" id="l_notes">
                                         <property name="width_request">80</property>
                                         <property name="visible">True</property>
@@ -5246,6 +5199,55 @@ settings for a similar project.</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">6</property>
+                                        <property name="top_attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkComboBoxText" id="ecb_savedConfig">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="tooltip_text" translatable="yes">Select a previously-saved
+configuration to retrieve those settings.
+
+Or type a name for the current configuration
+to be saved as and click the Save button.
+When the Paratext project is shared through
+Send/Recv, all saved configurations will be
+also made available to other PTXprint users 
+of the same Paratext project.</property>
+                                        <property name="halign">start</property>
+                                        <property name="margin_top">6</property>
+                                        <property name="margin_bottom">6</property>
+                                        <property name="active">0</property>
+                                        <property name="has_entry">True</property>
+                                        <property name="active_id">0</property>
+                                        <items>
+                                          <item translatable="yes">Default</item>
+                                        </items>
+                                        <signal name="changed" handler="onConfigNameChanged" swapped="no"/>
+                                        <child internal-child="entry">
+                                          <object class="GtkEntry" id="t_savedConfig">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="tooltip_text" translatable="yes">Enter a name for the configuration to be saved.
+
+Note that only Roman/Latin names
+are supported using: a-z A-Z, 0-9,
+parentheses, underscores and hyphens.
+
+Longer descriptions may be typed into
+the Notes field below.</property>
+                                            <property name="halign">start</property>
+                                            <property name="max_length">32</property>
+                                            <property name="width_chars">30</property>
+                                            <property name="progress_pulse_step">0</property>
+                                            <signal name="focus-out-event" handler="onCfgFocusOutEvent" swapped="no"/>
+                                            <signal name="key-press-event" handler="onConfigKeyPressed" swapped="no"/>
+                                          </object>
+                                        </child>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">1</property>
                                         <property name="top_attach">0</property>
                                       </packing>
                                     </child>
@@ -17711,18 +17713,6 @@ Note: All comply with archive standard PDF/A-1b.</property>
                                     <property name="top_attach">0</property>
                                   </packing>
                                 </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
@@ -18386,10 +18376,11 @@ include special text in the front matter:
 \zlicense - license statement from the Basic tab
 \zimagecopyrights - generated list of images with copyright attribution
 \zimagecopyrightsfr - as above, but localized (fr = French)
-\zbl # - inserts # blank lines (e.g. '\zbl 3' inserts 3 blank lines)
+
+\zbl|3\* - inserts 3 blank lines
 
 In addition to the above-mentioned codes, you may specify
-your own config-specific \zvar |variables\* as place-holders.
+your own config-specific \zvar|variables\* as place-holders.
 Click on 'Edit Variables...' to assign values to these variables
 on the Publication Info tab.</property>
                             <property name="label" translatable="yes">Front Matter</property>

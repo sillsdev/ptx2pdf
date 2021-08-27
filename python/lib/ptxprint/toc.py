@@ -22,20 +22,22 @@ def parsetoc(infname):
 
 bkranges = {'ot': (0, 40), 'nt': (40, 68), 'dc': (67, 87)}
 
-def createtocvariants(toc, ducet=None):
+def sortToC(toc, booklist):
+    bknums = {k:i for i,k in enumerate(booklist)}
+    return sorted(toc, key=lambda b: bknums[b[0]])
+
+def createtocvariants(toc, booklist, ducet=None):
     res = {}
-    res['main'] = toc
+    res['main'] = sortToC(toc, booklist)
     for k, r in bkranges.items():
         ttoc = []
-        res[k] = ttoc
         for e in toc:
-            print(bookcodes.get(e[0], -1), e)
-            print()
             try:
                 if r[0] < int(bookcodes.get(e[0], -1)) < r[1]:
                     ttoc.append(e)
             except ValueError:
-                ttoc.append(e)
+                pass
+        res[k] = sortToC(ttoc, booklist)
     for i in range(3):
         ttoc = []
         k = "sort"+chr(97+i)

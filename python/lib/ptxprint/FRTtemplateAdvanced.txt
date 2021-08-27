@@ -9,7 +9,7 @@
 \periph Title Page|id="title"
 \rem -------------------------------------------------------------------------
 \mt1
-\zbl 6
+\zbl|6\*
 \mt1 \zvar|maintitle\*
 \mt2 \zvar|subtitle\*
 
@@ -31,22 +31,22 @@
 \periph Publication Data|id="pubdata"
 \rem -------------------------------------------------------------------------
 \mt
-\zbl 2
+\zbl|2\*
 \pc \zvar|maintitle\* 
 \pc \zvar|subtitle\*
-\zbl 2
+\zbl|2\*
 \pc Language: \zvar|languagename\* (\zvar|langiso\*)
 \pc Script: \zvar|script\*
 \pc Trial edition for limited distribution
 \pc Copies printed: \zvar|copiesprinted\*
-\zbl 2
+\zbl|2\*
 \pc \zcopyright
 \pc \zlicense
 \pc \zvar|licensetext\*
 \rem Permission requests: The text of this publication may be quoted (in written, visual or electronic form) up to one thousand (1,000) verses, or up to two hundred and fifty (250) verses for audio use without express written permission of the publisher, provided the verses quoted do not amount to a complete book of the NT, nor 50 percent or more of the total text of the work in which they are quoted.
-\zbl 2
+\zbl|2\*
 \pc \zimagecopyrights
-\zbl 3
+\zbl|3\*
 \pc Printed by: \zvar|printedby\*
 
 \rem -------------------------------------------------------------------------
