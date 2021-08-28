@@ -170,25 +170,35 @@ class Collector:
                     bi = i-1
                 self.acc[bi].extend(self.acc[i])
                 self.acc[i].deleteme = True
-        # move everything after \c up to something with a \v in it, to before the \c
+        # Merge all chunks between \c and not including \v.
         for i in range(1, len(self.acc)):
             if self.acc[i-1].type == ChunkType.CHAPTER and not self.acc[i].hasVerse:
-                self.acc[i-1], self.acc[i] = self.acc[i], self.acc[i-1]
+                self.acc[i-1].extend(self.acc[i])
+                self.acc[i].deleteme = True
         # merge \c with body chunk following
+        lastchunk = None
+        prelastchunk = None
         for i in range(1, len(self.acc)):
             if getattr(self.acc[i], 'deleteme', False):
                 continue
-            if self.acc[i-1].type == ChunkType.CHAPTER and self.acc[i].type == ChunkType.BODY:
+            if lastchunk is not None and lastchunk.type == ChunkType.CHAPTER and self.acc[i].type == ChunkType.BODY:
                 tag = self.acc[i][0].name
-                self.acc[i-1].extend(self.acc[i])
-                self.acc[i-1].type = self.acc[i].type
+                lastchunk.extend(self.acc[i])
+                lastchunk.type = self.acc[i].type
                 self.acc[i].deleteme = True
-                if tag == "nb" and i > 1:
-                    self.acc[i-2].extend(self.acc[i-1])
-                    self.acc[i-1].deleteme = True
+                if tag == "nb" and prelastchunk is not None:
+                    prelastchunk.extend(lastchunk)
+                    lastchunk.deleteme = True
                 elif tag.startswith("q") and i < len(self.acc) - 1 and self.acc[i+1][0].name.startswith("q"):
-                    self.acc[i-1].extend(self.acc[i+1])
+                    lastchunk.extend(self.acc[i+1])
                     self.acc[i+1].deleteme = True
+            if not getattr(lastchunk, 'deleteme', False):
+                prelastchunk = lastchunk
+            else:
+                lastchunk = prelastchunk
+                prelastchunk = None     # can't really move backwards
+            if not getattr(self.acc[i], 'deleteme', False):
+                lastchunk = self.acc[i]
         self.acc = [x for x in self.acc if not getattr(x, 'deleteme', False)]
 
 
