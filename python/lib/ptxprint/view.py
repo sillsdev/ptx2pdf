@@ -715,7 +715,9 @@ class ViewModel:
         if v < 1.9:
             val = self._config_get(config, "scrmymr", "syllables", fallback="")
             self._configset(config, "scripts/mymr/syllables", config.getboolean("scrmymr", "syllables", fallback=False) if val else False)
-            config.set("config", "version", "1.9")
+        if v < 1.93:
+            self._configset(config, "notes/xrcolside", "3")
+            config.set("config", "version", "1.93")
 
         styf = os.path.join(self.configPath(cfgname), "ptxprint.sty")
         if not os.path.exists(styf):
