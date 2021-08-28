@@ -1,15 +1,14 @@
 PTXprint 1.9.3 Release Notes 
-25 August 2021
+28 August 2021
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 
-Bug fixes and Improvements in 1.9.3 (25 Aug 2021) 
+Bug fixes and Improvements in 1.9.3 (28 Aug 2021) 
   
-  * !Changed! output location from “PRJID\PrintDraft” to “PRJID\local\ptxprint” folder
-	* All temporary files are now neatly hidden away in sub-folders of this target folder
+  * CHANGED: output location from "<projID>\PrintDraft" to "<projID>\local\ptxprint" folder
+	* All temporary files are hidden away in sub-folders of this target folder
   
   * Added Publication Info tab to UI for better handling of config-specific front matter
-
 	* Added feature to create config-specific front matter with variables
 	* Added feature to import Paratext entire PDFs as part of front matter
 	* Added feature to import Paratext FRT periph sections as part of front matter
@@ -19,7 +18,9 @@ Bug fixes and Improvements in 1.9.3 (25 Aug 2021)
   
   * Improved 'Hide Empty Verses' and added option to show ellipsis #478
 
-  * Improved 'Column of xRefs' feature so it now also works with single-column layouts
+  * Typing new configuration name no longer selects similar configuration instead #468
+  
+  * Improved 'Column of xRefs' feature to also work with single-column layout
   
   * Added warning for lack of EL compliance if 'SIL' found in copyright statement
   
@@ -33,6 +34,8 @@ Bug fixes and Improvements in 1.9.3 (25 Aug 2021)
   * #475 Preserve notes on 1->2 and 2->1 column transitions
 
   * #483 fix ptxprint-mod.sty not being included from secondary diglot text 
+  
+  * #486 fix --book fails to select book(s) to print on command line 
   
 Bug fixes and Improvements in 1.9.2 (29 Jul 2021) 
 

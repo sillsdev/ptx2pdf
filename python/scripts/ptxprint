@@ -224,11 +224,11 @@ if args.print or args.action is not None:
             mainw.bookNoUpdate = True
             bl = args.books.split(" ")
             if len(bl) == 1:
-                mainw.set("cb_book", bl[0])
+                mainw.set("ecb_book", bl[0])
                 mainw.set("r_book", "single")
             elif len(bl) > 1:
                 mainw.set("t_booklist", args.books)
-                mainw.set("r_booK", "multiple")
+                mainw.set("r_book", "multiple")
         elif args.module is not None and len(args.module):
             mainw.set("r_book", "module")
             mainw.moduleFile = Path(args.module)
