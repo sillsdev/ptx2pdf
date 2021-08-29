@@ -10124,6 +10124,7 @@ Books on the Basic tab will be included.</property>
 selected cross-references for both NT and OT.</property>
                                                     <property name="draw_indicator">True</property>
                                                     <property name="group">r_xrSource_custom</property>
+                                                    <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                                   </object>
                                                   <packing>
                                                     <property name="left_attach">0</property>
