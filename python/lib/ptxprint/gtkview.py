@@ -814,6 +814,14 @@ class GtkViewModel(ViewModel):
         for w in ["b_print", "b_print2ndDiglotText", "btn_adjust_diglot", "s_diglotPriFraction"]:
             self.builder.get_object(w).set_sensitive(not self.printReason)
 
+    def checkFontsMissing(self):
+        self.setPrintBtnStatus(4, "")
+        for f in ['R','B','I','BI']:
+            if self.get("bl_font" + f) is None:
+                self.setPrintBtnStatus(4, _("Font(s) not set"))
+                return True
+        return False
+                
     def print2ndDiglotTextClicked(self, btn):
         self.onOK(btn)
         
@@ -829,6 +837,8 @@ class GtkViewModel(ViewModel):
         jobs = self.getBooks(files=True)
         if not len(jobs) or jobs[0] == '':
             self.set("l_statusLine", _("No books to print"))
+            return
+        if self.checkFontsMissing():
             return
         # If the viewer/editor is open on an Editable tab, then "autosave" contents
         if Gtk.Buildable.get_name(self.builder.get_object("nbk_Main").get_nth_page(self.get("nbk_Main"))) == "tb_ViewerEditor":
@@ -1677,15 +1687,19 @@ class GtkViewModel(ViewModel):
     def onFontRclicked(self, btn):
         if self.getFontNameFace("bl_fontR"):
             self.onFontChanged(btn)
+        self.checkFontsMissing()
         
     def onFontBclicked(self, btn):
         self.getFontNameFace("bl_fontB")
+        self.checkFontsMissing()
         
     def onFontIclicked(self, btn):
         self.getFontNameFace("bl_fontI")
+        self.checkFontsMissing()
         
     def onFontBIclicked(self, btn):
         self.getFontNameFace("bl_fontBI")
+        self.checkFontsMissing()
         
     def onFontRowSelected(self, dat):
         lsstyles = self.builder.get_object("ls_fontFaces")
