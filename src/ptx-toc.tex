@@ -173,21 +173,21 @@
   \count252=1
   \ifx\t@mpa\empty\else
     \edef\t@mpd{tc\the\count252}%
-    \csname \t@mpd\endcsname~\t@mpa
+    \csname \t@mpd\endcsname \t@mpa
     \advance\count252 by 1
   \fi
   \ifx\t@mpb\empty\else
     \edef\t@mpd{tc\the\count252}%
-    \csname \t@mpd\endcsname~\t@mpb
+    \csname \t@mpd\endcsname \t@mpb
     \advance\count252 by 1
   \fi
   \ifx\t@mpc\empty\else
     \edef\t@mpd{tc\the\count252}%
-    \csname \t@mpd\endcsname~\t@mpc
+    \csname \t@mpd\endcsname \t@mpc
     \advance\count252 by 1
   \fi
   \edef\t@mpd{tcr\the\count252}%
-  \csname\t@mpd\endcsname~#5
+  \csname\t@mpd\endcsname #5\@ndcell\@ndrow
 }}
 
 \addtoeveryparhooks{\checkfort@c}

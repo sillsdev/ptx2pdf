@@ -148,7 +148,7 @@
     \ifx\p@ram\relax \else \advance\dimen255 \p@ram\IndentUnit \fi
     \getp@ram{firstindent}{tr}%
     \ifx\p@ram\relax \else \advance\dimen255 \p@ram\IndentUnit \fi
-    \kern\dimen255
+    %\kern\dimen255
     \s@tfont{tr}%
     \global\p@ranesting=1
     \@celltrue}
@@ -194,6 +194,7 @@
     \@ndcell
     \@ndrow
     \t@talwidth=0pt
+    %\x@\showbox\csname tablecol-2\endcsname
     \f@reachcol{\advance\t@talwidth by \wd\c@rrentcolbox}%
     \endt@blewrap
     \f@reachcol{\setbox\c@rrentcolbox=\box\voidb@x}%
@@ -247,7 +248,7 @@
     \@@LOOP \ifnum\nth@line<\linec@unt
       \advance\nth@line by 1
       \line{\ifRTL\hfil\lochcaer@f{\getnth@line}\hfil\else
-        \hfil\f@reachcol{\getnth@line}\hfil\fi}%
+        \hfil\f@reachcol{\getnth@line\csname \c@tprefix tc\the\@col:fill\endcsname}\hfil\fi}%
       \ifnum\nth@line<\linec@unt \nobreak \fi
       \@@REPEAT
   }%
@@ -296,17 +297,17 @@
     \else\ifx\the@lign\cell@c
         \nobreak\csname leaders-tcc\the\@col\endcsname
     \fi\fi
-    \trace{t}{cell(\the@lign)[\the\@row, \the\@col]: leaders. leftskip=\the\leftskip, rightskip=\the\rightskip, parfillskip=\the\parfillskip}%
+    \trace{t}{cell(\the@lign)[\the\@row, \the\@col]: leaders. leftskip=\the\leftskip, rightskip=\the\rightskip, parfillskip=\the\parfillskip, width=\the\c@rrentcolwidth}%
     \unhbox0\unskip \parfillskip=0pt
     \ifx\the@lign\cell@r\else
       \ifx\the@lign\cell@c
-        \nobreak\csname leaders-tcc\the\@col\endcsname\null
+        \nobreak\csname leaders-tcc\the\@col\endcsname\relax
       \else
-        \nobreak\csname leaders-tc\the\@col\endcsname\hfil\null
+        \nobreak\csname leaders-tc\the\@col\endcsname\hfil\relax
     \fi\fi
     \par}%
   \wd0=\c@rrentcolwidth
-  \box0 }
+  \box0}
 \def\cell@r{r}
 \def\cell@c{c}
 \def\extractl@stcell{% delete last cell from box \c@rrentcolbox and return it in \c@rrentcell
@@ -317,9 +318,7 @@
   \setbox0=\vbox{\unvcopy\c@rrentcell \c@untlines}%
   \ifnum\lct@mp>\linec@unt \global\linec@unt=\lct@mp \fi}
 \def\c@untlines{\setbox0=\lastbox
-  \ifhbox0 \global\advance\lct@mp by 1 \unskip\unpenalty\c@untlines
-  \trace{t}{countd \the\lct@mp\space lines}%
-  \fi}
+  \ifhbox0 \global\advance\lct@mp by 1 \unskip\unpenalty\c@untlines\fi}
 \def\getnth@line{% return content of line nth@line from box \c@rrentcell
   \lct@mp=0
   \setbox0=\vbox{\unvcopy\c@rrentcell \c@untlines}% count lines into \lct@mp

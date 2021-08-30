@@ -666,11 +666,11 @@
   %\decr{\availht}{\verybottomins}%
   \setbox\s@vedpage=\copy255
   % split the galley to the actual size available
-  \setbox\colA=\vsplit255 to \availht \setbox0\copy\colA \setbox0=\vbox{\unvbox0\vfil}
-  \decr{\availht}{0}
   \ifdim\availht<0pt                                                        %(2)
     \MSG{Page overfull with inserts. Perhaps a little more text and less pictures would help}%
   \fi
+  \setbox\colA=\vsplit255 to \availht \setbox0\copy\colA \setbox0=\vbox{\unvbox0\vfil}
+  \decr{\availht}{0}
   %\setbox\colA=\vbox{\unvbox\colA}%
   % and check if it all fit; if not, we'll have to back up and try again
   \ifvoid255 \fitonpagetrue \else \fitonpagefalse \fi

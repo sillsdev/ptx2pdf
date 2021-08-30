@@ -535,6 +535,7 @@
 |normalc@tcodes%
 %+cfig_dofigure_intro
 \def\d@figure#1{%
+ \trace{g}{d@figure entered IncludeFigures\ifIncludeFigures true\else false\fi}%
  \ifIncludeFigures
   \ifdim\hsize=0pt
     \hsize=\colwidth

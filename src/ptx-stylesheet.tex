@@ -745,7 +745,7 @@
     \else
       \vskip\p@ram
     \fi\egroup} 
- \def\fig{\m@kedigitsother\ptx@fig}% \fig has its own special macro to parse the fields
+ \def\fig{\trace{g}{In fig}\m@kedigitsother\ptx@fig}% \fig has its own special macro to parse the fields
  %
  \let\nb=\ptx@nb% \nb is a special code that suppresses a paragraph break across \c
  \global\let\@k=\k
@@ -769,7 +769,9 @@
 
 \def\unc@tcodespecials{\def\do##1{\catcode`##1=12 }\dospecials}
 \def\@@id#1#2#3#4\end{\gdef\id@@@{#1#2#3}} % get first 3 chars of the \id
-\def\ptx@fig #1\fig*{\d@figure{#1}\m@kedigitsletters}                           %(1)
+\def\ptx@fig #1\fig*{\ifIncludeFigures\temptrue\else\tempfalse\fi\IncludeFigurestrue
+    \trace{g}{In ptx@fig #1}\d@figure{#1}\m@kedigitsletters
+    \iftemp\else\IncludeFiguresfalse}                           %(1)
 %-csty_addspecialhooks
 
 %+csty_stack
@@ -1336,8 +1338,12 @@
  \fi
 }
 \def\onecolwidth#1{#1=\textwidth
-  \advance #1 by -2\columnshift\advance #1 by -\XrefNotesWidth
-  \advance #1 by -\XrefNotesMargin\advance #1 by -\gutter
+  \advance #1 by -2\columnshift
+  \ifx\XrefNotes\empty\else\ifx\ch@pter\empty\else
+    \trace{o}{setonecolwidth with notes width=\the\XrefNotesWidth, margin=\the\XrefNotesMargin, gutter=\the\gutter}%
+    \advance #1 by -\XrefNotesWidth
+    \advance #1 by -\XrefNotesMargin\advance #1 by -\gutter
+  \fi\fi
 }
 \def\s@tupsizes{
  \s@tb@dyb@seline{}%
