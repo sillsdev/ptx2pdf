@@ -164,6 +164,7 @@ ModelMap = {
     "document/usetoc1":         ("c_usetoc1", lambda w,v: "true" if v else "false"),
     "document/usetoc2":         ("c_usetoc2", lambda w,v: "true" if v else "false"),
     "document/usetoc3":         ("c_usetoc3", lambda w,v: "true" if v else "false"),
+    # "document/tocleaders":      ("c_tocLeaders", lambda w,v: "true" if v else "false"),
     "document/chapfrom":        ("s_chapfrom", lambda w,v: int(float(v)) if v else "1"),
     "document/chapto":          ("s_chapto", lambda w,v: int(float(v)) if v else "999"),
     "document/colgutterfactor": ("s_colgutterfactor", lambda w,v: round(float(v)*3) or "12"), # Hack to be fixed
