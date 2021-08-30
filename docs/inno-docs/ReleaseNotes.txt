@@ -1,16 +1,16 @@
 PTXprint 1.9.3 Release Notes 
-28 August 2021
+30 August 2021
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 
-Bug fixes and Improvements in 1.9.3 (28 Aug 2021) 
+Bug fixes and Improvements in 1.9.3 (30 Aug 2021)
   
   * CHANGED: output location from "<projID>\PrintDraft" to "<projID>\local\ptxprint" folder
 	* All temporary files are hidden away in sub-folders of this target folder
   
   * Added Publication Info tab to UI for better handling of config-specific front matter
 	* Added feature to create config-specific front matter with variables
-	* Added feature to import Paratext entire PDFs as part of front matter
+	* Added feature to import Paratext PDFs as part of front matter
 	* Added feature to import Paratext FRT periph sections as part of front matter
 	* Improved table of contents, including various options to categorize and sort
   
