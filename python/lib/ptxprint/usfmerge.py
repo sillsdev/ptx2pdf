@@ -15,6 +15,7 @@ class ChunkType(Enum):
     TITLE = 3
     INTRO = 4
     BODY = 5
+    ID = 6
 
 _textype_map = {
     "ChapterNumber":   ChunkType.CHAPTER,
@@ -73,9 +74,10 @@ def ispara(c):
     return 'paragraph' == str(c.meta.get('StyleType', 'none')).lower()
     
 class Collector:
-    def __init__(self, doc=None, primary=True, fsecondary=False):
+    def __init__(self, doc=None, primary=True, fsecondary=False, stylesheet=None):
         self.acc = []
         self.fsecondary = fsecondary
+        self.stylesheet = stylesheet
         self.chap = 0
         self.verse = 0
         self.end = 0
@@ -99,6 +101,8 @@ class Collector:
         else:
             if c.name == "cl" and self.chap == 0:
                 mode = ChunkType.TITLE
+            elif c.name == "id":
+                mode = ChunkType.ID
             else:
                 mode = _marker_modes.get(c.name, _textype_map.get(str(c.meta.get('TextType')), self.mode))
             currChunk = Chunk(mode=mode, chap=self.chap, verse=self.verse, end=self.end, pnum=self.pnum(c))
@@ -111,9 +115,15 @@ class Collector:
         ischap = sfm.text_properties('chapter')
         isverse = sfm.text_properties('verse')
         currChunk = None
+        elements = root
         if len(self.acc) == 0:
-            currChunk = self.makeChunk()
-        for c in root[:]:
+            if isinstance(root[0], sfm.Element) and root[0].name == "id":
+                # turn \id into a paragraph level and main children as siblings
+                elements = root[0][1:]
+                idel = sfm.Element(root[0].name, args=root[0].args[:], content=root[0][0], meta=self.stylesheet['id'])
+                currChunk = self.makeChunk(idel)
+                currChunk.append(idel)
+        for c in elements:
             if not isinstance(c, sfm.Element):
                 continue
             if c.name == "fig":
@@ -133,7 +143,7 @@ class Collector:
                 currChunk = self.makeChunk(c)
             if currChunk is not None:
                 currChunk.append(c)
-                root.remove(c)
+                # root.remove(c)
             if ischap(c):
                 vc = re.sub(r"[^0-9\-]", "", c.args[0])
                 try:
@@ -143,6 +153,8 @@ class Collector:
                 if currChunk is not None:
                     currChunk.chap = self.chap
                     currChunk.verse = 0
+                newc = sfm.Element(c.name, pos=c.pos, parent=c.parent, args=c.args, meta=c.meta)
+                currChunk[-1] = newc
             elif isverse(c):
                 vc = re.sub(r"[^0-9\-]", "", c.args[0])
                 try:
@@ -163,6 +175,7 @@ class Collector:
         return currChunk
 
     def reorder(self):
+        # Merge contiguous title chunks
         bi = None
         for i in range(1, len(self.acc)):
             if self.acc[i].type == ChunkType.TITLE and self.acc[i-1].type == ChunkType.TITLE:
@@ -170,6 +183,10 @@ class Collector:
                     bi = i-1
                 self.acc[bi].extend(self.acc[i])
                 self.acc[i].deleteme = True
+        # Swap chapter and heading first
+        for i in range(1, len(self.acc)):
+            if self.acc[i-1].type == ChunkType.CHAPTER and self.acc[i].type == ChunkType.HEADING:
+                (self.acc[i-1], self.acc[i]) = (self.acc[i], self.acc[i-1])
         # Merge all chunks between \c and not including \v.
         for i in range(1, len(self.acc)):
             if self.acc[i-1].type == ChunkType.CHAPTER and not self.acc[i].hasVerse:
@@ -343,13 +360,13 @@ def usfmerge2(infilea, infileb, outfile, stylesheetsa=[], stylesheetsb=[], fseco
     with open(infilea, encoding="utf-8") as inf:
         doc = list(usfm.parser(inf, stylesheet=stylesheeta,
                                canonicalise_footnotes=False, tag_escapes=tag_escapes))
-        pcoll = Collector(doc=doc, fsecondary=fsecondary)
+        pcoll = Collector(doc=doc, fsecondary=fsecondary, stylesheet=stylesheeta)
     mainchunks = {c.ident: c for c in pcoll.acc}
 
     with open(infileb, encoding="utf-8") as inf:
         doc = list(usfm.parser(inf, stylesheet=stylesheetb,
                                canonicalise_footnotes=False, tag_escapes=tag_escapes))
-        scoll = Collector(doc=doc, primary=False)
+        scoll = Collector(doc=doc, primary=False, stylesheet=stylesheetb)
     secondchunks = {c.ident: c for c in scoll.acc}
     mainkeys = ["_".join(str(x) for x in c.ident) for c in pcoll.acc]
     secondkeys = ["_".join(str(x) for x in c.ident) for c in scoll.acc]
