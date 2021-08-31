@@ -2961,7 +2961,7 @@ technology, then enable this.</property>
   </object>
   <object class="GtkDialog" id="dlg_gridsGuides">
     <property name="can_focus">False</property>
-    <property name="title" translatable="yes">Crop Marks, Guides and Grid Settings</property>
+    <property name="title" translatable="yes">Guides, Crop Marks, Watermark and Grid Settings</property>
     <property name="window_position">mouse</property>
     <property name="icon">Google-Noto-Emoji-Objects-62859-open-book.ico</property>
     <property name="type_hint">dialog</property>
@@ -3001,28 +3001,6 @@ technology, then enable this.</property>
             <property name="orientation">vertical</property>
             <property name="spacing">12</property>
             <child>
-              <object class="GtkCheckButton" id="c_cropmarks">
-                <property name="label" translatable="yes">Crop Marks (Shows Page Edge for Trimming)</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">False</property>
-                <property name="tooltip_text" translatable="yes">Some printers require crop marks
-on the PDF to show where the page
-should be trimmed after printing.
-
-The cropmarks also show the top and
-bottom text margins.</property>
-                <property name="halign">start</property>
-                <property name="margin_left">6</property>
-                <property name="draw_indicator">True</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
-            <child>
               <object class="GtkCheckButton" id="c_gridLines">
                 <property name="label" translatable="yes">Guides (Rules and Baselines)</property>
                 <property name="visible">True</property>
@@ -3039,7 +3017,94 @@ as the baselines of the body text.</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkCheckButton" id="c_cropmarks">
+                <property name="label" translatable="yes">Crop Marks (Shows Page Edge for Trimming)</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">False</property>
+                <property name="tooltip_text" translatable="yes">Some printers require crop marks
+on the PDF to show where the page
+should be trimmed after printing.
+
+The cropmarks also show the top and
+bottom text margins.</property>
+                <property name="halign">start</property>
+                <property name="margin_left">6</property>
+                <property name="margin_top">6</property>
+                <property name="draw_indicator">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
                 <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkGrid">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="halign">start</property>
+                <property name="margin_left">6</property>
+                <property name="margin_right">6</property>
+                <property name="column_spacing">12</property>
+                <child>
+                  <object class="GtkCheckButton" id="c_applyWatermark">
+                    <property name="label" translatable="yes">Apply Watermark PDF</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">False</property>
+                    <property name="tooltip_text" translatable="yes">A watermark can be applied to all pages of 
+the publication. The file must be a PDF and
+should ideally have the same dimensions as 
+the publication being printed.</property>
+                    <property name="halign">start</property>
+                    <property name="draw_indicator">True</property>
+                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
+                    <property name="top_attach">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkButton" id="btn_selectWatermarkPDF">
+                    <property name="label" translatable="yes">Select...</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <property name="halign">start</property>
+                    <property name="valign">center</property>
+                    <signal name="clicked" handler="onWatermarkPDFclicked" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="left_attach">1</property>
+                    <property name="top_attach">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="lb_applyWatermark">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="opacity">0.80000000000000004</property>
+                    <property name="halign">start</property>
+                    <property name="valign">center</property>
+                    <property name="ellipsize">middle</property>
+                    <property name="max_width_chars">26</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">2</property>
+                    <property name="top_attach">0</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">2</property>
               </packing>
             </child>
             <child>
@@ -3315,7 +3380,7 @@ the text. This may be useful for precise measuring.</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">2</property>
+                <property name="position">3</property>
               </packing>
             </child>
           </object>
@@ -5859,14 +5924,14 @@ can be customized.</property>
                                     </child>
                                     <child>
                                       <object class="GtkCheckButton" id="c_grid">
-                                        <property name="label" translatable="yes">Crop Marks,
-Guides, Grid</property>
+                                        <property name="label" translatable="yes">Marks &amp; Guides</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
-                                        <property name="tooltip_text" translatable="yes">Enable Guides and/or Grid behind the text
-to assist with setup or final adjustments; or
-turn on the Crop marks for the printer.</property>
+                                        <property name="tooltip_text" translatable="yes">Enable Guides or a Grid to sit behind the
+text to assist with final adjustments; or
+enable a Watermark to appear behind the
+text: or turn on the Crop marks for the printer.</property>
                                         <property name="halign">end</property>
                                         <property name="margin_left">2</property>
                                         <property name="draw_indicator">True</property>
@@ -17242,217 +17307,7 @@ other settings are applied. This file is rarely used.</property>
                             <property name="margin_right">6</property>
                             <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkFrame">
-                                <property name="width_request">290</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="margin_right">6</property>
-                                <property name="margin_top">6</property>
-                                <property name="vexpand">True</property>
-                                <property name="label_xalign">0.039999999105930328</property>
-                                <child>
-                                  <object class="GtkAlignment">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="left_padding">12</property>
-                                    <child>
-                                      <object class="GtkGrid">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="margin_left">3</property>
-                                        <property name="margin_right">3</property>
-                                        <property name="margin_bottom">6</property>
-                                        <property name="column_spacing">8</property>
-                                        <child>
-                                          <object class="GtkCheckButton" id="c_inclFrontMatter">
-                                            <property name="label" translatable="yes">Include Front Matter PDF(s)</property>
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">True</property>
-                                            <property name="receives_default">False</property>
-                                            <property name="tooltip_text" translatable="yes">One or more previously created PDF file(s) can be included BEFORE the scripture material being typeset. If more than one
-file is selected, then these will appear in alphabetical order.</property>
-                                            <property name="halign">start</property>
-                                            <property name="margin_top">4</property>
-                                            <property name="draw_indicator">True</property>
-                                            <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">0</property>
-                                            <property name="top_attach">0</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkButton" id="btn_selectFrontPDFs">
-                                            <property name="label" translatable="yes">Select...</property>
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">True</property>
-                                            <property name="receives_default">True</property>
-                                            <property name="halign">start</property>
-                                            <property name="valign">center</property>
-                                            <property name="margin_right">5</property>
-                                            <property name="margin_bottom">4</property>
-                                            <signal name="clicked" handler="onFrontPDFsClicked" swapped="no"/>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">2</property>
-                                            <property name="top_attach">0</property>
-                                            <property name="height">2</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkButton" id="btn_selectBackPDFs">
-                                            <property name="label" translatable="yes">Select...</property>
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">True</property>
-                                            <property name="receives_default">True</property>
-                                            <property name="halign">start</property>
-                                            <property name="valign">center</property>
-                                            <property name="margin_right">6</property>
-                                            <property name="margin_top">4</property>
-                                            <property name="margin_bottom">4</property>
-                                            <signal name="clicked" handler="onBackPDFsClicked" swapped="no"/>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">2</property>
-                                            <property name="top_attach">4</property>
-                                            <property name="height">2</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkCheckButton" id="c_inclBackMatter">
-                                            <property name="label" translatable="yes">Include Back Matter PDF(s)</property>
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">True</property>
-                                            <property name="receives_default">False</property>
-                                            <property name="tooltip_text" translatable="yes">One or more previously created PDF file(s) can be included
-AFTER the scripture material being typeset. If more than one
-file is selected, then these will appear in alphabetical order.</property>
-                                            <property name="halign">start</property>
-                                            <property name="margin_top">4</property>
-                                            <property name="draw_indicator">True</property>
-                                            <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">0</property>
-                                            <property name="top_attach">4</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkButton" id="btn_selectWatermarkPDF">
-                                            <property name="label" translatable="yes">Select...</property>
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">True</property>
-                                            <property name="receives_default">True</property>
-                                            <property name="halign">start</property>
-                                            <property name="valign">center</property>
-                                            <property name="margin_right">6</property>
-                                            <property name="margin_top">4</property>
-                                            <property name="margin_bottom">4</property>
-                                            <signal name="clicked" handler="onWatermarkPDFclicked" swapped="no"/>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">2</property>
-                                            <property name="top_attach">2</property>
-                                            <property name="height">2</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkCheckButton" id="c_applyWatermark">
-                                            <property name="label" translatable="yes">Apply Watermark PDF</property>
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">True</property>
-                                            <property name="receives_default">False</property>
-                                            <property name="tooltip_text" translatable="yes">A watermark can be applied to all pages of 
-the publication. The file must be a PDF and
-should ideally have the same dimensions as 
-the publication being printed.</property>
-                                            <property name="halign">start</property>
-                                            <property name="margin_top">4</property>
-                                            <property name="draw_indicator">True</property>
-                                            <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">0</property>
-                                            <property name="top_attach">2</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkLabel" id="lb_inclFrontMatter">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="opacity">0.80000000000000004</property>
-                                            <property name="halign">end</property>
-                                            <property name="margin_bottom">6</property>
-                                            <property name="justify">right</property>
-                                            <property name="ellipsize">middle</property>
-                                            <property name="max_width_chars">26</property>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">0</property>
-                                            <property name="top_attach">1</property>
-                                            <property name="width">2</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkLabel" id="lb_applyWatermark">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="opacity">0.80000000000000004</property>
-                                            <property name="halign">end</property>
-                                            <property name="margin_bottom">6</property>
-                                            <property name="justify">right</property>
-                                            <property name="ellipsize">middle</property>
-                                            <property name="max_width_chars">26</property>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">0</property>
-                                            <property name="top_attach">3</property>
-                                            <property name="width">2</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkLabel" id="lb_inclBackMatter">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="opacity">0.80000000000000004</property>
-                                            <property name="halign">end</property>
-                                            <property name="margin_bottom">6</property>
-                                            <property name="justify">right</property>
-                                            <property name="ellipsize">middle</property>
-                                            <property name="max_width_chars">26</property>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">0</property>
-                                            <property name="top_attach">5</property>
-                                            <property name="width">2</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <placeholder/>
-                                        </child>
-                                        <child>
-                                          <placeholder/>
-                                        </child>
-                                        <child>
-                                          <placeholder/>
-                                        </child>
-                                      </object>
-                                    </child>
-                                  </object>
-                                </child>
-                                <child type="label">
-                                  <object class="GtkLabel">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="label" translatable="yes">Include Other PDFs</property>
-                                  </object>
-                                </child>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">False</property>
-                                <property name="position">0</property>
-                              </packing>
+                              <placeholder/>
                             </child>
                             <child>
                               <object class="GtkGrid">
@@ -18382,279 +18237,92 @@ output and tweak adjust lists.</property>
                     <property name="orientation">vertical</property>
                     <property name="spacing">3</property>
                     <child>
-                      <object class="GtkFrame" id="bx_frontmatter">
-                        <property name="width_request">675</property>
+                      <object class="GtkGrid">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="margin_left">6</property>
+                        <property name="margin_right">6</property>
                         <property name="margin_top">6</property>
                         <property name="margin_bottom">6</property>
-                        <property name="vexpand">False</property>
-                        <property name="label_xalign">0.019999999552965164</property>
+                        <property name="column_spacing">6</property>
                         <child>
-                          <object class="GtkGrid" id="gr_frontmatter">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="margin_right">6</property>
-                            <property name="margin_top">6</property>
-                            <property name="margin_bottom">6</property>
-                            <property name="vexpand">True</property>
-                            <property name="row_spacing">6</property>
-                            <property name="column_spacing">6</property>
-                            <child>
-                              <object class="GtkLabel">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="tooltip_text" translatable="yes">This table lists the standard set of \zvar|variables\* which
-can be used as part of front matter and/or colophon. 
-As these \zvar|variables\* are customizable, you can
-add your own as needed. For example, you may
-need the \zvar|maintitle\* in more than one language
-so you can add 'fr' or 'es' to create a new one:
-  \zvar|maintitlefr\*
-or you might want to add a custom variable such as:
-   \zvar|printedby\*
-
-The values of these variables are saved with the config 
-as they might vary from one publication to another.</property>
-                                <property name="halign">end</property>
-                                <property name="valign">start</property>
-                                <property name="margin_top">5</property>
-                                <property name="label" translatable="yes">List of Variables:</property>
-                                <property name="justify">right</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">0</property>
-                                <property name="top_attach">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkButton" id="btn_rescanFRTvars">
-                                <property name="label">↺</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">True</property>
-                                <property name="tooltip_text" translatable="yes">Clicking this button will rescan the
-Front Matter for any \zvar|variables\*
-and add any that are missing to this
-table of variable names and values.</property>
-                                <property name="halign">end</property>
-                                <property name="valign">end</property>
-                                <signal name="clicked" handler="rescanFRTvarsClicked" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="left_attach">0</property>
-                                <property name="top_attach">6</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkCheckButton" id="c_periphPageBreak">
-                                <property name="label" translatable="yes">Force Page Break 
-at each Periph</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">False</property>
-                                <property name="tooltip_text" translatable="yes">This option is normally checked so that each
-different section of the front matter will begin
-on a new page.</property>
-                                <property name="halign">start</property>
-                                <property name="valign">start</property>
-                                <property name="margin_left">3</property>
-                                <property name="active">True</property>
-                                <property name="draw_indicator">True</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">0</property>
-                                <property name="top_attach">2</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkButton" id="btn_editFrontMatter">
-                                <property name="label" translatable="yes">View/Edit
-Front Matter</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">True</property>
-                                <property name="halign">center</property>
-                                <property name="valign">center</property>
-                                <property name="margin_left">3</property>
-                                <property name="margin_right">3</property>
-                                <signal name="clicked" handler="editFrontMatterClicked" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="left_attach">0</property>
-                                <property name="top_attach">1</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkViewport">
-                                <property name="height_request">270</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="hexpand">True</property>
-                                <property name="vexpand">True</property>
-                                <child>
-                                  <object class="GtkScrolledWindow" id="scr_zvarlist">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="vexpand">True</property>
-                                    <property name="hscrollbar_policy">always</property>
-                                    <property name="vscrollbar_policy">always</property>
-                                    <property name="shadow_type">in</property>
-                                    <property name="overlay_scrolling">False</property>
-                                    <property name="propagate_natural_width">True</property>
-                                    <property name="propagate_natural_height">True</property>
-                                    <child>
-                                      <object class="GtkTreeView" id="tv_zvarEdit">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="hadjustment">a_zvarListadjustment1</property>
-                                        <property name="vadjustment">a_zvarListadjustment2</property>
-                                        <property name="vscroll_policy">natural</property>
-                                        <property name="model">ls_zvarList</property>
-                                        <property name="reorderable">True</property>
-                                        <property name="rules_hint">True</property>
-                                        <property name="enable_search">False</property>
-                                        <property name="search_column">0</property>
-                                        <property name="fixed_height_mode">True</property>
-                                        <property name="show_expanders">False</property>
-                                        <child internal-child="selection">
-                                          <object class="GtkTreeSelection">
-                                            <property name="mode">multiple</property>
-                                          </object>
-                                        </child>
-                                        <child>
-                                          <object class="GtkTreeViewColumn" id="col_zvar_name">
-                                            <property name="resizable">True</property>
-                                            <property name="spacing">2</property>
-                                            <property name="sizing">fixed</property>
-                                            <property name="fixed_width">150</property>
-                                            <property name="title" translatable="yes">Name</property>
-                                            <property name="clickable">True</property>
-                                            <property name="reorderable">True</property>
-                                            <property name="sort_indicator">True</property>
-                                            <property name="sort_column_id">0</property>
-                                            <child>
-                                              <object class="GtkCellRendererText" id="cr_zvar_name"/>
-                                              <attributes>
-                                                <attribute name="text">0</attribute>
-                                              </attributes>
-                                            </child>
-                                          </object>
-                                        </child>
-                                        <child>
-                                          <object class="GtkTreeViewColumn" id="col_zvar_value">
-                                            <property name="resizable">True</property>
-                                            <property name="spacing">2</property>
-                                            <property name="sizing">fixed</property>
-                                            <property name="fixed_width">250</property>
-                                            <property name="title" translatable="yes">Value</property>
-                                            <property name="reorderable">True</property>
-                                            <property name="sort_indicator">True</property>
-                                            <property name="sort_column_id">1</property>
-                                            <child>
-                                              <object class="GtkCellRendererText" id="cr_zvar_value">
-                                                <property name="editable">True</property>
-                                                <signal name="edited" handler="onzvarEdit" object="tv_zvarEdit" swapped="no"/>
-                                              </object>
-                                              <attributes>
-                                                <attribute name="text">1</attribute>
-                                              </attributes>
-                                            </child>
-                                          </object>
-                                        </child>
-                                      </object>
-                                    </child>
-                                  </object>
-                                </child>
-                              </object>
-                              <packing>
-                                <property name="left_attach">1</property>
-                                <property name="top_attach">0</property>
-                                <property name="height">7</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkBox">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="valign">end</property>
-                                <child>
-                                  <object class="GtkButton" id="b_addzvar">
-                                    <property name="label" translatable="yes">Add</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">True</property>
-                                    <property name="halign">center</property>
-                                    <property name="valign">center</property>
-                                    <property name="margin_left">6</property>
-                                    <property name="margin_right">3</property>
-                                    <signal name="clicked" handler="onzvarAdd" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">True</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkButton" id="b_delzvar">
-                                    <property name="label" translatable="yes">Del</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">True</property>
-                                    <property name="halign">end</property>
-                                    <property name="valign">center</property>
-                                    <property name="margin_left">3</property>
-                                    <signal name="clicked" handler="onzvarDel" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">True</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">1</property>
-                                  </packing>
-                                </child>
-                              </object>
-                              <packing>
-                                <property name="left_attach">0</property>
-                                <property name="top_attach">5</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">0</property>
-                                <property name="top_attach">3</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">0</property>
-                                <property name="top_attach">4</property>
-                              </packing>
-                            </child>
-                          </object>
-                        </child>
-                        <child type="label">
-                          <object class="GtkCheckButton" id="c_frontmatter">
-                            <property name="label" translatable="yes">Front Matter</property>
+                          <object class="GtkCheckButton" id="c_inclFrontMatter">
+                            <property name="label" translatable="yes">Import Front Matter PDF</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
+                            <property name="tooltip_text" translatable="yes">One or more previously created PDF file(s) can be included BEFORE the scripture material being typeset. If more than one
+file is selected, then these will appear in alphabetical order.</property>
                             <property name="halign">start</property>
+                            <property name="margin_left">6</property>
                             <property name="draw_indicator">True</property>
                             <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                           </object>
+                          <packing>
+                            <property name="left_attach">0</property>
+                            <property name="top_attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkButton" id="btn_selectFrontPDFs">
+                            <property name="label" translatable="yes">Select PDF...</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <property name="halign">start</property>
+                            <property name="valign">center</property>
+                            <signal name="clicked" handler="onFrontPDFsClicked" swapped="no"/>
+                          </object>
+                          <packing>
+                            <property name="left_attach">3</property>
+                            <property name="top_attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="lb_inclFrontMatter">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="opacity">0.80000000000000004</property>
+                            <property name="halign">start</property>
+                            <property name="valign">center</property>
+                            <property name="hexpand">True</property>
+                            <property name="ellipsize">middle</property>
+                            <property name="max_width_chars">26</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">4</property>
+                            <property name="top_attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="visible">True</property>
+                            <property name="sensitive">False</property>
+                            <property name="can_focus">False</property>
+                            <property name="margin_left">6</property>
+                            <property name="label" translatable="yes">Page(s):</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">1</property>
+                            <property name="top_attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkEntry">
+                            <property name="visible">True</property>
+                            <property name="sensitive">False</property>
+                            <property name="can_focus">True</property>
+                            <property name="width_chars">7</property>
+                            <property name="placeholder_text" translatable="yes">1</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">2</property>
+                            <property name="top_attach">0</property>
+                          </packing>
                         </child>
                       </object>
                       <packing>
-                        <property name="expand">False</property>
+                        <property name="expand">True</property>
                         <property name="fill">True</property>
                         <property name="position">0</property>
                       </packing>
@@ -18839,9 +18507,10 @@ of Contents</property>
                         <child>
                           <object class="GtkCheckButton" id="c_tocLeaders">
                             <property name="label" translatable="yes">Show . . . . . Leaders</property>
+                            <property name="visible">True</property>
+                            <property name="sensitive">False</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
-                            <property name="no_show_all">True</property>
                             <property name="margin_left">6</property>
                             <property name="active">True</property>
                             <property name="draw_indicator">True</property>
@@ -18860,9 +18529,280 @@ of Contents</property>
                       </packing>
                     </child>
                     <child>
+                      <object class="GtkFrame" id="bx_frontmatter">
+                        <property name="width_request">675</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="margin_top">6</property>
+                        <property name="margin_bottom">6</property>
+                        <property name="vexpand">False</property>
+                        <property name="label_xalign">0.019999999552965164</property>
+                        <child>
+                          <object class="GtkGrid" id="gr_frontmatter">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="margin_right">6</property>
+                            <property name="margin_top">6</property>
+                            <property name="margin_bottom">6</property>
+                            <property name="vexpand">True</property>
+                            <property name="row_spacing">6</property>
+                            <property name="column_spacing">6</property>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="tooltip_text" translatable="yes">This table lists the standard set of \zvar|variables\* which
+can be used as part of front matter and/or colophon. 
+As these \zvar|variables\* are customizable, you can
+add your own as needed. For example, you may
+need the \zvar|maintitle\* in more than one language
+so you can add 'fr' or 'es' to create a new one:
+  \zvar|maintitlefr\*
+or you might want to add a custom variable such as:
+   \zvar|printedby\*
+
+The values of these variables are saved with the config 
+as they might vary from one publication to another.</property>
+                                <property name="halign">end</property>
+                                <property name="valign">start</property>
+                                <property name="margin_top">5</property>
+                                <property name="label" translatable="yes">Variable Names
+and Their Values:</property>
+                                <property name="justify">right</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkButton" id="btn_rescanFRTvars">
+                                <property name="label">↺</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                                <property name="tooltip_text" translatable="yes">Clicking this button will rescan the
+Front Matter for any \zvar|variables\*
+and add any that are missing to this
+table of variable names and values.</property>
+                                <property name="halign">end</property>
+                                <property name="valign">end</property>
+                                <signal name="clicked" handler="rescanFRTvarsClicked" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">5</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkCheckButton" id="c_periphPageBreak">
+                                <property name="label" translatable="yes">Force Page Break 
+at each Periph</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="tooltip_text" translatable="yes">This option is normally checked so that each
+different section of the front matter will begin
+on a new page.</property>
+                                <property name="halign">start</property>
+                                <property name="valign">start</property>
+                                <property name="margin_left">3</property>
+                                <property name="active">True</property>
+                                <property name="draw_indicator">True</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkButton" id="btn_editFrontMatter">
+                                <property name="label" translatable="yes">View/Edit
+Front Matter</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                                <property name="halign">center</property>
+                                <property name="valign">center</property>
+                                <property name="margin_left">3</property>
+                                <property name="margin_right">3</property>
+                                <signal name="clicked" handler="editFrontMatterClicked" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkViewport">
+                                <property name="height_request">220</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="hexpand">True</property>
+                                <property name="vexpand">True</property>
+                                <child>
+                                  <object class="GtkScrolledWindow" id="scr_zvarlist">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="vexpand">True</property>
+                                    <property name="hscrollbar_policy">always</property>
+                                    <property name="vscrollbar_policy">always</property>
+                                    <property name="shadow_type">in</property>
+                                    <property name="overlay_scrolling">False</property>
+                                    <property name="propagate_natural_width">True</property>
+                                    <property name="propagate_natural_height">True</property>
+                                    <child>
+                                      <object class="GtkTreeView" id="tv_zvarEdit">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="vexpand">True</property>
+                                        <property name="hadjustment">a_zvarListadjustment1</property>
+                                        <property name="vadjustment">a_zvarListadjustment2</property>
+                                        <property name="vscroll_policy">natural</property>
+                                        <property name="model">ls_zvarList</property>
+                                        <property name="reorderable">True</property>
+                                        <property name="rules_hint">True</property>
+                                        <property name="enable_search">False</property>
+                                        <property name="search_column">0</property>
+                                        <property name="fixed_height_mode">True</property>
+                                        <property name="show_expanders">False</property>
+                                        <child internal-child="selection">
+                                          <object class="GtkTreeSelection">
+                                            <property name="mode">multiple</property>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkTreeViewColumn" id="col_zvar_name">
+                                            <property name="resizable">True</property>
+                                            <property name="spacing">2</property>
+                                            <property name="sizing">fixed</property>
+                                            <property name="fixed_width">150</property>
+                                            <property name="title" translatable="yes">Name</property>
+                                            <property name="clickable">True</property>
+                                            <property name="reorderable">True</property>
+                                            <property name="sort_indicator">True</property>
+                                            <property name="sort_column_id">0</property>
+                                            <child>
+                                              <object class="GtkCellRendererText" id="cr_zvar_name"/>
+                                              <attributes>
+                                                <attribute name="text">0</attribute>
+                                              </attributes>
+                                            </child>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkTreeViewColumn" id="col_zvar_value">
+                                            <property name="resizable">True</property>
+                                            <property name="spacing">2</property>
+                                            <property name="sizing">fixed</property>
+                                            <property name="fixed_width">250</property>
+                                            <property name="title" translatable="yes">Value</property>
+                                            <property name="reorderable">True</property>
+                                            <property name="sort_indicator">True</property>
+                                            <property name="sort_column_id">1</property>
+                                            <child>
+                                              <object class="GtkCellRendererText" id="cr_zvar_value">
+                                                <property name="editable">True</property>
+                                                <signal name="edited" handler="onzvarEdit" object="tv_zvarEdit" swapped="no"/>
+                                              </object>
+                                              <attributes>
+                                                <attribute name="text">1</attribute>
+                                                <attribute name="placeholder-text">1</attribute>
+                                              </attributes>
+                                            </child>
+                                          </object>
+                                        </child>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="top_attach">0</property>
+                                <property name="height">6</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkBox">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="valign">end</property>
+                                <child>
+                                  <object class="GtkButton" id="b_addzvar">
+                                    <property name="label" translatable="yes">Add</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <property name="halign">center</property>
+                                    <property name="valign">center</property>
+                                    <property name="margin_left">6</property>
+                                    <property name="margin_right">3</property>
+                                    <signal name="clicked" handler="onzvarAdd" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkButton" id="b_delzvar">
+                                    <property name="label" translatable="yes">Del</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <property name="halign">end</property>
+                                    <property name="valign">center</property>
+                                    <property name="margin_left">3</property>
+                                    <signal name="clicked" handler="onzvarDel" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">1</property>
+                                  </packing>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">4</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">3</property>
+                              </packing>
+                            </child>
+                          </object>
+                        </child>
+                        <child type="label">
+                          <object class="GtkCheckButton" id="c_frontmatter">
+                            <property name="label" translatable="yes">Front Matter</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">False</property>
+                            <property name="halign">start</property>
+                            <property name="draw_indicator">True</property>
+                            <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">True</property>
+                        <property name="fill">True</property>
+                        <property name="position">2</property>
+                      </packing>
+                    </child>
+                    <child>
                       <object class="GtkFrame" id="bx_colophon">
                         <property name="width_request">675</property>
-                        <property name="height_request">146</property>
+                        <property name="height_request">145</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="valign">start</property>
@@ -19030,7 +18970,98 @@ on subsequent runs.</property>
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">True</property>
-                        <property name="position">2</property>
+                        <property name="position">3</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkGrid">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="halign">start</property>
+                        <property name="valign">start</property>
+                        <property name="margin_left">6</property>
+                        <property name="margin_bottom">6</property>
+                        <property name="vexpand">True</property>
+                        <property name="column_spacing">6</property>
+                        <child>
+                          <object class="GtkCheckButton" id="c_inclBackMatter">
+                            <property name="label" translatable="yes">Import Back Matter PDF</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">False</property>
+                            <property name="tooltip_text" translatable="yes">One or more previously created PDF file(s) can be included
+AFTER the scripture material being typeset. If more than one
+file is selected, then these will appear in alphabetical order.</property>
+                            <property name="halign">start</property>
+                            <property name="draw_indicator">True</property>
+                            <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                          </object>
+                          <packing>
+                            <property name="left_attach">0</property>
+                            <property name="top_attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkButton" id="btn_selectBackPDFs">
+                            <property name="label" translatable="yes">Select PDF...</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <property name="halign">start</property>
+                            <property name="valign">center</property>
+                            <signal name="clicked" handler="onBackPDFsClicked" swapped="no"/>
+                          </object>
+                          <packing>
+                            <property name="left_attach">3</property>
+                            <property name="top_attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="lb_inclBackMatter">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="opacity">0.80000000000000004</property>
+                            <property name="halign">start</property>
+                            <property name="valign">center</property>
+                            <property name="ellipsize">middle</property>
+                            <property name="max_width_chars">26</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">4</property>
+                            <property name="top_attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="visible">True</property>
+                            <property name="sensitive">False</property>
+                            <property name="can_focus">False</property>
+                            <property name="margin_left">6</property>
+                            <property name="label" translatable="yes">Page(s):</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">1</property>
+                            <property name="top_attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkEntry">
+                            <property name="visible">True</property>
+                            <property name="sensitive">False</property>
+                            <property name="can_focus">True</property>
+                            <property name="width_chars">7</property>
+                            <property name="placeholder_text" translatable="yes">1</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">2</property>
+                            <property name="top_attach">0</property>
+                          </packing>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="position">4</property>
                       </packing>
                     </child>
                   </object>
@@ -19047,7 +19078,7 @@ Define front matter, and/or
 colophon which gets printed
 at the end of the publication.</property>
                     <property name="halign">start</property>
-                    <property name="label" translatable="yes">Publication Info</property>
+                    <property name="label" translatable="yes">Peripherals</property>
                   </object>
                   <packing>
                     <property name="position">12</property>
