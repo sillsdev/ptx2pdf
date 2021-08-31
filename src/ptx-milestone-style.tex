@@ -319,3 +319,16 @@
     \vrule height 1pt width \rule@wid\hsize depth 0pt
     \ifx\attr@b\@lignRight\else\hfil\fi}%
 }
+
+\x@\def\csname start-zgap\endcsname{%
+  \endgraf
+  \get@ttribute{dimension}%A
+  \ifx\attr@b\relax
+    \let\gap@dim\baselineskip%
+  \else
+    \m@kenumber{\attr@b}%
+    \let\gap@dim\@@result%
+  \fi
+  \vbox{}\vskip\gap@dim%
+}
+
