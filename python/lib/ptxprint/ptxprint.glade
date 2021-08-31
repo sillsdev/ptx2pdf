@@ -3459,6 +3459,36 @@ the text. This may be useful for precise measuring.</property>
       </row>
     </data>
   </object>
+  <object class="GtkListStore" id="ls_leaderStyle">
+    <columns>
+      <!-- column-name leaderStyle -->
+      <column type="gchararray"/>
+      <!-- column-name gloCode -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">None</col>
+        <col id="1">0</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">......................</col>
+        <col id="1">1</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">. . . . . . . . . . . . .</col>
+        <col id="1">2</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">- - - - - - - - -</col>
+        <col id="1" translatable="yes">3</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">________________</col>
+        <col id="1" translatable="yes">4</col>
+      </row>
+    </data>
+  </object>
   <object class="GtkListStore" id="ls_outputFormat">
     <columns>
       <!-- column-name FormatDesc -->
@@ -18044,7 +18074,7 @@ include special text in the front matter:
 In addition to the above-mentioned codes, you may specify
 your own config-specific \zvar|variables\* as place-holders.
 Click on 'Edit Variables...' to assign values to these variables
-on the Publication Info tab.</property>
+on the Peripherals tab.</property>
                             <property name="label" translatable="yes">Front Matter</property>
                           </object>
                           <packing>
@@ -18240,14 +18270,15 @@ output and tweak adjust lists.</property>
                       <object class="GtkGrid">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="valign">start</property>
                         <property name="margin_left">6</property>
                         <property name="margin_right">6</property>
                         <property name="margin_top">6</property>
                         <property name="margin_bottom">6</property>
-                        <property name="column_spacing">6</property>
+                        <property name="column_spacing">12</property>
                         <child>
                           <object class="GtkCheckButton" id="c_inclFrontMatter">
-                            <property name="label" translatable="yes">Import Front Matter PDF</property>
+                            <property name="label" translatable="yes">Import Front Matter PDF(s)</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
@@ -18265,7 +18296,7 @@ file is selected, then these will appear in alphabetical order.</property>
                         </child>
                         <child>
                           <object class="GtkButton" id="btn_selectFrontPDFs">
-                            <property name="label" translatable="yes">Select PDF...</property>
+                            <property name="label" translatable="yes">Select...</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
@@ -18274,7 +18305,7 @@ file is selected, then these will appear in alphabetical order.</property>
                             <signal name="clicked" handler="onFrontPDFsClicked" swapped="no"/>
                           </object>
                           <packing>
-                            <property name="left_attach">3</property>
+                            <property name="left_attach">1</property>
                             <property name="top_attach">0</property>
                           </packing>
                         </child>
@@ -18290,40 +18321,14 @@ file is selected, then these will appear in alphabetical order.</property>
                             <property name="max_width_chars">26</property>
                           </object>
                           <packing>
-                            <property name="left_attach">4</property>
-                            <property name="top_attach">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkLabel">
-                            <property name="visible">True</property>
-                            <property name="sensitive">False</property>
-                            <property name="can_focus">False</property>
-                            <property name="margin_left">6</property>
-                            <property name="label" translatable="yes">Page(s):</property>
-                          </object>
-                          <packing>
-                            <property name="left_attach">1</property>
-                            <property name="top_attach">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkEntry">
-                            <property name="visible">True</property>
-                            <property name="sensitive">False</property>
-                            <property name="can_focus">True</property>
-                            <property name="width_chars">7</property>
-                            <property name="placeholder_text" translatable="yes">1</property>
-                          </object>
-                          <packing>
                             <property name="left_attach">2</property>
                             <property name="top_attach">0</property>
                           </packing>
                         </child>
                       </object>
                       <packing>
-                        <property name="expand">True</property>
-                        <property name="fill">True</property>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
                         <property name="position">0</property>
                       </packing>
                     </child>
@@ -18332,6 +18337,7 @@ file is selected, then these will appear in alphabetical order.</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="margin_left">12</property>
+                        <property name="margin_right">6</property>
                         <property name="spacing">2</property>
                         <child>
                           <object class="GtkCheckButton" id="c_autoToC">
@@ -18364,7 +18370,7 @@ final run.</property>
                         </child>
                         <child>
                           <object class="GtkEntry" id="t_tocTitle">
-                            <property name="width_request">210</property>
+                            <property name="width_request">200</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="tooltip_text" translatable="yes">A file called "combined.toc" will be created 
@@ -18505,20 +18511,38 @@ of Contents</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkCheckButton" id="c_tocLeaders">
-                            <property name="label" translatable="yes">Show . . . . . Leaders</property>
+                          <object class="GtkLabel">
                             <property name="visible">True</property>
-                            <property name="sensitive">False</property>
-                            <property name="can_focus">True</property>
-                            <property name="receives_default">False</property>
+                            <property name="can_focus">False</property>
                             <property name="margin_left">6</property>
-                            <property name="active">True</property>
-                            <property name="draw_indicator">True</property>
+                            <property name="margin_right">3</property>
+                            <property name="label" translatable="yes"> . . . . Leaders:</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
                             <property name="fill">True</property>
                             <property name="position">4</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkComboBox" id="fcb_leaderStyle">
+                            <property name="width_request">100</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="tooltip_text" translatable="yes">Leaders display dots or a line between
+the text and the page number. Select
+the style of leader you wish to apply.</property>
+                            <property name="halign">start</property>
+                            <property name="valign">center</property>
+                            <property name="model">ls_leaderStyle</property>
+                            <property name="active">0</property>
+                            <property name="id_column">1</property>
+                            <property name="active_id">1</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">5</property>
                           </packing>
                         </child>
                       </object>
@@ -18606,7 +18630,7 @@ different section of the front matter will begin
 on a new page.</property>
                                 <property name="halign">start</property>
                                 <property name="valign">start</property>
-                                <property name="margin_left">3</property>
+                                <property name="margin_left">6</property>
                                 <property name="active">True</property>
                                 <property name="draw_indicator">True</property>
                               </object>
@@ -18932,7 +18956,7 @@ bottom of a new page at the end of the publication.
 In Diglot publications, the colophon always appears
 on its own page - regardless of this setting. </property>
                                 <property name="valign">start</property>
-                                <property name="margin_left">3</property>
+                                <property name="margin_left">6</property>
                                 <property name="draw_indicator">True</property>
                               </object>
                               <packing>
@@ -18969,7 +18993,7 @@ on subsequent runs.</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
-                        <property name="fill">True</property>
+                        <property name="fill">False</property>
                         <property name="position">3</property>
                       </packing>
                     </child>
@@ -18977,15 +19001,13 @@ on subsequent runs.</property>
                       <object class="GtkGrid">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="halign">start</property>
                         <property name="valign">start</property>
                         <property name="margin_left">6</property>
                         <property name="margin_bottom">6</property>
-                        <property name="vexpand">True</property>
-                        <property name="column_spacing">6</property>
+                        <property name="column_spacing">12</property>
                         <child>
                           <object class="GtkCheckButton" id="c_inclBackMatter">
-                            <property name="label" translatable="yes">Import Back Matter PDF</property>
+                            <property name="label" translatable="yes">Import Back Matter PDF(s)</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
@@ -19003,7 +19025,7 @@ file is selected, then these will appear in alphabetical order.</property>
                         </child>
                         <child>
                           <object class="GtkButton" id="btn_selectBackPDFs">
-                            <property name="label" translatable="yes">Select PDF...</property>
+                            <property name="label" translatable="yes">Select...</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
@@ -19012,7 +19034,7 @@ file is selected, then these will appear in alphabetical order.</property>
                             <signal name="clicked" handler="onBackPDFsClicked" swapped="no"/>
                           </object>
                           <packing>
-                            <property name="left_attach">3</property>
+                            <property name="left_attach">1</property>
                             <property name="top_attach">0</property>
                           </packing>
                         </child>
@@ -19025,32 +19047,6 @@ file is selected, then these will appear in alphabetical order.</property>
                             <property name="valign">center</property>
                             <property name="ellipsize">middle</property>
                             <property name="max_width_chars">26</property>
-                          </object>
-                          <packing>
-                            <property name="left_attach">4</property>
-                            <property name="top_attach">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkLabel">
-                            <property name="visible">True</property>
-                            <property name="sensitive">False</property>
-                            <property name="can_focus">False</property>
-                            <property name="margin_left">6</property>
-                            <property name="label" translatable="yes">Page(s):</property>
-                          </object>
-                          <packing>
-                            <property name="left_attach">1</property>
-                            <property name="top_attach">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkEntry">
-                            <property name="visible">True</property>
-                            <property name="sensitive">False</property>
-                            <property name="can_focus">True</property>
-                            <property name="width_chars">7</property>
-                            <property name="placeholder_text" translatable="yes">1</property>
                           </object>
                           <packing>
                             <property name="left_attach">2</property>
@@ -19073,10 +19069,9 @@ file is selected, then these will appear in alphabetical order.</property>
                   <object class="GtkLabel" id="lb_PubInfo">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="tooltip_text" translatable="yes">Publication Information
-Define front matter, and/or
-colophon which gets printed
-at the end of the publication.</property>
+                    <property name="tooltip_text" translatable="yes">Peripherals
+Define what comes before and
+after the scripture text.</property>
                     <property name="halign">start</property>
                     <property name="label" translatable="yes">Peripherals</property>
                   </object>

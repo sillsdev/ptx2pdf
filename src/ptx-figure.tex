@@ -514,6 +514,7 @@
 %-cfig_hex
 
 \def\m@kepl@ceholder#1#2#3{%
+\trace{g}{makeplaceholder #3}%
 \vbox to #2{\offinterlineskip
   \hrule height .2pt \kern-.2pt
   \hbox to #1{\vrule height #2 width .2pt \hfil \vrule width .2pt}%
@@ -522,9 +523,9 @@
 
 \def\ins@rtpic#1#2#3#4#5#6#7{%
  \trace{g}{ins@rtpic #1 #7 #2 #3 (#4) #5 #6}%
- \openin\t@stread="#1"
+ \openin\t@stread=#1
    \ifeof\t@stread\dimen0=\ifdim #3>#4\relax #4\else #3\fi
-     \m@kepl@ceholder{\dimen0}{0.618 \dimen0}{missing: \csname figparam-src\endcsname}%
+     \m@kepl@ceholder{\dimen0}{0.618 \dimen0}{missing: #1}%  \csname figparam-src\endcsname
    \else \closein\t@stread \picfilecomm@nd #1 #7 #2 #3 #5 #6\fi
 }
 

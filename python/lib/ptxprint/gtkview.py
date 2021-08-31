@@ -404,7 +404,7 @@ class GtkViewModel(ViewModel):
             nbk = self.builder.get_object("nbk_"+n)
             self.notebooks[n] = [Gtk.Buildable.get_name(nbk.get_nth_page(i)) for i in range(nbk.get_n_pages())]
         for fcb in ("project", "interfaceLang", "digits", "script", "diglotPicListSources",
-                    "textDirection", "glossaryMarkupStyle", "fontFaces", "featsLangs",
+                    "textDirection", "glossaryMarkupStyle", "fontFaces", "featsLangs", "leaderStyle",
                     "picaccept", "pubusage", "pubaccept", "chklstFilter|0.75", "gridUnits", "gridOffset"):
             self.addCR("fcb_"+fcb, 0)
         self.cb_savedConfig = self.builder.get_object("ecb_savedConfig")
@@ -1026,7 +1026,7 @@ class GtkViewModel(ViewModel):
         col = "#688ACC"
 
         pi = " color='"+col+"'" if (self.get("c_frontmatter") or self.get("c_colophon")) else ""
-        self.builder.get_object("lb_PubInfo").set_markup("<span{}>".format(pi)+_("Publication Info")+"</span>")
+        self.builder.get_object("lb_PubInfo").set_markup("<span{}>".format(pi)+_("Peripherals")+"</span>")
 
         ic = " color='"+col+"'" if self.get("c_includeillustrations") else ""
         self.builder.get_object("lb_Pictures").set_markup("<span{}>".format(ic)+_("Pictures")+"</span>")
