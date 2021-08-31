@@ -247,6 +247,7 @@
   \cl@singhooks{after}{\thismil@stone}\the\afterh@@ks\relax
   \let\thismil@stone\empty
 }%
+
 \def\upd@teMsPrefix{%Build a prefix based on all currently-in-force milestones.
   \trace{m}{upd@teMsPrefix}%
   \xdef\mspr@fix{}\let\d@=\mil@st@necheck\mcup
@@ -298,5 +299,23 @@
 %-csty_milestone
 \def\attrid{}
 \notlocation{zvar}
+\def\m@kenumber#1{\m@kedigitsother\x@\m@kenumb@r #1 =}
+\def\m@kenumb@r#1={\edef\@@result{\scantokens{#1\noexpand}}\m@kedigitsletters}
 \def\defzvar#1#2{\x@\def\csname ms:zvar=#1\endcsname{#2}}
-
+\x@\def\csname start-zrule\endcsname{%
+  \endgraf
+  \get@ttribute{width}%A
+  \ifx\attr@b\relax
+    \def\rule@wid{0.5}%
+  \else
+    \m@kenumber{\attr@b}%
+    \let\rule@wid\@@result%
+  \fi
+  \get@ttribute{align}%
+  \ifx\attr@b\relax
+    \def\attr@b{c}%
+  \fi
+  \hbox to \hsize{\ifx\attr@b\@lignLeft\else\hfil\fi
+    \vrule height 1pt width \rule@wid\hsize depth 0pt
+    \ifx\attr@b\@lignRight\else\hfil\fi}%
+}
