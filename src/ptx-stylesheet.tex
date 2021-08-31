@@ -745,7 +745,7 @@
     \else
       \vskip\p@ram
     \fi\egroup} 
- \def\fig{\trace{g}{In fig}\m@kedigitsother\ptx@fig}% \fig has its own special macro to parse the fields
+ \def\fig{\trace{g}{In fig}\bgroup\m@kedigitsother\catcode`\:=12\catcode`\/=12\catcode`\\=12\ptx@fig}% \fig has its own special macro to parse the fields
  %
  \let\nb=\ptx@nb% \nb is a special code that suppresses a paragraph break across \c
  \global\let\@k=\k
@@ -767,11 +767,12 @@
 
 \endgroup
 
+\newif\iftfmp \tfmpfalse
 \def\unc@tcodespecials{\def\do##1{\catcode`##1=12 }\dospecials}
 \def\@@id#1#2#3#4\end{\gdef\id@@@{#1#2#3}} % get first 3 chars of the \id
-\def\ptx@fig #1\fig*{\ifIncludeFigures\temptrue\else\tempfalse\fi\IncludeFigurestrue
+\def\ptx@fig #1\fig*{\egroup\ifIncludeFigures\tfmptrue\else\tfmpfalse\fi\IncludeFigurestrue
     \trace{g}{In ptx@fig #1}\d@figure{#1}\m@kedigitsletters
-    \iftemp\else\IncludeFiguresfalse}                           %(1)
+    \iftfmp\else\IncludeFiguresfalse\fi}                           %(1)
 %-csty_addspecialhooks
 
 %+csty_stack

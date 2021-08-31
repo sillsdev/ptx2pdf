@@ -529,7 +529,7 @@
 }
 
 \oddc@tcodes%NO SPACES until |normalc@tcodes is called.
-|def|ch@ckpathfwd#1/#2|E{|edef|t@mp{#2}|ifx|t@mp|empty|else||global|temptrue|fi}
+|def|ch@ckpathfwd#1/#2|E{|edef|t@mp{#2}|ifx|t@mp|empty|else|global|temptrue|fi}
 |def|ch@ckpathback#1\#2|E{|edef|t@mp{#2}|ifx|t@mp|empty|else|global|temptrue|fi}%
 |def|ch@ckpath#1{|global|tempfalse|ch@ckpathfwd#1/|E|ch@ckpathback#1\|E}%
 |normalc@tcodes%
@@ -717,7 +717,7 @@
     \fi
     % First, try to set it at the requested dimension:
     \tempfalse\tracingmacros=1\tracingassigns=1
-    \x@\ch@ckpath\x@{\csname figparam-src\endcsname}
+    \x@\ch@ckpath\x@{\f@lename}
 	\tracingmacros=0\tracingassigns=0
     \iftemp
       \setbox\newpicb@x=\hbox{%
