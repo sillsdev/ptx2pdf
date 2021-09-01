@@ -70,6 +70,7 @@
 \newcount\TRACEcount %Numbered tracing for is useful for diglot. May be for something else too.
 \def\y@s{y}
 \def\tracing#1{\x@\xdef\csname tr@cemode-#1\endcsname{\y@s}\let\trace=\tr@cer}%
+\def\untracing#1{\x@\xdef\csname tr@cemode-#1\endcsname{}}%
 \def\notr@cer#1#2{\relax}%
 \def\tr@cer#1#2{%
     \let\TRnext=\notr@ceout

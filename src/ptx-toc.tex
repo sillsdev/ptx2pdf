@@ -162,11 +162,10 @@
   \n@xt}
 
 \def\fnname{doTOCline}
-\catcode`\~=12 \lccode`\~=32 % we'll use \lowercase{~} when we need a category-12 space
-\lowercase{
 \x@\def\csname\fnname\endcsname#1#2#3#4#5{%
 % ID, cell1, cell2, cell3, pagenum
-  \tr
+  \trace{t}{\fnname\space #1 #2 #3 #4 #5}%
+  \def\tablecategory{toc}\tr
   \edef\t@mpa{#2}%
   \edef\t@mpb{#3}%
   \edef\t@mpc{#4}%
@@ -188,7 +187,7 @@
   \fi
   \edef\t@mpd{tcr\the\count252}%
   \csname\t@mpd\endcsname #5\@ndcell\@ndrow
-}}
+}
 
 \addtoeveryparhooks{\checkfort@c}
 
