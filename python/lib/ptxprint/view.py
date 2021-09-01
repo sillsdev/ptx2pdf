@@ -1381,6 +1381,8 @@ class ViewModel:
         zf.writestr("{}/fonts.conf".format(self.prjid), writefontsconf(archivedir=True))
         scriptlines = ["#!/bin/sh", "cd local/ptxprint/{}".format(self.configName())]
         for t in texfiles:
+            if t.endswith("_FRT.tex"):
+                continue
             scriptlines.append("hyph_size=32749 stack_size=32768 FONTCONFIG_FILE=`pwd`/../../../fonts.conf TEXINPUTS=../../../src:. xetex {}".format(os.path.basename(t)))
         zinfo = ZipInfo("{}/runtex.sh".format(self.prjid))
         zinfo.external_attr = 0o755 << 16
@@ -1400,6 +1402,8 @@ set TEXINPUTS=.;%cd%\\..\\..\\..\\src\\;
 set hyph_size=32749
 set stack_size=32768""".format(self.configName())
         for t in texfiles:
+            if t.endswith("_FRT.tex"):
+                continue
             batfile += '\nif exist "%truetex%" "%truetex%" {}'.format(os.path.basename(t))
         zf.writestr("{}/runtex.txt".format(self.prjid), batfile)
             
