@@ -174,18 +174,21 @@
     \trace{t}{\noexpand\tc\the\count252 \space \t@mpa}%
     \edef\t@mpd{tc\the\count252}%
     \csname \t@mpd\endcsname \t@mpa
+    \ifcsname cat:toc|tc\the\count252 :fill\endcsname\else\d@ftoc{tc\the\count252 :fill}{\hfill}\fi
     \global\advance\count252 by 1
   \fi
   \ifx\t@mpb\empty\else
     \trace{t}{\noexpand\tc\the\count252 \space \t@mpb}%
     \edef\t@mpd{tc\the\count252}%
     \csname \t@mpd\endcsname \t@mpb
+    \ifcsname cat:toc|tc\the\count252 :fill\endcsname\else\d@ftoc{tc\the\count252 :fill}{\hfill}\fi
     \global\advance\count252 by 1
   \fi
   \ifx\t@mpc\empty\else
     \trace{t}{\noexpand\tc\the\count252 \space \t@mpc}%
     \edef\t@mpd{tc\the\count252}%
     \csname \t@mpd\endcsname \t@mpc
+    \ifcsname cat:toc|tc\the\count252 :fill\endcsname\else\d@ftoc{tc\the\count252 :fill}{\hfill}\fi
     \global\advance\count252 by 1
   \fi
   \edef\t@mpd{tcr\the\count252}%
@@ -204,7 +207,11 @@
 \def\d@ftoc#1#2{\expandafter\gdef\csname cat:toc|#1\endcsname{#2}}
 \def\defTOC#1#2{\x@\def\csname ms:ztoc=#1\endcsname{\global\keeptriggertrue #2}}
 \def\tocleaders#1#2{
-  \gdef\l@drs{\xleaders\hbox{#1}\hfill}
+  \if#1\hrule
+    \gdef\l@drs{\xleaders #1 \hfill}
+  \else
+    \gdef\l@drs{\xleaders\hbox{#1}\hfill}
+  \fi
   \Marker cat:toc|tc1\relax
   \StyleType Character\relax
   \Marker cat:toc|tc2\relax

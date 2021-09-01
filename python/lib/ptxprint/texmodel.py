@@ -164,7 +164,7 @@ ModelMap = {
     "document/usetoc1":         ("c_usetoc1", lambda w,v: "true" if v else "false"),
     "document/usetoc2":         ("c_usetoc2", lambda w,v: "true" if v else "false"),
     "document/usetoc3":         ("c_usetoc3", lambda w,v: "true" if v else "false"),
-    # "document/tocleaders":      ("c_tocLeaders", lambda w,v: "true" if v else "false"),
+    "document/tocleaders":      ("fcb_leaderStyle", None),
     "document/chapfrom":        ("s_chapfrom", lambda w,v: int(float(v)) if v else "1"),
     "document/chapto":          ("s_chapto", lambda w,v: int(float(v)) if v else "999"),
     "document/colgutterfactor": ("s_colgutterfactor", lambda w,v: round(float(v)*3) or "12"), # Hack to be fixed
@@ -410,6 +410,14 @@ class TexModel:
         "spine": "spine"
     }
 
+    _tocleaders = [
+        "",
+        r"\hskip .5pt .\hskip .5pt",
+        r"\hskip 3pt .\hskip 3pt",
+        r"\hskip 6pt \emdash\hskip 3pt",
+        r"\hrule"
+    ]
+
     def __init__(self, printer, path, ptsettings, prjid=None, inArchive=False):
         from ptxprint.view import VersionStr
         self.VersionStr = VersionStr
@@ -530,6 +538,11 @@ class TexModel:
             vals = ("0.0", "0.0")
         (self.dict["grid/xoffset_"], self.dict["grid/yoffset_"]) = vals
         self.dict['project/frontfile'] = ''
+
+        if self.dict.get('document/tocleaders', None) is None:
+            self.dict['document/tocleaders'] = 0
+        self.dict['document/iftocleaders'] = '' if int(self.dict['document/tocleaders']) > 0 else '%'
+        self.dict['document/tocleaderstyle'] = self._tocleaders[int(self.dict['document/tocleaders'])]
 
     def updatefields(self, a):
         global get

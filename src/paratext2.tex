@@ -692,16 +692,17 @@
       \iflastpage\setbox\colA\vbox{\unvbox\colA}\fi
       \ifColNotes\setbox\colA\vbox{\unvbox\colA\box\coln@tebox}\fi
       \lastd@pth=\dp\colA
-      \ifColNotes\ifdim\dp\xr@fbox<\lastd@pth \lastd@pth=\dp\xr@fbox\fi\fi
+      \ifColNotes\ifdim\dp\xr@fbox>\lastd@pth \lastd@pth=\dp\xr@fbox\fi\fi
       \locs@startstop{\colA}{1}%
-      \dimen3=\ht\colA
+      \dimen3=\ht\colA \advance\dimen3\lastd@pth
+      %\trace{o}{onecoltrial: dimen=\the\dimen3, lastd@pth=\the\lastd@pth}%
       \ifColNotes\ifdim\ht\xr@fbox>\dimen3\dimen3=\ht\xr@fbox\fi\fi
       \hbox to \dimen1{\noindent\ifb@dy\testXrefSideL\ifnum\tmp=1
           \trace{o}{onecoltrial lcolgutter makecolumngutter}%
           \makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen3}{2}%
         \fi\fi
         \hbox to \columnshift{}%
-        \vbox to\dimen3{\box\colA\vfil}%
+        \vbox to\dimen3{\box\colA\kern0pt\vfil}%
         \ifb@dy\testXrefSideR\ifnum\tmp=1
           \trace{o}{onecoltrial rcolgutter makecolumngutter}%
           \makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen3}{1}%
@@ -714,11 +715,12 @@
         \m@kenotebox
         \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2 \space Leaving \the\ht255, \the\dp255}%
         \ifdim\ht2<-\lastd@pth\trace{b}{Strange notes height: \the\ht2}\fi
-        \unvbox2 %\kern-\lastd@pth\lastdepth=\dp2\unvbox2
+        \unvbox2 %\kern-\lastd@pth\lastd@pth=\dp2\unvbox2
       \fi
       \ifvoid\verybottomins\else\ifdim\availht > 0pt\vfil % \kern-\dimen0
         \trace{o}{verybottomins(onecoltrial): height=\the\ht\verybottomins , availht=\the\availht, textheight=\the\textheight, htpartial=\the\dimen9}
-        \lastd@pth=0pt \vskip\skip\verybottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\verybottomins}}\fi\fi
+        \lastd@pth=0pt \vskip\skip\verybottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\verybottomins}}%
+      \fi\fi
     }%
 %-c_onecoltrial_pagecontents
 %+c_onecoltrial_pagefit
@@ -807,7 +809,7 @@
 	\global\advance\vsize by 2\baselineskip % don't get caught short by 1/2 line or so
 	% make a macro reset vsize for remaining pages which do not have 1 column material
     \trace{o}{Going to 2 col, textheight \the\textheight - \the\ht\partial}%
-    \gdef\resetvsize{\trace{o}{resetvsize2}\global\vsize=2\textheight \global\advance\vsize by \baselineskip} 
+    \gdef\resetvsize{\global\vsize=2\textheight \global\advance\vsize by \baselineskip\trace{o}{resetvsize2 vsize=\the\vsize}} 
     \global\output={\twocols}%
     \global\c@rrentcols=2
     % top and bottom inserts effectively use twice their height
@@ -836,7 +838,7 @@
 %-c_setnotecount
 
 %+c_resetvsize
-\def\resetvsize{\trace{o}{resetvsize}\global\vsize=\textheight} 
+\def\resetvsize{\global\vsize=\textheight\trace{o}{resetvsize vsize=\the\vsize}} 
 %-c_resetvsize
 
 \def\msg#1{\immediate\write16{#1}}
@@ -1380,8 +1382,8 @@
       \multiply\availht by 8 \divide\availht by\dimen0 \multiply\availht by\dimen0 \divide\availht by 8
   \fi
   \advance\bmg@p by -\availht
-  %\advance\availht -\dp\pstr@t
-  %\advance\availht by \dp255 % split includes depth so give it space for that
+  %\advance\availht \dp\pstr@t
+  \advance\availht by \dp255 % split includes depth so give it space for that
   \trace{o}{new availht=\the\availht, texttrialheight=\the\t@xttrialheight, topins=\the\ht\topins, bottomins=\the\ht\bottomins, baselineskip=\the\baselineskip}%
   \ifColNotes\ifb@dy
     \ifx\XrefNotes\empty\relax\setbox5=\box\voidb@x\else
@@ -1688,7 +1690,7 @@
   \global\advance\vsize by \baselineskip % don't get caught short by 1/2 line or so
   \global\advance\vsize by -\ht\partial % Don't mis-inform TeX
   % make a macro reset vsize for remaining pages which do not have 1 column material
-  \gdef\resetvsize{\global\vsize=\textheight \global\advance\vsize by -\ht\partial \global\advance\vsize by 0.5\baselineskip} 
+  \gdef\resetvsize{\global\vsize=\textheight \global\advance\vsize by -\ht\partial \global\advance\vsize by 0.5\baselineskip\trace{o}{resetvsize vsize=\the\vsize}} 
   \global\availht=\vsize
   \global\c@rrentcols=2
   \global\output={\diglotCollect}%
@@ -1767,7 +1769,7 @@
     \eject
     \global\holdinginserts=1
   \fi\fi
-  \trace{o}{resetting resetvsize for singlecolumn. Partial ht=\the\ht\partial}\def\resetvsize{\trace{o}{resetvsize}\global\vsize=\textheight} 
+  \trace{o}{resetting resetvsize for singlecolumn. Partial ht=\the\ht\partial}\def\resetvsize{\global\vsize=\textheight\trace{o}{resetvsize vsize=\the\vsize}} 
   \global\output={\onecol}%
   \global\holdinginserts=1
   \count255=1000
