@@ -169,26 +169,59 @@
   \edef\t@mpa{#2}%
   \edef\t@mpb{#3}%
   \edef\t@mpc{#4}%
-  \count252=1
+  \global\count252=1
   \ifx\t@mpa\empty\else
+    \trace{t}{\noexpand\tc\the\count252 \space \t@mpa}%
     \edef\t@mpd{tc\the\count252}%
     \csname \t@mpd\endcsname \t@mpa
-    \advance\count252 by 1
+    \global\advance\count252 by 1
   \fi
   \ifx\t@mpb\empty\else
+    \trace{t}{\noexpand\tc\the\count252 \space \t@mpb}%
     \edef\t@mpd{tc\the\count252}%
     \csname \t@mpd\endcsname \t@mpb
-    \advance\count252 by 1
+    \global\advance\count252 by 1
   \fi
   \ifx\t@mpc\empty\else
+    \trace{t}{\noexpand\tc\the\count252 \space \t@mpc}%
     \edef\t@mpd{tc\the\count252}%
     \csname \t@mpd\endcsname \t@mpc
-    \advance\count252 by 1
+    \global\advance\count252 by 1
   \fi
   \edef\t@mpd{tcr\the\count252}%
   \csname\t@mpd\endcsname #5\@ndcell\@ndrow
+  \trace{t}{\noexpand\tcr\the\count252 \space \t@mpd}%
+  \ifcsname l@drs\endcsname
+    \trace{t}{Refactor for last column \the\count252}
+    \d@ftoc{tc\the\count252 :fill}{}
+    \global\advance\count252 by -1
+    \d@ftoc{tc\the\count252 :fill}{\l@drs}
+  \fi
 }
 
 \addtoeveryparhooks{\checkfort@c}
 
+\def\d@ftoc#1#2{\expandafter\gdef\csname cat:toc|#1\endcsname{#2}}
 \def\defTOC#1#2{\x@\def\csname ms:ztoc=#1\endcsname{\global\keeptriggertrue #2}}
+\def\tocleaders#1#2{
+  \gdef\l@drs{\xleaders\hbox{#1}\hfill}
+  \Marker cat:toc|tc1\relax
+  \StyleType Character\relax
+  \Marker cat:toc|tc2\relax
+  \StyleType Character\relax
+  \Marker cat:toc|tc3\relax
+  \StyleType Character\relax
+  \Marker cat:toc|tc4\relax
+  \StyleType Character\relax
+  \dimen0=\IndentUnit\dimen1=#2 \divide\dimen0 by \dimen1
+  \dimen1=1pt\divide\dimen1 by \dimen0
+  \edef\rm{\strip@pt{\dimen1}}
+  \count252=1
+  \loop
+    \d@ftoc{tc\the\count252 :rightmargin}{\rm}
+    \d@ftoc{leaders-tc\the\count252}{\rightskip=0pt\hskip #2 \l@drs}
+    \d@ftoc{tc\the\count252 :fill}{\l@drs\hskip #2}
+    \d@ftoc{leaders-tcr\the\count252}{\rightskip=0pt\leftskip=0pt\l@drs\hskip #2}
+    \advance\count252 by 1
+  \ifnum\count252<5\repeat
+}
