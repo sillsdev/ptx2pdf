@@ -750,7 +750,7 @@ class TexModel:
                         res.append(r"\catcode`\@=11")
                         res.append(r"\def\do@xtrafont{\x@\s@textrafont\ifx\thisch@rstyle\undefined\m@rker\else\thisch@rstyle\fi}")
                         for a,b in c:
-                            res.append(r"\def\@ctive{}{{{{\do@xtrafont {}{}}}}}".format(a, '^'*len(b), b))
+                            res.append(r"\def\@ctive{}{{\leavevmode{{\do@xtrafont {}{}}}}}".format(a, '^'*len(b), b))
                             res.append(r"\DefineActiveChar{{{}{}}}{{\@ctive{}}}".format( '^'*len(b), b, a))
                         res.append(r"\@ctivate")
                         res.append(r"\catcode`\@=12")
