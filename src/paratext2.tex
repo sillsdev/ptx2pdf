@@ -310,7 +310,7 @@
 
 %+c_foot
 % called at end of note
-\def\@foot{\ifp@ranotes \parfillskip=0pt \else\strut\fi
+\def\@foot{\ifp@ranotes \parfillskip=0pt \fi%\else\strut\fi
   \par
   \ifp@ranotes\else\getp@ram{spaceafter}{\n@tetype}\trace{f}{note(\n@tetype) spaceafter: \p@ram}%
   \ifx\p@ram\relax\else\vskip\p@ram\verticalsp@ceunit\fi\fi

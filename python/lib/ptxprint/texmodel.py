@@ -957,8 +957,10 @@ class TexModel:
                 dat = self.runChanges(self.changes, bk, dat)
                 self.analyzeImageCopyrights(dat)
 
-            if self.dict['project/canonicalise'] or self.dict['document/ifletter'] == "" or self.asBool("document/elipsizemptyvs") \
-                        or not self.asBool("document/bookintro") or not self.asBool("document/introoutline"):
+            if self.dict['project/canonicalise'] or self.dict['document/ifletter'] == "" \
+                        or not self.asBool("document/bookintro") \
+                        or not self.asBool("document/introoutline")\
+                        or self.asBool("document/hidemptyverses"):
                 if doc is None:
                     doc = self._makeUSFM(dat.splitlines(True), bk)
                 if doc is not None:
