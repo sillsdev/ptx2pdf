@@ -76,6 +76,7 @@
 \def\r@ngerefs#1#2{%
  \edef\t@st{#1}\ifx\t@st\t@tle\x@\extr@ctfirst\emptym@rk\relax\else\ifx\t@st\n@thing\x@\extr@ctfirst\emptym@rk\relax\else\x@\extr@ctfirst\t@st\relax\fi\fi
  \edef\t@st{#2}\ifx\t@st\t@tle\x@\extr@ctlast\emptym@rk\relax\else\ifx\t@st\n@thing\x@\extr@ctlast\emptym@rk\relax\else\x@\extr@ctlast\t@st\relax\fi\fi
+ \trace{v}{r@ngerefs \@book=\@chapter\cvs@p\@verse, \@@book=\@@chapter\cvs@p\@@verse}%
  \ifx\@book\empty\else
   \@book\ 
   \ifVerseRefs
@@ -131,10 +132,9 @@
 % split a possible verse range on hyphen, setting \v@rsefrom and \v@rseto
 %
 \def\getcatcodes#1#2\E{#1=\the\catcode`#1 \space \ifx #2\relax\else\getcatcodes #2\E\fi}
-\message{catcode - = \the\catcode`-}
 \def\spl@tverses#1-#2-#3\relax{%
- \trace{v}{catcode - = \the\catcode`-}%
  \edef\v@rsefrom{#1}\edef\v@rseto{#2}%
+ \trace{v}{spl@tverses #1-#2-#3}%
  \ifx\v@rseto\empty\let\v@rseto=\v@rsefrom\fi}
 \catcode`-=12
 \newif\ifVerseRefs % whether to include verse numbers, or only book+chapter

@@ -711,7 +711,7 @@
 \let\@v@rse=\v@rse
 \let\@v@rseR=\v@rse
 \def\m@rkverse{\ifdiglot\m@rkverseDglot\else\m@rkverseNml\fi}
-\def\m@rkverseNml{\mark{\b@ok:\ch@pter:\print@bleVerse}} %normal verse
+\def\m@rkverseNml{\mark{\b@ok:\ch@pter:\print@bleVerse}\trace{H}{mark: \b@ok:\ch@pter:\print@bleVerse}} %normal verse
 \def\m@rkverseDglot{\mark{\b@ok:\ch@pter:\print@bleVerse}\edef\cur@ds{\g@tdstat}\marks\m@rknum{\csname b@ok\cur@ds\endcsname:\csname @ch@pter\cur@ds\endcsname:\print@bleVerse}} % diglot verse
 
 \def\n@xtparstart{}
@@ -723,7 +723,7 @@
  \let\@H=\h%
  \def\h{\bgroup\deactiv@tecustomch@rs\catcode`\/=12
         \obeylines\@h}% \h gets stored as the book name (for references)
- \def\@h ##1^^M{\x@\gdef\csname b@ok\g@tdstat\endcsname{##1}\egroup}% store book id in \b@ok / b@okR 
+ \def\@h ##1^^M{\x@\gdef\csname b@ok\g@tdstat\endcsname{##1}\trace{ss}{heading b@ok\g@tdstat=##1}\egroup}% store book id in \b@ok / b@okR 
  %
  \let\@CL=\cl%
  \def\do@CL{\global\ch@pterfalse\gdef\n@xtparstart{\pdfch@ptermark}\@CL}%
@@ -1149,7 +1149,7 @@
  %\ifendbooknoeject\else\global\output={\shipout\vbox{\box\partial\box255}}\eject\xdef\p@gefirstmark{}\setbox\partial=\box\voidb@x\fi
  \global\output={\onecol}
  % no idea why we need \noindent here
- \ifendbooknoeject\else\trace{o}{end of book eject with \the\ht\partial \space remaining}\ifdim\ht\partial>0pt\noindent\eject\fi\xdef\p@gefirstmark{}\fi
+ \ifendbooknoeject\else\trace{o}{end of book eject with \the\ht\partial \space remaining}\ifdim\ht\partial>0pt\noindent\eject\fi\xdef\p@gefirstmark{}\rerunsavepartialpagedfalse\fi
 }
 %-csty_ptxfile_end
 \newread\t@stread
