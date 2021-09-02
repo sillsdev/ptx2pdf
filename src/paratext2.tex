@@ -359,7 +359,7 @@
     \iff@rstnote\kern-\dp\pstr@t \footnoterule\global\f@rstnotefalse
       \vskip\BelowNoteRuleSpace minus \BelowNoteRuleSpace\kern0pt
     \fi % output rule before first note
-    \hbox{\hskip\columnshift \vbox{\unvbox\th@cl@ss}}\fi}% output notes
+    \hbox{\vbox{\unvbox\th@cl@ss}}\fi}% output notes
 
 % insert a note class in which each note is in the same paragraph
 \def\parains@rtn@tecl@ss#1{%
@@ -384,13 +384,9 @@
 \def\footnoterule{\kern-\BelowNoteRuleSpace
   \setn@tewidth{-}%
   \dimen0=\n@tewidth
-  \ifdiglot\else
-     \advance\dimen0 by -\columnshift %handled differently in diglot
-  \fi
   \toks0=\everypar\everypar={}\parskip=0pt\baselineskip=0pt\parindent=0pt\let\par=\endgraf\parfillskip=0pt%
 %  \noindent\hbox{\noindent\kern\columnshift\vbox{\hrule width \dimen0}}\par
-  \hbox{\ifdiglot\else\kern\columnshift\fi
-    \vrule height 0.4pt width \dimen0}\kern-.4pt % the \hrule is .4pt high
+  \hbox{\vrule height 0.4pt width \dimen0}\kern-.4pt % the \hrule is .4pt high
 \everypar=\toks0}
 
 \def\EndNoteRuleWidth{0.5}
@@ -510,9 +506,6 @@
   \else\ifx\p@ram\r@ght
      \leftskip=\noteRag
   \fi\fi\fi
-  \ifdiglot\else
-    \advance\leftskip by \columnshift%
-  \fi
   %\showbox0
   \edef\@seglyphmetrics{\the\XeTeXuseglyphmetrics}%
   \XeTeXuseglyphmetrics=3
@@ -686,7 +679,7 @@
       \dimen1=\textwidth% \advance\dimen1 -\ExtraRMargin
       \trace{b}{BALANCE pageoutins: cols=1: text=\the\ht\colA, \the\dp\colA: partial=\the\ht\partial, \the\dp\partial: topins=\the\ht\topins: bottomins=\the\ht\bottomins}%
       \dimen9=\ht\partial
-      \ifvoid\partial\else \vbox{\hbox to \dimen1{\hskip\columnshift\vbox{\unvbox\partial}}} \fi
+      \ifvoid\partial\else \vbox{\hbox to \dimen1{\vbox{\unvbox\partial}}} \fi
       \ifvoid\topins\else \vbox{\hbox to \columnshift{}\box\topins} \vskip\skip\topins \fi
       \setbox1=\vbox{\unvcopy\colA\unskip}%
       \iflastpage\setbox\colA\vbox{\unvbox\colA}\fi
@@ -701,7 +694,7 @@
           \trace{o}{onecoltrial lcolgutter makecolumngutter}%
           \makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen3}{2}%
         \fi\fi
-        \hbox to \columnshift{}%
+        \ifx\ch@pter\empty\else\hbox to \columnshift{}\fi
         \vbox to\dimen3{\box\colA\kern0pt\vfil}%
         \ifb@dy\testXrefSideR\ifnum\tmp=1
           \trace{o}{onecoltrial rcolgutter makecolumngutter}%
@@ -870,7 +863,7 @@
   \iffitonpage
     \locs@startstop{\colA}{1}%
     \global\setbox\partial=\vbox{
-      \ifvoid\partial\else \vbox{\hbox to \dimen1{\hskip\columnshift\vbox{\unvbox\partial}}} \fi
+      \ifvoid\partial\else \vbox{\hbox to \dimen1{\vbox{\unvbox\partial}}} \fi
       \ifvoid\topins\else \unvbox\topins \vskip\skip\topins \fi
       \lastd@pth=\dp\colA
       \ifColNotes\ifdim\dp\xr@fbox<\lastd@pth \lastd@pth=\dp\xr@fbox\fi\fi
@@ -879,7 +872,7 @@
         \ifb@dy\testXrefSideL\ifnum\tmp=1
           \makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen3}{2}
         \fi\fi
-        \hbox to \columnshift{}%
+        \ifx\ch@pter\empty\else\hbox to \columnshift{}\fi
         \special{"testme1"}\vbox to \dimen3{\unvbox\colA\vfil}\special{"testme2"}%
         \ifb@dy\testXrefSideR\ifnum\tmp=1
           \makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen3}{1}

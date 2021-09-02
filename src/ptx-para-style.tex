@@ -66,7 +66,8 @@
 
 \newif\iftob@dy \tob@dyfalse
 \def\st@rtbody{%\endhe@dings
-\ifb@dy\else\trace{o}{st@rtbody by \m@rker}%
+ \trace{o}{st@rtbody: b@dy\ifb@dy true\else false\fi}%
+ \ifb@dy\else\trace{o}{st@rtbody by \m@rker}%
 %  \ifdiglot\else
 %    \ifnum\BodyColumns=\c@rrentcols
 %      \penalty-200\vskip\baselineskip
@@ -78,7 +79,7 @@
   \global\b@dytrue\global\@ntrofalse\global\t@tlefalse
   % set up for single column from single column. Empty vbox to say we are not at the start of a page
   \ifnum\BodyColumns=1 \onecolwidth{\hsize}\ifdim\ht\partial>\baselineskip\vbox{\kern0pt}\fi\fi
-\fi}
+ \fi}
 
 \newcount\c@rrentcols \global\c@rrentcols=1
 %-cpar_starttypes
@@ -303,6 +304,7 @@
  \let\p@r=\par
  \the\p@rstylehooks % allow other modules to hook in here
  \end@llpoppedstyles{P}%
+ \trace{s}{endlastp@rstyle #1 stack=\mcstack}%
  \ifx\mcstack\mcstack@mpty
    \toplevelp@rtrue
  \else

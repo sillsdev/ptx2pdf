@@ -1339,7 +1339,7 @@
  \fi
 }
 \def\onecolwidth#1{#1=\textwidth
-  \advance #1 by -2\columnshift
+  \advance #1 by -\columnshift
   \ifx\XrefNotes\empty\else\ifx\ch@pter\empty\else
     \trace{o}{setonecolwidth with notes width=\the\XrefNotesWidth, margin=\the\XrefNotesMargin, gutter=\the\gutter}%
     \advance #1 by -\XrefNotesWidth

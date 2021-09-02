@@ -8,24 +8,37 @@
 %\newif\multipleverses
 \newtoks\myeverypar
 \newdimen\mybaseline
+\newif\ifmarginverseleft
+\def\marginv@rseleft{\marginverselefttrue
+  %\ifnum\c@rrentcols=1\ifodd\pageno\marginverseleftfalse\fi\fi
+}
 {\catcode`\~=12 \lccode`\~=32 \catcode`\*=12 \lowercase{%
 \gdef\marginverse #1 {%
-    \gdef\v@rse{#1}\xdef\print@bleVerse{#1}
+    \gdef\v@rse{#1}\xdef\print@bleVerse{#1}%
     \the\prev@rsehooks\spl@tprintableverse
     \global\setbox2\hbox{\ifc@ncelfirstverse\else\ch@rstylepls{v}~\printv@rse\ch@rstylepls{v}*\fi}%
     \egroup\str@t\dimen0=\ht2\advance\dimen0 by \dp\str@tbox
     \myeverypar=\everypar\everypar={}%
     \dimen1=\columnshift\advance\dimen1 by -\AfterVerseSpaceFactor\FontSizeUnit
     \m@rkverse \the\v@rsehooks \gdef\reference{\ch@pter:\v@rse}%
-    \vadjust{\getp@ram{baseline}{v}\ifx\p@ram\relax\let\p@ram\baselineskip\fi
-        %\kern -\dimen0\setbox1=\vbox to \dimen0{\llap{\unhbox2\kern\AfterVerseSpaceFactor\FontSizeUnit}}\dp1=0pt\box1}\nobreak
-        \kern -\dimen0\setbox1=\vbox{\llap{\vbox{\leftskip=0pt plus 1fill %
+    \getp@ram{baseline}{v}\ifx\p@ram\relax\let\p@ram\baselineskip\fi
+    \vadjust{\kern -\dimen0\marginv@rseleft
+      \ifmarginverseleft
+        \setbox1=\vbox{\llap{\vbox{\leftskip=0pt plus 1fill %
             \rightskip=\z@skip\hsize=\dimen1 \baselineskip=\p@ram
-            \trace{v}{Marginal Verse (\print@bleVerse): hs=\the\hsize , bl=\the\baselineskip, wd=\the\wd2}%
+            \trace{v}{LMarginal Verse (\print@bleVerse): hs=\the\hsize , bl=\the\baselineskip, wd=\the\wd2}%
             \noindent \unhbox2 \marginremovehboxes}%
           \kern\AfterVerseSpaceFactor\FontSizeUnit}}%
-        \ht1=\dimen0\dp1=0pt\tracingparagraphs=0
-        \trace{v}{\reference - tolerance=\the\tolerance}\box1}\nobreak
+      \else
+        \setbox1=\vbox{\hfill\rlap{\kern\AfterVerseSpaceFactor\FontSizeUnit
+          \vbox{\rightskip=0pt plus 1fill %
+            \leftskip=\z@skip\hsize=\dimen1 \baselineskip=\p@ram
+            \trace{v}{RMarginal Verse (\print@bleVerse): hs=\the\hsize , bl=\the\baselineskip, wd=\the\wd2}%
+            \noindent \unhbox2 \marginremovehboxes}}}%
+      \fi
+      \ht1=\dimen0\dp1=0pt\tracingparagraphs=0
+      \trace{v}{\reference - tolerance=\the\tolerance}\box1
+    }\nobreak
     %\m@rkverse % generate a milestone for running headers
     % run the hooks for picture insertion, paragraph adjustments, etc.
     % these hooks were added via \addtoversehooks
