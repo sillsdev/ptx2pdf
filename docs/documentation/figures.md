@@ -137,13 +137,18 @@ Notes:
 [7] Since `p` is also interpretable as a media target, `pc` should always be
     used in SFM2 instead.
 [8] Use `b` for bottom alignment, or `c` for explicit central vertical alignment. 
+    If a vertical alignment is specified, then the image will be the only image
+    on the page, even if another image would also fit. If no vertical
+    alignment is specified, then the image will be centred vertically,
+    but an additional image or images may be fitted onto the page if there is space.
 [9] If the image is not the same aspect ratio as the page, or a scaling factor is used, 
     there may be some space. For this reason, the alignment options are available.
-    Full page images have no header or footer, there is no attempt made to keep
-    the caption on the page.  Alignment actively attempts to get the picture to the
+    Full page images have no header or footer, and using a caption with them 
+    is normally a mistake leading to part of the image or caption. 
+    Alignment actively attempts to get the picture/caption to the
     specified edge of the page. ```\FullPageFudgeFactor``` (normally defined to
     be -2pt) is available for tweaking if top alignment does not actually coincide 
-    with the image. 
+    with the top of the image. 
 
 #### Restrictions  / notes on certain picture positions
 - p : The delayed picture is saved until the end of the Nth paragraph in a

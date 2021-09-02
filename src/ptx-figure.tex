@@ -39,6 +39,7 @@
 \newinsert\toprightins \count\toprightins=0 \dimen\toprightins=\maxdimen
 \newinsert\bottomleftins \count\bottomleftins=0 \dimen\bottomleftins=\maxdimen
 \newinsert\bottomrightins\count\bottomrightins=0 \dimen\bottomrightins=\maxdimen
+\newcount\tmpcountB
 \def\colinsert@name#1{colinsert@#1}
 \let\colinsert@tL\topleftins
 \let\colinsert@bL\bottomleftins
@@ -251,7 +252,7 @@
 \def\p@rseLoc#1#2\end{% Parse the new picture options, and remember them
   \edef\l@cspec@a{#1}\edef\l@cspec@b{#2}%
   \ifx\l@cspec@b\empty\let\l@cspec@c=\l@cspec@b\else\x@\p@rsePicXtra\l@cspec@b\end\fi
-  \trace{g}{p@rseLoc: #1 \l@cspec@b \l@cspec@c}%
+  \trace{g}{p@rseLoc: #1 \l@cspec@b|\l@cspec@c}%
   % inner/outer support for everything
   \tempfalse
   %Switch relative (inner/outer) to absolute (left/right) depending on page number for this image.
@@ -293,11 +294,11 @@
   \fi
   % full-page options
   \tempfalse
-  \ifx\l@cspec@a\loc@Page\global\let\picl@c=\loc@Pag\global\picUsesInsfalse\p@cinswid=\PaperWidth\temptrue\fi
+  \ifx\l@cspec@a\loc@Page\global\let\picl@c=\loc@Page\global\picUsesInsfalse\temptrue \p@cinswid=\PaperWidth\fi
   \ifx\l@cspec@a\loc@Full\global\let\picl@c=\loc@Full\global\picUsesInsfalse\temptrue\fi
   \iftemp
-    \trace{g}{Experimental page / full-page \w@tsit}%
     \xdef\pic@lign{\l@cspec@b}\xdef\picV@lign{\l@cspec@c}%
+    \trace{g}{Experimental page / full-page \w@tsit (\pic@lign|\picV@lign)}%
   \fi
 }
 %-cfig_parsepicuse
@@ -578,7 +579,6 @@
     \fi 
   \fi
   % get location
-  %\lowercase{
   \edef\loc@ption{\csname figparam-pgpos\endcsname}%%
 %-cfig_dofigure_intro
   %
@@ -609,6 +609,7 @@
           \global\let\picl@c=\loc@Full
           \picUsesInsfalse
           \p@cwidth=\PaperWidth\p@cheight=\PaperHeight
+          \p@cinswid=\PaperWidth
         \else
            \errmessage{Unknown picture size "\size@ption", expected "col", "span", "page" or "full"}\fi\fi\fi\fi
   \let\p@cins=\relax
@@ -695,11 +696,15 @@
     \else
       \hsize=\p@cinswid
     \fi
-    \ifx\picl@c\loc@Inl
-       %\vskip0.5\baselineskip
-    \fi
     \ifCaptionFirst\d@caption\else
-       \vskip0.3\baselineskip
+      \tempfalse
+      \ifpicUsesIns\temptrue\fi
+      \ifx\picl@c\loc@Inl\temptrue\fi
+      \ifx\picl@c\loc@Par\temptrue\fi
+      \ifx\picl@c\loc@Cut\temptrue\fi
+      \iftemp 
+        \vskip0.3\baselineskip
+      \fi
     \fi
 	% insert picture based on PicPath and file name, scaled to \p@cwidth
     \let\picfilecomm@nd=\XeTeXpicfile
@@ -896,20 +901,25 @@
 %+cfig_dofigure_7
 
 \def\d@figurePage#1{%
-  \trace{g}{\w@tsit is page, \the\ht#1, \the\wd#1}%
-  \ifx\picV@lign\@lignTop \setbox#1\vtop to \textheight{\box#1\vskip 0pt plus 1fill}\fi%CHECKME
-  \ifx\picV@lign\@lignBot \setbox#1\vbox to \textheight{\vskip 0pt plus 1fill \box#1}\fi%CHECKME
-  \global\setbox\wholepagepic\vbox{\unvbox\wholepagepic\box#1\penalty11}% magic number
+  \trace{g}{\w@tsit\space is page, \the\ht#1, \the\wd#1}%
+  \ifx\picV@lign\@lignTop \trace{g}{Alignment: top}\setbox#1\vbox to \textheight{\box#1\penalty 200\vskip 0pt plus 1fill}\else
+    \ifx\picV@lign\@lignBot \trace{g}{Alignment: bottom}\setbox#1\vbox to \textheight{\vskip 0pt plus 1fill\penalty 200 \box#1}\else
+      \ifx\picV@lign\@lignCent \trace{g}{Alignment: center}\setbox#1\vbox to \textheight{\vskip 0pt plus 1fill \penalty 200\box#1\penalty 200 \vskip 0pt plus 1fill}\else
+        \dimen0=\textheight \advance\dimen0 by -\ht#1
+        \divide\dimen0 by 2
+        \trace{g}{Alignment: none}\setbox#1\vbox{\vskip 0.09969pt plus \dimen0\penalty200\box#1\penalty200\vskip 0pt plus \dimen0}%
+    \fi\fi\fi
+  \global\setbox\wholepagepic\vbox{\unvbox\wholepagepic\unvbox#1\penalty11}% magic number
 }
 
 \def\d@figureFull#1{%
   \trace{g}{\w@tsit\space is full-page, \the\ht#1, \the\wd#1,}%
-  %Page is not positioned absolutely. Calculate offset
-  \dimen0=\bottomm@rgin\advance\dimen0 by -\topm@rgin
-  \divide\dimen0 by 2
+  %Page is now positioned absolutely. 
+  \dimen0=0pt
   \advance\dimen0 by \FullPageFudgeFactor % apply user-tweakable Fudge factor (-2pt)
-  \ifx\picV@lign\@lignTop \setbox#1\vtop to \PaperHeight{\kern\dimen0\box#1\vss}\fi%CHECKME
-  \ifx\picV@lign\@lignBot \setbox#1\vbox to \PaperHeight{\vss\box#1}\fi%CHECKME
+  \ifx\picV@lign\@lignTop \trace{g}{Alignment: top}\setbox#1\vbox to \PaperHeight{\kern\dimen0\box#1\vss}\fi%CHECKME
+  \ifx\picV@lign\@lignBot \trace{g}{Alignment: bottom}\setbox#1\vbox to \PaperHeight{\vss\box#1}\fi%CHECKME
+  \ifx\picV@lign\@lignCent \trace{g}{Alignment: center}\setbox#1\vbox to \PaperHeight{\vss\box#1\vss}\fi%CHECKME
   \global\setbox\wholepagepic\vbox{\unvbox\wholepagepic\box#1\penalty9}% magic number
 }
 
@@ -1040,13 +1050,14 @@
 \def\loc@Cut{c}% cutout
 \def\loc@Par{p}% post-paragrpah
 \def\loc@Page{P}% Page (with headers/footers)
-\def\loc@Page{F}% FullPage (no headers/footers)
+\def\loc@Full{F}% FullPage (no headers/footers)
 \def\@lignInner{i}
 \def\@lignOuter{o}
 \def\@lignLeft{l}
 \def\@lignRight{r}
 \def\@lignTop{t}
 \def\@lignBot{b}
+\def\@lignCent{c}
 \def\keyR@TATE{rotate}
 \def\keyP@GE{page}
 \def\val@dd{odd}
@@ -1146,30 +1157,38 @@
   \fi
 }
 %-cfig_openpicpages
-
+%
 %+cfig_dofigpage
 \def\dofigp@ge{%
   \ifvoid\wholepagepic\else
     \trace{g}{wholepagepic is \the\ht\wholepagepic high}%
+    %\tracingassigns=1
     \savingvdiscards=1
+   % \nonstopmode\showbox\wholepagepic
+    \setbox2=\copy\wholepagepic
     \setbox0=\vsplit\wholepagepic to \PaperHeight
-    \setbox1=\vbox{\splitdiscards\global\tmpcount=\lastpenalty}%
-    \setbox0=\vbox{\unvbox 0\ifnum\lastpenalty=0\else\global\tmpcount=\lastpenalty\fi}%
+    \setbox3=\vbox{\splitdiscards}%
+    \setbox1=\vbox{\unvcopy3\global\tmpcount=\lastpenalty}%
+    \setbox\wholepagepic=\vbox{\unvbox3\unvbox\wholepagepic}%
+    %\showbox1
+    %\showbox0
+    \setbox0=\vbox{\unvbox 1\unvbox 0\global\tmpcountB=\lastpenalty}% MUST do this unconditionally
+    \ifnum\tmpcountB=0\else\tmpcount=\tmpcountB\fi % Because macro expansion in a box isn't what you think.
     \trace{g}{lp: box0 is \the\ht0\space high, penalty:\the\tmpcount, th:\the\textheight, ph:\the\PaperHeight}%
-    \ifnum\tmpcount=11
-      \def\pagecontents{%
-        \unskip
-        \trace{g}{Topins=\the\ht\topins, Bottomins=\the\ht\bottomins, tlins=\the\ht\topleftins, blins=\the\ht\bottomleftins, trins=\the\ht\toprightins, brins=\the\ht\bottomrightins}%
-        \box0%
-        }%
-      \plainoutput
-    \else% expected values: 9 (full page) or 10000 (too big)
+    \ifnum\tmpcount=9% Full page
       \dimen9=\pdfpagewidth \dimen8=\pdfpageheight
       \shipwithcr@pmarks{\vbox{\kern-\topm@rgin\box0}}%
       \pdfpagewidth=\dimen9 \pdfpageheight=\dimen8
       \advancepageno
+    \else% expected values: 0 (normal-sized page) or 0 
+      \def\pagecontents{%
+        \trace{g}{Topins=\the\ht\topins, Bottomins=\the\ht\bottomins, tlins=\the\ht\topleftins, blins=\the\ht\bottomleftins, trins=\the\ht\toprightins, brins=\the\ht\bottomrightins}%
+        \vbox to \textheight{\unvbox0}%
+        }%
+      \plainoutput
     \fi
   \fi
+  %\tracingassigns=0
   \let\n@xt\relax
   \ifdim\ht\wholepagepic>0pt
     \let\n@xt\dofigp@ge

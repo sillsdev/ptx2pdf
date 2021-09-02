@@ -311,12 +311,19 @@
     \m@kenumber{\attr@b}%
     \let\rule@wid\@@result%
   \fi
+  \get@ttribute{thick}%A
+  \ifx\attr@b\relax
+    \def\rule@thk{0.5pt}%
+  \else
+    \m@kenumber{\attr@b}%
+    \let\rule@thk\@@result%
+  \fi
   \get@ttribute{align}%
   \ifx\attr@b\relax
     \def\attr@b{c}%
   \fi
   \hbox to \hsize{\ifx\attr@b\@lignLeft\else\hfil\fi
-    \vrule height 0.5pt width \rule@wid\hsize depth 0pt
+    \vrule height \rule@thk width \rule@wid\hsize depth 0pt
     \ifx\attr@b\@lignRight\else\hfil\fi}%
 }
 
@@ -329,6 +336,6 @@
     \m@kenumber{\attr@b}%
     \let\gap@dim\@@result%
   \fi
-  \vbox{}\vskip\gap@dim%
+  \vbox{}\kern\gap@dim%
 }
 
