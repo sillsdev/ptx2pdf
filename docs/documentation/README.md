@@ -337,6 +337,7 @@ See <a href="thumbtabs.md">the feature-specific documentation</a> for a more ext
 * \NumTabs=```5``` - Pre-set / reset the number of tabs between which the available space will be divided. Normally there is no need to set this number, as ```\setthumbtab{ZEC}{39}``` will set it to 39 unless it is already larger than that.  
 * \TabsStart=```10pt``` Distance between the upper edge of the topmost thumb-tab and the top margin of the page (text area). Negative values may be given to extend tabs into the upper margin.
 * \TabsEnd=```10pt``` Distance between the lower edge of the lowermost thumb-tab and the bottom page margin (text area). Negative values may be given to extend tabs into the lower margins.
+* \def\TabBleed{```1pt```} - Amount the tab goes over the edge of the page. (default 1pt)
 
 
 ## ><a name="ptx2pdf-MacroSetupParameters-Hooks">Hooks</a>

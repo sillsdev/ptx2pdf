@@ -215,6 +215,7 @@
      
 \reinitThumbTabs
 
+\def\TabBleed{1pt}%
 \def\t@bbox{%
  \s@tfont{\ThumbTabStyle}%
  \x@\let\x@\t@bBoxCol\csname\t@bname -boxcol\endcsname
@@ -287,14 +288,14 @@
  \else%Unrotated tabs
    \ifdim\wd0>\tabwidth\ifx\lastw@rning\b@okShort\else\xdef\lastw@rning{\b@okShort}\message{Thumb tab contents "\b@okShort" too wide for tab width}\fi\fi
    \hbox to 0pt{%
-    \if\st@rtatedge F\hss\else\kern -1pt\fi% Bleed of 1pt
+    \if\st@rtatedge F\hss\else\kern -\TabBleed\fi% Bleed of 1pt
     \setbox0\hbox{\colourbox{\t@bBoxCol}{\t@bFontCol}{\tabwidth}{0.1\tabheight}{0.9\tabheight}{\horizThumbtabVadj}{\horizThumbtabContents{\b@okShort}}}%
    % \setbox2\hbox{\vrule height \ht0 depth \dp0 width 1pt}%
    % \copy2 
    %\ifodd\pageno\else\showbox0\fi
     \box0
    % \box2 
-    \if\st@rtatedge F\kern -1pt \else\hss\fi%bleed of 1pt.
+    \if\st@rtatedge F\kern -\TabBleed \else\hss\fi%bleed of 1pt.
     }%
  \fi
 }
