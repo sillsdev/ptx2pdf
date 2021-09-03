@@ -822,21 +822,21 @@
     \trace{g}{Inline \w@tsit\space takes \the\dimen0, reserving \the\dimen2}%
     %
     \ifx\picl@c\loc@Inl
-      \d@figureInl0%
+      \d@figureInl 0%
     \fi
     %
     \ifx\picl@c\loc@Par
-      \d@figurePar0%
+      \d@figurePar 0%
     \fi
     %
     \ifx\picl@c\loc@Page
-      \d@figurePage0%
+      \d@figurePage 0%
     \fi
     \ifx\picl@c\loc@Full
-      \d@figureFull0%
+      \d@figureFull 0%
     \fi
     \ifx\picl@c\loc@Cut
-      \d@figureCut0%
+      \d@figureCut 0%
     \fi
     %Sanity check. If we used \box0 then it'll be empty now.
     \ifvoid0\else\message{Placement for \the\im@gecount could not be understood. Image Lost!}\fi
@@ -901,27 +901,27 @@
 %+cfig_dofigure_7
 
 \def\d@figurePage#1{%
-  \trace{g}{\w@tsit\space is page, \the\ht#1, \the\wd#1}%
-  \ifx\picV@lign\@lignTop \trace{g}{Alignment: top}\setbox#1\vbox to \textheight{\box#1\penalty 200\vskip 0pt plus 1fill}\else
-    \ifx\picV@lign\@lignBot \trace{g}{Alignment: bottom}\setbox#1\vbox to \textheight{\vskip 0pt plus 1fill\penalty 200 \box#1}\else
-      \ifx\picV@lign\@lignCent \trace{g}{Alignment: center}\setbox#1\vbox to \textheight{\vskip 0pt plus 1fill \penalty 200\box#1\penalty 200 \vskip 0pt plus 1fill}\else
-        \dimen0=\textheight \advance\dimen0 by -\ht#1
-        \divide\dimen0 by 2
-        \trace{g}{Alignment: none}\setbox#1\vbox{\vskip 0.09969pt plus \dimen0\penalty200\box#1\penalty200\vskip 0pt plus \dimen0}%
-    \fi\fi\fi
-  \global\setbox\wholepagepic\vbox{\unvbox\wholepagepic\unvbox#1\penalty11}% magic number
+  \d@figurep@ge{#1}{page}{\textheight}{11}{0pt}%
+}
+\def\d@figureFull#1{%
+  \d@figurep@ge{#1}{full-page}{\PaperHeight}{9}{\FullPageFudgeFactor}%
+  \showbox\wholepagepic
 }
 
-\def\d@figureFull#1{%
-  \trace{g}{\w@tsit\space is full-page, \the\ht#1, \the\wd#1,}%
-  %Page is now positioned absolutely. 
-  \dimen0=0pt
-  \advance\dimen0 by \FullPageFudgeFactor % apply user-tweakable Fudge factor (-2pt)
-  \ifx\picV@lign\@lignTop \trace{g}{Alignment: top}\setbox#1\vbox to \PaperHeight{\kern\dimen0\box#1\vss}\fi%CHECKME
-  \ifx\picV@lign\@lignBot \trace{g}{Alignment: bottom}\setbox#1\vbox to \PaperHeight{\vss\box#1}\fi%CHECKME
-  \ifx\picV@lign\@lignCent \trace{g}{Alignment: center}\setbox#1\vbox to \PaperHeight{\vss\box#1\vss}\fi%CHECKME
-  \global\setbox\wholepagepic\vbox{\unvbox\wholepagepic\box#1\penalty9}% magic number
+% #1 box, #2 type, #3 vertical size, #4 magic penalty, #5 fine tuning kern 
+\def\d@figurep@ge#1#2#3#4#5{%
+  \trace{g}{\w@tsit\space is #2, \the\ht#1, \the\wd#1}%
+  \dimen0=#3 \advance\dimen0 by -\ht#1
+  \advance\dimen0 by -\dp#1
+  \divide\dimen0 by 2
+  \ifx\picV@lign\@lignTop \trace{g}{V alignment: top}\setbox#1\vbox{\vbox to #3{\kern#5\box#1\vss}}\else
+    \ifx\picV@lign\@lignBot \trace{g}{V alignment: bottom}\setbox#1\vbox{\vbox to #3{\vss\box#1}}\else
+      \ifx\picV@lign\@lignCent \trace{g}{V alignment: center}\setbox#1\vbox{\vbox to #3{\vss\box#1\vss}}\else
+        \trace{g}{V alignment: none}\setbox#1\vbox{\vskip 0pt plus \the\dimen0\penalty10000\box#1\penalty10000\vskip 0pt plus \dimen0}%
+    \fi\fi\fi
+  \global\setbox\wholepagepic\vbox{\unvbox\wholepagepic\unvbox#1\penalty#4}% magic number
 }
+
 
 
 \def\d@figureCut#1{% Expects: count255=number of lines gap, dimen0=size of wotsit, \c@tskip=delay
@@ -1164,28 +1164,39 @@
     \trace{g}{wholepagepic is \the\ht\wholepagepic high}%
     %\tracingassigns=1
     \savingvdiscards=1
-   % \nonstopmode\showbox\wholepagepic
+    \nonstopmode\showbox\wholepagepic
     \setbox2=\copy\wholepagepic
     \setbox0=\vsplit\wholepagepic to \PaperHeight
+    \tmpcountB=\badness
+    \tempfalse
+    \ifnum\tmpcountB>200 % Overstretch or understretch
+      \temptrue
+    \fi
     \setbox3=\vbox{\splitdiscards}%
     \setbox1=\vbox{\unvcopy3\global\tmpcount=\lastpenalty}%
-    \setbox\wholepagepic=\vbox{\unvbox3\unvbox\wholepagepic}%
+    \trace{g}{After split (\the\tmpcountB)  wholepagepic \the\ht\wholepagepic+\the\dp\wholepagepic}%
+    \ifdim\ht\wholepagepic>0pt
+      \setbox\wholepagepic=\vbox{\unvbox\wholepagepic}%
+    \else 
+      \setbox\wholepagepic\box\voidb@x
+    \fi
     %\showbox1
     %\showbox0
     \setbox0=\vbox{\unvbox 1\unvbox 0\global\tmpcountB=\lastpenalty}% MUST do this unconditionally
-    \ifnum\tmpcountB=0\else\tmpcount=\tmpcountB\fi % Because macro expansion in a box isn't what you think.
-    \trace{g}{lp: box0 is \the\ht0\space high, penalty:\the\tmpcount, th:\the\textheight, ph:\the\PaperHeight}%
-    \ifnum\tmpcount=9% Full page
-      \dimen9=\pdfpagewidth \dimen8=\pdfpageheight
-      \shipwithcr@pmarks{\vbox{\kern-\topm@rgin\box0}}%
-      \pdfpagewidth=\dimen9 \pdfpageheight=\dimen8
-      \advancepageno
-    \else% expected values: 0 (normal-sized page) or 0 
+    \trace{g}{lp: box0 is \the\ht0\space high, penalty:\the\tmpcount, \the\tmpcountB, th:\the\textheight, ph:\the\PaperHeight}%
+    \ifnum\tmpcountB=0\else\tmpcount=\tmpcountB\fi % Because if processing in a box gets surprising.
+    \showbox0
+    \ifnum\tmpcount=11% expected values: 11 (normal-sized page)
       \def\pagecontents{%
         \trace{g}{Topins=\the\ht\topins, Bottomins=\the\ht\bottomins, tlins=\the\ht\topleftins, blins=\the\ht\bottomleftins, trins=\the\ht\toprightins, brins=\the\ht\bottomrightins}%
         \vbox to \textheight{\unvbox0}%
         }%
       \plainoutput
+    \else% Full page, past margins (9) or 0 
+      \dimen9=\pdfpagewidth \dimen8=\pdfpageheight
+      \shipwithcr@pmarks{\vbox{\vbox to \PaperHeight{\kern-\topm@rgin\unvbox0}}}%
+      \pdfpagewidth=\dimen9 \pdfpageheight=\dimen8
+      \advancepageno
     \fi
   \fi
   %\tracingassigns=0
