@@ -855,6 +855,7 @@ class TexModel:
                         seenperiph = True
                     l = re.sub(r"\\zperiphfrt\s*\|([^\\\s]+)\s*\\\*", self._doperiph, l)
                     l = re.sub(r"\\zbl\s*\|(\d+)\\\*", lambda m: "\\b\n" * int(m.group(1)), l)
+                    l = re.sub(r'(\\fig .*?src=")(.*?)(".*?\\fig\*)', lambda m:m.group(1)+m.group(2).replace("\\","/")+m.group(3), l)
                     fcontent.append(l.rstrip())
             with open(outfname, "w", encoding="utf-8") as outf:
                 outf.write("\n".join(fcontent))
