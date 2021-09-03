@@ -100,6 +100,7 @@
 
 \let\milestoneOp\empty
 \let\thismil@stone\empty
+\let\thisattrmil@stone\empty
 \newif\ifmst@nestyle \mst@nestylefalse
 
 \def\processmil@stone{\trace{m}{Milestone \thismil@stone (\milestoneOp), \csname thisch@rstyle\endcsname}%
@@ -186,15 +187,23 @@
   % There may multiple milestones of a given type (can't sensibly have both \qt+s |Jesus\* and 
   % \qt+s |Pilate\* active at the same time (except quote in quote), but in some cases it might make sense to do something similar.)
   \get@ttribute{\attrid}\ifx\attr@b\relax %if sid is set, sid/eid must match, and may contain letters,numbers,underscore.
-    \mcpush{\ss@Mstn+\thismil@stone;\thismil@stoneVal}%
+    \xdef\thisattrmil@stone{\thismil@stone;\thismil@stoneVal}%
+    \mcpush{\ss@Mstn+\thisattrmil@stone}%
     \trace{m}{Milestone without ID stacked}%
   \else
-    \mcpush{\ss@Mstn+\thismil@stone;\thismil@stoneVal;\attr@b}%
+    \xdef\thisattrmil@stone{\thismil@stone;\thismil@stoneVal;\attr@b}%
+    \mcpush{\ss@Mstn+\thisattrmil@stone}%
     \trace{m}{Milestone with \attrid =\attr@b\space stacked}%
   \fi
+  \let\tmp\thisattrmil@stone
+  \csname d@code-m\endcsname
+  \global\let\thisattrmil@stone\tmp
   \upd@teMsPrefix
   \let\styst@k=\empty
   \s@tstyst@k{\thismil@stone}%
+  \ifx\thismil@stoneVal\empty\else
+    \@ttrMilestonetrue
+  \fi
   \kill@PossParamCache
   \trace{m}{Style stack now: \mcstack}%
   \op@ninghooks{start}{\thismil@stone}%
@@ -213,6 +222,7 @@
   \cl@singhooks{after}{\thismil@stone}\the\afterh@@ks
   \let\attr@b\empty\let\attrid\empty
   \let\thismil@stone\empty
+  \let\thisattrmil@stone\empty
 }
 \def\figmil@stone{zfiga}
 
@@ -269,16 +279,18 @@
  
 \newtoks\tmpt@ks
 \def\exp@ndmspr@fix#1{%for each potential prefix, call #1 with \@lso defined
-   %\tracingmacros=1
-   %\tracingassigns=1
+   \tracingmacros=1
+   \tracingassigns=1
    \tmpt@ks{#1}%
    \trace{m}{Expanding \mspr@fix}%
    \def\D@IT##1{\edef\@lso{ms:##1|}\trace{m}{adding option \@lso to styles}\the\tmpt@ks}%
    \it@mcount=0
-   \x@\@xp@ndmspr@fix \mspr@fix
+   \x@\@xp@ndmspr@fix \mspr@fix\E
    %\ifnum \it@mcount>1
      %\let\@lso\mspr@fix \the\tmpt@ks
    %\fi
+   \tracingmacros=0
+   \tracingassigns=0
 }
 
 %simple + separated list processing

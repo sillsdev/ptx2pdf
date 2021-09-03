@@ -180,12 +180,19 @@
   \fi
   \edef\tmp{#1}\ifx\tmp\styst@k\else
     \ifx\styst@k\empty\else
-      \ifx\tmp\styst@kfirst
-	    \ifx\tmp\styst@kskip\else
-	      % We get here with attributed milestones. Should we allow fall-back to the milestone's default style?
-	      \ifAttrMilestoneMatchesUnattr
-	        \edef\p@ssParams{\p@ssParams,\styst@kskip}%
-	      \fi
+      \ifx\tmp\styst@kfirst% top level?
+        \ifx\tmp\styst@kskip\else % Not matching the marker at the top of the stack?
+          %\trace{m}{checking if to add \styst@kskip: \if@ttrMilestone T\else F\fi \ifAttrMilestoneMatchesUnattr T\else F\fi "\tmp"="\thisattrmil@stone"}%
+          \if@ttrMilestone
+            % We get here only with attributed milestones. Does user allow fall-back to the milestone's default style?
+            \ifAttrMilestoneMatchesUnattr 
+              % Yes
+              \ifx\tmp\thisattrmil@stone %And is this actually the right time/place to add it?
+                \trace{m}{Adding \styst@kskip\space to possible params}%
+                \edef\p@ssParams{\p@ssParams,\styst@kskip}%
+              \fi
+            \fi
+          \fi
         \fi
       \else
          \edef\p@ssParams{#1+\styst@kfirst,\p@ssParams}%
@@ -217,7 +224,9 @@
 % Should a milestone with a defined attribute (e.g. \qt-s|Jesus\*) match the
 % main stylesheet entry for the milestone? (without a defined attribute).
 \newif\ifAttrMilestoneMatchesUnattr
+\newif\if@ttrMilestone
 \AttrMilestoneMatchesUnattrtrue% Default: yes.
+\@ttrMilestonefalse
 
 
 \def\kill@cache #1\E{%Remove listed item
@@ -920,6 +929,7 @@
   %List excludes marker #1 and stops at a barrier (e.g. a par/note/sidebar)
   %defines \styst@kskip to be the skipped value and \styst@kfirst to first value.
   \edef\styst@kskip{#1}%
+  \@ttrMilestonefalse
   \def\d@##1+##2\E{\ifcsname isb@rrier-##1\endcsname\let\d@=\cstackrelax\fi%stop here?
     \edef\tmp{##2}\csname d@code-##1\endcsname
     \ifx\tmp\empty\else\ifx\tmp\styst@kskip\else

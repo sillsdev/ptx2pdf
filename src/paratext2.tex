@@ -870,12 +870,13 @@
       \dimen1=\textwidth \advance\dimen1 -\ExtraRMargin \advance\dimen1 by -\columnshift
       \hbox to \dimen1{\noindent
         \ifb@dy\testXrefSideL\ifnum\tmp=1
-          \makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen3}{2}
+          \makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen3}{2}%
         \fi\fi
         \ifx\ch@pter\empty\else\hbox to \columnshift{}\fi
-        \special{"testme1"}\vbox to \dimen3{\unvbox\colA\vfil}\special{"testme2"}%
+        %\special{"testme1"}
+        \vbox to \dimen3{\unvbox\colA\vfil}%\special{"testme2"}%
         \ifb@dy\testXrefSideR\ifnum\tmp=1
-          \makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen3}{1}
+          \makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen3}{1}%
         \fi\fi
         \hbox to \ExtraRMargin{}\hfil}%
       \ifvoid\bottomins\else%
