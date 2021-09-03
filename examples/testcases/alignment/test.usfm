@@ -1,0 +1,21 @@
+\id FRT Test file
+\h small test file
+\mt Test of rules and such like
+
+\zrule|width="0.3" align="l"\*
+\p 
+That rule should have been 0.3 of the page. 
+Alias sed et est est vel et. Sint facilis illum sed est nihil fugiat. Minima quaerat eius quae et animi tenetur hic exercitationem. Iusto non consequatur voluptatum velit et vitae veritatis consectetur. 
+
+\zrule\*
+\p Default rule. 
+Optio aut consequatur recusandae rerum assumenda optio. Ab nostrum nulla maiores quas sed sed. Debitis et dolor molestiae voluptate molestiae id nobis illum.
+
+\zrule|0.7\*
+\p 0.7 of page.
+Ad repudiandae est maxime sunt quis. Odit aut beatae debitis. Reiciendis ex aspernatur dolorem repudiandae dicta aliquid ea ex. Quae consequatur enim qui et molestias ut quam. Quia quibusdam molestiae accusantium. Aut nostrum tenetur sint ea temporibus.
+
+\zgap|9em plus 2em\*
+\zrule|align="r"\*
+\p Right aligned, default width.
+Impedit aut dolorem ab quia quae. Enim nostrum amet error voluptatem vero voluptatem. Dolor beatae dolor voluptas quis sequi molestiae harum dolorem. Qui similique molestiae dignissimos. Rerum ex dolor quisquam consequatur. Earum quibusdam quis quasi.

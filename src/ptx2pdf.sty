@@ -253,6 +253,7 @@
 
 \Marker tr
 \OccursUnder c esb ms ms1 ms2 s s1 s2 s3 s4 ip id periph
+\LeftMargin 0
 
 # ptx2pdf treats texttype Other as Section if not intro marker
 
@@ -436,6 +437,9 @@
 \FontSize 12
 \StyleType Paragraph
 
+\Marker qt-s
+\OccursUnder id p c q1 q2 q3
+
 # local additions
 
 \Marker gloss|rb
@@ -533,3 +537,16 @@
 \Name zbl - Milestones - Multiple Blank Lines
 \OccursUnder id periph
 \StyleType Milestone
+
+\Marker zrule
+\Name zrule - Milestones - Horizontal Rule
+\OccursUnder id periph mt p
+\Attributes width align
+\StyleType Milestone
+
+\Marker zgap
+\Name zgap - Milestones - Vertical gap
+\OccursUnder id periph mt p
+\Attributes dimension
+\StyleType Milestone
+

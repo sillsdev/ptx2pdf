@@ -310,7 +310,7 @@
 
 %+c_foot
 % called at end of note
-\def\@foot{\ifp@ranotes \parfillskip=0pt \else\strut\fi
+\def\@foot{\ifp@ranotes \parfillskip=0pt \fi%\else\strut\fi
   \par
   \ifp@ranotes\else\getp@ram{spaceafter}{\n@tetype}\trace{f}{note(\n@tetype) spaceafter: \p@ram}%
   \ifx\p@ram\relax\else\vskip\p@ram\verticalsp@ceunit\fi\fi
@@ -359,7 +359,7 @@
     \iff@rstnote\kern-\dp\pstr@t \footnoterule\global\f@rstnotefalse
       \vskip\BelowNoteRuleSpace minus \BelowNoteRuleSpace\kern0pt
     \fi % output rule before first note
-    \hbox{\hskip\columnshift \vbox{\unvbox\th@cl@ss}}\fi}% output notes
+    \hbox{\vbox{\unvbox\th@cl@ss}}\fi}% output notes
 
 % insert a note class in which each note is in the same paragraph
 \def\parains@rtn@tecl@ss#1{%
@@ -384,13 +384,9 @@
 \def\footnoterule{\kern-\BelowNoteRuleSpace
   \setn@tewidth{-}%
   \dimen0=\n@tewidth
-  \ifdiglot\else
-     \advance\dimen0 by -\columnshift %handled differently in diglot
-  \fi
   \toks0=\everypar\everypar={}\parskip=0pt\baselineskip=0pt\parindent=0pt\let\par=\endgraf\parfillskip=0pt%
 %  \noindent\hbox{\noindent\kern\columnshift\vbox{\hrule width \dimen0}}\par
-  \hbox{\ifdiglot\else\kern\columnshift\fi
-    \vrule height 0.4pt width \dimen0}\kern-.4pt % the \hrule is .4pt high
+  \hbox{\vrule height 0.4pt width \dimen0}\kern-.4pt % the \hrule is .4pt high
 \everypar=\toks0}
 
 \def\EndNoteRuleWidth{0.5}
@@ -510,9 +506,6 @@
   \else\ifx\p@ram\r@ght
      \leftskip=\noteRag
   \fi\fi\fi
-  \ifdiglot\else
-    \advance\leftskip by \columnshift%
-  \fi
   %\showbox0
   \edef\@seglyphmetrics{\the\XeTeXuseglyphmetrics}%
   \XeTeXuseglyphmetrics=3
@@ -620,7 +613,7 @@
   % tempoarily split and see if there are marks in this text
   \bgroup\setbox0=\copy255 \setbox1=\vsplit0 to \maxdimen\egroup        %(+)
   \edef\t@mp{\splitbotmark}%
-  \ifx\t@mp\empty\else\global\m@rksonpagetrue\trace{H}{Found mark \splitbotmark}\fi
+  \ifx\t@mp\empty\trace{H}{no marks found in onecol}\else\global\m@rksonpagetrue\trace{H}{Found mark \splitbotmark}\fi
   \global\galleypenalty=\outputpenalty                                  %(+)
   \s@ttrialheight
   \global\output={\onecoltrial}%
@@ -666,11 +659,11 @@
   %\decr{\availht}{\verybottomins}%
   \setbox\s@vedpage=\copy255
   % split the galley to the actual size available
-  \setbox\colA=\vsplit255 to \availht \setbox0\copy\colA \setbox0=\vbox{\unvbox0\vfil}
-  \decr{\availht}{0}
   \ifdim\availht<0pt                                                        %(2)
     \MSG{Page overfull with inserts. Perhaps a little more text and less pictures would help}%
   \fi
+  \setbox\colA=\vsplit255 to \availht \setbox0\copy\colA \setbox0=\vbox{\unvbox0\vfil}
+  \decr{\availht}{0}
   %\setbox\colA=\vbox{\unvbox\colA}%
   % and check if it all fit; if not, we'll have to back up and try again
   \ifvoid255 \fitonpagetrue \else \fitonpagefalse \fi
@@ -686,22 +679,23 @@
       \dimen1=\textwidth% \advance\dimen1 -\ExtraRMargin
       \trace{b}{BALANCE pageoutins: cols=1: text=\the\ht\colA, \the\dp\colA: partial=\the\ht\partial, \the\dp\partial: topins=\the\ht\topins: bottomins=\the\ht\bottomins}%
       \dimen9=\ht\partial
-      \ifvoid\partial\else \vbox{\hbox to \dimen1{\hskip\columnshift\vbox{\unvbox\partial}}} \fi
+      \ifvoid\partial\else \vbox{\hbox to \dimen1{\vbox{\unvbox\partial}}} \fi
       \ifvoid\topins\else \vbox{\hbox to \columnshift{}\box\topins} \vskip\skip\topins \fi
       \setbox1=\vbox{\unvcopy\colA\unskip}%
       \iflastpage\setbox\colA\vbox{\unvbox\colA}\fi
       \ifColNotes\setbox\colA\vbox{\unvbox\colA\box\coln@tebox}\fi
       \lastd@pth=\dp\colA
-      \ifColNotes\ifdim\dp\xr@fbox<\lastd@pth \lastd@pth=\dp\xr@fbox\fi\fi
+      \ifColNotes\ifdim\dp\xr@fbox>\lastd@pth \lastd@pth=\dp\xr@fbox\fi\fi
       \locs@startstop{\colA}{1}%
-      \dimen3=\ht\colA
+      \dimen3=\ht\colA \advance\dimen3\lastd@pth
+      %\trace{o}{onecoltrial: dimen=\the\dimen3, lastd@pth=\the\lastd@pth}%
       \ifColNotes\ifdim\ht\xr@fbox>\dimen3\dimen3=\ht\xr@fbox\fi\fi
       \hbox to \dimen1{\noindent\ifb@dy\testXrefSideL\ifnum\tmp=1
           \trace{o}{onecoltrial lcolgutter makecolumngutter}%
           \makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen3}{2}%
         \fi\fi
-        \hbox to \columnshift{}%
-        \vbox to\dimen3{\box\colA\vfil}%
+        \ifx\ch@pter\empty\else\hbox to \columnshift{}\fi
+        \vbox to\dimen3{\box\colA\kern0pt\vfil}%
         \ifb@dy\testXrefSideR\ifnum\tmp=1
           \trace{o}{onecoltrial rcolgutter makecolumngutter}%
           \makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen3}{1}%
@@ -714,11 +708,12 @@
         \m@kenotebox
         \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2 \space Leaving \the\ht255, \the\dp255}%
         \ifdim\ht2<-\lastd@pth\trace{b}{Strange notes height: \the\ht2}\fi
-        \unvbox2 %\kern-\lastd@pth\lastdepth=\dp2\unvbox2
+        \unvbox2 %\kern-\lastd@pth\lastd@pth=\dp2\unvbox2
       \fi
       \ifvoid\verybottomins\else\ifdim\availht > 0pt\vfil % \kern-\dimen0
         \trace{o}{verybottomins(onecoltrial): height=\the\ht\verybottomins , availht=\the\availht, textheight=\the\textheight, htpartial=\the\dimen9}
-        \lastd@pth=0pt \vskip\skip\verybottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\verybottomins}}\fi\fi
+        \lastd@pth=0pt \vskip\skip\verybottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\verybottomins}}%
+      \fi\fi
     }%
 %-c_onecoltrial_pagecontents
 %+c_onecoltrial_pagefit
@@ -807,7 +802,7 @@
 	\global\advance\vsize by 2\baselineskip % don't get caught short by 1/2 line or so
 	% make a macro reset vsize for remaining pages which do not have 1 column material
     \trace{o}{Going to 2 col, textheight \the\textheight - \the\ht\partial}%
-    \gdef\resetvsize{\trace{o}{resetvsize2}\global\vsize=2\textheight \global\advance\vsize by \baselineskip} 
+    \gdef\resetvsize{\global\vsize=2\textheight \global\advance\vsize by \baselineskip\trace{o}{resetvsize2 vsize=\the\vsize}} 
     \global\output={\twocols}%
     \global\c@rrentcols=2
     % top and bottom inserts effectively use twice their height
@@ -836,7 +831,7 @@
 %-c_setnotecount
 
 %+c_resetvsize
-\def\resetvsize{\trace{o}{resetvsize}\global\vsize=\textheight} 
+\def\resetvsize{\global\vsize=\textheight\trace{o}{resetvsize vsize=\the\vsize}} 
 %-c_resetvsize
 
 \def\msg#1{\immediate\write16{#1}}
@@ -868,7 +863,7 @@
   \iffitonpage
     \locs@startstop{\colA}{1}%
     \global\setbox\partial=\vbox{
-      \ifvoid\partial\else \vbox{\hbox to \dimen1{\hskip\columnshift\vbox{\unvbox\partial}}} \fi
+      \ifvoid\partial\else \vbox{\hbox to \dimen1{\vbox{\unvbox\partial}}} \fi
       \ifvoid\topins\else \unvbox\topins \vskip\skip\topins \fi
       \lastd@pth=\dp\colA
       \ifColNotes\ifdim\dp\xr@fbox<\lastd@pth \lastd@pth=\dp\xr@fbox\fi\fi
@@ -877,7 +872,7 @@
         \ifb@dy\testXrefSideL\ifnum\tmp=1
           \makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen3}{2}
         \fi\fi
-        \hbox to \columnshift{}%
+        \ifx\ch@pter\empty\else\hbox to \columnshift{}\fi
         \special{"testme1"}\vbox to \dimen3{\unvbox\colA\vfil}\special{"testme2"}%
         \ifb@dy\testXrefSideR\ifnum\tmp=1
           \makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen3}{1}
@@ -1358,7 +1353,7 @@
 \def\XrefNotes{}
 \def\c@lcavailht{
   \edef\t@st{\p@gefirstmark}%
-  \ifx\t@st\empty\xdef\p@gefirstmark{\firstmark}\fi% remember first, if not already set
+  \ifx\t@st\empty\xdef\p@gefirstmark{\firstmark}\trace{H}{Loading firstmark \p@gefirstmark}\fi% remember first, if not already set
   \edef\t@st{\p@gebotmark}%
   \ifx\t@st\empty\xdef\p@gebotmark{\botmark}\fi
   %NOT HERE! \global\trialheight=\textheight \global\advance\trialheight by -\ht\partial
@@ -1380,7 +1375,7 @@
       \multiply\availht by 8 \divide\availht by\dimen0 \multiply\availht by\dimen0 \divide\availht by 8
   \fi
   \advance\bmg@p by -\availht
-  %\advance\availht -\dp\pstr@t
+  %\advance\availht \dp\pstr@t
   %\advance\availht by \dp255 % split includes depth so give it space for that
   \trace{o}{new availht=\the\availht, texttrialheight=\the\t@xttrialheight, topins=\the\ht\topins, bottomins=\the\ht\bottomins, baselineskip=\the\baselineskip}%
   \ifColNotes\ifb@dy
@@ -1688,7 +1683,7 @@
   \global\advance\vsize by \baselineskip % don't get caught short by 1/2 line or so
   \global\advance\vsize by -\ht\partial % Don't mis-inform TeX
   % make a macro reset vsize for remaining pages which do not have 1 column material
-  \gdef\resetvsize{\global\vsize=\textheight \global\advance\vsize by -\ht\partial \global\advance\vsize by 0.5\baselineskip} 
+  \gdef\resetvsize{\global\vsize=\textheight \global\advance\vsize by -\ht\partial \global\advance\vsize by 0.5\baselineskip\trace{o}{resetvsize vsize=\the\vsize}} 
   \global\availht=\vsize
   \global\c@rrentcols=2
   \global\output={\diglotCollect}%
@@ -1767,7 +1762,7 @@
     \eject
     \global\holdinginserts=1
   \fi\fi
-  \trace{o}{resetting resetvsize for singlecolumn. Partial ht=\the\ht\partial}\def\resetvsize{\trace{o}{resetvsize}\global\vsize=\textheight} 
+  \trace{o}{resetting resetvsize for singlecolumn. Partial ht=\the\ht\partial}\def\resetvsize{\global\vsize=\textheight\trace{o}{resetvsize vsize=\the\vsize}} 
   \global\output={\onecol}%
   \global\holdinginserts=1
   \count255=1000

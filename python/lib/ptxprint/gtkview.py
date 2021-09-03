@@ -404,7 +404,7 @@ class GtkViewModel(ViewModel):
             nbk = self.builder.get_object("nbk_"+n)
             self.notebooks[n] = [Gtk.Buildable.get_name(nbk.get_nth_page(i)) for i in range(nbk.get_n_pages())]
         for fcb in ("project", "interfaceLang", "digits", "script", "diglotPicListSources",
-                    "textDirection", "glossaryMarkupStyle", "fontFaces", "featsLangs",
+                    "textDirection", "glossaryMarkupStyle", "fontFaces", "featsLangs", "leaderStyle",
                     "picaccept", "pubusage", "pubaccept", "chklstFilter|0.75", "gridUnits", "gridOffset"):
             self.addCR("fcb_"+fcb, 0)
         self.cb_savedConfig = self.builder.get_object("ecb_savedConfig")
@@ -626,7 +626,7 @@ class GtkViewModel(ViewModel):
                 "If the settings are too overwhelming then\n" + \
                 "you can hide all the advanced options."))
                       
-        for c in ("tb_Advanced", "tb_ViewerEditor", "tb_StyleEditor", "tb_Pictures", "tb_TabsBorders", "tb_Diglot",
+        for c in ("tb_Advanced", "tb_ViewerEditor", "tb_StyleEditor", "tb_Pictures", "tb_TabsBorders", "tb_Diglot", "tb_Peripherals",
                   "fr_copyrightLicense", "r_book_module", "btn_chooseBibleModule", "lb_bibleModule", "lb_omitPics",
                   "lb_selectFigureFolder", "l_indentUnit", "s_indentUnit", "lb_style_s", "lb_style_r", 
                   "l_btmMrgn", "s_bottommargin", "l_ftrPosn", "s_footerposition", "r_ftrCenter_Pri", "r_ftrCenter_Sec", 
@@ -646,7 +646,7 @@ class GtkViewModel(ViewModel):
                   "fr_spacingAdj", "fr_fallbackFont", "l_complexScript", "b_scrsettings", "c_colorfonts",
                   "scr_picListEdit", "gr_picButtons", "tb_picPreview", "l_linesOnPageLabel", "l_linesOnPage", "fr_tabs",
                   "btn_adjust_spacing", "btn_adjust_top", "btn_adjust_bottom", "fr_diglot", "btn_diglotSwitch", "fr_borders",
-                  "c_grid", "btn_adjustGrid", "lb_omitPics", "tb_PubInfo", "bx_frontmatter", "bx_colophon"): #, "c_noInkFooter"):
+                  "c_grid", "btn_adjustGrid", "lb_omitPics", "bx_frontmatter", "bx_colophon"): #, "c_noInkFooter"):
                   
             # print(c)
             self.builder.get_object(c).set_visible(not val)
@@ -668,12 +668,24 @@ class GtkViewModel(ViewModel):
                 if self.get("c_borders"):
                     self.builder.get_object("fr_borders").set_visible(True)
 
+            if self.get("c_inclFrontMatter"):
+                self.builder.get_object("tb_Peripherals").set_visible(True)
+                self.builder.get_object("gr_importFrontPDF").set_visible(True)
+
+            if self.get("c_inclBackMatter"):
+                self.builder.get_object("tb_Peripherals").set_visible(True)
+                self.builder.get_object("gr_importBackPDF").set_visible(True)
+
+            if self.get("c_autoToC"):
+                self.builder.get_object("tb_Peripherals").set_visible(True)
+                self.builder.get_object("row_ToC").set_visible(True)
+
             if self.get("c_frontmatter"):
-                self.builder.get_object("tb_PubInfo").set_visible(True)
+                self.builder.get_object("tb_Peripherals").set_visible(True)
                 self.builder.get_object("bx_frontmatter").set_visible(True)
 
             if self.get("c_colophon"):
-                self.builder.get_object("tb_PubInfo").set_visible(True)
+                self.builder.get_object("tb_Peripherals").set_visible(True)
                 self.builder.get_object("bx_colophon").set_visible(True)
 
         # Disable/Enable the Details and Checklist tabs on the Pictures tab
@@ -1025,8 +1037,9 @@ class GtkViewModel(ViewModel):
     def colorTabs(self):
         col = "#688ACC"
 
-        pi = " color='"+col+"'" if (self.get("c_frontmatter") or self.get("c_colophon")) else ""
-        self.builder.get_object("lb_PubInfo").set_markup("<span{}>".format(pi)+_("Publication Info")+"</span>")
+        pi = " color='"+col+"'" if (self.get("c_inclFrontMatter") or self.get("c_autoToC") or \
+           self.get("c_frontmatter") or self.get("c_colophon") or self.get("c_inclBackMatter")) else ""
+        self.builder.get_object("lb_PubInfo").set_markup("<span{}>".format(pi)+_("Peripherals")+"</span>")
 
         ic = " color='"+col+"'" if self.get("c_includeillustrations") else ""
         self.builder.get_object("lb_Pictures").set_markup("<span{}>".format(ic)+_("Pictures")+"</span>")
@@ -3265,7 +3278,8 @@ class GtkViewModel(ViewModel):
         pic.set_tooltip_text("")
 
     def editZvarsClicked(self, btn):
-        mpgnum = self.notebooks['Main'].index("tb_PubInfo")
+        self.rescanFRTvarsClicked(None, autosave=True)
+        mpgnum = self.notebooks['Main'].index("tb_Peripherals")
         self.builder.get_object("nbk_Main").set_current_page(mpgnum)
         self.set("c_frontmatter", True)
 
@@ -3292,9 +3306,11 @@ class GtkViewModel(ViewModel):
             frtxt = inf.read()
         vlst = regex.findall(r"(\\zvar ?\|)([a-zA-Z0-9\-]+)\\\*", frtxt)
         for a, b in vlst:
-            if self.getvar(b) is None:
-                self.setvar(b, "")
-        
+            if b == "copiesprinted" and self.getvar(b) is None:
+                self.setvar(b, "50")
+            elif self.getvar(b) is None:
+                self.setvar(b, _("<Type Value Here>"))
+                
     def onEnglishClicked(self, btn):
         self.styleEditor.editMarker()
         self.userconfig.set("init", "englinks", "true" if self.get("c_useEngLinks") else "false")

@@ -660,14 +660,16 @@
     \fi
     %\setbox0=\hbox{\unhbox0\hskip\dimen4\gp@vrule}
     %\advance\dimen1\dimen4
-    \ifnum\BodyColumns=2 \dimen2=\ColumnGutterFactor\FontSizeUnit
-      \advance\dimen2 by \XrefNotesWidth
+    \ifnum\mainBodyColumns=2 \dimen2=\ColumnGutterFactor\FontSizeUnit
+      \if\XrefNotes\empty\else\advance\dimen2 by \XrefNotesWidth\fi
     \else\dimen2=0pt\fi
     \divide\dimen2 by 2
-    \ifdiglot\dimen4=\csname column\g@tterside width\endcsname\advance\dimen4 0.5\gutter\else\dimen4=0.5\textwidth\fi
+    \ifdiglot\dimen4=\csname column\g@tterside width\endcsname\advance\dimen4 0.5\gutter
+    \else\dimen4=0.5\textwidth\fi
     \advance\dimen4 by -\dimen2
     \ifdim\columnshift>0pt\advance\dimen4 by -\columnshift\fi % compensate for earlier added columnshift
-    \ifnum\BodyColumns=2
+    \ifnum\mainBodyColumns=2
+      \def\th@sgprule{Minor}
       \setbox0=\hbox{\unhbox0\hskip\dimen4\gp@vrule}
       \def\th@sgprule{Major}
       \setbox0=\hbox{\unhbox0\hskip\dimen2\gp@vrule}
@@ -679,6 +681,7 @@
     \fi
     \ifdim\columnshift>0pt
       \dimen0=\columnshift
+      \def\th@sgprule{Minor}
       \setbox0=\hbox{\unhbox0\hskip\dimen0\gp@vrule}
       \advance\dimen2\columnshift
     \fi

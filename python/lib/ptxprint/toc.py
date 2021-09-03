@@ -24,7 +24,7 @@ bkranges = {'ot': (0, 40), 'nt': (40, 68), 'dc': (67, 87)}
 
 def sortToC(toc, booklist):
     bknums = {k:i for i,k in enumerate(booklist)}
-    return sorted(toc, key=lambda b: bknums[b[0]])
+    return sorted(toc, key=lambda b: bknums.get(b[0], 100))
 
 def createtocvariants(toc, booklist, ducet=None):
     res = {}

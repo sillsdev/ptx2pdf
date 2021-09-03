@@ -43,7 +43,7 @@
 %% Columns
 \TitleColumns=1
 \IntroColumns=1
-\BodyColumns={paper/columns}
+\BodyColumns={paper/columns}\def\mainBodyColumns{{{paper/columns}}}
 \ColumnGutterRule{paper/ifverticalrule}
 \def\ColumnGutterFactor{{{document/colgutterfactor}}}
 \ColumnGutterRuleSkip={paper/colgutteroffset}pt
@@ -262,11 +262,12 @@
 %%%%% Front Matter PDF file(s) get included here %%%%%
 {document/toc}\BodyColumns=1     % Temporarily set this to Single Column for the ToC page(s)
 
+{document/iftocleaders}\tocleaders{{{document/tocleaderstyle}}}{{3pt}}
 {document/toc}\includeifpresent{{{jobname}.toc}}
-{document/toc}{document/hasnofront_}\preptxfile\prepusfm\id FRT -- toc
-{document/toc}{document/hasnofront_}\is {document/toctitle} \ip \ztoc |main\*\ip \postptxfile
 {project/frontincludes}
 \ptxfile{{{project/frontfile}}}
+{document/toc}{document/hasnofront_}\preptxfile\prepusfm\id FRT -- toc
+{document/toc}{document/hasnofront_}\is {document/toctitle} \ip \ztoc |main\*\ip \postptxfile
 {document/toc}\BodyColumns={paper/columns}     % But ensure it goes back to the chosen Single/Double setting for the main body text
 \useTOCone{document/usetoc1}
 \useTOCtwo{document/usetoc2}

@@ -787,7 +787,7 @@ download and use in a publication.</property>
     <property name="type_hint">dialog</property>
     <property name="gravity">center</property>
     <property name="program_name">PTXprint</property>
-    <property name="version">Version 1.9.2</property>
+    <property name="version">Version 1.9.3</property>
     <property name="copyright">© 2020-2021, SIL International</property>
     <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
 the User-Interface. The PDFs are produced by enhanced 
@@ -2961,7 +2961,7 @@ technology, then enable this.</property>
   </object>
   <object class="GtkDialog" id="dlg_gridsGuides">
     <property name="can_focus">False</property>
-    <property name="title" translatable="yes">Crop Marks, Guides and Grid Settings</property>
+    <property name="title" translatable="yes">Guides, Crop Marks, Watermark and Grid Settings</property>
     <property name="window_position">mouse</property>
     <property name="icon">Google-Noto-Emoji-Objects-62859-open-book.ico</property>
     <property name="type_hint">dialog</property>
@@ -3001,28 +3001,6 @@ technology, then enable this.</property>
             <property name="orientation">vertical</property>
             <property name="spacing">12</property>
             <child>
-              <object class="GtkCheckButton" id="c_cropmarks">
-                <property name="label" translatable="yes">Crop Marks (Shows Page Edge for Trimming)</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">False</property>
-                <property name="tooltip_text" translatable="yes">Some printers require crop marks
-on the PDF to show where the page
-should be trimmed after printing.
-
-The cropmarks also show the top and
-bottom text margins.</property>
-                <property name="halign">start</property>
-                <property name="margin_left">6</property>
-                <property name="draw_indicator">True</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
-            <child>
               <object class="GtkCheckButton" id="c_gridLines">
                 <property name="label" translatable="yes">Guides (Rules and Baselines)</property>
                 <property name="visible">True</property>
@@ -3039,7 +3017,94 @@ as the baselines of the body text.</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkCheckButton" id="c_cropmarks">
+                <property name="label" translatable="yes">Crop Marks (Shows Page Edge for Trimming)</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">False</property>
+                <property name="tooltip_text" translatable="yes">Some printers require crop marks
+on the PDF to show where the page
+should be trimmed after printing.
+
+The cropmarks also show the top and
+bottom text margins.</property>
+                <property name="halign">start</property>
+                <property name="margin_left">6</property>
+                <property name="margin_top">6</property>
+                <property name="draw_indicator">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
                 <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkGrid">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="halign">start</property>
+                <property name="margin_left">6</property>
+                <property name="margin_right">6</property>
+                <property name="column_spacing">12</property>
+                <child>
+                  <object class="GtkCheckButton" id="c_applyWatermark">
+                    <property name="label" translatable="yes">Apply Watermark PDF</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">False</property>
+                    <property name="tooltip_text" translatable="yes">A watermark can be applied to all pages of 
+the publication. The file must be a PDF and
+should ideally have the same dimensions as 
+the publication being printed.</property>
+                    <property name="halign">start</property>
+                    <property name="draw_indicator">True</property>
+                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
+                    <property name="top_attach">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkButton" id="btn_selectWatermarkPDF">
+                    <property name="label" translatable="yes">Select...</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <property name="halign">start</property>
+                    <property name="valign">center</property>
+                    <signal name="clicked" handler="onWatermarkPDFclicked" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="left_attach">1</property>
+                    <property name="top_attach">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="lb_applyWatermark">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="opacity">0.80000000000000004</property>
+                    <property name="halign">start</property>
+                    <property name="valign">center</property>
+                    <property name="ellipsize">middle</property>
+                    <property name="max_width_chars">26</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">2</property>
+                    <property name="top_attach">0</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">2</property>
               </packing>
             </child>
             <child>
@@ -3315,7 +3380,7 @@ the text. This may be useful for precise measuring.</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">2</property>
+                <property name="position">3</property>
               </packing>
             </child>
           </object>
@@ -3391,6 +3456,36 @@ the text. This may be useful for precise measuring.</property>
       <row>
         <col id="0" translatable="yes">Thai</col>
         <col id="1">th</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkListStore" id="ls_leaderStyle">
+    <columns>
+      <!-- column-name leaderStyle -->
+      <column type="gchararray"/>
+      <!-- column-name gloCode -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">None</col>
+        <col id="1">0</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">......................</col>
+        <col id="1">1</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">. . . . . . . . . . . . .</col>
+        <col id="1">2</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">- - - - - - - - -</col>
+        <col id="1" translatable="yes">3</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">________________</col>
+        <col id="1" translatable="yes">4</col>
       </row>
     </data>
   </object>
@@ -5859,14 +5954,14 @@ can be customized.</property>
                                     </child>
                                     <child>
                                       <object class="GtkCheckButton" id="c_grid">
-                                        <property name="label" translatable="yes">Crop Marks,
-Guides, Grid</property>
+                                        <property name="label" translatable="yes">Marks &amp; Guides</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
-                                        <property name="tooltip_text" translatable="yes">Enable Guides and/or Grid behind the text
-to assist with setup or final adjustments; or
-turn on the Crop marks for the printer.</property>
+                                        <property name="tooltip_text" translatable="yes">Enable Guides or a Grid to sit behind the
+text to assist with final adjustments; or
+enable a Watermark to appear behind the
+text: or turn on the Crop marks for the printer.</property>
                                         <property name="halign">end</property>
                                         <property name="margin_left">2</property>
                                         <property name="draw_indicator">True</property>
@@ -7830,273 +7925,86 @@ for characters missing in primary font.</property>
                             <property name="margin_bottom">6</property>
                             <property name="left_padding">12</property>
                             <child>
-                              <object class="GtkBox">
+                              <object class="GtkGrid">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="orientation">vertical</property>
+                                <property name="margin_top">4</property>
+                                <property name="margin_bottom">4</property>
+                                <property name="row_spacing">6</property>
+                                <property name="column_spacing">20</property>
                                 <child>
-                                  <object class="GtkBox" id="row_ToC">
+                                  <object class="GtkCheckButton" id="c_bookIntro">
+                                    <property name="label" translatable="yes">Book Introductions (\i..)</property>
                                     <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <child>
-                                      <object class="GtkCheckButton" id="c_autoToC">
-                                        <property name="label" translatable="yes">Generate Table of Contents       Title:</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="tooltip_text" translatable="yes">This will automatically generate the Table of Contents
-for all the books included in the publication using one
-or more of the \toc1, \toc2 and \toc3 fields as specified.
-This option is ignored unless the "Multiple Books" 
-option has been set on the Basic tab.
-
-NOTE that when this option is selected, the
-print process will be run at least twice - the
-first time the ToC index gets built. The second
-time, the ToC itself gets included. So it may
-be worth leaving this option OFF until the
-final run.</property>
-                                        <property name="halign">start</property>
-                                        <property name="draw_indicator">True</property>
-                                        <signal name="clicked" handler="onSimpleFocusClicked" swapped="no"/>
-                                        <signal name="clicked" handler="onTocClicked" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkEntry" id="t_tocTitle">
-                                        <property name="width_request">210</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="tooltip_text" translatable="yes">A file called "combined.toc" will be created 
-with the outline of the Table of Contents and
-automatically prepended to the output PDF.</property>
-                                        <property name="halign">start</property>
-                                        <property name="valign">center</property>
-                                        <property name="margin_right">10</property>
-                                        <property name="placeholder_text" translatable="yes">Table of Contents Title</property>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">False</property>
-                                        <property name="position">1</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkGrid" id="gr_toc">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="column_spacing">10</property>
-                                        <child>
-                                          <object class="GtkCheckButton" id="c_usetoc1">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">True</property>
-                                            <property name="receives_default">False</property>
-                                            <property name="tooltip_text" translatable="yes">Select which of the \toc markers
-should be included in the
-generated Table of Contents.</property>
-                                            <property name="halign">center</property>
-                                            <property name="valign">center</property>
-                                            <property name="active">True</property>
-                                            <property name="draw_indicator">True</property>
-                                            <signal name="clicked" handler="onTocClicked" swapped="no"/>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">0</property>
-                                            <property name="top_attach">1</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkLabel">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="margin_bottom">3</property>
-                                            <property name="label">\toc1</property>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">0</property>
-                                            <property name="top_attach">0</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkLabel">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="margin_bottom">3</property>
-                                            <property name="label">\toc2</property>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">1</property>
-                                            <property name="top_attach">0</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkLabel">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="margin_bottom">3</property>
-                                            <property name="label">\toc3</property>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">2</property>
-                                            <property name="top_attach">0</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkCheckButton" id="c_usetoc2">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">True</property>
-                                            <property name="receives_default">False</property>
-                                            <property name="tooltip_text" translatable="yes">Select which of the \toc markers
-should be included in the
-generated Table of Contents.</property>
-                                            <property name="halign">center</property>
-                                            <property name="valign">center</property>
-                                            <property name="draw_indicator">True</property>
-                                            <signal name="clicked" handler="onTocClicked" swapped="no"/>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">1</property>
-                                            <property name="top_attach">1</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkCheckButton" id="c_usetoc3">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">True</property>
-                                            <property name="receives_default">False</property>
-                                            <property name="tooltip_text" translatable="yes">Select which of the \toc markers
-should be included in the
-generated Table of Contents.</property>
-                                            <property name="halign">center</property>
-                                            <property name="valign">center</property>
-                                            <property name="active">True</property>
-                                            <property name="draw_indicator">True</property>
-                                            <signal name="clicked" handler="onTocClicked" swapped="no"/>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">2</property>
-                                            <property name="top_attach">1</property>
-                                          </packing>
-                                        </child>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">2</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkLabel" id="l_toc">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="margin_left">12</property>
-                                        <property name="margin_right">20</property>
-                                        <property name="label" translatable="yes">To be listed
-in the Table
-of Contents</property>
-                                        <attributes>
-                                          <attribute name="scale" value="0.80000000000000004"/>
-                                        </attributes>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">3</property>
-                                      </packing>
-                                    </child>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">Print the Book Introductions which
+appear at the beginning of each book.</property>
+                                    <property name="halign">start</property>
+                                    <property name="resize_mode">immediate</property>
+                                    <property name="active">True</property>
+                                    <property name="draw_indicator">True</property>
                                   </object>
                                   <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">0</property>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">0</property>
                                   </packing>
                                 </child>
-                                <child type="center">
-                                  <object class="GtkGrid">
+                                <child>
+                                  <object class="GtkCheckButton" id="c_introOutline">
+                                    <property name="label" translatable="yes">Introductory Outlines (\io..)</property>
                                     <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="margin_top">4</property>
-                                    <property name="margin_bottom">4</property>
-                                    <property name="row_spacing">6</property>
-                                    <property name="column_spacing">20</property>
-                                    <child>
-                                      <object class="GtkCheckButton" id="c_bookIntro">
-                                        <property name="label" translatable="yes">Book Introductions (\i..)</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="tooltip_text" translatable="yes">Print the Book Introductions which
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">Print the Introductory Outlines which
 appear at the beginning of each book.</property>
-                                        <property name="halign">start</property>
-                                        <property name="resize_mode">immediate</property>
-                                        <property name="active">True</property>
-                                        <property name="draw_indicator">True</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">0</property>
-                                        <property name="top_attach">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkCheckButton" id="c_introOutline">
-                                        <property name="label" translatable="yes">Introductory Outlines (\io..)</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="tooltip_text" translatable="yes">Print the Introductory Outlines which
-appear at the beginning of each book.</property>
-                                        <property name="halign">start</property>
-                                        <property name="active">True</property>
-                                        <property name="draw_indicator">True</property>
-                                        <signal name="clicked" handler="onIntroOutlineClicked" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">0</property>
-                                        <property name="top_attach">1</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkCheckButton" id="c_prettyIntroOutline">
-                                        <property name="label" translatable="yes">Right-align \ior With Tabbed Leaders</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="tooltip_text" translatable="yes">This will right-align and add leader tabs (. . . .) before the \ior numbers for a pretty Intro Outline Table.</property>
-                                        <property name="halign">start</property>
-                                        <property name="draw_indicator">True</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">0</property>
-                                        <property name="top_attach">2</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkCheckButton" id="c_ch1pagebreak">
-                                        <property name="label" translatable="yes">Always Start 1st Chapter on a New Page</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="tooltip_text" translatable="yes">Use this option to automatically make a page break after a book's introduction section. The break will come right before the \c 1 marker.</property>
-                                        <property name="halign">start</property>
-                                        <property name="draw_indicator">True</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">1</property>
-                                        <property name="top_attach">1</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkCheckButton" id="c_startOnHalfPage">
-                                        <property name="label" translatable="yes">Begin Next Book on Last Page of Previous Book</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="tooltip_text" translatable="yes">If the last page of a book uses less than
+                                    <property name="halign">start</property>
+                                    <property name="active">True</property>
+                                    <property name="draw_indicator">True</property>
+                                    <signal name="clicked" handler="onIntroOutlineClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_prettyIntroOutline">
+                                    <property name="label" translatable="yes">Right-align \ior With Tabbed Leaders</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">This will right-align and add leader tabs (. . . .) before the \ior numbers for a pretty Intro Outline Table.</property>
+                                    <property name="halign">start</property>
+                                    <property name="draw_indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_ch1pagebreak">
+                                    <property name="label" translatable="yes">Always Start 1st Chapter on a New Page</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">Use this option to automatically make a page break after a book's introduction section. The break will come right before the \c 1 marker.</property>
+                                    <property name="halign">start</property>
+                                    <property name="draw_indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="top_attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_startOnHalfPage">
+                                    <property name="label" translatable="yes">Begin Next Book on Last Page of Previous Book</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">If the last page of a book uses less than
 two-thirds of the page (66%), then the 
 next book will start on the same page.
 
@@ -8104,21 +8012,21 @@ Note that you can modify this percentage
 by adding a line to your ptxprint-mods.tex
 file as follows (for 75%):
 \def\PageFullFactor{0.75}</property>
-                                        <property name="halign">start</property>
-                                        <property name="draw_indicator">True</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">1</property>
-                                        <property name="top_attach">2</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkCheckButton" id="c_filterGlossary">
-                                        <property name="label" translatable="yes">Filter Glossary to Only Include Entries Used in the Text</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="tooltip_text" translatable="yes">This option is only available if the GLO book
+                                    <property name="halign">start</property>
+                                    <property name="draw_indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="top_attach">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_filterGlossary">
+                                    <property name="label" translatable="yes">Filter Glossary to Only Include Entries Used in the Text</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">This option is only available if the GLO book
 is also selected.
 If you have large glossary with many entries 
 but are only printing a small selection of books, 
@@ -8128,19 +8036,12 @@ are not marked-up in the text of the selected
 book(s) or chapter(s).
 i.e. only the \w marked-up\w* entries in the 
 selected books/chapters will show in the glossary.</property>
-                                        <property name="halign">start</property>
-                                        <property name="draw_indicator">True</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">1</property>
-                                        <property name="top_attach">0</property>
-                                      </packing>
-                                    </child>
+                                    <property name="halign">start</property>
+                                    <property name="draw_indicator">True</property>
                                   </object>
                                   <packing>
-                                    <property name="expand">True</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">2</property>
+                                    <property name="left_attach">1</property>
+                                    <property name="top_attach">0</property>
                                   </packing>
                                 </child>
                               </object>
@@ -17436,217 +17337,7 @@ other settings are applied. This file is rarely used.</property>
                             <property name="margin_right">6</property>
                             <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkFrame">
-                                <property name="width_request">290</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="margin_right">6</property>
-                                <property name="margin_top">6</property>
-                                <property name="vexpand">True</property>
-                                <property name="label_xalign">0.039999999105930328</property>
-                                <child>
-                                  <object class="GtkAlignment">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="left_padding">12</property>
-                                    <child>
-                                      <object class="GtkGrid">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="margin_left">3</property>
-                                        <property name="margin_right">3</property>
-                                        <property name="margin_bottom">6</property>
-                                        <property name="column_spacing">8</property>
-                                        <child>
-                                          <object class="GtkCheckButton" id="c_inclFrontMatter">
-                                            <property name="label" translatable="yes">Include Front Matter PDF(s)</property>
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">True</property>
-                                            <property name="receives_default">False</property>
-                                            <property name="tooltip_text" translatable="yes">One or more previously created PDF file(s) can be included BEFORE the scripture material being typeset. If more than one
-file is selected, then these will appear in alphabetical order.</property>
-                                            <property name="halign">start</property>
-                                            <property name="margin_top">4</property>
-                                            <property name="draw_indicator">True</property>
-                                            <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">0</property>
-                                            <property name="top_attach">0</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkButton" id="btn_selectFrontPDFs">
-                                            <property name="label" translatable="yes">Select...</property>
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">True</property>
-                                            <property name="receives_default">True</property>
-                                            <property name="halign">start</property>
-                                            <property name="valign">center</property>
-                                            <property name="margin_right">5</property>
-                                            <property name="margin_bottom">4</property>
-                                            <signal name="clicked" handler="onFrontPDFsClicked" swapped="no"/>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">2</property>
-                                            <property name="top_attach">0</property>
-                                            <property name="height">2</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkButton" id="btn_selectBackPDFs">
-                                            <property name="label" translatable="yes">Select...</property>
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">True</property>
-                                            <property name="receives_default">True</property>
-                                            <property name="halign">start</property>
-                                            <property name="valign">center</property>
-                                            <property name="margin_right">6</property>
-                                            <property name="margin_top">4</property>
-                                            <property name="margin_bottom">4</property>
-                                            <signal name="clicked" handler="onBackPDFsClicked" swapped="no"/>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">2</property>
-                                            <property name="top_attach">4</property>
-                                            <property name="height">2</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkCheckButton" id="c_inclBackMatter">
-                                            <property name="label" translatable="yes">Include Back Matter PDF(s)</property>
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">True</property>
-                                            <property name="receives_default">False</property>
-                                            <property name="tooltip_text" translatable="yes">One or more previously created PDF file(s) can be included
-AFTER the scripture material being typeset. If more than one
-file is selected, then these will appear in alphabetical order.</property>
-                                            <property name="halign">start</property>
-                                            <property name="margin_top">4</property>
-                                            <property name="draw_indicator">True</property>
-                                            <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">0</property>
-                                            <property name="top_attach">4</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkButton" id="btn_selectWatermarkPDF">
-                                            <property name="label" translatable="yes">Select...</property>
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">True</property>
-                                            <property name="receives_default">True</property>
-                                            <property name="halign">start</property>
-                                            <property name="valign">center</property>
-                                            <property name="margin_right">6</property>
-                                            <property name="margin_top">4</property>
-                                            <property name="margin_bottom">4</property>
-                                            <signal name="clicked" handler="onWatermarkPDFclicked" swapped="no"/>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">2</property>
-                                            <property name="top_attach">2</property>
-                                            <property name="height">2</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkCheckButton" id="c_applyWatermark">
-                                            <property name="label" translatable="yes">Apply Watermark PDF</property>
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">True</property>
-                                            <property name="receives_default">False</property>
-                                            <property name="tooltip_text" translatable="yes">A watermark can be applied to all pages of 
-the publication. The file must be a PDF and
-should ideally have the same dimensions as 
-the publication being printed.</property>
-                                            <property name="halign">start</property>
-                                            <property name="margin_top">4</property>
-                                            <property name="draw_indicator">True</property>
-                                            <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">0</property>
-                                            <property name="top_attach">2</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkLabel" id="lb_inclFrontMatter">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="opacity">0.80000000000000004</property>
-                                            <property name="halign">end</property>
-                                            <property name="margin_bottom">6</property>
-                                            <property name="justify">right</property>
-                                            <property name="ellipsize">middle</property>
-                                            <property name="max_width_chars">26</property>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">0</property>
-                                            <property name="top_attach">1</property>
-                                            <property name="width">2</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkLabel" id="lb_applyWatermark">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="opacity">0.80000000000000004</property>
-                                            <property name="halign">end</property>
-                                            <property name="margin_bottom">6</property>
-                                            <property name="justify">right</property>
-                                            <property name="ellipsize">middle</property>
-                                            <property name="max_width_chars">26</property>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">0</property>
-                                            <property name="top_attach">3</property>
-                                            <property name="width">2</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkLabel" id="lb_inclBackMatter">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="opacity">0.80000000000000004</property>
-                                            <property name="halign">end</property>
-                                            <property name="margin_bottom">6</property>
-                                            <property name="justify">right</property>
-                                            <property name="ellipsize">middle</property>
-                                            <property name="max_width_chars">26</property>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">0</property>
-                                            <property name="top_attach">5</property>
-                                            <property name="width">2</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <placeholder/>
-                                        </child>
-                                        <child>
-                                          <placeholder/>
-                                        </child>
-                                        <child>
-                                          <placeholder/>
-                                        </child>
-                                      </object>
-                                    </child>
-                                  </object>
-                                </child>
-                                <child type="label">
-                                  <object class="GtkLabel">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="label" translatable="yes">Include Other PDFs</property>
-                                  </object>
-                                </child>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">False</property>
-                                <property name="position">0</property>
-                              </packing>
+                              <placeholder/>
                             </child>
                             <child>
                               <object class="GtkGrid">
@@ -18383,7 +18074,7 @@ include special text in the front matter:
 In addition to the above-mentioned codes, you may specify
 your own config-specific \zvar|variables\* as place-holders.
 Click on 'Edit Variables...' to assign values to these variables
-on the Publication Info tab.</property>
+on the Peripherals tab.</property>
                             <property name="label" translatable="yes">Front Matter</property>
                           </object>
                           <packing>
@@ -18568,13 +18259,299 @@ output and tweak adjust lists.</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkBox" id="tb_PubInfo">
+                  <object class="GtkBox" id="tb_Peripherals">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="margin_left">6</property>
                     <property name="margin_right">6</property>
                     <property name="orientation">vertical</property>
                     <property name="spacing">3</property>
+                    <child>
+                      <object class="GtkGrid" id="gr_importFrontPDF">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="valign">start</property>
+                        <property name="margin_left">6</property>
+                        <property name="margin_right">6</property>
+                        <property name="margin_top">6</property>
+                        <property name="margin_bottom">6</property>
+                        <property name="column_spacing">12</property>
+                        <child>
+                          <object class="GtkCheckButton" id="c_inclFrontMatter">
+                            <property name="label" translatable="yes">Import Front Matter PDF(s)</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">False</property>
+                            <property name="tooltip_text" translatable="yes">One or more previously created PDF file(s) can be included BEFORE the scripture material being typeset. If more than one
+file is selected, then these will appear in alphabetical order.</property>
+                            <property name="halign">start</property>
+                            <property name="margin_left">6</property>
+                            <property name="draw_indicator">True</property>
+                            <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                          </object>
+                          <packing>
+                            <property name="left_attach">0</property>
+                            <property name="top_attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkButton" id="btn_selectFrontPDFs">
+                            <property name="label" translatable="yes">Select...</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <property name="halign">start</property>
+                            <property name="valign">center</property>
+                            <signal name="clicked" handler="onFrontPDFsClicked" swapped="no"/>
+                          </object>
+                          <packing>
+                            <property name="left_attach">1</property>
+                            <property name="top_attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="lb_inclFrontMatter">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="opacity">0.80000000000000004</property>
+                            <property name="halign">start</property>
+                            <property name="valign">center</property>
+                            <property name="hexpand">True</property>
+                            <property name="ellipsize">middle</property>
+                            <property name="max_width_chars">26</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">2</property>
+                            <property name="top_attach">0</property>
+                          </packing>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkBox" id="row_ToC">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="margin_left">12</property>
+                        <property name="margin_right">6</property>
+                        <property name="spacing">2</property>
+                        <child>
+                          <object class="GtkCheckButton" id="c_autoToC">
+                            <property name="label" translatable="yes">Table of Contents       Title:</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">False</property>
+                            <property name="tooltip_text" translatable="yes">This will automatically generate the Table of Contents
+for all the books included in the publication using one
+or more of the \toc1, \toc2 and \toc3 fields as specified.
+This option is ignored unless the "Multiple Books" 
+option has been set on the Basic tab.
+
+NOTE that when this option is selected, the
+print process will be run at least twice - the
+first time the ToC index gets built. The second
+time, the ToC itself gets included. So it may
+be worth leaving this option OFF until the
+final run.</property>
+                            <property name="halign">start</property>
+                            <property name="draw_indicator">True</property>
+                            <signal name="clicked" handler="onSimpleFocusClicked" swapped="no"/>
+                            <signal name="clicked" handler="onTocClicked" swapped="no"/>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="t_tocTitle">
+                            <property name="width_request">200</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="tooltip_text" translatable="yes">A file called "combined.toc" will be created 
+with the outline of the Table of Contents and
+automatically prepended to the output PDF.</property>
+                            <property name="halign">start</property>
+                            <property name="valign">center</property>
+                            <property name="placeholder_text" translatable="yes">Table of Contents Title</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">False</property>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkGrid" id="gr_toc">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="margin_left">3</property>
+                            <property name="column_spacing">10</property>
+                            <child>
+                              <object class="GtkCheckButton" id="c_usetoc1">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="tooltip_text" translatable="yes">Select which of the \toc markers
+should be included in the
+generated Table of Contents.</property>
+                                <property name="halign">center</property>
+                                <property name="valign">center</property>
+                                <property name="active">True</property>
+                                <property name="draw_indicator">True</property>
+                                <signal name="clicked" handler="onTocClicked" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="margin_bottom">3</property>
+                                <property name="label">\toc1</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="margin_bottom">3</property>
+                                <property name="label">\toc2</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="top_attach">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="margin_bottom">3</property>
+                                <property name="label">\toc3</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">2</property>
+                                <property name="top_attach">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkCheckButton" id="c_usetoc2">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="tooltip_text" translatable="yes">Select which of the \toc markers
+should be included in the
+generated Table of Contents.</property>
+                                <property name="halign">center</property>
+                                <property name="valign">center</property>
+                                <property name="draw_indicator">True</property>
+                                <signal name="clicked" handler="onTocClicked" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="top_attach">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkCheckButton" id="c_usetoc3">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="tooltip_text" translatable="yes">Select which of the \toc markers
+should be included in the
+generated Table of Contents.</property>
+                                <property name="halign">center</property>
+                                <property name="valign">center</property>
+                                <property name="active">True</property>
+                                <property name="draw_indicator">True</property>
+                                <signal name="clicked" handler="onTocClicked" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="left_attach">2</property>
+                                <property name="top_attach">1</property>
+                              </packing>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">2</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="l_toc">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="margin_left">3</property>
+                            <property name="margin_right">3</property>
+                            <property name="label" translatable="yes">To be listed
+in the Table
+of Contents</property>
+                            <attributes>
+                              <attribute name="scale" value="0.80000000000000004"/>
+                            </attributes>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">3</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="margin_left">10</property>
+                            <property name="margin_right">3</property>
+                            <property name="label" translatable="yes">. . . Leaders:</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">4</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkComboBox" id="fcb_leaderStyle">
+                            <property name="width_request">100</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="tooltip_text" translatable="yes">Leaders display dots or a line between
+the text and the page number. Select
+the style of leader you wish to apply.</property>
+                            <property name="halign">start</property>
+                            <property name="valign">center</property>
+                            <property name="model">ls_leaderStyle</property>
+                            <property name="active">0</property>
+                            <property name="id_column">1</property>
+                            <property name="active_id">1</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">5</property>
+                          </packing>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
                     <child>
                       <object class="GtkFrame" id="bx_frontmatter">
                         <property name="width_request">675</property>
@@ -18613,7 +18590,8 @@ as they might vary from one publication to another.</property>
                                 <property name="halign">end</property>
                                 <property name="valign">start</property>
                                 <property name="margin_top">5</property>
-                                <property name="label" translatable="yes">List of Variables:</property>
+                                <property name="label" translatable="yes">Variables
+and Values:</property>
                                 <property name="justify">right</property>
                               </object>
                               <packing>
@@ -18637,7 +18615,7 @@ table of variable names and values.</property>
                               </object>
                               <packing>
                                 <property name="left_attach">0</property>
-                                <property name="top_attach">6</property>
+                                <property name="top_attach">5</property>
                               </packing>
                             </child>
                             <child>
@@ -18652,7 +18630,7 @@ different section of the front matter will begin
 on a new page.</property>
                                 <property name="halign">start</property>
                                 <property name="valign">start</property>
-                                <property name="margin_left">3</property>
+                                <property name="margin_left">6</property>
                                 <property name="active">True</property>
                                 <property name="draw_indicator">True</property>
                               </object>
@@ -18681,7 +18659,7 @@ Front Matter</property>
                             </child>
                             <child>
                               <object class="GtkViewport">
-                                <property name="height_request">270</property>
+                                <property name="height_request">220</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="hexpand">True</property>
@@ -18701,6 +18679,7 @@ Front Matter</property>
                                       <object class="GtkTreeView" id="tv_zvarEdit">
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
+                                        <property name="vexpand">True</property>
                                         <property name="hadjustment">a_zvarListadjustment1</property>
                                         <property name="vadjustment">a_zvarListadjustment2</property>
                                         <property name="vscroll_policy">natural</property>
@@ -18751,6 +18730,8 @@ Front Matter</property>
                                                 <signal name="edited" handler="onzvarEdit" object="tv_zvarEdit" swapped="no"/>
                                               </object>
                                               <attributes>
+                                                <attribute name="ypad">3</attribute>
+                                                <attribute name="single-paragraph-mode">1</attribute>
                                                 <attribute name="text">1</attribute>
                                               </attributes>
                                             </child>
@@ -18764,7 +18745,7 @@ Front Matter</property>
                               <packing>
                                 <property name="left_attach">1</property>
                                 <property name="top_attach">0</property>
-                                <property name="height">7</property>
+                                <property name="height">6</property>
                               </packing>
                             </child>
                             <child>
@@ -18810,7 +18791,7 @@ Front Matter</property>
                               </object>
                               <packing>
                                 <property name="left_attach">0</property>
-                                <property name="top_attach">5</property>
+                                <property name="top_attach">4</property>
                               </packing>
                             </child>
                             <child>
@@ -18823,21 +18804,11 @@ Front Matter</property>
                                 <property name="top_attach">3</property>
                               </packing>
                             </child>
-                            <child>
-                              <object class="GtkLabel">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                              </object>
-                              <packing>
-                                <property name="left_attach">0</property>
-                                <property name="top_attach">4</property>
-                              </packing>
-                            </child>
                           </object>
                         </child>
                         <child type="label">
                           <object class="GtkCheckButton" id="c_frontmatter">
-                            <property name="label" translatable="yes">Include Front Matter</property>
+                            <property name="label" translatable="yes">Front Matter</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
@@ -18848,15 +18819,15 @@ Front Matter</property>
                         </child>
                       </object>
                       <packing>
-                        <property name="expand">False</property>
+                        <property name="expand">True</property>
                         <property name="fill">True</property>
-                        <property name="position">0</property>
+                        <property name="position">2</property>
                       </packing>
                     </child>
                     <child>
                       <object class="GtkFrame" id="bx_colophon">
                         <property name="width_request">675</property>
-                        <property name="height_request">185</property>
+                        <property name="height_request">145</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="valign">start</property>
@@ -18909,7 +18880,7 @@ in order to get accurate Image Copyright Attribution.</property>
                             </child>
                             <child>
                               <object class="GtkScrolledWindow" id="scroll_colophon">
-                                <property name="height_request">140</property>
+                                <property name="height_request">110</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="valign">start</property>
@@ -18986,7 +18957,7 @@ bottom of a new page at the end of the publication.
 In Diglot publications, the colophon always appears
 on its own page - regardless of this setting. </property>
                                 <property name="valign">start</property>
-                                <property name="margin_left">3</property>
+                                <property name="margin_left">6</property>
                                 <property name="draw_indicator">True</property>
                               </object>
                               <packing>
@@ -18998,7 +18969,7 @@ on its own page - regardless of this setting. </property>
                         </child>
                         <child type="label">
                           <object class="GtkCheckButton" id="c_colophon">
-                            <property name="label" translatable="yes">Include Colophon at End</property>
+                            <property name="label" translatable="yes">Colophon at End of Publication</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
@@ -19023,8 +18994,73 @@ on subsequent runs.</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">1</property>
+                        <property name="fill">False</property>
+                        <property name="position">3</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkGrid" id="gr_importBackPDF">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="valign">start</property>
+                        <property name="margin_left">6</property>
+                        <property name="margin_right">6</property>
+                        <property name="margin_bottom">6</property>
+                        <property name="column_spacing">12</property>
+                        <child>
+                          <object class="GtkCheckButton" id="c_inclBackMatter">
+                            <property name="label" translatable="yes">Import Back Matter PDF(s)</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">False</property>
+                            <property name="tooltip_text" translatable="yes">One or more previously created PDF file(s) can be included
+AFTER the scripture material being typeset. If more than one
+file is selected, then these will appear in alphabetical order.</property>
+                            <property name="halign">start</property>
+                            <property name="margin_left">6</property>
+                            <property name="draw_indicator">True</property>
+                            <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                          </object>
+                          <packing>
+                            <property name="left_attach">0</property>
+                            <property name="top_attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkButton" id="btn_selectBackPDFs">
+                            <property name="label" translatable="yes">Select...</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <property name="halign">start</property>
+                            <property name="valign">center</property>
+                            <signal name="clicked" handler="onBackPDFsClicked" swapped="no"/>
+                          </object>
+                          <packing>
+                            <property name="left_attach">1</property>
+                            <property name="top_attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="lb_inclBackMatter">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="opacity">0.80000000000000004</property>
+                            <property name="halign">start</property>
+                            <property name="valign">center</property>
+                            <property name="ellipsize">middle</property>
+                            <property name="max_width_chars">26</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">2</property>
+                            <property name="top_attach">0</property>
+                          </packing>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="position">4</property>
                       </packing>
                     </child>
                   </object>
@@ -19036,12 +19072,11 @@ on subsequent runs.</property>
                   <object class="GtkLabel" id="lb_PubInfo">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="tooltip_text" translatable="yes">Publication Information
-Define front matter, and/or
-colophon which gets printed
-at the end of the publication.</property>
+                    <property name="tooltip_text" translatable="yes">Peripherals
+Define what comes before and
+after the scripture text.</property>
                     <property name="halign">start</property>
-                    <property name="label" translatable="yes">Publication Info</property>
+                    <property name="label" translatable="yes">Peripherals</property>
                   </object>
                   <packing>
                     <property name="position">12</property>

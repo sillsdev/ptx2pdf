@@ -120,7 +120,7 @@ class Collector:
             if isinstance(root[0], sfm.Element) and root[0].name == "id":
                 # turn \id into a paragraph level and main children as siblings
                 elements = root[0][1:]
-                idel = sfm.Element(root[0].name, args=root[0].args[:], content=root[0][0], meta=self.stylesheet['id'])
+                idel = sfm.Element(root[0].name, args=root[0].args[:], content=root[0][0], meta=root[0].meta)
                 currChunk = self.makeChunk(idel)
                 currChunk.append(idel)
         for c in elements:

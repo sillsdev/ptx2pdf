@@ -1,0 +1,37 @@
+\input paratext2
+\tracing{m}
+\tracing{A}
+\tracing{s}
+\tracing{F}
+\tracing{j}
+\tracinggroups=1
+%\input "ptx-extended.tex"
+\stylesheet{ptx2pdf.sty}
+\stylesheet{usfm_sb.sty}
+\stylesheet{default-custom.sty}
+\stylesheet{test.sty}
+%\PaperHeight=210mm
+%\PaperWidth=296.9mm
+
+\catcode`\@=11
+\gdef\b@okShort{}
+\def\doLines{\doGridLines}
+\x@\def\csname complex-w\endcsname{\rubyb{w}{lemma}}
+%\def\dummy{%
+   %\box0
+   %{\s@tfont{w:lemma}%
+   %\get@ttribute{lemma}\attr@b}
+%}%
+%\def\GraphPaperLineMajor{0.3pt}
+%\def\GraphPaperLineMinor{0.1pt}
+%\def\GraphPaperYoffset{-0.5mm}
+%\def\GraphPaperColMajor{0.7 1.0 0.7} % Colour (R G B)
+%\def\GraphPaperColMinor{1.0 0.8 0.8} % Colour (R G B)
+\def\GOTOLinkBorderstyle{/S/U/D [2 2]/W 1} % Underline
+\def\URLLinkBorderstyle{/S/U/W 1} % Underline
+\def\GOTOLinkBorderCol{.9 .5 .5}% pale red
+\def\URLLinkBorderCol{.5 .5 .5}% Gry
+
+\tracingassigns=1
+\ptxfile{test.usfm}
+\bye

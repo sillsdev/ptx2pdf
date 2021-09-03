@@ -181,11 +181,11 @@
   \edef\tmp{#1}\ifx\tmp\styst@k\else
     \ifx\styst@k\empty\else
       \ifx\tmp\styst@kfirst
-	\ifx\tmp\styst@kskip\else
-	   % We get here with attributed milestones. Should we allow fall-back to the milestone's default style?
-	   \ifAttrMilestoneMatchesUnattr
-	     \edef\p@ssParams{\p@ssParams,\styst@kskip}%
-	   \fi
+	    \ifx\tmp\styst@kskip\else
+	      % We get here with attributed milestones. Should we allow fall-back to the milestone's default style?
+	      \ifAttrMilestoneMatchesUnattr
+	        \edef\p@ssParams{\p@ssParams,\styst@kskip}%
+	      \fi
         \fi
       \else
          \edef\p@ssParams{#1+\styst@kfirst,\p@ssParams}%
@@ -711,7 +711,7 @@
 \let\@v@rse=\v@rse
 \let\@v@rseR=\v@rse
 \def\m@rkverse{\ifdiglot\m@rkverseDglot\else\m@rkverseNml\fi}
-\def\m@rkverseNml{\mark{\b@ok:\ch@pter:\print@bleVerse}} %normal verse
+\def\m@rkverseNml{\mark{\b@ok:\ch@pter:\print@bleVerse}\trace{H}{mark: \b@ok:\ch@pter:\print@bleVerse}} %normal verse
 \def\m@rkverseDglot{\mark{\b@ok:\ch@pter:\print@bleVerse}\edef\cur@ds{\g@tdstat}\marks\m@rknum{\csname b@ok\cur@ds\endcsname:\csname @ch@pter\cur@ds\endcsname:\print@bleVerse}} % diglot verse
 
 \def\n@xtparstart{}
@@ -723,7 +723,12 @@
  \let\@H=\h%
  \def\h{\bgroup\deactiv@tecustomch@rs\catcode`\/=12
         \obeylines\@h}% \h gets stored as the book name (for references)
- \def\@h ##1^^M{\x@\gdef\csname b@ok\g@tdstat\endcsname{##1}\egroup}% store book id in \b@ok / b@okR 
+ \def\@h ##1^^M{\x@\gdef\csname b@ok\g@tdstat\endcsname{##1}\trace{ss}{heading b@ok\g@tdstat=##1}\egroup}% store book id in \b@ok / b@okR
+ \def\zbk{\csname b@ok\g@tdstat\endcsname}%
+ \def\h@h{\bgroup\deactiv@tecustomch@rs\catcode`\/=12 \obeylines\@hh}% \h1 gets stored as the book name (for references)
+ \def\@hh ##1^^M{\x@\gdef\csname b@ok1\g@tdstat\endcsname{##1}\trace{ss}{heading b@ok1\g@tdstat=##1}\egroup}% store book id in \b@ok1 / b@ok1R
+ \def\zbka{\csname b@ok1\g@tdstat\endcsname}%
+ \x@\let\csname h1\endcsname=\h@h
  %
  \let\@CL=\cl%
  \def\do@CL{\global\ch@pterfalse\gdef\n@xtparstart{\pdfch@ptermark}\@CL}%
@@ -745,7 +750,7 @@
     \else
       \vskip\p@ram
     \fi\egroup} 
- \def\fig{\m@kedigitsother\ptx@fig}% \fig has its own special macro to parse the fields
+ \def\fig{\trace{g}{In fig}\bgroup\m@kedigitsother\catcode`\:=12\catcode`\/=12\catcode`\\=12\ptx@fig}% \fig has its own special macro to parse the fields
  %
  \let\nb=\ptx@nb% \nb is a special code that suppresses a paragraph break across \c
  \global\let\@k=\k
@@ -767,9 +772,12 @@
 
 \endgroup
 
+\newif\iftfmp \tfmpfalse
 \def\unc@tcodespecials{\def\do##1{\catcode`##1=12 }\dospecials}
 \def\@@id#1#2#3#4\end{\gdef\id@@@{#1#2#3}} % get first 3 chars of the \id
-\def\ptx@fig #1\fig*{\d@figure{#1}\m@kedigitsletters}                           %(1)
+\def\ptx@fig #1\fig*{\egroup\ifIncludeFigures\tfmptrue\else\tfmpfalse\fi\IncludeFigurestrue
+    \trace{g}{In ptx@fig #1}\d@figure{#1}\m@kedigitsletters
+    \iftfmp\else\IncludeFiguresfalse\fi}                           %(1)
 %-csty_addspecialhooks
 
 %+csty_stack
@@ -1146,7 +1154,7 @@
  %\ifendbooknoeject\else\global\output={\shipout\vbox{\box\partial\box255}}\eject\xdef\p@gefirstmark{}\setbox\partial=\box\voidb@x\fi
  \global\output={\onecol}
  % no idea why we need \noindent here
- \ifendbooknoeject\else\trace{o}{end of book eject with \the\ht\partial \space remaining}\ifdim\ht\partial>0pt\noindent\eject\fi\xdef\p@gefirstmark{}\fi
+ \ifendbooknoeject\else\trace{o}{end of book eject with \the\ht\partial \space remaining}\ifdim\ht\partial>0pt\noindent\eject\fi\xdef\p@gefirstmark{}\rerunsavepartialpagedfalse\fi
 }
 %-csty_ptxfile_end
 \newread\t@stread
@@ -1336,8 +1344,12 @@
  \fi
 }
 \def\onecolwidth#1{#1=\textwidth
-  \advance #1 by -2\columnshift\advance #1 by -\XrefNotesWidth
-  \advance #1 by -\XrefNotesMargin\advance #1 by -\gutter
+  \advance #1 by -\columnshift
+  \ifx\XrefNotes\empty\else\ifx\ch@pter\empty\else
+    \trace{o}{setonecolwidth with notes width=\the\XrefNotesWidth, margin=\the\XrefNotesMargin, gutter=\the\gutter}%
+    \advance #1 by -\XrefNotesWidth
+    \advance #1 by -\XrefNotesMargin\advance #1 by -\gutter
+  \fi\fi
 }
 \def\s@tupsizes{
  \s@tb@dyb@seline{}%
