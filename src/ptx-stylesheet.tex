@@ -723,7 +723,12 @@
  \let\@H=\h%
  \def\h{\bgroup\deactiv@tecustomch@rs\catcode`\/=12
         \obeylines\@h}% \h gets stored as the book name (for references)
- \def\@h ##1^^M{\x@\gdef\csname b@ok\g@tdstat\endcsname{##1}\trace{ss}{heading b@ok\g@tdstat=##1}\egroup}% store book id in \b@ok / b@okR 
+ \def\@h ##1^^M{\x@\gdef\csname b@ok\g@tdstat\endcsname{##1}\trace{ss}{heading b@ok\g@tdstat=##1}\egroup}% store book id in \b@ok / b@okR
+ \def\zbk{\csname b@ok\g@tdstat\endcsname}%
+ \def\h@h{\bgroup\deactiv@tecustomch@rs\catcode`\/=12 \obeylines\@hh}% \h1 gets stored as the book name (for references)
+ \def\@hh ##1^^M{\x@\gdef\csname b@ok1\g@tdstat\endcsname{##1}\trace{ss}{heading b@ok1\g@tdstat=##1}\egroup}% store book id in \b@ok1 / b@ok1R
+ \def\zbka{\csname b@ok1\g@tdstat\endcsname}%
+ \x@\let\csname h1\endcsname=\h@h
  %
  \let\@CL=\cl%
  \def\do@CL{\global\ch@pterfalse\gdef\n@xtparstart{\pdfch@ptermark}\@CL}%

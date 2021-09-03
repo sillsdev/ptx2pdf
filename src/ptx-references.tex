@@ -78,7 +78,7 @@
  \edef\t@st{#2}\ifx\t@st\t@tle\x@\extr@ctlast\emptym@rk\relax\else\ifx\t@st\n@thing\x@\extr@ctlast\emptym@rk\relax\else\x@\extr@ctlast\t@st\relax\fi\fi
  \trace{v}{r@ngerefs \@book=\@chapter\cvs@p\@verse, \@@book=\@@chapter\cvs@p\@@verse}%
  \ifx\@book\empty\else
-  \@book\ 
+  \ifOmitBookRef\else\@book\ \fi
   \ifVerseRefs
    \ifOmitChapterNumberRH\else
     \ifx\@chapter\empty\else\@chapter\cvs@p\fi\@verse
@@ -89,7 +89,7 @@
       \ranges@p\ifOmitChapterNumberRH\else\@@chapter\cvs@p\@@verse\fi
      \fi
     \else
-     \ranges@p\@@book\ \ifOmitChapterNumberRH\else\@@chapter\cvs@p\@@verse\fi
+     \ranges@p\ifOmitBookRef\else\@@book\ \fi\ifOmitChapterNumberRH\else\@@chapter\cvs@p\@@verse\fi
     \fi
    \fi
   \else
