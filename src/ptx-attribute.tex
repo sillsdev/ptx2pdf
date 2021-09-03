@@ -76,7 +76,7 @@
 }
 \def\Spec@lAttribName#1#2{attr-spec-#1-#2}
 \def\SetOneSpecialAttrib#1#2#3{%
-  \edef\tmp{#3}\def\tmpa{\Spec@lAttribName{#1}{#2}}\ifx\tmp\empty
+  \def\tmp{#3}\def\tmpa{\Spec@lAttribName{#1}{#2}}\ifx\tmp\empty
     \x@\let\csname\tmpa\endcsname\relax
   \else
     \x@\let\csname\tmpa\endcsname\tmp
