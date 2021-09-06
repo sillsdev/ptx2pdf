@@ -1393,7 +1393,7 @@ class GtkViewModel(ViewModel):
                     if s == "0" and not len(vals):
                         continue
                     if r[1] != 0:
-                        outs = "{} {}.{} {}".format(bk, r[1], str(r[2]) + r[5], s)
+                        outs = "{} {}.{} {}".format(bk+r[3], r[1], str(r[2]) + r[5], s)
                         if p > 0:
                             outs += "[{}]".format(p)
                         if len(vals):

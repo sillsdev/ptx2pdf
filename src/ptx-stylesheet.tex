@@ -696,7 +696,7 @@
 \def\docvhook{\edef\c@rref{\id@@@\ifdiglot\c@rrdstat\fi\ch@pter.\v@rse}\csname cv-\c@rref\endcsname
   %\trace{v}{verse: \v@rse, catcodes:\x@\getcatcodes\v@rse\E, and of one:\x@\getcatcodes\@neletter\E}%
   \ifnum\ifnum\lastc@rradj>1 1\else\ifx\v@rse\@neletter 1\else 0\fi\fi =1
-    \xdef\lastc@rradj{1}\xdef\lastc@rref{\c@rref}\fi
+    \xdef\lastc@rradj{1}\ifdiglot\xdef\lastc@rref{\dc@rref}\else\xdef\lastc@rref{\c@rref}\fi\fi
 }
 \addtoversehooks{\docvhook}
 %-csty_define-hooks
