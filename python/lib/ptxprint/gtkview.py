@@ -342,6 +342,14 @@ def reset_gtk_direction():
     direction = Gtk.get_locale_direction()
     Gtk.Widget.set_default_direction(direction)
 
+def getsign(b, v, a):
+    r = ""
+    if b > 0 and b < v:
+        r = "-"
+    if v < a:
+        r = "+" + r
+    return r
+
 class GtkViewModel(ViewModel):
 
     def __init__(self, settings_dir, workingdir, userconfig, scriptsdir, args=None):
@@ -1342,88 +1350,55 @@ class GtkViewModel(ViewModel):
             if not self.msgQuestion(q1, q2, default=True):
                 return
         for bk in booklist:
-            if dynamic:
-                parlocs = os.path.join(self.working_dir, self.baseTeXPDFnames()[0] + ".parlocs")
-                adjs = {}
-                for i, loose in enumerate(("-1", "0", "+1")):
-                    runjob = self.callback(self, maxruns=1, forcedlooseness=loose, noview=True)
-                    while runjob.thread.is_alive():
-                        Gtk.main_iteration_do(False)
-                    runres = runjob.res
-                    if runres:
-                        continue
-                    #import pdb; pdb.set_trace()
-                    with open(parlocs) as inf:
-                        for l in inf.readlines():
-                            if not l.startswith(r"\@parlen"):
-                                continue
-                            m = re.findall(r"\{(.*?)\}", l)
-                            if not m:
-                                continue
-                            key = m[0] + (" "+m[1] if m[1] != "1" else "")
-                            adjs.setdefault(key, [0]*3)[i] = int(m[2])
-                adjlist = []
-                sortkeys = {}
-                for k in adjs.keys():
-                    r = refKey(k)
-                    sortkeys[k] = (r[:6], int(r[6].lstrip()) if r[6] else 0)
-                for k, v in sorted(adjs.items(), key=lambda x:sortkeys[x[0]]):
-                    if k[:3] != bk:
-                        continue
-                    r = refKey(k)
-                    if r[0] >= 100:
-                        continue
-                    b = r[6].lstrip() if r[6].startswith(" ") else ""
-                    print(k, r, b, v)
-                    s = "0"
-                    if v[0] and (v[0] < v[1] if v[1] else (v[0] < v[2] if v[2] else False)):
-                        s = "-"+s
-                    if v[1] and (v[1] < v[2] if v[2] else False):
-                        s = "+"+s
-                    adjlist.append((bk, r[1], str(r[2]) + r[5], int(b) if b else 0, s)) 
-            else:
-                try:
-                    u = usfms.get(bk)
-                except SyntaxError as e:
-                    self.doError(_("Syntax error in UFSM data for {}".format(bk)), \
-                                secondary=_("In order to generate an AdjList for this book the \n" +
-                                            "syntax error(s) in the data need to be resolved.\n" + str(e)))
-                    return
-                adjlist = u.make_adjlist()
-                fname = self.getBookFilename(bk)
-                outfname = os.path.join(self.configPath(self.configName()),
-                                        "AdjLists", self.getAdjListFilename(bk, ext=".adj"))
-                if diglot: 
-                    du = dusfms.get(bk)
-                    dadjlist = du.make_adjlist()
-                    nadjlist = []
-                    i = 0; j = 0
-                    while i < len(adjlist) or j < len(dadjlist):
-                        a = adjlist[i] if i < len(adjlist) else None
-                        d = dadjlist[j] if j < len(dadjlist) else None
-                        va = int(re.sub(r"^(\d+).*?$", r"\1", a[2])) if a is not None else 0
-                        vd = int(re.sub(r"^(\d+).*?$", r"\1", d[2])) if d is not None else 0
-                        if d is None or (a is not None and (a[1] < d[1] or \
-                                (a[1] == d[1] and va < vd) or \
-                                (a[1] == d[1] and va == vd and a[3] < d[3]) or a == d)):
-                            nadjlist.append((a[0]+"L", a[1], a[2], a[3]))
-                            i += 1
-                        elif d is not None:
-                            nadjlist.append((d[0]+"R", d[1], d[2], d[3]))
-                            j += 1
-                    adjlist = nadjlist
+            parlocs = os.path.join(self.working_dir, self.baseTeXPDFnames()[0] + ".parlocs")
+            adjs = {}
+            for i, loose in enumerate(("-1", "0", "+1")):
+                runjob = self.callback(self, maxruns=1, forcedlooseness=loose, noview=True)
+                while runjob.thread.is_alive():
+                    Gtk.main_iteration_do(False)
+                runres = runjob.res
+                if runres:
+                    continue
+                with open(parlocs) as inf:
+                    for l in inf.readlines():
+                        if not l.startswith(r"\@parlen"):
+                            continue
+                        m = re.findall(r"\{(.*?)\}", l)
+                        if not m:
+                            continue
+                        adjs.setdefault(m[0], {}).setdefault(int(m[1]), [0]*3)[i] = int(m[2])
             adjpath = os.path.join(self.configPath(self.configName()), "AdjLists")
             os.makedirs(adjpath, exist_ok=True)
             with open(outfname, "w", encoding="utf-8") as outf:
                 outf.write("% syntax bk c.v +num[paragraph]. E.g. JHN 3.18 +1[2] for para after 3.18\n")
                 outf.write("% autogenerated hints for paragraph possible changes: +0 for increases, -0 for decreases\n")
-                for (b, c, v, p, s) in adjlist:
-                    #if v != "0" and c != 0:
-                    if c != 0:
-                        if p == 0:
-                            outf.write("{} {}.{} {}\n".format(b, c, v, s))
+                for k, v in sorted(adjs.items(), key=lambda x:refKey(x[0])):
+                    r = refKey(k)
+                    if k[:3] != bk or r[0] >= 100:
+                        continue
+                    if self.args.extras & 2 != 0:
+                        print(k, r, v)
+                    vals = []
+                    first = True
+                    s = ""
+                    for sk, sv in sorted(v.items()):
+                        if first:
+                            s = getsign(*sv) + "0"
+                            p = sk if sk != 1 else 0
+                            first = False
                         else:
-                            outf.write("{} {}.{} {}[{}]\n".format(b, c, v, s, p))
+                            t = getsign(*sv)
+                            if t != "":
+                                vals.append("{}[{}]".format(t, sk))
+                    if s == "0" and not len(vals):
+                        continue
+                    if r[1] != 0:
+                        outs = "{} {}.{} {}".format(bk, r[1], str(r[2]) + r[5], s)
+                        if p > 0:
+                            outs += "[{}]".format(p)
+                        if len(vals):
+                            outs += "% " + " ".join(vals)
+                        outf.write(outs+"\n")
 
     def onChangedMainTab(self, nbk_Main, scrollObject, pgnum):
         pgid = Gtk.Buildable.get_name(nbk_Main.get_nth_page(pgnum))
