@@ -1363,14 +1363,18 @@ class GtkViewModel(ViewModel):
                             key = m[0] + (" "+m[1] if m[1] != "1" else "")
                             adjs.setdefault(key, [0]*3)[i] = int(m[2])
                 adjlist = []
-                for k, v in sorted(adjs.items(), key=lambda x:refKey(x[0])):
+                sortkeys = {}
+                for k in adjs.keys():
+                    r = refKey(k)
+                    sortkeys[k] = (r[:6], int(r[6].lstrip()) if r[6] else 0)
+                for k, v in sorted(adjs.items(), key=lambda x:sortkeys[x[0]]):
                     if k[:3] != bk:
                         continue
                     r = refKey(k)
                     if r[0] >= 100:
                         continue
                     b = r[6].lstrip() if r[6].startswith(" ") else ""
-                    # print(k, r, b, v)
+                    print(k, r, b, v)
                     s = "0"
                     if v[0] and (v[0] < v[1] if v[1] else (v[0] < v[2] if v[2] else False)):
                         s = "-"+s
