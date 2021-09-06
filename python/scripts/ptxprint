@@ -182,13 +182,14 @@ elif getattr(sys, 'frozen', False):
 else:
     macrosdir = os.path.join(scriptsdir, "..", "..", "src")
 
-def doit(printer, maxruns=0, noview=False, nothreads=False):
+def doit(printer, maxruns=0, noview=False, nothreads=False, forcedlooseness=None):
     if not isLocked():
         if maxruns > 0:
             oldruns = args.runs
             args.runs = maxruns
         runjob = RunJob(printer, scriptsdir, args)
         runjob.nothreads = nothreads
+        runjob.forcedlooseness = forcedlooseness
         runjob.doit(noview=noview)
         if maxruns > 0:
             args.runs = oldruns

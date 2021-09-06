@@ -223,7 +223,7 @@ class Usfm:
         res = reduce(_g, self.doc, [])
         if pending[0] is not None:
             ref[3] += 1
-            res.append(ref[:])
+            res.append(ref[:] + ["0"])
         return res
 
     def readnames(self):

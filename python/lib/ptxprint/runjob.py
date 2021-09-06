@@ -565,7 +565,11 @@ class RunJob:
                     "run="+str(numruns)])
             cmd = ["xetex", "-halt-on-error", "-interaction=nonstopmode",
                    '-output-comment="'+commentstr+'"', "-no-pdf"]
-            runner = call(cmd + [outfname], cwd=self.tmpdir)
+            if self.forcedlooseness is None:
+                action = outfname
+            else:
+                action = r"\def\ForcedLooseness{{{}}}\input {}".format(self.forcedlooseness, outfname)
+            runner = call(cmd + [action], cwd=self.tmpdir)
             if isinstance(runner, subprocess.Popen) and runner is not None:
                 try:
                     runner.wait(self.args.timeout)

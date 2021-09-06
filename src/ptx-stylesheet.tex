@@ -692,7 +692,12 @@
 \newtoks\prev@rsehooks
 % A CV hook is executed only for a particular CV when the verse milestone occurs.
 \def\setcvhook#1#2{\x@\gdef\csname cv-#1\endcsname{#2}}
-\def\docvhook{\edef\c@rref{\id@@@\ifdiglot\c@rrdstat\fi\ch@pter.\v@rse}\csname cv-\c@rref\endcsname}
+{\catcode`\1=11\xdef\@neletter{1}}
+\def\docvhook{\edef\c@rref{\id@@@\ifdiglot\c@rrdstat\fi\ch@pter.\v@rse}\csname cv-\c@rref\endcsname
+  %\trace{v}{verse: \v@rse, catcodes:\x@\getcatcodes\v@rse\E, and of one:\x@\getcatcodes\@neletter\E}%
+  \ifnum\ifnum\lastc@rradj>1 1\else\ifx\v@rse\@neletter 1\else 0\fi\fi =1
+    \xdef\lastc@rradj{1}\xdef\lastc@rref{\c@rref}\fi
+}
 \addtoversehooks{\docvhook}
 %-csty_define-hooks
 

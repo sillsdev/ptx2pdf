@@ -182,16 +182,18 @@
 \def\at@ndofthisparDelay{}
 \def\at@ndofthisparRDelay{}
 \def\at@ndofthisparLDelay{}
+\ifcsname ForcedLooseness\endcsname\else\gdef\ForcedLooseness{}\fi
 
 %+cpar_par
 % end a paragraph, handling cutouts (shaping around drop-cap) if any, and the <end> hook
 \def\par{\ifhmode
    \makecutouts
    \cl@singhooks{end}{\m@rker}%
+   \ifx\ForcedLooseness\empty\else\looseness=\ForcedLooseness\fi
    \trace{j}{baselineskip = \the\baselineskip, looseness = \the\looseness}%
    \endgraf
    \ifinn@te\else
-     \edef\t@mpp{\string\@parlen{\c@rref}{\the\prevgraf}}\x@\write\x@\p@rlocs\x@{\t@mpp}%
+     \edef\t@mpp{\string\@parlen{\lastc@rref}{\lastc@rradj}{\the\prevgraf}}\x@\write\x@\p@rlocs\x@{\t@mpp}%
    \fi
    \ifvmode\ifinn@te\else\ifhe@dings\else\lastdepth=\prevdepth\fi\fi\fi
    \cutoutcarryover 
@@ -418,6 +420,7 @@
    \the\@veryparhooks
    \x@\writep@rstart\x@{\the\baselineskip}%baselineskip must fully expanded as macro param, else it remains a macro and only L baseline is output on diglot/polyglot.
    %\edef\spc@ut{pdf:code /\c@rref \space BMC}\x@\special\x@{\spc@ut}%
+   \xdef\lastc@rref{\c@rref}\xdef\lastc@rradj{\the\curr@djpar}%
    \ifRTL \rightskip\else\leftskip\fi =0pt
    \ifRTL \beginR \leftskip\else\rightskip\fi =0pt \ifJustifyPars\else plus .25\hsize\fi
    \getp@ram{justification}{\m@rker}%
@@ -693,7 +696,7 @@
   \csname inp@r-\c@rrdstat false\endcsname
 }
 
-\def\@parlen#1#2{}
+\def\@parlen#1#2#3{}
 
 \def\@nontextstart#1#2{\def\n@ntextstart{#2}}%
 \def\@nontextstop#1#2{%
