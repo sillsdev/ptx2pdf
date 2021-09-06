@@ -16,6 +16,7 @@ class ChunkType(Enum):
     INTRO = 4
     BODY = 5
     ID = 6
+    TABLE = 7
 
 _textype_map = {
     "ChapterNumber":   ChunkType.CHAPTER,
@@ -103,6 +104,8 @@ class Collector:
                 mode = ChunkType.TITLE
             elif c.name == "id":
                 mode = ChunkType.ID
+            elif c.name == "tr":
+                mode = ChunkType.TABLE
             else:
                 mode = _marker_modes.get(c.name, _textype_map.get(str(c.meta.get('TextType')), self.mode))
             currChunk = Chunk(mode=mode, chap=self.chap, verse=self.verse, end=self.end, pnum=self.pnum(c))
@@ -176,6 +179,7 @@ class Collector:
 
     def reorder(self):
         # Merge contiguous title chunks
+        ti = None
         bi = None
         for i in range(1, len(self.acc)):
             if self.acc[i].type == ChunkType.TITLE and self.acc[i-1].type == ChunkType.TITLE:
@@ -183,6 +187,13 @@ class Collector:
                     bi = i-1
                 self.acc[bi].extend(self.acc[i])
                 self.acc[i].deleteme = True
+                ti = None
+            elif self.acc[i].type == ChunkType.TABLE and self.acc[i-1].type == ChunkType.TABLE:
+                if ti is None:
+                    ti = i - 1
+                self.acc[ti].extend(self.acc[i])
+                self.acc[i].deleteme = True
+                bi = None
         # Swap chapter and heading first
         for i in range(1, len(self.acc)):
             if self.acc[i-1].type == ChunkType.CHAPTER and self.acc[i].type == ChunkType.HEADING:
