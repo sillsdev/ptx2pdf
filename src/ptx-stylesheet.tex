@@ -717,7 +717,7 @@
 \def\tw@lve{12}
 %-csty_fndigits
 
-\let\b@ok\relax
+\let\book\relax
 \def\ch@pter{}
 \def\v@rse{}
 \def\m@rknum{1}
@@ -726,8 +726,8 @@
 \let\@v@rse=\v@rse
 \let\@v@rseR=\v@rse
 \def\m@rkverse{\ifdiglot\m@rkverseDglot\else\m@rkverseNml\fi}
-\def\m@rkverseNml{\mark{\b@ok:\ch@pter:\print@bleVerse}\trace{H}{mark: \b@ok:\ch@pter:\print@bleVerse}} %normal verse
-\def\m@rkverseDglot{\mark{\b@ok:\ch@pter:\print@bleVerse}\edef\cur@ds{\g@tdstat}\marks\m@rknum{\csname b@ok\cur@ds\endcsname:\csname @ch@pter\cur@ds\endcsname:\print@bleVerse}} % diglot verse
+\def\m@rkverseNml{\mark{\book:\ch@pter:\print@bleVerse}\trace{H}{mark: \book:\ch@pter:\print@bleVerse}} %normal verse
+\def\m@rkverseDglot{\mark{\book:\ch@pter:\print@bleVerse}\edef\cur@ds{\g@tdstat}\marks\m@rknum{\csname book\cur@ds\endcsname:\csname @ch@pter\cur@ds\endcsname:\print@bleVerse}} % diglot verse
 
 \def\n@xtparstart{}
 %+csty_addspecialhooks
@@ -738,9 +738,7 @@
  \let\@H=\h%
  \def\h{\bgroup\deactiv@tecustomch@rs\catcode`\/=12
         \obeylines\@h}% \h gets stored as the book name (for references)
- \def\@h ##1^^M{\x@\gdef\csname b@ok\g@tdstat\endcsname{##1}\trace{ss}{heading b@ok\g@tdstat=##1}\egroup}% store book id in \b@ok / b@okR
- \def\book{\futurelet\t@mp\bo@k}%
- \def\bo@k{\ifnum\ifx\t@mp L 1\else\ifx\t@mp R 1\else0\fi\fi =1 \csname b@ok\t@mp\endcsname\else \csname b@ok\endcsname\t@mp\fi}
+ \def\@h ##1^^M{\x@\gdef\csname book\g@tdstat\endcsname{##1}\trace{ss}{heading book\g@tdstat=##1}\egroup}% store book id in \book / bookR
  \def\h@h{\bgroup\deactiv@tecustomch@rs\catcode`\/=12 \obeylines\@hh}% \h1 gets stored as the book name (for references)
  \def\@hh ##1^^M{\x@\gdef\csname b@ok1\g@tdstat\endcsname{##1}\trace{ss}{heading b@ok1\g@tdstat=##1}\egroup}% store book id in \b@ok1 / b@ok1R
  \def\bookalt{\csname b@ok1\g@tdstat\endcsname}%
@@ -1124,6 +1122,9 @@
  \@netimesetuplater
  \gdef\ch@plabel{}
  \gdef\ch@plabelR{}
+ \x@\def\csname b@ok1L\endcsname{}%
+ \x@\def\csname b@ok1R\endcsname{}%
+ \x@\def\csname b@ok1\endcsname{}%
  \initp@rastyles
  \initn@testyles
  \ifendbooknoeject\else\p@geonetrue\fi
@@ -1157,7 +1158,7 @@
  \ifhe@dings\endhe@dings\fi
  \endt@ble
  \ifdiglot\enddigl@t\fi
- \ifx\b@ok\relax\else\csname bookend-\id@@@\endcsname\relax\fi
+ \ifx\b.ok\relax\else\csname bookend-\id@@@\endcsname\relax\fi
  \csname bookend-all\endcsname
  \the\@ndptxhooks
  \ifnum \ifnotesEachBook 1\else\iflastptxfile 1\else 0\fi\fi =1 \zplaceallnotes\fi

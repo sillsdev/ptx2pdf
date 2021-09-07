@@ -542,21 +542,21 @@
 \newif\ifOmitVerses \OmitVersesfalse
 \newif\ifDropActions \DropActionsfalse
 \def\n@wchaptersf{998}
-\let\b@ok\relax
+\let\book\relax
 \let\prevb@ok\relax
-\let\b@okR\relax
+\let\bookR\relax
 \let\prevb@okR\relax
 \def\pdfb@@kmark{\ifdiglot\ifx\c@rrdstat\PDFBookMarkColumn \pdfb@@km@rkD\fi\else\pdfb@@km@rk\fi}
 
-\def\pdfb@@km@rk{\ifx\b@ok\prevb@ok
+\def\pdfb@@km@rk{\ifx\book\prevb@ok
  \else
   \global\dr@ppednumberfalse
   \ifDropActions\else\bgroup\liter@lspecials
     \special{pdf:dest (\id@@@.) [@thispage /Fit]}%
-    \ifx\b@ok\relax \let\t@mp=\id@@@ \else \let\t@mp=\b@ok\fi
+    \ifx\book\relax \let\t@mp=\id@@@ \else \let\t@mp=\book\fi
     \special{pdf:outline 0 << /Title (\t@mp)
              /A << /S /GoTo /D (\id@@@.) >> >>}%
-    \global\let\prevb@ok\b@ok\egroup\fi
+    \global\let\prevb@ok\book\egroup\fi
  \fi}
 
 \def\Alternative{\ /\ }%
@@ -600,10 +600,10 @@
     \ifdiglot
       \let\t@mp\b@okDiglot
     \else
-      \let\t@mp\b@ok
+      \let\t@mp\book
     \fi
-    \x@\let\x@\t@mp\csname b@ok\@@side\endcsname
-    \ifx\b@ok\relax \let\t@mp=\id@@@ \fi
+    \x@\let\x@\t@mp\csname book\@@side\endcsname
+    \ifx\book\relax \let\t@mp=\id@@@ \fi
     \special{pdf:outline 1 << /Title (\t@mp\space\ch@pter)
              /A << /S /GoTo /D (\id@@@\@@side.\ch@pter) >> >>}%
   \egroup\fi}
