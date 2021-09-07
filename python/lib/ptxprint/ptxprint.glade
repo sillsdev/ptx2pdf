@@ -10576,8 +10576,8 @@ DRAFT\ \isodate\ \hrsmins   would give "DRAFT YYYY-MM-YY HH:MM"
                                           <item translatable="yes">First Reference</item>
                                           <item translatable="yes">Last Reference</item>
                                           <item translatable="yes">Reference Range</item>
-                                          <item translatable="yes">Book Name</item>
-                                          <item translatable="yes">Alternate Book Name</item>
+                                          <item translatable="yes">Book (\h)</item>
+                                          <item translatable="yes">Book Alt (\h1)</item>
                                         </items>
                                         <child internal-child="entry">
                                           <object class="GtkEntry">
@@ -10620,8 +10620,8 @@ DRAFT\ \isodate\ \hrsmins   would give "DRAFT YYYY-MM-YY HH:MM"
                                           <item translatable="yes">First Reference</item>
                                           <item translatable="yes">Last Reference</item>
                                           <item translatable="yes">Reference Range</item>
-                                          <item translatable="yes">Book Name</item>
-                                          <item translatable="yes">Alternate Book Name</item>
+                                          <item translatable="yes">Book (\h)</item>
+                                          <item translatable="yes">Book Alt (\h1)</item>
                                         </items>
                                         <child internal-child="entry">
                                           <object class="GtkEntry">
@@ -10664,8 +10664,8 @@ DRAFT\ \isodate\ \hrsmins   would give "DRAFT YYYY-MM-YY HH:MM"
                                           <item translatable="yes">First Reference</item>
                                           <item translatable="yes">Last Reference</item>
                                           <item translatable="yes">Reference Range</item>
-                                          <item id="&lt;Enter ID&gt;" translatable="yes">Book Name</item>
-                                          <item translatable="yes">Alternate Book Name</item>
+                                          <item id="&lt;Enter ID&gt;" translatable="yes">Book (\h)</item>
+                                          <item translatable="yes">Book Alt (\h1)</item>
                                         </items>
                                         <child internal-child="entry">
                                           <object class="GtkEntry">
@@ -15646,624 +15646,113 @@ or embelishments to the text.
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <child>
-                      <object class="GtkBox">
+                      <object class="GtkPaned">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="orientation">vertical</property>
-                        <child>
-                          <object class="GtkBox">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="margin_left">6</property>
-                            <property name="margin_right">6</property>
-                            <property name="margin_top">6</property>
-                            <property name="margin_bottom">6</property>
-                            <property name="spacing">6</property>
-                            <child>
-                              <object class="GtkLabel">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="tooltip_text" translatable="yes">If you are not sure which category
-your marker can be found under,
-then use this Search tool to find
-the marker you need.</property>
-                                <property name="label" translatable="yes">Search Markers:</property>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">True</property>
-                                <property name="position">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkSearchEntry" id="t_styleSearch">
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="tooltip_text" translatable="yes">If you are not sure which category
-your marker can be found under,
-then use this Search tool to find
-the marker you need.</property>
-                                <property name="width_chars">15</property>
-                                <property name="secondary_icon_stock">gtk-clear</property>
-                                <property name="primary_icon_name">edit-find-symbolic</property>
-                                <property name="primary_icon_activatable">False</property>
-                                <property name="primary_icon_sensitive">False</property>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">True</property>
-                                <property name="position">1</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkButton" id="btn_resetStyFilter">
-                                <property name="label">↺</property>
-                                <property name="sensitive">False</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">True</property>
-                                <property name="no_show_all">True</property>
-                                <property name="tooltip_text" translatable="yes">Clicking this button will reset
-the Search/Filter to SHOW ALL
-markers/styles in the list below.</property>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">False</property>
-                                <property name="position">2</property>
-                              </packing>
-                            </child>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">False</property>
-                            <property name="position">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkScrolledWindow">
-                            <property name="width_request">270</property>
-                            <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="vexpand">True</property>
-                            <property name="shadow_type">in</property>
-                            <property name="overlay_scrolling">False</property>
-                            <child>
-                              <object class="GtkTreeView" id="tv_Styles">
-                                <property name="width_request">310</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="has_focus">True</property>
-                                <property name="is_focus">True</property>
-                                <property name="halign">start</property>
-                                <property name="margin_left">6</property>
-                                <property name="margin_right">6</property>
-                                <property name="model">ts_styles</property>
-                                <property name="headers_visible">False</property>
-                                <property name="search_column">0</property>
-                                <property name="level_indentation">1</property>
-                                <property name="enable_tree_lines">True</property>
-                                <property name="activate_on_single_click">True</property>
-                                <child internal-child="selection">
-                                  <object class="GtkTreeSelection" id="tsel_Styles"/>
-                                </child>
-                              </object>
-                            </child>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">1</property>
-                          </packing>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">0</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkFrame">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="margin_left">6</property>
-                        <property name="margin_right">7</property>
-                        <property name="margin_top">6</property>
-                        <property name="label_xalign">0.019999999552965164</property>
+                        <property name="can_focus">True</property>
+                        <property name="position">260</property>
+                        <property name="position_set">True</property>
+                        <property name="wide_handle">True</property>
                         <child>
                           <object class="GtkBox">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkGrid">
+                              <object class="GtkBox">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="margin_left">6</property>
                                 <property name="margin_right">6</property>
                                 <property name="margin_top">6</property>
                                 <property name="margin_bottom">6</property>
-                                <property name="column_spacing">3</property>
+                                <property name="spacing">6</property>
                                 <child>
-                                  <object class="GtkLabel" id="l_styDescription">
+                                  <object class="GtkLabel">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="halign">start</property>
-                                    <property name="valign">start</property>
-                                    <property name="margin_top">12</property>
-                                    <property name="hexpand">True</property>
-                                    <property name="wrap">True</property>
-                                    <attributes>
-                                      <attribute name="style" value="italic"/>
-                                    </attributes>
+                                    <property name="tooltip_text" translatable="yes">If you are not sure which category
+your marker can be found under,
+then use this Search tool to find
+the marker you need.</property>
+                                    <property name="label" translatable="yes">Search Markers:</property>
                                   </object>
                                   <packing>
-                                    <property name="left_attach">2</property>
-                                    <property name="top_attach">0</property>
-                                    <property name="width">2</property>
-                                    <property name="height">2</property>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">0</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkLinkButton" id="l_url_usfm">
-                                    <property name="label" translatable="yes">More Info...</property>
+                                  <object class="GtkSearchEntry" id="t_styleSearch">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
+                                    <property name="tooltip_text" translatable="yes">If you are not sure which category
+your marker can be found under,
+then use this Search tool to find
+the marker you need.</property>
+                                    <property name="width_chars">15</property>
+                                    <property name="secondary_icon_stock">gtk-clear</property>
+                                    <property name="primary_icon_name">edit-find-symbolic</property>
+                                    <property name="primary_icon_activatable">False</property>
+                                    <property name="primary_icon_sensitive">False</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkButton" id="btn_resetStyFilter">
+                                    <property name="label">↺</property>
+                                    <property name="sensitive">False</property>
+                                    <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
-                                    <property name="relief">none</property>
-                                    <property name="uri">https://ubsicap.github.io/usfm/index.html</property>
+                                    <property name="no_show_all">True</property>
+                                    <property name="tooltip_text" translatable="yes">Clicking this button will reset
+the Search/Filter to SHOW ALL
+markers/styles in the list below.</property>
                                   </object>
                                   <packing>
-                                    <property name="left_attach">0</property>
-                                    <property name="top_attach">1</property>
-                                    <property name="width">2</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkLabel" id="l_styleTag">
-                                    <property name="width_request">100</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="valign">start</property>
-                                    <property name="margin_top">10</property>
-                                    <attributes>
-                                      <attribute name="weight" value="bold"/>
-                                      <attribute name="scale" value="1.2"/>
-                                    </attributes>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">0</property>
-                                    <property name="top_attach">0</property>
-                                    <property name="width">2</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkGrid">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="halign">end</property>
-                                    <property name="margin_left">6</property>
-                                    <property name="row_spacing">4</property>
-                                    <property name="column_spacing">4</property>
-                                    <child>
-                                      <object class="GtkButton" id="btn_styAdd">
-                                        <property name="label" translatable="yes">Add</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">True</property>
-                                        <property name="tooltip_text" translatable="yes">Find a style within the appropriate section which is similar to the new style you wish to create. Then click this Add button to create a new style based on the currently selected style.</property>
-                                        <signal name="clicked" handler="onStyleAdd" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">0</property>
-                                        <property name="top_attach">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkButton" id="btn_styDel">
-                                        <property name="label" translatable="yes">Del</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">True</property>
-                                        <property name="tooltip_text" translatable="yes">Click to delete this style.
-Warning: There is no 
-confirmation or undo!</property>
-                                        <signal name="clicked" handler="onStyleDel" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">0</property>
-                                        <property name="top_attach">1</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkButton" id="btn_styReset">
-                                        <property name="label">↺</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">True</property>
-                                        <property name="tooltip_text" translatable="yes">Click to reset this style's
-settings to default values.</property>
-                                        <signal name="clicked" handler="onStyleRefresh" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">1</property>
-                                        <property name="top_attach">1</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkButton" id="btn_styEdit">
-                                        <property name="label" translatable="yes">Edit</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">True</property>
-                                        <property name="tooltip_text" translatable="yes">Click to Edit additional  
-properties for this style.</property>
-                                        <signal name="clicked" handler="onStyleEdit" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">1</property>
-                                        <property name="top_attach">0</property>
-                                      </packing>
-                                    </child>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">4</property>
-                                    <property name="top_attach">0</property>
-                                    <property name="height">2</property>
+                                    <property name="expand">False</property>
+                                    <property name="fill">False</property>
+                                    <property name="position">2</property>
                                   </packing>
                                 </child>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
-                                <property name="fill">True</property>
+                                <property name="fill">False</property>
                                 <property name="position">0</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkExpander" id="ex_styChar">
+                              <object class="GtkScrolledWindow">
+                                <property name="width_request">260</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
+                                <property name="vexpand">True</property>
+                                <property name="shadow_type">in</property>
+                                <property name="overlay_scrolling">False</property>
                                 <child>
-                                  <object class="GtkGrid">
+                                  <object class="GtkTreeView" id="tv_Styles">
+                                    <property name="width_request">260</property>
                                     <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="has_focus">True</property>
+                                    <property name="is_focus">True</property>
                                     <property name="halign">start</property>
                                     <property name="margin_left">6</property>
                                     <property name="margin_right">6</property>
-                                    <property name="margin_top">6</property>
-                                    <property name="margin_bottom">6</property>
-                                    <property name="row_spacing">6</property>
-                                    <property name="column_spacing">4</property>
-                                    <child>
-                                      <object class="GtkButton" id="bl_font_styFontName">
-                                        <property name="label" translatable="yes">Select Font...</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">True</property>
-                                        <property name="halign">start</property>
-                                        <signal name="clicked" handler="onFontStyclicked" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">1</property>
-                                        <property name="top_attach">0</property>
-                                      </packing>
+                                    <property name="model">ts_styles</property>
+                                    <property name="headers_visible">False</property>
+                                    <property name="search_column">0</property>
+                                    <property name="level_indentation">1</property>
+                                    <property name="enable_tree_lines">True</property>
+                                    <property name="activate_on_single_click">True</property>
+                                    <child internal-child="selection">
+                                      <object class="GtkTreeSelection" id="tsel_Styles"/>
                                     </child>
-                                    <child>
-                                      <object class="GtkSpinButton" id="s_styFontSize">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="halign">start</property>
-                                        <property name="width_chars">5</property>
-                                        <property name="text">1.0</property>
-                                        <property name="caps_lock_warning">False</property>
-                                        <property name="placeholder_text">0.0</property>
-                                        <property name="input_purpose">number</property>
-                                        <property name="adjustment">a_styFontSize</property>
-                                        <property name="digits">2</property>
-                                        <property name="numeric">True</property>
-                                        <property name="update_policy">if-valid</property>
-                                        <property name="value">1</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">1</property>
-                                        <property name="top_attach">1</property>
-                                        <property name="width">2</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkCheckButton" id="c_styFontScale">
-                                        <property name="label" translatable="yes">Scale Relative
-to Parent</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="tooltip_text" translatable="yes">The Font Size is usually calculated as relative to the current Font Size Unit. If you prefer to specify an an amount relative to the underlying (parent) font then enable this option. Note that \p has a FontSize of 12 in usfm.sty</property>
-                                        <property name="halign">start</property>
-                                        <property name="draw_indicator">True</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">3</property>
-                                        <property name="top_attach">1</property>
-                                        <property name="width">4</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkCheckButton" id="c_styFaceBold">
-                                        <property name="label" translatable="yes">Bold</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="halign">start</property>
-                                        <property name="draw_indicator">True</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">1</property>
-                                        <property name="top_attach">2</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkCheckButton" id="c_styFaceItalic">
-                                        <property name="label" translatable="yes">Italic</property>
-                                        <property name="width_request">60</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="halign">start</property>
-                                        <property name="draw_indicator">True</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">1</property>
-                                        <property name="top_attach">3</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkCheckButton" id="c_styFaceSuperscript">
-                                        <property name="label" translatable="yes">Superscript   / </property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="tooltip_text" translatable="yes">The superscript option overrides these settings:
-   Font Size Factor is set to 0.75
-   Raise is set to 0.85 times the x-height of the font (which
-   defaults to 1/2 the ascent if not specified in the font).</property>
-                                        <property name="halign">start</property>
-                                        <property name="draw_indicator">True</property>
-                                        <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">2</property>
-                                        <property name="top_attach">3</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkCheckButton" id="c_stySmallCap">
-                                        <property name="label" translatable="yes">SmallCaps</property>
-                                        <property name="width_request">90</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="halign">start</property>
-                                        <property name="draw_indicator">True</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">3</property>
-                                        <property name="top_attach">2</property>
-                                        <property name="width">3</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkSpinButton" id="s_styRaise">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="tooltip_text" translatable="yes">How much to raise the text (in pts).</property>
-                                        <property name="halign">start</property>
-                                        <property name="width_chars">5</property>
-                                        <property name="text">1.0</property>
-                                        <property name="caps_lock_warning">False</property>
-                                        <property name="placeholder_text">0.0</property>
-                                        <property name="input_purpose">number</property>
-                                        <property name="adjustment">a_styRaise</property>
-                                        <property name="digits">2</property>
-                                        <property name="numeric">True</property>
-                                        <property name="update_policy">if-valid</property>
-                                        <property name="value">1</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">4</property>
-                                        <property name="top_attach">3</property>
-                                        <property name="width">3</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkColorButton" id="col_styColor">
-                                        <property name="width_request">40</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">True</property>
-                                        <property name="tooltip_text" translatable="yes">Sets text color for text in this style.</property>
-                                        <property name="halign">start</property>
-                                        <property name="title" translatable="yes">Text Color</property>
-                                        <property name="rgba">rgb(0,0,0)</property>
-                                        <signal name="color-set" handler="onstyColorSet" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">6</property>
-                                        <property name="top_attach">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkEventBox">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="halign">end</property>
-                                        <signal name="button-release-event" handler="resetParam" swapped="no"/>
-                                        <child>
-                                          <object class="GtkLabel" id="l_styFontName">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="halign">end</property>
-                                            <property name="label" translatable="yes">Font:</property>
-                                            <property name="justify">right</property>
-                                          </object>
-                                        </child>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">0</property>
-                                        <property name="top_attach">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkEventBox">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <signal name="button-release-event" handler="resetParam" swapped="no"/>
-                                        <child>
-                                          <object class="GtkLabel" id="l_styColor">
-                                            <property name="width_request">45</property>
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="halign">end</property>
-                                            <property name="label" translatable="yes">Color:</property>
-                                            <property name="justify">right</property>
-                                          </object>
-                                        </child>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">5</property>
-                                        <property name="top_attach">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkEventBox">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <signal name="button-release-event" handler="resetParam" swapped="no"/>
-                                        <child>
-                                          <object class="GtkLabel" id="l_styFontSize">
-                                            <property name="width_request">78</property>
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="tooltip_text" translatable="yes">This a factor or proportion of the base font size.
-So 1.0 is the same as the base font size from the 
-Layout tab.</property>
-                                            <property name="halign">end</property>
-                                            <property name="label" translatable="yes">Font Size
-Factor:</property>
-                                            <property name="justify">right</property>
-                                            <property name="xalign">1</property>
-                                          </object>
-                                        </child>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">0</property>
-                                        <property name="top_attach">1</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkEventBox">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <signal name="button-release-event" handler="resetParam" swapped="no"/>
-                                        <child>
-                                          <object class="GtkLabel" id="l_styRaise">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="tooltip_text" translatable="yes">How much to raise the text (in pts).</property>
-                                            <property name="halign">end</property>
-                                            <property name="label" translatable="yes">Raise:</property>
-                                            <property name="justify">right</property>
-                                            <signal name="button-release-event" handler="resetParam" swapped="no"/>
-                                          </object>
-                                        </child>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">3</property>
-                                        <property name="top_attach">3</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkLabel" id="l_styActualFontSize">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="tooltip_text" translatable="yes">Font name with calculated absolute point size 
-given the current Base Font Size (on the Layout tab).
-The (+Ascender -Descender) values from the base
-line for this font are provided for reference. </property>
-                                        <property name="halign">start</property>
-                                        <property name="label" translatable="yes">11.7pt</property>
-                                        <attributes>
-                                          <attribute name="foreground" value="#cece5c5c0000"/>
-                                        </attributes>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">2</property>
-                                        <property name="top_attach">0</property>
-                                        <property name="width">3</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkLabel">
-                                        <property name="width_request">0</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="halign">start</property>
-                                        <property name="hexpand">True</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">4</property>
-                                        <property name="top_attach">3</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkLabel" id="l_styColorValue">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="tooltip_text" translatable="yes">RGB value in hexadecimal.</property>
-                                        <property name="halign">center</property>
-                                        <property name="valign">start</property>
-                                        <property name="label" translatable="yes">ColorVal</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">6</property>
-                                        <property name="top_attach">1</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkCheckButton" id="c_styFaceUnderline">
-                                        <property name="label" translatable="yes">Underline</property>
-                                        <property name="visible">True</property>
-                                        <property name="sensitive">False</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="no_show_all">True</property>
-                                        <property name="halign">start</property>
-                                        <property name="draw_indicator">True</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">2</property>
-                                        <property name="top_attach">2</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                  </object>
-                                </child>
-                                <child type="label">
-                                  <object class="GtkLabel">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="label" translatable="yes">Character Settings</property>
-                                    <attributes>
-                                      <attribute name="weight" value="bold"/>
-                                      <attribute name="foreground" value="#72729f9fcfcf"/>
-                                    </attributes>
                                   </object>
                                 </child>
                               </object>
@@ -16273,698 +15762,1212 @@ line for this font are provided for reference. </property>
                                 <property name="position">1</property>
                               </packing>
                             </child>
+                          </object>
+                          <packing>
+                            <property name="resize">False</property>
+                            <property name="shrink">True</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkFrame">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="margin_left">6</property>
+                            <property name="margin_right">6</property>
+                            <property name="margin_top">6</property>
+                            <property name="margin_bottom">6</property>
+                            <property name="label_xalign">0.019999999552965164</property>
                             <child>
-                              <object class="GtkExpander" id="ex_styPara">
+                              <object class="GtkBox">
                                 <property name="visible">True</property>
-                                <property name="can_focus">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="orientation">vertical</property>
                                 <child>
                                   <object class="GtkGrid">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="margin_left">6</property>
-                                    <property name="margin_right">6</property>
                                     <property name="margin_top">6</property>
                                     <property name="margin_bottom">6</property>
-                                    <property name="row_spacing">6</property>
-                                    <property name="column_spacing">6</property>
+                                    <property name="column_spacing">3</property>
                                     <child>
-                                      <object class="GtkComboBox" id="fcb_styJustification">
+                                      <object class="GtkLabel" id="l_styDescription">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="can_default">True</property>
                                         <property name="halign">start</property>
-                                        <property name="model">ls_styJustification</property>
-                                        <property name="wrap_width">1</property>
-                                        <property name="has_entry">True</property>
-                                        <property name="entry_text_column">0</property>
-                                        <property name="id_column">1</property>
-                                        <child internal-child="entry">
-                                          <object class="GtkEntry">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">True</property>
-                                            <property name="width_chars">9</property>
-                                          </object>
-                                        </child>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">1</property>
-                                        <property name="top_attach">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkSpinButton" id="s_styFirstLineIndent">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="halign">start</property>
-                                        <property name="width_chars">5</property>
-                                        <property name="text">1.0</property>
-                                        <property name="caps_lock_warning">False</property>
-                                        <property name="placeholder_text">0.0</property>
-                                        <property name="input_purpose">number</property>
-                                        <property name="adjustment">a_styFirstLineIndent</property>
-                                        <property name="digits">2</property>
-                                        <property name="numeric">True</property>
-                                        <property name="update_policy">if-valid</property>
-                                        <property name="value">1</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">4</property>
-                                        <property name="top_attach">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkSpinButton" id="s_styLeftMargin">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="halign">start</property>
-                                        <property name="width_chars">5</property>
-                                        <property name="text">1.0</property>
-                                        <property name="caps_lock_warning">False</property>
-                                        <property name="placeholder_text">0.0</property>
-                                        <property name="input_purpose">number</property>
-                                        <property name="adjustment">a_styLeftMargin</property>
-                                        <property name="digits">2</property>
-                                        <property name="numeric">True</property>
-                                        <property name="update_policy">if-valid</property>
-                                        <property name="value">1</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">1</property>
-                                        <property name="top_attach">1</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkSpinButton" id="s_styRightMargin">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="halign">start</property>
-                                        <property name="width_chars">5</property>
-                                        <property name="text">1.0</property>
-                                        <property name="caps_lock_warning">False</property>
-                                        <property name="placeholder_text">0.0</property>
-                                        <property name="input_purpose">number</property>
-                                        <property name="adjustment">a_styRightMargin</property>
-                                        <property name="digits">2</property>
-                                        <property name="numeric">True</property>
-                                        <property name="update_policy">if-valid</property>
-                                        <property name="value">1</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">4</property>
-                                        <property name="top_attach">1</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkSpinButton" id="s_styLineSpacing">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="halign">start</property>
-                                        <property name="width_chars">5</property>
-                                        <property name="text">1.0</property>
-                                        <property name="caps_lock_warning">False</property>
-                                        <property name="placeholder_text">0.0</property>
-                                        <property name="input_purpose">number</property>
-                                        <property name="adjustment">a_styLineSpacing</property>
-                                        <property name="climb_rate">0.10000000000000001</property>
-                                        <property name="digits">2</property>
-                                        <property name="numeric">True</property>
-                                        <property name="update_policy">if-valid</property>
-                                        <property name="value">1</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">1</property>
-                                        <property name="top_attach">2</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkCheckButton" id="c_styAbsoluteLineSpacing">
-                                        <property name="label" translatable="yes">Use Absolute Spacing (in pts)</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="tooltip_text" translatable="yes">The Line Spacing is usually calculated as a factor of the Font Size. If you prefer to specify an exact/absolute line spacing (in points), then enable this option.</property>
-                                        <property name="halign">start</property>
-                                        <property name="margin_left">6</property>
-                                        <property name="draw_indicator">True</property>
+                                        <property name="valign">start</property>
+                                        <property name="margin_top">12</property>
+                                        <property name="hexpand">True</property>
+                                        <property name="wrap">True</property>
+                                        <attributes>
+                                          <attribute name="style" value="italic"/>
+                                        </attributes>
                                       </object>
                                       <packing>
                                         <property name="left_attach">2</property>
-                                        <property name="top_attach">2</property>
-                                        <property name="width">3</property>
+                                        <property name="top_attach">0</property>
+                                        <property name="width">2</property>
+                                        <property name="height">2</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkSpinButton" id="s_stySpaceBefore">
+                                      <object class="GtkLinkButton" id="l_url_usfm">
+                                        <property name="label" translatable="yes">More Info...</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
-                                        <property name="halign">start</property>
-                                        <property name="width_chars">5</property>
-                                        <property name="text">1.0</property>
-                                        <property name="caps_lock_warning">False</property>
-                                        <property name="placeholder_text">0.0</property>
-                                        <property name="input_purpose">number</property>
-                                        <property name="adjustment">a_stySpaceBefore</property>
-                                        <property name="digits">2</property>
-                                        <property name="numeric">True</property>
-                                        <property name="update_policy">if-valid</property>
-                                        <property name="value">1</property>
+                                        <property name="receives_default">True</property>
+                                        <property name="relief">none</property>
+                                        <property name="uri">https://ubsicap.github.io/usfm/index.html</property>
                                       </object>
                                       <packing>
-                                        <property name="left_attach">1</property>
-                                        <property name="top_attach">3</property>
+                                        <property name="left_attach">0</property>
+                                        <property name="top_attach">1</property>
+                                        <property name="width">2</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkSpinButton" id="s_stySpaceAfter">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="halign">start</property>
-                                        <property name="width_chars">5</property>
-                                        <property name="text">1.0</property>
-                                        <property name="caps_lock_warning">False</property>
-                                        <property name="placeholder_text">0.0</property>
-                                        <property name="input_purpose">number</property>
-                                        <property name="adjustment">a_stySpaceAfter</property>
-                                        <property name="digits">2</property>
-                                        <property name="numeric">True</property>
-                                        <property name="update_policy">if-valid</property>
-                                        <property name="value">1</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">4</property>
-                                        <property name="top_attach">3</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkLabel">
+                                      <object class="GtkLabel" id="l_styleTag">
+                                        <property name="width_request">100</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="hexpand">True</property>
+                                        <property name="valign">start</property>
+                                        <property name="margin_top">10</property>
+                                        <attributes>
+                                          <attribute name="weight" value="bold"/>
+                                          <attribute name="scale" value="1.2"/>
+                                        </attributes>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">0</property>
+                                        <property name="top_attach">0</property>
+                                        <property name="width">2</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkGrid">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="halign">end</property>
+                                        <property name="margin_right">6</property>
+                                        <property name="row_spacing">4</property>
+                                        <property name="column_spacing">4</property>
+                                        <child>
+                                          <object class="GtkButton" id="btn_styAdd">
+                                            <property name="label" translatable="yes">Add</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">True</property>
+                                            <property name="tooltip_text" translatable="yes">Find a style within the appropriate section which is similar to the new style you wish to create. Then click this Add button to create a new style based on the currently selected style.</property>
+                                            <signal name="clicked" handler="onStyleAdd" swapped="no"/>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">0</property>
+                                            <property name="top_attach">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkButton" id="btn_styDel">
+                                            <property name="label" translatable="yes">Del</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">True</property>
+                                            <property name="tooltip_text" translatable="yes">Click to delete this style.
+Warning: There is no 
+confirmation or undo!</property>
+                                            <signal name="clicked" handler="onStyleDel" swapped="no"/>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">0</property>
+                                            <property name="top_attach">1</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkButton" id="btn_styReset">
+                                            <property name="label">↺</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">True</property>
+                                            <property name="tooltip_text" translatable="yes">Click to reset this style's
+settings to default values.</property>
+                                            <signal name="clicked" handler="onStyleRefresh" swapped="no"/>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">1</property>
+                                            <property name="top_attach">1</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkButton" id="btn_styEdit">
+                                            <property name="label" translatable="yes">Edit</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">True</property>
+                                            <property name="tooltip_text" translatable="yes">Click to Edit additional  
+properties for this style.</property>
+                                            <signal name="clicked" handler="onStyleEdit" swapped="no"/>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">1</property>
+                                            <property name="top_attach">0</property>
+                                          </packing>
+                                        </child>
                                       </object>
                                       <packing>
                                         <property name="left_attach">4</property>
                                         <property name="top_attach">0</property>
+                                        <property name="height">2</property>
                                       </packing>
                                     </child>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkExpander" id="ex_styChar">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
                                     <child>
-                                      <object class="GtkEventBox">
+                                      <object class="GtkGrid">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <signal name="button-release-event" handler="resetParam" swapped="no"/>
+                                        <property name="halign">start</property>
+                                        <property name="margin_top">6</property>
+                                        <property name="margin_bottom">6</property>
+                                        <property name="row_spacing">6</property>
+                                        <property name="column_spacing">4</property>
                                         <child>
-                                          <object class="GtkLabel" id="l_styJustification">
+                                          <object class="GtkButton" id="bl_font_styFontName">
+                                            <property name="label" translatable="yes">Select Font...</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">True</property>
+                                            <property name="halign">start</property>
+                                            <signal name="clicked" handler="onFontStyclicked" swapped="no"/>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">1</property>
+                                            <property name="top_attach">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkSpinButton" id="s_styFontSize">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="halign">start</property>
+                                            <property name="width_chars">5</property>
+                                            <property name="text">1.00</property>
+                                            <property name="caps_lock_warning">False</property>
+                                            <property name="placeholder_text">0.0</property>
+                                            <property name="input_purpose">number</property>
+                                            <property name="adjustment">a_styFontSize</property>
+                                            <property name="digits">2</property>
+                                            <property name="numeric">True</property>
+                                            <property name="update_policy">if-valid</property>
+                                            <property name="value">1</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">1</property>
+                                            <property name="top_attach">1</property>
+                                            <property name="width">2</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkCheckButton" id="c_styFontScale">
+                                            <property name="label" translatable="yes">Scale Relative
+to Parent</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">False</property>
+                                            <property name="tooltip_text" translatable="yes">The Font Size is usually calculated as relative to the current Font Size Unit. If you prefer to specify an an amount relative to the underlying (parent) font then enable this option. Note that \p has a FontSize of 12 in usfm.sty</property>
+                                            <property name="halign">start</property>
+                                            <property name="draw_indicator">True</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">3</property>
+                                            <property name="top_attach">1</property>
+                                            <property name="width">4</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkCheckButton" id="c_styFaceBold">
+                                            <property name="label" translatable="yes">Bold</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">False</property>
+                                            <property name="halign">start</property>
+                                            <property name="draw_indicator">True</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">1</property>
+                                            <property name="top_attach">2</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkCheckButton" id="c_styFaceItalic">
+                                            <property name="label" translatable="yes">Italic</property>
+                                            <property name="width_request">60</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">False</property>
+                                            <property name="halign">start</property>
+                                            <property name="draw_indicator">True</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">1</property>
+                                            <property name="top_attach">3</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkCheckButton" id="c_styFaceSuperscript">
+                                            <property name="label" translatable="yes">Superscript   / </property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">False</property>
+                                            <property name="tooltip_text" translatable="yes">The superscript option overrides these settings:
+   Font Size Factor is set to 0.75
+   Raise is set to 0.85 times the x-height of the font (which
+   defaults to 1/2 the ascent if not specified in the font).</property>
+                                            <property name="halign">start</property>
+                                            <property name="draw_indicator">True</property>
+                                            <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">2</property>
+                                            <property name="top_attach">3</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkCheckButton" id="c_stySmallCap">
+                                            <property name="label" translatable="yes">SmallCaps</property>
+                                            <property name="width_request">90</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">False</property>
+                                            <property name="halign">start</property>
+                                            <property name="draw_indicator">True</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">3</property>
+                                            <property name="top_attach">2</property>
+                                            <property name="width">3</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkSpinButton" id="s_styRaise">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="tooltip_text" translatable="yes">How much to raise the text (in pts).</property>
+                                            <property name="halign">start</property>
+                                            <property name="width_chars">5</property>
+                                            <property name="text">1.00</property>
+                                            <property name="caps_lock_warning">False</property>
+                                            <property name="placeholder_text">0.0</property>
+                                            <property name="input_purpose">number</property>
+                                            <property name="adjustment">a_styRaise</property>
+                                            <property name="digits">2</property>
+                                            <property name="numeric">True</property>
+                                            <property name="update_policy">if-valid</property>
+                                            <property name="value">1</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">4</property>
+                                            <property name="top_attach">3</property>
+                                            <property name="width">3</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkColorButton" id="col_styColor">
+                                            <property name="width_request">40</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">True</property>
+                                            <property name="tooltip_text" translatable="yes">Sets text color for text in this style.</property>
+                                            <property name="halign">start</property>
+                                            <property name="title" translatable="yes">Text Color</property>
+                                            <property name="rgba">rgb(0,0,0)</property>
+                                            <signal name="color-set" handler="onstyColorSet" swapped="no"/>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">6</property>
+                                            <property name="top_attach">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkEventBox">
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
-                                            <property name="tooltip_text" translatable="yes">If text is justified but Justify Paragraphs is turned off on the
+                                            <property name="halign">end</property>
+                                            <signal name="button-release-event" handler="resetParam" swapped="no"/>
+                                            <child>
+                                              <object class="GtkLabel" id="l_styFontName">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">False</property>
+                                                <property name="halign">end</property>
+                                                <property name="label" translatable="yes">Font:</property>
+                                                <property name="justify">right</property>
+                                              </object>
+                                            </child>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">0</property>
+                                            <property name="top_attach">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkEventBox">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <signal name="button-release-event" handler="resetParam" swapped="no"/>
+                                            <child>
+                                              <object class="GtkLabel" id="l_styColor">
+                                                <property name="width_request">45</property>
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">False</property>
+                                                <property name="halign">end</property>
+                                                <property name="label" translatable="yes">Color:</property>
+                                                <property name="justify">right</property>
+                                              </object>
+                                            </child>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">5</property>
+                                            <property name="top_attach">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkEventBox">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <signal name="button-release-event" handler="resetParam" swapped="no"/>
+                                            <child>
+                                              <object class="GtkLabel" id="l_styFontSize">
+                                                <property name="width_request">78</property>
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">False</property>
+                                                <property name="tooltip_text" translatable="yes">This a factor or proportion of the base font size.
+So 1.0 is the same as the base font size from the 
+Layout tab.</property>
+                                                <property name="halign">end</property>
+                                                <property name="label" translatable="yes">Font Size
+Factor:</property>
+                                                <property name="justify">right</property>
+                                                <property name="xalign">1</property>
+                                              </object>
+                                            </child>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">0</property>
+                                            <property name="top_attach">1</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkEventBox">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <signal name="button-release-event" handler="resetParam" swapped="no"/>
+                                            <child>
+                                              <object class="GtkLabel" id="l_styRaise">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">False</property>
+                                                <property name="tooltip_text" translatable="yes">How much to raise the text (in pts).</property>
+                                                <property name="halign">end</property>
+                                                <property name="label" translatable="yes">Raise:</property>
+                                                <property name="justify">right</property>
+                                                <signal name="button-release-event" handler="resetParam" swapped="no"/>
+                                              </object>
+                                            </child>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">3</property>
+                                            <property name="top_attach">3</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkLabel" id="l_styActualFontSize">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="tooltip_text" translatable="yes">Font name with calculated absolute point size 
+given the current Base Font Size (on the Layout tab).
+The (+Ascender -Descender) values from the base
+line for this font are provided for reference. </property>
+                                            <property name="halign">start</property>
+                                            <property name="label" translatable="yes">11.7pt</property>
+                                            <attributes>
+                                              <attribute name="foreground" value="#cece5c5c0000"/>
+                                            </attributes>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">2</property>
+                                            <property name="top_attach">0</property>
+                                            <property name="width">3</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkLabel">
+                                            <property name="width_request">0</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="halign">start</property>
+                                            <property name="hexpand">True</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">4</property>
+                                            <property name="top_attach">3</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkLabel" id="l_styColorValue">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="tooltip_text" translatable="yes">RGB value in hexadecimal.</property>
+                                            <property name="halign">center</property>
+                                            <property name="valign">start</property>
+                                            <property name="label" translatable="yes">ColorVal</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">6</property>
+                                            <property name="top_attach">1</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkCheckButton" id="c_styFaceUnderline">
+                                            <property name="label" translatable="yes">Underline</property>
+                                            <property name="visible">True</property>
+                                            <property name="sensitive">False</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">False</property>
+                                            <property name="no_show_all">True</property>
+                                            <property name="tooltip_text" translatable="yes">Underlining printed text is actively
+discouraged. If you have a strong
+use-case for why this is needed for
+your typesetting job, then get in
+touch for details on how to achieve
+this using a .tex snippet.
+Email: ptxprint_support@sil.org</property>
+                                            <property name="halign">start</property>
+                                            <property name="draw_indicator">True</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">2</property>
+                                            <property name="top_attach">2</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                      </object>
+                                    </child>
+                                    <child type="label">
+                                      <object class="GtkLabel">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="label" translatable="yes">Character Settings</property>
+                                        <attributes>
+                                          <attribute name="weight" value="bold"/>
+                                          <attribute name="foreground" value="#72729f9fcfcf"/>
+                                        </attributes>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkExpander" id="ex_styPara">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <child>
+                                      <object class="GtkGrid">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="margin_top">6</property>
+                                        <property name="margin_bottom">6</property>
+                                        <property name="row_spacing">6</property>
+                                        <property name="column_spacing">6</property>
+                                        <child>
+                                          <object class="GtkComboBox" id="fcb_styJustification">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="can_default">True</property>
+                                            <property name="halign">start</property>
+                                            <property name="model">ls_styJustification</property>
+                                            <property name="wrap_width">1</property>
+                                            <property name="has_entry">True</property>
+                                            <property name="entry_text_column">0</property>
+                                            <property name="id_column">1</property>
+                                            <child internal-child="entry">
+                                              <object class="GtkEntry">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">True</property>
+                                                <property name="width_chars">9</property>
+                                              </object>
+                                            </child>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">1</property>
+                                            <property name="top_attach">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkSpinButton" id="s_styFirstLineIndent">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="halign">start</property>
+                                            <property name="width_chars">5</property>
+                                            <property name="text">1.00</property>
+                                            <property name="caps_lock_warning">False</property>
+                                            <property name="placeholder_text">0.0</property>
+                                            <property name="input_purpose">number</property>
+                                            <property name="adjustment">a_styFirstLineIndent</property>
+                                            <property name="digits">2</property>
+                                            <property name="numeric">True</property>
+                                            <property name="update_policy">if-valid</property>
+                                            <property name="value">1</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">4</property>
+                                            <property name="top_attach">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkSpinButton" id="s_styLeftMargin">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="halign">start</property>
+                                            <property name="width_chars">5</property>
+                                            <property name="text">1.00</property>
+                                            <property name="caps_lock_warning">False</property>
+                                            <property name="placeholder_text">0.0</property>
+                                            <property name="input_purpose">number</property>
+                                            <property name="adjustment">a_styLeftMargin</property>
+                                            <property name="digits">2</property>
+                                            <property name="numeric">True</property>
+                                            <property name="update_policy">if-valid</property>
+                                            <property name="value">1</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">1</property>
+                                            <property name="top_attach">1</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkSpinButton" id="s_styRightMargin">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="halign">start</property>
+                                            <property name="width_chars">5</property>
+                                            <property name="text">1.00</property>
+                                            <property name="caps_lock_warning">False</property>
+                                            <property name="placeholder_text">0.0</property>
+                                            <property name="input_purpose">number</property>
+                                            <property name="adjustment">a_styRightMargin</property>
+                                            <property name="digits">2</property>
+                                            <property name="numeric">True</property>
+                                            <property name="update_policy">if-valid</property>
+                                            <property name="value">1</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">4</property>
+                                            <property name="top_attach">1</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkSpinButton" id="s_styLineSpacing">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="halign">start</property>
+                                            <property name="width_chars">5</property>
+                                            <property name="text">1.00</property>
+                                            <property name="caps_lock_warning">False</property>
+                                            <property name="placeholder_text">0.0</property>
+                                            <property name="input_purpose">number</property>
+                                            <property name="adjustment">a_styLineSpacing</property>
+                                            <property name="climb_rate">0.10000000000000001</property>
+                                            <property name="digits">2</property>
+                                            <property name="numeric">True</property>
+                                            <property name="update_policy">if-valid</property>
+                                            <property name="value">1</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">1</property>
+                                            <property name="top_attach">2</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkCheckButton" id="c_styAbsoluteLineSpacing">
+                                            <property name="label" translatable="yes">Use Absolute Spacing (in pts)</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">False</property>
+                                            <property name="tooltip_text" translatable="yes">The Line Spacing is usually calculated as a factor of the Font Size. If you prefer to specify an exact/absolute line spacing (in points), then enable this option.</property>
+                                            <property name="halign">start</property>
+                                            <property name="draw_indicator">True</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">2</property>
+                                            <property name="top_attach">2</property>
+                                            <property name="width">3</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkSpinButton" id="s_stySpaceBefore">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="halign">start</property>
+                                            <property name="width_chars">5</property>
+                                            <property name="text">1.00</property>
+                                            <property name="caps_lock_warning">False</property>
+                                            <property name="placeholder_text">0.0</property>
+                                            <property name="input_purpose">number</property>
+                                            <property name="adjustment">a_stySpaceBefore</property>
+                                            <property name="digits">2</property>
+                                            <property name="numeric">True</property>
+                                            <property name="update_policy">if-valid</property>
+                                            <property name="value">1</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">1</property>
+                                            <property name="top_attach">3</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkSpinButton" id="s_stySpaceAfter">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="halign">start</property>
+                                            <property name="width_chars">5</property>
+                                            <property name="text">1.00</property>
+                                            <property name="caps_lock_warning">False</property>
+                                            <property name="placeholder_text">0.0</property>
+                                            <property name="input_purpose">number</property>
+                                            <property name="adjustment">a_stySpaceAfter</property>
+                                            <property name="digits">2</property>
+                                            <property name="numeric">True</property>
+                                            <property name="update_policy">if-valid</property>
+                                            <property name="value">1</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">4</property>
+                                            <property name="top_attach">3</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkLabel">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="hexpand">True</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">4</property>
+                                            <property name="top_attach">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkEventBox">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <signal name="button-release-event" handler="resetParam" swapped="no"/>
+                                            <child>
+                                              <object class="GtkLabel" id="l_styJustification">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">False</property>
+                                                <property name="tooltip_text" translatable="yes">If text is justified but Justify Paragraphs is turned off on the
 Body tab then an alignment of Justified here is treated as 
 Left, (and maybe swapped if Right-to-Left).
 
 When the Writing system text flow direction is Right-to-Left
 the interpretation of Left and Right is swapped. Top-to-Bottom
 flow is treated as Left-to-Right.</property>
-                                            <property name="label" translatable="yes">Alignment:</property>
-                                            <property name="xalign">1</property>
+                                                <property name="label" translatable="yes">Alignment:</property>
+                                                <property name="xalign">1</property>
+                                              </object>
+                                            </child>
                                           </object>
+                                          <packing>
+                                            <property name="left_attach">0</property>
+                                            <property name="top_attach">0</property>
+                                          </packing>
                                         </child>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">0</property>
-                                        <property name="top_attach">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkEventBox">
-                                        <property name="width_request">78</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <signal name="button-release-event" handler="resetParam" swapped="no"/>
                                         <child>
-                                          <object class="GtkLabel" id="l_styFirstLineIndent">
-                                            <property name="width_request">60</property>
+                                          <object class="GtkEventBox">
+                                            <property name="width_request">78</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
-                                            <property name="tooltip_text" translatable="yes">This is multiplied by the Base Paragraph Indent
+                                            <signal name="button-release-event" handler="resetParam" swapped="no"/>
+                                            <child>
+                                              <object class="GtkLabel" id="l_styFirstLineIndent">
+                                                <property name="width_request">60</property>
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">False</property>
+                                                <property name="tooltip_text" translatable="yes">This is multiplied by the Base Paragraph Indent
 value (specified on the Layout tab) to get the final
 indentation amount.</property>
-                                            <property name="halign">end</property>
-                                            <property name="label" translatable="yes">First Line
+                                                <property name="halign">end</property>
+                                                <property name="label" translatable="yes">First Line
 Indent Factor:</property>
-                                            <property name="justify">right</property>
-                                            <property name="xalign">1</property>
+                                                <property name="justify">right</property>
+                                                <property name="xalign">1</property>
+                                              </object>
+                                            </child>
                                           </object>
+                                          <packing>
+                                            <property name="left_attach">3</property>
+                                            <property name="top_attach">0</property>
+                                          </packing>
                                         </child>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">3</property>
-                                        <property name="top_attach">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkEventBox">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <signal name="button-release-event" handler="resetParam" swapped="no"/>
                                         <child>
-                                          <object class="GtkLabel" id="l_styLeftMargin">
+                                          <object class="GtkEventBox">
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
-                                            <property name="tooltip_text" translatable="yes">This is multiplied by the Base Paragraph Indent
+                                            <signal name="button-release-event" handler="resetParam" swapped="no"/>
+                                            <child>
+                                              <object class="GtkLabel" id="l_styLeftMargin">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">False</property>
+                                                <property name="tooltip_text" translatable="yes">This is multiplied by the Base Paragraph Indent
 value (specified on the Layout tab) to get the final
 indentation amount. 
 
 When the Writing system text flow direction is Right-to-Left
 the interpretation of Left and Right is swapped.</property>
-                                            <property name="halign">end</property>
-                                            <property name="label" translatable="yes">Left Indent
+                                                <property name="halign">end</property>
+                                                <property name="label" translatable="yes">Left Indent
 Factor:</property>
-                                            <property name="justify">right</property>
-                                            <property name="xalign">1</property>
+                                                <property name="justify">right</property>
+                                                <property name="xalign">1</property>
+                                              </object>
+                                            </child>
                                           </object>
+                                          <packing>
+                                            <property name="left_attach">0</property>
+                                            <property name="top_attach">1</property>
+                                          </packing>
                                         </child>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">0</property>
-                                        <property name="top_attach">1</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkEventBox">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <signal name="button-release-event" handler="resetParam" swapped="no"/>
                                         <child>
-                                          <object class="GtkLabel" id="l_styRightMargin">
-                                            <property name="width_request">72</property>
+                                          <object class="GtkEventBox">
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
-                                            <property name="tooltip_text" translatable="yes">This is multiplied by the Base Paragraph Indent
+                                            <signal name="button-release-event" handler="resetParam" swapped="no"/>
+                                            <child>
+                                              <object class="GtkLabel" id="l_styRightMargin">
+                                                <property name="width_request">72</property>
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">False</property>
+                                                <property name="tooltip_text" translatable="yes">This is multiplied by the Base Paragraph Indent
 value (specified on the Layout tab) to get the final
 indentation amount.
 
 When the Writing system text flow direction is Right-to-Left
 the interpretation of Left and Right is swapped.</property>
-                                            <property name="halign">end</property>
-                                            <property name="label" translatable="yes">Right Indent
+                                                <property name="halign">end</property>
+                                                <property name="label" translatable="yes">Right Indent
 Factor:</property>
-                                            <property name="justify">right</property>
+                                                <property name="justify">right</property>
+                                              </object>
+                                            </child>
                                           </object>
+                                          <packing>
+                                            <property name="left_attach">3</property>
+                                            <property name="top_attach">1</property>
+                                          </packing>
                                         </child>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">3</property>
-                                        <property name="top_attach">1</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkEventBox">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="halign">end</property>
-                                        <signal name="button-release-event" handler="resetParam" swapped="no"/>
                                         <child>
-                                          <object class="GtkLabel" id="l_styLineSpacing">
-                                            <property name="width_request">78</property>
+                                          <object class="GtkEventBox">
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
-                                            <property name="tooltip_text" translatable="yes">This a proportion of the base line spacing.
+                                            <property name="halign">end</property>
+                                            <signal name="button-release-event" handler="resetParam" swapped="no"/>
+                                            <child>
+                                              <object class="GtkLabel" id="l_styLineSpacing">
+                                                <property name="width_request">78</property>
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">False</property>
+                                                <property name="tooltip_text" translatable="yes">This a proportion of the base line spacing.
 So 1.0 is the same as the base line spacing from the Layout tab.
 If Absolute Spacing is set, then this value is the line spacing in pts.</property>
-                                            <property name="halign">end</property>
-                                            <property name="label" translatable="yes">Line Spacing
+                                                <property name="halign">end</property>
+                                                <property name="label" translatable="yes">Line Spacing
 Factor:</property>
-                                            <property name="justify">right</property>
-                                            <property name="xalign">1</property>
+                                                <property name="justify">right</property>
+                                                <property name="xalign">1</property>
+                                              </object>
+                                            </child>
                                           </object>
+                                          <packing>
+                                            <property name="left_attach">0</property>
+                                            <property name="top_attach">2</property>
+                                          </packing>
                                         </child>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">0</property>
-                                        <property name="top_attach">2</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkEventBox">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <signal name="button-release-event" handler="resetParam" swapped="no"/>
                                         <child>
-                                          <object class="GtkLabel" id="l_stySpaceBefore">
+                                          <object class="GtkEventBox">
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
-                                            <property name="tooltip_text" translatable="yes">Amount of space to insert before the paragraph. The actual space is this factor multiplied by the base line spacing from the Layout tab.</property>
-                                            <property name="halign">end</property>
-                                            <property name="label" translatable="yes">Space Before
-Factor:</property>
-                                            <property name="justify">right</property>
-                                            <property name="xalign">1</property>
-                                          </object>
-                                        </child>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">0</property>
-                                        <property name="top_attach">3</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkEventBox">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <signal name="button-release-event" handler="resetParam" swapped="no"/>
-                                        <child>
-                                          <object class="GtkLabel" id="l_stySpaceAfter">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="tooltip_text" translatable="yes">Amount of space to insert after the paragraph. The actual space is this factor multiplied by the base line spacing from the layout tab.</property>
-                                            <property name="halign">end</property>
-                                            <property name="label" translatable="yes">Space After
-Factor:</property>
-                                            <property name="justify">right</property>
                                             <signal name="button-release-event" handler="resetParam" swapped="no"/>
+                                            <child>
+                                              <object class="GtkLabel" id="l_stySpaceBefore">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">False</property>
+                                                <property name="tooltip_text" translatable="yes">Amount of space to insert before the paragraph. The actual space is this factor multiplied by the base line spacing from the Layout tab.</property>
+                                                <property name="halign">end</property>
+                                                <property name="label" translatable="yes">Space Before
+Factor:</property>
+                                                <property name="justify">right</property>
+                                                <property name="xalign">1</property>
+                                              </object>
+                                            </child>
                                           </object>
+                                          <packing>
+                                            <property name="left_attach">0</property>
+                                            <property name="top_attach">3</property>
+                                          </packing>
                                         </child>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">3</property>
-                                        <property name="top_attach">3</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                  </object>
-                                </child>
-                                <child type="label">
-                                  <object class="GtkLabel">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="label" translatable="yes">Paragraph Settings</property>
-                                    <attributes>
-                                      <attribute name="weight" value="bold"/>
-                                      <attribute name="foreground" value="#72729f9fcfcf"/>
-                                    </attributes>
-                                  </object>
-                                </child>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">True</property>
-                                <property name="position">2</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkExpander" id="ex_styNote">
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <child>
-                                  <object class="GtkGrid">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="margin_left">6</property>
-                                    <property name="margin_right">6</property>
-                                    <property name="margin_top">6</property>
-                                    <property name="margin_bottom">6</property>
-                                    <property name="row_spacing">6</property>
-                                    <property name="column_spacing">6</property>
-                                    <child>
-                                      <object class="GtkSpinButton" id="s_styCallerRaise">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="halign">start</property>
-                                        <property name="width_chars">5</property>
-                                        <property name="text">1.0</property>
-                                        <property name="caps_lock_warning">False</property>
-                                        <property name="placeholder_text">0.0</property>
-                                        <property name="input_purpose">number</property>
-                                        <property name="adjustment">a_styCallerRaise</property>
-                                        <property name="digits">1</property>
-                                        <property name="numeric">True</property>
-                                        <property name="update_policy">if-valid</property>
-                                        <property name="value">1</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">3</property>
-                                        <property name="top_attach">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkSpinButton" id="s_styNoteCallerRaise">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="halign">start</property>
-                                        <property name="width_chars">5</property>
-                                        <property name="text">1.0</property>
-                                        <property name="caps_lock_warning">False</property>
-                                        <property name="placeholder_text">0.0</property>
-                                        <property name="input_purpose">number</property>
-                                        <property name="adjustment">a_styNoteCallerRaise</property>
-                                        <property name="digits">1</property>
-                                        <property name="numeric">True</property>
-                                        <property name="update_policy">if-valid</property>
-                                        <property name="value">1</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">3</property>
-                                        <property name="top_attach">1</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkEventBox">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <signal name="button-release-event" handler="resetParam" swapped="no"/>
                                         <child>
-                                          <object class="GtkLabel" id="l_styCallerStyle">
+                                          <object class="GtkEventBox">
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
-                                            <property name="tooltip_text" translatable="yes">The style which is used to style the caller
+                                            <signal name="button-release-event" handler="resetParam" swapped="no"/>
+                                            <child>
+                                              <object class="GtkLabel" id="l_stySpaceAfter">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">False</property>
+                                                <property name="tooltip_text" translatable="yes">Amount of space to insert after the paragraph. The actual space is this factor multiplied by the base line spacing from the layout tab.</property>
+                                                <property name="halign">end</property>
+                                                <property name="label" translatable="yes">Space After
+Factor:</property>
+                                                <property name="justify">right</property>
+                                                <signal name="button-release-event" handler="resetParam" swapped="no"/>
+                                              </object>
+                                            </child>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">3</property>
+                                            <property name="top_attach">3</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                      </object>
+                                    </child>
+                                    <child type="label">
+                                      <object class="GtkLabel">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="label" translatable="yes">Paragraph Settings</property>
+                                        <attributes>
+                                          <attribute name="weight" value="bold"/>
+                                          <attribute name="foreground" value="#72729f9fcfcf"/>
+                                        </attributes>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkExpander" id="ex_styNote">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <child>
+                                      <object class="GtkGrid">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="margin_top">6</property>
+                                        <property name="margin_bottom">6</property>
+                                        <property name="row_spacing">6</property>
+                                        <property name="column_spacing">6</property>
+                                        <child>
+                                          <object class="GtkSpinButton" id="s_styCallerRaise">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="halign">start</property>
+                                            <property name="width_chars">5</property>
+                                            <property name="text">1.0</property>
+                                            <property name="caps_lock_warning">False</property>
+                                            <property name="placeholder_text">0.0</property>
+                                            <property name="input_purpose">number</property>
+                                            <property name="adjustment">a_styCallerRaise</property>
+                                            <property name="digits">1</property>
+                                            <property name="numeric">True</property>
+                                            <property name="update_policy">if-valid</property>
+                                            <property name="value">1</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">3</property>
+                                            <property name="top_attach">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkSpinButton" id="s_styNoteCallerRaise">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="halign">start</property>
+                                            <property name="width_chars">5</property>
+                                            <property name="text">1.0</property>
+                                            <property name="caps_lock_warning">False</property>
+                                            <property name="placeholder_text">0.0</property>
+                                            <property name="input_purpose">number</property>
+                                            <property name="adjustment">a_styNoteCallerRaise</property>
+                                            <property name="digits">1</property>
+                                            <property name="numeric">True</property>
+                                            <property name="update_policy">if-valid</property>
+                                            <property name="value">1</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">3</property>
+                                            <property name="top_attach">1</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkEventBox">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <signal name="button-release-event" handler="resetParam" swapped="no"/>
+                                            <child>
+                                              <object class="GtkLabel" id="l_styCallerStyle">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">False</property>
+                                                <property name="tooltip_text" translatable="yes">The style which is used to style the caller
 in the main text. If none is specified then
 \v is used.</property>
-                                            <property name="halign">end</property>
-                                            <property name="label" translatable="yes">Caller
+                                                <property name="halign">end</property>
+                                                <property name="label" translatable="yes">Caller
 Style:</property>
-                                            <property name="justify">right</property>
-                                            <property name="xalign">1</property>
+                                                <property name="justify">right</property>
+                                                <property name="xalign">1</property>
+                                              </object>
+                                            </child>
                                           </object>
+                                          <packing>
+                                            <property name="left_attach">0</property>
+                                            <property name="top_attach">0</property>
+                                          </packing>
                                         </child>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">0</property>
-                                        <property name="top_attach">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkEventBox">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <signal name="button-release-event" handler="resetParam" swapped="no"/>
                                         <child>
-                                          <object class="GtkLabel" id="l_styCallerRaise">
+                                          <object class="GtkEventBox">
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
-                                            <property name="tooltip_text" translatable="yes">Raise the caller in the main text by
+                                            <signal name="button-release-event" handler="resetParam" swapped="no"/>
+                                            <child>
+                                              <object class="GtkLabel" id="l_styCallerRaise">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">False</property>
+                                                <property name="tooltip_text" translatable="yes">Raise the caller in the main text by
 this number of points.</property>
-                                            <property name="halign">end</property>
-                                            <property name="label" translatable="yes">Caller
+                                                <property name="halign">end</property>
+                                                <property name="label" translatable="yes">Caller
 Raise:</property>
-                                            <property name="justify">right</property>
+                                                <property name="justify">right</property>
+                                              </object>
+                                            </child>
                                           </object>
+                                          <packing>
+                                            <property name="left_attach">2</property>
+                                            <property name="top_attach">0</property>
+                                          </packing>
                                         </child>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">2</property>
-                                        <property name="top_attach">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkEventBox">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <signal name="button-release-event" handler="resetParam" swapped="no"/>
                                         <child>
-                                          <object class="GtkLabel" id="l_styNoteCallerStyle">
+                                          <object class="GtkEventBox">
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
-                                            <property name="tooltip_text" translatable="yes">The style which is used to style the caller
+                                            <signal name="button-release-event" handler="resetParam" swapped="no"/>
+                                            <child>
+                                              <object class="GtkLabel" id="l_styNoteCallerStyle">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">False</property>
+                                                <property name="tooltip_text" translatable="yes">The style which is used to style the caller
 in the note itself. If none is specified then
 \v is used.</property>
-                                            <property name="halign">end</property>
-                                            <property name="label" translatable="yes">Note Caller
+                                                <property name="halign">end</property>
+                                                <property name="label" translatable="yes">Note Caller
 Style:</property>
-                                            <property name="justify">right</property>
-                                            <property name="xalign">1</property>
+                                                <property name="justify">right</property>
+                                                <property name="xalign">1</property>
+                                              </object>
+                                            </child>
                                           </object>
+                                          <packing>
+                                            <property name="left_attach">0</property>
+                                            <property name="top_attach">1</property>
+                                          </packing>
                                         </child>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">0</property>
-                                        <property name="top_attach">1</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkEventBox">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <signal name="button-release-event" handler="resetParam" swapped="no"/>
                                         <child>
-                                          <object class="GtkLabel" id="l_styNoteCallerRaise">
-                                            <property name="width_request">87</property>
+                                          <object class="GtkEventBox">
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
-                                            <property name="tooltip_text" translatable="yes">Raise the caller in the note by
+                                            <signal name="button-release-event" handler="resetParam" swapped="no"/>
+                                            <child>
+                                              <object class="GtkLabel" id="l_styNoteCallerRaise">
+                                                <property name="width_request">87</property>
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">False</property>
+                                                <property name="tooltip_text" translatable="yes">Raise the caller in the note by
 this number of points.</property>
-                                            <property name="halign">end</property>
-                                            <property name="label" translatable="yes">Note Caller
+                                                <property name="halign">end</property>
+                                                <property name="label" translatable="yes">Note Caller
 Raise:</property>
-                                            <property name="justify">right</property>
-                                            <property name="xalign">1</property>
+                                                <property name="justify">right</property>
+                                                <property name="xalign">1</property>
+                                              </object>
+                                            </child>
                                           </object>
+                                          <packing>
+                                            <property name="left_attach">2</property>
+                                            <property name="top_attach">1</property>
+                                          </packing>
                                         </child>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">2</property>
-                                        <property name="top_attach">1</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkEventBox">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <signal name="button-release-event" handler="resetParam" swapped="no"/>
                                         <child>
-                                          <object class="GtkLabel" id="l_NoteBlendInto">
-                                            <property name="width_request">78</property>
+                                          <object class="GtkEventBox">
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
-                                            <property name="tooltip_text" translatable="yes">Insert the notes of the marker being defined
+                                            <signal name="button-release-event" handler="resetParam" swapped="no"/>
+                                            <child>
+                                              <object class="GtkLabel" id="l_NoteBlendInto">
+                                                <property name="width_request">78</property>
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">False</property>
+                                                <property name="tooltip_text" translatable="yes">Insert the notes of the marker being defined
 into the collection of notes in the
 marker specified here.
 
 For example, if when defining the \x style,
 if this value was set to f then all cross references
 would be blended into the \f footnotes.</property>
-                                            <property name="halign">end</property>
-                                            <property name="label" translatable="yes">Note Blend
+                                                <property name="halign">end</property>
+                                                <property name="label" translatable="yes">Note Blend
 Into Style:</property>
-                                            <property name="justify">right</property>
-                                            <property name="xalign">1</property>
+                                                <property name="justify">right</property>
+                                                <property name="xalign">1</property>
+                                              </object>
+                                            </child>
                                           </object>
+                                          <packing>
+                                            <property name="left_attach">0</property>
+                                            <property name="top_attach">2</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkEntry" id="t_styCallerStyle">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="halign">start</property>
+                                            <property name="width_chars">16</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">1</property>
+                                            <property name="top_attach">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkEntry" id="t_styNoteCallerStyle">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="halign">start</property>
+                                            <property name="width_chars">16</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">1</property>
+                                            <property name="top_attach">1</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkEntry" id="t_NoteBlendInto">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="halign">start</property>
+                                            <property name="width_chars">16</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">1</property>
+                                            <property name="top_attach">2</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
                                         </child>
                                       </object>
-                                      <packing>
-                                        <property name="left_attach">0</property>
-                                        <property name="top_attach">2</property>
-                                      </packing>
                                     </child>
-                                    <child>
-                                      <object class="GtkEntry" id="t_styCallerStyle">
+                                    <child type="label">
+                                      <object class="GtkLabel">
                                         <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="halign">start</property>
-                                        <property name="width_chars">16</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="label" translatable="yes">Note  Settings</property>
+                                        <attributes>
+                                          <attribute name="weight" value="bold"/>
+                                          <attribute name="foreground" value="#72729f9fcfcf"/>
+                                        </attributes>
                                       </object>
-                                      <packing>
-                                        <property name="left_attach">1</property>
-                                        <property name="top_attach">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkEntry" id="t_styNoteCallerStyle">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="halign">start</property>
-                                        <property name="width_chars">16</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">1</property>
-                                        <property name="top_attach">1</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkEntry" id="t_NoteBlendInto">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="halign">start</property>
-                                        <property name="width_chars">16</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left_attach">1</property>
-                                        <property name="top_attach">2</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
                                     </child>
                                   </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">3</property>
+                                  </packing>
                                 </child>
-                                <child type="label">
+                                <child>
+                                  <object class="GtkSeparator">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="margin_top">4</property>
+                                    <property name="margin_bottom">4</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">4</property>
+                                  </packing>
+                                </child>
+                                <child>
                                   <object class="GtkLabel">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="label" translatable="yes">Note  Settings</property>
-                                    <attributes>
-                                      <attribute name="weight" value="bold"/>
-                                      <attribute name="foreground" value="#72729f9fcfcf"/>
-                                    </attributes>
-                                  </object>
-                                </child>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">True</property>
-                                <property name="position">3</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkSeparator">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="margin_left">12</property>
-                                <property name="margin_right">12</property>
-                                <property name="margin_top">4</property>
-                                <property name="margin_bottom">4</property>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">True</property>
-                                <property name="position">4</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="tooltip_text" translatable="yes">When a setting's name is in bold it indicates that 
+                                    <property name="tooltip_text" translatable="yes">When a setting's name is in bold it indicates that 
 the value is different from what is in the stylesheet.
 
 Note that you can click on a bold setting name of 
 any parameter to RESET it to the stylesheet value.</property>
-                                <property name="margin_top">6</property>
-                                <property name="margin_bottom">2</property>
-                                <property name="label" translatable="yes">Why are some parameter names in bold?</property>
-                                <attributes>
-                                  <attribute name="foreground" value="#5c5c35356666"/>
-                                </attributes>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">True</property>
-                                <property name="position">5</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="tooltip_text" translatable="yes">It is recommended that you make changes in this Style editor which overrides all the stylesheets below. The settings modified here are stored in each config's ptxprint.sty file.
+                                    <property name="margin_top">6</property>
+                                    <property name="margin_bottom">2</property>
+                                    <property name="label" translatable="yes">Why are some parameter names in bold?</property>
+                                    <attributes>
+                                      <attribute name="foreground" value="#5c5c35356666"/>
+                                    </attributes>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">5</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="tooltip_text" translatable="yes">It is recommended that you make changes in this Style editor which overrides all the stylesheets below. The settings modified here are stored in each config's ptxprint.sty file.
 
 [Optional: ptxprint-mods.sty can be edited using the Advanced tab, and contains style modifications specific to a publication/configuration.]
 
@@ -16973,42 +16976,48 @@ any parameter to RESET it to the stylesheet value.</property>
 ptx2pdf.sty contains PTXprint-specific modifications to make things work better (not to be edited)
 
 usfm_sb.sty is the underlying Paratext stylesheet (which should never be edited)</property>
-                                <property name="margin_top">2</property>
-                                <property name="margin_bottom">6</property>
-                                <property name="label" translatable="yes">How are the various Stylesheets applied?</property>
-                                <attributes>
-                                  <attribute name="foreground" value="#5c5c35356666"/>
-                                </attributes>
+                                    <property name="margin_top">2</property>
+                                    <property name="margin_bottom">6</property>
+                                    <property name="label" translatable="yes">How are the various Stylesheets applied?</property>
+                                    <attributes>
+                                      <attribute name="foreground" value="#5c5c35356666"/>
+                                    </attributes>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">6</property>
+                                  </packing>
+                                </child>
                               </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">True</property>
-                                <property name="position">6</property>
-                              </packing>
                             </child>
-                          </object>
-                        </child>
-                        <child type="label">
-                          <object class="GtkCheckButton" id="c_styTextProperties">
-                            <property name="label" translatable="yes">Hide/Exclude Contents of Marker</property>
-                            <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="receives_default">False</property>
-                            <property name="tooltip_text" translatable="yes">If this option is checked, the marker becomes 
+                            <child type="label">
+                              <object class="GtkCheckButton" id="c_styTextProperties">
+                                <property name="label" translatable="yes">Hide/Exclude Contents of Marker</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="tooltip_text" translatable="yes">If this option is checked, the marker becomes 
 "non-publishable" and the contents of this 
 marker will not be included in the output.</property>
-                            <property name="halign">end</property>
-                            <property name="valign">start</property>
-                            <property name="image_position">right</property>
-                            <property name="draw_indicator">True</property>
-                            <signal name="clicked" handler="onstyTextPropertiesClicked" swapped="no"/>
+                                <property name="halign">end</property>
+                                <property name="valign">start</property>
+                                <property name="image_position">right</property>
+                                <property name="draw_indicator">True</property>
+                                <signal name="clicked" handler="onstyTextPropertiesClicked" swapped="no"/>
+                              </object>
+                            </child>
                           </object>
+                          <packing>
+                            <property name="resize">True</property>
+                            <property name="shrink">True</property>
+                          </packing>
                         </child>
                       </object>
                       <packing>
-                        <property name="expand">False</property>
+                        <property name="expand">True</property>
                         <property name="fill">True</property>
-                        <property name="position">1</property>
+                        <property name="position">0</property>
                       </packing>
                     </child>
                   </object>
