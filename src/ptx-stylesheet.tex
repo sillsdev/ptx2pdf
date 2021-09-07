@@ -690,6 +690,7 @@
 \def\addtopreversehooks#1{\x@\global\x@\prev@rsehooks\x@{\the\prev@rsehooks #1}}
 \newtoks\v@rsehooks
 \newtoks\prev@rsehooks
+\def\lastc@rref{}\def\lastc@rradj{1}
 % A CV hook is executed only for a particular CV when the verse milestone occurs.
 \def\setcvhook#1#2{\x@\gdef\csname cv-#1\endcsname{#2}}
 {\catcode`\1=11\xdef\@neletter{1}}
