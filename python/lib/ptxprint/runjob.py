@@ -100,7 +100,7 @@ _diglot = {
 
 "diglot/colorfonts" :       "document/ifcolorfonts",
 "diglot/ifrtl" :            "document/ifrtl",
-"diglot/ifomitsinglechnum": "document/ifomitsinglechnum",
+"diglot/ifshow1chbooknum":  "document/ifshow1chbooknum",
 "diglot/fontfactor" :       "paper/fontfactor",
 "diglot/linespacingfactor": "paragraph/linespacingfactor",
 "diglot/iflinebreakon" :    "document/iflinebreakon",
@@ -409,7 +409,7 @@ class RunJob:
                            "document/parallelrefs", "document/elipsizemptyvs", "notes/iffootnoterule",
                            "notes/xrlocation", "notes/includefootnotes", "notes/includexrefs", 
                            "notes/fneachnewline", "notes/xreachnewline", "document/filterglossary", 
-                           "document/chapfrom", "document/chapto", "document/ifcolorfonts", "document/ifomitsinglechnum"]
+                           "document/chapfrom", "document/chapto", "document/ifcolorfonts", "document/ifshow1chbooknum"]
         diginfo["project/bookids"] = jobs
         diginfo["project/books"] = digdonebooks
         diginfo["document/ifdiglot"] = "%"

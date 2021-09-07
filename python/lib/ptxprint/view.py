@@ -639,13 +639,13 @@ class ViewModel:
         v = float(version)
         if v < 0.9:
             try:
-                self._configset(config, "document/ifshowchapternums", not config.getboolean("document", "ifomitchapternum"))
-                self._configset(config, "document/ifshowversenums", not config.getboolean("document", "ifomitallverses"))
-                self._configset(config, "document/bookintro", not config.getboolean("document", "supressbookintro"))
-                self._configset(config, "document/introoutline", not config.getboolean("document", "supressintrooutline"))
-                self._configset(config, "document/firstparaindent", not config.getboolean("document", "supressindent"))
-                self._configset(config, "document/sectionheads", not config.getboolean("document", "supresssectheads"))
-                self._configset(config, "document/parallelrefs", not config.getboolean("document", "supressparallels"))
+                self._configset(config, "document/ifshowchapternums", not config.getboolean("document", "ifomitchapternum", fallback=False))
+                self._configset(config, "document/ifshowversenums", not config.getboolean("document", "ifomitallverses", fallback=False))
+                self._configset(config, "document/bookintro", not config.getboolean("document", "supressbookintro", fallback=False))
+                self._configset(config, "document/introoutline", not config.getboolean("document", "supressintrooutline", fallback=False))
+                self._configset(config, "document/firstparaindent", not config.getboolean("document", "supressindent", fallback=False))
+                self._configset(config, "document/sectionheads", not config.getboolean("document", "supresssectheads", fallback=False))
+                self._configset(config, "document/parallelrefs", not config.getboolean("document", "supressparallels", fallback=False))
             except:
                 pass
         if v < 1.2:
@@ -697,8 +697,8 @@ class ViewModel:
             config.set("paper", "rulegap", f2s(config.getfloat("header", "ruleposition", fallback=0.)))
         if v < 1.504:
             try:
-                self._configset(config, "notes/fneachnewline", not config.getboolean("notes", "fnparagraphednotes"))
-                self._configset(config, "notes/xreachnewline", not config.getboolean("notes", "xrparagraphednotes"))
+                self._configset(config, "notes/fneachnewline", not config.getboolean("notes", "fnparagraphednotes", fallback=False))
+                self._configset(config, "notes/xreachnewline", not config.getboolean("notes", "xrparagraphednotes", fallback=False))
             except:
                 pass
         if v < 1.505:
@@ -718,9 +718,9 @@ class ViewModel:
         if v < 1.93:
             self._configset(config, "notes/xrcolside", "3")
         if v < 1.94:
-            self._configset(config, "document/ifshow1chbooknum", not config.getboolean("document", "ifomitsinglechnum"))
-            self._configset(config, "header/ifshowchapter", not config.getboolean("header", "ifomitrhchapnum"))
-            self._configset(config, "header/ifshowverse", config.getboolean("header", "ifverses"))
+            self._configset(config, "document/ifshow1chbooknum", not config.getboolean("document", "ifomitsinglechnum", fallback=False))
+            self._configset(config, "header/ifshowchapter", not config.getboolean("header", "ifomitrhchapnum", fallback=False))
+            self._configset(config, "header/ifshowverse", config.getboolean("header", "ifverses", fallback=False))
             config.set("config", "version", "1.94")
 
         styf = os.path.join(self.configPath(cfgname), "ptxprint.sty")

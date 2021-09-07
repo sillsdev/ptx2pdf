@@ -1359,7 +1359,7 @@ class GtkViewModel(ViewModel):
                 runres = runjob.res
                 if runres:
                     continue
-                with open(parlocs) as inf:
+                with universalopen(parlocs) as inf:
                     for l in inf.readlines():
                         if not l.startswith(r"\@parlen"):
                             continue
