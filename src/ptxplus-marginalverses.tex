@@ -1,9 +1,9 @@
 % This TeX code provides a way to have marginal verses
 % Caution, it is still under heavy development
 
-
-%+cmargin_verse
 \catcode`\@=11
+\input marginnotes.tex
+%+cmargin_verse
 %\let\myoldv=\v
 %\newif\multipleverses
 \newtoks\myeverypar
@@ -16,29 +16,30 @@
 \gdef\marginverse #1 {%
     \gdef\v@rse{#1}\xdef\print@bleVerse{#1}%
     \the\prev@rsehooks\spl@tprintableverse
-    \global\setbox2\hbox{\ifc@ncelfirstverse\else\ch@rstylepls{v}~\printv@rse\ch@rstylepls{v}*\fi}%
-    \str@t\dimen0=\ht2\advance\dimen0 by \dp\str@tbox
+    \global\setbox2\vbox{\hbox{\ifc@ncelfirstverse\else\ch@rstylepls{v}~\printv@rse\ch@rstylepls{v}*\fi}}%
     \myeverypar=\everypar\everypar={}%
     \dimen1=\columnshift\advance\dimen1 by -\AfterVerseSpaceFactor\FontSizeUnit
     \m@rkverse \the\v@rsehooks \gdef\reference{\ch@pter:\v@rse}%
     \ifdim\wd2>0pt
-      \getp@ram{baseline}{v}\ifx\p@ram\relax\let\p@ram\baselineskip\fi
-      \vadjust{\kern -\dimen0\marginv@rseleft
-        \ifmarginverseleft
-          \setbox1=\vbox{\llap{\vbox{\leftskip=0pt plus 1fill %
-              \rightskip=\z@skip\hsize=\dimen1 \baselineskip=\p@ram
-              \trace{v}{LMarginal Verse (\print@bleVerse): hs=\the\hsize , bl=\the\baselineskip, wd=\the\wd2}%
-              \noindent \unhbox2 \marginremovehboxes}%
-            \kern\AfterVerseSpaceFactor\FontSizeUnit}}%
-        \else
-          \setbox1=\vbox{\hfill\rlap{\kern\AfterVerseSpaceFactor\FontSizeUnit
-            \vbox{\rightskip=0pt plus 1fill %
-              \leftskip=\z@skip\hsize=\dimen1 \baselineskip=\p@ram
-              \trace{v}{RMarginal Verse (\print@bleVerse): hs=\the\hsize , bl=\the\baselineskip, wd=\the\wd2}%
-              \noindent \unhbox2}}}% \marginremovehboxes}}}%
-      \fi
-      \ht1=\dimen0\dp1=0pt\tracingparagraphs=0\box1
-      }\nobreak
+      \d@marginnote{2}{\c@rref}{v}%
+%      \getp@ram{baseline}{v}\ifx\p@ram\relax\let\p@ram\baselineskip\fi
+%      \vadjust pre{\marginv@rseleft
+%        \ifmarginverseleft
+%          \setbox1=\vbox{\llap{\vbox{\leftskip=0pt plus 1fill %
+%              \rightskip=\z@skip\hsize=\dimen1 \baselineskip=\p@ram
+%              \trace{v}{LMarginal Verse (\print@bleVerse): hs=\the\hsize , bl=\the\baselineskip, wd=\the\wd2}%
+%              \noindent \unhbox2 \marginremovehboxes}%
+%            \kern\AfterVerseSpaceFactor\FontSizeUnit}}%
+%        \else
+%          \setbox1=\vbox{\hfill\rlap{\kern\AfterVerseSpaceFactor\FontSizeUnit
+%            \vbox{\rightskip=0pt plus 1fill %
+%              \leftskip=\z@skip\hsize=\dimen1 \baselineskip=\p@ram
+%              \trace{v}{RMarginal Verse (\print@bleVerse): hs=\the\hsize , bl=\the\baselineskip, wd=\the\wd2}%
+%              \noindent \unhbox2}}}% \marginremovehboxes}}}%
+%      \fi
+%      \d@marginnote{1}{\c@rref}{v}%
+%      \ht1=0pt\dp1=0pt\tracingparagraphs=0\box1
+%      }\nobreak
     \fi
     \trace{v}{\reference - tolerance=\the\tolerance}
     %\m@rkverse % generate a milestone for running headers
