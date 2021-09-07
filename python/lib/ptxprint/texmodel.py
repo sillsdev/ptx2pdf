@@ -99,7 +99,6 @@ ModelMap = {
     "paper/gutter":             ("s_pagegutter", lambda w,v: round(float(v)) if v else "0"),
     "paper/colgutteroffset":    ("s_colgutteroffset", lambda w,v: "{:.1f}".format(float(v)) if v else "0.0"),
     "paper/columns":            ("c_doublecolumn", lambda w,v: "2" if v else "1"),
-    # "paper/fontfactor":         ("s_fontsize", lambda w,v: round((v / 12), 3) or "1.000"),
     "paper/fontfactor":         ("s_fontsize", lambda w,v: f2s(float(v) / 12, dp=8) if v else "1.000"),
 
     "grid/gridlines":           ("c_gridLines", lambda w,v: "\doGridLines" if v else ""),
@@ -144,7 +143,6 @@ ModelMap = {
     "paragraph/linespacing":       ("s_linespacing", lambda w,v: f2s(float(v), dp=8) if v else "15"),
     "paragraph/linespacebase":  ("c_AdvCompatLineSpacing", lambda w,v: 14 if v else 12),
     "paragraph/useglyphmetrics":   ("c_AdvCompatGlyphMetrics", lambda w,v: "%" if v else ""),
-    # "paragraph/linespacingfactor": ("s_linespacing", lambda w,v: "{:.3f}".format(float(v or "15") / 12)),
     "paragraph/ifjustify":      ("c_justify", lambda w,v: "true" if v else "false"),
     "paragraph/ifhyphenate":    ("c_hyphenate", lambda w,v: "" if v else "%"),
     "paragraph/ifomithyphen":   ("c_omitHyphen", lambda w,v: "" if v else "%"),
@@ -179,29 +177,25 @@ ModelMap = {
     "document/columnshift":     ("s_columnShift", lambda w,v: v or "16"),
     "document/ifshowchapternums": ("c_chapterNumber", lambda w,v: "%" if v else ""),
     "document/showxtrachapnums":  ("c_showNonScriptureChapters", None),
-    "document/ifomitsinglechnum": ("c_omitChap1ChBooks", None),
+    "document/ifshow1chbooknum": ("c_show1chBookNum", None),
     "document/ifomitverseone":  ("c_omitverseone", lambda w,v: "true" if v else "false"),
     "document/ifshowversenums":   ("c_verseNumbers", lambda w,v: "%" if v else ""),
     "document/ifmainbodytext":  ("c_mainBodyText", None),
     "document/glueredupwords":  ("c_glueredupwords", None),
     "document/ifinclfigs":      ("c_includeillustrations", lambda w,v: "true" if v else "false"),
     "document/ifusepiclist":    ("c_includeillustrations", lambda w,v :"" if v else "%"),
-    # "document/iffigfrmpiclist": ("c_usePicList", None),
     "document/iffigexclwebapp": ("c_figexclwebapp", None),
     "document/iffigskipmissing": ("c_skipmissingimages", None),
     "document/iffigcrop":       ("c_cropborders", None),
     "document/iffigplaceholders": ("c_figplaceholders", lambda w,v: "true" if v else "false"),
     "document/iffigshowcaptions": ("c_fighidecaptions", lambda w,v: "false" if v else "true"),
     "document/iffighiderefs":   ("c_fighiderefs", None),
-    # "document/usesmallpics":    ("c_useLowResPics", lambda w,v :"" if v else "%"),
-    # "document/uselargefigs":    ("c_useHighResPics", lambda w,v :"" if v else "%"),
     "document/picresolution":   ("r_pictureRes", None),
     "document/customfiglocn":   ("c_useCustomFolder", lambda w,v :"" if v else "%"),
     "document/exclusivefolder": ("c_exclusiveFiguresFolder", None),
     "document/customfigfolder": ("btn_selectFigureFolder", lambda w,v: w.customFigFolder.as_posix() \
                                                                        if w.customFigFolder is not None else ""),
     "document/imagetypepref":   ("t_imageTypeOrder", None),
-    # "document/spacecntxtlztn":  ("fcb_spaceCntxtlztn", lambda w,v: str({"None": 0, "Some": 1, "Full": 2}.get(v, loosint(v)))),
     "document/glossarymarkupstyle":  ("fcb_glossaryMarkupStyle", None),
     "document/filterglossary":  ("c_filterGlossary", None),
     "document/hangpoetry":      ("c_hangpoetry", lambda w,v: "" if v else "%"),
@@ -244,8 +238,9 @@ ModelMap = {
 
     "document/hasnofront_":     ("c_frontmatter", lambda w,v: "%" if v else ""),
 
-    "header/ifomitrhchapnum":   ("c_omitrhchapnum", lambda w,v :"true" if v else "false"),
-    "header/ifverses":          ("c_hdrverses", lambda w,v :"true" if v else "false"),
+    "header/ifshowbook":        ("c_rangeShowBook", lambda w,v :"false" if v else "true"),
+    "header/ifshowchapter":     ("c_rangeShowChapter", lambda w,v :"false" if v else "true"),
+    "header/ifshowverse":       ("c_rangeShowVerse", lambda w,v :"true" if v else "false"),
     "header/chvseparator":      ("c_sepColon", lambda w,v : ":" if v else "."),
     "header/ifrhrule":          ("c_rhrule", lambda w,v: "" if v else "%"),
     "header/hdrleftside":       ("r_hdrLeft", None),
@@ -650,7 +645,8 @@ class TexModel:
                     self.dict['header/noVeven{}'.format(side)] = t 
 
     def _addLR(self, t, pri):
-        if t in [r"\firstref", r"\lastref", r"\rangeref", r"\pagenumber", r"\hrsmins", r"\isodate"]:                
+        if t in [r"\firstref", r"\lastref", r"\rangeref", r"\pagenumber", r"\hrsmins", r"\isodate" \
+                 r"\book", r"\bookalt"]:                
             if pri:
                 t = t+'L'
             else:
@@ -717,7 +713,7 @@ class TexModel:
                             res.append(r"\ifodd\pageno\else\catcode`\@=11 \shipwithcr@pmarks{\vbox{}}\catcode`\@=12 \fi")
                             res.append(r"\pageno=1")
                             resetPageDone = True
-                        if self.asBool('document/ifomitsinglechnum') and \
+                        if not self.asBool('document/ifshow1chbooknum') and \
                            self.asBool('document/ifshowchapternums', '%') and \
                            f in oneChbooks:
                             res.append(r"\OmitChapterNumbertrue")

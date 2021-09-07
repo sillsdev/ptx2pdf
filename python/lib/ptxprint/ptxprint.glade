@@ -8609,7 +8609,7 @@ setting will be applied to ALL books</property>
                                   <packing>
                                     <property name="left_attach">1</property>
                                     <property name="top_attach">0</property>
-                                    <property name="width">4</property>
+                                    <property name="width">2</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -8629,7 +8629,7 @@ insert a Zero Width Non-Break Space.</property>
                                     <property name="valign">center</property>
                                   </object>
                                   <packing>
-                                    <property name="left_attach">6</property>
+                                    <property name="left_attach">4</property>
                                     <property name="top_attach">0</property>
                                   </packing>
                                 </child>
@@ -8651,7 +8651,7 @@ Label:</property>
                                     <property name="justify">right</property>
                                   </object>
                                   <packing>
-                                    <property name="left_attach">5</property>
+                                    <property name="left_attach">3</property>
                                     <property name="top_attach">0</property>
                                   </packing>
                                 </child>
@@ -8678,7 +8678,7 @@ to have both single and double column layouts.</property>
                                 </child>
                                 <child>
                                   <object class="GtkCheckButton" id="c_showNonScriptureChapters">
-                                    <property name="label" translatable="yes">Show Chapter Numbers in Non-Scripture Books</property>
+                                    <property name="label" translatable="yes">Non-Scripture Books</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
@@ -8689,21 +8689,21 @@ the chapter numbers from non-scripture books.
 If you need it to retain (and show) those chapter
 numbers then check this option.</property>
                                     <property name="halign">start</property>
+                                    <property name="margin_left">6</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
                                   <packing>
-                                    <property name="left_attach">3</property>
+                                    <property name="left_attach">2</property>
                                     <property name="top_attach">3</property>
-                                    <property name="width">4</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkCheckButton" id="c_omitChap1ChBooks">
-                                    <property name="label" translatable="yes">Hide Chapter Number in Single Chapter Books</property>
+                                  <object class="GtkCheckButton" id="c_show1chBookNum">
+                                    <property name="label" translatable="yes">Single Chapter Books</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">Select this option to suppress the 1 at the beginning
+                                    <property name="tooltip_text" translatable="yes">Select this option to show the 1 at the beginning
 of books that only have a single chapter (OBA, PHM,
 2JN, 3JN, JUD, etc.)</property>
                                     <property name="halign">start</property>
@@ -8711,9 +8711,8 @@ of books that only have a single chapter (OBA, PHM,
                                     <property name="draw_indicator">True</property>
                                   </object>
                                   <packing>
-                                    <property name="left_attach">0</property>
+                                    <property name="left_attach">1</property>
                                     <property name="top_attach">3</property>
-                                    <property name="width">3</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -8750,11 +8749,20 @@ that should be typeset as a single column.</property>
                                   <packing>
                                     <property name="left_attach">1</property>
                                     <property name="top_attach">2</property>
-                                    <property name="width">5</property>
+                                    <property name="width">4</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <placeholder/>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="margin_left">12</property>
+                                    <property name="label" translatable="yes">Show Chapter Numbers in:</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">3</property>
+                                  </packing>
                                 </child>
                                 <child>
                                   <placeholder/>
@@ -8779,7 +8787,7 @@ that should be typeset as a single column.</property>
                           <object class="GtkLabel">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">Handling Special Books </property>
+                            <property name="label" translatable="yes">Special Books </property>
                           </object>
                         </child>
                       </object>
@@ -10568,6 +10576,8 @@ DRAFT\ \isodate\ \hrsmins   would give "DRAFT YYYY-MM-YY HH:MM"
                                           <item translatable="yes">First Reference</item>
                                           <item translatable="yes">Last Reference</item>
                                           <item translatable="yes">Reference Range</item>
+                                          <item translatable="yes">Book Name</item>
+                                          <item translatable="yes">Alternate Book Name</item>
                                         </items>
                                         <child internal-child="entry">
                                           <object class="GtkEntry">
@@ -10610,6 +10620,8 @@ DRAFT\ \isodate\ \hrsmins   would give "DRAFT YYYY-MM-YY HH:MM"
                                           <item translatable="yes">First Reference</item>
                                           <item translatable="yes">Last Reference</item>
                                           <item translatable="yes">Reference Range</item>
+                                          <item translatable="yes">Book Name</item>
+                                          <item translatable="yes">Alternate Book Name</item>
                                         </items>
                                         <child internal-child="entry">
                                           <object class="GtkEntry">
@@ -10652,6 +10664,8 @@ DRAFT\ \isodate\ \hrsmins   would give "DRAFT YYYY-MM-YY HH:MM"
                                           <item translatable="yes">First Reference</item>
                                           <item translatable="yes">Last Reference</item>
                                           <item translatable="yes">Reference Range</item>
+                                          <item id="&lt;Enter ID&gt;" translatable="yes">Book Name</item>
+                                          <item translatable="yes">Alternate Book Name</item>
                                         </items>
                                         <child internal-child="entry">
                                           <object class="GtkEntry">
@@ -10851,31 +10865,34 @@ setting, you must first enable Diglot.</property>
                                   <object class="GtkGrid" id="gr_HeaderAdvOptions">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="halign">center</property>
+                                    <property name="column_spacing">6</property>
                                     <child>
-                                      <object class="GtkCheckButton" id="c_omitrhchapnum">
-                                        <property name="label" translatable="yes">Omit Chapter Numbers From Header References</property>
+                                      <object class="GtkCheckButton" id="c_rangeShowChapter">
+                                        <property name="label" translatable="yes">Chapter</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
                                         <property name="tooltip_text" translatable="yes">By default, the chapter number will be included
 in any references in the header line. If you prefer
 to suppress that (and just show the book name)
-then check this option.</property>
+then uncheck this option.</property>
                                         <property name="halign">start</property>
                                         <property name="margin_top">4</property>
                                         <property name="margin_bottom">4</property>
+                                        <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
                                         <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                       </object>
                                       <packing>
-                                        <property name="left_attach">0</property>
+                                        <property name="left_attach">2</property>
                                         <property name="top_attach">0</property>
                                         <property name="width">2</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkCheckButton" id="c_hdrverses">
-                                        <property name="label" translatable="yes">Verse numbers in Header References</property>
+                                      <object class="GtkCheckButton" id="c_rangeShowVerse">
+                                        <property name="label" translatable="yes">Verse</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
@@ -10887,14 +10904,13 @@ Keep in mind that including the verse numbers
 actually makes it harder to read/absorb when
 flicking through pages to find the right chapter.</property>
                                         <property name="halign">start</property>
-                                        <property name="margin_left">20</property>
                                         <property name="margin_top">4</property>
                                         <property name="margin_bottom">4</property>
                                         <property name="draw_indicator">True</property>
                                         <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                       </object>
                                       <packing>
-                                        <property name="left_attach">2</property>
+                                        <property name="left_attach">4</property>
                                         <property name="top_attach">0</property>
                                       </packing>
                                     </child>
@@ -10943,7 +10959,51 @@ in the header reference.</property>
                                         </child>
                                       </object>
                                       <packing>
-                                        <property name="left_attach">3</property>
+                                        <property name="left_attach">6</property>
+                                        <property name="top_attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="label" translatable="yes">Include in References:</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">0</property>
+                                        <property name="top_attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="c_rangeShowBook">
+                                        <property name="label" translatable="yes">Book</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="tooltip_text" translatable="yes">By default, the chapter number will be included
+in any references in the header line. If you prefer
+to suppress that (and just show the book name)
+then check this option.</property>
+                                        <property name="halign">start</property>
+                                        <property name="margin_top">4</property>
+                                        <property name="margin_bottom">4</property>
+                                        <property name="active">True</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">1</property>
+                                        <property name="top_attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel" id="l_chvsSep">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="margin_left">18</property>
+                                        <property name="label" translatable="yes">Chapter-Verse Separator:</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">5</property>
                                         <property name="top_attach">0</property>
                                       </packing>
                                     </child>
@@ -15873,7 +15933,7 @@ properties for this style.</property>
                                     <property name="margin_top">6</property>
                                     <property name="margin_bottom">6</property>
                                     <property name="row_spacing">6</property>
-                                    <property name="column_spacing">6</property>
+                                    <property name="column_spacing">4</property>
                                     <child>
                                       <object class="GtkButton" id="bl_font_styFontName">
                                         <property name="label" translatable="yes">Select Font...</property>
@@ -15952,14 +16012,13 @@ to Parent</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
                                       <packing>
-                                        <property name="left_attach">2</property>
-                                        <property name="top_attach">2</property>
+                                        <property name="left_attach">1</property>
+                                        <property name="top_attach">3</property>
                                       </packing>
                                     </child>
                                     <child>
                                       <object class="GtkCheckButton" id="c_styFaceSuperscript">
-                                        <property name="label" translatable="yes">Superscript</property>
-                                        <property name="width_request">95</property>
+                                        <property name="label" translatable="yes">Superscript   / </property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
@@ -15972,9 +16031,8 @@ to Parent</property>
                                         <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                       </object>
                                       <packing>
-                                        <property name="left_attach">3</property>
-                                        <property name="top_attach">2</property>
-                                        <property name="width">4</property>
+                                        <property name="left_attach">2</property>
+                                        <property name="top_attach">3</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -15988,8 +16046,9 @@ to Parent</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
                                       <packing>
-                                        <property name="left_attach">1</property>
-                                        <property name="top_attach">3</property>
+                                        <property name="left_attach">3</property>
+                                        <property name="top_attach">2</property>
+                                        <property name="width">3</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -16144,13 +16203,14 @@ line for this font are provided for reference. </property>
                                     </child>
                                     <child>
                                       <object class="GtkLabel">
-                                        <property name="width_request">47</property>
+                                        <property name="width_request">0</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
+                                        <property name="halign">start</property>
                                         <property name="hexpand">True</property>
                                       </object>
                                       <packing>
-                                        <property name="left_attach">3</property>
+                                        <property name="left_attach">4</property>
                                         <property name="top_attach">3</property>
                                       </packing>
                                     </child>
@@ -16166,6 +16226,22 @@ line for this font are provided for reference. </property>
                                       <packing>
                                         <property name="left_attach">6</property>
                                         <property name="top_attach">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="c_styFaceUnderline">
+                                        <property name="label" translatable="yes">Underline</property>
+                                        <property name="visible">True</property>
+                                        <property name="sensitive">False</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="no_show_all">True</property>
+                                        <property name="halign">start</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left_attach">2</property>
+                                        <property name="top_attach">2</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -18511,7 +18587,7 @@ of Contents</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel">
+                          <object class="GtkLabel" id="l_leaderStyle">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="margin_left">10</property>

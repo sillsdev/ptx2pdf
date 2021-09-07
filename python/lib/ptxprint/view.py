@@ -717,7 +717,11 @@ class ViewModel:
             self._configset(config, "scripts/mymr/syllables", config.getboolean("scrmymr", "syllables", fallback=False) if val else False)
         if v < 1.93:
             self._configset(config, "notes/xrcolside", "3")
-            config.set("config", "version", "1.93")
+        if v < 1.94:
+            self._configset(config, "document/ifshow1chbooknum", not config.getboolean("document", "ifomitsinglechnum"))
+            self._configset(config, "header/ifshowchapter", not config.getboolean("header", "ifomitrhchapnum"))
+            self._configset(config, "header/ifshowverse", config.getboolean("header", "ifverses"))
+            config.set("config", "version", "1.94")
 
         styf = os.path.join(self.configPath(cfgname), "ptxprint.sty")
         if not os.path.exists(styf):
