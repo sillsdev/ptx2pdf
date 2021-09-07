@@ -905,7 +905,7 @@
 }
 \def\d@figureFull#1{%
   \d@figurep@ge{#1}{full-page}{\PaperHeight}{9}{\FullPageFudgeFactor}%
-  \showbox\wholepagepic
+  %\showbox\wholepagepic
 }
 
 % #1 box, #2 type, #3 vertical size, #4 magic penalty, #5 fine tuning kern 
@@ -1164,7 +1164,7 @@
     \trace{g}{wholepagepic is \the\ht\wholepagepic high}%
     %\tracingassigns=1
     \savingvdiscards=1
-    \nonstopmode\showbox\wholepagepic
+    %\nonstopmode\showbox\wholepagepic
     \setbox2=\copy\wholepagepic
     \setbox0=\vsplit\wholepagepic to \PaperHeight
     \tmpcountB=\badness
@@ -1177,7 +1177,7 @@
     \setbox\wholepagepic=\vbox{\unvbox\wholepagepic}%
     \trace{g}{After split (\the\tmpcountB)  wholepagepic \the\ht\wholepagepic+\the\dp\wholepagepic}%
     \ifdim\ht\wholepagepic>0pt
-      \showbox3 \showbox\wholepagepic
+      %\showbox3 \showbox\wholepagepic
       \setbox\wholepagepic=\vbox{\unvcopy1\unvbox\wholepagepic}%
     \else 
       \setbox\wholepagepic\box\voidb@x
