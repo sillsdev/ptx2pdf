@@ -775,13 +775,13 @@
     \x@\setkr@f\x@{\kr@f}%
     \trace{T}{keyword: \kr@f}%
     \runtrigg@rsother{k.\kr@f}%
-    \activ@tecustomch@rs
+    \activ@tecustomch@rs%   no CR here
     \@k ##1\endch@rstylen* %
     \runtrigg@rs{\id@@@ k.\kr@f}%
   }
-  \def\k{%\k processing
-    \deactiv@tecustomch@rs
-    \@K}
+ \def\k{%\k processing
+   \deactiv@tecustomch@rs% no CR here
+   \@K}
 }%
 
 \endgroup
