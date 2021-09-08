@@ -1497,8 +1497,10 @@
   \fi
 }
 
-\def\diglot@fill@sep@note@box#1{\let\s@veddstat=\c@rrdstat
+\def\diglot@fill@sep@note@box#1{%
+  \edef\s@vedbaseline{\the\baselineskip}\edef\s@vedlineskiplimit{\the\lineskiplimit}\let\s@veddstat=\c@rrdstat
   \setc@rdstat{#1}%
+  \lineskiplimit=0pt%
   \setLRspecific
   \f@rstnotetrue
   \lastd@pth=0pt
@@ -1508,9 +1510,16 @@
   \iff@rstnote
       \trace{f}{No footnotes for #1}%
   \else\LRf@@tnotestrue
-    %\x@\showbox\csname #1box\endcsname
+    \trace{Df}{Notes for #1 \x@\the\x@\ht\csname #1box\endcsname, bls=\the\baselineskip, lsl=\the\lineskiplimit}%
+    %\x@\ifdim\x@\ht\csname #1box\endcsname<\AboveNoteSpace
+      %\x@\ifdim\x@\ht\csname #1box\endcsname>0pt
+        %\x@\showbox\csname #1box\endcsname
+      %\fi
+    %\fi
   \fi
-  \setc@rdstat{\s@veddstat}}
+  \setc@rdstat{\s@veddstat}\baselineskip=\s@vedbaseline\relax
+  \lineskiplimit=\s@vedlineskiplimit\relax
+}
 
 \def\@setup@layout@simplecols{%
   \let\layout@list=\diglot@list % default
@@ -1557,33 +1566,37 @@
   \trace{Df}{Finding max \v@lpfx X\v@lsfx}%
   \let\col@do=\max@val\dimen1=0pt
   \x@\each@col\diglot@list\E
+  \trace{Df}{=\the\dimen1}%
   \dimen2=\dimen1 %dimen2=note height 
   \dimen8=\dimen1 %dimen8=note height (needed for rule)
   \edef\v@lpfx{@cur}\dimen1=0pt
   \trace{Df}{Finding max \v@lpfx X\v@lsfx}%
   \x@\each@col\diglot@list\E
+  \trace{Df}{=\the\dimen1}%
   \advance\dimen2 by \dimen1%dimen2 now contains total natural height of text from last true synch-point and notes.
   \edef\v@lpfxb{@fn}\dimen1=\dimen2
   \trace{Df}{Finding min note sep \v@lpfxb Xht}%
   \let\col@do=\min@note@sep% subtracts \v@lpfxb Xht and \v@lpfx Xht from dimen2, returning the smalles value in dimen1
   \x@\each@col\diglot@list\E
+  \trace{Df}{=\the\dimen1}%
   \dimen3=\dimen1
   %rule calcs: is #1 (dimen7) high, #3(dimen9) deep, and fits in a box #2(dimen8 - found earlier)high
   \edef\v@lpfx{@fn}
   \edef\v@lsfx{dp}\let\col@do=\max@val\dimen1=0pt
   \trace{Df}{Finding max \v@lpfx X\v@lsfx}%
   \x@\each@col\diglot@list\E
+  \trace{Df}{=\the\dimen1}%
   \dimen9=\dimen1
   \advance\dimen8 by -\AboveNoteSpace\relax %stop the line a little short
   \dimen7=\dimen8
-  \trace{d}{Gutter \the\dimen8 tall, \the\dimen9 deep}%
+  \trace{d}{ANS: \the\AboveNoteSpace. Gutter \the\dimen8 tall, \the\dimen9 deep}%
 }
 
 \def\@do@unbalnotes@simplecols{%
   \traceNum{d}{@do@unbalnotes@simplecols \layout@list}%
   \setbox1\hbox{\makediglotgutter{\dimen7}{\dimen8}{\dimen9}}%
   \let\col@do=\@@simplecols\let\l@stcol\empty
-  \setbox\notechunk\hbox to \textwidth{%\vllap{\the\ht\Lbox \the\dp\Lbox}%
+   \setbox\notechunk\hbox to \textwidth{%\vllap{\the\ht\Lbox \the\dp\Lbox}%
     \ifdiglotN@rmal%are the sides swapped?
       \x@\each@col\layout@list\E
     \else%
@@ -2041,7 +2054,7 @@
   \x@\let\x@\t@st\csname \v@lpfx#1ht\endcsname
   \x@\let\x@\t@stb\csname \v@lpfxb#1ht\endcsname
   \dimen0=\dimen2
-  \trace{Df}{Notesep: (#1) d2:\the\dimen2 - \t@st -\t@stb}%
+  \trace{Df}{Notesep: (#1) d2:\the\dimen2\space -\t@st\space -\t@stb}%
   \advance\dimen0 by -\t@st\relax
   \advance\dimen0 by -\t@stb\relax
   \ifdim\dimen1>\dimen0

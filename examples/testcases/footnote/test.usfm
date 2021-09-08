@@ -6,7 +6,7 @@
 \c 1
 \s This is a title\f + \ft And this is a footnote on a title\f*
 \p
-\v 1 This is normal text.\f + \fr 1:1 \ft Supposedly\f*  There are 4 hook positions: before, start, end,
+\v 1 This is normal \wj text.\wj*\f + \fr 1:1 \ft Supposedly\f*  There are 4 hook positions: before, start, end,
 after.  But this is about footnotes\fe + \ft and endnotes \fe*, not hooks.
 \p
 \esb
