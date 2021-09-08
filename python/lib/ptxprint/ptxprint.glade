@@ -10980,10 +10980,11 @@ in the header reference.</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
-                                        <property name="tooltip_text" translatable="yes">By default, the chapter number will be included
-in any references in the header line. If you prefer
-to suppress that (and just show the book name)
-then check this option.</property>
+                                        <property name="tooltip_text" translatable="yes">By default, the book name will be included
+in any references in the header line. But if you
+wish to suppress that (and just show the 
+chapter and/or verse numbers) then 
+uncheck this option.</property>
                                         <property name="halign">start</property>
                                         <property name="margin_top">4</property>
                                         <property name="margin_bottom">4</property>
