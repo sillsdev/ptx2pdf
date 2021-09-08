@@ -1610,18 +1610,20 @@
       \vskip\ColumnGutterRuleSkip
       \hbox to 1pt{\hfil\vrule height \the\dimen4\hfil}%\dp5=#3 \box5
       \vfil}%
-    \if\XrefNotes\ifnum#5>1\box4\fi\else\ifdim\ht\xr@fbox>0pt
-      \trace{o}{makecolumngutter: xr@fbox=\the\ht\xr@fbox}%
-      \ifnum#5=1\copy4\else\ifnum#5=3\copy4\fi\fi
-      \dimen0=#2
-      % todo: ensure empty box doesn't collapse
-      % todo: allow user defined inner margin also on grid
-      \ifnum#5=1\hbox to \XrefNotesMargin{}\else\ifnum#5=3\hbox to \XrefNotesMargin{}\fi\fi
-      \vbox to #4{\vbox to #2{\ifdim\ht\xr@fbox>0.9\dimen0 \unvbox\xr@fbox\unpenalty\unskip
-        \else\ifdim\ht\xr@fbox=0pt\message{empty xrefbox}\vbox{\hsize=\XrefNotesWidth\hskip\XrefNotesWidth\hbox{}}\else
-          \unvbox\xr@fbox\fi\vfil\fi}\vfil}%
-      \ifnum#5>1\hbox to \XrefNotesMargin{}\box4\fi
-    \fi\fi
+    \ifx\XrefNotes\empty\ifnum#5>1\box4\fi\else
+      \ifdim\ht\xr@fbox>0pt
+        \trace{o}{makecolumngutter: xr@fbox=\the\ht\xr@fbox}%
+        \ifnum#5=1\copy4\else\ifnum#5=3\copy4\fi\fi
+        \dimen0=#2
+        % todo: ensure empty box doesn't collapse
+        % todo: allow user defined inner margin also on grid
+        \ifnum#5=1\hbox to \XrefNotesMargin{}\else\ifnum#5=3\hbox to \XrefNotesMargin{}\fi\fi
+        \vbox to #4{\vbox to #2{\ifdim\ht\xr@fbox>0.9\dimen0 \unvbox\xr@fbox\unpenalty\unskip
+          \else\ifdim\ht\xr@fbox=0pt\message{empty xrefbox}\vbox{\hsize=\XrefNotesWidth\hskip\XrefNotesWidth\hbox{}}\else
+            \unvbox\xr@fbox\fi\vfil\fi}\vfil}%
+        \ifnum#5>1\hbox to \XrefNotesMargin{}\box4\fi
+      \fi
+    \fi
   \fi
   \ifnum#5>1\hfil\fi
   \hbox to \columnshift{}}
