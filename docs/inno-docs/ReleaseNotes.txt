@@ -1,8 +1,26 @@
-PTXprint 1.9.3 Release Notes 
-30 August 2021
+PTXprint 1.9.4beta Release Notes 
+8 September 2021
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 
+Bug fixes and Improvements in 1.9.4beta (8 Sep 2021)
+
+  * Added option to have the header in a second language/script #500
+  
+  * Fixed bug "Hide Empty Verses" has a dependency on "Auto-Correct USFM" #502
+  
+  * Leaders in Table of Contents...........also relates to #73 #490
+  
+  * Make it obvious that VALUES need to be filled in on the variable list #492
+  
+  * Add / verify "start chapter 1 on new page" support in diglots #429
+  
+  * Added \zgap and \zrule options #488
+
+  * Fixed full-page picture vertical alignment issues #505
+  
+  * Added an alternative way to format Table of Contents entries #73
+  
 Bug fixes and Improvements in 1.9.3 (30 Aug 2021)
   
   * CHANGED: output location from "<projID>\PrintDraft" to "<projID>\local\ptxprint" folder
