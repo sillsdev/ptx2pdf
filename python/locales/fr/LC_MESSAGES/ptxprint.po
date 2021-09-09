@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: ptxprint\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-08-28 10:57+0700\n"
-"PO-Revision-Date: 2021-08-28 03:58\n"
+"PO-Revision-Date: 2021-09-09 10:47\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -4422,12 +4422,13 @@ msgstr "La liste standard de références croisées contient\n"
 
 #: lib/ptxprint/ptxprint.glade:10118
 msgid "\"The Works\" from BibleWorks™"
-msgstr ""
+msgstr "\"Le Tout\" de BibleWorks™"
 
 #: lib/ptxprint/ptxprint.glade:10123
 msgid "This BibleWorks list contains carefully\n"
 "selected cross-references for both NT and OT."
-msgstr ""
+msgstr "Cette liste de BibleWorks contient des références croisées\n"
+"soigneusement sélectionnées pour le NT et l'AT."
 
 #: lib/ptxprint/ptxprint.glade:10146
 msgid "Use External List of Cross-References"
@@ -4469,7 +4470,7 @@ msgstr "Les références croisées seront listées dans un bloc séparé\n"
 
 #: lib/ptxprint/ptxprint.glade:10219
 msgid "Column of xRefs"
-msgstr ""
+msgstr "Colonne de xRefs"
 
 #: lib/ptxprint/ptxprint.glade:10223
 msgid "When there are numerous cross-references (usually\n"
@@ -4555,23 +4556,27 @@ msgstr "Pour économiser de l'espace dans la zone de la note de bas de page,\n"
 
 #: lib/ptxprint/ptxprint.glade:10382
 msgid "Gutter Width (pts):"
-msgstr ""
+msgstr "Largeur de la gouttière (pts) :"
 
 #: lib/ptxprint/ptxprint.glade:10393
 msgid "This sets the space between the main body\n"
 "text and the column of cross-references."
-msgstr ""
+msgstr "Ceci définit l'espace entre le texte du corps principal\n"
+"et la colonne des références croisées."
 
 #: lib/ptxprint/ptxprint.glade:10420
 msgid "Select where the column of cross-references\n"
 "should be located on the page. Note that the\n"
 "2-column layout insists on the cross-references\n"
 "being positioned between the columns of text."
-msgstr ""
+msgstr "Sélectionnez l'endroit de la colonne de références croisées\n"
+"sur la page. Notez que la mise en page à 2 colonnes\n"
+"insiste pour que les références croisées soient\n"
+"positionnées entre les colonnes de texte."
 
 #: lib/ptxprint/ptxprint.glade:10451
 msgid "Side of page:"
-msgstr ""
+msgstr "Côté de la page :"
 
 #: lib/ptxprint/ptxprint.glade:10472
 msgid "Location of Cross-References"
@@ -7406,7 +7411,17 @@ msgid "You may use the following \\zspecialcodes to\n"
 "your own config-specific \\zvar|variables\\* as place-holders.\n"
 "Click on 'Edit Variables...' to assign values to these variables\n"
 "on the Publication Info tab."
-msgstr ""
+msgstr "Vous pouvez utiliser les \\zspecialcodes suivants pour\n"
+"inclure un texte spécial dans les pages liminaires :\n\n"
+"\\zcopyright - déclaration de droit d'auteur de l'onglet Basique\n"
+"\\zlicense - texte de licence de l'onglet Basique\n"
+"\\zimagecopyrights - liste générée des images, avec droits d’auteur.\n"
+"\\zimagecopyrightsfr - comme ci-dessus, mais localisé (fr = français)\n\n"
+"\\zbl|3\\* - insère 3 lignes vides\n\n"
+"En plus des codes susmentionnés, vous pouvez utiliser vos propres\n"
+"\\zvar|variables\\* pour remplacement spécifique à la configuration.\n"
+"Cliquez sur 'Modifier variables...' pour remplir les valeurs dans l'onglet\n"
+"Info Publication."
 
 #: lib/ptxprint/ptxprint.glade:18386
 msgid "Front Matter"

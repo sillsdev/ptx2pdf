@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: ptxprint\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-08-28 10:57+0700\n"
-"PO-Revision-Date: 2021-08-28 03:58\n"
+"PO-Revision-Date: 2021-09-09 10:47\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -1657,11 +1657,11 @@ msgstr "Centro"
 
 #: lib/ptxprint/ptxprint.glade:3492
 msgid "Anti-clockwise"
-msgstr "Anti-reloj"
+msgstr "En sentido contrario a las agujas del reloj"
 
 #: lib/ptxprint/ptxprint.glade:3496
 msgid "Clockwise"
-msgstr "A la derecha"
+msgstr "En el sentido de las agujas del reloj"
 
 #: lib/ptxprint/ptxprint.glade:3510 lib/ptxprint/ptxprint.glade:3947
 msgid "Top"

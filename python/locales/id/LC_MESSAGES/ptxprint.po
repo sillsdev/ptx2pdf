@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: ptxprint\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-08-28 10:57+0700\n"
-"PO-Revision-Date: 2021-08-28 03:58\n"
+"PO-Revision-Date: 2021-09-09 10:47\n"
 "Last-Translator: \n"
 "Language-Team: Indonesian\n"
 "Language: id_ID\n"
@@ -4150,7 +4150,8 @@ msgstr ""
 #: lib/ptxprint/ptxprint.glade:10123
 msgid "This BibleWorks list contains carefully\n"
 "selected cross-references for both NT and OT."
-msgstr ""
+msgstr "Daftar BibleWorks ini berisi referensi silang \n"
+"yang dipilih dengan cermat untuk PB dan PL."
 
 #: lib/ptxprint/ptxprint.glade:10146
 msgid "Use External List of Cross-References"
@@ -4181,7 +4182,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:10219
 msgid "Column of xRefs"
-msgstr ""
+msgstr "Kolom Referensi Silang"
 
 #: lib/ptxprint/ptxprint.glade:10223
 msgid "When there are numerous cross-references (usually\n"
@@ -4249,19 +4250,23 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:10382
 msgid "Gutter Width (pts):"
-msgstr ""
+msgstr "Lebar Tepi Halaman Di Dalam (pt):"
 
 #: lib/ptxprint/ptxprint.glade:10393
 msgid "This sets the space between the main body\n"
 "text and the column of cross-references."
-msgstr ""
+msgstr "Ini mengatur ruang antara teks isi utama \n"
+"dan kolom referensi silang."
 
 #: lib/ptxprint/ptxprint.glade:10420
 msgid "Select where the column of cross-references\n"
 "should be located on the page. Note that the\n"
 "2-column layout insists on the cross-references\n"
 "being positioned between the columns of text."
-msgstr ""
+msgstr "Pilih di mana kolom referensi silang harus \n"
+"ditempatkan pada halaman. Perhatikan bahwa \n"
+"tata letak 2 kolom menuntut referensi silang \n"
+"ditempatkan di antara kolom teks."
 
 #: lib/ptxprint/ptxprint.glade:10451
 msgid "Side of page:"
@@ -6574,7 +6579,17 @@ msgid "You may use the following \\zspecialcodes to\n"
 "your own config-specific \\zvar|variables\\* as place-holders.\n"
 "Click on 'Edit Variables...' to assign values to these variables\n"
 "on the Publication Info tab."
-msgstr ""
+msgstr "Anda dapat menggunakan markah-markah \\zspecialcodes berikut \n"
+"untuk menyertakan teks khusus di Bagian Depan Buku:\n"
+"\\zcopyright - Pernyataan hak cipta dari tab Dasar\n"
+"\\zlicense - Teks lisensi dari tab Dasar\n"
+"\\zimagecopyrights - Daftar gambar dengan pernyataan hak cipta\n"
+"\\zimagecopyrightsfr - seperti di atas, tetapi gunakan versi lokal (fr = Prancis)\n\n"
+"\\zbl|3\\* - sisipkan 3 baris kosong\n\n"
+"Selain kode yang disebutkan di atas, Anda dapat menentukan \n"
+"\\zvar|variabel\\* yang khusus untuk konfigurasi Anda sendiri sebagai \n"
+"pemegang tempat. Klik 'Sunting Variabel...' pada tab Info Penerbitan \n"
+"untuk menetapkan nilai-nilai variabel ini."
 
 #: lib/ptxprint/ptxprint.glade:18386
 msgid "Front Matter"
