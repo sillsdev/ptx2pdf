@@ -1,9 +1,9 @@
-PTXprint 1.9.3 Release Notes 
-8 September 2021
+PTXprint 1.9.3.1 Release Notes 
+9 September 2021
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 
-Bug fixes and Improvements in 1.9.4 (8 Sep 2021)
+Bug fixes and Improvements in 1.9.3.1 (9 Sep 2021)
 
   * Added option to have the header in a second language/script #500
   
