@@ -427,9 +427,9 @@
 \newif\ifhangingverse
 
 \catcode`-=11
-\def\setPrintVerse #1 #2.{\gdef\print@bleVerse{#1-#2}}
+\def\setPrintVerse #1 #2.{\gdef\print@bleverse{#1-#2}}
 \def\noPrintVerse{\global\c@ncelfirstversetrue}
-\def\spl@tprintableverse{\x@\spl@tverses\print@bleVerse --\relax}
+\def\spl@tprintableverse{\x@\spl@tverses\print@bleverse --\relax}
 \catcode`-=12
 \def\pdfv@rsemark{%TODO: Not every verse.
   \special{pdf:dest (\id@@@\c@rrdstat.\ch@pter:\v@rsefrom) [@thispage /XYZ @xpos @ypos null]}%
@@ -438,130 +438,127 @@
 \def\MakeChapterLabel#1#2{#1\ #2}
 \gdef\reference{}%
 
-\lowercase{
- % `~` is set by lowercase to a space for delimiting \ch@rstylepls
- \def\@ddcvhooks{
-  % called after \c and \v have been processed in stylesheet at beginning of typesetting file
-  \let\@V=\v% remember \v defn for (A) below
-  % Define a macro to read an actual space delimited verse number, and then check if the next token is \vp
-  \def\@v@ ##1 {\gdef\v@rse{##1}\ifdiglot\x@\global\x@\let\csname @v@rse\g@tdstat\endcsname\v@rse\fi\global\let\print@bleVerse\v@rse\futurelet\mayb@vp\@V@}%
-  % If the next token IS vp, then call relevant code to interpret before dropping 
-  \def\@V@{%
-   \let\nxt\@@V@@
-   \ifx\mayb@vp\vp\let\nxt\@@VP@@\fi\nxt}%
-  \def\@@VP@@\vp ##1\vp*{\xdef\print@bleVerse{##1}\@@V@@}
-  \def\@@V@@{%
-   \the\prev@rsehooks
-   \spl@tprintableverse
-   \pdfv@rsemark % make book.chapter:verse mark (plural if this is a range)
-   %\ if not cancelling first verse, output verse number
-   \ifc@ncelfirstverse\else
-    \ifrotate
-     \setbox0=\hbox{\ch@rstylepls{v}~\printv@rse\ch@rstylepls{v}*}\dimen0=\wd0%
-     \dimen1=\ht0\dimen2=0.5\dimen0\advance\dimen2 -0.5\ht0%
-     \setbox0=\hbox{~\lower\dimen2\hbox to \dimen1{\kern\ht0\special{x:gsave}\special{x:rotate 90}%
-      \box0\special{x:grestore}\hss}}\ht0=0pt\dp0=0pt\@V\box0\@V*%
-    \else
-     \ch@rstylepls{v}~\printv@rse\ch@rstylepls{v}*% (A) output verse number using saved style. ~ will lowercase to a space
-    \fi
-    \kern\AfterVerseSpaceFactor\FontSizeUnit
+\def\@ddcvhooks{
+ % called after \c and \v have been processed in stylesheet at beginning of typesetting file
+ \let\@V=\v% remember \v defn for (A) below
+ % Define a macro to read an actual space delimited verse number, and then check if the next token is \vp
+ \def\@v@ ##1 {\gdef\v@rse{##1}\ifdiglot\x@\global\x@\let\csname @v@rse\g@tdstat\endcsname\v@rse\fi\global\let\print@bleverse\v@rse\futurelet\mayb@vp\@V@}%
+ % If the next token IS vp, then call relevant code to interpret before dropping 
+ \def\@V@{%
+  \let\nxt\@@V@@
+  \ifx\mayb@vp\vp\let\nxt\@@VP@@\fi\nxt}%
+ \def\@@VP@@\vp ##1\vp*{\xdef\print@bleverse{##1}\@@V@@}
+ \def\@@V@@{%
+  \the\prev@rsehooks
+  \spl@tprintableverse
+  \pdfv@rsemark % make book.chapter:verse mark (plural if this is a range)
+  %\ if not cancelling first verse, output verse number
+  \ifc@ncelfirstverse\else
+   \ifrotate
+    \setbox0=\hbox{\printv@rse}\dimen0=\wd0%
+    \dimen1=\ht0\dimen2=0.5\dimen0\advance\dimen2 -0.5\ht0%
+    \setbox0=\hbox{\lower\dimen2\hbox to \dimen1{\kern\ht0\special{x:gsave}\special{x:rotate 90}%
+     \box0\special{x:grestore}\hss}}\ht0=0pt\dp0=0pt\@V\box0\@V*%
+     \kern\AfterVerseSpaceFactor\FontSizeUnit
+   \else
+    \printv@rse
    \fi
-   \egroup
-   \m@rkverse % generate a milestone for running headers
-   % run the hooks for picture insertion, paragraph adjustments, etc.
-   % these hooks were added via \addtoversehooks
-   \the\v@rsehooks
-   % remember current chapter:verse, not currently used. Could potentially be used
-   % to insert chapter:verse in footnotes.
-   \gdef\reference{\ch@pter:\v@rse}%
-   \ifhangingverse
-     \trace{hv}{Hanging verse \reference}%
-     \hangingversefalse
-   \fi
-   \nobreak\hskip0.5sp\relax% let \x detect that there's "space" (or maybe drop-chapter) here
-  }
-  \let\C@T\cat %Preserve \cat definition from stylesheet in case that's ever useful, and then restore it to correct version
-  \let\cat\c@t
+  \fi
+  \egroup
+  \m@rkverse % generate a milestone for running headers
+  % run the hooks for picture insertion, paragraph adjustments, etc.
+  % these hooks were added via \addtoversehooks
+  \the\v@rsehooks
+  % remember current chapter:verse, not currently used. Could potentially be used
+  % to insert chapter:verse in footnotes.
+  \gdef\reference{\ch@pter:\v@rse}%
+  \ifhangingverse
+    \trace{hv}{Hanging verse \reference}%
+    \hangingversefalse
+  \fi
+  \nobreak\hskip0.5sp\relax% let \x detect that there's "space" (or maybe drop-chapter) here
+ }
+ \let\C@T\cat %Preserve \cat definition from stylesheet in case that's ever useful, and then restore it to correct version
+ \let\cat\c@t
 %-csty_defv
-  % define handling for usfm \v marker
+ % define handling for usfm \v marker
 %+csty_verse
-  \def\v{%
-   \ifvmode\xdef\prev@rsemode{\m@rker}\else
-     \ifhangingverse 
-       \trace{hv}{Horiz Mode:cancel hangingverse}%
-       \hangingversefalse % Cancel
-     \fi
-   \global\let\prev@rsemode\empty\fi
-   \leavevmode % ensure we are in horizontal mode to build paragraph
-   % set c@ncelfirstversetrue if we are immediately following a drop cap chapter number
-   % and the user has requested omission of the first verse number in a chapter
-   \c@ncelfirstversefalse
-   \dimen0=\lastkern
-   \ifnum\spacefactor=\n@wchaptersf \kern0sp % override \hangversenumber here
-    \ifOmitVerseNumberOne \c@ncelfirstversetrue \fi \fi
-   % -1sp indicates that a hanging verse number has been requested here. But that does not seem as reliable as \ifhangingverse
-   % When this happens we make ll@p use llap to right justify the verse number at the current position.
-   % Otherwise make ll@p do nothing.
-   \ifdim\lastkern=-1sp \hangingversetrue\fi
-   \ifhangingverse \let\ll@p=\llap
-   \else \let\ll@p=\relax
-   \fi % hanging verse number?
-   %\trace{hv}{lastkern \the\dimen0}%
-   \ll@p\bgroup\@v@}%
-  %{.. was: \ll@p\bgroup\m@kedigitsother\@v@}%
-  % remember chapter macro for later
+ \def\v{%
+  \ifvmode\xdef\prev@rsemode{\m@rker}\else
+    \ifhangingverse 
+      \trace{hv}{Horiz Mode:cancel hangingverse}%
+      \hangingversefalse % Cancel
+    \fi
+  \global\let\prev@rsemode\empty\fi
+  \leavevmode % ensure we are in horizontal mode to build paragraph
+  % set c@ncelfirstversetrue if we are immediately following a drop cap chapter number
+  % and the user has requested omission of the first verse number in a chapter
+  \c@ncelfirstversefalse
+  \dimen0=\lastkern
+  \ifnum\spacefactor=\n@wchaptersf \kern0sp % override \hangversenumber here
+   \ifOmitVerseNumberOne \c@ncelfirstversetrue \fi \fi
+  % -1sp indicates that a hanging verse number has been requested here. But that does not seem as reliable as \ifhangingverse
+  % When this happens we make ll@p use llap to right justify the verse number at the current position.
+  % Otherwise make ll@p do nothing.
+  \ifdim\lastkern=-1sp \hangingversetrue\fi
+  \ifhangingverse \let\ll@p=\llap
+  \else \let\ll@p=\relax
+  \fi % hanging verse number?
+  %\trace{hv}{lastkern \the\dimen0}%
+  \ll@p\bgroup\@v@}%
+ %{.. was: \ll@p\bgroup\m@kedigitsother\@v@}%
+ % remember chapter macro for later
 %-csty_verse
 %+csty_chapdef
-  \let\@C=\c
-  % Define a macro to process space delimited chapter number
-  % ## is necessary because this is a nested macro definition
-  \def\@c@ ##1 {\ifsk@pping \egroup \fi % if we were skipping, stop it
-    \gdef\ch@pter{##1}% remember chapter number
-    \gdef\ch@ptert@xt{##1}% the chapter number we will actually output
-    \gdef\v@rse{}% clear verse number
-    \ifdiglot
-      \trace{c}{Saving chapter number '\ch@pter' for side: \c@rrdstat}%
-      \x@\global\x@\let\csname @ch@pter\g@tdstat\endcsname\ch@pter
-      \x@\global\x@\let\csname @ch@ptert@xt\g@tdstat\endcsname\ch@ptert@xt
-      \x@\global\x@\let\csname @v@rse\g@tdstat\endcsname\v@rse
-    \fi
-    \ifReenterIntroOK\else\global\intr@donetrue\fi% Are markers starting 'i' allowed to flip us back into one-column mode?
-    \uppercase{\xdef\c@rref{\id@@@\ifdiglot\c@rrdstat\fi\ch@pter.0}}%
-    \global\let\print@bleVerse=\v@rse
-    \op@ninghooks{start}{c}%
-    \m@kedigitsletters
-     % If omitting chapter number, skip this. 
-     % We would have to set \OmitChapterNumbertrue on a book by book basis
-     % in the configuration file in order to omit chapter numbers for single chapter books.
-    \ifOmitChapterNumber
-      \trace{c}{Chapter numbers ommitted}%
-      \pdfb@@kmark \pdfch@ptermark
-    \else
-      % if chapter label not present, set \ch@ptertrue to cause chapter number to be printed
-      % at start of first text paragraph.
-      \x@\global\x@\let\x@\ch@pl@bel\csname ch@plabel\g@tdstat\endcsname% global as p@rstyle{cl} may end a group.
-      \ifx\ch@pl@bel\empty \global\ch@ptertrue 
-        \trace{c}{No chapter label in use : \ch@pter}%
-      \else % if \cl present, output chapter label here
-        \trace{c}{Chapter label in use: \ch@pl@bel \ch@pter}%
-        \p@rstyle{cl}\MakeChapterLabel{\ch@pl@bel}{\ch@pter}%
-        \pdfb@@kmark \pdfch@ptermark
-      \fi
-    \fi}
-  %
-  \def\c{\m@kedigitsother\@c@}
-  \def\cp ##1 {\gdef\ch@ptert@xt{##1}}
+ \let\@C=\c
+ % Define a macro to process space delimited chapter number
+ % ## is necessary because this is a nested macro definition
+ \def\@c@ ##1 {\ifsk@pping \egroup \fi % if we were skipping, stop it
+   \gdef\ch@pter{##1}% remember chapter number
+   \gdef\ch@ptert@xt{##1}% the chapter number we will actually output
+   \gdef\v@rse{}% clear verse number
+   \ifdiglot
+     \trace{c}{Saving chapter number '\ch@pter' for side: \c@rrdstat}%
+     \x@\global\x@\let\csname @ch@pter\g@tdstat\endcsname\ch@pter
+     \x@\global\x@\let\csname @ch@ptert@xt\g@tdstat\endcsname\ch@ptert@xt
+     \x@\global\x@\let\csname @v@rse\g@tdstat\endcsname\v@rse
+   \fi
+   \ifReenterIntroOK\else\global\intr@donetrue\fi% Are markers starting 'i' allowed to flip us back into one-column mode?
+   \uppercase{\xdef\c@rref{\id@@@\ifdiglot\c@rrdstat\fi\ch@pter.0}}%
+   \global\let\print@bleverse=\v@rse
+   \op@ninghooks{start}{c}%
+   \m@kedigitsletters
+    % If omitting chapter number, skip this. 
+    % We would have to set \OmitChapterNumbertrue on a book by book basis
+    % in the configuration file in order to omit chapter numbers for single chapter books.
+   \ifOmitChapterNumber
+     \trace{c}{Chapter numbers ommitted}%
+     \pdfb@@kmark \pdfch@ptermark
+   \else
+     % if chapter label not present, set \ch@ptertrue to cause chapter number to be printed
+     % at start of first text paragraph.
+     \x@\global\x@\let\x@\ch@pl@bel\csname ch@plabel\g@tdstat\endcsname% global as p@rstyle{cl} may end a group.
+     \ifx\ch@pl@bel\empty \global\ch@ptertrue 
+       \trace{c}{No chapter label in use : \ch@pter}%
+     \else % if \cl present, output chapter label here
+       \trace{c}{Chapter label in use: \ch@pl@bel \ch@pter}%
+       \p@rstyle{cl}\MakeChapterLabel{\ch@pl@bel}{\ch@pter}%
+       \pdfb@@kmark \pdfch@ptermark
+     \fi
+   \fi}
+ %
+ \def\c{\m@kedigitsother\@c@}
+ \def\cp ##1 {\gdef\ch@ptert@xt{##1}}
 %-csty_chapdef
-  % set default value for drop cap chapter number size if not already set
+ % set default value for drop cap chapter number size if not already set
 %+csty_dropchap
-  \ifdim\dropnumbersize=0pt
-    \calcdr@psize
-  \fi
-  \def\m@rker{c}\defp@ram{fontsize}{\dr@psize}%
-  \ifdiglot \repeatsetdropc@p\fi%Can't do this here since things get lowercased
- }
-%-csty_dropchap
+ \ifdim\dropnumbersize=0pt
+   \calcdr@psize
+ \fi
+ \def\m@rker{c}\defp@ram{fontsize}{\dr@psize}%
+ \ifdiglot \repeatsetdropc@p\fi%Can't do this here since things get lowercased
 }
+%-csty_dropchap
 \def\bridgeVerses #1.#2-#3.{
   \addtrigger{#1.#2-preverse}{\setPrintVerse #2 #3.}
   \addtrigger{#1.#3-preverse}{\noPrintVerse}
@@ -644,7 +641,7 @@
       \message{ Setting \ drop-cap size to \dr@psize}%
       \setp@ram{fontsize}{c##1}{\dr@psize}%
     \fi
-  }%
+  }%i
   \x@\each@col\diglot@list\E
   %\x@\let\csname font<cL>\endcsname=\relax %
   %\x@\let\csname font<cR>\endcsname=\relax %
@@ -661,16 +658,28 @@
 \def\AfterVerseSpaceFactor{2}
 \newif\ifOmitChapterNumber
 \newif\ifc@ncelfirstverse
-\def\simpleprintv@rse{\AdornVerseNumber{\v@rsefrom}\ifx\v@rsefrom\v@rseto       %(2)
+\lowercase{
+\def\simpleprintv@rse{\ch@rstylepls{v}~\plainv@rse\ch@rstylepls{v}*%
+     \kern\AfterVerseSpaceFactor\FontSizeUnit}
+}
+\def\plainv@rse{\AdornVerseNumber{\v@rsefrom}\ifx\v@rsefrom\v@rseto       %(2)
                  \else\endash\AdornVerseNumber{\v@rseto}\fi}
-\def\hangprintv@rse{\ifx\v@rsefrom\v@rseto\relax\AdornVerseNumber{\v@rsefrom}%
-    \else
-         \getp@ram{baseline}{v}\baselineskip=\ifx\p@ram\relax\baselineskip\else\p@ram\fi
-         \dimen0=\SuperscriptFactor\baselineskip \advance\dimen0 by -\baselineskip
-         \setbox1=\hbox{\endash\AdornVerseNumber{\v@rseto}}%
-         \setbox0=\vtop{\hbox to \wd1{\hfil\AdornVerseNumber{\v@rsefrom}}%
-                        \kern\dimen0\box1}%
-         \hbox{\box0}\fi}
+\def\hangprintv@rse{\ifx\v@rsefrom\v@rseto\relax\simpleprintv@rse
+    \else {\s@tsideskips{v} \h@ngprintv@rse{0}}\box0\fi
+}
+\def\adornv#1{\AdornVerseNumber{#1}}
+\def\ssf{\SuperscriptFactor}
+\lowercase{
+\def\h@ngprintv@rse#1{%
+    \s@tbaseline{v}%
+    %\getp@ram{baseline}{v}\baselineskip=\ifx\p@ram\relax\baselineskip\else\p@ram\fi
+    \dimen0=\ssf\baselineskip \advance\dimen0 by -\baselineskip
+    \setbox1=\hbox{\ch@rstylepls{v}~\adornv{\v@rseto}\ch@rstylepls{v}*}%
+    \global\setbox#1=\vtop{\hbox{\hbox{\ch@rstylepls{v}~\endash\ch@rstylepls{v}*}%
+                                 \vbox{\hbox to \wd1{\hskip\leftskip\ch@rstylepls{v}~\adornv{\v@rsefrom}\ch@rstylepls{v}*\hskip\rightskip}%
+                                       \kern\dimen0\box1}}}%
+    \trace{v}{hangprintverse height=\the\ht#1, width=\the\wd#1}}%
+}
 \let\printv@rse=\simpleprintv@rse                                               %(1)
 \def\@ne{1}
 \def\AdornVerseNumber#1{#1}                                                     %(3)
@@ -726,8 +735,8 @@
 \let\@v@rse=\v@rse
 \let\@v@rseR=\v@rse
 \def\m@rkverse{\ifdiglot\m@rkverseDglot\else\m@rkverseNml\fi}
-\def\m@rkverseNml{\mark{\book:\ch@pter:\print@bleVerse}\trace{H}{mark: \book:\ch@pter:\print@bleVerse}} %normal verse
-\def\m@rkverseDglot{\mark{\book:\ch@pter:\print@bleVerse}\edef\cur@ds{\g@tdstat}\marks\m@rknum{\csname book\cur@ds\endcsname:\csname @ch@pter\cur@ds\endcsname:\print@bleVerse}} % diglot verse
+\def\m@rkverseNml{\mark{\book:\ch@pter:\print@bleverse}\trace{H}{mark: \book:\ch@pter:\print@bleverse}} %normal verse
+\def\m@rkverseDglot{\mark{\book:\ch@pter:\print@bleverse}\edef\cur@ds{\g@tdstat}\marks\m@rknum{\csname book\cur@ds\endcsname:\csname @ch@pter\cur@ds\endcsname:\print@bleverse}} % diglot verse
 
 \def\n@xtparstart{}
 %+csty_addspecialhooks

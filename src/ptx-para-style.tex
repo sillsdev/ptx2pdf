@@ -337,6 +337,20 @@
   \the\afterh@@ks
  \fi
 }
+
+\def\s@tsideskips#1{%
+   \ifRTL \rightskip\else\leftskip\fi =0pt
+   \ifRTL \beginR \leftskip\else\rightskip\fi =0pt \ifJustifyPars\else plus .25\hsize\fi
+   \getp@ram{justification}{#1}%
+   \ifx\p@ram\c@nter
+    \leftskip=0pt plus \hsize \rightskip=\leftskip \parfillskip=0pt
+   \else\ifx\p@ram\l@ft
+    \ifRTL\leftskip\else\rightskip\fi=0pt plus .25\hsize \ifRTL\parfillskip=0pt\fi
+   \else\ifx\p@ram\r@ght
+    \ifRTL\rightskip\else\leftskip\fi=0pt plus .25\hsize \ifRTL\else\parfillskip=0pt\fi
+   \fi\fi\fi
+}
+
 \def\p@rstyle#1{\trace{ss}{p@rstyle: #1}%
  \endlastp@rstyle{#1}%
  \ifn@npublishable\else
@@ -421,16 +435,7 @@
    \x@\writep@rstart\x@{\the\baselineskip}%baselineskip must fully expanded as macro param, else it remains a macro and only L baseline is output on diglot/polyglot.
    %\edef\spc@ut{pdf:code /\c@rref \space BMC}\x@\special\x@{\spc@ut}%
    \ifdiglot\xdef\lastc@rref{\dc@rref}\else\xdef\lastc@rref{\c@rref}\fi\xdef\lastc@rradj{\the\curr@djpar}%
-   \ifRTL \rightskip\else\leftskip\fi =0pt
-   \ifRTL \beginR \leftskip\else\rightskip\fi =0pt \ifJustifyPars\else plus .25\hsize\fi
-   \getp@ram{justification}{\m@rker}%
-   \ifx\p@ram\c@nter
-    \leftskip=0pt plus \hsize \rightskip=\leftskip \parfillskip=0pt
-   \else\ifx\p@ram\l@ft
-    \ifRTL\leftskip\else\rightskip\fi=0pt plus .25\hsize \ifRTL\parfillskip=0pt\fi
-   \else\ifx\p@ram\r@ght
-    \ifRTL\rightskip\else\leftskip\fi=0pt plus .25\hsize \ifRTL\else\parfillskip=0pt\fi
-   \fi\fi\fi
+   \s@tsideskips{\m@rker}%
    \getp@ram{leftmargin}{\m@rker}%                                              %(1)
    \ifx\p@ram\relax \else \advance \ifRTL\rightskip\else\leftskip\fi\p@ram \IndentUnit \fi
    \getp@ram{rightmargin}{\m@rker}%
