@@ -138,7 +138,7 @@
   \ifnum\tablec@l>\allocatedtablec@ls \@llocnewc@l \fi
   \setbox\cellb@x=\vbox\bgroup
     \def\mark##1{\x@\global\x@\s@vedm@rks\x@{\the\s@vedm@rks \origm@rk{##1}}}%
-    \def\marks##1##2{\x@\global\x@\s@vedm@rks\x@{\the\s@vedm@rks \origm@rks{##1}{##2}}}%
+    \def\marks##1##2{\trace{t}{marks ##1, ##2}\x@\global\x@\s@vedm@rks\x@{\the\s@vedm@rks \origm@rks##1{##2}}}%
     \aftergroup\dos@vedm@rk%
     \hsize=\maxdimen
     \resetp@rstyle \everypar={}\noindent
