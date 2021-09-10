@@ -4,82 +4,51 @@
 \catcode`\@=11
 \input marginnotes.tex
 %+cmargin_verse
-%\let\myoldv=\v
-%\newif\multipleverses
-\newtoks\myeverypar
-\newdimen\mybaseline
-\newif\ifmarginverseleft
-\def\marginv@rseleft{\marginverselefttrue
-  %\ifnum\c@rrentcols=1\ifodd\pageno\marginverseleftfalse\fi\fi
-}
-{\catcode`\~=12 \lccode`\~=32 \catcode`\*=12 \lowercase{%
-\gdef\marginverse #1 {%
-    \xdef\v@rse{#1}\global\let\print@bleverse\v@rse
-    \trace{v}{\reference - tolerance=\the\tolerance, verse "\print@bleverse" \x@\getcatcodes\print@bleverse\E\E}%
-    \the\prev@rsehooks\spl@tprintableverse
-    \global\setbox2\vbox{\hbox{\ifc@ncelfirstverse\else\ch@rstylepls{v}~\printv@rse\ch@rstylepls{v}*\fi}}%
-    \m@rkverse \the\v@rsehooks \gdef\reference{\ch@pter:\v@rse}%
-    \ifdim\wd2>0pt
-      \d@marginnote{2}{\c@rref}{v}%
-    \fi
-    %\m@rkverse % generate a milestone for running headers
-    % run the hooks for picture insertion, paragraph adjustments, etc.
-    % these hooks were added via \addtoversehooks
-    %\the\v@rsehooks
-    % remember current chapter:verse, not currently used. Could potentially be used
-    % to insert chapter:verse in footnotes.
-    %\gdef\reference{\ch@pter:\v@rse}%
-    \nobreak\hskip 1sp% *%
-    \everypar=\myeverypar}}}
-
-\gdef\marginremovehboxes{%
-  \setbox0=\lastbox 
-  \ifhbox0{\removehboxes}\unhbox0\fi}
-%-cmargin_verse
-
-%+cmargin_init
-\def\myv{%
-    \ifvmode\xdef\prev@rsemode{\m@rker}\else\global\let\prev@rsemode\empty\fi
-    \leavevmode\c@ncelfirstversefalse
-    \ifnum\spacefactor=\n@wchaptersf \kern0sp %
-     \ifOmitVerseNumberOne \c@ncelfirstversetrue \fi\fi
-    \marginverse} % ensure we are in horizontal mode to build paragraph
-
-\def\initmyverse{\let\myoldv=\@V\let\v=\myv}
-%\def\initmyverse{\let\v=\myv}
-%\addtoinithooks{\initmyverse}
-
+\newdimen\VerseBoxWidth \VerseBoxWidth=0pt
 {\catcode`\~=12 \lccode`\~=32 \lowercase{
-\gdef\getverseboxwidth{\setbox3=\hbox{\ch@rstylepls{v}~\endash 00\ch@rstylepls{v}*}\global\dimen3=\wd3}
+\gdef\getverseboxwidth{\setbox2=\hbox{\ch@rstylepls{v}~\endash 00\ch@rstylepls{v}*}\global\VerseBoxWidth=\wd2}
 }}
 
-\def\mymarginpv@rse{
-  \getverseboxwidth
+\def\mymarginpverse{
+  \ifdim\VerseBoxWidth=0pt\getverseboxwidth\fi
   \getp@ram{position}{v}\ifx\p@ram\relax\let\p@ram\l@ft\fi
   \trace{v}{position is \p@ram}%
-  \tracingifs=1
   \ifx\v@rsefrom\v@rseto\edef\t@mp{\id@@@\ch@pter.\v@rsefrom}\else\edef\t@mp{\id@@@\ch@pter.\v@rsefrom-\v@rseto}\fi
-  \ifcsname marginnote-\t@mp @v:pageno\endcsname\count254=\csname marginnote-\t@mp @v:pageno\endcsname\trace{v}{count is \the\count254}\ifodd\count254\t@mptrue\else\t@mpfalse\fi
-  \else\trace{v}{no marginnote-\t@mp @v:pageno}\ifodd\pageno\t@mptrue\else\t@mpfalse\fi\fi%
-  \message{IAFFM}%
-  \trace{v}{pagenumber is \ift@mp odd\else even\fi, and side is \p@ram, value=\the\count254, mcstack=\mcstack}%
+  \ifcsname marginnote-\t@mp @v:pageno\endcsname \count10=\csname marginnote-\t@mp @v:pageno\endcsname
+    \trace{v}{from marginnote-\t@mp @v:pageno, count=\the\count10}\ifodd\count10\relax\t@mptrue\else\t@mpfalse\fi
+  \else\trace{v}{no marginnote-\t@mp @v:pageno, pageno=\the\pageno}\ifodd\pageno\relax\t@mptrue\else\t@mpfalse\fi\fi%
+  \trace{v}{pagenumber is \ift@mp odd\else even\fi, and side is \p@ram, value=\the\count10, mcstack=\mcstack}%
   \ifnum \ifx\p@ram\@nner\ift@mp 0\else 1\fi\else\ifx\p@ram\@uter\ift@mp 1\else 0\fi\else\ifx\p@ram\r@ght 1\else 0\fi\fi\fi =0
     \t@mptrue\else\t@mpfalse
   \fi
-  \ifx\v@rsefrom\v@rseto\setbox2=\vbox{\hbox to \dimen3{\ift@mp\else\hfil\fi\simpleprintv@rse\ift@mp\hfil\fi}}\trace{v}{in mymarginpv@rse \v@rseto - \v@rsefrom}%
+  \ifx\v@rsefrom\v@rseto\setbox2=\vbox{\hbox to \VerseBoxWidth{\ift@mp\hfil\fi\simpleprintv@rse\ift@mp\else\hfil\fi}}\trace{v}{in mymarginpv@rse \v@rseto - \v@rsefrom, side is \ift@mp left\else right\fi, pad to \the\VerseBoxWidth}%
   \else
     \s@tsideskips{v}%
     \ift@mp \dimen9=\leftskip\leftskip=\rightskip\rightskip=\dimen9\fi
     \trace{v}{leftskip=\the\leftskip, rightskip=\the\rightskip}%
     \h@ngprintv@rse{2}%
+    \setbox2=\vbox{\hbox to \VerseBoxWidth{\ift@mp\hfil\fi\box2\ift@mp\else\hfil\fi}}%
   \fi
-  %\setbox4=\vbox{\hbox to \dimen3{\ift@mp\hfill\fi\copy2\ift@mp\else\hfill\fi}}%
-  \trace{v}{verse \t@mp \space width=\the\wd2, height=\the\ht2, newwidth=\the\dimen3, \ift@mp left\else right\fi}%
+  \trace{v}{verse \t@mp \space width=\the\wd2, height=\the\ht2, newwidth=\the\VerseBoxWidth, \ift@mp left\else right\fi}%
   \d@marginnote{2}{\t@mp}{v}%
-  \tracingifs=0
 }
 
-\let\printv@rse=\mymarginpv@rse
-    
-%-cmargin_init
+\let\printverse=\mymarginpverse
+%-cmargin_verse
+
+% Example integration code:
+% Basics
+%\BookOpenLefttrue
+%\def\AfterVerseSpaceFactor{0}
+%\expandafter\def\csname v:position\endcsname{inner}
+
+% Limiting one verse per paragraph
+%\newif\iffirstinpara \firstinparatrue
+%\let\mytv=\printverse
+%\def\printverse{\iffirstinpara\global\firstinparafalse\mytv\fi}
+%\def\paramarker#1{\expandafter\let\csname _#1\expandafter\endcsname \csname #1\endcsname
+%    \expandafter\gdef\csname #1\endcsname{\global\firstinparatrue\csname _#1\endcsname}}
+%\paramarker{p}\paramarker{q1}\paramarker{li}
+
 \endinput
+
