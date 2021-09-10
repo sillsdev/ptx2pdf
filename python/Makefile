@@ -1,5 +1,5 @@
 
-CROWDIN = java -jar ../crowdin/3.5.2/crowdin-cli.jar
+CROWDIN = java -jar ../crowdin/3.6.5/crowdin-cli.jar
 
 LANGUAGES = $(patsubst locales/%/LC_MESSAGES/ptxprint.po,%,$(wildcard locales/*/LC_MESSAGES/ptxprint.po))
 SRC_FILES = $(foreach l,${LANGUAGES},locales/${l}/LC_MESSAGES/ptxprint.po)
