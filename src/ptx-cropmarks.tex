@@ -379,17 +379,18 @@
     %%%%% The following was added to help produce proper x1a PDF output (djd - 20150504)
     %%%%% Note the \special line here seems to work but there may be a better location for it
     %%%%% Also, the numbers used are hard coded now but need to be calculated
+    \dimen1=0.99626401\pdfpagewidth \dimen2=0.99626401\pdfpageheight
+    \dimen3=0.99626401\dimen0 \trace{s}{pdfpagewidth=\the\dimen1 from \the\pdfpagewidth}%
     \ifCropMarks
-      \pdfcropwidth=\pdfpagewidth\advance\pdfcropwidth by -\dimen0
-      \pdfcropheight=\pdfpageheight\advance\pdfcropheight by -\dimen0
-      \def\tmp{\dimen0}
-      \special {pdf:put @thispage <</MediaBox [0 0 \strip@pt\pdfpagewidth \space
-        \strip@pt\pdfpageheight ] /TrimBox [\strip@pt\tmp \space
-        \strip@pt\tmp \space \strip@pt\pdfcropwidth \space
+      \pdfcropwidth=\pdfpagewidth\advance\pdfcropwidth by -\dimen0 \pdfcropwidth=0.99626401\pdfcropwidth
+      \pdfcropheight=\pdfpageheight\advance\pdfcropheight by -\dimen0 \pdfcropheight=0.99626401\pdfcropheight
+      \special {pdf:put @thispage <</MediaBox [0 0 \strip@pt\dimen1 \space
+        \strip@pt\dimen2 ] /TrimBox [\strip@pt\dimen3 \space
+        \strip@pt\dimen3 \space \strip@pt\pdfcropwidth \space
         \strip@pt\pdfcropheight ] >>}
-    \else\trace{s}{pdfpagewidth=\the\pdfpagewidth}\special {pdf:put @thispage <</MediaBox [0 0 \strip@pt{\pdfpagewidth} \space
-        \strip@pt{\pdfpageheight} ] /TrimBox [0 0 \strip@pt{\pdfpagewidth} \space
-        \strip@pt{\pdfpageheight} ]>> }\fi
+    \else\special {pdf:put @thispage <</MediaBox [0 0 \strip@pt{\dimen1} \space
+        \strip@pt{\dimen2} ] /TrimBox [0 0 \strip@pt{\dimen1} \space
+        \strip@pt{\dimen2} ]>> }\fi
     % End inserted \special line
     \edef\oldup{\the\XeTeXupwardsmode}
     \XeTeXupwardsmode=0 %

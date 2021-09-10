@@ -163,8 +163,7 @@
 %-cnote_startnote
 
 %+cnote_endnote
-\def\endn@testyle*{\TRACE{endn@testyle}%
- \trace{f}{endn@testyle}%
+\def\endn@testyle*{\trace{f}{endn@testyle}%
  \end@llpoppedstyles{N*}%end any character styles within the note
  \ifskipn@testyle \else
   \csname end-\newn@testyle\endcsname % execute <end> hook
