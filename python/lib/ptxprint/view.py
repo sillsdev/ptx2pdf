@@ -721,6 +721,7 @@ class ViewModel:
             self._configset(config, "document/ifshow1chbooknum", not config.getboolean("document", "ifomitsinglechnum", fallback=False))
             self._configset(config, "header/ifshowchapter", not config.getboolean("header", "ifomitrhchapnum", fallback=False))
             self._configset(config, "header/ifshowverse", config.getboolean("header", "ifverses", fallback=False))
+            self._configset(config, "header/ifshowbook", True)
             config.set("config", "version", "1.94")
 
         styf = os.path.join(self.configPath(cfgname), "ptxprint.sty")

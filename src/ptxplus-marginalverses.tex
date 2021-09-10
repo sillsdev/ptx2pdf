@@ -4,69 +4,51 @@
 \catcode`\@=11
 \input marginnotes.tex
 %+cmargin_verse
-%\let\myoldv=\v
-%\newif\multipleverses
-\newtoks\myeverypar
-\newdimen\mybaseline
-\newif\ifmarginverseleft
-\def\marginv@rseleft{\marginverselefttrue
-  %\ifnum\c@rrentcols=1\ifodd\pageno\marginverseleftfalse\fi\fi
-}
-{\catcode`\~=12 \lccode`\~=32 \catcode`\*=12 \lowercase{%
-\gdef\marginverse #1 {%
-    \gdef\v@rse{#1}\xdef\print@bleVerse{#1}%
-    \the\prev@rsehooks\spl@tprintableverse
-    \global\setbox2\vbox{\hbox{\ifc@ncelfirstverse\else\ch@rstylepls{v}~\printv@rse\ch@rstylepls{v}*\fi}}%
-    \myeverypar=\everypar\everypar={}%
-    \dimen1=\columnshift\advance\dimen1 by -\AfterVerseSpaceFactor\FontSizeUnit
-    \m@rkverse \the\v@rsehooks \gdef\reference{\ch@pter:\v@rse}%
-    \ifdim\wd2>0pt
-      \d@marginnote{2}{\c@rref}{v}%
-%      \getp@ram{baseline}{v}\ifx\p@ram\relax\let\p@ram\baselineskip\fi
-%      \vadjust pre{\marginv@rseleft
-%        \ifmarginverseleft
-%          \setbox1=\vbox{\llap{\vbox{\leftskip=0pt plus 1fill %
-%              \rightskip=\z@skip\hsize=\dimen1 \baselineskip=\p@ram
-%              \trace{v}{LMarginal Verse (\print@bleVerse): hs=\the\hsize , bl=\the\baselineskip, wd=\the\wd2}%
-%              \noindent \unhbox2 \marginremovehboxes}%
-%            \kern\AfterVerseSpaceFactor\FontSizeUnit}}%
-%        \else
-%          \setbox1=\vbox{\hfill\rlap{\kern\AfterVerseSpaceFactor\FontSizeUnit
-%            \vbox{\rightskip=0pt plus 1fill %
-%              \leftskip=\z@skip\hsize=\dimen1 \baselineskip=\p@ram
-%              \trace{v}{RMarginal Verse (\print@bleVerse): hs=\the\hsize , bl=\the\baselineskip, wd=\the\wd2}%
-%              \noindent \unhbox2}}}% \marginremovehboxes}}}%
-%      \fi
-%      \d@marginnote{1}{\c@rref}{v}%
-%      \ht1=0pt\dp1=0pt\tracingparagraphs=0\box1
-%      }\nobreak
-    \fi
-    \trace{v}{\reference - tolerance=\the\tolerance}
-    %\m@rkverse % generate a milestone for running headers
-    % run the hooks for picture insertion, paragraph adjustments, etc.
-    % these hooks were added via \addtoversehooks
-    %\the\v@rsehooks
-    % remember current chapter:verse, not currently used. Could potentially be used
-    % to insert chapter:verse in footnotes.
-    %\gdef\reference{\ch@pter:\v@rse}%
-    \nobreak\hskip 1sp% *%
-    \everypar=\myeverypar}}}
+\newdimen\VerseBoxWidth \VerseBoxWidth=0pt
+{\catcode`\~=12 \lccode`\~=32 \lowercase{
+\gdef\getverseboxwidth{\setbox2=\hbox{\ch@rstylepls{v}~\endash 00\ch@rstylepls{v}*}\global\VerseBoxWidth=\wd2}
+}}
 
-\gdef\marginremovehboxes{%
-  \setbox0=\lastbox 
-  \ifhbox0{\removehboxes}\unhbox0\fi}
+\def\mymarginpverse{
+  \ifdim\VerseBoxWidth=0pt\getverseboxwidth\fi
+  \getp@ram{position}{v}\ifx\p@ram\relax\let\p@ram\l@ft\fi
+  \trace{v}{position is \p@ram}%
+  \ifx\v@rsefrom\v@rseto\edef\t@mp{\id@@@\ch@pter.\v@rsefrom}\else\edef\t@mp{\id@@@\ch@pter.\v@rsefrom-\v@rseto}\fi
+  \ifcsname marginnote-\t@mp @v:pageno\endcsname \count10=\csname marginnote-\t@mp @v:pageno\endcsname
+    \trace{v}{from marginnote-\t@mp @v:pageno, count=\the\count10}\ifodd\count10\relax\t@mptrue\else\t@mpfalse\fi
+  \else\trace{v}{no marginnote-\t@mp @v:pageno, pageno=\the\pageno}\ifodd\pageno\relax\t@mptrue\else\t@mpfalse\fi\fi%
+  \trace{v}{pagenumber is \ift@mp odd\else even\fi, and side is \p@ram, value=\the\count10, mcstack=\mcstack}%
+  \ifnum \ifx\p@ram\@nner\ift@mp 0\else 1\fi\else\ifx\p@ram\@uter\ift@mp 1\else 0\fi\else\ifx\p@ram\r@ght 1\else 0\fi\fi\fi =0
+    \t@mptrue\else\t@mpfalse
+  \fi
+  \ifx\v@rsefrom\v@rseto\setbox2=\vbox{\hbox to \VerseBoxWidth{\ift@mp\hfil\fi\simpleprintv@rse\ift@mp\else\hfil\fi}}\trace{v}{in mymarginpv@rse \v@rseto - \v@rsefrom, side is \ift@mp left\else right\fi, pad to \the\VerseBoxWidth}%
+  \else
+    \s@tsideskips{v}%
+    \ift@mp \dimen9=\leftskip\leftskip=\rightskip\rightskip=\dimen9\fi
+    \trace{v}{leftskip=\the\leftskip, rightskip=\the\rightskip}%
+    \h@ngprintv@rse{2}%
+    \setbox2=\vbox{\hbox to \VerseBoxWidth{\ift@mp\hfil\fi\box2\ift@mp\else\hfil\fi}}%
+  \fi
+  \trace{v}{verse \t@mp \space width=\the\wd2, height=\the\ht2, newwidth=\the\VerseBoxWidth, \ift@mp left\else right\fi}%
+  \d@marginnote{2}{\t@mp}{v}%
+}
+
+\let\printverse=\mymarginpverse
 %-cmargin_verse
 
-%+cmargin_init
-\def\myv{%
-    \ifvmode\xdef\prev@rsemode{\m@rker}\else\global\let\prev@rsemode\empty\fi
-    \leavevmode\c@ncelfirstversefalse
-    \ifnum\spacefactor=\n@wchaptersf \kern0sp %
-     \ifOmitVerseNumberOne \c@ncelfirstversetrue \fi\fi
-    \marginverse} % ensure we are in horizontal mode to build paragraph
-\def\initmyverse{\let\myoldv=\@V\let\v=\myv}
-%\def\initmyverse{\let\v=\myv}
-\addtoinithooks{\initmyverse}%
-\let\printv@rse=\hangprintv@rse
-%-cmargin_init
+% Example integration code:
+% Basics
+%\BookOpenLefttrue
+%\def\AfterVerseSpaceFactor{0}
+%\expandafter\def\csname v:position\endcsname{inner}
+
+% Limiting one verse per paragraph
+%\newif\iffirstinpara \firstinparatrue
+%\let\mytv=\printverse
+%\def\printverse{\iffirstinpara\global\firstinparafalse\mytv\fi}
+%\def\paramarker#1{\expandafter\let\csname _#1\expandafter\endcsname \csname #1\endcsname
+%    \expandafter\gdef\csname #1\endcsname{\global\firstinparatrue\csname _#1\endcsname}}
+%\paramarker{p}\paramarker{q1}\paramarker{li}
+
 \endinput
+
