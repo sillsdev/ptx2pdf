@@ -215,7 +215,7 @@
      
 \reinitThumbTabs
 
-\def\TabBleed{1pt}%
+\def\TabBleed{5pt}%
 \def\t@bbox{%
  \s@tfont{\ThumbTabStyle}%
  \x@\let\x@\t@bBoxCol\csname\t@bname -boxcol\endcsname
@@ -255,8 +255,9 @@
      \ifTabTopToEdgeEven\temptrue\fi
    \fi
    \trace{pt}{pg \the\pageno, Top to \iftemp edge \else page\fi}%
+   \dimen0=\TabBleed\advance\dimen0 by 1pt
    \iftemp %Rotated text has its top at the edge of the page (decenders to text)
-     \edef\bxht{2pt}% Bleed distance
+     \edef\bxht{\the\dimen0}% Bleed distance
      \edef\bxdp{\the\tabwidth}%
      \bgroup
        \dimen1=\vertThumbtabVadj%
@@ -267,7 +268,7 @@
      \egroup
    \else %Rotated text has its bottom at the edge of the page (descenders to edge)
      \edef\bxht{\the\tabwidth}%
-     \edef\bxdp{2pt}% Bleed distance
+     \edef\bxdp{\the\dimen0}%
      \edef\V@dj{\vertThumbtabVadj}%
    \fi
    \setbox0\hbox{\colourbox{\t@bBoxCol}{\t@bFontCol}{\tabheight}{\bxdp}{\bxht}{\V@dj}{\vertThumbtabContents{\b@okShort}}}%
@@ -288,8 +289,10 @@
  \else%Unrotated tabs
    \ifdim\wd0>\tabwidth\ifx\lastw@rning\b@okShort\else\xdef\lastw@rning{\b@okShort}\message{Thumb tab contents "\b@okShort" too wide for tab width}\fi\fi
    \hbox to 0pt{%
-    \if\st@rtatedge F\hss\else\kern -\TabBleed\fi% Bleed of 1pt
-    \setbox0\hbox{\colourbox{\t@bBoxCol}{\t@bFontCol}{\tabwidth}{0.1\tabheight}{0.9\tabheight}{\horizThumbtabVadj}{\horizThumbtabContents{\b@okShort}}}%
+    \dimen0\ifodd\pageno\TabBleed\else-\TabBleed\fi
+    \if\st@rtatedge F\hss\else\kern \dimen0\fi% Bleed of 1pt
+    \dimen0=\TabBleed \advance\dimen0\tabwidth
+    \setbox0\hbox{\colourbox{\t@bBoxCol}{\t@bFontCol}{\dimen0}{0.1\tabheight}{0.9\tabheight}{\horizThumbtabVadj}{\horizThumbtabContents{\b@okShort}}}%
    % \setbox2\hbox{\vrule height \ht0 depth \dp0 width 1pt}%
    % \copy2 
    %\ifodd\pageno\else\showbox0\fi
@@ -379,18 +382,20 @@
     %%%%% The following was added to help produce proper x1a PDF output (djd - 20150504)
     %%%%% Note the \special line here seems to work but there may be a better location for it
     %%%%% Also, the numbers used are hard coded now but need to be calculated
-    \dimen1=0.99626401\pdfpagewidth \dimen2=0.99626401\pdfpageheight
-    \dimen3=0.99626401\dimen0 \trace{s}{pdfpagewidth=\the\dimen1 from \the\pdfpagewidth}%
-    \ifCropMarks
-      \pdfcropwidth=\pdfpagewidth\advance\pdfcropwidth by -\dimen0 \pdfcropwidth=0.99626401\pdfcropwidth
-      \pdfcropheight=\pdfpageheight\advance\pdfcropheight by -\dimen0 \pdfcropheight=0.99626401\pdfcropheight
-      \special {pdf:put @thispage <</MediaBox [0 0 \strip@pt\dimen1 \space
-        \strip@pt\dimen2 ] /TrimBox [\strip@pt\dimen3 \space
-        \strip@pt\dimen3 \space \strip@pt\pdfcropwidth \space
-        \strip@pt\pdfcropheight ] >>}
-    \else\special {pdf:put @thispage <</MediaBox [0 0 \strip@pt{\dimen1} \space
-        \strip@pt{\dimen2} ] /TrimBox [0 0 \strip@pt{\dimen1} \space
-        \strip@pt{\dimen2} ]>> }\fi
+    \bgroup
+      \dimen1=0.99626401\pdfpagewidth \dimen2=0.99626401\pdfpageheight
+      \dimen3=0.99626401\dimen0 \trace{s}{pdfpagewidth=\the\dimen1 from \the\pdfpagewidth}%
+      \ifCropMarks
+        \pdfcropwidth=\pdfpagewidth\advance\pdfcropwidth by -\dimen0 \pdfcropwidth=0.99626401\pdfcropwidth
+        \pdfcropheight=\pdfpageheight\advance\pdfcropheight by -\dimen0 \pdfcropheight=0.99626401\pdfcropheight
+        \special {pdf:put @thispage <</MediaBox [0 0 \strip@pt{\dimen1} \space
+          \strip@pt{\dimen2} ] /TrimBox [\strip@pt{\dimen3} \space
+          \strip@pt{\dimen3} \space \strip@pt\pdfcropwidth \space
+          \strip@pt\pdfcropheight ] >>}
+      \else\special {pdf:put @thispage <</MediaBox [0 0 \strip@pt{\dimen1} \space
+          \strip@pt{\dimen2} ] /TrimBox [0 0 \strip@pt{\dimen1} \space
+          \strip@pt{\dimen2} ]>> }\fi
+    \egroup
     % End inserted \special line
     \edef\oldup{\the\XeTeXupwardsmode}
     \XeTeXupwardsmode=0 %
@@ -427,45 +432,6 @@
   \let\pr@tect=\relax
 }
 %-c_shipwithcropmarks
-
-%+c_shipcomplete
-\def\shipcompletep@gewithcr@pmarks#1{% \shipout box #1, adding cropmarks if required
-                                     % but without adding margins, borders, etc
-                                     % (used for \includepdf)
-  \dimen0=0\ifCropMarks .5\fi in
-  \advance\pdfpagewidth by 2\dimen0 % increase PDF media size
-  \advance\pdfpageheight by 2\dimen0
-  \hoffset=-1in \voffset=-1in % shift the origin to (0,0)
-  \shipout\vbox to 0pt{% ship the actual page
-    %%%%% The following was added to help produce proper x1a PDF output (djd - 20150504)
-    %%%%% Note the \special line here seems to work but there may be a better location for it
-    %%%%% Also, the numbers used are hard coded now but need to be calculated
-    \ifCropMarks
-      \pdfcropwidth=\pdfpagewidth\advance\pdfcropwidth by -\dimen0
-      \pdfcropheight=\pdfpageheight\advance\pdfcropheight by -\dimen0
-      \def\tmp{\dimen0}
-      \special {pdf: put @thispage <</MediaBox [0 0 \strip@pt\pdfpagewidth \space
-        \strip@pt\pdfpageheight ] /TrimBox [\strip@pt\tmp \space
-        \strip@pt\tmp \space \strip@pt\pdfcropwidth \space
-        \strip@pt\pdfcropheight ] /ArtBox [\strip@pt\tmp \space
-        \strip@pt\tmp \space \strip@pt\pdfcropwidth \space \strip@pt\pdfcropheight ]>>}
-    \else
-      \special {pdf: put @thispage <</MediaBox [0 0 \strip@pt\pdfpagewidth \space
-        \strip@pt\pdfpageheight ] /TrimBox [0 0 \strip@pt\pdfpagewidth \space
-        \strip@pt\pdfpageheight ] /ArtBox [0 0 \strip@pt\pdfpagewidth \space
-        \strip@pt\pdfpageheight ]>>}
-    \fi
-    \trace{p}{Pagesize \the\pdfpagewidth, \the\pdfpageheight}
-    % End inserted \special line
-    \offinterlineskip                                                           %(1)
-    \vbox to \pdfpageheight{\vss
-      \hbox to \pdfpagewidth{\hss#1\hss}
-      \vss}
-    \vss
-    \docr@pmarks
-  }%
-}
-%-c_shipcomplete
 
 %+c_docropmarks
 \def\docr@pmarks{%
