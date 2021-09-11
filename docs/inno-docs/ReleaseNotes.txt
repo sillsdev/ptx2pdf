@@ -11,9 +11,15 @@ Bug fixes and Improvements in 1.9.4 (11 Sep 2021)
   
   * Added option to have Leaders in Table of Contents #490
   
+  * Added ability to create "Reader layout" with verse numbers in center gutter (beta)
+  
   * Make it obvious that VALUES need to be filled in on the variable list #492
   
   * Fixed PTXprint doesn't start after installing #516
+  
+  * Fixed Adding a new style doesn't always work the first time around #513
+  
+  * Fixed Creating FRT matter often fails when starting off #514
   
   * Fixed bug of "Hide Empty Verses" having a dependency on "Auto-Correct USFM" in UI #502
   
@@ -24,6 +30,8 @@ Bug fixes and Improvements in 1.9.4 (11 Sep 2021)
           \zrule|align="c" width="0.75" thick="0.5pt"\*    or   just \zrule \*
 
   * Fixed full-page picture vertical alignment issues #505
+  
+  * Fixed 1-line diglot footnotes get a footnoterule going through them #508
   
 Bug fixes and Improvements in 1.9.3 (30 Aug 2021)
   
