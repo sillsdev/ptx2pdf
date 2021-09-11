@@ -532,57 +532,69 @@ class StyleEditorView(StyleEditor):
         wid = self.builder.get_object(dialogKeys['Marker'])
         if wid is not None:
             wid.set_sensitive(newkey)
-        response = dialog.run()
-        if response == Gtk.ResponseType.OK:
-            key = self.model.get(dialogKeys['Marker'])
-            if key == "":
-                return
-            (_, selecti) = self.treeview.get_selection().get_selected()
-            if key not in self.sheet:
-                self.sheet[key] = Marker({" deletable": True})
-                name = self.model.get(dialogKeys['Name'], '')
-                m = name_reg.match(name)
-                if m:
-                    if not m.group(1) and " " in m.group(2):
-                        cat = m.group(2)
-                    else:
-                        cat = m.group(1) or m.group(3)
-                else:
-                    cat = "Other"
-                cat, url = categorymapping.get(cat, (cat, None))
-                self.sheet[key][' category'] = cat
-                selecti = self.treestore.get_iter_first()
-                while selecti:
-                    r = self.treestore[selecti]
-                    if r[0] == cat:
-                        selecti = self.treestore.append(selecti, [key, name, True])
+        tryme = True
+        while tryme:
+            response = dialog.run()
+            if response == Gtk.ResponseType.OK:
+                key = self.model.get(dialogKeys['Marker'])
+                if key == "":
+                    break
+                for a in ('StyleType', 'TextType', 'OccursUnder'):
+                    if not self.model.get(dialogKeys[a]):
+                        self.model.doError(_("Required element {} is not set. Please set it").format(a))
                         break
-                    selecti = self.treestore.iter_next(selecti)
                 else:
-                    selecti = self.treestore.append(None, [cat, cat, False])
-                    selecti = self.treestore.append(selecti, [key, name, True])
-            data = self.sheet[key]
-            for k, v in dialogKeys.items():
-                if k == 'Marker':
+                    tryme = False
+                if tryme:
                     continue
-                val = self.model.get(v)
-                # print(f"{k=} {v=} -> {val=}")
-                if k.lower() == 'occursunder':
-                    val = set(val.split())
-                    data[k] = val
-                elif val:
-                    data[k] = CaselessStr(val)
-            if data['StyleType'] == 'Character' or data['StyleType'] == 'Note':
-                data['EndMarker'] = key + "*"
-                if data['StyleType'] == 'Character':
-                    data['OccursUnder'].add("NEST")
-                self.resolveEndMarker(data, key, None)
-            elif data['StyleType'] == 'Milestone':
-                self.resolveEndMarker(data, key, data['EndMarker'])
-                del data['EndMarker']
-            self.marker = key
-            self.treeview.get_selection().select_iter(selecti)
-            #self.editMarker()
+                (d, selecti) = self.treeview.get_selection().get_selected()
+                if key not in self.sheet:
+                    self.sheet[key] = Marker({" deletable": True})
+                    name = self.model.get(dialogKeys['Name'], '')
+                    m = name_reg.match(name)
+                    if m:
+                        if not m.group(1) and " " in m.group(2):
+                            cat = m.group(2)
+                        else:
+                            cat = m.group(1) or m.group(3)
+                    else:
+                        cat = "Other"
+                    cat, url = categorymapping.get(cat, (cat, None))
+                    self.sheet[key][' category'] = cat
+                    selecti = self.treestore.get_iter_first()
+                    while selecti:
+                        r = self.treestore[selecti]
+                        if r[0] == cat:
+                            selecti = self.treestore.append(selecti, [key, name, True])
+                            break
+                        selecti = self.treestore.iter_next(selecti)
+                    else:
+                        selecti = self.treestore.append(None, [cat, cat, False])
+                        selecti = self.treestore.append(selecti, [key, name, True])
+                data = self.sheet[key]
+                for k, v in dialogKeys.items():
+                    if k == 'Marker':
+                        continue
+                    val = self.model.get(v)
+                    # print(f"{k=} {v=} -> {val=}")
+                    if k.lower() == 'occursunder':
+                        val = set(val.split())
+                        data[k] = val
+                    elif val:
+                        data[k] = CaselessStr(val)
+                if data['StyleType'] == 'Character' or data['StyleType'] == 'Note':
+                    data['EndMarker'] = key + "*"
+                    if data['StyleType'] == 'Character':
+                        data['OccursUnder'].add("NEST")
+                    self.resolveEndMarker(data, key, None)
+                elif data['StyleType'] == 'Milestone':
+                    self.resolveEndMarker(data, key, data['EndMarker'])
+                    del data['EndMarker']
+                self.marker = key
+                self.treeview.get_selection().select_iter(selecti)
+            else:
+                tryme = False
+                #self.editMarker()
         dialog.hide()
 
     def resolveEndMarker(self, newdata, key, newval):
