@@ -86,7 +86,10 @@ elif args.logging:
         parms = {'level': loglevel, 'datefmt': '%d/%b/%Y %H:%M:%S', 'format': '%(asctime)s %(levelname)s:%(module)s(%(lineno)d) %(message)s'}
         if args.logfile.lower != "none":
             parms.update(filename=args.logfile, filemode="w") #, encoding="utf-8")
-        logging.basicConfig(**parms)
+        try:
+            logging.basicConfig(**parms)
+        except Exception as e:
+            print("Exception", e)
     log = logging.getLogger('ptxprint')
 
 if log is not None and getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
