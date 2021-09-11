@@ -261,7 +261,7 @@
 {paper/ifwatermark}\def\MergePDF{{"{paper/watermarkpdf}"}}
 
 %%%%% Front Matter PDF file(s) get included here %%%%%
-{document/toc}\BodyColumns=1     % Temporarily set this to Single Column for the ToC page(s)
+\BodyColumns=1     % Temporarily set this to Single Column for the ToC page(s)
 
 {document/iftocleaders}\tocleaders{{{document/tocleaderstyle}}}{{3pt}}
 {document/toc}\includeifpresent{{{jobname}.toc}}
@@ -269,7 +269,7 @@
 \ptxfile{{{project/frontfile}}}
 {document/toc}{document/hasnofront_}\preptxfile\prepusfm\id FRT -- toc
 {document/toc}{document/hasnofront_}\is {document/toctitle} \ip \ztoc |main\*\ip \postptxfile
-{document/toc}\BodyColumns={paper/columns}     % But ensure it goes back to the chosen Single/Double setting for the main body text
+\BodyColumns={paper/columns}     % But ensure it goes back to the chosen Single/Double setting for the main body text
 \useTOCone{document/usetoc1}
 \useTOCtwo{document/usetoc2}
 \useTOCthree{document/usetoc3}
