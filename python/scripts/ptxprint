@@ -88,7 +88,7 @@ elif args.logging:
             parms.update(filename=args.logfile, filemode="w") #, encoding="utf-8")
         try:
             logging.basicConfig(**parms)
-        except Exception as e:
+        except FileNotFoundError as e:      # no write access to the log
             print("Exception", e)
     log = logging.getLogger('ptxprint')
 
