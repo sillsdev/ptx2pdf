@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ptxprint\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-10 11:09+0700\n"
-"PO-Revision-Date: 2021-09-10 04:09\n"
+"POT-Creation-Date: 2021-09-11 10:37+0700\n"
+"PO-Revision-Date: 2021-09-11 03:37\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -602,73 +602,73 @@ msgstr ""
 msgid "{} at line {} col {}"
 msgstr ""
 
-#: lib/ptxprint/view.py:921
+#: lib/ptxprint/view.py:922
 msgid "Failed to Generate Hyphenation List"
 msgstr ""
 
-#: lib/ptxprint/view.py:922
+#: lib/ptxprint/view.py:923
 msgid "{} Paratext Project's Hyphenation file not found:\n"
 "{}"
 msgstr ""
 
-#: lib/ptxprint/view.py:959
+#: lib/ptxprint/view.py:960
 msgid "\n\n"
 "That is too many for XeTeX! List truncated to longest {} words found in the active sources."
 msgstr ""
 
-#: lib/ptxprint/view.py:965
+#: lib/ptxprint/view.py:966
 msgid "Hyphenation List Generated"
 msgstr ""
 
-#: lib/ptxprint/view.py:966
+#: lib/ptxprint/view.py:967
 msgid "{} hyphenated words were gathered\n"
 "from Paratext's Hyphenation Word List."
 msgstr ""
 
-#: lib/ptxprint/view.py:968
+#: lib/ptxprint/view.py:969
 msgid "\n\n"
 "Note for Indic languages that {} words containing ZWJ"
 msgstr ""
 
-#: lib/ptxprint/view.py:969
+#: lib/ptxprint/view.py:970
 msgid "\n"
 "and ZWNJ characters have been left off the hyphenation list."
 msgstr ""
 
-#: lib/ptxprint/view.py:971
+#: lib/ptxprint/view.py:972
 msgid "\n\n"
 "{} words were at least 10 characters long but had no hyphenation marked"
 msgstr ""
 
-#: lib/ptxprint/view.py:974
+#: lib/ptxprint/view.py:975
 msgid "Hyphenation List was NOT Generated"
 msgstr ""
 
-#: lib/ptxprint/view.py:975
+#: lib/ptxprint/view.py:976
 msgid "No valid words were found in Paratext's Hyphenation List"
 msgstr ""
 
-#: lib/ptxprint/view.py:1018
+#: lib/ptxprint/view.py:1019
 msgid "The Fallback Font needs to be something other than the Regular Font."
 msgstr ""
 
-#: lib/ptxprint/view.py:1019 lib/ptxprint/view.py:1027
+#: lib/ptxprint/view.py:1020 lib/ptxprint/view.py:1028
 msgid "Please select a different Font."
 msgstr ""
 
-#: lib/ptxprint/view.py:1026
+#: lib/ptxprint/view.py:1027
 msgid "The Fallback Font just selected does NOT support all the missing characters listed."
 msgstr ""
 
-#: lib/ptxprint/view.py:1226
+#: lib/ptxprint/view.py:1227
 msgid "No Config found for Diglot"
 msgstr ""
 
-#: lib/ptxprint/view.py:1239
+#: lib/ptxprint/view.py:1240
 msgid "Error: Cannot create Archive!"
 msgstr ""
 
-#: lib/ptxprint/view.py:1239
+#: lib/ptxprint/view.py:1240
 msgid "The ZIP file seems to be open in another program."
 msgstr ""
 

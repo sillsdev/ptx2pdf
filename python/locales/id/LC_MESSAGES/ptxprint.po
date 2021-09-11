@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ptxprint\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-10 11:09+0700\n"
-"PO-Revision-Date: 2021-09-10 04:09\n"
+"POT-Creation-Date: 2021-09-11 10:37+0700\n"
+"PO-Revision-Date: 2021-09-11 03:37\n"
 "Last-Translator: \n"
 "Language-Team: Indonesian\n"
 "Language: id_ID\n"
@@ -664,77 +664,77 @@ msgstr "Kesalahan pada penguraian JSON di {}"
 msgid "{} at line {} col {}"
 msgstr "{} di baris {} kolom {}"
 
-#: lib/ptxprint/view.py:921
+#: lib/ptxprint/view.py:922
 msgid "Failed to Generate Hyphenation List"
 msgstr "Tidak Berhasil Menghasilkan Daftar Pemenggalan Kata"
 
-#: lib/ptxprint/view.py:922
+#: lib/ptxprint/view.py:923
 msgid "{} Paratext Project's Hyphenation file not found:\n"
 "{}"
 msgstr "File Pemenggalan Kata untuk proyek {} tidak ditemukan:\n"
 "{}"
 
-#: lib/ptxprint/view.py:959
+#: lib/ptxprint/view.py:960
 msgid "\n\n"
 "That is too many for XeTeX! List truncated to longest {} words found in the active sources."
 msgstr "\n\n"
 "Itu terlalu banyak untuk XeTeX! Daftar terpotong menjadi kata {} terpanjang yang ditemukan di sumber aktif."
 
-#: lib/ptxprint/view.py:965
+#: lib/ptxprint/view.py:966
 msgid "Hyphenation List Generated"
 msgstr "Daftar Pemenggalan Kata Telah Dihasilkan"
 
-#: lib/ptxprint/view.py:966
+#: lib/ptxprint/view.py:967
 msgid "{} hyphenated words were gathered\n"
 "from Paratext's Hyphenation Word List."
 msgstr "Sebanyak {} kata yang diberi tanda garis telah dikumpul\n"
 "dari Daftar Pemenggalan Kata di Paratext."
 
-#: lib/ptxprint/view.py:968
+#: lib/ptxprint/view.py:969
 msgid "\n\n"
 "Note for Indic languages that {} words containing ZWJ"
 msgstr ""
 
-#: lib/ptxprint/view.py:969
+#: lib/ptxprint/view.py:970
 msgid "\n"
 "and ZWNJ characters have been left off the hyphenation list."
 msgstr ""
 
-#: lib/ptxprint/view.py:971
+#: lib/ptxprint/view.py:972
 msgid "\n\n"
 "{} words were at least 10 characters long but had no hyphenation marked"
 msgstr "\n\n"
 "{} kata ada setidaknya 10 karakter tetapi tidak diberikan tanda hubung"
 
-#: lib/ptxprint/view.py:974
+#: lib/ptxprint/view.py:975
 msgid "Hyphenation List was NOT Generated"
 msgstr "Daftar Pemenggalan Kata TIDAK Dihasilkan"
 
-#: lib/ptxprint/view.py:975
+#: lib/ptxprint/view.py:976
 msgid "No valid words were found in Paratext's Hyphenation List"
 msgstr "Tidak ada kata berlaku yang terdapat di Daftar Pemenggalan Kata"
 
-#: lib/ptxprint/view.py:1018
+#: lib/ptxprint/view.py:1019
 msgid "The Fallback Font needs to be something other than the Regular Font."
 msgstr "Fon Pengganti tidak boleh sama dengan fon yang biasa dipakai di teks."
 
-#: lib/ptxprint/view.py:1019 lib/ptxprint/view.py:1027
+#: lib/ptxprint/view.py:1020 lib/ptxprint/view.py:1028
 msgid "Please select a different Font."
 msgstr "Silakan pilih fon yang lain."
 
-#: lib/ptxprint/view.py:1026
+#: lib/ptxprint/view.py:1027
 msgid "The Fallback Font just selected does NOT support all the missing characters listed."
 msgstr "Fon Pengganti yang baru dipilih TIDAK mendukung semua karakter yang diperlukan."
 
-#: lib/ptxprint/view.py:1226
+#: lib/ptxprint/view.py:1227
 msgid "No Config found for Diglot"
 msgstr "Pengaturan untuk terbitan dua bahasa tidak ditemukan"
 
-#: lib/ptxprint/view.py:1239
+#: lib/ptxprint/view.py:1240
 msgid "Error: Cannot create Archive!"
 msgstr "Kesalahan: Tidak dapat membuat Arsip!"
 
-#: lib/ptxprint/view.py:1239
+#: lib/ptxprint/view.py:1240
 msgid "The ZIP file seems to be open in another program."
 msgstr "Sepertinya file ZIP telah dibuka di program lain."
 
