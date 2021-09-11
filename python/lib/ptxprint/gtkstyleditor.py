@@ -215,6 +215,8 @@ class StyleEditorView(StyleEditor):
                 foundp = True
             cat = 'Other'
             if 'Name' in v:
+                if not v['Name']:
+                    v['Name'] = "{} - Other".format(k)
                 m = name_reg.match(str(v['Name']))
                 if m:
                     if not m.group(1) and " " in m.group(2):
@@ -536,7 +538,7 @@ class StyleEditorView(StyleEditor):
         while tryme:
             response = dialog.run()
             if response == Gtk.ResponseType.OK:
-                key = self.model.get(dialogKeys['Marker'])
+                key = self.model.get(dialogKeys['Marker']).strip().replace("\\","")
                 if key == "":
                     break
                 for a in ('StyleType', 'TextType', 'OccursUnder'):
@@ -575,7 +577,7 @@ class StyleEditorView(StyleEditor):
                 for k, v in dialogKeys.items():
                     if k == 'Marker':
                         continue
-                    val = self.model.get(v)
+                    val = self.model.get(v).replace("\\","")
                     # print(f"{k=} {v=} -> {val=}")
                     if k.lower() == 'occursunder':
                         val = set(val.split())
