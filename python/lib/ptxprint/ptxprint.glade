@@ -6064,12 +6064,12 @@ can be customized.</property>
                                       <object class="GtkCheckButton" id="c_grid">
                                         <property name="label" translatable="yes">Marks &amp; Guides</property>
                                         <property name="visible">True</property>
-                                        <property name="can-focus">True</property>
-                                        <property name="receives-default">False</property>
-                                        <property name="tooltip-text" translatable="yes">Enable Guides or a Grid to sit behind the
-text to assist with final adjustments; or
-enable a Watermark to appear behind the
-text: or turn on the Crop marks for the printer.</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="tooltip_text" translatable="yes">Enable Guides or a Grid to sit behind the
+text to assist with final adjustments; 
+or enable a Watermark to show behind the text;
+or turn on the Crop marks for the printer.</property>
                                         <property name="halign">end</property>
                                         <property name="margin-left">2</property>
                                         <property name="draw-indicator">True</property>
@@ -19787,9 +19787,8 @@ file is selected, then these will appear in alphabetical order.</property>
                 <child type="tab">
                   <object class="GtkLabel" id="lb_PubInfo">
                     <property name="visible">True</property>
-                    <property name="can-focus">False</property>
-                    <property name="tooltip-text" translatable="yes">Peripherals
-Define what comes before and
+                    <property name="can_focus">False</property>
+                    <property name="tooltip_text" translatable="yes">Define what comes before and
 after the scripture text.</property>
                     <property name="halign">start</property>
                     <property name="label" translatable="yes">Peripherals</property>
