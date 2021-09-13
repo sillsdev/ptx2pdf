@@ -1159,7 +1159,7 @@ class TexModel:
                     return ""
                 ref = re.sub(r"^\S+\s+", r"", a)
                 return "\\zfiga|{}\\*".format(ref)
-            self.localChanges.append((None, regex.compile(r'\\fig .*?src="([^"]+?)".*?\\fig\*', flags=regex.M), figtozfiga))
+            self.localChanges.append((None, regex.compile(r'\\fig.*?src="([^"]+?)".*?\\fig\*', flags=regex.M), figtozfiga))
             self.localChanges.append((None, regex.compile(r'\\fig(?: .*?)?\|(.*?)\|.*?\\fig\*', flags=regex.M), figtozfiga))
 
             if self.asBool("document/iffighiderefs"): # del ch:vs from caption 
@@ -1355,6 +1355,7 @@ class TexModel:
             rematch = r"\\figonpage\{(\d+)\}\{\d+\}\{(?:" + self.printer.getPicRe() + "|(.*?))\.[^}]+\}\{.*?\}\{(.*?)?\}\{.+?\}"
             # print(rematch)
             m = re.findall(rematch, dat)
+            print(m)
             msngPgs = []
             customStmt = []
             if len(m):

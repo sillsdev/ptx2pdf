@@ -308,7 +308,7 @@ class PicInfo(dict):
             blocks = ["0"] + re.split(r"\\c\s+(\d+)", dat)
             for c, t in zip(blocks[0::2], blocks[1::2]):
                 if isperiph:
-                    m = re.findall(r"(?ms)\\fig (.*?)\|(.+?\.....?)\|(col|span)[^|]*\|([^\\]+?)?\\fig\*", dat)
+                    m = re.findall(r"(?ms)\\fig(.*?)\|(.+?\.....?)\|(col|span)[^|]*\|([^\\]+?)?\\fig\*", dat)
                     if len(m):
                         for i, f in enumerate(m):
                             r = "{}{} p{:03d}".format(bk, suffix, i+1)
