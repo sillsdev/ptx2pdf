@@ -1,0 +1,19 @@
+
+\id TBL Table test
+\h table test file
+\mt Footnotes and tables
+\c 1
+\p
+We don't want the table to be caught up in the cut-out text.
+This is the beginning of the table:
+\testpoint
+\p
+\tr
+\th1 Head1 \th2 Head2 \th3 Head3\testpoint
+\tr\tc1 l1c1 \tc2 l1c2 \tc3 l1c3
+\tr\tc1 l2c1
+\tc2 l2c2 \tc3 l2c3
+\tr\tc1 l3c1 \tc2 l3c2 \tc3 l3c3
+\p
+
+\p The end of the table

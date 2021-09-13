@@ -136,6 +136,7 @@
 %+c_makenote
 % footnote macros based on plain.tex \footnote, \vfootnote
 \newbox\he@dingnotes
+\newbox\t@blenotes
 %:
 % #1 ~ class to store the note in. E.g. f, x. The results of `\NoteBlendInto`.
 % #2 ~ class to use for styling (what the source had in it)
@@ -146,11 +147,13 @@
   \ifhmode\edef\@sf{\spacefactor\the\spacefactor}\/\fi%
   % if footnote is on a chapter number ...
   \ifinextended #3\edef\@wrap{\global\setbox\sid@barnotes=\vbox\bgroup\unvbox\sid@barnotes}\else
-    \ifhe@dings #3\edef\@wrap{\global\setbox\he@dingnotes=\vbox\bgroup\unvbox\he@dingnotes}%
-    \else\edef\@wrap{}%
-      \ifch@pter \everypar={}\ch@pterfalse%
-        \global\setbox\ch@pternote=\hbox{\box\ch@pternote #3}%
-      \else #3\fi % output caller
+    \ifdoingt@ble #3\edef\@wrap{\global\setbox\t@blenotes=\vbox\bgroup\unvbox\t@blenotes}\else%
+      \ifhe@dings #3\edef\@wrap{\global\setbox\he@dingnotes=\vbox\bgroup\unvbox\he@dingnotes}%
+      \else\edef\@wrap{}%
+        \ifch@pter \everypar={}\ch@pterfalse%
+          \global\setbox\ch@pternote=\hbox{\box\ch@pternote #3}%
+        \else #3\fi % output caller
+      \fi
     \fi
   \fi%
   % @sf preserves the space factor (e.g. extra space after a period), restore it now

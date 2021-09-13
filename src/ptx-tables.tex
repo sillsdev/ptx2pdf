@@ -160,7 +160,9 @@
     \end@llpoppedstyles{tc*}%
     \getp@ram{rightmargin}{tc\the\tablec@l}%
     \ifx\p@ram\relax\else\trace{t}{rightkern(tc\the\tablec@l) \p@ram}\kern\p@ram\IndentUnit\fi
+    %\showlists
     \egroup
+    %\showbox\cellb@x
     \setbox0=\vbox{\unvbox\cellb@x \global\setbox\cellb@x=\lastbox}%
     \global\setbox\cellb@x=\hbox{\unhbox\cellb@x \unskip\unskip\unpenalty}%
     \x@\let\x@\c@rrentcolbox\csname tablecol-\the\tablec@l\endcsname
@@ -194,19 +196,23 @@
 \newdimen\t@talwidth
 \def\endt@ble{%
   \ifdoingt@ble
+    \trace{t}{endt@ble-\mcstack}%
     \@ndcell
     \@ndrow\end@llpoppedstyles{P}%
     \t@talwidth=0pt
-    %\x@\showbox\csname tablecol-2\endcsname
+    %%\x@\showbox\csname tablecol-2\endcsname
     \f@reachcol{\advance\t@talwidth by \wd\c@rrentcolbox}%
     \endt@blewrap
     \f@reachcol{\setbox\c@rrentcolbox=\box\voidb@x}%
     \doingt@blefalse\inn@tefalse
     \egroup
+    %\showbox\t@blenotes
+    \unvbox\t@blenotes
   \fi}
 \newif\ifdoingt@ble
 
 \def\endt@blewrap{%
+  \trace{t}{endt@blewrap}%
   % calculate column widths as:
   % (a) any column whose max is < \hsize / numcols gets its natural width
   % (b) calculate exc@ss width of the remaining columns
@@ -215,6 +221,7 @@
   \sp@re=0pt \exc@ss=0pt
   \thr@shold=\hsize \divide\thr@shold by \maxtablec@l
   \f@reachcol{%
+    %\showbox\c@rrentcolbox
     \c@rrentcolwidth=-1sp % "unset" flag
     \ifdim\wd\c@rrentcolbox>\thr@shold
       \advance\exc@ss by \wd\c@rrentcolbox \advance\exc@ss by -\thr@shold
@@ -248,7 +255,9 @@
   \ifx\p@ram\relax\else\advance\ifRTL\dimen1\else\dimen0\fi by \p@ram\IndentUnit\fi
   \getp@ram{rightmargin}{tr}%
   \ifx\p@ram\relax\else\advance\ifRTL\dimen0\else\dimen1\fi by \p@ram\IndentUnit\fi
+  \tracingmacros=1
   \f@reachrow{%
+    \trace{t}{outputting table (\the\tabler@ws, \the\linec@unt)}%
     \ifnum\@row=2 \nobreak \fi
     \ifnum\@row=\tabler@ws \nobreak \fi
     \linec@unt=0
@@ -323,8 +332,9 @@
 \def\cell@r{r}
 \def\cell@c{c}
 \def\extractl@stcell{% delete last cell from box \c@rrentcolbox and return it in \c@rrentcell
+  \showbox\c@rrentcolbox
   \setbox\c@rrentcolbox=\vbox{\unvbox\c@rrentcolbox \unskip\unpenalty
-    \global\setbox\c@rrentcell=\lastbox}}
+    \global\setbox\c@rrentcell=\lastbox}\showbox\c@rrentcell}
 \def\updatelinec@unt{% count lines in \c@rrentcell, update \linec@unt if more than current value
   \global\lct@mp=0
   \setbox0=\vbox{\unvcopy\c@rrentcell \c@untlines}%

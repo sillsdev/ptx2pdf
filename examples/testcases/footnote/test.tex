@@ -24,4 +24,12 @@
 \ptxfile{test.usfm}
 \ParagraphedNotes{fe}
 \ptxfile{test.usfm}
+\unbalancedtrue
+\tracing{t}
+%\tracingassigns=1
+\newcount\tp
+\def\logoutput{1}
+\def\testpoint{%\tracinggroups=1
+  \edef\thetp{test point \the\tp}\expandafter\write\expandafter\logoutput\expandafter{\thetp}\message{\thetp}\global\advance\tp by 1\relax}
+\ptxfile{table.usfm}
 \bye
