@@ -184,6 +184,8 @@
 \def\at@ndofthisparLDelay{}
 \ifcsname ForcedLooseness\endcsname\else\gdef\ForcedLooseness{}\fi
 
+\newif\ifdoingt@ble
+\newdimen\lastdepth
 %+cpar_par
 % end a paragraph, handling cutouts (shaping around drop-cap) if any, and the <end> hook
 \def\par{\ifhmode
@@ -192,10 +194,10 @@
    \ifx\ForcedLooseness\empty\else\looseness=\ForcedLooseness\fi
    \trace{j}{baselineskip = \the\baselineskip, looseness = \the\looseness}%
    \endgraf
-   \ifinn@te\else
+   \ifinn@te\else\ifdoingt@ble\else
      \edef\t@mpp{\string\@parlen{\lastc@rref}{\lastc@rradj}{\the\prevgraf}}\x@\write\x@\p@rlocs\x@{\t@mpp}%
-   \fi
-   \ifvmode\ifinn@te\else\ifhe@dings\else\lastdepth=\prevdepth\fi\fi\fi
+   \fi\fi
+   \ifvmode\ifinn@te\else\ifhe@dings\else\ifdoingt@ble\else\lastdepth=\prevdepth\fi\fi\fi\fi
    \cutoutcarryover 
  \fi
  \do@ndofthispar
@@ -260,7 +262,6 @@
 \def\settest@mb#1{\x@\let\x@\test@mb\csname intro@mbigious-#1\endcsname}
 \introAmbigious{iex} % iex can be intro or not intro.
 
-\newdimen\lastdepth
 \newcount\dropped@ther@lines
 \dropped@ther@lines=0
 \def\endit@P{%Called by whileitp@ps, to end a paragraph style
