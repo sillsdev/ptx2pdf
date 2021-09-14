@@ -749,6 +749,7 @@
 \def\pagebody{\vbox to\textheight{\boxmaxdepth\maxdepth \pagecontents}}
 \def\makeheadline{%
   \g@tfontname{h}%
+  %\trace{h}{makeheadline: textwidth \the\textwidth}%
   \vbox to 0pt{\kern-\topm@rgin
    \vbox{\kern\HeaderPosition\MarginUnit
     \setbox0=\vbox{\hbox to \textwidth{\the\headline}}%

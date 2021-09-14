@@ -294,8 +294,8 @@
   \fi
   % full-page options
   \tempfalse
-  \ifx\l@cspec@a\loc@Page\global\let\picl@c=\loc@Page\global\picUsesInsfalse\temptrue \p@cinswid=\PaperWidth\fi
-  \ifx\l@cspec@a\loc@Full\global\let\picl@c=\loc@Full\global\picUsesInsfalse\temptrue\fi
+  \ifx\l@cspec@a\loc@Page\global\let\picl@c=\loc@Page\global\picUsesInsfalse\temptrue\fi
+  \ifx\l@cspec@a\loc@Full\global\let\picl@c=\loc@Full\global\picUsesInsfalse\temptrue \p@cinswid=\PaperWidth\fi
   \iftemp
     \xdef\pic@lign{\l@cspec@b}\xdef\picV@lign{\l@cspec@c}%
     \trace{g}{Experimental page / full-page \w@tsit (\pic@lign|\picV@lign)}%
@@ -743,6 +743,7 @@
     \ifFigurePlaceholders % replace graphic with a frame and the file name
       \setbox\newpicb@x=\m@kepl@ceholder{\wd\newpicb@x}{\ht\newpicb@x}{\csname figparam-src\endcsname}%
     \fi
+    \trace{g}{Object going into hbox \sizem@ltiple x \the\p@cwidth}%
     \setbox\newpicb@x=\hbox to \sizem@ltiple\p@cwidth{\hss
       \edef\l@gstring{{\the\im@gecount}{\f@lename}{\csname figparam-pgpos\endcsname}{\csname figparam-copy\endcsname}{\picdim@n:\the\wd\newpicb@x x\the\ht\newpicb@x}}% Fully expand figure parameters, but leave page no. to be expanded later.
       \x@\writefigp@gelog\x@{\l@gstring}%
@@ -775,6 +776,7 @@
 	\add@credit%
     \fi
     %Align image left/right or centre
+    \trace{g}{Object aligned into hbox \the\p@cinswid}%
     \ifx\pic@lign\@lignRight\hbox to \p@cinswid{\hss\box\newpicb@x}%
     \else
       \ifx\pic@lign\@lignLeft \hbox to \p@cinswid{\box\newpicb@x\hss}%
@@ -1190,13 +1192,17 @@
     %\showbox0
     \ifnum\tmpcount=11% expected values: 11 (normal-sized page)
       \def\pagecontents{%
-        \trace{g}{Topins=\the\ht\topins, Bottomins=\the\ht\bottomins, tlins=\the\ht\topleftins, blins=\the\ht\bottomleftins, trins=\the\ht\toprightins, brins=\the\ht\bottomrightins}%
-        \vbox to \textheight{\unvbox0}%
+        \trace{g}{Topins=\the\ht\topins, Bottomins=\the\ht\bottomins, tlins=\the\ht\topleftins, blins=\the\ht\bottomleftins, trins=\the\ht\toprightins, brins=\the\ht\bottomrightins, hoffset=\the\hoffset, voffset=\the\voffset}%
+        \vbox to \textheight{\par\unvbox0}%
         }%
       \plainoutput
     \else% Full page, past margins (9) or 0 
       \dimen9=\pdfpagewidth \dimen8=\pdfpageheight
-      \shipwithcr@pmarks{\vbox{\vbox to \PaperHeight{\kern-\topm@rgin\unvbox0}}}%
+      %\showbox 0
+      \trace{g}{Topins=\the\ht\topins, Bottomins=\the\ht\bottomins, tlins=\the\ht\topleftins, blins=\the\ht\bottomleftins, trins=\the\ht\toprightins, brins=\the\ht\bottomrightins, hoffset=\the\hoffset, voffset=\the\voffset, PaperHeight=\the\PaperHeight, pdfpageheight=\the\pdfpageheight}%
+      \setbox0\vbox to \PaperHeight{\kern-\topm@rgin \unvbox0}%  
+      \trace{g}{Box prepared (\the\ht0+\the\dp0)x\the\wd0}%
+      \shipwithcr@pmarks{\box0}
       \pdfpagewidth=\dimen9 \pdfpageheight=\dimen8
       \advancepageno
     \fi
