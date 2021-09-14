@@ -357,6 +357,28 @@
  \fi %ifnum
  \XeTeXuseglyphmetrics=\@seglyphmetrics% Restore to normal value.
 }
+
+
+\def\pdfp@geout{%
+    %%%%% The following was added to help produce proper x1a PDF output (djd - 20150504)
+    %%%%% Note the \special line here seems to work but there may be a better location for it
+    %%%%% Also, the numbers used are hard coded now but need to be calculated
+  \bgroup
+    \dimen1=0.99626401\pdfpagewidth \dimen2=0.99626401\pdfpageheight
+    \dimen3=0.99626401\dimen0 \trace{s}{pdfpagewidth=\the\dimen1 from \the\pdfpagewidth}%
+    \ifCropMarks
+      \pdfcropwidth=\pdfpagewidth\advance\pdfcropwidth by -\dimen0 \pdfcropwidth=0.99626401\pdfcropwidth
+      \pdfcropheight=\pdfpageheight\advance\pdfcropheight by -\dimen0 \pdfcropheight=0.99626401\pdfcropheight
+      \special {pdf:put @thispage <</MediaBox [0 0 \strip@pt{\dimen1} \space
+        \strip@pt{\dimen2} ] /TrimBox [\strip@pt{\dimen3} \space
+        \strip@pt{\dimen3} \space \strip@pt\pdfcropwidth \space
+        \strip@pt\pdfcropheight ] >>}
+    \else\special {pdf:put @thispage <</MediaBox [0 0 \strip@pt{\dimen1} \space
+        \strip@pt{\dimen2} ] /TrimBox [0 0 \strip@pt{\dimen1} \space
+        \strip@pt{\dimen2} ]>> }\fi
+  \egroup
+}
+
 \def\shipwithcr@pmarks#1{% \shipout box #1, adding cropmarks if required
   \def\g@tterside{L} % figure out if we're adding a binding gutter, and which side
   %\ifBindingGutter
@@ -379,24 +401,7 @@
   \let\pr@tect=\noexpand
   \trace{G}{\the\pdfpagewidth x \the\pdfpageheight}
   \shipout\vbox to 0pt{% ship the actual page content, with \BindingGutter added if wanted
-    %%%%% The following was added to help produce proper x1a PDF output (djd - 20150504)
-    %%%%% Note the \special line here seems to work but there may be a better location for it
-    %%%%% Also, the numbers used are hard coded now but need to be calculated
-    \bgroup
-      \dimen1=0.99626401\pdfpagewidth \dimen2=0.99626401\pdfpageheight
-      \dimen3=0.99626401\dimen0 \trace{s}{pdfpagewidth=\the\dimen1 from \the\pdfpagewidth}%
-      \ifCropMarks
-        \pdfcropwidth=\pdfpagewidth\advance\pdfcropwidth by -\dimen0 \pdfcropwidth=0.99626401\pdfcropwidth
-        \pdfcropheight=\pdfpageheight\advance\pdfcropheight by -\dimen0 \pdfcropheight=0.99626401\pdfcropheight
-        \special {pdf:put @thispage <</MediaBox [0 0 \strip@pt{\dimen1} \space
-          \strip@pt{\dimen2} ] /TrimBox [\strip@pt{\dimen3} \space
-          \strip@pt{\dimen3} \space \strip@pt\pdfcropwidth \space
-          \strip@pt\pdfcropheight ] >>}
-      \else\special {pdf:put @thispage <</MediaBox [0 0 \strip@pt{\dimen1} \space
-          \strip@pt{\dimen2} ] /TrimBox [0 0 \strip@pt{\dimen1} \space
-          \strip@pt{\dimen2} ]>> }\fi
-    \egroup
-    % End inserted \special line
+    \pdfp@geout
     \edef\oldup{\the\XeTeXupwardsmode}
     \XeTeXupwardsmode=0 %
     \ifrotate
@@ -433,6 +438,25 @@
 }
 %-c_shipwithcropmarks
 
+%+c_shipcomplete
+\def\shipcompletep@gewithcr@pmarks#1{% \shipout box #1, adding cropmarks if required
+                                     % but without adding margins, borders, etc
+                                     % (used for \includepdf)
+  \dimen0=0\ifCropMarks .5\fi in
+  \advance\pdfpagewidth by 2\dimen0 % increase PDF media size
+  \advance\pdfpageheight by 2\dimen0
+  \hoffset=-1in \voffset=-1in % shift the origin to (0,0)
+  \shipout\vbox to 0pt{% ship the actual page
+    \pdfp@geout
+    \offinterlineskip                                                           %(1)
+    \vbox to \pdfpageheight{\vss
+      \hbox to \pdfpagewidth{\hss#1\hss}
+      \vss}
+    \vss
+    \docr@pmarks
+  }%
+}
+%-c_shipcomplete
 %+c_docropmarks
 \def\docr@pmarks{%
     \ifCropMarks % if crop marks are enabled

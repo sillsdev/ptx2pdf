@@ -55,9 +55,9 @@ def setWidgetVal(wid, w, value, noui=False):
         elif wid.startswith("fcb_"):
             w.set_active_id(value)
         elif wid.startswith("t_"):
-            w.set_text(value)
+            w.set_text(value or "")
         elif wid.startswith("tb_"):
-            w.set_text(value)
+            w.set_text(value or "")
         elif wid.startswith("f_"):
             w.set_font_name(value)
             # w.emit("font-set")
@@ -68,13 +68,13 @@ def setWidgetVal(wid, w, value, noui=False):
         elif wid.startswith("s_"):
             w.set_value(float(value or 0))
         elif wid.startswith("btn_"):
-            w.set_tooltip_text(value)
+            w.set_tooltip_text(value or "")
         elif wid.startswith("bl_"):
             setFontButton(w, value or None)
         elif wid.startswith("lb_"):
-            w.set_label(value)
+            w.set_label(value or "")
         elif wid.startswith("l_"):
-            w.set_text(value)
+            w.set_text(value or "")
         elif wid.startswith("col_"):
             c = Gdk.RGBA()
             c.parse(value)

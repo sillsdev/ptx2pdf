@@ -193,8 +193,8 @@ class StyleEditorView(StyleEditor):
             return
         try:
             setWidgetVal(key, w, value)
-        except ValueError as e:
-            raise ValueError("{} for widget {}".format(e, key))
+        except (TypeError, ValueError) as e:
+            raise e.__class__("{} for widget {}".format(e, key))
 
     def load(self, sheetfiles):
         super().load(sheetfiles)

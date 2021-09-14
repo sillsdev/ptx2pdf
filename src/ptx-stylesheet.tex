@@ -937,7 +937,10 @@
   \global\p@ppingfalse
   \let\d@=\wip@do
 }
-\def\end@llpoppedstyles#1{\trace{s}{end@llpoppedstyles #1}\let\itp@psstore\empty\xdef\mcch@cking{#1}\let\d@=\whileitp@ps\mcdown\ifx\itp@psstore\empty\else\edef\mcstack{\itp@psstore\mcstack}\fi\trace{s}{end@llpoppedstyles END: \mcstack}}
+\def\end@llpoppedstyles#1{\trace{s}{end@llpoppedstyles #1}%
+  \let\itp@psstore\empty\xdef\mcch@cking{#1}\let\d@=\whileitp@ps
+  \mcdown\ifx\itp@psstore\empty\else\edef\mcstack{\itp@psstore\mcstack}\fi
+  \trace{s}{end@llpoppedstyles END: \mcstack}}
 
 \def\s@tstyst@k#1{%Get a + separated list of styles that ought to uniquely define a font/etc.
   %List excludes marker #1 and stops at a barrier (e.g. a par/note/sidebar)
