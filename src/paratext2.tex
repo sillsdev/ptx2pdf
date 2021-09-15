@@ -178,7 +178,7 @@
   \fi%
   \trace{f}{Footnote (\n@tetype) [\reference] will be \the\n@tewidth wide (page is \the\hsize)}%
   \the\d@note\bgroup% insert note-f (or note-x)
-    \XeTeXuseglyphmetrics=3 % so that notes sit on the baseline based on content and not font descender
+    % \XeTeXuseglyphmetrics=3 % so that notes sit on the baseline based on content and not font descender
     \hsize=\n@tewidth
 %%% single-column notes:
     \interlinepenalty\interfootnotelinepenalty % set penalty to break lines
@@ -219,6 +219,7 @@
   \mcpush{N+#2}%
   %\getp@ram{fontsize}{#2}\edef\c@rrfontsize{\ifx\p@ram\relax12\else\p@ram\fi}%
   \s@tfont{#2}%
+  \trace{f}{Use glyph metrics in footnote=\the\XeTeXuseglyphmetrics}%
   \futurelet\next\fo@t}% use plain.tex footnote processor
 %-c_vmakenote
 
