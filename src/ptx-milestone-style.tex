@@ -348,6 +348,7 @@
     \m@kenumber{\attr@b}%
     \let\gap@dim\@@result%
   \fi
-  \vbox{}\kern\gap@dim%
+  \trace{m}{zgap \gap@dim}%
+  \vbox{\kern\gap@dim}%
 }
 
