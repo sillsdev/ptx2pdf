@@ -1026,7 +1026,7 @@
 \CaptionRefFirstfalse
 \newif\ifCaptionFirst % Does the caption come before the image or after?
 \CaptionFirstfalse
-\def\FullPageFudgeFactor{-2pt} % How much does a full page top-aligned picture miss the top of the page by?
+\def\FullPageFudgeFactor{0pt} % How much does a full page top-aligned picture miss the top of the page by?
 %+cfig_checkpdf
 \def\ch@ckpdf#1.#2.#3\endf@lename{\lowercase{\edef\@xt{#2}}%
   \ifx\@xt\@pdf \let\picfilecomm@nd\XeTeXpdffile \fi}
@@ -1200,9 +1200,9 @@
       \dimen9=\pdfpagewidth \dimen8=\pdfpageheight
       %\showbox 0
       \trace{g}{Topins=\the\ht\topins, Bottomins=\the\ht\bottomins, tlins=\the\ht\topleftins, blins=\the\ht\bottomleftins, trins=\the\ht\toprightins, brins=\the\ht\bottomrightins, hoffset=\the\hoffset, voffset=\the\voffset, PaperHeight=\the\PaperHeight, pdfpageheight=\the\pdfpageheight}%
-      \setbox0\vbox to \PaperHeight{\kern-\topm@rgin \unvbox0}%  
+      \setbox0\vbox to \PaperHeight{\unvbox0}%  
       \trace{g}{Box prepared (\the\ht0+\the\dp0)x\the\wd0}%
-      \shipwithcr@pmarks{\box0}
+      \shipcompletep@gewithcr@pmarks{\box0}
       \pdfpagewidth=\dimen9 \pdfpageheight=\dimen8
       \advancepageno
     \fi

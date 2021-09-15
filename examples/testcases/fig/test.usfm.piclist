@@ -14,3 +14,4 @@ TST 1.2 A printed area-sized picture[Pc] |pgpos="Pc" src="image.jpg" ref="1.2" s
 TST 3.2	Page 2 of 2page doc [Fcc]| pgpos="Fcc" src="testpages.pdf" ref="" size="page" scale="1" x-xetex="rotate=binding page=2"
 TST 3.2 The Ghostscript tiger in a PDF file [Fct]|pgpos="Fct" src="tiger.pdf" ref="" size="full" scale="1" x-credit="Ghostscript"
 TST 3.2 The Ghostscript tiger in a PDF file [Fcb]|pgpos="Fcb" src="tiger.pdf" ref="" size="full" scale="1" x-credit="Ghostscript"
+TST 3.2 A full page picture[Fct] |pgpos="Fct" src="image.jpg" ref="3:2" size="full" scale="1" x-credit="© ImageMagick LLC" x-creditpos="tl" x-creditbox="dark" mirror="none" 
