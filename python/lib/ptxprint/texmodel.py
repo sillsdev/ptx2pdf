@@ -1353,9 +1353,7 @@ class TexModel:
 
             # \figonpage{304}{56}{cn01617.jpg}{tl}{© David C. Cook Publishing Co, 1978.}{x170.90504pt}
             rematch = r"\\figonpage\{(\d+)\}\{\d+\}\{(?:" + self.printer.getPicRe() + "|(.*?))\.[^}]+\}\{.*?\}\{(.*?)?\}\{.+?\}"
-            # print(rematch)
             m = re.findall(rematch, dat)
-            print(m)
             msngPgs = []
             customStmt = []
             if len(m):
@@ -1416,11 +1414,8 @@ class TexModel:
                     exceptPgs = ""
 
                 if len(artistWithMost):
-                    # print(artistWithMost)
-                    # print("hasOut:", hasOut)
                     artinfo = cinfo["copyrights"].get(artistWithMost, 
                                 {'copyright': {'en': artistWithMost}, 'sensitive': {'en': artistWithMost}})
-                    # print("artinfo:", artinfo)
                     if artinfo is not None and (artistWithMost in cinfo["copyrights"] or len(artistWithMost) > 5):
                         pgs = artpgs[artistWithMost]
                         plurals = pluralstr(plstr, pgs)
@@ -1434,7 +1429,6 @@ class TexModel:
                             template = cinfo['templates']['exceptIllustrations'].get(lang,
                                 cinfo['templates']['exceptIllustrations']['en'])
                         cpystr = template.format(artstr.replace("_", "\u00A0") + exceptPgs)
-                        # print(cpystr)
                         crdts.append("\\{} {}".format(mkr, cpystr))
             if self.dict['notes/ifxrexternalist']:
                 if self.dict['notes/xrlistsource'] == "standard":
