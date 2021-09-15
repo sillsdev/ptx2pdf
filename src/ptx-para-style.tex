@@ -152,7 +152,8 @@
   \else
       \ifhmode\endgraf\fi % Not sure why, but sometiems we get here in hmode
       \prevdepth=0pt
-      \setbox0=\ifgridp@c\vbox{\box#1}\else\killd@scenders{#1}\fi
+      % \setbox0=\ifgridp@c\vbox{\box#1}\else\killd@scenders{#1}\fi
+      \setbox0=\vbox{\box#1}%
       \trace{h}{after killingdescenders: ht=\the\ht0, dp=\the\dp0}
       \ifVisTraceExtra
         \setbox0=\vbox{\box0\doVisTraceT{G}\box0}%
@@ -417,9 +418,8 @@
   \getp@ram{spacebefore}{\m@rker}% output <spacebefore> for this style
   \ifx\p@ram\relax \else
     \ifhe@dings\nobreak\fi
-    \ifnsp@cebefore\nsp@cebeforefalse
-      \ifdim\p@ram\verticalsp@ceunit<0pt\vskip\p@ram\verticalsp@ceunit\fi
-    \else\vskip\p@ram\verticalsp@ceunit\fi
+    \ifnsp@cebefore\nsp@cebeforefalse\fi
+	\vskip\p@ram\verticalsp@ceunit
   \fi
   \global\startparatrue
   \resetp@rstyle
