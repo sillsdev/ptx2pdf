@@ -33,28 +33,27 @@
 
 \plugin@startif{marginalnotes}
 
-\def\@marginnote#1#2#3#4#5#6#7#8#9{%
+\def\@marginnote#1#2#3#4#5#6#7#8{%
 % #1 = reference, #2 = marker, #3 = side, #4 = distance from text, #5 = width,
-% #6 = height, #7 = ypos, #8 = pageno, #9 = column number
-  \x@\xdef\csname marginnote-#1@#2:pageno\endcsname{#8}%
-  \trace{M}{defining marginnote-#1@#2:pageno = #8}%
+% #6 = height, #7 = x-shift, #8 = y-shift
+  \x@\xdef\csname marginnote-#1@#2:xshift\endcsname{#7}%
+  \x@\xdef\csname marginnote-#1@#2:yshift\endcsname{#8}%
   \@m@rginnote{#1}{#2}
 }
 
-\def\@m@rginnote#1#2#3#4{%
-% #1 = reference, #2 = marker, #3 = x-shift, #4 = y-shift
-  \x@\xdef\csname marginnote-#1@#2:xshift\endcsname{#3}%
-  \x@\xdef\csname marginnote-#1@#2:yshift\endcsname{#4}%
+\def\@m@rginnote#1#2#3#4#5{%
+% #1 = reference, #2 = marker, #3 = pageno, #4 = xpos, #5 = ypos
+  \trace{M}{defining marginnote-#1@#2:pageno = #3}%
+  \x@\xdef\csname marginnote-#1@#2:pageno\endcsname{#3}%
 }
 
 \def\pl@cemnote#1#2#3#4#5{%
 % #1 = vbox, #2 = side, #3 = distance from text, #4 = x-shift, #5 = y-shift
-  \edef\t@mp{#2}
+  \edef\t@mp{#2}%
   \trace{M}{kerns: pstrut=\the\dp\pstr@t, y-shift=\the#5, text = \the#3, side = #2}%
-  \setbox0=\vbox to 0pt{\vss\leftskip=0pt\rightskip=0pt\parfillskip=0pt
-    \ifx\t@mp\l@ft
-      \llap{\box #1\kern #4\kern #3}%
-    \else\hfill\rlap{\kern #4\kern #3\box #1}%
+  \setbox0=\vbox to 0pt{\vss\leftskip=0pt\rightskip=0pt\parfillskip=0pt\everypar={}%
+    \ifx\t@mp\l@ft\llap{\box #1\kern #4\kern #3}%
+    \else\noindent\hfil\rlap{\kern #4\kern #3\box #1}%
     \fi}%
   %\ifx\t@mp\l@ft\else\showbox0
   \dp0=0pt\vadjust {\kern -\dp\pstr@t\kern #5\box0\kern\dp\pstr@t\kern-#5}%
@@ -78,8 +77,8 @@
 % #1 = vbox, #2 = side, #3 = distance from text, #4 = x-shift, #5 = y-shift
 % #6 = reference, #7 = marker
   \pdfsavepos
-  \edef\t@mp{\string\@marginnote{#6}{#7}{#2}{#3}{\the\wd#1}{\the\ht#1}{\noexpand\the\pdflastypos}{\noexpand\the\pageno}{\noexpand\the\@col}{#4}{#5}}%
-  \x@\write\x@\m@rginnotes\x@{\t@mp}%
+  \edef\t@mp{\string\@marginnote{#6}{#7}{#2}{#3}{\the\wd#1}{\the\ht#1}{#4}{#5}}%
+  \x@\write\x@\m@rginnotes\x@{\t@mp{\the\pageno}{\the\pdflastxpos}{\the\pdflastypos}}%
 }
 
 \def\@uter{outer}

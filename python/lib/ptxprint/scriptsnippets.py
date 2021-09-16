@@ -31,7 +31,7 @@ class mymr(ScriptSnippet):
                    "\uAA71-\uAA7A\uAA7E\uAA7F]\uFE00?"
             ncons = "[\u102B-\u103E\u1056-\u1059\u105E-\u1060\u1062-\u1064\u1067-\u106D\u1071-\u1074" + \
                     "\u1082-\u108D\u108F\u109A-\u109D\uA9E5\uA9E6\uAA70\uAA7B-\uAA7D]"
-            res += [(None, re.compile('(?<![\\s\u1039])({0})(?![\\s\u1039\u103A])'.format(cons)), '\u200B\\1')]
+            res += [(None, re.compile('(?<![\\s\u1039"\'\[\(\{{\u2018-\u201F])({0})(?![\\s\u1039\u103A])'.format(cons)), '\u200B\\1')]
             res += [(None, re.compile('(\u103A\u1039{0})\u200B'.format(cons)), r'\1')]
             res += [(None, re.compile('(\\s{0}(?:\u1039{0})*{1}*)\u200B'.format(cons, ncons)), r'\1')]
         return res

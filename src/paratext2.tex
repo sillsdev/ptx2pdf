@@ -858,6 +858,8 @@
   % split the galley to the actual size available
   \setbox\colA=\vsplit255 to \availht
   \setbox1=\vbox{\unvcopy\colA}
+  \edef\t@mp{\splitbotmark}%
+  \ifx\t@mp\empty\else\global\m@rksonpagetrue\trace{H}{Found mark \splitbotmark}\fi
   \dimen1=\textwidth\advance\dimen1 by -\ExtraRMargin\advance\dimen1 by -\columnshift
   \dimen3=\ht1\advance\dimen3 by \dp1
   \ifColNotes\ifdim\dimen3<\ht\coln@tebox\dimen3=\ht\coln@tebox\fi\fi
