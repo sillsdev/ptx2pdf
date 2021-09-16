@@ -486,19 +486,12 @@
   \let\par=\endgraf\ch@pterfalse
   \everypar={}% don't do body text formatting
   \unvbox#1 % open up the vbox of notes to get at the list of individual note boxes
-  %\ifvmode %odd situation
-    %\showboxdepth=99
-    %\showboxbreadth=99
-    %\message{gt: \the\currentgrouptype}
-  %  \showlists
-  %\fi
   \makehboxofhboxes % make a single hbox for all notes of this class
   \unskip\unskip
   \setbox0=\hbox{\unhbox0 \removehboxes}% add internote space                   %(1)
   \trace{j}{maken@tepara #2 \c@rrdstat: baseline was \the\baselineskip}%
-  %\getp@ram{baseline}{#2}\ifx\p@ram\relax\else\baselineskip=\p@ram\fi
   \s@tbaseline{#2}%
-% Enable justification according to marker.
+  % Enable justification according to marker.
   \trace{j}{maken@tepara #2 \c@rrdstat: baseline now \the\baselineskip}%
   \lineskiplimit=-10pt\leftskip=0pt\rightskip=0pt\parskip=0pt\parfillskip=0pt plus 1fil%\lineskip=10pt
   \getp@ram{justification}{#2}%
@@ -509,7 +502,6 @@
   \else\ifx\p@ram\r@ght
      \leftskip=\noteRag
   \fi\fi\fi
-  %\showbox0
   \edef\@seglyphmetrics{\the\XeTeXuseglyphmetrics}%
   \XeTeXuseglyphmetrics=3
   \noindent % starting making new paragraph
@@ -888,28 +880,27 @@
       \ifvoid\bottomins\else%
         \kern-\lastd@pth \lastd@pth=0pt \vskip\skip\bottomins \unvbox\bottomins \fi
       \ifMidPageFootnotes
-	\f@rstnotetrue
-	\m@kenotebox
-	\trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2}%
-	\unvbox2 %\kern-\lastd@pth\lastdepth=\dp2\unvbox2
-	\ifvoid\verybottomins\else\ifdim\availht > 0pt%
-	  \trace{o}{verybottomins(savepartialpage): height=\the\ht\verybottomins , availht=\the\availht, textheight=\the\textheight}
-	  \kern-\lastd@pth \lastd@pth=0pt \vskip\skip\verybottomins \unvbox\verybottomins \fi\fi
-	\iff@rstnote\else
-	  \vskip\baselineskip
-	\fi
-	\s@veallnotes{1}% save the state after notes are used.
+        \f@rstnotetrue\m@kenotebox
+        \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2}%
+        \unvbox2 %\kern-\lastd@pth\lastdepth=\dp2\unvbox2
+        \ifvoid\verybottomins\else\ifdim\availht > 0pt%
+          \trace{o}{verybottomins(savepartialpage): height=\the\ht\verybottomins , availht=\the\availht, textheight=\the\textheight}
+          \kern-\lastd@pth \lastd@pth=0pt \vskip\skip\verybottomins \unvbox\verybottomins
+        \fi\fi
+        \iff@rstnote\else \vskip\baselineskip \fi
+        \s@veallnotes{1}% save the state after notes are used.
       \fi
     }%
-    \resetvsize%
-    \ifdim\ht\colA>\baselineskip\plainoutput\fin@lverybottom
-      \s@tpage
-    \else\trace{o}{Page empty cols=\the\ht\colA, \the\ht\colB, partial=\the\ht\partial}\setbox0=\box255\deadcycles=0\fi % dump empty pages (typically at end)
+    \resetvsize
+    \ifdim\ht\colA>\baselineskip\plainoutput\fin@lverybottom \s@tpage
+    \else\trace{o}{Page empty cols=\the\ht\colA, \the\ht\colB, partial=\the\ht\partial}%
+      \setbox0=\box255\deadcycles=0
+    \fi % dump empty pages (typically at end)
     \tempfalse%
     \ifdim\ht\partial>\PageFullFactor\textheight \temptrue\fi%
     \ifnum\outputpenalty<-10000 \temptrue\else\trace{o}{outputpenalty = \the\outputpenalty}\fi%
-    \iftemp\trace{o}{savepartial eject partial=\the\ht\partial, bottom=\the\ht\verybottomins}\def\pagecontents{\box\partial}\plainoutput 
-      \s@tpage
+    \iftemp\trace{o}{savepartial eject partial=\the\ht\partial, bottom=\the\ht\verybottomins}%
+      \def\pagecontents{\box\partial}\plainoutput \s@tpage
     \fi
     \fin@lverybottom
     \global\holdinginserts=1

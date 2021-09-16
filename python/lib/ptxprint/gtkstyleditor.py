@@ -524,12 +524,11 @@ class StyleEditorView(StyleEditor):
 
     def mkrDialog(self, newkey=False):
         dialog = self.builder.get_object("dlg_styModsdialog")
-        data = self.sheet.get(self.marker, {})
         for k, v in dialogKeys.items():
             if k == "OccursUnder":
-                self.model.set(v, " ".join(sorted(data.get(k, {}))))
-            elif data.get(k, '') is not None:
-                self.model.set(v, data.get(k, ''))
+                self.model.set(v, " ".join(sorted(self.getval(self.marker, k, {}))))
+            elif self.getval(self.marker, k) is not None:
+                self.model.set(v, self.getval(self.marker, k, ''))
         self.model.set(dialogKeys['Marker'], '' if newkey else self.marker)
         wid = self.builder.get_object(dialogKeys['Marker'])
         if wid is not None:
@@ -550,9 +549,9 @@ class StyleEditorView(StyleEditor):
                 if tryme:
                     continue
                 (d, selecti) = self.treeview.get_selection().get_selected()
+                name = self.model.get(dialogKeys['Name'], '')
                 if key not in self.sheet:
                     self.sheet[key] = Marker({" deletable": True})
-                    name = self.model.get(dialogKeys['Name'], '')
                     m = name_reg.match(name)
                     if m:
                         if not m.group(1) and " " in m.group(2):
@@ -573,7 +572,8 @@ class StyleEditorView(StyleEditor):
                     else:
                         selecti = self.treestore.append(None, [cat, cat, False])
                         selecti = self.treestore.append(selecti, [key, name, True])
-                data = self.sheet[key]
+                else:
+                    self.treestore.set_value(selecti, 1, name)
                 for k, v in dialogKeys.items():
                     if k == 'Marker':
                         continue
@@ -581,17 +581,20 @@ class StyleEditorView(StyleEditor):
                     # print(f"{k=} {v=} -> {val=}")
                     if k.lower() == 'occursunder':
                         val = set(val.split())
-                        data[k] = val
+                        self.setval(self.marker, k, val)
                     elif val:
-                        data[k] = CaselessStr(val)
-                if data['StyleType'] == 'Character' or data['StyleType'] == 'Note':
-                    data['EndMarker'] = key + "*"
-                    if data['StyleType'] == 'Character':
-                        data['OccursUnder'].add("NEST")
-                    self.resolveEndMarker(data, key, None)
-                elif data['StyleType'] == 'Milestone':
-                    self.resolveEndMarker(data, key, data['EndMarker'])
-                    del data['EndMarker']
+                        self.setval(self.marker, k, CaselessStr(val))
+                st = self.getval(self.marker, 'StyleType', '')
+                if st == 'Character' or st == 'Note':
+                    self.setval(self.marker, 'EndMarker', key + "*")
+                    if st == 'Character':
+                        ou = self.getval(self.marker, 'OccursUnder')
+                        ou.add("NEST")
+                        self.setval(self.marker, 'OccursUnder', ou)
+                    self.resolveEndMarker(key, None)
+                elif st == 'Milestone':
+                    self.resolveEndMarker(key, self.getval(self.marker, 'EndMarker'))
+                    self.setval(self.marker, 'EndMarker', None)
                 self.marker = key
                 self.treeview.get_selection().select_iter(selecti)
             else:
@@ -599,8 +602,8 @@ class StyleEditorView(StyleEditor):
                 #self.editMarker()
         dialog.hide()
 
-    def resolveEndMarker(self, newdata, key, newval):
-        endm = self.getval(key, ' endMilestone')
+    def resolveEndMarker(self, key, newval):
+        endm = self.getval(self.marker, key, ' endMilestone')
         if endm is not None and endm != ' None' and endm != newval:
             derivation = self.getval(endm, 'zDerived')
             if derivation is not None:
@@ -608,12 +611,13 @@ class StyleEditorView(StyleEditor):
                     del self.sheet[endm]
                 if endm in self.basesheet:
                     del self.basesheet[endm]
-        if newdata['styletype'] == 'Milestone':
+        st = self.getval(self.marker, 'StyleType')
+        if st == 'Milestone':
             if newval is None:
-                if ' endMarker' in self.basesheet.get(key, {}):
-                    newdata[' endMarker'] = ' None'
+                if self.getval(self.marker, ' endMarker') is not None:
+                    self.setval(self.marker, ' endMarker', ' None')
             elif newval != endm:
-                newdata[' endMarker'] = newval
+                self.setval(self.marker, ' endMarker', newval)
 
     def delKey(self, key=None):
         if key is None:
