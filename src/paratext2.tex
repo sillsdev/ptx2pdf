@@ -1154,19 +1154,12 @@
 %+c_balanced_intro
 \newdimen\availA \newdimen\availB
 \newif\ifcolbfull \colbfulltrue
-\def\BalanceThreshold{0}
+\def\BalanceThreshold{0.95}
 
 \def\balanced{
   \setbox0=\copy\s@vedpage
   \s@tcolhts{\availht}
   \spl@tcols0                                               %(1)
-  \ifnum\BalanceThreshold>0
-    \availA=\colhtA \availB=\colhtB
-    \advance\availA by -\BalanceThreshold\baselineskip
-    \advance\availB by -\BalanceThreshold\baselineskip
-  \else
-    \availA=0pt \availB=0pt
-  \fi
   % and check if it all fit; if not, we'll have to back up and try again
   \ifvoid0 \fitonpagetrue \else \fitonpagefalse \fi
   \rebalancefalse
@@ -1227,22 +1220,15 @@
           \setbox0=\copy\s@vedpage
           \s@tcolhts{\shortavail}\spl@tcols0
         \fi\fi
-        % if either column height ends up negative, rollback and bail           %(6)
-        \ifrebalance\ifnum\ifdim\colhtA<\availA 1\else\ifdim\colhtB<\availB 1\else 0\fi\fi =1
-          \advance\shortavail by \baselineskip
-          \trace{o}{rebalance found column height < 0, back to \the\shortavail}\rebalancefalse
-          \setbox0=\copy\s@vedpage
-          \s@tcolhts{\shortavail}\spl@tcols0
-        \fi\fi
 		% if second column longer than first column by more than .3*line height, quit loop
         \colhtA=\ht\colA \colhtB=\ht\colB
         \dimen0=\colhtB \incr{\dimen0}{\toprightins} \incr{\dimen0}{\bottomrightins}%
         \advance\dimen0 by -\colhtA \decr{\dimen0}{\topleftins} \decr{\dimen0}{\bottomleftins}%
-        \ifdim\dimen0<.95\baselineskip\ifdim\dimen0>-.95\baselineskip           %(7)
+        \ifdim\dimen0<\BalanceThreshold\baselineskip\ifdim\dimen0>-\BalanceThreshold\baselineskip   %(7)
           \shortavail=\colhtB\incr{\shortavail}{\toprightins}\incr{\shortavail}{\bottomrightins}%
           \ifdim\dimen0>0pt\else\advance\shortavail by -\dimen0\fi
           %\advance\shortavail by \ifdim\dp\colA>\dp\colB \dp\colA\else\dp\colB\fi
-          \trace{o}{Best height \the\shortavail}\rebalancefalse
+          \trace{o}{Best height \the\shortavail, difference of \the\dimen0, from a threshold of \BalanceThreshold x\the\baselineskip}\rebalancefalse
         \fi\fi
 		% give up if target size less than 2 lines (should not happen)
         \ifdim\shortavail<\baselineskip \MSG{Rebalancing bailed for short block}%   %(8)
