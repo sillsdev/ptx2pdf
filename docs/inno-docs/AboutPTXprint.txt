@@ -28,6 +28,9 @@ will directly create a PDF of ROMANS from the XYJ project using the saved config
 "C:\Program Files\PTXprint\PTXprint.exe" -b "MAT MRK LUK JHN ACT GLO" -P XYZ
 will directly create a PDF of 4 gospels, Acts and Glossary from the XYJ project using the Default configuration (no GUI will appear)
 
+"C:\Program Files\PTXprint\PTXprint.exe" -d "C:\Temp"
+runs PTXprint, and output PDF files will be created in C:\Temp folder instead of C:\My Paratext 9 Projects\<XYZ>\local\ptxprint
+
 "C:\Program Files\PTXprint\PTXprint.exe" -h
 will show the commandline usage parameters (as seen below)
  

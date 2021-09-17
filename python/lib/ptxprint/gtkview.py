@@ -949,17 +949,19 @@ class GtkViewModel(ViewModel):
             # self.doError(_("Can't delete 'Default' configuration!"), secondary=_("Folder: ") + delCfgPath)
             self.resetToInitValues()
             self.onFontChanged(None)
-            # Note that we may give them an option (later) to delete the entire "Default" including piclists etc.
-            # Right now it (only) re-initializes the UI settings.
+            # Right now this 'reset' (only) re-initializes the UI settings.
+            # Note that we may later provide a dialog with options about what to delete.
+            # e.g. the entire "Default" settings including piclists, adjlists, etc.
             return
         else:
             if not os.path.exists(os.path.join(delCfgPath, "ptxprint.cfg")):
                 self.doError(_("Internal error occurred, trying to delete a directory tree"), secondary=_("Folder: ")+delCfgPath)
                 return
-            try: # Delete the entire folder
-                rmtree(delCfgPath)
-            except OSError:
-                self.doError(_("Can't delete that configuration from disk"), secondary=_("Folder: ") + delCfgPath)
+            for p in [delCfgPath, self.working_dir]:
+                try: # Delete the entire folder
+                    rmtree(p)
+                except OSError:
+                    self.doError(_("Cannot delete folder from disk!"), secondary=_("Folder: ") + delCfgPath)
             self.updateSavedConfigList()
             self.set("t_savedConfig", "Default")
             self.readConfig("Default")
@@ -2246,7 +2248,8 @@ class GtkViewModel(ViewModel):
             self.builder.get_object("lb_ptxprintdir").set_label(os.path.dirname(__file__))
             self.builder.get_object("lb_prjdir").set_label(os.path.join(self.settings_dir, self.prjid))
             self.builder.get_object("lb_settings_dir").set_label(self.configPath(cfgname=self.configName()) or "")
-            self.builder.get_object("lb_working_dir").set_label(os.path.join(self.settings_dir, self.prjid, "local", "ptxprint") or "")
+        # Fixme! This folder below needs to be set to the TEMP folder if the path was set through the command line option -d
+            self.builder.get_object("lb_working_dir").set_label(self.working_dir or "")
             
     def updateProjectSettings(self, prjid, saveCurrConfig=False, configName=None, readConfig=False):
         self.picListView.clear()
@@ -2782,8 +2785,7 @@ class GtkViewModel(ViewModel):
         self.openFolder(self.configPath(cfgname=self.configName()))
         
     def onOpenFolderOutputClicked(self, btn):
-        self.openFolder(os.path.join(self.working_dir, "..", "..", "ptxprint"))
-        # self.openFolder(os.path.join(self.settings_dir, self.prjid, "local", "ptxprint"))
+        self.openFolder(os.path.join(self.working_dir))
 
     def openFolder(self, fldrpath):
         path = os.path.realpath(fldrpath)

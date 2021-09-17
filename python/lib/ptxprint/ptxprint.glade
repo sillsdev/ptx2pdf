@@ -5180,10 +5180,14 @@ Shortcut key: &lt;Ctrl-S&gt;</property>
                                         <property name="receives_default">True</property>
                                         <property name="tooltip_text" translatable="yes">Delete the currently selected
 Saved Configuration immediately.
+This also deletes the corresponding subfolder 
+of temporary files in the local\ptxprint folder 
+where the created PDF files are located.
 
 If the Default configuration is selected,
 then this will RESET all the settings to
-their default values.</property>
+their default values, but not Stylesheets,
+or other advanced file-based settings.</property>
                                         <property name="halign">center</property>
                                         <property name="margin_top">6</property>
                                         <property name="margin_bottom">6</property>
