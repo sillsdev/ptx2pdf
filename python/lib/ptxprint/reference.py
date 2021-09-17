@@ -224,6 +224,14 @@ class RefRange:
                 r.chap += 1
                 r.verse = 1
 
+class AnyBooks:
+    @classmethod
+    def getBook(cls, s):
+        return s
+
+    @classmethod
+    def getLocalBook(cls, s):
+        return s
 
 class BaseBooks:
     bookStrs = {k: [k]*3 for k, v in chaps.items() if 0 < int(v) < 999}

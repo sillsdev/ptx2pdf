@@ -14,7 +14,7 @@ from ptxprint.utils import _, universalopen, localhdrmappings, pluralstr, multst
 from ptxprint.dimension import Dimension
 import ptxprint.scriptsnippets as scriptsnippets
 from ptxprint.interlinear import Interlinear
-from ptxprint.reference import Reference, RefRange, RefList, RefSeparators
+from ptxprint.reference import Reference, RefRange, RefList, RefSeparators, AnyBooks
 
 # After universalopen to resolve circular import. Kludge
 from ptxprint.snippets import FancyIntro, PDFx1aOutput, Diglot, FancyBorders, ThumbTabs, Colophon, Grid
@@ -1045,7 +1045,7 @@ class TexModel:
                     m = re.match(r"^\s*at\s+(.*?)\s+(?=in|['\"])", l)
                     if m:
                         # import pdb; pdb.set_trace()
-                        atref = RefList.fromStr(m.group(1))
+                        atref = RefList.fromStr(m.group(1), context=AnyBooks)
                         for r in atref.allrefs():
                             if r.chap == 0:
                                 atcontexts.append((r.book, None))
@@ -1178,10 +1178,10 @@ class TexModel:
         if not self.asBool("document/parallelrefs"): # Drop ALL Parallel Passage References
             self.localChanges.append((None, regex.compile(r"\\r .+", flags=regex.M), ""))
 
-        if self.asBool("document/preventorphans"): # Prevent orphans at end of *any* paragraph [anything that isn't followed by a \v]
-            self.localChanges.append((None, regex.compile(r"(\\q\d?(\s?\r?\n?\\v)?( \S+)+( (?!\\)[^\\\s]+)) (\S+\s*\n)", \
+        if self.asBool("document/preventorphans"): # Prevent orphans of short words (6 - 8 chars or less) at end of *any* paragraph
+            self.localChanges.append((None, regex.compile(r"(\\q\d?(\s?\r?\n?\\v)?( \S+)+( (?!\\)[^\\\s]{,6})) ([\S]{,9}\s*\n)", \
                                             flags=regex.M), r"\1\u00A0\5"))
-            self.localChanges.append((None, regex.compile(r"(\s+[^ 0-9\\\n\u2000\u00A0]+) ([^ 0-9\\\n\u2000\u00A0]+\n(?:\\[pmqsc]|$))", flags=regex.S), r"\1\u00A0\2"))
+            self.localChanges.append((None, regex.compile(r"(\s+[^ 0-9\\\n\u2000\u00A0]{,6}) ([^ 0-9\\\n\u2000\u00A0]{,8}\n(?:\\[pmqsc]|$))", flags=regex.S), r"\1\u00A0\2"))
 
         if self.asBool("document/preventwidows"):
             # Push the verse number onto the next line (using NBSP) if there is

@@ -957,11 +957,12 @@ class GtkViewModel(ViewModel):
             if not os.path.exists(os.path.join(delCfgPath, "ptxprint.cfg")):
                 self.doError(_("Internal error occurred, trying to delete a directory tree"), secondary=_("Folder: ")+delCfgPath)
                 return
-            for p in [delCfgPath, self.working_dir]:
+            for p in [delCfgPath, os.path.join(self.working_dir, cfg)]:  # Not sure we want to do this for a custom working_dir
+                print("Deleting folder:", p)                             
                 try: # Delete the entire folder
                     rmtree(p)
                 except OSError:
-                    self.doError(_("Cannot delete folder from disk!"), secondary=_("Folder: ") + delCfgPath)
+                    self.doError(_("Cannot delete folder from disk!"), secondary=_("Folder: ") + p)
             self.updateSavedConfigList()
             self.set("t_savedConfig", "Default")
             self.readConfig("Default")
