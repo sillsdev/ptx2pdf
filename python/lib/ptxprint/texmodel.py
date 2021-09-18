@@ -960,7 +960,6 @@ class TexModel:
                         or not self.asBool("document/introoutline")\
                         or self.asBool("document/hidemptyverses"):
                 if doc is None:
-                    # import pdb; pdb.set_trace()
                     doc = self._makeUSFM(dat.splitlines(True), bk)
                 if doc is not None:
                     if not self.asBool("document/bookintro") or not self.asBool("document/introoutline"):
