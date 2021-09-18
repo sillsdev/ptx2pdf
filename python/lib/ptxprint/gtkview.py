@@ -957,12 +957,18 @@ class GtkViewModel(ViewModel):
             if not os.path.exists(os.path.join(delCfgPath, "ptxprint.cfg")):
                 self.doError(_("Internal error occurred, trying to delete a directory tree"), secondary=_("Folder: ")+delCfgPath)
                 return
-            for p in [delCfgPath, os.path.join(self.working_dir, cfg)]:  # Not sure we want to do this for a custom working_dir
-                print("Deleting folder:", p)                             
-                try: # Delete the entire folder
-                    rmtree(p)
-                except OSError:
-                    self.doError(_("Cannot delete folder from disk!"), secondary=_("Folder: ") + p)
+            try: # Delete the entire settings folder
+                rmtree(delCfgPath)
+            except OSError:
+                self.doError(_("Cannot delete folder from disk!"), secondary=_("Folder: ") + delCfgPath)
+
+            if not self.working_dir.startswith(os.path.join(self.settings_dir, self.prjid, "local", "ptxprint")):
+                self.doError(_("Non-standard output folder needs to be deleted manually"), secondary=_("Folder: ")+self.working_dir)
+            try: # Delete the entire output folder
+                rmtree(self.working_dir)
+            except OSError:
+                self.doError(_("Cannot delete folder from disk!"), secondary=_("Folder: ") + self.working_dir)
+
             self.updateSavedConfigList()
             self.set("t_savedConfig", "Default")
             self.readConfig("Default")
@@ -2542,9 +2548,12 @@ class GtkViewModel(ViewModel):
                 self.picListView.onRadioChanged()
 
     def _onPDFClicked(self, title, isSingle, basedir, ident, attr, btn):
+        fldr = os.path.dirname(getattr(self, attr, "")[0])
+        if not os.path.exists(fldr):
+            fldr = basedir
         vals = self.fileChooser(title,
                 filters = {"PDF files": {"pattern": "*.pdf", "mime": "application/pdf"}},
-                multiple = not isSingle, basedir=basedir)
+                multiple = not isSingle, basedir=fldr)
         if vals != None and len(vals) and str(vals[0]) != "None":
             self.builder.get_object("c_"+ident).set_active(True)
             if isSingle:
@@ -2563,12 +2572,14 @@ class GtkViewModel(ViewModel):
             self.set("lb_"+ident, "")
 
     def onFrontPDFsClicked(self, btn_selectFrontPDFs):
-        self._onPDFClicked(_("Select one or more PDF(s) for FRONT matter"),
-                False, self.working_dir, "inclFrontMatter", "FrontPDFs", btn_selectFrontPDFs)
+        self._onPDFClicked(_("Select one or more PDF(s) for FRONT matter"), False, 
+                os.path.join(self.settings_dir, self.prjid), 
+                "inclFrontMatter", "FrontPDFs", btn_selectFrontPDFs)
 
     def onBackPDFsClicked(self, btn_selectBackPDFs):
-        self._onPDFClicked(_("Select one or more PDF(s) for BACK matter"),
-                False, self.working_dir, "inclBackMatter", "BackPDFs", btn_selectBackPDFs)
+        self._onPDFClicked(_("Select one or more PDF(s) for BACK matter"), False, 
+                os.path.join(self.settings_dir, self.prjid), 
+                "inclBackMatter", "BackPDFs", btn_selectBackPDFs)
 
     def onWatermarkPDFclicked(self, btn_selectWatermarkPDF):
         self._onPDFClicked(_("Select Watermark PDF file"), True,
