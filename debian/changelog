@@ -1,3 +1,9 @@
+ptxprint (1.9.5-1ubuntu1) bionic; urgency=medium
+
+  * Bumped release to 1.9.5
+
+ -- Martin Hosken <martin_hosken@sil.org>  Sun, 19 Sep 2021 10:39:01 +1200
+
 ptxprint (1.9.4-1ubuntu1) bionic; urgency=medium
 
   * Bumped release to 1.9.4
