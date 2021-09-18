@@ -5751,7 +5751,7 @@ space between lines of text.</property>
                                           <item translatable="yes">5.5in, 8.5in (1/2 Letter)</item>
                                           <item translatable="yes">5.25in, 8.25in (133x210mm)</item>
                                           <item translatable="yes">5.8in, 8.7in (147x221mm)</item>
-                                          <item translatable="yes">175mm, 262mm (A4 with cropmarks)</item>
+                                          <item translatable="yes">184.6mm, 271.6mm (A4 with cropmarks)</item>
                                         </items>
                                         <signal name="changed" handler="onNumTabsChanged" swapped="no"/>
                                         <child internal-child="entry">
