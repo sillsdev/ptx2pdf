@@ -5754,6 +5754,7 @@ space between lines of text.</property>
                                           <item translatable="yes">184.6mm, 271.6mm (A4 with cropmarks)</item>
                                         </items>
                                         <signal name="changed" handler="onNumTabsChanged" swapped="no"/>
+                                        <signal name="changed" handler="onPageSizeChanged" swapped="no"/>
                                         <child internal-child="entry">
                                           <object class="GtkEntry">
                                             <property name="can_focus">True</property>

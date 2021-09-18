@@ -1,8 +1,37 @@
 PTXprint 1.9.4 Release Notes 
-11 September 2021
+19 September 2021
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 
+Bug fixes and Improvements in 1.9.5 (19 Sep 2021)
+
+  * Added option to allow for unbalanced columns (Bottom Rag on Layout page)
+  
+  * Added ability to supress, re-enable and reset page numbers (esp. for FRT matter)
+      using codes: \nopagenums, \dopagenums, \resetpagenums N   (if N<0: i, ii, iii)
+	  
+  * Added support for Paratext's traditional manual line break (i.e. // = \u2028)
+
+  * Added "A4 with cropmarks" as an optimum paper size for local printing and binding
+  
+  * Remember folder location of previously selected PDF when selecting a new file #520, #188
+  
+  * Provide an alternative way to format Table of Contents entries #73  
+  
+  * Improved logic for "Prevent Orphan Words" to only force shorter words
+
+  * Improved logic for calculating adjust lists (indicating grow and shrink options) #493
+
+  * Fixed odd empty line at bottom of page #489
+  
+  * Fixed Full-page picture vertical alignment issues #505
+  
+  * Fixed Hide Empty Verses affecting the output of a change rule (\pagebreak missing) #522
+
+  * Fixed Adding a new style doesn't always work the 1st time around #513  
+  
+  * Fixed intro matter jumping off grid causing misalignment
+  
 Bug fixes and Improvements in 1.9.4 (11 Sep 2021)
 
   * Added option to have the header in a second language/script #500

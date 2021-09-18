@@ -9,8 +9,8 @@
 \periph Publication Data|id="pubdata"
 \mt4
 \zgap|0.5in\*
-\pc \zvar|maintitle\* 
-\pc \zvar|subtitle\*
+\mt3 \zvar|maintitle\* 
+\mt4 \zvar|subtitle\*
 \pc \zvar|languagename\*
 \zbl|2\*
 \pc \zcopyright

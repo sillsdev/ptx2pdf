@@ -2548,7 +2548,10 @@ class GtkViewModel(ViewModel):
                 self.picListView.onRadioChanged()
 
     def _onPDFClicked(self, title, isSingle, basedir, ident, attr, btn):
-        fldr = os.path.dirname(getattr(self, attr, "")[0])
+        if isSingle:
+            fldr = os.path.dirname(getattr(self, attr, ""))
+        else:
+            fldr = os.path.dirname(getattr(self, attr, "")[0])
         if not os.path.exists(fldr):
             fldr = basedir
         vals = self.fileChooser(title,
@@ -3450,3 +3453,8 @@ class GtkViewModel(ViewModel):
         for r in reversed(i):
             itr = model.get_iter(r)
             model.remove(itr)
+
+    def onPageSizeChanged(self, btn):
+        val = "cropmarks" in self.get("ecb_pagesize")
+        for w in ["c_cropmarks", "c_grid"]:
+            self.set(w, val)

@@ -16,10 +16,10 @@
 \rem -------------------------------------------------------------------------
 \periph Publication Data|id="pubdata"
 \rem -------------------------------------------------------------------------
-\mt
-\zbl|2\*
-\pc \zvar|maintitle\* 
-\pc \zvar|subtitle\*
+\mt4
+\zgap|0.5in\*
+\mt3 \zvar|maintitle\* 
+\mt4 \zvar|subtitle\*
 \zbl|2\*
 \pc Language: \zvar|languagename\* (\zvar|langiso\*)
 \pc Script: \zvar|script\*
