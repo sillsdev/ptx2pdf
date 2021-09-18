@@ -722,7 +722,9 @@ class ViewModel:
             self._configset(config, "header/ifshowchapter", not config.getboolean("header", "ifomitrhchapnum", fallback=False))
             self._configset(config, "header/ifshowverse", config.getboolean("header", "ifverses", fallback=False))
             self._configset(config, "header/ifshowbook", True)
-            config.set("config", "version", "1.94")
+        if v < 1.95:
+            self._configset(config, "paper/bottomrag", "0")
+            config.set("config", "version", "1.95")
 
         styf = os.path.join(self.configPath(cfgname), "ptxprint.sty")
         if not os.path.exists(styf):
