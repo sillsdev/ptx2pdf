@@ -583,7 +583,7 @@ class StyleEditorView(StyleEditor):
                         val = set(val.split())
                         self.setval(self.marker, k, val)
                     elif val:
-                        self.setval(self.marker, k, CaselessStr(val))
+                        self.setval(self.marker, k, val)
                 st = self.getval(self.marker, 'StyleType', '')
                 if st == 'Character' or st == 'Note':
                     self.setval(self.marker, 'EndMarker', key + "*")
