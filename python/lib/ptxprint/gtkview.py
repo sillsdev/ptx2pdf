@@ -3398,6 +3398,8 @@ class GtkViewModel(ViewModel):
         for a, b in vlst:
             if b == "copiesprinted" and self.getvar(b) is None:
                 self.setvar(b, "50")
+            elif b == "contentsheader":
+                pass
             elif self.getvar(b) is None:
                 self.setvar(b, _("<Type Value Here>"))
                 

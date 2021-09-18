@@ -248,7 +248,7 @@ class StyleEditorView(StyleEditor):
             ismarker = True
             if k in allStyles:
                 # n = self.sheet[k].get('name', k)
-                n = self.getval(k, 'name')
+                n = self.getval(k, 'name') or ""
                 m = re.match(r"^([^-\s]*)\s*([^-]+)(?:-\s*|$)", n)
                 if m:
                     if m.group(1) and m.group(1) not in ('OBSOLETE', 'DEPRECATED'):
@@ -581,9 +581,7 @@ class StyleEditorView(StyleEditor):
                     # print(f"{k=} {v=} -> {val=}")
                     if k.lower() == 'occursunder':
                         val = set(val.split())
-                        self.setval(self.marker, k, val)
-                    elif val:
-                        self.setval(self.marker, k, val)
+                    self.setval(self.marker, k, val)
                 st = self.getval(self.marker, 'StyleType', '')
                 if st == 'Character' or st == 'Note':
                     self.setval(self.marker, 'EndMarker', key + "*")

@@ -960,7 +960,7 @@ class TexModel:
                         or not self.asBool("document/introoutline")\
                         or self.asBool("document/hidemptyverses"):
                 if doc is None:
-                    import pdb; pdb.set_trace()
+                    # import pdb; pdb.set_trace()
                     doc = self._makeUSFM(dat.splitlines(True), bk)
                 if doc is not None:
                     if not self.asBool("document/bookintro") or not self.asBool("document/introoutline"):
@@ -1179,10 +1179,10 @@ class TexModel:
         if not self.asBool("document/parallelrefs"): # Drop ALL Parallel Passage References
             self.localChanges.append((None, regex.compile(r"\\r .+", flags=regex.M), ""))
 
-        if self.asBool("document/preventorphans"): # Prevent orphans of short words (6 - 8 chars or less) at end of *any* paragraph (was \u00A0)
-            self.localChanges.append((None, regex.compile(r"(\\q\d?(\s?\r?\n?\\v)?( \S+)+( (?!\\)[^\\\s]{,6})) ([\S]{,9}\s*\n)", \
+        if self.asBool("document/preventorphans"): # Prevent orphans at end of *any* paragraph
+            self.localChanges.append((None, regex.compile(r"(\\q\d?(\s?\r?\n?\\v)?( \S+)+( (?!\\)[^\\\s]+)) ([\S]+\s*\n)", \
                                             flags=regex.M), r"\1\u2000\5"))
-            self.localChanges.append((None, regex.compile(r"(\s+[^ 0-9\\\n\u2000\u00A0]{,6}) ([^ 0-9\\\n\u2000\u00A0]{,8}\n(?:\\[pmqsc]|$))", flags=regex.S), r"\1\u2000\2"))
+            self.localChanges.append((None, regex.compile(r"(\s+[^ 0-9\\\n\u2000\u00A0]+) ([^ 0-9\\\n\u2000\u00A0]+\n(?:\\[pmqsc]|$))", flags=regex.S), r"\1\u2000\2"))
 
         if self.asBool("document/preventwidows"):
             # Push the verse number onto the next line (using NBSP) if there is
@@ -1222,6 +1222,9 @@ class TexModel:
 
         # Paratext marks no-break space as a tilde ~
         self.localChanges.append((None, regex.compile(r"~", flags=regex.M), r"\u00A0")) 
+
+        # Paratext marks forced line breaks as //
+        self.localChanges.append((None, regex.compile(r"//", flags=regex.M), r"\u2028"))  
 
         # Convert hyphens from minus to hyphen
         self.localChanges.append((None, regex.compile(r"(?<!\\[fx]\s)((?<=\s)-|-(?=\s))", flags=regex.M), r"\u2011"))

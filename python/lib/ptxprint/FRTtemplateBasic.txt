@@ -1,14 +1,14 @@
 \rem ----------Page 1----------------
 \periph Title Page|id="title"
-\mt1
-\zbl|6\*
+\nopagenums
+\mt4
+\zgap|1.5in\*
 \mt1 \zvar|maintitle\*
 \mt2 \zvar|subtitle\*
-
 \rem ----------Page 2----------------
 \periph Publication Data|id="pubdata"
-\mt
-\zbl|2\*
+\mt4
+\zgap|0.5in\*
 \pc \zvar|maintitle\* 
 \pc \zvar|subtitle\*
 \pc \zvar|languagename\*
@@ -17,9 +17,10 @@
 \pc \zlicense
 \zbl|2\*
 \pc \zimagecopyrights
-
 \rem ----------Page 3----------------
 \periph Table of Contents|id="contents"
 \is \zvar|contentsheader\*
 \ip \ztoc|main\*
+\resetpagenums -1
+\dopagenums
 \ip

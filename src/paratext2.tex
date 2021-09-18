@@ -1846,7 +1846,7 @@
 \def\WJ{\leavevmode\nobreak} % WORD JOINER
 \def\ZWNBSP{\WJ} % ZERO WIDTH NO-BREAK SPACE
 \def\NBHYPH{\leavevmode\hbox{-}} % NON-BREAKING HYPHEN
-\def\NQUAD{\penalty\the\badspacepenalty\hskip 0.4em} % subvert Unicode En-Quad as BAD BREAKING SPACE
+\def\NQUAD{\penalty\the\badspacepenalty\relax\space} % subvert Unicode En-Quad as BAD BREAKING SPACE
 \def\MQUAD{\penalty\the\badspacepenalty\hskip 1em}
 \def\MSPACE{\hskip 1em}
 \def\NSPACE{\space}
@@ -1934,8 +1934,8 @@
 \catcode"200A=\active \def^^^^200a{\pr@tect\HAIRSPACE}
 \catcode"2010=\active \def^^^^2010{\pr@tect\HYPHEN}
 \lccode"2010="2010
-\catcode`\@=12
 \catcode"2028=\active \def^^^^2028{\pr@tect\LINESEP}
+\catcode`\@=12
 
 \parskip=0pt
 \lineskip=0pt

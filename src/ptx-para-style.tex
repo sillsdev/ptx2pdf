@@ -158,6 +158,7 @@
       \ifVisTraceExtra
         \setbox0=\vbox{\box0\doVisTraceT{G}\box0}%
       \fi
+	  \ift@tle\lastdepth=0pt\fi
       \trace{h}{before gridbox: ht0=\the\ht0; dp0=\the\dp0 (\the\dimen4); spacebefore=\the\headingtopspace; depth=\the\lastdepth}%
       \s@tbaseline{p}\dimen1=\ht0 \dimen0=\baselineskip \m@d \dimen2=\dimen0 % dimen2 is grid space
       \dimen1=\ht0 \advance\dimen1 by -\headingtopspace
@@ -167,7 +168,7 @@
         \ifdim\lastdepth>0pt\advance\dimen2 by -\lastdepth\fi
       \fi\fi
       \ifdiglot\kern\else\vskip\fi\dimen2
-      \trace{h}{after gridbox(\ch@pter.\v@rse): skip \the\dimen2, kern \the\dimen0; baselineskip=\the\baselineskip; dim1=\the\dimen1;  ht0=\the\ht0; dp0=\the\dp0}%
+      \trace{h}{after gridbox(\ch@pter.\v@rse): skip \the\dimen2, kern \the\dimen0; baselineskip=\the\baselineskip; dim1=\the\dimen1;  ht0=\the\ht0; dp0=\the\dp0; is \ifdiglot\else\space not\fi\space diglot}%
       \vbox{\kern\dimen0\vskip-\headingtopspace\unvbox0}
       \nobreak%\dimen0=\prevdepth\trace{h}{prevdepth=\the\dimen0}%
   \fi
@@ -409,6 +410,7 @@
         \interlinepenalty=10000 % never break column/page between lines
         \XeTeXdashbreakstate=0 % mainly for ranges in \r
         \hyphenpenalty=10000 \exhyphenpenalty=10000 % don't hyphenate in headings
+		\trace{h}{marker = \m@rker, spacebefore = \p@ram, heading top space = \the\headingtopspace}%
     \fi
     \nobreak
   \else\trace{s}{headingstyle false}%

@@ -529,7 +529,7 @@ class Usfm:
                 st = el.meta.get("styletype", "") 
                 if (st is None or st.lower() == "paragraph") and len(el) == len(predels):
                     # el.parent.remove(el)
-                    return False
+                    return True  # To handle empty markers like \pagebreak 
             elif re.match(r"^\s*$", str(el)) or re.match(r"\.{3}\s*$", str(el)):
                 return False
             return True

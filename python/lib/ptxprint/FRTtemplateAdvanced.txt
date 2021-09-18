@@ -3,30 +3,16 @@
 \rem for Paratext's FRT book, there are additional \zvar variables used which
 \rem make it unsuitable for use within Paratext without prior modification.
 
-\rem !!! DELETE any unwanted sections (e.g. Promo) and sample text before use !!!
+\rem !!! Edit sample text before use !!!
 
 \rem -------------------------------------------------------------------------
 \periph Title Page|id="title"
 \rem -------------------------------------------------------------------------
-\mt1
-\zbl|6\*
+\nopagenums
+\mt4
+\zgap|1.5in\*
 \mt1 \zvar|maintitle\*
 \mt2 \zvar|subtitle\*
-
-\rem ---------RARELY USED -------------
-\periph Half Title Page|id="halftitle"
-\rem ----------------------------------
-\mt1 \zvar|maintitle\*
-\mt2 \zvar|subtitle\*
-
-\rem ---------RARELY USED -------------
-\periph Promotional Page|id="promo"
-\rem ----------------------------------
-
-\rem ---------RARELY USED -------------
-\periph Imprimatur|id="imprimatur"
-\rem ----------------------------------
-
 \rem -------------------------------------------------------------------------
 \periph Publication Data|id="pubdata"
 \rem -------------------------------------------------------------------------
@@ -48,12 +34,13 @@
 \pc \zimagecopyrights
 \zbl|3\*
 \pc Printed by: \zvar|printedby\*
-
 \rem -------------------------------------------------------------------------
 \periph Foreword|id="foreword"
 \rem -------------------------------------------------------------------------
 \h Foreword
 \mt1 Foreword
+\resetpagenums -1
+\dopagenums
 \p The \bk Wakawaka Translation\bk* of the Bible is a translation which seeks to state clearly,
 accurately and naturally the meaning of the original texts in words and forms that are widely
 accepted by people who use the Wakawaka language as a means of communication.
