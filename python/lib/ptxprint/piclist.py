@@ -40,7 +40,8 @@ _checks = {
 
 class PicChecks:
 
-    fname = "picInfo.txt"
+    sharedfname = "picInfo.txt"
+    pubfname = "picChecks.txt"
 
     def __init__(self, parent):
         self.cfgShared = configparser.ConfigParser()
@@ -58,9 +59,9 @@ class PicChecks:
     def init(self, basepath, configid):
         if basepath is None or configid is None:
             return
-        self.cfgShared.read(os.path.join(basepath, self.fname), encoding="utf-8")
+        self.cfgShared.read(os.path.join(basepath, self.sharedfname), encoding="utf-8")
         self._init_default(self.cfgShared, "pic")
-        self.cfgProject.read(os.path.join(basepath, configid, self.fname), encoding="utf-8")
+        self.cfgProject.read(os.path.join(basepath, configid, self.pubfname), encoding="utf-8")
         self._init_default(self.cfgProject, "pub")
 
     def writeCfg(self, basepath, configid):
@@ -68,11 +69,12 @@ class PicChecks:
             return
         self.savepic()
         basep = os.path.join(basepath, "shared", "ptxprint")
-        for a in (configid, None):
-            p = os.path.join(basep, a) if a else basep
+        for a in ((None, self.sharedfname, self.cfgShared), (configid, self.pubfname, self.cfgProject)):
+            p = os.path.join(basep, a[0]) if a[0] else basep
             os.makedirs(p, exist_ok=True)
-            with open(os.path.join(p, self.fname), "w", encoding="utf-8") as outf:
-                self.cfgShared.write(outf)
+            print(a)
+            with open(os.path.join(p, a[1]), "w", encoding="utf-8") as outf:
+                a[2].write(outf)
 
     def loadpic(self, src):
         if self.src == newBase(src):

@@ -853,6 +853,7 @@ class ViewModel:
         if self.picinfos is not None and self.picinfos.loaded:
             self.picinfos.out(os.path.join(self.configPath(self.configName()),
                                     "{}-{}.piclist".format(self.prjid, self.configName())))
+        self.picChecksView.writeCfg(os.path.join(self.settings_dir, self.prjid), self.configName())
 
     def loadPics(self, mustLoad=True):
         if self.loadingConfig:
