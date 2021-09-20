@@ -411,7 +411,7 @@ class GtkViewModel(ViewModel):
         for n in _notebooks:
             nbk = self.builder.get_object("nbk_"+n)
             self.notebooks[n] = [Gtk.Buildable.get_name(nbk.get_nth_page(i)) for i in range(nbk.get_n_pages())]
-        for fcb in ("project", "interfaceLang", "digits", "script", "diglotPicListSources",
+        for fcb in ("project", "interfaceLang", "digits", "fontdigits", "script", "diglotPicListSources",
                     "textDirection", "glossaryMarkupStyle", "fontFaces", "featsLangs", "leaderStyle",
                     "picaccept", "pubusage", "pubaccept", "chklstFilter|0.75", "gridUnits", "gridOffset"):
             self.addCR("fcb_"+fcb, 0)
@@ -1583,6 +1583,8 @@ class GtkViewModel(ViewModel):
     def onScriptChanged(self, btn):
         # If there is a matching digit style for the script that has just been set, 
         # then also turn that on (but it can be overridden by the user if needed).
+        if self.loadingConfig:
+            return
         self.fcb_digits.set_active_id(self.get('fcb_script'))
         script = self.get("fcb_script")
         if script is not None:
@@ -1894,7 +1896,8 @@ class GtkViewModel(ViewModel):
             else:
                 bi = None
             f = FontRef.fromDialog(name, style, self.get("c_fontGraphite"), 
-                                   self.get("c_fontCtxtSpaces"), self.get("t_fontFeatures"), bi)
+                                   self.get("c_fontCtxtSpaces"), self.get("t_fontFeatures"),
+                                   bi, self.get("fcb_fontdigits"))
             self.set(btnid, f)
             res = True
         elif response == Gtk.ResponseType.CANCEL:

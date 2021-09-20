@@ -785,13 +785,15 @@ class FontRef:
         return cls(name, styles, isGraphite.lower()=="true", isCtxtSpace.lower()=="true", feats, lang)
 
     @classmethod
-    def fromDialog(cls, name, style, isGraphite, isCtxtSpace, featstring, bi):
+    def fromDialog(cls, name, style, isGraphite, isCtxtSpace, featstring, bi, fontdigits):
         res = cls(name, style, isGraphite, isCtxtSpace)
         res.updateFeats(featstring)
         if bi is not None:
             for i, a in enumerate(("embolden", "slant")):
                 if float(bi[i]) > 0.0001:
                     res.feats[a] = bi[i]
+        if fontdigits and fontdigits.lower() != "default":
+            res.feats['mapping']='mappings/{}digits'.format(fontdigits.lower())
         return res
 
     @classmethod
