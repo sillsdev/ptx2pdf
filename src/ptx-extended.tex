@@ -178,7 +178,11 @@
  \xdef\sb@leftshift{0pt}\xdef\sb@rightshift{0pt}%
  \getsbp@ram{posn}%
   \global\advance\im@gecount by 1 % A side bar is a strange sort of image, but there are similarities
-  \x@\let\x@\pgn@\csname fig\the\im@gecount p@ge\endcsname
+  \ifcsname fig\the\im@gecount p@ge\endcsname
+    \x@\let\x@\pgn@\csname fig\the\im@gecount p@ge\endcsname
+  \else
+    \let\pgn@\relax
+  \fi
   \ifx\pgn@\relax
     \whichp@ge=\pageno
     \trace{e}{Sidebar \the\im@gecount may not be mirrored/rotated/aligned properly}%
@@ -288,15 +292,16 @@
       \fi
     \fi
     \ifx\b@drleft\tr@e \advance\dimen1 by -\b@drwidth\FontSizeUnit
-      \advance\dimen1 by \fb@hpadding\fi
+      \advance\dimen1 by -\fb@hpadding\fi
     \ifx\b@drright\tr@e \advance\dimen1 by -\b@drwidth\FontSizeUnit
-      \advance\dimen1 by \fb@hpadding\fi
+      \advance\dimen1 by -\fb@hpadding\fi
     \if h\tempc\relax\else% Don't store width for class h sidebars, as they may appear full width or single column
       \setsbp@ram{w@dth}{\the\dimen1}%
     \fi
  \else
    \dimen1=\cp@ram
  \fi
+ \trace{e}{Box width is \the\dimen1}%
  \hsize=\dimen1
 }
 % Sidebar 

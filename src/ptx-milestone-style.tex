@@ -340,6 +340,7 @@
 }
 
 \x@\def\csname start-zgap\endcsname{%
+  \endlastp@rstyle{zgap}%
   \endgraf
   \get@ttribute{dimension}%A
   \ifx\attr@b\relax
@@ -349,6 +350,6 @@
     \let\gap@dim\@@result%
   \fi
   \trace{m}{zgap \gap@dim}%
-  \vbox{}\penalty10000\vskip\gap@dim%
+  \vbox{}\penalty10000\vskip\gap@dim\relax%
 }
 
