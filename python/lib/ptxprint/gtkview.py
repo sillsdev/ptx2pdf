@@ -1287,6 +1287,7 @@ class GtkViewModel(ViewModel):
                     diallbooks = self.diglotView.getAllBooks()
                     PicInfoUpdateProject(self.diglotView, procbks, diallbooks,
                                          self.picinfos, suffix="R", random=rnd, cols=cols, doclear=doclear & (mode != "both"), clearsuffix=(mode != "bth"))
+                    self.picinfos.merge("L", "R")
             self.updatePicList(procbks)
             self.savePics()
             if self.get('r_generate') == 'all':

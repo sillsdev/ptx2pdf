@@ -8,7 +8,7 @@ import os, re, random, sys
 
 posparms = ["alt", "src", "size", "pgpos", "copy", "caption", "ref", "x-xetex", "mirror", "scale"]
 pos3parms = ["src", "size", "pgpos", "ref", "copy", "alt", "x-xetex", "mirror", "scale", "media", 
-             "x-credit", "x-creditrot", "x-creditbox", "x-creditpos"]
+             "x-credit", "x-creditrot", "x-creditbox", "x-creditpos", "captionR", "refR"]
 
 _defaults = {
     'scale':    "1.000"
@@ -72,7 +72,6 @@ class PicChecks:
         for a in ((None, self.sharedfname, self.cfgShared), (configid, self.pubfname, self.cfgProject)):
             p = os.path.join(basep, a[0]) if a[0] else basep
             os.makedirs(p, exist_ok=True)
-            print(a)
             with open(os.path.join(p, a[1]), "w", encoding="utf-8") as outf:
                 a[2].write(outf)
 
@@ -204,17 +203,14 @@ class PicInfo(dict):
         self.loaded = False
         self.srchlist = []
 
-    def load_files(self, parent, suffix="", prjdir=None, prj=None, cfg=None):
+    def load_files(self, parent, suffix=""):
         if self.inthread:
             return False
         else:
             self.thread = None
-        if prjdir is None:
-            prjdir = self.basedir
-        if prj is None:
-            prj = self.prj
-        if cfg is None:
-            cfg = self.config
+        prjdir = self.basedir
+        prj = self.prj
+        cfg = self.config
         if prjdir is None or prj is None or cfg is None:
             return False
         preferred = os.path.join(prjdir, "shared/ptxprint/{1}/{0}-{1}.piclist".format(prj, cfg))
@@ -239,9 +235,24 @@ class PicInfo(dict):
             self.threadUsfms(parent, suffix)
             # self.thread = Thread(target=self.threadUsfms, args=(suffix,))
             return False
-        else:
-            self.model.savePics()
         return True
+
+    def merge(self, tgtpre, srcpre, indat=None):
+        if indat is None:
+            indat = self
+        tgts = {}
+        for k, v in self.items():
+            if v['anchor'][3:].startswith(tgtpre):
+                tgts.setdefault(v['anchor'][:3] + v['anchor'][3+len(tgtpre):], []).append(v)
+        for k, v in indat.items():
+            if v['anchor'][3:].startswith(srcpre):
+                a = v['anchor'][:3]+v['anchor'][3+len(srcpre):]
+                for s in tgts.get(a, []):
+                    if s.get('src', '') == v.get('src', '') and v.get('caption', '') != '':
+                        s['caption'+srcpre] = v.get('caption', '')
+                        if v.get('ref', '') != '':
+                            s['ref'+srcpre] = v['ref']
+                        break
 
     def threadUsfms(self, parent, suffix):
         bks = self.model.getAllBooks()
@@ -418,6 +429,7 @@ class PicInfo(dict):
             os.unlink(fpath)
 
     def rmdups(self): # MH {checking I understand this right} Does this assume we can't have 2 pics with the same anchor?
+        ''' Makes sure there are not two entries with the same anchor and same image source'''
         allkeys = {}
         for k,v in self.items():
             allkeys.setdefault(self.stripsp_re.sub(r"\1", v['anchor']), []).append(k)

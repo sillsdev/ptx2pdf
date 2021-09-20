@@ -868,8 +868,13 @@ class ViewModel:
         if self.diglotView is None:
             res = self.picinfos.load_files(self)
         else:
-            res = self.picinfos.load_files(self, suffix="BL")
-        if not res and mustLoad:
+            res = self.picinfos.load_files(self, suffix="L")
+            digpicinfos = PicInfo(self.diglotView)
+            if digpicinfos.load_files(self.diglotView, suffix="R"):
+                self.picinfos.merge("L", "R", digpicinfos)
+        if res:
+            self.savePics()
+        elif mustLoad:
             self.onGeneratePicListClicked(None)
             
     def onGeneratePicListClicked(self, btn):
@@ -903,7 +908,6 @@ class ViewModel:
     def generateFrontMatter(self, frtype="basic", inclcover=False):
         prjid = self.get("fcb_project")
         destp = self.configFRT()
-        print(destp)
         if frtype == "basic":
             srcp = os.path.join(os.path.dirname(__file__), "FRTtemplateBasic.txt")
         elif frtype == "advanced":
@@ -911,7 +915,6 @@ class ViewModel:
         elif frtype == "paratext":
             srcp = os.path.join(self.settings_dir, prjid, self.getBookFilename("FRT", prjid))
             
-        print("Copying:", srcp, "===>", destp)
         copyfile(srcp, destp)
 
     def generateHyphenationFile(self):
