@@ -634,6 +634,21 @@
       \else\ifnum\XrefSide=3
         \ifodd\pageno\else \xdef\tmp{1}\fi
   \fi\fi\fi\fi\fi}
+\def\p@geendcontent{%
+  \ifvoid\bottomins\else \vfil\kern-\lastd@pth
+    \lastd@pth=0pt \vskip\skip\bottomins \hbox{\hbox to \columnshift{}\box\bottomins} \fi % ouput bottom spanning pictures
+  \ifColNotes\else
+    \f@rstnotetrue%
+    \m@kenotebox
+    \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2. Lastdepth=\the\lastd@pth \space Leaving \the\ht255, \the\dp255}%
+    \unvbox2 %\kern-\lastd@pth\lastd@pth=\dp2\unvbox2
+  \fi
+  \noteseenfalse
+  \ifvoid\verybottomins\else\ifdim\availht > 0pt\vfil % \kern-\dimen0
+    \trace{o}{verybottomins(onecoltrial): height=\the\ht\verybottomins , availht=\the\availht, textheight=\the\textheight, htpartial=\the\dimen9}
+    \lastd@pth=0pt \vskip\skip\verybottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\verybottomins}}%
+  \fi\fi
+}
 \def\onecoltrial{% single-column version of \twocoltrial (see below)
   \tracingparagraphs=0
   %\tracingall=1\tracingoutput=0\tracingpages=0\tracingparagraphs=0\tracingassigns=0\tracingscantokens=0
@@ -696,19 +711,7 @@
           \makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen3}{1}%
         \fi\fi
         \hbox to \ExtraRMargin{}}%
-      \ifvoid\bottomins\else \vfil\kern-\lastd@pth
-        \lastd@pth=0pt \vskip\skip\bottomins \hbox{\hbox to \columnshift{}\box\bottomins} \fi % ouput bottom spanning pictures
-      \ifColNotes\else
-        \f@rstnotetrue%
-        \m@kenotebox
-        \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2 \space Leaving \the\ht255, \the\dp255}%
-        \ifdim\ht2<-\lastd@pth\trace{b}{Strange notes height: \the\ht2}\fi
-        \unvbox2 %\kern-\lastd@pth\lastd@pth=\dp2\unvbox2
-      \fi
-      \ifvoid\verybottomins\else\ifdim\availht > 0pt\vfil % \kern-\dimen0
-        \trace{o}{verybottomins(onecoltrial): height=\the\ht\verybottomins , availht=\the\availht, textheight=\the\textheight, htpartial=\the\dimen9}
-        \lastd@pth=0pt \vskip\skip\verybottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\verybottomins}}%
-      \fi\fi
+        \p@geendcontent
     }%
 %-c_onecoltrial_pagecontents
 %+c_onecoltrial_pagefit
@@ -900,7 +903,10 @@
     \ifdim\ht\partial>\PageFullFactor\textheight \temptrue\fi%
     \ifnum\outputpenalty<-10000 \temptrue\else\trace{o}{outputpenalty = \the\outputpenalty}\fi%
     \iftemp\trace{o}{savepartial eject partial=\the\ht\partial, bottom=\the\ht\verybottomins}%
-      \def\pagecontents{\box\partial}\plainoutput \s@tpage
+      \def\pagecontents{%
+        \box\partial
+        \p@geendcontent
+      }\plainoutput \s@tpage
     \fi
     \fin@lverybottom
     \global\holdinginserts=1
@@ -1537,17 +1543,7 @@
         \ifRTL \hbox to \ExtraRMargin{}\vbox to \dimen2{\unvbox\colB\vfil}\makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen2}{3}\vbox to \dimen2{\unvbox\colA\vfil}
         \else \vbox to \dimen2{\unvbox\colA\vfil}\makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen2}{3}\vbox to \dimen2{\unvbox\colB\vfil}\hbox to \ExtraRMargin{}\fi}%
         %\else \box\colA\makecolumngutter{\the\dimen3}{\the\textheight}{0pt}\box\colB\hbox to \ExtraRMargin{\fi}%
-      \ifvoid\bottomins\else \kern-\lastd@pth
-        \lastd@pth=0pt \vskip\skip\bottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\bottomins}}\fi % ouput bottom spanning pictures
-      \f@rstnotetrue
-      \ifColNotes\else\m@kenotebox
-        \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2}%
-        \unvbox2 %\kern-\lastd@pth\lastdepth=\dp2\unvbox2
-      \fi
-      \global\noteseenfalse%
-      \ifvoid\verybottomins\else\vfil
-        \trace{o}{verybottomins(twocoltrial): height=\the\ht\verybottomins , availht=\the\availht, textheight=\the\textheight}
-        \kern-\lastd@pth \lastd@pth=0pt \vskip\skip\verybottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\verybottomins}}\fi % ouput bottom spanning picture
+      \p@geendcontent
     }%
     \global\setbox255=\box\voidb@x                                          %(+)
     \resetvsize % reset size of next page since it will not have any 1 column material
@@ -1692,14 +1688,7 @@
 	  \lastd@pth=\dp\partial
       \ifvoid\bottomins\else % \kern-\dimen0
         \lastd@pth=0pt \vskip\skip\bottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\bottomins}}\fi
-      \f@rstnotetrue%
-      \ifColNotes\else \m@kenotebox
-        \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2}%
-        \unvbox2 %\kern-\lastd@pth\lastdepth=\dp2\unvbox2
-      \fi
-      \ifvoid\verybottomins\else\ifdim\availht > 0pt % \kern-\dimen0
-        \trace{o}{verybottomins(twocolp@geout): height=\the\ht\verybottomins , availht=\the\availht, textheight=\the\textheight}
-        \lastd@pth=0pt \vskip 0pt plus 1fill\vskip\skip\verybottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\verybottomins}}\fi\fi
+      \p@geendcontent
     }}\plainoutput
     \s@tpage
     \fin@lverybottom
