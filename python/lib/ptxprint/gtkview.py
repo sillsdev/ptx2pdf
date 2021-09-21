@@ -1307,7 +1307,6 @@ class GtkViewModel(ViewModel):
         if not len(bks2gen):
             return
         bk = self.get("ecb_examineBook")
-        bk = bk if bk in bks2gen else None
         if pgid == "scroll_FrontMatter":
             ptFRT = os.path.exists(os.path.join(self.settings_dir, self.prjid, self.getBookFilename("FRT", self.prjid)))
             self.builder.get_object("r_generateFRT_paratext").set_sensitive(ptFRT)
@@ -1323,9 +1322,15 @@ class GtkViewModel(ViewModel):
             dialog.hide()
 
         if pgid == "scroll_AdjList":
-            self.generateAdjList(books = [bk])
+            if bk not in bks2gen:
+                self.doError(_("Book in focus not within scope"), 
+                    secondary=_("To generate an AdjList, the book must be\n"+
+                                "in the list of books to be printed."))
+                return
+            self.generateAdjList()
 
         elif pgid == "scroll_FinalSFM" and bk is not None:
+            bk = bk if bk in bks2gen else None
             tmodel = TexModel(self, self.settings_dir, self._getPtSettings(self.prjid), self.prjid)
             out = tmodel.convertBook(bk, None, self.working_dir, os.path.join(self.settings_dir, self.prjid))
             self.editFile(out, loc="wrk", pgid=pgid)
@@ -1349,16 +1354,22 @@ class GtkViewModel(ViewModel):
         usfms = self.get_usfms()
         if diglot:
             dusfms = self.diglotView.get_usfms()
+        skipbooks = []
         for bk in booklist:
             fname = self.getAdjListFilename(bk, ext=".adj")
             outfname = os.path.join(self.configPath(self.configName()), "AdjLists", fname)
             if os.path.exists(outfname):
-                existingFilelist.append(re.split(r"\\|/",outfname)[-1])
+                if os.path.getsize(outfname) > 0:
+                    skipbooks.append(bk)
+                    existingFilelist.append(re.split(r"\\|/",outfname)[-1])
         if len(existingFilelist):
             q1 = _("One or more Paragraph Adjust file(s) already exist!")
             q2 = "\n".join(existingFilelist)+_("\n\nDo you want to OVERWRITE the above-listed file(s)?")
-            if not self.msgQuestion(q1, q2, default=True):
-                return
+            if self.msgQuestion(q1, q2, default=False):
+                skipbooks = []
+        booklist = [x for x in booklist if x not in skipbooks]
+        if not len(booklist):
+            return
         parlocs = os.path.join(self.working_dir, self.baseTeXPDFnames()[0] + ".parlocs")
         adjs = {}
         for i, loose in enumerate(("-1", "0", "+1")):
