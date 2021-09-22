@@ -409,9 +409,9 @@
     \toks0=\everypar\everypar={}\parskip=0pt\parindent=0pt\let\par=\endgraf\parfillskip=0pt%
 %  \noindent\hbox{\noindent\kern\columnshift\vbox{\hrule width \dimen0}}\par
     \dimen0=\prevdepth\ifdim \dimen0>0pt\kern-\dimen0\fi
-    \vbox{\kern \AboveEndNoteRule\baselineskip
+    \vbox{\kern \AboveEndNoteRule
       \EndNoteSeparator
-      \kern \BelowEndNoteRule\baselineskip}%
+      \kern \BelowEndNoteRule}%
     \everypar=\toks0 
   }%
   \penalty 5000 %Not a good place to break. Also protects from unboxing

@@ -286,7 +286,9 @@ ModelMap = {
     "notes/addcolon":           ("c_addColon", None),
     "notes/keepbookwithrefs":   ("c_keepBookWithRefs", None),
     "notes/glossaryfootnotes":  ("c_glossaryFootnotes", None),
-    "notes/columnnotes":        ("c_columnNotes", lambda w,v: "true" if v else "false"),
+    "notes/fnpos":              ("r_fnpos", None),
+    "notes/columnnotes_":       ("r_fnpos_column", lambda w,v: "true" if v else "false"),
+    "notes/endnotes_":          ("r_fnpos_endnote", lambda w,v: "" if v else "%"),
 
     "notes/abovenotespace":     ("s_abovenotespace", None),
     "notes/belownoterulespace": ("s_belownoterulespace", None),

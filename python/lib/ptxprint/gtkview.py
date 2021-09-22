@@ -126,7 +126,7 @@ _sensitivities = {
                                 "s_verseDecoratorShift", "s_verseDecoratorScale"],
         "r_decorator_ayah":    ["lb_style_v"]},
     "r_xrLocn": {
-        "r_xrLocn_below" :     ["l_internote", "s_internote", "l_xrColWid", "s_centreColWidth", "c_columnNotes"],
+        "r_xrLocn_below" :     ["l_internote", "s_internote", "l_xrColWid", "s_centreColWidth", "r_fnpos_column"],
         "r_xrLocn_blend" :     [],
         "r_xrLocn_centre" :    ["l_internote", "s_internote", "l_xrColWid", "s_centreColWidth", "l_xrColSpace", "s_xrGutterWidth", "l_colXRside", "fcb_colXRside"]},
         
@@ -134,7 +134,7 @@ _sensitivities = {
         "r_xrSource_standard": ["s_xrSourceSize", "l_xrSourceSize", "l_xrSourceLess", "l_xrSourceMore"],
         "r_xrSource_custom" :  ["btn_selectXrFile"]},
     "c_mainBodyText" :         ["gr_mainBodyText"],
-    "c_doublecolumn" :         ["gr_doubleColumn", "c_singleColLayout", "t_singleColBookList", "c_columnNotes"],
+    "c_doublecolumn" :         ["gr_doubleColumn", "c_singleColLayout", "t_singleColBookList", "r_fnpos_column"],
     "c_useFallbackFont" :      ["btn_findMissingChars", "t_missingChars", "l_fallbackFont", "bl_fontExtraR"],
     "c_includeFootnotes" :     ["bx_fnOptions"],
     "c_includeXrefs" :         ["bx_xrOptions"],
@@ -590,7 +590,7 @@ class GtkViewModel(ViewModel):
             self.picListView.onResized()
 
     def getInitValues(self):
-        self.initValues = {v[0]: self.get(v[0], skipmissing=True) for k, v in ModelMap.items() if v[0] is not None}
+        self.initValues = {v[0]: self.get(v[0], skipmissing=True) for k, v in ModelMap.items() if v[0] is not None and not v[0].startswith("r_")}
         for r, a in self.radios.items():
             for v in a:
                 w = self.builder.get_object("r_{}_{}".format(r, v))
@@ -1123,10 +1123,10 @@ class GtkViewModel(ViewModel):
         self.colorTabs()
 
     def onXrefLocnClicked(self, btn):
-        if self.get("r_xrLocn") == "blend":
-            self.set("c_columnNotes", False)
-        elif self.get("r_xrLocn") == "centre":
-            self.set("c_columnNotes", True)
+        if self.get("r_xrLocn") == "blend" and self.get("r_fnpos") == "column":
+            self.set("r_fnpos", "normal")
+        elif self.get("r_xrLocn") == "centre" and self.get("r_fnpos") == "normal":
+            self.set("r_fnpos", "column")
         self.onSimpleClicked(btn)
         try:
             self.styleEditor.setval("x", "NoteBlendInto", "f" if self.get("r_xrLocn") == "blend" else None)

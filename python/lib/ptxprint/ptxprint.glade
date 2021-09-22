@@ -9195,6 +9195,67 @@ Also settings for special books.</property>
                                                     <property name="visible">True</property>
                                                     <property name="can-focus">False</property>
                                                     <child>
+                                                      <object class="GtkRadioButton" id="r_fnpos_normal">
+                                                        <property name="label" translatable="yes">End of Page</property>
+                                                        <property name="visible">True</property>
+                                                        <property name="can-focus">True</property>
+                                                        <property name="receives-default">False</property>
+                                                        <property name="margin-end">6</property>
+                                                        <property name="active">True</property>
+                                                        <property name="draw-indicator">True</property>
+                                                        <signal name="clicked" handler="onRadioChanged" swapped="no"/>
+                                                      </object>
+                                                      <packing>
+                                                        <property name="expand">False</property>
+                                                        <property name="fill">True</property>
+                                                        <property name="position">0</property>
+                                                      </packing>
+                                                    </child>
+                                                    <child>
+                                                      <object class="GtkRadioButton" id="r_fnpos_column">
+                                                        <property name="label" translatable="yes">End of Column</property>
+                                                        <property name="visible">True</property>
+                                                        <property name="can-focus">True</property>
+                                                        <property name="receives-default">False</property>
+                                                        <property name="margin-end">6</property>
+                                                        <property name="draw-indicator">True</property>
+                                                        <property name="group">r_fnpos_normal</property>
+                                                        <signal name="clicked" handler="onRadioChanged" swapped="no"/>
+                                                      </object>
+                                                      <packing>
+                                                        <property name="expand">False</property>
+                                                        <property name="fill">True</property>
+                                                        <property name="position">1</property>
+                                                      </packing>
+                                                    </child>
+                                                    <child>
+                                                      <object class="GtkRadioButton" id="r_fnpos_endnote">
+                                                        <property name="label" translatable="yes">End Notes</property>
+                                                        <property name="visible">True</property>
+                                                        <property name="can-focus">True</property>
+                                                        <property name="receives-default">False</property>
+                                                        <property name="draw-indicator">True</property>
+                                                        <property name="group">r_fnpos_normal</property>
+                                                        <signal name="clicked" handler="onRadioChanged" swapped="no"/>
+                                                      </object>
+                                                      <packing>
+                                                        <property name="expand">False</property>
+                                                        <property name="fill">True</property>
+                                                        <property name="position">2</property>
+                                                      </packing>
+                                                    </child>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="expand">False</property>
+                                                    <property name="fill">True</property>
+                                                    <property name="position">0</property>
+                                                  </packing>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkBox">
+                                                    <property name="visible">True</property>
+                                                    <property name="can-focus">False</property>
+                                                    <child>
                                                       <object class="GtkCheckButton" id="c_fneachnewline">
                                                         <property name="label" translatable="yes">Start Each Footnote on a New Line</property>
                                                         <property name="visible">True</property>
@@ -9241,7 +9302,7 @@ line then set this option.</property>
                                                   <packing>
                                                     <property name="expand">False</property>
                                                     <property name="fill">True</property>
-                                                    <property name="position">0</property>
+                                                    <property name="position">1</property>
                                                   </packing>
                                                 </child>
                                                 <child>
@@ -9265,7 +9326,7 @@ has been specified within the text itself.</property>
                                                   <packing>
                                                     <property name="expand">False</property>
                                                     <property name="fill">True</property>
-                                                    <property name="position">1</property>
+                                                    <property name="position">2</property>
                                                   </packing>
                                                 </child>
                                                 <child>
@@ -9357,7 +9418,7 @@ showing, then a default set will appear.</property>
                                                   <packing>
                                                     <property name="expand">False</property>
                                                     <property name="fill">False</property>
-                                                    <property name="position">2</property>
+                                                    <property name="position">3</property>
                                                   </packing>
                                                 </child>
                                                 <child>
@@ -9411,7 +9472,7 @@ Print a second time before it applies.</property>
                                                   <packing>
                                                     <property name="expand">False</property>
                                                     <property name="fill">True</property>
-                                                    <property name="position">3</property>
+                                                    <property name="position">4</property>
                                                   </packing>
                                                 </child>
                                               </object>
@@ -9462,6 +9523,17 @@ Print a second time before it applies.</property>
                                                 <property name="orientation">vertical</property>
                                                 <property name="spacing">2</property>
                                                 <child>
+                                                  <object class="GtkLabel" id="l_empty">
+                                                    <property name="visible">True</property>
+                                                    <property name="can-focus">False</property>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="expand">False</property>
+                                                    <property name="fill">True</property>
+                                                    <property name="position">0</property>
+                                                  </packing>
+                                                </child>
+                                                <child>
                                                   <object class="GtkBox">
                                                     <property name="visible">True</property>
                                                     <property name="can-focus">False</property>
@@ -9511,7 +9583,7 @@ line then set this option.</property>
                                                   <packing>
                                                     <property name="expand">False</property>
                                                     <property name="fill">True</property>
-                                                    <property name="position">0</property>
+                                                    <property name="position">1</property>
                                                   </packing>
                                                 </child>
                                                 <child>
@@ -9535,7 +9607,7 @@ has been specified within the text itself.</property>
                                                   <packing>
                                                     <property name="expand">False</property>
                                                     <property name="fill">True</property>
-                                                    <property name="position">1</property>
+                                                    <property name="position">2</property>
                                                   </packing>
                                                 </child>
                                                 <child>
@@ -9625,7 +9697,7 @@ showing, then a default set will appear.</property>
                                                   <packing>
                                                     <property name="expand">False</property>
                                                     <property name="fill">False</property>
-                                                    <property name="position">2</property>
+                                                    <property name="position">3</property>
                                                   </packing>
                                                 </child>
                                                 <child>
@@ -9679,7 +9751,7 @@ Print a second time before it applies.</property>
                                                   <packing>
                                                     <property name="expand">False</property>
                                                     <property name="fill">True</property>
-                                                    <property name="position">3</property>
+                                                    <property name="position">4</property>
                                                   </packing>
                                                 </child>
                                               </object>
@@ -10552,25 +10624,6 @@ reducing the size of the \x font (to approx 6pt).</property>
                                                   </packing>
                                                 </child>
                                                 <child>
-                                                  <object class="GtkCheckButton" id="c_columnNotes">
-                                                    <property name="label" translatable="yes">Notes at Bottom of Second Column</property>
-                                                    <property name="visible">True</property>
-                                                    <property name="can-focus">True</property>
-                                                    <property name="receives-default">False</property>
-                                                    <property name="tooltip-text" translatable="yes">Place notes within the bottom of the second column in 2 column text</property>
-                                                    <property name="halign">end</property>
-                                                    <property name="margin-left">24</property>
-                                                    <property name="margin-bottom">10</property>
-                                                    <property name="draw-indicator">True</property>
-                                                  </object>
-                                                  <packing>
-                                                    <property name="left-attach">1</property>
-                                                    <property name="top-attach">1</property>
-                                                    <property name="width">2</property>
-                                                    <property name="height">2</property>
-                                                  </packing>
-                                                </child>
-                                                <child>
                                                   <object class="GtkLabel" id="l_xrColWid">
                                                     <property name="visible">True</property>
                                                     <property name="can-focus">False</property>
@@ -10692,6 +10745,9 @@ being positioned between the columns of text.</property>
                                                     <property name="left-attach">1</property>
                                                     <property name="top-attach">3</property>
                                                   </packing>
+                                                </child>
+                                                <child>
+                                                  <placeholder/>
                                                 </child>
                                                 <child>
                                                   <placeholder/>

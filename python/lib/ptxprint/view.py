@@ -724,7 +724,9 @@ class ViewModel:
             self._configset(config, "header/ifshowbook", True)
         if v < 1.95:
             self._configset(config, "paper/bottomrag", "0")
-            config.set("config", "version", "1.95")
+        if v < 1.96:
+            self._configset(config, "notes/r_fnpos", "normal")
+            config.set("config", "version", "1.96")
 
         styf = os.path.join(self.configPath(cfgname), "ptxprint.sty")
         if not os.path.exists(styf):
