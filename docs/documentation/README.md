@@ -279,9 +279,9 @@ Literal text can also be included (e.g., to add dashes around a centered page nu
 *   \NoteAtEnd{```f```} – To make the specified note class an endnote (default: only ```fe``` 'endnotes' are endnotes). 
 *   \notesEachBook```false``` – To place endnotes at the end of the entire volume rather than (default) the end of individual books.(default=true)
 *   \def\EndNoteRuleWidth{```0.5```} –  Fraction of column width to make the rule above automatically inserted endnotes (default =```0.5```)
-*   \def\EndNoteRuleThickness{```0.4```} – Fraction of _1pt_ to make the rule above automatically inserted endnotes (default=```0.4```)
-*   \def\SpaceAboveEndNoteRule{```1.2```} – Space (measured relative to the line space currently in force) between the body text and the  end-note separator line.
-*   \def\SpaceBelowEndNoteRule{```0.8```} – Space (measured relative to the line space currently in force) between the separator line and the start of the end-notes. If this and `\EndNoteRuleAbove` add up to a whole number, then (with the default definition for `\EndNoteSeparator`) then gridding will be preserved.
+*   \def\EndNoteRuleThickness{```0.4pt```} – Thickness of the rule above automatically inserted endnotes (default=```0.4pt```)
+*   \def\AboveEndNoteRule{```14 pt```} – Space between the body text and the  end-note separator line.
+*   \def\BelowEndNoteRule{```10 pt```} – Space between the separator line and the start of the end-notes. If this and `\EndNoteRuleAbove` add up to a whole number, then (with the default definition for `\EndNoteSeparator`) then gridding will be preserved. I.e. the macros will not ensure the above end note rule will keep to the grid.
 
 #### Custom end-note use
 *   \zplaceallnotes – Non-standard USFM marker to place any currently-waiting endnotes (with preceding endnote rule and spacing, if there are any endnotes).

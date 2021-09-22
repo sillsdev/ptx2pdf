@@ -393,17 +393,17 @@
 \everypar=\toks0}
 
 \def\EndNoteRuleWidth{0.5}
-\def\EndNoteRuleThickness{0.4}
-\def\AboveEndNoteRule{1.2}
-\def\BelowEndNoteRule{0.8}
+\def\EndNoteRuleThickness{0.4pt}
+\def\AboveEndNoteRule{14pt}
+\def\BelowEndNoteRule{10pt}
 
 \def\endn@terule{\relax
   \@ndnotesfoundfalse
   \let\\=\ch@ckendnotes\the\endn@teclasses
   \if@ndnotesfound\zendnoterule\fi
 }
-\def\EndNoteSeparator{\hbox to \hsize{\hss\vrule width \EndNoteRuleWidth\hsize  height \EndNoteRuleThickness pt\hss}%
-      \kern-\EndNoteRuleThickness pt %
+\def\EndNoteSeparator{\hbox to \hsize{\hss\vrule width \EndNoteRuleWidth\hsize  height \EndNoteRuleThickness\hss}%
+      \kern-\EndNoteRuleThickness %
 } 
 \def\zendnoterule{{%
     \toks0=\everypar\everypar={}\parskip=0pt\parindent=0pt\let\par=\endgraf\parfillskip=0pt%
