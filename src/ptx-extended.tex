@@ -295,8 +295,10 @@
       \advance\dimen1 by -\fb@hpadding\fi
     \ifx\b@drright\tr@e \advance\dimen1 by -\b@drwidth\FontSizeUnit
       \advance\dimen1 by -\fb@hpadding\fi
-    \if h\tempc\relax\else% Don't store width for class h sidebars, as they may appear full width or single column
-      \setsbp@ram{w@dth}{\the\dimen1}%
+    \if h\tempc\relax\else% Don't store width for class h or class p sidebars, as they may appear full width or single column
+      \if p\tempc\relax\else
+        \setsbp@ram{w@dth}{\the\dimen1}%
+      \fi
     \fi
  \else
    \dimen1=\cp@ram
@@ -734,5 +736,7 @@
 \def\g@nbox#1{%For some reason, this prefers to be in its own macro.
   \x@\newb@x\csname #1\endcsname
 }
+\x@\def\csname d@code-t\endcsname{\edef\tmp{cat:\tmp}}
+
 \def\Override{\m@kedigitsother}
 \def\EndOverride{\m@kedigitsletters}
