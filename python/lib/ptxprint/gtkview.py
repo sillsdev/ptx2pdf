@@ -1869,6 +1869,7 @@ class GtkViewModel(ViewModel):
             embolden = None
             italic = None
             isCtxtSpace = False
+            mapping = "Default"
         else:
             for i, row in enumerate(ls):
                 if row[0] == f.name:
@@ -1882,6 +1883,7 @@ class GtkViewModel(ViewModel):
             embolden = f.getFake("embolden")
             italic = f.getFake("slant")
             hasfake = embolden is not None or italic is not None
+            mapping = f.getMapping()
         lb.set_cursor(i)
         lb.scroll_to_cell(i)
         self.builder.get_object("t_fontSearch").set_text("")
@@ -1894,6 +1896,7 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("s_fontBold").set_value(float(embolden or 0.))
         self.builder.get_object("s_fontItalic").set_value(float(italic or 0.))
         self.builder.get_object("c_fontFake").set_active(hasfake)
+        self.builder.get_object("fcb_fontdigits").set_active_id(mapping)
         for a in ("Bold", "Italic"):
             self.builder.get_object("s_font"+a).set_sensitive(hasfake)
         # dialog.set_default_response(Gtk.ResponseType.OK)

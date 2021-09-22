@@ -938,7 +938,7 @@ class FontRef:
             sfeats.append("/GR")
         feats = []
         for k, v in self.feats.items():
-            if k in ('embolden', 'slant'):
+            if k in ('embolden', 'slant', 'mapping'):
                 feats.append((k, v))
                 continue
             if self.isGraphite:
@@ -1009,10 +1009,18 @@ class FontRef:
         return "|".join(res)
 
     def asFeatStr(self):
-        res = ["{}={}".format(k, v) for k, v in self.feats.items() if k not in ("embolden", "slant")]
+        res = ["{}={}".format(k, v) for k, v in self.feats.items() if k not in ("embolden", "slant", "mapping")]
         if self.lang is not None:
             res.append("language={}".format(self.lang))
         return ", ".join(res)
+
+    def getMapping(self):
+        v = self.feats.get("mapping", None)
+        if v is not None:
+            m = re.match("^mappings/(.*?)digits", v)
+            if m:
+                return re.sub(r"(^|[\-])([a-z])", lambda n: n.group(1) + n.group(2).upper(), m.group(1))
+        return "Default"
 
     def asPango(self, fallbacks, size=None):
         fb = ("," + ",".join(fallbacks)) if len(fallbacks) else ""

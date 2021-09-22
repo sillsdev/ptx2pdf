@@ -587,7 +587,9 @@ class StyleEditorView(StyleEditor):
                     self.setval(self.marker, 'EndMarker', key + "*")
                     if st == 'Character':
                         ou = self.getval(self.marker, 'OccursUnder')
-                        ou.add(["NEST"])
+                        if not isinstance(ou, set):
+                            ou = set(ou.split())
+                        ou.add("NEST")
                         self.setval(self.marker, 'OccursUnder', ou)
                     self.resolveEndMarker(key, None)
                 elif st == 'Milestone':

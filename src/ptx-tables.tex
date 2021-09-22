@@ -388,4 +388,7 @@
 }
 \let\n@wbox=\newbox
 \let\n@wdimen=\newdimen
-
+\bgroup \catcode`\^=7\obeylines
+\def\ztablecategory{\bgroup\unc@tcodespecials\obeylines\zt@blecategory}
+\def\zt@blecategory #1^^M{\gdef\tablecategory{#1}\egroup}
+\egroup
