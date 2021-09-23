@@ -859,7 +859,7 @@ class ViewModel:
         with open(fname, "w", encoding="Utf-8") as outf:
             self.styleEditor.output_diffile(outf, regular=regularfont, root=root)
 
-    def savePics(self, force=False):
+    def savePics(self, fromdata=True, force=False):
         if not force and self.configLocked():
             return
         if self.picinfos is not None and self.picinfos.loaded:
@@ -867,13 +867,13 @@ class ViewModel:
                                     "{}-{}.piclist".format(self.prjid, self.configName())))
         self.picChecksView.writeCfg(os.path.join(self.settings_dir, self.prjid), self.configName())
 
-    def loadPics(self, mustLoad=True):
+    def loadPics(self, mustLoad=True, fromdata=True):
         if self.loadingConfig:
             return
         if self.picinfos is None:
             self.picinfos = PicInfo(self)
         else:
-            self.savePics()
+            self.savePics(fromdata=fromdata)
             self.picinfos.clear(self)
         if not self.get("c_includeillustrations"):
             return
@@ -885,7 +885,7 @@ class ViewModel:
             if digpicinfos.load_files(self.diglotView, suffix="R"):
                 self.picinfos.merge("L", "R", digpicinfos)
         if res:
-            self.savePics()
+            self.savePics(fromdata=fromdata)
         elif mustLoad:
             self.onGeneratePicListClicked(None)
             

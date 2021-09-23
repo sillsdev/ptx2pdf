@@ -383,7 +383,7 @@ class GtkViewModel(ViewModel):
                 pre, name = nid.split("_", 1) if "_" in nid else ("", nid)
                 if pre in ("btn", "bx", "c", "ecb", "fcb", "fr", "gr", "l", "lb", "r", "s", "t", "tb"):
                     self.allControls.add(nid)
-        print(self.allControls)
+        # print(self.allControls)
         xml_text = et.tostring(tree.getroot(), encoding='unicode', method='xml')
         self.builder = Gtk.Builder.new_from_string(xml_text, -1)
         #    self.builder.set_translation_domain(APP)
@@ -1550,12 +1550,16 @@ class GtkViewModel(ViewModel):
                                                \n   * the 'Print' button to create the PDF first"))
         self.bookNoUpdate = False
 
-    def savePics(self, force=False):
+    def savePics(self, fromdata=True, force=False):
         if not force and self.configLocked():
             return
-        if self.picinfos is not None and self.picinfos.loaded:
+        if not fromdata and self.picinfos is not None and self.picinfos.loaded:
             self.picListView.updateinfo(self.picinfos)
-        super().savePics(force=force)
+        super().savePics(fromdata=fromdata, force=force)
+
+    def loadPics(self, mustLoad=True, fromdata=True):
+        super().loadPics(mustLoad=mustLoad, fromdata=fromdata)
+        self.updatePicList()
 
     def onSavePicListEdits(self, btn):
         self.savePics()
@@ -1680,10 +1684,7 @@ class GtkViewModel(ViewModel):
         self.onSimpleClicked(btn)
         self.colorTabs()
         if btn.get_active():
-            if self.picinfos is None:
-                self.picinfos = PicInfo(self)
             self.loadPics()
-            self.updatePicList()
         else:
             self.picinfos.clear(self)
             self.picListView.clear()
@@ -2729,7 +2730,6 @@ class GtkViewModel(ViewModel):
             self.diglotView = None
         self.updateDialogTitle()
         self.loadPics(mustLoad=False)
-        self.updatePicList()
 
     def onDiglotSwitchClicked(self, btn):
         oprjid = None
@@ -2787,7 +2787,6 @@ class GtkViewModel(ViewModel):
             self.setPrintBtnStatus(2)
             self.diglotView = None
         self.loadPics()
-        self.updatePicList()
         
     def onGenerateHyphenationListClicked(self, btn):
         self.generateHyphenationFile()

@@ -11589,7 +11589,7 @@ headers and footers.</property>
                                     <signal name="row-activated" handler="onPLrowActivated" swapped="no"/>
                                     <child internal-child="selection">
                                       <object class="GtkTreeSelection">
-                                        <property name="mode">multiple</property>
+                                        <property name="mode">single</property>
                                       </object>
                                     </child>
                                     <child>

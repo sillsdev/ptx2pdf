@@ -253,7 +253,7 @@ class PicInfo(dict):
                             s['caption'+srcpre] = v.get('caption', '')
                         if v.get('ref', '') != '':
                             s['ref'+srcpre] = v['ref']
-                        # del self[k]
+                        del indat[k]
                         break
 
     def threadUsfms(self, parent, suffix):
