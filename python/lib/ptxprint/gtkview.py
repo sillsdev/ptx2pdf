@@ -161,7 +161,7 @@ _sensitivities = {
     "c_rangeShowVerse" :       ["l_chvsSep", "c_sepPeriod", "c_sepColon"],
     "c_fnautocallers" :        ["t_fncallers", "btn_resetFNcallers", "c_fnomitcaller", "c_fnpageresetcallers"],
     "c_xrautocallers" :        ["t_xrcallers", "btn_resetXRcallers", "c_xromitcaller", "c_xrpageresetcallers"],
-    "c_glossaryFootnotes" :    ["c_firstOccurenceOnly"],
+    "c_footnoterule" :         ["l_SpaceAboveRule", "l_SpaceBelowRule", ],
     "c_useCustomFolder" :      ["btn_selectFigureFolder", "c_exclusiveFiguresFolder", "lb_selectFigureFolder"],
     "c_processScript" :        ["c_processScriptBefore", "c_processScriptAfter", "btn_selectScript", "btn_editScript"],
     "c_usePrintDraftChanges" : ["btn_editChangesFile"],
@@ -642,7 +642,7 @@ class GtkViewModel(ViewModel):
                   "s_colgutteroffset", "bx_TopMarginSettings", "gr_HeaderAdvOptions", "l_colgutteroffset", "c_fighidecaptions",
                   "c_fighiderefs", "c_skipmissingimages", "c_useCustomFolder", "btn_selectFigureFolder", "c_exclusiveFiguresFolder",
                   "c_startOnHalfPage", "c_prettyIntroOutline", "c_marginalverses", "s_columnShift", "c_figplaceholders",
-                  "fr_fallbackFont", "l_colgutteroffset", "fr_hyphenation", "lb_style_f", "lb_style_x",
+                  "fr_fallbackFont", "fr_hyphenation", "lb_style_f", "lb_style_x",
                   "bx_fnCallers", "bx_fnCalleeCaller", "bx_xrCallers", "bx_xrCalleeCaller", "c_fnOverride", "c_xrOverride",
                   "row_ToC", "c_hyphenate", "l_missingPictureCount", "bx_colophon", "btn_deleteConfig", "btn_lockunlock",
                   "r_hdrLeft_Pri", "r_hdrLeft_Sec", "r_hdrCenter_Pri", "r_hdrCenter_Sec", "r_hdrRight_Pri", "r_hdrRight_Sec", 
@@ -651,10 +651,11 @@ class GtkViewModel(ViewModel):
                   "c_pagegutter", "s_pagegutter", "l_script", "fcb_script", "c_quickRun", "c_mirrorpages", "c_hideEmptyVerses",
                   "t_invisiblePassword", "t_configNotes", "l_notes", "c_elipsizeMissingVerses", "fcb_glossaryMarkupStyle",
                   "gr_fnAdvOptions", "c_figexclwebapp", "l_glossaryMarkupStyle", "btn_refreshFonts", "btn_copyToTargetProj",
-                  "fr_spacingAdj", "fr_fallbackFont", "l_complexScript", "b_scrsettings", "c_colorfonts",
+                  "fr_spacingAdj", "l_complexScript", "b_scrsettings", "c_colorfonts",
                   "scr_picListEdit", "gr_picButtons", "tb_picPreview", "l_linesOnPageLabel", "l_linesOnPage", "fr_tabs",
                   "btn_adjust_spacing", "btn_adjust_top", "btn_adjust_bottom", "fr_diglot", "btn_diglotSwitch", "fr_borders",
-                  "c_grid", "btn_adjustGrid", "lb_omitPics", "bx_frontmatter", "bx_colophon"): #, "c_noInkFooter"):
+                  "c_grid", "btn_adjustGrid", "bx_frontmatter", "gr_importFrontPDF", "gr_importBackPDF",
+                  "r_fnpos_normal", "r_fnpos_column", "r_fnpos_endnote", "rule_footnote"):
                   
             # print(c)
             self.builder.get_object(c).set_visible(not val)
@@ -714,15 +715,15 @@ class GtkViewModel(ViewModel):
         val = self.get("c_noInternet")
         adv = self.get("c_showAdvancedOptions")
         for w in ["lb_omitPics", "l_url_usfm", 
-                   "l_homePage",  "l_community",  "l_faq",  "l_pdfViewer",  "l_techFAQ",  "l_reportBugs", 
-                  "lb_homePage", "lb_community", "lb_faq", "lb_pdfViewer", "lb_techFAQ", "lb_reportBugs"]:
+                   "l_homePage",  "l_community",  "l_faq",  "l_pdfViewer",  "l_techFAQ",  "l_reportBugs",
+                  "lb_homePage", "lb_community", "lb_faq", "lb_pdfViewer", "lb_techFAQ", "lb_reportBugs", "lb_canvaCoverMaker"]:
             self.builder.get_object(w).set_visible(adv and not val)
         self.userconfig.set("init", "nointernet", "true" if self.get("c_noInternet") else "false")
         self.styleEditor.editMarker()
         # Show Hide specific Help items
         for pre in ("l_", "lb_"):
-            for h in ("ptxprintdir", "prjdir", "settings_dir", "pdfViewer", "techFAQ", "reportBugs"): 
-                self.builder.get_object("{}{}".format(pre, h)).set_visible(not(not adv or val))
+            for h in ("ptxprintdir", "prjdir", "settings_dir"): 
+                self.builder.get_object("{}{}".format(pre, h)).set_visible(adv)
 
     def addCR(self, name, index):
         if "|" in name:
@@ -1150,8 +1151,8 @@ class GtkViewModel(ViewModel):
         else:
             val = float(val) * 2
         self.set("s_indentUnit", val)
-        #if not btn.get_active() and self.get("r_xrLocn") == "centre":
-        #    self.set("r_xrLocn", "below")
+        if not btn.get_active() and self.get("r_fnpos") == "column":
+           self.set("r_fnpos", "normal")
 
     def onSimpleFocusClicked(self, btn):
         self.sensiVisible(Gtk.Buildable.get_name(btn), focus=True)
@@ -1323,7 +1324,7 @@ class GtkViewModel(ViewModel):
 
         if pgid == "scroll_AdjList":
             if bk not in bks2gen:
-                self.doError(_("Book in focus not within scope"), 
+                self.doError(_("The Book in focus is not within scope"), 
                     secondary=_("To generate an AdjList, the book must be\n"+
                                 "in the list of books to be printed."))
                 return
@@ -2275,8 +2276,8 @@ class GtkViewModel(ViewModel):
             self.builder.get_object("lb_ptxprintdir").set_label(os.path.dirname(__file__))
             self.builder.get_object("lb_prjdir").set_label(os.path.join(self.settings_dir, self.prjid))
             self.builder.get_object("lb_settings_dir").set_label(self.configPath(cfgname=self.configName()) or "")
-        # Fixme! This folder below needs to be set to the TEMP folder if the path was set through the command line option -d
-            self.builder.get_object("lb_working_dir").set_label(self.working_dir or "")
+            outputfolder =  self.working_dir.strip(self.configName()) or ""
+            self.builder.get_object("lb_working_dir").set_label(outputfolder)
             
     def updateProjectSettings(self, prjid, saveCurrConfig=False, configName=None, readConfig=False):
         self.picListView.clear()
@@ -2820,7 +2821,8 @@ class GtkViewModel(ViewModel):
         self.openFolder(self.configPath(cfgname=self.configName()))
         
     def onOpenFolderOutputClicked(self, btn):
-        self.openFolder(os.path.join(self.working_dir))
+        outputfolder =  self.working_dir.strip(self.configName()) or ""
+        self.openFolder(outputfolder)
 
     def openFolder(self, fldrpath):
         path = os.path.realpath(fldrpath)
@@ -3419,7 +3421,7 @@ class GtkViewModel(ViewModel):
         titer = buf.get_iter_at_mark(buf.get_insert())
         self.cursors[pgnum] = (titer.get_line(), titer.get_line_offset())
         oldlist = buf.get_text(buf.get_start_iter(), buf.get_end_iter(), True)
-        self.fileViews[pgnum][0].set_text(re.sub(r".+?\+0\s?\r?\n", "", oldlist))
+        self.fileViews[pgnum][0].set_text(re.sub(r"[A-Z123]{3}\s\d.+?[-+]+0([%[].+\])?\r?\n", "", oldlist))
 
     def rescanFRTvarsClicked(self, btn, autosave=True):
         prjid = self.get("fcb_project")
@@ -3478,3 +3480,7 @@ class GtkViewModel(ViewModel):
         val = "cropmarks" in self.get("ecb_pagesize")
         for w in ["c_cropmarks", "c_grid"]:
             self.set(w, val)
+
+    def onFootnoteRuleClicked(self, btn):
+        status = self.sensiVisible("c_footnoterule")
+        self.builder.get_object("rule_footnote").set_visible(status)
