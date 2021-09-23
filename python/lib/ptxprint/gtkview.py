@@ -111,6 +111,44 @@ _allbooks = ["FRT", "INT",
             "GLO", "TDX", "NDX", "CNC", "OTH", "BAK"]
 _allbkmap = {k: i for i, k in enumerate(_allbooks)} 
 
+_ui_minimal = """
+bx_statusBar fcb_uiLevel
+fcb_filterXrefs fcb_interfaceLang c_quickRun
+tb_Basic lb_Basic
+fr_projScope l_project fcb_project l_projectFullName r_book_single ecb_book l_chapfrom s_chapfrom l_chapto s_chapto 
+r_book_multiple btn_chooseBooks t_booklist 
+fr_SavedConfigSettings l_cfgName ecb_savedConfig t_savedConfig btn_saveConfig btn_reloadConfig btn_lockunlock
+tb_Layout lb_Layout
+fr_pageSetup l_pageSize ecb_pagesize l_fontsize s_fontsize l_linespacing s_linespacing 
+fr_2colLayout c_doublecolumn gr_doubleColumn c_verticalrule 
+tb_Font lb_Font
+fr_FontConfig l_fontR bl_fontR 
+tb_Help lb_Help
+fr_Help l_working_dir lb_working_dir btn_about
+""".split()
+
+_ui_basic = """
+r_book_module btn_chooseBibleModule 
+c_pagegutter s_pagegutter l_gutterWidth btn_adjust_spacing l_linesOnPageLabel l_linesOnPage c_mirrorpages
+l_bottomRag s_bottomRag
+fr_margins l_margins s_margins
+l_fontB bl_fontB l_fontI bl_fontI l_fontBI bl_fontBI 
+fr_writingSystem l_textDirection fcb_textDirection fcb_script l_script
+tb_Body lb_Body
+fr_BeginEnding c_bookIntro c_introOutline c_filterGlossary c_ch1pagebreak
+fr_IncludeScripture c_mainBodyText gr_mainBodyText c_chapterNumber c_justify c_sectionHeads
+c_verseNumbers c_preventorphans c_hideEmptyVerses c_elipsizeMissingVerses
+tb_NotesRefs lb_NotesRefs
+fr_inclFN c_includeFootnotes bx_fnOptions r_fnpos_normal r_fnpos_column r_fnpos_endnote c_fneachnewline
+fr_inclXR c_includeXrefs     bx_xrOptions l_empty                                       c_xreachnewline
+tb_HeadFoot lb_HeadFoot
+fr_Header l_hdrleft ecb_hdrleft l_hdrcenter ecb_hdrcenter l_hdrright ecb_hdrright
+fr_Footer l_ftrcenter ecb_ftrcenter
+tb_Pictures lb_Pictures
+c_includeillustrations tb_settings lb_settings fr_inclPictures gr_IllustrationOptions c_cropborders r_pictureRes_High r_pictureRes_Low
+rule_help l_homePage lb_homePage l_createZipArchiveXtra btn_createZipArchiveXtra
+""".split()
+
 # The 3 dicts below are used by method: sensiVisible() to toggle object states
 
 # Checkboxes and the different objects they make (in)sensitive when toggled
@@ -371,7 +409,7 @@ class GtkViewModel(ViewModel):
                 node.text = os.path.join(os.path.dirname(__file__), node.text)
             if nid is None:
                 pass
-            elif nid == 'tb_colophon':
+            elif nid == 'txbf_colophon':
                 node.set('class', 'GtkSourceBuffer')
             elif nid == 'textv_colophon':
                 node.set('class', 'GtkSourceView')
@@ -381,9 +419,8 @@ class GtkViewModel(ViewModel):
                     self.radios.setdefault(m.group(1), set()).add(m.group(2))
             if nid is not None:
                 pre, name = nid.split("_", 1) if "_" in nid else ("", nid)
-                if pre in ("btn", "bx", "c", "ecb", "fcb", "fr", "gr", "l", "lb", "r", "s", "t", "tb"):
+                if pre in ("btn", "bx", "c", "ecb", "fcb", "fr", "gr", "l", "lb", "r", "s", "t", "tb", "rule", "img"):
                     self.allControls.add(nid)
-        # print(self.allControls)
         xml_text = et.tostring(tree.getroot(), encoding='unicode', method='xml')
         self.builder = Gtk.Builder.new_from_string(xml_text, -1)
         #    self.builder.set_translation_domain(APP)
@@ -417,7 +454,7 @@ class GtkViewModel(ViewModel):
         for n in _notebooks:
             nbk = self.builder.get_object("nbk_"+n)
             self.notebooks[n] = [Gtk.Buildable.get_name(nbk.get_nth_page(i)) for i in range(nbk.get_n_pages())]
-        for fcb in ("project", "interfaceLang", "fontdigits", "script", "diglotPicListSources",
+        for fcb in ("project", "uiLevel", "interfaceLang", "fontdigits", "script", "diglotPicListSources",
                     "textDirection", "glossaryMarkupStyle", "fontFaces", "featsLangs", "leaderStyle",
                     "picaccept", "pubusage", "pubaccept", "chklstFilter|0.75", "gridUnits", "gridOffset"):
             self.addCR("fcb_"+fcb, 0)
@@ -467,8 +504,8 @@ class GtkViewModel(ViewModel):
             view.connect("focus-out-event", self.onViewerLostFocus)
             view.connect("focus-in-event", self.onViewerFocus)
             
-        if self.get("c_colophon") and self.get("tb_colophon") == "":
-            self.set("tb_colophon", _defaultColophon)
+        if self.get("c_colophon") and self.get("txbf_colophon") == "":
+            self.set("txbf_colophon", _defaultColophon)
 
         self.picListView = PicList(self.builder.get_object('tv_picListEdit'), self.builder, self)
         self.styleEditor = StyleEditorView(self)
@@ -556,9 +593,9 @@ class GtkViewModel(ViewModel):
         self.set("c_noInternet", noInt)
         el = self.userconfig.getboolean('init', 'englinks', fallback=False)
         self.set("c_useEngLinks", el)
-        expert = self.userconfig.getboolean('init', 'expert', fallback=False)
-        self.set("c_showAdvancedOptions", not expert)
-        self.onShowAdvancedOptionsClicked(None)
+        # expert = self.userconfig.getboolean('init', 'expert', fallback=False)
+        # self.set("c_showAdvancedOptions", not expert)
+        # self.onShowAdvancedOptionsClicked(None)
         sys.excepthook = self.doSysError
         lsfonts = self.builder.get_object("ls_font")
         lsfonts.clear()
@@ -615,59 +652,41 @@ class GtkViewModel(ViewModel):
         self._setChapRange("to", 1, 999, 1)
         self.colorTabs()
 
-    def onShowMoreOrLessClicked(self, btn):
-        self.set("c_showAdvancedOptions", not self.get("c_showAdvancedOptions"))
-    
-    def onShowAdvancedOptionsClicked(self, btn):
-        val = not self.get("c_showAdvancedOptions")
-        self.userconfig.set('init', 'expert', 'true' if val else 'false')
-        if val:
+    def onUILevelChanged(self, btn):
+        ui = int(self.get("fcb_uiLevel"))
+        # self.userconfig.set('init', 'expert', 'true' if val else 'false')
+        self.userconfig.set('init', 'userinterface', str(ui))
+
+        # For Minimal and Basic mode, turn some essential settings OFF/ON
+        if ui < 6:
             for c in ("c_startOnHalfPage", "c_marginalverses", "c_figplaceholders"):
                 self.builder.get_object(c).set_active(False)
 
-            # Turn Essential Settings ON
             for c in ("c_mainBodyText", "c_skipmissingimages"):
                 self.builder.get_object(c).set_active(True)
-            self.builder.get_object("btn_showMoreOrLess").set_label(_("v  Show More"))
-            self.builder.get_object("btn_showMoreOrLess").set_tooltip_text( \
-                _("Show More Settings:\n" + \
-                "There are many more complex options\n" + \
-                "available for use within PTXprint."))
-        else:
-            self.builder.get_object("btn_showMoreOrLess").set_label(_("^  Show Less"))
-            self.builder.get_object("btn_showMoreOrLess").set_tooltip_text( \
-                _("Show Fewer Settings:\n" + \
-                "If the settings are too overwhelming then\n" + \
-                "you can hide all the advanced options."))
-                      
-        for c in ("tb_Advanced", "tb_ViewerEditor", "tb_StyleEditor", "tb_Pictures", "tb_TabsBorders", "tb_Diglot", "tb_Peripherals",
-                  "fr_copyrightLicense", "r_book_module", "btn_chooseBibleModule", "lb_bibleModule", "lb_omitPics",
-                  "lb_selectFigureFolder", "l_indentUnit", "s_indentUnit", "lb_style_s", "lb_style_r", 
-                  "l_btmMrgn", "s_bottommargin", "l_ftrPosn", "s_footerposition", "r_ftrCenter_Pri", "r_ftrCenter_Sec", 
-                  "l_missingPictureString", "l_imageTypeOrder", "t_imageTypeOrder", "fr_layoutSpecialBooks", "fr_layoutOther",
-                  "s_colgutteroffset", "bx_TopMarginSettings", "gr_HeaderAdvOptions", "l_colgutteroffset", "c_fighidecaptions",
-                  "c_fighiderefs", "c_skipmissingimages", "c_useCustomFolder", "btn_selectFigureFolder", "c_exclusiveFiguresFolder",
-                  "c_startOnHalfPage", "c_prettyIntroOutline", "c_marginalverses", "s_columnShift", "c_figplaceholders",
-                  "fr_fallbackFont", "fr_hyphenation", "lb_style_f", "lb_style_x",
-                  "bx_fnCallers", "bx_fnCalleeCaller", "bx_xrCallers", "bx_xrCalleeCaller", "c_fnOverride", "c_xrOverride",
-                  "bx_ToC", "c_hyphenate", "l_missingPictureCount", "bx_colophon", "btn_deleteConfig", "btn_lockunlock",
-                  "r_hdrLeft_Pri", "r_hdrLeft_Sec", "r_hdrCenter_Pri", "r_hdrCenter_Sec", "r_hdrRight_Pri", "r_hdrRight_Sec", 
-                  "c_omitverseone", "c_glueredupwords", "c_firstParaIndent", "c_hangpoetry", "c_preventwidows", 
-                  "l_DBLbundle", "btn_DBLbundle", "c_cropmarks", "fr_margins", "c_linebreakon", "t_linebreaklocale", 
-                  "c_pagegutter", "s_pagegutter", "l_script", "fcb_script", "c_quickRun", "c_mirrorpages", "c_hideEmptyVerses",
-                  "t_invisiblePassword", "t_configNotes", "l_notes", "c_elipsizeMissingVerses", "fcb_glossaryMarkupStyle",
-                  "gr_fnAdvOptions", "c_figexclwebapp", "l_glossaryMarkupStyle", "btn_refreshFonts", "btn_copyToTargetProj",
-                  "fr_spacingAdj", "l_complexScript", "b_scrsettings", "c_colorfonts",
-                  "scr_picListEdit", "gr_picButtons", "tb_picPreview", "l_linesOnPageLabel", "l_linesOnPage", "fr_tabs",
-                  "btn_adjust_spacing", "btn_adjust_top", "btn_adjust_bottom", "fr_diglot", "btn_diglotSwitch", "fr_borders",
-                  "c_grid", "btn_adjustGrid", "bx_frontmatter", "gr_importFrontPDF", "gr_importBackPDF",
-                  "r_fnpos_normal", "r_fnpos_column", "r_fnpos_endnote", "rule_footnote"):
-                  
-            # print(c)
-            self.builder.get_object(c).set_visible(not val)
 
+        if ui < 6:
+            for w in self.allControls:
+                self.builder.get_object(w).set_visible(False)
+                
+            if ui >= 2:
+                for w in _ui_minimal:
+                    # print(w)
+                    self.builder.get_object(w).set_visible(True)
+                self.mw.resize(700, 150)
+
+            if ui >= 4:
+                for w in _ui_basic:
+                    # print(w)
+                    self.builder.get_object(w).set_visible(True)
+                self.mw.resize(700, 350)
+            return
+        if ui >= 6:
+            for w in self.allControls:
+                self.builder.get_object(w).set_visible(True)
+        
         # Selectively turn things back on if their settings are enabled
-        if val:
+        if ui >= 6:
             if self.get("c_includeillustrations"):
                 self.builder.get_object("tb_Pictures").set_visible(True)
                 
@@ -705,25 +724,23 @@ class GtkViewModel(ViewModel):
 
         # Disable/Enable the Details and Checklist tabs on the Pictures tab
         for w in ["tb_details", "tb_checklist"]:
-            self.builder.get_object(w).set_sensitive(not val)        
+            self.builder.get_object(w).set_sensitive(ui >= 6)        
         for w in ["tb_plTopPane", "tb_picPreview", "scr_detailsBottom", "scr_checklistBottom", "l_globalPicSettings"]: 
-            self.builder.get_object(w).set_visible(not val)        
+            self.builder.get_object(w).set_visible(ui >= 6)        
             
         self.noInternetClicked(None)
         self.colorTabs()
         # Resize Main UI Window appropriately
-        if val:
-            self.mw.resize(828, 292)
-        else:
-            self.mw.resize(830, 594)
+        self.mw.resize(830, 594)
 
     def noInternetClicked(self, btn):
-        val = self.get("c_noInternet")
-        adv = self.get("c_showAdvancedOptions")
+        ui = int(self.get("fcb_uiLevel"))
+        val = self.get("c_noInternet") or (ui < 6)  
+        adv = (ui >= 6)
         for w in ["lb_omitPics", "l_url_usfm", 
                    "l_homePage",  "l_community",  "l_faq",  "l_pdfViewer",  "l_techFAQ",  "l_reportBugs",
                   "lb_homePage", "lb_community", "lb_faq", "lb_pdfViewer", "lb_techFAQ", "lb_reportBugs", "lb_canvaCoverMaker"]:
-            self.builder.get_object(w).set_visible(adv and not val)
+            self.builder.get_object(w).set_visible(not val)
         self.userconfig.set("init", "nointernet", "true" if self.get("c_noInternet") else "false")
         self.styleEditor.editMarker()
         # Show Hide specific Help items
@@ -1080,7 +1097,7 @@ class GtkViewModel(ViewModel):
             else _("Tabs") if self.builder.get_object("fr_tabs").get_visible() else ""
         bc = "<span color='{}'>".format(col)+_("Borders")+"</span>" if bd \
             else _("Borders") if self.builder.get_object("fr_borders").get_visible() else ""
-        jn = "+" if ((tb and bd) or self.get("c_showAdvancedOptions")) else ""
+        jn = "+" if ((tb and bd) or int(self.get("fcb_uiLevel")) >= 6) else ""
         self.builder.get_object("lb_TabsBorders").set_markup(tc+jn+bc)
 
         ad = False
@@ -1092,7 +1109,7 @@ class GtkViewModel(ViewModel):
         ac = " color='"+col+"'" if ad else ""
         self.builder.get_object("lb_Advanced").set_markup("<span{}>".format(ac)+_("Advanced")+"</span>")
 
-        self.builder.get_object("c_showAdvancedOptions").set_sensitive(not (tb and bd))
+        # self.builder.get_object("c_showAdvancedOptions").set_sensitive(not (tb and bd))
 
     def sensiVisible(self, k, focus=False, state=None):
         if state is None:
@@ -1190,12 +1207,12 @@ class GtkViewModel(ViewModel):
         invPW = self.get("t_invisiblePassword")
         if invPW == None or invPW == "": # No existing PW, so set a new one
             self.builder.get_object("t_invisiblePassword").set_text(pw)
-            self.builder.get_object("btn_showMoreOrLess").set_sensitive(False)
+            # self.builder.get_object("btn_showMoreOrLess").set_sensitive(False)
             self.onSaveConfig(None, force=True)     # Always save the config when locking
         else: # try to unlock the settings by removing the settings
             if pw == invPW:
                 self.builder.get_object("t_invisiblePassword").set_text("")
-                self.builder.get_object("btn_showMoreOrLess").set_sensitive(True)
+                # self.builder.get_object("btn_showMoreOrLess").set_sensitive(True)
             else: # Mismatching password - Don't do anything
                 pass
         self.builder.get_object("t_password").set_text("")
@@ -1210,7 +1227,7 @@ class GtkViewModel(ViewModel):
         else:
             status = False
             lockBtn.set_label(_("Unlock"))
-        for c in ["btn_saveConfig", "btn_deleteConfig", "t_configNotes", "btn_showMoreOrLess", 
+        for c in ["btn_saveConfig", "btn_deleteConfig", "t_configNotes", "fcb_uiLevel", 
                   "btn_Generate", "btn_plAdd", "btn_plDel"]:
             self.builder.get_object(c).set_sensitive(status)
         
@@ -1617,7 +1634,7 @@ class GtkViewModel(ViewModel):
             state = False
         else:
             state = True
-        for w in ["l_complexScript", "b_scrsettings"]:
+        for w in ["l_complexScript", "btn_scrsettings"]:
             wid = self.builder.get_object(w)
             if wid is not None:
                 wid.set_sensitive(state)
@@ -2337,7 +2354,7 @@ class GtkViewModel(ViewModel):
             lockBtn.set_sensitive(False)
         if self.configNoUpdate or self.get("ecb_savedConfig") == "":
             return
-        self.builder.get_object("btn_showMoreOrLess").set_sensitive(True)
+        self.builder.get_object("fcb_uiLevel").set_sensitive(True)
         lockBtn.set_label("Lock")
         self.builder.get_object("t_invisiblePassword").set_text("")
         self.builder.get_object("btn_saveConfig").set_sensitive(True)
@@ -2994,7 +3011,7 @@ class GtkViewModel(ViewModel):
         
     def onColophonClicked(self, btn):
         self.onSimpleClicked(btn)
-        if self.get("c_colophon") and self.get("tb_colophon") == "":
+        if self.get("c_colophon") and self.get("txbf_colophon") == "":
             self.localizeDefColophon()
 
     def onColophonResetClicked(self, btn):
@@ -3004,7 +3021,7 @@ class GtkViewModel(ViewModel):
         ct = _defaultDigColophon if self.get("c_diglot") else _defaultColophon
         if self.lang in _availableColophons:
             ct = re.sub(r'\\zimagecopyrights', r'\\zimagecopyrights' + self.lang, ct)
-        self.set("tb_colophon", ct)
+        self.set("txbf_colophon", ct)
 
     def onResetCopyrightClicked(self, btn):
         self.builder.get_object("t_copyrightStatement").set_text(self._getPtSettings().get('Copyright', ""))

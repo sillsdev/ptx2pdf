@@ -726,6 +726,8 @@ class ViewModel:
             self._configset(config, "paper/bottomrag", "0")
         if v < 1.96:
             self._configset(config, "notes/r_fnpos", "normal")
+            # "project/hideadvsettings":  ("c_showAdvancedOptions",
+            # project/uilevel ??? should really be set for each config
             digmap = config.get("document", "digitmapping", fallback="Default")
             if digmap != "Default":
                 for a in ('regular', 'bold', 'bolditalic', 'italic'):

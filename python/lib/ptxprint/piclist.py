@@ -85,7 +85,7 @@ class PicChecks:
                 val = "OK"
             self.parent.set(k, val)
         # MH - this doesn't seem to be working
-        self.parent.set("tb_picNotes", self.cfgProject.get(self.src, "notes", fallback=""))
+        self.parent.set("txbf_picNotes", self.cfgProject.get(self.src, "notes", fallback=""))
         for cfg in (self.cfgShared, self.cfgProject):
             if cfg.getboolean(self.src, "approved", fallback=False):
                 self.parent.set("t_pubInits", cfg.get(self.src, "approved_by", fallback=""))
@@ -119,7 +119,7 @@ class PicChecks:
         else:
             cfg.set(self.src, "approved", "false")
         ocfg.set(self.src, "approved", "false")
-        self.cfgProject.set(self.src, "notes", self.parent.get("tb_picNotes"))
+        self.cfgProject.set(self.src, "notes", self.parent.get("txbf_picNotes"))
 
     def filter(self, src, filt):
         if filt == 0:       # All

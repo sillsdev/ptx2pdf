@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.1 
+<!-- Generated with glade 3.22.2 
 
 The MIT License (MIT)
 
@@ -32,7 +32,7 @@ THE SOFTWARE.
   <!-- interface-copyright SIL International -->
   <object class="GtkApplicationWindow">
     <property name="can_focus">False</property>
-    <child>
+    <child type="titlebar">
       <placeholder/>
     </child>
     <child>
@@ -96,6 +96,11 @@ THE SOFTWARE.
     <property name="step_increment">0.01</property>
     <property name="page_increment">0.10000000000000001</property>
   </object>
+  <object class="GtkAdjustment" id="a_bottomRag">
+    <property name="upper">10</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">1</property>
+  </object>
   <object class="GtkAdjustment" id="a_bottommargin">
     <property name="lower">0.5</property>
     <property name="upper">99</property>
@@ -129,6 +134,13 @@ THE SOFTWARE.
     <property name="upper">40</property>
     <property name="value">4</property>
     <property name="step_increment">0.5</property>
+    <property name="page_increment">1</property>
+  </object>
+  <object class="GtkAdjustment" id="a_columnShift">
+    <property name="lower">1</property>
+    <property name="upper">50</property>
+    <property name="value">16</property>
+    <property name="step_increment">1</property>
     <property name="page_increment">1</property>
   </object>
   <object class="GtkAdjustment" id="a_columngutteroffset">
@@ -482,23 +494,11 @@ THE SOFTWARE.
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkAdjustment" id="adj_bottomRag">
-    <property name="upper">10</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">1</property>
-  </object>
-  <object class="GtkAdjustment" id="c_columnShift">
-    <property name="lower">1</property>
-    <property name="upper">50</property>
-    <property name="value">16</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">1</property>
-  </object>
   <object class="GtkDialog" id="dlg_DBLbundle">
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">PTXprint: Set up DBL bundle...</property>
     <property name="type_hint">dialog</property>
-    <child>
+    <child type="titlebar">
       <placeholder/>
     </child>
     <child internal-child="vbox">
@@ -812,7 +812,7 @@ Built on the foundation laid by:
 Jonathan Kew (Author of XeTeX + sfm2pdf)</property>
     <property name="logo">62859-open-book-icon(128).png</property>
     <property name="license_type">mit-x11</property>
-    <child>
+    <child type="titlebar">
       <placeholder/>
     </child>
     <child internal-child="vbox">
@@ -850,7 +850,7 @@ Jonathan Kew (Author of XeTeX + sfm2pdf)</property>
     <property name="skip_taskbar_hint">True</property>
     <property name="deletable">False</property>
     <property name="gravity">center</property>
-    <child>
+    <child type="titlebar">
       <placeholder/>
     </child>
     <child internal-child="vbox">
@@ -1091,7 +1091,7 @@ book selector on the Basic tab. In that case, click
     <property name="skip_taskbar_hint">True</property>
     <property name="deletable">False</property>
     <property name="gravity">center</property>
-    <child>
+    <child type="titlebar">
       <placeholder/>
     </child>
     <child internal-child="vbox">
@@ -1314,7 +1314,7 @@ If in doubt, click Cancel.</property>
     <property name="type_hint">dialog</property>
     <property name="skip_taskbar_hint">True</property>
     <property name="gravity">center</property>
-    <child>
+    <child type="titlebar">
       <placeholder/>
     </child>
     <child internal-child="vbox">
@@ -1647,7 +1647,7 @@ start of the publication in this oder:
     <property name="type_hint">dialog</property>
     <property name="skip_taskbar_hint">True</property>
     <property name="gravity">center</property>
-    <child>
+    <child type="titlebar">
       <placeholder/>
     </child>
     <child internal-child="vbox">
@@ -1824,7 +1824,7 @@ the target project(s) will be overwritten.</property>
     <property name="type_hint">dialog</property>
     <property name="skip_taskbar_hint">True</property>
     <property name="gravity">center</property>
-    <child>
+    <child type="titlebar">
       <placeholder/>
     </child>
     <child internal-child="vbox">
@@ -2265,7 +2265,7 @@ settings for a similar project.</property>
     <property name="title" translatable="yes">Select Font Features...</property>
     <property name="icon">Google-Noto-Emoji-Objects-62859-open-book.ico</property>
     <property name="type_hint">dialog</property>
-    <child>
+    <child type="titlebar">
       <placeholder/>
     </child>
     <child internal-child="vbox">
@@ -2481,7 +2481,7 @@ settings for a similar project.</property>
     <property name="icon">Google-Noto-Emoji-Objects-62859-open-book.ico</property>
     <property name="type_hint">dialog</property>
     <property name="gravity">center</property>
-    <child>
+    <child type="titlebar">
       <placeholder/>
     </child>
     <child internal-child="vbox">
@@ -3008,7 +3008,7 @@ are using supports these digits too.)</property>
     <property name="window_position">mouse</property>
     <property name="icon">Google-Noto-Emoji-Objects-62859-open-book.ico</property>
     <property name="type_hint">dialog</property>
-    <child>
+    <child type="titlebar">
       <placeholder/>
     </child>
     <child internal-child="vbox">
@@ -3663,7 +3663,7 @@ the text. This may be useful for precise measuring.</property>
     <property name="title" translatable="yes">Illustration Credit Overlay</property>
     <property name="icon">Google-Noto-Emoji-Objects-62859-open-book.ico</property>
     <property name="type_hint">dialog</property>
-    <child>
+    <child type="titlebar">
       <placeholder/>
     </child>
     <child internal-child="vbox">
@@ -4349,6 +4349,32 @@ information, position and other parameters.</property>
       </row>
     </data>
   </object>
+  <object class="GtkListStore" id="ls_uiLevel">
+    <columns>
+      <!-- column-name uiLevelName -->
+      <column type="gchararray"/>
+      <!-- column-name uiLevel -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">Minimal</col>
+        <col id="1">2</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Basic</col>
+        <col id="1">4</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Full</col>
+        <col id="1">6</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Advanced</col>
+        <col id="1">8</col>
+      </row>
+    </data>
+  </object>
   <object class="GtkListStore" id="ls_zvarList">
     <columns>
       <!-- column-name Name -->
@@ -4375,9 +4401,19 @@ information, position and other parameters.</property>
       </row>
     </data>
   </object>
-  <object class="GtkTextBuffer" id="tb_colophon"/>
-  <object class="GtkTextBuffer" id="tb_picNotes"/>
-  <object class="GtkTextBuffer" id="tb_styDesc"/>
+  <object class="GtkTreeStore" id="ts_styles">
+    <columns>
+      <!-- column-name marker -->
+      <column type="gchararray"/>
+      <!-- column-name name -->
+      <column type="gchararray"/>
+      <!-- column-name active -->
+      <column type="gboolean"/>
+    </columns>
+  </object>
+  <object class="GtkTextBuffer" id="txbf_colophon"/>
+  <object class="GtkTextBuffer" id="txbf_picNotes"/>
+  <object class="GtkTextBuffer" id="txbf_styDesc"/>
   <object class="GtkDialog" id="dlg_styModsdialog">
     <property name="can_focus">False</property>
     <property name="halign">start</property>
@@ -4390,7 +4426,7 @@ information, position and other parameters.</property>
     <property name="type_hint">dialog</property>
     <property name="skip_taskbar_hint">True</property>
     <property name="gravity">center</property>
-    <child>
+    <child type="titlebar">
       <placeholder/>
     </child>
     <child internal-child="vbox">
@@ -4627,7 +4663,7 @@ in your data for this marker.</property>
                         <property name="tooltip_text" translatable="yes">You can say what you like here to
 describe the purpose of the style.</property>
                         <property name="wrap_mode">word</property>
-                        <property name="buffer">tb_styDesc</property>
+                        <property name="buffer">txbf_styDesc</property>
                       </object>
                     </child>
                   </object>
@@ -4706,16 +4742,6 @@ and helps to place the marker in the tree listing all markers.</property>
       </object>
     </child>
   </object>
-  <object class="GtkTreeStore" id="ts_styles">
-    <columns>
-      <!-- column-name marker -->
-      <column type="gchararray"/>
-      <!-- column-name name -->
-      <column type="gchararray"/>
-      <!-- column-name active -->
-      <column type="gboolean"/>
-    </columns>
-  </object>
   <object class="GtkAdjustment" id="xrGutterWidth">
     <property name="lower">0.10000000000000001</property>
     <property name="upper">20</property>
@@ -4732,7 +4758,7 @@ and helps to place the marker in the tree listing all markers.</property>
     <signal name="configure-event" handler="onMainConfigure" swapped="no"/>
     <signal name="destroy" handler="onDestroy" swapped="no"/>
     <signal name="key-press-event" handler="onKeyPress" swapped="no"/>
-    <child>
+    <child type="titlebar">
       <placeholder/>
     </child>
     <child internal-child="vbox">
@@ -6211,7 +6237,7 @@ Top (pt):</property>
                                   <object class="GtkSpinButton" id="s_bottomRag">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
-                                    <property name="adjustment">adj_bottomRag</property>
+                                    <property name="adjustment">a_bottomRag</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">1</property>
@@ -6301,7 +6327,7 @@ the Two Column layout).</property>
                                 <property name="row_spacing">5</property>
                                 <property name="column_spacing">6</property>
                                 <child>
-                                  <object class="GtkLabel">
+                                  <object class="GtkLabel" id="l_topmargin">
                                     <property name="height_request">35</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
@@ -6327,7 +6353,7 @@ Top of Text (mm):</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkLabel">
+                                  <object class="GtkLabel" id="l_headerposition">
                                     <property name="width_request">110</property>
                                     <property name="height_request">35</property>
                                     <property name="visible">True</property>
@@ -6461,7 +6487,7 @@ space between the end of the text and the footer line.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkSeparator">
+                                  <object class="GtkSeparator" id="rule_margins">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="valign">center</property>
@@ -6863,7 +6889,7 @@ main body text begins.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <child>
-                                      <object class="GtkLabel">
+                                      <object class="GtkLabel" id="l_margin2header2">
                                         <property name="width_request">95</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
@@ -6908,7 +6934,7 @@ starts a little bit below the top of the header area.</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkLabel">
+                                      <object class="GtkLabel" id="l_margin2header3">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="tooltip_text" translatable="yes">This value is calculated using the
@@ -7470,7 +7496,7 @@ leave this setting as "Default".</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkButton" id="b_scrsettings">
+                                  <object class="GtkButton" id="btn_scrsettings">
                                     <property name="label" translatable="yes">Additional Script Settings...</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
@@ -8353,7 +8379,7 @@ marginal verse numbers. (pts)</property>
                                         <property name="progress_pulse_step">0</property>
                                         <property name="placeholder_text">0.0</property>
                                         <property name="input_purpose">number</property>
-                                        <property name="adjustment">c_columnShift</property>
+                                        <property name="adjustment">a_columnShift</property>
                                         <property name="climb_rate">0.10000000000000001</property>
                                         <property name="numeric">True</property>
                                         <property name="update_policy">if-valid</property>
@@ -9323,6 +9349,8 @@ Print a second time before it applies.</property>
                                                   <object class="GtkLabel" id="l_empty">
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">False</property>
+                                                    <property name="margin_top">3</property>
+                                                    <property name="margin_bottom">2</property>
                                                   </object>
                                                   <packing>
                                                     <property name="expand">False</property>
@@ -13970,7 +13998,7 @@ be used in:</property>
                                                             <property name="can_focus">True</property>
                                                             <property name="vexpand">True</property>
                                                             <property name="wrap_mode">word</property>
-                                                            <property name="buffer">tb_picNotes</property>
+                                                            <property name="buffer">txbf_picNotes</property>
                                                             </object>
                                                             </child>
                                                             </object>
@@ -19176,7 +19204,7 @@ use // where a line break needs to be forced
 but :// used in URLs will still be preserved</property>
                                         <property name="vexpand">True</property>
                                         <property name="wrap_mode">word</property>
-                                        <property name="buffer">tb_colophon</property>
+                                        <property name="buffer">txbf_colophon</property>
                                       </object>
                                     </child>
                                   </object>
@@ -19798,30 +19826,6 @@ general users and common solutions.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkCheckButton" id="c_showAdvancedOptions">
-                                    <property name="label" translatable="yes">Show Advanced Settings</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">There are two views available in PTXprint.
-Basic view - which shows only the essential settings
-          and is intended for novice users.
-Advanced view - which has many more complex 
-          options to fine-tune the typesetting.
-
-Note that if you use Thumb Tabs as well as Borders
-at the same time then the Basic view is not available.</property>
-                                    <property name="halign">end</property>
-                                    <property name="margin_right">6</property>
-                                    <property name="draw_indicator">True</property>
-                                    <signal name="clicked" handler="onShowAdvancedOptionsClicked" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">5</property>
-                                    <property name="top_attach">11</property>
-                                  </packing>
-                                </child>
-                                <child>
                                   <object class="GtkButton" id="btn_about">
                                     <property name="label">gtk-about</property>
                                     <property name="visible">True</property>
@@ -19839,6 +19843,9 @@ at the same time then the Basic view is not available.</property>
                                     <property name="left_attach">5</property>
                                     <property name="top_attach">0</property>
                                   </packing>
+                                </child>
+                                <child>
+                                  <placeholder/>
                                 </child>
                                 <child>
                                   <placeholder/>
@@ -19957,23 +19964,32 @@ from XeTeX processing.</property>
           </packing>
         </child>
         <child>
-          <object class="GtkBox">
+          <object class="GtkBox" id="bx_statusBar">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="valign">end</property>
             <child>
-              <object class="GtkButton" id="btn_showMoreOrLess">
-                <property name="label" translatable="yes">v More /^ Less</property>
-                <property name="width_request">90</property>
+              <object class="GtkComboBox" id="fcb_uiLevel">
+                <property name="width_request">100</property>
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <property name="margin_left">2</property>
+                <property name="can_focus">False</property>
+                <property name="can_default">True</property>
+                <property name="tooltip_text" translatable="yes">Set the most appropriate
+user interface mode as needed.
+Settings will be hidden or shown
+depending on the level set here.</property>
+                <property name="halign">start</property>
+                <property name="margin_left">6</property>
                 <property name="margin_right">3</property>
-                <property name="margin_top">3</property>
-                <property name="margin_bottom">3</property>
-                <property name="always_show_image">True</property>
-                <signal name="clicked" handler="onShowMoreOrLessClicked" swapped="no"/>
+                <property name="margin_top">4</property>
+                <property name="margin_bottom">4</property>
+                <property name="model">ls_uiLevel</property>
+                <property name="wrap_width">1</property>
+                <property name="active">1</property>
+                <property name="entry_text_column">0</property>
+                <property name="id_column">1</property>
+                <property name="active_id">all</property>
+                <signal name="changed" handler="onUILevelChanged" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -20016,7 +20032,7 @@ Click to visit download page on the website.</property>
                 <property name="halign">start</property>
                 <property name="valign">center</property>
                 <property name="margin_left">3</property>
-                <property name="margin_right">2</property>
+                <property name="margin_right">3</property>
                 <property name="image">icon_download</property>
                 <signal name="clicked" handler="onUpdateButtonClicked" swapped="no"/>
               </object>

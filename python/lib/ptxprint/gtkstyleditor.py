@@ -107,7 +107,7 @@ dialogKeys = {
     "Marker":       "t_styMarker",
     "EndMarker":    "t_styEndMarker",
     "Name":         "t_styName",
-    "Description":  "tb_styDesc",
+    "Description":  "txbf_styDesc",
     "OccursUnder":  "t_styOccursUnder",
     "TextType":     "fcb_styTextType",
     "StyleType":    "fcb_styStyleType"
