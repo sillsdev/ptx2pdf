@@ -100,8 +100,8 @@ class Collector:
         if c is None:
             currChunk = Chunk(mode=self.mode)
         else:
-            if c.name == "cl" and self.chap == 0:
-                mode = ChunkType.TITLE
+            if c.name == "cl":
+                mode = ChunkType.TITLE if self.chap == 0 else ChunkType.HEADING
             elif c.name == "id":
                 mode = ChunkType.ID
             elif c.name == "tr":
@@ -178,7 +178,7 @@ class Collector:
         return currChunk
 
     def reorder(self):
-        # Merge contiguous title chunks
+        # Merge contiguous title and table chunks
         ti = None
         bi = None
         for i in range(1, len(self.acc)):
@@ -196,37 +196,43 @@ class Collector:
                 bi = None
         # Swap chapter and heading first
         for i in range(1, len(self.acc)):
-            if self.acc[i-1].type == ChunkType.CHAPTER and self.acc[i].type == ChunkType.HEADING:
-                (self.acc[i-1], self.acc[i]) = (self.acc[i], self.acc[i-1])
-        # Merge all chunks between \c and not including \v.
-        for i in range(1, len(self.acc)):
-            if self.acc[i-1].type == ChunkType.CHAPTER and not self.acc[i].hasVerse:
+            if self.acc[i].type == ChunkType.CHAPTER and self.acc[i-1].type == ChunkType.HEADING:
+                self.acc[i].extend(self.acc[i-1])
+                self.acc[i-1].deleteme = True
+            elif self.acc[i-1].type == ChunkType.CHAPTER and self.acc[i].type == ChunkType.HEADING:
                 self.acc[i-1].extend(self.acc[i])
                 self.acc[i].deleteme = True
+        # Merge all chunks between \c and not including \v.
+        if 0:
+            for i in range(1, len(self.acc)):
+                if self.acc[i-1].type == ChunkType.CHAPTER and not self.acc[i].hasVerse:
+                    self.acc[i-1].extend(self.acc[i])
+                    self.acc[i].deleteme = True
         # merge \c with body chunk following
-        lastchunk = None
-        prelastchunk = None
-        for i in range(1, len(self.acc)):
-            if getattr(self.acc[i], 'deleteme', False):
-                continue
-            if lastchunk is not None and lastchunk.type == ChunkType.CHAPTER and self.acc[i].type == ChunkType.BODY:
-                tag = self.acc[i][0].name
-                lastchunk.extend(self.acc[i])
-                lastchunk.type = self.acc[i].type
-                self.acc[i].deleteme = True
-                if tag == "nb" and prelastchunk is not None:
-                    prelastchunk.extend(lastchunk)
-                    lastchunk.deleteme = True
-                elif tag.startswith("q") and i < len(self.acc) - 1 and self.acc[i+1][0].name.startswith("q"):
-                    lastchunk.extend(self.acc[i+1])
-                    self.acc[i+1].deleteme = True
-            if not getattr(lastchunk, 'deleteme', False):
-                prelastchunk = lastchunk
-            else:
-                lastchunk = prelastchunk
-                prelastchunk = None     # can't really move backwards
-            if not getattr(self.acc[i], 'deleteme', False):
-                lastchunk = self.acc[i]
+        if 0:
+            lastchunk = None
+            prelastchunk = None
+            for i in range(1, len(self.acc)):
+                if getattr(self.acc[i], 'deleteme', False):
+                    continue
+                if lastchunk is not None and lastchunk.type == ChunkType.CHAPTER and self.acc[i].type == ChunkType.BODY:
+                    tag = self.acc[i][0].name
+                    lastchunk.extend(self.acc[i])
+                    lastchunk.type = self.acc[i].type
+                    self.acc[i].deleteme = True
+                    if tag == "nb" and prelastchunk is not None:
+                        prelastchunk.extend(lastchunk)
+                        lastchunk.deleteme = True
+                    elif tag.startswith("q") and i < len(self.acc) - 1 and self.acc[i+1][0].name.startswith("q"):
+                        lastchunk.extend(self.acc[i+1])
+                        self.acc[i+1].deleteme = True
+                if not getattr(lastchunk, 'deleteme', False):
+                    prelastchunk = lastchunk
+                else:
+                    lastchunk = prelastchunk
+                    prelastchunk = None     # can't really move backwards
+                if not getattr(self.acc[i], 'deleteme', False):
+                    lastchunk = self.acc[i]
         self.acc = [x for x in self.acc if not getattr(x, 'deleteme', False)]
 
 

@@ -244,14 +244,16 @@ class PicInfo(dict):
         for k, v in self.items():
             if v['anchor'][3:].startswith(tgtpre):
                 tgts.setdefault(v['anchor'][:3] + v['anchor'][3+len(tgtpre):], []).append(v)
-        for k, v in indat.items():
+        for k, v in list(indat.items()):
             if v['anchor'][3:].startswith(srcpre):
                 a = v['anchor'][:3]+v['anchor'][3+len(srcpre):]
                 for s in tgts.get(a, []):
-                    if s.get('src', '') == v.get('src', '') and v.get('caption', '') != '':
-                        s['caption'+srcpre] = v.get('caption', '')
+                    if s.get('src', '') == v.get('src', ''):
+                        if v.get('caption', '') != '':
+                            s['caption'+srcpre] = v.get('caption', '')
                         if v.get('ref', '') != '':
                             s['ref'+srcpre] = v['ref']
+                        # del self[k]
                         break
 
     def threadUsfms(self, parent, suffix):
