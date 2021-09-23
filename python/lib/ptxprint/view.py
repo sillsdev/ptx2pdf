@@ -726,6 +726,16 @@ class ViewModel:
             self._configset(config, "paper/bottomrag", "0")
         if v < 1.96:
             self._configset(config, "notes/r_fnpos", "normal")
+            digmap = config.get("document/digitmapping", fallback="Default")
+            if digmap != "Default":
+                for a in ('regular', 'bold', 'bolditalic', 'italic'):
+                    f = config.get("document", "font{}".format(a), fallback="||||")+
+                    bits = f.split("|")
+                    if len(bits) < 3:
+                        bits += [] * (3-len(bits))
+                    bits.append("mapping=mappings/{}digits".format(digmap.lower()))
+                    f = "|".join(bits)
+                    self._configset("document/font{}".format(a), f)
             config.set("config", "version", "1.96")
 
         styf = os.path.join(self.configPath(cfgname), "ptxprint.sty")
