@@ -513,6 +513,7 @@ class Usfm:
                 if lastv is not None:
                     lastv.parent.remove(lastv)
                 res = len(el) == 0
+                predels = [p for p in predels if isinstance(p, sfm.Element) or not re.match(r"^\s*$", str(p))]
                 if len(predels):
                     if ellipsis:
                         p = predels[0]
