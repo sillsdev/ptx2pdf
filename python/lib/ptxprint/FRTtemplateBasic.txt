@@ -1,13 +1,11 @@
 \rem ----------Page 1----------------
 \periph Title Page|id="title"
 \nopagenums
-\mt4
 \zgap|1.5in\*
 \mt1 \zvar|maintitle\*
 \mt2 \zvar|subtitle\*
 \rem ----------Page 2----------------
 \periph Publication Data|id="pubdata"
-\mt4
 \zgap|0.5in\*
 \mt3 \zvar|maintitle\* 
 \mt4 \zvar|subtitle\*

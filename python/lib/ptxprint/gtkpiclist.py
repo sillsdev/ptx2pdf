@@ -460,3 +460,5 @@ class PicList:
     def clearSrcPaths(self):
         self.picinfo.clearSrcPaths()
 
+    def multiSelected(self, ismulti=False):
+        pass

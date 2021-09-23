@@ -111,7 +111,7 @@ _diglot = {
 "diglot/lettershrink":      "document/lettershrink",
 
 "diglot/docscript" :        "document/script",
-"diglot/docdigitmapping" :  "document/digitmapping",
+# "diglot/docdigitmapping" :  "document/digitmapping",
 "diglot/interlinear":       "project/interlinear",
                             
 "diglot/fontregular" :      "document/fontregular",

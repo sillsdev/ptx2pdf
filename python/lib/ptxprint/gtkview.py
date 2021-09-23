@@ -361,6 +361,7 @@ class GtkViewModel(ViewModel):
         GObject.type_register(GtkSource.View)
         GObject.type_register(GtkSource.Buffer)
         tree = et.parse(gladefile)
+        self.allControls = set()
         for node in tree.iter():
             if 'translatable' in node.attrib:
                 node.text = _(node.text)
@@ -378,6 +379,11 @@ class GtkViewModel(ViewModel):
                 m = re.match(r"^r_(.+)?_(.+)$", nid)
                 if m:
                     self.radios.setdefault(m.group(1), set()).add(m.group(2))
+            if nid is not None:
+                pre, name = nid.split("_", 1) if "_" in nid else ("", nid)
+                if pre in ("btn", "bx", "c", "ecb", "fcb", "fr", "gr", "l", "lb", "r", "s", "t", "tb"):
+                    self.allControls.add(nid)
+        print(self.allControls)
         xml_text = et.tostring(tree.getroot(), encoding='unicode', method='xml')
         self.builder = Gtk.Builder.new_from_string(xml_text, -1)
         #    self.builder.set_translation_domain(APP)
@@ -411,7 +417,7 @@ class GtkViewModel(ViewModel):
         for n in _notebooks:
             nbk = self.builder.get_object("nbk_"+n)
             self.notebooks[n] = [Gtk.Buildable.get_name(nbk.get_nth_page(i)) for i in range(nbk.get_n_pages())]
-        for fcb in ("project", "interfaceLang", "digits", "fontdigits", "script", "diglotPicListSources",
+        for fcb in ("project", "interfaceLang", "fontdigits", "script", "diglotPicListSources",
                     "textDirection", "glossaryMarkupStyle", "fontFaces", "featsLangs", "leaderStyle",
                     "picaccept", "pubusage", "pubaccept", "chklstFilter|0.75", "gridUnits", "gridOffset"):
             self.addCR("fcb_"+fcb, 0)
@@ -437,7 +443,7 @@ class GtkViewModel(ViewModel):
         for d in _alldigits: # .items():
             v = currdigits.get(d, d.lower())
             digits.append([d, v])
-        self.fcb_digits.set_active_id(_alldigits[0])
+        self.fcb_fontdigits.set_active_id(_alldigits[0])
 
         for d in ("multiBookSelector", "multiProjSelector", "fontChooser", "password", "overlayCredit",
                   "generateFRT", "generatePL", "styModsdialog", "DBLbundle", "features", "gridsGuides"):
@@ -644,7 +650,7 @@ class GtkViewModel(ViewModel):
                   "c_startOnHalfPage", "c_prettyIntroOutline", "c_marginalverses", "s_columnShift", "c_figplaceholders",
                   "fr_fallbackFont", "fr_hyphenation", "lb_style_f", "lb_style_x",
                   "bx_fnCallers", "bx_fnCalleeCaller", "bx_xrCallers", "bx_xrCalleeCaller", "c_fnOverride", "c_xrOverride",
-                  "row_ToC", "c_hyphenate", "l_missingPictureCount", "bx_colophon", "btn_deleteConfig", "btn_lockunlock",
+                  "bx_ToC", "c_hyphenate", "l_missingPictureCount", "bx_colophon", "btn_deleteConfig", "btn_lockunlock",
                   "r_hdrLeft_Pri", "r_hdrLeft_Sec", "r_hdrCenter_Pri", "r_hdrCenter_Sec", "r_hdrRight_Pri", "r_hdrRight_Sec", 
                   "c_omitverseone", "c_glueredupwords", "c_firstParaIndent", "c_hangpoetry", "c_preventwidows", 
                   "l_DBLbundle", "btn_DBLbundle", "c_cropmarks", "fr_margins", "c_linebreakon", "t_linebreaklocale", 
@@ -687,7 +693,7 @@ class GtkViewModel(ViewModel):
 
             if self.get("c_autoToC"):
                 self.builder.get_object("tb_Peripherals").set_visible(True)
-                self.builder.get_object("row_ToC").set_visible(True)
+                self.builder.get_object("bx_ToC").set_visible(True)
 
             if self.get("c_frontmatter"):
                 self.builder.get_object("tb_Peripherals").set_visible(True)
@@ -1597,7 +1603,7 @@ class GtkViewModel(ViewModel):
         # then also turn that on (but it can be overridden by the user if needed).
         if self.loadingConfig:
             return
-        self.fcb_digits.set_active_id(self.get('fcb_script'))
+        self.fcb_fontdigits.set_active_id(self.get('fcb_script'))
         script = self.get("fcb_script")
         if script is not None:
             gclass = getattr(scriptsnippets, script.lower(), None)

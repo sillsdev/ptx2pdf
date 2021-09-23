@@ -172,7 +172,7 @@ ModelMap = {
     "document/iflinebreakon":   ("c_linebreakon", lambda w,v: "" if v else "%"),
     "document/linebreaklocale": ("t_linebreaklocale", lambda w,v: v or ""),
     "document/script":          ("fcb_script", lambda w,v: ":script="+v.lower() if v != "Zyyy" else ""),
-    "document/digitmapping":    ("fcb_digits", lambda w,v: ':mapping=mappings/'+v.lower()+'digits' if v != "Default" else ""),
+    # "document/digitmapping":    ("fcb_digits", lambda w,v: ':mapping=mappings/'+v.lower()+'digits' if v != "Default" else ""),
     "document/ch1pagebreak":    ("c_ch1pagebreak", None),
     "document/marginalverses":  ("c_marginalverses", lambda w,v: "" if v else "%"),
     "document/columnshift":     ("s_columnShift", lambda w,v: v or "16"),
@@ -692,7 +692,7 @@ class TexModel:
             if self.dict[k] == "":
                 self.dict[k] = self.ptsettings.dict.get(v, "a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z")
         res = []
-        resetPageDone = self.dict['document/startpagenum'] >= 0
+        resetPageDone = False
         docdir, docbase = self.docdir()
         self.dict['jobname'] = jobname
         self.dict['document/imageCopyrights'] = self.generateImageCopyrightText()
@@ -714,7 +714,7 @@ class TexModel:
                                 res.append(r"\endbooknoejecttrue")
                         if not resetPageDone and f not in self._peripheralBooks:
                             res.append(r"\ifodd\pageno\else\catcode`\@=11 \shipwithcr@pmarks{\vbox{}}\catcode`\@=12 \fi")
-                            res.append(r"\pageno=1")
+                            res.append(r"\pageno={}".format(self.dict['document/startpagenum']))
                             resetPageDone = True
                         if not self.asBool('document/ifshow1chbooknum') and \
                            self.asBool('document/ifshowchapternums', '%') and \

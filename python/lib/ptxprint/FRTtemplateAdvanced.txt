@@ -9,14 +9,12 @@
 \periph Title Page|id="title"
 \rem -------------------------------------------------------------------------
 \nopagenums
-\mt4
 \zgap|1.5in\*
 \mt1 \zvar|maintitle\*
 \mt2 \zvar|subtitle\*
 \rem -------------------------------------------------------------------------
 \periph Publication Data|id="pubdata"
 \rem -------------------------------------------------------------------------
-\mt4
 \zgap|0.5in\*
 \mt3 \zvar|maintitle\* 
 \mt4 \zvar|subtitle\*

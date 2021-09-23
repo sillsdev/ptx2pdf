@@ -726,16 +726,16 @@ class ViewModel:
             self._configset(config, "paper/bottomrag", "0")
         if v < 1.96:
             self._configset(config, "notes/r_fnpos", "normal")
-            digmap = config.get("document/digitmapping", fallback="Default")
+            digmap = config.get("document", "digitmapping", fallback="Default")
             if digmap != "Default":
                 for a in ('regular', 'bold', 'bolditalic', 'italic'):
-                    f = config.get("document", "font{}".format(a), fallback="||||")+
+                    f = config.get("document", "font{}".format(a), fallback="||||")
                     bits = f.split("|")
                     if len(bits) < 3:
                         bits += [] * (3-len(bits))
                     bits.append("mapping=mappings/{}digits".format(digmap.lower()))
                     f = "|".join(bits)
-                    self._configset("document/font{}".format(a), f)
+                    self._configset(config, "document/font{}".format(a), f)
             config.set("config", "version", "1.96")
 
         styf = os.path.join(self.configPath(cfgname), "ptxprint.sty")
@@ -1287,12 +1287,12 @@ class ViewModel:
         for f in os.listdir(ptxmacrospath):
             if f.endswith(".tex") or f.endswith(".sty"):
                 zf.write(os.path.join(ptxmacrospath, f), self.prjid+"/src/"+f)
-        mappingfile = self.get("fcb_digits")
-        if mappingfile is not None and mappingfile != "Default":
-            mappingfile = mappingfile.lower()+"digits.tec"
-            mpath = os.path.join(ptxmacrospath, "mappings", mappingfile)
-            if os.path.exists(mpath):
-                zf.write(mpath, self.prjid+"/src/mappings/"+mappingfile)
+        # mappingfile = self.get("fcb_digits")
+        # if mappingfile is not None and mappingfile != "Default":
+            # mappingfile = mappingfile.lower()+"digits.tec"
+            # mpath = os.path.join(ptxmacrospath, "mappings", mappingfile)
+            # if os.path.exists(mpath):
+                # zf.write(mpath, self.prjid+"/src/mappings/"+mappingfile)
         self._archiveSupportAdd(zf, [x for x in self.tempFiles if x.endswith(".tex")])
         zf.close()
 
