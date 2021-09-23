@@ -512,6 +512,7 @@ class Usfm:
                         lastv = c
                 if lastv is not None:
                     lastv.parent.remove(lastv)
+                res = len(el) == 0
                 if len(predels):
                     if ellipsis:
                         p = predels[0]
@@ -529,7 +530,7 @@ class Usfm:
                 st = el.meta.get("styletype", "") 
                 if (st is None or st.lower() == "paragraph") and len(el) == len(predels):
                     # el.parent.remove(el)
-                    return True  # To handle empty markers like \pagebreak 
+                    return res  # To handle empty markers like \pagebreak 
             elif re.match(r"^\s*$", str(el)) or re.match(r"\.{3}\s*$", str(el)):
                 return False
             return True
