@@ -16,7 +16,7 @@ def getWidgetVal(wid, w, default=None, asstr=False, sub=0):
         v = w.get_active_id()
     elif wid.startswith("t_"):
         v = w.get_text()
-    elif wid.startswith("tb_"):
+    elif wid.startswith("txbf_"):
         v = w.get_text(w.get_start_iter(), w.get_end_iter(), True)
     # elif wid.startswith("f_"):
         # v = w.get_font_name()
@@ -56,7 +56,7 @@ def setWidgetVal(wid, w, value, noui=False):
             w.set_active_id(value)
         elif wid.startswith("t_"):
             w.set_text(value or "")
-        elif wid.startswith("tb_"):
+        elif wid.startswith("txbf_"):
             w.set_text(value or "")
         elif wid.startswith("f_"):
             w.set_font_name(value)

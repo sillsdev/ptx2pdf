@@ -82,3 +82,73 @@ be specified more like a .sty file, within TeX. Notice that each value is
 delimited by `\relax` and that the `\Marker` is necessary to know which style
 marker we are setting attributes one.
 
+## Auto lengthen poetry
+
+A team has nice and short \\q1 and \\q2 lines in their text which work great for 2-col layouts.
+But for a single column layout, we would like to merge all \\q2 into the previos \\q1, and then
+turn every other \\q1 into a \\q2 to make it look like poetry.
+
+```regex
+"\\q2 " > ""
+"(\\q1(?:[^\\]|(\\[fx]).*?\2\*|\\v)+?)\\q1" > "\1\\q2"
+```
+
+### Implementation
+
+First we delete all the \\q2 lines merging them into their preceding \\q1 lines.
+Then we match 2 adjacent \\q1 paragraphs. To do that we have to skip \\f \\x and \\v
+when searching for 2 adjacent \\q1 paragraphs. We do this with a big old \|or\| whose
+elements are: 
+- non backslash character
+- \\f or \\x upto their corresponding \\f\* \\x\*
+- \\v 
+
+## Allow linebreaks after in-word hyphens
+
+When the hyphen is a word-forming character in the USFM text, but normally it isn't a 
+line-breaking opportunity. But this team wanted to allow a soft-break after hyphens.
+We do not want to break in verse ranges, etc. where a hyphen is between digits. 
+
+```regex
+"(?<=\s[^\\]*\D)-(?=\D)" > "-\u200B"
+```
+
+### Implementation
+
+The regex starts with a look-behind assertion. To understand this consider the engine
+matching the hyphen after the look-behind assertion. When it matches it then checks the
+look-behind assertion (i.e. does the string preceding the hyphen match that sub-expression.
+The look-behind assertion checks that there is a space followed by no marker followed by 
+a non digit immediately before the hyphen. Then, after the hyphen there is a look-ahead
+assertion which in this case is a non-digit \\D. And we replace just the hyphen (since
+the look-ahead assertion is not included in the match), with a hyphen followed by a 
+zero-width space which allows a line break.
+
+## Make glossary entries list items
+
+Paratext very unhelpfully forces glossary items to use the \\p marker which is less than
+ideal for a list of glossary items. This replaces the \\p with \\ili only in the GLO book.
+(This doesn't yet handle multi-paragraph entries.)
+
+```regex
+at GLO "\\p \\k " > "\\ili \\k "
+```
+
+## Fancy book separators from Heading information
+
+Use the Header text for a book's title page along with a language-specific sub-heading.
+
+```regex
+"(?ms)(\\h )(.+?\r?\n)(.+?)(\r?\n)(\\mt)" > "\1\2\3\4\\zgap|2in\\*\4\\mt \2\\is गोंडि बासाता पूना नयम\4\\zrule\\*\4\\pb\4\5"
+```
+
+### Implementation
+
+We grab 4 capture groups:
+- the header marker
+- the header contents
+- intermediate lines
+- a new line - which is useful to generate OS-specific new lines
+- the \\mt marker - which will be preceded with all the new info
+Then we assemble the output string that we need using those components. 
+We also throw in some vertical space, a horizontal rule followed by a pagebreak.

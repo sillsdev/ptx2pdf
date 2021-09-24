@@ -122,7 +122,7 @@ tb_Layout lb_Layout
 fr_pageSetup l_pageSize ecb_pagesize l_fontsize s_fontsize l_linespacing s_linespacing 
 fr_2colLayout c_doublecolumn gr_doubleColumn c_verticalrule 
 tb_Font lb_Font
-fr_FontConfig l_fontR bl_fontR 
+fr_FontConfig l_fontR bl_fontR tv_fontFamily fcb_fontFaces t_fontSearch 
 tb_Help lb_Help
 fr_Help l_working_dir lb_working_dir btn_about
 """.split()
@@ -130,9 +130,10 @@ fr_Help l_working_dir lb_working_dir btn_about
 _ui_basic = """
 r_book_module btn_chooseBibleModule 
 c_pagegutter s_pagegutter l_gutterWidth btn_adjust_spacing l_linesOnPageLabel l_linesOnPage c_mirrorpages
-l_bottomRag s_bottomRag
+s_colgutterfactor l_bottomRag s_bottomRag
 fr_margins l_margins s_margins
 l_fontB bl_fontB l_fontI bl_fontI l_fontBI bl_fontBI 
+c_fontFake l_fontBold s_fontBold l_fontItalic s_fontItalic
 fr_writingSystem l_textDirection fcb_textDirection fcb_script l_script
 tb_Body lb_Body
 fr_BeginEnding c_bookIntro c_introOutline c_filterGlossary c_ch1pagebreak
@@ -399,7 +400,7 @@ class GtkViewModel(ViewModel):
         GObject.type_register(GtkSource.View)
         GObject.type_register(GtkSource.Buffer)
         tree = et.parse(gladefile)
-        self.allControls = set()
+        self.allControls = []
         for node in tree.iter():
             if 'translatable' in node.attrib:
                 node.text = _(node.text)
@@ -419,8 +420,13 @@ class GtkViewModel(ViewModel):
                     self.radios.setdefault(m.group(1), set()).add(m.group(2))
             if nid is not None:
                 pre, name = nid.split("_", 1) if "_" in nid else ("", nid)
-                if pre in ("btn", "bx", "c", "ecb", "fcb", "fr", "gr", "l", "lb", "r", "s", "t", "tb", "rule", "img"):
-                    self.allControls.add(nid)
+                if pre in ("bl", "btn", "bx", "c", "col", "ecb", "fcb", "fr", "gr", 
+                           "l", "lb", "r", "s", "t", "tb", "textv", "tv", "rule", "img"):
+                    self.allControls.append(nid)
+                # else:
+                    # if nid not in ("0", "1"):
+                        # if not nid.startswith("ls_"):
+                            # print(nid)
         xml_text = et.tostring(tree.getroot(), encoding='unicode', method='xml')
         self.builder = Gtk.Builder.new_from_string(xml_text, -1)
         #    self.builder.set_translation_domain(APP)
@@ -664,25 +670,28 @@ class GtkViewModel(ViewModel):
 
             for c in ("c_mainBodyText", "c_skipmissingimages"):
                 self.builder.get_object(c).set_active(True)
+                
 
         if ui < 6:
-            for w in self.allControls:
+            for w in reversed(sorted(self.allControls)):
+                # print("Turning off:", w)
                 self.builder.get_object(w).set_visible(False)
                 
             if ui >= 2:
-                for w in _ui_minimal:
-                    # print(w)
+                for w in sorted(_ui_minimal):
+                    # print("Turning on (level 2):", w)
                     self.builder.get_object(w).set_visible(True)
                 self.mw.resize(700, 150)
 
             if ui >= 4:
-                for w in _ui_basic:
-                    # print(w)
+                for w in sorted(_ui_basic):
+                    # print("Turning on (level 4):", w)
                     self.builder.get_object(w).set_visible(True)
                 self.mw.resize(700, 350)
             return
         if ui >= 6:
-            for w in self.allControls:
+            for w in sorted(self.allControls):
+                # print("Turning on (level 6):", w)
                 self.builder.get_object(w).set_visible(True)
         
         # Selectively turn things back on if their settings are enabled
@@ -1567,7 +1576,7 @@ class GtkViewModel(ViewModel):
                                                \n   * the 'Print' button to create the PDF first"))
         self.bookNoUpdate = False
 
-    def savePics(self, fromdata=True, force=False):
+    def savePics(self, fromdata=False, force=False):
         if not force and self.configLocked():
             return
         if not fromdata and self.picinfos is not None and self.picinfos.loaded:
