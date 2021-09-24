@@ -169,14 +169,10 @@
   \TRACE{vm@kenote \n@tetype}%
   \x@\let\x@\th@sins\csname note-no-insert-\n@tetype\endcsname
   \checkp@ranotes{#1}% check whether this note class is to be paragraphed 
-  \ifx\th@sins\relax
-    \ifp@ranotes\n@tewidth=\maxdimen \else\setn@tewidth{#1}\fi
-    \d@note{\x@\insert\csname note-\n@tetype\endcsname}%
-  \else
-    \n@tewidth=\ifp@ranotes\maxdimen\else\hsize\fi
-    \d@note{\th@sins}%
-  \fi%
-  \trace{f}{Footnote (\n@tetype) [\reference] will be \the\n@tewidth wide (page is \the\hsize)}%
+  \ifp@ranotes\n@tewidth=\maxdimen \else\setn@tewidth{#1}\fi
+  \ifx\th@sins\relax \d@note{\x@\insert\csname note-\n@tetype\endcsname}%
+  \else \d@note{\th@sins}\fi
+  \trace{f}{Footnote (\n@tetype) [\reference] will be \the\n@tewidth \space wide (page is \the\hsize)}%
   \the\d@note\bgroup% insert note-f (or note-x)
     % \XeTeXuseglyphmetrics=3 % so that notes sit on the baseline based on content and not font descender
     \hsize=\n@tewidth
@@ -443,7 +439,6 @@
 %+c_setnotewidth
 \newdimen\n@tewidth
 \def\setn@tewidth#1{%
-  \trace{f}{setn@tewidth}%
   \x@\let\x@\th@sins\csname note-no-insert-#1\endcsname
   \ifx\th@sins\relax % Normal footnote
    \ifdiglot
@@ -456,19 +451,21 @@
           \n@tewidth=\csname columnLwidth\endcsname
         \fi
      \else\n@tewidth=\textwidth\fi
-   \else\ifColNotes\ifnum\c@rrentcols=2\n@tewidth=\colwidth\else\onecolwidth{\n@tewidth}\fi\else\n@tewidth=\textwidth\fi\fi
+   \else
+     \ifColNotes\ifnum\c@rrentcols=2\global\n@tewidth=\textwidth\else\onecolwidth{\n@tewidth}\fi\else\n@tewidth=\textwidth\fi
+   \fi
   \else
     %Assume that the note will be inserted using the current text width.
     \ifnum\c@rrentcols=1\onecolwidth{\n@tewidth}\else
       \ifdiglot
         \n@tewidth=\csname column\c@rrdstat width\endcsname
       \else
-        \n@tewidth=\colwidth
+        \n@tewidth=\textwidth
       \fi
     \fi
     %\advance\n@tewidth by -\columnshift
   \fi
-  \trace{f}{end-setn@tewidth #1: \the\n@tewidth}%
+  \trace{f}{setn@tewidth #1: \the\n@tewidth}%
 }
 %-c_setnotewidth
 
