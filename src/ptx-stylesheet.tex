@@ -349,7 +349,8 @@
 %-csty_getmcparam
 
 %+csty_getmcfontsize
-\def\getmcfonts@ze{\trace{s}{getmcfonts@ze}\getp@ram{fontsize}{p}\ifx\p@ram\relax\edef\ps@ze{12}\else\edef\ps@ze{\p@ram}\fi
+\def\getmcfonts@ze{\getp@ram{fontsize}{p}\ifx\p@ram\relax\edef\ps@ze{12}\else\edef\ps@ze{\p@ram}\fi
+  \trace{s}{getmcfonts@ze starting with \ps@ze}%
   \def\d@##1+##2\E{\edef\tmp{##2}\ifx\tmp\empty\else
       \csname d@code-##1\endcsname
       \let\tmpstylen@me\tmp
@@ -362,7 +363,7 @@
             \dimen0=\sc@le\dimen0\else\dimen0=\p@ram pt\fi
         \else\dimen0=\sc@le\dimen0                                                  %(2)
     \fi\fi\xdef\c@rrfontsize{\strip@pt{\dimen0}}\fi\trace{s}{\space working c@rrfontsize from ##2 is \c@rrfontsize}}%
-  \mcup\trace{s}{set c@rrfontsize for \mcstack\space is \c@rrfontsize}}             %(3)
+  \mcdown\trace{s}{set c@rrfontsize for \mcstack\space is \c@rrfontsize}}             %(3)
 %-csty_getmcfontsize
 
 %+csty_makestyle
