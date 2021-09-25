@@ -127,6 +127,7 @@ tb_Help lb_Help
 fr_Help l_working_dir lb_working_dir btn_about
 """.split()
 
+# bx_fnOptions bx_xrOptions 
 _ui_basic = """
 r_book_module btn_chooseBibleModule 
 btn_deleteConfig l_notes t_configNotes t_invisiblePassword
@@ -140,9 +141,9 @@ tb_Body lb_Body
 fr_BeginEnding c_bookIntro c_introOutline c_filterGlossary c_ch1pagebreak
 fr_IncludeScripture c_mainBodyText gr_mainBodyText c_chapterNumber c_justify c_sectionHeads
 c_verseNumbers c_preventorphans c_hideEmptyVerses c_elipsizeMissingVerses
-tb_NotesRefs lb_NotesRefs
-fr_inclFN c_includeFootnotes bx_fnOptions r_fnpos_normal r_fnpos_column r_fnpos_endnote c_fneachnewline
-fr_inclXR c_includeXrefs     bx_xrOptions l_empty                                       c_xreachnewline
+tb_NotesRefs lb_NotesRefs tb_general
+tb_footnotes c_includeFootnotes r_fnpos_normal r_fnpos_column r_fnpos_endnote c_fneachnewline
+tb_xrefs c_includeXrefs                                                       c_xreachnewline
 tb_HeadFoot lb_HeadFoot
 fr_Header l_hdrleft ecb_hdrleft l_hdrcenter ecb_hdrcenter l_hdrright ecb_hdrright
 fr_Footer l_ftrcenter ecb_ftrcenter
@@ -154,7 +155,6 @@ rule_help l_homePage lb_homePage l_createZipArchiveXtra btn_createZipArchiveXtra
 _uiLevels = {
     2 : _ui_minimal,
     4 : _ui_basic,
-    # 6 : self.allControls,
 }
 
 _showActiveTabs = {
@@ -194,9 +194,9 @@ _sensitivities = {
     "c_mainBodyText" :         ["gr_mainBodyText"],
     "c_doublecolumn" :         ["gr_doubleColumn", "c_singleColLayout", "t_singleColBookList", "r_fnpos_column"],
     "c_useFallbackFont" :      ["btn_findMissingChars", "t_missingChars", "l_fallbackFont", "bl_fontExtraR"],
-    "c_includeFootnotes" :     ["bx_fnOptions"],
-    "c_includeXrefs" :         ["bx_xrOptions"],
-    "c_useXrefList" :          ["gr_useXrefList"],
+    "c_includeFootnotes" :     ["tb_footnotes", "lb_footnotes"],
+    "c_includeXrefs" :         ["tb_xrefs", "lb_xrefs"],
+    "c_useXrefList" :          ["tb_extXrefs", "lb_extXrefs"],
     
     "c_includeillustrations" : ["gr_IllustrationOptions", "tb_details", "lb_details", "tb_checklist", "lb_details"],
     "c_diglot" :               ["gr_diglot", "fcb_diglotPicListSources", "r_hdrLeft_Pri", "r_hdrCenter_Pri", "r_hdrRight_Pri",
@@ -219,7 +219,8 @@ _sensitivities = {
     "c_rangeShowVerse" :       ["l_chvsSep", "c_sepPeriod", "c_sepColon"],
     "c_fnautocallers" :        ["t_fncallers", "btn_resetFNcallers", "c_fnomitcaller", "c_fnpageresetcallers"],
     "c_xrautocallers" :        ["t_xrcallers", "btn_resetXRcallers", "c_xromitcaller", "c_xrpageresetcallers"],
-    "c_footnoterule" :         ["l_SpaceAboveRule", "l_SpaceBelowRule", ],
+    "c_footnoterule" :         ["rule_footnote", "l_fnAboveSpace", "l_fnBelowSpace", "s_fnAboveSpace", "s_fnBelowSpace"],
+    "c_xrefrule" :             ["rule_xref", "l_xrAboveSpace", "l_xrBelowSpace", "s_xrAboveSpace", "s_xrBelowSpace"],
     "c_useCustomFolder" :      ["btn_selectFigureFolder", "c_exclusiveFiguresFolder", "lb_selectFigureFolder"],
     "c_processScript" :        ["c_processScriptBefore", "c_processScriptAfter", "btn_selectScript", "btn_editScript"],
     "c_usePrintDraftChanges" : ["btn_editChangesFile"],
@@ -482,7 +483,8 @@ class GtkViewModel(ViewModel):
             self.notebooks[n] = [Gtk.Buildable.get_name(nbk.get_nth_page(i)) for i in range(nbk.get_n_pages())]
         for fcb in ("project", "uiLevel", "interfaceLang", "fontdigits", "script", "diglotPicListSources",
                     "textDirection", "glossaryMarkupStyle", "fontFaces", "featsLangs", "leaderStyle",
-                    "picaccept", "pubusage", "pubaccept", "chklstFilter|0.75", "gridUnits", "gridOffset"):
+                    "picaccept", "pubusage", "pubaccept", "chklstFilter|0.75", "gridUnits", "gridOffset",
+                    "fnHorizPosn", "xrHorizPosn", "filterXrefs", "colXRside", "outputFormat"):
             self.addCR("fcb_"+fcb, 0)
         self.cb_savedConfig = self.builder.get_object("ecb_savedConfig")
         self.ecb_diglotSecConfig = self.builder.get_object("ecb_diglotSecConfig")
@@ -625,7 +627,8 @@ class GtkViewModel(ViewModel):
         sys.excepthook = self.doSysError
         lsfonts = self.builder.get_object("ls_font")
         lsfonts.clear()
-        self.noInternetClicked(None)
+        # self.noInternetClicked(None)
+        self.onUILevelChanged(None)
         self.checkUpdates(False)
         try:
             Gtk.main()
@@ -687,28 +690,29 @@ class GtkViewModel(ViewModel):
                 # print("Turning off:", w)
                 self.builder.get_object(w).set_visible(False)
                 
-            for k, v in _uiLevels.items():
-                if ui >= k:
-                    for w in sorted(v):
-                        # print("Turning on (for level {}): {}".format(k, w))
-                        self.builder.get_object(w).set_visible(True)
+            widgets = sum((v for k, v in _uiLevels.items() if ui >= k), [])
+            # widgets = _ui_minimal + _ui_basic
         else:
-            for w in sorted(self.allControls):
-                # print("Turning on (level 6):", w)
-                self.builder.get_object(w).set_visible(True)
-        
             # Selectively turn things back on if their settings are enabled
             for k, v in _showActiveTabs.items():
                 if self.get(k):
                     for w in v:
                         self.builder.get_object(w).set_visible(True)
+                # for w in v:
+                    # self.builder.get_object(w).set_visible(self.get(k))
                 
-            # Disable/Enable the Details and Checklist tabs on the Pictures tab
-            for w in ["tb_details", "tb_checklist"]:
-                self.builder.get_object(w).set_sensitive(ui >= 6)        
-            for w in ["tb_plTopPane", "tb_picPreview", "scr_detailsBottom", "scr_checklistBottom", "l_globalPicSettings"]: 
-                self.builder.get_object(w).set_visible(ui >= 6)        
-                
+            widgets = self.allControls
+
+        for w in sorted(widgets):
+            # print("Turning on:", w)
+            self.builder.get_object(w).set_visible(True)
+
+        # Disable/Enable the Details and Checklist tabs on the Pictures tab
+        for w in ["tb_details", "tb_checklist"]:
+            self.builder.get_object(w).set_sensitive(ui >= 6)        
+        for w in ["tb_plTopPane", "tb_picPreview", "scr_detailsBottom", "scr_checklistBottom", "l_globalPicSettings"]: 
+            self.builder.get_object(w).set_visible(ui >= 6)        
+
         self.noInternetClicked(None)
         self.colorTabs()
         self.mw.resize(200, 200)
@@ -1045,6 +1049,7 @@ class GtkViewModel(ViewModel):
                 continue
             state = self.get(k)
             for w in v:
+                # print(w)
                 self.builder.get_object(w).set_sensitive(state)
         for k, v in _nonsensitivities.items():
             if k.startswith("r_"):
@@ -3499,3 +3504,7 @@ class GtkViewModel(ViewModel):
     def onFootnoteRuleClicked(self, btn):
         status = self.sensiVisible("c_footnoterule")
         self.builder.get_object("rule_footnote").set_visible(status)
+
+    def onXrefRuleClicked(self, btn):
+        status = self.sensiVisible("c_xrefrule")
+        self.builder.get_object("rule_xref").set_visible(status)

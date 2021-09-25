@@ -275,7 +275,6 @@ ModelMap = {
     "notes/xrresetcallers":     ("c_xrpageresetcallers", lambda w,v: "" if v else "%"),
     "notes/xromitcaller":       ("c_xromitcaller", lambda w,v: "%" if v else ""),
 
-    "notes/iffootnoterule":     ("c_footnoterule", lambda w,v: "%" if v else ""),
     "notes/xrlocation":         ("r_xrLocn", lambda w,v: r"" if v == "centre" else "%"),
     "notes/xrcolside":          ("fcb_colXRside", None),
     "notes/xrcentrecolwidth":   ("s_centreColWidth", lambda w,v: int(float(v)) if v else "60"),
@@ -291,8 +290,23 @@ ModelMap = {
     "notes/columnnotes_":       ("r_fnpos_column", lambda w,v: "true" if v else "false"),
     "notes/endnotes_":          ("r_fnpos_endnote", lambda w,v: "" if v else "%"),
 
-    "notes/abovenotespace":     ("s_abovenotespace", None),
-    "notes/belownoterulespace": ("s_belownoterulespace", None),
+    "notes/iffootnoterule":     ("c_footnoterule", lambda w,v: "%" if v else ""),
+    "notes/ifxrefrule":         ("c_xrefrule", lambda w,v: "%" if v else ""),
+
+    "notes/abovenotespace":     ("s_fnAboveSpace", None),
+    "notes/belownoterulespace": ("s_fnBelowSpace", None),
+    "notes/fnruleposn":         ("fcb_fnHorizPosn", None),
+    "notes/fnruleindent":       ("s_fnIndent", None),
+    "notes/fnrulelength":       ("s_fnLength", None),
+    "notes/fnrulethick":        ("s_fnThick", None),
+    
+    "notes/abovexrefspace":     ("s_xrAboveSpace", None),
+    "notes/belowxrefrulespace": ("s_xrBelowSpace", None),
+    "notes/xrruleposn":         ("fcb_xrHorizPosn", None),
+    "notes/xrruleindent":       ("s_xrIndent", None),
+    "notes/xrrulelength":       ("s_xrLength", None),
+    "notes/xrrulethick":        ("s_xrThick", None),
+    
     "notes/internotespace":     ("s_internote", lambda w,v: f2s(float(v))),
 
     "notes/horiznotespacemin":  ("s_notespacingmin", lambda w,v: f2s(float(v)) if v is not None else "7"),
