@@ -1845,13 +1845,13 @@ class GtkViewModel(ViewModel):
     def responseToDialog(entry, dialog, response):
         dialog.response(response)
 
-    def _getSelectedFont(self):
+    def _getSelectedFont(self, fallback=""):
         lb = self.builder.get_object("tv_fontFamily")
         sel = lb.get_selection()
         ls, row = sel.get_selected()
         if row is None:
-            return (None, None)
-        name = ls.get_value(row, 0)
+            return (fallback, None)
+        name = ls.get_value(row, 0) or fallback
         style = self.get("fcb_fontFaces")
         if style.lower() == "regular":
             style = None
@@ -1875,6 +1875,7 @@ class GtkViewModel(ViewModel):
             italic = None
             isCtxtSpace = False
             mapping = "Default"
+            name = None
         else:
             for i, row in enumerate(ls):
                 if row[0] == f.name:
@@ -1889,8 +1890,20 @@ class GtkViewModel(ViewModel):
             italic = f.getFake("slant")
             hasfake = embolden is not None or italic is not None
             mapping = f.getMapping()
+            name = f.name
         lb.set_cursor(i)
         lb.scroll_to_cell(i)
+        if name is not None:
+            tv = self.builder.get_object("tv_fontFamily")
+            tm = self.builder.get_object("ls_font")
+            try:
+                tp = [x[0] for x in tm].index(name)
+            except ValueError:
+                tp = None
+            if tp is not None:
+                ti = tm.get_iter(Gtk.TreePath.new_from_indices([tp]))
+                tv.get_selection().select_iter(ti)
+                logger.debug("Found {} in font dialog at {}".format(name, tp))
         self.builder.get_object("t_fontSearch").set_text("")
         self.builder.get_object("t_fontSearch").has_focus()
         self.builder.get_object("fcb_fontFaces").set_sensitive(not noStyles)
@@ -1909,7 +1922,7 @@ class GtkViewModel(ViewModel):
         
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
-            (name, style) = self._getSelectedFont()
+            (name, style) = self._getSelectedFont(name)
             if self.get("c_fontFake"):
                 bi = (self.get("s_fontBold"), self.get("s_fontItalic"))
             else:
