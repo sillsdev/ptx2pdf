@@ -186,10 +186,10 @@ class FancyIntro(Snippet):
 class Diglot(Snippet):
     processTex = True
     texCode = r"""
-\def\regularR{{"{diglot/fontregular}{diglot/docscript}{diglot/docdigitmapping}"}}
-\def\boldR{{"{diglot/fontbold}{diglot/docdigitmapping}"}}
-\def\italicR{{"{diglot/fontitalic}{diglot/docscript}{diglot/docdigitmapping}"}}
-\def\bolditalicR{{"{diglot/fontbolditalic}{diglot/docscript}{diglot/docdigitmapping}"}}
+\def\regularR{{"{diglot/fontregular}{diglot/docscript}"}}
+\def\boldR{{"{diglot/fontbold}"}}
+\def\italicR{{"{diglot/fontitalic}{diglot/docscript}"}}
+\def\bolditalicR{{"{diglot/fontbolditalic}{diglot/docscript}"}}
 
 \def\DiglotLeftFraction{{{document/diglotprifraction}}}
 \def\DiglotRightFraction{{{document/diglotsecfraction}}}

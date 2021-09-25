@@ -726,7 +726,7 @@ class ViewModel:
             self._configset(config, "paper/bottomrag", "0")
         if v < 1.96:
             self._configset(config, "notes/r_fnpos", "normal")
-            self._configset(config, "project/uilevel", 4 if config.getboolean("project", "hideadvsettings", fallback=True) else 6)
+            self._configset(config, "project/uilevel", "4" if config.getboolean("project", "hideadvsettings", fallback=True) else "6")
             digmap = config.get("document", "digitmapping", fallback="Default")
             if digmap != "Default":
                 for a in ('regular', 'bold', 'bolditalic', 'italic'):
