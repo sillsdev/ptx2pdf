@@ -218,7 +218,7 @@
   \let\d@=\cscheck@xist\x@\cstackdown \p@ssParams,\E
   \let\d@=\tmpd@
   \global\let\p@ssParams=\@ut
-  \trace{s}{3. Shrunk list:\p@ssParams}%
+  \trace{s}{3. Shrunk list: \p@ssParams}%
 }
 
 % Should a milestone with a defined attribute (e.g. \qt-s|Jesus\*) match the
@@ -363,7 +363,7 @@
             \dimen0=\sc@le\dimen0\else\dimen0=\p@ram pt\fi
         \else\dimen0=\sc@le\dimen0                                                  %(2)
     \fi\fi\xdef\c@rrfontsize{\strip@pt{\dimen0}}\fi\trace{s}{\space working c@rrfontsize from ##2 is \c@rrfontsize}}%
-  \mcdown\trace{s}{set c@rrfontsize for \mcstack\space is \c@rrfontsize}}             %(3)
+  \mcup\trace{s}{set c@rrfontsize for \mcstack\space is \c@rrfontsize}}             %(3)
 %-csty_getmcfontsize
 
 %+csty_makestyle
