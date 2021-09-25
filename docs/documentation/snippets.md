@@ -152,3 +152,28 @@ We grab 4 capture groups:
 - the \\mt marker - which will be preceded with all the new info
 Then we assemble the output string that we need using those components. 
 We also throw in some vertical space, a horizontal rule followed by a pagebreak.
+
+## To be done later
+
+```regex
+# Stick in a hoizontal rule after the intro outline, before the 1st chapter
+'(\\c 1 ?\r?\n)' > '\\zrule\\*\r\n\1 '
+
+# Just for the gospel of Mark, insert a page break BEFORE the title of the Introductory Outline
+# at MRK "(\\iot Outline)" > "\pb\r\n\1" 
+
+# Turn short q1 and q2 into merged \q1 with artificial q2 
+"\\q2 " > ""
+"(\\q1(?:[^\\]|(\\[fx]).*?\2\*|\\v)+?)\\q1" > "\1\\q2"
+# "(\\q1 [^\\]+?)\\q1 " > "\1\\q2 "
+
+# Push a particular section heading in the TDX book onto the next page
+at TDX "(\\s1 Parables Jesus Told)" > "\\pb\r\n\1"
+
+# Remove any trailing space at the end of the \\ior marker to eliminate a jagged right edge when justified
+' (\\ior\*)' > '\1'
+
+# Insert Pictures that haven't yet been included in the USFM text
+# at EPH 6:13 "(मना परकिट.)" > '\1\\fig  सिपायि लडेय किय्ले सोनेके, सम्दो तयरि कींतोरो|alt="Map Creator soldier with armour" src="ESG Armor of God(v2).png" size="col" ref="6:14-18"\\fig*'
+
+```

@@ -117,7 +117,7 @@ fcb_filterXrefs fcb_interfaceLang c_quickRun
 tb_Basic lb_Basic
 fr_projScope l_project fcb_project l_projectFullName r_book_single ecb_book l_chapfrom s_chapfrom l_chapto s_chapto 
 r_book_multiple btn_chooseBooks t_booklist 
-fr_SavedConfigSettings l_cfgName ecb_savedConfig t_savedConfig btn_saveConfig btn_reloadConfig btn_lockunlock
+fr_SavedConfigSettings l_cfgName ecb_savedConfig t_savedConfig btn_saveConfig btn_reloadConfig btn_lockunlock t_password
 tb_Layout lb_Layout
 fr_pageSetup l_pageSize ecb_pagesize l_fontsize s_fontsize l_linespacing s_linespacing 
 fr_2colLayout c_doublecolumn gr_doubleColumn c_verticalrule 
@@ -129,7 +129,8 @@ fr_Help l_working_dir lb_working_dir btn_about
 
 _ui_basic = """
 r_book_module btn_chooseBibleModule 
-c_pagegutter s_pagegutter l_gutterWidth btn_adjust_spacing l_linesOnPageLabel l_linesOnPage c_mirrorpages
+btn_deleteConfig l_notes t_configNotes t_invisiblePassword
+c_pagegutter s_pagegutter l_gutterWidth btn_adjust_spacing
 s_colgutterfactor l_bottomRag s_bottomRag
 fr_margins l_margins s_margins
 l_fontB bl_fontB l_fontI bl_fontI l_fontBI bl_fontBI 
@@ -149,6 +150,24 @@ tb_Pictures lb_Pictures
 c_includeillustrations tb_settings lb_settings fr_inclPictures gr_IllustrationOptions c_cropborders r_pictureRes_High r_pictureRes_Low
 rule_help l_homePage lb_homePage l_createZipArchiveXtra btn_createZipArchiveXtra
 """.split()
+
+_uiLevels = {
+    2 : _ui_minimal,
+    4 : _ui_basic,
+    # 6 : self.allControls,
+}
+
+_showActiveTabs = {
+    "c_includeillustrations" : ["tb_Pictures"],
+    "c_diglot" :               ["tb_Diglot", "fr_diglot", "btn_diglotSwitch"],
+    "c_thumbtabs" :            ["tb_TabsBorders", "fr_tabs"],
+    "c_borders" :              ["tb_TabsBorders", "fr_borders"],
+    "c_inclFrontMatter" :      ["tb_Peripherals", "gr_importFrontPDF"],
+    "c_inclBackMatter" :       ["tb_Peripherals", "gr_importBackPDF"],
+    "c_autoToC" :              ["tb_Peripherals", "bx_ToC"],
+    "c_frontmatter" :          ["tb_Peripherals", "bx_frontmatter"],
+    "c_colophon" :             ["tb_Peripherals", "bx_colophon"],
+}
 
 # The 3 dicts below are used by method: sensiVisible() to toggle object states
 
@@ -240,6 +259,7 @@ _nonsensitivities = {
         "r_xrLocn_blend" :     ["l_internote", "s_internote"],
         "r_xrLocn_centre" :    []},
 }
+
 _object_classes = {
     "printbutton": ("b_print", "btn_refreshFonts", "btn_adjust_diglot", "btn_createZipArchiveXtra", "btn_Generate"),
     "fontbutton":  ("bl_fontR", "bl_fontB", "bl_fontI", "bl_fontBI"),
@@ -660,87 +680,38 @@ class GtkViewModel(ViewModel):
 
     def onUILevelChanged(self, btn):
         ui = int(self.get("fcb_uiLevel"))
-        # self.userconfig.set('init', 'expert', 'true' if val else 'false')
         self.userconfig.set('init', 'userinterface', str(ui))
-
-        # For Minimal and Basic mode, turn some essential settings OFF/ON
-        if ui < 6:
-            for c in ("c_startOnHalfPage", "c_marginalverses", "c_figplaceholders"):
-                self.builder.get_object(c).set_active(False)
-
-            for c in ("c_mainBodyText", "c_skipmissingimages"):
-                self.builder.get_object(c).set_active(True)
                 
-
         if ui < 6:
             for w in reversed(sorted(self.allControls)):
                 # print("Turning off:", w)
                 self.builder.get_object(w).set_visible(False)
                 
-            if ui >= 2:
-                for w in sorted(_ui_minimal):
-                    # print("Turning on (level 2):", w)
-                    self.builder.get_object(w).set_visible(True)
-                self.mw.resize(700, 150)
-
-            if ui >= 4:
-                for w in sorted(_ui_basic):
-                    # print("Turning on (level 4):", w)
-                    self.builder.get_object(w).set_visible(True)
-                self.mw.resize(700, 350)
-            return
-        if ui >= 6:
+            for k, v in _uiLevels.items():
+                if ui >= k:
+                    for w in sorted(v):
+                        # print("Turning on (for level {}): {}".format(k, w))
+                        self.builder.get_object(w).set_visible(True)
+        else:
             for w in sorted(self.allControls):
                 # print("Turning on (level 6):", w)
                 self.builder.get_object(w).set_visible(True)
         
-        # Selectively turn things back on if their settings are enabled
-        if ui >= 6:
-            if self.get("c_includeillustrations"):
-                self.builder.get_object("tb_Pictures").set_visible(True)
+            # Selectively turn things back on if their settings are enabled
+            for k, v in _showActiveTabs.items():
+                if self.get(k):
+                    for w in v:
+                        self.builder.get_object(w).set_visible(True)
                 
-            if self.get("c_diglot"):
-                self.builder.get_object("tb_Diglot").set_visible(True)
-                self.builder.get_object("fr_diglot").set_visible(True)
-                self.builder.get_object("btn_diglotSwitch").set_visible(True)
+            # Disable/Enable the Details and Checklist tabs on the Pictures tab
+            for w in ["tb_details", "tb_checklist"]:
+                self.builder.get_object(w).set_sensitive(ui >= 6)        
+            for w in ["tb_plTopPane", "tb_picPreview", "scr_detailsBottom", "scr_checklistBottom", "l_globalPicSettings"]: 
+                self.builder.get_object(w).set_visible(ui >= 6)        
                 
-            if self.get("c_thumbtabs") or self.get("c_borders"):
-                self.builder.get_object("tb_TabsBorders").set_visible(True)
-                if self.get("c_thumbtabs"):
-                    self.builder.get_object("fr_tabs").set_visible(True)
-                if self.get("c_borders"):
-                    self.builder.get_object("fr_borders").set_visible(True)
-
-            if self.get("c_inclFrontMatter"):
-                self.builder.get_object("tb_Peripherals").set_visible(True)
-                self.builder.get_object("gr_importFrontPDF").set_visible(True)
-
-            if self.get("c_inclBackMatter"):
-                self.builder.get_object("tb_Peripherals").set_visible(True)
-                self.builder.get_object("gr_importBackPDF").set_visible(True)
-
-            if self.get("c_autoToC"):
-                self.builder.get_object("tb_Peripherals").set_visible(True)
-                self.builder.get_object("bx_ToC").set_visible(True)
-
-            if self.get("c_frontmatter"):
-                self.builder.get_object("tb_Peripherals").set_visible(True)
-                self.builder.get_object("bx_frontmatter").set_visible(True)
-
-            if self.get("c_colophon"):
-                self.builder.get_object("tb_Peripherals").set_visible(True)
-                self.builder.get_object("bx_colophon").set_visible(True)
-
-        # Disable/Enable the Details and Checklist tabs on the Pictures tab
-        for w in ["tb_details", "tb_checklist"]:
-            self.builder.get_object(w).set_sensitive(ui >= 6)        
-        for w in ["tb_plTopPane", "tb_picPreview", "scr_detailsBottom", "scr_checklistBottom", "l_globalPicSettings"]: 
-            self.builder.get_object(w).set_visible(ui >= 6)        
-            
         self.noInternetClicked(None)
         self.colorTabs()
-        # Resize Main UI Window appropriately
-        self.mw.resize(830, 594)
+        self.mw.resize(200, 200)
 
     def noInternetClicked(self, btn):
         ui = int(self.get("fcb_uiLevel"))

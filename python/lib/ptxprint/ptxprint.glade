@@ -4358,15 +4358,15 @@ information, position and other parameters.</property>
     </columns>
     <data>
       <row>
-        <col id="0" translatable="yes">Minimal</col>
+        <col id="0" translatable="yes">Mini View</col>
         <col id="1">2</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Basic</col>
+        <col id="0" translatable="yes">Basic View</col>
         <col id="1">4</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Full</col>
+        <col id="0" translatable="yes">Full View</col>
         <col id="1">6</col>
       </row>
       <row>
@@ -6307,6 +6307,8 @@ the Two Column layout).</property>
                       <object class="GtkFrame" id="fr_margins">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="halign">start</property>
+                        <property name="valign">start</property>
                         <property name="margin_left">6</property>
                         <property name="margin_right">6</property>
                         <property name="margin_top">4</property>
@@ -6316,11 +6318,15 @@ the Two Column layout).</property>
                           <object class="GtkAlignment">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
+                            <property name="halign">start</property>
+                            <property name="valign">start</property>
                             <property name="left_padding">12</property>
                             <child>
                               <object class="GtkGrid">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="halign">start</property>
+                                <property name="valign">start</property>
                                 <property name="margin_right">6</property>
                                 <property name="margin_top">4</property>
                                 <property name="margin_bottom">6</property>
@@ -7017,7 +7023,7 @@ derived)</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
-                        <property name="fill">True</property>
+                        <property name="fill">False</property>
                         <property name="position">1</property>
                       </packing>
                     </child>
@@ -8292,7 +8298,7 @@ a \m(argin) paragraph with no indentation.</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">2</property>
-                                    <property name="top_attach">2</property>
+                                    <property name="top_attach">3</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -8523,7 +8529,7 @@ uncheck the Parallel Passage Refs.</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">2</property>
-                                    <property name="top_attach">0</property>
+                                    <property name="top_attach">1</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -8572,7 +8578,7 @@ occur below Section Headings.</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">2</property>
-                                    <property name="top_attach">1</property>
+                                    <property name="top_attach">2</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -8621,7 +8627,7 @@ parts of the text have been skipped.</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">2</property>
-                                    <property name="top_attach">3</property>
+                                    <property name="top_attach">0</property>
                                   </packing>
                                 </child>
                               </object>
@@ -18632,7 +18638,7 @@ cover using the online Canva.com tool (link provided).</property>
                         <property name="can_focus">False</property>
                         <property name="margin_left">12</property>
                         <property name="margin_right">6</property>
-                        <property name="margin_top">4</property>
+                        <property name="margin_top">2</property>
                         <property name="spacing">2</property>
                         <child>
                           <object class="GtkCheckButton" id="c_autoToC">
@@ -18852,8 +18858,8 @@ the style of leader you wish to apply.</property>
                         <property name="width_request">675</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="margin_top">6</property>
-                        <property name="margin_bottom">6</property>
+                        <property name="margin_top">2</property>
+                        <property name="margin_bottom">4</property>
                         <property name="vexpand">False</property>
                         <property name="label_xalign">0.019999999552965164</property>
                         <child>
@@ -18954,7 +18960,7 @@ Front Matter</property>
                             </child>
                             <child>
                               <object class="GtkViewport">
-                                <property name="height_request">220</property>
+                                <property name="height_request">200</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="hexpand">True</property>
@@ -20023,8 +20029,10 @@ chosen language.</property>
             </child>
             <child>
               <object class="GtkButton" id="btn_download_update">
+                <property name="sensitive">False</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">False</property>
+                <property name="no_show_all">True</property>
                 <property name="tooltip_text" translatable="yes">A newer version of PTXprint is available.
 Click to visit download page on the website.</property>
                 <property name="halign">start</property>
