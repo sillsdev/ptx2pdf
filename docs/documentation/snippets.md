@@ -42,8 +42,8 @@ a paragraph is printed, the if is set to false so that no others will be printed
 in that paragraph.
 
 Next we need to wrap various paragraph type markers to set the paragraph if. The
-`paramarker` function wraps a given marker by storing the old marker as \_marker
-and then replace the \marker with code to set the if and call the old \_marker.
+`paramarker` function wraps a given marker by storing the old marker as `_marker`
+and then replace the \\marker with code to set the if and call the old `_marker`.
 We then run this code over various key markers that we want to have verse
 numbers on. Notice we don't do this for all paragraph markers, since we aren't
 interested in tracking verse numbers in `\\q2` for example.
@@ -139,7 +139,7 @@ at GLO "\\p \\k " > "\\ili \\k "
 Use the Header text for a book's title page along with a language-specific sub-heading.
 
 ```regex
-"(?ms)(\\h )(.+?\r?\n)(.+?)(\r?\n)(\\mt)" > "\1\2\3\4\\zgap|2in\\*\4\\mt \2\\is गोंडि बासाता पूना नयम\4\\zrule\\*\4\\pb\4\5"
+"(?ms)(\\h )(.+?\r?\n)(.+?)(\r?\n)(\\mt)" > "\1\2\3\4\\zgap|2in\\*\4\\mt \2\\is The New Testament in Wakawaka\4\\zrule\\*\4\\pb\4\5"
 ```
 
 ### Implementation

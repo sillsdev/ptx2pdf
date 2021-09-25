@@ -778,19 +778,20 @@
  \let\nb=\ptx@nb% \nb is a special code that suppresses a paragraph break across \c
  \global\let\@k=\k
  \def\setkr@f##1{\edef\kr@f{\zap@space ##1 \empty}}
- \def\@K##1\k*{%\k processing 2nd half
+ \lowercase{
+ \def\@@k##1\k*{%\k processing 2nd half
     \let\v@rse=\empty % Normally verses and keywords don't co-occur
     \edef\kr@f{\detokenize{##1}}%
     \x@\setkr@f\x@{\kr@f}%
     \trace{T}{keyword: \kr@f}%
     \runtrigg@rsother{k.\kr@f}%
     \activ@tecustomch@rs%   no CR here
-    \@k ##1\endch@rstylen* %
+    \@k~##1\endch@rstylen* %
     \runtrigg@rs{\id@@@ k.\kr@f}%
-  }
+  }}
  \def\k{%\k processing
    \deactiv@tecustomch@rs% no CR here
-   \@K}
+   \@@k}
 }%
 
 \endgroup
