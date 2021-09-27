@@ -385,6 +385,7 @@ def usfmerge2(infilea, infileb, outfile, stylesheetsa=[], stylesheetsb=[], fseco
                                canonicalise_footnotes=False, tag_escapes=tag_escapes))
         scoll = Collector(doc=doc, primary=False, stylesheet=stylesheetb)
     secondchunks = {c.ident: c for c in scoll.acc}
+
     mainkeys = ["_".join(str(x) for x in c.ident) for c in pcoll.acc]
     secondkeys = ["_".join(str(x) for x in c.ident) for c in scoll.acc]
     f = modes[mode]

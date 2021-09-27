@@ -82,21 +82,24 @@
 
 \def\*{%This might end a + style (c)  or a normal style character style(C), or a milestone style
   \trace{m}{slash *}%
-  \proc@ttribs
-  \get@ttribute{\thisdefault@ttrkey}%
-  \ifx\attr@b\relax\else
-    \let\thismil@stoneKey\thisdefault@ttrkey
-    \let\thismil@stoneVal\attr@b
-  \fi
-  \ifmst@nestyle\else
-    \ifx \ss@ChrP\stylet@pe
-      \endch@rstylepls*
-    \else
-      \endch@rstyle*
+  \ifmst@nestyle
+    \proc@ttribs
+    \get@ttribute{\thisdefault@ttrkey}%
+    \ifx\attr@b\relax\else
+      \let\thismil@stoneKey\thisdefault@ttrkey
+      \let\thismil@stoneVal\attr@b
     \fi
-  \fi
-  \mst@nestylefalse
-  \processmil@stone}% USFM3 'self closing marker' milestone
+  %  \ifmst@nestyle\else
+  %    \ifx \ss@ChrP\stylet@pe
+  %      \endch@rstylepls*
+  %    \else
+  %      \endch@rstyle*
+  %    \fi
+  %  \fi
+    \mst@nestylefalse
+    \processmil@stone
+  \else{*}
+  \fi}% USFM3 'self closing marker' milestone
 
 \let\milestoneOp\empty
 \let\thismil@stone\empty
