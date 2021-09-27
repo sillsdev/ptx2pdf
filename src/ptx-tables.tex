@@ -217,7 +217,10 @@
   % (c) calculate sp@re width available from the narrow ones
   % (d) distribute this in proportion to the relative exc@ss of each
   \sp@re=0pt \exc@ss=0pt
-  \thr@shold=\hsize \divide\thr@shold by \maxtablec@l
+  \thr@shold=\hsize
+  \getp@ram{leftmargin}{tr}\ifx\p@ram\relax\else\advance\thr@shold by -\p@ram\IndentUnit\fi 
+  \getp@ram{rightmargin}{tr}\ifx\p@ram\relax\else\advance\thr@shold by -\p@ram\IndentUnit\fi 
+  \divide\thr@shold by \maxtablec@l
   \f@reachcol{%
     \c@rrentcolwidth=-1sp % "unset" flag
     \ifdim\wd\c@rrentcolbox>\thr@shold

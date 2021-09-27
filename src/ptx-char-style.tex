@@ -294,6 +294,7 @@
 \def\s@tfont#1{%
  \trace{s}{s@tfont #1}%
  \edef\r@qmkr{#1}\ifx\empty\r@qmkr\trace{F}{Font for empty marker requested. Nonsense! Substituting p}\def\r@qmkr{p}\fi
+ \g@tfontname{\r@qmkr}%
  \trace{F}{f@ntstyle=\f@ntstyle}%
  \ifdiglot\else
    \let\c@rrdstat\empty %Whether diglot or not, it might have been diglot before.
@@ -333,7 +334,7 @@
   \fi\fi%
   \dimen0=\c@rrfontsize\FontSizeUnit                                    %(+)
   \getFp@ramR{fontfactor}{#1}% scale down by \SuperscriptFactor if superscripted style %FIXME! Should this be R version or not (regular=!shrunk??)
-  \ifx\p@ram\relax\else \dimen0=\p@ram\dimen0\fi
+  \ifx\p@ram\relax\else \trace{F}{Scaling by \p@ram}\dimen0=\p@ram\dimen0\fi
   %\edef\f@ntstyle{\f@ntstyle-\c@rrfontsize}%
   % create the font identifier for this style
   \trace{F}{font<\f@ntstyle>=\typef@ce\space at \the\dimen0}%

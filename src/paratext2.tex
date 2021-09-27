@@ -1227,11 +1227,13 @@
         \colhtA=\ht\colA \colhtB=\ht\colB
         \dimen0=\colhtB \incr{\dimen0}{\toprightins} \incr{\dimen0}{\bottomrightins}%
         \advance\dimen0 by -\colhtA \decr{\dimen0}{\topleftins} \decr{\dimen0}{\bottomleftins}%
-        \ifdim\dimen0<\BalanceThreshold\baselineskip\ifdim\dimen0>-\BalanceThreshold\baselineskip   %(7)
+        \trace{o}{Testing column difference of \the\dimen0 \space against threshold of \BalanceThreshold x\the\baselineskip}%
+        \ifdim\dimen0>\BalanceThreshold\baselineskip\else\ifdim\dimen0<-\BalanceThreshold\baselineskip\else   %(7)
           \shortavail=\colhtB\incr{\shortavail}{\toprightins}\incr{\shortavail}{\bottomrightins}%
           \ifdim\dimen0>0pt\else\advance\shortavail by -\dimen0\fi
           %\advance\shortavail by \ifdim\dp\colA>\dp\colB \dp\colA\else\dp\colB\fi
-          \trace{o}{Best height \the\shortavail, difference of \the\dimen0, from a threshold of \BalanceThreshold x\the\baselineskip}\rebalancefalse
+          \trace{o}{Best height \the\shortavail, difference of \the\dimen0, from a threshold of \BalanceThreshold x\the\baselineskip}%
+          \rebalancefalse
         \fi\fi
 		% give up if target size less than 2 lines (should not happen)
         \ifdim\shortavail<\baselineskip \MSG{Rebalancing bailed for short block}%   %(8)

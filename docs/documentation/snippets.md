@@ -3,7 +3,8 @@
 This file contains a structured list of snippets. Destinations are marked with
 different kinds of fences. Thus snippets to go into the .tex or
 ptxprint-mods.tex are fenced with `tex`. Items for PrintDraftChanges are marked
-by `regex`. Each snippet has a second level title, a description, the code and
+by `perl` (Ideally `regex` but syntax highlighting works so much better with a
+recognised language). Each snippet has a second level title, a description, the code and
 then marked with a 3rd level is a section called `Implementation` that describes
 how the snippet works, rather than how to use it.
 
@@ -33,7 +34,7 @@ _#1\endcsname}}
 
 ### Implementation
 
-First there is a new if declared that is used to track whether we have started a
+First there is a new `if` declared that is used to track whether we have started a
 new paragraph or not. Then we collect the old printverse function that is used
 to print the verse number (whether simply or as a marginal verse). We are going
 to wrap this function to only call the original if the paragraph if is true.
@@ -88,7 +89,7 @@ A team has nice and short \\q1 and \\q2 lines in their text which work great for
 But for a single column layout, we would like to merge all \\q2 into the previos \\q1, and then
 turn every other \\q1 into a \\q2 to make it look like poetry.
 
-```regex
+```perl
 "\\q2 " > ""
 "(\\q1(?:[^\\]|(\\[fx]).*?\2\*|\\v)+?)\\q1" > "\1\\q2"
 ```
@@ -109,7 +110,7 @@ When the hyphen is a word-forming character in the USFM text, but normally it is
 line-breaking opportunity. But this team wanted to allow a soft-break after hyphens.
 We do not want to break in verse ranges, etc. where a hyphen is between digits. 
 
-```regex
+```perl
 "(?<=\s[^\\]*\D)-(?=\D)" > "-\u200B"
 ```
 
@@ -130,7 +131,7 @@ Paratext very unhelpfully forces glossary items to use the \\p marker which is l
 ideal for a list of glossary items. This replaces the \\p with \\ili only in the GLO book.
 (This doesn't yet handle multi-paragraph entries.)
 
-```regex
+```perl
 at GLO "\\p \\k " > "\\ili \\k "
 ```
 
@@ -138,7 +139,7 @@ at GLO "\\p \\k " > "\\ili \\k "
 
 Use the Header text for a book's title page along with a language-specific sub-heading.
 
-```regex
+```perl
 "(?ms)(\\h )(.+?\r?\n)(.+?)(\r?\n)(\\mt)" > "\1\2\3\4\\zgap|2in\\*\4\\mt \2\\is The New Testament in Wakawaka\4\\zrule\\*\4\\pb\4\5"
 ```
 
@@ -155,7 +156,7 @@ We also throw in some vertical space, a horizontal rule followed by a pagebreak.
 
 ## To be done later
 
-```regex
+```perl
 # Stick in a hoizontal rule after the intro outline, before the 1st chapter
 '(\\c 1 ?\r?\n)' > '\\zrule\\*\r\n\1 '
 
@@ -174,6 +175,6 @@ at TDX "(\\s1 Parables Jesus Told)" > "\\pb\r\n\1"
 ' (\\ior\*)' > '\1'
 
 # Insert Pictures that haven't yet been included in the USFM text
-# at EPH 6:13 "(मना परकिट.)" > '\1\\fig  सिपायि लडेय किय्ले सोनेके, सम्दो तयरि कींतोरो|alt="Map Creator soldier with armour" src="ESG Armor of God(v2).png" size="col" ref="6:14-18"\\fig*'
+# at EPH 6:13 "(armed soldier.)" > '\1\\fig Soldier with armour|alt="Map Creator soldier with armour" src="ESG Armor of God(v2).png" size="col" ref="6:14-18"\\fig*'
 
 ```
