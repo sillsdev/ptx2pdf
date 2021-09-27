@@ -39,7 +39,7 @@
 \def\c@tegory{}
 \gdef\sb@rmarker{esb} % future-proofing. What's the current sidebar marker?
 
-\def\setsbp@ram#1#2{\trace{sc}{Styling cat \c@tegory:#1 #2}\setp@ram{#1}{\sb@rmarker}{#2}}
+\def\setsbp@ram#1#2{\trace{sc}{Styling \m@rker:#1 #2}\setp@ram{#1}{\m@rker}{#2}}
 \def\getsbp@ram#1{\getp@ram{#1}{\sb@rmarker}\let\cp@ram\p@ram\ifx\cp@ram\empty\global\let\cp@ram\relax\fi\trace{sc}{Got result for (\c@tegory)\sb@rmarker:#1: \cp@ram}}
 \def\getsbp@ramNoInh#1{\edef\d@sf{\g@tdstat}%
   \getp@r@m{#1}{\c@tprefix\sb@rmarker\d@sf}\ifx\p@ram\relax\getp@ram{#1}{\c@tprefix\sb@rmarker}\fi
@@ -53,6 +53,7 @@
 %\setsbp@ram{hascol}{T}
 %\setsbp@ram{bgcolour}{0 1 0}
 %\setsbp@ram{alpha}{0.2}% 1=solid 0=invisible
+\def\m@rker{esb}
 \setsbp@ram{bgfigscale}{1}%
 \setsbp@ram{fgfigsize}{box}%What is image scaled to?
 \setsbp@ram{fgfigscale}{0.2}%
@@ -67,6 +68,7 @@
 \setsbp@ram{bgfigspec}{}%Normally no picture.
 \setsbp@ram{bgfigalpha}{1.0}%Normally solid colour
 \setsbp@ram{bgfigcolour}{0 0 0}%Normally black
+\let\m@rker\relax
 \def\fb@hpadding{1pt}%Added left and right of feintbox content
 \def\fb@vpadding{1pt}%added above and below feintbox content
 \newif\ifNoTransparency
@@ -314,7 +316,7 @@
   \kill@PossParamCache
   \edef\hs@ze{\the\hsize}%
   \s@tc@tpr@fix
-  \end@llpoppedstyles{s}\mcpush{s+\sb@rmarker}\trace{e}{ESB}\setbox\extb@x\vbox\bgroup
+  \end@llpoppedstyles{\ss@Sbar}\mcpush{\ss@Sbar+\sb@rmarker}\trace{e}{ESB}\setbox\extb@x\vbox\bgroup
     \s@tsb@rwidth\inextendedtrue
     \global\sb@rchunkh@ight=\maxdimen
     \global\c@th@@ks{\st@rtsb@r}%
@@ -593,7 +595,9 @@
         \penalty10000
         \pdfsavepos
         \write\p@rlocs{\noexpand\@nontextstart{\the\pdflastxpos}{\the\pdflastypos}}%
+        \penalty10000
         \unvbox\extchunkb@x\vskip-\the\dimen0
+        \penalty10000
         \pdfsavepos
         \write\p@rlocs{\noexpand\@nontextstop{\the\pdflastxpos}{\the\pdflastypos}}%
         \ifdim\ht\extb@x>0pt \penalty5000 \fi}%
@@ -647,7 +651,6 @@
 \def\Category   #1\relax{%Store name of current category and defaults
   \S@tCat{#1}%
   \xdef\m@rker{esb}%
-  \initc@t
 }
 
 \def\initc@t{%

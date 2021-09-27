@@ -50,10 +50,13 @@
 \fi
 }
 
+
 % Remember the name of the marker currently being defined
-\def \Marker         #1\relax{\m@kedigitsletters%
+\def \Marker         #1\relax{
+  \m@kedigitsletters%
   \xdef\m@rker{\scantokens{#1\noexpand}}%
-  \m@kedigitsother\remember@xists{\m@rker}% store name of marker currently being defined
+  \m@kedigitsother
+  \remember@xists{\m@rker}% store name of marker currently being defined
   \ifx\c@tprefix\empty\else
     \remember@xists{\c@tprefix\m@rker}%
   \fi
