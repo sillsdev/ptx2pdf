@@ -842,7 +842,7 @@ class ViewModel:
                         self.styleEditor.setval(a+b, 'FontSize', None)
                         self.styleEditor.setval(a+b, 'FontScale', v)
 
-        if self.get('r_xrLocn') == "blend":
+        if self.get('r_xrpos') == "blend":
             self.styleEditor.setval('x', 'NoteBlendInto', 'f')
         else:
             self.styleEditor.setval('x', 'NoteBlendInto', None)

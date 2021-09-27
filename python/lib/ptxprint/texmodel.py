@@ -88,7 +88,7 @@ ModelMap = {
                                  if (w.get("c_applyWatermark") and w.watermarks is not None and w.watermarks != 'None') else ""),
     "paper/ifcropmarks":        ("c_cropmarks", lambda w,v :"true" if v else "false"),  
     "paper/ifgrid":             ("c_grid", lambda w,v :"" if v else "%"),
-    "paper/ifverticalrule":     ("c_verticalrule", lambda w,v :"true" if v or w.get("r_xrLocn") == "centre" else "false"),
+    "paper/ifverticalrule":     ("c_verticalrule", lambda w,v :"true" if v or w.get("r_xrpos") == "centre" else "false"),
     "paper/margins":            ("s_margins", lambda w,v: round(float(v)) if v else "12"),
     "paper/topmargin":          ("s_topmargin", None),
     "paper/bottommargin":       ("s_bottommargin", None),
@@ -275,7 +275,7 @@ ModelMap = {
     "notes/xrresetcallers":     ("c_xrpageresetcallers", lambda w,v: "" if v else "%"),
     "notes/xromitcaller":       ("c_xromitcaller", lambda w,v: "%" if v else ""),
 
-    "notes/xrlocation":         ("r_xrLocn", lambda w,v: r"" if v == "centre" else "%"),
+    "notes/xrlocation":         ("r_xrpos", lambda w,v: r"" if v == "centre" else "%"),
     "notes/xrcolside":          ("fcb_colXRside", None),
     "notes/xrcentrecolwidth":   ("s_centreColWidth", lambda w,v: int(float(v)) if v else "60"),
     "notes/xrguttermargin":     ("s_xrGutterWidth", lambda w,v: "{:.1f}".format(float(v)) if v else "2.0"),

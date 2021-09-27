@@ -142,8 +142,8 @@ fr_BeginEnding c_bookIntro c_introOutline c_filterGlossary c_ch1pagebreak
 fr_IncludeScripture c_mainBodyText gr_mainBodyText c_chapterNumber c_justify c_sectionHeads
 c_verseNumbers c_preventorphans c_hideEmptyVerses c_elipsizeMissingVerses
 tb_NotesRefs lb_NotesRefs tb_general
-tb_footnotes c_includeFootnotes r_fnpos_normal r_fnpos_column r_fnpos_endnote c_fneachnewline
-tb_xrefs c_includeXrefs                                                       c_xreachnewline
+tb_footnotes c_includeFootnotes c_fneachnewline
+tb_xrefs     c_includeXrefs     c_xreachnewline
 tb_HeadFoot lb_HeadFoot
 fr_Header l_hdrleft ecb_hdrleft l_hdrcenter ecb_hdrcenter l_hdrright ecb_hdrright
 fr_Footer l_ftrcenter ecb_ftrcenter
@@ -151,6 +151,8 @@ tb_Pictures lb_Pictures
 c_includeillustrations tb_settings lb_settings fr_inclPictures gr_IllustrationOptions c_cropborders r_pictureRes_High r_pictureRes_Low
 rule_help l_homePage lb_homePage l_createZipArchiveXtra btn_createZipArchiveXtra
 """.split()
+
+_ui_keepHidden = ("btn_download_update", "lb_extXrefs", "l_extXrefsComingSoon", "tb_Logging", "lb_Logging")
 
 _uiLevels = {
     2 : _ui_minimal,
@@ -183,10 +185,13 @@ _sensitivities = {
                                 "l_verseDecoratorShift", "l_verseDecoratorScale",
                                 "s_verseDecoratorShift", "s_verseDecoratorScale"],
         "r_decorator_ayah":    ["lb_style_v"]},
-    "r_xrLocn": {
-        "r_xrLocn_below" :     ["l_internote", "s_internote", "l_xrColWid", "s_centreColWidth", "r_fnpos_column"],
-        "r_xrLocn_blend" :     [],
-        "r_xrLocn_centre" :    ["l_internote", "s_internote", "l_xrColWid", "s_centreColWidth", "l_xrColSpace", "s_xrGutterWidth", "l_colXRside", "fcb_colXRside"]},
+    "r_xrpos": {
+        # "r_xrpos_normal" :    ["l_internote", "s_internote", "l_xrColWid", "s_centreColWidth", "r_fnpos_column"],
+        # "r_xrpos_column" :    ["l_internote", "s_internote", "l_xrColWid", "s_centreColWidth", "r_fnpos_column"],
+        # "r_xrpos_endnote" :   ["l_internote", "s_internote", "l_xrColWid", "s_centreColWidth", "r_fnpos_column"],
+        "r_xrpos_below" :     ["l_internote", "s_internote", "l_xrColWid", "s_centreColWidth", "r_fnpos_column"],
+        "r_xrpos_blend" :     [],
+        "r_xrpos_centre" :    ["l_internote", "s_internote", "fr_colXrefs"]}, 
         
     "r_xrSource": {
         "r_xrSource_standard": ["s_xrSourceSize", "l_xrSourceSize", "l_xrSourceLess", "l_xrSourceMore"],
@@ -194,11 +199,11 @@ _sensitivities = {
     "c_mainBodyText" :         ["gr_mainBodyText"],
     "c_doublecolumn" :         ["gr_doubleColumn", "c_singleColLayout", "t_singleColBookList", "r_fnpos_column"],
     "c_useFallbackFont" :      ["btn_findMissingChars", "t_missingChars", "l_fallbackFont", "bl_fontExtraR"],
-    "c_includeFootnotes" :     ["tb_footnotes", "lb_footnotes"],
-    "c_includeXrefs" :         ["tb_xrefs", "lb_xrefs"],
+    "c_includeFootnotes" :     ["tb_footnotes", "lb_footnotes", "r_xrpos_below", "r_xrpos_blend"],
+    # "c_includeXrefs" :         ["tb_xrefs", "lb_xrefs"],
     "c_useXrefList" :          ["tb_extXrefs", "lb_extXrefs"],
     
-    "c_includeillustrations" : ["gr_IllustrationOptions", "tb_details", "lb_details", "tb_checklist", "lb_details"],
+    "c_includeillustrations" : ["gr_IllustrationOptions", "tb_details", "lb_details", "tb_checklist"],
     "c_diglot" :               ["gr_diglot", "fcb_diglotPicListSources", "r_hdrLeft_Pri", "r_hdrCenter_Pri", "r_hdrRight_Pri",
                                 "r_ftrCenter_Pri", "r_hdrLeft_Sec", "r_hdrCenter_Sec", "r_hdrRight_Sec", "r_ftrCenter_Sec"],
     "c_borders" :              ["gr_borders"],
@@ -219,8 +224,8 @@ _sensitivities = {
     "c_rangeShowVerse" :       ["l_chvsSep", "c_sepPeriod", "c_sepColon"],
     "c_fnautocallers" :        ["t_fncallers", "btn_resetFNcallers", "c_fnomitcaller", "c_fnpageresetcallers"],
     "c_xrautocallers" :        ["t_xrcallers", "btn_resetXRcallers", "c_xromitcaller", "c_xrpageresetcallers"],
-    "c_footnoterule" :         ["rule_footnote", "l_fnAboveSpace", "l_fnBelowSpace", "s_fnAboveSpace", "s_fnBelowSpace"],
-    "c_xrefrule" :             ["rule_xref", "l_xrAboveSpace", "l_xrBelowSpace", "s_xrAboveSpace", "s_xrBelowSpace"],
+    "c_footnoterule" :         ["rule_footnote", "l_fnAboveSpace", "l_fnBelowSpace", "s_fnBelowSpace", "gr_fnRulePosParms"],
+    "c_xrefrule" :             ["rule_xref",     "l_xrAboveSpace", "l_xrBelowSpace", "s_xrBelowSpace", "gr_xrRulePosParms"],
     "c_useCustomFolder" :      ["btn_selectFigureFolder", "c_exclusiveFiguresFolder", "lb_selectFigureFolder"],
     "c_processScript" :        ["c_processScriptBefore", "c_processScriptAfter", "btn_selectScript", "btn_editScript"],
     "c_usePrintDraftChanges" : ["btn_editChangesFile"],
@@ -255,10 +260,10 @@ _nonsensitivities = {
     "c_styFaceSuperscript" :   ["l_styRaise", "s_styRaise"],
     "c_interlinear" :          ["c_letterSpacing", "s_letterShrink", "s_letterStretch"],
     "c_fighidecaptions" :      ["c_fighiderefs"],
-    "r_xrLocn": {
-        "r_xrLocn_below" :     [],
-        "r_xrLocn_blend" :     ["l_internote", "s_internote"],
-        "r_xrLocn_centre" :    []},
+    "r_xrpos": {
+        "r_xrpos_below" :     [],
+        "r_xrpos_blend" :     ["l_internote", "s_internote"],
+        "r_xrpos_centre" :    []},
 }
 
 _object_classes = {
@@ -688,10 +693,12 @@ class GtkViewModel(ViewModel):
         if ui < 6:
             for w in reversed(sorted(self.allControls)):
                 # print("Turning off:", w)
-                self.builder.get_object(w).set_visible(False)
+                try:
+                    self.builder.get_object(w).set_visible(False)
+                except:
+                    print("Failed to turn off", w)
                 
             widgets = sum((v for k, v in _uiLevels.items() if ui >= k), [])
-            # widgets = _ui_minimal + _ui_basic
         else:
             # Selectively turn things back on if their settings are enabled
             for k, v in _showActiveTabs.items():
@@ -704,15 +711,19 @@ class GtkViewModel(ViewModel):
             widgets = self.allControls
 
         for w in sorted(widgets):
-            # print("Turning on:", w)
-            self.builder.get_object(w).set_visible(True)
+            if w not in _ui_keepHidden:
+                # print("Turning on:", w)
+                try:
+                    self.builder.get_object(w).set_visible(True)
+                except:
+                    print("Failed on", w)
 
         # Disable/Enable the Details and Checklist tabs on the Pictures tab
         for w in ["tb_details", "tb_checklist"]:
             self.builder.get_object(w).set_sensitive(ui >= 6)        
         for w in ["tb_plTopPane", "tb_picPreview", "scr_detailsBottom", "scr_checklistBottom", "l_globalPicSettings"]: 
-            self.builder.get_object(w).set_visible(ui >= 6)        
-
+            self.builder.get_object(w).set_visible(ui >= 6)
+            
         self.noInternetClicked(None)
         self.colorTabs()
         self.mw.resize(200, 200)
@@ -1075,6 +1086,7 @@ class GtkViewModel(ViewModel):
 
         xl = " color='"+col+"'" if self.get("c_useXrefList") else ""
         self.builder.get_object("lb_NotesRefs").set_markup(_("Notes+")+"<span{}>".format(xl)+_("Refs")+"</span>")
+        self.builder.get_object("lb_xrefs").set_markup("<span{}>".format(xl)+_("Cross-References")+"</span>")
 
         tb = self.get("c_thumbtabs")
         bd = self.get("c_borders")
@@ -1132,13 +1144,13 @@ class GtkViewModel(ViewModel):
         self.colorTabs()
 
     def onXrefLocnClicked(self, btn):
-        if self.get("r_xrLocn") == "blend" and self.get("r_fnpos") == "column":
+        if self.get("r_xrpos") == "blend" and self.get("r_fnpos") == "column":
             self.set("r_fnpos", "normal")
-        elif self.get("r_xrLocn") == "centre" and self.get("r_fnpos") == "normal":
+        elif self.get("r_xrpos") == "centre" and self.get("r_fnpos") == "normal":
             self.set("r_fnpos", "column")
         self.onSimpleClicked(btn)
         try:
-            self.styleEditor.setval("x", "NoteBlendInto", "f" if self.get("r_xrLocn") == "blend" else None)
+            self.styleEditor.setval("x", "NoteBlendInto", "f" if self.get("r_xrpos") == "blend" else None)
         except KeyError:
             return
     
@@ -1159,8 +1171,9 @@ class GtkViewModel(ViewModel):
         else:
             val = float(val) * 2
         self.set("s_indentUnit", val)
-        if not btn.get_active() and self.get("r_fnpos") == "column":
-           self.set("r_fnpos", "normal")
+        for fx in ["fn", "xr"]: 
+            if not btn.get_active() and self.get("r_{}pos".format(fx)) == "column":
+               self.set("r_{}pos".format(fx), "normal")
 
     def onSimpleFocusClicked(self, btn):
         self.sensiVisible(Gtk.Buildable.get_name(btn), focus=True)
@@ -3351,9 +3364,23 @@ class GtkViewModel(ViewModel):
                 v = "Sec" if v == "Pri" else ("Pri" if v == "Sec" else v)
                 self.set(a, v)
 
+    def onFootnotesClicked(self, btn):
+        if not self.sensiVisible("c_includeFootnotes"):
+            if self.get("r_xrpos_below") or self.get("r_xrpos_blend"):
+                self.set("r_xrpos", "centre") if self.get("c_useXrefList") else self.set("r_xrpos", "normal")
+              
+    def onXrefClicked(self, btn):
+        for w in ["tb_xrefs", "lb_xrefs"]:
+            self.builder.get_object(w).set_sensitive(self.get("c_includeXrefs") or self.get("c_useXrefList"))
+
     def onXrefListClicked(self, btn):
-        if self.get("c_useXrefList"):
+        xrf = self.get("c_includeXrefs")
+        xrl = self.get("c_useXrefList")
+        if xrl:
             self.set("c_includeXrefs", False)
+        self.builder.get_object("ex_xrListSettings").set_expanded(xrl)
+        for w in ["tb_xrefs", "lb_xrefs"]:
+            self.builder.get_object(w).set_sensitive(xrf or xrl)
 
     def onInterlinearClicked(self, btn):
         if self.sensiVisible("c_interlinear"):

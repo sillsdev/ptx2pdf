@@ -8730,9 +8730,9 @@ Also settings for special books.</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="valign">start</property>
-                                <property name="margin_left">6</property>
+                                <property name="margin_left">12</property>
                                 <property name="margin_right">6</property>
-                                <property name="margin_top">6</property>
+                                <property name="margin_top">12</property>
                                 <property name="margin_bottom">8</property>
                                 <property name="row_spacing">4</property>
                                 <property name="column_spacing">6</property>
@@ -8746,6 +8746,7 @@ Also settings for special books.</property>
                                     <property name="halign">start</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
+                                    <signal name="clicked" handler="onFootnotesClicked" swapped="no"/>
                                     <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                   </object>
                                   <packing>
@@ -8762,37 +8763,11 @@ Also settings for special books.</property>
                                     <property name="halign">start</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
-                                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                                    <signal name="clicked" handler="onXrefClicked" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
                                     <property name="top_attach">1</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkCheckButton" id="c_useXrefList">
-                                    <property name="label" translatable="yes">Use External List of Cross-References</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">Instead of using a handful of cross-references
-as specified within the project's USFM text, you
-can select an external list containing many 1000's
-of cross-references. These will automatically be
-localized into the project's language using the
-\toc3 values specified in the Paratext project
-settings (See: Scripture reference settings...)
-
-This feature is usually used for Study or
-Reference Bibles in conjunction with the 
-'Centre Column xRefs' location option.</property>
-                                    <property name="draw_indicator">True</property>
-                                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
-                                    <signal name="clicked" handler="onXrefListClicked" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">0</property>
-                                    <property name="top_attach">2</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -9030,6 +9005,33 @@ Footnotes and xRefs (pt):</property>
                                     <property name="top_attach">2</property>
                                   </packing>
                                 </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_useXrefList">
+                                    <property name="label" translatable="yes">Use External List of Cross-References</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">Instead of using a handful of cross-references
+as specified within the project's USFM text, you
+can select an external list containing many 1000's
+of cross-references. These will automatically be
+localized into the project's language using the
+\toc3 values specified in the Paratext project
+settings (See: Scripture reference settings...)
+
+This feature is usually used for Study or
+Reference Bibles in conjunction with the 
+'Centre Column xRefs' location option.</property>
+                                    <property name="halign">start</property>
+                                    <property name="draw_indicator">True</property>
+                                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                                    <signal name="clicked" handler="onXrefListClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">2</property>
+                                  </packing>
+                                </child>
                               </object>
                               <packing>
                                 <property name="tab_fill">False</property>
@@ -9057,7 +9059,7 @@ Footnotes and xRefs (pt):</property>
                                     <property name="halign">start</property>
                                     <property name="margin_left">12</property>
                                     <property name="margin_right">6</property>
-                                    <property name="margin_top">6</property>
+                                    <property name="margin_top">12</property>
                                     <property name="margin_bottom">6</property>
                                     <property name="row_homogeneous">True</property>
                                     <child>
@@ -9205,8 +9207,6 @@ If this option is enabled, the Show Callers
 settings below will override whatever
 has been specified within the text itself.</property>
                                         <property name="halign">start</property>
-                                        <property name="margin_top">2</property>
-                                        <property name="margin_bottom">6</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
                                       <packing>
@@ -9226,8 +9226,8 @@ the other to form a block of text. But if you
 require each footnote to start on its own new
 line then set this option.</property>
                                         <property name="halign">start</property>
-                                        <property name="margin_top">2</property>
-                                        <property name="margin_bottom">6</property>
+                                        <property name="valign">start</property>
+                                        <property name="margin_top">7</property>
                                         <property name="draw_indicator">True</property>
                                         <signal name="clicked" handler="onParagraphednotesClicked" swapped="no"/>
                                       </object>
@@ -9264,6 +9264,7 @@ line then set this option.</property>
                                         <property name="tooltip_text" translatable="yes">This option will prevent footnotes showing
 on each page, but will gather them together
 and place them all at the end of the book.</property>
+                                        <property name="halign">start</property>
                                         <property name="margin_left">24</property>
                                         <property name="draw_indicator">True</property>
                                         <property name="group">r_fnpos_normal</property>
@@ -9283,6 +9284,7 @@ and place them all at the end of the book.</property>
                                         <property name="tooltip_text" translatable="yes">Use this option (only available in 2-column
 layout) to show the footnotes at the end
 of the 2nd column of text.</property>
+                                        <property name="halign">start</property>
                                         <property name="margin_left">24</property>
                                         <property name="margin_right">6</property>
                                         <property name="margin_end">6</property>
@@ -9304,6 +9306,7 @@ of the 2nd column of text.</property>
                                         <property name="tooltip_text" translatable="yes">Footnotes (and cross-references) are
 usually placed at the end of each page.
 </property>
+                                        <property name="halign">start</property>
                                         <property name="margin_left">24</property>
                                         <property name="margin_right">6</property>
                                         <property name="margin_end">6</property>
@@ -9317,7 +9320,7 @@ usually placed at the end of each page.
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkLabel">
+                                      <object class="GtkLabel" id="l_fnPos">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="halign">start</property>
@@ -9396,201 +9399,6 @@ usually placed at the end of each page.
                                           </packing>
                                         </child>
                                         <child>
-                                          <object class="GtkSpinButton" id="s_fnIndent">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">True</property>
-                                            <property name="tooltip_text" translatable="yes">This is the (minimum) vertical space/gap (pts) that
-must exist between the main text body and the
-footnote rule.
-
-Note: if you make this value less than the descenders
-of the last lines of text, then the footnotes will push
-down into the footer area. If you see this happening,
-increase this value to trigger an earlier page break to
-solve the problem.</property>
-                                            <property name="halign">start</property>
-                                            <property name="valign">start</property>
-                                            <property name="text">6.0</property>
-                                            <property name="input_purpose">number</property>
-                                            <property name="adjustment">a_fnRuleIndent</property>
-                                            <property name="climb_rate">5</property>
-                                            <property name="numeric">True</property>
-                                            <property name="update_policy">if-valid</property>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">2</property>
-                                            <property name="top_attach">3</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkSpinButton" id="s_fnLength">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">True</property>
-                                            <property name="tooltip_text" translatable="yes">This is the (minimum) vertical space/gap (pts) that
-must exist between the main text body and the
-footnote rule.
-
-Note: if you make this value less than the descenders
-of the last lines of text, then the footnotes will push
-down into the footer area. If you see this happening,
-increase this value to trigger an earlier page break to
-solve the problem.</property>
-                                            <property name="halign">start</property>
-                                            <property name="valign">start</property>
-                                            <property name="text">6.0</property>
-                                            <property name="input_purpose">number</property>
-                                            <property name="adjustment">a_fnRuleWidthProportion</property>
-                                            <property name="climb_rate">5</property>
-                                            <property name="numeric">True</property>
-                                            <property name="update_policy">if-valid</property>
-                                            <property name="value">100</property>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">3</property>
-                                            <property name="top_attach">3</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkSpinButton" id="s_fnThick">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">True</property>
-                                            <property name="tooltip_text" translatable="yes">This is the (minimum) vertical space/gap (pts) that
-must exist between the main text body and the
-footnote rule.
-
-Note: if you make this value less than the descenders
-of the last lines of text, then the footnotes will push
-down into the footer area. If you see this happening,
-increase this value to trigger an earlier page break to
-solve the problem.</property>
-                                            <property name="halign">start</property>
-                                            <property name="valign">start</property>
-                                            <property name="text">6.0</property>
-                                            <property name="input_purpose">number</property>
-                                            <property name="adjustment">a_fnRuleThickness</property>
-                                            <property name="climb_rate">0.10000000000000001</property>
-                                            <property name="digits">1</property>
-                                            <property name="numeric">True</property>
-                                            <property name="update_policy">if-valid</property>
-                                            <property name="value">0.5</property>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">4</property>
-                                            <property name="top_attach">3</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkComboBox" id="fcb_fnHorizPosn">
-                                            <property name="width_request">100</property>
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="can_default">True</property>
-                                            <property name="tooltip_text" translatable="yes">Set the most appropriate
-user interface mode as needed.
-Settings will be hidden or shown
-depending on the level set here.</property>
-                                            <property name="halign">start</property>
-                                            <property name="valign">start</property>
-                                            <property name="model">ls_fnruleHorizPosn</property>
-                                            <property name="wrap_width">1</property>
-                                            <property name="active">0</property>
-                                            <property name="entry_text_column">0</property>
-                                            <property name="id_column">1</property>
-                                            <property name="active_id">all</property>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">1</property>
-                                            <property name="top_attach">3</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkLabel">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="halign">start</property>
-                                            <property name="valign">end</property>
-                                            <property name="label" translatable="yes">Indent (mm)</property>
-                                            <attributes>
-                                              <attribute name="style" value="italic"/>
-                                            </attributes>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">2</property>
-                                            <property name="top_attach">2</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkLabel">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="halign">start</property>
-                                            <property name="valign">end</property>
-                                            <property name="margin_top">6</property>
-                                            <property name="label" translatable="yes">Length (% of col)</property>
-                                            <attributes>
-                                              <attribute name="style" value="italic"/>
-                                            </attributes>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">3</property>
-                                            <property name="top_attach">2</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkLabel">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="halign">start</property>
-                                            <property name="valign">end</property>
-                                            <property name="label" translatable="yes">Thickness (pt)</property>
-                                            <attributes>
-                                              <attribute name="style" value="italic"/>
-                                            </attributes>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">4</property>
-                                            <property name="top_attach">2</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkCheckButton" id="c_footnoterule">
-                                            <property name="label" translatable="yes">Show Footnote Rule</property>
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">True</property>
-                                            <property name="receives_default">False</property>
-                                            <property name="tooltip_text" translatable="yes">This is the horizontal rule separating
-the body text from the footnote area.
-The rule covers the entire width even
-if the note is short.</property>
-                                            <property name="halign">start</property>
-                                            <property name="margin_left">12</property>
-                                            <property name="active">True</property>
-                                            <property name="draw_indicator">True</property>
-                                            <signal name="clicked" handler="onFootnoteRuleClicked" swapped="no"/>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">0</property>
-                                            <property name="top_attach">1</property>
-                                            <property name="width">2</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkLabel">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="halign">start</property>
-                                            <property name="valign">end</property>
-                                            <property name="label" translatable="yes">Horizontal Position</property>
-                                            <attributes>
-                                              <attribute name="style" value="italic"/>
-                                            </attributes>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">1</property>
-                                            <property name="top_attach">2</property>
-                                          </packing>
-                                        </child>
-                                        <child>
                                           <object class="GtkLabel" id="l_text2NotesSpace1">
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
@@ -9610,32 +9418,11 @@ Text From Notes:</property>
                                           </packing>
                                         </child>
                                         <child>
-                                          <object class="GtkLabel" id="l_text2NotesSpace2">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="tooltip_text" translatable="yes">The vertical space between the body text and the
-area containing footnotes and cross-references.
-
-If the Footnote Rule is not shown, the vertical
-space will still be calculated as the Space Above
-plus the Space Below (the imaginary) Rule.</property>
-                                            <property name="halign">end</property>
-                                            <property name="label" translatable="yes">Rule Positioning
-and Parameters:</property>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">0</property>
-                                            <property name="top_attach">3</property>
-                                          </packing>
-                                        </child>
-                                        <child>
                                           <object class="GtkSpinButton" id="s_fnAboveSpace">
-                                            <property name="sensitive">False</property>
+                                            <property name="visible">True</property>
                                             <property name="can_focus">True</property>
-                                            <property name="no_show_all">True</property>
-                                            <property name="tooltip_text" translatable="yes">This is the (minimum) vertical space/gap (pts) that
-must exist between the main text body and the
-footnote rule.
+                                            <property name="tooltip_text" translatable="yes">The vertical space between the main
+text body and the footnote rule.
 
 Note: if you make this value less than the descenders
 of the last lines of text, then the footnotes will push
@@ -9659,12 +9446,10 @@ solve the problem.</property>
                                         </child>
                                         <child>
                                           <object class="GtkSpinButton" id="s_fnBelowSpace">
-                                            <property name="sensitive">False</property>
+                                            <property name="visible">True</property>
                                             <property name="can_focus">True</property>
-                                            <property name="no_show_all">True</property>
-                                            <property name="tooltip_text" translatable="yes">This is the vertical space/gap (pts) between the 
-footnote rule and the area at the bottom of the 
-page for footnotes and cross-references. </property>
+                                            <property name="tooltip_text" translatable="yes">This is the vertical space/gap (pts) between
+the rule and the footnotes.</property>
                                             <property name="halign">start</property>
                                             <property name="text">2.0</property>
                                             <property name="input_purpose">number</property>
@@ -9685,6 +9470,9 @@ page for footnotes and cross-references. </property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
                                             <property name="valign">end</property>
+                                            <property name="margin_left">28</property>
+                                            <property name="margin_right">4</property>
+                                            <property name="margin_bottom">10</property>
                                           </object>
                                           <packing>
                                             <property name="left_attach">0</property>
@@ -9693,7 +9481,219 @@ page for footnotes and cross-references. </property>
                                           </packing>
                                         </child>
                                         <child>
-                                          <placeholder/>
+                                          <object class="GtkCheckButton" id="c_footnoterule">
+                                            <property name="label" translatable="yes">Show Footnote Rule</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">False</property>
+                                            <property name="tooltip_text" translatable="yes">This is the horizontal rule separating
+the body text from the footnote area.</property>
+                                            <property name="halign">start</property>
+                                            <property name="margin_left">12</property>
+                                            <property name="active">True</property>
+                                            <property name="draw_indicator">True</property>
+                                            <signal name="clicked" handler="onFootnoteRuleClicked" swapped="no"/>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">0</property>
+                                            <property name="top_attach">1</property>
+                                            <property name="width">2</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkBox">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <child>
+                                              <object class="GtkGrid" id="gr_fnRulePosParms">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">False</property>
+                                                <property name="margin_top">2</property>
+                                                <property name="margin_bottom">6</property>
+                                                <property name="hexpand">True</property>
+                                                <property name="column_spacing">6</property>
+                                                <property name="column_homogeneous">True</property>
+                                                <child>
+                                                  <object class="GtkSpinButton" id="s_fnIndent">
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">True</property>
+                                                    <property name="tooltip_text" translatable="yes">This is the amount to indent the rule.</property>
+                                                    <property name="halign">start</property>
+                                                    <property name="valign">start</property>
+                                                    <property name="text">0</property>
+                                                    <property name="input_purpose">number</property>
+                                                    <property name="adjustment">a_fnRuleIndent</property>
+                                                    <property name="climb_rate">5</property>
+                                                    <property name="numeric">True</property>
+                                                    <property name="update_policy">if-valid</property>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="left_attach">2</property>
+                                                    <property name="top_attach">1</property>
+                                                  </packing>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkSpinButton" id="s_fnLength">
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">True</property>
+                                                    <property name="tooltip_text" translatable="yes">The length of the rule as a percentage
+of the column/page width.</property>
+                                                    <property name="halign">start</property>
+                                                    <property name="valign">start</property>
+                                                    <property name="text">100</property>
+                                                    <property name="input_purpose">number</property>
+                                                    <property name="adjustment">a_fnRuleWidthProportion</property>
+                                                    <property name="climb_rate">5</property>
+                                                    <property name="numeric">True</property>
+                                                    <property name="update_policy">if-valid</property>
+                                                    <property name="value">100</property>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="left_attach">3</property>
+                                                    <property name="top_attach">1</property>
+                                                  </packing>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkSpinButton" id="s_fnThick">
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">True</property>
+                                                    <property name="tooltip_text" translatable="yes">The thickness of the rule.</property>
+                                                    <property name="halign">start</property>
+                                                    <property name="valign">start</property>
+                                                    <property name="text">0.5</property>
+                                                    <property name="input_purpose">number</property>
+                                                    <property name="adjustment">a_fnRuleThickness</property>
+                                                    <property name="climb_rate">0.10000000000000001</property>
+                                                    <property name="digits">1</property>
+                                                    <property name="numeric">True</property>
+                                                    <property name="update_policy">if-valid</property>
+                                                    <property name="value">0.5</property>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="left_attach">4</property>
+                                                    <property name="top_attach">1</property>
+                                                  </packing>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkComboBox" id="fcb_fnHorizPosn">
+                                                    <property name="width_request">100</property>
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">False</property>
+                                                    <property name="can_default">True</property>
+                                                    <property name="halign">start</property>
+                                                    <property name="valign">start</property>
+                                                    <property name="model">ls_fnruleHorizPosn</property>
+                                                    <property name="wrap_width">1</property>
+                                                    <property name="active">0</property>
+                                                    <property name="entry_text_column">0</property>
+                                                    <property name="id_column">1</property>
+                                                    <property name="active_id">all</property>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="left_attach">1</property>
+                                                    <property name="top_attach">1</property>
+                                                  </packing>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkLabel">
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">False</property>
+                                                    <property name="halign">start</property>
+                                                    <property name="valign">end</property>
+                                                    <property name="label" translatable="yes">Indent (mm)</property>
+                                                    <attributes>
+                                                      <attribute name="style" value="italic"/>
+                                                    </attributes>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="left_attach">2</property>
+                                                    <property name="top_attach">0</property>
+                                                  </packing>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkLabel">
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">False</property>
+                                                    <property name="halign">start</property>
+                                                    <property name="valign">end</property>
+                                                    <property name="margin_top">6</property>
+                                                    <property name="label" translatable="yes">Length (% of col)</property>
+                                                    <attributes>
+                                                      <attribute name="style" value="italic"/>
+                                                    </attributes>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="left_attach">3</property>
+                                                    <property name="top_attach">0</property>
+                                                  </packing>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkLabel">
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">False</property>
+                                                    <property name="halign">start</property>
+                                                    <property name="valign">end</property>
+                                                    <property name="label" translatable="yes">Thickness (pt)</property>
+                                                    <attributes>
+                                                      <attribute name="style" value="italic"/>
+                                                    </attributes>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="left_attach">4</property>
+                                                    <property name="top_attach">0</property>
+                                                  </packing>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkLabel">
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">False</property>
+                                                    <property name="halign">start</property>
+                                                    <property name="valign">end</property>
+                                                    <property name="label" translatable="yes">Horizontal Position</property>
+                                                    <attributes>
+                                                      <attribute name="style" value="italic"/>
+                                                    </attributes>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="left_attach">1</property>
+                                                    <property name="top_attach">0</property>
+                                                  </packing>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkLabel" id="l_fnRulePosParms">
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">False</property>
+                                                    <property name="tooltip_text" translatable="yes">The vertical space between the body text and the
+area containing footnotes and cross-references.
+
+If the Footnote Rule is not shown, the vertical
+space will still be calculated as the Space Above
+plus the Space Below (the imaginary) Rule.</property>
+                                                    <property name="halign">end</property>
+                                                    <property name="label" translatable="yes">Rule Positioning
+and Parameters:</property>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="left_attach">0</property>
+                                                    <property name="top_attach">1</property>
+                                                  </packing>
+                                                </child>
+                                                <child>
+                                                  <placeholder/>
+                                                </child>
+                                              </object>
+                                              <packing>
+                                                <property name="expand">False</property>
+                                                <property name="fill">True</property>
+                                                <property name="position">0</property>
+                                              </packing>
+                                            </child>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">0</property>
+                                            <property name="top_attach">2</property>
+                                            <property name="width">5</property>
+                                          </packing>
                                         </child>
                                       </object>
                                     </child>
@@ -9743,22 +9743,24 @@ page for footnotes and cross-references. </property>
                                     <property name="halign">start</property>
                                     <property name="margin_left">12</property>
                                     <property name="margin_right">6</property>
-                                    <property name="margin_top">6</property>
+                                    <property name="margin_top">12</property>
                                     <property name="margin_bottom">6</property>
                                     <property name="row_homogeneous">True</property>
                                     <child>
-                                      <object class="GtkRadioButton" id="r_fnpos_endnote1">
+                                      <object class="GtkRadioButton" id="r_xrpos_endnote">
                                         <property name="label" translatable="yes">End Notes</property>
                                         <property name="visible">True</property>
-                                        <property name="sensitive">False</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
-                                        <property name="tooltip_text" translatable="yes">This option will prevent footnotes showing
+                                        <property name="tooltip_text" translatable="yes">This option will prevent cross-references showing
 on each page, but will gather them together
 and place them all at the end of the book.</property>
+                                        <property name="halign">start</property>
                                         <property name="margin_left">24</property>
                                         <property name="draw_indicator">True</property>
-                                        <property name="group">r_fnpos_normal</property>
+                                        <property name="group">r_xrpos_normal</property>
+                                        <signal name="clicked" handler="onRadioChanged" swapped="no"/>
+                                        <signal name="clicked" handler="onXrefLocnClicked" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left_attach">2</property>
@@ -9766,20 +9768,22 @@ and place them all at the end of the book.</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkRadioButton" id="r_fnpos_column1">
+                                      <object class="GtkRadioButton" id="r_xrpos_column">
                                         <property name="label" translatable="yes">End of Column</property>
                                         <property name="visible">True</property>
-                                        <property name="sensitive">False</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
                                         <property name="tooltip_text" translatable="yes">Use this option (only available in 2-column
-layout) to show the footnotes at the end
+layout) to show the cross-references at the end
 of the 2nd column of text.</property>
+                                        <property name="halign">start</property>
                                         <property name="margin_left">24</property>
                                         <property name="margin_right">6</property>
                                         <property name="margin_end">6</property>
                                         <property name="draw_indicator">True</property>
-                                        <property name="group">r_fnpos_normal</property>
+                                        <property name="group">r_xrpos_normal</property>
+                                        <signal name="clicked" handler="onRadioChanged" swapped="no"/>
+                                        <signal name="clicked" handler="onXrefLocnClicked" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left_attach">2</property>
@@ -9787,20 +9791,21 @@ of the 2nd column of text.</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkRadioButton" id="r_fnpos_normal1">
+                                      <object class="GtkRadioButton" id="r_xrpos_normal">
                                         <property name="label" translatable="yes">End of Page</property>
                                         <property name="visible">True</property>
-                                        <property name="sensitive">False</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
-                                        <property name="tooltip_text" translatable="yes">Footnotes (and cross-references) are
-usually placed at the end of each page.
-</property>
+                                        <property name="tooltip_text" translatable="yes">Cross-references are usually placed 
+at the end of each page.</property>
+                                        <property name="halign">start</property>
                                         <property name="margin_left">24</property>
                                         <property name="margin_right">6</property>
                                         <property name="margin_end">6</property>
                                         <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
+                                        <signal name="clicked" handler="onRadioChanged" swapped="no"/>
+                                        <signal name="clicked" handler="onXrefLocnClicked" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left_attach">2</property>
@@ -9808,7 +9813,7 @@ usually placed at the end of each page.
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkLabel">
+                                      <object class="GtkLabel" id="l_xrPos">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="halign">start</property>
@@ -9832,7 +9837,8 @@ the other to form a block of text. But if you
 require each cross-reference to start on its own new
 line then set this option.</property>
                                         <property name="halign">start</property>
-                                        <property name="margin_bottom">6</property>
+                                        <property name="valign">start</property>
+                                        <property name="margin_top">7</property>
                                         <property name="draw_indicator">True</property>
                                         <signal name="clicked" handler="onParagraphednotesClicked" swapped="no"/>
                                       </object>
@@ -9855,8 +9861,6 @@ If this option is enabled, the Show Callers
 settings below will override whatever
 has been specified within the text itself.</property>
                                         <property name="halign">start</property>
-                                        <property name="margin_top">2</property>
-                                        <property name="margin_bottom">6</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
                                       <packing>
@@ -10014,7 +10018,7 @@ Print a second time before it applies.</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkRadioButton" id="r_xrLocn_below">
+                                      <object class="GtkRadioButton" id="r_xrpos_below">
                                         <property name="label" translatable="yes">Below Footnotes</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
@@ -10024,7 +10028,7 @@ underneath the footnotes (rather than combined
 along with the footnotes as a single paragraph).</property>
                                         <property name="halign">start</property>
                                         <property name="draw_indicator">True</property>
-                                        <property name="group">r_xrLocn_blend</property>
+                                        <property name="group">r_xrpos_normal</property>
                                         <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                         <signal name="clicked" handler="onXrefLocnClicked" swapped="no"/>
                                       </object>
@@ -10034,7 +10038,7 @@ along with the footnotes as a single paragraph).</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkRadioButton" id="r_xrLocn_blend">
+                                      <object class="GtkRadioButton" id="r_xrpos_blend">
                                         <property name="label" translatable="yes">Blend with Footnotes</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
@@ -10051,7 +10055,7 @@ which must be specified above.</property>
                                         <property name="valign">center</property>
                                         <property name="margin_top">6</property>
                                         <property name="draw_indicator">True</property>
-                                        <property name="group">r_xrLocn_below</property>
+                                        <property name="group">r_xrpos_normal</property>
                                         <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                         <signal name="clicked" handler="onXrefLocnClicked" swapped="no"/>
                                       </object>
@@ -10061,8 +10065,8 @@ which must be specified above.</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkRadioButton" id="r_xrLocn_centre">
-                                        <property name="label" translatable="yes">Column of xRefs</property>
+                                      <object class="GtkRadioButton" id="r_xrpos_centre">
+                                        <property name="label" translatable="yes">Column Cross-References</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
@@ -10070,11 +10074,12 @@ which must be specified above.</property>
 when using an external list of references) then it
 may be useful to place them in their own column. 
 
-The cross references will appear in a narrow vertical column similar to a study/reference Bible layout.</property>
+The cross references will appear in a narrow vertical
+column similar to a study/reference Bible layout.</property>
                                         <property name="halign">start</property>
                                         <property name="margin_top">5</property>
                                         <property name="draw_indicator">True</property>
-                                        <property name="group">r_xrLocn_blend</property>
+                                        <property name="group">r_xrpos_normal</property>
                                         <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                         <signal name="clicked" handler="onXrefLocnClicked" swapped="no"/>
                                       </object>
@@ -10140,172 +10145,13 @@ The cross references will appear in a narrow vertical column similar to a study/
                                           </packing>
                                         </child>
                                         <child>
-                                          <object class="GtkSpinButton" id="s_xrIndent">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">True</property>
-                                            <property name="tooltip_text" translatable="yes">This is the (minimum) vertical space/gap (pts) that
-must exist between the main text body and the
-footnote rule.
-
-Note: if you make this value less than the descenders
-of the last lines of text, then the footnotes will push
-down into the footer area. If you see this happening,
-increase this value to trigger an earlier page break to
-solve the problem.</property>
-                                            <property name="halign">start</property>
-                                            <property name="valign">start</property>
-                                            <property name="text">0</property>
-                                            <property name="input_purpose">number</property>
-                                            <property name="adjustment">a_xrRuleIndent</property>
-                                            <property name="climb_rate">5</property>
-                                            <property name="numeric">True</property>
-                                            <property name="update_policy">if-valid</property>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">2</property>
-                                            <property name="top_attach">3</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkSpinButton" id="s_xrLength">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">True</property>
-                                            <property name="tooltip_text" translatable="yes">This is the (minimum) vertical space/gap (pts) that
-must exist between the main text body and the
-footnote rule.
-
-Note: if you make this value less than the descenders
-of the last lines of text, then the footnotes will push
-down into the footer area. If you see this happening,
-increase this value to trigger an earlier page break to
-solve the problem.</property>
-                                            <property name="halign">start</property>
-                                            <property name="valign">start</property>
-                                            <property name="text">100</property>
-                                            <property name="input_purpose">number</property>
-                                            <property name="adjustment">a_xrRuleWidthProportion</property>
-                                            <property name="climb_rate">5</property>
-                                            <property name="numeric">True</property>
-                                            <property name="update_policy">if-valid</property>
-                                            <property name="value">100</property>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">3</property>
-                                            <property name="top_attach">3</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkSpinButton" id="s_xrThick">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">True</property>
-                                            <property name="tooltip_text" translatable="yes">This is the (minimum) vertical space/gap (pts) that
-must exist between the main text body and the
-footnote rule.
-
-Note: if you make this value less than the descenders
-of the last lines of text, then the footnotes will push
-down into the footer area. If you see this happening,
-increase this value to trigger an earlier page break to
-solve the problem.</property>
-                                            <property name="halign">start</property>
-                                            <property name="valign">start</property>
-                                            <property name="text">0.5</property>
-                                            <property name="input_purpose">number</property>
-                                            <property name="adjustment">a_xrRuleThickness</property>
-                                            <property name="climb_rate">0.10000000000000001</property>
-                                            <property name="digits">1</property>
-                                            <property name="numeric">True</property>
-                                            <property name="update_policy">if-valid</property>
-                                            <property name="value">0.5</property>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">4</property>
-                                            <property name="top_attach">3</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkComboBox" id="fcb_xrHorizPosn">
-                                            <property name="width_request">100</property>
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="can_default">True</property>
-                                            <property name="tooltip_text" translatable="yes">Set the most appropriate
-user interface mode as needed.
-Settings will be hidden or shown
-depending on the level set here.</property>
-                                            <property name="halign">start</property>
-                                            <property name="valign">start</property>
-                                            <property name="model">ls_xrruleHorizPosn</property>
-                                            <property name="wrap_width">1</property>
-                                            <property name="active">0</property>
-                                            <property name="entry_text_column">0</property>
-                                            <property name="id_column">1</property>
-                                            <property name="active_id">all</property>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">1</property>
-                                            <property name="top_attach">3</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkLabel">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="halign">start</property>
-                                            <property name="valign">end</property>
-                                            <property name="label" translatable="yes">Indent (mm)</property>
-                                            <attributes>
-                                              <attribute name="style" value="italic"/>
-                                            </attributes>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">2</property>
-                                            <property name="top_attach">2</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkLabel">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="halign">start</property>
-                                            <property name="valign">end</property>
-                                            <property name="margin_top">6</property>
-                                            <property name="label" translatable="yes">Length (% of col)</property>
-                                            <attributes>
-                                              <attribute name="style" value="italic"/>
-                                            </attributes>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">3</property>
-                                            <property name="top_attach">2</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkLabel">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="halign">start</property>
-                                            <property name="valign">end</property>
-                                            <property name="label" translatable="yes">Thickness (pt)</property>
-                                            <attributes>
-                                              <attribute name="style" value="italic"/>
-                                            </attributes>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">4</property>
-                                            <property name="top_attach">2</property>
-                                          </packing>
-                                        </child>
-                                        <child>
                                           <object class="GtkCheckButton" id="c_xrefrule">
                                             <property name="label" translatable="yes">Show Cross-Reference Rule</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
-                                            <property name="tooltip_text" translatable="yes">This is the horizontal rule separating
-the body text from the footnote area.
-The rule covers the entire width even
-if the note is short.</property>
+                                            <property name="tooltip_text" translatable="yes">This is the horizontal rule separating the
+body text from the cross-reference area.</property>
                                             <property name="halign">start</property>
                                             <property name="margin_left">12</property>
                                             <property name="active">True</property>
@@ -10316,22 +10162,6 @@ if the note is short.</property>
                                             <property name="left_attach">0</property>
                                             <property name="top_attach">1</property>
                                             <property name="width">2</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkLabel">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="halign">start</property>
-                                            <property name="valign">end</property>
-                                            <property name="label" translatable="yes">Horizontal Position</property>
-                                            <attributes>
-                                              <attribute name="style" value="italic"/>
-                                            </attributes>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">1</property>
-                                            <property name="top_attach">2</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -10354,38 +10184,11 @@ Text From xRefs:</property>
                                           </packing>
                                         </child>
                                         <child>
-                                          <object class="GtkLabel" id="l_text2NotesSpace4">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="tooltip_text" translatable="yes">The vertical space between the body text and the
-area containing footnotes and cross-references.
-
-If the Footnote Rule is not shown, the vertical
-space will still be calculated as the Space Above
-plus the Space Below (the imaginary) Rule.</property>
-                                            <property name="halign">end</property>
-                                            <property name="label" translatable="yes">Rule Positioning
-and Parameters:</property>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">0</property>
-                                            <property name="top_attach">3</property>
-                                          </packing>
-                                        </child>
-                                        <child>
                                           <object class="GtkSpinButton" id="s_xrAboveSpace">
-                                            <property name="sensitive">False</property>
+                                            <property name="visible">True</property>
                                             <property name="can_focus">True</property>
-                                            <property name="no_show_all">True</property>
-                                            <property name="tooltip_text" translatable="yes">This is the (minimum) vertical space/gap (pts) that
-must exist between the main text body and the
-footnote rule.
-
-Note: if you make this value less than the descenders
-of the last lines of text, then the footnotes will push
-down into the footer area. If you see this happening,
-increase this value to trigger an earlier page break to
-solve the problem.</property>
+                                            <property name="tooltip_text" translatable="yes">The vertical space between the main
+text body and the cross-reference rule.</property>
                                             <property name="halign">start</property>
                                             <property name="text">6.0</property>
                                             <property name="input_purpose">number</property>
@@ -10403,12 +10206,10 @@ solve the problem.</property>
                                         </child>
                                         <child>
                                           <object class="GtkSpinButton" id="s_xrBelowSpace">
-                                            <property name="sensitive">False</property>
+                                            <property name="visible">True</property>
                                             <property name="can_focus">True</property>
-                                            <property name="no_show_all">True</property>
-                                            <property name="tooltip_text" translatable="yes">This is the vertical space/gap (pts) between the 
-footnote rule and the area at the bottom of the 
-page for footnotes and cross-references. </property>
+                                            <property name="tooltip_text" translatable="yes">This is the vertical space/gap (pts) between
+the rule and the cross-references. </property>
                                             <property name="halign">start</property>
                                             <property name="text">2.0</property>
                                             <property name="input_purpose">number</property>
@@ -10429,6 +10230,9 @@ page for footnotes and cross-references. </property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
                                             <property name="valign">end</property>
+                                            <property name="margin_left">28</property>
+                                            <property name="margin_right">4</property>
+                                            <property name="margin_bottom">10</property>
                                           </object>
                                           <packing>
                                             <property name="left_attach">0</property>
@@ -10437,7 +10241,200 @@ page for footnotes and cross-references. </property>
                                           </packing>
                                         </child>
                                         <child>
-                                          <placeholder/>
+                                          <object class="GtkBox">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="hexpand">True</property>
+                                            <child>
+                                              <object class="GtkGrid" id="gr_xrRulePosParms">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">False</property>
+                                                <property name="margin_top">2</property>
+                                                <property name="margin_bottom">6</property>
+                                                <property name="hexpand">True</property>
+                                                <property name="column_spacing">6</property>
+                                                <property name="column_homogeneous">True</property>
+                                                <child>
+                                                  <object class="GtkSpinButton" id="s_xrIndent">
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">True</property>
+                                                    <property name="tooltip_text" translatable="yes">This is the amount to indent the rule.</property>
+                                                    <property name="halign">start</property>
+                                                    <property name="valign">start</property>
+                                                    <property name="text">0</property>
+                                                    <property name="input_purpose">number</property>
+                                                    <property name="adjustment">a_fnRuleIndent</property>
+                                                    <property name="climb_rate">5</property>
+                                                    <property name="numeric">True</property>
+                                                    <property name="update_policy">if-valid</property>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="left_attach">2</property>
+                                                    <property name="top_attach">1</property>
+                                                  </packing>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkSpinButton" id="s_xrLength">
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">True</property>
+                                                    <property name="tooltip_text" translatable="yes">The length of the rule as a percentage
+of the column/page width.</property>
+                                                    <property name="halign">start</property>
+                                                    <property name="valign">start</property>
+                                                    <property name="text">100</property>
+                                                    <property name="input_purpose">number</property>
+                                                    <property name="adjustment">a_fnRuleWidthProportion</property>
+                                                    <property name="climb_rate">5</property>
+                                                    <property name="numeric">True</property>
+                                                    <property name="update_policy">if-valid</property>
+                                                    <property name="value">100</property>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="left_attach">3</property>
+                                                    <property name="top_attach">1</property>
+                                                  </packing>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkSpinButton" id="s_xrThick">
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">True</property>
+                                                    <property name="tooltip_text" translatable="yes">The thickness of the rule.</property>
+                                                    <property name="halign">start</property>
+                                                    <property name="valign">start</property>
+                                                    <property name="text">0.5</property>
+                                                    <property name="input_purpose">number</property>
+                                                    <property name="adjustment">a_fnRuleThickness</property>
+                                                    <property name="climb_rate">0.10000000000000001</property>
+                                                    <property name="digits">1</property>
+                                                    <property name="numeric">True</property>
+                                                    <property name="update_policy">if-valid</property>
+                                                    <property name="value">0.5</property>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="left_attach">4</property>
+                                                    <property name="top_attach">1</property>
+                                                  </packing>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkComboBox" id="fcb_xrHorizPosn">
+                                                    <property name="width_request">100</property>
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">False</property>
+                                                    <property name="can_default">True</property>
+                                                    <property name="halign">start</property>
+                                                    <property name="valign">start</property>
+                                                    <property name="model">ls_fnruleHorizPosn</property>
+                                                    <property name="wrap_width">1</property>
+                                                    <property name="active">0</property>
+                                                    <property name="entry_text_column">0</property>
+                                                    <property name="id_column">1</property>
+                                                    <property name="active_id">all</property>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="left_attach">1</property>
+                                                    <property name="top_attach">1</property>
+                                                  </packing>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkLabel">
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">False</property>
+                                                    <property name="halign">start</property>
+                                                    <property name="valign">end</property>
+                                                    <property name="label" translatable="yes">Indent (mm)</property>
+                                                    <attributes>
+                                                      <attribute name="style" value="italic"/>
+                                                    </attributes>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="left_attach">2</property>
+                                                    <property name="top_attach">0</property>
+                                                  </packing>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkLabel">
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">False</property>
+                                                    <property name="halign">start</property>
+                                                    <property name="valign">end</property>
+                                                    <property name="margin_top">6</property>
+                                                    <property name="label" translatable="yes">Length (% of col)</property>
+                                                    <attributes>
+                                                      <attribute name="style" value="italic"/>
+                                                    </attributes>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="left_attach">3</property>
+                                                    <property name="top_attach">0</property>
+                                                  </packing>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkLabel">
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">False</property>
+                                                    <property name="halign">start</property>
+                                                    <property name="valign">end</property>
+                                                    <property name="label" translatable="yes">Thickness (pt)</property>
+                                                    <attributes>
+                                                      <attribute name="style" value="italic"/>
+                                                    </attributes>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="left_attach">4</property>
+                                                    <property name="top_attach">0</property>
+                                                  </packing>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkLabel">
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">False</property>
+                                                    <property name="halign">start</property>
+                                                    <property name="valign">end</property>
+                                                    <property name="label" translatable="yes">Horizontal Position</property>
+                                                    <attributes>
+                                                      <attribute name="style" value="italic"/>
+                                                    </attributes>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="left_attach">1</property>
+                                                    <property name="top_attach">0</property>
+                                                  </packing>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkLabel">
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">False</property>
+                                                    <property name="tooltip_text" translatable="yes">The vertical space between the body text and the
+area containing footnotes and cross-references.
+
+If the Footnote Rule is not shown, the vertical
+space will still be calculated as the Space Above
+plus the Space Below (the imaginary) Rule.</property>
+                                                    <property name="halign">end</property>
+                                                    <property name="label" translatable="yes">Rule Positioning
+and Parameters:</property>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="left_attach">0</property>
+                                                    <property name="top_attach">1</property>
+                                                  </packing>
+                                                </child>
+                                                <child>
+                                                  <placeholder/>
+                                                </child>
+                                              </object>
+                                              <packing>
+                                                <property name="expand">False</property>
+                                                <property name="fill">True</property>
+                                                <property name="position">0</property>
+                                              </packing>
+                                            </child>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">0</property>
+                                            <property name="top_attach">2</property>
+                                            <property name="width">5</property>
+                                          </packing>
                                         </child>
                                       </object>
                                     </child>
@@ -10459,6 +10456,455 @@ page for footnotes and cross-references. </property>
                                     <property name="position">1</property>
                                   </packing>
                                 </child>
+                                <child>
+                                  <object class="GtkExpander" id="ex_xrListSettings">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <child>
+                                      <object class="GtkGrid" id="tb_extXrefs">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="valign">start</property>
+                                        <property name="margin_left">12</property>
+                                        <property name="margin_right">12</property>
+                                        <property name="margin_top">12</property>
+                                        <property name="margin_bottom">6</property>
+                                        <property name="column_spacing">6</property>
+                                        <child>
+                                          <object class="GtkRadioButton" id="r_xrSource_standard">
+                                            <property name="label" translatable="yes">Standard List</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">False</property>
+                                            <property name="tooltip_text" translatable="yes">The Standard List contains more 
+than 340,000 cross-references.</property>
+                                            <property name="draw_indicator">True</property>
+                                            <property name="group">r_xrSource_custom</property>
+                                            <signal name="clicked" handler="onRadioChanged" swapped="no"/>
+                                            <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">0</property>
+                                            <property name="top_attach">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkRadioButton" id="r_xrSource_custom">
+                                            <property name="label" translatable="yes">Custom List</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">False</property>
+                                            <property name="tooltip_text" translatable="yes">You can use a specially-curated list of cross-references
+in the form of an .xrf file. For example, the UBS-supplied
+cross-references are available in:
+       \My Paratext X Projects\_Cross References
+
+It is also possible to extract cross-references from another
+project (as an .xrf file) to be included in this project.</property>
+                                            <property name="draw_indicator">True</property>
+                                            <property name="group">r_xrSource_standard</property>
+                                            <signal name="clicked" handler="onRadioChanged" swapped="no"/>
+                                            <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">0</property>
+                                            <property name="top_attach">3</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkScale" id="s_xrSourceSize">
+                                            <property name="width_request">260</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="tooltip_text" translatable="yes">You can adjust how many of the cross-references
+get used from the standard list. The slider restricts
+or expands the pool from which references are used
+based on a popularity vote.
+
+If the slider is moved toward the Less side, then 
+fewer xRefs will be included (i.e. only those that
+are the MOST popular). Conversely, if the slider
+is moved toward the More side, then many more
+xRefs will be included (including some of the less
+popular or more obscure references).</property>
+                                            <property name="valign">center</property>
+                                            <property name="adjustment">a_diglotPriFraction1</property>
+                                            <property name="fill_level">5</property>
+                                            <property name="round_digits">0</property>
+                                            <property name="digits">0</property>
+                                            <property name="value_pos">left</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">1</property>
+                                            <property name="top_attach">1</property>
+                                            <property name="width">2</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkButton" id="btn_selectXrFile">
+                                            <property name="label" translatable="yes">Select...</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">True</property>
+                                            <property name="halign">start</property>
+                                            <property name="valign">center</property>
+                                            <property name="margin_top">4</property>
+                                            <property name="margin_bottom">4</property>
+                                            <signal name="clicked" handler="onSelectXrFileClicked" swapped="no"/>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">1</property>
+                                            <property name="top_attach">3</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkLabel" id="l_xrSourceSize">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="tooltip_text" translatable="yes">You can adjust how many of the cross-references
+get used from the standard list. The slider restricts
+or expands the pool from which references are used
+based on a popularity vote.
+
+If the slider is moved toward the Less side, then 
+fewer xRefs will be included (i.e. only those that
+are the MOST popular). Conversely, if the slider
+is moved toward the More side, then many more
+xRefs will be included (including some of the less
+popular and more spurious references).</property>
+                                            <property name="halign">end</property>
+                                            <property name="label" translatable="yes">How Many
+to Include:</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">0</property>
+                                            <property name="top_attach">1</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkLabel" id="l_xrSourceLess">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="halign">start</property>
+                                            <property name="valign">end</property>
+                                            <property name="margin_left">18</property>
+                                            <property name="label" translatable="yes">Less</property>
+                                            <attributes>
+                                              <attribute name="style" value="italic"/>
+                                            </attributes>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">1</property>
+                                            <property name="top_attach">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkLabel" id="l_xrSourceMore">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="halign">end</property>
+                                            <property name="valign">end</property>
+                                            <property name="margin_right">18</property>
+                                            <property name="label" translatable="yes">More</property>
+                                            <attributes>
+                                              <attribute name="style" value="italic"/>
+                                            </attributes>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">2</property>
+                                            <property name="top_attach">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkSeparator">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="valign">center</property>
+                                            <property name="margin_top">2</property>
+                                            <property name="margin_bottom">4</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">0</property>
+                                            <property name="top_attach">4</property>
+                                            <property name="width">3</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkBox">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="spacing">3</property>
+                                            <child>
+                                              <object class="GtkLabel">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">False</property>
+                                                <property name="tooltip_text" translatable="yes">The Standard List of cross-references contains
+more than 340,000 references. You may want
+to only include target references that are
+currently available to your readers by 
+selecting a subset of Biblical books.
+
+So for example, if there is no Old Testament 
+yet, you may want to only include target 
+cross-references to NT Books.
+
+If you select Books in "This Publication", 
+then only cross-references targetting 
+books in the list of Multiple Books on 
+the Basic tab will be included.</property>
+                                                <property name="halign">start</property>
+                                                <property name="label" translatable="yes">Include xRefs
+for Books in:</property>
+                                              </object>
+                                              <packing>
+                                                <property name="expand">False</property>
+                                                <property name="fill">True</property>
+                                                <property name="position">0</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkComboBox" id="fcb_filterXrefs">
+                                                <property name="width_request">120</property>
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">False</property>
+                                                <property name="can_default">True</property>
+                                                <property name="tooltip_text" translatable="yes">The Standard List of cross-references contains
+more than 300,000 references. You may want
+to only include target references that are
+currently available to your readers by 
+selecting a subset of Biblical books.
+
+So for example, if there is no Old Testament 
+yet, you may want to only include target 
+cross-references to NT Books.
+
+If you select Books in "This Publication", then only
+cross-references targetting books in the list of Multiple
+Books on the Basic tab will be included.</property>
+                                                <property name="halign">start</property>
+                                                <property name="margin_top">4</property>
+                                                <property name="margin_bottom">4</property>
+                                                <property name="model">ls_filterXrefs</property>
+                                                <property name="wrap_width">1</property>
+                                                <property name="active">1</property>
+                                                <property name="entry_text_column">0</property>
+                                                <property name="id_column">1</property>
+                                                <property name="active_id">all</property>
+                                              </object>
+                                              <packing>
+                                                <property name="expand">False</property>
+                                                <property name="fill">True</property>
+                                                <property name="position">1</property>
+                                              </packing>
+                                            </child>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">0</property>
+                                            <property name="top_attach">5</property>
+                                            <property name="width">3</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkRadioButton" id="r_xrSource_bibleWorks">
+                                            <property name="label" translatable="yes">"The Works" from BibleWorks™</property>
+                                            <property name="visible">True</property>
+                                            <property name="sensitive">False</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">False</property>
+                                            <property name="tooltip_text" translatable="yes">This BibleWorks list contains carefully
+selected cross-references for both NT and OT.</property>
+                                            <property name="halign">start</property>
+                                            <property name="draw_indicator">True</property>
+                                            <property name="group">r_xrSource_custom</property>
+                                            <signal name="clicked" handler="onRadioChanged" swapped="no"/>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">0</property>
+                                            <property name="top_attach">2</property>
+                                            <property name="width">3</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkFrame" id="fr_colXrefs">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="valign">end</property>
+                                            <property name="margin_left">34</property>
+                                            <property name="margin_top">6</property>
+                                            <property name="label_xalign">0.10000000149011612</property>
+                                            <child>
+                                              <object class="GtkAlignment">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">False</property>
+                                                <property name="left_padding">12</property>
+                                                <child>
+                                                  <object class="GtkGrid">
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">False</property>
+                                                    <property name="margin_left">12</property>
+                                                    <property name="margin_right">12</property>
+                                                    <property name="margin_top">6</property>
+                                                    <property name="margin_bottom">10</property>
+                                                    <property name="row_spacing">12</property>
+                                                    <property name="column_spacing">5</property>
+                                                    <child>
+                                                      <object class="GtkSpinButton" id="s_centreColWidth">
+                                                        <property name="visible">True</property>
+                                                        <property name="can_focus">True</property>
+                                                        <property name="tooltip_text" translatable="yes">This sets the width of the centre column in points.
+Note that 72pts is 1 inch, and increasing the size
+here will decrease the amount of space available
+for the 2 columns of scripture text.
+
+Consider using a larger page size if you want to
+use Centre Column xRefs.
+
+If this centre column isn't wide enough to fit
+the references, then you should also consider
+reducing the size of the \x font (to approx 6pt).</property>
+                                                        <property name="halign">start</property>
+                                                        <property name="width_chars">4</property>
+                                                        <property name="text">60</property>
+                                                        <property name="caps_lock_warning">False</property>
+                                                        <property name="progress_pulse_step">0</property>
+                                                        <property name="placeholder_text">0.0</property>
+                                                        <property name="input_purpose">number</property>
+                                                        <property name="adjustment">a_centreColWidth</property>
+                                                        <property name="climb_rate">5</property>
+                                                        <property name="numeric">True</property>
+                                                        <property name="update_policy">if-valid</property>
+                                                        <property name="value">60</property>
+                                                      </object>
+                                                      <packing>
+                                                        <property name="left_attach">1</property>
+                                                        <property name="top_attach">1</property>
+                                                      </packing>
+                                                    </child>
+                                                    <child>
+                                                      <object class="GtkLabel" id="l_xrColWid">
+                                                        <property name="visible">True</property>
+                                                        <property name="can_focus">False</property>
+                                                        <property name="halign">end</property>
+                                                        <property name="label" translatable="yes">Column Width (pts):</property>
+                                                      </object>
+                                                      <packing>
+                                                        <property name="left_attach">0</property>
+                                                        <property name="top_attach">1</property>
+                                                      </packing>
+                                                    </child>
+                                                    <child>
+                                                      <object class="GtkLabel" id="l_xrColSpace">
+                                                        <property name="visible">True</property>
+                                                        <property name="can_focus">False</property>
+                                                        <property name="halign">end</property>
+                                                        <property name="label" translatable="yes">Gutter Width (pts):</property>
+                                                      </object>
+                                                      <packing>
+                                                        <property name="left_attach">0</property>
+                                                        <property name="top_attach">2</property>
+                                                      </packing>
+                                                    </child>
+                                                    <child>
+                                                      <object class="GtkSpinButton" id="s_xrGutterWidth">
+                                                        <property name="visible">True</property>
+                                                        <property name="can_focus">True</property>
+                                                        <property name="tooltip_text" translatable="yes">This sets the space between the main body
+text and the column of cross-references.</property>
+                                                        <property name="halign">start</property>
+                                                        <property name="width_chars">4</property>
+                                                        <property name="text">2.0</property>
+                                                        <property name="caps_lock_warning">False</property>
+                                                        <property name="progress_pulse_step">0</property>
+                                                        <property name="placeholder_text">0.0</property>
+                                                        <property name="input_purpose">number</property>
+                                                        <property name="adjustment">xrGutterWidth</property>
+                                                        <property name="climb_rate">0.5</property>
+                                                        <property name="digits">1</property>
+                                                        <property name="numeric">True</property>
+                                                        <property name="update_policy">if-valid</property>
+                                                        <property name="value">2</property>
+                                                      </object>
+                                                      <packing>
+                                                        <property name="left_attach">1</property>
+                                                        <property name="top_attach">2</property>
+                                                      </packing>
+                                                    </child>
+                                                    <child>
+                                                      <object class="GtkLabel" id="l_colXRside">
+                                                        <property name="visible">True</property>
+                                                        <property name="can_focus">False</property>
+                                                        <property name="halign">end</property>
+                                                        <property name="label" translatable="yes">Side of page:</property>
+                                                      </object>
+                                                      <packing>
+                                                        <property name="left_attach">0</property>
+                                                        <property name="top_attach">0</property>
+                                                      </packing>
+                                                    </child>
+                                                    <child>
+                                                      <object class="GtkComboBox" id="fcb_colXRside">
+                                                        <property name="width_request">116</property>
+                                                        <property name="visible">True</property>
+                                                        <property name="can_focus">False</property>
+                                                        <property name="can_default">True</property>
+                                                        <property name="tooltip_text" translatable="yes">Select where the column of cross-references
+should be located on the page. Note that the
+2-column layout insists on the cross-references
+being positioned between the columns of text.</property>
+                                                        <property name="halign">start</property>
+                                                        <property name="model">ls_colXRside</property>
+                                                        <property name="wrap_width">1</property>
+                                                        <property name="active">1</property>
+                                                        <property name="entry_text_column">0</property>
+                                                        <property name="id_column">1</property>
+                                                        <property name="active_id">3</property>
+                                                      </object>
+                                                      <packing>
+                                                        <property name="left_attach">1</property>
+                                                        <property name="top_attach">0</property>
+                                                      </packing>
+                                                    </child>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                            </child>
+                                            <child type="label">
+                                              <object class="GtkLabel" id="l_colXrefs">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">False</property>
+                                                <property name="label" translatable="yes">Column Cross-References</property>
+                                              </object>
+                                            </child>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">3</property>
+                                            <property name="top_attach">0</property>
+                                            <property name="height">6</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                      </object>
+                                    </child>
+                                    <child type="label">
+                                      <object class="GtkLabel" id="lb_xrRuleSettings1">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="label" translatable="yes">External Cross-Reference Settings</property>
+                                        <attributes>
+                                          <attribute name="weight" value="bold"/>
+                                          <attribute name="foreground" value="#72729f9ecfcf"/>
+                                        </attributes>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">2</property>
+                                  </packing>
+                                </child>
                               </object>
                               <packing>
                                 <property name="position">2</property>
@@ -10476,440 +10922,21 @@ page for footnotes and cross-references. </property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkGrid" id="tb_extXrefs">
+                              <object class="GtkLabel" id="l_extXrefsComingSoon">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="valign">start</property>
-                                <property name="margin_left">12</property>
-                                <property name="margin_right">12</property>
-                                <property name="margin_top">6</property>
-                                <property name="margin_bottom">6</property>
-                                <property name="row_spacing">6</property>
-                                <property name="column_spacing">6</property>
-                                <child>
-                                  <object class="GtkRadioButton" id="r_xrSource_standard">
-                                    <property name="label" translatable="yes">Standard List</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">The Standard List contains more 
-than 340,000 cross-references.</property>
-                                    <property name="draw_indicator">True</property>
-                                    <property name="group">r_xrSource_custom</property>
-                                    <signal name="clicked" handler="onRadioChanged" swapped="no"/>
-                                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">0</property>
-                                    <property name="top_attach">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkRadioButton" id="r_xrSource_custom">
-                                    <property name="label" translatable="yes">Custom List</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">You can use a specially-curated list of cross-references
-in the form of an .xrf file. For example, the UBS-supplied
-cross-references are available in:
-       \My Paratext X Projects\_Cross References
-
-It is also possible to extract cross-references from another
-project (as an .xrf file) to be included in this project.</property>
-                                    <property name="draw_indicator">True</property>
-                                    <property name="group">r_xrSource_standard</property>
-                                    <signal name="clicked" handler="onRadioChanged" swapped="no"/>
-                                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">0</property>
-                                    <property name="top_attach">3</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkScale" id="s_xrSourceSize">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="tooltip_text" translatable="yes">You can adjust how many of the cross-references
-get used from the standard list. The slider restricts
-or expands the pool from which references are used
-based on a popularity vote.
-
-If the slider is moved toward the Less side, then 
-fewer xRefs will be included (i.e. only those that
-are the MOST popular). Conversely, if the slider
-is moved toward the More side, then many more
-xRefs will be included (including some of the less
-popular or more obscure references).</property>
-                                    <property name="valign">center</property>
-                                    <property name="adjustment">a_diglotPriFraction1</property>
-                                    <property name="fill_level">5</property>
-                                    <property name="round_digits">0</property>
-                                    <property name="digits">0</property>
-                                    <property name="value_pos">left</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">1</property>
-                                    <property name="top_attach">1</property>
-                                    <property name="width">2</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkButton" id="btn_selectXrFile">
-                                    <property name="label" translatable="yes">Select...</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">True</property>
-                                    <property name="halign">start</property>
-                                    <property name="valign">center</property>
-                                    <property name="margin_top">4</property>
-                                    <property name="margin_bottom">4</property>
-                                    <signal name="clicked" handler="onSelectXrFileClicked" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">1</property>
-                                    <property name="top_attach">3</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkLabel" id="l_xrSourceSize">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="tooltip_text" translatable="yes">You can adjust how many of the cross-references
-get used from the standard list. The slider restricts
-or expands the pool from which references are used
-based on a popularity vote.
-
-If the slider is moved toward the Less side, then 
-fewer xRefs will be included (i.e. only those that
-are the MOST popular). Conversely, if the slider
-is moved toward the More side, then many more
-xRefs will be included (including some of the less
-popular and more spurious references).</property>
-                                    <property name="halign">end</property>
-                                    <property name="label" translatable="yes">How Many
-to Include:</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">0</property>
-                                    <property name="top_attach">1</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkLabel" id="l_xrSourceLess">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="halign">start</property>
-                                    <property name="valign">end</property>
-                                    <property name="margin_left">12</property>
-                                    <property name="label" translatable="yes">Less</property>
-                                    <attributes>
-                                      <attribute name="style" value="italic"/>
-                                    </attributes>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">1</property>
-                                    <property name="top_attach">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkLabel" id="l_xrSourceMore">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="halign">end</property>
-                                    <property name="valign">end</property>
-                                    <property name="margin_right">12</property>
-                                    <property name="label" translatable="yes">More</property>
-                                    <attributes>
-                                      <attribute name="style" value="italic"/>
-                                    </attributes>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">2</property>
-                                    <property name="top_attach">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkSeparator">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="valign">center</property>
-                                    <property name="margin_top">2</property>
-                                    <property name="margin_bottom">4</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">0</property>
-                                    <property name="top_attach">4</property>
-                                    <property name="width">3</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkBox">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="spacing">3</property>
-                                    <child>
-                                      <object class="GtkLabel">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="tooltip_text" translatable="yes">The Standard List of cross-references contains
-more than 340,000 references. You may want
-to only include target references that are
-currently available to your readers by 
-selecting a subset of Biblical books.
-
-So for example, if there is no Old Testament 
-yet, you may want to only include target 
-cross-references to NT Books.
-
-If you select Books in "This Publication", 
-then only cross-references targetting 
-books in the list of Multiple Books on 
-the Basic tab will be included.</property>
-                                        <property name="halign">start</property>
-                                        <property name="label" translatable="yes">Include xRefs
-for Books in:</property>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkComboBox" id="fcb_filterXrefs">
-                                        <property name="width_request">120</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="can_default">True</property>
-                                        <property name="tooltip_text" translatable="yes">The Standard List of cross-references contains
-more than 300,000 references. You may want
-to only include target references that are
-currently available to your readers by 
-selecting a subset of Biblical books.
-
-So for example, if there is no Old Testament 
-yet, you may want to only include target 
-cross-references to NT Books.
-
-If you select Books in "This Publication", then only
-cross-references targetting books in the list of Multiple
-Books on the Basic tab will be included.</property>
-                                        <property name="halign">start</property>
-                                        <property name="margin_top">4</property>
-                                        <property name="margin_bottom">4</property>
-                                        <property name="model">ls_filterXrefs</property>
-                                        <property name="wrap_width">1</property>
-                                        <property name="active">1</property>
-                                        <property name="entry_text_column">0</property>
-                                        <property name="id_column">1</property>
-                                        <property name="active_id">all</property>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">1</property>
-                                      </packing>
-                                    </child>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">0</property>
-                                    <property name="top_attach">5</property>
-                                    <property name="width">3</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkRadioButton" id="r_xrSource_bibleWorks">
-                                    <property name="label" translatable="yes">"The Works" from BibleWorks™</property>
-                                    <property name="visible">True</property>
-                                    <property name="sensitive">False</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">This BibleWorks list contains carefully
-selected cross-references for both NT and OT.</property>
-                                    <property name="halign">start</property>
-                                    <property name="draw_indicator">True</property>
-                                    <property name="group">r_xrSource_custom</property>
-                                    <signal name="clicked" handler="onRadioChanged" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">0</property>
-                                    <property name="top_attach">2</property>
-                                    <property name="width">3</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkFrame" id="fr_colXrefs">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="valign">start</property>
-                                    <property name="margin_left">24</property>
-                                    <property name="margin_top">6</property>
-                                    <property name="label_xalign">0.10000000149011612</property>
-                                    <child>
-                                      <object class="GtkAlignment">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="left_padding">12</property>
-                                        <child>
-                                          <object class="GtkGrid">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="margin_right">6</property>
-                                            <property name="margin_top">3</property>
-                                            <property name="margin_bottom">6</property>
-                                            <property name="row_spacing">6</property>
-                                            <property name="column_spacing">5</property>
-                                            <child>
-                                              <object class="GtkSpinButton" id="s_centreColWidth">
-                                                <property name="visible">True</property>
-                                                <property name="can_focus">True</property>
-                                                <property name="tooltip_text" translatable="yes">This sets the width of the centre column in points.
-Note that 72pts is 1 inch, and increasing the size
-here will decrease the amount of space available
-for the 2 columns of scripture text.
-
-Consider using a larger page size if you want to
-use Centre Column xRefs.
-
-If this centre column isn't wide enough to fit
-the references, then you should also consider
-reducing the size of the \x font (to approx 6pt).</property>
-                                                <property name="halign">start</property>
-                                                <property name="width_chars">4</property>
-                                                <property name="text">60</property>
-                                                <property name="caps_lock_warning">False</property>
-                                                <property name="progress_pulse_step">0</property>
-                                                <property name="placeholder_text">0.0</property>
-                                                <property name="input_purpose">number</property>
-                                                <property name="adjustment">a_centreColWidth</property>
-                                                <property name="climb_rate">5</property>
-                                                <property name="numeric">True</property>
-                                                <property name="update_policy">if-valid</property>
-                                                <property name="value">60</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left_attach">1</property>
-                                                <property name="top_attach">1</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel" id="l_xrColWid">
-                                                <property name="visible">True</property>
-                                                <property name="can_focus">False</property>
-                                                <property name="halign">end</property>
-                                                <property name="label" translatable="yes">Column Width (pts):</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left_attach">0</property>
-                                                <property name="top_attach">1</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel" id="l_xrColSpace">
-                                                <property name="visible">True</property>
-                                                <property name="can_focus">False</property>
-                                                <property name="halign">end</property>
-                                                <property name="label" translatable="yes">Gutter Width (pts):</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left_attach">0</property>
-                                                <property name="top_attach">2</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkSpinButton" id="s_xrGutterWidth">
-                                                <property name="visible">True</property>
-                                                <property name="can_focus">True</property>
-                                                <property name="tooltip_text" translatable="yes">This sets the space between the main body
-text and the column of cross-references.</property>
-                                                <property name="halign">start</property>
-                                                <property name="width_chars">4</property>
-                                                <property name="text">2.0</property>
-                                                <property name="caps_lock_warning">False</property>
-                                                <property name="progress_pulse_step">0</property>
-                                                <property name="placeholder_text">0.0</property>
-                                                <property name="input_purpose">number</property>
-                                                <property name="adjustment">xrGutterWidth</property>
-                                                <property name="climb_rate">0.5</property>
-                                                <property name="digits">1</property>
-                                                <property name="numeric">True</property>
-                                                <property name="update_policy">if-valid</property>
-                                                <property name="value">2</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left_attach">1</property>
-                                                <property name="top_attach">2</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel" id="l_colXRside">
-                                                <property name="visible">True</property>
-                                                <property name="can_focus">False</property>
-                                                <property name="halign">end</property>
-                                                <property name="label" translatable="yes">Side of page:</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left_attach">0</property>
-                                                <property name="top_attach">0</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkComboBox" id="fcb_colXRside">
-                                                <property name="width_request">116</property>
-                                                <property name="visible">True</property>
-                                                <property name="can_focus">False</property>
-                                                <property name="can_default">True</property>
-                                                <property name="tooltip_text" translatable="yes">Select where the column of cross-references
-should be located on the page. Note that the
-2-column layout insists on the cross-references
-being positioned between the columns of text.</property>
-                                                <property name="halign">start</property>
-                                                <property name="model">ls_colXRside</property>
-                                                <property name="wrap_width">1</property>
-                                                <property name="active">1</property>
-                                                <property name="entry_text_column">0</property>
-                                                <property name="id_column">1</property>
-                                                <property name="active_id">3</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left_attach">1</property>
-                                                <property name="top_attach">0</property>
-                                              </packing>
-                                            </child>
-                                          </object>
-                                        </child>
-                                      </object>
-                                    </child>
-                                    <child type="label">
-                                      <object class="GtkLabel">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="label" translatable="yes">Column Cross-References</property>
-                                      </object>
-                                    </child>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">3</property>
-                                    <property name="top_attach">0</property>
-                                    <property name="height">6</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
+                                <property name="label" translatable="yes">Coming one day, but don't hold your breath!</property>
                               </object>
                               <packing>
                                 <property name="position">3</property>
-                                <property name="tab_fill">False</property>
                               </packing>
                             </child>
                             <child type="tab">
                               <object class="GtkLabel" id="lb_extXrefs">
-                                <property name="visible">True</property>
+                                <property name="sensitive">False</property>
                                 <property name="can_focus">False</property>
-                                <property name="label" translatable="yes">External Cross-References</property>
+                                <property name="no_show_all">True</property>
+                                <property name="label" translatable="yes">Study Bible Notes</property>
                               </object>
                               <packing>
                                 <property name="position">3</property>
@@ -10919,7 +10946,7 @@ being positioned between the columns of text.</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
-                            <property name="fill">True</property>
+                            <property name="fill">False</property>
                             <property name="position">0</property>
                           </packing>
                         </child>
