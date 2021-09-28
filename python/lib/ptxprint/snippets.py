@@ -14,6 +14,7 @@ class PDFx1aOutput(Snippet):
 
     def generateTex(self, model, diglotSide=""):
         res = r"""
+\bgroup \catcode`\^^M=10
 \special{{pdf:docinfo<<
 /Title({document/title})%
 /Subject({document/subject})%
@@ -23,7 +24,7 @@ class PDFx1aOutput(Snippet):
 /ModDate(D:{pdfdate_})%
 /Producer(XeTeX)%
 /Trapped /False
-{_gtspdfx}>> }} 
+{_gtspdfx}>> }}
 \special{{pdf:fstream @OBJCVR ({/iccfpath})}}
 \special{{pdf:put @OBJCVR <</N {_iccnumcols}>>}}
 %\special{{pdf:close @OBJCVR}}
@@ -156,8 +157,9 @@ class PDFx1aOutput(Snippet):
 /DestOutputProfile @OBJCVR
 /RegistryName (http://www.color.og)
 >> ]
-/MarkInfo <</Marked false>>
+/MarkInfo <</Marked /False{rtlview}>>
 >>}}
+\egroup
 \catcode`\#=6
 """
         extras = {'_gtspdfx': '', '_gtspdfaid': ''}
@@ -173,6 +175,7 @@ class PDFx1aOutput(Snippet):
         else:
             extras['_iccnumcols'] = "4"
         extras['_gtspdfaid'] = "      <pdfaid:part>1</pdfaid:part>\n      <pdfaid:conformance>B</pdfaid:conformance>\n"
+        extras['rtlview'] = " /ViewerPreferences <</Direction /R2L>>" if model['document/ifrtl'] == "true" else ""
         if model['snippets/pdfoutput'] == "PDF/A-1":
             res += "\XeTeXgenerateactualtext=1\n"
         return res.format(**{**model.dict, **extras}) + "\n"
