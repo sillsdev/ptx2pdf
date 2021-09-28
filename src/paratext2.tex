@@ -389,8 +389,8 @@
   \dimen0=\FootNoteRuleWidth\n@tewidth
   \toks0=\everypar\everypar={}\parskip=0pt\baselineskip=0pt\parindent=0pt\let\par=\endgraf\parfillskip=0pt%
 %  \noindent\hbox{\noindent\kern\columnshift\vbox{\hrule width \dimen0}}\par
-  \hbox{\FootNoteRuleLeftIndent\vrule height \FootNoteRuleThickness width \dimen0
-        \FootNoteRuleRightIndent}%
+  \hbox to \ifColNotes\colwidth\else\textwidth\fi {\FootNoteRuleLeftIndent
+    \vrule height \FootNoteRuleThickness width \dimen0 \FootNoteRuleRightIndent}%
   \kern-\FootNoteRuleThickness % the \hrule is .4pt high
 \everypar=\toks0}
 
