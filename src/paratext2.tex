@@ -354,9 +354,9 @@
   % if the noteclass has content to output ...
   \ifvoid\th@cl@ss\TRACE{no note}\else%
     \iff@rstnote\ifvoid\verybottomins\vfill\fi\fi % ignore depth of body text; fill space
-    \kern\AboveNoteSpace % output above note class space
+    \kern\AboveFootNoteSpace % output above note class space
     \iff@rstnote\kern-\dp\pstr@t \footnoterule\global\f@rstnotefalse
-      \vskip\BelowNoteRuleSpace minus \BelowNoteRuleSpace\kern0pt
+      \vskip\BelowFootNoteRuleSpace minus \BelowFootNoteRuleSpace\kern0pt
     \fi % output rule before first note
     \hbox{\vbox{\unvbox\th@cl@ss}}\fi}% output notes
 
@@ -368,46 +368,56 @@
   % if the noteclass has content to output ...
   \ifvoid\th@cl@ss\else
     \iff@rstnote\ifvoid\verybottomins\vfill\fi %\kern-\lastd@pth\vfil % ignore depth of body text; fill space
-      \dimen5=\AboveNoteSpace\advance\dimen5 by -\BelowNoteRuleSpace\advance\dimen5 by -0.2pt
-      \vskip\ifdim\dimen5>0pt \AboveNoteSpace minus \dimen5\else\AboveNoteSpace\fi
+      \dimen5=\AboveFootNoteSpace\advance\dimen5 by -\BelowFootNoteRuleSpace\advance\dimen5 by -0.2pt
+      \vskip\ifdim\dimen5>0pt \AboveFootNoteSpace minus \dimen5\else\AboveFootNoteSpace\fi
       %\kern-\dp\pstr@t
       {\footnoterule}\global\f@rstnotefalse % output rule before first note
-      \vskip\BelowNoteRuleSpace minus \BelowNoteRuleSpace\kern0pt
+      \vskip\BelowFootNoteRuleSpace minus \BelowFootNoteRuleSpace\kern0pt
     \else\kern\InterNoteSpace\fi
     {\maken@tepara{\th@cl@ss}{#1}}%
   \fi}
 
-\def\BelowNoteRuleSpace{0.5\AboveNoteSpace}
+\def\BelowFootNoteRuleSpace{0.5\AboveFootNoteSpace}
+\def\FootNoteRuleThickness{0.4pt}
+\def\FootNoteRuleWidth{1}
+\def\FootNoteRuleLeftIndent{0pt}
+\def\FootNoteRuleRightIndent{0pt}
 \newif\iff@rstnote
 \f@rstnotetrue
-\def\footnoterule{\kern-\BelowNoteRuleSpace
+\def\footnoterule{\kern-\BelowFootNoteRuleSpace
   \setn@tewidth{-}%
-  \dimen0=\n@tewidth
+  \dimen0=\FootNoteRuleWidth\n@tewidth
   \toks0=\everypar\everypar={}\parskip=0pt\baselineskip=0pt\parindent=0pt\let\par=\endgraf\parfillskip=0pt%
 %  \noindent\hbox{\noindent\kern\columnshift\vbox{\hrule width \dimen0}}\par
-  \hbox{\vrule height 0.4pt width \dimen0}\kern-.4pt % the \hrule is .4pt high
+  \hbox{\FootNoteRuleLeftIndent\vrule height \FootNoteRuleThickness width \dimen0
+        \FootNoteRuleRightIndent}%
+  \kern-\FootNoteRuleThickness % the \hrule is .4pt high
 \everypar=\toks0}
 
 \def\EndNoteRuleWidth{0.5}
 \def\EndNoteRuleThickness{0.4pt}
-\def\AboveEndNoteRule{14pt}
-\def\BelowEndNoteRule{10pt}
+\def\EndNoteRuleLeftIndent{0pt}
+\def\EndNoteRuleRightIndent{0pt}
+\newdimen\AboveEndNoteSpace \AboveEndNoteSpace=14pt
+\def\BelowEndNoteRuleSpace{10pt}
 
 \def\endn@terule{\relax
   \@ndnotesfoundfalse
   \let\\=\ch@ckendnotes\the\endn@teclasses
   \if@ndnotesfound\zendnoterule\fi
 }
-\def\EndNoteSeparator{\hbox to \hsize{\hss\vrule width \EndNoteRuleWidth\hsize  height \EndNoteRuleThickness\hss}%
-      \kern-\EndNoteRuleThickness %
+\def\EndNoteSeparator{\hbox to \hsize{\EndNoteRuleLeftIndent
+    \vrule width \EndNoteRuleWidth\hsize  height \EndNoteRuleThickness
+    \EndNoteRuleRightIndent}%
+  \kern-\EndNoteRuleThickness %
 } 
 \def\zendnoterule{{%
     \toks0=\everypar\everypar={}\parskip=0pt\parindent=0pt\let\par=\endgraf\parfillskip=0pt%
 %  \noindent\hbox{\noindent\kern\columnshift\vbox{\hrule width \dimen0}}\par
     \dimen0=\prevdepth\ifdim \dimen0>0pt\kern-\dimen0\fi
-    \vbox{\kern \AboveEndNoteRule
+    \vbox{\kern \AboveEndNoteSpace
       \EndNoteSeparator
-      \kern \BelowEndNoteRule}%
+      \kern \BelowEndNoteRuleSpace}%
     \everypar=\toks0 
   }%
   \penalty 5000 %Not a good place to break. Also protects from unboxing
@@ -823,7 +833,7 @@
   % Diglot prefers to get things closer 1st time round...
   %\global\count\th@cl@ss=\ifp@ranotes \ifdiglot 500\else 0\fi \else 0\fi %\count255 \fi
   \global\count\th@cl@ss=\ifdiglot 100\else 0\fi
-  \global\skip\th@cl@ss=0pt} %\AboveNoteSpace }
+  \global\skip\th@cl@ss=0pt} %\AboveFootNoteSpace }
 %-c_setnotecount
 
 %+c_resetvsize
@@ -971,10 +981,10 @@
     \global\advance\availht by -\ht0
     \global\advance\availht by -\dp0
     \iff@rstnote
-      \advance\availht by -\AboveNoteSpace
-      \advance\availht by -\BelowNoteRuleSpace
+      \advance\availht by -\AboveFootNoteSpace
+      \advance\availht by -\BelowFootNoteRuleSpace
       \f@rstnotefalse
-      \trace{f}{ParaNotes[#1] cost \the\ht0+\the\dp0 + \the\AboveNoteSpace + \BelowNoteRuleSpace}%
+      \trace{f}{ParaNotes[#1] cost \the\ht0+\the\dp0 + \the\AboveFootNoteSpace + \BelowFootNoteRuleSpace}%
     \else
       \advance\availht by -\InterNoteSpace
       \trace{f}{ParaNotes[#1] cost \the\ht0+\the\dp0 + \the\InterNoteSpace}%
@@ -1009,7 +1019,7 @@
   \x@\each@col\diglot@list\E % max@boxsz sets dimen1 to max ht+dp
   \ifdim\dimen1>0pt
     \global\advance\availht by -\dimen1
-    \iff@rstnote\global\advance\availht by -\AboveNoteSpace \f@rstnotefalse
+    \iff@rstnote\global\advance\availht by -\AboveFootNoteSpace \f@rstnotefalse
     \else \global\advance\availht by -\InterNoteSpace\fi
     \trace{n}{reduced by=\the\dimen1}%
   \fi\egroup}
@@ -1023,14 +1033,14 @@
     \f@rstnotefalse
     \advance\availht by -\ht\th@cl@ss
     \advance\availht by -\dp\th@cl@ss
-    \iff@rstnote\advance\availht by -\AboveNoteSpace
-      \trace{f}{Notes[#1] cost \the\ht\th@cl@ss+\the\dp\th@cl@ss + \dp\pstr@t + 2*\the\AboveNoteSpace}%
+    \iff@rstnote\advance\availht by -\AboveFootNoteSpace
+      \trace{f}{Notes[#1] cost \the\ht\th@cl@ss+\the\dp\th@cl@ss + \dp\pstr@t + 2*\the\AboveFootNoteSpace}%
      \advance\availht -\dp\pstr@t \f@rstnotefalse % ensure we don't impinge on the depth
     \else
       \advance\availht by -\InterNoteSpace
-      \trace{f}{Notes[#1] cost \the\ht\th@cl@ss0+\the\dp\th@cl@ss + \the\InterNoteSpace + \the\AboveNoteSpace}%
+      \trace{f}{Notes[#1] cost \the\ht\th@cl@ss0+\the\dp\th@cl@ss + \the\InterNoteSpace + \the\AboveFootNoteSpace}%
     \fi
-    \advance\availht by -\AboveNoteSpace
+    \advance\availht by -\AboveFootNoteSpace
   \fi}
 %-c_reduceavailhtsep
 
@@ -1041,7 +1051,7 @@
   \x@\each@col\diglot@list\E % max@boxsz sets dimen1 to max ht+dp
   \ifdim\dimen1>0pt 
     \advance\availht by -\dimen1
-    \iff@rstnote\advance\availht by -\AboveNoteSpace \f@rstnotefalse
+    \iff@rstnote\advance\availht by -\AboveFootNoteSpace \f@rstnotefalse
       \advance\availht -\dp\pstr@t  % ensure we don't impinge on the depth
     \else \advance\availht by -\InterNoteSpace\fi
   \fi}
@@ -1376,10 +1386,10 @@
       \ifdim\ht2>0pt\unvbox2\ifdim\ht5>0pt\setbox0\lastbox\dimen0=\dp0\box0\vskip\dimen0\vskip\InterNoteSpace \unvbox5\fi
       \else\ifdim\ht5>0pt
           \ifvoid\verybottomins\vfill\fi %\kern-\lastd@pth\vfil % ignore depth of body text; fill space
-          \dimen5=\AboveNoteSpace\advance\dimen5 by -\BelowNoteRuleSpace\advance\dimen5 by -0.2pt
-          \vskip\ifdim\dimen5>0pt \AboveNoteSpace minus \dimen5\else\AboveNoteSpace\fi
+          \dimen5=\AboveFootNoteSpace\advance\dimen5 by -\BelowFootNoteRuleSpace\advance\dimen5 by -0.2pt
+          \vskip\ifdim\dimen5>0pt \AboveFootNoteSpace minus \dimen5\else\AboveFootNoteSpace\fi
           {\footnoterule}\prevdepth=-10000pt
-          \vskip\BelowNoteRuleSpace minus \BelowNoteRuleSpace\kern0pt
+          \vskip\BelowFootNoteRuleSpace minus \BelowFootNoteRuleSpace\kern0pt
           \unvbox5\setbox0\lastbox\dimen1=\ht0\dimen0=\dp0\box0\ifdim\dimen1>0pt\kern-\dimen0\fi\vskip\bmg@p
       \fi\fi}%
       \trace{o}{coln@tebox out=\the\ht\coln@tebox+\the\dp\coln@tebox}%

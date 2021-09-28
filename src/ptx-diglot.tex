@@ -263,7 +263,7 @@
    \f@rstnotetrue
    \let\\=\reduceavailht \the\n@tecl@sses % reduce it by the space needed for each note class
    \iff@rstnote\else
-      \advance\availht by -\AboveNoteSpace
+      \advance\availht by -\AboveFootNoteSpace
    \fi
    \trace{Dh}{after notes:\the\availht}%
    \ifunprintable\else 
@@ -1511,7 +1511,7 @@
       \trace{f}{No footnotes for #1}%
   \else\LRf@@tnotestrue
     \trace{Df}{Notes for #1 \x@\the\x@\ht\csname #1box\endcsname, bls=\the\baselineskip, lsl=\the\lineskiplimit}%
-    %\x@\ifdim\x@\ht\csname #1box\endcsname<\AboveNoteSpace
+    %\x@\ifdim\x@\ht\csname #1box\endcsname<\AboveFootNoteSpace
       %\x@\ifdim\x@\ht\csname #1box\endcsname>0pt
         %\x@\showbox\csname #1box\endcsname
       %\fi
@@ -1587,9 +1587,9 @@
   \x@\each@col\diglot@list\E
   \trace{Df}{=\the\dimen1}%
   \dimen9=\dimen1
-  \advance\dimen8 by -\AboveNoteSpace\relax %stop the line a little short
+  \advance\dimen8 by -\AboveFootNoteSpace\relax %stop the line a little short
   \dimen7=\dimen8
-  \trace{d}{ANS: \the\AboveNoteSpace. Gutter \the\dimen8 tall, \the\dimen9 deep}%
+  \trace{d}{ANS: \the\AboveFootNoteSpace. Gutter \the\dimen8 tall, \the\dimen9 deep}%
 }
 
 \def\@do@unbalnotes@simplecols{%
@@ -1605,7 +1605,7 @@
   }%
   \trace{f}{Adjusting footnotebox}%
   \trace{D}{Raising footnotebox by \the\dimen3\space \l@gdims{\notechunk}}%
-  \global\setbox\partial=\vbox{\unvbox\partial\kern -\dimen3\vskip 0.5\AboveNoteSpace plus 1fil \box\notechunk}%
+  \global\setbox\partial=\vbox{\unvbox\partial\kern -\dimen3\vskip 0.5\AboveFootNoteSpace plus 1fil \box\notechunk}%
 }%
 
 \def\@writep@ge{%

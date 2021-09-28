@@ -276,6 +276,7 @@ ModelMap = {
     "notes/xromitcaller":       ("c_xromitcaller", lambda w,v: "%" if v else ""),
 
     "notes/xrlocation":         ("r_xrpos", lambda w,v: r"" if v == "centre" else "%"),
+    "notes/xrpos":              ("r_xrpos", None),
     "notes/xrcolside":          ("fcb_colXRside", None),
     "notes/xrcentrecolwidth":   ("s_centreColWidth", lambda w,v: int(float(v)) if v else "60"),
     "notes/xrguttermargin":     ("s_xrGutterWidth", lambda w,v: "{:.1f}".format(float(v)) if v else "2.0"),
@@ -556,6 +557,7 @@ class TexModel:
             self.dict['document/tocleaders'] = 0
         self.dict['document/iftocleaders'] = '' if int(self.dict['document/tocleaders']) > 0 else '%'
         self.dict['document/tocleaderstyle'] = self._tocleaders[int(self.dict['document/tocleaders'])]
+        self.calcRuleParameters()
 
     def updatefields(self, a):
         global get
@@ -574,6 +576,40 @@ class TexModel:
                         self.dict[k] = v[1](self.printer, val, self)
                 except Exception as e:
                     raise type(e)("In TeXModel with key {}, ".format(k) + str(e))
+
+    def calcRuleParameters(self):
+        notemap = {'fn': 'note', 'xr': 'xref'}
+        fnrule = None
+        enrule = None
+        endnotes = []
+        for a in ('fn', 'xr'):
+            if self.dict['notes/{}pos'.format(a)] == 'endnote':
+                enrule = a if enrule is None else enrule
+                endnotes.append(r"\NoteAtEnd{{{}}}".format(a[0]))
+            elif fnrule is None:
+                fnrule = a
+        for a in (('Foot', fnrule), ('End', enrule)):
+            dat = []
+            if a[1] is not None:
+                pos = int(self.dict['notes/{}ruleposn'.format(a[1])])
+                left = "\hskip {:.2f} mm".format(float(self.dict['notes/{}ruleindent'.format(a[1])]))
+                right = r"\hss"
+                if pos == 2 or pos == 4:      # Right or Outer
+                    right, left = (left, right)
+                elif pos == 5:
+                    left = r"\hss"
+                if pos < 3 or pos == 5:         # Left, Right or Centre
+                    dat.append(r"\def\{}NoteRuleLeftIndent{{{}}}".format(a[0], left))
+                    dat.append(r"\def\{}NoteRuleRightIndent{{{}}}".format(a[0], right))
+                else:
+                    dat.append(r"\def\{}NoteRuleLeftIndent{{\ifodd\pageno {}\else {}\fi}}".format(a[0], left, right))
+                    dat.append(r"\def\{}NoteRuleRightIndent{{\ifodd\pageno {}\else {}\fi}}".format(a[0], right, left))
+                dat.append(r"\def\{}NoteRuleThickness{{{} pt}}".format(a[0], self.dict['notes/{}rulethick'.format(a[1])]))
+                dat.append(r"\def\{}NoteRuleWidth{{{:.2f}}}".format(a[0], float(self.dict['notes/{}rulelength'.format(a[1])])/100))
+                dat.append(r"\def\Below{}NoteRuleSpace{{{} pt}}".format(a[0], self.dict['notes/below{}rulespace'.format(notemap[a[1]])]))
+                dat.append(r"\Above{}NoteSpace={} pt".format(a[0], self.dict['notes/above{}space'.format(notemap[a[1]])]))
+            self.dict['noterules/{}'.format(a[0].lower())] = "\n".join(dat)
+        self.dict['noterules/endnotemarkers'] = "\n".join(endnotes)
 
     def __getitem__(self, key):
         return self.dict[key]

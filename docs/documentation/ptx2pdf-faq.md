@@ -241,7 +241,7 @@ where \\pgnum is defined as a character style:
 
 By default elements in the heading row are styled according to the `\h` marker.
 
-### How does \AboveNoteSpace work?
+### How does \AboveFootNoteSpace work?
 
 This value is used to ensure space above the footnotes area. The footnote rule
 is inserted halfway up that space.
