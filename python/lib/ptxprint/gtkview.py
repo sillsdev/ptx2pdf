@@ -125,11 +125,12 @@ tb_Font lb_Font
 fr_FontConfig l_fontR bl_fontR tv_fontFamily fcb_fontFaces t_fontSearch 
 tb_Help lb_Help
 fr_Help l_working_dir lb_working_dir btn_about
+r_generate_selected l_generate_booklist r_generate_all c_randomPicPosn
 """.split()
 
 # bx_fnOptions bx_xrOptions 
 _ui_basic = """
-r_book_module btn_chooseBibleModule 
+r_book_module btn_chooseBibleModule lb_bibleModule
 btn_deleteConfig l_notes t_configNotes t_invisiblePassword
 c_pagegutter s_pagegutter l_gutterWidth btn_adjust_spacing
 s_colgutterfactor l_bottomRag s_bottomRag
@@ -152,7 +153,8 @@ c_includeillustrations tb_settings lb_settings fr_inclPictures gr_IllustrationOp
 rule_help l_homePage lb_homePage l_createZipArchiveXtra btn_createZipArchiveXtra
 """.split()
 
-_ui_keepHidden = ("btn_download_update", "lb_extXrefs", "l_extXrefsComingSoon", "tb_Logging", "lb_Logging")
+_ui_keepHidden = ("btn_download_update", "lb_extXrefs", "l_extXrefsComingSoon", "tb_Logging", "lb_Logging",
+                  "c_customOrder", "t_mbsBookList", )
 
 _uiLevels = {
     2 : _ui_minimal,
@@ -189,9 +191,9 @@ _sensitivities = {
         # "r_xrpos_normal" :    ["l_internote", "s_internote", "l_xrColWid", "s_centreColWidth", "r_fnpos_column"],
         # "r_xrpos_column" :    ["l_internote", "s_internote", "l_xrColWid", "s_centreColWidth", "r_fnpos_column"],
         # "r_xrpos_endnote" :   ["l_internote", "s_internote", "l_xrColWid", "s_centreColWidth", "r_fnpos_column"],
-        "r_xrpos_below" :     ["l_internote", "s_internote", "l_xrColWid", "s_centreColWidth", "r_fnpos_column"],
+        "r_xrpos_below" :     ["l_internote", "s_internote", "l_xrColWid", "s_centreColWidth"], # , "r_fnpos_column"],
         "r_xrpos_blend" :     [],
-        "r_xrpos_centre" :    ["l_internote", "s_internote", "fr_colXrefs"]}, 
+        "r_xrpos_centre" :    ["l_internote", "s_internote", "fr_colXrefs", "l_xrColWid", "s_centreColWidth"]}, 
         
     "r_xrSource": {
         "r_xrSource_standard": ["s_xrSourceSize", "l_xrSourceSize", "l_xrSourceLess", "l_xrSourceMore"],
@@ -260,6 +262,7 @@ _nonsensitivities = {
     "c_styFaceSuperscript" :   ["l_styRaise", "s_styRaise"],
     "c_interlinear" :          ["c_letterSpacing", "s_letterShrink", "s_letterStretch"],
     "c_fighidecaptions" :      ["c_fighiderefs"],
+    "c_doublecolumn" :         ["l_colXRside", "fcb_colXRside"],
     "r_xrpos": {
         "r_xrpos_below" :     [],
         "r_xrpos_blend" :     ["l_internote", "s_internote"],
@@ -692,7 +695,7 @@ class GtkViewModel(ViewModel):
                 
         if ui < 6:
             for w in reversed(sorted(self.allControls)):
-                # print("Turning off:", w)
+                print("Turning off:", w)
                 try:
                     self.builder.get_object(w).set_visible(False)
                 except:
@@ -704,15 +707,14 @@ class GtkViewModel(ViewModel):
             for k, v in _showActiveTabs.items():
                 if self.get(k):
                     for w in v:
+                        print("Selectively turning on:", w)
                         self.builder.get_object(w).set_visible(True)
-                # for w in v:
-                    # self.builder.get_object(w).set_visible(self.get(k))
                 
             widgets = self.allControls
 
         for w in sorted(widgets):
             if w not in _ui_keepHidden:
-                # print("Turning on:", w)
+                print("Turning on:", w)
                 try:
                     self.builder.get_object(w).set_visible(True)
                 except:
@@ -720,8 +722,10 @@ class GtkViewModel(ViewModel):
 
         # Disable/Enable the Details and Checklist tabs on the Pictures tab
         for w in ["tb_details", "tb_checklist"]:
+            print("Turning on/off if ui >= 6 (set_sensitive):", ui, w)
             self.builder.get_object(w).set_sensitive(ui >= 6)        
         for w in ["tb_plTopPane", "tb_picPreview", "scr_detailsBottom", "scr_checklistBottom", "l_globalPicSettings"]: 
+            print("Turning on/off if ui >= 6 (set_visible):", ui, w)
             self.builder.get_object(w).set_visible(ui >= 6)
             
         self.noInternetClicked(None)
@@ -1146,8 +1150,11 @@ class GtkViewModel(ViewModel):
     def onXrefLocnClicked(self, btn):
         if self.get("r_xrpos") == "blend" and self.get("r_fnpos") == "column":
             self.set("r_fnpos", "normal")
-        elif self.get("r_xrpos") == "centre" and self.get("r_fnpos") == "normal":
-            self.set("r_fnpos", "column")
+        elif self.get("r_xrpos") == "centre":
+            self.builder.get_object("ex_xrListSettings").set_expanded(True)
+            if self.get("r_fnpos") == "normal":
+                self.set("r_fnpos", "column")
+        
         self.onSimpleClicked(btn)
         try:
             self.styleEditor.setval("x", "NoteBlendInto", "f" if self.get("r_xrpos") == "blend" else None)
@@ -1288,7 +1295,12 @@ class GtkViewModel(ViewModel):
         self.set("l_generate_booklist", " ".join(bks))
         if sys.platform == "win32":
             dialog.set_keep_above(True)
-        response = dialog.run()
+        # If there is no PicList file for this config, then don't even ask - just generate it
+        plpath = os.path.join(self.configPath(self.configName()),"{}-{}.piclist".format(self.prjid, self.configName()))
+        if not os.path.exists(plpath):
+            response = Gtk.ResponseType.OK
+        else:
+            response = dialog.run()
         if response == Gtk.ResponseType.OK:
             if self.get("r_generate") == "all":
                 procbks = ab.keys()
@@ -1677,7 +1689,9 @@ class GtkViewModel(ViewModel):
         if btn.get_active():
             self.set("r_"+bits[0], bits[1])
         self.sensiVisible("r_"+bits[0])
-        if n.startswith("r_book_"):
+        print("in onRadioChanged")
+        if n.startswith("r_book_") and self.get("r_book") is not "module":
+            print("    Doing something strange")
             self.onBookSelectorChange(btn)
             self.updateExamineBook()
             self.updateDialogTitle()
@@ -2207,9 +2221,10 @@ class GtkViewModel(ViewModel):
         if bk == "NON":
             self.set("ecb_book", "")
             return
-        if bk is not None and bk != "":
+        if bk is not None and bk != "" and self.get("r_book") is not "module":
             chs = int(chaps.get(str(bk), 999))
             if self.loadingConfig:
+                print("Changing r_book to single!")
                 self.set("r_book", "single")
                 self._setChapRange("from", 1, chs, int(float(self.get("s_chapfrom"))))
                 self._setChapRange("to", 1, chs, int(float(self.get("s_chapto"))))
