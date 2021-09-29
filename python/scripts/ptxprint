@@ -231,7 +231,7 @@ if args.print or args.action is not None:
                 mainw.set("ecb_book", bl[0])
                 mainw.set("r_book", "single")
             elif len(bl) > 1:
-                mainw.set("t_booklist", args.books)
+                mainw.set("ecb_booklist", args.books)
                 mainw.set("r_book", "multiple")
         elif args.module is not None and len(args.module):
             mainw.set("r_book", "module")

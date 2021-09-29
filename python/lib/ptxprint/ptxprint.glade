@@ -5025,26 +5025,6 @@ to be printed from the project.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkEntry" id="t_booklist">
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="tooltip_text" translatable="yes">After selecting one or more books to be
-printed, the book codes will be listed here.
-This list is editable, so books can be re-ordered
-if need be.</property>
-                                <property name="margin_left">6</property>
-                                <property name="margin_right">6</property>
-                                <property name="hexpand">True</property>
-                                <property name="caps_lock_warning">False</property>
-                                <signal name="focus-out-event" handler="onBookListChanged" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="left_attach">2</property>
-                                <property name="top_attach">2</property>
-                                <property name="width">4</property>
-                              </packing>
-                            </child>
-                            <child>
                               <object class="GtkRadioButton" id="r_book_module">
                                 <property name="label" translatable="yes">Bible Module:</property>
                                 <property name="visible">True</property>
@@ -5239,6 +5219,43 @@ be viewed or edited in Paratext.</property>
                               <packing>
                                 <property name="left_attach">0</property>
                                 <property name="top_attach">4</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkComboBoxText" id="ecb_booklist">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="tooltip_text" translatable="yes">After selecting one or more books to be
+printed, the book codes will be listed here.
+This list is editable, so books can be re-ordered
+if need be.</property>
+                                <property name="active">0</property>
+                                <property name="has_entry">True</property>
+                                <property name="active_id">0</property>
+                                <items>
+                                  <item translatable="yes">LUK ACT GLO</item>
+                                  <item translatable="yes">MAT MRK LUK JHN ACT</item>
+                                  <item translatable="yes">PSA PRO</item>
+                                  <item translatable="yes">GEN EXO LEV NUM DEU</item>
+                                </items>
+                                <signal name="focus-out-event" handler="onBookListChanged" swapped="no"/>
+                                <child internal-child="entry">
+                                  <object class="GtkEntry">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="tooltip_text" translatable="yes">After selecting one or more books to be
+printed, the book codes will be listed here.
+This list is editable, so books can be re-ordered
+if need be.</property>
+                                    <signal name="focus-out-event" handler="onBkLstFocusOutEvent" swapped="no"/>
+                                    <signal name="key-press-event" handler="onBkLstKeyPressed" swapped="no"/>
+                                  </object>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="left_attach">2</property>
+                                <property name="top_attach">2</property>
+                                <property name="width">4</property>
                               </packing>
                             </child>
                             <child>

@@ -46,7 +46,7 @@ ModelMap = {
     "project/uilevel":          ("fcb_uiLevel", None),
     "project/book":             ("ecb_book", None),
     "project/modulefile":       ("btn_chooseBibleModule", lambda w,v: v.replace("\\","/") if v is not None else ""),
-    "project/booklist":         ("t_booklist", lambda w,v: v or ""),
+    "project/booklist":         ("ecb_booklist", lambda w,v: v or ""),
     "project/ifinclfrontpdf":   ("c_inclFrontMatter", None),
     "project/frontincludes":    ("btn_selectFrontPDFs", lambda w,v: "\n".join('\\includepdf{{{}}}'.format(s.as_posix()) \
                                  for s in w.FrontPDFs) if (w.get("c_inclFrontMatter") and w.FrontPDFs is not None
@@ -154,7 +154,7 @@ ModelMap = {
 
     "document/sensitive":       ("c_sensitive", None),
     "document/title":           (None, lambda w,v: "" if w.get("c_sensitive") else w.ptsettings.get('FullName', "")),
-    "document/subject":         ("t_booklist", lambda w,v: v if w.get("r_book") == "multiple" else w.get("ecb_book")),
+    "document/subject":         ("ecb_booklist", lambda w,v: v if w.get("r_book") == "multiple" else w.get("ecb_book")),
     "document/author":          (None, lambda w,v: "" if w.get("c_sensitive") else w.ptsettings.get('Copyright', "")),
 
     "document/startpagenum":    ("s_startPageNum", lambda w,v: int(float(v)) if v else "1"),
@@ -1548,7 +1548,7 @@ class TexModel:
     def createXrefTriggers(self, bk, prjdir, outpath):
         cfilter = self.dict['notes/xrfilterbooks']
         if cfilter == "pub":
-            bl = self.printer.get("t_booklist", "").split()
+            bl = self.printer.get("ecb_booklist", "").split()
             filters = set(bl)
         elif cfilter == "prj":
             filters = set(self.printer.getAllBooks().keys())

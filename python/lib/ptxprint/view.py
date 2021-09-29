@@ -227,7 +227,7 @@ class ViewModel:
         return [fname]
         
     def getBooks(self, scope=None, files=False):
-        bl = self.get("t_booklist", "").split()
+        bl = self.get("ecb_booklist", "").upper().split()
         if scope is None:
             scope = self.get("r_book")
         if scope == "single":

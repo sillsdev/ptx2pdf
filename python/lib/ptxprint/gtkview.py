@@ -116,7 +116,7 @@ bx_statusBar fcb_uiLevel
 fcb_filterXrefs fcb_interfaceLang c_quickRun
 tb_Basic lb_Basic
 fr_projScope l_project fcb_project l_projectFullName r_book_single ecb_book l_chapfrom s_chapfrom l_chapto s_chapto 
-r_book_multiple btn_chooseBooks t_booklist 
+r_book_multiple btn_chooseBooks ecb_booklist 
 fr_SavedConfigSettings l_cfgName ecb_savedConfig t_savedConfig btn_saveConfig btn_reloadConfig btn_lockunlock t_password
 tb_Layout lb_Layout
 fr_pageSetup l_pageSize ecb_pagesize l_fontsize s_fontsize l_linespacing s_linespacing 
@@ -180,7 +180,7 @@ _showActiveTabs = {
 _sensitivities = {
     "r_book": {
         "r_book_single":       ["ecb_book", "l_chapfrom", "s_chapfrom", "l_chapto", "s_chapto"],
-        "r_book_multiple":     ["btn_chooseBooks", "t_booklist"],
+        "r_book_multiple":     ["btn_chooseBooks", "ecb_booklist"],
         "r_book_module":       ["btn_chooseBibleModule", "lb_bibleModule"]},
     "r_decorator": {
         "r_decorator_file":    ["btn_selectVerseDecorator", "lb_inclVerseDecorator", "lb_style_v",
@@ -465,6 +465,7 @@ class GtkViewModel(ViewModel):
         self.isDisplay = True
         self.config_dir = None
         self.initialised = False
+        self.booklistKeypressed = False
         self.configKeypressed = False
         self.configNoUpdate = False
         self.chapNoUpdate = False
@@ -935,11 +936,25 @@ class GtkViewModel(ViewModel):
         dialog.set_keep_above(False)
         dialog.hide()
             
-    def onBookListChanged(self, t_booklist, foo): # called on "focus-out-event"
+    def onBookListChanged(self, ecb_booklist, foo): # called on "focus-out-event"
+        if self.booklistKeypressed:
+            self.booklistKeypressed = False
+            return
+        self.doBookListChange()
+        
+    def onBkLstKeyPressed(self, btn, *a):
+        self.booklistKeypressed = True
+
+    def onBkLstFocusOutEvent(self, btn, *a):
+        self.booklistKeypressed = False
+        self.doBookListChange()
+
+    def doBookListChange(self):
         bl = self.getBooks()
-        self.set('t_booklist', " ".join(bl))
+        self.set('ecb_booklist', " ".join(bl))
         self.updateExamineBook()
         self.updateDialogTitle()
+        # Save to user's MRU
 
     def onSaveConfig(self, btn, force=False):
         if self.prjid is None or (not force and self.configLocked()):
@@ -1244,7 +1259,7 @@ class GtkViewModel(ViewModel):
 
     def onBookSelectorChange(self, btn):
         status = self.sensiVisible("r_book_multiple")
-        if status and self.get("t_booklist") == "" and self.prjid is not None:
+        if status and self.get("ecb_booklist") == "" and self.prjid is not None:
             self.updateDialogTitle()
         else:
             # toc = self.builder.get_object("c_autoToC") # Ensure that we're not trying to build a ToC for a single book!
@@ -2089,12 +2104,12 @@ class GtkViewModel(ViewModel):
         mbs_grid = self.builder.get_object("mbs_grid")
         mbs_grid.forall(mbs_grid.remove)
         lsbooks = self.builder.get_object("ls_books")
-        bl = self.builder.get_object("t_booklist")
+        bl = self.get("ecb_booklist").split(" ")
         self.alltoggles = []
         for i, b in enumerate(lsbooks):
             tbox = Gtk.ToggleButton(b[0])
             tbox.show()
-            if tbox.get_label() in bl.get_text().split(" "):
+            if tbox.get_label() in bl:
                 tbox.set_active(True)
             self.alltoggles.append(tbox)
             mbs_grid.attach(tbox, i // 13, i % 13, 1, 1)
@@ -2103,7 +2118,7 @@ class GtkViewModel(ViewModel):
         if response == Gtk.ResponseType.OK:
             booklist = sorted((b.get_label() for b in self.alltoggles if b.get_active()), \
                                     key=lambda x:_allbkmap.get(x, len(_allbkmap)))
-            bl.set_text(" ".join(b for b in booklist))
+            self.set("ecb_booklist", " ".join(b for b in booklist))
         if self.get("r_book") in ("single", "multiple"):
             self.set("r_book", "multiple" if len(booklist) else "single")
         self.updateDialogTitle()
@@ -2351,7 +2366,7 @@ class GtkViewModel(ViewModel):
                     self.set("r_book", "single")
                     break
         status = self.get("r_book") == "multiple"
-        self.builder.get_object("t_booklist").set_sensitive(status)
+        self.builder.get_object("ecb_booklist").set_sensitive(status)
         # toc = self.builder.get_object("c_autoToC") # Ensure that we're not trying to build a ToC for a single book!
         # toc.set_sensitive(status)
         # if not status:
