@@ -10138,7 +10138,6 @@ layout) to show the cross-references at the end
 of the 2nd column of text.</property>
                                         <property name="halign">start</property>
                                         <property name="margin_left">24</property>
-                                        <property name="margin_right">6</property>
                                         <property name="margin_end">6</property>
                                         <property name="draw_indicator">True</property>
                                         <property name="group">r_xrpos_normal</property>
@@ -10160,7 +10159,6 @@ of the 2nd column of text.</property>
 at the end of each page.</property>
                                         <property name="halign">start</property>
                                         <property name="margin_left">24</property>
-                                        <property name="margin_right">6</property>
                                         <property name="margin_end">6</property>
                                         <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
@@ -10387,6 +10385,7 @@ Print a second time before it applies.</property>
 underneath the footnotes (rather than combined
 along with the footnotes as a single paragraph).</property>
                                         <property name="halign">start</property>
+                                        <property name="margin_left">6</property>
                                         <property name="draw_indicator">True</property>
                                         <property name="group">r_xrpos_normal</property>
                                         <signal name="clicked" handler="onRadioChanged" swapped="no"/>
@@ -10412,8 +10411,7 @@ used, the Cross-References can only have
 one type of caller (rather than a sequence)
 which must be specified above.</property>
                                         <property name="halign">start</property>
-                                        <property name="valign">center</property>
-                                        <property name="margin_top">6</property>
+                                        <property name="margin_left">6</property>
                                         <property name="draw_indicator">True</property>
                                         <property name="group">r_xrpos_normal</property>
                                         <signal name="clicked" handler="onRadioChanged" swapped="no"/>
@@ -10437,7 +10435,7 @@ may be useful to place them in their own column.
 The cross references will appear in a narrow vertical
 column similar to a study/reference Bible layout.</property>
                                         <property name="halign">start</property>
-                                        <property name="margin_top">5</property>
+                                        <property name="margin_left">6</property>
                                         <property name="draw_indicator">True</property>
                                         <property name="group">r_xrpos_normal</property>
                                         <signal name="clicked" handler="onRadioChanged" swapped="no"/>
@@ -10834,6 +10832,7 @@ and Parameters:</property>
                                             <property name="margin_right">12</property>
                                             <property name="margin_top">12</property>
                                             <property name="margin_bottom">6</property>
+                                            <property name="row_spacing">2</property>
                                             <property name="column_spacing">6</property>
                                             <child>
                                               <object class="GtkRadioButton" id="r_xrSource_standard">
@@ -11104,7 +11103,7 @@ selected cross-references for both NT and OT.</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
                                             <property name="valign">end</property>
-                                            <property name="margin_left">36</property>
+                                            <property name="margin_left">40</property>
                                             <property name="margin_right">6</property>
                                             <property name="margin_top">6</property>
                                             <property name="margin_bottom">6</property>
@@ -11120,9 +11119,9 @@ selected cross-references for both NT and OT.</property>
                                                     <property name="can_focus">False</property>
                                                     <property name="margin_left">6</property>
                                                     <property name="margin_right">6</property>
-                                                    <property name="margin_top">6</property>
-                                                    <property name="margin_bottom">6</property>
-                                                    <property name="row_spacing">6</property>
+                                                    <property name="margin_top">4</property>
+                                                    <property name="margin_bottom">4</property>
+                                                    <property name="row_spacing">4</property>
                                                     <property name="column_spacing">5</property>
                                                     <child>
                                                       <object class="GtkSpinButton" id="s_centreColWidth">
@@ -11249,17 +11248,39 @@ being positioned between the columns of text.</property>
                                                         <property name="receives_default">False</property>
                                                         <property name="tooltip_text" translatable="yes">Check this option to include a vertical line
 separating the text and cross-references.</property>
-                                                        <property name="halign">end</property>
+                                                        <property name="halign">start</property>
                                                         <property name="valign">center</property>
-                                                        <property name="margin_right">6</property>
-                                                        <property name="margin_top">6</property>
-                                                        <property name="margin_bottom">6</property>
+                                                        <property name="margin_left">6</property>
+                                                        <property name="margin_right">2</property>
                                                         <property name="active">True</property>
                                                         <property name="draw_indicator">True</property>
                                                       </object>
                                                       <packing>
                                                         <property name="left_attach">0</property>
                                                         <property name="top_attach">3</property>
+                                                        <property name="width">2</property>
+                                                      </packing>
+                                                    </child>
+                                                    <child>
+                                                      <object class="GtkCheckButton" id="c_xrColumnBottom">
+                                                        <property name="label" translatable="yes">Fill Upward From Bottom of Column</property>
+                                                        <property name="visible">True</property>
+                                                        <property name="can_focus">True</property>
+                                                        <property name="receives_default">False</property>
+                                                        <property name="tooltip_text" translatable="yes">If there are only a small number of
+cross-references, it may appear better
+for them to be placed nearer the end
+(or bottom) of the page. Check this
+option if you prefer the references to
+fill the column upward from the end
+of the page. </property>
+                                                        <property name="margin_left">6</property>
+                                                        <property name="margin_right">2</property>
+                                                        <property name="draw_indicator">True</property>
+                                                      </object>
+                                                      <packing>
+                                                        <property name="left_attach">0</property>
+                                                        <property name="top_attach">4</property>
                                                         <property name="width">2</property>
                                                       </packing>
                                                     </child>
@@ -12369,7 +12390,9 @@ headers and footers.</property>
                                     <property name="show_expanders">False</property>
                                     <signal name="row-activated" handler="onPLrowActivated" swapped="no"/>
                                     <child internal-child="selection">
-                                      <object class="GtkTreeSelection"/>
+                                      <object class="GtkTreeSelection">
+                                        <property name="mode">multiple</property>
+                                      </object>
                                     </child>
                                     <child>
                                       <object class="GtkTreeViewColumn" id="col_anchor">
@@ -12753,27 +12776,7 @@ the Basic tab.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkCheckButton" id="c_plMultiSelect">
-                                    <property name="label" translatable="yes">Select Multiple</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="tooltip_text" translatable="yes">The details of ALL the pictures are stored in a single list.
-Select this option to only display the pictures from the
-books that are currently in focus to be printed. 
-When unchecked, then the list will show pictures from
-ALL the books in the project that have been added to
-the PicList. If pictures of a certain book are missing, 
-then you may need to select that book and Generate
-the PicList details just for *that* book.</property>
-                                    <property name="halign">center</property>
-                                    <property name="draw_indicator">True</property>
-                                    <signal name="clicked" handler="picListMultiselectclicked" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">0</property>
-                                    <property name="top_attach">3</property>
-                                    <property name="width">2</property>
-                                  </packing>
+                                  <placeholder/>
                                 </child>
                               </object>
                               <packing>

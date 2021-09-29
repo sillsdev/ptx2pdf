@@ -205,7 +205,7 @@ _sensitivities = {
     # "c_includeXrefs" :         ["tb_xrefs", "lb_xrefs"],
     "c_useXrefList" :          ["gr_extXrefs", "lb_extXrefs"],
     
-    "c_includeillustrations" : ["gr_IllustrationOptions", "tb_details", "lb_details", "tb_checklist"],
+    "c_includeillustrations" : ["gr_IllustrationOptions", "lb_details", "tb_details", "tb_checklist"],
     "c_diglot" :               ["gr_diglot", "fcb_diglotPicListSources", "r_hdrLeft_Pri", "r_hdrCenter_Pri", "r_hdrRight_Pri",
                                 "r_ftrCenter_Pri", "r_hdrLeft_Sec", "r_hdrCenter_Sec", "r_hdrRight_Sec", "r_ftrCenter_Sec"],
     "c_borders" :              ["gr_borders"],
@@ -1221,9 +1221,11 @@ class GtkViewModel(ViewModel):
         else:
             val = float(val) * 2
         self.set("s_indentUnit", val)
-        for fx in ["fn", "xr"]: 
+        for fx in ("fn", "xr"): 
             if not btn.get_active() and self.get("r_{}pos".format(fx)) == "column":
                self.set("r_{}pos".format(fx), "normal")
+        for w in ("l_colXRside", "fcb_colXRside"):
+            self.builder.get_object(w).set_visible(not btn.get_active())            
 
     def onSimpleFocusClicked(self, btn):
         self.sensiVisible(Gtk.Buildable.get_name(btn), focus=True)
@@ -3493,23 +3495,6 @@ class GtkViewModel(ViewModel):
         if self.get("c_noInternet"):
             return
         self.openURL("https://software.sil.org/ptxprint/download")       
-
-    def picListMultiselectclicked(self, btn):
-        val = self.get("c_plMultiSelect")
-        for w in ['l_plAnchor', 't_plAnchor', 'l_plMedia', 'c_plMediaP', 'c_plMediaA', 'c_plMediaW', 'l_plFilename', 't_plFilename', 
-                  'l_plCaption', 't_plCaption', 'l_plRef', 't_plRef', 'l_plAltText', 't_plAltText', 'l_plCopyright', 't_plCopyright', 'img_picPreview']:
-            self.builder.get_object(w).set_sensitive(not val)
-        return # TO DO: Fix the code below - so that we don't wipe out the contents of a row of the PicList
-        for w in ['t_plAnchor', 't_plFilename', 't_plCaption', 't_plRef', 't_plAltText', 't_plCopyright']:
-            self.set(w, "")
-        self.builder.get_object("t_plFilename").set_tooltip_text(tooltip)
-
-        for w in ['c_plMediaP', 'c_plMediaA', 'c_plMediaW']:
-            self.set(w, False)
-
-        pic = self.builder.get_object("img_picPreview")
-        pic.clear()
-        pic.set_tooltip_text("")
 
     def editZvarsClicked(self, btn):
         self.rescanFRTvarsClicked(None, autosave=True)
