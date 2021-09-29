@@ -1705,7 +1705,7 @@ class GtkViewModel(ViewModel):
             self.set("r_"+bits[0], bits[1])
         self.sensiVisible("r_"+bits[0])
         print("in onRadioChanged")
-        if n.startswith("r_book_") and self.get("r_book") is not "module":
+        if n.startswith("r_book_") and self.get("r_book") != "module":
             print("    Doing something strange")
             self.onBookSelectorChange(btn)
             self.updateExamineBook()

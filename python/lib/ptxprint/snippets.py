@@ -139,7 +139,7 @@ class PDFx1aOutput(Snippet):
 <?xpacket end="w"?>)}}
 \special{{pdf:put @OBJCMR <</Type /Metadata /Subtype /XML>>}}
 \special{{pdf:docview <<
-/Metadata @OBJCMR
+/Metadata @OBJCMR{rtlview}
 /OutputIntents [ <<
 /Type/OutputIntent
 /S/GTS_PDFX
@@ -157,7 +157,7 @@ class PDFx1aOutput(Snippet):
 /DestOutputProfile @OBJCVR
 /RegistryName (http://www.color.og)
 >> ]
-/MarkInfo <</Marked /False{rtlview}>>
+/MarkInfo <</Marked /False>>
 >>}}
 \egroup
 \catcode`\#=6

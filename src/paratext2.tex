@@ -562,7 +562,7 @@
   \fi}
 \def\m@kexrefbox#1#2#3{
 % #1: height, #2: xrefbox width, #3: note marker/style returns vbox
-  \setbox\xr@fbox=\box\voidb@x
+  \setbox\xr@fbox=\ifXrefTopfill\vbox{\vfil}\else\box\voidb@x\fi
   \temptrue
   \let\par=\endgraf\ch@pterfalse
   \everypar={}% don't do body text formatting
@@ -580,7 +580,7 @@
       \dimen0=\ht\xr@fbox \advance\dimen0 by \ht1 \advance\dimen0 by \baselineskip
       \advance\dimen0 by -\dimen1 \advance\dimen0 by -\dp\xr@fbox
       \ifdim\dimen0>#1
-        \tempfalse % we done with the main loop
+        \tempfalse % we're done with the main loop
         \setbox0=\hbox{}
         \m@ke@te@mp{#1}
         \ifdim\ht0>0pt\hbox{\unhbox0\unskip\unskip\unpenalty\unskip\unpenalty}\fi
@@ -1383,7 +1383,8 @@
     \fi
     \m@kenotebox\setbox\coln@tebox=\vbox{%
       \trace{o}{coln@tebox in=\the\ht5+\the\dp5, notes=\the\ht2+\the\dp2}%
-      \ifdim\ht2>0pt\unvbox2\ifdim\ht5>0pt\setbox0\lastbox\dimen0=\dp0\box0\vskip\dimen0\vskip\InterNoteSpace \unvbox5\fi
+      \ifdim\ht2>0pt
+        \unvbox2\ifdim\ht5>0pt\setbox0\lastbox\dimen0=\dp0\box0\vskip\dimen0\vskip\InterNoteSpace \unvbox5\fi
       \else\ifdim\ht5>0pt
           \ifvoid\verybottomins\vfill\fi %\kern-\lastd@pth\vfil % ignore depth of body text; fill space
           \dimen5=\AboveFootNoteSpace\advance\dimen5 by -\BelowFootNoteRuleSpace\advance\dimen5 by -0.2pt
@@ -1399,6 +1400,7 @@
   \splittopskip=\topskip
 }
 %-c_calcavailht
+\newif\ifXrefTopfill \XrefTopfillfalse
 
 \def\s@ttrialheight{
   \global\trialheight=\textheight \global\advance\trialheight by -\ht\partial %\advance\trialheight by -\bmg@p
@@ -1598,19 +1600,19 @@
       \vskip\ColumnGutterRuleSkip
       \hbox to 1pt{\hfil\vrule height \the\dimen4\hfil}%\dp5=#3 \box5
       \vfil}%
-    \ifx\XrefNotes\empty\ifnum#5>1\box4\fi\else
-      \ifdim\ht\xr@fbox>0pt
-        \trace{o}{makecolumngutter: xr@fbox=\the\ht\xr@fbox}%
-        \ifnum#5=1\copy4\else\ifnum#5=3\copy4\fi\fi
-        \dimen0=#2
-        % todo: ensure empty box doesn't collapse
-        % todo: allow user defined inner margin also on grid
-        \ifnum#5=1\hbox to \XrefNotesMargin{}\else\ifnum#5=3\hbox to \XrefNotesMargin{}\fi\fi
-        \vbox to #4{\vbox to #2{\ifdim\ht\xr@fbox>0.9\dimen0 \unvbox\xr@fbox\unpenalty\unskip
-          \else\ifdim\ht\xr@fbox=0pt\message{empty xrefbox}\vbox{\hsize=\XrefNotesWidth\hskip\XrefNotesWidth\hbox{}}\else
-            \unvbox\xr@fbox\fi\vfil\fi}\vfil}%
-        \ifnum#5>1\hbox to \XrefNotesMargin{}\box4\fi
-      \fi
+  \else\setbox4=\box\voidb@x\fi
+  \ifx\XrefNotes\empty\ifnum#5>1\box4\fi\else
+    \ifdim\ht\xr@fbox>0pt
+      \trace{o}{makecolumngutter: xr@fbox=\the\ht\xr@fbox}%
+      \ifnum#5=1\copy4\else\ifnum#5=3\copy4\fi\fi
+      \dimen0=#2
+      % todo: ensure empty box doesn't collapse
+      % todo: allow user defined inner margin also on grid
+      \ifnum#5=1\hbox to \XrefNotesMargin{}\else\ifnum#5=3\hbox to \XrefNotesMargin{}\fi\fi
+      \vbox to #4{\vbox to #2{\ifdim\ht\xr@fbox>0.9\dimen0 \unvbox\xr@fbox\unpenalty\unskip
+        \else\ifdim\ht\xr@fbox=0pt\message{empty xrefbox}\vbox{\hsize=\XrefNotesWidth\hskip\XrefNotesWidth\hbox{}}\else
+          \unvbox\xr@fbox\fi\ifXrefTopfill\else\vfil\fi\fi}\vfil}%
+      \ifnum#5>1\hbox to \XrefNotesMargin{}\box4\fi
     \fi
   \fi
   \ifnum#5>1\hfil\fi

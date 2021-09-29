@@ -88,7 +88,7 @@ ModelMap = {
                                  if (w.get("c_applyWatermark") and w.watermarks is not None and w.watermarks != 'None') else ""),
     "paper/ifcropmarks":        ("c_cropmarks", lambda w,v :"true" if v else "false"),  
     "paper/ifgrid":             ("c_grid", lambda w,v :"" if v else "%"),
-    "paper/ifverticalrule":     ("c_verticalrule", lambda w,v :"true" if v or w.get("r_xrpos") == "centre" else "false"),
+    "paper/ifverticalrule":     ("c_verticalrule", lambda w,v :"true" if v else "false"),
     "paper/margins":            ("s_margins", lambda w,v: round(float(v)) if v else "12"),
     "paper/topmargin":          ("s_topmargin", None),
     "paper/bottommargin":       ("s_bottommargin", None),
@@ -1256,9 +1256,9 @@ class TexModel:
         
         if self.asBool("notes/keepbookwithrefs"): # keep Booknames and ch:vs nums together within \xt and \xo 
             self.localChanges.append((self.make_contextsfn(None, regex.compile(r"(\\[xf]t [^\\]+)")),
-                                    regex.compile(r"(\d?[^\s\d\-\\,;]{3,}[^\\\s]*?) (\d+[:.]\d+)"), r"\1\u00A0\2"))
+                                    regex.compile(r"(\d?[^\s\d\-\\,;]{3,}[^\\\s]*?) (\d+[:.]\d+)"), r"\1\u2000\2"))
             self.localChanges.append((self.make_contextsfn(None, regex.compile(r"(\\[xf]t [^\\]+)")),
-                                    regex.compile(r"( .) "), r"\1\u00A0")) # Ensure no floating single chars in note text
+                                    regex.compile(r"( .) "), r"\1\u2000")) # Ensure no floating single chars in note text
 
         # keep \xo & \fr refs with whatever follows (i.e the bookname or footnote) so it doesn't break at end of line
         self.localChanges.append((None, regex.compile(r"(\\(xo|fr) (\d+[:.]\d+([-,]\d+)?)) "), r"\1\u00A0"))
