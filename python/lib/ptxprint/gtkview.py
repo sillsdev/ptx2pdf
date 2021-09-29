@@ -191,8 +191,8 @@ _sensitivities = {
         # "r_xrpos_normal" :    ["l_internote", "s_internote", "l_xrColWid", "s_centreColWidth", "r_fnpos_column"],
         # "r_xrpos_column" :    ["l_internote", "s_internote", "l_xrColWid", "s_centreColWidth", "r_fnpos_column"],
         # "r_xrpos_endnote" :   ["l_internote", "s_internote", "l_xrColWid", "s_centreColWidth", "r_fnpos_column"],
-        "r_xrpos_below" :     ["l_internote", "s_internote", "l_xrColWid", "s_centreColWidth"], # , "r_fnpos_column"],
-        "r_xrpos_blend" :     [],
+        # "r_xrpos_below" :     ["l_internote", "s_internote", "l_xrColWid", "s_centreColWidth"], # , "r_fnpos_column"],
+        # "r_xrpos_blend" :     [],
         "r_xrpos_centre" :    ["l_internote", "s_internote", "fr_colXrefs", "l_xrColWid", "s_centreColWidth"]}, 
         
     "r_xrSource": {
@@ -203,7 +203,7 @@ _sensitivities = {
     "c_useFallbackFont" :      ["btn_findMissingChars", "t_missingChars", "l_fallbackFont", "bl_fontExtraR"],
     "c_includeFootnotes" :     ["tb_footnotes", "lb_footnotes", "r_xrpos_below", "r_xrpos_blend"],
     # "c_includeXrefs" :         ["tb_xrefs", "lb_xrefs"],
-    "c_useXrefList" :          ["tb_extXrefs", "lb_extXrefs"],
+    "c_useXrefList" :          ["gr_extXrefs", "lb_extXrefs"],
     
     "c_includeillustrations" : ["gr_IllustrationOptions", "tb_details", "lb_details", "tb_checklist"],
     "c_diglot" :               ["gr_diglot", "fcb_diglotPicListSources", "r_hdrLeft_Pri", "r_hdrCenter_Pri", "r_hdrRight_Pri",
@@ -480,6 +480,7 @@ class GtkViewModel(ViewModel):
         self.isDiglotMeasuring = False
         self.warnedSIL = False
         self.printReason = 0
+        self.mruBookList = self.userconfig.get('init', 'mruBooks', fallback='').split('\n')
         self.lang = args.lang if args.lang is not None else 'en'
         ilang = self.builder.get_object("fcb_interfaceLang")
         llang = self.builder.get_object("ls_interfaceLang")
@@ -518,6 +519,11 @@ class GtkViewModel(ViewModel):
             v = currdigits.get(d, d.lower())
             digits.append([d, v])
         self.fcb_fontdigits.set_active_id(_alldigits[0])
+
+        mrubl = self.builder.get_object("ecb_booklist")
+        mrubl.remove_all()
+        for m in self.mruBookList:
+            mrubl.append(None, m)
 
         for d in ("multiBookSelector", "multiProjSelector", "fontChooser", "password", "overlayCredit",
                   "generateFRT", "generatePL", "styModsdialog", "DBLbundle", "features", "gridsGuides"):
@@ -696,11 +702,8 @@ class GtkViewModel(ViewModel):
                 
         if ui < 6:
             for w in reversed(sorted(self.allControls)):
-                print("Turning off:", w)
-                try:
-                    self.builder.get_object(w).set_visible(False)
-                except:
-                    print("Failed to turn off", w)
+                # print("Turning off:", w)
+                self.builder.get_object(w).set_visible(False)
                 
             widgets = sum((v for k, v in _uiLevels.items() if ui >= k), [])
         else:
@@ -708,26 +711,23 @@ class GtkViewModel(ViewModel):
             for k, v in _showActiveTabs.items():
                 if self.get(k):
                     for w in v:
-                        print("Selectively turning on:", w)
+                        # print("Selectively turning on:", w)
                         self.builder.get_object(w).set_visible(True)
                 
             widgets = self.allControls
 
-        for w in sorted(widgets):
+        for w in sorted(widgets): #, key=lambda x: x.replace("nbk_", "znbk_")):
             if w not in _ui_keepHidden:
-                print("Turning on:", w)
-                try:
-                    self.builder.get_object(w).set_visible(True)
-                except:
-                    print("Failed on", w)
+                # print("Turning on:", w)
+                self.builder.get_object(w).set_visible(True)
 
         # Disable/Enable the Details and Checklist tabs on the Pictures tab
-        for w in ["tb_details", "tb_checklist"]:
-            print("Turning on/off if ui >= 6 (set_sensitive):", ui, w)
-            self.builder.get_object(w).set_sensitive(ui >= 6)        
-        for w in ["tb_plTopPane", "tb_picPreview", "scr_detailsBottom", "scr_checklistBottom", "l_globalPicSettings"]: 
-            print("Turning on/off if ui >= 6 (set_visible):", ui, w)
-            self.builder.get_object(w).set_visible(ui >= 6)
+        # for w in ["tb_details", "tb_checklist"]:
+            # print("Turning on/off if ui >= 6 (set_sensitive):", ui, w)
+            # self.builder.get_object(w).set_sensitive(ui >= 6)        
+        # for w in ["tb_plTopPane", "tb_picPreview", "scr_detailsBottom", "scr_checklistBottom", "l_globalPicSettings"]: 
+            # print("Turning on/off if ui >= 6 (set_visible):", ui, w)
+            # self.builder.get_object(w).set_visible(ui >= 6)
             
         self.noInternetClicked(None)
         self.colorTabs()
@@ -936,7 +936,9 @@ class GtkViewModel(ViewModel):
         dialog.set_keep_above(False)
         dialog.hide()
             
-    def onBookListChanged(self, ecb_booklist, foo): # called on "focus-out-event"
+    def onBookListChanged(self, ecb_booklist): #, foo): # called on "focus-out-event"
+        if not self.initialised:
+            return
         if self.booklistKeypressed:
             self.booklistKeypressed = False
             return
@@ -951,11 +953,22 @@ class GtkViewModel(ViewModel):
 
     def doBookListChange(self):
         bl = self.getBooks()
-        self.set('ecb_booklist', " ".join(bl))
+        bls = " ".join(bl)
+        self.set("r_book", "multiple" if bls else "single")
+        self.set('ecb_booklist', bls)
         self.updateExamineBook()
         self.updateDialogTitle()
         # Save to user's MRU
-
+        if bls in self.mruBookList or bls == "":
+            return
+        self.mruBookList.insert(0, bls)
+        w = self.builder.get_object("ecb_booklist")
+        w.prepend_text(bls)
+        while len(self.mruBookList) > 10:
+            self.mruBookList.pop(10)
+            w.remove(10)
+        self.userconfig.set('init', 'mruBooks', "\n".join(self.mruBookList))
+        
     def onSaveConfig(self, btn, force=False):
         if self.prjid is None or (not force and self.configLocked()):
             return
@@ -1162,13 +1175,28 @@ class GtkViewModel(ViewModel):
         self.sensiVisible(Gtk.Buildable.get_name(btn))
         self.colorTabs()
 
+    def onFnPosChanged(self, btn):
+        if self.get("r_fnpos") == "column" and self.get("r_xrpos") == "normal":
+            self.set("r_xrpos", "column")
+
+        if self.get("r_fnpos") == "normal" and self.get("r_xrpos") == "column":
+            self.set("r_xrpos", "normal")
+    
     def onXrefLocnClicked(self, btn):
-        if self.get("r_xrpos") == "blend" and self.get("r_fnpos") == "column":
+        # if self.get("r_xrpos") == "blend" and self.get("r_fnpos") == "column":
+            # self.set("r_fnpos", "normal")
+
+        if self.get("r_xrpos") == "column" and self.get("r_fnpos") == "normal":
+            self.set("r_fnpos", "column")
+
+        if self.get("r_xrpos") == "normal" and self.get("r_fnpos") == "column":
             self.set("r_fnpos", "normal")
-        elif self.get("r_xrpos") == "centre":
+
+        if self.get("r_xrpos") in ("centre", "column"):
+            self.set("r_fnpos", "column")
+
+        if self.get("r_xrpos") == "centre":
             self.builder.get_object("ex_xrListSettings").set_expanded(True)
-            if self.get("r_fnpos") == "normal":
-                self.set("r_fnpos", "column")
         
         self.onSimpleClicked(btn)
         try:
@@ -1704,9 +1732,7 @@ class GtkViewModel(ViewModel):
         if btn.get_active():
             self.set("r_"+bits[0], bits[1])
         self.sensiVisible("r_"+bits[0])
-        print("in onRadioChanged")
-        if n.startswith("r_book_") and self.get("r_book") != "module":
-            print("    Doing something strange")
+        if n.startswith("r_book_") and self.get("r_book") is not "module":
             self.onBookSelectorChange(btn)
             self.updateExamineBook()
             self.updateDialogTitle()
@@ -2236,10 +2262,9 @@ class GtkViewModel(ViewModel):
         if bk == "NON":
             self.set("ecb_book", "")
             return
-        if bk is not None and bk != "" and self.get("r_book") is not "module":
+        if bk is not None and bk != "" and self.get("r_book") != "module":
             chs = int(chaps.get(str(bk), 999))
             if self.loadingConfig:
-                print("Changing r_book to single!")
                 self.set("r_book", "single")
                 self._setChapRange("from", 1, chs, int(float(self.get("s_chapfrom"))))
                 self._setChapRange("to", 1, chs, int(float(self.get("s_chapto"))))
@@ -2358,7 +2383,7 @@ class GtkViewModel(ViewModel):
                 self.userconfig.set("init", "config", self.configId)
         # self.updateBookList()
         books = self.getBooks()
-        if books is None or not len(books):
+        if self.get("r_book") in ("single", "multiple") and (books is None or not len(books)):
             books = self.getAllBooks()
             for b in allbooks:
                 if b in books:
@@ -3396,7 +3421,7 @@ class GtkViewModel(ViewModel):
 
     def onFootnotesClicked(self, btn):
         if not self.sensiVisible("c_includeFootnotes"):
-            if self.get("r_xrpos_below") or self.get("r_xrpos_blend"):
+            if self.get("r_xrpos") == "below" or self.get("r_xrpos") == "blend":
                 self.set("r_xrpos", "centre") if self.get("c_useXrefList") else self.set("r_xrpos", "normal")
               
     def onXrefClicked(self, btn):
@@ -3411,6 +3436,12 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("ex_xrListSettings").set_expanded(xrl)
         for w in ["tb_xrefs", "lb_xrefs"]:
             self.builder.get_object(w).set_sensitive(xrf or xrl)
+            
+    def updateColxrefSetting(self, btn):
+        xrf = self.get("c_includeXrefs")
+        xrl = self.get("c_useXrefList")
+        xrc = self.get("r_xrpos") == "centre"
+        self.builder.get_object("fr_colXrefs").set_sensitive(xrc)
 
     def onInterlinearClicked(self, btn):
         if self.sensiVisible("c_interlinear"):

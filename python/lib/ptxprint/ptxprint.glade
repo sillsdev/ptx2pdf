@@ -5229,6 +5229,7 @@ be viewed or edited in Paratext.</property>
 printed, the book codes will be listed here.
 This list is editable, so books can be re-ordered
 if need be.</property>
+                                <property name="margin_right">6</property>
                                 <property name="active">0</property>
                                 <property name="has_entry">True</property>
                                 <property name="active_id">0</property>
@@ -5238,7 +5239,7 @@ if need be.</property>
                                   <item translatable="yes">PSA PRO</item>
                                   <item translatable="yes">GEN EXO LEV NUM DEU</item>
                                 </items>
-                                <signal name="focus-out-event" handler="onBookListChanged" swapped="no"/>
+                                <signal name="changed" handler="onBookListChanged" swapped="no"/>
                                 <child internal-child="entry">
                                   <object class="GtkEntry">
                                     <property name="visible">True</property>
@@ -9118,6 +9119,7 @@ Also settings for special books.</property>
                                     <property name="draw_indicator">True</property>
                                     <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                     <signal name="clicked" handler="onXrefClicked" swapped="no"/>
+                                    <signal name="clicked" handler="updateColxrefSetting" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
@@ -9380,6 +9382,7 @@ Reference Bibles in conjunction with the
                                     <property name="draw_indicator">True</property>
                                     <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                     <signal name="clicked" handler="onXrefListClicked" swapped="no"/>
+                                    <signal name="clicked" handler="updateColxrefSetting" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
@@ -9622,6 +9625,7 @@ and place them all at the end of the book.</property>
                                         <property name="margin_left">24</property>
                                         <property name="draw_indicator">True</property>
                                         <property name="group">r_fnpos_normal</property>
+                                        <signal name="clicked" handler="onFnPosChanged" swapped="no"/>
                                         <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                       </object>
                                       <packing>
@@ -9644,6 +9648,7 @@ of the 2nd column of text.</property>
                                         <property name="margin_end">6</property>
                                         <property name="draw_indicator">True</property>
                                         <property name="group">r_fnpos_normal</property>
+                                        <signal name="clicked" handler="onFnPosChanged" swapped="no"/>
                                         <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                       </object>
                                       <packing>
@@ -9666,6 +9671,7 @@ usually placed at the end of each page.
                                         <property name="margin_end">6</property>
                                         <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
+                                        <signal name="clicked" handler="onFnPosChanged" swapped="no"/>
                                         <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                       </object>
                                       <packing>
@@ -10055,7 +10061,7 @@ and Parameters:</property>
                                       <object class="GtkLabel" id="lb_fnRuleSettings">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="label" translatable="yes">Rule Settings</property>
+                                        <property name="label" translatable="yes">Rule and Space Settings</property>
                                         <attributes>
                                           <attribute name="weight" value="bold"/>
                                           <attribute name="foreground" value="#72729f9ecfcf"/>
@@ -10436,6 +10442,7 @@ column similar to a study/reference Bible layout.</property>
                                         <property name="group">r_xrpos_normal</property>
                                         <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                         <signal name="clicked" handler="onXrefLocnClicked" swapped="no"/>
+                                        <signal name="clicked" handler="updateColxrefSetting" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left_attach">3</property>
@@ -10796,7 +10803,7 @@ and Parameters:</property>
                                       <object class="GtkLabel" id="lb_xrRuleSettings">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="label" translatable="yes">Rule Settings</property>
+                                        <property name="label" translatable="yes">Rule and Space Settings</property>
                                         <attributes>
                                           <attribute name="weight" value="bold"/>
                                           <attribute name="foreground" value="#72729f9ecfcf"/>
@@ -11115,7 +11122,7 @@ selected cross-references for both NT and OT.</property>
                                                     <property name="margin_right">6</property>
                                                     <property name="margin_top">6</property>
                                                     <property name="margin_bottom">6</property>
-                                                    <property name="row_spacing">12</property>
+                                                    <property name="row_spacing">6</property>
                                                     <property name="column_spacing">5</property>
                                                     <child>
                                                       <object class="GtkSpinButton" id="s_centreColWidth">
@@ -11232,6 +11239,28 @@ being positioned between the columns of text.</property>
                                                       <packing>
                                                         <property name="left_attach">1</property>
                                                         <property name="top_attach">0</property>
+                                                      </packing>
+                                                    </child>
+                                                    <child>
+                                                      <object class="GtkCheckButton" id="c_xrColumnRule">
+                                                        <property name="label" translatable="yes">Vertical Rule(s) Between Columns</property>
+                                                        <property name="visible">True</property>
+                                                        <property name="can_focus">True</property>
+                                                        <property name="receives_default">False</property>
+                                                        <property name="tooltip_text" translatable="yes">Check this option to include a vertical line
+separating the text and cross-references.</property>
+                                                        <property name="halign">end</property>
+                                                        <property name="valign">center</property>
+                                                        <property name="margin_right">6</property>
+                                                        <property name="margin_top">6</property>
+                                                        <property name="margin_bottom">6</property>
+                                                        <property name="active">True</property>
+                                                        <property name="draw_indicator">True</property>
+                                                      </object>
+                                                      <packing>
+                                                        <property name="left_attach">0</property>
+                                                        <property name="top_attach">3</property>
+                                                        <property name="width">2</property>
                                                       </packing>
                                                     </child>
                                                   </object>
