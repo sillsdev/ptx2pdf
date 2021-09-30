@@ -353,7 +353,7 @@
   \x@\let\x@\th@cl@ss\csname note-\cl@ss\endcsname % make \th@cl@ss be a synonym for the current note class
   % if the noteclass has content to output ...
   \ifvoid\th@cl@ss\TRACE{no note}\else%
-    \iff@rstnote\ifvoid\verybottomins\vfill\fi\fi % ignore depth of body text; fill space
+    \iff@rstnote\ifvoid\verybottomins\vfil\fi\fi % ignore depth of body text; fill space
     \kern\AboveNoteSpace % output above note class space
     \iff@rstnote\kern-\dp\pstr@t \footnoterule\global\f@rstnotefalse
       \vskip\BelowFootNoteRuleSpace minus \BelowFootNoteRuleSpace\kern0pt
@@ -367,7 +367,7 @@
   \x@\let\x@\th@cl@ss\csname note-\cl@ss\endcsname % make \th@cl@ss be a synonym for the current note class
   % if the noteclass has content to output ...
   \ifvoid\th@cl@ss\else
-    \iff@rstnote\ifvoid\verybottomins\vfill\fi %\kern-\lastd@pth\vfil % ignore depth of body text; fill space
+    \iff@rstnote\ifvoid\verybottomins\vfil\fi %\kern-\lastd@pth\vfil % ignore depth of body text; fill space
       \dimen5=\AboveNoteSpace\advance\dimen5 by -\BelowFootNoteRuleSpace\advance\dimen5 by -0.2pt
       \vskip\ifdim\dimen5>0pt \AboveNoteSpace minus \dimen5\else\AboveNoteSpace\fi
       %\kern-\dp\pstr@t
@@ -1183,7 +1183,7 @@
     \else\setbox\colA=\box0\setbox\s@vedpage=\box\voidb@x \trace{o}{Everything to colA}% dump it all in colA and bail
   \fi\fi\fi
   \ifColNotes\iffitonpage\ifdim\ht\coln@tebox>0pt
-    \setbox\colB=\vbox to \colhtA{\unvbox\colB \vfil \unvbox\coln@tebox\unkern}
+    \setbox\colB=\vbox to \colhtA{\unvbox\colB \unvbox\coln@tebox\unkern}
     \trace{o}{balanced: ifcolnotes bailing with A=\the\ht\colA, B=\the\ht\colB}
     \fitonpagefalse\rebalancetrue % bail early
     \colbfullfalse
@@ -1387,7 +1387,7 @@
       \ifdim\ht2>0pt
         \unvbox2\ifdim\ht5>0pt\setbox0\lastbox\dimen0=\dp0\box0\vskip\dimen0\vskip\InterNoteSpace \unvbox5\fi
       \else\ifdim\ht5>0pt
-          \ifvoid\verybottomins\vfill\fi %\kern-\lastd@pth\vfil % ignore depth of body text; fill space
+          %\ifvoid\verybottomins\vfil\fi %\kern-\lastd@pth\vfil % ignore depth of body text; fill space
           \dimen5=\AboveNoteSpace\advance\dimen5 by -\BelowFootNoteRuleSpace\advance\dimen5 by -0.2pt
           \vskip\ifdim\dimen5>0pt \AboveNoteSpace minus \dimen5\else\AboveNoteSpace\fi
           {\footnoterule}\prevdepth=-10000pt
@@ -1597,7 +1597,7 @@
 % #1: Height of gutter rule, #2: height of gutter rule box, #3: depth of gutter rule box, #4: total height
 % #5: line sides bit 0=left, 1=right
   \dimen4=#1\advance\dimen4-\ColumnGutterRuleSkip%\advance\dimen4 by #3
-  \setbox4=\ifdim#2>\onel@neunit\vbox to #4{%       don't rule empty single column stuff e.g. at end of 2 col
+  \setbox4=\ifdim#2>\onel@neunit\vbox to #4{%       don't rule empty single column stuff at end of 2 col
     \vskip\ColumnGutterRuleSkip
     \hbox to 1pt{\hfil\vrule height \the\dimen4\hfil}%\dp5=#3 \box5
     \vfil}\else\box\voidb@x\fi
