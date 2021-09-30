@@ -1196,10 +1196,6 @@
       \let\col@do\update@cumulative@delta
       \x@\each@col\cts@list\E
     \egroup
-    
-    
-    
-    
     \thisjointDelta=0pt %Do we need extra space?
     %Calculate how much extra space we need:
     \csname @do@jointcalc@\diglotlayout\endcsname
@@ -1239,8 +1235,8 @@
        \fi
       \fi
     \fi\fi
-    \trace{d}{Gutter \the\dimen8 height, \the\dimen9 deep}%
-    \dimen7=\dimen8%.5\baselineskip
+    \trace{d}{simplecols Gutter \the\dimen8 height, \the\dimen9 deep}%
+    \dimen7=\dimen8
 }
 
 \def\@preswap@simplecols#1{}
@@ -1462,9 +1458,9 @@
 
 
 \newif\ifLRf@@tnotes%
-\newif\ifNoteGutterRule \NoteGutterRulefalse
+\newif\ifNoteGutterRule \NoteGutterRuletrue
 \newif\ifFigGutterRule \FigGutterRulefalse
-\newif\ifJoinGutterRule \FigGutterRulefalse
+\newif\ifJoinGutterRule \JoinGutterRulefalse
 \newcount\MaxPages
 \edef\MaxPagesPerChunk{300}
 \MaxPages=\MaxPagesPerChunk
@@ -1534,17 +1530,18 @@
   \x@\each@col\diglot@list\E% 
   \let\col@do=\reb@xht
   \x@\each@col\diglot@list\E% 
-  \dimen8=\dimen1
+  \dimen7=\dimen1
   \dimen1=0pt
   \let\col@do=\max@boxdp
   \x@\each@col\diglot@list\E% 
   \dimen9=\dimen1
-  \trace{d}{Gutter \the\dimen8 high, \the\dimen9 deep}%
-  \dimen7=0pt
+  \trace{d}{@prepare@balnotes@simplecols: Gutter \the\dimen8 high, \the\dimen9 deep}%
+  \ifJoinGutterRule\else\advance\dimen7 by -\AboveNoteSpace\fi
+  \dimen8=\dimen7
 }
 
 \def\@do@balnotes@simplecols{%
-  \setbox1\hbox{\makediglotgutter{\dimen7}{\dimen8}{\dimen9}}%
+  \setbox1\hbox{\ifNoteGutterRule\makediglotgutter{\dimen7}{\dimen8}{\dimen9}\else\hskip\gutter\fi}%
   \let\col@do=\@@simplecols\let\l@stcol\empty
   \setbox0=\hbox to \textwidth{%\vllap{\the\ht\Lbox \the\dp\Lbox}%
   \hbox to\columnshift{}%
@@ -1587,14 +1584,16 @@
   \x@\each@col\diglot@list\E
   \trace{Df}{=\the\dimen1}%
   \dimen9=\dimen1
-  \advance\dimen8 by -\AboveNoteSpace\relax %stop the line a little short
-  \dimen7=\dimen8
-  \trace{d}{ANS: \the\AboveNoteSpace. Gutter \the\dimen8 tall, \the\dimen9 deep}%
+  \ifJoinGutterRule\else
+    \advance\dimen7 by -\AboveNoteSpace\relax %stop the line a little short
+  \fi
+  \dimen8=\dimen7
+  \trace{d}{ANS: \the\AboveNoteSpace. Gutter \the\dimen7 tall, \the\dimen9 deep}%
 }
 
 \def\@do@unbalnotes@simplecols{%
   \traceNum{d}{@do@unbalnotes@simplecols \layout@list}%
-  \setbox1\hbox{\makediglotgutter{\dimen7}{\dimen8}{\dimen9}}%
+  \setbox1\hbox{\ifNoteGutterRule\makediglotgutter{\dimen7}{\dimen8}{\dimen9}\else\hskip\gutter\fi}%
   \let\col@do=\@@simplecols\let\l@stcol\empty
    \setbox\notechunk\hbox to \textwidth{%\vllap{\the\ht\Lbox \the\dp\Lbox}%
     \ifdiglotN@rmal%are the sides swapped?
@@ -1682,7 +1681,7 @@
   \dimen8=\ht\topleftins % heights have been forced to be the same, no check
   \dimen9=\dp\topleftins
   \ifdim \dimen9 <\dp\toprightins \dimen9=\dp\toprightins \fi
-  \trace{d}{Gutter \the\dimen8 hight, \the\dimen9 deep}%
+  \trace{d}{Top fig Gutter \the\dimen8 hight, \the\dimen9 deep}%
   \dimen7=\dimen9
   \advance\dimen7 by \dimen8
   \setbox\topchunk=\hbox to \textwidth{%\vllap{\the\ht\Lbox \the\dp\Lbox}%
@@ -1707,7 +1706,7 @@
   \ifdim \dimen8 <\ht\bottomrightins \dimen8=\ht\bottomrightins \fi
   \dimen9=\dp\bottomleftins
   \ifdim \dimen9 <\dp\bottomrightins \dimen9=\dp\bottomrightins \fi
-  \trace{d}{Gutter \the\dimen8 hight, \the\dimen9 deep}%
+  \trace{d}{Bottom Fig Gutter \the\dimen8 hight, \the\dimen9 deep}%
   \dimen7=\dimen9
   \advance\dimen7 by \dimen8
   \setbox\botchunk=\hbox to \textwidth{%\vllap{\the\ht\Lbox \the\dp\Lbox}%
@@ -2400,10 +2399,12 @@
 \def\makediglotgutter#1#2#3{\hbox to \gutter{\hss
 %rule is #1 hight, #3 deep, and fits in a box #2 high
   \trace{D}{makediglotgutter \the #1,\the #2,\the #3}%
-  \dimen4=#1\advance \dimen4 by #3
    \setbox4=\vbox to #2{%
+     \dimen4=#2\advance\dimen4 by -#1
+     \kern\dimen4
      \hbox to 1pt{\hfil
        \ifColumnGutterRule
+        \dimen4=#1\advance \dimen4 by #3
         \vrule height \the\dimen4 
        \fi
        \hfil}%\dp5=#3 \box5

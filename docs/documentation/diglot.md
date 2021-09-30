@@ -108,8 +108,13 @@ Debugging options for really sticky problems; see end of this document.
 - ```\rangerefL```,  ```\rangerefR```, ```\rangerefA```   (and their companions ```\firstrefL,R,A``` and ```\lastrefL,R,A```) have now been defined, which display the book/chapter/verse ranges on a given column only. The appropriate font will be selected from the stylesheet(s) (```\Marker h```, ```hL``` and ```hR```, as above).
 
 ### Page layout options
+
 - ```\def\ColumnGutterFactor{15}``` 
 Gutter between the 2 cols, (measured in ```\FontSizeUnit```s), just like in two column mode.
+- ```\ColumnGutterRuletrue``` There should be a vertical rule(line) between columns of text.
+- ```\FigGutterRuletrue``` There should be a vertical rule between column-figures if there is one between the columns of text
+- ```\NoteGutterRuletrue``` There should be a vertical rule between footnotes if there is one between the columns of text
+- ```\JoinGutterRuletrue``` There should be no gap in the vertical rule between the one for the text body and the one for the notes. If false, there is no vertical rule in the gap controlled by `\AboveNoteSpace`.
 
 - ```\def\DiglotLFraction{0.55}```  
 Fraction of the space that is used by column L.  Similarly `\DiglotRFraction`, `\DiglotAFraction` etc. Unless multiple page layout (experimental)
