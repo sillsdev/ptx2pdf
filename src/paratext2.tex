@@ -354,7 +354,7 @@
   % if the noteclass has content to output ...
   \ifvoid\th@cl@ss\TRACE{no note}\else%
     \iff@rstnote\ifvoid\verybottomins\vfill\fi\fi % ignore depth of body text; fill space
-    \kern\AboveFootNoteSpace % output above note class space
+    \kern\AboveNoteSpace % output above note class space
     \iff@rstnote\kern-\dp\pstr@t \footnoterule\global\f@rstnotefalse
       \vskip\BelowFootNoteRuleSpace minus \BelowFootNoteRuleSpace\kern0pt
     \fi % output rule before first note
@@ -368,8 +368,8 @@
   % if the noteclass has content to output ...
   \ifvoid\th@cl@ss\else
     \iff@rstnote\ifvoid\verybottomins\vfill\fi %\kern-\lastd@pth\vfil % ignore depth of body text; fill space
-      \dimen5=\AboveFootNoteSpace\advance\dimen5 by -\BelowFootNoteRuleSpace\advance\dimen5 by -0.2pt
-      \vskip\ifdim\dimen5>0pt \AboveFootNoteSpace minus \dimen5\else\AboveFootNoteSpace\fi
+      \dimen5=\AboveNoteSpace\advance\dimen5 by -\BelowFootNoteRuleSpace\advance\dimen5 by -0.2pt
+      \vskip\ifdim\dimen5>0pt \AboveNoteSpace minus \dimen5\else\AboveNoteSpace\fi
       %\kern-\dp\pstr@t
       {\footnoterule}\global\f@rstnotefalse % output rule before first note
       \vskip\BelowFootNoteRuleSpace minus \BelowFootNoteRuleSpace\kern0pt
@@ -377,7 +377,7 @@
     {\maken@tepara{\th@cl@ss}{#1}}%
   \fi}
 
-\def\BelowFootNoteRuleSpace{0.5\AboveFootNoteSpace}
+\def\BelowFootNoteRuleSpace{0.5\AboveNoteSpace}
 \def\FootNoteRuleThickness{0.4pt}
 \def\FootNoteRuleWidth{1}
 \def\FootNoteRuleLeftIndent{0pt}
@@ -462,7 +462,8 @@
         \fi
      \else\n@tewidth=\textwidth\fi
    \else
-     \ifColNotes\ifnum\c@rrentcols=2\global\n@tewidth=\textwidth\else\onecolwidth{\n@tewidth}\fi\else\n@tewidth=\textwidth\fi
+     \ifColNotes\ifnum\c@rrentcols=2\global\n@tewidth=\colwidth\else\onecolwidth{\n@tewidth}\fi
+     \else\n@tewidth=\textwidth\fi
    \fi
   \else
     %Assume that the note will be inserted using the current text width.
@@ -470,7 +471,7 @@
       \ifdiglot
         \n@tewidth=\csname column\c@rrdstat width\endcsname
       \else
-        \n@tewidth=\textwidth
+        \n@tewidth=\ifColNotes\colwidth\else\textwidth\fi
       \fi
     \fi
     %\advance\n@tewidth by -\columnshift
@@ -833,7 +834,7 @@
   % Diglot prefers to get things closer 1st time round...
   %\global\count\th@cl@ss=\ifp@ranotes \ifdiglot 500\else 0\fi \else 0\fi %\count255 \fi
   \global\count\th@cl@ss=\ifdiglot 100\else 0\fi
-  \global\skip\th@cl@ss=0pt} %\AboveFootNoteSpace }
+  \global\skip\th@cl@ss=0pt} %\AboveNoteSpace }
 %-c_setnotecount
 
 %+c_resetvsize
@@ -981,10 +982,10 @@
     \global\advance\availht by -\ht0
     \global\advance\availht by -\dp0
     \iff@rstnote
-      \advance\availht by -\AboveFootNoteSpace
+      \advance\availht by -\AboveNoteSpace
       \advance\availht by -\BelowFootNoteRuleSpace
       \f@rstnotefalse
-      \trace{f}{ParaNotes[#1] cost \the\ht0+\the\dp0 + \the\AboveFootNoteSpace + \BelowFootNoteRuleSpace}%
+      \trace{f}{ParaNotes[#1] cost \the\ht0+\the\dp0 + \the\AboveNoteSpace + \BelowFootNoteRuleSpace}%
     \else
       \advance\availht by -\InterNoteSpace
       \trace{f}{ParaNotes[#1] cost \the\ht0+\the\dp0 + \the\InterNoteSpace}%
@@ -1019,7 +1020,7 @@
   \x@\each@col\diglot@list\E % max@boxsz sets dimen1 to max ht+dp
   \ifdim\dimen1>0pt
     \global\advance\availht by -\dimen1
-    \iff@rstnote\global\advance\availht by -\AboveFootNoteSpace \f@rstnotefalse
+    \iff@rstnote\global\advance\availht by -\AboveNoteSpace \f@rstnotefalse
     \else \global\advance\availht by -\InterNoteSpace\fi
     \trace{n}{reduced by=\the\dimen1}%
   \fi\egroup}
@@ -1033,14 +1034,14 @@
     \f@rstnotefalse
     \advance\availht by -\ht\th@cl@ss
     \advance\availht by -\dp\th@cl@ss
-    \iff@rstnote\advance\availht by -\AboveFootNoteSpace
-      \trace{f}{Notes[#1] cost \the\ht\th@cl@ss+\the\dp\th@cl@ss + \dp\pstr@t + 2*\the\AboveFootNoteSpace}%
+    \iff@rstnote\advance\availht by -\AboveNoteSpace
+      \trace{f}{Notes[#1] cost \the\ht\th@cl@ss+\the\dp\th@cl@ss + \dp\pstr@t + 2*\the\AboveNoteSpace}%
      \advance\availht -\dp\pstr@t \f@rstnotefalse % ensure we don't impinge on the depth
     \else
       \advance\availht by -\InterNoteSpace
-      \trace{f}{Notes[#1] cost \the\ht\th@cl@ss0+\the\dp\th@cl@ss + \the\InterNoteSpace + \the\AboveFootNoteSpace}%
+      \trace{f}{Notes[#1] cost \the\ht\th@cl@ss0+\the\dp\th@cl@ss + \the\InterNoteSpace + \the\AboveNoteSpace}%
     \fi
-    \advance\availht by -\AboveFootNoteSpace
+    \advance\availht by -\AboveNoteSpace
   \fi}
 %-c_reduceavailhtsep
 
@@ -1051,7 +1052,7 @@
   \x@\each@col\diglot@list\E % max@boxsz sets dimen1 to max ht+dp
   \ifdim\dimen1>0pt 
     \advance\availht by -\dimen1
-    \iff@rstnote\advance\availht by -\AboveFootNoteSpace \f@rstnotefalse
+    \iff@rstnote\advance\availht by -\AboveNoteSpace \f@rstnotefalse
       \advance\availht -\dp\pstr@t  % ensure we don't impinge on the depth
     \else \advance\availht by -\InterNoteSpace\fi
   \fi}
@@ -1387,8 +1388,8 @@
         \unvbox2\ifdim\ht5>0pt\setbox0\lastbox\dimen0=\dp0\box0\vskip\dimen0\vskip\InterNoteSpace \unvbox5\fi
       \else\ifdim\ht5>0pt
           \ifvoid\verybottomins\vfill\fi %\kern-\lastd@pth\vfil % ignore depth of body text; fill space
-          \dimen5=\AboveFootNoteSpace\advance\dimen5 by -\BelowFootNoteRuleSpace\advance\dimen5 by -0.2pt
-          \vskip\ifdim\dimen5>0pt \AboveFootNoteSpace minus \dimen5\else\AboveFootNoteSpace\fi
+          \dimen5=\AboveNoteSpace\advance\dimen5 by -\BelowFootNoteRuleSpace\advance\dimen5 by -0.2pt
+          \vskip\ifdim\dimen5>0pt \AboveNoteSpace minus \dimen5\else\AboveNoteSpace\fi
           {\footnoterule}\prevdepth=-10000pt
           \vskip\BelowFootNoteRuleSpace minus \BelowFootNoteRuleSpace\kern0pt
           \unvbox5\setbox0\lastbox\dimen1=\ht0\dimen0=\dp0\box0\ifdim\dimen1>0pt\kern-\dimen0\fi\vskip\bmg@p
@@ -1586,34 +1587,37 @@
 %+c_makecolumngutter
 \newdimen\columnshift \columnshift=0pt
 \newdimen\ColumnGutterRuleSkip \ColumnGutterRuleSkip=0pt
+\newif\ifColNotesRule \ColNotesRulefalse
 
 %makecolumngutter{rule height}{vbox height}{depth}
 
 \def\makecolumngutter#1#2#3#4#5{\ifnum#5=1\hfil\else\ifnum#5=3\hfil\fi\fi
   \trace{o}{makecolumngutter: rule height=#1, box height=#2, box depth=#3, total height=#4, lineside=#5 bits
-            ColumnGutterRuleSkip=\the\ColumnGutterRuleSkip}%
+            ColumnGutterRuleSkip=\the\ColumnGutterRuleSkip, baselineskip=\the\onel@neunit}%
 % #1: Height of gutter rule, #2: height of gutter rule box, #3: depth of gutter rule box, #4: total height
 % #5: line sides bit 0=left, 1=right
   \dimen4=#1\advance\dimen4-\ColumnGutterRuleSkip%\advance\dimen4 by #3
-  \ifColumnGutterRule
-    \setbox4=\vbox to #4{
-      \vskip\ColumnGutterRuleSkip
-      \hbox to 1pt{\hfil\vrule height \the\dimen4\hfil}%\dp5=#3 \box5
-      \vfil}%
-  \else\setbox4=\box\voidb@x\fi
-  \ifx\XrefNotes\empty\ifnum#5>1\box4\fi\else
+  \setbox4=\ifdim#2>\onel@neunit\vbox to #4{%       don't rule empty single column stuff e.g. at end of 2 col
+    \vskip\ColumnGutterRuleSkip
+    \hbox to 1pt{\hfil\vrule height \the\dimen4\hfil}%\dp5=#3 \box5
+    \vfil}\else\box\voidb@x\fi
+  \ifx\XrefNotes\empty
+    \ifnum#5=3\ifColumnGutterRule \box4\fi\fi
+  \else
+    \trace{o}{makecolumngutter: xr@fbox=\the\ht\xr@fbox}%
+    \ifnum\ifnum#5=1 1\else\ifnum#5=3 1\else 0\fi\fi =1
+      \ifColNotesRule\copy4\fi\fi
+    \dimen0=#2
+    % todo: ensure empty box doesn't collapse
+    % todo: allow user defined inner margin also on grid
+    \ifnum#5=1\hbox to \XrefNotesMargin{}\else\ifnum#5=3\hbox to \XrefNotesMargin{}\fi\fi
     \ifdim\ht\xr@fbox>0pt
-      \trace{o}{makecolumngutter: xr@fbox=\the\ht\xr@fbox}%
-      \ifnum#5=1\copy4\else\ifnum#5=3\copy4\fi\fi
-      \dimen0=#2
-      % todo: ensure empty box doesn't collapse
-      % todo: allow user defined inner margin also on grid
-      \ifnum#5=1\hbox to \XrefNotesMargin{}\else\ifnum#5=3\hbox to \XrefNotesMargin{}\fi\fi
       \vbox to #4{\vbox to #2{\ifdim\ht\xr@fbox>0.9\dimen0 \unvbox\xr@fbox\unpenalty\unskip
         \else\ifdim\ht\xr@fbox=0pt\message{empty xrefbox}\vbox{\hsize=\XrefNotesWidth\hskip\XrefNotesWidth\hbox{}}\else
           \unvbox\xr@fbox\fi\ifXrefTopfill\else\vfil\fi\fi}\vfil}%
-      \ifnum#5>1\hbox to \XrefNotesMargin{}\box4\fi
+    \else \hbox to \XrefNotesWidth{}%
     \fi
+    \ifnum#5>1\hbox to \XrefNotesMargin{}\ifColNotesRule\box4\fi\fi
   \fi
   \ifnum#5>1\hfil\fi
   \hbox to \columnshift{}}

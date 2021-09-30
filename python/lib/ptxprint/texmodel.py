@@ -280,7 +280,7 @@ ModelMap = {
     "notes/xrcolside":          ("fcb_colXRside", None),
     "notes/xrcentrecolwidth":   ("s_centreColWidth", lambda w,v: int(float(v)) if v else "60"),
     "notes/xrguttermargin":     ("s_xrGutterWidth", lambda w,v: "{:.1f}".format(float(v)) if v else "2.0"),
-    "notes/xrcolrule":          ("c_xrColumnRule", None),
+    "notes/xrcolrule":          ("c_xrColumnRule", lambda w,v: "true" if v else "false"),
     "notes/xrcolbottom":        ("c_xrColumnBottom", lambda w,v: "true" if v else "false"),
     "notes/ifxrexternalist":    ("c_useXrefList", lambda w,v: "%" if v else ""),
     "notes/xrlistsource":       ("r_xrSource", None),
@@ -609,7 +609,8 @@ class TexModel:
                 dat.append(r"\def\{}NoteRuleThickness{{{} pt}}".format(a[0], self.dict['notes/{}rulethick'.format(a[1])]))
                 dat.append(r"\def\{}NoteRuleWidth{{{:.2f}}}".format(a[0], float(self.dict['notes/{}rulelength'.format(a[1])])/100))
                 dat.append(r"\def\Below{}NoteRuleSpace{{{} pt}}".format(a[0], self.dict['notes/below{}rulespace'.format(notemap[a[1]])]))
-                dat.append(r"\Above{}NoteSpace={} pt".format(a[0], self.dict['notes/above{}space'.format(notemap[a[1]])]))
+                dat.append(r"\Above{}NoteSpace={} pt".format(a[0] if a[1] != "fn" else "",
+                                                             self.dict['notes/above{}space'.format(notemap[a[1]])]))
             self.dict['noterules/{}'.format(a[0].lower())] = "\n".join(dat)
         self.dict['noterules/endnotemarkers'] = "\n".join(endnotes)
 

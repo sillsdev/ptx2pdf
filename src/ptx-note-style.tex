@@ -81,10 +81,10 @@
 }
 \def\s@tn@tep@r@ms#1{%
   \x@\count\csname note-#1\endcsname=\ifdiglot 100 \else \ifp@ranotes 100 \else 100 \fi\fi 
-  \x@\skip\csname note-#1\endcsname=\AboveFootNoteSpace %Skip before footntoes
+  \x@\skip\csname note-#1\endcsname=\AboveNoteSpace %Skip before footntoes
   \x@\dimen\csname note-#1\endcsname=\maxdimen %Max note skip
 }
-\newdimen\AboveFootNoteSpace \AboveFootNoteSpace=\medskipamount
+\newdimen\AboveNoteSpace \AboveNoteSpace=\medskipamount
 \newdimen\InterNoteSpace \InterNoteSpace=3.5pt
 \newdimen\NoteCallerWidth %Now set in 1timesetup \NoteCallerWidth=1.1ex %Minimum width for callers/callees, helps alignment.
 %-cnote_initnotes
