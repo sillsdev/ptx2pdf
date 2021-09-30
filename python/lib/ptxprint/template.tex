@@ -129,7 +129,6 @@
 %%%%% Notes %%%%%
 
 %% Disable footnote rule (when line is commented out, the footnote rule will show)
-{notes/iffootnoterule}\def\footnoterule{{}} {notes/endnotes_}\def\zendnoterule{{}}
 
 %\AutoCallerStartChar=97
 %\AutoCallerNumChars=26
@@ -163,6 +162,8 @@
 {noterules/endnotemarkers}
 {noterules/foot}
 {noterules/end}
+{notes/iffootnoterule}\def\FootNotRuleWidth{{0.0}}
+{notes/endnotes_}\def\EndNotRuleWidth{{0.0}}
 \InterNoteSpace={notes/internotespace}pt
 %\AboveNoteSpace=\medskipamount % but is a dimension not a skip
 %\InterNoteSpace=3.5pt

@@ -608,9 +608,10 @@ class TexModel:
                     dat.append(r"\def\{}NoteRuleRightIndent{{\ifodd\pageno {}\else {}\fi}}".format(a[0], right, left))
                 dat.append(r"\def\{}NoteRuleThickness{{{} pt}}".format(a[0], self.dict['notes/{}rulethick'.format(a[1])]))
                 dat.append(r"\def\{}NoteRuleWidth{{{:.2f}}}".format(a[0], float(self.dict['notes/{}rulelength'.format(a[1])])/100))
-                dat.append(r"\def\Below{}NoteRuleSpace{{{} pt}}".format(a[0], self.dict['notes/below{}rulespace'.format(notemap[a[1]])]))
-                dat.append(r"\Above{}NoteSpace={} pt".format(a[0] if a[1] != "fn" else "",
-                                                             self.dict['notes/above{}space'.format(notemap[a[1]])]))
+                bspace = float(self.dict['notes/below{}rulespace'.format(notemap[a[1]])])
+                dat.append(r"\def\Below{}NoteRuleSpace{{{:.1f} pt}}".format(a[0], bspace))
+                aspace = float(self.dict['notes/above{}space'.format(notemap[a[1]])]) + bspace
+                dat.append(r"\Above{}NoteSpace={:.1f} pt".format(a[0] if a[1] != "fn" else "", aspace))
             self.dict['noterules/{}'.format(a[0].lower())] = "\n".join(dat)
         self.dict['noterules/endnotemarkers'] = "\n".join(endnotes)
 

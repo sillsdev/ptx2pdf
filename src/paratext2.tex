@@ -354,10 +354,7 @@
   % if the noteclass has content to output ...
   \ifvoid\th@cl@ss\TRACE{no note}\else%
     \iff@rstnote\ifvoid\verybottomins\vfil\fi\fi % ignore depth of body text; fill space
-    \kern\AboveNoteSpace % output above note class space
-    \iff@rstnote\kern-\dp\pstr@t \footnoterule\global\f@rstnotefalse
-      \vskip\BelowFootNoteRuleSpace minus \BelowFootNoteRuleSpace\kern0pt
-    \fi % output rule before first note
+    \iff@rstnote\footnoterule\global\f@rstnotefalse\else\kern\InterNoteSpace\fi
     \hbox{\vbox{\unvbox\th@cl@ss}}\fi}% output notes
 
 % insert a note class in which each note is in the same paragraph
@@ -368,11 +365,7 @@
   % if the noteclass has content to output ...
   \ifvoid\th@cl@ss\else
     \iff@rstnote\ifvoid\verybottomins\vfil\fi %\kern-\lastd@pth\vfil % ignore depth of body text; fill space
-      \dimen5=\AboveNoteSpace\advance\dimen5 by -\BelowFootNoteRuleSpace\advance\dimen5 by -0.2pt
-      \vskip\ifdim\dimen5>0pt \AboveNoteSpace minus \dimen5\else\AboveNoteSpace\fi
-      %\kern-\dp\pstr@t
-      {\footnoterule}\global\f@rstnotefalse % output rule before first note
-      \vskip\BelowFootNoteRuleSpace minus \BelowFootNoteRuleSpace\kern0pt
+      \footnoterule\global\f@rstnotefalse % output rule before first note
     \else\kern\InterNoteSpace\fi
     {\maken@tepara{\th@cl@ss}{#1}}%
   \fi}
@@ -385,15 +378,25 @@
 
 \newif\iff@rstnote
 \f@rstnotetrue
-\def\footnoterule{\kern-\BelowFootNoteRuleSpace
-  \setn@tewidth{-}%
-  \dimen0=\FootNoteRuleWidth\n@tewidth
-  \toks0=\everypar\everypar={}\parskip=0pt\baselineskip=0pt\parindent=0pt\let\par=\endgraf\parfillskip=0pt%
+\def\footnoterule{\noterule{\AboveNoteSpace}{\BelowFootNoteRuleSpace}{\n@tewidth}{%
+  \FootNoteRuleLeftIndent \vrule height \FootNoteRuleThickness width \FootNoteRuleWidth\n@tewidth
+  \FootNoteRuleRightIndent}}
+
+%\def\footnoterule{%\kern-\BelowFootNoteRuleSpace
+%  \setn@tewidth{-}%
+%  \dimen0=\FootNoteRuleWidth\n@tewidth
+%  \toks0=\everypar\everypar={}\parskip=0pt\baselineskip=0pt\parindent=0pt\let\par=\endgraf\parfillskip=0pt%
 %  \noindent\hbox{\noindent\kern\columnshift\vbox{\hrule width \dimen0}}\par
-  \hbox to \ifColNotes\colwidth\else\textwidth\fi {\FootNoteRuleLeftIndent
-    \vrule height \FootNoteRuleThickness width \dimen0 \FootNoteRuleRightIndent}%
-  \kern-\FootNoteRuleThickness % the \hrule is .4pt high
-\everypar=\toks0}
+%  \hbox to \ifColNotes\colwidth\else\textwidth\fi {\FootNoteRuleLeftIndent
+%    \vrule height \FootNoteRuleThickness width \dimen0 \FootNoteRuleRightIndent}%
+%  \kern-\FootNoteRuleThickness % the \hrule is .4pt high
+%\everypar=\toks0}
+\newbox\tb@x
+\def\noterule#1#2#3#4{{\dimen1=#1\vskip\dimen1 minus 0.5 \dimen1
+  \dimen1=#2 \kern -\dimen1
+  \relax\setbox\tb@x=\hbox to #3{#4}\dimen0=0.5\ht0\kern-\dimen0\box\tb@x\kern-\dimen0
+  \vskip \dimen1 minus 0.5\dimen1}}
+
 
 \def\EndNoteRuleWidth{0.5}
 \def\EndNoteRuleThickness{0.4pt}
@@ -408,21 +411,13 @@
   \if@ndnotesfound\zendnoterule\fi
 }
 \def\EndNoteSeparator{\hbox to \hsize{\EndNoteRuleLeftIndent
-    \vrule width \EndNoteRuleWidth\hsize  height \EndNoteRuleThickness
+    \vrule width \EndNoteRuleWidth \hsize  height \EndNoteRuleThickness
     \EndNoteRuleRightIndent}%
   \kern-\EndNoteRuleThickness %
 } 
-\def\zendnoterule{{%
-    \toks0=\everypar\everypar={}\parskip=0pt\parindent=0pt\let\par=\endgraf\parfillskip=0pt%
-%  \noindent\hbox{\noindent\kern\columnshift\vbox{\hrule width \dimen0}}\par
-    \dimen0=\prevdepth\ifdim \dimen0>0pt\kern-\dimen0\fi
-    \vbox{\kern \AboveEndNoteSpace
-      \EndNoteSeparator
-      \kern \BelowEndNoteRuleSpace}%
-    \everypar=\toks0 
-  }%
-  \penalty 5000 %Not a good place to break. Also protects from unboxing
-}
+\def\zendnoterule{\noterule{\AboveEndNoteSpace}{\BelowEndNoteSpace}{\hsize}{%
+  \EndNoteRuleLeftIndent\vrule width \EndNoteRuleWidth\hsize height \EndNoteRuleThickness
+  \EndNoteRuleRightIndent}}
 
 \def\zpostendnoterule{\if@ndnotesfound{%
     \toks0=\everypar\everypar={}\parskip=0pt\parindent=0pt\let\par=\endgraf\parfillskip=0pt%
@@ -702,7 +697,7 @@
       \ifvoid\topins\else \vbox{\hbox to \columnshift{}\box\topins} \vskip\skip\topins \fi
       \setbox1=\vbox{\unvcopy\colA\unskip}%
       \iflastpage\setbox\colA\vbox{\unvbox\colA}\fi
-      \ifColNotes\setbox\colA\vbox{\unvbox\colA\box\coln@tebox}\fi
+      \ifColNotes\setbox\colA\vbox{\unvbox\colA\vfil\box\coln@tebox}\fi
       \lastd@pth=\dp\colA
       \ifColNotes\ifdim\dp\xr@fbox>\lastd@pth \lastd@pth=\dp\xr@fbox\fi\fi
       \locs@startstop{\colA}{1}%
@@ -1184,7 +1179,7 @@
     \else\setbox\colA=\box0\setbox\s@vedpage=\box\voidb@x \trace{o}{Everything to colA}% dump it all in colA and bail
   \fi\fi\fi
   \ifColNotes\iffitonpage\ifdim\ht\coln@tebox>0pt
-    \setbox\colB=\vbox to \colhtA{\unvbox\colB \unvbox\coln@tebox\unkern}
+    \setbox\colB=\vbox to \colhtA{\unvbox\colB \vfil\unvbox\coln@tebox\unkern}
     \trace{o}{balanced: ifcolnotes bailing with A=\the\ht\colA, B=\the\ht\colB}
     \fitonpagefalse\rebalancetrue % bail early
     \colbfullfalse
@@ -1389,10 +1384,7 @@
         \unvbox2\ifdim\ht5>0pt\setbox0\lastbox\dimen0=\dp0\box0\vskip\dimen0\vskip\InterNoteSpace \unvbox5\fi
       \else\ifdim\ht5>0pt
           %\ifvoid\verybottomins\vfil\fi %\kern-\lastd@pth\vfil % ignore depth of body text; fill space
-          \dimen5=\AboveNoteSpace\advance\dimen5 by -\BelowFootNoteRuleSpace\advance\dimen5 by -0.2pt
-          \vskip\ifdim\dimen5>0pt \AboveNoteSpace minus \dimen5\else\AboveNoteSpace\fi
-          {\footnoterule}\prevdepth=-10000pt
-          \vskip\BelowFootNoteRuleSpace minus \BelowFootNoteRuleSpace\kern0pt
+          \footnoterule\prevdepth=-10000pt
           \unvbox5\setbox0\lastbox\dimen1=\ht0\dimen0=\dp0\box0\ifdim\dimen1>0pt\kern-\dimen0\fi\vskip\bmg@p
       \fi\fi}%
       \trace{o}{coln@tebox out=\the\ht\coln@tebox+\the\dp\coln@tebox}%
