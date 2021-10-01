@@ -1164,6 +1164,7 @@
 %+c_balanced_intro
 \newdimen\availA \newdimen\availB
 \newif\ifcolbfull \colbfulltrue
+\newif\ifhascolnotes
 \def\BalanceThreshold{0.95}
 
 \def\balanced{
@@ -1178,7 +1179,8 @@
     \iffitonpage\s@ve@nd \trace{o}{Abandoning ship}% the split failed and there is nothing left!
     \else\setbox\colA=\box0\setbox\s@vedpage=\box\voidb@x \trace{o}{Everything to colA}% dump it all in colA and bail
   \fi\fi\fi
-  \ifColNotes\iffitonpage\ifdim\ht\coln@tebox>0pt
+  \hascolnotesfalse
+  \ifColNotes\iffitonpage\ifdim\ht\coln@tebox>0pt\hascolnotestrue
     \setbox\colB=\vbox to \colhtA{\unvbox\colB \vfil\unvbox\coln@tebox\unkern}
     \trace{o}{balanced: ifcolnotes bailing with A=\the\ht\colA, B=\the\ht\colB}
     \fitonpagefalse\rebalancetrue % bail early
@@ -1528,14 +1530,15 @@
     %\ht\colA=\the\availht \ht\colB=\the\availht                             %(1)
     \lastd@pth=\dp\colA\ifdim\dp\colB<\lastd@pth \lastd@pth=\dp\colB\fi
     \ifColNotes\ifdim\dp\xr@fbox<\lastd@pth \lastd@pth=\dp\xr@fbox\fi\fi
-    \trace{p}{twocoltrial: calculate dimen3 as min(\the\availht, max(\the\colhtA, \the\colhtB, \the\ht\xr@fbox))}
-    \dimen3=\colhtA \ifdim\colhtB>\dimen3\dimen3=\colhtB\fi
+    \trace{p}{twocoltrial: calculate dimen3 as min(\the\availht, max(\the\ht\colA, \the\ht\colB, \the\ht\xr@fbox))}
+    \dimen3=\ht\colA \ifdim\ht\colB>\dimen3\ifhascolnotes\dimen3=\ht\colB\fi\fi
     \ifColNotes\ifdim\ht\xr@fbox>\dimen3\dimen3=\ht\xr@fbox\fi\fi
     \ifdim\dimen3>\availht\dimen3=\availht\fi
+    \ht\colA=\dimen3 \ht\colB=\dimen3
     \advance\dimen4 by \lastd@pth
-    \trace{o}{box height = \the\availht + \the\bmg@p}%
+    \trace{o}{box height + gap = \the\availht \space + \the\bmg@p}%
     \def\pagecontents{%
-      \trace{o}{Topins=\the\ht\topins, Bottomins=\the\ht\bottomins, tlins=\the\ht\topleftins, blins=\the\ht\bottomleftins, trins=\the\ht\toprightins, brins=\the\ht\bottomrightins}%
+      \trace{o}{Topins=\the\ht\topins, Bottomins=\the\ht\bottomins, tlins=\the\ht\topleftins, blins=\the\ht\bottomleftins, trins=\the\ht\toprightins, brins=\the\ht\bottomrightins, boxA=\the\ht\colA, boxB=\the\ht\colB, colbox=\the\ht\xr@fbox}%
       \dimen1=\textwidth\advance\dimen1 by -\ExtraRMargin
       \dimen2=\availht\advance\dimen2\bmg@p
       \ifvoid\partial\else %\msg{2colout partial: \the\ht\partial}\hskip\columnshift

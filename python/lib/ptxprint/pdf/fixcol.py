@@ -243,62 +243,64 @@ def fixhighlights(trailer, parlocs=None):
                 r = ann.Rect
                 if ann.Ref is not None:
                     if ann.Ref not in newannots:
-                        newannots[ann.Ref] = ann
+                        newannots[ann.Ref] = [ann]
                         ann.QuadPoints = []
-                    newannots[ann.Ref].QuadPoints.append(list(map(float, ann.Rect)))
+                    newannots[ann.Ref][-1].QuadPoints.append(list(map(float, ann.Rect)))
             else:
                 newannots.setdefault(None, []).append(ann)
         pannots = PdfArray()
         pres = []
-        for k, v in newannots.items():
+        for k, vannots in newannots.items():
             if k is None:
-                page.Annots.extend(v)
-            q = []
-            rect = []
-            blefts = []
-            brights = []
-            margin = float(v.Margin) if v.Margin is not None else 0.
-            # collect rectangles in QuadPoints
-            for i, r in enumerate(v.QuadPoints):
-                ymin = min(r[1], r[3])
-                ymax = max(r[1], r[3])
-                if k in annotlocs and i == 0 and annotlocs[k][0][2] == pagenum and ymin <= annotlocs[k][0][1] <= ymax:
-                    xmin = annotlocs[k][0][0]
-                else:
-                    xmin = min(r[0], r[2])
-                if k in annotlocs and i == len(v.QuadPoints) - 1 and annotlocs[k][1][2] == pagenum and ymin <= annotlocs[k][1][1] <= ymax:
-                    xmax = annotlocs[k][1][0]
-                else:
-                    xmax = max(r[0], r[2])
-                q += [xmin, ymin, xmax, ymin, xmin, ymax, xmax, ymax]
-                blefts += [(xmin - margin, ymax), (xmin - margin, ymin)]  # top to bottom
-                brights += [(xmax + margin, ymax), (xmax + margin, ymin)]
-                if i == 0:
-                    rect = (xmin, ymin, xmax, ymax)
-                else:
-                    rect = (min(rect[0], xmin), min(rect[1], ymin), max(rect[2], xmax), max(rect[3], ymax))
-            if v.Subtype == "/Highlight":
-                v.QuadPoints = PdfArray(q)
-                v.Rect = PdfArray(rect)
-                v.Ref = None
-                pannots.append(v)
-            elif v.Subtype == "/Background":
-                # convert rectangles to bounding polygon and graphics op stream
-                brect = []
-                for p in brights + list(reversed(blefts)):
-                    if len(brect) > 1:
-                        if brect[-2][0] == brect[-1][0] and brect[-1][0] == p[0]:
-                            brect.pop()
-                        elif p[0] != brect[-1][0]:
-                            p = (p[0], brect[-1][1])
-                    brect.append(p)
-                col = v.C
-                action = ["{} {} {} rg".format(*(simplefloat(float(c)) for c in col))]
-                action.append("{} {} m".format(simplefloat(brect[0][0]), simplefloat(brect[0][1])))
-                for p in brect[1:]:
-                    action.append("{} {} l".format(simplefloat(p[0]), simplefloat(p[1])))
-                action.append("h f")
-                pres.append("\n".join(action))
+                page.Annots.extend(vannots)
+            for v in vannots:
+                q = []
+                rect = []
+                blefts = []
+                brights = []
+                margin = float(v.Margin) if v.Margin is not None else 0.
+                # collect rectangles in QuadPoints
+                if getattr(v, 'QuadPoints', None) is not None:
+                    for i, r in enumerate(v.QuadPoints):
+                        ymin = min(r[1], r[3])
+                        ymax = max(r[1], r[3])
+                        if k in annotlocs and i == 0 and annotlocs[k][0][2] == pagenum and ymin <= annotlocs[k][0][1] <= ymax:
+                            xmin = annotlocs[k][0][0]
+                        else:
+                            xmin = min(r[0], r[2])
+                        if k in annotlocs and i == len(v.QuadPoints) - 1 and annotlocs[k][1][2] == pagenum and ymin <= annotlocs[k][1][1] <= ymax:
+                            xmax = annotlocs[k][1][0]
+                        else:
+                            xmax = max(r[0], r[2])
+                        q += [xmin, ymin, xmax, ymin, xmin, ymax, xmax, ymax]
+                        blefts += [(xmin - margin, ymax), (xmin - margin, ymin)]  # top to bottom
+                        brights += [(xmax + margin, ymax), (xmax + margin, ymin)]
+                        if i == 0:
+                            rect = (xmin, ymin, xmax, ymax)
+                        else:
+                            rect = (min(rect[0], xmin), min(rect[1], ymin), max(rect[2], xmax), max(rect[3], ymax))
+                if v.Subtype == "/Highlight":
+                    v.QuadPoints = PdfArray(q)
+                    v.Rect = PdfArray(rect)
+                    v.Ref = None
+                    pannots.append(v)
+                elif v.Subtype == "/Background":
+                    # convert rectangles to bounding polygon and graphics op stream
+                    brect = []
+                    for p in brights + list(reversed(blefts)):
+                        if len(brect) > 1:
+                            if brect[-2][0] == brect[-1][0] and brect[-1][0] == p[0]:
+                                brect.pop()
+                            elif p[0] != brect[-1][0]:
+                                p = (p[0], brect[-1][1])
+                        brect.append(p)
+                    col = v.C
+                    action = ["{} {} {} rg".format(*(simplefloat(float(c)) for c in col))]
+                    action.append("{} {} m".format(simplefloat(brect[0][0]), simplefloat(brect[0][1])))
+                    for p in brect[1:]:
+                        action.append("{} {} l".format(simplefloat(p[0]), simplefloat(p[1])))
+                    action.append("h f")
+                    pres.append("\n".join(action))
         if len(pres):
             pres.insert(0, "q")
             pres.append("Q")
