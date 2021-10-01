@@ -737,6 +737,12 @@ class ViewModel:
                     bits.append("mapping=mappings/{}digits".format(digmap.lower()))
                     f = "|".join(bits)
                     self._configset(config, "document/font{}".format(a), f)
+            for a in ('fn', 'xr'):
+                self._configset(config, "notes/{}pos".format(a), "page")
+                self._configset(config, "notes/{}ruleposn".format(a), "1")
+                self._configset(config, "notes/{}ruleindent".format(a), "0")
+                self._configset(config, "notes/{}rulelength".format(a), "100")
+                self._configset(config, "notes/{}rulethick".format(a), "0.4")
             config.set("config", "version", "1.96")
 
         styf = os.path.join(self.configPath(cfgname), "ptxprint.sty")
