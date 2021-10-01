@@ -391,11 +391,10 @@
 %    \vrule height \FootNoteRuleThickness width \dimen0 \FootNoteRuleRightIndent}%
 %  \kern-\FootNoteRuleThickness % the \hrule is .4pt high
 %\everypar=\toks0}
-\newbox\tb@x
-\def\noterule#1#2#3#4{{\dimen1=#1\vskip\dimen1 minus 0.5 \dimen1
+\def\noterule#1#2#3#4{{\dimen1=#1\kern 0pt\vskip\dimen1 minus 0.5 \dimen1
   \dimen1=#2 \kern -\dimen1
-  \relax\setbox\tb@x=\hbox to #3{#4}\dimen0=0.5\ht0\kern-\dimen0\box\tb@x\kern-\dimen0
-  \vskip \dimen1 minus 0.5\dimen1}}
+  \setbox0=\hbox to #3{#4}\dimen0=0.5\ht0\kern-\dimen0\box0\kern-\dimen0
+  \vskip \dimen1 minus 0.5\dimen1\kern 0pt}}
 
 
 \def\EndNoteRuleWidth{0.5}
