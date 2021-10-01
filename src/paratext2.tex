@@ -641,10 +641,9 @@
   \ifvoid\bottomins\else \vfil\kern-\lastd@pth
     \lastd@pth=0pt \vskip\skip\bottomins \hbox{\hbox to \columnshift{}\box\bottomins} \fi % ouput bottom spanning pictures
   \ifColNotes\else
-    \f@rstnotetrue%
-    \m@kenotebox
+    %\m@kenotebox
     \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2. Lastdepth=\the\lastd@pth \space Leaving \the\ht255, \the\dp255}%
-    \unvbox2 %\kern-\lastd@pth\lastd@pth=\dp2\unvbox2
+    \unvbox\n@tesbox %\kern-\lastd@pth\lastd@pth=\dp2\unvbox2
   \fi
   \noteseenfalse
   \ifvoid\verybottomins\else\ifdim\availht > 0pt\vfil % \kern-\dimen0
@@ -886,9 +885,9 @@
       \ifvoid\bottomins\else%
         \kern-\lastd@pth \lastd@pth=0pt \vskip\skip\bottomins \unvbox\bottomins \fi
       \ifMidPageFootnotes
-        \f@rstnotetrue\m@kenotebox
+        %\f@rstnotetrue\m@kenotebox
         \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2}%
-        \unvbox2 %\kern-\lastd@pth\lastdepth=\dp2\unvbox2
+        \unvbox\n@tesbox %\kern-\lastd@pth\lastdepth=\dp2\unvbox2
         \ifvoid\verybottomins\else\ifdim\availht > 0pt%
           \trace{o}{verybottomins(savepartialpage): height=\the\ht\verybottomins , availht=\the\availht, textheight=\the\textheight}
           \kern-\lastd@pth \lastd@pth=0pt \vskip\skip\verybottomins \unvbox\verybottomins
@@ -978,7 +977,6 @@
     \global\advance\availht by -\dp0
     \iff@rstnote
       \global\advance\availht by -\AboveNoteSpace
-      \global\advance\availht by -\BelowFootNoteRuleSpace
       \f@rstnotefalse
       \trace{f}{ParaNotes[#1] cost \the\ht0+\the\dp0 + \the\AboveNoteSpace + \BelowFootNoteRuleSpace}%
     \else
@@ -1346,7 +1344,7 @@
 
 %+c_calcavailht
 \xdef\p@gebotmark{}% No guarantee this will be universally set
-\newbox\coln@tebox
+\newbox\coln@tebox\newbox\n@tesbox
 \def\XrefNotes{}
 \def\c@lcavailht{
   \edef\t@st{\p@gefirstmark}%
@@ -1360,8 +1358,9 @@
   \decr{\availht}{\bottomins}%
   \decr{\availht}{\verybottomins}%
   \f@rstnotetrue
-  \ifColNotes\else
-    \let\\=\reduceavailht\the\n@tecl@sses % reduce it by the space needed for each note class
+  \ifColNotes\setbox\n@tesbox\box\voidb@x\else
+    \m@kenotebox\advance\availht by -\ht2\setbox\n@tesbox\box2
+    %\let\\=\reduceavailht\the\n@tecl@sses % reduce it by the space needed for each note class
   \fi
   \trace{i}{after inserts: \the\availht}%
   \trace{o}{c@lcavailht = \the\availht, depth = \the\dp\pstr@t}%
@@ -1497,7 +1496,7 @@
     \setbox0=\lastbox
     \trace{i}{Inserted notes, ht \the\ht0, dp \the\lastd@pth,\the\dp0}%
     \lastd@pth=\dp0 \dp0=0pt \prevdepth=-1000pt \box0 \kern\lastd@pth
-  \fi}}
+  \fi}}%\iff@rstnote\else\showbox2\fi}
 %-c_makenotebox
 
 %+c_twocoltrial_intro
