@@ -463,10 +463,14 @@
   \else
     %Assume that the note will be inserted using the current text width.
     \ifnum\c@rrentcols=1\onecolwidth{\n@tewidth}\else
-      \ifdiglot
-        \n@tewidth=\csname column\c@rrdstat width\endcsname
+      \ifcsname endn@te-#1\endcsname
+        \n@tewidth=\hsize
       \else
-        \n@tewidth=\ifColNotes\colwidth\else\textwidth\fi
+        \ifdiglot
+          \n@tewidth=\csname column\c@rrdstat width\endcsname
+        \else
+          \n@tewidth=\ifColNotes\colwidth\else\textwidth\fi
+        \fi
       \fi
     \fi
     %\advance\n@tewidth by -\columnshift

@@ -66,6 +66,7 @@ omnis voluptas assumenda est, omnis dolor repellendus.
 \p
 \esbe
 \esb \cat something\cat*
+\cancelcutouts
 \s1 Testing 6
 \p This is a box of category "\showTheCategory", which is not defined.
 \esbe
