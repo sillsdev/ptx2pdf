@@ -591,11 +591,10 @@
   \XeTeXuseglyphmetrics=0\relax\setbox1=\hbox{0}% get font metrics          %(1)
   \XeTeXuseglyphmetrics=3\s@tfont{c}\relax\setbox0=\hbox{0123456789}% set a box at the size specified by the \c marker
   \XeTeXuseglyphmetrics=\@seglyphmetrics% \tracingcommands=0\MSG{useglyphmetrics=\the\XeTeXuseglyphmetrics}
-  \getp@ram{fontsize}{c}\dropnumbersize=\ifx\p@ram\relax 0pt\else\p@ram\FontSizeUnit\fi \relax % C in following
-  \getp@ram{fontsize}{p}\dimen255=\p@ram\FontSizeUnit
+  \getp@ram{fontsize}{c}\dropnumbersize=0\ifx\p@ram\relax pt\else\FontSizeUnit\fi \relax % C in following
 	% if font size specified for chapter number stylesheet is less than 2*paragraph font size ...
     %\ifdim\dropnumbersize<\dimen255
-    \ifCalcChapSize\ifdim\dropnumbersize<\dimen255
+    \ifCalcChapSize
       \ifdim\dropnumbersize<1pt
         \dropnumbersize=\baselineskip
       \fi
@@ -633,7 +632,7 @@
         \setp@ram{raise}{c\ifdiglot\c@rrdstat\fi}{\the\dimen3}%
       \fi
       \trace{h}{dropnumbersize = \the\dropnumbersize, dropnumberraise = \the\dropnumberraise}%
-    \fi\fi
+    \fi
     \edef\dr@psize{\strip@pt\dropnumbersize}%
 }
 
