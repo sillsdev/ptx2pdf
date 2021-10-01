@@ -208,6 +208,8 @@ _sensitivities = {
     "c_includeillustrations" : ["gr_IllustrationOptions", "lb_details", "tb_details", "tb_checklist"],
     "c_diglot" :               ["gr_diglot", "fcb_diglotPicListSources", "r_hdrLeft_Pri", "r_hdrCenter_Pri", "r_hdrRight_Pri",
                                 "r_ftrCenter_Pri", "r_hdrLeft_Sec", "r_hdrCenter_Sec", "r_hdrRight_Sec", "r_ftrCenter_Sec"],
+    "c_diglotSeparateNotes" :  ["c_diglotNotesRule", "c_diglotJoinVrule"],
+    "c_diglotNotesRule" :      ["c_diglotJoinVrule"],
     "c_borders" :              ["gr_borders"],
 
     "c_pagegutter" :           ["s_pagegutter"],

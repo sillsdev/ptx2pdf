@@ -169,14 +169,14 @@ THE SOFTWARE.
     <property name="page_increment">5</property>
   </object>
   <object class="GtkAdjustment" id="a_fnAboveSpace">
-    <property name="lower">-10</property>
+    <property name="lower">-50</property>
     <property name="upper">50</property>
     <property name="value">6</property>
     <property name="step_increment">0.5</property>
     <property name="page_increment">1</property>
   </object>
   <object class="GtkAdjustment" id="a_fnBelowSpace">
-    <property name="lower">-10</property>
+    <property name="lower">-50</property>
     <property name="upper">50</property>
     <property name="value">2</property>
     <property name="step_increment">0.5</property>
@@ -504,13 +504,13 @@ THE SOFTWARE.
     <property name="page_increment">1</property>
   </object>
   <object class="GtkAdjustment" id="a_xrAboveSpace">
-    <property name="lower">-10</property>
+    <property name="lower">-50</property>
     <property name="upper">50</property>
     <property name="step_increment">0.5</property>
     <property name="page_increment">1</property>
   </object>
   <object class="GtkAdjustment" id="a_xrBelowSpace">
-    <property name="lower">-10</property>
+    <property name="lower">-50</property>
     <property name="upper">50</property>
     <property name="step_increment">0.5</property>
     <property name="page_increment">1</property>
@@ -15210,7 +15210,7 @@ and Page Number in (or near) the middle.</property>
                                 <property name="draw_indicator">True</property>
                               </object>
                               <packing>
-                                <property name="left_attach">2</property>
+                                <property name="left_attach">1</property>
                                 <property name="top_attach">4</property>
                                 <property name="width">2</property>
                               </packing>
@@ -15255,8 +15255,8 @@ different columns).</property>
                                 <property name="draw_indicator">True</property>
                               </object>
                               <packing>
-                                <property name="left_attach">2</property>
-                                <property name="top_attach">3</property>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">4</property>
                               </packing>
                             </child>
                             <child>
@@ -15320,11 +15320,11 @@ leave this option checked ON.</property>
                                 <property name="halign">start</property>
                                 <property name="active">True</property>
                                 <property name="draw_indicator">True</property>
+                                <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                               </object>
                               <packing>
-                                <property name="left_attach">3</property>
+                                <property name="left_attach">2</property>
                                 <property name="top_attach">3</property>
-                                <property name="width">2</property>
                               </packing>
                             </child>
                             <child>
@@ -15385,13 +15385,33 @@ paragraphs start in the same verse.</property>
                               </packing>
                             </child>
                             <child>
-                              <placeholder/>
+                              <object class="GtkCheckButton" id="c_diglotNotesRule">
+                                <property name="label" translatable="yes">Vertical Rule in Notes Area</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="draw_indicator">True</property>
+                                <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="left_attach">3</property>
+                                <property name="top_attach">3</property>
+                                <property name="width">2</property>
+                              </packing>
                             </child>
                             <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
+                              <object class="GtkCheckButton" id="c_diglotJoinVrule">
+                                <property name="label" translatable="yes">Join with Rule Above</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="draw_indicator">True</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">3</property>
+                                <property name="top_attach">4</property>
+                                <property name="width">2</property>
+                              </packing>
                             </child>
                           </object>
                         </child>
