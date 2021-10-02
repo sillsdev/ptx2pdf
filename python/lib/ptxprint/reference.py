@@ -1,6 +1,6 @@
 
 from collections import namedtuple
-import re, sys
+import re, sys, os
 from ptxprint.utils import chaps, oneChbooks, books, allbooks, binsearch
 from base64 import b64encode
 from functools import reduce
@@ -12,6 +12,30 @@ startbooks = dict(startchaps)
 allchaps = ['GEN'] + sum([[b] * int(chaps[b]) for b in allbooks if 0 < int(chaps[b]) < 999], []) + ['special']
 b64codes = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
 b64lkup = {b:i for i, b in enumerate(b64codes)}
+
+def readvrs(fname):
+    res = [[] for i in range(len(allbooks))]
+    with open(fname, encoding="utf-8") as inf:
+        for li in inf.readlines():
+            l = li.strip()
+            if l.startswith("#"):
+                continue
+            b = l.split()
+            if not len(b) or (len(b) == 5 and b[2] == "="):
+                continue
+            if b[0] not in books:
+                continue
+            verses = [int(x.split(':')[1]) for x in b[1:]]
+            versesums = reduce(lambda a, x: (a[0] + [a[1]+x], a[1]+x), verses, ([0], 0))
+            res[books[b[0]]-1] = versesums[0]
+    curr = 0
+    for b in res:
+        if len(b):
+            b[0] = curr
+            curr += b[-1]
+        else:
+            b.append(curr)
+    return res
 
 class RefSeparators(dict):
     _defaults = {
@@ -29,11 +53,20 @@ class RefSeparators(dict):
                 self[k] = v
 
 class Reference:
+
+    vrs = None
+
     def __init__(self, book, chap, verse, subverse=None):
         self.book = book
         self.chap = chap
         self.verse = verse
         self.subverse = subverse
+
+    @classmethod
+    def loadvrs(cls, fname=None):
+        if fname is None:
+            fname = os.path.join(os.path.dirname(__file__), 'eng.vrs')
+        cls.vrs = readvrs(fname)
 
     def str(self, context=None, level=0, lastref=None, addsep=RefSeparators()):
         sep = ""
@@ -127,6 +160,12 @@ class Reference:
         vals = [(c >> 5) & 63, ((v & 64) >> 6) + ((c & 31) << 1), v & 63]
         return subverse + "".join(b64codes[v] for v in vals)
 
+    def asint(self):
+        if self.vrs is None:
+            self.loadvrs()
+        coffset = self.vrs[books[self.book]-1][self.chap-1] if self.chap > 1 else 0
+        return self.vrs[books[self.book]-1][0] + coffset + self.verse
+
     @classmethod
     def fromtag(cls, s, remainder=False):
         if s[0] in "0123456789":
@@ -159,6 +198,37 @@ class Reference:
         if remainder:
             return (res, s[3:])
         return res
+
+    @classmethod
+    def fromint(cls, val):
+        if cls.vrs is None:
+            cls.loadvrs()
+        def testbk(arr, i, v):
+            a = arr[i]
+            if v < a[0]:
+                return 1
+            elif len(a) == 1 or v >= a[0] + a[-1]:
+                return -1
+            return 0
+        def testchap(arr, i, v):
+            if i == 0:
+                if v > arr[1]:
+                    return -1
+                return 0
+            elif arr[i] > v:
+                return 1
+            elif i+1 < len(arr) and arr[i+1] < v:
+                return -1
+            return 0
+        ind = binsearch(cls.vrs, val, testbk)
+        v = val - cls.vrs[ind][0]
+        c = binsearch(cls.vrs[ind], v, testchap) + 1
+        if cls.vrs[ind][c] > v:
+            c -= 1
+        if c > 0:
+            v = v - cls.vrs[ind][c]
+        return cls(allbooks[ind], c+1, v)
+
 
 class RefRange:
     ''' Inclusive range of verses with first and last '''
@@ -450,6 +520,12 @@ def tests():
             raise TestException("{} != canonical string of {}".format(s, str(res)))
         if tag != t:
             raise TestException("{} != {} in {}".format(tag, t, s))
+        refint = res[0].first.asint()
+        intref = Reference.fromint(refint)
+        temp = res[0].first.copy()
+        temp.subverse = None
+        if intref != temp:
+            raise TestException("{} has int({}) but that is {}".format(res[0].first, refint, intref))
 
     t("GEN 1:1", "ACB", r("GEN", 1, 1))
     t("JHN 3", "fQA", r("JHN", 3, 0))
@@ -457,7 +533,7 @@ def tests():
     t("1CO 6:5a", "0hYF", r("1CO", 6, 5, "a"))
     t("MAT 5:1-7", "dMB-dMH", RefRange(r("MAT", 5, 1), r("MAT", 5, 7)))
     t("MAT 7:1,2;8:6b-9:4", "dQBdQC1dSG-dUE", r("MAT", 7, 1), r("MAT", 7, 2), RefRange(r("MAT", 8, 6, "b"), r("MAT", 9, 4)))
-    t("LUK 3:47-end", "egv-eh/", RefRange(r("LUK", 3, 47), r("LUK", 3, 200)))
+    t("LUK 3:35-end", "egj-eh/", RefRange(r("LUK", 3, 35), r("LUK", 3, 200)))
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
