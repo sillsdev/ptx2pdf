@@ -1103,7 +1103,6 @@ class TexModel:
                     # test for "at" command
                     m = re.match(r"^\s*at\s+(.*?)\s+(?=in|['\"])", l)
                     if m:
-                        # import pdb; pdb.set_trace()
                         atref = RefList.fromStr(m.group(1), context=AnyBooks)
                         for r in atref.allrefs():
                             if r.chap == 0:
@@ -1568,6 +1567,7 @@ class TexModel:
             filters = None
         if self.dict['notes/xrlistsource'] == "custom":
             self.xrefdat = {}
+            # import pdb; pdb.set_trace()
             with open(self.dict['project/selectxrfile']) as inf:
                 for l in inf.readlines():
                     if '=' in l:
@@ -1576,7 +1576,7 @@ class TexModel:
                             self.xrefcopyright = v.strip()
                     v = RefList()
                     for d in re.sub(r"[{}]", "", l).split():
-                        v.extend(RefList.fromStr(d.replace(".", " ")))
+                        v.extend(RefList.fromStr(d.replace(".", " "), marks="+"))
                     k = v.pop(0)
                     self.xrefdat[k] = [v]
         else:       # standard
@@ -1614,7 +1614,11 @@ class TexModel:
             @classmethod
             def getLocalBook(cls, s, level=0):
                 return ""
-        addsep = RefSeparators(books="; ", chaps=";\u200B", verses=",\u200B", bkcv="\u2000")
+        def usfmmark(ref, txt):
+            if ref.mark == "+":
+                return r"\+it {}\+it*".format(txt)
+            return txt
+        addsep = RefSeparators(books="; ", chaps=";\u200B", verses=",\u200B", bkcv="\u2000", mark=usfmmark)
         dotsep = RefSeparators(cv=".", onechap=True)
         template = "\n\\AddTrigger {book}{dotref}\n\\x - \\xo {colnobook} \\xt {refs}\\x*\n\\EndTrigger\n"
         with open(outpath + ".triggers", "w", encoding="utf-8") as outf:

@@ -44,7 +44,8 @@ class RefSeparators(dict):
         "verses": ",",      # separator between references in the same chapter
         "cv": ":",          # separator between chapter and verse
         "bkc": " ",         # separator between book and chapter
-        "onechap": False    # output chapter in single chapter books
+        "onechap": False,   # output chapter in single chapter books
+        "mark": lambda r, s: (r.mark or "") + s
     }
     def __init__(self, **kw):
         self.update(kw)
@@ -56,11 +57,12 @@ class Reference:
 
     vrs = None
 
-    def __init__(self, book, chap, verse, subverse=None):
+    def __init__(self, book, chap, verse, subverse=None, mark=None):
         self.book = book
         self.chap = chap
         self.verse = verse
         self.subverse = subverse
+        self.mark = mark
 
     @classmethod
     def loadvrs(cls, fname=None):
@@ -89,7 +91,8 @@ class Reference:
             res.append("{}{}{}".format(" " if hasbook else "", *[self.verse if self.verse < 200 else "end", self.subverse or ""]))
             if lastref is not None:
                 sep = sep or addsep['verses']
-        return sep + "".join(res)
+        result = sep + (addsep['mark'](self, "".join(res)) if self.mark is not None else "".join(res))
+        return result
 
     def __str__(self):
         return self.str()
@@ -105,7 +108,9 @@ class Reference:
         return self == o        
 
     def __lt__(self, o):
-        if not isinstance(o, Reference):
+        if o is None:
+            return False
+        elif not isinstance(o, Reference):
             return not o < self or o == self
         if self.book != o.book:
             return books.get(self.book, 200) < books.get(o.book, 200)
@@ -123,6 +128,8 @@ class Reference:
         return False
 
     def __gt__(self, o):
+        if o is None:
+            return True
         return o < self
 
     def __le__(self, o):
@@ -143,7 +150,7 @@ class Reference:
         return self
 
     def copy(self):
-        res = self.__class__(self.book, self.chap, self.verse, self.subverse)
+        res = self.__class__(self.book, self.chap, self.verse, self.subverse, self.mark)
         return res
 
     def astag(self):
@@ -354,9 +361,12 @@ class BookNames(BaseBooks):
 
 class RefList(list):
     @classmethod
-    def fromStr(cls, s, context=BaseBooks, starting=None):
+    def fromStr(cls, s, context=BaseBooks, starting=None, marks=None):
         rerefs = re.compile(r"[\s;,]+")
-        rebook = re.compile(r"^\d?[^0-9\-:.]+")
+        if marks is not None:
+            rebook = re.compile("^(["+"".join(marks)+r"]?)(\d?[^0-9\-:.]+)")
+        else:
+            rebook = re.compile(r"^(\d?[^0-9\-:.]+)")
         recv = re.compile(r"^(\d+)[:.](\d+|end)([a-z]?)")
         rec = re.compile(r"(\d+)([a-z]?)")
         self = cls()
@@ -382,7 +392,10 @@ class RefList(list):
                     if mode != "r" and mode != "":
                         curr = self._addRefOrRange(start, curr)
                         start = None
-                    curr.book = context.getBook(m.group(0))
+                    bookinfo = m.groups()
+                    curr.book = context.getBook(bookinfo[-1])
+                    if len(bookinfo) > 1:
+                        curr.mark = bookinfo[0]
                     mode = "b"
                     b = b[m.end():]
                     continue
