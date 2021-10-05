@@ -196,6 +196,7 @@
 \newif\ifRTLL \newif\ifRTLR
 \x@\newif\csname ifinp@r-L\endcsname % Used for parlocs analysis
 \x@\newif\csname ifinp@r-R\endcsname % Used for parlocs analysis
+\x@\newif\csname ifch@pterR\endcsname %  Is there a chapter?
 \x@\newcount\csname p@rlinesgone-L\endcsname % Used for parlocs analysis
 \x@\newcount\csname p@rlinesgone-R\endcsname % Used for parlocs analysis
 \def\newsideSpecificIf#1{% 'Tristate' if - true / false / default (where default means the side-specific logic ought to let the global value take precedence
@@ -2493,6 +2494,7 @@
     \xdef@cseq{@cur#1dp}{0pt}% 
     \header@defs{#1}% All the possible header contents
     \x@\n@wif\csname ifinp@r-#1\endcsname % Used for parlocs analysis
+    \x@\n@wif\csname ifch@pter#1\endcsname % Used for parlocs analysis
     \x@\newc@unt\csname p@rlinesgone-#1\endcsname % Used for parlocs analysis
     \def@cseq{stylesheet#1}{\gdef\ds@ffix{#1}\stylesh@@t}% column-specific stylesheet
 %TODO:

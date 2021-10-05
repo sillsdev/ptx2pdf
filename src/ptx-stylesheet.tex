@@ -548,7 +548,7 @@
      % if chapter label not present, set \ch@ptertrue to cause chapter number to be printed
      % at start of first text paragraph.
      \x@\global\x@\let\x@\ch@pl@bel\csname ch@plabel\g@tdstat\endcsname% global as p@rstyle{cl} may end a group.
-     \ifx\ch@pl@bel\empty \global\ch@ptertrue 
+     \ifx\ch@pl@bel\empty \x@\global\csname ch@pter\g@tdstat true\endcsname
        \trace{c}{No chapter label in use : \ch@pter}%
      \else % if \cl present, output chapter label here
        \trace{c}{Chapter label in use: \ch@pl@bel \ch@pter}%
@@ -768,8 +768,8 @@
  \x@\let\csname h1\endcsname=\h@h
  %
  \let\@CL=\cl%
- \def\do@CL{\global\ch@pterfalse\gdef\n@xtparstart{\pdfch@ptermark}\@CL}%
- \def\cl{\ifch@pter \let\n@xt=\do@CL \else \let\n@xt=\st@recl \fi \n@xt}%
+ \def\do@CL{\x@\global\csname ch@pter\g@tdstat false\endcsname\gdef\n@xtparstart{\pdfch@ptermark}\@CL}%
+ \def\cl{\csname ifch@pter\g@tdstat\endcsname \let\n@xt=\do@CL \else \let\n@xt=\st@recl \fi \n@xt}%
  \def\st@recl{\bgroup\obeylines\@cl}% \cl gets stored as chapter label and changes \c format
  \def\@cl ##1^^M{\x@\gdef\csname ch@plabel\g@tdstat\endcsname{##1}\egroup}%
  %

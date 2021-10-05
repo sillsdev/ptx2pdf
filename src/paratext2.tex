@@ -146,11 +146,12 @@
   % text is read later
   \ifhmode\edef\@sf{\spacefactor\the\spacefactor}\/\fi%
   % if footnote is on a chapter number ...
+  \x@\let\x@\@ifch\csname ifch@pter\g@tdstat\endcsname
   \ifinextended #3\edef\@wrap{\global\setbox\sid@barnotes=\vbox\bgroup\unvbox\sid@barnotes}\else
     \ifdoingt@ble #3\edef\@wrap{\global\setbox\t@blenotes=\vbox\bgroup\unvbox\t@blenotes}\else%
       \ifhe@dings #3\edef\@wrap{\global\setbox\he@dingnotes=\vbox\bgroup\unvbox\he@dingnotes}%
       \else\edef\@wrap{}%
-        \ifch@pter \everypar={}\ch@pterfalse%
+        \@ifch \everypar={}\csname ch@pter\g@tdstat false\endcsname%
           \global\setbox\ch@pternote=\hbox{\box\ch@pternote #3}%
         \else #3\fi % output caller
       \fi
