@@ -6,6 +6,7 @@
 *-draft.SFM
 *-draft.txt
 *.notepages
+*.precommit
 NestedStyles*.sty
 __pycache__/
 temp/

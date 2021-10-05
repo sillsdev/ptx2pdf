@@ -742,7 +742,7 @@ download and use in a publication.</property>
                     <property name="halign">center</property>
                     <property name="valign">center</property>
                     <property name="relief">none</property>
-                    <property name="uri">https://app.thedigitalbiblelibrary.org/entries/open_access_entries?type=text</property>
+                    <property name="uri">https://app.thedigitalbiblelibrary.org/entries/open-access-entries?type=text</property>
                   </object>
                   <packing>
                     <property name="left-attach">1</property>
@@ -971,7 +971,7 @@ information followed by a table of contents.</property>
                         <property name="halign">start</property>
                         <property name="active">True</property>
                         <property name="draw-indicator">True</property>
-                        <property name="group">r_generateFRT_advanced</property>
+                        <property name="group">r-generateFRT-advanced</property>
                         <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                       </object>
                       <packing>
@@ -1007,7 +1007,7 @@ For example:
 \pc \zvar|copiesprinted\*</property>
                         <property name="halign">start</property>
                         <property name="draw-indicator">True</property>
-                        <property name="group">r_generateFRT_basic</property>
+                        <property name="group">r-generateFRT-basic</property>
                         <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                       </object>
                       <packing>
@@ -1104,7 +1104,7 @@ book selector on the Basic tab. In that case, click
 'Cancel' as there is no need to generate Front Matter.</property>
                         <property name="halign">start</property>
                         <property name="draw-indicator">True</property>
-                        <property name="group">r_generateFRT_basic</property>
+                        <property name="group">r-generateFRT-basic</property>
                         <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                       </object>
                       <packing>
@@ -1231,7 +1231,7 @@ book(s) listed below.</property>
                         <property name="halign">start</property>
                         <property name="active">True</property>
                         <property name="draw-indicator">True</property>
-                        <property name="group">r_generate_all</property>
+                        <property name="group">r-generate-all</property>
                         <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                       </object>
                       <packing>
@@ -1254,7 +1254,7 @@ If in doubt, then click Cancel.</property>
                         <property name="halign">start</property>
                         <property name="active">True</property>
                         <property name="draw-indicator">True</property>
-                        <property name="group">r_generate_selected</property>
+                        <property name="group">r-generate-selected</property>
                         <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                       </object>
                       <packing>
@@ -2014,14 +2014,14 @@ saved configuration.</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon_size">3</property>
+    <property name="icon-size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_diglot">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon_size">3</property>
+    <property name="icon-size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_grid">
     <property name="visible">True</property>
@@ -2032,27 +2032,27 @@ combination of Crop marks, Guides (margins,
 baselines, etc.) and/or a graph-paper-like Grid
 can be set.</property>
     <property name="icon-name">view-grid-symbolic</property>
-    <property name="icon_size">3</property>
+    <property name="icon-size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_spacing">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon_size">3</property>
+    <property name="icon-size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_top">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon_size">3</property>
+    <property name="icon-size">3</property>
   </object>
   <object class="GtkImage" id="icon_download">
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">software-update-available-symbolic</property>
-    <property name="icon_size">3</property>
+    <property name="icon-size">3</property>
   </object>
   <object class="GtkImage" id="icon_refresh">
     <property name="visible">True</property>
@@ -2069,7 +2069,7 @@ having to manually re-create all the same
 settings for a similar project.</property>
     <property name="halign">end</property>
     <property name="icon-name">view-grid-symbolic</property>
-    <property name="icon_size">3</property>
+    <property name="icon-size">3</property>
   </object>
   <object class="GtkListStore" id="ls_NoteBlendInto">
     <columns>
@@ -2448,7 +2448,7 @@ settings for a similar project.</property>
               <object class="GtkComboBox" id="fcb_featsLangs">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="model">ls_featsLangs</property>
+                <property name="model">ls-featsLangs</property>
                 <property name="id-column">1</property>
               </object>
               <packing>
@@ -2640,7 +2640,7 @@ settings for a similar project.</property>
                     <property name="can-focus">True</property>
                     <property name="has-focus">True</property>
                     <property name="can-default">True</property>
-                    <property name="model">ls_font</property>
+                    <property name="model">ls-font</property>
                     <property name="headers-visible">False</property>
                     <property name="search-column">0</property>
                     <property name="show-expanders">False</property>
@@ -2694,7 +2694,7 @@ in the Windows system.</property>
                     <property name="halign">start</property>
                     <property name="margin-right">6</property>
                     <property name="margin-bottom">6</property>
-                    <property name="model">ls_fontFaces</property>
+                    <property name="model">ls-fontFaces</property>
                     <property name="active">0</property>
                     <property name="id-column">0</property>
                     <property name="active-id">1</property>
@@ -2780,7 +2780,7 @@ in the Windows system.</property>
                             <property name="text">1.6</property>
                             <property name="caps-lock-warning">False</property>
                             <property name="input-purpose">number</property>
-                            <property name="adjustment">a_bolditalice</property>
+                            <property name="adjustment">a-bolditalice</property>
                             <property name="climb-rate">0.10</property>
                             <property name="digits">1</property>
                             <property name="numeric">True</property>
@@ -2801,7 +2801,7 @@ in the Windows system.</property>
                             <property name="text">0.15</property>
                             <property name="caps-lock-warning">False</property>
                             <property name="input-purpose">number</property>
-                            <property name="adjustment">a_bolditalics</property>
+                            <property name="adjustment">a-bolditalics</property>
                             <property name="climb-rate">0.01</property>
                             <property name="digits">2</property>
                             <property name="numeric">True</property>
@@ -2959,7 +2959,7 @@ Latin/Arabic numbers [0-9], you can pick the
 appropriate script here. (Make sure the font you
 are using supports these digits too.)</property>
                     <property name="halign">start</property>
-                    <property name="model">ls_digits</property>
+                    <property name="model">ls-digits</property>
                     <property name="wrap-width">3</property>
                     <property name="active">0</property>
                     <property name="popup-fixed-width">False</property>
@@ -3413,7 +3413,7 @@ and 3, 4, 6, or 12 for inches.</property>
                             <property name="tooltip-text" translatable="yes">Specify the thickness
 of the major lines.</property>
                             <property name="text">0.0</property>
-                            <property name="adjustment">a_gridMajorThick</property>
+                            <property name="adjustment">a-gridMajorThick</property>
                             <property name="climb-rate">0.10</property>
                             <property name="digits">1</property>
                             <property name="value">0.20</property>
@@ -3431,7 +3431,7 @@ of the major lines.</property>
                             <property name="tooltip-text" translatable="yes">Specify the line thickness
 of the minor divisions.</property>
                             <property name="text">0.0</property>
-                            <property name="adjustment">a_gridMinorThick</property>
+                            <property name="adjustment">a-gridMinorThick</property>
                             <property name="climb-rate">0.10</property>
                             <property name="digits">1</property>
                             <property name="value">0.20</property>
@@ -3452,7 +3452,7 @@ Recommendations: 2, 5, or 10 for centimeters,
 and 3, 4, 6, or 12 for inches.</property>
                             <property name="width-chars">5</property>
                             <property name="text">0</property>
-                            <property name="adjustment">a_gridMinorDivisions</property>
+                            <property name="adjustment">a-gridMinorDivisions</property>
                           </object>
                           <packing>
                             <property name="left-attach">1</property>
@@ -3484,7 +3484,7 @@ corner of the page, or margins.</property>
 the default Grid settings:
 Centimeters with 5 divisions (2mm each) 
 red and light green lines (0.2pt thickness).</property>
-                            <property name="image">icon_refresh</property>
+                            <property name="image">icon-refresh</property>
                             <signal name="clicked" handler="onRefreshGridDefaults" swapped="no"/>
                           </object>
                           <packing>
@@ -3501,7 +3501,7 @@ red and light green lines (0.2pt thickness).</property>
                             <property name="tooltip-text" translatable="yes">The grid can use Centimeters or 
 Inches as the major units.</property>
                             <property name="halign">start</property>
-                            <property name="model">ls_gridUnits</property>
+                            <property name="model">ls-gridUnits</property>
                             <property name="wrap-width">1</property>
                             <property name="active">1</property>
                             <property name="entry-text-column">0</property>
@@ -3522,7 +3522,7 @@ Inches as the major units.</property>
                             <property name="tooltip-text" translatable="yes">The grid can start at the top-left corner
 of the Page, or at the top-left Margin.</property>
                             <property name="halign">start</property>
-                            <property name="model">ls_gridOffset</property>
+                            <property name="model">ls-gridOffset</property>
                             <property name="wrap-width">1</property>
                             <property name="active">1</property>
                             <property name="entry-text-column">0</property>
@@ -3867,7 +3867,7 @@ Position:</property>
                     <property name="can-focus">False</property>
                     <property name="can-default">True</property>
                     <property name="halign">start</property>
-                    <property name="model">ls_plCreditVpos</property>
+                    <property name="model">ls-plCreditVpos</property>
                     <property name="wrap-width">1</property>
                     <property name="has-entry">True</property>
                     <property name="entry-text-column">0</property>
@@ -3907,7 +3907,7 @@ Position:</property>
                     <property name="can-focus">False</property>
                     <property name="can-default">True</property>
                     <property name="halign">start</property>
-                    <property name="model">ls_plCreditHpos</property>
+                    <property name="model">ls-plCreditHpos</property>
                     <property name="wrap-width">1</property>
                     <property name="has-entry">True</property>
                     <property name="entry-text-column">0</property>
@@ -3993,7 +3993,7 @@ parameters at once: font, size and color. </property>
 to be rotated. 
 </property>
                     <property name="halign">start</property>
-                    <property name="model">ls_plCreditRotate</property>
+                    <property name="model">ls-plCreditRotate</property>
                     <property name="wrap-width">1</property>
                     <property name="has-entry">True</property>
                     <property name="entry-text-column">0</property>
@@ -4660,7 +4660,7 @@ For normal, vernacular body text, use VerseText. If this is part of
 a heading, use Section. If it is part of the title block of a book, 
 use Title. NoteText makes this a kind of footnote, like \x.</property>
                 <property name="halign">start</property>
-                <property name="model">ls_styTextType</property>
+                <property name="model">ls-styTextType</property>
                 <property name="wrap-width">1</property>
                 <property name="active">1</property>
                 <property name="has-entry">True</property>
@@ -4708,7 +4708,7 @@ Paragraph markers close other paragraphs and character styles, etc.</property>
                 <property name="tooltip-text" translatable="yes">[Required] This describes the nesting level for this marker. 
 Paragraph markers close other paragraphs and character styles, etc.</property>
                 <property name="halign">start</property>
-                <property name="model">ls_styStyleType</property>
+                <property name="model">ls-styStyleType</property>
                 <property name="wrap-width">1</property>
                 <property name="active">1</property>
                 <property name="has-entry">True</property>
@@ -4831,7 +4831,7 @@ in your data for this marker.</property>
                         <property name="tooltip-text" translatable="yes">You can say what you like here to
 describe the purpose of the style.</property>
                         <property name="wrap-mode">word</property>
-                        <property name="buffer">txbf_styDesc</property>
+                        <property name="buffer">txbf-styDesc</property>
                       </object>
                     </child>
                   </object>
@@ -4861,7 +4861,7 @@ and helps to place the marker in the tree listing all markers.</property>
             </child>
             <child>
               <object class="GtkEntry" id="t_styName">
-                <property name="name">t_styName</property>
+                <property name="name">t-styName</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="tooltip-text" translatable="yes">Consists of: Marker..Endmarker - Group - short description 
@@ -5012,7 +5012,7 @@ and helps to place the marker in the tree listing all markers.</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">start</property>
-                                <property name="model">ls_books</property>
+                                <property name="model">ls-books</property>
                                 <property name="wrap-width">5</property>
                                 <property name="active">0</property>
                                 <property name="has-entry">True</property>
@@ -5067,7 +5067,7 @@ Chapter:</property>
                             </child>
                             <child>
                               <object class="GtkButton" id="btn_chooseBooks">
-                                <property name="label" translatable="yes">Ch_oose...</property>
+                                <property name="label" translatable="yes">Ch-oose...</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="receives-default">True</property>
@@ -5092,7 +5092,7 @@ to be printed from the project.</property>
                                 <property name="margin-left">12</property>
                                 <property name="active">True</property>
                                 <property name="draw-indicator">True</property>
-                                <property name="group">r_book_single</property>
+                                <property name="group">r-book-single</property>
                                 <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                 <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                               </object>
@@ -5111,7 +5111,7 @@ to be printed from the project.</property>
                                 <property name="margin-left">12</property>
                                 <property name="active">True</property>
                                 <property name="draw-indicator">True</property>
-                                <property name="group">r_book_single</property>
+                                <property name="group">r-book-single</property>
                                 <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                 <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                               </object>
@@ -5130,7 +5130,7 @@ to be printed from the project.</property>
                                 <property name="margin-left">12</property>
                                 <property name="active">True</property>
                                 <property name="draw-indicator">True</property>
-                                <property name="group">r_book_multiple</property>
+                                <property name="group">r-book-multiple</property>
                                 <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                 <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                               </object>
@@ -5161,7 +5161,7 @@ to be printed from the project.</property>
                             </child>
                             <child>
                               <object class="GtkButton" id="btn_chooseBibleModule">
-                                <property name="label" translatable="yes">Ch_oose...</property>
+                                <property name="label" translatable="yes">Ch-oose...</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="receives-default">True</property>
@@ -5197,7 +5197,7 @@ to be printed from the project.</property>
                                 <property name="width-chars">2</property>
                                 <property name="text">1</property>
                                 <property name="progress-pulse-step">0</property>
-                                <property name="adjustment">a_chapfrom</property>
+                                <property name="adjustment">a-chapfrom</property>
                                 <property name="climb-rate">1</property>
                                 <property name="numeric">True</property>
                                 <property name="value">1</property>
@@ -5217,7 +5217,7 @@ to be printed from the project.</property>
                                 <property name="width-chars">2</property>
                                 <property name="text" translatable="yes">1</property>
                                 <property name="progress-pulse-step">0</property>
-                                <property name="adjustment">a_chapto</property>
+                                <property name="adjustment">a-chapto</property>
                                 <property name="climb-rate">1</property>
                                 <property name="numeric">True</property>
                                 <property name="value">1</property>
@@ -5235,7 +5235,7 @@ to be printed from the project.</property>
                                 <property name="can-focus">False</property>
                                 <property name="can-default">True</property>
                                 <property name="halign">start</property>
-                                <property name="model">ls_projects</property>
+                                <property name="model">ls-projects</property>
                                 <property name="wrap-width">1</property>
                                 <property name="entry-text-column">0</property>
                                 <property name="id-column">0</property>
@@ -5583,7 +5583,7 @@ settings for a similar project.</property>
                                         <property name="margin-right">6</property>
                                         <property name="margin-top">6</property>
                                         <property name="margin-bottom">6</property>
-                                        <property name="image">icon_targetProj</property>
+                                        <property name="image">icon-targetProj</property>
                                         <signal name="clicked" handler="onChooseTargetProjectsClicked" swapped="no"/>
                                       </object>
                                       <packing>
@@ -5948,7 +5948,7 @@ page for binding (millimeters).</property>
                                         <property name="progress-pulse-step">0</property>
                                         <property name="placeholder-text">0.0</property>
                                         <property name="input-purpose">number</property>
-                                        <property name="adjustment">a_bindinggutter</property>
+                                        <property name="adjustment">a-bindinggutter</property>
                                         <property name="climb-rate">1</property>
                                         <property name="digits">1</property>
                                         <property name="numeric">True</property>
@@ -5988,7 +5988,7 @@ space between lines of text.</property>
                                         <property name="progress-pulse-step">0</property>
                                         <property name="placeholder-text">0.0</property>
                                         <property name="input-purpose">number</property>
-                                        <property name="adjustment">a_linespacing</property>
+                                        <property name="adjustment">a-linespacing</property>
                                         <property name="climb-rate">0.10</property>
                                         <property name="digits">2</property>
                                         <property name="numeric">True</property>
@@ -6080,7 +6080,7 @@ Size (pt):</property>
                                         <property name="text">12.0</property>
                                         <property name="xalign">1</property>
                                         <property name="caps-lock-warning">False</property>
-                                        <property name="adjustment">a_fontsize</property>
+                                        <property name="adjustment">a-fontsize</property>
                                         <property name="climb-rate">0.10</property>
                                         <property name="digits">2</property>
                                         <property name="numeric">True</property>
@@ -6149,7 +6149,7 @@ also affects poetry indentation.
                                         <property name="xalign">1</property>
                                         <property name="caps-lock-warning">False</property>
                                         <property name="input-purpose">number</property>
-                                        <property name="adjustment">a_indentUnit</property>
+                                        <property name="adjustment">a-indentUnit</property>
                                         <property name="climb-rate">0.10</property>
                                         <property name="digits">2</property>
                                         <property name="numeric">True</property>
@@ -6222,7 +6222,7 @@ then do NOT click this option. Instead, use the similar
 button to adjust either the Top or Bottom Margin.</property>
                                         <property name="halign">start</property>
                                         <property name="valign">center</property>
-                                        <property name="image">icon_adjust_spacing</property>
+                                        <property name="image">icon-adjust-spacing</property>
                                         <property name="always-show-image">True</property>
                                         <signal name="clicked" handler="onMagicAdjustClicked" swapped="no"/>
                                       </object>
@@ -6272,7 +6272,7 @@ Grid for precise measuring. Grid settings
 can be customized.</property>
                                         <property name="halign">start</property>
                                         <property name="valign">center</property>
-                                        <property name="image">icon_adjust_grid</property>
+                                        <property name="image">icon-adjust-grid</property>
                                         <signal name="clicked" handler="adjustGuideGrid" swapped="no"/>
                                       </object>
                                       <packing>
@@ -6359,7 +6359,7 @@ the text of the two columns
                                     <property name="xalign">1</property>
                                     <property name="caps-lock-warning">False</property>
                                     <property name="input-purpose">number</property>
-                                    <property name="adjustment">a_colgutterwidth</property>
+                                    <property name="adjustment">a-colgutterwidth</property>
                                     <property name="climb-rate">1</property>
                                     <property name="digits">1</property>
                                     <property name="numeric">True</property>
@@ -6423,7 +6423,7 @@ Width (mm):</property>
                                     <property name="xalign">1</property>
                                     <property name="caps-lock-warning">False</property>
                                     <property name="input-purpose">number</property>
-                                    <property name="adjustment">a_columngutteroffset</property>
+                                    <property name="adjustment">a-columngutteroffset</property>
                                     <property name="climb-rate">1</property>
                                     <property name="digits">1</property>
                                     <property name="numeric">True</property>
@@ -6455,7 +6455,7 @@ Top (pt):</property>
                                   <object class="GtkSpinButton" id="s_bottomRag">
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
-                                    <property name="adjustment">a_bottomRag</property>
+                                    <property name="adjustment">a-bottomRag</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">1</property>
@@ -6635,7 +6635,7 @@ above the base line of the first line of the body text.</property>
                                     <property name="caps-lock-warning">False</property>
                                     <property name="placeholder-text">0.0</property>
                                     <property name="input-purpose">number</property>
-                                    <property name="adjustment">a_hdrposition</property>
+                                    <property name="adjustment">a-hdrposition</property>
                                     <property name="climb-rate">0.5</property>
                                     <property name="digits">1</property>
                                     <property name="numeric">True</property>
@@ -6710,7 +6710,7 @@ space between the end of the text and the footer line.</property>
                                     <property name="caps-lock-warning">False</property>
                                     <property name="placeholder-text">0.0</property>
                                     <property name="input-purpose">number</property>
-                                    <property name="adjustment">a_ftrposition</property>
+                                    <property name="adjustment">a-ftrposition</property>
                                     <property name="climb-rate">0.5</property>
                                     <property name="digits">1</property>
                                     <property name="numeric">True</property>
@@ -6756,7 +6756,7 @@ from the descender of the final line of text
                                     <property name="caps-lock-warning">False</property>
                                     <property name="placeholder-text">0.0</property>
                                     <property name="input-purpose">number</property>
-                                    <property name="adjustment">a_bottommargin</property>
+                                    <property name="adjustment">a-bottommargin</property>
                                     <property name="climb-rate">0.5</property>
                                     <property name="digits">1</property>
                                     <property name="numeric">True</property>
@@ -6813,7 +6813,7 @@ above.</property>
                                     <property name="progress-pulse-step">0</property>
                                     <property name="placeholder-text" translatable="yes">0.0</property>
                                     <property name="input-purpose">number</property>
-                                    <property name="adjustment">a_margins</property>
+                                    <property name="adjustment">a-margins</property>
                                     <property name="climb-rate">1</property>
                                     <property name="digits">1</property>
                                     <property name="numeric">True</property>
@@ -6873,7 +6873,7 @@ above the base line of the first line of the body text.</property>
                                     <property name="progress-pulse-step">0</property>
                                     <property name="placeholder-text">0.0</property>
                                     <property name="input-purpose">number</property>
-                                    <property name="adjustment">a_ruleposition</property>
+                                    <property name="adjustment">a-ruleposition</property>
                                     <property name="climb-rate">0.5</property>
                                     <property name="digits">1</property>
                                     <property name="numeric">True</property>
@@ -6905,7 +6905,7 @@ above the base line of the first line of the body text.</property>
                                     <property name="caps-lock-warning">False</property>
                                     <property name="placeholder-text">0.0</property>
                                     <property name="input-purpose">number</property>
-                                    <property name="adjustment">a_topmargin</property>
+                                    <property name="adjustment">a-topmargin</property>
                                     <property name="climb-rate">0.5</property>
                                     <property name="digits">1</property>
                                     <property name="numeric">True</property>
@@ -6943,7 +6943,7 @@ then do NOT click this option. Instead, use the similar
 button to adjust either the Line Spacing or Bottom Margin.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
-                                    <property name="image">icon_adjust_top</property>
+                                    <property name="image">icon-adjust-top</property>
                                     <signal name="clicked" handler="onMagicAdjustClicked" swapped="no"/>
                                   </object>
                                   <packing>
@@ -6975,7 +6975,7 @@ then do NOT click this option. Instead, use the similar
 button to adjust either the Line Spacing or Top Margin.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
-                                    <property name="image">icon_adjust_bottom</property>
+                                    <property name="image">icon-adjust-bottom</property>
                                     <signal name="clicked" handler="onMagicAdjustClicked" swapped="no"/>
                                   </object>
                                   <packing>
@@ -7699,7 +7699,7 @@ Note that the option for "Top to Bottom"
 lays out the vertical lines left to right.</property>
                                     <property name="halign">start</property>
                                     <property name="hexpand">False</property>
-                                    <property name="model">ls_textDirection</property>
+                                    <property name="model">ls-textDirection</property>
                                     <property name="active">0</property>
                                     <property name="id-column">1</property>
                                     <property name="active-id">1</property>
@@ -7732,7 +7732,7 @@ Script:</property>
 additional typesetting functionality. In most cases
 leave this setting as "Default".</property>
                                     <property name="resize-mode">queue</property>
-                                    <property name="model">ls_scripts</property>
+                                    <property name="model">ls-scripts</property>
                                     <property name="wrap-width">6</property>
                                     <property name="active">0</property>
                                     <property name="popup-fixed-width">False</property>
@@ -7939,7 +7939,7 @@ space width. TeX's default value is 66%.</property>
                                         <property name="text">50</property>
                                         <property name="caps-lock-warning">False</property>
                                         <property name="input-purpose">number</property>
-                                        <property name="adjustment">a_minSpace</property>
+                                        <property name="adjustment">a-minSpace</property>
                                         <property name="climb-rate">5</property>
                                         <property name="numeric">True</property>
                                         <property name="update-policy">if-valid</property>
@@ -7970,7 +7970,7 @@ space width. TeX's default value is 150%.</property>
                                         <property name="text">200</property>
                                         <property name="caps-lock-warning">False</property>
                                         <property name="input-purpose">number</property>
-                                        <property name="adjustment">a_maxSpace</property>
+                                        <property name="adjustment">a-maxSpace</property>
                                         <property name="climb-rate">5</property>
                                         <property name="numeric">True</property>
                                         <property name="update-policy">if-valid</property>
@@ -7988,7 +7988,7 @@ space width. TeX's default value is 150%.</property>
                                         <property name="tooltip-text" translatable="yes">Values are in percentage of the text point size.</property>
                                         <property name="width-chars">3</property>
                                         <property name="text">1.0</property>
-                                        <property name="adjustment">a_letterShrink</property>
+                                        <property name="adjustment">a-letterShrink</property>
                                         <property name="climb-rate">0.20</property>
                                         <property name="digits">1</property>
                                         <property name="value">1</property>
@@ -8006,7 +8006,7 @@ space width. TeX's default value is 150%.</property>
 </property>
                                         <property name="width-chars">3</property>
                                         <property name="text">5.0</property>
-                                        <property name="adjustment">a_letterStretch</property>
+                                        <property name="adjustment">a-letterStretch</property>
                                         <property name="climb-rate">0.20</property>
                                         <property name="digits">1</property>
                                         <property name="value">5</property>
@@ -8630,7 +8630,7 @@ If you wish to apply your own custom
 styling to \w then select the last option.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
-                                    <property name="model">ls_glossaryMarkupStyle</property>
+                                    <property name="model">ls-glossaryMarkupStyle</property>
                                     <property name="active">0</property>
                                     <property name="id-column">1</property>
                                     <property name="active-id">1</property>
@@ -8700,7 +8700,7 @@ marginal verse numbers. (pts)</property>
                                         <property name="progress-pulse-step">0</property>
                                         <property name="placeholder-text">0.0</property>
                                         <property name="input-purpose">number</property>
-                                        <property name="adjustment">a_columnShift</property>
+                                        <property name="adjustment">a-columnShift</property>
                                         <property name="climb-rate">0.10</property>
                                         <property name="numeric">True</property>
                                         <property name="update-policy">if-valid</property>
@@ -9424,7 +9424,7 @@ between notes that have been run together.</property>
                                     <property name="progress-pulse-step">0</property>
                                     <property name="placeholder-text">0.0</property>
                                     <property name="input-purpose">number</property>
-                                    <property name="adjustment">a_notespacingmin</property>
+                                    <property name="adjustment">a-notespacingmin</property>
                                     <property name="climb-rate">1</property>
                                     <property name="numeric">True</property>
                                     <property name="update-policy">if-valid</property>
@@ -9451,7 +9451,7 @@ between notes that have been run together.</property>
                                     <property name="progress-pulse-step">0</property>
                                     <property name="placeholder-text">0.0</property>
                                     <property name="input-purpose">number</property>
-                                    <property name="adjustment">a_notespacingmax</property>
+                                    <property name="adjustment">a-notespacingmax</property>
                                     <property name="climb-rate">1</property>
                                     <property name="numeric">True</property>
                                     <property name="update-policy">if-valid</property>
@@ -9507,7 +9507,7 @@ to adjust the vertical space between these two sections.</property>
                                     <property name="halign">start</property>
                                     <property name="text">3.5</property>
                                     <property name="input-purpose">number</property>
-                                    <property name="adjustment">a_internote</property>
+                                    <property name="adjustment">a-internote</property>
                                     <property name="climb-rate">0.10</property>
                                     <property name="digits">1</property>
                                     <property name="numeric">True</property>
@@ -9816,7 +9816,7 @@ and place them all at the end of the book.</property>
                                         <property name="halign">start</property>
                                         <property name="margin-left">24</property>
                                         <property name="draw-indicator">True</property>
-                                        <property name="group">r_fnpos_normal</property>
+                                        <property name="group">r-fnpos-normal</property>
                                         <signal name="clicked" handler="onFnPosChanged" swapped="no"/>
                                         <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                       </object>
@@ -9839,7 +9839,7 @@ of the 2nd column of text.</property>
                                         <property name="margin-right">6</property>
                                         <property name="margin-end">6</property>
                                         <property name="draw-indicator">True</property>
-                                        <property name="group">r_fnpos_normal</property>
+                                        <property name="group">r-fnpos-normal</property>
                                         <signal name="clicked" handler="onFnPosChanged" swapped="no"/>
                                         <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                       </object>
@@ -9985,7 +9985,7 @@ solve the problem.</property>
                                             <property name="halign">start</property>
                                             <property name="text">6.0</property>
                                             <property name="input-purpose">number</property>
-                                            <property name="adjustment">a_fnAboveSpace</property>
+                                            <property name="adjustment">a-fnAboveSpace</property>
                                             <property name="climb-rate">0.5</property>
                                             <property name="digits">1</property>
                                             <property name="numeric">True</property>
@@ -10006,7 +10006,7 @@ the rule and the footnotes.</property>
                                             <property name="halign">start</property>
                                             <property name="text">2.0</property>
                                             <property name="input-purpose">number</property>
-                                            <property name="adjustment">a_fnBelowSpace</property>
+                                            <property name="adjustment">a-fnBelowSpace</property>
                                             <property name="climb-rate">0.5</property>
                                             <property name="digits">1</property>
                                             <property name="numeric">True</property>
@@ -10076,7 +10076,7 @@ the body text from the footnote area.</property>
                                                     <property name="valign">start</property>
                                                     <property name="text">0</property>
                                                     <property name="input-purpose">number</property>
-                                                    <property name="adjustment">a_fnRuleIndent</property>
+                                                    <property name="adjustment">a-fnRuleIndent</property>
                                                     <property name="climb-rate">5</property>
                                                     <property name="numeric">True</property>
                                                     <property name="update-policy">if-valid</property>
@@ -10096,7 +10096,7 @@ of the column/page width.</property>
                                                     <property name="valign">start</property>
                                                     <property name="text">100</property>
                                                     <property name="input-purpose">number</property>
-                                                    <property name="adjustment">a_fnRuleWidthProportion</property>
+                                                    <property name="adjustment">a-fnRuleWidthProportion</property>
                                                     <property name="climb-rate">5</property>
                                                     <property name="numeric">True</property>
                                                     <property name="update-policy">if-valid</property>
@@ -10116,7 +10116,7 @@ of the column/page width.</property>
                                                     <property name="valign">start</property>
                                                     <property name="text">0.5</property>
                                                     <property name="input-purpose">number</property>
-                                                    <property name="adjustment">a_fnRuleThickness</property>
+                                                    <property name="adjustment">a-fnRuleThickness</property>
                                                     <property name="climb-rate">0.10</property>
                                                     <property name="digits">1</property>
                                                     <property name="numeric">True</property>
@@ -10136,7 +10136,7 @@ of the column/page width.</property>
                                                     <property name="can-default">True</property>
                                                     <property name="halign">start</property>
                                                     <property name="valign">start</property>
-                                                    <property name="model">ls_fnruleHorizPosn</property>
+                                                    <property name="model">ls-fnruleHorizPosn</property>
                                                     <property name="wrap-width">1</property>
                                                     <property name="active">0</property>
                                                     <property name="entry-text-column">0</property>
@@ -10328,7 +10328,7 @@ and place them all at the end of the book.</property>
                                         <property name="halign">start</property>
                                         <property name="margin-left">24</property>
                                         <property name="draw-indicator">True</property>
-                                        <property name="group">r_xrpos_normal</property>
+                                        <property name="group">r-xrpos-normal</property>
                                         <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                         <signal name="clicked" handler="onXrefLocnClicked" swapped="no"/>
                                       </object>
@@ -10350,7 +10350,7 @@ of the 2nd column of text.</property>
                                         <property name="margin-left">24</property>
                                         <property name="margin-end">6</property>
                                         <property name="draw-indicator">True</property>
-                                        <property name="group">r_xrpos_normal</property>
+                                        <property name="group">r-xrpos-normal</property>
                                         <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                         <signal name="clicked" handler="onXrefLocnClicked" swapped="no"/>
                                       </object>
@@ -10597,7 +10597,7 @@ along with the footnotes as a single paragraph).</property>
                                         <property name="halign">start</property>
                                         <property name="margin-left">6</property>
                                         <property name="draw-indicator">True</property>
-                                        <property name="group">r_xrpos_normal</property>
+                                        <property name="group">r-xrpos-normal</property>
                                         <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                         <signal name="clicked" handler="onXrefLocnClicked" swapped="no"/>
                                       </object>
@@ -10623,7 +10623,7 @@ which must be specified above.</property>
                                         <property name="halign">start</property>
                                         <property name="margin-left">6</property>
                                         <property name="draw-indicator">True</property>
-                                        <property name="group">r_xrpos_normal</property>
+                                        <property name="group">r-xrpos-normal</property>
                                         <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                         <signal name="clicked" handler="onXrefLocnClicked" swapped="no"/>
                                       </object>
@@ -10647,7 +10647,7 @@ column similar to a study/reference Bible layout.</property>
                                         <property name="halign">start</property>
                                         <property name="margin-left">6</property>
                                         <property name="draw-indicator">True</property>
-                                        <property name="group">r_xrpos_normal</property>
+                                        <property name="group">r-xrpos-normal</property>
                                         <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                         <signal name="clicked" handler="onXrefLocnClicked" swapped="no"/>
                                         <signal name="clicked" handler="updateColxrefSetting" swapped="no"/>
@@ -10762,7 +10762,7 @@ text body and the cross-reference rule.</property>
                                             <property name="halign">start</property>
                                             <property name="text">6.0</property>
                                             <property name="input-purpose">number</property>
-                                            <property name="adjustment">a_xrAboveSpace</property>
+                                            <property name="adjustment">a-xrAboveSpace</property>
                                             <property name="climb-rate">0.5</property>
                                             <property name="digits">1</property>
                                             <property name="numeric">True</property>
@@ -10783,7 +10783,7 @@ the rule and the cross-references. </property>
                                             <property name="halign">start</property>
                                             <property name="text">2.0</property>
                                             <property name="input-purpose">number</property>
-                                            <property name="adjustment">a_xrBelowSpace</property>
+                                            <property name="adjustment">a-xrBelowSpace</property>
                                             <property name="climb-rate">0.5</property>
                                             <property name="digits">1</property>
                                             <property name="numeric">True</property>
@@ -10834,7 +10834,7 @@ the rule and the cross-references. </property>
                                                     <property name="valign">start</property>
                                                     <property name="text">0</property>
                                                     <property name="input-purpose">number</property>
-                                                    <property name="adjustment">a_xrRuleIndent</property>
+                                                    <property name="adjustment">a-xrRuleIndent</property>
                                                     <property name="climb-rate">5</property>
                                                     <property name="numeric">True</property>
                                                     <property name="update-policy">if-valid</property>
@@ -10854,7 +10854,7 @@ of the column/page width.</property>
                                                     <property name="valign">start</property>
                                                     <property name="text">100</property>
                                                     <property name="input-purpose">number</property>
-                                                    <property name="adjustment">a_xrRuleWidthProportion</property>
+                                                    <property name="adjustment">a-xrRuleWidthProportion</property>
                                                     <property name="climb-rate">5</property>
                                                     <property name="numeric">True</property>
                                                     <property name="update-policy">if-valid</property>
@@ -10874,7 +10874,7 @@ of the column/page width.</property>
                                                     <property name="valign">start</property>
                                                     <property name="text">0.5</property>
                                                     <property name="input-purpose">number</property>
-                                                    <property name="adjustment">a_xrRuleThickness</property>
+                                                    <property name="adjustment">a-xrRuleThickness</property>
                                                     <property name="climb-rate">0.10</property>
                                                     <property name="digits">1</property>
                                                     <property name="numeric">True</property>
@@ -10894,7 +10894,7 @@ of the column/page width.</property>
                                                     <property name="can-default">True</property>
                                                     <property name="halign">start</property>
                                                     <property name="valign">start</property>
-                                                    <property name="model">ls_fnruleHorizPosn</property>
+                                                    <property name="model">ls-fnruleHorizPosn</property>
                                                     <property name="wrap-width">1</property>
                                                     <property name="active">0</property>
                                                     <property name="entry-text-column">0</property>
@@ -11071,7 +11071,7 @@ and Parameters:</property>
                                                 <property name="tooltip-text" translatable="yes">The Standard List contains more 
 than 340,000 cross-references.</property>
                                                 <property name="draw-indicator">True</property>
-                                                <property name="group">r_xrSource_custom</property>
+                                                <property name="group">r-xrSource-custom</property>
                                                 <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                                 <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                               </object>
@@ -11094,7 +11094,7 @@ cross-references are available in:
 It is also possible to extract cross-references from another
 project (as an .xrf file) to be included in this project.</property>
                                                 <property name="draw-indicator">True</property>
-                                                <property name="group">r_xrSource_standard</property>
+                                                <property name="group">r-xrSource-standard</property>
                                                 <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                                 <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                               </object>
@@ -11120,7 +11120,7 @@ is moved toward the More side, then many more
 xRefs will be included (including some of the less
 popular or more obscure references).</property>
                                                 <property name="valign">center</property>
-                                                <property name="adjustment">a_diglotPriFraction1</property>
+                                                <property name="adjustment">a-diglotPriFraction1</property>
                                                 <property name="fill-level">5</property>
                                                 <property name="round-digits">0</property>
                                                 <property name="digits">0</property>
@@ -11276,7 +11276,7 @@ Books on the Basic tab will be included.</property>
                                                     <property name="halign">start</property>
                                                     <property name="margin-top">4</property>
                                                     <property name="margin-bottom">4</property>
-                                                    <property name="model">ls_filterXrefs</property>
+                                                    <property name="model">ls-filterXrefs</property>
                                                     <property name="wrap-width">1</property>
                                                     <property name="active">1</property>
                                                     <property name="entry-text-column">0</property>
@@ -11307,7 +11307,7 @@ Books on the Basic tab will be included.</property>
 selected cross-references for both NT and OT.</property>
                                                 <property name="halign">start</property>
                                                 <property name="draw-indicator">True</property>
-                                                <property name="group">r_xrSource_custom</property>
+                                                <property name="group">r-xrSource-custom</property>
                                                 <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                               </object>
                                               <packing>
@@ -11374,7 +11374,7 @@ reducing the size of the \x font (to approx 6pt).</property>
                                                         <property name="progress-pulse-step">0</property>
                                                         <property name="placeholder-text">0.0</property>
                                                         <property name="input-purpose">number</property>
-                                                        <property name="adjustment">a_centreColWidth</property>
+                                                        <property name="adjustment">a-centreColWidth</property>
                                                         <property name="climb-rate">5</property>
                                                         <property name="numeric">True</property>
                                                         <property name="update-policy">if-valid</property>
@@ -11457,7 +11457,7 @@ should be located on the page. Note that the
 2-column layout insists on the cross-references
 being positioned between the columns of text.</property>
                                                         <property name="halign">start</property>
-                                                        <property name="model">ls_colXRside</property>
+                                                        <property name="model">ls-colXRside</property>
                                                         <property name="wrap-width">1</property>
                                                         <property name="active">1</property>
                                                         <property name="entry-text-column">0</property>
@@ -11901,7 +11901,7 @@ Note: To activate or change this
 setting, you must first enable Diglot.</property>
                                         <property name="active">True</property>
                                         <property name="draw-indicator">True</property>
-                                        <property name="group">r_hdrLeft_Sec</property>
+                                        <property name="group">r-hdrLeft-Sec</property>
                                         <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                       </object>
                                       <packing>
@@ -11925,7 +11925,7 @@ Note: To activate or change this
 setting, you must first enable Diglot.</property>
                                         <property name="active">True</property>
                                         <property name="draw-indicator">True</property>
-                                        <property name="group">r_hdrLeft_Pri</property>
+                                        <property name="group">r-hdrLeft-Pri</property>
                                         <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                       </object>
                                       <packing>
@@ -11950,7 +11950,7 @@ setting, you must first enable Diglot.</property>
                                         <property name="margin-left">10</property>
                                         <property name="active">True</property>
                                         <property name="draw-indicator">True</property>
-                                        <property name="group">r_hdrCenter_Sec</property>
+                                        <property name="group">r-hdrCenter-Sec</property>
                                         <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                       </object>
                                       <packing>
@@ -11975,7 +11975,7 @@ setting, you must first enable Diglot.</property>
                                         <property name="margin-left">10</property>
                                         <property name="active">True</property>
                                         <property name="draw-indicator">True</property>
-                                        <property name="group">r_hdrRight_Sec</property>
+                                        <property name="group">r-hdrRight-Sec</property>
                                         <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                       </object>
                                       <packing>
@@ -12000,7 +12000,7 @@ setting, you must first enable Diglot.</property>
                                         <property name="margin-left">10</property>
                                         <property name="active">True</property>
                                         <property name="draw-indicator">True</property>
-                                        <property name="group">r_hdrCenter_Pri</property>
+                                        <property name="group">r-hdrCenter-Pri</property>
                                         <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                       </object>
                                       <packing>
@@ -12025,7 +12025,7 @@ setting, you must first enable Diglot.</property>
                                         <property name="margin-left">10</property>
                                         <property name="active">True</property>
                                         <property name="draw-indicator">True</property>
-                                        <property name="group">r_hdrRight_Pri</property>
+                                        <property name="group">r-hdrRight-Pri</property>
                                         <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                       </object>
                                       <packing>
@@ -12135,7 +12135,7 @@ chapter &amp; verse numbers
 in the header reference.</property>
                                             <property name="margin-right">6</property>
                                             <property name="draw-indicator">True</property>
-                                            <property name="group">c_sepPeriod</property>
+                                            <property name="group">c-sepPeriod</property>
                                           </object>
                                           <packing>
                                             <property name="expand">False</property>
@@ -12154,7 +12154,7 @@ chapter &amp; verse numbers
 in the header reference.</property>
                                             <property name="margin-right">6</property>
                                             <property name="draw-indicator">True</property>
-                                            <property name="group">c_sepColon</property>
+                                            <property name="group">c-sepColon</property>
                                           </object>
                                           <packing>
                                             <property name="expand">False</property>
@@ -12355,7 +12355,7 @@ soon as the first scripture book is encountered.</property>
                                     <property name="text">1</property>
                                     <property name="caps-lock-warning">False</property>
                                     <property name="input-purpose">number</property>
-                                    <property name="adjustment">a_startPageNum</property>
+                                    <property name="adjustment">a-startPageNum</property>
                                     <property name="climb-rate">1</property>
                                     <property name="numeric">True</property>
                                     <property name="update-policy">if-valid</property>
@@ -12552,7 +12552,7 @@ header, or the Secondary format.</property>
                                 <property name="margin-left">10</property>
                                 <property name="active">True</property>
                                 <property name="draw-indicator">True</property>
-                                <property name="group">r_ftrCenter_Pri</property>
+                                <property name="group">r-ftrCenter-Pri</property>
                                 <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                               </object>
                               <packing>
@@ -12574,7 +12574,7 @@ header, or the Secondary format.</property>
                                 <property name="halign">start</property>
                                 <property name="margin-left">10</property>
                                 <property name="draw-indicator">True</property>
-                                <property name="group">r_ftrCenter_Sec</property>
+                                <property name="group">r-ftrCenter-Sec</property>
                                 <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                               </object>
                               <packing>
@@ -12695,10 +12695,10 @@ headers and footers.</property>
                                   <object class="GtkTreeView" id="tv_picListEdit">
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
-                                    <property name="hadjustment">a_picListadjustment1</property>
-                                    <property name="vadjustment">a_picListadjustment2</property>
+                                    <property name="hadjustment">a-picListadjustment1</property>
+                                    <property name="vadjustment">a-picListadjustment2</property>
                                     <property name="vscroll-policy">natural</property>
-                                    <property name="model">ls_PicList</property>
+                                    <property name="model">ls-PicList</property>
                                     <property name="reorderable">True</property>
                                     <property name="rules-hint">True</property>
                                     <property name="enable-search">False</property>
@@ -12960,7 +12960,7 @@ status of the checking values.</property>
                                                 <property name="margin-left">4</property>
                                                 <property name="margin-right">6</property>
                                                 <property name="resize-mode">immediate</property>
-                                                <property name="model">ls_chklstFilter</property>
+                                                <property name="model">ls-chklstFilter</property>
                                                 <property name="active">0</property>
                                                 <property name="id-column">0</property>
                                                 <property name="active-id">All</property>
@@ -13223,7 +13223,7 @@ share, but the image quality will be low.</property>
                                                 <property name="halign">start</property>
                                                 <property name="valign">start</property>
                                                 <property name="draw-indicator">True</property>
-                                                <property name="group">r_pictureRes_High</property>
+                                                <property name="group">r-pictureRes-High</property>
                                                 <signal name="clicked" handler="onPicRescan" swapped="no"/>
                                                 <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                               </object>
@@ -13276,7 +13276,7 @@ the image quality will be as good as possible.</property>
                                                 <property name="halign">start</property>
                                                 <property name="valign">start</property>
                                                 <property name="draw-indicator">True</property>
-                                                <property name="group">r_pictureRes_Low</property>
+                                                <property name="group">r-pictureRes-Low</property>
                                                 <signal name="clicked" handler="onPicRescan" swapped="no"/>
                                                 <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                               </object>
@@ -14000,7 +14000,7 @@ Position:</property>
                                                     <property name="halign">start</property>
                                                     <property name="text">100</property>
                                                     <property name="progress-pulse-step">0</property>
-                                                    <property name="adjustment">a_plScale</property>
+                                                    <property name="adjustment">a-plScale</property>
                                                     <property name="climb-rate">5</property>
                                                     <property name="value">100</property>
                                                   </object>
@@ -14029,7 +14029,7 @@ Cutout: A notch/corner cut out of the text, starting at current line
 The above options may have other positioning parameters such
 as: Left, Right, Center, no. of lines (up or down).</property>
                                                     <property name="halign">start</property>
-                                                    <property name="model">ls_plPgPos</property>
+                                                    <property name="model">ls-plPgPos</property>
                                                     <property name="wrap-width">1</property>
                                                     <property name="has-entry">True</property>
                                                     <property name="entry-text-column">0</property>
@@ -14072,7 +14072,7 @@ Page (to Edge) is intended for pictures (or more commonly
 for maps) to fill the entire page, with no margins at all. 
 Captions should not be used with 'Page (to Edge)' images.</property>
                                                     <property name="halign">start</property>
-                                                    <property name="model">ls_plSize</property>
+                                                    <property name="model">ls-plSize</property>
                                                     <property name="wrap-width">1</property>
                                                     <property name="has-entry">True</property>
                                                     <property name="entry-text-column">0</property>
@@ -14122,7 +14122,7 @@ settings. So if you can't find an option
 you are looking for, then check those
 settings first.</property>
                                                     <property name="halign">start</property>
-                                                    <property name="model">ls_plHoriz</property>
+                                                    <property name="model">ls-plHoriz</property>
                                                     <property name="wrap-width">1</property>
                                                     <property name="has-entry">True</property>
                                                     <property name="entry-text-column">0</property>
@@ -14187,7 +14187,7 @@ you have already restricted the mirroring options
 on the Checklist tab.</property>
                                                     <property name="halign">start</property>
                                                     <property name="valign">center</property>
-                                                    <property name="model">ls_plMirror</property>
+                                                    <property name="model">ls-plMirror</property>
                                                     <property name="wrap-width">1</property>
                                                     <property name="has-entry">True</property>
                                                     <property name="entry-text-column">0</property>
@@ -14238,7 +14238,7 @@ Lines:</property>
                                                     <property name="text">0</property>
                                                     <property name="progress-pulse-step">0</property>
                                                     <property name="input-purpose">number</property>
-                                                    <property name="adjustment">a_plLines</property>
+                                                    <property name="adjustment">a-plLines</property>
                                                     <property name="climb-rate">1</property>
                                                   </object>
                                                   <packing>
@@ -14577,7 +14577,7 @@ in Paratext before regenerating the PicList here.</property>
                                                             <property name="receives-default">False</property>
                                                             <property name="halign">start</property>
                                                             <property name="draw-indicator">True</property>
-                                                            <property name="group">r_picclear_no</property>
+                                                            <property name="group">r-picclear-no</property>
                                                             <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                                           </object>
                                                           <packing>
@@ -14593,7 +14593,7 @@ in Paratext before regenerating the PicList here.</property>
                                                             <property name="receives-default">False</property>
                                                             <property name="halign">start</property>
                                                             <property name="draw-indicator">True</property>
-                                                            <property name="group">r_picclear_yes</property>
+                                                            <property name="group">r-picclear-yes</property>
                                                             <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                                           </object>
                                                           <packing>
@@ -14609,7 +14609,7 @@ in Paratext before regenerating the PicList here.</property>
                                                             <property name="receives-default">False</property>
                                                             <property name="halign">start</property>
                                                             <property name="draw-indicator">True</property>
-                                                            <property name="group">r_picclear_yes</property>
+                                                            <property name="group">r-picclear-yes</property>
                                                             <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                                           </object>
                                                           <packing>
@@ -14734,7 +14734,7 @@ how these words should be highlighted
 in the printed output.</property>
                                                             <property name="halign">start</property>
                                                             <property name="valign">center</property>
-                                                            <property name="model">ls_pic_accept</property>
+                                                            <property name="model">ls-pic-accept</property>
                                                             <property name="active">0</property>
                                                             <property name="id-column">1</property>
                                                             <property name="active-id">-1</property>
@@ -14756,7 +14756,7 @@ mirror</property>
 not change the impact or response of the readers.</property>
                                                             <property name="halign">start</property>
                                                             <property name="draw-indicator">True</property>
-                                                            <property name="group">r_picreverse_never</property>
+                                                            <property name="group">r-picreverse-never</property>
                                                             <signal name="clicked" handler="onReverseRadioChanged" swapped="no"/>
                                                           </object>
                                                           <packing>
@@ -14776,7 +14776,7 @@ as currently depicted in the preview. Do
 NOT allow it to be mirrored (reversed).</property>
                                                             <property name="halign">start</property>
                                                             <property name="draw-indicator">True</property>
-                                                            <property name="group">r_picreverse_OK</property>
+                                                            <property name="group">r-picreverse-OK</property>
                                                             <signal name="clicked" handler="onReverseRadioChanged" swapped="no"/>
                                                           </object>
                                                           <packing>
@@ -14797,7 +14797,7 @@ actions being done with the left hand will show as
 being done with the right hand, and vice versa.</property>
                                                             <property name="halign">end</property>
                                                             <property name="draw-indicator">True</property>
-                                                            <property name="group">r_picreverse_OK</property>
+                                                            <property name="group">r-picreverse-OK</property>
                                                             <signal name="clicked" handler="onReverseRadioChanged" swapped="no"/>
                                                           </object>
                                                           <packing>
@@ -14816,7 +14816,7 @@ how these words should be highlighted
 in the printed output.</property>
                                                             <property name="halign">start</property>
                                                             <property name="valign">center</property>
-                                                            <property name="model">ls_pub_usage</property>
+                                                            <property name="model">ls-pub-usage</property>
                                                             <property name="active">0</property>
                                                             <property name="id-column">1</property>
                                                             <property name="active-id">-1</property>
@@ -14835,7 +14835,7 @@ in the printed output.</property>
                                                             <property name="receives-default">False</property>
                                                             <property name="halign">start</property>
                                                             <property name="draw-indicator">True</property>
-                                                            <property name="group">r_pubclear_no</property>
+                                                            <property name="group">r-pubclear-no</property>
                                                             <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                                           </object>
                                                           <packing>
@@ -14851,7 +14851,7 @@ in the printed output.</property>
                                                             <property name="receives-default">False</property>
                                                             <property name="halign">start</property>
                                                             <property name="draw-indicator">True</property>
-                                                            <property name="group">r_pubclear_yes</property>
+                                                            <property name="group">r-pubclear-yes</property>
                                                             <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                                           </object>
                                                           <packing>
@@ -14867,7 +14867,7 @@ in the printed output.</property>
                                                             <property name="receives-default">False</property>
                                                             <property name="halign">start</property>
                                                             <property name="draw-indicator">True</property>
-                                                            <property name="group">r_pubclear_yes</property>
+                                                            <property name="group">r-pubclear-yes</property>
                                                             <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                                           </object>
                                                           <packing>
@@ -14883,7 +14883,7 @@ in the printed output.</property>
                                                             <property name="receives-default">False</property>
                                                             <property name="halign">start</property>
                                                             <property name="draw-indicator">True</property>
-                                                            <property name="group">r_pubnoise_no</property>
+                                                            <property name="group">r-pubnoise-no</property>
                                                             <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                                           </object>
                                                           <packing>
@@ -14899,7 +14899,7 @@ in the printed output.</property>
                                                             <property name="receives-default">False</property>
                                                             <property name="halign">start</property>
                                                             <property name="draw-indicator">True</property>
-                                                            <property name="group">r_pubnoise_yes</property>
+                                                            <property name="group">r-pubnoise-yes</property>
                                                             <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                                           </object>
                                                           <packing>
@@ -14918,7 +14918,7 @@ how these words should be highlighted
 in the printed output.</property>
                                                             <property name="halign">start</property>
                                                             <property name="valign">center</property>
-                                                            <property name="model">ls_pub_accept</property>
+                                                            <property name="model">ls-pub-accept</property>
                                                             <property name="active">0</property>
                                                             <property name="id-column">1</property>
                                                             <property name="active-id">1</property>
@@ -14948,7 +14948,7 @@ in the printed output.</property>
                                                             <property name="receives-default">False</property>
                                                             <property name="halign">start</property>
                                                             <property name="draw-indicator">True</property>
-                                                            <property name="group">r_pubnoise_yes</property>
+                                                            <property name="group">r-pubnoise-yes</property>
                                                             <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                                           </object>
                                                           <packing>
@@ -15021,7 +15021,7 @@ consultant approval updated.</property>
                                                             <property name="receives-default">False</property>
                                                             <property name="halign">start</property>
                                                             <property name="draw-indicator">True</property>
-                                                            <property name="group">r_pubapprove_scopeThis</property>
+                                                            <property name="group">r-pubapprove-scopeThis</property>
                                                             </object>
                                                             <packing>
                                                             <property name="left-attach">1</property>
@@ -15036,7 +15036,7 @@ consultant approval updated.</property>
                                                             <property name="receives-default">False</property>
                                                             <property name="halign">start</property>
                                                             <property name="draw-indicator">True</property>
-                                                            <property name="group">r_pubapprove_scopeAny</property>
+                                                            <property name="group">r-pubapprove-scopeAny</property>
                                                             </object>
                                                             <packing>
                                                             <property name="left-attach">1</property>
@@ -15123,7 +15123,7 @@ be used in:</property>
                                                             <property name="can-focus">True</property>
                                                             <property name="vexpand">True</property>
                                                             <property name="wrap-mode">word</property>
-                                                            <property name="buffer">txbf_picNotes</property>
+                                                            <property name="buffer">txbf-picNotes</property>
                                                             </object>
                                                             </child>
                                                             </object>
@@ -15303,7 +15303,7 @@ being located in the specified folder(s).</property>
                                         <property name="halign">start</property>
                                         <property name="valign">end</property>
                                         <property name="draw-indicator">True</property>
-                                        <property name="group">r_image_location</property>
+                                        <property name="group">r-image-location</property>
                                         <signal name="clicked" handler="onPicRadioChanged" swapped="no"/>
                                       </object>
                                       <packing>
@@ -15325,7 +15325,7 @@ odd/right-hand page of a spread.</property>
                                         <property name="halign">start</property>
                                         <property name="valign">end</property>
                                         <property name="draw-indicator">True</property>
-                                        <property name="group">r_image_preview</property>
+                                        <property name="group">r-image-preview</property>
                                         <signal name="clicked" handler="onPicRadioChanged" swapped="no"/>
                                       </object>
                                       <packing>
@@ -15458,7 +15458,7 @@ to copyrights.</property>
                               <object class="GtkScale" id="s_diglotPriFraction">
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
-                                <property name="adjustment">a_diglotPriFraction</property>
+                                <property name="adjustment">a-diglotPriFraction</property>
                                 <property name="lower-stepper-sensitivity">on</property>
                                 <property name="upper-stepper-sensitivity">on</property>
                                 <property name="show-fill-level">True</property>
@@ -15549,7 +15549,7 @@ settings for the project)</property>
 to be printed. This will usually appear
 in the right-hand (or outer) column.</property>
                                 <property name="halign">start</property>
-                                <property name="model">ls_digprojects</property>
+                                <property name="model">ls-digprojects</property>
                                 <property name="wrap-width">1</property>
                                 <property name="has-entry">True</property>
                                 <property name="entry-text-column">0</property>
@@ -15665,7 +15665,7 @@ Note that this control remains
 inactive until Diglot is enabled.</property>
                                 <property name="halign">start</property>
                                 <property name="valign">center</property>
-                                <property name="model">ls_diglotPicListSources</property>
+                                <property name="model">ls-diglotPicListSources</property>
                                 <property name="active">0</property>
                                 <property name="id-column">1</property>
                                 <property name="active-id">1</property>
@@ -15707,7 +15707,7 @@ leave this option checked ON.</property>
                                 <property name="tooltip-text" translatable="yes">Auto calculate primary percentage by trying to reduce the page count. This will run your print job up to 10 times or more, so choose a small book to run on. It will attempt to find the best balance of column widths near to the starting position of the slider.</property>
                                 <property name="halign">start</property>
                                 <property name="valign">center</property>
-                                <property name="image">icon_adjust_diglot</property>
+                                <property name="image">icon-adjust-diglot</property>
                                 <property name="always-show-image">True</property>
                                 <signal name="clicked" handler="onDiglotAutoAdjust" swapped="no"/>
                               </object>
@@ -15931,7 +15931,7 @@ a secondary project and configuration.</property>
                                 <property name="halign">start</property>
                                 <property name="width-chars">5</property>
                                 <property name="text">6.0</property>
-                                <property name="adjustment">a_thumbheight</property>
+                                <property name="adjustment">a-thumbheight</property>
                                 <property name="climb-rate">0.10</property>
                                 <property name="digits">1</property>
                                 <property name="value">6</property>
@@ -16017,7 +16017,7 @@ Tab Positions:</property>
                                 <property name="can-focus">True</property>
                                 <property name="width-chars">5</property>
                                 <property name="text">11</property>
-                                <property name="adjustment">a_thumbtabs</property>
+                                <property name="adjustment">a-thumbtabs</property>
                               </object>
                               <packing>
                                 <property name="left-attach">1</property>
@@ -16033,7 +16033,7 @@ Tab Positions:</property>
                                 <property name="width-chars">5</property>
                                 <property name="text">15</property>
                                 <property name="progress-pulse-step">0</property>
-                                <property name="adjustment">a_thumblength</property>
+                                <property name="adjustment">a-thumblength</property>
                                 <property name="climb-rate">0.10</property>
                                 <property name="digits">1</property>
                                 <property name="value">15</property>
@@ -16122,7 +16122,7 @@ For example: PHM TIT; 1JN 2JN 3JN JUD</property>
                                 <property name="can-default">True</property>
                                 <property name="tooltip-text" translatable="yes">If you choose to Rotate the tabs, there are various options as to how these should be oriented. The preview (right) will show how these will appear on facing pages.</property>
                                 <property name="halign">start</property>
-                                <property name="model">ls_rotateTabs</property>
+                                <property name="model">ls-rotateTabs</property>
                                 <property name="wrap-width">1</property>
                                 <property name="active">1</property>
                                 <property name="has-entry">True</property>
@@ -16452,7 +16452,7 @@ Note: If only a single book is currently selected, it will place the Thumb Tab r
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="text">0.0</property>
-                                            <property name="adjustment">a_inclSectionShift</property>
+                                            <property name="adjustment">a-inclSectionShift</property>
                                             <property name="climb-rate">0.10</property>
                                             <property name="digits">1</property>
                                           </object>
@@ -16480,7 +16480,7 @@ Note: If only a single book is currently selected, it will place the Thumb Tab r
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="text">1.0</property>
-                                            <property name="adjustment">a_inclSectionScale</property>
+                                            <property name="adjustment">a-inclSectionScale</property>
                                             <property name="climb-rate">0.10</property>
                                             <property name="digits">1</property>
                                             <property name="value">1</property>
@@ -16785,7 +16785,7 @@ as vertical to make sure all headings fit.</property>
 font to decorate the verse number.</property>
                                             <property name="halign">start</property>
                                             <property name="draw-indicator">True</property>
-                                            <property name="group">r_decorator_file</property>
+                                            <property name="group">r-decorator-file</property>
                                             <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                             <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                           </object>
@@ -16806,7 +16806,7 @@ font properties to ensure the verse numbers
 fit within the graphic.</property>
                                             <property name="halign">start</property>
                                             <property name="draw-indicator">True</property>
-                                            <property name="group">r_decorator_ayah</property>
+                                            <property name="group">r-decorator-ayah</property>
                                             <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                             <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                           </object>
@@ -16889,7 +16889,7 @@ fit within the graphic.</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="text">0.0</property>
-                                            <property name="adjustment">a_verseDecoratorShift</property>
+                                            <property name="adjustment">a-verseDecoratorShift</property>
                                             <property name="climb-rate">0.10</property>
                                             <property name="digits">1</property>
                                           </object>
@@ -16917,7 +16917,7 @@ fit within the graphic.</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="text">1.0</property>
-                                            <property name="adjustment">a_verseDecoratorScale</property>
+                                            <property name="adjustment">a-verseDecoratorScale</property>
                                             <property name="climb-rate">0.10</property>
                                             <property name="digits">1</property>
                                             <property name="value">1</property>
@@ -17143,7 +17143,7 @@ markers/styles in the list below.</property>
                                     <property name="halign">start</property>
                                     <property name="margin-left">6</property>
                                     <property name="margin-right">6</property>
-                                    <property name="model">ts_styles</property>
+                                    <property name="model">ts-styles</property>
                                     <property name="headers-visible">False</property>
                                     <property name="search-column">0</property>
                                     <property name="level-indentation">1</property>
@@ -17393,7 +17393,7 @@ properties for this style.</property>
                                             <property name="caps-lock-warning">False</property>
                                             <property name="placeholder-text">0.0</property>
                                             <property name="input-purpose">number</property>
-                                            <property name="adjustment">a_styFontSize</property>
+                                            <property name="adjustment">a-styFontSize</property>
                                             <property name="digits">2</property>
                                             <property name="numeric">True</property>
                                             <property name="update-policy">if-valid</property>
@@ -17497,7 +17497,7 @@ to Parent</property>
                                             <property name="caps-lock-warning">False</property>
                                             <property name="placeholder-text">0.0</property>
                                             <property name="input-purpose">number</property>
-                                            <property name="adjustment">a_styRaise</property>
+                                            <property name="adjustment">a-styRaise</property>
                                             <property name="digits">2</property>
                                             <property name="numeric">True</property>
                                             <property name="update-policy">if-valid</property>
@@ -17734,7 +17734,7 @@ Email: ptxprint_support@sil.org</property>
                                             <property name="can-focus">False</property>
                                             <property name="can-default">True</property>
                                             <property name="halign">start</property>
-                                            <property name="model">ls_styJustification</property>
+                                            <property name="model">ls-styJustification</property>
                                             <property name="wrap-width">1</property>
                                             <property name="has-entry">True</property>
                                             <property name="entry-text-column">0</property>
@@ -17762,7 +17762,7 @@ Email: ptxprint_support@sil.org</property>
                                             <property name="caps-lock-warning">False</property>
                                             <property name="placeholder-text">0.0</property>
                                             <property name="input-purpose">number</property>
-                                            <property name="adjustment">a_styFirstLineIndent</property>
+                                            <property name="adjustment">a-styFirstLineIndent</property>
                                             <property name="digits">2</property>
                                             <property name="numeric">True</property>
                                             <property name="update-policy">if-valid</property>
@@ -17783,7 +17783,7 @@ Email: ptxprint_support@sil.org</property>
                                             <property name="caps-lock-warning">False</property>
                                             <property name="placeholder-text">0.0</property>
                                             <property name="input-purpose">number</property>
-                                            <property name="adjustment">a_styLeftMargin</property>
+                                            <property name="adjustment">a-styLeftMargin</property>
                                             <property name="digits">2</property>
                                             <property name="numeric">True</property>
                                             <property name="update-policy">if-valid</property>
@@ -17804,7 +17804,7 @@ Email: ptxprint_support@sil.org</property>
                                             <property name="caps-lock-warning">False</property>
                                             <property name="placeholder-text">0.0</property>
                                             <property name="input-purpose">number</property>
-                                            <property name="adjustment">a_styRightMargin</property>
+                                            <property name="adjustment">a-styRightMargin</property>
                                             <property name="digits">2</property>
                                             <property name="numeric">True</property>
                                             <property name="update-policy">if-valid</property>
@@ -17825,7 +17825,7 @@ Email: ptxprint_support@sil.org</property>
                                             <property name="caps-lock-warning">False</property>
                                             <property name="placeholder-text">0.0</property>
                                             <property name="input-purpose">number</property>
-                                            <property name="adjustment">a_styLineSpacing</property>
+                                            <property name="adjustment">a-styLineSpacing</property>
                                             <property name="climb-rate">0.10</property>
                                             <property name="digits">2</property>
                                             <property name="numeric">True</property>
@@ -17863,7 +17863,7 @@ Email: ptxprint_support@sil.org</property>
                                             <property name="caps-lock-warning">False</property>
                                             <property name="placeholder-text">0.0</property>
                                             <property name="input-purpose">number</property>
-                                            <property name="adjustment">a_stySpaceBefore</property>
+                                            <property name="adjustment">a-stySpaceBefore</property>
                                             <property name="digits">2</property>
                                             <property name="numeric">True</property>
                                             <property name="update-policy">if-valid</property>
@@ -17884,7 +17884,7 @@ Email: ptxprint_support@sil.org</property>
                                             <property name="caps-lock-warning">False</property>
                                             <property name="placeholder-text">0.0</property>
                                             <property name="input-purpose">number</property>
-                                            <property name="adjustment">a_stySpaceAfter</property>
+                                            <property name="adjustment">a-stySpaceAfter</property>
                                             <property name="digits">2</property>
                                             <property name="numeric">True</property>
                                             <property name="update-policy">if-valid</property>
@@ -18140,7 +18140,7 @@ Factor:</property>
                                             <property name="caps-lock-warning">False</property>
                                             <property name="placeholder-text">0.0</property>
                                             <property name="input-purpose">number</property>
-                                            <property name="adjustment">a_styCallerRaise</property>
+                                            <property name="adjustment">a-styCallerRaise</property>
                                             <property name="digits">1</property>
                                             <property name="numeric">True</property>
                                             <property name="update-policy">if-valid</property>
@@ -18161,7 +18161,7 @@ Factor:</property>
                                             <property name="caps-lock-warning">False</property>
                                             <property name="placeholder-text">0.0</property>
                                             <property name="input-purpose">number</property>
-                                            <property name="adjustment">a_styNoteCallerRaise</property>
+                                            <property name="adjustment">a-styNoteCallerRaise</property>
                                             <property name="digits">1</property>
                                             <property name="numeric">True</property>
                                             <property name="update-policy">if-valid</property>
@@ -18585,7 +18585,7 @@ which are all specified below.</property>
                                                     <property name="halign">start</property>
                                                     <property name="active">True</property>
                                                     <property name="draw-indicator">True</property>
-                                                    <property name="group">c_processScriptAfter</property>
+                                                    <property name="group">c-processScriptAfter</property>
                                                   </object>
                                                   <packing>
                                                     <property name="expand">False</property>
@@ -18606,7 +18606,7 @@ which are all specified below.</property>
                                                     <property name="halign">start</property>
                                                     <property name="active">True</property>
                                                     <property name="draw-indicator">True</property>
-                                                    <property name="group">c_processScriptBefore</property>
+                                                    <property name="group">c-processScriptBefore</property>
                                                   </object>
                                                   <packing>
                                                     <property name="expand">False</property>
@@ -18907,7 +18907,7 @@ Archive (largest size, for keeping long-term)
 
 Note: All comply with archive standard PDF/A-1b.</property>
                                     <property name="halign">start</property>
-                                    <property name="model">ls_outputFormat</property>
+                                    <property name="model">ls-outputFormat</property>
                                     <property name="wrap-width">1</property>
                                     <property name="entry-text-column">0</property>
                                     <property name="id-column">1</property>
@@ -19491,7 +19491,7 @@ in the list to be printed.)</property>
                             <property name="halign">end</property>
                             <property name="margin-top">6</property>
                             <property name="margin-bottom">6</property>
-                            <property name="model">ls_books</property>
+                            <property name="model">ls-books</property>
                             <property name="wrap-width">5</property>
                             <property name="active">0</property>
                             <property name="has-entry">True</property>
@@ -19564,7 +19564,7 @@ with a text editor (such as Notepad or NP++).</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">True</property>
-                            <property name="tooltip-text" translatable="yes">If you have used \zvar_variable names
+                            <property name="tooltip-text" translatable="yes">If you have used \zvar-variable names
 in the front matter template, these may
 be edited on the "Pub. Info" tab. Click
 this button to show that tab.</property>
@@ -20206,7 +20206,7 @@ the text and the page number. Select
 the style of leader you wish to apply.</property>
                             <property name="halign">start</property>
                             <property name="valign">center</property>
-                            <property name="model">ls_leaderStyle</property>
+                            <property name="model">ls-leaderStyle</property>
                             <property name="active">0</property>
                             <property name="id-column">1</property>
                             <property name="active-id">1</property>
@@ -20353,10 +20353,10 @@ Front Matter</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="vexpand">True</property>
-                                        <property name="hadjustment">a_zvarListadjustment1</property>
-                                        <property name="vadjustment">a_zvarListadjustment2</property>
+                                        <property name="hadjustment">a-zvarListadjustment1</property>
+                                        <property name="vadjustment">a-zvarListadjustment2</property>
                                         <property name="vscroll-policy">natural</property>
-                                        <property name="model">ls_zvarList</property>
+                                        <property name="model">ls-zvarList</property>
                                         <property name="reorderable">True</property>
                                         <property name="rules-hint">True</property>
                                         <property name="enable-search">False</property>
@@ -20599,7 +20599,7 @@ use // where a line break needs to be forced
 but :// used in URLs will still be preserved</property>
                                         <property name="vexpand">True</property>
                                         <property name="wrap-mode">word</property>
-                                        <property name="buffer">txbf_colophon</property>
+                                        <property name="buffer">txbf-colophon</property>
                                       </object>
                                     </child>
                                   </object>
@@ -21056,7 +21056,7 @@ to the PTX2PDF Macros:</property>
                                 </child>
                                 <child>
                                   <object class="GtkLinkButton" id="lb_settings_dir">
-                                    <property name="label" translatable="yes">settings_dir</property>
+                                    <property name="label" translatable="yes">settings-dir</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">True</property>
@@ -21073,7 +21073,7 @@ to the PTX2PDF Macros:</property>
                                 </child>
                                 <child>
                                   <object class="GtkLinkButton" id="lb_working_dir">
-                                    <property name="label" translatable="yes">working_dir</property>
+                                    <property name="label" translatable="yes">working-dir</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">True</property>
@@ -21398,7 +21398,7 @@ depending on the level set here.</property>
                 <property name="margin-right">3</property>
                 <property name="margin-top">4</property>
                 <property name="margin-bottom">4</property>
-                <property name="model">ls_uiLevel</property>
+                <property name="model">ls-uiLevel</property>
                 <property name="wrap-width">1</property>
                 <property name="active">1</property>
                 <property name="entry-text-column">0</property>
@@ -21426,7 +21426,7 @@ chosen language.</property>
                 <property name="margin-top">3</property>
                 <property name="margin-bottom">3</property>
                 <property name="hexpand">False</property>
-                <property name="model">ls_interfaceLang</property>
+                <property name="model">ls-interfaceLang</property>
                 <property name="active">3</property>
                 <property name="id-column">1</property>
                 <property name="active-id">1</property>
@@ -21450,7 +21450,7 @@ Click to visit download page on the website.</property>
                 <property name="valign">center</property>
                 <property name="margin-left">3</property>
                 <property name="margin-right">3</property>
-                <property name="image">icon_download</property>
+                <property name="image">icon-download</property>
                 <signal name="clicked" handler="onUpdateButtonClicked" swapped="no"/>
               </object>
               <packing>
