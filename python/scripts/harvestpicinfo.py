@@ -1,8 +1,10 @@
 #!/usr/bin/python3
+# Script to extract anonymous picture statistics from a folder of Paratext projects
+# by Martin Hosken and Mark Penny, Oct 2021
 
-import sys, os, re, regex, gi
+import sys, os, re
 import xml.etree.ElementTree as et
-# from collections import Counter
+import json, argparse
 
 _bookslist = """GEN|50 EXO|40 LEV|27 NUM|36 DEU|34 JOS|24 JDG|21 RUT|4 1SA|31 2SA|24 1KI|22 2KI|25 1CH|29 2CH|36 EZR|10 NEH|13
         EST|10 JOB|42 PSA|150 PRO|31 ECC|12 SNG|8 ISA|66 JER|52 LAM|5 EZK|48 DAN|12 HOS|14 JOL|3 AMO|9 OBA|1 JON|4 MIC|7 NAM|3
@@ -20,40 +22,39 @@ OTnNTbooks = ("GEN", "EXO", "LEV", "NUM", "DEU", "JOS", "JDG", "RUT", "1SA", "2S
             "HAB", "ZEP", "HAG", "ZEC", "MAL", 
             "MAT", "MRK", "LUK", "JHN", "ACT", "ROM", "1CO", "2CO", "GAL", "EPH", "PHP", "COL", "1TH", "2TH", "1TI", "2TI", "TIT",
             "PHM", "HEB", "JAS", "1PE", "2PE", "1JN", "2JN", "3JN", "JUD", "REV")
-            
+
+bnre      = re.compile(r"(?i)_?((?=ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib)..\d{5})[abcABC]?$")
+nbsimplre = re.compile('[()&+,.;: \-]')
+chptre    = re.compile(r"\\c\s+(\d+)")
+vrsre     = re.compile(r"(?s)(?<=\\v )(\d+[abc]?(?:[,-]\d+?[abc]?)?) ((?:.(?!\\v ))+)")
+usfm2re   = re.compile(r"(?ms)\\fig (.*?)\|(.+?\.....?)\|(....?)\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+?)?\\fig\*")
+usfm3re   = re.compile(r'(?ms)\\fig ([^\\]*?)\|([^\\]+)*src=[\'"]([^\\]+?)[\'"]([^\\]+)\\fig\*')
+
+                # usfm2re m = regex.findall(r"(?ms)\\fig (.*?)\|(.+?\.....?)\|(....?)\|([^\\]+?)?\|([^\\]+?)?"
+                                          # r"\|([^\\]+?)?\|([^\\]+?)?\\fig\*", s)
+                # usfm3re m = regex.findall(r'(?ms)\\fig ([^\\]*?)\|([^\\]+)*src=[\'"]([^\\]+?)[\'"]([^\\]+)\\fig\*', s)
+
 ptsettings = None
-ref2img = {}
+# ref2img = {}
 img2ref = {}
 COUNT = 0
-allprojects = []
-settings_dir = "C:\My Paratext 9 Projects"
+counts = {}
 
-def incPicCnt():
-    global COUNT
-    COUNT = COUNT+1
-    
-def getAllBooks(prjid):
+def getAllBooks(prjdir, prjid, ptsettings):
     ''' Returns a dict of all books in the project bkid: bookfile_path '''
     if prjid is None:
         return {}
-    prjdir = os.path.join(settings_dir, prjid)
     res = {}
     for bk in OTnNTbooks:
-        f = getBookFilename(bk, prjid)
+        f = getBookFilename(ptsettings, bk, prjid)
         fp = os.path.join(prjdir, f)
         if os.path.exists(fp):
             res[bk] = fp
     return res
 
-def _getPtSettings(prjid=None):
-    if prjid is not None:
-        ptsettings = parsePTstngs(prjid)
-        return ptsettings
-
-def getBookFilename(bk, prjid=None):
+def getBookFilename(ptsettings, bk, prjid=None):
     if bk is None or any(x in "./\\" for x in bk):
         return None
-    ptsettings = _getPtSettings(prjid)
     if ptsettings is None:
         return None
     fbkfm = ptsettings['FileNameBookNameForm']
@@ -66,52 +67,44 @@ def getBookFilename(bk, prjid=None):
 def newBase(fpath):
     doti = fpath.rfind(".")
     f = os.path.basename(fpath[:doti])
-    cl = re.findall(r"(?i)_?((?=ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib)..\d{5})[abcABC]?$", f)
+    cl = bnre.findall(f)
     if cl:
         return cl[0].lower()
     else:
-        return re.sub('[()&+,.;: \-]', '_', f.lower())
+        return nbsimplre.sub('_', f.lower())
+
+def incHashRef(d, *a):
+    for i, k in enumerate(a):
+        if k not in d:
+            d[k] = {} if i < len(a) - 1 else 0
+        if i < len(a) - 1:
+            d = d[k]
+        else:
+            d[k] += 1
 
 def read_sfm(bk, fname):
+    count = 0
     with universalopen(fname) as inf:
         dat = inf.read()
-        blocks = ["0"] + re.split(r"\\c\s+(\d+)", dat)
+        blocks = ["0"] + chptre.split(dat)
         for c, t in zip(blocks[0::2], blocks[1::2]):
-            for v in re.findall(r"(?s)(?<=\\v )(\d+[abc]?(?:[,-]\d+?[abc]?)?) ((?:.(?!\\v ))+)", t):
+            for v in vrsre.findall(t):
                 lastv = v[0]
                 s = v[1]
                 r = "{}{}".format(bk, c)   #  or   "{} {}.{}".format(bk, c, lastv)
                 key = None
-                m = regex.findall(r"(?ms)\\fig (.*?)\|(.+?\.....?)\|(....?)\|([^\\]+?)?\|([^\\]+?)?"
-                               r"\|([^\\]+?)?\|([^\\]+?)?\\fig\*", s)
+                m = usfm2re.findall(s)
                 if len(m):
                     for f in m:     # usfm 2
-                        incPicCnt()
-                        nbf = newBase(f[1])
-                        # print(r, nbf, f[1])
-                        try:
-                            ref2img[r] += [nbf]
-                        except KeyError:
-                            ref2img[r] = [nbf]
-                        try:
-                            img2ref[nbf] += [r]
-                        except KeyError:
-                            img2ref[nbf] = [r]
+                        count += 1
+                        incHashRef(img2ref, newBase(f[1]), r)
                 else:
-                    m = regex.findall(r'(?ms)\\fig ([^\\]*?)\|([^\\]+)*src=[\'"]([^\\]+?)[\'"]([^\\]+)\\fig\*', s)
+                    m = usfm3re.findall(s)
                     if len(m):
                         for f in m:     # usfm 3
-                            incPicCnt()
-                            nbf = newBase(f[2])
-                            # print(r, nbf, f[2])
-                            try:
-                                ref2img[r] += [nbf]
-                            except KeyError:
-                                ref2img[r] = [nbf]
-                            try:
-                                img2ref[nbf] += [r]
-                            except KeyError:
-                                img2ref[nbf] = [r]
+                            count += 1
+                            incHashRef(img2ref, newBase(f[2]), r)
+    return count
 
 def universalopen(fname, cp=65001):
     """ Opens a file with the right codec from a small list and perhaps rewrites as utf-8 """
@@ -139,13 +132,13 @@ def universalopen(fname, cp=65001):
     fh.seek(0)
     return fh
 
-def parsePTstngs(prjid):
+def parsePTstngs(prjdir):
     ptstngs = {}
-    path = os.path.join(settings_dir, prjid, "Settings.xml")
+    path = os.path.join(prjdir, "Settings.xml")
     if os.path.exists(path):
         doc = et.parse(path)
         for c in doc.getroot():
-            ptstngs[c.tag] = c.text
+            ptstngs[c.tag] = c.text or ""
     else:
         ptstngs = None
     return ptstngs
@@ -156,42 +149,63 @@ def get(key, default=None):
         return default
     return res
 
-for d in os.listdir(settings_dir):
-    p = os.path.join(settings_dir, d)
+def writeFile(outfile, **kw):    
+    with open(outfile, "w", encoding="utf-8") as outf:
+        json.dump(kw, outf)
+
+parser = argparse.ArgumentParser()
+# parser.add_argument("-i", "--indir", required=True, help="Path to Paratext project tree")
+parser.add_argument("-i", "--indir", default="C:/My Paratext 9 Projects", help="Path to Paratext project tree")
+parser.add_argument("-o", "--outfile", default="HarvestedPictureInfo.json", help="Output JSON file")
+parser.add_argument("-a", "--all", action="store_true", help="Process ALL projects, not just Standard translation type")
+args = parser.parse_args()
+
+for d in os.listdir(args.indir):
+    p = os.path.join(args.indir, d)
     if not os.path.isdir(p):
         continue
     try:
-        if os.path.exists(os.path.join(p, 'Settings.xml')) \
-                or any(x.lower().endswith("sfm") for x in os.listdir(p)):
-            # if d in ["WSG", "WSGdev", "aArp", "VASV", "VNT", "U01", "SGAH", "RWB"]:
-            if d is not None and d not in ["KEY-L", "KEY-F"]:
-                COUNT = 0
-                allprojects.append(d)
-                try:
-                    pts = _getPtSettings(d)
-                except NameError:
-                    continue
-                if pts is not None:
-                    bks = getAllBooks(d)
-                    for bk in bks.keys():
-                        if bk in OTnNTbooks:
-                            read_sfm(bk, bks[bk])
-                if COUNT != 0:
-                    print("{}  {} pics".format(d, COUNT))
-                else:
-                    print(d)
+        print(p)
+        if not os.path.exists(os.path.join(p, 'Settings.xml')) \
+                and not any(x.lower().endswith("sfm") for x in os.listdir(p)):
+            continue
+        # if d not in ["WSG", "WSGdev", "aArp", "VASV", "VNT", "U01", "SGAH", "RWB"]:
+        # TO DO! Something is wrong with these projects... the re(gex) for USFM3 is getting stuck!
+        # see usfm3re  - which works with regex, but not with re  - but WHY not?
+        if d is None or d in ["HMAST", "KBRosU", "kjj", "KONDA", "OGNT", "PTP2", "UO1", "KEY-L", "KEY-F"]:
+            continue
+        totalCOUNT = 0
+        try:
+            pts = parsePTstngs(p)
+        except NameError:
+            continue
+        if pts is None:
+            # This happens for Resource projects
+            # print("{} - no settings parsed".format(d))
+            continue
+        if not args.all and not pts.get("TranslationInfo", "").startswith("Standard"):
+            continue
+        # And now we collect the info we need
+        bks = getAllBooks(p, d, pts)
+        for bk, v in bks.items():
+            if bk in OTnNTbooks:
+                COUNT = read_sfm(bk, v)
+                incHashRef(counts, bk, COUNT)
+                totalCOUNT += COUNT
+                counts[bk][COUNT] +=1
+        if totalCOUNT != 0:
+            print(" "*60, "{}  {} pics".format(d, totalCOUNT))
+        else:
+            print(" "*50, d)
     except OSError:
         pass
 
-print('-'*40)
-for ref in sorted(ref2img.keys()):
-    i = ref2img[ref]
-    d = {x:i.count(x) for x in i}
-    print(ref, d)
+# To flip the structure to be ref-based instead of img-based
+# for pic, dat in img2ref.items():
+    # for k, v in dat.items():
+        # ref2img.setdefault(k, {})[pic]=v
+        
+print("\nWriting JSON file:", args.outfile)
+writeFile(args.outfile, images=img2ref, counts=counts)
 
-print('-'*40)
-
-for img in sorted(img2ref.keys()):
-    i = img2ref[img]
-    d = {x:i.count(x) for x in i}
-    print(img, d)
+print("\nDone harvesting Pic statistics!")
