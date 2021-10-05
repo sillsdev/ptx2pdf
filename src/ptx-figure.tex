@@ -846,19 +846,25 @@
  \fi% end \ifIncludeFigures
 }
 
+
+\def\@lignpic#1{%Align pic (or whatever) according to pic@lign
+  \def\l@ftedge{\hss}\def\r@ghtedge{\hss}%
+  \ifx\pic@lign\@lignLeft\def\l@ftedge{}\fi
+  \ifx\pic@lign\@lignRight\def\r@ghtedge{}\fi
+  \ifRTL\let\t@mp\r@ghtedge\let\r@ghtedge\l@ftedge\let\l@ftedge\t@mp\fi
+  \setbox#1\vbox{\hbox to \p@cinswid{\l@ftedge\box#1\r@ghtedge}}%
+}
 \def\d@figureInl#1{%
-  \trace{g}{\w@tsit is inline \ifhmode in HMODE\fi}%
+  \trace{g}{\w@tsit\space is inline, \the\hsize \ifhmode , in HMODE\fi \ifpicNarrow , narrow\fi}%
   \penalty10 % Allow the page to break
   \ifpicNarrow
-    \ifx\pic@lign\@lignLeft
-      \setbox#1\vbox{\hbox to \colwidth{\box#1\hss}}\else\setbox#1\vbox{\hbox to \colwidth{\hss\box#1}}%
-    \fi
+    \@lignpic{#1}%
   \fi
   %\splittopskip\baselineskip
   \def\picc@ntents{%
     \gridp@cfalse% Not true! It's not floating.
       \headingtopspace=0pt
-    \gridb@x#1 
+    \gridb@x#1%
     \ifx\w@tsit\gr@phic
       \dimen9=\lastdepth \kern\dimen9
       \trace{g}{gridbox dp=\the\dimen9}%Figs have a skip at the bottom of the box, but somehow the depth is kept. Need to kill it. sidebars don't have this issue.
@@ -870,13 +876,15 @@
 
 
 \def\d@figurePar#1{%
-  \trace{g}{\w@tsit is post-paragraph}%
+  \trace{g}{\w@tsit is post-paragraph, \the\hsize/\the\p@cinswid \ifpicNarrow , narrow\fi}%
   \x@\let\x@\picb@@x\csname picb@x\g@tdstat\endcsname
-  \global\setbox\picb@@x\box#1
+  \global\setbox\picb@@x\box#1%
   \ifpicNarrow
-    \ifx\pic@lign\@lignLeft \global\setbox\picb@@x\vbox{\hbox to \colwidth{\box\picb@@x\hss}}\trace{g}{Pic aligned left}%
-    \else \global\setbox\picb@@x\vbox{\hbox to \colwidth{\hss\box\picb@@x}}\trace{g}{Pic aligned right}%
-    \fi
+    \@lignpic{\picb@@x}%
+    %\ifx\pic@lign\@lignLeft \global\setbox\picb@@x\vbox{\hbox to \colwidth{\box\picb@@x\hss}}\trace{g}{Pic aligned left}%
+    %\else \global\setbox\picb@@x\vbox{\hbox to \colwidth{\hss\box\picb@@x}}\trace{g}{Pic aligned right}%
+    %\fi
+    %\showbox\picb@@x
   \fi
   \edef\eotpn@me{at@ndofthispar\c@rrdstat}% Which at@ndofthispar macro?\emspace
   \trace{g}{\eotpn@me\space defined}%

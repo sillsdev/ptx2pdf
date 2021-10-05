@@ -96,4 +96,21 @@ Rem nesciunt voluptatem labore eaque necessitatibus repellat itaque id. Ut est p
 \p
 \v 11
 Tenetur deleniti rerum minima dolor. Rerum autem ipsa ipsum autem quo a. Aut ut occaecati et aspernatur voluptatum voluptate consequatur. Alias illum molestiae quia sed blanditiis est. Saepe ipsam omnis beatae magnam culpa.
+\p
+
+\esb\cat pc\cat*
+\p This  esb of category "\showTheCategory" is testing the appropriate positioning.
+\esbe
+\pb
+\p Interesting
+
+\esb\cat pr\cat*
+\p This  esb of category "\showTheCategory" is testing the appropriate positioning.
+\esbe
+
+\p There needs to be text in between side bars.
+
+\esb\cat pl\cat*
+\p This  esb of category "\showTheCategory" is testing the appropriate positioning.
+\esbe
 

@@ -11,6 +11,8 @@ TST 3.2 A full page picture[Fc] |pgpos="Fc" src="image.jpg" ref="3:2" size="full
 TST 1.2 A printed area-sized picture[Pc] |pgpos="Pc" src="image.jpg" ref="1.2" size="page" scale="1" x-credit="© ImageMagick LLC" x-creditpos="tl" x-creditbox="dark" mirror="both"
 TST 1.2 A printed area-sized picture[Pc] |pgpos="Pc" src="image.jpg" ref="1.2" size="page" scale="1" x-credit="© ImageMagick LLC" x-creditpos="tl" x-creditbox="dark" mirror="both"
 TST 1.2 A printed area-sized picture[Pc] |pgpos="Pc" src="image.jpg" ref="1.2" size="page" scale="1" x-credit="© ImageMagick LLC" x-creditpos="tl" x-creditbox="dark" mirror="both"
+TST 3.1 This is a rose, not a fig (hl) |loc="hl" src="image.jpg" alt="Figs are tasty"  ref="1:5" size="col*0.25" x-credit="© IM"
+TST 3.1 This is a rose, not a fig (hr) |loc="hr" src="image.jpg" alt="Figs are tasty"  ref="1:5" size="col*0.25" x-credit="© IM"
 TST 3.2	Page 2 of 2page doc [Fcc]| pgpos="Fcc" src="testpages.pdf" ref="" size="page" scale="1" x-xetex="rotate=binding page=2"
 TST 3.2 The Ghostscript tiger in a PDF file [Fct]|pgpos="Fct" src="tiger.pdf" ref="" size="full" scale="1" x-credit="Ghostscript"
 TST 3.2 The Ghostscript tiger in a PDF file [Fcb]|pgpos="Fcb" src="tiger.pdf" ref="" size="full" scale="1" x-credit="Ghostscript"

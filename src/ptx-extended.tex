@@ -216,6 +216,7 @@
       \fi\fi
     \fi
    % Now apply scale..
+    \p@cinswid=\dimen1
     \getsbp@ram{scale}\ifx\cp@ram\relax\else
       \dimen1=\cp@ram\dimen1
     \fi
@@ -518,7 +519,10 @@
   \fi
   \let\w@tsit\sb@rb@x % Make sure the item is identified properly - used in debugging and .delayed file
   \let\loc@ption\sb@rpos
-  \picUsesInstrue
+  \picUsesInstrue \picNarrowfalse
+  \ifdim\wd\extb@x=\p@cinswid\else
+    \picNarrowtrue
+  \fi
   \x@\p@rsePicUse\loc@ption\end  %set loc@ption and discover if there's to be an insert. (sets \picUsesInsfalse if not)
   \ifx\h@scol\tr@e
     \getsbp@ram{alpha}\global\let\pdf@lpha=\cp@ram
@@ -609,17 +613,21 @@
         \dimen0=\ht\extchunkb@x \advance\dimen0 by \dp\extchunkb@x \advance\dimen0 by 0.5\baselineskip % Rounding correction
         \divide\dimen0 by \baselineskip \count255=\dimen0
         \advance\count255 by 1
-        \trace{g}{Inline \w@tsit takes \the\count255 lines}%
+        \trace{g}{Inline \w@tsit takes \the\count255 lines, ls:\l@cspec@b}%
         \ifx\picl@c\loc@Inl
+          \ifx\l@cspec@b\@lignLeft\picNarrowtrue\fi
+          \ifx\l@cspec@b\@lignRight\picNarrowtrue\fi
 	  %\vskip -\lastdepth
-	      \ifx\h@scol\tr@e
-	        \ifdim\lastdepth>0.2pt\vskip\baselineskip\fi%
-	      \fi
-	      \d@figureInl\extchunkb@x
-	    \fi
+          \ifx\h@scol\tr@e
+            \ifdim\lastdepth>0.2pt\vskip\baselineskip\fi%
+          \fi
+          \d@figureInl\extchunkb@x
+        \fi
         \ifx\picl@c\loc@Par
-  	      \d@figurePar\extchunkb@x
-  	    \fi
+          \ifx\l@cspec@b\@lignLeft\picNarrowtrue\fi
+          \ifx\l@cspec@b\@lignRight\picNarrowtrue\fi
+          \d@figurePar\extchunkb@x
+        \fi
         \ifx\picl@c\loc@Page
           \d@figurePage\extchunkb@x
         \fi
