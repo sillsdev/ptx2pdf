@@ -29,7 +29,7 @@ class Interlinear:
             elif event == "end":
                 if e.tag == "Gloss":
                     if e.get("Language") == self.lang:
-                        self.lexicon.setdefault(currlex, {})[currsense] = e.text
+                        self.lexicon.setdefault(currlex, {})[currsense] = e.text or ""
 
     def makeref(self, s):
         m = _refre.match(s)
@@ -89,7 +89,8 @@ class Interlinear:
                         lid = e.get('Id', '')
                         gid = e.get('GlossId', '')
                         if lid.startswith('Word:'):
-                            lexemes.append((currange, str(self.lexicon.get(lid, {}).get(gid, ''))))
+                            wd = self.lexicon.get(lid, {}).get(gid, '')
+                            lexemes.append((currange, str(wd)))
                 elif event == "end":
                     if e.tag == "string":
                         curref = self.makeref(e.text)

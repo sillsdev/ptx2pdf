@@ -694,7 +694,7 @@
     \def\pagecontents{%                                                     %(3)
 %      \msg{upwards mode = \the\XeTeXupwardsmode}
       \dimen1=\textwidth% \advance\dimen1 -\ExtraRMargin
-      \trace{b}{BALANCE pageoutins: cols=1: text=\the\ht\colA, \the\dp\colA: partial=\the\ht\partial, \the\dp\partial: topins=\the\ht\topins: bottomins=\the\ht\bottomins}%
+      \trace{b}{BALANCE pageoutins: cols=1: text=\the\ht\colA, \the\dp\colA: partial=\the\ht\partial, \the\dp\partial: topins=\the\ht\topins: bottomins=\the\ht\bottomins, width=\the\dimen1}%
       \dimen9=\ht\partial
       \ifvoid\partial\else \vbox{\hbox to \dimen1{\vbox{\unvbox\partial}}} \fi
       \ifvoid\topins\else \vbox{\hbox to \columnshift{}\box\topins} \vskip\skip\topins \fi
@@ -862,7 +862,7 @@
   \setbox1=\vbox{\unvcopy\colA}
   \edef\t@mp{\splitbotmark}%
   \ifx\t@mp\empty\else\global\m@rksonpagetrue\trace{H}{Found mark \splitbotmark}\fi
-  \dimen1=\textwidth\advance\dimen1 by -\ExtraRMargin\advance\dimen1 by -\columnshift
+  \dimen1=\textwidth\advance\dimen1 by -\ExtraRMargin\ifb@dy\iftob@dy\else\advance\dimen1 by -\columnshift\fi\fi
   \dimen3=\ht1\advance\dimen3 by \dp1
   \ifColNotes\ifdim\dimen3<\ht\coln@tebox\dimen3=\ht\coln@tebox\fi\fi
   % and check if it all fit; if not, we'll have to back up and try again
@@ -875,12 +875,12 @@
       \ifvoid\topins\else \unvbox\topins \vskip\skip\topins \fi
       \lastd@pth=\dp\colA
       \ifColNotes\ifdim\dp\xr@fbox<\lastd@pth \lastd@pth=\dp\xr@fbox\fi\fi
-      \dimen1=\textwidth \advance\dimen1 -\ExtraRMargin \advance\dimen1 by -\columnshift
+      \dimen1=\textwidth \advance\dimen1 -\ExtraRMargin \ifb@dy\iftob@dy\else\advance\dimen1 by -\columnshift\fi\fi
       \hbox to \dimen1{\noindent
         \ifb@dy\testXrefSideL\ifnum\tmp=1
           \makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen3}{2}%
         \fi\fi
-        \ifx\ch@pter\empty\else\hbox to \columnshift{}\fi
+        \ifx\ch@pter\empty\else\ifb@dy\hbox to \columnshift{}\fi\fi
         %\special{"testme1"}
         \vbox to \dimen3{\unvbox\colA\vfil}%\special{"testme2"}%
         \ifb@dy\testXrefSideR\ifnum\tmp=1
@@ -1545,7 +1545,7 @@
       \dimen1=\textwidth\advance\dimen1 by -\ExtraRMargin
       \dimen2=\availht\advance\dimen2\bmg@p
       \ifvoid\partial\else %\msg{2colout partial: \the\ht\partial}\hskip\columnshift
-        \vbox{\hbox to \dimen1{\hskip\columnshift\vbox{\unvbox\partial}}}\fi % output partial page % \vskip -2\dimen5
+        \vbox{\hbox to \dimen1{\vbox{\unvbox\partial}}}\fi % output partial page % \vskip -2\dimen5
       \ifvoid\topins\else \hbox{\hbox to \columnshift{}\box\topins} \vskip\skip\topins \fi % output top spanning pictures
       \iflastpage\setbox\colA=\vbox{\unvbox\colA}\setbox\colB=\vbox{\unvbox\colB}%
         \ifdim\ht\colA>\ht\colB\ht\colB=\ht\colA\else\ht\colA=\ht\colB\fi\fi
