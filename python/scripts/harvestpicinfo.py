@@ -28,15 +28,13 @@ nbsimplre = re.compile('[()&+,.;: \-]')
 chptre    = re.compile(r"\\c\s+(\d+)")
 vrsre     = re.compile(r"(?s)(?<=\\v )(\d+[abc]?(?:[,-]\d+?[abc]?)?) ((?:.(?!\\v ))+)")
 usfm2re   = re.compile(r"(?ms)\\fig (.*?)\|(.+?\.....?)\|(....?)\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+?)?\\fig\*")
-usfm3re   = re.compile(r'(?ms)\\fig ([^\\]*?)\|([^\\]+)*src=[\'"]([^\\]+?)[\'"]([^\\]+)\\fig\*')
-
-                # usfm2re m = regex.findall(r"(?ms)\\fig (.*?)\|(.+?\.....?)\|(....?)\|([^\\]+?)?\|([^\\]+?)?"
-                                          # r"\|([^\\]+?)?\|([^\\]+?)?\\fig\*", s)
-                # usfm3re m = regex.findall(r'(?ms)\\fig ([^\\]*?)\|([^\\]+)*src=[\'"]([^\\]+?)[\'"]([^\\]+)\\fig\*', s)
+usfm3re     = re.compile(r'(?m)\\fig .+?src=[\'"]([^\\]+?)[\'"]([^\\]+)\\fig\*')
 
 ptsettings = None
 # ref2img = {}
 img2ref = {}
+prjtypes = {}
+picnopic = {}
 COUNT = 0
 counts = {}
 
@@ -102,8 +100,9 @@ def read_sfm(bk, fname):
                     m = usfm3re.findall(s)
                     if len(m):
                         for f in m:     # usfm 3
+                            # print("usfm3 found:", newBase(f[0]))
                             count += 1
-                            incHashRef(img2ref, newBase(f[2]), r)
+                            incHashRef(img2ref, newBase(f[0]), r)
     return count
 
 def universalopen(fname, cp=65001):
@@ -172,7 +171,7 @@ for d in os.listdir(args.indir):
         # if d not in ["WSG", "WSGdev", "aArp", "VASV", "VNT", "U01", "SGAH", "RWB"]:
         # TO DO! Something is wrong with these projects... the re(gex) for USFM3 is getting stuck!
         # see usfm3re  - which works with regex, but not with re  - but WHY not?
-        if d is None or d in ["HMAST", "KBRosU", "kjj", "KONDA", "OGNT", "PTP2", "UO1", "KEY-L", "KEY-F"]:
+        if d is None: # or d in ["HMAST", "KBRosU", "kjj", "KONDA", "OGNT", "PTP2", "UO1", "KEY-L", "KEY-F"]:
             continue
         totalCOUNT = 0
         try:
@@ -183,7 +182,9 @@ for d in os.listdir(args.indir):
             # This happens for Resource projects
             # print("{} - no settings parsed".format(d))
             continue
-        if not args.all and not pts.get("TranslationInfo", "").startswith("Standard"):
+        ptype = pts.get("TranslationInfo", "").split(":")[0]
+        incHashRef(prjtypes, ptype)
+        if not args.all and not ptype.startswith("Standard"):
             continue
         # And now we collect the info we need
         bks = getAllBooks(p, d, pts)
@@ -195,8 +196,10 @@ for d in os.listdir(args.indir):
                 counts[bk][COUNT] +=1
         if totalCOUNT != 0:
             print(" "*60, "{}  {} pics".format(d, totalCOUNT))
+            incHashRef(picnopic, "Has pics")
         else:
             print(" "*50, d)
+            incHashRef(picnopic, "No pics")
     except OSError:
         pass
 
@@ -206,6 +209,9 @@ for d in os.listdir(args.indir):
         # ref2img.setdefault(k, {})[pic]=v
         
 print("\nWriting JSON file:", args.outfile)
-writeFile(args.outfile, images=img2ref, counts=counts)
+writeFile(args.outfile, images=img2ref, counts=counts, projectypes=prjtypes, haspics=picnopic)
 
 print("\nDone harvesting Pic statistics!")
+
+print(picnopic)
+print(prjtypes)
