@@ -152,13 +152,15 @@ def writeFile(outfile, **kw):
     with open(outfile, "w", encoding="utf-8") as outf:
         json.dump(kw, outf, indent=2, separators=(',', ': '))  # sort_keys=True, indent=4)
 
+# -------------------------------------------------------------------------------------------
 parser = argparse.ArgumentParser()
 parser.add_argument("-i", "--indir", default="C:/My Paratext 9 Projects", help="Path to Paratext project tree")
 parser.add_argument("-o", "--outfile", default="HarvestedPictureInfo.json", help="Output JSON file")
 parser.add_argument("-a", "--all", action="store_true", help="Process ALL projects, not just Standard translation type")
 parser.add_argument("-v", "--byverse", action="store_true", help="Verse-level granularity instead of by chapter")
 args = parser.parse_args()
-
+# -------------------------------------------------------------------------------------------
+# This is where the main work is done - cycle through all the folders looking for valid projects
 for d in os.listdir(args.indir):
     p = os.path.join(args.indir, d)
     if not os.path.isdir(p):
@@ -170,7 +172,6 @@ for d in os.listdir(args.indir):
             continue
         if d.lower().startswith("z"):
             incHashRef(prjtypes, "ignored", "Starts with 'z'")
-            # incHashRef(prjtypes, "Starts with 'z' (ignored)")
             continue
         totalCOUNT = 0
         try:
@@ -180,19 +181,16 @@ for d in os.listdir(args.indir):
         if pts is None:
             # This happens for Resource projects
             incHashRef(prjtypes, "ignored", "Resource Projects")
-            # incHashRef(prjtypes, "Resource Projects (ignored)")
             continue
         # Read the project description to see if it contains "test" or "train"ing - and if so, ignore it
         pdesc = pts.get("FullName", "").lower()
         if "test" in pdesc or "train" in pdesc:
             incHashRef(prjtypes, "ignored", "Test or Training Projects")
-            # incHashRef(prjtypes, "Test or Training Projects (ignored)")
             continue
         # Read the 'Project type' so that we only look at 'Standard' projects (unless -a = all was passed in)
         ptype = pts.get("TranslationInfo", "").split(":")[0]
         if not args.all and not ptype.startswith("Standard"):
             incHashRef(prjtypes, "ignored", ptype)
-            # incHashRef(prjtypes, ptype+" (ignored)")
             continue
 
         incHashRef(prjtypes, "counted", ptype)
@@ -200,7 +198,7 @@ for d in os.listdir(args.indir):
         bks = getAllBooks(p, d, pts)
         for bk, v in bks.items():
             if bk in OTnNTbooks:
-                COUNT = process_sfm(bk, v)  # This is where the hard work happens
+                COUNT = process_sfm(bk, v)  # This is where the hard work happens to look for pics in each book
                 incHashRef(counts, bk, COUNT)
                 totalCOUNT += COUNT
                 counts[bk][COUNT] +=1
