@@ -28,10 +28,9 @@ nbsimplre = re.compile('[()&+,.;: \-]')
 chptre    = re.compile(r"\\c\s+(\d+)")
 vrsre     = re.compile(r"(?s)(?<=\\v )(\d+[abc]?(?:[,-]\d+?[abc]?)?) ((?:.(?!\\v ))+)")
 usfm2re   = re.compile(r"(?ms)\\fig (.*?)\|(.+?\.....?)\|(....?)\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+?)?\\fig\*")
-usfm3re     = re.compile(r'(?m)\\fig .+?src=[\'"]([^\\]+?)[\'"]([^\\]+)\\fig\*')
+usfm3re   = re.compile(r'(?m)\\fig .+?src=[\'"]([^\\]+?)[\'"]([^\\]+)\\fig\*')
 
 ptsettings = None
-# ref2img = {}
 img2ref = {}
 prjtypes = {}
 picnopic = {}
@@ -80,7 +79,7 @@ def incHashRef(d, *a):
         else:
             d[k] += 1
 
-def read_sfm(bk, fname):
+def process_sfm(bk, fname):
     count = 0
     with universalopen(fname) as inf:
         dat = inf.read()
@@ -89,17 +88,17 @@ def read_sfm(bk, fname):
             for v in vrsre.findall(t):
                 lastv = v[0]
                 s = v[1]
-                r = "{}{}".format(bk, c)   #  or   "{} {}.{}".format(bk, c, lastv)
+                r = "{} {}.{}".format(bk, c, lastv) if args.byverse else "{} {}".format(bk, c)
                 key = None
                 m = usfm2re.findall(s)
                 if len(m):
-                    for f in m:     # usfm 2
+                    for f in m:     # search for usfm 2 images
                         count += 1
                         incHashRef(img2ref, newBase(f[1]), r)
-                else:
+                else: # only keep looking if no usfm2 images were found
                     m = usfm3re.findall(s)
                     if len(m):
-                        for f in m:     # usfm 3
+                        for f in m:     # search for usfm 3 images
                             # print("usfm3 found:", newBase(f[0]))
                             count += 1
                             incHashRef(img2ref, newBase(f[0]), r)
@@ -127,6 +126,7 @@ def universalopen(fname, cp=65001):
             fh.readline()
             failed = False
         except UnicodeError:
+            print("Failed to open with various encodings!")
             return None
     fh.seek(0)
     return fh
@@ -150,13 +150,13 @@ def get(key, default=None):
 
 def writeFile(outfile, **kw):    
     with open(outfile, "w", encoding="utf-8") as outf:
-        json.dump(kw, outf)
+        json.dump(kw, outf, indent=2, separators=(',', ': '))  # sort_keys=True, indent=4)
 
 parser = argparse.ArgumentParser()
-# parser.add_argument("-i", "--indir", required=True, help="Path to Paratext project tree")
 parser.add_argument("-i", "--indir", default="C:/My Paratext 9 Projects", help="Path to Paratext project tree")
 parser.add_argument("-o", "--outfile", default="HarvestedPictureInfo.json", help="Output JSON file")
 parser.add_argument("-a", "--all", action="store_true", help="Process ALL projects, not just Standard translation type")
+parser.add_argument("-v", "--byverse", action="store_true", help="Verse-level granularity instead of by chapter")
 args = parser.parse_args()
 
 for d in os.listdir(args.indir):
@@ -168,10 +168,9 @@ for d in os.listdir(args.indir):
         if not os.path.exists(os.path.join(p, 'Settings.xml')) \
                 and not any(x.lower().endswith("sfm") for x in os.listdir(p)):
             continue
-        # if d not in ["WSG", "WSGdev", "aArp", "VASV", "VNT", "U01", "SGAH", "RWB"]:
-        # TO DO! Something is wrong with these projects... the re(gex) for USFM3 is getting stuck!
-        # see usfm3re  - which works with regex, but not with re  - but WHY not?
-        if d is None: # or d in ["HMAST", "KBRosU", "kjj", "KONDA", "OGNT", "PTP2", "UO1", "KEY-L", "KEY-F"]:
+        if d.lower().startswith("z"):
+            incHashRef(prjtypes, "ignored", "Starts with 'z'")
+            # incHashRef(prjtypes, "Starts with 'z' (ignored)")
             continue
         totalCOUNT = 0
         try:
@@ -180,17 +179,28 @@ for d in os.listdir(args.indir):
             continue
         if pts is None:
             # This happens for Resource projects
-            # print("{} - no settings parsed".format(d))
+            incHashRef(prjtypes, "ignored", "Resource Projects")
+            # incHashRef(prjtypes, "Resource Projects (ignored)")
             continue
+        # Read the project description to see if it contains "test" or "train"ing - and if so, ignore it
+        pdesc = pts.get("FullName", "").lower()
+        if "test" in pdesc or "train" in pdesc:
+            incHashRef(prjtypes, "ignored", "Test or Training Projects")
+            # incHashRef(prjtypes, "Test or Training Projects (ignored)")
+            continue
+        # Read the 'Project type' so that we only look at 'Standard' projects (unless -a = all was passed in)
         ptype = pts.get("TranslationInfo", "").split(":")[0]
-        incHashRef(prjtypes, ptype)
         if not args.all and not ptype.startswith("Standard"):
+            incHashRef(prjtypes, "ignored", ptype)
+            # incHashRef(prjtypes, ptype+" (ignored)")
             continue
-        # And now we collect the info we need
+
+        incHashRef(prjtypes, "counted", ptype)
+        # Finally, we collect the info we need
         bks = getAllBooks(p, d, pts)
         for bk, v in bks.items():
             if bk in OTnNTbooks:
-                COUNT = read_sfm(bk, v)
+                COUNT = process_sfm(bk, v)  # This is where the hard work happens
                 incHashRef(counts, bk, COUNT)
                 totalCOUNT += COUNT
                 counts[bk][COUNT] +=1
@@ -209,9 +219,7 @@ for d in os.listdir(args.indir):
         # ref2img.setdefault(k, {})[pic]=v
         
 print("\nWriting JSON file:", args.outfile)
-writeFile(args.outfile, images=img2ref, counts=counts, projectypes=prjtypes, haspics=picnopic)
-
-print("\nDone harvesting Pic statistics!")
-
+writeFile(args.outfile, images=img2ref, bookcounts=counts, projectypes=prjtypes, haspics=picnopic)
+print("Done harvesting Pic statistics!")
 print(picnopic)
 print(prjtypes)
