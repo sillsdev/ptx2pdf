@@ -25,6 +25,11 @@ utah=https://ftp.math.utah.edu/pub/tex/historic/systems/w32tex/current
 server=$utah
 
 # download and unpack TeX Live
+
+# In 2021 64 bit binaries were manually added after
+# the files below were updated. If W32TeX exists
+# in 2022 (for TeX Live 2022) this script will need
+# to be updated.
 packages="dvipdfm-w32 web2c-lib web2c-w32 xetex-w32"
 suffix=tar.xz
 
