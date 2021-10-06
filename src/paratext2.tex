@@ -341,6 +341,7 @@
     \baselineskip=\p@ram\fi
   \trace{j}{set baselineskip=\the\baselineskip (\s@urce)}}
 
+\newif\ifkeepn@tes
 \def\ins@rtn@tecl@ss#1{% insert the given note class, either paragraphed or separately
   \iff@rstnote\setn@tewidth{#1}\fi % set appropriate hsize width for diglot or not.
   \checkp@ranotes{#1}\ifp@ranotes\let\n@xt=\parains@rtn@tecl@ss
@@ -356,7 +357,7 @@
   \ifvoid\th@cl@ss\TRACE{no note}\else%
     \iff@rstnote\ifvoid\verybottomins\vfill\fi\fi % ignore depth of body text; fill space
     \iff@rstnote\footnoterule\global\f@rstnotefalse\else\kern\InterNoteSpace\fi
-    \hbox{\vbox{\unvbox\th@cl@ss}}\fi}% output notes
+    \hbox{\vbox{\ifkeepn@tes\unvcopy\else\unvbox\fi \th@cl@ss}}\fi}% output notes
 
 % insert a note class in which each note is in the same paragraph
 \def\parains@rtn@tecl@ss#1{%
@@ -493,7 +494,7 @@
   \hsize=\n@tewidth%\advance\hsize by -\columnshift % width is full page size
   \let\par=\endgraf\ch@pterfalse
   \everypar={}% don't do body text formatting
-  \unvbox#1 % open up the vbox of notes to get at the list of individual note boxes
+  \ifkeepn@tes\unvcopy\else\unvbox\fi #1 % open up the vbox of notes to get at the list of individual note boxes
   \makehboxofhboxes % make a single hbox for all notes of this class
   \unskip\unskip
   \setbox0=\hbox{\unhbox0 \removehboxes}% add internote space                   %(1)
@@ -854,7 +855,7 @@
   \trace{o}{savepartialpage: b@dy\ifb@dy true\else false\fi\space for trialheight \the\trialheight}%
   \setbox0=\vbox{\unvcopy255}%
   \global\t@xttrialheight=\ht0
-  \c@lcavailht
+  \keepn@testrue\c@lcavailht\keepn@tesfalse
   \s@veallnotes{1}%
   \setbox\s@vedpage=\copy255
   % split the galley to the actual size available
@@ -1410,7 +1411,7 @@
 \def\savepartialpaged{%Double columnn version of save partial page
   \trace{o}{savepartialpaged}%
   \s@ttrialheight
-  \c@lcavailht
+  \keepn@testrue\c@lcavailht\keepn@tesfalse
   \setbox\s@vedpage=\vbox{\unvbox255}%
   \trace{o}{balancing from savepartialpaged, height=\the\ht\s@vedpage, hIns:\the\holdinginserts, vsz=\the\vsize}%
   \ifdim\ht\partial>\baselineskip\swapcolfalse\else\swapcoltrue\fi
@@ -1460,7 +1461,7 @@
     \global\holdinginserts=1
     \global\setbox255=\box\voidb@x
     \s@ttrialheight
-    \c@lcavailht
+    \keepn@testrue\c@lcavailht\keepn@tesfalse
     \trace{o}{spdd: partial=\the\ht\partial, textheight=\the\textheight, availht=\the\availht}%
     \ifdim\availht<2\baselineskip \twocolp@geout \fi
     \unvbox\s@vedpage\penalty\ifnum\outputpenalty=10000 0 \else \outputpenalty \fi
@@ -1491,6 +1492,7 @@
 %+c_makenotebox
 \def\m@kenotebox{
   \setbox2=\vbox{
+  \f@rstnotetrue
   \let\\=\ins@rtn@tecl@ss \the\n@tecl@sses % output all note classes
   \iff@rstnote % no notes actually occurred!
     \trace{i}{No notes}%

@@ -6,7 +6,9 @@ from ptxprint.sfm import style
 import argparse, difflib, sys
 from enum import Enum
 from itertools import groupby
+import logging
 
+logger = logging.getLogger(__name__)
 debugPrint = False
 
 class ChunkType(Enum):
@@ -126,6 +128,11 @@ class Collector:
                 idel = sfm.Element(root[0].name, args=root[0].args[:], content=root[0][0], meta=root[0].meta)
                 currChunk = self.makeChunk(idel)
                 currChunk.append(idel)
+        #if isinstance(root, sfm.Element) and root.meta.get('TextType') == 'section':
+        #    elements = root[:]
+        #    for i, e in enumerate(root):
+        #        if isinstance(e, sfm.Element) and root.meta.get('TextType') != 'section':
+        #            root[:] = root[:i]
         for c in elements:
             if not isinstance(c, sfm.Element):
                 continue
@@ -146,7 +153,7 @@ class Collector:
                 currChunk = self.makeChunk(c)
             if currChunk is not None:
                 currChunk.append(c)
-                # root.remove(c)
+                root.remove(c)      # now separate thing in a chunk, it can't be in the content of something
             if ischap(c):
                 vc = re.sub(r"[^0-9\-]", "", c.args[0])
                 try:
@@ -181,6 +188,7 @@ class Collector:
         # Merge contiguous title and table chunks
         ti = None
         bi = None
+        #import pdb; pdb.set_trace()
         for i in range(1, len(self.acc)):
             if self.acc[i].type == ChunkType.TITLE and self.acc[i-1].type == ChunkType.TITLE:
                 if bi is None:
@@ -233,7 +241,9 @@ class Collector:
                     prelastchunk = None     # can't really move backwards
                 if not getattr(self.acc[i], 'deleteme', False):
                     lastchunk = self.acc[i]
+        logger.debug("Chunks before reordering: {}".format(len(self.acc)))
         self.acc = [x for x in self.acc if not getattr(x, 'deleteme', False)]
+        logger.debug("Chunks after reordering: {}".format(len(self.acc)))
 
 
 def appendpair(pairs, ind, chunks):
