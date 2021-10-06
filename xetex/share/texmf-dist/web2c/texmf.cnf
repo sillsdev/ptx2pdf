@@ -703,9 +703,7 @@ BIBTEX_CSFILE = 88591lat.csf
 %  Part 3: Array and other sizes for TeX (and Metafont).
 %
 % If you want to change some of these sizes only for a certain TeX
-% variant, the usual dot notation works, e.g.,
-% main_memory.hugetex = 20000000
-%
+% variant, the usual dot notation works, as shown below for ConTeXt.
 % If a change here appears to be ignored, try redumping the format file.
 
 % Memory. Must be less than 8,000,000 total.
@@ -777,9 +775,11 @@ buf_size = 500000
 % for all known free hyphenation patterns to be loaded simultaneously
 % (as TeX Live does).
 %
-trie_size = 1000000
+trie_size = 1100000
 
-hyph_size = 8191        % prime number of hyphenation exceptions, >610, <32767.
+hyph_size = 8191        % prime number of hyphenation exceptions, >610, <65535
+                        % http://primes.utm.edu/curios/page.php/8191.html
+                        % dynamically increased as necessary, so not important.
                         % http://primes.utm.edu/curios/page.php/8191.html
 nest_size = 500         % simultaneous semantic levels (e.g., groups)
 max_in_open = 15        % simultaneous input files and error insertions, 

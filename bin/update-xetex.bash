@@ -19,9 +19,10 @@ popd
 
 # possible servers
 ring1=http://ring.shibaura-it.ac.jp/archives/text/TeX/ptex-win32/current
+utah=https://ftp.math.utah.edu/pub/tex/historic/systems/w32tex/current
 
 # server to use
-server=$ring1
+server=$utah
 
 # download and unpack TeX Live
 packages="dvipdfm-w32 web2c-lib web2c-w32 xetex-w32"
