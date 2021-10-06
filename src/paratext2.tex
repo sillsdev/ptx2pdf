@@ -1643,7 +1643,7 @@
   % This output routine gets the partial galley (input text) before a 2->1 column transition
   % so that it can be re-run with holdinginserts=0, so footnotes etc can be seen.
   \s@ttrialheight
-  \c@lcavailht
+  \keepn@testrue\c@lcavailht\keepn@tesfalse
   \vsize=2\availht
   \advance\vsize by \baselineskip
   \global\output={\savepartialpaged}%
