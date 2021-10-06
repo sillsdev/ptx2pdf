@@ -429,7 +429,7 @@
   \trace{sP}{Redefined everypar}%
 %+cpar_parstyle_start
   \everypar={%
-   \trace{sP}{everypar! ifch@pter\csname ifch@pter\g@tdstat\endcsname true\else false\fi}%
+   \trace{sP}{everypar! ch@pter\g@tdstat waiting:'\csname ch@pter\g@tdstat waiting\endcsname'}%
    %
    % \everypar will be triggered when the paragraph actually starts (normally at the first character of text,
    % or something like a verse number); then we'll set up margins/indents and font
@@ -457,8 +457,7 @@
    % handle drop-cap style chapter number, if this is the beginning of a chapter
    %
 %+cpar_parstyle_chapter
-   \x@\let\x@\@ifch\csname ifch@pter\g@tdstat\endcsname
-   \ifinextended\else\@ifch
+   \ifinextended\else\x@\unless\x@\ifx\csname ch@pter\g@tdstat waiting\endcsname\relax
     \getp@ram{type}{\m@rker}%
     \ifx\p@ram\v@rsetext
      \t@stpublishability{c}\ifn@npublishable
@@ -482,7 +481,7 @@
           \setbox\ch@pterbox=\hbox to \dimen0{\box\ch@pterbox\hfil}%
         \fi
       \fi
-      \x@\global\csname ch@pter\g@tdstat false\endcsname
+      \x@\global\x@\let\csname ch@pter\g@tdstat waiting\endcsname\relax
       \ifIndentAtChapter\else \allowp@rindentfalse \fi
       \dr@ppednumbertrue
      \fi
@@ -1023,7 +1022,7 @@
   \trace{C}{raise@test: \id@@@\ifdiglot\c@rrdstat\fi.\ch@pter: #1 \c@rref ::\t@str@ise}}%
 
 \def\ptx@nb{%
-  \csname ifch@pter\g@tdstat\endcsname
+  \x@\unless\x@\ifx\csname ch@pter\g@tdstat waiting\endcsname\relax
     \delay@test{chapter}%
     %\x@\let\x@\t@st\csname delay-\id@@@.\ch@pter\endcsname
     \ifx\t@std@lay\relax
@@ -1033,7 +1032,7 @@
       \MSG{* no-break at \id@@@\space\ch@pter (\t@std@lay)}%
     \fi
     \leavevmode\str@t                                                           %(1)
-    \x@\global\csname ch@pter\g@tdstat false\endcsname
+    \x@\global\x@\let\csname ch@pter\g@tdstat waiting\endcsname\relax
     \t@stpublishability{c}\ifn@npublishable
      \setbox\ch@pterbox=\box\voidb@x
     \else
