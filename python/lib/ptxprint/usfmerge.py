@@ -197,6 +197,14 @@ class Collector:
                 self.acc[ti].extend(self.acc[i])
                 self.acc[i].deleteme = True
                 bi = None
+        # make headings in the intro into intro
+        for i in range(1, len(self.acc) - 1):
+            c = self.acc[i+1]
+            if c.type in (ChunkType.CHAPTER, ChunkType.BODY):
+                break
+            c = self.acc[i]
+            if c.type == ChunkType.HEADING:
+                c.type == ChunkType.INTRO
         # Swap chapter and heading first
         for i in range(1, len(self.acc)):
             if self.acc[i].type == ChunkType.CHAPTER and self.acc[i-1].type == ChunkType.HEADING:
