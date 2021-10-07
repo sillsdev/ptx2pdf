@@ -120,20 +120,14 @@ class Collector:
         ischap = sfm.text_properties('chapter')
         isverse = sfm.text_properties('verse')
         currChunk = None
-        elements = root
         if len(self.acc) == 0:
             if isinstance(root[0], sfm.Element) and root[0].name == "id":
                 # turn \id into a paragraph level and main children as siblings
-                elements = root[0][1:]
                 idel = sfm.Element(root[0].name, args=root[0].args[:], content=root[0][0], meta=root[0].meta)
                 currChunk = self.makeChunk(idel)
                 currChunk.append(idel)
-        #if isinstance(root, sfm.Element) and root.meta.get('TextType') == 'section':
-        #    elements = root[:]
-        #    for i, e in enumerate(root):
-        #        if isinstance(e, sfm.Element) and root.meta.get('TextType') != 'section':
-        #            root[:] = root[:i]
-        for c in elements:
+                root = root[0][1:]
+        for c in root:
             if not isinstance(c, sfm.Element):
                 continue
             if c.name == "fig":
