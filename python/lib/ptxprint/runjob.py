@@ -13,6 +13,9 @@ from ptxprint.utils import _, universalopen, print_traceback
 from ptxprint.pdf.fixcol import fixpdffile
 from ptxprint.toc import parsetoc, createtocvariants, generateTex
 from datetime import datetime
+import logging
+
+logger = logging.getLogger(__name__)
 
 _errmsghelp = {
 "! Argument":                            _("Probably a TeX macro problem - contact support, or post a bug report"),
@@ -426,6 +429,7 @@ class RunJob:
             chaprange = (int(info["document/chapfrom"]), int(info["document/chapto"]))
         else:
             chaprange = (-1, -1)
+        logger.debug('Diglot processing jobs: {}'.format(jobs))
         for b in jobs:
             try:
                 out = info.convertBook(b, chaprange, self.tmpdir, self.prjdir)

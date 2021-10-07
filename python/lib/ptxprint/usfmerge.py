@@ -120,14 +120,15 @@ class Collector:
         ischap = sfm.text_properties('chapter')
         isverse = sfm.text_properties('verse')
         currChunk = None
+        elements = root[:]
         if len(self.acc) == 0:
             if isinstance(root[0], sfm.Element) and root[0].name == "id":
                 # turn \id into a paragraph level and main children as siblings
+                elements = root[0][1:]
                 idel = sfm.Element(root[0].name, args=root[0].args[:], content=root[0][0], meta=root[0].meta)
                 currChunk = self.makeChunk(idel)
                 currChunk.append(idel)
-                root = root[0][1:]
-        for c in root:
+        for c in elements:
             if not isinstance(c, sfm.Element):
                 continue
             if c.name == "fig":
@@ -147,7 +148,8 @@ class Collector:
                 currChunk = self.makeChunk(c)
             if currChunk is not None:
                 currChunk.append(c)
-                root.remove(c)      # now separate thing in a chunk, it can't be in the content of something
+                if c in root:
+                    root.remove(c)      # now separate thing in a chunk, it can't be in the content of something
             if ischap(c):
                 vc = re.sub(r"[^0-9\-]", "", c.args[0])
                 try:
@@ -182,7 +184,6 @@ class Collector:
         # Merge contiguous title and table chunks
         ti = None
         bi = None
-        #import pdb; pdb.set_trace()
         for i in range(1, len(self.acc)):
             if self.acc[i].type == ChunkType.TITLE and self.acc[i-1].type == ChunkType.TITLE:
                 if bi is None:

@@ -91,7 +91,7 @@ class Reference:
             res.append("{}{}{}".format(" " if hasbook else "", *[self.verse if self.verse < 200 else "end", self.subverse or ""]))
             if lastref is not None:
                 sep = sep or addsep['verses']
-        result = sep + (addsep['mark'](self, "".join(res)) if self.mark is not None else "".join(res))
+        result = sep + (addsep['mark'](self, "".join(res)) if getattr(self, 'mark', None) is not None else "".join(res))
         return result
 
     def __str__(self):
