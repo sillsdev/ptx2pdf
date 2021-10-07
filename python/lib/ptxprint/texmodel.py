@@ -1068,7 +1068,7 @@ class TexModel:
         if len(syntaxErrors):
             dlgtitle = "PTXprint [{}] - USFM Text Error!".format(self.VersionStr)
             errbits = re.match(r"(\S+) (...) line: (\d+),\d+: orphan marker (\\.+?)", syntaxErrors[0])
-            if len(errbits[0]):
+            if errbits is not None:
                 self.printer.doError("Syntax Error warning: ",        
                         secondary="Examine line {} in {} on the 'Final SFM' tab of the View+Edit".format(errbits[3], errbits[2]) + \
                                   "\npage to determine the cause of this issue related to marker: {}.".format(errbits[4]) + \
