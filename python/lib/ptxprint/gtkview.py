@@ -153,6 +153,9 @@ c_includeillustrations tb_settings lb_settings fr_inclPictures gr_IllustrationOp
 rule_help l_homePage lb_homePage l_createZipArchiveXtra btn_createZipArchiveXtra
 """.split()
 
+_ui_noToggleVisible = ("lb_details", "tb_details", "lb_checklist", "tb_checklist")
+                       # "lb_footnotes", "tb_footnotes", "lb_xrefs", "tb_xrefs")  # for some strange reason, these are fine!
+
 _ui_keepHidden = ("btn_download_update", "lb_extXrefs", "l_extXrefsComingSoon", "tb_Logging", "lb_Logging",
                   "c_customOrder", "t_mbsBookList", )
 
@@ -451,8 +454,8 @@ class GtkViewModel(ViewModel):
                     self.radios.setdefault(m.group(1), set()).add(m.group(2))
             if nid is not None:
                 pre, name = nid.split("_", 1) if "_" in nid else ("", nid)
-                if pre in ("bl", "btn", "bx", "c", "col", "ecb", "fcb", "fr", "gr", 
-                           "l", "lb", "r", "s", "t", "tb", "textv", "tv", "rule", "img"):
+                if pre in ("bl", "btn", "bx", "c", "col", "ecb", "exp", "fcb", "fr", "gr", 
+                           "l", "lb", "r", "s", "scr", "t", "tb", "textv", "tv", "rule", "img"):
                     self.allControls.append(nid)
                 # else:
                     # if nid not in ("0", "1"):
@@ -705,8 +708,12 @@ class GtkViewModel(ViewModel):
                 
         if ui < 6:
             for w in reversed(sorted(self.allControls)):
-                # print("Turning off:", w)
-                self.builder.get_object(w).set_visible(False)
+                if w in _ui_noToggleVisible:
+                    print("De-sensitising:", w)
+                    self.builder.get_object(w).set_sensitive(False)
+                else:
+                    print("Turning off:", w)
+                    self.builder.get_object(w).set_visible(False)
                 
             widgets = sum((v for k, v in _uiLevels.items() if ui >= k), [])
         else:
@@ -714,16 +721,24 @@ class GtkViewModel(ViewModel):
             for k, v in _showActiveTabs.items():
                 if self.get(k):
                     for w in v:
-                        # print("Selectively turning on:", w)
-                        self.builder.get_object(w).set_visible(True)
+                        if w in _ui_noToggleVisible:
+                            print("Sensitising:", w)
+                            self.builder.get_object(w).set_sensitive(True)
+                        else:
+                            # print("Selectively turning on:", w)
+                            self.builder.get_object(w).set_visible(True)
                 
             widgets = self.allControls
 
         for w in sorted(widgets): #, key=lambda x: x.replace("nbk_", "znbk_")):
             if w not in _ui_keepHidden:
-                # print("Turning on:", w)
-                self.builder.get_object(w).set_visible(True)
-
+                if w in _ui_noToggleVisible:
+                    print("Sensitising:", w)
+                    self.builder.get_object(w).set_sensitive(True)
+                else:
+                    # print("Selectively turning on:", w)
+                    self.builder.get_object(w).set_visible(True)
+        
         # Disable/Enable the Details and Checklist tabs on the Pictures tab
         # for w in ["tb_details", "tb_checklist"]:
             # print("Turning on/off if ui >= 6 (set_sensitive):", ui, w)
@@ -735,6 +750,25 @@ class GtkViewModel(ViewModel):
         self.noInternetClicked(None)
         self.colorTabs()
         self.mw.resize(200, 200)
+        
+    def toggleDetails(self, btn):
+        status = self.get("c_quickRun")
+        print(status)  # lb_details tb_details lb_checklist tb_checklist
+        dtlWidgets = """gr_details l_plAnchor t_plAnchor l_plCaption l_plRef t_plRef
+        l_plAltText t_plAltText t_plFilename l_plFilename l_plCopyright t_plCopyright 
+        s_plScale fcb_plPgPos fcb_plSize l_plHoriz fcb_plHoriz fcb_plMirror l_plOffsetNum s_plLines
+        l_plMedia c_plMediaP c_plMediaA c_plMediaW l_autoCopyAttrib btn_overlayCredit t_piccreditbox l_piccredit
+        t_plCaption lb_style_fig scr_detailsBottom""".split()  # nbk_PicList 
+        dtlWidgets = ["scr_detailsBottom", "scr_checklistBottom"]
+        if status:
+            for w in dtlWidgets:
+                print("Turning visible {}: {}".format(status, w))
+                self.builder.get_object(w).set_visible(status)
+        else:
+            for w in dtlWidgets[::-1]:
+                print("Reverse order, turning visible {}: {}".format(status, w))
+                self.builder.get_object(w).set_visible(status)
+        
 
     def noInternetClicked(self, btn):
         ui = int(self.get("fcb_uiLevel"))
