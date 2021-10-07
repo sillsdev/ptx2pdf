@@ -599,7 +599,7 @@ class TexModel:
             dat = []
             if a[1] is not None:
                 pos = int(self.dict['notes/{}ruleposn'.format(a[1])] or 0)
-                left = "\hskip {:.2f} mm".format(float(self.dict['notes/{}ruleindent'.format(a[1])]))
+                left = "\hskip {:.2f} mm".format(float(self.dict['notes/{}ruleindent'.format(a[1])] or 0.))
                 right = r"\hss"
                 if pos == 2 or pos == 4:      # Right or Outer
                     right, left = (left, right)
@@ -611,7 +611,7 @@ class TexModel:
                 else:
                     dat.append(r"\def\{}NoteRuleLeftIndent{{\ifodd\pageno {}\else {}\fi}}".format(a[0], left, right))
                     dat.append(r"\def\{}NoteRuleRightIndent{{\ifodd\pageno {}\else {}\fi}}".format(a[0], right, left))
-                dat.append(r"\def\{}NoteRuleThickness{{{} pt}}".format(a[0], self.dict['notes/{}rulethick'.format(a[1])]))
+                dat.append(r"\def\{}NoteRuleThickness{{{} pt}}".format(a[0], self.dict['notes/{}rulethick'.format(a[1])] or "0.4"))
                 dat.append(r"\def\{}NoteRuleWidth{{{:.2f}}}".format(a[0], float(self.dict['notes/{}rulelength'.format(a[1])] or 100.)/100))
                 bspace = float(self.dict['notes/below{}rulespace'.format(notemap[a[1]])] or 0.)
                 dat.append(r"\def\Below{}NoteRuleSpace{{{:.1f} pt}}".format(a[0], bspace))
