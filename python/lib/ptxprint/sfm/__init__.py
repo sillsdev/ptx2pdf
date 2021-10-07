@@ -713,10 +713,12 @@ class parser(collections.Iterable):
                                     'no matching opening marker \\{0}',
                                     tok, list(meta['OccursUnder'])[0])
                     else:
+                        # self._error(ErrorLevel.Unrecoverable,
+                                    # 'orphan marker {token}: '
+                                    # 'may only occur under {0}', tok,
+                                    # self.__pp_marker_list(meta['OccursUnder']))
                         self._error(ErrorLevel.Unrecoverable,
-                                    'orphan marker {token}: '
-                                    'may only occur under {0}', tok,
-                                    self.__pp_marker_list(meta['OccursUnder']))
+                                    'orphan marker {token}', tok,)
                 else:
                     tok = Text(tag, tok.pos, tok.parent)
                     # Do implicit closure only for non-inline markers or

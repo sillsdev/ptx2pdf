@@ -1066,14 +1066,25 @@ class TexModel:
             syntaxErrors.append("{} {} Error({}): {}".format(self.prjid, bk, type(e), str(e)))
             traceback.print_exc()
         if len(syntaxErrors):
-            self.printer.doError("Failed to canonicalise texts due to a Syntax Error: ",        
-                    secondary="\n".join(syntaxErrors)+"\n\nIf original USFM text is correct, then check "+ \
-                    "if PrintDraftChanges.txt has caused the error(s).", 
-                    title="PTXprint [{}] - Canonicalise Text Error!".format(self.VersionStr),
-                    show=not self.printer.get("c_quickRun"))
+            dlgtitle = "PTXprint [{}] - USFM Text Error!".format(self.VersionStr)
+            errbits = re.match(r"(\S+) (...) line: (\d+),\d+: orphan marker (\\.+?)", syntaxErrors[0])
+            if len(errbits[0]):
+                self.printer.doError("Syntax Error warning: ",        
+                        secondary="Examine line {} in {} on the 'Final SFM' tab of the View+Edit".format(errbits[3], errbits[2]) + \
+                                  "\npage to determine the cause of this issue related to marker: {}.".format(errbits[4]) + \
+                                  "\n\n(This warning was triggered due to 'Auto-Correct USFM'" + \
+                                  "\nbeing enabled on the Advanced tab.)", title=dlgtitle,
+                        show=not self.printer.get("c_quickRun"))
+            else:
+                prtDrft = "And check if a faulty rule in PrintDraftChanges.txt has caused the error(s). " if self.asBool("project/usechangesfile") else ""
+                self.printer.doError("Failed to canonicalise texts due to a Syntax Error: ",        
+                        secondary="\n".join(syntaxErrors)+"\n\nRun the Basic Checks in Paratext to ensure there are no Marker errors. "+ \
+                        prtDrft + "If this error persists, try running the Schema Check in Paratext as well.", title=dlgtitle,
+                        show=not self.printer.get("c_quickRun"))
+                    
             return None
         else:
-            return doc
+            return doc  
 
     def make_contextsfn(self, bk, *changes):
         # functional programmers eat your hearts out

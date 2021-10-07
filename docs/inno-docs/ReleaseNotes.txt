@@ -7,12 +7,12 @@ Bug fixes and Improvements in 1.9.5 (19 Sep 2021)
 
   * Added option to allow for unbalanced columns (Bottom Rag on Layout page)
   
-  * Added ability to supress, re-enable and reset page numbers (esp. for FRT matter)
+  * Added ability to suppress, re-enable and reset page numbers (esp. for FRT matter)
       using codes: \nopagenums, \dopagenums, \resetpagenums N   (if N<0: i, ii, iii)
 	  
   * Added support for Paratext's traditional manual line break (i.e. // = \u2028)
 
-  * Added "A4 with cropmarks" as an optimum paper size for local printing and binding
+  * Added "A4 with crop marks" as an optimum paper size for local printing and binding
   
   * Remember folder location of previously selected PDF when selecting a new file #520, #188
   
