@@ -611,6 +611,7 @@ class GtkViewModel(ViewModel):
         self.updateDialogTitle()
         if self.pendingPid is not None:
             self.set("fcb_project", self.pendingPid)
+            print("running")
             self.pendingPid = None
         if self.pendingConfig is not None:
             self.set("ecb_savedConfig", self.pendingConfig)
@@ -1736,7 +1737,7 @@ class GtkViewModel(ViewModel):
         if btn.get_active():
             self.set("r_"+bits[0], bits[1])
         self.sensiVisible("r_"+bits[0])
-        if n.startswith("r_book_") and self.get("r_book") is not "module":
+        if n.startswith("r_book_") and self.get("r_book") != "module":
             self.onBookSelectorChange(btn)
             self.updateExamineBook()
             self.updateDialogTitle()
@@ -2664,9 +2665,9 @@ class GtkViewModel(ViewModel):
 
     def _onPDFClicked(self, title, isSingle, basedir, ident, attr, btn):
         if isSingle:
-            fldr = os.path.dirname(getattr(self, attr, ""))
+            fldr = os.path.dirname(getattr(self, attr, "") or "")
         else:
-            fldr = os.path.dirname(getattr(self, attr, "")[0])
+            fldr = os.path.dirname(getattr(self, attr, "")[0] or "")
         if not os.path.exists(fldr):
             fldr = basedir
         vals = self.fileChooser(title,
@@ -2754,7 +2755,7 @@ class GtkViewModel(ViewModel):
             (btnlabel), Gtk.ResponseType.OK))
         dialog.set_default_size(400, 300)
         dialog.set_select_multiple(multiple)
-        if basedir is not None:
+        if basedir is not None or not basedir:
             dialog.set_current_folder(str(basedir))
         if save:
             dialog.set_do_overwrite_confirmation(True)

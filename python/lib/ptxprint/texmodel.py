@@ -15,6 +15,9 @@ from ptxprint.dimension import Dimension
 import ptxprint.scriptsnippets as scriptsnippets
 from ptxprint.interlinear import Interlinear
 from ptxprint.reference import Reference, RefRange, RefList, RefSeparators, AnyBooks
+import logging
+
+logger = logging.getLogger(__name__)
 
 # After universalopen to resolve circular import. Kludge
 from ptxprint.snippets import FancyIntro, PDFx1aOutput, Diglot, FancyBorders, ThumbTabs, Colophon, Grid
@@ -944,7 +947,7 @@ class TexModel:
 
     def runChanges(self, changes, bk, dat):
         for c in changes:
-            if self.debug: print(c)
+            logger.debug("Change: {}".format(c))
             if c[0] is None:
                 dat = c[1].sub(c[2], dat)
             elif isinstance(c[0], str):
