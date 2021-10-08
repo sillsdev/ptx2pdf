@@ -1,7 +1,43 @@
 PTXprint 1.9.5 Release Notes 
-19 September 2021
+8 October 2021
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
+
+Bug fixes and Improvements in 1.9.6 (8 Oct 2021)
+
+  * Added ability for selection and editing of multiple pictures #479
+  
+  * Illustrations in diglots can now have multiple captions #511
+  
+  * Moved digit mapping to be part of the font definition within the font chooser #433
+    (This allows different styles to use the same font but with different digit mappings.)
+
+  * Added greater flexibility for positioning and rules for footnotes and x-refs #527
+  
+  * Added most-recently used functionality to booklist #521
+
+  * Added a 3-tier view (Mini, Basic, Full) to replace Basic and Advanced
+  
+  * Improved wording of mysterious error messages for markers #536
+  
+  * Improved logic for AdjList creation (specificaly, overwrite y/n behaves now)
+
+  * Fixed multiple PicInfo.txt files found in a project #512
+    (Renamed publication specific picInfo.txt to picChecks.txt)
+	
+  * Fixed diglot merging of \cl chapter label issues #485
+  
+  * Fixed RTL books don't have correct binding side #525
+  
+  * Fixed error on attempting to Select Page Border (or any other PDFs) #535
+  
+  * Fixed multiple diglot merge issues (inc. primary text repeats leaving gaps #532)
+
+  * Fixed footnotes from getting lost on 2->1 and 1->2 col transition #533
+  
+  * Fixed outputting footnotes at end of singlecolumn books
+  
+  * Fixed side-bar width issue, and zgap after a rem
 
 Bug fixes and Improvements in 1.9.5 (19 Sep 2021)
 
