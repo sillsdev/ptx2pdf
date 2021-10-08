@@ -9073,7 +9073,7 @@ Also settings for special books.</property>
                         <property name="orientation">vertical</property>
                         <property name="spacing">6</property>
                         <child>
-                          <object class="GtkNotebook">
+                          <object class="GtkNotebook" id="nbk_fnxr">
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <child>
@@ -9388,6 +9388,7 @@ Reference Bibles in conjunction with the
                                 </child>
                               </object>
                               <packing>
+                                <property name="tab-expand">True</property>
                                 <property name="tab-fill">False</property>
                               </packing>
                             </child>
@@ -9707,7 +9708,7 @@ usually placed at the end of each page.
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkExpander" id="exp_footnotes">
+                                  <object class="GtkExpander" id="ex_footnotes">
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="margin-top">6</property>
@@ -10075,6 +10076,7 @@ and Parameters:</property>
                               </object>
                               <packing>
                                 <property name="position">1</property>
+                                <property name="tab-expand">True</property>
                               </packing>
                             </child>
                             <child type="tab">
@@ -10452,7 +10454,7 @@ column similar to a study/reference Bible layout.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkExpander" id="exp_xrefs">
+                                  <object class="GtkExpander" id="ex_xrefs">
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="margin-top">6</property>
@@ -10813,7 +10815,7 @@ and Parameters:</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkExpander" id="exp_xrListSettings">
+                                  <object class="GtkExpander" id="ex_xrListSettings">
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <child>
@@ -11322,6 +11324,7 @@ of the page. </property>
                               </object>
                               <packing>
                                 <property name="position">2</property>
+                                <property name="tab-expand">True</property>
                               </packing>
                             </child>
                             <child type="tab">
@@ -11354,6 +11357,7 @@ of the page. </property>
                               </object>
                               <packing>
                                 <property name="position">3</property>
+                                <property name="tab-expand">True</property>
                                 <property name="tab-fill">False</property>
                               </packing>
                             </child>
@@ -12354,11 +12358,12 @@ headers and footers.</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="orientation">vertical</property>
-                        <property name="position">260</property>
+                        <property name="position">250</property>
                         <property name="position-set">True</property>
+                        <property name="wide-handle">True</property>
                         <child>
                           <object class="GtkBox" id="tb_plTopPane">
-                            <property name="height-request">40</property>
+                            <property name="height-request">250</property>
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
                             <child>
@@ -12798,6 +12803,7 @@ the Basic tab.</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="halign">start</property>
+                                <property name="valign">start</property>
                                 <signal name="change-current-page" handler="onPLpageChanged" swapped="no"/>
                                 <signal name="select-page" handler="onPLpageChanged" swapped="no"/>
                                 <signal name="switch-page" handler="onPLpageChanged" swapped="no"/>
@@ -12805,7 +12811,6 @@ the Basic tab.</property>
                                   <object class="GtkBox" id="tb_settings">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
-                                    <property name="valign">start</property>
                                     <property name="orientation">vertical</property>
                                     <child>
                                       <object class="GtkLabel" id="l_globalPicSettings">
@@ -13308,8 +13313,6 @@ the Header+Footer tab for details).
                                     <property name="can-focus">False</property>
                                     <property name="margin-top">4</property>
                                     <property name="margin-bottom">4</property>
-                                    <property name="hexpand">True</property>
-                                    <property name="vexpand">False</property>
                                     <property name="orientation">vertical</property>
                                     <child>
                                       <object class="GtkScrolledWindow" id="scr_detailsBottom">
@@ -15313,30 +15316,6 @@ inactive until Diglot is enabled.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkCheckButton" id="c_diglotSeparateNotes">
-                                <property name="label" translatable="yes">Separate Notes
-in Two Columns</property>
-                                <property name="visible">True</property>
-                                <property name="can-focus">True</property>
-                                <property name="receives-default">False</property>
-                                <property name="tooltip-text" translatable="yes">If this option is disabled, the footnotes from
-both sides of the diglot get merged together
-and are interspersed one after the other.
-
-Depending on the scripts and text direction,
-this may or may not be desirable. If in doubt,
-leave this option checked ON.</property>
-                                <property name="halign">start</property>
-                                <property name="active">True</property>
-                                <property name="draw-indicator">True</property>
-                                <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="left-attach">2</property>
-                                <property name="top-attach">3</property>
-                              </packing>
-                            </child>
-                            <child>
                               <object class="GtkToggleButton" id="btn_adjust_diglot">
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
@@ -15394,33 +15373,124 @@ paragraphs start in the same verse.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkCheckButton" id="c_diglotNotesRule">
-                                <property name="label" translatable="yes">Vertical Rule in Notes Area</property>
+                              <object class="GtkFrame">
+                                <property name="width-request">240</property>
                                 <property name="visible">True</property>
-                                <property name="can-focus">True</property>
-                                <property name="receives-default">False</property>
-                                <property name="draw-indicator">True</property>
-                                <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                                <property name="can-focus">False</property>
+                                <property name="halign">end</property>
+                                <property name="margin-right">6</property>
+                                <property name="margin-bottom">3</property>
+                                <property name="label-xalign">0.10000000149011612</property>
+                                <child>
+                                  <object class="GtkAlignment">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="left-padding">12</property>
+                                    <child>
+                                      <object class="GtkBox">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="margin-left">12</property>
+                                        <property name="margin-top">4</property>
+                                        <property name="margin-bottom">4</property>
+                                        <property name="orientation">vertical</property>
+                                        <property name="spacing">2</property>
+                                        <child>
+                                          <object class="GtkCheckButton" id="c_diglotNotesRule">
+                                            <property name="label" translatable="yes">Vertical Rule in Notes Area</property>
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">True</property>
+                                            <property name="receives-default">False</property>
+                                            <property name="tooltip-text" translatable="yes">Add a vertical rule between the two
+sides of the notes area of the diglot.</property>
+                                            <property name="halign">start</property>
+                                            <property name="draw-indicator">True</property>
+                                            <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkCheckButton" id="c_diglotJoinVrule">
+                                            <property name="label" translatable="yes">Join with Rule Above</property>
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">True</property>
+                                            <property name="receives-default">False</property>
+                                            <property name="tooltip-text" translatable="yes">To prevent a small gap in the line
+allow the vertical line to extend
+down into the notes area.</property>
+                                            <property name="halign">start</property>
+                                            <property name="draw-indicator">True</property>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">1</property>
+                                          </packing>
+                                        </child>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+                                <child type="label">
+                                  <object class="GtkCheckButton" id="c_diglotSeparateNotes">
+                                    <property name="label" translatable="yes">Separate Notes in Two Columns</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="receives-default">False</property>
+                                    <property name="tooltip-text" translatable="yes">If this option is disabled, the footnotes from
+both sides of the diglot get merged together
+and are interspersed one after the other.
+
+Depending on the scripts and text direction,
+this may or may not be desirable. If in doubt,
+leave this option checked ON.</property>
+                                    <property name="halign">start</property>
+                                    <property name="active">True</property>
+                                    <property name="draw-indicator">True</property>
+                                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                                  </object>
+                                </child>
                               </object>
                               <packing>
-                                <property name="left-attach">3</property>
+                                <property name="left-attach">2</property>
                                 <property name="top-attach">3</property>
-                                <property name="width">2</property>
+                                <property name="width">3</property>
+                                <property name="height">2</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkCheckButton" id="c_diglotJoinVrule">
-                                <property name="label" translatable="yes">Join with Rule Above</property>
-                                <property name="visible">True</property>
-                                <property name="can-focus">True</property>
-                                <property name="receives-default">False</property>
-                                <property name="draw-indicator">True</property>
-                              </object>
-                              <packing>
-                                <property name="left-attach">3</property>
-                                <property name="top-attach">4</property>
-                                <property name="width">2</property>
-                              </packing>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
                             </child>
                           </object>
                         </child>
@@ -16622,7 +16692,7 @@ or embelishments to the text.
                       <object class="GtkPaned">
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
-                        <property name="position">260</property>
+                        <property name="position">300</property>
                         <property name="position-set">True</property>
                         <property name="wide-handle">True</property>
                         <child>
@@ -20890,7 +20960,6 @@ be displayed (in red) just to the left.</property>
                 <property name="margin-top">3</property>
                 <property name="margin-bottom">3</property>
                 <property name="draw-indicator">True</property>
-                <signal name="clicked" handler="toggleDetails" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
