@@ -197,7 +197,7 @@
    \trace{j}{baselineskip = \the\baselineskip, looseness = \the\looseness}%
    \endgraf
    \ifinn@te\else\ifdoingt@ble\else
-     \edef\t@mpp{\string\@parlen{\id@@@ \ch@pter.\v@rse}{\lastc@rradj}{\the\prevgraf}}\x@\write\x@\p@rlocs\x@{\t@mpp}%
+     \edef\t@mpp{\string\@parlen{\lastc@rref}{\lastc@rradj}{\the\prevgraf}}\x@\write\x@\p@rlocs\x@{\t@mpp}%
    \fi\fi
    \ifvmode\ifinn@te\else\ifhe@dings\else\ifdoingt@ble\else\lastdepth=\prevdepth\fi\fi\fi\fi
    \cutoutcarryover 
@@ -437,7 +437,7 @@
    \the\@veryparhooks
    \x@\writep@rstart\x@{\the\baselineskip}%baselineskip must fully expanded as macro param, else it remains a macro and only L baseline is output on diglot/polyglot.
    %\edef\spc@ut{pdf:code /\c@rref \space BMC}\x@\special\x@{\spc@ut}%
-   \ifdiglot\xdef\lastc@rref{\dc@rref}\else\xdef\lastc@rref{\c@rref}\fi\xdef\lastc@rradj{\the\curr@djpar}%
+   \ifdiglot\xdef\lastc@rref{\dc@rref}\else\xdef\lastc@rref{\id@@@ \ch@pter.\v@rse}\fi\xdef\lastc@rradj{\the\curr@djpar}%
    \s@tsideskips{\m@rker}%
    \getp@ram{leftmargin}{\m@rker}%                                              %(1)
    \ifx\p@ram\relax \else \advance \ifRTL\rightskip\else\leftskip\fi\p@ram \IndentUnit \fi
