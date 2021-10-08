@@ -29,11 +29,11 @@ _errmsghelp = {
 "! Missing control sequence inserted.":  _("Fallback font probably being applied to text in a footnote (not permitted!)"),
 "! Missing number, treated as zero.":    _("Related to USFM3 illustration markup"),
 "! Undefined control sequence.":         _("This might be related to a USFM marker error (using an unsupported marker).\n" +\
-                                           "Try 'Run Basic Checks' in Paratext"),
+                                           "Try running 'Basic Checks' in Paratext to validate markers."),
 "! Illegal unit of measure (pt inserted).":    _("One of the settings in the Stylesheet may be missing the units.\n" +\
                                            "To confirm that this is a stylesheet issue, temporarily turn off Stylesheets.\n" +\
                                            "Then, check any recent changes to the Stylesheets (on Advanced tab) and try again."),
-"! File ended while scanning use of":    _("Try turning off PrintDraftChanges.txt and both Stylesheets on Advanced tab."),
+"! File ended while scanning use of":    _("Try turning off various settings on the Advanced tab."),
 "! Output loop---25 consecutive dead cycles.":  _("Sorry! XeTeX was unable to complete the typesetting.\n" +\
                                            "* If creating a Diglot, ensure both texts can print successfully\n" +\
                                            "  before merging them as a Diglot print. And ensure that there\n" +\
@@ -55,8 +55,8 @@ _errmsghelp = {
 "! This can't happen (page)":            _("Possibly a TeX macro issue - contact support, or post a bug report"),
 "! I can't find file `paratext2.tex'.":  _("Possibly a faulty installation."),
 "! I can't find file `ptx-tracing.tex'.": _("Possibly a faulty installation."),
-"Runaway argument?":                     _("Unknown issue. Maybe related to Right-aligned tabbed leaders\n" +\
-                                           "Try turning off PrintDraftChanges.txt and both Stylesheets"),
+"Runaway argument?":                     _("Unknown issue. Possibly related to Right-aligned tabbed leaders. " +\
+                                           "Try turning off various settings on the Advanced Tab."),
 "Unknown":                               _("Oops! Something unexpected happened causing this error.\n" +\
                                            "If you are unable to solve this issue yourself, use the 'Create Archive...' button\n" +\
                                            "on the Help page to create a .zip file and send it to <ptxprint_support@sil.org>\n" +\
@@ -469,10 +469,11 @@ class RunJob:
             return []
 
         if len(syntaxErrors):
+            prtDrft = _("And check if a faulty rule in PrintDraftChanges.txt has caused the error(s).") if info["project/usechangesfile"] else ""
             self.printer.doError(_("Failed to merge texts due to a Syntax Error:"),
-                                 secondary="\n".join(syntaxErrors)+_("\n\nIf original USFM text is correct, then check "+ \
-                                                                     "if PrintDraftChanges.txt has caused the error(s)."),
-                                 title=_("PTXprint [{}] - Diglot Merge Error!").format(VersionStr), copy2clip=True)
+                secondary="\n".join(syntaxErrors)+"\n\n"+_("Run the Basic Checks in Paratext to ensure there are no Marker errors "+ \
+                "in either of the diglot projects. If this error persists, try running the Schema Check in Paratext as well.") + " " + prtDrft,
+                title=_("PTXprint [{}] - Diglot Merge Error!").format(VersionStr), copy2clip=True)
 
         info["project/bookids"] = jobs
         info["project/books"] = donebooks

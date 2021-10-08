@@ -4592,7 +4592,7 @@ use Title. NoteText makes this a kind of footnote, like \x.</property>
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="can-default">True</property>
-                <property name="tooltip-text" translatable="yes">[Required] This tells ptxprint how to layout data in this marker. 
+                <property name="tooltip-text" translatable="yes">[Required] This tells PTXprint how to layout data in this marker. 
 For normal, vernacular body text, use VerseText. If this is part of
 a heading, use Section. If it is part of the title block of a book, 
 use Title. NoteText makes this a kind of footnote, like \x.</property>
@@ -4608,7 +4608,7 @@ use Title. NoteText makes this a kind of footnote, like \x.</property>
                   <object class="GtkEntry">
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
-                    <property name="tooltip-text" translatable="yes">[Required] This tells ptxprint how to layout data in this marker. 
+                    <property name="tooltip-text" translatable="yes">[Required] This tells PTXprint how to layout data in this marker. 
 For normal, vernacular body text, use VerseText. If this is part of
 a heading, use Section. If it is part of the title block of a book, 
 use Title. NoteText makes this a kind of footnote, like \x.</property>
@@ -4706,7 +4706,7 @@ describe the purpose of the style.</property>
                 <property name="halign">start</property>
                 <property name="max-length">16</property>
                 <property name="width-chars">16</property>
-                <property name="placeholder-text" translatable="yes">xyz</property>
+                <property name="placeholder-text">xyz</property>
               </object>
               <packing>
                 <property name="left-attach">2</property>
@@ -4737,7 +4737,7 @@ in your data for this marker.</property>
                 <property name="tooltip-text" translatable="yes">[Required] List markers that this marker may occur under. 
 Without this, the USFM parser may report structural errors 
 in your data for this marker.</property>
-                <property name="placeholder-text" translatable="yes">id p m q1 q2</property>
+                <property name="placeholder-text">id p m q1 q2</property>
               </object>
               <packing>
                 <property name="left-attach">2</property>
@@ -4830,7 +4830,7 @@ and helps to place the marker in the tree listing all markers.</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="halign">start</property>
-                <property name="placeholder-text" translatable="yes">xyz*</property>
+                <property name="placeholder-text">xyz*</property>
               </object>
               <packing>
                 <property name="left-attach">4</property>
@@ -5231,10 +5231,8 @@ if need be.</property>
                                 <property name="has-entry">True</property>
                                 <property name="active-id">0</property>
                                 <items>
-                                  <item translatable="yes">LUK ACT GLO</item>
-                                  <item translatable="yes">MAT MRK LUK JHN ACT</item>
-                                  <item translatable="yes">PSA PRO</item>
-                                  <item translatable="yes">GEN EXO LEV NUM DEU</item>
+                                  <item>LUK ACT GLO</item>
+                                  <item>PSA PRO</item>
                                 </items>
                                 <signal name="changed" handler="onBookListChanged" swapped="no"/>
                                 <child internal-child="entry">
@@ -19402,7 +19400,8 @@ output and tweak adjust lists.</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">False</property>
-                            <property name="tooltip-text" translatable="yes">One or more previously created PDF file(s) can be included BEFORE the scripture material being typeset. If more than one
+                            <property name="tooltip-text" translatable="yes">One or more previously created PDF file(s) can be included 
+BEFORE the scripture material being typeset. If more than one
 file is selected, then these will appear in alphabetical order.
 
 If you are creating an electronic publication and want to

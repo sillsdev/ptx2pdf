@@ -1129,15 +1129,13 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("lb_TabsBorders").set_markup(tc+jn+bc)
 
         ad = False
-        for w in ["processScript", "usePrintDraftChanges", "usePreModsTex", "useModsTex", "useCustomSty", \
-                  "useModsSty", "interlinear", "inclFrontMatter", "applyWatermark", "inclBackMatter"]:
+        for w in ["processScript", "usePrintDraftChanges", "usePreModsTex", \
+                  "useModsTex", "useCustomSty", "useModsSty", "interlinear"]:
             if self.get("c_" + w):
                 ad = True
                 break
         ac = " color='"+col+"'" if ad else ""
         self.builder.get_object("lb_Advanced").set_markup("<span{}>".format(ac)+_("Advanced")+"</span>")
-
-        # self.builder.get_object("c_showAdvancedOptions").set_sensitive(not (tb and bd))
 
     def sensiVisible(self, k, focus=False, state=None):
         if state is None:
@@ -1291,10 +1289,6 @@ class GtkViewModel(ViewModel):
         if status and self.get("ecb_booklist") == "" and self.prjid is not None:
             self.updateDialogTitle()
         else:
-            # toc = self.builder.get_object("c_autoToC") # Ensure that we're not trying to build a ToC for a single book!
-            # toc.set_sensitive(status)
-            # if not status:
-                # toc.set_active(False)
             self.updateDialogTitle()
             bks = self.getBooks()
             if len(bks) > 1:
@@ -3101,8 +3095,9 @@ class GtkViewModel(ViewModel):
             chkSIL = re.findall(r"(?i)\bs\.?i\.?l\.?\b", t)
             if len(chkSIL):
                 self.doError(_("Warning! SIL's Executive Limitations do not permit SIL to publish scripture."), 
-                   secondary=_("Contact your entity's Publishing Coordinator for advice regarding protocols."))
-                t = re.sub(r"(?i)\bs\.?i\.?l\.?\b", "", t)
+                   secondary=_("The reference to SIL in the project's copyright line has been removed. " + \
+                               "Contact your entity's Publishing Coordinator for advice regarding protocols."))
+                t = re.sub(r"(?i)\bs\.?i\.?l\.?\b ?(International)* ?", "", t)
                 self.warnedSIL = True
         t = re.sub("</?p>", "", t)
         t = re.sub("\([cC]\)", "\u00a9 ", t)
