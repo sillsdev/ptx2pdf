@@ -642,6 +642,7 @@
       \else\ifnum\XrefSide=3
         \ifodd\pageno\else \xdef\tmp{1}\fi
   \fi\fi\fi\fi\fi}
+
 \def\p@geendcontent{%
   \ifvoid\bottomins\else \vfil\kern-\lastd@pth
     \lastd@pth=0pt \vskip\skip\bottomins \hbox{\hbox to \columnshift{}\box\bottomins} \fi % ouput bottom spanning pictures
@@ -913,7 +914,7 @@
       \def\pagecontents{%
         \box\partial
         \p@geendcontent
-      }\plainoutput \s@tpage
+      }\plainoutput \s@tpage \clearn@tes
     \fi
     \fin@lverybottom
     \global\holdinginserts=1
@@ -1068,7 +1069,9 @@
 \def\cle@rn@t@cl@ss#1{%
   \trace{n}{cle@rn@t@cl@ss{#1}}%
   \x@\let\x@\th@cl@ss\csname note-#1\endcsname
-  \global\setbox\th@cl@ss=\box\voidb@x}
+  \global\setbox\th@cl@ss=\box\voidb@x
+}
+\def\clearn@tes{\let\\=\cle@rn@tecl@ss \the\n@tecl@sses}
 
 \def\s@venotes#1#2{\trace{nS}{Saving footnotes}\edef\n@tesavelevel{#2}\edef\n@t@sfx{#1}\let\\=\s@ven@te \the\n@tecl@sses}
 \def\s@veallnotes#1{%
@@ -1462,7 +1465,7 @@
     \s@ttrialheight
     \keepn@testrue\c@lcavailht\keepn@tesfalse
     \trace{o}{spdd: partial=\the\ht\partial, textheight=\the\textheight, availht=\the\availht}%
-    \ifdim\availht<2\baselineskip \twocolp@geout \fi
+    \ifdim\availht<2\baselineskip \twocolp@geout \clearn@tes\fi
     \unvbox\s@vedpage\penalty\ifnum\outputpenalty=10000 0 \else \outputpenalty \fi
   \else
     \trace{o}{sppd: Not fit on page}%
@@ -1692,6 +1695,7 @@
   %\let\\=\s@tn@tec@unt \the\n@tecl@sses % NECESSARY? reset \count for each note class \global\holdinginserts=1 % don't pull out inserts yet, we are still adjusting page
   %\msg{Starting diglot partial: \the\ht\partial, pagetotal: \the\pagetotal, vsize: \the\vsize}
 } 
+
 
 %+c_twocolpageout
 \def\twocolp@geout{%This gets used a few times
