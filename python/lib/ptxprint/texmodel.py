@@ -946,6 +946,7 @@ class TexModel:
         return outfpath
 
     def runChanges(self, changes, bk, dat):
+        # import pdb; pdb.set_trace()
         for c in changes:
             logger.debug("Change: {}".format(c))
             if c[0] is None:
@@ -1183,7 +1184,7 @@ class TexModel:
             first, last = (-1, -1)
         
         # Fix things that other parsers accept and we don't
-        self.localChanges.append((None, regex.compile(r"(\\[cv] [^ \\\n]+)(\\)", flags=regex.S), r"\1 \2"))
+        self.localChanges.append((None, regex.compile(r"(\\[cv] [^ \\\r\n]+)(\\)", flags=regex.S), r"\1 \2"))
         
         # Remove empty \h markers (might need to expand this list and loop through a bunch of markers)
         self.localChanges.append((None, regex.compile(r"(\\h ?\r?\n)", flags=regex.S), r""))

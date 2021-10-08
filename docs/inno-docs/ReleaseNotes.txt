@@ -12,15 +12,15 @@ Bug fixes and Improvements in 1.9.6 (8 Oct 2021)
   * Moved digit mapping to be part of the font definition within the font chooser #433
     (This allows different styles to use the same font but with different digit mappings.)
 
-  * Added greater flexibility for positioning and rules for footnotes and x-refs #527
+  * Added greater flexibility for positioning lines for footnotes and cross-refs #527
   
   * Added most-recently used functionality to booklist #521
 
-  * Added a 3-tier view (Mini, Basic, Full) to replace Basic and Advanced
+  * Added a 3-tier view (Mini, Basic, Full) system for UI to replace Basic and Advanced
   
   * Improved wording of mysterious error messages for markers #536
   
-  * Improved logic for AdjList creation (specificaly, overwrite y/n behaves now)
+  * Improved logic for AdjList creation (specifically, overwrite y/n behaves now)
 
   * Fixed multiple PicInfo.txt files found in a project #512
     (Renamed publication specific picInfo.txt to picChecks.txt)
