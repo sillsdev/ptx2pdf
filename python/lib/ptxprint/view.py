@@ -766,16 +766,17 @@ class ViewModel:
             gm = ''
             if config.getboolean("paragraph", "linespacebase", fallback=False):
                 self._configset(config, "paragraph/linespacebase", False)
-                ls = "'Legacy 1/14 LineSpacing'"
+                ls = "   * Legacy 1/14 LineSpacing\n"
             if config.getboolean("paragraph", "useglyphmetrics", fallback=False):
                 self._configset(config, "paragraph/useglyphmetrics", False)
-                gm = "'Use glyph metrics'"
-            joiner = ' and ' if len(ls) and len(gm) else ''
+                gm = "   * Use glyph metrics\n"
             if ls or gm:
-                self.doError(_("Note: Compatability Options Changed"), 
-                    secondary=_("We noticed that you had "+ls+joiner+gm+" turned on. " + \
-                                "Compatability setting(s) on the Advanced page have been turned off in order " + \
-                                "to give more consistent results, but note that layouts will be affected."))
+                self.doError("Warning: Compatibility Settings Changed", 
+                    secondary="We noticed the following setting(s) were turned ON:\n" + ls + gm + \
+                              "We have turned these settings OFF on the Advanced page due to the confusion it caused people. " + \
+                              "Note that compatibility settings will change your layout. If you need to keep the layout as it " + \
+                              "is then turn the compatibility setting(s) back ON. We will not do this again." + \
+                              "\n\n(Ignore this minor warning if you don't understand it)")
             config.set("config", "version", "1.97")
 
         styf = os.path.join(self.configPath(cfgname), "ptxprint.sty")
