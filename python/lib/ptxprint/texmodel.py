@@ -1437,7 +1437,7 @@ class TexModel:
             customStmt = []
             if len(m):
                 for f in m:
-                    if not len(f) or not f[0]:
+                    if not len(f) or not f[0] or f[5] == "None":
                         continue
                     a = 'co' if f[1] == 'cn' else f[1] # merge Cook's OT & NT illustrations together
                     if a == '' and f[5] != '':

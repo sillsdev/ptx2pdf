@@ -232,6 +232,8 @@ class ViewModel:
             scope = self.get("r_book")
         if scope == "single":
             bk = self.get("ecb_book")
+            # if bk == "FRT":   # Probably don't need to do this as no one in their right mind would only print FRT
+                # self.switchFRTsettings()
             if bk:
                 bname = self.getBookFilename(bk, self.prjid)
                 if bname is not None and os.path.exists(os.path.join(self.settings_dir, self.prjid, bname)):
@@ -242,7 +244,10 @@ class ViewModel:
             for b in bl:
                 bname = self.getBookFilename(b, self.prjid)
                 if os.path.exists(os.path.join(self.settings_dir, self.prjid, bname)):
-                    blst.append(b)
+                    if b == "FRT":
+                        self.switchFRTsettings()
+                    else:
+                        blst.append(b)
             return blst
         elif scope == "module":
             if self.moduleFile is None:
@@ -253,6 +258,18 @@ class ViewModel:
         else:
             # return self.booklist
             return []
+            
+    def switchFRTsettings(self):
+        frtpath = self.configFRT()
+        if not os.path.exists(frtpath) or os.path.getsize(frtpath) == 0:
+            self.doError(_("FRT must not be included in the list of books"), \
+                secondary = _("The 'Front Matter' option has now been enabled for you " + \
+                              "on the Peripherals page and the contents of Paratext's " + \
+                              "FRT book has been copied to the PTXprint settings " + \
+                              "location for this publication. It can be edited if " + \
+                              "needed on the View+Edit page."))
+            self.generateFrontMatter(frtype="paratext")
+            self.set("c_frontmatter", True)
 
     def getAllBooks(self):
         ''' Returns a dict of all books in the project bkid: bookfile_path '''
@@ -288,7 +305,7 @@ class ViewModel:
         bknamefmt = (ptsettings['FileNamePrePart'] or "") + \
                     fbkfm.replace("MAT","{bkid}").replace("41","{bkcode}") + \
                     (ptsettings['FileNamePostPart'] or "")
-        fname = bknamefmt.format(bkid=bk, bkcode=bookcodes.get(bk, 0))
+        fname = bknamefmt.format(bkid=bk, bkcode=bookcodes.get(bk, "A0"))  # FRT = A0
         return fname
 
     def setFont(self, btn, name, style):
@@ -743,7 +760,23 @@ class ViewModel:
                 self._configset(config, "notes/{}ruleindent".format(a), "0")
                 self._configset(config, "notes/{}rulelength".format(a), "100")
                 self._configset(config, "notes/{}rulethick".format(a), "0.4")
-            config.set("config", "version", "1.96")
+        if v < 1.97:
+            # We may want a list of fonts here that we look out for and don't update these settings if found
+            ls = ''
+            gm = ''
+            if config.getboolean("paragraph", "linespacebase", fallback=False):
+                self._configset(config, "paragraph/linespacebase", False)
+                ls = "'Legacy 1/14 LineSpacing'"
+            if config.getboolean("paragraph", "useglyphmetrics", fallback=False):
+                self._configset(config, "paragraph/useglyphmetrics", False)
+                gm = "'Use glyph metrics'"
+            joiner = ' and ' if len(ls) and len(gm) else ''
+            if ls or gm:
+                self.doError(_("Note: Compatability Options Changed"), 
+                    secondary=_("We noticed that you had "+ls+joiner+gm+" turned on. " + \
+                                "Compatability setting(s) on the Advanced page have been turned off in order " + \
+                                "to give more consistent results, but note that layouts will be affected."))
+            config.set("config", "version", "1.97")
 
         styf = os.path.join(self.configPath(cfgname), "ptxprint.sty")
         if not os.path.exists(styf):
