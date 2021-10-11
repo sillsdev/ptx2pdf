@@ -36,16 +36,20 @@ else:
 def makedoc(inf, sheets):
     return list(usfm.parser(inf, stylesheet=sheets, canonicalise_footnotes=True))
 
+def outdoc(doc):
+    if args.literal:
+        outf.write("\n".join(x.pprint() for x in doc))
+    elif args.string:
+        outf.write("\n".join(str(x) for x in doc))
+    else:
+        outf.write("\n".join(generate(x) for x in doc))
+    outf.write("\n")
+
 if args.input:
     for f in args.usfm:
         with open(f, encoding="utf-8") as inf:
             doc = makedoc(inf, sheet)
-            outf.write(sfm.generate(doc))
+            outdoc(doc)
 else:
     doc = makedoc([s.encode("utf-8").decode("raw_unicode_escape") for s in args.usfm], sheet)
-    if args.literal:
-        print("\n".join(x.pprint() for x in doc))
-    elif args.string:
-        print("\n".join(str(x) for x in doc))
-    else:
-        print("\n".join(generate(x) for x in doc))
+    outdoc(doc)

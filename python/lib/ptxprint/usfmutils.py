@@ -482,7 +482,7 @@ class Usfm:
                 predels = []
                 for c in el[:]:
                     if not isinstance(c, sfm.Element) or c.name != "v":
-                        if iterfn(c):
+                        if iterfn(c):           # False if deletable ~> empty
                             if len(predels):
                                 if isinstance(predels[-1], sfm.Element) \
                                                  and predels[-1].name == "p" \
@@ -512,11 +512,12 @@ class Usfm:
                         lastv = c
                 if lastv is not None:
                     lastv.parent.remove(lastv)
-                res = len(el) == 0
-                predels = [p for p in predels if isinstance(p, sfm.Element) or not re.match(r"^\s*$", str(p))]
-                if len(predels):
+                res = len(el) != 0
+                nonemptypredels = [p for p in predels if isinstance(p, sfm.Element) or not re.match(r"^\s*$", str(p))]
+                ell = None
+                if len(nonemptypredels):
                     if ellipsis:
-                        p = predels[0]
+                        p = nonemptypredels[0]
                         i = p.parent.index(p)
                         st = p.parent.meta.get("styletype", "")
                         if st is None or st.lower() == "paragraph":
@@ -525,13 +526,13 @@ class Usfm:
                             ell = sfm.Element('p', parent=p.parent, meta=self.sheets['p'])
                             ell.append(sfm.Text("...\n", parent=ell))
                         p.parent.insert(i, ell)
-                    for p in predels:
-                        p.parent.remove(p)
-                    predels = [ell] if ellipsis else []
+                for p in predels:
+                    p.parent.remove(p)
+                predels = [ell] if ell is not None else []
                 st = el.meta.get("styletype", "") 
                 if (st is None or st.lower() == "paragraph") and len(el) == len(predels):
                     # el.parent.remove(el)
-                    return res  # To handle empty markers like \pagebreak 
+                    return True if st is None else False  # To handle empty markers like \pagebreak 
             elif re.match(r"^\s*$", str(el)) or re.match(r"\.{3}\s*$", str(el)):
                 return False
             return True
