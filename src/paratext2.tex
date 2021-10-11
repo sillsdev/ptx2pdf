@@ -628,20 +628,20 @@
 }
 %-c_onecol
 %+c_onecoltrial_intro
-\def\testXrefSideL{\xdef\tmp{0}\if\XrefNotes\relax\else
+\def\testXrefSideL{\xdef\tmp{0}\if\XrefNotes\relax\else\ifb@dy
   \ifnum\pageno<1\else
     \ifnum\XrefSide=1\xdef\tmp{1}\else
       \ifnum\XrefSide=3\ifodd\pageno \xdef\tmp{1}\fi
       \else\ifnum\XrefSide=4
         \ifodd\pageno\else \xdef\tmp{1}\fi
-  \fi\fi\fi\fi\fi}
-\def\testXrefSideR{\xdef\tmp{0}\if\XrefNotes\relax\else
+  \fi\fi\fi\fi\fi\fi}
+\def\testXrefSideR{\xdef\tmp{0}\if\XrefNotes\relax\else\ifb@dy
   \ifnum\pageno<1\else
     \ifnum\XrefSide=2 \xdef\tmp{1}\else
       \ifnum\XrefSide=4\ifodd\pageno \xdef\tmp{1}\fi
       \else\ifnum\XrefSide=3
         \ifodd\pageno\else \xdef\tmp{1}\fi
-  \fi\fi\fi\fi\fi}
+  \fi\fi\fi\fi\fi\fi}
 
 \def\p@geendcontent{%
   \ifvoid\bottomins\else \vfil\kern-\lastd@pth

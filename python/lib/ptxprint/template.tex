@@ -271,6 +271,8 @@
 %%%%% Front Matter PDF file(s) get included here %%%%%
 \BodyColumns=1     % Temporarily set this to Single Column for the ToC page(s)
 
+{document/ifdiglot}\diglotfalse
+\NoBodytrue
 {document/iftocleaders}\tocleaders{{{document/tocleaderstyle}}}{{3pt}}
 {document/toc}\includeifpresent{{{jobname}.toc}}
 {project/frontincludes}
@@ -278,10 +280,12 @@
 {document/toc}{document/hasnofront_}\preptxfile\prepusfm\id FRT -- toc
 {document/toc}{document/hasnofront_}\is {document/toctitle} \ip \ztoc |main\*\ip \postptxfile
 \BodyColumns={paper/columns}     % But ensure it goes back to the chosen Single/Double setting for the main body text
+{document/ifdiglot}\diglottrue
 \useTOCone{document/usetoc1}
 \useTOCtwo{document/usetoc2}
 \useTOCthree{document/usetoc3}
 {document/toc}\GenerateTOC[{document/toctitle}]{{{jobname}.toc}}
+\NoBodyfalse
 
 %%%%% Load Paratext USFM %%%%%
 \XeTeXdefaultencoding "utf-8"

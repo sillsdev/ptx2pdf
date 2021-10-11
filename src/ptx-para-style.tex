@@ -32,7 +32,7 @@
 
 % some flags used to communicate between the macros
 \newif\if@ntromarker
-\newif\if@ntro \newif\ift@tle \newif\ifb@dy
+\newif\if@ntro \newif\ift@tle \newif\ifb@dy \newif\ifNoBody
 \newif\ifstartpara
 \newif\ifintr@done\intr@donefalse % If true, then if@ntro can only be set between the start of a book and the first chapter number
 \newif\ifReenterIntroOK\ReenterIntroOKtrue % If true, then a chapter number does not set intr@done
@@ -67,7 +67,7 @@
 \newif\iftob@dy \tob@dyfalse
 \def\st@rtbody{%\endhe@dings
  \trace{o}{st@rtbody: b@dy\ifb@dy true\else false\fi}%
- \ifb@dy\else\trace{o}{st@rtbody by \m@rker}%
+ \ifNoBody\else\ifb@dy\else\trace{o}{st@rtbody by \m@rker}%
 %  \ifdiglot\else
 %    \ifnum\BodyColumns=\c@rrentcols
 %      \penalty-200\vskip\baselineskip
@@ -79,7 +79,7 @@
   \global\b@dytrue\global\@ntrofalse\global\t@tlefalse
   % set up for single column from single column. Empty vbox to say we are not at the start of a page
   \ifnum\BodyColumns=1 \onecolwidth{\hsize}\ifdim\ht\partial>\baselineskip\vbox{\kern0pt}\fi\fi
- \fi}
+ \fi\fi}
 
 \newcount\c@rrentcols \global\c@rrentcols=1
 %-cpar_starttypes
