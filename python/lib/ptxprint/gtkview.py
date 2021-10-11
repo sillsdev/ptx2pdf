@@ -736,7 +736,7 @@ class GtkViewModel(ViewModel):
         ui = int(self.get("fcb_uiLevel"))
         val = self.get("c_noInternet") or (ui < 6)  
         adv = (ui >= 6)
-        for w in ["lb_omitPics", "l_url_usfm", 
+        for w in ["lb_omitPics", "l_url_usfm", "lb_DBLdownloads", "lb_openBible",
                    "l_homePage",  "l_community",  "l_faq",  "l_pdfViewer",  "l_techFAQ",  "l_reportBugs",
                   "lb_homePage", "lb_community", "lb_faq", "lb_pdfViewer", "lb_techFAQ", "lb_reportBugs", "lb_canvaCoverMaker"]:
             self.builder.get_object(w).set_visible(not val)
@@ -3193,25 +3193,16 @@ class GtkViewModel(ViewModel):
             return
         pgid = Gtk.Buildable.get_name(page).split('_')[-1]
         filterSensitive = True if pgid == "checklist" else False
+        self.builder.get_object("c_filterPicList").set_visible(False)
         self.builder.get_object("fr_plChecklistFilter").set_sensitive(filterSensitive)
+        self.builder.get_object("fr_plChecklistFilter").set_visible(filterSensitive)
+        self.builder.get_object("gr_picButtons").set_visible(not filterSensitive)
+        self.builder.get_object("c_filterPicList").set_visible(True)
         for w in _allcols:
             if w in _selcols[pgid]:
                 self.builder.get_object("col_{}".format(w)).set_visible(True)
             else:
                 self.builder.get_object("col_{}".format(w)).set_visible(False)
-
-        # Ask MH: @@@@
-        # if pgid in ["settings", "checklist", "credits"]:
-            # self.builder.get_object("scr_picListEdit").set_policy(None, GTK_POLICY_NEVER, GTK_POLICY_ALWAYS)
-
-        # See: https://stackoverflow.com/questions/50414957/gtk3-0-scrollbar-on-treeview-scrolledwindow-css-properties-to-control-scrol
-        # set_policy(GTK_SCROLLED_WINDOW(scwin), GTK_POLICY_AUTOMATIC,GTK_POLICY_ALWAYS)
-        
-        # sw = gtk_scrolled_window_new(NULL, NULL);
-        # gtk_container_set_border_width( GTK_CONTAINER(sw), 0 );
-        # gtk_scrolled_window_set_policy( GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS ); //scroll bars
-        # //Set scrollbar to ALWAYS be displayed and not as temporary overlay
-        # g_object_set( sw , "overlay-scrolling", FALSE , NULL);
 
     def onDBLbundleClicked(self, btn):
         dialog = self.builder.get_object("dlg_DBLbundle")
