@@ -542,7 +542,7 @@ class StyleEditorView(StyleEditor):
                     break
                 for a in ('StyleType', 'TextType', 'OccursUnder'):
                     if not self.model.get(dialogKeys[a]):
-                        self.model.doError(_("Required element {} is not set. Please set it").format(a))
+                        self.model.doError(_("Required element {} is not set. Please set it.").format(a))
                         break
                 else:
                     tryme = False

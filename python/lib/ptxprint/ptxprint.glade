@@ -12051,9 +12051,9 @@ start the page numbering from where
 the previous document ends by entering
 the subsequent page number here.
 
-If you want FRT matter page to be numbered 
+If you want front matter pages to be numbered 
 with roman numerals (i, ii, iii, iv, v, etc) then 
-add this line to the FRT matter to trigger it:
+add this line to the front matter to trigger it:
        \resetpagenums -1
 and normal page numbering will restart as
 soon as the first scripture book is encountered.</property>
@@ -12076,9 +12076,9 @@ start the page numbering from where
 the previous document ends by entering
 the subsequent page number here.
 
-If you want FRT matter page to be numbered 
+If you want front matter pages to be numbered 
 with roman numerals (i, ii, iii, iv, v, etc) then 
-add this line to the FRT matter to trigger it:
+add this line to the front matter to trigger it:
        \resetpagenums -1
 and normal page numbering will restart as
 soon as the first scripture book is encountered.</property>

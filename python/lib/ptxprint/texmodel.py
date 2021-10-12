@@ -1080,7 +1080,7 @@ class TexModel:
                         show=not self.printer.get("c_quickRun"))
             else:
                 prtDrft = _("And check if a faulty rule in PrintDraftChanges.txt has caused the error(s).") if self.asBool("project/usechangesfile") else ""
-                self.printer.doError(_("Failed to canonicalise texts due to a Syntax Error: "),        
+                self.printer.doError(_("Failed to normalize texts due to a Syntax Error: "),        
                     secondary="\n".join(syntaxErrors)+"\n\n"+_("Run the Basic Checks in Paratext to ensure there are no Marker errors "+ \
                     "in either of the diglot projects. If this error persists, try running the Schema Check in Paratext as well.") + " " + prtDrft,
                     title=dlgtitle, show=not self.printer.get("c_quickRun"))
