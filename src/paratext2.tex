@@ -493,7 +493,7 @@
 \def\maken@tepara#1#2{%
   \setn@tewidth{#2}%
   \hsize=\n@tewidth%\advance\hsize by -\columnshift % width is full page size
-  \let\par=\endgraf\x@\global%\x@\let\csname ch@pter\g@tdstat waiting\endcsname\relax
+  \let\par=\endgraf\x@\let\csname ch@pter\g@tdstat waiting\endcsname\relax
   \everypar={}% don't do body text formatting
   \ifkeepn@tes\unvcopy\else\unvbox\fi #1 % open up the vbox of notes to get at the list of individual note boxes
   \makehboxofhboxes % make a single hbox for all notes of this class
@@ -567,7 +567,7 @@
 % #1: height, #2: xrefbox width, #3: note marker/style returns vbox
   \setbox\xr@fbox=\ifXrefTopfill\vbox{\vfil}\else\box\voidb@x\fi
   \temptrue
-  \let\par=\endgraf\x@\global%\x@\let\csname ch@pter\g@tdstat waiting\endcsname\relax
+  \let\par=\endgraf\x@\let\csname ch@pter\g@tdstat waiting\endcsname\relax
   \everypar={}% don't do body text formatting
   \x@\let\x@\th@cl@ss\csname note-#3\endcsname % make \th@cl@ss be a synonym for the current note class
   \hsize=#2%\advance\hsize-\XrefNotesMargin\advance\hsize-\XrefNotesMargin
