@@ -694,7 +694,6 @@ class ViewModel:
             f = os.path.join(self.configPath(cfgname), "NestedStyles.sty")
             if os.path.exists(f):
                 os.remove(f)
-            config.set("paragraph", "linespacebase", "True")
         if v < 1.404:
             config.set("fancy", "versedecoratorshift", "-5")
         if v < 1.502:
@@ -718,8 +717,6 @@ class ViewModel:
                 self._configset(config, "notes/xreachnewline", not config.getboolean("notes", "xrparagraphednotes", fallback=False))
             except:
                 pass
-        if v < 1.505:
-            config.set("paragraph", "useglyphmetrics", "True")
         if v < 1.601:
             # invert right and left in Justification in styles
             pass
@@ -770,7 +767,7 @@ class ViewModel:
             if config.getboolean("paragraph", "useglyphmetrics", fallback=False):
                 self._configset(config, "paragraph/useglyphmetrics", False)
                 gm = "   * Use glyph metrics\n"
-            if ls or gm:
+            if len(ls+gm) > 0:
                 self.doError("Warning: Compatibility Settings Changed", 
                     secondary="We noticed the following setting(s) were turned ON:\n" + ls + gm + \
                               "We have turned these settings OFF on the Advanced page due to the confusion it caused people. " + \
