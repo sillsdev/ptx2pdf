@@ -726,7 +726,8 @@
 %-c_onecoltrial_pagecontents
 %+c_onecoltrial_pagefit
     \resetvsize
-    \ifdim\ht\colA>\baselineskip\plainoutput\trace{p}{plainoutput from onecoltrial}%    %(+)
+    \ifnum\ifdim\ht\colA>\baselineskip 1\else\ifdim\ht\partial>0pt 1\else 0\fi\fi =1
+      \plainoutput\trace{p}{plainoutput from onecoltrial}%    %(+)
       \s@tpage
     \else\setbox0=\box255\deadcycles=0\fi % dump empty pages (typically at end)
     \fin@lverybottom
