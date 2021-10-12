@@ -277,7 +277,7 @@
  \edef\cmpf@ntstyle{#1}%
  \let\d@@=\d@
  \trace{F}{\cmpf@ntstyle (\reqf@ntstyle): Looking for fontsize from style stack: \mcstack}%
- \def\d@##1+##2\E{\edef\tmpa{##2}\ifx\cmpf@ntstyle\tmpa \getmcfonts@ze\else
+ \def\d@##1+##2\E{\edef\tmp{##2}\ifx\cmpf@ntstyle\tmp \getmcfonts@ze\else
 			\csname d@code-##1\endcsname
                         \getp@ram{fontsize}{#1}\ifx\p@ram\relax\xdef\c@rrfontsize{12}%
                         \else\global\let\c@rrfontsize=\p@ram\fi\fi}%
