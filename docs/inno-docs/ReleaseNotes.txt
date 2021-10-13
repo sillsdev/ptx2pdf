@@ -1,8 +1,24 @@
 PTXprint 1.9.6.1 Release Notes 
-8 October 2021
+12 October 2021
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 
+Bug fixes and Improvements in 1.9.6.2 (12 Oct 2021)
+  * Note: Compatibility settings on Advanced page get reset by this version
+    (and an informative message is displayed - which most people can safely ignore)
+  
+  * Improved UI behaviour on Pictures page
+  
+  * Fixed Chapter numbers are sometimes missing #538
+  
+  * Fixed 'Hide empty verses' still leaving empty whitespace in PDF #540
+  
+  * Fixed Notes/Xrefs missing when 'Start each on new line' was set
+  
+  * Fixed Crash on 1st startup if never been run before on machine
+  
+  * Fixed missing icons
+  
 Bug fixes and Improvements in 1.9.6 (8 Oct 2021)
 
   * Added ability for selection and editing of multiple pictures #479

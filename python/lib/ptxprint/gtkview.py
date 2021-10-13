@@ -1338,6 +1338,7 @@ class GtkViewModel(ViewModel):
         plpath = os.path.join(self.configPath(self.configName()),"{}-{}.piclist".format(self.prjid, self.configName()))
         if not os.path.exists(plpath):
             response = Gtk.ResponseType.OK
+            self.set("r_generate", "all")
         else:
             response = dialog.run()
         if response == Gtk.ResponseType.OK:

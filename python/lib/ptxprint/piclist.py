@@ -199,7 +199,7 @@ class PicInfo(dict):
                 self.basedir = self.model.settings_dir
             else:
                 self.basedir = os.path.join(self.model.settings_dir, model.prjid)
-            self.config = model.configId
+            self.config = model.configName()
         self.loaded = False
         self.srchlist = []
 
@@ -288,6 +288,7 @@ class PicInfo(dict):
         return "pic{}{}".format(suffix, self.keycounter)
 
     def read_piclist(self, fname, suffix=""):
+        print("fname={} suffix={}".format(fname, suffix))
         if not os.path.exists(fname):
             return
         with universalopen(fname) as inf:
