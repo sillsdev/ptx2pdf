@@ -460,6 +460,7 @@ class ViewModel:
             self.onNumTabsChanged()
             self.readCopyrights()
             self.picChecksView.init(basepath=self.configPath(cfgname=None), configid=self.configId)
+            self.picinfos = None
             self.loadPics()
             return oldVersion >= 0
         else:

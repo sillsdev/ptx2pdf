@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ptxprint\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-12 14:32+0700\n"
-"PO-Revision-Date: 2021-10-12 07:33\n"
+"POT-Creation-Date: 2021-10-13 11:50+0700\n"
+"PO-Revision-Date: 2021-10-13 04:50\n"
 "Last-Translator: \n"
 "Language-Team: Thai\n"
 "Language: th_TH\n"
@@ -610,89 +610,89 @@ msgstr ""
 msgid "The 'Front Matter' option has now been enabled for you on the Peripherals page and the contents of Paratext's FRT book has been copied to the PTXprint settings location for this publication. It can be edited if needed on the View+Edit page."
 msgstr ""
 
-#: lib/ptxprint/view.py:478
+#: lib/ptxprint/view.py:479
 msgid "PTXprint {} - Bible Layout for Everyone!"
 msgstr ""
 
-#: lib/ptxprint/view.py:491
+#: lib/ptxprint/view.py:492
 msgid "No book selected!"
 msgstr ""
 
-#: lib/ptxprint/view.py:511
+#: lib/ptxprint/view.py:512
 msgid "Json parsing error in {}"
 msgstr ""
 
-#: lib/ptxprint/view.py:512
+#: lib/ptxprint/view.py:513
 msgid "{} at line {} col {}"
 msgstr ""
 
-#: lib/ptxprint/view.py:978
+#: lib/ptxprint/view.py:979
 msgid "Failed to Generate Hyphenation List"
 msgstr ""
 
-#: lib/ptxprint/view.py:979
+#: lib/ptxprint/view.py:980
 msgid "{} Paratext Project's Hyphenation file not found:\n"
 "{}"
 msgstr ""
 
-#: lib/ptxprint/view.py:1016
+#: lib/ptxprint/view.py:1017
 msgid "\n\n"
 "That is too many for XeTeX! List truncated to longest {} words found in the active sources."
 msgstr ""
 
-#: lib/ptxprint/view.py:1022
+#: lib/ptxprint/view.py:1023
 msgid "Hyphenation List Generated"
 msgstr ""
 
-#: lib/ptxprint/view.py:1023
+#: lib/ptxprint/view.py:1024
 msgid "{} hyphenated words were gathered\n"
 "from Paratext's Hyphenation Word List."
 msgstr ""
 
-#: lib/ptxprint/view.py:1025
+#: lib/ptxprint/view.py:1026
 msgid "\n\n"
 "Note for Indic languages that {} words containing ZWJ"
 msgstr ""
 
-#: lib/ptxprint/view.py:1026
+#: lib/ptxprint/view.py:1027
 msgid "\n"
 "and ZWNJ characters have been left off the hyphenation list."
 msgstr ""
 
-#: lib/ptxprint/view.py:1028
+#: lib/ptxprint/view.py:1029
 msgid "\n\n"
 "{} words were at least 10 characters long but had no hyphenation marked"
 msgstr ""
 
-#: lib/ptxprint/view.py:1031
+#: lib/ptxprint/view.py:1032
 msgid "Hyphenation List was NOT Generated"
 msgstr ""
 
-#: lib/ptxprint/view.py:1032
+#: lib/ptxprint/view.py:1033
 msgid "No valid words were found in Paratext's Hyphenation List"
 msgstr ""
 
-#: lib/ptxprint/view.py:1075
+#: lib/ptxprint/view.py:1076
 msgid "The Fallback Font needs to be something other than the Regular Font."
 msgstr ""
 
-#: lib/ptxprint/view.py:1076 lib/ptxprint/view.py:1084
+#: lib/ptxprint/view.py:1077 lib/ptxprint/view.py:1085
 msgid "Please select a different Font."
 msgstr ""
 
-#: lib/ptxprint/view.py:1083
+#: lib/ptxprint/view.py:1084
 msgid "The Fallback Font just selected does NOT support all the missing characters listed."
 msgstr ""
 
-#: lib/ptxprint/view.py:1283
+#: lib/ptxprint/view.py:1284
 msgid "No Config found for Diglot"
 msgstr ""
 
-#: lib/ptxprint/view.py:1296
+#: lib/ptxprint/view.py:1297
 msgid "Error: Cannot create Archive!"
 msgstr ""
 
-#: lib/ptxprint/view.py:1296
+#: lib/ptxprint/view.py:1297
 msgid "The ZIP file seems to be open in another program."
 msgstr ""
 

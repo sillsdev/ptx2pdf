@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ptxprint\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-12 14:32+0700\n"
-"PO-Revision-Date: 2021-10-12 07:33\n"
+"POT-Creation-Date: 2021-10-13 11:50+0700\n"
+"PO-Revision-Date: 2021-10-13 04:50\n"
 "Last-Translator: \n"
 "Language-Team: Indonesian\n"
 "Language: id_ID\n"
@@ -51,7 +51,7 @@ msgstr "Ukuran huruf:"
 
 #: lib/ptxprint/gtkstyleditor.py:545
 msgid "Required element {} is not set. Please set it."
-msgstr ""
+msgstr "Hal {} diperlukan tetapi belum ditentukan. Silakan diatur dulu."
 
 #: lib/ptxprint/gtkutils.py:90
 msgid "Set Font..."
@@ -607,7 +607,7 @@ msgstr "Peringatan ini muncul karena 'Perbaiki USFM Secara Otomatis' diaktifkan 
 
 #: lib/ptxprint/texmodel.py:1083
 msgid "Failed to normalize texts due to a Syntax Error: "
-msgstr ""
+msgstr "Tidak berhasil mengaturkan teks oleh karena kesalahan sintaksis: "
 
 #: lib/ptxprint/texmodel.py:1484
 msgid "\\rem Warning: No copyright statement found for: {} on pages {}"
@@ -661,99 +661,99 @@ msgstr "-kosong-"
 
 #: lib/ptxprint/view.py:265
 msgid "FRT must not be included in the list of books"
-msgstr ""
+msgstr "FRT tidak boleh dimasukkan dalam daftar buku"
 
 #: lib/ptxprint/view.py:266
 msgid "The 'Front Matter' option has now been enabled for you on the Peripherals page and the contents of Paratext's FRT book has been copied to the PTXprint settings location for this publication. It can be edited if needed on the View+Edit page."
-msgstr ""
+msgstr "Pilihan 'Bagian Depan Buku' telah diaktifkan di halaman Sampingan, dan isi bagian FRT di Paratext telah disalin ke lokasi pengaturan PTXprint untuk publikasi ini. Bagian Depan dapat disunting jika diperlukan di halaman Lihat+Sunting."
 
-#: lib/ptxprint/view.py:478
+#: lib/ptxprint/view.py:479
 msgid "PTXprint {} - Bible Layout for Everyone!"
 msgstr "PTXprint {} - Semua Orang Bisa Menyusun Cetakan Alkitab!"
 
-#: lib/ptxprint/view.py:491
+#: lib/ptxprint/view.py:492
 msgid "No book selected!"
 msgstr "Belum ada kitab yang dipilih!"
 
-#: lib/ptxprint/view.py:511
+#: lib/ptxprint/view.py:512
 msgid "Json parsing error in {}"
 msgstr "Kesalahan pada penguraian JSON di {}"
 
-#: lib/ptxprint/view.py:512
+#: lib/ptxprint/view.py:513
 msgid "{} at line {} col {}"
 msgstr "{} di baris {} kolom {}"
 
-#: lib/ptxprint/view.py:978
+#: lib/ptxprint/view.py:979
 msgid "Failed to Generate Hyphenation List"
 msgstr "Tidak Berhasil Menghasilkan Daftar Pemenggalan Kata"
 
-#: lib/ptxprint/view.py:979
+#: lib/ptxprint/view.py:980
 msgid "{} Paratext Project's Hyphenation file not found:\n"
 "{}"
 msgstr "File Pemenggalan Kata untuk proyek {} tidak ditemukan:\n"
 "{}"
 
-#: lib/ptxprint/view.py:1016
+#: lib/ptxprint/view.py:1017
 msgid "\n\n"
 "That is too many for XeTeX! List truncated to longest {} words found in the active sources."
 msgstr "\n\n"
 "Itu terlalu banyak untuk XeTeX! Daftar terpotong menjadi kata {} terpanjang yang ditemukan di sumber aktif."
 
-#: lib/ptxprint/view.py:1022
+#: lib/ptxprint/view.py:1023
 msgid "Hyphenation List Generated"
 msgstr "Daftar Pemenggalan Kata Telah Dihasilkan"
 
-#: lib/ptxprint/view.py:1023
+#: lib/ptxprint/view.py:1024
 msgid "{} hyphenated words were gathered\n"
 "from Paratext's Hyphenation Word List."
 msgstr "Sebanyak {} kata yang diberi tanda garis telah dikumpul\n"
 "dari Daftar Pemenggalan Kata di Paratext."
 
-#: lib/ptxprint/view.py:1025
+#: lib/ptxprint/view.py:1026
 msgid "\n\n"
 "Note for Indic languages that {} words containing ZWJ"
 msgstr ""
 
-#: lib/ptxprint/view.py:1026
+#: lib/ptxprint/view.py:1027
 msgid "\n"
 "and ZWNJ characters have been left off the hyphenation list."
 msgstr ""
 
-#: lib/ptxprint/view.py:1028
+#: lib/ptxprint/view.py:1029
 msgid "\n\n"
 "{} words were at least 10 characters long but had no hyphenation marked"
 msgstr "\n\n"
 "{} kata ada setidaknya 10 karakter tetapi tidak diberikan tanda hubung"
 
-#: lib/ptxprint/view.py:1031
+#: lib/ptxprint/view.py:1032
 msgid "Hyphenation List was NOT Generated"
 msgstr "Daftar Pemenggalan Kata TIDAK Dihasilkan"
 
-#: lib/ptxprint/view.py:1032
+#: lib/ptxprint/view.py:1033
 msgid "No valid words were found in Paratext's Hyphenation List"
 msgstr "Tidak ada kata berlaku yang terdapat di Daftar Pemenggalan Kata"
 
-#: lib/ptxprint/view.py:1075
+#: lib/ptxprint/view.py:1076
 msgid "The Fallback Font needs to be something other than the Regular Font."
 msgstr "Fon Pengganti tidak boleh sama dengan fon yang biasa dipakai di teks."
 
-#: lib/ptxprint/view.py:1076 lib/ptxprint/view.py:1084
+#: lib/ptxprint/view.py:1077 lib/ptxprint/view.py:1085
 msgid "Please select a different Font."
 msgstr "Silakan pilih fon yang lain."
 
-#: lib/ptxprint/view.py:1083
+#: lib/ptxprint/view.py:1084
 msgid "The Fallback Font just selected does NOT support all the missing characters listed."
 msgstr "Fon Pengganti yang baru dipilih TIDAK mendukung semua karakter yang diperlukan."
 
-#: lib/ptxprint/view.py:1283
+#: lib/ptxprint/view.py:1284
 msgid "No Config found for Diglot"
 msgstr "Pengaturan untuk terbitan dua bahasa tidak ditemukan"
 
-#: lib/ptxprint/view.py:1296
+#: lib/ptxprint/view.py:1297
 msgid "Error: Cannot create Archive!"
 msgstr "Kesalahan: Tidak dapat membuat Arsip!"
 
-#: lib/ptxprint/view.py:1296
+#: lib/ptxprint/view.py:1297
 msgid "The ZIP file seems to be open in another program."
 msgstr "Sepertinya file ZIP telah dibuka di program lain."
 
@@ -1129,11 +1129,13 @@ msgstr "Klik untuk MENONAKTIFKAN semua kitab/buku."
 msgid "The FRT book in Paratext contains front matter\n"
 "for a publicatuon. Visit the Peripherals page to\n"
 "set up front matter for this publication."
-msgstr ""
+msgstr "Bagian FRT di Paratext berisi bagian depan buku. \n"
+"Kunjungi halaman Sampingan untuk menyiapkan \n"
+"bagian depan buku untuk terbitan ini."
 
 #: lib/ptxprint/ptxprint.glade:1551
 msgid "Why is FRT not listed?"
-msgstr ""
+msgstr "Mengapa FRT tidak terdaftar?"
 
 #: lib/ptxprint/ptxprint.glade:1566
 msgid "Build List of Books\n"
@@ -1429,7 +1431,7 @@ msgstr "Semua sistem karakter unicode yang diketahui telah\n"
 
 #: lib/ptxprint/ptxprint.glade:2959
 msgid "Digit mapping:"
-msgstr ""
+msgstr "Penyesuaian angka:"
 
 #: lib/ptxprint/ptxprint.glade:3019 lib/ptxprint/ptxprint.glade:3617
 #: lib/ptxprint/ptxprint.glade:3729
@@ -1541,7 +1543,10 @@ msgid "A watermark can be applied to all pages of \n"
 "the publication. The file must be a PDF and\n"
 "should ideally have the same dimensions as \n"
 "the publication being printed."
-msgstr ""
+msgstr "Cap air dapat diterapkan ke semua halaman\n"
+"terbitan ini. Filenya harus berupa PDF dan\n"
+"sebaiknya memiliki ukuran yang sama dengan\n"
+"terbitan yang sedang dicetak."
 
 #: lib/ptxprint/ptxprint.glade:3221 lib/ptxprint/ptxprint.glade:10930
 #: lib/ptxprint/ptxprint.glade:16099 lib/ptxprint/ptxprint.glade:16239
@@ -3323,16 +3328,17 @@ msgstr "Saat meratakan sisi paragraf, terutama ketika mengecilkan \n"
 
 #: lib/ptxprint/ptxprint.glade:7876
 msgid "Values are in percentage of the text point size."
-msgstr ""
+msgstr "Nilai dalam persentase dari ukuran huruf."
 
 #: lib/ptxprint/ptxprint.glade:7893
 msgid "Values are in percentage of the text point size.\n"
-msgstr ""
+msgstr "Nilai dalam persentase dari ukuran huruf.\n"
 
 #: lib/ptxprint/ptxprint.glade:7911 lib/ptxprint/ptxprint.glade:7930
 msgid "Maximum size % that a space\n"
 "can grow to when necessary."
-msgstr ""
+msgstr "Ukuran maksimum (persentase) untuk \n"
+"spasi yang diperlebar (bila perlu diperlebar)."
 
 #: lib/ptxprint/ptxprint.glade:7915
 msgid "Min/Shrink"
@@ -3395,7 +3401,10 @@ msgid "To hyphenate properly you need to first create a \n"
 "Hyphenation List using the button on the left.\n"
 "This will create a XeTeX hyphenation list from the\n"
 "hyphenation list in Paratext."
-msgstr ""
+msgstr "Untuk memberi tanda hubung dengan benar, Anda harus terlebih \n"
+"dahulu membuat Daftar Pemenggalan Kata menggunakan \n"
+"tombol di sebelah kiri. Ini akan membuat daftar pemenggalan kata \n"
+"untuk XeTeX dari daftar pemenggalan kata di Paratext."
 
 #: lib/ptxprint/ptxprint.glade:8073
 msgid "Create Hyphenation List"
@@ -3407,7 +3416,11 @@ msgid "Click this button to generate a hyphenation \n"
 "hyphenation. This will read Paratext's\n"
 "HyphenatedWords.txt list and create a\n"
 "TeX hyphen list for this language."
-msgstr ""
+msgstr "Klik tombol ini untuk membuat daftar pemenggalan \n"
+"kata yang dapat digunakan oleh XeTeX \n"
+"untuk mengoptimalkan tanda hubung. Daftar \n"
+"HyphenatedWords.txt di Paratext akan dibaca untuk \n"
+"membuat daftar pemenggalan kata TeX untuk bahasa ini."
 
 #: lib/ptxprint/ptxprint.glade:8095
 msgid "Omit '-'Hyphen"
@@ -3418,7 +3431,10 @@ msgid "Some scripts use hyphenation to break long\n"
 "words onto the next line, BUT don't need to\n"
 "display the actual '-' character. If this option\n"
 "is checked, then \"hyphens\" will be invisible."
-msgstr ""
+msgstr "Beberapa jenis tulisan menggunakan tanda hubung untuk \n"
+"memecah kata-kata panjang ke baris berikutnya, TETAPI \n"
+"tidak perlu menampilkan karakter '-' pada tempat pemenggalan. \n"
+"Jika pilihan ini dicentang, maka tanda hubung tidak akan terlihat."
 
 #: lib/ptxprint/ptxprint.glade:8119
 msgid "Hyphenation"
@@ -3430,7 +3446,11 @@ msgid "Basic Fonts and Advanced Font options.\n"
 "settings to support any Writing System.\n"
 "Advanced Spacing Settings. Fallback fonts\n"
 "for characters missing in primary font."
-msgstr ""
+msgstr "Font Dasar dan Pilihan Lanjutan untuk Font.\n"
+"Juga berbagai pengaturan tingkat lanjut untuk \n"
+"mendukung Sistem Penulisan apa pun.\n"
+"Pengaturan Lanjutan untuk Spasi. Font pengganti \n"
+"untuk karakter yang tidak ada di font utama."
 
 #: lib/ptxprint/ptxprint.glade:8150
 msgid "Fonts+Script"
@@ -3462,7 +3482,7 @@ msgstr "Ratakan \\ior ke Kanan dengan Tab"
 
 #: lib/ptxprint/ptxprint.glade:8234
 msgid "This will right-align and add leader tabs (. . . .) before the \\ior numbers for a pretty Intro Outline Table."
-msgstr ""
+msgstr "Ini akan menyelaraskan ke kanan dan menambahkan tab penghubung (. . . .) sebelum nomor \\ior untuk Tabel Garis Besar Pendahuluan yang cantik."
 
 #: lib/ptxprint/ptxprint.glade:8245
 msgid "Always Start 1st Chapter on a New Page"
@@ -3470,7 +3490,7 @@ msgstr "Pasal Pertama Selalu Dimulai di Halaman Baru"
 
 #: lib/ptxprint/ptxprint.glade:8249
 msgid "Use this option to automatically make a page break after a book's introduction section. The break will come right before the \\c 1 marker."
-msgstr ""
+msgstr "Gunakan pilihan ini untuk memulai halaman baru secara otomatis setelah bagian pengenalan buku. Halaman baru akan mulai tepat sebelum markah \\c 1."
 
 #: lib/ptxprint/ptxprint.glade:8260
 msgid "Begin Next Book on Last Page of Previous Book"
@@ -3484,11 +3504,17 @@ msgid "If the last page of a book uses less than\n"
 "by adding a line to your ptxprint-mods.tex\n"
 "file as follows (for 75%):\n"
 "\\def\\PageFullFactor{0.75}"
-msgstr ""
+msgstr "Jika halaman terakhir dari sebuah kitab menggunakan \n"
+"kurang dari dua pertiga halaman (66%), maka kitab \n"
+"berikutnya akan dimulai pada halaman yang sama.\n\n"
+"Perhatikan bahwa Anda dapat mengubah persentase ini \n"
+"dengan menambahkan baris ke file ptxprint-mods.tex \n"
+"sebagai berikut (untuk 75%):\n"
+"\\def\\PageFullFactor{0.75}"
 
 #: lib/ptxprint/ptxprint.glade:8282
 msgid "Filter Glossary to Only Include Entries Used in the Text"
-msgstr ""
+msgstr "Saring Kamus untuk Hanya Sertakan Entri yang Digunakan dalam Teks"
 
 #: lib/ptxprint/ptxprint.glade:8286
 msgid "This option is only available if the GLO book\n"
@@ -3501,7 +3527,16 @@ msgid "This option is only available if the GLO book\n"
 "book(s) or chapter(s).\n"
 "i.e. only the \\w marked-up\\w* entries in the \n"
 "selected books/chapters will show in the glossary."
-msgstr ""
+msgstr "Pilihan ini hanya tersedia jika bagian GLO\n"
+"juga dipilih.\n"
+"Jika proyek ini ada kamus dengan banyak \n"
+"entri tetapi hanya mencetak sedikit pilihan \n"
+"buku, pilihan ini akan menghapus entri-entri \n"
+"dari kamus yang tidak ditandai dalam teks \n"
+"kitab atau pasal yang dipilih, sehingga hanya \n"
+"entri yang ditandai \\w ... \\w* di dalam \n"
+"kitab/pasal yang dipilih akan ditampilkan \n"
+"dalam kamus."
 
 #: lib/ptxprint/ptxprint.glade:8312
 msgid "Beginning and Ending Material"
@@ -3518,7 +3553,12 @@ msgid "Uncheck this option to hide all chapter \n"
 "Note that there is another option lower down\n"
 "in the next section which will only \"Hide Chapter\n"
 "Number in Single Chapter Books\"."
-msgstr ""
+msgstr "Hapus centang di pilihan ini untuk \n"
+"menyembunyikan semua nomor pasal, \n"
+"supaya terbitan ini kelihatan seperti buku biasa.\n\n"
+"Perhatikan bahwa ada pilihan lain di bagian \n"
+"berikutnya yang hanya akan \"Sembunyikan \n"
+"Nomor Pasal dalam Kitab yang Hanya Satu Pasal\"."
 
 #: lib/ptxprint/ptxprint.glade:8370
 msgid "Hide First Verse Number"
@@ -4695,7 +4735,17 @@ msgid "If the document you are creating needs\n"
 "       \\resetpagenums -1\n"
 "and normal page numbering will restart as\n"
 "soon as the first scripture book is encountered."
-msgstr ""
+msgstr "Jika dokumen yang Anda buat perlu \n"
+"ditambahkan ke dokumen lain, Anda dapat \n"
+"memulai penomoran halaman dari tempat \n"
+"dokumen sebelumnya berakhir dengan \n"
+"memasukkan nomor halaman berikutnya di sini.\n\n"
+"Jika Anda ingin halaman-halaman di bagian depan diberi \n"
+"nomor dengan angka romawi (i, ii, iii, iv, v, dll.), tambahkanlah \n"
+"baris ini ke bagian depan buku:\n"
+"        \\resetpagenums -1\n"
+"lalu penomoran halaman biasa akan dimulai pas pada \n"
+"halaman di mana kitab pertama ditemukan."
 
 #: lib/ptxprint/ptxprint.glade:12061
 msgid "Starting Page Number\n"

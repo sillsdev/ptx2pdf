@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ptxprint\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-12 14:32+0700\n"
-"PO-Revision-Date: 2021-10-12 07:33\n"
+"POT-Creation-Date: 2021-10-13 11:50+0700\n"
+"PO-Revision-Date: 2021-10-13 04:50\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -51,7 +51,7 @@ msgstr "Échelle de police :"
 
 #: lib/ptxprint/gtkstyleditor.py:545
 msgid "Required element {} is not set. Please set it."
-msgstr ""
+msgstr "L'élément requis {} n'est pas défini. Veuillez le définir."
 
 #: lib/ptxprint/gtkutils.py:90
 msgid "Set Font..."
@@ -607,7 +607,7 @@ msgstr "Cet avertissement a été déclenché par l'activation de l'option \"Cor
 
 #: lib/ptxprint/texmodel.py:1083
 msgid "Failed to normalize texts due to a Syntax Error: "
-msgstr ""
+msgstr "Impossible de normaliser les textes à cause d'une erreur de syntaxe : "
 
 #: lib/ptxprint/texmodel.py:1484
 msgid "\\rem Warning: No copyright statement found for: {} on pages {}"
@@ -661,101 +661,101 @@ msgstr "-vide-"
 
 #: lib/ptxprint/view.py:265
 msgid "FRT must not be included in the list of books"
-msgstr ""
+msgstr "FRT ne doit pas figurer dans la liste des livres"
 
 #: lib/ptxprint/view.py:266
 msgid "The 'Front Matter' option has now been enabled for you on the Peripherals page and the contents of Paratext's FRT book has been copied to the PTXprint settings location for this publication. It can be edited if needed on the View+Edit page."
-msgstr ""
+msgstr "L'option \"Pages de garde\" a été activée sur la page Périphériques et le contenu du livre FRT de Paratext a été copié à l'emplacement des paramètres PTXprint pour cette publication. Il peut être édité si nécessaire sur la page View+Edit."
 
-#: lib/ptxprint/view.py:478
+#: lib/ptxprint/view.py:479
 msgid "PTXprint {} - Bible Layout for Everyone!"
 msgstr "PTXprint {} - Mise en page biblique pour tous !"
 
-#: lib/ptxprint/view.py:491
+#: lib/ptxprint/view.py:492
 msgid "No book selected!"
 msgstr "Aucun livre sélectionné !"
 
-#: lib/ptxprint/view.py:511
+#: lib/ptxprint/view.py:512
 msgid "Json parsing error in {}"
 msgstr "Erreur d'analyse de Json dans {}"
 
-#: lib/ptxprint/view.py:512
+#: lib/ptxprint/view.py:513
 msgid "{} at line {} col {}"
 msgstr "{} à la ligne {} col {}"
 
-#: lib/ptxprint/view.py:978
+#: lib/ptxprint/view.py:979
 msgid "Failed to Generate Hyphenation List"
 msgstr "Échec de la génération de la liste de césure d'union"
 
-#: lib/ptxprint/view.py:979
+#: lib/ptxprint/view.py:980
 msgid "{} Paratext Project's Hyphenation file not found:\n"
 "{}"
 msgstr "{} Le fichier de césure du projet Paratext n'a pas été trouvé :\n"
 "{}"
 
-#: lib/ptxprint/view.py:1016
+#: lib/ptxprint/view.py:1017
 msgid "\n\n"
 "That is too many for XeTeX! List truncated to longest {} words found in the active sources."
 msgstr "\n\n"
 "C'est trop pour XeTeX ! Liste tronquée aux {} plus longs mots trouvés dans les sources actives."
 
-#: lib/ptxprint/view.py:1022
+#: lib/ptxprint/view.py:1023
 msgid "Hyphenation List Generated"
 msgstr "Liste de césure générée"
 
-#: lib/ptxprint/view.py:1023
+#: lib/ptxprint/view.py:1024
 msgid "{} hyphenated words were gathered\n"
 "from Paratext's Hyphenation Word List."
 msgstr "{} Les mots de trait d'union ont été rassemblés\n"
 "de la liste de mots de césure de Paratext."
 
-#: lib/ptxprint/view.py:1025
+#: lib/ptxprint/view.py:1026
 msgid "\n\n"
 "Note for Indic languages that {} words containing ZWJ"
 msgstr "\n\n"
 "Note pour les langues indiques que {} mots contenant ZWJ"
 
-#: lib/ptxprint/view.py:1026
+#: lib/ptxprint/view.py:1027
 msgid "\n"
 "and ZWNJ characters have been left off the hyphenation list."
 msgstr "\n"
 "et les caractères ZWNJ ont été laissés sur la liste de césure d'union."
 
-#: lib/ptxprint/view.py:1028
+#: lib/ptxprint/view.py:1029
 msgid "\n\n"
 "{} words were at least 10 characters long but had no hyphenation marked"
 msgstr "\n\n"
 "{} mots ont au moins 10 caractères mais n'ont pas de césure marquée"
 
-#: lib/ptxprint/view.py:1031
+#: lib/ptxprint/view.py:1032
 msgid "Hyphenation List was NOT Generated"
 msgstr "La liste de césure d'union n'a PAS été générée"
 
-#: lib/ptxprint/view.py:1032
+#: lib/ptxprint/view.py:1033
 msgid "No valid words were found in Paratext's Hyphenation List"
 msgstr "Aucun mot valide n'a été trouvé dans la liste de césure de Paratext"
 
-#: lib/ptxprint/view.py:1075
+#: lib/ptxprint/view.py:1076
 msgid "The Fallback Font needs to be something other than the Regular Font."
 msgstr "La police de repli doit être différente que la police principale."
 
-#: lib/ptxprint/view.py:1076 lib/ptxprint/view.py:1084
+#: lib/ptxprint/view.py:1077 lib/ptxprint/view.py:1085
 msgid "Please select a different Font."
 msgstr "Veuillez sélectionner une police différente."
 
-#: lib/ptxprint/view.py:1083
+#: lib/ptxprint/view.py:1084
 msgid "The Fallback Font just selected does NOT support all the missing characters listed."
 msgstr "La police de repli que vous avez sélectionné ne prend pas en charge tous les caractères manquants listés."
 
-#: lib/ptxprint/view.py:1283
+#: lib/ptxprint/view.py:1284
 msgid "No Config found for Diglot"
 msgstr "Aucune configuration trouvée pour Diglot"
 
-#: lib/ptxprint/view.py:1296
+#: lib/ptxprint/view.py:1297
 msgid "Error: Cannot create Archive!"
 msgstr "Erreur : Impossible de créer une archive !"
 
-#: lib/ptxprint/view.py:1296
+#: lib/ptxprint/view.py:1297
 msgid "The ZIP file seems to be open in another program."
 msgstr "Le fichier ZIP semble être ouvert dans un autre logiciel."
 
@@ -1134,11 +1134,13 @@ msgstr "Cliquez pour désactiver tous les livres."
 msgid "The FRT book in Paratext contains front matter\n"
 "for a publicatuon. Visit the Peripherals page to\n"
 "set up front matter for this publication."
-msgstr ""
+msgstr "Le livre FRT dans Paratext contient les pages de garde\n"
+"pour une publication. Visitez la page Périphériques pour\n"
+"configurer les pages de garde de cette publication."
 
 #: lib/ptxprint/ptxprint.glade:1551
 msgid "Why is FRT not listed?"
-msgstr ""
+msgstr "Pourquoi le FRT ne figure pas dans la liste?"
 
 #: lib/ptxprint/ptxprint.glade:1566
 msgid "Build List of Books\n"
@@ -5002,7 +5004,16 @@ msgid "If the document you are creating needs\n"
 "       \\resetpagenums -1\n"
 "and normal page numbering will restart as\n"
 "soon as the first scripture book is encountered."
-msgstr ""
+msgstr "Si le document que vous créez doit être annexé\n"
+"à un autre, vous pouvez commencer la numérotation\n"
+"des pages à partir de l'endroit où le document précédent\n"
+"se termine en entrant le numéro de page suivant ici.\n\n"
+"Si vous voulez que les pages de garde soient numérotées \n"
+"avec des chiffres romains (i, ii, iii, iv, v, etc.), ajoutez cette\n"
+"ligne dans le livre FRT :\n"
+"       \\resetpagenums -1\n"
+"et la numérotation normale recommencera dès que\n"
+"le premier livre d'écriture sera rencontré."
 
 #: lib/ptxprint/ptxprint.glade:12061
 msgid "Starting Page Number\n"
