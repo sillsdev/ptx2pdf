@@ -1,3 +1,9 @@
+ptxprint (1.9.6.2-1ubuntu1) bionic; urgency=medium
+
+  * Bumped release to 1.9.6.2
+
+ -- Martin Hosken <martin_hosken@sil.org>  Wed, 13 Oct 2021 20:33:11 +1300
+
 ptxprint (1.9.6.1-1ubuntu1) bionic; urgency=medium
 
   * Bumped release to 1.9.6.1
