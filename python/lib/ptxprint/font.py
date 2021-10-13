@@ -938,7 +938,7 @@ class FontRef:
             sfeats.append("/GR")
         feats = []
         for k, v in self.feats.items():
-            if k in ('embolden', 'slant', 'mapping'):
+            if k in ('embolden', 'slant', 'mapping', 'extend', 'color', 'letterspace'):
                 feats.append((k, v))
                 continue
             if self.isGraphite:
