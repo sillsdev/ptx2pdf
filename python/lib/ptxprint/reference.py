@@ -14,6 +14,8 @@ b64codes = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
 b64lkup = {b:i for i, b in enumerate(b64codes)}
 
 def readvrs(fname):
+    ''' res[book number] [0] versenum of start of book from start of Bible
+                         [1..n] number of verses from start of book to end of chapter'''
     res = [[] for i in range(len(allbooks))]
     with open(fname, encoding="utf-8") as inf:
         for li in inf.readlines():
@@ -27,7 +29,7 @@ def readvrs(fname):
                 continue
             verses = [int(x.split(':')[1]) for x in b[1:]]
             versesums = reduce(lambda a, x: (a[0] + [a[1]+x], a[1]+x), verses, ([0], 0))
-            res[books[b[0]]-1] = versesums[0]
+            res[books[b[0]]] = versesums[0]
     curr = 0
     for b in res:
         if len(b):
@@ -69,6 +71,7 @@ class Reference:
         if fname is None:
             fname = os.path.join(os.path.dirname(__file__), 'eng.vrs')
         cls.vrs = readvrs(fname)
+        return cls.vrs
 
     def str(self, context=None, level=0, lastref=None, addsep=RefSeparators()):
         sep = ""
@@ -170,8 +173,8 @@ class Reference:
     def asint(self):
         if self.vrs is None:
             self.loadvrs()
-        coffset = self.vrs[books[self.book]-1][self.chap-1] if self.chap > 1 else 0
-        return self.vrs[books[self.book]-1][0] + coffset + self.verse
+        coffset = self.vrs[books[self.book]][self.chap-1] if self.chap > 1 else 0
+        return self.vrs[books[self.book]][0] + coffset + self.verse
 
     @classmethod
     def fromtag(cls, s, remainder=False):
@@ -293,13 +296,22 @@ class RefRange:
         return res
 
     def allrefs(self):
+        vrs = Reference.vrs or Reference.loadvrs()
         r = self.first.copy()
+        maxvrs = vrs[books[r.book]][r.chap] - (vrs[books[r.book]][r.chap-1] if r.chap > 1 else 0)
         while r <= self.last:
             yield r
             r.verse += 1
-            if r.verse > 180:
+            if r.verse > maxvrs:
                 r.chap += 1
                 r.verse = 1
+                if r.chap >= len(vrs[books[r.book]]):
+                    newbk = books[r.book] + 1
+                    if newbk >= len(allbooks):
+                        return
+                    r.book = allbooks[newbk]
+                    r.chap = 1
+                maxvrs = vrs[books[r.book]][r.chap] - (vrs[books[r.book]][r.chap-1] if r.chap > 1 else 0)
 
 class AnyBooks:
     @classmethod
@@ -540,6 +552,17 @@ def tests():
         if intref != temp:
             raise TestException("{} has int({}) but that is {}".format(res[0].first, refint, intref))
 
+    def testrange(s, a, b):
+        res = RefList.fromStr(s)
+        init = a.asint()
+        end = b.asint()
+        for r in res.allrefs():
+            if r.asint() != init:
+                raise TestException("{} in {} is out of order".format(r, s))
+            if init > end:
+                raise TestException("{} in {} is beyond the end {}".format(r, s, b))
+            init += 1
+
     t("GEN 1:1", "ACB", r("GEN", 1, 1))
     t("JHN 3", "fQA", r("JHN", 3, 0))
     t("3JN 3", "kcD", r("3JN", 1, 3))
@@ -547,6 +570,8 @@ def tests():
     t("MAT 5:1-7", "dMB-dMH", RefRange(r("MAT", 5, 1), r("MAT", 5, 7)))
     t("MAT 7:1,2;8:6b-9:4", "dQBdQC1dSG-dUE", r("MAT", 7, 1), r("MAT", 7, 2), RefRange(r("MAT", 8, 6, "b"), r("MAT", 9, 4)))
     t("LUK 3:35-end", "egj-eh/", RefRange(r("LUK", 3, 35), r("LUK", 3, 200)))
+    testrange("PSA 125:4-128:4", r("PSA", 125, 4), r("PSA", 128, 4))
+
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:

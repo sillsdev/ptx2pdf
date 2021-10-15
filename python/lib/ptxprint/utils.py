@@ -27,7 +27,7 @@ _bookslist = """GEN|50 EXO|40 LEV|27 NUM|36 DEU|34 JOS|24 JDG|21 RUT|4 1SA|31 2S
 _endBkCodes = {'XXG':'100', 'FRT':'A0', 'BAK':'A1', 'OTH':'A2', 'INT':'A7', 'CNC':'A8', 'GLO':'A9', 'TDX':'B0', 'NDX':'B1', 'DAG':'B2', 'LAO':'C3'} 
 
 allbooks = [b.split("|")[0] for b in _bookslist.split()] # if b != "ZZZ|0"]
-books = dict((b.split("|")[0], i+1) for i, b in enumerate(_bookslist.split()) if b[-2:] != "|0")
+books = dict((b.split("|")[0], i) for i, b in enumerate(_bookslist.split()) if b[-2:] != "|0")
 bookcodes = dict((b.split("|")[0], "{:02d}".format(i+1)) for i, b in enumerate(_bookslist.split()[:99]) if b[-2:] != "|0")
 bookcodes.update(_endBkCodes)
 chaps = dict(b.split("|") for b in _bookslist.split())
@@ -88,7 +88,7 @@ def refKey(r, info=""):
     m = re.match(r"^(\d?\D+)?\s*(\d*)\.?(\d*)(\S*?)(\s+.*)?$", r)
     if m:
         bkid = m.group(1) or ""
-        return (books.get(bkid[:3], 100), int(m.group(2) or 0), int(m.group(3) or 0), bkid[3:], info, m.group(4), m.group(5) or "")
+        return (books.get(bkid[:3], 99)+1, int(m.group(2) or 0), int(m.group(3) or 0), bkid[3:], info, m.group(4), m.group(5) or "")
     else:
         return (100, 0, 0, r, info, "", "")
 
