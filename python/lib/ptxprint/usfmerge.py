@@ -71,7 +71,7 @@ class Chunk(list):
         return sfm.generate(self)
 
 
-nestedparas = set(('io2', 'io3', 'io4', 'toc2', 'toc3', 'ili2', 'cp', 'cl'))
+nestedparas = set(('io2', 'io3', 'io4', 'toc2', 'toc3', 'ili2', 'cp', 'cl', 'nb'))
 
 def ispara(c):
     return 'paragraph' == str(c.meta.get('StyleType', 'none')).lower()
@@ -138,11 +138,8 @@ class Collector:
             newchunk = False
             if ispara(c):
                 newmode = _marker_modes.get(c.name, _textype_map.get(str(c.meta.get('TextType')), self.mode))
-                if newmode != self.mode:
-                    newchunk = True
-                elif self.mode in (ChunkType.HEADING, ChunkType.TITLE):
-                    pass
-                elif c.name not in nestedparas:
+                if c.name not in nestedparas and (newmode != self.mode \
+                                                  or self.mode not in (ChunkType.HEADING, ChunkType.TITLE)):
                     newchunk = True
             if newchunk:
                 currChunk = self.makeChunk(c)

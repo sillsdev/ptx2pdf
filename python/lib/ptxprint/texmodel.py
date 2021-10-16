@@ -103,7 +103,7 @@ ModelMap = {
     "paper/gutter":             ("s_pagegutter", lambda w,v: round(float(v)) if v else "0"),
     "paper/colgutteroffset":    ("s_colgutteroffset", lambda w,v: "{:.1f}".format(float(v)) if v else "0.0"),
     "paper/columns":            ("c_doublecolumn", lambda w,v: "2" if v else "1"),
-    "paper/bottomrag":          ("s_bottomRag", lambda w,v: str(int(v)+0.95)),
+    "paper/bottomrag":          ("s_bottomRag", lambda w,v: str(int(v or 0)+0.95)),
     "paper/fontfactor":         ("s_fontsize", lambda w,v: f2s(float(v) / 12, dp=8) if v else "1.000"),
 
     "grid/gridlines":           ("c_gridLines", lambda w,v: "\doGridLines" if v else ""),
@@ -170,12 +170,12 @@ ModelMap = {
     "document/tocleaders":      ("fcb_leaderStyle", None),
     "document/chapfrom":        ("s_chapfrom", lambda w,v: int(float(v)) if v else "1"),
     "document/chapto":          ("s_chapto", lambda w,v: int(float(v)) if v else "999"),
-    "document/colgutterfactor": ("s_colgutterfactor", lambda w,v: round(float(v)*3) or "12"), # Hack to be fixed
+    "document/colgutterfactor": ("s_colgutterfactor", lambda w,v: round(float(v or 4)*3)), # Hack to be fixed
     "document/ifrtl":           ("fcb_textDirection", lambda w,v:"true" if v == "rtl" else "false"),
     "document/toptobottom":     ("fcb_textDirection", lambda w,v: "" if v == "ttb" else "%"),
     "document/iflinebreakon":   ("c_linebreakon", lambda w,v: "" if v else "%"),
     "document/linebreaklocale": ("t_linebreaklocale", lambda w,v: v or ""),
-    "document/script":          ("fcb_script", lambda w,v: ":script="+v.lower() if v != "Zyyy" else ""),
+    "document/script":          ("fcb_script", lambda w,v: ":script="+v.lower() if v and v != "Zyyy" else ""),
     "document/ch1pagebreak":    ("c_ch1pagebreak", None),
     "document/marginalverses":  ("c_marginalverses", lambda w,v: "" if v else "%"),
     "document/columnshift":     ("s_columnShift", lambda w,v: v or "16"),
@@ -215,25 +215,25 @@ ModelMap = {
     "document/hidemptyverses":  ("c_hideEmptyVerses", None),
     "document/elipsizemptyvs":  ("c_elipsizeMissingVerses", None),
     "document/ifspacing":       ("c_spacing", lambda w,v :"" if v else "%"),
-    "document/spacestretch":    ("s_maxSpace", lambda w,v : str((int(float(v)) - 100) / 100.)),
-    "document/spaceshrink":     ("s_minSpace", lambda w,v : str((100 - int(float(v))) / 100.)),
+    "document/spacestretch":    ("s_maxSpace", lambda w,v : str((int(float(v or 150)) - 100) / 100.)),
+    "document/spaceshrink":     ("s_minSpace", lambda w,v : str((100 - int(float(v or 66))) / 100.)),
     "document/ifletter":        ("c_letterSpacing", lambda w,v: "" if v else "%"),
     "document/letterstretch":   ("s_letterStretch", lambda w,v: float(v or "5.0") / 100.),
     "document/lettershrink":    ("s_letterShrink", lambda w,v: float(v or "1.0") / 100.),
     "document/ifcolorfonts":    ("c_colorfonts", lambda w,v: "%" if v else ""),
 
     "document/ifchaplabels":    ("c_useChapterLabel", lambda w,v: "%" if v else ""),
-    "document/clabelbooks":     ("t_clBookList", lambda w,v: v.upper()),
+    "document/clabelbooks":     ("t_clBookList", lambda w,v: v.upper() if v else ""),
     "document/clabel":          ("t_clHeading", None),
     "document/clsinglecol":     ("c_singleColLayout", None),
-    "document/clsinglecolbooks":("t_singleColBookList", None),
-    "document/cloptimizepoetry": ("c_optimizePoetryLayout", None),
+    "document/clsinglecolbooks":    ("t_singleColBookList", None),
+    "document/cloptimizepoetry":    ("c_optimizePoetryLayout", None),
 
-    "document/ifdiglot":        ("c_diglot", lambda w,v : "" if v else "%"),
-    "document/diglotprifraction": ("s_diglotPriFraction", lambda w,v : round((float(v)/100), 3) if v is not None else "0.550"),
-    "document/diglotsecfraction": ("s_diglotPriFraction", lambda w,v : round(1 - (float(v)/100), 3) if v is not None else "0.450"),
+    "document/ifdiglot":            ("c_diglot", lambda w,v : "" if v else "%"),
+    "document/diglotprifraction":   ("s_diglotPriFraction", lambda w,v : round((float(v)/100), 3) if v is not None else "0.550"),
+    "document/diglotsecfraction":   ("s_diglotPriFraction", lambda w,v : round(1 - (float(v)/100), 3) if v is not None else "0.450"),
     "document/diglotsecprj":    ("fcb_diglotSecProject", None),
-    "document/diglotpicsources": ("fcb_diglotPicListSources", None),
+    "document/diglotpicsources":    ("fcb_diglotPicListSources", None),
     "document/diglot2captions": ("c_diglot2captions", None),
     "document/diglotswapside":  ("c_diglotSwapSide", lambda w,v: "true" if v else "false"),
     "document/diglotsepnotes":  ("c_diglotSeparateNotes", lambda w,v: "true" if v else "false"),
@@ -315,7 +315,7 @@ ModelMap = {
     "notes/xrrulelength":       ("s_xrLength", None),
     "notes/xrrulethick":        ("s_xrThick", None),
     
-    "notes/internotespace":     ("s_internote", lambda w,v: f2s(float(v))),
+    "notes/internotespace":     ("s_internote", lambda w,v: f2s(float(v or 3))),
 
     "notes/horiznotespacemin":  ("s_notespacingmin", lambda w,v: f2s(float(v)) if v is not None else "7"),
     "notes/horiznotespacemax":  ("s_notespacingmax", lambda w,v: f2s(float(v)) if v is not None else "27"),
@@ -562,8 +562,8 @@ class TexModel:
 
         if self.dict.get('document/tocleaders', None) is None:
             self.dict['document/tocleaders'] = 0
-        self.dict['document/iftocleaders'] = '' if int(self.dict['document/tocleaders']) > 0 else '%'
-        self.dict['document/tocleaderstyle'] = self._tocleaders[int(self.dict['document/tocleaders'])]
+        self.dict['document/iftocleaders'] = '' if int(self.dict['document/tocleaders'] or 0) > 0 else '%'
+        self.dict['document/tocleaderstyle'] = self._tocleaders[int(self.dict['document/tocleaders'] or 0)]
         self.calcRuleParameters()
 
     def updatefields(self, a):
