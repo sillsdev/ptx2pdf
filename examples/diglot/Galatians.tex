@@ -1,14 +1,16 @@
 \input paratext2.tex
 %\let\TRACEdiglot=\doTRACEdiglot% Generate (numbered) trace
 %\VisTracetrue% Every chunk joined, mark with the current trace number
-%\diglotDbgJoinboxes=1246 % And if that's not enough, assuming trace entry 1246
+\diglotDbgJoinboxes=5356 % And if that's not enough, assuming trace entry 1246
+\nonstopmode
 %is from joinboxes (which pastes 2 left or 2 right columns together) show the
 %boxes joined.
-%\showboxdepth=100 %.... In all their gory detail
-%\showboxbreadth=100
+\showboxdepth=100 %.... In all their gory detail
+\showboxbreadth=100
 %\tracingifs=1
 
 %\diglotInnerOutertrue
+\XeTeXuseglyphmetrics=0
 \ColumnGutterRuletrue
 %\def\BelowFootNoteRuleSpace{5pt}
 %\AboveNoteSpace=5pt
@@ -16,16 +18,17 @@
 \NoteGutterRuletrue
 
 \input Galatians-setup.tex
-\iffalse
- \tracing{H}
+\iftrue
+% \tracing{H}
  \tracing{d}
  \tracing{F}
- \tracing{dP}
- \tracing{s}
+% \tracing{dP}
+% \tracing{s}
  \tracing{n}
- \tracing{sC}
+ \tracing{V}
+% \tracing{sC}
  \VisTracetrue
- \tracing{D}
+% \tracing{D}
 \fi
 
 

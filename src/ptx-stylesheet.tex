@@ -452,7 +452,7 @@
  % called after \c and \v have been processed in stylesheet at beginning of typesetting file
  \let\@V=\v% remember \v defn for (A) below
  % Define a macro to read an actual space delimited verse number, and then check if the next token is \vp
- \def\@v@ ##1 {\gdef\v@rse{##1}\ifdiglot\x@\global\x@\let\csname @v@rse\g@tdstat\endcsname\v@rse\fi\global\let\print@bleverse\v@rse\futurelet\mayb@vp\@V@}%
+ \def\@v@ ##1 {\gdef\v@rse{##1}\trace{V}{\c@rrdstat\ch@pter:\v@rse}\ifdiglot\x@\global\x@\let\csname @v@rse\g@tdstat\endcsname\v@rse\fi\global\let\print@bleverse\v@rse\futurelet\mayb@vp\@V@}%
  % If the next token IS vp, then call relevant code to interpret before dropping 
  \def\@V@{%
   \let\nxt\@@V@@

@@ -185,7 +185,7 @@
   \trace{d}{saveLRspecificOrig \c@rrdstat}%
   \let\wh@t\s@veSpecificOrig\pr@cessSpecific\let\saveLRspecificOrig=\relax}
 
-\maxdeadcycles=75
+\maxdeadcycles=100
 \newdimen\FontSizeUnitL\FontSizeUnitL=-1sp\newdimen\FontSizeUnitR\FontSizeUnitR=-1sp
 \newdimen\le@dingunitL\le@dingunitL=-1sp\newdimen\le@dingunitR\le@dingunitR=-1sp
 \newdimen\onel@neunitL\onel@neunitL=-1sp\newdimen\onel@neunitR\onel@neunitR=-1sp
@@ -925,7 +925,7 @@
 }
 
 \def\swap@diglot#1{% Because we need to set things appropriately.
- %Swapping fonts isn't actually needed, but do need to set
+ %Swapping fonts isn't actually needed, as that's done elsewhere, but do need to set
  %baselineskip and other things
  \trace{d}{swap@diglot #1 (\show@dstat)}%
  \trace{D}{t@tle is \ift@tle set\else  not set\fi}%
@@ -941,6 +941,7 @@
  \fi
  \x@\global\x@\let\x@\m@rker\csname m@rker\c@rrdstat\endcsname
  \trace{D}{m@rker set to \m@rker}%
+ \xdef\mcstack{P+\m@rker,+,}%
  \x@\let\x@\w@dth\csname column#1width\endcsname
  \global\hsize=\w@dth\relax
  \x@\global\x@\let\x@\ch@pter\csname @ch@pter\g@tdstat\endcsname
@@ -948,7 +949,7 @@
  \x@\global\x@\let\x@\v@rse\csname @v@rse\g@tdstat\endcsname
  \x@\global\x@\let\x@\m@rknum\csname m@rknum\c@rrdstat\endcsname
  \setLRspecific %ensure that all the units, etc. are correct.
- \trace{D}{Leadingunit: \the\le@dingunit, stylestack:\styst@k}%
+ \trace{D}{Leadingunit: \the\le@dingunit, stylestack:\styst@k, \mcstack}%
  \ifdim\le@dingunit>0pt %
    \s@tbaseline{p}%
  \fi%
@@ -963,7 +964,8 @@
  \ifnum\tmpcount>\MaxPages \global\MaxPages=\tmpcount
    %\message{Maxpages now : \the\MaxPages}%
  \fi
- \expandafter\ifx\csname language#1\endcsname\relax\else\uselanguage{\csname language#1\endcsname}\fi}%
+ \expandafter\ifx\csname language#1\endcsname\relax\else\uselanguage{\csname language#1\endcsname}\fi
+}%
 
 
 %\output={\diglotLeft}

@@ -93,7 +93,7 @@
 % Each USFM note marker is defined to call \n@testyle, with the marker name as parameter
 %
 %+cnote_notestyle
-\def\n@testyle#1{\trace{n}{n@testyle:#1}%
+\def\n@testyle#1{\trace{n}{n@testyle:#1 \c@rrdstat}%
  \def\newn@testyle{#1}%
  \catcode32=12\relax % look ahead to see if space or * follows (like char styles)
  \futurelet\n@xt\don@testyle}
