@@ -31,10 +31,10 @@
 
 % Local configurations for ptxprint
 
-\sethook{start}{wh}{^^^^2067}
-\sethook{end}{wh}{^^^^2069}
-\sethook{start}{wg}{^^^^2066}
-\sethook{end}{wg}{^^^^2069}
+\sethook{start}{wh}{\beginR}
+\sethook{end}{wh}{\endR}
+\sethook{start}{wg}{\beginL}
+\sethook{end}{wg}{\endL}
 \begingroup\obeylines
 \catcode`\@=11\catcode`\^=7
 \gdef\zpdf{\bgroup\obeylines\unc@tcodespecials\@zdpf}

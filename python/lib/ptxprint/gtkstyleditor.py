@@ -406,6 +406,11 @@ class StyleEditorView(StyleEditor):
                             continue
                 self.builder.get_object("l_url_usfm").set_uri('{}{}/{}/{}.html#{}'.format(ggltrans, site, urlcat, pgname, urlmkr))
         self.isLoading = False
+        # Sensitize font size, line spacing, etc. for \paragraphs
+        for w in ["s_styFontSize", "s_styLineSpacing", "c_styAbsoluteLineSpacing"]:
+            widget = self.builder.get_object(w)
+            widget.set_sensitive(self.marker != "p")
+        
 
     def _cmp(self, a, b):
         try:
@@ -526,7 +531,7 @@ class StyleEditorView(StyleEditor):
         dialog = self.builder.get_object("dlg_styModsdialog")
         for k, v in dialogKeys.items():
             if k == "OccursUnder":
-                self.model.set(v, " ".join(sorted(self.getval(self.marker, k, {}))))
+                self.model.set(v, " ".join(sorted(self.getval(self.marker, k, set()))))
             elif self.getval(self.marker, k) is not None:
                 self.model.set(v, self.getval(self.marker, k, ''))
         self.model.set(dialogKeys['Marker'], '' if newkey else self.marker)
@@ -581,20 +586,20 @@ class StyleEditorView(StyleEditor):
                     # print(f"{k=} {v=} -> {val=}")
                     if k.lower() == 'occursunder':
                         val = set(val.split())
-                    self.setval(self.marker, k, val)
-                st = self.getval(self.marker, 'StyleType', '')
+                    self.setval(key, k, val)
+                st = self.getval(key, 'StyleType', '')
                 if st == 'Character' or st == 'Note':
-                    self.setval(self.marker, 'EndMarker', key + "*")
+                    self.setval(key, 'EndMarker', key + "*")
                     if st == 'Character':
-                        ou = self.getval(self.marker, 'OccursUnder')
+                        ou = self.getval(key, 'OccursUnder')
                         if not isinstance(ou, set):
                             ou = set(ou.split())
                         ou.add("NEST")
-                        self.setval(self.marker, 'OccursUnder', ou)
+                        self.setval(key, 'OccursUnder', ou)
                     self.resolveEndMarker(key, None)
                 elif st == 'Milestone':
-                    self.resolveEndMarker(key, self.getval(self.marker, 'EndMarker'))
-                    self.setval(self.marker, 'EndMarker', None)
+                    self.resolveEndMarker(key, self.getval(key, 'EndMarker'))
+                    self.setval(key, 'EndMarker', None)
                 self.marker = key
                 self.treeview.get_selection().select_iter(selecti)
             else:

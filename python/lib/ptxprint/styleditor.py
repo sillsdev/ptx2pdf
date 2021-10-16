@@ -140,7 +140,8 @@ _fieldmap = {
     'SpaceBefore':      (from12, to12),
     'SpaceAfter':       (from12, to12),
     'FontName':         (fromFont, toFont),
-    'TextProperties':   (fromSet, toSet)
+    'TextProperties':   (fromSet, toSet),
+    'OccursUnder':      (fromSet, toSet)
 # color?
 }
 

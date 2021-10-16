@@ -1354,14 +1354,15 @@ class GtkViewModel(ViewModel):
                 PicInfoUpdateProject(self, procbks, ab, self.picinfos, random=rnd, cols=cols, doclear=doclear, clearsuffix=True)
             else:
                 mode = self.get("fcb_diglotPicListSources")
-                if mode in ("bth", "pri"):
-                    PicInfoUpdateProject(self, procbks, ab, self.picinfos,
-                                         suffix="L", random=rnd, cols=cols, clearsuffix=(mode != "bth"))
-                if mode in ("bth", "sec"):
-                    diallbooks = self.diglotView.getAllBooks()
-                    PicInfoUpdateProject(self.diglotView, procbks, diallbooks,
-                                         self.picinfos, suffix="R", random=rnd, cols=cols, doclear=doclear & (mode != "both"), clearsuffix=(mode != "bth"))
-                    self.picinfos.merge("L", "R")
+                PicInfoUpdateProject(self, procbks, ab, self.picinfos,
+                                     suffix="L", random=rnd, cols=cols, doclear=doclear, clearsuffix=True)
+                diallbooks = self.diglotView.getAllBooks()
+                PicInfoUpdateProject(self.diglotView, procbks, diallbooks,
+                                     self.picinfos, suffix="R", random=rnd, cols=cols, doclear=False)
+                if mode == "pri":
+                    self.picinfos.merge("L", "R", mergeCaptions=True)
+                elif mode == "sec":
+                    self.picinfos.merge("R", "L", mergeCaptions=True)
             self.updatePicList(procbks)
             self.savePics()
             if self.get('r_generate') == 'all':

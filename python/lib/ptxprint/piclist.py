@@ -237,7 +237,7 @@ class PicInfo(dict):
             return False
         return True
 
-    def merge(self, tgtpre, srcpre, indat=None):
+    def merge(self, tgtpre, srcpre, indat=None, mergeCaptions=True):
         if indat is None:
             indat = self
         tgts = {}
@@ -247,14 +247,15 @@ class PicInfo(dict):
         for k, v in list(indat.items()):
             if v['anchor'][3:].startswith(srcpre):
                 a = v['anchor'][:3]+v['anchor'][3+len(srcpre):]
-                for s in tgts.get(a, []):
-                    if s.get('src', '') == v.get('src', ''):
-                        if v.get('caption', '') != '':
-                            s['caption'+srcpre] = v.get('caption', '')
-                        if v.get('ref', '') != '':
-                            s['ref'+srcpre] = v['ref']
-                        del indat[k]
-                        break
+                if mergeCaptions:
+                    for s in tgts.get(a, []):
+                        if s.get('src', '') == v.get('src', ''):
+                            if v.get('caption', '') != '':
+                                s['caption'+srcpre] = v.get('caption', '')
+                            if v.get('ref', '') != '':
+                                s['ref'+srcpre] = v['ref']
+                            break
+                del indat[k]
 
     def threadUsfms(self, parent, suffix):
         bks = self.model.getAllBooks()
@@ -288,7 +289,6 @@ class PicInfo(dict):
         return "pic{}{}".format(suffix, self.keycounter)
 
     def read_piclist(self, fname, suffix=""):
-        print("fname={} suffix={}".format(fname, suffix))
         if not os.path.exists(fname):
             return
         with universalopen(fname) as inf:
