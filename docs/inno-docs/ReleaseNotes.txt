@@ -1,8 +1,22 @@
 PTXprint 1.9.6.2 Release Notes 
-15 October 2021
+16 October 2021
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 
+Bug fixes and Improvements in 1.9.7 (16 Oct 2021)
+
+  * Allow better control over Dual Captions in diglots (and show in PicList table)
+  
+  * Fixed wrong folder location displayed after creating Archive #545
+  
+  * Don't allow changing font size, line spacing of \p marker (use Layout tab instead)
+  
+  * Fixed 'at' rules from wrongly targeting other chapters (\c 2 was matching \c 20 etc.)
+  
+  * Fixed bugs in 'Add/Edit Style'
+  
+  * Fixed \wh ...\wh* and \wg ... \wg*  to handle runs of RTL and LTR text better
+  
 Bug fixes and Improvements in 1.9.6.2 (13 Oct 2021)
   * Note: Compatibility settings on Advanced page get reset by this version
     (and an informative message is displayed - which most people can safely ignore)
