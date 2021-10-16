@@ -922,7 +922,7 @@ class ViewModel:
             res = self.picinfos.load_files(self, suffix="L")
             digpicinfos = PicInfo(self.diglotView)
             if digpicinfos.load_files(self.diglotView, suffix="R"):
-                self.picinfos.merge("L", "R", digpicinfos)
+                self.picinfos.merge("L", "R", digpicinfos, mergeCaptions=self.get("c_diglot2captions", False))
         if res:
             self.savePics(fromdata=fromdata)
         elif mustLoad:

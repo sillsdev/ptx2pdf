@@ -25,7 +25,7 @@ _form_structure = {
 
 _singlefields = ("anchor", "caption", "src", "ref", "alt")
 
-_piclistfields = ["anchor", "caption", "src", "size", "scale", "pgpos", "ref", "alt", "copy", "mirror", 
+_piclistfields = ["anchor", "caption", "src", "size", "scale", "pgpos", "ref", "alt", "copy", "mirror", "captionR",
                   "disabled", "cleardest", "key", "media"]
 _pickeys = {k:i for i, k in enumerate(_piclistfields)}
 
@@ -90,8 +90,9 @@ class PicList:
         self.model.refilter()
 
     def modify_font(self, p):
-        w = self.builder.get_object("cr_caption")
-        w.set_property("font-desc", p)
+        for a in ["cr_caption", "cr_caption2"]:
+            w = self.builder.get_object(a)
+            w.set_property("font-desc", p)
 
     def isEmpty(self):
         return len(self.model) == 0
@@ -124,6 +125,8 @@ class PicList:
                         val = False
                     elif e == "disabled":
                         val = v.get(e, False)
+                    elif e == 'captionR':
+                        val = v.get(e, v.get('captionL', ""))
                     # elif e == "media":
                         # val = v.get(e, None)
                         # if val is None:

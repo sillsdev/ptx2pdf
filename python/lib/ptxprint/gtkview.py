@@ -306,13 +306,13 @@ _horiz = {
     "-":        "-"
 }
 
-_allcols = ["anchor", "caption", "file", "frame", "scale", "posn", "ref", "mirror", "desc", "copy", "media"]
+_allcols = ["anchor", "caption", "file", "frame", "scale", "posn", "ref", "mirror", "caption2", "desc", "copy", "media", ]
 
 _selcols = {
     "settings":  ["anchor", "caption",         "desc"],
-    "details":   ["anchor", "caption", "file", "frame", "scale", "posn", "ref", "mirror", "desc", "copy", "media"],
+    "details":   ["anchor", "caption", "file", "frame", "scale", "posn", "ref", "mirror", "caption2", "desc", "copy", "media"],
     "checklist": ["anchor", "caption", "file", "desc"]
-}
+} 
 
 _availableColophons = ("fr", "es") # update when .json file gets expanded
 _defaultColophon = r"""\pc \zcopyright
@@ -1350,6 +1350,7 @@ class GtkViewModel(ViewModel):
                 doclear = False
             rnd = self.get("c_randomPicPosn")
             cols = 2 if self.get("c_doublecolumn") else 1
+            mrgCptn = self.get("c_diglot2captions")
             if self.diglotView is None:
                 PicInfoUpdateProject(self, procbks, ab, self.picinfos, random=rnd, cols=cols, doclear=doclear, clearsuffix=True)
             else:
@@ -1360,9 +1361,9 @@ class GtkViewModel(ViewModel):
                 PicInfoUpdateProject(self.diglotView, procbks, diallbooks,
                                      self.picinfos, suffix="R", random=rnd, cols=cols, doclear=False)
                 if mode == "pri":
-                    self.picinfos.merge("L", "R", mergeCaptions=True)
+                    self.picinfos.merge("L", "R", mergeCaptions=mrgCptn)
                 elif mode == "sec":
-                    self.picinfos.merge("R", "L", mergeCaptions=True)
+                    self.picinfos.merge("R", "L", mergeCaptions=mrgCptn)
             self.updatePicList(procbks)
             self.savePics()
             if self.get('r_generate') == 'all':
@@ -3569,3 +3570,9 @@ class GtkViewModel(ViewModel):
     def onXrefRuleClicked(self, btn):
         status = self.sensiVisible("c_xrefrule")
         self.builder.get_object("rule_xref").set_visible(status)
+
+    def diglotPicListSourcesChanged(self, btn):
+        status = not self.get("fcb_diglotPicListSources") == "bth"
+        self.builder.get_object("c_diglot2captions").set_sensitive(status)
+        self.set("c_diglot2captions", status)
+        
