@@ -239,6 +239,9 @@ class Reference:
             v = v - cls.vrs[ind][c]
         return cls(allbooks[ind], c+1, v)
 
+    def allrefs(self):
+        yield self
+
 
 class RefRange:
     ''' Inclusive range of verses with first and last '''
@@ -296,7 +299,7 @@ class RefRange:
         return res
 
     def allrefs(self):
-        vrs = Reference.vrs or Reference.loadvrs()
+        vrs = self.first.vrs or Reference.loadvrs()
         r = self.first.copy()
         maxvrs = vrs[books[r.book]][r.chap] - (vrs[books[r.book]][r.chap-1] if r.chap > 1 else 0)
         while r <= self.last:
@@ -307,6 +310,8 @@ class RefRange:
                 r.verse = 1
                 if r.chap >= len(vrs[books[r.book]]):
                     newbk = books[r.book] + 1
+                    while newbk < len(allbooks) and allbooks[newbk] not in books:
+                        newbk += 1
                     if newbk >= len(allbooks):
                         return
                     r.book = allbooks[newbk]
