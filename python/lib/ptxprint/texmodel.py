@@ -262,7 +262,7 @@ ModelMap = {
     "footer/ftrcenter":         ("ecb_ftrcenter", lambda w,v: v or "-empty-"),
     "footer/ifftrtitlepagenum": ("c_pageNumTitlePage", lambda w,v: "" if v else "%"),
     "footer/ifprintconfigname": ("c_printConfigName", lambda w,v: "" if v else "%"),
-    "footer/noinkinfooter":     ("c_noInkFooter", None),
+    # "footer/noinkinfooter":     ("c_noInkFooter", None),
 
     "notes/includefootnotes":   ("c_includeFootnotes", lambda w,v: "%" if v else ""),
     "notes/fneachnewline":      ("c_fneachnewline", lambda w,v: "%" if v else ""),

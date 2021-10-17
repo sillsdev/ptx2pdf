@@ -721,7 +721,7 @@ class GtkViewModel(ViewModel):
                 
         for nbp in ["nbk_fnxr", "nbk_PicList"]:
             self.builder.get_object(nbp).set_current_page(0)
-        
+
         self.noInternetClicked(None)
         self.colorTabs()
         self.mw.resize(200, 200)
@@ -1108,7 +1108,7 @@ class GtkViewModel(ViewModel):
 
         pi = " color='"+col+"'" if (self.get("c_inclFrontMatter") or self.get("c_autoToC") or \
            self.get("c_frontmatter") or self.get("c_colophon") or self.get("c_inclBackMatter")) else ""
-        self.builder.get_object("lb_PubInfo").set_markup("<span{}>".format(pi)+_("Peripherals")+"</span>")
+        self.builder.get_object("lb_Peripherals").set_markup("<span{}>".format(pi)+_("Peripherals")+"</span>")
 
         ic = " color='"+col+"'" if self.get("c_includeillustrations") else ""
         self.builder.get_object("lb_Pictures").set_markup("<span{}>".format(ic)+_("Pictures")+"</span>")
