@@ -1,7 +1,11 @@
 PTXprint 2.0 Release Notes 
-18 October 2021
+19 October 2021
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
+
+Bug fixes in 2.0.1 (19 Oct 2021)
+
+  * Fixed Odd changes in v2.0 - Base Paragraph Indent gone wrong #550
 
 Bug fixes and Improvements in 2.0 (18 Oct 2021)
 
