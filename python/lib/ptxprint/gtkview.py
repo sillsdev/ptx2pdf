@@ -723,7 +723,7 @@ class GtkViewModel(ViewModel):
             self.builder.get_object(nbp).set_current_page(0)
 
         self.noInternetClicked(None)
-        self.on2colClicked(self.builder.get_object("c_doublecolumn"))
+        self.updateMarginGraphics()
         self.colorTabs()
         self.mw.resize(200, 200)
 
