@@ -16844,7 +16844,7 @@ markers/styles in the list below.</property>
                                     <property name="search-column">0</property>
                                     <property name="level-indentation">1</property>
                                     <property name="enable-tree-lines">True</property>
-                                    <property name="activate_on-single-click">True</property>
+                                    <property name="activate-on-single-click">True</property>
                                     <child internal-child="selection">
                                       <object class="GtkTreeSelection" id="tsel_Styles"/>
                                     </child>

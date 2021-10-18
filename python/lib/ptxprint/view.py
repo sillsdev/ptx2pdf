@@ -268,8 +268,7 @@ class ViewModel:
                               "FRT book has been copied to the PTXprint settings " + \
                               "location for this publication. It can be edited if " + \
                               "needed on the View+Edit page."))
-            self.generateFrontMatter(frtype="paratext")
-            self.set("c_frontmatter", True)
+            self.set("c_frontmatter", self.generateFrontMatter(frtype="paratext"))
 
     def getAllBooks(self):
         ''' Returns a dict of all books in the project bkid: bookfile_path '''
@@ -957,16 +956,19 @@ class ViewModel:
         return res
 
     def generateFrontMatter(self, frtype="basic", inclcover=False):
-        prjid = self.get("fcb_project")
         destp = self.configFRT()
         if frtype == "basic":
             srcp = os.path.join(os.path.dirname(__file__), "FRTtemplateBasic.txt")
         elif frtype == "advanced":
             srcp = os.path.join(os.path.dirname(__file__), "FRTtemplateAdvanced.txt")
         elif frtype == "paratext":
-            srcp = os.path.join(self.settings_dir, prjid, self.getBookFilename("FRT", prjid))
+            fname = self.getBookFilename("FRT", self.prjid)
+            if fname is None:
+                return False
+            srcp = os.path.join(self.settings_dir, self.prjid, fname)
             
         copyfile(srcp, destp)
+        return True
 
     def generateHyphenationFile(self):
         listlimit = 27836 # 32749

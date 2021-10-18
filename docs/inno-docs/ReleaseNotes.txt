@@ -9,7 +9,7 @@ Bug fixes and Improvements in 2.0 (18 Oct 2021)
 
   * Increase dead cycles from 75 to 100 to prevent giving up with pictures in diglot prematurely 
   
-  * Fixed crash on trying to delete rows from PicList
+  * Fixed crash on trying to delete one or more rows from PicList
   
   * Fixed faulty usfm and usfmerge not breaking nb in diglots
   
