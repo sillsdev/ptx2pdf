@@ -5,9 +5,9 @@ PTXprint 2.0 Release Notes
 
 Bug fixes and Improvements in 2.0 (18 Oct 2021)
 
-  * https://software.sil.org/ptxprint website updated to reflect changes in made in 2.0
+  * https://software.sil.org/ptxprint/whats-new-in-version-2-0/ reflects changes made since 1.0
 
-  * Prevent stopping after 75 dead cycles
+  * Increase dead cycles from 75 to 100 to prevent giving up with pictures in diglot prematurely 
   
   * Fixed crash on trying to delete rows from PicList
   

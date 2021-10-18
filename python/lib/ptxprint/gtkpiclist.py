@@ -449,15 +449,20 @@ class PicList:
         self.select_row(len(self.model)-1)
 
     def del_row(self):
-        model, i = self.selection.get_selected()
-        ci = model.convert_iter_to_child_iter(i)
-        del self.coremodel[ci]
-        ind = model.get_path(i)
-        if ind is None:
+        model, paths = self.selection.get_selected_rows()
+        inds = [model.convert_path_to_child_path(i) for i in paths]
+        for i in reversed(sorted(inds)):
+            ci = self.coremodel.get_iter(i)
+            del self.coremodel[ci]
+        if not len(inds):
             indt = model.get_iter_first()
             if indt is not None:
                 ind = model.get_path(indt)
-        if ind is not None:         # otherwise we have an empty list
+            else:
+                ind = None
+        else:
+            ind = inds[0]
+        if ind is not None:  # otherwise we have an empty list
             self.select_row(ind.get_indices()[0])
 
     def set_src(self, src):
