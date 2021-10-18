@@ -840,7 +840,7 @@ download and use in a publication.</property>
     <property name="type-hint">dialog</property>
     <property name="gravity">center</property>
     <property name="program-name">PTXprint</property>
-    <property name="version">Version 1.9.7</property>
+    <property name="version">Version 2.0</property>
     <property name="copyright">© 2020-2021, SIL International</property>
     <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
 the User-Interface. The PDFs are produced by enhanced 
@@ -1086,14 +1086,12 @@ If in doubt, click Cancel.</property>
                         <property name="can-focus">True</property>
                         <property name="receives-default">False</property>
                         <property name="tooltip-text" translatable="yes">This option will create a COPY of the Paratext project's
-FRT book to be used exclusively by PTXprint. This is
-only necessary if you wish to further edit the front
-matter to make use of PTXprint-specific \zvar|variables\*.
-
-If you just want to use Paratext's FRT book with no
-customization, then select the FRT book from the
-book selector on the Basic tab. In that case, click
-'Cancel' as there is no need to generate Front Matter.</property>
+FRT book to be used exclusively by PTXprint. You can
+edit the front matter to make use of PTXprint-specific
+\zvar|variables\* but note that none of these edits will
+be reflected in Paratext. In addition, if you edit the FRT
+book in Paratext, those changes will not be reflected
+here until you regenerate this (local) Front Matter.</property>
                         <property name="halign">start</property>
                         <property name="draw-indicator">True</property>
                         <property name="group">r_generateFRT_basic</property>
@@ -6284,7 +6282,7 @@ or turn on the Crop marks for the printer.</property>
                                     <property name="tooltip-text" translatable="yes">This is the space between 
 the text of the two columns 
 (measured in millimeters).</property>
-                                    <property name="halign">end</property>
+                                    <property name="halign">start</property>
                                     <property name="valign">center</property>
                                     <property name="width-chars">5</property>
                                     <property name="text">15</property>
@@ -6348,7 +6346,7 @@ Width (mm):</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="tooltip-text" translatable="yes">This setting can raise (if -ve) or lower (if +ve) the starting point of the vertical rule between columns. (Value is pts).</property>
-                                    <property name="halign">end</property>
+                                    <property name="halign">start</property>
                                     <property name="valign">center</property>
                                     <property name="width-chars">5</property>
                                     <property name="text">-2.0</property>
@@ -6387,6 +6385,7 @@ Top (pt):</property>
                                   <object class="GtkSpinButton" id="s_bottomRag">
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
+                                    <property name="halign">start</property>
                                     <property name="adjustment">a_bottomRag</property>
                                   </object>
                                   <packing>
@@ -6455,6 +6454,7 @@ the Two Column layout).</property>
                     </child>
                     <child>
                       <object class="GtkFrame" id="fr_margins">
+                        <property name="width-request">675</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="halign">start</property>

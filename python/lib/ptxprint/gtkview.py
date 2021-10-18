@@ -134,7 +134,7 @@ r_book_module btn_chooseBibleModule lb_bibleModule
 btn_deleteConfig l_notes t_configNotes t_invisiblePassword
 c_pagegutter s_pagegutter l_gutterWidth btn_adjust_spacing
 s_colgutterfactor l_bottomRag s_bottomRag
-fr_margins l_margins s_margins
+fr_margins l_margins s_margins l_topmargin s_topmargin l_btmMrgn s_bottommargin
 l_fontB bl_fontB l_fontI bl_fontI l_fontBI bl_fontBI 
 c_fontFake l_fontBold s_fontBold l_fontItalic s_fontItalic
 fr_writingSystem l_textDirection fcb_textDirection fcb_script l_script
@@ -153,7 +153,7 @@ c_includeillustrations tb_settings lb_settings fr_inclPictures gr_IllustrationOp
 rule_help l_homePage lb_homePage l_createZipArchiveXtra btn_createZipArchiveXtra
 """.split()
 
-_ui_noToggleVisible = ("lb_details", "tb_details", "lb_checklist", "tb_checklist", "ex_styNote")
+_ui_noToggleVisible = ("lb_details", "tb_details", "lb_checklist", "tb_checklist", "ex_styNote") # toggling these causes a crash
                        # "lb_footnotes", "tb_footnotes", "lb_xrefs", "tb_xrefs")  # for some strange reason, these are fine!
 
 _ui_keepHidden = ("btn_download_update", "lb_extXrefs", "l_extXrefsComingSoon", "tb_Logging", "lb_Logging",
@@ -723,6 +723,7 @@ class GtkViewModel(ViewModel):
             self.builder.get_object(nbp).set_current_page(0)
 
         self.noInternetClicked(None)
+        self.on2colClicked(self.builder.get_object("c_doublecolumn"))
         self.colorTabs()
         self.mw.resize(200, 200)
 

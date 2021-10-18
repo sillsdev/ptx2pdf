@@ -1,8 +1,20 @@
-PTXprint 1.9.7 Release Notes 
-16 October 2021
+PTXprint 2.0 Release Notes 
+18 October 2021
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 
+Bug fixes and Improvements in 2.0 (18 Oct 2021)
+
+  * https://software.sil.org/ptxprint website updated to reflect changes in made in 2.0
+
+  * Prevent stopping after 75 dead cycles
+  
+  * Fixed crash on trying to delete rows from PicList
+  
+  * Fixed faulty usfm and usfmerge not breaking nb in diglots
+  
+  * Fixed fn/xr callers/callees in headings and diglots not respecting font settings #541
+  
 Bug fixes and Improvements in 1.9.7 (16 Oct 2021)
 
   * Allow better control over Dual Captions in diglots (and show in PicList table)
