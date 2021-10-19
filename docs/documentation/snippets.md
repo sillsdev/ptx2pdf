@@ -135,6 +135,17 @@ ideal for a list of glossary items. This replaces the \\p with \\ili only in the
 at GLO "\\p \\k " > "\\ili \\k "
 ```
 
+## Make each chapter start on a new page
+
+If you are wanting to produce a kid's chapter book of scripture with each chapter starting
+on a new page, then set the chapter label to something appropriate, like 'Chapter' and apply
+this rule to force a new page before the chapter begins, followed by a short rule under the
+chapter title.
+
+```perl
+"(\\c \d+)" > "\\pb\n\1\n\\zrule|\\*"
+```
+
 ## Fancy book separators from Heading information
 
 Use the Header text for a book's title page along with a language-specific sub-heading.
@@ -154,27 +165,44 @@ We grab 4 capture groups:
 Then we assemble the output string that we need using those components. 
 We also throw in some vertical space, a horizontal rule followed by a pagebreak.
 
-## To be done later
+## Add a rule after the intro (for all books)
+
+Use a hoizontal rule (line) after the introductory outline, before the 1st chapter.
 
 ```perl
-# Stick in a hoizontal rule after the intro outline, before the 1st chapter
 '(\\c 1 ?\r?\n)' > '\\zrule\\*\r\n\1 '
+```
 
-# Just for the gospel of Mark, insert a page break BEFORE the title of the Introductory Outline
-# at MRK "(\\iot Outline)" > "\pb\r\n\1" 
+## Add a rule before the introductory outline
 
-# Turn short q1 and q2 into merged \q1 with artificial q2 
-"\\q2 " > ""
-"(\\q1(?:[^\\]|(\\[fx]).*?\2\*|\\v)+?)\\q1" > "\1\\q2"
-# "(\\q1 [^\\]+?)\\q1 " > "\1\\q2 "
+Just for the gospel of Mark, insert a page break BEFORE the title of the Introductory Outline.
 
-# Push a particular section heading in the TDX book onto the next page
+```perl
+at MRK "(\\iot Outline)" > "\pb\r\n\1" 
+```
+
+## Insert pagebreak at specific location
+
+Push a particular section heading in the TDX book onto the next page.
+
+```perl
 at TDX "(\\s1 Parables Jesus Told)" > "\\pb\r\n\1"
+```
 
-# Remove any trailing space at the end of the \\ior marker to eliminate a jagged right edge when justified
+## Make the ending of \\ior markers consistent
+
+Remove any trailing space at the end of the \\ior marker to eliminate a jagged right edge 
+when justified for a fancy intro outline table.
+
+```perl
 ' (\\ior\*)' > '\1'
+```
 
-# Insert Pictures that haven't yet been included in the USFM text
-# at EPH 6:13 "(armed soldier.)" > '\1\\fig Soldier with armour|alt="Map Creator soldier with armour" src="ESG Armor of God(v2).png" size="col" ref="6:14-18"\\fig*'
+## Insert picture at a particular reference
 
+Usually pictures are defined in the USFM text, or added manually in the PicList. But if you need to 
+insert pictures through the specified changes, then this trick is useful.
+
+```perl
+at EPH 6:13 "(armed soldier.)" > '\1\\fig Soldier with armour|alt="Map Creator soldier with armour" src="ESG Armor of God(v2).png" size="col" ref="6:14-18"\\fig*'
 ```
