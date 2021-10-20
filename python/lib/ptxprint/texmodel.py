@@ -1058,7 +1058,6 @@ class TexModel:
             
     def _makeUSFM(self, txtlines, bk):
         syntaxErrors = []
-        import pdb; pdb.set_trace()
         try:
             doc = Usfm(txtlines, self.sheets)
             doc.normalise()
