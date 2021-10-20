@@ -1,7 +1,17 @@
 PTXprint 2.0.1 Release Notes 
-19 October 2021
+20 October 2021
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
+
+Bug fixes in 2.0.2 (20 Oct 2021)
+
+  * Fixed erroneous error message #552
+  
+  * Added missing eng.vrs file for referencing to work properly
+  
+  * Fixed style editor issues when adding new markers
+  
+  * Handle 'at REF' change specification better for bridged verses
 
 Bug fixes in 2.0.1 (19 Oct 2021)
 

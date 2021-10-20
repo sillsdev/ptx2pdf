@@ -1068,7 +1068,8 @@ class TexModel:
             traceback.print_exc()
         if len(syntaxErrors):
             dlgtitle = "PTXprint [{}] - USFM Text Error!".format(self.VersionStr)
-            print(syntaxErrors[0])
+            # print(syntaxErrors[0])
+            # logger.info(syntaxErrors[0])
             errbits = re.match(r"(\S+) (...) line: (\d+),\d+: orphan marker (\\.+?)", syntaxErrors[0])
             if errbits is not None:
                 self.printer.doError("Syntax Error warning: ",        
