@@ -341,11 +341,11 @@ class parser(sfm.parser):
             return False
         if 'NoteText' in parent.meta.get('TextType', []) \
                      or parent.meta.get('StyleType', None) == 'Character':
-            self._error(ErrorLevel.Note,
-                        'implicit end marker before {token}: \\{0.name} '
-                        '(line {0.pos.line},{0.pos.col}) '
-                        'should be closed with \\{1}', tok, parent,
-                        parent.meta['Endmarker'])
+            #self._error(ErrorLevel.Note,
+            #            'implicit end marker before {token}: \\{0.name} '
+            #            '(line {0.pos.line},{0.pos.col}) '
+            #            'should be closed with \\{1}', tok, parent,
+            #            parent.meta['Endmarker'])
             return False
         meta = self.__get_style(tag.name)
         occurs = meta['OccursUnder']

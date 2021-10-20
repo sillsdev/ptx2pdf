@@ -1011,7 +1011,7 @@ class TexModel:
                                         show=not printer.get("c_quickRun"))
                         self.interlinear.fails = []
 
-            if self.changes is not None:
+            if self.changes is not None and len(self.changes):
                 if doc is not None:
                     dat = str(doc)
                     doc = None
@@ -1058,6 +1058,7 @@ class TexModel:
             
     def _makeUSFM(self, txtlines, bk):
         syntaxErrors = []
+        import pdb; pdb.set_trace()
         try:
             doc = Usfm(txtlines, self.sheets)
             doc.normalise()

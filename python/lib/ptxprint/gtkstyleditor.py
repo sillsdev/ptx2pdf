@@ -532,8 +532,9 @@ class StyleEditorView(StyleEditor):
         for k, v in dialogKeys.items():
             if k == "OccursUnder":
                 self.model.set(v, " ".join(sorted(self.getval(self.marker, k, set()))))
-            elif self.getval(self.marker, k) is not None:
-                self.model.set(v, self.getval(self.marker, k, ''))
+            else:
+                self.model.set(v, self.getval(self.marker, k, '') or "")
+                # print(f"setting {self.marker}:{k} = {self.getval(self.marker, k, '')}")
         self.model.set(dialogKeys['Marker'], '' if newkey else self.marker)
         wid = self.builder.get_object(dialogKeys['Marker'])
         if wid is not None:
