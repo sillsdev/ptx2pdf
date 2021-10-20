@@ -4,6 +4,7 @@ import re, sys, os
 from ptxprint.utils import chaps, oneChbooks, books, allbooks, binsearch
 from base64 import b64encode
 from functools import reduce
+import json
 
 startchaps = list(zip([b for b in allbooks if 0 < int(chaps[b]) < 999],
                       reduce(lambda a,x: a + [a[-1]+x], (int(chaps[b]) for b in allbooks if 0 < int(chaps[b]) < 999), [0])))
@@ -264,16 +265,16 @@ class RefRange:
         return self.first == other.first and self.last == other.last
 
     def __lt__(self, o):
-        return self.last <= o if isinstance(o, Reference) else self.last <= o.first
+        return self.last <= o.first
 
     def __le__(self, o):
-        return self.last <= (o if isinstance(o, Reference) else o.last)
+        return self.last <= o.last
 
     def __gt__(self, o):
-        return self.first >= o if isinstance(o, Reference) else self.first >= o.last
+        return self.first >= o.last
 
     def __ge__(self, o):
-        return self.first >= (o if isinstance(o, Reference) else o.first)
+        return self.first >= o.first
 
     def __hash__(self):
         return hash((self.first, self.last))
@@ -527,6 +528,13 @@ class RefList(list):
             else:
                 yield r
 
+class RefJSONEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, (Reference, RefRange, RefList)):
+            return str(obj)
+        elif isinstance(obj, set):
+            return sorted(obj)
+        return super()(obj)
 
 class TestException(Exception):
     pass
