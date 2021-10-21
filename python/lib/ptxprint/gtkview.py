@@ -2371,6 +2371,8 @@ class GtkViewModel(ViewModel):
             self.builder.get_object("lb_working_dir").set_label(outputfolder)
             
     def updateProjectSettings(self, prjid, saveCurrConfig=False, configName=None, readConfig=False):
+        if prjid == self.prjid and configName == self.configId:
+            return True
         self.picListView.clear()
         if self.picinfos is not None:
             self.picinfos.clear()
