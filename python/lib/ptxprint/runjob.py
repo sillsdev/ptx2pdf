@@ -524,21 +524,25 @@ class RunJob:
                 if os.path.exists(ptxmacrospath):
                     break
 
-        pathjoin = (";" if sys.platform=="win32" else ":").join
+        pathjoiner = (";" if sys.platform=="win32" else ":")
         envtexinputs = os.getenv("TEXINPUTS")
-        texinputs = [envtexinputs] if envtexinputs is not None and len(envtexinputs) else []
-        texinputs += [os.path.abspath(self.tmpdir), ptxmacrospath]
+        texinputs = envtexinputs.split(pathjoiner) if envtexinputs is not None and len(envtexinputs) else []
+        for a in (os.path.abspath(self.tmpdir), ptxmacrospath):
+            if a not in texinputs:
+                texinputs.append(a)
         # print("TEXINPUTS=",os.getenv('TEXINPUTS'))
         miscfonts = getfontcache().fontpaths
         if sys.platform != "win32":
-            texinputs += ["/usr/share/ptx2pdf/texmacros"]
+            a = "/usr/share/ptx2pdf/texmacros"
+            if a not in texinputs:
+                texinputs.append(a)
             miscfonts.append("/usr/share/ptx2pdf/texmacros")
         miscfonts.append(ptxmacrospath)
         miscfonts.append(os.path.join(self.tmpdir, "shared", "fonts"))
         if len(miscfonts):
-            os.putenv("MISCFONTS", pathjoin(miscfonts))
+            os.putenv("MISCFONTS", pathjoiner.join(miscfonts))
         # print(f"{pathjoin(miscfonts)=}")
-        os.putenv('TEXINPUTS', pathjoin(texinputs))
+        os.putenv('TEXINPUTS', pathjoiner.join(texinputs))
         if self.nothreads:
             self.run_xetex(outfname, info)
         else:
