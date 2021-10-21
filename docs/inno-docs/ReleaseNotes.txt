@@ -1,8 +1,20 @@
 PTXprint 2.0.2 Release Notes 
-20 October 2021
+21 October 2021
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 
+Bug fixes in 2.0.3 (21 Oct 2021)
+
+  * Fixed spaces in the caller area of the footnotes #557
+  
+  * Fixed font codes leaving a space in footnotes (v2.0.2) #556
+  
+  * Fixed repetitive use of PTXprint (for >3 hours?) causes a ValueError #555
+  
+  * Fixed (?) Glossary Words Markup Style selector not working
+  
+  * Fixed PicList blanks out when config name is edited but not changed
+  
 Bug fixes in 2.0.2 (20 Oct 2021)
 
   * Fixed erroneous error message #552
