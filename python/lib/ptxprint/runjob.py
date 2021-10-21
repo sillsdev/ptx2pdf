@@ -197,10 +197,7 @@ class RunJob:
         self.prjdir = os.path.join(self.args.paratext, self.prjid)
         if self.prjid is None or not len(self.prjid):     # can't print no project
             return
-        if info.asBool("project/useprintdraftfolder") or self.args.directory is None:
-            self.tmpdir = os.path.join(self.prjdir, 'local', 'ptxprint', configid)
-        else:
-            self.tmpdir = self.args.directory
+        self.tmpdir = os.path.join(self.prjdir, 'local', 'ptxprint', configid)
         os.makedirs(self.tmpdir, exist_ok=True)
         jobs = self.printer.getBooks(files=True)
 

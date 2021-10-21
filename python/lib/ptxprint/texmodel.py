@@ -465,12 +465,8 @@ class TexModel:
             self.update()
 
     def docdir(self):
-        if self.asBool("project/useprintdraftfolder"):
-            base = os.path.join(self.dict["/ptxpath"], self.dict["project/id"])
-            docdir = os.path.join(base, 'local', 'ptxprint', self.printer.configName())
-        else:
-            base = self.printer.working_dir
-            docdir = base
+        base = os.path.join(self.dict["/ptxpath"], self.dict["project/id"])
+        docdir = os.path.join(base, 'local', 'ptxprint', self.printer.configName())
         return docdir, base
 
     def update(self):
