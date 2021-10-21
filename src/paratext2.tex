@@ -209,7 +209,7 @@
     \ifdim\wd0>0pt\ifdim\wd0<\NoteCallerWidth% Allow for wide callers, but standardise normal callers to \NoteCallerWidth, for better alignment
       \setbox0=\hbox{\hbox to \NoteCallerWidth{\hfil\box0\hfil}}%
     \fi\fi
-    \setbox1=\copy0\unhbox1\ifdim\wd0>0pt\kern.2em\fi
+    \setbox1=\copy0\unhbox1\ifdim\wd0>0pt\kern\NoteCallerSpace\fi
   \fi
   % currently we do not allow footnotes to break to the next page, so this may not be necessary
 %  \splittopskip\ht\f@@tstrut % top baseline for broken footnotes

@@ -555,7 +555,7 @@ class parser(collections.Iterable):
         self._default_meta = default_meta
         self._pua_prefix = private_prefix
         if tokeniser is None:
-            tokeniser = re.compile(rf'(?:\\(?:{tag_escapes})|[^\\])+|\\[^\s\\|]+',
+            tokeniser = re.compile(rf'(?:\\(?:{tag_escapes})|[^\\])+|\\[^\s\\|*]+\*?',
                 re.DOTALL | re.UNICODE)
         self._tokens = _put_back_iter(self.__lexer(source, tokeniser))
         self._error_level = error_level

@@ -1164,7 +1164,7 @@ class TexModel:
             sscript = getattr(scriptsnippets, script[8:].lower(), None)
             if sscript is not None:
                 self.changes.extend(sscript.regexes(self))
-        self.changes.append((None, regex.compile(r"(?<=\\[^\\\s]+)\*(?=\S)", flags=regex.S), "* "))
+        #self.changes.append((None, regex.compile(r"(?<=\\[^\\\s]+)\*(?=\S)", flags=regex.S), "* "))
         if self.printer is not None and self.printer.get("c_tracing"):
             print("List of PrintDraftChanges:-------------------------------------------------------------")
             report = "\n".join("{} -> {}".format(p[1].pattern, p[2]) for p in self.changes)
