@@ -4,7 +4,7 @@ from ptxprint.texmodel import ModelMap, TexModel, Borders
 from ptxprint.ptsettings import ParatextSettings
 from ptxprint.font import TTFont, cachepath, cacheremovepath, FontRef, getfontcache, writefontsconf
 from ptxprint.utils import _, refKey, universalopen, print_traceback, local2globalhdr, \
-                            global2localhdr, asfloat, allbooks, books, bookcodes, chaps, f2s
+                            global2localhdr, asfloat, allbooks, books, bookcodes, chaps, f2s, pycodedir
 from ptxprint.usfmutils import Sheets, UsfmCollection, Usfm
 from ptxprint.piclist import PicInfo, PicChecks
 from ptxprint.styleditor import StyleEditor
@@ -47,7 +47,7 @@ class Path(pathlib.Path):
         res = {}
         for k, v in varpaths:
             res[k] = pathlib.Path(*[getattr(aView, x) for x in v])
-        res['pdfassets'] = pathlib.Path(os.path.abspath(os.path.dirname(__file__)), 'PDFassets')
+        res['pdfassets'] = pathlib.Path(pycodedir(), 'PDFassets')
         return res
 
     def __new__(cls, txt, view=None):
@@ -499,7 +499,7 @@ class ViewModel:
             return "PTXprint {}  -  {}  ({})".format(VersionStr, prjcfg, bks)
 
     def readCopyrights(self):
-        with open(os.path.join(os.path.dirname(__file__), "picCopyrights.json"), encoding="utf-8", errors="ignore") as inf:
+        with open(os.path.join(pycodedir(), "picCopyrights.json"), encoding="utf-8", errors="ignore") as inf:
             self.copyrightInfo = json.load(inf)
         fname = os.path.join(self.settings_dir, self.prjid, "shard", "ptxprint", "picCopyrights.json")
         if os.path.exists(fname):
@@ -958,9 +958,9 @@ class ViewModel:
     def generateFrontMatter(self, frtype="basic", inclcover=False):
         destp = self.configFRT()
         if frtype == "basic":
-            srcp = os.path.join(os.path.dirname(__file__), "FRTtemplateBasic.txt")
+            srcp = os.path.join(pycodedir(), "FRTtemplateBasic.txt")
         elif frtype == "advanced":
-            srcp = os.path.join(os.path.dirname(__file__), "FRTtemplateAdvanced.txt")
+            srcp = os.path.join(pycodedir(), "FRTtemplateAdvanced.txt")
         elif frtype == "paratext":
             fname = self.getBookFilename("FRT", self.prjid)
             if fname is None:

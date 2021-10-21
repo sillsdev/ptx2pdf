@@ -3,6 +3,7 @@ import re, os
 from struct import pack, unpack
 import pickle, bz2, copy
 from ptxprint.sfm.ucd import normal_ucd
+from ptxprint.utils import pycodedir
 
 NONIGNORE = 0
 BLANK = 1
@@ -17,7 +18,7 @@ class DUCET(dict):
         if basedict is not None:
             super().__init__(basedict)
         if localfile is None:
-            localfile = os.path.join(os.path.dirname(__file__), "allkeys.txt")
+            localfile = os.path.join(pycodedir(), "sfm", "allkeys.txt")
         self.implicits = []
         self.specials = {   'first tertiary ignorable': (0, 0, 0),
                             'last tertiary ignorable': (0, 0, 0),

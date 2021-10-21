@@ -21,6 +21,7 @@ the object interface:
 import array, pickle
 import xml.etree.ElementTree as et
 import os, bz2, zipfile
+from ptxprint.utils import pycodedir
 
 __all__ = ['get_ucd']
 # Unicode data xml attributes
@@ -92,7 +93,7 @@ class UCD(list):
         else:
             cls._singletemp = list.__new__(cls)
         if localfile is None:
-            localfile = os.path.join(os.path.dirname(__file__), "ucdata_pickle.bz2")
+            localfile = os.path.join(pycodedir(), "sfm", "ucdata_pickle.bz2")
         if not os.path.exists(localfile):
             res = cls._singletemp
         elif localfile.endswith(".bz2"):

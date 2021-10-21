@@ -6,6 +6,7 @@ from ptxprint.pdfrw.uncompress import uncompress, streamobjects
 from ptxprint.pdfrw.py23_diffs import zlib, convert_load, convert_store
 from PIL.ImageCms import applyTransform, buildTransform
 from PIL import Image
+from ptxprint.utils import pycodedir
 
 import re, os
 
@@ -191,7 +192,7 @@ def fixpdfrgb(trailer, **kw):
         iccprofile[PdfName('Binary')] = True
         iccdat = iccprofile.stream
     if iccdat is None:
-        iccfile = os.path.join(os.path.dirname(__file__), "..", "sRGB.icc")
+        iccfile = os.path.join(pycodedir(), "sRGB.icc")
         if os.path.exists(iccfile):
             with open(iccfile, "rb") as inf:
                 iccdat = inf.read()

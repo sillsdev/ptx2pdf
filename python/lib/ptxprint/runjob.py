@@ -540,6 +540,7 @@ class RunJob:
             os.putenv("MISCFONTS", pathjoiner.join(miscfonts))
         # print(f"{pathjoin(miscfonts)=}")
         os.putenv('TEXINPUTS', pathjoiner.join(texinputs))
+        os.chdir(self.tmpdir)
         if self.nothreads:
             self.run_xetex(outfname, info)
         else:

@@ -31,11 +31,12 @@ import os
 import pickle
 import re
 import site
+from ptxprint.utils import pycodedir
 
 _PALASO_DATA = os.path.join(
     site.getuserbase(),
     'ptxprint', 'sfm')
-_package_dir = os.path.dirname(__file__)
+_package_dir = os.path.join(pycodedir(), 'sfm')
 
 
 def _check_paths(pred, paths):

@@ -21,7 +21,7 @@ import xml.etree.ElementTree as et
 from ptxprint.font import TTFont, initFontCache, fccache, FontRef, parseFeatString
 from ptxprint.view import ViewModel, Path, VersionStr
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal, setFontButton, makeSpinButton
-from ptxprint.utils import APP, setup_i18n, brent, xdvigetpages, allbooks, books, bookcodes, chaps, print_traceback
+from ptxprint.utils import APP, setup_i18n, brent, xdvigetpages, allbooks, books, bookcodes, chaps, print_traceback, pycodedir
 from ptxprint.ptsettings import ParatextSettings
 from ptxprint.gtkpiclist import PicList
 from ptxprint.piclist import PicChecks, PicInfoUpdateProject
@@ -430,7 +430,7 @@ class GtkViewModel(ViewModel):
         self.radios = {}
         GLib.set_prgname("ptxprint")
         self.builder = Gtk.Builder()
-        gladefile = os.path.join(os.path.dirname(__file__), "ptxprint.glade")
+        gladefile = os.path.join(pycodedir(), "ptxprint.glade")
         GObject.type_register(GtkSource.View)
         GObject.type_register(GtkSource.Buffer)
         tree = et.parse(gladefile)
@@ -441,7 +441,7 @@ class GtkViewModel(ViewModel):
                 del node.attrib['translatable']
             nid = node.get('id')
             if node.get('name') in ('pixbuf', 'icon', 'logo'):
-                node.text = os.path.join(os.path.dirname(__file__), node.text)
+                node.text = os.path.join(pycodedir(), node.text)
             if nid is None:
                 pass
             elif nid == 'txbf_colophon':
@@ -2363,7 +2363,7 @@ class GtkViewModel(ViewModel):
 
     def updatePrjLinks(self):
         if self.settings_dir != None and self.prjid != None:
-            self.builder.get_object("lb_ptxprintdir").set_label(os.path.dirname(__file__))
+            self.builder.get_object("lb_ptxprintdir").set_label(pycodedir())
             self.builder.get_object("lb_prjdir").set_label(os.path.join(self.settings_dir, self.prjid))
             self.builder.get_object("lb_settings_dir").set_label(self.configPath(cfgname=self.configName()) or "")
             outputfolder =  self.working_dir.strip(self.configName()) or ""
@@ -2697,27 +2697,27 @@ class GtkViewModel(ViewModel):
 
     def onWatermarkPDFclicked(self, btn_selectWatermarkPDF):
         self._onPDFClicked(_("Select Watermark PDF file"), True,
-                os.path.join(os.path.dirname(__file__), "PDFassets", "watermarks"),
+                os.path.join(pycodedir(), "PDFassets", "watermarks"),
                 "applyWatermark", "watermarks", btn_selectWatermarkPDF)
 
     def onPageBorderPDFclicked(self, btn_selectPageBorderPDF):
         self._onPDFClicked(_("Select Page Border PDF file"), True,
-                os.path.join(os.path.dirname(__file__), "PDFassets", "border-art"),
+                os.path.join(pycodedir(), "PDFassets", "border-art"),
                 "inclPageBorder", "pageborder", btn_selectPageBorderPDF)
 
     def onSectionHeaderPDFclicked(self, btn_selectSectionHeaderPDF):
         self._onPDFClicked(_("Select Section Header PDF file"), True,
-                os.path.join(os.path.dirname(__file__), "PDFassets", "border-art"),
+                os.path.join(pycodedir(), "PDFassets", "border-art"),
                 "inclSectionHeader", "sectionheader", btn_selectSectionHeaderPDF)
 
     def onEndOfBookPDFclicked(self, btn_selectEndOfBookPDF):
         self._onPDFClicked(_("Select End of Book PDF file"), True,
-                os.path.join(os.path.dirname(__file__), "PDFassets", "border-art"),
+                os.path.join(pycodedir(), "PDFassets", "border-art"),
                 "inclEndOfBook", "endofbook", btn_selectEndOfBookPDF)
 
     def onVerseDecoratorPDFclicked(self, btn_selectVerseDecoratorPDF):
         self._onPDFClicked(_("Select Verse Decorator PDF file"), True,
-                os.path.join(os.path.dirname(__file__), "PDFassets", "border-art"),
+                os.path.join(pycodedir(), "PDFassets", "border-art"),
                 "inclVerseDecorator", "versedecorator", btn_selectVerseDecoratorPDF)
 
     def onEditAdjListClicked(self, btn_editParaAdjList):
@@ -2900,7 +2900,7 @@ class GtkViewModel(ViewModel):
             return(False)
 
     def onPTXprintDocsDirClicked(self, btn):
-        self.openFolder(os.path.join(os.path.dirname(__file__),''))
+        self.openFolder(os.path.join(pycodedir(),''))
         
     def onOpenFolderPrjDirClicked(self, btn):
         self.openFolder(os.path.join(self.settings_dir, self.prjid))

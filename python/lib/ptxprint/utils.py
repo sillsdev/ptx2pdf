@@ -36,6 +36,7 @@ oneChbooks = [b.split("|")[0] for b in _bookslist.split() if b[-2:] == "|1"]
 APP = 'ptxprint'
 
 _ = gettext.gettext
+__file__ = os.path.abspath(__file__)
 
 lang = None
 
@@ -221,6 +222,9 @@ elif sys.platform == "win32":
 
     def queryvalue(base, value):
         return winreg.QueryValueEx(base, value)[0]
+
+def pycodedir():
+    return os.path.abspath(os.path.dirname(__file__))
 
 def pt_bindir():
     res = getattr(sys, '_MEIPASS', os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..')))

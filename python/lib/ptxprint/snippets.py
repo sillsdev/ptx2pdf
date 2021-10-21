@@ -2,6 +2,7 @@ import re, os
 import regex
 from .texmodel import universalopen
 from .ptsettings import bookcodes
+from .utils import pycodedir
 
 class Snippet:
     order = 0
@@ -164,7 +165,7 @@ class PDFx1aOutput(Snippet):
 """
         extras = {'_gtspdfx': '', '_gtspdfaid': ''}
         pdftype = model['snippets/pdfoutput'] or "None"
-        libpath = os.path.abspath(os.path.dirname(__file__))
+        libpath = pycodedir()
         if pdftype in ("None", "CMYK"):
             extras['_gtspdfx'] = "/GTS_PDFXVersion(PDF/X-4)%\n"
         else:

@@ -1,7 +1,7 @@
 
 from collections import namedtuple
 import re, sys, os
-from ptxprint.utils import chaps, oneChbooks, books, allbooks, binsearch
+from ptxprint.utils import chaps, oneChbooks, books, allbooks, binsearch, pycodedir
 from base64 import b64encode
 from functools import reduce
 import json
@@ -70,7 +70,7 @@ class Reference:
     @classmethod
     def loadvrs(cls, fname=None):
         if fname is None:
-            fname = os.path.join(os.path.dirname(__file__), 'eng.vrs')
+            fname = os.path.join(pycodedir(), 'eng.vrs')
         cls.vrs = readvrs(fname)
         return cls.vrs
 
