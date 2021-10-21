@@ -10,7 +10,7 @@ from ptxprint import sfm
 from ptxprint.sfm import usfm, style, Text
 from ptxprint.usfmutils import Usfm, Sheets, isScriptureText, Module
 from ptxprint.utils import _, universalopen, localhdrmappings, pluralstr, multstr, coltoonemax, \
-                            chaps, books, bookcodes, allbooks, oneChbooks, asfloat, f2s, cachedData
+                            chaps, books, bookcodes, allbooks, oneChbooks, asfloat, f2s, cachedData, pycodedir
 from ptxprint.dimension import Dimension
 import ptxprint.scriptsnippets as scriptsnippets
 from ptxprint.interlinear import Interlinear
@@ -451,7 +451,7 @@ class TexModel:
         self.interlinear = None
         self.imageCopyrightLangs = {}
         self.frontperiphs = None
-        libpath = os.path.abspath(os.path.dirname(__file__))
+        libpath = pycodedir()
         self.dict = {"/ptxpath": str(path).replace("\\","/"),
                      "/ptxprintlibpath": libpath.replace("\\","/"),
                      "/iccfpath": os.path.join(libpath, "default_cmyk.icc").replace("\\","/"),
@@ -756,7 +756,7 @@ class TexModel:
         self.dict['project/colophontext'] = re.sub(r'://', r':/ / ', self.dict['project/colophontext'])
         self.dict['project/colophontext'] = re.sub(r"(?i)(\\zimagecopyrights)([A-Z]{2,3})", \
                 lambda m:m.group(0).lower(), self.dict['project/colophontext'])
-        with universalopen(os.path.join(os.path.dirname(__file__), template)) as inf:
+        with universalopen(os.path.join(pycodedir(), template)) as inf:
             for l in inf.readlines():
                 if l.startswith(r"%\ptxfile"):
                     res.append(r"\PtxFilePath={"+os.path.relpath(filedir, docdir).replace("\\","/")+"/}")
@@ -1604,7 +1604,7 @@ class TexModel:
                         v = [RefList.fromStr(s) for s in d]
                         results[v[0][0]] = v[1:]
                     return results
-                self.__class__._crossRefInfo = cachedData(os.path.join(os.path.dirname(__file__), "cross_references.txt"), procxref)
+                self.__class__._crossRefInfo = cachedData(os.path.join(pycodedir(), "cross_references.txt"), procxref)
             self.xrefdat = self.__class__._crossRefInfo
         results = {}
         for k, v in self.xrefdat.items():

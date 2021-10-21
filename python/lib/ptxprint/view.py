@@ -107,7 +107,6 @@ class ViewModel:
 
     def __init__(self, settings_dir, workingdir, userconfig, scriptsdir, args=None):
         self.settings_dir = settings_dir        # ~/Paratext8Projects
-        self.fixed_wd = workingdir != None
         self.working_dir = workingdir           # . or ~/Paratext8Projects/<prj>/PrintDraft
         self.userconfig = userconfig
         self.scriptsdir = scriptsdir
@@ -446,8 +445,7 @@ class ViewModel:
                     self._copyConfig(None, configName, moving=True)
                 else:
                     self._copyConfig(self.configId, configName)
-            if not self.fixed_wd:
-                self.working_dir = os.path.join(self.settings_dir, self.prjid, "local", "ptxprint", configName)
+            self.working_dir = os.path.join(self.settings_dir, self.prjid, "local", "ptxprint", configName)
             oldVersion = self.readConfig(cfgname=configName)
             self.styleEditor.load(self.getStyleSheets(configName))
             self.updateStyles(oldVersion)

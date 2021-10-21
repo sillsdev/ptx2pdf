@@ -978,6 +978,7 @@ class GtkViewModel(ViewModel):
             self.configId = newconfigId
             self.updateSavedConfigList()
             self.set("lb_settings_dir", self.configPath(self.configName()))
+            self.updateProjectSettings(self.prjid, configName=newconfigId, readConfig=True)
             self.updateDialogTitle()
         self.userconfig.set("init", "project", self.prjid)
         self.userconfig.set("init", "nointernet", "true" if self.get("c_noInternet") else "false")
