@@ -687,7 +687,7 @@ class RunJob:
         #    print("Warning: Couldn't Remove Temporary Folders - is a temp file open?")
         cropme = info['document/iffigcrop']
         def carefulCopy(p, src, tgt):
-            ratio = pageRatios[0 if p['size'].startswith("span") else 1]
+            ratio = pageRatios[0 if p['size'].startswith("span") else 1] if p.get('pgpos', 'N') in 'tbhp' else None,
             return self.carefulCopy(ratio, src, tgt, cropme)
         missingPics = []
         if info['document/ifinclfigs'] == 'false':
@@ -761,7 +761,7 @@ class RunJob:
         p = im.load()
         iw = im.size[0]
         ih = im.size[1]
-        if iw/ih < ratio:
+        if ratio is not None and iw/ih < ratio:
             onlyRGBAimage = im.convert("RGBA")
             newWidth = int(ih * ratio)
             compimg = Image.new("RGBA", (newWidth, ih), color=(255, 255, 255, 255))
@@ -807,7 +807,8 @@ class RunJob:
             print(("Failed to get size of (image) file:"), srcpath)
         # If either the source image is a TIF (or) the proportions aren't right for page dimensions 
         # then we first need to convert to a JPG and/or pad with which space on either side
-        if cropme or self.ispdfxa != "None" or iw/ih < ratio or os.path.splitext(srcpath)[1].lower().startswith(".tif"): # (.tif or .tiff)
+        if cropme or self.ispdfxa != "None" or (ratio is not None and iw/ih < ratio) \
+                  or os.path.splitext(srcpath)[1].lower().startswith(".tif"): # (.tif or .tiff)
             tgtpath = os.path.splitext(tgtpath)[0]+".jpg"
             try:
                 self.convertToJPGandResize(ratio, srcpath, tgtpath, cropme)
