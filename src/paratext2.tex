@@ -181,12 +181,21 @@
 %%% single-column notes:
     \interlinepenalty\interfootnotelinepenalty % set penalty to break lines
     \floatingpenalty\@MM % make sure note does not float away from caller to another page
-    \leftskip\z@skip \rightskip\z@skip \spaceskip\z@skip \xspaceskip\z@skip % reset extra space around paragraph 0
+    \lineskiplimit=-10pt\leftskip=0pt\rightskip=0pt\parskip=0pt\parfillskip=0pt plus 1fil%\lineskip=10pt
+    \xspaceskip=0pt
+    \getp@ram{justification}{#2}%
+    \ifx\p@ram\c@nter
+       \leftskip=\noteRag\rightskip=\noteRag
+    \else\ifx\p@ram\l@ft
+       \rightskip=\noteRag
+    \else\ifx\p@ram\r@ght
+       \leftskip=\noteRag
+    \fi\fi\fi
     \ifx\th@sins\relax
       \s@tbaseline{#1}%
     \else
       \ifp@ranotes
-        \baselineskip=0pt\lineskiplimit=0pt
+        \baselineskip=0pt
       \else
         \s@tbaseline{#1}%
       \fi
