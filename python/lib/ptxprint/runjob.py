@@ -510,8 +510,9 @@ class RunJob:
         genfiles += [os.path.join(self.tmpdir, outfname.replace(".tex", x)) for x in (".tex", ".xdv")]
         if self.inArchive:
             return genfiles
-        os.putenv("hyph_size", "32749")     # always run with maximum hyphenated words size (xetex is still tiny ~200MB resident)
+        os.putenv("hyph_size", "65521")     # always run with maximum prime hyphenated words size (xetex is still tiny ~200MB resident)
         os.putenv("stack_size", "32768")    # extra input stack space (up from 5000)
+        os.putenv("pool_size", "12500000")  # Double conventional pool size for big jobs (Full Bible with xrefs)
         ptxmacrospath = os.path.abspath(os.path.join(self.scriptsdir, "..", "..", "src"))
         if not os.path.exists(ptxmacrospath):
             for b in (getattr(sys, 'USER_BASE', '.'), sys.prefix):
@@ -579,7 +580,8 @@ class RunJob:
             runner = call(cmd + [action], cwd=self.tmpdir)
             if isinstance(runner, subprocess.Popen) and runner is not None:
                 try:
-                    runner.wait(self.args.timeout)
+                    #runner.wait(self.args.timeout)
+                    runner.wait()
                 except subprocess.TimeoutExpired:
                     print("Timed out!")
                 self.res = runner.returncode
@@ -629,14 +631,15 @@ class RunJob:
                    "-o", outfname.replace(".tex", ".prepress.pdf")]
             #if self.ispdfxa == "PDF/A-1":
             #    cmd += ["-z", "0"]
-            if self.args.extras & 1:
-                cmd += ["-vv"]
+            if self.args.extras & 7:
+                cmd += ["-" + ("v" * (self.args.extras & 7))]
             runner = call(cmd + [outfname.replace(".tex", ".xdv")], cwd=self.tmpdir)
             if self.args.extras & 1:
                 print(f"Subprocess return value: {runner}")
             if isinstance(runner, subprocess.Popen) and runner is not None:
                 try:
-                    runner.wait(self.args.timeout)
+                    runner.wait()
+                    #runner.wait(self.args.timeout)
                 except subprocess.TimeoutExpired:
                     print("Timed out!")
                     self.res = runner.returncode

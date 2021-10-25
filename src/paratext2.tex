@@ -559,11 +559,12 @@
 \newbox\xr@fbox
 \newdimen\XrefSkip \XrefSkip=0pt
 \def\m@ke@te@mp#1{
-  \dimen0=\ht\xr@fbox \advance\dimen0 by \baselineskip \advance\dimen0 by -\dp\xr@fbox\advance\dimen0 by -\dimen2
+  \dimen0=\ht\xr@fbox \advance\dimen0 by \baselineskip \advance\dimen0 by -\dimen2\advance\dimen0 by -\dp\xr@fbox
   \setbox0=\hbox{}
   \ifdim\dimen0>#1\loop
     \setbox1=\vbox{\unvbox1\unskip\unpenalty\global\setbox3=\lastbox\unskip}%
-    \ifdim\ht3>0pt\setbox0=\hbox{\unhbox3\unskip\unpenalty\space\unhbox0}\repeat\setbox1=\box\voidb@x
+    \ifdim\ht3>0pt\setbox0=\hbox{\unhbox3\unskip\unpenalty\space\unhbox0}\repeat
+    \setbox1=\box\voidb@x
   \else\loop
     \setbox1=\vbox{\unvbox1 \unskip\unpenalty\global\setbox3=\lastbox\unskip}%
     \ifdim\ht3>0pt\setbox0=\hbox{\unhbox3\unskip\unpenalty\space\unhbox0}
@@ -607,8 +608,7 @@
   \setbox1=\vbox{}
   \loop
     \setbox0\lastbox
-    \ifdim\ht0>0pt\setbox1=\vbox{\unvbox1\box0}%
-  \repeat
+    \ifdim\ht0>0pt\setbox1=\vbox{\unvbox1\box0}\repeat
   \trace{o}{m@kerefbox(\the#1, \the#2, marker #3): othernotes=\the\ht1, dimensions of xr@fbox= \the\ht\xr@fbox x \the\wd\xr@fbox}%
   \prevdepth=-10000pt\maken@tepara{1}{#3}%
 }
@@ -1165,10 +1165,12 @@
     %\trace{o}{split params maxdepth=\the\splitmaxdepth, topskip=\the\splittopskip, colhtA=\the\colhtA, colhtB=\the\colhtB}
     \splittopskip=\topskip
     \setbox9=\copy#1
-    \setbox\colA=\vsplit#1 to \colhtA \ifnum\badness>999999\setbox#1=\box9\setbox\colA\box\voidb@x\else\setbox\colA=\vbox{\unvbox\colA}\fi
+    \setbox\colA=\vsplit#1 to \colhtA
+    \ifnum\badness>999999\setbox#1=\box9\setbox\colA\box\voidb@x\else\setbox\colA=\vbox{\unvbox\colA}\fi
     \setbox9=\copy#1
     \ifdim\colhtB<0pt\setbox#1=\box9\setbox\colB\box\voidb@x\else
-      \setbox\colB=\vsplit#1 to \colhtB \ifnum\badness>999999\setbox#1=\box9\setbox\colB\box\voidb@x\else\setbox\colB=\vbox{\unvbox\colB}\fi
+      \setbox\colB=\vsplit#1 to \colhtB
+      \ifnum\badness>999999\setbox#1=\box9\setbox\colB\box\voidb@x\else\setbox\colB=\vbox{\unvbox\colB}\fi
     \fi
     % swap boxes if either, colA is empty and colB full, or colB is empty and colA is over full.
     \ifvoid\colA\ifvoid\colB\else\ifswapcol\ifdim\colhtA<\ht\colB\else
@@ -1197,7 +1199,7 @@
     \else\setbox\colA=\box0\setbox\s@vedpage=\box\voidb@x \trace{o}{Everything to colA}% dump it all in colA and bail
   \fi\fi\fi
   \hascolnotesfalse
-  \ifColNotes\iffitonpage\ifdim\ht\coln@tebox>0pt\hascolnotestrue
+  \ifColNotes\iffitonpage\ifdim\ht\coln@tebox>0pt \hascolnotestrue\relax
     \setbox\colB=\vbox to \colhtA{\unvbox\colB \vfil\unvbox\coln@tebox\unkern}
     \trace{o}{balanced: ifcolnotes bailing with A=\the\ht\colA, B=\the\ht\colB}
     \fitonpagefalse\rebalancetrue % bail early
@@ -1398,11 +1400,13 @@
   \ifColNotes\ifb@dy
     \ifx\XrefNotes\empty\relax\setbox5=\box\voidb@x\else
       \setbox5=\vbox{\m@kexrefbox{\ifdim\t@xttrialheight>0pt\ifdim\t@xttrialheight<\availht\t@xttrialheight\else\availht\fi\else\availht\fi}{\XrefNotesWidth}{\XrefNotes}}%
+      \setbox\xr@fbox\vbox{\unvbox\xr@fbox\setbox0=\lastbox\dimen0=\dp0\box0\vskip\dimen0}%
     \fi
     \m@kenotebox\setbox\coln@tebox=\vbox{%
       \trace{o}{coln@tebox in=\the\ht5+\the\dp5, notes=\the\ht2+\the\dp2}%
       \ifdim\ht2>0pt
-        \unvbox2\ifdim\ht5>0pt\setbox0\lastbox\dimen0=\dp0\box0\vskip\dimen0\vskip\InterNoteSpace \unvbox5\fi
+        \unvbox2\ifdim\ht5>0pt\setbox0\lastbox\dimen0=\dp0\box0\vskip\dimen0
+                  \vskip\InterNoteSpace \unvbox5\setbox0\lastbox\dimen0=\dp0\box0\vskip\dimen0\fi
       \else\ifdim\ht5>0pt
           %\ifvoid\verybottomins\vfil\fi %\kern-\lastd@pth\vfil % ignore depth of body text; fill space
           \footnoterule\prevdepth=-10000pt

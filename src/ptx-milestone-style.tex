@@ -282,8 +282,6 @@
  
 \newtoks\tmpt@ks
 \def\exp@ndmspr@fix#1{%for each potential prefix, call #1 with \@lso defined
-   \tracingmacros=1
-   \tracingassigns=1
    \tmpt@ks{#1}%
    \trace{m}{Expanding \mspr@fix}%
    \def\D@IT##1{\edef\@lso{ms:##1|}\trace{m}{adding option \@lso to styles}\the\tmpt@ks}%
@@ -292,8 +290,6 @@
    %\ifnum \it@mcount>1
      %\let\@lso\mspr@fix \the\tmpt@ks
    %\fi
-   \tracingmacros=0
-   \tracingassigns=0
 }
 
 %simple + separated list processing
@@ -354,5 +350,28 @@
   \fi
   \trace{m}{zgap \gap@dim}%
   \vbox{}\penalty10000\vskip\gap@dim\relax%
+}
+
+\def\proc@strong#1{%
+  \get@ttribute{align}%
+  \ifx\attr@b\relax \let\al@gn\@lignLeft\else\let\al@gn\attr@b\fi
+  \get@ttribute{strong}%
+  \trace{m}{Got strongs \attr@b}%
+  \ifx\attr@b\relax \else\edef\tmpz{#1}
+    \x@\dostr@ngs\x@{\x@\tmpz\x@}\x@{\x@\al@gn\x@}\attr@b+++\E
+  \fi
+}
+\def\dostr@ngs#1#2#3#4#5#6#7\E{%
+% #1 style, #2 align, #3 #4 #5 #6 4 digits, #7 dummy
+  \trace{m}{dostr@ngs #1, #2, #3, #4, #5, #6, #7}%
+  \bgroup\s@tfont{#1}%
+    \setbox0=\hbox{\if #4+\relax #3\else\if #6+\relax #3\else #3#4\fi\fi}%
+    \setbox1=\hbox{\if #4+\relax\else\if #5+\relax #4\else\if #6+\relax #4#5\else #5#6\fi\fi\fi}%
+    \dimen0=\ifdim\wd0>\wd1 \wd0\else\wd1\fi
+    \getp@ram{raise}{#1}\ifx\p@ram\relax\else\dimen1=\p@ram\raise\dimen1\fi
+    \vbox{\s@tbaseline{#1}\trace{m}{dostr@ngs #1 baselineskip=\the\baselineskip}%
+                          \hbox to \dimen0{\if#2r\relax\hfil\fi\unhbox0\if#2l\relax\hfil\fi}%
+                          \hbox to \dimen0{\if#2r\relax\hfil\fi\unhbox1\if#2l\relax\hfil\fi}%
+    }\egroup
 }
 

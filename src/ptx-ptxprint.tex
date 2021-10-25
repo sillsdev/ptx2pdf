@@ -43,5 +43,6 @@
 \gdef\dopagenums{\global\let\pagenumber=\folio}
 \gdef\resetpagenums{\bgroup\m@kedigitsother\obeylines\r@setpagenums}
 \gdef\r@setpagenums #1^^M{\global\pageno=#1\egroup}
+\sethook{start}{xts}{\proc@strong{xts}}
 \endgroup
 \catcode`\@=12

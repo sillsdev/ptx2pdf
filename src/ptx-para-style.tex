@@ -554,7 +554,7 @@
 \let\prevb@ok\relax
 \let\bookR\relax
 \let\prevb@okR\relax
-\def\pdfb@@kmark{\ifdiglot\ifx\c@rrdstat\PDFBookMarkColumn \pdfb@@km@rkD\fi\else\pdfb@@km@rk\fi}
+\def\pdfb@@kmark{\ifdiglot\ifx\c@rrdstat\PDFBookMarkColumn\relax \pdfb@@km@rkD\fi\else\pdfb@@km@rk\fi}
 
 \def\pdfb@@km@rk{\ifx\book\prevb@ok
  \else
@@ -599,7 +599,8 @@
 
 %+cpar_pdfchaptermark
 \def\prevch@p{}
-\def\pdfch@ptermark{\ifDropActions\else\ifdiglot\ifx\c@rrdstat\PDFBookMarkColumn \pdfch@pterm@rk\fi\else\pdfch@pterm@rk\fi\fi}
+\def\pdfch@ptermark{\ifDropActions\else\ifdiglot\ifx\c@rrdstat\PDFBookMarkColumn\relax \pdfch@pterm@rk\fi
+                                       \else\pdfch@pterm@rk\fi\fi}
 \def\pdfch@pterm@rk{%
   \ifx\prevch@p\ch@pter\else
     \bgroup\liter@lspecials

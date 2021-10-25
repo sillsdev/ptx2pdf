@@ -15,6 +15,7 @@ from ptxprint.dimension import Dimension
 import ptxprint.scriptsnippets as scriptsnippets
 from ptxprint.interlinear import Interlinear
 from ptxprint.reference import Reference, RefRange, RefList, RefSeparators, AnyBooks
+from ptxprint.xrefs import Xrefs
 import logging
 
 logger = logging.getLogger(__name__)
@@ -453,6 +454,7 @@ class TexModel:
         self.interlinear = None
         self.imageCopyrightLangs = {}
         self.frontperiphs = None
+        self.xrefs = None
         libpath = pycodedir()
         self.dict = {"/ptxpath": str(path).replace("\\","/"),
                      "/ptxprintlibpath": libpath.replace("\\","/"),
@@ -1578,89 +1580,23 @@ class TexModel:
                 results[ra] = acc
 
     def createXrefTriggers(self, bk, prjdir, outpath):
-        cfilter = self.dict['notes/xrfilterbooks']
-        if cfilter == "pub":
-            bl = self.printer.get("ecb_booklist", "").split()
-            filters = set(bl)
-        elif cfilter == "prj":
-            filters = set(self.printer.getAllBooks().keys())
-        elif cfilter == "all":
-            filters = None
-        elif cfilter == "ot":
-            filters = allbooks[:39]
-        elif cfilter == "nt":
-            filters = allbooks[40:67]
-        if filters is not None and len(filters) == 0:
-            filters = None
-        if self.dict['notes/xrlistsource'] == "custom":
-            self.xrefdat = {}
-            # import pdb; pdb.set_trace()
-            with open(self.dict['project/selectxrfile']) as inf:
-                for l in inf.readlines():
-                    if '=' in l:
-                        (k, v) = l.split("=", maxsplit=1)
-                        if k.strip() == "attribution":
-                            self.xrefcopyright = v.strip()
-                    v = RefList()
-                    for d in re.sub(r"[{}]", "", l).split():
-                        v.extend(RefList.fromStr(d.replace(".", " "), marks="+"))
-                    k = v.pop(0)
-                    self.xrefdat[k] = [v]
-        else:       # standard
-            if self._crossRefInfo == None:
-                def procxref(inf):
-                    results = {}
-                    for l in inf.readlines():
-                        d = l.split("|")
-                        v = [RefList.fromStr(s) for s in d]
-                        results[v[0][0]] = v[1:]
-                    return results
-                self.__class__._crossRefInfo = cachedData(os.path.join(pycodedir(), "cross_references.txt"), procxref)
-            self.xrefdat = self.__class__._crossRefInfo
-        results = {}
-        for k, v in self.xrefdat.items():
-            if k.first.book != bk:
-                continue
-            outl = v[0]
-            if len(v) > 1 and self.dict['notes/xrlistsize'] > 1:
-                outl = sum(v[0:self.dict['notes/xrlistsize']], RefList())
-            results[k] = outl
-        fname = self.printer.getBookFilename(bk)
-        if fname is None:
-            return
-        infpath = os.path.join(prjdir, fname)
-        with open(infpath) as inf:
-            try:
-                sfm = Usfm(inf, self.sheets)
-            except:
-                sfm = None
-            if sfm is not None:
-                ranges = self._getVerseRanges(sfm.doc, bk)
-                self._addranges(results, ranges)
-        class NoBook:
-            @classmethod
-            def getLocalBook(cls, s, level=0):
-                return ""
-        def usfmmark(ref, txt):
-            if ref.mark == "+":
-                return r"\+it {}\+it*".format(txt)
-            return txt
-        addsep = RefSeparators(books="; ", chaps=";\u200B", verses=",\u200B", bkcv="\u2000", mark=usfmmark)
-        dotsep = RefSeparators(cv=".", onechap=True)
-        template = "\n\\AddTrigger {book}{dotref}\n\\x - \\xo {colnobook} \\xt {refs}\\x*\n\\EndTrigger\n"
-        with open(outpath + ".triggers", "w", encoding="utf-8") as outf:
-            for k, v in sorted(results.items()):
-                if filters is not None:
-                    v.filterBooks(filters)
-                v.sort()
-                v.simplify()
-                if not len(v):
-                    continue
-                info = {
-                    "book":         k.first.book,
-                    "dotref":       k.str(context=NoBook, addsep=dotsep),
-                    "colnobook":    k.str(context=NoBook),
-                    "refs":         v.str(self.ptsettings, addsep=addsep)
-                }
-                outf.write(template.format(**info))
+        if self.xrefs is None:
+            cfilter = self.dict['notes/xrfilterbooks']
+            if cfilter == "pub":
+                bl = self.printer.get("ecb_booklist", "").split()
+                filters = set(bl)
+            elif cfilter == "prj":
+                filters = set(self.printer.getAllBooks().keys())
+            elif cfilter == "all":
+                filters = None
+            elif cfilter == "ot":
+                filters = allbooks[:39]
+            elif cfilter == "nt":
+                filters = allbooks[40:67]
+            if filters is not None and len(filters) == 0:
+                filters = None
+            self.xrefs = Xrefs(self, filters, prjdir,
+                    self.dict['project/selectxrfile'] if self.dict['notes/xrlistsource'] == 'custom' else None,
+                    self.dict['notes/xrlistsize'])
+        self.xrefs.process(bk, outpath)
 

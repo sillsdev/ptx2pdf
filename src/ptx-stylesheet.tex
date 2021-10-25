@@ -175,6 +175,10 @@
 % Rather than attempt to code \ifs for all possible 8 options, it now builds a comma-separated list of them, 
 % and finds the first match. This results in cleaner code.
 
+\newif\ifnotracestacks \notracestacksfalse
+\def\tracestack{,}
+\def\pushtracing{\xdef\tracestack{\the\tracingmacros,\tracestack}\tracingmacros=0}
+\def\poptracing{\tracingmacros=\x@\cstackpeek\tracestack\E\xdef\tracestack{\x@\cstackpop\tracestack\E}}
 \def\s@tpossParams#1{\trace{s}{setpossParam {#1} (\styst@kskip / \styst@kfirst / \styst@k)}%
   \ifdiglot
      \edef\p@ssParams{#1\c@rrdstat,#1}%
@@ -255,7 +259,7 @@
   \fi
 }
 
-\def\getp@ram#1#2{\trace{s}{getp@ram #2:#1 (\mcstack)}%
+\def\getp@ram#1#2{\trace{s}{getp@ram #2:#1 (\mcstack)}\ifnotracestacks\pushtracing\fi
  \iftrue
    \let\p@ram\relax
    \def\gp@test{#1}%
@@ -302,14 +306,15 @@
    \else\getp@r@m{#1}{\c@tprefix#2}%
     \ifx\p@ram\relax
       \ifx\c@tprefix\empty\else
-	\getp@r@m{#1}{#2}%
+        \getp@r@m{#1}{#2}%
       \fi
     \else
       \ifx\c@tprefix\empty\else\trace{sc}{Milestone/Category specific(\c@tprefix#2):#1 found}\fi%
     \fi
    \fi
  \fi
-  \trace{s}{\space\space (\c@tprefix)(\mspr@fix)#2\ifdiglot(\c@rrdstat)\fi :#1 is \p@ram}%
+ \trace{s}{\space\space (\c@tprefix)(\mspr@fix)#2\ifdiglot(\c@rrdstat)\fi :#1 is \p@ram}%
+ \ifnotracestacks\poptracing\fi
 }
 \def\gettop@aram#1{%Check list of acceptable parameters and return the first one found.
    \edef\p@ramcheck{#1}%
@@ -336,29 +341,30 @@
 
 %+csty_getmcparam
 %Main utility function for font parameters, stacking-styles aware
-\def\getmcp@ram#1{\trace{s}{getmcp #1}\let\r@s=\relax
+\def\getmcp@ram#1{\trace{s}{getmcp #1}\let\r@s=\relax\ifnotracestacks\pushtracing\fi
   \def\d@##1+##2\E{\edef\tmp{##2}\ifx\tmp\empty\else\csname d@code-##1\endcsname\if##1\ss@Sbar\global\let\r@s\relax\else\if##1\ss@Note\global\let\r@s\relax\fi\fi
     \getp@ram{#1}{\tmp}\ifx\p@ram\relax\else\global\let\r@s\p@ram\fi\fi}%
-  \mcup\global\let\p@ram\r@s\traceNum{s}{param #1 for \mcstack\space is \p@ram}}    %(1)
-\def\getmcp@ramR#1{\trace{s}{getmcpR #1}\let\r@s\relax
+  \mcup\global\let\p@ram\r@s\traceNum{s}{param #1 for \mcstack\space is \p@ram}\ifnotracestacks\poptracing\fi}    %(1)
+\def\getmcp@ramR#1{\trace{s}{getmcpR #1}\let\r@s\relax\ifnotracestacks\pushtracing\fi
   \def\d@##1+##2\E{%
     \trace{s}{inside getmcp@ramR ##2 currently res=\r@s}%
     \edef\tmp{##2}\ifx\tmp\empty\else\csname d@code-##1\endcsname\if##1\ss@Sbar\global\let\r@s\relax\else\if##1\ss@Note\global\let\r@s\relax\fi\fi
     \getp@ram{regular}{\tmp}\ifx\p@ram\relax\getp@ram{#1}{\tmp}\ifx\p@ram\relax\else\global\let\r@s\p@ram\fi
                            \else\global\let\r@s\relax\fi\fi}%
-  \mcup\global\let\p@ram\r@s\traceNum{s}{paramR #1 for \mcstack\space is \p@ram}}
+  \mcup\global\let\p@ram\r@s\traceNum{s}{paramR #1 for \mcstack\space is \p@ram}\ifnotracestacks\poptracing\fi}
  
-\def\getFp@ram#1#2{%
+\def\getFp@ram#1#2{\ifnotracestacks\pushtracing\fi
   \let\p@ram\relax
   \def\d@##1+##2\E{\edef\tmp{##2}\csname d@code-##1\endcsname\edef\tmpa{#2}\ifx\tmp\tmpa\getmcp@ram{#1}\else\getp@ram{#1}{#2}\fi}%
-  \mctop}
-\def\getFp@ramR#1#2{%
+  \mctop\ifnotracestacks\poptracing\fi}
+\def\getFp@ramR#1#2{\ifnotracestacks\pushtracing\fi
   \def\d@##1+##2\E{\edef\tmp{##2}\csname d@code-##1\endcsname\edef\tmpa{#2}\ifx\tmp\tmpa\getmcp@ramR{#1}\else\getp@ram{#1}{#2}\fi}%
-  \mctop}
+  \mctop\ifnotracestacks\poptracing\fi}
 %-csty_getmcparam
 
 %+csty_getmcfontsize
-\def\getmcfonts@ze{\getp@ram{fontsize}{p}\ifx\p@ram\relax\edef\ps@ze{12}\else\edef\ps@ze{\p@ram}\fi
+\def\getmcfonts@ze{\ifnotracestacks\pushtracing\fi
+  \getp@ram{fontsize}{p}\ifx\p@ram\relax\edef\ps@ze{12}\else\edef\ps@ze{\p@ram}\fi
   \trace{s}{getmcfonts@ze starting with \ps@ze}%
   \def\d@##1+##2\E{\edef\tmp{##2}\ifx\tmp\empty\else
       \csname d@code-##1\endcsname
@@ -372,7 +378,7 @@
             \dimen0=\sc@le\dimen0\else\dimen0=\p@ram pt\fi
         \else\dimen0=\sc@le\dimen0                                                  %(2)
     \fi\fi\xdef\c@rrfontsize{\strip@pt{\dimen0}}\fi\trace{s}{\space working c@rrfontsize from ##2 is \c@rrfontsize}}%
-  \mcup\trace{s}{set c@rrfontsize for \mcstack\space is \c@rrfontsize}}             %(3)
+  \mcup\trace{s}{set c@rrfontsize for \mcstack\space is \c@rrfontsize}\ifnotracestacks\poptracing\fi}             %(3)
 %-csty_getmcfontsize
 
 %+csty_makestyle
@@ -396,14 +402,14 @@
 %
 % \csname...\endcsname is used because the marker may contain numbers as well as letters
 %
-\def\defp@rstyle#1{\x@\def\csname#1\endcsname{\p@rstyle{#1}}}
+\def\defp@rstyle#1{\x@\def\csname#1\endcsname{\trace{M}{ParMarker: #1}\p@rstyle{#1}}}
 \edef\pl@scatcode{\the\catcode`+}
 \catcode`+=11
-\def\defch@rstyle#1{\x@\def\csname#1\endcsname{\ch@rstyle{#1}}\x@\def\csname +#1\endcsname{\ch@rstylepls{#1}}}
+\def\defch@rstyle#1{\x@\def\csname#1\endcsname{\trace{M}{CharMarker: #1}\ch@rstyle{#1}}\x@\def\csname +#1\endcsname{\ch@rstylepls{#1}}}
 \catcode`+=\pl@scatcode
-\def\defn@testyle#1{\x@\def\csname#1\endcsname{\n@testyle{#1}}\m@ken@tecl@ss{#1}}
+\def\defn@testyle#1{\x@\def\csname#1\endcsname{\trace{M}{NoteMarker: #1}\n@testyle{#1}}\m@ken@tecl@ss{#1}}
 %Make a milestone marker if there isn't a character style with the same prefix
-\def\defmst@nestyle#1\E{\x@\let\x@\tmp\csname #1\endcsname
+\def\defmst@nestyle#1\E{\trace{M}{MilestoneMarker: #1}\x@\let\x@\tmp\csname #1\endcsname
   \ifx\tmp\relax
     \getp@r@m{endmarker}{\m@rker}%
     \ifx\p@ram\relax
@@ -418,8 +424,8 @@
 %+csty_sethook
 % Allow "hooking" custom TeX code at the beginning or ending of specific styles.
 % e.g. `\sethook{start}{s1}{-}` put a hyphen at the start of every section heading
-\def\sethook#1#2#3{\x@\def\csname #1-#2\endcsname{#3}}
-\def\setbookhook#1#2#3{\x@\def\csname book#1-#2\endcsname{#3}}
+\def\sethook#1#2#3{\x@\gdef\csname #1-#2\endcsname{#3}}
+\def\setbookhook#1#2#3{\x@\gdef\csname book#1-#2\endcsname{#3}}
 %-csty_sethook
 
 %+csty_testpublishability
@@ -548,7 +554,7 @@
      % if chapter label not present, set \ch@pter[X]waiting to cause chapter number to be printed
      % at start of first text paragraph.
      \x@\global\x@\let\x@\ch@pl@bel\csname ch@plabel\g@tdstat\endcsname% global as p@rstyle{cl} may end a group.
-     \ifx\ch@pl@bel\empty \x@\global\x@\let\csname ch@pter\g@tdstat waiting\endcsname\ch@pter
+     \ifx\ch@pl@bel\empty\relax \x@\global\x@\let\csname ch@pter\g@tdstat waiting\endcsname\ch@pter
        \trace{c}{No chapter label in use : \ch@pter}%
      \else % if \cl present, output chapter label here
        \trace{c}{Chapter label in use: \ch@pl@bel \ch@pter}%
@@ -769,7 +775,7 @@
  %
  \let\@CL=\cl%
  \def\do@CL{\x@\global\x@\let\csname ch@pter\g@tdstat waiting\endcsname\relax\gdef\n@xtparstart{\pdfch@ptermark}\@CL}%
- \def\cl{\x@\unless\x@\ifx\csname ch@pter\g@tdstat waiting\endcsname\relax \let\n@xt=\do@CL \else \let\n@xt=\st@recl \fi \n@xt}%
+ \def\cl{\ifcsname ch@pter\g@tdstat waiting\endcsname\let\n@xt=\do@CL\else\let\n@xt=\st@recl\fi \n@xt}%
  \def\st@recl{\bgroup\obeylines\@cl}% \cl gets stored as chapter label and changes \c format
  \def\@cl ##1^^M{\x@\gdef\csname ch@plabel\g@tdstat\endcsname{##1}\egroup}%
  %
@@ -1300,7 +1306,7 @@
 %Hook-runners for paragraph and character styles
 \def\op@ninghooks#1#2{% for <start> and <before> hooks
    \trace{s}{op@ninghooks #1 #2}%
-   \csname #1-#2\endcsname % 
+   \csname #1-#2\endcsname
    \ifx\c@tegory\empty\else\csname #1-\c@tprefix#2\endcsname\fi
    \ifdiglot\setsid@ % \MSG{start-\thisch@rstyle\sid@}%
      \csname #1-#2\sid@\endcsname\relax % handle side-specific <before> hook
