@@ -556,8 +556,7 @@
 \let\prevb@okR\relax
 \def\pdfb@@kmark{\ifdiglot\ifx\c@rrdstat\PDFBookMarkColumn\relax \pdfb@@km@rkD\fi\else\pdfb@@km@rk\fi}
 
-\def\pdfb@@km@rk{\ifx\book\prevb@ok
- \else
+\def\pdfb@@km@rk{\ifx\book\prevb@ok\else
   \global\dr@ppednumberfalse
   \ifDropActions\else\bgroup\liter@lspecials
     \special{pdf:dest (\id@@@.) [@thispage /Fit]}%
@@ -586,8 +585,7 @@
  \let\b@okDiglot\empty
  \x@\each@col\diglot@list\E
  %\message{Bookname now: \b@okDiglot}%
- \ifx\b@okDiglot\prevb@okD 
- \else
+ \ifx\b@okDiglot\prevb@okD\else
   \bgroup\liter@lspecials
    \special{pdf:dest (\id@@@.) [@thispage /Fit]}%
    \special{pdf:outline 0 << /Title (\b@okDiglot)
@@ -600,7 +598,7 @@
 %+cpar_pdfchaptermark
 \def\prevch@p{}
 \def\pdfch@ptermark{\ifDropActions\else\ifdiglot\ifx\c@rrdstat\PDFBookMarkColumn\relax \pdfch@pterm@rk\fi
-                                       \else\pdfch@pterm@rk\fi\fi}
+                                        \else\pdfch@pterm@rk\fi\fi}
 \def\pdfch@pterm@rk{%
   \ifx\prevch@p\ch@pter\else
     \bgroup\liter@lspecials

@@ -549,6 +549,7 @@
     % in the configuration file in order to omit chapter numbers for single chapter books.
    \ifOmitChapterNumber
      \trace{c}{Chapter numbers ommitted}%
+     \unskip % If we are mid paragraph remove the space caused by the \n before the \c.
      \pdfb@@kmark \pdfch@ptermark
    \else
      % if chapter label not present, set \ch@pter[X]waiting to cause chapter number to be printed

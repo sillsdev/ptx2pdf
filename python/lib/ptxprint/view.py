@@ -1303,8 +1303,14 @@ class ViewModel:
         runjob.doit(noview=True)
         res = runjob.wait()
         temps = []
+        found = False
         for a in (".pdf", ):
-            temps.extend([x.replace(".xdv", a) for x in self.tempFiles if x.endswith(".xdv")])
+            for d in ('', '..'):
+                for x in self.tempFiles:
+                    f = os.path.join(os.path.dirname(x), d, os.path.basename().replace(".xdv", a))
+                    if not found and os.path.exists(f):
+                        temps.append(f)
+                        break
         for f in set(self.tempFiles + runjob.picfiles + temps):
             pf = os.path.join(self.working_dir, f)
             if os.path.exists(pf):
