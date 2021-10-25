@@ -687,7 +687,7 @@ class RunJob:
         #    print("Warning: Couldn't Remove Temporary Folders - is a temp file open?")
         cropme = info['document/iffigcrop']
         def carefulCopy(p, src, tgt):
-            ratio = pageRatios[0 if p['size'].startswith("span") else 1] if p.get('pgpos', 'N') in 'tbhp' else None,
+            ratio = pageRatios[0 if p['size'].startswith("span") else 1] if p.get('pgpos', 'N') in 'tbhp' else None
             return self.carefulCopy(ratio, src, tgt, cropme)
         missingPics = []
         if info['document/ifinclfigs'] == 'false':

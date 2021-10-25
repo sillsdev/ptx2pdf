@@ -377,14 +377,16 @@ class TexModel:
         "it": r"\\it \1\\it*",      # "format as italics":       
         "bi": r"\\bdit \1\\bdit*",  # "format as bold italics":  
         "em": r"\\em \1\\em*",      # "format with emphasis":    
-        "fb": r"\u2E24\1\u2E25",    # "with ⸤floor⸥ brackets":   
-        "fc": r"\u230a\1\u230b",    # "with ⌊floor⌋ characters": 
-        "cc": r"\u231e\1\u231f",    # "with ⌞corner⌟ characters":
+        "ww":  r"\\w \1\\w*",       # "\w ...\w* char style":  
+        # Note that these glossary markers can be styled with \zglm 
+        # But this doesn't work if fallback font is turned on for these chars
+        "fb": r"\\zglm \u2E24\\zglm*\1\\zglm \u2E25\\zglm*",    # "with ⸤floor⸥ brackets":   
+        "fc": r"\\zglm \u230a\\zglm*\1\\zglm \u230b\\zglm*",    # "with ⌊floor⌋ characters": 
+        "cc": r"\\zglm \u231e\\zglm*\1\\zglm \u231f\\zglm*",    # "with ⌞corner⌟ characters":
         "sb": r"*\1",               # "star *before word":       
         "sa": r"\1*",               # "star after* word":        
         "cb": r"^\1",               # "circumflex ^before word": 
-        "ca":  r"\1^",              # "circumflex after^ word":  
-        "ww":  r"\\w \1\\w*"        # "\w ...\w* char style":  
+        "ca":  r"\1^"               # "circumflex after^ word":  
     }
     _snippets = {
         "snippets/fancyintro":            ("c_prettyIntroOutline", None, FancyIntro),
@@ -1274,12 +1276,21 @@ class TexModel:
         
         if self.asBool("notes/addcolon"): # Insert a colon between \fq (or \xq) and following \ft (or \xt)
             self.localChanges.append((None, regex.compile(r"(\\[fx]q .+?):* ?(\\[fx]t)", flags=regex.M), r"\1: \2")) 
+
+        # HELP NEEDED from Martin to fix this section up again.
         
-        if self.asBool("notes/keepbookwithrefs"): # keep Booknames and ch:vs nums together within \xt and \xo 
+        if self.asBool("notes/keepbookwithrefs"): # keep Booknames and ch:vs nums together within \xt and \xo
             self.localChanges.append((self.make_contextsfn(None, regex.compile(r"(\\[xf]t [^\\]+)")),
                                     regex.compile(r"(\d?[^\s\d\-\\,;]{3,}[^\\\s]*?) (\d+[:.]\d+)"), r"\1\u2000\2"))
             self.localChanges.append((self.make_contextsfn(None, regex.compile(r"(\\[xf]t [^\\]+)")),
                                     regex.compile(r"( .) "), r"\1\u2000")) # Ensure no floating single chars in note text
+        
+        # Keep book number together with book name "1 Kings", "2 Samuel" within \xt and \xo
+# Works-> in "\\xt .+?\\xt\*": "([\d]) (\p{L})" > "\1\u00A0\2"
+        # self.localChanges.append((self.make_contextsfn(None, regex.compile(r"(\\[xf]t [^\\]+)")),
+                        # regex.compile(r"([1234]) (\p{L})"), r"\1\u00A0\2"))
+        self.localChanges.append((self.make_contextsfn(None, regex.compile(r"(\\[xf]t [^\\]+)")),
+                        regex.compile(r"(\d) (\p{L})"), r"\1\u2000\2"))
 
         # keep \xo & \fr refs with whatever follows (i.e the bookname or footnote) so it doesn't break at end of line
         self.localChanges.append((None, regex.compile(r"(\\(xo|fr) (\d+[:.]\d+([-,]\d+)?)) "), r"\1\u00A0"))
