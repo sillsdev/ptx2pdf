@@ -1,5 +1,5 @@
 
-from ptxprint.utils import cachedData
+from ptxprint.utils import cachedData, pycodedir
 from ptxprint.reference import RefList, RefRange, Reference, RefSeparators
 import xml.etree.ElementTree as et
 import re, os

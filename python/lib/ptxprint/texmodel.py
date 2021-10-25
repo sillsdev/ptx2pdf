@@ -157,7 +157,7 @@ ModelMap = {
     "paragraph/missingchars":   ("t_missingChars", lambda w,v: v or ""),
 
     "document/sensitive":       ("c_sensitive", None),
-    "document/title":           (None, lambda w,v: "" if w.get("c_sensitive") else w.ptsettings.get('FullName', "")),
+    "document/title":           (None, lambda w,v: "[Unknown]" if w.get("c_sensitive") else w.ptsettings.get('FullName', "[Unknown]")),
     "document/subject":         ("ecb_booklist", lambda w,v: v if w.get("r_book") == "multiple" else w.get("ecb_book")),
     "document/author":          (None, lambda w,v: "" if w.get("c_sensitive") else w.ptsettings.get('Copyright', "")),
 
@@ -1280,20 +1280,16 @@ class TexModel:
             self.localChanges.append((None, regex.compile(r"(\\[fx]q .+?):* ?(\\[fx]t)", flags=regex.M), r"\1: \2")) 
 
         # HELP NEEDED from Martin to fix this section up again.
+        # Keep book number together with book name "1 Kings", "2 Samuel" within \xt and \xo
+        self.localChanges.append((self.make_contextsfn(None, regex.compile(r"(\\[xf]t\s[^\\]+)")),
+                        regex.compile(r"(\d)\s(\p{L})"), r"\1\u00A0\2"))
         
         if self.asBool("notes/keepbookwithrefs"): # keep Booknames and ch:vs nums together within \xt and \xo
-            self.localChanges.append((self.make_contextsfn(None, regex.compile(r"(\\[xf]t [^\\]+)")),
-                                    regex.compile(r"(\d?[^\s\d\-\\,;]{3,}[^\\\s]*?) (\d+[:.]\d+)"), r"\1\u2000\2"))
-            self.localChanges.append((self.make_contextsfn(None, regex.compile(r"(\\[xf]t [^\\]+)")),
-                                    regex.compile(r"( .) "), r"\1\u2000")) # Ensure no floating single chars in note text
+            self.localChanges.append((self.make_contextsfn(None, regex.compile(r"(\\[xf]t\s[^\\]+)")),
+                                    regex.compile(r"(\d?[^\s\d\-\\,;]{3,}[^\\\s]*?)\s(\d+[:.]\d+(-\d+)?)"), r"\1\u2000\2"))
+            self.localChanges.append((self.make_contextsfn(None, regex.compile(r"(\\[xf]t\s[^\\]+)")),
+                                    regex.compile(r"(\s.) "), r"\1\u2000")) # Ensure no floating single chars in note text
         
-        # Keep book number together with book name "1 Kings", "2 Samuel" within \xt and \xo
-# Works-> in "\\xt .+?\\xt\*": "([\d]) (\p{L})" > "\1\u00A0\2"
-        # self.localChanges.append((self.make_contextsfn(None, regex.compile(r"(\\[xf]t [^\\]+)")),
-                        # regex.compile(r"([1234]) (\p{L})"), r"\1\u00A0\2"))
-        self.localChanges.append((self.make_contextsfn(None, regex.compile(r"(\\[xf]t [^\\]+)")),
-                        regex.compile(r"(\d) (\p{L})"), r"\1\u2000\2"))
-
         # keep \xo & \fr refs with whatever follows (i.e the bookname or footnote) so it doesn't break at end of line
         self.localChanges.append((None, regex.compile(r"(\\(xo|fr) (\d+[:.]\d+([-,]\d+)?)) "), r"\1\u00A0"))
 

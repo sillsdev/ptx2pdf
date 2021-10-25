@@ -776,7 +776,7 @@
  %
  \let\@CL=\cl%
  \def\do@CL{\x@\global\x@\let\csname ch@pter\g@tdstat waiting\endcsname\relax\gdef\n@xtparstart{\pdfch@ptermark}\@CL}%
- \def\cl{\ifcsname ch@pter\g@tdstat waiting\endcsname\let\n@xt=\do@CL\else\let\n@xt=\st@recl\fi \n@xt}%
+ \def\cl{\x@\ifx\csname ch@pter\g@tdstat waiting\endcsname\relax \let\n@xt=\st@recl\else\let\n@xt=\do@CL\fi \n@xt}%
  \def\st@recl{\bgroup\obeylines\@cl}% \cl gets stored as chapter label and changes \c format
  \def\@cl ##1^^M{\x@\gdef\csname ch@plabel\g@tdstat\endcsname{##1}\egroup}%
  %

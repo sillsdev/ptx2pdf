@@ -158,11 +158,12 @@ class PDFx1aOutput(Snippet):
 /DestOutputProfile @OBJCVR
 /RegistryName (http://www.color.og)
 >> ]
-/MarkInfo <</Marked /False>>
 >>}}
 \egroup
 \catcode`\#=6
 """
+# /MarkInfo <</Marked /False>>
+
         extras = {'_gtspdfx': '', '_gtspdfaid': ''}
         pdftype = model['snippets/pdfoutput'] or "None"
         libpath = pycodedir()
