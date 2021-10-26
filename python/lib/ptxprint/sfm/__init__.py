@@ -684,6 +684,8 @@ class parser(collections.Iterable):
     def _default_(self, parent):
         force_need = False
         for tok in self._tokens:
+            if getattr(tok, 'parent', None) is None:
+                tok.parent = parent
             tag = self.__get_tag(parent, tok)
             if tag:  # Parse markers.
                 if tag.name == "*" and parent is not None:

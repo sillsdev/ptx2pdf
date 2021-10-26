@@ -101,8 +101,8 @@ class Xrefs:
             if k.first.book != bk:
                 continue
             outl = v[0]
-            if len(v) > 1 and self.listsize > 1:
-                outl = sum(v[0:self.listsize], RefList())
+            if len(v) > 1 and self.xrlistsize > 1:
+                outl = sum(v[0:self.xrlistsize], RefList())
             results[k] = outl
         fname = self.parent.printer.getBookFilename(bk)
         if fname is None:

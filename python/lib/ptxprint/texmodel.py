@@ -1076,11 +1076,12 @@ class TexModel:
             dlgtitle = "PTXprint [{}] - USFM Text Error!".format(self.VersionStr)
             # print(syntaxErrors[0])
             # logger.info(syntaxErrors[0])
-            errbits = re.match(r"(\S+) (...) line: (\d+),\d+: orphan marker (\\.+?)", syntaxErrors[0])
+            errbits = re.match(r"(\S+) (...) line: (\d+),\d+\s*\[(.*?)\]: orphan marker (\\.+?)", syntaxErrors[0])
             if errbits is not None:
                 self.printer.doError("Syntax Error warning: ",        
                     secondary=_("Examine line {} in {} on the 'Final SFM' tab of the View+Edit " + \
-                        "page to determine the cause of this issue related to marker: {}.").format(errbits[3], errbits[2], errbits[4]) + \
+                        "page to determine the cause of this issue related to marker: {} as found in the markers: {}.").format(
+                                errbits[3], errbits[2], errbits[5], errbits[4]) + \
                         "\n\n"+_("This warning was triggered due to 'Auto-Correct USFM' being " + \
                         "enabled on the Advanced tab but is due to an orphaned marker. " + \
                         "It means the marker does not belong in that position, or it " + \
