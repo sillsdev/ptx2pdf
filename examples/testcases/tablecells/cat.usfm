@@ -1,0 +1,12 @@
+
+\tr\cat foo\cat*
+\tc1 The cat
+\tc2 sat
+\tc3 on the mat
+\tr
+\tc1 NP(S)
+\tc2 V
+\tc3 NP(O)
+
+\p In the above thing we see something..
+
