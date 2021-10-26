@@ -1022,7 +1022,7 @@ class TexModel:
                     dat = str(doc)
                     doc = None
                 dat = self.runChanges(self.changes, bk, dat)
-                self.analyzeImageCopyrights(dat)
+                #self.analyzeImageCopyrights(dat)
 
             if self.dict['project/canonicalise'] or self.dict['document/ifletter'] == "" \
                         or not self.asBool("document/bookintro") \
@@ -1420,13 +1420,18 @@ class TexModel:
         for delGloEntry in [x for x in ge if x not in list(set(glossentries))]:
             self.localChanges.append((None, regex.compile(r"\\p \\k {}\\k\* .+\r?\n".format(delGloEntry), flags=regex.M), ""))
 
-    def analyzeImageCopyrights(self, txt):
+    def analyzeImageCopyrights(self):
+        if self.dict['project/iffrontmatter'] == "":
+            with open(self.printer.configFRT(), encoding="utf-8") as inf:
+                txt = inf.read()
+        else:
+            txt = self.dict['project/colophontext']
         for m in re.findall(r"(?i)\\(\S+).*?\\zimagecopyrights([A-Z]{2,3})?", txt):
             self.imageCopyrightLangs[m[1].lower() if m[1] else "en"] = m[0]
         return
 
     def generateEmptyImageCopyrights(self):
-        self.analyzeImageCopyrights(self.dict['project/colophontext'])
+        self.analyzeImageCopyrights()
         res = [r"\def\zimagecopyrights{}"]
         for k in self.imageCopyrightLangs.keys():
             res.append(r"\def\zimagecopyrights{}{{}}".format(k))
@@ -1439,7 +1444,7 @@ class TexModel:
         picpagesfile = os.path.join(self.docdir()[0], self['jobname'] + ".picpages")
         crdts = []
         cinfo = self.printer.copyrightInfo
-        self.analyzeImageCopyrights(self.dict['project/colophontext'])
+        self.analyzeImageCopyrights()
         if os.path.exists(picpagesfile):
             with universalopen(picpagesfile) as inf:
                 dat = inf.read()

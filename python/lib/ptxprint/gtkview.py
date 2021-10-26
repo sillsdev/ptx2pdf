@@ -2917,7 +2917,7 @@ class GtkViewModel(ViewModel):
 
     def openFolder(self, fldrpath):
         path = os.path.realpath(fldrpath)
-        if sys.platform.startswith("win"):
+        if sys.platform.startswith("win") and os.path.exists(fldrpath):
             os.startfile(fldrpath)
 
     def finished(self):
