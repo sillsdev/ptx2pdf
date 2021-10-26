@@ -1307,7 +1307,7 @@ class ViewModel:
         for a in (".pdf", ):
             for d in ('', '..'):
                 for x in self.tempFiles:
-                    f = os.path.join(os.path.dirname(x), d, os.path.basename().replace(".xdv", a))
+                    f = os.path.join(os.path.dirname(x), d, os.path.basename(x).replace(".xdv", a))
                     if not found and os.path.exists(f):
                         temps.append(f)
                         break
