@@ -952,7 +952,6 @@ class TexModel:
         return outfpath
 
     def runChanges(self, changes, bk, dat):
-        # import pdb; pdb.set_trace()
         for c in changes:
             logger.debug("Change: {}".format(c))
             if c[0] is None:
@@ -1024,7 +1023,7 @@ class TexModel:
                 dat = self.runChanges(self.changes, bk, dat)
                 #self.analyzeImageCopyrights(dat)
 
-            if self.dict['project/canonicalise'] or self.dict['document/ifletter'] == "" \
+            if self.dict['project/canonicalise'] \
                         or not self.asBool("document/bookintro") \
                         or not self.asBool("document/introoutline")\
                         or self.asBool("document/hidemptyverses"):
@@ -1205,7 +1204,10 @@ class TexModel:
             clbooks = self.dict["document/clabelbooks"].split()
             # print("Chapter label: '{}' for '{}' with {}".format(clabel, " ".join(clbooks), bk))
             if len(clabel) and (not len(clbooks) or bk in clbooks):
-                self.localChanges.append((None, regex.compile(r"(\\c 1)(?=\s*\r?\n|\s)", flags=regex.S), r"\\cl {}\n\1".format(clabel)))
+                #self.localChanges.append((lambda fn,b,d: d if r'\cl ' in d else fn(d),
+                #                          regex.compile(r"(\\c 1)(?=\s*\r?\n|\s)", flags=regex.S), "\\cl {}\n\\1".format(clabel)))
+                self.localChanges.append((None,
+                                          regex.compile(r"(\\c 1)(?=\s*\r?\n|\s)", flags=regex.S), "\\cl {}\n\\1".format(clabel)))
                 
         # if self.dict["project/bookscope"] == "single":
         if first > 1:
@@ -1266,7 +1268,7 @@ class TexModel:
         if self.asBool("document/preventorphans"): # Prevent orphans at end of *any* paragraph
             self.localChanges.append((None, regex.compile(r"(\\q\d?(\s?\r?\n?\\v)?( \S+)+( (?!\\)[^\\\s]{,6})) ([\S]{,9}\s*\n)", \
                                             flags=regex.M), r"\1\u2000\5"))
-            self.localChanges.append((None, regex.compile(r"(?<=\\[^tm][^\\]+)(\s+[^ 0-9\\\n\u2000\u00A0]{,6}) ([^ 0-9\\\n\u2000\u00A0]{,8}\n(?:\\[pmqsc]|$))", flags=regex.S), r"\1\u2000\2"))
+            self.localChanges.append((None, regex.compile(r"(?<=\\[^ctm][^\\]+)(\s+[^ 0-9\\\n\u2000\u00A0]{,6}) ([^ 0-9\\\n\u2000\u00A0]{,8}\n(?:\\[pmqsc]|$))", flags=regex.S), r"\1\u2000\2"))
 
         if self.asBool("document/preventwidows"):
             # Push the verse number onto the next line (using NBSP) if there is

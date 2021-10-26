@@ -951,25 +951,31 @@ def generate(doc):
         styletype = e.meta['StyleType']
         sep = ''
         end = ''
+        presep = ''
         if len(e) > 0:
             if styletype == 'Paragraph' \
                     and isinstance(e[0], Element) \
-                    and e[0].meta['StyleType'] == 'Paragraph':
+                    and e[0].meta['StyleType'] == 'Paragraph'\
+                    and not any(body.startswith(x) for x in ('\r\n', '\n')):
                 sep = os.linesep
-            elif not body.startswith(('\r\n', '\n', '|')):
+            elif not any(body.startswith(x) for x in ('\r\n', '\n', '|')):
                 sep = ' '
+                if styletype == 'Paragraph' and not a.endswith("\n"):
+                    presep = os.linesep
             elif styletype not in ('Character', 'Paragraph') and not body.endswith((" ", "\r\n", "\n")):
                 end = '*'
         elif styletype == 'Character':
             body = ' '
         elif styletype == 'Paragraph':
             body = os.linesep
+            if not a.endswith("\n"):
+                presep = os.linesep
         nested = '+' if 'nested' in e.annotations else ''
         if 'implicit-closed' not in e.annotations:
             end = e.meta.get('Endmarker', '') or end
         end = end and f"\\{nested}{end}"
 
-        return f"{a}\\{nested}{' '.join([e.name] + e.args)}{sep}{body}{end}" \
+        return f"{a}{presep}\\{nested}{' '.join([e.name] + e.args)}{sep}{body}{end}" \
                if e.name else ''
 
     def gt(t, a):
