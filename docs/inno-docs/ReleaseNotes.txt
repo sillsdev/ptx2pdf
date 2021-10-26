@@ -1,7 +1,32 @@
 PTXprint 2.0.4 Release Notes 
-21 October 2021
+27 October 2021
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
+
+Bug fixes and improvements in 2.0.5 (27 Oct 2021)
+
+  * Fixed: Rendering issue with some Devanagari conjuncts if letter spacing is on #561
+
+  * Fixed: Creating an Archive fails (sometimes) #562
+  
+  * Fixed: After creating a new configuration, trying to open output folder location failed #564
+  
+  * Fixed: Spurious space in marginal verses
+  
+  * Fixed: Only pad certain images (don't pad when creating cutouts)
+
+  * Fixed: Chapter label \cl handling was being overriden
+  
+  * Improved: Keep book number together with book name "1 Kings", "2 Samuel" within \xt
+  
+  * Improved: Allow non paragraphed footnotes to rag
+  
+  * Improved: Seemingly 'erroneous error messages' now give more information to track them down #552
+
+  * Added: \zglm marker to format font, size, colour, position of glossary *marks* #565
+
+  * Added: Support for Creative Commons license logos with CMYK using \zccimg for front matter or colophon
+    e.g. \zccimg by-nc-nd|size="col" pgpos="pc" scale="0.15"\*
 
 Bug fixes in 2.0.4 (21 Oct 2021)
 
