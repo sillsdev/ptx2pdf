@@ -4,6 +4,9 @@ from ptxprint.piclist import newBase
 from ptxprint.utils import refKey, getlang, _, f2s, pycodedir
 from gi.repository import Gtk, GdkPixbuf, GObject, Gdk, GLib
 import os, re
+import logging
+
+logger = logging.getLogger(__name__)
 
 _form_structure = {
     'anchor':   't_plAnchor',
@@ -438,12 +441,15 @@ class PicList:
 
     def add_row(self):
         global newrowcounter
-        if len(self.model) > 0:
-            row = self.model[self.selection.get_selected()[1]][:]
+        model, sel = self.selection.get_selected_rows()
+        if sel is not None:
+            sel = model.convert_path_to_child_path(sel[0])
+        if sel is not None and len(self.model) > 0:
+            row = self.model[self.model.get_iter(sel)][:]
         else:
             row = self.get_row_from_items()
         row[_pickeys['key']] = "row{}".format(newrowcounter)
-        print(f"{row[_pickeys['key']]}", sorted(self.picinfo.keys()))
+        logger.debug(f"{row[_pickeys['key']]}", sorted(self.picinfo.keys()))
         newrowcounter += 1
         self.coremodel.append(row)
         self.select_row(len(self.model)-1)
