@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ptxprint\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-26 16:24+0700\n"
-"PO-Revision-Date: 2021-10-26 09:25\n"
+"POT-Creation-Date: 2021-10-26 17:45+0700\n"
+"PO-Revision-Date: 2021-10-26 10:45\n"
 "Last-Translator: \n"
 "Language-Team: Burmese\n"
 "Language: my_MM\n"
@@ -303,7 +303,7 @@ msgstr ""
 
 #: lib/ptxprint/gtkview.py:2836
 msgid "Return"
-msgstr ""
+msgstr "ပြန်လာခြင်း"
 
 #: lib/ptxprint/gtkview.py:2888
 msgid "FYI: The Regular font already supports all the characters in the text."
@@ -477,7 +477,7 @@ msgstr ""
 msgid "Rerun to fix: "
 msgstr ""
 
-#: lib/ptxprint/runjob.py:469 lib/ptxprint/texmodel.py:1091
+#: lib/ptxprint/runjob.py:469 lib/ptxprint/texmodel.py:1090
 msgid "And check if a faulty rule in PrintDraftChanges.txt has caused the error(s)."
 msgstr ""
 
@@ -485,7 +485,7 @@ msgstr ""
 msgid "Failed to merge texts due to a Syntax Error:"
 msgstr ""
 
-#: lib/ptxprint/runjob.py:471 lib/ptxprint/texmodel.py:1093
+#: lib/ptxprint/runjob.py:471 lib/ptxprint/texmodel.py:1092
 msgid "Run the Basic Checks in Paratext to ensure there are no Marker errors in either of the diglot projects. If this error persists, try running the Schema Check in Paratext as well."
 msgstr ""
 
@@ -540,19 +540,19 @@ msgstr ""
 msgid "Missing font ({})"
 msgstr ""
 
-#: lib/ptxprint/texmodel.py:1082
+#: lib/ptxprint/texmodel.py:1081
 msgid "Examine line {} in {} on the 'Final SFM' tab of the View+Edit page to determine the cause of this issue related to marker: {} as found in the markers: {}."
 msgstr ""
 
-#: lib/ptxprint/texmodel.py:1085
+#: lib/ptxprint/texmodel.py:1084
 msgid "This warning was triggered due to 'Auto-Correct USFM' being enabled on the Advanced tab but is due to an orphaned marker. It means the marker does not belong in that position, or it is missing a valid parent marker."
 msgstr ""
 
-#: lib/ptxprint/texmodel.py:1092
+#: lib/ptxprint/texmodel.py:1091
 msgid "Failed to normalize texts due to a Syntax Error: "
 msgstr ""
 
-#: lib/ptxprint/texmodel.py:1504
+#: lib/ptxprint/texmodel.py:1506
 msgid "\\rem Warning: No copyright statement found for: {} on pages {}"
 msgstr ""
 
@@ -1066,7 +1066,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:2197
 msgid "All"
-msgstr ""
+msgstr "အားလုံး"
 
 #: lib/ptxprint/ptxprint.glade:2201
 msgid "All Unknown / Unchecked"
@@ -1376,7 +1376,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:3283
 msgid "Color"
-msgstr ""
+msgstr "အရောင်"
 
 #: lib/ptxprint/ptxprint.glade:3298
 msgid "Line Thickness (pt)"
@@ -1557,11 +1557,11 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:3754 lib/ptxprint/ptxprint.glade:4191
 msgid "Top"
-msgstr ""
+msgstr "အစိတ်အပိုင်းများ"
 
 #: lib/ptxprint/ptxprint.glade:3762 lib/ptxprint/ptxprint.glade:4195
 msgid "Bottom"
-msgstr ""
+msgstr "အစိတ်အပိုင်းများ"
 
 #: lib/ptxprint/ptxprint.glade:3769
 msgid "Illustration Credit Overlay"
@@ -1656,7 +1656,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:4165
 msgid "Never"
-msgstr ""
+msgstr "ဘယ်တော့မှ"
 
 #: lib/ptxprint/ptxprint.glade:4169
 msgid "Odd"
@@ -2069,7 +2069,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:5798
 msgid "Basic"
-msgstr ""
+msgstr "အခြေခံ"
 
 #: lib/ptxprint/ptxprint.glade:5848
 msgid "Binding\n"
@@ -3256,7 +3256,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:9077
 msgid "Body"
-msgstr ""
+msgstr "ခန္ဓာအစိတ်အပိုင်း"
 
 #: lib/ptxprint/ptxprint.glade:9120
 msgid "Include Footnotes"
@@ -3787,11 +3787,11 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:10981
 msgid "Less"
-msgstr ""
+msgstr "ပိုနည်းခြင်း"
 
 #: lib/ptxprint/ptxprint.glade:10998
 msgid "More"
-msgstr ""
+msgstr "ပိုများခြင်း"
 
 #: lib/ptxprint/ptxprint.glade:11031
 msgid "The Standard List of cross-references contains\n"
@@ -4072,7 +4072,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:12162 lib/ptxprint/ptxprint.glade:18880
 msgid "Other"
-msgstr ""
+msgstr "အခြား"
 
 #: lib/ptxprint/ptxprint.glade:12199
 msgid "It is not considered best-practice to include \n"
@@ -4797,7 +4797,7 @@ msgstr ""
 #: lib/ptxprint/ptxprint.glade:14266 lib/ptxprint/ptxprint.glade:14524
 #: lib/ptxprint/ptxprint.glade:14572
 msgid "Yes"
-msgstr ""
+msgstr "သဘောတူမှုကို ပြခြင်း"
 
 #: lib/ptxprint/ptxprint.glade:14282 lib/ptxprint/ptxprint.glade:14540
 #: lib/ptxprint/ptxprint.glade:14588
@@ -6293,11 +6293,11 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:19896
 msgid "Name"
-msgstr ""
+msgstr "နာမည်"
 
 #: lib/ptxprint/ptxprint.glade:19915
 msgid "Value"
-msgstr ""
+msgstr "တန်ဖိုး"
 
 #: lib/ptxprint/ptxprint.glade:20039
 msgid "Enter your Colophon text here - using standard\n"
@@ -6564,7 +6564,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:20784
 msgid "Help"
-msgstr ""
+msgstr "ကူညီခြင်း"
 
 #: lib/ptxprint/ptxprint.glade:20836
 msgid "Display the output log \n"

@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ptxprint\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-26 16:24+0700\n"
-"PO-Revision-Date: 2021-10-26 09:25\n"
+"POT-Creation-Date: 2021-10-26 17:45+0700\n"
+"PO-Revision-Date: 2021-10-26 10:45\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -531,7 +531,7 @@ msgstr "Impossible de créer : "
 msgid "Rerun to fix: "
 msgstr "Relancer pour réparer : "
 
-#: lib/ptxprint/runjob.py:469 lib/ptxprint/texmodel.py:1091
+#: lib/ptxprint/runjob.py:469 lib/ptxprint/texmodel.py:1090
 msgid "And check if a faulty rule in PrintDraftChanges.txt has caused the error(s)."
 msgstr "Et vérifiez si une règle défectueuse dans PrintDraftChanges.txt a provoqué les erreurs."
 
@@ -539,7 +539,7 @@ msgstr "Et vérifiez si une règle défectueuse dans PrintDraftChanges.txt a pro
 msgid "Failed to merge texts due to a Syntax Error:"
 msgstr "Impossible de fusionner les textes à cause d'une erreur de syntaxe :"
 
-#: lib/ptxprint/runjob.py:471 lib/ptxprint/texmodel.py:1093
+#: lib/ptxprint/runjob.py:471 lib/ptxprint/texmodel.py:1092
 msgid "Run the Basic Checks in Paratext to ensure there are no Marker errors in either of the diglot projects. If this error persists, try running the Schema Check in Paratext as well."
 msgstr "Exécutez les vérifications de base dans Paratext pour vous assurer qu'il n'y a aucune erreur de marqueur dans l'un ou l'autre des projets diglot. Si cette erreur persiste, essayez aussi d'exécuter la vérification du schéma dans Paratext."
 
@@ -597,19 +597,19 @@ msgstr "Casser la syllabe"
 msgid "Missing font ({})"
 msgstr "Police manquante ({})"
 
-#: lib/ptxprint/texmodel.py:1082
+#: lib/ptxprint/texmodel.py:1081
 msgid "Examine line {} in {} on the 'Final SFM' tab of the View+Edit page to determine the cause of this issue related to marker: {} as found in the markers: {}."
 msgstr ""
 
-#: lib/ptxprint/texmodel.py:1085
+#: lib/ptxprint/texmodel.py:1084
 msgid "This warning was triggered due to 'Auto-Correct USFM' being enabled on the Advanced tab but is due to an orphaned marker. It means the marker does not belong in that position, or it is missing a valid parent marker."
 msgstr "Cet avertissement a été déclenché par l'activation de l'option \"Correction automatique de l’USFM\" dans l'onglet Avancé, mais il est dû à un marqueur orphelin. Cela signifie que le marqueur n'a pas sa place à cet endroit ou qu'il lui manque un marqueur parent valide."
 
-#: lib/ptxprint/texmodel.py:1092
+#: lib/ptxprint/texmodel.py:1091
 msgid "Failed to normalize texts due to a Syntax Error: "
 msgstr "Impossible de normaliser les textes à cause d'une erreur de syntaxe : "
 
-#: lib/ptxprint/texmodel.py:1504
+#: lib/ptxprint/texmodel.py:1506
 msgid "\\rem Warning: No copyright statement found for: {} on pages {}"
 msgstr "\\rem Attention : aucune déclaration de copyright trouvée pour: {} sur les pages {}"
 

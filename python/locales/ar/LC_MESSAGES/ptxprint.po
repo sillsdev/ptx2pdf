@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ptxprint\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-26 16:24+0700\n"
-"PO-Revision-Date: 2021-10-26 09:25\n"
+"POT-Creation-Date: 2021-10-26 17:45+0700\n"
+"PO-Revision-Date: 2021-10-26 10:45\n"
 "Last-Translator: \n"
 "Language-Team: Arabic\n"
 "Language: ar_SA\n"
@@ -51,7 +51,7 @@ msgstr "Font Scale:"
 
 #: lib/ptxprint/gtkstyleditor.py:552
 msgid "Required element {} is not set. Please set it."
-msgstr ""
+msgstr "لم يتم تعيين العنصر المطلوب {}. الرجاء تعيينه."
 
 #: lib/ptxprint/gtkutils.py:90
 msgid "Set Font..."
@@ -81,7 +81,7 @@ msgstr "لم يتم تعيين مشروع"
 
 #: lib/ptxprint/gtkview.py:778
 msgid "Can't get {} in the model. Returning {}"
-msgstr ""
+msgstr "لا يمكن الحصول على {} في النموذج. العودة {}"
 
 #: lib/ptxprint/gtkview.py:791
 msgid "Can't set {} in the model"
@@ -89,7 +89,7 @@ msgstr "لا يمكن تعيين {} في النموذج"
 
 #: lib/ptxprint/gtkview.py:865
 msgid "Font(s) not set"
-msgstr ""
+msgstr "لم يتم تعيين الخط(ات)"
 
 #: lib/ptxprint/gtkview.py:879
 msgid "Printing busy"
@@ -128,15 +128,15 @@ msgstr "مجلد: "
 
 #: lib/ptxprint/gtkview.py:1015 lib/ptxprint/gtkview.py:1022
 msgid "Cannot delete folder from disk!"
-msgstr ""
+msgstr "لا يمكن حذف المجلد من القرص!"
 
 #: lib/ptxprint/gtkview.py:1018
 msgid "Non-standard output folder needs to be deleted manually"
-msgstr ""
+msgstr "يجب حذف مجلد المخرجات غير القياسي يدويًا"
 
 #: lib/ptxprint/gtkview.py:1113 lib/ptxprint/ptxprint.glade:20265
 msgid "Peripherals"
-msgstr ""
+msgstr "محيطات"
 
 #: lib/ptxprint/gtkview.py:1116 lib/ptxprint/ptxprint.glade:15098
 msgid "Pictures"
@@ -156,7 +156,7 @@ msgstr "المراجع:"
 
 #: lib/ptxprint/gtkview.py:1123 lib/ptxprint/ptxprint.glade:11361
 msgid "Cross-References"
-msgstr ""
+msgstr "المراجع المتقاطعة"
 
 #: lib/ptxprint/gtkview.py:1127 lib/ptxprint/gtkview.py:1128
 msgid "Tabs"
@@ -180,12 +180,13 @@ msgstr "فتح"
 
 #: lib/ptxprint/gtkview.py:1404
 msgid "The Book in focus is not within scope"
-msgstr ""
+msgstr "الكتاب قيد التركيز ليس ضمن النطاق"
 
 #: lib/ptxprint/gtkview.py:1405
 msgid "To generate an AdjList, the book must be\n"
 "in the list of books to be printed."
-msgstr ""
+msgstr "لإنشاء قائمة تعديل، يجب أن يكون الكتاب\n"
+"في قائمة الكتب المراد طباعتها."
 
 #: lib/ptxprint/gtkview.py:1428
 msgid "No Secondary Project Set"
@@ -209,7 +210,7 @@ msgstr "\n\n"
 
 #: lib/ptxprint/gtkview.py:1553
 msgid " Click the Generate button (above) to start the process of creating Front Matter..."
-msgstr ""
+msgstr " انقر فوق زر توليد (أعلاه) لبدء عملية إنشاء موضوع الأمام..."
 
 #: lib/ptxprint/gtkview.py:1597
 msgid " Use the 'Advanced' tab to select which settings you want to view or edit."
@@ -332,7 +333,7 @@ msgstr "حفظ والعودة إلى\n"
 
 #: lib/ptxprint/gtkview.py:2836
 msgid "Return"
-msgstr ""
+msgstr "العودة"
 
 #: lib/ptxprint/gtkview.py:2888
 msgid "FYI: The Regular font already supports all the characters in the text."
@@ -346,11 +347,11 @@ msgstr "الخط الخلفي غير مطلوب لذلك\n"
 
 #: lib/ptxprint/gtkview.py:3105
 msgid "Warning! SIL's Executive Limitations do not permit SIL to publish scripture."
-msgstr ""
+msgstr "تحذير! لا تسمح القيود التنفيذية لـ SIL بنشر البرنامج النصي."
 
 #: lib/ptxprint/gtkview.py:3106
 msgid "The reference to SIL in the project's copyright line has been removed. Contact your entity's Publishing Coordinator for advice regarding protocols."
-msgstr ""
+msgstr "تمت إزالة الإشارة إلى SIL في خط حقوق الطبع والنشر للمشروع. اتصل بمنسق النشر في كيانك للحصول على المشورة فيما يتعلق بالبروتوكولات."
 
 #: lib/ptxprint/gtkview.py:3149
 msgid "Choose Image"
@@ -368,15 +369,17 @@ msgstr "هذا الإعدادات المحلية غير مدعومة على ال
 msgid "FYI: This Interlinear option is not compatible with the\n"
 "'Spacing Adjustments Between Letters' on the Fonts+Script page.\n"
 "So that option has just been disabled."
-msgstr ""
+msgstr "FYI: خيار الخط الخطي هذا غير متوافق مع\n"
+"'تعديلات المسافة بين الحروف' في صفحة الخط +Script.\n"
+"لذلك تم تعطيل هذا الخيار."
 
 #: lib/ptxprint/gtkview.py:3526
 msgid "<Type Value Here>"
-msgstr ""
+msgstr "<Type Value Here>"
 
 #: lib/ptxprint/gtkview.py:3543
 msgid "Variable Name"
-msgstr ""
+msgstr "اسم المتغير"
 
 #: lib/ptxprint/runjob.py:21 lib/ptxprint/runjob.py:47
 msgid "Probably a TeX macro problem - contact support, or post a bug report"
@@ -415,7 +418,8 @@ msgstr "متصل بعلامة التوضيح USFM3"
 #: lib/ptxprint/runjob.py:31
 msgid "This might be related to a USFM marker error (using an unsupported marker).\n"
 "Try running 'Basic Checks' in Paratext to validate markers."
-msgstr ""
+msgstr "قد يكون هذا مرتبطا بخطأ في علامة USFM (باستخدام علامة غير مدعومة).\n"
+"حاول تشغيل 'التحقق الأساسي' في Paratext للتحقق من العلامات."
 
 #: lib/ptxprint/runjob.py:33
 msgid "One of the settings in the Stylesheet may be missing the units.\n"
@@ -427,7 +431,7 @@ msgstr "قد يكون أحد الإعدادات في ورقة النمط مفق�
 
 #: lib/ptxprint/runjob.py:36
 msgid "Try turning off various settings on the Advanced tab."
-msgstr ""
+msgstr "حاول إيقاف تشغيل مختلف الإعدادات على علامة التبويب المتقدمة."
 
 #: lib/ptxprint/runjob.py:37
 msgid "Sorry! XeTeX was unable to complete the typesetting.\n"
@@ -482,7 +486,7 @@ msgstr "قد يكون تركيب خاطئ."
 
 #: lib/ptxprint/runjob.py:58
 msgid "Unknown issue. Possibly related to Right-aligned tabbed leaders. Try turning off various settings on the Advanced Tab."
-msgstr ""
+msgstr "مشكلة غير معروفة. قد تكون مرتبطة بالقادة المغلوفين على اليمين. حاول إيقاف تشغيل مختلف الإعدادات على التبويب المتقدم."
 
 #: lib/ptxprint/runjob.py:60
 msgid "Oops! Something unexpected happened causing this error.\n"
@@ -490,7 +494,11 @@ msgid "Oops! Something unexpected happened causing this error.\n"
 "on the Help page to create a .zip file and send it to <ptxprint_support@sil.org>\n"
 "for further assistance. Please include a description of the problem, and if\n"
 "known, tell us which setting was changed since it last worked."
-msgstr ""
+msgstr "عفوا! حدث شيء غير متوقع تسبب في هذا الخطأ.\n"
+"إذا كنت غير قادر على حل هذه المشكلة بنفسك، استخدم الزر 'إنشاء أرشيف...'\n"
+"على صفحة المساعدة لإنشاء . قم بإرسال ملف وإرساله إلى <ptxprint_support@sil.org>\n"
+"للحصول على المزيد من المساعدة. يرجى إدراج وصف للمشكلة، وإذا كان\n"
+"معروفا، أخبرنا بأي إعدادات تم تغييرها منذ آخر مرة."
 
 #: lib/ptxprint/runjob.py:190
 msgid "Illegal Project"
@@ -522,17 +530,17 @@ msgstr "فشل في الإنشاء: "
 msgid "Rerun to fix: "
 msgstr "إعادة إلى الإصلاح: "
 
-#: lib/ptxprint/runjob.py:469 lib/ptxprint/texmodel.py:1091
+#: lib/ptxprint/runjob.py:469 lib/ptxprint/texmodel.py:1090
 msgid "And check if a faulty rule in PrintDraftChanges.txt has caused the error(s)."
-msgstr ""
+msgstr "وتحقق مما إذا كانت قاعدة خاطئة في PrintDraftChanges.txt قد تسببت في الخطأ."
 
 #: lib/ptxprint/runjob.py:470
 msgid "Failed to merge texts due to a Syntax Error:"
 msgstr "فشل دمج النصوص بسبب خطأ في بناء الصياغة:"
 
-#: lib/ptxprint/runjob.py:471 lib/ptxprint/texmodel.py:1093
+#: lib/ptxprint/runjob.py:471 lib/ptxprint/texmodel.py:1092
 msgid "Run the Basic Checks in Paratext to ensure there are no Marker errors in either of the diglot projects. If this error persists, try running the Schema Check in Paratext as well."
-msgstr ""
+msgstr "قم بتشغيل الفحوص الأساسية في Paratext للتأكد من عدم وجود أخطاء علامات في أي من مشاريع الحفر. إذا استمر هذا الخطأ، حاول تشغيل نظام التحقق في Paratext أيضا."
 
 #: lib/ptxprint/runjob.py:473
 msgid "PTXprint [{}] - Diglot Merge Error!"
@@ -540,7 +548,7 @@ msgstr "PTXprint [{}] - خطأ الدمج"
 
 #: lib/ptxprint/runjob.py:562
 msgid "table of contents"
-msgstr ""
+msgstr "جدول المحتويات"
 
 #: lib/ptxprint/runjob.py:563
 msgid "image copyrights"
@@ -552,11 +560,11 @@ msgstr "أرقام الفصل"
 
 #: lib/ptxprint/runjob.py:565
 msgid "chapter positions"
-msgstr ""
+msgstr "مناصب الفصل"
 
 #: lib/ptxprint/runjob.py:614
 msgid "Rerunning because the {} changed"
-msgstr ""
+msgstr "رمي لأن {} تغير"
 
 #: lib/ptxprint/runjob.py:677
 msgid "Warning: Could not locate decorative PDF(s):"
@@ -588,19 +596,19 @@ msgstr "كسر الخط القابل للتخطيط"
 msgid "Missing font ({})"
 msgstr "الخط مفقود ({})"
 
-#: lib/ptxprint/texmodel.py:1082
+#: lib/ptxprint/texmodel.py:1081
 msgid "Examine line {} in {} on the 'Final SFM' tab of the View+Edit page to determine the cause of this issue related to marker: {} as found in the markers: {}."
 msgstr ""
 
-#: lib/ptxprint/texmodel.py:1085
+#: lib/ptxprint/texmodel.py:1084
 msgid "This warning was triggered due to 'Auto-Correct USFM' being enabled on the Advanced tab but is due to an orphaned marker. It means the marker does not belong in that position, or it is missing a valid parent marker."
-msgstr ""
+msgstr "وقد بدأ هذا التحذير بسبب تمكين \"تصحيح تلقائي لدولار الولايات المتحدة\" على علامة التبويب المتقدمة، ولكنه يرجع إلى وجود علامة يتيمة. وهذا يعني أن العلامة لا تنتمي إلى تلك الوظيفة، أو أنها لا تنتمي إلى علامة أم صالحة."
 
-#: lib/ptxprint/texmodel.py:1092
+#: lib/ptxprint/texmodel.py:1091
 msgid "Failed to normalize texts due to a Syntax Error: "
-msgstr ""
+msgstr "فشل في تطبيع النصوص بسبب خطأ في بناء الصياغة: "
 
-#: lib/ptxprint/texmodel.py:1504
+#: lib/ptxprint/texmodel.py:1506
 msgid "\\rem Warning: No copyright statement found for: {} on pages {}"
 msgstr "\\rem تحذير: لم يتم العثور على بيان حقوق الطبع والنشر لـ: {} على الصفحات {}"
 
@@ -629,12 +637,12 @@ msgstr "رقم الصفحة"
 #: lib/ptxprint/utils.py:265 lib/ptxprint/ptxprint.glade:11566
 #: lib/ptxprint/ptxprint.glade:11610 lib/ptxprint/ptxprint.glade:11654
 msgid "Book (\\h)"
-msgstr ""
+msgstr "كتاب (\\h)"
 
 #: lib/ptxprint/utils.py:266 lib/ptxprint/ptxprint.glade:11567
 #: lib/ptxprint/ptxprint.glade:11611 lib/ptxprint/ptxprint.glade:11655
 msgid "Book Alt (\\h1)"
-msgstr ""
+msgstr "كتاب البديل (\\h1)"
 
 #: lib/ptxprint/utils.py:267
 msgid "Time (HH:MM)"
@@ -652,11 +660,11 @@ msgstr "-فارغ-"
 
 #: lib/ptxprint/view.py:264
 msgid "FRT must not be included in the list of books"
-msgstr ""
+msgstr "يجب عدم إدراج تقرير مراجعة الحسابات في قائمة الكتب"
 
 #: lib/ptxprint/view.py:265
 msgid "The 'Front Matter' option has now been enabled for you on the Peripherals page and the contents of Paratext's FRT book has been copied to the PTXprint settings location for this publication. It can be edited if needed on the View+Edit page."
-msgstr ""
+msgstr "تم الآن تمكين خيار \"الأمر الأمامي\" لك في صفحة المحيط، وتم نسخ محتويات كتاب Paratext FRT إلى موقع إعدادات PTXprint لهذا النشر. يمكن تعديله إذا لزم الأمر على صفحة العرض +التحرير."
 
 #: lib/ptxprint/view.py:475
 msgid "PTXprint {} - Bible Layout for Everyone!"
@@ -687,7 +695,8 @@ msgstr "{} لم يتم العثور على ملف Hyvination الخاص بمشر
 #: lib/ptxprint/view.py:1016
 msgid "\n\n"
 "That is too many for XeTeX! List truncated to longest {} words found in the active sources."
-msgstr ""
+msgstr "\n\n"
+"هذا عدد كبير جدا للكلمات XeTeX! القائمة مقتطعة إلى أطول {} موجودة في المصادر النشطة."
 
 #: lib/ptxprint/view.py:1022
 msgid "Hyphenation List Generated"
@@ -714,7 +723,8 @@ msgstr "\n"
 #: lib/ptxprint/view.py:1028
 msgid "\n\n"
 "{} words were at least 10 characters long but had no hyphenation marked"
-msgstr ""
+msgstr "\n\n"
+"{} الكلمات كانت على الأقل 10 أحرف ولكن لم يكن لها علامة الوصل"
 
 #: lib/ptxprint/view.py:1031
 msgid "Hyphenation List was NOT Generated"
@@ -892,23 +902,27 @@ msgstr "تحميل أحدث إصدار"
 
 #: lib/ptxprint/ptxprint.glade:892
 msgid "PTXprint: Generate Front Matter"
-msgstr ""
+msgstr "PTXprint: توليد مسألة الأمامية"
 
 #: lib/ptxprint/ptxprint.glade:955
 msgid "BASIC: Front matter contains just a few\n"
 "essentials with publication information"
-msgstr ""
+msgstr "BASIC: المادة الأمامية تحتوي فقط على بعض\n"
+"أساسيات مع معلومات النشر"
 
 #: lib/ptxprint/ptxprint.glade:960
 msgid "This option will create a simple verso page\n"
 "containing essential copyright and licensing\n"
 "information followed by a table of contents."
-msgstr ""
+msgstr "سيؤدي هذا الخيار إلى إنشاء صفحة نسخة بسيطة\n"
+"تحتوي على معلومات حقوق التأليف والنشر الأساسية والترخيص\n"
+"تليها قائمة المحتويات."
 
 #: lib/ptxprint/ptxprint.glade:977
 msgid "ADVANCED: template contains several sections\n"
 "(some of which require editing before use)"
-msgstr ""
+msgstr "التحديف: يحتوي القالب على عدة أقسام\n"
+"(بعضها يتطلب التعديل قبل الاستخدام)"
 
 #: lib/ptxprint/ptxprint.glade:982
 msgid "This option will create an extensive template\n"
@@ -929,11 +943,28 @@ msgid "This option will create an extensive template\n"
 "\\pc \\zvar|subtitlefr\\*\n"
 "\\pc \\zvar|languagename\\*\n"
 "\\pc \\zvar|copiesprinted\\*"
-msgstr ""
+msgstr "سيؤدي هذا الخيار إلى إنشاء قالب شامل\n"
+"مع أقسام متعددة (سيبدأ كل منها\n"
+"على صفحة جديدة في المنشور النهائي). ستحتاج إلى\n"
+"تعديل نموذج النص المقدم حتى\n"
+"يتواصل باللغة أو اللغات المطلوبة.\n"
+"يمكنك أيضًا إزالة الأقسام غير المرغوب فيها إذا كانت\n"
+"غير مناسبة لهذا المنشور.\n"
+"ملاحظة: لجعل هذا القالب عاما لـ\n"
+"عدة منشورات مختلفة في هذا المشروع، يتم تشجيع\n"
+"على استخدام متغيرات \\zvar<unk> \\* التي سيتم استبدالها\n"
+"بمعلومات خاصة بالنشر عند طباعتها.\n"
+"على سبيل المثال:\n"
+"\\mt1 \\zvar<unk> maintitle\\*\n"
+"\\mt2 \\zvar<unk> subtitle\\*\n"
+"\\pc \\zvar<unk> maintitlefr\\*\n"
+"\\pc \\zvar<unk> subtitlefr\\*\n"
+"\\pc \\zvar<unk> languagename\\*\n"
+"\\pc \\zvar<unk> copiesprinted\\*"
 
 #: lib/ptxprint/ptxprint.glade:1013
 msgid "Include sections for a separate cover page"
-msgstr ""
+msgstr "تضمين أقسام لصفحة غلاف منفصلة"
 
 #: lib/ptxprint/ptxprint.glade:1019
 msgid "(Not yet implemented)\n"
@@ -941,7 +972,11 @@ msgid "(Not yet implemented)\n"
 "sections (used for creating a cover page):\n"
 "\\periph Cover - detailing text and optional picture\n"
 "\\periph Spine - text for the spine of the cover"
-msgstr ""
+msgstr "(لم يتم تنفيذه بعد)\n"
+"تمكين هذا الخيار إذا كنت ترغب في تضمين الأقسام\n"
+"التالية (المستخدمة لإنشاء صفحة غلاء):\n"
+"\\periph Cover- تفاصيل النص والصورة الاختيارية\n"
+"\\periph Spine - نص لعمود الغلاف"
 
 #: lib/ptxprint/ptxprint.glade:1053 lib/ptxprint/ptxprint.glade:1303
 msgid "Warning!"
@@ -960,7 +995,8 @@ msgstr "يمكن لهذه العملية الكتابة فوق \n"
 #: lib/ptxprint/ptxprint.glade:1083
 msgid "PARATEXT: Make a copy of the Project's FRT book \n"
 "(which may be edited to make use of \\zvar|variables\\*)"
-msgstr ""
+msgstr "PARATEXT: اصنع نسخة من كتاب FRT للمشروع \n"
+"(والذي قد يتم تحريره لاستخدام المتغيرات \\zvar<unk> \\*)"
 
 #: lib/ptxprint/ptxprint.glade:1088
 msgid "This option will create a COPY of the Paratext project's\n"
@@ -974,7 +1010,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:1114
 msgid "Generate Front Matter"
-msgstr ""
+msgstr "توليد المهمة الأمامية"
 
 #: lib/ptxprint/ptxprint.glade:1131
 msgid "PTXprint: Generate PicList"
@@ -1084,11 +1120,13 @@ msgstr "انقر لإيقاف تشغيل جميع الكتب."
 msgid "The FRT book in Paratext contains front matter\n"
 "for a publicatuon. Visit the Peripherals page to\n"
 "set up front matter for this publication."
-msgstr ""
+msgstr "يحتوي كتاب FRT في Paratext على مادة واجهة\n"
+"للنشر. قم بزيارة صفحة المحطات إلى\n"
+"قم بإعداد المادة الأمامية لهذا المنشور."
 
 #: lib/ptxprint/ptxprint.glade:1549
 msgid "Why is FRT not listed?"
-msgstr ""
+msgstr "لماذا لم يتم إدراج FRT ؟"
 
 #: lib/ptxprint/ptxprint.glade:1564
 msgid "Build List of Books\n"
@@ -1110,22 +1148,25 @@ msgstr "الكتب:"
 
 #: lib/ptxprint/ptxprint.glade:1711
 msgid "PTXprint: Copy Configuration To..."
-msgstr ""
+msgstr "PTXprint: نسخ التكوين إلى..."
 
 #: lib/ptxprint/ptxprint.glade:1762
 msgid "Select one or more (target) Paratext projects that the \n"
 "current configuration (source) should be copied to:"
-msgstr ""
+msgstr "حدد واحد أو أكثر من مشاريع Paratext التي يجب نسخ \n"
+"التكوين الحالي (المصدر) إلى:"
 
 #: lib/ptxprint/ptxprint.glade:1847
 msgid "Overwrite Target Project Settings"
-msgstr ""
+msgstr "الكتابة فوق إعدادات المشروع الهدف"
 
 #: lib/ptxprint/ptxprint.glade:1851
 msgid "If this option is checked, any existing\n"
 "settings with the same Config name in \n"
 "the target project(s) will be overwritten."
-msgstr ""
+msgstr "إذا تم تحديد هذا الخيار، أي إعدادات\n"
+"موجودة بنفس اسم التكوين في \n"
+"سيتم الكتابة فوق المشروع (المشاريع) المستهدفة."
 
 #: lib/ptxprint/ptxprint.glade:1889
 msgid "PTXprint: Lock/Unlock Configuration"
@@ -1150,14 +1191,20 @@ msgid "Set which marks are to be displayed. Any\n"
 "combination of Crop marks, Guides (margins,\n"
 "baselines, etc.) and/or a graph-paper-like Grid\n"
 "can be set."
-msgstr ""
+msgstr "تعيين العلامات التي سيتم عرضها. أي\n"
+"مزيج من علامات المحاصيل، الأدلة (الهوامش،\n"
+"خطوط الأساس، إلخ. و/أو يمكن تعيين شبكة ورقية بيانية مثل شبكة\n"
+"."
 
 #: lib/ptxprint/ptxprint.glade:2053 lib/ptxprint/ptxprint.glade:5539
 msgid "A saved configuration can be copied to\n"
 "other Paratext projects in order to avoid\n"
 "having to manually re-create all the same\n"
 "settings for a similar project."
-msgstr ""
+msgstr "يمكن نسخ الإعدادات المحفوظة إلى\n"
+"مشاريع Paratext الأخرى لتجنب\n"
+"الاضطرار إلى إعادة إنشاء جميع\n"
+"الإعدادات نفسها لمشروع مماثل."
 
 #: lib/ptxprint/ptxprint.glade:2184
 msgid "NONE"
@@ -1269,7 +1316,7 @@ msgstr "الوسط"
 
 #: lib/ptxprint/ptxprint.glade:2520 lib/ptxprint/ptxprint.glade:4506
 msgid "5"
-msgstr ""
+msgstr "5"
 
 #: lib/ptxprint/ptxprint.glade:2584
 msgid "Pick a Font (and Typeface)"
@@ -1377,7 +1424,7 @@ msgstr "يتم رعاية جميع أنظمة الأرقام / الأرقام ا
 
 #: lib/ptxprint/ptxprint.glade:2962
 msgid "Digit mapping:"
-msgstr ""
+msgstr "رسم الرمز:"
 
 #: lib/ptxprint/ptxprint.glade:3022 lib/ptxprint/ptxprint.glade:3620
 #: lib/ptxprint/ptxprint.glade:3732
@@ -1450,7 +1497,7 @@ msgstr "بوصة"
 
 #: lib/ptxprint/ptxprint.glade:3113
 msgid "Guides, Crop Marks, Watermark and Grid Settings"
-msgstr ""
+msgstr "الإرشادات، علامات المحاصيل، العلامة المائية وإعدادات الشبكة"
 
 #: lib/ptxprint/ptxprint.glade:3154
 msgid "Guides (Rules and Baselines)"
@@ -1466,7 +1513,7 @@ msgstr "تمكين هذا الخيار سوف يقوم بتشغيل مختلف �
 
 #: lib/ptxprint/ptxprint.glade:3174
 msgid "Crop Marks (Shows Page Edge for Trimming)"
-msgstr ""
+msgstr "علامات الحصاد (حافة صفحة البحث للتقويم)"
 
 #: lib/ptxprint/ptxprint.glade:3178
 msgid "Some printers require crop marks\n"
@@ -1572,7 +1619,10 @@ msgid "Clicking this button will refresh\n"
 "the default Grid settings:\n"
 "Centimeters with 5 divisions (2mm each) \n"
 "red and light green lines (0.2pt thickness)."
-msgstr ""
+msgstr "النقر على هذا الزر سيقوم بتحديث\n"
+"إعدادات الشبكة الافتراضية:\n"
+"سنتيمتر مع 5 أقسام (2 مم لكل منهما) \n"
+"خطين أحمر و أخضر فاتح (سمك 0.2 صف)."
 
 #: lib/ptxprint/ptxprint.glade:3465
 msgid "The grid can use Centimeters or \n"
@@ -1652,23 +1702,23 @@ msgstr "التايلندية"
 
 #: lib/ptxprint/ptxprint.glade:3650
 msgid "Digital (PDF/X-4)"
-msgstr ""
+msgstr "رقمي (PDF/X-4)"
 
 #: lib/ptxprint/ptxprint.glade:3654
 msgid "Print (PDF/X-1a:2003)"
-msgstr ""
+msgstr "Print (PDF/X-1a:2003)"
 
 #: lib/ptxprint/ptxprint.glade:3658
 msgid "Transparency (Digital+CMYK)"
-msgstr ""
+msgstr "الشفافية (رقمي+CMYK)"
 
 #: lib/ptxprint/ptxprint.glade:3659
 msgid "CMYK"
-msgstr ""
+msgstr "CMYK"
 
 #: lib/ptxprint/ptxprint.glade:3662
 msgid "Archive (Print+Unicode Text)"
-msgstr ""
+msgstr "أرشيف (Print+Unicode النص)"
 
 #: lib/ptxprint/ptxprint.glade:3676 lib/ptxprint/ptxprint.glade:4266
 #: lib/ptxprint/ptxprint.glade:4292 lib/ptxprint/ptxprint.glade:14298
@@ -1797,7 +1847,7 @@ msgstr "يمكن تطبيق نفس نص تراكب الائتمان\n"
 
 #: lib/ptxprint/ptxprint.glade:4062
 msgid "Click to edit the Credit Overlay properties on the Styles tab."
-msgstr ""
+msgstr "انقر لتعديل خصائص تراكب الائتمان على تبويب الأنماط."
 
 #: lib/ptxprint/ptxprint.glade:4076
 msgid "Overwite any existing settings"
@@ -1907,15 +1957,15 @@ msgstr "من الأعلى إلى الأسفل"
 
 #: lib/ptxprint/ptxprint.glade:4467
 msgid "Mini View"
-msgstr ""
+msgstr "عرض مصغر"
 
 #: lib/ptxprint/ptxprint.glade:4471
 msgid "Basic View"
-msgstr ""
+msgstr "عرض أساسي"
 
 #: lib/ptxprint/ptxprint.glade:4475
 msgid "Full View"
-msgstr ""
+msgstr "عرض كامل"
 
 #: lib/ptxprint/ptxprint.glade:4553
 msgid "PTXprint: Add/Edit Style"
@@ -1926,52 +1976,63 @@ msgid "[Required] This tells ptxprint how to layout data in this marker. \n"
 "For normal, vernacular body text, use VerseText. If this is part of\n"
 "a heading, use Section. If it is part of the title block of a book, \n"
 "use Title. NoteText makes this a kind of footnote, like \\x."
-msgstr ""
+msgstr "[Required] هذا يخبر ptxprint كيفية تخطيط البيانات في هذا العلامة. \n"
+"لنص الجسم الطبيعي ، استخدم VerseText. إذا كان هذا جزء من\n"
+"عنوان، استخدم القسم إذا كانت جزءا من كتلة العنوان في كتاب، \n"
+"استخدم العنوان. ملاحظة النص تجعل هذا نوعا من الحاشية، مثل \\x."
 
 #: lib/ptxprint/ptxprint.glade:4608
 msgid "⚠️Text Type:"
-msgstr ""
+msgstr "⚠️نوع النص:"
 
 #: lib/ptxprint/ptxprint.glade:4622 lib/ptxprint/ptxprint.glade:4638
 msgid "[Required] This tells PTXprint how to layout data in this marker. \n"
 "For normal, vernacular body text, use VerseText. If this is part of\n"
 "a heading, use Section. If it is part of the title block of a book, \n"
 "use Title. NoteText makes this a kind of footnote, like \\x."
-msgstr ""
+msgstr "[Required] هذا يخبر PTXprint كيفية تخطيط البيانات في هذا العلامة. \n"
+"لنص الجسم الطبيعي ، استخدم VerseText. إذا كان هذا جزء من\n"
+"عنوان، استخدم القسم إذا كانت جزءا من كتلة العنوان في كتاب، \n"
+"استخدم العنوان. ملاحظة النص تجعل هذا نوعا من الحاشية، مثل \\x."
 
 #: lib/ptxprint/ptxprint.glade:4655 lib/ptxprint/ptxprint.glade:4672
 #: lib/ptxprint/ptxprint.glade:4686
 msgid "[Required] This describes the nesting level for this marker. \n"
 "Paragraph markers close other paragraphs and character styles, etc."
-msgstr ""
+msgstr "[Required] هذا يصف مستوى التعزيز لهذا العلامة. \n"
+"علامات الفقرات تغلق الفقرات وأنماط الأحرف الأخرى، إلخ."
 
 #: lib/ptxprint/ptxprint.glade:4659
 msgid "⚠️Style Type:"
-msgstr ""
+msgstr "⚠️Style Type:"
 
 #: lib/ptxprint/ptxprint.glade:4702
 msgid "⚠️Marker:"
-msgstr ""
+msgstr "⚠️Marker:"
 
 #: lib/ptxprint/ptxprint.glade:4715 lib/ptxprint/ptxprint.glade:4795
 msgid "You can say what you like here to\n"
 "describe the purpose of the style."
-msgstr ""
+msgstr "يمكنك أن تقول ما تحبه هنا\n"
+"لوصف الغرض من النمط."
 
 #: lib/ptxprint/ptxprint.glade:4747 lib/ptxprint/ptxprint.glade:4764
 msgid "[Required] List markers that this marker may occur under. \n"
 "Without this, the USFM parser may report structural errors \n"
 "in your data for this marker."
-msgstr ""
+msgstr "[Required] علامات القائمة التي قد تحدث تحت هذا العلامة. \n"
+"بدون هذا، قد يبلغ تحليل USFM عن أخطاء هيكلية \n"
+"في بياناتك لهذا العلامة."
 
 #: lib/ptxprint/ptxprint.glade:4751
 msgid "⚠️Occurs Under:"
-msgstr ""
+msgstr "⚠️أسفل:"
 
 #: lib/ptxprint/ptxprint.glade:4814 lib/ptxprint/ptxprint.glade:4831
 msgid "Consists of: Marker..Endmarker - Group - short description \n"
 "and helps to place the marker in the tree listing all markers."
-msgstr ""
+msgstr "يتكون من: Marker..Endmarker - Group - وصف قصير \n"
+"ويساعد على وضع العلامة في شجرة قائمة بجميع العلامات."
 
 #: lib/ptxprint/ptxprint.glade:4817 lib/ptxprint/ptxprint.glade:5357
 msgid "Name:"
@@ -1979,11 +2040,11 @@ msgstr "الاسم:"
 
 #: lib/ptxprint/ptxprint.glade:4833
 msgid "xyz - Other - Brief description of marker"
-msgstr ""
+msgstr "xyz - أخر- وصف موجز للعلامة"
 
 #: lib/ptxprint/ptxprint.glade:4845
 msgid "If the closing marker for this marker is not the same as the marker followed by a * then enter it here. For example, with paired milestones, do not create a new milestone just specify the closing milestone marker here."
-msgstr ""
+msgstr "إذا لم يكن علامة الإغلاق لهذا العلامة هي نفس العلامة التي يتبعها * فقم بإدخالها هنا. على سبيل المثال، مع معالم مقترنة، لا تنشئ معلما جديدا فقط تحدد معلم الاختتام هنا."
 
 #: lib/ptxprint/ptxprint.glade:4848
 msgid "End Marker:"
@@ -2111,7 +2172,15 @@ msgid "Delete the currently selected\n"
 "then this will RESET all the settings to\n"
 "their default values, but not Stylesheets,\n"
 "or other advanced file-based settings."
-msgstr ""
+msgstr "حذف التكوين المحفوظ\n"
+"المحدد حاليا فورا.\n"
+"يحذف هذا أيضا المجلد الفرعي المقابل \n"
+"من الملفات المؤقتة في مجلد local\\ptxprint \n"
+"حيث توجد ملفات PDF المنشأة.\n\n"
+"إذا تم تحديد التكوين الافتراضي،\n"
+"ثم هذا سوف يعيد جميع الإعدادات إلى\n"
+"القيم الافتراضية الخاصة بها، ولكن ليس سماعات الأسطور،\n"
+"أو غيرها من الإعدادات المتقدمة المستندة إلى الملف."
 
 #: lib/ptxprint/ptxprint.glade:5425 lib/ptxprint/ptxprint.glade:5442
 msgid "Optional: Provide a description about the\n"
@@ -2223,11 +2292,19 @@ msgid "It is important to include a copyright statement on every publication. By
 "use ~ for places where a non-breaking space is needed\n"
 "use // where a line break needs to be forced\n"
 "but :// used in URLs will still be preserved"
-msgstr ""
+msgstr "ومن المهم إدراج بيان عن حقوق التأليف والنشر في كل منشور. بشكل افتراضي سيتم تعيين هذا وفقا لإعدادات مشروع Paratext، ولكن يمكنك تعديله هنا إذا لزم الأمر. \n\n"
+"سلاسل لوحة المفاتيح هذه يمكن استخدامها:\n"
+"   (ج) --> © علامة حقوق الطبع والنشر\n"
+"   (r) --> ® للدلالة على العلامات التجارية المسجلة\n"
+"   (tm) --> TM للدلالة على العلامات التجارية بشكل عام\n\n"
+"الرموز الخاصة الأخرى التي تم تحويلها في وقت الطباعة:\n"
+"استخدم ~ للأماكن التي تحتاج إلى مساحة غير قاطعة\n"
+"استخدام // / حيث يحتاج الأمر إلى قطع سطر\n"
+"ولكن :// المستخدمة في عناوين URLs سوف تظل محفوظة"
 
 #: lib/ptxprint/ptxprint.glade:5685
 msgid "<Enter copyright holder here. For example, © 2021 Wycliffe Bible Translators, Inc.>"
-msgstr ""
+msgstr "<Enter copyright holder here. For example, © 2021 Wycliffe Bible Translators, Inc.>"
 
 #: lib/ptxprint/ptxprint.glade:5700
 msgid "Clicking this button will reload\n"
@@ -2339,7 +2416,7 @@ msgstr "148 مم، 210 ملم (A5)"
 
 #: lib/ptxprint/ptxprint.glade:5961
 msgid "176mm, 250mm (B5)"
-msgstr ""
+msgstr "176 مم، 250 ملم (B5)"
 
 #: lib/ptxprint/ptxprint.glade:5962
 msgid "8.5in, 11in (Letter)"
@@ -2359,7 +2436,7 @@ msgstr "5.8, 8.7in (147x221mm)"
 
 #: lib/ptxprint/ptxprint.glade:5966
 msgid "184.6mm, 271.6mm (A4 with cropmarks)"
-msgstr ""
+msgstr "184.6 مم، 271.6 ملم (A4 مزودة بمحاصيل)"
 
 #: lib/ptxprint/ptxprint.glade:5988
 msgid "This is the base font size for default paragraph \n"
@@ -2498,14 +2575,17 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:6216
 msgid "Marks & Guides"
-msgstr ""
+msgstr "علامات وأدلة"
 
 #: lib/ptxprint/ptxprint.glade:6220
 msgid "Enable Guides or a Grid to sit behind the\n"
 "text to assist with final adjustments; \n"
 "or enable a Watermark to show behind the text;\n"
 "or turn on the Crop marks for the printer."
-msgstr ""
+msgstr "تمكين الأدلة أو الشبكة للجلوس وراء النص\n"
+"للمساعدة في التعديلات النهائية؛ \n"
+"أو تمكين علامة مائية لإظهار وراء النص؛\n"
+"أو تشغيل علامات المحاصيل للطابعة."
 
 #: lib/ptxprint/ptxprint.glade:6249
 msgid "Page Setup"
@@ -2571,12 +2651,23 @@ msgid "By default (when this is set to 0)\n"
 "you can still stretch/shrink paragraphs\n"
 "using AdjLists to refine the output by\n"
 "manually balancing pages."
-msgstr ""
+msgstr "بشكل افتراضي (عندما يتم تعيين هذا إلى 0)\n"
+"PTXprint سوف توازن عدد الأسطر\n"
+"المستخدمة في كل عمود. أحيانا\n"
+"يؤدي هذا إلى مسافات فارغة كبيرة في\n"
+"نهاية الصفحة.\n\n"
+"زيادة هذا الرقم (النطاق الموصى به\n"
+"1-4) سيسمح حتى ذلك\n"
+"أسطر غير متوازنة على الصفحة. لاحظ أنه\n"
+"لا يزال بإمكانك تمديد/تقليص الفقرات\n"
+"باستخدام قوائم AdjLists لصقل الإخراج ب\n"
+"موازنة الصفحات يدويا."
 
 #: lib/ptxprint/ptxprint.glade:6413
 msgid "Unbalanced\n"
 "Lines (max):"
-msgstr ""
+msgstr "خطوط\n"
+"غير متوازنة (الحد الأقصى):"
 
 #: lib/ptxprint/ptxprint.glade:6426
 msgid "Two Column Layout"
@@ -2609,7 +2700,8 @@ msgstr "المسافة (مم) من الجزء العلوي من الصفحة\n"
 #: lib/ptxprint/ptxprint.glade:6499
 msgid "Start of Page to \n"
 "Top of Text (mm):"
-msgstr ""
+msgstr "بدء الصفحة إلى \n"
+"أعلى النص (مم):"
 
 #: lib/ptxprint/ptxprint.glade:6517
 msgid "The space (pt) between the bottom of the header\n"
@@ -2628,7 +2720,8 @@ msgstr "المساحة (p) بين الجزء السفلي من رأس\n"
 #: lib/ptxprint/ptxprint.glade:6526
 msgid "Bottom of Header\n"
 "to Top of Text (pt):"
-msgstr ""
+msgstr "أسفل رأس\n"
+"إلى الجزء العلوي من النص (ص):"
 
 #: lib/ptxprint/ptxprint.glade:6543
 msgid "This setting determines the vertical positioning\n"
@@ -2657,7 +2750,8 @@ msgstr "المسافة (مم) من أسفل منطقة النص الرئيسية
 #: lib/ptxprint/ptxprint.glade:6583
 msgid "Bottom of Text to\n"
 "End of Page (mm):"
-msgstr ""
+msgstr "أسفل النص إلى\n"
+"نهاية الصفحة (مم):"
 
 #: lib/ptxprint/ptxprint.glade:6599
 msgid "The distance (mm) from the TOP of the footer \n"
@@ -2672,7 +2766,8 @@ msgstr "المسافة (مم) من التوب لمنطقة تذييل \n"
 #: lib/ptxprint/ptxprint.glade:6606
 msgid "Top of Footer to\n"
 "End of Page (mm):"
-msgstr ""
+msgstr "أعلى من التذييل إلى\n"
+"نهاية الصفحة (مم):"
 
 #: lib/ptxprint/ptxprint.glade:6622
 msgid "This setting can be used to increase/decrease the \n"
@@ -2721,7 +2816,8 @@ msgstr "المساحة (pt) بين القاعدة الأفقية\n"
 #: lib/ptxprint/ptxprint.glade:6762
 msgid "Space between Rule\n"
 "and Top of Text (pt):"
-msgstr ""
+msgstr "المساحة بين القاعدة\n"
+"و الجزء العلوي من النص (ص):"
 
 #: lib/ptxprint/ptxprint.glade:6846
 msgid "Fine Tune Top Margin:\n\n"
@@ -2781,7 +2877,7 @@ msgstr "حفر جيد في الأسفل:\n\n"
 
 #: lib/ptxprint/ptxprint.glade:7024
 msgid "Horizontal Rule"
-msgstr ""
+msgstr "القاعدة الأفقية"
 
 #: lib/ptxprint/ptxprint.glade:7029
 msgid "Check this option to add a horizontal\n"
@@ -2804,7 +2900,8 @@ msgstr "المسافة (مم) من الجزء العلوي من الصفحة\n"
 #: lib/ptxprint/ptxprint.glade:7057
 msgid "Start of Page to\n"
 "Top of Header:"
-msgstr ""
+msgstr "بدء من الصفحة إلى\n"
+"أعلى الرأس:"
 
 #: lib/ptxprint/ptxprint.glade:7080
 msgid "8.5mm"
@@ -2815,12 +2912,16 @@ msgid "This value is calculated using the\n"
 "other values (Start of Page to\n"
 "Top of Text, and Bottom of Header\n"
 "to Top of Text)."
-msgstr ""
+msgstr "يتم حساب هذه القيمة باستخدام\n"
+"قيم أخرى (بدء الصفحة إلى\n"
+"أعلى النص, و أسفل رأس\n"
+"إلى أعلى النص)."
 
 #: lib/ptxprint/ptxprint.glade:7101
 msgid "(value is\n"
 "derived)"
-msgstr ""
+msgstr "(القيمة\n"
+"مشتقة)"
 
 #: lib/ptxprint/ptxprint.glade:7125 lib/ptxprint/ptxprint.glade:7137
 #: lib/ptxprint/ptxprint.glade:7149 lib/ptxprint/ptxprint.glade:16069
@@ -3147,7 +3248,15 @@ msgid "Enabling letter spacing allows the spaces between\n"
 "Note that if this option is disabled, then it is due to\n"
 "the Interlinear option being set on the Advanced page.\n"
 "These two settings are mutually exclusive."
-msgstr ""
+msgstr "تمكين المسافات بين الحروف يسمح بتعديل المسافات بين\n"
+"الحروف (عادة بنسبة مئوية صغيرة جدا\n"
+") هذا يمكن أن يساعد في تخفيف مشاكل الفضاء.\n"
+"القيم هي في نسبة مئوية من حجم نقطة النص \n"
+"يتم استخدامها في كل مكان. استخدم هذا فقط إذا لزم الأمر!\n"
+"في العديد من الحالات يمكن أن يجعل النص يبدو قبيحا للغاية.\n\n"
+"لاحظ أنه إذا تم تعطيل هذا الخيار، فيجب أن يتم تعيين\n"
+"خيار الإنترنت على الصفحة المتقدمة.\n"
+"وهذان الإعدادان يستبعد أحدهما الآخر."
 
 #: lib/ptxprint/ptxprint.glade:7820
 msgid "When justifying paragraphs, and especially when\n"
@@ -3596,7 +3705,7 @@ msgstr "قم بإلغاء تحديد هذا الخيار إذا كنت لا تر
 
 #: lib/ptxprint/ptxprint.glade:8666
 msgid "Click to edit the \\s marker's properties on the Styles tab."
-msgstr ""
+msgstr "انقر لتعديل خصائص علامة \\s على علامة التبويب الأنماط."
 
 #: lib/ptxprint/ptxprint.glade:8691
 msgid "Parallel Passage Refs "
@@ -3612,29 +3721,35 @@ msgstr "قم بإلغاء تحديد هذا الخيار لإخفاء جميع �
 
 #: lib/ptxprint/ptxprint.glade:8716
 msgid "Click to edit the \\r marker's properties on the Styles tab."
-msgstr ""
+msgstr "انقر لتعديل خصائص العلامة \\r على علامة التبويب الأنماط."
 
 #: lib/ptxprint/ptxprint.glade:8740
 msgid "Hide Empty Verses"
-msgstr ""
+msgstr "إخفاء الأخبار الفارغة"
 
 #: lib/ptxprint/ptxprint.glade:8744
 msgid "Do not print any empty chapters or verses.\n"
 "Useful for when only part of the text has been\n"
 "drafted but you still need a printout of whatever\n"
 "has been translated so far."
-msgstr ""
+msgstr "لا تقم بطباعة أي فصول أو محادثات فارغة.\n"
+"مفيد عندما تمت صياغة جزء فقط من النص\n"
+"ولكن مازلت بحاجة إلى نسخة مطبوعة من أي\n"
+"تمت ترجمته حتى الآن."
 
 #: lib/ptxprint/ptxprint.glade:8760
 msgid "Show '...'"
-msgstr ""
+msgstr "إظهار '...'"
 
 #: lib/ptxprint/ptxprint.glade:8764
 msgid "Indicate using ellipsis that verses and/or \n"
 "entire chapters are missing by placing '...'\n"
 "in the text to alert the reader that some\n"
 "parts of the text have been skipped."
-msgstr ""
+msgstr "الإشارة باستخدام الإهليج أن الآيات و/أو \n"
+"الفصول بأكملها مفقودة عن طريق وضع '...\n"
+"في النص لتنبيه القارئ إلى أنه تم تخطي بعض\n"
+"أجزاء من النص."
 
 #: lib/ptxprint/ptxprint.glade:8789
 msgid "Include Scripture Text"
@@ -3742,7 +3857,7 @@ msgstr "بعض الكتب (مثلا) المقدمة والمسرد والرسا�
 
 #: lib/ptxprint/ptxprint.glade:8943
 msgid "Non-Scripture Books"
-msgstr ""
+msgstr "كتب غير سكريبت"
 
 #: lib/ptxprint/ptxprint.glade:8947
 msgid "Peripheral books often have more than one\n"
@@ -3760,13 +3875,15 @@ msgstr "غالباً ما تحتوي الكتب الدورية على أكثر �
 
 #: lib/ptxprint/ptxprint.glade:8964
 msgid "Single Chapter Books"
-msgstr ""
+msgstr "كتب فصل واحد"
 
 #: lib/ptxprint/ptxprint.glade:8968
 msgid "Select this option to show the 1 at the beginning\n"
 "of books that only have a single chapter (OBA, PHM,\n"
 "2JN, 3JN, JUD, etc.)"
-msgstr ""
+msgstr "حدد هذا الخيار لإظهار 1 في بداية\n"
+"الكتب التي تحتوي على فصل واحد فقط (OBA)، PHM,\n"
+"2JN, 3JN, JUD, الخ)"
 
 #: lib/ptxprint/ptxprint.glade:8982
 msgid "Optimize Layout for Poetry Books"
@@ -3794,11 +3911,11 @@ msgstr "أضف رموز الكتاب المكونة من 3 حروف لأي كت�
 
 #: lib/ptxprint/ptxprint.glade:9022
 msgid "Show Chapter Numbers in:"
-msgstr ""
+msgstr "إظهار أرقام الفصل في:"
 
 #: lib/ptxprint/ptxprint.glade:9052
 msgid "Special Books "
-msgstr ""
+msgstr "كتب خاصة "
 
 #: lib/ptxprint/ptxprint.glade:9071
 msgid "Main settings to control the \n"
@@ -3924,11 +4041,11 @@ msgstr "يتم تعيين المباعدة في النقاط (الحقائق). �
 
 #: lib/ptxprint/ptxprint.glade:9305
 msgid "Minimum Space (pt)"
-msgstr ""
+msgstr "المساحة الدنيا (p)"
 
 #: lib/ptxprint/ptxprint.glade:9321
 msgid "Maximum Space (pt)"
-msgstr ""
+msgstr "الحد الأقصى للفضاء (p)"
 
 #: lib/ptxprint/ptxprint.glade:9335 lib/ptxprint/ptxprint.glade:9359
 msgid "If Footnotes and Cross-references are not blended \n"
@@ -3945,11 +4062,12 @@ msgstr "إذا لم يتم خلط حواشي القدم والمراجع الم�
 #: lib/ptxprint/ptxprint.glade:9367
 msgid "Vertical Space Between\n"
 "Footnotes and xRefs (pt):"
-msgstr ""
+msgstr "المساحة الرأسية بين\n"
+"حواشي و xRefs (pt):"
 
 #: lib/ptxprint/ptxprint.glade:9390
 msgid "Use External List of Cross-References"
-msgstr ""
+msgstr "استخدام القائمة الخارجية للمراجع المتقاطعة"
 
 #: lib/ptxprint/ptxprint.glade:9394
 msgid "Instead of using a handful of cross-references\n"
@@ -3962,11 +4080,20 @@ msgid "Instead of using a handful of cross-references\n"
 "This feature is usually used for Study or\n"
 "Reference Bibles in conjunction with the \n"
 "'Centre Column xRefs' location option."
-msgstr ""
+msgstr "بدلاً من استخدام حفنة من المراجع\n"
+"كما هو محدد في النص USFM للمشروع، يمكنك\n"
+"تحديد قائمة خارجية تحتوي على العديد من 1000\n"
+"من المراجع. سيتم توطين هذه\n"
+"تلقائيًا في لغة المشروع باستخدام\n"
+"\\tقيم oc3 المحددة في إعدادات مشروع Paratext\n"
+"(انظر الإعدادات المرجعية للكتاب. .)\n\n"
+"تستخدم هذه الميزة عادة للدراسة أو\n"
+"الكتاب المقدس المرجعي بالاقتران مع \n"
+"'مركز عمود xRefes' خيار الموقع."
 
 #: lib/ptxprint/ptxprint.glade:9426
 msgid "General"
-msgstr ""
+msgstr "عام"
 
 #: lib/ptxprint/ptxprint.glade:9449 lib/ptxprint/ptxprint.glade:10347
 msgid "Show Callers in Notes Area"
@@ -4085,31 +4212,35 @@ msgstr "عادة يتم ترتيب الحواشي واحدة تلو\n"
 
 #: lib/ptxprint/ptxprint.glade:9628
 msgid "Click to edit the Footnote properties on the Styles tab."
-msgstr ""
+msgstr "انقر لتعديل خصائص الحاشية على علامة التبويب الأنماط."
 
 #: lib/ptxprint/ptxprint.glade:9642 lib/ptxprint/ptxprint.glade:10137
 msgid "End Notes"
-msgstr ""
+msgstr "ملاحظات نهاية"
 
 #: lib/ptxprint/ptxprint.glade:9646
 msgid "This option will prevent footnotes showing\n"
 "on each page, but will gather them together\n"
 "and place them all at the end of the book."
-msgstr ""
+msgstr "هذا الخيار سيمنع الحواشي التي تظهر\n"
+"في كل صفحة، ولكن سوف تجمعهم معاً\n"
+"ووضعهم جميعاً في نهاية الكتاب."
 
 #: lib/ptxprint/ptxprint.glade:9663 lib/ptxprint/ptxprint.glade:10158
 msgid "End of Column"
-msgstr ""
+msgstr "نهاية العمود"
 
 #: lib/ptxprint/ptxprint.glade:9667
 msgid "Use this option (only available in 2-column\n"
 "layout) to show the footnotes at the end\n"
 "of the 2nd column of text."
-msgstr ""
+msgstr "استخدم هذا الخيار (متاح فقط في العمود 2\n"
+"تخطيط ) لإظهار الحواشي في نهاية\n"
+"من العمود الثاني من النص."
 
 #: lib/ptxprint/ptxprint.glade:9686 lib/ptxprint/ptxprint.glade:10180
 msgid "End of Page"
-msgstr ""
+msgstr "نهاية الصفحة"
 
 #: lib/ptxprint/ptxprint.glade:9690
 msgid "Footnotes (and cross-references) are\n"
@@ -4118,15 +4249,15 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:9713
 msgid "Placement of Footnotes:"
-msgstr ""
+msgstr "وضع الحواشي:"
 
 #: lib/ptxprint/ptxprint.glade:9759 lib/ptxprint/ptxprint.glade:10505
 msgid "Space Below Rule (pt)"
-msgstr ""
+msgstr "المساحة تحت القاعدة (p)"
 
 #: lib/ptxprint/ptxprint.glade:9776 lib/ptxprint/ptxprint.glade:10522
 msgid "Space Above Rule (pt)"
-msgstr ""
+msgstr "قاعدة الفضاء العليا (pt)"
 
 #: lib/ptxprint/ptxprint.glade:9790 lib/ptxprint/ptxprint.glade:10051
 #: lib/ptxprint/ptxprint.glade:10556 lib/ptxprint/ptxprint.glade:10792
@@ -4144,7 +4275,8 @@ msgstr "المسافة العمودية بين نص الجسم والمنطقة\
 #: lib/ptxprint/ptxprint.glade:9797
 msgid "Space Separating\n"
 "Text From Notes:"
-msgstr ""
+msgstr "فصل المسافة\n"
+"النص من الملاحظات:"
 
 #: lib/ptxprint/ptxprint.glade:9809
 msgid "The vertical space between the main\n"
@@ -4154,12 +4286,19 @@ msgid "The vertical space between the main\n"
 "down into the footer area. If you see this happening,\n"
 "increase this value to trigger an earlier page break to\n"
 "solve the problem."
-msgstr ""
+msgstr "المسافة العمودية بين جسم النص الرئيسي\n"
+"وقاعدة الحاشية.\n\n"
+"ملاحظة: إذا جعلت هذه القيمة أقل من الذرية\n"
+"من السطر الأخير من النص، ثم ستدفع الحواشي\n"
+"إلى أسفل في منطقة تذييل الصفحة. إذا رأيت هذا يحدث،\n"
+"قم بزيادة هذه القيمة لتفعيل استراحة سابقة للصفحة إلى\n"
+"حل المشكلة."
 
 #: lib/ptxprint/ptxprint.glade:9836
 msgid "This is the vertical space/gap (pts) between\n"
 "the rule and the footnotes."
-msgstr ""
+msgstr "هذا هو الفضاء الرأسي/الفجوة (ps) بين\n"
+"القاعدة والحواشي."
 
 #: lib/ptxprint/ptxprint.glade:9870
 msgid "Show Footnote Rule"
@@ -4172,67 +4311,74 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:9905 lib/ptxprint/ptxprint.glade:10646
 msgid "This is the amount to indent the rule."
-msgstr ""
+msgstr "وهذا هو المبلغ الذي يستوجب تطبيق القاعدة."
 
 #: lib/ptxprint/ptxprint.glade:9924 lib/ptxprint/ptxprint.glade:10665
 msgid "The length of the rule as a percentage\n"
 "of the column/page width."
-msgstr ""
+msgstr "طول القاعدة كنسبة مئوية\n"
+"من عرض العمود/الصفحة."
 
 #: lib/ptxprint/ptxprint.glade:9945 lib/ptxprint/ptxprint.glade:10686
 msgid "The thickness of the rule."
-msgstr ""
+msgstr "2 - سمك القاعدة."
 
 #: lib/ptxprint/ptxprint.glade:9988 lib/ptxprint/ptxprint.glade:10729
 msgid "Indent (mm)"
-msgstr ""
+msgstr "غير صالح (مم)"
 
 #: lib/ptxprint/ptxprint.glade:10005 lib/ptxprint/ptxprint.glade:10746
 #, python-format
 msgid "Length (% of col)"
-msgstr ""
+msgstr "الطول (% من الكون)"
 
 #: lib/ptxprint/ptxprint.glade:10021 lib/ptxprint/ptxprint.glade:10762
 msgid "Thickness (pt)"
-msgstr ""
+msgstr "السمك (pt)"
 
 #: lib/ptxprint/ptxprint.glade:10037 lib/ptxprint/ptxprint.glade:10778
 msgid "Horizontal Position"
-msgstr ""
+msgstr "الوضع الأفقي"
 
 #: lib/ptxprint/ptxprint.glade:10058 lib/ptxprint/ptxprint.glade:10799
 msgid "Rule Positioning\n"
 "and Parameters:"
-msgstr ""
+msgstr "تحديد موقع القاعدة\n"
+"والمعلمات:"
 
 #: lib/ptxprint/ptxprint.glade:10089 lib/ptxprint/ptxprint.glade:10830
 msgid "Rule and Space Settings"
-msgstr ""
+msgstr "إعدادات القاعدة والفضاء"
 
 #: lib/ptxprint/ptxprint.glade:10113
 msgid "Footnotes"
-msgstr ""
+msgstr "الحواشي"
 
 #: lib/ptxprint/ptxprint.glade:10141
 msgid "This option will prevent cross-references showing\n"
 "on each page, but will gather them together\n"
 "and place them all at the end of the book."
-msgstr ""
+msgstr "هذا الخيار سيمنع الإحالات المرجعية المعروضة\n"
+"في كل صفحة، ولكن سوف تجمعهم معاً\n"
+"ووضعهم جميعاً في نهاية الكتاب."
 
 #: lib/ptxprint/ptxprint.glade:10162
 msgid "Use this option (only available in 2-column\n"
 "layout) to show the cross-references at the end\n"
 "of the 2nd column of text."
-msgstr ""
+msgstr "استخدم هذا الخيار (متاح فقط في العمود 2\n"
+"تخطيط ) لإظهار الإشارات المرجعية في نهاية\n"
+"من العمود الثاني من النص."
 
 #: lib/ptxprint/ptxprint.glade:10184
 msgid "Cross-references are usually placed \n"
 "at the end of each page."
-msgstr ""
+msgstr "عادة ما توضع المراجع المتقاطعة \n"
+"في نهاية كل صفحة."
 
 #: lib/ptxprint/ptxprint.glade:10205
 msgid "Placement of Cross-References:"
-msgstr ""
+msgstr "وضع الإحالة المتقاطعة:"
 
 #: lib/ptxprint/ptxprint.glade:10215
 msgid "Start Each Cross-Reference on a New Line"
@@ -4303,21 +4449,23 @@ msgstr "عادة ما يظهر رمز \"المتصل\"\n"
 
 #: lib/ptxprint/ptxprint.glade:10392
 msgid "Click to edit the Cross-Reference properties on the Styles tab."
-msgstr ""
+msgstr "انقر لتعديل الخصائص المتقاطعة على تبويب الأنماط."
 
 #: lib/ptxprint/ptxprint.glade:10406
 msgid "Below Footnotes"
-msgstr ""
+msgstr "حواشي أسفل"
 
 #: lib/ptxprint/ptxprint.glade:10410
 msgid "Cross-references will be listed in a separate block\n"
 "underneath the footnotes (rather than combined\n"
 "along with the footnotes as a single paragraph)."
-msgstr ""
+msgstr "ستدرج الإشارات المرجعية المتقاطعة في بلوك منفصل\n"
+"أسفل الحواشي (بدلاً من الجمع\n"
+"مع الحواشي كفقرة واحدة)."
 
 #: lib/ptxprint/ptxprint.glade:10427
 msgid "Blend with Footnotes"
-msgstr ""
+msgstr "مزج مع ملاحظات القدم"
 
 #: lib/ptxprint/ptxprint.glade:10431
 msgid "To save space in the footnote area, you can\n"
@@ -4339,7 +4487,7 @@ msgstr "لحفظ المساحة في منطقة الحاشية، يمكنك\n"
 
 #: lib/ptxprint/ptxprint.glade:10453 lib/ptxprint/ptxprint.glade:11321
 msgid "Column Cross-References"
-msgstr ""
+msgstr "عمود المراجع الشاملة"
 
 #: lib/ptxprint/ptxprint.glade:10457
 msgid "When there are numerous cross-references (usually\n"
@@ -4347,31 +4495,39 @@ msgid "When there are numerous cross-references (usually\n"
 "may be useful to place them in their own column. \n\n"
 "The cross references will appear in a narrow vertical\n"
 "column similar to a study/reference Bible layout."
-msgstr ""
+msgstr "عندما يكون هناك العديد من الإحالات المرجعية (عادة\n"
+"عند استخدام قائمة مراجع خارجية)، قد يكون من المفيد\n"
+"وضعها في عمودها الخاص. \n\n"
+"ستظهر الإشارات المرجعية في عمود عمودي ضيق\n"
+"مماثل لتصميم كتاب الإنجيل الدراسي/المرجعي."
 
 #: lib/ptxprint/ptxprint.glade:10534
 msgid "Show Cross-Reference Rule"
-msgstr ""
+msgstr "إظهار القاعدة المرجعية"
 
 #: lib/ptxprint/ptxprint.glade:10538
 msgid "This is the horizontal rule separating the\n"
 "body text from the cross-reference area."
-msgstr ""
+msgstr "هذه هي القاعدة الأفقية التي تفصل نص الجسم\n"
+"عن منطقة الإحالة."
 
 #: lib/ptxprint/ptxprint.glade:10563
 msgid "Space Separating\n"
 "Text From xRefs:"
-msgstr ""
+msgstr "فصل المساحة\n"
+"نص من xRefs:"
 
 #: lib/ptxprint/ptxprint.glade:10575
 msgid "The vertical space between the main\n"
 "text body and the cross-reference rule."
-msgstr ""
+msgstr "المسافة العمودية بين جسم النص الرئيسي\n"
+"وقاعدة الإحالة المرجعية."
 
 #: lib/ptxprint/ptxprint.glade:10596
 msgid "This is the vertical space/gap (pts) between\n"
 "the rule and the cross-references. "
-msgstr ""
+msgstr "هذه هي المساحة الرأسية/الفجوة (ps) بين\n"
+"القاعدة والإحالات المرجعية. "
 
 #: lib/ptxprint/ptxprint.glade:10865
 msgid "Standard List"
@@ -4439,7 +4595,7 @@ msgstr "أقل"
 
 #: lib/ptxprint/ptxprint.glade:10998
 msgid "More"
-msgstr ""
+msgstr "المزيد"
 
 #: lib/ptxprint/ptxprint.glade:11031
 msgid "The Standard List of cross-references contains\n"
@@ -4454,12 +4610,24 @@ msgid "The Standard List of cross-references contains\n"
 "then only cross-references targetting \n"
 "books in the list of Multiple Books on \n"
 "the Basic tab will be included."
-msgstr ""
+msgstr "القائمة القياسية للمراجع تحتوي على\n"
+"أكثر من 340,000 مرجع. قد ترغب في\n"
+"فقط تضمين المراجع المستهدفة\n"
+"المتاحة حاليا للقراء بواسطة \n"
+"اختيار مجموعة فرعية من الكتب المقدسة.\n\n"
+"على سبيل المثال، إذا لم يكن هناك العهد القديم \n"
+"حتى الآن، قد ترغب في تضمين فقط إحالات مستهدفة \n"
+"إلى كتب NT.\n\n"
+"إذا قمت بتحديد الكتب في \"هذا المنشور\"، \n"
+"ثم الإحالات المرجعية فقط التي تستهدف \n"
+"كتب في قائمة الكتب المتعددة في \n"
+"سيتم إدراج علامة التبويب الأساسية."
 
 #: lib/ptxprint/ptxprint.glade:11046
 msgid "Include xRefs\n"
 "for Books in:"
-msgstr ""
+msgstr "قم بتضمين xRefs\n"
+"للكتب في:"
 
 #: lib/ptxprint/ptxprint.glade:11061
 msgid "The Standard List of cross-references contains\n"
@@ -4473,16 +4641,27 @@ msgid "The Standard List of cross-references contains\n"
 "If you select Books in \"This Publication\", then only\n"
 "cross-references targetting books in the list of Multiple\n"
 "Books on the Basic tab will be included."
-msgstr ""
+msgstr "القائمة القياسية للمراجع تحتوي على\n"
+"أكثر من 300,000 مرجع. قد ترغب في\n"
+"فقط تضمين المراجع المستهدفة\n"
+"المتاحة حاليا للقراء بواسطة \n"
+"اختيار مجموعة فرعية من الكتب المقدسة.\n\n"
+"على سبيل المثال، إذا لم يكن هناك العهد القديم \n"
+"حتى الآن، قد ترغب في تضمين فقط إحالات مستهدفة \n"
+"إلى كتب NT.\n\n"
+"إذا قمت بتحديد الكتب في \"هذا المنشور\"، ثم\n"
+"فقط الإحالات المرجعية المستهدفة للكتب في قائمة متعددة\n"
+"الكتب على علامة التبويب الأساسية."
 
 #: lib/ptxprint/ptxprint.glade:11099
 msgid "\"The Works\" from BibleWorks™"
-msgstr ""
+msgstr "\"العمل\" من الكتاب المقدس"
 
 #: lib/ptxprint/ptxprint.glade:11104
 msgid "This BibleWorks list contains carefully\n"
 "selected cross-references for both NT and OT."
-msgstr ""
+msgstr "تحتوي قائمة الـ BibleWorks هذه بعناية\n"
+"مراجع محددة لكل من NT و OT."
 
 #: lib/ptxprint/ptxprint.glade:11156
 msgid "This sets the width of the centre column in points.\n"
@@ -4494,44 +4673,57 @@ msgid "This sets the width of the centre column in points.\n"
 "If this centre column isn't wide enough to fit\n"
 "the references, then you should also consider\n"
 "reducing the size of the \\x font (to approx 6pt)."
-msgstr ""
+msgstr "هذا يعين عرض عمود المركز في النقاط.\n"
+"لاحظ أن 72 نقطة هي 1 بوصة، وزيادة الحجم\n"
+"هنا سوف تقلل من حجم المساحة المتاحة\n"
+"لعمودين من النص النصي.\n\n"
+"تفكير في استخدام حجم صفحة أكبر إذا كنت ترغب في\n"
+"استخدام عمود المركز.\n\n"
+"إذا كان عمود المركز هذا غير واسع بما فيه الكفاية لتلائم\n"
+"المراجع، ثم يجب أن تفكر أيضًا في\n"
+"تقليل حجم خط \\x (إلى حوالي 6pt)."
 
 #: lib/ptxprint/ptxprint.glade:11190
 msgid "Column Width (pts):"
-msgstr ""
+msgstr "عرض العمود (صفحات):"
 
 #: lib/ptxprint/ptxprint.glade:11202
 msgid "Gutter Width (pts):"
-msgstr ""
+msgstr "عرض غاتر (صفحات):"
 
 #: lib/ptxprint/ptxprint.glade:11213
 msgid "This sets the space between the main body\n"
 "text and the column of cross-references."
-msgstr ""
+msgstr "هذا يحدد المساحة بين نص الجسم الرئيسي\n"
+"وعمود الإحالات المرجعية."
 
 #: lib/ptxprint/ptxprint.glade:11239
 msgid "Side of page:"
-msgstr ""
+msgstr "جانب الصفحة:"
 
 #: lib/ptxprint/ptxprint.glade:11252
 msgid "Select where the column of cross-references\n"
 "should be located on the page. Note that the\n"
 "2-column layout insists on the cross-references\n"
 "being positioned between the columns of text."
-msgstr ""
+msgstr "حدد المكان الذي يجب أن يكون فيه عمود الإشارات المرجعية\n"
+"على الصفحة. لاحظ أن تخطيط العمودين\n"
+"يصر على وضع الإشارات المرجعية\n"
+"بين أعمدة النص."
 
 #: lib/ptxprint/ptxprint.glade:11271
 msgid "Vertical Rule(s) Between Columns"
-msgstr ""
+msgstr "القواعد الرأسية بين الأعمدة"
 
 #: lib/ptxprint/ptxprint.glade:11275
 msgid "Check this option to include a vertical line\n"
 "separating the text and cross-references."
-msgstr ""
+msgstr "حدد هذا الخيار لتضمين سطر عمودي\n"
+"يفصل النص والإحالات المرجعية."
 
 #: lib/ptxprint/ptxprint.glade:11292
 msgid "Fill Upward From Bottom of Column"
-msgstr ""
+msgstr "تعبئة لأعلى من أسفل العمود"
 
 #: lib/ptxprint/ptxprint.glade:11296
 msgid "If there are only a small number of\n"
@@ -4541,19 +4733,25 @@ msgid "If there are only a small number of\n"
 "option if you prefer the references to\n"
 "fill the column upward from the end\n"
 "of the page. "
-msgstr ""
+msgstr "إذا كان هناك عدد صغير فقط من الإحالات المرجعية،\n"
+"قد يبدو من الأفضل\n"
+"لهم أن يضعوا أقرب إلى نهاية\n"
+"(أو أسفل) الصفحة. حدد هذا الخيار\n"
+"إذا كنت تفضل المراجع إلى\n"
+"ملء العمود صعودا من نهاية\n"
+"الصفحة. "
 
 #: lib/ptxprint/ptxprint.glade:11337
 msgid "External Cross-Reference Settings"
-msgstr ""
+msgstr "إعدادات عبور المراجع الخارجية"
 
 #: lib/ptxprint/ptxprint.glade:11372
 msgid "Coming one day, but don't hold your breath!"
-msgstr ""
+msgstr "يأتي في يوم من الأيام، ولكن لا تحمل أنفاسك!"
 
 #: lib/ptxprint/ptxprint.glade:11383
 msgid "Study Bible Notes"
-msgstr ""
+msgstr "دراسة ملاحظات الكتاب المقدس"
 
 #: lib/ptxprint/ptxprint.glade:11414
 msgid "Control how Footnotes and\n"
@@ -4624,18 +4822,21 @@ msgstr "ثواني"
 
 #: lib/ptxprint/ptxprint.glade:11859
 msgid "Chapter"
-msgstr ""
+msgstr "الفصل"
 
 #: lib/ptxprint/ptxprint.glade:11863
 msgid "By default, the chapter number will be included\n"
 "in any references in the header line. If you prefer\n"
 "to suppress that (and just show the book name)\n"
 "then uncheck this option."
-msgstr ""
+msgstr "بشكل افتراضي، سيتم تضمين رقم الفصل\n"
+"في أي مراجع في سطر الترويسة. إذا كنت تفضل\n"
+"قمع هذا (وإظهار اسم الكتاب فقط)\n"
+"ثم قم بإلغاء تحديد هذا الخيار."
 
 #: lib/ptxprint/ptxprint.glade:11882
 msgid "Verse"
-msgstr ""
+msgstr "آية"
 
 #: lib/ptxprint/ptxprint.glade:11886
 msgid "By default only the Book and Chapter number\n"
@@ -4677,11 +4878,11 @@ msgstr "استخدم فترة (.) لفصل\n"
 
 #: lib/ptxprint/ptxprint.glade:11957
 msgid "Include in References:"
-msgstr ""
+msgstr "إدراج في المراجع:"
 
 #: lib/ptxprint/ptxprint.glade:11966
 msgid "Book"
-msgstr ""
+msgstr "كتاب"
 
 #: lib/ptxprint/ptxprint.glade:11970
 msgid "By default, the book name will be included\n"
@@ -4689,11 +4890,15 @@ msgid "By default, the book name will be included\n"
 "wish to suppress that (and just show the \n"
 "chapter and/or verse numbers) then \n"
 "uncheck this option."
-msgstr ""
+msgstr "بشكل افتراضي، سيتم تضمين اسم الكتاب\n"
+"في أي مراجع في سطر الترويسة. ولكن إذا كنت\n"
+"ترغب في قمع ذلك (فقط إظهار \n"
+"فصل و/أو أرقام آسية) فقط \n"
+"قم بإلغاء تحديد هذا الخيار."
 
 #: lib/ptxprint/ptxprint.glade:11991
 msgid "Chapter-Verse Separator:"
-msgstr ""
+msgstr "فاصل الفصل بين الآداب:"
 
 #: lib/ptxprint/ptxprint.glade:12015
 msgid "Header"
@@ -4711,12 +4916,23 @@ msgid "If the document you are creating needs\n"
 "       \\resetpagenums -1\n"
 "and normal page numbering will restart as\n"
 "soon as the first scripture book is encountered."
-msgstr ""
+msgstr "إذا كان المستند الذي تقوم بإنشائه يحتاج\n"
+"إلى إرفاق بآخر، يمكنك\n"
+"بدء ترقيم الصفحة من حيث\n"
+"ينتهي المستند السابق بإدخال\n"
+"رقم الصفحة التالي هنا.\n\n"
+"إذا كنت تريد ترقيم صفحات المادة الأمامية \n"
+"مع أرقام الرومان (i, ii, iii, iv, v, v, إلخ) ثم \n"
+"أضف هذا السطر إلى المادة الأمامية لتفعيله:\n"
+"       \\resetpagenums -1\n"
+"وسيتم إعادة ترقيم الصفحة العادية كـ\n"
+"بمجرد ظهور أول دفتر نص."
 
 #: lib/ptxprint/ptxprint.glade:12065
 msgid "Starting Page Number\n"
 "(for Scripture Books):"
-msgstr ""
+msgstr "بدء رقم الصفحة\n"
+"(للكتب البرمجية):"
 
 #: lib/ptxprint/ptxprint.glade:12109
 msgid "Print Page Number at Bottom of Intro Page(s)"
@@ -4847,7 +5063,8 @@ msgstr "تذييل"
 #: lib/ptxprint/ptxprint.glade:12362
 msgid "Adjust the content of \n"
 "headers and footers."
-msgstr ""
+msgstr "ضبط محتوى \n"
+"رؤوس و تذييلات."
 
 #: lib/ptxprint/ptxprint.glade:12365
 msgid "Header+Footer"
@@ -4899,7 +5116,7 @@ msgstr "الوسائط"
 
 #: lib/ptxprint/ptxprint.glade:12595
 msgid "Sec.Caption"
-msgstr ""
+msgstr "القسم التسمية"
 
 #: lib/ptxprint/ptxprint.glade:12633 lib/ptxprint/ptxprint.glade:16964
 #: lib/ptxprint/ptxprint.glade:19966
@@ -5259,17 +5476,19 @@ msgstr "كيف؟"
 
 #: lib/ptxprint/ptxprint.glade:13239
 msgid "Omit Captions "
-msgstr ""
+msgstr "حذف التعبيرات "
 
 #: lib/ptxprint/ptxprint.glade:13243
 msgid "If you want to suppress the picture\n"
 "captions from being displayed below\n"
 "the picture, then check this option."
-msgstr ""
+msgstr "إذا كنت ترغب في قمع الصورة\n"
+"التسميات التوضيحية من عرض أسفل\n"
+"الصورة، ثم تحقق من هذا الخيار."
 
 #: lib/ptxprint/ptxprint.glade:13258
 msgid "Omit References (ch:vs)"
-msgstr ""
+msgstr "حذف المراجع (ch:vs)"
 
 #: lib/ptxprint/ptxprint.glade:13262
 msgid "If you only want to suppress the \n"
@@ -5277,7 +5496,11 @@ msgid "If you only want to suppress the \n"
 "then check this option. Note that\n"
 "it is not possible to just have the\n"
 "references without the captions."
-msgstr ""
+msgstr "إذا كنت ترغب فقط في قمع \n"
+"الجزء المرجعي من الشرح،\n"
+"ثم تحقق من هذا الخيار. لاحظ أنه\n"
+"ليس من الممكن فقط الحصول على\n"
+"المراجع بدون العناوين التوضيحية."
 
 #: lib/ptxprint/ptxprint.glade:13287
 msgid "Include Pictures (illustrations)"
@@ -5674,7 +5897,7 @@ msgstr "بشكل افتراضي سيظهر العنوان تحت الصورة.\n
 
 #: lib/ptxprint/ptxprint.glade:14120
 msgid "Click to edit the Figure Caption properties on the Styles tab."
-msgstr ""
+msgstr "انقر لتعديل خصائص التوضيح الشكلي على تبويب الأنماط."
 
 #: lib/ptxprint/ptxprint.glade:14169
 msgid "Use this tab to change the position, location, size \n"
@@ -6108,26 +6331,29 @@ msgstr "يستخدم هذا طريقة بديلة لـ\n"
 
 #: lib/ptxprint/ptxprint.glade:15416
 msgid "Vertical Rule in Notes Area"
-msgstr ""
+msgstr "القاعدة العمودية في منطقة الملاحظات"
 
 #: lib/ptxprint/ptxprint.glade:15420
 msgid "Add a vertical rule between the two\n"
 "sides of the notes area of the diglot."
-msgstr ""
+msgstr "أضف قاعدة رأسية بين جانبي\n"
+"من منطقة الملاحظات من الحبل."
 
 #: lib/ptxprint/ptxprint.glade:15434
 msgid "Join with Rule Above"
-msgstr ""
+msgstr "الانضمام إلى القاعدة فوق"
 
 #: lib/ptxprint/ptxprint.glade:15438
 msgid "To prevent a small gap in the line\n"
 "allow the vertical line to extend\n"
 "down into the notes area."
-msgstr ""
+msgstr "لمنع حدوث فجوة صغيرة في الخط\n"
+"اسمح للخط العمودي بتمديد\n"
+"لأسفل منطقة الملاحظات."
 
 #: lib/ptxprint/ptxprint.glade:15456
 msgid "Separate Notes in Two Columns"
-msgstr ""
+msgstr "ملاحظات منفصلة في عمودين"
 
 #: lib/ptxprint/ptxprint.glade:15460
 msgid "If this option is disabled, the footnotes from\n"
@@ -6145,7 +6371,7 @@ msgstr "إذا تم تعطيل هذا الخيار، يتم دمج الحواش�
 
 #: lib/ptxprint/ptxprint.glade:15513
 msgid "Dual Captions"
-msgstr ""
+msgstr "تعليقات مزدوجة"
 
 #: lib/ptxprint/ptxprint.glade:15517
 msgid "When creating the PicList for a diglot,\n"
@@ -6160,7 +6386,18 @@ msgid "When creating the PicList for a diglot,\n"
 "the Primary and Secondary projects, then\n"
 "their captions will be independent, and this\n"
 "option does not apply at all."
-msgstr ""
+msgstr "عند إنشاء قائمة للحلقة,\n"
+"إذا تم تعيين الصور لاستخدامها من\n"
+"إما في المرحلة الابتدائية أو الثانوية\n"
+"(ولكن ليس كليهما)، ثم يتم عرض التعبيرات المزدوجة (واحد\n"
+"تحت الآخر) بشكل افتراضي.\n\n"
+"إذا كنت تفضل إظهار العناوين التوضيحية فقط\n"
+"لكل من الإعدادية والثانوية (ولكن ليس \n"
+"كليهما)، ثم قم بإلغاء تحديد هذا الخيار.\n\n"
+"لاحظ أنه إذا تم رسم صور من\n"
+"فإن المشروعين الابتدائي والثانوي كليهما، ثم\n"
+"ستكون عناوينهم مستقلة، وهذا الخيار\n"
+"لا ينطبق على الإطلاق."
 
 #: lib/ptxprint/ptxprint.glade:15551
 msgid "Diglot or Discript"
@@ -6432,7 +6669,7 @@ msgstr "استخدم رسومات PDF لتزيين رقم \n"
 
 #: lib/ptxprint/ptxprint.glade:16537
 msgid "Click to edit the \\v marker's properties on the Styles tab."
-msgstr ""
+msgstr "انقر لتعديل خصائص علامة \\v على علامة التبويب الأنماط."
 
 #: lib/ptxprint/ptxprint.glade:16587
 msgid "Vertical shift in pts of the verse decorator image upwards relative to the text."
@@ -6556,7 +6793,7 @@ msgstr "Italic"
 
 #: lib/ptxprint/ptxprint.glade:17119
 msgid "Superscript   / "
-msgstr ""
+msgstr "Superscript / "
 
 #: lib/ptxprint/ptxprint.glade:17123
 msgid "The superscript option overrides these settings:\n"
@@ -6624,7 +6861,7 @@ msgstr "قيمة الـ RGB في سداسية المستوى."
 
 #: lib/ptxprint/ptxprint.glade:17331
 msgid "Underline"
-msgstr ""
+msgstr "أسفل"
 
 #: lib/ptxprint/ptxprint.glade:17337
 msgid "Underlining printed text is actively\n"
@@ -6634,7 +6871,13 @@ msgid "Underlining printed text is actively\n"
 "touch for details on how to achieve\n"
 "this using a .tex snippet.\n"
 "Email: ptxprint_support@sil.org"
-msgstr ""
+msgstr "إن وضع علامة تحت النص المطبوع هو\n"
+"غير مشجع. إذا كان لديك\n"
+"حالة استخدام قوية لسبب الحاجة إلى\n"
+"وظيفة ضبط الطباعة الخاصة بك، ثم قم باللمس\n"
+"للحصول على تفاصيل حول كيفية تحقيق\n"
+"هذا باستخدام . كتلة أخرى\n"
+"البريد الإلكتروني: ptxprint_support@sil.org"
 
 #: lib/ptxprint/ptxprint.glade:17367
 msgid "Character Settings"
@@ -7010,11 +7253,18 @@ msgid "Select the appropriate standard \n"
 "Transparency (if CMYK is required)\n"
 "Archive (largest size, for keeping long-term)\n\n"
 "Note: All comply with archive standard PDF/A-1b."
-msgstr ""
+msgstr "حدد المعيار المناسب \n"
+"لتنسيق الإخراج لتحسين\n"
+"PDF للغرض المقصود.\n\n"
+"رقمي (أصغر حجم، للطباعة المحلية)\n"
+"الطباعة (للطابعات المحترفة)\n"
+"الشفافية (إذا كان MYK مطلوب)\n"
+"الأرشيف (أكبر حجم، للحفاظ على المدى البعيد)\n\n"
+"ملاحظة: الجميع يمتثلون للمحفوظات القياسية PDF/A-1b."
 
 #: lib/ptxprint/ptxprint.glade:18545
 msgid "PDF Output Format:"
-msgstr ""
+msgstr "تنسيق ناتج PDF:"
 
 #: lib/ptxprint/ptxprint.glade:18633
 msgid "Show Error Bars For Overfull Lines"
@@ -7080,7 +7330,17 @@ msgid "Convert Paratext's interlinear data\n"
 "the Spacing Adjustments Between Letters (on the\n"
 "Fonts+Scripts page) will be disabled as these two\n"
 "settings are mutually exclusive."
-msgstr ""
+msgstr "تحويل نص بيانات Paratext الخطي\n"
+"إلى خروبي (المسرد) بحيث يمكن طباعة\n"
+"نص خطي.\n\n"
+"لاحظ أنك قد تحتاج إلى ضبط \n"
+"أنماط العلامات التالية:\n"
+"  \\rب للنص الأساسي \n"
+"  \\gloss<unk> rb للنص المسطح\n\n"
+"لاحظ أنه إذا تم تمكين خيار Interlinear هذا، ثم\n"
+"سيتم تعطيل التعديلات المتباعدة بين الحروف (على صفحة\n"
+"الخطوط+سكريبت) لأن هذه الإعدادات\n"
+"يستبعد بعضها بعضا."
 
 #: lib/ptxprint/ptxprint.glade:18731
 msgid "Interlinear language code to use.\n"
@@ -7144,7 +7404,7 @@ msgstr "انقر للانتقال إلى علامة \n"
 
 #: lib/ptxprint/ptxprint.glade:18827
 msgid "Only Use English Links"
-msgstr ""
+msgstr "استخدام الروابط الإنجليزية فقط"
 
 #: lib/ptxprint/ptxprint.glade:18831
 msgid "When using a non-English interface (such as French,\n"
@@ -7154,11 +7414,17 @@ msgid "When using a non-English interface (such as French,\n"
 "interface.\n\n"
 "Enable this option if Google is blocked in your country,\n"
 "or you simply prefer to read the original page in English."
-msgstr ""
+msgstr "عند استخدام واجهة غير انجليزية (مثل الفرنسية،\n"
+"الإسبانية، الهندية، إلخ. معظم الروابط إلى المواقع الخارجية تحصل على\n"
+"إرسالها عبر موقع ترجمة جوجل بحيث يمكنك قراءة\n"
+"المعلومات بنفس اللغة التي تم اختيارها في واجهة\n"
+".\n\n"
+"تمكين هذا الخيار إذا تم حظر جوجل في بلدك،\n"
+"أو ببساطة تفضّل قراءة الصفحة الأصلية باللغة الإنجليزية."
 
 #: lib/ptxprint/ptxprint.glade:18852
 msgid "Disable ALL Internet Use"
-msgstr ""
+msgstr "تعطيل جميع استخدام الإنترنت"
 
 #: lib/ptxprint/ptxprint.glade:18856
 msgid "PTXprint checks for program updates and also\n"
@@ -7166,7 +7432,11 @@ msgid "PTXprint checks for program updates and also\n"
 "the Styles tab and the Help tab). If this is an\n"
 "issue, then check this option to prevent\n"
 "PTXprint from accessing the internet."
-msgstr ""
+msgstr "التحقق من PTXprint لتحديثات البرنامج وأيضاً\n"
+"يحتوي على روابط لمواقع خارجية (من \n"
+"علامة التبويب الأنماط وعلامة التبويب المساعدة). إذا كان هذا\n"
+"مشكلة، فتحقق من هذا الخيار لمنع\n"
+"PTXprint من الوصول إلى الإنترنت."
 
 #: lib/ptxprint/ptxprint.glade:18913
 msgid "Legacy 1/14 LineSpacing"
@@ -7255,7 +7525,12 @@ msgid "This button will (re-)generate content for \n"
 "a single book, then just select that book on the \n"
 "Basic tab. Otherwise it will (re-)generate a Pic/Adj\n"
 "list for each of the books listed for printing."
-msgstr ""
+msgstr "هذا الزر سوف (إعادة إنشاء) المحتوى ل \n"
+"مسألة الأمام، قائمة (قوائم) و SFM النهائية.\n\n"
+"إذا كنت تريد فقط (إعادة إنشاء) قائمة Adj ل \n"
+"كتاب واحد، ثم قم فقط باختيار هذا الكتاب على \n"
+"علامة التبويب الأساسية. وإلا فإنه سوف (يعيد) إنشاء قائمة Pic/Adj\n"
+"لكل كتاب من الكتب المدرجة للطباعة."
 
 #: lib/ptxprint/ptxprint.glade:19145
 msgid "View/Edit..."
@@ -7279,18 +7554,21 @@ msgstr "إذا كنت تفضل عرض هذا الملف أو تعديله في\n
 
 #: lib/ptxprint/ptxprint.glade:19168
 msgid "Edit Variables..."
-msgstr ""
+msgstr "تحرير المتغيرات..."
 
 #: lib/ptxprint/ptxprint.glade:19172
 msgid "If you have used \\zvar_variable names\n"
 "in the front matter template, these may\n"
 "be edited on the \"Pub. Info\" tab. Click\n"
 "this button to show that tab."
-msgstr ""
+msgstr "إذا كنت قد استخدمت أسماء \\zvar_variable\n"
+"في قالب المادة الأمامية، قد\n"
+"يتم تعديلها على \"Pub. معلومات التبويب. انقر على\n"
+"هذا الزر لإظهار علامة التبويب هذه."
 
 #: lib/ptxprint/ptxprint.glade:19187
 msgid "Remove +0's"
-msgstr ""
+msgstr "إزالة +0"
 
 #: lib/ptxprint/ptxprint.glade:19191
 msgid "When you generate an AdjList with all the\n"
@@ -7302,7 +7580,15 @@ msgid "When you generate an AdjList with all the\n"
 "all the redundant lines (i.e. those with +0 which\n"
 "have no effect on the output) so that you can see\n"
 "more clearly where changes are being made."
-msgstr ""
+msgstr "عندما تقوم بإنشاء قائمة تعديل مع جميع\n"
+"مواقع تعديل الفقرات المحتملة، فإنه\n"
+"يحفظ الكثير من الكتابة. ولكن بمجرد إجراء\n"
+"بعض التعديلات، ومن الصعب رؤية\n"
+"على وجه التحديد الأماكن التي تم تعديلها لأن القائمة\n"
+"طويلة جدا. النقر على هذا الزر سيزيل\n"
+"جميع الخطوط الزائدة عن الحاجة (أي تلك مع +0 التي\n"
+"ليس لها أي تأثير على الإخراج) بحيث يمكنك رؤية\n"
+"بوضوح أكبر أين يتم إجراء التغييرات."
 
 #: lib/ptxprint/ptxprint.glade:19236
 msgid "You may use the following \\zspecialcodes to\n"
@@ -7316,7 +7602,17 @@ msgid "You may use the following \\zspecialcodes to\n"
 "your own config-specific \\zvar|variables\\* as place-holders.\n"
 "Click on 'Edit Variables...' to assign values to these variables\n"
 "on the Peripherals tab."
-msgstr ""
+msgstr "يمكنك استخدام \\zspecialcode التالية\n"
+"لإدراج نص خاص في الأمر الأمامي:\n\n"
+"\\zcopyright - بيان حقوق الطبع والنشر من علامة التبويب الأساسية\n"
+"\\zlicense - بيان الترخيص من علامة التبويب الأساسية\n"
+"\\zimagecopyrights - قائمة الصور التي تم إنشاؤها مع سمة حقوق الطبع والنشر\n"
+"\\zimagecopyrightsfr - كما هو مبين أعلاه. ولكن موضوعة (fr = الفرنسية)\n\n"
+"\\zbl<unk> 3\\* - يدرج 3 أسطر فارغة\n\n"
+"بالإضافة إلى الرموز المذكورة أعلاه، يمكنك تحديد\n"
+"المتغيرات الخاصة بالتكوين الخاص بك \\zvar<unk> \\* كعناصر محتملة.\n"
+"انقر فوق 'تحرير المتغيرات...' لتعيين القيم لهذه المتغيرات\n"
+"على علامة التبويب المحيطية."
 
 #: lib/ptxprint/ptxprint.glade:19250 lib/ptxprint/ptxprint.glade:20001
 msgid "Front Matter"
@@ -7380,7 +7676,7 @@ msgstr "عرض +تحرير"
 
 #: lib/ptxprint/ptxprint.glade:19453
 msgid "Import Front Matter PDF(s)"
-msgstr ""
+msgstr "استيراد PDF(s) المهمة الأمامية"
 
 #: lib/ptxprint/ptxprint.glade:19457
 msgid "One or more previously created PDF file(s) can be included \n"
@@ -7389,15 +7685,20 @@ msgid "One or more previously created PDF file(s) can be included \n"
 "If you are creating an electronic publication and want to\n"
 "add a fancy (colour) cover, then consider designing a\n"
 "cover using the online Canva.com tool (link provided)."
-msgstr ""
+msgstr "واحد أو أكثر من ملفات PDF التي تم إنشاؤها سابقاً يمكن تضمينها \n"
+"BEFORE مادة البرنامج النصي التي يتم طباعتها. إذا تم تحديد أكثر من ملف واحد\n"
+"، فستظهر هذه في الترتيب الأبجدي .\n\n"
+"إذا كنت تقوم بإنشاء منشور إلكتروني وترغب في\n"
+"إضافة غلاف (لون) رائع، ثم تفكر في تصميم\n"
+"غلاف باستخدام الكانفا على الإنترنت. أداة م (تم توفير الرابط)."
 
 #: lib/ptxprint/ptxprint.glade:19507
 msgid "Create book cover..."
-msgstr ""
+msgstr "إنشاء غطاء كتابي..."
 
 #: lib/ptxprint/ptxprint.glade:19538
 msgid "Table of Contents       Title:"
-msgstr ""
+msgstr "عنوان جدول المحتويات:"
 
 #: lib/ptxprint/ptxprint.glade:19542
 msgid "This will automatically generate the Table of Contents\n"
@@ -7411,7 +7712,17 @@ msgid "This will automatically generate the Table of Contents\n"
 "time, the ToC itself gets included. So it may\n"
 "be worth leaving this option OFF until the\n"
 "final run."
-msgstr ""
+msgstr "سيؤدي هذا تلقائيا إلى إنشاء جدول المحتويات\n"
+"لجميع الكتب المدرجة في المنشور باستخدام واحد\n"
+"أو أكثر من \\tc1 \\tالحقول oc2 و \\toc3 كما هو محدد.\n"
+"يتم تجاهل هذا الخيار ما لم يتم تعيين خيار \"الكتب المتعددة\" \n"
+"على علامة التبويب الأساسية.\n\n"
+"لاحظ أنه عند تحديد هذا الخيار، سيتم تشغيل عملية الطباعة\n"
+"مرتين على الأقل -\n"
+"المرة الأولى التي يتم فيها بناء فهرس ToC. في المرة الثانية\n"
+"، يتم إدراج التوكس نفسه. لذلك قد يكون\n"
+"جديراً بترك هذا الخيار متوقفاً حتى يتم تشغيل\n"
+"نهائياً."
 
 #: lib/ptxprint/ptxprint.glade:19570
 msgid "A file called \"combined.toc\" will be created \n"
@@ -7444,13 +7755,15 @@ msgstr "تدرج\n"
 
 #: lib/ptxprint/ptxprint.glade:19713
 msgid ". . . Leaders:"
-msgstr ""
+msgstr ". . . القادة"
 
 #: lib/ptxprint/ptxprint.glade:19726
 msgid "Leaders display dots or a line between\n"
 "the text and the page number. Select\n"
 "the style of leader you wish to apply."
-msgstr ""
+msgstr "يقوم القادة بعرض نقاط أو سطر بين\n"
+"النص ورقم الصفحة. اختر\n"
+"نمط القائد الذي ترغب في تطبيقه."
 
 #: lib/ptxprint/ptxprint.glade:19771
 msgid "This table lists the standard set of \\zvar|variables\\* which\n"
@@ -7464,43 +7777,61 @@ msgid "This table lists the standard set of \\zvar|variables\\* which\n"
 "   \\zvar|printedby\\*\n\n"
 "The values of these variables are saved with the config \n"
 "as they might vary from one publication to another."
-msgstr ""
+msgstr "يسرد هذا الجدول المجموعة القياسية من المتغيرات \\zvar<unk> \\* التي\n"
+"يمكن استخدامها كجزء من المادة الأمامية و/أو الكولوفون. \n"
+"بما أن هذه المتغيرات \\zvar<unk> \\* قابلة للتخصيص، يمكنك\n"
+"إضافة المتغيرات الخاصة بك حسب الحاجة. على سبيل المثال قد\n"
+"تحتاج إلى \\zvar<unk> maintitle\\* في أكثر من لغة واحدة\n"
+"حتى تتمكن من إضافة 'fr' أو 'es' لإنشاء لغة جديدة:\n"
+"  \\zvar<unk> maintitlefr\\*\n"
+"أو قد ترغب في إضافة متغير مخصص مثل:\n"
+"   \\zvar<unk> printedby\\*\n\n"
+"يتم حفظ قيم هذه المتغيرات مع التهيئة \n"
+"لأنها قد تختلف من منشور إلى آخر."
 
 #: lib/ptxprint/ptxprint.glade:19786
 msgid "Variables\n"
 "and Values:"
-msgstr ""
+msgstr "المتغيرات\n"
+"والقيم:"
 
 #: lib/ptxprint/ptxprint.glade:19801
 msgid "Clicking this button will rescan the\n"
 "Front Matter for any \\zvar|variables\\*\n"
 "and add any that are missing to this\n"
 "table of variable names and values."
-msgstr ""
+msgstr "النقر على هذا الزر سيعيد مسح\n"
+"عنصر الواجهة لأي متغيرات \\zvar<unk> \\*\n"
+"وإضافة أي متغيرات مفقودة إلى هذا\n"
+"جدول أسماء وقيم المتغيرة."
 
 #: lib/ptxprint/ptxprint.glade:19816
 msgid "Force Page Break \n"
 "at each Periph"
-msgstr ""
+msgstr "فرض استراحة الصفحة \n"
+"في كل بيرب"
 
 #: lib/ptxprint/ptxprint.glade:19821
 msgid "This option is normally checked so that each\n"
 "different section of the front matter will begin\n"
 "on a new page."
-msgstr ""
+msgstr "عادة يتم التحقق من هذا الخيار بحيث يبدأ كل\n"
+"قسم مختلف من المادة الأمامية\n"
+"في صفحة جديدة."
 
 #: lib/ptxprint/ptxprint.glade:19837
 msgid "View/Edit\n"
 "Front Matter"
-msgstr ""
+msgstr "عرض/تعديل\n"
+"المهمة الأمامية"
 
 #: lib/ptxprint/ptxprint.glade:19896
 msgid "Name"
-msgstr ""
+msgstr "الاسم"
 
 #: lib/ptxprint/ptxprint.glade:19915
 msgid "Value"
-msgstr ""
+msgstr "القيمة"
 
 #: lib/ptxprint/ptxprint.glade:20039
 msgid "Enter your Colophon text here - using standard\n"
@@ -7592,7 +7923,7 @@ msgstr "عادة يتم إدراج الكولوفيون في نهاية\n"
 
 #: lib/ptxprint/ptxprint.glade:20159
 msgid "Colophon at End of Publication"
-msgstr ""
+msgstr "كولوفون في نهاية النشر"
 
 #: lib/ptxprint/ptxprint.glade:20163
 msgid "What is a Colophon?\n"
@@ -7618,7 +7949,7 @@ msgstr "ما هو الكولوفون؟\n"
 
 #: lib/ptxprint/ptxprint.glade:20199
 msgid "Import Back Matter PDF(s)"
-msgstr ""
+msgstr "استيراد PDF(s) مهمة الرجوع"
 
 #: lib/ptxprint/ptxprint.glade:20203
 msgid "One or more previously created PDF file(s) can be included\n"
@@ -7631,7 +7962,8 @@ msgstr "واحد أو أكثر من ملفات PDF التي تم إنشاؤها 
 #: lib/ptxprint/ptxprint.glade:20262
 msgid "Define what comes before and\n"
 "after the scripture text."
-msgstr ""
+msgstr "حدد ما يأتي من قبل و\n"
+"بعد نص النص البرمجي."
 
 #: lib/ptxprint/ptxprint.glade:20306
 msgid "Current Project Path:"
@@ -7649,7 +7981,13 @@ msgid "The PDF file created is stored in this\n"
 "in this location are temporary and can\n"
 "be deleted. None of these files are\n"
 "included in Paratext's Send/Recv data."
-msgstr ""
+msgstr "ملف PDF الذي تم إنشاؤه يتم تخزينه في هذا المجلد\n"
+"(ولكن يجب فتحه تلقائيًا\n"
+"في عارض النظام PDF على أية حال).\n\n"
+"لاحظ أن جميع الملفات والمجلدات الفرعية\n"
+"في هذا الموقع مؤقتة ويمكن حذف\n"
+". لا يوجد أي من هذه الملفات\n"
+"مضمن في بيانات Paratext Send/Recv"
 
 #: lib/ptxprint/ptxprint.glade:20342
 msgid "Output PDF Location:"
@@ -7868,7 +8206,10 @@ msgid "Set the most appropriate\n"
 "user interface mode as needed.\n"
 "Settings will be hidden or shown\n"
 "depending on the level set here."
-msgstr ""
+msgstr "تعيين وضع واجهة المستخدم\n"
+"الأنسب حسب الحاجة.\n"
+"سيتم إخفاء الإعدادات أو إظهارها\n"
+"تبعاً للمستوى المحدد هنا."
 
 #: lib/ptxprint/ptxprint.glade:20904
 msgid "Several PTXprint interface languages are \n"
@@ -7883,7 +8224,8 @@ msgstr "تتوفر العديد من لغات واجهة PTXprint \n"
 #: lib/ptxprint/ptxprint.glade:20932
 msgid "A newer version of PTXprint is available.\n"
 "Click to visit download page on the website."
-msgstr ""
+msgstr "نسخة أحدث من PTXprint متوفرة.\n"
+"انقر لزيارة صفحة التحميل على الموقع."
 
 #: lib/ptxprint/ptxprint.glade:20987
 msgid "Quick Run\n\n"
@@ -7900,7 +8242,20 @@ msgid "Quick Run\n\n"
 "If it detects that it needs to be re-run for\n"
 "a perfect result, a reminder message will\n"
 "be displayed (in red) just to the left."
-msgstr ""
+msgstr "التشغيل السريع\n\n"
+"عادةً، PTXprint يعيد تشغيل عملية ضبط الكتابة\n"
+"(عدة مرات) لضمان\n"
+"وضع كل شيء بدقة، و\n"
+"جدول المحتويات و الصور صفحة حقوق الطبع والنشر\n"
+"أرقام دقيقة.\n"
+"  \n"
+"ويعطي هذا نتيجة نهائية أقرب بكثير، ولكن من الواضح أن \n"
+"يستغرق لتشغيله وقتاً أطول. إذا كنت تفضل\n"
+"فقط رؤية نتيجة سريعة/تقريبية، ثم\n"
+"تحقق من هذا الخيار لتشغيل ONCE.\n\n"
+"إذا اكتشف أنه يحتاج إلى إعادة تشغيل من أجل\n"
+"نتيجة مثالية، رسالة تذكير سيتم عرضها\n"
+"(باللون الأحمر) فقط إلى اليسار."
 
 #: lib/ptxprint/ptxprint.glade:21040
 msgid "The current configuration displayed is\n"
@@ -7911,7 +8266,14 @@ msgid "The current configuration displayed is\n"
 "Otherwise, use the 'Return' button to get\n"
 "back to the primary project in order to \n"
 "print a diglot with both texts."
-msgstr ""
+msgstr "التكوين الحالي المعروض هو\n"
+"للجزء (الثاني) من Diglot. إذا كنت\n"
+"ترغب في طباعة هذا النص بنفسها (للتحقق من\n"
+"ما يبدو أن PDF مع الإعدادات\n"
+"المحددة هنا) ثم استخدم هذا الزر.\n\n"
+"خلاف ذلك، استخدم زر 'العودة' للعودة\n"
+"إلى المشروع الأساسي من أجل \n"
+"طباعة حفرة مع كلا النصين."
 
 #: lib/ptxprint/ptxprint.glade:21069
 msgid "Close the PTXprint tool without re-creating the PDF."
@@ -7927,5 +8289,13 @@ msgid "Apply any changes specified, save the\n"
 "Diglot project, and will need to return to\n"
 "the primary project before you can print.\n\n"
 "Shortcut key: <Ctrl-P>"
-msgstr ""
+msgstr "تطبيق أي تغييرات محددة، حفظ\n"
+"التكوين الحالي (إذا لم يكن مقفل)\n"
+"وإنتاج PDF مع الإعدادات المحددة.\n\n"
+"إذا تم تسمية هذا الزر 'رجوع' ثم\n"
+"يعني أنك تقوم حاليا بتعديل إعدادات \n"
+"لمشروع مرتبط بـ\n"
+"مشروع، وسوف تحتاج إلى العودة إلى\n"
+"المشروع الأساسي قبل أن تتمكن من الطباعة.\n\n"
+"مفتاح الاختصار: <Ctrl-P>"
 

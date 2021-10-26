@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ptxprint\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-26 16:24+0700\n"
-"PO-Revision-Date: 2021-10-26 09:25\n"
+"POT-Creation-Date: 2021-10-26 17:45+0700\n"
+"PO-Revision-Date: 2021-10-26 10:45\n"
 "Last-Translator: \n"
 "Language-Team: Hindi\n"
 "Language: hi_IN\n"
@@ -477,7 +477,7 @@ msgstr ""
 msgid "Rerun to fix: "
 msgstr ""
 
-#: lib/ptxprint/runjob.py:469 lib/ptxprint/texmodel.py:1091
+#: lib/ptxprint/runjob.py:469 lib/ptxprint/texmodel.py:1090
 msgid "And check if a faulty rule in PrintDraftChanges.txt has caused the error(s)."
 msgstr ""
 
@@ -485,7 +485,7 @@ msgstr ""
 msgid "Failed to merge texts due to a Syntax Error:"
 msgstr ""
 
-#: lib/ptxprint/runjob.py:471 lib/ptxprint/texmodel.py:1093
+#: lib/ptxprint/runjob.py:471 lib/ptxprint/texmodel.py:1092
 msgid "Run the Basic Checks in Paratext to ensure there are no Marker errors in either of the diglot projects. If this error persists, try running the Schema Check in Paratext as well."
 msgstr ""
 
@@ -540,19 +540,19 @@ msgstr ""
 msgid "Missing font ({})"
 msgstr ""
 
-#: lib/ptxprint/texmodel.py:1082
+#: lib/ptxprint/texmodel.py:1081
 msgid "Examine line {} in {} on the 'Final SFM' tab of the View+Edit page to determine the cause of this issue related to marker: {} as found in the markers: {}."
 msgstr ""
 
-#: lib/ptxprint/texmodel.py:1085
+#: lib/ptxprint/texmodel.py:1084
 msgid "This warning was triggered due to 'Auto-Correct USFM' being enabled on the Advanced tab but is due to an orphaned marker. It means the marker does not belong in that position, or it is missing a valid parent marker."
 msgstr ""
 
-#: lib/ptxprint/texmodel.py:1092
+#: lib/ptxprint/texmodel.py:1091
 msgid "Failed to normalize texts due to a Syntax Error: "
 msgstr ""
 
-#: lib/ptxprint/texmodel.py:1504
+#: lib/ptxprint/texmodel.py:1506
 msgid "\\rem Warning: No copyright statement found for: {} on pages {}"
 msgstr ""
 
@@ -1376,7 +1376,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:3283
 msgid "Color"
-msgstr ""
+msgstr "रंग"
 
 #: lib/ptxprint/ptxprint.glade:3298
 msgid "Line Thickness (pt)"
@@ -1468,11 +1468,11 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:3566
 msgid "English"
-msgstr ""
+msgstr "अंग्रेज़ी"
 
 #: lib/ptxprint/ptxprint.glade:3570
 msgid "French"
-msgstr ""
+msgstr "फ्रांसिसी"
 
 #: lib/ptxprint/ptxprint.glade:3574
 msgid "Hindi"
@@ -1484,7 +1484,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:3582
 msgid "Indonesian"
-msgstr ""
+msgstr "इंडोनेशियाई"
 
 #: lib/ptxprint/ptxprint.glade:3586
 msgid "Korean"
@@ -1500,11 +1500,11 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:3598
 msgid "Russian"
-msgstr ""
+msgstr "रूसी"
 
 #: lib/ptxprint/ptxprint.glade:3602
 msgid "Spanish"
-msgstr ""
+msgstr "स्पेनिश"
 
 #: lib/ptxprint/ptxprint.glade:3606
 msgid "Thai"
@@ -1871,7 +1871,7 @@ msgstr "1"
 
 #: lib/ptxprint/ptxprint.glade:5218
 msgid "Choose..."
-msgstr ""
+msgstr "चुनें..."
 
 #: lib/ptxprint/ptxprint.glade:5222 lib/ptxprint/ptxprint.glade:15357
 msgid "Click to add a DBL bundle to the list of\n"
@@ -3375,7 +3375,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:9426
 msgid "General"
-msgstr ""
+msgstr "सामान्य"
 
 #: lib/ptxprint/ptxprint.glade:9449 lib/ptxprint/ptxprint.glade:10347
 msgid "Show Callers in Notes Area"
@@ -3589,7 +3589,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:10113
 msgid "Footnotes"
-msgstr ""
+msgstr "पाद-टिप्पणियाँ"
 
 #: lib/ptxprint/ptxprint.glade:10141
 msgid "This option will prevent cross-references showing\n"
@@ -3787,11 +3787,11 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:10981
 msgid "Less"
-msgstr ""
+msgstr "कम"
 
 #: lib/ptxprint/ptxprint.glade:10998
 msgid "More"
-msgstr ""
+msgstr "अधिक"
 
 #: lib/ptxprint/ptxprint.glade:11031
 msgid "The Standard List of cross-references contains\n"
@@ -3961,7 +3961,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:11859
 msgid "Chapter"
-msgstr ""
+msgstr "अध्याय"
 
 #: lib/ptxprint/ptxprint.glade:11863
 msgid "By default, the chapter number will be included\n"
@@ -4009,7 +4009,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:11966
 msgid "Book"
-msgstr ""
+msgstr "पुस्तक"
 
 #: lib/ptxprint/ptxprint.glade:11970
 msgid "By default, the book name will be included\n"
@@ -5103,7 +5103,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:15353
 msgid "DBL"
-msgstr ""
+msgstr "DBL"
 
 #: lib/ptxprint/ptxprint.glade:15373
 msgid "Alternate Merging"
@@ -6293,11 +6293,11 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:19896
 msgid "Name"
-msgstr ""
+msgstr "नाम"
 
 #: lib/ptxprint/ptxprint.glade:19915
 msgid "Value"
-msgstr ""
+msgstr "मान"
 
 #: lib/ptxprint/ptxprint.glade:20039
 msgid "Enter your Colophon text here - using standard\n"

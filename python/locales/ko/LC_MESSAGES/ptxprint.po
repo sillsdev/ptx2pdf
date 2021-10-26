@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ptxprint\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-26 16:24+0700\n"
-"PO-Revision-Date: 2021-10-26 09:25\n"
+"POT-Creation-Date: 2021-10-26 17:45+0700\n"
+"PO-Revision-Date: 2021-10-26 10:45\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Language: ko_KR\n"
@@ -34,7 +34,7 @@ msgstr ""
 
 #: lib/ptxprint/gtkstyleditor.py:167
 msgid "Baseline:"
-msgstr ""
+msgstr "초기 계획:"
 
 #: lib/ptxprint/gtkstyleditor.py:168 lib/ptxprint/ptxprint.glade:17248
 msgid "Font Size\n"
@@ -128,7 +128,7 @@ msgstr ""
 
 #: lib/ptxprint/gtkview.py:1116 lib/ptxprint/ptxprint.glade:15098
 msgid "Pictures"
-msgstr ""
+msgstr "그림"
 
 #: lib/ptxprint/gtkview.py:1119 lib/ptxprint/ptxprint.glade:15619
 msgid "Diglot"
@@ -152,11 +152,11 @@ msgstr ""
 
 #: lib/ptxprint/gtkview.py:1129 lib/ptxprint/gtkview.py:1130
 msgid "Borders"
-msgstr ""
+msgstr "테두리"
 
 #: lib/ptxprint/gtkview.py:1141 lib/ptxprint/ptxprint.glade:19003
 msgid "Advanced"
-msgstr ""
+msgstr "고급"
 
 #: lib/ptxprint/gtkview.py:1276 lib/ptxprint/ptxprint.glade:5487
 msgid "Lock"
@@ -294,7 +294,7 @@ msgstr ""
 #: lib/ptxprint/gtkview.py:2828 lib/ptxprint/ptxprint.glade:13956
 #: lib/ptxprint/ptxprint.glade:21036 lib/ptxprint/ptxprint.glade:21088
 msgid "Print"
-msgstr ""
+msgstr "인쇄"
 
 #: lib/ptxprint/gtkview.py:2834
 msgid "Save & Return to\n"
@@ -477,7 +477,7 @@ msgstr ""
 msgid "Rerun to fix: "
 msgstr ""
 
-#: lib/ptxprint/runjob.py:469 lib/ptxprint/texmodel.py:1091
+#: lib/ptxprint/runjob.py:469 lib/ptxprint/texmodel.py:1090
 msgid "And check if a faulty rule in PrintDraftChanges.txt has caused the error(s)."
 msgstr ""
 
@@ -485,7 +485,7 @@ msgstr ""
 msgid "Failed to merge texts due to a Syntax Error:"
 msgstr ""
 
-#: lib/ptxprint/runjob.py:471 lib/ptxprint/texmodel.py:1093
+#: lib/ptxprint/runjob.py:471 lib/ptxprint/texmodel.py:1092
 msgid "Run the Basic Checks in Paratext to ensure there are no Marker errors in either of the diglot projects. If this error persists, try running the Schema Check in Paratext as well."
 msgstr ""
 
@@ -540,19 +540,19 @@ msgstr ""
 msgid "Missing font ({})"
 msgstr ""
 
-#: lib/ptxprint/texmodel.py:1082
+#: lib/ptxprint/texmodel.py:1081
 msgid "Examine line {} in {} on the 'Final SFM' tab of the View+Edit page to determine the cause of this issue related to marker: {} as found in the markers: {}."
 msgstr ""
 
-#: lib/ptxprint/texmodel.py:1085
+#: lib/ptxprint/texmodel.py:1084
 msgid "This warning was triggered due to 'Auto-Correct USFM' being enabled on the Advanced tab but is due to an orphaned marker. It means the marker does not belong in that position, or it is missing a valid parent marker."
 msgstr ""
 
-#: lib/ptxprint/texmodel.py:1092
+#: lib/ptxprint/texmodel.py:1091
 msgid "Failed to normalize texts due to a Syntax Error: "
 msgstr ""
 
-#: lib/ptxprint/texmodel.py:1504
+#: lib/ptxprint/texmodel.py:1506
 msgid "\\rem Warning: No copyright statement found for: {} on pages {}"
 msgstr ""
 
@@ -781,7 +781,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:787 lib/ptxprint/ptxprint.glade:4720
 msgid "Description:"
-msgstr ""
+msgstr "설명:"
 
 #: lib/ptxprint/ptxprint.glade:800
 msgid "Open.Bible site"
@@ -860,7 +860,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:1053 lib/ptxprint/ptxprint.glade:1303
 msgid "Warning!"
-msgstr ""
+msgstr "경고!"
 
 #: lib/ptxprint/ptxprint.glade:1068 lib/ptxprint/ptxprint.glade:1318
 msgid "This operation can overwrite \n"
@@ -1010,7 +1010,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:1668
 msgid "Books:"
-msgstr ""
+msgstr "책:"
 
 #: lib/ptxprint/ptxprint.glade:1711
 msgid "PTXprint: Copy Configuration To..."
@@ -1066,7 +1066,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:2197
 msgid "All"
-msgstr ""
+msgstr "전체"
 
 #: lib/ptxprint/ptxprint.glade:2201
 msgid "All Unknown / Unchecked"
@@ -1084,38 +1084,38 @@ msgstr ""
 #: lib/ptxprint/ptxprint.glade:3702 lib/ptxprint/ptxprint.glade:4131
 #: lib/ptxprint/ptxprint.glade:4368 lib/ptxprint/ptxprint.glade:4489
 msgid "Left"
-msgstr ""
+msgstr "왼쪽"
 
 #: lib/ptxprint/ptxprint.glade:2227 lib/ptxprint/ptxprint.glade:2507
 #: lib/ptxprint/ptxprint.glade:3710 lib/ptxprint/ptxprint.glade:4139
 #: lib/ptxprint/ptxprint.glade:4376 lib/ptxprint/ptxprint.glade:4493
 msgid "Right"
-msgstr ""
+msgstr "오른쪽"
 
 #: lib/ptxprint/ptxprint.glade:2231 lib/ptxprint/ptxprint.glade:2511
 #: lib/ptxprint/ptxprint.glade:3714 lib/ptxprint/ptxprint.glade:4143
 #: lib/ptxprint/ptxprint.glade:4497
 msgid "Inner"
-msgstr ""
+msgstr "안"
 
 #: lib/ptxprint/ptxprint.glade:2235 lib/ptxprint/ptxprint.glade:2515
 #: lib/ptxprint/ptxprint.glade:3718 lib/ptxprint/ptxprint.glade:4147
 #: lib/ptxprint/ptxprint.glade:4501
 msgid "Outer"
-msgstr ""
+msgstr "밖"
 
 #: lib/ptxprint/ptxprint.glade:2249
 msgid "Single"
-msgstr ""
+msgstr "단일 실선"
 
 #: lib/ptxprint/ptxprint.glade:2253
 msgid "Double"
-msgstr ""
+msgstr "이중 실선"
 
 #: lib/ptxprint/ptxprint.glade:2265 lib/ptxprint/ptxprint.glade:2278
 #: lib/ptxprint/ptxprint.glade:5577
 msgid "Default"
-msgstr ""
+msgstr "영어) "
 
 #: lib/ptxprint/ptxprint.glade:2282
 msgid "Arabic-Hindi"
@@ -1147,7 +1147,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:2433
 msgid "Language:"
-msgstr ""
+msgstr "언어 설정:"
 
 #: lib/ptxprint/ptxprint.glade:2473
 msgid "Whole Bible"
@@ -1166,7 +1166,7 @@ msgstr ""
 #: lib/ptxprint/ptxprint.glade:4372 lib/ptxprint/ptxprint.glade:4505
 #: lib/ptxprint/ptxprint.glade:11514
 msgid "Center"
-msgstr ""
+msgstr "가운데 맞춤"
 
 #: lib/ptxprint/ptxprint.glade:2520 lib/ptxprint/ptxprint.glade:4506
 msgid "5"
@@ -1263,7 +1263,7 @@ msgstr ""
 #: lib/ptxprint/ptxprint.glade:3022 lib/ptxprint/ptxprint.glade:3620
 #: lib/ptxprint/ptxprint.glade:3732
 msgid "None"
-msgstr ""
+msgstr "적용 안 함"
 
 #: lib/ptxprint/ptxprint.glade:3026
 msgid "format as bold"
@@ -1323,11 +1323,11 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:3102
 msgid "Centimeters"
-msgstr ""
+msgstr "센티미터"
 
 #: lib/ptxprint/ptxprint.glade:3106
 msgid "Inches"
-msgstr ""
+msgstr "인치(in)"
 
 #: lib/ptxprint/ptxprint.glade:3113
 msgid "Guides, Crop Marks, Watermark and Grid Settings"
@@ -1468,11 +1468,11 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:3566
 msgid "English"
-msgstr ""
+msgstr "영어"
 
 #: lib/ptxprint/ptxprint.glade:3570
 msgid "French"
-msgstr ""
+msgstr "프랑스어"
 
 #: lib/ptxprint/ptxprint.glade:3574
 msgid "Hindi"
@@ -1508,7 +1508,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:3606
 msgid "Thai"
-msgstr ""
+msgstr "태국어"
 
 #: lib/ptxprint/ptxprint.glade:3650
 msgid "Digital (PDF/X-4)"
@@ -1533,7 +1533,7 @@ msgstr ""
 #: lib/ptxprint/ptxprint.glade:3676 lib/ptxprint/ptxprint.glade:4266
 #: lib/ptxprint/ptxprint.glade:4292 lib/ptxprint/ptxprint.glade:14298
 msgid "Unknown"
-msgstr ""
+msgstr "알 수 없음"
 
 #: lib/ptxprint/ptxprint.glade:3680 lib/ptxprint/ptxprint.glade:4270
 msgid "Culturally Appropriate"
@@ -1557,11 +1557,11 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:3754 lib/ptxprint/ptxprint.glade:4191
 msgid "Top"
-msgstr ""
+msgstr "위쪽"
 
 #: lib/ptxprint/ptxprint.glade:3762 lib/ptxprint/ptxprint.glade:4195
 msgid "Bottom"
-msgstr ""
+msgstr "아래쪽"
 
 #: lib/ptxprint/ptxprint.glade:3769
 msgid "Illustration Credit Overlay"
@@ -1728,15 +1728,15 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:4364
 msgid "Justified"
-msgstr ""
+msgstr "양쪽 맞춤"
 
 #: lib/ptxprint/ptxprint.glade:4445
 msgid "Left-to-Right"
-msgstr ""
+msgstr "왼쪽에서 오른쪽"
 
 #: lib/ptxprint/ptxprint.glade:4449
 msgid "Right-to-Left"
-msgstr ""
+msgstr "오른쪽에서 왼쪽"
 
 #: lib/ptxprint/ptxprint.glade:4453
 msgid "Top-to-Bottom"
@@ -1812,7 +1812,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:4817 lib/ptxprint/ptxprint.glade:5357
 msgid "Name:"
-msgstr ""
+msgstr "이름: "
 
 #: lib/ptxprint/ptxprint.glade:4833
 msgid "xyz - Other - Brief description of marker"
@@ -1871,7 +1871,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:5218
 msgid "Choose..."
-msgstr ""
+msgstr "선택..."
 
 #: lib/ptxprint/ptxprint.glade:5222 lib/ptxprint/ptxprint.glade:15357
 msgid "Click to add a DBL bundle to the list of\n"
@@ -1935,7 +1935,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:5429
 msgid "Notes:"
-msgstr ""
+msgstr "메모:"
 
 #: lib/ptxprint/ptxprint.glade:5458
 msgid "Dots show that a password\n"
@@ -2069,7 +2069,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:5798
 msgid "Basic"
-msgstr ""
+msgstr "표준"
 
 #: lib/ptxprint/ptxprint.glade:5848
 msgid "Binding\n"
@@ -2245,7 +2245,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:6249
 msgid "Page Setup"
-msgstr ""
+msgstr "페이지 설정"
 
 #: lib/ptxprint/ptxprint.glade:6282
 msgid "This is the space between \n"
@@ -2493,7 +2493,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:7170
 msgid "Margins"
-msgstr ""
+msgstr "여백"
 
 #: lib/ptxprint/ptxprint.glade:7190
 msgid "Page Setup, Font Size and Line Spacing. \n"
@@ -2572,11 +2572,11 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:7374
 msgid "Bold:"
-msgstr ""
+msgstr "굵게:"
 
 #: lib/ptxprint/ptxprint.glade:7386
 msgid "Italic:"
-msgstr ""
+msgstr "기울임꼴:"
 
 #: lib/ptxprint/ptxprint.glade:7398
 msgid "Bold Italic:"
@@ -3375,7 +3375,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:9426
 msgid "General"
-msgstr ""
+msgstr "일반"
 
 #: lib/ptxprint/ptxprint.glade:9449 lib/ptxprint/ptxprint.glade:10347
 msgid "Show Callers in Notes Area"
@@ -3589,7 +3589,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:10113
 msgid "Footnotes"
-msgstr ""
+msgstr "각주"
 
 #: lib/ptxprint/ptxprint.glade:10141
 msgid "This option will prevent cross-references showing\n"
@@ -3787,7 +3787,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:10981
 msgid "Less"
-msgstr ""
+msgstr "간단히"
 
 #: lib/ptxprint/ptxprint.glade:10998
 msgid "More"
@@ -4009,7 +4009,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:11966
 msgid "Book"
-msgstr ""
+msgstr "책"
 
 #: lib/ptxprint/ptxprint.glade:11970
 msgid "By default, the book name will be included\n"
@@ -4072,7 +4072,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:12162 lib/ptxprint/ptxprint.glade:18880
 msgid "Other"
-msgstr ""
+msgstr "언어2) "
 
 #: lib/ptxprint/ptxprint.glade:12199
 msgid "It is not considered best-practice to include \n"
@@ -4150,11 +4150,11 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:12448
 msgid "Caption"
-msgstr ""
+msgstr "캡션"
 
 #: lib/ptxprint/ptxprint.glade:12463
 msgid "File"
-msgstr ""
+msgstr "파일"
 
 #: lib/ptxprint/ptxprint.glade:12478
 msgid "Frame"
@@ -4178,7 +4178,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:12550
 msgid "Description"
-msgstr ""
+msgstr "설명"
 
 #: lib/ptxprint/ptxprint.glade:12565
 msgid "Copyright"
@@ -4225,7 +4225,7 @@ msgstr ""
 #: lib/ptxprint/ptxprint.glade:12690 lib/ptxprint/ptxprint.glade:16950
 #: lib/ptxprint/ptxprint.glade:19948
 msgid "Add"
-msgstr ""
+msgstr " 추가 "
 
 #: lib/ptxprint/ptxprint.glade:12694
 msgid "Click to add another picture to the PicList. You\n"
@@ -4490,7 +4490,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:13339 lib/ptxprint/ptxprint.glade:19398
 msgid "Settings"
-msgstr ""
+msgstr "설정"
 
 #: lib/ptxprint/ptxprint.glade:13383 lib/ptxprint/ptxprint.glade:13421
 msgid "The anchor specifies what page in a book a picture will appear on.\n"
@@ -4776,7 +4776,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:14177
 msgid "Details"
-msgstr ""
+msgstr "자세히"
 
 #: lib/ptxprint/ptxprint.glade:14237
 msgid "Is there anything confusing or misleading in this image that the reader might misunderstand if they look at this picture apart from the text? Yes and no are both appropriate answers as some images may need to be seen alongside text in order to be understood."
@@ -4797,12 +4797,12 @@ msgstr ""
 #: lib/ptxprint/ptxprint.glade:14266 lib/ptxprint/ptxprint.glade:14524
 #: lib/ptxprint/ptxprint.glade:14572
 msgid "Yes"
-msgstr ""
+msgstr "있음"
 
 #: lib/ptxprint/ptxprint.glade:14282 lib/ptxprint/ptxprint.glade:14540
 #: lib/ptxprint/ptxprint.glade:14588
 msgid "No"
-msgstr ""
+msgstr "없음"
 
 #: lib/ptxprint/ptxprint.glade:14316
 msgid "Be sure that there is nothing offensive or inappropriate in this image. This could be the way people are clothed, what actions they are doing, how they are depicted, etc. “Culturally Appropriate” means this image is in a style from this culture or a related one, “Acceptable” means this picture might be from a different culture or in a different style, but there are no issues using it. “Inappropriate” means there are issues that should prevent this image from being used. Answering “Inappropriate” will help avoid this image being used in other publications."
@@ -5476,7 +5476,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:16995
 msgid "Edit"
-msgstr ""
+msgstr "편집 "
 
 #: lib/ptxprint/ptxprint.glade:16999
 msgid "Click to Edit additional  \n"
@@ -5494,11 +5494,11 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:17090
 msgid "Bold"
-msgstr ""
+msgstr "굵게"
 
 #: lib/ptxprint/ptxprint.glade:17104
 msgid "Italic"
-msgstr ""
+msgstr "기울임꼴"
 
 #: lib/ptxprint/ptxprint.glade:17119
 msgid "Superscript   / "
@@ -5529,7 +5529,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:17203
 msgid "Font:"
-msgstr ""
+msgstr "글꼴: "
 
 #: lib/ptxprint/ptxprint.glade:17224
 msgid "Color:"
@@ -5765,7 +5765,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:18131
 msgid "Styles"
-msgstr ""
+msgstr "스타일"
 
 #: lib/ptxprint/ptxprint.glade:18189
 msgid "Apply Customized Settings (ptxprint-mods.tex)"
@@ -5825,7 +5825,7 @@ msgstr ""
 #: lib/ptxprint/ptxprint.glade:18362 lib/ptxprint/ptxprint.glade:18422
 #: lib/ptxprint/ptxprint.glade:18438 lib/ptxprint/ptxprint.glade:18455
 msgid "Edit..."
-msgstr ""
+msgstr "편집..."
 
 #: lib/ptxprint/ptxprint.glade:18378
 msgid "Apply Stylesheet Overrides (ptxprint-mods.sty)"
@@ -6293,11 +6293,11 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:19896
 msgid "Name"
-msgstr ""
+msgstr "이름"
 
 #: lib/ptxprint/ptxprint.glade:19915
 msgid "Value"
-msgstr ""
+msgstr "값"
 
 #: lib/ptxprint/ptxprint.glade:20039
 msgid "Enter your Colophon text here - using standard\n"
@@ -6564,7 +6564,7 @@ msgstr ""
 
 #: lib/ptxprint/ptxprint.glade:20784
 msgid "Help"
-msgstr ""
+msgstr "도움말(H)"
 
 #: lib/ptxprint/ptxprint.glade:20836
 msgid "Display the output log \n"
