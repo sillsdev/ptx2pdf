@@ -137,7 +137,7 @@ class Xrefs:
         for e in xr:
             st = e.get('strongs', None)
             s = '\\xts|strong="{}" align="r"\\*'.format(st) if st is not None else ""
-            if e.tag == "ref":
+            if e.tag == "ref" and e.text is not None:
                 r = RefList.fromStr(e.text)
                 if self.filters is not None:
                     r.filterBooks(self.filters)

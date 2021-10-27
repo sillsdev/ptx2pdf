@@ -310,11 +310,9 @@
  \the\p@rstylehooks % allow other modules to hook in here
  \end@llpoppedstyles{P}%
  \trace{s}{endlastp@rstyle #1 stack=\mcstack}%
- \ifx\mcstack\mcstack@mpty
-   \toplevelp@rtrue
- \else
-   \toplevelp@rfalse
- \fi
+ \toplevelp@rtrue
+ \def\d@##1+##2\E{\if##1P\relax\global\toplevelp@rfalse\let\d@=\cstackrelax\fi}%
+ \mcdown
 %-cpar_parstyle_intro
 %+cpar_parstyle_after
  \t@stpublishability{#1}% test if the new marker is nonpublishable
@@ -398,6 +396,7 @@
   \else
     \iftoplevelp@r \if@ntromarker\st@rtintro\else\st@rtbody\fi\fi
   \fi\fi\fi                                                                     %(2)
+  \trace{H}{Marker type: \p@ram, stack: \mcstack \space toplevel: \iftoplevelp@r True\else False\fi}%
   \ifhe@dingstyle\trace{s}{headingstyle true}%
     \ifhe@dings\nsp@cebeforetrue\s@tbaseline{\m@rker}%In a heading again, may be different so set a new baseline
     \else

@@ -260,58 +260,33 @@
 }
 
 \def\getp@ram#1#2{\trace{s}{getp@ram #2:#1 (\mcstack)}\ifnotracestacks\pushtracing\fi
- \iftrue
-   \let\p@ram\relax
-   \def\gp@test{#1}%
-   \ifx\gp@test\empty\message{Eh? getp@ram called for #2 and empty parameter}\else 
-     \setpp@name{#2\c@rrdstat}%
-     \x@\let\x@\g@tp@tmp\csname \pp@name\endcsname
-     \ifx\g@tp@tmp\relax
-       \s@tpossParams{#2}\x@\global\x@\let\csname \pp@name\endcsname\p@ssParams
-       \ifx\p@ssParamCached\empty
-         \xdef\p@ssParamCached{\pp@name}%
-       \else
-         \xdef\p@ssParamCached{\p@ssParamCached,\pp@name}%
-       \fi
-       \trace{sC}{\pp@name\space defined (\p@ssParamCached) as '\p@ssParams'}%
+ \let\p@ram\relax
+ \def\gp@test{#1}%
+ \ifx\gp@test\empty\message{Eh? getp@ram called for #2 and empty parameter}\else 
+   \setpp@name{#2\c@rrdstat}%
+   \x@\let\x@\g@tp@tmp\csname \pp@name\endcsname
+   \ifx\g@tp@tmp\relax
+     \s@tpossParams{#2}\x@\global\x@\let\csname \pp@name\endcsname\p@ssParams
+     \ifx\p@ssParamCached\empty
+       \xdef\p@ssParamCached{\pp@name}%
      \else
-       \global\let\p@ssParams\g@tp@tmp
-       \trace{sC}{\pp@name\space exists: '\p@ssParams'}%
+       \xdef\p@ssParamCached{\p@ssParamCached,\pp@name}%
      \fi
-     {%protect outer version of \d@, etc.
-     %\tracingassigns=1
-     %\tracingmacros=1
-    % Final version of the list might be cat:inl|ms:qt|pR,cat:inl|ms:qt|p,cat:inl|pR,cat:inl|p,ms:qt|pR,ms:qt|p,pR,p
-     \gettop@aram{#1}%
-     \global\let\p@@r@m=\p@ram % Need to return outside the brackets
-     %\tracingassigns=0
-     %\tracingmacros=0
-     }%
-     \let\p@ram=\p@@r@m
+     \trace{sC}{\pp@name\space defined (\p@ssParamCached) as '\p@ssParams'}%
+   \else
+     \global\let\p@ssParams\g@tp@tmp
+     \trace{sC}{\pp@name\space exists: '\p@ssParams'}%
    \fi
- \else %Old, working, but ignorant of milestones
-   \ifdiglot
-    \getp@r@m{#1}{\c@tprefix#2\c@rrdstat}%
-    \ifx\p@ram\relax
-      \ifx\c@tprefix\empty\else\getp@r@m{#1}{\c@tprefix#2}\fi%
-    \else
-      \trace{sc}{Category specific(\c@tprefix#2\c@rrdstat):#1 found}%
-      \trace{Ds}{...side-specfic -> \p@ram}%
-    \fi
-    \ifx\p@ram\relax
-      \getp@r@m{#1}{#2}\trace{Ds}{...default -> \p@ram}%
-    %\else
-      %\trace{Ds}{...side-specfic -> \p@ram}%
-    \fi
-   \else\getp@r@m{#1}{\c@tprefix#2}%
-    \ifx\p@ram\relax
-      \ifx\c@tprefix\empty\else
-        \getp@r@m{#1}{#2}%
-      \fi
-    \else
-      \ifx\c@tprefix\empty\else\trace{sc}{Milestone/Category specific(\c@tprefix#2):#1 found}\fi%
-    \fi
-   \fi
+   {%protect outer version of \d@, etc.
+   %\tracingassigns=1
+   %\tracingmacros=1
+  % Final version of the list might be cat:inl|ms:qt|pR,cat:inl|ms:qt|p,cat:inl|pR,cat:inl|p,ms:qt|pR,ms:qt|p,pR,p
+   \gettop@aram{#1}%
+   \global\let\p@@r@m=\p@ram % Need to return outside the brackets
+   %\tracingassigns=0
+   %\tracingmacros=0
+   }%
+   \let\p@ram=\p@@r@m
  \fi
  \trace{s}{\space\space (\c@tprefix)(\mspr@fix)#2\ifdiglot(\c@rrdstat)\fi :#1 is \p@ram}%
  \ifnotracestacks\poptracing\fi
@@ -941,7 +916,7 @@
         \trace{s}{Complex pop endit@#1}% endit@ macros are assumed(requrired) to call mcpop 
       	\csname endit@#1\endcsname
       \else 
-        \trace{s}{Simple pop suficcient}%
+        \trace{s}{Simple pop sufficient}%
 	\mcpopsimple
       \fi
     \else
@@ -951,7 +926,7 @@
 	   \trace{s}{Complex pop endit@#1}% endit@ macros are assumed(requrired) to call mcpop 
 	   \csname endit@#1\endcsname
 	 \else 
-           \trace{s}{Simple pop suficcient}%
+           \trace{s}{Simple pop sufficient}%
 	   \mcpopsimple
 	 \fi
        \fi
@@ -1401,11 +1376,11 @@
 }
 \def\onecolwidth#1{#1=\textwidth
   \advance #1 by -\columnshift
-  \ifx\XrefNotes\empty\else\ifx\ch@pter\empty\else
+  \ifx\XrefNotes\empty\else\ifx\ch@pter\empty\else\ifnum\BodyColumns=1
     \trace{o}{setonecolwidth with notes width=\the\XrefNotesWidth, margin=\the\XrefNotesMargin, gutter=\the\gutter}%
     \advance #1 by -\XrefNotesWidth
     \advance #1 by -\XrefNotesMargin\advance #1 by -\gutter
-  \fi\fi
+  \fi\fi\fi
 }
 \def\s@tupsizes{
  \s@tb@dyb@seline{}%

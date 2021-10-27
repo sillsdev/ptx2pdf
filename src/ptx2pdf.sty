@@ -350,9 +350,11 @@
 
 \Marker wh
 \FontName Ezra SIL
+\FontScale 1
 
 \Marker wg
 \FontName Galatia SIL
+\FontScale 1
 
 \Marker periph
 \OccursUnder id
@@ -584,6 +586,33 @@
 \OccursUnder id periph mt p
 \Attributes dimension
 \StyleType Milestone
+
+\Marker strong-s
+\Name strong-s - Milestones - Start strongs list context
+\Endmarker strong-e
+\OccursUnder id
+\StyleType Milestone
+
+\Marker strong-s+li
+\Name ms:strong+li - List Entry in Strongs - Level 1
+\Description A list entry, level 1 (if single level)
+\OccursUnder id
+\TextType VerseText
+\TextProperties paragraph publishable vernacular level_1
+\StyleType paragraph
+\LeftMargin .125
+\FirstLineIndent -.125
+\FontSize 9
+\Justification Left
+
+\Marker ms:strong|wg
+\FontSize 9
+
+\Marker strong-s+li+wh
+\FontSize 9
+
+\Marker ms:strong+xt
+\FontSize 9
 
 \Marker cat:toc|tr
 \Name tr - File - Styling of tr in Table of Contents

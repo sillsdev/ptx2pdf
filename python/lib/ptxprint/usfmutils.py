@@ -557,7 +557,7 @@ class Module:
     localise_re = re.compile(r"\$([asl]?)\(\s*(\S+\s+\d+:[^)\s]+)\s*\)")
     localcodes = {'a': 0, 's': 1, 'l': 2}
 
-    def __init__(self, fname, usfms):
+    def __init__(self, fname, usfms, usfm=None):
         self.fname = fname
         self.usfms = usfms
         self.usfms.makeBookNames()
@@ -568,8 +568,11 @@ class Module:
         for k, v in self.sheets.items():
             if 'OccursUnder' in v and 'c' in v['OccursUnder']:
                 v['OccursUnder'].add('id')
-        with open(fname, encoding="utf-8") as inf:
-            self.doc = read_module(inf, self.sheets)
+        if usfm is not None:
+            self.doc = usfm
+        else:
+            with open(fname, encoding="utf-8") as inf:
+                self.doc = read_module(inf, self.sheets)
 
     def parse(self):
         if self.doc.doc is None:
@@ -597,7 +600,7 @@ class Module:
             curr = e.parent.index(e)
             while curr + 1 < len(e.parent):
                 rep = e.parent[curr+1]
-                if rep.name != "rep":
+                if not isinstance(rep, sfm.Element) or rep.name != "rep":
                     break
                 # parse rep
                 m = re.match("^\s*(.*?)\s*=>\s*(.*?)\s*$", str(rep[0]), re.M)

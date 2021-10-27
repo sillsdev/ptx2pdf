@@ -925,17 +925,19 @@ class TexModel:
             with open(outfname, "w", encoding="utf-8") as outf:
                 outf.write("\n".join(fcontent))
 
-    def flattenModule(self, infpath, outdir):
+    def flattenModule(self, infpath, outdir, usfm=None):
         outfpath = os.path.join(outdir, os.path.basename(infpath))
         doti = outfpath.rfind(".")
         if doti > 0:
             outfpath = outfpath[:doti] + "-flat" + outfpath[doti:]
         usfms = self.printer.get_usfms()
         try:
-            mod = Module(infpath, usfms)
+            mod = Module(infpath, usfms, usfm=usfm)
             res = mod.parse()
         except SyntaxError as e:
             return (None, e)
+        if usfm is not None:
+            return res
         with open(outfpath, "w", encoding="utf-8") as outf:
             outf.write(sfm.generate(res))
         return outfpath
@@ -1015,6 +1017,10 @@ class TexModel:
                         printer.doError("The following references need to be reapproved: " + " ".join(self.interlinear.fails),
                                         show=not printer.get("c_quickRun"))
                         self.interlinear.fails = []
+            elif bk.lower().startswith("xx"):
+                doc = self._makeUSFM(dat.splitlines(True), bk)
+                #import pdb; pdb.set_trace()
+                doc.doc = self.flattenModule(infpath, outfpath, usfm=doc)
 
             if self.changes is not None and len(self.changes):
                 if doc is not None:
@@ -1039,7 +1045,7 @@ class TexModel:
                 if doc is None:
                     doc = self._makeUSFM(dat.splitlines(True), bk)
                 doc.versesToEnd()
-                
+
             if doc is not None and getattr(doc, 'doc', None) is not None:
                 dat = str(doc)
 
