@@ -1,12 +1,12 @@
 % A Work-in-progress, and aspirational document. I.e. this may change, and no features are at present guaranteed to be present!
 % 
-# Styling for side bars
+# Specific Styling options for side bars
 
 ```\esb```  boxes may have a colour, which may be transparent (allowing a
 whole-page background image or decoration to show through). They may also have
 their own watermark or background image, and a foreground image such as a logo 
 that would further identify the type of information being presented (e.g. a scroll for 
-historic notes, or a map for geographical notes).
+historic notes, or a compass for geographical notes).
 ```
 
 ```\Category people```
@@ -21,22 +21,28 @@ Subsequent modifications to a style should be done using the alternative format:
 * Default: bl
 The position for this class of side-bars.  Any image position may be specified. 
 `B` indicates that this box goes below any notes on the page (b normally comes above notes).
+
+Note that `h` and `p` sidebars, if they have  no background colour or images,
+may be permitted to break across pages.
  
 ```\Scale  value(0-1)```
 * Default: 1
-Width of the box relative to the nominal size of the containing box.
+Width of the box relative to the nominal size of the containing column or box (like the scale="..." `\fig` parameter).
 
 `\Breakable option`   *!!!DO NOT USE!!!*
 *  Options: T, F, value(0-1)
 *  Default: F
 *  Incompatible with: Background images; Alpha.
 Should the contents of this box be forced to be on one page or can it be broken? (Not compatible with background images)
-With a background colour, the box will be broken into sections and these sections will be added one chunk at a time.
-If a value is given, this is the smallest fraction of the pageheight that the sections will be, if 't' is given, the fraction 
+With a background colour, the box will be broken into sections and these sections will be added one chunk at a time. Descenders 
+may be lost at these joints if a non-transparent background colour is given.
+
+If a value is given, rather than a simple 't', this is the smallest fraction of the pageheight that the sections will be, if 't' is given, the fraction 
 will be 0.2 of the page height. If splitting a given chunk of the box is impossible, the algorithm will increase the chunk-size until 
  a break IS possible. 
 
-*NB:* Breakable triggers a bug in the page output mechanism and *things go  horribly wrong* if this option is used.
+*NB:* Breakable in out-of-body positions triggers a bug in the page output
+mechanism and *things go  horribly wrong* if this option is used.
 
 `\BgColour option` 
 `\BgColor option` 
@@ -161,23 +167,3 @@ The `\StyleCategory` command assumes that the styling fragments contain neither
 `\Category` nor `\EndCategory` 
 
 
-```
-
-## Thoughts
-
-- Do we need  a special `\categorysheet` command? The real deal is the `\Category` command that turns on the goodies.
-
-- Might we add some border options?
-DG reply: Yes. Some done, please criticise. As above, I'm imagining \vrules just outside the box, 
-reducing the box size by the appropriate line width(s).
-
-DG qn: At present, the default-setting code that gets called by \Category means
-that there's no sane way to have a secondary categorysheet that overrides some
-previously defined values. Might that be a feature someone would want?
-
-TODO:
-1) boxes
-2) FGfigures
-3) BGfigures
-4) Refactor so that the one-time setup only gets triggered once.
-```
