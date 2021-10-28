@@ -777,6 +777,11 @@ class ViewModel:
                 forcerewrite = True
             config.set("config", "version", "1.97")
 
+        if v < 2.01:
+            self._configset(config, "document/diffcolayout", not config.getboolean("document", "clsinglecol", fallback=False))
+            diffcolbooks = config.get("document", "clsinglecolbooks", fallback="FRT INT PSA PRO BAK GLO")
+            self._configset(config, "document/diffcolayoutbooks", diffcolbooks)
+
         styf = os.path.join(self.configPath(cfgname), "ptxprint.sty")
         if not os.path.exists(styf):
             with open(styf, "w", encoding="utf-8") as outf:
@@ -1343,7 +1348,8 @@ class ViewModel:
                 # zf.write(mpath, self.prjid+"/src/mappings/"+mappingfile)
         self._archiveSupportAdd(zf, [x for x in self.tempFiles if x.endswith(".tex")])
         zf.close()
-
+        self.finished()
+        
     def _archiveAdd(self, zf, books):
         prjid = self.prjid
         cfgid = self.configName()

@@ -224,7 +224,7 @@ _sensitivities = {
     "c_sectionHeads" :         ["c_parallelRefs", "lb_style_s", "lb_style_r"],
     "c_parallelRefs" :         ["lb_style_r"],
     "c_useChapterLabel" :      ["t_clBookList", "l_clHeading", "t_clHeading", "c_optimizePoetryLayout"],
-    "c_singleColLayout" :      ["t_singleColBookList"],
+    "c_differentColLayout" :   ["t_differentColBookList"],
     "c_autoToC" :              ["t_tocTitle", "gr_toc", "l_toc", "l_leaderStyle", "fcb_leaderStyle"],
     "c_hideEmptyVerses" :      ["c_elipsizeMissingVerses"],
     "c_marginalverses" :       ["s_columnShift"],
@@ -1525,6 +1525,7 @@ class GtkViewModel(ViewModel):
         for w in ["gr_editableButtons", "l_examineBook", "ecb_examineBook", "btn_saveEdits", 
                   "btn_refreshViewerText", "btn_viewEdit"]: # "btn_Generate", "btn_editZvars", "btn_removeZeros", 
             self.builder.get_object(w).set_sensitive(True)
+        self.builder.get_object("btn_viewEdit").set_label("View/Edit...")
         genBtn = self.builder.get_object("btn_Generate")
         genBtn.set_sensitive(False)
         self.builder.get_object("btn_editZvars").set_sensitive(False)
@@ -1585,11 +1586,13 @@ class GtkViewModel(ViewModel):
             elif pgid == "scroll_FinalSFM":
                 self.builder.get_object("btn_saveEdits").set_sensitive(False)
                 self.builder.get_object("btn_refreshViewerText").set_sensitive(False)
+                self.builder.get_object("btn_viewEdit").set_label("View only...")
 
         elif pgid in ("scroll_TeXfile", "scroll_XeTeXlog"): # (TeX,Log)
             fpath = os.path.join(self.working_dir, self.baseTeXPDFnames()[0])+fndict[pgid][1]
             self.builder.get_object("btn_saveEdits").set_sensitive(False)
             self.builder.get_object("btn_refreshViewerText").set_sensitive(False)
+            self.builder.get_object("btn_viewEdit").set_label("View only...")
 
         elif pgid == "scroll_Settings": # View/Edit one of the 4 Settings files or scripts
             fpath = self.builder.get_object("l_Settings").get_tooltip_text()
@@ -2928,7 +2931,7 @@ class GtkViewModel(ViewModel):
         wid = self.builder.get_object("pr_runs")
         if val is None:
             val = wid.get_fraction()
-            val = 0.25 if val < 0.1 else (1. + val) * 0.5
+            val = 0.20 if val < 0.1 else (1. + val) * 0.5
         wid.set_fraction(val)
 
     def incrementProgress(self):

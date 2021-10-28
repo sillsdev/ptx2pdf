@@ -416,7 +416,7 @@ class RunJob:
         diginfo["footer/ftrcenter"] = "-empty-"
         diginfo["footer/ifftrtitlepagenum"] = "%"
         diginfo["fancy/pageborder"] = "%"
-        diginfo["document/clsinglecol"] = False
+        diginfo["document/diffcolayout"] = False
         diginfo["snippets/diglot"] = False
         docdir = os.path.join(info["/ptxpath"], info["project/id"], "local", "ptxprint", info["config/name"])
         for k in _digSecSettings:

@@ -226,14 +226,14 @@ ModelMap = {
     "document/ifchaplabels":    ("c_useChapterLabel", lambda w,v: "%" if v else ""),
     "document/clabelbooks":     ("t_clBookList", lambda w,v: v.upper() if v else ""),
     "document/clabel":          ("t_clHeading", None),
-    "document/clsinglecol":     ("c_singleColLayout", None),
-    "document/clsinglecolbooks":    ("t_singleColBookList", None),
+    "document/diffcolayout":        ("c_differentColLayout", None),
+    "document/diffcolayoutbooks":   ("t_differentColBookList", None),
     "document/cloptimizepoetry":    ("c_optimizePoetryLayout", None),
 
     "document/ifdiglot":            ("c_diglot", lambda w,v : "" if v else "%"),
     "document/diglotprifraction":   ("s_diglotPriFraction", lambda w,v : round((float(v)/100), 3) if v is not None else "0.550"),
     "document/diglotsecfraction":   ("s_diglotPriFraction", lambda w,v : round(1 - (float(v)/100), 3) if v is not None else "0.450"),
-    "document/diglotsecprj":    ("fcb_diglotSecProject", None),
+    "document/diglotsecprj":        ("fcb_diglotSecProject", None),
     "document/diglotpicsources":    ("fcb_diglotPicListSources", None),
     "document/diglot2captions": ("c_diglot2captions", None),
     "document/diglotswapside":  ("c_diglotSwapSide", lambda w,v: "true" if v else "false"),
@@ -1244,7 +1244,7 @@ class TexModel:
         # Glossary Word markup: Remove the second half of the \w word|glossary-form\w* and apply chosen glossary markup
         v = self.dict["document/glossarymarkupstyle"]
         gloStyle = self._glossarymarkup.get(v, v)
-        if v is not None and v != "no":
+        if v is not None: # and v != "no":
             if gloStyle is not None and len(v) == 2: # otherwise skip over OLD Glossary markup definitions
                 self.localChanges.append((None, regex.compile(r"\\\+?w ((?:.(?!\\\+w\*))+?)(\|[^|]+?)?\\\+?w\*", flags=regex.M), gloStyle))
 
