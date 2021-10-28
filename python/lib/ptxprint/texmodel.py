@@ -442,6 +442,15 @@ class TexModel:
         r"\hrule"
     ]
 
+    _specialchars = {
+        '*': 'asterisk',
+        '%': 'percent',
+        '#': 'hash',
+        '$': 'dollar',
+        '&': 'ampersand',
+        '^': 'circumflex'
+    }
+
     def __init__(self, printer, path, ptsettings, prjid=None, inArchive=False):
         from ptxprint.view import VersionStr
         self.VersionStr = VersionStr
@@ -773,7 +782,7 @@ class TexModel:
                             if self.dict['project/pgbreakcolophon'] != '%':
                                 res.append(r"\endbooknoejecttrue")
                         if not resetPageDone and f not in self._peripheralBooks:
-                            res.append(r"\ifodd\pageno\else\catcode`\@=11 \shipwithcr@pmarks{\vbox{}}\catcode`\@=12 \fi")
+                            res.append(r"\ifodd\pageno\else\emptyoutput \fi")
                             res.append(r"\pageno={}".format(self.dict['document/startpagenum']))
                             resetPageDone = True
                         if not self.asBool('document/ifshow1chbooknum') and \
@@ -1362,7 +1371,8 @@ class TexModel:
         # Change double-spaces to singles
         self.localChanges.append((None, regex.compile(r" {2,}", flags=regex.M), r" ")) 
         # Escape special codes % and $ that could be in the text itself
-        self.localChanges.append((None, regex.compile(r"([%$])", flags=regex.M), r"\\\1")) 
+        self.localChanges.append((None, regex.compile(r"(?<!\\\S*|\\[fx]\s)([{}])".format("".join(self._specialchars)),
+                                                      flags=regex.M), lambda m:"\\"+self._specialchars[m.group(1)])) 
 
         if self.printer is not None and self.printer.get("c_tracing"):
             print("List of Local Changes:----------------------------------------------------------")

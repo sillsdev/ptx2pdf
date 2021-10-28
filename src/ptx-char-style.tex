@@ -285,6 +285,7 @@
  \let\d@=\d@@
  \edef\f@ntstyle{\f@ntstyle-\c@rrfontsize\ifx\styst@k\empty\else+\styst@k\fi}%
 }
+\def\nomsg@tfontname#1{\getp@r@m{fontsize}{#1}\ifx\p@ram\relax\edef\p@ram{12}\fi\edef\f@ntstyle{#1-\p@ram}}
 %-cchar_getfontname
 
 \let\styst@k\empty

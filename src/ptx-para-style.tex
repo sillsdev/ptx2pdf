@@ -350,6 +350,10 @@
    \else\ifx\p@ram\r@ght
     \ifRTL\rightskip\else\leftskip\fi=0pt plus .25\hsize \ifRTL\else\parfillskip=0pt\fi
    \fi\fi\fi
+   \getp@ram{leftmargin}{#1}%
+   \ifx\p@ram\relax \else \advance \ifRTL\rightskip\else\leftskip\fi\p@ram \IndentUnit \fi
+   \getp@ram{rightmargin}{#1}%
+   \ifx\p@ram\relax \else \advance \ifRTL\leftskip\else\rightskip\fi\p@ram \IndentUnit \fi
 }
 
 \def\p@rstyle#1{\trace{ss}{p@rstyle: #1}%
@@ -438,10 +442,6 @@
    %\edef\spc@ut{pdf:code /\c@rref \space BMC}\x@\special\x@{\spc@ut}%
    \ifdiglot\xdef\lastc@rref{\dc@rref}\else\xdef\lastc@rref{\id@@@ \ch@pter.\v@rse}\fi\xdef\lastc@rradj{\the\curr@djpar}%
    \s@tsideskips{\m@rker}%
-   \getp@ram{leftmargin}{\m@rker}%                                              %(1)
-   \ifx\p@ram\relax \else \advance \ifRTL\rightskip\else\leftskip\fi\p@ram \IndentUnit \fi
-   \getp@ram{rightmargin}{\m@rker}%
-   \ifx\p@ram\relax \else \advance \ifRTL\leftskip\else\rightskip\fi\p@ram \IndentUnit \fi
    \trace{s}{\m@rker\g@tdstat\space iu=\the\IndentUnit, ls=\the\leftskip, rs=\the\rightskip}%
    \getp@ram{fontsize}{\m@rker}\edef\c@rrfontsize{\ifx\p@ram\relax12\else\p@ram\fi}%Need to set this before calling s@tfont, else that will consder the current fontsize as ruling.
    \setwh@tvrstyle% set up font attributes (based on style stack)

@@ -191,6 +191,10 @@
     \else\ifx\p@ram\r@ght
        \leftskip=\noteRag
     \fi\fi\fi
+    \getp@ram{leftmargin}{#2}%
+    \ifx\p@ram\relax \else \advance \ifRTL\rightskip\else\leftskip\fi\p@ram \IndentUnit \fi
+    \getp@ram{rightmargin}{#2}%
+    \ifx\p@ram\relax \else \advance \ifRTL\leftskip\else\rightskip\fi\p@ram \IndentUnit \fi
     \ifx\th@sins\relax
       \s@tbaseline{#1}%
     \else
@@ -207,7 +211,7 @@
         \dimen1=\baselineskip\advance\dimen1 by -\dimen0
         \vskip\dimen1
 		\trace{f}{\reference : Footnote vskip=\the\dimen1 baselineskip=\the\baselineskip strut height=\the\dimen0}%
-	  \fi\fi
+	\fi\fi
   \leavevmode % begin paragraph
   \ifdiglot \x@\the\csname diglot\c@rrdstat ho@ks\endcsname \fi%
   \ifRTL\setbox2=\lastbox\beginR\box2\fi % if RTL text this paragraph needs to be RTL
@@ -763,7 +767,7 @@
 %+c_pagebody
 \def\pagebody{\vbox to\textheight{\boxmaxdepth\maxdepth \pagecontents}}
 \def\makeheadline{%
-  \g@tfontname{h}%
+  \ifdiglot\nomsg@tfontname{h\c@rrdstat}\else\nomsg@tfontname{h}\fi%
   %\trace{h}{makeheadline: textwidth \the\textwidth}%
   \vbox to 0pt{\kern-\topm@rgin
    \vbox{\kern\HeaderPosition\MarginUnit
@@ -915,7 +919,7 @@
       \fi
     }%
     \resetvsize
-    \ifdim\ht\colA>\baselineskip\plainoutput\fin@lverybottom \s@tpage
+    \ifdim\ht\colA>\baselineskip\plainoutput\fin@lverybottom\trace{p}{plainoutput of finalverybottom from savepartialpage}\s@tpage
     \else\trace{o}{Page empty cols=\the\ht\colA, \the\ht\colB, partial=\the\ht\partial}%
       \setbox0=\box255\deadcycles=0
     \fi % dump empty pages (typically at end)
@@ -926,7 +930,7 @@
       \def\pagecontents{%
         \box\partial
         \p@geendcontent
-      }\plainoutput \s@tpage \clearn@tes
+      }\plainoutput\trace{p}{plainoutput for large partial in savepartialpage}\s@tpage \clearn@tes
     \fi
     \fin@lverybottom
     \global\holdinginserts=1
@@ -1582,7 +1586,7 @@
     }%
     \global\setbox255=\box\voidb@x                                          %(+)
     \resetvsize % reset size of next page since it will not have any 1 column material
-    \plainoutput 
+    \plainoutput\trace{p}{plainoutput twocoltrial}%
     \s@tpage
     \global\holdinginserts=1
     \ifrerunsavepartialpaged
@@ -1728,7 +1732,7 @@
       \ifvoid\bottomins\else % \kern-\dimen0
         \lastd@pth=0pt \vskip\skip\bottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\bottomins}}\fi
       \p@geendcontent
-    }}\plainoutput
+    }}\plainoutput\trace{p}{plainoutput for twocolp@geout}%
     \s@tpage
     \fin@lverybottom
 }
@@ -1740,7 +1744,7 @@
                 verybottomins=\the\count\verybottomins, \the\dimen\verybottomins}
       \setbox0=\vsplit\verybottomins to \textheight
       \def\pagecontents{\vfil\hbox{\hbox to \columnshift{}\vbox{\unvbox0}}}
-      \plainoutput
+      \plainoutput\trace{plainoutput for fin@lverybottom}%
       \s@tpage
       \ifvoid\verybottomins\tempfalse\else\temptrue\fi\iftemp\repeat
   \fi
@@ -1964,6 +1968,13 @@
 \lccode"2010="2010
 \catcode"2028=\active \def^^^^2028{\pr@tect\LINESEP}
 \catcode`\@=12
+
+\def\asterisk{*}
+\catcode`\%=12 \def\percent{%}\catcode`\%=14
+\catcode`\$=12 \def\dollar{$}   %$ keep editor syntax highlight happy
+\catcode`\#=12 \def\hash{#}\catcode`\#=6
+\catcode`\&=12 \def\ampersand{&}\catcode`\&=4
+\catcode`\^=12 \def\circumflex{^^5e}\catcode`\^=7
 
 \parskip=0pt
 \lineskip=0pt

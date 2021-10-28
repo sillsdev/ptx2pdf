@@ -443,8 +443,10 @@
                                      % but without adding margins, borders, etc
                                      % (used for \includepdf)
   \dimen0=0\ifCropMarks .5\fi in
+  \dimen9=\pdfpageheight \dimen8=\pdfpagewidth
   \advance\pdfpagewidth by 2\dimen0 % increase PDF media size
   \advance\pdfpageheight by 2\dimen0
+  \trace{G}{shipcomplete \the\pdfpagewidth x\the\pdfpageheight}%
   \hoffset=-1in \voffset=-1in % shift the origin to (0,0)
   \shipout\vbox to 0pt{% ship the actual page
     \pdfp@geout
@@ -454,6 +456,7 @@
       \vss}
     \vss
     \docr@pmarks
+  \pdfpageheight=\dimen9 \pdfpagewidth=\dimen8
   }%
 }
 %-c_shipcomplete
@@ -721,11 +724,14 @@
 \m@rksonpagefalse
 \newif\ifp@geone\p@geonetrue
 % redefine plain TeX's output routine to add the cropmarks
-\def\plainoutput{%
+\def\plainoutput{\pl@inoutput{\vbox{\makeheadline\pagebody\makefootline}}}
+\def\emptyoutput{\pl@inoutput{\vbox{}}}
+\def\pl@inoutput#1{%
   \ifm@rksonpage\else\trace{m}{No marks on page \the\pageno}\fi
   \immediate\write\p@rlocs{\string\@pgstart\string{\the\pageno\string}}%
+  \trace{G}{Before shipout \the\pdfpagewidth x\the\pdfpageheight}%
   \dimen9=\pdfpagewidth \dimen8=\pdfpageheight
-  \shipwithcr@pmarks{\vbox{\makeheadline\pagebody\makefootline}}%
+  \shipwithcr@pmarks{#1}%
   \pdfpagewidth=\dimen9 \pdfpageheight=\dimen8
   \advancepageno
   \global\p@geonefalse
