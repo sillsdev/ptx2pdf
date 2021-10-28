@@ -758,7 +758,6 @@ class ViewModel:
                 self._configset(config, "notes/{}rulelength".format(a), "100")
                 self._configset(config, "notes/{}rulethick".format(a), "0.4")
         if v < 1.97:
-            # We may want a list of fonts here that we look out for and don't update these settings if found
             ls = ''
             gm = ''
             if config.getboolean("paragraph", "linespacebase", fallback=False):
@@ -775,13 +774,14 @@ class ViewModel:
                               "is then turn the compatibility setting(s) back ON. We will not do this again." + \
                               "\n\n(Ignore this minor warning if you don't understand it)")
                 forcerewrite = True
-            config.set("config", "version", "1.97")
 
-        if v < 2.01:
+        if v < 2.06:
             self._configset(config, "document/diffcolayout", not config.getboolean("document", "clsinglecol", fallback=False))
             diffcolbooks = config.get("document", "clsinglecolbooks", fallback="FRT INT PSA PRO BAK GLO")
             self._configset(config, "document/diffcolayoutbooks", diffcolbooks)
 
+            config.set("config", "version", "2.06")
+            
         styf = os.path.join(self.configPath(cfgname), "ptxprint.sty")
         if not os.path.exists(styf):
             with open(styf, "w", encoding="utf-8") as outf:

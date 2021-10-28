@@ -791,8 +791,8 @@ class TexModel:
                             res.append(r"\OmitChapterNumbertrue")
                             res.append(r"\ptxfile{{{}}}".format(fname))
                             res.append(r"\OmitChapterNumberfalse")
-                        elif self.dict['document/clsinglecol'] and \
-                                    f in self.dict['document/clsinglecolbooks']:
+                        elif self.dict['document/diffcolayout'] and \
+                                    f in self.dict['document/diffcolayoutbooks']:
                             cols = self.dict['paper/columns']
                             res.append(r"\BodyColumns={}".format('2' if cols == '1' else '1'))
                             res.append(r"\ptxfile{{{}}}".format(fname))
