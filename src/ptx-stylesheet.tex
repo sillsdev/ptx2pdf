@@ -208,9 +208,9 @@
   \trace{s}{1. Checking \p@ssParams}%
   \ifx\mspr@fix\empty\else
      %If we expand our prefix list for special styling of milestone+marker, then:
-     \exp@ndmspr@fix{\let\@ut=\empty \let\d@=\cspr@pend\x@\cstackdown \p@ssParams,\E \edef\p@ssParams{\@ut,\p@ssParams}}%
+     %\exp@ndmspr@fix{\let\@ut=\empty \let\d@=\cspr@pend\x@\cstackdown \p@ssParams,\E \edef\p@ssParams{\@ut,\p@ssParams}}%
   \fi
-   %\trace{s}{2. Checking \p@ssParams}%
+   \trace{s}{1b. Checking \p@ssParams (\mspr@fix)}%
   \ifx\c@tprefix\empty\else
     \edef\@lso{\c@tprefix}%
     \let\@ut=\empty \let\tmpd@=\d@\let\d@=\cspr@pend\x@\cstackdown \p@ssParams,\E \edef\p@ssParams{\@ut,\p@ssParams}\let\d@=\tmpd@
