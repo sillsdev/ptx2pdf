@@ -202,7 +202,7 @@ _sensitivities = {
         "r_xrSource_standard": ["s_xrSourceSize", "l_xrSourceSize", "l_xrSourceLess", "l_xrSourceMore"],
         "r_xrSource_custom" :  ["btn_selectXrFile"]},
     "c_mainBodyText" :         ["gr_mainBodyText"],
-    "c_doublecolumn" :         ["gr_doubleColumn", "c_singleColLayout", "t_singleColBookList", "r_fnpos_column"],
+    "c_doublecolumn" :         ["gr_doubleColumn", "r_fnpos_column"],
     "c_useFallbackFont" :      ["btn_findMissingChars", "t_missingChars", "l_fallbackFont", "bl_fontExtraR"],
     "c_includeFootnotes" :     ["tb_footnotes", "lb_footnotes", "r_xrpos_below", "r_xrpos_blend"],
     # "c_includeXrefs" :         ["tb_xrefs", "lb_xrefs"],

@@ -791,12 +791,12 @@ class TexModel:
                             res.append(r"\OmitChapterNumbertrue")
                             res.append(r"\ptxfile{{{}}}".format(fname))
                             res.append(r"\OmitChapterNumberfalse")
-                        elif self.dict['paper/columns'] == '2' and \
-                             self.dict['document/clsinglecol'] and \
-                             f in self.dict['document/clsinglecolbooks']:
-                            res.append(r"\BodyColumns=1")
+                        elif self.dict['document/clsinglecol'] and \
+                                    f in self.dict['document/clsinglecolbooks']:
+                            cols = self.dict['paper/columns']
+                            res.append(r"\BodyColumns={}".format('2' if cols == '1' else '1'))
                             res.append(r"\ptxfile{{{}}}".format(fname))
-                            res.append(r"\BodyColumns=2")
+                            res.append(r"\BodyColumns={}".format(cols))
                         else:
                             res.append(r"\ptxfile{{{}}}".format(fname))
                 elif l.startswith(r"%\extrafont") and self.dict["document/fontextraregular"]:
@@ -1372,7 +1372,7 @@ class TexModel:
         self.localChanges.append((None, regex.compile(r" {2,}", flags=regex.M), r" ")) 
         # Escape special codes % and $ that could be in the text itself
         self.localChanges.append((None, regex.compile(r"(?<!\\\S*|\\[fx]\s)([{}])".format("".join(self._specialchars)),
-                                                      flags=regex.M), lambda m:"\\"+self._specialchars[m.group(1)])) 
+                                                      flags=regex.M), lambda m:"\\"+self._specialchars[m.group(1)]+" ")) 
 
         if self.printer is not None and self.printer.get("c_tracing"):
             print("List of Local Changes:----------------------------------------------------------")

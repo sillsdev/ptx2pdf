@@ -554,7 +554,7 @@ exclusionmap = {
 
 class Module:
 
-    localise_re = re.compile(r"\$([asl]?)\(\s*(\S+\s+\d+:[^)\s]+)\s*\)")
+    localise_re = re.compile(r"\$([asl]?)\(\s*(\S+\s+\d+(?::[^)\s]+)?)\s*\)")
     localcodes = {'a': 0, 's': 1, 'l': 2}
 
     def __init__(self, fname, usfms, usfm=None):
