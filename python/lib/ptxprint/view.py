@@ -547,7 +547,7 @@ class ViewModel:
         config = configparser.ConfigParser()
         with open(path, encoding="utf-8", errors="ignore") as inf:
             config.read_file(inf)
-        oldversion = self.versionFwdConfig(config, cfgname)
+        (oldversion, forcerewrite) = self.versionFwdConfig(config, cfgname)
         self.loadingConfig = True
         self.localiseConfig(config)
         self.loadConfig(config)
@@ -572,6 +572,8 @@ class ViewModel:
                     os.makedirs(path2del, exist_ok=True)
                 except (OSError, PermissionError):
                     pass
+        if forcerewrite:
+            self.writeConfig(cfgname=cfgname)
         return oldversion
 
     def writeConfig(self, cfgname=None):
@@ -650,6 +652,7 @@ class ViewModel:
 
     def versionFwdConfig(self, config, cfgname):
         version = self._config_get(config, "config", "version", conv=float, fallback=0.0)
+        forcerewrite = False
         v = float(version)
         if v < 0.9:
             try:
@@ -771,13 +774,14 @@ class ViewModel:
                               "Note that compatibility settings will change your layout. If you need to keep the layout as it " + \
                               "is then turn the compatibility setting(s) back ON. We will not do this again." + \
                               "\n\n(Ignore this minor warning if you don't understand it)")
+                forcerewrite = True
             config.set("config", "version", "1.97")
 
         styf = os.path.join(self.configPath(cfgname), "ptxprint.sty")
         if not os.path.exists(styf):
             with open(styf, "w", encoding="utf-8") as outf:
                 outf.write("# This file left intentionally blank\n")
-        return v
+        return (v, forcerewrite)
 
     def localiseConfig(self, config):
         for a in ("header/hdrleft", "header/hdrcenter", "header/hdrright", "footer/ftrcenter"):
