@@ -38,7 +38,7 @@ from threading import Thread
 logger = logging.getLogger(__name__)
 
 # ssl._create_default_https_context = ssl._create_unverified_context
-pdfre = re.compile(r".+[\\/](.+)\.pdf")
+pdfre = re.compile(r".+[\\/](.+\.pdf)")
 
 # xmlstarlet sel -t -m '//iso_15924_entry' -o '"' -v '@alpha_4_code' -o '" : "' -v '@name' -o '",' -n /usr/share/xml/iso-codes/iso_15924.xml
 _allscripts = { "Zyyy" : "Default", "Adlm" : "Adlam", "Afak" : "Afaka", "Aghb" : "Caucasian Albanian", "Ahom" : "Ahom, Tai Ahom", 
@@ -2683,7 +2683,7 @@ class GtkViewModel(ViewModel):
             else:
                 setattr(self, attr, vals)
                 btn.set_tooltip_text("\n".join(str(s) for s in vals))
-                self.set("lb_"+ident, ",".join(pdfre.sub(r"\1", str(s)) for s in vals))
+                self.set("lb_"+ident, ", ".join(pdfre.sub(r"\1", str(s)) for s in vals))
         else:
             setattr(self, attr, None)
             btn.set_tooltip_text("")

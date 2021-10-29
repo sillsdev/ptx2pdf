@@ -22,7 +22,7 @@ from shutil import copyfile, copytree, move
 
 VersionStr = "2.0.5"
 
-pdfre = re.compile(r".+[\\/](.+)\.pdf")
+pdfre = re.compile(r".+[\\/](.+\.pdf)")
 
 varpaths = (
     ('prjdir', ('settings_dir', 'prjid')),
@@ -821,7 +821,7 @@ class ViewModel:
                             val = val.split("\n") if val is not None else []
                             val = [Path(x, self) for x in val if x is not None]
                             if w[2] is not None:
-                                setv(w[2], ",".join(pdfre.sub(r"\1", x.as_posix()) for x in val))
+                                setv(w[2], ", ".join(pdfre.sub(r"\1", x.as_posix()) for x in val))
                         else:
                             val = Path(val, self) if val is not None else None
                             if w[2] is not None and val is not None:
