@@ -887,7 +887,7 @@ class GtkViewModel(ViewModel):
         # If the viewer/editor is open on an Editable tab, then "autosave" contents
         if Gtk.Buildable.get_name(self.builder.get_object("nbk_Main").get_nth_page(self.get("nbk_Main"))) == "tb_ViewerEditor":
             pgnum = self.get("nbk_Viewer")
-            if self.notebooks["Viewer"][pgnum] in ("scroll_AdjList", "scroll_Settings"):
+            if self.notebooks["Viewer"][pgnum] in ("scroll_FrontMatter", "scroll_AdjList", "scroll_Settings"):
                 self.onSaveEdits(None)
         cfgname = self.configName()
         if cfgname is None:
@@ -898,7 +898,7 @@ class GtkViewModel(ViewModel):
             os.makedirs(self.working_dir)
         pdfnames = self.baseTeXPDFnames()
         for basename in pdfnames:
-            pdfname = os.path.join(self.working_dir, basename) + ".pdf"
+            pdfname = os.path.join(self.working_dir, "..", basename) + ".pdf"
             fileLocked = True
             while fileLocked:
                 try:
@@ -913,6 +913,8 @@ class GtkViewModel(ViewModel):
                     if self.msgQuestion(_("The old PDF file is open!"), question):
                         continue
                     else:
+                        self.set("l_statusLine", _("Close the old PDF file before you try again."))
+                        self.finished()
                         return
                 fileLocked = False
         self.onSaveConfig(None)
@@ -928,6 +930,14 @@ class GtkViewModel(ViewModel):
 
     def onCancel(self, btn):
         self.onDestroy(btn)
+
+    def warnSlowRun(self, btn):
+        ofmt = self.get("fcb_outputFormat")
+        if self.get("c_includeillustrations") and ofmt != "None":
+            self.set("l_statusLine", \
+                   _("Note: It may take a while for pictures to convert to CMYK for selected PDF Output Format ({}).".format(ofmt)))
+        else:
+            self.set("l_statusLine", "")
 
     def onAboutClicked(self, btn_about):
         dialog = self.builder.get_object("dlg_about")
@@ -1586,13 +1596,13 @@ class GtkViewModel(ViewModel):
             elif pgid == "scroll_FinalSFM":
                 self.builder.get_object("btn_saveEdits").set_sensitive(False)
                 self.builder.get_object("btn_refreshViewerText").set_sensitive(False)
-                self.builder.get_object("btn_viewEdit").set_label("View only...")
+                self.builder.get_object("btn_viewEdit").set_label(_("View Only..."))
 
         elif pgid in ("scroll_TeXfile", "scroll_XeTeXlog"): # (TeX,Log)
             fpath = os.path.join(self.working_dir, self.baseTeXPDFnames()[0])+fndict[pgid][1]
             self.builder.get_object("btn_saveEdits").set_sensitive(False)
             self.builder.get_object("btn_refreshViewerText").set_sensitive(False)
-            self.builder.get_object("btn_viewEdit").set_label("View only...")
+            self.builder.get_object("btn_viewEdit").set_label(_("View Only..."))
 
         elif pgid == "scroll_Settings": # View/Edit one of the 4 Settings files or scripts
             fpath = self.builder.get_object("l_Settings").get_tooltip_text()

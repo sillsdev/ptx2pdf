@@ -13348,6 +13348,7 @@ the Header+Footer tab for details).
                                             <property name="draw-indicator">True</property>
                                             <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                             <signal name="clicked" handler="onUseIllustrationsClicked" swapped="no"/>
+                                            <signal name="clicked" handler="warnSlowRun" swapped="no"/>
                                           </object>
                                         </child>
                                       </object>
@@ -18618,6 +18619,7 @@ Note: All comply with archive standard PDF/A-1b.</property>
                                     <property name="entry_text-column">0</property>
                                     <property name="id-column">1</property>
                                     <property name="active-id">None</property>
+                                    <signal name="changed" handler="warnSlowRun" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left-attach">1</property>
