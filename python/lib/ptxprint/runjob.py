@@ -296,6 +296,7 @@ class RunJob:
             self.printer.set("l_statusLine", "")
         self.printer.finished()
         self.busy = False
+        logger.debug("done_job: Finishing thread")
         unlockme()
 
     def parselog(self, fname, rerunp=False, lines=20):
@@ -547,10 +548,12 @@ class RunJob:
         else:
             self.thread = Thread(target=self.run_xetex, args=(outfname, info))
             self.busy = True
+            logger.debug("sharedjob: Starting thread to run xetex")
             self.thread.start()
         return genfiles
 
     def wait(self):
+        logger.debug(f"Waiting for thread: {self.busy=}, {isLocked()}")
         if self.busy:
             self.thread.join()
         unlockme()
