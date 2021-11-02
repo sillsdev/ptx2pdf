@@ -790,7 +790,7 @@ class FontRef:
         res.updateFeats(featstring)
         if bi is not None:
             for i, a in enumerate(("embolden", "slant")):
-                if float(bi[i]) > 0.0001:
+                if a == "slant" or float(bi[i]) > 0.0001:
                     res.feats[a] = bi[i]
         if fontdigits and fontdigits.lower() != "default":
             res.feats['mapping']='mappings/{}digits'.format(fontdigits.lower())
