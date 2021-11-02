@@ -24,7 +24,7 @@ editions where only limited verse hints are required.
 ```tex
 \newif\iffirstinpara \firstinparatrue
 \let\mytv=\printverse
-\def\printverse{\iffirstinpara\global\firstinparafalse\mytv\fi}
+\def\simpleprintverse{\iffirstinpara\global\firstinparafalse\mytv\fi}
 \def\paramarker#1{\expandafter\let\csname _#1\expandafter\endcsname \csname
 #1\endcsname
     \expandafter\gdef\csname #1\endcsname{\global\firstinparatrue\csname

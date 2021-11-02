@@ -488,11 +488,11 @@
   % When this happens we make ll@p use llap to right justify the verse number at the current position.
   % Otherwise make ll@p do nothing.
   \ifdim\lastkern=-1sp \hangingversetrue\fi
-  \ifhangingverse \let\ll@p=\llap
-  \else \let\ll@p=\relax
+  \ifhangingverse \let\printverse=\hangprintv@rse
+  \else \let\printverse=\simpleprintverse
   \fi % hanging verse number?
   %\trace{hv}{lastkern \the\dimen0}%
-  \ll@p\bgroup\@v@}%
+  \bgroup\@v@}%
  %{.. was: \ll@p\bgroup\m@kedigitsother\@v@}%
  % remember chapter macro for later
 %-csty_verse
@@ -674,7 +674,8 @@
                                        \kern\dimen0\box1}}}%
     \trace{v}{hangprintverse height=\the\ht#1, width=\the\wd#1}}%
 }
-\let\printverse=\simpleprintv@rse                                               %(1)
+\let\simpleprintverse=\simpleprintv@rse
+\let\printverse=\simpleprintverse                                               %(1)
 \def\@ne{1}
 \def\AdornVerseNumber#1{#1}                                                     %(3)
 

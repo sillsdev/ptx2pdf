@@ -32,6 +32,7 @@
 % \fig handling code, originally from paratext2.tex
 
 % Inserts
+%\newinsert\topins is already defined in plainTeX
 \count\topins=1000 \dimen\topins=\maxdimen \skip\topins=0pt
 \newinsert\bottomins \count\bottomins=1000 \dimen\bottomins=\maxdimen
 \newinsert\verybottomins \count\verybottomins=0 \dimen\verybottomins=\maxdimen
@@ -515,8 +516,8 @@
 %-cfig_hex
 
 \def\m@kepl@ceholder#1#2#3{%
-\trace{g}{makeplaceholder #3}%
 \vbox to #2{\offinterlineskip
+  \trace{g}{makeplaceholder #3}%
   \hrule height .2pt \kern-.2pt
   \hbox to #1{\vrule height #2 width .2pt \hfil \vrule width .2pt}%
   \vbox to 0pt{\kern-#2 \vss \hbox to #1{\hss\idf@nt #3\hss}\vss}%
@@ -800,7 +801,7 @@
         \ht0=-\otherinsht
       \fi
     \fi
-    \trace{g}{Picture now \the\ht0}%
+    \trace{g}{Picture now \the\ht0 \space into insert box \the\p@cins}%
     \insert\p@cins{\penalty10000 % make sure this picture does not float away to another page
       \splittopskip\z@skip
       \splitmaxdepth\maxdimen \floatingpenalty20000 % was zero
