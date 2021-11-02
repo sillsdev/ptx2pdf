@@ -398,15 +398,6 @@
   \FootNoteRuleLeftIndent \vrule height \FootNoteRuleThickness width \FootNoteRuleWidth\n@tewidth
   \FootNoteRuleRightIndent}}
 
-%\def\footnoterule{%\kern-\BelowFootNoteRuleSpace
-%  \setn@tewidth{-}%
-%  \dimen0=\FootNoteRuleWidth\n@tewidth
-%  \toks0=\everypar\everypar={}\parskip=0pt\baselineskip=0pt\parindent=0pt\let\par=\endgraf\parfillskip=0pt%
-%  \noindent\hbox{\noindent\kern\columnshift\vbox{\hrule width \dimen0}}\par
-%  \hbox to \ifColNotes\colwidth\else\textwidth\fi {\FootNoteRuleLeftIndent
-%    \vrule height \FootNoteRuleThickness width \dimen0 \FootNoteRuleRightIndent}%
-%  \kern-\FootNoteRuleThickness % the \hrule is .4pt high
-%\everypar=\toks0}
 \def\noterule#1#2#3#4{{\dimen1=#1\kern 0pt\vskip\dimen1 minus 0.5 \dimen1
   \dimen1=#2 \kern -\dimen1
   \setbox0=\hbox to #3{#4}\dimen0=0.5\ht0\kern-\dimen0\box0\kern-\dimen0
@@ -677,19 +668,8 @@
   %\tracingall=1\tracingoutput=0\tracingpages=0\tracingparagraphs=0\tracingassigns=0\tracingscantokens=0
   \s@ttrialheight
   \trace{i}{1c TRIAL with ht=\the\trialheight, vsize=\the\vsize, hIns=\the\holdinginserts}%
-  %\t@xttrialheight=\ht255
   \c@lcavailht
-  %\t@xttrialheight=0pt
   \ifColNotes\advance\availht by -\ht\coln@tebox\fi
-  %\xdef\p@gebotmark{\botmark}% remember last \mark for running header
-  %\xdef\t@st{\p@gefirstmark}%
-  %\ifx\t@st\empty\xdef\p@gefirstmark{\firstmark}\fi % remember first, if not already set
-  %\availht=\trialheight % amount of space we think is available             %(1)
-  %\f@rstnotetrue
-  %\let\\=\reduceavailht \the\n@tecl@sses % reduce it by the space needed for each note class
-  %\decr{\availht}{\topins}% and by the space needed for spanning pictures
-  %\decr{\availht}{\bottomins}%And post-footnote inserts
-  %\decr{\availht}{\verybottomins}%
   \setbox\s@vedpage=\copy255
   % split the galley to the actual size available
   \ifdim\availht<0pt                                                        %(2)
@@ -697,18 +677,12 @@
   \fi
   \setbox\colA=\vsplit255 to \availht \setbox0\copy\colA \setbox0=\vbox{\unvbox0\vfil}
   \decr{\availht}{0}
-  %\setbox\colA=\vbox{\unvbox\colA}%
-  % and check if it all fit; if not, we'll have to back up and try again
   \ifvoid255 \fitonpagetrue \else \fitonpagefalse \fi
 %-c_onecoltrial_intro
 %+c_onecoltrial_pagecontents
   \iffitonpage
     \trace{i}{1 SUCCEEDED, shipping page hIns=\the\holdinginserts}%
-% at this point:
-%   \box\colA is the page content
-%   \availht is ht that definitely works
     \def\pagecontents{%                                                     %(3)
-%      \msg{upwards mode = \the\XeTeXupwardsmode}
       \dimen1=\textwidth% \advance\dimen1 -\ExtraRMargin
       \trace{b}{BALANCE pageoutins: cols=1: text=\the\ht\colA, \the\dp\colA: partial=\the\ht\partial, \the\dp\partial: topins=\the\ht\topins: bottomins=\the\ht\bottomins, width=\the\dimen1}%
       \dimen9=\ht\partial
@@ -803,20 +777,12 @@
     \dimen0=\ht\partial
     \trace{o}{DoubleColumns: partial=\the\dimen0\space > \PageFullFactor\space * \the\textheight}%
     \ifdim\dimen0>\PageFullFactor\textheight
-%%%      \msg{Output full page from 1 to 2 columns}%
       \global\output={\onecol} % but output it immediately if 75% full
       \loop\ifdim\dimen0>\textheight\advance\dimen0-\textheight\repeat
-      %\vbox{\hskip-\columnshift\box\partial}
       \unvbox\partial
       \ifdim\dimen0>\PageFullFactor\textheight\vfill\eject
-      \else
-	\holdinginserts=0
-	\global\output={\savepartialpage}\eject
-	\holdinginserts=1
+      \else \holdinginserts=0 \global\output={\savepartialpage}\eject \holdinginserts=1
       \fi
-    \else
-      %\hsize=\textwidth
-      %\setbox\partial=\vbox{\hskip\columnshift\box\partial}
     \fi
     % reset parameters for 2-column formatting
     \global\hsize=\colwidth\trace{o}{doublecolumn vsize doubles}%
@@ -836,7 +802,6 @@
     \global\count\verybottomins=100%\count255
     \let\\=\s@tn@tec@unt \the\n@tecl@sses % reset \count for each note class
     \global\holdinginserts=1 % don't pull out inserts yet, we are still adjusting page
-    %\msg{Starting 2col partial: \the\ht\partial, pagetotal: \the\pagetotal, vsize: \the\vsize}
   \fi}
 %-c_doublecolumns
 
@@ -1577,7 +1542,7 @@
       \ifvoid\topins\else \hbox{\hbox to \columnshift{}\box\topins} \vskip\skip\topins \fi % output top spanning pictures
       \iflastpage\setbox\colA=\vbox{\unvbox\colA}\setbox\colB=\vbox{\unvbox\colB}%
         \ifdim\ht\colA>\ht\colB\ht\colB=\ht\colA\else\ht\colA=\ht\colB\fi\fi
-      \trace{p}{Text depth = \the\dimen3}%\showthe\lastd@pth
+      \trace{p}{Text depth = \the\dimen3}%
       \hbox to \dimen1{\noindent\hbox to \columnshift{}%
         \ifRTL \hbox to \ExtraRMargin{}\vbox to \dimen2{\unvbox\colB\vfil}\makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen2}{3}\vbox to \dimen2{\unvbox\colA\vfil}
         \else \vbox to \dimen2{\unvbox\colA\vfil}\makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen2}{3}\vbox to \dimen2{\unvbox\colB\vfil}\hbox to \ExtraRMargin{}\fi}%
@@ -1711,13 +1676,9 @@
   \global\availht=\vsize
   \global\c@rrentcols=2
   \global\output={\diglotCollect}%
-  
-  % (\count of an insertion class is a scaling factor)
   \count255=1000
   \global\count\topins=\count255
   \global\count\bottomins=\count255
-  %\let\\=\s@tn@tec@unt \the\n@tecl@sses % NECESSARY? reset \count for each note class \global\holdinginserts=1 % don't pull out inserts yet, we are still adjusting page
-  %\msg{Starting diglot partial: \the\ht\partial, pagetotal: \the\pagetotal, vsize: \the\vsize}
 } 
 
 

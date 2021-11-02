@@ -237,16 +237,17 @@ class PicInfo(dict):
             return False
         return True
 
-    def merge(self, tgtpre, srcpre, indat=None, mergeCaptions=True):
+    def merge(self, tgtpre, srcpre, indat=None, mergeCaptions=True, bkanchors=False):
+        ''' Used for merging piclists from diglots into the main piclist'''
         if indat is None:
             indat = self
         tgts = {}
         for k, v in self.items():
             if v['anchor'][3:].startswith(tgtpre):
-                tgts.setdefault(v['anchor'][:3] + v['anchor'][3+len(tgtpre):], []).append(v)
+                tgts.setdefault(v['anchor'][:3] + ("" if bkanchors else v['anchor'][3+len(tgtpre):]), []).append(v)
         for k, v in list(indat.items()):
             if v['anchor'][3:].startswith(srcpre):
-                a = v['anchor'][:3]+v['anchor'][3+len(srcpre):]
+                a = v['anchor'][:3]+("" if bkanchors else v['anchor'][3+len(srcpre):])
                 if mergeCaptions:
                     for s in tgts.get(a, []):
                         if s.get('src', '') == v.get('src', ''):

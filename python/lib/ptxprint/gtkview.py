@@ -1336,6 +1336,11 @@ class GtkViewModel(ViewModel):
         f = w.get_active()
         self.picListView.setCheckFilter(self.get('c_picCheckInvFilter'), f)
 
+    def onUpdatePicCaptionsClicked(self, btn):
+        newpics = PicInfo(self)
+        newpics.threadUsfms(self, "")
+        self.picinfos.merge("", "", indat=newpics, mergeCaptions=True, bkanchors=True)
+
     def onGeneratePicListClicked(self, btn):
         bks2gen = self.getBooks()
         if not len(bks2gen):

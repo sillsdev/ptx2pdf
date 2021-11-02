@@ -23,8 +23,8 @@ editions where only limited verse hints are required.
 
 ```tex
 \newif\iffirstinpara \firstinparatrue
-\let\mytv=\printverse
-\def\simpleprintverse{\iffirstinpara\global\firstinparafalse\mytv\fi}
+\let\mytv=\defaultprintverse
+\def\defaultprintverse{\iffirstinpara\global\firstinparafalse\mytv\fi}
 \def\paramarker#1{\expandafter\let\csname _#1\expandafter\endcsname \csname
 #1\endcsname
     \expandafter\gdef\csname #1\endcsname{\global\firstinparatrue\csname
@@ -35,7 +35,7 @@ _#1\endcsname}}
 ### Implementation
 
 First there is a new `if` declared that is used to track whether we have started a
-new paragraph or not. Then we collect the old printverse function that is used
+new paragraph or not. Then we collect the old default printverse function that is used
 to print the verse number (whether simply or as a marginal verse). We are going
 to wrap this function to only call the original if the paragraph if is true.
 This is what the new definition of printverse does. Once the the first verse in
