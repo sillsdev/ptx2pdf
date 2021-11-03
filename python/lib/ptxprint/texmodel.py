@@ -1080,6 +1080,8 @@ class TexModel:
         syntaxErrors = []
         try:
             doc = Usfm(txtlines, self.sheets)
+            if len(doc.doc) != 1:
+                raise ValueError("Badly formed USFM. Probably missing a \\id line")
             doc.normalise()
         except SyntaxError as e:
             syntaxErrors.append("{} {} line:{}".format(self.prjid, bk, str(e).split('line', maxsplit=1)[1]))

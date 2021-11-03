@@ -464,6 +464,8 @@ class Usfm:
         
     def stripIntro(self, noIntro=True, noOutline=True):
         newdoc = []
+        if not isinstance(self.doc[0], sfm.Element):
+            return
         for e in self.doc[0]:
             if not isinstance(e, sfm.Element):
                 newdoc.append(e)
