@@ -11,6 +11,7 @@ from ptxprint.font import getfontcache
 from ptxprint.usfmerge import usfmerge2
 from ptxprint.utils import _, universalopen, print_traceback
 from ptxprint.pdf.fixcol import fixpdffile
+from ptxprint.pdfrw.errors import PdfError
 from ptxprint.toc import parsetoc, createtocvariants, generateTex
 from datetime import datetime
 import logging
@@ -651,9 +652,12 @@ class RunJob:
                 pdffile = os.path.join(self.prjdir, "local", "ptxprint", outfname[:-4]+".pdf") 
             else:
                 pdffile = outpath + ".pdf"
-            fixpdffile(outpath + ".prepress.pdf", pdffile,
+            try:
+                fixpdffile(outpath + ".prepress.pdf", pdffile,
                         colour="rgbx4" if self.ispdfxa == "None" else "cmyk",
                         parlocs = outpath + ".parlocs")
+            except PdfError:
+                self.res = 1
             os.remove(outpath + ".prepress.pdf")
         print("Done")
         self.done_job(outfname, pdffile, info)

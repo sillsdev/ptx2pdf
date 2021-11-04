@@ -97,7 +97,7 @@
        \pr@tectspecials % protect \ZWSP etc from expansion in the TOC text
        \liter@lkerns
        \xdef\t@cline[\string\doTOCline {\id@@@ }{\toc@A }{\toc@B }{\toc@C }{\the\pageno }]
-       \write\t@cfile[\t@cline]
+       \trace[t][\t@cline]\x@\write\x@\t@cfile\x@[\t@cline]
      \endgroup
      \gdef\toc@A[]%
      \gdef\toc@B[]%
