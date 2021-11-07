@@ -24,7 +24,7 @@ from ptxprint.gtkutils import getWidgetVal, setWidgetVal, setFontButton, makeSpi
 from ptxprint.utils import APP, setup_i18n, brent, xdvigetpages, allbooks, books, bookcodes, chaps, print_traceback, pycodedir
 from ptxprint.ptsettings import ParatextSettings
 from ptxprint.gtkpiclist import PicList
-from ptxprint.piclist import PicChecks, PicInfoUpdateProject
+from ptxprint.piclist import PicChecks, PicInfo, PicInfoUpdateProject
 from ptxprint.gtkstyleditor import StyleEditorView
 from ptxprint.runjob import isLocked, unlockme
 from ptxprint.texmodel import TexModel, ModelMap
@@ -286,7 +286,8 @@ _object_classes = {
                     "btn_resetFNcallers", "btn_resetXRcallers", "btn_styAdd", "btn_styEdit", "btn_styDel", 
                     "btn_styReset", "btn_refreshFonts", "btn_resetStyFilter", "btn_plAdd", "btn_plDel", 
                     "btn_plGenerate", "btn_plSaveEdits", "btn_resetTabGroups", "btn_adjust_spacing", 
-                    "btn_adjust_top", "btn_adjust_bottom", "btn_DBLbundleDiglot", "btn_resetGrid")
+                    "btn_adjust_top", "btn_adjust_bottom", "btn_DBLbundleDiglot", "btn_resetGrid",
+                    "btn_refreshCaptions")
 }
 
 _pgpos = {
@@ -1340,6 +1341,7 @@ class GtkViewModel(ViewModel):
         newpics = PicInfo(self)
         newpics.threadUsfms(self, "")
         self.picinfos.merge("", "", indat=newpics, mergeCaptions=True, bkanchors=True)
+        self.updatePicList()
 
     def onGeneratePicListClicked(self, btn):
         bks2gen = self.getBooks()
@@ -1522,8 +1524,8 @@ class GtkViewModel(ViewModel):
             self.onRefreshViewerTextClicked(None)
         elif pgid == "tb_TabsBorders":
             self.onThumbColorChange()
-        # elif pgid == "tb_Pictures":
-            # need to get it to hide detail columns
+        elif pgid == "tb_Pictures":
+            self.onPLpageChanged(None, None, pgnum=0)
 
     def onRefreshViewerTextClicked(self, btn):
         pg = self.get("nbk_Viewer")
@@ -3213,16 +3215,18 @@ class GtkViewModel(ViewModel):
         self.set("col_gridMinor", "rgb(115,210,22)")
 
     def onPLpageChanged(self, nbk_PicList, scrollObject, pgnum):
+        if nbk_PicList is None:
+            nbk_PicList = self.builder.get_object("nbk_PicList")
         page = nbk_PicList.get_nth_page(pgnum)
         if page == None:
             return
         pgid = Gtk.Buildable.get_name(page).split('_')[-1]
         filterSensitive = True if pgid == "checklist" else False
-        self.builder.get_object("c_filterPicList").set_visible(False)
+        self.builder.get_object("bx_activeRefresh").set_visible(False)
         self.builder.get_object("fr_plChecklistFilter").set_sensitive(filterSensitive)
         self.builder.get_object("fr_plChecklistFilter").set_visible(filterSensitive)
         self.builder.get_object("gr_picButtons").set_visible(not filterSensitive)
-        self.builder.get_object("c_filterPicList").set_visible(True)
+        self.builder.get_object("bx_activeRefresh").set_visible(True)
         for w in _allcols:
             if w in _selcols[pgid]:
                 self.builder.get_object("col_{}".format(w)).set_visible(True)

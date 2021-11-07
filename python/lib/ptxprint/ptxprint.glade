@@ -696,7 +696,7 @@ the name of an existing Project.</property>
                     <property name="wrap">True</property>
                     <property name="wrap-mode">char</property>
                     <property name="ellipsize">middle</property>
-                    <property name="max-width-chars">50</property>
+                    <property name="max_width-chars">50</property>
                   </object>
                   <packing>
                     <property name="left-attach">1</property>
@@ -739,7 +739,7 @@ the name of an existing Project.</property>
                     <property name="name">Visit the Digital Bible Library to download a DBL bundle</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
-                    <property name="focus-on-click">False</property>
+                    <property name="focus_on-click">False</property>
                     <property name="receives-default">True</property>
                     <property name="tooltip-text" translatable="yes">There are hundreds of DBL bundles available at
 the Digital Bible Library website which you may
@@ -801,7 +801,7 @@ Online Repository</property>
                     <property name="name">Visit the Open.Bible site to download a DBL bundle</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
-                    <property name="focus-on-click">False</property>
+                    <property name="focus_on-click">False</property>
                     <property name="receives-default">True</property>
                     <property name="tooltip-text" translatable="yes">There are several DBL bundles available at
 the Open.Bible website which you may
@@ -895,7 +895,7 @@ Jonathan Kew (Author of XeTeX + sfm2pdf)</property>
     <property name="window-position">center-on-parent</property>
     <property name="icon">Google-Noto-Emoji-Objects-62859-open-book.ico</property>
     <property name="type-hint">dialog</property>
-    <property name="skip-taskbar-hint">True</property>
+    <property name="skip_taskbar-hint">True</property>
     <property name="deletable">False</property>
     <property name="gravity">center</property>
     <child type="titlebar">
@@ -1015,7 +1015,7 @@ For example:
                         <property name="sensitive">False</property>
                         <property name="can-focus">True</property>
                         <property name="receives-default">False</property>
-                        <property name="no-show-all">True</property>
+                        <property name="no_show-all">True</property>
                         <property name="tooltip-text" translatable="yes">(Not yet implemented)
 Enable this option if you want to include the following
 sections (used for creating a cover page):
@@ -1134,7 +1134,7 @@ here until you regenerate this (local) Front Matter.</property>
     <property name="window-position">center-on-parent</property>
     <property name="icon">Google-Noto-Emoji-Objects-62859-open-book.ico</property>
     <property name="type-hint">dialog</property>
-    <property name="skip-taskbar-hint">True</property>
+    <property name="skip_taskbar-hint">True</property>
     <property name="deletable">False</property>
     <property name="gravity">center</property>
     <child type="titlebar">
@@ -1247,7 +1247,7 @@ If in doubt, then click Cancel.</property>
                         <property name="margin-bottom">10</property>
                         <property name="label" translatable="yes">MAT MRK LUK JHN ACT ROM 1CO 2CO GAL EPH PHP COL 1TH 2TH 1TI 2TI TIT</property>
                         <property name="wrap">True</property>
-                        <property name="max-width-chars">40</property>
+                        <property name="max_width-chars">40</property>
                       </object>
                       <packing>
                         <property name="left-attach">0</property>
@@ -1358,7 +1358,7 @@ If in doubt, click Cancel.</property>
     <property name="default-height">300</property>
     <property name="icon">Google-Noto-Emoji-Objects-62859-open-book.ico</property>
     <property name="type-hint">dialog</property>
-    <property name="skip-taskbar-hint">True</property>
+    <property name="skip_taskbar-hint">True</property>
     <property name="gravity">center</property>
     <child type="titlebar">
       <placeholder/>
@@ -1715,7 +1715,7 @@ start of the publication in this oder:
     <property name="default-height">300</property>
     <property name="icon">Google-Noto-Emoji-Objects-62859-open-book.ico</property>
     <property name="type-hint">dialog</property>
-    <property name="skip-taskbar-hint">True</property>
+    <property name="skip_taskbar-hint">True</property>
     <property name="gravity">center</property>
     <child type="titlebar">
       <placeholder/>
@@ -1892,7 +1892,7 @@ the target project(s) will be overwritten.</property>
     <property name="window-position">center-on-parent</property>
     <property name="icon">Google-Noto-Emoji-Objects-62859-open-book.ico</property>
     <property name="type-hint">dialog</property>
-    <property name="skip-taskbar-hint">True</property>
+    <property name="skip_taskbar-hint">True</property>
     <property name="gravity">center</property>
     <child type="titlebar">
       <placeholder/>
@@ -2097,59 +2097,6 @@ settings for a similar project.</property>
       <!-- column-name media -->
       <column type="gchararray"/>
     </columns>
-    <data>
-      <row>
-        <col id="0">MRK 1:16</col>
-        <col id="1">Jesus walking to Jersusalem</col>
-        <col id="2">HK000123c.tif</col>
-        <col id="3">col</col>
-        <col id="4">100</col>
-        <col id="5">bl</col>
-        <col id="6">1.16</col>
-        <col id="7">None</col>
-        <col id="8">None</col>
-        <col id="9">N</col>
-        <col id="10" translatable="yes"/>
-        <col id="11">False</col>
-        <col id="12">False</col>
-        <col id="13">MRK 1:16</col>
-        <col id="14">paw</col>
-      </row>
-      <row>
-        <col id="0">JHN 3:16-17</col>
-        <col id="1">The people of the world</col>
-        <col id="2">LB000316b.jpg</col>
-        <col id="3">span</col>
-        <col id="4">75</col>
-        <col id="5">t</col>
-        <col id="6">3.16</col>
-        <col id="7">Image of a group of people</col>
-        <col id="8">None</col>
-        <col id="9">N</col>
-        <col id="10" translatable="yes"/>
-        <col id="11">False</col>
-        <col id="12">False</col>
-        <col id="13">JHN 3:16-17</col>
-        <col id="14">paw</col>
-      </row>
-      <row>
-        <col id="0">GLO 1:0</col>
-        <col id="1">Palestine at the time of Jesus</col>
-        <col id="2">mapcreatorPalestine.png</col>
-        <col id="3">full</col>
-        <col id="4">100</col>
-        <col id="5">F</col>
-        <col id="6">1.0</col>
-        <col id="7">unrotated map</col>
-        <col id="8">Map Creator</col>
-        <col id="9">N</col>
-        <col id="10" translatable="yes"/>
-        <col id="11">False</col>
-        <col id="12">False</col>
-        <col id="13">GLO 1:0</col>
-        <col id="14">paw</col>
-      </row>
-    </data>
   </object>
   <object class="GtkListStore" id="ls_XrefCaller">
     <columns>
@@ -2710,9 +2657,9 @@ in the Windows system.</property>
                     <property name="is-focus">True</property>
                     <property name="margin-left">8</property>
                     <property name="margin-bottom">6</property>
-                    <property name="primary-icon-name">edit-find-symbolic</property>
-                    <property name="primary-icon-activatable">False</property>
-                    <property name="primary-icon-sensitive">False</property>
+                    <property name="primary_icon-name">edit-find-symbolic</property>
+                    <property name="primary_icon-activatable">False</property>
+                    <property name="primary_icon-sensitive">False</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -2774,7 +2721,7 @@ in the Windows system.</property>
                             <property name="tooltip-text" translatable="yes">If the required font doesn't have a BOLD typeface, you can use this setting to create the BOLD effect. (For example, setting Embolden to 1.6 would thicken the Regular typeface making it appear as bold.)</property>
                             <property name="width-chars">5</property>
                             <property name="text">1.6</property>
-                            <property name="caps-lock-warning">False</property>
+                            <property name="caps_lock-warning">False</property>
                             <property name="input-purpose">number</property>
                             <property name="adjustment">a_bolditalice</property>
                             <property name="climb-rate">0.10000000000000001</property>
@@ -2795,7 +2742,7 @@ in the Windows system.</property>
                             <property name="tooltip-text" translatable="yes">If the required font does not have an ITALIC typeface, you can use this setting to create the ITALIC effect. (For example, setting Slant to 0.15 would slant the Regular typeface by 15% making it appear as italic.)</property>
                             <property name="width-chars">5</property>
                             <property name="text">0.15</property>
-                            <property name="caps-lock-warning">False</property>
+                            <property name="caps_lock-warning">False</property>
                             <property name="input-purpose">number</property>
                             <property name="adjustment">a_bolditalics</property>
                             <property name="climb-rate">0.01</property>
@@ -2942,7 +2889,7 @@ are using supports these digits too.)</property>
                     <property name="model">ls_digits</property>
                     <property name="wrap-width">3</property>
                     <property name="active">0</property>
-                    <property name="popup-fixed-width">False</property>
+                    <property name="popup_fixed-width">False</property>
                     <property name="id-column">0</property>
                     <property name="active-id">0</property>
                   </object>
@@ -3242,7 +3189,7 @@ the publication being printed.</property>
                     <property name="halign">start</property>
                     <property name="valign">center</property>
                     <property name="ellipsize">middle</property>
-                    <property name="max-width-chars">26</property>
+                    <property name="max_width-chars">26</property>
                   </object>
                   <packing>
                     <property name="left-attach">2</property>
@@ -3468,7 +3415,7 @@ Inches as the major units.</property>
                             <property name="model">ls_gridUnits</property>
                             <property name="wrap-width">1</property>
                             <property name="active">1</property>
-                            <property name="entry-text-column">0</property>
+                            <property name="entry_text-column">0</property>
                             <property name="id-column">1</property>
                             <property name="active-id">1</property>
                           </object>
@@ -3489,7 +3436,7 @@ of the Page, or at the top-left Margin.</property>
                             <property name="model">ls_gridOffset</property>
                             <property name="wrap-width">1</property>
                             <property name="active">1</property>
-                            <property name="entry-text-column">0</property>
+                            <property name="entry_text-column">0</property>
                             <property name="id-column">1</property>
                             <property name="active-id">1</property>
                           </object>
@@ -3836,7 +3783,7 @@ Position:</property>
                     <property name="model">ls_plCreditVpos</property>
                     <property name="wrap-width">1</property>
                     <property name="has-entry">True</property>
-                    <property name="entry-text-column">0</property>
+                    <property name="entry_text-column">0</property>
                     <property name="id-column">1</property>
                     <property name="active-id">0</property>
                     <child internal-child="entry">
@@ -3876,7 +3823,7 @@ Position:</property>
                     <property name="model">ls_plCreditHpos</property>
                     <property name="wrap-width">1</property>
                     <property name="has-entry">True</property>
-                    <property name="entry-text-column">0</property>
+                    <property name="entry_text-column">0</property>
                     <property name="id-column">1</property>
                     <property name="active-id">0</property>
                     <child internal-child="entry">
@@ -3962,7 +3909,7 @@ to be rotated.
                     <property name="model">ls_plCreditRotate</property>
                     <property name="wrap-width">1</property>
                     <property name="has-entry">True</property>
-                    <property name="entry-text-column">0</property>
+                    <property name="entry_text-column">0</property>
                     <property name="id-column">1</property>
                     <property name="active-id">0</property>
                     <child internal-child="entry">
@@ -4057,7 +4004,7 @@ which already have Credit Overlay settings.</property>
                     <property name="label">\x-credit|fig</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
-                    <property name="focus-on-click">False</property>
+                    <property name="focus_on-click">False</property>
                     <property name="receives-default">True</property>
                     <property name="tooltip-text" translatable="yes">Click to edit the Credit Overlay properties on the Styles tab.</property>
                     <property name="halign">center</property>
@@ -4556,7 +4503,7 @@ information, position and other parameters.</property>
     <property name="window-position">center-on-parent</property>
     <property name="icon">Google-Noto-Emoji-Objects-62859-open-book.ico</property>
     <property name="type-hint">dialog</property>
-    <property name="skip-taskbar-hint">True</property>
+    <property name="skip_taskbar-hint">True</property>
     <property name="gravity">center</property>
     <child type="titlebar">
       <placeholder/>
@@ -4628,7 +4575,7 @@ use Title. NoteText makes this a kind of footnote, like \x.</property>
                 <property name="wrap-width">1</property>
                 <property name="active">1</property>
                 <property name="has-entry">True</property>
-                <property name="entry-text-column">0</property>
+                <property name="entry_text-column">0</property>
                 <property name="id-column">0</property>
                 <property name="active-id">1</property>
                 <child internal-child="entry">
@@ -4676,7 +4623,7 @@ Paragraph markers close other paragraphs and character styles, etc.</property>
                 <property name="wrap-width">1</property>
                 <property name="active">1</property>
                 <property name="has-entry">True</property>
-                <property name="entry-text-column">0</property>
+                <property name="entry_text-column">0</property>
                 <property name="id-column">0</property>
                 <property name="active-id">1</property>
                 <child internal-child="entry">
@@ -4886,7 +4833,7 @@ and helps to place the marker in the tree listing all markers.</property>
     <property name="icon">Google-Noto-Emoji-Objects-62859-open-book.ico</property>
     <property name="type-hint">normal</property>
     <property name="urgency-hint">True</property>
-    <property name="has-resize-grip">True</property>
+    <property name="has_resize-grip">True</property>
     <signal name="configure-event" handler="onMainConfigure" swapped="no"/>
     <signal name="destroy" handler="onDestroy" swapped="no"/>
     <signal name="key-press-event" handler="onKeyPress" swapped="no"/>
@@ -4982,7 +4929,7 @@ and helps to place the marker in the tree listing all markers.</property>
                                 <property name="wrap-width">5</property>
                                 <property name="active">0</property>
                                 <property name="has-entry">True</property>
-                                <property name="entry-text-column">0</property>
+                                <property name="entry_text-column">0</property>
                                 <property name="id-column">0</property>
                                 <signal name="changed" handler="onBookChange" swapped="no"/>
                                 <child internal-child="entry">
@@ -5008,7 +4955,7 @@ and helps to place the marker in the tree listing all markers.</property>
                                 <property name="margin-left">30</property>
                                 <property name="label" translatable="yes">From
 Chapter:</property>
-                                <property name="track-visited-links">False</property>
+                                <property name="track_visited-links">False</property>
                               </object>
                               <packing>
                                 <property name="left-attach">2</property>
@@ -5024,7 +4971,7 @@ Chapter:</property>
                                 <property name="margin-left">30</property>
                                 <property name="label" translatable="yes">To
 Chapter:</property>
-                                <property name="track-visited-links">False</property>
+                                <property name="track_visited-links">False</property>
                               </object>
                               <packing>
                                 <property name="left-attach">4</property>
@@ -5162,7 +5109,7 @@ to be printed from the project.</property>
                                 <property name="max-length">3</property>
                                 <property name="width-chars">2</property>
                                 <property name="text">1</property>
-                                <property name="progress-pulse-step">0</property>
+                                <property name="progress_pulse-step">0</property>
                                 <property name="adjustment">a_chapfrom</property>
                                 <property name="climb-rate">1</property>
                                 <property name="numeric">True</property>
@@ -5182,7 +5129,7 @@ to be printed from the project.</property>
                                 <property name="max-length">3</property>
                                 <property name="width-chars">2</property>
                                 <property name="text" translatable="yes">1</property>
-                                <property name="progress-pulse-step">0</property>
+                                <property name="progress_pulse-step">0</property>
                                 <property name="adjustment">a_chapto</property>
                                 <property name="climb-rate">1</property>
                                 <property name="numeric">True</property>
@@ -5203,7 +5150,7 @@ to be printed from the project.</property>
                                 <property name="halign">start</property>
                                 <property name="model">ls_projects</property>
                                 <property name="wrap-width">1</property>
-                                <property name="entry-text-column">0</property>
+                                <property name="entry_text-column">0</property>
                                 <property name="id-column">0</property>
                                 <signal name="changed" handler="onProjectChange" swapped="no"/>
                               </object>
@@ -5380,7 +5327,7 @@ Shortcut key: &lt;Ctrl-S&gt;</property>
                                         <property name="margin-top">6</property>
                                         <property name="margin-bottom">6</property>
                                         <property name="use-stock">True</property>
-                                        <property name="always-show-image">True</property>
+                                        <property name="always_show-image">True</property>
                                         <signal name="clicked" handler="onSaveConfig" swapped="no"/>
                                         <accelerator key="s" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                                       </object>
@@ -5409,7 +5356,7 @@ or other advanced file-based settings.</property>
                                         <property name="margin-top">6</property>
                                         <property name="margin-bottom">6</property>
                                         <property name="use-stock">True</property>
-                                        <property name="always-show-image">True</property>
+                                        <property name="always_show-image">True</property>
                                         <signal name="clicked" handler="onDeleteConfig" swapped="no"/>
                                       </object>
                                       <packing>
@@ -5470,8 +5417,8 @@ the password that was set.</property>
                                         <property name="has-frame">False</property>
                                         <property name="invisible-char">●</property>
                                         <property name="width-chars">16</property>
-                                        <property name="caps-lock-warning">False</property>
-                                        <property name="progress-pulse-step">0</property>
+                                        <property name="caps_lock-warning">False</property>
+                                        <property name="progress_pulse-step">0</property>
                                         <property name="placeholder-text" translatable="yes">No Password Set</property>
                                         <property name="input-purpose">password</property>
                                         <signal name="changed" handler="onPasswordChanged" swapped="no"/>
@@ -5592,7 +5539,7 @@ the Notes field below.</property>
                                             <property name="halign">start</property>
                                             <property name="max-length">32</property>
                                             <property name="width-chars">30</property>
-                                            <property name="progress-pulse-step">0</property>
+                                            <property name="progress_pulse-step">0</property>
                                             <signal name="focus-out-event" handler="onCfgFocusOutEvent" swapped="no"/>
                                             <signal name="key-press-event" handler="onConfigKeyPressed" swapped="no"/>
                                           </object>
@@ -5875,8 +5822,8 @@ page for binding (millimeters).</property>
                                         <property name="width-chars">4</property>
                                         <property name="text">5</property>
                                         <property name="xalign">1</property>
-                                        <property name="caps-lock-warning">False</property>
-                                        <property name="progress-pulse-step">0</property>
+                                        <property name="caps_lock-warning">False</property>
+                                        <property name="progress_pulse-step">0</property>
                                         <property name="placeholder-text">0.0</property>
                                         <property name="input-purpose">number</property>
                                         <property name="adjustment">a_bindinggutter</property>
@@ -5915,8 +5862,8 @@ space between lines of text.</property>
                                         <property name="width-chars">6</property>
                                         <property name="text">15.0</property>
                                         <property name="xalign">1</property>
-                                        <property name="caps-lock-warning">False</property>
-                                        <property name="progress-pulse-step">0</property>
+                                        <property name="caps_lock-warning">False</property>
+                                        <property name="progress_pulse-step">0</property>
                                         <property name="placeholder-text">0.0</property>
                                         <property name="input-purpose">number</property>
                                         <property name="adjustment">a_linespacing</property>
@@ -6010,7 +5957,7 @@ Size (pt):</property>
                                         <property name="width-chars">6</property>
                                         <property name="text">12.0</property>
                                         <property name="xalign">1</property>
-                                        <property name="caps-lock-warning">False</property>
+                                        <property name="caps_lock-warning">False</property>
                                         <property name="adjustment">a_fontsize</property>
                                         <property name="climb-rate">0.10000000000000001</property>
                                         <property name="digits">2</property>
@@ -6078,7 +6025,7 @@ also affects poetry indentation.
                                         <property name="width-chars">4</property>
                                         <property name="text">1.00</property>
                                         <property name="xalign">1</property>
-                                        <property name="caps-lock-warning">False</property>
+                                        <property name="caps_lock-warning">False</property>
                                         <property name="input-purpose">number</property>
                                         <property name="adjustment">a_indentUnit</property>
                                         <property name="climb-rate">0.10000000000000001</property>
@@ -6154,7 +6101,7 @@ button to adjust either the Top or Bottom Margin.</property>
                                         <property name="halign">start</property>
                                         <property name="valign">center</property>
                                         <property name="image">icon_adjust_spacing</property>
-                                        <property name="always-show-image">True</property>
+                                        <property name="always_show-image">True</property>
                                         <signal name="clicked" handler="onMagicAdjustClicked" swapped="no"/>
                                       </object>
                                       <packing>
@@ -6287,7 +6234,7 @@ the text of the two columns
                                     <property name="width-chars">5</property>
                                     <property name="text">15</property>
                                     <property name="xalign">1</property>
-                                    <property name="caps-lock-warning">False</property>
+                                    <property name="caps_lock-warning">False</property>
                                     <property name="input-purpose">number</property>
                                     <property name="adjustment">a_colgutterwidth</property>
                                     <property name="climb-rate">1</property>
@@ -6351,7 +6298,7 @@ Width (mm):</property>
                                     <property name="width-chars">5</property>
                                     <property name="text">-2.0</property>
                                     <property name="xalign">1</property>
-                                    <property name="caps-lock-warning">False</property>
+                                    <property name="caps_lock-warning">False</property>
                                     <property name="input-purpose">number</property>
                                     <property name="adjustment">a_columngutteroffset</property>
                                     <property name="climb-rate">1</property>
@@ -6551,7 +6498,7 @@ above the base line of the first line of the body text.</property>
                                     <property name="width-chars">5</property>
                                     <property name="text">1.00</property>
                                     <property name="xalign">1</property>
-                                    <property name="caps-lock-warning">False</property>
+                                    <property name="caps_lock-warning">False</property>
                                     <property name="placeholder-text">0.0</property>
                                     <property name="input-purpose">number</property>
                                     <property name="adjustment">a_hdrposition</property>
@@ -6626,7 +6573,7 @@ space between the end of the text and the footer line.</property>
                                     <property name="width-chars">5</property>
                                     <property name="text">0.80</property>
                                     <property name="xalign">1</property>
-                                    <property name="caps-lock-warning">False</property>
+                                    <property name="caps_lock-warning">False</property>
                                     <property name="placeholder-text">0.0</property>
                                     <property name="input-purpose">number</property>
                                     <property name="adjustment">a_ftrposition</property>
@@ -6672,7 +6619,7 @@ from the descender of the final line of text
                                     <property name="width-chars">5</property>
                                     <property name="text">1.20</property>
                                     <property name="xalign">1</property>
-                                    <property name="caps-lock-warning">False</property>
+                                    <property name="caps_lock-warning">False</property>
                                     <property name="placeholder-text">0.0</property>
                                     <property name="input-purpose">number</property>
                                     <property name="adjustment">a_bottommargin</property>
@@ -6728,8 +6675,8 @@ above.</property>
                                     <property name="width-chars">5</property>
                                     <property name="text">12.0</property>
                                     <property name="xalign">1</property>
-                                    <property name="caps-lock-warning">False</property>
-                                    <property name="progress-pulse-step">0</property>
+                                    <property name="caps_lock-warning">False</property>
+                                    <property name="progress_pulse-step">0</property>
                                     <property name="placeholder-text" translatable="yes">0.0</property>
                                     <property name="input-purpose">number</property>
                                     <property name="adjustment">a_margins</property>
@@ -6749,7 +6696,7 @@ above.</property>
                                   <object class="GtkLabel" id="l_rhruleoffset">
                                     <property name="height-request">35</property>
                                     <property name="can-focus">False</property>
-                                    <property name="no-show-all">True</property>
+                                    <property name="no_show-all">True</property>
                                     <property name="tooltip-text" translatable="yes">The space (pt) between the horizontal rule
 and the top of the main text area. Note that
 the first line actually starts a little bit below
@@ -6775,7 +6722,7 @@ and Top of Text (pt):</property>
                                   <object class="GtkSpinButton" id="s_rhruleposition">
                                     <property name="height-request">35</property>
                                     <property name="can-focus">True</property>
-                                    <property name="no-show-all">True</property>
+                                    <property name="no_show-all">True</property>
                                     <property name="tooltip-text" translatable="yes">The space (pt) between the horizontal rule
 and the top of the main text area. Note that
 the first line actually starts a little bit below
@@ -6788,8 +6735,8 @@ above the base line of the first line of the body text.</property>
                                     <property name="width-chars">4</property>
                                     <property name="text">0</property>
                                     <property name="xalign">1</property>
-                                    <property name="caps-lock-warning">False</property>
-                                    <property name="progress-pulse-step">0</property>
+                                    <property name="caps_lock-warning">False</property>
+                                    <property name="progress_pulse-step">0</property>
                                     <property name="placeholder-text">0.0</property>
                                     <property name="input-purpose">number</property>
                                     <property name="adjustment">a_ruleposition</property>
@@ -6821,7 +6768,7 @@ above the base line of the first line of the body text.</property>
                                     <property name="width-chars">5</property>
                                     <property name="text">1.80</property>
                                     <property name="xalign">1</property>
-                                    <property name="caps-lock-warning">False</property>
+                                    <property name="caps_lock-warning">False</property>
                                     <property name="placeholder-text">0.0</property>
                                     <property name="input-purpose">number</property>
                                     <property name="adjustment">a_topmargin</property>
@@ -7641,7 +7588,7 @@ leave this setting as "Default".</property>
                                     <property name="model">ls_scripts</property>
                                     <property name="wrap-width">6</property>
                                     <property name="active">0</property>
-                                    <property name="popup-fixed-width">False</property>
+                                    <property name="popup_fixed-width">False</property>
                                     <property name="id-column">1</property>
                                     <property name="active-id">0</property>
                                     <signal name="changed" handler="onScriptChanged" swapped="no"/>
@@ -7718,7 +7665,7 @@ zh = Chinese
 gr = Graphite</property>
                                     <property name="halign">start</property>
                                     <property name="width-chars">6</property>
-                                    <property name="max-width-chars">4</property>
+                                    <property name="max_width-chars">4</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">1</property>
@@ -7830,7 +7777,7 @@ space width. TeX's default value is 66%.</property>
                                         <property name="max-length">3</property>
                                         <property name="width-chars">3</property>
                                         <property name="text">50</property>
-                                        <property name="caps-lock-warning">False</property>
+                                        <property name="caps_lock-warning">False</property>
                                         <property name="input-purpose">number</property>
                                         <property name="adjustment">a_minSpace</property>
                                         <property name="climb-rate">5</property>
@@ -7861,7 +7808,7 @@ space width. TeX's default value is 150%.</property>
                                         <property name="max-length">4</property>
                                         <property name="width-chars">2</property>
                                         <property name="text">200</property>
-                                        <property name="caps-lock-warning">False</property>
+                                        <property name="caps_lock-warning">False</property>
                                         <property name="input-purpose">number</property>
                                         <property name="adjustment">a_maxSpace</property>
                                         <property name="climb-rate">5</property>
@@ -8531,8 +8478,8 @@ marginal verse numbers. (pts)</property>
                                         <property name="hexpand">True</property>
                                         <property name="width-chars">4</property>
                                         <property name="text">15.0</property>
-                                        <property name="caps-lock-warning">False</property>
-                                        <property name="progress-pulse-step">0</property>
+                                        <property name="caps_lock-warning">False</property>
+                                        <property name="progress_pulse-step">0</property>
                                         <property name="placeholder-text">0.0</property>
                                         <property name="input-purpose">number</property>
                                         <property name="adjustment">a_columnShift</property>
@@ -8661,7 +8608,7 @@ uncheck the Parallel Passage Refs.</property>
                                         <property name="label">\s</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
-                                        <property name="focus-on-click">False</property>
+                                        <property name="focus_on-click">False</property>
                                         <property name="receives-default">True</property>
                                         <property name="tooltip-text" translatable="yes">Click to edit the \s marker's properties on the Styles tab.</property>
                                         <property name="halign">start</property>
@@ -8711,7 +8658,7 @@ occur below Section Headings.</property>
                                         <property name="label">\r</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
-                                        <property name="focus-on-click">False</property>
+                                        <property name="focus_on-click">False</property>
                                         <property name="receives-default">True</property>
                                         <property name="tooltip-text" translatable="yes">Click to edit the \r marker's properties on the Styles tab.</property>
                                         <property name="halign">start</property>
@@ -8866,7 +8813,7 @@ this "Chapter Label" setting should be applied to.
 Note: If this list of books is left empty, then this
 setting will be applied to ALL books</property>
                                     <property name="text">PSA PRO</property>
-                                    <property name="caps-lock-warning">False</property>
+                                    <property name="caps_lock-warning">False</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">1</property>
@@ -9029,7 +8976,7 @@ the publication is set as double-column (on the
 layout page) then any books listed here would
 be set in single-column layout.</property>
                                     <property name="text">FRT INT PSA PRO BAK GLO</property>
-                                    <property name="caps-lock-warning">False</property>
+                                    <property name="caps_lock-warning">False</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">1</property>
@@ -9276,8 +9223,8 @@ between notes that have been run together.</property>
                                     <property name="valign">start</property>
                                     <property name="width-chars">4</property>
                                     <property name="text">5</property>
-                                    <property name="caps-lock-warning">False</property>
-                                    <property name="progress-pulse-step">0</property>
+                                    <property name="caps_lock-warning">False</property>
+                                    <property name="progress_pulse-step">0</property>
                                     <property name="placeholder-text">0.0</property>
                                     <property name="input-purpose">number</property>
                                     <property name="adjustment">a_notespacingmin</property>
@@ -9303,8 +9250,8 @@ between notes that have been run together.</property>
                                     <property name="valign">start</property>
                                     <property name="width-chars">4</property>
                                     <property name="text">25</property>
-                                    <property name="caps-lock-warning">False</property>
-                                    <property name="progress-pulse-step">0</property>
+                                    <property name="caps_lock-warning">False</property>
+                                    <property name="progress_pulse-step">0</property>
                                     <property name="placeholder-text">0.0</property>
                                     <property name="input-purpose">number</property>
                                     <property name="adjustment">a_notespacingmax</property>
@@ -9646,7 +9593,7 @@ line then set this option.</property>
                                         <property name="label">\f</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
-                                        <property name="focus-on-click">False</property>
+                                        <property name="focus_on-click">False</property>
                                         <property name="receives-default">True</property>
                                         <property name="tooltip-text" translatable="yes">Click to edit the Footnote properties on the Styles tab.</property>
                                         <property name="halign">end</property>
@@ -9993,7 +9940,7 @@ of the column/page width.</property>
                                                     <property name="model">ls_fnruleHorizPosn</property>
                                                     <property name="wrap-width">1</property>
                                                     <property name="active">0</property>
-                                                    <property name="entry-text-column">0</property>
+                                                    <property name="entry_text-column">0</property>
                                                     <property name="id-column">1</property>
                                                     <property name="active-id">all</property>
                                                   </object>
@@ -10410,7 +10357,7 @@ Print a second time before it applies.</property>
                                         <property name="label">\x</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
-                                        <property name="focus-on-click">False</property>
+                                        <property name="focus_on-click">False</property>
                                         <property name="receives-default">True</property>
                                         <property name="tooltip-text" translatable="yes">Click to edit the Cross-Reference properties on the Styles tab.</property>
                                         <property name="halign">end</property>
@@ -10734,7 +10681,7 @@ of the column/page width.</property>
                                                     <property name="model">ls_fnruleHorizPosn</property>
                                                     <property name="wrap-width">1</property>
                                                     <property name="active">0</property>
-                                                    <property name="entry-text-column">0</property>
+                                                    <property name="entry_text-column">0</property>
                                                     <property name="id-column">1</property>
                                                     <property name="active-id">all</property>
                                                   </object>
@@ -11100,7 +11047,7 @@ Books on the Basic tab will be included.</property>
                                                     <property name="model">ls_filterXrefs</property>
                                                     <property name="wrap-width">1</property>
                                                     <property name="active">1</property>
-                                                    <property name="entry-text-column">0</property>
+                                                    <property name="entry_text-column">0</property>
                                                     <property name="id-column">1</property>
                                                     <property name="active-id">all</property>
                                                   </object>
@@ -11190,8 +11137,8 @@ reducing the size of the \x font (to approx 6pt).</property>
                                                         <property name="halign">start</property>
                                                         <property name="width-chars">4</property>
                                                         <property name="text">60</property>
-                                                        <property name="caps-lock-warning">False</property>
-                                                        <property name="progress-pulse-step">0</property>
+                                                        <property name="caps_lock-warning">False</property>
+                                                        <property name="progress_pulse-step">0</property>
                                                         <property name="placeholder-text">0.0</property>
                                                         <property name="input-purpose">number</property>
                                                         <property name="adjustment">a_centreColWidth</property>
@@ -11238,8 +11185,8 @@ text and the column of cross-references.</property>
                                                         <property name="halign">start</property>
                                                         <property name="width-chars">4</property>
                                                         <property name="text">2.0</property>
-                                                        <property name="caps-lock-warning">False</property>
-                                                        <property name="progress-pulse-step">0</property>
+                                                        <property name="caps_lock-warning">False</property>
+                                                        <property name="progress_pulse-step">0</property>
                                                         <property name="placeholder-text">0.0</property>
                                                         <property name="input-purpose">number</property>
                                                         <property name="adjustment">xrGutterWidth</property>
@@ -11280,7 +11227,7 @@ being positioned between the columns of text.</property>
                                                         <property name="model">ls_colXRside</property>
                                                         <property name="wrap-width">1</property>
                                                         <property name="active">1</property>
-                                                        <property name="entry-text-column">0</property>
+                                                        <property name="entry_text-column">0</property>
                                                         <property name="id-column">1</property>
                                                         <property name="active-id">3</property>
                                                       </object>
@@ -11402,7 +11349,7 @@ of the page. </property>
                               <object class="GtkLabel" id="lb_extXrefs">
                                 <property name="sensitive">False</property>
                                 <property name="can-focus">False</property>
-                                <property name="no-show-all">True</property>
+                                <property name="no_show-all">True</property>
                                 <property name="label" translatable="yes">Study Bible Notes</property>
                               </object>
                               <packing>
@@ -12138,7 +12085,7 @@ soon as the first scripture book is encountered.</property>
                                     <property name="max-length">4</property>
                                     <property name="width-chars">4</property>
                                     <property name="text">1</property>
-                                    <property name="caps-lock-warning">False</property>
+                                    <property name="caps_lock-warning">False</property>
                                     <property name="input-purpose">number</property>
                                     <property name="adjustment">a_startPageNum</property>
                                     <property name="climb-rate">1</property>
@@ -12363,7 +12310,7 @@ header, or the Secondary format.</property>
                                 <property name="sensitive">False</property>
                                 <property name="can-focus">True</property>
                                 <property name="receives-default">False</property>
-                                <property name="no-show-all">True</property>
+                                <property name="no_show-all">True</property>
                                 <property name="tooltip-text" translatable="yes">This option will prevent the descenders of footnotes 
 and cross-references from going into the footer area.</property>
                                 <property name="halign">start</property>
@@ -12446,8 +12393,8 @@ headers and footers.</property>
                                 <property name="vscrollbar-policy">always</property>
                                 <property name="shadow-type">in</property>
                                 <property name="overlay-scrolling">False</property>
-                                <property name="propagate-natural-width">True</property>
-                                <property name="propagate-natural-height">True</property>
+                                <property name="propagate_natural-width">True</property>
+                                <property name="propagate_natural-height">True</property>
                                 <child>
                                   <object class="GtkTreeView" id="tv_picListEdit">
                                     <property name="visible">True</property>
@@ -12460,7 +12407,7 @@ headers and footers.</property>
                                     <property name="rules-hint">True</property>
                                     <property name="enable-search">False</property>
                                     <property name="search-column">0</property>
-                                    <property name="fixed-height-mode">True</property>
+                                    <property name="fixed_height-mode">True</property>
                                     <property name="show-expanders">False</property>
                                     <signal name="row-activated" handler="onPLrowActivated" swapped="no"/>
                                     <child internal-child="selection">
@@ -12704,7 +12651,7 @@ manipulate the PicList and want to be sure to
 save your changes, then use this Save button
 from time to time.   Shortcut key: &lt;Ctrl-S&gt;</property>
                                         <property name="use-stock">True</property>
-                                        <property name="always-show-image">True</property>
+                                        <property name="always_show-image">True</property>
                                         <signal name="clicked" handler="onSavePicListEdits" swapped="no"/>
                                         <accelerator key="s" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                                       </object>
@@ -12758,6 +12705,7 @@ will need to fill in all the details in the area below.</property>
                                 </child>
                                 <child>
                                   <object class="GtkFrame" id="fr_plChecklistFilter">
+                                    <property name="visible">True</property>
                                     <property name="sensitive">False</property>
                                     <property name="can-focus">False</property>
                                     <property name="halign">center</property>
@@ -12837,13 +12785,17 @@ any items that match.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkCheckButton" id="c_filterPicList">
-                                    <property name="label" translatable="yes">Only Show
-Active Books</property>
+                                  <object class="GtkBox" id="bx_activeRefresh">
                                     <property name="visible">True</property>
-                                    <property name="can-focus">True</property>
-                                    <property name="receives-default">False</property>
-                                    <property name="tooltip-text" translatable="yes">The details of ALL the pictures are stored in a single list.
+                                    <property name="can-focus">False</property>
+                                    <child>
+                                      <object class="GtkCheckButton" id="c_filterPicList">
+                                        <property name="label" translatable="yes">Only Show
+Active Books</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">False</property>
+                                        <property name="tooltip-text" translatable="yes">The details of ALL the pictures are stored in a single list.
 Select this option to only display the pictures from the
 books that are currently in focus to be printed. 
 When unchecked, then the list will show pictures from
@@ -12851,10 +12803,42 @@ ALL the books in the project that have been added to
 the PicList. If pictures of a certain book are missing, 
 then you may need to select that book and Generate
 the PicList details just for *that* book.</property>
-                                    <property name="halign">center</property>
-                                    <property name="valign">start</property>
-                                    <property name="draw-indicator">True</property>
-                                    <signal name="clicked" handler="onFilterPicListClicked" swapped="no"/>
+                                        <property name="halign">center</property>
+                                        <property name="valign">start</property>
+                                        <property name="draw-indicator">True</property>
+                                        <signal name="clicked" handler="onFilterPicListClicked" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkButton" id="btn_refreshCaptions">
+                                        <property name="label" translatable="yes">↺</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">True</property>
+                                        <property name="tooltip-text" translatable="yes">Refresh Captions:
+If you have edited the picture captions
+within the Paratext USFM files but those
+changes are not being reflected here, 
+then click this button to refresh the captions.
+
+Note that only the Captions and Verse Refs
+will be updated. All other size and position
+settings will remain unchanged.</property>
+                                        <property name="opacity">0.80000000000000004</property>
+                                        <property name="halign">start</property>
+                                        <signal name="clicked" handler="onUpdatePicCaptionsClicked" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">1</property>
+                                      </packing>
+                                    </child>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
@@ -13166,8 +13150,8 @@ found at all.</property>
                                                 <property name="can-focus">False</property>
                                                 <property name="halign">start</property>
                                                 <property name="label" translatable="yes">(0 Missing)</property>
-                                                <property name="single-line-mode">True</property>
-                                                <property name="track-visited-links">False</property>
+                                                <property name="single_line-mode">True</property>
+                                                <property name="track_visited-links">False</property>
                                               </object>
                                               <packing>
                                                 <property name="left-attach">1</property>
@@ -13206,8 +13190,8 @@ images, not just those with lines.</property>
                                                 <property name="halign">start</property>
                                                 <property name="valign">center</property>
                                                 <property name="ellipsize">middle</property>
-                                                <property name="single-line-mode">True</property>
-                                                <property name="max-width-chars">60</property>
+                                                <property name="single_line-mode">True</property>
+                                                <property name="max_width-chars">60</property>
                                               </object>
                                               <packing>
                                                 <property name="left-attach">1</property>
@@ -13257,7 +13241,7 @@ attribute.  Note: w= web, a=app, p=print.</property>
                                                     <property name="label" translatable="yes">How?</property>
                                                     <property name="visible">True</property>
                                                     <property name="can-focus">True</property>
-                                                    <property name="focus-on-click">False</property>
+                                                    <property name="focus_on-click">False</property>
                                                     <property name="receives-default">True</property>
                                                     <property name="halign">end</property>
                                                     <property name="hexpand">True</property>
@@ -13404,8 +13388,8 @@ the Header+Footer tab for details).
                                         <property name="hexpand">False</property>
                                         <property name="hscrollbar-policy">never</property>
                                         <property name="vscrollbar-policy">always</property>
-                                        <property name="min-content-height">256</property>
-                                        <property name="max-content-height">300</property>
+                                        <property name="min_content-height">256</property>
+                                        <property name="max_content-height">300</property>
                                         <child>
                                           <object class="GtkViewport">
                                             <property name="visible">True</property>
@@ -13733,7 +13717,7 @@ Position:</property>
                                                     <property name="can-focus">True</property>
                                                     <property name="halign">start</property>
                                                     <property name="text">100</property>
-                                                    <property name="progress-pulse-step">0</property>
+                                                    <property name="progress_pulse-step">0</property>
                                                     <property name="adjustment">a_plScale</property>
                                                     <property name="climb-rate">5</property>
                                                     <property name="value">100</property>
@@ -13766,7 +13750,7 @@ as: Left, Right, Center, no. of lines (up or down).</property>
                                                     <property name="model">ls_plPgPos</property>
                                                     <property name="wrap-width">1</property>
                                                     <property name="has-entry">True</property>
-                                                    <property name="entry-text-column">0</property>
+                                                    <property name="entry_text-column">0</property>
                                                     <property name="id-column">1</property>
                                                     <property name="active-id">t</property>
                                                     <signal name="changed" handler="onPLpgPosChanged" swapped="no"/>
@@ -13809,7 +13793,7 @@ Captions should not be used with 'Page (to Edge)' images.</property>
                                                     <property name="model">ls_plSize</property>
                                                     <property name="wrap-width">1</property>
                                                     <property name="has-entry">True</property>
-                                                    <property name="entry-text-column">0</property>
+                                                    <property name="entry_text-column">0</property>
                                                     <property name="id-column">1</property>
                                                     <property name="active-id">col</property>
                                                     <signal name="changed" handler="onPLsizeChanged" swapped="no"/>
@@ -13859,7 +13843,7 @@ settings first.</property>
                                                     <property name="model">ls_plHoriz</property>
                                                     <property name="wrap-width">1</property>
                                                     <property name="has-entry">True</property>
-                                                    <property name="entry-text-column">0</property>
+                                                    <property name="entry_text-column">0</property>
                                                     <property name="id-column">1</property>
                                                     <property name="active-id">l</property>
                                                     <child internal-child="entry">
@@ -13924,7 +13908,7 @@ on the Checklist tab.</property>
                                                     <property name="model">ls_plMirror</property>
                                                     <property name="wrap-width">1</property>
                                                     <property name="has-entry">True</property>
-                                                    <property name="entry-text-column">0</property>
+                                                    <property name="entry_text-column">0</property>
                                                     <property name="id-column">1</property>
                                                     <property name="active-id">None</property>
                                                     <child internal-child="entry">
@@ -13970,7 +13954,7 @@ Lines:</property>
                                                     <property name="max-length">3</property>
                                                     <property name="width-chars">3</property>
                                                     <property name="text">0</property>
-                                                    <property name="progress-pulse-step">0</property>
+                                                    <property name="progress_pulse-step">0</property>
                                                     <property name="input-purpose">number</property>
                                                     <property name="adjustment">a_plLines</property>
                                                     <property name="climb-rate">1</property>
@@ -14117,7 +14101,7 @@ be set here.</property>
                                                     <property name="visible">True</property>
                                                     <property name="sensitive">False</property>
                                                     <property name="can-focus">False</property>
-                                                    <property name="no-show-all">True</property>
+                                                    <property name="no_show-all">True</property>
                                                     <property name="halign">center</property>
                                                     <property name="valign">start</property>
                                                     <property name="margin-right">6</property>
@@ -14163,7 +14147,7 @@ changes specified in the PrintDraftChanges.txt file.</property>
                                                         <property name="width-request">2</property>
                                                         <property name="visible">True</property>
                                                         <property name="can-focus">True</property>
-                                                        <property name="focus-on-click">False</property>
+                                                        <property name="focus_on-click">False</property>
                                                         <property name="receives-default">True</property>
                                                         <property name="tooltip-text" translatable="yes">Click to edit the Figure Caption properties on the Styles tab.</property>
                                                         <property name="halign">center</property>
@@ -14243,8 +14227,8 @@ in Paratext before regenerating the PicList here.</property>
                                         <property name="hscrollbar-policy">never</property>
                                         <property name="vscrollbar-policy">always</property>
                                         <property name="shadow-type">in</property>
-                                        <property name="min-content-height">256</property>
-                                        <property name="max-content-height">300</property>
+                                        <property name="min_content-height">256</property>
+                                        <property name="max_content-height">300</property>
                                         <child>
                                           <object class="GtkViewport">
                                             <property name="visible">True</property>
@@ -15187,9 +15171,9 @@ to copyrights.</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="adjustment">a_diglotPriFraction</property>
-                                <property name="lower-stepper-sensitivity">on</property>
-                                <property name="upper-stepper-sensitivity">on</property>
-                                <property name="show-fill-level">True</property>
+                                <property name="lower_stepper-sensitivity">on</property>
+                                <property name="upper_stepper-sensitivity">on</property>
+                                <property name="show_fill-level">True</property>
                                 <property name="fill-level">100</property>
                                 <property name="round-digits">1</property>
                                 <property name="value-pos">left</property>
@@ -15280,7 +15264,7 @@ in the right-hand (or outer) column.</property>
                                 <property name="model">ls_digprojects</property>
                                 <property name="wrap-width">1</property>
                                 <property name="has-entry">True</property>
-                                <property name="entry-text-column">0</property>
+                                <property name="entry_text-column">0</property>
                                 <property name="id-column">0</property>
                                 <signal name="changed" handler="ondiglotSecProjectChanged" swapped="no"/>
                                 <child internal-child="entry">
@@ -15301,7 +15285,7 @@ in the right-hand (or outer) column.</property>
 Settings for Diglot</property>
                                 <property name="can-focus">True</property>
                                 <property name="receives-default">False</property>
-                                <property name="no-show-all">True</property>
+                                <property name="no_show-all">True</property>
                                 <property name="tooltip-text" translatable="yes">Checking this option will override
 the header settings and place the
 Reference Ranges on the outer edges
@@ -15388,7 +15372,7 @@ a Diglot use Pictures from:</property>
                                 <property name="halign">start</property>
                                 <property name="valign">center</property>
                                 <property name="image">icon_adjust_diglot</property>
-                                <property name="always-show-image">True</property>
+                                <property name="always_show-image">True</property>
                                 <signal name="clicked" handler="onDiglotAutoAdjust" swapped="no"/>
                               </object>
                               <packing>
@@ -15838,7 +15822,7 @@ Tab Positions:</property>
                                 <property name="halign">start</property>
                                 <property name="width-chars">5</property>
                                 <property name="text">15</property>
-                                <property name="progress-pulse-step">0</property>
+                                <property name="progress_pulse-step">0</property>
                                 <property name="adjustment">a_thumblength</property>
                                 <property name="climb-rate">0.10000000000000001</property>
                                 <property name="digits">1</property>
@@ -15853,7 +15837,7 @@ Tab Positions:</property>
                             <child>
                               <object class="GtkLabel" id="l_thumbVerticalL">
                                 <property name="can-focus">False</property>
-                                <property name="no-show-all">True</property>
+                                <property name="no_show-all">True</property>
                                 <property name="halign">start</property>
                                 <property name="valign">start</property>
                                 <property name="margin-left">6</property>
@@ -15871,7 +15855,7 @@ Tab Positions:</property>
                             <child>
                               <object class="GtkLabel" id="l_thumbHorizontalR">
                                 <property name="can-focus">False</property>
-                                <property name="no-show-all">True</property>
+                                <property name="no_show-all">True</property>
                                 <property name="halign">end</property>
                                 <property name="margin-left">6</property>
                                 <property name="label" translatable="yes">&lt;span background="black" foreground="white" font-weight="bold"&gt;  Horizontal  &lt;/span&gt;</property>
@@ -15932,7 +15916,7 @@ For example: PHM TIT; 1JN 2JN 3JN JUD</property>
                                 <property name="wrap-width">1</property>
                                 <property name="active">1</property>
                                 <property name="has-entry">True</property>
-                                <property name="entry-text-column">0</property>
+                                <property name="entry_text-column">0</property>
                                 <property name="id-column">1</property>
                                 <property name="active-id">1</property>
                                 <signal name="changed" handler="onRotateTabsChanged" swapped="no"/>
@@ -15953,7 +15937,7 @@ For example: PHM TIT; 1JN 2JN 3JN JUD</property>
                             <child>
                               <object class="GtkLabel" id="l_thumbVerticalR">
                                 <property name="can-focus">False</property>
-                                <property name="no-show-all">True</property>
+                                <property name="no_show-all">True</property>
                                 <property name="halign">end</property>
                                 <property name="valign">start</property>
                                 <property name="label" translatable="yes">&lt;span background="black" foreground="white" font-weight="bold"&gt;  Vertical  &lt;/span&gt;</property>
@@ -15984,7 +15968,7 @@ For example: PHM TIT; 1JN 2JN 3JN JUD</property>
                             <child>
                               <object class="GtkLabel" id="l_thumbHorizontalL">
                                 <property name="can-focus">False</property>
-                                <property name="no-show-all">True</property>
+                                <property name="no_show-all">True</property>
                                 <property name="halign">start</property>
                                 <property name="label" translatable="yes">&lt;span background="black" foreground="white" font-weight="bold"&gt;  Horizontal  &lt;/span&gt;</property>
                                 <property name="use-markup">True</property>
@@ -16062,7 +16046,7 @@ specifies that there should be no text in the thumbtab for that book.</property>
                                 <property name="label" translatable="yes">Edit Style</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
-                                <property name="focus-on-click">False</property>
+                                <property name="focus_on-click">False</property>
                                 <property name="receives-default">True</property>
                                 <property name="tooltip-text" translatable="yes">Click to jump to the appropriate
 (\toc3 or \zthumbtab) marker in
@@ -16228,7 +16212,7 @@ Note: If only a single book is currently selected, it will place the Thumb Tab r
                                             <property name="valign">center</property>
                                             <property name="margin-bottom">6</property>
                                             <property name="ellipsize">middle</property>
-                                            <property name="max-width-chars">40</property>
+                                            <property name="max_width-chars">40</property>
                                           </object>
                                           <packing>
                                             <property name="left-attach">1</property>
@@ -16384,7 +16368,7 @@ as vertical to make sure all headings fit.</property>
                                             <property name="margin-top">4</property>
                                             <property name="margin-bottom">4</property>
                                             <property name="ellipsize">middle</property>
-                                            <property name="max-width-chars">30</property>
+                                            <property name="max_width-chars">30</property>
                                           </object>
                                           <packing>
                                             <property name="left-attach">0</property>
@@ -16469,7 +16453,7 @@ to make it fit. </property>
                                             <property name="margin-top">4</property>
                                             <property name="margin-bottom">4</property>
                                             <property name="ellipsize">middle</property>
-                                            <property name="max-width-chars">30</property>
+                                            <property name="max_width-chars">30</property>
                                           </object>
                                           <packing>
                                             <property name="left-attach">0</property>
@@ -16580,7 +16564,7 @@ fit within the graphic.</property>
                                             <property name="label">\v</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
-                                            <property name="focus-on-click">False</property>
+                                            <property name="focus_on-click">False</property>
                                             <property name="receives-default">True</property>
                                             <property name="tooltip-text" translatable="yes">Click to edit the \v marker's properties on the Styles tab.</property>
                                             <property name="halign">end</property>
@@ -16619,7 +16603,7 @@ fit within the graphic.</property>
                                             <property name="valign">center</property>
                                             <property name="justify">right</property>
                                             <property name="ellipsize">middle</property>
-                                            <property name="max-width-chars">30</property>
+                                            <property name="max_width-chars">30</property>
                                           </object>
                                           <packing>
                                             <property name="left-attach">1</property>
@@ -16834,10 +16818,10 @@ your marker can be found under,
 then use this Search tool to find
 the marker you need.</property>
                                     <property name="width-chars">15</property>
-                                    <property name="secondary-icon-stock">gtk-clear</property>
-                                    <property name="primary-icon-name">edit-find-symbolic</property>
-                                    <property name="primary-icon-activatable">False</property>
-                                    <property name="primary-icon-sensitive">False</property>
+                                    <property name="secondary_icon-stock">gtk-clear</property>
+                                    <property name="primary_icon-name">edit-find-symbolic</property>
+                                    <property name="primary_icon-activatable">False</property>
+                                    <property name="primary_icon-sensitive">False</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
@@ -16851,7 +16835,7 @@ the marker you need.</property>
                                     <property name="sensitive">False</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">True</property>
-                                    <property name="no-show-all">True</property>
+                                    <property name="no_show-all">True</property>
                                     <property name="tooltip-text" translatable="yes">Clicking this button will reset
 the Search/Filter to SHOW ALL
 markers/styles in the list below.</property>
@@ -16891,8 +16875,8 @@ markers/styles in the list below.</property>
                                     <property name="headers-visible">False</property>
                                     <property name="search-column">0</property>
                                     <property name="level-indentation">1</property>
-                                    <property name="enable-tree-lines">True</property>
-                                    <property name="activate-on-single-click">True</property>
+                                    <property name="enable_tree-lines">True</property>
+                                    <property name="activate_on_single-click">True</property>
                                     <child internal-child="selection">
                                       <object class="GtkTreeSelection" id="tsel_Styles"/>
                                     </child>
@@ -17101,7 +17085,7 @@ properties for this style.</property>
                                             <property name="halign">start</property>
                                             <property name="width-chars">5</property>
                                             <property name="text">1.00</property>
-                                            <property name="caps-lock-warning">False</property>
+                                            <property name="caps_lock-warning">False</property>
                                             <property name="placeholder-text">0.0</property>
                                             <property name="input-purpose">number</property>
                                             <property name="adjustment">a_styFontSize</property>
@@ -17205,7 +17189,7 @@ to Parent</property>
                                             <property name="halign">start</property>
                                             <property name="width-chars">5</property>
                                             <property name="text">1.00</property>
-                                            <property name="caps-lock-warning">False</property>
+                                            <property name="caps_lock-warning">False</property>
                                             <property name="placeholder-text">0.0</property>
                                             <property name="input-purpose">number</property>
                                             <property name="adjustment">a_styRaise</property>
@@ -17381,7 +17365,7 @@ line for this font are provided for reference. </property>
                                             <property name="sensitive">False</property>
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">False</property>
-                                            <property name="no-show-all">True</property>
+                                            <property name="no_show-all">True</property>
                                             <property name="tooltip-text" translatable="yes">Underlining printed text is actively
 discouraged. If you have a strong
 use-case for why this is needed for
@@ -17447,7 +17431,7 @@ Email: ptxprint_support@sil.org</property>
                                             <property name="model">ls_styJustification</property>
                                             <property name="wrap-width">1</property>
                                             <property name="has-entry">True</property>
-                                            <property name="entry-text-column">0</property>
+                                            <property name="entry_text-column">0</property>
                                             <property name="id-column">1</property>
                                             <child internal-child="entry">
                                               <object class="GtkEntry">
@@ -17469,7 +17453,7 @@ Email: ptxprint_support@sil.org</property>
                                             <property name="halign">start</property>
                                             <property name="width-chars">5</property>
                                             <property name="text">1.00</property>
-                                            <property name="caps-lock-warning">False</property>
+                                            <property name="caps_lock-warning">False</property>
                                             <property name="placeholder-text">0.0</property>
                                             <property name="input-purpose">number</property>
                                             <property name="adjustment">a_styFirstLineIndent</property>
@@ -17490,7 +17474,7 @@ Email: ptxprint_support@sil.org</property>
                                             <property name="halign">start</property>
                                             <property name="width-chars">5</property>
                                             <property name="text">1.00</property>
-                                            <property name="caps-lock-warning">False</property>
+                                            <property name="caps_lock-warning">False</property>
                                             <property name="placeholder-text">0.0</property>
                                             <property name="input-purpose">number</property>
                                             <property name="adjustment">a_styLeftMargin</property>
@@ -17511,7 +17495,7 @@ Email: ptxprint_support@sil.org</property>
                                             <property name="halign">start</property>
                                             <property name="width-chars">5</property>
                                             <property name="text">1.00</property>
-                                            <property name="caps-lock-warning">False</property>
+                                            <property name="caps_lock-warning">False</property>
                                             <property name="placeholder-text">0.0</property>
                                             <property name="input-purpose">number</property>
                                             <property name="adjustment">a_styRightMargin</property>
@@ -17532,7 +17516,7 @@ Email: ptxprint_support@sil.org</property>
                                             <property name="halign">start</property>
                                             <property name="width-chars">5</property>
                                             <property name="text">1.00</property>
-                                            <property name="caps-lock-warning">False</property>
+                                            <property name="caps_lock-warning">False</property>
                                             <property name="placeholder-text">0.0</property>
                                             <property name="input-purpose">number</property>
                                             <property name="adjustment">a_styLineSpacing</property>
@@ -17570,7 +17554,7 @@ Email: ptxprint_support@sil.org</property>
                                             <property name="halign">start</property>
                                             <property name="width-chars">5</property>
                                             <property name="text">1.00</property>
-                                            <property name="caps-lock-warning">False</property>
+                                            <property name="caps_lock-warning">False</property>
                                             <property name="placeholder-text">0.0</property>
                                             <property name="input-purpose">number</property>
                                             <property name="adjustment">a_stySpaceBefore</property>
@@ -17591,7 +17575,7 @@ Email: ptxprint_support@sil.org</property>
                                             <property name="halign">start</property>
                                             <property name="width-chars">5</property>
                                             <property name="text">1.00</property>
-                                            <property name="caps-lock-warning">False</property>
+                                            <property name="caps_lock-warning">False</property>
                                             <property name="placeholder-text">0.0</property>
                                             <property name="input-purpose">number</property>
                                             <property name="adjustment">a_stySpaceAfter</property>
@@ -17846,7 +17830,7 @@ Factor:</property>
                                             <property name="halign">start</property>
                                             <property name="width-chars">5</property>
                                             <property name="text">1.0</property>
-                                            <property name="caps-lock-warning">False</property>
+                                            <property name="caps_lock-warning">False</property>
                                             <property name="placeholder-text">0.0</property>
                                             <property name="input-purpose">number</property>
                                             <property name="adjustment">a_styCallerRaise</property>
@@ -17867,7 +17851,7 @@ Factor:</property>
                                             <property name="halign">start</property>
                                             <property name="width-chars">5</property>
                                             <property name="text">1.0</property>
-                                            <property name="caps-lock-warning">False</property>
+                                            <property name="caps_lock-warning">False</property>
                                             <property name="placeholder-text">0.0</property>
                                             <property name="input-purpose">number</property>
                                             <property name="adjustment">a_styNoteCallerRaise</property>
@@ -18616,7 +18600,7 @@ Note: All comply with archive standard PDF/A-1b.</property>
                                     <property name="halign">start</property>
                                     <property name="model">ls_outputFormat</property>
                                     <property name="wrap-width">1</property>
-                                    <property name="entry-text-column">0</property>
+                                    <property name="entry_text-column">0</property>
                                     <property name="id-column">1</property>
                                     <property name="active-id">None</property>
                                     <signal name="changed" handler="warnSlowRun" swapped="no"/>
@@ -18826,7 +18810,7 @@ to locate those styles in the editor.</property>
                                             <property name="label">\rb</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
-                                            <property name="focus-on-click">False</property>
+                                            <property name="focus_on-click">False</property>
                                             <property name="receives-default">True</property>
                                             <property name="tooltip-text" translatable="yes">Click to jump to the \rb marker in
 the style editor to change the
@@ -18847,7 +18831,7 @@ formatting of the ruby text.</property>
                                             <property name="label">\gloss|rb</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
-                                            <property name="focus-on-click">False</property>
+                                            <property name="focus_on-click">False</property>
                                             <property name="receives-default">True</property>
                                             <property name="tooltip-text" translatable="yes">Click to jump to the \gloss|rb 
 marker in the style editor to 
@@ -19092,7 +19076,7 @@ Shortcut key: &lt;Ctrl-S&gt;</property>
                             <property name="margin-top">5</property>
                             <property name="margin-bottom">5</property>
                             <property name="use-stock">True</property>
-                            <property name="always-show-image">True</property>
+                            <property name="always_show-image">True</property>
                             <signal name="clicked" handler="onSaveEdits" swapped="no"/>
                             <accelerator key="s" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                           </object>
@@ -19114,7 +19098,7 @@ of this file as it was when last saved.</property>
                             <property name="margin-top">5</property>
                             <property name="margin-bottom">5</property>
                             <property name="use-stock">True</property>
-                            <property name="always-show-image">True</property>
+                            <property name="always_show-image">True</property>
                             <signal name="clicked" handler="onRefreshViewerTextClicked" swapped="no"/>
                           </object>
                           <packing>
@@ -19149,7 +19133,7 @@ in the list to be printed.)</property>
                             <property name="wrap-width">5</property>
                             <property name="active">0</property>
                             <property name="has-entry">True</property>
-                            <property name="entry-text-column">0</property>
+                            <property name="entry_text-column">0</property>
                             <property name="id-column">0</property>
                             <signal name="changed" handler="onExamineBookChanged" swapped="no"/>
                             <child internal-child="entry">
@@ -19548,7 +19532,7 @@ cover using the online Canva.com tool (link provided).</property>
                             <property name="valign">center</property>
                             <property name="hexpand">True</property>
                             <property name="ellipsize">middle</property>
-                            <property name="max-width-chars">60</property>
+                            <property name="max_width-chars">60</property>
                           </object>
                           <packing>
                             <property name="left-attach">2</property>
@@ -19560,7 +19544,7 @@ cover using the online Canva.com tool (link provided).</property>
                             <property name="label" translatable="yes">Create book cover...</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
-                            <property name="focus-on-click">False</property>
+                            <property name="focus_on-click">False</property>
                             <property name="receives-default">True</property>
                             <property name="halign">start</property>
                             <property name="valign">end</property>
@@ -19918,8 +19902,8 @@ Front Matter</property>
                                     <property name="vscrollbar-policy">always</property>
                                     <property name="shadow-type">in</property>
                                     <property name="overlay-scrolling">False</property>
-                                    <property name="propagate-natural-width">True</property>
-                                    <property name="propagate-natural-height">True</property>
+                                    <property name="propagate_natural-width">True</property>
+                                    <property name="propagate_natural-height">True</property>
                                     <child>
                                       <object class="GtkTreeView" id="tv_zvarEdit">
                                         <property name="visible">True</property>
@@ -19933,7 +19917,7 @@ Front Matter</property>
                                         <property name="rules-hint">True</property>
                                         <property name="enable-search">False</property>
                                         <property name="search-column">0</property>
-                                        <property name="fixed-height-mode">True</property>
+                                        <property name="fixed_height-mode">True</property>
                                         <property name="show-expanders">False</property>
                                         <child internal-child="selection">
                                           <object class="GtkTreeSelection">
@@ -19950,7 +19934,7 @@ Front Matter</property>
                                             <property name="clickable">True</property>
                                             <property name="reorderable">True</property>
                                             <property name="sort-indicator">True</property>
-                                            <property name="sort-column-id">0</property>
+                                            <property name="sort_column-id">0</property>
                                             <child>
                                               <object class="GtkCellRendererText" id="cr_zvar_name"/>
                                               <attributes>
@@ -19968,7 +19952,7 @@ Front Matter</property>
                                             <property name="title" translatable="yes">Value</property>
                                             <property name="reorderable">True</property>
                                             <property name="sort-indicator">True</property>
-                                            <property name="sort-column-id">1</property>
+                                            <property name="sort_column-id">1</property>
                                             <child>
                                               <object class="GtkCellRendererText" id="cr_zvar_value">
                                                 <property name="editable">True</property>
@@ -20289,7 +20273,7 @@ file is selected, then these will appear in alphabetical order.</property>
                             <property name="halign">start</property>
                             <property name="valign">center</property>
                             <property name="ellipsize">middle</property>
-                            <property name="max-width-chars">70</property>
+                            <property name="max_width-chars">70</property>
                           </object>
                           <packing>
                             <property name="left-attach">2</property>
@@ -20431,7 +20415,7 @@ PDF Viewer:</property>
                                     <property name="label" translatable="yes">Visit SumatraPDF Download Page</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
-                                    <property name="focus-on-click">False</property>
+                                    <property name="focus_on-click">False</property>
                                     <property name="receives-default">True</property>
                                     <property name="halign">start</property>
                                     <property name="valign">end</property>
@@ -20472,7 +20456,7 @@ Annoyances or Other Issues:</property>
                                     <property name="name">Report an Issue with PTXprint</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
-                                    <property name="focus-on-click">False</property>
+                                    <property name="focus_on-click">False</property>
                                     <property name="receives-default">True</property>
                                     <property name="halign">start</property>
                                     <property name="valign">end</property>
@@ -20490,7 +20474,7 @@ Annoyances or Other Issues:</property>
                                     <property name="label" translatable="yes">Visit PTXprint's Home Page to Download Latest Version</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
-                                    <property name="focus-on-click">False</property>
+                                    <property name="focus_on-click">False</property>
                                     <property name="receives-default">True</property>
                                     <property name="halign">start</property>
                                     <property name="valign">end</property>
@@ -20561,7 +20545,7 @@ to the PTX2PDF Macros:</property>
                                     <property name="name">Refer to deeper technical help</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
-                                    <property name="focus-on-click">False</property>
+                                    <property name="focus_on-click">False</property>
                                     <property name="receives-default">True</property>
                                     <property name="halign">start</property>
                                     <property name="valign">end</property>
@@ -20631,7 +20615,7 @@ to the PTX2PDF Macros:</property>
                                     <property name="label" translatable="yes">Answers to Frequently Asked Questions (FAQs)</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
-                                    <property name="focus-on-click">False</property>
+                                    <property name="focus_on-click">False</property>
                                     <property name="receives-default">True</property>
                                     <property name="halign">start</property>
                                     <property name="valign">end</property>
@@ -20749,7 +20733,7 @@ ptxprint_support@sil.org</property>
                                     <property name="label" translatable="yes">Get help from other PTXprint users</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
-                                    <property name="focus-on-click">False</property>
+                                    <property name="focus_on-click">False</property>
                                     <property name="receives-default">True</property>
                                     <property name="halign">start</property>
                                     <property name="valign">end</property>
@@ -20789,7 +20773,7 @@ general users and common solutions.</property>
                                     <property name="margin-top">3</property>
                                     <property name="margin-bottom">3</property>
                                     <property name="use-stock">True</property>
-                                    <property name="always-show-image">True</property>
+                                    <property name="always_show-image">True</property>
                                     <signal name="clicked" handler="onAboutClicked" swapped="no"/>
                                   </object>
                                   <packing>
@@ -20844,7 +20828,7 @@ obtain help from others.</property>
                 <child>
                   <object class="GtkBox" id="tb_Logging">
                     <property name="can-focus">False</property>
-                    <property name="no-show-all">True</property>
+                    <property name="no_show-all">True</property>
                     <property name="halign">start</property>
                     <property name="orientation">vertical</property>
                     <child>
@@ -20885,7 +20869,7 @@ obtain help from others.</property>
                 <child type="tab">
                   <object class="GtkLabel" id="lb_Logging">
                     <property name="can-focus">False</property>
-                    <property name="no-show-all">True</property>
+                    <property name="no_show-all">True</property>
                     <property name="tooltip-text" translatable="yes">Display the output log 
 from XeTeX processing.</property>
                     <property name="halign">start</property>
@@ -20939,7 +20923,7 @@ depending on the level set here.</property>
                 <property name="model">ls_uiLevel</property>
                 <property name="wrap-width">1</property>
                 <property name="active">1</property>
-                <property name="entry-text-column">0</property>
+                <property name="entry_text-column">0</property>
                 <property name="id-column">1</property>
                 <property name="active-id">all</property>
                 <signal name="changed" handler="onUILevelChanged" swapped="no"/>
@@ -20981,7 +20965,7 @@ chosen language.</property>
                 <property name="sensitive">False</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">False</property>
-                <property name="no-show-all">True</property>
+                <property name="no_show-all">True</property>
                 <property name="tooltip-text" translatable="yes">A newer version of PTXprint is available.
 Click to visit download page on the website.</property>
                 <property name="halign">start</property>
@@ -21089,7 +21073,7 @@ be displayed (in red) just to the left.</property>
                 <property name="label" translatable="yes">Print</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">True</property>
-                <property name="no-show-all">True</property>
+                <property name="no_show-all">True</property>
                 <property name="tooltip-text" translatable="yes">The current configuration displayed is
 for the (second) part of the Diglot. If you
 want to print this text by itself (to check
@@ -21103,7 +21087,7 @@ print a diglot with both texts.</property>
                 <property name="margin-top">3</property>
                 <property name="margin-bottom">3</property>
                 <property name="resize-mode">immediate</property>
-                <property name="always-show-image">True</property>
+                <property name="always_show-image">True</property>
                 <signal name="clicked" handler="print2ndDiglotTextClicked" swapped="no"/>
                 <accelerator key="p" signal="activate" modifiers="GDK_CONTROL_MASK"/>
               </object>
@@ -21127,7 +21111,7 @@ print a diglot with both texts.</property>
                 <property name="margin-bottom">3</property>
                 <property name="resize-mode">immediate</property>
                 <property name="use-stock">True</property>
-                <property name="always-show-image">True</property>
+                <property name="always_show-image">True</property>
                 <signal name="clicked" handler="onCancel" swapped="no"/>
               </object>
               <packing>
@@ -21160,7 +21144,7 @@ Shortcut key: &lt;Ctrl-P&gt;</property>
                 <property name="margin-top">3</property>
                 <property name="margin-bottom">3</property>
                 <property name="resize-mode">immediate</property>
-                <property name="always-show-image">True</property>
+                <property name="always_show-image">True</property>
                 <signal name="clicked" handler="onOK" swapped="no"/>
                 <accelerator key="p" signal="activate" modifiers="GDK_CONTROL_MASK"/>
               </object>

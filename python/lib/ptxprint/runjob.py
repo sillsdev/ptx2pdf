@@ -554,7 +554,7 @@ class RunJob:
         return genfiles
 
     def wait(self):
-        logger.debug(f"Waiting for thread: {self.busy=}, {isLocked()}")
+        logger.debug("Waiting for thread: {}, {}".format(self.busy, isLocked()))
         if self.busy:
             self.thread.join()
         unlockme()
