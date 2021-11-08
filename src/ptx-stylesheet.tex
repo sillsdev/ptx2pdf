@@ -488,7 +488,7 @@
   % When this happens we make ll@p use llap to right justify the verse number at the current position.
   % Otherwise make ll@p do nothing.
   \ifdim\lastkern=-1sp \hangingversetrue\fi
-  \ifhangingverse\let\printverse\hangprintv@rse\else\let\printverse\defaultprintverse\fi
+  \ifhangingverse\let\printverse\hangprintverse\else\let\printverse\defaultprintverse\fi
   %\trace{hv}{lastkern \the\dimen0}%
   \bgroup\@v@}%
  %{.. was: \ll@p\bgroup\m@kedigitsother\@v@}%
@@ -656,9 +656,10 @@
 }
 \def\plainv@rse{\AdornVerseNumber{\v@rsefrom}\ifx\v@rsefrom\v@rseto       %(2)
                  \else\endash\AdornVerseNumber{\v@rseto}\fi}
-\def\hangprintv@rse{\ifx\v@rsefrom\v@rseto\relax\simpleprintv@rse
+\def\hangprintv@rse{\ifx\v@rsefrom\v@rseto\relax\defaultprintverse
     \else {\s@tsideskips{v} \h@ngprintv@rse{0}}\box0\fi
 }
+\def\hangprintverse{\llap\defaultprintverse}
 \def\adornv#1{\AdornVerseNumber{#1}}
 \def\ssf{\SuperscriptFactor}
 \lowercase{
@@ -673,7 +674,7 @@
     \trace{v}{hangprintverse height=\the\ht#1, width=\the\wd#1}}%
 }
 \let\defaultprintverse=\simpleprintv@rse
-\let\printverse=\simpleprintverse                                               %(1)
+\let\printverse=\defaultprintverse                                               %(1)
 \def\@ne{1}
 \def\AdornVerseNumber#1{#1}                                                     %(3)
 
