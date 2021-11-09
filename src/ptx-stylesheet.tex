@@ -851,6 +851,7 @@
 %\def\ss@MstnS{M}% Static milestones (unused)
 \def\ss@Mstn{m}% Floating milestones (always above a par style)
 \def\ss@Ctgy{t}%
+\def\ss@ParCtgy{T}% A category attached to (ended by) a paragraph style
 \def\ss@Sbar{s}%
 
 \mcp@pCont{P}{P}% new P pops P
@@ -861,6 +862,7 @@
 \mcp@pCont{s}{C}% Side bars pop character styles.
 \mcp@pCont{s}{c}% Side bars pop character styles.
 \mcp@pCont{t}{t}% new cat pops old cat
+\mcp@pCont{P}{T}% new paragraph pops old parcat
 \mcnp@pSt@re{*}{m}% Milestones are always stored.
 %Style end pops:
 \mcp@pCont{s*}{t}% sidebar end pops caT
@@ -869,6 +871,7 @@
 \mcp@pCont{s*}{C}% sidebar end pops Charstyle
 \mcp@pEnd{s*}{s}% sidebar end pops ONE sidebar, then finish
 \mcp@pEnd{t*}{t}% cat end pops one old cat, then finish
+\mcp@pEnd{t*}{T}% cat end pops one old cat, then finish
 \mcp@pCont{N*}{c}% Ending Note pops c
 \mcp@pCont{N*}{C}% Ending Note pops C
 \mcp@pCont{tc*}{C}% Ending table cell pops C (\char)
@@ -894,6 +897,7 @@
 \def\endit@c{\endch@rstylepls*}
 \def\endit@C{\endch@rstyle*}
 \def\endit@t{\@ndc@t}
+\def\endit@T{\@ndc@t}
 \def\whileitp@ps#1+#2\E{% This almost does the same as \end@llcharstyle, but uses the new mechanism
   \global\p@ppingtrue
   \global\let\wip@do=\d@
@@ -1262,12 +1266,17 @@
     %\endgroup %End the group started between the cat groups  
     %\cl@singhooks{after}{cat}%
   \fi
+  \ifx\stylet@pe\ss@Para
+    \let\stylet@pe\ss@ParCtgy
+  \else 
+    \let\stylet@pe\ss@Ctgy
+  \fi
   \x@\s@tc@tprefix{\nofin@lspace #1 \E}%
   \the\c@th@@ks% Run anythingthe enclosing code wants
   \op@ninghooks{before}{cat}% 
   \ifhmode\par\fi
   \begingroup % This group will be closed between the end and after hooks of endc@t %(1)
-  \mcpush{t+#1}%
+  \mcpush{\stylet@pe+#1}%
   \op@ninghooks{start}{cat}%
   \let\styst@k=\empty
   \s@tstyst@k{#1}%
