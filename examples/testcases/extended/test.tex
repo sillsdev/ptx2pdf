@@ -18,6 +18,7 @@
 \tracing{eb}
 \tracing{s}
 \tracing{g}
+\tracing{V}
 %\tracingmacros=1
 %\tracingassigns=1
 \categorysheet{mycats.sty}
@@ -51,5 +52,6 @@
 \sethook{end}{cat:foo|cat}{foo_hook>>}
 \csname ColorFontstrue\endcsname
 %\tracinggroups=1
+\setcvhook{TST1.15}{\message{HERE}\global\tracingparagraphs=1}
 \ptxfile{test.usfm}
 \bye

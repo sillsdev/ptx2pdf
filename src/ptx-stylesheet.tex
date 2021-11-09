@@ -179,7 +179,7 @@
 \def\tracestack{,}
 \def\pushtracing{\xdef\tracestack{\the\tracingmacros,\tracestack}\tracingmacros=0}
 \def\poptracing{\tracingmacros=\x@\cstackpeek\tracestack\E\xdef\tracestack{\x@\cstackpop\tracestack\E}}
-\def\s@tpossParams#1{\trace{s}{setpossParam {#1} (\styst@kskip / \styst@kfirst / \styst@k)}%
+\def\s@tpossParams#1{\trace{s}{setpossParam {#1}\m@rker (\styst@kskip / \styst@kfirst / \styst@k)}%
   \ifdiglot
      \edef\p@ssParams{#1\c@rrdstat,#1}%
   \else
@@ -213,7 +213,7 @@
    \trace{s}{1b. Checking \p@ssParams (\mspr@fix)}%
   \ifx\c@tprefix\empty\else
     \edef\@lso{\c@tprefix}%
-    \let\@ut=\empty \let\tmpd@=\d@\let\d@=\cspr@pend\x@\cstackdown \p@ssParams,\E \edef\p@ssParams{\@ut,\p@ssParams}\let\d@=\tmpd@
+    \let\@ut=\empty \let\tmpd@=\d@\let\d@=\cspr@pend\x@\cstackdown \p@ssParams,\E \edef\p@ssParams{\@ut,\ifx\m@rker\tmp \c@tprefix*,\fi\p@ssParams}\let\d@=\tmpd@
   \fi
   \trace{s}{2. Checking \p@ssParams}%
   \let\@ut\empty
@@ -896,8 +896,7 @@
 \def\itp@psstore{}
 \def\endit@c{\endch@rstylepls*}
 \def\endit@C{\endch@rstyle*}
-\def\endit@t{\@ndc@t}
-\def\endit@T{\@ndc@t}
+\def\endit@T{\egroup\@ndc@t}
 \def\whileitp@ps#1+#2\E{% This almost does the same as \end@llcharstyle, but uses the new mechanism
   \global\p@ppingtrue
   \global\let\wip@do=\d@
@@ -1240,19 +1239,21 @@
   \fi
   \trace{sc}{Stylesheet prefix for \c@tegory: '\c@tprefix'}%
 }
+\def\endc@tmarker{t*}
 \def\@ndc@t{%
+  \trace{sc}{@ndc@t}%
   \ifx\c@tegory\empty
     \trace{sc}{@ndc@t called with empty category. Eh?}%
   \else
-    \ifp@pping\else
       \cl@singhooks{end}{cat}% 
-      \end@llpoppedstyles{t*}%pop styles closed by and end of t
+      \ifp@pping\else
+        \end@llpoppedstyles{\endc@tmarker}%pop any styles closed by an end of t
+      \fi
       \endgroup %End the group started between the cat groups     %(3)
       \cl@singhooks{after}{cat}%
       \s@tc@tprefix{}%
       \the\afterh@@ks
       \egroup % End the group from the containing code.             %(4)
-    \fi
   \fi
 }
 % remember as c@t, onetime setup will define \cat to this, protecting the definition from stylesheet
@@ -1267,7 +1268,9 @@
     %\cl@singhooks{after}{cat}%
   \fi
   \ifx\stylet@pe\ss@Para
+    \bgroup % There is no containing group, so need to provide one.
     \let\stylet@pe\ss@ParCtgy
+    \tracinggroups=1
   \else 
     \let\stylet@pe\ss@Ctgy
   \fi
@@ -1275,14 +1278,16 @@
   \the\c@th@@ks% Run anythingthe enclosing code wants
   \op@ninghooks{before}{cat}% 
   \ifhmode\par\fi
-  \begingroup % This group will be closed between the end and after hooks of endc@t %(1)
+  \begingroup % This group will be closed between the end and after hooks of @ndc@t %(1)
   \mcpush{\stylet@pe+#1}%
   \op@ninghooks{start}{cat}%
   \let\styst@k=\empty
   \s@tstyst@k{#1}%
   \bgroup % This group will be closed by the end-of footnote marker / other container.  %(2)
   %I.e. we're borrowing the egroup from other bits of code.  
-  \aftergroup\@ndc@t %
+  \ifx\stylet@pe\ss@Ctgy
+    \aftergroup\@ndc@t %
+  \fi
 }
 \global\let\c@tprefix\empty % category-specific prefix
 \global\let\mspr@fix\empty % Milestone-specific prefix
