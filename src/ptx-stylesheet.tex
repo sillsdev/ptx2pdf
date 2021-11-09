@@ -893,6 +893,7 @@
 \def\itp@psstore{}
 \def\endit@c{\endch@rstylepls*}
 \def\endit@C{\endch@rstyle*}
+\def\endit@t{\@ndc@t}
 \def\whileitp@ps#1+#2\E{% This almost does the same as \end@llcharstyle, but uses the new mechanism
   \global\p@ppingtrue
   \global\let\wip@do=\d@
@@ -1239,14 +1240,16 @@
   \ifx\c@tegory\empty
     \trace{sc}{@ndc@t called with empty category. Eh?}%
   \else
-    \cl@singhooks{end}{cat}% 
-    \end@llpoppedstyles{t*}%pop styles closed by and end of t
-    \endgroup %End the group started between the cat groups     %(3)
-    \cl@singhooks{after}{cat}%
-    \s@tc@tprefix{}%
-    \the\afterh@@ks
+    \ifp@pping\else
+      \cl@singhooks{end}{cat}% 
+      \end@llpoppedstyles{t*}%pop styles closed by and end of t
+      \endgroup %End the group started between the cat groups     %(3)
+      \cl@singhooks{after}{cat}%
+      \s@tc@tprefix{}%
+      \the\afterh@@ks
+      \egroup % End the group from the containing code.             %(4)
+    \fi
   \fi
-  \egroup % End the group from the containing code.             %(4)
 }
 % remember as c@t, onetime setup will define \cat to this, protecting the definition from stylesheet
 \def\nofin@lspace #1 #2\E{#1}%Eat a final space
