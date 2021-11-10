@@ -115,6 +115,7 @@ Tenetur deleniti rerum minima dolor. Rerum autem ipsa ipsum autem quo a. Aut ut 
 \p This  esb of category "\showTheCategory" is testing the appropriate positioning.
 \esbe
 
+\s \cat testpar\cat* Categorised paragraphs
 \p
 \v 14 This is a paragraph of category "\showTheCategory" and is testing the appropriate
 formatting.

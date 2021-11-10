@@ -3,30 +3,75 @@
 Categories add an additional dimension to styling. While there are not may *contexts* in which they may be officially applied (USFM 3.0 allows only `\ef` and `\esb`), they allow alternative styles for almost all styling elements.
 [http://ubs-icap.org/chm/usfm/3.0/notes_study/categories.html]
 
-In the XeTeX macros, categories need to be enclosed by another marker. Some
+In the XeTeX macros, categories can apply to most markers. Normally they will be enclosed by another marker. Some
 markers form an explict enclosure (such as footnotes, cross-references and
 side-bars), others form an implicit enclosure, (such as tables), where the end marker 
-is implicitly provided by the following paragraph style. 
+is implicitly provided by the following paragraph style.  Paragraph styles (and section headers) 
+can now also have categories applied to them. In this case starting the category creates 
+an implicit enclosure, which is ended by the next paragraph style.
 
-Normal paragraph styles do *not* form any kind of an enclosure. 
-## Applying a category to  headings and sidebars
+## Applying a category to a paragraph
+```
+\p \cat 98\cat* This paragraph could be set using an alternative font  configuration  that 
+reduces the font width to 0.98 of the normal size. Note that there is nothing magic about the 
+numbers, the numbers are just a label.
+```
+The style sheet might then read:
+```
+\Marker cat:98|p
+\FontName GentiumPlus:expand=0.98
+```
+Alternatively, if the desire is to apply category 98 to *all* paragraph styles, the stylesheet can specify this:
+```
+\Marker cat:98|*
+\FontName GentiumPlus:expand=0.98
+```
+
+Parameters for paragraph styles are looked up in the following order:
+`cat:98|p`, `cat:98:*`, `p`, with the first match winning. 
+
+### `*` and character styles
+Style sheet entries like the above with `\Marker cat:98|*` do not apply to
+character styles. This is to avoid unexpected problems.
+If the `*` applied to all character styles as well as all paragraph styles, 
+then when formatting, say `\nd`, it  would look for parameters in this order:
+`cat:98|nd`, `cat:98:*`, `nd`.
+And this would mean that any special font selection for that style would be 
+lost in such paragraphs. If it were necessary to apply the font expansion to 
+this character class,  then an approach such as this would be necessary:
+
+```
+\Marker nd
+\FontName Zapf Chancery
+
+\Marker cat:98|nd
+\FontName Zapf Chancery:expand=0.98
+```
+
+
+## Applying a category to a block of  headings and sidebars
 A heading block (`\s..`) in the main body text may *seem* to form an
-implicit enclosure, but at the time of writing, the enclosure is not complete,
-and there is a persistance of category data beyond the heading block. Such
-behaviour is not fully defined and should in no way be relied on. The correct
-method to apply categorisation 
-to a heading block is to define an inline sidebar with `\Position h` (see below and (SideBars.md)[SideBars.md]).
+implicit enclosure, but as it is made of individual paragraphs there is no way
+to access this. Either every paragraph (`\mt`, `\mr1`, `\s1`, `\r`) 
+must have a specified `\cat` or an inline sidebar with `\Position h` (see below
+and (SideBars.md)[SideBars.md]) can be constructed to enclose the text.
+
 ```
 \esb \cat PossibleAddition\cat*
 \s The Woman Caught in Adultery
 \sr John 8:1-11
 \esb*
 ```
-As well as special formatting for the sidebar itself, (specifying the position
-on the page, similarly to figures and other parameters), all markers within the
-sidebar can have alternative values. Note that many of the options prevent a sidebar from 
-existing on both sides of a page or column break.
 
+
+### Categorised paragraphs vs paragraphs in sidebars
+The key similarities and differences between a sidebar and a paragraph with a category are as follows:
+
+1. A paragraph style with a category can inherit or change any and all parameters from the 'main' style.
+2. All paragraphs within a sidebar have the category of the sidebar
+3. A sidebar has special formatting for the sidebar itself, specifying things
+   like background colour, the position on the page, (similarly to figures) and other parameters.
+4. Most sidebar options prevent the bar from splitting across page boundaries or column breaks.
 
 ## Applying a category to footnotes
 ```

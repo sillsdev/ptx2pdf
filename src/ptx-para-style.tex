@@ -358,7 +358,6 @@
 
 \def\p@rstyle#1{\trace{ss}{p@rstyle: #1}%
  \endlastp@rstyle{#1}%
- \let\stylet@pe\ss@Para
  \ifn@npublishable\else
   \gdef\m@rker{#1}% remember the new style name
   \mcpushunderms{P+#1}%
@@ -421,6 +420,7 @@
     \ifhe@dings\endhe@dings\fi
     \s@tbaseline{\m@rker}%
   \fi
+ \let\stylet@pe\ss@Para % Thus must come this late, or grouping gives odd results sometimes..
   \getp@ram{spacebefore}{\m@rker}% output <spacebefore> for this style
   \ifx\p@ram\relax \else
     \ifhe@dings\nobreak\fi

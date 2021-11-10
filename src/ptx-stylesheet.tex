@@ -896,7 +896,9 @@
 \def\itp@psstore{}
 \def\endit@c{\endch@rstylepls*}
 \def\endit@C{\endch@rstyle*}
-\def\endit@T{\egroup\@ndc@t}
+\def\endit@T{\cl@singhooks{end}{cat}\par\egroup\@ndc@t} %Must call closing hooks before end of group,
+\def\endit@t{\cl@singhooks{end}{cat}} %@ndcat does not call closing hooks now.
+
 \def\whileitp@ps#1+#2\E{% This almost does the same as \end@llcharstyle, but uses the new mechanism
   \global\p@ppingtrue
   \global\let\wip@do=\d@
@@ -1245,7 +1247,6 @@
   \ifx\c@tegory\empty
     \trace{sc}{@ndc@t called with empty category. Eh?}%
   \else
-      \cl@singhooks{end}{cat}% 
       \ifp@pping\else
         \end@llpoppedstyles{\endc@tmarker}%pop any styles closed by an end of t
       \fi
@@ -1260,7 +1261,7 @@
 \def\nofin@lspace #1 #2\E{#1}%Eat a final space
 \def\c@t #1\cat*{%
   \ifx\c@tegory\empty\else                                      %(5)
-    \trace{sc}{Odd situation: two \\cat commands in one group or nested categories? Assuming nesting.}%
+    \trace{sc}{Odd situation: two cat commands in one group or nested categories? Assuming nesting.}%
     \end@llpoppedstyles{t}%pop styles closed by a start of t, in case this IS 2 cat commands
     % Assume nesting and don't run any endhooks. Otherwise we'd do this:
     %\op@ninghooks{end}{cat}% 
