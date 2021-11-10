@@ -1048,13 +1048,16 @@ class TexModel:
                     doc = self._makeUSFM(dat.splitlines(True), bk)
                 if doc is not None:
                     if not self.asBool("document/bookintro") or not self.asBool("document/introoutline"):
+                        logger.debug("stripIntro")
                         doc.stripIntro(not self.asBool("document/bookintro"), not self.asBool("document/introoutline"))
                     if self.asBool("document/hidemptyverses"):
+                        logger.debug("stripEmptyChVs")
                         doc.stripEmptyChVs(ellipsis=self.asBool("document/elipsizemptyvs"))
 
             if self.dict['fancy/endayah'] == "":
                 if doc is None:
                     doc = self._makeUSFM(dat.splitlines(True), bk)
+                logger.debug("versesToEnd")
                 doc.versesToEnd()
 
             if doc is not None and getattr(doc, 'doc', None) is not None:
@@ -1083,8 +1086,10 @@ class TexModel:
         try:
             doc = Usfm(txtlines, self.sheets)
             while len(doc.doc) > 1:
-                if str(doc.doc[0]) == "\n":
+                if str(doc.doc[0]) in ("\n", "\r\n"):
                     doc.doc.pop(0)
+                else:
+                    break
             if len(doc.doc) != 1:
                 raise ValueError("Badly formed USFM. Probably missing a \\id line")
             doc.normalise()
