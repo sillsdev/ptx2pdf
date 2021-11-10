@@ -896,8 +896,8 @@
 \def\itp@psstore{}
 \def\endit@c{\endch@rstylepls*}
 \def\endit@C{\endch@rstyle*}
-\def\endit@T{\cl@singhooks{end}{cat}\par\egroup\@ndc@t} %Must call closing hooks before end of group,
-\def\endit@t{\cl@singhooks{end}{cat}} %@ndcat does not call closing hooks now.
+\def\endit@T{\cl@singhooks{end}{cat}\par\mcpopsimple\egroup\@ndc@t} %Must call closing hooks before end of group, Must call mcpopsimple.
+\def\endit@t{\cl@singhooks{end}{cat}\mcpopsimple}
 
 \def\whileitp@ps#1+#2\E{% This almost does the same as \end@llcharstyle, but uses the new mechanism
   \global\p@ppingtrue
