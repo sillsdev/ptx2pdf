@@ -535,7 +535,7 @@ class RunJob:
             if a not in texinputs:
                 texinputs.append(a)
         # print("TEXINPUTS=",os.getenv('TEXINPUTS'))
-        miscfonts = getfontcache().fontpaths
+        miscfonts = getfontcache().fontpaths[:]
         if sys.platform != "win32":
             a = "/usr/share/ptx2pdf/texmacros"
             if a not in texinputs:

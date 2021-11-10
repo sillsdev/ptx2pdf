@@ -1082,11 +1082,12 @@ class TexModel:
             return bn
             
     def _makeUSFM(self, txtlines, bk):
+        # import pdb; pdb.set_trace()
         syntaxErrors = []
         try:
             doc = Usfm(txtlines, self.sheets)
             while len(doc.doc) > 1:
-                if str(doc.doc[0]) in ("\n", "\r\n"):
+                if isinstance(doc.doc[0], sfm.Text):
                     doc.doc.pop(0)
                 else:
                     break

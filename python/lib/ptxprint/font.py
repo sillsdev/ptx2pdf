@@ -154,6 +154,7 @@ class TTFontCache:
             self.addFontDir(p, noadd=True)
         
     def addFontDir(self, path, noadd=False):
+        logger.debug("add Font Path: {}, {}".format(path, noadd))
         if not noadd:
             logger.debug(f"Add font path: {path}")
             self.fontpaths.append(path)
@@ -165,6 +166,7 @@ class TTFontCache:
                 self.cache.setdefault(f.family, {})[f.style] = fpath
 
     def removeFontDir(self, path):
+        logger.debug("add Font Path: {}".format(path))
         self.fontpaths.remove(path)
         logger.debug(f"Remove font path: {path}")
         allitems = list(self.cache.items())
