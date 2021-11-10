@@ -2670,10 +2670,13 @@ class GtkViewModel(ViewModel):
                 self.picListView.onRadioChanged()
 
     def _onPDFClicked(self, title, isSingle, basedir, ident, attr, btn):
+        folderattr = getattr(self, attr, None)
+        if folderattr is None:
+            folderattr = basedir if isSingle else [basedir]
         if isSingle:
-            fldr = os.path.dirname(getattr(self, attr, "") or "")
+            fldr = os.path.dirname(folderattr)
         else:
-            fldr = os.path.dirname(getattr(self, attr, "")[0] or "")
+            fldr = os.path.dirname(folderattr[0])
         if not os.path.exists(fldr):
             fldr = basedir
         vals = self.fileChooser(title,
