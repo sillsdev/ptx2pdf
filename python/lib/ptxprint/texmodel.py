@@ -980,6 +980,8 @@ class TexModel:
         if self.changes is None:
             if self.asBool('project/usechangesfile'):
                 # print("Applying PrntDrftChgs:", os.path.join(prjdir, 'PrintDraftChanges.txt'))
+                #cpath = self.printer.configPath(self.printer.configName())
+                #self.changes = self.readChanges(os.path.join(cpath, 'changes.txt'), bk)
                 self.changes = self.readChanges(os.path.join(prjdir, 'PrintDraftChanges.txt'), bk)
             else:
                 self.changes = []
@@ -1141,44 +1143,55 @@ class TexModel:
                     continue
                 contexts = []
                 atcontexts = []
-                try:
-                    # test for "at" command
-                    m = re.match(r"^\s*at\s+(.*?)\s+(?=in|['\"])", l)
-                    if m:
-                        atref = RefList.fromStr(m.group(1), context=AnyBooks)
-                        for r in atref.allrefs():
-                            if r.chap == 0:
-                                atcontexts.append((r.book, None))
-                            elif r.verse == 0:
-                                atcontexts.append((r.book, regex.compile(r"(?<=\\c {}(?=\D)).*?($|\\[cv] )".format(r.chap), flags=regex.S)))
-                            else:
-                                atcontexts.append((r.book, regex.compile(r"(?<=\\c {}(?=\D)(?:.(?!\\c))*?)\\v {}[ -].*?($|\\[cv] )".format(r.chap, r.verse), flags=regex.S)))
-                        l = l[m.end():].strip()
-                    else:
-                        atcontexts = [None]
-                    # test for 1+ "in" commands
-                    while True:
-                        m = re.match(r"^\s*in\s+"+qreg+r"\s*:\s*", l)
-                        if not m:
-                            break
+                m = re.match(r"^\s*include\s+(['\"])(.*?)\1", l)
+                if m:
+                    cpath = self.printer.configPath(self.printer.configName())
+                    changes.extend(self.readChanges(os.path.join(cpath, m.group(2)), bk))
+                    continue
+                # test for "at" command
+                m = re.match(r"^\s*at\s+(.*?)\s+(?=in|['\"])", l)
+                if m:
+                    atref = RefList.fromStr(m.group(1), context=AnyBooks)
+                    for r in atref.allrefs():
+                        if r.chap == 0:
+                            atcontexts.append((r.book, None))
+                        elif r.verse == 0:
+                            atcontexts.append((r.book, regex.compile(r"(?<=\\c {}(?=\D)).*?($|\\[cv] )".format(r.chap), flags=regex.S)))
+                        else:
+                            atcontexts.append((r.book, regex.compile(r"(?<=\\c {}(?=\D)(?:.(?!\\c))*?)\\v {}[ -].*?($|\\[cv] )".format(r.chap, r.verse), flags=regex.S)))
+                    l = l[m.end():].strip()
+                else:
+                    atcontexts = [None]
+                # test for 1+ "in" commands
+                while True:
+                    m = re.match(r"^\s*in\s+"+qreg+r"\s*:\s*", l)
+                    if not m:
+                        break
+                    try:
                         contexts.append(regex.compile(m.group(1) or m.group(2), flags=regex.M))
-                        l = l[m.end():].strip()
-                    # capture the actual change
-                    m = re.match(r"^"+qreg+r"\s*>\s*"+qreg, l)
-                    if m:
-                        for at in atcontexts:
-                            if at is None:
-                                context = self.make_contextsfn(None, *contexts) if len(contexts) else None
-                            elif len(contexts) or at[1] is not None:
-                                context = self.make_contextsfn(at[0], at[1], *contexts)
-                            else:
-                                context = at[0]
+                    except re.error as e:
+                        self.printer.doError("Regular expression error: {} in changes file at line {}".format(str(e), i+1),
+                                             show=not self.printer.get("c_quickRun"))
+                        break
+                    l = l[m.end():].strip()
+                # capture the actual change
+                m = re.match(r"^"+qreg+r"\s*>\s*"+qreg, l)
+                if m:
+                    for at in atcontexts:
+                        if at is None:
+                            context = self.make_contextsfn(None, *contexts) if len(contexts) else None
+                        elif len(contexts) or at[1] is not None:
+                            context = self.make_contextsfn(at[0], at[1], *contexts)
+                        else:
+                            context = at[0]
+                        try:
                             changes.append((context, regex.compile(m.group(1) or m.group(2), flags=regex.M),
-                                            m.group(3) or m.group(4) or ""))
-                        continue
-                except re.error as e:
-                    self.printer.doError("Regular expression error: {} in changes file at line {}".format(str(e), i+1),
-                                         show=not self.printer.get("c_quickRun"))
+                                        m.group(3) or m.group(4) or ""))
+                        except re.error as e:
+                            self.printer.doError("Regular expression error: {} in changes file at line {}".format(str(e), i+1),
+                                                 show=not self.printer.get("c_quickRun"))
+                            break
+                    continue
         return changes
 
     def makelocalChanges(self, printer, bk, chaprange=None):
