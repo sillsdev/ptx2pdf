@@ -648,7 +648,7 @@ class parser(collections.Iterable):
         if parent is None:
             return tag
         stype = self._sty.get(tok.lstrip('+'),{}).get('StyleType', None)
-        if style == 'Standalone':
+        if stype == 'Standalone':
             return None
 
         # Check for the expected end markers with no separator and

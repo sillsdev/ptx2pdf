@@ -1082,6 +1082,9 @@ class TexModel:
         syntaxErrors = []
         try:
             doc = Usfm(txtlines, self.sheets)
+            while len(doc.doc) > 1:
+                if str(doc.doc[0]) == "\n":
+                    doc.doc.pop(0)
             if len(doc.doc) != 1:
                 raise ValueError("Badly formed USFM. Probably missing a \\id line")
             doc.normalise()
@@ -1145,8 +1148,7 @@ class TexModel:
                 atcontexts = []
                 m = re.match(r"^\s*include\s+(['\"])(.*?)\1", l)
                 if m:
-                    cpath = self.printer.configPath(self.printer.configName())
-                    changes.extend(self.readChanges(os.path.join(cpath, m.group(2)), bk))
+                    changes.extend(self.readChanges(os.path.join(os.path.basename(fname), m.group(2)), bk))
                     continue
                 # test for "at" command
                 m = re.match(r"^\s*at\s+(.*?)\s+(?=in|['\"])", l)

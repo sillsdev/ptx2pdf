@@ -387,12 +387,18 @@ def usfmerge2(infilea, infileb, outfile, stylesheetsa=[], stylesheetsb=[], fseco
     with open(infilea, encoding="utf-8") as inf:
         doc = list(usfm.parser(inf, stylesheet=stylesheeta,
                                canonicalise_footnotes=False, tag_escapes=tag_escapes))
+        while len(doc) > 1:
+            if str(doc[0]) == "\n":
+                doc.pop(0)
         pcoll = Collector(doc=doc, fsecondary=fsecondary, stylesheet=stylesheeta)
     mainchunks = {c.ident: c for c in pcoll.acc}
 
     with open(infileb, encoding="utf-8") as inf:
         doc = list(usfm.parser(inf, stylesheet=stylesheetb,
                                canonicalise_footnotes=False, tag_escapes=tag_escapes))
+        while len(doc) > 1:
+            if str(doc[0]) == "\n":
+                doc.pop(0)
         scoll = Collector(doc=doc, primary=False, stylesheet=stylesheetb)
     secondchunks = {c.ident: c for c in scoll.acc}
 
