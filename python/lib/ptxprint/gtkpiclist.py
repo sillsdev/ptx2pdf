@@ -442,7 +442,7 @@ class PicList:
     def add_row(self):
         global newrowcounter
         model, sel = self.selection.get_selected_rows()
-        if sel is not None:
+        if sel is not None and len(sel):
             sel = model.convert_path_to_child_path(sel[0])
         if sel is not None and len(self.model) > 0:
             row = self.model[self.model.get_iter(sel)][:]

@@ -1803,7 +1803,7 @@
 \newcount\im@gecount
 
 \newif\ifendbooknoeject \endbooknoejectfalse
-\def\pagebreak{
+\def\pagebreak{\ifhmode\par\fi
   \ifsk@pping \egroup \fi%
   \ifhe@dings\endhe@dings\fi%
   \ifdiglot \vbox to 0pt{}\fi%

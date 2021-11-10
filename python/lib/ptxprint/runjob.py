@@ -256,6 +256,7 @@ class RunJob:
 
     def done_job(self, outfname, pdfname, info):
         # Work out what the resulting PDF was called
+        logger.debug(f"done_job: {outfname}, {pdfname}")
         cfgname = info['config/name']
         if cfgname is not None and cfgname != "":
             cfgname = "-"+cfgname
@@ -372,6 +373,7 @@ class RunJob:
     def dojob(self, jobs, info):
         donebooks = []
         for b in jobs:
+            logger.debug(f"Converting {b} in {self.tmpdir} from {self.prjdir}")
             try:
                 out = info.convertBook(b, None, self.tmpdir, self.prjdir)
             except FileNotFoundError as e:
@@ -430,6 +432,7 @@ class RunJob:
             chaprange = (-1, -1)
         logger.debug('Diglot processing jobs: {}'.format(jobs))
         for b in jobs:
+            logger.debug(f"Diglot({b}): f{self.tmpdir} from f{self.prjdir}")
             try:
                 out = info.convertBook(b, chaprange, self.tmpdir, self.prjdir)
                 digout = diginfo.convertBook(b, chaprange, self.tmpdir, digprjdir, letterspace="\ufdd1")
@@ -453,6 +456,7 @@ class RunJob:
 
             sheetsa = info.printer.getStyleSheets()
             sheetsb = diginfo.printer.getStyleSheets()
+            logger.debug(f"usfmerge2({left}, {right})")
             try:
                 usfmerge2(left, right, outFile, stylesheetsa=sheetsa, stylesheetsb=sheetsb, mode=info["document/diglotmergemode"])
             except SyntaxError as e:
@@ -531,7 +535,7 @@ class RunJob:
             if a not in texinputs:
                 texinputs.append(a)
         # print("TEXINPUTS=",os.getenv('TEXINPUTS'))
-        miscfonts = getfontcache().fontpaths
+        miscfonts = getfontcache().fontpaths[:]
         if sys.platform != "win32":
             a = "/usr/share/ptx2pdf/texmacros"
             if a not in texinputs:
@@ -581,6 +585,7 @@ class RunJob:
                 action = outfname
             else:
                 action = r"\def\ForcedLooseness{{{}}}\input {}".format(self.forcedlooseness, outfname)
+            logger.debug(f"Running: {cmd} {action}")
             runner = call(cmd + [action], cwd=self.tmpdir)
             if isinstance(runner, subprocess.Popen) and runner is not None:
                 try:
@@ -638,6 +643,7 @@ class RunJob:
             if self.args.extras & 7:
                 cmd += ["-" + ("v" * (self.args.extras & 7))]
             runner = call(cmd + [outfname.replace(".tex", ".xdv")], cwd=self.tmpdir)
+            logger.debug(f"Running: {cmd} for {outfname}")
             if self.args.extras & 1:
                 print(f"Subprocess return value: {runner}")
             if isinstance(runner, subprocess.Popen) and runner is not None:
@@ -698,6 +704,7 @@ class RunJob:
         cropme = info['document/iffigcrop']
         def carefulCopy(p, src, tgt):
             ratio = pageRatios[0 if p['size'].startswith("span") else 1] if p.get('pgpos', 'N') in 'tbhp' else None
+            logger.debug(f"carefulcopy {src} -> {tgt} @ {ratio}")
             return self.carefulCopy(ratio, src, tgt, cropme)
         missingPics = []
         if info['document/ifinclfigs'] == 'false':

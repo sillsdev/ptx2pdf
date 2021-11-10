@@ -31,3 +31,4 @@
 *.zip    binary
 *.ods    binary
 *.tfm    binary
+python/scripts/ptxprint text ident

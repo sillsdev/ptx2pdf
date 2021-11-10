@@ -625,7 +625,7 @@ class TexModel:
                 bspace = float(self.dict['notes/below{}rulespace'.format(notemap[a[1]])] or 0.)
                 dat.append(r"\def\Below{}NoteRuleSpace{{{:.1f} pt}}".format(a[0], bspace))
                 aspace = float(self.dict['notes/above{}space'.format(notemap[a[1]])] or 0.) + bspace
-                dat.append(r"\Above{}NoteSpace={:.1f} pt".format(a[0] if a[1] != "fn" else "", aspace))
+                dat.append(r"\Above{}NoteSpace={:.1f} pt".format(a[0] if a[0] != "Foot" else "", aspace))
             self.dict['noterules/{}'.format(a[0].lower())] = "\n".join(dat)
         self.dict['noterules/endnotemarkers'] = "\n".join(endnotes)
 
@@ -980,6 +980,8 @@ class TexModel:
         if self.changes is None:
             if self.asBool('project/usechangesfile'):
                 # print("Applying PrntDrftChgs:", os.path.join(prjdir, 'PrintDraftChanges.txt'))
+                #cpath = self.printer.configPath(self.printer.configName())
+                #self.changes = self.readChanges(os.path.join(cpath, 'changes.txt'), bk)
                 self.changes = self.readChanges(os.path.join(prjdir, 'PrintDraftChanges.txt'), bk)
             else:
                 self.changes = []
@@ -1046,13 +1048,16 @@ class TexModel:
                     doc = self._makeUSFM(dat.splitlines(True), bk)
                 if doc is not None:
                     if not self.asBool("document/bookintro") or not self.asBool("document/introoutline"):
+                        logger.debug("stripIntro")
                         doc.stripIntro(not self.asBool("document/bookintro"), not self.asBool("document/introoutline"))
                     if self.asBool("document/hidemptyverses"):
+                        logger.debug("stripEmptyChVs")
                         doc.stripEmptyChVs(ellipsis=self.asBool("document/elipsizemptyvs"))
 
             if self.dict['fancy/endayah'] == "":
                 if doc is None:
                     doc = self._makeUSFM(dat.splitlines(True), bk)
+                logger.debug("versesToEnd")
                 doc.versesToEnd()
 
             if doc is not None and getattr(doc, 'doc', None) is not None:
@@ -1077,9 +1082,15 @@ class TexModel:
             return bn
             
     def _makeUSFM(self, txtlines, bk):
+        # import pdb; pdb.set_trace()
         syntaxErrors = []
         try:
             doc = Usfm(txtlines, self.sheets)
+            while len(doc.doc) > 1:
+                if isinstance(doc.doc[0], sfm.Text):
+                    doc.doc.pop(0)
+                else:
+                    break
             if len(doc.doc) != 1:
                 raise ValueError("Badly formed USFM. Probably missing a \\id line")
             doc.normalise()
@@ -1141,44 +1152,54 @@ class TexModel:
                     continue
                 contexts = []
                 atcontexts = []
-                try:
-                    # test for "at" command
-                    m = re.match(r"^\s*at\s+(.*?)\s+(?=in|['\"])", l)
-                    if m:
-                        atref = RefList.fromStr(m.group(1), context=AnyBooks)
-                        for r in atref.allrefs():
-                            if r.chap == 0:
-                                atcontexts.append((r.book, None))
-                            elif r.verse == 0:
-                                atcontexts.append((r.book, regex.compile(r"(?<=\\c {}(?=\D)).*?($|\\[cv] )".format(r.chap), flags=regex.S)))
-                            else:
-                                atcontexts.append((r.book, regex.compile(r"(?<=\\c {}(?=\D)(?:.(?!\\c))*?)\\v {}[ -].*?($|\\[cv] )".format(r.chap, r.verse), flags=regex.S)))
-                        l = l[m.end():].strip()
-                    else:
-                        atcontexts = [None]
-                    # test for 1+ "in" commands
-                    while True:
-                        m = re.match(r"^\s*in\s+"+qreg+r"\s*:\s*", l)
-                        if not m:
-                            break
+                m = re.match(r"^\s*include\s+(['\"])(.*?)\1", l)
+                if m:
+                    changes.extend(self.readChanges(os.path.join(os.path.basename(fname), m.group(2)), bk))
+                    continue
+                # test for "at" command
+                m = re.match(r"^\s*at\s+(.*?)\s+(?=in|['\"])", l)
+                if m:
+                    atref = RefList.fromStr(m.group(1), context=AnyBooks)
+                    for r in atref.allrefs():
+                        if r.chap == 0:
+                            atcontexts.append((r.book, None))
+                        elif r.verse == 0:
+                            atcontexts.append((r.book, regex.compile(r"(?<=\\c {}(?=\D)).*?($|\\[cv] )".format(r.chap), flags=regex.S)))
+                        else:
+                            atcontexts.append((r.book, regex.compile(r"(?<=\\c {}(?=\D)(?:.(?!\\c))*?)\\v {}[ -].*?($|\\[cv] )".format(r.chap, r.verse), flags=regex.S)))
+                    l = l[m.end():].strip()
+                else:
+                    atcontexts = [None]
+                # test for 1+ "in" commands
+                while True:
+                    m = re.match(r"^\s*in\s+"+qreg+r"\s*:\s*", l)
+                    if not m:
+                        break
+                    try:
                         contexts.append(regex.compile(m.group(1) or m.group(2), flags=regex.M))
-                        l = l[m.end():].strip()
-                    # capture the actual change
-                    m = re.match(r"^"+qreg+r"\s*>\s*"+qreg, l)
-                    if m:
-                        for at in atcontexts:
-                            if at is None:
-                                context = self.make_contextsfn(None, *contexts) if len(contexts) else None
-                            elif len(contexts) or at[1] is not None:
-                                context = self.make_contextsfn(at[0], at[1], *contexts)
-                            else:
-                                context = at[0]
+                    except re.error as e:
+                        self.printer.doError("Regular expression error: {} in changes file at line {}".format(str(e), i+1),
+                                             show=not self.printer.get("c_quickRun"))
+                        break
+                    l = l[m.end():].strip()
+                # capture the actual change
+                m = re.match(r"^"+qreg+r"\s*>\s*"+qreg, l)
+                if m:
+                    for at in atcontexts:
+                        if at is None:
+                            context = self.make_contextsfn(None, *contexts) if len(contexts) else None
+                        elif len(contexts) or at[1] is not None:
+                            context = self.make_contextsfn(at[0], at[1], *contexts)
+                        else:
+                            context = at[0]
+                        try:
                             changes.append((context, regex.compile(m.group(1) or m.group(2), flags=regex.M),
-                                            m.group(3) or m.group(4) or ""))
-                        continue
-                except re.error as e:
-                    self.printer.doError("Regular expression error: {} in changes file at line {}".format(str(e), i+1),
-                                         show=not self.printer.get("c_quickRun"))
+                                        m.group(3) or m.group(4) or ""))
+                        except re.error as e:
+                            self.printer.doError("Regular expression error: {} in changes file at line {}".format(str(e), i+1),
+                                                 show=not self.printer.get("c_quickRun"))
+                            break
+                    continue
         return changes
 
     def makelocalChanges(self, printer, bk, chaprange=None):

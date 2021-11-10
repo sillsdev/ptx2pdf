@@ -91,6 +91,7 @@ elif args.logging:
         except FileNotFoundError as e:      # no write access to the log
             print("Exception", e)
     log = logging.getLogger('ptxprint')
+    log.info("git sha: $Id$")
 
 if log is not None and getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
     sys.stdio = StreamLogger(log, logging.INFO)

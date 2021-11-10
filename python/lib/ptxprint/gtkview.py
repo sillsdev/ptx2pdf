@@ -31,7 +31,7 @@ from ptxprint.texmodel import TexModel, ModelMap
 from ptxprint.minidialog import MiniDialog
 from ptxprint.dbl import UnpackDBL
 import ptxprint.scriptsnippets as scriptsnippets
-from ptxprint.utils import _, f_, textocol
+from ptxprint.utils import _, f_, textocol, _allbkmap
 import configparser, logging
 from threading import Thread
 
@@ -98,18 +98,6 @@ _alldigits = [ "Default", "Adlam", "Ahom", "Arabic-Indic", "Balinese", "Bengali"
     "Mro", "Myanmar", "Myanmar-Shan", "Myanmar-Tai-Laing", "New-Tai-Lue", "Newa", "Nko", "Nyiakeng-Puachue-Hmong", "Ol-Chiki", "Oriya", 
     "Osmanya", "Pahawh-Hmong", "Rumi", "Saurashtra", "Sharada", "Sinhala-Lith", "Sora-Sompeng", "Sundanese", "Tai-Tham-Hora", 
     "Tai-Tham-Tham", "Takri", "Tamil", "Telugu", "Thai", "Tibetan", "Tirhuta", "Vai", "Wancho", "Warang-Citi", "Western-Cham"]
-
-_allbooks = ["FRT", "INT", 
-            "GEN", "EXO", "LEV", "NUM", "DEU", "JOS", "JDG", "RUT", "1SA", "2SA", "1KI", "2KI", "1CH", "2CH", "EZR", "NEH", "EST",
-            "JOB", "PSA", "PRO", "ECC", "SNG", "ISA", "JER", "LAM", "EZK", "DAN", "HOS", "JOL", "AMO", "OBA", "JON", "MIC", "NAM",
-            "HAB", "ZEP", "HAG", "ZEC", "MAL", 
-            "TOB", "JDT", "ESG", "WIS", "SIR", "BAR", "LJE", "S3Y", "SUS", "BEL", 
-            "1MA", "2MA", "3MA", "4MA", "1ES", "2ES", "MAN", "PS2", "DAG", "LAO",
-            "MAT", "MRK", "LUK", "JHN", "ACT", "ROM", "1CO", "2CO", "GAL", "EPH", "PHP", "COL", "1TH", "2TH", "1TI", "2TI", "TIT",
-            "PHM", "HEB", "JAS", "1PE", "2PE", "1JN", "2JN", "3JN", "JUD", "REV", 
-            "XXA", "XXB", "XXC", "XXD", "XXE", "XXF", "XXG",
-            "GLO", "TDX", "NDX", "CNC", "OTH", "BAK"]
-_allbkmap = {k: i for i, k in enumerate(_allbooks)} 
 
 _ui_minimal = """
 bx_statusBar fcb_uiLevel
@@ -352,6 +340,9 @@ _olst = ["fr_SavedConfigSettings", "tb_Layout", "tb_Font", "tb_Body", "tb_NotesR
          "tb_Advanced", "tb_Logging", "tb_TabsBorders", "tb_Diglot", "tb_StyleEditor", "tb_ViewerEditor", "tb_Help"]
 
 def _doError(text, secondary="", title=None, copy2clip=False, show=True):
+    logger.error(text)
+    if secondary:
+        logger.error(secondary)
     if copy2clip:
         lines = [title or ""]
         if text is not None and len(text):
@@ -2682,10 +2673,13 @@ class GtkViewModel(ViewModel):
                 self.picListView.onRadioChanged()
 
     def _onPDFClicked(self, title, isSingle, basedir, ident, attr, btn):
+        folderattr = getattr(self, attr, None)
+        if folderattr is None:
+            folderattr = basedir if isSingle else [basedir]
         if isSingle:
-            fldr = os.path.dirname(getattr(self, attr, "") or "")
+            fldr = os.path.dirname(folderattr)
         else:
-            fldr = os.path.dirname(getattr(self, attr, "")[0] or "")
+            fldr = os.path.dirname(folderattr[0])
         if not os.path.exists(fldr):
             fldr = basedir
         vals = self.fileChooser(title,

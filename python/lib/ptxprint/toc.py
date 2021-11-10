@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 import re
-from ptxprint.utils import bookcodes
+from ptxprint.utils import bookcodes, _allbkmap
 from ptxprint.sfm.ducet import get_sortkey, SHIFTTRIM, tailored
 
 def parsetoc(infname):
@@ -20,7 +20,14 @@ def parsetoc(infname):
                     break
     return tocentries
 
-bkranges = {'ot': (0, 40), 'nt': (40, 68), 'dc': (67, 87)}
+# bkranges = {'ot': (0, 40), 'nt': (40, 68), 'dc': (67, 87)}
+
+bkranges = {'ot':   [b for b, i in _allbkmap.items() if 1  < i < 41],
+            'nt':   [b for b, i in _allbkmap.items() if 60 < i < 88],
+            'dc':   [b for b, i in _allbkmap.items() if 40 < i < 61],
+            'pre':  [b for b, i in _allbkmap.items() if 0 <= i < 2],
+            'post': [b for b, i in _allbkmap.items() if 87 < i]}
+
 
 def sortToC(toc, booklist):
     bknums = {k:i for i,k in enumerate(booklist)}
@@ -33,7 +40,7 @@ def createtocvariants(toc, booklist, ducet=None):
         ttoc = []
         for e in toc:
             try:
-                if r[0] < int(bookcodes.get(e[0], -1)) < r[1]:
+                if e[0] in r: # r[0] < int(bookcodes.get(e[0], -1)) < r[1]:
                     ttoc.append(e)
             except ValueError:
                 pass

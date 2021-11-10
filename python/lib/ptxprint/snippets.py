@@ -258,7 +258,7 @@ class FancyBorders(Snippet):
 {%E%fancy/versedecoratorisfile}    \raise {%E%fancy/versedecoratorshift}pt\copy\versestarbox%D%\endL}}
 {%E%fancy/versedecoratorisayah}\catcode`@=11\catcode`-=11\catcode`\~=12\lccode`\~=32\lowercase{{%
 {%E%fancy/versedecoratorisayah} \def\vp #1\vp*{{\edef\temp{{#1}}\x@\spl@tverses\temp --\relax
-{%E%fancy/versedecoratorisayah}  \ch@rstyle{{vp}}~\printv@rse\ch@rstylepls{{vp}}*\kern 2\FontSizeUnit}}}}
+{%E%fancy/versedecoratorisayah}  \ch@rstyle{{vp}}~\plainv@rse\ch@rstylepls{{vp}}*\kern 2\FontSizeUnit}}}}
 {%E%fancy/versedecoratorisayah}\catcode`@=12\catcode`=12
 {%E%fancy/versedecoratorisayah}\def\AdornVerseNumber#1{{\hbox{{\char"06DD #1}}}}
 """.replace("%D%", replaceD).replace("%E%", replaceE)

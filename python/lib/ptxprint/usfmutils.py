@@ -147,9 +147,9 @@ class Usfm:
         def isHeading(e):
             if not isinstance(e, sfm.Element):
                 return False
-            if e.meta.get('StyleType', '').lower() != 'paragraph':
+            if getattr(e, "meta", {}).get('StyleType', '').lower() != 'paragraph':
                 return False
-            if e.meta.get('TextType', '').lower() == 'section':
+            if getattr(e, "meta", {}).get('TextType', '').lower() == 'section':
                 return True
             return False
 

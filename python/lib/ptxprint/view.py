@@ -20,7 +20,7 @@ import datetime, time
 import json
 from shutil import copyfile, copytree, move
 
-VersionStr = "2.0.5"
+VersionStr = "2.0.6"
 
 pdfre = re.compile(r".+[\\/](.+\.pdf)")
 
@@ -78,8 +78,10 @@ pos3parms = ["src", "size", "pgpos", "ref", "copy", "alt", "x-xetex", "mirror", 
 
 def doError(txt, secondary=None, title=None, copy2clip=False, show=True):
     print(txt)
+    logger.error(txt)
     if secondary is not None:
         print(secondary)
+        logger.error(txt)
 
 class ViewModel:
     _attributes = {
