@@ -340,6 +340,9 @@ _olst = ["fr_SavedConfigSettings", "tb_Layout", "tb_Font", "tb_Body", "tb_NotesR
          "tb_Advanced", "tb_Logging", "tb_TabsBorders", "tb_Diglot", "tb_StyleEditor", "tb_ViewerEditor", "tb_Help"]
 
 def _doError(text, secondary="", title=None, copy2clip=False, show=True):
+    logger.error(text)
+    if secondary:
+        logger.error(secondary)
     if copy2clip:
         lines = [title or ""]
         if text is not None and len(text):
