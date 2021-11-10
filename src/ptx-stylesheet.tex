@@ -909,24 +909,24 @@
     \if Y\tmp\relax  %end it and pop it
       \if #1\ss@Para\relax\xdef\last@popped@parstyle{#2}\fi
       \ifcsname endit@#1\endcsname
-        \trace{s}{Complex pop endit@#1}% endit@ macros are assumed(requrired) to call mcpop 
-      	\csname endit@#1\endcsname
-      \else 
+        \trace{s}{Complex pop endit@#1}% endit@ macros are assumed(requrired) to call mcpop
+        \csname endit@#1\endcsname
+      \else
         \trace{s}{Simple pop sufficient}%
-	\mcpopsimple
+        \mcpopsimple
       \fi
     \else
       \let\wip@do=\cstackrelax %stop here
       \if P\tmp\relax % ....but end it and pop first
-	 \ifcsname endit@#1\endcsname
-	   \trace{s}{Complex pop endit@#1}% endit@ macros are assumed(requrired) to call mcpop 
-	   \csname endit@#1\endcsname
-	 \else 
-           \trace{s}{Simple pop sufficient}%
-	   \mcpopsimple
-	 \fi
-       \fi
-     \fi
+        \ifcsname endit@#1\endcsname
+          \trace{s}{Complex pop endit@#1}% endit@ macros are assumed(requrired) to call mcpop 
+          \csname endit@#1\endcsname
+	    \else 
+          \trace{s}{Simple pop sufficient}%
+          \mcpopsimple
+        \fi
+      \fi
+    \fi
   \fi
   \trace{s}{whileitp@ps END:\mcch@cking:#1+#2 (\mcstack)}%
   \global\p@ppingfalse

@@ -625,7 +625,7 @@ class TexModel:
                 bspace = float(self.dict['notes/below{}rulespace'.format(notemap[a[1]])] or 0.)
                 dat.append(r"\def\Below{}NoteRuleSpace{{{:.1f} pt}}".format(a[0], bspace))
                 aspace = float(self.dict['notes/above{}space'.format(notemap[a[1]])] or 0.) + bspace
-                dat.append(r"\Above{}NoteSpace={:.1f} pt".format(a[0] if a[1] != "fn" else "", aspace))
+                dat.append(r"\Above{}NoteSpace={:.1f} pt".format(a[0] if a[0] != "Foot" else "", aspace))
             self.dict['noterules/{}'.format(a[0].lower())] = "\n".join(dat)
         self.dict['noterules/endnotemarkers'] = "\n".join(endnotes)
 
