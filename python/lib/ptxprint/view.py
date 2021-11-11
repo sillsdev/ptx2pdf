@@ -20,7 +20,7 @@ import datetime, time
 import json
 from shutil import copyfile, copytree, move
 
-VersionStr = "2.0.6"
+VersionStr = "2.0.8"
 
 pdfre = re.compile(r".+[\\/](.+\.pdf)")
 
