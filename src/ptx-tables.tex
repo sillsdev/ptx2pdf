@@ -191,7 +191,7 @@
     \tablec@l=0
     \global\maxtablec@l=0
     \doingt@bletrue\inn@tetrue
-    \ifx\tablecategory\empty\else\x@\c@t\tablecategory\cat*\fi
+    \ifx\tablecategory\empty\else\doc@t{\tablecategory}\fi
     \message{starting table cat:\tablecategory}%
   \fi}
 
@@ -265,8 +265,8 @@
     \@@LOOP \ifnum\nth@line<\linec@unt
       \advance\nth@line by 1
       \line{\hskip\dimen0
-        \ifRTL\hfil\lochcaer@f{\getnth@line\csname \c@tprefix tc\the\@col:fill\endcsname}\hfil\else
-          \hfil\f@reachcol{\getnth@line\csname \c@tprefix tc\the\@col:fill\endcsname}\hfil\fi
+        \ifRTL\hfil\lochcaer@f{\getnth@line\csname \c@tprefix tc\the\@col :fill\endcsname}\hfil\else
+          \hfil\f@reachcol{\getnth@line\csname \c@tprefix tc\the\@col :fill\endcsname}\hfil\fi
         \hskip\dimen1}%
       \ifnum\nth@line<\linec@unt \nobreak \fi
       \@@REPEAT
