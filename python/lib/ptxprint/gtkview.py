@@ -1329,9 +1329,16 @@ class GtkViewModel(ViewModel):
         self.picListView.setCheckFilter(self.get('c_picCheckInvFilter'), f)
 
     def onUpdatePicCaptionsClicked(self, btn):
+        if self.diglotView is not None:
+            pref = "L"
+            digpics = PicInfo(self.diglotView)
+            digpics.threadUsfms(self.diglotView, "R")
+            self.picinfos.merge("R", "R", indat=digpics, mergeCaptions=True, bkanchors=True)
+        else:
+            pref = ""
         newpics = PicInfo(self)
-        newpics.threadUsfms(self, "")
-        self.picinfos.merge("", "", indat=newpics, mergeCaptions=True, bkanchors=True)
+        newpics.threadUsfms(self, pref)
+        self.picinfos.merge(pref, pref, indat=newpics, mergeCaptions=True, bkanchors=True)
         self.updatePicList()
 
     def onGeneratePicListClicked(self, btn):
