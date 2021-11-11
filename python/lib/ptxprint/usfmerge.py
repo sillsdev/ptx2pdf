@@ -388,7 +388,7 @@ def usfmerge2(infilea, infileb, outfile, stylesheetsa=[], stylesheetsb=[], fseco
         doc = list(usfm.parser(inf, stylesheet=stylesheeta,
                                canonicalise_footnotes=False, tag_escapes=tag_escapes))
         while len(doc) > 1:
-            if isinstance(doc.doc[0], sfm.Text):
+            if isinstance(doc[0], sfm.Text):
                 doc.pop(0)
             else:
                 break
@@ -399,7 +399,7 @@ def usfmerge2(infilea, infileb, outfile, stylesheetsa=[], stylesheetsb=[], fseco
         doc = list(usfm.parser(inf, stylesheet=stylesheetb,
                                canonicalise_footnotes=False, tag_escapes=tag_escapes))
         while len(doc) > 1:
-            if isinstance(doc.doc[0], sfm.Text):
+            if isinstance(doc[0], sfm.Text):
                 doc.pop(0)
             else:
                 break
