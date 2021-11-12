@@ -1652,6 +1652,7 @@
 
 % to switch back to diglot columns, first set the page  so far 
 % and then change the rest.
+
 \def\diglotcolumns{
   \trace{o}{DiglotColumns: partial:\the\ht\partial. Pff:  \PageFullFactor\space\the\textheight}%
   \ifx\@netimesetup\relax%Skip ending diglot if there's no possibily we've started.
@@ -1663,11 +1664,13 @@
   \global\diglottrue\diglots@tup
 }
 
+
 \def\diglots@tup{%
   % reset parameters for diglot-column formatting
   \kill@PossParamCache
   \global\hsize=\columnLwidth % always start with left column
   \global\vsize=\textheight
+  \global\pagefullfalse%
   \global\BodyColumns=2
   \global\advance\vsize by \baselineskip % don't get caught short by 1/2 line or so
   \global\advance\vsize by -\ht\partial % Don't mis-inform TeX
@@ -1803,7 +1806,7 @@
 \newcount\im@gecount
 
 \newif\ifendbooknoeject \endbooknoejectfalse
-\def\pagebreak{\ifhmode\par\fi
+\def\pagebreak{\message{pagebreak}\ifhmode\par\fi
   \ifsk@pping \egroup \fi%
   \ifhe@dings\endhe@dings\fi%
   \ifdiglot \vbox to 0pt{}\fi%

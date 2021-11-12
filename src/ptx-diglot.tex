@@ -387,6 +387,7 @@
     \trace{D}{ODD: trialheight bigger than contents. Reducing trialheight from \the\trialheight to \the\dimen1}%
     \global\trialheight=\dimen1
   \fi
+  %\splittopskip=0pt
   \setbox1=\vsplit0 to \trialheight
   \setbox1=\vbox{\unvbox1}%
   \ifnum 1=\ifdim \ht1=0pt\ifdim\dp1=0pt 1 \else 0\fi \else 0\fi
@@ -397,9 +398,12 @@
     \vfuzz=\dimen0
     \let\after@this=\whichtrial
   \else 
+    \savingvdiscards=1
     \global\setbox\galley=\vsplit\galleyexc@ss to \trialheight
+    \setbox3=\vbox{\splitdiscards}%
     \vfuzz=\dimen0
     \global\setbox\galley=\vbox{\unvbox\galley\global\galleypenalty=\lastpenalty\unpenalty\penalty\endtri@lpen@lty}%
+    %\global\setbox\galleyexc@ss\vbox{\unvbox3\unvbox\galleyexc@ss}%
     \trace{D}{galley/xs now \the\ht\galley+\the\dp\galley, / \the\ht\galleyexc@ss+\the\dp\galleyexc@ss, gp:\the\galleypenalty}%
     \ifnum\TRACEcount=\diglotDbgJoinboxes
      \showbox\galley\showbox\galleyexc@ss
@@ -647,7 +651,7 @@
   \fi
   \dglt@calc@vailht
   \TempDim=\availht
-  \setbox255\vbox{\unvbox255}%
+  \setbox255=\vbox{\unvbox255}%
   \ifdim\ht255>0pt
     \advance\TempDim by -\ht255
     \advance\TempDim by -\dp255
@@ -656,7 +660,7 @@
     \advance\TempDim by -\dp255
   \fi 
   \ifvoid\trialbox
-    \global\setbox\trialbox=\box255
+    \global\setbox\trialbox=\vbox{\vskip-\topskip\unvbox255}%
     \ifdim\TempDim<-0.3\baselineskip % Coarse test. main trial routine can be pickier if it wants
       \trace{D}{Initial Content does not fit (\the\trialheight, \the\TempDim, \the\availht)}%
       \global\holdinginserts=1
@@ -681,6 +685,7 @@
         \global\setbox255\box\voidb@x
       \else
         \trace{D}{Extra material found, which also fits (\the\ht255+\the\dp255) \the\TempDim remaining.}%
+        \setbox255=\vbox{\x@\vskip\csname baselineDelta\c@rrdstat\endcsname\unvbox255}%
         \global\setbox\trialbox=\vbox{\joinboxes{\trialbox}{255}{5}{0}}%
         \ifdim \TempDim > 2\baselineskip
           \vsize=\TempDim
@@ -727,6 +732,9 @@
     \trace{d}{\c@rrdstat is empty, somehow, making it L for sanity}%
     \gdef\c@rrdstat{L}%
   \fi
+  \x@\ifnum\csname saved\c@rrdstat penalty\endcsname=-10000
+    %\global\savedpenalty=-10000
+  \fi
   \endlastp@rstyle{p}%
   \global\let\layoutstylebreak\enddigl@t % 
   \ifhe@dings\endhe@dings
@@ -737,10 +745,10 @@
       \showlists
     \fi
   \fi%
-  \trace{d}{pr@sideswitch #1 #2, sp:\the\savedpenalty lnt:\the\tmpcount}%
-  \ifnum\outputpenalty=-10000 %User-pagebreak
-    \global\savedpenalty=\outputpenalty
-  \fi
+  \trace{d}{pr@sideswitch #1 #2, sp:\the\savedpenalty\space lnt:\the\tmpcount, op:\the\outputpenalty}%
+  %\ifnum\outputpenalty=-10000 %User-pagebreak
+  %  \global\savedpenalty=\outputpenalty
+  %\fi
   \x@\xdef\csname saved\c@rrdstat penalty\endcsname{\the\savedpenalty}%
   \ifinn@te\errmessage{*** #1text called from inside footnote?!?}\fi
   \ifx\last@popped@parstyle\relax\else
@@ -964,6 +972,7 @@
  \ifnum\tmpcount>\MaxPages \global\MaxPages=\tmpcount
    %\message{Maxpages now : \the\MaxPages}%
  \fi
+ \trace{D}{COLLECT: lsl=\the\lineskiplimit, ts=\the\topskip, bs=\the\baselineskip}%
  \expandafter\ifx\csname language#1\endcsname\relax\else\uselanguage{\csname language#1\endcsname}\fi
 }%
 
@@ -990,7 +999,7 @@
 \def\makevtop#1{%There is a strong posibility that a vbox has a depth that
 %is unrecoverable on changing it to a vtop, e.g. if the last item in the
 %vbox is a \mark. To rejoin boxes on a page accurately we need to preserve
-\global%the depth of the box. We therefore assume the box will be joined and if
+\global%the depth of the box. We therefore *assume* the box will be joined and if
 %the depth is not recoverable we add a kern to remove the orignial depth.
  \s@tbaseline{p}%
  \trace{D}{makevtop #1, before vtop dp=\the\dp#1, ht=\the\ht#1}%
@@ -1000,6 +1009,7 @@
  \fi%
  \setbox0=\copy#1\setbox1=\vtop{\unvbox 0\setbox2=\lastbox}%Work on a copy so we don't break stuff.
  \trace{D}{pd:\the\dp2, ph=\the\ht2, d:\the\TempDim}%
+ % Now ready to (A) remove topskip, later replacing it with baselineskip. (B) append kern if needed.
  \global\setbox#1=\vtop{\unvbox#1\ifdim\dp2=0pt\ifdim\TempDim=0pt\else\kern-\TempDim\fi\fi}
 }
 \let\lAd@do\relax
@@ -1074,6 +1084,7 @@
        \unpenalty
      \fi
    \fi
+   %\dimen3=0pt
    \dimen3=\baselineskip
    \advance\dimen3 by -\topskip
    \ifVisTrace
@@ -1095,7 +1106,7 @@
    \fi
    \kern \dimen4
    \ifVisTrace
-  %   \hrule\kern -0.4pt
+     \hrule\kern -0.4pt
      \hbox to 0pt{\hss\doVisTrace{j}\box0\kern\dimexpr -20pt * \tmpcount\relax}%
      \kern \dimen6
    \fi
@@ -1192,21 +1203,24 @@
       \def\v@lpfx{}\def\v@lsfx{ht}\dimen1=0pt%
       \let\col@do\sum@val
       \x@\each@col\cts@list\E
-      \divide \dimen1 by \curactivecols
+      \divide \dimen1 by \curactivecols % dimen1 is now average of Lht, Rht, heights.
       \dimen0=\chunkDelta
       %\message{c255: \the\dimen0}%
-      \let\col@do\update@cumulative@delta
+      \let\col@do\update@cumulative@delta % Add (Lht - dimen1) to cumulativeDeltaL
       \x@\each@col\cts@list\E
     \egroup
     \thisjointDelta=0pt %Do we need extra space?
     %Calculate how much extra space we need:
     \csname @do@jointcalc@\diglotlayout\endcsname
+    % Returns the ideal next baseline posltion below previous sync line.
     \ifdim\dimen1>0pt
       \thisjointDelta=\dimen1
       \advance\thisjointDelta by -\@maxht
       \advance\thisjointDelta by -\topskip %remove topskip 
+      \advance\thisjointDelta by \@maxb@seline
+      \advance\thisjointDelta by \@maxb@seline
     \fi
-    \if\thisjointDelta>\@maxb@seline %sanity check
+    \ifdim 0.5\thisjointDelta>\@maxb@seline %sanity check
       \trace{d}{Unacceptable jointDelta (\the\thisjointDelta) reduced to 0pt}%
       \thisjointDelta=0pt
     \fi
@@ -1258,8 +1272,12 @@
   \let\col@do=\@@simplecols
   % Skip calculations:
   \dimen6=0pt
-  \iftemp
+  \iftemp % Is this the top of the page? If so, (only) apply skip based on columngutterruleskip (set by @prepare@layout...
     \dimen6=\ColumnGutterRuleSkip
+    \ifdim\baselineDelta<0pt
+      %\advance\dimen6 by \baselineDelta
+      %\advance\dimen6 by \truetopskip
+    \fi
   \else
     \ifdim\thisjointDelta<0pt
       \ifdim\thisjointDelta>-\@maxb@seline %sanity check
@@ -1300,14 +1318,14 @@
 }
 
 \def\diglot@arrange@cols{% Xht is the sum of Xbox's depth and height (set by after@a@trial
-  \trace{d}{diglot@arrange@cols chnkDlta:\the\chunkDelta. cp:\the\chunkpenalty, lcp:\the\lastchunkpenalty}%
+  \traceNum{d}{diglot@arrange@cols chnkDlta:\the\chunkDelta. cp:\the\chunkpenalty, lcp:\the\lastchunkpenalty}%
   \let\ac@d@=\d@
   \let\ac@col@do=\col@do
   \ifVisTrace
     \ifx\b@xtype\vbox %boxtype is set on discovery of whether this is a heading or not
-      \doVisTraceT{L}% sets box0, used ~43 lines below
+      \doVisTraceT{L}% sets box0, used @do@layout@... in lines below
     \else
-      \doVisTrace{L}% sets box0, used ~43 lines below
+      \doVisTrace{L}% sets box0, used  @do@layout@... lines below
     \fi
   \fi
   \ifnum \curactivecols>0
@@ -1397,7 +1415,7 @@
 \def\restore@trace@updatepartial{}
 \def\upd@tep@rtial{%routine called to add stuff to the partial page.
   \traceNum{d}{upd@tep@rtial \the\outputpenalty (\diglotDbgupdtPtl)}%
-  \trace{D}{plp:\the\partialLpenalty, prp:\the\partialRpenalty, cp:\the\chunkpenalty lcp:\the\lastchunkpenalty, lbp:\the\Lboxpenalty, rbp:\the\Rboxpenalty}%
+  \trace{D}{plp:\the\partialLpenalty, prp:\the\partialRpenalty, cp:\the\chunkpenalty lcp:\the\lastchunkpenalty, lbp:\the\Lboxpenalty, rbp:\the\Rboxpenalty. pf:\ifpagefull true\else false\fi}%
   \ifnum\diglotDbgupdtPtl=\TRACEcount
     \xdef\restore@trace@updatepartial{\global\tracingmacros=\the\tracingmacros \global\tracingassigns=\the\tracingassigns}%
     \global\tracingmacros=1\global\tracingassigns=1
@@ -1405,7 +1423,7 @@
     \restore@trace@updatepartial
   \fi
   \csname @start@upd@tep@rtial@\diglotlayout\endcsname % Any setup?
-  \csname s@tctslist@\diglotlayout\endcsname % increments curactivecols by each non-0 value, and sets \cts@list
+  \csname s@tctslist@\diglotlayout\endcsname % increments curactivecols by each non- value, and sets \cts@list
   \setdiglotN@rmal % Left=left (normal) or not?
   \pickn@xtpartial
   \csname @prepare@upd@tep@rtial@\diglotlayout\endcsname % Sort out headings, etc.
@@ -1437,6 +1455,7 @@
   \dglt@calc@vailht
   \ifdim\availht<\baselineskip %
     \global\pagefulltrue%
+    \trace{D}{Page full}%
   \else%
   \fi%
   \ifdim\TempDim>0.1pt
@@ -1445,7 +1464,7 @@
     \global\vsize=\trialheight\relax%
   \fi
   \ifpagefull%
-    %\message{+}%
+    \trace{D}{Page full}%
     \@add@n@xtpartial
     \@writep@ge%
       \let\col@do=\reset@n@xt
@@ -1830,6 +1849,9 @@
   \ifx\destb@x\relax
     \errmessage{! ERROR! Impropper state; '\c@rrdstat' should be 'L' 'R' or some other defined column. Maybe there was output before columns were set up?}%
   \fi
+  \ifnum\outputpenalty=-10000 %User-pagebreak
+    \x@\xdef\csname saved\c@rrdstat penalty\endcsname{\outputpenalty}%
+  \fi
   \diglot@any@primary
   \ifnum\outputpenalty=\dgl@tPenLtrialEnd\relax 
     \trace{D}{Why are we in diglotCollect after a trial?}%
@@ -1840,14 +1862,16 @@
   \edef\t@mp{\splitbotmark}%
   \ifx\t@mp\empty\else\global\m@rksonpagetrue\trace{H}{Found mark \splitbotmark}\fi
   \makevtop{255}%
+  \ifnum\diglotDbgJoinboxes=\TRACEcount\showbox255\fi
   \trace{D}{dp:\the\dp255}%
   \tmpcount=\outputpenalty %
   \ifnum\outputpenalty=10000 % Nothing wrong with breaking here
     \tmpcount=0\relax%
   \fi
   \ifvoid\destb@x
-    \global\setbox\destb@x=\box255
+    \global\setbox\destb@x=\vbox{\vskip-\topskip\unvbox255}%
   \else 
+    \setbox255=\vbox{\x@\vskip\csname baselineDelta\c@rrdstat\endcsname\unvbox255}%
     \global\setbox\destb@x=\vtop{\joinboxes{\destb@x}{255}{1}{\x@\the\csname partial\c@rrdstat penalty\endcsname}}%
   \fi
   \global\x@\csname partial\c@rrdstat penalty\endcsname=\tmpcount
@@ -2271,6 +2295,7 @@
     \else
       \ifx\tri@llist\empty\else
         \ifnum\triall@@pcount>10
+          \message{Forcing page break}%
           \pagefulltrue
         \fi
       \fi
@@ -2326,13 +2351,14 @@
 }
 
 \def\after@after@a@trial{%
-  \trace{d}{after@after@a@trial iftrialfailed\iftrialfailed true\else false\fi,  \the\triall@@pcount}%
+  \trace{d}{after@after@a@trial iftrialfailed\iftrialfailed true\else false\fi,  \the\triall@@pcount pf:\ifpagefull true\else false\fi}%
   % Check if the run failed (or didn't even run), and update page if that's 
   % appropriate.
   \iftrialfailed
     \ifnum\triall@@pcount=1
       \global\boxmovedtrue %Only count box as moved if the first chunk doesn't fit. 
     \fi
+    \trace{D}{Setting pagefull to true}%
     \global\pagefulltrue
   \else
     \x@\let\x@\tmppen\csname \c@rrdstat boxpenalty\endcsname
