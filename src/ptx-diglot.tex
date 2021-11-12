@@ -727,6 +727,9 @@
     \trace{d}{\c@rrdstat is empty, somehow, making it L for sanity}%
     \gdef\c@rrdstat{L}%
   \fi
+  \x@\ifnum\csname saved\c@rrdstat penalty\endcsname=-10000
+    \global\savedpenalty=-10000
+  \fi
   \endlastp@rstyle{p}%
   \global\let\layoutstylebreak\enddigl@t % 
   \ifhe@dings\endhe@dings
@@ -737,10 +740,10 @@
       \showlists
     \fi
   \fi%
-  \trace{d}{pr@sideswitch #1 #2, sp:\the\savedpenalty lnt:\the\tmpcount}%
-  \ifnum\outputpenalty=-10000 %User-pagebreak
-    \global\savedpenalty=\outputpenalty
-  \fi
+  \trace{d}{pr@sideswitch #1 #2, sp:\the\savedpenalty\space lnt:\the\tmpcount, op:\the\outputpenalty}%
+  %\ifnum\outputpenalty=-10000 %User-pagebreak
+  %  \global\savedpenalty=\outputpenalty
+  %\fi
   \x@\xdef\csname saved\c@rrdstat penalty\endcsname{\the\savedpenalty}%
   \ifinn@te\errmessage{*** #1text called from inside footnote?!?}\fi
   \ifx\last@popped@parstyle\relax\else
@@ -1437,6 +1440,7 @@
   \dglt@calc@vailht
   \ifdim\availht<\baselineskip %
     \global\pagefulltrue%
+    \trace{D}{Page full}%
   \else%
   \fi%
   \ifdim\TempDim>0.1pt
@@ -1445,7 +1449,7 @@
     \global\vsize=\trialheight\relax%
   \fi
   \ifpagefull%
-    %\message{+}%
+    \trace{D}{Page full}%
     \@add@n@xtpartial
     \@writep@ge%
       \let\col@do=\reset@n@xt
@@ -1829,6 +1833,9 @@
   \x@\let\x@\destb@x\csname excess\c@rrdstat\endcsname
   \ifx\destb@x\relax
     \errmessage{! ERROR! Impropper state; '\c@rrdstat' should be 'L' 'R' or some other defined column. Maybe there was output before columns were set up?}%
+  \fi
+  \ifnum\outputpenalty=-10000 %User-pagebreak
+    \x@\xdef\csname saved\c@rrdstat penalty\endcsname{\outputpenalty}%
   \fi
   \diglot@any@primary
   \ifnum\outputpenalty=\dgl@tPenLtrialEnd\relax 
@@ -2271,6 +2278,7 @@
     \else
       \ifx\tri@llist\empty\else
         \ifnum\triall@@pcount>10
+          \message{Forcing page break}%
           \pagefulltrue
         \fi
       \fi
