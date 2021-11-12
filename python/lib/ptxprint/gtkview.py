@@ -216,7 +216,7 @@ _sensitivities = {
     "c_autoToC" :              ["t_tocTitle", "gr_toc", "l_toc", "l_leaderStyle", "fcb_leaderStyle"],
     "c_hideEmptyVerses" :      ["c_elipsizeMissingVerses"],
     "c_marginalverses" :       ["s_columnShift"],
-    "c_rangeShowVerse" :       ["l_chvsSep", "c_sepPeriod", "c_sepColon"],
+    "c_rangeShowVerse" :       ["l_chvsSep", "r_CVsep_period", "r_CVsep_colon"],
     "c_fnautocallers" :        ["t_fncallers", "btn_resetFNcallers", "c_fnomitcaller", "c_fnpageresetcallers"],
     "c_xrautocallers" :        ["t_xrcallers", "btn_resetXRcallers", "c_xromitcaller", "c_xrpageresetcallers"],
     "c_footnoterule" :         ["rule_footnote", "l_fnAboveSpace", "l_fnBelowSpace", "s_fnBelowSpace", "gr_fnRulePosParms"],
@@ -246,7 +246,7 @@ _sensitivities = {
     "c_frontmatter":           ["c_periphPageBreak", "btn_editFrontMatter"],
     "c_colophon":              ["gr_colophon"],
     "c_plCreditApply2all":     ["c_plCreditOverwrite"],
-    "c_rangeShowChapter":      ["c_rangeShowVerse", "l_chvsSep", "c_sepPeriod", "c_sepColon"],
+    "c_rangeShowChapter":      ["c_rangeShowVerse", "l_chvsSep", "r_CVsep_period", "r_CVsep_colon"],
 }
 # Checkboxes and the different objects they make (in)sensitive when toggled
 # These function OPPOSITE to the ones above (they turn OFF/insensitive when the c_box is active)
@@ -1523,7 +1523,7 @@ class GtkViewModel(ViewModel):
         elif pgid == "tb_TabsBorders":
             self.onThumbColorChange()
         elif pgid == "tb_Pictures":
-            self.onPLpageChanged(None, None, pgnum=0)
+            self.onPLpageChanged(None, None, pgnum=-1)
 
     def onRefreshViewerTextClicked(self, btn):
         pg = self.get("nbk_Viewer")
@@ -3216,11 +3216,12 @@ class GtkViewModel(ViewModel):
         self.set("col_gridMinor", "rgb(115,210,22)")
 
     def onPLpageChanged(self, nbk_PicList, scrollObject, pgnum):
+        page = 99
         if nbk_PicList is None:
             nbk_PicList = self.builder.get_object("nbk_PicList")
+        if pgnum == -1:
+            pgnum = nbk_PicList.get_current_page()
         page = nbk_PicList.get_nth_page(pgnum)
-        if page == None:
-            return
         pgid = Gtk.Buildable.get_name(page).split('_')[-1]
         filterSensitive = True if pgid == "checklist" else False
         self.builder.get_object("bx_activeRefresh").set_visible(False)
