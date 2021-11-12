@@ -840,7 +840,7 @@ download and use in a publication.</property>
     <property name="type-hint">dialog</property>
     <property name="gravity">center</property>
     <property name="program-name">PTXprint</property>
-    <property name="version">Version 2.0.9</property>
+    <property name="version">Version 2.0.10</property>
     <property name="copyright">© 2020-2021, SIL International</property>
     <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
 the User-Interface. The PDFs are produced by enhanced 
@@ -16878,7 +16878,7 @@ markers/styles in the list below.</property>
                                     <property name="search-column">0</property>
                                     <property name="level-indentation">1</property>
                                     <property name="enable-tree-lines">True</property>
-                                    <property name="activate_on-single-click">True</property>
+                                    <property name="activate-on-single-click">True</property>
                                     <child internal-child="selection">
                                       <object class="GtkTreeSelection" id="tsel_Styles"/>
                                     </child>
