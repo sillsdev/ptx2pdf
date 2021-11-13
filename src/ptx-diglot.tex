@@ -406,7 +406,9 @@
     \showbox3
     \vfuzz=\dimen0
     \global\setbox\galley=\vbox{\unvbox\galley\global\galleypenalty=\lastpenalty\unpenalty\penalty\endtri@lpen@lty}%
-    \global\setbox\galleyexc@ss\vbox{\unvbox3\unvbox\galleyexc@ss}%
+    \ifvoid\galleyexc@ss\else
+      \global\setbox\galleyexc@ss\vbox{\unvbox3\unvbox\galleyexc@ss}%
+    \fi
     \trace{D}{galley/xs now \the\ht\galley+\the\dp\galley, / \the\ht\galleyexc@ss+\the\dp\galleyexc@ss, gp:\the\galleypenalty}%
     \ifnum\TRACEcount=\diglotDbgJoinboxes
      \showbox\galley\showbox\galleyexc@ss
@@ -1105,7 +1107,7 @@
        \unpenalty
      \fi
    \fi
-   %\dimen3=0pt
+   \dimen3=0pt
    %\dimen3=\baselineskip
    %\advance\dimen3 by -\topskip\relax
    \ifVisTrace
@@ -1125,8 +1127,8 @@
      \vskip \dimen3 
      \trace{D}{Box joint is \join@a-\join@b (bls:\the\baselineskip, ts:\the\topskip -> skip: \the\dimen3)}%
    \fi
+   \kern \dimen4 % kern away old depth.
    \ifVisTrace
-     \kern \dimen4
      \hrule\kern -0.4pt
      \hbox to 0pt{\hss\doVisTrace{j}\box0\kern\dimexpr -20pt * \tmpcount\relax}%
      \kern \dimen6
@@ -1295,11 +1297,11 @@
   \dimen6=0pt
   \iftemp % Is this the top of the page? If so, (only) apply skip based on columngutterruleskip (set by @prepare@layout...
     \dimen6=\ColumnGutterRuleSkip
-    \ifdim\baselineDelta<0pt
-      %\advance\dimen6 by \baselineDelta\relax
-      \advance\dimen6 by -\topskip\relax
-      \advance\dimen6 by \truetopskip\relax
-    \fi
+    %\ifdim\baselineDelta<0pt
+      %%\advance\dimen6 by \baselineDelta\relax
+      %\advance\dimen6 by -\topskip\relax
+      %\advance\dimen6 by \truetopskip\relax
+    %\fi
   \else
     \ifdim\thisjointDelta<0pt
       \ifdim\thisjointDelta>-\@maxb@seline %sanity check
