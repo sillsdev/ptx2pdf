@@ -1334,12 +1334,12 @@ class GtkViewModel(ViewModel):
             pref = "L"
             digpics = PicInfo(self.diglotView)
             digpics.threadUsfms(self.diglotView, "R")
-            self.picinfos.merge("R", "R", indat=digpics, mergeCaptions=True, bkanchors=True)
+            self.picinfos.merge("L", "R", indat=digpics, mergeCaptions=True, bkanchors=True)
         else:
             pref = ""
         newpics = PicInfo(self)
         newpics.threadUsfms(self, pref)
-        self.picinfos.merge(pref, pref, indat=newpics, mergeCaptions=True, bkanchors=True)
+        self.picinfos.merge(pref, pref, indat=newpics, mergeCaptions=True, bkanchors=True, captionpre="")
         self.updatePicList()
 
     def onGeneratePicListClicked(self, btn):
