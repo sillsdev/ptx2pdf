@@ -453,12 +453,12 @@
     \else
       \s@venotes{\g@tndstat}{1}%
     \fi
-    \s@veinserts{col}
+    \s@veinserts{col}%
     %grab 1st trialheight from excessX
     \ifnum\diglotDbgJoinboxes=\TRACEcount
       \showbox\@xcs
     \fi
-    \dimen0=\ht\@xcs\advance\dimen0 by \dp\@xcs
+    \dimen0=\ht\@xcs\advance\dimen0 by \dp\@xcs \relax
     \ifdim\dimen0<\trialheight
       \global\trialheight=\dimen0 %save useless trims.
     \fi
@@ -529,7 +529,7 @@
   \iftrialfailed\else
     \TempDim=\dimexpr \availht-\ht\trialbox\relax
     \ifdim \dp\trialbox > 0.5\baselineskip % Is the depth of the box significant?
-      \advance\TempDim by -\dp\trialbox
+      \advance\TempDim by -\dp\trialbox \relax
     \fi
     \ifvoid\galleyexc@ss %Was that the whole input?
       \x@\ifvoid\csname excess\c@rrdstat\endcsname
@@ -548,7 +548,7 @@
   \fi
   \iftemp
     \traceNum{D}{Rejecting \the\ht\partialL+\the\dp\partialL,\the\ht\galley+\the\dp\galley, :: \the\ht\galleyexc@ss+\the\dp\galleyexc@ss (\the\trialheight}%
-    \ifnum\TRACEcount=\diglotDbgJoinboxes
+    \ifnum\TRACEcount=\diglotDbgJoinboxes \relax
       \x@\showbox\csname partial\c@rrdstat\endcsname 
       \x@\showbox\csname excess\c@rrdstat\endcsname 
       \showbox\galley
@@ -638,7 +638,7 @@
  %as though it hadn't been here.
  %Assumptions: holdinginserts=1 material in \galley and \galleyexc@ss
   \traceNum{d}{diglot@any@trial \the\ht255+\the\dp255 \space hIns=\the\holdinginserts(==0 1st time) op=\the\outputpenalty, etp=\endtri@lpen@lty, dc=\the\deadcycles, xs:\the\ht\galleyexc@ss+\the\dp\galleyexc@ss, th:\the\trialheight}%
-  \ifnum\holdinginserts=0\else
+  \ifnum\holdinginserts=0\relax\else
     \ifvoid\trialbox
       \MSG{*** Internal error caught. Incorrect internal state found in during trial run. Text or footnotes may have been lost.}%
       \ifnum\interactionmode=2
@@ -647,7 +647,7 @@
       \fi
     \fi
   \fi
-  \ifnum\diglotDbgJoinboxes=\TRACEcount
+  \ifnum\diglotDbgJoinboxes=\TRACEcount\relax
     %{\setbox0\vbox{\pagediscards}\showbox0}%
     \showbox255
   \fi
@@ -699,7 +699,7 @@
     \fi
   \fi
   \let\after@this=\relax
-  \ifnum\outputpenalty=\endtri@lpen@lty
+  \ifnum\outputpenalty=\endtri@lpen@lty\relax
     \global\intrialfalse
     \iftrialfailed
       \global\advance\trialheight by -1\baselineskip
@@ -1134,7 +1134,7 @@
 \bgroup
  \setbox0=\box#1
  \setbox1=\box#2
- \dimen0=0pt
+ \dimen0=0pt\relax
  \ifdim\ht0>0pt \ifdim\dp0<0.5\baselineskip
    %box0 is not a vtop, it's a vbox
    \advance\dimen0 by -\baselineskip
@@ -1199,7 +1199,7 @@
     \def\v@lpfx{@cur}\def\v@lsfx{ht}%
     \let\col@do=\maxjoint@val
     \x@\each@col\cts@list\E
-    \trace{dP}{do@joint@calc : mh:\@maxht\space mb:\@maxb@seline\space mjv:\the\dimen1}%
+    \trace{dP}{do@joint@calc : col:\m@x@at@col\space mh:\@maxht\space mb:\@maxb@seline\space mjv:\the\dimen1}%
 }
 
 \def\@prepare@layout@simplecols{%
@@ -1221,11 +1221,11 @@
     % Returns the ideal next baseline posltion below previous sync line.
     \ifdim\dimen1>0pt
       \thisjointDelta=\dimen1
-      \advance\thisjointDelta by -\@maxht
+      \advance\thisjointDelta by -\@maxht\relax
     %  \advance\thisjointDelta by -\topskip %remove topskip 
-      %\advance\thisjointDelta by -\@maxb@seline
+      \advance\thisjointDelta by -\@maxb@seline\relax
     \fi
-    \ifdim \thisjointDelta > \@maxb@seline\relax  %sanity check
+    \ifdim \thisjointDelta > \@maxb@seline  %sanity check
       \trace{d}{Unacceptable jointDelta (\the\thisjointDelta > \@maxb@seline) reduced to 0pt}%
       \thisjointDelta=0pt
     \fi
