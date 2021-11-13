@@ -1114,18 +1114,18 @@
      \x@\each@col\diglot@list\E
    \fi
    \dimen0=\baselineskip
-   \global\topskip=2\truetopskip
-   \global\splittopskip=\topskip
+   \global\topskip=1.5\truetopskip
+   \global\splittopskip=0pt
    \MSG{truetopskip=\the\truetopskip,  topskip=\the\topskip}
    \message{Setting up column-specific values for \diglot@list}%
-   \baselineDelta=-\maxdimen
+   \global\baselineDelta=-\maxdimen
    \def\col@do##1{% Per-column setup
      \setc@rdstat{##1}%
      \showLRspecific
      \setLRspecific\s@tb@dyb@seline{##1}%
      \x@\global\csname baselineDelta##1\endcsname=\dimexpr \baselineskip - \topskip\relax
      \ifdim\baselineDelta<\csname baselineDelta##1\endcsname
-       \baselineDelta=\csname baselineDelta##1\endcsname
+       \global\baselineDelta=\csname baselineDelta##1\endcsname
      \fi
      \saveLRspecificSide{##1}%
    }
