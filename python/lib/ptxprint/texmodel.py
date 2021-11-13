@@ -872,7 +872,7 @@ class TexModel:
                 elif l.startswith(r"%\defzvar"):
                     for k in self.printer.allvars():
                         res.append(r"\defzvar{{{}}}{{{}}}".format(k, self.printer.getvar(k)))
-                    for k, e in (('contentsheader', 'document/toctitle'),):
+                    for k, e in (('toctitle', 'document/toctitle'),):
                         res.append(r"\defzvar{{{}}}{{{}}}".format(k, self.dict[e]))
                 else:
                     res.append(l.rstrip().format(**self.dict))

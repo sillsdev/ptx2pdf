@@ -17,13 +17,13 @@
 \stylesheet{{ptx2pdf.sty}}
 
 {document/ifdiglot}{ifusediglotcustomsty_}\stylesheet{R_}{{{/ptxrpath}/{document/diglotsecprj}/custom.sty}}
-{project/ifusecustomsty}{/nocustomsty}\stylesheet{L_}{{{/ptxrpath}/{project/id}/custom.sty}}
+{project/ifusecustomsty}{/nocustomsty}\stylesheet{{{/ptxrpath}/{project/id}/custom.sty}}
 
 {document/ifdiglot}{ifusediglotmodsty_}\stylesheet{R_}{{{document/diglotcfgrpath}/ptxprint-mods.sty}} % Right-side/Diglot Secondary stylesheet override settings
-{project/ifusemodssty}\stylesheet{L_}{{{/cfgrpath}/ptxprint-mods.sty}} % Left-side stylesheet override settings
+{project/ifusemodssty}\stylesheet{{{/cfgrpath}/ptxprint-mods.sty}} % Left-side stylesheet override settings
 
 {document/ifdiglot}\stylesheet{{{/cfgrpath}/ptxprint.sty}}
-\stylesheet{L_}{{{/cfgrpath}/ptxprint.sty}}
+%\stylesheet{L_}{{{/cfgrpath}/ptxprint.sty}}
 {document/ifdiglot}\stylesheet{R_}{{{document/diglotcfgrpath}/ptxprint.sty}}
 
 %%%%% Page Setup %%%%%
@@ -58,22 +58,22 @@
 
 %%%%% Text Spacing %%%%%
 \def\LineSpaceBase{{{paragraph/linespacebase}}}
-\def\LineSpacingFactor{L_}{{{paragraph/linespacingfactor}}}
-\def\VerticalSpaceFactor{L_}{{1.0}}
+\def\LineSpacingFactor{{{paragraph/linespacingfactor}}}
+\def\VerticalSpaceFactor{{1.0}}
 {paragraph/useglyphmetrics}\XeTeXuseglyphmetrics=0
 
 %% Cross-space contextualization
 \XeTeXinterwordspaceshaping={document/spacecntxtlztn}
 
 %%%%% Fonts %%%%%
-\FontSizeUnit{L_}={paper/fontfactor}pt
+\FontSizeUnit={paper/fontfactor}pt
 %% Faces
-\def\regular{L_}{{"{document/fontregular}{document/script}"}}
-\def\bold{L_}{{"{document/fontbold}{document/script}"}}
-\def\italic{L_}{{"{document/fontitalic}{document/script}"}}
-\def\bolditalic{L_}{{"{document/fontbolditalic}{document/script}"}}
-{document/ifspacing}\def\SpaceStretchFactor{L_}{{{document/spacestretch}}}
-{document/ifspacing}\def\SpaceShrinkFactor{L_}{{{document/spaceshrink}}}
+\def\regular{{"{document/fontregular}{document/script}"}}
+\def\bold{{"{document/fontbold}{document/script}"}}
+\def\italic{{"{document/fontitalic}{document/script}"}}
+\def\bolditalic{{"{document/fontbolditalic}{document/script}"}}
+{document/ifspacing}\def\SpaceStretchFactor{{{document/spacestretch}}}
+{document/ifspacing}\def\SpaceShrinkFactor{{{document/spaceshrink}}}
 {document/ifcolorfonts}\ColorFontsfalse
 
 %% Specify the fallback font to be used for special/missing characters
@@ -85,7 +85,7 @@
 
 %%%%% Layout %%%%%
 {document/ifhidehboxerrors}\overfullrule=0pt
-\RTL{L_}{document/ifrtl}   % Use right-to-left layout mode?
+\RTL{document/ifrtl}   % Use right-to-left layout mode?
 {document/toptobottom}\XeTeXupwardsmode=1     % Top-to-Bottom and Left-to-Right layout
 {document/toptobottom}\rotatetrue
 % Specify ISO 639-1 language code.

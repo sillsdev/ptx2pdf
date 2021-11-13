@@ -1,8 +1,14 @@
 PTXprint 2.0.10 Release Notes 
-13 November 2021
+14 November 2021
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 
+Bug fixes and improvements in 2.0.11 (14 Nov 2021)
+
+  * Fixed: Refresh captions now works and also updates diglot captions as advertised
+  
+  * Fixed: Front matter fonts and styling in diglots now follow primary settings
+  
 Bug fixes and improvements in 2.0.10 (13 Nov 2021)
 
   * Fixed: unwanted diglot pagebreak after mt
