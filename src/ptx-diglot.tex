@@ -249,21 +249,21 @@
    \trace{D}{dglt@calc@vailht \c@rrdstat \number\partial, \the\dimexpr \ht\partial+\dp\partial\relax + \the\dimexpr \ht\n@xtpartial+\dp\n@xtpartial\relax}%
    \global\availht=\textheight %
    \global\advance\availht by \adjustp@ge\relax % Panic measure..
-   \global\advance\availht by -\ht\partial %
-   \global\advance\availht by -\dp\partial %
-   \global\advance\availht by -\ht\n@xtpartial %
-   \global\advance\availht by -\dp\n@xtpartial %
+   \global\advance\availht by -\ht\partial\relax %
+   \global\advance\availht by -\dp\partial\relax %
+   \global\advance\availht by -\ht\n@xtpartial\relax %
+   \global\advance\availht by -\dp\n@xtpartial\relax %
    \trace{Dh}{after part1:\the\availht}%
-   \ifdim\baselineDelta<0pt %FIXME, shouldn't this be side-dependent?
-     \global\advance\availht by \baselineDelta\relax%
+   \ifdim\baselineDelta<0pt %Account for space (falsely) lost to topskip FIXME, shouldn't this be side-dependent?
+     %\global\advance\availht by -\baselineDelta\relax%
    \else
-     \global\advance\availht by -\baselineDelta\relax%
+     \global\advance\availht by +\baselineDelta\relax%
    \fi
    \trace{Dh}{after part2:\the\availht}%
    \f@rstnotetrue
    \let\\=\reduceavailht \the\n@tecl@sses % reduce it by the space needed for each note class
    \iff@rstnote\else
-      \advance\availht by -\AboveNoteSpace
+      \advance\availht by -\AboveNoteSpace\relax
    \fi
    \trace{Dh}{after notes:\the\availht}%
    \ifunprintable\else 
@@ -382,7 +382,7 @@
   \vfuzz=\maxdimen
   \global\setbox\galleyexc@ss\vbox{\undog@lley}%
   \setbox0\vbox{\penalty9000\unvcopy\galleyexc@ss}%
-  \dimen1=\ht\galleyexc@ss\advance\dimen1 by \dp\galleyexc@ss
+  \dimen1=\ht\galleyexc@ss\advance\dimen1 by \dp\galleyexc@ss\relax
   \ifdim\dimen1<\trialheight
     \trace{D}{ODD: trialheight bigger than contents. Reducing trialheight from \the\trialheight to \the\dimen1}%
     \global\trialheight=\dimen1
@@ -400,7 +400,10 @@
   \else 
     \savingvdiscards=1
     \global\setbox\galley=\vsplit\galleyexc@ss to \trialheight
-    \setbox3=\vbox{\splitdiscards}%
+    \trace{D}{Showing galley 3}%
+    \showbox\galley%
+    \setbox3=\vbox{\vskip\dp\galley\splitdiscards}%
+    \showbox3
     \vfuzz=\dimen0
     \global\setbox\galley=\vbox{\unvbox\galley\global\galleypenalty=\lastpenalty\unpenalty\penalty\endtri@lpen@lty}%
     \global\setbox\galleyexc@ss\vbox{\unvbox3\unvbox\galleyexc@ss}%
@@ -421,6 +424,8 @@
   \global\setbox\trialbox=\box\voidb@x
   \global\output={\diglot@any@trial}%calls \whichtrial on success
   \unvcopy\galley\relax %process newly-shrunk galley
+  \trace{D}{Showing galley 1}%
+  \showbox\galley
 }
 
 \def\run@a@trial{%
@@ -462,12 +467,19 @@
     \ifdim\dimen0<\trialheight
       \global\trialheight=\dimen0 %save useless trims.
     \fi
+    \trace{D}{Showing xcs}%
+    \showbox\@xcs
+    \savingvdiscards=1
     \global\setbox\p@rtl=\vsplit\@xcs to \availht
-    \global\advance\availht by \baselineskip % avoid underfull box in case of footnote
+    \setbox3=\vbox{\vskip\dp\p@rtl\splitdiscards}%
+    \trace{D}{p@rtl:\the\ht\p@rtl, @xcs:\the\ht\@xcs}%
+    \showbox3
+    \global\advance\availht by \baselineskip \relax% avoid underfull box in case of footnote
     \global\vsize=\availht
-    \global\advance\availht by -\baselineskip % avoid underfull box in case of footnote
+    \global\advance\availht by -\baselineskip\relax % avoid underfull box in case of footnote
     \ifvoid\@xcs\else
-      \global\setbox\@xcs=\vbox{\splitdiscards\unvbox\@xcs}%
+      \global\setbox\@xcs=\vbox{\unvcopy3\unvbox\@xcs}%
+      \showbox\@xcs
       \trace{D}{Resetting partial\c@rrdstat penalty from \the\csname partial\c@rrdstat penalty\endcsname to 0}%
       \global\csname partial\c@rrdstat penalty\endcsname=0 %FIXME: Isn't there a \splitpenalty??
     \fi
@@ -481,7 +493,8 @@
       \fi
     \fi\fi
     \global\output{\diglot@any@trial}
-%    \showbox\galley
+    \trace{D}{Showing galley 4}%
+    \showbox\galley
     \unvcopy\galley
     \unpenalty
     \penalty\endtri@lpen@lty
@@ -534,7 +547,7 @@
     \ifvoid\galleyexc@ss %Was that the whole input?
       \x@\ifvoid\csname excess\c@rrdstat\endcsname
         \x@\ifnum\csname saved\c@rrdstat penalty\endcsname>9999
-          \advance\TempDim by -2\baselineskip
+          \advance\TempDim by -2\baselineskip\relax
           \trace{D}{Penalty does not allow this as last item on page, checking there's 2 lines space: -> \the\TempDim}%
         \fi
         \ifdim \TempDim<-0.2\baselineskip %then Unacceptably over-full
@@ -553,7 +566,7 @@
       \x@\showbox\csname excess\c@rrdstat\endcsname 
       \showbox\galley
     \fi
-    \global\advance\trialheight by -1\baselineskip
+    \global\advance\trialheight by -1\baselineskip\relax
     \ifdim\trialheight>\baselineskip
       \let\after@this=\rej@ctgalley %reject and try again
     \else
@@ -575,6 +588,8 @@
         \x@\global\x@\setbox\csname excess\c@rrdstat\endcsname\vbox{\joinboxes{\galleyexc@ss}{\csname excess\c@rrdstat\endcsname}{4}{\x@\the\csname partial\c@rrdstat penalty\endcsname}}%
       \fi
       \global\setbox\galleyexc@ss=\box\voidb@x
+      \trace{D}{Showing galley 2}%
+      \showbox\galley
       \x@\global\x@\setbox\csname partial\c@rrdstat\endcsname\box\galley% Remember the old galley
       \x@\global\csname \c@rrdstat ht\endcsname=\dimexpr \ht\trialbox + \dp\trialbox\relax
       \x@\global\x@\setbox\x@\csname \c@rrdstat box\endcsname\box\trialbox
@@ -657,11 +672,11 @@
   \setbox255=\vbox{\vskip\baselineDelta\relax\unvbox255}%
     \showbox255
   \ifdim\ht255>0pt
-    \advance\TempDim by -\ht255
-    \advance\TempDim by -\dp255
+    \advance\TempDim by -\ht255\relax
+    \advance\TempDim by -\dp255\relax
   \else
-    \advance\TempDim by \ht255
-    \advance\TempDim by -\dp255
+    \advance\TempDim by \ht255\relax
+    \advance\TempDim by -\dp255\relax
   \fi 
   \ifvoid\trialbox
     \global\setbox\trialbox=\vbox{\unvbox255}%
@@ -677,8 +692,8 @@
       \fi
     \fi
   \else
-    \advance\TempDim by -\ht\trialbox
-    \advance\TempDim by -\dp\trialbox
+    \advance\TempDim by -\ht\trialbox\relax
+    \advance\TempDim by -\dp\trialbox\relax
     \ifdim\TempDim<-0.3\baselineskip 
       \trace{D}{Extra content found before end of trial, \the\ht255+\the\dp255}%
       \global\holdinginserts=1
@@ -689,8 +704,9 @@
       \iftrialfailed
         \global\setbox255\box\voidb@x
       \else
-        \trace{D}{Extra material found, which also fits (\the\ht255+\the\dp255) \the\TempDim remaining.}%
-        \setbox255=\vbox{\x@\vskip\csname baselineDelta\c@rrdstat\endcsname\unvbox255}%
+        \dimen1=\baselineDelta\relax
+        \trace{D}{Extra material found, which also fits (\the\ht255+\the\dp255) \the\TempDim remaining. \show@dstat}%
+        \setbox255=\vbox{\x@\vskip\x@\dimexpr \csname baselineDelta\c@rrdstat\endcsname - \dimen1\relax\unvbox255}%
         \global\setbox\trialbox=\vbox{\joinboxes{\trialbox}{255}{5}{0}}%
         \ifdim \TempDim > 2\baselineskip
           \vsize=\TempDim
@@ -702,7 +718,7 @@
   \ifnum\outputpenalty=\endtri@lpen@lty\relax
     \global\intrialfalse
     \iftrialfailed
-      \global\advance\trialheight by -1\baselineskip
+      \global\advance\trialheight by -1\baselineskip\relax
       \ifdim\trialheight<0.5\baselineskip
         \trace{D}{Abandoning trial, no space for galley at all}%
         \r@storenotes{\g@tndstat}{1}% As if galley hadn't happened.
@@ -872,7 +888,7 @@
 %Diglotstate.
 \def\n@xtdstat{L}%What does the diglotstate become at the next \dgl@tPenColSwap penalty?
 \def\f@lwgdstat{L}%What is the diglotstate of the 'recent contributions'? (i.e. next material to read)
-\def\c@rrdstat{}%What is the current diglotstate?
+\def\c@rrdstat{}%What is the current diglotstate, in loops?
 \def\@g@tdst@t#1{\ifdiglot\if L#1\else#1\fi\fi}% Returns "" or "R" (Or other state values in the future)
 \def\g@tdstat{\@g@tdst@t\c@rrdstat}% Normal access routine for above
 \def\g@tndstat{\ifdiglotSepNotes \g@tdstat \fi} %if notes are merged, there should be no R (etc)  suffix notes.
@@ -1061,7 +1077,7 @@
      %\showlists
      \dimen4=\lastkern%
      \dimen5=\dimen4
-    % \unkern
+     \unkern
      \setbox0=\lastbox%
      \copy0
      \trace{D}{lk: \the\dimen4, final bit of deconstructed first box: \l@gdims{0}, 2nd box: \l@gdims{#2}}%
@@ -1090,15 +1106,15 @@
      \fi
    \fi
    %\dimen3=0pt
-   \dimen3=\baselineskip
-   \advance\dimen3 by -\topskip
+   %\dimen3=\baselineskip
+   %\advance\dimen3 by -\topskip\relax
    \ifVisTrace
      \dimen6=1sp\tmpcount=0
    \fi
    \ifdim\dimen5<10sp \ifdim\dimen5>0sp
       \tmpcount=\dimen5
       \dimen6=\dimen5
-      \advance\dimen6 by 1sp
+      \advance\dimen6 by 1sp\relax
       \dimen4=-\dimen6 
       \dimen3=0pt
       \trace{D}{Re-breaking in the same place as before. Cancelling topskip removal. Indenting VisTrace label by \the\tmpcount}%
@@ -1109,8 +1125,8 @@
      \vskip \dimen3 
      \trace{D}{Box joint is \join@a-\join@b (bls:\the\baselineskip, ts:\the\topskip -> skip: \the\dimen3)}%
    \fi
-   \kern \dimen4
    \ifVisTrace
+     \kern \dimen4
      \hrule\kern -0.4pt
      \hbox to 0pt{\hss\doVisTrace{j}\box0\kern\dimexpr -20pt * \tmpcount\relax}%
      \kern \dimen6
@@ -1137,7 +1153,7 @@
  \dimen0=0pt\relax
  \ifdim\ht0>0pt \ifdim\dp0<0.5\baselineskip
    %box0 is not a vtop, it's a vbox
-   \advance\dimen0 by -\baselineskip
+   \advance\dimen0 by -\baselineskip\relax
  \fi\fi
  \ifdim\ht1>0pt \ifdim\dp1<0.5\baselineskip
    %box1 is not a vtop, it's a vbox
@@ -1163,7 +1179,7 @@
   \traceNum{dP}{Adding \the\dimen0 \space to cumulativeDelta#1}%
   \divide\dimen0 by \dimen2
   \count255=\dimen0
-  \x@\global\x@\advance\x@\csname cumulativeDelta#1\endcsname by \count255
+  \x@\global\x@\advance\x@\csname cumulativeDelta#1\endcsname by \count255\relax
   \egroup
 }
 
@@ -1173,7 +1189,7 @@
   \def\col@do##1{\advance\count255 by 1}%
   \count255=0
   \x@\each@col\layout@list\E
-  \advance\dimen0 by -\numexpr \count255 - 1\relax\gutter\advance\dimen0 by -\count255\columnshift
+  \advance\dimen0 by -\numexpr \count255 - 1\relax\gutter \relax\advance\dimen0 by -\count255\columnshift\relax
   \def\col@do##1{%
     \csname column##1width\endcsname=\csname Diglot##1Fraction\endcsname\dimen0
     \traceNum{dP}{Setting column##1width to \the\csname column##1width\endcsname}}%
@@ -1242,7 +1258,7 @@
     \fi
     \def\v@lpfx{}\def\v@lsfx{box}\let\col@do=\max@boxht\dimen1=0pt
     \x@\each@col\diglot@list\E
-    \advance\dimen8 by \dimen1
+    \advance\dimen8 by \dimen1\relax
     \let\col@do=\max@boxdp\dimen1=0pt
     \x@\each@col\diglot@list\E
     \dimen9=\dimen1
@@ -1280,8 +1296,9 @@
   \iftemp % Is this the top of the page? If so, (only) apply skip based on columngutterruleskip (set by @prepare@layout...
     \dimen6=\ColumnGutterRuleSkip
     \ifdim\baselineDelta<0pt
-      \advance\dimen6 by \baselineDelta
-      %\advance\dimen6 by \truetopskip
+      %\advance\dimen6 by \baselineDelta\relax
+      \advance\dimen6 by -\topskip\relax
+      \advance\dimen6 by \truetopskip\relax
     \fi
   \else
     \ifdim\thisjointDelta<0pt
@@ -1509,8 +1526,8 @@
     \fi
   \fi
   \ifvoid\s@mebox\else
-    \advance\dimen0 by \ht\s@mebox
-    \advance\dimen0 by \dp\s@mebox
+    \advance\dimen0 by \ht\s@mebox\relax
+    \advance\dimen0 by \dp\s@mebox\relax
     \ifx\pagecontents\empty
       \def\pagecontents{\setdiglotN@rmal\pickn@xtpartial\the\tmpt@ks}
     \fi
@@ -1596,7 +1613,7 @@
   \trace{Df}{Finding max \v@lpfx X\v@lsfx}%
   \x@\each@col\diglot@list\E
   \trace{Df}{=\the\dimen1}%
-  \advance\dimen2 by \dimen1%dimen2 now contains total natural height of text from last true synch-point and notes.
+  \advance\dimen2 by \dimen1\relax%dimen2 now contains total natural height of text from last true synch-point and notes.
   \edef\v@lpfxb{@fn}\dimen1=\dimen2
   \trace{Df}{Finding min note sep \v@lpfxb Xht}%
   \let\col@do=\min@note@sep% subtracts \v@lpfxb Xht and \v@lpfx Xht from dimen2, returning the smalles value in dimen1
@@ -1709,7 +1726,7 @@
   \ifdim \dimen9 <\dp\toprightins \dimen9=\dp\toprightins \fi
   \trace{d}{Top fig Gutter \the\dimen8 hight, \the\dimen9 deep}%
   \dimen7=\dimen9
-  \advance\dimen7 by \dimen8
+  \advance\dimen7 by \dimen8\relax
   \setbox\topchunk=\hbox to \textwidth{%\vllap{\the\ht\Lbox \the\dp\Lbox}%
     \hbox to\columnshift{}%
     \ifdiglotN@rmal%Are the sides swapped?
@@ -1734,7 +1751,7 @@
   \ifdim \dimen9 <\dp\bottomrightins \dimen9=\dp\bottomrightins \fi
   \trace{d}{Bottom Fig Gutter \the\dimen8 hight, \the\dimen9 deep}%
   \dimen7=\dimen9
-  \advance\dimen7 by \dimen8
+  \advance\dimen7 by \dimen8\relax
   \setbox\botchunk=\hbox to \textwidth{%\vllap{\the\ht\Lbox \the\dp\Lbox}%
     \hbox to\columnshift{}%
     \ifdiglotN@rmal%Are the sides swapped?
@@ -2014,7 +2031,7 @@
     \ifdim \dimen1 =0pt
       \x@\dimen1\x@=\csname @cur#1ht\endcsname % new height = old hright
     \else
-      \advance\dimen1 by \m@xht
+      \advance\dimen1 by \m@xht\relax
     \fi
   \fi
   \x@\xdef\csname @cur#1ht\endcsname{\the\dimen1}%
@@ -2030,11 +2047,11 @@
 }
 %Sum values (for averaging)
 \def\sum@val#1{\x@\let\x@\t@st\csname \v@lpfx#1\v@lsfx\endcsname
-  \advance\dimen1 by \t@st
+  \advance\dimen1 by \t@st\relax
 }
 
 \def\maxjoint@val#1{\dimen0=\csname \v@lpfx#1\v@lsfx\endcsname
-  \advance \dimen0 by \csname b@selineskip#1\endcsname
+  \advance \dimen0 by \csname b@selineskip#1\endcsname\relax
   \trace{dP}{joint ht for #1 = \the\dimen0}%
   \ifdim\dimen1<\dimen0
     \edef\m@x@at@col{#1}%
@@ -2045,7 +2062,7 @@
 
 \def\max@boxsz#1{\x@\let\x@\t@st\csname \v@lpfx#1\v@lsfx\endcsname
   \ifvoid\t@st \else
-    \dimen0=\ht\t@st \advance\dimen0 by \dp\t@st
+    \dimen0=\ht\t@st \advance\dimen0 by \dp\t@st\relax
     \ifdim\dimen1<\dimen0
       \edef\m@x@at@col{#1}%
       \dimen1=\dimen0
@@ -2381,7 +2398,7 @@
   %\showlists
   \trace{D}{tri@llist: \tri@llist}%
   \ifx\tri@llist\empty
-    \advance\triall@@pcount by 1
+    \advance\triall@@pcount by 1\relax
     \check@and@update %May trigger a refilling of \tri@llist
     \trace{D}{after check@and@update, tri@llist: \tri@llist, refl@wlist:\refl@wlist}%
     \ifx\refl@wlist\empty\else
@@ -2434,11 +2451,11 @@
 %rule is #1 hight, #3 deep, and fits in a box #2 high
   \trace{D}{makediglotgutter \the #1,\the #2,\the #3}%
    \setbox4=\vbox to #2{%
-     \dimen4=#2\advance\dimen4 by -#1
+     \dimen4=#2\advance\dimen4 by -#1\relax
      \kern\dimen4
      \hbox to 1pt{\hfil
        \ifColumnGutterRule
-        \dimen4=#1\advance \dimen4 by #3
+        \dimen4=#1\advance \dimen4 by #3\relax
         \vrule height \the\dimen4 
        \fi
        \hfil}%\dp5=#3 \box5
