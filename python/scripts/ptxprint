@@ -85,7 +85,8 @@ elif args.logging:
     if isinstance(loglevel, int):
         parms = {'level': loglevel, 'datefmt': '%d/%b/%Y %H:%M:%S', 'format': '%(asctime)s %(levelname)s:%(module)s(%(lineno)d) %(message)s'}
         if args.logfile.lower != "none":
-            parms.update(filename=args.logfile, filemode="w") #, encoding="utf-8")
+            logfh = open(args.logfile, "w", encoding="utf-8")
+            parms.update(stream=logfh, filemode="w") #, encoding="utf-8")
         try:
             logging.basicConfig(**parms)
         except FileNotFoundError as e:      # no write access to the log

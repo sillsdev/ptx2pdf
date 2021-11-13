@@ -3,6 +3,9 @@
 import re
 from ptxprint.utils import bookcodes, _allbkmap, refKey
 from ptxprint.sfm.ducet import get_sortkey, SHIFTTRIM, tailored
+import logging
+
+logger = logging.getLogger(__name__)
 
 bkranges = {'ot':   [b for b, i in _allbkmap.items() if 1  < i < 41],
             'nt':   [b for b, i in _allbkmap.items() if 60 < i < 88],
@@ -30,6 +33,7 @@ class TOC:
         self.sides = set()
         with open(infname, encoding="utf-8") as inf:
             for l in inf.readlines():
+                logger.debug("TOCline: {}".format(l.strip()))
                 if mode == 0 and re.match(r"\\defTOC\{main\}", l):
                     mode = 1
                 elif mode == 1:
