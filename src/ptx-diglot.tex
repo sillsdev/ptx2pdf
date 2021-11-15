@@ -33,7 +33,6 @@
 \def\diglotDbgeachcol{-1}% Define to begin tracingmacros and tracing assigns at each@col with TRACEcount
 \def\diglotDbgupdtPtl{-1}% Define to begin tracingmacros and tracing assigns at n@xtpartial  with TRACEcount
 
-
 \def\diglotbadbrk{\penalty 10000}
 
 %\def\TRshipout#1{\shipout#1}
@@ -53,8 +52,10 @@
 \newif\ifuseLeftMarks %Do we use marks from the left column
 \newif\ifuseRightMarks %Do we use them from the right column
 \newif\ifunprintable % The 'correct' logic results in a page that won't fit. Something breaks.
+\newif\ifdiglotDebugFollowContents% Fill the log with showboxes
 \useLeftMarkstrue
 \useRightMarkstrue
+\diglotDebugFollowContentsfalse
 
 \def\firstLmark{} % First mark in left column
 \def\botLmark{} % last mark in left column
@@ -400,10 +401,14 @@
   \else 
     \savingvdiscards=1
     \global\setbox\galley=\vsplit\galleyexc@ss to \trialheight
-    \trace{D}{Showing galley 3}%
-    \showbox\galley%
+    \ifdiglotDebugFollowContents
+      \trace{D}{Showing galley locn 3}%
+      \showbox\galley%
+    \fi
     \setbox3=\vbox{\vskip\dp\galley\splitdiscards}%
-    \showbox3
+    \ifdiglotDebugFollowContents
+      \showbox3
+    \fi
     \vfuzz=\dimen0
     \global\setbox\galley=\vbox{\unvbox\galley\global\galleypenalty=\lastpenalty\unpenalty\penalty\endtri@lpen@lty}%
     \ifvoid\galleyexc@ss\else
@@ -426,8 +431,10 @@
   \global\setbox\trialbox=\box\voidb@x
   \global\output={\diglot@any@trial}%calls \whichtrial on success
   \unvcopy\galley\relax %process newly-shrunk galley
-  \trace{D}{Showing galley 1}%
-  \showbox\galley
+  \ifdiglotDebugFollowContents
+    \trace{D}{Showing galley Locn 1}%
+    \showbox\galley
+  \fi
 }
 
 \def\run@a@trial{%
@@ -469,19 +476,26 @@
     \ifdim\dimen0<\trialheight
       \global\trialheight=\dimen0 %save useless trims.
     \fi
-    \trace{D}{Showing xcs}%
-    \showbox\@xcs
+    \ifdiglotDebugFollowContents
+      \trace{D}{Showing xcs before split}%
+      \showbox\@xcs
+    \fi
     \savingvdiscards=1
     \global\setbox\p@rtl=\vsplit\@xcs to \availht
     \setbox3=\vbox{\vskip\dp\p@rtl\splitdiscards}%
     \trace{D}{p@rtl:\the\ht\p@rtl, @xcs:\the\ht\@xcs}%
-    \showbox3
+    \ifdiglotDebugFollowContents
+      \showbox3
+    \fi
     \global\advance\availht by \baselineskip \relax% avoid underfull box in case of footnote
     \global\vsize=\availht
     \global\advance\availht by -\baselineskip\relax % avoid underfull box in case of footnote
     \ifvoid\@xcs\else
       \global\setbox\@xcs=\vbox{\unvcopy3\unvbox\@xcs}%
-      \showbox\@xcs
+      \ifdiglotDebugFollowContents
+        \trace{D}{Showing xcs after split}%
+        \showbox\@xcs
+      \fi
       \trace{D}{Resetting partial\c@rrdstat penalty from \the\csname partial\c@rrdstat penalty\endcsname to 0}%
       \global\csname partial\c@rrdstat penalty\endcsname=0 %FIXME: Isn't there a \splitpenalty??
     \fi
@@ -495,8 +509,10 @@
       \fi
     \fi\fi
     \global\output{\diglot@any@trial}
-    \trace{D}{Showing galley 4}%
-    \showbox\galley
+    \ifdiglotDebugFollowContents
+      \trace{D}{Showing galley locn 4}%
+      \showbox\galley
+    \fi
     \unvcopy\galley
     \unpenalty
     \penalty\endtri@lpen@lty
@@ -590,8 +606,10 @@
         \x@\global\x@\setbox\csname excess\c@rrdstat\endcsname\vbox{\joinboxes{\galleyexc@ss}{\csname excess\c@rrdstat\endcsname}{4}{\x@\the\csname partial\c@rrdstat penalty\endcsname}}%
       \fi
       \global\setbox\galleyexc@ss=\box\voidb@x
-      \trace{D}{Showing galley 2}%
-      \showbox\galley
+      \ifdiglotDebugFollowContents
+        \trace{D}{Showing galley locn 2}%
+        \showbox\galley
+      \fi
       \x@\global\x@\setbox\csname partial\c@rrdstat\endcsname\box\galley% Remember the old galley
       \x@\global\csname \c@rrdstat ht\endcsname=\dimexpr \ht\trialbox + \dp\trialbox\relax
       \x@\global\x@\setbox\x@\csname \c@rrdstat box\endcsname\box\trialbox
@@ -672,7 +690,9 @@
   \TempDim=\availht
   \trace{dP}{bld:\the\baselineDelta}%
   \setbox255=\vbox{\vskip\baselineDelta\relax\unvbox255}%
+  \ifdiglotDebugFollowContents
     \showbox255
+  \fi
   \ifdim\ht255>0pt
     \advance\TempDim by -\ht255\relax
     \advance\TempDim by -\dp255\relax
@@ -682,7 +702,9 @@
   \fi 
   \ifvoid\trialbox
     \global\setbox\trialbox=\vbox{\unvbox255}%
-    \showbox\trialbox
+    \ifdiglotDebugFollowContents
+      \showbox\trialbox
+    \fi
     \ifdim\TempDim<-0.3\baselineskip % Coarse test. main trial routine can be pickier if it wants
       \trace{D}{Initial Content does not fit (\the\trialheight, \the\TempDim, \the\availht)}%
       \global\holdinginserts=1
