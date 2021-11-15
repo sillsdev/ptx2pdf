@@ -356,6 +356,10 @@
     \unvbox\galleyexc@ss
   \fi
   \global\setbox\galleyexc@ss=\box\voidb@x\global\setbox\galley=\box\voidb@x
+  \ifdiglotDebugFollowContents
+    \trace{D}{Galley unrolled}%
+    \showlists
+  \fi
 }
 
 \def\rej@ctgalley{%For calling by trial routines that don't like the galley they've just been given 
@@ -393,7 +397,8 @@
   \setbox1=\vbox{\unvbox1}%
   \ifnum 1=\ifdim \ht1=0pt\ifdim\dp1=0pt 1 \else 0\fi \else 0\fi
     \trace{D}{Nothing wants to split from top of box: trial failed}%
-    \trialfailedtrue
+    \showbox\galleyexc@ss%
+    \global\trialfailedtrue
     \global\trialheight=-\baselineskip
     \global\setbox\galley\box\voidb@x
     \vfuzz=\dimen0
@@ -436,17 +441,20 @@
     \showbox\galley
   \fi
 }
+\newif\ifNoMergeReflow
+\NoMergeReflowfalse
 
 \def\run@a@trial{%
   \x@\global\x@\endtri@lpen@lty\x@=\csname dgl@tPen\c@rrdstat trialEnd\endcsname
-  \traceNum{d}{run@a@trial \show@dstat, \the\availht>\the\baselineskip?, etp:\endtri@lpen@lty}%
-  \x@\let\x@\p@rtl\csname partial\c@rrdstat\endcsname
-  \x@\let\x@\@xcs\csname excess\c@rrdstat\endcsname
+  \traceNum{d}{run@a@trial \show@dstat, \the\availht>\the\baselineskip?, etp:\the\endtri@lpen@lty}%
+  \x@\let\x@\p@rtl\csname partial\c@rrdstat\endcsname %last galley
+  \x@\let\x@\@xcs\csname excess\c@rrdstat\endcsname %source
   \trace{D}{partial\c@rrdstat: \the\ht\p@rtl+\the\dp\p@rtl x\the\wd\p@rtl}%
   \trace{D}{excess\c@rrdstat: \the\ht\@xcs+\the\dp\@xcs x\the\wd\@xcs}%
   \ifnum\TRACEcount=\diglotDbgJoinboxes
    \showbox\p@rtl\showbox\@xcs
   \fi
+  \let\after@run@a@trial=\relax
   \s@tbaseline{p}%
   \trace{D}{baseline: \the\baselineskip, av:\the\availht}%
   \ifdim\availht>\baselineskip
@@ -463,6 +471,15 @@
     \iflate@stage@reflow
       \trace{D}{restoring notes, re-flowing partial\c@rrdstat\space and excess\c@rrdstat,}%
       \r@storenotes{\g@tndstat}{1}%
+      %\showbox\p@rtl
+      \ifvoid\p@rtl\else
+        % FIXME: Merge boxes back together? More data needed! It didn't used to
+        % be here, but surely it ought to be?
+        \message{+++RARE CONDITION MET. Maybe doing wrong thing on page \the\pageno, debug posn \the\TRACEcount. Toggle with \NoMergeReflow\ifNoMergeReflow false\else true\fi}%
+        \ifNoMergeReflow\else
+          \global\setbox\@xcs\vbox{\joinboxes{\p@rtl}{\@xcs}{2}{0}}%
+        \fi
+      \fi
       % No need to *save* notes after restoring, because they're already saved.
     \else
       \s@venotes{\g@tndstat}{1}%
@@ -482,46 +499,60 @@
     \fi
     \savingvdiscards=1
     \global\setbox\p@rtl=\vsplit\@xcs to \availht
-    \setbox3=\vbox{\vskip\dp\p@rtl\splitdiscards}%
-    \trace{D}{p@rtl:\the\ht\p@rtl, @xcs:\the\ht\@xcs}%
-    \ifdiglotDebugFollowContents
-      \showbox3
+    \edef\tmpbadness{\the\badness}%
+    \setbox\p@rtl\vbox{\unvbox\p@rtl}%
+    \ifdim\ht\p@rtl<\baselineskip % Not a lineof text
+      \setbox4=\vbox{\unvcopy\p@rtl\unskip}% Test... make sure we split off something mroe than a skip
+      \showbox4
+      \ifdim\ht4=0pt\ifdim\dp4=0pt\ifdim\wd4=0pt
+        \trace{D}{Nothing printable split off. Badness \tmpbadness.}%
+        \global\trialfailedtrue
+        \let\after@run@a@trial=\after@after@a@trial
+      \fi\fi\fi
     \fi
-    \global\advance\availht by \baselineskip \relax% avoid underfull box in case of footnote
-    \global\vsize=\availht
-    \global\advance\availht by -\baselineskip\relax % avoid underfull box in case of footnote
-    \ifvoid\@xcs\else
-      \global\setbox\@xcs=\vbox{\unvcopy3\unvbox\@xcs}%
+    \iftrialfailed\else
+      \setbox3=\vbox{\vskip\dp\p@rtl\splitdiscards}%
+      \trace{D}{p@rtl:\the\ht\p@rtl+\the\dp\p@rtl, @xcs:\the\ht\@xcs}%
       \ifdiglotDebugFollowContents
-        \trace{D}{Showing xcs after split}%
-        \showbox\@xcs
+        \showbox3
       \fi
-      \trace{D}{Resetting partial\c@rrdstat penalty from \the\csname partial\c@rrdstat penalty\endcsname to 0}%
-      \global\csname partial\c@rrdstat penalty\endcsname=0 %FIXME: Isn't there a \splitpenalty??
-    \fi
-    \global\galleypenalty=0
-    \global\setbox\galley=\vbox{\x@\unvcopy\p@rtl\unpenalty\penalty\endtri@lpen@lty}%
-    \trace{D}{Running trial \the\trialheight, \the\ht\galley+\the\dp\galley (\the\ht\@xcs+\the\dp\@xcs left for next time)}%
-    \ifdim\ht\galley=0pt\ifdim\dp\galley=0pt
-      \trace{D}{How come galley has no size? (check with  scrollmode)}%
-      \ifnum\interactionmode=2
+      \global\advance\availht by \baselineskip \relax% avoid underfull box in case of footnote
+      \global\vsize=\availht
+      \global\advance\availht by -\baselineskip\relax % avoid underfull box in case of footnote
+      \ifvoid\@xcs\else
+        \global\setbox\@xcs=\vbox{\unvcopy3\unvbox\@xcs}%
+        \ifdiglotDebugFollowContents
+          \trace{D}{Showing xcs after split}%
+          \showbox\@xcs
+        \fi
+        \trace{D}{Resetting partial\c@rrdstat penalty from \the\csname partial\c@rrdstat penalty\endcsname to 0}%
+        \global\csname partial\c@rrdstat penalty\endcsname=0 %FIXME: Isn't there a \splitpenalty??
+      \fi
+      \global\galleypenalty=0
+      \global\setbox\galley=\vbox{\x@\unvcopy\p@rtl\unpenalty\penalty\endtri@lpen@lty}%
+      \trace{D}{Running trial \the\trialheight, \the\ht\galley+\the\dp\galley (\the\ht\@xcs+\the\dp\@xcs left for next time)}%
+      \ifdim\ht\galley=0pt\ifdim\dp\galley=0pt
+        \trace{D}{How come galley has no size? (check with  scrollmode)}%
+        \ifnum\interactionmode=2
+          \showbox\galley
+        \fi
+      \fi\fi
+      \global\output{\diglot@any@trial}
+      \ifdiglotDebugFollowContents
+        \trace{D}{Showing galley locn 4}%
         \showbox\galley
       \fi
-    \fi\fi
-    \global\output{\diglot@any@trial}
-    \ifdiglotDebugFollowContents
-      \trace{D}{Showing galley locn 4}%
-      \showbox\galley
+      \unvcopy\galley
+      \unpenalty
+      \penalty\endtri@lpen@lty
+      \relax\relax
     \fi
-    \unvcopy\galley
-    \unpenalty
-    \penalty\endtri@lpen@lty
-    \relax\relax
   \else
     \trace{D}{No space for trial}%
     \global\trialfailedtrue
-    \after@after@a@trial
+    \let\after@run@a@trial=\after@after@a@trial
   \fi
+  \after@run@a@trial
 }
 
 \xdef\m@rksm@x{0}
@@ -590,11 +621,14 @@
     \else
       \global\trialfailedtrue
       \global\pagefulltrue
-      \@trial@failed
+      \@trial@failed{2}%
     \fi
   \else
-    \iftrialfailed
-      \@trial@failed
+    \iftrialfailed %The 'simple' case.
+      \x@\ifvoid\csname excess\c@rrdstat\endcsname
+        \x@\global\x@\setbox\csname excess\c@rrdstat\endcsname\box\galleyexc@ss
+      \fi
+      \@trial@failed{1}%
     \else
       \makevtop{\trialbox}%
       \ifvoid\galleyexc@ss
@@ -622,10 +656,18 @@
   \after@this
 }
 
-\def\@trial@failed{%
-  \trace{D}{trial failed, (end of?) input moved. refilling excess\c@rrdstat - \refl@wlist}%(the start may have been set already
+\def\@trial@failed#1{%
+  \trace{D}{trial failed (class #1), (end of?) input moved. refilling excess\c@rrdstat - \refl@wlist}%(the start may have been set already
   %Undo the vsplit (all mtl into excessX)
   \x@\global\x@\setbox\csname excess\c@rrdstat\endcsname\vbox{\joinboxes{\csname partial\c@rrdstat\endcsname}{\csname excess\c@rrdstat\endcsname}{3}{\x@\the\csname partial\c@rrdstat penalty\endcsname}}%
+  \ifdiglotDebugFollowContents
+    \trace{D}{Showing galley@xcess}%
+    \x@\showbox\galleyexc@ss
+    \trace{D}{Showing restored excess\c@rrdstat}%
+    \x@\showbox\csname excess\c@rrdstat\endcsname
+  \fi
+  \ifdim\dimexpr \ht\@xcs + \dp\@xcs + \wd\@xcs\relax=0pt \relax
+  \fi
   \let\col@do=\restore@oldmarks
   \x@\each@col\diglot@list\E
 }
@@ -771,8 +813,8 @@
 \def\ztmoff{\tracingmacros=0}
 % Change which side we're adding to
 \def\pr@sideswitch#1#2{%
-  \tmpcount=\lastnodetype
   \global\savedpenalty=\lastpenalty% This MUST be first (at least, before any writes), or the last /thing/ won't be a penalty
+  \tmpcount=\lastnodetype
   \ifx\c@rrdstat\empty
     \trace{d}{\c@rrdstat is empty, somehow, making it L for sanity}%
     \gdef\c@rrdstat{L}%
@@ -1032,6 +1074,8 @@
 \newdimen\TempDim %
 \newbox\Lbox % The part of partialL which fits on the page
 \newbox\Rbox % The part of partialR which fits on the page
+\newbox\Ldiscards %what did tex discard at the top of this chunk?
+\newbox\Rdiscards %what did tex discard at the top of this chunk?
 
 %when there's no more input, make sure partial gets printed
 \def\emitpartial{%
@@ -1898,6 +1942,15 @@
   \ifnum\outputpenalty=-10000 %User-pagebreak
     \x@\xdef\csname saved\c@rrdstat penalty\endcsname{\outputpenalty}%
   \fi
+  \ifnum\savedpenalty>9999
+    \trace{D}{Saving discards}%
+    \x@\setbox\csname \c@rrdstat discards\endcsname\vbox{\pagediscards}%
+    \ifdiglotDebugFollowContents
+      \x@\showbox\csname\c@rrdstat discards\endcsname
+    \fi
+  \else 
+    \x@\setbox\csname \c@rrdstat discards\endcsname\box\voidb@x
+  \fi
   \diglot@any@primary
   \ifnum\outputpenalty=\dgl@tPenLtrialEnd\relax 
     \trace{D}{Why are we in diglotCollect after a trial?}%
@@ -1923,7 +1976,7 @@
   \fi
   \global\x@\csname partial\c@rrdstat penalty\endcsname=\tmpcount
   \ifnum\outputpenalty=\dgl@tPenColSwap\relax %Got to the end of the \lefttext
-    \trace{D}{Reached end of diglotCollect. \ifallNeedEmptying Running trials soon\fi}%
+    \trace{D}{Reached end of diglotCollect. \ifallNeedEmptying Running trials soon\fi\ifintrial IN trial??\fi}%
     \ifallNeedEmptying
       \global\let\n@xtc@mmand=\diglot@run@trials
       \global\allNeedEmptyingfalse
@@ -2382,7 +2435,7 @@
 
 \def\diglot@run@nxt@trial{%
   \traceNum{d}{diglot@run@nxt@trial}%
-  \x@\n@xttrial\tri@llist\E
+  \x@\n@xttrial\tri@llist\E % cuts 1st column off tri@lalist and makes it current.
   \ifx\c@rrdstat\empty %End of the loop.
   \else
     \ifnum 1=\x@\ifvoid\csname excess\c@rrdstat\endcsname \x@\ifvoid\csname partial\c@rrdstat\endcsname 0\else 1\fi\else 1\fi
@@ -2537,6 +2590,7 @@
     {\edef\sfx{#1}\let\wh@t\n@wSpecificDim \pr@cessSpecificDim}
     \global\let\rev@layout@list\rev@diglot@list
     \x@\csname #1isDiglotColumn\endcsname\empty
+    \x@\newb@x\csname #1discards\endcsname
     \x@\newb@x\csname #1box\endcsname
     \x@\newb@x\csname partial#1\endcsname
     \x@\newb@x\csname excess#1\endcsname
