@@ -993,7 +993,11 @@
 \newif\ifc@ntinue
 \def\c@tegory{}
 \newread\styl@sheet
+\newif\ifnewstyles
+\newstylestrue
+
 \def\stylesheet#1{
+ \newstylestrue
  \let\oldc@tegory=\c@tegory
  \m@kedigitsother
  \let\save@regular=\regular \let\regular=\Regular
@@ -1101,10 +1105,9 @@
  \global\intr@donefalse
  \xdef\ptxst@rtp@ge{\the\pageno}%
  \ifdiglot
-    \ifx\c@rrdstat\empty
-      \gdef\c@rrdstat{L}%
-    \fi
-    \setLRspecific% \@netimesetup needs actual values, in a diglot there may be no use of generic FontSizeUnit, etc.
+    \trace{d}{New ptxfile}%
+    \gdef\c@rrdstat{L}%
+    \setLRspecific% \@netimesetup needs actual values, in a diglot there might not be any use of generic FontSizeUnit, etc.
  \fi
  \@netimesetup
  \ifdiglot\bgroup%This must be outside of @onetimesetup as there's no guarantee that diglot will be true for all ptxfiles.
@@ -1373,7 +1376,7 @@
 \newif\ifDoubleSided \DoubleSidedtrue % binding gutter on alternate sides; use odd/even headers
 \def\debugBL{\MSG{\f@ntstyle, Baseline: \the\baselineskip}} % for scattering in usfm as desired.
 % calculate various dimensions based on the factors, units, etc that have been defined
-%+csty_setupsizes
+%+csty_setupsizewas s
 \def\s@tb@dyb@seline#1{%Parameter is {} for monoglot, L / R for diglot.
  \baselineskip=\origb@selineskip
  \global\le@dingunit=\LineSpacingFactor\FontSizeUnit
@@ -1389,7 +1392,7 @@
    \x@\xdef\csname b@selineskip#1\endcsname{\the\baselineskip}%
    \MSG{Baselineskip for p#1 was undefined, now set to \the\baselineskip}%
  \else
-   \MSG{Baselineskip for p#1 defined, as \the\baselineskip}%
+   \MSG{Baselineskip for p#1 was \p@ram (orig: \the\origb@selineskip). now defined as \the\baselineskip}%
    \x@\xdef\csname b@selineskip#1\endcsname{\the\baselineskip}%
  \fi
 }

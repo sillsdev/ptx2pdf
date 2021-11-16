@@ -397,8 +397,8 @@
   \setbox1=\vbox{\unvbox1}%
   \ifnum 1=\ifdim \ht1=0pt\ifdim\dp1=0pt 1 \else 0\fi \else 0\fi
     \trace{D}{Nothing wants to split from top of box: trial failed}%
-    \showbox\galleyexc@ss%
-    \global\trialfailedtrue
+    \ifdiglotDebugFollowContents\showbox\galleyexc@ss \fi
+    \trialfailedtrue
     \global\trialheight=-\baselineskip
     \global\setbox\galley\box\voidb@x
     \vfuzz=\dimen0
@@ -417,7 +417,7 @@
     \vfuzz=\dimen0
     \global\setbox\galley=\vbox{\unvbox\galley\global\galleypenalty=\lastpenalty\unpenalty\penalty\endtri@lpen@lty}%
     \ifvoid\galleyexc@ss\else
-      \global\setbox\galleyexc@ss\vbox{\unvbox3\unvbox\galleyexc@ss}%
+      \global\setbox\galleyexc@ss\vbox{\vskip\ht3\penalty10000\unvbox\galleyexc@ss}%
     \fi
     \trace{D}{galley/xs now \the\ht\galley+\the\dp\galley, / \the\ht\galleyexc@ss+\the\dp\galleyexc@ss, gp:\the\galleypenalty}%
     \ifnum\TRACEcount=\diglotDbgJoinboxes
@@ -501,52 +501,41 @@
     \global\setbox\p@rtl=\vsplit\@xcs to \availht
     \edef\tmpbadness{\the\badness}%
     \setbox\p@rtl\vbox{\unvbox\p@rtl}%
-    \ifdim\ht\p@rtl<\baselineskip % Not a lineof text
-      \setbox4=\vbox{\unvcopy\p@rtl\unskip}% Test... make sure we split off something mroe than a skip
-      \showbox4
-      \ifdim\ht4=0pt\ifdim\dp4=0pt\ifdim\wd4=0pt
-        \trace{D}{Nothing printable split off. Badness \tmpbadness.}%
-        \global\trialfailedtrue
-        \let\after@run@a@trial=\after@after@a@trial
-      \fi\fi\fi
+    \setbox3=\vbox{\vskip\dp\p@rtl\splitdiscards}%
+    \ifdiglotDebugFollowContents
+      \showbox3
     \fi
-    \iftrialfailed\else
-      \setbox3=\vbox{\vskip\dp\p@rtl\splitdiscards}%
-      \trace{D}{p@rtl:\the\ht\p@rtl+\the\dp\p@rtl, @xcs:\the\ht\@xcs}%
+    \global\advance\availht by \baselineskip \relax% avoid underfull box in case of footnote
+    \global\vsize=\availht
+    \global\advance\availht by -\baselineskip\relax % avoid underfull box in case of footnote
+    \ifvoid\@xcs\else
+      \global\setbox\@xcs=\vbox{\vskip\ht3\penalty10000\unvbox\@xcs}%
       \ifdiglotDebugFollowContents
-        \showbox3
+        \trace{D}{Showing xcs after split}%
+        \showbox\@xcs
       \fi
-      \global\advance\availht by \baselineskip \relax% avoid underfull box in case of footnote
-      \global\vsize=\availht
-      \global\advance\availht by -\baselineskip\relax % avoid underfull box in case of footnote
-      \ifvoid\@xcs\else
-        \global\setbox\@xcs=\vbox{\unvcopy3\unvbox\@xcs}%
-        \ifdiglotDebugFollowContents
-          \trace{D}{Showing xcs after split}%
-          \showbox\@xcs
-        \fi
-        \trace{D}{Resetting partial\c@rrdstat penalty from \the\csname partial\c@rrdstat penalty\endcsname to 0}%
-        \global\csname partial\c@rrdstat penalty\endcsname=0 %FIXME: Isn't there a \splitpenalty??
-      \fi
-      \global\galleypenalty=0
-      \global\setbox\galley=\vbox{\x@\unvcopy\p@rtl\unpenalty\penalty\endtri@lpen@lty}%
-      \trace{D}{Running trial \the\trialheight, \the\ht\galley+\the\dp\galley (\the\ht\@xcs+\the\dp\@xcs left for next time)}%
-      \ifdim\ht\galley=0pt\ifdim\dp\galley=0pt
-        \trace{D}{How come galley has no size? (check with  scrollmode)}%
-        \ifnum\interactionmode=2
-          \showbox\galley
-        \fi
-      \fi\fi
-      \global\output{\diglot@any@trial}
-      \ifdiglotDebugFollowContents
-        \trace{D}{Showing galley locn 4}%
+      \trace{D}{Resetting partial\c@rrdstat penalty from \the\csname partial\c@rrdstat penalty\endcsname to 0}%
+      \global\csname partial\c@rrdstat penalty\endcsname=0 %FIXME: Isn't there a \splitpenalty??
+    \fi
+    \global\galleypenalty=0
+    \global\setbox\galley=\vbox{\x@\unvcopy\p@rtl\unpenalty\penalty\endtri@lpen@lty}%
+    \trace{D}{Running trial \the\trialheight, \the\ht\galley+\the\dp\galley (\the\ht\@xcs+\the\dp\@xcs left for next time)}%
+    \ifdim\ht\galley=0pt\ifdim\dp\galley=0pt
+      \trace{D}{How come galley has no size? (check with  scrollmode)}%
+      \ifnum\interactionmode=2
         \showbox\galley
       \fi
-      \unvcopy\galley
-      \unpenalty
-      \penalty\endtri@lpen@lty
-      \relax\relax
+    \fi\fi
+    \global\output{\diglot@any@trial}
+    \ifdiglotDebugFollowContents
+      \trace{D}{Showing galley locn 4}%
+      \showbox\galley
     \fi
+    \unvcopy\galley
+    \unpenalty
+    \penalty\endtri@lpen@lty
+    \relax\relax
+    \let\after@run@a@trial=\relax
   \else
     \trace{D}{No space for trial}%
     \global\trialfailedtrue
@@ -625,9 +614,6 @@
     \fi
   \else
     \iftrialfailed %The 'simple' case.
-      \x@\ifvoid\csname excess\c@rrdstat\endcsname
-        \x@\global\x@\setbox\csname excess\c@rrdstat\endcsname\box\galleyexc@ss
-      \fi
       \@trial@failed{1}%
     \else
       \makevtop{\trialbox}%
@@ -666,8 +652,8 @@
     \trace{D}{Showing restored excess\c@rrdstat}%
     \x@\showbox\csname excess\c@rrdstat\endcsname
   \fi
-  \ifdim\dimexpr \ht\@xcs + \dp\@xcs + \wd\@xcs\relax=0pt \relax
-  \fi
+  %\ifdim\dimexpr \ht\@xcs + \dp\@xcs + \wd\@xcs\relax=0pt \relax
+  %\fi
   \let\col@do=\restore@oldmarks
   \x@\each@col\diglot@list\E
 }
@@ -820,7 +806,7 @@
     \gdef\c@rrdstat{L}%
   \fi
   \x@\ifnum\csname saved\c@rrdstat penalty\endcsname=-10000
-    %\global\savedpenalty=-10000
+    \global\savedpenalty=-10000
   \fi
   \endlastp@rstyle{p}%
   \global\let\layoutstylebreak\enddigl@t % 
@@ -1059,7 +1045,7 @@
  \ifnum\tmpcount>\MaxPages \global\MaxPages=\tmpcount
    %\message{Maxpages now : \the\MaxPages}%
  \fi
- \trace{D}{COLLECT: lsl=\the\lineskiplimit, ts=\the\topskip, bs=\the\baselineskip}%
+ \trace{D}{end of swap@diglot: lsl=\the\lineskiplimit, ts=\the\topskip, bs=\the\baselineskip}%
  \expandafter\ifx\csname language#1\endcsname\relax\else\uselanguage{\csname language#1\endcsname}\fi
 }%
 
@@ -1213,32 +1199,32 @@
  \fi
 }
 
-\def\joinb@xes#1#2{%Called (ONLY) by pagebuilder. Join a vtop/vbox and a vtop/vbox together and preserve baselineskip%
-%\showbox#1\showbox#2%
-\bgroup
- \setbox0=\box#1
- \setbox1=\box#2
- \dimen0=0pt\relax
- \ifdim\ht0>0pt \ifdim\dp0<0.5\baselineskip
-   %box0 is not a vtop, it's a vbox
-   \advance\dimen0 by -\baselineskip\relax
- \fi\fi
- \ifdim\ht1>0pt \ifdim\dp1<0.5\baselineskip
-   %box1 is not a vtop, it's a vbox
-   \ifdim\dimen0<0pt
-     \dimen0=0pt
-   \fi
-   %I thought ought to be a \baselineskip here. It doesn't seem to be needed.
-   %\advance\dimen0 by \baselineskip
- \fi\fi
- \trace{D}{joinb@xes #1 #2, skip \the\dimen0}%
- \box0
- \ifdim\dimen0=0pt
- \else
-   \vskip\dimen0
- \fi
- \box1
-\egroup}
+\def\joinb@xes#1#2{%Called (ONLY) by pagebuilder. Join a vtop/vbox and a vbox/vbox together and preserve baselineskip%
+ %\showbox#1\showbox#2%
+ \bgroup
+  \setbox0=\box#1
+  \setbox1=\box#2
+  \dimen0=0pt\relax
+  \ifdim\ht0>0pt \ifdim\dp0<0.5\baselineskip
+    %box0 is not a vtop, it's a vbox, so won't have text hanging below its baseline.
+    \advance\dimen0 by -\baselineskip\relax % 
+  \fi\fi
+  \ifdim\ht1>0pt \ifdim\dp1<0.5\baselineskip
+    %box1 is not a vtop, it's a vbox
+    \ifdim\dimen0<0pt
+      \dimen0=0pt
+    \fi
+    %I thought there ought to be a \baselineskip here. It doesn't seem to be needed.
+    %\advance\dimen0 by \baselineskip
+  \fi\fi
+  \trace{D}{joinb@xes #1 #2, skip \the\dimen0}%
+  \box0
+  \ifdim\dimen0=0pt
+  \else
+    \vskip\dimen0
+  \fi
+  \box1
+ \egroup}
 
 
 \def\update@cumulative@delta#1{\bgroup
