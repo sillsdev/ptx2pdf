@@ -411,6 +411,7 @@
       \showbox\galley%
     \fi
     \setbox3=\vbox{\vskip\dp\galley\splitdiscards}%
+    \trace{D}{discard ht:\the\ht3}%
     \ifdiglotDebugFollowContents
       \showbox3
     \fi
@@ -502,6 +503,7 @@
     \edef\tmpbadness{\the\badness}%
     \setbox\p@rtl\vbox{\unvbox\p@rtl}%
     \setbox3=\vbox{\vskip\dp\p@rtl\splitdiscards}%
+    \trace{D}{discard ht:\the\ht3}%
     \ifdiglotDebugFollowContents
       \showbox3
     \fi
@@ -717,7 +719,31 @@
   \dglt@calc@vailht
   \TempDim=\availht
   \trace{dP}{bld:\the\baselineDelta}%
-  \setbox255=\vbox{\vskip\baselineDelta\relax\unvbox255}%
+  {%Don't autmatically remove baselinedelta... that'd be wrong for titles, etc.
+    \vfuzz=\maxdimen
+    \setbox0=\vbox{\penalty0\unvcopy255}%
+    \setbox1=\vsplit0 to 0pt % Remove topskip glue
+    \setbox3=\vbox{\splitdiscards}% Discards contains topskip glue and other stuff. Other stuff should have gone into page discards by  now.
+    \ifdim\dimen3>\topskip
+      \message{+++Uh oh. Didn't expect this. Now what? Discards \the\dimen3 > \the\topskip}%
+    \fi
+    \trace{D}{Topskip glue was \the\ht3, bls:\the\baselineskip}%
+    \dimen0=\baselineDelta
+    \dimen1=\ht3
+    %\showbox3
+    \ifdim\dimen1=0pt 
+      \dimen0=0pt %No adjustment, it's too tall and already been gridded, we hope
+    \else
+      \advance \dimen1 by \dimen0
+      \loop\ifdim\dimen1 < 0pt
+        \advance\dimen0 by \csname b@selineskip\c@rrdstat\endcsname
+        \advance\dimen1 by \csname b@selineskip\c@rrdstat\endcsname
+      \repeat
+    \fi
+    \xdef\@djustskip{\the\dimen0}%
+    \trace{D}{Adjusted topskip correction \the\dimen0}%
+  }
+  \setbox255=\vbox{\vskip\@djustskip\unvbox255}%
   \ifdiglotDebugFollowContents
     \showbox255
   \fi
@@ -829,7 +855,7 @@
   \fi
   \trace{d}{pr@sideswitch #1 (\c@rrdstat) pL:\the\dp\partialL, xL:\the\dp\excessL, pR:\the\dp\partialR, xR\the\dp\excessR, lp:\the\savedpenalty \ifallNeedEmptying\space  allNeedemptying\fi}%
   %\showlists
-  \global\savedpenalty=0 % avoid cross-contamination
+  %\global\savedpenalty=0 % avoid cross-contamination
   \global\output={\diglotCollect}%Why woudn't it be? Don't know, but sometimes it's not.
   \let\@ldstat=\c@rrdstat
   \@@setside{#2}%Set the side to occur after the next swapcols penalty
@@ -1060,8 +1086,8 @@
 \newdimen\TempDim %
 \newbox\Lbox % The part of partialL which fits on the page
 \newbox\Rbox % The part of partialR which fits on the page
-\newbox\Ldiscards %what did tex discard at the top of this chunk?
-\newbox\Rdiscards %what did tex discard at the top of this chunk?
+%\newbox\Ldiscards %what did tex discard at the top of this chunk?
+%\newbox\Rdiscards %what did tex discard at the top of this chunk?
 
 %when there's no more input, make sure partial gets printed
 \def\emitpartial{%
@@ -1928,22 +1954,28 @@
   \ifnum\outputpenalty=-10000 %User-pagebreak
     \x@\xdef\csname saved\c@rrdstat penalty\endcsname{\outputpenalty}%
   \fi
-  \ifnum\savedpenalty>9999
-    \trace{D}{Saving discards}%
-    \x@\setbox\csname \c@rrdstat discards\endcsname\vbox{\pagediscards}%
-    \ifdiglotDebugFollowContents
-      \x@\showbox\csname\c@rrdstat discards\endcsname
-    \fi
-  \else 
-    \x@\setbox\csname \c@rrdstat discards\endcsname\box\voidb@x
-  \fi
+%  \ifvoid\destb@x
+%    \ifnum\savedpenalty>9999
+%      \trace{D}{Saving discards}%
+%      \x@\setbox\csname \c@rrdstat discards\endcsname\vbox{\pagediscards}%
+%      \ifdiglotDebugFollowContents
+%        \x@\showbox\csname\c@rrdstat discards\endcsname
+%      \fi
+%    \else 
+%      \x@\setbox\csname \c@rrdstat discards\endcsname\box\voidb@x
+%    \fi
+%  \fi
   \diglot@any@primary
   \ifnum\outputpenalty=\dgl@tPenLtrialEnd\relax 
     \trace{D}{Why are we in diglotCollect after a trial?}%
     \ifintrial\diglot@any@tstored\fi
   \fi
   % tempoarily split and see if there are marks in this text
-  \bgroup\setbox0=\copy255 \setbox1=\vsplit0 to \maxdimen\egroup
+  \bgroup
+    \setbox0=\copy255 \setbox1=\vsplit0 to \maxdimen
+    %\setbox1=\vbox{\unvbox1}%l
+    %\trace{D}{ht1:\the\ht1  dp0:\the\dp1}%
+  \egroup
   \edef\t@mp{\splitbotmark}%
   \ifx\t@mp\empty\else\global\m@rksonpagetrue\trace{H}{Found mark \splitbotmark}\fi
   \makevtop{255}%
@@ -2576,12 +2608,13 @@
     {\edef\sfx{#1}\let\wh@t\n@wSpecificDim \pr@cessSpecificDim}
     \global\let\rev@layout@list\rev@diglot@list
     \x@\csname #1isDiglotColumn\endcsname\empty
-    \x@\newb@x\csname #1discards\endcsname
+%    \x@\newb@x\csname #1discards\endcsname
     \x@\newb@x\csname #1box\endcsname
     \x@\newb@x\csname partial#1\endcsname
     \x@\newb@x\csname excess#1\endcsname
     \x@\newb@x\csname picb@x#1\endcsname
     \x@\newt@ks\csname diglot#1ho@ks\endcsname
+    \x@\newc@unt\csname saved#1penalty\endcsname
     \x@\newc@unt\csname partial#1penalty\endcsname
     \x@\newc@unt\csname #1boxpenalty\endcsname
     \x@\newc@unt\csname cumulativeDelta#1\endcsname
