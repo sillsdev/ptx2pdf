@@ -1,8 +1,34 @@
-PTXprint 2.0.6 Release Notes 
-10 November 2021
+PTXprint 2.0.13 Release Notes 
+17 November 2021
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 
+Bug fixes and improvements in 2.0.13 (17 Nov 2021)
+
+  * Fixed: Missing initial Table of Contents line for Primary diglot table
+  
+  * Fixed: ptxprint.sty file was getting excluded for non-diglot projects
+  
+Bug fixes and improvements in 2.0.11 (14 Nov 2021)
+
+  * Fixed: Refresh captions now works and also updates diglot captions as advertised
+  
+  * Fixed: Front matter fonts and styling in diglots now follow primary settings
+  
+Bug fixes and improvements in 2.0.10 (13 Nov 2021)
+
+  * Fixed: unwanted diglot pagebreak after mt
+  
+  * Fixed: Ch:Vs separator selection not being remembered
+  
+  * Fixed: PicList table kept switching to wrong view
+  
+Bug fixes and improvements in 2.0.9 (11 Nov 2021)
+
+  * Table of Contents for Diglot publications can specify L (Pri) or R (Sec) filters
+  
+  * Fixed: Diglots failed to print with .doc error
+  
 Bug fixes and improvements in 2.0.6 (10 Nov 2021)
 
   * Picture captions can now be refreshed from Paratext USFM files #435

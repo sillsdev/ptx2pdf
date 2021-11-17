@@ -237,10 +237,12 @@ class PicInfo(dict):
             return False
         return True
 
-    def merge(self, tgtpre, srcpre, indat=None, mergeCaptions=True, bkanchors=False):
+    def merge(self, tgtpre, srcpre, indat=None, mergeCaptions=True, bkanchors=False, captionpre=None):
         ''' Used for merging piclists from diglots into the main piclist'''
         if indat is None:
             indat = self
+        if captionpre is None:
+            captionpre = srcpre
         tgts = {}
         for k, v in self.items():
             if v['anchor'][3:].startswith(tgtpre):
@@ -252,19 +254,20 @@ class PicInfo(dict):
                     for s in tgts.get(a, []):
                         if s.get('src', '') == v.get('src', ''):
                             if v.get('caption', '') != '':
-                                s['caption'+srcpre] = v.get('caption', '')
+                                s['caption'+captionpre] = v.get('caption', '')
                             if v.get('ref', '') != '':
-                                s['ref'+srcpre] = v['ref']
+                                s['ref'+captionpre] = v['ref']
                             break
                 del indat[k]
 
-    def threadUsfms(self, parent, suffix):
+    def threadUsfms(self, parent, suffix, nosave=False):
         bks = self.model.getAllBooks()
         for bk, bkp in bks.items():
             if os.path.exists(bkp):
                 self.read_sfm(bk, bkp, parent, suffix=suffix)
         self.set_positions(cols=2, randomize=True, suffix=suffix)
-        self.model.savePics()
+        if not nosave:
+            self.model.savePics()
         self.inthread = False
 
     def _fixPicinfo(self, vals): # USFM2 to USFM3 converter

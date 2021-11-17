@@ -98,10 +98,10 @@
   \startt@ble
   \@ndcell
   \@ndrow
-  \advance\tabler@ws by 1
+  \global\advance\tabler@ws by 1
   \tablec@l=0
   \@tablerowtrue \@TR \@tablerowfalse
-  \@rowtrue
+  \@rowtrue\trace{t}{rows=\the\tabler@ws}%
   \ignorespaces}
 
 \addtoparstylehooks{\if@tablerow\else\endt@ble\fi}
@@ -210,7 +210,7 @@
   \fi}
 
 \def\endt@blewrap{%
-  \trace{t}{endt@blewrap \the\maxtablec@l}%
+  \trace{t}{endt@blewrap \the\maxtablec@l, rows=\the\tabler@ws}%
   % calculate column widths as:
   % (a) any column whose max is < \hsize / numcols gets its natural width
   % (b) calculate exc@ss width of the remaining columns
@@ -222,7 +222,8 @@
   \getp@ram{rightmargin}{tr}\ifx\p@ram\relax\else\advance\thr@shold by -\p@ram\IndentUnit\fi 
   \divide\thr@shold by \maxtablec@l
   \f@reachcol{%
-    \c@rrentcolwidth=-1sp % "unset" flag
+    \getp@ram{spacebefore}{tc\the\@col}%
+    \c@rrentcolwidth=\ifx\p@ram\relax-1sp\else\p@ram\textwidth\divide\c@rrentcolwidth 12\trace{t}{width=\the\c@rrentcolwidth}\fi
     \ifdim\wd\c@rrentcolbox>\thr@shold
       \advance\exc@ss by \wd\c@rrentcolbox \advance\exc@ss by -\thr@shold
     \else

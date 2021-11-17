@@ -17,7 +17,7 @@
 \pc \zimagecopyrights
 \rem ----------Page 3----------------
 \periph Table of Contents|id="contents"
-\is \zvar|contentsheader\*
+\mt3 \zvar|toctitle\*
 \ip \ztoc|main\*
 \resetpagenums -1
 \dopagenums

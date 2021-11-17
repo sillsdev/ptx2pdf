@@ -116,6 +116,19 @@ fr_Help l_working_dir lb_working_dir btn_about
 r_generate_selected l_generate_booklist r_generate_all c_randomPicPosn
 """.split()
 
+_ui_enable4diglot2ndary = """
+l_fontB bl_fontB l_fontI bl_fontI l_fontBI bl_fontBI 
+tb_NotesRefs lb_NotesRefs tb_general
+tb_footnotes c_includeFootnotes c_fneachnewline
+tb_xrefs     c_includeXrefs     c_xreachnewline
+c_fontFake l_fontBold s_fontBold l_fontItalic s_fontItalic
+fr_writingSystem l_textDirection fcb_textDirection fcb_script l_script
+tb_Body lb_Body
+fr_BeginEnding c_bookIntro c_introOutline c_filterGlossary c_ch1pagebreak
+fr_IncludeScripture c_mainBodyText gr_mainBodyText c_chapterNumber c_justify c_sectionHeads
+c_verseNumbers c_preventorphans c_hideEmptyVerses c_elipsizeMissingVerses
+""".split()
+
 # bx_fnOptions bx_xrOptions 
 _ui_basic = """
 r_book_module btn_chooseBibleModule lb_bibleModule
@@ -216,7 +229,7 @@ _sensitivities = {
     "c_autoToC" :              ["t_tocTitle", "gr_toc", "l_toc", "l_leaderStyle", "fcb_leaderStyle"],
     "c_hideEmptyVerses" :      ["c_elipsizeMissingVerses"],
     "c_marginalverses" :       ["s_columnShift"],
-    "c_rangeShowVerse" :       ["l_chvsSep", "c_sepPeriod", "c_sepColon"],
+    "c_rangeShowVerse" :       ["l_chvsSep", "r_CVsep_period", "r_CVsep_colon"],
     "c_fnautocallers" :        ["t_fncallers", "btn_resetFNcallers", "c_fnomitcaller", "c_fnpageresetcallers"],
     "c_xrautocallers" :        ["t_xrcallers", "btn_resetXRcallers", "c_xromitcaller", "c_xrpageresetcallers"],
     "c_footnoterule" :         ["rule_footnote", "l_fnAboveSpace", "l_fnBelowSpace", "s_fnBelowSpace", "gr_fnRulePosParms"],
@@ -246,7 +259,7 @@ _sensitivities = {
     "c_frontmatter":           ["c_periphPageBreak", "btn_editFrontMatter"],
     "c_colophon":              ["gr_colophon"],
     "c_plCreditApply2all":     ["c_plCreditOverwrite"],
-    "c_rangeShowChapter":      ["c_rangeShowVerse", "l_chvsSep", "c_sepPeriod", "c_sepColon"],
+    "c_rangeShowChapter":      ["c_rangeShowVerse", "l_chvsSep", "r_CVsep_period", "r_CVsep_colon"],
 }
 # Checkboxes and the different objects they make (in)sensitive when toggled
 # These function OPPOSITE to the ones above (they turn OFF/insensitive when the c_box is active)
@@ -717,6 +730,7 @@ class GtkViewModel(ViewModel):
         self.noInternetClicked(None)
         self.updateMarginGraphics()
         self.colorTabs()
+        self.onRotateTabsChanged()
         self.mw.resize(200, 200)
 
     def toggleUIdetails(self, w, state):
@@ -1329,16 +1343,17 @@ class GtkViewModel(ViewModel):
         self.picListView.setCheckFilter(self.get('c_picCheckInvFilter'), f)
 
     def onUpdatePicCaptionsClicked(self, btn):
+        # import pdb; pdb.set_trace()
         if self.diglotView is not None:
             pref = "L"
             digpics = PicInfo(self.diglotView)
-            digpics.threadUsfms(self.diglotView, "R")
-            self.picinfos.merge("R", "R", indat=digpics, mergeCaptions=True, bkanchors=True)
+            digpics.threadUsfms(self.diglotView, "R", nosave=True)
+            self.picinfos.merge("L", "R", indat=digpics, mergeCaptions=True, bkanchors=True)
         else:
             pref = ""
         newpics = PicInfo(self)
-        newpics.threadUsfms(self, pref)
-        self.picinfos.merge(pref, pref, indat=newpics, mergeCaptions=True, bkanchors=True)
+        newpics.threadUsfms(self, pref, nosave=True)
+        self.picinfos.merge(pref, pref, indat=newpics, mergeCaptions=True, bkanchors=True, captionpre="")
         self.updatePicList()
 
     def onGeneratePicListClicked(self, btn):
@@ -1523,7 +1538,7 @@ class GtkViewModel(ViewModel):
         elif pgid == "tb_TabsBorders":
             self.onThumbColorChange()
         elif pgid == "tb_Pictures":
-            self.onPLpageChanged(None, None, pgnum=0)
+            self.onPLpageChanged(None, None, pgnum=-1)
 
     def onRefreshViewerTextClicked(self, btn):
         pg = self.get("nbk_Viewer")
@@ -1563,7 +1578,7 @@ class GtkViewModel(ViewModel):
         fndict = {"scroll_FrontMatter" : ("", ""), "scroll_AdjList" : ("AdjLists", ".adj"), "scroll_FinalSFM" : ("", ""),
                   "scroll_TeXfile" : ("", ".tex"), "scroll_XeTeXlog" : ("", ".log"), "scroll_Settings": ("", "")}
 
-        if pgid == "scroll_FrontMatter": # This hasn't been built yet, but is coming soon!
+        if pgid == "scroll_FrontMatter":
             fpath = self.configFRT()
             if not os.path.exists(fpath):
                 self.fileViews[pgnum][0].set_text("\n" +_(" Click the Generate button (above) to start the process of creating Front Matter..."))
@@ -1744,7 +1759,6 @@ class GtkViewModel(ViewModel):
         w = self.builder.get_object("cr_zvar_value")
         w.set_property("font-desc", p)
 
-
     def onRadioChanged(self, btn):
         n = Gtk.Buildable.get_name(btn)
         bits = n.split("_")[1:]
@@ -1866,40 +1880,36 @@ class GtkViewModel(ViewModel):
         if not self.sensiVisible("c_introOutline"):
             self.builder.get_object("c_prettyIntroOutline").set_active(False)
 
-    def onDeleteTemporaryFilesClicked(self, btn):
-        dir = self.working_dir
-        warnings = []
-        title = _("Remove Intermediate Files and Logs?")
-        question = _("Are you sure you want to delete\nALL the temporary PTXprint files?")
-        if self.msgQuestion(title, question):
-            patterns = []
-            for extn in ('delayed','parlocs','notepages', 'picpages', 'piclist', 'SFM', 'sfm', 'xdv', 'tex', 'log'):
-                patterns.append(r".+\.{}".format(extn))
-            patterns.append(r".+\-draft\....".format(extn))
-            patterns.append(r".+\.toc".format(extn))
-            # MH: Should we be deleting NestedStyles.sty as well? 
-            # patterns.append(r"NestedStyles\.sty".format(extn)) # To be updated as locn has changed (maybe no longer need to delete it)
-            patterns.append(r"ptxprint\-.+\.tex".format(extn))
-            # print(patterns)
-            for pattern in patterns:
-                for f in os.listdir(dir):
-                    if re.search(pattern, f):
-                        try:
-                            os.remove(os.path.join(dir, f))
-                        except (OSError, PermissionError):
-                            warnings += [f]
-            for p in ["tmpPics", "tmpPicLists"]:
-                path2del = os.path.join(dir, p)
-                # Make sure we're not deleting something closer to Root!
-                if len(path2del) > 30 and os.path.exists(path2del):
-                    try:
-                        rmtree(path2del)
-                    except (OSError, PermissionError):
-                        warnings += [path2del]
-            if len(warnings):
-                self.printer.doError(_("Warning: Could not delete some file(s) or folders(s):"),
-                        secondary="\n".join(warnings))
-            self.picinfos.clearDests()
+    # def onDeleteTemporaryFilesClicked(self, btn):
+        # dir = self.working_dir
+        # warnings = []
+        # title = _("Remove Intermediate Files and Logs?")
+        # question = _("Are you sure you want to delete\nALL the temporary PTXprint files?")
+        # if self.msgQuestion(title, question):
+            # patterns = []
+            # for extn in ('delayed','parlocs','notepages', 'picpages', 'piclist', 'SFM', 'sfm', 'xdv', 'tex', 'log'):
+                # patterns.append(r".+\.{}".format(extn))
+            # patterns.append(r".+\-draft\....".format(extn))
+            # patterns.append(r".+\.toc".format(extn))
+            # patterns.append(r"ptxprint\-.+\.tex".format(extn))
+            # for pattern in patterns:
+                # for f in os.listdir(dir):
+                    # if re.search(pattern, f):
+                        # try:
+                            # os.remove(os.path.join(dir, f))
+                        # except (OSError, PermissionError):
+                            # warnings += [f]
+            # for p in ["tmpPics", "tmpPicLists"]:
+                # path2del = os.path.join(dir, p)
+                # if len(path2del) > 30 and os.path.exists(path2del):
+                    # try:
+                        # rmtree(path2del)
+                    # except (OSError, PermissionError):
+                        # warnings += [path2del]
+            # if len(warnings):
+                # self.printer.doError(_("Warning: Could not delete some file(s) or folders(s):"),
+                        # secondary="\n".join(warnings))
+            # self.picinfos.clearDests()
 
     def onRefreshFontsclicked(self, btn):
         fc = fccache()
@@ -1974,7 +1984,6 @@ class GtkViewModel(ViewModel):
                     break
             else:
                 i = 0
-            # print(btnid, f, i)
             isGraphite = f.isGraphite
             isCtxtSpace = f.isCtxtSpace
             feats = f.asFeatStr()
@@ -2195,7 +2204,6 @@ class GtkViewModel(ViewModel):
         projlist = []
         if response == Gtk.ResponseType.OK:
             cfg = self.configName()
-            # projlist = (b.get_label() for b in self.alltoggles if b.get_active())
             for b in self.alltoggles:
                 try:
                     if b.get_active():
@@ -2210,7 +2218,7 @@ class GtkViewModel(ViewModel):
         dialog.set_keep_above(False)
         dialog.hide()
         
-    def updateExamineBook(self):    
+    def updateExamineBook(self):
         bks = self.getBooks()
         if len(bks):
             self.builder.get_object("ecb_examineBook").set_active_id(bks[0])
@@ -2265,7 +2273,6 @@ class GtkViewModel(ViewModel):
                 self.builder.get_object("c_thumbIsZthumb").set_sensitive(self.get("c_usetoc3"))
         else:
             self.builder.get_object("c_thumbIsZthumb").set_sensitive(True)
-        
         
     def _setChapRange(self, fromTo, minimum, maximum, value):
         initChap = int(float(self.get('s_chap'+fromTo)))
@@ -2368,7 +2375,6 @@ class GtkViewModel(ViewModel):
             self.builder.get_object(o).set_sensitive(True)
         self.setPrintBtnStatus(1)
         self.updateFonts()
-        # self.updateHdrFtrOptions(self.get("c_diglot"))
         if self.ptsettings is not None:
             self.builder.get_object("l_projectFullName").set_label(self.ptsettings.get('FullName', ""))
             self.builder.get_object("l_projectFullName").set_tooltip_text(self.ptsettings.get('Copyright', ""))
@@ -2402,7 +2408,6 @@ class GtkViewModel(ViewModel):
             self.userconfig.set("init", "project", self.prjid)
             if getattr(self, 'configId', None) is not None:
                 self.userconfig.set("init", "config", self.configId)
-        # self.updateBookList()
         books = self.getBooks()
         if self.get("r_book") in ("single", "multiple") and (books is None or not len(books)):
             books = self.getAllBooks()
@@ -2413,10 +2418,6 @@ class GtkViewModel(ViewModel):
                     break
         status = self.get("r_book") == "multiple"
         self.builder.get_object("ecb_booklist").set_sensitive(status)
-        # toc = self.builder.get_object("c_autoToC") # Ensure that we're not trying to build a ToC for a single book!
-        # toc.set_sensitive(status)
-        # if not status:
-            # toc.set_active(False)
         for i in self.notebooks['Viewer']:
             obj = self.builder.get_object("l_{1}".format(*i.split("_")))
             if obj is not None:
@@ -2501,7 +2502,6 @@ class GtkViewModel(ViewModel):
         if switch:
             self.builder.get_object("nbk_Main").set_current_page(mpgnum)
             self.builder.get_object("nbk_Viewer").set_current_page(pgnum)
-        # self.prjid = self.get("fcb_project")
         fpath = self._locFile(file2edit, loc)
         if fpath is None:
             return
@@ -2513,8 +2513,6 @@ class GtkViewModel(ViewModel):
         if os.path.exists(fpath):
             with open(fpath, "r", encoding="utf-8") as inf:
                 txt = inf.read()
-                # if len(txt) > 32000:
-                    # txt = txt[:32000]+"\n\n etc...\n\n"
             self.fileViews[pgnum][0].set_text(txt)
             self.onViewerFocus(self.fileViews[pgnum][1], None)
         else:
@@ -2628,7 +2626,6 @@ class GtkViewModel(ViewModel):
                 filters={"ZIP files": {"pattern": "*.zip", "mime": "application/zip"}},
                 multiple=False, folder=False, save=True, basedir=self.working_dir, defaultSaveName=zfname)
         if archiveZipFile is not None:
-            # self.archiveZipFile = archiveZipFile[0]
             btn_createZipArchive.set_tooltip_text(str(archiveZipFile[0]))
             try:
                 self.createArchive(str(archiveZipFile[0]))
@@ -2638,7 +2635,6 @@ class GtkViewModel(ViewModel):
                 s += "\n{}: {}".format(type(e), str(e))
                 self.doError(s, copy2clip=True)
         else:
-            # self.archiveZipFile = None
             btn_createZipArchive.set_tooltip_text("No Archive File Created")
 
     def onSelectModuleClicked(self, btn):
@@ -2791,7 +2787,7 @@ class GtkViewModel(ViewModel):
                     preview_image.set_from_pixbuf(pixbuf)
             dialog.connect("update-preview", dopreview)
             dialog.set_preview_widget(preview_image)
-        if filters != None: # was len(filters):
+        if filters != None:
             # filters = {"PDF files": {"pattern": "*.pdf", "mime": "application/pdf"}}
             for k, f in filters.items():
                 filter_in = Gtk.FileFilter()
@@ -2823,7 +2819,6 @@ class GtkViewModel(ViewModel):
 
     def onDiglotClicked(self, btn):
         self.sensiVisible("c_diglot")
-        # self.updateHdrFtrOptions(btn.get_active())
         self.colorTabs()
         if self.loadingConfig:
             return
@@ -2868,19 +2863,6 @@ class GtkViewModel(ViewModel):
         b.set_label(lbl)
         b.set_visible(True)
         
-    def updateHdrFtrOptions(self, diglot=False):
-        l = ["First Reference", "Last Reference", "Reference Range", "Page Number",
-             "Time (HH:MM)", "Date (YYYY-MM-DD)", "DRAFT", "-empty-"]
-
-        for side in ["left", "center", "right"]:
-            self.builder.get_object("ecb_hdr"+side).remove_all()
-            for i, v in enumerate(l):
-                self.builder.get_object("ecb_hdr"+side).append_text(v)
- 
-        self.builder.get_object("ecb_ftrcenter").remove_all()
-        for i, v in enumerate(l[2:]):
-            self.builder.get_object("ecb_ftrcenter").append_text(v)
-
     def ondiglotSecProjectChanged(self, btn):
         self.updateDiglotConfigList()
         self.updateDialogTitle()
@@ -3216,11 +3198,12 @@ class GtkViewModel(ViewModel):
         self.set("col_gridMinor", "rgb(115,210,22)")
 
     def onPLpageChanged(self, nbk_PicList, scrollObject, pgnum):
+        page = 99
         if nbk_PicList is None:
             nbk_PicList = self.builder.get_object("nbk_PicList")
+        if pgnum == -1:
+            pgnum = nbk_PicList.get_current_page()
         page = nbk_PicList.get_nth_page(pgnum)
-        if page == None:
-            return
         pgid = Gtk.Buildable.get_name(page).split('_')[-1]
         filterSensitive = True if pgid == "checklist" else False
         self.builder.get_object("bx_activeRefresh").set_visible(False)
@@ -3469,6 +3452,7 @@ class GtkViewModel(ViewModel):
                                "'Spacing Adjustments Between Letters' on the Fonts+Script page.\n" +\
                                "So that option has just been disabled."))
 
+    # Waiting for an upstream SSL bug to be fixed.
     def checkUpdates(self, background=True):
         if True: # WAITING for Python fix!   sys.platform != "win32":
             self.builder.get_object("btn_download_update").set_visible(False)
@@ -3543,7 +3527,7 @@ class GtkViewModel(ViewModel):
         for a, b in vlst:
             if b == "copiesprinted" and self.getvar(b) is None:
                 self.setvar(b, "50")
-            elif b == "contentsheader":
+            elif b == "toctitle":
                 pass
             elif self.getvar(b) is None:
                 self.setvar(b, _("<Type Value Here>"))

@@ -249,7 +249,8 @@ ModelMap = {
     "header/ifshowbook":        ("c_rangeShowBook", lambda w,v :"false" if v else "true"),
     "header/ifshowchapter":     ("c_rangeShowChapter", lambda w,v :"false" if v else "true"),
     "header/ifshowverse":       ("c_rangeShowVerse", lambda w,v :"true" if v else "false"),
-    "header/chvseparator":      ("c_sepColon", lambda w,v : ":" if v else "."),
+    # "header/chvseparator":      ("c_sepColon", lambda w,v : ":" if v else "."),
+    "header/chvseparator":      ("r_CVsep", lambda w,v : ":" if v == "colon" else "."),
     "header/ifrhrule":          ("c_rhrule", lambda w,v: "" if v else "%"),
     "header/hdrleftside":       ("r_hdrLeft", None),
     "header/hdrleft":           ("ecb_hdrleft", lambda w,v: v or "-empty-"),
@@ -871,7 +872,7 @@ class TexModel:
                 elif l.startswith(r"%\defzvar"):
                     for k in self.printer.allvars():
                         res.append(r"\defzvar{{{}}}{{{}}}".format(k, self.printer.getvar(k)))
-                    for k, e in (('contentsheader', 'document/toctitle'),):
+                    for k, e in (('toctitle', 'document/toctitle'),):
                         res.append(r"\defzvar{{{}}}{{{}}}".format(k, self.dict[e]))
                 else:
                     res.append(l.rstrip().format(**self.dict))

@@ -12,7 +12,7 @@ from ptxprint.usfmerge import usfmerge2
 from ptxprint.utils import _, universalopen, print_traceback
 from ptxprint.pdf.fixcol import fixpdffile
 from ptxprint.pdfrw.errors import PdfError
-from ptxprint.toc import parsetoc, createtocvariants, generateTex
+from ptxprint.toc import TOC, generateTex
 from datetime import datetime
 import logging
 
@@ -102,7 +102,7 @@ _diglot = {
 "ifdiglotincludefootnotes_":"notes/includefootnotes",
 "ifdiglotincludexrefs_":    "notes/includexrefs",
 
-"diglot/colorfonts" :       "document/ifcolorfonts",
+# "diglot/colorfonts" :       "document/ifcolorfonts",
 "diglot/ifrtl" :            "document/ifrtl",
 "diglot/ifshow1chbooknum":  "document/ifshow1chbooknum",
 "diglot/fontfactor" :       "paper/fontfactor",
@@ -135,10 +135,10 @@ _diglot = {
 "diglotfancy/versedecoratorisfile": "fancy/versedecoratorisfile",
 "diglotfancy/versedecoratorisayah": "fancy/versedecoratorisayah",
 "diglotfancy/endayah":              "fancy/endayah",
-"diglotfancy/sectionheader":    "fancy/sectionheader",
+"diglotfancy/sectionheader":        "fancy/sectionheader",
 "diglotfancy/sectionheadershift":   "fancy/sectionheadershift",
 "diglotfancy/sectionheaderscale":   "fancy/sectionheaderscale",
-"diglotfancy/sectionheaderpdf": "fancy/sectionheaderpdf",
+"diglotfancy/sectionheaderpdf":     "fancy/sectionheaderpdf",
 }
 
 _joblock = None
@@ -627,7 +627,8 @@ class RunJob:
                 tailoring = self.printer.ptsettings.getCollation()
                 ducet = tailor(tailoring.text) if tailoring else None
                 bklist = self.printer.getBooks()
-                newtoc = generateTex(createtocvariants(parsetoc(tocfname), bklist, ducet=ducet))
+                toc = TOC(tocfname)
+                newtoc = generateTex(toc.createtocvariants(bklist, ducet=ducet))
                 with open(tocfname, "w", encoding="utf-8") as outf:
                     outf.write(newtoc)
             if not rererun:
