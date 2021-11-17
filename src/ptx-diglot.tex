@@ -523,7 +523,7 @@
     \global\setbox\galley=\vbox{\x@\unvcopy\p@rtl\unpenalty\penalty\endtri@lpen@lty}%
     \trace{D}{Running trial \the\trialheight, \the\ht\galley+\the\dp\galley (\the\ht\@xcs+\the\dp\@xcs left for next time)}%
     \ifdim\ht\galley=0pt\ifdim\dp\galley=0pt
-      \trace{D}{How come galley has no size? (check with  scrollmode)}%
+      \trace{D}{How come galley has no size? (check with  scrollmode) \the\interactionmode}%
       \ifnum\interactionmode=2
         \showbox\galley
       \fi
@@ -719,26 +719,33 @@
   \dglt@calc@vailht
   \TempDim=\availht
   \trace{dP}{bld:\the\baselineDelta}%
-  {%Don't autmatically remove baselinedelta... that'd be wrong for titles, etc.
+  {% Don't autmatically remove baselinedelta... that'd be wrong for titles, etc.
     \vfuzz=\maxdimen
     \setbox0=\vbox{\penalty0\unvcopy255}%
     \setbox1=\vsplit0 to 0pt % Remove topskip glue
+    \setbox2=\hbox{\count255=\XeTeXuseglyphmetrics\relax\XeTeXuseglyphmetrics=0\relax \char65  \XeTeXuseglyphmetrics=\count255}%
     \setbox3=\vbox{\splitdiscards}% Discards contains topskip glue and other stuff. Other stuff should have gone into page discards by  now.
-    \ifdim\dimen3>\topskip
-      \message{+++Uh oh. Didn't expect this. Now what? Discards \the\dimen3 > \the\topskip}%
-    \fi
-    \trace{D}{Topskip glue was \the\ht3, bls:\the\baselineskip}%
-    \dimen0=\baselineDelta
     \dimen1=\ht3
+    \ifdim\dimen1>\topskip
+      \message{+++Uh oh. Didn't expect this. Now what? Discards \the\dimen1 > topskip \the\topskip}%
+    \fi
+    \dimen3=\csname gridding@scent\c@rrdstat\endcsname
+    \trace{D}{Topskip glue was \the\ht3, basic line is \the\dimen3\space high.  bls:\the\baselineskip}%
+    \advance\dimen3 by -\baselineskip
+    \ifdim\dimen3 < 0pt
+      \dimen3=0pt
+    \fi
+    \dimen0=\baselineDelta
     %\showbox3
     \ifdim\dimen1=0pt 
       \dimen0=0pt %No adjustment, it's too tall and already been gridded, we hope
-    \else
-      \advance \dimen1 by \dimen0
-      \loop\ifdim\dimen1 < 0pt
-        \advance\dimen0 by \csname b@selineskip\c@rrdstat\endcsname
-        \advance\dimen1 by \csname b@selineskip\c@rrdstat\endcsname
-      \repeat
+    % This just breaks things.
+    %\else
+      %\advance \dimen1 by \dimen0
+      %\loop\ifdim\dimen1 < -\dimen3
+        %\advance\dimen0 by \csname b@selineskip\c@rrdstat\endcsname
+        %\advance\dimen1 by \csname b@selineskip\c@rrdstat\endcsname
+      %\repeat
     \fi
     \xdef\@djustskip{\the\dimen0}%
     \trace{D}{Adjusted topskip correction \the\dimen0}%
@@ -861,8 +868,9 @@
   \@@setside{#2}%Set the side to occur after the next swapcols penalty
   \endgraf\penalty\dgl@tPenColSwap\relax %Trigger collection of text.
   % <<< Diglot collect runs HERE! (and sets n@xtc@mmand
+  \relax
   \ifintrial 
-    \message{EEK! Still in trial!}
+    \message{EEK! Still in trial! on page \the\pageno}
   \fi
   \let\t@mpc@mmand=\n@xtc@mmand% This bit may process the collected input. 
   \x@\xdef\csname c@rrfontsize\@ldstat\endcsname{\c@rrfontsize}% Remember the fontsize before column-swap
@@ -1207,7 +1215,7 @@
    \fi
    \kern \dimen4 % kern away old depth.
    \ifVisTrace
-     \hrule\kern -0.4pt
+     %\hrule\kern -0.4pt
      \hbox to 0pt{\hss\doVisTrace{j}\box0\kern\dimexpr -20pt * \tmpcount\relax}%
      \kern \dimen6
    \fi
@@ -1375,11 +1383,6 @@
   \dimen6=0pt
   \iftemp % Is this the top of the page? If so, (only) apply skip based on columngutterruleskip (set by @prepare@layout...
     \dimen6=\ColumnGutterRuleSkip
-    %\ifdim\baselineDelta<0pt
-      %%\advance\dimen6 by \baselineDelta\relax
-      %\advance\dimen6 by -\topskip\relax
-      %\advance\dimen6 by \truetopskip\relax
-    %\fi
   \else
     \ifdim\thisjointDelta<0pt
       \ifdim\thisjointDelta>-\@maxb@seline %sanity check
@@ -1476,7 +1479,7 @@
 
 \def\@Poly@colstart#1#2#3#4#5#6{\edef\c@rrdstat{#6}\relax
   \x@\let\x@\p@rlinesgone\csname p@rlinesgone-\c@rrdstat\endcsname
-  \@@colstart{#1}{#2}{#3}{#4}{#5}
+  \@@colstart{#1}{#2}{#3}{#4}{#5}%
 }
 \def\@Poly@colstop#1#2#3{\edef\c@rrdstat{#3}\relax\@@colstop{#1}{#2}}
 
@@ -1490,11 +1493,11 @@
     \iftemp
       \let\b@xtype\vbox
       \trace{D}{Un vtopping headings}%
-      \def\col@do##1{\x@\setbox\csname ##1box\endcsname\vbox{\@@simple@colstart{\csname ##1box\endcsname}{##1}\unvbox\csname ##1box\endcsname\@@simple@colstop{##1}}}
+      \def\col@do##1{\x@\setbox\csname ##1box\endcsname\vbox{\@@simple@colstart{\csname ##1box\endcsname}{##1}\unvbox\csname ##1box\endcsname\@@simple@colstop{##1}}}%
       \x@\each@col\cts@list\E
     \else
       \trace{D}{marking column start and stop}%
-      \def\col@do##1{\x@\setbox\csname ##1box\endcsname\vtop{\@@simple@colstart{\csname ##1box\endcsname}{##1}\unvbox\csname ##1box\endcsname\@@simple@colstop{##1}}}
+      \def\col@do##1{\x@\setbox\csname ##1box\endcsname\vtop{\@@simple@colstart{\csname ##1box\endcsname}{##1}\unvbox\csname ##1box\endcsname\@@simple@colstop{##1}}}%
       \x@\each@col\cts@list\E
     \fi
   \fi
@@ -1609,7 +1612,7 @@
     \advance\dimen0 by \ht\s@mebox\relax
     \advance\dimen0 by \dp\s@mebox\relax
     \ifx\pagecontents\empty
-      \def\pagecontents{\setdiglotN@rmal\pickn@xtpartial\the\tmpt@ks}
+      \def\pagecontents{\setdiglotN@rmal\pickn@xtpartial\the\tmpt@ks}%
     \fi
     \x@\tmpt@ks\x@{\the\tmpt@ks\box\csname#1\endcsname}%
     \relax
@@ -1701,7 +1704,7 @@
   \trace{Df}{=\the\dimen1}%
   \dimen3=\dimen1
   %rule calcs: is #1 (dimen7) high, #3(dimen9) deep, and fits in a box #2(dimen8 - found earlier)high
-  \edef\v@lpfx{@fn}
+  \edef\v@lpfx{@fn}%
   \edef\v@lsfx{dp}\let\col@do=\max@val\dimen1=0pt
   \trace{Df}{Finding max \v@lpfx X\v@lsfx}%
   \x@\each@col\diglot@list\E
@@ -1818,7 +1821,7 @@
       \hbox to\columnshift{}%
       \hbox to\columnLwidth{\box\topleftins\hss}%\rlap{\the\ht\Rbox \the\dp\Rbox}%
     \fi%
-  }
+  }%
 %
   \ifdim\ht\bottomleftins>\ht\bottomrightins%
     \setbox\bottomrightins=\vbox to \ht\bottomleftins{\box\bottomrightins\vss}%
@@ -1843,7 +1846,7 @@
       \hbox to\columnshift{}%
       \hbox to\columnLwidth{\box\bottomleftins\hss}%\rlap{\the\ht\Rbox \the\dp\Rbox}%
     \fi%
-  }
+  }%
   \ifdiglotSepNotes%
   \else%
      % RTLness will have been asserted (or not) when the note was defined.
@@ -1858,9 +1861,9 @@
   \fi%
 %
   \ifunprintable 
-    \edef\b@xseq{topins,topchunk,partial,botchunk,bottomins,notechunk,verybottomins,}
+    \edef\b@xseq{topins,topchunk,partial,botchunk,bottomins,notechunk,verybottomins,}%
     \dimen0=0pt
-    \tmpt@ks{}
+    \tmpt@ks{}%
     \let\pagecontents\empty
     \let\d@=\try@print@unprintable
     \x@\cstackdown\b@xseq\E

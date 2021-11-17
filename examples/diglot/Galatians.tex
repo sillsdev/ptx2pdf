@@ -3,28 +3,28 @@
 %\VisTracetrue% Every chunk joined, mark with the current trace number
 \diglotDbgJoinboxes=6876 % And if that's not enough, assuming trace entry 1246
 \nonstopmode
+\scrollmode
 %is from joinboxes (which pastes 2 left or 2 right columns together) show the
 %boxes joined.
 \showboxdepth=100 %.... In all their gory detail
 \showboxbreadth=100
 %\tracingifs=1
-\tracingoutput=1
-\truetopskip=52.3456pt
+%\tracingoutput=1
 %\diglotInnerOutertrue
-\XeTeXuseglyphmetrics=1
+\XeTeXuseglyphmetrics=0
 \ColumnGutterRuletrue
 %\def\BelowFootNoteRuleSpace{5pt}
 \AboveNoteSpace=15pt
 \JoinGutterRuletrue
 \NoteGutterRuletrue
-%\diglotDebugFollowContentstrue
+\diglotDebugFollowContentstrue
 
 \input Galatians-setup.tex
 \iftrue
 % \tracing{H}
  \tracing{d}
  \tracing{dP}
- \tracing{F}
+ %\tracing{F}
 % \tracing{dP}
 % \tracing{s}
  \tracing{n}
@@ -36,11 +36,12 @@
  \tracing{D}
 \fi
 
-\XeTeXuseglyphmetrics=2
-\def\LineSpacingFactorL{1.0}
-\FontSizeUnitL=1.1pt
-\FontSizeUnitR=1.1pt
-\def\LineSpacingFactorR{1.0}
+\XeTeXuseglyphmetrics=0
+\def\LineSpaceBase{12}
+\def\LineSpacingFactorL{1.15}
+\FontSizeUnitL=.95pt
+\FontSizeUnitR=.95pt
+\def\LineSpacingFactorR{1.15}
 \pageno=-1
 %\tracing{s}\tracing{S}
 %\uselanguage{british}
