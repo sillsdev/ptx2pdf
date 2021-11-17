@@ -233,11 +233,11 @@
 % saved by the first output routine. Unless void, it always ends with the appropriate
 % end-of-trial penalty
 \newbox\galleyexc@ss %This is the bit of the galley that didn't make it onto the current page
-\newbox\partialL  % Partial page (fully processed), on the left side
+\newbox\partialL  % last Galley contents on the left side
 \newbox\excessL  % Excess left material, aligning with the next right chunk.
 \newbox\excessR  % Excess right material, once we know we're on the next page 
-\newbox\partialR  % Partial page on the right side
-\newbox\trialbox
+\newbox\partialR  % last Galley contents on the right side
+\newbox\trialbox  % result of current trial, filled by  diglot@any@trial
 
 %\newbox\partialPage \setbox\partialPage=\vbox{}
 %\diglotLeft={\hsize=\columnLwidth\global\setbox\partialL=\vbox{\unvbox\partialL\unvbox255}}
@@ -450,10 +450,11 @@
   \traceNum{d}{run@a@trial \show@dstat, \the\availht>\the\baselineskip?, etp:\the\endtri@lpen@lty}%
   \x@\let\x@\p@rtl\csname partial\c@rrdstat\endcsname %last galley
   \x@\let\x@\@xcs\csname excess\c@rrdstat\endcsname %source
-  \trace{D}{partial\c@rrdstat: \the\ht\p@rtl+\the\dp\p@rtl x\the\wd\p@rtl}%
-  \trace{D}{excess\c@rrdstat: \the\ht\@xcs+\the\dp\@xcs x\the\wd\@xcs}%
-  \ifnum\TRACEcount=\diglotDbgJoinboxes
-   \showbox\p@rtl\showbox\@xcs
+  \trace{D}{partial\c@rrdstat: \the\ht\p@rtl+\the\dp\p@rtl x\the\wd\p@rtl}% The contents of the galley that went to page last time
+  \trace{D}{excess\c@rrdstat: \the\ht\@xcs+\the\dp\@xcs x\the\wd\@xcs}% Material for this time
+  \ifnum 1= \ifdiglotDebugFollowContents 1 \else \ifnum\TRACEcount=\diglotDbgJoinboxes 1\else 0\fi\fi
+   \showbox\p@rtl
+   \showbox\@xcs
   \fi
   \let\after@run@a@trial=\relax
   \s@tbaseline{p}%
@@ -501,11 +502,13 @@
     \savingvdiscards=1
     \global\setbox\p@rtl=\vsplit\@xcs to \availht
     \edef\tmpbadness{\the\badness}%
-    \setbox\p@rtl\vbox{\unvbox\p@rtl}%
+    \global\p@rtlsettrue
+    \global\setbox\p@rtl\vbox{\unvbox\p@rtl}%
     \setbox3=\vbox{\vskip\dp\p@rtl\splitdiscards}%
     \trace{D}{discard ht:\the\ht3}%
     \ifdiglotDebugFollowContents
       \showbox3
+      \showbox\p@rtl
     \fi
     \global\advance\availht by \baselineskip \relax% avoid underfull box in case of footnote
     \global\vsize=\availht
@@ -645,7 +648,7 @@
 }
 
 \def\@trial@failed#1{%
-  \trace{D}{trial failed (class #1), (end of?) input moved. refilling excess\c@rrdstat - \refl@wlist}%(the start may have been set already
+  \trace{D}{trial failed (class #1), (end of?) input moved. refilling excess\c@rrdstat - \refl@wlist. \ifp@rtlset partial\c@rrdstat\space was set\fi}%(the start may have been set already
   %Undo the vsplit (all mtl into excessX)
   \x@\global\x@\setbox\csname excess\c@rrdstat\endcsname\vbox{\joinboxes{\csname partial\c@rrdstat\endcsname}{\csname excess\c@rrdstat\endcsname}{3}{\x@\the\csname partial\c@rrdstat penalty\endcsname}}%
   \ifdiglotDebugFollowContents
@@ -653,6 +656,7 @@
     \x@\showbox\galleyexc@ss
     \trace{D}{Showing restored excess\c@rrdstat}%
     \x@\showbox\csname excess\c@rrdstat\endcsname
+    \x@\showbox\csname partial\c@rrdstat\endcsname
   \fi
   %\ifdim\dimexpr \ht\@xcs + \dp\@xcs + \wd\@xcs\relax=0pt \relax
   %\fi
@@ -702,7 +706,7 @@
  %it calls whichtrial 
  %as though it hadn't been here.
  %Assumptions: holdinginserts=1 material in \galley and \galleyexc@ss
-  \traceNum{d}{diglot@any@trial \the\ht255+\the\dp255 \space hIns=\the\holdinginserts(==0 1st time) op=\the\outputpenalty, etp=\endtri@lpen@lty, dc=\the\deadcycles, xs:\the\ht\galleyexc@ss+\the\dp\galleyexc@ss, th:\the\trialheight}%
+  \traceNum{d}{diglot@any@trial \the\ht255+\the\dp255 \space hIns=\the\holdinginserts(==0 1st time) op=\the\outputpenalty, etp=\endtri@lpen@lty, dc=\the\deadcycles, xs:\the\ht\galleyexc@ss+\the\dp\galleyexc@ss, th:\the\trialheight, p:\the\ht\p@rtl}%
   \ifnum\holdinginserts=0\relax\else
     \ifvoid\trialbox
       \MSG{*** Internal error caught. Incorrect internal state found in during trial run. Text or footnotes may have been lost.}%
@@ -750,7 +754,7 @@
     \xdef\@djustskip{\the\dimen0}%
     \trace{D}{Adjusted topskip correction \the\dimen0}%
   }
-  \setbox255=\vbox{\vskip\@djustskip\unvbox255}%
+  \setbox255=\vbox{\vskip\@djustskip\penalty10000\unvbox255}%
   \ifdiglotDebugFollowContents
     \showbox255
   \fi
@@ -806,6 +810,9 @@
       \global\advance\trialheight by -1\baselineskip\relax
       \ifdim\trialheight<0.5\baselineskip
         \trace{D}{Abandoning trial, no space for galley at all}%
+        %\ifdiglotDebugFollowContents
+          %\ifp@rtlset \showbox\p@rtl\fi
+        %\fi
         \r@storenotes{\g@tndstat}{1}% As if galley hadn't happened.
         \r@storeinserts{col}%
         \global\setbox\galleyexc@ss\vbox{\undog@lley}%
@@ -870,7 +877,7 @@
   % <<< Diglot collect runs HERE! (and sets n@xtc@mmand
   \relax
   \ifintrial 
-    \message{EEK! Still in trial! on page \the\pageno}
+    \message{EEK! Still in trial! on page \the\pageno}%
   \fi
   \let\t@mpc@mmand=\n@xtc@mmand% This bit may process the collected input. 
   \x@\xdef\csname c@rrfontsize\@ldstat\endcsname{\c@rrfontsize}% Remember the fontsize before column-swap
@@ -1989,10 +1996,10 @@
     \tmpcount=0\relax%
   \fi
   \ifvoid\destb@x
-    \global\setbox\destb@x=\vbox{\vskip\baselineDelta\unvbox255}%
+    \global\setbox\destb@x=\vbox{\vskip\baselineDelta\penalty10000\unvbox255}%
     %\global\setbox\destb@x=\vbox{\unvbox255}%
   \else 
-    \setbox255=\vbox{\x@\vskip\csname baselineDelta\c@rrdstat\endcsname\unvbox255}%
+    \setbox255=\vbox{\x@\vskip\csname baselineDelta\c@rrdstat\endcsname\penalty10000\unvbox255}%
     \global\setbox\destb@x=\vtop{\joinboxes{\destb@x}{255}{1}{\x@\the\csname partial\c@rrdstat penalty\endcsname}}%
   \fi
   \global\x@\csname partial\c@rrdstat penalty\endcsname=\tmpcount
@@ -2454,6 +2461,7 @@
   \fi
 }
 
+\newif\ifp@rtlset
 \def\diglot@run@nxt@trial{%
   \traceNum{d}{diglot@run@nxt@trial}%
   \x@\n@xttrial\tri@llist\E % cuts 1st column off tri@lalist and makes it current.
@@ -2464,6 +2472,7 @@
       %\ifnum\triall@@pcount=1
         %\showbox\partialL\showbox\excessL
       %\fi
+      \global\p@rtlsetfalse
       \run@a@trial
       \relax
     \fi
@@ -2491,7 +2500,10 @@
   \ifboxmoved % Breaks things?
     %things gone from the triallist should be reflowed,
     % for other things, partialX still contains the previous galley
-    \empty@partials% voids partialX for all X in tri@llist, also sets triallist to empty.
+    \trace{D}{BOX moved, emptying old partials: \tri@llist}%
+    \ifx\empty\triallist\else
+      \empty@partials% voids partialX for all X in tri@llist, also sets triallist to empty.
+    \fi
   \fi
   %\showlists
   \trace{D}{tri@llist: \tri@llist}%
