@@ -673,6 +673,11 @@
   \trace{H}{update@marks: First mark was empty}% Presumably others also
 \else%
   \x@\let\x@\t@@st\csname bot\c@rrdstat mark\endcsname%
+  \x@\let\x@\ot@@st\csname oldbot\c@rrdstat mark\endcsname%
+  \trace{H}{bot\c@rrdstat mark='\t@@st', firstmark:'\t@st', oldbot\c@rrdstat mark '\ot@@st'}%
+  \ifx\t@@st\empty
+    \let\t@@st\ot@@st
+  \fi
   \trace{H}{u@m:'\t@st'='\t@@st'?}% 
   \ifx\t@st\t@@st
     \trace{H}{update@marks: First mark was carry-over}% Presumably others also
