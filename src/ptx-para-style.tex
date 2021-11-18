@@ -556,13 +556,22 @@
 \let\prevb@okR\relax
 \def\pdfb@@kmark{\ifdiglot\ifx\c@rrdstat\PDFBookMarkColumn\relax \pdfb@@km@rkD\fi\else\pdfb@@km@rk\fi}
 
+\newif\ifActions \Actionstrue
+\def\pdf@utline#1#2#3{%
+% #1 dest id, #2 outline title, #3 outline level
+  \ifActions
+    \special{pdf:dest (#1) [@thispage /Fit]}%
+    \special{pdf:outline #3 << /Title (#2) /A << /S /GoTo /D (#1) >> >>}%
+  \else
+    \special{pdf:outline #3 << /Title (#2) /Dest [@thispage /Fit] >>}%
+  \fi
+}
+
 \def\pdfb@@km@rk{\ifx\book\prevb@ok\else
   \global\dr@ppednumberfalse
   \ifDropActions\else\bgroup\liter@lspecials
-    \special{pdf:dest (\id@@@.) [@thispage /Fit]}%
     \ifx\book\relax \let\t@mp=\id@@@ \else \let\t@mp=\book\fi
-    \special{pdf:outline 0 << /Title (\t@mp)
-             /A << /S /GoTo /D (\id@@@.) >> >>}%
+    \pdf@utline{\id@@@.}{\t@mp}{0}%
     \global\let\prevb@ok\book\egroup\fi
  \fi}
 
@@ -587,9 +596,7 @@
  %\message{Bookname now: \b@okDiglot}%
  \ifx\b@okDiglot\prevb@okD\else
   \bgroup\liter@lspecials
-   \special{pdf:dest (\id@@@.) [@thispage /Fit]}%
-   \special{pdf:outline 0 << /Title (\b@okDiglot)
-            /A << /S /GoTo /D (\id@@@.) >> >>}%
+   \pdf@utline{\id@@@.}{\b@okDiglot}{0}%
    \global\let\prevb@okD\b@okDiglot
   \egroup
  \fi\fi}
@@ -603,7 +610,6 @@
   \ifx\prevch@p\ch@pter\else
     \bgroup\liter@lspecials
     \edef\@@side{\g@tdstat}%
-    \special{pdf:dest (\id@@@\@@side.\ch@pter) [@thispage /Fit]}%
     \ifdiglot
       \let\t@mp\b@okDiglot
     \else
@@ -611,8 +617,7 @@
     \fi
     \x@\let\x@\t@mp\csname book\@@side\endcsname
     \ifx\book\relax \let\t@mp=\id@@@ \fi
-    \special{pdf:outline 1 << /Title (\t@mp\space\ch@pter)
-             /A << /S /GoTo /D (\id@@@\@@side.\ch@pter) >> >>}%
+    \pdf@utline{\id@@@\@@side.\ch@pter}{\t@mp\space\ch@pter}{1}%
   \egroup\fi}
 
 %-cpar_pdfchaptermark

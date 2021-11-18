@@ -171,6 +171,7 @@ class PDFx1aOutput(Snippet):
             extras['_gtspdfx'] = "/GTS_PDFXVersion(PDF/X-4)%\n"
         else:
             extras['_gtspdfx'] = "/GTS_PDFXVersion(PDF/X-1a:2003)%\n/GTS_PDFXConformance(PDF/X-1a:2003)%\n"
+            res += "\\Actionsfalse\n"
         if pdftype == "None":
             model.dict["/iccfpath"] = os.path.join(libpath, "sRGB.icc").replace("\\","/")
             extras['_iccnumcols'] = "3"
