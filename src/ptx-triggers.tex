@@ -46,9 +46,19 @@
 \trigg@rchecks{}
 \def\addtotrigg@rchecks#1{\x@\global\x@\trigg@rchecks\x@{\the\trigg@rchecks #1}}
 
+\newif\ifMarkTriggerPoints
+\x@\font\csname font<TP>\endcsname "Source Code Pro:extend=0.8,color=007f7f" at 7pt
+\x@\font\csname font<VP>\endcsname "Source Code Pro:extend=0.8,color=7f007f" at 7pt
+\def\@mark@trigerTP{1}
+\def\@mark@trigerVP{0.5}
+\def\trigg@rmark#1{%
+  \llap{\setbox0\hbox{\csname font<#1>\endcsname \ifdiglot\dc@rref\else\c@rref\fi\hskip1em}\smash{\x@\lower\csname @mark@triger#1\endcsname\ht0\box0}}%
+}
+
 \def\runtrigg@rscv{%after the verse number
   \p@rnum=1
   \settrig@refcv
+  \ifMarkTriggerPoints\trigg@rmark{VP}\fi
   \trace{T}{running (cv) triggers \c@rref}%
   \the\trigg@rchecks
 }
@@ -64,6 +74,7 @@
   \gdef\ch@kparref##1#1##2\E{\def\chkp@rrf{##2}\ifx\chkp@rrf\empty\temptrue\fi}}
 \SetTriggerParagraphSeparator{=}
 
+
 \def\runtrigg@rspar{%Paragraph trigger
   \trace{T}{runtrigg@rspar}%
   \advance\p@rnum by 1
@@ -75,6 +86,7 @@
   \ifdiglot
     \xdef\dc@rref{\odc@rref\TriggerP@rSep\the\p@rnum}%
   \fi
+  \ifMarkTriggerPoints\trigg@rmark{TP}\fi
   \trace{T}{running triggers \c@rref}%
   \the\trigg@rchecks
   \global\let\c@rref=\oc@rref\global\let\dc@rref=\odc@rref
