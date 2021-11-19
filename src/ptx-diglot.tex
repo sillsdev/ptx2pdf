@@ -443,6 +443,7 @@
   \fi
 }
 \newif\ifNoMergeReflow
+\newif\ifextr@content
 \NoMergeReflowfalse
 
 \def\run@a@trial{%
@@ -456,6 +457,8 @@
    \showbox\p@rtl
    \showbox\@xcs
   \fi
+  \global\let\tri@lfirstmarks\empty
+  \extr@contentfalse
   \let\after@run@a@trial=\relax
   \s@tbaseline{p}%
   \trace{D}{baseline: \the\baselineskip, av:\the\availht}%
@@ -665,42 +668,74 @@
 }
 
 
+\def\update@marks@partone{%Called on the first part of any galley, finally (successful or not)
+  \bgroup
+    \x@\let\x@\m@rknum\csname m@rknum\c@rrdstat\endcsname
+    \trace{H}{update@marks@partone: \c@rrdstat\space uses marks\m@rknum\space fm:\firstmarks\m@rknum, tm:\topmarks\m@rknum, bm:\botmarks\m@rknum}%
+    \edef\t@st{\firstmarks\m@rknum}%
+    \ifx\t@st\empty%
+      \trace{H}{u@m@1: First mark was empty}% Presumably others also
+    \else
+      \x@\let\x@\t@@st\csname bot\c@rrdstat mark\endcsname%
+      \x@\let\x@\ot@@st\csname oldbot\c@rrdstat mark\endcsname%
+      \trace{H}{bot\c@rrdstat mark='\t@@st', firstmark:'\t@st', oldbot\c@rrdstat mark '\ot@@st'}%
+    \fi 
+    \ifx\t@@st\empty
+      \let\t@@st\ot@@st
+    \fi
+    \trace{H}{u@m@1:'\t@st'='\t@@st'?}% 
+    \ifx\t@st\t@@st
+      \trace{H}{u@m@1: First mark was carry-over, not remembering it}% Presumably others also
+    \else
+      \trace{H}{u@m@1: remembering firstmark}% Presumably others also
+      \global\let\tri@lfirstmarks\t@st
+      \global\extr@contentfalse % This is ONLY valid if there's acceptable content later on.
+    \fi
+  \egroup
+}
+
 \def\update@marks{% Called on successful galley
 \x@\let\x@\m@rknum\csname m@rknum\c@rrdstat\endcsname
-\trace{H}{update@marks: \c@rrdstat\space uses marks\m@rknum}%
-\edef\t@st{\firstmarks\m@rknum}%
-\ifx\t@st\empty%
-  \trace{H}{update@marks: First mark was empty}% Presumably others also
-\else%
-  \x@\let\x@\t@@st\csname bot\c@rrdstat mark\endcsname%
-  \x@\let\x@\ot@@st\csname oldbot\c@rrdstat mark\endcsname%
-  \trace{H}{bot\c@rrdstat mark='\t@@st', firstmark:'\t@st', oldbot\c@rrdstat mark '\ot@@st'}%
-  \ifx\t@@st\empty
-    \let\t@@st\ot@@st
+\trace{H}{update@marks: \c@rrdstat\space uses marks\m@rknum\space fm:\firstmarks\m@rknum, tm:\topmarks\m@rknum, bm:\botmarks\m@rknum}%
+  \ifextr@content
+    \ifx\tri@lfirstmarks\empty%
+      \edef\tri@lfirstmarks{\firstmarks\m@rknum}%
+    \fi
+  \else
+    \edef\tri@lfirstmarks{\firstmarks\m@rknum}%
   \fi
-  \trace{H}{u@m:'\t@st'='\t@@st'?}% 
-  \ifx\t@st\t@@st
-    \trace{H}{update@marks: First mark was carry-over}% Presumably others also
-    \x@\xdef\csname n@xtfirst\c@rrdstat mark\endcsname{}%
-  \else % do not use if \firstmark,botmark are a carry-over,
-    \trace{H}{u@m: Setting bot\c@rrdstat mark to \botmarks\m@rknum [!=\csname oldbot\c@rrdstat mark\endcsname]}%
-    \global\m@rksonpagetrue
-    \x@\xdef\csname oldfirst\c@rrdstat mark\endcsname{\csname first\c@rrdstat mark\endcsname}%
-    \x@\xdef\csname oldbot\c@rrdstat mark\endcsname{\csname bot\c@rrdstat mark\endcsname}% Remember botmark in case this chunk isn't on the page
-    \x@\xdef\csname bot\c@rrdstat mark\endcsname{\botmarks\m@rknum}%
-    \x@\xdef\csname n@xtfirst\c@rrdstat mark\endcsname{\firstmarks\m@rknum}%If the chunk moves, then this will be the appropriate start-point
-    \x@\xdef\csname n@xtbot\c@rrdstat mark\endcsname{\botmarks\m@rknum}%If the chunk moves, then this will be the appropriate end-point
-    \x@\ifx\csname first\c@rrdstat mark\endcsname\empty
-      \trace{H}{u@m: Setting first\c@rrdstat mark to \firstmarks\m@rknum}%
-      \x@\xdef\csname first\c@rrdstat mark\endcsname{\firstmarks\m@rknum}%If the chunk moves, then this will be the appropriate start-point
-      \edef\t@st{\p@gefirstmark}%
-      \ifx\t@st\empty%
-        \trace{H}{dlt3: Setting (default) pagefirstmark to \firstmarks\m@rknum}%
-        \xdef\p@gefirstmark{\firstmarks\m@rknum}%
+  \ifx\tri@lfirstmarks\empty%
+    \trace{H}{u@m: First mark was empty}% Presumably others also
+  \else%
+    \x@\let\x@\t@@st\csname bot\c@rrdstat mark\endcsname%
+    \x@\let\x@\ot@@st\csname oldbot\c@rrdstat mark\endcsname%
+    \trace{H}{bot\c@rrdstat mark='\t@@st', firstmark:'\tri@lfirstmarks', oldbot\c@rrdstat mark '\ot@@st'}%
+    \ifx\t@@st\empty
+      \let\t@@st\ot@@st
+    \fi
+    \trace{H}{u@m:'\tri@lfirstmarks'='\t@@st'?}% 
+    \ifx\tri@lfirstmarks\t@@st
+      \trace{H}{update@marks: First mark was carry-over}% Presumably others also
+      \x@\xdef\csname n@xtfirst\c@rrdstat mark\endcsname{}%
+    \else % do not use if \firstmark,botmark are a carry-over,
+      \trace{H}{u@m: Setting bot\c@rrdstat mark to \botmarks\m@rknum [!=\csname oldbot\c@rrdstat mark\endcsname]}%
+      \global\m@rksonpagetrue
+      \x@\xdef\csname oldfirst\c@rrdstat mark\endcsname{\csname first\c@rrdstat mark\endcsname}%
+      \x@\xdef\csname oldbot\c@rrdstat mark\endcsname{\csname bot\c@rrdstat mark\endcsname}% Remember botmark in case this chunk isn't on the page
+      \x@\xdef\csname bot\c@rrdstat mark\endcsname{\botmarks\m@rknum}%
+      \x@\xdef\csname n@xtfirst\c@rrdstat mark\endcsname{\tri@lfirstmarks}%If the chunk moves, then this will be the appropriate start-point
+      \x@\xdef\csname n@xtbot\c@rrdstat mark\endcsname{\botmarks\m@rknum}%If the chunk moves, then this will be the appropriate end-point
+      \x@\ifx\csname first\c@rrdstat mark\endcsname\empty
+        \trace{H}{u@m: Setting first\c@rrdstat mark to \tri@lfirstmarks}%
+        \x@\xdef\csname first\c@rrdstat mark\endcsname{\tri@lfirstmarks}%If the chunk moves, then this will be the appropriate start-point
+        \edef\t@st{\p@gefirstmark}%
+        \ifx\t@st\empty%
+          \trace{H}{dlt3: Setting (default) pagefirstmark to \tri@lfirstmarks}%
+          \xdef\p@gefirstmark{\tri@lfirstmarks}%
+        \fi
       \fi
     \fi
   \fi
-\fi
 }
 
 
@@ -775,6 +810,7 @@
     \ifdiglotDebugFollowContents
       \showbox\trialbox
     \fi
+    \update@marks@partone
     \ifdim\TempDim<-0.3\baselineskip % Coarse test. main trial routine can be pickier if it wants
       \trace{D}{Initial Content does not fit (\the\trialheight, \the\TempDim, \the\availht)}%
       \global\holdinginserts=1
@@ -799,7 +835,8 @@
         \global\setbox255\box\voidb@x
       \else
         \dimen1=\baselineDelta\relax
-        \trace{D}{Extra material found, which also fits (\the\ht255+\the\dp255) \the\TempDim remaining. \show@dstat}%
+        \global\extr@contenttrue
+        \trace{d}{Extra material found, which also fits (\the\ht255+\the\dp255) \the\TempDim remaining. \show@dstat}%
         \setbox255=\vbox{\x@\vskip\x@\dimexpr \csname baselineDelta\c@rrdstat\endcsname - \dimen1\relax\unvbox255}%
         \global\setbox\trialbox=\vbox{\joinboxes{\trialbox}{255}{5}{0}}%
         \ifdim \TempDim > 2\baselineskip
