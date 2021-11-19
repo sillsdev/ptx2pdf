@@ -241,6 +241,7 @@
 \footline={{%
  \s@tfont{h}%
  \edef\t@st{\p@gefirstmark}% check first mark on page to see if this is a "title" page
+ \trace{h}{page \the\pageno, first mark=\t@st}%
  \ifnum\ifx\t@st\empty\ifp@geone 0\else 1\fi\else 0\fi =1
    \ifodd\pageno \the\noVoddfoot \else 
      \ifDoubleSided \the\noVevenfoot \else \the\noVoddfoot \fi\fi

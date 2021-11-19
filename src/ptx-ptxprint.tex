@@ -39,8 +39,8 @@
 \catcode`\@=11\catcode`\^=7
 \gdef\zpdf{\bgroup\obeylines\unc@tcodespecials\@zdpf}
 \gdef\@zdpf#1#2^^M{\egroup\includepdf{#2}}
-\gdef\nopagenums{\ifdiglot\global\let\pagenumberL=\relax\global\let\pagenumberR=\relax\else\global\let\pagenumber=\relax\fi}
-\gdef\dopagenums{\ifdiglot\global\let\pagenumberL=\folio\global\let\pagenumberR=\folio\else\global\let\pagenumber=\folio\fi}
+\gdef\nopagenums{\global\let\pagenumberL=\relax\global\let\pagenumberR=\relax\global\let\pagenumber=\relax}
+\gdef\dopagenums{\global\let\pagenumberL=\folio\global\let\pagenumberR=\folio\global\let\pagenumber=\folio}
 \gdef\resetpagenums{\bgroup\m@kedigitsother\obeylines\r@setpagenums}
 \gdef\r@setpagenums #1^^M{\global\pageno=#1\egroup}
 \sethook{start}{xts}{\proc@strong{xts}}
