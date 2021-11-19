@@ -789,10 +789,17 @@
 }%
 
 \endgroup
-
+\catcode`0=11\def\z@ro{0}\catcode`0=12
 \newif\iftfmp \tfmpfalse
 \def\unc@tcodespecials{\def\do##1{\catcode`##1=12 }\dospecials}
-\def\@@id#1#2#3#4\end{\gdef\id@@@{#1#2#3}} % get first 3 chars of the \id
+\def\@@id#1#2#3#4\end{\gdef\id@@@{#1#2#3}% get first 3 chars of the \id
+  \global\let\ch@pter\z@ro\global\let\v@rse\@neletter
+  \settrig@refcv\docvhook
+  \ifdiglot\def\col@do##1{%
+     \x@\global\x@\let\csname @ch@pter##1\endcsname\ch@pter
+     \x@\global\x@\let\csname @ch@ptert@xt##1\endcsname\ch@pter
+     \x@\global\x@\let\csname @v@rse##1\endcsname\v@rse}\x@\each@col\diglot@list\E\col@do{}%
+  \fi}
 \def\ptx@fig #1\fig*{\egroup\ifIncludeFigures\tfmptrue\else\tfmpfalse\fi\IncludeFigurestrue
     \trace{g}{In ptx@fig #1}\d@figure{#1}\m@kedigitsletters
     \iftfmp\else\IncludeFiguresfalse\fi}                           %(1)
@@ -1045,6 +1052,7 @@
  \fi
  \origb@selineskip=\baselineskip
  \s@tupsizes
+ \gdef\id@@@{UNK}%
  \defineheads
  \ifnum 1=\ifVisTrace 1 \else \ifVisTraceExtra 1 \else 0\fi\fi 
    \font\VisTracefont="Arial":color=3f7f3f at 6pt\fi
