@@ -684,8 +684,8 @@ class TexModel:
         elif self.dict['footer/ifprintconfigname'] == "":
             self.dict['footer/titleevencenter'] = self.dict['footer/titleoddcenter'] = self.dict['config/name']
         else:
-            self.dict['footer/titleevencenter'] = self.dict['header/evencenter']
-            self.dict['footer/titleoddcenter'] = self.dict['header/oddcenter']
+            self.dict['footer/titleevencenter'] = self.dict['footer/evencenter']
+            self.dict['footer/titleoddcenter'] = self.dict['footer/oddcenter']
 
         mirror = self.asBool("header/mirrorlayout")
         for side in ('left', 'center', 'right'):
@@ -699,15 +699,7 @@ class TexModel:
                 self.dict['header/even{}'.format(self._swapRL[side])] = self.mirrorHeaders(t, diglot)
             else:
                 self.dict['header/even{}'.format(side)] = t
-            if side == "center" and diglot and self.dict["document/diglotadjcenter"]:
-                for a in ('header/odd', 'header/even', 'footer/odd', 'footer/even', 'footer/titleeven', 'footer/titleodd'):
-                    b = (a+"{}").format(side)
-                    if 'even' in a:
-                        self.dict[b] = (rhfil if mirror ^ swap else lhfil) \
-                                    + self.dict[b] + (lhfil if mirror ^ swap else rhfil)
-                    else:
-                        self.dict[b] = (rhfil if swap else lhfil) + self.dict[b] + (lhfil if swap else rhfil)
-                
+
             if t.startswith((r'\first', r'\last', r'\range')): # ensure noVodd + noVeven is \empty
                 self.dict['header/noVodd{}'.format(side)] = r'\empty'
             else:
@@ -722,6 +714,16 @@ class TexModel:
                     self.dict['header/noVeven{}'.format(side)] = r'\empty'
                 else:
                     self.dict['header/noVeven{}'.format(side)] = t 
+
+            if side == "center" and diglot and self.dict["document/diglotadjcenter"]:
+                for a in ('header/odd', 'header/even', 'footer/odd', 'footer/even',
+                          'footer/titleeven', 'footer/titleodd', 'header/noVeven', 'header/noVodd'):
+                    b = (a+"{}").format(side)
+                    if 'even' in a:
+                        self.dict[b] = (rhfil if mirror ^ swap else lhfil) \
+                                    + self.dict[b] + (lhfil if mirror ^ swap else rhfil)
+                    else:
+                        self.dict[b] = (rhfil if swap else lhfil) + self.dict[b] + (lhfil if swap else rhfil)
 
     def _addLR(self, t, pri):
         if t in [r"\firstref", r"\lastref", r"\rangeref", r"\pagenumber", r"\hrsmins", r"\isodate" \
