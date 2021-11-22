@@ -3,7 +3,7 @@ import configparser, os, re, regex, random, collections
 from ptxprint.texmodel import ModelMap, TexModel, Borders
 from ptxprint.ptsettings import ParatextSettings
 from ptxprint.font import TTFont, cachepath, cacheremovepath, FontRef, getfontcache, writefontsconf
-from ptxprint.utils import _, refKey, universalopen, print_traceback, local2globalhdr, \
+from ptxprint.utils import _, refKey, universalopen, print_traceback, local2globalhdr, chgsHeader, \
                             global2localhdr, asfloat, allbooks, books, bookcodes, chaps, f2s, pycodedir
 from ptxprint.usfmutils import Sheets, UsfmCollection, Usfm
 from ptxprint.piclist import PicInfo, PicChecks
@@ -781,13 +781,12 @@ class ViewModel:
             self._configset(config, "document/diffcolayout", not config.getboolean("document", "clsinglecol", fallback=False))
             diffcolbooks = config.get("document", "clsinglecolbooks", fallback="FRT INT PSA PRO BAK GLO")
             self._configset(config, "document/diffcolayoutbooks", diffcolbooks)
-
         if v < 2.07:
             if config.getboolean("project", "usechangesfile", fallback=False):
                 cfile = os.path.join(self.configPath(cfgname), "changes.txt")
                 if not os.path.exists(cfile):
                     with open(cfile, "w", encoding="utf-8") as outf:
-                        outf.write('include "../../../PrintDraftChanges.txt"\n')
+                        outf.write(chgsHeader)
             config.set("config", "version", "2.07")
             
         styf = os.path.join(self.configPath(cfgname), "ptxprint.sty")

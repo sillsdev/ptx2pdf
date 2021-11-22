@@ -5,7 +5,7 @@ gi.require_version('Gtk', '3.0')
 gi.require_version('Gdk', '3.0')
 from shutil import rmtree
 import time, locale, urllib.request, json
-from ptxprint.utils import universalopen, refKey
+from ptxprint.utils import universalopen, refKey, chgsHeader
 from gi.repository import Gdk, Gtk, Pango, GObject, GLib, GdkPixbuf
 
 if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
@@ -1633,13 +1633,15 @@ class GtkViewModel(ViewModel):
                 self.fileViews[pgnum][0].set_text("\n"+_(" Use the 'Advanced' tab to select which settings you want to view or edit."))
                 self.builder.get_object(lname).set_text("Settings")
                 return
-
         else:
             return
 
         if fpath is None:
             return
         set_tooltip = self.builder.get_object("l_{1}".format(*pgid.split("_"))).set_tooltip_text
+        buf = self.fileViews[pgnum][0]
+        if buf.get_char_count():
+            return
         if os.path.exists(fpath):
             set_tooltip(fpath)
             with open(fpath, "r", encoding="utf-8", errors="ignore") as inf:
@@ -1676,6 +1678,7 @@ class GtkViewModel(ViewModel):
             try:
                 pg = self.notebooks["Viewer"].index(pgid)
             except ValueError:
+                print("ValueError, pg=", pg)
                 pg = 0
         else:
             pg = self.builder.get_object("nbk_Viewer").get_current_page()
@@ -1695,6 +1698,7 @@ class GtkViewModel(ViewModel):
         titer = buf.get_iter_at_mark(buf.get_insert())
         self.cursors[pg] = (titer.get_line(), titer.get_line_offset())
         text2save = buf.get_text(buf.get_start_iter(), buf.get_end_iter(), True)
+        print(fpath, text2save)
         openfile = open(fpath,"w", encoding="utf-8")
         openfile.write(text2save)
         openfile.close()
@@ -2511,6 +2515,7 @@ class GtkViewModel(ViewModel):
             old
         label = self.builder.get_object("l_{1}".format(*pgid.split("_")))
         if pgid == "scroll_Settings":
+            self.onSaveEdits(None, pgid="scroll_SettingsOld")
             oldlabel = self.builder.get_object("l_SettingsOld")
             oldlabel.set_tooltip_text(label.get_tooltip_text())
             oldlabel.set_text(label.get_text())
@@ -2518,7 +2523,7 @@ class GtkViewModel(ViewModel):
             label.set_text(file2edit)
             buf = self.fileViews[pgnum][0]
             text2save = buf.get_text(buf.get_start_iter(), buf.get_end_iter(), True)
-            self.fileViews[pgnum-1][0].set_text(text2save)
+            self.fileViews[pgnum+1][0].set_text(text2save)
         label.set_tooltip_text(fpath)
         if os.path.exists(fpath):
             with open(fpath, "r", encoding="utf-8") as inf:
@@ -2594,10 +2599,10 @@ class GtkViewModel(ViewModel):
 
     def onChangesFileClicked(self, btn):
         self.onExtraFileClicked(btn)
-        cfile = os.path.join(self.configPath(), "changes.txt")
+        cfile = os.path.join(self.configPath(self.configName()), "changes.txt")
         if not os.path.exists(cfile):
             with open(cfile, "w", encoding="utf-8") as outf:
-                outf.write('include "../../../PrintDraftChanges.txt"\n')
+                outf.write(chgsHeader)
 
     def onMainBodyTextChanged(self, btn):
         self.sensiVisible("c_mainBodyText")

@@ -48,6 +48,12 @@ oneChbooks = [b.split("|")[0] for b in _bookslist.split() if b[-2:] == "|1"]
 
 APP = 'ptxprint'
 
+chgsHeader = """# This (changes.txt) file is for configuration-specific changes (which will not affect other saved configurations).
+# Other generic project-wide changes can be specified in PrintDraftChanges.txt).
+# Note that the 'inlcude' statement on the next line imports those (legacy/generic) project-wide changes.
+include "../../../PrintDraftChanges.txt"
+"""
+
 _ = gettext.gettext
 __file__ = os.path.abspath(__file__)
 
