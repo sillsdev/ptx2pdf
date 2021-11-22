@@ -782,7 +782,13 @@ class ViewModel:
             diffcolbooks = config.get("document", "clsinglecolbooks", fallback="FRT INT PSA PRO BAK GLO")
             self._configset(config, "document/diffcolayoutbooks", diffcolbooks)
 
-            config.set("config", "version", "2.06")
+        if v < 2.07:
+            if config.getboolean("project", "usechangesfile", fallback=False):
+                cfile = os.path.join(self.configPath(cfgname), "changes.txt")
+                if not os.path.exists(cfile):
+                    with open(cfile, "w", encoding="utf-8") as outf:
+                        outf.write('include "../../../PrintDraftChanges.txt"\n')
+            config.set("config", "version", "2.07")
             
         styf = os.path.join(self.configPath(cfgname), "ptxprint.sty")
         if not os.path.exists(styf):

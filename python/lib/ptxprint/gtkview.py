@@ -2553,7 +2553,7 @@ class GtkViewModel(ViewModel):
             self._editProcFile(scriptName, scriptPath)
 
     def onEditChangesFile(self, btn):
-        self._editProcFile("PrintDraftChanges.txt", "prj")
+        self._editProcFile("changes.txt", "cfg")
 
     def onEditModsTeX(self, btn):
         cfgname = self.configName()
@@ -2580,6 +2580,13 @@ class GtkViewModel(ViewModel):
         self.colorTabs()
         if btn.get_active():
             self.triggervcs = True
+
+    def onChangesFileClicked(self, btn):
+        self.onExtraFileClicked(btn)
+        cfile = os.path.join(self.configPath(), "changes.txt")
+        if not os.path.exists(cfile):
+            with open(cfile, "w", encoding="utf-8") as outf:
+                outf.write('include "../../../PrintDraftChanges.txt"\n')
 
     def onMainBodyTextChanged(self, btn):
         self.sensiVisible("c_mainBodyText")

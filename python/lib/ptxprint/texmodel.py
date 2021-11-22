@@ -986,16 +986,16 @@ class TexModel:
         return dat
 
     def convertBook(self, bk, chaprange, outdir, prjdir, letterspace="\uFDD0"):
+        printer = self.printer
         if self.changes is None:
             if self.asBool('project/usechangesfile'):
                 # print("Applying PrntDrftChgs:", os.path.join(prjdir, 'PrintDraftChanges.txt'))
                 #cpath = self.printer.configPath(self.printer.configName())
                 #self.changes = self.readChanges(os.path.join(cpath, 'changes.txt'), bk)
-                self.changes = self.readChanges(os.path.join(prjdir, 'PrintDraftChanges.txt'), bk)
+                self.changes = self.readChanges(os.path.join(printer.configPath(printer.configName()), 'changes.txt'), bk)
             else:
                 self.changes = []
-        printer = self.printer
-        draft = "-" + (self.printer.configName() or "draft")
+        draft = "-" + (printer.configName() or "draft")
         self.makelocalChanges(printer, bk, chaprange=chaprange)
         customsty = os.path.join(prjdir, 'custom.sty')
         if not os.path.exists(customsty):
@@ -1124,7 +1124,7 @@ class TexModel:
                         "is missing a valid parent marker."), title=dlgtitle,
                         show=not self.printer.get("c_quickRun"))
             else:
-                prtDrft = _("And check if a faulty rule in PrintDraftChanges.txt has caused the error(s).") if self.asBool("project/usechangesfile") else ""
+                prtDrft = _("And check if a faulty rule in changes.txt has caused the error(s).") if self.asBool("project/usechangesfile") else ""
                 self.printer.doError(_("Failed to normalize texts due to a Syntax Error: "),        
                     secondary="\n".join(syntaxErrors)+"\n\n"+_("Run the Basic Checks in Paratext to ensure there are no Marker errors "+ \
                     "in either of the diglot projects. If this error persists, try running the Schema Check in Paratext as well.") + " " + prtDrft,
@@ -1163,7 +1163,7 @@ class TexModel:
                 atcontexts = []
                 m = re.match(r"^\s*include\s+(['\"])(.*?)\1", l)
                 if m:
-                    changes.extend(self.readChanges(os.path.join(os.path.basename(fname), m.group(2)), bk))
+                    changes.extend(self.readChanges(os.path.join(os.path.dirname(fname), m.group(2)), bk))
                     continue
                 # test for "at" command
                 m = re.match(r"^\s*at\s+(.*?)\s+(?=in|['\"])", l)
@@ -1219,7 +1219,7 @@ class TexModel:
                 self.changes.extend(sscript.regexes(self))
         #self.changes.append((None, regex.compile(r"(?<=\\[^\\\s]+)\*(?=\S)", flags=regex.S), "* "))
         if self.printer is not None and self.printer.get("c_tracing"):
-            print("List of PrintDraftChanges:-------------------------------------------------------------")
+            print("List of changes.txt:-------------------------------------------------------------")
             report = "\n".join("{} -> {}".format(p[1].pattern, p[2]) for p in self.changes)
             if getattr(self.printer, "logger", None) is not None:
                 self.printer.logger.insert_at_cursor(v)
@@ -1227,7 +1227,7 @@ class TexModel:
                 try:
                     print(report)
                 except UnicodeEncodeError:
-                    print("Unable to print details of PrintDraftChanges.txt")
+                    print("Unable to print details of changes.txt")
         self.localChanges = []
         if bk == "GLO" and self.dict['document/filterglossary']:
             self.filterGlossary(printer)
