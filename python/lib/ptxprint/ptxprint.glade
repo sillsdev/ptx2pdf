@@ -20015,6 +20015,32 @@ are likely to have to re-do it all again.</property>
                             <property name="tab-fill">False</property>
                           </packing>
                         </child>
+                        <child>
+                          <object class="GtkScrolledWindow" id="scroll_SettingsOld">
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="hexpand">True</property>
+                            <property name="vexpand">True</property>
+                            <property name="shadow-type">in</property>
+                            <child>
+                              <placeholder/>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="position">6</property>
+                          </packing>
+                        </child>
+                        <child type="tab">
+                          <object class="GtkLabel" id="l_SettingsOld">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="label" translatable="yes">Settings</property>
+                          </object>
+                          <packing>
+                            <property name="position">6</property>
+                            <property name="tab-fill">False</property>
+                          </packing>
+                        </child>
                       </object>
                       <packing>
                         <property name="expand">True</property>

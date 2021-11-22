@@ -541,7 +541,7 @@ class GtkViewModel(ViewModel):
         self.fileViews = []
         self.buf = []
         self.cursors = []
-        for i,k in enumerate(["FrontMatter", "AdjList", "FinalSFM", "TeXfile", "XeTeXlog", "Settings"]):
+        for i,k in enumerate(["FrontMatter", "AdjList", "FinalSFM", "TeXfile", "XeTeXlog", "Settings", "SettingsOld"]):
             self.buf.append(GtkSource.Buffer())
             self.cursors.append((0,0))
             view = GtkSource.View.new_with_buffer(self.buf[i])
@@ -893,7 +893,7 @@ class GtkViewModel(ViewModel):
         # If the viewer/editor is open on an Editable tab, then "autosave" contents
         if Gtk.Buildable.get_name(self.builder.get_object("nbk_Main").get_nth_page(self.get("nbk_Main"))) == "tb_ViewerEditor":
             pgnum = self.get("nbk_Viewer")
-            if self.notebooks["Viewer"][pgnum] in ("scroll_FrontMatter", "scroll_AdjList", "scroll_Settings"):
+            if self.notebooks["Viewer"][pgnum] in ("scroll_FrontMatter", "scroll_AdjList", "scroll_Settings", "scroll_SettingsOld"):
                 self.onSaveEdits(None)
         cfgname = self.configName()
         if cfgname is None:
@@ -1546,7 +1546,7 @@ class GtkViewModel(ViewModel):
 
     def onViewerChangePage(self, nbk_Viewer, scrollObject, pgnum):
         allpgids = ("scroll_FrontMatter", "scroll_Settings", "scroll_AdjList", "scroll_FinalSFM", 
-                    "scroll_TeXfile", "scroll_XeTeXlog")
+                    "scroll_TeXfile", "scroll_XeTeXlog", "scroll_SettingsOld")
         if nbk_Viewer is None:
             nbk_Viewer = self.builder.get_object("nbk_Viewer")
         page = nbk_Viewer.get_nth_page(pgnum)
@@ -1575,8 +1575,10 @@ class GtkViewModel(ViewModel):
             else:
                 self.builder.get_object(o).set_sensitive(pgid in allpgids[2:4])
 
-        fndict = {"scroll_FrontMatter" : ("", ""), "scroll_AdjList" : ("AdjLists", ".adj"), "scroll_FinalSFM" : ("", ""),
-                  "scroll_TeXfile" : ("", ".tex"), "scroll_XeTeXlog" : ("", ".log"), "scroll_Settings": ("", "")}
+        fndict = {"scroll_FrontMatter" : ("", ""), "scroll_AdjList" : ("AdjLists", ".adj"),
+                  "scroll_FinalSFM" : ("", ""), "scroll_TeXfile" : ("", ".tex"),
+                  "scroll_XeTeXlog" : ("", ".log"), "scroll_Settings": ("", ""),
+                  "scroll_SettingsOld": ("", "")}
 
         if pgid == "scroll_FrontMatter":
             fpath = self.configFRT()
@@ -1624,11 +1626,12 @@ class GtkViewModel(ViewModel):
             self.builder.get_object("btn_refreshViewerText").set_sensitive(False)
             self.builder.get_object("btn_viewEdit").set_label(_("View Only..."))
 
-        elif pgid == "scroll_Settings": # View/Edit one of the 4 Settings files or scripts
-            fpath = self.builder.get_object("l_Settings").get_tooltip_text()
+        elif pgid in ("scroll_Settings", "scroll_SettingsOld"): # View/Edit one of the 4 Settings files or scripts
+            lname = "l_{1}".format(*pgid.split('_'))
+            fpath = self.builder.get_object(lname).get_tooltip_text()
             if fpath == None:
                 self.fileViews[pgnum][0].set_text("\n"+_(" Use the 'Advanced' tab to select which settings you want to view or edit."))
-                self.builder.get_object("l_Settings").set_text("Settings")
+                self.builder.get_object(lname).set_text("Settings")
                 return
 
         else:
@@ -2505,11 +2508,18 @@ class GtkViewModel(ViewModel):
         fpath = self._locFile(file2edit, loc)
         if fpath is None:
             return
+            old
         label = self.builder.get_object("l_{1}".format(*pgid.split("_")))
-        label.set_tooltip_text(fpath)
         if pgid == "scroll_Settings":
+            oldlabel = self.builder.get_object("l_SettingsOld")
+            oldlabel.set_tooltip_text(label.get_tooltip_text())
+            oldlabel.set_text(label.get_text())
             self.builder.get_object("gr_editableButtons").set_sensitive(True)
             label.set_text(file2edit)
+            buf = self.fileViews[pgnum][0]
+            text2save = buf.get_text(buf.get_start_iter(), buf.get_end_iter(), True)
+            self.fileViews[pgnum-1][0].set_text(text2save)
+        label.set_tooltip_text(fpath)
         if os.path.exists(fpath):
             with open(fpath, "r", encoding="utf-8") as inf:
                 txt = inf.read()
@@ -2553,6 +2563,7 @@ class GtkViewModel(ViewModel):
             self._editProcFile(scriptName, scriptPath)
 
     def onEditChangesFile(self, btn):
+        self._editProcFile("PrintDraftChanges.txt", "prj")
         self._editProcFile("changes.txt", "cfg")
 
     def onEditModsTeX(self, btn):
