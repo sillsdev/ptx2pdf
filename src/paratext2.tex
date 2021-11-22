@@ -41,6 +41,10 @@
 \edef\t@mp{\jobname}%
 \xdef\j@bname{\x@\x@\x@\stripqu@tes\x@\t@mp\x@"\t@mp"\relax}
 
+%There is no equivalent definition to maxdimen for counts
+\def\m@xcount{2147483647}
+\def\m@ncount{-2147483647} % Technically ...8, but TeX moans about athat.
+
 \def\MSG{\immediate\write16 } % shorthand to write a message to the terminal
 \def\TRACE#1{}%\let\TRACE=\MSG % default - consume messages
 

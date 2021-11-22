@@ -47,18 +47,24 @@
 \def\addtotrigg@rchecks#1{\x@\global\x@\trigg@rchecks\x@{\the\trigg@rchecks #1}}
 
 \newif\ifMarkTriggerPoints
-\x@\font\csname font<TP>\endcsname "Source Code Pro:extend=0.8,color=007f7f" at 7pt
-\x@\font\csname font<VP>\endcsname "Source Code Pro:extend=0.8,color=7f007f" at 7pt
+\x@\font\csname font<TP>\endcsname "Source Code Pro:extend=0.8,color=007f7f" at 7pt %Trigger Paragraph
+\x@\font\csname font<TV>\endcsname "Source Code Pro:extend=0.8,color=7f007f" at 7pt %Trigger verse
+\x@\font\csname font<AP>\endcsname "Source Code Pro:extend=0.8,color=7f7f00" at 7pt % AdjustPar
+
 \def\@mark@trigerTP{1}
-\def\@mark@trigerVP{0.5}
+\def\@mark@trigerTV{0.5}
+\def\@mark@trigerAP{0.1}
+\def\trigg@rmark@selectT{\ifdiglot\dc@rref\else\c@rref\fi}%
+\def\trigg@rmark@selectA{\adjc@rref,\the\curr@djpar}
+\def\trigg@rmark@select#1#2\E{\csname trigg@rmark@select#1\endcsname}%
 \def\trigg@rmark#1{%
-  \llap{\setbox0\hbox{\csname font<#1>\endcsname \ifdiglot\dc@rref\else\c@rref\fi\hskip1em}\smash{\x@\lower\csname @mark@triger#1\endcsname\ht0\box0}}%
+  \llap{\setbox0\hbox{\csname font<#1>\endcsname \trigg@rmark@select#1\E\hskip1em}\smash{\x@\lower\csname @mark@triger#1\endcsname\ht0\box0}}%
 }
 
 \def\runtrigg@rscv{%after the verse number
   \p@rnum=1
   \settrig@refcv
-  \ifMarkTriggerPoints\trigg@rmark{VP}\fi
+  \ifMarkTriggerPoints\trigg@rmark{TV}\fi
   \trace{T}{running (cv) triggers \c@rref}%
   \the\trigg@rchecks
 }
@@ -77,7 +83,7 @@
 
 \def\runtrigg@rspar{%Paragraph trigger
   \trace{T}{runtrigg@rspar}%
-  \advance\p@rnum by 1
+  \global\advance\p@rnum by 1
   \ifx\v@rse\empty\else
     \settrig@refcv
   \fi
@@ -87,7 +93,7 @@
     \xdef\dc@rref{\odc@rref\TriggerP@rSep\the\p@rnum}%
   \fi
   \ifMarkTriggerPoints\trigg@rmark{TP}\fi
-  \trace{T}{running triggers \c@rref}%
+  \trace{T}{running triggers \c@rref \c@rrdstat \the\p@rnum, \the\curr@djpar}%
   \the\trigg@rchecks
   \global\let\c@rref=\oc@rref\global\let\dc@rref=\odc@rref
 }

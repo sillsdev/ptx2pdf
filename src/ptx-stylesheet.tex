@@ -1212,8 +1212,9 @@
  \bookendpagebreak
  %\ifendbooknoeject\else\global\output={\shipout\vbox{\box\partial\box255}}\eject\xdef\p@gefirstmark{}\setbox\partial=\box\voidb@x\fi
  \global\output={\onecol}
- % no idea why we need \noindent here
- \ifendbooknoeject\else\trace{o}{end of book eject with \the\ht\partial \space remaining}\ifdim\ht\partial>0pt\noindent\eject\fi\xdef\p@gefirstmark{}\rerunsavepartialpagedfalse\fi
+ % no idea why we need \noindent here:
+ \ifendbooknoeject\else\trace{o}{end of book eject with \the\ht\partial \space remaining}\ifdim\ht\partial>0pt\noindent\eject\fi
+ \xdef\p@gefirstmark{}\rerunsavepartialpagedfalse\fi
 }
 %-csty_ptxfile_end
 \newread\t@stread

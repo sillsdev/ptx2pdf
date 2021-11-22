@@ -106,6 +106,7 @@
 %LRspecific holds a list of things that get redefined on side-switching. Now split into Definitions and Dimensions.
 \def\LRspecificDef{AdornVerseNumber,VerticalSpaceFactor,LineSpacingFactor,regular,bold,italic,bolditalic,SpaceStretchFactor,SpaceShrinkFactor,ifOmitChapterNumber,ifOmitVerseNumberOne,MakeChapterLabel}
 \def\LRspecificDim{FontSizeUnit,le@dingunit,onel@neunit,verticalsp@ceunit,IndentUnit} 
+\def\LRspecificCount{curr@djpar,p@rnum} 
 
 
 % Code to cycle through \LRspecific, setting them to their L/R values, modified
@@ -116,9 +117,10 @@
 % These do the looping
 \def\pr@cessSp@cific#1,#2\E{\def\t@st{#1}\ifx\t@st\empty\let\n@xt\l@stSpecific\else\let\n@xt\pr@cessSp@cific\wh@t{#1}\fi\n@xt #2,\E}
 \def\l@stSpecific#1\E{}
-\def\pr@cessSpecific{\edef\LRs{\LRspecificDef,\LRspecificDim}\x@\pr@cessSp@cific \LRs,\E}
+\def\pr@cessSpecificAll{\edef\LRs{\LRspecificDef,\LRspecificDim,\LRspecificCount}\x@\pr@cessSp@cific \LRs,\E}
 \def\pr@cessSpecificDef{\edef\LRs{\LRspecificDef}\x@\pr@cessSp@cific \LRs,\E}
 \def\pr@cessSpecificDim{\edef\LRs{\LRspecificDim}\x@\pr@cessSp@cific \LRs,\E}
+\def\pr@cessSpecificCount{\edef\LRs{\LRspecificCount}\x@\pr@cessSp@cific \LRs,\E}
 
 % These are the things that might get called by the loop.
 
@@ -129,21 +131,36 @@
   \ifcsname #1\@rig\endcsname\x@\let\csname#1\x@\endcsname\csname #1\@rig\endcsname
     \trace{S}{SpS: #1 returned to original}\else\trace{S}{SpS: #1 unmodified (no #1\sfx, no #1\@rig)}\fi\fi}
 
-% If theres a side-specific version and its >0sp, switch to it. If there's no side-specific verision,
+% If theres a side-specific version and its not -1sp, switch to it. If there's no side-specific verision,
 % switch to the \original version, if that exists.
-\def\sp@cificSideDim#1{\x@\ifdim\csname #1\sfx\endcsname>0sp\x@\let\csname#1\x@\endcsname\csname #1\sfx\endcsname
-  \trace{S}{SpS: #1\sfx\space selected}\else
-  \ifcsname #1\@rig\endcsname\x@\let\csname#1\x@\endcsname\csname #1\@rig\endcsname
-    \trace{S}{SpS: #1 returned to original}\else\trace{S}{SpS: #1 unmodified}\fi\fi}
+\def\sp@cificSideDim#1{\x@\ifdim\csname #1\sfx\endcsname=-1sp
+   \ifcsname #1\@rig\endcsname\x@\let\csname#1\x@\endcsname\csname #1\@rig\endcsname
+     \trace{S}{SpS: #1 returned to original}\else\trace{S}{SpS: #1 unmodified}%
+    \fi
+  \else
+   \x@\let\csname#1\x@\endcsname\csname #1\sfx\endcsname\trace{S}{SpS: #1\sfx\space selected}
+  \fi
+}
 
+\def\sp@cificSideCount#1{\x@\ifnum\csname #1\sfx\endcsname=\m@ncount
+   \ifcsname #1\@rig\endcsname\x@\let\csname#1\x@\endcsname\csname #1\@rig\endcsname
+     \trace{S}{SpS: #1 returned to original}\else\trace{S}{SpS: #1 unmodified}%
+    \fi
+  \else
+   \x@\let\csname#1\x@\endcsname\csname #1\sfx\endcsname\trace{S}{SpS: #1\sfx\space selected}
+  \fi
+}
 \def\s@veSpecificOrig#1{\ifcsname #1\endcsname \x@\let\csname #1\@rig\x@\endcsname\csname #1\endcsname
     \let\sSotmp=\col@do
     \def\col@do##1{\ch@ckLR{#1}{##1}}%
     \x@\each@col\diglot@list\E % Check all columns
     \let\col@do=\sSotmp
   \else\MSG{No global definition for #1}\fi} % If the item exists, save its current value. 
+
 \def\ch@ckLR#1#2{\ifcsname#1#2\endcsname\trace{S}{SpS: #1#2 exists}\else\x@\let\csname #1#2\x@\endcsname\csname #1\@rig\endcsname
   \ifdiglot\MSG{Side-specific #1#2 not defined, global #1 will be used}\fi\fi}% Helper function
+\def\restoreLR@rig#1{\x@\let\csname #1\x@\endcsname\csname #1\@rig\endcsname}
+
 \def\n@wSpecificDim#1{\x@\newdim@n\csname #1\sfx\endcsname}
 % If the item exists, save its current value. 
 \def\s@veSpecificSideDef#1{\ifcsname #1\endcsname \x@\let\csname #1\sfx\x@\endcsname\csname #1\endcsname\fi}
@@ -164,27 +181,42 @@
     \let\l@stLRspecific\c@rrdstat
     \let\wh@t\sp@cificSideDef\pr@cessSpecificDef
     \let\wh@t\sp@cificSideDim\pr@cessSpecificDim
+    \let\wh@t\sp@cificSideCount\pr@cessSpecificCount
   \fi
 }% For use with style definitions, etc.
 
 \def\SSsetLRspecific{\ifx\ds@ffix\empty\def\sfx{\@orig}\else\edef\sfx{\ds@ffix}\fi
   \let\wh@t\sp@cificSideDef\pr@cessSpecific}% for use in stylesheet, no need to check dimensions, just existance
 
-\def\showLRspecific{\edef\sfx{\ifdiglot\c@rrdstat\else \@rig\fi}%
+\def\showLRspecific{\edef\sfx{\ifdiglot \c@rrdstat\else \@rig\fi}%
   \let\wh@t\sh@wSpecificDef\pr@cessSpecificDef
   \let\wh@t\sh@wSpecificDim\pr@cessSpecificDim
+  \let\wh@t\sh@wSpecificDim\pr@cessSpecificCount %No need for separate sh@w.. macro
 }% Call the output routines
-\def\saveLRspecificSide#1{\xdef\sfx{#1}% Save current values (side defined by #1) 
-  \trace{S}{Redefining #1-specific values to current ones}%
+\def\saveLRspecificSide#1{\edef\sfx{#1}% Save current values (side defined by #1) 
+  \ifx\sfx\empty\let\sfx\@rig\fi
+  \trace{S}{Redefining #1-specific values to current settings}%
   \let\wh@t\s@veSpecificSideDef\pr@cessSpecificDef
-  \let\wh@t\s@veSpecificSideDim\pr@cessSpecificDim
+  \ifx\sfx\l@stLRspecific\else %If  l@stSpecific is #1, then \foo IS \foo#1 
+    \let\wh@t\s@veSpecificSideDim\pr@cessSpecificDim
+   %\let\wh@t\s@veSpecificSideCount\pr@cessSpecificCount % So far, nothing needs saving
+  \fi
 }
 %
 % Except this one:
 %
 \def\saveLRspecificOrig{% Save original values of side-specific variables. Force it to single use
   \trace{d}{saveLRspecificOrig \c@rrdstat}%
-  \let\wh@t\s@veSpecificOrig\pr@cessSpecific\let\saveLRspecificOrig=\relax}
+  \let\wh@t\s@veSpecificOrig\pr@cessSpecificAll\let\saveLRspecificOrig=\relax}
+
+\def\restoreLRorig{%Dimens and counts must point back to their original value on closing a file
+  \trace{d}{restoreLRorig}%
+  %\tracingassigns=1
+  \let\wh@t\restoreLR@rig\pr@cessSpecificDim
+  \let\wh@t\restoreLR@rig\pr@cessSpecificCount
+  %\tracingassigns=0
+}
+  
 
 \maxdeadcycles=100
 \newdimen\FontSizeUnitL\FontSizeUnitL=-1sp\newdimen\FontSizeUnitR\FontSizeUnitR=-1sp
@@ -199,6 +231,11 @@
 \x@\newif\csname ifinp@r-R\endcsname % Used for parlocs analysis
 \x@\newcount\csname p@rlinesgone-L\endcsname % Used for parlocs analysis
 \x@\newcount\csname p@rlinesgone-R\endcsname % Used for parlocs analysis
+\x@\newcount\csname curr@djparL\endcsname % Used for adjust list
+\x@\newcount\csname curr@djparR\endcsname % Used for adjust list
+\x@\newcount\csname p@rnumL\endcsname % Used for triggers
+\x@\newcount\csname p@rnumR\endcsname % Used for triggers
+
 \def\newsideSpecificIf#1{% 'Tristate' if - true / false / default (where default means the side-specific logic ought to let the global value take precedence
   \x@\def\csname #1true\endcsname{\x@\let\csname if#1\endcsname\iftrue}%
   \x@\def\csname #1false\endcsname{\x@\let\csname if#1\endcsname\iffalse}%
