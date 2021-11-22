@@ -395,7 +395,7 @@ class ViewModel:
             return False
         self.triggervcs = True
         os.makedirs(newp)
-        jobs = {k:k for k in('ptxprint-mods.sty', 'ptxprint.sty', 'ptxprint-mods.tex',
+        jobs = {k:k for k in('ptxprint-mods.sty', 'ptxprint.sty', 'ptxprint-mods.tex', "changes.txt",
                              'ptxprint.cfg', 'FRTlocal.sfm', 'PicLists', 'AdjLists')}
         if newprj is not None:
             del jobs['AdjLists']
@@ -1141,7 +1141,8 @@ class ViewModel:
         sfiles = {'c_useCustomSty': ("custom.sty", False),
                   'c_useModsSty': ("ptxprint-mods.sty", True),
                   'c_useModsTex': ("ptxprint-mods.tex", True),
-                  'c_usePrintDraftChanges': ("PrintDraftChanges.txt", False),
+                  # should really parse changes.txt and follow the include chain, sigh
+                  'c_usePrintDraftChanges': (("PrintDraftChanges.txt", False), ("changes.txt", True)),
                   'c_frontmatter': ("FRTlocal.sfm", True),
                   None: ("picChecks.txt", False)}
         res = {}
@@ -1245,16 +1246,18 @@ class ViewModel:
         tmpfiles.append(tempfile.name)
 
         # config files
-        for t, a in sfiles.items():
+        for t, b in sfiles.items():
             if isinstance(t, str) and not self.get(t): continue
-            if a[1]:
-                s = os.path.join(basecfpath, a[0])
-                d = cfpath + a[0]
-            else:
-                s = os.path.join(self.settings_dir, prjid, a[0])
-                d = a[0]
-            if os.path.exists(s):
-                res[s] = d
+            c = [b] if isinstance(b[0], str) else b
+            for a  in c:
+                if a[1]:
+                    s = os.path.join(basecfpath, a[0])
+                    d = cfpath + a[0]
+                else:
+                    s = os.path.join(self.settings_dir, prjid, a[0])
+                    d = a[0]
+                if os.path.exists(s):
+                    res[s] = d
 
         if self.get("c_useModsTex"):
             loaded = False

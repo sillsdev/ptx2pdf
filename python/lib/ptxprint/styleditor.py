@@ -253,19 +253,24 @@ class StyleEditor:
             res = str(v)
         return res
 
-    def output_diffile(self, outfh, regular=None, inArchive=False, root=None):
+    def output_diffile(self, outfh, regular=None, inArchive=False, root=None,
+                       sheet=None, basesheet=None):
         def normmkr(s):
             x = s.lower().title()
             return mkrexceptions.get(x, x)
+        if basesheet is None:
+            basesheet = self.basesheet
+        if sheet is None:
+            sheet = self.sheet
         for m in sorted(self.allStyles()):
             markerout = False
             if m in aliases:
                 sm = self.asStyle(m+"1")
             elif inArchive:
-                sm = self.sheet.get(m, {}).copy()
+                sm = sheet.get(m, {}).copy()
             else:
-                sm = self.sheet.get(m, {})
-            om = self.basesheet.get(m, {})
+                sm = sheet.get(m, {})
+            om = basesheet.get(m, {})
             if 'zDerived' in om or 'zDerived' in sm:
                 continue
             for k,v in sm.items():
