@@ -107,6 +107,11 @@
 \def\LRspecificDef{AdornVerseNumber,VerticalSpaceFactor,LineSpacingFactor,regular,bold,italic,bolditalic,SpaceStretchFactor,SpaceShrinkFactor,ifOmitChapterNumber,ifOmitVerseNumberOne,MakeChapterLabel}
 \def\LRspecificDim{FontSizeUnit,le@dingunit,onel@neunit,verticalsp@ceunit,IndentUnit} 
 \def\LRspecificCount{curr@djpar,p@rnum} 
+\ifcsname KeepMyBrokenAdjList\endcsname
+\def\LRspecificCount{}
+\else
+\def\LRspecificCount{curr@djpar,p@rnum} 
+\fi
 
 
 % Code to cycle through \LRspecific, setting them to their L/R values, modified
