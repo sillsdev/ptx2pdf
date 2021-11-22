@@ -127,6 +127,7 @@ _diglot = {
 
 "diglot/copyright":         "project/copyright",
 "diglot/license":           "project/license",
+"diglot/ptxprintstyfile_":  "project/ptxprintstyfile_",
 
 "diglotfancy/versedecorator":       "fancy/versedecorator",
 "diglotfancy/versedecoratorpdf":    "fancy/versedecoratorpdf",
@@ -430,6 +431,15 @@ class RunJob:
             chaprange = (int(info["document/chapfrom"]), int(info["document/chapto"]))
         else:
             chaprange = (-1, -1)
+
+        # create differential ptxprint.sty
+        cfgname = info['config/name']
+        outstyname = os.path.join(self.tmpdir, "diglot.sty")
+        with open(outstyname, "w", encoding="utf-8") as outf:
+            diginfo.printer.styleEditor.output_diffile(outf, basesheet=info.printer.styleEditor.asStyle(None),
+                                                       sheet=diginfo.printer.styleEditor.asStyle(None))
+        diginfo["project/ptxprintstyfile_"] = outstyname
+
         logger.debug('Diglot processing jobs: {}'.format(jobs))
         for b in jobs:
             logger.debug(f"Diglot({b}): f{self.tmpdir} from f{self.prjdir}")
@@ -510,6 +520,7 @@ class RunJob:
             frtfname = os.path.join(self.tmpdir, outfname.replace(".tex", "_FRT.tex"))
             info.createFrontMatter(frtfname)
             genfiles.append(frtfname)
+        logger.debug("diglot styfile is {}".format(info['diglot/ptxprintstyfile_']))
         texfiledat = info.asTex(filedir=self.tmpdir, jobname=outfname.replace(".tex", ""), extra=extra)
         with open(os.path.join(self.tmpdir, outfname), "w", encoding="utf-8") as texf:
             texf.write(texfiledat)

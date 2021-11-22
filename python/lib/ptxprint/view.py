@@ -906,10 +906,8 @@ class ViewModel:
         if not force and self.configLocked():
             return
         fname = os.path.join(self.configPath(self.configName(), makePath=True), "ptxprint.sty")
-        regularfont = self.get("bl_fontR")
-        root = os.path.join(self.settings_dir, self.prjid, "local", "ptxprint", self.configName())
         with open(fname, "w", encoding="Utf-8") as outf:
-            self.styleEditor.output_diffile(outf, regular=regularfont, root=root)
+            self.styleEditor.output_diffile(outf)
 
     def savePics(self, fromdata=True, force=False):
         if not force and self.configLocked():
@@ -1238,9 +1236,8 @@ class ViewModel:
                 fname = os.path.basename(f.filename)
                 res[f.filename] = "shared/fonts/"+fname
 
-        regularfont = self.get("bl_fontR")
         tempfile = NamedTemporaryFile("w", encoding="utf-8", newline=None, delete=False)
-        self.styleEditor.output_diffile(tempfile, regular=regularfont, inArchive=True)
+        self.styleEditor.output_diffile(tempfile, inArchive=True)
         tempfile.close()
         res[tempfile.name] = cfpath+"ptxprint.sty"
         tmpfiles.append(tempfile.name)
@@ -1318,6 +1315,10 @@ class ViewModel:
         self._archiveAdd(zf, self.getBooks(files=True))
         if self.diglotView is not None:
             self.diglotView._archiveAdd(zf, self.getBooks(files=True))
+            pf = "{}/local/ptxprint/{}/diglot.sty".format(self.prjid, self.configName())
+            ipf = os.path.join(self.settings_dir, pf)
+            if os.path.exists(ipf):
+                zf.write(ipf, pf)
         from ptxprint.runjob import RunJob
         runjob = RunJob(self, self.scriptsdir, self.args, inArchive=True)
         runjob.doit(noview=True)
@@ -1348,17 +1349,14 @@ class ViewModel:
 #                else:
                 zf.write(pf, outfname)
         ptxmacrospath = self.scriptsdir
-        for f in os.listdir(ptxmacrospath):
-            if f.endswith(".tex") or f.endswith(".sty"):
-                zf.write(os.path.join(ptxmacrospath, f), self.prjid+"/src/"+f)
-        # mappingfile = self.get("fcb_digits")
-        # if mappingfile is not None and mappingfile != "Default":
-            # mappingfile = mappingfile.lower()+"digits.tec"
-            # mpath = os.path.join(ptxmacrospath, "mappings", mappingfile)
-            # if os.path.exists(mpath):
-                # zf.write(mpath, self.prjid+"/src/mappings/"+mappingfile)
+        for dp, d, fs in os.walk(ptxmacrospath):
+            for f in fs:
+                if f[-4:].lower() in ('.tex', '.sty', '.tec') and f != "usfm.sty":
+                    zf.write(os.path.join(dp, f), self.prjid+"/src/"+os.path.join(os.path.relpath(dp, ptxmacrospath), f))
         self._archiveSupportAdd(zf, [x for x in self.tempFiles if x.endswith(".tex")])
         zf.close()
+        if res:
+            self.doError(_("Warning: The print job failed, and so the archive is incomplete"))
         self.finished()
         
     def _archiveAdd(self, zf, books):

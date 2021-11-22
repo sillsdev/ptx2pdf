@@ -162,8 +162,14 @@ class StyleEditor:
         return res
 
     def asStyle(self, m):
-        res = {str(k):v for k, v in self.basesheet.get(m, {}).items()}
-        res.update({str(k):v for k, v in self.sheet.get(m, {}).items()})
+        if m is None:
+            res = {}
+            for m in self.allStyles():
+                res[m] = {str(k):v for k, v in self.basesheet.get(m, {}).items()}
+                res[m].update({str(k):v for k, v in self.sheet.get(m, {}).items()})
+        else:
+            res = {str(k):v for k, v in self.basesheet.get(m, {}).items()}
+            res.update({str(k):v for k, v in self.sheet.get(m, {}).items()})
         return res
 
     def getval(self, mrk, key, default=None, baseonly=False):
@@ -253,8 +259,7 @@ class StyleEditor:
             res = str(v)
         return res
 
-    def output_diffile(self, outfh, regular=None, inArchive=False, root=None,
-                       sheet=None, basesheet=None):
+    def output_diffile(self, outfh, inArchive=False, sheet=None, basesheet=None):
         def normmkr(s):
             x = s.lower().title()
             return mkrexceptions.get(x, x)
