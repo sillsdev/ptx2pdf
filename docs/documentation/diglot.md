@@ -181,6 +181,9 @@ necesary to specify \diglotfalse before switching.
   The PDF bookmarks are produced (by default) with a ```/``` separating the chapter name. The slash is actually produced by ```\Alternative```, in case 
 slash not the correct symbol to use. 
 
+- ```\def\KeepMyBrokenAdjList{}```
+If this is defined, then old-stlye (broken) paragraph numbering for adjust lists and triggers.
+
 
 ## Easy solutions to common problems
 

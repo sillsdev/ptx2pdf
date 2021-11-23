@@ -32,3 +32,22 @@ spacing, then add:
 
 to your ptxprint-mods.tex and have the surety of never crashing lines again.
 
+# Display Paragraph numbers
+```
+\MarkTriggerPointstrue
+```
+Will add indications to the output of trigger points for paragraphs and verse numbers. These may be useful 
+adjust-lists, triggers, or image anchors.
+
+# Broken paragraph counting in diglots
+Until late Nov 2021, paragraph counting in diglots did not keep track of paragraphs on a per-column basis.
+It may be that adjust lists or triggers have been set-up relying on this aberrant behaviour.
+```\def\KeepMyBrokenAdjList{}```
+If this is defined, then old-stlye (broken) paragraph numbering for adjust lists and triggers will be restored.
+
+```\let\KeepMyBrokenAdjList\undefined```
+Will reset to correctly numbered paragraphs. (for the next USFM file read)
+
+
+
+
