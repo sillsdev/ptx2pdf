@@ -77,7 +77,7 @@ and the right column will use:
 ## Configuration items to go in foo-setup.tex (or main .tex file)
 
 ### Extra columns
-`\newPolyglotCol A` This specifies that just `L` and `R` are a bit boring, and you wish to use another column (`A`) as well. The perl program to merge files uses L,R,A,B,C.... as column identifiers.
+`\newPolyglotCol A` This specifies that just `L` and `R` are a bit boring, and you wish to use another column (`A`) as well. The perl program to merge files uses L,R,A,B,C.... as column identifiers. So far there is no python code to cope with polyglots.
 
 
 ###True/false options
@@ -245,9 +245,11 @@ A debugging option to help match the numbers from the log file with position in 
 This command adds even more markers, but the markers may alter what appears on which page. 
 
 - ```\diglotDbgJoinboxes=132```
-At various points in the process, boxes (see later) get joined together, by a macro called ```\joinboxes```. This is a debugging option to help check that what's happening there is what ought to be happening.  XeTeX has a debugging command ```\showbox```, which stops processing and writes information about a given box (in the case here, a box is the stack of lines separated by spaceing).  This command fires the ```\showbox```  command if the number given is the current debug message number when joinboxes is called.  If the number is set to 0, and the command ```\tracing{d}``` has not been given, then every single call to joinboxes will result in a ```\showbox```.  **You almost certainly don't want to do this!** 
+At various points in the process, boxes (see later) get joined together, by a macro called ```\joinboxes```. This is a debugging option to help check that what's happening there is what ought to be happening.  XeTeX has a debugging command ```\showbox```, which stops processing and writes information about a given box (in the case here, a box is the stack of lines separated by spacing).  This command fires the ```\showbox```  command if the number given is the current debug message number when joinboxes is called (and various other places).   Note that ```\showboxbreadth=99` and ```\showboxdepth=99``` control how much detail is shown before truncation.
 
 - ```\def\diglotDbgeachcol{134}```
 - ```\def\diglotDbgdiglotDbgupdtPtl{213}```
 Trigger detailed debugging code for a particular occurance of the (frequently met) `\each@col` and `\upd@tep@rtial` macros.
 
+- ```\diglotDebugFollowContentstrue```
+This is the extreme version of `\diglotDbgJoinboxes` above. Rather than just showing boxes at a single point in the code, this will show the box contents at most points of potential interest. Combined with `\tracing{d}\tracing{D}`, log files on the order of 10Mbytes per page are to be expected.

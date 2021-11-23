@@ -106,12 +106,11 @@
 %LRspecific holds a list of things that get redefined on side-switching. Now split into Definitions and Dimensions.
 \def\LRspecificDef{AdornVerseNumber,VerticalSpaceFactor,LineSpacingFactor,regular,bold,italic,bolditalic,SpaceStretchFactor,SpaceShrinkFactor,ifOmitChapterNumber,ifOmitVerseNumberOne,MakeChapterLabel}
 \def\LRspecificDim{FontSizeUnit,le@dingunit,onel@neunit,verticalsp@ceunit,IndentUnit} 
-\def\LRspecificCount{curr@djpar,p@rnum} 
-\ifcsname KeepMyBrokenAdjList\endcsname
-\def\LRspecificCount{}
-\else
-\def\LRspecificCount{curr@djpar,p@rnum} 
-\fi
+
+%Because some people may have adjust-lists using the old broken numbering, we make 2 versions of this.
+\def\LRspecificCountFixed{curr@djpar,p@rnum} 
+\def\LRspecificCountBroken{}
+\let\LRspecificCount\LRspecificCountFixed
 
 
 % Code to cycle through \LRspecific, setting them to their L/R values, modified
