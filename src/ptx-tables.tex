@@ -183,6 +183,8 @@
 \newbox\cellb@x
 \def\tablecategory{}
 
+%\tracinggroups=1
+%\tracingassigns=1
 \def\startt@ble{%
   \ifdoingt@ble \else
     \ifhe@dings\endhe@dings\fi
@@ -194,7 +196,6 @@
     \ifx\tablecategory\empty\else\doc@t{\tablecategory}\fi
     \message{starting table cat:\tablecategory}%
   \fi}
-
 \newdimen\t@talwidth
 \def\endt@ble{%
   \ifdoingt@ble
@@ -340,17 +341,38 @@
   \ifnum\lct@mp>\linec@unt \global\linec@unt=\lct@mp \fi}
 \def\c@untlines{\setbox0=\lastbox
   \ifhbox0 \global\advance\lct@mp by 1 \unskip\unpenalty\c@untlines\fi}
+
+\newif\ifh@lfrow
 \def\getnth@line{% return content of line nth@line from box \c@rrentcell
+  \getp@ram{verticalalign}{tc\the\@col}%
+  \ifx\p@ram\relax\let\p@ram\@lignTop\fi
   \lct@mp=0
-  \setbox0=\vbox{\unvcopy\c@rrentcell \c@untlines}% count lines into \lct@mp
-  \ifnum\nth@line>\lct@mp \global\setbox1=\hbox to \c@rrentcolwidth{\hfil}\else
-    \setbox0=\vbox{\unvcopy\c@rrentcell
-      \@@@LOOP \ifnum\nth@line<\lct@mp
-        \setbox0=\lastbox \unskip\unpenalty
-        \advance\lct@mp by -1 \@@@REPEAT
-      \global\setbox1=\lastbox}%
-  \fi
-  \box1
+  \h@lfrowfalse
+  \bgroup %protect nth@line and count255
+    \setbox0=\vbox{\unvcopy\c@rrentcell \c@untlines}% count lines into \lct@mp
+    \count255=0
+    \ifx\p@ram\@lignTop\else
+      \count255=\numexpr \linec@unt - \lct@mp \relax
+      \ifx\p@ram\@lignBot\else
+        \ifx\p@ram\@lignGCent \else
+          \ifodd\count255 \global\h@lfrowtrue\fi
+        \fi
+        \divide\count255 by 2
+      \fi
+    \fi
+    \trace{t}{column \@col. linecount:\the\linec@unt, lct@mp:\the\lct@mp, nthline:\the\nth@line, adj \the\count255 \ifh@lfrow .5\fi}%
+    \advance \nth@line by -\count255
+    \ifnum 1 = \ifnum\nth@line>\lct@mp 1 \else \ifnum\nth@line<1 1\else 0\fi\fi \global\setbox1=\hbox to \c@rrentcolwidth{\hfil}\else
+      \setbox0=\vbox{\unvcopy\c@rrentcell
+        \@@@LOOP \ifnum\nth@line<\lct@mp
+          \setbox0=\lastbox \unskip\unpenalty
+          \advance\lct@mp by -1 \@@@REPEAT
+        \global\setbox1=\lastbox}%
+    \fi
+  \egroup
+  \trace{t}{bls:\the\baselineskip}%
+  \ifh@lfrow\lower 0.5\baselineskip\fi \box1%
+  %\box1
 }
 \newcount\nth@line
 
