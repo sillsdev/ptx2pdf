@@ -37,8 +37,6 @@
 % either ignoring it or saving the parameter as appropriate
 %
 %+csty_definition_setup
-\def\h@phen{-} % for matching
-\def\tru@{true}% for matching
 \def\ds@ffix{} % diglot suffix (L/R)
 \def\m@rker{} % The currently being defined \Marker
 \let\prev@rsemode\empty
@@ -361,10 +359,6 @@
  \else\ifx\styl@type\MSt@ne \x@\defmst@nestyle\m@rker\E
  \else \message{unknown style type '\styl@type'}
  \fi\fi\fi\fi}
-\def\P@ra{paragraph}
-\def\Ch@r{character}
-\def\N@te{note}
-\def\MSt@ne{milestone}
 
 %:
 % \def*style: define a USFM marker as a paragraph, character or note style marker
@@ -850,52 +844,43 @@
 \def\mcp@pCont#1#2{\edef\t@@st{\mct@stname{#1}{#2}}\x@\xdef\csname\t@@st\endcsname{Y}} % Pop and continue
 \def\mcp@pEnd#1#2{\edef\t@@st{\mct@stname{#1}{#2}}\x@\xdef\csname\t@@st\endcsname{P}} % Pop and end.
 \def\mcnp@pSt@re#1#2{\edef\t@@st{\mct@stname{#1}{#2}}\x@\xdef\csname\t@@st\endcsname{S}} % no pop, Store and continue
-%defs for comparison purposes 
-\def\ss@Char{C}%
-\def\ss@ChrP{c}%
-\def\ss@Para{P}%
-\def\ss@Note{N}%
-%\def\ss@MstnS{M}% Static milestones (unused)
-\def\ss@Mstn{m}% Floating milestones (always above a par style)
-\def\ss@Ctgy{t}%
-\def\ss@ParCtgy{T}% A category attached to (ended by) a paragraph style
-\def\ss@Sbar{s}%
+%defs for comparison purposes  Now in ptx-constants
 
-\mcp@pCont{P}{P}% new P pops P
-\mcp@pCont{P}{c}% new P pops c (\+char)
-\mcp@pCont{P}{C}% new P pops C (\char)
-\mcp@pCont{C}{c}% new C pops c
-\mcp@pCont{C}{C}% new C pops C
-\mcp@pCont{s}{C}% Side bars pop character styles.
-\mcp@pCont{s}{c}% Side bars pop character styles.
-\mcp@pCont{t}{t}% new cat pops old cat
-\mcp@pCont{P}{T}% new paragraph pops old parcat
-\mcnp@pSt@re{*}{m}% Milestones are always stored.
+\mcp@pCont{\ss@Para}{\ss@Para}% new P pops P
+\mcp@pCont{\ss@Para}{\ss@ChrP}% new P pops c (\+char)
+\mcp@pCont{\ss@Para}{\ss@Char}% new P pops C (\char)
+\mcp@pCont{\ss@Char}{\ss@ChrP}% new C pops c
+\mcp@pCont{\ss@Char}{\ss@Char}% new C pops C
+\mcp@pCont{\ss@Sbar}{\ss@Char}% Side bars pop character styles.
+\mcp@pCont{\ss@Sbar}{\ss@ChrP}% Side bars pop character styles.
+\mcp@pCont{\ss@Ctgy}{\ss@Ctgy}% new cat pops old cat
+\mcp@pCont{\ss@Para}{\ss@ParCtgy}% new paragraph pops old parcat
+\mcnp@pSt@re{*}{\ss@Mstn}% Milestones are always stored.
 %Style end pops:
-\mcp@pCont{s*}{t}% sidebar end pops caT
-\mcp@pCont{s*}{P}% sidebar end pops Paragraph
-\mcp@pCont{s*}{c}% sidebar end pops embedded charstyle
-\mcp@pCont{s*}{C}% sidebar end pops Charstyle
-\mcp@pEnd{s*}{s}% sidebar end pops ONE sidebar, then finish
-\mcp@pEnd{t*}{t}% cat end pops one old cat, then finish
-\mcp@pEnd{t*}{T}% cat end pops one old cat, then finish
-\mcp@pCont{N*}{c}% Ending Note pops c
-\mcp@pCont{N*}{C}% Ending Note pops C
-\mcp@pCont{tc*}{C}% Ending table cell pops C (\char)
-\mcp@pCont{tc*}{c}% Ending table cell pops c (\+char)
+\mcp@pCont{\ss@Sbar*}{\ss@Ctgy}% sidebar end pops caT
+\mcp@pCont{\ss@Sbar*}{\ss@Para}% sidebar end pops Paragraph
+\mcp@pCont{\ss@Sbar*}{\ss@ChrP}% sidebar end pops embedded charstyle
+\mcp@pCont{\ss@Sbar*}{\ss@Char}% sidebar end pops Charstyle
+\mcp@pEnd{\ss@Sbar*}{\ss@Sbar}% sidebar end pops ONE sidebar, then finish
+\mcp@pEnd{t*}{\ss@Ctgy}% cat end pops one old cat, then finish
+\mcp@pEnd{t*}{\ss@ParCtgy}% cat end pops one old cat, then finish
+\mcp@pCont{N*}{\ss@ChrP}% Ending Note pops c
+\mcp@pCont{N*}{\ss@Char}% Ending Note pops C
+\mcp@pCont{tc*}{\ss@Char}% Ending table cell pops C (\char)
+\mcp@pCont{tc*}{\ss@ChrP}% Ending table cell pops c (\+char)
 
 %No point going below these for font styling, etc.
 \def\mcb@rrier#1{\x@\let\csname isb@rrier-#1\endcsname\empty}
-\mcb@rrier{P}
-\mcb@rrier{N}
-\mcb@rrier{s}
+\mcb@rrier{\ss@Para}
+\mcb@rrier{\ss@Note}
+\mcb@rrier{\ss@Sbar}
 %Are these style modifiers (category or milestone)  or actual styles?
 \def\msm@dfyname#1{#1-is-modifyer}
 \def\msm@difyer#1{\edef\t@@st{\msm@dfyname{#1}}\x@\xdef\csname\t@@st\endcsname{Y}}
 \def\g@tmodifyer#1{\edef\t@@st{\msm@dfyname{#1}}\x@\let\x@\t@stme\csname\t@@st\endcsname}
-\msm@difyer{t}
-\msm@difyer{M}
-\msm@difyer{m}
+\msm@difyer{\ss@Ctgy}
+\msm@difyer{\ss@MstnS}
+\msm@difyer{\ss@Mstn}
 
 \newif\ifp@pping
 \p@ppingfalse
@@ -1296,7 +1281,7 @@
 \def\doc@t#1{
   \ifx\c@tegory\empty\else                                      %(5)
     \trace{sc}{Odd situation: two cat commands in one group or nested categories? Assuming nesting.}%
-    \end@llpoppedstyles{t}%pop styles closed by a start of t, in case this IS 2 cat commands
+    \end@llpoppedstyles{\ss@Ctgy}%pop styles closed by a start of t, in case this IS 2 cat commands
     % Assume nesting and don't run any endhooks. Otherwise we'd do this:
     %\op@ninghooks{end}{cat}% 
     %\endgroup %End the group started between the cat groups  

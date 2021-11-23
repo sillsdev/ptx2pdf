@@ -249,7 +249,6 @@
 \def\p@rsePicXtra#1#2\end{% Parse optional new picture options, and remember them
   \xdef\l@cspec@b{#1}\xdef\l@cspec@c{#2}%
 }
-\def\gr@phic{graphic}
 \def\p@rseLoc#1#2\end{% Parse the new picture options, and remember them
   \edef\l@cspec@a{#1}\edef\l@cspec@b{#2}%
   \ifx\l@cspec@b\empty\let\l@cspec@c=\l@cspec@b\else\x@\p@rsePicXtra\l@cspec@b\end\fi
@@ -501,7 +500,6 @@
 }
 %-cfig_addcredit
 %+cfig_hex
-\def\@x@{x}
 \def\checkh@x #1#2\end{%
   \def\t@mp{#1}%
   \ifx \t@mp\@x@\x@\h@xsixtotripple #1#2\end\else\def\rgb@out{#1#2}\fi}
@@ -1040,42 +1038,10 @@
 \def\ch@ckpdf#1.#2.#3\endf@lename{\lowercase{\edef\@xt{#2}}%
   \ifx\@xt\@pdf \let\picfilecomm@nd\XeTeXpdffile \fi}
 %-cfig_checkpdf
-\def\@pdf{pdf}
 
 %+cfig_declare
 \def\picw@rning#1#2{\msg{converted picture placement "#1" to "#2" in single-column layout}}
 
-\def\size@COL{col}
-\def\size@SPAN{span}
-\def\size@PAGE{page}% a page, within the margins
-\def\size@FULL{full}% the paper size
-% tA,bA  etc are reserved for the top and bottom of polyglot column A
-\def\loc@T{t}
-\def\loc@B{b}
-\def\loc@VB{B}
-\def\loc@TL{tl}
-\def\loc@TR{tr}
-\def\loc@BL{bl}
-\def\loc@BR{br}
-\def\loc@Inl{h}% In-line graphic, not a float.
-\def\loc@Cut{c}% cutout
-\def\loc@Par{p}% post-paragrpah
-\def\loc@Page{P}% Page (with headers/footers)
-\def\loc@Full{F}% FullPage (no headers/footers)
-\def\@lignInner{i}
-\def\@lignOuter{o}
-\def\@lignLeft{l}
-\def\@lignRight{r}
-\def\@lignTop{t}
-\def\@lignBot{b}
-\def\@lignCent{c}
-\def\keyR@TATE{rotate}
-\def\keyP@GE{page}
-\def\val@dd{odd}
-\def\val@ven{even}
-\def\valb@th{both}
-\def\val@BIND{binding}
-\def\val@EDGE{edge}
 \def\alias@inserts{%
   \x@\let\csname ins-\loc@TL\endcsname\topleftins
   \x@\let\csname ins-\loc@TR\endcsname\toprightins
