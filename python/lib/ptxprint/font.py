@@ -719,7 +719,10 @@ class TTFont:
 
     def testcmap(self, chars):
         self.loadttfont()
-        cmap = self.ttfont['cmap']
+        try:
+            cmap = self.ttfont['cmap']
+        except KeyError:
+            return []
         b=cmap.getBestCmap()
         return [c for c in chars if ord(c) not in b and ord(c) > 32]
 
