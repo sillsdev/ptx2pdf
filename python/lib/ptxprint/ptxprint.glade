@@ -5002,6 +5002,7 @@ to be printed from the project.</property>
                                 <property name="can-focus">True</property>
                                 <property name="receives-default">False</property>
                                 <property name="halign">start</property>
+                                <property name="valign">center</property>
                                 <property name="margin-left">12</property>
                                 <property name="active">True</property>
                                 <property name="draw-indicator">True</property>
@@ -5021,6 +5022,7 @@ to be printed from the project.</property>
                                 <property name="can-focus">True</property>
                                 <property name="receives-default">False</property>
                                 <property name="halign">start</property>
+                                <property name="valign">center</property>
                                 <property name="margin-left">12</property>
                                 <property name="active">True</property>
                                 <property name="draw-indicator">True</property>
@@ -5040,6 +5042,7 @@ to be printed from the project.</property>
                                 <property name="can-focus">True</property>
                                 <property name="receives-default">False</property>
                                 <property name="halign">start</property>
+                                <property name="valign">center</property>
                                 <property name="margin-left">12</property>
                                 <property name="active">True</property>
                                 <property name="draw-indicator">True</property>
@@ -6169,6 +6172,7 @@ text to assist with final adjustments;
 or enable a Watermark to show behind the text;
 or turn on the Crop marks for the printer.</property>
                                         <property name="halign">end</property>
+                                        <property name="valign">center</property>
                                         <property name="margin-left">2</property>
                                         <property name="draw-indicator">True</property>
                                         <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
@@ -6379,6 +6383,7 @@ inactive, it is due to Diglot being
 active (which obviously must use 
 the Two Column layout).</property>
                                 <property name="halign">end</property>
+                                <property name="valign">center</property>
                                 <property name="margin-left">2</property>
                                 <property name="active">True</property>
                                 <property name="draw-indicator">True</property>
@@ -7279,6 +7284,7 @@ special characters (for example curly quotes),
 then an alternative "fallback" font can be used
 to ensure that they are displayed properly.</property>
                                 <property name="halign">start</property>
+                                <property name="valign">center</property>
                                 <property name="draw-indicator">True</property>
                                 <signal name="toggled" handler="onSimpleClicked" swapped="no"/>
                               </object>
@@ -7471,6 +7477,7 @@ specify \Color Red which will only take effect
 if this option is also enabled - otherwise all
 text will appear in black.</property>
                                         <property name="halign">start</property>
+                                        <property name="valign">center</property>
                                         <property name="margin-top">6</property>
                                         <property name="draw-indicator">True</property>
                                       </object>
@@ -7642,6 +7649,7 @@ For example, zh for Chinese, ko for Korean, etc.
 Note that Graphite fonts can also have line breaking
 rules which can be enabled by using the gr locale.</property>
                                     <property name="halign">end</property>
+                                    <property name="valign">center</property>
                                     <property name="draw-indicator">True</property>
                                     <signal name="clicked" handler="onSimpleFocusClicked" swapped="no"/>
                                   </object>
@@ -7725,6 +7733,7 @@ adjustable - and allows a greater degree
 of flexibility when trying to shrink or
 grow paragrahs when balancing pages.</property>
                                         <property name="halign">start</property>
+                                        <property name="valign">center</property>
                                         <property name="image-position">right</property>
                                         <property name="draw-indicator">True</property>
                                         <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
@@ -7751,6 +7760,7 @@ Note that if this option is disabled, then it is due to
 the Interlinear option being set on the Advanced page.
 These two settings are mutually exclusive.</property>
                                         <property name="halign">start</property>
+                                        <property name="valign">center</property>
                                         <property name="draw-indicator">True</property>
                                         <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                       </object>
@@ -8013,6 +8023,7 @@ Hyphenation List using the button on the left.
 This will create a XeTeX hyphenation list from the
 hyphenation list in Paratext.</property>
                                         <property name="halign">start</property>
+                                        <property name="valign">center</property>
                                         <property name="draw-indicator">True</property>
                                       </object>
                                       <packing>
@@ -8053,6 +8064,7 @@ words onto the next line, BUT don't need to
 display the actual '-' character. If this option
 is checked, then "hyphens" will be invisible.</property>
                                         <property name="halign">start</property>
+                                        <property name="valign">center</property>
                                         <property name="draw-indicator">True</property>
                                       </object>
                                       <packing>
@@ -8150,6 +8162,7 @@ for characters missing in primary font.</property>
                                     <property name="tooltip-text" translatable="yes">Print the Book Introductions which
 appear at the beginning of each book.</property>
                                     <property name="halign">start</property>
+                                    <property name="valign">center</property>
                                     <property name="resize-mode">immediate</property>
                                     <property name="active">True</property>
                                     <property name="draw-indicator">True</property>
@@ -8168,6 +8181,7 @@ appear at the beginning of each book.</property>
                                     <property name="tooltip-text" translatable="yes">Print the Introductory Outlines which
 appear at the beginning of each book.</property>
                                     <property name="halign">start</property>
+                                    <property name="valign">center</property>
                                     <property name="active">True</property>
                                     <property name="draw-indicator">True</property>
                                     <signal name="clicked" handler="onIntroOutlineClicked" swapped="no"/>
@@ -8185,6 +8199,7 @@ appear at the beginning of each book.</property>
                                     <property name="receives-default">False</property>
                                     <property name="tooltip-text" translatable="yes">This will right-align and add leader tabs (. . . .) before the \ior numbers for a pretty Intro Outline Table.</property>
                                     <property name="halign">start</property>
+                                    <property name="valign">center</property>
                                     <property name="draw-indicator">True</property>
                                   </object>
                                   <packing>
@@ -8200,6 +8215,7 @@ appear at the beginning of each book.</property>
                                     <property name="receives-default">False</property>
                                     <property name="tooltip-text" translatable="yes">Use this option to automatically make a page break after a book's introduction section. The break will come right before the \c 1 marker.</property>
                                     <property name="halign">start</property>
+                                    <property name="valign">center</property>
                                     <property name="draw-indicator">True</property>
                                   </object>
                                   <packing>
@@ -8222,6 +8238,7 @@ by adding a line to your ptxprint-mods.tex
 file as follows (for 75%):
 \def\PageFullFactor{0.75}</property>
                                     <property name="halign">start</property>
+                                    <property name="valign">center</property>
                                     <property name="draw-indicator">True</property>
                                   </object>
                                   <packing>
@@ -8246,6 +8263,7 @@ book(s) or chapter(s).
 i.e. only the \w marked-up\w* entries in the 
 selected books/chapters will show in the glossary.</property>
                                     <property name="halign">start</property>
+                                    <property name="valign">center</property>
                                     <property name="draw-indicator">True</property>
                                   </object>
                                   <packing>
@@ -8309,6 +8327,7 @@ Note that there is another option lower down
 in the next section which will only "Hide Chapter
 Number in Single Chapter Books".</property>
                                     <property name="halign">start</property>
+                                    <property name="valign">center</property>
                                     <property name="active">True</property>
                                     <property name="draw-indicator">True</property>
                                   </object>
@@ -8329,6 +8348,7 @@ drop-cap chapter number. By default this
 option is on. If you prefer to see verse
 number 1, then uncheck this option.</property>
                                     <property name="halign">start</property>
+                                    <property name="valign">center</property>
                                     <property name="active">True</property>
                                     <property name="draw-indicator">True</property>
                                   </object>
@@ -8347,6 +8367,7 @@ number 1, then uncheck this option.</property>
 numbers - making the publication read
 more like an ordinary book.</property>
                                     <property name="halign">start</property>
+                                    <property name="valign">center</property>
                                     <property name="active">True</property>
                                     <property name="draw-indicator">True</property>
                                     <signal name="clicked" handler="onverseNumbersClicked" swapped="no"/>
@@ -8373,6 +8394,7 @@ However, if there are many of these in the
 language, then it may create other unwanted
 typesetting issues. Use with care!</property>
                                     <property name="halign">start</property>
+                                    <property name="valign">center</property>
                                     <property name="draw-indicator">True</property>
                                   </object>
                                   <packing>
@@ -8390,6 +8412,7 @@ typesetting issues. Use with care!</property>
 \p(aragraph) after a Section Heading appear as
 a \m(argin) paragraph with no indentation.</property>
                                     <property name="halign">start</property>
+                                    <property name="valign">center</property>
                                     <property name="active">True</property>
                                     <property name="draw-indicator">True</property>
                                   </object>
@@ -8436,6 +8459,7 @@ what is required, check this option
 and also adjust the width of that
 column to fit the verse numbers.</property>
                                     <property name="halign">start</property>
+                                    <property name="valign">center</property>
                                     <property name="draw-indicator">True</property>
                                     <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                   </object>
@@ -8454,6 +8478,7 @@ column to fit the verse numbers.</property>
 line up vertically on the margin, and
 Verse Bridges (3-4) also stack vertically.</property>
                                     <property name="halign">start</property>
+                                    <property name="valign">center</property>
                                     <property name="draw-indicator">True</property>
                                   </object>
                                   <packing>
@@ -8534,6 +8559,7 @@ Markup Style:</property>
 AFTER a verse begins near the end of 
 a line.</property>
                                     <property name="halign">start</property>
+                                    <property name="valign">center</property>
                                     <property name="draw-indicator">True</property>
                                   </object>
                                   <packing>
@@ -8551,6 +8577,7 @@ a line.</property>
 at the ends of paragraphs from 
 occuring on a line on their own.</property>
                                     <property name="halign">start</property>
+                                    <property name="valign">center</property>
                                     <property name="draw-indicator">True</property>
                                   </object>
                                   <packing>
@@ -8570,6 +8597,7 @@ this option.
 NOTE that a justification setting of "Justify"
 in a style is subject to this setting.</property>
                                     <property name="halign">start</property>
+                                    <property name="valign">center</property>
                                     <property name="active">True</property>
                                     <property name="draw-indicator">True</property>
                                   </object>
@@ -8593,6 +8621,7 @@ to print any Section Headings.
 Unchecking this option will ALSO 
 uncheck the Parallel Passage Refs.</property>
                                         <property name="halign">start</property>
+                                        <property name="valign">center</property>
                                         <property name="active">True</property>
                                         <property name="draw-indicator">True</property>
                                         <signal name="clicked" handler="onSectionHeadsClicked" swapped="no"/>
@@ -8643,6 +8672,7 @@ uncheck the Parallel Passage Refs.</property>
 Parallel Pasage References which
 occur below Section Headings.</property>
                                         <property name="halign">start</property>
+                                        <property name="valign">center</property>
                                         <property name="active">True</property>
                                         <property name="draw-indicator">True</property>
                                         <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
@@ -8693,6 +8723,7 @@ Useful for when only part of the text has been
 drafted but you still need a printout of whatever
 has been translated so far.</property>
                                         <property name="halign">start</property>
+                                        <property name="valign">center</property>
                                         <property name="draw-indicator">True</property>
                                         <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                       </object>
@@ -8713,6 +8744,7 @@ entire chapters are missing by placing '...'
 in the text to alert the reader that some
 parts of the text have been skipped.</property>
                                         <property name="halign">start</property>
+                                        <property name="valign">center</property>
                                         <property name="draw-indicator">True</property>
                                       </object>
                                       <packing>
@@ -8745,6 +8777,7 @@ purpose of final checking, or looking
 for consistency) then this option can
 be unchecked (to omit the main text).</property>
                             <property name="halign">start</property>
+                            <property name="valign">center</property>
                             <property name="active">True</property>
                             <property name="draw-indicator">True</property>
                             <signal name="clicked" handler="onMainBodyTextChanged" swapped="no"/>
@@ -8795,6 +8828,7 @@ at the start of the chapter.
 Note: If the text already has one or more \cl markers, then
 these settings will overrirde what has been set in the text.</property>
                                     <property name="halign">start</property>
+                                    <property name="valign">center</property>
                                     <property name="draw-indicator">True</property>
                                     <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                   </object>
@@ -8887,6 +8921,7 @@ the publication is set as double-column (on the
 layout page) then any books listed here would
 be set in single-column layout.</property>
                                     <property name="halign">start</property>
+                                    <property name="valign">center</property>
                                     <property name="draw-indicator">True</property>
                                     <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                   </object>
@@ -8908,6 +8943,7 @@ the chapter numbers from non-scripture books.
 If you need it to retain (and show) those chapter
 numbers then check this option.</property>
                                     <property name="halign">start</property>
+                                    <property name="valign">center</property>
                                     <property name="margin-left">6</property>
                                     <property name="draw-indicator">True</property>
                                   </object>
@@ -8926,6 +8962,7 @@ numbers then check this option.</property>
 of books that only have a single chapter (OBA, PHM,
 2JN, 3JN, JUD, etc.)</property>
                                     <property name="halign">start</property>
+                                    <property name="valign">center</property>
                                     <property name="active">True</property>
                                     <property name="draw-indicator">True</property>
                                   </object>
@@ -8947,6 +8984,7 @@ unbalanced, which might improve the overall look.
 But note that it also allows Widow and Orphan 
 lines to occur, which is a negative side-effect.</property>
                                     <property name="halign">start</property>
+                                    <property name="valign">center</property>
                                     <property name="active">True</property>
                                     <property name="draw-indicator">True</property>
                                   </object>
@@ -9092,6 +9130,7 @@ Also settings for special books.</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">False</property>
                                     <property name="halign">start</property>
+                                    <property name="valign">center</property>
                                     <property name="active">True</property>
                                     <property name="draw-indicator">True</property>
                                     <signal name="clicked" handler="onFootnotesClicked" swapped="no"/>
@@ -9109,6 +9148,7 @@ Also settings for special books.</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">False</property>
                                     <property name="halign">start</property>
+                                    <property name="valign">center</property>
                                     <property name="active">True</property>
                                     <property name="draw-indicator">True</property>
                                     <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
@@ -9131,6 +9171,7 @@ Quoted text from the footnote text
 with a colon ':' which helps keep the
 elements visually distinct.</property>
                                     <property name="halign">start</property>
+                                    <property name="valign">center</property>
                                     <property name="draw-indicator">True</property>
                                   </object>
                                   <packing>
@@ -9152,6 +9193,7 @@ so that they don't get split across lines.
 Note:  This setting currently has no effect on
 cross-references imported from external lists.</property>
                                     <property name="halign">start</property>
+                                    <property name="valign">center</property>
                                     <property name="margin-right">12</property>
                                     <property name="active">True</property>
                                     <property name="draw-indicator">True</property>
@@ -9181,6 +9223,7 @@ testing (where  Key Biblical Terms in the
 passage which have Glossary Entries also
 need to be checked for understanding).</property>
                                     <property name="halign">start</property>
+                                    <property name="valign">center</property>
                                     <property name="draw-indicator">True</property>
                                   </object>
                                   <packing>
@@ -9373,6 +9416,7 @@ This feature is usually used for Study or
 Reference Bibles in conjunction with the 
 'Centre Column xRefs' location option.</property>
                                     <property name="halign">start</property>
+                                    <property name="valign">center</property>
                                     <property name="draw-indicator">True</property>
                                     <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                     <signal name="clicked" handler="onXrefListClicked" swapped="no"/>
@@ -9424,6 +9468,7 @@ Reference Bibles in conjunction with the
 in the notes area which helps the reader 
 quickly find the footnote from the text.</property>
                                         <property name="halign">start</property>
+                                        <property name="valign">center</property>
                                         <property name="active">True</property>
                                         <property name="draw-indicator">True</property>
                                       </object>
@@ -9446,6 +9491,7 @@ Note that this feature doesn't always take
 effect straight away. You may need to hit
 Print a second time before it applies.</property>
                                         <property name="halign">start</property>
+                                        <property name="valign">center</property>
                                         <property name="active">True</property>
                                         <property name="draw-indicator">True</property>
                                       </object>
@@ -9485,6 +9531,7 @@ expecting in the PDF, then try using
 the "Override..." setting above.
 </property>
                                             <property name="halign">start</property>
+                                            <property name="valign">center</property>
                                             <property name="active">True</property>
                                             <property name="draw-indicator">True</property>
                                             <signal name="clicked" handler="onCallersClicked" swapped="no"/>
@@ -9559,6 +9606,7 @@ If this option is enabled, the Show Callers
 settings below will override whatever
 has been specified within the text itself.</property>
                                         <property name="halign">start</property>
+                                        <property name="valign">center</property>
                                         <property name="draw-indicator">True</property>
                                       </object>
                                       <packing>
@@ -9578,7 +9626,7 @@ the other to form a block of text. But if you
 require each footnote to start on its own new
 line then set this option.</property>
                                         <property name="halign">start</property>
-                                        <property name="valign">start</property>
+                                        <property name="valign">center</property>
                                         <property name="margin-top">7</property>
                                         <property name="draw-indicator">True</property>
                                         <signal name="clicked" handler="onParagraphednotesClicked" swapped="no"/>
@@ -9617,6 +9665,7 @@ line then set this option.</property>
 on each page, but will gather them together
 and place them all at the end of the book.</property>
                                         <property name="halign">start</property>
+                                        <property name="valign">center</property>
                                         <property name="margin-left">24</property>
                                         <property name="draw-indicator">True</property>
                                         <property name="group">r_fnpos_normal</property>
@@ -9638,6 +9687,7 @@ and place them all at the end of the book.</property>
 layout) to show the footnotes at the end
 of the 2nd column of text.</property>
                                         <property name="halign">start</property>
+                                        <property name="valign">center</property>
                                         <property name="margin-left">24</property>
                                         <property name="margin-right">6</property>
                                         <property name="margin-end">6</property>
@@ -9661,6 +9711,7 @@ of the 2nd column of text.</property>
 usually placed at the end of each page.
 </property>
                                         <property name="halign">start</property>
+                                        <property name="valign">center</property>
                                         <property name="margin-left">24</property>
                                         <property name="margin-right">6</property>
                                         <property name="margin-end">6</property>
@@ -9844,6 +9895,7 @@ the rule and the footnotes.</property>
                                             <property name="tooltip-text" translatable="yes">This is the horizontal rule separating
 the body text from the footnote area.</property>
                                             <property name="halign">start</property>
+                                            <property name="valign">center</property>
                                             <property name="margin-left">12</property>
                                             <property name="active">True</property>
                                             <property name="draw-indicator">True</property>
@@ -10112,6 +10164,7 @@ and Parameters:</property>
 on each page, but will gather them together
 and place them all at the end of the book.</property>
                                         <property name="halign">start</property>
+                                        <property name="valign">center</property>
                                         <property name="margin-left">24</property>
                                         <property name="draw-indicator">True</property>
                                         <property name="group">r_xrpos_normal</property>
@@ -10133,6 +10186,7 @@ and place them all at the end of the book.</property>
 layout) to show the cross-references at the end
 of the 2nd column of text.</property>
                                         <property name="halign">start</property>
+                                        <property name="valign">center</property>
                                         <property name="margin-left">24</property>
                                         <property name="margin-end">6</property>
                                         <property name="draw-indicator">True</property>
@@ -10154,6 +10208,7 @@ of the 2nd column of text.</property>
                                         <property name="tooltip-text" translatable="yes">Cross-references are usually placed 
 at the end of each page.</property>
                                         <property name="halign">start</property>
+                                        <property name="valign">center</property>
                                         <property name="margin-left">24</property>
                                         <property name="margin-end">6</property>
                                         <property name="active">True</property>
@@ -10191,7 +10246,7 @@ the other to form a block of text. But if you
 require each cross-reference to start on its own new
 line then set this option.</property>
                                         <property name="halign">start</property>
-                                        <property name="valign">start</property>
+                                        <property name="valign">center</property>
                                         <property name="margin-top">7</property>
                                         <property name="draw-indicator">True</property>
                                         <signal name="clicked" handler="onParagraphednotesClicked" swapped="no"/>
@@ -10215,6 +10270,7 @@ If this option is enabled, the Show Callers
 settings below will override whatever
 has been specified within the text itself.</property>
                                         <property name="halign">start</property>
+                                        <property name="valign">center</property>
                                         <property name="draw-indicator">True</property>
                                       </object>
                                       <packing>
@@ -10252,6 +10308,7 @@ If you do not see the callers you are
 expecting in the PDF, then try using 
 the "Override..." setting above.</property>
                                             <property name="halign">start</property>
+                                            <property name="valign">center</property>
                                             <property name="active">True</property>
                                             <property name="draw-indicator">True</property>
                                             <signal name="clicked" handler="onCallersClicked" swapped="no"/>
@@ -10322,6 +10379,7 @@ showing, then a default set will appear.</property>
 in the notes area which helps the reader 
 quickly find the cross-reference from the text.</property>
                                         <property name="halign">start</property>
+                                        <property name="valign">center</property>
                                         <property name="active">True</property>
                                         <property name="draw-indicator">True</property>
                                       </object>
@@ -10344,6 +10402,7 @@ Note that this feature doesn't always take
 effect straight away. You may need to hit
 Print a second time before it applies.</property>
                                         <property name="halign">start</property>
+                                        <property name="valign">center</property>
                                         <property name="active">True</property>
                                         <property name="draw-indicator">True</property>
                                       </object>
@@ -10381,6 +10440,7 @@ Print a second time before it applies.</property>
 underneath the footnotes (rather than combined
 along with the footnotes as a single paragraph).</property>
                                         <property name="halign">start</property>
+                                        <property name="valign">center</property>
                                         <property name="margin-left">6</property>
                                         <property name="draw-indicator">True</property>
                                         <property name="group">r_xrpos_normal</property>
@@ -10407,6 +10467,7 @@ used, the Cross-References can only have
 one type of caller (rather than a sequence)
 which must be specified above.</property>
                                         <property name="halign">start</property>
+                                        <property name="valign">center</property>
                                         <property name="margin-left">6</property>
                                         <property name="draw-indicator">True</property>
                                         <property name="group">r_xrpos_normal</property>
@@ -10431,6 +10492,7 @@ may be useful to place them in their own column.
 The cross references will appear in a narrow vertical
 column similar to a study/reference Bible layout.</property>
                                         <property name="halign">start</property>
+                                        <property name="valign">center</property>
                                         <property name="margin-left">6</property>
                                         <property name="draw-indicator">True</property>
                                         <property name="group">r_xrpos_normal</property>
@@ -10508,6 +10570,7 @@ column similar to a study/reference Bible layout.</property>
                                             <property name="tooltip-text" translatable="yes">This is the horizontal rule separating the
 body text from the cross-reference area.</property>
                                             <property name="halign">start</property>
+                                            <property name="valign">center</property>
                                             <property name="margin-left">12</property>
                                             <property name="active">True</property>
                                             <property name="draw-indicator">True</property>
@@ -10838,6 +10901,7 @@ and Parameters:</property>
                                                 <property name="receives-default">False</property>
                                                 <property name="tooltip-text" translatable="yes">The Standard List contains more 
 than 340,000 cross-references.</property>
+                                                <property name="valign">center</property>
                                                 <property name="draw-indicator">True</property>
                                                 <property name="group">r_xrSource_custom</property>
                                                 <signal name="clicked" handler="onRadioChanged" swapped="no"/>
@@ -10861,6 +10925,7 @@ cross-references are available in:
 
 It is also possible to extract cross-references from another
 project (as an .xrf file) to be included in this project.</property>
+                                                <property name="valign">center</property>
                                                 <property name="draw-indicator">True</property>
                                                 <property name="group">r_xrSource_standard</property>
                                                 <signal name="clicked" handler="onRadioChanged" swapped="no"/>
@@ -11074,6 +11139,7 @@ Books on the Basic tab will be included.</property>
                                                 <property name="tooltip-text" translatable="yes">This BibleWorks list contains carefully
 selected cross-references for both NT and OT.</property>
                                                 <property name="halign">start</property>
+                                                <property name="valign">center</property>
                                                 <property name="draw-indicator">True</property>
                                                 <property name="group">r_xrSource_custom</property>
                                                 <signal name="clicked" handler="onRadioChanged" swapped="no"/>
@@ -11270,6 +11336,7 @@ for them to be placed nearer the end
 option if you prefer the references to
 fill the column upward from the end
 of the page. </property>
+                                                        <property name="valign">center</property>
                                                         <property name="margin-left">6</property>
                                                         <property name="margin-right">2</property>
                                                         <property name="draw-indicator">True</property>
@@ -11676,6 +11743,7 @@ header, or the Secondary format.
 
 Note: To activate or change this 
 setting, you must first enable Diglot.</property>
+                                        <property name="valign">center</property>
                                         <property name="active">True</property>
                                         <property name="draw-indicator">True</property>
                                         <property name="group">r_hdrLeft_Sec</property>
@@ -11700,6 +11768,7 @@ header, or the Secondary format.
 
 Note: To activate or change this 
 setting, you must first enable Diglot.</property>
+                                        <property name="valign">center</property>
                                         <property name="active">True</property>
                                         <property name="draw-indicator">True</property>
                                         <property name="group">r_hdrLeft_Pri</property>
@@ -11724,6 +11793,7 @@ header, or the Secondary format.
 
 Note: To activate or change this 
 setting, you must first enable Diglot.</property>
+                                        <property name="valign">center</property>
                                         <property name="margin-left">10</property>
                                         <property name="active">True</property>
                                         <property name="draw-indicator">True</property>
@@ -11749,6 +11819,7 @@ header, or the Secondary format.
 
 Note: To activate or change this 
 setting, you must first enable Diglot.</property>
+                                        <property name="valign">center</property>
                                         <property name="margin-left">10</property>
                                         <property name="active">True</property>
                                         <property name="draw-indicator">True</property>
@@ -11774,6 +11845,7 @@ header, or the Secondary format.
 
 Note: To activate or change this 
 setting, you must first enable Diglot.</property>
+                                        <property name="valign">center</property>
                                         <property name="margin-left">10</property>
                                         <property name="active">True</property>
                                         <property name="draw-indicator">True</property>
@@ -11799,6 +11871,7 @@ header, or the Secondary format.
 
 Note: To activate or change this 
 setting, you must first enable Diglot.</property>
+                                        <property name="valign">center</property>
                                         <property name="margin-left">10</property>
                                         <property name="active">True</property>
                                         <property name="draw-indicator">True</property>
@@ -11859,6 +11932,7 @@ in any references in the header line. If you prefer
 to suppress that (and just show the book name)
 then uncheck this option.</property>
                                         <property name="halign">start</property>
+                                        <property name="valign">center</property>
                                         <property name="margin-top">4</property>
                                         <property name="margin-bottom">4</property>
                                         <property name="active">True</property>
@@ -11885,6 +11959,7 @@ Keep in mind that including the verse numbers
 actually makes it harder to read/absorb when
 flicking through pages to find the right chapter.</property>
                                         <property name="halign">start</property>
+                                        <property name="valign">center</property>
                                         <property name="margin-top">4</property>
                                         <property name="margin-bottom">4</property>
                                         <property name="draw-indicator">True</property>
@@ -11909,6 +11984,7 @@ flicking through pages to find the right chapter.</property>
                                             <property name="tooltip-text" translatable="yes">Use a colon (:) to separate
 chapter &amp; verse numbers
 in the header reference.</property>
+                                            <property name="valign">center</property>
                                             <property name="margin-right">6</property>
                                             <property name="draw-indicator">True</property>
                                             <property name="group">r_CVsep_period</property>
@@ -11929,6 +12005,7 @@ in the header reference.</property>
                                             <property name="tooltip-text" translatable="yes">Use a period (.) to separate
 chapter &amp; verse numbers
 in the header reference.</property>
+                                            <property name="valign">center</property>
                                             <property name="margin-right">6</property>
                                             <property name="draw-indicator">True</property>
                                             <property name="group">r_CVsep_colon</property>
@@ -11969,6 +12046,7 @@ wish to suppress that (and just show the
 chapter and/or verse numbers) then 
 uncheck this option.</property>
                                         <property name="halign">start</property>
+                                        <property name="valign">center</property>
                                         <property name="margin-top">4</property>
                                         <property name="margin-bottom">4</property>
                                         <property name="active">True</property>
@@ -12273,6 +12351,7 @@ the Primary (Left) text's formatting
 should be used for this part of the
 header, or the Secondary format.</property>
                                 <property name="halign">start</property>
+                                <property name="valign">center</property>
                                 <property name="margin-left">10</property>
                                 <property name="active">True</property>
                                 <property name="draw-indicator">True</property>
@@ -12296,6 +12375,7 @@ the Primary (Left) text's formatting
 should be used for this part of the
 header, or the Secondary format.</property>
                                 <property name="halign">start</property>
+                                <property name="valign">center</property>
                                 <property name="margin-left">10</property>
                                 <property name="draw-indicator">True</property>
                                 <property name="group">r_ftrCenter_Sec</property>
@@ -12759,6 +12839,7 @@ status of the checking values.</property>
 filtered list to exclude
 any items that match.</property>
                                                 <property name="halign">start</property>
+                                                <property name="valign">center</property>
                                                 <property name="draw-indicator">True</property>
                                                 <signal name="toggled" handler="onPicCheckFilterChanged" swapped="no"/>
                                               </object>
@@ -12936,7 +13017,7 @@ these are used, the file size of the resulting PDF
 will be relatively small, and therefore easy to
 share, but the image quality will be low.</property>
                                                 <property name="halign">start</property>
-                                                <property name="valign">start</property>
+                                                <property name="valign">center</property>
                                                 <property name="draw-indicator">True</property>
                                                 <property name="group">r_pictureRes_High</property>
                                                 <signal name="clicked" handler="onPicRescan" swapped="no"/>
@@ -12963,6 +13044,7 @@ possible PDF file (usually in order to send by
 e-mail) or to produce a PDF to be printed
 without illustrations.</property>
                                                 <property name="halign">start</property>
+                                                <property name="valign">center</property>
                                                 <property name="draw-indicator">True</property>
                                               </object>
                                               <packing>
@@ -12989,7 +13071,7 @@ used, the resulting PDF could be very large, and
 therefore difficult to share electronically, but
 the image quality will be as good as possible.</property>
                                                 <property name="halign">start</property>
-                                                <property name="valign">start</property>
+                                                <property name="valign">center</property>
                                                 <property name="draw-indicator">True</property>
                                                 <property name="group">r_pictureRes_Low</property>
                                                 <signal name="clicked" handler="onPicRescan" swapped="no"/>
@@ -13031,6 +13113,7 @@ If Pictures are missing after preparing a PDF, then
 they will be listed as a tooltip along with the number
 missing (right).</property>
                                                 <property name="halign">start</property>
+                                                <property name="valign">center</property>
                                                 <property name="active">True</property>
                                                 <property name="draw-indicator">True</property>
                                               </object>
@@ -13053,6 +13136,7 @@ down processing slightly. If the needed images
 are all located in the same folder, then check the
 'Exclusively Use Selected Folder' option as well.</property>
                                                 <property name="halign">start</property>
+                                                <property name="valign">center</property>
                                                 <property name="draw-indicator">True</property>
                                                 <signal name="clicked" handler="onUseCustomFolderclicked" swapped="no"/>
                                               </object>
@@ -13138,6 +13222,7 @@ then select this option. This should speed up searches
 for images, but may result in some images not being
 found at all.</property>
                                                 <property name="halign">end</property>
+                                                <property name="valign">center</property>
                                                 <property name="draw-indicator">True</property>
                                                 <signal name="clicked" handler="onPicRescan" swapped="no"/>
                                               </object>
@@ -13174,7 +13259,7 @@ lines from the edge of pictures.
 Note that this setting affects ALL
 images, not just those with lines.</property>
                                                 <property name="halign">start</property>
-                                                <property name="valign">start</property>
+                                                <property name="valign">center</property>
                                                 <property name="margin-top">10</property>
                                                 <property name="draw-indicator">True</property>
                                               </object>
@@ -13229,6 +13314,7 @@ the w/a/p notation, then it is easy to exclude
 any illustrations that do not have the 'p'
 attribute.  Note: w= web, a=app, p=print.</property>
                                                     <property name="halign">start</property>
+                                                    <property name="valign">center</property>
                                                     <property name="active">True</property>
                                                     <property name="draw-indicator">True</property>
                                                   </object>
@@ -13277,6 +13363,7 @@ attribute.  Note: w= web, a=app, p=print.</property>
 captions from being displayed below
 the picture, then check this option.</property>
                                                     <property name="halign">start</property>
+                                                    <property name="valign">center</property>
                                                     <property name="draw-indicator">True</property>
                                                     <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                                   </object>
@@ -13298,6 +13385,7 @@ then check this option. Note that
 it is not possible to just have the
 references without the captions.</property>
                                                     <property name="halign">start</property>
+                                                    <property name="valign">center</property>
                                                     <property name="draw-indicator">True</property>
                                                   </object>
                                                   <packing>
@@ -13331,6 +13419,7 @@ very easily using the \zimagecopyrights
 magic code within the Colophon (see
 the Header+Footer tab for details).
 </property>
+                                            <property name="valign">center</property>
                                             <property name="draw-indicator">True</property>
                                             <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                             <signal name="clicked" handler="onUseIllustrationsClicked" swapped="no"/>
@@ -13992,6 +14081,7 @@ Lines:</property>
                                                         <property name="can-focus">True</property>
                                                         <property name="receives-default">False</property>
                                                         <property name="tooltip-text" translatable="yes">Can be used in Print/PDF publications. </property>
+                                                        <property name="valign">center</property>
                                                         <property name="draw-indicator">True</property>
                                                       </object>
                                                       <packing>
@@ -14007,6 +14097,7 @@ Lines:</property>
                                                         <property name="can-focus">True</property>
                                                         <property name="receives-default">False</property>
                                                         <property name="tooltip-text" translatable="yes">Can be used in mobile phone Apps. </property>
+                                                        <property name="valign">center</property>
                                                         <property name="draw-indicator">True</property>
                                                       </object>
                                                       <packing>
@@ -14022,6 +14113,7 @@ Lines:</property>
                                                         <property name="can-focus">True</property>
                                                         <property name="receives-default">False</property>
                                                         <property name="tooltip-text" translatable="yes">Can be used on websites. </property>
+                                                        <property name="valign">center</property>
                                                         <property name="draw-indicator">True</property>
                                                       </object>
                                                       <packing>
@@ -14302,6 +14394,7 @@ in Paratext before regenerating the PicList here.</property>
                                                             <property name="can-focus">True</property>
                                                             <property name="receives-default">False</property>
                                                             <property name="halign">start</property>
+                                                            <property name="valign">center</property>
                                                             <property name="draw-indicator">True</property>
                                                             <property name="group">r_picclear_no</property>
                                                             <signal name="clicked" handler="onRadioChanged" swapped="no"/>
@@ -14318,6 +14411,7 @@ in Paratext before regenerating the PicList here.</property>
                                                             <property name="can-focus">True</property>
                                                             <property name="receives-default">False</property>
                                                             <property name="halign">start</property>
+                                                            <property name="valign">center</property>
                                                             <property name="draw-indicator">True</property>
                                                             <property name="group">r_picclear_yes</property>
                                                             <signal name="clicked" handler="onRadioChanged" swapped="no"/>
@@ -14334,6 +14428,7 @@ in Paratext before regenerating the PicList here.</property>
                                                             <property name="can-focus">True</property>
                                                             <property name="receives-default">False</property>
                                                             <property name="halign">start</property>
+                                                            <property name="valign">center</property>
                                                             <property name="draw-indicator">True</property>
                                                             <property name="group">r_picclear_yes</property>
                                                             <signal name="clicked" handler="onRadioChanged" swapped="no"/>
@@ -14481,6 +14576,7 @@ mirror</property>
                                                             <property name="tooltip-text" translatable="yes">It is fine to mirror the image if needed. It would
 not change the impact or response of the readers.</property>
                                                             <property name="halign">start</property>
+                                                            <property name="valign">center</property>
                                                             <property name="draw-indicator">True</property>
                                                             <property name="group">r_picreverse_never</property>
                                                             <signal name="clicked" handler="onReverseRadioChanged" swapped="no"/>
@@ -14501,6 +14597,7 @@ mirror</property>
 as currently depicted in the preview. Do
 NOT allow it to be mirrored (reversed).</property>
                                                             <property name="halign">start</property>
+                                                            <property name="valign">center</property>
                                                             <property name="draw-indicator">True</property>
                                                             <property name="group">r_picreverse_OK</property>
                                                             <signal name="clicked" handler="onReverseRadioChanged" swapped="no"/>
@@ -14522,6 +14619,7 @@ what is currently shown in the preview. Therefore
 actions being done with the left hand will show as
 being done with the right hand, and vice versa.</property>
                                                             <property name="halign">end</property>
+                                                            <property name="valign">center</property>
                                                             <property name="draw-indicator">True</property>
                                                             <property name="group">r_picreverse_OK</property>
                                                             <signal name="clicked" handler="onReverseRadioChanged" swapped="no"/>
@@ -14560,6 +14658,7 @@ in the printed output.</property>
                                                             <property name="can-focus">True</property>
                                                             <property name="receives-default">False</property>
                                                             <property name="halign">start</property>
+                                                            <property name="valign">center</property>
                                                             <property name="draw-indicator">True</property>
                                                             <property name="group">r_pubclear_no</property>
                                                             <signal name="clicked" handler="onRadioChanged" swapped="no"/>
@@ -14576,6 +14675,7 @@ in the printed output.</property>
                                                             <property name="can-focus">True</property>
                                                             <property name="receives-default">False</property>
                                                             <property name="halign">start</property>
+                                                            <property name="valign">center</property>
                                                             <property name="draw-indicator">True</property>
                                                             <property name="group">r_pubclear_yes</property>
                                                             <signal name="clicked" handler="onRadioChanged" swapped="no"/>
@@ -14592,6 +14692,7 @@ in the printed output.</property>
                                                             <property name="can-focus">True</property>
                                                             <property name="receives-default">False</property>
                                                             <property name="halign">start</property>
+                                                            <property name="valign">center</property>
                                                             <property name="draw-indicator">True</property>
                                                             <property name="group">r_pubclear_yes</property>
                                                             <signal name="clicked" handler="onRadioChanged" swapped="no"/>
@@ -14608,6 +14709,7 @@ in the printed output.</property>
                                                             <property name="can-focus">True</property>
                                                             <property name="receives-default">False</property>
                                                             <property name="halign">start</property>
+                                                            <property name="valign">center</property>
                                                             <property name="draw-indicator">True</property>
                                                             <property name="group">r_pubnoise_no</property>
                                                             <signal name="clicked" handler="onRadioChanged" swapped="no"/>
@@ -14624,6 +14726,7 @@ in the printed output.</property>
                                                             <property name="can-focus">True</property>
                                                             <property name="receives-default">False</property>
                                                             <property name="halign">start</property>
+                                                            <property name="valign">center</property>
                                                             <property name="draw-indicator">True</property>
                                                             <property name="group">r_pubnoise_yes</property>
                                                             <signal name="clicked" handler="onRadioChanged" swapped="no"/>
@@ -14673,6 +14776,7 @@ in the printed output.</property>
                                                             <property name="can-focus">True</property>
                                                             <property name="receives-default">False</property>
                                                             <property name="halign">start</property>
+                                                            <property name="valign">center</property>
                                                             <property name="draw-indicator">True</property>
                                                             <property name="group">r_pubnoise_yes</property>
                                                             <signal name="clicked" handler="onRadioChanged" swapped="no"/>
@@ -14745,6 +14849,7 @@ consultant approval updated.</property>
                                                             <property name="can-focus">True</property>
                                                             <property name="receives-default">False</property>
                                                             <property name="halign">start</property>
+                                                            <property name="valign">center</property>
                                                             <property name="draw-indicator">True</property>
                                                             <property name="group">r_pubapprove_scopeThis</property>
                                                             </object>
@@ -14760,6 +14865,7 @@ consultant approval updated.</property>
                                                             <property name="can-focus">True</property>
                                                             <property name="receives-default">False</property>
                                                             <property name="halign">start</property>
+                                                            <property name="valign">center</property>
                                                             <property name="draw-indicator">True</property>
                                                             <property name="group">r_pubapprove_scopeAny</property>
                                                             </object>
@@ -14775,6 +14881,7 @@ be used in:</property>
                                                             <property name="visible">True</property>
                                                             <property name="can-focus">True</property>
                                                             <property name="receives-default">False</property>
+                                                            <property name="valign">center</property>
                                                             <property name="draw-indicator">True</property>
                                                             </object>
                                                             <packing>
@@ -15016,7 +15123,7 @@ in this publication, as well as other contexts.</property>
 Note that this is dependent on the image
 being located in the specified folder(s).</property>
                                         <property name="halign">start</property>
-                                        <property name="valign">end</property>
+                                        <property name="valign">center</property>
                                         <property name="draw-indicator">True</property>
                                         <property name="group">r_image_location</property>
                                         <signal name="clicked" handler="onPicRadioChanged" swapped="no"/>
@@ -15038,7 +15145,7 @@ on the page. When Inner/Outer is used,
 the position displayed represents the 
 odd/right-hand page of a spread.</property>
                                         <property name="halign">start</property>
-                                        <property name="valign">end</property>
+                                        <property name="valign">center</property>
                                         <property name="draw-indicator">True</property>
                                         <property name="group">r_image_preview</property>
                                         <signal name="clicked" handler="onPicRadioChanged" swapped="no"/>
@@ -15293,6 +15400,7 @@ the header settings and place the
 Reference Ranges on the outer edges
 and Page Number in (or near) the middle.</property>
                                 <property name="halign">start</property>
+                                <property name="valign">center</property>
                                 <property name="draw-indicator">True</property>
                               </object>
                               <packing>
@@ -15317,6 +15425,7 @@ on the left (or Inner) side, then check this option.
 
 This is quite likely required for RTL languages.</property>
                                 <property name="halign">start</property>
+                                <property name="valign">center</property>
                                 <property name="draw-indicator">True</property>
                                 <signal name="clicked" handler="onDiglotSwapSideClicked" swapped="no"/>
                               </object>
@@ -15338,6 +15447,7 @@ the content of the center header matches the
 position of the gutter (space between the two
 different columns).</property>
                                 <property name="halign">start</property>
+                                <property name="valign">center</property>
                                 <property name="draw-indicator">True</property>
                               </object>
                               <packing>
@@ -15414,6 +15524,7 @@ have less structure in common.
 It only tries to align at places where 
 paragraphs start in the same verse.</property>
                                 <property name="halign">start</property>
+                                <property name="valign">center</property>
                                 <property name="draw-indicator">True</property>
                               </object>
                               <packing>
@@ -15454,6 +15565,7 @@ paragraphs start in the same verse.</property>
                                             <property name="tooltip-text" translatable="yes">Add a vertical rule between the two
 sides of the notes area of the diglot.</property>
                                             <property name="halign">start</property>
+                                            <property name="valign">center</property>
                                             <property name="draw-indicator">True</property>
                                             <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                           </object>
@@ -15473,6 +15585,7 @@ sides of the notes area of the diglot.</property>
 allow the vertical line to extend
 down into the notes area.</property>
                                             <property name="halign">start</property>
+                                            <property name="valign">center</property>
                                             <property name="draw-indicator">True</property>
                                           </object>
                                           <packing>
@@ -15499,6 +15612,7 @@ Depending on the scripts and text direction,
 this may or may not be desirable. If in doubt,
 leave this option checked ON.</property>
                                     <property name="halign">start</property>
+                                    <property name="valign">center</property>
                                     <property name="active">True</property>
                                     <property name="draw-indicator">True</property>
                                     <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
@@ -15562,6 +15676,7 @@ Note that if pictures are drawn from both
 the Primary and Secondary projects, then
 their captions will be independent, and this
 option does not apply at all.</property>
+                                    <property name="valign">center</property>
                                     <property name="margin-left">6</property>
                                     <property name="active">True</property>
                                     <property name="draw-indicator">True</property>
@@ -15589,6 +15704,7 @@ option does not apply at all.</property>
                             <property name="tooltip-text" translatable="yes">A Diglot publication contains more than
 one language, or script, or text. Set the
 options here to create a Diglot or Didoc.</property>
+                            <property name="valign">center</property>
                             <property name="draw-indicator">True</property>
                             <signal name="clicked" handler="onDiglotClicked" swapped="no"/>
                           </object>
@@ -15778,6 +15894,7 @@ set by clicking the Edit Style link.</property>
                                 <property name="receives-default">False</property>
                                 <property name="tooltip-text" translatable="yes">Rotates the tabs so that the text runs along the edge of the page. This works well for narrow margins, but may result in fewer tab positions per page.</property>
                                 <property name="halign">start</property>
+                                <property name="valign">center</property>
                                 <property name="margin-left">15</property>
                                 <property name="draw-indicator">True</property>
                                 <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
@@ -16004,6 +16121,7 @@ For example: PHM TIT; 1JN 2JN 3JN JUD</property>
                                 <property name="receives-default">False</property>
                                 <property name="tooltip-text" translatable="yes">Normally books will follow sequentially and if the next tab would be off the bottom of the page, then it will be set to the top for a new cycle of tabs. Setting this starts a new cycle at the start of the New Testament (Matthew).</property>
                                 <property name="halign">start</property>
+                                <property name="valign">center</property>
                                 <property name="margin-left">15</property>
                                 <property name="draw-indicator">True</property>
                               </object>
@@ -16033,6 +16151,7 @@ the thumbtab contents. If a book's header contains a \zthumbtab entry, then
 \toc3 will not be used as the thumbtab contents. An empty \zthumbtab'' entry 
 specifies that there should be no text in the thumbtab for that book.</property>
                                 <property name="halign">start</property>
+                                <property name="valign">center</property>
                                 <property name="margin-left">15</property>
                                 <property name="draw-indicator">True</property>
                                 <signal name="clicked" handler="onTabsClicked" swapped="no"/>
@@ -16136,6 +16255,7 @@ default values for the Grouped Tabs.</property>
 these use the \toc3 element in a USFM file to provide
 the text for the tab.
 Note: If only a single book is currently selected, it will place the Thumb Tab relative to ALL the books listed in the multiple book list.</property>
+                            <property name="valign">center</property>
                             <property name="draw-indicator">True</property>
                             <signal name="clicked" handler="onTabsClicked" swapped="no"/>
                           </object>
@@ -16295,6 +16415,7 @@ a special graphic. Ensure that there is
 adequate space - both horizontal as well
 as vertical to make sure all headings fit.</property>
                                     <property name="halign">start</property>
+                                    <property name="valign">center</property>
                                     <property name="margin-top">4</property>
                                     <property name="draw-indicator">True</property>
                                     <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
@@ -16352,7 +16473,7 @@ as vertical to make sure all headings fit.</property>
                                             <property name="receives-default">False</property>
                                             <property name="tooltip-text" translatable="yes">If set, the border is expanded to the full page. Otherwise it is expanded only to the gutter margins.</property>
                                             <property name="halign">end</property>
-                                            <property name="valign">start</property>
+                                            <property name="valign">center</property>
                                             <property name="hexpand">True</property>
                                             <property name="draw-indicator">True</property>
                                           </object>
@@ -16393,6 +16514,7 @@ Note that after setting this border, it is likely
 that you will need to adjust the page margins
 to make it fit. </property>
                                     <property name="halign">start</property>
+                                    <property name="valign">center</property>
                                     <property name="margin-top">4</property>
                                     <property name="draw-indicator">True</property>
                                     <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
@@ -16488,6 +16610,7 @@ a special graphic. Ensure that there is
 adequate space - both horizontal as well
 as vertical to make sure all headings fit.</property>
                                     <property name="halign">start</property>
+                                    <property name="valign">center</property>
                                     <property name="margin-top">4</property>
                                     <property name="draw-indicator">True</property>
                                     <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
@@ -16529,6 +16652,7 @@ as vertical to make sure all headings fit.</property>
                                             <property name="tooltip-text" translatable="yes">Use the End of Ayah character in the
 font to decorate the verse number.</property>
                                             <property name="halign">start</property>
+                                            <property name="valign">center</property>
                                             <property name="draw-indicator">True</property>
                                             <property name="group">r_decorator_file</property>
                                             <signal name="clicked" handler="onRadioChanged" swapped="no"/>
@@ -16550,6 +16674,7 @@ number. You may need to also adjust the
 font properties to ensure the verse numbers
 fit within the graphic.</property>
                                             <property name="halign">start</property>
+                                            <property name="valign">center</property>
                                             <property name="draw-indicator">True</property>
                                             <property name="group">r_decorator_ayah</property>
                                             <signal name="clicked" handler="onRadioChanged" swapped="no"/>
@@ -16680,6 +16805,7 @@ fit within the graphic.</property>
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">False</property>
                                             <property name="halign">start</property>
+                                            <property name="valign">center</property>
                                             <property name="draw-indicator">True</property>
                                           </object>
                                           <packing>
@@ -16715,6 +16841,7 @@ fit within the graphic.</property>
                                     <property name="tooltip-text" translatable="yes">Verse numbers can be decorated using
 either of the options shown below.</property>
                                     <property name="halign">start</property>
+                                    <property name="valign">center</property>
                                     <property name="margin-top">4</property>
                                     <property name="draw-indicator">True</property>
                                     <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
@@ -16738,6 +16865,7 @@ either of the options shown below.</property>
 decorative features in their scripture
 publications. This option allows you
 to specify the settings for these.</property>
+                            <property name="valign">center</property>
                             <property name="draw-indicator">True</property>
                             <signal name="clicked" handler="onBorderClicked" swapped="no"/>
                           </object>
@@ -17111,6 +17239,7 @@ to Parent</property>
                                             <property name="receives-default">False</property>
                                             <property name="tooltip-text" translatable="yes">The Font Size is usually calculated as relative to the current Font Size Unit. If you prefer to specify an an amount relative to the underlying (parent) font then enable this option. Note that \p has a FontSize of 12 in usfm.sty</property>
                                             <property name="halign">start</property>
+                                            <property name="valign">center</property>
                                             <property name="draw-indicator">True</property>
                                           </object>
                                           <packing>
@@ -17126,6 +17255,7 @@ to Parent</property>
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">False</property>
                                             <property name="halign">start</property>
+                                            <property name="valign">center</property>
                                             <property name="draw-indicator">True</property>
                                           </object>
                                           <packing>
@@ -17141,6 +17271,7 @@ to Parent</property>
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">False</property>
                                             <property name="halign">start</property>
+                                            <property name="valign">center</property>
                                             <property name="draw-indicator">True</property>
                                           </object>
                                           <packing>
@@ -17159,6 +17290,7 @@ to Parent</property>
    Raise is set to 0.85 times the x-height of the font (which
    defaults to 1/2 the ascent if not specified in the font).</property>
                                             <property name="halign">start</property>
+                                            <property name="valign">center</property>
                                             <property name="draw-indicator">True</property>
                                             <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                           </object>
@@ -17175,6 +17307,7 @@ to Parent</property>
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">False</property>
                                             <property name="halign">start</property>
+                                            <property name="valign">center</property>
                                             <property name="draw-indicator">True</property>
                                           </object>
                                           <packing>
@@ -17376,6 +17509,7 @@ touch for details on how to achieve
 this using a .tex snippet.
 Email: ptxprint_support@sil.org</property>
                                             <property name="halign">start</property>
+                                            <property name="valign">center</property>
                                             <property name="draw-indicator">True</property>
                                           </object>
                                           <packing>
@@ -17541,6 +17675,7 @@ Email: ptxprint_support@sil.org</property>
                                             <property name="receives-default">False</property>
                                             <property name="tooltip-text" translatable="yes">The Line Spacing is usually calculated as a factor of the Font Size. If you prefer to specify an exact/absolute line spacing (in points), then enable this option.</property>
                                             <property name="halign">start</property>
+                                            <property name="valign">center</property>
                                             <property name="draw-indicator">True</property>
                                           </object>
                                           <packing>
@@ -18228,6 +18363,7 @@ edit the USFM stylesheet files.</property>
 configure TeX. This .tex file executes AFTER 
 all the PTXprint settings. </property>
                                             <property name="halign">start</property>
+                                            <property name="valign">center</property>
                                             <property name="draw-indicator">True</property>
                                             <signal name="clicked" handler="onExtraFileClicked" swapped="no"/>
                                           </object>
@@ -18251,6 +18387,7 @@ Custom Script at:</property>
                                                 <property name="tooltip-text" translatable="yes">Processes the .usfm file through a program of your choosing. 
 The program is run as `prog infile outfile` where infile is the 
 source .usfm file and outfile the output .usfm that will then be typeset.</property>
+                                                <property name="valign">center</property>
                                                 <property name="draw-indicator">True</property>
                                                 <signal name="clicked" handler="onProcessScriptClicked" swapped="no"/>
                                               </object>
@@ -18357,6 +18494,7 @@ PrintDraftChanges.txt - specifies changes
 which apply to all configurations, and gets
 'included' at the top of changes.txt</property>
                                             <property name="halign">start</property>
+                                            <property name="valign">center</property>
                                             <property name="draw-indicator">True</property>
                                             <signal name="clicked" handler="onChangesFileClicked" swapped="no"/>
                                           </object>
@@ -18427,6 +18565,7 @@ customized styles using the
 ptxprint-mods.sty stylesheet and 
 wish for these to be used by PTXprint.</property>
                                             <property name="halign">start</property>
+                                            <property name="valign">center</property>
                                             <property name="draw-indicator">True</property>
                                             <signal name="clicked" handler="onExtraFileClicked" swapped="no"/>
                                           </object>
@@ -18449,6 +18588,7 @@ customized styles using the
 custom.sty stylesheet and wish 
 for these to be used by PTXprint.</property>
                                             <property name="halign">start</property>
+                                            <property name="valign">center</property>
                                             <property name="draw-indicator">True</property>
                                             <signal name="clicked" handler="onExtraFileClicked" swapped="no"/>
                                           </object>
@@ -18514,6 +18654,7 @@ for these to be used by PTXprint.</property>
                                             <property name="tooltip-text" translatable="yes">This .tex file is executed BEFORE any stylesheets of 
 other settings are applied. This file is rarely used.</property>
                                             <property name="halign">start</property>
+                                            <property name="valign">center</property>
                                             <property name="draw-indicator">True</property>
                                             <signal name="clicked" handler="onExtraFileClicked" swapped="no"/>
                                           </object>
@@ -18613,6 +18754,7 @@ Note: All comply with archive standard PDF/A-1b.</property>
                                     <property name="id-column">1</property>
                                     <property name="active-id">None</property>
                                     <signal name="changed" handler="warnSlowRun" swapped="no"/>
+                                    <signal name="grab-notify" handler="grab_notify_event" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left-attach">1</property>
@@ -18680,6 +18822,7 @@ Note: All comply with archive standard PDF/A-1b.</property>
 If you don't know what this means, or just want to get rid of 
 black boxes at the end of lines in the PDF then uncheck it. </property>
                                         <property name="halign">start</property>
+                                        <property name="valign">center</property>
                                         <property name="margin-top">4</property>
                                         <property name="draw-indicator">True</property>
                                       </object>
@@ -18702,6 +18845,7 @@ acronyms (e.g. BFBS or DCC) for some artists.
 And if PDF/X-1a:2003 Format is selected above, then
 the meta-data will not contain any sensitive data.</property>
                                         <property name="halign">start</property>
+                                        <property name="valign">center</property>
                                         <property name="margin-top">6</property>
                                         <property name="draw-indicator">True</property>
                                       </object>
@@ -18724,6 +18868,7 @@ process to fail - giving you helpful feedback
 about how to fix the issue before re-trying 
 to print.</property>
                                         <property name="halign">start</property>
+                                        <property name="valign">center</property>
                                         <property name="margin-top">6</property>
                                         <property name="active">True</property>
                                         <property name="draw-indicator">True</property>
@@ -18757,6 +18902,7 @@ Note that if this Interlinear option is enabled, then
 the Spacing Adjustments Between Letters (on the
 Fonts+Scripts page) will be disabled as these two
 settings are mutually exclusive.</property>
+                                            <property name="valign">center</property>
                                             <property name="draw-indicator">True</property>
                                             <signal name="clicked" handler="onInterlinearClicked" swapped="no"/>
                                           </object>
@@ -18806,6 +18952,7 @@ the following marker styles:
 Use the shortcut links on the right
 to locate those styles in the editor.</property>
                                             <property name="halign">start</property>
+                                            <property name="valign">center</property>
                                             <property name="draw-indicator">True</property>
                                           </object>
                                           <packing>
@@ -18879,9 +19026,9 @@ interface.
 Enable this option if Google is blocked in your country,
 or you simply prefer to read the original page in English.</property>
                                         <property name="halign">start</property>
+                                        <property name="valign">center</property>
                                         <property name="margin-top">6</property>
                                         <property name="draw-indicator">True</property>
-                                        <signal name="button-release-event" handler="button_release_callback" swapped="no"/>
                                         <signal name="clicked" handler="onEnglishClicked" swapped="no"/>
                                         <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                       </object>
@@ -18902,6 +19049,7 @@ the Styles tab and the Help tab). If this is an
 issue, then check this option to prevent
 PTXprint from accessing the internet.</property>
                                         <property name="halign">start</property>
+                                        <property name="valign">center</property>
                                         <property name="margin-top">6</property>
                                         <property name="draw-indicator">True</property>
                                         <signal name="clicked" handler="noInternetClicked" swapped="no"/>
@@ -18958,6 +19106,7 @@ PTXprint from accessing the internet.</property>
                                         <property name="can-focus">True</property>
                                         <property name="receives-default">False</property>
                                         <property name="tooltip-text" translatable="yes">In the past, SpaceAbove and SpaceBelow were, in effect units of 1/14 of the base line spacing. This has changed so they are now in units of 1/12 of the base line spacing. Enabling this compatibility reverts the units.</property>
+                                        <property name="valign">center</property>
                                         <property name="margin-top">4</property>
                                         <property name="draw-indicator">True</property>
                                       </object>
@@ -18976,6 +19125,7 @@ PTXprint from accessing the internet.</property>
 troubleshooting use only.</property>
                                         <property name="opacity">0.80000000000000004</property>
                                         <property name="halign">start</property>
+                                        <property name="valign">center</property>
                                         <property name="margin-top">6</property>
                                         <property name="draw-indicator">True</property>
                                       </object>
@@ -18993,6 +19143,7 @@ troubleshooting use only.</property>
                                         <property name="tooltip-text" translatable="yes">ptxprint can use either the actual glyph metrics in a line or the font metrics to calculate line heights and depths.
 Font metrics gives more consistent results.</property>
                                         <property name="halign">start</property>
+                                        <property name="valign">center</property>
                                         <property name="margin-top">6</property>
                                         <property name="draw-indicator">True</property>
                                       </object>
@@ -19536,6 +19687,7 @@ If you are creating an electronic publication and want to
 add a fancy (colour) cover, then consider designing a
 cover using the online Canva.com tool (link provided).</property>
                             <property name="halign">start</property>
+                            <property name="valign">center</property>
                             <property name="margin-left">6</property>
                             <property name="draw-indicator">True</property>
                             <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
@@ -19626,6 +19778,7 @@ time, the ToC itself gets included. So it may
 be worth leaving this option OFF until the
 final run.</property>
                             <property name="halign">start</property>
+                            <property name="valign">center</property>
                             <property name="draw-indicator">True</property>
                             <signal name="clicked" handler="onSimpleFocusClicked" swapped="no"/>
                             <signal name="clicked" handler="onTocClicked" swapped="no"/>
@@ -19662,6 +19815,7 @@ automatically prepended to the output PDF.</property>
                             <property name="column-spacing">10</property>
                             <child>
                               <object class="GtkCheckButton" id="c_usetoc1">
+                                <property name="width-request">25</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="receives-default">False</property>
@@ -19717,6 +19871,7 @@ generated Table of Contents.</property>
                             </child>
                             <child>
                               <object class="GtkCheckButton" id="c_usetoc2">
+                                <property name="width-request">25</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="receives-default">False</property>
@@ -19735,6 +19890,7 @@ generated Table of Contents.</property>
                             </child>
                             <child>
                               <object class="GtkCheckButton" id="c_usetoc3">
+                                <property name="width-request">25</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="receives-default">False</property>
@@ -20077,6 +20233,7 @@ Front Matter</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">False</property>
                             <property name="halign">start</property>
+                            <property name="valign">center</property>
                             <property name="draw-indicator">True</property>
                             <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                           </object>
@@ -20218,6 +20375,7 @@ bottom of a new page at the end of the publication.
 
 In Diglot publications, the colophon always appears
 on its own page - regardless of this setting. </property>
+                                <property name="valign">center</property>
                                 <property name="margin-left">6</property>
                                 <property name="draw-indicator">True</property>
                               </object>
@@ -20246,6 +20404,7 @@ NOTE: The colophon will not appear
 the first time you run it, but will appear
 on subsequent runs.</property>
                             <property name="halign">start</property>
+                            <property name="valign">center</property>
                             <property name="active">True</property>
                             <property name="draw-indicator">True</property>
                             <signal name="clicked" handler="onColophonClicked" swapped="no"/>
@@ -20278,6 +20437,7 @@ on subsequent runs.</property>
 AFTER the scripture material being typeset. If more than one
 file is selected, then these will appear in alphabetical order.</property>
                             <property name="halign">start</property>
+                            <property name="valign">center</property>
                             <property name="margin-left">6</property>
                             <property name="draw-indicator">True</property>
                             <signal name="clicked" handler="onSimpleClicked" swapped="no"/>

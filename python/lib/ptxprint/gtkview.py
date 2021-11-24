@@ -563,6 +563,14 @@ class GtkViewModel(ViewModel):
 
         self.mw = self.builder.get_object("ptxprint")
 
+        for w in self.allControls:
+            if w.startswith(("c_", "s_", "t_", "r_")):  # These don't work. But why not? "bl_", "btn_", "ecb_", "fcb_")):
+                # try:
+                self.builder.get_object(w).connect("button-release-event", self.button_release_callback)
+                # except (AttributeError, TypeError):
+                    # print("Can't do that for:", w)
+                    # pass
+
         projects = self.builder.get_object("ls_projects")
         digprojects = self.builder.get_object("ls_digprojects")
         projects.clear()
@@ -711,12 +719,6 @@ class GtkViewModel(ViewModel):
         if ui < 6:
             for w in reversed(sorted(self.allControls)):
                 self.toggleUIdetails(w, False)
-                if w.startswith(("c_", "s_", "t_")):  # These don't work. But why not? "bl_", "s_", "btn_", "ecb_", "fcb_")):
-                    try:
-                        self.builder.get_object(w).connect("button-release-event", self.button_release_callback)
-                    except (AttributeError, TypeError):
-                        print("Can't do that for:", w)
-                        pass
                 
             widgets = sum((v for k, v in _uiLevels.items() if ui >= k), [])
         else:
@@ -3626,5 +3628,9 @@ class GtkViewModel(ViewModel):
             if wname.startswith("c_"):
                 self.set(wname, not self.get(wname)) # this makes sure that Ctrl+Click doesn't ALSO toggle the value
             # widget.set_sensitive(False)
-        else:
-            print("Ctrl not held")
+        # else:
+            # print("Ctrl not held")
+
+    def grab_notify_event(self, widget, event, data=None):
+        print("Got it!")
+        widget.get_style_context().add_class("inactivewidget")
