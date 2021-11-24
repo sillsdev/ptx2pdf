@@ -280,6 +280,7 @@ _object_classes = {
     "fontbutton":  ("bl_fontR", "bl_fontB", "bl_fontI", "bl_fontBI"),
     "mainnb":      ("nbk_Main", ),
     "viewernb":    ("nbk_Viewer", "nbk_PicList"),
+    # "inactivewidget": ("c_useEngLinks", ),
     "thumbtabs":   ("l_thumbVerticalL", "l_thumbVerticalR", "l_thumbHorizontalL", "l_thumbHorizontalR"),
     "stylinks":    ("lb_style_s", "lb_style_r", "lb_style_v", "lb_style_f", "lb_style_x", "lb_style_fig",
                     "lb_style_rb", "lb_style_gloss|rb", "lb_style_toc3", "lb_style_x-credit|fig", "lb_omitPics"), 
@@ -598,7 +599,8 @@ class GtkViewModel(ViewModel):
             .viewernb {background-color: #F0F0F0}
             .viewernb tab {min-height: 0pt; margin: 0pt; padding-bottom: 3pt}
             .smradio {font-size: 11px; padding: 1px 1px}
-            .changed {font-weight: bold} """
+            .changed {font-weight: bold} 
+            .inactivewidget { background-color: peachpuff} """
         provider = Gtk.CssProvider()
         provider.load_from_data(css.encode("utf-8"))
         Gtk.StyleContext().add_provider_for_screen(Gdk.Screen.get_default(), provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
@@ -709,6 +711,12 @@ class GtkViewModel(ViewModel):
         if ui < 6:
             for w in reversed(sorted(self.allControls)):
                 self.toggleUIdetails(w, False)
+                if w.startswith(("c_", "s_", "t_")):  # These don't work. But why not? "bl_", "s_", "btn_", "ecb_", "fcb_")):
+                    try:
+                        self.builder.get_object(w).connect("button-release-event", self.button_release_callback)
+                    except (AttributeError, TypeError):
+                        print("Can't do that for:", w)
+                        pass
                 
             widgets = sum((v for k, v in _uiLevels.items() if ui >= k), [])
         else:
@@ -1698,7 +1706,6 @@ class GtkViewModel(ViewModel):
         titer = buf.get_iter_at_mark(buf.get_insert())
         self.cursors[pg] = (titer.get_line(), titer.get_line_offset())
         text2save = buf.get_text(buf.get_start_iter(), buf.get_end_iter(), True)
-        print(fpath, text2save)
         openfile = open(fpath,"w", encoding="utf-8")
         openfile.write(text2save)
         openfile.close()
@@ -3609,4 +3616,15 @@ class GtkViewModel(ViewModel):
         status = not self.get("fcb_diglotPicListSources") == "bth"
         self.builder.get_object("c_diglot2captions").set_sensitive(status)
         self.set("c_diglot2captions", status)
-        
+
+    def button_release_callback(self, widget, event, data=None):
+        # Experimenting with the View/Edit button to see what 
+        # we can do to lock controls etc. (e.g. hold Ctrl to toggle state)
+        if event.get_state() & Gdk.ModifierType.CONTROL_MASK:
+            widget.get_style_context().add_class("inactivewidget")
+            wname = Gtk.Buildable.get_name(widget)
+            if wname.startswith("c_"):
+                self.set(wname, not self.get(wname)) # this makes sure that Ctrl+Click doesn't ALSO toggle the value
+            # widget.set_sensitive(False)
+        else:
+            print("Ctrl not held")

@@ -18881,6 +18881,7 @@ or you simply prefer to read the original page in English.</property>
                                         <property name="halign">start</property>
                                         <property name="margin-top">6</property>
                                         <property name="draw-indicator">True</property>
+                                        <signal name="button-release-event" handler="button_release_callback" swapped="no"/>
                                         <signal name="clicked" handler="onEnglishClicked" swapped="no"/>
                                         <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                       </object>
@@ -19202,6 +19203,7 @@ to the text or markers need to be made in Paratext.</property>
                             <property name="halign">end</property>
                             <property name="margin-top">6</property>
                             <property name="margin-bottom">6</property>
+                            <signal name="button-release-event" handler="button_release_callback" swapped="no"/>
                             <signal name="clicked" handler="onOpenInSystemEditor" swapped="no"/>
                           </object>
                           <packing>
