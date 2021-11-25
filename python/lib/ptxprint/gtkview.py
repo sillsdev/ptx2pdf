@@ -280,13 +280,12 @@ _object_classes = {
     "fontbutton":  ("bl_fontR", "bl_fontB", "bl_fontI", "bl_fontBI"),
     "mainnb":      ("nbk_Main", ),
     "viewernb":    ("nbk_Viewer", "nbk_PicList"),
-    # "inactivewidget": ("c_useEngLinks", ),
     "thumbtabs":   ("l_thumbVerticalL", "l_thumbVerticalR", "l_thumbHorizontalL", "l_thumbHorizontalR"),
     "stylinks":    ("lb_style_s", "lb_style_r", "lb_style_v", "lb_style_f", "lb_style_x", "lb_style_fig",
                     "lb_style_rb", "lb_style_gloss|rb", "lb_style_toc3", "lb_style_x-credit|fig", "lb_omitPics"), 
     "stybutton":   ("btn_reloadConfig", "btn_resetCopyright", "btn_rescanFRTvars", "btn_resetColophon", 
                     "btn_resetFNcallers", "btn_resetXRcallers", "btn_styAdd", "btn_styEdit", "btn_styDel", 
-                    "btn_styReset", "btn_refreshFonts", "btn_resetStyFilter", "btn_plAdd", "btn_plDel", 
+                    "btn_styReset", "btn_refreshFonts", "btn_plAdd", "btn_plDel", 
                     "btn_plGenerate", "btn_plSaveEdits", "btn_resetTabGroups", "btn_adjust_spacing", 
                     "btn_adjust_top", "btn_adjust_bottom", "btn_DBLbundleDiglot", "btn_resetGrid",
                     "btn_refreshCaptions")
@@ -602,9 +601,9 @@ class GtkViewModel(ViewModel):
             .stylinks {font-weight: bold; text-decoration: None; padding: 1px 1px}
             .stybutton {font-size: 12px; padding: 4px 6px}
             progress, trough {min-height: 24px}
-            .mainnb {background-color: #F0F0F0}
+            .mainnb {background-color: #d3d3d3;}
             .mainnb tab {min-height: 0pt; margin: 0pt; padding-bottom: 6pt}
-            .viewernb {background-color: #F0F0F0}
+            .viewernb {background-color: #d3d3d3}
             .viewernb tab {min-height: 0pt; margin: 0pt; padding-bottom: 3pt}
             .smradio {font-size: 11px; padding: 1px 1px}
             .changed {font-weight: bold} 

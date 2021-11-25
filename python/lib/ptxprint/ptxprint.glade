@@ -16943,6 +16943,7 @@ or embelishments to the text.
                               <object class="GtkBox">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
+                                <property name="halign">end</property>
                                 <property name="margin-left">6</property>
                                 <property name="margin-right">6</property>
                                 <property name="margin-top">6</property>
@@ -16972,7 +16973,7 @@ the marker you need.</property>
 your marker can be found under,
 then use this Search tool to find
 the marker you need.</property>
-                                    <property name="width-chars">15</property>
+                                    <property name="width-chars">30</property>
                                     <property name="secondary_icon-stock">gtk-clear</property>
                                     <property name="primary_icon-name">edit-find-symbolic</property>
                                     <property name="primary_icon-activatable">False</property>
@@ -16982,23 +16983,6 @@ the marker you need.</property>
                                     <property name="expand">False</property>
                                     <property name="fill">True</property>
                                     <property name="position">1</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkButton" id="btn_resetStyFilter">
-                                    <property name="label">↺</property>
-                                    <property name="sensitive">False</property>
-                                    <property name="can-focus">True</property>
-                                    <property name="receives-default">True</property>
-                                    <property name="no_show-all">True</property>
-                                    <property name="tooltip-text" translatable="yes">Clicking this button will reset
-the Search/Filter to SHOW ALL
-markers/styles in the list below.</property>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">False</property>
-                                    <property name="position">2</property>
                                   </packing>
                                 </child>
                               </object>
@@ -18242,32 +18226,6 @@ Into Style:</property>
                                                 <property name="margin-bottom">6</property>
                                                 <property name="column-spacing">6</property>
                                                 <child>
-                                                  <object class="GtkComboBox" id="fcb_stytcVpos">
-                                                    <property name="width-request">150</property>
-                                                    <property name="visible">True</property>
-                                                    <property name="can-focus">False</property>
-                                                    <property name="can-default">True</property>
-                                                    <property name="halign">start</property>
-                                                    <property name="model">ls_tcVpos</property>
-                                                    <property name="wrap-width">1</property>
-                                                    <property name="has-entry">True</property>
-                                                    <property name="entry_text-column">0</property>
-                                                    <property name="id-column">1</property>
-                                                    <property name="active-id">0</property>
-                                                    <child internal-child="entry">
-                                                      <object class="GtkEntry">
-                                                        <property name="visible">True</property>
-                                                        <property name="can-focus">True</property>
-                                                        <property name="width-chars">12</property>
-                                                      </object>
-                                                    </child>
-                                                  </object>
-                                                  <packing>
-                                                    <property name="left-attach">1</property>
-                                                    <property name="top-attach">1</property>
-                                                  </packing>
-                                                </child>
-                                                <child>
                                                   <object class="GtkLabel">
                                                     <property name="visible">True</property>
                                                     <property name="can-focus">False</property>
@@ -18282,6 +18240,8 @@ Into Style:</property>
                                                   <object class="GtkEventBox">
                                                     <property name="visible">True</property>
                                                     <property name="can-focus">False</property>
+                                                    <property name="valign">center</property>
+                                                    <signal name="button-release-event" handler="resetParam" swapped="no"/>
                                                     <child>
                                                       <object class="GtkLabel" id="l_tcVpos">
                                                         <property name="width-request">72</property>
@@ -18297,6 +18257,25 @@ Position:</property>
                                                   </object>
                                                   <packing>
                                                     <property name="left-attach">0</property>
+                                                    <property name="top-attach">1</property>
+                                                  </packing>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkComboBox" id="fcb_stytcVpos">
+                                                    <property name="width-request">150</property>
+                                                    <property name="visible">True</property>
+                                                    <property name="can-focus">False</property>
+                                                    <property name="can-default">True</property>
+                                                    <property name="halign">start</property>
+                                                    <property name="model">ls_tcVpos</property>
+                                                    <property name="wrap-width">1</property>
+                                                    <property name="active">0</property>
+                                                    <property name="entry_text-column">0</property>
+                                                    <property name="id-column">1</property>
+                                                    <property name="active-id">1</property>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="left-attach">1</property>
                                                     <property name="top-attach">1</property>
                                                   </packing>
                                                 </child>
