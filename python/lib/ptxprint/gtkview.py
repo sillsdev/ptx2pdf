@@ -501,7 +501,7 @@ class GtkViewModel(ViewModel):
         for fcb in ("project", "uiLevel", "interfaceLang", "fontdigits", "script", "diglotPicListSources",
                     "textDirection", "glossaryMarkupStyle", "fontFaces", "featsLangs", "leaderStyle",
                     "picaccept", "pubusage", "pubaccept", "chklstFilter|0.75", "gridUnits", "gridOffset",
-                    "fnHorizPosn", "xrHorizPosn", "filterXrefs", "colXRside", "outputFormat"):
+                    "fnHorizPosn", "xrHorizPosn", "filterXrefs", "colXRside", "outputFormat", "stytcVpos"):
             self.addCR("fcb_"+fcb, 0)
         self.cb_savedConfig = self.builder.get_object("ecb_savedConfig")
         self.ecb_diglotSecConfig = self.builder.get_object("ecb_diglotSecConfig")
@@ -3384,21 +3384,22 @@ class GtkViewModel(ViewModel):
         top = re.sub("1True", "1False", "{}{}{}".format(cols,vert,horiz))
         bottom = re.sub("1True", "1False", "{}{}".format(cols,vert))
         for t in ["1FalseFalse", "1FalseTrue", "2FalseFalse", "2FalseTrue", "2TrueFalse", "2TrueTrue"]:
-            self.builder.get_object("img_Top{}".format(t)).set_visible(t == top)        
+            self.builder.get_object("img_Top{}".format(t)).set_visible(t == top)
         for b in ["1False", "2False", "2True"]:
-            self.builder.get_object("img_Bottom{}".format(b)).set_visible(b == bottom)        
+            self.builder.get_object("img_Bottom{}".format(b)).set_visible(b == bottom)
 
     def onOverlayCreditClicked(self, btn):
         dialog = self.builder.get_object("dlg_overlayCredit")
         dialog.set_keep_above(True)
         crParams = self.get("t_piccreditbox")
+        crParams = "bl,0,None" if not len(crParams) else crParams
         m = re.match(r"^([tcb]?)([lrcio]?),(-?9?0?|None),(\w*)", crParams)
         if m:
             self.set("fcb_plCreditVpos", m[1])
             self.set("fcb_plCreditHpos", m[2])
             self.set("fcb_plCreditRotate", m[3])
             self.set("ecb_plCreditBoxStyle", m[4])
-        self.set("t_plCreditText", self.get("l_piccredit"))
+        self.set("t_plCreditText", self.get("l_piccredit") if len(self.get("l_piccredit")) else "")
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
             vpos = self.get("fcb_plCreditVpos")
@@ -3625,12 +3626,13 @@ class GtkViewModel(ViewModel):
         if event.get_state() & Gdk.ModifierType.CONTROL_MASK:
             widget.get_style_context().add_class("inactivewidget")
             wname = Gtk.Buildable.get_name(widget)
-            if wname.startswith("c_"):
-                self.set(wname, not self.get(wname)) # this makes sure that Ctrl+Click doesn't ALSO toggle the value
-            # widget.set_sensitive(False)
+            # if wname.startswith("c_"):
+                # self.set(wname, not self.get(wname)) # this makes sure that Ctrl+Click doesn't ALSO toggle the value
+            widget.set_sensitive(False)
         # else:
             # print("Ctrl not held")
 
     def grab_notify_event(self, widget, event, data=None):
-        print("Got it!")
-        widget.get_style_context().add_class("inactivewidget")
+        pass
+        # print("Got it!")
+        # widget.get_style_context().add_class("inactivewidget")

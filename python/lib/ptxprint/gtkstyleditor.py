@@ -387,6 +387,14 @@ class StyleEditorView(StyleEditor):
         for i, w in enumerate(('Para', 'Char', 'Note')):
             self.builder.get_object("ex_sty"+w).set_expanded(visibles[i])
 
+        self.builder.get_object("ex_styTable").set_expanded(self.marker.startswith("tc"))
+        self.builder.get_object("ex_styCat").set_expanded(self.marker.startswith("cat"))
+        self.builder.get_object("ex_styOther").set_expanded(False)
+        for w in (('Note', 'Table', 'Cat')):
+            if self.builder.get_object("ex_sty"+w).get_expanded():
+                self.builder.get_object("ex_styOther").set_expanded(True)
+        self.builder.get_object("ptxprint").resize(200, 200)
+
         if not self.model.get("c_noInternet"):
             site = 'https://ubsicap.github.io/usfm'
             tl = self.get("fcb_interfaceLang") # target language for Google Translate
