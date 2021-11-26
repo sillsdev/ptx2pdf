@@ -3,6 +3,9 @@ from ptxprint.utils import cachedData, pycodedir
 from ptxprint.reference import RefList, RefRange, Reference, RefSeparators
 import xml.etree.ElementTree as et
 import re, os
+import logging
+
+logger = logging.getLogger(__name__)
 
 class Xrefs:
     class NoBook:
@@ -14,19 +17,22 @@ class Xrefs:
     def usfmmark(ref, txt):
         if ref.mark == "+":
             return r"\+it {}\+it*".format(txt)
-        return txt
+        return (ref.mark or "") + txt
 
-    def __init__(self, parent, filters, prjdir, xrfile, listsize):
+    def __init__(self, parent, filters, prjdir, xrfile, listsize, source, localfile):
         self.parent = parent
         self.filters = filters
         self.prjdir = prjdir
         self.xrfile = xrfile
         self.xrefdat = None
         self.xrlistsize = listsize
-        self.addsep = RefSeparators(books="; ", chaps=";\u200B", verses=",\u200B", bkcv="\u2000", mark=self.usfmmark)
+        self.addsep = RefSeparators(books="; ", chaps=";\u200A", verses=",\u200A", bkc="\u2000", mark=self.usfmmark, bksp="\u00A0")
         self.dotsep = RefSeparators(cv=".", onechap=True)
-        self.template = "\n\\AddTrigger {book}{dotref}\n\\x - \\xo {colnobook} \\xt {refs}\\x*\n\\EndTrigger\n"
-        if self.xrfile is None:
+        self.template = "\n\\AddTrigger {book}{dotref}\n\\x - \\xo {colnobook}\u00A0\\xt {refs}\\x*\n\\EndTrigger\n"
+        logger.debug(f"Source: {source}")
+        if source == "strongs":
+            self.readxml(os.path.join(os.path.dirname(__file__), "strongs.xml"), localfile)
+        elif self.xrfile is None:
             def procxref(inf):
                 results = {}
                 for l in inf.readlines():
@@ -36,7 +42,7 @@ class Xrefs:
                 return results
             self.xrefdat = cachedData(os.path.join(pycodedir(), "cross_references.txt"), procxref)
         elif self.xrfile.endswith(".xml"):
-            self.readxml(self.xrfile)
+            self.readxml(self.xrfile, None)
         else:
             self.xrefdat = {}
             with open(xrfile) as inf:
@@ -132,34 +138,53 @@ class Xrefs:
                 }
                 outf.write(self.template.format(**info))
 
-    def _unpackxml(self, xr):
+    def _unpackxml(self, xr, stfilter):
         a = []
         for e in xr:
             st = e.get('strongs', None)
+            if stfilter is not None and st not in stfilter:
+                continue
+            if st[0] in "GH":
+                st = st[1:]
             s = '\\xts|strong="{}" align="r"\\*'.format(st) if st is not None else ""
             if e.tag == "ref" and e.text is not None:
-                r = RefList.fromStr(e.text)
+                r = RefList.fromStr(e.text, marks=("+", "\u203A"))
                 if self.filters is not None:
                     r.filterBooks(self.filters)
                 r.sort()
                 r.simplify()
-                rs = r.str(self.parent.ptsettings, addsep=self.addsep)
+                rs = r.str(context=self.parent.ptsettings, addsep=self.addsep)
                 if len(rs) and e.get('style', '') in ('backref', 'crossref'):
                     a.append(s + "\\+xti " + rs + "\\+xti*")
                 elif len(rs):
                     a.append(s + rs)
             elif e.tag == "refgroup":
-                a.append(s + "[" + " ".join(self._unpackxml(e)) + "]")
+                a.append(s + "[" + " ".join(self._unpackxml(e, stfilter)) + "]")
         return a
 
-    def readxml(self, xrfile):
+    def readxml(self, xrfile, localfile):
+        #import pdb; pdb.set_trace()
+        if localfile is not None:
+            sinfodoc = et.parse(os.path.join(os.path.dirname(__file__), "strongs_info.xml"))
+            btmap = {}
+            for s in sinfodoc.findall('.//strong'):
+                btmap[s.get('btid')] = s.get('ref')
+            termsdoc = et.parse(localfile)
+            strongsfilter = set()
+            for r in termsdoc.findall('.//TermRendering'):
+                rend = r.findtext('Renderings')
+                rid = r.get('Id')
+                if rend is not None and len(rend) and rid in btmap:
+                    strongsfilter.add(btmap[rid])
+        else:
+            strongsfilter = None
         doc = et.parse(xrfile)
         self.xmldat = {}
         for xr in doc.findall('.//xref'):
             k = RefList.fromStr(xr.get('ref'))[0]
-            a = self._unpackxml(xr)
+            a = self._unpackxml(xr, strongsfilter)
             if len(a):
-                self.xmldat[k.first] = " ".join(self._unpackxml(xr))
+                self.xmldat[k.first] = " ".join(self._unpackxml(xr, strongsfilter))
 
     def processxml(self, bk, outpath):
         with open(outpath + ".triggers", "w", encoding="utf-8") as outf:
@@ -173,4 +198,39 @@ class Xrefs:
                     "refs":         v
                 }
                 outf.write(self.template.format(**info))
-            
+
+def generateStrongsIndex(bkid, cols, outfile, localfile, onlylocal):
+    strongsdoc = et.parse(os.path.join(os.path.dirname(__file__), "strongs_info.xml"))
+    strongs = {}
+    btmap = {}
+    for s in strongsdoc.findall(".//strong"):
+        sref = s.get('ref')
+        strongs[sref] = {k: s.get(k) for k in ('btid', 'lemma', 'head')}
+        strongs[sref]['def'] = s.text
+        btmap[s.get('btid')] = sref
+    if localfile is not None:
+        localdoc = et.parse(localfile)
+        for r in localdoc.findall(".//TermRendering"):
+            rid = r.get("Id")
+            rend = r.findtext('Renderings')
+            if rid not in btmap or rend is None or not len(rend):
+                continue
+            sref = btmap[rid]
+            strongs[sref]['local'] = ", ".join(rend.split("||"))
+    with open(outfile, "w", encoding="utf-8") as outf:
+        outf.write("\\id {} Strongs based terms index\n\\NoXrefNotes\n\\strong-s\\*\n".format(bkid))
+        outf.write("\\onebody\n" if cols == 1 else "\\twobody\n")
+        for a in ('Hebrew', 'Greek'):
+            hdr = ("\n\\mt2 {}\\p\n".format(a))
+            for k, v in sorted(strongs.items(), key=lambda x:int(x[0][1:])):
+                if not k.startswith(a[0]):
+                    continue
+                d = v.get('local', v.get('def', None) if not onlylocal else None)
+                if d is None:
+                    continue
+                if hdr:
+                    outf.write(hdr)
+                    hdr = ""
+                outf.write(r"\{_marker} \bd {_key}\bd* \w{_lang} {lemma}\w{_lang}* {_defn} \xt $a({head})\xt*".format(
+                    _key=k[1:], _lang=a[0].lower(), _marker="li", _defn=d, **v) + "\n")
+        outf.write("\\strong-e\\*\n")

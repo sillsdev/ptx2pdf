@@ -532,7 +532,8 @@ class GtkViewModel(ViewModel):
             mrubl.append(None, m)
 
         for d in ("multiBookSelector", "multiProjSelector", "fontChooser", "password", "overlayCredit",
-                  "generateFRT", "generatePL", "styModsdialog", "DBLbundle", "features", "gridsGuides"):
+                  "generateFRT", "generatePL", "styModsdialog", "DBLbundle", "features", "gridsGuides",
+                  "strongsGenerate"):
             dialog = self.builder.get_object("dlg_" + d)
             dialog.add_buttons(
                 Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
@@ -3475,6 +3476,19 @@ class GtkViewModel(ViewModel):
         xrl = self.get("c_useXrefList")
         xrc = self.get("r_xrpos") == "centre"
         self.builder.get_object("fr_colXrefs").set_sensitive(xrc)
+
+    def onGenerateStrongsClicked(self, btn):
+        dialog = self.builder.get_object("dlg_strongsGenerate")
+        if sys.platform == "win32":
+            dialog.set_keep_above(True)
+        response = dialog.run()
+        if response == Gtk.ResponseType.OK:
+            cols = int(float(self.get("s_strongsCols")))
+            bkid = self.get("t_strongsId") or "XXA"
+            self.generateStrongs(bkid, cols)
+        if sys.platform == "win32":
+            dialog.set_keep_above(False)
+        dialog.hide()
 
     def onInterlinearClicked(self, btn):
         if self.sensiVisible("c_interlinear"):

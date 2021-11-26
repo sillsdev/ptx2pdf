@@ -8,6 +8,7 @@ from ptxprint.utils import _, refKey, universalopen, print_traceback, local2glob
 from ptxprint.usfmutils import Sheets, UsfmCollection, Usfm
 from ptxprint.piclist import PicInfo, PicChecks
 from ptxprint.styleditor import StyleEditor
+from ptxprint.xrefs import generateStrongsIndex
 from ptxprint.pdfrw.pdfreader import PdfReader
 import ptxprint.pdfrw.errors
 import pathlib, os, sys
@@ -1445,3 +1446,11 @@ set stack_size=32768""".format(self.configName())
         newnum = int(tabsheight / tabheight)
         self.set("s_thumbtabs", newnum)
 
+    def generateStrongs(self, bkid, cols):
+        outfile = os.path.join(self.settings_dir, self.prjid, self.getBookFilename(bkid))
+        onlylocal = self.get("c_strongsLocal")
+        localfile = os.path.join(self.settings_dir, self.prjid, "TermRenderings.xml")
+        if not os.path.exists(localfile):
+            localfile = None
+        generateStrongsIndex(bkid, cols, outfile, localfile, onlylocal)
+        

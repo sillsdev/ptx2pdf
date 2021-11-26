@@ -293,6 +293,7 @@ ModelMap = {
     "notes/xrlistsource":       ("r_xrSource", None),
     "notes/xrlistsize":         ("s_xrSourceSize", lambda w,v: int(float(v)) if v else "3"),
     "notes/xrfilterbooks":      ("fcb_filterXrefs", None),
+    "notes/xrlocalstrongs":     ("c_strongsLocal", None),
     "notes/addcolon":           ("c_addColon", None),
     "notes/keepbookwithrefs":   ("c_keepBookWithRefs", None),
     "notes/glossaryfootnotes":  ("c_glossaryFootnotes", None),
@@ -1655,8 +1656,13 @@ class TexModel:
                 filters = allbooks[40:67]
             if filters is not None and len(filters) == 0:
                 filters = None
+            localfile = None
+            if self.dict['notes/xrlocalstrongs']:
+                localfile = os.path.join(self.printer.settings_dir, self.printer.prjid, "TermRenderings.xml")
+                if not os.path.exists(localfile):
+                    localfile = None
             self.xrefs = Xrefs(self, filters, prjdir,
                     self.dict['project/selectxrfile'] if self.dict['notes/xrlistsource'] == 'custom' else None,
-                    self.dict['notes/xrlistsize'])
+                    self.dict['notes/xrlistsize'], self.dict['notes/xrlistsource'], localfile)
         self.xrefs.process(bk, outpath)
 

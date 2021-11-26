@@ -48,7 +48,8 @@ class RefSeparators(dict):
         "cv": ":",          # separator between chapter and verse
         "bkc": " ",         # separator between book and chapter
         "onechap": False,   # output chapter in single chapter books
-        "mark": lambda r, s: (r.mark or "") + s
+        "mark": lambda r, s: (r.mark or "") + s,
+        "bksp": " ",
     }
     def __init__(self, **kw):
         self.update(kw)
@@ -78,7 +79,7 @@ class Reference:
         sep = ""
         hasbook = False
         if lastref is None or lastref.book != self.book:
-            res = ["{}".format(self.book if context is None else context.getLocalBook(self.book, level))]
+            res = ["{}".format(self.book if context is None else context.getLocalBook(self.book, level)).replace(" ", addsep['bksp'])]
             if lastref is not None and lastref.book is not None:
                 sep = addsep['books']
             hasbook = len(res[0]) != 0
