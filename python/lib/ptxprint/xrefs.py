@@ -142,9 +142,9 @@ class Xrefs:
         a = []
         for e in xr:
             st = e.get('strongs', None)
-            if stfilter is not None and st not in stfilter:
+            if st is not None and stfilter is not None and st not in stfilter:
                 continue
-            if st[0] in "GH":
+            if st is not None and st[0] in "GH":
                 st = st[1:]
             s = '\\xts|strong="{}" align="r"\\*'.format(st) if st is not None else ""
             if e.tag == "ref" and e.text is not None:

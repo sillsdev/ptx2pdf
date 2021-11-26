@@ -1057,7 +1057,7 @@
   \x@\let\x@\th@cl@ss\csname note-#1\endcsname
   \global\setbox\th@cl@ss=\box\voidb@x
 }
-\def\clearn@tes{\let\\=\cle@rn@tecl@ss \the\n@tecl@sses}
+\def\clearn@tes{\trace{o}{clearn@tes}\let\\=\cle@rn@tecl@ss \the\n@tecl@sses}
 
 \def\s@venotes#1#2{\trace{nS}{Saving footnotes}\edef\n@tesavelevel{#2}\edef\n@t@sfx{#1}\let\\=\s@ven@te \the\n@tecl@sses}
 \def\s@veallnotes#1{%

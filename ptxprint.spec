@@ -50,7 +50,8 @@ a = Analysis(['python/scripts/ptxprint'],
                       + [('src/mappings/*.tec', 'ptx2pdf/mappings')],
 #					  + [('python/lib/ptxprint/mo/' + y +'/LC_MESSAGES/ptxprint.mo', 'mo/' + y + '/LC_MESSAGES') for y in os.listdir('python/lib/ptxprint/mo')],
              datas =    [('python/lib/ptxprint/'+x, 'ptxprint') for x in 
-                            ('ptxprint.glade', 'template.tex', 'picCopyrights.json', 'sRGB.icc', 'default_cmyk.icc', 'eng.vrs')]
+                            ('ptxprint.glade', 'template.tex', 'picCopyrights.json', 'sRGB.icc', 'default_cmyk.icc', 'eng.vrs',
+                             'strongs.xml', 'strongs_info.xml')]
 					  + sum(([('python/lib/ptxprint/{}/*.*y'.format(x), 'ptxprint/{}'.format(x))] for x in ('sfm', 'pdf', 'pdfrw', 'pdfrw/objects')), [])
                       + [('python/lib/ptxprint/sfm/*.txt', 'ptxprint/sfm')]
                       + [('docs/inno-docs/*.txt', 'ptxprint')]
