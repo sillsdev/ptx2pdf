@@ -3,7 +3,7 @@ from ptxprint.utils import cachedData, pycodedir
 from ptxprint.reference import RefList, RefRange, Reference, RefSeparators
 from unicodedata import normalize
 import xml.etree.ElementTree as et
-import re, os
+import re, os, gc
 import logging
 
 logger = logging.getLogger(__name__)
@@ -57,6 +57,7 @@ class Xrefs:
                         v.extend(RefList.fromStr(d.replace(".", " "), marks="+"))
                     k = v.pop(0)
                     self.xrefdat[k] = [v]
+        gc.collect()
 
     def _getVerseRanges(self, sfm, bk):
         class Result(list):
@@ -165,7 +166,7 @@ class Xrefs:
         return a
 
     def readxml(self, xrfile, localfile):
-        #import pdb; pdb.set_trace()
+        # import pdb; pdb.set_trace()
         if localfile is not None:
             sinfodoc = et.parse(os.path.join(os.path.dirname(__file__), "strongs_info.xml"))
             btmap = {}
@@ -178,6 +179,7 @@ class Xrefs:
                 rid = normalize('NFC', r.get('Id'))
                 if rend is not None and len(rend) and rid in btmap:
                     strongsfilter.add(btmap[rid])
+            logger.debug("strongsfilter="+str(strongsfilter))
         else:
             strongsfilter = None
         doc = et.parse(xrfile)

@@ -493,8 +493,9 @@ class RefList(list):
         return any(other in x for x in self)
 
     def _addRefOrRange(self, start, curr, currmark):
+        curr.mark = currmark
         self.append(curr if start is None else RefRange(start, curr))
-        res = Reference(curr.book, 0, 0, currmark)
+        res = Reference(curr.book, 0, 0)
         currmark = None
         return (res, currmark)
 
