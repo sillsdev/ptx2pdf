@@ -1,6 +1,7 @@
 
 from ptxprint.utils import cachedData, pycodedir
 from ptxprint.reference import RefList, RefRange, Reference, RefSeparators
+from unicodedata import normalize
 import xml.etree.ElementTree as et
 import re, os
 import logging
@@ -174,7 +175,7 @@ class Xrefs:
             strongsfilter = set()
             for r in termsdoc.findall('.//TermRendering'):
                 rend = r.findtext('Renderings')
-                rid = r.get('Id')
+                rid = normalize('NFC', r.get('Id'))
                 if rend is not None and len(rend) and rid in btmap:
                     strongsfilter.add(btmap[rid])
         else:
@@ -212,7 +213,7 @@ def generateStrongsIndex(bkid, cols, outfile, localfile, onlylocal):
     if localfile is not None:
         localdoc = et.parse(localfile)
         for r in localdoc.findall(".//TermRendering"):
-            rid = r.get("Id")
+            rid = normalize('NFC', r.get("Id"))
             rend = r.findtext('Renderings')
             if rid not in btmap or rend is None or not len(rend):
                 continue
