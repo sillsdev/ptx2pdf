@@ -382,14 +382,14 @@ class RefList(list):
     @classmethod
     def fromStr(cls, s, context=BaseBooks, starting=None, marks=None):
         rerefs = re.compile(r"[\s;,]+")
-        if marks is not None:
-            rebook = re.compile("^(["+"".join(marks)+r"]?)(\d?[^0-9\-:.]+)")
-        else:
-            rebook = re.compile(r"^(\d?[^0-9\-:.]+)")
+        
+        remarks = re.compile("^(["+"".join(marks)+r"])") if marks is not None else None
+        rebook = re.compile(r"^(\d?[^0-9\-:.]+)")
         recv = re.compile(r"^(\d+)[:.](\d+|end)([a-z]?)")
         rec = re.compile(r"(\d+)([a-z]?)")
         self = cls()
         curr = Reference(None, 0, 0) if starting is None else starting
+        currmark = None
         start = None
         mode = ""
         for b in rerefs.split(s):
@@ -406,22 +406,26 @@ class RefList(list):
                         mode = "v"
                     b = ""
                     continue
+                if remarks is not None:
+                    m = remarks.match(b)
+                    if m:
+                        currmark = m.group(1)
+                        b = b[m.end():]
+                        continue
                 m = rebook.match(b)
                 if m:
                     if mode != "r" and mode != "":
-                        curr = self._addRefOrRange(start, curr)
+                        (curr, currmark) = self._addRefOrRange(start, curr, currmark)
                         start = None
                     bookinfo = m.groups()
                     curr.book = context.getBook(bookinfo[-1])
-                    if len(bookinfo) > 1:
-                        curr.mark = bookinfo[0]
                     mode = "b"
                     b = b[m.end():]
                     continue
                 m = recv.match(b)
                 if m:
                     if mode not in "br":
-                        curr = self._addRefOrRange(start, curr)
+                        (curr, currmark) = self._addRefOrRange(start, curr, currmark)
                         start = None
                     curr.chap = int(m.group(1))
                     if m.group(2):
@@ -442,14 +446,14 @@ class RefList(list):
                             raise SyntaxError("invalid string {} in context of {}".format(b, curr))
                         if mode not in "bcr":
                             c = curr.chap
-                            curr = self._addRefOrRange(start, curr)
+                            (curr, currmark) = self._addRefOrRange(start, curr, currmark)
                             start = None
                             curr.chap = c
                         curr.subverse = m.group(2) or None
                         curr.verse = v
                     else:
                         if mode not in "bcr":
-                            curr = self._addRefOrRange(start, curr)
+                            (curr, currmark) = self._addRefOrRange(start, curr, currmark)
                             start = None
                         mode = "c"
                         curr.chap = v
@@ -465,7 +469,7 @@ class RefList(list):
                     continue
                 raise SyntaxError("Unknown string component {} in {}".format(b, s))
         if mode != "r" and mode != "":
-            self._addRefOrRange(start, curr)
+            self._addRefOrRange(start, curr, currmark)
         return self
 
     def str(self, context=None, level=0, addsep=RefSeparators()):
@@ -488,9 +492,11 @@ class RefList(list):
     def __contains__(self, other):
         return any(other in x for x in self)
 
-    def _addRefOrRange(self, start, curr):
+    def _addRefOrRange(self, start, curr, currmark):
         self.append(curr if start is None else RefRange(start, curr))
-        return Reference(curr.book, 0, 0)
+        res = Reference(curr.book, 0, 0, currmark)
+        currmark = None
+        return (res, currmark)
 
     def simplify(self):
         res = []
