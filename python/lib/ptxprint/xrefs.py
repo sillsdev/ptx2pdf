@@ -204,7 +204,7 @@ class Xrefs:
                 }
                 outf.write(self.template.format(**info))
 
-def generateStrongsIndex(bkid, cols, outfile, localfile, onlylocal, ptsettings):
+def generateStrongsIndex(bkid, cols, outfile, localfile, onlylocal, ptsettings, view):
     strongsdoc = et.parse(os.path.join(os.path.dirname(__file__), "strongs_info.xml"))
     strongs = {}
     btmap = {}
@@ -230,7 +230,7 @@ def generateStrongsIndex(bkid, cols, outfile, localfile, onlylocal, ptsettings):
         outf.write("\\id {} Strongs based terms index\n\\NoXrefNotes\n\\strong-s\\*\n".format(bkid))
         outf.write("\\onebody\n" if cols == 1 else "\\twobody\n")
         for a in ('Hebrew', 'Greek'):
-            hdr = ("\n\\mt2 {}\n\\p\n".format(a))
+            hdr = ("\n\\mt2 {}\n\\p\n".format(view.getvar("strongs_{}".format(a.lower())) or a))
             for k, v in sorted(strongs.items(), key=lambda x:int(x[0][1:])):
                 if not k.startswith(a[0]):
                     continue
@@ -248,7 +248,7 @@ def generateStrongsIndex(bkid, cols, outfile, localfile, onlylocal, ptsettings):
             ldmlindices = ptsettings.getIndexList()
             indices = None if ldmlindices is None else sorted([c.lower() for c in ldmlindices], key=lambda s:(-len(s), s))
             lastinit = ""
-            outf.write("\n\\mt2 Index\n")
+            outf.write("\n\\mt2 {}\n".format(view.getvar("strongs_index") or "Index"))
             for k, v in sorted(revwds.items(), key=lambda x:get_sortkey(x[0], variable=SHIFTTRIM, ducet=ducet)):
                 for i in range(len(k)):
                     if indices is None:
