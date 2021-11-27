@@ -2,7 +2,7 @@
 
 import re
 from ptxprint.utils import bookcodes, _allbkmap, refKey
-from ptxprint.sfm.ducet import get_sortkey, SHIFTTRIM, tailored
+from ptxprint.unicode.ducet import get_sortkey, SHIFTTRIM, tailored
 import logging
 
 logger = logging.getLogger(__name__)

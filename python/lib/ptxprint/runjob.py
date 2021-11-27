@@ -13,6 +13,7 @@ from ptxprint.utils import _, universalopen, print_traceback
 from ptxprint.pdf.fixcol import fixpdffile
 from ptxprint.pdfrw.errors import PdfError
 from ptxprint.toc import TOC, generateTex
+from ptxprint.unicode.ducet import tailored
 from datetime import datetime
 import logging
 
@@ -636,7 +637,7 @@ class RunJob:
                         break
             if os.path.exists(tocfname):
                 tailoring = self.printer.ptsettings.getCollation()
-                ducet = tailor(tailoring.text) if tailoring else None
+                ducet = tailored(tailoring.text) if tailoring else None
                 bklist = self.printer.getBooks()
                 toc = TOC(tocfname)
                 newtoc = generateTex(toc.createtocvariants(bklist, ducet=ducet))

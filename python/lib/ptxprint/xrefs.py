@@ -1,6 +1,7 @@
 
 from ptxprint.utils import cachedData, pycodedir
 from ptxprint.reference import RefList, RefRange, Reference, RefSeparators
+from ptxprint.unicode.ducet import get_sortkey, SHIFTTRIM, tailored
 from unicodedata import normalize
 import xml.etree.ElementTree as et
 import re, os, gc
@@ -203,13 +204,14 @@ class Xrefs:
                 }
                 outf.write(self.template.format(**info))
 
-def generateStrongsIndex(bkid, cols, outfile, localfile, onlylocal):
+def generateStrongsIndex(bkid, cols, outfile, localfile, onlylocal, ptsettings):
     strongsdoc = et.parse(os.path.join(os.path.dirname(__file__), "strongs_info.xml"))
     strongs = {}
     btmap = {}
+    revwds = {}
     for s in strongsdoc.findall(".//strong"):
         sref = s.get('ref')
-        strongs[sref] = {k: s.get(k) for k in ('btid', 'lemma', 'head')}
+        strongs[sref] = {k: s.get(k) for k in ('btid', 'lemma', 'head', 'translit')}
         strongs[sref]['def'] = s.text
         btmap[s.get('btid')] = sref
     if localfile is not None:
@@ -221,11 +223,14 @@ def generateStrongsIndex(bkid, cols, outfile, localfile, onlylocal):
                 continue
             sref = btmap[rid]
             strongs[sref]['local'] = ", ".join(rend.split("||"))
+            for w in rend.split("||"):
+                s = re.sub(r"\(.*?\)", "", w).strip()
+                revwds.setdefault(s.lower(), set()).add(sref)
     with open(outfile, "w", encoding="utf-8") as outf:
         outf.write("\\id {} Strongs based terms index\n\\NoXrefNotes\n\\strong-s\\*\n".format(bkid))
         outf.write("\\onebody\n" if cols == 1 else "\\twobody\n")
         for a in ('Hebrew', 'Greek'):
-            hdr = ("\n\\mt2 {}\\p\n".format(a))
+            hdr = ("\n\\mt2 {}\n\\p\n".format(a))
             for k, v in sorted(strongs.items(), key=lambda x:int(x[0][1:])):
                 if not k.startswith(a[0]):
                     continue
@@ -235,6 +240,31 @@ def generateStrongsIndex(bkid, cols, outfile, localfile, onlylocal):
                 if hdr:
                     outf.write(hdr)
                     hdr = ""
-                outf.write(r"\{_marker} \bd {_key}\bd* \w{_lang} {lemma}\w{_lang}* {_defn} \xt $a({head})\xt*".format(
+                outf.write(r"\{_marker} \bd {_key}\bd* \w{_lang} {lemma}\w{_lang}* \wl {translit}\wl* {_defn} \xt $a({head})\xt*".format(
                     _key=k[1:], _lang=a[0].lower(), _marker="li", _defn=d, **v) + "\n")
+        if len(revwds):
+            tailoring = ptsettings.getCollation()
+            ducet = tailored(tailoring.text) if tailoring else None
+            ldmlindices = ptsettings.getIndexList()
+            indices = None if ldmlindices is None else sorted([c.lower() for c in ldmlindices], key=lambda s:(-len(s), s))
+            lastinit = ""
+            outf.write("\n\\mt2 Index\n")
+            for k, v in sorted(revwds.items(), key=lambda x:get_sortkey(x[0], variable=SHIFTTRIM, ducet=ducet)):
+                for i in range(len(k)):
+                    if indices is None:
+                        if k[i] not in "\u0E40\u0E41\u0E42\u0E43\u0E44":
+                            init = k[i]
+                            break
+                    else:
+                        for s in indices:
+                            if k[i:].startswith(s):
+                                init = s
+                                break
+                        else:
+                            continue
+                        break
+                if init != lastinit:
+                    outf.write("\n\\p\n")
+                    lastinit = init
+                outf.write("{}({}) ".format(k, ", ".join(sorted(v, key=lambda s:(int(s[1:]), s[0]))))) 
         outf.write("\\strong-e\\*\n")

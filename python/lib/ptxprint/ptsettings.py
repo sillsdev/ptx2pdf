@@ -2,6 +2,7 @@ import os, re
 import xml.etree.ElementTree as et
 import regex
 from ptxprint.utils import allbooks, books, bookcodes, chaps
+from ptxprint.unicode.UnicodeSets import flatten
 
 
 class ParatextSettings:
@@ -159,3 +160,10 @@ class ParatextSettings:
         if self.collation is None:
             self.collation = self.find_ldml('collations/collation[@type="standard"]/cr')
         return self.collation
+
+    def getIndexList(self):
+        s = self.find_ldml('characters/exemplarCharacters[@type="index"]')
+        if s is None:
+            return None
+        res = list(flatten(s))
+        return res
