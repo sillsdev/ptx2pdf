@@ -281,6 +281,14 @@
   #1%
   \ifx#2\empty\else\expandafter\zap@space\fi
   #2}
+\def\zap@plus#1+#2{%borrowed from latex.ltx. Eats all pluses in arg, including mid-space
+  #1%
+  \ifx#2\empty\else\expandafter\zap@plus\fi
+  #2}
+\def\zap@comma#1,#2{%borrowed from latex.ltx. Eats all commas in arg, including mid-space
+  #1%
+  \ifx#2\empty\else\expandafter\zap@comma\fi
+  #2}
 
 \def\geton@item #1 #2\E{% Parse space separated list
   \edef\it@m{#1}%

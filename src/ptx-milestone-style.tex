@@ -186,18 +186,25 @@
 }
 %+csty_milestone
 % Operations on the current milestone(s)
+\def\zapres@rved#1{%
+    \edef\smst@mp{\zap@space #1 \empty}%
+    \edef\smst@mp{\expandafter\zap@comma \smst@mp,\empty}
+    \edef\smst@mp{\expandafter\zap@plus \smst@mp+\empty}
+}
 \def\st@rtmilestone{%
-  % There may multiple milestones of a given type (can't sensibly have both \qt+s |Jesus\* and 
-  % \qt+s |Pilate\* active at the same time (except quote in quote), but in some cases it might make sense to do something similar.)
+  % There may multiple milestones of a given type (can't sensibly have both \qt-s |Jesus\* and 
+  % \qt-s |Pilate\* active at the same time (except quote in quote), but in some cases it might make sense to do something similar.)
   \get@ttribute{\attrid}\ifx\attr@b\relax %if sid is set, sid/eid must match, and may contain letters,numbers,underscore.
-    \xdef\thisattrmil@stone{\thismil@stone;\thismil@stoneVal}%
-    \mcpush{\ss@Mstn+\thisattrmil@stone}%
-    \trace{m}{Milestone without ID stacked}%
+    \x@\zapres@rved\x@{\thismil@stoneVal}%
+    \xdef\thisattrmil@stone{\thismil@stone;\smst@mp}%
+    \def\smst@mp{without ID}%
   \else
-    \xdef\thisattrmil@stone{\thismil@stone;\thismil@stoneVal;\attr@b}%
-    \mcpush{\ss@Mstn+\thisattrmil@stone}%
-    \trace{m}{Milestone with \attrid =\attr@b\space stacked}%
+    \x@\zapres@rved\x@{\thismil@stoneVal;\attr@b}%
+    \xdef\thisattrmil@stone{\thismil@stone;\smst@mp}%
+    \def\smst@mp{with \attrid =\attr@b\space}%
   \fi
+  \mcpush{\ss@Mstn+\thisattrmil@stone}%
+  \trace{m}{Milestone \smst@mp\space stacked, \mcstack}%
   \let\tmp\thisattrmil@stone
   \csname d@code-m\endcsname
   \global\let\thisattrmil@stone\tmp

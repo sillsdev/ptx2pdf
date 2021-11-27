@@ -1,5 +1,4 @@
 .SUFFIXES: .dvi .pdf
-all: test.pdf diglot.pdf
 
 DIR:=$(shell dirname `find ../../..  -name paratext2.tex`)
 .tex.pdf:
@@ -10,6 +9,7 @@ DIR:=$(shell dirname `find ../../..  -name paratext2.tex`)
 
 test.pdf: test.tex test.usfm test.sty $(DIR)/*.tex 
 diglot.pdf: diglot.tex diglot.usfm diglot.sty $(DIR)/*.tex 
+all: test.pdf diglot.pdf
 
 bisect:
 	mkdir ../bisect || rm -f ../bisect/*
