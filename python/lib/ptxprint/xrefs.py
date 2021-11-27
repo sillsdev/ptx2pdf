@@ -226,8 +226,9 @@ def generateStrongsIndex(bkid, cols, outfile, localfile, onlylocal, ptsettings, 
             for w in rend.split("||"):
                 s = re.sub(r"\(.*?\)", "", w).strip()
                 revwds.setdefault(s.lower(), set()).add(sref)
+    title = view.getvar("strongs_title") or "Strongs"
     with open(outfile, "w", encoding="utf-8") as outf:
-        outf.write("\\id {} Strongs based terms index\n\\NoXrefNotes\n\\strong-s\\*\n".format(bkid))
+        outf.write("\\id {0} Strongs based terms index\n\\h {1}\n\\NoXrefNotes\n\\strong-s\\*\n\\mt1 {1}\n".format(bkid, title))
         outf.write("\\onebody\n" if cols == 1 else "\\twobody\n")
         for a in ('Hebrew', 'Greek'):
             hdr = ("\n\\mt2 {}\n\\p\n".format(view.getvar("strongs_{}".format(a.lower())) or a))
