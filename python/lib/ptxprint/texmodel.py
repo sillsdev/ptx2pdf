@@ -323,11 +323,11 @@ ModelMap = {
     "notes/horiznotespacemin":  ("s_notespacingmin", lambda w,v: f2s(float(v)) if v is not None else "7"),
     "notes/horiznotespacemax":  ("s_notespacingmax", lambda w,v: f2s(float(v)) if v is not None else "27"),
 
-    "document/fontregular":              ("bl_fontR", lambda w,v,s: v.asTeXFont(s.inArchive) if v else ""),
-    "document/fontbold":                 ("bl_fontB", lambda w,v,s: v.asTeXFont(s.inArchive) if v else ""),
-    "document/fontitalic":               ("bl_fontI", lambda w,v,s: v.asTeXFont(s.inArchive) if v else ""),
-    "document/fontbolditalic":           ("bl_fontBI", lambda w,v,s: v.asTeXFont(s.inArchive) if v else ""),
-    "document/fontextraregular":         ("bl_fontExtraR", lambda w,v,s: v.asTeXFont(s.inArchive) if v else ""),
+    "document/fontregular":     ("bl_fontR", lambda w,v,s: v.asTeXFont(s.inArchive) if v else ""),
+    "document/fontbold":        ("bl_fontB", lambda w,v,s: v.asTeXFont(s.inArchive) if v else ""),
+    "document/fontitalic":      ("bl_fontI", lambda w,v,s: v.asTeXFont(s.inArchive) if v else ""),
+    "document/fontbolditalic":  ("bl_fontBI", lambda w,v,s: v.asTeXFont(s.inArchive) if v else ""),
+    "document/fontextraregular":("bl_fontExtraR", lambda w,v,s: v.asTeXFont(s.inArchive) if v else ""),
     "snippets/fancyintro":      ("c_prettyIntroOutline", None),
     "snippets/pdfoutput":       ("fcb_outputFormat", None),
     "snippets/diglot":          ("c_diglot", lambda w,v: True if v else False),
@@ -345,6 +345,21 @@ ModelMap = {
     "thumbtabs/groups":         ("t_thumbgroups", None),
 
     "scripts/mymr/syllables":   ("c_scrmymrSyllable", None),
+
+    "strongsndx/showhebrew":    ("c_strongsHeb", None),
+    "strongsndx/showgreek":     ("c_strongsGrk", None),
+    "strongsndx/include":       ("r_strongs", None), # local / all
+    "strongsndx/includenames":  ("c_strongsInclNames", None),
+    "strongsndx/sortndxby":     ("r_sortkey", None), # stongs / renderings
+    "strongsndx/number":        ("c_strongsNumber", None),
+    "strongsndx/sourcelang":    ("c_strongsSrcLg", None),
+    "strongsndx/transliterate": ("c_strongsTranslit", None),
+    "strongsndx/renderings":    ("c_strongsRenderings", None),
+    "strongsndx/fallback":      ("c_strongsFallback", None),
+    "strongsndx/keyvrsrefs":    ("c_strongsKeyVref", None),
+    "strongsndx/allvrsrefs":    ("c_strongsAllVrefs", None),
+    "strongsndx/ndxbookid":     ("fcb_strongsNdxBookId", None),
+    "strongsndx/twocols":       ("c_strongs2cols", None),
 }
 
 Borders = {'c_inclPageBorder':      ('pageborder', 'fancy/pageborderpdf', 'A5 page border.pdf'),

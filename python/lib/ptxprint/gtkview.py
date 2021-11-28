@@ -501,7 +501,7 @@ class GtkViewModel(ViewModel):
                     "textDirection", "glossaryMarkupStyle", "fontFaces", "featsLangs", "leaderStyle",
                     "picaccept", "pubusage", "pubaccept", "chklstFilter|0.75", "gridUnits", "gridOffset",
                     "fnHorizPosn", "xrHorizPosn", "filterXrefs", "colXRside", "outputFormat", "stytcVpos", 
-                    "strongsId"):
+                    "strongsNdxBookId"):
             self.addCR("fcb_"+fcb, 0)
         self.cb_savedConfig = self.builder.get_object("ecb_savedConfig")
         self.ecb_diglotSecConfig = self.builder.get_object("ecb_diglotSecConfig")
@@ -3491,7 +3491,7 @@ class GtkViewModel(ViewModel):
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
             cols = 2 if self.get("c_strongs2cols") else 1
-            bkid = self.get("fcb_strongsId") or "XXA"
+            bkid = self.get("fcb_strongsNdxBookId") or "XXA"
             self.generateStrongs(bkid, cols)
         if sys.platform == "win32":
             dialog.set_keep_above(False)
