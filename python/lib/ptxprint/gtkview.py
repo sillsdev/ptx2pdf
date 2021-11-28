@@ -596,6 +596,11 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("fcb_diglotSecProject").set_wrap_width(wide)
         self.getInitValues()
 
+            # .mainnb {background-color: #d3d3d3;}
+            # .mainnb panel {background-color: #d3d3d3;}
+            # .mainnb panel:active {border: 1px solid green;}
+            # .mainnb label:active{background-color: darker(powderblue);}
+
     def _setup_css(self):
         css = """
             .printbutton:active { background-color: chartreuse; background-image: None }
@@ -603,9 +608,7 @@ class GtkViewModel(ViewModel):
             .stylinks {font-weight: bold; text-decoration: None; padding: 1px 1px}
             .stybutton {font-size: 12px; padding: 4px 6px}
             progress, trough {min-height: 24px}
-            .mainnb {background-color: #d3d3d3;}
             .mainnb tab {min-height: 0pt; margin: 0pt; padding-bottom: 6pt}
-            .mainnb tab:active{background-color: darker(powderblue);}
             .viewernb {background-color: #d3d3d3}
             .viewernb tab {min-height: 0pt; margin: 0pt; padding-bottom: 3pt}
             .smradio {font-size: 11px; padding: 1px 1px}

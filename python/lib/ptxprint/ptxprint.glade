@@ -4421,7 +4421,7 @@ information, position and other parameters.</property>
           <packing>
             <property name="expand">False</property>
             <property name="fill">False</property>
-            <property name="position">0</property>
+            <property name="position">1</property>
           </packing>
         </child>
         <child>
@@ -4431,7 +4431,7 @@ information, position and other parameters.</property>
             <property name="label-xalign">0</property>
             <property name="shadow-type">none</property>
             <child>
-              <!-- n-columns=2 n-rows=14 -->
+              <!-- n-columns=2 n-rows=15 -->
               <object class="GtkGrid">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
@@ -4445,29 +4445,16 @@ information, position and other parameters.</property>
                   <object class="GtkLabel">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
-                    <property name="halign">start</property>
-                    <property name="label" translatable="yes">Book Identifier:</property>
-                  </object>
-                  <packing>
-                    <property name="left-attach">0</property>
-                    <property name="top-attach">1</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel">
-                    <property name="visible">True</property>
-                    <property name="can-focus">False</property>
                     <property name="margin-start">6</property>
                     <property name="margin-end">6</property>
                     <property name="margin-top">6</property>
                     <property name="margin-bottom">6</property>
-                    <property name="label" translatable="yes">After selecting the required options here, click OK
-to create the XXA (...XXG) book, and then append 
-this book to the list of books to be printed.</property>
+                    <property name="label" translatable="yes">Click OK to create the Strongs Index in the temporary book (XXA...XXG) 
+and then append the selected book to the list of books to be printed.</property>
                   </object>
                   <packing>
                     <property name="left-attach">0</property>
-                    <property name="top-attach">13</property>
+                    <property name="top-attach">14</property>
                     <property name="width">2</property>
                   </packing>
                 </child>
@@ -4479,12 +4466,9 @@ this book to the list of books to be printed.</property>
                     <property name="margin-start">6</property>
                     <property name="margin-end">6</property>
                     <property name="margin-top">6</property>
-                    <property name="margin-bottom">12</property>
-                    <property name="label" translatable="yes">For Strongs Cross References to be most useful,
-it is recommended to include an Index at the
-end of the publication. The index created here
-will be stored in one of Paratext's temporary 
-books (XXA...XXG) for additional materials.</property>
+                    <property name="margin-bottom">10</property>
+                    <property name="label" translatable="yes">For Strongs Cross References to be most useful to readers, it is highly
+recommended to include an Index at the end of the publication.</property>
                   </object>
                   <packing>
                     <property name="left-attach">0</property>
@@ -4493,22 +4477,27 @@ books (XXA...XXG) for additional materials.</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkComboBox" id="fcb_strongsId">
-                    <property name="width-request">80</property>
+                  <object class="GtkLabel">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
-                    <property name="can-default">True</property>
-                    <property name="tooltip-text" translatable="yes">Select which temporary book should
-be used to contain the generated
-Strongs Cross Reference Index.</property>
+                    <property name="halign">start</property>
+                    <property name="label" translatable="yes">Entries to Include:</property>
+                  </object>
+                  <packing>
+                    <property name="left-attach">0</property>
+                    <property name="top-attach">4</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkCheckButton" id="c_strongsHeb">
+                    <property name="label" translatable="yes">Hebrew Words (from the OT)</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">False</property>
                     <property name="halign">start</property>
                     <property name="valign">center</property>
-                    <property name="model">ls_strongsId</property>
-                    <property name="wrap-width">1</property>
-                    <property name="active">0</property>
-                    <property name="entry-text-column">0</property>
-                    <property name="id-column">1</property>
-                    <property name="active-id">0</property>
+                    <property name="active">True</property>
+                    <property name="draw-indicator">True</property>
                   </object>
                   <packing>
                     <property name="left-attach">1</property>
@@ -4516,8 +4505,8 @@ Strongs Cross Reference Index.</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkCheckButton" id="c_strongs2cols">
-                    <property name="label" translatable="yes">Two Column Layout</property>
+                  <object class="GtkCheckButton" id="c_strongsGrk">
+                    <property name="label" translatable="yes">Greek Words (from the NT)</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="receives-default">False</property>
@@ -4532,81 +4521,26 @@ Strongs Cross Reference Index.</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkCheckButton" id="c_strongsFallback">
-                    <property name="label" translatable="yes">Use English Definition if no 
-Renderings in Biblical Terms</property>
-                    <property name="visible">True</property>
-                    <property name="sensitive">False</property>
-                    <property name="can-focus">True</property>
-                    <property name="receives-default">False</property>
-                    <property name="halign">start</property>
-                    <property name="valign">center</property>
-                    <property name="margin-start">20</property>
-                    <property name="active">True</property>
-                    <property name="draw-indicator">True</property>
-                  </object>
-                  <packing>
-                    <property name="left-attach">1</property>
-                    <property name="top-attach">9</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel">
-                    <property name="visible">True</property>
-                    <property name="can-focus">False</property>
-                    <property name="halign">start</property>
-                    <property name="label" translatable="yes">Entries to Include:</property>
-                  </object>
-                  <packing>
-                    <property name="left-attach">0</property>
-                    <property name="top-attach">7</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkCheckButton" id="c_strongsHeb">
-                    <property name="label" translatable="yes">Hebrew Words (from the OT)</property>
-                    <property name="visible">True</property>
-                    <property name="can-focus">True</property>
-                    <property name="receives-default">False</property>
-                    <property name="valign">center</property>
-                    <property name="active">True</property>
-                    <property name="draw-indicator">True</property>
-                  </object>
-                  <packing>
-                    <property name="left-attach">1</property>
-                    <property name="top-attach">4</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkCheckButton" id="c_strongsGrk">
-                    <property name="label" translatable="yes">Greek Words (from the NT)</property>
-                    <property name="visible">True</property>
-                    <property name="can-focus">True</property>
-                    <property name="receives-default">False</property>
-                    <property name="valign">center</property>
-                    <property name="active">True</property>
-                    <property name="draw-indicator">True</property>
-                  </object>
-                  <packing>
-                    <property name="left-attach">1</property>
-                    <property name="top-attach">5</property>
-                  </packing>
-                </child>
-                <child>
                   <object class="GtkRadioButton" id="r_strongs_local">
-                    <property name="label" translatable="yes">Only Words Which Have Local Renderings</property>
+                    <property name="label" translatable="yes">Only Words With Localized Term Renderings</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="receives-default">False</property>
+                    <property name="tooltip-text" translatable="yes">When generating the Index, PTXprint examines
+the project's Biblical Terms renderings list. If this
+option is selected, then only entries that have one
+or more term renderings will be included in the
+Strongs Cross Reference Index being generated.</property>
                     <property name="halign">start</property>
                     <property name="valign">center</property>
+                    <property name="margin-end">40</property>
                     <property name="active">True</property>
                     <property name="draw-indicator">True</property>
                     <property name="group">r_strongs_all</property>
                   </object>
                   <packing>
                     <property name="left-attach">1</property>
-                    <property name="top-attach">7</property>
+                    <property name="top-attach">4</property>
                   </packing>
                 </child>
                 <child>
@@ -4615,6 +4549,11 @@ Renderings in Biblical Terms</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="receives-default">False</property>
+                    <property name="tooltip-text" translatable="yes">If this option is selected, all entries will be included
+in the Strongs Cross Reference Index being generated.
+Given that not all entries will have term renderings
+in the project's Biblical Terms list, you can (optionally)
+include the English definition if desired (see next option). </property>
                     <property name="halign">start</property>
                     <property name="valign">center</property>
                     <property name="active">True</property>
@@ -4623,7 +4562,7 @@ Renderings in Biblical Terms</property>
                   </object>
                   <packing>
                     <property name="left-attach">1</property>
-                    <property name="top-attach">8</property>
+                    <property name="top-attach">5</property>
                   </packing>
                 </child>
                 <child>
@@ -4635,7 +4574,7 @@ Renderings in Biblical Terms</property>
                   </object>
                   <packing>
                     <property name="left-attach">0</property>
-                    <property name="top-attach">4</property>
+                    <property name="top-attach">1</property>
                   </packing>
                 </child>
                 <child>
@@ -4668,22 +4607,21 @@ Renderings in Biblical Terms</property>
                   <object class="GtkSeparator">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
-                    <property name="margin-top">6</property>
-                    <property name="margin-bottom">6</property>
+                    <property name="margin-top">8</property>
                   </object>
                   <packing>
                     <property name="left-attach">0</property>
-                    <property name="top-attach">10</property>
+                    <property name="top-attach">9</property>
                     <property name="width">2</property>
                   </packing>
                 </child>
                 <child>
-                  <!-- n-columns=4 n-rows=2 -->
+                  <!-- n-columns=7 n-rows=3 -->
                   <object class="GtkGrid">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <child>
-                      <object class="GtkCheckButton" id="c_strongsKeyVerse">
+                      <object class="GtkCheckButton" id="c_strongsKeyVref">
                         <property name="label" translatable="yes">Key Verse
 Reference</property>
                         <property name="visible">True</property>
@@ -4695,24 +4633,26 @@ Reference</property>
                         <property name="draw-indicator">True</property>
                       </object>
                       <packing>
-                        <property name="left-attach">3</property>
+                        <property name="left-attach">6</property>
                         <property name="top-attach">0</property>
                       </packing>
                     </child>
                     <child>
                       <object class="GtkCheckButton" id="c_strongsRenderings">
-                        <property name="label" translatable="yes">Target Language
+                        <property name="label" translatable="yes">Localized Term
 Rendering(s)</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="receives-default">False</property>
+                        <property name="tooltip-text" translatable="yes">Show the term renderings from 
+the project's Biblical Terms list.</property>
                         <property name="halign">start</property>
                         <property name="valign">center</property>
                         <property name="active">True</property>
                         <property name="draw-indicator">True</property>
                       </object>
                       <packing>
-                        <property name="left-attach">2</property>
+                        <property name="left-attach">4</property>
                         <property name="top-attach">0</property>
                       </packing>
                     </child>
@@ -4729,7 +4669,7 @@ Greek Word</property>
                         <property name="draw-indicator">True</property>
                       </object>
                       <packing>
-                        <property name="left-attach">1</property>
+                        <property name="left-attach">2</property>
                         <property name="top-attach">0</property>
                       </packing>
                     </child>
@@ -4738,7 +4678,6 @@ Greek Word</property>
                         <property name="label" translatable="yes">Strongs
 Number</property>
                         <property name="visible">True</property>
-                        <property name="sensitive">False</property>
                         <property name="can-focus">True</property>
                         <property name="receives-default">False</property>
                         <property name="halign">start</property>
@@ -4795,8 +4734,8 @@ Number</property>
                         </child>
                       </object>
                       <packing>
-                        <property name="left-attach">1</property>
-                        <property name="top-attach">1</property>
+                        <property name="left-attach">2</property>
+                        <property name="top-attach">2</property>
                       </packing>
                     </child>
                     <child>
@@ -4813,9 +4752,104 @@ Number</property>
                         <property name="uri">Click to view the Styles tab</property>
                       </object>
                       <packing>
-                        <property name="left-attach">3</property>
+                        <property name="left-attach">6</property>
+                        <property name="top-attach">2</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkCheckButton" id="c_strongsTranslit">
+                        <property name="label" translatable="yes">Transliterate
+(Latin Script)</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">False</property>
+                        <property name="valign">center</property>
+                        <property name="margin-start">20</property>
+                        <property name="draw-indicator">True</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">2</property>
                         <property name="top-attach">1</property>
                       </packing>
+                    </child>
+                    <child>
+                      <object class="GtkCheckButton" id="c_strongsAllVrefs">
+                        <property name="label" translatable="yes">Show All
+References</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">False</property>
+                        <property name="valign">center</property>
+                        <property name="margin-start">20</property>
+                        <property name="draw-indicator">True</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">6</property>
+                        <property name="top-attach">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkCheckButton" id="c_strongsFallback">
+                        <property name="label" translatable="yes">Use Definition If No 
+Renderings Located</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">False</property>
+                        <property name="tooltip-text" translatable="yes">If a particular Biblical Term doesn't have any term
+renderings in the project's Biblical Terms list, the
+English definition can be used instead.</property>
+                        <property name="halign">start</property>
+                        <property name="valign">center</property>
+                        <property name="margin-start">20</property>
+                        <property name="active">True</property>
+                        <property name="draw-indicator">True</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">4</property>
+                        <property name="top-attach">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkSeparator">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="margin-start">6</property>
+                        <property name="margin-end">6</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">5</property>
+                        <property name="top-attach">0</property>
+                        <property name="height">3</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkSeparator">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="margin-start">6</property>
+                        <property name="margin-end">6</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">1</property>
+                        <property name="top-attach">0</property>
+                        <property name="height">3</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkSeparator">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="margin-start">6</property>
+                        <property name="margin-end">6</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">3</property>
+                        <property name="top-attach">0</property>
+                        <property name="height">3</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <placeholder/>
                     </child>
                     <child>
                       <placeholder/>
@@ -4826,7 +4860,7 @@ Number</property>
                   </object>
                   <packing>
                     <property name="left-attach">0</property>
-                    <property name="top-attach">12</property>
+                    <property name="top-attach">11</property>
                     <property name="width">2</property>
                   </packing>
                 </child>
@@ -4840,6 +4874,7 @@ Number</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="halign">start</property>
+                        <property name="valign">center</property>
                         <property name="label" translatable="yes">Components Each Index Entry Should Include:</property>
                       </object>
                       <packing>
@@ -4857,7 +4892,7 @@ Number</property>
                         <property name="receives-default">True</property>
                         <property name="tooltip-text" translatable="yes">Click to edit the Credit Overlay properties on the Styles tab.</property>
                         <property name="halign">center</property>
-                        <property name="valign">start</property>
+                        <property name="valign">center</property>
                         <property name="relief">none</property>
                         <property name="uri">Click to view the Styles tab</property>
                       </object>
@@ -4870,12 +4905,136 @@ Number</property>
                   </object>
                   <packing>
                     <property name="left-attach">0</property>
-                    <property name="top-attach">11</property>
+                    <property name="top-attach">10</property>
                     <property name="width">2</property>
                   </packing>
                 </child>
                 <child>
-                  <placeholder/>
+                  <object class="GtkRadioButton" id="r_sortkey_strongs">
+                    <property name="label" translatable="yes">Strongs Numbers</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">False</property>
+                    <property name="tooltip-text" translatable="yes">By default, the index is sorted by the Strongs number.</property>
+                    <property name="halign">start</property>
+                    <property name="draw-indicator">True</property>
+                    <property name="group">r_sortkey_renderings</property>
+                  </object>
+                  <packing>
+                    <property name="left-attach">1</property>
+                    <property name="top-attach">7</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkRadioButton" id="r_sortkey_renderings">
+                    <property name="label" translatable="yes">Localized Term Rendering(s)</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">False</property>
+                    <property name="tooltip-text" translatable="yes">Select this option if you prefer to sort the index 
+alphabetically by the term renderings rather than
+by the Strongs numbers.</property>
+                    <property name="halign">start</property>
+                    <property name="draw-indicator">True</property>
+                    <property name="group">r_sortkey_strongs</property>
+                  </object>
+                  <packing>
+                    <property name="left-attach">1</property>
+                    <property name="top-attach">8</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="halign">start</property>
+                    <property name="label" translatable="yes">Order Entries By:</property>
+                  </object>
+                  <packing>
+                    <property name="left-attach">0</property>
+                    <property name="top-attach">7</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkBox">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="halign">center</property>
+                    <property name="spacing">6</property>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="tooltip-text" translatable="yes">Select the temporary book to be used for the 
+generated Strongs Cross Reference Index.</property>
+                        <property name="halign">start</property>
+                        <property name="label" translatable="yes">Create Index in Book:</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkComboBox" id="fcb_strongsId">
+                        <property name="width-request">80</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="can-default">True</property>
+                        <property name="tooltip-text" translatable="yes">Select the temporary book to be used for the 
+generated Strongs Cross Reference Index.</property>
+                        <property name="halign">start</property>
+                        <property name="valign">center</property>
+                        <property name="margin-end">40</property>
+                        <property name="model">ls_strongsId</property>
+                        <property name="wrap-width">1</property>
+                        <property name="active">0</property>
+                        <property name="entry-text-column">0</property>
+                        <property name="active-id">0</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkCheckButton" id="c_strongs2cols">
+                        <property name="label" translatable="yes">Two Column Layout</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">False</property>
+                        <property name="halign">end</property>
+                        <property name="valign">center</property>
+                        <property name="active">True</property>
+                        <property name="draw-indicator">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">2</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="left-attach">0</property>
+                    <property name="top-attach">13</property>
+                    <property name="width">2</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkSeparator">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="margin-top">3</property>
+                    <property name="margin-bottom">8</property>
+                  </object>
+                  <packing>
+                    <property name="left-attach">0</property>
+                    <property name="top-attach">12</property>
+                    <property name="width">2</property>
+                  </packing>
                 </child>
                 <child>
                   <placeholder/>
@@ -4895,7 +5054,7 @@ Number</property>
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
-            <property name="position">1</property>
+            <property name="position">0</property>
           </packing>
         </child>
       </object>
