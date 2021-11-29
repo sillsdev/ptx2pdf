@@ -360,7 +360,7 @@
  \endlastp@rstyle{#1}%
  \ifn@npublishable\else
   \gdef\m@rker{#1}% remember the new style name
-  \mcpushunderms{P+#1}%
+  \mcpushunderms{P}{#1}%
   \trace{s}{Pushed P+#1,  stack now: \mcstack}%
   \op@ninghooks{before}{\m@rker}%
 %-cpar_parstyle_after
@@ -370,7 +370,7 @@
   %
 %+cpar_parstyle_transition
   \let\styst@k=\empty
-  \def\d@##1+##2\E{\edef\tmp{##2}\csname d@code-##1\endcsname\let\t@pstyle\tmp}\mctop
+  \def\d@##1+##2+##3\E{\d@code{##1}{##2}\let\t@pstyle\tmp}\mctop
   \s@tstyst@k{\t@pstyle}%
   \x@\t@stintro\m@rker\relax
   %If the marker is an (ultra-rare) type that occurs in introductions and normal text, then

@@ -117,7 +117,7 @@
   \fi
    \let\milestoneOp\empty
    %\xdef\thisch@rstyle{\mcpeek}%
-   \def\d@##1+##2\E{\def\tmp{##2}\csname d@code-##1\endcsname\edef\thisch@rstyle{\tmp}}\mctop
+   \def\d@##1+##2+##3\E{\d@code{##1}{##2}\edef\thisch@rstyle{\tmp}}\mctop
    \trace{m}{Milestone style is \thisch@rstyle}%
    \s@tfont{\thisch@rstyle}% set up font attributes
 }
@@ -128,7 +128,7 @@
    \csname init@ttribs\endcsname
 }
 
-\def\dr@pmilest@ne#1+#2\E{% This itterates the stack to kills the TOP matching milestone 
+\def\dr@pmilest@ne#1+#2+#3\E{% This itterates the stack to kills the TOP matching milestone 
   \edef\MSt@mp{#1}%
   \ifx\MSt@mp\empty
     \let\d@=\cstackrelax %permanent change
@@ -176,7 +176,8 @@
   \ifx\@ut\empty
     \xdef\mcstack{\mcstack@mpty}%
   \else
-    \xdef\mcstack{\@ut,\mcstack@mpty}%
+    \rebuild@mcstack{\@ut,}%
+    %\xdef\mcstack{\@ut,\mcstack@mpty}%
   \fi
   \trace{m}{Stack now: \mcstack}%
   \iftemp
@@ -203,7 +204,7 @@
     \xdef\thisattrmil@stone{\thismil@stone;\smst@mp}%
     \def\smst@mp{with \attrid =\attr@b\space}%
   \fi
-  \mcpush{\ss@Mstn+\thisattrmil@stone}%
+  \mcpush{\ss@Mstn}{\thisattrmil@stone}%
   \trace{m}{Milestone \smst@mp\space stacked, \mcstack}%
   \let\tmp\thisattrmil@stone
   \csname d@code-m\endcsname

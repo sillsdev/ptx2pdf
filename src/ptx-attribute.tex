@@ -155,7 +155,7 @@
 \SetSpeciallAttribs{link-href}{\noexpand\pdfURLorGOTO\attr@b:\noexpand\end}{\special{pdf:eann}}
 %%%%%%%%%
 %
-\def\def@endm@rker#1+#2\E{\edef\end@marker{\if #1\ss@ChrP +\fi#2}}
+\def\def@endm@rker#1+#2+#3\E{\edef\end@marker{\if #1\ss@ChrP +\fi#2}}
 % make something that swallows everything up to a given end-marker
 \def\s@tend@marker#1{\let\end@marker\relax\let\d@\def@endm@rker\mctop\ifx\end@marker\relax\edef\end@marker{#1}\fi}
 \def\setgr@bname#1{%

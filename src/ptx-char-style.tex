@@ -137,13 +137,13 @@
 }
 \def\endch@rstylepls*{%Consume the star..
   \trace{s}{endch@rstylepls \newch@rstyle}%
-  \def\d@##1+##2\E{\edef\tmp{\detokenize{##2}}\edef\tmq{\newch@rstyle}\tempfalse\ifx\tmp\tmq\else\temptrue\MSG{\tmp !=\tmq}\fi}\mctopnoms
+  \def\d@##1+##2+##3\E{\edef\tmp{\detokenize{##2}}\edef\tmq{\newch@rstyle}\tempfalse\ifx\tmp\tmq\else\temptrue\MSG{\tmp !=\tmq}\fi}\mctopnoms
   \iftemp\MSG{Unexpected closing marker for plus +\newch@rstyle * on stack \mcstack. Ignoring}\else\endch@rstyle*\fi
 }
 %-cchar_endstyle
 %+cchar_startcharstyle
 \def\startch@rstyle{\trace{s}{startch@rstyle \newch@rstyle (\stylet@pe)}%
-  \mcpush{\ifx\stylet@pe\empty C\else\stylet@pe\fi+\newch@rstyle}%
+  \mcpush{\ifx\stylet@pe\empty C\else\stylet@pe\fi}{\newch@rstyle}%
   \let\styst@k=\empty
   \s@tstyst@k{\newch@rstyle}%
   \t@stpublishability{\newch@rstyle}\ifn@npublishable                   %(1)
@@ -175,7 +175,7 @@
 \lccode`\|=`\\ % for printing backslash in error message
 \lowercase{
  \def\endch@rstyle*{\TRACE{endch@rstyle}% consume the * that marked the SFM as ending a style
-   \def\d@##1+##2\E{\xdef\oldch@rstyle{##2}}\mctopnoms
+   \def\d@##1+##2+##3\E{\xdef\oldch@rstyle{##2}}\mctopnoms
    \trace{s}{endch@rstyle \oldch@rstyle\space from \newch@rstyle}%
    \ifx\@ttributes\empty\else
      %\message{\@ttributes (\csname @ttriblist-\oldch@rstyle\endcsname)}%
@@ -226,7 +226,7 @@
   \trace{s}{setwh@tvrstyle: \mcstack}%
    \def\thiswh@tvrstyle{p}%Default value just in case
    \ifx\mcstack\mcstack@mpty\else
-     \def\d@##1+##2\E{\edef\tmp{##2}\csname d@code-##1\endcsname\let\thiswh@tvrstyle\tmp}\mctop
+     \def\d@##1+##2+##3\E{\d@code{##1}{##2}\let\thiswh@tvrstyle\tmp}\mctop
    \fi
    \let\styst@k=\empty
    \s@tstyst@k{\thiswh@tvrstyle}%
@@ -277,7 +277,7 @@
  \edef\cmpf@ntstyle{#1}%
  \let\d@@=\d@
  \trace{F}{\cmpf@ntstyle (\reqf@ntstyle): Looking for fontsize from style stack: \mcstack}%
- \def\d@##1+##2\E{\edef\tmp{##2}\ifx\cmpf@ntstyle\tmp \getmcfonts@ze\else
+ \def\d@##1+##2+##3\E{\edef\tmp{##2}\ifx\cmpf@ntstyle\tmp \getmcfonts@ze\else
 			\csname d@code-##1\endcsname
                         \getp@ram{fontsize}{#1}\ifx\p@ram\relax\xdef\c@rrfontsize{12}%
                         \else\global\let\c@rrfontsize=\p@ram\fi\fi}%
