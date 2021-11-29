@@ -32,8 +32,10 @@ class ParatextSettings:
         path = os.path.join(self.basedir, self.prjid, "BookNames.xml")
         if os.path.exists(path):
             self.read_bookNames(path)
+            self.hasLocalBookNames = True
         else:
             self.default_bookNames()
+            self.hasLocalBookNames = False
         self.collation = None
         return self
 

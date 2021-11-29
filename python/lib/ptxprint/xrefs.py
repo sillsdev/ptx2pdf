@@ -31,6 +31,13 @@ class Xrefs:
         self.addsep = RefSeparators(books="; ", chaps=";\u200A", verses=",\u200A", bkc="\u2000", mark=self.usfmmark, bksp="\u00A0")
         self.dotsep = RefSeparators(cv=".", onechap=True)
         self.template = "\n\\AddTrigger {book}{dotref}\n\\x - \\xo {colnobook}\u00A0\\xt {refs}\\x*\n\\EndTrigger\n"
+        if not self.parent.ptsettings.hasLocalBookNames:
+            import pdb; pdb.set_trace()
+            usfms = self.parent.printer.get_usfms()
+            usfms.makeBookNames()
+            self.parent.ptsettings.bkstrs = usfms.booknames.bookStrs
+            self.parent.ptsettings.bookNames = usfms.booknames.bookNames
+            self.parent.hasLocalBookNames = True
         logger.debug(f"Source: {source}")
         if source == "strongs":
             self.readxml(os.path.join(os.path.dirname(__file__), "strongs.xml"), localfile)

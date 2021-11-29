@@ -500,7 +500,8 @@ class GtkViewModel(ViewModel):
         for fcb in ("project", "uiLevel", "interfaceLang", "fontdigits", "script", "diglotPicListSources",
                     "textDirection", "glossaryMarkupStyle", "fontFaces", "featsLangs", "leaderStyle",
                     "picaccept", "pubusage", "pubaccept", "chklstFilter|0.75", "gridUnits", "gridOffset",
-                    "fnHorizPosn", "xrHorizPosn", "filterXrefs", "colXRside", "outputFormat", "stytcVpos"):
+                    "fnHorizPosn", "xrHorizPosn", "filterXrefs", "colXRside", "outputFormat", "stytcVpos", 
+                    "strongsNdxBookId"):
             self.addCR("fcb_"+fcb, 0)
         self.cb_savedConfig = self.builder.get_object("ecb_savedConfig")
         self.ecb_diglotSecConfig = self.builder.get_object("ecb_diglotSecConfig")
@@ -595,6 +596,11 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("fcb_diglotSecProject").set_wrap_width(wide)
         self.getInitValues()
 
+            # .mainnb {background-color: #d3d3d3;}
+            # .mainnb panel {background-color: #d3d3d3;}
+            # .mainnb panel:active {border: 1px solid green;}
+            # .mainnb label:active{background-color: darker(powderblue);}
+
     def _setup_css(self):
         css = """
             .printbutton:active { background-color: chartreuse; background-image: None }
@@ -602,7 +608,6 @@ class GtkViewModel(ViewModel):
             .stylinks {font-weight: bold; text-decoration: None; padding: 1px 1px}
             .stybutton {font-size: 12px; padding: 4px 6px}
             progress, trough {min-height: 24px}
-            .mainnb {background-color: #d3d3d3;}
             .mainnb tab {min-height: 0pt; margin: 0pt; padding-bottom: 6pt}
             .viewernb {background-color: #d3d3d3}
             .viewernb tab {min-height: 0pt; margin: 0pt; padding-bottom: 3pt}
@@ -1132,7 +1137,9 @@ class GtkViewModel(ViewModel):
         self.updateMarginGraphics()
 
     def colorTabs(self):
-        col = "#688ACC"
+        col = "#0000CD"
+        fs = " color='"+col+"'" if self.get("c_colorfonts") else ""
+        self.builder.get_object("lb_Font").set_markup("<span{}>".format(fs)+_("Fonts")+"</span>"+"+"+_("Scripts"))
 
         pi = " color='"+col+"'" if (self.get("c_inclFrontMatter") or self.get("c_autoToC") or \
            self.get("c_frontmatter") or self.get("c_colophon") or self.get("c_inclBackMatter")) else ""
@@ -3483,8 +3490,8 @@ class GtkViewModel(ViewModel):
             dialog.set_keep_above(True)
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
-            cols = int(float(self.get("s_strongsCols")))
-            bkid = self.get("t_strongsId") or "XXA"
+            cols = 2 if self.get("c_strongs2cols") else 1
+            bkid = self.get("fcb_strongsNdxBookId") or "XXA"
             self.generateStrongs(bkid, cols)
         if sys.platform == "win32":
             dialog.set_keep_above(False)
