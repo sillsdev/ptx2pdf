@@ -131,7 +131,7 @@
 \def\dr@pmilest@ne#1+#2+#3\E{% This itterates the stack to kills the TOP matching milestone 
   \edef\MSt@mp{#1}%
   \ifx\MSt@mp\empty
-    \let\d@=\cstackrelax %permanent change
+    \let\d@=\cstackrelax %Stop processing (permanent change)
   \else
     \ifx\ss@Mstn\MSt@mp\relax %It's a milestone
       \x@\pars@msid #2;;;\E
@@ -150,9 +150,9 @@
     \ifx\d@\empty
       %Two possible actions here: clear all matching milestones or only the top one.
       %standard is vague about nesting/cancellation. Current implementation 
-      %keeps going down if there's no sid/eid to match.
+      %keeps going down if there's no sid/eid to match. 
       %\ifx\MSch@ckid\empty
-        \let\d@=\dr@pmilest@ne % Keep tracking down.
+        \let\d@=\dr@pmilest@neB % Keep tracking down, to build \@ut, but no more testing.
       %\else
         %\let\d@=\cstackrelax %Top match only.  permanent change
       %\fi
@@ -165,6 +165,18 @@
   \trace{m}{dr@pmilest@ne: \@ut}%
 }
 
+\def\dr@pmilest@neB#1+#2+#3\E{% This itterates the stack to kills the TOP matching milestone 
+  \edef\MSt@mp{#1}%
+  \ifx\MSt@mp\empty
+    \let\d@=\cstackrelax %Stop processing 
+  \else
+    \ifx\@ut\empty \xdef\@ut{#1+#2}\else
+      \xdef\@ut{\@ut,#1+#2}%
+    \fi
+  \fi
+  \trace{m}{dr@pmilest@neB: \@ut}%
+}
+
 \def\dr@pmilestone#1#2{%Kill a milestone that might be burried in the stack, and might be nested.
   \trace{m}{Dropping milestone #1 from \mcstack}% 
   \edef\MSch@cking{#1}%
@@ -173,8 +185,8 @@
   \let\@ut=\empty
   \let\d@=\dr@pmilest@ne
   \mcdown
+  \xdef\mcstack{\mcstack@mpty}%
   \ifx\@ut\empty
-    \xdef\mcstack{\mcstack@mpty}%
   \else
     \rebuild@mcstack{\@ut,}%
     %\xdef\mcstack{\@ut,\mcstack@mpty}%
