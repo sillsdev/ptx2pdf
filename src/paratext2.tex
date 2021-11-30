@@ -164,7 +164,7 @@
     \fi
   \fi%
   % @sf preserves the space factor (e.g. extra space after a period), restore it now
-  \@sf \@wrap\vm@kenote{#1}{#2}{\getp@ram{notecallerstyle}{#2}\ifx\p@ram\relax #3\else #4\fi}}
+  \@sf \@wrap\vm@kenote{#1}{#2}{\getp@ram{notecallerstyle}{#2}{#2}\ifx\p@ram\relax #3\else #4\fi}}
 %-c_makenote
 
 %+c_vmakenote
@@ -188,7 +188,7 @@
     \floatingpenalty\@MM % make sure note does not float away from caller to another page
     \lineskiplimit=-10pt\leftskip=0pt\rightskip=0pt\parskip=0pt\parfillskip=0pt plus 1fil%\lineskip=10pt
     \xspaceskip=0pt
-    \getp@ram{justification}{#2}%
+    \getp@ram{justification}{#2}{#2}%
     \ifx\p@ram\c@nter
        \leftskip=\noteRag\rightskip=\noteRag
     \else\ifx\p@ram\l@ft
@@ -196,21 +196,21 @@
     \else\ifx\p@ram\r@ght
        \leftskip=\noteRag
     \fi\fi\fi
-    \getp@ram{leftmargin}{#2}%
+    \getp@ram{leftmargin}{#2}{#2}%
     \ifx\p@ram\relax \else \advance \ifRTL\rightskip\else\leftskip\fi\p@ram \IndentUnit \fi
-    \getp@ram{rightmargin}{#2}%
+    \getp@ram{rightmargin}{#2}{#2}%
     \ifx\p@ram\relax \else \advance \ifRTL\leftskip\else\rightskip\fi\p@ram \IndentUnit \fi
     \ifx\th@sins\relax
-      \s@tbaseline{#1}%
+      \s@tbaseline{#1}{#1}%
     \else
       \ifp@ranotes
         \baselineskip=0pt
       \else
-        \s@tbaseline{#1}%
+        \s@tbaseline{#1}{#1}%
       \fi
     \fi
     \ifp@ranotes\else
-      \getp@ram{spacebefore}{#1}\trace{f}{note(#1) spacebefore: \p@ram}\ifx\p@ram\relax\else\kern\p@ram\verticalsp@ceunit\fi
+      \getp@ram{spacebefore}{#1}{#1}\trace{f}{note(#1) spacebefore: \p@ram}\ifx\p@ram\relax\else\kern\p@ram\verticalsp@ceunit\fi
       \setbox0=\hbox{\XeTeXuseglyphmetrics=0 \char32}\dimen0=\ht0
       \ifdim\dimen0<\baselineskip
         \dimen1=\baselineskip\advance\dimen1 by -\dimen0
@@ -219,7 +219,7 @@
 	\fi\fi
   \leavevmode % begin paragraph
   \ifdiglot \x@\the\csname diglot\c@rrdstat ho@ks\endcsname \fi%
-  \ifp@ranotes\else\getp@ram{firstindent}{#1}\trace{f}{note(#1) firstindent: \p@ram}%
+  \ifp@ranotes\else\getp@ram{firstindent}{#1}{#1}\trace{f}{note(#1) firstindent: \p@ram}%
     \ifx\p@ram\relax\else\kern\p@ram\IndentUnit\fi\fi
   \ifRTL\setbox2=\lastbox\beginR\box2\fi % if RTL text this paragraph needs to be RTL
   % if note omitting caller from note (i.e. all callers are *'s)
@@ -277,7 +277,7 @@
         \maken@tepara{\csname endn@te-#1\endcsname}{#1}%
       \fi
     \else 
-      \s@tbaseline{#1}%
+      \s@tbaseline{#1}{#1}%
       {%\x@\showbox\csname endn@te-#1\endcsname
       \setbox0=\vbox{\unvbox\csname endn@te-#1\endcsname}%
       %\showbox0
@@ -317,7 +317,7 @@
 
 % create a "strut" (see TeXbook) of suitable size for the note style
 \def\footstrut{\s@tfont{\newn@testyle}%
-  \s@tbaseline{\newn@testyle}%
+  \s@tbaseline{\newn@testyle}{\newn@testyle}%
   \setbox\f@@tstrut=\hbox to 0pt{\XeTeXuseglyphmetrics=0 \char32 \hss}%
   \dimen0=\ht\f@@tstrut \dimen2=\dp\f@@tstrut
   \dimen4=\dimen0 \advance\dimen4 by \dimen2
@@ -333,7 +333,7 @@
 % called at end of note
 \def\@foot{\ifp@ranotes \parfillskip=0pt \fi%\else\strut\fi
   \par
-  \ifp@ranotes\else\getp@ram{spaceafter}{\n@tetype}\trace{f}{note(\n@tetype) spaceafter: \p@ram}%
+  \ifp@ranotes\else\getp@ram{spaceafter}{\n@tetype}{\n@tetype}\trace{f}{note(\n@tetype) spaceafter: \p@ram}%
   \ifx\p@ram\relax\else\vskip\p@ram\verticalsp@ceunit\fi\fi
   \egroup\end@llpoppedstyles{N*}%
   \def\d@##1+##2\E{\if ##1N\else\MSG{Bad marker ##2\space but expected a closing note marker}\fi}\mctopnoms
@@ -344,12 +344,12 @@
 
 % set baseline appropriately for the given style (may be using much smaller font than body)
 % baselineskip = leading
-\def\s@tbaseline#1{%
+\def\s@tbaseline#1#2{%
   \trace{F}{s@tbaseline #1 \c@rrdstat}%
   \def\s@urce{no data}%
   \def\f@ntstyle{#1\c@rrdstat}%
-  \getp@ram{baseline}{#1}\ifx\p@ram\relax
-    \getp@ram{fontsize}{#1}\ifx\p@ram\relax\else
+  \getp@ram{baseline}{#1}{#2}\ifx\p@ram\relax
+    \getp@ram{fontsize}{#1}{#2}\ifx\p@ram\relax\else
       \def\s@urce{calcn:\f@ntstyle}%
       \dimen0=\p@ram\le@dingunit
       \multiply\dimen0 by \LineSpaceBase \divide\dimen0 by 12 % default .75 shift of .85ex (ex=.5 fontsize) against 14/12
@@ -511,11 +511,11 @@
   \unskip\unskip
   \setbox0=\hbox{\unhbox0 \removehboxes}% add internote space                   %(1)
   \trace{j}{maken@tepara #2 \c@rrdstat: baseline was \the\baselineskip}%
-  \s@tbaseline{#2}%
+  \s@tbaseline{#2}{#2}%
   % Enable justification according to marker.
   \trace{j}{maken@tepara #2 \c@rrdstat: baseline now \the\baselineskip}%
   \lineskiplimit=-10pt\leftskip=0pt\rightskip=0pt\parskip=0pt\parfillskip=0pt plus 1fil%\lineskip=10pt
-  \getp@ram{justification}{#2}%
+  \getp@ram{justification}{#2}{#2}%
   \ifx\p@ram\c@nter
      \leftskip=\noteRag\rightskip=\noteRag
   \else\ifx\p@ram\l@ft
@@ -585,7 +585,7 @@
   \hsize=#2%\advance\hsize-\XrefNotesMargin\advance\hsize-\XrefNotesMargin
   \leftskip=0pt\rightskip=0pt plus 0.8\hsize\unvbox\th@cl@ss
   \r@versevb@x{3}\unvbox3
-  \s@tbaseline{#3}
+  \s@tbaseline{#3}{#3}
   \loop
     \setbox0=\lastbox
     \dimen2=\ht0

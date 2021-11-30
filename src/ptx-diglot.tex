@@ -501,7 +501,7 @@
   \global\let\tri@lfirstmarks\empty
   \extr@contentfalse
   \let\after@run@a@trial=\relax
-  \s@tbaseline{p}%
+  \s@tbaseline{p}{p}%
   \trace{D}{baseline: \the\baselineskip, av:\the\availht}%
   \ifdim\availht>\baselineskip
     \trace{D}{Preparing for trial}%
@@ -1156,7 +1156,7 @@
  \setLRspecific %ensure that all the units, etc. are correct.
  \trace{D}{Leadingunit: \the\le@dingunit, stylestack:\styst@k, \mcstack}%
  \ifdim\le@dingunit>0pt %
-   \s@tbaseline{p}%
+   \s@tbaseline{p}{p}%
  \fi%
  \ifdim\baselineskip=0pt %
   \message{baseline set to 0pt EEK}%
@@ -1200,7 +1200,7 @@
 %vbox is a \mark. To rejoin boxes on a page accurately we need to preserve
 \global%the depth of the box. We therefore *assume* the box will be joined and if
 %the depth is not recoverable we add a kern to remove the orignial depth.
- \s@tbaseline{p}%
+ \s@tbaseline{p}{p}%
  \trace{D}{makevtop #1, before vtop dp=\the\dp#1, ht=\the\ht#1}%
  \TempDim=\dp#1\relax%
  \ifdim\TempDim>\baselineskip \trace{D}{Looks like this is already a vtop}%
@@ -1249,7 +1249,7 @@
  \ifvoid#1%
    \trace{D}{#1 is void}%
  \else%
-   \s@tbaseline{p}%
+   \s@tbaseline{p}{p}%
    \ifdim\ht#1=0pt
      \unvbox#1
      %\showlists

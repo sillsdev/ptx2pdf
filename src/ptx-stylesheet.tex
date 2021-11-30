@@ -1,3 +1,7 @@
+%FIXME: \<s@tstyst@k\>
+%FIXME: \<styst@kskip\>
+%FIXME: \<styst@ksfirst\>
+
 %:strip
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Part of the ptx2pdf macro package for formatting USFM text
@@ -171,39 +175,100 @@
 % The macro was once just diglot aware, allowing all parameters to have L Left/Right variant or use
 % default. (e.g when asked for paramter for v, check for vL|vR, default to v). Now it (potentially) needs to 
 % take into account: diglot, categories and milestones.
-% Rather than attempt to code \ifs for all possible 8 options, it now builds a comma-separated list of them, 
-% and finds the first match. This results in cleaner code.
+% Rather than attempt to code \ifs for all possible 8 (16? more?) options, it
+% now subcontracts s@tpossParams to build a comma-separated list of them, 
+% and then finds the first match. This results in cleaner code.
 
 \newif\ifnotracestacks \notracestacksfalse
 \def\tracestack{,}
 \def\pushtracing{\xdef\tracestack{\the\tracingmacros,\tracestack}\tracingmacros=0}
 \def\poptracing{\tracingmacros=\x@\cstackpeek\tracestack\E\xdef\tracestack{\x@\cstackpop\tracestack\E}}
-\def\s@tpossParams#1{\trace{s}{setpossParam {#1}\m@rker (\styst@kskip / \styst@kfirst / \styst@k)}%
+\def\stystacksplit#1+#2\E{\edef\t@mp{#2}\let\tmpstystackb@dy\empty\edef\tmpstyst@kfirst{#1}\ifx\t@mp\empty\else\styst@cksplit#2\E\fi\trace{mc}{splistystack: \tmpstyst@kfirst , \tmpstystackb@dy}}
+\def\styst@cksplit#1+\E{\edef\tmpstystackb@dy{#1}}
+\def\stystack@pts#1+#2\E{%Given an style stack, recurse down it, turning it into an option stack, going a maximum of count255 levels deep
+% If \AttrMilestoneMatchesUnattrtrue, then the option list should be as follows:
+%   nd+Fred|qt-s+p -> (nd+Fred|qt-s+p, nd+qt-s+p, nd+Fred|qt-s, nd+qt-s, nd)
+% 2 milestones are active, then only the inner-most will be affected by this flag, 
+% outer ones must be fully specified.
+  \trace{mc}{stystack@pts #1+#2}%
+  \ifAttrMilestoneMatchesUnattr
+    \edef\t@mp{#1}%
+    \ifx\t@mp\thisattrmil@stone % Need to match on unattributed milestone too.
+      \ifx\mini@stackB\empty\let\mini@stackB\mini@stack\fi
+      \trace{m}{Adding \thismil@stone\space to possible params}%
+      \edef\mini@stackB{\mini@stack+\thismil@stone}
+    \else
+      \edef\mini@stack{\mini@stack+#1}%
+    \fi
+  \fi
+  \edef\mini@stack{\mini@stack+#1}%
+  \edef\@ut{\mini@stack,\@ut}%
+  \ifx\mini@stackB\empty\else
+    \edef\@ut{\mini@stackB,\@ut}%
+  \fi
+  \edef\t@mp{#2}\advance\count255 by -1 \ifx\t@mp\empty\count255=0 \fi\ifnum\count255>0 \else\x@\stystack@pts#2\E\fi
+}
+
+
+\def\fullstack@xpand#1|#2\E{%Parameters: complexity|style stack
+  \trace{mc}{fullstack@xpand #1|#2}%
+  \def\exp@stystak{#2}%
+  \ifx\exp@stystak\empty\else
+    \x@\stystacksplit\exp@stystak+\E% Cut off the head entry of the stylestack
+    \ifx\styst@kfirst\empty
+      \let\styst@kfirst\tmpstyst@kfirst
+      \let\styst@ckb@dy\tmpstystackb@dy
+    \fi
+    \let\mini@stack\empty
+    \let\mini@stackB\empty
+    \ifx\tmpstystackb@dy\empty
+      \def\@ut{#2};
+    \else
+      \count255=#1  % Limit the options
+      \stystack@pts\tmpstystackb@dy+\E
+      \let\@in\@ut
+      \let\@ut\empty
+      \ifnum\count255>0
+        \edef\@in{+\tmpstystackb@dy,\@in}%  still allow full-stack definitions, even if the list is truncated
+      \fi
+      \def\d@it#1\E{\def\@also{#1}\let\d@b\d@\let\d@=\cspr@pend\x@\cstackdown\p@ssParams,\E \let\d@\d@b}%
+      \let\d@=\cs@apply\x@\cstackdown \@in,\E \let\p@ssParams\@ut
+      \trace{mc}{fullstack@xpand #1|#2 : \@ut}%
+      \x@\fullstack@xpand#1|\tmpstystackb@dy\E %Recurse
+    \fi
+  \fi
+}
+
+\def\StackComplexity{3}
+\def\this@stystak{=}
+\def\s@tpossParams#1#2{\trace{s}{setpossParam {#1}{#2}\m@rker (\styst@kskip / \styst@kfirst / \styst@k)}%
   \ifdiglot
      \edef\p@ssParams{#1\c@rrdstat,#1}%
   \else
      \edef\p@ssParams{#1}%
   \fi
-  \edef\tmp{#1}%
-  \ifx\tmp\styst@k\else\ifx\styst@k\empty\else
-    \ifx\tmp\styst@kfirst% top level?
-      \ifx\tmp\styst@kskip\else % Not matching the marker at the top of the stack?
-        %\trace{m}{checking if to add \styst@kskip: \if@ttrMilestone T\else F\fi \ifAttrMilestoneMatchesUnattr T\else F\fi "\tmp"="\thisattrmil@stone"}%
-        % We get here only with attributed milestones. Does user allow fall-back to the milestone's default style?
-        \if@ttrMilestone\ifAttrMilestoneMatchesUnattr% Yes
-          \ifx\tmp\thisattrmil@stone %And is this actually the right time/place to add it?
-            \trace{m}{Adding \styst@kskip\space to possible params}%
-            \edef\p@ssParams{\p@ssParams,\styst@kskip}%
-          \fi
-        \fi\fi
-      \fi
-    \else
-       \edef\p@ssParams{#1+\styst@kfirst,\p@ssParams}%
-    \fi
-    \ifx\styst@k\styst@kfirst\else%styst@k may be the same as styst@kfirst
-       \edef\p@ssParams{#1+\styst@k,\p@ssParams}%
-    \fi
-  \fi\fi
+  \edef\tmp{#1}% #1 is the main marker
+  \edef\this@stystak{#2}%#2 is the stystack to be used for this call (normally \styst@k, but not *ALWAYS*). The stystack supplied should always include the present marker.
+  \ifx\thiswh@tvrstyle\tmp
+    \let\styst@kfirst\empty
+  \fi
+  \ifx\tmp\this@stystak\else % Assuming there's a stack to expand...
+    \let\@ut\empty
+    \fullstack@xpand\StackComplexity|\this@stystak\E
+    \let\p@ssParams\@ut%
+  \fi
+%%%FIXME: REWRITE
+            %%\edef\p@ssParams{\p@ssParams,\styst@kskip}%
+          %\fi
+        %\fi\fi
+      %\fi
+    %\else
+       %\edef\p@ssParams{#1+\styst@kfirst,\p@ssParams}%
+    %\fi
+    %\ifx\styst@k\styst@kfirst\else%styst@k may be the same as styst@kfirst
+    %   \edef\p@ssParams{#1+\styst@k,\p@ssParams}%
+    %\fi
+  %\fi\fi
   \trace{s}{1. Checking \p@ssParams}%
   \ifx\mspr@fix\empty\else
      %If we expand our prefix list for special styling of milestone+marker, then:
@@ -246,22 +311,18 @@
   \fi
 }
 
-\def\setpp@name#1{%
-  \edef\tmppar@mtwo{#1}\ifx\styst@k\tmppar@mtwo
-   \xdef\pp@name{pPrms-\c@tprefix#1/--}%
-  \else
-   \xdef\pp@name{pPrms-\c@tprefix#1/\styst@k}%
-  \fi
+\def\setpp@name#1#2{%
+   \xdef\pp@name{pPrms-\c@tprefix\mspr@fix#1/#2}%
 }
 
-\def\getp@ram#1#2{\trace{s}{getp@ram #2:#1 (\mcstack)}\ifnotracestacks\pushtracing\fi
+\def\getp@ram#1#2#3{\trace{s}{getp@ram #2:#1 [#3](\mcstack)}\ifnotracestacks\pushtracing\fi
  \let\p@ram\relax
  \def\gp@test{#1}%
  \ifx\gp@test\empty\message{Eh? getp@ram called for #2 and empty parameter}\else 
-   \setpp@name{#2\c@rrdstat}%
+   \setpp@name{#2\c@rrdstat}{#3}%
    \x@\let\x@\g@tp@tmp\csname \pp@name\endcsname
    \ifx\g@tp@tmp\relax
-     \s@tpossParams{#2}\x@\global\x@\let\csname \pp@name\endcsname\p@ssParams
+     \s@tpossParams{#2}{#3}\x@\global\x@\let\csname \pp@name\endcsname\p@ssParams
      \ifx\p@ssParamCached\empty
        \xdef\p@ssParamCached{\pp@name}%
      \else
@@ -306,6 +367,7 @@
 % like cspr@pend, but also record unprepended item.
 \def\cs@lsolist#1\E{\trace{s}{expanding #1->\@lso#1,#1}\ifx\@ut\empty\xdef\@ut{\@lso#1,#1}\else\xdef\@ut{\@ut,\@lso#1,#1}\fi}
 \def\cscheck@xist#1\E{\ifcsname m@rkerexists-#1\endcsname\ifx\@ut\empty\xdef\@ut{#1}\else\xdef\@ut{\@ut,#1}\fi\fi}
+\def\cs@ppend#1\E{\ifx\@ut\empty\xdef\@ut{#1\@lso}\else\xdef\@ut{\@ut,\@lso#1}\fi}
 
 %-csty_getparam
 
@@ -313,37 +375,37 @@
 %Main utility function for font parameters, stacking-styles aware
 \def\getmcp@ram#1{\trace{s}{getmcp #1}\let\r@s=\relax\ifnotracestacks\pushtracing\fi
   \def\d@##1+##2+##3\E{\d@code{##1}{##2}\ifx\tmp\empty\else\if##1\ss@Sbar\global\let\r@s\relax\else\if##1\ss@Note\global\let\r@s\relax\fi\fi
-    \getp@ram{#1}{\tmp}\ifx\p@ram\relax\else\global\let\r@s\p@ram\fi\fi}%
+    \getp@ram{#1}{\tmp}{\tmp}\ifx\p@ram\relax\else\global\let\r@s\p@ram\fi\fi}%
   \mcup\global\let\p@ram\r@s\traceNum{s}{param #1 for \mcstack\space is \p@ram}\ifnotracestacks\poptracing\fi}    %(1)
 \def\getmcp@ramR#1{\trace{s}{getmcpR #1}\let\r@s\relax\ifnotracestacks\pushtracing\fi
   \def\d@##1+##2+##3\E{%
     \trace{s}{inside getmcp@ramR ##2 currently res=\r@s}%
     \d@code{##1}{##2}%
     \ifx\tmp\empty\else\if##1\ss@Sbar\global\let\r@s\relax\else\if##1\ss@Note\global\let\r@s\relax\fi\fi
-    \getp@ram{regular}{\tmp}\ifx\p@ram\relax\getp@ram{#1}{\tmp}\ifx\p@ram\relax\else\global\let\r@s\p@ram\fi
+    \getp@ram{regular}{\tmp}{\tmp}\ifx\p@ram\relax\getp@ram{#1}{\tmp}{\tmp}\ifx\p@ram\relax\else\global\let\r@s\p@ram\fi
                            \else\global\let\r@s\relax\fi\fi}%
   \mcup\global\let\p@ram\r@s\traceNum{s}{paramR #1 for \mcstack\space is \p@ram}\ifnotracestacks\poptracing\fi}
  
 \def\getFp@ram#1#2{\ifnotracestacks\pushtracing\fi
   \let\p@ram\relax
-  \def\d@##1+##2+##3\E{\d@code{##1}{##2}\edef\tmpa{#2}\ifx\tmp\tmpa\getmcp@ram{#1}\else\getp@ram{#1}{#2}\fi}%
+  \def\d@##1+##2+##3\E{\d@code{##1}{##2}\edef\tmpa{#2}\ifx\tmp\tmpa\getmcp@ram{#1}\else\getp@ram{#1}{#2}{#2}\fi}%
   \mctop\ifnotracestacks\poptracing\fi}
 \def\getFp@ramR#1#2{\ifnotracestacks\pushtracing\fi
-  \def\d@##1+##2+##3\E{\d@code{##1}{##2}\edef\tmpa{#2}\ifx\tmp\tmpa\getmcp@ramR{#1}\else\getp@ram{#1}{#2}\fi}%
+  \def\d@##1+##2+##3\E{\d@code{##1}{##2}\edef\tmpa{#2}\ifx\tmp\tmpa\getmcp@ramR{#1}\else\getp@ram{#1}{#2}{#2}\fi}%
   \mctop\ifnotracestacks\poptracing\fi}
 %-csty_getmcparam
 
 %+csty_getmcfontsize
 \def\getmcfonts@ze{\ifnotracestacks\pushtracing\fi
-  \getp@ram{fontsize}{p}\ifx\p@ram\relax\edef\ps@ze{12}\else\edef\ps@ze{\p@ram}\fi
+  \getp@ram{fontsize}{p}{p}\ifx\p@ram\relax\edef\ps@ze{12}\else\edef\ps@ze{\p@ram}\fi
   \trace{s}{getmcfonts@ze starting with \ps@ze}%
   \def\d@##1+##2+##3\E{\d@code{##1}{##2}\ifx\tmp\empty\else
       \let\tmpstylen@me\tmp
       \dimen0=\c@rrfontsize pt 
       \ifnum\if##1\ss@Para 1\else\if##1\ss@Note 1\else0\fi\fi =1
-        \getp@ram{fontsize}{\tmpstylen@me}\dimen0=\ifx\p@ram\relax 12\else\p@ram\fi pt%
-      \else\getp@ram{fontscale}{\tmpstylen@me}\edef\sc@le{\p@ram}%                            %(1)
-        \ifx\p@ram\relax\edef\sc@le{1}\getp@ram{fontsize}{\tmpstylen@me}%
+        \getp@ram{fontsize}{\tmpstylen@me}{\tmpstylen@me}\dimen0=\ifx\p@ram\relax 12\else\p@ram\fi pt%
+      \else\getp@ram{fontscale}{\tmpstylen@me}{\tmpstylen@me}\edef\sc@le{\p@ram}%                            %(1)
+        \ifx\p@ram\relax\edef\sc@le{1}\getp@ram{fontsize}{\tmpstylen@me}{\tmpstylen@me}%
           \ifnum\ifx\p@ram\relax 1\else\ifx\p@ram\ps@ze 1\else 0\fi\fi =1
             \dimen0=\sc@le\dimen0\else\dimen0=\p@ram pt\fi
         \else\dimen0=\sc@le\dimen0                                                  %(2)
@@ -397,7 +459,7 @@
 %+csty_testpublishability
 % All types of marker use this to check for the "nonpublishable" property
 \def\t@stpublishability#1{\n@npublishablefalse % check if "nonpublishable" occurred in the marker's \Properties
- \getp@ram{properties}{#1}%
+ \getp@ram{properties}{#1}{\styst@k}%
  \x@\t@stnonpub\p@ram nonpublishable!}
 \def\t@stnonpub #1nonpublishable#2!{%
  \def\t@st{#2}\ifx\t@st\empty\else\n@npublishabletrue\fi}
@@ -554,9 +616,9 @@
   \ifdiglot 
     \trace{d}{Calculating drop: \c@rrdstat}%
     \should@xist{c\c@rrdstat}%
-    \s@tbaseline{p\c@rrdstat}%
+    \s@tbaseline{p\c@rrdstat}{p\c@rrdstat}%
   \else
-    \s@tbaseline{p}%
+    \s@tbaseline{p}{p}%
   \fi
   \edef\@seglyphmetrics{\the\XeTeXuseglyphmetrics}%
   \s@tfont{p}%workaround for Lotus Elam Bold issue - ensure the \p font is loaded first
@@ -564,8 +626,8 @@
   \XeTeXuseglyphmetrics=0\relax\setbox1=\hbox{0}% get font metrics          %(1)
   \XeTeXuseglyphmetrics=3\s@tfont{c}\relax\setbox0=\hbox{0123456789}% set a box at the size specified by the \c marker
   \XeTeXuseglyphmetrics=\@seglyphmetrics% \tracingcommands=0\MSG{useglyphmetrics=\the\XeTeXuseglyphmetrics}
-  \getp@ram{fontsize}{c}\dropnumbersize=\ifx\p@ram\relax 0pt\else\p@ram\FontSizeUnit\fi \relax % C in following
-  \getp@ram{fontsize}{p}\dimen255=\p@ram\FontSizeUnit
+  \getp@ram{fontsize}{c}{c}\dropnumbersize=\ifx\p@ram\relax 0pt\else\p@ram\FontSizeUnit\fi \relax % C in following
+  \getp@ram{fontsize}{p}{p}\dimen255=\p@ram\FontSizeUnit
   \advance\dimen255 by 0.5\dimen255
   \advance\dimen255 by 2sp
 	% if font size specified for chapter number stylesheet is less than 1.5*paragraph font size ...
@@ -659,7 +721,7 @@
 \def\ssf{\SuperscriptFactor}
 \lowercase{
 \def\h@ngprintv@rse#1{%
-    \s@tbaseline{v}%
+    \s@tbaseline{v}{\styst@k}%
     %\getp@ram{baseline}{v}\baselineskip=\ifx\p@ram\relax\baselineskip\else\p@ram\fi
     \dimen0=\ssf\baselineskip \advance\dimen0 by -\baselineskip
     \setbox1=\hbox{\ch@rstylepls{v}~\adornv{\v@rseto}\ch@rstylepls{v}*}%
@@ -757,8 +819,8 @@
         \csname bookstart-\id@@@\endcsname}%
  %
  \def\b{\endlastp@rstyle{b}\bgroup % End previous par before making a gap
-   \getp@ram{baseline}{b}\ifx\p@ram\relax
-     \s@tbaseline{p}\vskip\baselineskip
+   \getp@ram{baseline}{b}{\styst@k}\ifx\p@ram\relax
+     \s@tbaseline{p}{p}\vskip\baselineskip
     \else
       \vskip\p@ram
     \fi\egroup} 
@@ -819,7 +881,7 @@
 \def\cstackempty{,}
 \def\mcpopsimple{\traceNum{s}{popsimple stack: \mcstack}\xdef\mcstack{\x@\cstackpop\mcstack\E}\ifx\mcstack\empty\global\let\mcstack\mcstack@mpty\fi}
 \def\mcpush#1#2{%
-  \ifcsname isb@rrier-##1\endcsname%stop here?
+  \ifcsname isb@rrier-#1\endcsname%stop here?
     \let\tmpstyst@k=\empty
   \else
     \gett@psty
@@ -958,19 +1020,16 @@
 \def\s@tstyst@k#1{%Get a + separated list of styles that ought to uniquely define a font/etc.
   %List excludes marker #1 and stops at a barrier (e.g. a par/note/sidebar)
   %defines \styst@kskip to be the skipped value and \styst@kfirst to first value.
-  \edef\styst@kskip{#1}%
+  %\edef\styst@kskip{#1}%
   \@ttrMilestonefalse
   \def\d@##1+##2+##3\E{\ifcsname isb@rrier-##1\endcsname\let\d@=\cstackrelax\fi%stop here?
     \def\styst@k{##3}%
     \d@code{##1}{##2}%
-    \ifx\tmp\empty\else\ifx\tmp\styst@kskip\else
+    \ifx\tmp\empty\else
       \edef\styst@kfirst{\tmp}%
-      \ifx\styst@k\empty
-      \else
-        %\edef\styst@k{\styst@k+\tmp}%
-    \fi\fi\fi
+    \fi
   }\mctop
-  \trace{s}{styst@k -> (\styst@kskip/\styst@kfirst/\styst@k)}%
+  \trace{s}{styst@k -> (\styst@kfirst/\styst@k)}%
 }
 \let\styst@kfirst\empty
 \let\styst@kskip\empty
@@ -1419,8 +1478,8 @@
                                                            % set it will remain. Otherwise, the default
                                                            % of 14 will be applied here and set text will
                                                            % hold to the grid.
- \getp@ram{baseline}{p#1}\ifx\p@ram\relax
-   \s@tbaseline{p#1}\setp@ram{baseline}{p#1}{\the\baselineskip}%
+ \getp@r@m{baseline}{p#1}\ifx\p@ram\relax
+   \s@tbaseline{p#1}{p#1}\setp@ram{baseline}{p#1}{\the\baselineskip}%
    \x@\xdef\csname b@selineskip#1\endcsname{\the\baselineskip}%
    \MSG{Baselineskip for p#1 was undefined, now set to \the\baselineskip}%
  \else
@@ -1443,7 +1502,7 @@
  %\tracingifs=1
  \lineskiplimit=-9\le@dingunit
  \lineskip=0pt
- \s@tbaseline{p}%
+ \s@tbaseline{p}{p}%
  \NoteCallerWidth=1.1ex %Something sane?
  \global\topskip=\ifdiglot 2\fi\baselineskip
  \global\splittopskip=0pt
