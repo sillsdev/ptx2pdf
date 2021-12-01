@@ -98,7 +98,7 @@
   %  \fi
     \mst@nestylefalse
     \processmil@stone
-  \else{*}
+  \else{*}%
   \fi}% USFM3 'self closing marker' milestone
 
 \let\milestoneOp\empty
@@ -201,8 +201,8 @@
 % Operations on the current milestone(s)
 \def\zapres@rved#1{%
     \edef\smst@mp{\zap@space #1 \empty}%
-    \edef\smst@mp{\expandafter\zap@comma \smst@mp,\empty}
-    \edef\smst@mp{\expandafter\zap@plus \smst@mp+\empty}
+    \edef\smst@mp{\expandafter\zap@comma \smst@mp,\empty}%
+    \edef\smst@mp{\expandafter\zap@plus \smst@mp+\empty}%
 }
 \def\st@rtmilestone{%
   % There may multiple milestones of a given type (can't sensibly have both \qt-s |Jesus\* and 
@@ -378,7 +378,7 @@
   \ifx\attr@b\relax \let\al@gn\@lignLeft\else\let\al@gn\attr@b\fi
   \get@ttribute{strong}%
   \trace{m}{Got strongs \attr@b}%
-  \ifx\attr@b\relax \else\edef\tmpz{#1}
+  \ifx\attr@b\relax \else\edef\tmpz{#1}%
     \x@\dostr@ngs\x@{\x@\tmpz\x@}\x@{\x@\al@gn\x@}\attr@b+++\E
   \fi
 }

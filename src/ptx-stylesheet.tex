@@ -195,7 +195,7 @@
     \ifx\t@mp\thisattrmil@stone % Need to match on unattributed milestone too.
       \ifx\mini@stackB\empty\let\mini@stackB\mini@stack\fi
       \trace{m}{Adding \thismil@stone\space to possible params}%
-      \edef\mini@stackB{\mini@stack+\thismil@stone}
+      \edef\mini@stackB{\mini@stack+\thismil@stone}%
     \else
       \edef\mini@stack{\mini@stack+#1}%
     \fi
@@ -241,9 +241,9 @@
       \ifx\@@ut\empty\global\let\@@ut\@lso\else\xdef\@@ut{\@@ut,\@lso}\fi
       \trace{mc}{fullstack@xpand #1|#2 : \@@ut. No more}%
     \else
-      \count255=#1  % Limit the options
+      \count255=#1% Limit the options
       \def\@ut{}%
-      \x@\stystack@pts\tmpstystackb@dy+\E
+      \x@\stystack@pts\tmpstystackb@dy+\E%
       \let\@in\@ut
       \let\@ut\empty
       \ifnum\count255>0
@@ -279,7 +279,7 @@
   \ifx\tmp\this@stystak\else % Assuming there's is a real stack to expand...
     \let\@@ut\empty
     \let\@ut\empty
-    \fullstack@xpand\StackComplexity|\this@stystak\E
+    \fullstack@xpand\StackComplexity|\this@stystak\E%
     \let\p@ssParams\@@ut
   \fi
 %%%FIXME: REWRITE
