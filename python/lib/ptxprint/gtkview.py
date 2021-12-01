@@ -501,7 +501,7 @@ class GtkViewModel(ViewModel):
                     "textDirection", "glossaryMarkupStyle", "fontFaces", "featsLangs", "leaderStyle",
                     "picaccept", "pubusage", "pubaccept", "chklstFilter|0.75", "gridUnits", "gridOffset",
                     "fnHorizPosn", "xrHorizPosn", "filterXrefs", "colXRside", "outputFormat", "stytcVpos", 
-                    "strongsNdxBookId"):
+                    "strongsMajorLg", "strongswildcards", "strongsNdxBookId"):
             self.addCR("fcb_"+fcb, 0)
         self.cb_savedConfig = self.builder.get_object("ecb_savedConfig")
         self.ecb_diglotSecConfig = self.builder.get_object("ecb_diglotSecConfig")
@@ -574,8 +574,10 @@ class GtkViewModel(ViewModel):
 
         projects = self.builder.get_object("ls_projects")
         digprojects = self.builder.get_object("ls_digprojects")
+        strngsfbprojects = self.builder.get_object("ls_strongsfallbackprojects")
         projects.clear()
         digprojects.clear()
+        strngsfbprojects.clear()
         allprojects = []
         for d in os.listdir(self.settings_dir):
             p = os.path.join(self.settings_dir, d)
@@ -588,12 +590,16 @@ class GtkViewModel(ViewModel):
                     allprojects.append(d)
             except OSError:
                 pass
+        strngsfbprojects.append(["None"])
         for p in sorted(allprojects, key = lambda s: s.casefold()):
             projects.append([p])
             digprojects.append([p])
+            if os.path.exists(os.path.join(self.settings_dir, p, 'TermRenderings.xml')):
+                strngsfbprojects.append([p])
         wide = int(len(allprojects)/16)+1
         self.builder.get_object("fcb_project").set_wrap_width(wide)
         self.builder.get_object("fcb_diglotSecProject").set_wrap_width(wide)
+        self.builder.get_object("fcb_strongsFallbackProj").set_wrap_width(wide)
         self.getInitValues()
 
             # .mainnb {background-color: #d3d3d3;}
@@ -1732,8 +1738,8 @@ class GtkViewModel(ViewModel):
     def onScriptChanged(self, btn):
         # If there is a matching digit style for the script that has just been set, 
         # then also turn that on (but it can be overridden by the user if needed).
-        if self.loadingConfig:
-            return
+        # if self.loadingConfig:
+            # return
         self.fcb_fontdigits.set_active_id(self.get('fcb_script'))
         script = self.get("fcb_script")
         if script is not None:
@@ -2212,7 +2218,7 @@ class GtkViewModel(ViewModel):
         self.alltoggles = []
         prjs = self.builder.get_object("ls_projects")
         prjCtr = len(prjs)
-        rows = int(prjCtr**0.6) if prjCtr <= 140 else 16
+        cols = int(prjCtr**0.6) if prjCtr <= 140 else 10
         for i, b in enumerate(prjs):
             if self.prjid == b[0]:
                 tbox = Gtk.Label()
@@ -2222,7 +2228,7 @@ class GtkViewModel(ViewModel):
                 tbox = Gtk.ToggleButton(b[0])
             tbox.show()
             self.alltoggles.append(tbox)
-            mps_grid.attach(tbox, i // rows, i % rows, 1, 1)
+            mps_grid.attach(tbox, i % cols, i // cols, 1, 1)
         response = dialog.run()
         projlist = []
         if response == Gtk.ResponseType.OK:
@@ -3265,7 +3271,7 @@ class GtkViewModel(ViewModel):
             if prj != "":
                 if UnpackDBL(self.DBLfile, prj, self.settings_dir):
                     # add prj to ls_project before selecting it.
-                    for a in ("ls_projects", "ls_digprojects"):
+                    for a in ("ls_projects", "ls_digprojects", "ls_strongsfallbackprojects"):
                         lsp = self.builder.get_object(a)
                         allprojects = [x[0] for x in lsp]
                         for i, p in enumerate(allprojects):
@@ -3485,6 +3491,7 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("fr_colXrefs").set_sensitive(xrc)
 
     def onGenerateStrongsClicked(self, btn):
+        self.addStrongsVars()
         dialog = self.builder.get_object("dlg_strongsGenerate")
         if sys.platform == "win32":
             dialog.set_keep_above(True)
@@ -3496,6 +3503,12 @@ class GtkViewModel(ViewModel):
         if sys.platform == "win32":
             dialog.set_keep_above(False)
         dialog.hide()
+        
+    def addStrongsVars(self):
+        for b in ("Title", "Hebrew", "Greek", "Index"): 
+            v = "strongs_" + b.lower()
+            if self.getvar(v) is None:
+                self.setvar(v, _("<Type Value Here>"))
 
     def onInterlinearClicked(self, btn):
         if self.sensiVisible("c_interlinear"):
