@@ -324,7 +324,7 @@
     \ifx\cpt@mp\empty\else\setLRspecific\fi
     \edef\@@r@f{\ifx\@r@f\empty\else\DecorateRef{\@r@f\unskip}\fi}%
     \t@xtfragment{fig}{%
-      \s@tfont{fig}%
+      \s@tfont{fig}{fig}%
       \ifCaptionRefFirst\@@r@f\nobreak\ \fi
       \c@ption\unskip
       \ifCaptionRefFirst\else\nobreak\ \@@r@f\fi}%
@@ -424,7 +424,7 @@
      \count255=-\count255
   \fi
   %pad credit
-  \setbox0=\hbox{\s@tfont{\cr@ditstyle}\cr@dit}%
+  \setbox0=\hbox{\s@tfont{\cr@ditstyle}{\cr@ditstyle}\cr@dit}%
   \dimen1=\ht0\advance\dimen1 by \FigCreditPadding\ht0=\dimen1
   \dimen1=\dp0\advance\dimen1 by \FigCreditPadding\dp0=\dimen1
   % Calculuate maximum credit width.  (note count255 is now

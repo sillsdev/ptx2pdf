@@ -236,7 +236,7 @@
 %  \splitmaxdepth\dp\f@@tstrut
   \mcpush{\ss@Note}{#2}%
   %\getp@ram{fontsize}{#2}\edef\c@rrfontsize{\ifx\p@ram\relax12\else\p@ram\fi}%
-  \s@tfont{#2}%
+  \s@tfont{#2}{#2}%
   \futurelet\next\fo@t}% use plain.tex footnote processor
 %-c_vmakenote
 
@@ -316,7 +316,7 @@
 \newif\ifomitc@ller
 
 % create a "strut" (see TeXbook) of suitable size for the note style
-\def\footstrut{\s@tfont{\newn@testyle}%
+\def\footstrut{\s@tfont{\newn@testyle}{\newn@testyle}%
   \s@tbaseline{\newn@testyle}{\newn@testyle}%
   \setbox\f@@tstrut=\hbox to 0pt{\XeTeXuseglyphmetrics=0 \char32 \hss}%
   \dimen0=\ht\f@@tstrut \dimen2=\dp\f@@tstrut

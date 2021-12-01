@@ -1,4 +1,3 @@
-%FIXME: \<s@tstyst@k\>
 %FIXME: \<styst@kskip\>
 %FIXME: \<styst@ksfirst\>
 
@@ -183,14 +182,14 @@
 \def\tracestack{,}
 \def\pushtracing{\xdef\tracestack{\the\tracingmacros,\tracestack}\tracingmacros=0}
 \def\poptracing{\tracingmacros=\x@\cstackpeek\tracestack\E\xdef\tracestack{\x@\cstackpop\tracestack\E}}
-\def\stystacksplit#1+#2\E{\edef\t@mp{#2}\let\tmpstystackb@dy\empty\edef\tmpstyst@kfirst{#1}\ifx\t@mp\empty\else\styst@cksplit#2\E\fi\trace{mc}{splistystack: \tmpstyst@kfirst , \tmpstystackb@dy}}
+\def\stystacksplit#1+#2\E{\edef\t@mp{#2}\let\tmpstystackb@dy\empty\edef\tmpstyst@kfirst{#1}\ifx\t@mp\empty\else\styst@cksplit#2\E\fi\trace{mc}{splistystack: '\tmpstyst@kfirst' , '\tmpstystackb@dy'}}
 \def\styst@cksplit#1+\E{\edef\tmpstystackb@dy{#1}}
 \def\stystack@pts#1+#2\E{%Given an style stack, recurse down it, turning it into an option stack, going a maximum of count255 levels deep
 % If \AttrMilestoneMatchesUnattrtrue, then the option list should be as follows:
 %   nd+Fred|qt-s+p -> (nd+Fred|qt-s+p, nd+qt-s+p, nd+Fred|qt-s, nd+qt-s, nd)
 % 2 milestones are active, then only the inner-most will be affected by this flag, 
 % outer ones must be fully specified.
-  \trace{mc}{stystack@pts #1+#2}%
+  \trace{mc}{stystack@pts '#1' + '#2' (out:\@ut)}%
   \ifAttrMilestoneMatchesUnattr
     \edef\t@mp{#1}%
     \ifx\t@mp\thisattrmil@stone % Need to match on unattributed milestone too.
@@ -200,21 +199,32 @@
     \else
       \edef\mini@stack{\mini@stack+#1}%
     \fi
+  \else 
+    \edef\mini@stack{\mini@stack+#1}%
   \fi
-  \edef\mini@stack{\mini@stack+#1}%
-  \edef\@ut{\mini@stack,\@ut}%
+  \trace{mc}{-> \mini@stack}%
+  \xdef\@ut{\mini@stack,\@ut}%
   \ifx\mini@stackB\empty\else
-    \edef\@ut{\mini@stackB,\@ut}%
+    \xdef\@ut{\mini@stackB,\@ut}%
   \fi
-  \edef\t@mp{#2}\advance\count255 by -1 \ifx\t@mp\empty\count255=0 \fi\ifnum\count255>0 \else\x@\stystack@pts#2\E\fi
+  \edef\t@mp{#2}\advance\count255 by -1 
+  \trace{mc}{#2,\the\count255---> \@ut}%
+  \ifx\t@mp\empty\count255=0 \relax\fi
+  \ifnum\count255>0 \x@\stystack@pts#2\E\fi
 }
 
 
 \def\fullstack@xpand#1|#2\E{%Parameters: complexity|style stack
-  \trace{mc}{fullstack@xpand #1|#2}%
-  \def\exp@stystak{#2}%
+  \trace{mc}{fullstack@xpand}%
+  \edef\exp@stystak{#2}%
   \ifx\exp@stystak\empty\else
     \x@\stystacksplit\exp@stystak+\E% Cut off the head entry of the stylestack
+    \ifdiglot
+       \edef\p@ssParams{\tmpstyst@kfirst\c@rrdstat,\tmpstyst@kfirst}%
+    \else
+       \edef\p@ssParams{\tmpstyst@kfirst}%
+    \fi 
+    \trace{mc}{#1::(\p@ssParams)+\tmpstystackb@dy}%
     \ifx\styst@kfirst\empty
       \let\styst@kfirst\tmpstyst@kfirst
       \let\styst@ckb@dy\tmpstystackb@dy
@@ -222,18 +232,32 @@
     \let\mini@stack\empty
     \let\mini@stackB\empty
     \ifx\tmpstystackb@dy\empty
-      \def\@ut{#2};
+      \xdef\@lso{\p@ssParams}%
+      \trace{mc}{no body...appending \@lso (onto: \@@ut)}%
+      %\let\@ut\empty
+      %\let\d@\cs@ppend
+      %\x@\cstackdown \p@ssParams,\E 
+      %\trace{mc}{:\@ut ->(\@@ut)}%
+      \ifx\@@ut\empty\global\let\@@ut\@lso\else\xdef\@@ut{\@@ut,\@lso}\fi
+      \trace{mc}{fullstack@xpand #1|#2 : \@@ut. No more}%
     \else
       \count255=#1  % Limit the options
-      \stystack@pts\tmpstystackb@dy+\E
+      \def\@ut{}%
+      \x@\stystack@pts\tmpstystackb@dy+\E
       \let\@in\@ut
       \let\@ut\empty
       \ifnum\count255>0
         \edef\@in{+\tmpstystackb@dy,\@in}%  still allow full-stack definitions, even if the list is truncated
       \fi
-      \def\d@it#1\E{\def\@also{#1}\let\d@b\d@\let\d@=\cspr@pend\x@\cstackdown\p@ssParams,\E \let\d@\d@b}%
-      \let\d@=\cs@apply\x@\cstackdown \@in,\E \let\p@ssParams\@ut
-      \trace{mc}{fullstack@xpand #1|#2 : \@ut}%
+      %\tracingmacros=1
+      %\tracingassigns=1
+      \def\d@##1\E{\trace{mc}{appending '##1' onto (\p@ssParams)}\edef\@lso{##1}\let\d@c\d@
+        \let\@ut=\empty
+        \let\d@=\cs@ppend\x@\cstackdown\p@ssParams,\E
+        \trace{mc}{:\@ut (\@@ut)}%
+        \let\d@\d@c\ifx\@@ut\empty\global\let\@@ut\@ut\else\xdef\@@ut{\@@ut,\@ut,\p@ssParams}\fi}%
+      \x@\cstackdown \@in,\E 
+      \trace{mc}{fullstack@xpand #1|#2 : \@@ut. Continue (\tmpstystackb@dy)}%
       \x@\fullstack@xpand#1|\tmpstystackb@dy\E %Recurse
     \fi
   \fi
@@ -252,10 +276,11 @@
   \ifx\thiswh@tvrstyle\tmp
     \let\styst@kfirst\empty
   \fi
-  \ifx\tmp\this@stystak\else % Assuming there's a stack to expand...
+  \ifx\tmp\this@stystak\else % Assuming there's is a real stack to expand...
+    \let\@@ut\empty
     \let\@ut\empty
     \fullstack@xpand\StackComplexity|\this@stystak\E
-    \let\p@ssParams\@ut%
+    \let\p@ssParams\@@ut
   \fi
 %%%FIXME: REWRITE
             %%\edef\p@ssParams{\p@ssParams,\styst@kskip}%
@@ -367,7 +392,7 @@
 % like cspr@pend, but also record unprepended item.
 \def\cs@lsolist#1\E{\trace{s}{expanding #1->\@lso#1,#1}\ifx\@ut\empty\xdef\@ut{\@lso#1,#1}\else\xdef\@ut{\@ut,\@lso#1,#1}\fi}
 \def\cscheck@xist#1\E{\ifcsname m@rkerexists-#1\endcsname\ifx\@ut\empty\xdef\@ut{#1}\else\xdef\@ut{\@ut,#1}\fi\fi}
-\def\cs@ppend#1\E{\ifx\@ut\empty\xdef\@ut{#1\@lso}\else\xdef\@ut{\@ut,\@lso#1}\fi}
+\def\cs@ppend#1\E{\ifx\@ut\empty\xdef\@ut{#1\@lso}\else\xdef\@ut{\@ut,#1\@lso}\fi}
 
 %-csty_getparam
 
@@ -386,11 +411,11 @@
                            \else\global\let\r@s\relax\fi\fi}%
   \mcup\global\let\p@ram\r@s\traceNum{s}{paramR #1 for \mcstack\space is \p@ram}\ifnotracestacks\poptracing\fi}
  
-\def\getFp@ram#1#2{\ifnotracestacks\pushtracing\fi
+\def\getFp@ram#1#2#3{\ifnotracestacks\pushtracing\fi
   \let\p@ram\relax
   \def\d@##1+##2+##3\E{\d@code{##1}{##2}\edef\tmpa{#2}\ifx\tmp\tmpa\getmcp@ram{#1}\else\getp@ram{#1}{#2}{#2}\fi}%
   \mctop\ifnotracestacks\poptracing\fi}
-\def\getFp@ramR#1#2{\ifnotracestacks\pushtracing\fi
+\def\getFp@ramR#1#2#3{\ifnotracestacks\pushtracing\fi
   \def\d@##1+##2+##3\E{\d@code{##1}{##2}\edef\tmpa{#2}\ifx\tmp\tmpa\getmcp@ramR{#1}\else\getp@ram{#1}{#2}{#2}\fi}%
   \mctop\ifnotracestacks\poptracing\fi}
 %-csty_getmcparam
@@ -621,10 +646,10 @@
     \s@tbaseline{p}{p}%
   \fi
   \edef\@seglyphmetrics{\the\XeTeXuseglyphmetrics}%
-  \s@tfont{p}%workaround for Lotus Elam Bold issue - ensure the \p font is loaded first
+  \s@tfont{p}{p}%workaround for Lotus Elam Bold issue - ensure the \p font is loaded first
   \mkstr@t\setbox\pstr@t=\copy\str@tbox
   \XeTeXuseglyphmetrics=0\relax\setbox1=\hbox{0}% get font metrics          %(1)
-  \XeTeXuseglyphmetrics=3\s@tfont{c}\relax\setbox0=\hbox{0123456789}% set a box at the size specified by the \c marker
+  \XeTeXuseglyphmetrics=3\s@tfont{c}{c}\relax\setbox0=\hbox{0123456789}% set a box at the size specified by the \c marker
   \XeTeXuseglyphmetrics=\@seglyphmetrics% \tracingcommands=0\MSG{useglyphmetrics=\the\XeTeXuseglyphmetrics}
   \getp@ram{fontsize}{c}{c}\dropnumbersize=\ifx\p@ram\relax 0pt\else\p@ram\FontSizeUnit\fi \relax % C in following
   \getp@ram{fontsize}{p}{p}\dimen255=\p@ram\FontSizeUnit
@@ -641,7 +666,7 @@
       \x@\let\csname font<c>\endcsname=\relax 
 	  % Calculate drop cap height = base line height + (lower case) x height
       % get x height (appendix F) 5 is x-height of font X=x + baselineskip
-      \s@tfont{p}\dimen0=\fontdimen5\font\advance\dimen0\baselineskip           %(2)
+      \s@tfont{p}{p}\dimen0=\fontdimen5\font\advance\dimen0\baselineskip           %(2)
       \dimen1=\dimen0 \multiply\dimen1 by 128 \divide\dimen1 by \dropnumbersize % X/C * 128
       \dimen2=\ht1 \advance\dimen2 by \dp1 \advance\dimen2 by \baselineskip % total height available: T
       \dimen3=128\dimen0 \divide\dimen3 by \dimen2 \multiply\dimen3 by \dropnumbersize \divide\dimen3 by 128 % CX/T
@@ -897,7 +922,7 @@
     \ifx\tmp\empty\let\n@x=\cstackrelax\else\d@b #1\E\iftemp\xdef\mcstack{#2}\rebuild@mcstack{\msst@ck\inst@ck}\let\n@x=\cstackrelax\fi\fi\n@x #2\E}
 
     
-\def\rebuild@mcstack#1{\trace{mc}{rebuild@mcstack '#1' (on \mcstack)}\edef\r@mclist{#1}\ifx\r@mclist\empty\else\let\d@=\mcpushE\x@\cstackup\r@mclist\E\fi}
+\def\rebuild@mcstack#1{\trace{mc}{rebuild@mcstack '#1' (on \mcstack)}\ifx\mcstack\empty\let\mcstack\mcstack@mpty\fi\edef\r@mclist{#1}\ifx\r@mclist\empty\else\let\d@=\mcpushE\x@\cstackup\r@mclist\E\fi}
 \def\doB@pop@nonms#1+#2\E{\if #1m\xdef\msst@ck{#1+#2,\msst@ck}\else\global\temptrue\fi}% For mcstackdown. Push milestones onto msst@ck. lose the 1st non-ms
 \def\doB@save@ms#1+#2+#3\E{\trace{s}{[#1+#2+#3] (\msst@ck)}\if #1\relax\relax\xdef\inst@ck{\inst@ck\mcstack@mpty}\temptrue\else\if #1m\relax\xdef\msst@ck{\msst@ck#1+#2,}\else\xdef\inst@ck{\inst@ck#1+#2,}\global\temptrue\fi\fi}% For mcstackdown. Push milestones onto msstack. bail out on 1st non-ms, saving it.
 
@@ -1017,11 +1042,10 @@
   \mcdown\ifx\itp@psstore\empty\else\x@\rebuild@mcstack\x@{\itp@psstore}\fi
   \trace{s}{end@llpoppedstyles END: \mcstack}}
 
-\def\s@tstyst@k#1{%Get a + separated list of styles that ought to uniquely define a font/etc.
+\def\s@tstyst@k{%Get a + separated list of styles that ought to uniquely define a font/etc.
   %List excludes marker #1 and stops at a barrier (e.g. a par/note/sidebar)
   %defines \styst@kskip to be the skipped value and \styst@kfirst to first value.
   %\edef\styst@kskip{#1}%
-  \@ttrMilestonefalse
   \def\d@##1+##2+##3\E{\ifcsname isb@rrier-##1\endcsname\let\d@=\cstackrelax\fi%stop here?
     \def\styst@k{##3}%
     \d@code{##1}{##2}%
@@ -1210,8 +1234,8 @@
      \saveLRspecificSide{##1}%
      \bgroup 
        \let\mcstack\mcstack@mpty
-       \s@tfont{p}%
-       \setbox\f@@tstrut=\hbox to 0pt{\XeTeXuseglyphmetrics=0\hbox{\char32}\s@tfont{v}\getp@r@m{raise}{v}\setbox0\hbox{\char32}
+       \s@tfont{p}{p}%
+       \setbox\f@@tstrut=\hbox to 0pt{\XeTeXuseglyphmetrics=0\hbox{\char32}\s@tfont{v}{v+p}\getp@r@m{raise}{v}\setbox0\hbox{\char32}
             \ifx\p@ram\relax\else\dimen9=\p@ram\ifdim\dimen9<0pt\lower-\dimen9 \else\raise\dimen9 \fi\box0 \fi
        \hss}%
        %\showbox\f@@tstrut
@@ -1382,7 +1406,7 @@
   \mcpush{\stylet@pe}{#1}%
   \op@ninghooks{start}{cat}%
   \let\styst@k=\empty
-  \s@tstyst@k{#1}%
+  \s@tstyst@k%
   \bgroup % This group will be closed by the end-of footnote marker / other container.  %(2)
   %I.e. we're borrowing the egroup from other bits of code.  
   \ifx\stylet@pe\ss@Ctgy

@@ -119,7 +119,7 @@
    %\xdef\thisch@rstyle{\mcpeek}%
    \def\d@##1+##2+##3\E{\d@code{##1}{##2}\edef\thisch@rstyle{\tmp}}\mctop
    \trace{m}{Milestone style is \thisch@rstyle}%
-   \s@tfont{\thisch@rstyle}% set up font attributes
+   \s@tfont{\thisch@rstyle}{\styst@k}% set up font attributes
 }
 
 \def\startmst@nestyle{%What actually changes between the beginning of a milestone and the end-marker? Attribute values!
@@ -223,7 +223,8 @@
   \global\let\thisattrmil@stone\tmp
   \upd@teMsPrefix
   \let\styst@k=\empty
-  \s@tstyst@k{\thismil@stone}%
+  \s@tstyst@k%
+  \@ttrMilestonefalse
   \ifx\thismil@stoneVal\empty\else
     \@ttrMilestonetrue
   \fi

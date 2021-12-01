@@ -371,7 +371,7 @@
 %+cpar_parstyle_transition
   \let\styst@k=\empty
   \def\d@##1+##2+##3\E{\d@code{##1}{##2}\let\t@pstyle\tmp}\mctop
-  \s@tstyst@k{\t@pstyle}%
+  \s@tstyst@k%
   \x@\t@stintro\m@rker\relax
   %If the marker is an (ultra-rare) type that occurs in introductions and normal text, then
   %set the intromarker flag based on what the current state (\if@ntro) is.
@@ -977,7 +977,7 @@
  \edef\@seglyphmetrics{\the\XeTeXuseglyphmetrics}\XeTeXuseglyphmetrics=3%
  \edef\printchapter{\ch@ptert@xt}%
  \csname PrepChapterNumber\endcsname
- \setbox\ch@pterbox=\hbox{\s@tfont{c}\printchapter}%
+ \setbox\ch@pterbox=\hbox{\s@tfont{c}{c}\printchapter}%
  \ifrotate
   \dimen0=1.0\ht\ch@pterbox
   \dimen1=\ht\ch@pterbox \advance\dimen1 by \dp\ch@pterbox\advance\dimen1 by \AfterChapterSpaceFactor\FontSizeUnit
