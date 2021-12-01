@@ -904,7 +904,7 @@
 \gdef\mcstack{++,} 
 \let\mcstack@mpty\mcstack
 \def\cstackempty{,}
-\def\mcpopsimple{\traceNum{s}{popsimple stack: \mcstack}\xdef\mcstack{\x@\cstackpop\mcstack\E}\ifx\mcstack\empty\global\let\mcstack\mcstack@mpty\fi}
+\def\mcpopsimple{\traceNum{s}{popsimple stack: \mcstack}\xdef\mcstack{\x@\cstackpop\mcstack\E}\ifx\mcstack\empty\global\let\mcstack\mcstack@mpty\fi\ifp@pping\else\s@tstyst@k\fi}
 \def\mcpush#1#2{%
   \ifcsname isb@rrier-#1\endcsname%stop here?
     \let\tmpstyst@k=\empty
@@ -934,7 +934,8 @@
     \let\d@b=\doB@save@ms
     \x@\mcstackdown\mcstack\E\trace{s}{->\msst@ck [\iftemp t\else f\fi], '\mcstack'}%
     \iftemp % It's been dealt with
-    \else\rebuild@mcstack{\inst@ck}\fi}
+    \else\rebuild@mcstack{\inst@ck}\fi
+    \trace{s}{Stack now \mcstack}}
 
 \def\s@ttmpsty#1+#2+#3\E{\xdef\tmpstyst@k{#3}}
 \def\gett@psty{\ifx\mcstack\empty\let\tmpstyst@k\empty\else{\let\d@\s@ttmpsty\mctop}\fi}
@@ -1034,12 +1035,13 @@
     \fi
   \fi
   \trace{s}{whileitp@ps END:\mcch@cking:#1+#2 (\mcstack)}%
-  \global\p@ppingfalse
+  \global\p@ppingfalse 
   \let\d@=\wip@do
 }
 \def\end@llpoppedstyles#1{\trace{s}{end@llpoppedstyles #1}%
   \let\itp@psstore\empty\xdef\mcch@cking{#1}\let\d@=\whileitp@ps
   \mcdown\ifx\itp@psstore\empty\else\x@\rebuild@mcstack\x@{\itp@psstore}\fi
+  \s@tstyst@k
   \trace{s}{end@llpoppedstyles END: \mcstack}}
 
 \def\s@tstyst@k{%Get a + separated list of styles that ought to uniquely define a font/etc.
@@ -1047,10 +1049,10 @@
   %defines \styst@kskip to be the skipped value and \styst@kfirst to first value.
   %\edef\styst@kskip{#1}%
   \def\d@##1+##2+##3\E{\ifcsname isb@rrier-##1\endcsname\let\d@=\cstackrelax\fi%stop here?
-    \def\styst@k{##3}%
+    \xdef\styst@k{##3}%
     \d@code{##1}{##2}%
     \ifx\tmp\empty\else
-      \edef\styst@kfirst{\tmp}%
+      \xdef\styst@kfirst{\tmp}%
     \fi
   }\mctop
   \trace{s}{styst@k -> (\styst@kfirst/\styst@k)}%

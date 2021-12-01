@@ -345,7 +345,7 @@
 % set baseline appropriately for the given style (may be using much smaller font than body)
 % baselineskip = leading
 \def\s@tbaseline#1#2{%
-  \trace{F}{s@tbaseline #1 \c@rrdstat}%
+  \trace{F}{s@tbaseline #1\c@rrdstat /\noexpand#2}%
   \def\s@urce{no data}%
   \def\f@ntstyle{#1\c@rrdstat}%
   \getp@ram{baseline}{#1}{#2}\ifx\p@ram\relax

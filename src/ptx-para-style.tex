@@ -361,7 +361,7 @@
  \ifn@npublishable\else
   \gdef\m@rker{#1}% remember the new style name
   \mcpushunderms{P}{#1}%
-  \trace{s}{Pushed P+#1,  stack now: \mcstack}%
+  \trace{s}{Pushed P+#1,  stack now: \mcstack [\styst@k]}%
   \op@ninghooks{before}{\m@rker}%
 %-cpar_parstyle_after
   %
@@ -400,7 +400,7 @@
   \else
     \iftoplevelp@r \if@ntromarker\st@rtintro\else\st@rtbody\fi\fi
   \fi\fi\fi                                                                     %(2)
-  \trace{H}{Marker type: \p@ram, stack: \mcstack \space toplevel: \iftoplevelp@r True\else False\fi}%
+  \trace{H}{Marker type: \p@ram, stack: \mcstack [\styst@k] \space toplevel: \iftoplevelp@r True\else False\fi}%
   \ifhe@dingstyle\trace{s}{headingstyle true}%
     \ifhe@dings\nsp@cebeforetrue\s@tbaseline{\m@rker}{\styst@k}%In a heading again, may be different so set a new baseline
     \else
