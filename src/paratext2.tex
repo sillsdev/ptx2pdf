@@ -709,7 +709,7 @@
           \trace{o}{onecoltrial lcolgutter makecolumngutter}%
           \makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen3}{2}%
         \fi\fi
-        \ifx\ch@pter\empty\else\hbox to \columnshift{}\fi
+        \ifb@dy\iftob@dy\else\hbox to \columnshift{}\fi\fi
         \vbox to\dimen3{\box\colA\kern0pt\vfil}%
         \ifb@dy\testXrefSideR\ifnum\tmp=1
           \trace{o}{onecoltrial rcolgutter makecolumngutter}%
@@ -870,7 +870,7 @@
         \ifb@dy\testXrefSideL\ifnum\tmp=1
           \makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen3}{2}%
         \fi\fi
-        \ifx\ch@pter\empty\else\ifb@dy\hbox to \columnshift{}\fi\fi
+        \ifb@dy\iftob@dy\else\hbox to \columnshift{}\fi\fi
         %\special{"testme1"}
         \vbox to \dimen3{\unvbox\colA\vfil}%\special{"testme2"}%
         \ifb@dy\testXrefSideR\ifnum\tmp=1
