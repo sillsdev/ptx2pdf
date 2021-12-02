@@ -211,6 +211,25 @@ class Xrefs:
                 }
                 outf.write(self.template.format(**info))
 
+components = [
+    ("c_strongsSrcLg", r"\w{_lang} {lemma}\w{_lang}*"),
+    ("c_strongsTranslit", r"\wl {translit}\wl*"),
+    ("c_strongsRenderings", r"{_defn};"),
+    ("c_strongsKeyVref", r"\xt $a({head})\xt*")
+]
+def _readTermRenderings(localfile, strongs, revwds, key):
+    localdoc = et.parse(localfile)
+    for r in localdoc.findall(".//TermRendering"):
+        rid = normalize('NFC', r.get("Id"))
+        rend = r.findtext('Renderings')
+        if rid not in btmap or rend is None or not len(rend):
+            continue
+        sref = btmap[rid]
+        strongs[sref][key] = ", ".join(rend.split("||"))
+        for w in rend.split("||"):
+            s = re.sub(r"\(.*?\)", "", w).strip()
+            revwds.setdefault(s.lower(), set()).add(sref)
+
 def generateStrongsIndex(bkid, cols, outfile, localfile, onlylocal, ptsettings, view):
     strongsdoc = et.parse(os.path.join(os.path.dirname(__file__), "strongs_info.xml"))
     strongs = {}
@@ -221,21 +240,14 @@ def generateStrongsIndex(bkid, cols, outfile, localfile, onlylocal, ptsettings, 
         strongs[sref] = {k: s.get(k) for k in ('btid', 'lemma', 'head', 'translit')}
         strongs[sref]['def'] = s.text
         btmap[s.get('btid')] = sref
+    fallback = view.get("fcb_strongsFallbackProj")
+    if fallback is not None and fallback and fallback != "None":
+        fallbackfile = os.path.join(view.settings_dir, fallback, "TermRenderings.xml")
+        if os.path.exists(fallbackfile):
+            _readTermRenderings(fallbackfile, strongs, revwds, 'def')
     if localfile is not None:
-        localdoc = et.parse(localfile)
-        for r in localdoc.findall(".//TermRendering"):
-            rid = normalize('NFC', r.get("Id"))
-            rend = r.findtext('Renderings')
-            if rid not in btmap or rend is None or not len(rend):
-                continue
-            sref = btmap[rid]
-            strongs[sref]['local'] = ", ".join(rend.split("||"))
-            for w in rend.split("||"):
-                s = re.sub(r"\(.*?\)", "", w).strip()
-                revwds.setdefault(s.lower(), set()).add(sref)
+        _readTermRenderings(localfile, strongs, revwds, 'local')
     title = view.getvar("strongs_title") or "Strong's Index"
-    wildcard = view.get("fcb_strongswildcards")
-    print(f"{wildcard}")
     with open(outfile, "w", encoding="utf-8") as outf:
         outf.write("\\id {0} Strongs based terms index\n\\h {1}\n\\NoXrefNotes\n\\strong-s\\*\n\\mt1 {1}\n".format(bkid, title))
         outf.write("\\onebody\n" if cols == 1 else "\\twobody\n")
@@ -247,23 +259,29 @@ def generateStrongsIndex(bkid, cols, outfile, localfile, onlylocal, ptsettings, 
                 d = v.get('local', v.get('def', None) if not onlylocal else None)
                 if d is None:
                     continue
+                if view.get("c_strongsNoComments"):
+                    d = re.sub(r"\(.*?\)", "", d)
+                wc = view.get("c_fcbstrongwildcards") 
+                if wc in ("remove", "hyphen"):
+                    d = d.replace("*", "" if wc == "remove" else "-")
                 if hdr:
                     outf.write(hdr)
                     hdr = ""
-                outf.write(r"\{_marker} \bd {_key}\bd* \w{_lang} {lemma}\w{_lang}* \wl {translit}\wl* {_defn}; \xt $a({head})\xt*".format(
-                    _key=k[1:], _lang=a[0].lower(), _marker="li", _defn=d, **v) + "\n")
+                bits = [r"\{_marker} \bd{_key}\bd*"] + [cv for ck, cv in components if view.get(ck)]
+                if bits[-1][-1] == ";":
+                    bits[-1] = bits[-1][:-1]
+                outf.write(" ".join(bits).format(_key=k[1:], _lang=a[0].lower(), _marker="li", _defn=d, **v) + "\n")
         if len(revwds):
             tailoring = ptsettings.getCollation()
             ducet = tailored(tailoring.text) if tailoring else None
             ldmlindices = ptsettings.getIndexList()
             indices = None if ldmlindices is None else sorted([c.lower() for c in ldmlindices], key=lambda s:(-len(s), s))
             lastinit = ""
-            # outf.write("\\onebody\n")  # Wondering if we set this as an option (Hnnnn and Gnnnn as 1-col, and Index as 2-col)
             outf.write("\n\\mt2 {}\n".format(view.getvar("strongs_index") or "Index"))
-            for k, v in sorted(revwds.items(), key=lambda x:get_sortkey(x[0], variable=SHIFTTRIM, ducet=ducet)):
+            for k, v in sorted(revwds.items(), key=lambda x:get_sortkey(x[0].replace("*",""), variable=SHIFTTRIM, ducet=ducet)):
                 for i in range(len(k)):
                     if indices is None:
-                        if k[i] not in "\u0E40\u0E41\u0E42\u0E43\u0E44":
+                        if k[i] not in "*\u0E40\u0E41\u0E42\u0E43\u0E44":
                             init = k[i]
                             break
                     else:
@@ -275,7 +293,7 @@ def generateStrongsIndex(bkid, cols, outfile, localfile, onlylocal, ptsettings, 
                             continue
                         break
                 if init != lastinit:
-                    outf.write("\n\\b\n\\m\n")
+                    outf.write("\n\\m\n")
                     lastinit = init
                 outf.write("{}({}) ".format(k, ", ".join(sorted(v, key=lambda s:(int(s[1:]), s[0]))))) 
-        outf.write("\\strong-e\\*\n")
+        outf.write("\n\\strong-e\\*\n")

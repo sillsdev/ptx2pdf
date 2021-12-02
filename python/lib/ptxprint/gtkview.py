@@ -1465,7 +1465,7 @@ class GtkViewModel(ViewModel):
             tmodel = TexModel(self, self.settings_dir, self._getPtSettings(self.prjid), self.prjid)
             out = tmodel.convertBook(bk, None, self.working_dir, os.path.join(self.settings_dir, self.prjid))
             self.editFile(out, loc="wrk", pgid=pgid)
-        self.onViewerChangePage(None,None,pg)
+        self.onViewerChangePage(None, None, pg, forced=True)
 
     def generateAdjList(self, books=None, dynamic=True):
         existingFilelist = []
@@ -1565,9 +1565,9 @@ class GtkViewModel(ViewModel):
 
     def onRefreshViewerTextClicked(self, btn):
         pg = self.get("nbk_Viewer")
-        self.onViewerChangePage(None, None, pg)
+        self.onViewerChangePage(None, None, pg, forced=True)
 
-    def onViewerChangePage(self, nbk_Viewer, scrollObject, pgnum):
+    def onViewerChangePage(self, nbk_Viewer, scrollObject, pgnum, forced=False):
         allpgids = ("scroll_FrontMatter", "scroll_Settings", "scroll_AdjList", "scroll_FinalSFM", 
                     "scroll_TeXfile", "scroll_XeTeXlog", "scroll_SettingsOld")
         if nbk_Viewer is None:
@@ -1663,7 +1663,7 @@ class GtkViewModel(ViewModel):
             return
         set_tooltip = self.builder.get_object("l_{1}".format(*pgid.split("_"))).set_tooltip_text
         buf = self.fileViews[pgnum][0]
-        if buf.get_char_count():
+        if not forced and buf.get_char_count():
             return
         if os.path.exists(fpath):
             set_tooltip(fpath)
