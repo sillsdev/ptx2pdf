@@ -100,7 +100,7 @@ _alldigits = [ "Default", "Adlam", "Ahom", "Arabic-Indic", "Balinese", "Bengali"
     "Tai-Tham-Tham", "Takri", "Tamil", "Telugu", "Thai", "Tibetan", "Tirhuta", "Vai", "Wancho", "Warang-Citi", "Western-Cham"]
 
 _ui_minimal = """
-bx_statusBar fcb_uiLevel
+btn_download_update bx_statusBar fcb_uiLevel
 fcb_filterXrefs fcb_interfaceLang c_quickRun
 tb_Basic lb_Basic
 fr_projScope l_project fcb_project l_projectFullName r_book_single ecb_book l_chapfrom s_chapfrom l_chapto s_chapto 
@@ -157,7 +157,7 @@ rule_help l_homePage lb_homePage l_createZipArchiveXtra btn_createZipArchiveXtra
 _ui_noToggleVisible = ("lb_details", "tb_details", "lb_checklist", "tb_checklist", "ex_styNote") # toggling these causes a crash
                        # "lb_footnotes", "tb_footnotes", "lb_xrefs", "tb_xrefs")  # for some strange reason, these are fine!
 
-_ui_keepHidden = ("btn_download_update", "lb_extXrefs", "l_extXrefsComingSoon", "tb_Logging", "lb_Logging",
+_ui_keepHidden = ("lb_extXrefs", "l_extXrefsComingSoon", "tb_Logging", "lb_Logging",
                   "c_customOrder", "t_mbsBookList", )
 
 _uiLevels = {
@@ -3518,12 +3518,10 @@ class GtkViewModel(ViewModel):
                                "'Spacing Adjustments Between Letters' on the Fonts+Script page.\n" +\
                                "So that option has just been disabled."))
 
-    # Waiting for an upstream SSL bug to be fixed.
     def checkUpdates(self, background=True):
-        if True: # WAITING for Python fix!   sys.platform != "win32":
+        if sys.platform != "win32":
             self.builder.get_object("btn_download_update").set_visible(False)
             return
-        # os.environ["PYTHONHTTPSVERIFY"] = "0"
         version = None
         if not background:
             self.builder.get_object("btn_download_update").set_visible(False)
@@ -3539,10 +3537,14 @@ class GtkViewModel(ViewModel):
             return
         newv = [int(x) for x in version.split('.')]
         currv = [int(x) for x in VersionStr.split('.')]
+        # currv = [int(x) for x in "2.0.14".split('.')]
+        # print(f"Current version is: {currv}\nLatest version is:  {newv}")
         if newv <= currv:
             return
         def enabledownload():
             wid = self.builder.get_object("btn_download_update")
+            tip = _("A newer version of PTXprint ({}) is available.\nClick to visit download page on the website.".format(version))
+            wid.set_tooltip_text(tip)
             wid.set_visible(True)
         if background:
             GLib.idle_add(enabledownload)
@@ -3551,6 +3553,7 @@ class GtkViewModel(ViewModel):
 
     def openURL(self, url):
         if self.get("c_noInternet"):
+            self.deniedInternet()
             return
         if sys.platform == "win32":
             os.system("start \"\" {}".format(url))
@@ -3559,8 +3562,12 @@ class GtkViewModel(ViewModel):
 
     def onUpdateButtonClicked(self, btn):
         if self.get("c_noInternet"):
+            self.deniedInternet()
             return
-        self.openURL("https://software.sil.org/ptxprint/download")       
+        self.openURL("https://software.sil.org/ptxprint/download")
+
+    def deniedInternet(self):
+        self.doError(_("Internet Access Disabled"), secondary=_("All Internet URLs have been disabled \nusing the option on the Advanced Tab"))
 
     def editZvarsClicked(self, btn):
         self.rescanFRTvarsClicked(None, autosave=True)

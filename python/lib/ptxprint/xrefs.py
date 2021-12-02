@@ -233,7 +233,9 @@ def generateStrongsIndex(bkid, cols, outfile, localfile, onlylocal, ptsettings, 
             for w in rend.split("||"):
                 s = re.sub(r"\(.*?\)", "", w).strip()
                 revwds.setdefault(s.lower(), set()).add(sref)
-    title = view.getvar("strongs_title") or "Strongs"
+    title = view.getvar("strongs_title") or "Strong's Index"
+    wildcard = view.get("fcb_strongswildcards")
+    print(f"{wildcard}")
     with open(outfile, "w", encoding="utf-8") as outf:
         outf.write("\\id {0} Strongs based terms index\n\\h {1}\n\\NoXrefNotes\n\\strong-s\\*\n\\mt1 {1}\n".format(bkid, title))
         outf.write("\\onebody\n" if cols == 1 else "\\twobody\n")
@@ -248,7 +250,7 @@ def generateStrongsIndex(bkid, cols, outfile, localfile, onlylocal, ptsettings, 
                 if hdr:
                     outf.write(hdr)
                     hdr = ""
-                outf.write(r"\{_marker} \bd {_key}\bd* \w{_lang} {lemma}\w{_lang}* \wl {translit}\wl* {_defn} \xt $a({head})\xt*".format(
+                outf.write(r"\{_marker} \bd {_key}\bd* \w{_lang} {lemma}\w{_lang}* \wl {translit}\wl* {_defn}; \xt $a({head})\xt*".format(
                     _key=k[1:], _lang=a[0].lower(), _marker="li", _defn=d, **v) + "\n")
         if len(revwds):
             tailoring = ptsettings.getCollation()
@@ -256,6 +258,7 @@ def generateStrongsIndex(bkid, cols, outfile, localfile, onlylocal, ptsettings, 
             ldmlindices = ptsettings.getIndexList()
             indices = None if ldmlindices is None else sorted([c.lower() for c in ldmlindices], key=lambda s:(-len(s), s))
             lastinit = ""
+            # outf.write("\\onebody\n")  # Wondering if we set this as an option (Hnnnn and Gnnnn as 1-col, and Index as 2-col)
             outf.write("\n\\mt2 {}\n".format(view.getvar("strongs_index") or "Index"))
             for k, v in sorted(revwds.items(), key=lambda x:get_sortkey(x[0], variable=SHIFTTRIM, ducet=ducet)):
                 for i in range(len(k)):
@@ -272,7 +275,7 @@ def generateStrongsIndex(bkid, cols, outfile, localfile, onlylocal, ptsettings, 
                             continue
                         break
                 if init != lastinit:
-                    outf.write("\n\\p\n")
+                    outf.write("\n\\b\n\\m\n")
                     lastinit = init
                 outf.write("{}({}) ".format(k, ", ".join(sorted(v, key=lambda s:(int(s[1:]), s[0]))))) 
         outf.write("\\strong-e\\*\n")

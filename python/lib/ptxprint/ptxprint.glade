@@ -22706,7 +22706,6 @@ chosen language.</property>
             </child>
             <child>
               <object class="GtkButton" id="btn_download_update">
-                <property name="sensitive">False</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">False</property>
                 <property name="no-show-all">True</property>
