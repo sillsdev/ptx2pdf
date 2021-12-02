@@ -1564,8 +1564,7 @@
     \s@tpage
     \global\holdinginserts=1
     \ifrerunsavepartialpaged
-      \global\holdinginserts=0
-      \global\output={\savepartialpaged}\global\rerunsavepartialpagedfalse\unvbox\s@vedpage
+      \global\output={\savepartialpagedbounce}\global\rerunsavepartialpagedfalse\unvbox\s@vedpage
     \else\global\output={\twocols}\unvbox\s@vedpage\fi
     \ifnum\interactionmode=2
       \showlists
