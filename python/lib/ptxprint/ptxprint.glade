@@ -4437,11 +4437,6 @@ information, position and other parameters.</property>
       <!-- column-name digprojid -->
       <column type="gchararray"/>
     </columns>
-    <data>
-      <row>
-        <col id="0">Unknown</col>
-      </row>
-    </data>
   </object>
   <object class="GtkListStore" id="ls_strongswildcards">
     <columns>
@@ -4872,6 +4867,7 @@ the gloss in a major language.
                             <property name="wrap-width">1</property>
                             <property name="active">0</property>
                             <property name="entry-text-column">0</property>
+                            <property name="id-column">1</property>
                             <property name="active-id">0</property>
                           </object>
                           <packing>
@@ -5009,6 +5005,7 @@ to be displayed, select an appropriate option.</property>
                     <property name="wrap-width">1</property>
                     <property name="active">0</property>
                     <property name="entry-text-column">0</property>
+                    <property name="id-column">1</property>
                     <property name="active-id">0</property>
                   </object>
                   <packing>

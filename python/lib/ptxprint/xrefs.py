@@ -217,7 +217,7 @@ components = [
     ("c_strongsRenderings", r"{_defn};"),
     ("c_strongsKeyVref", r"\xt $a({head})\xt*")
 ]
-def _readTermRenderings(localfile, strongs, revwds, key):
+def _readTermRenderings(localfile, strongs, revwds, btmap, key):
     localdoc = et.parse(localfile)
     for r in localdoc.findall(".//TermRendering"):
         rid = normalize('NFC', r.get("Id"))
@@ -244,34 +244,35 @@ def generateStrongsIndex(bkid, cols, outfile, localfile, onlylocal, ptsettings, 
     if fallback is not None and fallback and fallback != "None":
         fallbackfile = os.path.join(view.settings_dir, fallback, "TermRenderings.xml")
         if os.path.exists(fallbackfile):
-            _readTermRenderings(fallbackfile, strongs, revwds, 'def')
+            _readTermRenderings(fallbackfile, strongs, revwds, btmap, 'def')
     if localfile is not None:
-        _readTermRenderings(localfile, strongs, revwds, 'local')
+        _readTermRenderings(localfile, strongs, revwds, btmap, 'local')
     title = view.getvar("strongs_title") or "Strong's Index"
     with open(outfile, "w", encoding="utf-8") as outf:
         outf.write("\\id {0} Strongs based terms index\n\\h {1}\n\\NoXrefNotes\n\\strong-s\\*\n\\mt1 {1}\n".format(bkid, title))
         outf.write("\\onebody\n" if cols == 1 else "\\twobody\n")
         for a in ('Hebrew', 'Greek'):
-            hdr = ("\n\\mt2 {}\n\\p\n".format(view.getvar("strongs_{}".format(a.lower())) or a))
-            for k, v in sorted(strongs.items(), key=lambda x:int(x[0][1:])):
-                if not k.startswith(a[0]):
-                    continue
-                d = v.get('local', v.get('def', None) if not onlylocal else None)
-                if d is None:
-                    continue
-                if view.get("c_strongsNoComments"):
-                    d = re.sub(r"\(.*?\)", "", d)
-                wc = view.get("c_fcbstrongwildcards") 
-                if wc in ("remove", "hyphen"):
-                    d = d.replace("*", "" if wc == "remove" else "-")
-                if hdr:
-                    outf.write(hdr)
-                    hdr = ""
-                bits = [r"\{_marker} \bd{_key}\bd*"] + [cv for ck, cv in components if view.get(ck)]
-                if bits[-1][-1] == ";":
-                    bits[-1] = bits[-1][:-1]
-                outf.write(" ".join(bits).format(_key=k[1:], _lang=a[0].lower(), _marker="li", _defn=d, **v) + "\n")
-        if len(revwds):
+            if (view.get("c_strongsHeb") and a == 'Hebrew') or (view.get("c_strongsGrk") and a == 'Greek'):
+                hdr = ("\n\\mt2 {}\n\\p\n".format(view.getvar("strongs_{}".format(a.lower())) or a))
+                for k, v in sorted(strongs.items(), key=lambda x:int(x[0][1:])):
+                    if not k.startswith(a[0]):
+                        continue
+                    d = v.get('local', v.get('def', None) if not onlylocal else None)
+                    if d is None:
+                        continue
+                    if view.get("c_strongsNoComments"):
+                        d = re.sub(r"\(.*?\)", "", d)
+                    wc = view.get("fcb_strongswildcards") 
+                    if wc in ("remove", "hyphen"):
+                        d = d.replace("*", "" if wc == "remove" else "-")
+                    if hdr:
+                        outf.write(hdr)
+                        hdr = ""
+                    bits = [r"\{_marker} \bd{_key}\bd*"] + [cv for ck, cv in components if view.get(ck)]
+                    if bits[-1][-1] == ";":
+                        bits[-1] = bits[-1][:-1]
+                    outf.write(" ".join(bits).format(_key=k[1:], _lang=a[0].lower(), _marker="li", _defn=d, **v) + "\n")
+        if len(revwds) and view.get("c_strongsNdx"):
             tailoring = ptsettings.getCollation()
             ducet = tailored(tailoring.text) if tailoring else None
             ldmlindices = ptsettings.getIndexList()
