@@ -100,7 +100,7 @@ _alldigits = [ "Default", "Adlam", "Ahom", "Arabic-Indic", "Balinese", "Bengali"
     "Tai-Tham-Tham", "Takri", "Tamil", "Telugu", "Thai", "Tibetan", "Tirhuta", "Vai", "Wancho", "Warang-Citi", "Western-Cham"]
 
 _ui_minimal = """
-btn_download_update bx_statusBar fcb_uiLevel
+bx_statusBar fcb_uiLevel
 fcb_filterXrefs fcb_interfaceLang c_quickRun
 tb_Basic lb_Basic
 fr_projScope l_project fcb_project l_projectFullName r_book_single ecb_book l_chapfrom s_chapfrom l_chapto s_chapto 
@@ -157,7 +157,7 @@ rule_help l_homePage lb_homePage l_createZipArchiveXtra btn_createZipArchiveXtra
 _ui_noToggleVisible = ("lb_details", "tb_details", "lb_checklist", "tb_checklist", "ex_styNote") # toggling these causes a crash
                        # "lb_footnotes", "tb_footnotes", "lb_xrefs", "tb_xrefs")  # for some strange reason, these are fine!
 
-_ui_keepHidden = ("lb_extXrefs", "l_extXrefsComingSoon", "tb_Logging", "lb_Logging",
+_ui_keepHidden = ("btn_download_update ", "lb_extXrefs", "l_extXrefsComingSoon", "tb_Logging", "lb_Logging",
                   "c_customOrder", "t_mbsBookList", )
 
 _uiLevels = {
@@ -752,6 +752,7 @@ class GtkViewModel(ViewModel):
         self.updateMarginGraphics()
         self.colorTabs()
         self.onRotateTabsChanged()
+        self.checkUpdates()
         self.mw.resize(200, 200)
 
     def toggleUIdetails(self, w, state):
@@ -3519,12 +3520,11 @@ class GtkViewModel(ViewModel):
                                "So that option has just been disabled."))
 
     def checkUpdates(self, background=True):
+        wid = self.builder.get_object("btn_download_update")
+        wid.set_visible(False)
         if sys.platform != "win32":
-            self.builder.get_object("btn_download_update").set_visible(False)
             return
         version = None
-        if not background:
-            self.builder.get_object("btn_download_update").set_visible(False)
         if self.get("c_noInternet"):
             return
         try:
@@ -3542,7 +3542,6 @@ class GtkViewModel(ViewModel):
         if newv <= currv:
             return
         def enabledownload():
-            wid = self.builder.get_object("btn_download_update")
             tip = _("A newer version of PTXprint ({}) is available.\nClick to visit download page on the website.".format(version))
             wid.set_tooltip_text(tip)
             wid.set_visible(True)
@@ -3563,8 +3562,8 @@ class GtkViewModel(ViewModel):
     def onUpdateButtonClicked(self, btn):
         if self.get("c_noInternet"):
             self.deniedInternet()
-            return
-        self.openURL("https://software.sil.org/ptxprint/download")
+        else:
+            self.openURL("https://software.sil.org/ptxprint/download")
 
     def deniedInternet(self):
         self.doError(_("Internet Access Disabled"), secondary=_("All Internet URLs have been disabled \nusing the option on the Advanced Tab"))
