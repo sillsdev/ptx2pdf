@@ -355,6 +355,7 @@ ModelMap = {
     "strongsndx/sourcelang":    ("c_strongsSrcLg", None),
     "strongsndx/transliterate": ("c_strongsTranslit", None),
     "strongsndx/renderings":    ("c_strongsRenderings", None),
+    "strongsndx/definitions":   ("c_strongsDefn", None),
     "strongsndx/keyvrsrefs":    ("c_strongsKeyVref", None),
     "strongsndx/fallbackprj":   ("fcb_strongsFallbackProj", None),
     "strongsndx/majorlang":     ("fcb_strongsMajorLg", None),

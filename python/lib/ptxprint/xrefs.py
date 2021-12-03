@@ -215,6 +215,7 @@ components = [
     ("c_strongsSrcLg", r"\w{_lang} {lemma}\w{_lang}*"),
     ("c_strongsTranslit", r"\wl {translit}\wl*"),
     ("c_strongsRenderings", r"{_defn};"),
+    ("c_strongsDefn", r"{trans}"),
     ("c_strongsKeyVref", r"\xt $a({head})\xt*")
 ]
 def _readTermRenderings(localfile, strongs, revwds, btmap, key):
@@ -235,11 +236,17 @@ def generateStrongsIndex(bkid, cols, outfile, localfile, onlylocal, ptsettings, 
     strongs = {}
     btmap = {}
     revwds = {}
+    lang = view.get('fcb_strongsMajorLg')
+    if lang is None or lang == 'und':
+        lang = 'en'
     for s in strongsdoc.findall(".//strong"):
         sref = s.get('ref')
+        le = s.find('.//trans[xml:lang="{}"]'.format(lang))
         strongs[sref] = {k: s.get(k) for k in ('btid', 'lemma', 'head', 'translit')}
-        strongs[sref]['def'] = s.text
         btmap[s.get('btid')] = sref
+        if le is not None:
+            strongs[sref]['def'] = le.get('gloss', None)
+            strongs[sref]['trans'] = le.text
     fallback = view.get("fcb_strongsFallbackProj")
     if fallback is not None and fallback and fallback != "None":
         fallbackfile = os.path.join(view.settings_dir, fallback, "TermRenderings.xml")
