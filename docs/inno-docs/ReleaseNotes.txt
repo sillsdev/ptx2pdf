@@ -1,7 +1,42 @@
 PTXprint 2.0.15 Release Notes 
-19 November 2021
+3 December 2021
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
+
+Bug fixes and improvements in 2.0.16 (3 Dec 2021)
+
+NOTE: Underlying code libraries were recently upgraded, so there is a new look and feel
+      to PTXprint on Windows. Report any regressions you find as a result of this upgrade.
+
+  * Added Strongs Numbers cross-reference system along with a powerful, configurable
+    localized Strongs Index generator - hiding under 'External Cross-reference Settings'
+    tab of the Notes+Refs page. It generates an XXA/B.../G file to be included in booklist.
+
+  * Added configuration-specific PrintDraftChanges (changes.txt is now for config-specific 
+    changes, while project-wide changes remain in PrintDraftChanges.txt) #587
+
+  * Various improvements to View/Edit page:
+    - preserve edits when switching between tabs
+    - blank lines are no longer hidden/invisible in tabs (Front Matter, AdjList, Final SFM)
+    - two tabs available for editing settings (making it easier to edit commonly used files)
+
+  * Enchanced Style editor to handle Vertical Position for table \tc markers
+  
+  * Copy Configuration dialog now shows projects horizontally in alphabetical order
+
+  * Fixed: Footnotes on final page of book missing
+
+  * Fixed: Marginal verse column shift leaking into introductions #594
+
+  * Fixed: Update button on status bar (now shows up if a newer version is available)
+
+  * Fixed: Generated AdjList for diglot publications are faulty #581
+
+  * Fixed: stylesheet handling making an incorrect assumption #577
+  
+  * Fixed: Footnotes Style Control for Paragraph Indention not working #560
+  
+  * Fixed: FirstIndent for footnotes, improved book name calculations and note columns
 
 Bug fixes and improvements in 2.0.15 (19 Nov 2021)
 

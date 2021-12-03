@@ -21576,7 +21576,7 @@ at each Periph</property>
 different section of the front matter will begin
 on a new page.</property>
                                 <property name="halign">start</property>
-                                <property name="valign">start</property>
+                                <property name="valign">center</property>
                                 <property name="margin-start">6</property>
                                 <property name="active">True</property>
                                 <property name="draw-indicator">True</property>
@@ -21738,9 +21738,23 @@ Front Matter</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkLabel">
+                              <object class="GtkCheckButton" id="c_periphSuppressPage">
+                                <property name="label" translatable="yes">Suppress Blank Page</property>
                                 <property name="visible">True</property>
-                                <property name="can-focus">False</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">False</property>
+                                <property name="tooltip-text" translatable="yes">By default, the main body of scripture always starts
+on an odd (right-hand-side) page. PTXprint will
+automatically insert a pagebreak if needed to make
+this happen. If you wish to override this behavior,
+then check this option (to NOT insert a blank page
+after any front matter material).</property>
+                                <property name="halign">start</property>
+                                <property name="valign">center</property>
+                                <property name="margin-left">6</property>
+                                <property name="margin-start">6</property>
+                                <property name="active">True</property>
+                                <property name="draw-indicator">True</property>
                               </object>
                               <packing>
                                 <property name="left-attach">0</property>

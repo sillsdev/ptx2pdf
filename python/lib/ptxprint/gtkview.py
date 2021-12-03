@@ -1577,7 +1577,7 @@ class GtkViewModel(ViewModel):
         if page == None:
             return
         for w in ["gr_editableButtons", "l_examineBook", "ecb_examineBook", "btn_saveEdits", 
-                  "btn_refreshViewerText", "btn_viewEdit"]: # "btn_Generate", "btn_editZvars", "btn_removeZeros", 
+                  "btn_refreshViewerText", "btn_viewEdit"]:
             self.builder.get_object(w).set_sensitive(True)
         self.builder.get_object("btn_viewEdit").set_label("View/Edit...")
         genBtn = self.builder.get_object("btn_Generate")

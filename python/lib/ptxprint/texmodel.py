@@ -245,6 +245,7 @@ ModelMap = {
     "document/diglotjoinvrule": ("c_diglotJoinVrule", lambda w,v: "true" if v else "false"),
 
     "document/hasnofront_":     ("c_frontmatter", lambda w,v: "%" if v else ""),
+    "document/noblankpage":     ("c_periphSuppressPage", None),
 
     "header/ifshowbook":        ("c_rangeShowBook", lambda w,v :"false" if v else "true"),
     "header/ifshowchapter":     ("c_rangeShowChapter", lambda w,v :"false" if v else "true"),
@@ -810,8 +811,9 @@ class TexModel:
                             res.append(r"\lastptxfiletrue")
                             if self.dict['project/pgbreakcolophon'] != '%':
                                 res.append(r"\endbooknoejecttrue")
-                        if not resetPageDone and f not in self._peripheralBooks:
-                            res.append(r"\ifodd\pageno\else\emptyoutput \fi")
+                        if not resetPageDone and f not in self._peripheralBooks: 
+                            if not self.dict['document/noblankpage']:
+                                res.append(r"\ifodd\pageno\else\emptyoutput \fi")
                             res.append(r"\pageno={}".format(self.dict['document/startpagenum']))
                             resetPageDone = True
                         if not self.asBool('document/ifshow1chbooknum') and \
