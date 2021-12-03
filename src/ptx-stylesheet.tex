@@ -192,22 +192,21 @@
   \ifAttrMilestoneMatchesUnattr
     \edef\t@mp{#1}%
     \ifx\t@mp\thisattrmil@stone % Need to match on unattributed milestone too.
-      \ifx\mini@stackB\empty\let\mini@stackB\mini@stack\fi
-      \trace{m}{Adding \thismil@stone\space to possible params}%
-      \edef\mini@stackB{\mini@stack+\thismil@stone}%
-    \else
-      \edef\mini@stack{\mini@stack+#1}%
+      \if@ttrMilestone
+        \ifx\mini@stackB\empty\let\mini@stackB\mini@stack\fi
+        \trace{m}{Adding \thismil@stone\space to possible params}%
+        \edef\mini@stackB{\mini@stack+\thismil@stone}%
+      \fi
     \fi
-  \else 
-    \edef\mini@stack{\mini@stack+#1}%
   \fi
-  \trace{skx}{-> \mini@stack}%
+  \edef\mini@stack{\mini@stack+#1}%
+  \trace{sk}{'#1' -> \mini@stack}%
   \xdef\@ut{\mini@stack,\@ut}%
   \ifx\mini@stackB\empty\else
     \xdef\@ut{\mini@stackB,\@ut}%
   \fi
   \edef\t@mp{#2}\advance\count255 by -1 
-  \trace{skx}{#2,\the\count255---> \@ut}%
+  \trace{sk}{'#2',\the\count255---> \@ut}%
   \ifx\t@mp\empty\count255=0 \relax\fi
   \ifnum\count255>0 \x@\stystack@pts#2\E\fi
 }
@@ -253,10 +252,10 @@
         \let\@ut=\empty
         \let\d@=\cs@ppend\x@\cstackdown\p@ssParams,\E
         \trace{sk}{:\@ut (\@@ut)}%
-        \let\d@\d@c\ifx\@@ut\empty\xdef\@@ut{\@ut,\p@ssParams}\else\xdef\@@ut{\@@ut,\@ut,\p@ssParams}\fi}%
+        \let\d@\d@c\ifx\@@ut\empty\xdef\@@ut{\@ut\ifx\p@ssParams\simplep@ssParams\else,\p@ssParams\fi}\else\xdef\@@ut{\@@ut,\@ut,\p@ssParams}\fi}%
       \x@\cstackdown \@in,\E 
       \trace{sk}{fullstack@xpand #1|#2 : \@@ut. Continue (\tmpstyst@kbody)}%
-      \x@\fullstack@xpand#1|\tmpstyst@kbody\E %Recurse
+      \x@\fullstack@xpand\x@#1\x@|\tmpstyst@kbody\E %Recurse
     \fi
   \fi
 }
@@ -269,6 +268,7 @@
   \else
      \edef\p@ssParams{#1}%
   \fi
+  \let\simplep@ssParams\p@ssParams
   \edef\tmp{#1}% #1 is the main marker
   \edef\this@stystak{#2}%#2 is the stystack to be used for *this* call (normally \styst@k, but not *ALWAYS*). The stystack supplied should always include the present marker.
   \ifx\tmp\this@stystak
@@ -276,7 +276,7 @@
   \else % Assuming there's is a real stack to expand...
     \let\@@ut\empty
     \let\@ut\empty
-    \fullstack@xpand\StackComplexity|\this@stystak\E%
+    \x@\fullstack@xpand\x@\StackComplexity\x@|\this@stystak\E%
     \let\p@ssParams\@@ut
   \fi
   \trace{s}{1. Checking \p@ssParams}%
@@ -357,19 +357,25 @@
    %\tracingmacros=1
   % Final version of the list might be cat:inl|ms:qt|pR,cat:inl|ms:qt|p,cat:inl|pR,cat:inl|p,ms:qt|pR,ms:qt|p,pR,p
    \ifcsname getthep@ram-#1\endcsname %call a parameter-specific routine. e.g. for fontsize.
+     \trace{s}{Specific 'getpar@m-#1'}%
+     %\tracingmacros=0
+     %\tracingassigns=1
+     %\tracingifs=1
      \ifg@ttingspecificparam % Avoid lookup loops.
+       \trace{s}{No recursion}%
        \gettop@aram{#1}%
      \else
        \g@ttingspecificparamtrue
-       \csname getthep@ram-#1{#1}\endcsname
+       \csname getthep@ram-#1\endcsname{#1}%
        \g@ttingspecificparamfalse
      \fi
+     %\tracingifs=0
+     %\tracingassigns=0
+     %\tracingmacros=0
    \else
      \gettop@aram{#1}%
    \fi
    \global\let\p@@r@m=\p@ram % Need to return outside the brackets
-   %\tracingassigns=0
-   %\tracingmacros=0
    }%
    \let\p@ram=\p@@r@m
  \fi
@@ -388,7 +394,7 @@
    \fi
 }
 
-\def\stackg@tp@ram#1\E{\getp@r@m{\p@ramcheck}{#1}\ifx\p@ram\relax\else\let\d@=\cstackrelax\fi}
+\def\stackg@tp@ram#1\E{\trace{s}{tgp #1}\getp@r@m{\p@ramcheck}{#1}\ifx\p@ram\relax\else\let\d@=\cstackrelax\fi}
 
 \def\getp@r@m#1#2{\x@\let\x@\p@ram\csname#2:#1\endcsname \ifx\p@ram\relax\trace{spv}{#2:#1 undefined}\else\trace{s}{#2:#1 found: \p@ram}\fi}
 % prepend \@lso to #1 and build comma separated list of results
@@ -421,17 +427,20 @@
   \let\d@gettheparam=\d@
   \trace{s}{getthep@ramObeyRegular{#1}}%
   \let\r@s\relax\ifnotracestacks\pushtracing\fi
-  \def\d@##1\E{\edef\tmpstylename{##1}\trace{s}{inside getthep@ram-fontregular ##1 currently res=\r@s}%
-  \getp@r@m{regular}{\tmpstylen@me}\ifx\p@ram\relax\getp@r@m{#1}{\tmpstylename}\ifx\p@ram\relax\else\let\r@s\p@ram\fi
-       \else\global\let\r@s\relax\fi\fi}%
-  \cstackup\p@ssParams,\E
+  %\tracingassigns=1
+  \def\d@##1\E{\edef\tmpstylen@me{##1}\trace{s}{inside getthep@ram-fontregular ##1 currently res=\r@s}%
+  \getp@r@m{regular}{\tmpstylen@me}\ifx\p@ram\relax\getp@r@m{#1}{\tmpstylen@me}\ifx\p@ram\relax\else\let\r@s\p@ram\fi
+       \else\global\let\r@s\relax\fi}%
+  \x@\cstackup\p@ssParams,\E
+  %\tracingassigns=1
   \let\d@\d@gettheparam
+  \let\p@ram\r@s
   }
 
 \def\getthep@ramObeyRegularTop#1{%Called with p@ssParams set up. work down through possParam list, stopping on value or \Regular in the stylesheet
   \let\d@gettheparam=\d@
   \trace{s}{getthep@ramObeyRegularTop{#1}}%
-  \def\d@##1\E{\edef\tmpstylename{##1}\getp@r@m{regular}{\tmpstylen@me}\ifx\p@ram\relax\getp@r@m{#1}{\tmpstylename}\ifx\p@ram\relax\let\d@\cstackrelax\fi\else\global\let\p@ram\relax\let\d@\cstackrelax\fi}
+  \def\d@##1\E{\edef\tmpstylen@me{##1}\getp@r@m{regular}{\tmpstylen@me}\ifx\p@ram\relax\getp@r@m{#1}{\tmpstylen@me}\ifx\p@ram\relax\let\d@\cstackrelax\fi\else\global\let\p@ram\relax\let\d@\cstackrelax\fi}%
   \cstackdown\p@ssParams,\E
   \let\d@\d@gettheparam
   }
@@ -448,7 +457,7 @@
 \def\getmcp@ram#1{\getp@ram{#1}{\styst@kfirst}{\styst@k}}
 \def\getmcp@ramR#1{\getp@ram{#1}{\styst@kfirst}{\styst@k}}
 
-\def\getFp@ram#1#2#3{\ifnotracestacks\pushtracing\fi
+\def\getFp@ram#1#2#3{%\ifnotracestacks\pushtracing\fi
   \let\p@ram\relax
   \def\d@##1+##2+##3\E{\d@code{##1}{##2}\edef\tmpa{#2}\ifx\tmp\tmpa\getmcp@ram{#1}\else\getp@ram{#1}{#2}{#2}\fi}%
   \mctop\ifnotracestacks\poptracing\fi}
@@ -473,7 +482,7 @@
 %    \fi\fi\xdef\c@rrfontsize{\strip@pt{\dimen0}}\fi\trace{s}{\space working c@rrfontsize from ##2 is \c@rrfontsize}}%
 %  \mcup\trace{s}{set c@rrfontsize for \mcstack\space is \c@rrfontsize}\ifnotracestacks\poptracing\fi}             %(3)
 
-\x@\def\csname getthep@ram-fontsize#1\endcsname{%Called with p@ssParams set up. work up through possParam list
+\x@\def\csname getthep@ram-fontsize\endcsname#1{%Called with p@ssParams set up. work up through possParam list
   \let\savep@ssParams\p@ssParams\let\savestyst@k\tmpstyst@k
   \getp@ram{fontsize}{p}{p}%
   \ifx\p@ram\relax \edef\ps@ze{12}\edef\tmpfr@m{default}\else \edef\ps@ze{\p@ram}\edef\tmpfr@m{p}\fi
@@ -497,7 +506,7 @@
     \fi
     \xdef\c@rrfontsize{\strip@pt{\dimen0}}%
     \trace{s}{\space working c@rrfontsize from ##1 is \c@rrfontsize}}%
-  \cstackup\p@ssParams,\E
+  \x@\cstackup\p@ssParams,\E
   \trace{s}{set c@rrfontsize for \tmpstyst@k\space from \tmpfr@m\space is \c@rrfontsize}%
 }
 

@@ -294,7 +294,7 @@
   \x@\pars@msid \tmp;;;\E
   \edef\tmp{\ifx\k@yv@al\empty\else\k@yv@al|\fi\MStyp@}%
 }
-\def\mil@st@necheck#1+#2\E{%The milestone has a key value and possibly an ID field. Ignore the id for building the prefix
+\def\mil@st@necheck#1+#2+#3\E{%The milestone has a key value and possibly an ID field. Ignore the id for building the prefix
   \edef\MSt@mp{#1}%
   \ifx\MSt@mp\ss@Mstn
     \x@\pars@msid #2;;;\E
