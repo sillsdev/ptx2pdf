@@ -1454,3 +1454,6 @@ set stack_size=32768""".format(self.configName())
             localfile = None
         generateStrongsIndex(bkid, cols, outfile, localfile, onlylocal, self._getPtSettings(), self)
         
+    def doGenerateStrongs(self):
+        bkid = self.getBooks()[0]
+        self.generateStrongs(bkid, 2)

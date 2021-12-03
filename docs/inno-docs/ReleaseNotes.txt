@@ -23,6 +23,8 @@ NOTE: Underlying code libraries were recently upgraded, so there is a new look a
   * Enchanced Style editor to handle Vertical Position for table \tc markers
   
   * Copy Configuration dialog now shows projects horizontally in alphabetical order
+  
+  * Added option to suppress insertion of a blank (even) page after front matter
 
   * Fixed: Footnotes on final page of book missing
 

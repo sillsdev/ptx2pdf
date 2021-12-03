@@ -239,14 +239,19 @@ def generateStrongsIndex(bkid, cols, outfile, localfile, onlylocal, ptsettings, 
     lang = view.get('fcb_strongsMajorLg')
     if lang is None or lang == 'und':
         lang = 'en'
+    import pdb; pdb.set_trace()
     for s in strongsdoc.findall(".//strong"):
         sref = s.get('ref')
-        le = s.find('.//trans[xml:lang="{}"]'.format(lang))
+        le = s.find('.//trans[{{http://www.w3.org/XML/1998/namespace}}lang="{}"]'.format(lang))
         strongs[sref] = {k: s.get(k) for k in ('btid', 'lemma', 'head', 'translit')}
         btmap[s.get('btid')] = sref
         if le is not None:
             strongs[sref]['def'] = le.get('gloss', None)
             strongs[sref]['trans'] = le.text
+        else:
+            strongs[sref]['def'] = None
+            strongs[sref]['trans'] = ""
+            
     fallback = view.get("fcb_strongsFallbackProj")
     if fallback is not None and fallback and fallback != "None":
         fallbackfile = os.path.join(view.settings_dir, fallback, "TermRenderings.xml")
