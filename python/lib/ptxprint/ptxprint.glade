@@ -4700,6 +4700,7 @@ generated Strongs Cross Reference Index.</property>
                         <property name="wrap-width">1</property>
                         <property name="active">0</property>
                         <property name="entry-text-column">0</property>
+                        <property name="id-column">0</property>
                         <property name="active-id">0</property>
                       </object>
                       <packing>
@@ -12187,6 +12188,7 @@ Biblical Terms List.</property>
                                                   <object class="GtkCheckButton" id="c_strongsInclNames">
                                                     <property name="label" translatable="yes">Include Proper Nouns</property>
                                                     <property name="visible">True</property>
+                                                    <property name="sensitive">False</property>
                                                     <property name="can-focus">True</property>
                                                     <property name="receives-default">False</property>
                                                     <property name="tooltip-text" translatable="yes">For the sake of being more concise, and not
@@ -12195,6 +12197,7 @@ too much detail, you may choose to exclude
 proper nouns (names of people and places).</property>
                                                     <property name="halign">start</property>
                                                     <property name="valign">center</property>
+                                                    <property name="active">True</property>
                                                     <property name="draw-indicator">True</property>
                                                   </object>
                                                   <packing>

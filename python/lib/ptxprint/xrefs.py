@@ -212,11 +212,11 @@ class Xrefs:
                 outf.write(self.template.format(**info))
 
 components = [
-    ("c_strongsSrcLg", r"\w{_lang} {lemma}\w{_lang}*"),
-    ("c_strongsTranslit", r"\wl {translit}\wl*"),
-    ("c_strongsRenderings", r"{_defn};"),
-    ("c_strongsDefn", r"{trans};"),
-    ("c_strongsKeyVref", r"\xt $a({head})\xt*")
+    ("c_strongsSrcLg", r"\w{_lang} {lemma}\w{_lang}*", "lemma"),
+    ("c_strongsTranslit", r"\wl {translit}\wl*", "translit"),
+    ("c_strongsRenderings", r"{_defn};", "_defn"),
+    ("c_strongsDefn", r"{trans};", "trans"),
+    ("c_strongsKeyVref", r"\xt $a({head})\xt*", "head")
 ]
 def _readTermRenderings(localfile, strongs, revwds, btmap, key):
     localdoc = et.parse(localfile)
@@ -227,9 +227,10 @@ def _readTermRenderings(localfile, strongs, revwds, btmap, key):
             continue
         sref = btmap[rid]
         strongs[sref][key] = ", ".join(rend.split("||"))
-        for w in rend.split("||"):
-            s = re.sub(r"\(.*?\)", "", w).strip()
-            revwds.setdefault(s.lower(), set()).add(sref)
+        if revwds is not None:
+            for w in rend.split("||"):
+                s = re.sub(r"\(.*?\)", "", w).strip()
+                revwds.setdefault(s.lower(), set()).add(sref)
 
 def generateStrongsIndex(bkid, cols, outfile, localfile, onlylocal, ptsettings, view):
     strongsdoc = et.parse(os.path.join(os.path.dirname(__file__), "strongs_info.xml"))
@@ -247,7 +248,7 @@ def generateStrongsIndex(bkid, cols, outfile, localfile, onlylocal, ptsettings, 
         btmap[s.get('btid')] = sref
         if le is not None:
             strongs[sref]['def'] = le.get('gloss', None)
-            strongs[sref]['trans'] = le.text
+            strongs[sref]['trans'] = le.text or ""
         else:
             strongs[sref]['def'] = None
             strongs[sref]['trans'] = ""
@@ -256,7 +257,7 @@ def generateStrongsIndex(bkid, cols, outfile, localfile, onlylocal, ptsettings, 
     if fallback is not None and fallback and fallback != "None":
         fallbackfile = os.path.join(view.settings_dir, fallback, "TermRenderings.xml")
         if os.path.exists(fallbackfile):
-            _readTermRenderings(fallbackfile, strongs, revwds, btmap, 'def')
+            _readTermRenderings(fallbackfile, strongs, None, btmap, 'def')
     if localfile is not None:
         _readTermRenderings(localfile, strongs, revwds, btmap, 'local')
     title = view.getvar("strongs_title") or "Strong's Index"
@@ -280,10 +281,11 @@ def generateStrongsIndex(bkid, cols, outfile, localfile, onlylocal, ptsettings, 
                     if hdr:
                         outf.write(hdr)
                         hdr = ""
-                    bits = [r"\{_marker} \bd {_key}\bd*"] + [cv for ck, cv in components if view.get(ck)]
+                    v["_defn"] = d
+                    bits = [r"\{_marker} \bd {_key}\bd*"] + [cv for ck, cv, ct in components if view.get(ck) and v.get(ct, "")]
                     if bits[-1][-1] == ";":
                         bits[-1] = bits[-1][:-1]
-                    outf.write(" ".join(bits).format(_key=k[1:], _lang=a[0].lower(), _marker="li", _defn=d, **v) + "\n")
+                    outf.write(" ".join(bits).format(_key=k[1:], _lang=a[0].lower(), _marker="li", **v) + "\n")
         if len(revwds) and view.get("c_strongsNdx"):
             tailoring = ptsettings.getCollation()
             ducet = tailored(tailoring.text) if tailoring else None
