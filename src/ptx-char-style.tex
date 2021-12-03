@@ -272,12 +272,11 @@
  %\s@tstyst@k{#1}%
  \ifdiglot\def\f@ntstyle{#1\c@rrdstat}\let\sid@\c@rrdstat\else\def\f@ntstyle{#1}\def\sid@{-}\fi%
  \ifx\mspr@fix\empty\else\edef\f@ntstyle{\mspr@fix\f@ntstyle}\fi % Milestones now on stack
- \ifx\c@tegory\empty\else\s@tc@tpr@fix\edef\f@ntstyle{\c@tprefix\f@ntstyle}\fi % Categories have different styles
+ \ifx\c@tegory\empty\else\s@tc@tpr@fix\edef\f@ntstyle{\c@tprefix\f@ntstyle}\fi % Categories also have different styles
  \let\reqf@ntstyle\f@ntstyle
  \edef\cmpf@ntstyle{#1}%
  \let\d@@=\d@
  \getp@ram{fontsize}{#1}{#2}%
- %\trace{F}{\cmpf@ntstyle (\reqf@ntstyle): Looking for fontsize from style stack: \mcstack}%
  %\def\d@##1+##2+##3\E{\edef\tmp{##2}\ifx\cmpf@ntstyle\tmp \getmcfonts@ze\else
 			%\csname d@code-##1\endcsname
                         %\getp@ram{fontsize}{#1}{#1\ifx\tmp\empty\else +\tmp\fi}\ifx\p@ram\relax\xdef\c@rrfontsize{12}%
@@ -286,7 +285,7 @@
  \let\d@=\d@@
  \ifx\p@ram\relax\xdef\c@rrfontsize{12}\else\global\let\c@rrfontsize=\p@ram\fi
  \x@\stystacksplit#2+\E% Cut off the head entry of the stylestack
- \edef\f@ntstyle{\f@ntstyle-\c@rrfontsize\ifx\tmpstystackb@dy\empty\else+\tmpstystackb@dy\fi}%
+ \edef\f@ntstyle{\f@ntstyle-\c@rrfontsize\ifx\tmpstyst@kbody\empty\else+\tmpstyst@kbody\fi}%
 }
 \def\nomsg@tfontname#1{\getp@r@m{fontsize}{#1}\ifx\p@ram\relax\edef\p@ram{12}\fi\edef\f@ntstyle{#1-\p@ram}}
 %-cchar_getfontname

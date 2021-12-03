@@ -1,4 +1,3 @@
-%FIXME: \<styst@kskip\>
 %FIXME: \<styst@ksfirst\>
 
 %:strip
@@ -182,14 +181,14 @@
 \def\tracestack{,}
 \def\pushtracing{\xdef\tracestack{\the\tracingmacros,\tracestack}\tracingmacros=0}
 \def\poptracing{\tracingmacros=\x@\cstackpeek\tracestack\E\xdef\tracestack{\x@\cstackpop\tracestack\E}}
-\def\stystacksplit#1+#2\E{\edef\t@mp{#2}\let\tmpstystackb@dy\empty\edef\tmpstyst@kfirst{#1}\ifx\t@mp\empty\else\styst@cksplit#2\E\fi\trace{mc}{splistystack: '\tmpstyst@kfirst' , '\tmpstystackb@dy'}}
-\def\styst@cksplit#1+\E{\edef\tmpstystackb@dy{#1}}
+\def\stystacksplit#1+#2\E{\edef\t@mp{#2}\let\tmpstyst@kbody\empty\edef\tmpstyst@kfirst{#1}\ifx\t@mp\empty\else\styst@cksplit#2\E\fi\trace{sk}{splistystack: '\tmpstyst@kfirst' , '\tmpstyst@kbody'}}
+\def\styst@cksplit#1+\E{\edef\tmpstyst@kbody{#1}}
 \def\stystack@pts#1+#2\E{%Given an style stack, recurse down it, turning it into an option stack, going a maximum of count255 levels deep
 % If \AttrMilestoneMatchesUnattrtrue, then the option list should be as follows:
 %   nd+Fred|qt-s+p -> (nd+Fred|qt-s+p, nd+qt-s+p, nd+Fred|qt-s, nd+qt-s, nd)
 % 2 milestones are active, then only the inner-most will be affected by this flag, 
 % outer ones must be fully specified.
-  \trace{mc}{stystack@pts '#1' + '#2' (out:\@ut)}%
+  \trace{sk}{stystack@pts '#1' + '#2' (out:\@ut)}%
   \ifAttrMilestoneMatchesUnattr
     \edef\t@mp{#1}%
     \ifx\t@mp\thisattrmil@stone % Need to match on unattributed milestone too.
@@ -202,20 +201,20 @@
   \else 
     \edef\mini@stack{\mini@stack+#1}%
   \fi
-  \trace{mc}{-> \mini@stack}%
+  \trace{sk}{-> \mini@stack}%
   \xdef\@ut{\mini@stack,\@ut}%
   \ifx\mini@stackB\empty\else
     \xdef\@ut{\mini@stackB,\@ut}%
   \fi
   \edef\t@mp{#2}\advance\count255 by -1 
-  \trace{mc}{#2,\the\count255---> \@ut}%
+  \trace{sk}{#2,\the\count255---> \@ut}%
   \ifx\t@mp\empty\count255=0 \relax\fi
   \ifnum\count255>0 \x@\stystack@pts#2\E\fi
 }
 
 
 \def\fullstack@xpand#1|#2\E{%Parameters: complexity|style stack
-  \trace{mc}{fullstack@xpand}%
+  \trace{sk}{fullstack@xpand}%
   \edef\exp@stystak{#2}%
   \ifx\exp@stystak\empty\else
     \x@\stystacksplit\exp@stystak+\E% Cut off the head entry of the stylestack
@@ -224,76 +223,61 @@
     \else
        \edef\p@ssParams{\tmpstyst@kfirst}%
     \fi 
-    \trace{mc}{#1::(\p@ssParams)+\tmpstystackb@dy}%
+    \trace{sk}{#1::(\p@ssParams)+\tmpstyst@kbody}%
     \ifx\styst@kfirst\empty
       \let\styst@kfirst\tmpstyst@kfirst
-      \let\styst@ckb@dy\tmpstystackb@dy
+      \let\styst@kbody\tmpstyst@kbody
     \fi
     \let\mini@stack\empty
     \let\mini@stackB\empty
-    \ifx\tmpstystackb@dy\empty
+    \ifx\tmpstyst@kbody\empty
       \xdef\@lso{\p@ssParams}%
-      \trace{mc}{no body...appending \@lso (onto: \@@ut)}%
+      \trace{sk}{no body...appending \@lso (onto: \@@ut)}%
       %\let\@ut\empty
       %\let\d@\cs@ppend
       %\x@\cstackdown \p@ssParams,\E 
-      %\trace{mc}{:\@ut ->(\@@ut)}%
+      %\trace{sk}{:\@ut ->(\@@ut)}%
       \ifx\@@ut\empty\global\let\@@ut\@lso\else\xdef\@@ut{\@@ut,\@lso}\fi
-      \trace{mc}{fullstack@xpand #1|#2 : \@@ut. No more}%
+      \trace{sk}{fullstack@xpand #1|#2 : \@@ut. No more}%
     \else
       \count255=#1% Limit the options
       \def\@ut{}%
-      \x@\stystack@pts\tmpstystackb@dy+\E%
+      \x@\stystack@pts\tmpstyst@kbody+\E%
       \let\@in\@ut
       \let\@ut\empty
       \ifnum\count255>0
-        \edef\@in{+\tmpstystackb@dy,\@in}%  still allow full-stack definitions, even if the list is truncated
+        \edef\@in{+\tmpstyst@kbody,\@in}%  still allow full-stack definitions, even if the list is truncated
       \fi
       %\tracingmacros=1
       %\tracingassigns=1
-      \def\d@##1\E{\trace{mc}{appending '##1' onto (\p@ssParams)}\edef\@lso{##1}\let\d@c\d@
+      \def\d@##1\E{\trace{sk}{appending '##1' onto (\p@ssParams)}\edef\@lso{##1}\let\d@c\d@
         \let\@ut=\empty
         \let\d@=\cs@ppend\x@\cstackdown\p@ssParams,\E
-        \trace{mc}{:\@ut (\@@ut)}%
+        \trace{sk}{:\@ut (\@@ut)}%
         \let\d@\d@c\ifx\@@ut\empty\global\let\@@ut\@ut\else\xdef\@@ut{\@@ut,\@ut,\p@ssParams}\fi}%
       \x@\cstackdown \@in,\E 
-      \trace{mc}{fullstack@xpand #1|#2 : \@@ut. Continue (\tmpstystackb@dy)}%
-      \x@\fullstack@xpand#1|\tmpstystackb@dy\E %Recurse
+      \trace{sk}{fullstack@xpand #1|#2 : \@@ut. Continue (\tmpstyst@kbody)}%
+      \x@\fullstack@xpand#1|\tmpstyst@kbody\E %Recurse
     \fi
   \fi
 }
 
 \def\StackComplexity{3}
 \def\this@stystak{=}
-\def\s@tpossParams#1#2{\trace{s}{setpossParam {#1}{#2}\m@rker (\styst@kskip / \styst@kfirst / \styst@k)}%
+\def\s@tpossParams#1#2{\trace{s}{setpossParam {#1}{#2}\m@rker (\styst@kfirst / \styst@k)}%
   \ifdiglot
      \edef\p@ssParams{#1\c@rrdstat,#1}%
   \else
      \edef\p@ssParams{#1}%
   \fi
   \edef\tmp{#1}% #1 is the main marker
-  \edef\this@stystak{#2}%#2 is the stystack to be used for this call (normally \styst@k, but not *ALWAYS*). The stystack supplied should always include the present marker.
-  \ifx\thiswh@tvrstyle\tmp
-    \let\styst@kfirst\empty
-  \fi
+  \edef\this@stystak{#2}%#2 is the stystack to be used for *this* call (normally \styst@k, but not *ALWAYS*). The stystack supplied should always include the present marker.
   \ifx\tmp\this@stystak\else % Assuming there's is a real stack to expand...
     \let\@@ut\empty
     \let\@ut\empty
     \fullstack@xpand\StackComplexity|\this@stystak\E%
     \let\p@ssParams\@@ut
   \fi
-%%%FIXME: REWRITE
-            %%\edef\p@ssParams{\p@ssParams,\styst@kskip}%
-          %\fi
-        %\fi\fi
-      %\fi
-    %\else
-       %\edef\p@ssParams{#1+\styst@kfirst,\p@ssParams}%
-    %\fi
-    %\ifx\styst@k\styst@kfirst\else%styst@k may be the same as styst@kfirst
-    %   \edef\p@ssParams{#1+\styst@k,\p@ssParams}%
-    %\fi
-  %\fi\fi
   \trace{s}{1. Checking \p@ssParams}%
   \ifx\mspr@fix\empty\else
      %If we expand our prefix list for special styling of milestone+marker, then:
@@ -343,6 +327,7 @@
 \def\getp@ram#1#2#3{\trace{s}{getp@ram #2:#1 [#3](\mcstack)}\ifnotracestacks\pushtracing\fi
  \let\p@ram\relax
  \def\gp@test{#1}%
+ \xdef\tmpstyst@k{#3}%
  \ifx\gp@test\empty\message{Eh? getp@ram called for #2 and empty parameter}\else 
    \setpp@name{#2\c@rrdstat}{#3}%
    \x@\let\x@\g@tp@tmp\csname \pp@name\endcsname
@@ -362,7 +347,11 @@
    %\tracingassigns=1
    %\tracingmacros=1
   % Final version of the list might be cat:inl|ms:qt|pR,cat:inl|ms:qt|p,cat:inl|pR,cat:inl|p,ms:qt|pR,ms:qt|p,pR,p
-   \gettop@aram{#1}%
+   \ifcsname getthep@ram-#1\endcsname %call a parameter-specific routine. e.g. for fontsize.
+     \csname getthep@ram-#1\endcsname
+   \else
+     \gettop@aram{#1}%
+   \fi
    \global\let\p@@r@m=\p@ram % Need to return outside the brackets
    %\tracingassigns=0
    %\tracingmacros=0
@@ -436,6 +425,26 @@
         \else\dimen0=\sc@le\dimen0                                                  %(2)
     \fi\fi\xdef\c@rrfontsize{\strip@pt{\dimen0}}\fi\trace{s}{\space working c@rrfontsize from ##2 is \c@rrfontsize}}%
   \mcup\trace{s}{set c@rrfontsize for \mcstack\space is \c@rrfontsize}\ifnotracestacks\poptracing\fi}             %(3)
+
+\x@\def\csname getthep@ram-fontsize\endcsname{%Called with p@ssParams set up. work up through possible 
+  \edef\ps@ze{12}\edef\tmpfr@m{default}%
+  \trace{s}{getthep@ram-fontsize starting with \ps@ze}%
+  \def\d@##1\E{\getp@r@m{fontsize}{##1}\ifx\p@ram\relax\else\edef\tmpfr@m{##1}\let\ps@ze\p@ram\fi}\cstackbottom\p@ssParams,\E
+  \trace{s}{getthep@ram-fontsize found \ps@ze\space from \tmpfr@m}%
+      \dimen0=\c@rrfontsize pt 
+  \def\d@##1\E{\edef\tmpstylen@me{##1}%
+      \getp@r@m{fontscale}{\tmpstylen@me}\edef\sc@le{\p@ram}%                            %(1)
+      \ifx\p@ram\relax\edef\sc@le{1}\getp@r@m{fontsize}{\tmpstylen@me}%
+        \ifnum\ifx\p@ram\relax 1\else\ifx\p@ram\ps@ze 1\else 0\fi\fi =1
+          \dimen0=\sc@le\dimen0\else\dimen0=\p@ram pt%
+        \fi
+      \else\dimen0=\sc@le\dimen0                                                  %(2)
+    \fi
+    \xdef\c@rrfontsize{\strip@pt{\dimen0}}\fi\trace{s}{\space working c@rrfontsize from ##1 is \c@rrfontsize}}%
+  \cstackup\p@ssParams,\E
+  \trace{s}{set c@rrfontsize for \tmpstyst@k\space is \c@rrfontsize}%
+}
+
 %-csty_getmcfontsize
 
 %+csty_makestyle
@@ -894,6 +903,7 @@
 \def\cstackpush#1#2{#2,#1}
 \def\cstackpeek#1,#2\E{#1}
 \def\cstackup#1,#2\E{\edef\cstack@tmp{#2}\ifx\cstack@tmp\empty\let\n@x=\cstackrelax\else\let\n@x=\cstackup\fi\n@x #2\E\edef\cstack@tmp{#1}\ifx\cstack@tmp\empty\else\d@ #1\E\fi}                  %(1)
+\def\cstackbottom#1,#2\E{\edef\cstack@tmp{#2}\ifx\cstack@tmp\empty\d@ #1\E\let\n@x=\cstackrelax\else\let\n@x=\cstackbottom\fi\n@x #2\E}                  %(1)
 \def\cstackdown#1,#2\E{\edef\cstack@tmp{#1}\ifx\cstack@tmp\empty\else\d@ #1\E\fi\edef\cstack@tmp{#2}\ifx\cstack@tmp\empty\let\n@x=\cstackrelax\else\let\n@x=\cstackdown\fi\n@x #2\E}
 \def\cstacktop#1,#2\E{\edef\temp{#1}\ifx\temp\empty\else\d@ #1\E\fi}
 \def\cstackrelax#1\E{}
@@ -912,7 +922,7 @@
     \gett@psty
   \fi
   \d@code{#1}{#2}\mcp@sh{#1+#2+\tmp\ifx\empty\tmpstyst@k\else+\tmpstyst@k\fi}}
-\def\mcpushE#1+#2\E{\trace{mc}{mcpushE #1+#2}\if #1\relax\relax\else\mcpush{#1}{#2}\fi}
+\def\mcpushE#1+#2\E{\trace{sk}{mcpushE #1+#2}\if #1\relax\relax\else\mcpush{#1}{#2}\fi}
 \def\mcp@sh#1{\traceNum{s}{push #1 onto \mcstack}\xdef\mcstack{#1,\mcstack}}
 \def\mcup{\x@\cstackup\mcstack\E}
 \def\mcdown{\x@\cstackdown\mcstack\E}
@@ -922,7 +932,7 @@
     \ifx\tmp\empty\let\n@x=\cstackrelax\else\d@b #1\E\iftemp\xdef\mcstack{#2}\rebuild@mcstack{\msst@ck\inst@ck}\let\n@x=\cstackrelax\fi\fi\n@x #2\E}
 
     
-\def\rebuild@mcstack#1{\trace{mc}{rebuild@mcstack '#1' (on \mcstack)}\ifx\mcstack\empty\let\mcstack\mcstack@mpty\fi\edef\r@mclist{#1}\ifx\r@mclist\empty\else\let\d@=\mcpushE\x@\cstackup\r@mclist\E\fi}
+\def\rebuild@mcstack#1{\trace{sk}{rebuild@mcstack '#1' (on \mcstack)}\ifx\mcstack\empty\let\mcstack\mcstack@mpty\fi\edef\r@mclist{#1}\ifx\r@mclist\empty\else\let\d@=\mcpushE\x@\cstackup\r@mclist\E\fi}
 \def\doB@pop@nonms#1+#2\E{\if #1m\xdef\msst@ck{#1+#2,\msst@ck}\else\global\temptrue\fi}% For mcstackdown. Push milestones onto msst@ck. lose the 1st non-ms
 \def\doB@save@ms#1+#2+#3\E{\trace{s}{[#1+#2+#3] (\msst@ck)}\if #1\relax\relax\xdef\inst@ck{\inst@ck\mcstack@mpty}\temptrue\else\if #1m\relax\xdef\msst@ck{\msst@ck#1+#2,}\else\xdef\inst@ck{\inst@ck#1+#2,}\global\temptrue\fi\fi}% For mcstackdown. Push milestones onto msstack. bail out on 1st non-ms, saving it.
 
@@ -1046,10 +1056,10 @@
 
 \def\s@tstyst@k{%Get a + separated list of styles that ought to uniquely define a font/etc.
   %List excludes marker #1 and stops at a barrier (e.g. a par/note/sidebar)
-  %defines \styst@kskip to be the skipped value and \styst@kfirst to first value.
-  %\edef\styst@kskip{#1}%
+  %defines \styst@kfirst to first value.
   \def\d@##1+##2+##3\E{\ifcsname isb@rrier-##1\endcsname\let\d@=\cstackrelax\fi%stop here?
-    \xdef\styst@k{##3}%
+    \xdef\styst@k{##3}% The real one
+    \xdef\tmpstyst@k{##3}% This will get over-ridden if there are other calls.
     \d@code{##1}{##2}%
     \ifx\tmp\empty\else
       \xdef\styst@kfirst{\tmp}%
@@ -1058,8 +1068,8 @@
   \trace{s}{styst@k -> (\styst@kfirst/\styst@k)}%
 }
 \let\styst@kfirst\empty
-\let\styst@kskip\empty
 \let\styst@k\empty
+\let\tmpstyst@k\empty
 %-csty_mstack
 
 %+csty_stylesheet
