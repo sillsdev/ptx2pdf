@@ -284,9 +284,10 @@
  %\mctop
  \let\d@=\d@@
  \ifx\p@ram\relax\xdef\c@rrfontsize{12}\else\global\let\c@rrfontsize=\p@ram\fi
- \x@\stystacksplit#2+\E% Cut off the head entry of the stylestack
+ \x@\stystacksplit#2+\E% Cut split the stylestack between head and body 
  \edef\f@ntstyle{\f@ntstyle-\c@rrfontsize\ifx\tmpstyst@kbody\empty\else+\tmpstyst@kbody\fi}%
 }
+
 \def\nomsg@tfontname#1{\getp@r@m{fontsize}{#1}\ifx\p@ram\relax\edef\p@ram{12}\fi\edef\f@ntstyle{#1-\p@ram}}
 %-cchar_getfontname
 
@@ -311,23 +312,23 @@
   \let\it@lic=\italic
   \let\b@lditalic=\bolditalic
   \let\typef@ce=\regul@r
-  \getFp@ram{fontname}{#1}{#2}% see if \FontName was specified in the stylesheet
+  \getp@ram{fontname}{#1}{#2}% see if \FontName was specified in the stylesheet
   \ifx\p@ram\relax % if not, check the \Bold and \Italic properties
-	  \getFp@ramR{bold}{#1}{#2}%
+	  \getp@ram{bold}{#1}{#2}%
 	  \ifx\p@ram\tru@
 		\let\typef@ce=\b@ld
-		\getFp@ramR{italic}{#1}{#2}%
+		\getp@ram{italic}{#1}{#2}%
 		\ifx\p@ram\tru@ \let\typef@ce=\b@lditalic \fi
 	  \else
-		\getFp@ramR{italic}{#1}{#2}%
+		\getp@ram{italic}{#1}{#2}%
 		\ifx\p@ram\tru@ \let\typef@ce=\it@lic \fi
 	  \fi
   \else
     \edef\typef@ce{"\p@ram"}% use font name from the stylesheet
   \fi
-  \getFp@ramR{fontfeatures}{#1}{#2}%
+  \getp@ram{fontfeatures}{#1}{#2}%
   \ifx\p@ram\relax\else\edef\typef@ce{\typef@ce"\p@ram"}\fi
-  \getFp@ramR{smallcaps}{#1}{#2}%                                           %(1)
+  \getp@ram{smallcaps}{#1}{#2}%                                           %(1)
   \ifx\p@ram\tru@
     \edef\typef@ce{\typef@ce\SmallCapsSuffix}%
   \fi
@@ -336,7 +337,7 @@
     \x@\ParseColor\p@ram\end\ifx\r@s\z@ros\else\edef\typef@ce{\typef@ce :color=\r@s}\fi%
   \fi\fi%
   \dimen0=\c@rrfontsize\FontSizeUnit                                    %(+)
-  \getFp@ramR{fontfactor}{#1}{#2}% scale down by \SuperscriptFactor if superscripted style %FIXME! Should this be R version or not (regular=!shrunk??)
+  \getp@ram{fontfactor}{#1}{#2}% scale down by \SuperscriptFactor if superscripted style %FIXME! Should this be R version or not (regular=!shrunk??)
   \ifx\p@ram\relax\else \trace{F}{Scaling by \p@ram}\dimen0=\p@ram\dimen0\fi
   %\edef\f@ntstyle{\f@ntstyle-\c@rrfontsize}%
   % create the font identifier for this style
@@ -366,17 +367,20 @@
 %+cchar_extrafont
 \def\extraregular{"Times New Roman"}
 \def\s@textrafont#1{%
-  \ifcsname extrafont<#1>\endcsname\else
+  \stystacksplit\styst@k+\E
+  \edef\@xfname{#1+\styst@kbody}%
+  \ifcsname extrafont<\@xfname>\endcsname\else
     \let\typef@ce=\extraregular
-    \getmcfonts@ze
+    \stystacksplit\styst@k+\E
+    \getp@ram{fontsize}{#1}{\@xfname}%
     \dimen0=\c@rrfontsize\FontSizeUnit
-    \getmcp@ramR{fontfactor}% scale down by \SuperscriptFactor if superscripted style
+    \getp@ram{fontfactor}{#1}{\@xfname}% scale down by \SuperscriptFactor if superscripted style
     \ifx\p@ram\relax\else \multiply\dimen0 by \p@ram\fi
-    \x@\global\x@\font\csname extrafont<#1>\endcsname=\typef@ce\space at \dimen0
-    \trace{s}{define extrafont<#1> \typef@ce\space at \the\dimen0}%
+    \x@\global\x@\font\csname extrafont<\@xfname>\endcsname=\typef@ce\space at \dimen0
+    \trace{s}{define extrafont<\@xfname> \typef@ce\space at \the\dimen0}%
   \fi
-  \trace{s}{extrafont<#1> =\csname extrafont<#1>\endcsname}%
-  \csname extrafont<#1>\endcsname
+  \trace{s}{extrafont<\@xfname> =\csname extrafont<\@xfname>\endcsname}%
+  \csname extrafont<\@xfname>\endcsname
 }
 \def\SuperscriptFactor{0.75}
 \def\SmallCapsSuffix{/ICU:+smcp}
