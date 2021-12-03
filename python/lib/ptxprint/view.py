@@ -1446,14 +1446,10 @@ set stack_size=32768""".format(self.configName())
         newnum = int(tabsheight / tabheight)
         self.set("s_thumbtabs", newnum)
 
-    def generateStrongs(self, bkid, cols):
+    def generateStrongs(self, bkid="XXA", cols=2):
         outfile = os.path.join(self.settings_dir, self.prjid, self.getBookFilename(bkid))
         onlylocal = self.get("c_strongsLocal")
         localfile = os.path.join(self.settings_dir, self.prjid, "TermRenderings.xml")
         if not os.path.exists(localfile):
             localfile = None
         generateStrongsIndex(bkid, cols, outfile, localfile, onlylocal, self._getPtSettings(), self)
-        
-    def doGenerateStrongs(self):
-        bkid = self.getBooks()[0]
-        self.generateStrongs(bkid, 2)
