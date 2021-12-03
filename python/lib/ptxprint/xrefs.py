@@ -215,7 +215,7 @@ components = [
     ("c_strongsSrcLg", r"\w{_lang} {lemma}\w{_lang}*"),
     ("c_strongsTranslit", r"\wl {translit}\wl*"),
     ("c_strongsRenderings", r"{_defn};"),
-    ("c_strongsDefn", r"{trans}"),
+    ("c_strongsDefn", r"{trans};"),
     ("c_strongsKeyVref", r"\xt $a({head})\xt*")
 ]
 def _readTermRenderings(localfile, strongs, revwds, btmap, key):
@@ -239,10 +239,10 @@ def generateStrongsIndex(bkid, cols, outfile, localfile, onlylocal, ptsettings, 
     lang = view.get('fcb_strongsMajorLg')
     if lang is None or lang == 'und':
         lang = 'en'
-    import pdb; pdb.set_trace()
+    #import pdb; pdb.set_trace()
     for s in strongsdoc.findall(".//strong"):
         sref = s.get('ref')
-        le = s.find('.//trans[{{http://www.w3.org/XML/1998/namespace}}lang="{}"]'.format(lang))
+        le = s.find('.//trans[@{{http://www.w3.org/XML/1998/namespace}}lang="{}"]'.format(lang))
         strongs[sref] = {k: s.get(k) for k in ('btid', 'lemma', 'head', 'translit')}
         btmap[s.get('btid')] = sref
         if le is not None:
@@ -280,7 +280,7 @@ def generateStrongsIndex(bkid, cols, outfile, localfile, onlylocal, ptsettings, 
                     if hdr:
                         outf.write(hdr)
                         hdr = ""
-                    bits = [r"\{_marker} \bd{_key}\bd*"] + [cv for ck, cv in components if view.get(ck)]
+                    bits = [r"\{_marker} \bd {_key}\bd*"] + [cv for ck, cv in components if view.get(ck)]
                     if bits[-1][-1] == ";":
                         bits[-1] = bits[-1][:-1]
                     outf.write(" ".join(bits).format(_key=k[1:], _lang=a[0].lower(), _marker="li", _defn=d, **v) + "\n")
