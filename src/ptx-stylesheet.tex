@@ -194,20 +194,20 @@
       \edef\t@mp{#1}%
       \ifx\t@mp\thisattrmil@stone % Need to match on unattributed milestone too.
         \ifx\mini@stackB\empty\let\mini@stackB\mini@stack\fi
-        \trace{m}{Adding \thismil@stone\space to possible params}%
+        \trace{sko}{Adding \thismil@stone\space to possible params}%
         \edef\mini@stackB{\mini@stack+\thismil@stone}%
       \fi
     \fi
   \fi
   \edef\mini@stack{\mini@stack+#1}%
-  \trace{sk}{'#1' -> \mini@stack}%
+  \trace{sko}{'#1' -> \mini@stack}%
   \xdef\@ut{\mini@stack,\@ut}%
   \ifx\mini@stackB\empty\else
     \xdef\@ut{\mini@stackB,\@ut}%
   \fi
   \edef\t@mp{#2}\advance\count255 by -1 
   \ifx\t@mp\empty\count255=0 \relax\fi
-  \trace{sk}{'#2',\the\count255---> \@ut}%
+  \trace{sko}{'#2',\the\count255---> \@ut}%
   \ifnum\count255>0 \x@\stystack@pts#2\E\fi
 }
 
@@ -221,7 +221,7 @@
     \else
        \edef\p@ssParams{\tmpstyst@kfirst}%
     \fi 
-    \trace{sk}{#1::(\p@ssParams)+\tmpstyst@kbody}%
+    \trace{sko}{#1::(\p@ssParams)+\tmpstyst@kbody}%
     \ifx\styst@kfirst\empty
       \let\styst@kfirst\tmpstyst@kfirst
       \let\styst@kbody\tmpstyst@kbody
@@ -230,13 +230,13 @@
     \let\mini@stackB\empty
     \ifx\tmpstyst@kbody\empty
       \xdef\@lso{\p@ssParams}%
-      \trace{sk}{no body...appending \@lso (onto: \@@ut)}%
+      \trace{sko}{no body...appending \@lso (onto: \@@ut)}%
       %\let\@ut\empty
       %\let\d@\cs@ppend
       %\x@\cstackdown \p@ssParams,\E 
       %\trace{sk}{:\@ut ->(\@@ut)}%
       \ifx\@@ut\empty\global\let\@@ut\@lso\else\xdef\@@ut{\@@ut,\@lso}\fi
-      \trace{sk}{fullstack@xpand #1|#2 : \@@ut. No more}%
+      \trace{sko}{fullstack@xpand #1|#2 : \@@ut. No more}%
     \else
       \count255=#1% Limit the options
       \def\@ut{}%
@@ -251,11 +251,11 @@
       \def\d@##1\E{\trace{sk}{appending '##1' onto (\p@ssParams)}\edef\@lso{##1}\let\d@c\d@
         \let\@ut=\empty
         \let\d@=\cs@ppend\x@\cstackdown\p@ssParams,\E
-        \trace{sk}{:\@ut (\@@ut) pp:\p@ssParams, spp:\simplep@ssParams}%
+        \trace{sko}{:\@ut (\@@ut) pp:\p@ssParams, spp:\simplep@ssParams}%
         \let\d@\d@c\xdef\@@ut{\ifx\@@ut\empty\else\@@ut,\fi\@ut}}%
       \x@\cstackdown \@in,\E 
       \xdef\@@ut{\@@ut,\p@ssParams}%
-      \trace{sk}{fullstack@xpand #1|#2 : \@@ut. Continue (\tmpstyst@kbody)}%
+      \trace{sko}{fullstack@xpand #1|#2 : \@@ut. Continue (\tmpstyst@kbody)}%
       \x@\fullstack@xpand\x@#1\x@|\tmpstyst@kbody\E %Recurse
     \fi
   \fi
@@ -395,7 +395,8 @@
    \fi
 }
 
-\def\stackg@tp@ram#1\E{\trace{s}{tgp #1}\getp@r@m{\p@ramcheck}{#1}\ifx\p@ram\relax\else\let\d@=\cstackrelax\fi}
+\def\stackg@tp@ram#1\E{%\trace{s}{tgp #1}%
+  \getp@r@m{\p@ramcheck}{#1}\ifx\p@ram\relax\else\let\d@=\cstackrelax\fi}
 
 \def\getp@r@m#1#2{\x@\let\x@\p@ram\csname#2:#1\endcsname \ifx\p@ram\relax\trace{spv}{#2:#1 undefined}\else\trace{s}{#2:#1 found: \p@ram}\fi}
 % prepend \@lso to #1 and build comma separated list of results
@@ -999,8 +1000,8 @@
     \ifx\tmp\empty\let\n@x=\cstackrelax\else\d@b #1\E\iftemp\xdef\mcstack{#2}\rebuild@mcstack{\msst@ck\inst@ck}\let\n@x=\cstackrelax\fi\fi\n@x #2\E}
 
     
-\def\rebuild@mcstack#1{\trace{s}{rebuild@mcstack '#1' (on \mcstack)}\ifx\mcstack\empty\let\mcstack\mcstack@mpty\fi\edef\r@mclist{#1}\ifx\r@mclist\empty\else\let\d@=\mcpushE\x@\cstackup\r@mclist\E\fi}
-\def\doB@pop@nonms#1+#2\E{\if #1m\xdef\msst@ck{#1+#2,\msst@ck}\else\global\temptrue\fi}% For mcstackdown. Push milestones onto msst@ck. lose the 1st non-ms
+\def\rebuild@mcstack#1{\trace{s}{rebuild@mcstack '#1' (on \mcstack)}\ifx\mcstack\empty\let\mcstack\mcstack@mpty\fi\edef\r@mclist{#1}\ifx\r@mclist\empty\else\let\d@=\mcpushE\x@\cstackup\r@mclist\E\fi\s@tstyst@k}
+\def\doB@pop@nonms#1+#2+#3\E{\if #1m\xdef\msst@ck{#1+#2,\msst@ck}\else\global\temptrue\fi}% For mcstackdown. Push milestones onto msst@ck. lose the 1st non-ms
 \def\doB@save@ms#1+#2+#3\E{\trace{s}{[#1+#2+#3] (\msst@ck)}\if #1\relax\relax\xdef\inst@ck{\inst@ck\mcstack@mpty}\temptrue\else\if #1m\relax\xdef\msst@ck{\msst@ck#1+#2,}\else\xdef\inst@ck{\inst@ck#1+#2,}\global\temptrue\fi\fi}% For mcstackdown. Push milestones onto msstack. bail out on 1st non-ms, saving it.
 
 \def\mcpop{\traceNum{s}{mcpop stack: '\mcstack'}\global\tempfalse\xdef\inst@ck{}\xdef\msst@ck{}% Pop the first non-milestone
@@ -1134,6 +1135,8 @@
       \xdef\styst@kfirst{\tmp}%
     \fi
   }\mctop
+  \global\let\tmpstyst@k\styst@k
+  \global\let\tmpstyst@kfirst\styst@kfirst
   \trace{s}{styst@k -> (\styst@kfirst/\styst@k)}%
 }
 \let\styst@kfirst\empty

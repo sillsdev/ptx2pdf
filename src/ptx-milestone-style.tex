@@ -115,10 +115,10 @@
       \st@ndalonemilestone\fi 
     \fi
   \fi
-   \let\milestoneOp\empty
    %\xdef\thisch@rstyle{\mcpeek}%
    \def\d@##1+##2+##3\E{\d@code{##1}{##2}\edef\thisch@rstyle{\tmp}}\mctop
-   \trace{m}{Milestone style is \thisch@rstyle}%
+   \trace{m}{\if e\milestoneOp After-\fi Milestone style is \thisch@rstyle, stystack is: \styst@k }%
+   \global\let\milestoneOp\empty
    \s@tfont{\thisch@rstyle}{\styst@k}% set up font attributes
 }
 
@@ -187,11 +187,12 @@
   \mcdown
   \xdef\mcstack{\mcstack@mpty}%
   \ifx\@ut\empty
+    \s@tstyst@k
   \else
     \rebuild@mcstack{\@ut,}%
     %\xdef\mcstack{\@ut,\mcstack@mpty}%
   \fi
-  \trace{m}{Stack now: \mcstack}%
+  \trace{m}{Stack now: \mcstack, stystack:\styst@k}%
   \iftemp
     \message{End-milestone of class '\MSch@cking', id '\MSch@ckid' partially matched one or 
       more open milestones, but no match on the id was found, sid and eid must match exactly}%
@@ -244,9 +245,9 @@
   \trace{m}{Style stack now: \mcstack}%
   \upd@teMsPrefix
   \cl@singhooks{after}{\thismil@stone}\the\afterh@@ks
-  \let\attr@b\empty\let\attrid\empty
-  \let\thismil@stone\empty
-  \let\thisattrmil@stone\empty
+  \global\let\attr@b\empty\global\let\attrid\empty
+  \global\let\thismil@stone\empty
+  \global\let\thisattrmil@stone\empty
 }
 \def\figmil@stone{zfiga}
 
