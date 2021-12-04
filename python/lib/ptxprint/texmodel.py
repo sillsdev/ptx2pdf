@@ -245,6 +245,7 @@ ModelMap = {
     "document/diglotjoinvrule": ("c_diglotJoinVrule", lambda w,v: "true" if v else "false"),
 
     "document/hasnofront_":     ("c_frontmatter", lambda w,v: "%" if v else ""),
+    "document/noblankpage":     ("c_periphSuppressPage", None),
 
     "header/ifshowbook":        ("c_rangeShowBook", lambda w,v :"false" if v else "true"),
     "header/ifshowchapter":     ("c_rangeShowChapter", lambda w,v :"false" if v else "true"),
@@ -293,7 +294,7 @@ ModelMap = {
     "notes/xrlistsource":       ("r_xrSource", None),
     "notes/xrlistsize":         ("s_xrSourceSize", lambda w,v: int(float(v)) if v else "3"),
     "notes/xrfilterbooks":      ("fcb_filterXrefs", None),
-    "notes/xrlocalstrongs":     ("c_strongsLocal", None),
+    # "notes/xrlocalstrongs":     ("c_strongsLocal", None),  # now added to strongsndx section below
     "notes/addcolon":           ("c_addColon", None),
     "notes/keepbookwithrefs":   ("c_keepBookWithRefs", None),
     "notes/glossaryfootnotes":  ("c_glossaryFootnotes", None),
@@ -346,18 +347,20 @@ ModelMap = {
 
     "scripts/mymr/syllables":   ("c_scrmymrSyllable", None),
 
+    "strongsndx/includenames":  ("c_strongsInclNames", None),
+    "strongsndx/localterms":    ("c_strongsLocal", None),
     "strongsndx/showhebrew":    ("c_strongsHeb", None),
     "strongsndx/showgreek":     ("c_strongsGrk", None),
-    "strongsndx/include":       ("r_strongs", None), # local / all
-    "strongsndx/includenames":  ("c_strongsInclNames", None),
-    "strongsndx/sortndxby":     ("r_sortkey", None), # stongs / renderings
-    "strongsndx/number":        ("c_strongsNumber", None),
+    "strongsndx/showindex":     ("c_strongsNdx", None),
     "strongsndx/sourcelang":    ("c_strongsSrcLg", None),
     "strongsndx/transliterate": ("c_strongsTranslit", None),
     "strongsndx/renderings":    ("c_strongsRenderings", None),
-    "strongsndx/fallback":      ("c_strongsFallback", None),
+    "strongsndx/definitions":   ("c_strongsDefn", None),
     "strongsndx/keyvrsrefs":    ("c_strongsKeyVref", None),
-    "strongsndx/allvrsrefs":    ("c_strongsAllVrefs", None),
+    "strongsndx/fallbackprj":   ("fcb_strongsFallbackProj", None),
+    "strongsndx/majorlang":     ("fcb_strongsMajorLg", None),
+    "strongsndx/nocomments":    ("c_strongsNoComments", None),
+    "strongsndx/wildcards":     ("fcb_strongswildcards", None),
     "strongsndx/ndxbookid":     ("fcb_strongsNdxBookId", None),
     "strongsndx/twocols":       ("c_strongs2cols", None),
 }
@@ -809,8 +812,9 @@ class TexModel:
                             res.append(r"\lastptxfiletrue")
                             if self.dict['project/pgbreakcolophon'] != '%':
                                 res.append(r"\endbooknoejecttrue")
-                        if not resetPageDone and f not in self._peripheralBooks:
-                            res.append(r"\ifodd\pageno\else\emptyoutput \fi")
+                        if not resetPageDone and f not in self._peripheralBooks: 
+                            if not self.dict['document/noblankpage']:
+                                res.append(r"\ifodd\pageno\else\emptyoutput \fi")
                             res.append(r"\pageno={}".format(self.dict['document/startpagenum']))
                             resetPageDone = True
                         if not self.asBool('document/ifshow1chbooknum') and \
@@ -1673,7 +1677,7 @@ class TexModel:
             if filters is not None and len(filters) == 0:
                 filters = None
             localfile = None
-            if self.dict['notes/xrlocalstrongs']:
+            if self.dict['strongsndx/localterms']:
                 localfile = os.path.join(self.printer.settings_dir, self.printer.prjid, "TermRenderings.xml")
                 if not os.path.exists(localfile):
                     localfile = None

@@ -7,6 +7,9 @@ if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
     site.USER_BASE = os.path.join(os.path.expanduser("~"), ".local")
     if not hasattr(site, 'getuserbase'):
         site.getuserbase = lambda : site.USER_BASE
+    oldp = os.getenv("PATH").split(";")
+    newp = [p for p in oldp if "msys64" not in p]
+    os.putenv("PATH", ";".join(newp))
 
 try:
     import ptxprint
