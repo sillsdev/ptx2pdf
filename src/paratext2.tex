@@ -749,7 +749,7 @@
 %+c_pagebody
 \def\pagebody{\vbox to\textheight{\boxmaxdepth\maxdepth \pagecontents}}
 \def\makeheadline{%
-  \ifdiglot\nomsg@tfontname{h\c@rrdstat}\else\nomsg@tfontname{h}\fi%
+  \nomsg@tfontname{h}%
   %\trace{h}{makeheadline: textwidth \the\textwidth}%
   \vbox to 0pt{\kern-\topm@rgin
    \vbox{\kern\HeaderPosition\MarginUnit

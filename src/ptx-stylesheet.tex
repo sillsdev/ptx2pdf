@@ -1,5 +1,3 @@
-%FIXME: \<styst@kfirst\>
-
 %:strip
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Part of the ptx2pdf macro package for formatting USFM text
@@ -979,9 +977,7 @@
 
 %+csty_mstack
 % marker (comma) stack operations (mcstack)
-\gdef\mcstack{++,} 
-\let\mcstack@mpty\mcstack
-\def\cstackempty{,}
+\let\mcstack\mcstack@mpty
 \def\mcpopsimple{\traceNum{s}{popsimple stack: \mcstack}\xdef\mcstack{\x@\cstackpop\mcstack\E}\ifx\mcstack\empty\global\let\mcstack\mcstack@mpty\fi\ifp@pping\else\s@tstyst@k\fi}
 \def\mcpush#1#2{%
   \ifcsname isb@rrier-#1\endcsname%stop here?
@@ -1087,7 +1083,7 @@
   \fi
   \trace{s}{whileitp@ps result:\tmp}%
   \if S\tmp\relax % Store it?
-     \edef\itp@psstore{#1+#2,\itp@psstore}%
+     \edef\itp@psstore{#1+#2+#3,\itp@psstore}%
      \mcpopsimple
   \else
     \if Y\tmp\relax  %end it and pop it
@@ -1112,7 +1108,7 @@
       \fi
     \fi
   \fi
-  \trace{s}{whileitp@ps END:\mcch@cking:#1+#2 (\mcstack)}%
+  \trace{s}{whileitp@ps END:\mcch@cking:#1+#2+#3 (\mcstack)}%
   \global\p@ppingfalse 
   \let\d@=\wip@do
 }

@@ -369,7 +369,7 @@
 \def\extraregular{"Times New Roman"}
 \def\s@textrafont#1{%
   \stystacksplit\styst@k+\E
-  \edef\@xfname{#1+\styst@kbody}%
+  \edef\@xfname{#1+\tmpstyst@kbody}%
   \ifcsname extrafont<\@xfname>\endcsname\else
     \let\typef@ce=\extraregular
     \stystacksplit\styst@k+\E
