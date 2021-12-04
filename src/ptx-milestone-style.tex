@@ -204,7 +204,11 @@
     \edef\smst@mp{\zap@space #1 \empty}%
     \edef\smst@mp{\expandafter\zap@comma \smst@mp,\empty}%
     \edef\smst@mp{\expandafter\zap@plus \smst@mp+\empty}%
-}
+} 
+% If there is '\s \qt-s\*' in the input, should the qt-s have effect on the paragraph style? If the boolean is true, 
+% then it does not, and the paragaph starts differently to '\qt-s\* \s'. Note that this does not trigger any extra paragraph break,
+% all it does is ensure that a parargaph waiting to start *is* safely started.
+\newif\ifDefineParBeforeMilestone\DefineParBeforeMilestonetrue 
 \def\st@rtmilestone{%
   % There may multiple milestones of a given type (can't sensibly have both \qt-s |Jesus\* and 
   % \qt-s |Pilate\* active at the same time (except quote in quote), but in some cases it might make sense to do something similar.)
@@ -217,6 +221,7 @@
     \xdef\thisattrmil@stone{\thismil@stone;\smst@mp}%
     \def\smst@mp{with \attrid =\attr@b\space}%
   \fi
+  \ifDefineParBeforeMilestone\leavevmode\fi
   \mcpush{\ss@Mstn}{\thisattrmil@stone}%
   \trace{m}{Milestone \smst@mp\space stacked, \mcstack}%
   \let\tmp\thisattrmil@stone

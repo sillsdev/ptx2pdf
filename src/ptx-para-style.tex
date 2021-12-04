@@ -529,7 +529,8 @@
    \fi
    \ifvoid\ch@pterbox\else \kern-\wd\ch@pterbox \box\ch@pterbox \fi
    \global\p@ranesting=1
-   \n@xtparstart\gdef\n@xtparstart{}%
+   \let\tmpn@xtparstart\n@xtparstart\gdef\n@xtparstart{}% Allow n@xtparstart to re-trigger itself
+   \tmpn@xtparstart
    \op@ninghooks{start}{\m@rker}%handle <start> hook
    \ifdr@ppednumber \spacefactor=0\n@wchaptersf \fi
    \startparafalse\first@fterheadingfalse
