@@ -442,16 +442,16 @@
    \x@\writep@rstart\x@{\the\baselineskip}%baselineskip must fully expanded as macro param, else it remains a macro and only L baseline is output on diglot/polyglot.
    %\edef\spc@ut{pdf:code /\c@rref \space BMC}\x@\special\x@{\spc@ut}%
    \ifdiglot\xdef\lastc@rref{\dc@rref}\else\xdef\lastc@rref{\id@@@ \ch@pter.\v@rse}\fi\xdef\lastc@rradj{\the\curr@djpar}%
-   \s@tsideskips{\m@rker}%
+   \s@tsideskips{\styst@kfirst}%
    \trace{s}{\m@rker\g@tdstat\space iu=\the\IndentUnit, ls=\the\leftskip, rs=\the\rightskip}%
-   \getp@ram{fontsize}{\m@rker}{\styst@k}\edef\c@rrfontsize{\ifx\p@ram\relax12\else\p@ram\fi}%Need to set this before calling s@tfont, else that will consder the current fontsize as ruling.
+   \getp@ram{fontsize}{\styst@kfirst}{\styst@k}\edef\c@rrfontsize{\ifx\p@ram\relax12\else\p@ram\fi}%Need to set this before calling s@tfont, else that will consder the current fontsize as ruling.
    \setwh@tvrstyle% set up font attributes (based on style stack)
    \trace{j}{baselineskip=\the\baselineskip ; UseGlyphMetrics=\the\XeTeXuseglyphmetrics}%
    \allowp@rindenttrue
    %
    % Generate top-level PDF bookmark if the \h book name has changed
    \pdfb@@kmark
-   \getp@ram{firstindent}{\m@rker}{\styst@k}\let\f@rstindent=\p@ram
+   \getp@ram{firstindent}{\styst@kfirst}{\styst@k}\let\f@rstindent=\p@ram
 %-cpar_parstyle_start
    %
    % handle drop-cap style chapter number, if this is the beginning of a chapter
@@ -464,7 +464,7 @@
      \else
       \m@kechapterbox
       \ifRTL\let\c@tcmd=\rightcutout\else\let\c@tcmd=\leftcutout\fi
-      \getp@ram{leftmargin}{\m@rker}{\styst@k}%
+      \getp@ram{leftmargin}{\styst@kfirst}{\styst@k}%
       \ifx\p@ram\relax % simple case - no left indent
         \x@\c@tcmd\x@{\the\ch@pterwd}{0}{2}%
       \else % probably \q or something like that;                               %(1)
@@ -494,7 +494,7 @@
     \ifdr@ppednumber % second line of chapter number, need to check indent/cutout
      \cancelcutouts % forget existing cutout, we're re-doing it
      \ifRTL\let\c@tcmd=\rightcutout\else\let\c@tcmd=\leftcutout\fi
-     \getp@ram{leftmargin}{\m@rker}{\styst@k}%
+     \getp@ram{leftmargin}{\styst@kfirst}{\styst@k}%
      \ifx\p@ram\relax % simple case - no left indent
        \x@\c@tcmd\x@{\the\ch@pterwd}{0}{1}%
      \else % probably \q or something like that;

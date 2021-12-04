@@ -1,4 +1,4 @@
-%FIXME: \<styst@ksfirst\>
+%FIXME: \<styst@kfirst\>
 
 %:strip
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -181,7 +181,7 @@
 \def\tracestack{,}
 \def\pushtracing{\xdef\tracestack{\the\tracingmacros,\tracestack}\tracingmacros=0}
 \def\poptracing{\tracingmacros=\x@\cstackpeek\tracestack\E\xdef\tracestack{\x@\cstackpop\tracestack\E}}
-\def\stystacksplit#1+#2\E{\edef\t@mp{#2}\let\tmpstyst@kbody\empty\edef\tmpstyst@kfirst{#1}\ifx\t@mp\empty\else\styst@cksplit#2\E\fi\trace{sk}{splistystack: '\tmpstyst@kfirst' , '\tmpstyst@kbody'}}
+\def\stystacksplit#1+#2\E{\edef\t@mp{#2}\let\tmpstyst@kbody\empty\edef\tmpstyst@kfirst{#1}\ifx\t@mp\empty\else\styst@cksplit#2\E\fi\trace{sk}{styst@ksplit: '\tmpstyst@kfirst' , '\tmpstyst@kbody'}}
 \def\styst@cksplit#1+\E{\edef\tmpstyst@kbody{#1}}
 \def\stystack@pts#1+#2\E{%Given an style stack, recurse down it, turning it into an option stack, going a maximum of count255 levels deep
 % If \AttrMilestoneMatchesUnattrtrue, then the option list should be as follows:
@@ -190,9 +190,9 @@
 % outer ones must be fully specified.
   \trace{sk}{stystack@pts '#1' + '#2' (out:\@ut)}%
   \ifAttrMilestoneMatchesUnattr
-    \edef\t@mp{#1}%
-    \ifx\t@mp\thisattrmil@stone % Need to match on unattributed milestone too.
-      \if@ttrMilestone
+    \if@ttrMilestone
+      \edef\t@mp{#1}%
+      \ifx\t@mp\thisattrmil@stone % Need to match on unattributed milestone too.
         \ifx\mini@stackB\empty\let\mini@stackB\mini@stack\fi
         \trace{m}{Adding \thismil@stone\space to possible params}%
         \edef\mini@stackB{\mini@stack+\thismil@stone}%
@@ -206,8 +206,8 @@
     \xdef\@ut{\mini@stackB,\@ut}%
   \fi
   \edef\t@mp{#2}\advance\count255 by -1 
-  \trace{sk}{'#2',\the\count255---> \@ut}%
   \ifx\t@mp\empty\count255=0 \relax\fi
+  \trace{sk}{'#2',\the\count255---> \@ut}%
   \ifnum\count255>0 \x@\stystack@pts#2\E\fi
 }
 
@@ -251,9 +251,10 @@
       \def\d@##1\E{\trace{sk}{appending '##1' onto (\p@ssParams)}\edef\@lso{##1}\let\d@c\d@
         \let\@ut=\empty
         \let\d@=\cs@ppend\x@\cstackdown\p@ssParams,\E
-        \trace{sk}{:\@ut (\@@ut)}%
-        \let\d@\d@c\ifx\@@ut\empty\xdef\@@ut{\@ut\ifx\p@ssParams\simplep@ssParams\else,\p@ssParams\fi}\else\xdef\@@ut{\@@ut,\@ut,\p@ssParams}\fi}%
+        \trace{sk}{:\@ut (\@@ut) pp:\p@ssParams, spp:\simplep@ssParams}%
+        \let\d@\d@c\xdef\@@ut{\ifx\@@ut\empty\else\@@ut,\fi\@ut}}%
       \x@\cstackdown \@in,\E 
+      \xdef\@@ut{\@@ut,\p@ssParams}%
       \trace{sk}{fullstack@xpand #1|#2 : \@@ut. Continue (\tmpstyst@kbody)}%
       \x@\fullstack@xpand\x@#1\x@|\tmpstyst@kbody\E %Recurse
     \fi
@@ -777,7 +778,7 @@
 \def\repeatsetdropc@p{%The above code is in \lowercase which  breaks L and R
   \message{Setting \c@rrdstat drop-cap size to \dr@psize}%
   \setp@ram{fontsize}{c\c@rrdstat}{\dr@psize}%
-  \g@tfontname{c}\x@\let\csname font<\f@ntstyle>\endcsname=\relax
+  \g@tfontname{c}{c}\x@\let\csname font<\f@ntstyle>\endcsname=\relax
   \let\d@neit\c@rrdstat
   \def\col@do##1{
     \setc@rdstat{##1}%
@@ -785,7 +786,7 @@
       \setLRspecific
       \dropnumbersize=0pt
       \calcdr@psize
-      \g@tfontname{c}\x@\let\csname font<\f@ntstyle>\endcsname=\relax
+      \g@tfontname{c}{c}\x@\let\csname font<\f@ntstyle>\endcsname=\relax
       \message{ Setting \ drop-cap size to \dr@psize}%
       \setp@ram{fontsize}{c##1}{\dr@psize}%
     \fi
@@ -1122,6 +1123,8 @@
 \def\s@tstyst@k{%Get a + separated list of styles that ought to uniquely define a font/etc.
   %List excludes marker #1 and stops at a barrier (e.g. a par/note/sidebar)
   %defines \styst@kfirst to first value.
+  \xdef\styst@k{\empty}%
+  \xdef\styst@kfirst{\empty}%
   \def\d@##1+##2+##3\E{\ifcsname isb@rrier-##1\endcsname\let\d@=\cstackrelax\fi%stop here?
     \xdef\styst@k{##3}% The real one
     \xdef\tmpstyst@k{##3}% This will get over-ridden if there are other calls.
