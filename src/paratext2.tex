@@ -709,7 +709,7 @@
           \trace{o}{onecoltrial lcolgutter makecolumngutter}%
           \makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen3}{2}%
         \fi\fi
-        \ifx\ch@pter\empty\else\hbox to \columnshift{}\fi
+        \ifb@dy\iftob@dy\else\hbox to \columnshift{}\fi\fi
         \vbox to\dimen3{\box\colA\kern0pt\vfil}%
         \ifb@dy\testXrefSideR\ifnum\tmp=1
           \trace{o}{onecoltrial rcolgutter makecolumngutter}%
@@ -769,7 +769,7 @@
 
 %+c_doublecolumns
 \def\PageFullFactor{0.9}
-\gdef\layoutstylebreak@doublecolumn{\global\output={\savepartialpagedbounce}\eject\eject}
+\gdef\layoutstylebreak@doublecolumn{\trace{o}{LAYOUTSTYLE break}\global\output={\savepartialpagedbounce}\par\eject\eject}
 \def\doublecolumns{
   \ifnum\c@rrentcols=1
     % make switch from single to double column
@@ -870,7 +870,7 @@
         \ifb@dy\testXrefSideL\ifnum\tmp=1
           \makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen3}{2}%
         \fi\fi
-        \ifx\ch@pter\empty\else\ifb@dy\hbox to \columnshift{}\fi\fi
+        \ifb@dy\iftob@dy\else\hbox to \columnshift{}\fi\fi
         %\special{"testme1"}
         \vbox to \dimen3{\unvbox\colA\vfil}%\special{"testme2"}%
         \ifb@dy\testXrefSideR\ifnum\tmp=1
@@ -1409,10 +1409,11 @@
 \newif\ifrerunsavepartialpaged
 \def\savepartialpaged{%Double columnn version of save partial page
   \trace{o}{savepartialpaged}%
+  \ifnum\holdinginserts=0 \else\message{INTERNAL ERROR! Foonotes/figures shouldn't be held, or they'll get lost!}\fi
   \s@ttrialheight
   \keepn@testrue\c@lcavailht\keepn@tesfalse
   \setbox\s@vedpage=\vbox{\unvbox255}%
-  \trace{o}{balancing from savepartialpaged, height=\the\ht\s@vedpage, hIns:\the\holdinginserts, vsz=\the\vsize}%
+  \trace{o}{balancing from savepartialpaged, height=\the\ht\s@vedpage, hIns:\the\holdinginserts, vsz=\the\vsize, av=\the\availht, op:\the\outputpenalty}%
   \ifdim\ht\partial>\baselineskip\swapcolfalse\else\swapcoltrue\fi
   \ifdim\availht<\baselineskip 
     \rem@indertrue % No, I don't know what this does, but once If i  didn't do it then we get lost verses. 
@@ -1563,7 +1564,7 @@
     \s@tpage
     \global\holdinginserts=1
     \ifrerunsavepartialpaged
-      \global\output={\savepartialpaged}\global\rerunsavepartialpagedfalse\unvbox\s@vedpage
+      \global\output={\savepartialpagedbounce}\global\rerunsavepartialpagedfalse\unvbox\s@vedpage
     \else\global\output={\twocols}\unvbox\s@vedpage\fi
     \ifnum\interactionmode=2
       \showlists
@@ -1651,7 +1652,7 @@
   \bgroup\setbox0=\copy255 \setbox1=\vsplit0 to \maxdimen\egroup
    \edef\t@mp{\splitbotmark}%
    \ifx\t@mp\empty\else\global\m@rksonpagetrue\trace{H}{Found mark \splitbotmark}\fi
-  \trace{o}{sppb hIns=\the\holdinginserts, pt:\the\ht\partial, g:\the\ht255, \the\ht\galley}%
+  \trace{o}{sppb hIns=\the\holdinginserts, pt:\the\ht\partial, g:\the\ht255, \the\ht\galley, op:\the\outputpenalty}%
   \global\holdinginserts=0
   \unvbox255\eject
 }

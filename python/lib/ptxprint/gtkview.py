@@ -157,7 +157,7 @@ rule_help l_homePage lb_homePage l_createZipArchiveXtra btn_createZipArchiveXtra
 _ui_noToggleVisible = ("lb_details", "tb_details", "lb_checklist", "tb_checklist", "ex_styNote") # toggling these causes a crash
                        # "lb_footnotes", "tb_footnotes", "lb_xrefs", "tb_xrefs")  # for some strange reason, these are fine!
 
-_ui_keepHidden = ("btn_download_update", "lb_extXrefs", "l_extXrefsComingSoon", "tb_Logging", "lb_Logging",
+_ui_keepHidden = ("btn_download_update ", "lb_extXrefs", "l_extXrefsComingSoon", "tb_Logging", "lb_Logging",
                   "c_customOrder", "t_mbsBookList", )
 
 _uiLevels = {
@@ -501,7 +501,7 @@ class GtkViewModel(ViewModel):
                     "textDirection", "glossaryMarkupStyle", "fontFaces", "featsLangs", "leaderStyle",
                     "picaccept", "pubusage", "pubaccept", "chklstFilter|0.75", "gridUnits", "gridOffset",
                     "fnHorizPosn", "xrHorizPosn", "filterXrefs", "colXRside", "outputFormat", "stytcVpos", 
-                    "strongsNdxBookId"):
+                    "strongsMajorLg", "strongswildcards", "strongsNdxBookId"):
             self.addCR("fcb_"+fcb, 0)
         self.cb_savedConfig = self.builder.get_object("ecb_savedConfig")
         self.ecb_diglotSecConfig = self.builder.get_object("ecb_diglotSecConfig")
@@ -574,8 +574,10 @@ class GtkViewModel(ViewModel):
 
         projects = self.builder.get_object("ls_projects")
         digprojects = self.builder.get_object("ls_digprojects")
+        strngsfbprojects = self.builder.get_object("ls_strongsfallbackprojects")
         projects.clear()
         digprojects.clear()
+        strngsfbprojects.clear()
         allprojects = []
         for d in os.listdir(self.settings_dir):
             p = os.path.join(self.settings_dir, d)
@@ -588,12 +590,16 @@ class GtkViewModel(ViewModel):
                     allprojects.append(d)
             except OSError:
                 pass
+        strngsfbprojects.append(["None"])
         for p in sorted(allprojects, key = lambda s: s.casefold()):
             projects.append([p])
             digprojects.append([p])
+            if os.path.exists(os.path.join(self.settings_dir, p, 'TermRenderings.xml')):
+                strngsfbprojects.append([p])
         wide = int(len(allprojects)/16)+1
         self.builder.get_object("fcb_project").set_wrap_width(wide)
         self.builder.get_object("fcb_diglotSecProject").set_wrap_width(wide)
+        self.builder.get_object("fcb_strongsFallbackProj").set_wrap_width(wide)
         self.getInitValues()
 
             # .mainnb {background-color: #d3d3d3;}
@@ -746,6 +752,7 @@ class GtkViewModel(ViewModel):
         self.updateMarginGraphics()
         self.colorTabs()
         self.onRotateTabsChanged()
+        self.checkUpdates()
         self.mw.resize(200, 200)
 
     def toggleUIdetails(self, w, state):
@@ -1459,7 +1466,7 @@ class GtkViewModel(ViewModel):
             tmodel = TexModel(self, self.settings_dir, self._getPtSettings(self.prjid), self.prjid)
             out = tmodel.convertBook(bk, None, self.working_dir, os.path.join(self.settings_dir, self.prjid))
             self.editFile(out, loc="wrk", pgid=pgid)
-        self.onViewerChangePage(None,None,pg)
+        self.onViewerChangePage(None, None, pg, forced=True)
 
     def generateAdjList(self, books=None, dynamic=True):
         existingFilelist = []
@@ -1559,9 +1566,9 @@ class GtkViewModel(ViewModel):
 
     def onRefreshViewerTextClicked(self, btn):
         pg = self.get("nbk_Viewer")
-        self.onViewerChangePage(None, None, pg)
+        self.onViewerChangePage(None, None, pg, forced=True)
 
-    def onViewerChangePage(self, nbk_Viewer, scrollObject, pgnum):
+    def onViewerChangePage(self, nbk_Viewer, scrollObject, pgnum, forced=False):
         allpgids = ("scroll_FrontMatter", "scroll_Settings", "scroll_AdjList", "scroll_FinalSFM", 
                     "scroll_TeXfile", "scroll_XeTeXlog", "scroll_SettingsOld")
         if nbk_Viewer is None:
@@ -1570,7 +1577,7 @@ class GtkViewModel(ViewModel):
         if page == None:
             return
         for w in ["gr_editableButtons", "l_examineBook", "ecb_examineBook", "btn_saveEdits", 
-                  "btn_refreshViewerText", "btn_viewEdit"]: # "btn_Generate", "btn_editZvars", "btn_removeZeros", 
+                  "btn_refreshViewerText", "btn_viewEdit"]:
             self.builder.get_object(w).set_sensitive(True)
         self.builder.get_object("btn_viewEdit").set_label("View/Edit...")
         genBtn = self.builder.get_object("btn_Generate")
@@ -1657,7 +1664,7 @@ class GtkViewModel(ViewModel):
             return
         set_tooltip = self.builder.get_object("l_{1}".format(*pgid.split("_"))).set_tooltip_text
         buf = self.fileViews[pgnum][0]
-        if buf.get_char_count():
+        if not forced and buf.get_char_count():
             return
         if os.path.exists(fpath):
             set_tooltip(fpath)
@@ -1732,8 +1739,8 @@ class GtkViewModel(ViewModel):
     def onScriptChanged(self, btn):
         # If there is a matching digit style for the script that has just been set, 
         # then also turn that on (but it can be overridden by the user if needed).
-        if self.loadingConfig:
-            return
+        # if self.loadingConfig:
+            # return
         self.fcb_fontdigits.set_active_id(self.get('fcb_script'))
         script = self.get("fcb_script")
         if script is not None:
@@ -2212,7 +2219,7 @@ class GtkViewModel(ViewModel):
         self.alltoggles = []
         prjs = self.builder.get_object("ls_projects")
         prjCtr = len(prjs)
-        rows = int(prjCtr**0.6) if prjCtr <= 140 else 16
+        cols = int(prjCtr**0.6) if prjCtr <= 140 else 10
         for i, b in enumerate(prjs):
             if self.prjid == b[0]:
                 tbox = Gtk.Label()
@@ -2222,7 +2229,7 @@ class GtkViewModel(ViewModel):
                 tbox = Gtk.ToggleButton(b[0])
             tbox.show()
             self.alltoggles.append(tbox)
-            mps_grid.attach(tbox, i // rows, i % rows, 1, 1)
+            mps_grid.attach(tbox, i % cols, i // cols, 1, 1)
         response = dialog.run()
         projlist = []
         if response == Gtk.ResponseType.OK:
@@ -3265,7 +3272,7 @@ class GtkViewModel(ViewModel):
             if prj != "":
                 if UnpackDBL(self.DBLfile, prj, self.settings_dir):
                     # add prj to ls_project before selecting it.
-                    for a in ("ls_projects", "ls_digprojects"):
+                    for a in ("ls_projects", "ls_digprojects", "ls_strongsfallbackprojects"):
                         lsp = self.builder.get_object(a)
                         allprojects = [x[0] for x in lsp]
                         for i, p in enumerate(allprojects):
@@ -3485,6 +3492,7 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("fr_colXrefs").set_sensitive(xrc)
 
     def onGenerateStrongsClicked(self, btn):
+        self.addStrongsVars()
         dialog = self.builder.get_object("dlg_strongsGenerate")
         if sys.platform == "win32":
             dialog.set_keep_above(True)
@@ -3496,6 +3504,12 @@ class GtkViewModel(ViewModel):
         if sys.platform == "win32":
             dialog.set_keep_above(False)
         dialog.hide()
+        
+    def addStrongsVars(self):
+        for b in ("Title", "Hebrew", "Greek", "Index"): 
+            v = "strongs_" + b.lower()
+            if self.getvar(v) is None:
+                self.setvar(v, _("<Type Value Here>"))
 
     def onInterlinearClicked(self, btn):
         if self.sensiVisible("c_interlinear"):
@@ -3505,15 +3519,12 @@ class GtkViewModel(ViewModel):
                                "'Spacing Adjustments Between Letters' on the Fonts+Script page.\n" +\
                                "So that option has just been disabled."))
 
-    # Waiting for an upstream SSL bug to be fixed.
     def checkUpdates(self, background=True):
-        if True: # WAITING for Python fix!   sys.platform != "win32":
-            self.builder.get_object("btn_download_update").set_visible(False)
+        wid = self.builder.get_object("btn_download_update")
+        wid.set_visible(False)
+        if sys.platform != "win32":
             return
-        # os.environ["PYTHONHTTPSVERIFY"] = "0"
         version = None
-        if not background:
-            self.builder.get_object("btn_download_update").set_visible(False)
         if self.get("c_noInternet"):
             return
         try:
@@ -3526,10 +3537,13 @@ class GtkViewModel(ViewModel):
             return
         newv = [int(x) for x in version.split('.')]
         currv = [int(x) for x in VersionStr.split('.')]
+        # currv = [int(x) for x in "2.0.14".split('.')]
+        # print(f"Current version is: {currv}\nLatest version is:  {newv}")
         if newv <= currv:
             return
         def enabledownload():
-            wid = self.builder.get_object("btn_download_update")
+            tip = _("A newer version of PTXprint ({}) is available.\nClick to visit download page on the website.".format(version))
+            wid.set_tooltip_text(tip)
             wid.set_visible(True)
         if background:
             GLib.idle_add(enabledownload)
@@ -3538,6 +3552,7 @@ class GtkViewModel(ViewModel):
 
     def openURL(self, url):
         if self.get("c_noInternet"):
+            self.deniedInternet()
             return
         if sys.platform == "win32":
             os.system("start \"\" {}".format(url))
@@ -3546,8 +3561,12 @@ class GtkViewModel(ViewModel):
 
     def onUpdateButtonClicked(self, btn):
         if self.get("c_noInternet"):
-            return
-        self.openURL("https://software.sil.org/ptxprint/download")       
+            self.deniedInternet()
+        else:
+            self.openURL("https://software.sil.org/ptxprint/download")
+
+    def deniedInternet(self):
+        self.doError(_("Internet Access Disabled"), secondary=_("All Internet URLs have been disabled \nusing the option on the Advanced Tab"))
 
     def editZvarsClicked(self, btn):
         self.rescanFRTvarsClicked(None, autosave=True)

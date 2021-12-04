@@ -643,6 +643,8 @@ class Module:
         return [e]
 
     def get_passage(self, ref, removes={}, strippara=False):
+        if ref.first.book is None:
+            return []
         book = self.usfms.get(ref.first.book.upper())
         if book is None:
             return []
