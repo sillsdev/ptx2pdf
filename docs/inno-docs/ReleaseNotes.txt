@@ -1,12 +1,23 @@
 PTXprint 2.0.17 Release Notes 
-4 December 2021
+7 December 2021
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 
-Bug fixes and improvements in 2.0.17 (4 Dec 2021)
+Bug fixes and improvements in 2.0.18 (7 Dec 2021)
 
 NOTE: Underlying code libraries were recently upgraded, so there is a new look and feel
       to PTXprint on Windows. Report any regressions you find as a result of this upgrade.
+
+  * First public release through recently updated TeamCity build server
+
+  * Remove extraneous spaces from TOC entry processing #595 (\toc1 marks cause 
+    the following paragraph to have incorrect justification)
+  
+  * Ensure \cl marker is applied to all books/chapters when enabled (affects XX* songbook)
+  
+  * Updated code for generated batch file script to just work without first changing path
+  
+Bug fixes and improvements in 2.0.17 (4 Dec 2021)
 
   * Added Strongs Numbers cross-reference system along with a powerful, configurable
     localized Strongs Index generator - hiding under 'External Cross-reference Settings'
