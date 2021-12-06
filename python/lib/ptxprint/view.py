@@ -1408,11 +1408,8 @@ class ViewModel:
         zinfo.create_system = 3
         zf.writestr(zinfo, "\n".join(scriptlines))
         batfile = r"""@echo off
-REM In order to run this script at the Windows CMD prompt:
-REM   1. Change the extension from .txt to .bat
-REM   2. Change current directory to PrintDraft using: cd PrintDraft
-REM   3. Then to run it, use: ..\\runtex.bat
-REM e.g. C:\\Users\\<Username>\\Downloads\\WSG\\local\\ptxprint\\{0}>..\\..\\..\\runtex.bat
+REM To run this batch script (in Windows) change the extension 
+REM from .txt to .bat and then type: runtex.bat <Enter>
 cd local\\ptxprint\\{0}
 for %%i in (xetex.exe) do set truetex=%%~$PATH:i
 if "%truetex%" == "" set truetex=C:\\Program Files\\PTXprint\\xetex\\bin\\xetex.exe
@@ -1423,9 +1420,8 @@ set stack_size=32768""".format(self.configName())
         for t in texfiles:
             if t.endswith("_FRT.tex"):
                 continue
-            batfile += '\nif exist "%truetex%" "%truetex%" {}'.format(os.path.basename(t))
+            batfile += '\nif exist "%truetex%" "%truetex%" {}\ncd ..\..\..'.format(os.path.basename(t))
         zf.writestr("{}/runtex.txt".format(self.prjid), batfile)
-            
 
     def updateThumbLines(self):
         munits = float(self.get("s_margins"))
