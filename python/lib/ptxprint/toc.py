@@ -66,10 +66,10 @@ class TOC:
                 res[k] = ttoc
                 if i == 2:
                     ducet = tailored("&[first primary ignorable] << 0 << 1 << 2 << 3 << 4 << 5 << 6 << 7 << 8 << 9", ducet)
-                if any(not re.match(r"^\d+$", x[i+1]) for x in tocentries):
+                if any(not re.match(r"^\d*$", x[i+1]) for x in tocentries):
                     outentries = sorted(tocentries, key=lambda x:(get_sortkey(x[i+1], variable=SHIFTTRIM, ducet=ducet), refKey(x[0])))
                 else:
-                    outentries = sorted(tocentries, key=lambda x:int(x[i+1]))
+                    outentries = sorted(tocentries, key=lambda x:int(x[i+1] or "0"))
                 for e in outentries:
                     ttoc.append(e)
         return res

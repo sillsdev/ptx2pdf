@@ -254,9 +254,9 @@ class StyleEditorView(StyleEditor):
                 m = re.match(r"^([^-\s]*)\s*([^-]+)(?:-\s*|$)", n)
                 if m:
                     if m.group(1) and m.group(1) not in ('OBSOLETE', 'DEPRECATED'):
-                        n = ((k + " - ") if not n.startswith(k) else "") + n
+                        n = ((str(k) + " - ") if not n.startswith(str(k)) else "") + n
                     elif m.group(2):
-                        n = ((k + " - ") if not n[m.end():].startswith(k) else "") + n[m.end():]
+                        n = ((str(k) + " - ") if not n[m.end():].startswith(str(k)) else "") + n[m.end():]
             elif k not in self.basesheet:
                 ismarker = False
                 n = k
@@ -541,7 +541,11 @@ class StyleEditorView(StyleEditor):
         dialog = self.builder.get_object("dlg_styModsdialog")
         for k, v in dialogKeys.items():
             if k == "OccursUnder":
-                self.model.set(v, " ".join(sorted(self.getval(self.marker, k, set()))))
+                o = self.getval(self.marker, k, None)
+                if o is not None:
+                    self.model.set(v, " ".join(sorted(str(x) for x in o)))
+                else:
+                    self.model.set(v, "")
             else:
                 self.model.set(v, self.getval(self.marker, k, '') or "")
                 # print(f"setting {self.marker}:{k} = {self.getval(self.marker, k, '')}")
