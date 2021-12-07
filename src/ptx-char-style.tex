@@ -170,6 +170,23 @@
   \csname init@ttribs\endcsname %If ptx-attribute is in use, use it... 
 }
 %-cchar_startcharstyle
+\newbox\ulb@x
+\newif\ifUnderlineSpaces\UnderlineSpacestrue
+\def\ulsp@ce{\discretionary{}{}{\vtop{\hbox{\space}\kern\UnderlineLower\hrule height\UnderlineThickness}}}
+\def\ulsp@ce{\leaders\hrule depth\dimen0 height-\dimen1\hskip 1ex plus 0.2ex minus 0.2ex}
+\def\@do@underline{\let\@@@do\@do@underline\unskip\unpenalty\setbox0\lastbox\dimen2=\dp0\ifdim\wd0=0pt\let\@@@do\relax\else\global\setbox\ulb@x=\hbox{\vtop{\hbox{\unhbox0}\kern-\dimen2\kern\dimen1\hrule height\UnderlineThickness}\ifvoid\ulb@x\else\@ulsp@ce\unhbox\ulb@x\fi}\fi\@@@do}%
+\def\d@underline#1{\showboxbreadth=99
+  %\ifUnderlineSpaces
+    \let\@ulsp@ce\ulsp@ce
+  %\else\let\ulsp@ce\space\fi
+  \setbox\ulb@x\box\voidb@x
+  {\dimen0=\UnderlineLower\advance\dimen0\dp#1\dimen1=\dimen0\advance\dimen0\UnderlineThickness\everypar={}\setbox#1=\vbox{\hfuzz=\maxdimen \hsize=1em \hyphenpenalty=10000 \unhbox#1 \endgraf\@do@underline}%
+  %\showbox#1
+  %\showbox\ulb@x
+  \ifdim \wd#1=0pt\else\setbox#1\hbox{\vtop{\box#1\kern\UnderlineLower\hrule height\UnderlineThickness}}%
+    \unhbox#1\@ulsp@ce\fi
+  \unhbox\ulb@x}
+}
 
 %+cchar_endcharstyle
 \lccode`\|=`\\ % for printing backslash in error message
@@ -194,7 +211,7 @@
      \getmcp@ramR{underline}%
      \ifx\p@ram\tru@\temptrue\fi
      \iftemp\egroup
-       \ifx\p@ram\tru@ \setbox0=\hbox{\vtop{\hbox{\unhbox0}\kern\UnderlineLower\hrule height\UnderlineThickness}}\fi
+       \ifx\p@ram\tru@ \d@underline{0}\unhbox0\fi
        \ifx\@ttributes\empty\else% If there are attributes, call an appropriate hook	
 	     \let\d@\apply@attr@specials
 	     \x@\cstackdown \attribsus@d,\E

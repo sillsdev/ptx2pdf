@@ -430,7 +430,7 @@
   %\tracingassigns=1
   \def\d@##1\E{\edef\tmpstylen@me{##1}\trace{s}{inside getthep@ram-fontregular ##1 currently res=\r@s}%
   \getp@r@m{regular}{\tmpstylen@me}\ifx\p@ram\relax\getp@r@m{#1}{\tmpstylen@me}\ifx\p@ram\relax\else\let\r@s\p@ram\fi
-       \else\global\let\r@s\relax\fi}%
+       \else\global\let\r@s\relax\let\t@preset\tmpstylen@me\fi}%
   \x@\cstackup\p@ssParams,\E
   %\tracingassigns=1
   \let\d@\d@gettheparam
@@ -440,10 +440,29 @@
 \def\getthep@ramObeyRegularTop#1{%Called with p@ssParams set up. work down through possParam list, stopping on value or \Regular in the stylesheet
   \let\d@gettheparam=\d@
   \trace{s}{getthep@ramObeyRegularTop{#1}}%
-  \def\d@##1\E{\edef\tmpstylen@me{##1}\getp@r@m{regular}{\tmpstylen@me}\ifx\p@ram\relax\getp@r@m{#1}{\tmpstylen@me}\ifx\p@ram\relax\let\d@\cstackrelax\fi\else\global\let\p@ram\relax\let\d@\cstackrelax\fi}%
+  \def\d@##1\E{\edef\tmpstylen@me{##1}\getp@r@m{regular}{\tmpstylen@me}\ifx\p@ram\relax\getp@r@m{#1}{\tmpstylen@me}\ifx\p@ram\relax\else\let\d@\cstackrelax\fi\else\let\t@preset\tmpstylen@me\global\let\p@ram\relax\let\d@\cstackrelax\fi}%
   \cstackdown\p@ssParams,\E
   \let\d@\d@gettheparam
   }
+
+
+\iffalse
+\def\getthep@ram-fontfeatures#1{%
+  \let\r@s\empty
+  \def\d@##1\E{\edef\tmpstylen@me{##1}\getp@r@m{regular}{\tmpstylen@me}\ifx\p@ram\relax\getp@r@m{#1}{\tmpstylen@me}\ifx\p@ram\relax\else
+      \xdef\r@s{\r@s\space\p@ram}%
+      \let\d@\cstackrelax
+    \fi\else\let\t@preset\tmpstylen@me\global\let\p@ram\relax\let\d@\cstackrelax\fi}%
+  \cstackdown\p@ssParams,\E
+  \let\d@\d@gettheparam
+  \ifx\r@s\empty
+    \let\p@ram\relax
+  \else
+    \x@\fe@turemaths\r@s\E
+    \let\p@ram\r@s
+  \fi
+}
+\fi
 
 %Which parameters need to obey the \Regular reset?
 \x@\let\csname getthep@ram-raise\endcsname\getthep@ramObeyRegular
