@@ -204,6 +204,8 @@ class StyleEditorView(StyleEditor):
         for k in sorted(self.allStyles(), key=lambda x:(len(x), x)):
             # v = self.sheet.get(k, self.basesheet.get(k, {}))
             v = self.asStyle(k)
+            if v.get('StyleType', '') == 'Standalone':
+                continue
             if 'zDerived' in v:
                 # self.sheet[v['zDerived']][' endMilestone']=k
                 self.setval(v['zDerived'], ' endMilestone', k)
@@ -248,13 +250,13 @@ class StyleEditorView(StyleEditor):
             ismarker = True
             if k in allStyles:
                 # n = self.sheet[k].get('name', k)
-                n = self.getval(k, 'name') or ""
+                n = self.getval(k, 'name') or "{} - Other".format(k)
                 m = re.match(r"^([^-\s]*)\s*([^-]+)(?:-\s*|$)", n)
                 if m:
                     if m.group(1) and m.group(1) not in ('OBSOLETE', 'DEPRECATED'):
-                        n = k + " - " + n
+                        n = ((k + " - ") if not n.startswith(k) else "") + n
                     elif m.group(2):
-                        n = k + " - " + n[m.end():]
+                        n = ((k + " - ") if not n[m.end():].startswith(k) else "") + n[m.end():]
             elif k not in self.basesheet:
                 ismarker = False
                 n = k
