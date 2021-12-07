@@ -3,7 +3,7 @@ PTXprint 2.0.19 Release Notes
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 
-Bug fixes and improvements in 2.0.19 (7 Dec 2021)
+Bug fixes and improvements in 2.0.20 (7 Dec 2021)
 
 NOTE: Underlying code libraries were recently upgraded, so there is a new look and feel
       to PTXprint on Windows. Report any regressions you find as a result of this upgrade.
@@ -17,7 +17,15 @@ NOTE: Underlying code libraries were recently upgraded, so there is a new look a
   
   * Updated code for generated batch file script to just work without first changing path
   
-  * Click to Download Updated version button now works (SSL issue solved)
+  * Turn on page numbers by default at the start of a new book
+  
+  * Fix styleditor to not show standalones and fix up naming in the tree view
+  
+  * Add smarter links to style editor for Strongs dialog
+  
+  * Remove leaking space in RTL page layout
+  
+ (* Click to Download Updated version button is still broken - SSL library issue)
   
 Bug fixes and improvements in 2.0.17 (4 Dec 2021)
 
