@@ -303,6 +303,7 @@
  \ifx\p@ram\relax\xdef\c@rrfontsize{12}\else\global\let\c@rrfontsize=\p@ram\fi
  \x@\stystacksplit#2+\E% redo the split because it's not preserved.
  \edef\f@ntstyle{\f@ntstyle-\c@rrfontsize\ifx\tmpstyst@kbody\empty\else+\tmpstyst@kbody\fi}%
+ \trace{F}{Font style name is \f@ntstyle (\tmpstyst@kfirst | \tmpstyst@kbody}%
 }
 
 \def\nomsg@tfontname#1{\g@tfontname{#1}{#1}}

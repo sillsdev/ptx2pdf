@@ -260,7 +260,7 @@
 }
 
 \def\StackComplexity{3}
-\def\this@stystak{=}
+\def\this@stystak{}
 \def\s@tpossParams#1#2{\trace{s}{s@tpossParams {#1}{#2}\m@rker (\styst@kfirst / \styst@k)}%
   \ifdiglot
      \edef\p@ssParams{#1\c@rrdstat,#1}%
@@ -428,50 +428,125 @@
   \trace{s}{getthep@ramObeyRegular{#1}}%
   \let\r@s\relax\ifnotracestacks\pushtracing\fi
   %\tracingassigns=1
-  \def\d@##1\E{\edef\tmpstylen@me{##1}\trace{s}{inside getthep@ram-fontregular ##1 currently res=\r@s}%
+  \def\d@##1\E{\edef\tmpstylen@me{##1}\trace{s}{inside getthep@ramObeyRegular ##1 currently res=\r@s}%
   \getp@r@m{regular}{\tmpstylen@me}\ifx\p@ram\relax\getp@r@m{#1}{\tmpstylen@me}\ifx\p@ram\relax\else\let\r@s\p@ram\fi
        \else\global\let\r@s\relax\let\t@preset\tmpstylen@me\fi}%
   \x@\cstackup\p@ssParams,\E
   %\tracingassigns=1
   \let\d@\d@gettheparam
   \let\p@ram\r@s
-  }
+}
 
 \def\getthep@ramObeyRegularTop#1{%Called with p@ssParams set up. work down through possParam list, stopping on value or \Regular in the stylesheet
   \let\d@gettheparam=\d@
   \trace{s}{getthep@ramObeyRegularTop{#1}}%
-  \def\d@##1\E{\edef\tmpstylen@me{##1}\getp@r@m{regular}{\tmpstylen@me}\ifx\p@ram\relax\getp@r@m{#1}{\tmpstylen@me}\ifx\p@ram\relax\else\let\d@\cstackrelax\fi\else\let\t@preset\tmpstylen@me\global\let\p@ram\relax\let\d@\cstackrelax\fi}%
-  \cstackdown\p@ssParams,\E
+  \def\d@##1\E{\edef\tmpstylen@me{##1}\trace{s}{inside getthep@raObeyRegularTop ##1}%
+    \getp@r@m{regular}{\tmpstylen@me}\ifx\p@ram\relax\getp@r@m{#1}{\tmpstylen@me}\ifx\p@ram\relax\else\let\d@\cstackrelax\fi\else\let\t@preset\tmpstylen@me\global\let\p@ram\relax\let\d@\cstackrelax\fi}%
+  \x@\cstackdown\p@ssParams,\E
   \let\d@\d@gettheparam
-  }
+}
 
 
-\iffalse
-\def\getthep@ram-fontfeatures#1{%
+\def\r@setparam{=[]}
+
+\x@\def\csname getthep@ram-fontfeatures\endcsname#1{%
+  \trace{s}{getthep@ram-fontfeatures}%
+  \let\d@gettheparam=\d@
   \let\r@s\empty
-  \def\d@##1\E{\edef\tmpstylen@me{##1}\getp@r@m{regular}{\tmpstylen@me}\ifx\p@ram\relax\getp@r@m{#1}{\tmpstylen@me}\ifx\p@ram\relax\else
-      \xdef\r@s{\r@s\space\p@ram}%
-      \let\d@\cstackrelax
-    \fi\else\let\t@preset\tmpstylen@me\global\let\p@ram\relax\let\d@\cstackrelax\fi}%
-  \cstackdown\p@ssParams,\E
-  \let\d@\d@gettheparam
+  \def\d@##1\E{\edef\tmpstylen@me{##1}\getp@r@m{regular}{\tmpstylen@me}%
+    \ifx\p@ram\relax\getp@r@m{#1}{\tmpstylen@me}%
+      \ifx\p@ram\relax\else
+        \ifx\p@ram\r@setparam
+          \let\d@\cstackrelax
+        \else
+          \ifx\p@ram\empty\else
+            \xdef\r@s{\p@ram\space\r@s\space}%Processed left to right, so top level (overrides) go *LAST*
+          \fi
+        \fi
+      \fi
+    \else\let\t@preset\tmpstylen@me\global\let\p@ram\relax\let\d@\cstackrelax
+    \fi}%
+    \x@\cstackdown\p@ssParams,\E
   \ifx\r@s\empty
     \let\p@ram\relax
   \else
-    \x@\fe@turemaths\r@s\E
+    \trace{s}{Found fontfeatures: '\r@s'}%
+    \let\f@atureset\cstackempty
+    \let\f@aturen@xt\n@xt
+    \x@\fe@turemaths\r@s[] \E
+    \trace{s}{Merging options}%
+    \let\r@s\empty
+    \def\d@##1\E{\x@\let\x@\t@st\csname ##1\endcsname\ifx\relax\t@st\else\edef\r@s{\ifx\r@s\empty:\else\r@s:\fi\t@st}\x@\let\csname ##1\endcsname\relax\fi}%
+    \x@\cstackdown\f@atureset,\E
+    \let\n@xt\f@aturen@xt
     \let\p@ram\r@s
   \fi
+  \let\d@\d@gettheparam
 }
-\fi
+
+\def\endf@aturemaths#1\E{}
+\def\fe@turemaths #1[#2] #3\E{%
+  \trace{s}{Feature maths #1.#2.#3}%
+  \let\n@xt\fe@turemaths
+  \edef\t@st{#2}\ifx\t@st\empty
+    \let\n@xt\endf@aturemaths
+    \trace{s}{No more features #2}%
+  \else
+    \edef\t@st{\zap@space #1 \empty}\ifx\t@st\empty\let\t@st\pl@s\fi
+    \if\t@st\m@nusLtr\relax
+      \let\d@\rmf@ature
+      \trace{s}{Removing font features #2}%
+    \else
+      \let\d@\addf@ature\relax
+      \if\t@st\equ@ls
+        \trace{s}{Exact font features #2}%
+        \let\f@atureset\cstackempty
+      \else\if\t@st\pl@sLtr\relax\else
+          \message{Unrecognised control flag '\x@\meaning\t@st' \x@\the\x@\catcode\x@`\t@st  in fontfeature definition #1[#2], processing like '+' (valid: +/-/=)}%
+        \fi
+        \trace{s}{Adding font features #2}%
+      \fi
+    \fi 
+    \x@\cstackdown #2,\E
+  \fi
+  \edef\t@st{#3}\ifx\t@st\empty
+    \let\n@xt\endf@aturemaths
+  \fi
+  \n@xt #3 []\E
+}
+
+\def\rmf@ature#1\E{%
+  \x@\decodeff@ature #1==\E
+  \x@\let\csname \@ffname\endcsname\relax
+}
+\def\addf@ature#1\E{%
+  \x@\decodeff@ature #1==\E
+  \x@\edef\csname \@ffname\endcsname{\@ffvalue}%
+  \edef\f@atureset{\f@atureset,\@ffname}% Duplicate values don't matter, as we'll unset values as the list is generated.
+}
+
+
+\def\decodeff@ature#1#2=#3=#4\E{% [+foo] or [foo] adds '+foo' [-foo] removes '+foo',   [foo=bar] adds foo=bar
+  \edef\t@st{#3}\ifx\t@st\empty
+    \if#1+\edef\@ffname{@@ffname-#2}\edef\@ffvalue{+#2}%
+    \else
+      \if#1-\edef\@ffname{@@ffname-#2}\edef\@ffvalue{}%
+      \else\edef\@ffname{@@ffname-#1#2}\edef\@ffvalue{+#1#2}%
+      \fi
+    \fi
+  \else
+    \edef\@ffname{@@ffname-#1#2}\edef\@ffvalue{#1#2=#3}\E
+  \fi
+}
 
 %Which parameters need to obey the \Regular reset?
-\x@\let\csname getthep@ram-raise\endcsname\getthep@ramObeyRegular
-\x@\let\csname getthep@ram-underline\endcsname\getthep@ramObeyRegular
-\x@\let\csname getthep@ram-bold\endcsname\getthep@ramObeyRegular
-\x@\let\csname getthep@ram-italic\endcsname\getthep@ramObeyRegular
-\x@\let\csname getthep@ram-fontfeatures\endcsname\getthep@ramObeyRegular
-\x@\let\csname getthep@ram-smallcaps\endcsname\getthep@ramObeyRegular
-\x@\let\csname getthep@ram-fontfactor\endcsname\getthep@ramObeyRegular
+\x@\let\csname getthep@ram-raise\endcsname\getthep@ramObeyRegularTop
+\x@\let\csname getthep@ram-underline\endcsname\getthep@ramObeyRegularTop
+\x@\let\csname getthep@ram-bold\endcsname\getthep@ramObeyRegularTop
+\x@\let\csname getthep@ram-italic\endcsname\getthep@ramObeyRegularTop
+%\x@\let\csname getthep@ram-fontfeatures\endcsname\getthep@ramObeyRegularTop
+\x@\let\csname getthep@ram-smallcaps\endcsname\getthep@ramObeyRegularTop
+\x@\let\csname getthep@ram-fontfactor\endcsname\getthep@ramObeyRegularTop
 
 \def\getmcp@ram#1{\getp@ram{#1}{\styst@kfirst}{\styst@k}}
 \def\getmcp@ramR#1{\getp@ram{#1}{\styst@kfirst}{\styst@k}}
@@ -1102,7 +1177,7 @@
   \fi
   \trace{s}{whileitp@ps result:\tmp}%
   \if S\tmp\relax % Store it?
-     \edef\itp@psstore{#1+#2+#3,\itp@psstore}%
+     \edef\itp@psstore{#1+#2,\itp@psstore}%only store the marker and type, restacking will recaclulate the stystak
      \mcpopsimple
   \else
     \if Y\tmp\relax  %end it and pop it
