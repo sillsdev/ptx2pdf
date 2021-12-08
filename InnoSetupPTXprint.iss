@@ -47,8 +47,9 @@ Source: "dist\ptxprint\ptxprint\gspawn-win64-helper.exe"; DestDir: "{app}"; Flag
 Source: "dist\ptxprint\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs; Excludes: "icons,locale,librsvg-2-2.dll,gspawn-win64-helper.exe"
 Source: "dist\ptxprint\share\locale\es\*"; DestDir: "{app}\share\locale\es\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "dist\ptxprint\share\locale\fr\*"; DestDir: "{app}\share\locale\fr\"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "dist\ptxprint\share\locale\id\*"; DestDir: "{app}\share\locale\id\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "dist\ptxprint\share\locale\zh_CN\*"; DestDir: "{app}\share\locale\zh_CN\"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "xetex\*"; DestDir: "{app}\xetex\"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "xetex\*"; DestDir: "{app}\xetex\"; Flags: ignoreversion recursesubdirs createallsubdirs; Excludes: "cache"
 #include "AdwaitaIcons.txt"
 Source: "dist\ptxprint\share\icons\Adwaita\index.theme"; DestDir: "{app}\share\icons\Adwaita"
 

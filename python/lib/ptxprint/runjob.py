@@ -710,10 +710,6 @@ class RunJob:
         if not os.path.exists(tmpPicpath):
             os.makedirs(tmpPicpath)
         folderList = ["tmpPics", "tmpPicLists"] 
-        #try:
-        #    self.removeTmpFolders(self.printer.working_dir, folderList, mkdirs=True)
-        #except PermissionError:
-        #    print("Warning: Couldn't Remove Temporary Folders - is a temp file open?")
         cropme = info['document/iffigcrop']
         def carefulCopy(p, src, tgt):
             ratio = pageRatios[0 if p['size'].startswith("span") else 1] if p.get('pgpos', 'N') in 'tbhp' else None
@@ -723,7 +719,6 @@ class RunJob:
         if info['document/ifinclfigs'] == 'false':
             # print("NoFigs")
             return []
-        print(str(picinfos).encode("utf-8"))
         picinfos.build_searchlist()
         for j in jobs:
             picinfos.getFigureSources(keys=j, exclusive=self.printer.get("c_exclusiveFiguresFolder"), mode=self.ispdfxa)

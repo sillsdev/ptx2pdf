@@ -3532,7 +3532,7 @@ class GtkViewModel(ViewModel):
     def checkUpdates(self, background=True):
         wid = self.builder.get_object("btn_download_update")
         wid.set_visible(False)
-        if True: # sys.platform != "win32":
+        if sys.platform != "win32":
             return
         version = None
         if self.get("c_noInternet"):

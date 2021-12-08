@@ -11,26 +11,10 @@ except ImportError:
     from ptxprint.utils import pt_bindir
 
 if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
-    import cryptography.hazmat.bindings.openssl.binding
-    import hashlib
-    class myflags:
-        def __init__(self, flags):
-            for k in flags.__dir__():
-                if k.startswith("_"):
-                    continue
-                setattr(self, k, getattr(flags, k))
-                
     site.USER_BASE = os.path.join(os.path.expanduser("~"), ".local")
     if not hasattr(site, 'getuserbase'):
         site.getuserbase = lambda : site.USER_BASE
-    oldp = os.getenv("PATH").split(";")
-    # newp = [p for p in oldp if "msys64" not in p]
-    newp = [sys._MEIPASS, pt_bindir()]
-    sys.flags = myflags(sys.flags)
-    sys.flags.verbose = 2
-    print(f"{oldp=},\n{newp=}")
-    print(f"verbosity={sys.flags.verbose}")
-    os.putenv("PATH", ";".join(newp))
+    os.putenv("PATH", sys._MEIPASS)
 
 import ptxprint
 from pathlib import Path

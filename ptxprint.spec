@@ -63,7 +63,7 @@ exe = EXE(pyz,
           upx_exclude = ['tcl'],
           runtime_tmpdir = None,
           windowed=True,
-          console = True,
+          console = False,
           icon="icon/Google-Noto-Emoji-Objects-62859-open-book.ico")
 coll = COLLECT(exe,
                a.binaries,
