@@ -230,6 +230,15 @@
 \AttrMilestoneMatchesUnattrtrue% Default: yes.
 \@ttrMilestonefalse
 
+\def\kill@font#1\E{\x@\let\csname font<#1>\endcsname\relax}
+
+\def\ClearCachedFonts{%Force font redefinition. 
+  \ifx\f@ntlist\empty\else
+    \let\d@\kill@font
+    \x@\cstackdown\f@ntlist,\E
+  \fi
+  \global\let\f@ntlist\empty
+}
 
 \def\kill@cache #1\E{%Remove listed item
    \x@\global\x@\let\csname #1\endcsname\relax}
@@ -998,6 +1007,8 @@
  \let\save@italic=\italic \let\italic=\Italic
  \openin\styl@sheet="#1" \c@ntinuetrue                      %(1)
  \ifeof\styl@sheet\errmessage{Paratext stylesheet "#1" not found}\else
+   \trace{s}{New Stylesheet: clearing fonts: \f@ntlist}%
+   \ClearCachedFonts
    \message{Reading Paratext stylesheet "#1" (\c@tegory)...}%
    \endlinechar=-1
    %\catcode`\#=5 % paratext comment char
