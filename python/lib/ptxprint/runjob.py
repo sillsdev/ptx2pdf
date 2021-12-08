@@ -723,6 +723,7 @@ class RunJob:
         if info['document/ifinclfigs'] == 'false':
             # print("NoFigs")
             return []
+        print(str(picinfos).encode("utf-8"))
         picinfos.build_searchlist()
         for j in jobs:
             picinfos.getFigureSources(keys=j, exclusive=self.printer.get("c_exclusiveFiguresFolder"), mode=self.ispdfxa)

@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-import sys, os, re, regex, gi, subprocess, traceback #, ssl
+import sys, os, re, regex, gi, subprocess, traceback, ssl
 gi.require_version('Gtk', '3.0')
 gi.require_version('Gdk', '3.0')
 from shutil import rmtree
@@ -37,7 +37,7 @@ from threading import Thread
 
 logger = logging.getLogger(__name__)
 
-# ssl._create_default_https_context = ssl._create_unverified_context
+ssl._create_default_https_context = ssl._create_unverified_context
 pdfre = re.compile(r".+[\\/](.+\.pdf)")
 
 # xmlstarlet sel -t -m '//iso_15924_entry' -o '"' -v '@alpha_4_code' -o '" : "' -v '@name' -o '",' -n /usr/share/xml/iso-codes/iso_15924.xml
@@ -1013,10 +1013,10 @@ class GtkViewModel(ViewModel):
         newconfigId = self.configName() # self.get("ecb_savedConfig")
         if newconfigId != self.configId:
             self._copyConfig(self.configId, newconfigId)
+            self.updateProjectSettings(self.prjid, configName=newconfigId, readConfig=True)
             self.configId = newconfigId
             self.updateSavedConfigList()
             self.set("lb_settings_dir", self.configPath(self.configName()))
-            self.updateProjectSettings(self.prjid, configName=newconfigId, readConfig=True)
             self.updateDialogTitle()
         self.userconfig.set("init", "project", self.prjid)
         self.userconfig.set("init", "nointernet", "true" if self.get("c_noInternet") else "false")

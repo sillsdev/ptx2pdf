@@ -3,20 +3,36 @@
 import argparse, sys, os, configparser
 import appdirs
 import site, logging
+
+try:
+    from ptxprint.utils import pt_bindir
+except ImportError:
+    sys.path.append(os.path.join(os.path.dirname(__file__), "..", "lib"))
+    from ptxprint.utils import pt_bindir
+
 if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+    import cryptography.hazmat.bindings.openssl.binding
+    import hashlib
+    class myflags:
+        def __init__(self, flags):
+            for k in flags.__dir__():
+                if k.startswith("_"):
+                    continue
+                setattr(self, k, getattr(flags, k))
+                
     site.USER_BASE = os.path.join(os.path.expanduser("~"), ".local")
     if not hasattr(site, 'getuserbase'):
         site.getuserbase = lambda : site.USER_BASE
     oldp = os.getenv("PATH").split(";")
-    newp = [p for p in oldp if "msys64" not in p]
-  # newp = [p for p in oldp if p.startswith(sys._MEIPASS)]
+    # newp = [p for p in oldp if "msys64" not in p]
+    newp = [sys._MEIPASS, pt_bindir()]
+    sys.flags = myflags(sys.flags)
+    sys.flags.verbose = 2
+    print(f"{oldp=},\n{newp=}")
+    print(f"verbosity={sys.flags.verbose}")
     os.putenv("PATH", ";".join(newp))
 
-try:
-    import ptxprint
-except ImportError:
-    sys.path.append(os.path.join(os.path.dirname(__file__), "..", "lib"))
-    import ptxprint
+import ptxprint
 from pathlib import Path
 
 def getnsetlang(config):
