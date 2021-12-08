@@ -69,8 +69,8 @@ class TOC:
                 def makekey(txt):
                     return int(t) if txt.isdigit() else get_sortkey(txt, variable=SHIFTTRIM, ducet=ducet)
                 def naturalkey(txt):
-                    return [convert(c) for c in re.split('(\d+)', txt)]
-                for e in sorted(tocentries, key=naturalkey):
+                    return [makekey(c) for c in re.split('(\d+)', txt)]
+                for e in sorted(tocentries, key=lambda x:naturalkey(x[i+1])):
                     ttoc.append(e)
         return res
 
