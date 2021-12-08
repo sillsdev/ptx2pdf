@@ -139,22 +139,35 @@
   \edef\t@mpc{#4}%
   \global\count252=1
   \ifx\t@mpa\empty\else
-    \trace{t}{\noexpand\tc\the\count252 \space \t@mpa}%
-    \edef\t@mpd{tc\the\count252}%
+    \ifcsname tocalign\the\count252\endcsname
+      \edef\t@mpd{tc\csname tocalign\the\count252\endcsname\the\count252}%
+    \else
+      \edef\t@mpd{tc\the\count252}%
+    \fi
+    \trace{t}{\t@mpd \space \t@mpa}%
     \csname \t@mpd\endcsname \t@mpa
     \ifcsname cat:toc|tc\the\count252 :fill\endcsname\else\d@ftoc{tc\the\count252 :fill}{\hfill}\fi
     \global\advance\count252 by 1
   \fi
   \ifx\t@mpb\empty\else
-    \trace{t}{\noexpand\tc\the\count252 \space \t@mpb}%
-    \edef\t@mpd{tc\the\count252}%
+    \ifcsname tocalign\the\count252\endcsname
+      \edef\t@mpd{tc\csname tocalign\the\count252\endcsname\the\count252}%
+      \trace{t}{Found tocalign\the\count252}%
+    \else
+      \edef\t@mpd{tc\the\count252}%
+    \fi
+    \trace{t}{\t@mpd \space \t@mpb}%
     \csname \t@mpd\endcsname \t@mpb
     \ifcsname cat:toc|tc\the\count252 :fill\endcsname\else\d@ftoc{tc\the\count252 :fill}{\hfill}\fi
     \global\advance\count252 by 1
   \fi
   \ifx\t@mpc\empty\else
-    \trace{t}{\noexpand\tc\the\count252 \space \t@mpc}%
-    \edef\t@mpd{tc\the\count252}%
+    \ifcsname tocalign\the\count252\endcsname
+      \edef\t@mpd{tc\csname tocalign\the\count252\endcsname\the\count252}%
+    \else
+      \edef\t@mpd{tc\the\count252}%
+    \fi
+    \trace{t}{\t@mpd \space \t@mpc}%
     \csname \t@mpd\endcsname \t@mpc
     \ifcsname cat:toc|tc\the\count252 :fill\endcsname\else\d@ftoc{tc\the\count252 :fill}{\hfill}\fi
     \global\advance\count252 by 1
@@ -201,3 +214,4 @@
     \advance\count252 by 1
   \ifnum\count252<5\repeat
 }
+\def\deftocalign#1#2{\x@\def\csname tocalign#1\endcsname{#2}}
