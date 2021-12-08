@@ -1887,6 +1887,7 @@ class GtkViewModel(ViewModel):
 
     def onEditStyleClicked(self, btn):
         mkr = Gtk.Buildable.get_name(btn)[9:]
+        print("mkr=", mkr)
         if mkr == "toc3" and self.get("c_thumbIsZthumb"):
             self.set("c_styTextProperties", False)
             mkr = "zthumbtab"
@@ -1894,9 +1895,18 @@ class GtkViewModel(ViewModel):
             dialog = self.builder.get_object("dlg_overlayCredit")
             dialog.set_keep_above(False)
             dialog.hide()
-        self.styleEditor.selectMarker(mkr)
-        mpgnum = self.notebooks['Main'].index("tb_StyleEditor")
-        self.builder.get_object("nbk_Main").set_current_page(mpgnum)
+        elif mkr.startswith("strong-s"):
+            simple = mkr.split("+",1)[1]
+            for a in ("strong-s+", ""):
+                if a+simple in self.styleEditor.allStyles():
+                    mkr = a+simple
+                    break # skip the next else
+            else:
+                mkr = None
+        if mkr is not None:
+            self.styleEditor.selectMarker(mkr)
+            mpgnum = self.notebooks['Main'].index("tb_StyleEditor")
+            self.builder.get_object("nbk_Main").set_current_page(mpgnum)
 
     def onProcessScriptClicked(self, btn):
         self.colorTabs()
@@ -3522,7 +3532,7 @@ class GtkViewModel(ViewModel):
     def checkUpdates(self, background=True):
         wid = self.builder.get_object("btn_download_update")
         wid.set_visible(False)
-        if sys.platform != "win32":
+        if True: # sys.platform != "win32":
             return
         version = None
         if self.get("c_noInternet"):
@@ -3537,8 +3547,6 @@ class GtkViewModel(ViewModel):
             return
         newv = [int(x) for x in version.split('.')]
         currv = [int(x) for x in VersionStr.split('.')]
-        # currv = [int(x) for x in "2.0.14".split('.')]
-        # print(f"Current version is: {currv}\nLatest version is:  {newv}")
         if newv <= currv:
             return
         def enabledownload():

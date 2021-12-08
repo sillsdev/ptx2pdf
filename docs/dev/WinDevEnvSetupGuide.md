@@ -4,7 +4,8 @@
 2. Download and install MSYS2 from here:     https://www.msys2.org/ 
 Link to exe: https://github.com/msys2/msys2-installer/releases/download/2021-11-30/msys2-x86_64-20211130.exe
 
-Then, in the MSYS2 termninal that appears after installation:
+When prompted, say 'NO' to starting the MYSYS2 console from the installer. 
+Instead, manually open the **MSYS2 MinGW x64** console app and then proceed with following steps.
 
 3. To update the package database and base packages:
 ```
@@ -15,13 +16,12 @@ The key issue here is NOT to have an installation of python under MSYS2, but to 
 
 4. Install the necessary packages:
 ```
-pacman -S mingw-w64-x86_64-python mingw-w64-x86_64-python-pip mingw-w64-x86_64-python-setuptools mingw-w64-x86_64-gtksourceview3 mingw-w64-x86_64-python-pillow mingw-w64-x86_64-python-fonttools mingw-w64-x86_64-python-regex mingw-w64-x86_64-python-cairo mingw-w64-x86_64-python-gobject mingw-w64-x86_64-gtk3 mingw-w64-x86_64-glib2 mingw-w64-x86_64-libffi mingw-w64-x86_64-gcc mingw-w64-x86_64-glade
+pacman -S mingw-w64-x86_64-python mingw-w64-x86_64-python-pip mingw-w64-x86_64-python-setuptools mingw-w64-x86_64-gtksourceview3 mingw-w64-x86_64-python-pillow mingw-w64-x86_64-python-fonttools mingw-w64-x86_64-python-regex mingw-w64-x86_64-python-cairo mingw-w64-x86_64-python-gobject mingw-w64-x86_64-gtk3 mingw-w64-x86_64-glib2 mingw-w64-x86_64-libffi mingw-w64-x86_64-gcc mingw-w64-x86_64-glade mingw-w64-x86_64-python-pyopenssl
 ```
 
 5. Install a couple of other important pieces:
 ```
-pip3 install appdirs
-pip3 install pyinstaller
+pip3 install appdirs pyinstaller
 ```
 
 Done! You are ready to build the .exe

@@ -9,6 +9,7 @@ if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
         site.getuserbase = lambda : site.USER_BASE
     oldp = os.getenv("PATH").split(";")
     newp = [p for p in oldp if "msys64" not in p]
+  # newp = [p for p in oldp if p.startswith(sys._MEIPASS)]
     os.putenv("PATH", ";".join(newp))
 
 try:

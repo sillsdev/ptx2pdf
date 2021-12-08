@@ -1276,8 +1276,10 @@ class TexModel:
             if len(clabel) and (not len(clbooks) or bk in clbooks):
                 #self.localChanges.append((lambda fn,b,d: d if r'\cl ' in d else fn(d),
                 #                          regex.compile(r"(\\c 1)(?=\s*\r?\n|\s)", flags=regex.S), "\\cl {}\n\\1".format(clabel)))
+                # self.localChanges.append((None,
+                                          # regex.compile(r"(\\c 1)(?=\s*\r?\n|\s)", flags=regex.S), "\\cl {}\n\\1".format(clabel)))
                 self.localChanges.append((None,
-                                          regex.compile(r"(\\c 1)(?=\s*\r?\n|\s)", flags=regex.S), "\\cl {}\n\\1".format(clabel)))
+                                          regex.compile(r"(\\c )", flags=regex.S), "\\cl {}\n\\1".format(clabel)))
                 
         # if self.dict["project/bookscope"] == "single":
         if first > 1:

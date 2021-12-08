@@ -267,11 +267,14 @@
     \@@LOOP \ifnum\nth@line<\linec@unt
       \advance\nth@line by 1
       \line{\hskip\dimen0
-        \ifRTL\hfil\lochcaer@f{\getnth@line\csname \c@tprefix tc\the\@col :fill\endcsname}\hfil\else
-          \hfil\f@reachcol{\getnth@line\csname \c@tprefix tc\the\@col :fill\endcsname}\hfil\fi
+        \ifRTL
+          \hfil\lochcaer@f{\csname \c@tprefix tc\the\@col :fill\endcsname\getnth@line}\hfil
+        \else
+          \hfil\f@reachcol{\getnth@line\csname \c@tprefix tc\the\@col :fill\endcsname}\hfil
+        \fi
         \hskip\dimen1}%
       \ifnum\nth@line<\linec@unt \nobreak \fi
-      \@@REPEAT
+    \@@REPEAT
     \setbox\t@bleinserts=\vbox{\unvbox\t@bleinserts \global\setbox0=\lastbox}%
     \ifdim\ht0=1sp\else\unvbox0\fi
   }%

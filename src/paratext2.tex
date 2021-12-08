@@ -1452,7 +1452,7 @@
       \dimen5=\textwidth\advance\dimen5 by -\ExtraRMargin% \advance\dimen5 by -\columnshift %
       \dimen2=\dimen3% \advance\dimen2\bmg@p
       \vbox{\hbox to \dimen5{\noindent\hbox to \columnshift{}%
-          \ifRTL \hbox to \ExtraRMargin{}\vbox to \dimen2{\unvbox\colB\vfil}\makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen2}{3}\vbox to \dimen2{\unvbox\colA\vfil}
+          \ifRTL \hbox to \ExtraRMargin{}\vbox to \dimen2{\unvbox\colB\vfil}\makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen2}{3}\vbox to \dimen2{\unvbox\colA\vfil}%
           \else \vbox to \dimen2{\unvbox\colA\vfil}\makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen2}{3}\vbox to \dimen2{\unvbox\colB\vfil}\hbox to \ExtraRMargin{}\fi}
         \kern\lastd@pth}}%
 %-c_savepartialpaged_intro
@@ -1553,7 +1553,7 @@
         \ifdim\ht\colA>\ht\colB\ht\colB=\ht\colA\else\ht\colA=\ht\colB\fi\fi
       \trace{p}{Text depth = \the\dimen3}%
       \hbox to \dimen1{\noindent\hbox to \columnshift{}%
-        \ifRTL \hbox to \ExtraRMargin{}\vbox to \dimen2{\unvbox\colB\vfil}\makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen2}{3}\vbox to \dimen2{\unvbox\colA\vfil}
+        \ifRTL \hbox to \ExtraRMargin{}\vbox to \dimen2{\unvbox\colB\vfil}\makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen2}{3}\vbox to \dimen2{\unvbox\colA\vfil}%
         \else \vbox to \dimen2{\unvbox\colA\vfil}\makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen2}{3}\vbox to \dimen2{\unvbox\colB\vfil}\hbox to \ExtraRMargin{}\fi}%
         %\else \box\colA\makecolumngutter{\the\dimen3}{\the\textheight}{0pt}\box\colB\hbox to \ExtraRMargin{\fi}%
       \p@geendcontent
