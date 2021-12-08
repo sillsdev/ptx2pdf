@@ -579,7 +579,9 @@ class ViewModel:
             self.writeConfig(cfgname=cfgname)
         return oldversion
 
-    def writeConfig(self, cfgname=None):
+    def writeConfig(self, cfgname=None, force=False):
+        if not force and self.configLocked():
+            return
         if cfgname is None:
             cfgname = self.configName() or ""
         path = os.path.join(self.configPath(cfgname=cfgname, makePath=True), "ptxprint.cfg")

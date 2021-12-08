@@ -1023,14 +1023,14 @@ class GtkViewModel(ViewModel):
         self.userconfig.set("init", "englinks", "true" if self.get("c_useEngLinks") else "false")
         if getattr(self, 'configId', None) is not None:
             self.userconfig.set("init", "config", self.configId)
-        self.writeConfig()
+        self.writeConfig(force=force)
         self.savePics(force=force)
         self.saveStyles(force=force)
 
-    def writeConfig(self, cfgname=None):
+    def writeConfig(self, cfgname=None, force=False):
         if self.prjid is not None:
             self.picChecksView.writeCfg(os.path.join(self.settings_dir, self.prjid), self.configId)
-        super().writeConfig(cfgname=cfgname)
+        super().writeConfig(cfgname=cfgname, force=force)
 
     def onDeleteConfig(self, btn):
         cfg = self.get("t_savedConfig")
