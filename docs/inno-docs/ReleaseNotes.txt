@@ -1,12 +1,20 @@
-PTXprint 2.0.20 Release Notes 
-7 December 2021
+PTXprint 2.0.21 Release Notes 
+9 December 2021
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 
-Bug fixes and improvements in 2.0.20 (7 Dec 2021)
+Bug fixes and improvements in 2.0.21 (9 Dec 2021)
 
 NOTE: Underlying code libraries were recently upgraded, so there is a new look and feel
       to PTXprint on Windows. Report any regressions you find as a result of this upgrade.
+
+  * Click to Download Updated version button now works
+  
+  * Fixed: changes to locked config were being saved when a config was changes
+  
+  * Fixed: Pictures weren't showing up when config was saved with a new name
+
+Bug fixes and improvements in 2.0.20 (7 Dec 2021)
 
   * First public release through recently updated TeamCity build server
 
