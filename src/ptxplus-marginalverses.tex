@@ -11,7 +11,7 @@
 
 \def\mymarginpverse{%
   \ifdim\VerseBoxWidth=0pt\getverseboxwidth\fi
-  \getp@ram{position}{v}\ifx\p@ram\relax\let\p@ram\l@ft\fi
+  \getp@ram{position}{v}{\styst@k}\ifx\p@ram\relax\let\p@ram\l@ft\fi
   \trace{v}{position is \p@ram}%
   \ifx\v@rsefrom\v@rseto\edef\t@mp{\id@@@\ch@pter.\v@rsefrom}\else\edef\t@mp{\id@@@\ch@pter.\v@rsefrom-\v@rseto}\fi
   \ifcsname marginnote-\t@mp @v:pageno\endcsname \count10=\csname marginnote-\t@mp @v:pageno\endcsname

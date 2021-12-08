@@ -119,7 +119,7 @@
 %+cnote_startnote
   \else
     \leavevmode
-    \getp@ram{notebase}{\newn@testyle}\edef\n@tebase{\ifx\p@ram\relax\newn@testyle\else\p@ram\fi}%
+    \getp@ram{notebase}{\newn@testyle}{\newn@testyle}\edef\n@tebase{\ifx\p@ram\relax\newn@testyle\else\p@ram\fi}%
     \csname before-\newn@testyle\endcsname
     \def\t@st{#1}%
     \ifx\t@st\pl@s % if it is + then generate an auto-numbering caller
@@ -134,25 +134,25 @@
     \resetp@rstyle                                                              %(1)
     \m@kenote{\n@tebase}{\newn@testyle}{%
         \everypar={}\cancelcutouts % begin a note insertion in the given style
-        \getp@ram{callerstyle}{\newn@testyle}% see if a caller style was defined
+        \getp@ram{callerstyle}{\newn@testyle}{\newn@testyle}% see if a caller style was defined
         \ifx\p@ram\relax\edef\c@llerstyle{v}\else\edef\c@llerstyle{\p@ram}\fi % if not, treat it like "v"
         \ifx\them@rk\empty \trace{n}{note caller is EMPTY}\setbox0=\box\voidb@x \else
           \trace{n}{note main caller}%
           \setbox0=\hbox{\x@\ch@rstylepls\x@{\c@llerstyle}~\them@rk\x@\ch@rstylepls\x@{\c@llerstyle}*}\ht0=0pt\dp0=0pt
           \trace{n}{note caller is \the\wd0 \space wide}%
         \fi
-        \getp@ram{callerraise}{\newn@testyle}\ifx\p@ram\relax\box0\else\raise\p@ram\box0\fi % suppress height of caller
+        \getp@ram{callerraise}{\newn@testyle}{\newn@testyle}\ifx\p@ram\relax\box0\else\raise\p@ram\box0\fi % suppress height of caller
         \ifnum\pagetracing>0
           \edef\n@tetxt{\b@lance\space note \newn@testyle\space in \n@tebase. \id@@@\space \ch@pter.\v@rse}%
           \x@\x@\x@\write-1\x@{\n@tetxt}%
         \fi
-      }{\getp@ram{notecallerstyle}{\newn@testyle}\ifx\p@ram\relax\else
+      }{\getp@ram{notecallerstyle}{\newn@testyle}{\newn@testyle}\ifx\p@ram\relax\else
           \edef\c@llerstyle{\p@ram}%
           \ifx\them@rk\empty \trace{n}{note caller is EMPTY}\setbox0=\box\voidb@x \else
             \trace{n}{note caller}%
             \setbox0=\hbox{\hss\x@\ch@rstylepls\x@{\c@llerstyle}~\them@rk\x@\ch@rstylepls\x@{\c@llerstyle}*\hss}\ht0=0pt\dp0=0pt
           \fi
-          \getp@ram{notecallerraise}{\newn@testyle}\ifx\p@ram\relax\box0\else\raise\p@ram\box0\fi
+          \getp@ram{notecallerraise}{\newn@testyle}{\newn@testyle}\ifx\p@ram\relax\box0\else\raise\p@ram\box0\fi
         \fi}\bgroup
     \global\n@tenesting=1\relax
     \trace{b}{BALANCE note: style=\newn@testyle}%
