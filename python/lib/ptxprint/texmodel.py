@@ -468,9 +468,9 @@ class TexModel:
         '#': 'hash',
         '$': 'dollar',
         '&': 'ampersand',
-        '^': 'circumflex',
-        '|': 'pipe'
+        '^': 'circumflex'
     }
+        # '|': 'pipe'
 
     def __init__(self, printer, path, ptsettings, prjid=None, inArchive=False):
         from ptxprint.view import VersionStr

@@ -1,12 +1,19 @@
 PTXprint 2.0.21 Release Notes 
-9 December 2021
+10 December 2021
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 
-Bug fixes and improvements in 2.0.21 (9 Dec 2021)
+Bug fixes and improvements in 2.0.22 (10 Dec 2021)
 
 NOTE: Underlying code libraries were recently upgraded, so there is a new look and feel
       to PTXprint on Windows. Report any regressions you find as a result of this upgrade.
+
+  * Rolled back recent changes to foundational TeX macros to maintain stability
+    (Revert "Merge branch 'fix576')
+
+  * Patched \pipe warning/error in ruby glossing
+
+Bug fixes and improvements in 2.0.21 (9 Dec 2021)
 
   * Click to Download Updated version button now works
   
