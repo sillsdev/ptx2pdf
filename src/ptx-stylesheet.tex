@@ -1088,8 +1088,9 @@
   \else
     \gett@psty
   \fi
-  \d@code{#1}{#2}\mcp@sh{#1+#2+\tmp\ifx\empty\tmpstyst@k\else+\tmpstyst@k\fi}}
-\def\mcpushE#1+#2\E{\trace{s}{mcpushE #1+#2}\if #1\relax\relax\else\mcpush{#1}{#2}\fi}
+  \d@code{#1}{#2}\xdef\styst@k{\tmp\ifx\empty\tmpstyst@k\else+\tmpstyst@k\fi}%
+  \mcp@sh{#1+#2+\styst@k}}
+\def\mcpushE#1+#2\E{\trace{s}{mcpushE '#1'+'#2'}\if #1\relax\relax\else\mcpush{#1}{#2}\fi}
 \def\mcp@sh#1{\traceNum{s}{push #1 onto \mcstack}\xdef\mcstack{#1,\mcstack}}
 \def\mcup{\x@\cstackup\mcstack\E}
 \def\mcdown{\x@\cstackdown\mcstack\E}

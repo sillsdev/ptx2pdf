@@ -263,6 +263,15 @@
     \get@ttribute{\attrid}%
   \fi
   \trace{m}{st@ndalonemilestone(\thismil@stone) \attrid=\attr@b}%
+  \t@stpublishability{\thismil@stone}%
+  \ifx\p@ram\relax
+    \trace{m}{Properties not defined, assuming standalone milestone has no publishable text}%
+    \n@npublishabletrue
+  \fi
+  \ifn@npublishable\else
+    \mcpush{\ss@Mstn}{\thismil@stone}%
+    \trace{m}{Milestone stacked, \mcstack}%
+  \fi
   \op@ninghooks{start}{\thismil@stone}%
   \let\oldc@rref\c@rref\let\olddc@rref\dc@rref
   \ifx\attr@b\relax\else\ifcsname ms:\thismil@stone=\attr@b\endcsname
@@ -283,7 +292,12 @@
       \fi
     \fi
   \fi
-  \cl@singhooks{end}{\thismil@stone}%
+  \cl@singhooks{end}{\thismil@stone}%\
+  \ifn@npublishable
+    \n@npublishablefalse %restore to publishable
+  \else
+    \mcpopsimple
+  \fi
   \cl@singhooks{after}{\thismil@stone}\the\afterh@@ks\relax
   \let\thismil@stone\empty
 }%
