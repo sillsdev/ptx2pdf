@@ -40,9 +40,9 @@
 \gdef\sb@rmarker{esb} % future-proofing. What's the current sidebar marker?
 
 \def\setsbp@ram#1#2{\trace{sc}{Styling \m@rker:#1 #2}\setp@ram{#1}{\m@rker}{#2}}
-\def\getsbp@ram#1{\getp@ram{#1}{\sb@rmarker}{\sb@rmarker}\let\cp@ram\p@ram\ifx\cp@ram\empty\global\let\cp@ram\relax\fi\trace{sc}{Got result for (\c@tegory)\sb@rmarker:#1: \cp@ram}}
+\def\getsbp@ram#1{\getp@ram{#1}{\sb@rmarker}\let\cp@ram\p@ram\ifx\cp@ram\empty\global\let\cp@ram\relax\fi\trace{sc}{Got result for (\c@tegory)\sb@rmarker:#1: \cp@ram}}
 \def\getsbp@ramNoInh#1{\edef\d@sf{\g@tdstat}%
-  \getp@r@m{#1}{\c@tprefix\sb@rmarker\d@sf}\ifx\p@ram\relax\getp@ram{#1}{\c@tprefix\sb@rmarker}{\c@tprefix\sb@rmarker}\fi
+  \getp@r@m{#1}{\c@tprefix\sb@rmarker\d@sf}\ifx\p@ram\relax\getp@ram{#1}{\c@tprefix\sb@rmarker}\fi
   \let\cp@ram\p@ram
   \ifx\cp@ram\empty\global\let\cp@ram\relax\fi
   \ifx\cp@ram\relax
@@ -318,7 +318,7 @@
   \kill@PossParamCache
   \edef\hs@ze{\the\hsize}%
   \s@tc@tpr@fix
-  \end@llpoppedstyles{\ss@Sbar}\mcpush{\ss@Sbar}{\sb@rmarker}\trace{e}{ESB}\setbox\extb@x\vbox\bgroup
+  \end@llpoppedstyles{\ss@Sbar}\mcpush{\ss@Sbar+\sb@rmarker}\trace{e}{ESB}\setbox\extb@x\vbox\bgroup
     \s@tsb@rwidth\inextendedtrue
     \global\sb@rchunkh@ight=\maxdimen
     \global\c@th@@ks{\st@rtsb@r}%

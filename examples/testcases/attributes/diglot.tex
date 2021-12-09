@@ -17,6 +17,15 @@
     \ifx\p@ram\c@nter\hfil\else\ifx\p@ram\r@ght\hfil\else\ifx\p@ram\relax\hfil\fi\fi\fi
     \box#2%
     \ifx\p@ram\c@nter\hfil\else\ifx\p@ram\l@ft\hfil\else\ifx\p@ram\relax\hfil\fi\fi\fi}
+\def\rubyb#1#2{\setbox1=\hbox{\s@tfont{#2|#1}\get@ttribute{#2}\attr@b}
+    \dimen0=\ifdim\wd0>\wd1 \wd0\else\wd1\fi
+    \setbox0=\hbox{\vtop{\s@tbaseline{#1}\hbox to \dimen0{\alignb@x{#1}{0}}
+        \hbox to \dimen0{\alignb@x{#2|#1}{1}}}}}
+\def\rubyt#1#2{\setbox1=\hbox{\s@tfont{#2|#1}\get@ttribute{#2}\attr@b}
+    \dimen0=\ifdim\wd0>\wd1 \wd0\else\wd1\fi
+    \setbox0=\hbox{\vbox{\s@tbaseline{#2|#1}\hbox to \dimen0{\alignb@x{#2|#1}{1}}
+        \hbox to \dimen0{\alignb@x{#1}{0}}}}}
+\x@\def\csname complex-w\endcsname{\rubyb{w}{lemma}}
 %\def\dummy{%
    %\box0
    %{\s@tfont{w:lemma}%

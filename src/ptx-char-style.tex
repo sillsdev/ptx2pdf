@@ -137,15 +137,15 @@
 }
 \def\endch@rstylepls*{%Consume the star..
   \trace{s}{endch@rstylepls \newch@rstyle}%
-  \def\d@##1+##2+##3\E{\edef\tmp{\detokenize{##2}}\edef\tmq{\newch@rstyle}\tempfalse\ifx\tmp\tmq\else\temptrue\MSG{\tmp !=\tmq}\fi}\mctopnoms
+  \def\d@##1+##2\E{\edef\tmp{\detokenize{##2}}\edef\tmq{\newch@rstyle}\tempfalse\ifx\tmp\tmq\else\temptrue\MSG{\tmp !=\tmq}\fi}\mctopnoms
   \iftemp\MSG{Unexpected closing marker for plus +\newch@rstyle * on stack \mcstack. Ignoring}\else\endch@rstyle*\fi
 }
 %-cchar_endstyle
 %+cchar_startcharstyle
 \def\startch@rstyle{\trace{s}{startch@rstyle \newch@rstyle (\stylet@pe)}%
-  \mcpush{\ifx\stylet@pe\empty C\else\stylet@pe\fi}{\newch@rstyle}%
+  \mcpush{\ifx\stylet@pe\empty C\else\stylet@pe\fi+\newch@rstyle}%
   \let\styst@k=\empty
-  \s@tstyst@k%
+  \s@tstyst@k{\newch@rstyle}%
   \t@stpublishability{\newch@rstyle}\ifn@npublishable                   %(1)
    \setbox0=\hbox\bgroup\skipch@rstyletrue
    \let\thisch@rstyle=\newch@rstyle
@@ -155,7 +155,7 @@
    \x@\let\x@\@ttriblist\csname @ttriblist-\newch@rstyle\endcsname
     \bgroup % start a group to encapsulate the style's formatting changes
     \let\thisch@rstyle=\newch@rstyle % remember the current style
-    \s@tfont{\thisch@rstyle}{\styst@k}% set up font attributes
+    \s@tfont{\thisch@rstyle}% set up font attributes
     \ifnum\n@tenesting>0 \global\advance\n@tenesting by 1 % record nesting level in para or note
     \else \global\advance\p@ranesting by 1 \fi
     \getmcp@ram{raise}%
@@ -170,29 +170,12 @@
   \csname init@ttribs\endcsname %If ptx-attribute is in use, use it... 
 }
 %-cchar_startcharstyle
-\newbox\ulb@x
-\newif\ifUnderlineSpaces\UnderlineSpacestrue
-\def\ulsp@ce{\discretionary{}{}{\vtop{\hbox{\space}\kern\UnderlineLower\hrule height\UnderlineThickness}}}
-\def\ulsp@ce{\leaders\hrule depth\dimen0 height-\dimen1\hskip 1ex plus 0.2ex minus 0.2ex}
-\def\@do@underline{\let\@@@do\@do@underline\unskip\unpenalty\setbox0\lastbox\dimen2=\dp0\ifdim\wd0=0pt\let\@@@do\relax\else\global\setbox\ulb@x=\hbox{\vtop{\hbox{\unhbox0}\kern-\dimen2\kern\dimen1\hrule height\UnderlineThickness}\ifvoid\ulb@x\else\@ulsp@ce\unhbox\ulb@x\fi}\fi\@@@do}%
-\def\d@underline#1{\showboxbreadth=99
-  %\ifUnderlineSpaces
-    \let\@ulsp@ce\ulsp@ce
-  %\else\let\ulsp@ce\space\fi
-  \setbox\ulb@x\box\voidb@x
-  {\dimen0=\UnderlineLower\advance\dimen0\dp#1\dimen1=\dimen0\advance\dimen0\UnderlineThickness\everypar={}\setbox#1=\vbox{\hfuzz=\maxdimen \hsize=1em \hyphenpenalty=10000 \unhbox#1 \endgraf\@do@underline}%
-  %\showbox#1
-  %\showbox\ulb@x
-  \ifdim \wd#1=0pt\else\setbox#1\hbox{\vtop{\box#1\kern\UnderlineLower\hrule height\UnderlineThickness}}%
-    \unhbox#1\@ulsp@ce\fi
-  \unhbox\ulb@x}
-}
 
 %+cchar_endcharstyle
 \lccode`\|=`\\ % for printing backslash in error message
 \lowercase{
  \def\endch@rstyle*{\TRACE{endch@rstyle}% consume the * that marked the SFM as ending a style
-   \def\d@##1+##2+##3\E{\xdef\oldch@rstyle{##2}}\mctopnoms
+   \def\d@##1+##2\E{\xdef\oldch@rstyle{##2}}\mctopnoms
    \trace{s}{endch@rstyle \oldch@rstyle\space from \newch@rstyle}%
    \ifx\@ttributes\empty\else
      %\message{\@ttributes (\csname @ttriblist-\oldch@rstyle\endcsname)}%
@@ -211,7 +194,7 @@
      \getmcp@ramR{underline}%
      \ifx\p@ram\tru@\temptrue\fi
      \iftemp\egroup
-       \ifx\p@ram\tru@ \d@underline{0}\unhbox0\fi
+       \ifx\p@ram\tru@ \setbox0=\hbox{\vtop{\hbox{\unhbox0}\kern\UnderlineLower\hrule height\UnderlineThickness}}\fi
        \ifx\@ttributes\empty\else% If there are attributes, call an appropriate hook	
 	     \let\d@\apply@attr@specials
 	     \x@\cstackdown \attribsus@d,\E
@@ -243,11 +226,11 @@
   \trace{s}{setwh@tvrstyle: \mcstack}%
    \def\thiswh@tvrstyle{p}%Default value just in case
    \ifx\mcstack\mcstack@mpty\else
-     \def\d@##1+##2+##3\E{\d@code{##1}{##2}\let\thiswh@tvrstyle\tmp}\mctop
+     \def\d@##1+##2\E{\edef\tmp{##2}\csname d@code-##1\endcsname\let\thiswh@tvrstyle\tmp}\mctop
    \fi
    \let\styst@k=\empty
-   \s@tstyst@k%
-   \s@tfont{\thiswh@tvrstyle}{\styst@k}% set up font attributes
+   \s@tstyst@k{\thiswh@tvrstyle}%
+   \s@tfont{\thiswh@tvrstyle}% set up font attributes
 }
 %-cchar_endcharstyle
 %+cchar_endallcharstyles
@@ -283,30 +266,26 @@
 \let\SpaceStretchFactor=\empty %default, do-nothing value
 \let\SpaceShrinkFactor=\empty %default, do-nothing value
 
-\def\g@tfontname#1#2{%
- \trace{F}{Font request for (\c@tegory)(\mspr@fix)#1[#2](\c@rrdstat)[\styst@k]}%
- \x@\stystacksplit#2+\E% Cut split the stylestack between head and body 
- \ifx\tmpstyst@kfirst\empty\trace{F}{stylestack invalid}\fi%
- \ifdiglot\def\f@ntstyle{\tmpstyst@kfirst\c@rrdstat}\let\sid@\c@rrdstat\else\def\f@ntstyle{\tmpstyst@kfirst}\def\sid@{-}\fi%
+\def\g@tfontname#1{%
+ \trace{F}{Font request for (\c@tegory)(\mspr@fix)#1(\c@rrdstat)[\styst@k]}%
+ %\let\styst@k=\empty
+ %\s@tstyst@k{#1}%
+ \ifdiglot\def\f@ntstyle{#1\c@rrdstat}\let\sid@\c@rrdstat\else\def\f@ntstyle{#1}\def\sid@{-}\fi%
  \ifx\mspr@fix\empty\else\edef\f@ntstyle{\mspr@fix\f@ntstyle}\fi % Milestones now on stack
- \ifx\c@tegory\empty\else\s@tc@tpr@fix\edef\f@ntstyle{\c@tprefix\f@ntstyle}\fi % Categories also have different styles
+ \ifx\c@tegory\empty\else\s@tc@tpr@fix\edef\f@ntstyle{\c@tprefix\f@ntstyle}\fi % Categories have different styles
  \let\reqf@ntstyle\f@ntstyle
  \edef\cmpf@ntstyle{#1}%
  \let\d@@=\d@
- \getp@ram{fontsize}{#1}{#2}%
- %\def\d@##1+##2+##3\E{\edef\tmp{##2}\ifx\cmpf@ntstyle\tmp \getmcfonts@ze\else
-			%\csname d@code-##1\endcsname
-                        %\getp@ram{fontsize}{#1}{#1\ifx\tmp\empty\else +\tmp\fi}\ifx\p@ram\relax\xdef\c@rrfontsize{12}%
-                        %\else\global\let\c@rrfontsize=\p@ram\fi\fi}%
- %\mctop
+ \trace{F}{\cmpf@ntstyle (\reqf@ntstyle): Looking for fontsize from style stack: \mcstack}%
+ \def\d@##1+##2\E{\edef\tmp{##2}\ifx\cmpf@ntstyle\tmp \getmcfonts@ze\else
+			\csname d@code-##1\endcsname
+                        \getp@ram{fontsize}{#1}\ifx\p@ram\relax\xdef\c@rrfontsize{12}%
+                        \else\global\let\c@rrfontsize=\p@ram\fi\fi}%
+ \mctop
  \let\d@=\d@@
- \ifx\p@ram\relax\xdef\c@rrfontsize{12}\else\global\let\c@rrfontsize=\p@ram\fi
- \x@\stystacksplit#2+\E% redo the split because it's not preserved.
- \edef\f@ntstyle{\f@ntstyle-\c@rrfontsize\ifx\tmpstyst@kbody\empty\else+\tmpstyst@kbody\fi}%
- \trace{F}{Font style name is \f@ntstyle (\tmpstyst@kfirst | \tmpstyst@kbody}%
+ \edef\f@ntstyle{\f@ntstyle-\c@rrfontsize\ifx\styst@k\empty\else+\styst@k\fi}%
 }
-
-\def\nomsg@tfontname#1{\g@tfontname{#1}{#1}}
+\def\nomsg@tfontname#1{\getp@r@m{fontsize}{#1}\ifx\p@ram\relax\edef\p@ram{12}\fi\edef\f@ntstyle{#1-\p@ram}}
 %-cchar_getfontname
 
 \let\styst@k\empty
@@ -314,11 +293,10 @@
 
 %+cchar_setfont
 \xdef\z@ros{000000}%What does ParseColor come out with for black?
-\def\s@tfont#1#2{%
- \trace{s}{s@tfont #1 / #2}%
+\def\s@tfont#1{%
+ \trace{s}{s@tfont #1}%
  \edef\r@qmkr{#1}\ifx\empty\r@qmkr\trace{F}{Font for empty marker requested. Nonsense! Substituting p}\def\r@qmkr{p}\fi
- \edef\r@qstyst@k{#2}\ifx\empty\r@qstyst@k\trace{F}{Empty style stack requested. Substituting \r@qmkr}\edef\r@qstyst@k{\r@qmkr}\fi 
- \g@tfontname{\r@qmkr}{\r@qstyst@k}%
+ \g@tfontname{\r@qmkr}%
  \trace{F}{f@ntstyle=\f@ntstyle}%
  \ifdiglot\else
    \let\c@rrdstat\empty %Whether diglot or not, it might have been diglot before.
@@ -332,32 +310,32 @@
   \let\it@lic=\italic
   \let\b@lditalic=\bolditalic
   \let\typef@ce=\regul@r
-  \getp@ram{fontname}{#1}{#2}% see if \FontName was specified in the stylesheet
+  \getFp@ram{fontname}{#1}% see if \FontName was specified in the stylesheet
   \ifx\p@ram\relax % if not, check the \Bold and \Italic properties
-	  \getp@ram{bold}{#1}{#2}%
+	  \getFp@ramR{bold}{#1}%
 	  \ifx\p@ram\tru@
 		\let\typef@ce=\b@ld
-		\getp@ram{italic}{#1}{#2}%
+		\getFp@ramR{italic}{#1}%
 		\ifx\p@ram\tru@ \let\typef@ce=\b@lditalic \fi
 	  \else
-		\getp@ram{italic}{#1}{#2}%
+		\getFp@ramR{italic}{#1}%
 		\ifx\p@ram\tru@ \let\typef@ce=\it@lic \fi
 	  \fi
   \else
     \edef\typef@ce{"\p@ram"}% use font name from the stylesheet
   \fi
-  \getp@ram{fontfeatures}{#1}{#2}%
+  \getFp@ramR{fontfeatures}{#1}%
   \ifx\p@ram\relax\else\edef\typef@ce{\typef@ce"\p@ram"}\fi
-  \getp@ram{smallcaps}{#1}{#2}%                                           %(1)
+  \getFp@ramR{smallcaps}{#1}%                                           %(1)
   \ifx\p@ram\tru@
     \edef\typef@ce{\typef@ce\SmallCapsSuffix}%
   \fi
-  \getFp@ram{color}{#1}{#2}%                                                %(+)
+  \getFp@ram{color}{#1}%                                                %(+)
   \ifColorFonts\ifx\p@ram\relax\else
     \x@\ParseColor\p@ram\end\ifx\r@s\z@ros\else\edef\typef@ce{\typef@ce :color=\r@s}\fi%
   \fi\fi%
   \dimen0=\c@rrfontsize\FontSizeUnit                                    %(+)
-  \getp@ram{fontfactor}{#1}{#2}% scale down by \SuperscriptFactor if superscripted style %FIXME! Should this be R version or not (regular=!shrunk??)
+  \getFp@ramR{fontfactor}{#1}% scale down by \SuperscriptFactor if superscripted style %FIXME! Should this be R version or not (regular=!shrunk??)
   \ifx\p@ram\relax\else \trace{F}{Scaling by \p@ram}\dimen0=\p@ram\dimen0\fi
   %\edef\f@ntstyle{\f@ntstyle-\c@rrfontsize}%
   % create the font identifier for this style
@@ -379,8 +357,8 @@
  % switch to the appropriate font
  \trace{F}{Font set to font<\f@ntstyle>}%
  \csname font<\f@ntstyle>\endcsname                                     %(+)
- \getFp@ram{fontname}{#1}{#2}\ifx\p@ram\relax
-   \getFp@ram{fontgrspace}{#1}{#2}\ifx\p@ram\relax\else\XeTeXinterwordspaceshaping=\p@ram\fi
+ \getFp@ram{fontname}{#1}\ifx\p@ram\relax
+   \getFp@ram{fontgrspace}{#1}\ifx\p@ram\relax\else\XeTeXinterwordspaceshaping=\p@ram\fi
  \fi
 }
 
@@ -391,20 +369,17 @@
 %+cchar_extrafont
 \def\extraregular{"Times New Roman"}
 \def\s@textrafont#1{%
-  \stystacksplit\styst@k+\E
-  \edef\@xfname{#1+\tmpstyst@kbody}%
-  \ifcsname extrafont<\@xfname>\endcsname\else
+  \ifcsname extrafont<#1>\endcsname\else
     \let\typef@ce=\extraregular
-    \stystacksplit\styst@k+\E
-    \getp@ram{fontsize}{#1}{\@xfname}%
+    \getmcfonts@ze
     \dimen0=\c@rrfontsize\FontSizeUnit
-    \getp@ram{fontfactor}{#1}{\@xfname}% scale down by \SuperscriptFactor if superscripted style
+    \getmcp@ramR{fontfactor}% scale down by \SuperscriptFactor if superscripted style
     \ifx\p@ram\relax\else \multiply\dimen0 by \p@ram\fi
-    \x@\global\x@\font\csname extrafont<\@xfname>\endcsname=\typef@ce\space at \dimen0
-    \trace{s}{define extrafont<\@xfname> \typef@ce\space at \the\dimen0}%
+    \x@\global\x@\font\csname extrafont<#1>\endcsname=\typef@ce\space at \dimen0
+    \trace{s}{define extrafont<#1> \typef@ce\space at \the\dimen0}%
   \fi
-  \trace{s}{extrafont<\@xfname> =\csname extrafont<\@xfname>\endcsname}%
-  \csname extrafont<\@xfname>\endcsname
+  \trace{s}{extrafont<#1> =\csname extrafont<#1>\endcsname}%
+  \csname extrafont<#1>\endcsname
 }
 \def\SuperscriptFactor{0.75}
 \def\SmallCapsSuffix{/ICU:+smcp}

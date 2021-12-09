@@ -217,7 +217,7 @@
 
 \def\TabBleed{5pt}%
 \def\t@bbox{%
- \s@tfont{\ThumbTabStyle}{\ThumbTabStyle}%
+ \s@tfont{\ThumbTabStyle}%
  \x@\let\x@\t@bBoxCol\csname\t@bname -boxcol\endcsname
  \x@\let\x@\t@bFontCol\csname\t@bname -col\endcsname
  \ifx\t@bgrp\relax
@@ -599,7 +599,7 @@
     \hsize=\pdfpagewidth\vsize=\pdfpageheight
     \leftskip=0pt\parshape=0\hangindent=0pt\parindent=0pt
     \let\par=\endgraf
-    \s@tfont{h}{h}\mkstr@t
+    \s@tfont{h}\mkstr@t
     %
     % horizontal rules
     \def\gp@type{GridPaper}%
@@ -608,7 +608,7 @@
     \dimen3=\pdfpagewidth
     \dimen2=\pdfpageheight
     \advance\dimen2 by -\bottomm@rgin
-    \s@tbaseline{p}{p}%
+    \s@tbaseline{p}
     \dimen1=\baselineskip
     \baselineskip=0pt
     \dimen0=\HeaderPosition\MarginUnit
