@@ -4,19 +4,18 @@ import argparse, sys, os, configparser
 import appdirs
 import site, logging
 
-try:
-    from ptxprint.utils import pt_bindir
-except ImportError:
-    sys.path.append(os.path.join(os.path.dirname(__file__), "..", "lib"))
-    from ptxprint.utils import pt_bindir
-
 if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
     site.USER_BASE = os.path.join(os.path.expanduser("~"), ".local")
     if not hasattr(site, 'getuserbase'):
         site.getuserbase = lambda : site.USER_BASE
     os.putenv("PATH", sys._MEIPASS)
 
-import ptxprint
+try:
+    import ptxprint
+except ImportError:
+    sys.path.append(os.path.join(os.path.dirname(__file__), "..", "lib"))
+    import ptxprint
+
 from pathlib import Path
 
 def getnsetlang(config):
