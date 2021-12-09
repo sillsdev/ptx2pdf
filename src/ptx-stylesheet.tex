@@ -1005,6 +1005,9 @@
  \let\save@regular=\regular \let\regular=\Regular
  \let\save@bold=\bold \let\bold=\Bold
  \let\save@italic=\italic \let\italic=\Italic
+ \ifLogFonts
+   \openout\f@ntl@g="\j@bname.fontusage"
+ \fi
  \openin\styl@sheet="#1" \c@ntinuetrue                      %(1)
  \ifeof\styl@sheet\errmessage{Paratext stylesheet "#1" not found}\else
    \trace{s}{New Stylesheet: clearing fonts: \f@ntlist}%

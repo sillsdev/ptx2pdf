@@ -30,6 +30,9 @@
 
 % Character style macros
 
+\newwrite\f@ntl@g
+\newif\ifLogFonts
+
 %+cchar_parsecolor
 \def\hex#1{\count3=#1\relax%
   \edef\r@s{}\count1=0
@@ -342,6 +345,10 @@
   \trace{F}{font<\f@ntstyle>=\typef@ce\space at \the\dimen0}%
   \x@\global\x@\font
     \csname font<\f@ntstyle>\endcsname=\typef@ce\space at \the \dimen0  %(+)
+  \ifLogFonts
+    \edef\f@ntl@gmsg{font<\f@ntstyle>=\typef@ce\space at \the \dimen0}%
+    \x@\write\x@\f@ntl@g\x@{\f@ntl@gmsg\space (page \the\pageno)}%
+  \fi
   \xdef\f@ntlist{\f@ntlist,\f@ntstyle}%
   \ifx\SpaceStretchFactor\empty\else
     \dimen0=\SpaceStretchFactor\x@\x@\fontdimen2\csname font<\f@ntstyle>\endcsname
