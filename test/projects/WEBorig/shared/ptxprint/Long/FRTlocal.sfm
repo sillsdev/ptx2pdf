@@ -1,0 +1,24 @@
+\rem ----------Page 1----------------
+\periph Title Page|id="title"
+\nopagenums
+\zgap|1.5in\*
+\mt1 \zvar|maintitle\*
+\mt2 \zvar|subtitle\*
+\rem ----------Page 2----------------
+\periph Publication Data|id="pubdata"
+\zgap|0.5in\*
+\mt3 \zvar|maintitle\* 
+\mt4 \zvar|subtitle\*
+\pc \zvar|languagename\*
+\zbl|2\*
+\pc \zcopyright
+\pc \zlicense
+\zbl|2\*
+\pc \zimagecopyrights
+\rem ----------Page 3----------------
+\periph Table of Contents|id="contents"
+\is \zvar|contentsheader\*
+\ip \ztoc|main\*
+\resetpagenums -1
+\dopagenums
+\ip
