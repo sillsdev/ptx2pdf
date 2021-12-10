@@ -2555,15 +2555,21 @@ class GtkViewModel(ViewModel):
             old
         label = self.builder.get_object("l_{1}".format(*pgid.split("_")))
         if pgid == "scroll_Settings":
-            self.onSaveEdits(None, pgid="scroll_SettingsOld")
+            currpath = label.get_tooltip_text()
             oldlabel = self.builder.get_object("l_SettingsOld")
-            oldlabel.set_tooltip_text(label.get_tooltip_text())
-            oldlabel.set_text(label.get_text())
-            self.builder.get_object("gr_editableButtons").set_sensitive(True)
-            label.set_text(file2edit)
-            buf = self.fileViews[pgnum][0]
-            text2save = buf.get_text(buf.get_start_iter(), buf.get_end_iter(), True)
-            self.fileViews[pgnum+1][0].set_text(text2save)
+            oldpath = oldlabel.get_tooltip_text()
+            if file2edit == oldpath:
+                label = oldlabel
+                pgnum += 1
+            elif file2edit != currpath:
+                self.onSaveEdits(None, pgid="scroll_SettingsOld")
+                oldlabel.set_tooltip_text(label.get_tooltip_text())
+                oldlabel.set_text(label.get_text())
+                self.builder.get_object("gr_editableButtons").set_sensitive(True)
+                label.set_text(file2edit)
+                buf = self.fileViews[pgnum][0]
+                text2save = buf.get_text(buf.get_start_iter(), buf.get_end_iter(), True)
+                self.fileViews[pgnum+1][0].set_text(text2save)
         label.set_tooltip_text(fpath)
         if os.path.exists(fpath):
             with open(fpath, "r", encoding="utf-8") as inf:

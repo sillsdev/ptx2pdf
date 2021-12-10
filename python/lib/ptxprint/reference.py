@@ -300,10 +300,18 @@ class RefRange:
             return (res, s)
         return res
 
+    def _getmaxvrs(self, bk, chap):
+        vrs = self.first.vrs or Reference.loadvrs()
+        if bk not in books or len(vrs[books[bk]]) < chap:
+            maxvrs = 200
+        else:
+            maxvrs = vrs[books[bk]][chap] - (vrs[books[bk]][chap-1] if chap > 1 else 0)
+        return maxvrs
+
     def allrefs(self):
         vrs = self.first.vrs or Reference.loadvrs()
         r = self.first.copy()
-        maxvrs = vrs[books[r.book]][r.chap] - (vrs[books[r.book]][r.chap-1] if r.chap > 1 else 0)
+        maxvrs = self._getmaxvrs(r.book, r.chap)
         while r <= self.last:
             yield r
             r.verse += 1
@@ -318,7 +326,7 @@ class RefRange:
                         return
                     r.book = allbooks[newbk]
                     r.chap = 1
-                maxvrs = vrs[books[r.book]][r.chap] - (vrs[books[r.book]][r.chap-1] if r.chap > 1 else 0)
+                maxvrs = self._getmaxvrs(r.book, r.chap)
 
 class AnyBooks:
     @classmethod
