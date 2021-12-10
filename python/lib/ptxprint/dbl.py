@@ -211,7 +211,7 @@ def UnpackDBL(dblfile, prjid, prjdir):
                 pass
 
         def process_usx(bkid, infname):
-            bkindex = books.get(bkid)
+            bkindex = books.get(bkid)+1
             bookshere[bkindex-1] = 1
             outfname = "{:02}{}{}.USFM".format(bkindex, bkid, prjid)
             outpath = os.path.join(prjpath, outfname)

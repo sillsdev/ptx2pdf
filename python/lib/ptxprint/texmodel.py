@@ -1428,8 +1428,8 @@ class TexModel:
         # Change double-spaces to singles
         self.localChanges.append((None, regex.compile(r" {2,}", flags=regex.M), r" ")) 
         # Escape special codes % and $ that could be in the text itself
-        self.localChanges.append((None, regex.compile(r"(?<!\\\S*|\\[fx]\s)([{}])".format("".join(self._specialchars)),
-                                                      flags=regex.M), lambda m:"\\"+self._specialchars[m.group(1)]+" ")) 
+        self.localChanges.append((None, regex.compile(r"(?<!\\\S*|\\[fx]\s)([{}])(\s?)".format("".join(self._specialchars)),
+                                                      flags=regex.M), lambda m:"\\"+self._specialchars[m.group(1)]+("\\space " if m.group(2) else " "))) 
 
         if self.printer is not None and self.printer.get("c_tracing"):
             print("List of Local Changes:----------------------------------------------------------")
@@ -1498,8 +1498,11 @@ class TexModel:
 
     def analyzeImageCopyrights(self):
         if self.dict['project/iffrontmatter'] == "":
-            with open(self.printer.configFRT(), encoding="utf-8") as inf:
-                txt = inf.read()
+            try:
+                with open(self.printer.configFRT(), encoding="utf-8") as inf:
+                    txt = inf.read()
+            except FileNotFoundError:
+                return
         else:
             txt = self.dict['project/colophontext']
         for m in re.findall(r"(?i)\\(\S+).*?\\zimagecopyrights([A-Z]{2,3})?", txt):

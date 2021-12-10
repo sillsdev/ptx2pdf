@@ -25,6 +25,7 @@ class ParatextSettings:
                 doc = et.parse(path)
                 for c in doc.getroot():
                     self.dict[c.tag] = c.text
+                self.calcbookspresent()
                 self.read_ldml()
                 break
         else:
@@ -126,16 +127,20 @@ class ParatextSettings:
         #self.dict['Copyright'] = ""
         self.dict['DefaultFont'] = ""
         self.dict['Encoding'] = 65001
-        
+        self.calcbookspresent()
+
+    def calcbookspresent(self):
+        path = os.path.join(self.basedir, self.prjid)
         fbkfm = self.dict['FileNameBookNameForm']
         bknamefmt = self.get('FileNamePrePart', "") + \
                     fbkfm.replace("MAT","{bkid}").replace("41","{bkcode}") + \
                     self.get('FileNamePostPart', "")
         bookspresent = [0] * len(allbooks)
         for k, v in books.items():
-            if os.path.exists(os.path.join(path, bknamefmt.format(bkid=k, bkcode=v))):
+            if os.path.exists(os.path.join(path, bknamefmt.format(bkid=k, bkcode=v+1))):
                 bookspresent[v-1] = 1
         self.dict['BooksPresent'] = "".join(str(x) for x in bookspresent)
+        print(self.dict['BooksPresent'])
 
     def getBookFilename(self, bk):
         fbkfm = self.get('FileNameBookNameForm', "")
