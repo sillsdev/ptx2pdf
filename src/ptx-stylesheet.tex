@@ -592,7 +592,7 @@
       \dimen1=\dimen0 \multiply\dimen1 by 128 \divide\dimen1 by \dropnumbersize % X/C * 128
       \dimen2=\ht1 \advance\dimen2 by \dp1 \advance\dimen2 by \baselineskip % total height available: T
       \dimen3=128\dimen0 \divide\dimen3 by \dimen2 \multiply\dimen3 by \dropnumbersize \divide\dimen3 by 128 % CX/T
-      \dimen4=\dp1 \multiply\dimen4 by \dimen1 \divide\dimen4 by 128 % scaled available
+      \dimen4=\dp1 \multiply\dimen4 by \dimen1 \advance\dimen4 64sp\divide\dimen4 by 128 % scaled available
       \trace{h}{dimen0=\the\dimen0, dimen1=\the\dimen1, dimen2=\the\dimen2, dimen3=\the\dimen3,
                 dimen4=\the\dimen4, dp0=\the\dp0, ht0=\the\ht0, dp1=\the\dp1, ht1=\the\ht1,
                 FontSizeUnit=\the\FontSizeUnit, dropnumbersize=\the\dropnumbersize}%
@@ -611,7 +611,7 @@
       \divide\dropnumbersize by \FontSizeUnit
       \multiply\dropnumbersize by 512 % (2^16 / 128)
       \multiply\dimen3 by \dp0  % new depth
-      \divide\dimen3 by 128
+      \advance\dimen3 64sp\divide\dimen3 by 128
       \trace{h}{dropnumbersize=\the\dropnumbersize, dimen1=\the\dimen1, dimen3=\the\dimen3}%
       \ifdim\dimen3>\dp1 % would overflow downwards. Need to shift              %(4)
         \advance\dimen3 by -\dp1% \divide\dropnumberraise by 2
