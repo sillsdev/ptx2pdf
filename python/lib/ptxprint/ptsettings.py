@@ -140,7 +140,6 @@ class ParatextSettings:
             if os.path.exists(os.path.join(path, bknamefmt.format(bkid=k, bkcode=v+1))):
                 bookspresent[v-1] = 1
         self.dict['BooksPresent'] = "".join(str(x) for x in bookspresent)
-        print(self.dict['BooksPresent'])
 
     def getBookFilename(self, bk):
         fbkfm = self.get('FileNameBookNameForm', "")

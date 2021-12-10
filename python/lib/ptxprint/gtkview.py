@@ -659,8 +659,9 @@ class GtkViewModel(ViewModel):
                 for w in v:
                     GObject.add_emission_hook(getattr(Gtk, w), k, self.emission_hook, k)
             self.logactive = True
-        noInt = self.userconfig.getboolean('init', 'nointernet', fallback=False)
-        self.set("c_noInternet", noInt)
+        self.noInt = self.userconfig.getboolean('init', 'nointernet', fallback=None)
+        if self.noInt is not None:
+            self.set("c_noInternet", self.noInt)
         el = self.userconfig.getboolean('init', 'englinks', fallback=False)
         self.set("c_useEngLinks", el)
         # expert = self.userconfig.getboolean('init', 'expert', fallback=False)
@@ -763,13 +764,18 @@ class GtkViewModel(ViewModel):
 
     def noInternetClicked(self, btn):
         ui = int(self.get("fcb_uiLevel"))
-        val = self.get("c_noInternet") or (ui < 6)  
+        if btn is not None:
+            val = self.get("c_noInternet") or (ui < 6)
+        else:
+            val = self.noInt if self.noInt is not None else True
         adv = (ui >= 6)
         for w in ["lb_omitPics", "l_url_usfm", "lb_DBLdownloads", "lb_openBible",
                    "l_homePage",  "l_community",  "l_faq",  "l_pdfViewer",  "l_techFAQ",  "l_reportBugs",
                   "lb_homePage", "lb_community", "lb_faq", "lb_pdfViewer", "lb_techFAQ", "lb_reportBugs", "lb_canvaCoverMaker"]:
             self.builder.get_object(w).set_visible(not val)
-        self.userconfig.set("init", "nointernet", "true" if self.get("c_noInternet") else "false")
+        newval = self.get("c_noInternet")
+        self.noInt = newval
+        self.userconfig.set("init", "nointernet", "true" if newval else "false")
         self.styleEditor.editMarker()
         # Show Hide specific Help items
         for pre in ("l_", "lb_"):
@@ -1020,6 +1026,7 @@ class GtkViewModel(ViewModel):
             self.updateDialogTitle()
         self.userconfig.set("init", "project", self.prjid)
         self.userconfig.set("init", "nointernet", "true" if self.get("c_noInternet") else "false")
+        self.noInt = self.get("c_noInternet")
         self.userconfig.set("init", "englinks", "true" if self.get("c_useEngLinks") else "false")
         if getattr(self, 'configId', None) is not None:
             self.userconfig.set("init", "config", self.configId)
@@ -3535,7 +3542,7 @@ class GtkViewModel(ViewModel):
         if sys.platform != "win32":
             return
         version = None
-        if self.get("c_noInternet"):
+        if self.noInt is None or self.noInt:
             return
         try:
             with urllib.request.urlopen("https://software.sil.org/downloads/r/ptxprint/latest.win.json") as inf:
@@ -3559,7 +3566,7 @@ class GtkViewModel(ViewModel):
             enabledownload()
 
     def openURL(self, url):
-        if self.get("c_noInternet"):
+        if self.noInt is None or self.noInt:
             self.deniedInternet()
             return
         if sys.platform == "win32":
@@ -3568,7 +3575,7 @@ class GtkViewModel(ViewModel):
             os.system("xdg-open \"\" {}".format(url))
 
     def onUpdateButtonClicked(self, btn):
-        if self.get("c_noInternet"):
+        if self.noInt is None or self.noInt:
             self.deniedInternet()
         else:
             self.openURL("https://software.sil.org/ptxprint/download")
