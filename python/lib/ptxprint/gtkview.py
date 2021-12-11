@@ -2552,16 +2552,15 @@ class GtkViewModel(ViewModel):
         fpath = self._locFile(file2edit, loc)
         if fpath is None:
             return
-            old
         label = self.builder.get_object("l_{1}".format(*pgid.split("_")))
         if pgid == "scroll_Settings":
             currpath = label.get_tooltip_text()
             oldlabel = self.builder.get_object("l_SettingsOld")
             oldpath = oldlabel.get_tooltip_text()
-            if file2edit == oldpath:
+            if fpath == oldpath:
                 label = oldlabel
                 pgnum += 1
-            elif file2edit != currpath:
+            elif fpath != currpath:
                 self.onSaveEdits(None, pgid="scroll_SettingsOld")
                 oldlabel.set_tooltip_text(label.get_tooltip_text())
                 oldlabel.set_text(label.get_text())
