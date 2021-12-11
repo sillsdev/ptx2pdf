@@ -535,14 +535,14 @@ class GtkViewModel(ViewModel):
         for m in self.mruBookList:
             mrubl.append(None, m)
 
-        for d in ("multiBookSelector", "multiProjSelector", "fontChooser", "password", "overlayCredit",
-                  "generateFRT", "generatePL", "styModsdialog", "DBLbundle", "features", "gridsGuides",
-                  "strongsGenerate"):
+        # for d in ("multiBookSelector", "multiProjSelector", "fontChooser", "password", "overlayCredit",
+                  # "generateFRT", "generatePL", "styModsdialog", "DBLbundle", "features", "gridsGuides"):
+        for d in ("multiBookSelector", "multiProjSelector", "features"):
             dialog = self.builder.get_object("dlg_" + d)
             dialog.add_buttons(
                 Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
                 Gtk.STOCK_OK, Gtk.ResponseType.OK)
-
+                
         self.fileViews = []
         self.buf = []
         self.cursors = []
@@ -2962,6 +2962,7 @@ class GtkViewModel(ViewModel):
         
     def msgQuestion(self, title, question, default=False):
         par = self.builder.get_object('ptxprint')
+        mybtns = Gtk
         dialog = Gtk.MessageDialog(parent=par, flags=Gtk.DialogFlags.MODAL, type=Gtk.MessageType.QUESTION, buttons=Gtk.ButtonsType.YES_NO, message_format=title)
         dialog.format_secondary_text(question)
         dialog.set_keep_above(True)

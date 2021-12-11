@@ -560,10 +560,34 @@ THE SOFTWARE.
             <property name="can-focus">False</property>
             <property name="layout-style">end</property>
             <child>
-              <placeholder/>
+              <object class="GtkButton" id="btn_dbl_cancel">
+                <property name="label">gtk-cancel</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="use-stock">True</property>
+                <property name="always-show-image">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
             </child>
             <child>
-              <placeholder/>
+              <object class="GtkButton" id="btn_dbl_ok">
+                <property name="label">gtk-apply</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="use-stock">True</property>
+                <property name="always-show-image">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
             </child>
           </object>
           <packing>
@@ -852,6 +876,10 @@ download and use in a publication.</property>
         </child>
       </object>
     </child>
+    <action-widgets>
+      <action-widget response="-6">btn_dbl_cancel</action-widget>
+      <action-widget response="-5">btn_dbl_ok</action-widget>
+    </action-widgets>
   </object>
   <object class="GtkAboutDialog" id="dlg_about">
     <property name="can-focus">False</property>
@@ -928,10 +956,34 @@ Jonathan Kew (Author of XeTeX + sfm2pdf)</property>
             <property name="margin-bottom">6</property>
             <property name="layout-style">end</property>
             <child>
-              <placeholder/>
+              <object class="GtkButton" id="btn_gnr8frt_cancel">
+                <property name="label">gtk-cancel</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="use-stock">True</property>
+                <property name="always-show-image">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
             </child>
             <child>
-              <placeholder/>
+              <object class="GtkButton" id="btn_gnr8frt_ok">
+                <property name="label">gtk-apply</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="use-stock">True</property>
+                <property name="always-show-image">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
             </child>
           </object>
           <packing>
@@ -1160,6 +1212,10 @@ here until you regenerate this (local) Front Matter.</property>
         </child>
       </object>
     </child>
+    <action-widgets>
+      <action-widget response="-6">btn_gnr8frt_cancel</action-widget>
+      <action-widget response="-5">btn_gnr8frt_ok</action-widget>
+    </action-widgets>
   </object>
   <object class="GtkDialog" id="dlg_generatePL">
     <property name="can-focus">False</property>
@@ -1188,10 +1244,34 @@ here until you regenerate this (local) Front Matter.</property>
             <property name="margin-bottom">6</property>
             <property name="layout-style">end</property>
             <child>
-              <placeholder/>
+              <object class="GtkButton" id="btn_gnr8pl_cancel">
+                <property name="label">gtk-cancel</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="use-stock">True</property>
+                <property name="always-show-image">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
             </child>
             <child>
-              <placeholder/>
+              <object class="GtkButton" id="btn_gnr8pl_ok">
+                <property name="label">gtk-apply</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="use-stock">True</property>
+                <property name="always-show-image">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
             </child>
           </object>
           <packing>
@@ -1404,6 +1484,10 @@ If in doubt, click Cancel.</property>
         </child>
       </object>
     </child>
+    <action-widgets>
+      <action-widget response="-6">btn_gnr8pl_cancel</action-widget>
+      <action-widget response="-5">btn_gnr8pl_ok</action-widget>
+    </action-widgets>
   </object>
   <object class="GtkDialog" id="dlg_multiBookSelector">
     <property name="can-focus">False</property>
@@ -1425,11 +1509,41 @@ If in doubt, click Cancel.</property>
           <object class="GtkButtonBox">
             <property name="can-focus">False</property>
             <property name="layout-style">end</property>
+            <child>
+              <object class="GtkButton" id="btn_mbs_cancel">
+                <property name="label">gtk-cancel</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="use-stock">True</property>
+                <property name="always-show-image">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="btn_mbs_ok">
+                <property name="label">gtk-apply</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="use-stock">True</property>
+                <property name="always-show-image">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
           </object>
           <packing>
             <property name="expand">False</property>
             <property name="fill">False</property>
-            <property name="position">0</property>
+            <property name="position">1</property>
           </packing>
         </child>
         <child>
@@ -1437,9 +1551,6 @@ If in doubt, click Cancel.</property>
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="orientation">vertical</property>
-            <child>
-              <placeholder/>
-            </child>
             <child>
               <object class="GtkBox">
                 <property name="visible">True</property>
@@ -1754,11 +1865,18 @@ start of the publication in this oder:
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
-            <property name="position">1</property>
+            <property name="position">0</property>
           </packing>
+        </child>
+        <child>
+          <placeholder/>
         </child>
       </object>
     </child>
+    <action-widgets>
+      <action-widget response="-6">btn_mbs_cancel</action-widget>
+      <action-widget response="-5">btn_mbs_ok</action-widget>
+    </action-widgets>
   </object>
   <object class="GtkDialog" id="dlg_multiProjSelector">
     <property name="can-focus">False</property>
@@ -1781,13 +1899,34 @@ start of the publication in this oder:
             <property name="can-focus">False</property>
             <property name="layout-style">end</property>
             <child>
-              <placeholder/>
+              <object class="GtkButton" id="btn_mps_cancel">
+                <property name="label">gtk-cancel</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="use-stock">True</property>
+                <property name="always-show-image">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
             </child>
             <child>
-              <placeholder/>
-            </child>
-            <child>
-              <placeholder/>
+              <object class="GtkButton" id="btn_mps_ok">
+                <property name="label">gtk-apply</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="use-stock">True</property>
+                <property name="always-show-image">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">2</property>
+              </packing>
             </child>
           </object>
           <packing>
@@ -1932,6 +2071,10 @@ the target project(s) will be overwritten.</property>
         </child>
       </object>
     </child>
+    <action-widgets>
+      <action-widget response="-6">btn_mps_cancel</action-widget>
+      <action-widget response="-5">btn_mps_ok</action-widget>
+    </action-widgets>
   </object>
   <object class="GtkDialog" id="dlg_password">
     <property name="width-request">270</property>
@@ -1960,10 +2103,34 @@ the target project(s) will be overwritten.</property>
             <property name="margin-bottom">6</property>
             <property name="layout-style">end</property>
             <child>
-              <placeholder/>
+              <object class="GtkButton" id="btn_pw_ok">
+                <property name="label">gtk-cancel</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="use-stock">True</property>
+                <property name="always-show-image">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
             </child>
             <child>
-              <placeholder/>
+              <object class="GtkButton" id="btn_pw_cancel">
+                <property name="label">gtk-apply</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="use-stock">True</property>
+                <property name="always-show-image">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
             </child>
           </object>
           <packing>
@@ -2044,20 +2211,24 @@ saved configuration.</property>
         </child>
       </object>
     </child>
+    <action-widgets>
+      <action-widget response="-6">btn_pw_ok</action-widget>
+      <action-widget response="-5">btn_pw_cancel</action-widget>
+    </action-widgets>
   </object>
   <object class="GtkImage" id="icon_adjust_bottom">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_diglot">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_grid">
     <property name="visible">True</property>
@@ -2068,27 +2239,27 @@ combination of Crop marks, Guides (margins,
 baselines, etc.) and/or a graph-paper-like Grid
 can be set.</property>
     <property name="icon-name">view-grid-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_spacing">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_top">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_download">
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">software-update-available-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_refresh">
     <property name="visible">True</property>
@@ -2105,7 +2276,7 @@ having to manually re-create all the same
 settings for a similar project.</property>
     <property name="halign">end</property>
     <property name="icon-name">view-grid-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkListStore" id="ls_NoteBlendInto">
     <columns>
@@ -2346,10 +2517,34 @@ settings for a similar project.</property>
             <property name="can-focus">False</property>
             <property name="layout-style">end</property>
             <child>
-              <placeholder/>
+              <object class="GtkButton" id="btn_feats_cancel">
+                <property name="label">gtk-cancel</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="use-stock">True</property>
+                <property name="always-show-image">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
             </child>
             <child>
-              <placeholder/>
+              <object class="GtkButton" id="btn_feats_ok">
+                <property name="label">gtk-apply</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="use-stock">True</property>
+                <property name="always-show-image">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
             </child>
           </object>
           <packing>
@@ -2454,6 +2649,10 @@ settings for a similar project.</property>
         </child>
       </object>
     </child>
+    <action-widgets>
+      <action-widget response="-6">btn_feats_cancel</action-widget>
+      <action-widget response="-5">btn_feats_ok</action-widget>
+    </action-widgets>
   </object>
   <object class="GtkListStore" id="ls_filterXrefs">
     <columns>
@@ -2595,10 +2794,34 @@ settings for a similar project.</property>
             <property name="margin-bottom">6</property>
             <property name="layout-style">end</property>
             <child>
-              <placeholder/>
+              <object class="GtkButton" id="btn_font_cancel">
+                <property name="label">gtk-cancel</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="use-stock">True</property>
+                <property name="always-show-image">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
             </child>
             <child>
-              <placeholder/>
+              <object class="GtkButton" id="btn_font_ok">
+                <property name="label">gtk-apply</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="use-stock">True</property>
+                <property name="always-show-image">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
             </child>
           </object>
           <packing>
@@ -2991,6 +3214,10 @@ are using supports these digits too.)</property>
         </child>
       </object>
     </child>
+    <action-widgets>
+      <action-widget response="-6">btn_font_cancel</action-widget>
+      <action-widget response="-5">btn_font_ok</action-widget>
+    </action-widgets>
   </object>
   <object class="GtkListStore" id="ls_fonts">
     <columns>
@@ -3132,10 +3359,34 @@ are using supports these digits too.)</property>
             <property name="can-focus">False</property>
             <property name="layout-style">end</property>
             <child>
-              <placeholder/>
+              <object class="GtkButton" id="btn_guides_cancel">
+                <property name="label">gtk-cancel</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="use-stock">True</property>
+                <property name="always-show-image">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
             </child>
             <child>
-              <placeholder/>
+              <object class="GtkButton" id="btn_guides_ok">
+                <property name="label">gtk-apply</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="use-stock">True</property>
+                <property name="always-show-image">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
             </child>
           </object>
           <packing>
@@ -3566,6 +3817,10 @@ the text. This may be useful for precise measuring.</property>
         </child>
       </object>
     </child>
+    <action-widgets>
+      <action-widget response="-6">btn_guides_cancel</action-widget>
+      <action-widget response="-5">btn_guides_ok</action-widget>
+    </action-widgets>
   </object>
   <object class="GtkListStore" id="ls_interfaceLang">
     <columns>
@@ -3804,10 +4059,34 @@ the text. This may be useful for precise measuring.</property>
             <property name="can-focus">False</property>
             <property name="layout-style">end</property>
             <child>
-              <placeholder/>
+              <object class="GtkButton" id="btn_ovrly_ok">
+                <property name="label">gtk-cancel</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="use-stock">True</property>
+                <property name="always-show-image">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
             </child>
             <child>
-              <placeholder/>
+              <object class="GtkButton" id="btn_ovrly_cancel">
+                <property name="label">gtk-apply</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="use-stock">True</property>
+                <property name="always-show-image">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
             </child>
           </object>
           <packing>
@@ -4141,6 +4420,10 @@ information, position and other parameters.</property>
         </child>
       </object>
     </child>
+    <action-widgets>
+      <action-widget response="-6">btn_ovrly_ok</action-widget>
+      <action-widget response="-5">btn_ovrly_cancel</action-widget>
+    </action-widgets>
   </object>
   <object class="GtkListStore" id="ls_plHoriz">
     <columns>
@@ -4446,6 +4729,28 @@ information, position and other parameters.</property>
       <column type="gchararray"/>
     </columns>
   </object>
+  <object class="GtkListStore" id="ls_strongswildcards">
+    <columns>
+      <!-- column-name Action -->
+      <column type="gchararray"/>
+      <!-- column-name Code -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">Keep wildcard*</col>
+        <col id="1">keep</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Remove wildcard</col>
+        <col id="1">remove</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Change to hyphen-</col>
+        <col id="1">hyphen</col>
+      </row>
+    </data>
+  </object>
   <object class="GtkDialog" id="dlg_strongsGenerate">
     <property name="can-focus">False</property>
     <property name="title" translatable="yes">PTXprint: Generate Strongs Index...</property>
@@ -4467,10 +4772,32 @@ information, position and other parameters.</property>
             <property name="margin-bottom">3</property>
             <property name="layout-style">end</property>
             <child>
-              <placeholder/>
+              <object class="GtkButton" id="btn_strong_ok">
+                <property name="label">gtk-cancel</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="use-stock">True</property>
+                <property name="always-show-image">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
             </child>
             <child>
-              <placeholder/>
+              <object class="GtkButton" id="btn_strong_cancel">
+                <property name="label" translatable="yes">Create Index...</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
             </child>
           </object>
           <packing>
@@ -4644,7 +4971,6 @@ the Peripherals page by editing the
 variable: strongs_index</property>
                     <property name="halign">start</property>
                     <property name="valign">center</property>
-                    <property name="active">True</property>
                     <property name="draw-indicator">True</property>
                   </object>
                   <packing>
@@ -5175,28 +5501,10 @@ to be displayed, select an appropriate option.</property>
         </child>
       </object>
     </child>
-  </object>
-  <object class="GtkListStore" id="ls_strongswildcards">
-    <columns>
-      <!-- column-name Action -->
-      <column type="gchararray"/>
-      <!-- column-name Code -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">Keep wildcard*</col>
-        <col id="1">keep</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Remove wildcard</col>
-        <col id="1">remove</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Change to hyphen-</col>
-        <col id="1">hyphen</col>
-      </row>
-    </data>
+    <action-widgets>
+      <action-widget response="-6">btn_strong_ok</action-widget>
+      <action-widget response="-5">btn_strong_cancel</action-widget>
+    </action-widgets>
   </object>
   <object class="GtkListStore" id="ls_styCallerStyle">
     <columns>
@@ -5449,10 +5757,34 @@ to be displayed, select an appropriate option.</property>
             <property name="margin-bottom">6</property>
             <property name="layout-style">end</property>
             <child>
-              <placeholder/>
+              <object class="GtkButton" id="btn_sty_ok">
+                <property name="label">gtk-cancel</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="use-stock">True</property>
+                <property name="always-show-image">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
             </child>
             <child>
-              <placeholder/>
+              <object class="GtkButton" id="btn_sty_cancel">
+                <property name="label">gtk-apply</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="use-stock">True</property>
+                <property name="always-show-image">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
             </child>
           </object>
           <packing>
@@ -5749,6 +6081,10 @@ and helps to place the marker in the tree listing all markers.</property>
         </child>
       </object>
     </child>
+    <action-widgets>
+      <action-widget response="-6">btn_sty_ok</action-widget>
+      <action-widget response="-5">btn_sty_cancel</action-widget>
+    </action-widgets>
   </object>
   <object class="GtkAdjustment" id="xrGutterWidth">
     <property name="lower">0.10</property>
@@ -21894,9 +22230,7 @@ then check this option (to NOT insert a blank page
 after any front matter material).</property>
                                 <property name="halign">start</property>
                                 <property name="valign">center</property>
-                                <property name="margin-left">6</property>
                                 <property name="margin-start">6</property>
-                                <property name="active">True</property>
                                 <property name="draw-indicator">True</property>
                               </object>
                               <packing>
@@ -22995,7 +23329,7 @@ print a diglot with both texts.</property>
               </packing>
             </child>
             <child>
-              <object class="GtkButton">
+              <object class="GtkButton" id="b_close">
                 <property name="label">gtk-close</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
