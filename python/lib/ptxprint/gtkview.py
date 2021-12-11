@@ -537,11 +537,10 @@ class GtkViewModel(ViewModel):
 
         # for d in ("multiBookSelector", "multiProjSelector", "fontChooser", "password", "overlayCredit",
                   # "generateFRT", "generatePL", "styModsdialog", "DBLbundle", "features", "gridsGuides"):
-        for d in ("multiBookSelector", "multiProjSelector", "features"):
-            dialog = self.builder.get_object("dlg_" + d)
-            dialog.add_buttons(
-                Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-                Gtk.STOCK_OK, Gtk.ResponseType.OK)
+            # dialog = self.builder.get_object("dlg_" + d)
+            # dialog.add_buttons(
+                # Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+                # Gtk.STOCK_OK, Gtk.ResponseType.OK)
                 
         self.fileViews = []
         self.buf = []
@@ -3499,14 +3498,14 @@ class GtkViewModel(ViewModel):
         for w in ["tb_xrefs", "lb_xrefs"]:
             self.builder.get_object(w).set_sensitive(self.get("c_includeXrefs") or self.get("c_useXrefList"))
 
-    def onXrefListClicked(self, btn):
-        xrf = self.get("c_includeXrefs")
-        xrl = self.get("c_useXrefList")
-        if xrl:
-            self.set("c_includeXrefs", False)
-        self.builder.get_object("ex_xrListSettings").set_expanded(xrl)
-        for w in ["tb_xrefs", "lb_xrefs"]:
-            self.builder.get_object(w).set_sensitive(xrf or xrl)
+    # def onXrefListClicked(self, btn):
+        # xrf = self.get("c_includeXrefs")
+        # xrl = self.get("c_useXrefList")
+        # if xrl:
+            # self.set("c_includeXrefs", False)
+        # self.builder.get_object("ex_xrListSettings").set_expanded(xrl)
+        # for w in ["tb_xrefs", "lb_xrefs"]:
+            # self.builder.get_object(w).set_sensitive(xrf or xrl)
             
     def updateColxrefSetting(self, btn):
         xrf = self.get("c_includeXrefs")
@@ -3520,9 +3519,9 @@ class GtkViewModel(ViewModel):
         if sys.platform == "win32":
             dialog.set_keep_above(True)
         response = dialog.run()
-        if response == Gtk.ResponseType.OK:
+        if response == Gtk.ResponseType.OK: # Create Index... clicked
             cols = 2 if self.get("c_strongs2cols") else 1
-            bkid = self.get("fcb_strongsNdxBookId") or "XXA"
+            bkid = self.get("fcb_strongsNdxBookId") or "XXS"
             self.generateStrongs(bkid, cols)
         if sys.platform == "win32":
             dialog.set_keep_above(False)
