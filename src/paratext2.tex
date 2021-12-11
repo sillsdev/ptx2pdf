@@ -1205,14 +1205,27 @@
     \fi
     \g@tcolhts                                                                  %(4)
     \shortavail=\colhtA
-    \ifunbalanced\shortavail=\availht\else\ifdim\colhtB<\colhtA \rebalancetrue \shortavail=\colhtA\fi\fi
-    \advance\colhtA -\baselineskip\ifdim\colhtA<\colhtB \rebalancetrue \shortavail=\colhtB\fi
+    \dimen1=0.5\baselineskip
+    \trace{o}{BalanceThreshold=\BalanceThreshold}%
+    \advance\dimen1 by \BalanceThreshold\baselineskip
+    \ifdim\dimen1 > \colhtA \dimen1=\colhtA\fi
+    \ifdim\dimen1 > \colhtB \dimen1=\colhtB\fi
+    \trace{o}{finding best height for \the\shortavail \space +/- \the\dimen1}%
+    \advance\shortavail-\dimen1
+    \ifunbalanced\shortavail=\availht\else\rebalancetrue
+      \ifdim\colhtB<\shortavail \shortavail=\colhtB
+      \else\ifdim\colhtB>\colhtA\advance\shortavail 2\dimen1
+          \ifdim\colhtB<\shortavail\shortavail=\colhtB
+          \else\advance\shortavail-\dimen1\fi
+        \else\advance\shortavail\dimen1\fi
+      \fi
+    \fi
     \advance\shortavail \baselineskip
 %-c_balanced_intro
 %+c_balanced_loop
     \loopcount=0
     \ifrebalance
-      \vfuzz=\maxdimen
+      \vfuzz=\PaperHeight %\maxdimen
       \loop                                                                     %(5)
         \advance\loopcount by 1
         \advance\shortavail by -\baselineskip
@@ -1250,7 +1263,7 @@
     \fi
     %\advance\shortavail by \ifdim\dp\colA>\dp\colB \dp\colA\else\dp\colB\fi     %(9)
     \s@tcolhts{\shortavail}\spl@tcols\s@vedpage
-    \trace{o}{A = \the\colhtA , B = \the\colhtB , remaining = \the\ht\s@vedpage}%
+    \trace{o}{A = \the\colhtA , B = \the\colhtB , (from \the\shortavail) remaining = \the\ht\s@vedpage}%
   \else
     \ifColNotes\ifrebalance
       \trace{o}{balanced: ColNotes A=\the\colhtA, \the\ht\colA, B=\the\colhtB, \the\ht\colB }
@@ -1371,7 +1384,7 @@
   \bmg@p=\availht
   \dimen0=8\baselineskip
   \ifdim\dimen0>0.5pt
-      \multiply\availht by 8 \divide\availht by\dimen0 \multiply\availht by\dimen0 \advance\availht 65535sp\divide\availht by 8
+      \multiply\availht by 8 \divide\availht by\dimen0 \multiply\availht by\dimen0 \advance\availht 1023sp\divide\availht by 8
   \fi
   \advance\bmg@p by -\availht
   %\advance\availht \dp\pstr@t
