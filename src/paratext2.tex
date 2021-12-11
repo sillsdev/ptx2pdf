@@ -1205,20 +1205,8 @@
     \fi
     \g@tcolhts                                                                  %(4)
     \shortavail=\colhtA
-    \dimen1=0.5\baselineskip
-    \trace{o}{BalanceThreshold=\BalanceThreshold}%
-    \advance\dimen1 by \BalanceThreshold\baselineskip
-    \ifdim\dimen1 > \colhtA \dimen1=\colhtA\fi
-    \ifdim\dimen1 > \colhtB \dimen1=\colhtB\fi
-    \trace{o}{finding best height for \the\shortavail \space +/- \the\dimen1}%
-    \advance\shortavail-\dimen1
     \ifunbalanced\shortavail=\availht\else\rebalancetrue
-      \ifdim\colhtB<\shortavail \shortavail=\colhtB
-      \else\ifdim\colhtB>\colhtA\advance\shortavail 2\dimen1
-          \ifdim\colhtB<\shortavail\shortavail=\colhtB
-          \else\advance\shortavail-\dimen1\fi
-        \else\advance\shortavail\dimen1\fi
-      \fi
+      \ifdim\colhtB>\colhtA \shortavail=\colhtB\fi
     \fi
     \advance\shortavail \baselineskip
 %-c_balanced_intro
