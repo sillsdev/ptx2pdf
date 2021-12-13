@@ -260,6 +260,7 @@ _sensitivities = {
     "c_colophon":              ["gr_colophon"],
     "c_plCreditApply2all":     ["c_plCreditOverwrite"],
     "c_rangeShowChapter":      ["c_rangeShowVerse", "l_chvsSep", "r_CVsep_period", "r_CVsep_colon"],
+    "c_strongs2cols":          ["l_strongRag", "s_strongRag"],
 }
 # Checkboxes and the different objects they make (in)sensitive when toggled
 # These function OPPOSITE to the ones above (they turn OFF/insensitive when the c_box is active)
@@ -3541,13 +3542,12 @@ class GtkViewModel(ViewModel):
             self.generateStrongs(bkid=bkid, cols=cols)
             bl = self.getBooks()
             self.set("r_book", "multiple")
-            print(f"{bl=}")
             if bkid not in bl:
                 bls = " ".join(bl)+ " " + bkid
                 self.set('ecb_booklist', bls)
+            self.set("l_statusLine", _("Strongs Index generated in: {}").format(bkid))
             if self.get("c_strongsOpenIndex"):
                 fpath = os.path.join(self.settings_dir, self.prjid, self.getBookFilename(bkid))
-                print(f"{fpath=}")
                 if os.path.exists(fpath):
                     if sys.platform == "win32":
                         os.startfile(fpath)

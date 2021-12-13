@@ -4863,7 +4863,7 @@ will be appended to the list of books to be printed.</property>
                     <property name="margin-top">6</property>
                     <property name="margin-bottom">10</property>
                     <property name="label" translatable="yes">For Strongs Cross References to be most useful to readers, it is highly recommended to include an Index 
-at the end of the publication. Set appropriate options here and the create an Index file (in USFM format).</property>
+at the end of the publication. Set appropriate options here to create an Index file (in USFM format).</property>
                   </object>
                   <packing>
                     <property name="left-attach">0</property>
@@ -5063,7 +5063,7 @@ the project's Biblical Terms list.</property>
                       <object class="GtkGrid">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
-                        <property name="margin-start">7</property>
+                        <property name="margin-start">3</property>
                         <property name="margin-end">6</property>
                         <property name="margin-top">6</property>
                         <property name="margin-bottom">6</property>
@@ -5078,7 +5078,7 @@ for a term rendering for entries
 which do not have a local rendering.</property>
                             <property name="halign">start</property>
                             <property name="valign">center</property>
-                            <property name="margin-start">20</property>
+                            <property name="margin-start">12</property>
                             <property name="label" translatable="yes">Use the Term Rendering
 from a Fallback Project:</property>
                           </object>
@@ -5120,7 +5120,7 @@ the gloss in a major language.
 the gloss in a major language.</property>
                             <property name="halign">start</property>
                             <property name="valign">center</property>
-                            <property name="margin-start">20</property>
+                            <property name="margin-start">12</property>
                             <property name="label" translatable="yes">Use Major Language Gloss:</property>
                           </object>
                           <packing>
@@ -5343,8 +5343,7 @@ to be displayed, select an appropriate option.</property>
                         <property name="valign">center</property>
                         <property name="margin-right">6</property>
                         <property name="margin-end">6</property>
-                        <property name="label" translatable="yes">Wildcard*
-handling:</property>
+                        <property name="label" translatable="yes">Wildcard* handling:</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -5354,7 +5353,7 @@ handling:</property>
                     </child>
                     <child>
                       <object class="GtkComboBox" id="fcb_strongswildcards">
-                        <property name="width-request">150</property>
+                        <property name="width-request">145</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="can-default">True</property>
@@ -5381,47 +5380,6 @@ to be displayed, select an appropriate option.</property>
                     <property name="left-attach">3</property>
                     <property name="top-attach">9</property>
                     <property name="width">2</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkCheckButton" id="c_strongs2cols">
-                    <property name="label" translatable="yes">Two Column Layout</property>
-                    <property name="visible">True</property>
-                    <property name="can-focus">True</property>
-                    <property name="receives-default">False</property>
-                    <property name="tooltip-text" translatable="yes">Using a two column layout for the index
-is highly recommended, but if you prefer
-a one column layout, uncheck this option.</property>
-                    <property name="halign">center</property>
-                    <property name="valign">center</property>
-                    <property name="margin-left">20</property>
-                    <property name="active">True</property>
-                    <property name="draw-indicator">True</property>
-                  </object>
-                  <packing>
-                    <property name="left-attach">3</property>
-                    <property name="top-attach">12</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkCheckButton" id="c_strongsOpenIndex">
-                    <property name="label" translatable="yes">Open Index
-File in Editor</property>
-                    <property name="visible">True</property>
-                    <property name="can-focus">True</property>
-                    <property name="receives-default">False</property>
-                    <property name="tooltip-text" translatable="yes">Check this option to open
-the generated file in a text
-editor after the Index has
-been created.</property>
-                    <property name="halign">center</property>
-                    <property name="valign">center</property>
-                    <property name="margin-left">20</property>
-                    <property name="draw-indicator">True</property>
-                  </object>
-                  <packing>
-                    <property name="left-attach">4</property>
-                    <property name="top-attach">12</property>
                   </packing>
                 </child>
                 <child>
@@ -5465,9 +5423,6 @@ been created.</property>
                                 <property name="sizing">fixed</property>
                                 <property name="fixed-width">150</property>
                                 <property name="title" translatable="yes">Name</property>
-                                <property name="clickable">True</property>
-                                <property name="reorderable">True</property>
-                                <property name="sort-indicator">True</property>
                                 <property name="sort-column-id">0</property>
                                 <child>
                                   <object class="GtkCellRendererText" id="cr_strvar_name"/>
@@ -5484,9 +5439,6 @@ been created.</property>
                                 <property name="sizing">fixed</property>
                                 <property name="fixed-width">250</property>
                                 <property name="title" translatable="yes">Value</property>
-                                <property name="clickable">True</property>
-                                <property name="reorderable">True</property>
-                                <property name="sort-indicator">True</property>
                                 <property name="sort-column-id">1</property>
                                 <child>
                                   <object class="GtkCellRendererText" id="cr_strvar_value">
@@ -5530,6 +5482,7 @@ other standard Paratext bookx XXA...XXG then
 select it here, but be aware that it will overwrite
 whatever is in that book without prior warning.</property>
                         <property name="halign">start</property>
+                        <property name="valign">center</property>
                         <property name="label" translatable="yes">Create Index in Book:</property>
                       </object>
                       <packing>
@@ -5581,22 +5534,37 @@ whatever is in that book without prior warning.</property>
                     <property name="spacing">6</property>
                     <property name="homogeneous">True</property>
                     <child>
-                      <object class="GtkLabel" id="l_bottomRag1">
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="left-attach">3</property>
+                    <property name="top-attach">10</property>
+                    <property name="width">2</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkBox">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <child>
+                      <object class="GtkCheckButton" id="c_strongs2cols">
+                        <property name="label" translatable="yes">Two Column Layout</property>
                         <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <property name="tooltip-text" translatable="yes">By default (when this is set to 0)
-PTXprint will balance the number of
-lines used in each column. Sometimes
-this results in large empty spaces at the
-end of a page.
-
-Increasing this number (recommended
-range 1-4) will allow up to that many
-unbalanced lines on the page.</property>
-                        <property name="halign">end</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">False</property>
+                        <property name="tooltip-text" translatable="yes">Using a two column layout for the index
+is highly recommended, but if you prefer
+a one column layout, uncheck this option.</property>
+                        <property name="halign">start</property>
                         <property name="valign">center</property>
-                        <property name="label" translatable="yes">Unbalanced Lines (max):</property>
-                        <property name="justify">right</property>
+                        <property name="margin-left">20</property>
+                        <property name="active">True</property>
+                        <property name="draw-indicator">True</property>
+                        <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -5605,13 +5573,19 @@ unbalanced lines on the page.</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkSpinButton" id="s_strongRag">
+                      <object class="GtkCheckButton" id="c_strongsOpenIndex">
+                        <property name="label" translatable="yes">Open Index
+File in Editor</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
+                        <property name="receives-default">False</property>
+                        <property name="tooltip-text" translatable="yes">Check this option to open
+the generated file in a text
+editor after the Index has
+been created.</property>
                         <property name="halign">start</property>
                         <property name="valign">center</property>
-                        <property name="text" translatable="yes">0</property>
-                        <property name="adjustment">a_bottomRag</property>
+                        <property name="draw-indicator">True</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -5622,15 +5596,47 @@ unbalanced lines on the page.</property>
                   </object>
                   <packing>
                     <property name="left-attach">3</property>
-                    <property name="top-attach">10</property>
+                    <property name="top-attach">12</property>
                     <property name="width">2</property>
                   </packing>
                 </child>
                 <child>
-                  <placeholder/>
+                  <object class="GtkLabel" id="l_strongRag">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="tooltip-text" translatable="yes">By default (when this is set to 0)
+PTXprint will balance the number of
+lines used in each column. Sometimes
+this results in large empty spaces at the
+end of a page.
+
+Increasing this number (recommended
+range 1-4) will allow up to that many
+unbalanced lines on the page.</property>
+                    <property name="halign">end</property>
+                    <property name="valign">center</property>
+                    <property name="margin-top">6</property>
+                    <property name="label" translatable="yes">Unbalanced Lines (max):</property>
+                  </object>
+                  <packing>
+                    <property name="left-attach">0</property>
+                    <property name="top-attach">12</property>
+                  </packing>
                 </child>
                 <child>
-                  <placeholder/>
+                  <object class="GtkSpinButton" id="s_strongRag">
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="halign">start</property>
+                    <property name="valign">center</property>
+                    <property name="margin-top">6</property>
+                    <property name="text" translatable="yes">0</property>
+                    <property name="adjustment">a_bottomRag</property>
+                  </object>
+                  <packing>
+                    <property name="left-attach">1</property>
+                    <property name="top-attach">12</property>
+                  </packing>
                 </child>
                 <child>
                   <placeholder/>
