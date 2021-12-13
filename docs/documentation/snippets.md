@@ -206,3 +206,21 @@ insert pictures through the specified changes, then this trick is useful.
 ```perl
 at EPH 6:13 "(armed soldier.)" > '\1\\fig Soldier with armour|alt="Map Creator soldier with armour" src="ESG Armor of God(v2).png" size="col" ref="6:14-18"\\fig*'
 ```
+
+## Add an alphabetic section header to Strongs reversal index
+
+Just for the XXS book, insert the first letter of each section of verncular renderings
+before the block of renderings with their Strongs H and G numbers.
+
+```perl
+at XXS "(\\m ?\r?\n(.))" > "\\s - \2 -\n\1"
+```
+
+## Adjust the underline position and thickness
+
+The default underline parameters might need to be tweaked based on the script, font and leading.
+
+```tex
+\Marker pn\relax\Underline \relax
+\def\UnderlineLower{-0.1em}\def\UnderlineThickness{0.05em}
+```
