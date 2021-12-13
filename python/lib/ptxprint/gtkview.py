@@ -563,6 +563,7 @@ class GtkViewModel(ViewModel):
         self.picListView = PicList(self.builder.get_object('tv_picListEdit'), self.builder, self)
         self.styleEditor = StyleEditorView(self)
         self.pubvarlist = self.builder.get_object("ls_zvarList")
+        self.strongsvarlist = self.builder.get_object("ls_strvarList")
 
         self.mw = self.builder.get_object("ptxprint")
 
@@ -837,22 +838,34 @@ class GtkViewModel(ViewModel):
             return
         setWidgetVal(wid, w, value)
 
-    def getvar(self, k):
-        for r in self.pubvarlist:
+    def getvar(self, k, dest=None):
+        if dest is None:
+            varlist = self.pubvarlist
+        elif dest == "strongs":
+            varlist = self.strongsvarlist
+        for r in varlist:
             if r[0] == k:
                 return r[1]
         return None
 
-    def setvar(self, k, v):
-        for r in self.pubvarlist:
+    def setvar(self, k, v, dest=None):
+        if dest is None:
+            varlist = self.pubvarlist
+        elif dest == "strongs":
+            varlist = self.strongsvarlist
+        for r in varlist:
             if r[0] == k:
                 r[1] = v
                 break
         else:
-            self.pubvarlist.append([k, v])
+            varlist.append([k, v])
 
-    def allvars(self):
-        return [r[0] for r in self.pubvarlist]
+    def allvars(self, dest=None):
+        if dest is None:
+            varlist = self.pubvarlist
+        elif dest == "strongs":
+            varlist = self.strongsvarlist
+        return [r[0] for r in varlist]
 
     def clearvars(self):
         self.pubvarlist.clear()
@@ -2961,7 +2974,6 @@ class GtkViewModel(ViewModel):
         
     def msgQuestion(self, title, question, default=False):
         par = self.builder.get_object('ptxprint')
-        mybtns = Gtk
         dialog = Gtk.MessageDialog(parent=par, flags=Gtk.DialogFlags.MODAL, type=Gtk.MessageType.QUESTION, buttons=Gtk.ButtonsType.YES_NO, message_format=title)
         dialog.format_secondary_text(question)
         dialog.set_keep_above(True)
@@ -3522,17 +3534,10 @@ class GtkViewModel(ViewModel):
         if response == Gtk.ResponseType.OK: # Create Index... clicked
             cols = 2 if self.get("c_strongs2cols") else 1
             bkid = self.get("fcb_strongsNdxBookId") or "XXS"
-            self.generateStrongs(bkid, cols)
         if sys.platform == "win32":
             dialog.set_keep_above(False)
         dialog.hide()
         
-    def addStrongsVars(self):
-        for b in ("Title", "Hebrew", "Greek", "Index"): 
-            v = "strongs_" + b.lower()
-            if self.getvar(v) is None:
-                self.setvar(v, _("<Type Value Here>"))
-
     def onInterlinearClicked(self, btn):
         if self.sensiVisible("c_interlinear"):
             if self.get("c_letterSpacing"):

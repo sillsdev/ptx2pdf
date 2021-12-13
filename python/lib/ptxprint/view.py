@@ -142,6 +142,7 @@ class ViewModel:
         self.triggervcs = False
         self.copyrightInfo = {}
         self.pubvars = {}
+        self.strongsvars = {}
 
         # private to this implementation
         self.dict = {}
@@ -198,14 +199,23 @@ class ViewModel:
         else:
             self.dict[wid] = value
 
-    def getvar(self, k):
-        return self.pubvars.get(k, "")
+    def getvar(self, k, dest=None):
+        if dest is None:
+            return self.pubvars.get(k, "")
+        elif dest == "strongs":
+            return self.strongsvars.get(k, "")
 
-    def setvar(self, k, v):
-        self.pubvars[k] = v
+    def setvar(self, k, v, dest=None):
+        if dest is None:
+            self.pubvars[k] = v
+        elif dest == "strongs":
+            self.strongsvars[k] = v
 
-    def allvars(self):
-        return self.pubvars.keys()
+    def allvars(self, dest=None):
+        if dest is None:
+            return self.pubvars.keys()
+        elif dest == "strongs":
+            return self.strongsvars.keys()
 
     def clearvars(self):
         self.pubvars = {}
@@ -640,6 +650,8 @@ class ViewModel:
             self._configset(config, k, str(val) if val is not None else "")
         for k in self.allvars():
             self._configset(config, "vars/"+str(k), self.getvar(str(k)))
+        for k in self.allvars(dest="strongs"):
+            self._configset(config, "strongsvars/"+str(k), self.getvar(str(k), dest="strongs"))
         return config
 
     def _config_get(self, config, section, option, conv=None, fallback=_UNSET, **kw):
@@ -850,7 +862,9 @@ class ViewModel:
                         except AttributeError:
                             pass # ignore missing keys
                 elif sect == "vars":
-                    self.setvar(opt, val)
+                    self.setvar(opt, val or "")
+                elif sect == "strongsvars":
+                    self.setvar(opt, val or "", dest="strongs")
                 elif sect in FontModelMap:
                     v = FontModelMap[sect]
                     if v[0].startswith("bl_") and opt == "name":    # legacy
