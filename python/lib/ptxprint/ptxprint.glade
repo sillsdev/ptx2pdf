@@ -4059,7 +4059,7 @@ the text. This may be useful for precise measuring.</property>
             <property name="can-focus">False</property>
             <property name="layout-style">end</property>
             <child>
-              <object class="GtkButton" id="btn_ovrly_ok">
+              <object class="GtkButton" id="btn_ovrly_cancel">
                 <property name="label">gtk-cancel</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
@@ -4074,7 +4074,7 @@ the text. This may be useful for precise measuring.</property>
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="btn_ovrly_cancel">
+              <object class="GtkButton" id="btn_ovrly_ok">
                 <property name="label">gtk-apply</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
@@ -4421,8 +4421,8 @@ information, position and other parameters.</property>
       </object>
     </child>
     <action-widgets>
-      <action-widget response="-6">btn_ovrly_ok</action-widget>
-      <action-widget response="-5">btn_ovrly_cancel</action-widget>
+      <action-widget response="-6">btn_ovrly_cancel</action-widget>
+      <action-widget response="-5">btn_ovrly_ok</action-widget>
     </action-widgets>
   </object>
   <object class="GtkListStore" id="ls_plHoriz">
@@ -4694,14 +4694,6 @@ information, position and other parameters.</property>
         <col id="1">und</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Chinese (Hans)</col>
-        <col id="1">zh-Hans</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Chinese (Hant)</col>
-        <col id="1" translatable="yes">zh-hant</col>
-      </row>
-      <row>
         <col id="0" translatable="yes">English</col>
         <col id="1">en</col>
       </row>
@@ -4715,7 +4707,7 @@ information, position and other parameters.</property>
       </row>
       <row>
         <col id="0" translatable="yes">Portugese</col>
-        <col id="1" translatable="yes">pt</col>
+        <col id="1">pt</col>
       </row>
       <row>
         <col id="0" translatable="yes">Spanish</col>
@@ -4751,6 +4743,32 @@ information, position and other parameters.</property>
       </row>
     </data>
   </object>
+  <object class="GtkListStore" id="ls_strvarList">
+    <columns>
+      <!-- column-name Name -->
+      <column type="gchararray"/>
+      <!-- column-name Value -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0">index_book_title</col>
+        <col id="1">Strongs Number Index</col>
+      </row>
+      <row>
+        <col id="0">hebrew_section_title</col>
+        <col id="1">Hebrew Words</col>
+      </row>
+      <row>
+        <col id="0">greek_section_title</col>
+        <col id="1">Greek Words</col>
+      </row>
+      <row>
+        <col id="0">reverse_index_title</col>
+        <col id="1">Reversal Index</col>
+      </row>
+    </data>
+  </object>
   <object class="GtkDialog" id="dlg_strongsGenerate">
     <property name="can-focus">False</property>
     <property name="title" translatable="yes">PTXprint: Generate Strongs Index...</property>
@@ -4772,7 +4790,7 @@ information, position and other parameters.</property>
             <property name="margin-bottom">3</property>
             <property name="layout-style">end</property>
             <child>
-              <object class="GtkButton" id="btn_strong_ok">
+              <object class="GtkButton" id="btn_strong_cancel">
                 <property name="label">gtk-cancel</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
@@ -4787,7 +4805,7 @@ information, position and other parameters.</property>
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="btn_strong_cancel">
+              <object class="GtkButton" id="btn_strong_ok">
                 <property name="label" translatable="yes">Create Index...</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
@@ -5407,7 +5425,7 @@ been created.</property>
                     <property name="hexpand">True</property>
                     <property name="vexpand">True</property>
                     <child>
-                      <object class="GtkScrolledWindow" id="scr_zvarlist1">
+                      <object class="GtkScrolledWindow" id="scr_strvarList">
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="hexpand">True</property>
@@ -5415,14 +5433,14 @@ been created.</property>
                         <property name="shadow-type">in</property>
                         <property name="overlay-scrolling">False</property>
                         <child>
-                          <object class="GtkTreeView" id="tv_zvarEdit1">
+                          <object class="GtkTreeView" id="tv_strvarEdit">
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="vexpand">True</property>
                             <property name="hadjustment">a_zvarListadjustment1</property>
                             <property name="vadjustment">a_zvarListadjustment2</property>
                             <property name="vscroll-policy">natural</property>
-                            <property name="model">ls_zvarList</property>
+                            <property name="model">ls_strvarList</property>
                             <property name="reorderable">True</property>
                             <property name="rules-hint">True</property>
                             <property name="enable-search">False</property>
@@ -5433,7 +5451,7 @@ been created.</property>
                               <object class="GtkTreeSelection"/>
                             </child>
                             <child>
-                              <object class="GtkTreeViewColumn" id="col_zvar_name1">
+                              <object class="GtkTreeViewColumn" id="col_strvar_name">
                                 <property name="resizable">True</property>
                                 <property name="spacing">2</property>
                                 <property name="sizing">fixed</property>
@@ -5452,7 +5470,7 @@ been created.</property>
                               </object>
                             </child>
                             <child>
-                              <object class="GtkTreeViewColumn" id="col_zvar_value1">
+                              <object class="GtkTreeViewColumn" id="col_strvar_value">
                                 <property name="resizable">True</property>
                                 <property name="spacing">2</property>
                                 <property name="sizing">fixed</property>
@@ -5573,8 +5591,8 @@ generated Strongs Cross Reference Index.</property>
       </object>
     </child>
     <action-widgets>
-      <action-widget response="-6">btn_strong_ok</action-widget>
-      <action-widget response="-5">btn_strong_cancel</action-widget>
+      <action-widget response="-6">btn_strong_cancel</action-widget>
+      <action-widget response="-5">btn_strong_ok</action-widget>
     </action-widgets>
   </object>
   <object class="GtkListStore" id="ls_styCallerStyle">
@@ -5828,7 +5846,7 @@ generated Strongs Cross Reference Index.</property>
             <property name="margin-bottom">6</property>
             <property name="layout-style">end</property>
             <child>
-              <object class="GtkButton" id="btn_sty_ok">
+              <object class="GtkButton" id="btn_sty_cancel">
                 <property name="label">gtk-cancel</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
@@ -5843,7 +5861,7 @@ generated Strongs Cross Reference Index.</property>
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="btn_sty_cancel">
+              <object class="GtkButton" id="btn_sty_ok">
                 <property name="label">gtk-apply</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
@@ -6153,8 +6171,8 @@ and helps to place the marker in the tree listing all markers.</property>
       </object>
     </child>
     <action-widgets>
-      <action-widget response="-6">btn_sty_ok</action-widget>
-      <action-widget response="-5">btn_sty_cancel</action-widget>
+      <action-widget response="-6">btn_sty_cancel</action-widget>
+      <action-widget response="-5">btn_sty_ok</action-widget>
     </action-widgets>
   </object>
   <object class="GtkAdjustment" id="xrGutterWidth">
@@ -22218,6 +22236,9 @@ table of variable names and values.</property>
                                         <property name="search-column">0</property>
                                         <property name="fixed-height-mode">True</property>
                                         <property name="show-expanders">False</property>
+                                        <child internal-child="selection">
+                                          <object class="GtkTreeSelection"/>
+                                        </child>
                                         <child>
                                           <object class="GtkTreeViewColumn" id="col_zvar_name">
                                             <property name="resizable">True</property>
