@@ -264,6 +264,9 @@ def generateStrongsIndex(bkid, cols, outfile, localfile, onlylocal, ptsettings, 
     with open(outfile, "w", encoding="utf-8") as outf:
         outf.write("\\id {0} Strongs based terms index\n\\h {1}\n\\NoXrefNotes\n\\strong-s\\*\n\\mt1 {1}\n".format(bkid, title))
         outf.write("\\onebody\n" if cols == 1 else "\\twobody\n")
+        rag = view.get("s_strongRag", 0)
+        if rag is not None and int(rag) > 0:
+            outf.write("\\zBottomRag {}\n".format(rag))
         for a in ('Hebrew', 'Greek'):
             if (view.get("c_strongsHeb") and a == 'Hebrew') or (view.get("c_strongsGrk") and a == 'Greek'):
                 hdr = ("\n\\mt2 {}\n\\p\n".format(view.getvar("{}_section_title".format(a.lower()), dest="strongs") or a))
@@ -310,5 +313,5 @@ def generateStrongsIndex(bkid, cols, outfile, localfile, onlylocal, ptsettings, 
                 if init != lastinit:
                     outf.write("\n\\m\n")
                     lastinit = init
-                outf.write("{}({})\u0200".format(k, ", ".join(sorted(v, key=lambda s:(int(s[1:]), s[0]))))) 
-        outf.write("\n\\strong-e\\*\n")
+                outf.write("{}\u200A({}) ".format(k, ", ".join(sorted(v, key=lambda s:(int(s[1:]), s[0]))))) 
+        outf.write("\n\\singlecolumn\n\\strong-e\\*\n")
