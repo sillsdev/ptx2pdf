@@ -750,6 +750,10 @@ class GtkViewModel(ViewModel):
         for nbp in ["nbk_fnxr", "nbk_PicList"]:
             self.builder.get_object(nbp).set_current_page(0)
 
+        for b in "dbl gnr8frt gnr8pl mbs mps pw feats font guides ovrly strong sty".split():
+            self.toggleUIdetails("btn_"+b+"_cancel", True)
+            self.toggleUIdetails("btn_"+b+"_ok", True)
+            
         self.noInternetClicked(None)
         self.updateMarginGraphics()
         self.colorTabs()

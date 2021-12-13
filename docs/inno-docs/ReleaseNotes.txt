@@ -3,7 +3,7 @@ PTXprint 2.0.26 Release Notes
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 
-Bug fixes and improvements in 2.0.26 (13 Dec 2021)
+Bug fixes and improvements in 2.0.27 (13 Dec 2021)
 
 NOTE: Underlying code libraries were recently upgraded, so there is a new look and feel
       to PTXprint on Windows. Report any regressions you find as a result of this upgrade.
@@ -17,6 +17,8 @@ NOTE: Underlying code libraries were recently upgraded, so there is a new look a
   * Peripherals page tidied up
   
   * Fix not multi editing the same settings file
+  
+  * Fix missing Cancel + Apply buttons in Mini and Basic views
   
 Bug fixes and improvements in 2.0.24 (11 Dec 2021)
 
