@@ -173,7 +173,7 @@ _showActiveTabs = {
     "c_inclFrontMatter" :      ["tb_Peripherals", "gr_importFrontPDF"],
     "c_inclBackMatter" :       ["tb_Peripherals", "gr_importBackPDF"],
     "c_autoToC" :              ["tb_Peripherals", "bx_ToC"],
-    "c_frontmatter" :          ["tb_Peripherals", "bx_frontmatter"],
+    "c_frontmatter" :          ["tb_Peripherals", "gr_frontmatter"],
     "c_colophon" :             ["tb_Peripherals", "bx_colophon"],
 }
 
@@ -765,6 +765,7 @@ class GtkViewModel(ViewModel):
         if w in _ui_noToggleVisible:
             self.builder.get_object(w).set_sensitive(state)
         else:
+            # print(w)
             self.builder.get_object(w).set_visible(state)
 
     def noInternetClicked(self, btn):
