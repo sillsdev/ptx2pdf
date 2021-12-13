@@ -3536,6 +3536,7 @@ class GtkViewModel(ViewModel):
         if response == Gtk.ResponseType.OK: # Create Index... clicked
             cols = 2 if self.get("c_strongs2cols") else 1
             bkid = self.get("fcb_strongsNdxBookId") or "XXS"
+            self.generateStrongs(bkid=bkid, cols=cols)
         if sys.platform == "win32":
             dialog.set_keep_above(False)
         dialog.hide()
@@ -3635,7 +3636,7 @@ class GtkViewModel(ViewModel):
         self.styleEditor.editMarker()
         self.userconfig.set("init", "englinks", "true" if self.get("c_useEngLinks") else "false")
         
-    def onzvarEdit(self, tv, path, text): #cr, path, text, tv):
+    def onvarEdit(self, tv, path, text): #cr, path, text, tv):
         if len(text) > 0:
             model = tv.get_model()
             it = model.get_iter_from_string(path)

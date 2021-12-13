@@ -266,7 +266,7 @@ def generateStrongsIndex(bkid, cols, outfile, localfile, onlylocal, ptsettings, 
         outf.write("\\onebody\n" if cols == 1 else "\\twobody\n")
         for a in ('Hebrew', 'Greek'):
             if (view.get("c_strongsHeb") and a == 'Hebrew') or (view.get("c_strongsGrk") and a == 'Greek'):
-                hdr = ("\n\\mt2 {}\n\\p\n".format(view.getvar("{}_section_title".format(a.lower())) or a, dest="strongs"))
+                hdr = ("\n\\mt2 {}\n\\p\n".format(view.getvar("{}_section_title".format(a.lower()), dest="strongs") or a))
                 for k, v in sorted(strongs.items(), key=lambda x:int(x[0][1:])):
                     if not k.startswith(a[0]):
                         continue

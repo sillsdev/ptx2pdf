@@ -2221,14 +2221,14 @@ saved configuration.</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_diglot">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_grid">
     <property name="visible">True</property>
@@ -2239,27 +2239,27 @@ combination of Crop marks, Guides (margins,
 baselines, etc.) and/or a graph-paper-like Grid
 can be set.</property>
     <property name="icon-name">view-grid-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_spacing">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_top">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_download">
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">software-update-available-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_refresh">
     <property name="visible">True</property>
@@ -2276,7 +2276,7 @@ having to manually re-create all the same
 settings for a similar project.</property>
     <property name="halign">end</property>
     <property name="icon-name">view-grid-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkListStore" id="ls_NoteBlendInto">
     <columns>
@@ -5439,7 +5439,6 @@ been created.</property>
                             <property name="vexpand">True</property>
                             <property name="hadjustment">a_zvarListadjustment1</property>
                             <property name="vadjustment">a_zvarListadjustment2</property>
-                            <property name="vscroll-policy">natural</property>
                             <property name="model">ls_strvarList</property>
                             <property name="reorderable">True</property>
                             <property name="rules-hint">True</property>
@@ -5462,7 +5461,7 @@ been created.</property>
                                 <property name="sort-indicator">True</property>
                                 <property name="sort-column-id">0</property>
                                 <child>
-                                  <object class="GtkCellRendererText" id="cr_zvar_name1"/>
+                                  <object class="GtkCellRendererText" id="cr_strvar_name"/>
                                   <attributes>
                                     <attribute name="text">0</attribute>
                                   </attributes>
@@ -5481,8 +5480,9 @@ been created.</property>
                                 <property name="sort-indicator">True</property>
                                 <property name="sort-column-id">1</property>
                                 <child>
-                                  <object class="GtkCellRendererText" id="cr_zvar_value1">
+                                  <object class="GtkCellRendererText" id="cr_strvar_value">
                                     <property name="editable">True</property>
+                                    <signal name="edited" handler="onvarEdit" object="tv_strvarEdit" swapped="no"/>
                                   </object>
                                   <attributes>
                                     <attribute name="text">1</attribute>
@@ -22271,7 +22271,7 @@ table of variable names and values.</property>
                                             <child>
                                               <object class="GtkCellRendererText" id="cr_zvar_value">
                                                 <property name="editable">True</property>
-                                                <signal name="edited" handler="onzvarEdit" object="tv_zvarEdit" swapped="no"/>
+                                                <signal name="edited" handler="onvarEdit" object="tv_zvarEdit" swapped="no"/>
                                               </object>
                                               <attributes>
                                                 <attribute name="text">1</attribute>
