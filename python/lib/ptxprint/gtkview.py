@@ -867,8 +867,11 @@ class GtkViewModel(ViewModel):
             varlist = self.strongsvarlist
         return [r[0] for r in varlist]
 
-    def clearvars(self):
-        self.pubvarlist.clear()
+    def clearvars(self, dest=None):
+        if dest is None:
+            self.pubvarlist.clear()
+        elif dest == "strongs":
+            self.strongsvarlist.clear()
 
     def onDestroy(self, btn):
         if self.logfile != None:
@@ -3526,7 +3529,6 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("fr_colXrefs").set_sensitive(xrc)
 
     def onGenerateStrongsClicked(self, btn):
-        self.addStrongsVars()
         dialog = self.builder.get_object("dlg_strongsGenerate")
         if sys.platform == "win32":
             dialog.set_keep_above(True)

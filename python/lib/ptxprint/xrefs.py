@@ -260,13 +260,13 @@ def generateStrongsIndex(bkid, cols, outfile, localfile, onlylocal, ptsettings, 
             _readTermRenderings(fallbackfile, strongs, None, btmap, 'def')
     if localfile is not None:
         _readTermRenderings(localfile, strongs, revwds, btmap, 'local')
-    title = view.getvar("strongs_title") or "Strong's Index"
+    title = view.getvar("index_book_title", dest="strongs") or "Strong's Index"
     with open(outfile, "w", encoding="utf-8") as outf:
         outf.write("\\id {0} Strongs based terms index\n\\h {1}\n\\NoXrefNotes\n\\strong-s\\*\n\\mt1 {1}\n".format(bkid, title))
         outf.write("\\onebody\n" if cols == 1 else "\\twobody\n")
         for a in ('Hebrew', 'Greek'):
             if (view.get("c_strongsHeb") and a == 'Hebrew') or (view.get("c_strongsGrk") and a == 'Greek'):
-                hdr = ("\n\\mt2 {}\n\\p\n".format(view.getvar("strongs_{}".format(a.lower())) or a))
+                hdr = ("\n\\mt2 {}\n\\p\n".format(view.getvar("{}_section_title".format(a.lower())) or a, dest="strongs"))
                 for k, v in sorted(strongs.items(), key=lambda x:int(x[0][1:])):
                     if not k.startswith(a[0]):
                         continue
@@ -292,7 +292,7 @@ def generateStrongsIndex(bkid, cols, outfile, localfile, onlylocal, ptsettings, 
             ldmlindices = ptsettings.getIndexList()
             indices = None if ldmlindices is None else sorted([c.lower() for c in ldmlindices], key=lambda s:(-len(s), s))
             lastinit = ""
-            outf.write("\n\\mt2 {}\n".format(view.getvar("strongs_index") or "Index"))
+            outf.write("\n\\mt2 {}\n".format(view.getvar("reverse_index_title", dest="strongs") or "Index"))
             for k, v in sorted(revwds.items(), key=lambda x:get_sortkey(x[0].replace("*",""), variable=SHIFTTRIM, ducet=ducet)):
                 for i in range(len(k)):
                     if indices is None:
