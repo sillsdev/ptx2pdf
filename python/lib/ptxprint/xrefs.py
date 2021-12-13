@@ -310,5 +310,5 @@ def generateStrongsIndex(bkid, cols, outfile, localfile, onlylocal, ptsettings, 
                 if init != lastinit:
                     outf.write("\n\\m\n")
                     lastinit = init
-                outf.write("{}({}) ".format(k, ", ".join(sorted(v, key=lambda s:(int(s[1:]), s[0]))))) 
+                outf.write("{}({})\u0200".format(k, ", ".join(sorted(v, key=lambda s:(int(s[1:]), s[0]))))) 
         outf.write("\n\\strong-e\\*\n")

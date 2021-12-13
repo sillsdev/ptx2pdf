@@ -4659,6 +4659,9 @@ information, position and other parameters.</property>
     </columns>
     <data>
       <row>
+        <col id="0">XXS</col>
+      </row>
+      <row>
         <col id="0">XXA</col>
       </row>
       <row>
@@ -4776,6 +4779,7 @@ information, position and other parameters.</property>
     <property name="window-position">center-on-parent</property>
     <property name="icon">Google-Noto-Emoji-Objects-62859-open-book.ico</property>
     <property name="type-hint">dialog</property>
+    <property name="gravity">center</property>
     <child internal-child="vbox">
       <object class="GtkBox">
         <property name="can-focus">False</property>
@@ -4806,10 +4810,14 @@ information, position and other parameters.</property>
             </child>
             <child>
               <object class="GtkButton" id="btn_strong_ok">
-                <property name="label" translatable="yes">Create Index...</property>
+                <property name="label" translatable="yes">Create Index</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">True</property>
+                <property name="tooltip-text" translatable="yes">Click to generate the index book (USFM file) which
+will be appended to the list of books to be printed.
+
+Warning: This will overwrite the existing book/file.</property>
               </object>
               <packing>
                 <property name="expand">True</property>
@@ -4831,7 +4839,7 @@ information, position and other parameters.</property>
             <property name="label-xalign">0</property>
             <property name="shadow-type">none</property>
             <child>
-              <!-- n-columns=5 n-rows=12 -->
+              <!-- n-columns=5 n-rows=13 -->
               <object class="GtkGrid">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
@@ -4846,15 +4854,16 @@ information, position and other parameters.</property>
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="tooltip-text" translatable="yes">Set the options (below), to create the Index file
- in a temporary book (XXS, or XXA...XXG). Then
-append that book to the list of books to be printed.</property>
-                    <property name="halign">center</property>
+in a temporary book (XXS, or XXA...XXG). After
+clicking "Create Index", the generated index book
+will be appended to the list of books to be printed.</property>
+                    <property name="halign">start</property>
                     <property name="margin-start">6</property>
                     <property name="margin-end">6</property>
                     <property name="margin-top">6</property>
                     <property name="margin-bottom">10</property>
-                    <property name="label" translatable="yes">For Strongs Cross References to be most useful to readers, it is highly
-recommended to include an Index at the end of the publication.</property>
+                    <property name="label" translatable="yes">For Strongs Cross References to be most useful to readers, it is highly recommended to include an Index 
+at the end of the publication. Set appropriate options here and the create an Index file (in USFM format).</property>
                   </object>
                   <packing>
                     <property name="left-attach">0</property>
@@ -4941,7 +4950,7 @@ in the Strongs index when it is generated.</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkLinkButton" id="lb_style_strong-s+li">
+                      <object class="GtkLinkButton" id="lb_style_li+strong-s">
                         <property name="label">\li</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
@@ -5211,7 +5220,7 @@ to the term rendering(s).</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkLinkButton" id="lb_style_strong-s+wl">
+                  <object class="GtkLinkButton" id="lb_style_wl+strong-s">
                     <property name="label">\wl</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
@@ -5230,7 +5239,7 @@ to the term rendering(s).</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkLinkButton" id="lb_style_strong-s+xt">
+                  <object class="GtkLinkButton" id="lb_style_xt+strong-s">
                     <property name="label">\xt</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
@@ -5253,7 +5262,7 @@ to the term rendering(s).</property>
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <child>
-                      <object class="GtkLinkButton" id="lb_style_strong-s+wh">
+                      <object class="GtkLinkButton" id="lb_style_wh+strong-s">
                         <property name="label">\wh</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
@@ -5273,7 +5282,7 @@ to the term rendering(s).</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkLinkButton" id="lb_style_strong-s+wg">
+                      <object class="GtkLinkButton" id="lb_style_wg+strong-s">
                         <property name="label">\wg</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
@@ -5391,11 +5400,11 @@ a one column layout, uncheck this option.</property>
                   </object>
                   <packing>
                     <property name="left-attach">3</property>
-                    <property name="top-attach">11</property>
+                    <property name="top-attach">12</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkCheckButton" id="c_strongs2cols1">
+                  <object class="GtkCheckButton" id="c_strongsOpenIndex">
                     <property name="label" translatable="yes">Open Index
 File in Editor</property>
                     <property name="visible">True</property>
@@ -5412,7 +5421,7 @@ been created.</property>
                   </object>
                   <packing>
                     <property name="left-attach">4</property>
-                    <property name="top-attach">11</property>
+                    <property name="top-attach">12</property>
                   </packing>
                 </child>
                 <child>
@@ -5506,13 +5515,20 @@ been created.</property>
                   <object class="GtkBox">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
-                    <property name="spacing">12</property>
+                    <property name="spacing">6</property>
+                    <property name="homogeneous">True</property>
                     <child>
                       <object class="GtkLabel">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="tooltip-text" translatable="yes">Select the temporary book to be used for the 
-generated Strongs Cross Reference Index.</property>
+generated Strongs Cross Reference Index.
+
+By default, an extra book XXS is used to store
+the index. But if you prefer to use one of the
+other standard Paratext bookx XXA...XXG then
+select it here, but be aware that it will overwrite
+whatever is in that book without prior warning.</property>
                         <property name="halign">start</property>
                         <property name="label" translatable="yes">Create Index in Book:</property>
                       </object>
@@ -5529,7 +5545,13 @@ generated Strongs Cross Reference Index.</property>
                         <property name="can-focus">False</property>
                         <property name="can-default">True</property>
                         <property name="tooltip-text" translatable="yes">Select the temporary book to be used for the 
-generated Strongs Cross Reference Index.</property>
+generated Strongs Cross Reference Index.
+
+By default, an extra book XXS is used to store
+the index. But if you prefer to use one of the
+other standard Paratext bookx XXA...XXG then
+select it here, but be aware that it will overwrite
+whatever is in that book without prior warning.</property>
                         <property name="halign">start</property>
                         <property name="valign">center</property>
                         <property name="model">ls_strongsId</property>
@@ -5537,7 +5559,59 @@ generated Strongs Cross Reference Index.</property>
                         <property name="active">0</property>
                         <property name="entry-text-column">0</property>
                         <property name="id-column">0</property>
-                        <property name="active-id">0</property>
+                        <property name="active-id">XXS</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="left-attach">3</property>
+                    <property name="top-attach">11</property>
+                    <property name="width">2</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkBox">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="spacing">6</property>
+                    <property name="homogeneous">True</property>
+                    <child>
+                      <object class="GtkLabel" id="l_bottomRag1">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="tooltip-text" translatable="yes">By default (when this is set to 0)
+PTXprint will balance the number of
+lines used in each column. Sometimes
+this results in large empty spaces at the
+end of a page.
+
+Increasing this number (recommended
+range 1-4) will allow up to that many
+unbalanced lines on the page.</property>
+                        <property name="halign">end</property>
+                        <property name="valign">center</property>
+                        <property name="label" translatable="yes">Unbalanced Lines (max):</property>
+                        <property name="justify">right</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkSpinButton" id="s_strongRag">
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="halign">start</property>
+                        <property name="valign">center</property>
+                        <property name="text" translatable="yes">0</property>
+                        <property name="adjustment">a_bottomRag</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -5551,6 +5625,15 @@ generated Strongs Cross Reference Index.</property>
                     <property name="top-attach">10</property>
                     <property name="width">2</property>
                   </packing>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
+                <child>
+                  <placeholder/>
                 </child>
                 <child>
                   <placeholder/>
@@ -10586,7 +10669,7 @@ Also settings for special books.</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <child>
-                              <!-- n-columns=4 n-rows=5 -->
+                              <!-- n-columns=4 n-rows=6 -->
                               <object class="GtkGrid" id="tb_general">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
@@ -10595,11 +10678,12 @@ Also settings for special books.</property>
                                 <property name="margin-end">6</property>
                                 <property name="margin-top">12</property>
                                 <property name="margin-bottom">8</property>
+                                <property name="row-spacing">9</property>
                                 <property name="column-spacing">6</property>
-                                <property name="row-homogeneous">True</property>
                                 <child>
                                   <object class="GtkCheckButton" id="c_includeFootnotes">
                                     <property name="label" translatable="yes">Include Footnotes</property>
+                                    <property name="width-request">200</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">False</property>
@@ -10610,6 +10694,7 @@ The specific settings for these are
 located on the Footnotes tab.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
+                                    <property name="xalign">0</property>
                                     <property name="active">True</property>
                                     <property name="draw-indicator">True</property>
                                     <signal name="clicked" handler="onFootnotesClicked" swapped="no"/>
@@ -10617,7 +10702,7 @@ located on the Footnotes tab.</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">0</property>
-                                    <property name="top-attach">0</property>
+                                    <property name="top-attach">1</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -10641,7 +10726,8 @@ located on the Cross-References tab.</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">0</property>
-                                    <property name="top-attach">1</property>
+                                    <property name="top-attach">2</property>
+                                    <property name="width">2</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -10660,7 +10746,7 @@ elements visually distinct.</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">0</property>
-                                    <property name="top-attach">3</property>
+                                    <property name="top-attach">4</property>
                                     <property name="width">2</property>
                                   </packing>
                                 </child>
@@ -10684,7 +10770,7 @@ cross-references imported from external lists.</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">0</property>
-                                    <property name="top-attach">4</property>
+                                    <property name="top-attach">5</property>
                                     <property name="width">2</property>
                                   </packing>
                                 </child>
@@ -10712,7 +10798,8 @@ need to be checked for understanding).</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">0</property>
-                                    <property name="top-attach">2</property>
+                                    <property name="top-attach">3</property>
+                                    <property name="width">2</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -10736,7 +10823,7 @@ Separating Notes:</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">1</property>
-                                    <property name="top-attach">4</property>
+                                    <property name="top-attach">1</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -10763,7 +10850,7 @@ between notes that have been run together.</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">2</property>
-                                    <property name="top-attach">4</property>
+                                    <property name="top-attach">1</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -10790,7 +10877,7 @@ between notes that have been run together.</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">3</property>
-                                    <property name="top-attach">4</property>
+                                    <property name="top-attach">1</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -10806,7 +10893,7 @@ between notes that have been run together.</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">2</property>
-                                    <property name="top-attach">3</property>
+                                    <property name="top-attach">0</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -10822,7 +10909,7 @@ between notes that have been run together.</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">3</property>
-                                    <property name="top-attach">3</property>
+                                    <property name="top-attach">0</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -10874,14 +10961,10 @@ Footnotes and xRefs (pt):</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkLabel">
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">1</property>
-                                    <property name="top-attach">2</property>
-                                  </packing>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
                                 </child>
                                 <child>
                                   <placeholder/>
@@ -11233,6 +11316,7 @@ usually placed at the end of each page.
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="margin-top">6</property>
+                                    <property name="margin-bottom">6</property>
                                     <child>
                                       <!-- n-columns=5 n-rows=3 -->
                                       <object class="GtkGrid" id="gr_fnRuleSettings">
@@ -12039,6 +12123,8 @@ Reference Bibles in conjunction with the
                                   <object class="GtkExpander" id="ex_xrListSettings">
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
+                                    <property name="margin-top">6</property>
+                                    <property name="margin-bottom">6</property>
                                     <child>
                                       <object class="GtkBox" id="tb_extXrefs">
                                         <property name="visible">True</property>
@@ -12321,7 +12407,10 @@ selected cross-references for both NT and OT.</property>
                                                 <property name="receives-default">False</property>
                                                 <property name="tooltip-text" translatable="yes">The Strongs List contains a curated
 subset of cross-references generated
-from the Strongs Numbers.
+from the Strongs Numbers. Optionally
+an index for these numbers can also
+be created as an additional book that
+can be appended to the publication.
 
 Each set of cross-references is indexed
 by a Hebrew or Greek Strongs number
@@ -12389,10 +12478,10 @@ Biblical Terms List.</property>
                                                 <child>
                                                   <object class="GtkCheckButton" id="c_strongsInclNames">
                                                     <property name="label" translatable="yes">Include Proper Nouns</property>
-                                                    <property name="visible">True</property>
                                                     <property name="sensitive">False</property>
                                                     <property name="can-focus">True</property>
                                                     <property name="receives-default">False</property>
+                                                    <property name="no-show-all">True</property>
                                                     <property name="tooltip-text" translatable="yes">For the sake of being more concise, and not
 cluttering the index and cross-references with
 too much detail, you may choose to exclude 
@@ -12651,7 +12740,6 @@ of the page. </property>
                                       <object class="GtkLabel" id="lb_extXRsource">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
-                                        <property name="margin-top">6</property>
                                         <property name="label" translatable="yes">Source for References</property>
                                         <attributes>
                                           <attribute name="weight" value="bold"/>
@@ -12671,6 +12759,7 @@ of the page. </property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="margin-top">6</property>
+                                    <property name="margin-bottom">6</property>
                                     <child>
                                       <!-- n-columns=5 n-rows=3 -->
                                       <object class="GtkGrid" id="gr_xrRuleSettings">
@@ -13016,7 +13105,6 @@ and Parameters:</property>
                                       <object class="GtkLabel" id="lb_xrRuleSettings">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
-                                        <property name="margin-bottom">6</property>
                                         <property name="label" translatable="yes">Rule and Space Settings</property>
                                         <attributes>
                                           <attribute name="weight" value="bold"/>

@@ -1809,6 +1809,7 @@ class GtkViewModel(ViewModel):
         self.picListView.modify_font(p)
 
         w = self.builder.get_object("cr_zvar_value")
+        w = self.builder.get_object("cr_strvar_value")
         w.set_property("font-desc", p)
 
     def onRadioChanged(self, btn):
@@ -1917,11 +1918,11 @@ class GtkViewModel(ViewModel):
             dialog = self.builder.get_object("dlg_overlayCredit")
             dialog.set_keep_above(False)
             dialog.hide()
-        elif mkr.startswith("strong-s"):
-            simple = mkr.split("+",1)[1]
-            for a in ("strong-s+", ""):
-                if a+simple in self.styleEditor.allStyles():
-                    mkr = a+simple
+        elif mkr.endswith("strong-s"):
+            simple = mkr.split("+",1)[0]
+            for a in ("+strong-s", ""):
+                if simple+a in self.styleEditor.allStyles():
+                    mkr = simple+a
                     break # skip the next else
             else:
                 mkr = None
@@ -3523,10 +3524,11 @@ class GtkViewModel(ViewModel):
             # self.builder.get_object(w).set_sensitive(xrf or xrl)
             
     def updateColxrefSetting(self, btn):
-        xrf = self.get("c_includeXrefs")
-        xrl = self.get("c_useXrefList")
-        xrc = self.get("r_xrpos") == "centre"
+        xrc = self.get("r_xrpos") == "centre" # i.e. Column Cross-References
         self.builder.get_object("fr_colXrefs").set_sensitive(xrc)
+        if self.get("c_useXrefList"):
+            self.builder.get_object("ex_xrListSettings").set_expanded(True)
+            self.builder.get_object("ex_xrefs").set_expanded(False)
 
     def onGenerateStrongsClicked(self, btn):
         dialog = self.builder.get_object("dlg_strongsGenerate")
@@ -3537,6 +3539,20 @@ class GtkViewModel(ViewModel):
             cols = 2 if self.get("c_strongs2cols") else 1
             bkid = self.get("fcb_strongsNdxBookId") or "XXS"
             self.generateStrongs(bkid=bkid, cols=cols)
+            bl = self.getBooks()
+            self.set("r_book", "multiple")
+            print(f"{bl=}")
+            if bkid not in bl:
+                bls = " ".join(bl)+ " " + bkid
+                self.set('ecb_booklist', bls)
+            if self.get("c_strongsOpenIndex"):
+                fpath = os.path.join(self.settings_dir, self.prjid, self.getBookFilename(bkid))
+                print(f"{fpath=}")
+                if os.path.exists(fpath):
+                    if sys.platform == "win32":
+                        os.startfile(fpath)
+                    elif sys.platform == "linux":
+                        subprocess.call(('xdg-open', fpath))
         if sys.platform == "win32":
             dialog.set_keep_above(False)
         dialog.hide()

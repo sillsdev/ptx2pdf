@@ -361,8 +361,10 @@ ModelMap = {
     "strongsndx/majorlang":     ("fcb_strongsMajorLg", None),
     "strongsndx/nocomments":    ("c_strongsNoComments", None),
     "strongsndx/wildcards":     ("fcb_strongswildcards", None),
+    "strongsndx/raglines":      ("s_strongRag", None),
     "strongsndx/ndxbookid":     ("fcb_strongsNdxBookId", None),
     "strongsndx/twocols":       ("c_strongs2cols", None),
+    "strongsndx/openineditor":  ("c_strongsOpenIndex", None),
 }
 
 Borders = {'c_inclPageBorder':      ('pageborder', 'fancy/pageborderpdf', 'A5 page border.pdf'),
