@@ -888,7 +888,7 @@ download and use in a publication.</property>
     <property name="type-hint">dialog</property>
     <property name="gravity">center</property>
     <property name="program-name">PTXprint</property>
-    <property name="version">Version 2.0.28</property>
+    <property name="version">Version 2.0.27</property>
     <property name="copyright">© 2020-2021, SIL International</property>
     <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
 the User-Interface. The PDFs are produced by enhanced 
@@ -2221,14 +2221,14 @@ saved configuration.</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_diglot">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_grid">
     <property name="visible">True</property>
@@ -2239,27 +2239,27 @@ combination of Crop marks, Guides (margins,
 baselines, etc.) and/or a graph-paper-like Grid
 can be set.</property>
     <property name="icon-name">view-grid-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_spacing">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_top">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_download">
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">software-update-available-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_refresh">
     <property name="visible">True</property>
@@ -2276,7 +2276,7 @@ having to manually re-create all the same
 settings for a similar project.</property>
     <property name="halign">end</property>
     <property name="icon-name">view-grid-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkListStore" id="ls_NoteBlendInto">
     <columns>
@@ -4756,7 +4756,7 @@ information, position and other parameters.</property>
     <data>
       <row>
         <col id="0">index_book_title</col>
-        <col id="1">Strongs Number Index</col>
+        <col id="1">Strong's Number Index</col>
       </row>
       <row>
         <col id="0">hebrew_section_title</col>
@@ -4774,7 +4774,7 @@ information, position and other parameters.</property>
   </object>
   <object class="GtkDialog" id="dlg_strongsGenerate">
     <property name="can-focus">False</property>
-    <property name="title" translatable="yes">PTXprint: Generate Strongs Index...</property>
+    <property name="title" translatable="yes">PTXprint: Generate Strong's Index...</property>
     <property name="resizable">False</property>
     <property name="window-position">center-on-parent</property>
     <property name="icon">Google-Noto-Emoji-Objects-62859-open-book.ico</property>
@@ -4862,7 +4862,7 @@ will be appended to the list of books to be printed.</property>
                     <property name="margin-end">6</property>
                     <property name="margin-top">6</property>
                     <property name="margin-bottom">10</property>
-                    <property name="label" translatable="yes">For Strongs Cross References to be most useful to readers, it is highly recommended to include an Index 
+                    <property name="label" translatable="yes">For Strong's Cross References to be most useful to readers, it is highly recommended to include an Index 
 at the end of the publication. Set appropriate options here to create an Index file (in USFM format).</property>
                   </object>
                   <packing>
@@ -4938,7 +4938,7 @@ at the end of the publication. Set appropriate options here to create an Index f
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="tooltip-text" translatable="yes">Select which components should be included
-in the Strongs index when it is generated.</property>
+in the Strong's index when it is generated.</property>
                         <property name="halign">start</property>
                         <property name="valign">center</property>
                         <property name="label" translatable="yes">Components to Include in Each Index Entry:</property>
@@ -4985,7 +4985,7 @@ listing with numbers)</property>
                     <property name="receives-default">False</property>
                     <property name="tooltip-text" translatable="yes">This (optional) section is intended for readers
 who want to look up a word in their own 
-language to find out the Strongs number.</property>
+language to find out the Strong's number.</property>
                     <property name="halign">start</property>
                     <property name="valign">center</property>
                     <property name="draw-indicator">True</property>
@@ -5316,7 +5316,7 @@ to the term rendering(s).</property>
                     <property name="tooltip-text" translatable="yes">Paratext allows for additional comments or
 notes to be added (in brackets) after term
 renderings. Check this option to prevent 
-these from showing in the Strongs index.</property>
+these from showing in the Strong's index.</property>
                     <property name="halign">start</property>
                     <property name="valign">center</property>
                     <property name="margin-start">20</property>
@@ -5474,11 +5474,11 @@ to be displayed, select an appropriate option.</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="tooltip-text" translatable="yes">Select the temporary book to be used for the 
-generated Strongs Cross Reference Index.
+generated Strong's Cross Reference Index.
 
 By default, an extra book XXS is used to store
 the index. But if you prefer to use one of the
-other standard Paratext bookx XXA...XXG then
+other standard Paratext books XXA...XXG then
 select it here, but be aware that it will overwrite
 whatever is in that book without prior warning.</property>
                         <property name="halign">start</property>
@@ -5498,7 +5498,7 @@ whatever is in that book without prior warning.</property>
                         <property name="can-focus">False</property>
                         <property name="can-default">True</property>
                         <property name="tooltip-text" translatable="yes">Select the temporary book to be used for the 
-generated Strongs Cross Reference Index.
+generated Strong's Cross Reference Index.
 
 By default, an extra book XXS is used to store
 the index. But if you prefer to use one of the
@@ -12407,19 +12407,19 @@ selected cross-references for both NT and OT.</property>
                                             </child>
                                             <child>
                                               <object class="GtkRadioButton" id="r_xrSource_strongs">
-                                                <property name="label" translatable="yes">Strongs List</property>
+                                                <property name="label" translatable="yes">Strong's List</property>
                                                 <property name="visible">True</property>
                                                 <property name="can-focus">True</property>
                                                 <property name="receives-default">False</property>
-                                                <property name="tooltip-text" translatable="yes">The Strongs List contains a curated
+                                                <property name="tooltip-text" translatable="yes">The Strong's List contains a curated
 subset of cross-references generated
-from the Strongs Numbers. Optionally
+from the Strong's Numbers. Optionally
 an index for these numbers can also
 be created as an additional book that
 can be appended to the publication.
 
 Each set of cross-references is indexed
-by a Hebrew or Greek Strongs number
+by a Hebrew or Greek Strong's number
 which can be looked up in the (optional)
 Index which can be generated using the
 "Generate Index..." button.</property>
@@ -12441,7 +12441,7 @@ Index...</property>
                                                 <property name="visible">True</property>
                                                 <property name="can-focus">True</property>
                                                 <property name="receives-default">True</property>
-                                                <property name="tooltip-text" translatable="yes">For Strongs Cross References to be most useful,
+                                                <property name="tooltip-text" translatable="yes">For Strong's Cross References to be most useful,
 it is recommended to include an Index at the
 end of the publication. Click this button to set
 various options to be used to generate the index.</property>
@@ -12468,8 +12468,8 @@ various options to be used to generate the index.</property>
                                                     <property name="visible">True</property>
                                                     <property name="can-focus">True</property>
                                                     <property name="receives-default">False</property>
-                                                    <property name="tooltip-text" translatable="yes">Restrict Strongs references to those 
-with localised renderings in Paratext's
+                                                    <property name="tooltip-text" translatable="yes">Restrict Strong's references to those 
+with localized renderings in Paratext's
 Biblical Terms List.</property>
                                                     <property name="halign">start</property>
                                                     <property name="valign">center</property>
@@ -13327,7 +13327,7 @@ or type in a keyword with additional adornments as needed.
 For example:
 \bookalt\ \rangeref   uses the book name from the \h1 alt book header
 [\pagenumber]    places square brackets around the page number
-DRAFT\ \isodate\ \hrsmins    gives "DRAFT YYYY-MM-YY HH:MM"
+DRAFT\ \isodate\ \hrsmins    gives "DRAFT YYYY-MM-DD HH:MM"
 -empty-     places nothing in that location
 
 Note that a space and the following certain special 
@@ -22168,7 +22168,8 @@ the style of leader you wish to apply.</property>
                       <object class="GtkBox">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
-                        <property name="spacing">12</property>
+                        <property name="margin-start">12</property>
+                        <property name="spacing">18</property>
                         <child>
                           <object class="GtkCheckButton" id="c_frontmatter">
                             <property name="label" translatable="yes">Front Matter</property>
@@ -22195,10 +22196,6 @@ Front Matter</property>
                             <property name="receives-default">True</property>
                             <property name="halign">center</property>
                             <property name="valign">center</property>
-                            <property name="margin-left">3</property>
-                            <property name="margin-right">3</property>
-                            <property name="margin-start">3</property>
-                            <property name="margin-end">3</property>
                             <signal name="clicked" handler="editFrontMatterClicked" swapped="no"/>
                           </object>
                           <packing>
@@ -22220,7 +22217,6 @@ on a new page.</property>
                             <property name="halign">start</property>
                             <property name="valign">center</property>
                             <property name="margin-left">6</property>
-                            <property name="margin-start">6</property>
                             <property name="active">True</property>
                             <property name="draw-indicator">True</property>
                           </object>
@@ -22232,7 +22228,8 @@ on a new page.</property>
                         </child>
                         <child>
                           <object class="GtkCheckButton" id="c_periphSuppressPage">
-                            <property name="label" translatable="yes">Suppress Blank Page</property>
+                            <property name="label" translatable="yes">Suppress Blank Page
+Before Scripture Text</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">False</property>
@@ -22245,7 +22242,6 @@ after any front matter material).</property>
                             <property name="halign">start</property>
                             <property name="valign">center</property>
                             <property name="margin-left">6</property>
-                            <property name="margin-start">6</property>
                             <property name="draw-indicator">True</property>
                           </object>
                           <packing>

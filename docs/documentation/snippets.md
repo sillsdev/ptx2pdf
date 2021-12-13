@@ -207,10 +207,10 @@ insert pictures through the specified changes, then this trick is useful.
 at EPH 6:13 "(armed soldier.)" > '\1\\fig Soldier with armour|alt="Map Creator soldier with armour" src="ESG Armor of God(v2).png" size="col" ref="6:14-18"\\fig*'
 ```
 
-## Add an alphabetic section header to Strongs reversal index
+## Add an alphabetic section header to Strong's reversal index
 
 Just for the XXS book, insert the first letter of each section of verncular renderings
-before the block of renderings with their Strongs H and G numbers.
+before the block of renderings with their Strong's H and G numbers.
 
 ```perl
 at XXS "(\\m ?\r?\n(.))" > "\\s - \2 -\n\1"

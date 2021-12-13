@@ -8,7 +8,7 @@ Bug fixes and improvements in 2.0.28 (13 Dec 2021)
 NOTE: Underlying code libraries were recently upgraded, so there is a new look and feel
       to PTXprint on Windows. Report any regressions you find as a result of this upgrade.
 
-  * Various improvements to Strongs index UI and file creation (XXS book is default
+  * Various improvements to Strong's index UI and file creation (XXS book is default
     (book for index, ragged column option, variables set within same dialog, option
      to open index after creation, index automatically gets added to booklist)
   
@@ -62,7 +62,7 @@ Bug fixes and improvements in 2.0.20 (7 Dec 2021)
   
   * Fix styleditor to not show standalones and fix up naming in the tree view
   
-  * Add smarter links to style editor for Strongs dialog
+  * Add smarter links to style editor for Strong's dialog
   
   * Remove leaking space in RTL page layout
   
@@ -70,8 +70,8 @@ Bug fixes and improvements in 2.0.20 (7 Dec 2021)
   
 Bug fixes and improvements in 2.0.17 (4 Dec 2021)
 
-  * Added Strongs Numbers cross-reference system along with a powerful, configurable
-    localized Strongs Index generator - hiding under 'External Cross-reference Settings'
+  * Added Strong's Numbers cross-reference system along with a powerful, configurable
+    localized Strong's Index generator - hiding under 'External Cross-reference Settings'
     tab of the Notes+Refs page. It generates an XXA/B.../G file to be included in booklist.
 
   * Added configuration-specific PrintDraftChanges (changes.txt is now for config-specific 

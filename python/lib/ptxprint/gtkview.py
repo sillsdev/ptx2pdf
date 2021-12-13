@@ -3550,7 +3550,7 @@ class GtkViewModel(ViewModel):
             if bkid not in bl:
                 bls = " ".join(bl)+ " " + bkid
                 self.set('ecb_booklist', bls)
-            self.set("l_statusLine", _("Strongs Index generated in: {}").format(bkid))
+            self.set("l_statusLine", _("Strong's Index generated in: {}").format(bkid))
             if self.get("c_strongsOpenIndex"):
                 fpath = os.path.join(self.settings_dir, self.prjid, self.getBookFilename(bkid))
                 if os.path.exists(fpath):

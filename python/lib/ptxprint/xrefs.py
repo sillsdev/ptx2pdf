@@ -262,7 +262,7 @@ def generateStrongsIndex(bkid, cols, outfile, localfile, onlylocal, ptsettings, 
         _readTermRenderings(localfile, strongs, revwds, btmap, 'local')
     title = view.getvar("index_book_title", dest="strongs") or "Strong's Index"
     with open(outfile, "w", encoding="utf-8") as outf:
-        outf.write("\\id {0} Strongs based terms index\n\\h {1}\n\\NoXrefNotes\n\\strong-s\\*\n\\mt1 {1}\n".format(bkid, title))
+        outf.write("\\id {0} Strong's based terms index\n\\h {1}\n\\NoXrefNotes\n\\strong-s\\*\n\\mt1 {1}\n".format(bkid, title))
         outf.write("\\onebody\n" if cols == 1 else "\\twobody\n")
         rag = view.get("s_strongRag", 0)
         if rag is not None and int(rag) > 0:
