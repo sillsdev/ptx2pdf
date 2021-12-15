@@ -87,7 +87,7 @@ precedence over the milestone, any font-styling applied by the mid-milestone
 "A whole uncheced paragraph" is original text.
 
 This could be solved by:
-1. Stacking (```\Marker sts+ip```)
+1. Stacking (```\Marker sts-s+ip```)
 2. Some additional clue or category being given to the code so that some
 milestones always 'float' to the top of the stack (```\sts```) while others 
 (```\qt```) remain in their normal position.  
