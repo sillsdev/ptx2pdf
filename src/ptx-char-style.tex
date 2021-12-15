@@ -246,11 +246,11 @@
   \trace{s}{setwh@tvrstyle: \mcstack}%
    \def\thiswh@tvrstyle{p}%Default value just in case
    \ifx\mcstack\mcstack@mpty\else
-     \def\d@##1+##2+##3\E{\d@code{##1}{##2}\let\thiswh@tvrstyle\tmp}\mctop
+     %\def\d@##1+##2+##3\E{\d@code{##1}{##2}\let\thiswh@tvrstyle\tmp}\mctop
    \fi
    \let\styst@k=\empty
    \s@tstyst@k%
-   \s@tfont{\thiswh@tvrstyle}{\styst@k}% set up font attributes
+   \s@tfont{\styst@kfirst}{\styst@k}% set up font attributes
 }
 %-cchar_endcharstyle
 %+cchar_endallcharstyles
@@ -331,7 +331,7 @@
  \else
    \x@\stystacksplit#2+\E
    \ifx\r@qmkr\tmpstyst@kfirst\else
-     \r@qstyst@k{\r@qmkr+\r@qstyst@k}%
+     \edef\r@qstyst@k{\r@qmkr+\r@qstyst@k}%
      \trace{F}{Fixed broken stystak}%
    \fi
  \fi 
