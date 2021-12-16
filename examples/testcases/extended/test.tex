@@ -24,6 +24,7 @@
 \tracing{sko}
 %\tracingmacros=1
 %\tracingassigns=1
+%\tracingoutput=1
 \categorysheet{mycats.sty}
 %\unbalancedfalse
 \unbalancedtrue
@@ -47,6 +48,7 @@
 %\sethook{after}{m}{\kern .5pt \hrule width 10em height .2pt \kern 1pt \hrule width 10em height .2pt}
 %\sethook{start}{m}{\beginadd\beginadd}
 %\sethook{end}{m}{\endadd\endadd}
+\sethook{start}{cat:testpar|cat}{\tracingparagraphs=1}
 \sethook{before}{add}{|}
 \sethook{after}{add}{|}
 \sethook{start}{add}{\beginadd}

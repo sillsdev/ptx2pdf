@@ -1,5 +1,6 @@
 
 # Application of styling in complex situations
+
 Consider this example piece of USFM:
 ```
 \s The Angel of the \nd Lord\nd* talks to Joshua
@@ -8,13 +9,77 @@ Consider this example piece of USFM:
 ```
 
 Styling of items such as `\p` and ```\nd``` are relatively simple matters, and are controlled easily via the 
-ptxprint user interface. However, there are several more complex cases, some of which may be caused by 
-practical compromises. For example if the alphabet has unusual characters, there may not (yet) be a 
-font that includes all letters, exists in bold and has the small-caps feature. 
-It may thus be necessary to select an alternative font for `\nd` in section
-headings. This document attempts to address such issues.
+ptxprint user interface. However, there are several more complex cases, some of
+which may be made necessary by practical compromises. For example if the
+alphabet has unusual characters, there may not (yet) be a font that includes
+all letters, exists in bold *and* has the small-caps feature.  It may thus be
+necessary to select an alternative font for `\nd` in section headings. This
+document attempts to address such issues. The reader is assumed to be familiar
+with the sylesheeet format. For most of the examples only the 1st line of the
+stylesheet are given.
 
-## Styling of ranged milestones
+
+### A brief introduction to the style stack. 
+The XeTeX code has a concept of a 'style stack', a pile of  styles that are active at any moment in time. Consider this fragment:
+```tex
+\p
+\v 1 The Angel of the \nd Lord\nd* said, <<\qt-s|Angel\*Thus says the \nd Lord\nd* ...
+```
+
+As processing moves through the text above, the stack takes the following values, `+` can be read as "added to"
+1. `p`
+2. `v + p`
+3. `p`
+4. `nd + p`
+5. `p`
+6. `Angel|qt-s + p`
+7. `nd + Angel|qt-s + p`
+8. `Angel|qt-s + p`
+
+Normally, the styling is additive, that is to say if the style stack is `v + p`
+then the styling from `\v` is added to (or supersedes)  the styling for `\p`,
+and so if, for instance `\v` specifies that verse numbers will be green, then
+they will also be green in a letter 'words of Jesus' section.
+ 
+Occasionally it is useful to specify a particular styling for not just the
+very top stack entry, but the top two (in the given sample, for example, an `\nd` inside 
+the `\qt-s`), or even the entire style stack.  This is possible using the
+method below.
+
+## Style-stack based styling
+
+* `\Marker nd+s1` 
+A special style for character style `\nd` when in an `\s1`  paragraph.
+
+* `\Marker Angels|qt-s+q1` 
+Specify the styling for poetic (`\q1`) angel voices. If the paragraph starts
+inside the milestone's range, then both paragraph styling and character styling can
+be specified. Otherwise, just the character styling will be affected.
+I.e. this can affect both this (as a character style):
+```
+\q1 The Angels sang <<\qt-s|Angels\*Glory\qt-e\*>>
+```
+and the `\q1` line of this this (as a paragraph style):
+```
+\qt-s|Angel\*
+\q1 Glory to God in the Highest
+\q2 And peace on Earth to mankind
+\qt-e\*
+```
+
+* `\Marker nd+Angel|qt-s+p` 
+Special styling for when an angel says the name of the LORD, in a standard `\p`-type  paragraph.
+
+* `\Marker cat:special|p` Styling for a special type of paragraph:
+`\p\cat special\cat* `
+
+
+* `\Marker cat:special|Jim|qt-s+p` Extra special styling for 'THIS BIT' in the example below:
+```\p\cat special\cat* Jim said <<\qt-s|Jim\*THIS BIT\qt-e\*>>```
+
+
+
+## Styling of ranged milestones with and without attributes
 Milestones such as `\qt-s \* ... \qt-e \*` define a range of text that cuts
 across normal boundaries of paragraphs or character styles. Attributes of milestones
 are not normally used for *content*, but can be used to define a styling.
@@ -37,6 +102,7 @@ With the above custom stylesheet then:
 may be given in the `ptxprint-mods.tex` file. Note that this affects all milestones.
 
 ## Styling of character styles with attributes
+
 Attributes of character styles may contain content (e.g. a gloss for `\rb`, captions for images), or
 non-content information such as a hyperlink (e.g. ```\w disciple|link-href="#disciple"\w*```). It might seem desirable to style `\w` differently 
 depending on whether there is a link associated with it or not, but *by the time that is known* the styling has already been 
@@ -75,25 +141,3 @@ The PDF reference, third edition describes the following options:
 
 Note that the last two of these do not seem very widely supported, and that 
 combinations of the above (e.g. dashed underline) are not possible.
-
-## A brief introduction to the style stack. 
-The XeTeX code has a concept of a 'style stack', a pile of  styles that may are active at any moment in time.
-
-As processing moves through the text above, the stack takes the following values, `+` can be read as "added to"
-1. `p`
-2. `v + p`
-3. `p`
-4. `nd + p`
-5. `p`
-6. `Angel|qt-s + p`
-7. `nd + Angel|qt-s + p`
-8. `Angel|qt-s + p`
-
-Occaisionally it is useful to specify a particular styling for not just the very top stack entry, but 
-the top two (in the given example, an `\nd` following the `\qt-s`), or even the entire style stack.
-This is possible using the method below.
-
-
-###
-
-

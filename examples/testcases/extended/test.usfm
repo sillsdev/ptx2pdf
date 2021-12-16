@@ -123,8 +123,10 @@ formatting.
 \v 15
 This is a p paragraph of category "\showTheCategory" and is testing the appropriate
 formatting.
-\q3\cat testpar\cat*
-\v 16 This is a q // to see what we can do
+\q1\cat testpar\cat*
+\v 16 This is a first q // to see what we can 
+
+\q2\cat testpar\cat*  And this is a q2 // to see if we're all spam
 
 \m The end. Back to '\showTheCategory'
 

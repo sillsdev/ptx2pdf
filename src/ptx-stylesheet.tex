@@ -113,6 +113,7 @@
 \def \SpaceAfter     #1\relax{\defp@ram{spaceafter}{#1}}
 \let \Spaceafter\SpaceAfter
 \def \Justification  #1\relax{\lowercase{\defp@ram{justification}{#1}}}
+\def \NonJustifiedFill #1\relax{\defp@ram{glue}{#1}} % ptx2pdf extension, glue portion of leftskip/rightskip (as fraction of hsize)
 \def \CallerStyle    #1\relax{\defp@ram{callerstyle}{#1}} % ptx2pdf extension
 \def \CallerRaise    #1\relax{\defp@ram{callerraise}{#1}}
 \def \NoteCallerStyle    #1\relax{\defp@ram{notecallerstyle}{#1}} % ptx2pdf extension
@@ -1559,7 +1560,7 @@
 \catcode`\/=\active
 \def/{\futurelet\n@xt\sl@sh}
 \def\sl@sh{\ifx\n@xt/\let\n@xt\sl@shbreak\else\let\n@xt\sl@shprint\fi\n@xt}
-\def\sl@shbreak/{\unskip\penalty-250{} \ignorespaces}
+\def\sl@shbreak/{\linepenalty=100\unskip\penalty-100{} \ignorespaces}
 \def\sl@shprint{\char`\/}
 \catcode`\/=12
 %-csty_slash

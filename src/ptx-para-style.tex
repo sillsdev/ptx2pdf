@@ -340,15 +340,21 @@
 }
 
 \def\s@tsideskips#1{%
+   \getp@ram{glue}{#1}{\styst@k}%
+   \ifx\p@ram\relax
+     \def\gl@e{0.25\hsize}%
+   \else
+     \edef\gl@e{\p@ram\noexpand\hsize}%
+   \fi
    \ifRTL \rightskip\else\leftskip\fi =0pt
-   \ifRTL \beginR \leftskip\else\rightskip\fi =0pt \ifJustifyPars\else plus .25\hsize\fi
+   \ifRTL \beginR \leftskip\else\rightskip\fi =0pt \ifJustifyPars\else plus \gl@e\fi
    \getp@ram{justification}{#1}{\styst@k}%
    \ifx\p@ram\c@nter
     \leftskip=0pt plus \hsize \rightskip=\leftskip \parfillskip=0pt
    \else\ifx\p@ram\l@ft
-    \ifRTL\leftskip\else\rightskip\fi=0pt plus .25\hsize \ifRTL\parfillskip=0pt\fi
+    \ifRTL\leftskip\else\rightskip\fi=0pt plus \gl@e \ifRTL\parfillskip=0pt\fi
    \else\ifx\p@ram\r@ght
-    \ifRTL\rightskip\else\leftskip\fi=0pt plus .25\hsize \ifRTL\else\parfillskip=0pt\fi
+    \ifRTL\rightskip\else\leftskip\fi=0pt plus \gl@e \ifRTL\else\parfillskip=0pt\fi
    \fi\fi\fi
    \getp@ram{leftmargin}{#1}{\styst@k}%
    \ifx\p@ram\relax \else \advance \ifRTL\rightskip\else\leftskip\fi\p@ram \IndentUnit \fi
