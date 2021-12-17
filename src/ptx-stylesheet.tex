@@ -194,18 +194,20 @@
       \ifx\t@mp\thisattrmil@stone % Need to match on unattributed milestone too.
         \ifx\mini@stackB\empty\let\mini@stackB\mini@stack\fi
         \trace{sko}{Adding \thismil@stone\space to possible params}%
-        \edef\mini@stackB{\mini@stack+\thismil@stone}%
+        \edef\mini@stackB{\mini@stackB+\thismil@stone}%
+      \else
+        \edef\mini@stackB{\mini@stackB+#1}%
       \fi
     \fi
   \fi
   \edef\mini@stack{\mini@stack+#1}%
-  \trace{sko}{'#1' -> \mini@stack}%
-  \xdef\@ut{\mini@stack,\@ut}%
+  \trace{sko}{'#1' -> \mini@stack\space(\mini@stackB)}%
   \ifx\mini@stackB\empty\else
     \xdef\@ut{\mini@stackB,\@ut}%
   \fi
+  \xdef\@ut{\mini@stack,\@ut}%
   \edef\t@mp{#2}\advance\count255 by -1 
-  \ifx\t@mp\empty\count255=0 \relax\fi
+  \ifx\t@mp\empty\count255=-1 \relax\fi %signal end of list before (or at) truncation point.
   \trace{sko}{'#2',\the\count255---> \@ut}%
   \ifnum\count255>0 \x@\stystack@pts#2\E\fi
 }
@@ -256,8 +258,8 @@
       \x@\stystack@pts\tmpstyst@kbody+\E%
       \let\@in\@ut
       \let\@ut\empty
-      \ifnum\count255>0
-        \edef\@in{+\tmpstyst@kbody,\@in}%  still allow full-stack definitions, even if the list is truncated
+      \ifnum\count255<0\else
+        \edef\@in{+\tmpstyst@kbody,\@in}%  still allow full-stack definitions, even if the list is normally truncated
       \fi
       %\tracingmacros=1
       %\tracingassigns=1
