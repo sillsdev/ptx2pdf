@@ -1124,7 +1124,7 @@
     
 \def\rebuild@mcstack#1{\trace{s}{rebuild@mcstack '#1' (on \mcstack)}\ifx\mcstack\empty\let\mcstack\mcstack@mpty\fi\edef\r@mclist{#1}\ifx\r@mclist\empty\else\let\d@=\mcpushE\x@\cstackup\r@mclist\E\fi\s@tstyst@k}
 \def\doB@pop@nonms#1+#2+#3\E{\if #1m\xdef\msst@ck{#1+#2,\msst@ck}\else\global\temptrue\fi}% For mcstackdown. Push milestones onto msst@ck. lose the 1st non-ms
-\def\doB@save@ms#1+#2+#3\E{\trace{s}{[#1+#2+#3] (\msst@ck)}\if #1\relax\relax\xdef\inst@ck{\inst@ck\mcstack@mpty}\temptrue\else\if #1m\relax\xdef\msst@ck{\msst@ck#1+#2,}\else\xdef\inst@ck{\inst@ck#1+#2,}\global\temptrue\fi\fi}% For mcstackdown. Push milestones onto msstack. bail out on 1st non-ms, saving it.
+\def\doB@save@ms#1+#2+#3\E{\trace{s}{[#1+#2+#3] (\msst@ck)}\if #1\relax\relax\xdef\inst@ck{\inst@ck\mcstack@mpty}\temptrue\else\if #1m\relax\xdef\msst@ck{#1+#2,\msst@ck}\else\xdef\inst@ck{\inst@ck#1+#2,}\global\temptrue\fi\fi}% For mcstackdown. Push milestones onto msstack. bail out on 1st non-ms, saving it.
 
 \def\mcpop{\traceNum{s}{mcpop stack: '\mcstack'}\global\tempfalse\xdef\inst@ck{}\xdef\msst@ck{}% Pop the first non-milestone
     \let\d@b=\doB@pop@nonms

@@ -42,6 +42,11 @@ dignissimos ducimus\w qui|a\w*blanditiis praesentium voluptatum deleniti atque c
 \v 6 Maybe this is disputed text or something \zmine-e\* but this isn't
 \v 7 And then \zmine-s\* another bit of disputed text\zmine-e\*
 
+
+\ts-s|zwho="Alice"\*
+\p Jesus said, <<\qt-s|Jesus\* It is written, \+bd <You shall not put the \+nd Lord\+nd*... \+bd* \qt-e\*
+
+
 \c 3
 \p
 \v  1 There was a man of the Pharisees, named Nicodemus, a ruler of the Jews:
@@ -49,7 +54,7 @@ dignissimos ducimus\w qui|a\w*blanditiis praesentium voluptatum deleniti atque c
 thou art a teacher come from God: for no man can do these miracles that thou
 doest, except God be with him.
 \p
-\v  3 Jesus answered and said unto him, \qt-s|Jesus\* Verily, verily, I say unto thee, Except a
+\v  3 Jesus answered and said unto him, \qt-s|Jesus\* \+bd Verily, verily,\+bd* I say unto thee, Except a
 man be born again, he cannot see the kingdom of God.\qt-e\*
 \v  4 Nicodemus saith unto him, How can a man be born when he is old? can he
 enter the second time into his mother's womb, and be born?
@@ -66,3 +71,4 @@ born of the Spirit.\qt-e\*
 \p
 \v  9 Nicodemus answered and said unto him, How can these things be?
 
+\ts-e\*
