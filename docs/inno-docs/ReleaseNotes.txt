@@ -1,12 +1,16 @@
 PTXprint 2.0.28 Release Notes 
-13 December 2021
+15 December 2021
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 
-Bug fixes and improvements in 2.0.28 (13 Dec 2021)
+Bug fixes and improvements in 2.0.29 (15 Dec 2021)
 
 NOTE: Underlying code libraries were recently upgraded, so there is a new look and feel
       to PTXprint on Windows. Report any regressions you find as a result of this upgrade.
+
+  * Override styles for \nd and \pn to NOT use underlining (which is the setting in usfm.sty)
+
+Bug fixes and improvements in 2.0.28 (13 Dec 2021)
 
   * Various improvements to Strong's index UI and file creation (XXS book is default
     (book for index, ragged column option, variables set within same dialog, option
@@ -14,7 +18,7 @@ NOTE: Underlying code libraries were recently upgraded, so there is a new look a
   
   * Fixed column-balancing algorithm to better handle rounding errors of height calcs
   
-  * Peripherals page tidied up
+  * Peripherals page tidied up so that variables can be edited aside from front matter
   
   * Fix not multi editing the same settings file
   

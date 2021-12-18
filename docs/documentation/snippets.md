@@ -224,3 +224,12 @@ The default underline parameters might need to be tweaked based on the script, f
 \Marker pn\relax\Underline \relax
 \def\UnderlineLower{-0.1em}\def\UnderlineThickness{0.05em}
 ```
+
+## Exclude certain chapters from being printed
+
+Many teams translate some of the Psalms and want to print them out without all the intermediate
+Psalms (which may be drafted but unchecked). This snippet allows for specified chapters to be dropped.
+
+```perl
+at PSA "(?s)\\c (3|5|9|24|119|142)[ \r\n].+?(?=\\c)" > ""
+```
