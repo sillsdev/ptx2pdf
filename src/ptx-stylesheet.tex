@@ -1562,7 +1562,8 @@
 \catcode`\/=\active
 \def/{\futurelet\n@xt\sl@sh}
 \def\sl@sh{\ifx\n@xt/\let\n@xt\sl@shbreak\else\let\n@xt\sl@shprint\fi\n@xt}
-\def\sl@shbreak/{\linepenalty=100\unskip\penalty-100{} \ignorespaces}
+\def\OptionalBreakPenalty{300}
+\def\sl@shbreak/{\linepenalty=\OptionalBreakPenalty\unskip\penalty-\OptionalBreakPenalty{} \ignorespaces}
 \def\sl@shprint{\char`\/}
 \catcode`\/=12
 %-csty_slash

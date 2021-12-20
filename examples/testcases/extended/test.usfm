@@ -123,10 +123,24 @@ formatting.
 \v 15
 This is a p paragraph of category "\showTheCategory" and is testing the appropriate
 formatting.
-\q1\cat testpar\cat*
-\v 16 This is a first q // to see what we can 
-
-\q2\cat testpar\cat*  And this is a q2 // to see if we're all spam
-
 \m The end. Back to '\showTheCategory'
+
+\s Poetic line-breaks
+\p The following lines show the effect of altering the NonJustifiedFill parameter:
+\m\bd Normal (0.25)\bd*
+
+\m|\hfill\hfill\hfill|\hfill|
+\q1
+\v 16 This is a first q // to see what we can 
+\q1
+\v 17 This is a first q // to see what we can do
+
+\m\bd More generous (0.5)\bd*
+\m|\hfill <-- 0.5 -->\hfill|\hfill <-- 0.5 -->\hfill|
+\q1 \cat 0.5w\cat*
+\v 18 This is a first q // to see what we can
+\q1 \cat 0.5w\cat*
+\v 19 This is a first q // to see what we can do
+
+
 
