@@ -159,7 +159,7 @@
 
 % define \headline for use by the output routine
 \headline={\hbox to \textwidth{%
- \s@tfont{h}%
+ \s@tfont{h}{h}%
  \ifm@rksonpage\trace{H}{marks on page pfm:\p@gefirstmark}\else\trace{H}{No marks on page. old pfm:\p@gefirstmark}\gdef\p@gefirstmark{}\fi
  \edef\t@st{\p@gefirstmark}% check first mark on page to see if this is a "title" page
  \global\rhr@letrue
@@ -239,7 +239,7 @@
 
 % \footline is similar except it doesn't have to place a border graphic
 \footline={{%
- \s@tfont{h}%
+ \s@tfont{h}{h}%
  \edef\t@st{\p@gefirstmark}% check first mark on page to see if this is a "title" page
  \trace{h}{page \the\pageno, first mark=\t@st}%
  \ifnum\ifx\t@st\empty\ifp@geone 0\else 1\fi\else 0\fi =1
@@ -251,10 +251,10 @@
        \ifDoubleSided \the\evenfoot \else \the\oddfoot \fi
  \fi\fi\fi}}
 
-\def\s@treffont{\let\tmp@dstat\c@rrdstat\ifuseRightMarks\setc@rdstat{R}\else\setc@rdstat{L}\fi\s@tfont{h}\setc@rdstat{\tmp@dstat}}
+\def\s@treffont{\let\tmp@dstat\c@rrdstat\ifuseRightMarks\setc@rdstat{R}\else\setc@rdstat{L}\fi\s@tfont{h}{h}\setc@rdstat{\tmp@dstat}}
 \def\headfootL#1{\headfoot L{#1}}
 \def\headfootR#1{\headfoot R{#1}}
-\def\headfoot#1#2{\bgroup\let\tmp@dstat\c@rrdstat\setc@rdstat{#1}\x@\the\csname diglot#1ho@ks\endcsname\ifRTL\beginR\fi\s@tfont{h}#2\ifRTL\endR\fi\setc@rdstat{\tmp@dstat}\egroup}
+\def\headfoot#1#2{\bgroup\let\tmp@dstat\c@rrdstat\setc@rdstat{#1}\x@\the\csname diglot#1ho@ks\endcsname\ifRTL\beginR\fi\s@tfont{h}{h}#2\ifRTL\endR\fi\setc@rdstat{\tmp@dstat}\egroup}
 
 %
 % user-level macros for use within the running header

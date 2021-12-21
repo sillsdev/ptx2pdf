@@ -501,7 +501,7 @@
   \global\let\tri@lfirstmarks\empty
   \extr@contentfalse
   \let\after@run@a@trial=\relax
-  \s@tbaseline{p}%
+  \s@tbaseline{p}{p}%
   \trace{D}{baseline: \the\baselineskip, av:\the\availht}%
   \ifdim\availht>\baselineskip
     \trace{D}{Preparing for trial}%
@@ -950,6 +950,7 @@
   \ifx\last@popped@parstyle\relax\else
     \x@\let\csname m@rker\c@rrdstat\endcsname\last@popped@parstyle %save the old (paragraph-style) marker 
   \fi
+  \x@\global\x@\let\csname mcstack\c@rrdstat\endcsname\mcstack %save the current (stack) 
   \trace{d}{pr@sideswitch #1 (\c@rrdstat) pL:\the\dp\partialL, xL:\the\dp\excessL, pR:\the\dp\partialR, xR\the\dp\excessR, lp:\the\savedpenalty \ifallNeedEmptying\space  allNeedemptying\fi}%
   %\showlists
   %\global\savedpenalty=0 % avoid cross-contamination
@@ -1061,6 +1062,8 @@
 \adjustp@ge=0pt
 \def\m@rkerL{}
 \def\m@rkerR{}
+\let\mcstackL\mcstack@mpty
+\let\mcstackR\mcstack@mpty
 %Diglotstate.
 \def\n@xtdstat{L}%What does the diglotstate become at the next \dgl@tPenColSwap penalty?
 \def\f@lwgdstat{L}%What is the diglotstate of the 'recent contributions'? (i.e. next material to read)
@@ -1137,7 +1140,7 @@
  \trace{D}{he@dingstyle is \ifhe@dingstyle set\else  not set\fi}%
  \trace{D}{he@dings is \ifhe@dings set\else  not set\fi}%
   %\trace{D}{nsp@cebefore is \ifnsp@cebefore set\else  not set\fi}%
- %All sorts of things should follow if m@rker is set properly...
+ %All sorts of things should follow if mcstack is set properly...
  \@setside{#1}%Ought to be needless
  \add@to@digl@tc@ntentlist{#1}%
  \ifcsname c@rrfontsize#1\endcsname
@@ -1148,8 +1151,10 @@
  %\tracingassigns=1
  \x@\global\x@\let\x@\mcstack\csname mcstack\c@rrdstat\endcsname
  \x@\global\x@\let\x@\m@rker\csname m@rker\c@rrdstat\endcsname
- \trace{D}{m@rker set to \m@rker}%
- \xdef\mcstack{P+\m@rker,+,}%
+ \ifx\mcstack\empty\let\mcstack\mcstack@mpty\fi
+ \s@tstyst@k
+ \trace{D}{mcstack set to '\mcstack', styst@k set to '\styst@k', m@rker to '\m@rker'}%
+ \x@\stystacksplit\styst@k+\E
  \x@\let\x@\w@dth\csname column#1width\endcsname
  \global\hsize=\w@dth\relax
  \x@\global\x@\let\x@\ch@pter\csname @ch@pter\g@tdstat\endcsname
@@ -1159,7 +1164,7 @@
  \setLRspecific %ensure that all the units, etc. are correct.
  \trace{D}{Leadingunit: \the\le@dingunit, stylestack:\styst@k, \mcstack}%
  \ifdim\le@dingunit>0pt %
-   \s@tbaseline{p}%
+   \s@tbaseline{p}{p}%
  \fi%
  \ifdim\baselineskip=0pt %
   \message{baseline set to 0pt EEK}%
@@ -1203,7 +1208,7 @@
 %vbox is a \mark. To rejoin boxes on a page accurately we need to preserve
 \global%the depth of the box. We therefore *assume* the box will be joined and if
 %the depth is not recoverable we add a kern to remove the orignial depth.
- \s@tbaseline{p}%
+ \s@tbaseline{p}{p}%
  \trace{D}{makevtop #1, before vtop dp=\the\dp#1, ht=\the\ht#1}%
  \TempDim=\dp#1\relax%
  \ifdim\TempDim>\baselineskip \trace{D}{Looks like this is already a vtop}%
@@ -1252,7 +1257,7 @@
  \ifvoid#1%
    \trace{D}{#1 is void}%
  \else%
-   \s@tbaseline{p}%
+   \s@tbaseline{p}{p}%
    \ifdim\ht#1=0pt
      \unvbox#1
      %\showlists
@@ -2726,6 +2731,7 @@
     \x@\newdim@n\csname #1ht\endcsname
     \x@\xdef\csname at@ndofthispar#1\endcsname{}%
     \x@\xdef\csname m@rker#1\endcsname{}%
+    \x@\xdef\csname mcstack#1\endcsname{\mcstack@mpty}%
     \newsp@cialpen{dgl@tPen#1trialEnd}%
     \empty@cseq{n@xtbot#1mark}% Last X mark in the next chunk 
     \empty@cseq{n@xtfirst#1mark}%First X mark in the next chunk 

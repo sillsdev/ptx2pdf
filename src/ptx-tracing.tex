@@ -55,10 +55,13 @@
 % | pt | Page tabs
 % | P | Piclists
 % | s | stylesheet
+% | spv | stylesheet parameter lookups that return void
 % | ss | style start/stop
 % | sP | Stylesheet everypar/chapter 
 % | sc | Stylesheet category
 % | sC | Stylesheet Cache
+% | sk| Style stacK  and option stack operations
+% | sko |  Style stack option-list building
 % | S | side-dependent swapping 
 % | t | Tables and table of contents
 % | T | Triggers
@@ -75,9 +78,13 @@
 \def\untracing#1{\x@\xdef\csname tr@cemode-#1\endcsname{}}%
 \def\notr@cer#1#2{\relax}%
 \def\tr@cer#1#2{%
-    \let\TRnext=\notr@ceout
-    \x@\ifx\csname tr@cemode-#1\endcsname\y@s \let\TRnext=\tr@ceout\fi
-    \x@\ifx\csname tr@cemode-a\endcsname\y@s \let\TRnext=\tr@ceout\fi
+    \x@\ifx\csname tr@cemode-#1\endcsname\y@s \let\TRnext=\tr@ceout
+    \else
+      \x@\ifx\csname tr@cemode-a\endcsname\y@s \let\TRnext=\tr@ceout
+      \else
+        \let\TRnext=\notr@ceout
+      \fi
+    \fi
     \TRnext{#2}}%
 \def\tr@ceout#1{%
     \immediate\write-1{#1}}%

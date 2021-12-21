@@ -98,7 +98,7 @@
   %  \fi
     \mst@nestylefalse
     \processmil@stone
-  \else{*}
+  \else{*}%
   \fi}% USFM3 'self closing marker' milestone
 
 \let\milestoneOp\empty
@@ -115,11 +115,11 @@
       \st@ndalonemilestone\fi 
     \fi
   \fi
-   \let\milestoneOp\empty
    %\xdef\thisch@rstyle{\mcpeek}%
-   \def\d@##1+##2\E{\def\tmp{##2}\csname d@code-##1\endcsname\edef\thisch@rstyle{\tmp}}\mctop
-   \trace{m}{Milestone style is \thisch@rstyle}%
-   \s@tfont{\thisch@rstyle}% set up font attributes
+   \def\d@##1+##2+##3\E{\d@code{##1}{##2}\edef\thisch@rstyle{\tmp}}\mctop
+   \trace{m}{\if e\milestoneOp After-\fi Milestone style is \thisch@rstyle, stystack is: \styst@k }%
+   \global\let\milestoneOp\empty
+   \s@tfont{\thisch@rstyle}{\styst@k}% set up font attributes
 }
 
 \def\startmst@nestyle{%What actually changes between the beginning of a milestone and the end-marker? Attribute values!
@@ -128,10 +128,10 @@
    \csname init@ttribs\endcsname
 }
 
-\def\dr@pmilest@ne#1+#2\E{% This itterates the stack to kills the TOP matching milestone 
+\def\dr@pmilest@ne#1+#2+#3\E{% This itterates the stack to kills the TOP matching milestone 
   \edef\MSt@mp{#1}%
   \ifx\MSt@mp\empty
-    \let\d@=\cstackrelax %permanent change
+    \let\d@=\cstackrelax %Stop processing (permanent change)
   \else
     \ifx\ss@Mstn\MSt@mp\relax %It's a milestone
       \x@\pars@msid #2;;;\E
@@ -150,9 +150,9 @@
     \ifx\d@\empty
       %Two possible actions here: clear all matching milestones or only the top one.
       %standard is vague about nesting/cancellation. Current implementation 
-      %keeps going down if there's no sid/eid to match.
+      %keeps going down if there's no sid/eid to match. 
       %\ifx\MSch@ckid\empty
-        \let\d@=\dr@pmilest@ne % Keep tracking down.
+        \let\d@=\dr@pmilest@neB % Keep tracking down, to build \@ut, but no more testing.
       %\else
         %\let\d@=\cstackrelax %Top match only.  permanent change
       %\fi
@@ -165,6 +165,18 @@
   \trace{m}{dr@pmilest@ne: \@ut}%
 }
 
+\def\dr@pmilest@neB#1+#2+#3\E{% This itterates the stack to kills the TOP matching milestone 
+  \edef\MSt@mp{#1}%
+  \ifx\MSt@mp\empty
+    \let\d@=\cstackrelax %Stop processing 
+  \else
+    \ifx\@ut\empty \xdef\@ut{#1+#2}\else
+      \xdef\@ut{\@ut,#1+#2}%
+    \fi
+  \fi
+  \trace{m}{dr@pmilest@neB: \@ut}%
+}
+
 \def\dr@pmilestone#1#2{%Kill a milestone that might be burried in the stack, and might be nested.
   \trace{m}{Dropping milestone #1 from \mcstack}% 
   \edef\MSch@cking{#1}%
@@ -173,12 +185,14 @@
   \let\@ut=\empty
   \let\d@=\dr@pmilest@ne
   \mcdown
+  \xdef\mcstack{\mcstack@mpty}%
   \ifx\@ut\empty
-    \xdef\mcstack{\mcstack@mpty}%
+    \s@tstyst@k
   \else
-    \xdef\mcstack{\@ut,\mcstack@mpty}%
+    \rebuild@mcstack{\@ut,}%
+    %\xdef\mcstack{\@ut,\mcstack@mpty}%
   \fi
-  \trace{m}{Stack now: \mcstack}%
+  \trace{m}{Stack now: \mcstack, stystack:\styst@k}%
   \iftemp
     \message{End-milestone of class '\MSch@cking', id '\MSch@ckid' partially matched one or 
       more open milestones, but no match on the id was found, sid and eid must match exactly}%
@@ -188,9 +202,13 @@
 % Operations on the current milestone(s)
 \def\zapres@rved#1{%
     \edef\smst@mp{\zap@space #1 \empty}%
-    \edef\smst@mp{\expandafter\zap@comma \smst@mp,\empty}
-    \edef\smst@mp{\expandafter\zap@plus \smst@mp+\empty}
-}
+    \edef\smst@mp{\expandafter\zap@comma \smst@mp,\empty}%
+    \edef\smst@mp{\expandafter\zap@plus \smst@mp+\empty}%
+} 
+% If there is '\s \qt-s\*' in the input, should the qt-s have effect on the paragraph style? If the boolean is true, 
+% then it does not, and the paragaph starts differently to '\qt-s\* \s'. Note that this does not trigger any extra paragraph break,
+% all it does is ensure that a parargaph waiting to start *is* safely started.
+\newif\ifDefineParBeforeMilestone\DefineParBeforeMilestonetrue 
 \def\st@rtmilestone{%
   % There may multiple milestones of a given type (can't sensibly have both \qt-s |Jesus\* and 
   % \qt-s |Pilate\* active at the same time (except quote in quote), but in some cases it might make sense to do something similar.)
@@ -203,14 +221,16 @@
     \xdef\thisattrmil@stone{\thismil@stone;\smst@mp}%
     \def\smst@mp{with \attrid =\attr@b\space}%
   \fi
-  \mcpush{\ss@Mstn+\thisattrmil@stone}%
+  \ifDefineParBeforeMilestone\leavevmode\fi
+  \mcpush{\ss@Mstn}{\thisattrmil@stone}%
   \trace{m}{Milestone \smst@mp\space stacked, \mcstack}%
   \let\tmp\thisattrmil@stone
   \csname d@code-m\endcsname
   \global\let\thisattrmil@stone\tmp
   \upd@teMsPrefix
   \let\styst@k=\empty
-  \s@tstyst@k{\thismil@stone}%
+  \s@tstyst@k%
+  \@ttrMilestonefalse
   \ifx\thismil@stoneVal\empty\else
     \@ttrMilestonetrue
   \fi
@@ -230,9 +250,9 @@
   \trace{m}{Style stack now: \mcstack}%
   \upd@teMsPrefix
   \cl@singhooks{after}{\thismil@stone}\the\afterh@@ks
-  \let\attr@b\empty\let\attrid\empty
-  \let\thismil@stone\empty
-  \let\thisattrmil@stone\empty
+  \global\let\attr@b\empty\global\let\attrid\empty
+  \global\let\thismil@stone\empty
+  \global\let\thisattrmil@stone\empty
 }
 \def\figmil@stone{zfiga}
 
@@ -280,7 +300,7 @@
   \x@\pars@msid \tmp;;;\E
   \edef\tmp{\ifx\k@yv@al\empty\else\k@yv@al|\fi\MStyp@}%
 }
-\def\mil@st@necheck#1+#2\E{%The milestone has a key value and possibly an ID field. Ignore the id for building the prefix
+\def\mil@st@necheck#1+#2+#3\E{%The milestone has a key value and possibly an ID field. Ignore the id for building the prefix
   \edef\MSt@mp{#1}%
   \ifx\MSt@mp\ss@Mstn
     \x@\pars@msid #2;;;\E
@@ -364,19 +384,19 @@
   \ifx\attr@b\relax \let\al@gn\@lignLeft\else\let\al@gn\attr@b\fi
   \get@ttribute{strong}%
   \trace{m}{Got strongs \attr@b}%
-  \ifx\attr@b\relax \else\edef\tmpz{#1}
+  \ifx\attr@b\relax \else\edef\tmpz{#1}%
     \x@\dostr@ngs\x@{\x@\tmpz\x@}\x@{\x@\al@gn\x@}\attr@b+++\E
   \fi
 }
 \def\dostr@ngs#1#2#3#4#5#6#7\E{%
 % #1 style, #2 align, #3 #4 #5 #6 4 digits, #7 dummy
   \trace{m}{dostr@ngs #1, #2, #3, #4, #5, #6, #7}%
-  \bgroup\s@tfont{#1}%
+  \bgroup\s@tfont{#1}{\styst@k}%
     \setbox0=\hbox{\if #4+\relax #3\else\if #6+\relax #3\else #3#4\fi\fi}%
     \setbox1=\hbox{\if #4+\relax\else\if #5+\relax #4\else\if #6+\relax #4#5\else #5#6\fi\fi\fi}%
     \dimen0=\ifdim\wd0>\wd1 \wd0\else\wd1\fi
     \getp@r@m{raise}{#1}\ifx\p@ram\relax\else\dimen1=\p@ram\trace{m}{raising by \the\dimen1, from \p@ram}\raise\dimen1\fi
-    \vbox{\s@tbaseline{#1}\trace{m}{dostr@ngs #1 baselineskip=\the\baselineskip}%
+    \vbox{\s@tbaseline{#1}{\styst@k}\trace{m}{dostr@ngs #1 baselineskip=\the\baselineskip}%
                           \hbox to \dimen0{\if#2r\relax\hfil\fi\unhbox0\if#2l\relax\hfil\fi}%
                           \hbox to \dimen0{\if#2r\relax\hfil\fi\unhbox1\if#2l\relax\hfil\fi}%
     }\egroup

@@ -148,12 +148,12 @@
     \resetp@rstyle \everypar={}\noindent
     \ifRTL\beginR\fi
     \dimen255=0pt
-    \getp@ram{leftmargin}{tc\the\tablec@l}%
+    \getp@ram{leftmargin}{tc\the\tablec@l}{\styst@k}%
     \ifx\p@ram\relax \else \advance\dimen255 \p@ram\IndentUnit \fi
-    \getp@ram{firstindent}{tc\the\tablec@l}%
+    \getp@ram{firstindent}{tc\the\tablec@l}{\styst@k}%
     \ifx\p@ram\relax \else \advance\dimen255 \p@ram\IndentUnit \fi
     \kern\dimen255
-    \s@tfont{tc\the\tablec@l}%
+    \s@tfont{tc\the\tablec@l}{\styst@k}%
     \global\advance\p@ranesting by 1
     \@celltrue}
 \def\dos@vedm@rk{\the\s@vedm@rks\relax\s@vedm@rks{}}
@@ -162,7 +162,7 @@
   \if@cell
     \unskip
     \end@llpoppedstyles{tc*}%
-    \getp@ram{rightmargin}{tc\the\tablec@l}%
+    \getp@ram{rightmargin}{tc\the\tablec@l}{\styst@k}%
     \ifx\p@ram\relax\else\trace{t}{rightkern(tc\the\tablec@l) \p@ram}\kern\p@ram\IndentUnit\fi
     \egroup
     \setbox0=\vbox{\unvbox\cellb@x \global\setbox\cellb@x=\lastbox}%
@@ -220,11 +220,11 @@
   % (d) distribute this in proportion to the relative exc@ss of each
   \sp@re=0pt \exc@ss=0pt
   \thr@shold=\hsize
-  \getp@ram{leftmargin}{tr}\ifx\p@ram\relax\else\advance\thr@shold by -\p@ram\IndentUnit\fi 
-  \getp@ram{rightmargin}{tr}\ifx\p@ram\relax\else\advance\thr@shold by -\p@ram\IndentUnit\fi 
+  \getp@ram{leftmargin}{tr}{\styst@k}\ifx\p@ram\relax\else\advance\thr@shold by -\p@ram\IndentUnit\fi 
+  \getp@ram{rightmargin}{tr}{\styst@k}\ifx\p@ram\relax\else\advance\thr@shold by -\p@ram\IndentUnit\fi 
   \divide\thr@shold by \maxtablec@l
   \f@reachcol{%
-    \getp@ram{spacebefore}{tc\the\@col}%
+    \getp@ram{spacebefore}{tc\the\@col}{\styst@k}%
     \c@rrentcolwidth=\ifx\p@ram\relax-1sp\else\p@ram\textwidth\divide\c@rrentcolwidth 12\trace{t}{width=\the\c@rrentcolwidth}\fi
     \ifdim\wd\c@rrentcolbox>\thr@shold
       \advance\exc@ss by \wd\c@rrentcolbox \advance\exc@ss by -\thr@shold
@@ -254,9 +254,9 @@
 %  }%
   \f@reachcol{\wr@pcolumn}%
   \dimen0=0pt \dimen1=0pt
-  \getp@ram{leftmargin}{tr}%
+  \getp@ram{leftmargin}{tr}{\styst@k}%
   \ifx\p@ram\relax\else\advance\ifRTL\dimen1\else\dimen0\fi by \p@ram\IndentUnit\fi
-  \getp@ram{rightmargin}{tr}%
+  \getp@ram{rightmargin}{tr}{\styst@k}%
   \ifx\p@ram\relax\else\advance\ifRTL\dimen0\else\dimen1\fi by \p@ram\IndentUnit\fi
   \f@reachrow{%
     \trace{t}{outputting table (\the\tabler@ws, \the\linec@unt)}%
@@ -305,11 +305,11 @@
   \setbox0=\vbox{\hsize=\c@rrentcolwidth
     \everypar={}\resetp@rstyle\noindent
     \ifRTL\beginR\fi
-    \getp@ram{leftmargin}{tc\the\@col}%
+    \getp@ram{leftmargin}{tc\the\@col}{\styst@k}%
     \ifx\p@ram\relax \else \advance \ifRTL\rightskip\else\leftskip\fi\p@ram \IndentUnit\fi
-    \getp@ram{firstindent}{tc\the\@col}%
+    \getp@ram{firstindent}{tc\the\@col}{\styst@k}%
     \ifx\p@ram\relax \else \kern \p@ram\IndentUnit\fi
-    \getp@ram{rightmargin}{tc\the\@col}%
+    \getp@ram{rightmargin}{tc\the\@col}{\styst@k}%
     \ifx\p@ram\relax \else \advance \ifRTL\leftskip\else\rightskip\fi\p@ram \IndentUnit\fi
     \x@\let\x@\the@lign\csname align-\the\@row-\the\@col\endcsname
     \ifx\the@lign\cell@r
@@ -348,7 +348,7 @@
 
 \newif\ifh@lfrow
 \def\getnth@line{% return content of line nth@line from box \c@rrentcell
-  \getp@ram{verticalalign}{tc\the\@col}%
+  \getp@ram{verticalalign}{tc\the\@col}{\styst@k}%
   \ifx\p@ram\relax\let\p@ram\@lignTop\fi
   \lct@mp=0
   \h@lfrowfalse
