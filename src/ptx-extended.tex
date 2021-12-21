@@ -745,6 +745,8 @@
   \x@\newb@x\csname #1\endcsname
 }
 \x@\def\csname d@code-t\endcsname{\edef\tmp{cat:\tmp}}
+%\x@\def\csname d@code-T\endcsname{\edef\tmp{cat:\tmp}}
+\x@\def\csname d@code-T\endcsname{\let\tmp\h@phen} % a paragraph-catergory does not altering the stystak
 
 \def\Override{\m@kedigitsother}
 \def\EndOverride{\m@kedigitsletters}

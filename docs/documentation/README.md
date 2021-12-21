@@ -42,7 +42,6 @@ Text in ```gray``` represents the portion of the setup parameter syntax which ca
 
 ## <a name="TOC-Paratext-Stylesheet">Paratext Stylesheet</a>
 
-<a name="TOC-Paratext-Stylesheet">
 
 *   \stylesheet{```usfm.sty```} – Define the Paratext stylesheet to be used as a basis for formatting (default=usfm.sty)
 
@@ -51,13 +50,8 @@ For example:
 
 *   \stylesheet{```mods.sty```}
 
-In the file ```mods.sty```, add standard Paratext marker style definition parameters to override the default stylesheet definitions provided through \stylesheet{...} (above). Note that the first stylesheet is only loaded if it is used. Also, you cannot change fonts in subsequent stylesheets. Fonts are only loaded once at the beginning of the process.
+In the file ```mods.sty```, add standard Paratext marker style definition parameters to override the default stylesheet definitions provided through \stylesheet{...} (above). 
 
-</a>
-
-<div style="border-width:1px"><a name="TOC-Paratext-Stylesheet"></a>
-
-<div><a name="TOC-Paratext-Stylesheet">
 
 ```
 \Marker s1
@@ -67,11 +61,10 @@ In the file ```mods.sty```, add standard Paratext marker style definition parame
 \Justification Left
 ```
 
+## <a name="TOC-Page-Setup">Page Setup</a>
 
-## <a name="TOC-Paratext-Stylesheet"></a><a name="TOC-Page-Setup">Page Setup</a>
 
-
-### <a name="TOC-Page-Setup"></a><a name="ptx2pdf-MacroSetupParameters-Dimensions">Dimensions</a>
+### <a name="ptx2pdf-MacroSetupParameters-Dimensions">Dimensions</a>
 
 <a name="ptx2pdf-MacroSetupParameters-Dimensions">
 
@@ -80,7 +73,7 @@ In the file ```mods.sty```, add standard Paratext marker style definition parame
 
 </a>
 
-### <a name="ptx2pdf-MacroSetupParameters-Dimensions"></a><a name="ptx2pdf-MacroSetupParameters-CropMarks">Crop Marks</a>
+### <a name="ptx2pdf-MacroSetupParameters-CropMarks">Crop Marks</a>
 
 <a name="ptx2pdf-MacroSetupParameters-CropMarks">
 

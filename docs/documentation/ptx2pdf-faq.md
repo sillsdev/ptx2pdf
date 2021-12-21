@@ -403,4 +403,54 @@ convenient way to bridge verses without having to edit the source text. It may
 also be used not in a marginal verses context.
 
 
+### My scripture text includes `//` but it is being ignored.
+The USFM `//` 'option line break' can be used in poetry or headings to indicate
+a good place to break a line.  In the understanding of ptx2pdf this has a very specific 
+meaning:
+* It is *optional*, it  does *not* force a line break. 
+* It *only* breaks a line, and in a justified paragraph, it does not do anything to 
+insert extra space at the end of the line. Using it in a justified paragraph is
+probably a mistake.
+* It dissuades TeX from using any other break-point.
+* It does not allow a break that is not permitted by other settings.
+
+This last one may be quite significant. At the time of writing, the distance 
+between the un-justified edge of a half-justified (ragged-right or ragged left)  
+paragraph and the column edge is allowed to be between 0 and 0.25 of the column 
+width (plus any fixed margin), this gap is called the right fill or right-skip 
+(or left-skip) (Technically, in TeX, the right-skip is both the fixed 
+right-hand margin plus the variable 'fill').  If the user-supplied `//` 
+suggests a break that half way across the page, then as that is suggesting a 
+line-break that would need the the right-skip to stretch to half the column 
+width. As that is  outside the permitted range for the right-skip, the 
+user-supplied break will be ignored.
+
+In this example the lines all USFM lines contain a `//` after 'q':
+[Visual demonstration](NonJustifiedFill.png)
+
+In the first section ('verses' 16 and 17) the default limit of 0.25 is used 
+(note that this default is adjused for `\q`, `\q1`, `\q2` and `\q3` in `ptx2pdf.sty`).
+Even though there is a suggested break after q, the code chooses a break after 
+'can' if the line does not fit on the page.
+
+In the second section, the stylesheet option has been given the line:
+```tex
+\NonJustifiedFill 0.5
+```
+The normal width of the text  puts the q past the mid-point of the line,
+(or can expand to do so), and thus the break is permissible.  If the line needs 
+to break then this will be a (very) highly favoured break-point, though of 
+course others are also possible. If the line does not need to break then it 
+will not.  Choosing a longer distance (e.g 0.75 or higher), will significantly  
+reduce the 'loosness' of the line (amount of stretch applied to the spaces), 
+visible in in the example with the 'q' moved almost its whole width, but will 
+favour unfilled lines in the text.
+
+TeX's line breaking algorithm resists finding breaks where there are large 
+amounts of 'stretch'. The global definition `\def\OptionalBreakPenalty{150}` 
+provides a tuning parameter for the line-breaking algorithm on paragraphs with 
+optional breaks.  Increasing the number makes the breaks more likely to occur 
+at only the specified point; reducing it means it is more possible that TeX 
+will choose an alternative one, and allow other considerations (like avoiding 
+hyphenation if possible) to play their normal role.
 

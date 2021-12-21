@@ -246,11 +246,11 @@
   \trace{s}{setwh@tvrstyle: \mcstack}%
    \def\thiswh@tvrstyle{p}%Default value just in case
    \ifx\mcstack\mcstack@mpty\else
-     \def\d@##1+##2+##3\E{\d@code{##1}{##2}\let\thiswh@tvrstyle\tmp}\mctop
+     %\def\d@##1+##2+##3\E{\d@code{##1}{##2}\let\thiswh@tvrstyle\tmp}\mctop
    \fi
    \let\styst@k=\empty
    \s@tstyst@k%
-   \s@tfont{\thiswh@tvrstyle}{\styst@k}% set up font attributes
+   \s@tfont{\styst@kfirst}{\styst@k}% set up font attributes
 }
 %-cchar_endcharstyle
 %+cchar_endallcharstyles
@@ -289,7 +289,7 @@
 \def\g@tfontname#1#2{%
  \trace{F}{Font request for (\c@tegory)(\mspr@fix)#1[#2](\c@rrdstat)[\styst@k]}%
  \x@\stystacksplit#2+\E% Cut split the stylestack between head and body 
- \ifx\tmpstyst@kfirst\empty\trace{F}{stylestack invalid}\fi%
+ \ifx\tmpstyst@kfirst\empty\trace{F}{stylestack invalid}\edef\tmpstyst@kfirst{#1}\fi%
  \ifdiglot\def\f@ntstyle{\tmpstyst@kfirst\c@rrdstat}\let\sid@\c@rrdstat\else\def\f@ntstyle{\tmpstyst@kfirst}\def\sid@{-}\fi%
  \ifx\mspr@fix\empty\else\edef\f@ntstyle{\mspr@fix\f@ntstyle}\fi % Milestones now on stack
  \ifx\c@tegory\empty\else\s@tc@tpr@fix\edef\f@ntstyle{\c@tprefix\f@ntstyle}\fi % Categories also have different styles
@@ -309,7 +309,14 @@
  \trace{F}{Font style name is \f@ntstyle (\tmpstyst@kfirst | \tmpstyst@kbody}%
 }
 
-\def\nomsg@tfontname#1{\g@tfontname{#1}{#1}}
+\def\nomsg@tfontname#1{%Fontname with no milestones/categories or stylestack, etc. Define it if there isn't one, but don't switch to it.
+  \getp@ram{fontsize}{#1}{#1}%
+  \ifx\p@ram\relax\xdef\c@rrfontsize{12}\else\global\let\c@rrfontsize=\p@ram\fi
+  \edef\f@ntstyle{#1\ifdiglot\c@rrdstat\fi-\c@rrfontsize}%
+  \x@\ifx\csname font<\f@ntstyle>\endcsname
+    \else\definef@nt{#1}{#1}%
+  \fi%
+}
 %-cchar_getfontname
 
 \let\styst@k\empty
@@ -320,7 +327,14 @@
 \def\s@tfont#1#2{%
  \trace{s}{s@tfont #1 / #2}%
  \edef\r@qmkr{#1}\ifx\empty\r@qmkr\trace{F}{Font for empty marker requested. Nonsense! Substituting p}\def\r@qmkr{p}\fi
- \edef\r@qstyst@k{#2}\ifx\empty\r@qstyst@k\trace{F}{Empty style stack requested. Substituting \r@qmkr}\edef\r@qstyst@k{\r@qmkr}\fi 
+ \edef\r@qstyst@k{#2}\ifx\empty\r@qstyst@k\trace{F}{Empty style stack requested. Substituting \r@qmkr}\edef\r@qstyst@k{\r@qmkr}%
+ \else
+   \x@\stystacksplit#2+\E
+   \ifx\r@qmkr\tmpstyst@kfirst\else
+     \edef\r@qstyst@k{\r@qmkr+\r@qstyst@k}%
+     \trace{F}{Fixed broken stystak}%
+   \fi
+ \fi 
  \g@tfontname{\r@qmkr}{\r@qstyst@k}%
  \trace{F}{f@ntstyle=\f@ntstyle}%
  \ifdiglot\else
@@ -328,7 +342,18 @@
  \fi 
  \setLRspecific %Does nothing if there's no change
  \x@\ifx\csname font<\f@ntstyle>\endcsname \relax 
-  \trace{F}{s@tfont font for #1 as \f@ntstyle \space at \c@rrfontsize}%
+   \definef@nt{#1}{#2}%
+ \fi
+ % switch to the appropriate font
+ \trace{F}{Font set to font<\f@ntstyle>}%
+ \csname font<\f@ntstyle>\endcsname                                     %(+)
+ \getFp@ram{fontname}{#1}{#2}\ifx\p@ram\relax
+   \getFp@ram{fontgrspace}{#1}{#2}\ifx\p@ram\relax\else\XeTeXinterwordspaceshaping=\p@ram\fi
+ \fi
+}
+
+\def\definef@nt#1#2{%Assumes \f@ntstyle is the pre-determined name, and that the font actually needs defining.
+  \trace{F}{definef@nt font for #1 as \f@ntstyle \space at \c@rrfontsize}%
   \trace{S}{Normal font for \sid@\space is \regular}%
   \let\regul@r=\regular
   \let\b@ld=\bold
@@ -360,7 +385,7 @@
     \x@\ParseColor\p@ram\end\ifx\r@s\z@ros\else\edef\typef@ce{\typef@ce :color=\r@s}\fi%
   \fi\fi%
   \dimen0=\c@rrfontsize\FontSizeUnit                                    %(+)
-  \getp@ram{fontfactor}{#1}{#2}% scale down by \SuperscriptFactor if superscripted style %FIXME! Should this be R version or not (regular=!shrunk??)
+  \getp@ram{fontfactor}{#1}{#2}% scale down by \SuperscriptFactor if superscripted style 
   \ifx\p@ram\relax\else \trace{F}{Scaling by \p@ram}\dimen0=\p@ram\dimen0\fi
   %\edef\f@ntstyle{\f@ntstyle-\c@rrfontsize}%
   % create the font identifier for this style
@@ -382,13 +407,6 @@
     \x@\x@\fontdimen4\csname font<\f@ntstyle>\endcsname=\dimen0
     \trace{F}{Font \f@ntstyle, space shrink \the\dimen0}%
   \fi
- \fi
- % switch to the appropriate font
- \trace{F}{Font set to font<\f@ntstyle>}%
- \csname font<\f@ntstyle>\endcsname                                     %(+)
- \getFp@ram{fontname}{#1}{#2}\ifx\p@ram\relax
-   \getFp@ram{fontgrspace}{#1}{#2}\ifx\p@ram\relax\else\XeTeXinterwordspaceshaping=\p@ram\fi
- \fi
 }
 
 

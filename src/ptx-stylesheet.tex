@@ -113,6 +113,7 @@
 \def \SpaceAfter     #1\relax{\defp@ram{spaceafter}{#1}}
 \let \Spaceafter\SpaceAfter
 \def \Justification  #1\relax{\lowercase{\defp@ram{justification}{#1}}}
+\def \NonJustifiedFill #1\relax{\defp@ram{glue}{#1}} % ptx2pdf extension, glue portion of leftskip/rightskip (as fraction of hsize)
 \def \CallerStyle    #1\relax{\defp@ram{callerstyle}{#1}} % ptx2pdf extension
 \def \CallerRaise    #1\relax{\defp@ram{callerraise}{#1}}
 \def \NoteCallerStyle    #1\relax{\defp@ram{notecallerstyle}{#1}} % ptx2pdf extension
@@ -193,22 +194,25 @@
       \ifx\t@mp\thisattrmil@stone % Need to match on unattributed milestone too.
         \ifx\mini@stackB\empty\let\mini@stackB\mini@stack\fi
         \trace{sko}{Adding \thismil@stone\space to possible params}%
-        \edef\mini@stackB{\mini@stack+\thismil@stone}%
+        \edef\mini@stackB{\mini@stackB+\thismil@stone}%
+      \else
+        \edef\mini@stackB{\mini@stackB+#1}%
       \fi
     \fi
   \fi
   \edef\mini@stack{\mini@stack+#1}%
-  \trace{sko}{'#1' -> \mini@stack}%
-  \xdef\@ut{\mini@stack,\@ut}%
+  \trace{sko}{'#1' -> \mini@stack\space(\mini@stackB)}%
   \ifx\mini@stackB\empty\else
     \xdef\@ut{\mini@stackB,\@ut}%
   \fi
+  \xdef\@ut{\mini@stack,\@ut}%
   \edef\t@mp{#2}\advance\count255 by -1 
-  \ifx\t@mp\empty\count255=0 \relax\fi
+  \ifx\t@mp\empty\count255=-1 \relax\fi %signal end of list before (or at) truncation point.
   \trace{sko}{'#2',\the\count255---> \@ut}%
   \ifnum\count255>0 \x@\stystack@pts#2\E\fi
 }
 
+%returns \@@ut and \c@t@ut.  For expansions, (\@@ut,) should be used, \c@t@ut has cat:foo|* before the final entries.
 \def\fullstack@xpand#1|#2\E{%Parameters: complexity|style stack
   \trace{sk}{fullstack@xpand}%
   \edef\exp@stystak{#2}%
@@ -228,12 +232,25 @@
     \let\mini@stackB\empty
     \ifx\tmpstyst@kbody\empty
       \xdef\@lso{\p@ssParams}%
-      \trace{sko}{no body...appending \@lso (onto: \@@ut)}%
+      \let\c@talso\@lso
+      \ifx\c@tprefix\empty\else % Prefix anything that ought to go before the bottom level here.
+        \trace{sko}{type of \tmpstyst@kfirst\space is '\csname stylet@pe-\tmpstyst@kfirst\endcsname'}%
+        \x@\ifx\csname stylet@pe-\tmpstyst@kfirst\endcsname\ss@Para
+          \xdef\c@talso{\c@tprefix*,\p@ssParams}%
+        \fi
+      \fi
+      \trace{sko}{no body...appending \@lso(\c@talso) (onto: \@@ut) }%
       %\let\@ut\empty
       %\let\d@\cs@ppend
       %\x@\cstackdown \p@ssParams,\E 
       %\trace{sk}{:\@ut ->(\@@ut)}%
-      \ifx\@@ut\empty\global\let\@@ut\@lso\else\xdef\@@ut{\@@ut,\@lso}\fi
+      \ifx\@@ut\empty
+        \global\let\@@ut\@lso
+        \global\let\c@t@ut\c@talso
+      \else
+       \xdef\c@t@ut{\@@ut,\c@talso}%
+       \xdef\@@ut{\@@ut,\@lso}%
+      \fi
       \trace{sko}{fullstack@xpand #1|#2 : \@@ut. No more}%
     \else
       \count255=#1% Limit the options
@@ -241,8 +258,8 @@
       \x@\stystack@pts\tmpstyst@kbody+\E%
       \let\@in\@ut
       \let\@ut\empty
-      \ifnum\count255>0
-        \edef\@in{+\tmpstyst@kbody,\@in}%  still allow full-stack definitions, even if the list is truncated
+      \ifnum\count255<0\else
+        \edef\@in{+\tmpstyst@kbody,\@in}%  still allow full-stack definitions, even if the list is normally truncated
       \fi
       %\tracingmacros=1
       %\tracingassigns=1
@@ -272,23 +289,26 @@
   \edef\this@stystak{#2}%#2 is the stystack to be used for *this* call (normally \styst@k, but not *ALWAYS*). The stystack supplied should always include the present marker.
   \ifx\tmp\this@stystak
     \trace{sk}{No stack}%
+    \edef\c@t@ut{\c@tprefix*,\p@ssParams}%
   \else % Assuming there's is a real stack to expand...
     \let\@@ut\empty
     \let\@ut\empty
     \x@\fullstack@xpand\x@\StackComplexity\x@|\this@stystak\E%
     \let\p@ssParams\@@ut
   \fi
-  \trace{s}{1. Checking \p@ssParams}%
+  \trace{s}{1. Checking list: \p@ssParams}%
   \ifx\mspr@fix\empty\else
      %If we expand our prefix list for special styling of milestone+marker, then:
      %\exp@ndmspr@fix{\let\@ut=\empty \let\d@=\cspr@pend\x@\cstackdown \p@ssParams,\E \edef\p@ssParams{\@ut,\p@ssParams}}%
   \fi
-   \trace{s}{1b. Checking \p@ssParams (\mspr@fix)}%
+  \trace{s}{1b. Checking list (\mspr@fix,\tmp=\m@rker?): \p@ssParams}%
   \ifx\c@tprefix\empty\else
     \edef\@lso{\c@tprefix}%
-    \let\@ut=\empty \let\tmpd@=\d@\let\d@=\cspr@pend\x@\cstackdown \p@ssParams,\E \edef\p@ssParams{\@ut,\ifx\m@rker\tmp \c@tprefix*,\fi\p@ssParams}\let\d@=\tmpd@
+    \let\@ut=\empty \let\tmpd@=\d@\let\d@=\cspr@pend\x@\cstackdown \p@ssParams,\E 
+    \edef\p@ssParams{\@ut,\c@t@ut}%  c@tout has cat:foo|* wildcard before final marker, if that's a parstyle. Note there's no L/R version of *!
+    \let\d@=\tmpd@
   \fi
-  \trace{s}{2. Checking \p@ssParams}%
+  \trace{s}{2. Checking list: \p@ssParams}%
   \let\@ut\empty
   \let\tmpd@=\d@
   \let\d@=\cscheck@xist\x@\cstackdown \p@ssParams,\E
@@ -633,14 +653,14 @@
 %
 % \csname...\endcsname is used because the marker may contain numbers as well as letters
 %
-\def\defp@rstyle#1{\x@\def\csname#1\endcsname{\trace{M}{ParMarker: #1}\p@rstyle{#1}}}
+\def\defp@rstyle#1{\x@\def\csname#1\endcsname{\trace{M}{ParMarker: #1}\p@rstyle{#1}}\x@\global\x@\let\csname stylet@pe-#1\endcsname\ss@Para}
 \edef\pl@scatcode{\the\catcode`+}
 \catcode`+=11
-\def\defch@rstyle#1{\x@\def\csname#1\endcsname{\trace{M}{CharMarker: #1}\ch@rstyle{#1}}\x@\def\csname +#1\endcsname{\ch@rstylepls{#1}}}
+\def\defch@rstyle#1{\x@\def\csname#1\endcsname{\trace{M}{CharMarker: #1}\ch@rstyle{#1}}\x@\def\csname +#1\endcsname{\ch@rstylepls{#1}}\x@\global\x@\let\csname stylet@pe-#1\endcsname\ss@Char}
 \catcode`+=\pl@scatcode
-\def\defn@testyle#1{\x@\def\csname#1\endcsname{\trace{M}{NoteMarker: #1}\n@testyle{#1}}\m@ken@tecl@ss{#1}}
+\def\defn@testyle#1{\x@\def\csname#1\endcsname{\trace{M}{NoteMarker: #1}\n@testyle{#1}}\m@ken@tecl@ss{#1}\x@\global\x@\let\csname stylet@pe-#1\endcsname\ss@Note}
 %Make a milestone marker if there isn't a character style with the same prefix
-\def\defmst@nestyle#1\E{\trace{M}{MilestoneMarker: #1}\x@\let\x@\tmp\csname #1\endcsname
+\def\defmst@nestyle#1\E{\trace{M}{MilestoneMarker: #1}\x@\let\x@\tmp\csname #1\endcsname\x@\global\x@\let\csname stylet@pe-#1\endcsname\ss@Mstn
   \ifx\tmp\relax
     \getp@r@m{endmarker}{\m@rker}%
     \ifx\p@ram\relax
@@ -1088,8 +1108,13 @@
   \else
     \gett@psty
   \fi
-  \d@code{#1}{#2}\mcp@sh{#1+#2+\tmp\ifx\empty\tmpstyst@k\else+\tmpstyst@k\fi}}
-\def\mcpushE#1+#2\E{\trace{s}{mcpushE #1+#2}\if #1\relax\relax\else\mcpush{#1}{#2}\fi}
+  \d@code{#1}{#2}\ifx\tmp\h@phen % Not evertying appears in the styst@k e.g. cat should not
+    \xdef\styst@k{\tmpstyst@k}%
+  \else
+    \xdef\styst@k{\tmp\ifx\empty\tmpstyst@k\else+\tmpstyst@k\fi}%
+  \fi
+  \mcp@sh{#1+#2+\styst@k}}
+\def\mcpushE#1+#2\E{\trace{s}{mcpushE '#1'+'#2'}\if #1\relax\relax\else\mcpush{#1}{#2}\fi}
 \def\mcp@sh#1{\traceNum{s}{push #1 onto \mcstack}\xdef\mcstack{#1,\mcstack}}
 \def\mcup{\x@\cstackup\mcstack\E}
 \def\mcdown{\x@\cstackdown\mcstack\E}
@@ -1101,7 +1126,7 @@
     
 \def\rebuild@mcstack#1{\trace{s}{rebuild@mcstack '#1' (on \mcstack)}\ifx\mcstack\empty\let\mcstack\mcstack@mpty\fi\edef\r@mclist{#1}\ifx\r@mclist\empty\else\let\d@=\mcpushE\x@\cstackup\r@mclist\E\fi\s@tstyst@k}
 \def\doB@pop@nonms#1+#2+#3\E{\if #1m\xdef\msst@ck{#1+#2,\msst@ck}\else\global\temptrue\fi}% For mcstackdown. Push milestones onto msst@ck. lose the 1st non-ms
-\def\doB@save@ms#1+#2+#3\E{\trace{s}{[#1+#2+#3] (\msst@ck)}\if #1\relax\relax\xdef\inst@ck{\inst@ck\mcstack@mpty}\temptrue\else\if #1m\relax\xdef\msst@ck{\msst@ck#1+#2,}\else\xdef\inst@ck{\inst@ck#1+#2,}\global\temptrue\fi\fi}% For mcstackdown. Push milestones onto msstack. bail out on 1st non-ms, saving it.
+\def\doB@save@ms#1+#2+#3\E{\trace{s}{[#1+#2+#3] (\msst@ck)}\if #1\relax\relax\xdef\inst@ck{\inst@ck\mcstack@mpty}\temptrue\else\if #1m\relax\xdef\msst@ck{#1+#2,\msst@ck}\else\xdef\inst@ck{\inst@ck#1+#2,}\global\temptrue\fi\fi}% For mcstackdown. Push milestones onto msstack. bail out on 1st non-ms, saving it.
 
 \def\mcpop{\traceNum{s}{mcpop stack: '\mcstack'}\global\tempfalse\xdef\inst@ck{}\xdef\msst@ck{}% Pop the first non-milestone
     \let\d@b=\doB@pop@nonms
@@ -1173,8 +1198,8 @@
 \def\itp@psstore{}
 \def\endit@c{\endch@rstylepls*}
 \def\endit@C{\endch@rstyle*}
-\def\endit@T{\cl@singhooks{end}{cat}\par\mcpopsimple\egroup\@ndc@t} %Must call closing hooks before end of group, Must call mcpopsimple.
-\def\endit@t{\cl@singhooks{end}{cat}\mcpopsimple}
+\def\endit@T{\cl@singhooks{end}{cat}\par\mcpopsimple\egroup\@ndc@t\s@tc@tpr@fix} %Must call closing hooks before end of group, Must call mcpopsimple.
+\def\endit@t{\cl@singhooks{end}{cat}\mcpopsimple\s@tc@tpr@fix}
 
 \def\whileitp@ps#1+#2+#3\E{% This almost does the same as \end@llcharstyle, but uses the new mechanism
   \global\p@ppingtrue
@@ -1230,10 +1255,12 @@
     \xdef\styst@k{##3}% The real one
     \xdef\tmpstyst@k{##3}% This will get over-ridden if there are other calls.
     \d@code{##1}{##2}%
-    \ifx\tmp\empty\else
+    \ifx\tmp\h@phen
+    \else
       \xdef\styst@kfirst{\tmp}%
+      \let\d@=\cstackrelax
     \fi
-  }\mctop
+  }\mcdown
   \global\let\tmpstyst@k\styst@k
   \global\let\tmpstyst@kfirst\styst@kfirst
   \trace{s}{styst@k -> (\styst@kfirst/\styst@k)}%
@@ -1535,7 +1562,8 @@
 \catcode`\/=\active
 \def/{\futurelet\n@xt\sl@sh}
 \def\sl@sh{\ifx\n@xt/\let\n@xt\sl@shbreak\else\let\n@xt\sl@shprint\fi\n@xt}
-\def\sl@shbreak/{\unskip\penalty-250{} \ignorespaces}
+\def\OptionalBreakPenalty{300}
+\def\sl@shbreak/{\linepenalty=\OptionalBreakPenalty\unskip\penalty-\OptionalBreakPenalty{} \ignorespaces}
 \def\sl@shprint{\char`\/}
 \catcode`\/=12
 %-csty_slash
@@ -1548,7 +1576,7 @@
 \def\s@tc@tpr@fix{%
   \ifx\c@tegory\empty\let\c@tprefix\empty
   \else
-    \xdef\c@tprefix{cat:\c@tegory|}%
+    \edef\c@tprefix{cat:\c@tegory|}% See above...
   \fi
   \trace{sc}{Stylesheet prefix for \c@tegory: '\c@tprefix'}%
 }

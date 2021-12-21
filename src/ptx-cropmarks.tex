@@ -727,6 +727,8 @@
 \def\plainoutput{\pl@inoutput{\vbox{\makeheadline\pagebody\makefootline}}}
 \def\emptyoutput{\pl@inoutput{\vbox{}}}
 \def\pl@inoutput#1{%
+  \let\opS@ve@msprefix\mspr@fix\let\mspr@fix\empty%
+  \let\opS@ve@catprefix\c@tprefix\let\c@tprefix\empty% Category and milestones have no place in determining page.
   \ifm@rksonpage\else\trace{m}{No marks on page \the\pageno}\fi
   \immediate\write\p@rlocs{\string\@pgstart\string{\the\pageno\string}}%
   \trace{G}{Before shipout \the\pdfpagewidth x\the\pdfpageheight}%
@@ -738,6 +740,8 @@
 %NB: dosupereject (from plain.tex) will continue triggering outputs as long as
 %there are footnotes/floats coming.
   \ifnum\outputpenalty>-\@MM \else\dosupereject\fi\global\m@rksonpagefalse\global\noteseenfalse
+  \global\let\mspr@fix\opS@ve@msprefix
+  \global\let\c@tprefix\opS@ve@catprefix
   }
 %-c_plainoutput
 
