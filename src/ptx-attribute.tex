@@ -114,7 +114,6 @@
   \fi
   \edef\attrid{\milestoneOp id}% id / sid / eid, depending.
   \catcode`\|=\active
-  \catcode`\/=12\relax
   \ifmst@nestyle
     \use@ttrSlash
   \else
@@ -169,7 +168,9 @@
 }
 
 \def\setup@ttr@grab#1{%
-  \x@\gdef\csname \gr@bname\endcsname##1#1{\xdef\@ttributes{\noexpand{##1}}\trace{A}{\gr@bname:found \@ttributes}#1}}
+  \x@\xdef\csname \gr@bname\endcsname{\catcode`\/=12\relax % FIXME other active chars too?
+    \csname @@\gr@bname\endcsname}%
+  \x@\gdef\csname @@\gr@bname\endcsname##1#1{\xdef\@ttributes{\noexpand{##1}}\trace{A}{\gr@bname:found \@ttributes}#1}}
 
 \def\proc@ttribs{%
   \trace{A}{Processing attributes (\ifin@ttrib true\else false\fi)}%
