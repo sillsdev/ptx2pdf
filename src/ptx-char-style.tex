@@ -154,9 +154,9 @@
    \let\thisch@rstyle=\newch@rstyle
   \else
    \leavevmode % in case the paragraph hasn't started yet               %(2)
-   \op@ninghooks{before}{\newch@rstyle}% execute any <before> hook
+   \op@ninghooks{before}{\newch@rstyle}\relax% execute any <before> hook
    \x@\let\x@\@ttriblist\csname @ttriblist-\newch@rstyle\endcsname
-    \bgroup % start a group to encapsulate the style's formatting changes
+   \bgroup % start a group to encapsulate the style's formatting changes
     \let\thisch@rstyle=\newch@rstyle % remember the current style
     \s@tfont{\thisch@rstyle}% set up font attributes
     \ifnum\n@tenesting>0 \global\advance\n@tenesting by 1 % record nesting level in para or note
@@ -164,7 +164,8 @@
     \getmcp@ram{raise}%
     \tempfalse % do we box the text?
     \ifx\p@ram\relax\else \temptrue\fi
-    \ifx\@ttriblist\empty\else\temptrue\fi
+    \ifx\@ttriblist\relax\let\@ttriblist\emtpy\fi
+    \ifx\@ttriblist\empty\else\temptrue\fi 
     \getmcp@ram{underline}%
 	\ifx\p@ram\tru@\temptrue\fi
     \iftemp\setbox0=\hbox\bgroup \fi                     %(3)
@@ -180,7 +181,9 @@
  \def\endch@rstyle*{\TRACE{endch@rstyle}% consume the * that marked the SFM as ending a style
    \def\d@##1+##2\E{\xdef\oldch@rstyle{##2}}\mctopnoms
    \trace{s}{endch@rstyle \oldch@rstyle\space from \newch@rstyle}%
-   \ifx\@ttributes\empty\else
+   \tempfalse
+   \ifx\@ttriblist\relax\let\@ttriblist\empty\fi
+   \ifx\@ttriblist\empty\else
      %\message{\@ttributes (\csname @ttriblist-\oldch@rstyle\endcsname)}%
      \parse@ttribs{\@ttributes}%
    \fi
@@ -189,11 +192,11 @@
    \else
     \ifskipch@rstyle\egroup\else%
      \cl@singhooks{end}{\oldch@rstyle}% discover and execute any <end> hook
-     \tempfalse
      \x@\let\x@\@ttriblist\csname @ttriblist-\oldch@rstyle\endcsname
-     \ifx\@attriblist\empty\else\temptrue\fi
      \getmcp@ramR{raise}%
+     \tempfalse
      \ifx\p@ram\relax\else \temptrue\fi
+     \ifx\@ttriblist\empty\else\temptrue\fi
      \getmcp@ramR{underline}%
      \ifx\p@ram\tru@\temptrue\fi
      \iftemp\egroup
