@@ -87,9 +87,9 @@
 \let \Texttype\TextType
 \def \TextProperties #1\relax{\lowercase{\defp@ram{properties}{#1}}}
 \let \Textproperties\TextProperties
-\def \FontSize       #1\relax{\defp@ram{fontsize}{#1}}
+\def \FontSize       #1\relax{\clearp@ram{fontscale}\defp@ram{fontsize}{#1}}
 \let \Fontsize\FontSize
-\def \FontScale      #1\relax{\defp@ram{fontscale}{#1}}
+\def \FontScale      #1\relax{\clearp@ram{fontsize}\defp@ram{fontscale}{#1}}
 \let \Fontscale\FontScale
 \def \FontFactor     #1\relax{\defp@ram{fontfactor}{#1}}
 \def \FontName       #1\relax{\defp@ram{fontname}{#1}}
@@ -151,6 +151,7 @@
 % `csname` is required here in order to build a macro name containing a colon and possibly a number.
 %
 
+\def\clearp@ram#1{\global\x@\let\csname\c@tprefix\m@rker\ds@ffix:#1\endcsname=\relax}
 \def\defp@ram#1#2{\x@\def\csname\c@tprefix\m@rker\ds@ffix:#1\endcsname{#2}\trace{s}{def \c@tprefix\m@rker\ds@ffix:#1 -> #2}}
 \def\condp@ram#1#2#3{\edef\t@mp{#1}\ifx\t@mp\h@phen\relax\def\t@mp{#3}\else\def\t@mp{#2}\fi\t@mp}
 \def\defbinp@ram#1#2{\edef\t@mp{#2}\ifx\t@mp\h@phen\defp@ram{#1}{false}\else\defp@ram{#1}{true}\fi}
