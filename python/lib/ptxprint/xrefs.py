@@ -32,7 +32,7 @@ class Xrefs:
         self.dotsep = RefSeparators(cv=".", onechap=True)
         self.template = "\n\\AddTrigger {book}{dotref}\n\\x - \\xo {colnobook}\u00A0\\xt {refs}\\x*\n\\EndTrigger\n"
         if not self.parent.ptsettings.hasLocalBookNames:
-            import pdb; pdb.set_trace()
+            # import pdb; pdb.set_trace()
             usfms = self.parent.printer.get_usfms()
             usfms.makeBookNames()
             self.parent.ptsettings.bkstrs = usfms.booknames.bookStrs

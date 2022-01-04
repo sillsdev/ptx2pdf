@@ -63,6 +63,7 @@
   \fi%
 }
 \def\n@wnoteins@rt#1{
+    \trace{n}{Creating note class #1}%
 	\x@\n@winsert\csname note-#1\endcsname
 	\x@\newb@x\csname notesave1-#1\endcsname
 	\x@\newb@x\csname notesave2-#1\endcsname

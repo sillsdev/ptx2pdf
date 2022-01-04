@@ -35,6 +35,7 @@
 % Here we declare generic useful stuff. Including log output routines.
 \TeXXeTstate=1 % enable the eTeX bidi extensions, in case we need RTL support
 \catcode`\@=11
+\count11=20 \count14=20 % need more temporary dimens and boxes
 \let\x@=\expandafter
 \newif\iftemp \tempfalse
 \def\stripqu@tes#1"#2"#3\relax{#2}% Strip quotes if present
@@ -334,7 +335,11 @@
 \def\@foot{\ifp@ranotes \parfillskip=0pt \fi%\else\strut\fi
   \par
   \ifp@ranotes\else\getp@ram{spaceafter}{\n@tetype}\trace{f}{note(\n@tetype) spaceafter: \p@ram}%
-  \ifx\p@ram\relax\else\vskip\p@ram\verticalsp@ceunit\fi\fi
+    \ifx\p@ram\relax\penalty0\else\vskip\p@ram\verticalsp@ceunit\fi
+    \setbox0=\hbox to 0pt{\XeTeXuseglyphmetrics=0 \char32 \hss}%
+    \dimen0=\baselineskip \advance\dimen0 by -\ht0 \advance\dimen0 by -\prevdepth
+    \vskip \dimen0
+  \fi
   \egroup\end@llpoppedstyles{N*}%
   \def\d@##1+##2\E{\if ##1N\else\MSG{Bad marker ##2\space but expected a closing note marker}\fi}\mctopnoms
   \mcpop}
@@ -363,10 +368,16 @@
   \trace{j}{set baselineskip=\the\baselineskip (\s@urce)}}
 
 \newif\ifkeepn@tes
+\newif\ifst@dynotes
+\newif\ifnotst@dynotes
+\newif\ifonlyst@dynotes
+\def\n@ffin#1{}
 \def\ins@rtn@tecl@ss#1{% insert the given note class, either paragraphed or separately
   \iff@rstnote\setn@tewidth{#1}\fi % set appropriate hsize width for diglot or not.
-  \checkp@ranotes{#1}\ifp@ranotes\let\n@xt=\parains@rtn@tecl@ss
-    \else\let\n@xt=\separateins@rtn@tecl@ss\fi
+  \checkp@ranotes{#1}\ifst@dynotes\ifnotst@dynotes\let\n@xt=\n@ffin\else\let\n@xt=\studyins@rtn@tecl@ss\fi\else
+    \ifonlyst@dynotes\let\n@xt=\n@ffin\else
+      \ifp@ranotes\let\n@xt=\parains@rtn@tecl@ss\else\let\n@xt=\separateins@rtn@tecl@ss\fi
+  \fi\fi
   \n@xt{#1}}
 
 % insert a note class in which each note is on its own line
@@ -391,6 +402,39 @@
       \footnoterule\global\f@rstnotefalse % output rule before first note
     \else\kern\InterNoteSpace\fi
     {\maken@tepara{\th@cl@ss}{#1}}%
+  \fi}
+
+% insert a note class which is two column study notes style
+\def\studyins@rtn@tecl@ss#1{%
+  \def\cl@ss{#1\g@tndstat}%
+  \trace{n}{studyins@rtn@tecl@ss \cl@ss \space (from #1)}%
+  \x@\let\x@\th@cl@ss\csname note-\cl@ss\endcsname % make \th@cl@ss be a synonym for the current note class
+  % if the noteclass has content to output ...
+  \ifvoid\th@cl@ss\trace{n}{no note}\else
+    \dimen10=0.4\ht\th@cl@ss
+    \setbox10=\box1
+    \splittopskip=0pt
+    \loop\temptrue
+      \setbox1=\copy\th@cl@ss
+      \trace{n}{splitting study box to \the\dimen10}%
+      \setbox11=\vsplit1 to \dimen10%
+      \setbox12=\vsplit1 to \dimen10%
+      \trace{n}{split box remainder \the\ht1}%
+      \ifdim\ht1>0pt
+        \ifdim\ht1 < \baselineskip \advance\dimen10 by \baselineskip\else \advance \dimen10 by 0.5\ht1\fi
+      \else\tempfalse\fi \iftemp\repeat
+    \setbox1=\box10
+    \iff@rstnote\ifvoid\verybottomins\vfill\fi\fi % ignore depth of body text; fill space
+    \iff@rstnote\noterule{\AboveNoteSpace}{\BelowFootNoteRuleSpace}{\textwidth}{%
+      \FootNoteRuleLeftIndent \vrule height 0.4pt width \FootNoteRuleWidth\textwidth \FootNoteRuleRightIndent}%
+      \global\f@rstnotefalse\else\kern\InterNoteSpace\fi
+    \dimen11=\ht11\ifdim\dimen11<\ht12\dimen11=\ht12\fi
+    \dimen12=\dp11\ifdim\dimen12<\dp12\dimen12=\dp12\fi
+    \trace{n}{Study notes (\the\ht11, \the\ht12)=\the\dimen11}%
+    \hbox to \textwidth {\box11\makecolumngutter{\dimen11}{\dimen11}{\dimen12}{\dimen11}{0}\box12}%
+    \ifkeepn@tes\else
+      \global\setbox\th@cl@ss\box\voidb@x
+    \fi
   \fi}
 
 \def\BelowFootNoteRuleSpace{0.5\AboveNoteSpace}
@@ -448,9 +492,11 @@
 %+c_paragraphedNotes
 \def\ParagraphedNotes#1{\Par@gr@phedNotes{#1\g@tndstat}}
 \def\Par@gr@phedNotes#1{\TRACE{Par@gr@phedNotes #1}\x@\let\csname paranotes-#1\endcsname=1}
+\def\StudyNotes#1{\x@\let\csname studynotes-#1\g@tndstat\endcsname=1}
 \newif\ifp@ranotes
 \newif\ifColNotes \ColNotesfalse
-\def\checkp@ranotes#1{\x@\ifx\csname paranotes-#1\endcsname\relax
+\def\checkp@ranotes#1{\st@dynotesfalse\x@\ifx\csname paranotes-#1\endcsname\relax
+  \x@\ifx\csname studynotes-#1\endcsname\relax\else\st@dynotestrue\fi
   \p@ranotesfalse\else\p@ranotestrue\fi}
 %-c_paragraphedNotes
 
@@ -473,17 +519,14 @@
    \else
      \ifColNotes\ifnum\c@rrentcols=2\global\n@tewidth=\colwidth\else\onecolwidth{\n@tewidth}\fi
      \else\n@tewidth=\textwidth\fi
+     \ifColNotes\ifst@dynotes\advance\n@tewidth by 0.5\XrefNotesWidth\fi\fi
    \fi
   \else
     %Assume that the note will be inserted using the current text width.
     \ifnum\c@rrentcols=1\onecolwidth{\n@tewidth}\else
-      \ifcsname endn@te-#1\endcsname
-        \n@tewidth=\hsize
-      \else
-        \ifdiglot
-          \n@tewidth=\csname column\c@rrdstat width\endcsname
-        \else
-          \n@tewidth=\ifColNotes\colwidth\else\textwidth\fi
+      \n@tewidth=\ifcsname endn@te-#1\endcsname \hsize \else
+        \ifdiglot\csname column\c@rrdstat width\endcsname
+        \else\ifColNotes\colwidth\else\textwidth\fi
         \fi
       \fi
     \fi
@@ -555,7 +598,7 @@
 %\def\internotespace{\hfil\hskip\intern@teskip\penalty-10\hfilneg}
 
 \def\r@versevb@x#1{\setbox#1=\vbox{}\loop
-  \setbox0=\lastbox\ifdim\ht0>0pt
+  \unskip\unpenalty\setbox0=\lastbox\ifdim\ht0>0pt
     \setbox#1=\vbox{\unvbox#1\box0}\unskip\unpenalty\unskip\repeat
 }
 \newbox\xr@fbox
@@ -576,15 +619,16 @@
     \ifdim\dimen1>#1\repeat
   \fi}
 \def\m@kexrefbox#1#2#3{
-% #1: height, #2: xrefbox width, #3: note marker/style returns vbox
+% #1: height, #2: xrefbox width, #3: note marker/style, returns vbox
   \setbox\xr@fbox=\ifXrefTopfill\vbox{\vfil}\else\box\voidb@x\fi
   \temptrue
   \let\par=\endgraf\x@\let\csname ch@pter\g@tdstat waiting\endcsname\relax
   \everypar={}% don't do body text formatting
   \x@\let\x@\th@cl@ss\csname note-#3\endcsname % make \th@cl@ss be a synonym for the current note class
   \hsize=#2%\advance\hsize-\XrefNotesMargin\advance\hsize-\XrefNotesMargin
-  \leftskip=0pt\rightskip=0pt plus 0.8\hsize\unvbox\th@cl@ss
-  \r@versevb@x{3}\unvbox3
+  \leftskip=0pt\rightskip=0pt plus 0.8\hsize
+  %\showbox\th@cl@ss
+  \unvbox\th@cl@ss \r@versevb@x{3}\unvbox3
   \s@tbaseline{#3}
   \loop
     \setbox0=\lastbox
@@ -660,11 +704,11 @@
 \def\p@geendcontent{%
   \ifvoid\bottomins\else \vfil\kern-\lastd@pth
     \lastd@pth=0pt \vskip\skip\bottomins \hbox{\hbox to \columnshift{}\box\bottomins} \fi % ouput bottom spanning pictures
-  \ifColNotes\else
+  %\ifColNotes\else
     %\m@kenotebox
     \trace{b}{BALANCE pageouttxt: notes=\the\ht\n@tesbox , \the\dp\n@tesbox. Lastdepth=\the\lastd@pth \space Leaving \the\ht255, \the\dp255}%
     \unvbox\n@tesbox %\kern-\lastd@pth\lastd@pth=\dp2\unvbox2
-  \fi
+  %\fi
   \noteseenfalse
   \ifvoid\verybottomins\else\ifdim\availht > 0pt\vfil % \kern-\dimen0
     \trace{o}{verybottomins(onecoltrial): height=\the\ht\verybottomins , availht=\the\availht, textheight=\the\textheight, htpartial=\the\dimen9}
@@ -1362,11 +1406,11 @@
   \decr{\availht}{\bottomins}%
   \decr{\availht}{\verybottomins}%
   \f@rstnotetrue
-  \ifColNotes\setbox\n@tesbox\box\voidb@x\else
-    \m@kenotebox\advance\availht by -\ht2\global\setbox\n@tesbox\box2
-    \trace{i}{Notes: ht=\the\ht\n@tesbox, dp=\the\dp\n@tesbox}%
-    %\let\\=\reduceavailht\the\n@tecl@sses % reduce it by the space needed for each note class
-  \fi
+  \ifColNotes\onlyst@dynotestrue\else\onlyst@dynotesfalse\fi
+  \m@kenotebox\advance\availht by -\ht2\global\setbox\n@tesbox\box2
+  \onlyst@dynotesfalse
+  \trace{i}{Notes: ht=\the\ht\n@tesbox, dp=\the\dp\n@tesbox}%
+  %\let\\=\reduceavailht\the\n@tecl@sses % reduce it by the space needed for each note class
   \trace{i}{after inserts: \the\availht}%
   % Round to lines accurate to 1/8pt in lineskip. 1/10pt causes overflow on longer pages. Support two column legal.
   \bmg@p=\availht
@@ -1383,7 +1427,8 @@
       \setbox5=\vbox{\m@kexrefbox{\ifdim\t@xttrialheight>0pt\ifdim\t@xttrialheight<\availht\t@xttrialheight\else\availht\fi\else\availht\fi}{\XrefNotesWidth}{\XrefNotes}}%
       \setbox\xr@fbox\vbox{\unvbox\xr@fbox\setbox0=\lastbox\dimen0=\dp0\box0\vskip\dimen0}%
     \fi
-    \m@kenotebox\setbox\coln@tebox=\vbox{%
+    \notst@dynotestrue\m@kenotebox\notst@dynotesfalse
+    \setbox\coln@tebox=\vbox{%
       \trace{o}{coln@tebox in=\the\ht5+\the\dp5, notes=\the\ht2+\the\dp2}%
       \ifdim\ht2>0pt
         \unvbox2\ifdim\ht5>0pt\setbox0\lastbox\dimen0=\dp0\box0\vskip\dimen0
@@ -1393,7 +1438,7 @@
           \footnoterule\prevdepth=-10000pt
           \unvbox5\setbox0\lastbox\dimen1=\ht0\dimen0=\dp0\box0\ifdim\dimen1>0pt\kern-\dimen0\fi\vskip\bmg@p
       \fi\fi}%
-      \trace{o}{coln@tebox out=\the\ht\coln@tebox+\the\dp\coln@tebox}%
+      \trace{o}{coln@tebox out=\the\ht\coln@tebox+\the\dp\coln@tebox, xrefbox=\the\ht\xr@fbox+\the\dp\xr@fbox}%
   \else
     \setbox5=\box\voidb@x\setbox\xr@fbox=\box\voidb@x
   \fi\fi
@@ -1591,21 +1636,19 @@
 \newdimen\ColumnGutterRuleSkip \ColumnGutterRuleSkip=0pt
 \newif\ifColNotesRule \ColNotesRulefalse
 
-%makecolumngutter{rule height}{vbox height}{depth}
-
-\def\makecolumngutter#1#2#3#4#5{\ifnum#5=1\hfil\else\ifnum#5=3\hfil\fi\fi
+\def\makecolumngutter#1#2#3#4#5{\ifnum#5=1\hfil\else\ifnum#5=3\hfil\else\ifnum#5=0\hfil\fi\fi\fi
   \trace{o}{makecolumngutter: rule height=#1, box height=#2, box depth=#3, total height=#4, lineside=#5 bits
             ColumnGutterRuleSkip=\the\ColumnGutterRuleSkip, baselineskip=\the\onel@neunit}%
 % #1: Height of gutter rule, #2: height of gutter rule box, #3: depth of gutter rule box, #4: total height
-% #5: line sides bit 0=left, 1=right
+% #5: line sides bit 0=left, 1=right (0=centre line, no XrefNotes)
   \dimen4=#1\advance\dimen4-\ColumnGutterRuleSkip%\advance\dimen4 by #3
   \setbox4=\ifdim#2>\onel@neunit\vbox to #4{%       don't rule empty single column stuff at end of 2 col
     \vskip\ColumnGutterRuleSkip
     \hbox to 1pt{\hfil\vrule height \the\dimen4\hfil}%\dp5=#3 \box5
     \vfil}\else\box\voidb@x\fi
   \ifx\XrefNotes\empty
-    \ifnum#5=3\ifColumnGutterRule \box4\fi\fi
-  \else
+    \ifColumnGutterRule \ifnum#5=3\box4\else\ifnum#5=0\box4\fi\fi\fi
+  \else\ifnum#5>0
     \trace{o}{makecolumngutter: xr@fbox=\the\ht\xr@fbox}%
     \ifnum\ifnum#5=1 1\else\ifnum#5=3 1\else 0\fi\fi =1
       \ifColNotesRule\copy4\fi\fi
@@ -1620,8 +1663,8 @@
     \else \hbox to \XrefNotesWidth{}%
     \fi
     \ifnum#5>1\hbox to \XrefNotesMargin{}\ifColNotesRule\box4\fi\fi
-  \fi
-  \ifnum#5>1\hfil\fi
+  \fi\fi
+  \ifnum#5>1\hfil\else\ifnum#5=0\hfil\fi\fi
   \hbox to \columnshift{}}
 \newif\ifColumnGutterRule
 %-c_makecolumngutter

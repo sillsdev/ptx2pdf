@@ -212,32 +212,37 @@ class Reference:
         return res
 
     @classmethod
-    def fromint(cls, val):
+    def fromint(cls, val, bkstarts=None, chapshift=0):
         if cls.vrs is None:
             cls.loadvrs()
+        if bkstarts is None:
+            bkstarts = [x[0] for x in cls.vrs]
         def testbk(arr, i, v):
             a = arr[i]
-            if v < a[0]:
+            if v < a:
                 return 1
-            elif len(a) == 1 or v >= a[0] + a[-1]:
+            elif i+1 < len(arr) and v >= arr[i+1]:
                 return -1
             return 0
         def testchap(arr, i, v):
+            v -= chapshift * i
             if i == 0:
                 if v > arr[1]:
                     return -1
                 return 0
             elif arr[i] > v:
                 return 1
-            elif i+1 < len(arr) and arr[i+1] < v:
+            elif i+1 < len(arr) and arr[i+1]  < v:
                 return -1
             return 0
-        ind = binsearch(cls.vrs, val, testbk)
-        v = val - cls.vrs[ind][0]
+        ind = binsearch(bkstarts, val, testbk)
+        v = val - bkstarts[ind]
         c = binsearch(cls.vrs[ind], v, testchap) + 1
-        if cls.vrs[ind][c] > v:
+        v1 = v
+        v -= chapshift * (c - 1)
+        if c > len(cls.vrs[ind]) or cls.vrs[ind][c] >= v:
             c -= 1
-        if c > 0:
+        if c > 0 and c < len(cls.vrs[ind]):
             v = v - cls.vrs[ind][c]
         return cls(allbooks[ind], c+1, v)
 
