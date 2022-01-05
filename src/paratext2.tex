@@ -1221,7 +1221,7 @@
   \s@tcolhts{\availht}
   \spl@tcols0                                               %(1)
   % and check if it all fit; if not, we'll have to back up and try again
-  \ifvoid0 \fitonpagetrue \else \fitonpagefalse \fi
+  \ifvoid0 \global\fitonpagetrue \else \global\fitonpagefalse \fi
   \rebalancefalse
   \trace{o}{first \the\availht . col=\the\ht\colA, \the\colhtA . second col=\the\ht\colB, \the\colhtB . rem=\the\ht0}%
   \ifdim\ht\colA<.5\baselineskip\ifdim\ht\colB<.5\baselineskip\MSG{I can't break this page!}    %(2)
@@ -1256,11 +1256,7 @@
     \ifunbalanced\shortavail=\availht\else\rebalancetrue
       \ifdim\colhtB>\colhtA \shortavail=\colhtB\fi
     \fi
-    \ifColNotes\ifdim\ht\coln@tebox>0pt \hascolnotestrue\relax
-      \trace{o}{balanced: ifcolnotes bailing with A=\the\ht\colA, B=\the\ht\colB}
-    %  \rebalancefalse % bail early
-      % \colbfullfalse
-    \fi\fi
+    \ifColNotes\ifdim\ht\coln@tebox>0pt \hascolnotestrue\relax\fi\fi
     \advance\shortavail \baselineskip
 %-c_balanced_intro
 %+c_balanced_loop
@@ -1297,7 +1293,7 @@
           \rebalancefalse
         \fi\fi
 		% give up if target size less than 2 lines (should not happen)
-        \ifdim\shortavail<\baselineskip \MSG{Rebalancing bailed for short block}%   %(8)
+        \ifdim\shortavail<\baselineskip \MSG{Rebalancing bailed for short block \the\shortavail}%   %(8)
           \shortavail=\availht \rebalancefalse\fi
         \ifnum\loopcount>20 
           \advance\shortavail by \baselineskip
@@ -1498,26 +1494,29 @@
     \dimen3=\ifdim\colhtA>\colhtB\colhtA\else\colhtB\fi
     \ifdim\dimen3>\availht\dimen3=\availht\fi
     \ifColNotes
-      \ifdim\ht\xr@fbox>1.1\dimen3
-        \keepn@testrue
-        \loop
+      \ifdim\ht\xr@fbox>1.1\dimen3 % reduce height of notes for smaller page
+        \keepn@testrue\dimen4=\availht
+        \@LOOP
           \setbox\th@cl@ss=\copy13
           \bestavailht=\dimen3
-          \dimen5=\ht\xr@fbox \advance\dimen5 -\dimen3
-          \multiply\dimen5 by 32\divide\dimen5 by \colwidth\multiply\dimen5 by \XrefNotesWidth
-          \divide\dimen5 by 32\advance\bestavailht by \dimen5
-          \trace{o}{Retrying colnotes at \the\bestavailht, versus \the\availht}%
-          \c@lcavailht \setbox\s@vedpage=\vbox{\unvcopy255}\balanced
-          \iffitonpage\temptrue\dimen3=\availht\else
-            \tempfalse\bestavailht=\dimen3
+          \dimen5=\ht\xr@fbox \advance\dimen5 -\dimen3 \multiply\dimen5 by 32
+          \divide\dimen5 by \colwidth\multiply\dimen5 by \XrefNotesWidth \divide\dimen5 by 32
+          \advance\bestavailht by \dimen5
+          \temptrue\ifdim\dimen5<\baselineskip\ifdim\dimen5>-\baselineskip\tempfalse\fi\fi
+          \iftemp
+            \trace{o}{Retrying colnotes at \the\bestavailht, versus \the\availht, diff=\the\dimen5, baselineskip=\the\baselineskip}%
             \c@lcavailht \setbox\s@vedpage=\vbox{\unvcopy255}\balanced
+            \iffitonpage\temptrue\dimen3=\availht \else
+              \tempfalse\bestavailht=\dimen3
+              \c@lcavailht \setbox\s@vedpage=\vbox{\unvcopy255}\balanced
+            \fi
           \fi
-        \iftemp\repeat
+        \iftemp\@REPEAT
         \c@lcboxheights\keepn@tesfalse
-      \else\ifdim\ht\xr@fbox>\dimen3\dimen3=\ht\xr@fbox\fi
       \fi
+      \ifdim\ht\xr@fbox>\dimen3\dimen3=\ht\xr@fbox\fi
     \fi
-    \setbox255=\box\voidb@x
+    %\setbox255=\box\voidb@x
     \advance\dimen3\lastd@pth
     \setbox1=\vbox{\unvcopy\colA\unskip}%
     \setbox2=\vbox{\unvcopy\colB\unskip}%
