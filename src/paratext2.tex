@@ -1471,7 +1471,7 @@
   \trace{o}{savepartialpaged}%
   \ifnum\holdinginserts=0 \else\message{INTERNAL ERROR! Foonotes/figures shouldn't be held, or they'll get lost!}\fi
   \s@ttrialheight
-  \ifColNotes
+  \if\XrefNotes\relax\else
     \x@\let\x@\th@cl@ss\csname note-\XrefNotes\endcsname % make \th@cl@ss be a synonym for the current note class
     \setbox13=\copy\th@cl@ss
   \fi
@@ -1493,7 +1493,7 @@
     \ifColNotes\ifdim\dp\xr@fbox<\lastd@pth \lastd@pth=\dp\xr@fbox\fi\fi
     \dimen3=\ifdim\colhtA>\colhtB\colhtA\else\colhtB\fi
     \ifdim\dimen3>\availht\dimen3=\availht\fi
-    \ifColNotes
+    \if\XrefNotes\relax\else
       \ifdim\ht\xr@fbox>1.1\dimen3 % reduce height of notes for smaller page
         \keepn@testrue\dimen4=\availht
         \@LOOP
