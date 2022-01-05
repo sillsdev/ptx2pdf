@@ -431,7 +431,8 @@
     \dimen11=\ht11\ifdim\dimen11<\ht12\dimen11=\ht12\fi
     \dimen12=\dp11\ifdim\dimen12<\dp12\dimen12=\dp12\fi
     \trace{n}{Study notes (\the\ht11, \the\ht12)=\the\dimen11}%
-    \hbox to \textwidth {\box11\makecolumngutter{\dimen11}{\dimen11}{\dimen12}{\dimen11}{0}\box12}%
+    \hbox to \textwidth {\box\ifRTL 12\else11\fi
+      \makecolumngutter{\dimen11}{\dimen11}{\dimen12}{\dimen11}{0}\box\ifRTL 11\else12\fi}%
     \ifkeepn@tes\else
       \global\setbox\th@cl@ss\box\voidb@x
     \fi
@@ -627,7 +628,7 @@
   \x@\let\x@\th@cl@ss\csname note-#3\endcsname % make \th@cl@ss be a synonym for the current note class
   \hsize=#2%\advance\hsize-\XrefNotesMargin\advance\hsize-\XrefNotesMargin
   \leftskip=0pt\rightskip=0pt plus 0.8\hsize
-  %\showbox\th@cl@ss
+  % Empty the xref notes so that they don't crop up elsewhere
   \unvbox\th@cl@ss \r@versevb@x{3}\unvbox3
   \s@tbaseline{#3}
   \loop
@@ -1101,7 +1102,9 @@
 
 \def\cle@rn@t@cl@ss#1{%
   \trace{n}{cle@rn@t@cl@ss{#1}}%
-  \x@\let\x@\th@cl@ss\csname note-#1\endcsname
+  \ifnum \ifnotst@dynotes\x@\ifx\csname studynotes-#1\endcsname\relax 1\else 0\fi\else 1\fi =1
+    \x@\let\x@\th@cl@ss\csname note-#1\endcsname
+  \fi
   \global\setbox\th@cl@ss=\box\voidb@x
 }
 \def\clearn@tes{\trace{o}{clearn@tes}\let\\=\cle@rn@tecl@ss \the\n@tecl@sses}
@@ -1220,19 +1223,14 @@
     \else\setbox\colA=\box0\setbox\s@vedpage=\box\voidb@x \trace{o}{Everything to colA}% dump it all in colA and bail
   \fi\fi\fi
   \hascolnotesfalse
-  \ifColNotes\iffitonpage\ifdim\ht\coln@tebox>0pt \hascolnotestrue\relax
-    \setbox\colB=\vbox to \colhtA{\unvbox\colB \vfil\unvbox\coln@tebox\unkern}
-    \trace{o}{balanced: ifcolnotes bailing with A=\the\ht\colA, B=\the\ht\colB}
-    \fitonpagefalse\rebalancetrue % bail early
-    \colbfullfalse
-  \fi\fi\fi
   \iffitonpage
     \colbfulltrue
     \shortavail=\colhtB \advance\shortavail by -\ht\colB                        %(3)
+    \ifColNotes\advance\shortavail by -\ht\coln@tebox\fi
     \advance\shortavail by \colhtA \advance\shortavail by -\ht\colA
     \ifdim\shortavail>5\baselineskip
       \trace{o}{Rebalance trying from average \the\shortavail\space of
-                \the\colhtA =\the\ht\colA, \the\colhtB =\the\ht\colB}%
+                \the\colhtA =\the\ht\colA, \the\colhtB =\the\ht\colB, colnotes=\the\ht\coln@tebox}%
       \divide\shortavail 2% \advance\shortavail by -0.5\ht\colA \advance\shortavail by -0.5\ht\colB
       \advance\colhtA by -\shortavail \advance\colhtB by -\shortavail
       \loop\setbox0=\copy\s@vedpage
@@ -1252,6 +1250,11 @@
     \ifunbalanced\shortavail=\availht\else\rebalancetrue
       \ifdim\colhtB>\colhtA \shortavail=\colhtB\fi
     \fi
+    \ifColNotes\ifdim\ht\coln@tebox>0pt \hascolnotestrue\relax
+      \trace{o}{balanced: ifcolnotes bailing with A=\the\ht\colA, B=\the\ht\colB}
+    %  \rebalancefalse % bail early
+      % \colbfullfalse
+    \fi\fi
     \advance\shortavail \baselineskip
 %-c_balanced_intro
 %+c_balanced_loop
@@ -1275,11 +1278,13 @@
         \fi\fi
 		% if second column longer than first column by more than .3*line height, quit loop
         \colhtA=\ht\colA \colhtB=\ht\colB
+        \ifColNotes\advance\colhtB \ht\coln@tebox\fi
         \dimen0=\colhtB \incr{\dimen0}{\toprightins} \incr{\dimen0}{\bottomrightins}%
         \advance\dimen0 by -\colhtA \decr{\dimen0}{\topleftins} \decr{\dimen0}{\bottomleftins}%
         \trace{o}{Testing column difference of \the\dimen0 \space against threshold of \BalanceThreshold x\the\baselineskip}%
         \ifdim\dimen0>\BalanceThreshold\baselineskip\else\ifdim\dimen0<-\BalanceThreshold\baselineskip\else   %(7)
           \shortavail=\colhtB\incr{\shortavail}{\toprightins}\incr{\shortavail}{\bottomrightins}%
+          \ifColNotes\advance\colhtB\ht\coln@tebox\fi
           \ifdim\dimen0>0pt\else\advance\shortavail by -\dimen0\fi
           %\advance\shortavail by \ifdim\dp\colA>\dp\colB \dp\colA\else\dp\colB\fi
           \trace{o}{Best height \the\shortavail, difference of \the\dimen0, from a threshold of \BalanceThreshold x\the\baselineskip}%
@@ -1294,8 +1299,11 @@
         \ifrebalance\repeat
     \fi
     %\advance\shortavail by \ifdim\dp\colA>\dp\colB \dp\colA\else\dp\colB\fi     %(9)
-    \s@tcolhts{\shortavail}\spl@tcols\s@vedpage
-    \trace{o}{A = \the\colhtA , B = \the\colhtB , (from \the\shortavail) remaining = \the\ht\s@vedpage}%
+    \s@tcolhts{\shortavail}\spl@tcols\s@vedpage\g@tcolhts
+    \ifColNotes\ifdim\ht\coln@tebox>0pt \hascolnotestrue\relax
+      \setbox\colB=\vbox{\unvbox\colB \vfil\unvbox\coln@tebox\unkern}
+    \fi\fi
+    \trace{o}{A = \the\colhtA=\the\ht\colA , B = \the\colhtB=\the\ht\colB , (from \the\shortavail) remaining = \the\ht\s@vedpage}%
   \else
     \ifColNotes\ifrebalance
       \trace{o}{balanced: ColNotes A=\the\colhtA, \the\ht\colA, B=\the\colhtB, \the\ht\colB }
@@ -1345,6 +1353,7 @@
     \ifdim\ht8>0pt \colbfullfalse\fi
   \fi
   \dimen9=\availht\advance\dimen9 by \bmg@p
+  \trace{o}{fitting columns to \the\dimen9, coln@tes=\the\ht\xr@fbox}%
   \lastd@pth=\dp\colA \setbox\colA=\vbox to \dimen9{\unvbox5\unvbox\colA\vfil\unvbox7}\dp\colA=\lastd@pth
   \ifdim\ht\colB<1pt\setbox\colB\vbox{\noindent\par}\else
     \ifcolbfull\ifdim\lastd@pth<\dp\colB \lastd@pth=\dp\colB\fi\else\lastd@pth=\dp\colB\fi
@@ -1509,7 +1518,9 @@
     \s@ttrialheight
     \keepn@testrue\c@lcavailht\keepn@tesfalse
     \trace{o}{spdd: partial=\the\ht\partial, textheight=\the\textheight, availht=\the\availht}%
-    \ifdim\availht<2\baselineskip \twocolp@geout \clearn@tes\fi
+    \ifdim\availht<2\baselineskip \twocolp@geout \clearn@tes\else
+      \ifColNotes\notst@dynotestrue\clearn@tes\notst@dynotesfalse\fi
+    \fi
     \unvbox\s@vedpage\penalty\ifnum\outputpenalty=10000 0 \else \outputpenalty \fi
   \else
     \trace{o}{sppd: Not fit on page}%
@@ -1585,7 +1596,7 @@
     \dimen3=\ht\colA \ifdim\ht\colB>\dimen3\ifhascolnotes\dimen3=\ht\colB\fi\fi
     \ifColNotes\ifdim\ht\xr@fbox>\dimen3\dimen3=\ht\xr@fbox\fi\fi
     \ifdim\dimen3>\availht\dimen3=\availht\fi
-    \ht\colA=\dimen3 \ht\colB=\dimen3
+    \setbox\colA=\vbox to \dimen3{\unvbox\colA} \setbox\colB=\vbox to \dimen3{\unvbox\colB}%
     \advance\dimen4 by \lastd@pth
     \trace{o}{box height + gap = \the\availht \space + \the\bmg@p}%
     \def\pagecontents{%
@@ -1599,8 +1610,8 @@
         \ifdim\ht\colA>\ht\colB\ht\colB=\ht\colA\else\ht\colA=\ht\colB\fi\fi
       \trace{p}{Text depth = \the\dimen3}%
       \hbox to \dimen1{\noindent\hbox to \columnshift{}%
-        \ifRTL \hbox to \ExtraRMargin{}\vbox to \dimen2{\unvbox\colB\vfil}\makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen2}{3}\vbox to \dimen2{\unvbox\colA\vfil}%
-        \else \vbox to \dimen2{\unvbox\colA\vfil}\makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen2}{3}\vbox to \dimen2{\unvbox\colB\vfil}\hbox to \ExtraRMargin{}\fi}%
+        \ifRTL \hbox to \ExtraRMargin{}\vbox to \dimen2{\box\colB\vfil}\makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen2}{3}\vbox to \dimen2{\box\colA\vfil}%
+        \else \vbox to \dimen2{\box\colA\vfil}\makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen2}{3}\vbox to \dimen2{\box\colB\vfil}\hbox to \ExtraRMargin{}\fi}%
         %\else \box\colA\makecolumngutter{\the\dimen3}{\the\textheight}{0pt}\box\colB\hbox to \ExtraRMargin{\fi}%
       \p@geendcontent
     }%
@@ -1787,7 +1798,7 @@
     \onecolwidth{\hsize}%
     \global\vsize=\textheight
     %\tempfalse
-    \trace{o}{SingleColumn: \the\ht\partial > \PageFullFactor\space\the\textheight}%
+    \trace{o}{SingleColumn: \the\ht\partial > \PageFullFactor\space x \the\textheight ?}%
     \ifdim\ht\partial>\PageFullFactor\textheight\iflastptxfile\else
       \twocolp@geout \fi\fi%Set up pagecontents and call \plainoutput
     \global\c@rrentcols=1
@@ -1797,7 +1808,8 @@
     \eject
     \global\holdinginserts=1
   \fi\fi
-  \trace{o}{resetting resetvsize for singlecolumn. Partial ht=\the\ht\partial}\def\resetvsize{\global\vsize=\textheight\trace{o}{resetvsize vsize=\the\vsize}} 
+  \trace{o}{resetting resetvsize for singlecolumn. Partial ht=\the\ht\partial}%
+  \def\resetvsize{\global\vsize=\textheight\trace{o}{resetvsize vsize=\the\vsize}}%
   \global\output={\onecol}%
   \global\holdinginserts=1
   \count255=1000
