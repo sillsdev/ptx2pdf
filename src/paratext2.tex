@@ -496,9 +496,15 @@
 \def\StudyNotes#1{\x@\let\csname studynotes-#1\g@tndstat\endcsname=1}
 \newif\ifp@ranotes
 \newif\ifColNotes \ColNotesfalse
-\def\checkp@ranotes#1{\st@dynotesfalse\x@\ifx\csname paranotes-#1\endcsname\relax
-  \x@\ifx\csname studynotes-#1\endcsname\relax\else\st@dynotestrue\fi
-  \p@ranotesfalse\else\p@ranotestrue\fi}
+\def\checkp@ranotes#1{%
+  \edef\tmp{#1}%
+  \ifnum\ifColNotes\ifx\tmp\XrefNotes 0\else 1\fi\else 1\fi =1
+    \st@dynotesfalse
+    \x@\ifx\csname paranotes-#1\endcsname\relax
+      \x@\ifx\csname studynotes-#1\endcsname\relax\else\st@dynotestrue\fi
+      \p@ranotesfalse
+    \else\p@ranotestrue\fi
+  \else\p@ranotestrue\fi}
 %-c_paragraphedNotes
 
 % Notewidth for diglots depends on settings and column. 
@@ -1402,6 +1408,8 @@
 \def\NoXrefNotes{\gdef\XrefNotes{}%
  \advance\colwidth by 0.5\XrefNotesWidth
  \advance\colwidth by \XrefNotesMargin}
+
+\newdimen\bestavailht \bestavailht=0pt
 \def\c@lcavailht{
   \edef\t@st{\p@gefirstmark}%
   \ifx\t@st\empty\xdef\p@gefirstmark{\firstmark}\trace{H}{Loading firstmark \p@gefirstmark}\fi% remember first, if not already set
@@ -1430,7 +1438,8 @@
   \advance\bmg@p by -\availht
   %\advance\availht \dp\pstr@t
   %\advance\availht by \dp255 % split includes depth so give it space for that
-  \trace{o}{new availht=\the\availht, texttrialheight=\the\t@xttrialheight, topins=\the\ht\topins, bottomins=\the\ht\bottomins, baselineskip=\the\baselineskip}%
+  \trace{o}{new availht=\the\availht, best availht=\the\bestavailht, texttrialheight=\the\t@xttrialheight, topins=\the\ht\topins, bottomins=\the\ht\bottomins, baselineskip=\the\baselineskip}%
+  \ifdim\bestavailht>0pt\ifdim\bestavailht<\availht\availht=\bestavailht\fi\fi
   \ifColNotes\ifb@dy
     \ifx\XrefNotes\empty\relax\setbox5=\box\voidb@x\else
       \setbox5=\vbox{\m@kexrefbox{\ifdim\t@xttrialheight>0pt\ifdim\t@xttrialheight<\availht\t@xttrialheight\else\availht\fi\else\availht\fi}{\XrefNotesWidth}{\XrefNotes}}%
@@ -1466,8 +1475,12 @@
   \trace{o}{savepartialpaged}%
   \ifnum\holdinginserts=0 \else\message{INTERNAL ERROR! Foonotes/figures shouldn't be held, or they'll get lost!}\fi
   \s@ttrialheight
+  \ifColNotes
+    \x@\let\x@\th@cl@ss\csname note-\XrefNotes\endcsname % make \th@cl@ss be a synonym for the current note class
+    \setbox13=\copy\th@cl@ss
+  \fi
   \keepn@testrue\c@lcavailht\keepn@tesfalse
-  \setbox\s@vedpage=\vbox{\unvbox255}%
+  \setbox\s@vedpage=\vbox{\unvcopy255}%
   \trace{o}{balancing from savepartialpaged, height=\the\ht\s@vedpage, hIns:\the\holdinginserts, vsz=\the\vsize, av=\the\availht, op:\the\outputpenalty}%
   \ifdim\ht\partial>\baselineskip\swapcolfalse\else\swapcoltrue\fi
   \ifdim\availht<\baselineskip 
@@ -1484,7 +1497,25 @@
     \ifColNotes\ifdim\dp\xr@fbox<\lastd@pth \lastd@pth=\dp\xr@fbox\fi\fi
     \dimen3=\ifdim\colhtA>\colhtB\colhtA\else\colhtB\fi
     \ifdim\dimen3>\availht\dimen3=\availht\fi
-    \ifColNotes\ifdim\ht\xr@fbox>\dimen3\dimen3=\ht\xr@fbox\fi\fi
+    \ifColNotes
+      \ifdim\ht\xr@fbox>1.1\dimen3
+        \dimen4=\dimen3
+        \loop
+          \setbox\th@cl@ss=\copy13
+          \bestavailht=\dimen3
+          \dimen5=\ht\xr@fbox \advance\dimen5 -\dimen3
+          \multiply\dimen5 by 32\divide\dimen5 by \colwidth\multiply\dimen5 by \XrefNotesWidth
+          \divide\dimen5 by 32\advance\bestavailht by \dimen5
+          \trace{o}{Retrying colnotes at \the\bestavailht, versus \the\availht}%
+          \keepn@testrue\c@lcavailht\keepn@tesfalse
+          \setbox\s@vedpage=\vbox{\unvcopy255}%
+          \balanced \iffitonpage\tempfalse\else\temptrue\fi
+        \iftemp\repeat
+        \c@lcboxheights
+        \dimen3=\availht
+      \else\ifdim\ht\xr@fbox>\dimen3\dimen3=\ht\xr@fbox\fi
+      \fi
+    \fi
     \advance\dimen3\lastd@pth
     \setbox1=\vbox{\unvcopy\colA\unskip}%
     \setbox2=\vbox{\unvcopy\colB\unskip}%

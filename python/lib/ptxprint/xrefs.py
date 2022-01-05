@@ -170,7 +170,7 @@ class Xrefs:
                 elif len(rs):
                     a.append(s + rs)
             elif e.tag == "refgroup":
-                a.append(s + "[" + " ".join(self._unpackxml(e, stfilter)) + "]")
+                a.append(s + "[\\nobreak " + " ".join(self._unpackxml(e, stfilter)) + "]")
         return a
 
     def readxml(self, xrfile, localfile):
