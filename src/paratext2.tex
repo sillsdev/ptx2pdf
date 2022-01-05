@@ -424,7 +424,7 @@
         \ifdim\ht1 < \baselineskip \advance\dimen10 by \baselineskip\else \advance \dimen10 by 0.5\ht1\fi
       \else\tempfalse\fi \iftemp\repeat
     \setbox1=\box10
-    \iff@rstnote\ifvoid\verybottomins\vfill\fi\fi % ignore depth of body text; fill space
+    \iff@rstnote\ifvoid\verybottomins\fi\fi % ignore depth of body text; fill space
     \iff@rstnote\noterule{\AboveNoteSpace}{\BelowFootNoteRuleSpace}{\textwidth}{%
       \FootNoteRuleLeftIndent \vrule height 0.4pt width \FootNoteRuleWidth\textwidth \FootNoteRuleRightIndent}%
       \global\f@rstnotefalse\else\kern\InterNoteSpace\fi
@@ -1499,7 +1499,7 @@
     \ifdim\dimen3>\availht\dimen3=\availht\fi
     \ifColNotes
       \ifdim\ht\xr@fbox>1.1\dimen3
-        \dimen4=\dimen3
+        \keepn@testrue
         \loop
           \setbox\th@cl@ss=\copy13
           \bestavailht=\dimen3
@@ -1507,15 +1507,17 @@
           \multiply\dimen5 by 32\divide\dimen5 by \colwidth\multiply\dimen5 by \XrefNotesWidth
           \divide\dimen5 by 32\advance\bestavailht by \dimen5
           \trace{o}{Retrying colnotes at \the\bestavailht, versus \the\availht}%
-          \keepn@testrue\c@lcavailht\keepn@tesfalse
-          \setbox\s@vedpage=\vbox{\unvcopy255}%
-          \balanced \iffitonpage\tempfalse\else\temptrue\fi
+          \c@lcavailht \setbox\s@vedpage=\vbox{\unvcopy255}\balanced
+          \iffitonpage\temptrue\dimen3=\availht\else
+            \tempfalse\bestavailht=\dimen3
+            \c@lcavailht \setbox\s@vedpage=\vbox{\unvcopy255}\balanced
+          \fi
         \iftemp\repeat
-        \c@lcboxheights
-        \dimen3=\availht
+        \c@lcboxheights\keepn@tesfalse
       \else\ifdim\ht\xr@fbox>\dimen3\dimen3=\ht\xr@fbox\fi
       \fi
     \fi
+    \setbox255=\box\voidb@x
     \advance\dimen3\lastd@pth
     \setbox1=\vbox{\unvcopy\colA\unskip}%
     \setbox2=\vbox{\unvcopy\colB\unskip}%
