@@ -358,7 +358,7 @@
 \let\b@drcol\relax
 
 \newbox\b@rderbox
-\def\mkb@rder#1{%Put a border around a box
+\def\mkb@rder#1{%Put a simple border around a box
   \x@\setbox\x@\b@rderbox\x@\box#1
   \tempfalse\t@mpfalse
   \ifx\b@drleft\tr@e\temptrue\trace{eb}{Border: left}\fi
@@ -417,6 +417,9 @@
   \fi
   \x@\setbox#1\box\b@rderbox
 }
+\let\mkb@rder@plain\mkb@rder
+\def\mkb@rder@double#1{\edef\b@r\mkb@rder
+
 \def\p@rsef@gsc@le#1x#2x#3\E{% \v@lpfx  fg or bg, params scale which might be of form Xscale x Yscale
   \edef\fig@h@dim{#1}\edef\fig@v@dim{#2}%
   \trace{e}{p@rsefigscale:#1,#2,#3}%
@@ -488,6 +491,7 @@
   \getsbp@ram{bordertop}\let\b@drtop\cp@ram
   \getsbp@ram{borderbottom}\let\b@drbottom\cp@ram 
   \getsbp@ram{borderwidth}\let\b@drwidth\cp@ram
+  \getsbp@ram{borderstyle}\let\b@drstyle\cp@ram
   \getsbp@ram{bgfigalpha}\let\bgf@galpha\cp@ram
   \getsbp@ram{bgfigcolour}\let\bgf@gcol\cp@ram
   \tempfalse
@@ -595,7 +599,11 @@
     \let\b@drtop=\fstb@drtop
     \getsbp@ram{bordercolour}%
     \let\b@drcol\cp@ram
-    \mkb@rder{\extchunkb@x}%
+    \ifx\b@drstyle\relax
+      \mkb@rder{\extchunkb@x}%
+    \else
+      \csname mkb@rder@\b@drstyle\endcsname{\extchunkb@x}%
+    \fi
     \let\fstb@drtop=\relax
     \trace{e}{After border, chunk is  now \the\ht\extchunkb@x+\the\dp\extchunkb@x}%
     \x@\let\x@\@xtins\csname ins-\loc@ption\endcsname
