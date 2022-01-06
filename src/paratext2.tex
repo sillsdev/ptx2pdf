@@ -524,9 +524,12 @@
         \fi
      \else\n@tewidth=\textwidth\fi
    \else
-     \ifColNotes\ifnum\c@rrentcols=2\global\n@tewidth=\colwidth\else\onecolwidth{\n@tewidth}\fi
-     \else\n@tewidth=\textwidth\fi
-     \ifColNotes\ifst@dynotes\advance\n@tewidth by 0.5\XrefNotesWidth\fi\fi
+     \ifst@dynotes\global\n@tewidth=0.5\textwidth
+       \ifColNotes\advance\n@tewidth by -0.5\gutter\fi
+     \else
+       \ifColNotes\ifnum\c@rrentcols=2\global\n@tewidth=\colwidth\else\onecolwidth{\n@tewidth}\fi
+       \else\n@tewidth=\textwidth\fi
+     \fi
    \fi
   \else
     %Assume that the note will be inserted using the current text width.
@@ -927,7 +930,7 @@
         \ifb@dy\testXrefSideR\ifnum\tmp=1
           \makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen3}{1}%
         \fi\fi
-        \hbox to \ExtraRMargin{}\hfil}%
+        \hbox to \ExtraRMargin{}}%
       \ifvoid\bottomins\else%
         \kern-\lastd@pth \lastd@pth=0pt \vskip\skip\bottomins \unvbox\bottomins \fi
       \ifMidPageFootnotes
@@ -1539,8 +1542,8 @@
       \dimen5=\textwidth\advance\dimen5 by -\ExtraRMargin% \advance\dimen5 by -\columnshift %
       \dimen2=\dimen3% \advance\dimen2\bmg@p
       \vbox{\hbox to \dimen5{\noindent\hbox to \columnshift{}%
-          \ifRTL \hbox to \ExtraRMargin{}\vbox to \dimen2{\unvbox\colB\vfil}\makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen2}{3}\vbox to \dimen2{\unvbox\colA\vfil}%
-          \else \vbox to \dimen2{\unvbox\colA\vfil}\makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen2}{3}\vbox to \dimen2{\unvbox\colB\vfil}\hbox to \ExtraRMargin{}\fi}
+          \ifRTL \hbox to \ExtraRMargin{}\vbox to \dimen2{\box\colB\vfil}\makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen2}{3}\vbox to \dimen2{\box\colA\vfil}%
+          \else \vbox to \dimen2{\box\colA\vfil}\makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen2}{3}\vbox to \dimen2{\box\colB\vfil}\hbox to \ExtraRMargin{}\fi}
         \kern\lastd@pth}}%
 %-c_savepartialpaged_intro
 %+c_savepartialpaged
