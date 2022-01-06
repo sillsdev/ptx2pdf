@@ -414,7 +414,7 @@
     \dimen10=0.4\ht\th@cl@ss
     \setbox10=\box1
     \splittopskip=0pt
-    \loop\temptrue
+    \@@LOOP\temptrue
       \setbox1=\copy\th@cl@ss
       \trace{n}{splitting study box to \the\dimen10}%
       \setbox11=\vsplit1 to \dimen10%
@@ -422,7 +422,7 @@
       \trace{n}{split box remainder \the\ht1}%
       \ifdim\ht1>0pt
         \ifdim\ht1 < \baselineskip \advance\dimen10 by \baselineskip\else \advance \dimen10 by 0.5\ht1\fi
-      \else\tempfalse\fi \iftemp\repeat
+      \else\tempfalse\fi \iftemp\@@REPEAT
     \setbox1=\box10
     \iff@rstnote\ifvoid\verybottomins\fi\fi % ignore depth of body text; fill space
     \iff@rstnote\noterule{\AboveNoteSpace}{\BelowFootNoteRuleSpace}{\textwidth}{%
@@ -728,21 +728,31 @@
 \def\onecoltrial{% single-column version of \twocoltrial (see below)
   \tracingparagraphs=0
   %\tracingall=1\tracingoutput=0\tracingpages=0\tracingparagraphs=0\tracingassigns=0\tracingscantokens=0
+  \if\XrefNotes\relax\else
+    \x@\let\x@\th@cl@ss\csname note-\XrefNotes\endcsname % make \th@cl@ss be a synonym for the current note class
+    \setbox13=\copy\th@cl@ss
+  \fi
   \s@ttrialheight
   \trace{i}{1c TRIAL with ht=\the\trialheight, vsize=\the\vsize, hIns=\the\holdinginserts}%
-  \c@lcavailht
+  \keepn@testrue\c@lcavailht\keepn@tesfalse
   \ifColNotes\advance\availht by -\ht\coln@tebox\fi
   \setbox\s@vedpage=\copy255
   % split the galley to the actual size available
   \ifdim\availht<0pt                                                        %(2)
     \MSG{Page overfull with inserts. Perhaps a little more text and less pictures would help}%
   \fi
-  \setbox\colA=\vsplit255 to \availht \setbox0\copy\colA \setbox0=\vbox{\unvbox0\vfil}
-  \decr{\availht}{0}
-  \ifvoid255 \fitonpagetrue \else \fitonpagefalse \fi
+  \setbox\colA=\vsplit255 to \availht
+  \ifColNotes\setbox\colA\vbox{\unvbox\colA\vfil\box\coln@tebox}\fi
+  \ifvoid255 \ifdim\ht\colA<\availht \fitonpagetrue\else\fitonpagefalse\fi \else \fitonpagefalse \fi
+  \decr{\availht}{\colA}
 %-c_onecoltrial_intro
 %+c_onecoltrial_pagecontents
   \iffitonpage
+    \dimen3=\ht\colA \advance\dimen3\lastd@pth
+    \if\XrefNotes\relax\else
+      \reheightcolnotess{13}%
+      \ifdim\ht\xr@fbox>\dimen3\dimen3=\ht\xr@fbox\fi
+    \fi
     \trace{i}{1 SUCCEEDED, shipping page hIns=\the\holdinginserts}%
     \def\pagecontents{%                                                     %(3)
       \dimen1=\textwidth% \advance\dimen1 -\ExtraRMargin
@@ -752,11 +762,9 @@
       \ifvoid\topins\else \vbox{\hbox to \columnshift{}\box\topins} \vskip\skip\topins \fi
       \setbox1=\vbox{\unvcopy\colA\unskip}%
       \iflastpage\setbox\colA\vbox{\unvbox\colA}\fi
-      \ifColNotes\setbox\colA\vbox{\unvbox\colA\vfil\box\coln@tebox}\fi
       \lastd@pth=\dp\colA
       \ifColNotes\ifdim\dp\xr@fbox>\lastd@pth \lastd@pth=\dp\xr@fbox\fi\fi
       \locs@startstop{\colA}{1}%
-      \dimen3=\ht\colA \advance\dimen3\lastd@pth
       %\trace{o}{onecoltrial: dimen=\the\dimen3, lastd@pth=\the\lastd@pth}%
       \ifColNotes\ifdim\ht\xr@fbox>\dimen3\dimen3=\ht\xr@fbox\fi\fi
       \hbox to \dimen1{\noindent\ifb@dy\testXrefSideL\ifnum\tmp=1
@@ -774,6 +782,7 @@
     }%
 %-c_onecoltrial_pagecontents
 %+c_onecoltrial_pagefit
+    \notst@dynotesfalse\clearn@tes
     \resetvsize
     \ifnum\ifdim\ht\colA>\baselineskip 1\else\ifdim\ht\partial>0pt 1\else 0\fi\fi =1
       \plainoutput\trace{p}{plainoutput from onecoltrial}%    %(+)
@@ -789,7 +798,7 @@
 %+c_onecoltrial_fail
   \else % the contents of the "galley" didn't fit into the actual page,
         % so reduce \vsize and try again with an earlier break
-    \trace{i}{1c REDUCING VSIZE hIns=\the\holdinginserts}%
+    \trace{i}{1c REDUCING VSIZE \the\vsize \space by -\the\baselineskip, hIns=\the\holdinginserts}%
     \global\advance\vsize by -\baselineskip
     \trace{b}{BALANCE 1col go round vsize=\the\vsize}%
     \res@tpage
@@ -890,25 +899,72 @@
 \newif\ifMidPageFootnotes % Should footnotes go before a single-double column transition
 \MidPageFootnotesfalse
 
+\def\reheightcolnotess#1{%
+  \trace{i}{height=\the\dimen3, xr@fbox=\the\ht\xr@fbox, baselineskip=\the\baselineskip}%\tracingassigns=1\tracingmacros=1\tracingifs=1
+  \ifdim\ht\xr@fbox>\dimen3 % reduce height of notes for smaller page
+    \keepn@testrue\dimen4=\availht
+    \@LOOP
+      \setbox\th@cl@ss=\copy#1
+      \bestavailht=\dimen3
+      \dimen5=\ht\xr@fbox \advance\dimen5 -\dimen3
+      \temptrue\ifdim\dimen5<\baselineskip\ifdim\dimen5>-\baselineskip\tempfalse\fi\fi
+      \ifdim\dimen5>2000pt \tempfalse\fi
+      \trace{o}{reheighting diff=\the\dimen5}%
+      \iftemp
+        \multiply\dimen5 by 32
+        \divide\dimen5 by \hsize\multiply\dimen5 by \XrefNotesWidth \divide\dimen5 by 32
+        \ifdim\dimen5<\baselineskip\dimen5=\baselineskip\fi
+        \advance\bestavailht by \dimen5
+        \trace{o}{Retrying colnotes at \the\bestavailht, versus \the\availht, from=\the\dimen3, diff=\the\dimen5, baselineskip=\the\baselineskip}%
+        \c@lcavailht
+        \setbox255=\copy\s@vedpage
+        \global\setbox\colA=\vsplit255 to \availht
+        \ifColNotes\global\setbox\colA\vbox{\unvbox\colA\vfil\copy\coln@tebox}\fi
+        \ifnum \ifvoid255 \ifdim\ht\colA<\availht 1\else 0\fi \else 0\fi =1
+          \global\dimen3=\ht\colA
+          \dimen6=\ht\xr@fbox\advance\dimen6 by -\dimen3
+          \ifdim\dimen6<\dimen5\ifdim-\dimen6>-\dimen5\temptrue\else\tempfalse\fi\else\tempfalse\fi
+          %\ifdim\dimen3>\dimen4\tempfalse\fi
+        \else\tempfalse\fi
+        \iftemp\else
+          \bestavailht=\dimen3 \c@lcavailht
+          \setbox255=\copy\s@vedpage
+          \global\setbox\colA=\vsplit255 to \availht
+          \ifColNotes\global\setbox\colA\vbox{\unvbox\colA\vfil\copy\coln@tebox}\fi
+        \fi
+        \global\dimen3=\ht\colA\advance\dimen3 by \dp\colA
+        \trace{o}{New availht(1)=\the\availht, measured height=\the\dimen3, olddiff=\the\dimen5, newdiff=\the\dimen6, limit=\the\dimen4}%
+      \fi
+    \iftemp\@REPEAT
+    \c@lcboxheights\keepn@tesfalse
+  \fi%\tracingassigns=0\tracingmacros=0\tracingifs=0
+}
 \newdimen\t@xttrialheight
 \def\savepartialpage{% save a partially-full page when switching to 2-column format,
   \xdef\p@gebotmark{\botmark}%
   \trace{o}{savepartialpage: partial=\the\ht\partial}%
+  \if\XrefNotes\relax\else
+    \x@\let\x@\th@cl@ss\csname note-\XrefNotes\endcsname % make \th@cl@ss be a synonym for the current note class
+    \setbox13=\copy\th@cl@ss
+  \fi
   \s@ttrialheight
   \trace{o}{savepartialpage: b@dy\ifb@dy true\else false\fi\space for trialheight \the\trialheight}%
   \setbox0=\vbox{\unvcopy255}%
-  \global\t@xttrialheight=\ht0
+  %\global\t@xttrialheight=\ht0
   \keepn@testrue\c@lcavailht\keepn@tesfalse
   \s@veallnotes{1}%
   \setbox\s@vedpage=\copy255
   % split the galley to the actual size available
   \setbox\colA=\vsplit255 to \availht
-  \setbox1=\vbox{\unvcopy\colA}
+  \ifColNotes\setbox\colA\vbox{\unvbox\colA\vfil\copy\coln@tebox}\fi
   \edef\t@mp{\splitbotmark}%
   \ifx\t@mp\empty\else\global\m@rksonpagetrue\trace{H}{Found mark \splitbotmark}\fi
   \dimen1=\textwidth\advance\dimen1 by -\ExtraRMargin\ifb@dy\iftob@dy\else\advance\dimen1 by -\columnshift\fi\fi
-  \dimen3=\ht1\advance\dimen3 by \dp1
-  \ifColNotes\ifdim\dimen3<\ht\coln@tebox\dimen3=\ht\coln@tebox\fi\fi
+  \dimen3=\ht\colA\advance\dimen3 by \dp\colA
+  \if\XrefNotes\relax\else
+    \reheightcolnotess{13}%
+    \ifdim\ht\xr@fbox>\dimen3\dimen3=\ht\xr@fbox\fi
+  \fi
   % and check if it all fit; if not, we'll have to back up and try again
   \trace{o}{savepartialpage \the\dimen3 \space rem=\the\ht255}%
   \ifvoid255 \fitonpagetrue \else \fitonpagefalse \fi
@@ -945,6 +1001,7 @@
         \s@veallnotes{1}% save the state after notes are used.
       \fi
     }%
+    \notst@dynotestrue\clearn@tes\notst@dynotesfalse
     \resetvsize
     \ifdim\ht\colA>\baselineskip\plainoutput\fin@lverybottom\trace{p}{plainoutput of finalverybottom from savepartialpage}\s@tpage
     \else\trace{o}{Page empty cols=\the\ht\colA, \the\ht\colB, partial=\the\ht\partial}%
@@ -1110,10 +1167,10 @@
 }
 
 \def\cle@rn@t@cl@ss#1{%
-  \trace{n}{cle@rn@t@cl@ss{#1}}%
   \ifnum \ifnotst@dynotes\x@\ifx\csname studynotes-#1\endcsname\relax 1\else 0\fi\else 1\fi =1
     \x@\let\x@\th@cl@ss\csname note-#1\endcsname
   \fi
+  \trace{n}{cle@rn@t@cl@ss{#1}->\the\th@cl@ss}%
   \global\setbox\th@cl@ss=\box\voidb@x
 }
 \def\clearn@tes{\trace{o}{clearn@tes}\let\\=\cle@rn@tecl@ss \the\n@tecl@sses}
@@ -1468,10 +1525,42 @@
   \global\trialheight=\textheight \global\advance\trialheight by -\ht\partial %\advance\trialheight by -\bmg@p
 }
 
+\def\reheightcolnotesd#1{%
+  \ifdim\ht\xr@fbox>\dimen3 % reduce height of notes for smaller page
+    \keepn@testrue\dimen4=\availht
+    \@LOOP
+      \setbox\th@cl@ss=\copy#1
+      \bestavailht=\dimen3
+      \dimen5=\ht\xr@fbox \advance\dimen5 -\dimen3 \multiply\dimen5 by 32
+      \divide\dimen5 by \colwidth\multiply\dimen5 by \XrefNotesWidth \divide\dimen5 by 32
+      \advance\bestavailht by \dimen5
+      \temptrue\ifdim\dimen5<\baselineskip\ifdim\dimen5>-\baselineskip\tempfalse\fi\fi
+      \iftemp
+        \trace{o}{Retrying colnotes(2) at \the\bestavailht, versus \the\availht, diff=\the\dimen5, baselineskip=\the\baselineskip. iflevel=\the\currentiflevel}%
+        \c@lcavailht
+        %\trace{o}{after c@lc iflevel=\the\currentiflevel}%
+        \setbox\s@vedpage=\vbox{\unvcopy255}\balanced
+        %\trace{o}{after balanced iflevel=\the\currentiflevel}%
+        \iffitonpage\global\dimen3=\ht\colA \ifdim\dimen3<\ht\colB \global\dimen3=\ht\colB\fi 
+          \dimen6=\ht\xr@fbox\advance\dimen6 by -\dimen3
+          \ifdim\dimen6<\dimen5 \temptrue\else\tempfalse\fi
+          \ifdim\dimen3>\textheight \tempfalse\fi
+          \ifdim\dimen6>0pt\global\advance\dimen3 by \dimen6\fi
+        \else\tempfalse\fi
+        \iftemp\else
+          \bestavailht=\dimen3
+          \c@lcavailht \global\setbox\s@vedpage=\vbox{\unvcopy255}\balanced
+        \fi
+        \trace{o}{New availht(2)=\the\availht, measured height=\the\dimen3, olddiff=\the\dimen5, newdiff=\the\dimen6, limit=\the\dimen4. iflevel=\the\currentiflevel}%
+      \fi
+    \iftemp\@REPEAT
+    \c@lcboxheights\keepn@tesfalse
+  \fi
+}
 %+c_savepartialpaged_intro
 \newif\ifrerunsavepartialpaged
 \def\savepartialpaged{%Double columnn version of save partial page
-  \trace{o}{savepartialpaged}%
+  \trace{o}{savepartialpaged. iflevel=\the\currentiflevel}%
   \ifnum\holdinginserts=0 \else\message{INTERNAL ERROR! Foonotes/figures shouldn't be held, or they'll get lost!}\fi
   \s@ttrialheight
   \if\XrefNotes\relax\else
@@ -1497,39 +1586,21 @@
     \dimen3=\ifdim\colhtA>\colhtB\colhtA\else\colhtB\fi
     \ifdim\dimen3>\availht\dimen3=\availht\fi
     \if\XrefNotes\relax\else
-      \ifdim\ht\xr@fbox>1.1\dimen3 % reduce height of notes for smaller page
-        \keepn@testrue\dimen4=\availht
-        \@LOOP
-          \setbox\th@cl@ss=\copy13
-          \bestavailht=\dimen3
-          \dimen5=\ht\xr@fbox \advance\dimen5 -\dimen3 \multiply\dimen5 by 32
-          \divide\dimen5 by \colwidth\multiply\dimen5 by \XrefNotesWidth \divide\dimen5 by 32
-          \advance\bestavailht by \dimen5
-          \temptrue\ifdim\dimen5<\baselineskip\ifdim\dimen5>-\baselineskip\tempfalse\fi\fi
-          \iftemp
-            \trace{o}{Retrying colnotes at \the\bestavailht, versus \the\availht, diff=\the\dimen5, baselineskip=\the\baselineskip}%
-            \c@lcavailht \setbox\s@vedpage=\vbox{\unvcopy255}\balanced
-            \iffitonpage\temptrue\dimen3=\availht \else
-              \tempfalse\bestavailht=\dimen3
-              \c@lcavailht \setbox\s@vedpage=\vbox{\unvcopy255}\balanced
-            \fi
-          \fi
-        \iftemp\@REPEAT
-        \c@lcboxheights\keepn@tesfalse
-      \fi
-      \ifdim\ht\xr@fbox>\dimen3\dimen3=\ht\xr@fbox\fi
+      \trace{o}{reheighting columns. xr@fbox: \the\ht\xr@fbox, colsheight: \the\dimen3. iflevel=\the\currentiflevel}%
+      \reheightcolnotesd{13}\ifdim\ht\xr@fbox>\dimen3\dimen3=\ht\xr@fbox\fi
+      \trace{o}{after reheightening to \the\dimen3, iflevel=\the\currentiflevel}%
     \fi
     %\setbox255=\box\voidb@x
     \advance\dimen3\lastd@pth
     \setbox1=\vbox{\unvcopy\colA\unskip}%
     \setbox2=\vbox{\unvcopy\colB\unskip}%
     % strip off full page height from c@lcboxheights and grab the depth
+    \locs@startstop{\colA}{1}\locs@startstop{\colB}{2}%
     \setbox\colA=\vbox to \dimen3{\unvbox\colA\unskip\setbox0\lastbox\global\dimen8=\dp0\box0}%
     \setbox\colB=\vbox to \dimen3{\unvbox\colB\unskip\setbox0\lastbox\global\dimen9=\dp0\box0}%
     \lastd@pth=\ifdim\dimen8>\dimen9\dimen8\else\dimen9\fi
     \ifColNotes\ifdim\dp\xr@fbox>\lastd@pth \lastd@pth=\dp\xr@fbox\fi\fi
     % do this after we have the final boxes
-    \locs@startstop{\colA}{1}\locs@startstop{\colB}{2}%
     \dimen4=\ht\partial \dimen5=\dp\partial
     \global\setbox\partial=\vbox{
       \dimen1=\textwidth\advance\dimen1 by -\ExtraRMargin
@@ -1541,6 +1612,7 @@
       \ifvoid\topins\else \hbox{\hbox to \columnshift{}\box\topins} \vskip\skip\topins \fi % output top spanning pictures
       \dimen5=\textwidth\advance\dimen5 by -\ExtraRMargin% \advance\dimen5 by -\columnshift %
       \dimen2=\dimen3% \advance\dimen2\bmg@p
+      \trace{o}{texboxheight=\the\dimen2, htA=\the\ht\colA, htB=\the\ht\colB}%
       \vbox{\hbox to \dimen5{\noindent\hbox to \columnshift{}%
           \ifRTL \hbox to \ExtraRMargin{}\vbox to \dimen2{\box\colB\vfil}\makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen2}{3}\vbox to \dimen2{\box\colA\vfil}%
           \else \vbox to \dimen2{\box\colA\vfil}\makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen2}{3}\vbox to \dimen2{\box\colB\vfil}\hbox to \ExtraRMargin{}\fi}
@@ -1578,6 +1650,7 @@
      \unvbox\galley\penalty\ifnum\galleypenalty=10000 0 \else \galleypenalty \fi
     \fi%
   \fi%
+  \trace{o}{endof savepartialpaged: iflevel=\the\currentiflevel}%
 }
 %-c_savepartialpaged
 
@@ -1601,8 +1674,12 @@
 %+c_twocoltrial_intro
 \def\twocoltrial{% trial formatting to see if current contents will fit on the page
   \tracingparagraphs=0
+  \if\XrefNotes\relax\else
+    \x@\let\x@\th@cl@ss\csname note-\XrefNotes\endcsname % make \th@cl@ss be a synonym for the current note class
+    \setbox13=\copy\th@cl@ss
+  \fi
   \s@ttrialheight
-  \c@lcavailht%
+  \keepn@testrue\c@lcavailht\keepn@tesfalse
   \ifdim\availht<0pt
     \MSG{Page overfull with inserts. Perhaps a little more text and less pictures would help}%
   \fi
@@ -1629,7 +1706,9 @@
     \ifColNotes\ifdim\dp\xr@fbox<\lastd@pth \lastd@pth=\dp\xr@fbox\fi\fi
     \trace{p}{twocoltrial: calculate dimen3 as min(\the\availht, max(\the\ht\colA, \the\ht\colB, \the\ht\xr@fbox))}
     \dimen3=\ht\colA \ifdim\ht\colB>\dimen3\ifhascolnotes\dimen3=\ht\colB\fi\fi
-    \ifColNotes\ifdim\ht\xr@fbox>\dimen3\dimen3=\ht\xr@fbox\fi\fi
+    \if\XrefNotes\relax\else
+      \reheightcolnotesd{13}\ifdim\ht\xr@fbox>\dimen3\dimen3=\ht\xr@fbox\fi
+    \fi
     \ifdim\dimen3>\availht\dimen3=\availht\fi
     \setbox\colA=\vbox to \dimen3{\unvbox\colA} \setbox\colB=\vbox to \dimen3{\unvbox\colB}%
     \advance\dimen4 by \lastd@pth
@@ -1651,6 +1730,7 @@
       \p@geendcontent
     }%
     \global\setbox255=\box\voidb@x                                          %(+)
+    \notst@dynotesfalse\clearn@tes
     \resetvsize % reset size of next page since it will not have any 1 column material
     \plainoutput\trace{p}{plainoutput twocoltrial}%
     \s@tpage
@@ -1834,7 +1914,7 @@
     \global\vsize=\textheight
     %\tempfalse
     \trace{o}{SingleColumn: \the\ht\partial > \PageFullFactor\space x \the\textheight ?}%
-    \ifdim\ht\partial>\PageFullFactor\textheight\iflastptxfile\else
+    \ifdim\ht\partial>\PageFullFactor\textheight \iflastptxfile\else
       \twocolp@geout \fi\fi%Set up pagecontents and call \plainoutput
     \global\c@rrentcols=1
   \else\ifdim\ht\partial<\baselineskip

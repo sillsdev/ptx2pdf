@@ -1430,7 +1430,7 @@
     \advance #1 by -\XrefNotesWidth
     \advance #1 by -\XrefNotesMargin
     \advance #1 by -0.5\gutter
-    \ifColNotesRule\advance #1 by -1pt\fi  % width of rule
+    \ifColNotesRule \advance #1 by -1pt\fi  % width of rule
     \trace{o}{setonecolwidth textwidth=\the\textwidth, columnshift=\the\columnshift, with notes width=\the\XrefNotesWidth, margin=\the\XrefNotesMargin, gutter=\the\gutter, result=\the #1}%
   \fi\fi\fi
 }
