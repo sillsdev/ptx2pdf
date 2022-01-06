@@ -743,7 +743,7 @@
   \fi
   \setbox\colA=\vsplit255 to \availht
   \ifColNotes\setbox\colA\vbox{\unvbox\colA\vfil\box\coln@tebox}\fi
-  \ifvoid255 \ifdim\ht\colA<\availht \fitonpagetrue\else\fitonpagefalse\fi \else \fitonpagefalse \fi
+  \ifvoid255 \fitonpagetrue\else\fitonpagefalse\fi
   \decr{\availht}{\colA}
 %-c_onecoltrial_intro
 %+c_onecoltrial_pagecontents

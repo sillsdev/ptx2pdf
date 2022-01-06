@@ -769,12 +769,12 @@ class FontRef:
     @classmethod
     def fromConfig(cls, txt):
         bits = txt.split("|")
-        isCtxtSpace = "False"
+        isCtxtSpace = "false"
         if len(bits) < 4:
             (name, styles, isGraphite) = bits
         else:
             (name, styles, isGraphite) = bits[:3]
-            if bits[3] not in ('True', 'False'):
+            if bits[3] not in ('true', 'false'):
                 featlist = bits[3:]
             else:
                 isCtxtSpace = bits[3]
@@ -1010,7 +1010,7 @@ class FontRef:
             featstr = "|".join("{}={}".format(k, v) for k, v in self.feats.items())
         else:
             featstr = ""
-        res = [self.name, self.style or "", ("true" if self.isGraphite else "false"), featstr]
+        res = [self.name, self.style or "", ("true" if self.isGraphite else "false"), ("true" if self.isCtxtSpace else "false"), featstr]
         if self.lang is not None:
             res.append("language={}".format(self.lang))
         return "|".join(res)
