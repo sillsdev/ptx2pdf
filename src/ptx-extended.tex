@@ -417,8 +417,9 @@
   \fi
   \x@\setbox#1\box\b@rderbox
 }
+\def\borderstylelist{plain, double}
 \let\mkb@rder@plain\mkb@rder
-\def\mkb@rder@double#1{\edef\b@r\mkb@rder
+\def\mkb@rder@double#1{\let\Ob@drwidth\b@drwidth\edef\b@drwidth{\strip@pt{\dimexpr \b@drwidth\FontSizeUnit /2 -\fb@hpadding\relax}}\mkb@rder#1\mkb@rder#1\let\b@drwidth\Ob@drwidth}
 
 \def\p@rsef@gsc@le#1x#2x#3\E{% \v@lpfx  fg or bg, params scale which might be of form Xscale x Yscale
   \edef\fig@h@dim{#1}\edef\fig@v@dim{#2}%
@@ -602,7 +603,11 @@
     \ifx\b@drstyle\relax
       \mkb@rder{\extchunkb@x}%
     \else
-      \csname mkb@rder@\b@drstyle\endcsname{\extchunkb@x}%
+      \ifcsname mkb@rder@\b@drstyle\endcsname 
+        \csname mkb@rder@\b@drstyle\endcsname{\extchunkb@x}%
+      \else
+        \message{Unknown borderstyle '\b@drstyle'. Known styles: \borderstylelist}%
+      \fi 
     \fi
     \let\fstb@drtop=\relax
     \trace{e}{After border, chunk is  now \the\ht\extchunkb@x+\the\dp\extchunkb@x}%
@@ -711,6 +716,7 @@
 \def\Alpha   #1\relax{\initc@t\setsbp@ram{alpha}{#1}}% 1=solid 0=invisible
 \def\BorderWidth        #1\relax{\initc@t\setsbp@ram{borderwidth}{#1}}
 \def\BorderColour       #1\relax{\initc@t\setsbp@ram{bordercolour}{#1}}
+\def\BorderStyle       #1\relax{\initc@t\setsbp@ram{borderstyle}{#1}}
 \let\BorderColor=\BorderColour%for Americans
 \def\Border	#1\relax{\initc@t\x@\p@rseBorder#1 \relax \relax}
 
