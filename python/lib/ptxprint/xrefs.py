@@ -157,7 +157,7 @@ class Xrefs:
                     continue
                 if st[0] in "GH":
                     st = st[1:]
-            s = '\\xts|strong="{}" align="r"\\*'.format(st) if st is not None else ""
+            s = '\\xts|strong="{}" align="r"\\*\\nobreak\u2006'.format(st) if st is not None else ""
             if e.tag == "ref" and e.text is not None:
                 r = RefList.fromStr(e.text, marks=("+", "\u203A"))
                 if self.filters is not None:
