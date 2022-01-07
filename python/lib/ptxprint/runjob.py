@@ -439,7 +439,7 @@ class RunJob:
         with open(outstyname, "w", encoding="utf-8") as outf:
             diginfo.printer.styleEditor.output_diffile(outf, basesheet=info.printer.styleEditor.asStyle(None),
                                                        sheet=diginfo.printer.styleEditor.asStyle(None))
-        diginfo["project/ptxprintstyfile_"] = outstyname
+        diginfo["project/ptxprintstyfile_"] = outstyname.replace("\\", "/")
 
         logger.debug('Diglot processing jobs: {}'.format(jobs))
         for b in jobs:
