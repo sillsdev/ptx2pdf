@@ -341,8 +341,12 @@
     \vskip \dimen0
   \fi
   \egroup\end@llpoppedstyles{N*}%
-  \def\d@##1+##2\E{\if ##1N\else\MSG{Bad marker ##2\space but expected a closing note marker}\fi}\mctopnoms
-  \mcpop}
+  %\def\d@##1+##2\E{\if ##1N\else\MSG{Bad marker ##2\space but expected a closing note marker}\fi}\mctopnoms
+  \global\tempfalse\xdef\inst@ck{}\xdef\msst@ck{}% Pop the first non-milestone
+  \def\d@b##1+##2\E{\if ##1m\xdef\msst@ck{##1+##2,\msst@ck}\else\if ##1N\global\temptrue\fi\fi}%
+  \x@\mcstackdown\mcstack\E\ifx\mcstack\empty\global\let\mcstack\mcstack@mpty\fi
+  \trace{s}{end of note popped: \mcstack}%
+  }
 \newbox\f@@tstrut
 \def\n@teglue{2em plus 1em minus .5em\relax} % glue to be used between paragraphed notes
 %-c_foot

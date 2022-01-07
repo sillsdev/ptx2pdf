@@ -310,6 +310,7 @@
  \the\p@rstylehooks % allow other modules to hook in here
  \end@llpoppedstyles{P}%
  \trace{s}{endlastp@rstyle #1 stack=\mcstack}%
+ \trace{ss}{endlastp@rstyle #1 stack=\mcstack}%
  \toplevelp@rtrue
  \def\d@##1+##2\E{\if##1P\relax\global\toplevelp@rfalse\let\d@=\cstackrelax\fi}%
  \mcdown
@@ -356,7 +357,7 @@
    \ifx\p@ram\relax \else \advance \ifRTL\leftskip\else\rightskip\fi\p@ram \IndentUnit \fi
 }
 
-\def\p@rstyle#1{\trace{ss}{p@rstyle: #1}%
+\def\p@rstyle#1{\trace{ss}{p@rstyle: #1, onto stack: \mcstack}%
  \endlastp@rstyle{#1}%
  \ifn@npublishable\else
   \gdef\m@rker{#1}% remember the new style name
