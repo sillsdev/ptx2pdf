@@ -1,0 +1,48 @@
+#!/usr/bin/python3
+
+import argparse
+from ptxprint.reference import Reference, RefList, BaseBooks
+from ptxprint.utils import allbooks
+
+bklist = ('ge', 'ex', 'le', 'nu', 'de', 'jos', 'jud', 'ru', '1sa', '2sa', '1ki',
+          '2ki', '1ch', '2ch', 'ezr', 'ne', 'es', 'job', 'ps', 'pr', 'ec', 'so',
+          'isa', 'jer', 'la', 'eze', 'da', 'ho', 'joe', 'am', 'ob', 'jon', 'mic',
+          'na', 'hab', 'zep', 'mal',
+          'mt', 'mr', 'lu', 'joh', 'ac', 'ro', '1co', '2co', 'ga', 'eph', 'php',
+          'col', '1th', '2th', '1ti', '2ti', 'tit', 'phm', 'heb', 'jas', '1pe',
+          '2pe', '1jo', '2jo', '3jo', 'jude', 're')
+
+class TSKBooks(BaseBooks):
+    bookNames = {k: allbooks[i] for i, k in enumerate(bklist)}
+    bookStrs = {allbooks[i]: [k]*3 for i, k in enumerate(bklist)}
+
+
+parser = argparse.ArgumentParser()
+parser.add_argument("infile", help="tab separate TSK entries")
+parser.add_argument("-o","--outfile",help="Output XML file")
+args = parser.parse_args()
+
+allentries = {}
+with open(args.infile, encoding="latin-1") as inf:
+    for l in inf.readlines():
+        bits = l.strip().split("\t")
+        if len(bits) != 6:
+            continue
+        ref = Reference(allbooks[int(bits[0])-1], int(bits[1]), int(bits[2]))
+        allentries.setdefault(ref, []).append(RefList.fromStr(bits[5], context=TSKBooks))
+
+if args.outfile:
+    with open(args.outfile, "w", encoding="utf-8") as outf:
+        outf.write("""<?xml version='1.0' encoding='utf-8'?>
+<cross-references>
+""")
+        for k, v in sorted(allentries.items()):
+            outf.write('    <xref ref="{}">\n'.format(str(k)))
+            for r in v:
+                outf.write('        <refgroup>\n')
+                outf.write('            <ref>{}</ref>\n'.format(str(r)))
+                outf.write('        </refgroup>\n')
+            outf.write('    </xref>\n')
+        outf.write('</cross-references>\n')
+
+                
