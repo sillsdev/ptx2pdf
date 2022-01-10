@@ -1,6 +1,6 @@
 
 from ptxprint.utils import cachedData, pycodedir
-from ptxprint.reference import RefList, RefRange, Reference, RefSeparators
+from ptxprint.reference import RefList, RefRange, Reference, RefSeparators, BaseBooks
 from ptxprint.unicode.ducet import get_sortkey, SHIFTTRIM, tailored
 from unicodedata import normalize
 import xml.etree.ElementTree as et
@@ -9,62 +9,232 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+class NoBook:
+    @classmethod
+    def getLocalBook(cls, s, level=0):
+        return ""
+
+def usfmmark(ref, txt):
+    if ref.mark == "+":
+        return r"\+it {}\+it*".format(txt)
+    return (ref.mark or "") + txt
+
+class BaseXrefs:
+    template = "\n\\AddTrigger {book}{dotref}\n\\x - \\xo {colnobook}\u00A0\\xt {refs}\\x*\n\\EndTrigger\n"
+    addsep = RefSeparators(books="; ", chaps=";\u200A", verses=",\u200A", bkc="\u2000", mark=usfmmark, bksp="\u00A0")
+    dotsep = RefSeparators(cv=".", onechap=True)
+
+
+class XrefFileXrefs(BaseXrefs):
+    def __init__(self, xrfile, filters, listsize=0):
+        self.filters = filters
+        self.xrlistsize = listsize
+        self.xrefdat = cachedData(xrfile, self.readdat)
+
+    def readdat(self, xrfile):
+        xrefdat = {}
+        with open(xrfile) as inf:
+            for l in inf.readlines():
+                if '=' in l:
+                    (k, v) = l.split("=", maxsplit=1)
+                    if k.strip() == "attribution":
+                        self.xrefcopyright = v.strip()
+                v = RefList()
+                for d in re.sub(r"[{}]", "", l).split():
+                    v.extend(RefList.fromStr(d.replace(".", " "), marks="+"))
+                k = v.pop(0)
+                xrefdat.setdefault(k.book, {})[k] = [v]
+        return xrefdat
+
+    def _addranges(self, results, ranges):
+        for ra in ranges:
+            acc = RefList()
+            for r in ra.allrefs():
+                if r in results:
+                    acc.extend(results[r])
+                    del results[r]
+            if len(acc):
+                results[ra] = acc
+
+    def process(self, bk, outpath, ranges, owner):
+        results = {}
+        for k, v in self.xrefdat[bk].items():
+            outl = v[0]
+            if len(v) > 1 and self.xrlistsize > 1:
+                outl = sum(v[0:self.xrlistsize], RefList())
+            results[k] = outl
+        self._addranges(results, ranges)
+        with open(outpath + ".triggers", "w", encoding="utf-8") as outf:
+            for k, v in sorted(results.items()):
+                if self.filters is not None:
+                    v.filterBooks(self.filters)
+                v.sort()
+                v.simplify()
+                if not len(v):
+                    continue
+                info = {
+                    "book":         k.first.book,
+                    "dotref":       k.str(context=NoBook, addsep=self.dotsep),
+                    "colnobook":    k.str(context=NoBook),
+                    "refs":         v.str(owner.parent.ptsettings, addsep=self.addsep)
+                }
+                outf.write(self.template.format(**info))
+
+
+class StandardXrefs(XrefFileXrefs):
+    def readdat(self, inf):
+        results = {}
+        for l in inf.readlines():
+            d = l.split("|")
+            v = [RefList.fromStr(s) for s in d]
+            results[v[0][0]] = v[1:]
+        return results
+
+
+class RefGroup(list):
+    pass
+
+class XMLXrefs(BaseXrefs):
+    def __init__(self, xrfile, localfile=None, filters=None, ptsettings=None, context=None):
+        # import pdb; pdb.set_trace()
+        self.filters = filters
+        self.context = context or BaseBooks
+        if localfile is not None:
+            sinfodoc = et.parse(os.path.join(os.path.dirname(__file__), "strongs_info.xml"))
+            btmap = {}
+            for s in sinfodoc.findall('.//strong'):
+                btmap[s.get('btid')] = s.get('ref')
+            termsdoc = et.parse(localfile)
+            self.strongsfilter = set()
+            for r in termsdoc.findall('.//TermRendering'):
+                rend = r.findtext('Renderings')
+                rid = normalize('NFC', r.get('Id'))
+                if rend is not None and len(rend) and rid in btmap:
+                    strongsfilter.add(btmap[rid])
+            logger.debug("strongsfilter="+str(strongsfilter))
+        else:
+            self.strongsfilter = None
+        self.xmldat = cachedData(xrfile, self.readxml)
+
+    def readxml(self, xrfile):
+        doc = et.parse(xrfile)
+        xmldat = {}
+        for xr in doc.findall('.//xref'):
+            k = RefList.fromStr(xr.get('ref'))[0]
+            a = self._unpackxml(xr)
+            if len(a):
+                xmldat.setdefault(k.first.book, {})[k.first] = a
+        return xmldat
+
+    def _unpackxml(self, xr):
+        a = []
+        for e in xr:
+            st = e.get('strongs', None)
+            if st is not None:
+                if st[0] in "GH":
+                    st = st[1:]
+            if e.tag == "ref" and e.text is not None:
+                r = RefList.fromStr(e.text, marks=("+", "\u203A"))
+                a.append((st, e.get('style', None), r))
+            elif e.tag == "refgroup":
+                a.append((st, None, RefGroup(self._unpackxml(e))))
+        return a
+
+    def _procnested(self, xr):
+        a = []
+        for e in xr:
+            st = e[0]
+            if st is not None and self.strongsfilter is not None and st not in self.strongsfilter:
+                continue
+            s = '\\xts|strong="{}" align="r"\\*\\nobreak\u2006'.format(st) if st is not None else ""
+            if isinstance(e[2], RefList):
+                r = e[2]
+                if self.filters is not None:
+                    r.filterBooks(self.filters)
+                r.sort()
+                r.simplify()
+                rs = r.str(context=self.context, addsep=self.addsep)
+                if len(rs) and e[1] in ('backref', 'crossref'):
+                    a.append(s + "\\+xti " + rs + "\\+xti*")
+                elif len(rs):
+                    a.append(s + rs)
+            else:
+                a.append(s + "[\\nobreak " + self._procnested(e[2]) + "]")
+        return " ".join(a)
+
+    def _updatedat(newdat, dat):
+        for k, v in dat.items():
+            if k not in newdat:
+                newdat[k] = v
+                continue
+            nd = {}
+            for n in newdat[k]:
+                nd.setdefault(n[1], []).append(n)
+            for n in v:
+                if n[1] in nd:
+                    for nn in nd[n[1]]:
+                        if nn[1] == n[1]:   # same styles
+                            if isinstance(nn[2], RefList):
+                                if isinstance(n[2], RefList):
+                                    nn[2].extend(n[2])
+                                else:
+                                    nn[2] = RefGroup(nn[2]) + n[2]
+                            elif isinstance(n[2], RefList):
+                                nn[2].append(n[2])
+                            else:
+                                nn[2].extend(n[2])
+                            break
+                    else:
+                        nd[d[1]].append(n)
+                else:
+                    nd[n[1]] = n
+
+    def _addranges(self, dat, ranges):
+        for ra in ranges:
+            newdat = {}
+            for r in ra.allrefs():
+                if r in dat:
+                    self._updatedat(newdat, dat[r])
+                    del dat[r]
+            if len(newdat):
+                dat[ra] = newdat
+
+    def process(self, bk, outpath, ranges):
+        results = self._addranges(self.xmldat[bk], ranges)
+        with open(outpath + ".triggers", "w", encoding="utf-8") as outf:
+            for k, v in self.xmldat[bk].items():
+                res = self._procnested(v)
+                if len(res):
+                    info = {
+                        "book":         k.first.book,
+                        "dotref":       k.str(context=NoBook, addsep=self.dotsep),
+                        "colnobook":    k.str(context=NoBook),
+                        "refs":         res
+                    }
+                    outf.write(self.template.format(**info))
+
+
 class Xrefs:
-    class NoBook:
-        @classmethod
-        def getLocalBook(cls, s, level=0):
-            return ""
-
-    @staticmethod
-    def usfmmark(ref, txt):
-        if ref.mark == "+":
-            return r"\+it {}\+it*".format(txt)
-        return (ref.mark or "") + txt
-
     def __init__(self, parent, filters, prjdir, xrfile, listsize, source, localfile):
         self.parent = parent
-        self.filters = filters
         self.prjdir = prjdir
-        self.xrfile = xrfile
-        self.xrefdat = None
-        self.xrlistsize = listsize
-        self.addsep = RefSeparators(books="; ", chaps=";\u200A", verses=",\u200A", bkc="\u2000", mark=self.usfmmark, bksp="\u00A0")
-        self.dotsep = RefSeparators(cv=".", onechap=True)
         self.template = "\n\\AddTrigger {book}{dotref}\n\\x - \\xo {colnobook}\u00A0\\xt {refs}\\x*\n\\EndTrigger\n"
-        if not self.parent.ptsettings.hasLocalBookNames:
+        if not parent.ptsettings.hasLocalBookNames:
             # import pdb; pdb.set_trace()
-            usfms = self.parent.printer.get_usfms()
+            usfms = parent.printer.get_usfms()
             usfms.makeBookNames()
-            self.parent.ptsettings.bkstrs = usfms.booknames.bookStrs
-            self.parent.ptsettings.bookNames = usfms.booknames.bookNames
-            self.parent.hasLocalBookNames = True
+            parent.ptsettings.bkstrs = usfms.booknames.bookStrs
+            parent.ptsettings.bookNames = usfms.booknames.bookNames
+            parent.hasLocalBookNames = True
         logger.debug(f"Source: {source}")
         if source == "strongs":
-            self.readxml(os.path.join(os.path.dirname(__file__), "strongs.xml"), localfile)
-        elif self.xrfile is None:
-            def procxref(inf):
-                results = {}
-                for l in inf.readlines():
-                    d = l.split("|")
-                    v = [RefList.fromStr(s) for s in d]
-                    results[v[0][0]] = v[1:]
-                return results
-            self.xrefdat = cachedData(os.path.join(pycodedir(), "cross_references.txt"), procxref)
-        elif self.xrfile.endswith(".xml"):
-            self.readxml(self.xrfile, None)
+            self.xrefs = XMLXrefs(os.path.join(pycodedir(), "strongs.xml"), localfile, filters=filters, context=parent.ptsettings)
+        elif xrfile is None:
+            self.xrefs = StandardXrefs(os.path.join(pycodedir(), "cross_references.txt"), listsize=listsize)
+        elif xrfile.endswith(".xml"):
+            self.xrefs = XMLXrefs(xrfile, filters=filters, context=parent.ptsettings)
         else:
-            self.xrefdat = {}
-            with open(xrfile) as inf:
-                for l in inf.readlines():
-                    if '=' in l:
-                        (k, v) = l.split("=", maxsplit=1)
-                        if k.strip() == "attribution":
-                            self.xrefcopyright = v.strip()
-                    v = RefList()
-                    for d in re.sub(r"[{}]", "", l).split():
-                        v.extend(RefList.fromStr(d.replace(".", " "), marks="+"))
-                    k = v.pop(0)
-                    self.xrefdat[k] = [v]
+            self.xrefs = XrefFileXrefs(xrfile, filters=filters)
         gc.collect()
 
     def _getVerseRanges(self, sfm, bk):
@@ -89,37 +259,7 @@ class Xrefs:
             return a
         return reduce(process, sfm, Result())
 
-    def _iterref(self, ra, allrefs):
-        curr = ra.first.copy()
-        while curr <= ra.last:
-            if curr in allrefs:
-                yield curr
-                curr.verse += 1
-            else:
-                curr.chap += 1
-                curr.verse = 1
-
-    def _addranges(self, results, ranges):
-        for ra in ranges:
-            acc = RefList()
-            for r in self._iterref(ra, results):
-                acc.extend(results[r])
-                del results[r]
-            if len(acc):
-                results[ra] = acc
-
     def process(self, bk, outpath):
-        if self.xrefdat is None:
-            return self.processxml(bk, outpath)
-
-        results = {}
-        for k, v in self.xrefdat.items():
-            if k.first.book != bk:
-                continue
-            outl = v[0]
-            if len(v) > 1 and self.xrlistsize > 1:
-                outl = sum(v[0:self.xrlistsize], RefList())
-            results[k] = outl
         fname = self.parent.printer.getBookFilename(bk)
         if fname is None:
             return
@@ -127,89 +267,12 @@ class Xrefs:
         with open(infpath) as inf:
             try:
                 sfm = Usfm(inf, self.sheets)
-            except:
-                sfm = None
-            if sfm is not None:
                 ranges = self._getVerseRanges(sfm.doc, bk)
-                self._addranges(results, ranges)
-        with open(outpath + ".triggers", "w", encoding="utf-8") as outf:
-            for k, v in sorted(results.items()):
-                if self.filters is not None:
-                    v.filterBooks(self.filters)
-                v.sort()
-                v.simplify()
-                if not len(v):
-                    continue
-                info = {
-                    "book":         k.first.book,
-                    "dotref":       k.str(context=self.NoBook, addsep=self.dotsep),
-                    "colnobook":    k.str(context=self.NoBook),
-                    "refs":         v.str(self.parent.ptsettings, addsep=self.addsep)
-                }
-                outf.write(self.template.format(**info))
+            except:
+                ranges = []
+        self.xrefs.process(bk, outpath, ranges)
 
-    def _unpackxml(self, xr, stfilter):
-        a = []
-        for e in xr:
-            st = e.get('strongs', None)
-            if st is not None:
-                if stfilter is not None and st not in stfilter:
-                    continue
-                if st[0] in "GH":
-                    st = st[1:]
-            s = '\\xts|strong="{}" align="r"\\*\\nobreak\u2006'.format(st) if st is not None else ""
-            if e.tag == "ref" and e.text is not None:
-                r = RefList.fromStr(e.text, marks=("+", "\u203A"))
-                if self.filters is not None:
-                    r.filterBooks(self.filters)
-                r.sort()
-                r.simplify()
-                rs = r.str(context=self.parent.ptsettings, addsep=self.addsep)
-                if len(rs) and e.get('style', '') in ('backref', 'crossref'):
-                    a.append(s + "\\+xti " + rs + "\\+xti*")
-                elif len(rs):
-                    a.append(s + rs)
-            elif e.tag == "refgroup":
-                a.append(s + "[\\nobreak " + " ".join(self._unpackxml(e, stfilter)) + "]")
-        return a
 
-    def readxml(self, xrfile, localfile):
-        # import pdb; pdb.set_trace()
-        if localfile is not None:
-            sinfodoc = et.parse(os.path.join(os.path.dirname(__file__), "strongs_info.xml"))
-            btmap = {}
-            for s in sinfodoc.findall('.//strong'):
-                btmap[s.get('btid')] = s.get('ref')
-            termsdoc = et.parse(localfile)
-            strongsfilter = set()
-            for r in termsdoc.findall('.//TermRendering'):
-                rend = r.findtext('Renderings')
-                rid = normalize('NFC', r.get('Id'))
-                if rend is not None and len(rend) and rid in btmap:
-                    strongsfilter.add(btmap[rid])
-            logger.debug("strongsfilter="+str(strongsfilter))
-        else:
-            strongsfilter = None
-        doc = et.parse(xrfile)
-        self.xmldat = {}
-        for xr in doc.findall('.//xref'):
-            k = RefList.fromStr(xr.get('ref'))[0]
-            a = self._unpackxml(xr, strongsfilter)
-            if len(a):
-                self.xmldat[k.first] = " ".join(self._unpackxml(xr, strongsfilter))
-
-    def processxml(self, bk, outpath):
-        with open(outpath + ".triggers", "w", encoding="utf-8") as outf:
-            for k, v in self.xmldat.items():
-                if k.first.book != bk:
-                    continue
-                info = {
-                    "book":         k.first.book,
-                    "dotref":       k.str(context=self.NoBook, addsep=self.dotsep),
-                    "colnobook":    k.str(context=self.NoBook),
-                    "refs":         v
-                }
-                outf.write(self.template.format(**info))
 
 components = [
     ("c_strongsSrcLg", r"\w{_lang} {lemma}\w{_lang}*", "lemma"),

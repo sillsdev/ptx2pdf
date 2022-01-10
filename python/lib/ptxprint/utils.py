@@ -6,6 +6,8 @@ from inspect import currentframe
 from struct import unpack
 import contextlib, appdirs, pickle, gzip
 
+DataVersion = 1
+
 # For future Reference on how Paratext treats this list:
 # G                                     M M                         RT                P        X      FBO    ICGTND          L  OT X NT DC  -  X Y  -  Z  --  L
 # E                                     A A                         EO                S        X      RAT    NNLDDA          A  
@@ -353,10 +355,16 @@ def f2s(x, dp=3) :
     return re.sub(r"0*$", "", res)
 
 def cachedData(filepath, fn):
-    cfgfilepath = os.path.join(appdirs.user_config_dir("ptxprint", "SIL"), os.path.basename(filepath+".pickle.gz"))
+    cfgdir = appdirs.user_cache_dir("ptxprint", "SIL")
+    os.makedirs(cfgdir, exist_ok=True)
+    cfgfilepath = os.path.join(cfgdir, os.path.basename("{}.pickle_{}.gz".format(filepath, DataVersion)))
     if os.path.exists(cfgfilepath):
         with contextlib.closing(gzip.open(cfgfilepath, "rb")) as inf:
             return pickle.load(inf)
+    testbase = os.path.basename("{}.pickle".format(filepath))
+    for l in os.listdir(cfgdir):
+        if l.startswith(testbase):
+            os.unlink(os.path.join(cfgdir, l))
     with open(filepath, "r") as inf:
         res = fn(inf)
     with contextlib.closing(gzip.open(cfgfilepath, "wb")) as outf:

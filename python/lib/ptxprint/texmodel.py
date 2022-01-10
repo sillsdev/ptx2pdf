@@ -1626,47 +1626,6 @@ class TexModel:
             crdts.append("\\let\\zimagecopyrights=\\zimagecopyrightsen")
         return "\n".join(crdts)
 
-    def _getVerseRanges(self, sfm, bk):
-        class Result(list):
-            def __init__(self):
-                super().__init__(self)
-                self.chap = 0
-
-        def process(a, e):
-            if isinstance(e, (str, Text)):
-                return a
-            if e.name == "c":
-                a.chap = int(e.args[0])
-            elif e.name == "v" and "-" in e.args[0]:
-                m = re.match(r"^(\d+)-(\d+)", e.args[0])
-                if m is not None:
-                    first = int(m.group(1))
-                    last = int(m.group(2))
-                    a.append(RefRange(Reference(bk, a.chap, first), Reference(bk, a.chap, last)))
-            for c in e:
-                process(a, c)
-            return a
-        return reduce(process, sfm, Result())
-
-    def _iterref(self, ra, allrefs):
-        curr = ra.first.copy()
-        while curr <= ra.last:
-            if curr in allrefs:
-                yield curr
-                curr.verse += 1
-            else:
-                curr.chap += 1
-                curr.verse = 1
-
-    def _addranges(self, results, ranges):
-        for ra in ranges:
-            acc = RefList()
-            for r in self._iterref(ra, results):
-                acc.extend(results[r])
-                del results[r]
-            if len(acc):
-                results[ra] = acc
-
     def createXrefTriggers(self, bk, prjdir, outpath):
         if self.xrefs is None:
             cfilter = self.dict['notes/xrfilterbooks']
