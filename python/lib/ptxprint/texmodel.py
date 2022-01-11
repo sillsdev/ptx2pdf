@@ -60,7 +60,7 @@ ModelMap = {
                                  for s in w.BackPDFs) if (w.get("c_inclBackMatter") and w.BackPDFs is not None
                                                                                     and w.BackPDFs != 'None') else ""),
     "project/processscript":    ("c_processScript", None),
-    "project/runscriptafter":   ("c_processScriptAfter", None),
+    "project/when2processscript": ("r_when2processScript", None),
     "project/selectscript":     ("btn_selectScript", lambda w,v: w.customScript.as_posix() if w.customScript is not None else ""),
     "project/selectxrfile":     ("btn_selectXrFile", None),
     "project/usechangesfile":   ("c_usePrintDraftChanges", lambda w,v :"true" if v else "false"),
@@ -1039,7 +1039,7 @@ class TexModel:
                 return None
         else:
             infpath = os.path.join(prjdir, fname)
-        if not self.dict['project/runscriptafter']:
+        if self.dict['project/when2processscript'] == "before":
             infpath = self.runConversion(infpath, outdir)
         outfname = os.path.basename(infpath)
         # outfname = fname
@@ -1102,7 +1102,7 @@ class TexModel:
 
         with open(outfpath, "w", encoding="utf-8") as outf:
             outf.write(dat)
-        if self.dict['project/runscriptafter']:
+        if self.dict['project/when2processscript'] == "after":
             bn = os.path.basename(self.runConversion(outfpath, outdir))
         else:
             bn = os.path.basename(outfpath)

@@ -235,7 +235,7 @@ _sensitivities = {
     "c_footnoterule" :         ["rule_footnote", "l_fnAboveSpace", "l_fnBelowSpace", "s_fnBelowSpace", "gr_fnRulePosParms"],
     "c_xrefrule" :             ["rule_xref",     "l_xrAboveSpace", "l_xrBelowSpace", "s_xrBelowSpace", "gr_xrRulePosParms"],
     "c_useCustomFolder" :      ["btn_selectFigureFolder", "c_exclusiveFiguresFolder", "lb_selectFigureFolder"],
-    "c_processScript" :        ["c_processScriptBefore", "c_processScriptAfter", "btn_selectScript", "btn_editScript"],
+    "c_processScript" :        ["r_when2processScript_before", "r_when2processScript_after", "btn_selectScript", "btn_editScript"],
     "c_usePrintDraftChanges" : ["btn_editChangesFile"],
     "c_useModsTex" :           ["btn_editModsTeX"],
     "c_usePreModsTex" :        ["btn_editModsPreTex"],
@@ -2685,13 +2685,13 @@ class GtkViewModel(ViewModel):
             self.customScript = customScript[0]
             self.builder.get_object("c_processScript").set_active(True)
             btn_selectScript.set_tooltip_text(str(customScript[0]))
-            for c in ("c_processScriptBefore", "c_processScriptAfter", "btn_editScript"):
+            for c in ("r_when2processScript_before", "r_when2processScript_after", "btn_editScript"):
                 self.builder.get_object(c).set_sensitive(True)
         else:
             self.customScript = None
             btn_selectScript.set_tooltip_text("")
             self.builder.get_object("c_processScript").set_active(False)
-            for c in ("c_processScriptBefore", "c_processScriptAfter", "btn_editScript"):
+            for c in ("r_when2processScript_before", "r_when2processScript_after", "btn_editScript"):
                 self.builder.get_object(c).set_sensitive(False)
 
     def onSelectXrFileClicked(self, btn_selectXrFile):

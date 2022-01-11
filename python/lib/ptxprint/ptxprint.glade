@@ -20545,7 +20545,7 @@ source .usfm file and outfile the output .usfm that will then be typeset.</prope
                                                 <property name="orientation">vertical</property>
                                                 <property name="homogeneous">True</property>
                                                 <child>
-                                                  <object class="GtkRadioButton" id="c_processScriptBefore">
+                                                  <object class="GtkRadioButton" id="r_when2processScript_before">
                                                     <property name="label" translatable="yes">start</property>
                                                     <property name="visible">True</property>
                                                     <property name="can-focus">True</property>
@@ -20557,7 +20557,8 @@ which are all specified below.</property>
                                                     <property name="halign">start</property>
                                                     <property name="active">True</property>
                                                     <property name="draw-indicator">True</property>
-                                                    <property name="group">c_processScriptAfter</property>
+                                                    <property name="group">r_when2processScript_after</property>
+                                                    <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                                   </object>
                                                   <packing>
                                                     <property name="expand">False</property>
@@ -20566,7 +20567,7 @@ which are all specified below.</property>
                                                   </packing>
                                                 </child>
                                                 <child>
-                                                  <object class="GtkRadioButton" id="c_processScriptAfter">
+                                                  <object class="GtkRadioButton" id="r_when2processScript_after">
                                                     <property name="label" translatable="yes">end</property>
                                                     <property name="visible">True</property>
                                                     <property name="can-focus">True</property>
@@ -20578,7 +20579,8 @@ which are all specified below.</property>
                                                     <property name="halign">start</property>
                                                     <property name="active">True</property>
                                                     <property name="draw-indicator">True</property>
-                                                    <property name="group">c_processScriptBefore</property>
+                                                    <property name="group">r_when2processScript_before</property>
+                                                    <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                                   </object>
                                                   <packing>
                                                     <property name="expand">False</property>
