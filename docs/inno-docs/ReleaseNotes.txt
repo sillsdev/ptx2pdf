@@ -1,15 +1,32 @@
 PTXprint 2.0.28 Release Notes 
-15 December 2021
+12 January 2021
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 
-Bug fixes and improvements in 2.0.29 (15 Dec 2021)
+Bug fixes and improvements in 2.0.30 (12 Jan 2021)
 
-NOTE: Underlying code libraries were recently upgraded, so there is a new look and feel
-      to PTXprint on Windows. Report any regressions you find as a result of this upgrade.
+  * Override styles for \nd and \pn to NOT use underlining (on by default in usfm.sty)
+  
+  * Add basic support for \ef StudyNotes
+  
+  * Add Treasury of Scripture Knowledge data
+  
+  * Cache cross reference lists to run faster
+  
+  * Cross reference resizing fixes
+  
+  * Prettify Strong's numbers
+  
+  * Clear fontscale if set fontsize and vice versa (regain control over font sizes)
 
-  * Override styles for \nd and \pn to NOT use underlining (which is the setting in usfm.sty)
-
+  * Fix annoying notes wrapping bug. Resize final page with notes, better
+  
+  * Fix diglot stylesheet loading in tex on windows
+  
+  * Fix single column cross references and study notes
+  
+  * Fix nested paragraphs in notes (e.g. \fp)
+  
 Bug fixes and improvements in 2.0.28 (13 Dec 2021)
 
   * Various improvements to Strong's index UI and file creation (XXS book is default
