@@ -957,7 +957,7 @@
   \setbox\s@vedpage=\copy255
   % split the galley to the actual size available
   \setbox\colA=\vsplit255 to \availht
-  \ifColNotes\setbox\colA\vbox{\unvbox\colA\vfil\copy\coln@tebox}\fi
+  \ifColNotes\setbox\colA\vbox{\unvbox\colA\vfil\copy\coln@tebox}\else\setbox\colA\vbox{\unvbox\colA}\fi
   \edef\t@mp{\splitbotmark}%
   \ifx\t@mp\empty\else\global\m@rksonpagetrue\trace{H}{Found mark \splitbotmark}\fi
   \dimen1=\textwidth\advance\dimen1 by -\ExtraRMargin\ifb@dy\iftob@dy\else\advance\dimen1 by -\columnshift\fi\fi
@@ -1010,7 +1010,8 @@
     \fi % dump empty pages (typically at end)
     \tempfalse%
     \ifdim\ht\partial>\PageFullFactor\textheight \temptrue\fi%
-    \ifnum\outputpenalty<-10000 \temptrue\else\trace{o}{outputpenalty = \the\outputpenalty}\fi%
+    \trace{o}{outputpenalty = \the\outputpenalty}%
+    \ifnum\outputpenalty<-10000 \temptrue\fi
     \iftemp\trace{o}{savepartial eject partial=\the\ht\partial, bottom=\the\ht\verybottomins}%
       \def\pagecontents{%
         \box\partial

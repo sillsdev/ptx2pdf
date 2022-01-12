@@ -6,7 +6,7 @@ print("sys.executable: ", sys.executable)
 print("sys.path: ", sys.path)
 print("Platform:", sys.platform)
 if sys.platform in ("win32", "cygwin"):
-    binaries = [('C:\\msys64\\mingw64\\lib\\girepository-1.0\\'+x+'.typelib',
+    binaries = [('C:\\msys64\\mingw64\\lib\\girepository-1.0\\{}.typelib'.format(x),
                                             'gi_typelibs') for x in
                     ('Gtk-3.0', 'GIRepository-2.0', 'Pango-1.0', 'GdkPixbuf-2.0', 
                      'GObject-2.0', 'fontconfig-2.0', 'win32-1.0', 'GtkSource-3.0')] \
@@ -37,7 +37,7 @@ a = Analysis(['python/scripts/ptxprint'],
 #                     + [('python/lib/ptxprint/mo/' + y +'/LC_MESSAGES/ptxprint.mo', 'mo/' + y + '/LC_MESSAGES') for y in os.listdir('python/lib/ptxprint/mo')],
              datas =    [('python/lib/ptxprint/'+x, 'ptxprint') for x in 
                             ('ptxprint.glade', 'template.tex', 'picCopyrights.json', 'sRGB.icc', 'default_cmyk.icc', 'eng.vrs',
-                             'strongs.xml', 'strongs_info.xml')]
+                             'strongs.xml', 'strongs_info.xml', 'tsk.xml')]
                       + sum(([('python/lib/ptxprint/{}/*.*y'.format(x), 'ptxprint/{}'.format(x))] for x in ('sfm', 'pdf', 'pdfrw', 'pdfrw/objects')), [])
                       + [('python/lib/ptxprint/sfm/*.txt', 'ptxprint/sfm')]
                       + [('docs/inno-docs/*.txt', 'ptxprint')]
