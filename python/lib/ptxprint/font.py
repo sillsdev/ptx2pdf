@@ -783,7 +783,7 @@ class FontRef:
         lang = None
         if len(featlist):
             for s in featlist:
-                if len(s):
+                if len(s) and '=' in s:
                     k, v = s.split("=")
                     if k == "language":
                         lang = v

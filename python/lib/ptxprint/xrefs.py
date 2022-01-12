@@ -31,19 +31,18 @@ class XrefFileXrefs(BaseXrefs):
         self.xrlistsize = listsize
         self.xrefdat = cachedData(xrfile, self.readdat)
 
-    def readdat(self, xrfile):
+    def readdat(self, inf):
         xrefdat = {}
-        with open(xrfile) as inf:
-            for l in inf.readlines():
-                if '=' in l:
-                    (k, v) = l.split("=", maxsplit=1)
-                    if k.strip() == "attribution":
-                        self.xrefcopyright = v.strip()
-                v = RefList()
-                for d in re.sub(r"[{}]", "", l).split():
-                    v.extend(RefList.fromStr(d.replace(".", " "), marks="+"))
-                k = v.pop(0)
-                xrefdat.setdefault(k.book, {})[k] = [v]
+        for l in inf.readlines():
+            if '=' in l:
+                (k, v) = l.split("=", maxsplit=1)
+                if k.strip() == "attribution":
+                    self.xrefcopyright = v.strip()
+            v = RefList()
+            for d in re.sub(r"[{}]", "", l).split():
+                v.extend(RefList.fromStr(d.replace(".", " "), marks="+"))
+            k = v.pop(0)
+            xrefdat.setdefault(k.book, {})[k] = [v]
         return xrefdat
 
     def _addranges(self, results, ranges):
@@ -116,8 +115,8 @@ class XMLXrefs(BaseXrefs):
             self.strongsfilter = None
         self.xmldat = cachedData(xrfile, self.readxml)
 
-    def readxml(self, xrfile):
-        doc = et.parse(xrfile)
+    def readxml(self, inf):
+        doc = et.parse(inf)
         xmldat = {}
         for xr in doc.findall('.//xref'):
             k = RefList.fromStr(xr.get('ref'))[0]
