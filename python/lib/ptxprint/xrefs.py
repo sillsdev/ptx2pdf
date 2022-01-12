@@ -198,7 +198,7 @@ class XMLXrefs(BaseXrefs):
             if len(newdat):
                 dat[ra] = newdat
 
-    def process(self, bk, outpath, ranges):
+    def process(self, bk, outpath, ranges, owner):
         results = self._addranges(self.xmldat[bk], ranges)
         with open(outpath + ".triggers", "w", encoding="utf-8") as outf:
             for k, v in self.xmldat[bk].items():
@@ -269,7 +269,7 @@ class Xrefs:
                 ranges = self._getVerseRanges(sfm.doc, bk)
             except:
                 ranges = []
-        self.xrefs.process(bk, outpath, ranges)
+        self.xrefs.process(bk, outpath, ranges, self)
 
 
 
