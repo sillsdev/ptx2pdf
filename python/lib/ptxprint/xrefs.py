@@ -94,7 +94,7 @@ class RefGroup(list):
     pass
 
 class XMLXrefs(BaseXrefs):
-    def __init__(self, xrfile, localfile=None, filters=None, ptsettings=None, context=None):
+    def __init__(self, xrfile, filters, localfile=None, ptsettings=None, context=None):
         # import pdb; pdb.set_trace()
         self.filters = filters
         self.context = context or BaseBooks
@@ -227,13 +227,13 @@ class Xrefs:
             parent.hasLocalBookNames = True
         logger.debug(f"Source: {source}")
         if source == "strongs":
-            self.xrefs = XMLXrefs(os.path.join(pycodedir(), "strongs.xml"), localfile, filters=filters, context=parent.ptsettings)
+            self.xrefs = XMLXrefs(os.path.join(pycodedir(), "strongs.xml"), localfile, filters, context=parent.ptsettings)
         elif xrfile is None:
-            self.xrefs = StandardXrefs(os.path.join(pycodedir(), "cross_references.txt"), listsize=listsize)
+            self.xrefs = StandardXrefs(os.path.join(pycodedir(), "cross_references.txt"), filters, listsize=listsize)
         elif xrfile.endswith(".xml"):
-            self.xrefs = XMLXrefs(xrfile, filters=filters, context=parent.ptsettings)
+            self.xrefs = XMLXrefs(xrfile, filters, context=parent.ptsettings)
         else:
-            self.xrefs = XrefFileXrefs(xrfile, filters=filters)
+            self.xrefs = XrefFileXrefs(xrfile, filters)
         gc.collect()
 
     def _getVerseRanges(self, sfm, bk):
