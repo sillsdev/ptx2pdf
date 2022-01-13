@@ -1,9 +1,9 @@
 PTXprint 2.0.30 Release Notes 
-12 January 2021
+12 January 2022
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 
-Bug fixes and improvements in 2.0.30 (12 Jan 2021)
+Bug fixes and improvements in 2.0.30 (12 Jan 2022)
 
   * Override styles for \nd and \pn to NOT use underlining (on by default in usfm.sty)
   
@@ -19,7 +19,7 @@ Bug fixes and improvements in 2.0.30 (12 Jan 2021)
   
   * Clear fontscale if set fontsize and vice versa (regain control over font sizes)
 
-  * Fix annoying notes wrapping bug. Resize final page with notes, better
+  * Fix annoying notes wrapping bug. Resize final page with notes better
   
   * Fix diglot stylesheet loading in tex on windows
   
@@ -103,7 +103,7 @@ Bug fixes and improvements in 2.0.17 (4 Dec 2021)
     - blank lines are no longer hidden/invisible in tabs (Front Matter, AdjList, Final SFM)
     - two tabs available for editing settings (making it easier to edit commonly used files)
 
-  * Enchanced Style editor to handle Vertical Position for table \tc markers
+  * Enhanced Style editor to handle Vertical Position for table \tc markers
   
   * Copy Configuration dialog now shows projects horizontally in alphabetical order
   

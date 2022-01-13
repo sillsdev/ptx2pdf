@@ -230,7 +230,7 @@ class Xrefs:
             parent.hasLocalBookNames = True
         logger.debug(f"Source: {source}")
         if source == "strongs":
-            self.xrefs = XMLXrefs(os.path.join(pycodedir(), "strongs.xml"), localfile, filters, context=parent.ptsettings)
+            self.xrefs = XMLXrefs(os.path.join(pycodedir(), "strongs.xml"), filters, localfile, context=parent.ptsettings)
         elif xrfile is None:
             self.xrefs = StandardXrefs(os.path.join(pycodedir(), "cross_references.txt"), filters, listsize=listsize)
         elif xrfile.endswith(".xml"):
