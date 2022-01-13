@@ -197,6 +197,15 @@
     \setsbp@ram{posn}{\sb@rpos}%
   \else
     \global\let\sb@rpos\cp@ram
+    \ifnum\BodyColumns>1\else\ifnum\c@rrentcols>1\else
+      \ifx\sb@rpos\loc@TL \sbw@rning{tl}{t}\global\let\sb@rpos\loc@T
+      \else\ifx\sb@rpos\loc@TR \sbw@rning{tr}{t}\global\let\sb@rpos\loc@T
+        \else\ifx\sb@rpos\loc@BL \sbw@rning{bl}{b}\global\let\sb@rpos\loc@B
+          \else\ifx\sb@rpos\loc@BR \sbw@rning{br}{b}\global\let\sb@rpos\loc@B\fi
+          \fi
+        \fi
+      \fi
+    \fi\fi
   \fi
   \getsbp@ram{fgfigpos}\let\fgfigp@s\cp@ram
   \getsbp@ram{fgfigspec}\let\fgfigsp@c\cp@ram
@@ -445,6 +454,7 @@
   \trace{e}{parsed figure scale: \csname #1fig@scale@wd\endcsname \csname #1fig@scale@ht\endcsname}%
 }
 
+\def\sbw@rning#1#2{\msg{converted sidebar placement "#1" to "#2" in single-column layout}}
 
 \def\@sbe{%
   \endlastp@rstyle{esbe}%
