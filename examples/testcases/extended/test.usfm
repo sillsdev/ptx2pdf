@@ -109,7 +109,7 @@ Tenetur deleniti rerum minima dolor. Rerum autem ipsa ipsum autem quo a. Aut ut 
 \esbe
 
 \p
-\v 13  There needs to be text in between side bars.
+\v 13  There needs to be a par break between sidebars, or the boxing breaks
 
 \esb\cat pl\cat*
 \p This  esb of category "\showTheCategory" is testing the appropriate positioning.
