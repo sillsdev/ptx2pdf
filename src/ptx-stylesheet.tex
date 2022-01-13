@@ -1206,14 +1206,14 @@
 \def\whileitp@ps#1+#2+#3\E{% This almost does the same as \end@llcharstyle, but uses the new mechanism
   \global\p@ppingtrue
   \global\let\wip@do=\d@
-  \trace{s}{whileitp@ps:\mcch@cking:#1+#2+#3 (\mcstack)}%
+  \trace{s}{whileitp@ps:\mcch@cking:#1+#2+#3 (\mcstack) [\itp@psstore]}%
   \x@\let\x@\tmp\csname\mct@stname{\mcch@cking}{#1}\endcsname
   \ifx\tmp\relax %No specific style pop, is there a generic?
     \x@\let\x@\tmp\csname\mct@stname{*}{#1}\endcsname
   \fi
   \trace{s}{whileitp@ps result:\tmp}%
   \if S\tmp\relax % Store it?
-     \edef\itp@psstore{#1+#2,\itp@psstore}%only store the marker and type, restacking will recaclulate the stystak
+     \xdef\itp@psstore{#1+#2,\itp@psstore}%only store the marker and type, restacking will recaclulate the stystak
      \mcpopsimple
   \else
     \if Y\tmp\relax  %end it and pop it
@@ -1238,12 +1238,12 @@
       \fi
     \fi
   \fi
-  \trace{s}{whileitp@ps END:\mcch@cking:#1+#2+#3 (\mcstack)}%
+  \trace{s}{whileitp@ps END:\mcch@cking:#1+#2+#3 (\mcstack) [\itp@psstore]}%
   \global\p@ppingfalse 
   \let\d@=\wip@do
 }
-\def\end@llpoppedstyles#1{\trace{s}{end@llpoppedstyles #1}%
-  \let\itp@psstore\empty\xdef\mcch@cking{#1}\let\d@=\whileitp@ps
+\def\end@llpoppedstyles#1{\trace{s}{end@llpoppedstyles #1 \ifp@pping WHILE already popping??\fi}%
+  \global\let\itp@psstore\empty\xdef\mcch@cking{#1}\let\d@=\whileitp@ps
   \mcdown\ifx\itp@psstore\empty\else\x@\rebuild@mcstack\x@{\itp@psstore}\fi
   \s@tstyst@k
   \trace{s}{end@llpoppedstyles END: \mcstack}}
