@@ -42,7 +42,7 @@ class XrefFileXrefs(BaseXrefs):
             for d in re.sub(r"[{}]", "", l).split():
                 v.extend(RefList.fromStr(d.replace(".", " "), marks="+"))
             k = v.pop(0)
-            xrefdat.setdefault(k.book, {})[k] = [v]
+            xrefdat.setdefault(k.first.book, {})[k] = [v]
         return xrefdat
 
     def _addranges(self, results, ranges):
