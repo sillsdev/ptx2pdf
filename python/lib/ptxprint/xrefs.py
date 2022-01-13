@@ -57,26 +57,27 @@ class XrefFileXrefs(BaseXrefs):
 
     def process(self, bk, outpath, ranges, owner):
         results = {}
-        for k, v in self.xrefdat[bk].items():
+        for k, v in self.xrefdat.get(bk, {}).items():
             outl = v[0]
             if len(v) > 1 and self.xrlistsize > 1:
                 outl = sum(v[0:self.xrlistsize], RefList())
             results[k] = outl
         self._addranges(results, ranges)
-        with open(outpath + ".triggers", "w", encoding="utf-8") as outf:
-            for k, v in sorted(results.items()):
-                if self.filters is not None:
-                    v.filterBooks(self.filters)
-                v.sort()
-                v.simplify()
-                if not len(v):
-                    continue
-                info = {
-                    "book":         k.first.book,
-                    "dotref":       k.str(context=NoBook, addsep=self.dotsep),
-                    "colnobook":    k.str(context=NoBook),
-                    "refs":         v.str(owner.parent.ptsettings, addsep=self.addsep)
-                }
+        if len(results):
+            with open(outpath + ".triggers", "w", encoding="utf-8") as outf:
+                for k, v in sorted(results.items()):
+                    if self.filters is not None:
+                        v.filterBooks(self.filters)
+                    v.sort()
+                    v.simplify()
+                    if not len(v):
+                        continue
+                    info = {
+                        "book":         k.first.book,
+                        "dotref":       k.str(context=NoBook, addsep=self.dotsep),
+                        "colnobook":    k.str(context=NoBook),
+                        "refs":         v.str(owner.parent.ptsettings, addsep=self.addsep)
+                    }
                 outf.write(self.template.format(**info))
 
 
@@ -199,18 +200,20 @@ class XMLXrefs(BaseXrefs):
                 dat[ra] = newdat
 
     def process(self, bk, outpath, ranges, owner):
-        results = self._addranges(self.xmldat[bk], ranges)
-        with open(outpath + ".triggers", "w", encoding="utf-8") as outf:
-            for k, v in self.xmldat[bk].items():
-                res = self._procnested(v)
-                if len(res):
-                    info = {
-                        "book":         k.first.book,
-                        "dotref":       k.str(context=NoBook, addsep=self.dotsep),
-                        "colnobook":    k.str(context=NoBook),
-                        "refs":         res
-                    }
-                    outf.write(self.template.format(**info))
+        xmldat = self.xmldat.get(bk, {})
+        if len(xmldat):
+            self._addranges(xmldat, ranges)
+            with open(outpath + ".triggers", "w", encoding="utf-8") as outf:
+                for k, v in xmldat.get(bk, {}).items():
+                    res = self._procnested(v)
+                    if len(res):
+                        info = {
+                            "book":         k.first.book,
+                            "dotref":       k.str(context=NoBook, addsep=self.dotsep),
+                            "colnobook":    k.str(context=NoBook),
+                            "refs":         res
+                        }
+                        outf.write(self.template.format(**info))
 
 
 class Xrefs:
