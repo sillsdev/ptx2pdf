@@ -6,7 +6,9 @@
 %\input "ptxplus-marginalverses.tex"
 \showboxdepth=99\showboxbreadth=99
 \catcode`\@=12
+\LogFontstrue
 \stylesheet{usfm_sb.sty}
+%\stylesheet{ptx2pdf.sty}
 \stylesheet{default-custom.sty}
 \tracing{sc}
 \tracing{sC}
@@ -20,8 +22,10 @@
 \tracing{sP}
 \tracing{g}
 \tracing{V}
+\tracing{sko}
 %\tracingmacros=1
 %\tracingassigns=1
+%\tracingoutput=1
 \categorysheet{mycats.sty}
 %\unbalancedfalse
 \unbalancedtrue
@@ -45,6 +49,7 @@
 %\sethook{after}{m}{\kern .5pt \hrule width 10em height .2pt \kern 1pt \hrule width 10em height .2pt}
 %\sethook{start}{m}{\beginadd\beginadd}
 %\sethook{end}{m}{\endadd\endadd}
+\sethook{start}{cat:testpar|cat}{\tracingparagraphs=1}
 \sethook{before}{add}{|}
 \sethook{after}{add}{|}
 \sethook{start}{add}{\beginadd}

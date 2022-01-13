@@ -3,7 +3,8 @@
 DIR:=$(shell dirname `find ../../..  -name paratext2.tex`)
 .tex.pdf:
 	TEXINPUTS=.:$(DIR) xetex -no-pdf $<
-	TEXINPUTS=.:$(DIR) xetex -no-pdf $<
+	TEXINPUTS=.:$(DIR) time xetex -no-pdf $<
+	grep '^font<' $(subst .tex,.log,$<) > $(subst .tex,.fonts,$<)
 	dvipdfmx -C16 $(subst .tex,.xdv,$<)
 	
 
