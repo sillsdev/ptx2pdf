@@ -2,6 +2,7 @@
 from ptxprint.utils import cachedData, pycodedir
 from ptxprint.reference import RefList, RefRange, Reference, RefSeparators, BaseBooks
 from ptxprint.unicode.ducet import get_sortkey, SHIFTTRIM, tailored
+from ptxprint.usfmutils import Usfm
 from unicodedata import normalize
 import xml.etree.ElementTree as et
 import re, os, gc
@@ -78,7 +79,7 @@ class XrefFileXrefs(BaseXrefs):
                         "colnobook":    k.str(context=NoBook),
                         "refs":         v.str(owner.parent.ptsettings, addsep=self.addsep)
                     }
-                outf.write(self.template.format(**info))
+                    outf.write(self.template.format(**info))
 
 
 class StandardXrefs(XrefFileXrefs):
@@ -87,7 +88,7 @@ class StandardXrefs(XrefFileXrefs):
         for l in inf.readlines():
             d = l.split("|")
             v = [RefList.fromStr(s) for s in d]
-            results[v[0][0]] = v[1:]
+            results.setdefault(v[0][0].first.book, {})[v[0][0]] = v[1:]
         return results
 
 
@@ -96,7 +97,6 @@ class RefGroup(list):
 
 class XMLXrefs(BaseXrefs):
     def __init__(self, xrfile, filters, localfile=None, ptsettings=None, context=None):
-        # import pdb; pdb.set_trace()
         self.filters = filters
         self.context = context or BaseBooks
         if localfile is not None:
@@ -204,7 +204,7 @@ class XMLXrefs(BaseXrefs):
         if len(xmldat):
             self._addranges(xmldat, ranges)
             with open(outpath + ".triggers", "w", encoding="utf-8") as outf:
-                for k, v in xmldat.get(bk, {}).items():
+                for k, v in xmldat.items():
                     res = self._procnested(v)
                     if len(res):
                         info = {
@@ -222,13 +222,13 @@ class Xrefs:
         self.prjdir = prjdir
         self.template = "\n\\AddTrigger {book}{dotref}\n\\x - \\xo {colnobook}\u00A0\\xt {refs}\\x*\n\\EndTrigger\n"
         if not parent.ptsettings.hasLocalBookNames:
-            # import pdb; pdb.set_trace()
             usfms = parent.printer.get_usfms()
             usfms.makeBookNames()
             parent.ptsettings.bkstrs = usfms.booknames.bookStrs
             parent.ptsettings.bookNames = usfms.booknames.bookNames
             parent.hasLocalBookNames = True
         logger.debug(f"Source: {source}")
+        import pdb; pdb.set_trace()
         if source == "strongs":
             self.xrefs = XMLXrefs(os.path.join(pycodedir(), "strongs.xml"), filters, localfile, context=parent.ptsettings)
         elif xrfile is None:
