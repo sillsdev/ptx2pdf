@@ -197,15 +197,6 @@
     \setsbp@ram{posn}{\sb@rpos}%
   \else
     \global\let\sb@rpos\cp@ram
-    \ifnum\BodyColumns>1\else\ifnum\c@rrentcols>1\else
-      \ifx\sb@rpos\loc@TL \sbw@rning{tl}{t}\global\let\sb@rpos\loc@T
-      \else\ifx\sb@rpos\loc@TR \sbw@rning{tr}{t}\global\let\sb@rpos\loc@T
-        \else\ifx\sb@rpos\loc@BL \sbw@rning{bl}{b}\global\let\sb@rpos\loc@B
-          \else\ifx\sb@rpos\loc@BR \sbw@rning{br}{b}\global\let\sb@rpos\loc@B\fi
-          \fi
-        \fi
-      \fi
-    \fi\fi
   \fi
   \getsbp@ram{fgfigpos}\let\fgfigp@s\cp@ram
   \getsbp@ram{fgfigspec}\let\fgfigsp@c\cp@ram
@@ -220,9 +211,15 @@
         \if\tempc b\relax\dimen1=\textwidth\else
           \if\tempc B\relax\dimen1=\textwidth\fi\fi\fi
     \else
-      \if\tempc t\relax\dimen1=\colwidth\else
-        \if\tempc b\relax\dimen1=\colwidth
-      \fi\fi
+      \temptrue
+      \ifnum\c@rrentcols>1\else
+        \tempfalse
+      \fi
+      \iftemp
+        \if\tempc t\relax\dimen1=\colwidth\else
+          \if\tempc b\relax\dimen1=\colwidth
+        \fi\fi
+      \fi
     \fi
    % Now apply scale..
     \p@cinswid=\dimen1
@@ -454,7 +451,8 @@
   \trace{e}{parsed figure scale: \csname #1fig@scale@wd\endcsname \csname #1fig@scale@ht\endcsname}%
 }
 
-\def\sbw@rning#1#2{\msg{converted sidebar placement "#1" to "#2" in single-column layout}}
+\x@\def\csname \sb@rb@x @warning\endcsname#1#2{\msg{converted sidebar placement "#1" to "#2" in single-column layout}}
+
 
 \def\@sbe{%
   \endlastp@rstyle{esbe}%
@@ -598,8 +596,8 @@
     \mkb@rder{\extchunkb@x}%
     \let\fstb@drtop=\relax
     \trace{e}{After border, chunk is  now \the\ht\extchunkb@x+\the\dp\extchunkb@x}%
-    \x@\let\x@\@xtins\csname ins-\loc@ption\endcsname
     \ifpicUsesIns
+      \x@\let\x@\@xtins\csname ins-\loc@ption\endcsname
       \trace{e}{using ins-\loc@ption}%
       \insert\@xtins{%\vskip\baselineskip
 	    \vskip-\v@dj
