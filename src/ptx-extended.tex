@@ -178,6 +178,8 @@
  \gdef\sb@leftedge{}\gdef\sb@rightedge{}%
  \gdef\sb@rtopedge{}\gdef\sb@rbotedge{}%
  \xdef\sb@leftshift{0pt}\xdef\sb@rightshift{0pt}%
+ \getsbp@ram{borderhpadding}\ifx\cp@ram\relax\else\edef\fb@hpadding{\the\dimexpr \cp@ram\FontSizeUnit\relax}\fi
+ \getsbp@ram{bordervpadding}\ifx\cp@ram\relax\else\edef\fb@vpadding{\the\dimexpr \cp@ram\FontSizeUnit\relax}\fi
  \getsbp@ram{posn}%
   \global\advance\im@gecount by 1 % A side bar is a strange sort of image, but there are similarities
   \ifcsname fig\the\im@gecount p@ge\endcsname
@@ -353,7 +355,8 @@
  \sb@rtopedge\ifhmode\endgraf\fi
 }
 \let\b@drcol\relax
-
+\newif\ifdoUnskip
+\doUnskiptrue
 \newbox\b@rderbox
 \def\mkb@rder#1{%Put a simple border around a box
   \x@\setbox\x@\b@rderbox\x@\box#1
@@ -375,6 +378,7 @@
   \advance\dimen1 by \dp\b@rderbox
   \iftemp % if ANY border, add horizontal padding and any vertical lines
     \setbox\b@rderbox\vbox{%
+      %\ifdoUnskip\vskip-\lastskip\fi
       \hbox{\ifx\b@drleft\tr@e\trace{eb}{Drawing Border:left}%
          \bc@l\vrule width \b@drwidth\FontSizeUnit height \dimen0 depth \dimen1 \endbc@l
        \else
@@ -416,7 +420,14 @@
 }
 \def\borderstylelist{plain, double}
 \let\mkb@rder@plain\mkb@rder
-\def\mkb@rder@double#1{\let\Ob@drwidth\b@drwidth\edef\b@drwidth{\strip@pt{\dimexpr \b@drwidth\FontSizeUnit /2 -\fb@hpadding\relax}}\mkb@rder#1\mkb@rder#1\let\b@drwidth\Ob@drwidth}
+\def\mkb@rder@double#1{%
+  \let\Ob@drwidth\b@drwidth
+  \let\Os@vedhpadding\fb@hpadding
+  \edef\b@drwidth{\strip@pt{\dimexpr \b@drwidth pt /3\relax}}%
+  \mkb@rder#1\edef\fb@hpadding{\the\dimexpr\b@drwidth\FontSizeUnit\relax}%
+  \setbox#1\vbox{\vskip-1\dimen1\unvbox#1}% This helps, but it's not enough, for some reason.
+  \mkb@rder#1\let\b@drwidth\Ob@drwidth
+  \let\fb@hpadding\Os@vedhpadding}
 
 \def\p@rsef@gsc@le#1x#2x#3\E{% \v@lpfx  fg or bg, params scale which might be of form Xscale x Yscale
   \edef\fig@h@dim{#1}\edef\fig@v@dim{#2}%
@@ -481,7 +492,10 @@
   \trace{e}{ESBE \c@tprefix(\the\ht\extb@x*\the\wd\extb@x)}%
   %\showbox\extb@x
   \inextendedfalse
-  \let\s@vedvpadding=\fb@vpadding%
+  \let\os@vedvpadding=\fb@vpadding%%Preserve old value
+  \let\os@vedhpadding=\fb@hpadding%
+  \getsbp@ram{borderhpadding}\ifx\cp@ram\relax\else\xdef\fb@hpadding{\the\dimexpr \cp@ram\FontSizeUnit\relax}\fi
+  \getsbp@ram{bordervpadding}\ifx\cp@ram\relax\else\xdef\fb@vpadding{\the\dimexpr \cp@ram\FontSizeUnit\relax}\fi
   \getsbp@ram{bgfigspec}\let\bgf@gsp@c\cp@ram
   \getsbp@ram{bgfiglow}\let\bgf@gl@w\cp@ram%
   \getsbp@ram{hascol}\let\h@scol\cp@ram%
@@ -493,6 +507,7 @@
   \getsbp@ram{borderstyle}\let\b@drstyle\cp@ram
   \getsbp@ram{bgfigalpha}\let\bgf@galpha\cp@ram
   \getsbp@ram{bgfigcolour}\let\bgf@gcol\cp@ram
+  \let\s@vedvpadding=\fb@vpadding%%Preserve old value
   \tempfalse
   \ifx\bgf@gsp@c\relax\else
     \p@rsefigscale{bg}%
@@ -598,6 +613,7 @@
     \let\b@drtop=\fstb@drtop
     \getsbp@ram{bordercolour}%
     \let\b@drcol\cp@ram
+    \def\v@dj{0pt}%
     \ifx\b@drstyle\relax
       \mkb@rder{\extchunkb@x}%
     \else
@@ -670,6 +686,8 @@
   \ifvoid\sid@barnotes\else
     \unvbox\sid@barnotes
   \fi
+  \let\fb@hpadding\os@vedhpadding
+  \let\fb@vpadding\os@vedvpadding
   \kill@PossParamCache
   \global\c@th@@ks{}%
   %\ifhmode +\fi
@@ -715,6 +733,9 @@
 \def\BorderWidth        #1\relax{\initc@t\setsbp@ram{borderwidth}{#1}}
 \def\BorderColour       #1\relax{\initc@t\setsbp@ram{bordercolour}{#1}}
 \def\BorderStyle       #1\relax{\initc@t\setsbp@ram{borderstyle}{#1}}
+\def\BorderHPadding #1\relax{\initc@t\setsbp@ram{borderhpadding}{#1}}
+\def\BorderVPadding #1\relax{\initc@t\setsbp@ram{bordervpadding}{#1}}
+\def\BorderPadding #1\relax{\initc@t\setsbp@ram{borderhpadding}{#1}\setsbp@ram{bordervpadding}{#1}}
 \let\BorderColor=\BorderColour%for Americans
 \def\Border	#1\relax{\initc@t\x@\p@rseBorder#1 \relax \relax}
 

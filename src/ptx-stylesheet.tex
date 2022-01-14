@@ -1497,10 +1497,13 @@
  \ifcsname ifm@rginnotesopen\endcsname\openm@rginnotes "\j@bname.marginnotes"\fi
  \lastpagefalse
  \prepusfm
- \openin\t@stread="\the\PtxFilePath#1"
-   \ifeof\t@stread \def\n@xt{\MSG{USFM file "\the\PtxFilePath#1" not found -- ignored}}
-   \else \closein\t@stread \def\n@xt{\input "\the\PtxFilePath#1"\relax}\fi
- \n@xt
+ \edef\t@st{#1}%
+ \ifx\t@st\empty\else
+   \openin\t@stread="\the\PtxFilePath#1"
+     \ifeof\t@stread \def\n@xt{\MSG{USFM file "\the\PtxFilePath#1" not found -- ignored}}
+     \else \closein\t@stread \def\n@xt{\input "\the\PtxFilePath#1"\relax}\fi
+   \n@xt
+ \fi
  \postptxfile
 }
 %-csty_ptxfile_start

@@ -590,14 +590,15 @@
     \ifdim\fill@stretch=0pt 
     \else
       \MSG{Stretch = \the\dimen4 / \the\fill@stretch}%
-      \dimen5=\dimexpr \fill@stretch*32\relax%
-    %  \loop \ifdim\dimen5<1pt
-%	\multiply\dimen5 by 2
-%	\multiply\dimen4 by 2
-%	\repeat
+      \dimen5=\dimexpr \fill@stretch*4\relax%
+      \multiply\dimen4 by 4\relax
+      \loop \ifdim\dimen4<0.5\maxdimen
+	\multiply\dimen5 by 2
+	\multiply\dimen4 by 2
+	\repeat
       \count255=\dimen5 \divide\count255 by 65535 % Integer part only
-      \MSG{\the\dimen4*32 / \the\count255}%
-      \dimen4=\dimexpr (\dimen4*32) / \count255\relax%Scale by 32
+      \MSG{\the\dimen4 / \the\count255}%
+      \dimen4=\dimexpr \dimen4 / \count255\relax%Scale by 32
       \xdef\ornamentstretch{\strip@pt{\dimen4}}%
     \fi
     \message{Ornament stretch set to \ornamentstretch}%
@@ -871,9 +872,6 @@
 \def\BorderPatternBot #1\relax{\initc@t\setsbp@ram{borderpatternbot}{#1}}
 \def\BorderPatternLeft #1\relax{\initc@t\setsbp@ram{borderpatternleft}{#1}}
 \def\BorderPatternRight #1\relax{\initc@t\setsbp@ram{borderpatternright}{#1}}
-\def\BorderHPadding #1\relax{\initc@t\setsbp@ram{borderhpadding}{#1}}
-\def\BorderVPadding #1\relax{\initc@t\setsbp@ram{bordervpadding}{#1}}
-\def\BorderPadding #1\relax{\initc@t\setsbp@ram{borderhpadding}{#1}\setsbp@ram{bordervpadding}{#1}}
 \def\BorderLineWidth #1\relax{\initc@t\setsbp@ram{borderlinewidth}{#1}}
 
 
@@ -884,21 +882,22 @@
 \catcode`\@=11
 \def\m@rker{esb}
 \setsbp@ram{borderfillcolour}{none}
-\setsbp@ram{borderhpadding}{0.5ex}
-\setsbp@ram{bordervpadding}{0.5ex}
+\setsbp@ram{borderhpadding}{5} %FontSizeUnits
+\setsbp@ram{bordervpadding}{1} %FontSizeUnits
 \setsbp@ram{borderlinewidth}{1}
 
 \def\DefaultOrnament{80}
 \def\mkb@rder@ornaments#1{% Plugin for sidebars
   \def\ornamentheight{\b@drwidth}%
   \getsbp@ram{borderfillcolour}\ifx\cp@ram\relax\edef\ornamentfillcol\orn@none\else\let\ornamentfillcol\cp@ram\fi
-  \let\ornamentlinecol\b@drcol
+  \ifx\b@drcol\relax
+    \def\ornamentlinecol{0 0 0}\else
+    \let\ornamentlinecol\b@drcol
+  \fi
   \getsbp@ram{borderpatterntop}\ifx\cp@ram\relax\edef\patternT{\DefaultOrnament||-}\else\let\patternT\cp@ram\fi
   \getsbp@ram{borderpatternbot}\ifx\cp@ram\relax\edef\patternB{\DefaultOrnament||-}\else\let\patternB\cp@ram\fi
   \getsbp@ram{borderpatternleft}\ifx\cp@ram\relax\edef\patternL{\DefaultOrnament|l|-}\else\let\patternL\cp@ram\fi
   \getsbp@ram{borderpatternright}\ifx\cp@ram\relax\edef\patternR{\DefaultOrnament|r|-}\else\let\patternR\cp@ram\fi
-  \getsbp@ram{borderhpadding}\let\box@hsep\cp@ram
-  \getsbp@ram{bordervpadding}\let\box@vsep\cp@ram
   \getsbp@ram{borderlinewidth}\edef\ornamentlinewidth{\strip@pt{\dimexpr\cp@ram\FontSizeUnit\relax}}%
   \OrnamentBorder{#1}{\b@drwidth\FontSizeUnit}%
   \message{ORNAMENTS box \the\ht#1+\the\dp#1 * \the\wd#1}%
