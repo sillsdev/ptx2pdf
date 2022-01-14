@@ -1335,7 +1335,7 @@
  \let\regular=\save@regular
  \let\bold=\save@bold
  \let\italic=\save@italic
- \ifx\oldc@tegory\c@tegory\else\ifsubc@ll\else\message{Error: Stylesheet changed category from '\oldc@tegory' to '\c@tegory'.}\fi\fi%
+ \ifx\oldc@tegory\c@tegory\else\ifsubc@ll\else\message{Error in stylsheet: Stylesheet changed category from '\oldc@tegory' to '\c@tegory'. Resetting to '\oldc@tegory'}\global\let\c@tegory=\oldc@tegory\s@tc@tpr@fix\fi\fi%
  \global\let\c@tegory=\oldc@tegory
 }
 \newif\ifsubc@ll \subc@llfalse

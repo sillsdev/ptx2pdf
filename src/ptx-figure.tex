@@ -260,18 +260,36 @@
   \ifx\l@cspec@b\@lignInner\temptrue\ifodd\whichp@ge\let\l@cspec@b=\@lignLeft\else\let\l@cspec@b=\@lignRight\fi\fi
 }
 
-\def\p@rsePicUse#1\end{% Parse the new picture options, and remember them
+%NB THIS IS ONLY for page-based items, not for e.g. captions. 
+\def\p@rsePicUse#1\end{% Parse the new picture options, and remember them. 
   \x@\p@rseLoc#1\end % sets \l@cspec@a, \l@cspec@b, \l@cspec@c to chars 1, 2, 3+
   \iftemp
     % inner/outer support for inserts
     \trace{g}{Page \the\whichp@ge, defined #1 to \l@cspec@a, \l@cspec@b, \l@cspec@c}%
-    \tempfalse
-    \ifx\l@cspec@a\loc@T\temptrue\fi
-    \ifx\l@cspec@a\loc@B\temptrue\fi
+  \fi
+  \tempfalse
+  \ifx\l@cspec@a\loc@T\temptrue\fi
+  \ifx\l@cspec@a\loc@B\temptrue\fi
+  \iftemp
+    \ifx\l@cspec@b\empty\else 
+      \ifnum\c@rrentcols>1\else
+        \tempfalse %Can't do it.
+      \fi
+    \fi
+    %redefine loc@ption
     \iftemp
-      %redefine loc@ption
       \xdef\loc@ption{\l@cspec@a\l@cspec@b}%
-  \fi\fi
+    \else
+      \let\l@cspec@b\empty
+      \x@\let\x@\tmp\csname \w@tsit @warning\endcsname
+      \ifx\tmp\relax
+        \picw@rning{#1}{\l@cspec@a\l@cspec@b}%
+      \else 
+        \tmp{#1}{\l@cspec@a\l@cspec@b}%
+      \fi
+      \xdef\loc@ption{\l@cspec@a}%
+    \fi
+  \fi
   % new options
   \ifx\l@cspec@a\loc@Inl
     \trace{g}{Experimental inline \w@tsit}%
@@ -1041,6 +1059,7 @@
 
 %+cfig_declare
 \def\picw@rning#1#2{\msg{converted picture placement "#1" to "#2" in single-column layout}}
+\x@\let\csname \gr@phic @warning\endcsname\picw@rning
 
 \def\alias@inserts{%
   \x@\let\csname ins-\loc@TL\endcsname\topleftins
