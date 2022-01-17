@@ -385,7 +385,7 @@ class BookNames(BaseBooks):
         bkstrs = {}
         for s in strs:
             for i in range(len(s)):
-                if s[i] == " ":
+                if s[i] is None or s[i] == " ":
                     break
                 bkstrs[s[:i+1]] = "" if bkstrs.get(s[:i+1], bkid) != bkid else bkid
                 self.bookNames.update({k:v for k,v in bkstrs.items() if v != ""})

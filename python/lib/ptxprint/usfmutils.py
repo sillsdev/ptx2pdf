@@ -101,22 +101,27 @@ class UsfmCollection:
         else:
             tocre = re.compile(r"^\\toc(\d)\s+(.*)\s*$")
             for bk in list(self.booknames.bookStrs.keys()):
-                tocs = [None]*3
+                tocs = [""] * 3
                 bkfile = self.bkmapper(bk)
                 if bkfile is None:
                     continue
                 bkfile = os.path.join(self.basedir, bkfile)
                 if not os.path.exists(bkfile):
                     continue
+                nochap = True
                 with open(bkfile, encoding="utf-8") as inf:
-                    for i in range(20):
+                    while nochap:
                         l = inf.readline()
                         m = tocre.match(l)
                         if m:
                             r = int(m.group(1))
-                            if r < len(tocs):
-                                tocs[r] = m.group(2)
-                tocs = reversed([x or tocs[i-1:i] for i,x in enumerate(tocs)])
+                            if r <= len(tocs):
+                                tocs[r-1] = m.group(2)
+                        elif '\\c ' in l:
+                            nochap = False
+                for i in range(len(tocs)-2,-1, -1):
+                    if tocs[i] == "":
+                        tocs[i] = tocs[i+1]
                 self.booknames.addBookName(bk, *tocs)
 
 class Usfm:

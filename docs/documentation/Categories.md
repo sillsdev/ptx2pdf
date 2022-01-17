@@ -19,12 +19,12 @@ numbers, the numbers are just a label.
 The style sheet might then read:
 ```
 \Marker cat:98|p
-\FontName GentiumPlus:expand=0.98
+\FontName GentiumPlus:extend=0.98
 ```
 Alternatively, if the desire is to apply category 98 to *all* paragraph styles, the stylesheet can specify this:
 ```
 \Marker cat:98|*
-\FontName GentiumPlus:expand=0.98
+\FontName GentiumPlus:extend=0.98
 ```
 
 Parameters for paragraph styles are looked up in the following order:
