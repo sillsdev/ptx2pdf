@@ -374,8 +374,8 @@
 \newif\ifonlyst@dynotes
 \def\n@ffin#1{}
 \def\ins@rtn@tecl@ss#1{% insert the given note class, either paragraphed or separately
-  \iff@rstnote\setn@tewidth{#1}\fi % set appropriate hsize width for diglot or not.
-  \checkp@ranotes{#1}\ifst@dynotes\ifnotst@dynotes\let\n@xt=\n@ffin\else\let\n@xt=\studyins@rtn@tecl@ss\fi\else
+  % set appropriate hsize width for diglot or not.
+  \checkp@ranotes{#1}\setn@tewidth{#1}\ifst@dynotes\ifnotst@dynotes\let\n@xt=\n@ffin\else\let\n@xt=\studyins@rtn@tecl@ss\fi\else
     \ifonlyst@dynotes\let\n@xt=\n@ffin\else
       \ifp@ranotes\let\n@xt=\parains@rtn@tecl@ss\else\let\n@xt=\separateins@rtn@tecl@ss\fi
   \fi\fi
