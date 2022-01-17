@@ -307,6 +307,7 @@
 \def\endlastp@rstyle#1{%
  \ifsk@pping \egroup \fi % if we were skipping nonpublishable text, end that mode
  \let\p@r=\par
+ \global\let\oldstyst@k\styst@k
  \the\p@rstylehooks % allow other modules to hook in here
  \end@llpoppedstyles{P}%
  \trace{s}{endlastp@rstyle #1 stack=\mcstack}%
@@ -322,7 +323,7 @@
   \setbox\j@nkbox=\vbox\bgroup\def\m@rker{#1}\sk@ppingtrue % and if so, start a box to consume and discard the text
  \else % else we need to actually process it!
   \ifx\m@rker\relax\else
-    \getp@ram{spaceafter}{\m@rker}{\styst@k}% output any <spaceafter> for the previous style
+    \getp@ram{spaceafter}{\m@rker}{\oldstyst@k}% output any <spaceafter> for the previous style
     \ifx\p@ram\relax \else
       \ifhe@dings\nobreak\fi
       \vskip\p@ram\verticalsp@ceunit                                              %(1)
