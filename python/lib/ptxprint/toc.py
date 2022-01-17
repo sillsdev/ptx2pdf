@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 import re
-from ptxprint.utils import bookcodes, _allbkmap, refKey
+from ptxprint.utils import bookcodes, _allbkmap, refKey, _hebOrder
 from ptxprint.unicode.ducet import get_sortkey, SHIFTTRIM, tailored
 import logging
 
@@ -11,7 +11,8 @@ bkranges = {'ot':   [b for b, i in _allbkmap.items() if 1  < i < 41],
             'nt':   [b for b, i in _allbkmap.items() if 60 < i < 88],
             'dc':   [b for b, i in _allbkmap.items() if 40 < i < 61],
             'pre':  [b for b, i in _allbkmap.items() if 0 <= i < 2],
-            'post': [b for b, i in _allbkmap.items() if 87 < i]}
+            'post': [b for b, i in _allbkmap.items() if 87 < i],
+            'heb':  _hebOrder}
 
 def sortToC(toc, booklist):
     bknums = {k:i for i,k in enumerate(booklist)}

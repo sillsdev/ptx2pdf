@@ -159,7 +159,8 @@ class XMLXrefs(BaseXrefs):
                 elif len(rs):
                     a.append(s + rs)
             else:
-                a.append(s + "[\\nobreak " + self._procnested(e[2]) + "]")
+                if len(e[2]):
+                    a.append(s + "[\\nobreak " + self._procnested(e[2]) + "]")
         return " ".join(a)
 
     def _updatedat(newdat, dat):
@@ -224,7 +225,7 @@ class Xrefs:
         if not parent.ptsettings.hasLocalBookNames:
             usfms = parent.printer.get_usfms()
             usfms.makeBookNames()
-            parent.ptsettings.bkstrs = usfms.booknames.bookStrs
+            parent.ptsettings.bkStrs = usfms.booknames.bookStrs
             parent.ptsettings.bookNames = usfms.booknames.bookNames
             parent.hasLocalBookNames = True
         logger.debug(f"Source: {source}")

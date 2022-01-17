@@ -2221,14 +2221,14 @@ saved configuration.</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_diglot">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_grid">
     <property name="visible">True</property>
@@ -2239,27 +2239,27 @@ combination of Crop marks, Guides (margins,
 baselines, etc.) and/or a graph-paper-like Grid
 can be set.</property>
     <property name="icon-name">view-grid-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_spacing">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_top">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_download">
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">software-update-available-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_refresh">
     <property name="visible">True</property>
@@ -2276,7 +2276,7 @@ having to manually re-create all the same
 settings for a similar project.</property>
     <property name="halign">end</property>
     <property name="icon-name">view-grid-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkListStore" id="ls_NoteBlendInto">
     <columns>
@@ -4635,6 +4635,43 @@ information, position and other parameters.</property>
       <row>
         <col id="0" translatable="yes">Rotate Both Clockwise</col>
         <col id="1">4</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkListStore" id="ls_sbCatList">
+    <columns>
+      <!-- column-name Category -->
+      <column type="gchararray"/>
+      <!-- column-name IncludeEF -->
+      <column type="gboolean"/>
+      <!-- column-name IncludeSB -->
+      <column type="gboolean"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">People</col>
+        <col id="1">True</col>
+        <col id="2">False</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Ideas</col>
+        <col id="1">False</col>
+        <col id="2">True</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">HIstory</col>
+        <col id="1">True</col>
+        <col id="2">True</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Keywords</col>
+        <col id="1">False</col>
+        <col id="2">True</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Objects</col>
+        <col id="1">False</col>
+        <col id="2">True</col>
       </row>
     </data>
   </object>
@@ -13143,10 +13180,439 @@ and Parameters:</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkLabel" id="l_extXrefsComingSoon">
+                              <object class="GtkBox">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
-                                <property name="label" translatable="yes">Coming one day, but don't hold your breath!</property>
+                                <property name="margin-start">6</property>
+                                <property name="margin-end">6</property>
+                                <property name="margin-top">6</property>
+                                <property name="margin-bottom">6</property>
+                                <property name="orientation">vertical</property>
+                                <property name="spacing">6</property>
+                                <child>
+                                  <object class="GtkFrame" id="fr_ef_Layout">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="halign">start</property>
+                                    <property name="margin-start">6</property>
+                                    <property name="margin-end">6</property>
+                                    <property name="margin-top">6</property>
+                                    <property name="margin-bottom">4</property>
+                                    <property name="hexpand">True</property>
+                                    <property name="label-xalign">0.05000000074505806</property>
+                                    <child>
+                                      <!-- n-columns=3 n-rows=4 -->
+                                      <object class="GtkGrid" id="gr_doubleColumn1">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="margin-left">6</property>
+                                        <property name="margin-right">12</property>
+                                        <property name="margin-start">6</property>
+                                        <property name="margin-end">12</property>
+                                        <property name="margin-top">4</property>
+                                        <property name="margin-bottom">5</property>
+                                        <property name="row-spacing">6</property>
+                                        <property name="column-spacing">4</property>
+                                        <child>
+                                          <object class="GtkSpinButton" id="s_ef_colgutterfactor">
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">True</property>
+                                            <property name="tooltip-text" translatable="yes">This is the space between 
+the text of the two columns 
+(measured in millimeters).</property>
+                                            <property name="halign">start</property>
+                                            <property name="valign">center</property>
+                                            <property name="width-chars">5</property>
+                                            <property name="text">4.0</property>
+                                            <property name="xalign">1</property>
+                                            <property name="caps-lock-warning">False</property>
+                                            <property name="input-purpose">number</property>
+                                            <property name="adjustment">a_colgutterwidth</property>
+                                            <property name="climb-rate">1</property>
+                                            <property name="digits">1</property>
+                                            <property name="numeric">True</property>
+                                            <property name="value">4</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left-attach">1</property>
+                                            <property name="top-attach">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkCheckButton" id="c_ef_verticalrule">
+                                            <property name="label" translatable="yes">Vertical Rule in Gutter</property>
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">True</property>
+                                            <property name="receives-default">False</property>
+                                            <property name="tooltip-text" translatable="yes">Check this option to include a center
+line between the two columns.</property>
+                                            <property name="halign">start</property>
+                                            <property name="valign">center</property>
+                                            <property name="margin-left">8</property>
+                                            <property name="margin-start">8</property>
+                                            <property name="margin-top">6</property>
+                                            <property name="margin-bottom">6</property>
+                                            <property name="active">True</property>
+                                            <property name="draw-indicator">True</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left-attach">0</property>
+                                            <property name="top-attach">2</property>
+                                            <property name="width">2</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkLabel" id="l_ef_gutterWidth">
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
+                                            <property name="tooltip-text" translatable="yes">This is the space (mm) between 
+the text of the two columns.</property>
+                                            <property name="halign">end</property>
+                                            <property name="valign">center</property>
+                                            <property name="margin-left">12</property>
+                                            <property name="margin-start">12</property>
+                                            <property name="label" translatable="yes">Gutter 
+Width (mm):</property>
+                                            <property name="justify">right</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left-attach">0</property>
+                                            <property name="top-attach">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkSpinButton" id="s_ef_colgutteroffset">
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">True</property>
+                                            <property name="tooltip-text" translatable="yes">This setting can raise (if -ve) or lower (if +ve) the starting point of the vertical rule between columns. (Value is pts).</property>
+                                            <property name="halign">start</property>
+                                            <property name="valign">center</property>
+                                            <property name="width-chars">5</property>
+                                            <property name="text">3.0</property>
+                                            <property name="xalign">1</property>
+                                            <property name="caps-lock-warning">False</property>
+                                            <property name="input-purpose">number</property>
+                                            <property name="adjustment">a_columngutteroffset</property>
+                                            <property name="climb-rate">1</property>
+                                            <property name="digits">1</property>
+                                            <property name="numeric">True</property>
+                                            <property name="value">3</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left-attach">1</property>
+                                            <property name="top-attach">3</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkLabel" id="l_ef_colgutteroffset">
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
+                                            <property name="tooltip-text" translatable="yes">This setting raises (using a negative value) or 
+lowers (using a positive value) the starting 
+point of the vertical rule between columns.</property>
+                                            <property name="halign">end</property>
+                                            <property name="label" translatable="yes">Adjust
+Top (pt):</property>
+                                            <property name="justify">right</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left-attach">0</property>
+                                            <property name="top-attach">3</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkSpinButton" id="s_ef_bottomRag">
+                                            <property name="visible">True</property>
+                                            <property name="sensitive">False</property>
+                                            <property name="can-focus">True</property>
+                                            <property name="halign">start</property>
+                                            <property name="text" translatable="yes">0</property>
+                                            <property name="adjustment">a_bottomRag</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left-attach">1</property>
+                                            <property name="top-attach">1</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkLabel" id="l_ef_bottomRag">
+                                            <property name="visible">True</property>
+                                            <property name="sensitive">False</property>
+                                            <property name="can-focus">False</property>
+                                            <property name="tooltip-text" translatable="yes">By default (when this is set to 0)
+PTXprint will balance the number of
+lines used in each column. Sometimes
+this results in large empty spaces at the
+end of a page.
+
+Increasing this number (recommended
+range 1-4) will allow up to that many
+unbalanced lines on the page. Note that
+you can still stretch/shrink paragraphs
+using AdjLists to refine the output by
+manually balancing pages.</property>
+                                            <property name="halign">end</property>
+                                            <property name="label" translatable="yes">Unbalanced
+Lines (max):</property>
+                                            <property name="justify">right</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left-attach">0</property>
+                                            <property name="top-attach">1</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                      </object>
+                                    </child>
+                                    <child type="label">
+                                      <object class="GtkCheckButton" id="c_extendedFnotes">
+                                        <property name="label" translatable="yes">Extended Footnotes (\ef)</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">False</property>
+                                        <property name="tooltip-text" translatable="yes">Extended Footnotes are the primary means for
+displaying study notes. These are similar to 
+ordinary footnotes but appear as a 2-column
+block at the end of each page. </property>
+                                        <property name="halign">end</property>
+                                        <property name="valign">center</property>
+                                        <property name="margin-left">2</property>
+                                        <property name="margin-start">2</property>
+                                        <property name="active">True</property>
+                                        <property name="draw-indicator">True</property>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_sidebars">
+                                    <property name="label" translatable="yes">Sidebars (\esb ... \esbe)</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="receives-default">False</property>
+                                    <property name="tooltip-text" translatable="yes">Sidebars (\esb ... \esbe) are used to contain 
+larger blocks of topic-specific information. </property>
+                                    <property name="halign">start</property>
+                                    <property name="margin-start">6</property>
+                                    <property name="draw-indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <!-- n-columns=3 n-rows=6 -->
+                                  <object class="GtkGrid">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="halign">start</property>
+                                    <property name="margin-start">6</property>
+                                    <property name="margin-end">6</property>
+                                    <property name="margin-top">12</property>
+                                    <property name="margin-bottom">6</property>
+                                    <property name="row-spacing">6</property>
+                                    <property name="column-spacing">6</property>
+                                    <child>
+                                      <object class="GtkViewport">
+                                        <property name="width-request">380</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="hexpand">True</property>
+                                        <property name="vexpand">True</property>
+                                        <child>
+                                          <object class="GtkScrolledWindow" id="scr_sbCatList">
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">True</property>
+                                            <property name="hexpand">True</property>
+                                            <property name="vexpand">True</property>
+                                            <property name="shadow-type">in</property>
+                                            <property name="overlay-scrolling">False</property>
+                                            <child>
+                                              <object class="GtkTreeView" id="tv_sbCatEdit">
+                                                <property name="visible">True</property>
+                                                <property name="can-focus">True</property>
+                                                <property name="vexpand">True</property>
+                                                <property name="hadjustment">a_zvarListadjustment1</property>
+                                                <property name="vadjustment">a_zvarListadjustment2</property>
+                                                <property name="vscroll-policy">natural</property>
+                                                <property name="model">ls_sbCatList</property>
+                                                <property name="reorderable">True</property>
+                                                <property name="rules-hint">True</property>
+                                                <property name="enable-search">False</property>
+                                                <property name="search-column">0</property>
+                                                <property name="fixed-height-mode">True</property>
+                                                <property name="show-expanders">False</property>
+                                                <child internal-child="selection">
+                                                  <object class="GtkTreeSelection"/>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkTreeViewColumn" id="col_sbCatList_name">
+                                                    <property name="resizable">True</property>
+                                                    <property name="spacing">2</property>
+                                                    <property name="sizing">fixed</property>
+                                                    <property name="fixed-width">110</property>
+                                                    <property name="title" translatable="yes">Category</property>
+                                                    <property name="clickable">True</property>
+                                                    <property name="reorderable">True</property>
+                                                    <property name="sort-indicator">True</property>
+                                                    <property name="sort-column-id">0</property>
+                                                    <child>
+                                                      <object class="GtkCellRendererText" id="cr_sbCatList_name"/>
+                                                      <attributes>
+                                                        <attribute name="text">0</attribute>
+                                                      </attributes>
+                                                    </child>
+                                                  </object>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkTreeViewColumn" id="col_sbCatListEF_value">
+                                                    <property name="spacing">2</property>
+                                                    <property name="sizing">fixed</property>
+                                                    <property name="fixed-width">150</property>
+                                                    <property name="title" translatable="yes">Extended Footnote (\ef)</property>
+                                                    <property name="clickable">True</property>
+                                                    <property name="reorderable">True</property>
+                                                    <property name="sort-indicator">True</property>
+                                                    <property name="sort-column-id">1</property>
+                                                    <child>
+                                                      <object class="GtkCellRendererToggle" id="cr_sbCatListEF_value"/>
+                                                    </child>
+                                                  </object>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkTreeViewColumn" id="col_sbCatListEF_value1">
+                                                    <property name="spacing">2</property>
+                                                    <property name="sizing">fixed</property>
+                                                    <property name="fixed-width">100</property>
+                                                    <property name="title" translatable="yes">Sidebar (\esb)</property>
+                                                    <property name="clickable">True</property>
+                                                    <property name="reorderable">True</property>
+                                                    <property name="sort-indicator">True</property>
+                                                    <property name="sort-column-id">2</property>
+                                                    <child>
+                                                      <object class="GtkCellRendererToggle" id="cr_sbCatListSB_value"/>
+                                                    </child>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                            </child>
+                                          </object>
+                                        </child>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">2</property>
+                                        <property name="top-attach">0</property>
+                                        <property name="height">6</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel">
+                                        <property name="height-request">30</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="tooltip-text" translatable="yes">Select which Categories should be displayed
+in the Extended Footnotes and/or Sidebars.</property>
+                                        <property name="halign">start</property>
+                                        <property name="valign">center</property>
+                                        <property name="label" translatable="yes">Filter by Categories:</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">0</property>
+                                        <property name="top-attach">0</property>
+                                        <property name="width">2</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkButton" id="b_sb_addcat">
+                                        <property name="label" translatable="yes">Add</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">True</property>
+                                        <property name="tooltip-text" translatable="yes">Add a new Category.</property>
+                                        <property name="valign">center</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">1</property>
+                                        <property name="top-attach">3</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkButton" id="b_sb_delcat">
+                                        <property name="label" translatable="yes">Del</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">True</property>
+                                        <property name="tooltip-text" translatable="yes">Delete the currently
+selected Category.</property>
+                                        <property name="valign">center</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">1</property>
+                                        <property name="top-attach">4</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkButton" id="btn_sb_rescanCats">
+                                        <property name="label">↺</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">True</property>
+                                        <property name="tooltip-text" translatable="yes">Clicking this button will rescan 
+the project to add any Categories 
+missing from this list.</property>
+                                        <property name="valign">center</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">1</property>
+                                        <property name="top-attach">5</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">2</property>
+                                  </packing>
+                                </child>
                               </object>
                               <packing>
                                 <property name="position">3</property>
@@ -20256,7 +20722,7 @@ Position:</property>
                                           </packing>
                                         </child>
                                         <child>
-                                          <object class="GtkExpander" id="ex_styCat">
+                                          <object class="GtkExpander" id="ex_stySB">
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
                                             <child>
@@ -20273,7 +20739,7 @@ Position:</property>
                                               <object class="GtkLabel">
                                                 <property name="visible">True</property>
                                                 <property name="can-focus">False</property>
-                                                <property name="label" translatable="yes">Category Settings</property>
+                                                <property name="label" translatable="yes">Sidebar Settings</property>
                                                 <attributes>
                                                   <attribute name="weight" value="bold"/>
                                                   <attribute name="foreground" value="#72729f9fcfcf"/>
