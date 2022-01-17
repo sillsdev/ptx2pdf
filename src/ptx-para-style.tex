@@ -713,14 +713,15 @@
 
 \def\@parlen#1#2#3{}
 
-\def\@nontextstart#1#2{\def\n@ntextstart{#2}}%
+\def\@nontextstart#1#2{\gdef\n@ntextstart{#2}}%
 \def\@nontextstop#1#2{%
   \csname ifinp@r-\c@rrdstat\endcsname
-    \dimen1=\dimexpr \n@ntextstart sp - #2 sp\relax
-    \trace{C}{Non text for \n@ntextstart -#2 (=\the\dimen1)}%
-    \edef\tot@col@ht{\the\dimexpr \tot@col@ht -\dimen1\relax}%
-    \edef\prev@col@ht{\the\dimexpr \prev@col@ht -\dimen1\relax}%
-  \fi
+    \ifcsname n@ntextstart\endcsname
+      \dimen1=\dimexpr \n@ntextstart sp - #2 sp\relax
+      \trace{C}{Non text for \n@ntextstart -#2 (=\the\dimen1)}%
+      \edef\tot@col@ht{\the\dimexpr \tot@col@ht -\dimen1\relax}%
+      \edef\prev@col@ht{\the\dimexpr \prev@col@ht -\dimen1\relax}%
+  \fi\fi
 }%
 
 \def\@pgstart#1{%

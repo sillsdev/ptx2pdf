@@ -2221,14 +2221,14 @@ saved configuration.</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_diglot">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_grid">
     <property name="visible">True</property>
@@ -2239,27 +2239,27 @@ combination of Crop marks, Guides (margins,
 baselines, etc.) and/or a graph-paper-like Grid
 can be set.</property>
     <property name="icon-name">view-grid-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_spacing">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_top">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_download">
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">software-update-available-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_refresh">
     <property name="visible">True</property>
@@ -2276,7 +2276,7 @@ having to manually re-create all the same
 settings for a similar project.</property>
     <property name="halign">end</property>
     <property name="icon-name">view-grid-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkListStore" id="ls_NoteBlendInto">
     <columns>
@@ -13143,10 +13143,226 @@ and Parameters:</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkLabel" id="l_extXrefsComingSoon">
+                              <object class="GtkBox">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
-                                <property name="label" translatable="yes">Coming one day, but don't hold your breath!</property>
+                                <property name="orientation">vertical</property>
+                                <child>
+                                  <object class="GtkFrame" id="fr_2colLayout1">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="margin-right">6</property>
+                                    <property name="margin-end">6</property>
+                                    <property name="margin-top">6</property>
+                                    <property name="margin-bottom">4</property>
+                                    <property name="hexpand">True</property>
+                                    <property name="label-xalign">0.019999999552965164</property>
+                                    <child>
+                                      <!-- n-columns=3 n-rows=4 -->
+                                      <object class="GtkGrid" id="gr_doubleColumn1">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="margin-left">6</property>
+                                        <property name="margin-right">12</property>
+                                        <property name="margin-start">6</property>
+                                        <property name="margin-end">12</property>
+                                        <property name="margin-top">4</property>
+                                        <property name="margin-bottom">5</property>
+                                        <property name="row-spacing">6</property>
+                                        <property name="column-spacing">4</property>
+                                        <child>
+                                          <object class="GtkSpinButton" id="s_colgutterfactor1">
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">True</property>
+                                            <property name="tooltip-text" translatable="yes">This is the space between 
+the text of the two columns 
+(measured in millimeters).</property>
+                                            <property name="halign">start</property>
+                                            <property name="valign">center</property>
+                                            <property name="width-chars">5</property>
+                                            <property name="text">4.0</property>
+                                            <property name="xalign">1</property>
+                                            <property name="caps-lock-warning">False</property>
+                                            <property name="input-purpose">number</property>
+                                            <property name="adjustment">a_colgutterwidth</property>
+                                            <property name="climb-rate">1</property>
+                                            <property name="digits">1</property>
+                                            <property name="numeric">True</property>
+                                            <property name="value">4</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left-attach">1</property>
+                                            <property name="top-attach">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkCheckButton" id="c_verticalrule1">
+                                            <property name="label" translatable="yes">Vertical Rule in Gutter</property>
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">True</property>
+                                            <property name="receives-default">False</property>
+                                            <property name="tooltip-text" translatable="yes">Check this option to include a center
+line between the two columns.</property>
+                                            <property name="halign">start</property>
+                                            <property name="valign">center</property>
+                                            <property name="margin-left">8</property>
+                                            <property name="margin-start">8</property>
+                                            <property name="margin-top">6</property>
+                                            <property name="margin-bottom">6</property>
+                                            <property name="active">True</property>
+                                            <property name="draw-indicator">True</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left-attach">0</property>
+                                            <property name="top-attach">2</property>
+                                            <property name="width">2</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkLabel" id="l_gutterWidth1">
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
+                                            <property name="tooltip-text" translatable="yes">This is the space (mm) between 
+the text of the two columns.</property>
+                                            <property name="halign">end</property>
+                                            <property name="valign">center</property>
+                                            <property name="margin-left">12</property>
+                                            <property name="margin-start">12</property>
+                                            <property name="label" translatable="yes">Gutter 
+Width (mm):</property>
+                                            <property name="justify">right</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left-attach">0</property>
+                                            <property name="top-attach">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkSpinButton" id="s_colgutteroffset1">
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">True</property>
+                                            <property name="tooltip-text" translatable="yes">This setting can raise (if -ve) or lower (if +ve) the starting point of the vertical rule between columns. (Value is pts).</property>
+                                            <property name="halign">start</property>
+                                            <property name="valign">center</property>
+                                            <property name="width-chars">5</property>
+                                            <property name="text">3.0</property>
+                                            <property name="xalign">1</property>
+                                            <property name="caps-lock-warning">False</property>
+                                            <property name="input-purpose">number</property>
+                                            <property name="adjustment">a_columngutteroffset</property>
+                                            <property name="climb-rate">1</property>
+                                            <property name="digits">1</property>
+                                            <property name="numeric">True</property>
+                                            <property name="value">3</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left-attach">1</property>
+                                            <property name="top-attach">3</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkLabel" id="l_colgutteroffset1">
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
+                                            <property name="tooltip-text" translatable="yes">This setting raises (using a negative value) or 
+lowers (using a positive value) the starting 
+point of the vertical rule between columns.</property>
+                                            <property name="halign">end</property>
+                                            <property name="label" translatable="yes">Adjust
+Top (pt):</property>
+                                            <property name="justify">right</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left-attach">0</property>
+                                            <property name="top-attach">3</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkSpinButton" id="s_bottomRag1">
+                                            <property name="visible">True</property>
+                                            <property name="sensitive">False</property>
+                                            <property name="can-focus">True</property>
+                                            <property name="halign">start</property>
+                                            <property name="text" translatable="yes">0</property>
+                                            <property name="adjustment">a_bottomRag</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left-attach">1</property>
+                                            <property name="top-attach">1</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkLabel" id="l_bottomRag1">
+                                            <property name="visible">True</property>
+                                            <property name="sensitive">False</property>
+                                            <property name="can-focus">False</property>
+                                            <property name="tooltip-text" translatable="yes">By default (when this is set to 0)
+PTXprint will balance the number of
+lines used in each column. Sometimes
+this results in large empty spaces at the
+end of a page.
+
+Increasing this number (recommended
+range 1-4) will allow up to that many
+unbalanced lines on the page. Note that
+you can still stretch/shrink paragraphs
+using AdjLists to refine the output by
+manually balancing pages.</property>
+                                            <property name="halign">end</property>
+                                            <property name="label" translatable="yes">Unbalanced
+Lines (max):</property>
+                                            <property name="justify">right</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left-attach">0</property>
+                                            <property name="top-attach">1</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                      </object>
+                                    </child>
+                                    <child type="label">
+                                      <object class="GtkCheckButton" id="c_doublecolumn1">
+                                        <property name="label" translatable="yes">Show Extended Footnotes (\ef)</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">False</property>
+                                        <property name="tooltip-text" translatable="yes">If this setting is checked on, but
+inactive, it is due to Diglot being
+active (which obviously must use 
+the Two Column layout).</property>
+                                        <property name="halign">end</property>
+                                        <property name="valign">center</property>
+                                        <property name="margin-left">2</property>
+                                        <property name="margin-start">2</property>
+                                        <property name="active">True</property>
+                                        <property name="draw-indicator">True</property>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
                               </object>
                               <packing>
                                 <property name="position">3</property>
