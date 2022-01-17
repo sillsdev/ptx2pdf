@@ -390,9 +390,9 @@ class StyleEditorView(StyleEditor):
             self.builder.get_object("ex_sty"+w).set_expanded(visibles[i])
 
         self.builder.get_object("ex_styTable").set_expanded(self.marker.startswith("tc"))
-        self.builder.get_object("ex_styCat").set_expanded(self.marker.startswith("cat"))
+        self.builder.get_object("ex_stySB").set_expanded(self.marker.startswith("cat"))
         self.builder.get_object("ex_styOther").set_expanded(False)
-        for w in (('Note', 'Table', 'Cat')):
+        for w in (('Note', 'Table', 'SB')):
             if self.builder.get_object("ex_sty"+w).get_expanded():
                 self.builder.get_object("ex_styOther").set_expanded(True)
         self.builder.get_object("ptxprint").resize(200, 200)

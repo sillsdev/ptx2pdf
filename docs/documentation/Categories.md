@@ -45,7 +45,7 @@ this character class,  then an approach such as this would be necessary:
 \FontName Zapf Chancery
 
 \Marker cat:98|nd
-\FontName Zapf Chancery:expand=0.98
+\FontName Zapf Chancery:extend=0.98
 ```
 
 
