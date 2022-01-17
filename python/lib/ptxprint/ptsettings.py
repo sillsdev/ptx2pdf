@@ -79,7 +79,7 @@ class ParatextSettings:
                         break
                     bkstrs[s[:i+1]] = "" if bkstrs.get(s[:i+1], bkid) != bkid else bkid
         if len(bkstrs):
-            self.bookStrs = {k:v for k,v in bkstrs.items() if v != ""}
+            self.bkStrs = {k:v for k,v in bkstrs.items() if v != ""}
 
     def default_bookNames(self):
         self.bkStrs = {k: k for k, v in chaps.items() if 0 < int(v) < 999}

@@ -159,7 +159,8 @@ class XMLXrefs(BaseXrefs):
                 elif len(rs):
                     a.append(s + rs)
             else:
-                a.append(s + "[\\nobreak " + self._procnested(e[2]) + "]")
+                if len(e[2]):
+                    a.append(s + "[\\nobreak " + self._procnested(e[2]) + "]")
         return " ".join(a)
 
     def _updatedat(newdat, dat):

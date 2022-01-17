@@ -690,7 +690,9 @@
 \x@\newif\csname ifinp@r-\endcsname
 
 \def\calc@p@rlinesgone#1#2{%
-  \baselineskip=\csname baselineskip@\c@rrdstat\endcsname
+  \ifcsname baselineskip@\c@rrdstat\endcsname
+    \baselineskip=\csname baselineskip@\c@rrdstat\endcsname
+  \fi
   \advance\p@rlinesgone by \numexpr \dimexpr #1 / \baselineskip \relax\relax
   \trace{C}{#2: ( #1  / \the\baselineskip) -> \the\p@rlinesgone}%
 }
