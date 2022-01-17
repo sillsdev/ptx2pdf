@@ -224,7 +224,7 @@ class Xrefs:
         if not parent.ptsettings.hasLocalBookNames:
             usfms = parent.printer.get_usfms()
             usfms.makeBookNames()
-            parent.ptsettings.bkstrs = usfms.booknames.bookStrs
+            parent.ptsettings.bkStrs = usfms.booknames.bookStrs
             parent.ptsettings.bookNames = usfms.booknames.bookNames
             parent.hasLocalBookNames = True
         logger.debug(f"Source: {source}")
