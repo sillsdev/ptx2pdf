@@ -305,12 +305,13 @@
 
 \newif\iftoplevelp@r
 \def\endlastp@rstyle#1{%
+ \getp@ram{spaceafter}{\m@rker}{\styst@k}% output any <spaceafter> for the  style active when the last paragraph ended.
+ \global\let\spaceafterp@ram\p@ram
  \ifsk@pping \egroup \fi % if we were skipping nonpublishable text, end that mode
  \let\p@r=\par
- \global\let\oldstyst@k\styst@k
  \the\p@rstylehooks % allow other modules to hook in here
  \end@llpoppedstyles{P}%
- \trace{s}{endlastp@rstyle #1 stack=\mcstack}%
+ \trace{s}{endlastp@rstyle #1 stack=\mcstack, stys@k:\styst@k}%
  \trace{ss}{endlastp@rstyle #1 stack=\mcstack}%
  \toplevelp@rtrue
  \def\d@##1+##2\E{\if##1P\relax\global\toplevelp@rfalse\let\d@=\cstackrelax\fi}%
@@ -323,10 +324,9 @@
   \setbox\j@nkbox=\vbox\bgroup\def\m@rker{#1}\sk@ppingtrue % and if so, start a box to consume and discard the text
  \else % else we need to actually process it!
   \ifx\m@rker\relax\else
-    \getp@ram{spaceafter}{\m@rker}{\oldstyst@k}% output any <spaceafter> for the previous style
-    \ifx\p@ram\relax \else
+    \ifx\spaceafterp@ram\relax \else
       \ifhe@dings\nobreak\fi
-      \vskip\p@ram\verticalsp@ceunit                                              %(1)
+      \vskip\spaceafterp@ram\verticalsp@ceunit                                              %(1)
     \fi
     %\edef\spc@ut{pdf:code EMC}\x@\special\x@{\spc@ut}%
   \fi
