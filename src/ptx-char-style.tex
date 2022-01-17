@@ -189,7 +189,7 @@
   %\showbox\ulb@x
   \ifdim \wd#1=0pt\else\setbox#1\hbox{\vtop{\box#1\kern\UnderlineLower\hrule height\UnderlineThickness}}%
     \unhbox#1\@ulsp@ce\fi
-  \unhbox\ulb@x}
+  \unhbox\ulb@x}%
 }
 
 %+cchar_endcharstyle
@@ -215,7 +215,7 @@
      \ifx\p@ram\relax\else \temptrue\fi
      \ifx\@ttriblist\empty\else\temptrue\fi
      \getmcp@ramR{underline}%
-     \ifx\p@ram\tru@\temptrue\fi
+     \ifx\p@ram\tru@\temptrue\global\let\p@ram\p@ram\fi
      \iftemp\egroup
        \ifx\p@ram\tru@ \d@underline{0}\unhbox0\fi
        \ifx\@ttributes\empty\else% If there are attributes, call an appropriate hook	
