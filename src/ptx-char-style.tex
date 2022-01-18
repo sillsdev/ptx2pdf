@@ -290,19 +290,22 @@
  \mctop
  \let\d@=\d@@
  \edef\f@ntstyle{\f@ntstyle-\c@rrfontsize\ifx\styst@k\empty\else+\styst@k\fi}%
+ \trace{F}{f@ntstyle=\f@ntstyle}%
 }
-\def\nomsg@tfontname#1{\getp@r@m{fontsize}{#1}\ifx\p@ram\relax\edef\p@ram{12}\fi\edef\f@ntstyle{#1-\p@ram}}
+\def\nomsg@tfontname#1{\getp@r@m{fontsize}{#1}\ifx\p@ram\relax\edef\p@ram{12}\fi
+  \edef\f@ntstyle{#1-\p@ram}\trace{F}{noms f@nstyle=\f@ntstyle}}
 %-cchar_getfontname
 
 \let\styst@k\empty
 \let\f@ntlist\empty % List of all fonts defined.
 
+\newif\ifh@vefont \h@vefontfalse
 %+cchar_setfont
 \xdef\z@ros{000000}%What does ParseColor come out with for black?
 \def\s@tfont#1{%
- \trace{s}{s@tfont #1}%
  \edef\r@qmkr{#1}\ifx\empty\r@qmkr\trace{F}{Font for empty marker requested. Nonsense! Substituting p}\def\r@qmkr{p}\fi
- \g@tfontname{\r@qmkr}%
+ \ifh@vefont\else\g@tfontname{\r@qmkr}\fi
+ \trace{s}{s@tfont #1}%
  \trace{F}{f@ntstyle=\f@ntstyle}%
  \ifdiglot\else
    \let\c@rrdstat\empty %Whether diglot or not, it might have been diglot before.

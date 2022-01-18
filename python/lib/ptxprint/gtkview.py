@@ -2044,6 +2044,7 @@ class GtkViewModel(ViewModel):
             hasfake = False
             embolden = None
             italic = None
+            extend = None
             isCtxtSpace = False
             mapping = "Default"
             name = None
@@ -2058,6 +2059,7 @@ class GtkViewModel(ViewModel):
             feats = f.asFeatStr()
             embolden = f.getFake("embolden")
             italic = f.getFake("slant")
+            extend = f.getFake("extend")
             hasfake = embolden is not None or italic is not None
             mapping = f.getMapping()
             name = f.name
@@ -2083,6 +2085,7 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("c_fontCtxtSpaces").set_active(isCtxtSpace)
         self.builder.get_object("s_fontBold").set_value(float(embolden or 0.))
         self.builder.get_object("s_fontItalic").set_value(float(italic or 0.))
+        self.builder.get_object("s_fontExtend").set_value(float(extend or 0.))
         self.builder.get_object("c_fontFake").set_active(hasfake)
         self.builder.get_object("fcb_fontdigits").set_active_id(mapping)
         for a in ("Bold", "Italic"):
@@ -2094,7 +2097,7 @@ class GtkViewModel(ViewModel):
         if response == Gtk.ResponseType.OK:
             (name, style) = self._getSelectedFont(name)
             if self.get("c_fontFake"):
-                bi = (self.get("s_fontBold"), self.get("s_fontItalic"))
+                bi = (self.get("s_fontBold"), self.get("s_fontItalic"), self.get("s_fontExtend"))
             else:
                 bi = None
             f = FontRef.fromDialog(name, style, self.get("c_fontGraphite"), 

@@ -159,7 +159,7 @@
 
 % define \headline for use by the output routine
 \headline={\hbox to \textwidth{%
- \s@tfont{h}%
+ \h@vefonttrue\s@tfont{h}\h@vefontfalse%
  \ifm@rksonpage\trace{H}{marks on page pfm:\p@gefirstmark}\else\trace{H}{No marks on page. old pfm:\p@gefirstmark}\gdef\p@gefirstmark{}\fi
  \edef\t@st{\p@gefirstmark}% check first mark on page to see if this is a "title" page
  \global\rhr@letrue

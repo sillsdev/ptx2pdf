@@ -796,7 +796,7 @@ class FontRef:
         res = cls(name, style, isGraphite, isCtxtSpace)
         res.updateFeats(featstring)
         if bi is not None:
-            for i, a in enumerate(("embolden", "slant")):
+            for i, a in enumerate(("embolden", "slant", "extend")):
                 if a == "slant" or float(bi[i]) > 0.0001:
                     res.feats[a] = bi[i]
         if fontdigits and fontdigits.lower() != "default":

@@ -198,6 +198,13 @@ THE SOFTWARE.
     <property name="step-increment">5</property>
     <property name="page-increment">10</property>
   </object>
+  <object class="GtkAdjustment" id="a_fontExtend">
+    <property name="upper">2</property>
+    <property name="value">1</property>
+    <property name="step-increment">0.05</property>
+    <property name="page-increment">0.20</property>
+    <property name="page-size">0.20</property>
+  </object>
   <object class="GtkAdjustment" id="a_fontsize">
     <property name="lower">2</property>
     <property name="upper">36</property>
@@ -2221,14 +2228,14 @@ saved configuration.</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon_size">3</property>
+    <property name="icon-size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_diglot">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon_size">3</property>
+    <property name="icon-size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_grid">
     <property name="visible">True</property>
@@ -2239,27 +2246,27 @@ combination of Crop marks, Guides (margins,
 baselines, etc.) and/or a graph-paper-like Grid
 can be set.</property>
     <property name="icon-name">view-grid-symbolic</property>
-    <property name="icon_size">3</property>
+    <property name="icon-size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_spacing">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon_size">3</property>
+    <property name="icon-size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_top">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon_size">3</property>
+    <property name="icon-size">3</property>
   </object>
   <object class="GtkImage" id="icon_download">
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">software-update-available-symbolic</property>
-    <property name="icon_size">3</property>
+    <property name="icon-size">3</property>
   </object>
   <object class="GtkImage" id="icon_refresh">
     <property name="visible">True</property>
@@ -2276,7 +2283,7 @@ having to manually re-create all the same
 settings for a similar project.</property>
     <property name="halign">end</property>
     <property name="icon-name">view-grid-symbolic</property>
-    <property name="icon_size">3</property>
+    <property name="icon-size">3</property>
   </object>
   <object class="GtkListStore" id="ls_NoteBlendInto">
     <columns>
@@ -3043,10 +3050,31 @@ in the Windows system.</property>
                           </packing>
                         </child>
                         <child>
-                          <placeholder/>
+                          <object class="GtkLabel">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="label" translatable="yes">Extend</property>
+                            <attributes>
+                              <attribute name="stretch" value="expanded"/>
+                            </attributes>
+                          </object>
+                          <packing>
+                            <property name="left-attach">2</property>
+                            <property name="top-attach">0</property>
+                          </packing>
                         </child>
                         <child>
-                          <placeholder/>
+                          <object class="GtkSpinButton" id="s_fontExtend">
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="adjustment">a_fontExtend</property>
+                            <property name="digits">2</property>
+                            <property name="value">1</property>
+                          </object>
+                          <packing>
+                            <property name="left-attach">2</property>
+                            <property name="top-attach">1</property>
+                          </packing>
                         </child>
                         <child>
                           <placeholder/>

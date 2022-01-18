@@ -15,7 +15,7 @@ def isScriptureText(e):
         return True
     if e.meta.get('TextType', "").lower() == "other" and e.name.startswith("i"):
         return True
-    if e.name in ("h", "id", "mt", "toc1", "toc2", "toc3"):
+    if e.name in ("h", "h1", "id", "mt", "toc1", "toc2", "toc3"):
         return False
     return True
 
