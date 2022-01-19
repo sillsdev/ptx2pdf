@@ -214,7 +214,7 @@
   \fi}
 
 \def\endt@blewrap{%
-  \trace{t}{endt@blewrap \the\maxtablec@l, rows=\the\tabler@ws}%
+  \trace{t}{endt@blewrap \the\maxtablec@l, rows=\the\tabler@ws, hsize=\the\hsize}%
   % calculate column widths as:
   % (a) any column whose max is < \hsize / numcols gets its natural width
   % (b) calculate exc@ss width of the remaining columns
@@ -225,6 +225,7 @@
   \getp@ram{leftmargin}{tr}{\styst@k}\ifx\p@ram\relax\else\advance\thr@shold by -\p@ram\IndentUnit\fi 
   \getp@ram{rightmargin}{tr}{\styst@k}\ifx\p@ram\relax\else\advance\thr@shold by -\p@ram\IndentUnit\fi 
   \divide\thr@shold by \maxtablec@l
+  \trace{t}{thr@shold=\the\thr@shold, textwidth=\the\textwidth}%
   \f@reachcol{%
     \getp@ram{spacebefore}{tc\the\@col}{\styst@k}%
     \c@rrentcolwidth=\ifx\p@ram\relax-1sp\else\p@ram\textwidth\divide\c@rrentcolwidth 12\trace{t}{width=\the\c@rrentcolwidth}\fi
@@ -234,6 +235,7 @@
       \c@rrentcolwidth=\wd\c@rrentcolbox
       \advance\sp@re by \thr@shold \advance\sp@re by -\c@rrentcolwidth
     \fi}%
+  \trace{t}{thr@shold=\the\thr@shold, exc@ss=\the\exc@ss, sp@re=\the\sp@re}%
   \f@reachcol{%
     \ifdim\c@rrentcolwidth=-1sp
       \ifdim\exc@ss>\sp@re % we have to wrap at least one column
@@ -247,7 +249,7 @@
         \c@rrentcolwidth=\wd\c@rrentcolbox
       \fi
     \fi
-    %\message{Table col width \the\c@rrentcolwidth}%
+    \trace{t}{Table col width \the\c@rrentcolwidth}%
   }%
 %  \f@reachcol{%
 %    \MSG{column \the\@col: width=\the\c@rrentcolwidth\space
