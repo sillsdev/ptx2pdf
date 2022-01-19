@@ -77,7 +77,7 @@ class XrefFileXrefs(BaseXrefs):
                         "book":         k.first.book,
                         "dotref":       k.str(context=NoBook, addsep=self.dotsep),
                         "colnobook":    k.str(context=NoBook),
-                        "refs":         v.str(owner.parent.ptsettings, addsep=self.addsep)
+                        "refs":         v.str(owner.parent.ptsettings, addsep=self.addsep, level=2)
                     }
                     outf.write(self.template.format(**info))
 
@@ -110,8 +110,8 @@ class XMLXrefs(BaseXrefs):
                 rend = r.findtext('Renderings')
                 rid = normalize('NFC', r.get('Id'))
                 if rend is not None and len(rend) and rid in btmap:
-                    strongsfilter.add(btmap[rid])
-            logger.debug("strongsfilter="+str(strongsfilter))
+                    self.strongsfilter.add(btmap[rid])
+            logger.debug("strongsfilter="+str(self.strongsfilter))
         else:
             self.strongsfilter = None
         self.xmldat = cachedData(xrfile, self.readxml)
@@ -153,7 +153,7 @@ class XMLXrefs(BaseXrefs):
                     r.filterBooks(self.filters)
                 r.sort()
                 r.simplify()
-                rs = r.str(context=self.context, addsep=self.addsep)
+                rs = r.str(context=self.context, addsep=self.addsep, level=2)
                 if len(rs) and e[1] in ('backref', 'crossref'):
                     a.append(s + "\\+xti " + rs + "\\+xti*")
                 elif len(rs):
@@ -225,7 +225,7 @@ class Xrefs:
         if not parent.ptsettings.hasLocalBookNames:
             usfms = parent.printer.get_usfms()
             usfms.makeBookNames()
-            parent.ptsettings.bkStrs = usfms.booknames.bookStrs
+            parent.ptsettings.bookStrs = usfms.booknames.bookStrs
             parent.ptsettings.bookNames = usfms.booknames.bookNames
             parent.hasLocalBookNames = True
         logger.debug(f"Source: {source}")
