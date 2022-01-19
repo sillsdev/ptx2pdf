@@ -2105,7 +2105,7 @@ class GtkViewModel(ViewModel):
                                    bi, self.get("fcb_fontdigits"))
             self.set(btnid, f)
             res = True
-        elif response == Gtk.ResponseType.CANCEL:
+        else:
             res = False
         dialog.set_keep_above(False)
         dialog.hide()
