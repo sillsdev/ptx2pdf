@@ -79,7 +79,7 @@ class XrefFileXrefs(BaseXrefs):
                         "colnobook":    k.str(context=NoBook),
                         "refs":         v.str(owner.parent.ptsettings, addsep=self.addsep)
                     }
-                outf.write(self.template.format(**info))
+                    outf.write(self.template.format(**info))
 
 
 class StandardXrefs(XrefFileXrefs):
