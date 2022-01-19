@@ -199,11 +199,11 @@ THE SOFTWARE.
     <property name="page-increment">10</property>
   </object>
   <object class="GtkAdjustment" id="a_fontExtend">
+    <property name="lower">0.5</property>
     <property name="upper">2</property>
     <property name="value">1</property>
     <property name="step-increment">0.05</property>
     <property name="page-increment">0.20</property>
-    <property name="page-size">0.20</property>
   </object>
   <object class="GtkAdjustment" id="a_fontsize">
     <property name="lower">2</property>
@@ -2228,14 +2228,14 @@ saved configuration.</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_diglot">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_grid">
     <property name="visible">True</property>
@@ -2246,27 +2246,27 @@ combination of Crop marks, Guides (margins,
 baselines, etc.) and/or a graph-paper-like Grid
 can be set.</property>
     <property name="icon-name">view-grid-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_spacing">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_top">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_download">
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">software-update-available-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_refresh">
     <property name="visible">True</property>
@@ -2283,7 +2283,7 @@ having to manually re-create all the same
 settings for a similar project.</property>
     <property name="halign">end</property>
     <property name="icon-name">view-grid-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkListStore" id="ls_NoteBlendInto">
     <columns>
@@ -2949,161 +2949,196 @@ in the Windows system.</property>
               </packing>
             </child>
             <child>
-              <object class="GtkFrame">
+              <object class="GtkBox">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="margin-start">6</property>
-                <property name="margin-end">6</property>
-                <property name="label-xalign">0</property>
                 <child>
-                  <object class="GtkAlignment">
+                  <object class="GtkFrame">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
-                    <property name="left-padding">12</property>
+                    <property name="margin-start">6</property>
+                    <property name="margin-end">6</property>
+                    <property name="label-xalign">0</property>
                     <child>
-                      <!-- n-columns=3 n-rows=3 -->
-                      <object class="GtkGrid">
+                      <object class="GtkAlignment">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
-                        <property name="halign">center</property>
-                        <property name="margin-bottom">6</property>
-                        <property name="row-spacing">6</property>
-                        <property name="column-spacing">20</property>
+                        <property name="left-padding">12</property>
                         <child>
-                          <object class="GtkLabel" id="l_fontBold">
+                          <!-- n-columns=2 n-rows=2 -->
+                          <object class="GtkGrid">
                             <property name="visible">True</property>
-                            <property name="sensitive">False</property>
                             <property name="can-focus">False</property>
-                            <property name="tooltip-text" translatable="yes">If the required font doesn't have a BOLD typeface, you can use this setting to create the BOLD effect. (For example, setting Embolden to 1.6 would thicken the Regular typeface making it appear as bold.)</property>
                             <property name="halign">center</property>
-                            <property name="label" translatable="yes">Embolden</property>
-                            <property name="justify">center</property>
-                            <property name="xalign">0.5</property>
-                            <attributes>
-                              <attribute name="weight" value="bold"/>
-                            </attributes>
+                            <property name="margin-end">6</property>
+                            <property name="margin-bottom">6</property>
+                            <property name="row-spacing">6</property>
+                            <property name="column-spacing">20</property>
+                            <child>
+                              <object class="GtkLabel" id="l_fontBold">
+                                <property name="visible">True</property>
+                                <property name="sensitive">False</property>
+                                <property name="can-focus">False</property>
+                                <property name="tooltip-text" translatable="yes">If the required font doesn't have a BOLD typeface, you can use this setting to create the BOLD effect. (For example, setting Embolden to 1.6 would thicken the Regular typeface making it appear as bold.)</property>
+                                <property name="halign">center</property>
+                                <property name="label" translatable="yes">Embolden</property>
+                                <property name="justify">center</property>
+                                <property name="xalign">0.5</property>
+                                <attributes>
+                                  <attribute name="weight" value="bold"/>
+                                </attributes>
+                              </object>
+                              <packing>
+                                <property name="left-attach">0</property>
+                                <property name="top-attach">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkSpinButton" id="s_fontBold">
+                                <property name="visible">True</property>
+                                <property name="sensitive">False</property>
+                                <property name="can-focus">True</property>
+                                <property name="tooltip-text" translatable="yes">If the required font doesn't have a BOLD typeface, you can use this setting to create the BOLD effect. (For example, setting Embolden to 1.6 would thicken the Regular typeface making it appear as bold.)</property>
+                                <property name="width-chars">5</property>
+                                <property name="text">1.6</property>
+                                <property name="caps-lock-warning">False</property>
+                                <property name="input-purpose">number</property>
+                                <property name="adjustment">a_bolditalice</property>
+                                <property name="climb-rate">0.10</property>
+                                <property name="digits">1</property>
+                                <property name="numeric">True</property>
+                                <property name="value">1.6000000002235175</property>
+                              </object>
+                              <packing>
+                                <property name="left-attach">0</property>
+                                <property name="top-attach">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkSpinButton" id="s_fontItalic">
+                                <property name="visible">True</property>
+                                <property name="sensitive">False</property>
+                                <property name="can-focus">True</property>
+                                <property name="tooltip-text" translatable="yes">If the required font does not have an ITALIC typeface, you can use this setting to create the ITALIC effect. (For example, setting Slant to 0.15 would slant the Regular typeface by 15% making it appear as italic.)</property>
+                                <property name="width-chars">5</property>
+                                <property name="text">0.15</property>
+                                <property name="caps-lock-warning">False</property>
+                                <property name="input-purpose">number</property>
+                                <property name="adjustment">a_bolditalics</property>
+                                <property name="climb-rate">0.01</property>
+                                <property name="digits">2</property>
+                                <property name="numeric">True</property>
+                                <property name="value">0.14999999999999999</property>
+                              </object>
+                              <packing>
+                                <property name="left-attach">1</property>
+                                <property name="top-attach">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="l_fontItalic">
+                                <property name="visible">True</property>
+                                <property name="sensitive">False</property>
+                                <property name="can-focus">False</property>
+                                <property name="tooltip-text" translatable="yes">If the required font does not have an ITALIC typeface, you can use this setting to create the ITALIC effect. (For example, setting Slant to 0.15 would slant the Regular typeface by 15% making it appear as italic.)</property>
+                                <property name="halign">center</property>
+                                <property name="label" translatable="yes">Slant</property>
+                                <property name="justify">right</property>
+                                <property name="xalign">0.5</property>
+                                <attributes>
+                                  <attribute name="style" value="italic"/>
+                                </attributes>
+                              </object>
+                              <packing>
+                                <property name="left-attach">1</property>
+                                <property name="top-attach">0</property>
+                              </packing>
+                            </child>
                           </object>
-                          <packing>
-                            <property name="left-attach">0</property>
-                            <property name="top-attach">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkSpinButton" id="s_fontBold">
-                            <property name="visible">True</property>
-                            <property name="sensitive">False</property>
-                            <property name="can-focus">True</property>
-                            <property name="tooltip-text" translatable="yes">If the required font doesn't have a BOLD typeface, you can use this setting to create the BOLD effect. (For example, setting Embolden to 1.6 would thicken the Regular typeface making it appear as bold.)</property>
-                            <property name="width-chars">5</property>
-                            <property name="text">1.6</property>
-                            <property name="caps-lock-warning">False</property>
-                            <property name="input-purpose">number</property>
-                            <property name="adjustment">a_bolditalice</property>
-                            <property name="climb-rate">0.10</property>
-                            <property name="digits">1</property>
-                            <property name="numeric">True</property>
-                            <property name="value">1.6000000002235175</property>
-                          </object>
-                          <packing>
-                            <property name="left-attach">0</property>
-                            <property name="top-attach">1</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkSpinButton" id="s_fontItalic">
-                            <property name="visible">True</property>
-                            <property name="sensitive">False</property>
-                            <property name="can-focus">True</property>
-                            <property name="tooltip-text" translatable="yes">If the required font does not have an ITALIC typeface, you can use this setting to create the ITALIC effect. (For example, setting Slant to 0.15 would slant the Regular typeface by 15% making it appear as italic.)</property>
-                            <property name="width-chars">5</property>
-                            <property name="text">0.15</property>
-                            <property name="caps-lock-warning">False</property>
-                            <property name="input-purpose">number</property>
-                            <property name="adjustment">a_bolditalics</property>
-                            <property name="climb-rate">0.01</property>
-                            <property name="digits">2</property>
-                            <property name="numeric">True</property>
-                            <property name="value">0.14999999999999999</property>
-                          </object>
-                          <packing>
-                            <property name="left-attach">1</property>
-                            <property name="top-attach">1</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkLabel" id="l_fontItalic">
-                            <property name="visible">True</property>
-                            <property name="sensitive">False</property>
-                            <property name="can-focus">False</property>
-                            <property name="tooltip-text" translatable="yes">If the required font does not have an ITALIC typeface, you can use this setting to create the ITALIC effect. (For example, setting Slant to 0.15 would slant the Regular typeface by 15% making it appear as italic.)</property>
-                            <property name="halign">center</property>
-                            <property name="label" translatable="yes">Slant</property>
-                            <property name="justify">right</property>
-                            <property name="xalign">0.5</property>
-                            <attributes>
-                              <attribute name="style" value="italic"/>
-                            </attributes>
-                          </object>
-                          <packing>
-                            <property name="left-attach">1</property>
-                            <property name="top-attach">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkLabel">
-                            <property name="visible">True</property>
-                            <property name="can-focus">False</property>
-                            <property name="label" translatable="yes">Extend</property>
-                            <attributes>
-                              <attribute name="stretch" value="expanded"/>
-                            </attributes>
-                          </object>
-                          <packing>
-                            <property name="left-attach">2</property>
-                            <property name="top-attach">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkSpinButton" id="s_fontExtend">
-                            <property name="visible">True</property>
-                            <property name="can-focus">True</property>
-                            <property name="adjustment">a_fontExtend</property>
-                            <property name="digits">2</property>
-                            <property name="value">1</property>
-                          </object>
-                          <packing>
-                            <property name="left-attach">2</property>
-                            <property name="top-attach">1</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
                         </child>
                       </object>
                     </child>
-                  </object>
-                </child>
-                <child type="label">
-                  <object class="GtkCheckButton" id="c_fontFake">
-                    <property name="label" translatable="yes">Fake Bold/Italic</property>
-                    <property name="visible">True</property>
-                    <property name="can-focus">True</property>
-                    <property name="receives-default">False</property>
-                    <property name="tooltip-text" translatable="yes">If the font you are using doesn't
+                    <child type="label">
+                      <object class="GtkCheckButton" id="c_fontFake">
+                        <property name="label" translatable="yes">Fake Bold/Italic</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">False</property>
+                        <property name="tooltip-text" translatable="yes">If the font you are using doesn't
 have multiple typefaces (such
 as Bold, Italic and Bold-Italic)
 then you can "fake" these by
 adding boldness and/or slant
 to the regular typeface.</property>
-                    <property name="draw-indicator">True</property>
-                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                        <property name="draw-indicator">True</property>
+                        <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                      </object>
+                    </child>
                   </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <!-- n-columns=1 n-rows=2 -->
+                  <object class="GtkGrid">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="halign">center</property>
+                    <property name="margin-start">6</property>
+                    <property name="margin-end">6</property>
+                    <property name="margin-top">22</property>
+                    <property name="margin-bottom">6</property>
+                    <property name="row-spacing">6</property>
+                    <property name="column-spacing">20</property>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="tooltip-text" translatable="yes">The shapes of the characters can be stretched
+(larger) or condensed (smaller) to occupy
+more horizontal space, or less (shrink text).
+1.00 = 100% = normal
+0.95 =   95% = shrink text
+1.05 = 105% = expand text</property>
+                        <property name="label" translatable="yes">Stretch</property>
+                        <attributes>
+                          <attribute name="stretch" value="ultra-expanded"/>
+                        </attributes>
+                      </object>
+                      <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkSpinButton" id="s_fontExtend">
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="tooltip-text" translatable="yes">The shapes of the characters can be stretched
+(larger) or condensed (smaller) to occupy
+more horizontal space, or less (shrink text).
+1.00 = 100% = normal
+0.95 =   95% = shrink text
+1.05 = 105% = expand text</property>
+                        <property name="text" translatable="yes">1.00</property>
+                        <property name="adjustment">a_fontExtend</property>
+                        <property name="digits">2</property>
+                        <property name="value">1</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">1</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
                 </child>
               </object>
               <packing>
@@ -13523,6 +13558,10 @@ larger blocks of topic-specific information. </property>
                                                     <property name="sort-column-id">1</property>
                                                     <child>
                                                       <object class="GtkCellRendererToggle" id="cr_sbCatListEF_value"/>
+                                                      <attributes>
+                                                        <attribute name="activatable">1</attribute>
+                                                        <attribute name="active">1</attribute>
+                                                      </attributes>
                                                     </child>
                                                   </object>
                                                 </child>
@@ -13538,6 +13577,10 @@ larger blocks of topic-specific information. </property>
                                                     <property name="sort-column-id">2</property>
                                                     <child>
                                                       <object class="GtkCellRendererToggle" id="cr_sbCatListSB_value"/>
+                                                      <attributes>
+                                                        <attribute name="activatable">2</attribute>
+                                                        <attribute name="active">2</attribute>
+                                                      </attributes>
                                                     </child>
                                                   </object>
                                                 </child>
@@ -13577,6 +13620,7 @@ in the Extended Footnotes and/or Sidebars.</property>
                                         <property name="receives-default">True</property>
                                         <property name="tooltip-text" translatable="yes">Add a new Category.</property>
                                         <property name="valign">center</property>
+                                        <signal name="clicked" handler="onCatListAdd" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left-attach">1</property>
@@ -13592,6 +13636,7 @@ in the Extended Footnotes and/or Sidebars.</property>
                                         <property name="tooltip-text" translatable="yes">Delete the currently
 selected Category.</property>
                                         <property name="valign">center</property>
+                                        <signal name="clicked" handler="onCatListDel" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left-attach">1</property>
@@ -13608,6 +13653,7 @@ selected Category.</property>
 the project to add any Categories 
 missing from this list.</property>
                                         <property name="valign">center</property>
+                                        <signal name="clicked" handler="onReScanCatList" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left-attach">1</property>

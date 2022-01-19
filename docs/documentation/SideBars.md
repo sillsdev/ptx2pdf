@@ -145,7 +145,7 @@ left border on odd pages will be altered by All, Left or Inner).
 For 'Book opens on the left'  publications (Right-to-left languages, but complicated by diglots), the
 inner/outer processing requires that `\BookOpenLefttrue` is specified before the category sheet is processed.
 
-The opion None clears all borders set until now. Thus:
+The option None clears all borders set until now. Thus:
 `\Border All None Left`
  is the same as "\Border None Left". "\Border Left" will retain any previously set or inherited values,
  while adding a Left-hand border.

@@ -289,7 +289,7 @@ _object_classes = {
                     "btn_styReset", "btn_refreshFonts", "btn_plAdd", "btn_plDel", 
                     "btn_plGenerate", "btn_plSaveEdits", "btn_resetTabGroups", "btn_adjust_spacing", 
                     "btn_adjust_top", "btn_adjust_bottom", "btn_DBLbundleDiglot", "btn_resetGrid",
-                    "btn_refreshCaptions")
+                    "btn_refreshCaptions", "btn_sb_rescanCats")
 }
 
 _pgpos = {
@@ -564,6 +564,7 @@ class GtkViewModel(ViewModel):
         self.picListView = PicList(self.builder.get_object('tv_picListEdit'), self.builder, self)
         self.styleEditor = StyleEditorView(self)
         self.pubvarlist = self.builder.get_object("ls_zvarList")
+        self.sbcatlist = self.builder.get_object("ls_sbCatList")
         self.strongsvarlist = self.builder.get_object("ls_strvarList")
 
         self.mw = self.builder.get_object("ptxprint")
@@ -849,6 +850,8 @@ class GtkViewModel(ViewModel):
             varlist = self.pubvarlist
         elif dest == "strongs":
             varlist = self.strongsvarlist
+        elif dest == "sbcats":
+            varlist = self.sbcatlist
         for r in varlist:
             if r[0] == k:
                 return r[1]
@@ -859,6 +862,8 @@ class GtkViewModel(ViewModel):
             varlist = self.pubvarlist
         elif dest == "strongs":
             varlist = self.strongsvarlist
+        elif dest == "sbcats":
+            varlist = self.sbcatlist
         for r in varlist:
             if r[0] == k:
                 r[1] = v
@@ -871,6 +876,8 @@ class GtkViewModel(ViewModel):
             varlist = self.pubvarlist
         elif dest == "strongs":
             varlist = self.strongsvarlist
+        elif dest == "sbcats":
+            varlist = self.sbcatlist
         return [r[0] for r in varlist]
 
     def clearvars(self, dest=None):
@@ -878,6 +885,8 @@ class GtkViewModel(ViewModel):
             self.pubvarlist.clear()
         elif dest == "strongs":
             self.strongsvarlist.clear()
+        elif dest == "sbcats":
+            self.sbcatlist.clear()
 
     def onDestroy(self, btn):
         if self.logfile != None:
@@ -3727,3 +3736,34 @@ class GtkViewModel(ViewModel):
         pass
         # print("Got it!")
         # widget.get_style_context().add_class("inactivewidget")
+
+    def onCatListAdd(self, btn): # Copied from 'onzvarAdd'
+        def responseToDialog(entry, dialog, response):
+            dialog.response(response)
+        dialog = Gtk.MessageDialog(parent=None, message_type=Gtk.MessageType.QUESTION,
+                 buttons=Gtk.ButtonsType.OK_CANCEL, text=_("Category Name"))
+        entry = Gtk.Entry()
+        entry.connect("activate", responseToDialog, dialog, Gtk.ResponseType.OK)
+        dbox = dialog.get_content_area()
+        dbox.pack_end(entry, False, False, 0)
+        dialog.set_keep_above(True)
+        dialog.show_all()
+        response = dialog.run()
+        if response == Gtk.ResponseType.OK: #MH: this needs to be fixed so that all three values are added
+            k = entry.get_text()            #    Category Name, True, True
+            if self.getvar(k, dest="sbcats") is None:
+                self.setvar(k, "", dest="sbcats") # <<--------------------
+        dialog.destroy()
+
+    def onCatListDel(self, btn):
+        tv = self.builder.get_object("tv_sbCatEdit")
+        selection = tv.get_selection()
+        model, i = selection.get_selected_rows()
+        for r in reversed(i):
+            itr = model.get_iter(r)
+            model.remove(itr)
+
+    def onReScanCatList(self, btn):
+        #MH: Need to re-scan .sty file(s) and/or USFM text to see which \cat names 
+        #    exist in the settings (or the data for the project).
+        pass

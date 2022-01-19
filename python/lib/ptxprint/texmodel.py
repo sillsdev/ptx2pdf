@@ -324,6 +324,13 @@ ModelMap = {
     "notes/horiznotespacemin":  ("s_notespacingmin", lambda w,v: f2s(float(v)) if v is not None else "7"),
     "notes/horiznotespacemax":  ("s_notespacingmax", lambda w,v: f2s(float(v)) if v is not None else "27"),
 
+    "studybib/includextfn":     ("c_extendedFnotes", lambda w,v: "" if v else "%"),
+    "studybib/colgutterfactor": ("s_ef_colgutterfactor", lambda w,v: round(float(v or 4)*3)), # Hack to be fixed?
+  # "studybib/bottomrag":       ("s_ef_bottomRag", lambda w,v: str(int(v or 0)+0.95)),
+    "studybib/ifverticalrule":  ("c_ef_verticalrule", lambda w,v :"true" if v else "false"),
+    "studybib/colgutteroffset": ("s_ef_colgutteroffset", lambda w,v: "{:.1f}".format(float(v)) if v else "0.0"),
+    "studybib/includesidebar":  ("c_sidebars", None),
+
     "document/fontregular":     ("bl_fontR", lambda w,v,s: v.asTeXFont(s.inArchive) if v else ""),
     "document/fontbold":        ("bl_fontB", lambda w,v,s: v.asTeXFont(s.inArchive) if v else ""),
     "document/fontitalic":      ("bl_fontI", lambda w,v,s: v.asTeXFont(s.inArchive) if v else ""),
@@ -1291,6 +1298,10 @@ class TexModel:
 
         # Throw out the known "nonpublishable" markers and their text (if any)
         self.localChanges.append((None, regex.compile(r"\\(usfm|ide|rem|sts|restore|pubinfo)( .*?)?\n(?=\\)", flags=regex.M), ""))
+
+        # Throw out \esb ... \esbe blocks if Study Bible Sidebars are not wanted
+        if not self.asBool("studybib/includesidebar"):
+            self.localChanges.append((None, regex.compile(r"\\esb.+?\\esbe", flags=regex.S), ""))
 
         # If a printout of JUST the book introductions is needed (i.e. no scripture text) then this option is very handy
         if not self.asBool("document/ifmainbodytext"):
