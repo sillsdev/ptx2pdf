@@ -792,13 +792,17 @@ class FontRef:
         return cls(name, styles, isGraphite.lower()=="true", isCtxtSpace.lower()=="true", feats, lang)
 
     @classmethod
-    def fromDialog(cls, name, style, isGraphite, isCtxtSpace, featstring, bi, fontdigits):
+    def fromDialog(cls, name, style, isGraphite, isCtxtSpace, featstring, bi, fontextend, fontdigits):
         res = cls(name, style, isGraphite, isCtxtSpace)
         res.updateFeats(featstring)
         if bi is not None:
-            for i, a in enumerate(("embolden", "slant", "extend")):
-                if a == "slant" or float(bi[i]) > 0.0001:
+            for i, a in enumerate(("embolden", "slant")):
+                if bi[i] != "0":
                     res.feats[a] = bi[i]
+        if fontextend != "1":
+            res.feats['extend'] = fontextend
+        else:
+            res.feats.pop('extend', None)
         if fontdigits and fontdigits.lower() != "default":
             res.feats['mapping']='mappings/{}digits'.format(fontdigits.lower())
         return res
@@ -1016,7 +1020,7 @@ class FontRef:
         return "|".join(res)
 
     def asFeatStr(self):
-        res = ["{}={}".format(k, v) for k, v in self.feats.items() if k not in ("embolden", "slant", "mapping")]
+        res = ["{}={}".format(k, v) for k, v in self.feats.items() if k not in ("embolden", "slant", "mapping", "extend")]
         if self.lang is not None:
             res.append("language={}".format(self.lang))
         return ", ".join(res)

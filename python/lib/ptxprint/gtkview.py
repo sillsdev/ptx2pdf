@@ -2068,7 +2068,7 @@ class GtkViewModel(ViewModel):
             feats = f.asFeatStr()
             embolden = f.getFake("embolden")
             italic = f.getFake("slant")
-            extend = f.getFake("extend")
+            extend = f.getFake("extend") or "1.0"
             hasfake = embolden is not None or italic is not None
             mapping = f.getMapping()
             name = f.name
@@ -2106,12 +2106,12 @@ class GtkViewModel(ViewModel):
         if response == Gtk.ResponseType.OK:
             (name, style) = self._getSelectedFont(name)
             if self.get("c_fontFake"):
-                bi = (self.get("s_fontBold"), self.get("s_fontItalic"), self.get("s_fontExtend"))
+                bi = (self.get("s_fontBold"), self.get("s_fontItalic"))
             else:
                 bi = None
             f = FontRef.fromDialog(name, style, self.get("c_fontGraphite"), 
                                    self.get("c_fontCtxtSpaces"), self.get("t_fontFeatures"),
-                                   bi, self.get("fcb_fontdigits"))
+                                   bi, self.get("s_fontExtend"), self.get("fcb_fontdigits"))
             self.set(btnid, f)
             res = True
         else:
@@ -3780,4 +3780,3 @@ class GtkViewModel(ViewModel):
 
     def onCatSBtoggled(self, cell, path):
         self.sbcatlist[path][2] = not cell.get_active()
-        
