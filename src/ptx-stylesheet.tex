@@ -1583,11 +1583,13 @@
   \s@tc@tpr@fix
 }
 \def\s@tc@tpr@fix{%
-  \ifx\c@tegory\empty\let\c@tprefix\empty
+  \trace{sc}{c@tegory is '\meaning\c@tegory' empty is '\meaning\empty'}%
+  \ifx\c@tegory\empty
+    \let\c@tprefix\empty
   \else
     \edef\c@tprefix{cat:\c@tegory|}% See above...
   \fi
-  \trace{sc}{Stylesheet prefix for \c@tegory: '\c@tprefix'}%
+  \trace{sc}{Stylesheet prefix for '\c@tegory': '\c@tprefix'}%
 }
 \def\endc@tmarker{t*}
 \def\@ndc@t{%
@@ -1624,7 +1626,8 @@
   \else 
     \let\stylet@pe\ss@Ctgy
   \fi
-  \x@\s@tc@tprefix{\nofin@lspace #1 \E}%
+  \edef\tmp{\nofin@lspace #1 \E}%Ensure full expansion 
+  \x@\s@tc@tprefix\x@{\tmp}%
   \the\c@th@@ks% Run anythingthe enclosing code wants
   \op@ninghooks{before}{cat}% 
   \ifhmode\par\fi

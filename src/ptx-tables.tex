@@ -148,9 +148,10 @@
     \resetp@rstyle \everypar={}\noindent
     \ifRTL\beginR\fi
     \dimen255=0pt
-    \getp@ram{leftmargin}{tc\the\tablec@l}{\styst@k}%
+    \edef\tc@ll{tc\the\tablec@l}%
+    \getp@ram{leftmargin}{\tc@ll}{\styst@k}%
     \ifx\p@ram\relax \else \advance\dimen255 \p@ram\IndentUnit \fi
-    \getp@ram{firstindent}{tc\the\tablec@l}{\styst@k}%
+    \getp@ram{firstindent}{\tc@ll}{\styst@k}%
     \ifx\p@ram\relax \else \advance\dimen255 \p@ram\IndentUnit \fi
     \kern\dimen255
     \s@tfont{tc\the\tablec@l}{\styst@k}%
@@ -161,8 +162,10 @@
 \def\@ndcell{%
   \if@cell
     \unskip
-    \end@llpoppedstyles{tc*}%
     \getp@ram{rightmargin}{tc\the\tablec@l}{\styst@k}%
+    \global\let\p@r@m\p@ram %preserve against endgroups
+    \end@llpoppedstyles{tc*}%
+    \let\p@ram\p@r@m
     \ifx\p@ram\relax\else\trace{t}{rightkern(tc\the\tablec@l) \p@ram}\kern\p@ram\IndentUnit\fi
     \egroup
     \setbox0=\vbox{\unvbox\cellb@x \global\setbox\cellb@x=\lastbox}%
@@ -195,19 +198,19 @@
     \tablec@l=0
     \global\maxtablec@l=0
     \doingt@bletrue\inn@tetrue
+    \message{starting table cat:\tablecategory \c@tegory}%
     \ifx\tablecategory\empty\else\doc@t{\tablecategory}\fi
-    \message{starting table cat:\tablecategory}%
   \fi}
 \newdimen\t@talwidth
 \def\endt@ble{%
   \ifdoingt@ble
     \trace{t}{endt@ble-\mcstack}%
     \@ndcell
-    \@ndrow\end@llpoppedstyles{\ss@Tbl*}%
     \t@talwidth=0pt
     \f@reachcol{\advance\t@talwidth by \wd\c@rrentcolbox}%
     \endt@blewrap
     \f@reachcol{\setbox\c@rrentcolbox=\box\voidb@x}%
+    \@ndrow\end@llpoppedstyles{\ss@Tbl*}%
     \doingt@blefalse\inn@tefalse
     \ifx\tablecategory\empty\else\@ndc@t\fi
     \egroup
@@ -227,7 +230,8 @@
   \divide\thr@shold by \maxtablec@l
   \trace{t}{thr@shold=\the\thr@shold, textwidth=\the\textwidth}%
   \f@reachcol{%
-    \getp@ram{spacebefore}{tc\the\@col}{\styst@k}%
+    \edef\tc@l{tc\the\@col}%
+    \getp@ram{spacebefore}{\tc@l}{\tc@l+\styst@k}%
     \c@rrentcolwidth=\ifx\p@ram\relax-1sp\else\p@ram\textwidth\divide\c@rrentcolwidth 12\trace{t}{width=\the\c@rrentcolwidth}\fi
     \ifdim\wd\c@rrentcolbox>\thr@shold
       \advance\exc@ss by \wd\c@rrentcolbox \advance\exc@ss by -\thr@shold
@@ -329,7 +333,7 @@
     \else\ifx\the@lign\cell@c
         \nobreak\csname \c@tprefix leaders-tcc\the\@col\endcsname
     \fi\fi
-    \trace{t}{cell(\the@lign)[\the\@row, \the\@col]: leaders. leftskip=\the\leftskip, rightskip=\the\rightskip, parfillskip=\the\parfillskip, width=\the\c@rrentcolwidth}%
+    \trace{t}{\c@tprefix cell(\the@lign)[\the\@row, \the\@col]: leaders. leftskip=\the\leftskip, rightskip=\the\rightskip, parfillskip=\the\parfillskip, width=\the\c@rrentcolwidth}%
     \unhbox0\unskip\unkern \parfillskip=0pt
     \ifx\the@lign\cell@r\else
       \ifx\the@lign\cell@c
