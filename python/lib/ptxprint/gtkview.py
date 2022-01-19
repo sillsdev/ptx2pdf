@@ -850,8 +850,8 @@ class GtkViewModel(ViewModel):
             varlist = self.pubvarlist
         elif dest == "strongs":
             varlist = self.strongsvarlist
-        elif dest == "sbcats":
-            varlist = self.sbcatlist
+        # elif dest == "sbcats":
+            # varlist = self.sbcatlist
         for r in varlist:
             if r[0] == k:
                 return r[1]
@@ -862,8 +862,8 @@ class GtkViewModel(ViewModel):
             varlist = self.pubvarlist
         elif dest == "strongs":
             varlist = self.strongsvarlist
-        elif dest == "sbcats":
-            varlist = self.sbcatlist
+        # elif dest == "sbcats":
+            # varlist = self.sbcatlist
         for r in varlist:
             if r[0] == k:
                 r[1] = v
@@ -876,8 +876,8 @@ class GtkViewModel(ViewModel):
             varlist = self.pubvarlist
         elif dest == "strongs":
             varlist = self.strongsvarlist
-        elif dest == "sbcats":
-            varlist = self.sbcatlist
+        # elif dest == "sbcats":
+            # varlist = self.sbcatlist
         return [r[0] for r in varlist]
 
     def clearvars(self, dest=None):
@@ -885,8 +885,8 @@ class GtkViewModel(ViewModel):
             self.pubvarlist.clear()
         elif dest == "strongs":
             self.strongsvarlist.clear()
-        elif dest == "sbcats":
-            self.sbcatlist.clear()
+        # elif dest == "sbcats":
+            # self.sbcatlist.clear()
 
     def onDestroy(self, btn):
         if self.logfile != None:
@@ -3749,10 +3749,9 @@ class GtkViewModel(ViewModel):
         dialog.set_keep_above(True)
         dialog.show_all()
         response = dialog.run()
-        if response == Gtk.ResponseType.OK: #MH: this needs to be fixed so that all three values are added
-            k = entry.get_text()            #    Category Name, True, True
-            if self.getvar(k, dest="sbcats") is None:
-                self.setvar(k, "", dest="sbcats") # <<--------------------
+        if response == Gtk.ResponseType.OK:
+            k = entry.get_text()
+            self.sbcatlist.append([k, True, True])   
         dialog.destroy()
 
     def onCatListDel(self, btn):
@@ -3764,6 +3763,21 @@ class GtkViewModel(ViewModel):
             model.remove(itr)
 
     def onReScanCatList(self, btn):
-        #MH: Need to re-scan .sty file(s) and/or USFM text to see which \cat names 
-        #    exist in the settings (or the data for the project).
-        pass
+        myDict = self.getAllBooks()
+        allCats = set()
+        for f in myDict.values():
+            with open(f, encoding = "utf-8") as inf:
+                dat = inf.read()
+                for m in re.findall(r"\\cat\s+(.*?)\s*\\cat\*", dat):
+                    allCats.add(m)
+        print(allCats, myDict)
+        self.sbcatlist.clear()
+        for c in sorted(allCats):
+            self.sbcatlist.append([c, True, True])
+        
+    def onCatEFtoggled(self, cell, path):
+        self.sbcatlist[path][1] = not cell.get_active()
+
+    def onCatSBtoggled(self, cell, path):
+        self.sbcatlist[path][2] = not cell.get_active()
+        
