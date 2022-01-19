@@ -187,6 +187,8 @@
 %\tracingassigns=1
 \def\startt@ble{%
   \ifdoingt@ble \else
+    \let\stylet@pe\ss@Tbl
+    \mcpush{\stylet@pe}{tr}%
     \ifhe@dings\endhe@dings\fi
     \bgroup
     \tabler@ws=0
@@ -201,7 +203,7 @@
   \ifdoingt@ble
     \trace{t}{endt@ble-\mcstack}%
     \@ndcell
-    \@ndrow\end@llpoppedstyles{P}%
+    \@ndrow\end@llpoppedstyles{\ss@Tbl*}%
     \t@talwidth=0pt
     \f@reachcol{\advance\t@talwidth by \wd\c@rrentcolbox}%
     \endt@blewrap

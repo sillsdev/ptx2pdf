@@ -159,6 +159,7 @@
 \def\setp@ram#1#2#3{
   \x@\xdef\csname\c@tprefix#2\ds@ffix:#1\endcsname{#3}\trace{s}{set \c@tprefix#2\ds@ffix:#1 -> #3}
   \should@xist{#2\ds@ffix}%Ensure that the marker is in the exists list
+  \ifx\c@tprefix\empty\else\should@xist{\c@tprefix#2\ds@ffix}\fi
 } % expand now, not later 
 %-csty_defparam
 
@@ -1180,6 +1181,9 @@
 \mcp@pCont{N*}{\ss@Para}% Ending Note pops P
 \mcp@pCont{tc*}{\ss@Char}% Ending table cell pops C (\char)
 \mcp@pCont{tc*}{\ss@ChrP}% Ending table cell pops c (\+char)
+\mcp@pCont{\ss@Tbl*}{\ss@Ctgy}
+\mcp@pCont{\ss@Tbl*}{\ss@Para}
+\mcp@pEnd{\ss@Tbl*}{\ss@Tbl}
 
 %No point going below these for font styling, etc.
 \def\mcb@rrier#1{\x@\let\csname isb@rrier-#1\endcsname\empty}
