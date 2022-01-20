@@ -3531,9 +3531,9 @@ class GtkViewModel(ViewModel):
             if self.get("r_xrpos") == "below" or self.get("r_xrpos") == "blend":
                 self.set("r_xrpos", "centre") if self.get("c_useXrefList") else self.set("r_xrpos", "normal")
               
-    def onXrefClicked(self, btn):
-        for w in ["tb_xrefs", "lb_xrefs"]:
-            self.builder.get_object(w).set_sensitive(self.get("c_includeXrefs") or self.get("c_useXrefList"))
+    # def onXrefClicked(self, btn):
+        # for w in ["tb_xrefs", "lb_xrefs"]:
+            # self.builder.get_object(w).set_sensitive(self.get("c_includeXrefs") or self.get("c_useXrefList"))
 
     # def onXrefListClicked(self, btn):
         # xrf = self.get("c_includeXrefs")
