@@ -1740,16 +1740,17 @@
    \x@\xdef\csname b@selineskip#1\endcsname{\the\baselineskip}%
  \fi
 }
-\def\onecolwidth#1{\dimen11=\textwidth
-  \advance \dimen11 by -\columnshift
+\def\onecolwidth#1{%
+  \dimen9=\textwidth
+  \advance \dimen9 by -\columnshift
   \ifx\XrefNotes\empty\relax\else\ifx\ch@pter\empty\else\ifnum\BodyColumns=1
-    \advance \dimen11 by -\XrefNotesWidth
-    \advance \dimen11 by -\XrefNotesMargin
-    \advance \dimen11 by -0.5\gutter
-    \ifColNotesRule \advance \dimen11 by -1pt\fi  % width of rule
+    \advance \dimen9 by -\XrefNotesWidth
+    \advance \dimen9 by -\XrefNotesMargin
+    \advance \dimen9 by -0.5\gutter
+    \ifColNotesRule \advance \dimen9 by -1pt\fi  % width of rule
   \fi\fi\fi
-  \global #1=\dimen11
-  %\trace{o}{setonecolwidth textwidth=\the\textwidth, columnshift=\the\columnshift, with notes width=\the\XrefNotesWidth, margin=\the\XrefNotesMargin, gutter=\the\gutter, result=\the #1, xrefnotes=\XrefNotes, ch@pter=\ch@pter, body columns=\the\BodyColumns}%
+  \global #1=\dimen9
+  \trace{o}{setonecolwidth textwidth=\the\textwidth, columnshift=\the\columnshift, with notes width=\the\XrefNotesWidth, margin=\the\XrefNotesMargin, gutter=\the\gutter, result=\the #1, xrefnotes=\XrefNotes, ch@pter=\ch@pter, body columns=\the\BodyColumns}%
 }
 
 

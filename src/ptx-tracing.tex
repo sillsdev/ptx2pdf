@@ -103,5 +103,5 @@
 
 \def\traceifset#1{\x@\xdef\csname checkif@#1\endcsname{\currentiflevel}}
 \def\traceifcheck#1{\x@\ifnum\csname checkif@#1\endcsname=\currentiflevel\else
-    \message{IF CHECK #1 Failed \csname checkif@#1\encsname !=\the\currentiflevel}}
+    \message{IF CHECK #1 Failed \csname checkif@#1\encsname !=\the\currentiflevel}\fi}
 %-tracing-support

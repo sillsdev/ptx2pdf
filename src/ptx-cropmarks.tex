@@ -411,7 +411,7 @@
     \fi
     \m@rgepdf
     \pl@ceborder % add PageBorder (or watermark) graphic, if defined
-    \offinterlineskip
+    \trace{o}{p@ = \the\p@}\offinterlineskip
     \x@\ifvoid\csname gp@box\g@tterside\endcsname\else
       \vbox to 0pt{\vbox to \ifrotate\pdfpagewidth\else\pdfpageheight\fi
         {\ifCropMarks\kern0.5in\hbox{\kern 0.5in\x@\copy\csname gp@box\g@tterside\endcsname}\else

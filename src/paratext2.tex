@@ -542,7 +542,7 @@
    \fi
   \else
     %Assume that the note will be inserted using the current text width.
-    \ifnum\c@rrentcols=1\onecolwidth{\n@tewidth}\else
+    \ifnum\c@rrentcols=1 \onecolwidth{\n@tewidth}\else
       \n@tewidth=\ifcsname endn@te-#1\endcsname \hsize \else
         \ifdiglot\csname column\c@rrdstat width\endcsname
         \else\ifColNotes\colwidth\else\textwidth\fi
@@ -849,6 +849,7 @@
 \def\PageFullFactor{0.9}
 \gdef\layoutstylebreak@doublecolumn{\trace{o}{LAYOUTSTYLE break}\global\output={\savepartialpagedbounce}\par\eject\eject}
 \def\doublecolumns{
+  \traceifset{doublecolumns}%
   \ifnum\c@rrentcols=1
     % make switch from single to double column
     \vskip-\lastdepth
@@ -866,7 +867,7 @@
       \global\output={\onecol} % but output it immediately if 75% full
       \loop\ifdim\dimen0>\textheight \advance\dimen0-\textheight\repeat
       \unvbox\partial
-      \ifdim\dimen0>\PageFullFactor\textheight\vfill\eject
+      \ifdim\dimen0>\PageFullFactor\textheight \vfill\eject
       \else \holdinginserts=0 \global\output={\savepartialpage}\eject \holdinginserts=1
       \fi
     \fi
@@ -888,7 +889,7 @@
     \global\count\verybottomins=100%\count255
     \let\\=\s@tn@tec@unt \the\n@tecl@sses % reset \count for each note class
     \global\holdinginserts=1 % don't pull out inserts yet, we are still adjusting page
-  \fi}
+  \fi\traceifcheck{doublecolumns}}
 %-c_doublecolumns
 
 %+c_setnotecount
@@ -1580,6 +1581,7 @@
 \newif\ifrerunsavepartialpaged
 \def\savepartialpaged{%Double columnn version of save partial page
   \trace{o}{savepartialpaged. iflevel=\the\currentiflevel}%
+  \traceifset{savepartialpaged}%
   \ifnum\holdinginserts=0 \else\message{INTERNAL ERROR! Foonotes/figures shouldn't be held, or they'll get lost!}\fi
   \s@ttrialheight
   \if\XrefNotes\relax\else
@@ -1648,6 +1650,7 @@
       \ifColNotes\notst@dynotestrue\clearn@tes\notst@dynotesfalse\fi
     \fi
     \unvbox\s@vedpage\penalty\ifnum\outputpenalty=10000 0 \else \outputpenalty \fi
+    \traceifcheck{savepartialpaged}%
   \else
     \trace{o}{sppd: Not fit on page}%
     \trace{i}{sppd: emptyinserts hIns=\the\holdinginserts, \the\ht\partial, vs:\the\vsize}%
@@ -1660,6 +1663,7 @@
     \tempfalse%\ifvoid\partial\else\temptrue\fi%
     % remember \holdingInserts=1 from \@emptyinserts
     \ifvoid\galley\temptrue\fi
+    \traceifcheck{savepartialpaged}%
     \ifm@rksonpage\else\gdef\p@gefirstmark{}\trace{H}{No marks found. Setting empty mark}\fi%No marks on the page, and it didn't fit, so add a blank mark
     \iftemp
      \trace{i}{Using savedpage.pen=\the\outputpenalty}%
