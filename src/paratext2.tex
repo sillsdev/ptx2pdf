@@ -1286,8 +1286,8 @@
   \ifvoid0 \global\fitonpagetrue \else \global\fitonpagefalse \fi
   \rebalancefalse
   \trace{o}{first \the\availht . col=\the\ht\colA, \the\colhtA . second col=\the\ht\colB, \the\colhtB . rem=\the\ht0}%
-  \ifdim\ht\colA<.5\baselineskip\ifdim\ht\colB<.5\baselineskip\MSG{I can't break this page!}    %(2)
-    \iffitonpage\s@ve@nd \trace{o}{Abandoning ship}% the split failed and there is nothing left!
+  \ifdim\ht\colA<.5\baselineskip\ifdim\ht\colB<.5\baselineskip\message{I can't break this page!}    %(2)
+    \iffitonpage\message{Abandoning ship}%\loop\ifnum\currentgrouplevel>0 \egroup\repeat
     \else\setbox\colA=\box0\setbox\s@vedpage=\box\voidb@x \trace{o}{Everything to colA}% dump it all in colA and bail
   \fi\fi\fi
   \hascolnotesfalse

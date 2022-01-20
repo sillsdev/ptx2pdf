@@ -261,6 +261,9 @@ _sensitivities = {
     "c_plCreditApply2all":     ["c_plCreditOverwrite"],
     "c_rangeShowChapter":      ["c_rangeShowVerse", "l_chvsSep", "r_CVsep_period", "r_CVsep_colon"],
     "c_strongs2cols":          ["l_strongRag", "s_strongRag"],
+    "c_extendedFnotes":        ["gr_ef_layout"],
+    "c_ef_verticalrule" :      ["l_ef_colgutteroffset", "s_ef_colgutteroffset", "line_efGutter"],
+    "c_filterCats":            ["gr_filterCats"],
 }
 # Checkboxes and the different objects they make (in)sensitive when toggled
 # These function OPPOSITE to the ones above (they turn OFF/insensitive when the c_box is active)
@@ -289,7 +292,7 @@ _object_classes = {
                     "btn_styReset", "btn_refreshFonts", "btn_plAdd", "btn_plDel", 
                     "btn_plGenerate", "btn_plSaveEdits", "btn_resetTabGroups", "btn_adjust_spacing", 
                     "btn_adjust_top", "btn_adjust_bottom", "btn_DBLbundleDiglot", "btn_resetGrid",
-                    "btn_refreshCaptions")
+                    "btn_refreshCaptions", "btn_sb_rescanCats")
 }
 
 _pgpos = {
@@ -564,6 +567,7 @@ class GtkViewModel(ViewModel):
         self.picListView = PicList(self.builder.get_object('tv_picListEdit'), self.builder, self)
         self.styleEditor = StyleEditorView(self)
         self.pubvarlist = self.builder.get_object("ls_zvarList")
+        self.sbcatlist = self.builder.get_object("ls_sbCatList")
         self.strongsvarlist = self.builder.get_object("ls_strvarList")
 
         self.mw = self.builder.get_object("ptxprint")
@@ -849,6 +853,8 @@ class GtkViewModel(ViewModel):
             varlist = self.pubvarlist
         elif dest == "strongs":
             varlist = self.strongsvarlist
+        # elif dest == "sbcats":
+            # varlist = self.sbcatlist
         for r in varlist:
             if r[0] == k:
                 return r[1]
@@ -859,6 +865,8 @@ class GtkViewModel(ViewModel):
             varlist = self.pubvarlist
         elif dest == "strongs":
             varlist = self.strongsvarlist
+        # elif dest == "sbcats":
+            # varlist = self.sbcatlist
         for r in varlist:
             if r[0] == k:
                 r[1] = v
@@ -871,6 +879,8 @@ class GtkViewModel(ViewModel):
             varlist = self.pubvarlist
         elif dest == "strongs":
             varlist = self.strongsvarlist
+        # elif dest == "sbcats":
+            # varlist = self.sbcatlist
         return [r[0] for r in varlist]
 
     def clearvars(self, dest=None):
@@ -878,6 +888,8 @@ class GtkViewModel(ViewModel):
             self.pubvarlist.clear()
         elif dest == "strongs":
             self.strongsvarlist.clear()
+        # elif dest == "sbcats":
+            # self.sbcatlist.clear()
 
     def onDestroy(self, btn):
         if self.logfile != None:
@@ -2044,6 +2056,7 @@ class GtkViewModel(ViewModel):
             hasfake = False
             embolden = None
             italic = None
+            extend = None
             isCtxtSpace = False
             mapping = "Default"
             name = None
@@ -2058,6 +2071,7 @@ class GtkViewModel(ViewModel):
             feats = f.asFeatStr()
             embolden = f.getFake("embolden")
             italic = f.getFake("slant")
+            extend = f.getFake("extend") or "1.0"
             hasfake = embolden is not None or italic is not None
             mapping = f.getMapping()
             name = f.name
@@ -2083,6 +2097,7 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("c_fontCtxtSpaces").set_active(isCtxtSpace)
         self.builder.get_object("s_fontBold").set_value(float(embolden or 0.))
         self.builder.get_object("s_fontItalic").set_value(float(italic or 0.))
+        self.builder.get_object("s_fontExtend").set_value(float(extend or 0.))
         self.builder.get_object("c_fontFake").set_active(hasfake)
         self.builder.get_object("fcb_fontdigits").set_active_id(mapping)
         for a in ("Bold", "Italic"):
@@ -2099,10 +2114,10 @@ class GtkViewModel(ViewModel):
                 bi = None
             f = FontRef.fromDialog(name, style, self.get("c_fontGraphite"), 
                                    self.get("c_fontCtxtSpaces"), self.get("t_fontFeatures"),
-                                   bi, self.get("fcb_fontdigits"))
+                                   bi, self.get("s_fontExtend"), self.get("fcb_fontdigits"))
             self.set(btnid, f)
             res = True
-        elif response == Gtk.ResponseType.CANCEL:
+        else:
             res = False
         dialog.set_keep_above(False)
         dialog.hide()
@@ -3724,3 +3739,50 @@ class GtkViewModel(ViewModel):
         pass
         # print("Got it!")
         # widget.get_style_context().add_class("inactivewidget")
+
+    def onCatListAdd(self, btn): # Copied from 'onzvarAdd'
+        def responseToDialog(entry, dialog, response):
+            dialog.response(response)
+        dialog = Gtk.MessageDialog(parent=None, message_type=Gtk.MessageType.QUESTION,
+                 buttons=Gtk.ButtonsType.OK_CANCEL, text=_("Category Name"))
+        entry = Gtk.Entry()
+        entry.connect("activate", responseToDialog, dialog, Gtk.ResponseType.OK)
+        dbox = dialog.get_content_area()
+        dbox.pack_end(entry, False, False, 0)
+        dialog.set_keep_above(True)
+        dialog.show_all()
+        response = dialog.run()
+        if response == Gtk.ResponseType.OK:
+            k = entry.get_text()
+            self.sbcatlist.append([k, True, True])   
+        dialog.destroy()
+
+    def onCatListDel(self, btn):
+        tv = self.builder.get_object("tv_sbCatEdit")
+        selection = tv.get_selection()
+        model, i = selection.get_selected_rows()
+        for r in reversed(i):
+            itr = model.get_iter(r)
+            model.remove(itr)
+
+    def onReScanCatList(self, btn):
+        myDict = self.getAllBooks()
+        allCats = set()
+        for f in myDict.values():
+            with open(f, encoding = "utf-8") as inf:
+                dat = inf.read()
+                for m in re.findall(r"\\cat\s+(.*?)\s*\\cat\*", dat):
+                    allCats.add(m)
+        self.sbcatlist.clear()
+        for c in sorted(allCats):
+            self.sbcatlist.append([c, True, True])
+            
+    def onFilterCatsClicked(self, btn):
+        if btn.get_active() and not len(self.sbcatlist):
+            self.onReScanCatList(None)
+    
+    def onCatEFtoggled(self, cell, path):
+        self.sbcatlist[path][1] = not cell.get_active()
+
+    def onCatSBtoggled(self, cell, path):
+        self.sbcatlist[path][2] = not cell.get_active()

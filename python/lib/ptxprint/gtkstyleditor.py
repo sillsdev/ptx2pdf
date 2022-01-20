@@ -232,8 +232,8 @@ class StyleEditorView(StyleEditor):
                 self.setval(k, ' category', cat)
                 # v[' url'] = url
                 self.setval(k, ' url', url)
-            else:
-                print(k)
+            # else:
+                # print(k)
             triefit(k, results.setdefault(cat, {}), 1)
         self.treestore.clear()
         self._fill_store(results, None)

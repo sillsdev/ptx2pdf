@@ -137,12 +137,12 @@
 
 % If theres a side-specific version and its not -1sp, switch to it. If there's no side-specific verision,
 % switch to the \original version, if that exists.
-\def\sp@cificSideDim#1{\x@\ifdim\csname #1\sfx\endcsname=-1sp
+\def\sp@cificSideDim#1{\x@\ifdim\csname #1\sfx\endcsname=-1sp%
    \ifcsname #1\@rig\endcsname\x@\let\csname#1\x@\endcsname\csname #1\@rig\endcsname
      \trace{S}{SpS: #1 returned to original}\else\trace{S}{SpS: #1 unmodified}%
     \fi
   \else
-   \x@\let\csname#1\x@\endcsname\csname #1\sfx\endcsname\trace{S}{SpS: #1\sfx\space selected}
+   \x@\let\csname#1\x@\endcsname\csname #1\sfx\endcsname\trace{S}{SpS: #1\sfx\space selected}%
   \fi
 }
 
@@ -151,7 +151,7 @@
      \trace{S}{SpS: #1 returned to original}\else\trace{S}{SpS: #1 unmodified}%
     \fi
   \else
-   \x@\let\csname#1\x@\endcsname\csname #1\sfx\endcsname\trace{S}{SpS: #1\sfx\space selected}
+   \x@\let\csname#1\x@\endcsname\csname #1\sfx\endcsname\trace{S}{SpS: #1\sfx\space selected}%
   \fi
 }
 \def\s@veSpecificOrig#1{\ifcsname #1\endcsname \x@\let\csname #1\@rig\x@\endcsname\csname #1\endcsname

@@ -1502,7 +1502,7 @@
  \lastpagefalse
  \prepusfm
  \edef\t@st{#1}%
- \ifx\t@st\empty\else
+ \ifx\t@st\empty\else %opening empty file causes problems with some paths. 
    \openin\t@stread="\the\PtxFilePath#1"
      \ifeof\t@stread \def\n@xt{\MSG{USFM file "\the\PtxFilePath#1" not found -- ignored}}
      \else \closein\t@stread \def\n@xt{\input "\the\PtxFilePath#1"\relax}\fi

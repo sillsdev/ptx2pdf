@@ -286,10 +286,10 @@
           \ifx\this@pic\relax
             \trace{e}{Creating a new box}% 
             \g@nbox{\sb@rboxname}%
-            \x@\let\x@\this@pic\csname\sb@rboxname\endcsname
-            \global\setbox\this@pic\hbox{\x@\sb@ins@rtpic\fgfigsp@c|\the\dimen0 \E}%
-            \trace{e}{Saved box \wd\this@pic x\ht\this@pic}%
           \fi
+          \x@\let\x@\this@pic\csname\sb@rboxname\endcsname
+          \global\setbox\this@pic\hbox{\x@\sb@ins@rtpic\fgfigsp@c|\the\dimen0 \E}%
+          \trace{e}{Saved box \wd\this@pic x\ht\this@pic}%
           \global\let\fgfig@cutout\tr@e
           \xdef\l@cspec{\l@cspec@b}%
           \ifx\l@cspec@c\empty\gdef\c@tskip{0}\else\xdef\c@tskip{\l@cspec@c}\fi%
@@ -740,11 +740,14 @@
 \def\Border	#1\relax{\initc@t\x@\p@rseBorder#1 \relax \relax}
 
 \def\GenC@tFig#1{%
- \getsbp@ram{#1figname}\ifx\cp@ram\relax\else
-   \let\c@tfigname\cp@ram
-   \getsbp@ram{#1figscale}%
+ \getp@r@m{#1figname}{\c@tprefix\m@rker}\ifx\p@ram\relax
+   \trace{e}{No figname yet for \c@tprefix\m@rker}%
+ \else
+   \let\c@tfigname\p@ram
+   %\getbp@r@m{#1figscale}%
    \edef\tmp{\c@tfigname|}
    \x@\setsbp@ram{#1figspec}{\tmp}%
+   \trace{e}{figspec for \c@tprefix\m@rker:  \tmp}%
  \fi
 }
 \def\sb@ins@rtpic#1|#2|#3\E{%

@@ -721,7 +721,7 @@
 
 \def\@parlen#1#2#3{}
 
-\def\@nontextstart#1#2{\gdef\n@ntextstart{#2}}%
+\def\@nontextstart#1#2{\xdef\n@ntextstart{#2}}%
 \def\@nontextstop#1#2{%
   \csname ifinp@r-\c@rrdstat\endcsname
     \ifcsname n@ntextstart\endcsname

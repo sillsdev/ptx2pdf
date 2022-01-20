@@ -165,6 +165,29 @@ THE SOFTWARE.
     <property name="step-increment">1</property>
     <property name="page-increment">5</property>
   </object>
+  <object class="GtkAdjustment" id="a_ef_bottomRag">
+    <property name="upper">10</property>
+    <property name="step-increment">1</property>
+    <property name="page-increment">1</property>
+  </object>
+  <object class="GtkAdjustment" id="a_ef_colgutterwidth">
+    <property name="lower">1</property>
+    <property name="upper">40</property>
+    <property name="step-increment">0.5</property>
+    <property name="page-increment">1</property>
+  </object>
+  <object class="GtkAdjustment" id="a_ef_columngutteroffset">
+    <property name="lower">-50</property>
+    <property name="upper">50</property>
+    <property name="step-increment">0.5</property>
+    <property name="page-increment">1</property>
+  </object>
+  <object class="GtkAdjustment" id="a_ef_internote">
+    <property name="lower">-20</property>
+    <property name="upper">20</property>
+    <property name="step-increment">0.5</property>
+    <property name="page-increment">1</property>
+  </object>
   <object class="GtkAdjustment" id="a_fnAboveSpace">
     <property name="lower">-50</property>
     <property name="upper">50</property>
@@ -197,6 +220,13 @@ THE SOFTWARE.
     <property name="value">100</property>
     <property name="step-increment">5</property>
     <property name="page-increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="a_fontExtend">
+    <property name="lower">0.5</property>
+    <property name="upper">2</property>
+    <property name="value">1</property>
+    <property name="step-increment">0.05</property>
+    <property name="page-increment">0.20</property>
   </object>
   <object class="GtkAdjustment" id="a_fontsize">
     <property name="lower">2</property>
@@ -2221,14 +2251,14 @@ saved configuration.</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon_size">3</property>
+    <property name="icon-size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_diglot">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon_size">3</property>
+    <property name="icon-size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_grid">
     <property name="visible">True</property>
@@ -2239,27 +2269,27 @@ combination of Crop marks, Guides (margins,
 baselines, etc.) and/or a graph-paper-like Grid
 can be set.</property>
     <property name="icon-name">view-grid-symbolic</property>
-    <property name="icon_size">3</property>
+    <property name="icon-size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_spacing">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon_size">3</property>
+    <property name="icon-size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_top">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon_size">3</property>
+    <property name="icon-size">3</property>
   </object>
   <object class="GtkImage" id="icon_download">
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">software-update-available-symbolic</property>
-    <property name="icon_size">3</property>
+    <property name="icon-size">3</property>
   </object>
   <object class="GtkImage" id="icon_refresh">
     <property name="visible">True</property>
@@ -2276,7 +2306,7 @@ having to manually re-create all the same
 settings for a similar project.</property>
     <property name="halign">end</property>
     <property name="icon-name">view-grid-symbolic</property>
-    <property name="icon_size">3</property>
+    <property name="icon-size">3</property>
   </object>
   <object class="GtkListStore" id="ls_NoteBlendInto">
     <columns>
@@ -2942,140 +2972,196 @@ in the Windows system.</property>
               </packing>
             </child>
             <child>
-              <object class="GtkFrame">
+              <object class="GtkBox">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="margin-start">6</property>
-                <property name="margin-end">6</property>
-                <property name="label-xalign">0</property>
                 <child>
-                  <object class="GtkAlignment">
+                  <object class="GtkFrame">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
-                    <property name="left-padding">12</property>
+                    <property name="margin-start">6</property>
+                    <property name="margin-end">6</property>
+                    <property name="label-xalign">0</property>
                     <child>
-                      <!-- n-columns=3 n-rows=3 -->
-                      <object class="GtkGrid">
+                      <object class="GtkAlignment">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
-                        <property name="halign">center</property>
-                        <property name="margin-bottom">6</property>
-                        <property name="row-spacing">6</property>
-                        <property name="column-spacing">20</property>
+                        <property name="left-padding">12</property>
                         <child>
-                          <object class="GtkLabel" id="l_fontBold">
+                          <!-- n-columns=2 n-rows=2 -->
+                          <object class="GtkGrid">
                             <property name="visible">True</property>
-                            <property name="sensitive">False</property>
                             <property name="can-focus">False</property>
-                            <property name="tooltip-text" translatable="yes">If the required font doesn't have a BOLD typeface, you can use this setting to create the BOLD effect. (For example, setting Embolden to 1.6 would thicken the Regular typeface making it appear as bold.)</property>
                             <property name="halign">center</property>
-                            <property name="label" translatable="yes">Embolden</property>
-                            <property name="justify">center</property>
-                            <property name="xalign">0.5</property>
-                            <attributes>
-                              <attribute name="weight" value="bold"/>
-                            </attributes>
+                            <property name="margin-end">6</property>
+                            <property name="margin-bottom">6</property>
+                            <property name="row-spacing">6</property>
+                            <property name="column-spacing">20</property>
+                            <child>
+                              <object class="GtkLabel" id="l_fontBold">
+                                <property name="visible">True</property>
+                                <property name="sensitive">False</property>
+                                <property name="can-focus">False</property>
+                                <property name="tooltip-text" translatable="yes">If the required font doesn't have a BOLD typeface, you can use this setting to create the BOLD effect. (For example, setting Embolden to 1.6 would thicken the Regular typeface making it appear as bold.)</property>
+                                <property name="halign">center</property>
+                                <property name="label" translatable="yes">Embolden</property>
+                                <property name="justify">center</property>
+                                <property name="xalign">0.5</property>
+                                <attributes>
+                                  <attribute name="weight" value="bold"/>
+                                </attributes>
+                              </object>
+                              <packing>
+                                <property name="left-attach">0</property>
+                                <property name="top-attach">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkSpinButton" id="s_fontBold">
+                                <property name="visible">True</property>
+                                <property name="sensitive">False</property>
+                                <property name="can-focus">True</property>
+                                <property name="tooltip-text" translatable="yes">If the required font doesn't have a BOLD typeface, you can use this setting to create the BOLD effect. (For example, setting Embolden to 1.6 would thicken the Regular typeface making it appear as bold.)</property>
+                                <property name="width-chars">5</property>
+                                <property name="text">1.6</property>
+                                <property name="caps-lock-warning">False</property>
+                                <property name="input-purpose">number</property>
+                                <property name="adjustment">a_bolditalice</property>
+                                <property name="climb-rate">0.10</property>
+                                <property name="digits">1</property>
+                                <property name="numeric">True</property>
+                                <property name="value">1.6000000002235175</property>
+                              </object>
+                              <packing>
+                                <property name="left-attach">0</property>
+                                <property name="top-attach">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkSpinButton" id="s_fontItalic">
+                                <property name="visible">True</property>
+                                <property name="sensitive">False</property>
+                                <property name="can-focus">True</property>
+                                <property name="tooltip-text" translatable="yes">If the required font does not have an ITALIC typeface, you can use this setting to create the ITALIC effect. (For example, setting Slant to 0.15 would slant the Regular typeface by 15% making it appear as italic.)</property>
+                                <property name="width-chars">5</property>
+                                <property name="text">0.15</property>
+                                <property name="caps-lock-warning">False</property>
+                                <property name="input-purpose">number</property>
+                                <property name="adjustment">a_bolditalics</property>
+                                <property name="climb-rate">0.01</property>
+                                <property name="digits">2</property>
+                                <property name="numeric">True</property>
+                                <property name="value">0.14999999999999999</property>
+                              </object>
+                              <packing>
+                                <property name="left-attach">1</property>
+                                <property name="top-attach">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="l_fontItalic">
+                                <property name="visible">True</property>
+                                <property name="sensitive">False</property>
+                                <property name="can-focus">False</property>
+                                <property name="tooltip-text" translatable="yes">If the required font does not have an ITALIC typeface, you can use this setting to create the ITALIC effect. (For example, setting Slant to 0.15 would slant the Regular typeface by 15% making it appear as italic.)</property>
+                                <property name="halign">center</property>
+                                <property name="label" translatable="yes">Slant</property>
+                                <property name="justify">right</property>
+                                <property name="xalign">0.5</property>
+                                <attributes>
+                                  <attribute name="style" value="italic"/>
+                                </attributes>
+                              </object>
+                              <packing>
+                                <property name="left-attach">1</property>
+                                <property name="top-attach">0</property>
+                              </packing>
+                            </child>
                           </object>
-                          <packing>
-                            <property name="left-attach">0</property>
-                            <property name="top-attach">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkSpinButton" id="s_fontBold">
-                            <property name="visible">True</property>
-                            <property name="sensitive">False</property>
-                            <property name="can-focus">True</property>
-                            <property name="tooltip-text" translatable="yes">If the required font doesn't have a BOLD typeface, you can use this setting to create the BOLD effect. (For example, setting Embolden to 1.6 would thicken the Regular typeface making it appear as bold.)</property>
-                            <property name="width-chars">5</property>
-                            <property name="text">1.6</property>
-                            <property name="caps-lock-warning">False</property>
-                            <property name="input-purpose">number</property>
-                            <property name="adjustment">a_bolditalice</property>
-                            <property name="climb-rate">0.10</property>
-                            <property name="digits">1</property>
-                            <property name="numeric">True</property>
-                            <property name="value">1.6000000002235175</property>
-                          </object>
-                          <packing>
-                            <property name="left-attach">0</property>
-                            <property name="top-attach">1</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkSpinButton" id="s_fontItalic">
-                            <property name="visible">True</property>
-                            <property name="sensitive">False</property>
-                            <property name="can-focus">True</property>
-                            <property name="tooltip-text" translatable="yes">If the required font does not have an ITALIC typeface, you can use this setting to create the ITALIC effect. (For example, setting Slant to 0.15 would slant the Regular typeface by 15% making it appear as italic.)</property>
-                            <property name="width-chars">5</property>
-                            <property name="text">0.15</property>
-                            <property name="caps-lock-warning">False</property>
-                            <property name="input-purpose">number</property>
-                            <property name="adjustment">a_bolditalics</property>
-                            <property name="climb-rate">0.01</property>
-                            <property name="digits">2</property>
-                            <property name="numeric">True</property>
-                            <property name="value">0.14999999999999999</property>
-                          </object>
-                          <packing>
-                            <property name="left-attach">1</property>
-                            <property name="top-attach">1</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkLabel" id="l_fontItalic">
-                            <property name="visible">True</property>
-                            <property name="sensitive">False</property>
-                            <property name="can-focus">False</property>
-                            <property name="tooltip-text" translatable="yes">If the required font does not have an ITALIC typeface, you can use this setting to create the ITALIC effect. (For example, setting Slant to 0.15 would slant the Regular typeface by 15% making it appear as italic.)</property>
-                            <property name="halign">center</property>
-                            <property name="label" translatable="yes">Slant</property>
-                            <property name="justify">right</property>
-                            <property name="xalign">0.5</property>
-                            <attributes>
-                              <attribute name="style" value="italic"/>
-                            </attributes>
-                          </object>
-                          <packing>
-                            <property name="left-attach">1</property>
-                            <property name="top-attach">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
                         </child>
                       </object>
                     </child>
-                  </object>
-                </child>
-                <child type="label">
-                  <object class="GtkCheckButton" id="c_fontFake">
-                    <property name="label" translatable="yes">Fake Bold/Italic</property>
-                    <property name="visible">True</property>
-                    <property name="can-focus">True</property>
-                    <property name="receives-default">False</property>
-                    <property name="tooltip-text" translatable="yes">If the font you are using doesn't
+                    <child type="label">
+                      <object class="GtkCheckButton" id="c_fontFake">
+                        <property name="label" translatable="yes">Fake Bold/Italic</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">False</property>
+                        <property name="tooltip-text" translatable="yes">If the font you are using doesn't
 have multiple typefaces (such
 as Bold, Italic and Bold-Italic)
 then you can "fake" these by
 adding boldness and/or slant
 to the regular typeface.</property>
-                    <property name="draw-indicator">True</property>
-                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                        <property name="draw-indicator">True</property>
+                        <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                      </object>
+                    </child>
                   </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <!-- n-columns=1 n-rows=2 -->
+                  <object class="GtkGrid">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="halign">center</property>
+                    <property name="margin-start">6</property>
+                    <property name="margin-end">6</property>
+                    <property name="margin-top">22</property>
+                    <property name="margin-bottom">6</property>
+                    <property name="row-spacing">6</property>
+                    <property name="column-spacing">20</property>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="tooltip-text" translatable="yes">The shapes of the characters can be stretched
+(larger) or condensed (smaller) to occupy
+more horizontal space, or less (shrink text).
+1.00 = 100% = normal
+0.95 =   95% = shrink text
+1.05 = 105% = expand text</property>
+                        <property name="label" translatable="yes">Stretch</property>
+                        <attributes>
+                          <attribute name="stretch" value="ultra-expanded"/>
+                        </attributes>
+                      </object>
+                      <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkSpinButton" id="s_fontExtend">
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="tooltip-text" translatable="yes">The shapes of the characters can be stretched
+(larger) or condensed (smaller) to occupy
+more horizontal space, or less (shrink text).
+1.00 = 100% = normal
+0.95 =   95% = shrink text
+1.05 = 105% = expand text</property>
+                        <property name="text" translatable="yes">1.00</property>
+                        <property name="adjustment">a_fontExtend</property>
+                        <property name="digits">2</property>
+                        <property name="value">1</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">1</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
                 </child>
               </object>
               <packing>
@@ -4647,33 +4733,6 @@ information, position and other parameters.</property>
       <!-- column-name IncludeSB -->
       <column type="gboolean"/>
     </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">People</col>
-        <col id="1">True</col>
-        <col id="2">False</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Ideas</col>
-        <col id="1">False</col>
-        <col id="2">True</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">HIstory</col>
-        <col id="1">True</col>
-        <col id="2">True</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Keywords</col>
-        <col id="1">False</col>
-        <col id="2">True</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Objects</col>
-        <col id="1">False</col>
-        <col id="2">True</col>
-      </row>
-    </data>
   </object>
   <object class="GtkListStore" id="ls_scripts">
     <columns>
@@ -10694,6 +10753,7 @@ Also settings for special books.</property>
                   <object class="GtkBox" id="tb_NotesRefs">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
+                    <property name="valign">start</property>
                     <property name="margin-start">6</property>
                     <property name="margin-end">6</property>
                     <property name="margin-top">6</property>
@@ -13188,7 +13248,7 @@ and Parameters:</property>
                                 <property name="margin-top">6</property>
                                 <property name="margin-bottom">6</property>
                                 <property name="orientation">vertical</property>
-                                <property name="spacing">6</property>
+                                <property name="spacing">12</property>
                                 <child>
                                   <object class="GtkFrame" id="fr_ef_Layout">
                                     <property name="visible">True</property>
@@ -13199,10 +13259,10 @@ and Parameters:</property>
                                     <property name="margin-top">6</property>
                                     <property name="margin-bottom">4</property>
                                     <property name="hexpand">True</property>
-                                    <property name="label-xalign">0.05000000074505806</property>
+                                    <property name="label-xalign">0.029999999329447746</property>
                                     <child>
-                                      <!-- n-columns=3 n-rows=4 -->
-                                      <object class="GtkGrid" id="gr_doubleColumn1">
+                                      <!-- n-columns=5 n-rows=3 -->
+                                      <object class="GtkGrid" id="gr_ef_layout">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
                                         <property name="margin-left">6</property>
@@ -13212,7 +13272,7 @@ and Parameters:</property>
                                         <property name="margin-top">4</property>
                                         <property name="margin-bottom">5</property>
                                         <property name="row-spacing">6</property>
-                                        <property name="column-spacing">4</property>
+                                        <property name="column-spacing">6</property>
                                         <child>
                                           <object class="GtkSpinButton" id="s_ef_colgutterfactor">
                                             <property name="visible">True</property>
@@ -13227,7 +13287,7 @@ the text of the two columns
                                             <property name="xalign">1</property>
                                             <property name="caps-lock-warning">False</property>
                                             <property name="input-purpose">number</property>
-                                            <property name="adjustment">a_colgutterwidth</property>
+                                            <property name="adjustment">a_ef_colgutterwidth</property>
                                             <property name="climb-rate">1</property>
                                             <property name="digits">1</property>
                                             <property name="numeric">True</property>
@@ -13235,30 +13295,7 @@ the text of the two columns
                                           </object>
                                           <packing>
                                             <property name="left-attach">1</property>
-                                            <property name="top-attach">0</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkCheckButton" id="c_ef_verticalrule">
-                                            <property name="label" translatable="yes">Vertical Rule in Gutter</property>
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">True</property>
-                                            <property name="receives-default">False</property>
-                                            <property name="tooltip-text" translatable="yes">Check this option to include a center
-line between the two columns.</property>
-                                            <property name="halign">start</property>
-                                            <property name="valign">center</property>
-                                            <property name="margin-left">8</property>
-                                            <property name="margin-start">8</property>
-                                            <property name="margin-top">6</property>
-                                            <property name="margin-bottom">6</property>
-                                            <property name="active">True</property>
-                                            <property name="draw-indicator">True</property>
-                                          </object>
-                                          <packing>
-                                            <property name="left-attach">0</property>
-                                            <property name="top-attach">2</property>
-                                            <property name="width">2</property>
+                                            <property name="top-attach">1</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -13277,47 +13314,7 @@ Width (mm):</property>
                                           </object>
                                           <packing>
                                             <property name="left-attach">0</property>
-                                            <property name="top-attach">0</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkSpinButton" id="s_ef_colgutteroffset">
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">True</property>
-                                            <property name="tooltip-text" translatable="yes">This setting can raise (if -ve) or lower (if +ve) the starting point of the vertical rule between columns. (Value is pts).</property>
-                                            <property name="halign">start</property>
-                                            <property name="valign">center</property>
-                                            <property name="width-chars">5</property>
-                                            <property name="text">3.0</property>
-                                            <property name="xalign">1</property>
-                                            <property name="caps-lock-warning">False</property>
-                                            <property name="input-purpose">number</property>
-                                            <property name="adjustment">a_columngutteroffset</property>
-                                            <property name="climb-rate">1</property>
-                                            <property name="digits">1</property>
-                                            <property name="numeric">True</property>
-                                            <property name="value">3</property>
-                                          </object>
-                                          <packing>
-                                            <property name="left-attach">1</property>
-                                            <property name="top-attach">3</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkLabel" id="l_ef_colgutteroffset">
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">False</property>
-                                            <property name="tooltip-text" translatable="yes">This setting raises (using a negative value) or 
-lowers (using a positive value) the starting 
-point of the vertical rule between columns.</property>
-                                            <property name="halign">end</property>
-                                            <property name="label" translatable="yes">Adjust
-Top (pt):</property>
-                                            <property name="justify">right</property>
-                                          </object>
-                                          <packing>
-                                            <property name="left-attach">0</property>
-                                            <property name="top-attach">3</property>
+                                            <property name="top-attach">1</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -13327,11 +13324,11 @@ Top (pt):</property>
                                             <property name="can-focus">True</property>
                                             <property name="halign">start</property>
                                             <property name="text" translatable="yes">0</property>
-                                            <property name="adjustment">a_bottomRag</property>
+                                            <property name="adjustment">a_ef_bottomRag</property>
                                           </object>
                                           <packing>
                                             <property name="left-attach">1</property>
-                                            <property name="top-attach">1</property>
+                                            <property name="top-attach">2</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -13358,20 +13355,149 @@ Lines (max):</property>
                                           </object>
                                           <packing>
                                             <property name="left-attach">0</property>
-                                            <property name="top-attach">1</property>
+                                            <property name="top-attach">2</property>
                                           </packing>
                                         </child>
                                         <child>
-                                          <placeholder/>
+                                          <object class="GtkSpinButton" id="s_ef_internote">
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">True</property>
+                                            <property name="tooltip-text" translatable="yes">This setting (pts) lets you adjust the vertical
+space between extended footnotes. Usually
+there is no space between them.</property>
+                                            <property name="halign">start</property>
+                                            <property name="text">3.5</property>
+                                            <property name="input-purpose">number</property>
+                                            <property name="adjustment">a_ef_internote</property>
+                                            <property name="climb-rate">0.10</property>
+                                            <property name="digits">1</property>
+                                            <property name="numeric">True</property>
+                                            <property name="update-policy">if-valid</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left-attach">1</property>
+                                            <property name="top-attach">0</property>
+                                          </packing>
                                         </child>
                                         <child>
-                                          <placeholder/>
+                                          <object class="GtkLabel" id="l_ef_internoteSpace">
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
+                                            <property name="tooltip-text" translatable="yes">This setting (pts) lets you adjust the vertical
+space between extended footnotes. Usually
+there is no space between them.</property>
+                                            <property name="halign">end</property>
+                                            <property name="label" translatable="yes">Vertical Space
+Between Notes:</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left-attach">0</property>
+                                            <property name="top-attach">0</property>
+                                          </packing>
                                         </child>
                                         <child>
-                                          <placeholder/>
+                                          <object class="GtkCheckButton" id="c_ef_verticalrule">
+                                            <property name="label" translatable="yes">Vertical Rule in Gutter</property>
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">True</property>
+                                            <property name="receives-default">False</property>
+                                            <property name="tooltip-text" translatable="yes">Check this option to include a center
+line between the two columns.</property>
+                                            <property name="halign">start</property>
+                                            <property name="valign">center</property>
+                                            <property name="margin-left">8</property>
+                                            <property name="margin-start">12</property>
+                                            <property name="margin-top">6</property>
+                                            <property name="margin-bottom">6</property>
+                                            <property name="draw-indicator">True</property>
+                                            <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                                          </object>
+                                          <packing>
+                                            <property name="left-attach">3</property>
+                                            <property name="top-attach">1</property>
+                                            <property name="width">2</property>
+                                          </packing>
                                         </child>
                                         <child>
-                                          <placeholder/>
+                                          <object class="GtkLabel" id="l_ef_colgutteroffset">
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
+                                            <property name="tooltip-text" translatable="yes">This setting raises (using a negative value) or 
+lowers (using a positive value) the starting 
+point of the vertical rule between columns.</property>
+                                            <property name="halign">end</property>
+                                            <property name="label" translatable="yes">Adjust
+Top (pt):</property>
+                                            <property name="justify">right</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left-attach">3</property>
+                                            <property name="top-attach">2</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkSpinButton" id="s_ef_colgutteroffset">
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">True</property>
+                                            <property name="tooltip-text" translatable="yes">This setting can raise (if -ve) or lower (if +ve) the starting point of the vertical rule between columns. (Value is pts).</property>
+                                            <property name="halign">start</property>
+                                            <property name="valign">center</property>
+                                            <property name="width-chars">5</property>
+                                            <property name="text">3.0</property>
+                                            <property name="xalign">1</property>
+                                            <property name="caps-lock-warning">False</property>
+                                            <property name="input-purpose">number</property>
+                                            <property name="adjustment">a_ef_columngutteroffset</property>
+                                            <property name="climb-rate">1</property>
+                                            <property name="digits">1</property>
+                                            <property name="numeric">True</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left-attach">4</property>
+                                            <property name="top-attach">2</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkSeparator" id="line_efGutter">
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
+                                            <property name="margin-start">12</property>
+                                            <property name="margin-end">12</property>
+                                            <property name="orientation">vertical</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left-attach">2</property>
+                                            <property name="top-attach">0</property>
+                                            <property name="height">3</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkCheckButton" id="c_ef_showCallers">
+                                            <property name="label" translatable="yes">Show Note Callers</property>
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">True</property>
+                                            <property name="receives-default">False</property>
+                                            <property name="tooltip-text" translatable="yes">A "Note Caller" in the text alerts the reader
+that there is further information (in this case
+an extended footnote) at the end of the page.
+Given that there are expected to be many such
+notes in a Study Bible, this option is normally
+disabled for extended footnotes.
+Note that currently only a,b,c...x,y,z callers are
+possible for this option.</property>
+                                            <property name="halign">start</property>
+                                            <property name="valign">center</property>
+                                            <property name="margin-left">8</property>
+                                            <property name="margin-start">12</property>
+                                            <property name="margin-top">6</property>
+                                            <property name="margin-bottom">6</property>
+                                            <property name="draw-indicator">True</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left-attach">3</property>
+                                            <property name="top-attach">0</property>
+                                            <property name="width">2</property>
+                                          </packing>
                                         </child>
                                       </object>
                                     </child>
@@ -13389,8 +13515,8 @@ block at the end of each page. </property>
                                         <property name="valign">center</property>
                                         <property name="margin-left">2</property>
                                         <property name="margin-start">2</property>
-                                        <property name="active">True</property>
                                         <property name="draw-indicator">True</property>
+                                        <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                       </object>
                                     </child>
                                   </object>
@@ -13409,7 +13535,7 @@ block at the end of each page. </property>
                                     <property name="tooltip-text" translatable="yes">Sidebars (\esb ... \esbe) are used to contain 
 larger blocks of topic-specific information. </property>
                                     <property name="halign">start</property>
-                                    <property name="margin-start">6</property>
+                                    <property name="margin-start">18</property>
                                     <property name="draw-indicator">True</property>
                                   </object>
                                   <packing>
@@ -13419,192 +13545,214 @@ larger blocks of topic-specific information. </property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <!-- n-columns=3 n-rows=6 -->
-                                  <object class="GtkGrid">
+                                  <object class="GtkFrame" id="fr_filterCats">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
                                     <property name="halign">start</property>
                                     <property name="margin-start">6</property>
-                                    <property name="margin-end">6</property>
-                                    <property name="margin-top">12</property>
-                                    <property name="margin-bottom">6</property>
-                                    <property name="row-spacing">6</property>
-                                    <property name="column-spacing">6</property>
+                                    <property name="label-xalign">0.029999999329447746</property>
                                     <child>
-                                      <object class="GtkViewport">
-                                        <property name="width-request">380</property>
+                                      <!-- n-columns=3 n-rows=6 -->
+                                      <object class="GtkGrid" id="gr_filterCats">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
-                                        <property name="hexpand">True</property>
-                                        <property name="vexpand">True</property>
+                                        <property name="halign">start</property>
+                                        <property name="margin-start">6</property>
+                                        <property name="margin-end">6</property>
+                                        <property name="margin-top">12</property>
+                                        <property name="margin-bottom">6</property>
+                                        <property name="row-spacing">6</property>
+                                        <property name="column-spacing">6</property>
                                         <child>
-                                          <object class="GtkScrolledWindow" id="scr_sbCatList">
+                                          <object class="GtkViewport">
+                                            <property name="width-request">380</property>
                                             <property name="visible">True</property>
-                                            <property name="can-focus">True</property>
+                                            <property name="can-focus">False</property>
                                             <property name="hexpand">True</property>
                                             <property name="vexpand">True</property>
-                                            <property name="shadow-type">in</property>
-                                            <property name="overlay-scrolling">False</property>
                                             <child>
-                                              <object class="GtkTreeView" id="tv_sbCatEdit">
+                                              <object class="GtkScrolledWindow" id="scr_sbCatList">
                                                 <property name="visible">True</property>
                                                 <property name="can-focus">True</property>
+                                                <property name="hexpand">True</property>
                                                 <property name="vexpand">True</property>
-                                                <property name="hadjustment">a_zvarListadjustment1</property>
-                                                <property name="vadjustment">a_zvarListadjustment2</property>
-                                                <property name="vscroll-policy">natural</property>
-                                                <property name="model">ls_sbCatList</property>
-                                                <property name="reorderable">True</property>
-                                                <property name="rules-hint">True</property>
-                                                <property name="enable-search">False</property>
-                                                <property name="search-column">0</property>
-                                                <property name="fixed-height-mode">True</property>
-                                                <property name="show-expanders">False</property>
-                                                <child internal-child="selection">
-                                                  <object class="GtkTreeSelection"/>
-                                                </child>
+                                                <property name="shadow-type">in</property>
+                                                <property name="overlay-scrolling">False</property>
                                                 <child>
-                                                  <object class="GtkTreeViewColumn" id="col_sbCatList_name">
-                                                    <property name="resizable">True</property>
-                                                    <property name="spacing">2</property>
-                                                    <property name="sizing">fixed</property>
-                                                    <property name="fixed-width">110</property>
-                                                    <property name="title" translatable="yes">Category</property>
-                                                    <property name="clickable">True</property>
+                                                  <object class="GtkTreeView" id="tv_sbCatEdit">
+                                                    <property name="visible">True</property>
+                                                    <property name="can-focus">True</property>
+                                                    <property name="vexpand">True</property>
+                                                    <property name="hadjustment">a_zvarListadjustment1</property>
+                                                    <property name="vadjustment">a_zvarListadjustment2</property>
+                                                    <property name="vscroll-policy">natural</property>
+                                                    <property name="model">ls_sbCatList</property>
                                                     <property name="reorderable">True</property>
-                                                    <property name="sort-indicator">True</property>
-                                                    <property name="sort-column-id">0</property>
-                                                    <child>
-                                                      <object class="GtkCellRendererText" id="cr_sbCatList_name"/>
-                                                      <attributes>
-                                                        <attribute name="text">0</attribute>
-                                                      </attributes>
+                                                    <property name="rules-hint">True</property>
+                                                    <property name="enable-search">False</property>
+                                                    <property name="search-column">0</property>
+                                                    <property name="fixed-height-mode">True</property>
+                                                    <property name="show-expanders">False</property>
+                                                    <child internal-child="selection">
+                                                      <object class="GtkTreeSelection"/>
                                                     </child>
-                                                  </object>
-                                                </child>
-                                                <child>
-                                                  <object class="GtkTreeViewColumn" id="col_sbCatListEF_value">
-                                                    <property name="spacing">2</property>
-                                                    <property name="sizing">fixed</property>
-                                                    <property name="fixed-width">150</property>
-                                                    <property name="title" translatable="yes">Extended Footnote (\ef)</property>
-                                                    <property name="clickable">True</property>
-                                                    <property name="reorderable">True</property>
-                                                    <property name="sort-indicator">True</property>
-                                                    <property name="sort-column-id">1</property>
                                                     <child>
-                                                      <object class="GtkCellRendererToggle" id="cr_sbCatListEF_value"/>
+                                                      <object class="GtkTreeViewColumn" id="col_sbCatList_name">
+                                                        <property name="resizable">True</property>
+                                                        <property name="spacing">2</property>
+                                                        <property name="sizing">fixed</property>
+                                                        <property name="fixed-width">110</property>
+                                                        <property name="title" translatable="yes">Category</property>
+                                                        <property name="clickable">True</property>
+                                                        <property name="reorderable">True</property>
+                                                        <property name="sort-indicator">True</property>
+                                                        <property name="sort-column-id">0</property>
+                                                        <child>
+                                                          <object class="GtkCellRendererText" id="cr_sbCatList_name"/>
+                                                          <attributes>
+                                                            <attribute name="text">0</attribute>
+                                                          </attributes>
+                                                        </child>
+                                                      </object>
                                                     </child>
-                                                  </object>
-                                                </child>
-                                                <child>
-                                                  <object class="GtkTreeViewColumn" id="col_sbCatListEF_value1">
-                                                    <property name="spacing">2</property>
-                                                    <property name="sizing">fixed</property>
-                                                    <property name="fixed-width">100</property>
-                                                    <property name="title" translatable="yes">Sidebar (\esb)</property>
-                                                    <property name="clickable">True</property>
-                                                    <property name="reorderable">True</property>
-                                                    <property name="sort-indicator">True</property>
-                                                    <property name="sort-column-id">2</property>
                                                     <child>
-                                                      <object class="GtkCellRendererToggle" id="cr_sbCatListSB_value"/>
+                                                      <object class="GtkTreeViewColumn" id="col_sbCatListEF_value">
+                                                        <property name="spacing">2</property>
+                                                        <property name="sizing">fixed</property>
+                                                        <property name="fixed-width">150</property>
+                                                        <property name="title" translatable="yes">Extended Footnote (\ef)</property>
+                                                        <property name="sort-column-id">1</property>
+                                                        <child>
+                                                          <object class="GtkCellRendererToggle" id="cr_sbCatListEF_value">
+                                                            <signal name="toggled" handler="onCatEFtoggled" swapped="no"/>
+                                                          </object>
+                                                          <attributes>
+                                                            <attribute name="active">1</attribute>
+                                                          </attributes>
+                                                        </child>
+                                                      </object>
+                                                    </child>
+                                                    <child>
+                                                      <object class="GtkTreeViewColumn" id="col_sbCatListEF_value1">
+                                                        <property name="spacing">2</property>
+                                                        <property name="sizing">fixed</property>
+                                                        <property name="fixed-width">100</property>
+                                                        <property name="title" translatable="yes">Sidebar (\esb)</property>
+                                                        <property name="sort-column-id">2</property>
+                                                        <child>
+                                                          <object class="GtkCellRendererToggle" id="cr_sbCatListSB_value">
+                                                            <signal name="toggled" handler="onCatSBtoggled" swapped="no"/>
+                                                          </object>
+                                                          <attributes>
+                                                            <attribute name="active">2</attribute>
+                                                          </attributes>
+                                                        </child>
+                                                      </object>
                                                     </child>
                                                   </object>
                                                 </child>
                                               </object>
                                             </child>
                                           </object>
+                                          <packing>
+                                            <property name="left-attach">2</property>
+                                            <property name="top-attach">0</property>
+                                            <property name="height">6</property>
+                                          </packing>
                                         </child>
-                                      </object>
-                                      <packing>
-                                        <property name="left-attach">2</property>
-                                        <property name="top-attach">0</property>
-                                        <property name="height">6</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkLabel">
-                                        <property name="height-request">30</property>
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">False</property>
-                                        <property name="tooltip-text" translatable="yes">Select which Categories should be displayed
-in the Extended Footnotes and/or Sidebars.</property>
-                                        <property name="halign">start</property>
-                                        <property name="valign">center</property>
-                                        <property name="label" translatable="yes">Filter by Categories:</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left-attach">0</property>
-                                        <property name="top-attach">0</property>
-                                        <property name="width">2</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkButton" id="b_sb_addcat">
-                                        <property name="label" translatable="yes">Add</property>
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">True</property>
-                                        <property name="receives-default">True</property>
-                                        <property name="tooltip-text" translatable="yes">Add a new Category.</property>
-                                        <property name="valign">center</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left-attach">1</property>
-                                        <property name="top-attach">3</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkButton" id="b_sb_delcat">
-                                        <property name="label" translatable="yes">Del</property>
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">True</property>
-                                        <property name="receives-default">True</property>
-                                        <property name="tooltip-text" translatable="yes">Delete the currently
+                                        <child>
+                                          <object class="GtkButton" id="b_sb_addcat">
+                                            <property name="label" translatable="yes">Add</property>
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">True</property>
+                                            <property name="receives-default">True</property>
+                                            <property name="tooltip-text" translatable="yes">Add a new Category.</property>
+                                            <property name="valign">center</property>
+                                            <property name="margin-start">6</property>
+                                            <signal name="clicked" handler="onCatListAdd" swapped="no"/>
+                                          </object>
+                                          <packing>
+                                            <property name="left-attach">1</property>
+                                            <property name="top-attach">3</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkButton" id="b_sb_delcat">
+                                            <property name="label" translatable="yes">Del</property>
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">True</property>
+                                            <property name="receives-default">True</property>
+                                            <property name="tooltip-text" translatable="yes">Delete the currently
 selected Category.</property>
-                                        <property name="valign">center</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left-attach">1</property>
-                                        <property name="top-attach">4</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkButton" id="btn_sb_rescanCats">
-                                        <property name="label">↺</property>
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">True</property>
-                                        <property name="receives-default">True</property>
-                                        <property name="tooltip-text" translatable="yes">Clicking this button will rescan 
+                                            <property name="valign">center</property>
+                                            <property name="margin-start">6</property>
+                                            <signal name="clicked" handler="onCatListDel" swapped="no"/>
+                                          </object>
+                                          <packing>
+                                            <property name="left-attach">1</property>
+                                            <property name="top-attach">4</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkButton" id="btn_sb_rescanCats">
+                                            <property name="label">↺</property>
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">True</property>
+                                            <property name="receives-default">True</property>
+                                            <property name="tooltip-text" translatable="yes">Clicking this button will rescan 
 the project to add any Categories 
 missing from this list.</property>
-                                        <property name="valign">center</property>
+                                            <property name="halign">end</property>
+                                            <property name="valign">center</property>
+                                            <signal name="clicked" handler="onReScanCatList" swapped="no"/>
+                                          </object>
+                                          <packing>
+                                            <property name="left-attach">1</property>
+                                            <property name="top-attach">5</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
                                       </object>
-                                      <packing>
-                                        <property name="left-attach">1</property>
-                                        <property name="top-attach">5</property>
-                                      </packing>
                                     </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
+                                    <child type="label">
+                                      <object class="GtkCheckButton" id="c_filterCats">
+                                        <property name="label" translatable="yes">Filter Categories</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">False</property>
+                                        <property name="tooltip-text" translatable="yes">Use this option to restrict certain categories of
+extended study notes and sidebars from being displayed. </property>
+                                        <property name="halign">end</property>
+                                        <property name="valign">center</property>
+                                        <property name="margin-left">2</property>
+                                        <property name="margin-start">2</property>
+                                        <property name="draw-indicator">True</property>
+                                        <signal name="clicked" handler="onFilterCatsClicked" swapped="no"/>
+                                        <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                                      </object>
                                     </child>
                                   </object>
                                   <packing>
@@ -13623,7 +13771,7 @@ missing from this list.</property>
                                 <property name="sensitive">False</property>
                                 <property name="can-focus">False</property>
                                 <property name="no-show-all">True</property>
-                                <property name="label" translatable="yes">Study Bible Notes</property>
+                                <property name="label" translatable="yes">Study Notes</property>
                               </object>
                               <packing>
                                 <property name="position">3</property>
@@ -19299,7 +19447,7 @@ or embelishments to the text.
                       <object class="GtkPaned">
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
-                        <property name="position">300</property>
+                        <property name="position">325</property>
                         <property name="position-set">True</property>
                         <property name="wide-handle">True</property>
                         <child>

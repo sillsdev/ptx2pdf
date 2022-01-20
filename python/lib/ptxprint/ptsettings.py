@@ -66,27 +66,29 @@ class ParatextSettings:
 
     def read_bookNames(self, fpath):
         bkstrs = {}
-        self.bookNames = {}
+        self.bookStrs = {}
         doc = et.parse(fpath)
         for b in doc.findall(".//book"):
             bkid = b.get("code")
-            strs = list(reversed([b.get(a, None) for a in ("abbr", "short", "long")]))
-            strs = list(reversed([s or strs[i-1] for i, s in enumerate(strs)]))
-            self.bookNames[bkid] = strs
-            for s in strs:
+            tocs = [b.get(a, None) for a in ("long", "short", "abbr")]
+            for i in range(len(tocs)-2,-1, -1):
+                if tocs[i] == "":
+                    tocs[i] = tocs[i+1]
+            self.bookStrs[bkid] = tocs
+            for s in tocs:
                 for i in range(len(s)):
                     if s[i] == " ":
                         break
                     bkstrs[s[:i+1]] = "" if bkstrs.get(s[:i+1], bkid) != bkid else bkid
         if len(bkstrs):
-            self.bkStrs = {k:v for k,v in bkstrs.items() if v != ""}
+            self.bkNames = {k:v for k,v in bkstrs.items() if v != ""}
 
     def default_bookNames(self):
-        self.bkStrs = {k: k for k, v in chaps.items() if 0 < int(v) < 999}
-        self.bookNames = {k: [k] * 3 for k in self.bkStrs.keys()}
+        self.bookNames = {k: k for k, v in chaps.items() if 0 < int(v) < 999}
+        self.bookStrs = {k: [k] * 3 for k in self.bookNames.keys()}
 
     def getLocalBook(self, s, level=0):
-        return self.bkStrs.get(s, [s]*(level+1))[level]
+        return self.bookStrs.get(s, [s]*(level+1))[level]
 
     def __getitem__(self, key):
         return self.dict[key]
