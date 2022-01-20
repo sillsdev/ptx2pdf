@@ -230,18 +230,20 @@
        \getmcp@ramR{raise}%
        \ifx\p@ram\relax
          \unhbox0
-       \else\dimen9=\p@ram\ifdim\dimen9<0pt\lower-\dimen9 \else\raise\dimen9 \fi\box0 \fi
+       \else\dimen9=\p@ram\ifdim\dimen9<0pt\lower-\dimen9 \else\raise\dimen9 \fi\box0
+       \fi
      \fi
      \cl@singhooks{after}{\oldch@rstyle}% discover any <after> hooks
      \ifnum\n@tenesting>0 \global\advance\n@tenesting by -1 % decrement nesting level
-     \else \global\advance\p@ranesting by -1 \fi
+     \else \global\advance\p@ranesting by -1
+     \fi
      \egroup % end the style's group, so formatting reverts             %(2)
      \the\afterh@@ks%\global\afterh@@ks{} % execute all the <after>-hook, if there was one
     \fi
-   \trace{s}{ending charstyle}%
-   \mcpop
-   \trace{s}{end char style, stack now: \mcstack}%
-   \ifp@pping\else\setwh@tvrstyle\fi
+    \trace{s}{ending charstyle}%
+    \mcpop
+    \trace{s}{end char style, stack now: \mcstack}%
+    \ifp@pping\else\setwh@tvrstyle\fi
   \fi
  }
 }

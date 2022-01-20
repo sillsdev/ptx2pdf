@@ -425,12 +425,14 @@
         \ifdim\ht1 < \baselineskip \advance\dimen10 by \baselineskip\else \advance \dimen10 by 0.5\ht1\fi
       \else\tempfalse\fi \iftemp\@@REPEAT
     \setbox1=\box10
-    \iff@rstnote\ifvoid\verybottomins\fi\fi % ignore depth of body text; fill space
-    \iff@rstnote\noterule{\AboveNoteSpace}{\BelowFootNoteRuleSpace}{\textwidth}{%
-      \FootNoteRuleLeftIndent \vrule height 0.4pt width \FootNoteRuleWidth\textwidth \FootNoteRuleRightIndent}%
-      \global\f@rstnotefalse\else\kern\InterNoteSpace\fi
-    \dimen11=\ht11\ifdim\dimen11<\ht12\dimen11=\ht12\fi
-    \dimen12=\dp11\ifdim\dimen12<\dp12\dimen12=\dp12\fi
+    \iff@rstnote
+      \ifvoid\verybottomins\fi % ignore depth of body text; fill space
+      \noterule{\AboveStudyNoteSpace}{\BelowStudyNoteRuleSpace}{\textwidth}{%
+      \StudyNoteRuleLeftIndent \vrule height \StudyNoteRuleThickness width \StudyNoteRuleWidth\textwidth \StudyNoteRuleRightIndent}%
+      \global\f@rstnotefalse
+    \fi%\else\kern\InterNoteSpace\fi
+    \dimen11=\ht11\ifdim\dimen11<\ht12 \dimen11=\ht12\fi
+    \dimen12=\dp11\ifdim\dimen12<\dp12 \dimen12=\dp12\fi
     \trace{n}{Study notes (\the\ht11, \the\ht12)=\the\dimen11}%
     \hbox to \textwidth {\box\ifRTL 12\else11\fi
       \makecolumngutter{\dimen11}{\dimen11}{\dimen12}{\dimen11}{0}\box\ifRTL 11\else12\fi}%
@@ -444,6 +446,12 @@
 \def\FootNoteRuleWidth{1}
 \def\FootNoteRuleLeftIndent{\hskip 0.00 mm}
 \def\FootNoteRuleRightIndent{\hss}
+\def\AboveStudyNoteSpace{\AboveNoteSpace}
+\def\BelowStudyNoteSpace{0.5\AboveNoteSpace}
+\def\StudyNoteRuleThickness{0.4pt}
+\def\StudyNoteRuleWidth{1}
+\def\StudyNoteRuleLeftIndent{\hskip 0.00 mm}
+\def\StudyNoteRuleRightIndent{\hss}
 
 \newif\iff@rstnote
 \f@rstnotetrue
@@ -727,6 +735,7 @@
   \fi\fi
 }
 \def\onecoltrial{% single-column version of \twocoltrial (see below)
+  \traceifset{onecoltrial}%
   \tracingparagraphs=0
   %\tracingall=1\tracingoutput=0\tracingpages=0\tracingparagraphs=0\tracingassigns=0\tracingscantokens=0
   \if\XrefNotes\relax\else
@@ -751,10 +760,13 @@
   \iffitonpage
     \dimen3=\ht\colA \advance\dimen3\lastd@pth
     \if\XrefNotes\relax\else
+      \trace{o}{enter reheightcolnotess}%
       \reheightcolnotess{13}%
-      \ifdim\ht\xr@fbox>\dimen3\dimen3=\ht\xr@fbox\fi
+      \trace{o}{exit reheightcolnotess}%
+      \ifdim\ht\xr@fbox>\dimen3 \dimen3=\ht\xr@fbox\fi
     \fi
     \trace{i}{1 SUCCEEDED, shipping page hIns=\the\holdinginserts}%
+    \trace{o}{onecoltrial width=\the\wd\colA, hsize=\the\hsize}%
     \def\pagecontents{%                                                     %(3)
       \dimen1=\textwidth% \advance\dimen1 -\ExtraRMargin
       \trace{b}{BALANCE pageoutins: cols=1: text=\the\ht\colA, \the\dp\colA: partial=\the\ht\partial, \the\dp\partial: topins=\the\ht\topins: bottomins=\the\ht\bottomins, width=\the\dimen1}%
@@ -766,10 +778,10 @@
       \lastd@pth=\dp\colA
       \ifColNotes\ifdim\dp\xr@fbox>\lastd@pth \lastd@pth=\dp\xr@fbox\fi\fi
       \locs@startstop{\colA}{1}%
+      \trace{o}{colwidth=\the\wd\colA}%
       %\trace{o}{onecoltrial: dimen=\the\dimen3, lastd@pth=\the\lastd@pth}%
-      \ifColNotes\ifdim\ht\xr@fbox>\dimen3\dimen3=\ht\xr@fbox\fi\fi
+      \ifColNotes\ifdim\ht\xr@fbox>\dimen3 \dimen3=\ht\xr@fbox\fi\fi
       \hbox to \dimen1{\noindent\ifb@dy\testXrefSideL\ifnum\tmp=1
-          \trace{o}{onecoltrial lcolgutter makecolumngutter}%
           \makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen3}{2}%
         \fi\fi
         \ifb@dy\iftob@dy\else\hbox to \columnshift{}\fi\fi
@@ -795,6 +807,7 @@
       \global\output={\savepartialpage}% leave flag set to allow caller to trigger extra \eject   %(+)
     \else\global\output={\onecol}\fi
     \global\setbox255=\box\voidb@x
+    \traceifcheck{onecoltrial}%
 %-c_onecoltrial_pagefit
 %+c_onecoltrial_fail
   \else % the contents of the "galley" didn't fit into the actual page,
@@ -802,6 +815,7 @@
     \trace{i}{1c REDUCING VSIZE \the\vsize \space by -\the\baselineskip, hIns=\the\holdinginserts}%
     \global\advance\vsize by -\baselineskip
     \trace{b}{BALANCE 1col go round vsize=\the\vsize}%
+    \traceifcheck{onecoltrial}%
     \res@tpage
     \global\let\whichtrial=\onecoltrial
     \global\output={\backingup}%
@@ -850,7 +864,7 @@
     \trace{o}{DoubleColumns: partial=\the\dimen0\space > \PageFullFactor\space * \the\textheight}%
     \ifdim\dimen0>\PageFullFactor\textheight
       \global\output={\onecol} % but output it immediately if 75% full
-      \loop\ifdim\dimen0>\textheight\advance\dimen0-\textheight\repeat
+      \loop\ifdim\dimen0>\textheight \advance\dimen0-\textheight\repeat
       \unvbox\partial
       \ifdim\dimen0>\PageFullFactor\textheight\vfill\eject
       \else \holdinginserts=0 \global\output={\savepartialpage}\eject \holdinginserts=1
@@ -904,17 +918,18 @@
   \trace{i}{height=\the\dimen3, xr@fbox=\the\ht\xr@fbox, baselineskip=\the\baselineskip}%\tracingassigns=1\tracingmacros=1\tracingifs=1
   \ifdim\ht\xr@fbox>\dimen3 % reduce height of notes for smaller page
     \keepn@testrue\dimen4=\availht
+    \count255=10
     \@LOOP
       \setbox\th@cl@ss=\copy#1
       \bestavailht=\dimen3
       \dimen5=\ht\xr@fbox \advance\dimen5 -\dimen3
-      \temptrue\ifdim\dimen5<\baselineskip\ifdim\dimen5>-\baselineskip\tempfalse\fi\fi
+      \temptrue\ifdim\dimen5<\baselineskip\ifdim\dimen5>-\baselineskip \tempfalse\fi\fi
       \ifdim\dimen5>2000pt \tempfalse\fi
       \trace{o}{reheighting diff=\the\dimen5}%
       \iftemp
         \multiply\dimen5 by 32
         \divide\dimen5 by \hsize\multiply\dimen5 by \XrefNotesWidth \divide\dimen5 by 32
-        \ifdim\dimen5<\baselineskip\dimen5=\baselineskip\fi
+        \ifdim\dimen5<\baselineskip \dimen5=\baselineskip\fi
         \advance\bestavailht by \dimen5
         \trace{o}{Retrying colnotes at \the\bestavailht, versus \the\availht, from=\the\dimen3, diff=\the\dimen5, baselineskip=\the\baselineskip}%
         \c@lcavailht
@@ -924,9 +939,9 @@
         \ifnum \ifvoid255 \ifdim\ht\colA<\availht 1\else 0\fi \else 0\fi =1
           \global\dimen3=\ht\colA
           \dimen6=\ht\xr@fbox\advance\dimen6 by -\dimen3
-          \ifdim\dimen6<\dimen5\ifdim-\dimen6>-\dimen5\temptrue\else\tempfalse\fi\else\tempfalse\fi
+          \ifdim\dimen6<\dimen5 \ifdim-\dimen6>-\dimen5 \temptrue\else\tempfalse \fi\else\tempfalse \fi
           %\ifdim\dimen3>\dimen4\tempfalse\fi
-        \else\tempfalse\fi
+        \else\tempfalse \fi
         \iftemp\else
           \bestavailht=\dimen3 \c@lcavailht
           \setbox255=\copy\s@vedpage
@@ -936,6 +951,8 @@
         \global\dimen3=\ht\colA\advance\dimen3 by \dp\colA
         \trace{o}{New availht(1)=\the\availht, measured height=\the\dimen3, olddiff=\the\dimen5, newdiff=\the\dimen6, limit=\the\dimen4}%
       \fi
+      \advance\count255 by -1
+      \ifnum\count255=0\tempfalse\fi
     \iftemp\@REPEAT
     \c@lcboxheights\keepn@tesfalse
   \fi%\tracingassigns=0\tracingmacros=0\tracingifs=0
@@ -964,7 +981,7 @@
   \dimen3=\ht\colA\advance\dimen3 by \dp\colA
   \if\XrefNotes\relax\else
     \reheightcolnotess{13}%
-    \ifdim\ht\xr@fbox>\dimen3\dimen3=\ht\xr@fbox\fi
+    \ifdim\ht\xr@fbox>\dimen3 \dimen3=\ht\xr@fbox\fi
   \fi
   % and check if it all fit; if not, we'll have to back up and try again
   \trace{o}{savepartialpage \the\dimen3 \space rem=\the\ht255}%
@@ -1267,7 +1284,7 @@
     % swap boxes if either, colA is empty and colB full, or colB is empty and colA is over full.
     \ifvoid\colA\ifvoid\colB\else\ifswapcol\ifdim\colhtA<\ht\colB\else
       \trace{o}{splitcols swapping B->A}\setbox\colA=\box\colB\fi\fi\fi\fi
-    \ifdim\ht\colA>\colhtA\ifdim\ht\colB<1pt\ifdim\ht\colA<\colhtB\setbox\colB=\box\colA\fi\fi\fi
+    \ifdim\ht\colA>\colhtA \ifdim\ht\colB<1pt \ifdim\ht\colA<\colhtB \setbox\colB=\box\colA\fi\fi\fi
     \xdef\p@gebotmark{\splitbotmark}%
 }
 %-c_splitcols
@@ -1286,7 +1303,7 @@
   \ifvoid0 \global\fitonpagetrue \else \global\fitonpagefalse \fi
   \rebalancefalse
   \trace{o}{first \the\availht . col=\the\ht\colA, \the\colhtA . second col=\the\ht\colB, \the\colhtB . rem=\the\ht0}%
-  \ifdim\ht\colA<.5\baselineskip\ifdim\ht\colB<.5\baselineskip\message{I can't break this page!}    %(2)
+  \ifdim\ht\colA<.5\baselineskip \ifdim\ht\colB<.5\baselineskip \message{I can't break this page!}    %(2)
     \iffitonpage\message{Abandoning ship}%\loop\ifnum\currentgrouplevel>0 \egroup\repeat
     \else\setbox\colA=\box0\setbox\s@vedpage=\box\voidb@x \trace{o}{Everything to colA}% dump it all in colA and bail
   \fi\fi\fi
@@ -1419,7 +1436,7 @@
   \dimen9=\availht\advance\dimen9 by \bmg@p
   \trace{o}{fitting columns to \the\dimen9, coln@tes=\the\ht\xr@fbox}%
   \lastd@pth=\dp\colA \setbox\colA=\vbox to \dimen9{\unvbox5\unvbox\colA\vfil\unvbox7}\dp\colA=\lastd@pth
-  \ifdim\ht\colB<1pt\setbox\colB\vbox{\noindent\par}\else
+  \ifdim\ht\colB<1pt \setbox\colB\vbox{\noindent\par}\else
     \ifcolbfull\ifdim\lastd@pth<\dp\colB \lastd@pth=\dp\colB\fi\else\lastd@pth=\dp\colB\fi
   \fi
   \setbox\colB=\vbox to \dimen9{\unvbox6\unvbox\colB\vfil\unvbox8}\dp\colB=\lastd@pth
@@ -1497,22 +1514,22 @@
   %\advance\availht \dp\pstr@t
   %\advance\availht by \dp255 % split includes depth so give it space for that
   \trace{o}{new availht=\the\availht, best availht=\the\bestavailht, texttrialheight=\the\t@xttrialheight, topins=\the\ht\topins, bottomins=\the\ht\bottomins, baselineskip=\the\baselineskip}%
-  \ifdim\bestavailht>0pt\ifdim\bestavailht<\availht\availht=\bestavailht\fi\fi
+  \ifdim\bestavailht>0pt \ifdim\bestavailht<\availht \availht=\bestavailht\fi\fi
   \ifColNotes\ifb@dy
     \ifx\XrefNotes\empty\relax\setbox5=\box\voidb@x\else
-      \setbox5=\vbox{\m@kexrefbox{\ifdim\t@xttrialheight>0pt\ifdim\t@xttrialheight<\availht\t@xttrialheight\else\availht\fi\else\availht\fi}{\XrefNotesWidth}{\XrefNotes}}%
+      \setbox5=\vbox{\m@kexrefbox{\ifdim\t@xttrialheight>0pt \ifdim\t@xttrialheight<\availht \t@xttrialheight\else\availht\fi\else\availht\fi}{\XrefNotesWidth}{\XrefNotes}}%
       \setbox\xr@fbox\vbox{\unvbox\xr@fbox\setbox0=\lastbox\dimen0=\dp0\box0\vskip\dimen0}%
     \fi
     \notst@dynotestrue\m@kenotebox\notst@dynotesfalse
     \setbox\coln@tebox=\vbox{%
       \trace{o}{coln@tebox in=\the\ht5+\the\dp5, notes=\the\ht2+\the\dp2}%
       \ifdim\ht2>0pt
-        \unvbox2\ifdim\ht5>0pt\setbox0\lastbox\dimen0=\dp0\box0\vskip\dimen0
+        \unvbox2\ifdim\ht5>0pt \setbox0\lastbox\dimen0=\dp0\box0\vskip\dimen0
                   \vskip\InterNoteSpace \unvbox5\setbox0\lastbox\dimen0=\dp0\box0\vskip\dimen0\fi
       \else\ifdim\ht5>0pt
           %\ifvoid\verybottomins\vfil\fi %\kern-\lastd@pth\vfil % ignore depth of body text; fill space
           \footnoterule\prevdepth=-10000pt
-          \unvbox5\setbox0\lastbox\dimen1=\ht0\dimen0=\dp0\box0\ifdim\dimen1>0pt\kern-\dimen0\fi\vskip\bmg@p
+          \unvbox5\setbox0\lastbox\dimen1=\ht0\dimen0=\dp0\box0\ifdim\dimen1>0pt \kern-\dimen0\fi\vskip\bmg@p
       \fi\fi}%
       \trace{o}{coln@tebox out=\the\ht\coln@tebox+\the\dp\coln@tebox, xrefbox=\the\ht\xr@fbox+\the\dp\xr@fbox}%
   \else
@@ -1547,7 +1564,7 @@
           \dimen6=\ht\xr@fbox\advance\dimen6 by -\dimen3
           \ifdim\dimen6<\dimen5 \temptrue\else\tempfalse\fi
           \ifdim\dimen3>\textheight \tempfalse\fi
-          \ifdim\dimen6>0pt\global\advance\dimen3 by \dimen6\fi
+          \ifdim\dimen6>0pt \global\advance\dimen3 by \dimen6\fi
         \else\tempfalse\fi
         \iftemp\else
           \bestavailht=\dimen3
@@ -1572,7 +1589,7 @@
   \keepn@testrue\c@lcavailht\keepn@tesfalse
   \setbox\s@vedpage=\vbox{\unvcopy255}%
   \trace{o}{balancing from savepartialpaged, height=\the\ht\s@vedpage, hIns:\the\holdinginserts, vsz=\the\vsize, av=\the\availht, op:\the\outputpenalty}%
-  \ifdim\ht\partial>\baselineskip\swapcolfalse\else\swapcoltrue\fi
+  \ifdim\ht\partial>\baselineskip \swapcolfalse\else\swapcoltrue\fi
   \ifdim\availht<\baselineskip 
     \rem@indertrue % No, I don't know what this does, but once If i  didn't do it then we get lost verses. 
     %\rem@inderfalse
@@ -1585,11 +1602,11 @@
     \s@veallnotes{1}%
     \lastd@pth=\dp\colA\ifdim\dp\colB<\lastd@pth \lastd@pth=\dp\colB\fi
     \ifColNotes\ifdim\dp\xr@fbox<\lastd@pth \lastd@pth=\dp\xr@fbox\fi\fi
-    \dimen3=\ifdim\colhtA>\colhtB\colhtA\else\colhtB\fi
-    \ifdim\dimen3>\availht\dimen3=\availht\fi
+    \dimen3=\ifdim\colhtA>\colhtB \colhtA\else\colhtB\fi
+    \ifdim\dimen3>\availht \dimen3=\availht\fi
     \if\XrefNotes\relax\else
       \trace{o}{reheighting columns. xr@fbox: \the\ht\xr@fbox, colsheight: \the\dimen3. iflevel=\the\currentiflevel}%
-      \reheightcolnotesd{13}\ifdim\ht\xr@fbox>\dimen3\dimen3=\ht\xr@fbox\fi
+      \reheightcolnotesd{13}\ifdim\ht\xr@fbox>\dimen3 \dimen3=\ht\xr@fbox\fi
       \trace{o}{after reheightening to \the\dimen3, iflevel=\the\currentiflevel}%
     \fi
     %\setbox255=\box\voidb@x
@@ -1600,7 +1617,7 @@
     \locs@startstop{\colA}{1}\locs@startstop{\colB}{2}%
     \setbox\colA=\vbox to \dimen3{\unvbox\colA\unskip\setbox0\lastbox\global\dimen8=\dp0\box0}%
     \setbox\colB=\vbox to \dimen3{\unvbox\colB\unskip\setbox0\lastbox\global\dimen9=\dp0\box0}%
-    \lastd@pth=\ifdim\dimen8>\dimen9\dimen8\else\dimen9\fi
+    \lastd@pth=\ifdim\dimen8>\dimen9 \dimen8\else\dimen9\fi
     \ifColNotes\ifdim\dp\xr@fbox>\lastd@pth \lastd@pth=\dp\xr@fbox\fi\fi
     % do this after we have the final boxes
     \dimen4=\ht\partial \dimen5=\dp\partial
@@ -1675,6 +1692,7 @@
 
 %+c_twocoltrial_intro
 \def\twocoltrial{% trial formatting to see if current contents will fit on the page
+  \traceifset{twocoltrial}%
   \tracingparagraphs=0
   \if\XrefNotes\relax\else
     \x@\let\x@\th@cl@ss\csname note-\XrefNotes\endcsname % make \th@cl@ss be a synonym for the current note class
@@ -1687,7 +1705,7 @@
   \fi
   \setbox\s@vedpage=\copy255
   \trace{o}{balance from twocoltrial height \the\ht\s@vedpage, availht=\the\availht}%
-  \ifdim\ht\partial>\baselineskip\swapcolfalse\else\swapcoltrue\fi
+  \ifdim\ht\partial>\baselineskip \swapcolfalse\else\swapcoltrue\fi
   \rem@indertrue\balanced
   \trace{o}{twocoltrial: return from balanced with fitonpage\iffitonpage true\else false\fi}
   \iffitonpage\ifvoid\s@vedpage\else\fitonpagefalse\fi
@@ -1702,16 +1720,16 @@
     \setbox2=\vbox{\unvcopy\colB\unskip}%
     \locs@startstop{\colA}{1}%
     \locs@startstop{\colB}{2}%
-    \ifdim\ht\colB<1pt\setbox\colB\vbox{\noindent\par}\fi
+    \ifdim\ht\colB<1pt \setbox\colB\vbox{\noindent\par}\fi
     %\ht\colA=\the\availht \ht\colB=\the\availht                             %(1)
     \lastd@pth=\dp\colA\ifdim\dp\colB<\lastd@pth \lastd@pth=\dp\colB\fi
     \ifColNotes\ifdim\dp\xr@fbox<\lastd@pth \lastd@pth=\dp\xr@fbox\fi\fi
     \trace{p}{twocoltrial: calculate dimen3 as min(\the\availht, max(\the\ht\colA, \the\ht\colB, \the\ht\xr@fbox))}
-    \dimen3=\ht\colA \ifdim\ht\colB>\dimen3\ifhascolnotes\dimen3=\ht\colB\fi\fi
+    \dimen3=\ht\colA \ifdim\ht\colB>\dimen3 \ifhascolnotes\dimen3=\ht\colB\fi\fi
     \if\XrefNotes\relax\else
-      \reheightcolnotesd{13}\ifdim\ht\xr@fbox>\dimen3\dimen3=\ht\xr@fbox\fi
+      \reheightcolnotesd{13}\ifdim\ht\xr@fbox>\dimen3 \dimen3=\ht\xr@fbox\fi
     \fi
-    \ifdim\dimen3>\availht\dimen3=\availht\fi
+    \ifdim\dimen3>\availht \dimen3=\availht\fi
     \setbox\colA=\vbox to \dimen3{\unvbox\colA} \setbox\colB=\vbox to \dimen3{\unvbox\colB}%
     \advance\dimen4 by \lastd@pth
     \trace{o}{box height + gap = \the\availht \space + \the\bmg@p}%
@@ -1723,7 +1741,7 @@
         \vbox{\hbox to \dimen1{\vbox{\unvbox\partial}}}\fi % output partial page % \vskip -2\dimen5
       \ifvoid\topins\else \hbox{\hbox to \columnshift{}\box\topins} \vskip\skip\topins \fi % output top spanning pictures
       \iflastpage\setbox\colA=\vbox{\unvbox\colA}\setbox\colB=\vbox{\unvbox\colB}%
-        \ifdim\ht\colA>\ht\colB\ht\colB=\ht\colA\else\ht\colA=\ht\colB\fi\fi
+        \ifdim\ht\colA>\ht\colB \ht\colB=\ht\colA\else\ht\colA=\ht\colB\fi\fi
       \trace{p}{Text depth = \the\dimen3}%
       \hbox to \dimen1{\noindent\hbox to \columnshift{}%
         \ifRTL \hbox to \ExtraRMargin{}\vbox to \dimen2{\box\colB\vfil}\makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen2}{3}\vbox to \dimen2{\box\colA\vfil}%
@@ -1742,6 +1760,7 @@
     \ifnum\interactionmode=2
       \showlists
     \fi
+    \traceifcheck{twocoltrial}%
   \else % the contents of the "galley" didn't fit into the columns,         %(+)
         % so reduce \vsize and try again with an earlier break
     \trace{o}{Reducing vsize \the\vsize, by \the\baselineskip}%
@@ -1749,6 +1768,7 @@
 	% clear insertions
     \trace{i}{2coltrial: emptyinserts hIns=\the\holdinginserts, vsz:\the\vsize}%
     \res@tpage
+    \traceifcheck{twocoltrial}%
     \global\let\whichtrial=\twocoltrial                                     %(+)
     \global\output={\backingup}%
     \ifm@rksonpage\else\gdef\p@gefirstmark{}\trace{H}{No marks found. Setting empty mark}\fi%No marks on the page, and it didn't fit, so add a blank mark

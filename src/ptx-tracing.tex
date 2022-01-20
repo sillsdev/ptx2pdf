@@ -100,4 +100,8 @@
 \def\s@vens@ttrace#1{\x@\xdef\csname tracing-#1\endcsname{\csname #1\endcsname}\csname #1\endcsname=1}
 \def\r@storetrace#1{\csname #1\endcsname=\csname tracing-#1\endcsname}
 \def\alltrace#1{\ifnum#1>0\let\wh@t=\s@vens@ttrace\else\let\wh@t=\r@storetrace\fi\x@\pr@cessSp@cific \tc@mmands,\E}
+
+\def\traceifset#1{\x@\xdef\csname checkif@#1\endcsname{\currentiflevel}}
+\def\traceifcheck#1{\x@\ifnum\csname checkif@#1\endcsname=\currentiflevel\else
+    \message{IF CHECK #1 Failed \csname checkif@#1\encsname !=\the\currentiflevel}}
 %-tracing-support

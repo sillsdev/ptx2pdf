@@ -318,6 +318,13 @@ ModelMap = {
     "notes/xrruleindent":       ("s_xrIndent", None),
     "notes/xrrulelength":       ("s_xrLength", None),
     "notes/xrrulethick":        ("s_xrThick", None),
+
+    "notes/snruleposn":         ("fcb_snHorizPosn", None),
+    "notes/snruleindent":       ("s_snIndent", None),
+    "notes/snrulethick":        ("s_snThick", None),
+    "notes/snrulelength":       ("s_snLength", None),
+    "notes/belowstudyrulespace": ("s_snBelowSpace", None),
+    "notes/abovestudyspace":    ("s_snAboveSpace", None),
     
     "notes/internotespace":     ("s_internote", lambda w,v: f2s(float(v or 3))),
 
@@ -629,7 +636,7 @@ class TexModel:
                     raise type(e)("In TeXModel with key {}, ".format(k) + str(e))
 
     def calcRuleParameters(self):
-        notemap = {'fn': 'note', 'xr': 'xref'}
+        notemap = {'fn': 'note', 'xr': 'xref', 'sn': 'study'}
         fnrule = None
         enrule = None
         endnotes = []
@@ -639,7 +646,7 @@ class TexModel:
                 endnotes.append(r"\NoteAtEnd{{{}}}".format(a[0]))
             elif fnrule is None:
                 fnrule = a
-        for a in (('Foot', fnrule), ('End', enrule)):
+        for a in (('Foot', fnrule), ('End', enrule), ('Study', 'sn')):
             dat = []
             if a[1] is not None:
                 pos = int(self.dict['notes/{}ruleposn'.format(a[1])] or 0)
