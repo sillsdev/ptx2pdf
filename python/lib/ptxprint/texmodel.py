@@ -325,11 +325,14 @@ ModelMap = {
     "notes/horiznotespacemax":  ("s_notespacingmax", lambda w,v: f2s(float(v)) if v is not None else "27"),
 
     "studynotes/includextfn":     ("c_extendedFnotes", lambda w,v: "" if v else "%"),
+    "studynotes/showcallers":     ("c_ef_showCallers", lambda w,v: "%" if v else ""),
     "studynotes/colgutterfactor": ("s_ef_colgutterfactor", lambda w,v: round(float(v or 4)*3)), # Hack to be fixed?
-  # "studynotes/bottomrag":       ("s_ef_bottomRag", lambda w,v: str(int(v or 0)+0.95)),
     "studynotes/ifverticalrule":  ("c_ef_verticalrule", lambda w,v :"true" if v else "false"),
+    "studynotes/internote":       ("s_ef_internote", lambda w,v: "{:.1f}".format(float(v)) if v else "0.0"),
     "studynotes/colgutteroffset": ("s_ef_colgutteroffset", lambda w,v: "{:.1f}".format(float(v)) if v else "0.0"),
+  # "studynotes/bottomrag":       ("s_ef_bottomRag", lambda w,v: str(int(v or 0)+0.95)),
     "studynotes/includesidebar":  ("c_sidebars", None),
+    "studynotes/filtercats":      ("c_filterCats", None),
 
     "document/fontregular":     ("bl_fontR", lambda w,v,s: v.asTeXFont(s.inArchive) if v else ""),
     "document/fontbold":        ("bl_fontB", lambda w,v,s: v.asTeXFont(s.inArchive) if v else ""),
@@ -1304,6 +1307,14 @@ class TexModel:
         if not self.asBool("studynotes/includesidebar"):
             self.localChanges.append((None, regex.compile(r"\\esb.+?\\esbe", flags=regex.S), ""))
         ############ Temporary (to be removed later) ########%%%%
+        
+        if self.asBool("studynotes/includextfn"):
+            if self.dict["studynotes/showcallers"] == "%":
+                self.localChanges.append((None, regex.compile(r"\\ef \- ", flags=regex.S), "\\ef + "))
+            else:
+                self.localChanges.append((None, regex.compile(r"\\ef . ", flags=regex.S), "\\ef - "))
+        else:
+            self.localChanges.append((None, regex.compile(r"\\ef( .*?)\\ef\* ", flags=regex.S), ""))
 
         # If a printout of JUST the book introductions is needed (i.e. no scripture text) then this option is very handy
         if not self.asBool("document/ifmainbodytext"):

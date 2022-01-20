@@ -261,6 +261,9 @@ _sensitivities = {
     "c_plCreditApply2all":     ["c_plCreditOverwrite"],
     "c_rangeShowChapter":      ["c_rangeShowVerse", "l_chvsSep", "r_CVsep_period", "r_CVsep_colon"],
     "c_strongs2cols":          ["l_strongRag", "s_strongRag"],
+    "c_extendedFnotes":        ["gr_ef_layout"],
+    "c_ef_verticalrule" :      ["l_ef_colgutteroffset", "s_ef_colgutteroffset", "line_efGutter"],
+    "c_filterCats":            ["gr_filterCats"],
 }
 # Checkboxes and the different objects they make (in)sensitive when toggled
 # These function OPPOSITE to the ones above (they turn OFF/insensitive when the c_box is active)
@@ -3770,11 +3773,14 @@ class GtkViewModel(ViewModel):
                 dat = inf.read()
                 for m in re.findall(r"\\cat\s+(.*?)\s*\\cat\*", dat):
                     allCats.add(m)
-        print(allCats, myDict)
         self.sbcatlist.clear()
         for c in sorted(allCats):
             self.sbcatlist.append([c, True, True])
-        
+            
+    def onFilterCatsClicked(self, btn):
+        if btn.get_active() and not len(self.sbcatlist):
+            self.onReScanCatList(None)
+    
     def onCatEFtoggled(self, cell, path):
         self.sbcatlist[path][1] = not cell.get_active()
 
