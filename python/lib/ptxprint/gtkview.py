@@ -508,7 +508,7 @@ class GtkViewModel(ViewModel):
                     "textDirection", "glossaryMarkupStyle", "fontFaces", "featsLangs", "leaderStyle",
                     "picaccept", "pubusage", "pubaccept", "chklstFilter|0.75", "gridUnits", "gridOffset",
                     "fnHorizPosn", "xrHorizPosn", "filterXrefs", "colXRside", "outputFormat", "stytcVpos", 
-                    "strongsMajorLg", "strongswildcards", "strongsNdxBookId"):
+                    "strongsMajorLg", "strongswildcards", "strongsNdxBookId"): # , "sbPgPos"
             self.addCR("fcb_"+fcb, 0)
         self.cb_savedConfig = self.builder.get_object("ecb_savedConfig")
         self.ecb_diglotSecConfig = self.builder.get_object("ecb_diglotSecConfig")
@@ -3786,3 +3786,33 @@ class GtkViewModel(ViewModel):
 
     def onCatSBtoggled(self, cell, path):
         self.sbcatlist[path][2] = not cell.get_active()
+
+    def onSBborderClicked(self, btn):
+        dialog = self.builder.get_object("dlg_borders")
+        if sys.platform == "win32":
+            dialog.set_keep_above(True)
+        response = dialog.run()
+        if response == Gtk.ResponseType.OK: # Save the new parameters
+            pass # do something useful
+        else:
+            pass # ignore
+        if sys.platform == "win32":
+            dialog.set_keep_above(False)
+        dialog.hide()
+
+    def onSBimageClicked(self, btn):
+        # btname = Gtk.Buildable.get_name(btn)
+        # print(btname)
+        # w = self.builder.get_object(btname)
+        dialog = self.builder.get_object("dlg_SBimage")
+        if sys.platform == "win32":
+            dialog.set_keep_above(True)
+        response = dialog.run()
+        if response == Gtk.ResponseType.OK: # Save the new parameters
+            pass # do something useful
+        else:
+            pass # ignore
+        if sys.platform == "win32":
+            dialog.set_keep_above(False)
+        dialog.hide()
+        
