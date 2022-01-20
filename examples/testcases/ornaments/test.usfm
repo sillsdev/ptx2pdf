@@ -8,7 +8,7 @@ after. \add The \+nd Lord\+nd*'s good!\add*  I'm putting little NIV-style angle 
 and d\endadd\ to show how close they ought to be when they get put in by the hooks.
 The sequence ought to be before..start..text..end..after.
 \p And that was a  new  parargaph.\f hello \fr 1:1 \ft This is a footnote <<\fq hello\ft >> goodbye\f*
-\p And that was a p class paragraph \nd NDbreak 
+\p And that was a p class paragraph \nd break 
 \qt-s | foo \*
 now inside a qt-s..qt-e block \nd*
 \p with a paragraph break
@@ -37,9 +37,6 @@ veritatis et quasi architecto beatae vitae dicta sunt explicabo.
 \p Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.
 \p Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium
 doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore
-veritatis et quasi architecto beatae vitae dicta sunt explicabo.
-\p Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.
-\p Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.
 \esbe
 
 \p  We're outside the esb (after esb testing3) so ought to be back to normal now
@@ -109,7 +106,7 @@ Tenetur deleniti rerum minima dolor. Rerum autem ipsa ipsum autem quo a. Aut ut 
 \esbe
 
 \p
-\v 13  There needs to be a par break between sidebars, or the boxing breaks
+\v 13  There needs to be text in between side bars.
 
 \esb\cat pl\cat*
 \p This  esb of category "\showTheCategory" is testing the appropriate positioning.
@@ -123,24 +120,8 @@ formatting.
 \v 15
 This is a p paragraph of category "\showTheCategory" and is testing the appropriate
 formatting.
+\q3\cat testpar\cat*
+\v 16 This is a q // to see what we can do
+
 \m The end. Back to '\showTheCategory'
-
-\s Poetic line-breaks
-\p The following lines show the effect of altering the NonJustifiedFill parameter:
-\m\bd Normal (0.25)\bd*
-
-\m|\hfill\hfill\hfill|\hfill|
-\q1
-\v 16 This is a first q // to see what we can 
-\q1
-\v 17 This is a first q // to see what we can do
-
-\m\bd More generous (0.5)\bd*
-\m|\hfill <-- 0.5 -->\hfill|\hfill <-- 0.5 -->\hfill|
-\q1 \cat 0.5w\cat*
-\v 18 This is a first q // to see what we can
-\q1 \cat 0.5w\cat*
-\v 19 This is a first q // to see what we can do
-
-
 

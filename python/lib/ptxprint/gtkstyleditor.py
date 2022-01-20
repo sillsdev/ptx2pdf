@@ -420,7 +420,6 @@ class StyleEditorView(StyleEditor):
         for w in ["s_styFontSize", "s_styLineSpacing", "c_styAbsoluteLineSpacing"]:
             widget = self.builder.get_object(w)
             widget.set_sensitive(self.marker != "p")
-        
 
     def _cmp(self, a, b):
         try:

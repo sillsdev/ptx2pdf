@@ -11,7 +11,7 @@ test.pdf: test.tex usfmTex-ext.tex usfmTex-settings.tex test.usfm $(DIR)/*.tex *
 test2.pdf: test2.tex usfmTex-ext.tex usfmTex-settings.tex test2.usfm $(DIR)/*.tex *.sty
 
 bisect:
-	mkdir ../bisect || rm -fr ../bisect/*
+	mkdir ../bisect || rm -f ../bisect/*
 	cp *.tex *.usfm *.sty Makefile ../bisect
 
 auto:

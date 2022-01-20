@@ -40,9 +40,9 @@
 \gdef\sb@rmarker{esb} % future-proofing. What's the current sidebar marker?
 
 \def\setsbp@ram#1#2{\trace{sc}{Styling \m@rker:#1 #2}\setp@ram{#1}{\m@rker}{#2}}
-\def\getsbp@ram#1{\getp@ram{#1}{\sb@rmarker}\let\cp@ram\p@ram\ifx\cp@ram\empty\global\let\cp@ram\relax\fi\trace{sc}{Got result for (\c@tegory)\sb@rmarker:#1: \cp@ram}}
+\def\getsbp@ram#1{\getp@ram{#1}{\sb@rmarker}{\sb@rmarker}\let\cp@ram\p@ram\ifx\cp@ram\empty\global\let\cp@ram\relax\fi\trace{sc}{Got result for (\c@tegory)\sb@rmarker:#1: \cp@ram}}
 \def\getsbp@ramNoInh#1{\edef\d@sf{\g@tdstat}%
-  \getp@r@m{#1}{\c@tprefix\sb@rmarker\d@sf}\ifx\p@ram\relax\getp@ram{#1}{\c@tprefix\sb@rmarker}\fi
+  \getp@r@m{#1}{\c@tprefix\sb@rmarker\d@sf}\ifx\p@ram\relax\getp@ram{#1}{\c@tprefix\sb@rmarker}{\c@tprefix\sb@rmarker}\fi
   \let\cp@ram\p@ram
   \ifx\cp@ram\empty\global\let\cp@ram\relax\fi
   \ifx\cp@ram\relax
@@ -178,6 +178,8 @@
  \gdef\sb@leftedge{}\gdef\sb@rightedge{}%
  \gdef\sb@rtopedge{}\gdef\sb@rbotedge{}%
  \xdef\sb@leftshift{0pt}\xdef\sb@rightshift{0pt}%
+ \getsbp@ram{borderhpadding}\ifx\cp@ram\relax\else\edef\fb@hpadding{\the\dimexpr \cp@ram\FontSizeUnit\relax}\fi
+ \getsbp@ram{bordervpadding}\ifx\cp@ram\relax\else\edef\fb@vpadding{\the\dimexpr \cp@ram\FontSizeUnit\relax}\fi
  \getsbp@ram{posn}%
   \global\advance\im@gecount by 1 % A side bar is a strange sort of image, but there are similarities
   \ifcsname fig\the\im@gecount p@ge\endcsname
@@ -326,8 +328,8 @@
   \kill@PossParamCache
   \edef\hs@ze{\the\hsize}%
   \s@tc@tpr@fix
- % \end@llpoppedstyles{\ss@Sbar}
-  \mcpush{\ss@Sbar+\sb@rmarker}\trace{e}{ESB}\setbox\extb@x\vbox\bgroup
+  %\end@llpoppedstyles{\ss@Sbar}
+  \mcpush{\ss@Sbar}{\sb@rmarker}\trace{e}{ESB}\setbox\extb@x\vbox\bgroup
     \s@tsb@rwidth\inextendedtrue
     \global\sb@rchunkh@ight=\maxdimen
     \global\c@th@@ks{\st@rtsb@r}%
@@ -353,9 +355,10 @@
  \sb@rtopedge\ifhmode\endgraf\fi
 }
 \let\b@drcol\relax
-
+\newif\ifdoUnskip
+\doUnskiptrue
 \newbox\b@rderbox
-\def\mkb@rder#1{%Put a border around a box
+\def\mkb@rder#1{%Put a simple border around a box
   \x@\setbox\x@\b@rderbox\x@\box#1
   \tempfalse\t@mpfalse
   \ifx\b@drleft\tr@e\temptrue\trace{eb}{Border: left}\fi
@@ -375,6 +378,7 @@
   \advance\dimen1 by \dp\b@rderbox
   \iftemp % if ANY border, add horizontal padding and any vertical lines
     \setbox\b@rderbox\vbox{%
+      %\ifdoUnskip\vskip-\lastskip\fi
       \hbox{\ifx\b@drleft\tr@e\trace{eb}{Drawing Border:left}%
          \bc@l\vrule width \b@drwidth\FontSizeUnit height \dimen0 depth \dimen1 \endbc@l
        \else
@@ -414,6 +418,17 @@
   \fi
   \x@\setbox#1\box\b@rderbox
 }
+\def\borderstylelist{plain, double}
+\let\mkb@rder@plain\mkb@rder
+\def\mkb@rder@double#1{%
+  \let\Ob@drwidth\b@drwidth
+  \let\Os@vedhpadding\fb@hpadding
+  \edef\b@drwidth{\strip@pt{\dimexpr \b@drwidth pt /3\relax}}%
+  \mkb@rder#1\edef\fb@hpadding{\the\dimexpr\b@drwidth\FontSizeUnit\relax}%
+  \setbox#1\vbox{\vskip-1\dimen1\unvbox#1}% This helps, but it's not enough, for some reason.
+  \mkb@rder#1\let\b@drwidth\Ob@drwidth
+  \let\fb@hpadding\Os@vedhpadding}
+
 \def\p@rsef@gsc@le#1x#2x#3\E{% \v@lpfx  fg or bg, params scale which might be of form Xscale x Yscale
   \edef\fig@h@dim{#1}\edef\fig@v@dim{#2}%
   \trace{e}{p@rsefigscale:#1,#2,#3}%
@@ -477,7 +492,10 @@
   \trace{e}{ESBE \c@tprefix(\the\ht\extb@x*\the\wd\extb@x)}%
   %\showbox\extb@x
   \inextendedfalse
-  \let\s@vedvpadding=\fb@vpadding%
+  \let\os@vedvpadding=\fb@vpadding%%Preserve old value
+  \let\os@vedhpadding=\fb@hpadding%
+  \getsbp@ram{borderhpadding}\ifx\cp@ram\relax\else\xdef\fb@hpadding{\the\dimexpr \cp@ram\FontSizeUnit\relax}\fi
+  \getsbp@ram{bordervpadding}\ifx\cp@ram\relax\else\xdef\fb@vpadding{\the\dimexpr \cp@ram\FontSizeUnit\relax}\fi
   \getsbp@ram{bgfigspec}\let\bgf@gsp@c\cp@ram
   \getsbp@ram{bgfiglow}\let\bgf@gl@w\cp@ram%
   \getsbp@ram{hascol}\let\h@scol\cp@ram%
@@ -486,8 +504,10 @@
   \getsbp@ram{bordertop}\let\b@drtop\cp@ram
   \getsbp@ram{borderbottom}\let\b@drbottom\cp@ram 
   \getsbp@ram{borderwidth}\let\b@drwidth\cp@ram
+  \getsbp@ram{borderstyle}\let\b@drstyle\cp@ram
   \getsbp@ram{bgfigalpha}\let\bgf@galpha\cp@ram
   \getsbp@ram{bgfigcolour}\let\bgf@gcol\cp@ram
+  \let\s@vedvpadding=\fb@vpadding%%Preserve old value
   \tempfalse
   \ifx\bgf@gsp@c\relax\else
     \p@rsefigscale{bg}%
@@ -593,7 +613,16 @@
     \let\b@drtop=\fstb@drtop
     \getsbp@ram{bordercolour}%
     \let\b@drcol\cp@ram
-    \mkb@rder{\extchunkb@x}%
+    \def\v@dj{0pt}%
+    \ifx\b@drstyle\relax
+      \mkb@rder{\extchunkb@x}%
+    \else
+      \ifcsname mkb@rder@\b@drstyle\endcsname 
+        \csname mkb@rder@\b@drstyle\endcsname{\extchunkb@x}%
+      \else
+        \message{Unknown borderstyle '\b@drstyle'. Known styles: \borderstylelist}%
+      \fi 
+    \fi
     \let\fstb@drtop=\relax
     \trace{e}{After border, chunk is  now \the\ht\extchunkb@x+\the\dp\extchunkb@x}%
     \ifpicUsesIns
@@ -657,6 +686,8 @@
   \ifvoid\sid@barnotes\else
     \unvbox\sid@barnotes
   \fi
+  \let\fb@hpadding\os@vedhpadding
+  \let\fb@vpadding\os@vedvpadding
   \kill@PossParamCache
   \global\c@th@@ks{}%
   %\ifhmode +\fi
@@ -701,6 +732,10 @@
 \def\Alpha   #1\relax{\initc@t\setsbp@ram{alpha}{#1}}% 1=solid 0=invisible
 \def\BorderWidth        #1\relax{\initc@t\setsbp@ram{borderwidth}{#1}}
 \def\BorderColour       #1\relax{\initc@t\setsbp@ram{bordercolour}{#1}}
+\def\BorderStyle       #1\relax{\initc@t\setsbp@ram{borderstyle}{#1}}
+\def\BorderHPadding #1\relax{\initc@t\setsbp@ram{borderhpadding}{#1}}
+\def\BorderVPadding #1\relax{\initc@t\setsbp@ram{bordervpadding}{#1}}
+\def\BorderPadding #1\relax{\initc@t\setsbp@ram{borderhpadding}{#1}\setsbp@ram{bordervpadding}{#1}}
 \let\BorderColor=\BorderColour%for Americans
 \def\Border	#1\relax{\initc@t\x@\p@rseBorder#1 \relax \relax}
 
@@ -759,6 +794,8 @@
   \x@\newb@x\csname #1\endcsname
 }
 \x@\def\csname d@code-t\endcsname{\edef\tmp{cat:\tmp}}
+%\x@\def\csname d@code-T\endcsname{\edef\tmp{cat:\tmp}}
+\x@\def\csname d@code-T\endcsname{\let\tmp\h@phen} % a paragraph-catergory does not altering the stystak
 
 \def\Override{\m@kedigitsother}
 \def\EndOverride{\m@kedigitsletters}

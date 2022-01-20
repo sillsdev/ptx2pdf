@@ -186,7 +186,7 @@
 
 \addtoeveryparhooks{\checkfort@c}
 
-\def\d@ftoc#1#2{\expandafter\gdef\csname cat:toc|#1\endcsname{#2}}
+\def\d@ftoc#1#2{\should@xist{cat:toc|#1}\expandafter\gdef\csname cat:toc|#1\endcsname{#2}}
 \def\defTOC#1#2{\x@\def\csname ms:ztoc=#1\endcsname{\global\keeptriggertrue #2}}
 \def\tocleaders#1#2{
   \if#1\hrule

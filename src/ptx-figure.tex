@@ -342,7 +342,7 @@
     \ifx\cpt@mp\empty\else\setLRspecific\fi
     \edef\@@r@f{\ifx\@r@f\empty\else\DecorateRef{\@r@f\unskip}\fi}%
     \t@xtfragment{fig}{%
-      \s@tfont{fig}%
+      \s@tfont{fig}{fig}%
       \ifCaptionRefFirst\@@r@f\nobreak\ \fi
       \c@ption\unskip
       \ifCaptionRefFirst\else\nobreak\ \@@r@f\fi}%
@@ -369,15 +369,15 @@
 
 \def\t@xtfragment#1#2{\bgroup\everypar={}\let\par\endgraf
     \leftskip=0pt plus \hsize \rightskip=\leftskip \parfillskip=0pt
-    \getp@ram{justification}{#1}%
+    \getp@ram{justification}{#1}{#1}%
     \ifx\p@ram\r@ght\rightskip=0pt\fi
     \ifx\p@ram\l@ft\leftskip=0pt\fi
-    \getp@ram{leftmargin}{#1}%
+    \getp@ram{leftmargin}{#1}{#1}%
     \ifx\p@ram\relax \else \advance \ifRTL\rightskip\else\leftskip\fi\p@ram \IndentUnit \fi
-    \getp@ram{rightmargin}{#1}%
+    \getp@ram{rightmargin}{#1}{#1}%
     \ifx\p@ram\relax \else \advance \ifRTL\leftskip\else\rightskip\fi\p@ram \IndentUnit \fi
     \linepenalty=1000
-    \s@tbaseline{#1}%
+    \s@tbaseline{#1}{#1}%
     \noindent\leavevmode #2\par
     \egroup
 }
@@ -442,7 +442,7 @@
      \count255=-\count255
   \fi
   %pad credit
-  \setbox0=\hbox{\s@tfont{\cr@ditstyle}\cr@dit}%
+  \setbox0=\hbox{\s@tfont{\cr@ditstyle}{\cr@ditstyle}\cr@dit}%
   \dimen1=\ht0\advance\dimen1 by \FigCreditPadding\ht0=\dimen1
   \dimen1=\dp0\advance\dimen1 by \FigCreditPadding\dp0=\dimen1
   % Calculuate maximum credit width.  (note count255 is now
@@ -474,7 +474,7 @@
   \setbox0=\hbox{\hskip \FigCreditPadding\box0\hskip \FigCreditPadding}%
   \ifx\cr@ditbox\empty\else
     \ifx\cr@dit@col\empty
-      \getp@ram{background}{\cr@ditstyle}%
+      \getp@ram{background}{\cr@ditstyle}{\cr@ditstyle}%
       \ifx\p@ram\relax
         \edef\cr@dit@col{1 1 1} 
       \else

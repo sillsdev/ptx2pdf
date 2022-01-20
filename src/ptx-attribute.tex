@@ -154,7 +154,7 @@
 \SetSpeciallAttribs{link-href}{\noexpand\pdfURLorGOTO\attr@b:\noexpand\end}{\special{pdf:eann}}
 %%%%%%%%%
 %
-\def\def@endm@rker#1+#2\E{\edef\end@marker{\if #1\ss@ChrP +\fi#2}}
+\def\def@endm@rker#1+#2+#3\E{\edef\end@marker{\if #1\ss@ChrP +\fi#2}}
 % make something that swallows everything up to a given end-marker
 \def\s@tend@marker#1{\let\end@marker\relax\let\d@\def@endm@rker\mctop\ifx\end@marker\relax\edef\end@marker{#1}\fi}
 \def\setgr@bname#1{%
@@ -351,17 +351,17 @@
   \fi
 }
 
-\def\alignb@x#1#2{\getp@ram{justification}{#1}%
+\def\alignb@x#1#2{\getp@ram{justification}{#1}{\styst@k}%
     \ifx\p@ram\c@nter\hfil\else\ifx\p@ram\r@ght\hfil\else\ifx\p@ram\relax\hfil\fi\fi\fi
     \box#2%
     \ifx\p@ram\c@nter\hfil\else\ifx\p@ram\l@ft\hfil\else\ifx\p@ram\relax\hfil\fi\fi\fi}
-\def\rubyb#1#2{\trace{A}{rubyb}\setbox1=\hbox{\s@tfont{#2|#1}\get@ttribute{#2}\attr@b}%
+\def\rubyb#1#2{\trace{A}{rubyb}\setbox1=\hbox{\s@tfont{#2|#1}{#2|#1+\styst@k}\get@ttribute{#2}\attr@b}%
     \dimen0=\ifdim\wd0>\wd1 \wd0\else\wd1\fi
-    \setbox0=\hbox{\vtop{\s@tbaseline{#1}\hbox to \dimen0{\alignb@x{#1}{0}}%
+    \setbox0=\hbox{\vtop{\s@tbaseline{#1}{\styst@k}\hbox to \dimen0{\alignb@x{#1}{0}}%
         \hbox to \dimen0{\alignb@x{#2|#1}{1}}}}}
-\def\rubyt#1#2{\trace{A}{rubyt}\setbox1=\hbox{\s@tfont{#2|#1}\get@ttribute{#2}\attr@b}%
+\def\rubyt#1#2{\trace{A}{rubyt}\setbox1=\hbox{\s@tfont{#2|#1}{#2|#1+\styst@k}\get@ttribute{#2}\attr@b}%
     \dimen0=\ifdim\wd0>\wd1 \wd0\else\wd1\fi
-    \setbox0=\hbox{\vbox{\s@tbaseline{#2|#1}\hbox to \dimen0{\alignb@x{#2|#1}{1}}%
+    \setbox0=\hbox{\vbox{\s@tbaseline{#2|#1}{\styst@k}\hbox to \dimen0{\alignb@x{#2|#1}{1}}%
         \hbox to \dimen0{\alignb@x{#1}{0}}}}}
 
 \expandafter\def\csname complex-rb\endcsname{\rubyt{rb}{gloss}} % USFM-3 suggests ruby goes above. 
