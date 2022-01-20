@@ -1301,11 +1301,11 @@ class GtkViewModel(ViewModel):
         else:
             val = float(val) * 2
         self.set("s_indentUnit", val)
-        for fx in ("fn", "xr"): 
-            if not btn.get_active() and self.get("r_{}pos".format(fx)) == "column":
-               self.set("r_{}pos".format(fx), "normal")
-        for w in ("l_colXRside", "fcb_colXRside"):
-            self.builder.get_object(w).set_visible(not btn.get_active())            
+        # for fx in ("fn", "xr"): 
+            # if not btn.get_active() and self.get("r_{}pos".format(fx)) == "column":
+               # self.set("r_{}pos".format(fx), "normal")
+        # for w in ("l_colXRside", "fcb_colXRside"):
+            # self.builder.get_object(w).set_visible(not btn.get_active())            
 
     def onSimpleFocusClicked(self, btn):
         self.sensiVisible(Gtk.Buildable.get_name(btn), focus=True)
