@@ -70,6 +70,7 @@ parser.add_argument('-D','--define',action=DictAction,help="set UI component=val
 parser.add_argument('--debug',action="store_true",help="Give debug output")
 parser.add_argument("-C","--capture",help="Capture interaction events to file. Not to be used yet")
 parser.add_argument("-z","--extras",type=int,default=0,help="Special bit flags: 0-3 - verbosity of xdvipdfmx")
+parser.add_argument("-I","--identify",action="store_true",help="add widget names to tooltips")
 # parser.add_argument('-t','--test', action='store_true',help="Quick start for a lazy typist")
 args = parser.parse_args()
 

@@ -435,7 +435,8 @@
     \dimen12=\dp11\ifdim\dimen12<\dp12 \dimen12=\dp12\fi
     \trace{n}{Study notes (\the\ht11, \the\ht12)=\the\dimen11}%
     \hbox to \textwidth {\box\ifRTL 12\else11\fi
-      \makecolumngutter{\dimen11}{\dimen11}{\dimen12}{\dimen11}{0}\box\ifRTL 11\else12\fi}%
+      \trace{o}{StudyGutter\ifStudyGutterRule true\else false\fi, ColumnGutter\ifColumnGutterRule true\else false\fi}%
+      \makestudycolumngutter{\dimen11}{\dimen11}{\dimen12}{\dimen11}{0}\box\ifRTL 11\else12\fi}%
     \ifkeepn@tes\else
       \global\setbox\th@cl@ss\box\voidb@x
     \fi
@@ -452,6 +453,7 @@
 \def\StudyNoteRuleWidth{1}
 \def\StudyNoteRuleLeftIndent{\hskip 0.00 mm}
 \def\StudyNoteRuleRightIndent{\hss}
+\newif\ifStudyGutterRule
 
 \newif\iff@rstnote
 \f@rstnotetrue
@@ -534,7 +536,8 @@
      \else\n@tewidth=\textwidth\fi
    \else
      \ifst@dynotes\global\n@tewidth=0.5\textwidth
-       \ifColNotes\advance\n@tewidth by -0.5\gutter\fi
+       \dimen9=\StudyGutterFactor\FontSizeUnit
+       \ifColNotes\advance\n@tewidth by -0.5\dimen9\fi
      \else
        \ifColNotes\ifnum\c@rrentcols=2\global\n@tewidth=\colwidth\else\onecolwidth{\n@tewidth}\fi
        \else\n@tewidth=\textwidth\fi
@@ -1815,6 +1818,20 @@
     \fi
     \ifnum#5>1\hbox to \XrefNotesMargin{}\ifColNotesRule\box4\fi\fi
   \fi\fi
+  \ifnum#5>1\hfil\else\ifnum#5=0\hfil\fi\fi
+  \hbox to \columnshift{}}
+\newif\ifColumnGutterRule
+\def\makestudycolumngutter#1#2#3#4#5{\ifnum#5=1\hfil\else\ifnum#5=3\hfil\else\ifnum#5=0\hfil\fi\fi\fi
+  \trace{o}{makecolumngutter: rule height=#1, box height=#2, box depth=#3, total height=#4, lineside=#5 bits
+            ColumnGutterRuleSkip=\the\ColumnGutterRuleSkip, baselineskip=\the\onel@neunit}%
+% #1: Height of gutter rule, #2: height of gutter rule box, #3: depth of gutter rule box, #4: total height
+% #5: line sides bit 0=left, 1=right (0=centre line, no XrefNotes)
+  \dimen4=#1\advance\dimen4-\ColumnGutterRuleSkip%\advance\dimen4 by #3
+  \setbox4=\ifdim#2>\onel@neunit\vbox to #4{%       don't rule empty single column stuff at end of 2 col
+    \vskip\ColumnGutterRuleSkip
+    \hbox to 1pt{\hfil\vrule height \the\dimen4\hfil}%\dp5=#3 \box5
+    \vfil}\else\box\voidb@x\fi
+  \ifStudyGutterRule \ifnum#5=3\box4\else\ifnum#5=0\box4\fi\fi\fi
   \ifnum#5>1\hfil\else\ifnum#5=0\hfil\fi\fi
   \hbox to \columnshift{}}
 \newif\ifColumnGutterRule

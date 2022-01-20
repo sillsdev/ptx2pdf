@@ -608,7 +608,7 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("fcb_project").set_wrap_width(wide)
         self.builder.get_object("fcb_diglotSecProject").set_wrap_width(wide)
         self.builder.get_object("fcb_strongsFallbackProj").set_wrap_width(wide)
-        self.getInitValues()
+        self.getInitValues(addtooltips=args.identify)
 
             # .mainnb {background-color: #d3d3d3;}
             # .mainnb panel {background-color: #d3d3d3;}
@@ -709,8 +709,25 @@ class GtkViewModel(ViewModel):
         if self.picListView is not None:
             self.picListView.onResized()
 
-    def getInitValues(self):
-        self.initValues = {v[0]: self.get(v[0], skipmissing=True) for k, v in ModelMap.items() if v[0] is not None and not v[0].startswith("r_")}
+    def getInitValues(self, addtooltips=False):
+        self.initValues = {}
+        for k, v in ModelMap.items():
+            if v[0] is None:
+                continue
+            if addtooltips:
+                w = self.builder.get_object(v[0])
+                if w is not None:
+                    try:
+                        t = w.get_tooltip_text()
+                    except AttributeError:
+                        continue
+                    if t is not None:
+                        t += "\n" + v[0]
+                    else:
+                        t = v[0]
+                    w.set_tooltip_text(t)
+            if not v[0].startswith("r_"):
+                self.initValues[v[0]] = self.get(v[0], skipmissing=True)
         for r, a in self.radios.items():
             for v in a:
                 w = self.builder.get_object("r_{}_{}".format(r, v))
