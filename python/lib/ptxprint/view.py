@@ -22,6 +22,7 @@ import json
 from shutil import copyfile, copytree, move
 
 VersionStr = "2.0.30"
+ConfigVersion = "2.07"
 
 pdfre = re.compile(r".+[\\/](.+\.pdf)")
 
@@ -622,6 +623,8 @@ class ViewModel:
                 return (0, k, v)
             else:
                 return (1, k, v)
+        if self.get("_version", skipmissing=True) is None:
+            self.set("_version", ConfigVersion)
         config = configparser.ConfigParser()
         for k, v in sorted(ModelMap.items(), key=sortkeys):
             if v[0] is None or k.endswith("_"):
@@ -802,7 +805,7 @@ class ViewModel:
                 if not os.path.exists(cfile):
                     with open(cfile, "w", encoding="utf-8") as outf:
                         outf.write(chgsHeader)
-            config.set("config", "version", "2.07")
+        config.set("config", "version", ConfigVersion)
             
         styf = os.path.join(self.configPath(cfgname), "ptxprint.sty")
         if not os.path.exists(styf):
@@ -893,6 +896,8 @@ class ViewModel:
             self.updateThumbLines()
 
     def updateStyles(self, version):
+        if version < 0:
+            return
         if version < 1.601:
            if self.get("fcb_textDirection", "") == "rtl":
                 for k in self.styleEditor.allStyles():
