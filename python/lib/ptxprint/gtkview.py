@@ -1051,10 +1051,12 @@ class GtkViewModel(ViewModel):
         self.doBookListChange()
 
     def doBookListChange(self):
-        bl = self.getBooks()
-        bls = " ".join(bl)
-        self.set("r_book", "multiple" if bls else "single")
+        bls = " ".join(self.getBooks())
         self.set('ecb_booklist', bls)
+        bl = self.getAllBooks()
+        if len(bl):
+            self.set("r_book", "single")
+            self.set("ecb_book", list(bl.keys())[0])
         self.updateExamineBook()
         self.updateDialogTitle()
         # Save to user's MRU
@@ -2497,7 +2499,7 @@ class GtkViewModel(ViewModel):
             self.builder.get_object("lb_ptxprintdir").set_label(pycodedir())
             self.builder.get_object("lb_prjdir").set_label(os.path.join(self.settings_dir, self.prjid))
             self.builder.get_object("lb_settings_dir").set_label(self.configPath(cfgname=self.configName()) or "")
-            outputfolder =  self.working_dir.strip(self.configName()) or ""
+            outputfolder =  self.working_dir.strip(self.configName()) or "" if self.working_dir is not None else ""
             self.builder.get_object("lb_working_dir").set_label(outputfolder)
             
     def updateProjectSettings(self, prjid, saveCurrConfig=False, configName=None, readConfig=False):
@@ -2518,7 +2520,7 @@ class GtkViewModel(ViewModel):
         if self.get("r_book") in ("single", "multiple") and (books is None or not len(books)):
             books = self.getAllBooks()
             for b in allbooks:
-                if b in books:
+                if b in books.keys():
                     self.set("ecb_book", b)
                     self.set("r_book", "single")
                     break

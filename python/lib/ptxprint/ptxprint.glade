@@ -7964,7 +7964,6 @@ to be printed from the project.</property>
                                 <property name="halign">start</property>
                                 <property name="valign">center</property>
                                 <property name="margin-start">12</property>
-                                <property name="active">True</property>
                                 <property name="draw-indicator">True</property>
                                 <property name="group">r_book_single</property>
                                 <signal name="clicked" handler="onRadioChanged" swapped="no"/>
@@ -7984,7 +7983,6 @@ to be printed from the project.</property>
                                 <property name="halign">start</property>
                                 <property name="valign">center</property>
                                 <property name="margin-start">12</property>
-                                <property name="active">True</property>
                                 <property name="draw-indicator">True</property>
                                 <property name="group">r_book_single</property>
                                 <signal name="clicked" handler="onRadioChanged" swapped="no"/>
@@ -8167,10 +8165,6 @@ if need be.</property>
                                 <property name="active">0</property>
                                 <property name="has-entry">True</property>
                                 <property name="active-id">0</property>
-                                <items>
-                                  <item>LUK ACT GLO</item>
-                                  <item>PSA PRO</item>
-                                </items>
                                 <signal name="changed" handler="onBookListChanged" swapped="no"/>
                                 <child internal-child="entry">
                                   <object class="GtkEntry">
