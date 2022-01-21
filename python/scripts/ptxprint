@@ -176,6 +176,8 @@ if args.pid is not None and (any(x in args.pid for x in "\\/") or args.pid.lower
 
 if args.directory is not None:
     args.directory = os.path.abspath(args.directory)
+else:
+    args.directory = os.path.abspath(".")
 
 # Where to find the default for -p
 # HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Paratext\8:Settings_Directory

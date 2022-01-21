@@ -359,7 +359,7 @@ class ViewModel:
 
     def getMargins(self):
         def asmm(v): return v * 25.4 / 72.27
-        hfont = self.styleEditor.getval("h", " font")
+        hfont = self.styleEditor.getval("h", "FontName")
         if hfont is None:
             hfont = self.get("bl_fontR")
             if hfont is None:
@@ -395,7 +395,7 @@ class ViewModel:
         pass
 
     def setPrjid(self, prjid, saveCurrConfig=False, loadConfig=True):
-        return self.updateProjectSettings(prjid, configName="Default", saveCurrConfig=saveCurrConfig, readConfig=loadConfig)
+        return self.updateProjectSettings(prjid, configName="Default", saveCurrConfig=saveCurrConfig, readConfig=loadConfig or None)
 
     def setConfigId(self, configid, saveCurrConfig=False, force=False):
         return self.updateProjectSettings(self.prjid, saveCurrConfig=saveCurrConfig, configName=configid, forceConfig=force)

@@ -2502,7 +2502,7 @@ class GtkViewModel(ViewModel):
             outputfolder =  self.working_dir.strip(self.configName()) or "" if self.working_dir is not None else ""
             self.builder.get_object("lb_working_dir").set_label(outputfolder)
             
-    def updateProjectSettings(self, prjid, saveCurrConfig=False, configName=None, readConfig=False):
+    def updateProjectSettings(self, prjid, saveCurrConfig=False, configName=None, readConfig=None):
         if prjid == self.prjid and configName == self.configId:
             return True
         self.picListView.clear()
