@@ -605,16 +605,20 @@ class ViewModel:
                 outf.write("ptxprint-{}".format(datetime.datetime.now().isoformat(" ")))
             self.triggervcs = False
 
-    def _configset(self, config, key, value):
+    def _configset(self, config, key, value, update=True):
         if "/" in key:
             (sect, k) = key.split("/", maxsplit=1)
         else:
             (sect, k) = (key, "")
         if not config.has_section(sect):
             config.add_section(sect)
+            hasval = False
+        else:
+            hasval = config.has_option(sect, k)
         if isinstance(value, bool):
             value = "true" if value else "false"
-        config.set(sect, k, value)
+        if not update or not hasval:
+            config.set(sect, k, value)
 
     def createConfig(self):
         def sortkeys(x):
@@ -650,11 +654,11 @@ class ViewModel:
             if k in self._settingmappings:
                 if val == "" or val == self.ptsettings.dict.get(self._settingmappings[k], ""):
                     continue
-            self._configset(config, k, str(val) if val is not None else "")
+            self._configset(config, k, str(val) if val is not None else "", update=False)
         for k in self.allvars():
-            self._configset(config, "vars/"+str(k), self.getvar(str(k)))
+            self._configset(config, "vars/"+str(k), self.getvar(str(k)), update=False)
         for k in self.allvars(dest="strongs"):
-            self._configset(config, "strongsvars/"+str(k), self.getvar(str(k), dest="strongs"))
+            self._configset(config, "strongsvars/"+str(k), self.getvar(str(k), dest="strongs"), update=False)
         return config
 
     def _config_get(self, config, section, option, conv=None, fallback=_UNSET, **kw):
@@ -709,28 +713,28 @@ class ViewModel:
         if v < 1.400:
             indent = config.getfloat("document", "indentunit", fallback="2.000")
             if indent == 2.0 and config.getboolean("paper", "columns", fallback=True):
-                    config.set("document", "indentunit", "1.000")
+                    self._configset(config, "document/indentunit", "1.000")
         if v < 1.403:   # no need to bump version for this and merge this with a later version test
             f = os.path.join(self.configPath(cfgname), "NestedStyles.sty")
             if os.path.exists(f):
                 os.remove(f)
         if v < 1.404:
-            config.set("fancy", "versedecoratorshift", "-5")
+            self._configset(config, "fancy/versedecoratorshift", "-5")
         if v < 1.502:
             if not config.has_option("document", "includimg"):
-                config.set("document", "includeimg", config.get("snippets", "imgcredits", fallback="false"))
+                self._configset(config, "document/includeimg", config.get("snippets", "imgcredits", fallback="false"))
             colophontext = config.get("project", "colophontext", fallback="").replace("zCopyright", "zcopyright")\
                             .replace("zImageCopyrights", "zimagecopyrights").replace("zLicense", "zlicense")
-            config.set("project", "colophontext", colophontext)
+            self._configset(config, "project/colophontext", colophontext)
         if v < 1.503:
             marginmms = config.getfloat("paper", "margins")
-            config.set("paper", "topmargin", f2s(config.getfloat("paper", "topmarginfactor", fallback=1.0) * marginmms))
-            config.set("paper", "headerpos", f2s(config.getfloat("paper", "topmarginfactor", fallback=1.0) * marginmms \
+            self._configset(config, "paper/topmargin", f2s(config.getfloat("paper", "topmarginfactor", fallback=1.0) * marginmms))
+            self._configset(config, "paper/headerpos", f2s(config.getfloat("paper", "topmarginfactor", fallback=1.0) * marginmms \
                         - config.getfloat("header", "headerposition", fallback=1.0) * marginmms\
                         - config.getfloat("paper", "fontfactor") * 25.4 / 72.27))
-            config.set("paper", "bottommargin", f2s(config.getfloat("paper", "bottommarginfactor", fallback=1.0) * marginmms))
-            config.set("paper", "footerpos", f2s(config.getfloat("header", "footerposition", fallback=1.0) * marginmms))
-            config.set("paper", "rulegap", f2s(config.getfloat("header", "ruleposition", fallback=0.)))
+            self._configset(config, "paper/bottommargin", f2s(config.getfloat("paper", "bottommarginfactor", fallback=1.0) * marginmms))
+            self._configset(config, "paper/footerpos", f2s(config.getfloat("header", "footerposition", fallback=1.0) * marginmms))
+            self._configset(config, "paper/rulegap", f2s(config.getfloat("header", "ruleposition", fallback=0.)))
         if v < 1.504:
             try:
                 self._configset(config, "notes/fneachnewline", not config.getboolean("notes", "fnparagraphednotes", fallback=False))
@@ -741,11 +745,11 @@ class ViewModel:
             # invert right and left in Justification in styles
             pass
         if v < 1.602:
-            config.set("notes", "belownoterulespace", "3.0")
-            config.set("notes", "abovenotespace", f2s(config.getfloat("notes", "abovenotespace", fallback=6.0) - 3.0))
+            self._configset(config, "notes/belownoterulespace", "3.0")
+            self._configset(config, "notes/abovenotespace", f2s(config.getfloat("notes", "abovenotespace", fallback=6.0) - 3.0))
         if v < 1.7:
             if config.getboolean("document", "pdfx1aoutput", fallback=False):
-                config.set("document", "pdfoutput", "PDF/X-1A")
+                self._configset(config, "document/pdfoutput", "PDF/X-1A")
         if v < 1.9:
             val = self._config_get(config, "scrmymr", "syllables", fallback="")
             self._configset(config, "scripts/mymr/syllables", config.getboolean("scrmymr", "syllables", fallback=False) if val else False)
@@ -805,7 +809,7 @@ class ViewModel:
                 if not os.path.exists(cfile):
                     with open(cfile, "w", encoding="utf-8") as outf:
                         outf.write(chgsHeader)
-        config.set("config", "version", ConfigVersion)
+        self._configset(config, "config/version", ConfigVersion)
             
         styf = os.path.join(self.configPath(cfgname), "ptxprint.sty")
         if not os.path.exists(styf):
