@@ -671,7 +671,7 @@ class ViewModel:
         return conv(v)
 
     def versionFwdConfig(self, config, cfgname):
-        version = self._config_get(config, "config", "version", conv=float, fallback=0.0)
+        version = self._config_get(config, "config", "version", conv=float, fallback=ConfigVersion)
         forcerewrite = False
         v = float(version)
         if v < 0.9:

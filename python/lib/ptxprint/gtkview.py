@@ -297,7 +297,7 @@ _object_classes = {
                     "btn_styReset", "btn_refreshFonts", "btn_plAdd", "btn_plDel", 
                     "btn_plGenerate", "btn_plSaveEdits", "btn_resetTabGroups", "btn_adjust_spacing", 
                     "btn_adjust_top", "btn_adjust_bottom", "btn_DBLbundleDiglot", "btn_resetGrid",
-                    "btn_refreshCaptions", "btn_sb_rescanCats", "btn_sbi_lockRatio")
+                    "btn_refreshCaptions", "btn_sb_rescanCats")
 }
 
 _pgpos = {
