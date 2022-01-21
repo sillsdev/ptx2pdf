@@ -264,6 +264,10 @@ _sensitivities = {
     "c_extendedFnotes":        ["gr_ef_layout"],
     "c_ef_verticalrule" :      ["l_ef_colgutteroffset", "s_ef_colgutteroffset", "line_efGutter"],
     "c_filterCats":            ["gr_filterCats"],
+    "r_sbiPosn": {
+        "r_sbiPosn_above":     ["fcb_sbi_posn_above"],
+        "r_sbiPosn_beside":    ["fcb_sbi_posn_beside"],
+        "r_sbiPosn_cutout":    ["fcb_sbi_posn_cutout", "s_sbiCutoutLines", "l_sbiCutoutLines"]},
 }
 # Checkboxes and the different objects they make (in)sensitive when toggled
 # These function OPPOSITE to the ones above (they turn OFF/insensitive when the c_box is active)
@@ -273,6 +277,7 @@ _nonsensitivities = {
     "c_interlinear" :          ["c_letterSpacing", "s_letterShrink", "s_letterStretch"],
     "c_fighidecaptions" :      ["c_fighiderefs"],
     "c_doublecolumn" :         ["l_colXRside", "fcb_colXRside"],
+    "c_sbi_lockRatio" :        ["s_sbi_scaleHeight"],
     "r_xrpos": {
         "r_xrpos_below" :     [],
         "r_xrpos_blend" :     ["l_internote", "s_internote"],
@@ -292,7 +297,7 @@ _object_classes = {
                     "btn_styReset", "btn_refreshFonts", "btn_plAdd", "btn_plDel", 
                     "btn_plGenerate", "btn_plSaveEdits", "btn_resetTabGroups", "btn_adjust_spacing", 
                     "btn_adjust_top", "btn_adjust_bottom", "btn_DBLbundleDiglot", "btn_resetGrid",
-                    "btn_refreshCaptions", "btn_sb_rescanCats")
+                    "btn_refreshCaptions", "btn_sb_rescanCats", "btn_sbi_lockRatio")
 }
 
 _pgpos = {
@@ -3817,10 +3822,16 @@ class GtkViewModel(ViewModel):
             dialog.set_keep_above(False)
         dialog.hide()
 
+    def onBorderLineClicked(self, btn):
+        btname = Gtk.Buildable.get_name(btn)
+        if btname[-3:] in ["inn", "out"] and self.get(btname):
+            self.set("c_sbBorder_lhs", False)
+            self.set("c_sbBorder_rhs", False)
+        elif btname[-3:] in ["lhs", "rhs"] and self.get(btname):
+            self.set("c_sbBorder_inn", False)
+            self.set("c_sbBorder_out", False)
+        
     def onSBimageClicked(self, btn):
-        # btname = Gtk.Buildable.get_name(btn)
-        # print(btname)
-        # w = self.builder.get_object(btname)
         dialog = self.builder.get_object("dlg_SBimage")
         if sys.platform == "win32":
             dialog.set_keep_above(True)
