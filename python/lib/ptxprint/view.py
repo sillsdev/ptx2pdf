@@ -394,8 +394,8 @@ class ViewModel:
     def updateBookList(self):
         pass
 
-    def setPrjid(self, prjid, saveCurrConfig=False):
-        return self.updateProjectSettings(prjid, configName="Default", saveCurrConfig=saveCurrConfig)
+    def setPrjid(self, prjid, saveCurrConfig=False, loadConfig=True):
+        return self.updateProjectSettings(prjid, configName="Default", saveCurrConfig=saveCurrConfig, readConfig=loadConfig)
 
     def setConfigId(self, configid, saveCurrConfig=False, force=False):
         return self.updateProjectSettings(self.prjid, saveCurrConfig=saveCurrConfig, configName=configid, forceConfig=force)
@@ -428,7 +428,7 @@ class ViewModel:
                     copyfile(srcp, destp)
         return True
 
-    def updateProjectSettings(self, prjid, saveCurrConfig=False, configName=None, forceConfig=False, readConfig=False):
+    def updateProjectSettings(self, prjid, saveCurrConfig=False, configName=None, forceConfig=False, readConfig=None):
         currprj = self.prjid
         if currprj is None or currprj != prjid:
             if currprj is not None and saveCurrConfig:
@@ -450,7 +450,10 @@ class ViewModel:
             fdir = os.path.join(self.settings_dir, self.prjid, 'shared', 'fonts')
             if os.path.exists(fdir):
                 cachepath(fdir)
-            readConfig = True
+            if readConfig is not False:
+                readConfig = True
+        if readConfig is None:
+            readConfig = False
         if readConfig or self.configId != configName:
             self.resetToInitValues()
             if currprj == self.prjid:
