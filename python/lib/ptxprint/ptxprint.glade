@@ -153,12 +153,6 @@ THE SOFTWARE.
     <property name="page-increment">0.5</property>
     <property name="page-size">1</property>
   </object>
-  <object class="GtkAdjustment" id="a_diglotPriFraction1">
-    <property name="lower">1</property>
-    <property name="upper">5</property>
-    <property name="value">3</property>
-    <property name="step-increment">1</property>
-  </object>
   <object class="GtkAdjustment" id="a_diglotpagegutter">
     <property name="lower">-200</property>
     <property name="upper">200</property>
@@ -211,12 +205,6 @@ THE SOFTWARE.
     <property name="lower">0.10</property>
     <property name="upper">2</property>
     <property name="value">0.5</property>
-    <property name="step-increment">0.10</property>
-    <property name="page-increment">0.10</property>
-  </object>
-  <object class="GtkAdjustment" id="a_fnRuleThickness1">
-    <property name="lower">0.10</property>
-    <property name="upper">2</property>
     <property name="step-increment">0.10</property>
     <property name="page-increment">0.10</property>
   </object>
@@ -983,6 +971,12 @@ THE SOFTWARE.
     <property name="upper">100</property>
     <property name="step-increment">5</property>
     <property name="page-increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="a_xrSourceSize">
+    <property name="lower">1</property>
+    <property name="upper">5</property>
+    <property name="value">3</property>
+    <property name="step-increment">1</property>
   </object>
   <object class="GtkAdjustment" id="a_zvarListadjustment1">
     <property name="upper">100</property>
@@ -5171,12 +5165,12 @@ information, position and other parameters.</property>
         <col id="1">tl</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Top-Right</col>
-        <col id="1">tr</col>
-      </row>
-      <row>
         <col id="0" translatable="yes">Top-Inner</col>
         <col id="1">ti</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Top-Right</col>
+        <col id="1">tr</col>
       </row>
       <row>
         <col id="0" translatable="yes">Top-Outer</col>
@@ -5191,12 +5185,12 @@ information, position and other parameters.</property>
         <col id="1">bl</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Bottom-Right</col>
-        <col id="1">br</col>
-      </row>
-      <row>
         <col id="0" translatable="yes">Bottom-Inner</col>
         <col id="1">bi</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Bottom-Right</col>
+        <col id="1">br</col>
       </row>
       <row>
         <col id="0" translatable="yes">Bottom-Outer</col>
@@ -13734,7 +13728,7 @@ is moved toward the More side, then many more
 xRefs will be included (including some of the less
 popular or more obscure references).</property>
                                                 <property name="valign">center</property>
-                                                <property name="adjustment">a_diglotPriFraction1</property>
+                                                <property name="adjustment">a_xrSourceSize</property>
                                                 <property name="fill-level">5</property>
                                                 <property name="round-digits">0</property>
                                                 <property name="digits">0</property>
@@ -22684,6 +22678,7 @@ Position:</property>
                                               <!-- n-columns=6 n-rows=2 -->
                                               <object class="GtkGrid">
                                                 <property name="visible">True</property>
+                                                <property name="sensitive">False</property>
                                                 <property name="can-focus">False</property>
                                                 <property name="margin-start">8</property>
                                                 <property name="margin-end">6</property>
@@ -22858,7 +22853,7 @@ Before Verse: Right where it comes in the text
 After Paragraph: After where it comes in the text</property>
                                                     <property name="halign">start</property>
                                                     <property name="model">ls_sbPgPos</property>
-                                                    <property name="wrap-width">1</property>
+                                                    <property name="wrap-width">5</property>
                                                     <property name="has-entry">True</property>
                                                     <property name="entry-text-column">0</property>
                                                     <property name="id-column">1</property>
