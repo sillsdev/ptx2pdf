@@ -2121,7 +2121,7 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("c_fontCtxtSpaces").set_active(isCtxtSpace)
         self.builder.get_object("s_fontBold").set_value(float(embolden or 0.))
         self.builder.get_object("s_fontItalic").set_value(float(italic or 0.))
-        self.builder.get_object("s_fontExtend").set_value(float(extend or 0.))
+        self.builder.get_object("s_fontExtend").set_value(float(extend or 1.0))
         self.builder.get_object("c_fontFake").set_active(hasfake)
         self.builder.get_object("fcb_fontdigits").set_active_id(mapping)
         for a in ("Bold", "Italic"):

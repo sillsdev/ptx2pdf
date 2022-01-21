@@ -3,10 +3,54 @@ PTXprint 2.0.32 Release Notes
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 
-Bug fixes and improvements in 2.0.32 (21 Jan 2022)
+Bug fixes and improvements in 2.0.33 (21 Jan 2022)
 
-  * Quick release - notes to follow...
+  * Added cat-esb UI elements in Styles area (not yet accessible)
+  
+  * Added Sidebar Images dialog (not yet accessible)
 
+  * Added column controls for study notes
+  
+  * Added rule options for Study Notes
+  
+  * Added UI for Stretch option in font dialog
+  
+  * Added Ornament boxes (mostly functioning)
+  
+  * Added -I option to commandline options to show widget identities
+
+  * Improved Cascading Styles in TeX macros
+  
+  * Improved xref and external xref list UI interaction
+  
+  * Improved handling of categories in tables (work in progress)
+  
+  * Improved appropriate single book default for new project
+  
+  * Make BorderHPadding work with plain and double-bordered boxes
+  
+  * No longer loads Default config when starting from command line
+  
+  * Modified fwd version changes to updates so can run on newer files
+  
+  * Fixed starting up with no config
+  
+  * Fixed footnote rules for study bibles
+  
+  * Fixed missing ToC leaders issue
+  
+  * Fixed xref handling of books with no xrefs
+
+  * Fixed booknames and the attribute naming mess
+  
+  * Fixed booknames inference from usfm files
+  
+  * Fixed buglet in handling books with no names
+  
+  * Fixed images in sidebars with GUI-prefered configuration
+  
+  * Fixed header styling bug
+  
 Bug fixes and improvements in 2.0.30 (12 Jan 2022)
 
   * Override styles for \nd and \pn to NOT use underlining (on by default in usfm.sty)
