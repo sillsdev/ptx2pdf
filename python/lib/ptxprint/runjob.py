@@ -849,50 +849,6 @@ class RunJob:
                 return os.path.basename(tgtpath)
         return os.path.basename(tgtpath)
 
-    def removeTempFiles(self, texfiles):
-        notDeleted = []
-        # MH: Should we try to remove the generated Nested files (now that they are stored along with the config)?
-        # What impact does that have on Paratext's S/R (cluttering)
-        # n = os.path.join(self.tmpdir, "NestedStyles.sty")
-        # if os.path.exists(n):
-            # try:
-                # os.remove(n)
-            # except:
-                # notDeleted += [n]
-        for extn in ('delayed','parlocs', 'notepages', 'SFM', 'sfm', 'xdv', 'tex', 'log'):
-            for t in set(texfiles):
-                delfname = os.path.join(self.tmpdir, t.replace(".tex", "."+extn))
-                if os.path.exists(delfname):
-                    try:
-                        os.remove(delfname)
-                    except OSError:
-                        notDeleted += [delfname]
-        for f in self.books:
-            delfname = os.path.join(self.tmpdir, f)
-            if os.path.exists(delfname):
-                try:
-                    os.remove(delfname)
-                except OSError:
-                    notDeleted += [delfname]
-        #folderList = ["tmpPics", "tmpPicLists"] 
-        #notDeleted += self.removeTmpFolders(self.tmpdir, folderList)
-        if len(notDeleted):
-            self.printer.doError(_("Warning: Could not delete\ntemporary file(s) or folder(s):"),
-                    secondary="\n".join(set(notDeleted)))
-
-    def removeTmpFolders(self, base, delFolders, mkdirs=False):
-        notDeleted = []
-        for p in delFolders:
-            path2del = os.path.join(base, p)
-            if os.path.exists(path2del):
-                try:
-                    rmtree(path2del)
-                except OSError:
-                    notDeleted += [path2del]
-            if mkdirs:
-                os.makedirs(path2del)
-        return notDeleted
-
     def usablePageRatios(self, info):
         pageHeight = self.convert2mm(info.dict["paper/height"])
         pageWidth = self.convert2mm(info.dict["paper/width"])

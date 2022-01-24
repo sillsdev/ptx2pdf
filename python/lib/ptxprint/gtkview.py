@@ -3846,3 +3846,16 @@ class GtkViewModel(ViewModel):
             dialog.set_keep_above(False)
         dialog.hide()
         
+    def onDeleteTempFolders(self, btn):
+        notDeleted = []
+        for p in self.getConfigList(self.prjid):
+            path2del = os.path.join(self.settings_dir, self.prjid, "local", "ptxprint", p)
+            if os.path.exists(path2del):
+                try:
+                    rmtree(path2del)
+                except OSError:
+                    notDeleted += [path2del]
+        if len(notDeleted):
+            self.printer.doError(_("Warning: Could not completely delete\nsome temporary folder(s):"),
+                    secondary="\n".join(set(notDeleted)))
+

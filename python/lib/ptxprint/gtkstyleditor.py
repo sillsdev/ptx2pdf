@@ -385,7 +385,7 @@ class StyleEditorView(StyleEditor):
 
         stype = self.getval(self.marker, 'StyleType')
         _showgrid = {'Para': (True, True, False), 'Char': (False, True, False), 'Note': (True, True, True)}
-        visibles = _showgrid.get(stype[:4] if stype is not None else "",(False, True, False))
+        visibles = _showgrid.get(stype[:4] if stype is not None else "",(True, True, False))
         for i, w in enumerate(('Para', 'Char', 'Note')):
             self.builder.get_object("ex_sty"+w).set_expanded(visibles[i])
 

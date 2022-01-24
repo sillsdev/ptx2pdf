@@ -2664,14 +2664,14 @@ saved configuration.</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_diglot">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_grid">
     <property name="visible">True</property>
@@ -2682,27 +2682,27 @@ combination of Crop marks, Guides (margins,
 baselines, etc.) and/or a graph-paper-like Grid
 can be set.</property>
     <property name="icon-name">view-grid-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_spacing">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_top">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_download">
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">software-update-available-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_refresh">
     <property name="visible">True</property>
@@ -2719,7 +2719,7 @@ having to manually re-create all the same
 settings for a similar project.</property>
     <property name="halign">end</property>
     <property name="icon-name">view-grid-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkListStore" id="ls_NoteBlendInto">
     <columns>
@@ -12838,22 +12838,22 @@ usually placed at the end of each page.
                                     <property name="margin-top">6</property>
                                     <property name="margin-bottom">6</property>
                                     <child>
-                                      <!-- n-columns=5 n-rows=3 -->
+                                      <!-- n-columns=4 n-rows=3 -->
                                       <object class="GtkGrid" id="gr_fnRuleSettings">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
+                                        <property name="halign">start</property>
                                         <property name="margin-start">6</property>
                                         <property name="margin-end">6</property>
                                         <property name="margin-top">2</property>
                                         <property name="margin-bottom">6</property>
                                         <property name="row-spacing">2</property>
-                                        <property name="column-spacing">6</property>
-                                        <property name="column-homogeneous">True</property>
+                                        <property name="column-spacing">8</property>
                                         <child>
                                           <object class="GtkLabel" id="l_fnBelowSpace">
                                             <property name="visible">True</property>
                                             <property name="can-focus">False</property>
-                                            <property name="halign">start</property>
+                                            <property name="halign">end</property>
                                             <property name="valign">end</property>
                                             <property name="label" translatable="yes">Space Below Rule (pt)</property>
                                             <attributes>
@@ -12861,7 +12861,7 @@ usually placed at the end of each page.
                                             </attributes>
                                           </object>
                                           <packing>
-                                            <property name="left-attach">4</property>
+                                            <property name="left-attach">3</property>
                                             <property name="top-attach">0</property>
                                           </packing>
                                         </child>
@@ -12869,7 +12869,7 @@ usually placed at the end of each page.
                                           <object class="GtkLabel" id="l_fnAboveSpace">
                                             <property name="visible">True</property>
                                             <property name="can-focus">False</property>
-                                            <property name="halign">start</property>
+                                            <property name="halign">end</property>
                                             <property name="valign">end</property>
                                             <property name="margin-top">4</property>
                                             <property name="label" translatable="yes">Space Above Rule (pt)</property>
@@ -12878,8 +12878,9 @@ usually placed at the end of each page.
                                             </attributes>
                                           </object>
                                           <packing>
-                                            <property name="left-attach">3</property>
+                                            <property name="left-attach">1</property>
                                             <property name="top-attach">0</property>
+                                            <property name="width">2</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -12892,12 +12893,12 @@ area containing footnotes and cross-references.
 If the Footnote Rule is not shown, the vertical
 space will still be calculated as the Space Above
 plus the Space Below (the imaginary) Rule.</property>
-                                            <property name="halign">end</property>
+                                            <property name="halign">start</property>
                                             <property name="label" translatable="yes">Space Separating
 Text From Notes:</property>
                                           </object>
                                           <packing>
-                                            <property name="left-attach">2</property>
+                                            <property name="left-attach">1</property>
                                             <property name="top-attach">1</property>
                                           </packing>
                                         </child>
@@ -12913,7 +12914,7 @@ of the last lines of text, then the footnotes will push
 down into the footer area. If you see this happening,
 increase this value to trigger an earlier page break to
 solve the problem.</property>
-                                            <property name="halign">start</property>
+                                            <property name="halign">end</property>
                                             <property name="text">6.0</property>
                                             <property name="input-purpose">number</property>
                                             <property name="adjustment">a_fnAboveSpace</property>
@@ -12924,7 +12925,7 @@ solve the problem.</property>
                                             <property name="value">6</property>
                                           </object>
                                           <packing>
-                                            <property name="left-attach">3</property>
+                                            <property name="left-attach">2</property>
                                             <property name="top-attach">1</property>
                                           </packing>
                                         </child>
@@ -12934,7 +12935,7 @@ solve the problem.</property>
                                             <property name="can-focus">True</property>
                                             <property name="tooltip-text" translatable="yes">This is the vertical space/gap (pts) between
 the rule and the footnotes.</property>
-                                            <property name="halign">start</property>
+                                            <property name="halign">end</property>
                                             <property name="text">2.0</property>
                                             <property name="input-purpose">number</property>
                                             <property name="adjustment">a_fnBelowSpace</property>
@@ -12945,7 +12946,7 @@ the rule and the footnotes.</property>
                                             <property name="value">2</property>
                                           </object>
                                           <packing>
-                                            <property name="left-attach">4</property>
+                                            <property name="left-attach">3</property>
                                             <property name="top-attach">1</property>
                                           </packing>
                                         </child>
@@ -12954,14 +12955,13 @@ the rule and the footnotes.</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">False</property>
                                             <property name="valign">end</property>
-                                            <property name="margin-start">28</property>
+                                            <property name="margin-start">20</property>
                                             <property name="margin-end">4</property>
                                             <property name="margin-bottom">10</property>
                                           </object>
                                           <packing>
                                             <property name="left-attach">0</property>
                                             <property name="top-attach">0</property>
-                                            <property name="width">3</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -12982,7 +12982,6 @@ the body text from the footnote area.</property>
                                           <packing>
                                             <property name="left-attach">0</property>
                                             <property name="top-attach">1</property>
-                                            <property name="width">2</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -12990,15 +12989,14 @@ the body text from the footnote area.</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">False</property>
                                             <child>
-                                              <!-- n-columns=5 n-rows=3 -->
+                                              <!-- n-columns=5 n-rows=2 -->
                                               <object class="GtkGrid" id="gr_fnRulePosParms">
                                                 <property name="visible">True</property>
                                                 <property name="can-focus">False</property>
                                                 <property name="margin-top">2</property>
                                                 <property name="margin-bottom">6</property>
                                                 <property name="hexpand">True</property>
-                                                <property name="column-spacing">6</property>
-                                                <property name="column-homogeneous">True</property>
+                                                <property name="column-spacing">8</property>
                                                 <child>
                                                   <object class="GtkSpinButton" id="s_fnIndent">
                                                     <property name="visible">True</property>
@@ -13167,21 +13165,6 @@ and Parameters:</property>
                                                 <child>
                                                   <placeholder/>
                                                 </child>
-                                                <child>
-                                                  <placeholder/>
-                                                </child>
-                                                <child>
-                                                  <placeholder/>
-                                                </child>
-                                                <child>
-                                                  <placeholder/>
-                                                </child>
-                                                <child>
-                                                  <placeholder/>
-                                                </child>
-                                                <child>
-                                                  <placeholder/>
-                                                </child>
                                               </object>
                                               <packing>
                                                 <property name="expand">False</property>
@@ -13193,7 +13176,7 @@ and Parameters:</property>
                                           <packing>
                                             <property name="left-attach">0</property>
                                             <property name="top-attach">2</property>
-                                            <property name="width">5</property>
+                                            <property name="width">4</property>
                                           </packing>
                                         </child>
                                       </object>
@@ -14281,22 +14264,22 @@ of the page. </property>
                                     <property name="margin-top">6</property>
                                     <property name="margin-bottom">6</property>
                                     <child>
-                                      <!-- n-columns=5 n-rows=3 -->
+                                      <!-- n-columns=4 n-rows=3 -->
                                       <object class="GtkGrid" id="gr_xrRuleSettings">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
+                                        <property name="halign">start</property>
                                         <property name="margin-start">6</property>
                                         <property name="margin-end">6</property>
                                         <property name="margin-top">2</property>
                                         <property name="margin-bottom">6</property>
                                         <property name="row-spacing">2</property>
-                                        <property name="column-spacing">6</property>
-                                        <property name="column-homogeneous">True</property>
+                                        <property name="column-spacing">8</property>
                                         <child>
                                           <object class="GtkLabel" id="l_xrBelowSpace">
                                             <property name="visible">True</property>
                                             <property name="can-focus">False</property>
-                                            <property name="halign">start</property>
+                                            <property name="halign">end</property>
                                             <property name="valign">end</property>
                                             <property name="label" translatable="yes">Space Below Rule (pt)</property>
                                             <attributes>
@@ -14304,7 +14287,7 @@ of the page. </property>
                                             </attributes>
                                           </object>
                                           <packing>
-                                            <property name="left-attach">4</property>
+                                            <property name="left-attach">3</property>
                                             <property name="top-attach">0</property>
                                           </packing>
                                         </child>
@@ -14312,7 +14295,7 @@ of the page. </property>
                                           <object class="GtkLabel" id="l_xrAboveSpace">
                                             <property name="visible">True</property>
                                             <property name="can-focus">False</property>
-                                            <property name="halign">start</property>
+                                            <property name="halign">end</property>
                                             <property name="valign">end</property>
                                             <property name="margin-top">4</property>
                                             <property name="label" translatable="yes">Space Above Rule (pt)</property>
@@ -14321,8 +14304,9 @@ of the page. </property>
                                             </attributes>
                                           </object>
                                           <packing>
-                                            <property name="left-attach">3</property>
+                                            <property name="left-attach">1</property>
                                             <property name="top-attach">0</property>
+                                            <property name="width">2</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -14343,7 +14327,6 @@ body text from the cross-reference area.</property>
                                           <packing>
                                             <property name="left-attach">0</property>
                                             <property name="top-attach">1</property>
-                                            <property name="width">2</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -14361,7 +14344,7 @@ plus the Space Below (the imaginary) Rule.</property>
 Text From xRefs:</property>
                                           </object>
                                           <packing>
-                                            <property name="left-attach">2</property>
+                                            <property name="left-attach">1</property>
                                             <property name="top-attach">1</property>
                                           </packing>
                                         </child>
@@ -14371,7 +14354,7 @@ Text From xRefs:</property>
                                             <property name="can-focus">True</property>
                                             <property name="tooltip-text" translatable="yes">The vertical space between the main
 text body and the cross-reference rule.</property>
-                                            <property name="halign">start</property>
+                                            <property name="halign">end</property>
                                             <property name="text">6.0</property>
                                             <property name="input-purpose">number</property>
                                             <property name="adjustment">a_xrAboveSpace</property>
@@ -14382,7 +14365,7 @@ text body and the cross-reference rule.</property>
                                             <property name="value">6</property>
                                           </object>
                                           <packing>
-                                            <property name="left-attach">3</property>
+                                            <property name="left-attach">2</property>
                                             <property name="top-attach">1</property>
                                           </packing>
                                         </child>
@@ -14392,7 +14375,7 @@ text body and the cross-reference rule.</property>
                                             <property name="can-focus">True</property>
                                             <property name="tooltip-text" translatable="yes">This is the vertical space/gap (pts) between
 the rule and the cross-references. </property>
-                                            <property name="halign">start</property>
+                                            <property name="halign">end</property>
                                             <property name="text">2.0</property>
                                             <property name="input-purpose">number</property>
                                             <property name="adjustment">a_xrBelowSpace</property>
@@ -14403,7 +14386,7 @@ the rule and the cross-references. </property>
                                             <property name="value">2</property>
                                           </object>
                                           <packing>
-                                            <property name="left-attach">4</property>
+                                            <property name="left-attach">3</property>
                                             <property name="top-attach">1</property>
                                           </packing>
                                         </child>
@@ -14412,20 +14395,21 @@ the rule and the cross-references. </property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">False</property>
                                             <property name="valign">end</property>
-                                            <property name="margin-start">28</property>
+                                            <property name="margin-start">20</property>
                                             <property name="margin-end">4</property>
                                             <property name="margin-bottom">10</property>
                                           </object>
                                           <packing>
                                             <property name="left-attach">0</property>
                                             <property name="top-attach">0</property>
-                                            <property name="width">3</property>
                                           </packing>
                                         </child>
                                         <child>
                                           <object class="GtkBox">
                                             <property name="visible">True</property>
                                             <property name="can-focus">False</property>
+                                            <property name="halign">start</property>
+                                            <property name="margin-start">20</property>
                                             <property name="hexpand">True</property>
                                             <child>
                                               <!-- n-columns=5 n-rows=2 -->
@@ -14435,8 +14419,7 @@ the rule and the cross-references. </property>
                                                 <property name="margin-top">2</property>
                                                 <property name="margin-bottom">6</property>
                                                 <property name="hexpand">True</property>
-                                                <property name="column-spacing">6</property>
-                                                <property name="column-homogeneous">True</property>
+                                                <property name="column-spacing">8</property>
                                                 <child>
                                                   <object class="GtkSpinButton" id="s_xrIndent">
                                                     <property name="visible">True</property>
@@ -14616,7 +14599,7 @@ and Parameters:</property>
                                           <packing>
                                             <property name="left-attach">0</property>
                                             <property name="top-attach">2</property>
-                                            <property name="width">5</property>
+                                            <property name="width">4</property>
                                           </packing>
                                         </child>
                                       </object>
@@ -14935,7 +14918,7 @@ possible for this option.</property>
                                             <property name="margin-top">6</property>
                                             <property name="margin-bottom">6</property>
                                             <child>
-                                              <!-- n-columns=5 n-rows=3 -->
+                                              <!-- n-columns=4 n-rows=3 -->
                                               <object class="GtkGrid" id="gr_snRuleSettings">
                                                 <property name="visible">True</property>
                                                 <property name="can-focus">False</property>
@@ -14946,108 +14929,7 @@ possible for this option.</property>
                                                 <property name="margin-top">2</property>
                                                 <property name="margin-bottom">6</property>
                                                 <property name="row-spacing">2</property>
-                                                <property name="column-spacing">6</property>
-                                                <property name="column-homogeneous">True</property>
-                                                <child>
-                                                  <object class="GtkLabel" id="l_snBelowSpace">
-                                                    <property name="visible">True</property>
-                                                    <property name="can-focus">False</property>
-                                                    <property name="halign">start</property>
-                                                    <property name="valign">end</property>
-                                                    <property name="label" translatable="yes">Space Below Rule (pt)</property>
-                                                    <attributes>
-                                                      <attribute name="style" value="italic"/>
-                                                    </attributes>
-                                                  </object>
-                                                  <packing>
-                                                    <property name="left-attach">4</property>
-                                                    <property name="top-attach">0</property>
-                                                  </packing>
-                                                </child>
-                                                <child>
-                                                  <object class="GtkLabel" id="l_snAboveSpace">
-                                                    <property name="visible">True</property>
-                                                    <property name="can-focus">False</property>
-                                                    <property name="halign">start</property>
-                                                    <property name="valign">end</property>
-                                                    <property name="margin-top">4</property>
-                                                    <property name="label" translatable="yes">Space Above Rule (pt)</property>
-                                                    <attributes>
-                                                      <attribute name="style" value="italic"/>
-                                                    </attributes>
-                                                  </object>
-                                                  <packing>
-                                                    <property name="left-attach">3</property>
-                                                    <property name="top-attach">0</property>
-                                                  </packing>
-                                                </child>
-                                                <child>
-                                                  <object class="GtkLabel" id="l_text2StudyNotesSpace">
-                                                    <property name="visible">True</property>
-                                                    <property name="can-focus">False</property>
-                                                    <property name="tooltip-text" translatable="yes">The vertical space between the body text and the
-area containing footnotes and cross-references.
-
-If the Footnote Rule is not shown, the vertical
-space will still be calculated as the Space Above
-plus the Space Below (the imaginary) Rule.</property>
-                                                    <property name="halign">end</property>
-                                                    <property name="label" translatable="yes">Space Separating
-Text From Notes:</property>
-                                                  </object>
-                                                  <packing>
-                                                    <property name="left-attach">2</property>
-                                                    <property name="top-attach">1</property>
-                                                  </packing>
-                                                </child>
-                                                <child>
-                                                  <object class="GtkSpinButton" id="s_snAboveSpace">
-                                                    <property name="visible">True</property>
-                                                    <property name="can-focus">True</property>
-                                                    <property name="tooltip-text" translatable="yes">The vertical space between the main
-text body and the footnote rule.
-
-Note: if you make this value less than the descenders
-of the last lines of text, then the footnotes will push
-down into the footer area. If you see this happening,
-increase this value to trigger an earlier page break to
-solve the problem.</property>
-                                                    <property name="halign">start</property>
-                                                    <property name="text">6.0</property>
-                                                    <property name="input-purpose">number</property>
-                                                    <property name="adjustment">a_fnAboveSpace</property>
-                                                    <property name="climb-rate">0.5</property>
-                                                    <property name="digits">1</property>
-                                                    <property name="numeric">True</property>
-                                                    <property name="update-policy">if-valid</property>
-                                                    <property name="value">6</property>
-                                                  </object>
-                                                  <packing>
-                                                    <property name="left-attach">3</property>
-                                                    <property name="top-attach">1</property>
-                                                  </packing>
-                                                </child>
-                                                <child>
-                                                  <object class="GtkSpinButton" id="s_snBelowSpace">
-                                                    <property name="visible">True</property>
-                                                    <property name="can-focus">True</property>
-                                                    <property name="tooltip-text" translatable="yes">This is the vertical space/gap (pts) between
-the rule and the footnotes.</property>
-                                                    <property name="halign">start</property>
-                                                    <property name="text">2.0</property>
-                                                    <property name="input-purpose">number</property>
-                                                    <property name="adjustment">a_fnBelowSpace</property>
-                                                    <property name="climb-rate">0.5</property>
-                                                    <property name="digits">1</property>
-                                                    <property name="numeric">True</property>
-                                                    <property name="update-policy">if-valid</property>
-                                                    <property name="value">2</property>
-                                                  </object>
-                                                  <packing>
-                                                    <property name="left-attach">4</property>
-                                                    <property name="top-attach">1</property>
-                                                  </packing>
-                                                </child>
+                                                <property name="column-spacing">8</property>
                                                 <child>
                                                   <object class="GtkSeparator" id="rule_studynote">
                                                     <property name="visible">True</property>
@@ -15055,35 +14937,13 @@ the rule and the footnotes.</property>
                                                     <property name="valign">end</property>
                                                     <property name="margin-left">28</property>
                                                     <property name="margin-right">4</property>
-                                                    <property name="margin-start">28</property>
+                                                    <property name="margin-start">20</property>
                                                     <property name="margin-end">4</property>
                                                     <property name="margin-bottom">10</property>
                                                   </object>
                                                   <packing>
                                                     <property name="left-attach">0</property>
                                                     <property name="top-attach">0</property>
-                                                    <property name="width">3</property>
-                                                  </packing>
-                                                </child>
-                                                <child>
-                                                  <object class="GtkCheckButton" id="c_studynoterule">
-                                                    <property name="label" translatable="yes">Show Study Note Rule</property>
-                                                    <property name="visible">True</property>
-                                                    <property name="can-focus">True</property>
-                                                    <property name="receives-default">False</property>
-                                                    <property name="tooltip-text" translatable="yes">This is the horizontal rule separating
-the body text from the footnote area.</property>
-                                                    <property name="halign">start</property>
-                                                    <property name="valign">center</property>
-                                                    <property name="margin-left">12</property>
-                                                    <property name="margin-start">12</property>
-                                                    <property name="active">True</property>
-                                                    <property name="draw-indicator">True</property>
-                                                  </object>
-                                                  <packing>
-                                                    <property name="left-attach">0</property>
-                                                    <property name="top-attach">1</property>
-                                                    <property name="width">2</property>
                                                   </packing>
                                                 </child>
                                                 <child>
@@ -15091,15 +14951,14 @@ the body text from the footnote area.</property>
                                                     <property name="visible">True</property>
                                                     <property name="can-focus">False</property>
                                                     <child>
-                                                      <!-- n-columns=5 n-rows=3 -->
+                                                      <!-- n-columns=5 n-rows=2 -->
                                                       <object class="GtkGrid" id="gr_fnRulePosParms2">
                                                         <property name="visible">True</property>
                                                         <property name="can-focus">False</property>
                                                         <property name="margin-top">2</property>
                                                         <property name="margin-bottom">6</property>
                                                         <property name="hexpand">True</property>
-                                                        <property name="column-spacing">6</property>
-                                                        <property name="column-homogeneous">True</property>
+                                                        <property name="column-spacing">8</property>
                                                         <child>
                                                           <object class="GtkSpinButton" id="s_snIndent">
                                                             <property name="visible">True</property>
@@ -15169,7 +15028,7 @@ of the column/page width.</property>
                                                             <property name="can-default">True</property>
                                                             <property name="halign">start</property>
                                                             <property name="valign">start</property>
-                                                            <property name="model">ls_fnruleHorizPosn</property>
+                                                            <property name="model">ls_snruleHorizPosn</property>
                                                             <property name="wrap-width">1</property>
                                                             <property name="active">0</property>
                                                             <property name="entry-text-column">0</property>
@@ -15268,21 +15127,6 @@ and Parameters:</property>
                                                         <child>
                                                           <placeholder/>
                                                         </child>
-                                                        <child>
-                                                          <placeholder/>
-                                                        </child>
-                                                        <child>
-                                                          <placeholder/>
-                                                        </child>
-                                                        <child>
-                                                          <placeholder/>
-                                                        </child>
-                                                        <child>
-                                                          <placeholder/>
-                                                        </child>
-                                                        <child>
-                                                          <placeholder/>
-                                                        </child>
                                                       </object>
                                                       <packing>
                                                         <property name="expand">False</property>
@@ -15294,7 +15138,128 @@ and Parameters:</property>
                                                   <packing>
                                                     <property name="left-attach">0</property>
                                                     <property name="top-attach">2</property>
-                                                    <property name="width">5</property>
+                                                    <property name="width">4</property>
+                                                  </packing>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkCheckButton" id="c_studynoterule">
+                                                    <property name="label" translatable="yes">Show Study Note Rule</property>
+                                                    <property name="visible">True</property>
+                                                    <property name="can-focus">True</property>
+                                                    <property name="receives-default">False</property>
+                                                    <property name="tooltip-text" translatable="yes">This is the horizontal rule separating
+the body text from the footnote area.</property>
+                                                    <property name="halign">start</property>
+                                                    <property name="valign">center</property>
+                                                    <property name="margin-left">12</property>
+                                                    <property name="margin-start">12</property>
+                                                    <property name="active">True</property>
+                                                    <property name="draw-indicator">True</property>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="left-attach">0</property>
+                                                    <property name="top-attach">1</property>
+                                                  </packing>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkLabel" id="l_snBelowSpace">
+                                                    <property name="visible">True</property>
+                                                    <property name="can-focus">False</property>
+                                                    <property name="halign">end</property>
+                                                    <property name="valign">end</property>
+                                                    <property name="label" translatable="yes">Space Below Rule (pt)</property>
+                                                    <attributes>
+                                                      <attribute name="style" value="italic"/>
+                                                    </attributes>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="left-attach">3</property>
+                                                    <property name="top-attach">0</property>
+                                                  </packing>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkLabel" id="l_snAboveSpace">
+                                                    <property name="visible">True</property>
+                                                    <property name="can-focus">False</property>
+                                                    <property name="halign">end</property>
+                                                    <property name="valign">end</property>
+                                                    <property name="margin-top">4</property>
+                                                    <property name="label" translatable="yes">Space Above Rule (pt)</property>
+                                                    <attributes>
+                                                      <attribute name="style" value="italic"/>
+                                                    </attributes>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="left-attach">1</property>
+                                                    <property name="top-attach">0</property>
+                                                    <property name="width">2</property>
+                                                  </packing>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkLabel" id="l_text2StudyNotesSpace">
+                                                    <property name="visible">True</property>
+                                                    <property name="can-focus">False</property>
+                                                    <property name="tooltip-text" translatable="yes">The vertical space between the body text and the
+area containing footnotes and cross-references.
+
+If the Footnote Rule is not shown, the vertical
+space will still be calculated as the Space Above
+plus the Space Below (the imaginary) Rule.</property>
+                                                    <property name="halign">start</property>
+                                                    <property name="label" translatable="yes">Space Separating
+Text From Notes:</property>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="left-attach">1</property>
+                                                    <property name="top-attach">1</property>
+                                                  </packing>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkSpinButton" id="s_snAboveSpace">
+                                                    <property name="visible">True</property>
+                                                    <property name="can-focus">True</property>
+                                                    <property name="tooltip-text" translatable="yes">The vertical space between the main
+text body and the footnote rule.
+
+Note: if you make this value less than the descenders
+of the last lines of text, then the footnotes will push
+down into the footer area. If you see this happening,
+increase this value to trigger an earlier page break to
+solve the problem.</property>
+                                                    <property name="halign">end</property>
+                                                    <property name="text">6.0</property>
+                                                    <property name="input-purpose">number</property>
+                                                    <property name="adjustment">a_fnAboveSpace</property>
+                                                    <property name="climb-rate">0.5</property>
+                                                    <property name="digits">1</property>
+                                                    <property name="numeric">True</property>
+                                                    <property name="update-policy">if-valid</property>
+                                                    <property name="value">6</property>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="left-attach">2</property>
+                                                    <property name="top-attach">1</property>
+                                                  </packing>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkSpinButton" id="s_snBelowSpace">
+                                                    <property name="visible">True</property>
+                                                    <property name="can-focus">True</property>
+                                                    <property name="tooltip-text" translatable="yes">This is the vertical space/gap (pts) between
+the rule and the footnotes.</property>
+                                                    <property name="halign">end</property>
+                                                    <property name="text">2.0</property>
+                                                    <property name="input-purpose">number</property>
+                                                    <property name="adjustment">a_fnBelowSpace</property>
+                                                    <property name="climb-rate">0.5</property>
+                                                    <property name="digits">1</property>
+                                                    <property name="numeric">True</property>
+                                                    <property name="update-policy">if-valid</property>
+                                                    <property name="value">2</property>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="left-attach">3</property>
+                                                    <property name="top-attach">1</property>
                                                   </packing>
                                                 </child>
                                               </object>
@@ -21340,6 +21305,8 @@ the marker you need.</property>
                                 <property name="hexpand">True</property>
                                 <property name="vexpand">True</property>
                                 <property name="resize-mode">immediate</property>
+                                <property name="hscrollbar-policy">always</property>
+                                <property name="vscrollbar-policy">always</property>
                                 <property name="shadow-type">in</property>
                                 <property name="overlay-scrolling">False</property>
                                 <child>
@@ -22672,7 +22639,6 @@ Position:</property>
                                               <!-- n-columns=6 n-rows=2 -->
                                               <object class="GtkGrid">
                                                 <property name="visible">True</property>
-                                                <property name="sensitive">False</property>
                                                 <property name="can-focus">False</property>
                                                 <property name="margin-start">8</property>
                                                 <property name="margin-end">6</property>
@@ -22800,8 +22766,12 @@ of the column/page width.</property>
                                                   <object class="GtkButton">
                                                     <property name="label" translatable="yes">Borders...</property>
                                                     <property name="visible">True</property>
+                                                    <property name="sensitive">False</property>
                                                     <property name="can-focus">True</property>
                                                     <property name="receives-default">True</property>
+                                                    <property name="tooltip-text" translatable="yes">Click for additional settings
+to control the look of borders
+for this category of sidebar.</property>
                                                     <property name="halign">end</property>
                                                     <signal name="clicked" handler="onSBborderClicked" swapped="no"/>
                                                   </object>
@@ -22814,8 +22784,12 @@ of the column/page width.</property>
                                                   <object class="GtkButton">
                                                     <property name="label" translatable="yes">FG...</property>
                                                     <property name="visible">True</property>
+                                                    <property name="sensitive">False</property>
                                                     <property name="can-focus">True</property>
                                                     <property name="receives-default">True</property>
+                                                    <property name="tooltip-text" translatable="yes">Click for additional settings
+to use a foreground image
+for this category of sidebar.</property>
                                                     <signal name="clicked" handler="onSBimageClicked" swapped="no"/>
                                                   </object>
                                                   <packing>
@@ -22827,8 +22801,12 @@ of the column/page width.</property>
                                                   <object class="GtkButton">
                                                     <property name="label" translatable="yes">BG...</property>
                                                     <property name="visible">True</property>
+                                                    <property name="sensitive">False</property>
                                                     <property name="can-focus">True</property>
                                                     <property name="receives-default">True</property>
+                                                    <property name="tooltip-text" translatable="yes">Click for additional settings
+to use a background image
+for this category of sidebar.</property>
                                                     <signal name="clicked" handler="onSBimageClicked" swapped="no"/>
                                                   </object>
                                                   <packing>
@@ -22855,7 +22833,8 @@ After Paragraph: After where it comes in the text</property>
                                                     <child internal-child="entry">
                                                       <object class="GtkEntry">
                                                         <property name="can-focus">False</property>
-                                                        <property name="width-chars">14</property>
+                                                        <property name="halign">start</property>
+                                                        <property name="width-chars">15</property>
                                                       </object>
                                                     </child>
                                                   </object>
@@ -22931,6 +22910,22 @@ After Paragraph: After where it comes in the text</property>
                                       <object class="GtkLabel">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
+                                        <property name="tooltip-text" translatable="yes">Hover over these help topics
+to gain a greater understanding
+about how the Styles editor works.</property>
+                                        <property name="margin-end">6</property>
+                                        <property name="label" translatable="yes">Hover-help:</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
                                         <property name="tooltip-text" translatable="yes">When a setting's name is in bold it indicates that 
 the value is different from what is in the stylesheet.
 
@@ -22944,19 +22939,19 @@ any parameter to RESET it to the stylesheet value.</property>
                                       <packing>
                                         <property name="expand">False</property>
                                         <property name="fill">True</property>
-                                        <property name="position">0</property>
+                                        <property name="position">1</property>
                                       </packing>
                                     </child>
                                     <child>
                                       <object class="GtkLabel">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
-                                        <property name="label" translatable="yes">  *  </property>
+                                        <property name="label" translatable="yes">   |   </property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
                                         <property name="fill">True</property>
-                                        <property name="position">1</property>
+                                        <property name="position">2</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -22981,7 +22976,7 @@ usfm_sb.sty is the underlying Paratext stylesheet (which should never be edited)
                                       <packing>
                                         <property name="expand">False</property>
                                         <property name="fill">True</property>
-                                        <property name="position">2</property>
+                                        <property name="position">3</property>
                                       </packing>
                                     </child>
                                   </object>
@@ -25330,7 +25325,7 @@ after the scripture text.</property>
                             <property name="can-focus">False</property>
                             <property name="left-padding">12</property>
                             <child>
-                              <!-- n-columns=6 n-rows=12 -->
+                              <!-- n-columns=7 n-rows=12 -->
                               <object class="GtkGrid">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
@@ -25375,11 +25370,12 @@ folder (but should automatically open
 in your system's PDF viewer anyway).
 
 Note that ALL the files and subfolders
-in this location are temporary and can
-be deleted. None of these files are
+in this location are TEMPORARY and 
+can be deleted. None of these files are
 included in Paratext's Send/Recv data.</property>
                                     <property name="halign">end</property>
-                                    <property name="label" translatable="yes">Output PDF Location:</property>
+                                    <property name="label" translatable="yes">Output PDF Location (which
+also includes temporary files):</property>
                                     <property name="justify">right</property>
                                   </object>
                                   <packing>
@@ -25487,7 +25483,7 @@ Annoyances or Other Issues:</property>
                                   <packing>
                                     <property name="left-attach">3</property>
                                     <property name="top-attach">5</property>
-                                    <property name="width">3</property>
+                                    <property name="width">4</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -25593,7 +25589,7 @@ to the PTX2PDF Macros:</property>
                                   <packing>
                                     <property name="left-attach">2</property>
                                     <property name="top-attach">2</property>
-                                    <property name="width">4</property>
+                                    <property name="width">5</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -25628,7 +25624,7 @@ to the PTX2PDF Macros:</property>
                                   <packing>
                                     <property name="left-attach">3</property>
                                     <property name="top-attach">7</property>
-                                    <property name="width">3</property>
+                                    <property name="width">4</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -25746,7 +25742,7 @@ ptxprint_support@sil.org</property>
                                   <packing>
                                     <property name="left-attach">3</property>
                                     <property name="top-attach">6</property>
-                                    <property name="width">3</property>
+                                    <property name="width">4</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -25771,7 +25767,7 @@ general users and common solutions.</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">True</property>
-                                    <property name="halign">end</property>
+                                    <property name="halign">start</property>
                                     <property name="margin-end">6</property>
                                     <property name="margin-top">3</property>
                                     <property name="margin-bottom">3</property>
@@ -25780,9 +25776,54 @@ general users and common solutions.</property>
                                     <signal name="clicked" handler="onAboutClicked" swapped="no"/>
                                   </object>
                                   <packing>
+                                    <property name="left-attach">6</property>
+                                    <property name="top-attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkButton" id="btn_deleteTempFiles">
+                                    <property name="label">gtk-delete</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="receives-default">True</property>
+                                    <property name="tooltip-text" translatable="yes">Delete all the TEMPORARY 
+files and subfolders in the
+output location. This will
+not delete the resulting PDF
+files, but will save some space
+by deleting unneeded files.</property>
+                                    <property name="halign">end</property>
+                                    <property name="margin-top">3</property>
+                                    <property name="margin-bottom">3</property>
+                                    <property name="use-stock">True</property>
+                                    <property name="always-show-image">True</property>
+                                    <signal name="clicked" handler="onDeleteTempFolders" swapped="no"/>
+                                  </object>
+                                  <packing>
                                     <property name="left-attach">5</property>
                                     <property name="top-attach">0</property>
                                   </packing>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
                                 </child>
                                 <child>
                                   <placeholder/>
