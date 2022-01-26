@@ -10,6 +10,7 @@ Alias sed et est est vel et. Sint facilis illum sed est nihil fugiat. Minima qua
 
 \zrule\*
 \p Default rule. 
+\zlabel|Optio\*
 Optio aut consequatur recusandae rerum assumenda optio. Ab nostrum nulla maiores quas sed sed. Debitis et dolor molestiae voluptate molestiae id nobis illum.
 
 \zrule|0.7\*
@@ -27,4 +28,5 @@ Impedit aut dolorem ab quia quae. Enim nostrum amet error voluptatem vero volupt
 \zrule\*
 \zgap|100pt plus 10em\*
 \vfill
+The paragraph starting "Optio aut" is on page \zpage|Optio\* 
 \pb

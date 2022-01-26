@@ -277,7 +277,9 @@
   \fi
   \op@ninghooks{start}{\thismil@stone}%
   \let\oldc@rref\c@rref\let\olddc@rref\dc@rref
+  %\trace{m}{Checking for  ms:\thismil@stone=\attr@b}%
   \ifx\attr@b\relax\else\ifcsname ms:\thismil@stone=\attr@b\endcsname
+    \trace{m}{Running ms:\thismil@stone=\attr@b}%
     \csname ms:\thismil@stone=\attr@b\endcsname
   \fi\fi
   \ifx\attr@b\relax
@@ -418,4 +420,3 @@
                           \hbox to \dimen0{\if#2r\relax\hfil\fi\unhbox1\if#2l\relax\hfil\fi}%
     }\egroup
 }
-
