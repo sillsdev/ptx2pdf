@@ -35,6 +35,7 @@ A [PDF](../documentation/ptx2pdf-MacroSetupParameters.pdf?attredirects=0/index.h
 -  [**11** Hooks](#ptx2pdf-MacroSetupParameters-Hooks)
 -  [**12** Introduction markers](#ptx2pdf-MacroSetupParameters-IntroMarkers)
 -  [**12** Grid and Graphpaper](#ptx2pdf-MacroSetupParameters-Graphpaper)
+-  [**13** PageNumbers](#ptx2pdf-PageNumbers)
 
    [**A.1** Appendix: Common OpenType script tags](#ptx2pdf-MacroSetupParameters-Appendix:CommonOpenTypescripttags)
 
@@ -426,6 +427,36 @@ cleared, so that the old page is not reused.
 <a name="ptx2pdf-MacroSetupParameters-scriptTags"></a>
 
 <a name="ptx2pdf-MacroSetupParameters-scriptTags"></a>
+##  <a name="ptx2pdf-PageNumbers">PageNumbers</a>
+Special-purpose milestones have been defined:
+```
+\esb \cat BibleBackgroud\cat*
+\zlabel|TypesOfPsalms\*
+Scripure contains several different types of Psalms....
+\esbe
+
+...
+
+\fe + \ft A psalm of ascent, see article on page \zpage|TypesOfPsalms\* \fe*
+```
+The `\zlabel` milestone instructs TeX to remember the page number of the text
+when the text is written to the pdf file. (using the `.picpages` file). The
+next time the file is processed, the page number will be 
+available.  `\zpage` will use that number, assuming it is defined. It will use
+the page number as printed by default (i.e. Roman numerals for introductory
+matter).
+
+Warning: At the moment, failures are silent and  there is no error checking,
+etc. It is planned that there will be. 
+
+It is planned that at some point there will be a `\zref` milestone, which
+would be repaced with Book Chapter:Verse of the most recent reference at the
+time the item is processed. As images and side bars can move to other pages,
+this method of referencing anything other than footnotes or verse text may not
+be reliable.
+
+
+
 
 ### <a name="ptx2pdf-MacroSetupParameters-scriptTags"></a><a name="ptx2pdf-MacroSetupParameters-Appendix:CommonOpenTypescripttags">Appendix: Common OpenType script tags</a>
 
