@@ -586,6 +586,7 @@
   \global\dr@ppednumberfalse
   \ifDropActions\else\bgroup\liter@lspecials
     \ifx\book\relax \let\t@mp=\id@@@ \else \let\t@mp=\book\fi
+    \ifrefbookmarks\let\t@mp=\id@@@\fi
     \pdf@utline{\id@@@.}{\t@mp}{0}%
     \global\let\prevb@ok\book\egroup\fi
  \fi}
@@ -631,10 +632,12 @@
       \let\t@mp\book
     \fi
     \x@\let\x@\t@mp\csname book\@@side\endcsname
+    \ifrefbookmarks\let\t@mp=\id@@@\fi
     \ifx\book\relax \let\t@mp=\id@@@ \fi
     \pdf@utline{\id@@@\@@side.\ch@pter}{\t@mp\space\ch@pter}{1}%
   \egroup\fi}
 
+\newif\ifrefbookmarks
 %-cpar_pdfchaptermark
 
 %+cpar_initparlocs
