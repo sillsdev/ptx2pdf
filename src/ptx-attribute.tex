@@ -63,15 +63,25 @@
   \fi
   \iftemp
     \get@ttribute{#1}%
-    \trace{A}{Special #1 :\attr@b}%
-    %\tracingmacros=1
+    \trace{A}{Special '#1':'\attr@b'}%
+    \tracingmacros=1
+    \tracingassigns=1
+    \let\exptmp\relax\let\tmp\relax
     \setbox0\hbox{%
+        \begingroup% Ensure there are no nesting errors
+        %\trace{A}{>>>}%
 	\ifx\tmpa\relax\else
-          \edef\tmp{\tmpa}\tmp\fi
+          \edef\exptmp{\tmpa}\exptmp\fi
+        \relax
 	\unhbox0
 	\ifx\tmpb\relax\else
-          \edef\tmp{\tmpb}\tmp\fi
+          \edef\exptmp{\tmpb}\exptmp\fi
+        \relax
+        %\trace{A}{<<<}%
+        \endgroup
       }%
+    \tracingassigns=0
+    \tracingmacros=0
   \fi
 }
 \def\Spec@lAttribName#1#2{attr-spec-#1-#2}
@@ -151,7 +161,7 @@
 
 
 \SetSpeciallAttribs{link-id}{\ifActions\special{pdf:dest (\attr@b) [@thispage /XYZ @xpos @ypos null]}\fi}{}
-\SetSpeciallAttribs{link-href}{\noexpand\pdfURLorGOTO\attr@b:\noexpand\end}{\special{pdf:eann}}
+\SetSpeciallAttribs{link-href}{\noexpand\trace{A}{Applying link-href:'\attr@b'}\noexpand\pdfURLorGOTO \attr@b:\noexpand\end}{\special{pdf:eann}}
 %%%%%%%%%
 %
 \def\def@endm@rker#1+#2+#3\E{\edef\end@marker{\if #1\ss@ChrP +\fi#2}}
@@ -244,32 +254,56 @@
 \def\default@ttrkey{} % What unnamed attributes get saved 
 \def\thisdefault@ttrkey{} % What do unnamed attributes get saved as?
 \def\relaxval{\relax}
-\def\milestoneJoinChar{ } % While replacing ' ' with '_' is  nice for styling things like \qt-s |the crowd\*, this then breaks equivalence with ... who="The crowd"
-\def\save@ttribute#1="#2"=#3\E{%
-  \lowercase{\def\attr@key{#1}}\def\attr@val{#2}%
+\def\spaceval{ }
+\def\s@tattr@val #1 #2\E{\tracingmacros=1\edef\test{#2}\ifx\test\empty\else\edef\attr@val{\ifx\attr@val\empty\else\attr@val\space\fi#1}\x@\s@tattr@val \test\E\fi\tracingmacros=0}% Remove trailing space(s)
+\def\milestoneJoinChar{ } % While replacing ' ' with '_' is  nice for styling things like \qt-s |the crowd\*, this then breaks equivalence with ... who="the crowd"
+\def\save@ttribute#1="#2" #3\E{%
+  \trace{A}{save@ttribute '#1'="#2" #3}%
+  \lowercase{\edef\attr@key{#1}}\edef\attr@val{#2}%
   \ifx\attr@val\relaxval
     \ifx\thisdefault@ttrkey\empty
       \edef\thisdefault@ttrkey{UnNamed}%
     \fi
-    \get@ttribute{\thisdefault@ttrkey}%
-    \ifx\attr@b\relax
-      \edef\attr@val{#1}%
-    \else
-      \ifmst@nestyle
-	\edef\attr@val{\attr@b\milestoneJoinChar#1}% Join words with milestoneJoinChar instead of space.
-      \else
-	\edef\attr@val{\attr@b\space #1}% Join words with a space.
-      \fi 
+    \ifx\attr@key\spaceval\else
+      \ifx\attr@key\empty\else
+      \get@ttribute{\thisdefault@ttrkey}%
+      \edef\attr@val{}%
+        \ifx\attr@b\relax
+          \s@tattr@val #1 \E
+        \else
+          \ifmst@nestyle
+            \s@tattr@val \attr@b\milestoneJoinChar#1 \E% Join words with milestoneJoinChar instead of space.
+          \else
+            \s@tattr@val \attr@b\space #1 \E% Join words with a space.
+          \fi 
+        \fi
+        \trace{A}{Got unnamed(\thisdefault@ttrkey) attribute '#1' -> '\attr@val'}%
+        \set@ttribute{\thisdefault@ttrkey}{\attr@val}%
+      \fi
     \fi
-    \trace{A}{Got unnamed(\thisdefault@ttrkey) attribute #1 -> \attr@val}%
-    \set@ttribute{\thisdefault@ttrkey}{\attr@val}%
   \else
-    \trace{A}{Got named attribute \attr@key="\attr@val"}%
-    \set@ttribute{\attr@key}{\attr@val}%
+    \edef\t@st{\zap@space #1 \empty}%
+    \ifx\attr@key\t@st
+      \trace{A}{Got named attribute \attr@key="\attr@val"}%
+      \set@ttribute{\attr@key}{\attr@val}%
+    \else
+      \trace{A}{Got unnamed AND named attributes '#1'}%
+      \x@\spl@tonspace #1\E
+      \trace{A}{Got unnamed(\thisdefault@ttrkey) -> '\f@rstitem'}%
+      \set@ttribute{\thisdefault@ttrkey}{\f@rstitem}%
+      \trace{A}{Got named attribute \s@conditem="\attr@val"}%
+      \set@ttribute{\s@conditem}{\attr@val}%
+    \fi
+  \fi
+  \def\t@st{#3}%
+  \ifx\t@st\empty\else
+    \ifx\t@st\spaceval\else
+      \save@ttribute #3\E
+    \fi
   \fi
 }
 
-\def\get@ttribute#1{\x@\let\x@\attr@b\csname attr:#1\endcsname \trace{A}{attrib #1 is \attr@b}} %simple access function
+\def\get@ttribute#1{\x@\let\x@\attr@b\csname attr:#1\endcsname \trace{A}{attrib '#1' is '\attr@b'}} %simple access function
 \def\set@ttribute#1#2{%
   \x@\xdef\csname attr:#1\endcsname{#2}%
   \xdef\attribsus@d{\ifx\attribsus@d\empty\else\attribsus@d,\fi#1}% Keep a list so we can junk it later.
@@ -302,16 +336,19 @@
 }
 
 
-% Parse an attribute="value" from the USFM code.
-\def\s@ve@ttribute#1{%
-   \x@\save@ttribute #1="\relax"=\E
+% Parse an attribute="value" from the USFM code. May be wrapped in {}
+\def\parse@ttribs#1{% Expand again to solve brackets
+   \x@\@parse@ttribs #1 \E
+}
+\def\@parse@ttribs#1 \E{%
+   \x@\save@ttribute #1 ="\relax" \E
 }
 
-\def\parse@ttribs#1{%
-  \let\nxt@tem=\geton@item
-  \let\D@first=\s@ve@ttribute
-  \x@\geton@item #1 \E
-}
+%\def\parse@ttribs#1{%
+  %\let\nxt@tem=\geton@item
+  %\let\D@first=\s@ve@ttribute
+  %\x@\geton@item #1 \E
+%}
 
 % Parse list of attributes from style file to read the default attribute
 % and the complete list(comma separated).
@@ -325,7 +362,7 @@
     \trace{A}{Attribute list for \m@rker\space is \csname\@ttrlistname\endcsname}%
   \fi
 }
-
+\def\spl@tonspace#1 #2\E{\trace{A}{Spl@tonspace{#1}{#2}}\edef\f@rstitem{#1}\edef\s@conditem{#2}}
 
 \def\interpr@tfirstattrib#1{%
   \x@\interpr@t@ttrib #1??\E

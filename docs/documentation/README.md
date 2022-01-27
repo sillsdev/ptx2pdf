@@ -427,8 +427,9 @@ cleared, so that the old page is not reused.
 <a name="ptx2pdf-MacroSetupParameters-scriptTags"></a>
 
 <a name="ptx2pdf-MacroSetupParameters-scriptTags"></a>
-##  <a name="ptx2pdf-PageNumbers">PageNumbers</a>
-Special-purpose milestones have been defined:
+##  <a name="ptx2pdf-PageNumbers">PageNumbers and Reference</a>
+Some special-purpose milestones have been defined for page and chapter:verse
+references within a publication:
 ```
 \esb \cat BibleBackgroud\cat*
 \zlabel|TypesOfPsalms\*
@@ -438,6 +439,8 @@ Scripure contains several different types of Psalms....
 ...
 
 \fe + \ft A psalm of ascent, see article on page \zpage|TypesOfPsalms\* \fe*
+
+\f + \ft A maskil, see note at \zref|label="MaskilMeaking" show="b_c.v"\* \f*
 ```
 The `\zlabel` milestone instructs TeX to remember the page number of the text
 when the text is written to the pdf file. (using the `.picpages` file). The
@@ -446,16 +449,22 @@ available.  `\zpage` will use that number, assuming it is defined. It will use
 the page number as printed by default (i.e. Roman numerals for introductory
 matter).
 
-Warning: At the moment, failures are silent and  there is no error checking,
-etc. It is planned that there will be. 
+The  `\zref` milestone performs a similar task but giving book, chapter and verse 
+for the specified text. It is most useful for footnotes, rather than side-bars or 
+images, as these can end up some distance from their anchor point.
 
-It is planned that at some point there will be a `\zref` milestone, which
-would be repaced with Book Chapter:Verse of the most recent reference at the
-time the item is processed. As images and side bars can move to other pages,
-this method of referencing anything other than footnotes or verse text may not
-be reliable.
+The (optional) parameter `show` gives a string that shows what should be printed:
+* `b` The book name (`\toc1`)
+* `c` Chapter number
+* `v` Verse number
+* `\_` A space
 
-
+Letters and punctuation that do not match 
+the above special characters will copied into the output.  The default value
+for `show` is `b\_c:v`, giving an output such as "Genesis 1:1".
+WARNING: spaces at the start and mid-string are ignored (due to a peculiarity of TeX), 
+and as a by-product of this problem, a space at the end of the `show` parameter
+will cause a crash.
 
 
 ### <a name="ptx2pdf-MacroSetupParameters-scriptTags"></a><a name="ptx2pdf-MacroSetupParameters-Appendix:CommonOpenTypescripttags">Appendix: Common OpenType script tags</a>

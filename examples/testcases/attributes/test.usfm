@@ -16,7 +16,7 @@ ought to be before the end of the block ->
 \qt-s| James  sid="123"\*
 this bit is attributed to James
 \qt-e|eid="234"\*
-So is this bit, after a non-mathcing break.
+So is this bit, after a non-matching break.
 \qt-e|eid="123"\*
 
 
@@ -71,4 +71,4 @@ born of the Spirit.\qt-e\*
 \p
 \v  9 Nicodemus answered and said unto him, How can these things be?
 
-\ts-e\*
+\ts-e|\*

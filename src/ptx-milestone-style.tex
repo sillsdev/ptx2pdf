@@ -81,7 +81,9 @@
 \def\@ttrSlash{\in@ttribtrue
   \catcode`\/=12\relax % FIXME Other active chars too?
   \@ttrSl@sh}
-\def\@ttrSl@sh#1\*{\xdef\attrib@rgs{#1}\trace{m}{@ttrSlash: Attr:\attrib@rgs}\*}
+% using #1#2 eats initial spaces. This means  #1#2 nicely ignores annoying initial spaces, but it also crashes on a spaces-only arg, so check for that.
+\def\@ttrSl@sh #1\*{\edef\tmp{\zap@space #1 \empty}\ifx\tmp\empty\else\x@\@@ttrSlash #1\relax\relax\fi}
+\def\@@ttrSlash #1#2\relax{\xdef\attrib@rgs{#1#2}\trace{m}{@ttrSlash: Attr:\attrib@rgs}\*}
 
 \def\*{%This might end a + style (c)  or a normal style character style(C), or a milestone style
   \trace{m}{slash *}%

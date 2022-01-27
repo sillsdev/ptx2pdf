@@ -221,6 +221,7 @@
        \ifx\@ttributes\empty\else% If there are attributes, call an appropriate hook	
 	     \let\d@\apply@attr@specials
 	     \x@\cstackdown \attribsus@d,\E
+         %\trace{A}{Special atributes done}%
          \ifcsname complex-\oldch@rstyle\c@rrdstat\endcsname
            \csname complex-\oldch@rstyle\c@rrdstat\endcsname
          \else 

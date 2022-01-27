@@ -38,7 +38,7 @@
     \let\attr@b\c@rref
   \fi
   \ifx\attr@b\relax\else
-    \edef\l@gstring{{\attr@b}{\c@rref}}%
+    \edef\l@gstring{{\attr@b}{\book:\ch@pter:\print@bleverse}}%
     \trace{m}{zlabel: \l@gstring}%
     \x@\labelp@ge\x@{\l@gstring}%
   \fi
@@ -46,11 +46,63 @@
 \x@\def\csname start-zpage\endcsname{%
   \get@ttribute{label}%
   \ifx\attr@b\relax\else
-    \csname zpage-\attr@b\endcsname
+    \ifcsname zpage-\attr@b\endcsname
+      \csname zpage-\attr@b\endcsname
+    \else
+      0000\message{Unable to find label for '\attr@b'. Re-run or correct typo at/near '\c@rref'.}%
+    \fi
   \fi
+}
+\x@\def\csname start-zref\endcsname{%
+  \get@ttribute{label}%
+  \ifx\attr@b\relax\else
+    \ifcsname zref-\attr@b\endcsname
+      \x@\let\x@\temp\csname zref-\attr@b\endcsname
+      \get@ttribute{show}%
+      \ifx\attr@b\relax\def\attr@b{b_c:v}\fi
+      \x@\extr@ctfirst\temp\relax
+      \tracingassigns=1
+      \x@\p@rsezref\x@|\attr@b|%
+      \tracingassigns=0
+    \else
+      ??:??\message{Unable to find reference for '\attr@b'. Re-run or correct typo at/near '\c@rref'.}%
+    \fi
+  \fi
+}
+
+\def\p@rsezref|#1#2|{\trace{m}{p@rsezref {'#1''#2'}}\def\tmp{#2}%
+  \if b#1\relax\trace{m}{book}\@book
+  \else\if c#1\relax\trace{m}{chapter}\@chapter
+    \else\if v#1\relax\trace{m}{verse}\@verse
+      \else\if _#1\relax\trace{m}{space}\space
+        \else #1\trace{m}{literal '#1'}\fi
+      \fi
+    \fi
+  \fi\ifx\tmp\empty\else
+    \x@\p@rsezref\x@|#2|%
+  \fi}
+
+\def\labelonpage#1#2#3{%
+  \x@\def\csname zpage-#2\endcsname{#1}%Page number for label.
+  \x@\def\csname zref-#2\endcsname{#3}%Reference for label. (why??)
 }
   
 \def\labelonpage#1#2#3{%
   \x@\def\csname zpage-#2\endcsname{#1}%Page number for label.
   \x@\def\csname zref-#2\endcsname{#3}%Reference for label. (why??)
+}
+
+\def\checklabelpage#1#2#3{%
+  \def\ch@ck{#1}%
+  \let\ch@nged\empty
+  \x@\ifx\csname zpage-#2\endcsname\ch@ck\else
+    \temptrue\edef\ch@nged{Page number}%
+  \fi
+  \def\ch@ck{#3}%
+  \x@\ifx\csname zref-#2\endcsname\ch@ck\else
+    \temptrue\edef\ch@nged{\ifx\ch@nged\emtpy Reference\else\ch@nged\space and reference\fi}%
+  \fi
+  \ifx\ch@nged\empty\else
+    \message{\ch@nged\space for label #2 changed. Re-run file.}%
+  \fi
 }
