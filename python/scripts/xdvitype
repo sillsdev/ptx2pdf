@@ -177,7 +177,9 @@ class XDviType:
     def font(self, opcode, parm, data):
         if parm is not None:
             data = [parm]
-        self.out("font [{:04x}]".format(self.fonts[data[0]][0]))
+        val = data[0]
+        if val in self.fonts:
+            self.out("font({}) [{:04x}]".format(opcode, self.fonts[data[0]][0]))
 
     def xxx(self, opcode, parm, data):
         txt = self.readbytes(data[0])
@@ -216,19 +218,22 @@ class XDviType:
         slant = self.readval(4) if flags & 0x2000 else 0
         embolden = self.readval(4) if flags & 0x4000 else 0
         self.fonts[k]=(ident, font_name)
-        self.out('xfontdef[{}] "{}", size={}, flags={:04X}, color={:08X}, vars={}, ext={}, slant={}, embolden={}'.format(
-                ident, font_name, points, flags, color, variations, ext, slant, embolden))
+        self.out('xfontdef[{}]->{} "{}", size={}, flags={:04X}, color={:08X}, vars={}, ext={}, slant={}, embolden={}'.format(
+                k, ident, font_name, points, flags, color, variations, ext, slant, embolden))
 
     def xglyphs(self, opcode, parm, data):
+        if parm == 0:
+            tlen = self.readval(2)
+            txt = self.readbytes(2*tlen)
         width = self.readval(4)
         slen = self.readval(2, uint=True)
-        if parm:
-            pos = [(self.readval(4), self.readval(4)) for i in range(slen)]
-        else:
-            pos = [(self.readval(4), 0) for i in range(slen)]
+        #if parm:
+        pos = [(self.readval(4), self.readval(4)) for i in range(slen)]
+        #else:
+        #    pos = [(self.readval(4), 0) for i in range(slen)]
         glyphs = [self.readval(2) for i in range(slen)]
         res = ["{}@({}={},{})".format(glyphs[i], pos[i][0], self.asdimen(pos[i][0]), pos[i][1]) for i in range(slen)]
-        self.out("xglyphs: {}".format(res))
+        self.out("xglyphs[{}@{}]: {}".format(width, slen, res))
 
     def xpic(self, opcode, parm, data):
         box = data.pop(0)

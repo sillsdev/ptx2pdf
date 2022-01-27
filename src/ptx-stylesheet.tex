@@ -730,7 +730,8 @@
      \box0\special{x:grestore}\hss}}\ht0=0pt\dp0=0pt\@V\box0\@V*%
      \kern\AfterVerseSpaceFactor\FontSizeUnit
    \else
-    \printverse
+    \ifreftooltip\ch@ptooltipstart\fi\printverse\ifreftooltip\ch@ptooltipend\fi
+    %\printverse
    \fi
   \fi
   \egroup

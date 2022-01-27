@@ -991,7 +991,7 @@
 \newbox\ch@pternote
 \def\AfterChapterSpaceFactor{3}
 \def\m@kechapterbox{%
- \trace{sP}{m@kechapterbox for \ch@ptert@xt}%
+ \trace{sP}{m@kechapterbox for \ch@ptert@xt, reftooltip\ifreftooltip true\else false\fi}%
  \edef\@seglyphmetrics{\the\XeTeXuseglyphmetrics}\XeTeXuseglyphmetrics=3%
  \edef\printchapter{\ch@ptert@xt}%
  \csname PrepChapterNumber\endcsname
@@ -1015,6 +1015,10 @@
  \dp\ch@pterbox=0pt
 }
 %-cpar_makechapterbox
+
+\newif\ifreftooltip
+\def\ch@ptooltipstart{\special{pdf:bann << /Type /Annot /Subtype /Widget /H /N /TU (\id@@@ \space \ch@pter :\v@rse) /T (tooltip \id@@@ \ch@pter :\v@rse) /C [] /FT /Btn /F 768 /Ff 65536 /BS << /W 0 >> >>}}
+\def\ch@ptooltipend{\special{pdf:eann}}
 
 %+cpar_ptxnb
 % Used to delay a cutout until later in the paragraph, for no-break chapter numbers
