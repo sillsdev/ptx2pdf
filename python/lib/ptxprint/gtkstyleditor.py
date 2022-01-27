@@ -3,6 +3,7 @@ from ptxprint.gtkutils import getWidgetVal, setWidgetVal
 from ptxprint.sfm.style import Marker, CaselessStr
 from ptxprint.styleditor import StyleEditor, aliases
 from ptxprint.utils import _, coltotex, textocol, asfloat
+from ptxprint.imagestyle import imageStyleFromStyle, ImageStyle
 import re
 
 stylemap = {
@@ -642,6 +643,14 @@ class StyleEditorView(StyleEditor):
                     self.setval(self.marker, ' endMarker', ' None')
             elif newval != endm:
                 self.setval(self.marker, ' endMarker', newval)
+
+    def sidebarImageDialog(self, isbg=False):
+        sb = imageStyleFromStyle(self, self.marker, isbg)
+        if sb is None:
+            sb = ImageStyle(isbg)
+        res = sb.run(self.model)
+        if res and sb.filename is not None:
+            sb.toStyle(self, self.marker)
 
     def delKey(self, key=None):
         if key is None:

@@ -3834,18 +3834,26 @@ class GtkViewModel(ViewModel):
             self.set("c_sbBorder_out", False)
         
     def onSBimageClicked(self, btn):
-        dialog = self.builder.get_object("dlg_SBimage")
-        if sys.platform == "win32":
-            dialog.set_keep_above(True)
-        response = dialog.run()
-        if response == Gtk.ResponseType.OK: # Save the new parameters
-            pass # do something useful
-        else:
-            pass # ignore
-        if sys.platform == "win32":
-            dialog.set_keep_above(False)
-        dialog.hide()
+        btname = Gtk.Buildable.get_name(btn)
+        isbg = btname == "btn_sbBGIDia"
+        self.styleEditor.sidebarImageDialog(isbg)
         
+    def onSBimageFileChooser(self, btn):
+        picpath = os.path.join(self.settings_dir, self.prjid)
+        def update_preview(dialog):
+            picpath = dialog.get_preview_filename()
+            try:
+                pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(picpath, 200, 300)
+            except Exception as e:
+                pixbuf = None
+            return pixbuf
+
+        picfiles = self.fileChooser(_("Choose Image"),
+                                  filters={"Images": {"patterns": ['*.png', '*.jpg', '*.pdf'], "mime": "application/image"}},
+                                   multiple=False, basedir=picpath, preview=update_preview)
+        self.set("lb_sbFilename", str(picfiles[0]))
+
+
     def onDeleteTempFolders(self, btn):
         notDeleted = []
         for p in self.getConfigList(self.prjid):
