@@ -462,9 +462,7 @@ The (optional) parameter `show` gives a string that shows what should be printed
 Letters and punctuation that do not match 
 the above special characters will copied into the output.  The default value
 for `show` is `b\_c:v`, giving an output such as "Genesis 1:1".
-WARNING: spaces at the start and mid-string are ignored (due to a peculiarity of TeX), 
-and as a by-product of this problem, a space at the end of the `show` parameter
-will cause a crash.
+WARNING: spaces in the string are ignored (due to a peculiarity of TeX). 
 
 
 ### <a name="ptx2pdf-MacroSetupParameters-scriptTags"></a><a name="ptx2pdf-MacroSetupParameters-Appendix:CommonOpenTypescripttags">Appendix: Common OpenType script tags</a>

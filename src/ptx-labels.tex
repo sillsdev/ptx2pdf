@@ -70,7 +70,7 @@
   \fi
 }
 
-\def\p@rsezref|#1#2|{\trace{m}{p@rsezref {'#1''#2'}}\def\tmp{#2}%
+\def\p@rsezref|#1#2|{\trace{m}{p@rsezref {'#1''#2'}}\edef\tmp{\zap@space #2 \empty}%
   \if b#1\relax\trace{m}{book}\@book
   \else\if c#1\relax\trace{m}{chapter}\@chapter
     \else\if v#1\relax\trace{m}{verse}\@verse

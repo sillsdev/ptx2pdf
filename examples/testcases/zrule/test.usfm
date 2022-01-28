@@ -15,7 +15,8 @@
 \p
 \v 4  Default rule.
 \p
-\v 5 \zlabel|Optio\* Optio aut consequatur recusandae rerum assumenda optio. Ab nostrum nulla maiores quas sed sed. Debitis et dolor molestiae voluptate molestiae id nobis illum.
+\v 5 \zlabel|Optio\* Optio aut consequatur recusandae rerum assumenda optio.
+\v 6 Ab nostrum nulla maiores quas sed sed. Debitis et dolor molestiae voluptate molestiae id nobis illum.\f + \ft This is some random note\zlabel|random\*\f* 
 
 \zrule|0.7\*
 \p 0.7 of page.
@@ -33,5 +34,5 @@ Impedit aut dolorem ab quia quae. Enim nostrum amet error voluptatem vero volupt
 \zrule\*
 \zgap|100pt plus 10em\*
 \vfill
-The paragraph starting "Optio aut" is on page \zpage|Optio\*. It occurs after \zref|label="Optio" show="b_c:v" \*
+The paragraph starting "Optio aut" is on page \zpage|Optio\*. See also note on \zref|label="random" show="b_c:v " \*
 \pb
