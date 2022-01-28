@@ -203,9 +203,9 @@
 \def\localornament@dims#1{\x@\let\x@\@pgfornamentX\csname localornament@#1@X\endcsname
   \x@\let\x@\@pgfornamentY\csname localornament@#1@Y\endcsname}%
 \LocalOrnament{0}{10}{10}{ }% A space
-\LocalOrnament{-1}{10}{10}{\m 0.0 5 \l 10 5 \k } % A line of equal lenght to a space
-\LocalOrnament{-2}{20}{10}{\m 0.0 5 \l 20 5 \k } % A line twice as long as a space
-\LocalOrnament{-3}{50}{10}{\m 0.0 5 \l 50 5 \k } % A line five times longer than as a space
+\LocalOrnament{-1}{10}{10}{\m 0.0 5 \l 10 5 \k } % A centred line of equal lenght to a space
+\LocalOrnament{-2}{20}{10}{\m 0.0 5 \l 20 5 \k } % A centred line twice as long as a space
+\LocalOrnament{-3}{50}{10}{\m 0.0 5 \l 50 5 \k } % A centred line five times longer than as a space
 	
 \def\get@ornamentDim#1{%
   \ifcsname localornament@#1@X\endcsname
@@ -230,7 +230,7 @@
     \dimen1=\dimexpr \pdf@xunit*\numexpr \pdf@ab*\@pgfornamentX\relax + \pdf@yunit * \numexpr\pdf@bb*\@pgfornamentY\relax\relax
 }
 \def\ornamentstretch{1}
-\newif\ifboxorn
+\newif\ifboxorn % Set to true to surroud all ornaments with boxes.
 \boxornfalse
 \def\orn@do@ornament{\bgroup%
     \ifpdf@ornament@stretch
@@ -306,9 +306,10 @@
       \ifdim\dimen7=0pt
 	\box0
       \else
-	\lower \dimen7\box0
+        \lower \dimen7\box0
       \fi%
       }%
+      \ht0=\dimen1
       \dimen7=0pt
     \fi
     \advance\dimen7  by \ornYalign\dimen1
@@ -316,7 +317,11 @@
     \ifdim\dimen7=0pt
       \box0
     \else
-      \lower \dimen7\box0
+      \ifhmode 
+        \lower \dimen7\box0
+      \else
+        \box0
+      \fi
     \fi%
 \egroup}
 \def\doOrnament#1{%
@@ -360,7 +365,8 @@
 %#2 orientation
 %#3 Scale/mult
 %#4 Size {=|[a-z]|N.NN}  If a number (1.0 is valid, 2. is not) then the item's size will be this much times the normal calulated size.
-% if =, no scaling will be applied, if it's not = or a number in formal N.N then a pre-set scale [set by setscale] will be applied 
+% if =, the previous scaling will be applied, if it's set, but not '=' or a
+% number in formal N.N, then a pre-set scale [which must have been set by setscale] will be applied 
 \newif\iflocalornament
 \def\ornament@parse#1|#2|#3|#4|#5\E{%#5 is scrap
   \message{ornament@parse:#1:#2:#3}%
@@ -592,10 +598,16 @@
       \MSG{Stretch = \the\dimen4 / \the\fill@stretch}%
       \dimen5=\dimexpr \fill@stretch*4\relax%
       \multiply\dimen4 by 4\relax
-      \loop \ifdim\dimen4<0.5\maxdimen
-	\multiply\dimen5 by 2
-	\multiply\dimen4 by 2
+      \dimen6=\dimen4
+      \tracingassigns=1
+      \ifdim\dimen6<0pt \multiply \dimen6 by -1\relax\fi
+      \ifdim \dimen5 > \dimen6 \dimen6=\dimen5 \fi
+      \loop \ifdim\dimen6<0.4\maxdimen
+	\multiply\dimen5 by 2\relax
+	\multiply\dimen4 by 2\relax
+	\multiply\dimen6 by 2\relax
 	\repeat
+      \tracingassigns=0
       \count255=\dimen5 \divide\count255 by 65535 % Integer part only
       \MSG{\the\dimen4 / \the\count255}%
       \dimen4=\dimexpr \dimen4 / \count255\relax%Scale by 32
@@ -806,17 +818,17 @@
   %\showboxdepth=9
   %\showboxdepth=10
   %\showbox\orn@bdr@right
-  \vbox to #2{\baselineskip=0pt\lineskip=0pt\hsize=#1\box\orn@bdr@top\hbox to #1{\box\orn@bdr@left\hfill\box\orn@bdr@right}\box\orn@bdr@bot}%
+  \vbox to #2{\baselineskim=0pt\lineskip=0pt\hsize=#1\box\orn@bdr@top\hbox to #1{\box\orn@bdr@left\hfill\box\orn@bdr@right}\box\orn@bdr@bot}%
 }
 \def\OrnamentBorder#1#2{%
   \MSG{OrnamentBorder}%
   \def\ornamentheight{#2}%
   \def\ornamentwidth{}%
   \def\ornYalign{1}%
-  \edef\b@drsides{\numexpr \ifx\b@drleft\tr@e 1 +\fi \ifx\b@drright\tr@e 1+\fi 0\relax}%
-  \edef\box@width{\dimexpr \wd#1 + #2 *\b@drsides+ \box@hsep * \b@drsides\relax}%%
-  \edef\b@drsides{\numexpr \ifx\b@drtop\tr@e 1 +\fi \ifx\b@drbottom\tr@e 1+\fi 0\relax}%
-  \edef\box@height{\dimexpr \ht#1 + #2 *\b@drsides + \box@vsep *\b@drsides\relax}%
+  \edef\b@drsides{\the\numexpr \ifx\b@drleft\tr@e 1 +\fi \ifx\b@drright\tr@e 1+\fi 0\relax}%
+  \edef\box@width{\dimexpr \wd#1 + #2 *\b@drsides+ \fb@hpadding * \b@drsides\relax}%%
+  \edef\b@drsides{\the\numexpr \ifx\b@drtop\tr@e 1 +\fi \ifx\b@drbottom\tr@e 1+\fi 0\relax}%
+  \edef\box@height{\dimexpr \ht#1 +\dp#1 + #2 *\b@drsides + \fb@vpadding *\b@drsides\relax}%
   \ifx\b@drtop\tr@e
     \orn@SetStretch{\box@width}{x}{}{\patternT}\setbox\orn@bdr@top\hbox to \box@width{\Ornaments{\patternT}}%
   \else
@@ -830,14 +842,15 @@
   \fi
   \MSG{#2 - \the\ht\orn@bdr@top -\the\dp\orn@bdr@top -\the\ht\orn@bdr@bot -\the\dp\orn@bdr@bot}%
   \dimen1=\dimexpr \box@height - \ht\orn@bdr@top -\dp\orn@bdr@top -\ht\orn@bdr@bot -\dp\orn@bdr@bot\relax
-  \dimen2=0.5\dimexpr \dimen1 - \ht#1\relax
+  \dimen2=\dimexpr \dimen1 - \ht#1\relax
+  \divide\dimen2 by \b@drsides
   %\def\ornamentheight{}
   %\def\ornamentwidth{#3}
-  \message{Box side is \the\dimen1}%
+  \message{Box side portion is \the\dimen1. Orig: \the\ht#1 +\the\dp#1 x\the\wd#1, final:\the\box@height }%
   \tempfalse
   \setbox\orn@bdr@right\box\voidb@x
   \ifx\b@drleft\tr@e
-    \orn@SetStretch{\the\dimen1}{y}{=}{\patternL}\setbox\orn@bdr@left\vbox to \dimen1{\lineskip=0pt\baselineskip=0pt\Ornaments{\patternL}}%
+    \orn@SetStretch{\the\dimen1}{y}{=}{\patternL}\setbox\orn@bdr@left\vbox to \dimen1{\lineskip=0pt\lineskiplimit=0pt\baselineskip=0pt\Ornaments{\patternL}}%
     \ifx\patternL\patternR
       \ifx\b@drright\tr@e
 	\setbox\orn@bdr@right\copy\orn@bdr@left
@@ -849,14 +862,16 @@
   %\showbox\orn@bdr@left
   \ifx\b@drright\tr@e
     \ifvoid\orn@bdr@right
-      \orn@SetStretch{\the\dimen1}{y}{=}{\patternR}\setbox\orn@bdr@right\vbox to \dimen1{\lineskip=0pt\baselineskip=0pt\Ornaments{\patternR}}%
+      \orn@SetStretch{\the\dimen1}{y}{=}{\patternR}\setbox\orn@bdr@right\vbox to \dimen1{\lineskip=0pt\lineskiplimit=0pt\baselineskip=0pt\Ornaments{\patternR}}%
     \fi
   \fi
-  %\showboxdepth=9
-  %\showboxdepth=10
+  \showboxdepth=3
+  \showboxbreadth=9999
   %\showbox\orn@bdr@right
-  \setbox#1\vbox to \box@height{\baselineskip=0pt\lineskip=0pt\hsize=\box@width\box\orn@bdr@top\hbox to \box@width{\box\orn@bdr@left\hss\hbox{\vbox{\kern\dimen2\box#1\kern\dimen2}}\hss\box\orn@bdr@right}\box\orn@bdr@bot}%
+  \setbox#1\vbox to \box@height{\baselineskip=0pt\lineskip=0pt\hsize=\box@width\box\orn@bdr@top\hbox to \box@width{\box\orn@bdr@left\hss\hbox{\vbox to \dimen1{\ifx\b@drtop\tr@e\kern\dimen2\fi\box#1\ifx\b@drbottom\tr@e\kern\dimen2\fi}}\hss\box\orn@bdr@right}\baselineskip=\ht\orn@bdr@bot\box\orn@bdr@bot}%
+  %\showbox#1
 }
+
 \def\OrnamentLine#1#2#3#4{%#1 Line length #2 Ornament height #3 Direction {Capital to keep old variables)  #4 Pattern
   \def\ornamentheight{#2}%
   \def\tmp{#3}\lowercase{\def\tmpb{#3}}%
@@ -876,7 +891,6 @@
 
 
 
-\boxornfalse
 \def\ornamentheight{20pt}\def\ornamentwidth{}
 \input pgflibraryvectorian.code.tex
 \catcode`\@=11
