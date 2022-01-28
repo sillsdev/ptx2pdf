@@ -2664,14 +2664,14 @@ saved configuration.</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_diglot">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_grid">
     <property name="visible">True</property>
@@ -2682,27 +2682,27 @@ combination of Crop marks, Guides (margins,
 baselines, etc.) and/or a graph-paper-like Grid
 can be set.</property>
     <property name="icon-name">view-grid-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_spacing">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_top">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_download">
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">software-update-available-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_refresh">
     <property name="visible">True</property>
@@ -2719,7 +2719,7 @@ having to manually re-create all the same
 settings for a similar project.</property>
     <property name="halign">end</property>
     <property name="icon-name">view-grid-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkListStore" id="ls_NoteBlendInto">
     <columns>
@@ -5572,13 +5572,14 @@ should be scaled horizontally.</property>
                     <property name="can-focus">True</property>
                     <property name="tooltip-text" translatable="yes">Specify how much the image 
 should be scaled vertically.</property>
+                    <property name="halign">start</property>
                     <property name="text" translatable="yes">1.00</property>
                     <property name="adjustment">a_sbi_scaleHeight</property>
                     <property name="digits">2</property>
                     <property name="value">1</property>
                   </object>
                   <packing>
-                    <property name="left-attach">4</property>
+                    <property name="left-attach">3</property>
                     <property name="top-attach">2</property>
                   </packing>
                 </child>
@@ -5615,7 +5616,7 @@ should be scaled vertically.</property>
                     </attributes>
                   </object>
                   <packing>
-                    <property name="left-attach">4</property>
+                    <property name="left-attach">3</property>
                     <property name="top-attach">1</property>
                   </packing>
                 </child>
@@ -5638,8 +5639,7 @@ should be scaled vertically.</property>
                             <property name="can-focus">False</property>
                             <property name="margin-start">6</property>
                             <property name="margin-end">6</property>
-                            <property name="margin-top">3</property>
-                            <property name="margin-bottom">6</property>
+                            <property name="margin-bottom">8</property>
                             <property name="row-spacing">6</property>
                             <property name="column-spacing">10</property>
                             <child>
@@ -5667,7 +5667,7 @@ After Paragraph: After where it comes in the text</property>
                               </object>
                               <packing>
                                 <property name="left-attach">1</property>
-                                <property name="top-attach">1</property>
+                                <property name="top-attach">3</property>
                               </packing>
                             </child>
                             <child>
@@ -5684,7 +5684,7 @@ After Paragraph: After where it comes in the text</property>
                               </object>
                               <packing>
                                 <property name="left-attach">0</property>
-                                <property name="top-attach">0</property>
+                                <property name="top-attach">2</property>
                               </packing>
                             </child>
                             <child>
@@ -5701,7 +5701,7 @@ After Paragraph: After where it comes in the text</property>
                               </object>
                               <packing>
                                 <property name="left-attach">0</property>
-                                <property name="top-attach">1</property>
+                                <property name="top-attach">3</property>
                               </packing>
                             </child>
                             <child>
@@ -5718,7 +5718,7 @@ After Paragraph: After where it comes in the text</property>
                               </object>
                               <packing>
                                 <property name="left-attach">0</property>
-                                <property name="top-attach">3</property>
+                                <property name="top-attach">1</property>
                               </packing>
                             </child>
                             <child>
@@ -5746,7 +5746,7 @@ After Paragraph: After where it comes in the text</property>
                               </object>
                               <packing>
                                 <property name="left-attach">1</property>
-                                <property name="top-attach">0</property>
+                                <property name="top-attach">2</property>
                               </packing>
                             </child>
                             <child>
@@ -5770,7 +5770,7 @@ After Paragraph: After where it comes in the text</property>
                               </object>
                               <packing>
                                 <property name="left-attach">1</property>
-                                <property name="top-attach">3</property>
+                                <property name="top-attach">1</property>
                               </packing>
                             </child>
                             <child>
@@ -5789,7 +5789,7 @@ and 3, 4, 6, or 12 for inches.</property>
                               </object>
                               <packing>
                                 <property name="left-attach">2</property>
-                                <property name="top-attach">3</property>
+                                <property name="top-attach">1</property>
                               </packing>
                             </child>
                             <child>
@@ -5807,7 +5807,7 @@ and 3, 4, 6, or 12 for inches.</property>
                               </object>
                               <packing>
                                 <property name="left-attach">2</property>
-                                <property name="top-attach">2</property>
+                                <property name="top-attach">0</property>
                               </packing>
                             </child>
                             <child>
@@ -5881,7 +5881,7 @@ black will become a darker shade of green, not grey.</property>
                                 <property name="input-purpose">number</property>
                                 <property name="adjustment">a_sbAlpha</property>
                                 <property name="climb-rate">0.05</property>
-                                <property name="digits">1</property>
+                                <property name="digits">2</property>
                                 <property name="numeric">True</property>
                                 <property name="update-policy">if-valid</property>
                                 <property name="value">1</property>
@@ -6002,7 +6002,7 @@ as .JPG images do not have transparency.</property>
                                 <child internal-child="entry">
                                   <object class="GtkEntry">
                                     <property name="can-focus">False</property>
-                                    <property name="width-chars">18</property>
+                                    <property name="width-chars">20</property>
                                   </object>
                                 </child>
                               </object>
@@ -6051,7 +6051,7 @@ being too large for a given sidebar.</property>
                                   <object class="GtkEntry">
                                     <property name="can-focus">False</property>
                                     <property name="halign">start</property>
-                                    <property name="width-chars">11</property>
+                                    <property name="width-chars">18</property>
                                   </object>
                                 </child>
                               </object>
@@ -6088,13 +6088,14 @@ Aspect Ratio</property>
                     <property name="tooltip-text" translatable="yes">Scale the width and height
 the same so that the image
 maintains its proportions.</property>
+                    <property name="halign">start</property>
                     <property name="active">True</property>
                     <property name="draw-indicator">True</property>
                     <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                   </object>
                   <packing>
-                    <property name="left-attach">3</property>
-                    <property name="top-attach">2</property>
+                    <property name="left-attach">2</property>
+                    <property name="top-attach">1</property>
                   </packing>
                 </child>
                 <child>
@@ -22713,11 +22714,12 @@ of the background colour:
 0 is transparent, 1 is solid.</property>
                                                     <property name="halign">start</property>
                                                     <property name="valign">start</property>
-                                                    <property name="text">0.5</property>
+                                                    <property name="text">1.0</property>
+                                                    <property name="progress-pulse-step">0</property>
                                                     <property name="input-purpose">number</property>
                                                     <property name="adjustment">a_sbAlpha</property>
                                                     <property name="climb-rate">0.05</property>
-                                                    <property name="digits">1</property>
+                                                    <property name="digits">2</property>
                                                     <property name="numeric">True</property>
                                                     <property name="update-policy">if-valid</property>
                                                     <property name="value">1</property>
@@ -22764,10 +22766,9 @@ of the column/page width.</property>
                                                   </packing>
                                                 </child>
                                                 <child>
-                                                  <object class="GtkButton">
+                                                  <object class="GtkButton" id="btn_sbBorders">
                                                     <property name="label" translatable="yes">Borders...</property>
                                                     <property name="visible">True</property>
-                                                    <property name="sensitive">False</property>
                                                     <property name="can-focus">True</property>
                                                     <property name="receives-default">True</property>
                                                     <property name="tooltip-text" translatable="yes">Click for additional settings
