@@ -1,5 +1,6 @@
 
 from gi.repository import Gtk
+import re
 
 fieldmap = {
     "filename":     "lb_sbFilename",
@@ -120,9 +121,12 @@ class ImageStyle:
             tgt.setval(mkr, key, val)
 
     def toStyle(self, tgt, mkr):
+        fname = getattr(self, 'filename', "")
+        if not len(fname):      # no filename, all else is pointless
+            return
         if self.isbg:
             prefix = "BgImage"
-            self._tostylemap(tgt, prefix, bgfieldmap)
+            self._tostylemap(tgt, mkr, prefix, bgfieldmap)
         else:
             pos = getattr(self, 'pos', 'tl')
             if self.position == "cutout":
@@ -131,7 +135,7 @@ class ImageStyle:
                     pos += str(cut)
             tgt.setval(mkr, 'FgImagePos', pos)
             prefix = "FgImage"
-        tgt.setval(mkr, prefix, getattr(self, 'filename', None))
+        tgt.setval(mkr, prefix, fname)
         scales = [float(getattr(self, a, "0")) for a in ('width', 'height')]
         scale = str(scales[0]) if 0. < scales[0] != 1. else ""
         scale += "x{}".format(scales[1]) if 0. < scales[1] != 1. else ""
