@@ -4,6 +4,7 @@ from ptxprint.sfm.style import Marker, CaselessStr
 from ptxprint.styleditor import StyleEditor, aliases
 from ptxprint.utils import _, coltotex, textocol, asfloat
 from ptxprint.imagestyle import imageStyleFromStyle, ImageStyle
+from ptxprint.borderstyle import borderStyleFromStyle, BorderStyle
 import re
 
 stylemap = {
@@ -650,6 +651,14 @@ class StyleEditorView(StyleEditor):
             sb = ImageStyle(isbg)
         res = sb.run(self.model)
         if res and sb.filename is not None:
+            sb.toStyle(self, self.marker)
+
+    def sidebarBorderDialog(self):
+        sb = borderStyleFromStyle(self, self.marker)
+        if sb is None:
+            sb = BorderStyle()
+        res = sb.run(self.model)
+        if res:
             sb.toStyle(self, self.marker)
 
     def delKey(self, key=None):

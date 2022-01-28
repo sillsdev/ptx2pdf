@@ -7621,8 +7621,8 @@ describe the purpose of the style.</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="halign">start</property>
-                <property name="max-length">16</property>
-                <property name="width-chars">16</property>
+                <property name="max-length">25</property>
+                <property name="width-chars">20</property>
                 <property name="placeholder-text">xyz</property>
               </object>
               <packing>
