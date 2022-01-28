@@ -512,8 +512,8 @@ class GtkViewModel(ViewModel):
         for fcb in ("project", "uiLevel", "interfaceLang", "fontdigits", "script", "diglotPicListSources",
                     "textDirection", "glossaryMarkupStyle", "fontFaces", "featsLangs", "leaderStyle",
                     "picaccept", "pubusage", "pubaccept", "chklstFilter|0.75", "gridUnits", "gridOffset",
-                    "fnHorizPosn", "xrHorizPosn", "filterXrefs", "colXRside", "outputFormat", "stytcVpos", 
-                    "strongsMajorLg", "strongswildcards", "strongsNdxBookId"): # , "sbPgPos"
+                    "fnHorizPosn", "xrHorizPosn", "snHorizPosn", "filterXrefs", "colXRside", "outputFormat", 
+                    "stytcVpos", "strongsMajorLg", "strongswildcards", "strongsNdxBookId"):
             self.addCR("fcb_"+fcb, 0)
         self.cb_savedConfig = self.builder.get_object("ecb_savedConfig")
         self.ecb_diglotSecConfig = self.builder.get_object("ecb_diglotSecConfig")

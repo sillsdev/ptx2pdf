@@ -12997,7 +12997,6 @@ the body text from the footnote area.</property>
                                                 <property name="can-focus">False</property>
                                                 <property name="margin-top">2</property>
                                                 <property name="margin-bottom">6</property>
-                                                <property name="hexpand">True</property>
                                                 <property name="column-spacing">8</property>
                                                 <child>
                                                   <object class="GtkSpinButton" id="s_fnIndent">
@@ -14420,7 +14419,6 @@ the rule and the cross-references. </property>
                                                 <property name="can-focus">False</property>
                                                 <property name="margin-top">2</property>
                                                 <property name="margin-bottom">6</property>
-                                                <property name="hexpand">True</property>
                                                 <property name="column-spacing">8</property>
                                                 <child>
                                                   <object class="GtkSpinButton" id="s_xrIndent">
@@ -14924,8 +14922,6 @@ possible for this option.</property>
                                               <object class="GtkGrid" id="gr_snRuleSettings">
                                                 <property name="visible">True</property>
                                                 <property name="can-focus">False</property>
-                                                <property name="margin-left">6</property>
-                                                <property name="margin-right">6</property>
                                                 <property name="margin-start">6</property>
                                                 <property name="margin-end">6</property>
                                                 <property name="margin-top">2</property>
@@ -14959,7 +14955,6 @@ possible for this option.</property>
                                                         <property name="can-focus">False</property>
                                                         <property name="margin-top">2</property>
                                                         <property name="margin-bottom">6</property>
-                                                        <property name="hexpand">True</property>
                                                         <property name="column-spacing">8</property>
                                                         <child>
                                                           <object class="GtkSpinButton" id="s_snIndent">
