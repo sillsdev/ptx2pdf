@@ -759,7 +759,7 @@
    \else\closein\t@stread
     \let\picfilecomm@nd=\XeTeXpicfile
     \expandafter\ch@ckpdf#1..\endf@lename
-    \setbox0\hbox{\picfilecomm@nd #1 #2}%
+    \setbox0\hbox{\picfilecomm@nd "#1" #2}%
     \global\dimen3=\wd0
     \global\dimen4=\ht0
     \trace{e}{Image dims: \the\dimen3 x \the\dimen4}%

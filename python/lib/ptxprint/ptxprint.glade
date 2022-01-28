@@ -5485,8 +5485,6 @@ information, position and other parameters.</property>
               <object class="GtkGrid" id="dlg_sb_images">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="margin-left">6</property>
-                <property name="margin-right">6</property>
                 <property name="margin-start">6</property>
                 <property name="margin-end">6</property>
                 <property name="margin-top">6</property>
@@ -5526,6 +5524,7 @@ information, position and other parameters.</property>
                     <property name="can-focus">False</property>
                     <property name="halign">start</property>
                     <property name="label" translatable="yes">C:\Filename\with\path</property>
+                    <property name="ellipsize">middle</property>
                     <attributes>
                       <attribute name="scale" value="0.84999999999999998"/>
                     </attributes>
@@ -5607,7 +5606,6 @@ should be scaled vertically.</property>
                     <property name="can-focus">False</property>
                     <property name="halign">start</property>
                     <property name="valign">end</property>
-                    <property name="margin-left">8</property>
                     <property name="margin-start">12</property>
                     <property name="label" translatable="yes">Height</property>
                     <attributes>
@@ -5624,205 +5622,195 @@ should be scaled vertically.</property>
                   <object class="GtkFrame" id="fr_sbForeground">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
+                    <property name="halign">start</property>
                     <property name="margin-top">6</property>
                     <property name="margin-bottom">6</property>
                     <property name="label-xalign">0.029999999329447746</property>
                     <child>
-                      <object class="GtkAlignment">
+                      <!-- n-columns=3 n-rows=4 -->
+                      <object class="GtkGrid">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
-                        <property name="left-padding">12</property>
+                        <property name="halign">start</property>
+                        <property name="margin-start">6</property>
+                        <property name="margin-end">6</property>
+                        <property name="margin-bottom">8</property>
+                        <property name="row-spacing">6</property>
+                        <property name="column-spacing">10</property>
                         <child>
-                          <!-- n-columns=3 n-rows=4 -->
-                          <object class="GtkGrid">
+                          <object class="GtkComboBox" id="fcb_sbi_posn_beside">
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
-                            <property name="margin-start">6</property>
-                            <property name="margin-end">6</property>
-                            <property name="margin-bottom">8</property>
-                            <property name="row-spacing">6</property>
-                            <property name="column-spacing">10</property>
-                            <child>
-                              <object class="GtkComboBox" id="fcb_sbi_posn_beside">
-                                <property name="visible">True</property>
-                                <property name="can-focus">False</property>
-                                <property name="can-default">True</property>
-                                <property name="tooltip-text" translatable="yes">Top: Above everything except the header line
+                            <property name="can-default">True</property>
+                            <property name="tooltip-text" translatable="yes">Top: Above everything except the header line
 Bottom: Below all verse text
 Before Verse: Right where it comes in the text
 After Paragraph: After where it comes in the text</property>
-                                <property name="halign">start</property>
-                                <property name="model">ls_sbi_posn_beside</property>
-                                <property name="wrap-width">4</property>
-                                <property name="has-entry">True</property>
-                                <property name="entry-text-column">0</property>
-                                <property name="id-column">1</property>
-                                <property name="active-id">sl</property>
-                                <child internal-child="entry">
-                                  <object class="GtkEntry">
-                                    <property name="can-focus">True</property>
-                                    <property name="width-chars">14</property>
-                                  </object>
-                                </child>
-                              </object>
-                              <packing>
-                                <property name="left-attach">1</property>
-                                <property name="top-attach">3</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkRadioButton" id="r_sbiPosn_above">
-                                <property name="label" translatable="yes">Above or Below Text:</property>
-                                <property name="visible">True</property>
-                                <property name="can-focus">True</property>
-                                <property name="receives-default">False</property>
-                                <property name="halign">start</property>
-                                <property name="active">True</property>
-                                <property name="draw-indicator">True</property>
-                                <property name="group">r_sbiPosn_beside</property>
-                                <signal name="clicked" handler="onRadioChanged" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="left-attach">0</property>
-                                <property name="top-attach">2</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkRadioButton" id="r_sbiPosn_beside">
-                                <property name="label" translatable="yes">Beside Text:</property>
-                                <property name="visible">True</property>
-                                <property name="can-focus">True</property>
-                                <property name="receives-default">False</property>
-                                <property name="halign">start</property>
-                                <property name="active">True</property>
-                                <property name="draw-indicator">True</property>
-                                <property name="group">r_sbiPosn_above</property>
-                                <signal name="clicked" handler="onRadioChanged" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="left-attach">0</property>
-                                <property name="top-attach">3</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkRadioButton" id="r_sbiPosn_cutout">
-                                <property name="label" translatable="yes">Cutout Within Text:</property>
-                                <property name="visible">True</property>
-                                <property name="can-focus">True</property>
-                                <property name="receives-default">False</property>
-                                <property name="halign">start</property>
-                                <property name="active">True</property>
-                                <property name="draw-indicator">True</property>
-                                <property name="group">r_sbiPosn_beside</property>
-                                <signal name="clicked" handler="onRadioChanged" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="left-attach">0</property>
-                                <property name="top-attach">1</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkComboBox" id="fcb_sbi_posn_above">
-                                <property name="visible">True</property>
+                            <property name="halign">start</property>
+                            <property name="model">ls_sbi_posn_beside</property>
+                            <property name="wrap-width">4</property>
+                            <property name="has-entry">True</property>
+                            <property name="entry-text-column">0</property>
+                            <property name="id-column">1</property>
+                            <property name="active-id">sl</property>
+                            <child internal-child="entry">
+                              <object class="GtkEntry">
                                 <property name="can-focus">False</property>
-                                <property name="can-default">True</property>
-                                <property name="tooltip-text" translatable="yes">Top: Above everything except the header line
+                                <property name="width-chars">18</property>
+                              </object>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="left-attach">1</property>
+                            <property name="top-attach">3</property>
+                            <property name="width">2</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkRadioButton" id="r_sbiPosn_above">
+                            <property name="label" translatable="yes">Above or Below Text:</property>
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="receives-default">False</property>
+                            <property name="halign">start</property>
+                            <property name="active">True</property>
+                            <property name="draw-indicator">True</property>
+                            <property name="group">r_sbiPosn_beside</property>
+                            <signal name="clicked" handler="onRadioChanged" swapped="no"/>
+                          </object>
+                          <packing>
+                            <property name="left-attach">0</property>
+                            <property name="top-attach">2</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkRadioButton" id="r_sbiPosn_beside">
+                            <property name="label" translatable="yes">Beside Text:</property>
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="receives-default">False</property>
+                            <property name="halign">start</property>
+                            <property name="active">True</property>
+                            <property name="draw-indicator">True</property>
+                            <property name="group">r_sbiPosn_above</property>
+                            <signal name="clicked" handler="onRadioChanged" swapped="no"/>
+                          </object>
+                          <packing>
+                            <property name="left-attach">0</property>
+                            <property name="top-attach">3</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkRadioButton" id="r_sbiPosn_cutout">
+                            <property name="label" translatable="yes">Cutout Within Text:</property>
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="receives-default">False</property>
+                            <property name="halign">start</property>
+                            <property name="active">True</property>
+                            <property name="draw-indicator">True</property>
+                            <property name="group">r_sbiPosn_beside</property>
+                            <signal name="clicked" handler="onRadioChanged" swapped="no"/>
+                          </object>
+                          <packing>
+                            <property name="left-attach">0</property>
+                            <property name="top-attach">1</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkComboBox" id="fcb_sbi_posn_above">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="can-default">True</property>
+                            <property name="tooltip-text" translatable="yes">Top: Above everything except the header line
 Bottom: Below all verse text
 Before Verse: Right where it comes in the text
 After Paragraph: After where it comes in the text</property>
-                                <property name="halign">start</property>
-                                <property name="model">ls_sbi_posn_above</property>
-                                <property name="wrap-width">6</property>
-                                <property name="has-entry">True</property>
-                                <property name="entry-text-column">0</property>
-                                <property name="id-column">1</property>
-                                <property name="active-id">t</property>
-                                <child internal-child="entry">
-                                  <object class="GtkEntry">
-                                    <property name="can-focus">True</property>
-                                    <property name="width-chars">14</property>
-                                  </object>
-                                </child>
-                              </object>
-                              <packing>
-                                <property name="left-attach">1</property>
-                                <property name="top-attach">2</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkComboBox" id="fcb_sbi_posn_cutout">
-                                <property name="visible">True</property>
+                            <property name="halign">start</property>
+                            <property name="model">ls_sbi_posn_above</property>
+                            <property name="wrap-width">6</property>
+                            <property name="has-entry">True</property>
+                            <property name="entry-text-column">0</property>
+                            <property name="id-column">1</property>
+                            <property name="active-id">t</property>
+                            <child internal-child="entry">
+                              <object class="GtkEntry">
                                 <property name="can-focus">False</property>
-                                <property name="can-default">True</property>
-                                <property name="halign">start</property>
-                                <property name="model">ls_sbi_posn_cutout</property>
-                                <property name="wrap-width">4</property>
-                                <property name="has-entry">True</property>
-                                <property name="entry-text-column">0</property>
-                                <property name="id-column">1</property>
-                                <property name="active-id">cl</property>
-                                <child internal-child="entry">
-                                  <object class="GtkEntry">
-                                    <property name="can-focus">True</property>
-                                    <property name="width-chars">14</property>
-                                  </object>
-                                </child>
+                                <property name="width-chars">18</property>
                               </object>
-                              <packing>
-                                <property name="left-attach">1</property>
-                                <property name="top-attach">1</property>
-                              </packing>
                             </child>
-                            <child>
-                              <object class="GtkSpinButton" id="s_sbiCutoutLines">
-                                <property name="visible">True</property>
-                                <property name="can-focus">True</property>
-                                <property name="tooltip-text" translatable="yes">Specify the number of minor divisions there should
+                          </object>
+                          <packing>
+                            <property name="left-attach">1</property>
+                            <property name="top-attach">2</property>
+                            <property name="width">2</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkComboBox" id="fcb_sbi_posn_cutout">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="can-default">True</property>
+                            <property name="halign">start</property>
+                            <property name="model">ls_sbi_posn_cutout</property>
+                            <property name="wrap-width">4</property>
+                            <property name="has-entry">True</property>
+                            <property name="entry-text-column">0</property>
+                            <property name="id-column">1</property>
+                            <property name="active-id">cl</property>
+                            <child internal-child="entry">
+                              <object class="GtkEntry">
+                                <property name="can-focus">False</property>
+                                <property name="width-chars">10</property>
+                              </object>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="left-attach">1</property>
+                            <property name="top-attach">1</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkSpinButton" id="s_sbiCutoutLines">
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="tooltip-text" translatable="yes">Specify the number of minor divisions there should
 be between the thicker (major) lines. 
 Recommendations: 2, 5, or 10 for centimeters, 
 and 3, 4, 6, or 12 for inches.</property>
-                                <property name="halign">start</property>
-                                <property name="width-chars">1</property>
-                                <property name="text">2</property>
-                                <property name="adjustment">a_sbiCutoutLines</property>
-                                <property name="climb-rate">1</property>
-                              </object>
-                              <packing>
-                                <property name="left-attach">2</property>
-                                <property name="top-attach">1</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel" id="l_sbiCutoutLines">
-                                <property name="visible">True</property>
-                                <property name="can-focus">False</property>
-                                <property name="halign">start</property>
-                                <property name="valign">end</property>
-                                <property name="margin-left">12</property>
-                                <property name="label" translatable="yes">Start N Lines Below Top</property>
-                                <attributes>
-                                  <attribute name="style" value="italic"/>
-                                  <attribute name="scale" value="0.84999999999999998"/>
-                                </attributes>
-                              </object>
-                              <packing>
-                                <property name="left-attach">2</property>
-                                <property name="top-attach">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
+                            <property name="halign">start</property>
+                            <property name="width-chars">1</property>
+                            <property name="text">2</property>
+                            <property name="adjustment">a_sbiCutoutLines</property>
+                            <property name="climb-rate">1</property>
                           </object>
+                          <packing>
+                            <property name="left-attach">2</property>
+                            <property name="top-attach">1</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="l_sbiCutoutLines">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="halign">start</property>
+                            <property name="valign">end</property>
+                            <property name="label" translatable="yes">Start N Lines Below Top</property>
+                            <attributes>
+                              <attribute name="style" value="italic"/>
+                              <attribute name="scale" value="0.84999999999999998"/>
+                            </attributes>
+                          </object>
+                          <packing>
+                            <property name="left-attach">2</property>
+                            <property name="top-attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <placeholder/>
+                        </child>
+                        <child>
+                          <placeholder/>
                         </child>
                       </object>
                     </child>
@@ -5844,58 +5832,55 @@ and 3, 4, 6, or 12 for inches.</property>
                   <object class="GtkFrame" id="fr_sbBackground">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
+                    <property name="halign">start</property>
                     <property name="margin-top">6</property>
                     <property name="margin-bottom">6</property>
                     <property name="label-xalign">0.029999999329447746</property>
                     <child>
-                      <object class="GtkAlignment">
+                      <!-- n-columns=5 n-rows=2 -->
+                      <object class="GtkGrid">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
-                        <property name="left-padding">12</property>
+                        <property name="halign">start</property>
+                        <property name="margin-start">6</property>
+                        <property name="margin-end">6</property>
+                        <property name="margin-top">6</property>
+                        <property name="margin-bottom">6</property>
+                        <property name="row-spacing">6</property>
+                        <property name="column-spacing">6</property>
                         <child>
-                          <!-- n-columns=5 n-rows=2 -->
-                          <object class="GtkGrid">
+                          <object class="GtkSpinButton" id="s_sbiAlpha">
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="tooltip-text" translatable="yes">Transparency or alpha value of the background 
+image: 0 is transparent, 1 is solid. This is useful 
+for turning black lines into a paler shade. 
+
+Note that this will allow the background colour
+to show through, even if the image is above
+the background layer, so on a green background
+black will become a darker shade of green, not grey.</property>
+                            <property name="halign">start</property>
+                            <property name="valign">start</property>
+                            <property name="text">1.0</property>
+                            <property name="input-purpose">number</property>
+                            <property name="adjustment">a_sbAlpha</property>
+                            <property name="climb-rate">0.05</property>
+                            <property name="digits">2</property>
+                            <property name="numeric">True</property>
+                            <property name="update-policy">if-valid</property>
+                            <property name="value">1</property>
+                          </object>
+                          <packing>
+                            <property name="left-attach">4</property>
+                            <property name="top-attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
-                            <property name="margin-start">6</property>
-                            <property name="margin-end">6</property>
-                            <property name="margin-top">6</property>
-                            <property name="margin-bottom">5</property>
-                            <property name="row-spacing">6</property>
-                            <property name="column-spacing">6</property>
-                            <child>
-                              <object class="GtkSpinButton" id="s_sbiAlpha">
-                                <property name="visible">True</property>
-                                <property name="can-focus">True</property>
-                                <property name="tooltip-text" translatable="yes">Transparency or alpha value of the background 
-image: 0 is transparent, 1 is solid. This is useful 
-for turning black lines into a paler shade. 
-
-Note that this will allow the background colour
-to show through, even if the image is above
-the background layer, so on a green background
-black will become a darker shade of green, not grey.</property>
-                                <property name="halign">start</property>
-                                <property name="valign">start</property>
-                                <property name="text">1.0</property>
-                                <property name="input-purpose">number</property>
-                                <property name="adjustment">a_sbAlpha</property>
-                                <property name="climb-rate">0.05</property>
-                                <property name="digits">2</property>
-                                <property name="numeric">True</property>
-                                <property name="update-policy">if-valid</property>
-                                <property name="value">1</property>
-                              </object>
-                              <packing>
-                                <property name="left-attach">4</property>
-                                <property name="top-attach">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel">
-                                <property name="visible">True</property>
-                                <property name="can-focus">False</property>
-                                <property name="tooltip-text" translatable="yes">Some (rare) PDF line-art images do not set 
+                            <property name="tooltip-text" translatable="yes">Some (rare) PDF line-art images do not set 
 the colour of their lines, relying instead on 
 the 'default' colour, which is normally black. 
 This control sets the default colour to something 
@@ -5906,20 +5891,20 @@ will have no visible effect at all. It is also possible
 that an image will *partly* contain colour information, 
 but only starting part way through the file, a situation 
 that might produce unexpected results.</property>
-                                <property name="halign">end</property>
-                                <property name="label" translatable="yes">Color:</property>
-                              </object>
-                              <packing>
-                                <property name="left-attach">0</property>
-                                <property name="top-attach">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkColorButton" id="col_sbBorderColor1">
-                                <property name="visible">True</property>
-                                <property name="can-focus">True</property>
-                                <property name="receives-default">True</property>
-                                <property name="tooltip-text" translatable="yes">Some (rare) PDF line-art images do not set 
+                            <property name="halign">end</property>
+                            <property name="label" translatable="yes">Color:</property>
+                          </object>
+                          <packing>
+                            <property name="left-attach">0</property>
+                            <property name="top-attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkColorButton" id="col_sbBorderColor1">
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="receives-default">True</property>
+                            <property name="tooltip-text" translatable="yes">Some (rare) PDF line-art images do not set 
 the colour of their lines, relying instead on 
 the 'default' colour, which is normally black. 
 This control sets the default colour to something 
@@ -5930,20 +5915,20 @@ will have no visible effect at all. It is also possible
 that an image will *partly* contain colour information, 
 but only starting part way through the file, a situation 
 that might produce unexpected results.</property>
-                                <property name="halign">start</property>
-                                <property name="title" translatable="yes">Border Color</property>
-                                <property name="rgba">rgb(0,0,0)</property>
-                              </object>
-                              <packing>
-                                <property name="left-attach">1</property>
-                                <property name="top-attach">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel">
-                                <property name="visible">True</property>
-                                <property name="can-focus">False</property>
-                                <property name="tooltip-text" translatable="yes">Transparency or alpha value of the background 
+                            <property name="halign">start</property>
+                            <property name="title" translatable="yes">Border Color</property>
+                            <property name="rgba">rgb(0,0,0)</property>
+                          </object>
+                          <packing>
+                            <property name="left-attach">1</property>
+                            <property name="top-attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="tooltip-text" translatable="yes">Transparency or alpha value of the background 
 image: 0 is transparent, 1 is solid. This is useful 
 for turning black lines into a paler shade. 
 
@@ -5951,116 +5936,113 @@ Note that this will allow the background colour
 to show through, even if the image is above
 the background layer, so on a green background
 black will become a darker shade of green, not grey.</property>
-                                <property name="halign">end</property>
-                                <property name="label" translatable="yes">Background Image Alpha:</property>
-                              </object>
-                              <packing>
-                                <property name="left-attach">2</property>
-                                <property name="top-attach">0</property>
-                                <property name="width">2</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel">
-                                <property name="visible">True</property>
-                                <property name="can-focus">False</property>
-                                <property name="tooltip-text" translatable="yes">Only relevant where there is both a background image
+                            <property name="halign">end</property>
+                            <property name="label" translatable="yes">Background Image Alpha:</property>
+                          </object>
+                          <packing>
+                            <property name="left-attach">2</property>
+                            <property name="top-attach">0</property>
+                            <property name="width">2</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="tooltip-text" translatable="yes">Only relevant where there is both a background image
 *and* a background color. Set whether the background 
 image should come above or behind the color. Line art 
 PDFs with a tranpsarent background may display better
 above the color layer, as the color layer will not then 
 wash them out, but .JPGs are probably better behind,
 as .JPG images do not have transparency.</property>
-                                <property name="halign">end</property>
-                                <property name="label" translatable="yes">Layer
+                            <property name="halign">end</property>
+                            <property name="label" translatable="yes">Layer
 Order:</property>
-                              </object>
-                              <packing>
-                                <property name="left-attach">0</property>
-                                <property name="top-attach">1</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkComboBox" id="fcb_sbiLayerOrder">
-                                <property name="visible">True</property>
-                                <property name="can-focus">False</property>
-                                <property name="can-default">True</property>
-                                <property name="tooltip-text" translatable="yes">Only relevant where there is both a background image
+                          </object>
+                          <packing>
+                            <property name="left-attach">0</property>
+                            <property name="top-attach">1</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkComboBox" id="fcb_sbiLayerOrder">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="can-default">True</property>
+                            <property name="tooltip-text" translatable="yes">Only relevant where there is both a background image
 *and* a background color. Set whether the background 
 image should come above or behind the color. Line art 
 PDFs with a tranpsarent background may display better
 above the color layer, as the color layer will not then 
 wash them out, but .JPGs are probably better behind,
 as .JPG images do not have transparency.</property>
-                                <property name="halign">start</property>
-                                <property name="model">ls_sbiLayerOrder</property>
-                                <property name="wrap-width">1</property>
-                                <property name="has-entry">True</property>
-                                <property name="entry-text-column">0</property>
-                                <property name="id-column">1</property>
-                                <property name="active-id">f</property>
-                                <child internal-child="entry">
-                                  <object class="GtkEntry">
-                                    <property name="can-focus">False</property>
-                                    <property name="width-chars">20</property>
-                                  </object>
-                                </child>
-                              </object>
-                              <packing>
-                                <property name="left-attach">1</property>
-                                <property name="top-attach">1</property>
-                                <property name="width">2</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel">
-                                <property name="visible">True</property>
+                            <property name="halign">start</property>
+                            <property name="model">ls_sbiLayerOrder</property>
+                            <property name="wrap-width">1</property>
+                            <property name="has-entry">True</property>
+                            <property name="entry-text-column">0</property>
+                            <property name="id-column">1</property>
+                            <property name="active-id">f</property>
+                            <child internal-child="entry">
+                              <object class="GtkEntry">
                                 <property name="can-focus">False</property>
-                                <property name="tooltip-text" translatable="yes">Select what action should be taken if
-the background image size is specified
-with a single dimension (height or width)
-and the unspecified dimension ends up
-being too large for a given sidebar.</property>
-                                <property name="halign">end</property>
-                                <property name="label" translatable="yes">If Image Is
-Oversized:</property>
+                                <property name="width-chars">20</property>
                               </object>
-                              <packing>
-                                <property name="left-attach">3</property>
-                                <property name="top-attach">1</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkComboBox" id="fcb_sbiOversize">
-                                <property name="visible">True</property>
-                                <property name="can-focus">False</property>
-                                <property name="can-default">True</property>
-                                <property name="tooltip-text" translatable="yes">Select what action should be taken if
-the background image size is specified
-with a single dimension (height or width)
-and the unspecified dimension ends up
-being too large for a given sidebar.</property>
-                                <property name="halign">start</property>
-                                <property name="model">ls_sbiOversize</property>
-                                <property name="wrap-width">1</property>
-                                <property name="has-entry">True</property>
-                                <property name="entry-text-column">0</property>
-                                <property name="id-column">1</property>
-                                <property name="active-id">ignore</property>
-                                <child internal-child="entry">
-                                  <object class="GtkEntry">
-                                    <property name="can-focus">False</property>
-                                    <property name="halign">start</property>
-                                    <property name="width-chars">18</property>
-                                  </object>
-                                </child>
-                              </object>
-                              <packing>
-                                <property name="left-attach">4</property>
-                                <property name="top-attach">1</property>
-                              </packing>
                             </child>
                           </object>
+                          <packing>
+                            <property name="left-attach">1</property>
+                            <property name="top-attach">1</property>
+                            <property name="width">2</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="tooltip-text" translatable="yes">Select what action should be taken if
+the background image size is specified
+with a single dimension (height or width)
+and the unspecified dimension ends up
+being too large for a given sidebar.</property>
+                            <property name="halign">end</property>
+                            <property name="label" translatable="yes">If Image Is
+Oversized:</property>
+                          </object>
+                          <packing>
+                            <property name="left-attach">3</property>
+                            <property name="top-attach">1</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkComboBox" id="fcb_sbiOversize">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="can-default">True</property>
+                            <property name="tooltip-text" translatable="yes">Select what action should be taken if
+the background image size is specified
+with a single dimension (height or width)
+and the unspecified dimension ends up
+being too large for a given sidebar.</property>
+                            <property name="halign">start</property>
+                            <property name="model">ls_sbiOversize</property>
+                            <property name="wrap-width">1</property>
+                            <property name="has-entry">True</property>
+                            <property name="entry-text-column">0</property>
+                            <property name="id-column">1</property>
+                            <property name="active-id">ignore</property>
+                            <child internal-child="entry">
+                              <object class="GtkEntry">
+                                <property name="can-focus">False</property>
+                                <property name="width-chars">16</property>
+                              </object>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="left-attach">4</property>
+                            <property name="top-attach">1</property>
+                          </packing>
                         </child>
                       </object>
                     </child>
@@ -6094,8 +6076,8 @@ maintains its proportions.</property>
                     <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                   </object>
                   <packing>
-                    <property name="left-attach">2</property>
-                    <property name="top-attach">1</property>
+                    <property name="left-attach">4</property>
+                    <property name="top-attach">2</property>
                   </packing>
                 </child>
                 <child>
@@ -6110,10 +6092,10 @@ maintains its proportions.</property>
               </object>
             </child>
             <child type="label">
-              <object class="GtkLabel">
+              <object class="GtkLabel" id="l_sbFGorBG">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="label" translatable="yes">Sidebar Image Settings (Foreground / Background)</property>
+                <property name="label" translatable="yes">Sidebar Foreground/Background</property>
               </object>
             </child>
           </object>
@@ -12206,7 +12188,6 @@ Also settings for special books.</property>
                                 <child>
                                   <object class="GtkCheckButton" id="c_includeFootnotes">
                                     <property name="label" translatable="yes">Include Footnotes</property>
-                                    <property name="width-request">200</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">False</property>
@@ -12217,7 +12198,6 @@ The specific settings for these are
 located on the Footnotes tab.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
-                                    <property name="xalign">0</property>
                                     <property name="active">True</property>
                                     <property name="draw-indicator">True</property>
                                     <signal name="clicked" handler="onFootnotesClicked" swapped="no"/>
@@ -13470,7 +13450,6 @@ quickly find the cross-reference from the text.</property>
                                     <child>
                                       <object class="GtkCheckButton" id="c_xrpageresetcallers">
                                         <property name="label" translatable="yes">Reset Callers on Page</property>
-                                        <property name="width-request">140</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="receives-default">False</property>
@@ -13483,7 +13462,6 @@ effect straight away. You may need to hit
 Print a second time before it applies.</property>
                                         <property name="halign">start</property>
                                         <property name="valign">center</property>
-                                        <property name="xalign">0</property>
                                         <property name="active">True</property>
                                         <property name="draw-indicator">True</property>
                                       </object>
@@ -14028,26 +14006,21 @@ proper nouns (names of people and places).</property>
                                             <property name="margin-bottom">6</property>
                                             <property name="label-xalign">0.10000000149011612</property>
                                             <child>
-                                              <object class="GtkAlignment">
+                                              <!-- n-columns=2 n-rows=5 -->
+                                              <object class="GtkGrid">
                                                 <property name="visible">True</property>
                                                 <property name="can-focus">False</property>
-                                                <property name="left-padding">12</property>
+                                                <property name="margin-start">6</property>
+                                                <property name="margin-end">6</property>
+                                                <property name="margin-top">6</property>
+                                                <property name="margin-bottom">6</property>
+                                                <property name="row-spacing">6</property>
+                                                <property name="column-spacing">5</property>
                                                 <child>
-                                                  <!-- n-columns=3 n-rows=5 -->
-                                                  <object class="GtkGrid">
+                                                  <object class="GtkSpinButton" id="s_centreColWidth">
                                                     <property name="visible">True</property>
-                                                    <property name="can-focus">False</property>
-                                                    <property name="margin-start">6</property>
-                                                    <property name="margin-end">6</property>
-                                                    <property name="margin-top">6</property>
-                                                    <property name="margin-bottom">6</property>
-                                                    <property name="row-spacing">6</property>
-                                                    <property name="column-spacing">5</property>
-                                                    <child>
-                                                      <object class="GtkSpinButton" id="s_centreColWidth">
-                                                        <property name="visible">True</property>
-                                                        <property name="can-focus">True</property>
-                                                        <property name="tooltip-text" translatable="yes">This sets the width of the centre column in points.
+                                                    <property name="can-focus">True</property>
+                                                    <property name="tooltip-text" translatable="yes">This sets the width of the centre column in points.
 Note that 72pts is 1 inch, and increasing the size
 here will decrease the amount of space available
 for the 2 columns of scripture text.
@@ -14058,169 +14031,152 @@ use Centre Column xRefs.
 If this centre column isn't wide enough to fit
 the references, then you should also consider
 reducing the size of the \x font (to approx 6pt).</property>
-                                                        <property name="halign">start</property>
-                                                        <property name="width-chars">4</property>
-                                                        <property name="text">60</property>
-                                                        <property name="caps-lock-warning">False</property>
-                                                        <property name="progress-pulse-step">0</property>
-                                                        <property name="placeholder-text">0.0</property>
-                                                        <property name="input-purpose">number</property>
-                                                        <property name="adjustment">a_centreColWidth</property>
-                                                        <property name="climb-rate">5</property>
-                                                        <property name="numeric">True</property>
-                                                        <property name="update-policy">if-valid</property>
-                                                        <property name="value">60</property>
-                                                      </object>
-                                                      <packing>
-                                                        <property name="left-attach">1</property>
-                                                        <property name="top-attach">1</property>
-                                                      </packing>
-                                                    </child>
-                                                    <child>
-                                                      <object class="GtkLabel" id="l_xrColWid">
-                                                        <property name="visible">True</property>
-                                                        <property name="can-focus">False</property>
-                                                        <property name="halign">end</property>
-                                                        <property name="label" translatable="yes">Column Width (pts):</property>
-                                                      </object>
-                                                      <packing>
-                                                        <property name="left-attach">0</property>
-                                                        <property name="top-attach">1</property>
-                                                      </packing>
-                                                    </child>
-                                                    <child>
-                                                      <object class="GtkLabel" id="l_xrColSpace">
-                                                        <property name="visible">True</property>
-                                                        <property name="can-focus">False</property>
-                                                        <property name="halign">end</property>
-                                                        <property name="label" translatable="yes">Gutter Width (pts):</property>
-                                                      </object>
-                                                      <packing>
-                                                        <property name="left-attach">0</property>
-                                                        <property name="top-attach">2</property>
-                                                      </packing>
-                                                    </child>
-                                                    <child>
-                                                      <object class="GtkSpinButton" id="s_xrGutterWidth">
-                                                        <property name="visible">True</property>
-                                                        <property name="can-focus">True</property>
-                                                        <property name="tooltip-text" translatable="yes">This sets the space between the main body
+                                                    <property name="halign">start</property>
+                                                    <property name="width-chars">4</property>
+                                                    <property name="text">60</property>
+                                                    <property name="caps-lock-warning">False</property>
+                                                    <property name="progress-pulse-step">0</property>
+                                                    <property name="placeholder-text">0.0</property>
+                                                    <property name="input-purpose">number</property>
+                                                    <property name="adjustment">a_centreColWidth</property>
+                                                    <property name="climb-rate">5</property>
+                                                    <property name="numeric">True</property>
+                                                    <property name="update-policy">if-valid</property>
+                                                    <property name="value">60</property>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="left-attach">1</property>
+                                                    <property name="top-attach">1</property>
+                                                  </packing>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkLabel" id="l_xrColWid">
+                                                    <property name="visible">True</property>
+                                                    <property name="can-focus">False</property>
+                                                    <property name="halign">end</property>
+                                                    <property name="label" translatable="yes">Column Width (pts):</property>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="left-attach">0</property>
+                                                    <property name="top-attach">1</property>
+                                                  </packing>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkLabel" id="l_xrColSpace">
+                                                    <property name="visible">True</property>
+                                                    <property name="can-focus">False</property>
+                                                    <property name="halign">end</property>
+                                                    <property name="label" translatable="yes">Gutter Width (pts):</property>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="left-attach">0</property>
+                                                    <property name="top-attach">2</property>
+                                                  </packing>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkSpinButton" id="s_xrGutterWidth">
+                                                    <property name="visible">True</property>
+                                                    <property name="can-focus">True</property>
+                                                    <property name="tooltip-text" translatable="yes">This sets the space between the main body
 text and the column of cross-references.</property>
-                                                        <property name="halign">start</property>
-                                                        <property name="width-chars">4</property>
-                                                        <property name="text">2.0</property>
-                                                        <property name="caps-lock-warning">False</property>
-                                                        <property name="progress-pulse-step">0</property>
-                                                        <property name="placeholder-text">0.0</property>
-                                                        <property name="input-purpose">number</property>
-                                                        <property name="adjustment">xrGutterWidth</property>
-                                                        <property name="climb-rate">0.5</property>
-                                                        <property name="digits">1</property>
-                                                        <property name="numeric">True</property>
-                                                        <property name="update-policy">if-valid</property>
-                                                        <property name="value">2</property>
-                                                      </object>
-                                                      <packing>
-                                                        <property name="left-attach">1</property>
-                                                        <property name="top-attach">2</property>
-                                                      </packing>
-                                                    </child>
-                                                    <child>
-                                                      <object class="GtkLabel" id="l_colXRside">
-                                                        <property name="visible">True</property>
-                                                        <property name="can-focus">False</property>
-                                                        <property name="halign">end</property>
-                                                        <property name="label" translatable="yes">Side of page:</property>
-                                                      </object>
-                                                      <packing>
-                                                        <property name="left-attach">0</property>
-                                                        <property name="top-attach">0</property>
-                                                      </packing>
-                                                    </child>
-                                                    <child>
-                                                      <object class="GtkComboBox" id="fcb_colXRside">
-                                                        <property name="width-request">116</property>
-                                                        <property name="visible">True</property>
-                                                        <property name="can-focus">False</property>
-                                                        <property name="can-default">True</property>
-                                                        <property name="tooltip-text" translatable="yes">Select where the column of cross-references
+                                                    <property name="halign">start</property>
+                                                    <property name="width-chars">4</property>
+                                                    <property name="text">2.0</property>
+                                                    <property name="caps-lock-warning">False</property>
+                                                    <property name="progress-pulse-step">0</property>
+                                                    <property name="placeholder-text">0.0</property>
+                                                    <property name="input-purpose">number</property>
+                                                    <property name="adjustment">xrGutterWidth</property>
+                                                    <property name="climb-rate">0.5</property>
+                                                    <property name="digits">1</property>
+                                                    <property name="numeric">True</property>
+                                                    <property name="update-policy">if-valid</property>
+                                                    <property name="value">2</property>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="left-attach">1</property>
+                                                    <property name="top-attach">2</property>
+                                                  </packing>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkLabel" id="l_colXRside">
+                                                    <property name="visible">True</property>
+                                                    <property name="can-focus">False</property>
+                                                    <property name="halign">end</property>
+                                                    <property name="label" translatable="yes">Side of page:</property>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="left-attach">0</property>
+                                                    <property name="top-attach">0</property>
+                                                  </packing>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkComboBox" id="fcb_colXRside">
+                                                    <property name="width-request">116</property>
+                                                    <property name="visible">True</property>
+                                                    <property name="can-focus">False</property>
+                                                    <property name="can-default">True</property>
+                                                    <property name="tooltip-text" translatable="yes">Select where the column of cross-references
 should be located on the page. Note that the
 2-column layout insists on the cross-references
 being positioned between the columns of text.</property>
-                                                        <property name="halign">start</property>
-                                                        <property name="model">ls_colXRside</property>
-                                                        <property name="wrap-width">1</property>
-                                                        <property name="active">1</property>
-                                                        <property name="entry-text-column">0</property>
-                                                        <property name="id-column">1</property>
-                                                        <property name="active-id">3</property>
-                                                      </object>
-                                                      <packing>
-                                                        <property name="left-attach">1</property>
-                                                        <property name="top-attach">0</property>
-                                                      </packing>
-                                                    </child>
-                                                    <child>
-                                                      <object class="GtkCheckButton" id="c_xrColumnRule">
-                                                        <property name="label" translatable="yes">Vertical Rule(s) Between Columns</property>
-                                                        <property name="visible">True</property>
-                                                        <property name="can-focus">True</property>
-                                                        <property name="receives-default">False</property>
-                                                        <property name="tooltip-text" translatable="yes">Check this option to include a vertical line
+                                                    <property name="halign">start</property>
+                                                    <property name="model">ls_colXRside</property>
+                                                    <property name="wrap-width">1</property>
+                                                    <property name="active">1</property>
+                                                    <property name="entry-text-column">0</property>
+                                                    <property name="id-column">1</property>
+                                                    <property name="active-id">3</property>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="left-attach">1</property>
+                                                    <property name="top-attach">0</property>
+                                                  </packing>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkCheckButton" id="c_xrColumnRule">
+                                                    <property name="label" translatable="yes">Vertical Rule(s) Between Columns</property>
+                                                    <property name="visible">True</property>
+                                                    <property name="can-focus">True</property>
+                                                    <property name="receives-default">False</property>
+                                                    <property name="tooltip-text" translatable="yes">Check this option to include a vertical line
 separating the text and cross-references.</property>
-                                                        <property name="halign">start</property>
-                                                        <property name="valign">center</property>
-                                                        <property name="margin-start">6</property>
-                                                        <property name="margin-end">2</property>
-                                                        <property name="active">True</property>
-                                                        <property name="draw-indicator">True</property>
-                                                      </object>
-                                                      <packing>
-                                                        <property name="left-attach">0</property>
-                                                        <property name="top-attach">3</property>
-                                                        <property name="width">2</property>
-                                                      </packing>
-                                                    </child>
-                                                    <child>
-                                                      <object class="GtkCheckButton" id="c_xrColumnBottom">
-                                                        <property name="label" translatable="yes">Fill Upward From Bottom of Column</property>
-                                                        <property name="visible">True</property>
-                                                        <property name="can-focus">True</property>
-                                                        <property name="receives-default">False</property>
-                                                        <property name="tooltip-text" translatable="yes">If there are only a small number of
+                                                    <property name="halign">start</property>
+                                                    <property name="valign">center</property>
+                                                    <property name="margin-start">6</property>
+                                                    <property name="margin-end">2</property>
+                                                    <property name="active">True</property>
+                                                    <property name="draw-indicator">True</property>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="left-attach">0</property>
+                                                    <property name="top-attach">3</property>
+                                                    <property name="width">2</property>
+                                                  </packing>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkCheckButton" id="c_xrColumnBottom">
+                                                    <property name="label" translatable="yes">Fill Upward From Bottom of Column</property>
+                                                    <property name="visible">True</property>
+                                                    <property name="can-focus">True</property>
+                                                    <property name="receives-default">False</property>
+                                                    <property name="tooltip-text" translatable="yes">If there are only a small number of
 cross-references, it may appear better
 for them to be placed nearer the end
 (or bottom) of the page. Check this
 option if you prefer the references to
 fill the column upward from the end
 of the page. </property>
-                                                        <property name="valign">center</property>
-                                                        <property name="margin-start">6</property>
-                                                        <property name="margin-end">2</property>
-                                                        <property name="draw-indicator">True</property>
-                                                      </object>
-                                                      <packing>
-                                                        <property name="left-attach">0</property>
-                                                        <property name="top-attach">4</property>
-                                                        <property name="width">2</property>
-                                                      </packing>
-                                                    </child>
-                                                    <child>
-                                                      <placeholder/>
-                                                    </child>
-                                                    <child>
-                                                      <placeholder/>
-                                                    </child>
-                                                    <child>
-                                                      <placeholder/>
-                                                    </child>
-                                                    <child>
-                                                      <placeholder/>
-                                                    </child>
-                                                    <child>
-                                                      <placeholder/>
-                                                    </child>
+                                                    <property name="valign">center</property>
+                                                    <property name="margin-start">6</property>
+                                                    <property name="margin-end">2</property>
+                                                    <property name="draw-indicator">True</property>
                                                   </object>
+                                                  <packing>
+                                                    <property name="left-attach">0</property>
+                                                    <property name="top-attach">4</property>
+                                                    <property name="width">2</property>
+                                                  </packing>
                                                 </child>
                                               </object>
                                             </child>
@@ -14411,7 +14367,6 @@ the rule and the cross-references. </property>
                                             <property name="can-focus">False</property>
                                             <property name="halign">start</property>
                                             <property name="margin-start">20</property>
-                                            <property name="hexpand">True</property>
                                             <child>
                                               <!-- n-columns=5 n-rows=2 -->
                                               <object class="GtkGrid" id="gr_xrRulePosParms">
@@ -14658,7 +14613,6 @@ and Parameters:</property>
                                     <property name="margin-end">6</property>
                                     <property name="margin-top">6</property>
                                     <property name="margin-bottom">4</property>
-                                    <property name="hexpand">True</property>
                                     <property name="label-xalign">0.029999999329447746</property>
                                     <child>
                                       <object class="GtkBox">
@@ -14670,8 +14624,6 @@ and Parameters:</property>
                                           <object class="GtkGrid" id="gr_ef_layout">
                                             <property name="visible">True</property>
                                             <property name="can-focus">False</property>
-                                            <property name="margin-left">6</property>
-                                            <property name="margin-right">12</property>
                                             <property name="margin-start">6</property>
                                             <property name="margin-end">12</property>
                                             <property name="margin-top">4</property>
@@ -14933,8 +14885,6 @@ possible for this option.</property>
                                                     <property name="visible">True</property>
                                                     <property name="can-focus">False</property>
                                                     <property name="valign">end</property>
-                                                    <property name="margin-left">28</property>
-                                                    <property name="margin-right">4</property>
                                                     <property name="margin-start">20</property>
                                                     <property name="margin-end">4</property>
                                                     <property name="margin-bottom">10</property>
@@ -15148,7 +15098,6 @@ and Parameters:</property>
 the body text from the footnote area.</property>
                                                     <property name="halign">start</property>
                                                     <property name="valign">center</property>
-                                                    <property name="margin-left">12</property>
                                                     <property name="margin-start">12</property>
                                                     <property name="active">True</property>
                                                     <property name="draw-indicator">True</property>
@@ -15293,7 +15242,6 @@ ordinary footnotes but appear as a 2-column
 block at the end of each page. </property>
                                         <property name="halign">end</property>
                                         <property name="valign">center</property>
-                                        <property name="margin-left">2</property>
                                         <property name="margin-start">2</property>
                                         <property name="draw-indicator">True</property>
                                         <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
@@ -15368,7 +15316,6 @@ larger blocks of topic-specific information. </property>
                                                     <property name="vscroll-policy">natural</property>
                                                     <property name="model">ls_sbCatList</property>
                                                     <property name="reorderable">True</property>
-                                                    <property name="rules-hint">True</property>
                                                     <property name="enable-search">False</property>
                                                     <property name="search-column">0</property>
                                                     <property name="fixed-height-mode">True</property>
@@ -15530,7 +15477,6 @@ missing from this list.</property>
 extended study notes and sidebars from being displayed. </property>
                                         <property name="halign">end</property>
                                         <property name="valign">center</property>
-                                        <property name="margin-left">2</property>
                                         <property name="margin-start">2</property>
                                         <property name="draw-indicator">True</property>
                                         <signal name="clicked" handler="onFilterCatsClicked" swapped="no"/>

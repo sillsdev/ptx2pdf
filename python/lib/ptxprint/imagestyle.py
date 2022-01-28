@@ -65,6 +65,8 @@ class ImageStyle:
         groundframe.set_visible(True)
         groundoframe = view.builder.get_object("fr_sbForeground" if self.isbg else "fr_sbBackground")
         groundoframe.set_visible(False)
+        frtitle = view.builder.get_object("l_sbFGorBG")
+        frtitle.set_label("Sidebar Background" if self.isbg else "Sidebar Foreground")
         dialog.set_keep_above(True)
         self.initdialog(dialog, view)
         response = dialog.run()
