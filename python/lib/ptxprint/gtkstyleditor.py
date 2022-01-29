@@ -27,14 +27,18 @@ stylemap = {
     'LineSpacing':  ('s_styLineSpacing',    'l_styLineSpacing', 1, None, None),
     'SpaceBefore':  ('s_stySpaceBefore',    'l_stySpaceBefore', 0, None, None),
     'SpaceAfter':   ('s_stySpaceAfter',     'l_stySpaceAfter',  0, None, None),
-    'CallerStyle':  ('t_styCallerStyle',  'l_styCallerStyle', '', None, None),
+    'CallerStyle':  ('t_styCallerStyle',    'l_styCallerStyle', '', None, None),
     'NoteCallerStyle': ('t_styNoteCallerStyle', 'l_styNoteCallerStyle', '', None, None),
-    'NoteBlendInto': ('t_NoteBlendInto',  'l_NoteBlendInto',  '', None, None),
+    'NoteBlendInto': ('t_NoteBlendInto',    'l_NoteBlendInto',  '', None, None),
     'CallerRaise':  ('s_styCallerRaise',    'l_styCallerRaise', 0, None, None),
     'NoteCallerRaise': ('s_styNoteCallerRaise', 'l_styNoteCallerRaise', 0, None, None),
-    '_fontsize':    ('c_styFontScale',      'c_styFontScale',   False, lambda v: "FontScale" if v else "FontSize", None),
+    'Position':     ('fcb_sbPgPos',         'l_sbPgPos', 'Top', lambda v: "" if v == "Top" else v, None),
+    'Scale':        ('s_sbWidth',           'l_sbWidth',        1, None, None),
+    'Alpha':        ('s_sbAlpha',           'l_sbAlpha',        0.5, None, None),
+    'BgColor':      ('col_sb_backColor',    'l_sb_backColor', 'xF5F5DC', None, None),
+    '_fontsize':    ('c_styFontScale',           'c_styFontScale',   False, lambda v: "FontScale" if v else "FontSize", None),
     '_linespacing': ('c_styAbsoluteLineSpacing', 'c_styAbsoluteLineSpacing', False, lambda v: "BaseLine" if v else 'LineSpacing', None),
-    '_publishable': ('c_styTextProperties', 'c_styTextProperties', False, None, None)
+    '_publishable': ('c_styTextProperties',      'c_styTextProperties', False, None, None)
 }
 
 topLevelOrder = ('Identification', 'Introduction', 'Chapters & Verses', 'Paragraphs', 'Poetry',
