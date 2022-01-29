@@ -18,7 +18,7 @@ brdrs = ["top", "bottom", "left", "right", "inner", "outer", "all", "none"]
 
 def borderStyleFromStyle(tgt, mkr):
     needres = False
-    borders = set((x.title() for x in tgt.getval(mkr, "Border", "").split(" ")))
+    borders = set((x.lower() for x in tgt.getval(mkr, "Border", "").split(" ")))
     bitfield = sum(1<<i if k in borders else 0 for i,k in enumerate(brdrs))
     if bitfield == 128:
         bitfield = 0

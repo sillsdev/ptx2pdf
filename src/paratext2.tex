@@ -538,7 +538,7 @@
    \else
      \ifst@dynotes\global\n@tewidth=0.5\textwidth
        \dimen9=\StudyGutterFactor\FontSizeUnit
-       \ifColNotes\advance\n@tewidth by -0.5\dimen9\fi
+       \advance\n@tewidth by -0.5\dimen9
      \else
        \ifColNotes\ifnum\c@rrentcols=2\global\n@tewidth=\colwidth\else\onecolwidth{\n@tewidth}\fi
        \else\n@tewidth=\textwidth\fi
