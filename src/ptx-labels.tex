@@ -37,8 +37,9 @@
   \ifx\attr@b\relax
     \let\attr@b\c@rref
   \fi
+  \x@\def\x@\@@l@bel\x@{\x@\detokenize\x@{\attr@b}}%
   \ifx\attr@b\relax\else
-    \edef\l@gstring{{\attr@b}{\book:\ch@pter:\print@bleverse}}%
+    \edef\l@gstring{{\@@l@bel}{\book:\ch@pter:\print@bleverse}}%
     \trace{m}{zlabel: \l@gstring}%
     \x@\labelp@ge\x@{\l@gstring}%
   \fi
@@ -46,8 +47,9 @@
 \x@\def\csname start-zpage\endcsname{%
   \get@ttribute{label}%
   \ifx\attr@b\relax\else
-    \ifcsname zpage-\attr@b\endcsname
-      \csname zpage-\attr@b\endcsname
+    \x@\def\x@\@@l@bel\x@{\x@\detokenize\x@{\attr@b}}%
+    \ifcsname zpage-\@@l@bel\endcsname
+      \csname zpage-\@@l@bel\endcsname
     \else
       0000\message{Unable to find label for '\attr@b'. Re-run or correct typo at/near '\c@rref'.}%
     \fi
@@ -56,8 +58,9 @@
 \x@\def\csname start-zref\endcsname{%
   \get@ttribute{label}%
   \ifx\attr@b\relax\else
-    \ifcsname zref-\attr@b\endcsname
-      \x@\let\x@\temp\csname zref-\attr@b\endcsname
+    \x@\def\x@\@@l@bel\x@{\x@\detokenize\x@{\attr@b}}%
+    \ifcsname zref-\@@l@bel\endcsname
+      \x@\let\x@\temp\csname zref-\@@l@bel\endcsname
       \get@ttribute{show}%
       \ifx\attr@b\relax\def\attr@b{b_c:v}\fi
       \x@\extr@ctfirst\temp\relax
@@ -83,23 +86,23 @@
   \fi}
 
 \def\labelonpage#1#2#3{%
-  \x@\def\csname zpage-#2\endcsname{#1}%Page number for label.
-  \x@\def\csname zref-#2\endcsname{#3}%Reference for label. (why??)
+  \x@\def\csname zpage-\x@\detokenize{#2}\endcsname{#1}%Page number for label.
+  \x@\def\csname zref-\x@\detokenize{#2}\endcsname{#3}%Reference for label. (why??)
 }
   
 \def\labelonpage#1#2#3{%
-  \x@\def\csname zpage-#2\endcsname{#1}%Page number for label.
-  \x@\def\csname zref-#2\endcsname{#3}%Reference for label. (why??)
+  \x@\def\csname zpage-\x@\detokenize{#2}\endcsname{#1}%Page number for label.
+  \x@\def\csname zref-\x@\detokenize{#2}\endcsname{#3}%Reference for label. (why??)
 }
 
 \def\checklabelpage#1#2#3{%
   \def\ch@ck{#1}%
   \let\ch@nged\empty
-  \x@\ifx\csname zpage-#2\endcsname\ch@ck\else
+  \x@\ifx\csname zpage-\x@\detokenize{#2}\endcsname\ch@ck\else
     \temptrue\edef\ch@nged{Page number}%
   \fi
   \def\ch@ck{#3}%
-  \x@\ifx\csname zref-#2\endcsname\ch@ck\else
+  \x@\ifx\csname zref-\x@\detokenize{#2}\endcsname\ch@ck\else
     \temptrue\edef\ch@nged{\ifx\ch@nged\emtpy Reference\else\ch@nged\space and reference\fi}%
   \fi
   \ifx\ch@nged\empty\else

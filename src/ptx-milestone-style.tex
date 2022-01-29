@@ -48,6 +48,7 @@
  \def\domst@nestyle{% here, \n@xt has been \let to the next character after the marker
   \mst@nestyletrue
   \initmil@stone%
+  \deactiv@tecustomch@rs
   \catcode32=10 % reset <space> to act like a space again
   \catcode13=10 % and <return> is also a space (we don't want blank line -> \par)
   \ifx\n@xt\h@phen\let\n@xt@\startmst@nestyle@minus\else
@@ -79,6 +80,7 @@
 }
 
 \def\@ttrSlash{\in@ttribtrue
+  \trace{m}{Starting attribute collection}%
   \catcode`\/=12\relax % FIXME Other active chars too?
   \@ttrSl@sh}
 % using #1#2 eats initial spaces. This means  #1#2 nicely ignores annoying initial spaces, but it also crashes on a spaces-only arg, so check for that.
@@ -217,6 +219,7 @@
 \def\st@rtmilestone{%
   % There may multiple milestones of a given type (can't sensibly have both \qt-s |Jesus\* and 
   % \qt-s |Pilate\* active at the same time (except quote in quote), but in some cases it might make sense to do something similar.)
+  \deactiv@tecustomch@rs
   \get@ttribute{\attrid}\ifx\attr@b\relax %if sid is set, sid/eid must match, and may contain letters,numbers,underscore.
     \x@\zapres@rved\x@{\thismil@stoneVal}%
     \xdef\thisattrmil@stone{\thismil@stone;\smst@mp}%
@@ -280,15 +283,15 @@
   \op@ninghooks{start}{\thismil@stone}%
   \let\oldc@rref\c@rref\let\olddc@rref\dc@rref
   %\trace{m}{Checking for  ms:\thismil@stone=\attr@b}%
-  \ifx\attr@b\relax\else\ifcsname ms:\thismil@stone=\attr@b\endcsname
+  \ifx\attr@b\relax\else\ifcsname ms:\thismil@stone=\x@\detokenize{\attr@b}\endcsname
     \trace{m}{Running ms:\thismil@stone=\attr@b}%
-    \csname ms:\thismil@stone=\attr@b\endcsname
+    \csname ms:\thismil@stone=\x@\detokenize{\attr@b}\endcsname
   \fi\fi
   \ifx\attr@b\relax
     \runtrigg@rs{ms:\thismil@stone}%
   \else
-    \runtrigg@rs{\mkp@cref{\id@@@}{\attr@b}}%
-    \runtrigg@rs{ms:\thismil@stone=\attr@b}%
+    \runtrigg@rs{\mkp@cref{\id@@@}{\x@\detokenize{\attr@b}}}%
+    \runtrigg@rs{ms:\thismil@stone=\x@\detokenize{\attr@b}}%
     \ch@ckislocation{\thismil@stone}% Non-locations can be multiple use, so their value is kept. Sets keeptrigger true if this is not a location. 
     \ifkeeptrigger% Not a location, leave c@rref what it used to be
       \global\let\c@rref\oldc@rref\global\let\dc@rref\olddc@rref
