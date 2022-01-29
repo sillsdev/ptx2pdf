@@ -140,6 +140,8 @@ def textocol(s):
             vals = [int(s[1:3], 16), int(s[3:5], 16), int(s[5:7], 16)]
         except (ValueError, TypeError):
             vals = [0, 0, 0]
+    elif " " in s:
+        vals = [int(float(x) * 255) for x in vals.split(" ")]
     else:
         try:
             v = int(s)

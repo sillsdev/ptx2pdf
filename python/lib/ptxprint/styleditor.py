@@ -130,7 +130,7 @@ def fromOneMax(self, v, mrk=None, model=None):
     return textocol(v)
 
 def toOneMax(self, v, mrk=None, model=None):
-    return coltoonemax(v)
+    return " ".join("{:.2f}".format(coltoonemax(v)))
 
 _fieldmap = {
     'Bold':             (fromBool, toBool),
