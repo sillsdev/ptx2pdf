@@ -33,6 +33,8 @@ def borderStyleFromStyle(tgt, mkr):
     for i,k in enumerate(brdrs):
         if bitfield & (1<<i) != 0:
             setattr(self, k, True)
+        else:
+            setattr(self, k, False)
     return self
 
 
@@ -57,6 +59,8 @@ class BorderStyle:
             val = getattr(self, k, None)
             if val is not None:
                 view.set(v, val)
+            elif v.startswith("c_"):
+                view.set(v, False)
 
     def initdialog(self, dialog, view):
         self._dialogfrommap(dialog, view, fieldmap)
