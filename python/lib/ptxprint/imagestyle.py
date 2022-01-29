@@ -10,7 +10,7 @@ fieldmap = {
 }
 
 bgfieldmap = {
-    "color":    "col_sbBorderColor",
+    "bgcolor":  "col_sbiBgColor",
     "alpha":    "s_sbiAlpha",
     "low":      "fcb_sbiLayerOrder",
     "oversize": "fcb_sbiOversize"

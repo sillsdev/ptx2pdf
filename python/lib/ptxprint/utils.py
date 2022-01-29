@@ -128,9 +128,15 @@ def coltotex(s):
 
 def coltoonemax(s):
     try:
-        return [float(x)/256. for x in s[s.find("(")+1:-1].split(",")]
+        if "," in s:
+            return [float(x)/256. for x in s[s.find("(")+1:-1].split(",")]
+        elif " " in s:
+            return [float(x)/256. for x in s.split(" ")]
+        else:
+            return [0.8, 0.8, 0.8]
     except (ValueError, TypeError):
         return [0.8, 0.8, 0.8]
+        
 
 def textocol(s):
     if s is None:
@@ -141,7 +147,7 @@ def textocol(s):
         except (ValueError, TypeError):
             vals = [0, 0, 0]
     elif " " in s:
-        vals = [int(float(x) * 255) for x in vals.split(" ")]
+        vals = [int(float(x) * 255) for x in s.split(" ")]
     else:
         try:
             v = int(s)

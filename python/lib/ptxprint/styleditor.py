@@ -11,7 +11,7 @@ mkrexceptions = {k.lower().title(): k for k in ('BaseLine', 'TextType', 'TextPro
                 'NoteCallerStyle', 'NoteCallerRaise', 'NoteBlendInto', 'LineSpacing',
                 'StyleType', 'ColorName', 'XMLTag', 'TEStyleName', 'ztexFontFeatures', 'ztexFontGrSpace',
                 'FgImage', 'FgImagePos', 'FgImageScale', 'BgImage', 'BgImageScale', 'BgImagePos', 'BgImageLow',
-                'BgImageColour', 'BgImageColor', 'BgImageAlpha', 'BgImageOversize', 'BgColour', 'BgColor', 'BgColour',
+                'BgImageColour', 'BgImageColor', 'BgImageAlpha', 'BgImageOversize', 'BgColour', 'BgColor',
                 'BorderWidth', 'BorderColour', 'BorderColor')}
 binarymkrs = {"bold", "italic", "smallcaps"}
 
@@ -126,11 +126,15 @@ def toFont(self, v, mrk=None, model=None):
     oldfont = self.basesheet.get(mrk, {}).get("FontName", None)
     return v.updateTeXStyle(Shim(), regular=regularfont, force=oldfont is not None)
 
-def fromOneMax(self, v, mrk=None, model=None):
-    return textocol(v)
-
 def toOneMax(self, v, mrk=None, model=None):
-    return " ".join("{:.2f}".format(coltoonemax(v)))
+    res = textocol(v)
+    print(f"TO: {mrk=} {v=} {res=}")
+    return res
+
+def fromOneMax(self, v, mrk=None, model=None):
+    res = " ".join("{:.2f}".format(x) for x in coltoonemax(v))
+    print(f"FROM: {mrk=} {v=} {res=}")
+    return res
 
 _fieldmap = {
     'Bold':             (fromBool, toBool),
@@ -151,8 +155,9 @@ _fieldmap = {
     'FontName':         (fromFont, toFont),
     'TextProperties':   (fromSet, toSet),
     'OccursUnder':      (fromSet, toSet),
-    'BorderColor':      (fromOneMax, toOneMax)
-# color?
+    'BorderColor':      (fromOneMax, toOneMax),
+    'BgImageColor':     (fromOneMax, toOneMax),
+    'BgColor':          (fromOneMax, toOneMax)
 }
 
 class StyleEditor:
