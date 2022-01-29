@@ -2,7 +2,7 @@
 import re
 from ptxprint.usfmutils import Sheets
 from ptxprint.font import FontRef
-from ptxprint.utils import f2s
+from ptxprint.utils import f2s, textocol, coltoonemax
 from copy import deepcopy
 
 mkrexceptions = {k.lower().title(): k for k in ('BaseLine', 'TextType', 'TextProperties', 'FontName',
@@ -126,6 +126,12 @@ def toFont(self, v, mrk=None, model=None):
     oldfont = self.basesheet.get(mrk, {}).get("FontName", None)
     return v.updateTeXStyle(Shim(), regular=regularfont, force=oldfont is not None)
 
+def fromOneMax(self, v, mrk=None, model=None):
+    return textocol(v)
+
+def toOneMax(self, v, mrk=None, model=None):
+    return coltoonemax(v)
+
 _fieldmap = {
     'Bold':             (fromBool, toBool),
     'Italic':           (fromBool, toBool),
@@ -144,7 +150,8 @@ _fieldmap = {
     'SpaceAfter':       (from12, to12),
     'FontName':         (fromFont, toFont),
     'TextProperties':   (fromSet, toSet),
-    'OccursUnder':      (fromSet, toSet)
+    'OccursUnder':      (fromSet, toSet),
+    'BorderColor':      (fromOneMax, toOneMax)
 # color?
 }
 
