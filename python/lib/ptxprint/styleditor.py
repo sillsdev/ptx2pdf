@@ -126,14 +126,14 @@ def toFont(self, v, mrk=None, model=None):
     oldfont = self.basesheet.get(mrk, {}).get("FontName", None)
     return v.updateTeXStyle(Shim(), regular=regularfont, force=oldfont is not None)
 
-def toOneMax(self, v, mrk=None, model=None):
+def fromOneMax(self, v, mrk=None, model=None):
     res = textocol(v)
-    print(f"TO: {mrk=} {v=} {res=}")
+    print(f"FROM: {mrk=} {v=} {res=}")
     return res
 
-def fromOneMax(self, v, mrk=None, model=None):
-    res = " ".join("{:.2f}".format(x) for x in coltoonemax(v))
-    print(f"FROM: {mrk=} {v=} {res=}")
+def toOneMax(self, v, mrk=None, model=None):
+    res = " ".join("{:.2f}".format(x) for x in coltoonemax(textocol(v)))
+    print(f"TO: {mrk=} {v=} {res=}")
     return res
 
 _fieldmap = {

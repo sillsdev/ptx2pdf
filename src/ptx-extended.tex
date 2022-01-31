@@ -94,11 +94,11 @@
     \fi
   \fi
   \ifdim 1pt = \thisalpha pt\relax %Not feint
-    \x@\special\x@{pdf:code q \thisRGB rg}%
+    \x@\special\x@{pdf:code q \thisRGB\space rg}%
   \else 
     \edef\thisalpha{#1 }% Important space
     \x@\special\x@{pdf:put @resources << /ExtGState << /GS0\the\feintb@xnum\space << /Type /ExtGState /CA \thisalpha /ca \thisalpha /AIS false >>  >> >>}%
-    \x@\special\x@{pdf:code q /GS0\the\feintb@xnum\space gs \thisRGB rg}%
+    \x@\special\x@{pdf:code q /GS0\the\feintb@xnum\space gs \thisRGB\space rg}%
     \global\advance\feintb@xnum by 1
   \fi
   #3%

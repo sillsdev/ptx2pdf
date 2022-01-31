@@ -1,5 +1,6 @@
 import re
 from gi.repository import Gtk
+from ptxprint.utils import textocol
 import re
 
 fieldmap = {
@@ -104,6 +105,7 @@ class ImageStyle:
 
     def fromdialog(self, dialog, view):
         self._fromdialogmap(dialog, view, fieldmap)
+        self.color = textocol(self.color)
         if self.lockratio:
             self.height = self.width
         if self.isbg:

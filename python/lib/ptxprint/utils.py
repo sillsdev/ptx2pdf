@@ -148,6 +148,8 @@ def textocol(s):
             vals = [0, 0, 0]
     elif " " in s:
         vals = [int(float(x) * 255) for x in s.split(" ")]
+    elif "rgb" in s:
+        vals = [float(x)/256. for x in s[s.find("(")+1:-1].split(",")]
     else:
         try:
             v = int(s)
