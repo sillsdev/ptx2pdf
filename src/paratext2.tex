@@ -625,6 +625,7 @@
     \setbox#1=\vbox{\unvbox#1\box0}\unskip\unpenalty\unskip\repeat
 }
 \newbox\xr@fbox
+\newbox\XrefB@x
 \newdimen\XrefSkip \XrefSkip=0pt
 \def\m@ke@te@mp#1{
   \dimen0=\ht\xr@fbox \advance\dimen0 by \baselineskip \advance\dimen0 by -\dimen2\advance\dimen0 by -\dp\xr@fbox
@@ -651,6 +652,7 @@
   \hsize=#2%\advance\hsize-\XrefNotesMargin\advance\hsize-\XrefNotesMargin
   \leftskip=0pt\rightskip=0pt plus 0.8\hsize
   % Empty the xref notes so that they don't crop up elsewhere
+  \global\setbox\XrefB@x=\copy\th@cl@ss
   \unvbox\th@cl@ss \r@versevb@x{3}\unvbox3
   \s@tbaseline{#3}{#3}%
   \loop
@@ -679,7 +681,7 @@
   \loop
     \setbox0\lastbox
     \ifdim\ht0>0pt\setbox1=\vbox{\unvbox1\box0}\repeat
-  \trace{o}{m@kerefbox(\the#1, \the#2, marker #3): othernotes=\the\ht1, dimensions of xr@fbox= \the\ht\xr@fbox x \the\wd\xr@fbox}%
+  \trace{o}{m@kexrefbox(\the#1, \the#2, marker #3): othernotes=\the\ht1, dimensions of xr@fbox= \the\ht\xr@fbox x \the\wd\xr@fbox, copy \the\ht\XrefB@x}%
   \prevdepth=-10000pt\maken@tepara{1}{#3}%
 }
 %-c_makehboxofhboxes
@@ -1350,6 +1352,11 @@
       \loop                                                                     %(5)
         \advance\loopcount by 1
         \advance\shortavail by -\baselineskip
+        \ifx\XrefNotes\empty\relax\else
+          \x@\let\x@\th@cl@ss\csname note-\XrefNotes\endcsname
+          \setbox\th@cl@ss=\copy\XrefB@x
+          \doColNotes{\shortavail}%
+        \fi
         \setbox0=\copy\s@vedpage
         \dimen0=\shortavail%\advance\dimen0 by \ifdim\dp\colA>\dp\colB \dp\colA\else\dp\colB\fi
         \s@tcolhts{\dimen0}\spl@tcols0
@@ -1520,9 +1527,13 @@
   %\advance\availht by \dp255 % split includes depth so give it space for that
   \trace{o}{new availht=\the\availht, best availht=\the\bestavailht, texttrialheight=\the\t@xttrialheight, topins=\the\ht\topins, bottomins=\the\ht\bottomins, baselineskip=\the\baselineskip}%
   \ifdim\bestavailht>0pt \ifdim\bestavailht<\availht \availht=\bestavailht\fi\fi
+  \doColNotes{\availht}%
+  \splittopskip=\topskip
+}
+\def\doColNotes#1{
   \ifColNotes\ifb@dy
     \ifx\XrefNotes\empty\relax\setbox5=\box\voidb@x\else
-      \setbox5=\vbox{\m@kexrefbox{\ifdim\t@xttrialheight>0pt \ifdim\t@xttrialheight<\availht \t@xttrialheight\else\availht\fi\else\availht\fi}{\XrefNotesWidth}{\XrefNotes}}%
+      \setbox5=\vbox{\m@kexrefbox{\ifdim\t@xttrialheight>0pt \ifdim\t@xttrialheight<#1 \t@xttrialheight\else #1\fi\else #1\fi}{\XrefNotesWidth}{\XrefNotes}}%
       \setbox\xr@fbox\vbox{\unvbox\xr@fbox\setbox0=\lastbox\dimen0=\dp0\box0\vskip\dimen0}%
     \fi
     \notst@dynotestrue\m@kenotebox\notst@dynotesfalse
@@ -1540,7 +1551,6 @@
   \else
     \setbox5=\box\voidb@x\setbox\xr@fbox=\box\voidb@x
   \fi\fi
-  \splittopskip=\topskip
 }
 %-c_calcavailht
 \newif\ifXrefTopfill \XrefTopfillfalse
