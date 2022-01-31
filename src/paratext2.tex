@@ -1708,6 +1708,13 @@
   \fi}}%\iff@rstnote\else\showbox2\fi}
 %-c_makenotebox
 
+\def\pr@pinserts{
+  \ifdim\ht\topins>0pt
+    \s@tbaseline{p}{p}
+    \dimen1=\ht\topins\dimen0=\baselineskip
+    \m@d \dimen1=\ht\topins\advance\dimen1\dimen0 \ht\topins=\dimen1
+  \fi}
+  
 %+c_twocoltrial_intro
 \def\twocoltrial{% trial formatting to see if current contents will fit on the page
   \traceifset{twocoltrial}%
@@ -1722,6 +1729,7 @@
     \MSG{Page overfull with inserts. Perhaps a little more text and less pictures would help}%
   \fi
   \setbox\s@vedpage=\copy255
+  \pr@pinserts
   \trace{o}{balance from twocoltrial height \the\ht\s@vedpage, availht=\the\availht}%
   \ifdim\ht\partial>\baselineskip \swapcolfalse\else\swapcoltrue\fi
   \rem@indertrue\balanced
