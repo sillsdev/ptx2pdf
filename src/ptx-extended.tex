@@ -124,12 +124,14 @@
   \egroup}
 \def\fb@htadjust{0pt}
 \def\feintbox#1#2#3{% Set a (transparent) coloured box as background for box given in #3. #1: alpha, #2: {r g b}  (all numbers in range 0-1.0)
-  \vskip-\fb@vpadding% preserve grid
+  \vskip-\fb@vpadding% ensure box expands to border line
   \setbox0#3%
   \trace{e}{pre-feintb@x, ht=\the\ht0 - \fb@htadjust, dp=\the\dp0}%
   \setbox0\hbox{\feintb@x{#1}{#2}{\the\dimexpr \ht0 - \fb@htadjust\relax}{\the\dp0}{\the\wd0}\box0}%
   \trace{e}{post-feintb@x, ht=\the\ht0, dp=\the\dp0}%
   \box0
+  %\vskip-\fb@vpadding % preserve grid
+  %\ifdim  \fb@vpadding > 0.3\baselineskip \vskip \baselineskip \fi %bigger gap may be needed.
   %\vskip-\fb@vpadding % preserve grid
   }
 
@@ -398,9 +400,9 @@
   \fi
   \edef\b@xadj{\the\dimen4}%
   \advance \dimen4 by -\dimen1
-  \ifdim\dimen4< -0.1\baselineskip
+  \loop\ifdim\dimen4< -0.1\baselineskip
     \advance\dimen4 by \baselineskip
-  \fi
+  \repeat
   \trace{eb}{Border box: \the\ht\b@rderbox+\the\dp\b@rderbox, bdr:\b@drwidth , \the\dimen4, \the \dimen0}%
   \ift@mp %Horizontal lines
     \edef\b@xw@dth{\the\wd\b@rderbox}%
@@ -635,7 +637,7 @@
         \pdfsavepos
         \write\p@rlocs{\noexpand\@nontextstart{\the\pdflastxpos}{\the\pdflastypos}}%
         \penalty10000
-        \unvbox\extchunkb@x\vskip-\the\dimen0
+        \unvbox\extchunkb@x%\vskip-\the\dimen0
         \penalty10000
         \pdfsavepos
         \write\p@rlocs{\noexpand\@nontextstop{\the\pdflastxpos}{\the\pdflastypos}}%
