@@ -2,7 +2,7 @@
 import re
 from ptxprint.usfmutils import Sheets
 from ptxprint.font import FontRef
-from ptxprint.utils import f2s, textocol, coltoonemax
+from ptxprint.utils import f2s, textocol, coltotex, coltoonemax
 from copy import deepcopy
 
 mkrexceptions = {k.lower().title(): k for k in ('BaseLine', 'TextType', 'TextProperties', 'FontName',
@@ -127,13 +127,13 @@ def toFont(self, v, mrk=None, model=None):
     return v.updateTeXStyle(Shim(), regular=regularfont, force=oldfont is not None)
 
 def fromOneMax(self, v, mrk=None, model=None):
-    res = textocol(v)
-    print(f"FROM: {mrk=} {v=} {res=}")
+    res = coltotex(textocol(v))
+    # print(f"FROM: {mrk=} {v=} {res=}")
     return res
 
 def toOneMax(self, v, mrk=None, model=None):
     res = " ".join("{:.2f}".format(x) for x in coltoonemax(textocol(v)))
-    print(f"TO: {mrk=} {v=} {res=}")
+    # print(f"TO: {mrk=} {v=} {res=}")
     return res
 
 _fieldmap = {
