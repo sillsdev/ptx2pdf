@@ -19,6 +19,7 @@ now inside a qt-s..qt-e block \nd*
 \p This is an esb with 
 \p category "\showTheCategory"
 \p It is put inline\f + \ft hmm \f* 
+It just has a plain line border, slightly separated from the coloured-background.
 \esbe
 
 \esb

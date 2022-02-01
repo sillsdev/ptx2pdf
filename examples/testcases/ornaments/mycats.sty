@@ -23,7 +23,9 @@
 \Position h
 \BgColour 0 1 0
 \Alpha 0.1
-\Border Outer Top Bottom
+% Border left set in test.sty
+\Border Outer Top Bottom 
+\BorderPadding 3
 \Scale 1 
 \Marker p
 \Justification center
@@ -32,16 +34,20 @@
 \Category cut
 \Position cr2
 \Scale 0.5
-\Border None
+\Border All
 %All Left Top Bottom
 \BgColour 0 0 1
-%\BgImage inner_include.pdf
+\BgImage inner_include.pdf
 \BgImageLow F
 \BgImageScale 1
 \BgImageColor 0.6 0.5 0.5 
-\BorderVPadding 2
+\BoxVPadding 5
+\BoxHPadding 5
+\BorderVPadding -10
+\BorderHPadding 0
 \BorderColour  1 0.5 0
-
+\SpaceBeside 12pt
+\BorderWidth 1
 
 \Category pictest
 \Position h
@@ -55,10 +61,12 @@
 %\BgImageLow f
 \BgImageScale x1
 \BgImageAlpha 0.5
-\BorderVPadding 5
-\BorderHPadding 5
+\BoxVPadding 20
+\BoxHPadding 20
+\BorderVPadding -5
+\BorderHPadding -5
 \BgImageOversize shrink
-\Border All
+\Border Top Bottom left right
 \BorderWidth 5 
 \BorderPatternTop 39|||2.5,0|||0.2,88||-,0||*,39|h||2.5
 \BorderPatternBot 39|v||2.5,0||*,88|h|-,0||-,39|d||2.5

@@ -236,6 +236,16 @@ the scale factor into its own `scale` attribute. This value is a multipler that
 scales an image after its size has been established via the `size` attribute. A
 value of `1.0` implies no size change.
 
+### x-spacebeside Attribute - cutout spacing
+
+An image in a cutout needs some space beside it, so that the text does not touch the image.
+This can be controlled globally by puting a different distance in the the configuration 
+parameter `\def\DefaultSpaceBeside{10pt}` If a particular figure needs a different value,
+this can be controlled by setting the x-spacebeside USFM3 attribute. e.g.
+`x-spacebeside="15pt"` This attribute is only relevant for figures in cutouts. Sidebars in cutouts 
+may set the `\SpaceBeside` value in the appropriate stylesheet. 
+
+
 ### x-xetex Attribute - Rotation control
 
 To allow further transforming of images when inserting into the publication,

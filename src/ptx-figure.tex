@@ -100,11 +100,11 @@
   \ifnum \p@ramnumber<0 
     \edef\p@ramid{NEG\the\p@ramnumber}%
   \else
-    \ifnum \p@ramnumber>16 \global\morep@ramsfalse\fi
+    \ifnum \p@ramnumber>17 \global\morep@ramsfalse\fi
     %WARNING: There must not be a space after the text(before \or / \else / \fi) or (re)-initialisation will break
     \edef\p@ramid{\ifcase\p@ramnumber UNK-0\or alt\or src\or size\or loc\or copy\or caption\or ref\or x-xetex\or mirror\or 
         scale\or media\or pgpos\or x-credit\or x-creditpos\or
-	x-creditrot\or x-creditbox\else UNK-\the\p@ramnumber\fi}%
+	x-creditrot\or x-creditbox\or x-spacebeside\else UNK-\the\p@ramnumber\fi}%
   \fi
 }
 \newif\ifusfmthree \usfmthreefalse
@@ -705,6 +705,11 @@
 %-cfig_dofigure_2
   % create box to contain picture
 %+cfig_dofigure_3
+  \ifcsname figparam-x-spacebeside\endcsname
+    \edef\sp@cebeside{\csname figparam-x-spacebeside\endcsname}%
+  \else
+    \edef\sp@cebeside{\DefaultSpaceBeside}%
+  \fi
   \trace{g}{Figure \the\im@gecount\space size=\size@ption, scale=\sizem@ltiple, loc=\loc@ption \ifpicUsesIns, picins=\the\p@cins\fi, hsz=\the\hsize}%
   \setbox0=\vbox{%
     \ifpicNarrow
@@ -950,8 +955,9 @@
 }
 
 
+\def\DefaultSpaceBeside{10pt}
 
-\def\d@figureCut#1{% Expects: count255=number of lines gap, dimen0=size of wotsit, \c@tskip=delay
+\def\d@figureCut#1{% Expects: count255=number of lines gap, \c@tskip=delay
   \mkstr@t
   \dimen0=\ht#1
   \ifx\w@tsit\gr@phic 
@@ -983,7 +989,7 @@
   \fi
   %\advance\dimen1 by \baselineskip
   \advance\dimen1 by \c@tskip\baselineskip
-  \dimen2=\wd#1\advance\dimen2 by 10pt\dimen3=\hs@ze \advance\dimen3 by -\dimen2
+  \dimen2=\wd#1\advance\dimen2 by \sp@cebeside\relax\dimen3=\hs@ze \advance\dimen3 by -\dimen2
   \ifdim\dimen3<5em\message{*** \w@tsit specification of \size@ption \sizem@ltiple (at \ch@pter:\v@rse) leaves \the\dimen3 \space for text. That's probably not enough.}\fi
   \raise@test{\dr@pthingid}%
   \ifx\t@str@ise\relax\else

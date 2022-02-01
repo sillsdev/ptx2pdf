@@ -68,6 +68,8 @@
 \setsbp@ram{bgfigspec}{}%Normally no picture.
 \setsbp@ram{bgfigalpha}{1.0}%Normally solid colour
 \setsbp@ram{bgfigcolour}{0 0 0}%Normally black
+%\setsbp@ram{borderhpadding}{0} %FontSizeUnits
+%\setsbp@ram{bordervpadding}{0} %FontSizeUnits
 \let\m@rker\relax
 \def\fb@hpadding{1pt}%Added left and right of feintbox content
 \def\fb@vpadding{1pt}%added above and below feintbox content
@@ -180,8 +182,10 @@
  \gdef\sb@leftedge{}\gdef\sb@rightedge{}%
  \gdef\sb@rtopedge{}\gdef\sb@rbotedge{}%
  \xdef\sb@leftshift{0pt}\xdef\sb@rightshift{0pt}%
- \getsbp@ram{borderhpadding}\ifx\cp@ram\relax\else\edef\fb@hpadding{\the\dimexpr \cp@ram\FontSizeUnit\relax}\fi
- \getsbp@ram{bordervpadding}\ifx\cp@ram\relax\else\edef\fb@vpadding{\the\dimexpr \cp@ram\FontSizeUnit\relax}\fi
+ \getsbp@ram{borderhpadding}\ifx\cp@ram\relax\xdef\border@hpadding{0pt}\else\xdef\border@hpadding{\the\dimexpr \cp@ram\FontSizeUnit\relax}\fi
+ \getsbp@ram{bordervpadding}\ifx\cp@ram\relax\xdef\border@vpadding{0pt}\else\xdef\border@vpadding{\the\dimexpr \cp@ram\FontSizeUnit\relax}\fi
+ \getsbp@ram{boxhpadding}\ifx\cp@ram\relax\else\edef\fb@hpadding{\the\dimexpr \cp@ram\FontSizeUnit\relax}\fi
+ \getsbp@ram{boxvpadding}\ifx\cp@ram\relax\else\edef\fb@vpadding{\the\dimexpr \cp@ram\FontSizeUnit\relax}\fi
  \getsbp@ram{posn}%
   \global\advance\im@gecount by 1 % A side bar is a strange sort of image, but there are similarities
   \ifcsname fig\the\im@gecount p@ge\endcsname
@@ -304,10 +308,15 @@
         \fi
       \fi
     \fi
-    \ifx\b@drleft\tr@e \advance\dimen1 by -\b@drwidth\FontSizeUnit
-      \advance\dimen1 by -\fb@hpadding\fi
-    \ifx\b@drright\tr@e \advance\dimen1 by -\b@drwidth\FontSizeUnit
-      \advance\dimen1 by -\fb@hpadding\fi
+    \advance\dimen1 by -2\dimexpr \fb@hpadding\relax
+    \ifx\b@drleft\tr@e \ifdim \border@hpadding>-\b@drwidth\FontSizeUnit 
+        \advance\dimen1 by -\b@drwidth\FontSizeUnit
+        \advance\dimen1 by -\border@hpadding
+    \fi\fi
+    \ifx\b@drright\tr@e\ifdim \border@hpadding>-\b@drwidth\FontSizeUnit  
+        \advance\dimen1 by -\b@drwidth\FontSizeUnit
+        \advance\dimen1 by -\border@hpadding
+    \fi\fi
     \if h\tempc\relax\else% Don't store width for class h or class p sidebars, as they may appear full width or single column
       \if p\tempc\relax\else
         \setsbp@ram{w@dth}{\the\dimen1}%
@@ -379,10 +388,17 @@
   \advance\dimen0 by \ht\b@rderbox
   \advance\dimen1 by \dp\b@rderbox
   \iftemp % if ANY border, add horizontal padding and any vertical lines
+    \ifx\b@drtop\tr@e
+      \advance\dimen0 by \border@vpadding
+    \fi
+    \ifx\b@drbottom\tr@e
+      \advance\dimen1 by \border@vpadding
+    \fi
     \setbox\b@rderbox\vbox{%
       %\ifdoUnskip\vskip-\lastskip\fi
       \hbox{\ifx\b@drleft\tr@e\trace{eb}{Drawing Border:left}%
          \bc@l\vrule width \b@drwidth\FontSizeUnit height \dimen0 depth \dimen1 \endbc@l
+         \hskip\border@hpadding
        \else
          \vrule width 0pt height \dimen0 depth \dimen1 %Strut to sort out vertical padding
        \fi
@@ -390,6 +406,7 @@
        \box\b@rderbox
        \hskip \fb@hpadding
        \ifx\b@drright\tr@e \trace{eb}{Drawing Border: right}%
+         \hskip\border@hpadding
          \bc@l\vrule width \b@drwidth\FontSizeUnit height \dimen0 depth \dimen1 \endbc@l
        \fi}%
      }%
@@ -406,15 +423,13 @@
   \trace{eb}{Border box: \the\ht\b@rderbox+\the\dp\b@rderbox, bdr:\b@drwidth , \the\dimen4, \the \dimen0}%
   \ift@mp %Horizontal lines
     \edef\b@xw@dth{\the\wd\b@rderbox}%
-    \dimen0=\ht\b@rderbox
-    \advance\dimen0 by \dp\b@rderbox
-    \advance\dimen0 by \b@drwidth\FontSizeUnit
-    \advance\dimen0 by \b@drwidth\FontSizeUnit
-    \setbox\b@rderbox\vbox{\baselineskip=0pt%
+    \advance\dimen0 by \dimen1
+    \setbox\b@rderbox\vbox to \dimexpr \dimen0 \relax{\baselineskip=0pt%
       \ifx\b@drtop\tr@e\vskip\b@xadj\trace{eb}{Drawing Border:top}\hbox{\bc@l\vrule height\b@drwidth\FontSizeUnit width \b@xw@dth \endbc@l}\fi%
-      \unvbox\b@rderbox
+      \vbox to \dimen0{\unvbox\b@rderbox\vss}%
       \ifx\b@drbottom\tr@e\trace{eb}{Drawing Border:bottom}\hbox{\bc@l\vrule depth\b@drwidth\FontSizeUnit width \b@xw@dth \endbc@l}\vskip\dimen4\fi
     }%
+    \dp\b@rderbox=\dimen1
     %\nonstopmode
     %\showbox\b@rderbox
   \fi
@@ -496,8 +511,10 @@
   \inextendedfalse
   \let\os@vedvpadding=\fb@vpadding%%Preserve old value
   \let\os@vedhpadding=\fb@hpadding%
-  \getsbp@ram{borderhpadding}\ifx\cp@ram\relax\else\xdef\fb@hpadding{\the\dimexpr \cp@ram\FontSizeUnit\relax}\fi
-  \getsbp@ram{bordervpadding}\ifx\cp@ram\relax\else\xdef\fb@vpadding{\the\dimexpr \cp@ram\FontSizeUnit\relax}\fi
+  \getsbp@ram{borderhpadding}\ifx\cp@ram\relax\xdef\border@hpadding{0pt}\else\edef\border@hpadding{\the\dimexpr \cp@ram\FontSizeUnit\relax}\fi
+  \getsbp@ram{bordervpadding}\ifx\cp@ram\relax\xdef\border@vpadding{0pt}\else\edef\border@vpadding{\the\dimexpr \cp@ram\FontSizeUnit\relax}\fi
+  \getsbp@ram{boxhpadding}\ifx\cp@ram\relax\else\xdef\fb@hpadding{\the\dimexpr \cp@ram\FontSizeUnit\relax}\fi
+  \getsbp@ram{boxvpadding}\ifx\cp@ram\relax\else\xdef\fb@vpadding{\the\dimexpr \cp@ram\FontSizeUnit\relax}\fi
   \getsbp@ram{bgfigspec}\let\bgf@gsp@c\cp@ram
   \getsbp@ram{bgfiglow}\let\bgf@gl@w\cp@ram%
   \getsbp@ram{hascol}\let\h@scol\cp@ram%
@@ -509,6 +526,7 @@
   \getsbp@ram{borderstyle}\let\b@drstyle\cp@ram
   \getsbp@ram{bgfigalpha}\let\bgf@galpha\cp@ram
   \getsbp@ram{bgfigcolour}\let\bgf@gcol\cp@ram
+  \getsbp@ram{spacebeside}\ifx\cp@ram\relax\let\sp@cebeside=\DefaultSpaceBeside\else\let\sp@cebeside\cp@ram\fi
   \let\s@vedvpadding=\fb@vpadding%%Preserve old value
   \tempfalse
   \ifx\bgf@gsp@c\relax\else
@@ -581,13 +599,14 @@
       \let\fb@vpadding=\s@vedvpadding
       \let\b@drbottom=\lstb@drbot
     \fi
+    % Shift text for side image(s) 
     \ifdim\sb@leftshift>0pt
       \setbox0\vbox to\ht\extchunkb@x{\sb@leftedge}%
       \trace{e}{Adding \sb@leftshift to left of box}%
       \setbox\extchunkb@x\vbox{\hbox{\hbox to \sb@leftshift{\hss\box0\hskip\fb@hpadding}\box\extchunkb@x}}\fi
     \ifdim\sb@rightshift>0pt
       \setbox0\vbox to\ht\extchunkb@x{\sb@rightedge}%
-      \trace{e}{Adding \sb@rightshift to left of box}%
+      \trace{e}{Adding \sb@rightshift to right of box}%
       \setbox\extchunkb@x\vbox{\hbox{\box\extchunkb@x\hbox to \sb@rightshift{\hskip\fb@hpadding\box0\hss}}}\fi
     \trace{e}{Chunk of extbox is \the\ht\extchunkb@x+\the\dp\extchunkb@x*\the\wd\extb@x (\the\ht\extb@x*\the\wd\extb@x)}%
     \ifx\h@scol\tr@e
@@ -735,9 +754,13 @@
 \def\BorderWidth        #1\relax{\initc@t\setsbp@ram{borderwidth}{#1}}
 \def\BorderColour       #1\relax{\initc@t\setsbp@ram{bordercolour}{#1}}
 \def\BorderStyle       #1\relax{\initc@t\setsbp@ram{borderstyle}{#1}}
+\def\BoxHPadding #1\relax{\initc@t\setsbp@ram{boxhpadding}{#1}}
+\def\BoxVPadding #1\relax{\initc@t\setsbp@ram{boxvpadding}{#1}}
+\def\BoxPadding #1\relax{\initc@t\setsbp@ram{boxhpadding}\setsbp@ram{boxvpadding}{#1}}
 \def\BorderHPadding #1\relax{\initc@t\setsbp@ram{borderhpadding}{#1}}
 \def\BorderVPadding #1\relax{\initc@t\setsbp@ram{bordervpadding}{#1}}
 \def\BorderPadding #1\relax{\initc@t\setsbp@ram{borderhpadding}{#1}\setsbp@ram{bordervpadding}{#1}}
+\def\SpaceBeside #1\relax{\initc@t\setsbp@ram{spacebeside}{#1}}
 \let\BorderColor=\BorderColour%for Americans
 \def\Border	#1\relax{\initc@t\x@\p@rseBorder#1 \relax \relax}
 

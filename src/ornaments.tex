@@ -826,9 +826,9 @@
   \def\ornamentwidth{}%
   \def\ornYalign{1}%
   \edef\b@drsides{\the\numexpr \ifx\b@drleft\tr@e 1 +\fi \ifx\b@drright\tr@e 1+\fi 0\relax}%
-  \edef\box@width{\dimexpr \wd#1 + #2 *\b@drsides+ \fb@hpadding * \b@drsides\relax}%%
+  \edef\box@width{\dimexpr \wd#1 +\fb@hpadding*2 + #2 *\b@drsides+ \border@hpadding * \b@drsides\relax}%%
   \edef\b@drsides{\the\numexpr \ifx\b@drtop\tr@e 1 +\fi \ifx\b@drbottom\tr@e 1+\fi 0\relax}%
-  \edef\box@height{\dimexpr \ht#1 +\dp#1 + #2 *\b@drsides + \fb@vpadding *\b@drsides\relax}%
+  \edef\box@height{\dimexpr \ht#1 +\fb@vpadding +\dp#1 + #2 *\b@drsides + \border@vpadding *\b@drsides\relax}%
   \ifx\b@drtop\tr@e
     \orn@SetStretch{\box@width}{x}{}{\patternT}\setbox\orn@bdr@top\hbox to \box@width{\Ornaments{\patternT}}%
   \else
@@ -848,27 +848,31 @@
   %\def\ornamentwidth{#3}
   \message{Box side portion is \the\dimen1. Orig: \the\ht#1 +\the\dp#1 x\the\wd#1, final:\the\box@height }%
   \tempfalse
+  \def\border@l@pad{}\def\border@r@pad{}%
   \setbox\orn@bdr@right\box\voidb@x
   \ifx\b@drleft\tr@e
     \orn@SetStretch{\the\dimen1}{y}{=}{\patternL}\setbox\orn@bdr@left\vbox to \dimen1{\lineskip=0pt\lineskiplimit=0pt\baselineskip=0pt\Ornaments{\patternL}}%
+    \def\border@l@pad{\hskip\border@hpadding}%
     \ifx\patternL\patternR
       \ifx\b@drright\tr@e
 	\setbox\orn@bdr@right\copy\orn@bdr@left
+        \def\border@r@pad{\hskip\border@hpadding}%
       \fi
     \fi
   \else
-    \setbox\orn@bdr@bot\vbox{}%
+    \setbox\orn@bdr@left\vbox{}%
   \fi
   %\showbox\orn@bdr@left
   \ifx\b@drright\tr@e
     \ifvoid\orn@bdr@right
       \orn@SetStretch{\the\dimen1}{y}{=}{\patternR}\setbox\orn@bdr@right\vbox to \dimen1{\lineskip=0pt\lineskiplimit=0pt\baselineskip=0pt\Ornaments{\patternR}}%
+      \def\border@r@pad{\hskip\border@hpadding}%
     \fi
   \fi
   \showboxdepth=3
   \showboxbreadth=9999
   %\showbox\orn@bdr@right
-  \setbox#1\vbox to \box@height{\baselineskip=0pt\lineskip=0pt\hsize=\box@width\box\orn@bdr@top\hbox to \box@width{\box\orn@bdr@left\hss\hbox{\vbox to \dimen1{\ifx\b@drtop\tr@e\kern\dimen2\fi\box#1\ifx\b@drbottom\tr@e\kern\dimen2\fi}}\hss\box\orn@bdr@right}\baselineskip=\ht\orn@bdr@bot\box\orn@bdr@bot}%
+  \setbox#1\vbox to \box@height{\baselineskip=0pt\lineskip=0pt\hsize=\box@width\box\orn@bdr@top\hbox to \box@width{\box\orn@bdr@left\border@l@pad\hss\hbox{\vbox to \dimen1{\ifx\b@drtop\tr@e\kern\dimen2\fi\box#1\ifx\b@drbottom\tr@e\kern\dimen2\fi}}\border@r@pad\hss\box\orn@bdr@right}\baselineskip=\ht\orn@bdr@bot\box\orn@bdr@bot}%
   %\showbox#1
 }
 
@@ -896,8 +900,6 @@
 \catcode`\@=11
 \def\m@rker{esb}
 \setsbp@ram{borderfillcolour}{none}
-\setsbp@ram{borderhpadding}{5} %FontSizeUnits
-\setsbp@ram{bordervpadding}{1} %FontSizeUnits
 \setsbp@ram{borderlinewidth}{1}
 
 \def\DefaultOrnament{80}
