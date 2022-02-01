@@ -370,7 +370,10 @@
 \doUnskiptrue
 \newbox\b@rderbox
 \def\mkb@rder#1{%Put a simple border around a box
-  \x@\setbox\x@\b@rderbox\x@\box#1
+  \ifdoUnskip\vskip-\prevdepth\prevdepth=0pt\fi
+  %\x@\setbox\x@\b@rderbox\x@\box#1
+  \setbox\b@rderbox\vbox to \ht#1{\hsize=\wd#1\hss\vss}%Placeholder
+  \dp\b@rderbox=\dp#1\relax
   \tempfalse\t@mpfalse
   \ifx\b@drleft\tr@e\temptrue\trace{eb}{Border: left}\fi
   \ifx\b@drright\tr@e\temptrue\trace{eb}{Border: right}\fi
@@ -385,36 +388,43 @@
   \iftemp\def\v@dj{\fb@vpadding}\fi
   \dimen0=\fb@vpadding
   \dimen1=0pt % should include padding already
+  \dimen7=\dimen0
   \advance\dimen0 by \ht\b@rderbox
   \advance\dimen1 by \dp\b@rderbox
+  \dimen4=-\fb@vpadding
   \iftemp % if ANY border, add horizontal padding and any vertical lines
     \ifx\b@drtop\tr@e
       \advance\dimen0 by \border@vpadding
+      \advance\dimen7 by \border@vpadding
+      \advance\dimen4 by -\dimexpr \border@vpadding + \b@drwidth\FontSizeUnit\relax
     \fi
     \ifx\b@drbottom\tr@e
       \advance\dimen1 by \border@vpadding
     \fi
+    \ifx\b@drleft\tr@e
+      \dimen8=\dimexpr \b@drwidth\FontSizeUnit + \border@hpadding\relax
+    \else
+      \dimen8=0pt\relax
+    \fi
+    \advance\dimen8 by \fb@hpadding
+    %\advance\dimen8 by \border@hpadding
     \setbox\b@rderbox\vbox{%
-      %\ifdoUnskip\vskip-\lastskip\fi
       \hbox{\ifx\b@drleft\tr@e\trace{eb}{Drawing Border:left}%
          \bc@l\vrule width \b@drwidth\FontSizeUnit height \dimen0 depth \dimen1 \endbc@l
          \hskip\border@hpadding
        \else
          \vrule width 0pt height \dimen0 depth \dimen1 %Strut to sort out vertical padding
        \fi
-       \hskip \fb@hpadding
-       \box\b@rderbox
-       \hskip \fb@hpadding
+       \hskip \dimexpr \fb@hpadding *2  + \wd#1\relax
        \ifx\b@drright\tr@e \trace{eb}{Drawing Border: right}%
          \hskip\border@hpadding
          \bc@l\vrule width \b@drwidth\FontSizeUnit height \dimen0 depth \dimen1 \endbc@l
        \fi}%
      }%
   \fi
-  \dimen4=-\b@drwidth\FontSizeUnit
-  \ifdim\dimen4< -0.1\baselineskip
+  \loop\ifdim\dimen4< -0.4\baselineskip
     \advance\dimen4 by \baselineskip
-  \fi
+  \repeat
   \edef\b@xadj{\the\dimen4}%
   \advance \dimen4 by -\dimen1
   \loop\ifdim\dimen4< -0.1\baselineskip
@@ -425,7 +435,7 @@
     \edef\b@xw@dth{\the\wd\b@rderbox}%
     \advance\dimen0 by \dimen1
     \setbox\b@rderbox\vbox to \dimexpr \dimen0 \relax{\baselineskip=0pt%
-      \ifx\b@drtop\tr@e\vskip\b@xadj\trace{eb}{Drawing Border:top}\hbox{\bc@l\vrule height\b@drwidth\FontSizeUnit width \b@xw@dth \endbc@l}\fi%
+      \ifx\b@drtop\tr@e\trace{eb}{Drawing Border:top}\hbox{\bc@l\vrule height\b@drwidth\FontSizeUnit width \b@xw@dth \endbc@l}\fi%
       \vbox to \dimen0{\unvbox\b@rderbox\vss}%
       \ifx\b@drbottom\tr@e\trace{eb}{Drawing Border:bottom}\hbox{\bc@l\vrule depth\b@drwidth\FontSizeUnit width \b@xw@dth \endbc@l}\vskip\dimen4\fi
     }%
@@ -433,7 +443,8 @@
     %\nonstopmode
     %\showbox\b@rderbox
   \fi
-  \x@\setbox#1\box\b@rderbox
+  %\hrule
+  \x@\setbox#1\vbox{\vskip\b@xadj\vbox to 0pt{\vskip\dimen7\hbox{\hskip\dimen8\box#1}\vss}\box\b@rderbox}%
 }
 \def\borderstylelist{plain, double}
 \let\mkb@rder@plain\mkb@rder
@@ -450,7 +461,7 @@
   \edef\fig@h@dim{#1}\edef\fig@v@dim{#2}%
   \trace{e}{p@rsefigscale:#1,#2,#3}%
   \ifdim\ht\extb@x=0pt
-    \def\fig@v@dim{}%
+    \def\fig@v@dim{}% 
   \fi
   \def\ch@ckfigdim{\tempfalse}%
   \ifx\fig@v@dim\empty
@@ -756,7 +767,7 @@
 \def\BorderStyle       #1\relax{\initc@t\setsbp@ram{borderstyle}{#1}}
 \def\BoxHPadding #1\relax{\initc@t\setsbp@ram{boxhpadding}{#1}}
 \def\BoxVPadding #1\relax{\initc@t\setsbp@ram{boxvpadding}{#1}}
-\def\BoxPadding #1\relax{\initc@t\setsbp@ram{boxhpadding}\setsbp@ram{boxvpadding}{#1}}
+\def\BoxPadding #1\relax{\initc@t\setsbp@ram{boxhpadding}{#1}\setsbp@ram{boxvpadding}{#1}}
 \def\BorderHPadding #1\relax{\initc@t\setsbp@ram{borderhpadding}{#1}}
 \def\BorderVPadding #1\relax{\initc@t\setsbp@ram{bordervpadding}{#1}}
 \def\BorderPadding #1\relax{\initc@t\setsbp@ram{borderhpadding}{#1}\setsbp@ram{bordervpadding}{#1}}

@@ -848,15 +848,15 @@
   %\def\ornamentwidth{#3}
   \message{Box side portion is \the\dimen1. Orig: \the\ht#1 +\the\dp#1 x\the\wd#1, final:\the\box@height }%
   \tempfalse
-  \def\border@l@pad{}\def\border@r@pad{}%
+  \def\border@l@pad{0pt}\def\border@r@pad{0pt}%
   \setbox\orn@bdr@right\box\voidb@x
   \ifx\b@drleft\tr@e
     \orn@SetStretch{\the\dimen1}{y}{=}{\patternL}\setbox\orn@bdr@left\vbox to \dimen1{\lineskip=0pt\lineskiplimit=0pt\baselineskip=0pt\Ornaments{\patternL}}%
-    \def\border@l@pad{\hskip\border@hpadding}%
+    \def\border@l@pad{\border@hpadding}%
     \ifx\patternL\patternR
       \ifx\b@drright\tr@e
 	\setbox\orn@bdr@right\copy\orn@bdr@left
-        \def\border@r@pad{\hskip\border@hpadding}%
+        \def\border@r@pad{\border@hpadding}%
       \fi
     \fi
   \else
@@ -866,14 +866,19 @@
   \ifx\b@drright\tr@e
     \ifvoid\orn@bdr@right
       \orn@SetStretch{\the\dimen1}{y}{=}{\patternR}\setbox\orn@bdr@right\vbox to \dimen1{\lineskip=0pt\lineskiplimit=0pt\baselineskip=0pt\Ornaments{\patternR}}%
-      \def\border@r@pad{\hskip\border@hpadding}%
+      \def\border@r@pad{\border@hpadding}%
     \fi
   \fi
   \showboxdepth=3
   \showboxbreadth=9999
   %\showbox\orn@bdr@right
-  \setbox#1\vbox to \box@height{\baselineskip=0pt\lineskip=0pt\hsize=\box@width\box\orn@bdr@top\hbox to \box@width{\box\orn@bdr@left\border@l@pad\hss\hbox{\vbox to \dimen1{\ifx\b@drtop\tr@e\kern\dimen2\fi\box#1\ifx\b@drbottom\tr@e\kern\dimen2\fi}}\border@r@pad\hss\box\orn@bdr@right}\baselineskip=\ht\orn@bdr@bot\box\orn@bdr@bot}%
+  \dimen7=\dimexpr\ht\orn@bdr@top+\dp\orn@bdr@top  \ifx\b@drtop\tr@e +\dimen2\fi \relax
+  \dimen8=\dimexpr\wd\orn@bdr@left + \border@l@pad\relax
+  \dimen9=\dimexpr\wd\orn@bdr@right + \border@r@pad\relax
+  \setbox\b@rderbox\vbox to \box@height{\baselineskip=0pt\lineskip=0pt\hsize=\box@width
+    \box\orn@bdr@top\hbox to \box@width{\box\orn@bdr@left\hskip\border@l@pad\hss\hbox{\vbox to \dimen1{}}\hskip\border@r@pad\hss\box\orn@bdr@right}\baselineskip=\ht\orn@bdr@bot\box\orn@bdr@bot}%
   %\showbox#1
+  \x@\setbox#1\vbox{\vbox to 0pt{\vskip\dimen7\hbox to \box@width{\hskip\dimen8\hss\box#1\hss\hskip\dimen9}\vss}\box\b@rderbox}%
 }
 
 \def\OrnamentLine#1#2#3#4{%#1 Line length #2 Ornament height #3 Direction {Capital to keep old variables)  #4 Pattern

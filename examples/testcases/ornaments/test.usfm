@@ -32,7 +32,8 @@ It just has a plain line border, slightly separated from the coloured-background
 \s Testing 3
 \p This esb (category foo) has a bit more text, and is set top-right. 
 \m Category foo has an end hook and the p style paragraphs in foo are centred too, hopefully.
-\p Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium
+\p But they still have an indent which looks a bit odd. Foo category esbs have an ornamented border by no background colour, etc.
+Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium
 doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore
 veritatis et quasi architecto beatae vitae dicta sunt explicabo.
 \p Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.
@@ -52,7 +53,7 @@ At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praese
 \esb\cat cut\cat*
 \s1 Testing 4
 \p
-This esb should be in a cut-out, two lines below 'possimus'. It has a pale blue background with a transparent pdf image as a 'watermark'.
+This esb should be in a cut-out, two lines below 'possimus'. It has a pale blue background, an orange border just inside the edge of the background, and a transparent pdf image as a 'watermark'.
 \esbe
 omnis voluptas assumenda est, omnis dolor repellendus.
 \p Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae.
@@ -99,19 +100,17 @@ Tenetur deleniti rerum minima dolor. Rerum autem ipsa ipsum autem quo a. Aut ut 
 \esb\cat pc\cat*
 \p This  esb of category "\showTheCategory" is testing the appropriate positioning.
 \esbe
-\pb
-\p Interesting
-
+\p Happily there no longer needs to be text between sidebars.
 \esb\cat pr\cat*
 \p This  esb of category "\showTheCategory" is testing the appropriate positioning.
 \esbe
 
-\p
-\v 13  There needs to be text in between side bars.
-
 \esb\cat pl\cat*
 \p This  esb of category "\showTheCategory" is testing the appropriate positioning.
 \esbe
+
+Sadly, however, it seems that sidebars
+currently loose their topskip / baselineskip, which means their contents will not be on-grid.
 
 \s \cat testpar\cat* Categorised paragraphs
 \p
