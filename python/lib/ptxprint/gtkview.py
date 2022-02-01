@@ -133,7 +133,7 @@ c_verseNumbers c_preventorphans c_hideEmptyVerses c_elipsizeMissingVerses
 _ui_basic = """
 r_book_module btn_chooseBibleModule lb_bibleModule
 btn_deleteConfig l_notes t_configNotes t_invisiblePassword
-c_pagegutter s_pagegutter l_gutterWidth btn_adjust_spacing
+c_mirrorpages l_gutterWidth btn_adjust_spacing
 s_colgutterfactor l_bottomRag s_bottomRag
 fr_margins l_margins s_margins l_topmargin s_topmargin l_btmMrgn s_bottommargin
 l_fontB bl_fontB l_fontI bl_fontI l_fontBI bl_fontBI 
@@ -149,7 +149,7 @@ tb_xrefs     c_includeXrefs     c_xreachnewline
 tb_HeadFoot lb_HeadFoot
 fr_Header l_hdrleft ecb_hdrleft l_hdrcenter ecb_hdrcenter l_hdrright ecb_hdrright
 fr_Footer l_ftrcenter ecb_ftrcenter
-tb_Pictures lb_Pictures
+tb_Pictures lb_Pictures lb_omitPics
 c_includeillustrations tb_settings lb_settings fr_inclPictures gr_IllustrationOptions c_cropborders r_pictureRes_High r_pictureRes_Low
 rule_help l_homePage lb_homePage l_createZipArchiveXtra btn_createZipArchiveXtra
 """.split()
@@ -216,7 +216,7 @@ _sensitivities = {
     "c_diglotNotesRule" :      ["c_diglotJoinVrule"],
     "c_borders" :              ["gr_borders"],
 
-    "c_pagegutter" :           ["s_pagegutter"],
+    "c_pagegutter" :           ["s_pagegutter", "c_outerGutter"],
     "c_verticalrule" :         ["l_colgutteroffset", "s_colgutteroffset"],
     "c_rhrule" :               ["s_rhruleposition"],
     "c_grid" :                 ["btn_adjustGrid"],

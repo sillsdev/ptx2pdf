@@ -2,16 +2,18 @@ import re
 from gi.repository import Gtk
 
 fieldmap = {
-    "width":   "s_sbBorderWidth",
-    "color":   "col_sbBorderColor"
+    "width":      "s_sbBorderWidth",
+    "vpadding":   "s_sbVpadding",
+    "hpadding":   "s_sbHpadding",
+    "color":      "col_sbBorderColor"
 }
 bordermap = {
-    "top":     "c_sbBorder_top",
-    "bottom":  "c_sbBorder_bot",
-    "left":    "c_sbBorder_lhs",
-    "right":   "c_sbBorder_rhs",
-    "inner":   "c_sbBorder_inn",
-    "outer":   "c_sbBorder_out"
+    "top":        "c_sbBorder_top",
+    "bottom":     "c_sbBorder_bot",
+    "left":       "c_sbBorder_lhs",
+    "right":      "c_sbBorder_rhs",
+    "inner":      "c_sbBorder_inn",
+    "outer":      "c_sbBorder_out"
 }
               
 brdrs = ["top", "bottom", "left", "right", "inner", "outer", "all", "none"]

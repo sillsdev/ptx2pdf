@@ -45,7 +45,6 @@ ModelMap = {
     "config/pwd":               ("t_invisiblePassword", lambda w,v: v or ""),
     "config/version":           ("_version", None),
 
-    # "project/hideadvsettings":  ("c_showAdvancedOptions", lambda w,v: not v),
     "project/bookscope":        ("r_book", None),
     "project/uilevel":          ("fcb_uiLevel", None),
     "project/book":             ("ecb_book", None),
@@ -101,6 +100,7 @@ ModelMap = {
     "paper/rulegap":            ("s_rhruleposition", None),
 
     "paper/ifaddgutter":        ("c_pagegutter", lambda w,v :"true" if v else "false"),
+    "paper/ifoutergutter":      ("c_outerGutter", lambda w,v :"true" if v else "false"),
     "paper/gutter":             ("s_pagegutter", lambda w,v: round(float(v)) if v else "0"),
     "paper/colgutteroffset":    ("s_colgutteroffset", lambda w,v: "{:.1f}".format(float(v)) if v else "0.0"),
     "paper/columns":            ("c_doublecolumn", lambda w,v: "2" if v else "1"),
@@ -294,7 +294,6 @@ ModelMap = {
     "notes/xrlistsource":       ("r_xrSource", None),
     "notes/xrlistsize":         ("s_xrSourceSize", lambda w,v: int(float(v)) if v else "3"),
     "notes/xrfilterbooks":      ("fcb_filterXrefs", None),
-    # "notes/xrlocalstrongs":     ("c_strongsLocal", None),  # now added to strongsndx section below
     "notes/addcolon":           ("c_addColon", None),
     "notes/keepbookwithrefs":   ("c_keepBookWithRefs", None),
     "notes/glossaryfootnotes":  ("c_glossaryFootnotes", None),
