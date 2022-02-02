@@ -35,10 +35,12 @@ def borderStyleFromStyle(tgt, mkr):
     self = BorderStyle()
     for k in fieldmap.keys():
         val = tgt.getval(mkr, "Border"+k.title())
-        setattr(self, k, val)
+        print("fieldmap:", k, val)
+        setattr(self, "border"+k, val)
     for k in boxpadmap.keys():
         val = tgt.getval(mkr, "Box"+k.title())
-        setattr(self, k, val)
+        print("boxpadmap:", k, val)
+        setattr(self, "box"+k, val)
     for i,k in enumerate(brdrs):
         if bitfield & (1<<i) != 0:
             setattr(self, k, True)
@@ -63,32 +65,32 @@ class BorderStyle:
         dialog.hide()
         return res
 
-    def _dialogfrommap(self, dialog, view, fmap):
+    def _dialogfrommap(self, dialog, view, fmap, boxbdr):
         for k, v in fmap.items():
-            val = getattr(self, k, None)
+            val = getattr(self, boxbdr+k, None)
             if val is not None:
                 view.set(v, val)
             elif v.startswith("c_"):
                 view.set(v, False)
 
     def initdialog(self, dialog, view):
-        self._dialogfrommap(dialog, view, fieldmap)
-        self._dialogfrommap(dialog, view, boxpadmap)
-        self._dialogfrommap(dialog, view, bordermap)
+        self._dialogfrommap(dialog, view, fieldmap, "Border")
+        self._dialogfrommap(dialog, view, boxpadmap, "Box")
+        self._dialogfrommap(dialog, view, bordermap, "")
 
-    def _fromdialogmap(self, dialog, view, fmap):
+    def _fromdialogmap(self, dialog, view, fmap, boxbdr):
         for k, v in fmap.items():
             val = view.get(v)
-            setattr(self, k, val)
+            setattr(self, boxbdr+k, val)
 
     def fromdialog(self, dialog, view):
-        self._fromdialogmap(dialog, view, fieldmap)
-        self._fromdialogmap(dialog, view, boxpadmap)
-        self._fromdialogmap(dialog, view, bordermap)
+        self._fromdialogmap(dialog, view, fieldmap, "Border")
+        self._fromdialogmap(dialog, view, boxpadmap, "Box")
+        self._fromdialogmap(dialog, view, bordermap, "")
 
     def _tostylemap(self, tgt, mkr, fmap, boxbdr):
         for k, v in fmap.items():
-            val = getattr(self, k, None)
+            val = getattr(self, boxbdr+k, None)
             if val is None:
                 continue
             tgt.setval(mkr, boxbdr+k.title(), val)
