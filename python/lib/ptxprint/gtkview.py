@@ -286,6 +286,7 @@ _nonsensitivities = {
 
 _object_classes = {
     "printbutton": ("b_print", "btn_refreshFonts", "btn_adjust_diglot", "btn_createZipArchiveXtra", "btn_Generate"),
+    "sbimgbutton": ("btn_sbFGIDia", "btn_sbBGIDia"),
     "fontbutton":  ("bl_fontR", "bl_fontB", "bl_fontI", "bl_fontBI"),
     "mainnb":      ("nbk_Main", ),
     "viewernb":    ("nbk_Viewer", "nbk_PicList"),
@@ -623,6 +624,7 @@ class GtkViewModel(ViewModel):
     def _setup_css(self):
         css = """
             .printbutton:active { background-color: chartreuse; background-image: None }
+            .sbimgbutton:active { background-color: lightskyblue; font-weight: bold}
             .fontbutton {font-size: smaller}
             .stylinks {font-weight: bold; text-decoration: None; padding: 1px 1px}
             .stybutton {font-size: 12px; padding: 4px 6px}
@@ -3841,8 +3843,6 @@ class GtkViewModel(ViewModel):
         picfiles = self.fileChooser(_("Choose Image"),
                                   filters={"Images": {"patterns": ['*.png', '*.jpg', '*.pdf'], "mime": "application/image"}},
                                    multiple=False, basedir=picpath, preview=update_preview)
-        print(f"{picfiles=}")
-        
         self.set("lb_sbFilename", str(picfiles[0]) if picfiles is not None and len(picfiles) else "")
 
     def onDeleteTempFolders(self, btn):
@@ -3858,3 +3858,5 @@ class GtkViewModel(ViewModel):
             self.printer.doError(_("Warning: Could not completely delete\nsome temporary folder(s):"),
                     secondary="\n".join(set(notDeleted)))
 
+    def btn_RemoveSBimage(self, btn):
+        pass

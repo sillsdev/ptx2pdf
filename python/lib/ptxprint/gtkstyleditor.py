@@ -654,6 +654,7 @@ class StyleEditorView(StyleEditor):
         if sb is None:
             sb = ImageStyle(isbg)
         res = sb.run(self.model)
+        # print(f"{res=}")
         if res and sb.filename != "":
             sb.toStyle(self, self.marker)
         elif res:

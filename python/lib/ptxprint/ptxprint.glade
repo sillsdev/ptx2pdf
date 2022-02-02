@@ -848,9 +848,8 @@ text contained within the sidebar.</property>
                       <object class="GtkSpinButton" id="s_sbHpaddingBdr">
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
-                        <property name="tooltip-text" translatable="yes">The horizontal space (pts) between the 
-left/right borders (if any) and the text 
-contained within the sidebar.</property>
+                        <property name="tooltip-text" translatable="yes">The horizontal space between the (inside) edge 
+of the border and the edge of the border.</property>
                         <property name="halign">start</property>
                         <property name="valign">start</property>
                         <property name="text">0</property>
@@ -870,9 +869,8 @@ contained within the sidebar.</property>
                       <object class="GtkSpinButton" id="s_sbVpaddingBdr">
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
-                        <property name="tooltip-text" translatable="yes">The vertical space (pts) between the 
-top/bottom borders (if any) and the 
-text contained within the sidebar.</property>
+                        <property name="tooltip-text" translatable="yes">The vertical space between the (inside) edge 
+of the border and the edge of the border.</property>
                         <property name="halign">start</property>
                         <property name="valign">start</property>
                         <property name="text">0</property>
@@ -892,7 +890,7 @@ text contained within the sidebar.</property>
                       <object class="GtkLabel">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
-                        <property name="tooltip-text" translatable="yes">The space between the (inside) edge of border
+                        <property name="tooltip-text" translatable="yes">The space between the (inside) edge of the border
 and the edge of the border. If there is no border
 on a specific side, then only Box Padding applies.
 
@@ -2909,14 +2907,14 @@ saved configuration.</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_diglot">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_grid">
     <property name="visible">True</property>
@@ -2927,27 +2925,27 @@ combination of Crop marks, Guides (margins,
 baselines, etc.) and/or a graph-paper-like Grid
 can be set.</property>
     <property name="icon-name">view-grid-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_spacing">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_top">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_download">
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">software-update-available-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_refresh">
     <property name="visible">True</property>
@@ -2964,7 +2962,7 @@ having to manually re-create all the same
 settings for a similar project.</property>
     <property name="halign">end</property>
     <property name="icon-name">view-grid-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkListStore" id="ls_NoteBlendInto">
     <columns>
@@ -5678,7 +5676,39 @@ information, position and other parameters.</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox">
             <property name="can-focus">False</property>
+            <property name="margin-start">6</property>
+            <property name="margin-end">6</property>
+            <property name="margin-bottom">4</property>
             <property name="layout-style">end</property>
+            <child>
+              <object class="GtkButton" id="button1">
+                <property name="label" translatable="yes">Remove Image</property>
+                <property name="visible">True</property>
+                <property name="sensitive">False</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="halign">start</property>
+                <property name="always-show-image">True</property>
+                <signal name="clicked" handler="btn_RemoveSBimage" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel">
+                <property name="width-request">27</property>
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
             <child>
               <object class="GtkButton" id="btn_image_cancel">
                 <property name="label">gtk-cancel</property>
@@ -5691,7 +5721,7 @@ information, position and other parameters.</property>
               <packing>
                 <property name="expand">True</property>
                 <property name="fill">True</property>
-                <property name="position">0</property>
+                <property name="position">2</property>
               </packing>
             </child>
             <child>
@@ -5706,7 +5736,7 @@ information, position and other parameters.</property>
               <packing>
                 <property name="expand">True</property>
                 <property name="fill">True</property>
-                <property name="position">1</property>
+                <property name="position">3</property>
               </packing>
             </child>
           </object>
@@ -5768,6 +5798,8 @@ information, position and other parameters.</property>
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="halign">start</property>
+                    <property name="margin-start">3</property>
+                    <property name="margin-end">6</property>
                     <property name="label" translatable="yes">C:\Filename\with\path</property>
                     <property name="ellipsize">middle</property>
                     <attributes>
@@ -6232,7 +6264,7 @@ as .JPG images do not have transparency.</property>
                             <child internal-child="entry">
                               <object class="GtkEntry">
                                 <property name="can-focus">False</property>
-                                <property name="width-chars">20</property>
+                                <property name="width-chars">22</property>
                               </object>
                             </child>
                           </object>
@@ -6280,7 +6312,7 @@ being too large for a given sidebar.</property>
                             <child internal-child="entry">
                               <object class="GtkEntry">
                                 <property name="can-focus">False</property>
-                                <property name="width-chars">16</property>
+                                <property name="width-chars">17</property>
                               </object>
                             </child>
                           </object>
@@ -6353,6 +6385,7 @@ maintains its proportions.</property>
       </object>
     </child>
     <action-widgets>
+      <action-widget response="-4">button1</action-widget>
       <action-widget response="-6">btn_image_cancel</action-widget>
       <action-widget response="-5">btn_image_ok</action-widget>
     </action-widgets>
@@ -23707,6 +23740,7 @@ Transparency (if CMYK is required)
 Archive (largest size, for keeping long-term)
 
 Note: All comply with archive standard PDF/A-1b.</property>
+                                    <property name="halign">start</property>
                                     <property name="label" translatable="yes">PDF Output Format:</property>
                                   </object>
                                   <packing>
@@ -23745,10 +23779,38 @@ Note: All comply with archive standard PDF/A-1b.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <placeholder/>
+                                  <object class="GtkSpinButton" id="s_spaceBeside">
+                                    <property name="visible">True</property>
+                                    <property name="sensitive">False</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="tooltip-text" translatable="yes">This sets the default gap (pt) between the body 
+text and the side of a figure/sidebar in a cutout.</property>
+                                    <property name="halign">start</property>
+                                    <property name="width-chars">1</property>
+                                    <property name="text">2</property>
+                                    <property name="adjustment">a_sbiCutoutLines</property>
+                                    <property name="climb-rate">1</property>
+                                    <property name="value">2</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">1</property>
+                                    <property name="top-attach">1</property>
+                                  </packing>
                                 </child>
                                 <child>
-                                  <placeholder/>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="sensitive">False</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="tooltip-text" translatable="yes">This sets the default gap (pt) between the body 
+text and the side of a figure/sidebar in a cutout.</property>
+                                    <property name="halign">start</property>
+                                    <property name="label" translatable="yes">Space Beside (pt):</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">0</property>
+                                    <property name="top-attach">1</property>
+                                  </packing>
                                 </child>
                                 <child>
                                   <placeholder/>
