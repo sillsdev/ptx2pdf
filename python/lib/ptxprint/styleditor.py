@@ -211,13 +211,11 @@ class StyleEditor:
             else:
                 val = newval
         if key in self.sheet.get(mrk, {}) and (val is None or val == self.basesheet.get(mrk, {}).get(key, None)):
-            print(f"Deleting {mrk}: {key}")
             del self.sheet[mrk][key]
             return
         elif self.basesheet.get(mrk, {}).get(key, None) != val and val is not None:
             self.sheet.setdefault(mrk, {})[key] = val or ""
         elif key in self.basesheet.get(mrk, {}) and val is None:
-            print(f"Deleting {mrk}: {key}")
             del self.basesheet[mrk][key]
 
     def haskey(self, mrk, key):

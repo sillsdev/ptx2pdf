@@ -148,15 +148,14 @@ class ImageStyle:
             tgt.setval(mkr, prefix+"Scale", scale)
 
     def removeStyle(self, tgt, mkr):
-        print("Removing Style", mkr)
+        prefix = "BgImage" if self.isbg else "FgImage"
         for k in fieldmap.keys():
-            print("setval to None:", mkr, k)
-            tgt.setval(mkr, k, None)
+            if k == "filename":
+                k = ""
+            tgt.setval(mkr, prefix + k.title(), None)
         if self.isbg:
             for k in bgfieldmap.keys():
-                print("isbg is True, setval to None:", mkr, k)
-                tgt.setval(mkr, k, None)
+                tgt.setval(mkr, prefix + k.title(), None)
         else:
-            print("isbg is False, setval to None:", mkr, "FgImagePos")
             tgt.setval(mkr, 'FgImagePos', None)
             
