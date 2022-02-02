@@ -422,10 +422,13 @@
        \fi}%
      }%
   \fi
-  \loop\ifdim\dimen4< -0.4\baselineskip
+  \loop\ifdim\dimen4> \baselineskip
+    \advance\dimen4 by -\baselineskip
+  \repeat
+  \loop\ifdim\dimen4< -0.1\baselineskip
     \advance\dimen4 by \baselineskip
   \repeat
-  \edef\b@xadj{\the\dimen4}%
+  \edef\b@xadj{\the\dimen4}% b@xadj is to keep the box on-grid when in-line. 
   \advance \dimen4 by -\dimen1
   \loop\ifdim\dimen4< -0.1\baselineskip
     \advance\dimen4 by \baselineskip
@@ -444,7 +447,9 @@
     %\showbox\b@rderbox
   \fi
   %\hrule
-  \x@\setbox#1\vbox{\vskip\b@xadj\vbox to 0pt{\vskip\dimen7\hbox{\hskip\dimen8\box#1}\vss}\box\b@rderbox}%
+  \ift@mp
+    \x@\setbox#1\vbox{\vskip\b@xadj\vbox to 0pt{\vskip\dimen7\hbox{\hskip\dimen8\box#1}\vss}\penalty10000\box\b@rderbox}%
+  \fi
 }
 \def\borderstylelist{plain, double}
 \let\mkb@rder@plain\mkb@rder
