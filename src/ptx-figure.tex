@@ -706,7 +706,10 @@
   % create box to contain picture
 %+cfig_dofigure_3
   \ifcsname figparam-x-spacebeside\endcsname
-    \edef\sp@cebeside{\csname figparam-x-spacebeside\endcsname}%
+    \x@\let\x@\sp@cebeside\csname figparam-x-spacebeside\endcsname%
+    \ifx\sp@cebeside\empty
+      \edef\sp@cebeside{\DefaultSpaceBeside}%
+    \fi
   \else
     \edef\sp@cebeside{\DefaultSpaceBeside}%
   \fi
