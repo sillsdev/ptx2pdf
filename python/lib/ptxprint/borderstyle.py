@@ -3,9 +3,13 @@ from gi.repository import Gtk
 
 fieldmap = {
     "width":      "s_sbBorderWidth",
-    "vpadding":   "s_sbVpadding",
-    "hpadding":   "s_sbHpadding",
+    "vpadding":   "s_sbVpaddingBdr",
+    "hpadding":   "s_sbHpaddingBdr",
     "color":      "col_sbBorderColor"
+}
+boxpadmap = {
+    "vpadding":   "s_sbVpaddingBox",
+    "hpadding":   "s_sbHpaddingBox"
 }
 bordermap = {
     "top":        "c_sbBorder_top",
@@ -31,6 +35,9 @@ def borderStyleFromStyle(tgt, mkr):
     self = BorderStyle()
     for k in fieldmap.keys():
         val = tgt.getval(mkr, "Border"+k.title())
+        setattr(self, k, val)
+    for k in boxpadmap.keys():
+        val = tgt.getval(mkr, "Box"+k.title())
         setattr(self, k, val)
     for i,k in enumerate(brdrs):
         if bitfield & (1<<i) != 0:
@@ -66,6 +73,7 @@ class BorderStyle:
 
     def initdialog(self, dialog, view):
         self._dialogfrommap(dialog, view, fieldmap)
+        self._dialogfrommap(dialog, view, boxpadmap)
         self._dialogfrommap(dialog, view, bordermap)
 
     def _fromdialogmap(self, dialog, view, fmap):
@@ -75,17 +83,19 @@ class BorderStyle:
 
     def fromdialog(self, dialog, view):
         self._fromdialogmap(dialog, view, fieldmap)
+        self._fromdialogmap(dialog, view, boxpadmap)
         self._fromdialogmap(dialog, view, bordermap)
 
-    def _tostylemap(self, tgt, mkr, fmap):
+    def _tostylemap(self, tgt, mkr, fmap, boxbdr):
         for k, v in fmap.items():
             val = getattr(self, k, None)
             if val is None:
                 continue
-            tgt.setval(mkr, "Border"+k.title(), val)
+            tgt.setval(mkr, boxbdr+k.title(), val)
 
     def toStyle(self, tgt, mkr):
-        self._tostylemap(tgt, mkr, fieldmap)
+        self._tostylemap(tgt, mkr, fieldmap, "Border")
+        self._tostylemap(tgt, mkr, boxpadmap, "Box")
         bitfield = sum(1<<i if getattr(self, k, False) else 0 for i,k in enumerate(brdrs))
         if bitfield == 15 or bitfield == 51:
             bitfield = 64

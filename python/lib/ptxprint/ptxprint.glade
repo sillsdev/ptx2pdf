@@ -418,13 +418,27 @@ THE SOFTWARE.
     <property name="step-increment">0.10</property>
     <property name="page-increment">0.5</property>
   </object>
-  <object class="GtkAdjustment" id="a_sbHpadding">
+  <object class="GtkAdjustment" id="a_sbHpaddingBdr">
+    <property name="lower">-50</property>
+    <property name="upper">50</property>
+    <property name="value">10</property>
+    <property name="step-increment">0.5</property>
+    <property name="page-increment">1</property>
+  </object>
+  <object class="GtkAdjustment" id="a_sbHpaddingBox">
     <property name="upper">50</property>
     <property name="value">5</property>
     <property name="step-increment">0.5</property>
     <property name="page-increment">1</property>
   </object>
-  <object class="GtkAdjustment" id="a_sbVpadding">
+  <object class="GtkAdjustment" id="a_sbVpaddingBdr">
+    <property name="lower">-50</property>
+    <property name="upper">50</property>
+    <property name="value">10</property>
+    <property name="step-increment">0.5</property>
+    <property name="page-increment">1</property>
+  </object>
+  <object class="GtkAdjustment" id="a_sbVpaddingBox">
     <property name="upper">50</property>
     <property name="value">5</property>
     <property name="step-increment">0.5</property>
@@ -479,7 +493,7 @@ THE SOFTWARE.
           <packing>
             <property name="expand">False</property>
             <property name="fill">False</property>
-            <property name="position">0</property>
+            <property name="position">2</property>
           </packing>
         </child>
         <child>
@@ -494,7 +508,7 @@ THE SOFTWARE.
             <property name="margin-bottom">6</property>
             <property name="label-xalign">0.029999999329447746</property>
             <child>
-              <!-- n-columns=3 n-rows=6 -->
+              <!-- n-columns=4 n-rows=3 -->
               <object class="GtkGrid" id="gr_sbBorders">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
@@ -502,7 +516,7 @@ THE SOFTWARE.
                 <property name="margin-end">6</property>
                 <property name="margin-top">3</property>
                 <property name="margin-bottom">6</property>
-                <property name="row-spacing">6</property>
+                <property name="row-spacing">3</property>
                 <property name="column-spacing">8</property>
                 <child>
                   <!-- n-columns=4 n-rows=4 -->
@@ -689,7 +703,7 @@ THE SOFTWARE.
                     <property name="value">0.5</property>
                   </object>
                   <packing>
-                    <property name="left-attach">1</property>
+                    <property name="left-attach">2</property>
                     <property name="top-attach">1</property>
                     <property name="width">2</property>
                   </packing>
@@ -700,13 +714,14 @@ THE SOFTWARE.
                     <property name="can-focus">False</property>
                     <property name="halign">start</property>
                     <property name="valign">end</property>
+                    <property name="margin-start">8</property>
                     <property name="label" translatable="yes">Thickness (pt)</property>
                     <attributes>
                       <attribute name="style" value="italic"/>
                     </attributes>
                   </object>
                   <packing>
-                    <property name="left-attach">1</property>
+                    <property name="left-attach">2</property>
                     <property name="top-attach">0</property>
                     <property name="width">2</property>
                   </packing>
@@ -722,7 +737,7 @@ THE SOFTWARE.
                     <property name="rgba">rgb(0,0,0)</property>
                   </object>
                   <packing>
-                    <property name="left-attach">2</property>
+                    <property name="left-attach">3</property>
                     <property name="top-attach">2</property>
                   </packing>
                 </child>
@@ -734,7 +749,7 @@ THE SOFTWARE.
                     <property name="label" translatable="yes">Color:</property>
                   </object>
                   <packing>
-                    <property name="left-attach">1</property>
+                    <property name="left-attach">2</property>
                     <property name="top-attach">2</property>
                   </packing>
                 </child>
@@ -742,97 +757,14 @@ THE SOFTWARE.
                   <object class="GtkLabel">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
-                    <property name="tooltip-text" translatable="yes">The horizontal space (pts) between the 
-left/right borders (if any) and the text 
-contained within the sidebar.</property>
-                    <property name="halign">end</property>
-                    <property name="label" translatable="yes">Horizontal:</property>
-                  </object>
-                  <packing>
-                    <property name="left-attach">0</property>
-                    <property name="top-attach">4</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel">
-                    <property name="visible">True</property>
-                    <property name="can-focus">False</property>
-                    <property name="tooltip-text" translatable="yes">The vertical space (pts) between the 
-top/bottom borders (if any) and the 
-text contained within the sidebar.</property>
-                    <property name="halign">end</property>
-                    <property name="label" translatable="yes">Vertical:</property>
-                  </object>
-                  <packing>
-                    <property name="left-attach">0</property>
-                    <property name="top-attach">5</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel">
-                    <property name="visible">True</property>
-                    <property name="can-focus">False</property>
-                    <property name="tooltip-text" translatable="yes">The padding space (in pts).</property>
-                    <property name="halign">start</property>
-                    <property name="valign">end</property>
-                    <property name="label" translatable="yes">Inner Padding (pt)</property>
-                    <attributes>
-                      <attribute name="style" value="italic"/>
-                    </attributes>
                   </object>
                   <packing>
                     <property name="left-attach">1</property>
-                    <property name="top-attach">3</property>
-                    <property name="width">2</property>
+                    <property name="top-attach">0</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkSpinButton" id="s_sbHpadding">
-                    <property name="visible">True</property>
-                    <property name="can-focus">True</property>
-                    <property name="tooltip-text" translatable="yes">The horizontal space (pts) between the 
-left/right borders (if any) and the text 
-contained within the sidebar.</property>
-                    <property name="halign">start</property>
-                    <property name="valign">start</property>
-                    <property name="text">5.0</property>
-                    <property name="input-purpose">number</property>
-                    <property name="adjustment">a_sbHpadding</property>
-                    <property name="climb-rate">0.5</property>
-                    <property name="digits">1</property>
-                    <property name="numeric">True</property>
-                    <property name="update-policy">if-valid</property>
-                    <property name="value">5</property>
-                  </object>
-                  <packing>
-                    <property name="left-attach">1</property>
-                    <property name="top-attach">4</property>
-                    <property name="width">2</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkSpinButton" id="s_sbVpadding">
-                    <property name="visible">True</property>
-                    <property name="can-focus">True</property>
-                    <property name="tooltip-text" translatable="yes">The vertical space (pts) between the 
-top/bottom borders (if any) and the 
-text contained within the sidebar.</property>
-                    <property name="halign">start</property>
-                    <property name="valign">start</property>
-                    <property name="text">5.0</property>
-                    <property name="input-purpose">number</property>
-                    <property name="adjustment">a_sbVpadding</property>
-                    <property name="climb-rate">0.5</property>
-                    <property name="digits">1</property>
-                    <property name="numeric">True</property>
-                    <property name="update-policy">if-valid</property>
-                    <property name="value">5</property>
-                  </object>
-                  <packing>
-                    <property name="left-attach">1</property>
-                    <property name="top-attach">5</property>
-                    <property name="width">2</property>
-                  </packing>
+                  <placeholder/>
                 </child>
                 <child>
                   <placeholder/>
@@ -844,6 +776,217 @@ text contained within the sidebar.</property>
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes">Borders to Show</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkFrame">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="label-xalign">0.029999999329447746</property>
+            <child>
+              <object class="GtkAlignment">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="left-padding">12</property>
+                <child>
+                  <!-- n-columns=3 n-rows=3 -->
+                  <object class="GtkGrid">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="margin-start">6</property>
+                    <property name="margin-end">6</property>
+                    <property name="margin-bottom">6</property>
+                    <property name="row-spacing">3</property>
+                    <property name="column-spacing">8</property>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="tooltip-text" translatable="yes">The horizontal space (pts) between the 
+left/right borders (if any) and the text 
+contained within the sidebar.</property>
+                        <property name="halign">start</property>
+                        <property name="valign">end</property>
+                        <property name="margin-start">8</property>
+                        <property name="label" translatable="yes">Horizontal (pt)</property>
+                        <attributes>
+                          <attribute name="style" value="italic"/>
+                        </attributes>
+                      </object>
+                      <packing>
+                        <property name="left-attach">1</property>
+                        <property name="top-attach">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="tooltip-text" translatable="yes">The vertical space (pts) between the 
+top/bottom borders (if any) and the 
+text contained within the sidebar.</property>
+                        <property name="halign">start</property>
+                        <property name="valign">end</property>
+                        <property name="margin-start">8</property>
+                        <property name="label" translatable="yes">Vertical (pt)</property>
+                        <attributes>
+                          <attribute name="style" value="italic"/>
+                        </attributes>
+                      </object>
+                      <packing>
+                        <property name="left-attach">2</property>
+                        <property name="top-attach">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkSpinButton" id="s_sbHpaddingBdr">
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="tooltip-text" translatable="yes">The horizontal space (pts) between the 
+left/right borders (if any) and the text 
+contained within the sidebar.</property>
+                        <property name="halign">start</property>
+                        <property name="valign">start</property>
+                        <property name="text">10</property>
+                        <property name="input-purpose">number</property>
+                        <property name="adjustment">a_sbHpaddingBdr</property>
+                        <property name="climb-rate">0.5</property>
+                        <property name="digits">1</property>
+                        <property name="numeric">True</property>
+                        <property name="update-policy">if-valid</property>
+                        <property name="value">10</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">1</property>
+                        <property name="top-attach">2</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkSpinButton" id="s_sbVpaddingBdr">
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="tooltip-text" translatable="yes">The vertical space (pts) between the 
+top/bottom borders (if any) and the 
+text contained within the sidebar.</property>
+                        <property name="halign">start</property>
+                        <property name="valign">start</property>
+                        <property name="text">10</property>
+                        <property name="input-purpose">number</property>
+                        <property name="adjustment">a_sbVpaddingBdr</property>
+                        <property name="climb-rate">0.5</property>
+                        <property name="digits">1</property>
+                        <property name="numeric">True</property>
+                        <property name="update-policy">if-valid</property>
+                        <property name="value">10</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">2</property>
+                        <property name="top-attach">2</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="tooltip-text" translatable="yes">The space between the (inside) edge of border
+and the edge of the border. If there is no border
+on a specific side, then only Box Padding applies.
+
+With sufficient Box Padding, the Border Padding
+can be negative, putting the border inside the 
+background colour/image.</property>
+                        <property name="halign">start</property>
+                        <property name="valign">center</property>
+                        <property name="label" translatable="yes">Border Padding:</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">2</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="tooltip-text" translatable="yes">The space (pts) between the edge of 
+the background box (or figure - if any) 
+and the edge of the text in the sidebar.</property>
+                        <property name="halign">start</property>
+                        <property name="valign">center</property>
+                        <property name="label" translatable="yes">Box Padding:</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkSpinButton" id="s_sbHpaddingBox">
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="tooltip-text" translatable="yes">The horizontal space (pts) between the 
+left/right edge of background box (or 
+figure - if any) and the edge of the text 
+contained within the sidebar.</property>
+                        <property name="halign">start</property>
+                        <property name="valign">start</property>
+                        <property name="text">5.0</property>
+                        <property name="input-purpose">number</property>
+                        <property name="adjustment">a_sbHpaddingBox</property>
+                        <property name="climb-rate">0.5</property>
+                        <property name="digits">1</property>
+                        <property name="numeric">True</property>
+                        <property name="update-policy">if-valid</property>
+                        <property name="value">5</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">1</property>
+                        <property name="top-attach">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkSpinButton" id="s_sbVpaddingBox">
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="tooltip-text" translatable="yes">The vertical space (pts) between the 
+top/bottom edge of background box (or 
+figure - if any) and the edge of the text 
+contained within the sidebar.</property>
+                        <property name="halign">start</property>
+                        <property name="valign">start</property>
+                        <property name="text">5.0</property>
+                        <property name="input-purpose">number</property>
+                        <property name="adjustment">a_sbVpaddingBox</property>
+                        <property name="climb-rate">0.5</property>
+                        <property name="digits">1</property>
+                        <property name="numeric">True</property>
+                        <property name="update-policy">if-valid</property>
+                        <property name="value">5</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">2</property>
+                        <property name="top-attach">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child type="label">
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="label" translatable="yes">Padding</property>
               </object>
             </child>
           </object>

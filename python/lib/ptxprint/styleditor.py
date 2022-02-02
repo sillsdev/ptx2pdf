@@ -12,7 +12,8 @@ mkrexceptions = {k.lower().title(): k for k in ('BaseLine', 'TextType', 'TextPro
                 'StyleType', 'ColorName', 'XMLTag', 'TEStyleName', 'ztexFontFeatures', 'ztexFontGrSpace',
                 'FgImage', 'FgImagePos', 'FgImageScale', 'BgImage', 'BgImageScale', 'BgImagePos', 'BgImageLow',
                 'BgImageColour', 'BgImageColor', 'BgImageAlpha', 'BgImageOversize', 'BgColour', 'BgColor',
-                'BorderWidth', 'BorderColour', 'BorderColor', 'BorderVPadding', 'BorderHPadding')}
+                'BorderWidth', 'BorderColour', 'BorderColor', 'BorderVPadding', 'BorderHPadding', 
+                'BoxVPadding', 'BoxHPadding')}
 binarymkrs = {"bold", "italic", "smallcaps"}
 
 absolutes = {"baseline", "raise", "callerraise", "notecallerraise"}
