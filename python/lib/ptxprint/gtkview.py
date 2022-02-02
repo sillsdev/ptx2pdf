@@ -3841,8 +3841,9 @@ class GtkViewModel(ViewModel):
         picfiles = self.fileChooser(_("Choose Image"),
                                   filters={"Images": {"patterns": ['*.png', '*.jpg', '*.pdf'], "mime": "application/image"}},
                                    multiple=False, basedir=picpath, preview=update_preview)
-        self.set("lb_sbFilename", str(picfiles[0]) if len(picfiles) else "")
-
+        print(f"{picfiles=}")
+        
+        self.set("lb_sbFilename", str(picfiles[0]) if picfiles is not None and len(picfiles) else "")
 
     def onDeleteTempFolders(self, btn):
         notDeleted = []

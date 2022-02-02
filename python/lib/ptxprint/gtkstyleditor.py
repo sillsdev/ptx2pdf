@@ -654,8 +654,11 @@ class StyleEditorView(StyleEditor):
         if sb is None:
             sb = ImageStyle(isbg)
         res = sb.run(self.model)
-        if res and sb.filename is not None:
+        print(f"{res=} {sb=} {sb.filename=}")
+        if res and sb.filename != "":
             sb.toStyle(self, self.marker)
+        else:
+            sb.removeStyle(self, self.marker)
 
     def sidebarBorderDialog(self):
         sb = borderStyleFromStyle(self, self.marker)

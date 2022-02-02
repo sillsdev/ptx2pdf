@@ -131,7 +131,7 @@ def coltoonemax(s):
         if "," in s:
             return [float(x)/256. for x in s[s.find("(")+1:-1].split(",")]
         elif " " in s:
-            return [float(x)/256. for x in s.split(" ")]
+            return [float(x) for x in s.split(" ")]
         else:
             return [0.8, 0.8, 0.8]
     except (ValueError, TypeError):
@@ -149,7 +149,7 @@ def textocol(s):
     elif " " in s:
         vals = [int(float(x) * 255) for x in s.split(" ")]
     elif "rgb" in s:
-        vals = [float(x)/256. for x in s[s.find("(")+1:-1].split(",")]
+        vals = [float(x) for x in s[s.find("(")+1:-1].split(",")]
     else:
         try:
             v = int(s)

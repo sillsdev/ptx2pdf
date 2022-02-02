@@ -1,15 +1,14 @@
 import re
 from gi.repository import Gtk
+from ptxprint.utils import textocol
 
 fieldmap = {
-    "width":      "s_sbBorderWidth",
-    "vpadding":   "s_sbVpaddingBdr",
-    "hpadding":   "s_sbHpaddingBdr",
-    "color":      "col_sbBorderColor"
-}
-boxpadmap = {
-    "vpadding":   "s_sbVpaddingBox",
-    "hpadding":   "s_sbHpaddingBox"
+    "BorderWidth":     "s_sbBorderWidth",
+    "BorderVPadding":  "s_sbVpaddingBdr",
+    "BorderHPadding":  "s_sbHpaddingBdr",
+    "BorderColor":     "col_sbBorderColor",
+    "BoxVPadding":     "s_sbVpaddingBox",
+    "BoxHPadding":     "s_sbHpaddingBox"
 }
 bordermap = {
     "top":        "c_sbBorder_top",
@@ -34,13 +33,8 @@ def borderStyleFromStyle(tgt, mkr):
         return None
     self = BorderStyle()
     for k in fieldmap.keys():
-        val = tgt.getval(mkr, "Border"+k.title())
-        print("fieldmap:", k, val)
-        setattr(self, "border"+k, val)
-    for k in boxpadmap.keys():
-        val = tgt.getval(mkr, "Box"+k.title())
-        print("boxpadmap:", k, val)
-        setattr(self, "box"+k, val)
+        val = tgt.getval(mkr, k)
+        setattr(self, k, val)
     for i,k in enumerate(brdrs):
         if bitfield & (1<<i) != 0:
             setattr(self, k, True)
@@ -65,39 +59,38 @@ class BorderStyle:
         dialog.hide()
         return res
 
-    def _dialogfrommap(self, dialog, view, fmap, boxbdr):
+    def _dialogfrommap(self, dialog, view, fmap):
         for k, v in fmap.items():
-            val = getattr(self, boxbdr+k, None)
+            val = getattr(self, k, None)
             if val is not None:
                 view.set(v, val)
             elif v.startswith("c_"):
                 view.set(v, False)
 
     def initdialog(self, dialog, view):
-        self._dialogfrommap(dialog, view, fieldmap, "Border")
-        self._dialogfrommap(dialog, view, boxpadmap, "Box")
-        self._dialogfrommap(dialog, view, bordermap, "")
+        self.BorderColor = textocol(self.BorderColor)
+        self._dialogfrommap(dialog, view, fieldmap)
+        self._dialogfrommap(dialog, view, bordermap)
 
-    def _fromdialogmap(self, dialog, view, fmap, boxbdr):
+    def _fromdialogmap(self, dialog, view, fmap):
         for k, v in fmap.items():
             val = view.get(v)
-            setattr(self, boxbdr+k, val)
+            setattr(self, k, val)
 
     def fromdialog(self, dialog, view):
-        self._fromdialogmap(dialog, view, fieldmap, "Border")
-        self._fromdialogmap(dialog, view, boxpadmap, "Box")
-        self._fromdialogmap(dialog, view, bordermap, "")
+        self._fromdialogmap(dialog, view, fieldmap)
+        self._fromdialogmap(dialog, view, bordermap)
+        self.BorderColor = textocol(self.BorderColor)
 
-    def _tostylemap(self, tgt, mkr, fmap, boxbdr):
+    def _tostylemap(self, tgt, mkr, fmap):
         for k, v in fmap.items():
-            val = getattr(self, boxbdr+k, None)
+            val = getattr(self, k, None)
             if val is None:
                 continue
-            tgt.setval(mkr, boxbdr+k.title(), val)
+            tgt.setval(mkr, k, val)
 
     def toStyle(self, tgt, mkr):
-        self._tostylemap(tgt, mkr, fieldmap, "Border")
-        self._tostylemap(tgt, mkr, boxpadmap, "Box")
+        self._tostylemap(tgt, mkr, fieldmap)
         bitfield = sum(1<<i if getattr(self, k, False) else 0 for i,k in enumerate(brdrs))
         if bitfield == 15 or bitfield == 51:
             bitfield = 64
