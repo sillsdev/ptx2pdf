@@ -302,6 +302,7 @@
           \gdef\sb@rtopedge{\strut
             \dimen0=\ht\this@pic \advance\dimen0 by \dp\this@pic %
             \count255=\dimen0
+            \getsbp@ram{spacebeside}\ifx\cp@ram\relax\let\sp@cebeside=\DefaultSpaceBeside\else\let\sp@cebeside\cp@ram\fi
             \divide\count255 by \baselineskip
             \advance\count255 by 1
             \d@figureCut\this@pic}
