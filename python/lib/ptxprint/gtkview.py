@@ -1054,7 +1054,7 @@ class GtkViewModel(ViewModel):
         bls = " ".join(self.getBooks())
         self.set('ecb_booklist', bls)
         bl = self.getAllBooks()
-        if len(bl):
+        if not self.booklistKeypressed and not len(bl):
             self.set("r_book", "single")
             self.set("ecb_book", list(bl.keys())[0])
         self.updateExamineBook()
