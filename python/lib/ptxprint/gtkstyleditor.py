@@ -657,7 +657,7 @@ class StyleEditorView(StyleEditor):
         print(f"{res=} {sb=} {sb.filename=}")
         if res and sb.filename != "":
             sb.toStyle(self, self.marker)
-        else:
+        elif res:
             sb.removeStyle(self, self.marker)
 
     def sidebarBorderDialog(self):
