@@ -3859,4 +3859,4 @@ class GtkViewModel(ViewModel):
                     secondary="\n".join(set(notDeleted)))
 
     def btn_RemoveSBimage(self, btn):
-        pass
+        self.set("lb_sbFilename", "")

@@ -1,4 +1,4 @@
-import configparser, re, os, gi, traceback
+import configparser, re, os, traceback
 from shutil import copyfile
 from pathlib import Path
 from functools import reduce
