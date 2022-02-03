@@ -362,7 +362,10 @@ def f2s(x, dp=3) :
     res = ("{:." + str(dp) + "f}").format(x)
     if res.endswith("." + ("0" * dp)) :
         return res[:-dp-1]
-    return re.sub(r"0*$", "", res)
+    res = re.sub(r"0*$", "", res)
+    if res == "":
+        res = "0"
+    return res
 
 def cachedData(filepath, fn):
     cfgdir = appdirs.user_cache_dir("ptxprint", "SIL")

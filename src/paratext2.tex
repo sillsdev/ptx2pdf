@@ -1382,9 +1382,12 @@
             %\advance\shortavail by \ifdim\dp\colA>\dp\colB \dp\colA\else\dp\colB\fi
             \trace{o}{Best height \the\shortavail, difference of \the\dimen0, from a threshold of \BalanceThreshold x\the\baselineskip}%
             \rebalancefalse
+          \else\ifdim\shortavail<\BalanceThreshold\baselineskip
+            \fitonpagefalse\rebalancefalse
+            \b@lbestdiff=\dimen0 \b@lbestavail=\shortavail
           \else\ifdim\dimen0<\b@lbestdiff
             \b@lbestdiff=\dimen0 \b@lbestavail=\shortavail
-        \fi\fi\fi
+        \fi\fi\fi\fi
 		% give up if target size less than 2 lines (should not happen)
         \ifdim\shortavail<\baselineskip \MSG{Rebalancing bailed for short block \the\shortavail}%   %(8)
           \shortavail=\b@lbestavail\rebalancefalse\fi
@@ -1539,7 +1542,7 @@
       \setbox5=\vbox{\m@kexrefbox{\ifdim\t@xttrialheight>0pt \ifdim\t@xttrialheight<#1 \t@xttrialheight\else #1\fi\else #1\fi}{\XrefNotesWidth}{\XrefNotes}}%
       \setbox\xr@fbox\vbox{\unvbox\xr@fbox\setbox0=\lastbox\dimen0=\dp0\box0\vskip\dimen0}%
     \fi
-    \notst@dynotestrue\m@kenotebox\notst@dynotesfalse
+    \keepn@testrue\notst@dynotestrue\m@kenotebox\notst@dynotesfalse\keepn@tesfalse
     \setbox\coln@tebox=\vbox{%
       \trace{o}{coln@tebox in=\the\ht5+\the\dp5, notes=\the\ht2+\the\dp2}%
       \ifdim\ht2>0pt
@@ -1835,7 +1838,7 @@
     % todo: allow user defined inner margin also on grid
     \ifnum#5=1\hbox to \XrefNotesMargin{}\else\ifnum#5=3\hbox to \XrefNotesMargin{}\fi\fi
     \ifdim\ht\xr@fbox>0pt
-      \vbox to #4{\vbox to #2{\ifdim\ht\xr@fbox>0.9\dimen0 \unvbox\xr@fbox\unpenalty\unskip
+      \vbox to #4{\vbox to #1{\ifdim\ht\xr@fbox>0.9\dimen0 \unvbox\xr@fbox\unpenalty\unskip
         \else\ifdim\ht\xr@fbox=0pt\message{empty xrefbox}\vbox{\hsize=\XrefNotesWidth\hskip\XrefNotesWidth\hbox{}}\else
           \unvbox\xr@fbox\fi\ifXrefTopfill\else\vfil\fi\fi}\vfil}%
     \else \hbox to \XrefNotesWidth{}%
