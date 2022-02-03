@@ -820,33 +820,29 @@
   %\showbox\orn@bdr@right
   \vbox to #2{\baselineskim=0pt\lineskip=0pt\hsize=#1\box\orn@bdr@top\hbox to #1{\box\orn@bdr@left\hfill\box\orn@bdr@right}\box\orn@bdr@bot}%
 }
-\def\OrnamentBorder#1#2{%
+\def\OrnamentBorder#1{%
   \MSG{OrnamentBorder}%
-  \def\ornamentheight{#2}%
+  \def\ornamentheight{#1}%
   \def\ornamentwidth{}%
   \def\ornYalign{1}%
-  \edef\b@drsides{\the\numexpr \ifx\b@drleft\tr@e 1 +\fi \ifx\b@drright\tr@e 1+\fi 0\relax}%
-  \edef\box@width{\dimexpr \wd#1 +\fb@hpadding*2 + #2 *\b@drsides+ \border@hpadding * \b@drsides\relax}%%
-  \edef\b@drsides{\the\numexpr \ifx\b@drtop\tr@e 1 +\fi \ifx\b@drbottom\tr@e 1+\fi 0\relax}%
-  \edef\box@height{\dimexpr \ht#1 +\fb@vpadding +\dp#1 + #2 *\b@drsides + \border@vpadding *\b@drsides\relax}%
   \ifx\b@drtop\tr@e
-    \orn@SetStretch{\box@width}{x}{}{\patternT}\setbox\orn@bdr@top\hbox to \box@width{\Ornaments{\patternT}}%
+    \orn@SetStretch{\b@rderbox@width}{x}{}{\patternT}\setbox\orn@bdr@top\hbox to \b@rderbox@width{\Ornaments{\patternT}}%
   \else
     \setbox\orn@bdr@top\hbox{}%
   \fi
   \def\ornYalign{0}%
   \ifx\b@drbottom\tr@e
-    \orn@SetStretch{\box@width}{x}{=}{\patternB}\setbox\orn@bdr@bot\hbox to \box@width{\Ornaments{\patternB}}%
+    \orn@SetStretch{\b@rderbox@width}{x}{=}{\patternB}\setbox\orn@bdr@bot\hbox to \b@rderbox@width{\Ornaments{\patternB}}%
   \else
     \setbox\orn@bdr@bot\hbox{}%
   \fi
-  \MSG{#2 - \the\ht\orn@bdr@top -\the\dp\orn@bdr@top -\the\ht\orn@bdr@bot -\the\dp\orn@bdr@bot}%
-  \dimen1=\dimexpr \box@height - \ht\orn@bdr@top -\dp\orn@bdr@top -\ht\orn@bdr@bot -\dp\orn@bdr@bot\relax
-  \dimen2=\dimexpr \dimen1 - \ht#1\relax
+  \MSG{#1 - \the\ht\orn@bdr@top -\the\dp\orn@bdr@top -\the\ht\orn@bdr@bot -\the\dp\orn@bdr@bot}%
+  \dimen1=\dimexpr \b@rderbox@height - \ht\orn@bdr@top -\dp\orn@bdr@top -\ht\orn@bdr@bot -\dp\orn@bdr@bot\relax
+  \dimen2=\dimexpr \dimen1 - \ht\b@rderbox\relax
   \divide\dimen2 by \b@drsides
   %\def\ornamentheight{}
   %\def\ornamentwidth{#3}
-  \message{Box side portion is \the\dimen1. Orig: \the\ht#1 +\the\dp#1 x\the\wd#1, final:\the\box@height }%
+  \message{Box side portion is \the\dimen1. Orig: \the\ht\b@rderbox +\the\dp\b@rderbox x\the\wd\b@rderbox, final:\b@rderbox@height }%
   \tempfalse
   \def\border@l@pad{0pt}\def\border@r@pad{0pt}%
   \setbox\orn@bdr@right\box\voidb@x
@@ -875,10 +871,10 @@
   \dimen7=\dimexpr\ht\orn@bdr@top+\dp\orn@bdr@top  \ifx\b@drtop\tr@e +\dimen2\fi \relax
   \dimen8=\dimexpr\wd\orn@bdr@left + \border@l@pad\relax
   \dimen9=\dimexpr\wd\orn@bdr@right + \border@r@pad\relax
-  \setbox\b@rderbox\vbox to \box@height{\baselineskip=0pt\lineskip=0pt\hsize=\box@width
-    \box\orn@bdr@top\hbox to \box@width{\box\orn@bdr@left\hskip\border@l@pad\hss\hbox{\vbox to \dimen1{}}\hskip\border@r@pad\hss\box\orn@bdr@right}\baselineskip=\ht\orn@bdr@bot\box\orn@bdr@bot}%
+  \setbox\b@rderbox\vbox to \b@rderbox@height{\baselineskip=0pt\lineskip=0pt\hsize=\b@rderbox@width
+    \box\orn@bdr@top\hbox to \b@rderbox@width{\box\orn@bdr@left\hskip\border@l@pad\hss\hbox{\vbox to \dimen1{}}\hskip\border@r@pad\hss\box\orn@bdr@right}\baselineskip=\ht\orn@bdr@bot\box\orn@bdr@bot}%
   %\showbox#1
-  \x@\setbox#1\vbox{\vbox to 0pt{\vskip\dimen7\hbox to \box@width{\hskip\dimen8\hss\box#1\hss\hskip\dimen9}\vss}\box\b@rderbox}%
+  %\x@\setbox#1\vbox{\vbox to 0pt{\vskip\dimen7\hbox to \b@rderbox@width{\hskip\dimen8\hss\box#1\hss\hskip\dimen9}\vss}\box\b@rderbox}%
 }
 
 \def\OrnamentLine#1#2#3#4{%#1 Line length #2 Ornament height #3 Direction {Capital to keep old variables)  #4 Pattern
@@ -908,7 +904,7 @@
 \setsbp@ram{borderlinewidth}{1}
 
 \def\DefaultOrnament{80}
-\def\mkb@rder@ornaments#1{% Plugin for sidebars
+\def\mkb@rder@ornaments{% Plugin for sidebars
   \def\ornamentheight{\b@drwidth}%
   \getsbp@ram{borderfillcolour}\ifx\cp@ram\relax\edef\ornamentfillcol\orn@none\else\let\ornamentfillcol\cp@ram\fi
   \ifx\b@drcol\relax
@@ -920,8 +916,8 @@
   \getsbp@ram{borderpatternleft}\ifx\cp@ram\relax\edef\patternL{\DefaultOrnament|l|-}\else\let\patternL\cp@ram\fi
   \getsbp@ram{borderpatternright}\ifx\cp@ram\relax\edef\patternR{\DefaultOrnament|r|-}\else\let\patternR\cp@ram\fi
   \getsbp@ram{borderlinewidth}\edef\ornamentlinewidth{\strip@pt{\dimexpr\cp@ram\FontSizeUnit\relax}}%
-  \OrnamentBorder{#1}{\b@drwidth\FontSizeUnit}%
-  \message{ORNAMENTS box \the\ht#1+\the\dp#1 * \the\wd#1}%
+  \OrnamentBorder{\b@drwidth\FontSizeUnit}%
+  \message{ORNAMENTS box \the\ht\b@rderbox+\the\dp\b@rderbox * \the\wd\b@rderbox}%
   %\showbox#1\copy #1 
 }
 \edef\borderstylelist{\borderstylelist, ornaments}

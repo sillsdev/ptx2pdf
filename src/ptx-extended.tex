@@ -331,7 +331,8 @@
 }
 % Sidebar 
 \def\@sb{\let\oldc@tegory\c@tegory\let\oldc@prefix\c@tprefix 
-  \trace{e}{Starting side bar from \m@rker}%
+  \trace{e}{Starting side bar from \m@rker, \the\lastdepth}%
+  \xdef\oldlastdepth{\the\lastdepth}\lastdepth=0pt
   %\ifhmode\endgraf\fi
   \endlastp@rstyle{\ss@Sbar}% Apply spaceafter, etc.
   \xdef\stylet@pe{\ss@Sbar}%                                                                   %(2)
@@ -367,36 +368,50 @@
  \sb@rtopedge\ifhmode\endgraf\fi
 }
 \let\b@drcol\relax
-\newif\ifdoUnskip
-\doUnskiptrue
+\newif\ifdoIntskip % Skip should be applied in the text area, not 
 \newbox\b@rderbox
-\def\mkb@rder#1{%Put a simple border around a box
-  \ifdoUnskip\vskip-\prevdepth\prevdepth=0pt\fi
+\newif\ifhorizb@rder
+\newif\ifhasb@rder
+\def\prepb@rderbox#1{% Prepare b@rderbox
+  \hasb@rderfalse\horizb@rderfalse
+  \ifx\b@drleft\tr@e\hasb@rdertrue\trace{eb}{Border: left}\fi
+  \ifx\b@drright\tr@e\hasb@rdertrue\trace{eb}{Border: right}\fi
+  \ifx\b@drtop\tr@e\hasb@rdertrue\horizb@rdertrue\trace{eb}{Border: Top}\fi
+  \ifx\b@drbottom\tr@e\hasb@rdertrue\horizb@rdertrue\trace{eb}{Border: Bottom}\fi
+  \ifhasb@rder
+    \setbox\b@rderbox\vbox to \ht#1{\hsize=\wd#1\hss\vss}%Placeholder
+    \dp\b@rderbox=\dp#1\relax
+    \edef\b@drsides{\the\numexpr \ifx\b@drleft\tr@e 1 +\fi \ifx\b@drright\tr@e 1+\fi 0\relax}%
+    \edef\b@rderbox@width{\the\dimexpr \wd\b@rderbox +\fb@hpadding*2 + \b@drwidth\FontSizeUnit *\b@drsides+ \border@hpadding * \b@drsides\relax}%% Final width of border artwork
+    \edef\b@drsides{\the\numexpr \ifx\b@drtop\tr@e 1 +\fi \ifx\b@drbottom\tr@e 1+\fi 0\relax}%
+    \edef\b@rderbox@height{\the\dimexpr \ht\b@rderbox +\fb@vpadding +\dp\b@rderbox + \b@drwidth\FontSizeUnit *\b@drsides + \border@vpadding *\b@drsides\relax}% Final height of border artwork 
+    \edef\b@xminadj{\ifdim\border@vpadding< -\b@drwidth\FontSizeUnit \ifx\b@drtop\tr@e\the\dimexpr -\b@drwidth\FontSizeUnit-\border@vpadding\relax\else 0pt\fi\else 0pt\fi}% b@xminadj is for inserts, so that the top of the box is at exactly the 
+    \edef\b@rderbox@depth{\the\dimexpr 2\dp\b@rderbox + \ifx\b@drbottom\tr@e \border@vpadding * 2 +\b@drwidth\FontSizeUnit * -1\fi \relax}% Quite HOW this is correct is a mystery, but it seems to be.
+    %\trace{e}{Depth b@drbox=\the\dp\b@rderbox / \the\dp\extchunkb@x / \thsch@nkdp}%
+    \let\b@xadj\b@xminadj
+  \else
+    \setbox\b@rderbox\box\voidb@x
+    \edef\b@xminadj{0pt}%
+  \fi
+}
+\def\mkb@rder{%Put a simple border around a box
   %\x@\setbox\x@\b@rderbox\x@\box#1
-  \setbox\b@rderbox\vbox to \ht#1{\hsize=\wd#1\hss\vss}%Placeholder
-  \dp\b@rderbox=\dp#1\relax
-  \tempfalse\t@mpfalse
-  \ifx\b@drleft\tr@e\temptrue\trace{eb}{Border: left}\fi
-  \ifx\b@drright\tr@e\temptrue\trace{eb}{Border: right}\fi
-  \ifx\b@drtop\tr@e\temptrue\t@mptrue\trace{eb}{Border: Top}\fi
-  \ifx\b@drbottom\tr@e\temptrue\t@mptrue\trace{eb}{Border: Bottom}\fi
   \ifx\b@drcol\relax
     \def\bc@l{}\def\endbc@l{}%
   \else
     \def\bc@l{\special{color push rgb \b@drcol}}\def\endbc@l{\special{color pop}}%
   \fi
-  \def\v@dj{0pt}%
-  \iftemp\def\v@dj{\fb@vpadding}\fi
   \dimen0=\fb@vpadding
   \dimen1=0pt % should include padding already
   \dimen7=\dimen0
   \advance\dimen0 by \ht\b@rderbox
   \advance\dimen1 by \dp\b@rderbox
   \dimen4=-\fb@vpadding
-  \iftemp % if ANY border, add horizontal padding and any vertical lines
+  \ifhasb@rder % if ANY border, add horizontal padding and any vertical lines
     \ifx\b@drtop\tr@e
       \advance\dimen0 by \border@vpadding
       \advance\dimen7 by \border@vpadding
+      \advance\dimen7 by \dimexpr \b@drwidth\FontSizeUnit\relax
       \advance\dimen4 by -\dimexpr \border@vpadding + \b@drwidth\FontSizeUnit\relax
     \fi
     \ifx\b@drbottom\tr@e
@@ -416,7 +431,7 @@
        \else
          \vrule width 0pt height \dimen0 depth \dimen1 %Strut to sort out vertical padding
        \fi
-       \hskip \dimexpr \fb@hpadding *2  + \wd#1\relax
+       \hskip \dimexpr \fb@hpadding *2  + \wd\b@rderbox\relax
        \ifx\b@drright\tr@e \trace{eb}{Drawing Border: right}%
          \hskip\border@hpadding
          \bc@l\vrule width \b@drwidth\FontSizeUnit height \dimen0 depth \dimen1 \endbc@l
@@ -429,13 +444,13 @@
   \loop\ifdim\dimen4< -0.1\baselineskip
     \advance\dimen4 by \baselineskip
   \repeat
-  \edef\b@xadj{\the\dimen4}% b@xadj is to keep the box on-grid when in-line. 
+  %\edef\b@xadj{\the\dimen4}% b@xadj is to keep the box on-grid when in-line. 
   \advance \dimen4 by -\dimen1
   \loop\ifdim\dimen4< -0.1\baselineskip
     \advance\dimen4 by \baselineskip
   \repeat
   \trace{eb}{Border box: \the\ht\b@rderbox+\the\dp\b@rderbox, bdr:\b@drwidth , \the\dimen4, \the \dimen0}%
-  \ift@mp %Horizontal lines
+  \ifhorizb@rder %Horizontal lines
     \edef\b@xw@dth{\the\wd\b@rderbox}%
     \advance\dimen0 by \dimen1
     \setbox\b@rderbox\vbox to \dimexpr \dimen0 \relax{\baselineskip=0pt%
@@ -448,9 +463,15 @@
     %\showbox\b@rderbox
   \fi
   %\hrule
-  \ift@mp
-    \x@\setbox#1\vbox{\vskip\b@xadj\vbox to 0pt{\vskip\dimen7\hbox{\hskip\dimen8\box#1}\vss}\penalty10000\box\b@rderbox}%
-  \fi
+  \trace{e}{\border@vpadding < \the\dimexpr -\b@drwidth\FontSizeUnit\relax?}%
+  %\edef\b@xminadj{0pt}%
+  %\advance\dimen1 by \dimen0
+  %\count255=\dimen1
+  %\divide\count255 by \baselineskip
+  %\advance\dimen1 by -\dimexpr\baselineskip * \count255\relax
+  %\loop\ifdim\dimen1>\baselineskip
+    %\advance\dimen1 by -\baselineskip
+  %\repeat
 }
 \def\borderstylelist{plain, double}
 \let\mkb@rder@plain\mkb@rder
@@ -546,6 +567,17 @@
   \getsbp@ram{spacebeside}\ifx\cp@ram\relax\let\sp@cebeside=\DefaultSpaceBeside\else\let\sp@cebeside\cp@ram\fi
   \let\s@vedvpadding=\fb@vpadding%%Preserve old value
   \tempfalse
+  \dimen4=-\dimexpr\ifx\b@drtop\tr@e \ifdim  \border@vpadding > -\b@drwidth\FontSizeUnit \border@vpadding + \fb@vpadding + \b@drwidth\FontSizeUnit +  \else \fb@vpadding  +\fi\else \fb@vpadding \fi  + 0pt\relax
+  %\dimen4=-\fb@vpadding
+  \trace{e}{b@xadj =\ifx\b@drtop\tr@e \ifdim \border@vpadding > -\b@drwidth\FontSizeUnit  \b@drwidth FSU + \border@vpadding +\fi \fi  \fb@vpadding + 0pt = \the\dimen4 |baseline: \the\baselineskip}%
+  \loop\ifdim\dimen4> \baselineskip
+    \advance\dimen4 by -\baselineskip
+  \repeat
+  %\loop\ifdim\dimen4< -0.1\baselineskip
+    %\advance\dimen4 by \baselineskip
+  %\repeat
+  \edef\b@xadj{\the\dimen4}%
+  \trace{e}{=\b@xadj}%
   \ifx\bgf@gsp@c\relax\else
     \p@rsefigscale{bg}%
     \edef\t@mpfigspec{\bgf@gsp@c \bgfig@scale@ht \bgfig@scale@wd|\bgfig@dim@wd}%
@@ -573,12 +605,6 @@
       \temptrue
     \fi
   \fi
-  \iftemp
-    %modify the esbbox to include the picture
-    \trace{e}{Including background image below contents: \t@mpfigspec}%
-    \setbox\extb@x\vbox to \ht\extb@x{\vbox to 0pt{\vbox to\ht\extb@x{\vss \hbox to \wd\extb@x{\f@intthing{\bgf@galpha}{\bgf@gcol}{\box\newpicb@x}} \vss}\vss}\box\extb@x}%
-    \let\bgf@gsp@c\relax %used it, so if it's still there later, we need to use it.
-  \fi
   \let\w@tsit\sb@rb@x % Make sure the item is identified properly - used in debugging and .delayed file
   \let\loc@ption\sb@rpos
   \picUsesInstrue \picNarrowfalse
@@ -586,6 +612,21 @@
     \picNarrowtrue
   \fi
   \x@\p@rsePicUse\loc@ption\end  %set loc@ption and discover if there's to be an insert. (sets \picUsesInsfalse if not)
+  \doIntskipfalse% Upper baseline-preserving skip should be outside the border, not in the text area.
+  \ifpicUsesIns
+    \doIntskiptrue
+  \fi
+  \ifdoIntskip
+    \setbox\extb@x\vbox{%\dbghrule
+      \kern\b@xadj\unvbox\extb@x}%
+    %\showbox\extb@x
+  \fi
+  \iftemp
+    %modify the esbbox to include the picture
+    \trace{e}{Including background image below contents: \t@mpfigspec}%
+    \setbox\extb@x\vbox to \ht\extb@x{\vbox to 0pt{\vbox to\ht\extb@x{\vss \hbox to \wd\extb@x{\f@intthing{\bgf@galpha}{\bgf@gcol}{\box\newpicb@x}} \vss}\vss}\box\extb@x}%
+    \let\bgf@gsp@c\relax %used it, so if it's still there later, we need to use it.
+  \fi
   \ifx\h@scol\tr@e
     \getsbp@ram{alpha}\global\let\pdf@lpha=\cp@ram
     \getsbp@ram{bgcolour}\let\pdfBGc@l=\cp@ram
@@ -626,15 +667,16 @@
       \trace{e}{Adding \sb@rightshift to right of box}%
       \setbox\extchunkb@x\vbox{\hbox{\box\extchunkb@x\hbox to \sb@rightshift{\hskip\fb@hpadding\box0\hss}}}\fi
     \trace{e}{Chunk of extbox is \the\ht\extchunkb@x+\the\dp\extchunkb@x*\the\wd\extb@x (\the\ht\extb@x*\the\wd\extb@x)}%
+    \xdef\thsch@nkdp{\the\dimexpr \dp\extchunkb@x\relax}%
     \ifx\h@scol\tr@e
       %\dimen0=\ht\extchunkb@x
       %\advance\dimen0 by -\lstch@nkdp
-      \xdef\thsch@nkdp{\the\dimexpr \dp\extchunkb@x\relax}%
       %\dp\extchunkb@x=\lstch@nkdp
       \setbox\extchunkb@x\vbox{%
         \ifx\bgf@gsp@c\relax\else
          \trace{e}{Including background image below everything: \t@mpfigspec}%
-          \vbox to 0pt{\vbox to\ht\extchunkb@x{\vfil\f@intthing{\bgf@galpha}{\bgf@gcol}{\box\newpicb@x}\vfil}\vss}\fi
+          \vbox to 0pt{\vbox to\ht\extchunkb@x{\vfil\f@intthing{\bgf@galpha}{\bgf@gcol}{\box\newpicb@x}\vfil}\vss}%
+        \fi
        % \vskip\baselineskip
         \let\fb@htadjust=\lstch@nkdp
         \feintbox{\pdf@lpha}{\pdfBGc@l}{\box\extchunkb@x}}%
@@ -651,23 +693,39 @@
     \let\b@drtop=\fstb@drtop
     \getsbp@ram{bordercolour}%
     \let\b@drcol\cp@ram
-    \def\v@dj{0pt}%
-    \ifx\b@drstyle\relax
-      \mkb@rder{\extchunkb@x}%
-    \else
-      \ifcsname mkb@rder@\b@drstyle\endcsname 
-        \csname mkb@rder@\b@drstyle\endcsname{\extchunkb@x}%
+    \prepb@rderbox\extchunkb@x %sets ifhasb@rder
+    \ifhasb@rder % any border
+      \ifx\b@drstyle\relax
+        \message{making box}%
+        \mkb@rder
       \else
-        \message{Unknown borderstyle '\b@drstyle'. Known styles: \borderstylelist}%
-      \fi 
+        \ifcsname mkb@rder@\b@drstyle\endcsname 
+          \message{making box for \b@drstyle}%
+          \csname mkb@rder@\b@drstyle\endcsname
+        \else
+          \message{Unknown borderstyle '\b@drstyle'. Known styles: \borderstylelist}%
+        \fi 
+      \fi
+      %\setbox\extchunkb@x\vbox{\vbox to 0pt{\vskip\dimen7\hbox to \b@rderbox@width{\hss\hskip\dimen8\box\extchunkb@x\hskip\dimen9\hss}\vss}\box\b@rderbox}%
+      %\showbox\extchunkb@x
+      \dimen1=\dimexpr -\b@rderbox@depth\relax
+      \relax
+      \@LOOP\ifdim\dimen1 <0.1\baselineskip
+        \advance\dimen1 by \baselineskip
+      \@REPEAT
+      %\repeat
+      \trace{e}{Box \the\ht\b@rderbox +\the\dp\b@rderbox x \the\wd\b@rderbox (\b@rderbox@height x\b@rderbox@width)  is offset \the\dimen7 (v) and <\the\dimen8|\the\dimen9> (h). Final adjust\the\dimen1}%
+      \trace{e}{Box adj (\c@tegory):\the\dimen7, spacing: \b@xminadj / \b@xadj,  \ifdoIntskip 1st \else 2nd\fi}%
+      \x@\setbox\extchunkb@x\vbox{\ifdoIntskip\kern\b@xminadj\else\kern\b@xadj\fi\vbox to 0pt{\vskip\dimen7\hbox to \b@rderbox@width{\hskip\dimen8\box\extchunkb@x\hskip\dimen9}\vss}\penalty10000\box\b@rderbox\kern\dimen1}%
+    \else
+      \x@\setbox\extchunkb@x\vbox{\ifdoIntskip\kern\b@xminadj\else\kern\b@xadj\fi\box\extchunkb@x}%
     \fi
     \let\fstb@drtop=\relax
-    \trace{e}{After border, chunk is  now \the\ht\extchunkb@x+\the\dp\extchunkb@x}%
+    \trace{e}{After border, chunk is  now \the\ht\extchunkb@x+\the\dp\extchunkb@x*\the\wd\extchunkb@x}%
     \ifpicUsesIns
       \x@\let\x@\@xtins\csname ins-\loc@ption\endcsname
       \trace{e}{using ins-\loc@ption}%
       \insert\@xtins{%\vskip\baselineskip
-	    \vskip-\v@dj
         \dimen0=\dp\extchunkb@x
         \penalty10000
         \pdfsavepos
@@ -839,5 +897,6 @@
 %\x@\def\csname d@code-T\endcsname{\edef\tmp{cat:\tmp}}
 \x@\def\csname d@code-T\endcsname{\let\tmp\h@phen} % a paragraph-catergory does not altering the stystak
 
+\def\dbghrule{\vbox to 0pt{\vrule width 0.5\hsize height 0.1pt \vss}}
 \def\Override{\m@kedigitsother}
 \def\EndOverride{\m@kedigitsletters}
