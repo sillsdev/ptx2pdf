@@ -397,8 +397,8 @@ class ViewModel:
     def setPrjid(self, prjid, saveCurrConfig=False, loadConfig=True):
         return self.updateProjectSettings(prjid, configName="Default", saveCurrConfig=saveCurrConfig, readConfig=loadConfig or None)
 
-    def setConfigId(self, configid, saveCurrConfig=False, force=False):
-        return self.updateProjectSettings(self.prjid, saveCurrConfig=saveCurrConfig, configName=configid, forceConfig=force)
+    def setConfigId(self, configid, saveCurrConfig=False, force=False, loadConfig=True):
+        return self.updateProjectSettings(self.prjid, saveCurrConfig=saveCurrConfig, configName=configid, forceConfig=force, readConfig=loadConfig or None)
 
     def _copyConfig(self, oldcfg, newcfg, moving=False, newprj=None):
         oldp = self.configPath(cfgname=oldcfg, makePath=False)
