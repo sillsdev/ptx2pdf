@@ -1250,7 +1250,7 @@
 \newdimen\colhtA \newdimen\colhtB % dimen registers for calculating available ht for each col
 \newbox\colA \newbox\colB % box registers to hold contents of the columns
 \newcount\loopcount
-\newif\ifrem@inder \rem@indertrue
+\newif\ifrem@inder \rem@indertrue % if true will return non fitting page if unbalanced, else will allow unbalanced
 \newif\ifunbalanced \unbalancedfalse% \unbalancedtrue
 \newif\ifnoteseen \noteseenfalse% A trigger to help alert user that note might have gone missing
 \newif\ifinextended \inextendedfalse % Test for sidebars (ptx extended)
@@ -1365,11 +1365,11 @@
         \s@tcolhts{\shortavail}\spl@tcols0
 		% if something left in box0, it didn't fit, quit loop
         \trace{o}{re-balancing cols=\the\ht\colA =\the\colhtA, \the\ht\colB =\the\colhtB, from \the\shortavail, bests: \the\b@lbestdiff @\the\b@lbestavail, rem \the\ht0}%
-        \ifrem@inder\ifdim\ht0>0pt
+        \ifdim\ht0>0pt
           \trace{o}{rebalance found extra back to \the\b@lbestavail}\rebalancefalse
-          \ifdim\b@lbestdiff>\BalanceThreshold\baselineskip \fitonpagefalse\fi
+          \ifrem@inder\ifdim\b@lbestdiff>\BalanceThreshold\baselineskip \fitonpagefalse\fi\fi
           \shortavail=\b@lbestavail
-        \fi\fi
+        \fi
 		% if second column longer than first column by less than .3*line height, quit loop
         \ifrebalance
           \g@tcolhts
@@ -1377,9 +1377,9 @@
           \dimen0=\colhtB \advance\dimen0 by -\colhtA
           \ifdim\dimen0<0pt \dimen0=-\dimen0\fi
           \trace{o}{Testing column difference of \the\dimen0 \space against threshold of \BalanceThreshold x\the\baselineskip}%
-          \ifdim\dimen0<\b@lbestdiff\ifdim\dimen0>\BalanceThreshold\baselineskip\else
+          \ifdim\dimen0<\b@lbestdiff
             \b@lbestdiff=\dimen0 \b@lbestavail=\shortavail
-        \fi\fi\fi
+        \fi\fi
 		% give up if target size less than 2 lines (should not happen)
         \ifdim\shortavail<\baselineskip \MSG{Rebalancing bailed for short block \the\shortavail}%   %(8)
           \ifdim\b@lbestdiff>\BalanceThreshold\baselineskip \fitonpagefalse\fi
@@ -1606,14 +1606,8 @@
   \setbox\s@vedpage=\vbox{\unvcopy255}%
   \trace{o}{balancing from savepartialpaged, height=\the\ht\s@vedpage, hIns:\the\holdinginserts, vsz=\the\vsize, av=\the\availht, op:\the\outputpenalty}%
   \ifdim\ht\partial>\baselineskip \swapcolfalse\else\swapcoltrue\fi
-  \ifdim\availht<\baselineskip 
-    \rem@indertrue % No, I don't know what this does, but once If i  didn't set it true then we get lost verses. 
-    %\rem@inderfalse
-    \balanced\fitonpagetrue % There's certainly no point shrinking past this
-  \else
-    %\rem@inderfalse\balanced
-    \rem@indertrue\balanced
-  \fi
+  \rem@inderfalse\balanced
+  \ifdim\availht<\baselineskip \fitonpagefalse \fi
   \iffitonpage
     \c@lcboxheights
     \s@veallnotes{1}%
