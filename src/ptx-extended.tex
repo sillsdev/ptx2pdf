@@ -213,11 +213,15 @@
   \ifx\cp@ram\relax
     \x@\minip@rsepos\fgfigp@s\mid\sb@rpos\end
     \dimen1=\ifnum \c@rrentcols=1 \textwidth \else \colwidth\fi
-    \trace{sc}{Initial width set to \the\dimen1}%
-    \ifx\tempd\empty
-      \if\tempc t\relax\dimen1=\textwidth\else
-        \if\tempc b\relax\dimen1=\textwidth\else
-          \if\tempc B\relax\dimen1=\textwidth\fi\fi\fi
+    \trace{sc}{Initial width set to \the\dimen1 '\tempc'}%
+    \let\sb@widtht\textwidth
+    \let\sb@widthb\textwidth
+    \let\sb@widthB\textwidth
+    \let\sb@widthP\textwidth
+    \let\sb@widthF\PaperWidth %Good luck with that!
+    \ifcsname sb@width\tempc\endcsname
+      \x@\dimen1\csname sb@width\tempc\endcsname
+      \trace{sc}{Revised width set to \the\dimen1}%
     \else
       \temptrue
       \ifnum\c@rrentcols>1\else
