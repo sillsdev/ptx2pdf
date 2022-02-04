@@ -98,6 +98,14 @@ Rem nesciunt voluptatem labore eaque necessitatibus repellat itaque id. Ut est p
 \v 11
 Tenetur deleniti rerum minima dolor. Rerum autem ipsa ipsum autem quo a. Aut ut occaecati et aspernatur voluptatum voluptate consequatur. Alias illum molestiae quia sed blanditiis est. Saepe ipsam omnis beatae magnam culpa.
 
+\esb\cat pl2\cat*
+\p Using a 'p' category side bar, you can nest one
+(single) sidebar in another.  It's not recommended! 
+\esbe
+\esb\cat top\cat*
+\p This ESB is of category '\showTheCategory' and ought to be at the top.
+\esbe
+
 \esb\cat hc\cat*
 \p This  esb of category "\showTheCategory" is testing the appropriate positioning.
 \esbe
@@ -109,11 +117,7 @@ Tenetur deleniti rerum minima dolor. Rerum autem ipsa ipsum autem quo a. Aut ut 
 \esbe
 
 \p This is Just a normal ParaGraPh.
-\esb\cat pl2\cat*
-\p This  esb of category "\showTheCategory" is testing the appropriate positioning.
-\esbe
 
-\p This paragraph is under the esb that was set with Pl2.
 \p This is a normal paragraph.
 
 \s \cat testpar\cat* Categorised paragraphs
