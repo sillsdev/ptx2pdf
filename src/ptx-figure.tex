@@ -919,9 +919,10 @@
     \penalty10 % Allow the page to break
     %\gridp@cfalse% Not true. Not a floating image.
       \headingtopspace=0pt
-    \gridb@x\picb@@x
-       %\vskip-\prevdepth
-    \penalty10
+      %\vskip-\prevdepth
+      \gridb@x\picb@@x
+      \prevdepth=0pt
+      \penalty10
    }%
    \def\temp{}%
    \ifnum\c@tskip>1 \count255=\c@tskip

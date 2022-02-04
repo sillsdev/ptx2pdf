@@ -29,7 +29,6 @@ It just has a plain line border, slightly separated from the coloured-background
 
 
 \esb \cat foo\cat*
-\dbghrule
 \s Testing 3
 \p This esb (category foo) has a bit more text, and is set top-right. 
 \m Category foo has an end hook and the p style paragraphs in foo are centred too, hopefully.
@@ -64,7 +63,6 @@ omnis voluptas assumenda est, omnis dolor repellendus.
 \p Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae.
 \p \v 6 Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.
 \esb \cat foo\cat*
-\dbghrule
 \s Testing 5
 \p
  This ought to be  on the 2nd page
@@ -94,28 +92,29 @@ mentioned  in the nonsense poem Jaberwocky).
 
 \p
 Rem nesciunt voluptatem labore eaque necessitatibus repellat itaque id. Ut est placeat tempora. Est et saepe molestiae fugit quas officiis. Omnis hic est quas aut. Ut amet hic harum sed voluptates quia beatae.
-\p ~
 \esbe
 
 \p
 \v 11
 Tenetur deleniti rerum minima dolor. Rerum autem ipsa ipsum autem quo a. Aut ut occaecati et aspernatur voluptatum voluptate consequatur. Alias illum molestiae quia sed blanditiis est. Saepe ipsam omnis beatae magnam culpa.
-\p
 
-\esb\cat pc\cat*
+\esb\cat hc\cat*
 \p This  esb of category "\showTheCategory" is testing the appropriate positioning.
 \esbe
+
+
 \p Happily there no longer needs to be text between sidebars.
-\esb\cat pr\cat*
+\esb\cat hr\cat*
 \p This  esb of category "\showTheCategory" is testing the appropriate positioning.
 \esbe
 
-\esb\cat pl\cat*
+\p This is Just a normal ParaGraPh.
+\esb\cat pl2\cat*
 \p This  esb of category "\showTheCategory" is testing the appropriate positioning.
 \esbe
 
-Sadly, however, it seems that sidebars
-currently loose their topskip / baselineskip, which means their contents will not be on-grid.
+\p This paragraph is under the esb that was set with Pl2.
+\p This is a normal paragraph.
 
 \s \cat testpar\cat* Categorised paragraphs
 \p
