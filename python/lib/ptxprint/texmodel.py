@@ -246,6 +246,7 @@ ModelMap = {
 
     "document/hasnofront_":     ("c_frontmatter", lambda w,v: "%" if v else ""),
     "document/noblankpage":     ("c_periphSuppressPage", None),
+    "document/cutouterpadding": ("s_cutouterpadding", None),
 
     "header/ifshowbook":        ("c_rangeShowBook", lambda w,v :"false" if v else "true"),
     "header/ifshowchapter":     ("c_rangeShowChapter", lambda w,v :"false" if v else "true"),
@@ -276,6 +277,7 @@ ModelMap = {
     "notes/fnomitcaller":       ("c_fnomitcaller", lambda w,v: "%" if v else ""),
 
     "notes/includexrefs":       ("c_includeXrefs", lambda w,v: "%" if v else ""),
+    "notes/showextxrefs":       ("c_extendedXrefs", None),
     "notes/xreachnewline":      ("c_xreachnewline", lambda w,v: "%" if v else ""),
     "notes/xroverride":         ("c_xrOverride", None),
     "notes/ifxrautocallers":    ("c_xrautocallers", lambda w,v :"true" if v else "false"),
@@ -1322,6 +1324,11 @@ class TexModel:
         else:
             self.localChanges.append((None, regex.compile(r"\\ef( .*?)\\ef\* ", flags=regex.S), ""))
 
+        if self.asBool("notes/showextxrefs"):
+            self.localChanges.append((None, regex.compile(r"\\ex", flags=regex.S), r"\\x"))
+        else:
+            self.localChanges.append((None, regex.compile(r"\\ex( .*?)\\ex\*", flags=regex.S), ""))
+        
         # If a printout of JUST the book introductions is needed (i.e. no scripture text) then this option is very handy
         if not self.asBool("document/ifmainbodytext"):
             self.localChanges.append((None, regex.compile(r"\\c 1 ?\r?\n.+".format(first), flags=regex.S), ""))
