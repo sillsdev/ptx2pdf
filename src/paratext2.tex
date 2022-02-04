@@ -1366,32 +1366,25 @@
         \trace{o}{re-balancing cols=\the\ht\colA =\the\colhtA, \the\ht\colB =\the\colhtB, from \the\shortavail, bests: \the\b@lbestdiff @\the\b@lbestavail, rem \the\ht0}%
         \ifrem@inder\ifdim\ht0>0pt
           \trace{o}{rebalance found extra back to \the\b@lbestavail}\rebalancefalse
-          \setbox0=\copy\s@vedpage
+          \ifdim\b@lbestdiff>\BalanceThreshold\baselineskip \fitonpagefalse\fi
           \shortavail=\b@lbestavail
         \fi\fi
 		% if second column longer than first column by less than .3*line height, quit loop
         \ifrebalance
           \g@tcolhts
+          \ifColNotes\advance\colhtB\ht\coln@tebox\fi
           \dimen0=\colhtB \advance\dimen0 by -\colhtA
           \ifdim\dimen0<0pt \dimen0=-\dimen0\fi
           \trace{o}{Testing column difference of \the\dimen0 \space against threshold of \BalanceThreshold x\the\baselineskip}%
-          \ifdim\dimen0<\BalanceThreshold\baselineskip                            %(7)
-            \shortavail=\colhtB\incr{\shortavail}{\toprightins}\incr{\shortavail}{\bottomrightins}%
-            \ifColNotes\advance\colhtB\ht\coln@tebox\fi
-            \ifdim\dimen0>0pt\else\advance\shortavail by -\dimen0\fi
-            %\advance\shortavail by \ifdim\dp\colA>\dp\colB \dp\colA\else\dp\colB\fi
-            \trace{o}{Best height \the\shortavail, difference of \the\dimen0, from a threshold of \BalanceThreshold x\the\baselineskip}%
-            \rebalancefalse
-          \else\ifdim\shortavail<\BalanceThreshold\baselineskip
-            \fitonpagefalse\rebalancefalse
+          \ifdim\dimen0<\b@lbestdiff\ifdim\dimen0>\BalanceThreshold\baselineskip\else
             \b@lbestdiff=\dimen0 \b@lbestavail=\shortavail
-          \else\ifdim\dimen0<\b@lbestdiff
-            \b@lbestdiff=\dimen0 \b@lbestavail=\shortavail
-        \fi\fi\fi\fi
+        \fi\fi\fi
 		% give up if target size less than 2 lines (should not happen)
         \ifdim\shortavail<\baselineskip \MSG{Rebalancing bailed for short block \the\shortavail}%   %(8)
+          \ifdim\b@lbestdiff>\BalanceThreshold\baselineskip \fitonpagefalse\fi
           \shortavail=\b@lbestavail\rebalancefalse\fi
         \ifnum\loopcount>20 
+          \ifdim\b@lbestdiff>\BalanceThreshold\baselineskip \fitonpagefalse\fi
           \shortavail=\b@lbestavail
           \rebalancefalse\MSG{Rebalancing loop count bail}\fi
         \ifrebalance\repeat

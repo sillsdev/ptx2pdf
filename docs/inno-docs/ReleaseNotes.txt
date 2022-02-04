@@ -3,6 +3,8 @@ PTXprint 2.0.34 Release Notes
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 
+  * 2 columns give the best balance that has a line difference <= Unbalanced Lines setting
+
 Bug fixes and improvements in 2.0.34 (24 Jan 2022)
 
   * Added Delete button to Help tab to remove temporary folders
