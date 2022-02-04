@@ -889,6 +889,7 @@
   \def\picc@ntents{%
     \gridp@cfalse% Not true! It's not floating.
       \headingtopspace=0pt
+    \trace{g}{Before gridbox \the\ht#1+\the\dp#1}%
     \gridb@x#1%
     \ifx\w@tsit\gr@phic
       \dimen9=\lastdepth \kern\dimen9

@@ -332,9 +332,8 @@
 % Sidebar 
 \def\@sb{\let\oldc@tegory\c@tegory\let\oldc@prefix\c@tprefix 
   \trace{e}{Starting side bar from \m@rker, \the\lastdepth}%
-  \xdef\oldlastdepth{\the\lastdepth}\lastdepth=0pt
-  %\ifhmode\endgraf\fi
   \endlastp@rstyle{\ss@Sbar}% Apply spaceafter, etc.
+  \xdef\oldlastdepth{\the\lastdepth}\lastdepth=0pt
   \xdef\stylet@pe{\ss@Sbar}%                                                                   %(2)
   \ifhe@dings\endhe@dings\fi% Sidebars should close a heading section.
   % kill cached possParam-\m@rker values  
@@ -381,98 +380,50 @@
   \ifhasb@rder
     \setbox\b@rderbox\vbox to \ht#1{\hsize=\wd#1\hss\vss}%Placeholder
     \dp\b@rderbox=\dp#1\relax
+    %Spacing for the content-box:
+    \xdef\b@dr@left@pad{\the\dimexpr \fb@hpadding  \ifx\b@drleft\tr@e +\border@hpadding + \b@drwidth\FontSizeUnit \fi\relax}%
+    \xdef\b@dr@right@pad{\the\dimexpr \fb@hpadding  \ifx\b@drright\tr@e +\border@hpadding + \b@drwidth\FontSizeUnit \fi\relax}%
+    \xdef\b@dr@top@pad{\the\dimexpr \fb@hpadding  \ifx\b@drtop\tr@e +\border@hpadding + \b@drwidth\FontSizeUnit \fi\relax}%
     \edef\b@drsides{\the\numexpr \ifx\b@drleft\tr@e 1 +\fi \ifx\b@drright\tr@e 1+\fi 0\relax}%
     \edef\b@rderbox@width{\the\dimexpr \wd\b@rderbox +\fb@hpadding*2 + \b@drwidth\FontSizeUnit *\b@drsides+ \border@hpadding * \b@drsides\relax}%% Final width of border artwork
     \edef\b@drsides{\the\numexpr \ifx\b@drtop\tr@e 1 +\fi \ifx\b@drbottom\tr@e 1+\fi 0\relax}%
     \edef\b@rderbox@height{\the\dimexpr \ht\b@rderbox +\fb@vpadding +\dp\b@rderbox + \b@drwidth\FontSizeUnit *\b@drsides + \border@vpadding *\b@drsides\relax}% Final height of border artwork 
-    \edef\b@xminadj{\ifdim\border@vpadding< -\b@drwidth\FontSizeUnit \ifx\b@drtop\tr@e\the\dimexpr -\b@drwidth\FontSizeUnit-\border@vpadding\relax\else 0pt\fi\else 0pt\fi}% b@xminadj is for inserts, so that the top of the box is at exactly the 
-    \edef\b@rderbox@depth{\the\dimexpr 2\dp\b@rderbox + \ifx\b@drbottom\tr@e \border@vpadding * 2 +\b@drwidth\FontSizeUnit * -1\fi \relax}% Quite HOW this is correct is a mystery, but it seems to be.
+    \edef\b@xminadj{\ifdim\border@vpadding< -\b@drwidth\FontSizeUnit \ifx\b@drtop\tr@e\the\dimexpr -\b@drwidth\FontSizeUnit-\border@vpadding\relax\else 0pt\fi\else 0pt\fi}% b@xminadj is for inserts, so that the top of the box is at exactly the page top.
+    \let\b@xadj\b@xminadj %b@xadj is for in-line boxes.
+    %\let\b@xextadj\b@xminadj %b@xadj is for in-line boxes.
+    \edef\b@xextadj{\dimexpr 0pt - \ifdim\border@vpadding< -\b@drwidth\FontSizeUnit \ifx\b@drbottom\tr@e\the\dimexpr \b@drwidth\FontSizeUnit +\border@vpadding\relax\else 0pt\fi\else 0pt\fi\relax}% b@xminadj is for inserts, so that the top of the box is at exactly the page top.
+    \edef\b@xextadj{\ifdim\border@vpadding> -\b@drwidth\FontSizeUnit \ifx\b@drtop\tr@e 3pt\else 0pt\fi\else 0pt\fi}%b@xextadj puts some space at the top of a box that will be gridded. This protects it from descenders
+    \edef\b@rderbox@depth{\the\dimexpr \dp\b@rderbox + \ifx\b@drbottom\tr@e \border@vpadding +\b@drwidth\FontSizeUnit \fi \relax}% 
     %\trace{e}{Depth b@drbox=\the\dp\b@rderbox / \the\dp\extchunkb@x / \thsch@nkdp}%
-    \let\b@xadj\b@xminadj
   \else
     \setbox\b@rderbox\box\voidb@x
+    \edef\b@xextadj{0pt}%
     \edef\b@xminadj{0pt}%
   \fi
 }
 \def\mkb@rder{%Put a simple border around a box
-  %\x@\setbox\x@\b@rderbox\x@\box#1
   \ifx\b@drcol\relax
     \def\bc@l{}\def\endbc@l{}%
   \else
     \def\bc@l{\special{color push rgb \b@drcol}}\def\endbc@l{\special{color pop}}%
   \fi
-  \dimen0=\fb@vpadding
-  \dimen1=0pt % should include padding already
-  \dimen7=\dimen0
-  \advance\dimen0 by \ht\b@rderbox
-  \advance\dimen1 by \dp\b@rderbox
-  \dimen4=-\fb@vpadding
-  \ifhasb@rder % if ANY border, add horizontal padding and any vertical lines
-    \ifx\b@drtop\tr@e
-      \advance\dimen0 by \border@vpadding
-      \advance\dimen7 by \border@vpadding
-      \advance\dimen7 by \dimexpr \b@drwidth\FontSizeUnit\relax
-      \advance\dimen4 by -\dimexpr \border@vpadding + \b@drwidth\FontSizeUnit\relax
-    \fi
-    \ifx\b@drbottom\tr@e
-      \advance\dimen1 by \border@vpadding
-    \fi
-    \ifx\b@drleft\tr@e
-      \dimen8=\dimexpr \b@drwidth\FontSizeUnit + \border@hpadding\relax
-    \else
-      \dimen8=0pt\relax
-    \fi
-    \advance\dimen8 by \fb@hpadding
-    %\advance\dimen8 by \border@hpadding
-    \setbox\b@rderbox\vbox{%
-      \hbox{\ifx\b@drleft\tr@e\trace{eb}{Drawing Border:left}%
-         \bc@l\vrule width \b@drwidth\FontSizeUnit height \dimen0 depth \dimen1 \endbc@l
-         \hskip\border@hpadding
-       \else
-         \vrule width 0pt height \dimen0 depth \dimen1 %Strut to sort out vertical padding
-       \fi
-       \hskip \dimexpr \fb@hpadding *2  + \wd\b@rderbox\relax
-       \ifx\b@drright\tr@e \trace{eb}{Drawing Border: right}%
-         \hskip\border@hpadding
-         \bc@l\vrule width \b@drwidth\FontSizeUnit height \dimen0 depth \dimen1 \endbc@l
-       \fi}%
-     }%
-  \fi
-  \loop\ifdim\dimen4> \baselineskip
-    \advance\dimen4 by -\baselineskip
-  \repeat
-  \loop\ifdim\dimen4< -0.1\baselineskip
-    \advance\dimen4 by \baselineskip
-  \repeat
-  %\edef\b@xadj{\the\dimen4}% b@xadj is to keep the box on-grid when in-line. 
-  \advance \dimen4 by -\dimen1
-  \loop\ifdim\dimen4< -0.1\baselineskip
-    \advance\dimen4 by \baselineskip
-  \repeat
-  \trace{eb}{Border box: \the\ht\b@rderbox+\the\dp\b@rderbox, bdr:\b@drwidth , \the\dimen4, \the \dimen0}%
-  \ifhorizb@rder %Horizontal lines
-    \edef\b@xw@dth{\the\wd\b@rderbox}%
-    \advance\dimen0 by \dimen1
-    \setbox\b@rderbox\vbox to \dimexpr \dimen0 \relax{\baselineskip=0pt%
-      \ifx\b@drtop\tr@e\trace{eb}{Drawing Border:top}\hbox{\bc@l\vrule height\b@drwidth\FontSizeUnit width \b@xw@dth \endbc@l}\fi%
-      \vbox to \dimen0{\unvbox\b@rderbox\vss}%
-      \ifx\b@drbottom\tr@e\trace{eb}{Drawing Border:bottom}\hbox{\bc@l\vrule depth\b@drwidth\FontSizeUnit width \b@xw@dth \endbc@l}\vskip\dimen4\fi
-    }%
-    \dp\b@rderbox=\dimen1
-    %\nonstopmode
-    %\showbox\b@rderbox
-  \fi
-  %\hrule
-  \trace{e}{\border@vpadding < \the\dimexpr -\b@drwidth\FontSizeUnit\relax?}%
-  %\edef\b@xminadj{0pt}%
-  %\advance\dimen1 by \dimen0
-  %\count255=\dimen1
-  %\divide\count255 by \baselineskip
-  %\advance\dimen1 by -\dimexpr\baselineskip * \count255\relax
-  %\loop\ifdim\dimen1>\baselineskip
-    %\advance\dimen1 by -\baselineskip
-  %\repeat
+  \dimen0=\b@rderbox@height \advance\dimen0 by \dimexpr -\b@drwidth\FontSizeUnit * \b@drsides\relax
+  \dimen1=0pt
+  \setbox\b@rderbox\vbox to \b@rderbox@height{\baselineskip=0pt\lineskip=0pt\hsize=\b@rderbox@width\bc@l
+    \ifx\b@drtop\tr@e\trace{eb}{Drawing Border:top}\hbox{\vrule height\b@drwidth\FontSizeUnit width \b@rderbox@width}\fi%
+    \hbox to \b@rderbox@width{%
+      \ifx\b@drleft\tr@e\trace{eb}{Drawing Border:left}%
+        \vrule width \b@drwidth\FontSizeUnit height \dimen0 depth \dimen1 
+      \fi
+    \hss
+      \ifx\b@drleft\tr@e\trace{eb}{Drawing Border:left}%
+        \vrule width \b@drwidth\FontSizeUnit height \dimen0 depth \dimen1
+      \fi
+    }\vss
+    \ifx\b@drbottom\tr@e\trace{eb}{Drawing Border:bottom}\hbox{\vrule height\b@drwidth\FontSizeUnit width \b@rderbox@width}\fi
+\endbc@l}%
 }
+
 \def\borderstylelist{plain, double}
 \let\mkb@rder@plain\mkb@rder
 \def\mkb@rder@double#1{%
@@ -619,7 +570,6 @@
   \ifdoIntskip
     \setbox\extb@x\vbox{%\dbghrule
       \kern\b@xadj\unvbox\extb@x}%
-    %\showbox\extb@x
   \fi
   \iftemp
     %modify the esbbox to include the picture
@@ -714,11 +664,11 @@
         \advance\dimen1 by \baselineskip
       \@REPEAT
       %\repeat
-      \trace{e}{Box \the\ht\b@rderbox +\the\dp\b@rderbox x \the\wd\b@rderbox (\b@rderbox@height x\b@rderbox@width)  is offset \the\dimen7 (v) and <\the\dimen8|\the\dimen9> (h). Final adjust\the\dimen1}%
+      \trace{e}{Box \the\ht\b@rderbox +\the\dp\b@rderbox x \the\wd\b@rderbox (\b@rderbox@height x\b@rderbox@width)  is offset \the\dimen7 (v) and <\b@dr@left@pad|\b@dr@right@pad> (h). Final adjust\the\dimen1}%
       \trace{e}{Box adj (\c@tegory):\the\dimen7, spacing: \b@xminadj / \b@xadj,  \ifdoIntskip 1st \else 2nd\fi}%
-      \x@\setbox\extchunkb@x\vbox{\ifdoIntskip\kern\b@xminadj\else\kern\b@xadj\fi\vbox to 0pt{\vskip\dimen7\hbox to \b@rderbox@width{\hskip\dimen8\box\extchunkb@x\hskip\dimen9}\vss}\penalty10000\box\b@rderbox\kern\dimen1}%
+      \x@\setbox\extchunkb@x\vbox{\ifdoIntskip\kern\b@xminadj\else\vskip\b@xextadj\fi\vbox to 0pt{\vskip\b@dr@top@pad\hbox to \b@rderbox@width{\hskip\b@dr@left@pad\box\extchunkb@x\hskip\b@dr@right@pad}\vss}\penalty10000\box\b@rderbox\kern\dimen1\ifdoIntskip\else\fi}%
     \else
-      \x@\setbox\extchunkb@x\vbox{\ifdoIntskip\kern\b@xminadj\else\kern\b@xadj\fi\box\extchunkb@x}%
+      \x@\setbox\extchunkb@x\vbox{\ifdoIntskip\kern\b@xminadj\else\fi\box\extchunkb@x}%
     \fi
     \let\fstb@drtop=\relax
     \trace{e}{After border, chunk is  now \the\ht\extchunkb@x+\the\dp\extchunkb@x*\the\wd\extchunkb@x}%
@@ -751,6 +701,7 @@
           \ifx\h@scol\tr@e
             \ifdim\lastdepth>0.2pt\vskip\baselineskip\fi%
           \fi
+          \lastdepth=\oldlastdepth
           \d@figureInl\extchunkb@x
         \fi
         \ifx\picl@c\loc@Par

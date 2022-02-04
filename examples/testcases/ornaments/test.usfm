@@ -54,18 +54,20 @@ At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praese
 \esb\cat cut\cat*
 \s1 Testing 4
 \p
-This esb should be in a cut-out, two lines below 'possimus'. It has a pale blue background, an orange border just inside the edge of the background, and a pdf image as a 'watermark', which because it has no inherent colour, we can pick the colour of in the style sheet.
+This esb should be in a cut-out, a line below 'possimus'. It
+has a pale blue background, an orange border just inside the edge
+of the background, and a pdf image as a 'watermark', which
+because it has no inherent colour, we can pick the colour of in
+the style sheet.
 \esbe
 omnis voluptas assumenda est, omnis dolor repellendus.
 \p Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae.
 \p \v 6 Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.
-
 \esb \cat foo\cat*
-\cancelcutouts
 \dbghrule
 \s Testing 5
-\p This ought to be  on the 2nd page
 \p
+ This ought to be  on the 2nd page
 \esbe
 \esb \cat something\cat*
 \cancelcutouts
