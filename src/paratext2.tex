@@ -463,7 +463,7 @@
   \FootNoteRuleRightIndent}}
 
 \def\noterule#1#2#3#4{{\dimen1=#1\kern 0pt\vskip\dimen1 minus 0.5 \dimen1
-  \dimen1=#2 \kern -\dimen1
+  \dimen1=#2 % what's this for? \kern -\dimen1
   \setbox0=\hbox to #3{#4}\dimen0=0.5\ht0\kern-\dimen0\box0\kern-\dimen0
   \vskip \dimen1 minus 0.5\dimen1\kern 0pt}\prevdepth=-1000pt}
 
