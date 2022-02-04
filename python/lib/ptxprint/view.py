@@ -394,11 +394,11 @@ class ViewModel:
     def updateBookList(self):
         pass
 
-    def setPrjid(self, prjid, saveCurrConfig=False, loadConfig=True):
-        return self.updateProjectSettings(prjid, configName="Default", saveCurrConfig=saveCurrConfig, readConfig=loadConfig or None)
+    def setPrjid(self, prjid, saveCurrConfig=False, loadConfig=True, readConfig=True):
+        return self.updateProjectSettings(prjid, configName="Default", saveCurrConfig=saveCurrConfig, readConfig=loadConfig)
 
-    def setConfigId(self, configid, saveCurrConfig=False, force=False):
-        return self.updateProjectSettings(self.prjid, saveCurrConfig=saveCurrConfig, configName=configid, forceConfig=force)
+    def setConfigId(self, configid, saveCurrConfig=False, force=False, loadConfig=True):
+        return self.updateProjectSettings(self.prjid, saveCurrConfig=saveCurrConfig, configName=configid, forceConfig=force, readConfig=loadConfig)
 
     def _copyConfig(self, oldcfg, newcfg, moving=False, newprj=None):
         oldp = self.configPath(cfgname=oldcfg, makePath=False)
@@ -840,6 +840,8 @@ class ViewModel:
         def setv(k, v): self.set(k, v, skipmissing=True)
         self.clearvars()
         for sect in config.sections():
+            # if sect == "paper":
+                # import pdb; pdb.set_trace()
             for opt in config.options(sect):
                 key = "{}/{}".format(sect, opt)
                 val = config.get(sect, opt)

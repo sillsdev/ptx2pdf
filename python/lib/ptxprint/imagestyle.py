@@ -91,6 +91,7 @@ class ImageStyle:
         self._dialogfrommap(dialog, view, fieldmap)
         if self.isbg:
             self._dialogfrommap(dialog, view, bgfieldmap)
+            self.color = textocol(getattr(self, "color", "x000000"))
         else:
             posn = getattr(self, 'position', 'above')
             view.set("r_sbiPosn", posn)
@@ -105,11 +106,11 @@ class ImageStyle:
 
     def fromdialog(self, dialog, view):
         self._fromdialogmap(dialog, view, fieldmap)
-        self.color = textocol(self.color)
         if self.lockratio:
             self.height = self.width
         if self.isbg:
             self._fromdialogmap(dialog, view, bgfieldmap)
+            self.color = textocol(self.color)
         else:
             self.position = view.get("r_sbiPosn")
             self.pos = view.get("fcb_sbi_posn_{}".format(self.position))
@@ -146,6 +147,15 @@ class ImageStyle:
         if len(scale):
             tgt.setval(mkr, prefix+"Scale", scale)
 
-
-
-    
+    def removeStyle(self, tgt, mkr):
+        prefix = "BgImage" if self.isbg else "FgImage"
+        for k in fieldmap.keys():
+            if k == "filename":
+                k = ""
+            tgt.setval(mkr, prefix + k.title(), None)
+        if self.isbg:
+            for k in bgfieldmap.keys():
+                tgt.setval(mkr, prefix + k.title(), None)
+        else:
+            tgt.setval(mkr, 'FgImagePos', None)
+            

@@ -427,7 +427,7 @@
       \else\tempfalse\fi \iftemp\@@REPEAT
     \setbox1=\box10
     \iff@rstnote
-      \ifvoid\verybottomins\fi % ignore depth of body text; fill space
+      \ifvoid\verybottomins\vfill\fi % ignore depth of body text; fill space
       \noterule{\AboveStudyNoteSpace}{\BelowStudyNoteRuleSpace}{\textwidth}{%
       \StudyNoteRuleLeftIndent \vrule height \StudyNoteRuleThickness width \StudyNoteRuleWidth\textwidth \StudyNoteRuleRightIndent}%
       \global\f@rstnotefalse
@@ -436,7 +436,7 @@
     \dimen12=\dp11\ifdim\dimen12<\dp12 \dimen12=\dp12\fi
     \trace{n}{Study notes (\the\ht11, \the\ht12)=\the\dimen11}%
     \hbox to \textwidth {\box\ifRTL 12\else11\fi
-      \trace{o}{StudyGutter\ifStudyGutterRule true\else false\fi, ColumnGutter\ifColumnGutterRule true\else false\fi}%
+      \trace{o}{StudyGutterRule\ifStudyGutterRule true\else false\fi, ColumnGutterRule\ifColumnGutterRule true\else false\fi}%
       \makestudycolumngutter{\dimen11}{\dimen11}{\dimen12}{\dimen11}{0}\box\ifRTL 11\else12\fi}%
     \ifkeepn@tes\else
       \global\setbox\th@cl@ss\box\voidb@x
@@ -463,7 +463,7 @@
   \FootNoteRuleRightIndent}}
 
 \def\noterule#1#2#3#4{{\dimen1=#1\kern 0pt\vskip\dimen1 minus 0.5 \dimen1
-  \dimen1=#2 \kern -\dimen1
+  \dimen1=#2 % what's this for? \kern -\dimen1
   \setbox0=\hbox to #3{#4}\dimen0=0.5\ht0\kern-\dimen0\box0\kern-\dimen0
   \vskip \dimen1 minus 0.5\dimen1\kern 0pt}\prevdepth=-1000pt}
 
@@ -643,7 +643,7 @@
     \ifdim\dimen1>#1\repeat
   \fi}
 \def\m@kexrefbox#1#2#3{
-% #1: height, #2: xrefbox width, #3: note marker/style, returns vbox
+% #1: height, #2: xrefbox width, #3: note marker/style, returns vbox of remaineder and results in xr@fbox
   \setbox\xr@fbox=\ifXrefTopfill\vbox{\vfil}\else\box\voidb@x\fi
   \temptrue
   \let\par=\endgraf\x@\let\csname ch@pter\g@tdstat waiting\endcsname\relax
@@ -655,6 +655,7 @@
   \global\setbox\XrefB@x=\copy\th@cl@ss
   \unvbox\th@cl@ss \r@versevb@x{3}\unvbox3
   \s@tbaseline{#3}{#3}%
+  \advance\baselineskip 0pt plus 1pt
   \loop
     \setbox0=\lastbox
     \dimen2=\ht0
@@ -664,7 +665,7 @@
       \dimen0=\ht\xr@fbox \advance\dimen0 by \ht1 \advance\dimen0 by \baselineskip
       \advance\dimen0 by -\dimen1 \advance\dimen0 by -\dp\xr@fbox
       \ifdim\dimen0>#1
-        \trace{o}{Bottom of xref box aiming for #1 but currently \the\dimen0. Lastbox \the\ht1}%
+        \trace{o}{Bottom of xref box aiming for \the #1 but currently \the\dimen0. Lastbox \the\ht1}%
         \tempfalse % we're done with the main loop
         \setbox0=\hbox{}
         \m@ke@te@mp{#1}
@@ -727,16 +728,13 @@
   \fi\fi\fi\fi\fi\fi}
 
 \def\p@geendcontent{%
-  \ifvoid\bottomins\else \vfil\kern-\lastd@pth
+  \ifdim\ht\bottomins>0pt \vfil\kern-\lastd@pth
     \lastd@pth=0pt \vskip\skip\bottomins \hbox{\hbox to \columnshift{}\box\bottomins} \fi % ouput bottom spanning pictures
-  %\ifColNotes\else
-    %\m@kenotebox
-    \trace{b}{BALANCE pageouttxt: notes=\the\ht\n@tesbox , \the\dp\n@tesbox. Lastdepth=\the\lastd@pth \space Leaving \the\ht255, \the\dp255}%
-    \unvbox\n@tesbox %\kern-\lastd@pth\lastd@pth=\dp2\unvbox2
-  %\fi
+  \trace{b}{BALANCE pageouttxt: notes=\the\ht\n@tesbox , \the\dp\n@tesbox. Lastdepth=\the\lastd@pth \space Leaving \the\ht255, \the\dp255}%
+  \unvbox\n@tesbox %\kern-\lastd@pth\lastd@pth=\dp2\unvbox2
   \noteseenfalse
-  \ifvoid\verybottomins\else\ifdim\availht > 0pt\vfil % \kern-\dimen0
-    \trace{o}{verybottomins(onecoltrial): height=\the\ht\verybottomins , availht=\the\availht, textheight=\the\textheight, htpartial=\the\dimen9}
+  \trace{o}{verybottomins(onecoltrial): height=\the\ht\verybottomins , availht=\the\availht, textheight=\the\textheight, htpartial=\the\dimen9}
+  \ifdim\ht\verybottomins>0pt\ifdim\availht > 0pt\vfil % \kern-\dimen0
     \lastd@pth=0pt \vskip\skip\verybottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\verybottomins}}%
   \fi\fi
 }
@@ -748,6 +746,7 @@
     \x@\let\x@\th@cl@ss\csname note-\XrefNotes\endcsname % make \th@cl@ss be a synonym for the current note class
     \setbox13=\copy\th@cl@ss
   \fi
+  \pr@pinserts
   \s@ttrialheight
   \trace{i}{1c TRIAL with ht=\the\trialheight, vsize=\the\vsize, hIns=\the\holdinginserts}%
   \keepn@testrue\c@lcavailht\keepn@tesfalse
@@ -758,7 +757,7 @@
     \MSG{Page overfull with inserts. Perhaps a little more text and less pictures would help}%
   \fi
   \setbox\colA=\vsplit255 to \availht
-  \ifColNotes\setbox\colA\vbox{\unvbox\colA\vfil\box\coln@tebox}\fi
+  \setbox\colA\vbox{\unvbox\colA\ifColNotes\vfil\box\coln@tebox\fi}%
   \ifvoid255 \fitonpagetrue\else\fitonpagefalse\fi
   \decr{\availht}{\colA}
 %-c_onecoltrial_intro
@@ -772,7 +771,7 @@
       \ifdim\ht\xr@fbox>\dimen3 \dimen3=\ht\xr@fbox\fi
     \fi
     \trace{i}{1 SUCCEEDED, shipping page hIns=\the\holdinginserts}%
-    \trace{o}{onecoltrial width=\the\wd\colA, hsize=\the\hsize}%
+    \trace{o}{onecoltrial width=\the\wd\colA, hsize=\the\hsize, partial=\the\ht\partial, verybottomins=\the\ht\verybottomins}%
     \def\pagecontents{%                                                     %(3)
       \dimen1=\textwidth% \advance\dimen1 -\ExtraRMargin
       \trace{b}{BALANCE pageoutins: cols=1: text=\the\ht\colA, \the\dp\colA: partial=\the\ht\partial, \the\dp\partial: topins=\the\ht\topins: bottomins=\the\ht\bottomins, width=\the\dimen1}%
@@ -801,12 +800,12 @@
     }%
 %-c_onecoltrial_pagecontents
 %+c_onecoltrial_pagefit
-    \notst@dynotesfalse\clearn@tes
-    \resetvsize
     \ifnum\ifdim\ht\colA>\baselineskip 1\else\ifdim\ht\partial>0pt 1\else 0\fi\fi =1
       \plainoutput\trace{p}{plainoutput from onecoltrial}%    %(+)
       \s@tpage
     \else\setbox0=\box255\deadcycles=0\fi % dump empty pages (typically at end)
+    \notst@dynotesfalse\clearn@tes
+    \resetvsize
     \fin@lverybottom
     \global\holdinginserts=1
     \ifrerunsavepartialpaged\trace{o}{onecoltrial: rerunsavepartialpage}%
@@ -1018,7 +1017,7 @@
         %\f@rstnotetrue\m@kenotebox
         \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2}%
         \unvbox\n@tesbox %\kern-\lastd@pth\lastdepth=\dp2\unvbox2
-        \ifvoid\verybottomins\else\ifdim\availht > 0pt%
+        \ifdim\ht\verybottomins>0pt\ifdim\availht > 0pt%
           \trace{o}{verybottomins(savepartialpage): height=\the\ht\verybottomins , availht=\the\availht, textheight=\the\textheight}
           \kern-\lastd@pth \lastd@pth=0pt \vskip\skip\verybottomins \unvbox\verybottomins
         \fi\fi
@@ -1251,7 +1250,7 @@
 \newdimen\colhtA \newdimen\colhtB % dimen registers for calculating available ht for each col
 \newbox\colA \newbox\colB % box registers to hold contents of the columns
 \newcount\loopcount
-\newif\ifrem@inder \rem@indertrue
+\newif\ifrem@inder \rem@indertrue % if true will return non fitting page if unbalanced, else will allow unbalanced
 \newif\ifunbalanced \unbalancedfalse% \unbalancedtrue
 \newif\ifnoteseen \noteseenfalse% A trigger to help alert user that note might have gone missing
 \newif\ifinextended \inextendedfalse % Test for sidebars (ptx extended)
@@ -1260,7 +1259,13 @@
 \def\s@tcolhts#1{
     \colhtA=#1 \decr{\colhtA}{\topleftins}\decr{\colhtA}{\bottomleftins}%
     \colhtB=#1 \decr{\colhtB}{\toprightins}\decr{\colhtB}{\bottomrightins}%
-    \ifColNotes\advance\colhtB by -\ht\coln@tebox\fi
+    \ifColNotes
+      \ifx\XrefNotes\empty\relax\else
+        \x@\let\x@\th@cl@ss\csname note-\XrefNotes\endcsname
+        \setbox\th@cl@ss=\copy\XrefB@x
+      \fi
+      \doColNotes{#1}\advance\colhtB by -\ht\coln@tebox
+    \fi
     \trace{o}{s@tcolhts: colhtA=\the\colhtA, colhtB=\the\colhtB, toprightins=(\the\skip\toprightins, \the\ht\toprightins), bottomrightins=(\the\skip\bottomrightins, \the\ht\bottomrightins), colnotebox=\the\ht\coln@tebox}%
 }
 %-c_setcolhts
@@ -1269,7 +1274,7 @@
 \def\g@tcolhts{
     \colhtA=\ht\colA \incr{\colhtA}{\topleftins}\incr{\colhtA}{\bottomleftins}%
     \colhtB=\ht\colB \incr{\colhtB}{\toprightins}\incr{\colhtB}{\bottomrightins}%
-    \ifColNotes\advance\colhtB by \ht\coln@tebox\fi
+    %\ifColNotes\advance\colhtB by \ht\coln@tebox\fi
     \trace{o}{g@tcolhts: colhtA=\the\colhtA, colhtB=\the\colhtB}%
 }
 %-c_getcolhts
@@ -1300,9 +1305,12 @@
 \newdimen\availA \newdimen\availB
 \newif\ifcolbfull \colbfulltrue
 \newif\ifhascolnotes
+\newdimen\b@lbestavail
+\newdimen\b@lbestdiff
 \def\BalanceThreshold{0.95}
 
 \def\balanced{
+  \vfuzz=\PaperHeight
   \setbox0=\copy\s@vedpage
   \s@tcolhts{\availht}
   \spl@tcols0                                               %(1)
@@ -1310,90 +1318,81 @@
   \ifvoid0 \global\fitonpagetrue \else \global\fitonpagefalse \fi
   \rebalancefalse
   \trace{o}{first \the\availht . col=\the\ht\colA, \the\colhtA . second col=\the\ht\colB, \the\colhtB . rem=\the\ht0}%
-  \ifdim\ht\colA<.5\baselineskip \ifdim\ht\colB<.5\baselineskip \message{I can't break this page!}    %(2)
-    \iffitonpage\message{Abandoning ship}%\loop\ifnum\currentgrouplevel>0 \egroup\repeat
+  \ifdim\ht\colA<.5\baselineskip \ifdim\ht\colB<.5\baselineskip% \message{I can't break this page!}    %(2)
+    \iffitonpage\message{Abandoning ship with nothing on the page}%\loop\ifnum\currentgrouplevel>0 \egroup\repeat
     \else\setbox\colA=\box0\setbox\s@vedpage=\box\voidb@x \trace{o}{Everything to colA}% dump it all in colA and bail
   \fi\fi\fi
   \hascolnotesfalse
   \iffitonpage
     \colbfulltrue
-    \shortavail=\colhtB \advance\shortavail by -\ht\colB                        %(3)
-    \ifColNotes\advance\shortavail by -\ht\coln@tebox\fi
-    \advance\shortavail by \colhtA \advance\shortavail by -\ht\colA
-    \ifdim\shortavail>5\baselineskip
-      \trace{o}{Rebalance trying from average \the\shortavail\space of
-                \the\colhtA =\the\ht\colA, \the\colhtB =\the\ht\colB, colnotes=\the\ht\coln@tebox}%
+    \g@tcolhts
+    %\shortavail=\colhtB \advance\shortavail by -\ht\colB                        %(3)
+    %\ifColNotes\advance\shortavail by -\ht\coln@tebox\fi
+    %\advance\shortavail by \colhtA \advance\shortavail by -\ht\colA
+    \dimen0=\colhtB \advance\dimen0 by -\colhtA
+    \ifdim\dimen0<0pt\dimen0=-\dimen0\fi
+    \ifdim\dimen0>5\baselineskip
+      \shortavail=\colhtA \advance\shortavail\colhtB
       \divide\shortavail 2% \advance\shortavail by -0.5\ht\colA \advance\shortavail by -0.5\ht\colB
-      \advance\colhtA by -\shortavail \advance\colhtB by -\shortavail
+      \trace{o}{Rebalance trying from average difference \the\shortavail\space of
+                \the\colhtA =\the\ht\colA, \the\colhtB =\the\ht\colB, colnotes=\the\ht\coln@tebox}%
       \loop\setbox0=\copy\s@vedpage
-        \advance\colhtA by \baselineskip
-        \advance\colhtB by \baselineskip
-        \advance\shortavail by -\baselineskip
+        \dimen0=\availht\advance\dimen0-\shortavail
+        \s@tcolhts{\dimen0}
         \spl@tcols0
         \trace{o}{Rebalance average loop(\the\shortavail): \the\ht\colA=\the\colhtA,
                   \the\ht\colB=\the\colhtB\space remainder \the\ht0}%
         \ifdim\ht0>0pt \temptrue\else\tempfalse\fi
         \ifdim\shortavail<\baselineskip\tempfalse\fi
-        \iftemp\repeat
-      \trace{o}{Rebalance starting with \the\colhtA=\the\colhtA, \the\colhtB=\the\colhtB}%
+        \iftemp\advance\shortavail -\baselineskip\repeat
+      \trace{o}{Rebalance starting with \the\colhtA=\the\ht\colA, \the\colhtB=\the\ht\colB}%
     \fi
     \g@tcolhts                                                                  %(4)
-    \shortavail=\colhtA
-    \ifunbalanced\shortavail=\availht\else\rebalancetrue
-      \ifdim\colhtB>\colhtA \shortavail=\colhtB\fi
-    \fi
-    \ifColNotes\ifdim\ht\coln@tebox>0pt \hascolnotestrue\relax\fi\fi
-    \advance\shortavail \baselineskip
+    \b@lbestdiff=\colhtA \advance\b@lbestdiff -\colhtB\ifdim\b@lbestdiff<0pt \b@lbestdiff=-\b@lbestdiff\fi
+    \shortavail=\ifdim\colhtA>\colhtB \colhtA\else\colhtB\fi
+    \b@lbestavail=\shortavail
+    \ifunbalanced\shortavail=\availht\else\rebalancetrue\fi
+    \ifColNotes\ifdim\ht\coln@tebox>0pt \hascolnotestrue\relax\fi\fi % pass back whether there are end col notes
+    \advance\shortavail \baselineskip % anticipate gap reduction at start of rebalance loop
 %-c_balanced_intro
 %+c_balanced_loop
     \loopcount=0
     \ifrebalance
-      \vfuzz=\PaperHeight %\maxdimen
       \loop                                                                     %(5)
         \advance\loopcount by 1
         \advance\shortavail by -\baselineskip
-        \ifx\XrefNotes\empty\relax\else
-          \x@\let\x@\th@cl@ss\csname note-\XrefNotes\endcsname
-          \setbox\th@cl@ss=\copy\XrefB@x
-          \doColNotes{\shortavail}%
-        \fi
         \setbox0=\copy\s@vedpage
-        \dimen0=\shortavail%\advance\dimen0 by \ifdim\dp\colA>\dp\colB \dp\colA\else\dp\colB\fi
-        \s@tcolhts{\dimen0}\spl@tcols0
+        \s@tcolhts{\shortavail}\spl@tcols0
 		% if something left in box0, it didn't fit, quit loop
-        \trace{o}{re-balancing cols=\the\ht\colA =\the\colhtA, \the\ht\colB =\the\colhtB, from \the\shortavail, rem \the\ht0}%
-        \ifrem@inder\else\ifvoid0\else
-          \advance\shortavail by \baselineskip
-          %\advance\shortavail by \ifdim\dp\colA>\dp\colB \dp\colA\else\dp\colB\fi
-          \trace{o}{rebalance found extra back to \the\shortavail}\rebalancefalse
-          \setbox0=\copy\s@vedpage
-          \s@tcolhts{\shortavail}\spl@tcols0
-        \fi\fi
-		% if second column longer than first column by more than .3*line height, quit loop
-        \colhtA=\ht\colA \colhtB=\ht\colB
-        \ifColNotes\advance\colhtB \ht\coln@tebox\fi
-        \dimen0=\colhtB \incr{\dimen0}{\toprightins} \incr{\dimen0}{\bottomrightins}%
-        \advance\dimen0 by -\colhtA \decr{\dimen0}{\topleftins} \decr{\dimen0}{\bottomleftins}%
-        \trace{o}{Testing column difference of \the\dimen0 \space against threshold of \BalanceThreshold x\the\baselineskip}%
-        \ifdim\dimen0>\BalanceThreshold\baselineskip\else\ifdim\dimen0<-\BalanceThreshold\baselineskip\else   %(7)
-          \shortavail=\colhtB\incr{\shortavail}{\toprightins}\incr{\shortavail}{\bottomrightins}%
+        \trace{o}{re-balancing cols=\the\ht\colA =\the\colhtA, \the\ht\colB =\the\colhtB, from \the\shortavail, bests: \the\b@lbestdiff @\the\b@lbestavail, rem \the\ht0}%
+        \ifdim\ht0>0pt
+          \trace{o}{rebalance found extra back to \the\b@lbestavail}\rebalancefalse
+          \ifrem@inder\ifdim\b@lbestdiff>\BalanceThreshold\baselineskip \fitonpagefalse\fi\fi
+          \shortavail=\b@lbestavail
+        \fi
+		% if second column longer than first column by less than .3*line height, quit loop
+        \ifrebalance
+          \g@tcolhts
           \ifColNotes\advance\colhtB\ht\coln@tebox\fi
-          \ifdim\dimen0>0pt\else\advance\shortavail by -\dimen0\fi
-          %\advance\shortavail by \ifdim\dp\colA>\dp\colB \dp\colA\else\dp\colB\fi
-          \trace{o}{Best height \the\shortavail, difference of \the\dimen0, from a threshold of \BalanceThreshold x\the\baselineskip}%
-          \rebalancefalse
+          \dimen0=\colhtB \advance\dimen0 by -\colhtA
+          \ifdim\dimen0<0pt \dimen0=-\dimen0\fi
+          \trace{o}{Testing column difference of \the\dimen0 \space against threshold of \BalanceThreshold x\the\baselineskip}%
+          \ifdim\dimen0<\b@lbestdiff
+            \b@lbestdiff=\dimen0 \b@lbestavail=\shortavail
         \fi\fi
 		% give up if target size less than 2 lines (should not happen)
         \ifdim\shortavail<\baselineskip \MSG{Rebalancing bailed for short block \the\shortavail}%   %(8)
-          \shortavail=\availht \rebalancefalse\fi
+          \ifdim\b@lbestdiff>\BalanceThreshold\baselineskip \fitonpagefalse\fi
+          \shortavail=\b@lbestavail\rebalancefalse\fi
         \ifnum\loopcount>20 
-          \advance\shortavail by \baselineskip
+          \ifdim\b@lbestdiff>\BalanceThreshold\baselineskip \fitonpagefalse\fi
+          \shortavail=\b@lbestavail
           \rebalancefalse\MSG{Rebalancing loop count bail}\fi
         \ifrebalance\repeat
     \fi
     %\advance\shortavail by \ifdim\dp\colA>\dp\colB \dp\colA\else\dp\colB\fi     %(9)
     \s@tcolhts{\shortavail}\spl@tcols\s@vedpage\g@tcolhts
-    \ifColNotes\ifdim\ht\coln@tebox>0pt \hascolnotestrue\relax
+    \ifColNotes\advance\colhtB\ht\coln@tebox\ifdim\ht\coln@tebox>0pt \hascolnotestrue\relax
       \setbox\colB=\vbox{\unvbox\colB \vfil\unvbox\coln@tebox\unkern}
     \fi\fi
     \trace{o}{A = \the\colhtA=\the\ht\colA , B = \the\colhtB=\the\ht\colB , (from \the\shortavail) remaining = \the\ht\s@vedpage}%
@@ -1447,11 +1446,11 @@
   \fi
   \dimen9=\availht\advance\dimen9 by \bmg@p
   \trace{o}{fitting columns to \the\dimen9, coln@tes=\the\ht\xr@fbox}%
-  \lastd@pth=\dp\colA \setbox\colA=\vbox to \dimen9{\unvbox5\unvbox\colA\vfil\unvbox7}\dp\colA=\lastd@pth
+  \lastd@pth=\dp\colA \setbox\colA=\vbox to \dimen9{\unvbox5\unvbox\colA\ifdim\ht7>0pt \vfil\unvbox7\fi}\dp\colA=\lastd@pth
   \ifdim\ht\colB<1pt \setbox\colB\vbox{\noindent\par}\else
     \ifcolbfull\ifdim\lastd@pth<\dp\colB \lastd@pth=\dp\colB\fi\else\lastd@pth=\dp\colB\fi
   \fi
-  \setbox\colB=\vbox to \dimen9{\unvbox6\unvbox\colB\vfil\unvbox8}\dp\colB=\lastd@pth
+  \setbox\colB=\vbox to \dimen9{\unvbox6\unvbox\colB\ifdim\ht8>0pt \vfil\unvbox8\fi}\dp\colB=\lastd@pth
   \ifdim\colhtA>\colhtB \dimen3=\colhtA
     \ifcolbfull\lastd@pth=\dp\colA\dp\colB=\lastd@pth\fi
   \else
@@ -1525,18 +1524,19 @@
   \advance\bmg@p by -\availht
   %\advance\availht \dp\pstr@t
   %\advance\availht by \dp255 % split includes depth so give it space for that
-  \trace{o}{new availht=\the\availht, best availht=\the\bestavailht, texttrialheight=\the\t@xttrialheight, topins=\the\ht\topins, bottomins=\the\ht\bottomins, baselineskip=\the\baselineskip}%
   \ifdim\bestavailht>0pt \ifdim\bestavailht<\availht \availht=\bestavailht\fi\fi
+  \trace{o}{new availht=\the\availht, best availht=\the\bestavailht, texttrialheight=\the\t@xttrialheight, topins=\the\ht\topins, bottomins=\the\ht\bottomins, baselineskip=\the\baselineskip}%
   \doColNotes{\availht}%
   \splittopskip=\topskip
 }
 \def\doColNotes#1{
+  % creates column notes in coln@tebox with side effect of perhaps xr@fbox. Uses boxes 0,2,5
   \ifColNotes\ifb@dy
     \ifx\XrefNotes\empty\relax\setbox5=\box\voidb@x\else
       \setbox5=\vbox{\m@kexrefbox{\ifdim\t@xttrialheight>0pt \ifdim\t@xttrialheight<#1 \t@xttrialheight\else #1\fi\else #1\fi}{\XrefNotesWidth}{\XrefNotes}}%
       \setbox\xr@fbox\vbox{\unvbox\xr@fbox\setbox0=\lastbox\dimen0=\dp0\box0\vskip\dimen0}%
     \fi
-    \notst@dynotestrue\m@kenotebox\notst@dynotesfalse
+    \keepn@testrue\notst@dynotestrue\m@kenotebox\notst@dynotesfalse\keepn@tesfalse
     \setbox\coln@tebox=\vbox{%
       \trace{o}{coln@tebox in=\the\ht5+\the\dp5, notes=\the\ht2+\the\dp2}%
       \ifdim\ht2>0pt
@@ -1545,11 +1545,11 @@
       \else\ifdim\ht5>0pt
           %\ifvoid\verybottomins\vfil\fi %\kern-\lastd@pth\vfil % ignore depth of body text; fill space
           \footnoterule\prevdepth=-10000pt
-          \unvbox5\setbox0\lastbox\dimen1=\ht0\dimen0=\dp0\box0\ifdim\dimen1>0pt \kern-\dimen0\fi\vskip\bmg@p
+          \unvbox5\setbox0\lastbox\dimen1=\ht0\dimen0=\dp0\box0\ifdim\dimen1>0pt \kern-\dimen0\fi%\vskip\bmg@p
       \fi\fi}%
       \trace{o}{coln@tebox out=\the\ht\coln@tebox+\the\dp\coln@tebox, xrefbox=\the\ht\xr@fbox+\the\dp\xr@fbox}%
   \else
-    \setbox5=\box\voidb@x\setbox\xr@fbox=\box\voidb@x
+    \setbox\coln@tebox=\box\voidb@x\setbox\xr@fbox=\box\voidb@x
   \fi\fi
 }
 %-c_calcavailht
@@ -1606,15 +1606,10 @@
   \setbox\s@vedpage=\vbox{\unvcopy255}%
   \trace{o}{balancing from savepartialpaged, height=\the\ht\s@vedpage, hIns:\the\holdinginserts, vsz=\the\vsize, av=\the\availht, op:\the\outputpenalty}%
   \ifdim\ht\partial>\baselineskip \swapcolfalse\else\swapcoltrue\fi
-  \ifdim\availht<\baselineskip 
-    \rem@indertrue % No, I don't know what this does, but once If i  didn't do it then we get lost verses. 
-    %\rem@inderfalse
-    \balanced\fitonpagetrue % There's certainly no point shrinking past this
-  \else
-    \rem@inderfalse\balanced
-  \fi
+  \rem@inderfalse\balanced
+  \ifdim\availht<\baselineskip \fitonpagefalse \fi
   \iffitonpage
-    \c@lcboxheights
+    %\c@lcboxheights
     \s@veallnotes{1}%
     \lastd@pth=\dp\colA\ifdim\dp\colB<\lastd@pth \lastd@pth=\dp\colB\fi
     \ifColNotes\ifdim\dp\xr@fbox<\lastd@pth \lastd@pth=\dp\xr@fbox\fi\fi
@@ -1692,6 +1687,7 @@
 %-c_savepartialpaged
 
 %+c_makenotebox
+% Make a box of all the notes
 \def\m@kenotebox{
   \global\setbox2=\vbox{
   \f@rstnotetrue
@@ -1711,8 +1707,10 @@
 \def\pr@pinserts{
   \ifdim\ht\topins>0pt
     \s@tbaseline{p}{p}
-    \dimen1=\ht\topins\dimen0=\baselineskip
-    \m@d \dimen1=\ht\topins\advance\dimen1\dimen0 \ht\topins=\dimen1
+    \dimen1=\ht\topins\advance\dimen1\dp\topins \dimen0=\baselineskip
+    \m@d \ifdim\dimen0<\baselineskip
+      \dimen1=\ht\topins\advance\dimen1\dimen0 \ht\topins=\dimen1 \dp\topins=0pt
+    \fi
   \fi}
   
 %+c_twocoltrial_intro
@@ -1723,14 +1721,14 @@
     \x@\let\x@\th@cl@ss\csname note-\XrefNotes\endcsname % make \th@cl@ss be a synonym for the current note class
     \setbox13=\copy\th@cl@ss
   \fi
+  \pr@pinserts
   \s@ttrialheight
   \keepn@testrue\c@lcavailht\keepn@tesfalse
   \ifdim\availht<0pt
     \MSG{Page overfull with inserts. Perhaps a little more text and less pictures would help}%
   \fi
   \setbox\s@vedpage=\copy255
-  \pr@pinserts
-  \trace{o}{balance from twocoltrial height \the\ht\s@vedpage, availht=\the\availht}%
+  \trace{o}{balance from twocoltrial height \the\ht\s@vedpage, availht=\the\availht, markrange=\firstmark ,\botmark}%
   \ifdim\ht\partial>\baselineskip \swapcolfalse\else\swapcoltrue\fi
   \rem@indertrue\balanced
   \trace{o}{twocoltrial: return from balanced with fitonpage\iffitonpage true\else false\fi}
@@ -1751,7 +1749,7 @@
     \lastd@pth=\dp\colA\ifdim\dp\colB<\lastd@pth \lastd@pth=\dp\colB\fi
     \ifColNotes\ifdim\dp\xr@fbox<\lastd@pth \lastd@pth=\dp\xr@fbox\fi\fi
     \trace{p}{twocoltrial: calculate dimen3 as min(\the\availht, max(\the\ht\colA, \the\ht\colB, \the\ht\xr@fbox))}
-    \dimen3=\ht\colA \ifdim\ht\colB>\dimen3 \ifhascolnotes\dimen3=\ht\colB\fi\fi
+    \dimen3=\ht\colA \ifdim\ht\colB>\dimen3 \dimen3=\ht\colB\fi
     \if\XrefNotes\relax\else
       \reheightcolnotesd{13}\ifdim\ht\xr@fbox>\dimen3 \dimen3=\ht\xr@fbox\fi
     \fi
@@ -1830,7 +1828,7 @@
     % todo: allow user defined inner margin also on grid
     \ifnum#5=1\hbox to \XrefNotesMargin{}\else\ifnum#5=3\hbox to \XrefNotesMargin{}\fi\fi
     \ifdim\ht\xr@fbox>0pt
-      \vbox to #4{\vbox to #2{\ifdim\ht\xr@fbox>0.9\dimen0 \unvbox\xr@fbox\unpenalty\unskip
+      \vbox to #4{\vbox to #1{\ifdim\ht\xr@fbox>0.9\dimen0 \unvbox\xr@fbox\unpenalty\unskip
         \else\ifdim\ht\xr@fbox=0pt\message{empty xrefbox}\vbox{\hsize=\XrefNotesWidth\hskip\XrefNotesWidth\hbox{}}\else
           \unvbox\xr@fbox\fi\ifXrefTopfill\else\vfil\fi\fi}\vfil}%
     \else \hbox to \XrefNotesWidth{}%
@@ -1841,7 +1839,7 @@
   \hbox to \columnshift{}}
 \newif\ifColumnGutterRule
 \def\makestudycolumngutter#1#2#3#4#5{\ifnum#5=1\hfil\else\ifnum#5=3\hfil\else\ifnum#5=0\hfil\fi\fi\fi
-  \trace{o}{makecolumngutter: rule height=#1, box height=#2, box depth=#3, total height=#4, lineside=#5 bits
+  \trace{o}{makestudycolumngutter: rule height=#1, box height=#2, box depth=#3, total height=#4, lineside=#5 bits
             ColumnGutterRuleSkip=\the\ColumnGutterRuleSkip, baselineskip=\the\onel@neunit}%
 % #1: Height of gutter rule, #2: height of gutter rule box, #3: depth of gutter rule box, #4: total height
 % #5: line sides bit 0=left, 1=right (0=centre line, no XrefNotes)
@@ -1941,7 +1939,7 @@
     \fin@lverybottom
 }
 \def\fin@lverybottom{%
-  \ifvoid\verybottomins\else
+  \ifdim\ht\verybottomins>0pt
       %\setbox0=\vbox{\unvbox\verybottomins\setbox1=\lastbox}
     \loop
       \trace{o}{verybottom(fin@lverybottom) height=\the\ht\verybottomins, textheight=\the\textheight, vsize=\the\vsize,
@@ -1950,7 +1948,7 @@
       \def\pagecontents{\vfil\hbox{\hbox to \columnshift{}\vbox{\unvbox0}}}
       \plainoutput\trace{plainoutput for fin@lverybottom}%
       \s@tpage
-      \ifvoid\verybottomins\tempfalse\else\temptrue\fi\iftemp\repeat
+      \ifdim\ht\verybottomins>0pt \temptrue\else\tempfalse\fi\iftemp\repeat
   \fi
 }
 %-c_twocolpageout

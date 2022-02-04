@@ -1528,7 +1528,7 @@
  \closeadjlist
  \unprepusfm
  \lastpagetrue
- \iflastptxfile\csname bookend-final\endcsname\fi
+ \iflastptxfile\trace{o}{running bookend-final}\csname bookend-final\endcsname\par\fi
  \singlecolumn % must come after bookend-final, as that might include 2col content.
  \bookendpagebreak
  %\ifendbooknoeject\else\global\output={\shipout\vbox{\box\partial\box255}}\eject\xdef\p@gefirstmark{}\setbox\partial=\box\voidb@x\fi

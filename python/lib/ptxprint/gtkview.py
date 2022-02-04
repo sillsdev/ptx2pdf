@@ -205,7 +205,8 @@ _sensitivities = {
     "c_mainBodyText" :         ["gr_mainBodyText"],
     "c_doublecolumn" :         ["gr_doubleColumn", "r_fnpos_column"],
     "c_useFallbackFont" :      ["btn_findMissingChars", "t_missingChars", "l_fallbackFont", "bl_fontExtraR"],
-    "c_includeFootnotes" :     ["tb_footnotes", "lb_footnotes", "r_xrpos_below", "r_xrpos_blend"],
+    # "c_includeFootnotes" :     ["tb_footnotes", "lb_footnotes", "r_xrpos_below", "r_xrpos_blend"],
+    "c_includeFootnotes" :     ["gr_footnotes"],
     # "c_includeXrefs" :         ["tb_xrefs", "lb_xrefs"],
     "c_useXrefList" :          ["gr_extXrefs", "lb_extXrefs"],
     
@@ -286,6 +287,7 @@ _nonsensitivities = {
 
 _object_classes = {
     "printbutton": ("b_print", "btn_refreshFonts", "btn_adjust_diglot", "btn_createZipArchiveXtra", "btn_Generate"),
+    "sbimgbutton": ("btn_sbFGIDia", "btn_sbBGIDia"),
     "fontbutton":  ("bl_fontR", "bl_fontB", "bl_fontI", "bl_fontBI"),
     "mainnb":      ("nbk_Main", ),
     "viewernb":    ("nbk_Viewer", "nbk_PicList"),
@@ -623,6 +625,7 @@ class GtkViewModel(ViewModel):
     def _setup_css(self):
         css = """
             .printbutton:active { background-color: chartreuse; background-image: None }
+            .sbimgbutton:active { background-color: lightskyblue; font-weight: bold}
             .fontbutton {font-size: smaller}
             .stylinks {font-weight: bold; text-decoration: None; padding: 1px 1px}
             .stybutton {font-size: 12px; padding: 4px 6px}
@@ -1054,7 +1057,7 @@ class GtkViewModel(ViewModel):
         bls = " ".join(self.getBooks())
         self.set('ecb_booklist', bls)
         bl = self.getAllBooks()
-        if len(bl):
+        if not self.booklistKeypressed and not len(bl):
             self.set("r_book", "single")
             self.set("ecb_book", list(bl.keys())[0])
         self.updateExamineBook()
@@ -3841,8 +3844,7 @@ class GtkViewModel(ViewModel):
         picfiles = self.fileChooser(_("Choose Image"),
                                   filters={"Images": {"patterns": ['*.png', '*.jpg', '*.pdf'], "mime": "application/image"}},
                                    multiple=False, basedir=picpath, preview=update_preview)
-        self.set("lb_sbFilename", str(picfiles[0]) if len(picfiles) else "")
-
+        self.set("lb_sbFilename", str(picfiles[0]) if picfiles is not None and len(picfiles) else "")
 
     def onDeleteTempFolders(self, btn):
         notDeleted = []
@@ -3857,3 +3859,5 @@ class GtkViewModel(ViewModel):
             self.printer.doError(_("Warning: Could not completely delete\nsome temporary folder(s):"),
                     secondary="\n".join(set(notDeleted)))
 
+    def btn_RemoveSBimage(self, btn):
+        self.set("lb_sbFilename", "")
