@@ -733,8 +733,8 @@
   \trace{b}{BALANCE pageouttxt: notes=\the\ht\n@tesbox , \the\dp\n@tesbox. Lastdepth=\the\lastd@pth \space Leaving \the\ht255, \the\dp255}%
   \unvbox\n@tesbox %\kern-\lastd@pth\lastd@pth=\dp2\unvbox2
   \noteseenfalse
+  \trace{o}{verybottomins(onecoltrial): height=\the\ht\verybottomins , availht=\the\availht, textheight=\the\textheight, htpartial=\the\dimen9}
   \ifdim\ht\verybottomins>0pt\ifdim\availht > 0pt\vfil % \kern-\dimen0
-    \trace{o}{verybottomins(onecoltrial): height=\the\ht\verybottomins , availht=\the\availht, textheight=\the\textheight, htpartial=\the\dimen9}
     \lastd@pth=0pt \vskip\skip\verybottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\verybottomins}}%
   \fi\fi
 }
@@ -746,6 +746,7 @@
     \x@\let\x@\th@cl@ss\csname note-\XrefNotes\endcsname % make \th@cl@ss be a synonym for the current note class
     \setbox13=\copy\th@cl@ss
   \fi
+  \pr@pinserts
   \s@ttrialheight
   \trace{i}{1c TRIAL with ht=\the\trialheight, vsize=\the\vsize, hIns=\the\holdinginserts}%
   \keepn@testrue\c@lcavailht\keepn@tesfalse
@@ -756,7 +757,7 @@
     \MSG{Page overfull with inserts. Perhaps a little more text and less pictures would help}%
   \fi
   \setbox\colA=\vsplit255 to \availht
-  \ifColNotes\setbox\colA\vbox{\unvbox\colA\vfil\box\coln@tebox}\fi
+  \setbox\colA\vbox{\unvbox\colA\ifColNotes\vfil\box\coln@tebox\fi}%
   \ifvoid255 \fitonpagetrue\else\fitonpagefalse\fi
   \decr{\availht}{\colA}
 %-c_onecoltrial_intro
@@ -770,7 +771,7 @@
       \ifdim\ht\xr@fbox>\dimen3 \dimen3=\ht\xr@fbox\fi
     \fi
     \trace{i}{1 SUCCEEDED, shipping page hIns=\the\holdinginserts}%
-    \trace{o}{onecoltrial width=\the\wd\colA, hsize=\the\hsize}%
+    \trace{o}{onecoltrial width=\the\wd\colA, hsize=\the\hsize, partial=\the\ht\partial, verybottomins=\the\ht\verybottomins}%
     \def\pagecontents{%                                                     %(3)
       \dimen1=\textwidth% \advance\dimen1 -\ExtraRMargin
       \trace{b}{BALANCE pageoutins: cols=1: text=\the\ht\colA, \the\dp\colA: partial=\the\ht\partial, \the\dp\partial: topins=\the\ht\topins: bottomins=\the\ht\bottomins, width=\the\dimen1}%
@@ -799,12 +800,12 @@
     }%
 %-c_onecoltrial_pagecontents
 %+c_onecoltrial_pagefit
-    \notst@dynotesfalse\clearn@tes
-    \resetvsize
     \ifnum\ifdim\ht\colA>\baselineskip 1\else\ifdim\ht\partial>0pt 1\else 0\fi\fi =1
       \plainoutput\trace{p}{plainoutput from onecoltrial}%    %(+)
       \s@tpage
     \else\setbox0=\box255\deadcycles=0\fi % dump empty pages (typically at end)
+    \notst@dynotesfalse\clearn@tes
+    \resetvsize
     \fin@lverybottom
     \global\holdinginserts=1
     \ifrerunsavepartialpaged\trace{o}{onecoltrial: rerunsavepartialpage}%
@@ -1712,8 +1713,10 @@
 \def\pr@pinserts{
   \ifdim\ht\topins>0pt
     \s@tbaseline{p}{p}
-    \dimen1=\ht\topins\dimen0=\baselineskip
-    \m@d \dimen1=\ht\topins\advance\dimen1\dimen0 \ht\topins=\dimen1
+    \dimen1=\ht\topins\advance\dimen1\dp\topins \dimen0=\baselineskip
+    \m@d \ifdim\dimen0<\baselineskip
+      \dimen1=\ht\topins\advance\dimen1\dimen0 \ht\topins=\dimen1 \dp\topins=0pt
+    \fi
   \fi}
   
 %+c_twocoltrial_intro
@@ -1724,13 +1727,13 @@
     \x@\let\x@\th@cl@ss\csname note-\XrefNotes\endcsname % make \th@cl@ss be a synonym for the current note class
     \setbox13=\copy\th@cl@ss
   \fi
+  \pr@pinserts
   \s@ttrialheight
   \keepn@testrue\c@lcavailht\keepn@tesfalse
   \ifdim\availht<0pt
     \MSG{Page overfull with inserts. Perhaps a little more text and less pictures would help}%
   \fi
   \setbox\s@vedpage=\copy255
-  \pr@pinserts
   \trace{o}{balance from twocoltrial height \the\ht\s@vedpage, availht=\the\availht, markrange=\firstmark ,\botmark}%
   \ifdim\ht\partial>\baselineskip \swapcolfalse\else\swapcoltrue\fi
   \rem@indertrue\balanced
