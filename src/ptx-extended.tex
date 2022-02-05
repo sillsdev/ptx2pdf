@@ -213,14 +213,24 @@
   \ifx\cp@ram\relax
     \x@\minip@rsepos\fgfigp@s\mid\sb@rpos\end
     \dimen1=\ifnum \c@rrentcols=1 \textwidth \else \colwidth\fi
-    \trace{sc}{Initial width set to \the\dimen1 '\tempc'}%
-    \let\sb@widtht\textwidth
-    \let\sb@widthb\textwidth
-    \let\sb@widthB\textwidth
-    \let\sb@widthP\textwidth
-    \let\sb@widthF\PaperWidth %Good luck with that!
-    \ifcsname sb@width\tempc\endcsname
-      \x@\dimen1\csname sb@width\tempc\endcsname
+    \x@\let\csname sb@onlypure-t\endcsname\tr@e
+    \x@\let\csname sb@onlypure-b\endcsname\tr@e
+    \let\@t@st\tempc
+    \ifcsname sb@onlypure-\tempc\endcsname
+      \x@\ifx\csname sb@onlypure-\tempc\endcsname\tr@e
+        \ifx\relax\tempd\else
+          \edef\@t@st{\tempc\tempd}%
+        \fi
+      \fi
+    \fi
+    \trace{sc}{Initial width set to \the\dimen1 '\@t@st' (\tempd)}%
+    \x@\let\csname sb@width-t\endcsname\textwidth
+    \x@\let\csname sb@width-b\endcsname\textwidth
+    \x@\let\csname sb@width-B\endcsname\textwidth
+    \x@\let\csname sb@width-P\endcsname\textwidth
+    \x@\let\csname sb@width-F\endcsname\PaperWidth %Good luck with that!
+    \ifcsname sb@width-\@t@st\endcsname
+      \x@\dimen1\csname sb@width-\@t@st\endcsname
       \trace{sc}{Revised width set to \the\dimen1}%
     \else
       \temptrue
