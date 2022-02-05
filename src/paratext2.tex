@@ -1782,8 +1782,8 @@
     }%
     \global\setbox255=\box\voidb@x                                          %(+)
     \plainoutput\trace{p}{plainoutput twocoltrial}%
-    \s@tpage
     \notst@dynotesfalse\clearn@tes
+    \s@tpage
     \resetvsize % reset size of next page since it will not have any 1 column material
     \global\holdinginserts=1
     \ifrerunsavepartialpaged
@@ -1792,7 +1792,6 @@
     \ifnum\interactionmode=2
       \showlists
     \fi
-    \traceifcheck{twocoltrial}%
   \else % the contents of the "galley" didn't fit into the columns,         %(+)
         % so reduce \vsize and try again with an earlier break
     \trace{o}{Reducing vsize \the\vsize, by \the\baselineskip}%
@@ -1800,12 +1799,12 @@
 	% clear insertions
     \trace{i}{2coltrial: emptyinserts hIns=\the\holdinginserts, vsz:\the\vsize}%
     \res@tpage
-    \traceifcheck{twocoltrial}%
     \global\let\whichtrial=\twocoltrial                                     %(+)
     \global\output={\backingup}%
     \ifm@rksonpage\else\gdef\p@gefirstmark{}\trace{H}{No marks found. Setting empty mark}\fi%No marks on the page, and it didn't fit, so add a blank mark
     \unvbox\galley \penalty\ifnum\galleypenalty=10000 0 \else \galleypenalty \fi
-  \fi}
+  \fi
+  \traceifcheck{twocoltrial}}
 \newif\iffitonpage
 \newif\ifrebalance
 %-c_twocoltrial

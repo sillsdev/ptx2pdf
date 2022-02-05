@@ -167,7 +167,7 @@
 
 %+cfig_parsesize
 \def\p@rsesize#1*#2*#3\end{%
-  \def\size@ption{#1}%
+  \global\def\size@ption{#1}%
   \edef\tmp{#2}%
   \if\tmp\relax\else\def\sizem@ltiple{#2}\trace{g}{Setting scale to #2}\fi% empty if not provided
 }
@@ -993,7 +993,7 @@
   %\advance\dimen1 by \baselineskip
   \advance\dimen1 by \c@tskip\baselineskip
   \dimen2=\wd#1\advance\dimen2 by \sp@cebeside\relax\dimen3=\hs@ze \advance\dimen3 by -\dimen2
-  \ifdim\dimen3<5em\message{*** \w@tsit specification of \size@ption \sizem@ltiple (at \ch@pter:\v@rse) leaves \the\dimen3 \space for text. That's probably not enough.}\fi
+  \ifdim\dimen3<5em\message{*** \w@tsit specification of \csname size@ption\endcsname \csname sizem@ltiple\endcsname (at \ch@pter:\v@rse) leaves \the\dimen3 \space for text. That's probably not enough.}\fi
   \raise@test{\dr@pthingid}%
   \ifx\t@str@ise\relax\else
     \advance\dimen1 by -\t@str@ise\baselineskip
