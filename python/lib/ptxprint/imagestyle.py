@@ -90,8 +90,8 @@ class ImageStyle:
     def initdialog(self, dialog, view):
         self._dialogfrommap(dialog, view, fieldmap)
         if self.isbg:
-            self._dialogfrommap(dialog, view, bgfieldmap)
             self.color = textocol(getattr(self, "color", "x000000"))
+            self._dialogfrommap(dialog, view, bgfieldmap)
         else:
             posn = getattr(self, 'position', 'above')
             view.set("r_sbiPosn", posn)

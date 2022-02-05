@@ -184,6 +184,7 @@ class StyleEditorView(StyleEditor):
             self.loading = True
             self.set(v[0], val or "")
             if key == "Color":
+                print(f"setval {val=}")
                 self.set("l_styColorValue", str(val))
             self.loading = False
 
@@ -446,7 +447,8 @@ class StyleEditorView(StyleEditor):
         else:
             if v[0].startswith("col_"):
                 newval = textocol(val)
-                self.set("l_styColorValue", val)
+                if v[0] == "col_styColor":
+                    self.set("l_styColorValue", str(val))
             else:
                 newval = val
             if newval is None:

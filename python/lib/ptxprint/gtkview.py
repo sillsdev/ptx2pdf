@@ -2442,7 +2442,9 @@ class GtkViewModel(ViewModel):
             vals = s[s.find("(")+1:-1].split(",")
             h = "#"+"".join("{:02x}".format(int(x)) for x in vals)
             return h
-        col = coltohex(self.get("col_styColor"))
+        c = self.get("col_styColor")
+        col = coltohex(c)
+        print(f"onStyColorSet {c=} {col=}")
         self.set("l_styColorValue", col)
         if col != "x000000" and not self.get("c_colorfonts"):
             self.set("c_colorfonts", True)
@@ -3755,10 +3757,10 @@ class GtkViewModel(ViewModel):
         # we can do to lock controls etc. (e.g. hold Ctrl to toggle state)
         if event.get_state() & Gdk.ModifierType.CONTROL_MASK:
             widget.get_style_context().add_class("inactivewidget")
-            wname = Gtk.Buildable.get_name(widget)
+            # wname = Gtk.Buildable.get_name(widget)
             # if wname.startswith("c_"):
                 # self.set(wname, not self.get(wname)) # this makes sure that Ctrl+Click doesn't ALSO toggle the value
-            widget.set_sensitive(False)
+            # widget.set_sensitive(False)
         # else:
             # print("Ctrl not held")
 
