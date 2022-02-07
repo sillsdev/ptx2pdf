@@ -1123,6 +1123,8 @@ class GtkViewModel(ViewModel):
                 self.doError(_("Non-standard output folder needs to be deleted manually"), secondary=_("Folder: ")+self.working_dir)
             try: # Delete the entire output folder
                 rmtree(self.working_dir)
+            except FileNotFoundError:
+                pass
             except OSError:
                 self.doError(_("Cannot delete folder from disk!"), secondary=_("Folder: ") + self.working_dir)
 

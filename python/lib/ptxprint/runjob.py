@@ -359,13 +359,13 @@ class RunJob:
         if len(refs):
             finalLogLines.append("\nReferences to check{}: {}".format(book, " ".join(refs)))
 
-        texmrkrs = [r"\fi", "\if", "\ifx", "\\box", "\\hbox", "\\vbox", "\else", "\\book", "\\par",
-                     "\\edef", "\\gdef", "\\dimen" "\\hsize", "\\relax"]
+        texmrkrs = [r"\fi", "\if", "\ifx", "\box", "\hbox", "\vbox", "\else", "\book", "\par",
+                     "\edef", "\gdef", "\dimen" "\hsize", "\relax"]
         allmrkrs = re.findall(r"(\\[a-z0-9]{0,5})[ *\r\n.]", "".join(finalLogLines[-8:]))
         mrkrs = [x for x in allmrkrs if x not in texmrkrs]
         if 0 < len(mrkrs) < 7:
-            if "\ef" in mrkrs or "\ex" in mrkrs:
-                finalLogLines.append("Sorry, Study Bible Markup (\ef \ex etc.) is not yet supported!")
+            if len(set(mrkrs) & set([r"\ef", "\ex", "\cat", "\esb"])):
+                finalLogLines.append(_("There might be a marker issue in the Extended Study Notes"))
 
         files = re.findall(r'(?i)([^\\/\n."= ]*?\.(?=jpg|jpeg|tif|tiff|bmp|png|pdf)....?)', "".join(finalLogLines))
         if len(files):
