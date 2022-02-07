@@ -19,6 +19,7 @@ temp/
 /bugs/
 dist/
 build/
+keepDIST/
 PrintDraft/
 /msys64/
 tmpPics/
@@ -36,3 +37,8 @@ tmpPicLists/
 docs/**/*.pdf
 ptxprint.sty
 ptxprint_crowdin.po
+AdwaitaIcons.txt
+Build4WindowsLOCAL.bat
+RunPTXprint.bat
+PrintAllProjects.bat
+src/DiglotUIsettings.txt
